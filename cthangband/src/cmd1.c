@@ -2062,6 +2062,9 @@ void move_player(int dir, int do_pickup)
 				msg_print("There is a tree blocking your way.");
 				c_ptr->info |= (CAVE_MARK);
 				lite_spot(y,x);
+			/* Assume that the player didn't really want to do that. */
+	          		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+					energy_use = 0;
 			}
 
 			/* Water */
@@ -2070,6 +2073,9 @@ void move_player(int dir, int do_pickup)
 				msg_print("You cannot swim.");
 				c_ptr->info |= (CAVE_MARK);
 				lite_spot(y,x);
+			/* Assume that the player didn't really want to do that. */
+	          		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+					energy_use = 0;
 			}
 
 			else if ((c_ptr->feat == FEAT_WILD_BORDER) || (c_ptr->feat == FEAT_PATH_BORDER))
