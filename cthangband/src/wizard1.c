@@ -2110,7 +2110,7 @@ static void spoil_mon_info(cptr fname)
 		}
 
 			/* Include death events here. */
-			describe_death_events(n, wd_lhe[msex], spoil_out, TRUE);
+			spoil_out(describe_death_events(n, wd_lhe[msex], TRUE));
 
 		/* Count the actual attacks */
 		for (i = 0, j = 0; j < 4; j++)

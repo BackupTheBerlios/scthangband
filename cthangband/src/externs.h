@@ -1235,7 +1235,7 @@ extern void process_monsters(void);
 /* monster1.c */
 
 #if (defined(MONSTER1_C) || defined(WIZARD1_C))
-extern void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscient);
+extern cptr describe_death_events(int r_idx, cptr he, bool omniscient);
 #endif
 #if (defined(CMD3_C) || defined(MONSTER1_C))
 extern void roff_top(int r_idx);
@@ -2329,7 +2329,7 @@ extern void message_add(cptr str);
 #if (defined(DEFINES_H) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MAIN_DOS_C) || defined(MAIN_WIN_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void msg_print(cptr msg);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void msg_format(cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C))
@@ -2764,7 +2764,7 @@ extern bool disturb_dawn;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool disturb_minor;
 #endif
-#if (defined(CMD2_C) || defined(CMD4_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CMD2_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool alert_failure;
 #endif
 #if (defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))

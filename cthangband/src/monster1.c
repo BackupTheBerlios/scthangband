@@ -113,27 +113,17 @@ static bool know_damage(int r_idx, int i)
 #define MONCOL_ATTACK	(moncol[17].attr)	/* What melee attacks it has */
 #define MONCOL_QUEST	(moncol[18].attr)	/* If it is a quest monster */
 
-/* Colour for croff() */
-static byte colour;
-
-/*
- * Hack - input routine for c_roff which does not require two parameters.
- */
-static void croff(cptr str)
-{
-	c_roff(colour, str);
-}
-
 /* "will" if always true and omniscient, "may" otherwise. */
 #define DDE_MAY ((omniscient && d_ptr->num >= d_ptr->denom) ? "will" : "may")
 
 /*
  * Display information about death events
  */
-void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscient)
+cptr describe_death_events(int r_idx, cptr he, bool omniscient)
 {
 	u16b j;
 	s16b start = -1, end = -1;
+	cptr s = format("When %s dies, ", he);
 
 	/* First count the interesting events */
 	for (j = 0; j < MAX_DEATH_EVENTS; j++)
@@ -159,11 +149,8 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 	}
 	
 	/* Nothing to do. */
-	if (end == -1) return;
+	if (end == -1) return "";
 
-	/* Make a note of the colour for croff(). */
-	colour = MONCOL_DROP;
-	
 	/* Then loop through them. There may be unknown ones in the range, but no incorrect ones. */
 	for (j = start; j <= end; j++)
 	{
@@ -175,12 +162,9 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 		/* Ignore DEATH_NOTHING entries */
 		if (d_ptr->type == DEATH_NOTHING) continue;
 
-		/* Start the string. */
-		if (j == start)
-			(*out)(format("When %s dies, ", he));
 		/* Prepare to finish the string */
-		else if (j == end)
-			(*out)("and ");
+		if (j != start && j == end)
+			s = format("%sand ", s);
 
 		switch (d_ptr->type)
 		{
@@ -198,7 +182,7 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 				o_ptr->name2 = EP_EGO;
 #endif
 				strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 0);
-				(*out)(format("%s %s drop %s", he, DDE_MAY, o_name));
+				s = format("%s%s %s drop %s", s, he, DDE_MAY, o_name);
 				TFREE(o_name);
 				break;
 			}
@@ -206,14 +190,15 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 			{
 				make_monster_type *i_ptr = &d_ptr->par.monster;
 				monster_race *r_ptr = &r_info[i_ptr->num];
-				(*out)(format("%v %s be created", monster_desc_aux_f3, r_ptr,
-					i_ptr->max, MDF_INDEF, DDE_MAY));
+				s = format("%s%v %s be created", s, monster_desc_aux_f3, r_ptr,
+					i_ptr->max, MDF_INDEF, DDE_MAY);
 				break;
 			}
 			case DEATH_EXPLODE:
 			{
 				make_explosion_type *i_ptr = &d_ptr->par.explosion;
-				(*out)(format("%s %s explode in a ball of %s of radius %d", he, DDE_MAY, explode_flags[i_ptr->method-1], i_ptr->radius));
+				s = format("%s%s %s explode in a ball of %s of radius %d", s, 
+					he, DDE_MAY, explode_flags[i_ptr->method-1], i_ptr->radius);
 				break;
 			}
 			case DEATH_COIN:
@@ -222,19 +207,21 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 				char coin[80];
 				int i;
 				for (i = 0; ((coin[i] = FORCELOWER(coin_types[i_ptr->metal][i]))) != '\0'; i++);
-				(*out)(format("%s %s only drop %s coins", he, DDE_MAY, coin));
+				s = format("%s%s %s only drop %s coins", s, he, DDE_MAY, coin);
 				break;
 			}
 			case DEATH_NOTHING: /* But nothing happens. */
 			break;
 			default: /* Shouldn't get here, but... */
-			(*out)("Something awful has happened.");
+			if (alert_failure)
+				msg_format("Strange death event %d encountered.", d_ptr->type);
 		}
 		if (j == end)
-			(*out)(". ");
+			s = format("%s. ", s);
 		else
-			(*out)(", ");
+			s = format("%s, ", s);
 	}
+	return s;
 }
 
 typedef struct roff_monster_type roff_monster_type;
@@ -1491,7 +1478,7 @@ static void roff_aux(int r_idx)
 	}
 
 	/* Include death events here. */
-	describe_death_events(r_idx, wd_he[msex], croff, spoil_mon);
+	c_roff(MONCOL_DROP, describe_death_events(r_idx, wd_he[msex], spoil_mon));
 
 	/* Count the number of "known" attacks */
 	for (n = 0, m = 0; m < 4; m++)
