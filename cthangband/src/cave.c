@@ -3935,6 +3935,9 @@ bool is_room_p(int y, int x)
 	int xs[9] = { 1, 1, 0,-1,-1,-1, 0, 1, 1};
 	int ys[9] = { 0,-1,-1,-1, 0, 1, 1, 1, 0};
 
+	/* Assume that non-floor squares are dealt with elsewhere. */
+	if (!cave_floor_bold(y,x)) return TRUE;
+
 	for (i = t = 0; i < 9; i++)
 	{
 		if (!cave_floor_bold(y+ys[i], x+xs[i]))

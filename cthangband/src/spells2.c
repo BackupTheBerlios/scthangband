@@ -5752,7 +5752,7 @@ static void cave_temp_room_aux(int y, int x)
 	if (temp_n == TEMP_MAX) return;
 
 	/* Not a room or a wall. */
-	if (!is_room_p(y,x) && cave_floor_bold(y,x)) return;
+	if (!is_room_p(y,x)) return;
 
 	/* Mark the grid as "seen" */
 	c_ptr->info |= (CAVE_TEMP);
