@@ -485,6 +485,12 @@ In the "Modify" option, the following keys are valid:
 
       n: Move to the next colour.
 r, g, b: Change the amount of red, blue or green in the indicated colour.
+%%%%? [IOR [EQU $SYS win] [EQU $SYS w2k] [EQU $SYS ibm]]
+      k: Change the representation of this colour in 16 colour mode.
+%%%%? [NOT [IOR [EQU $SYS win] [EQU $SYS w2k] [EQU $SYS ibm]]]
+
+There is also a k parameter, but this only has an effect in the Windows and IBM ports.
+%%%%? 1
 
 Lower case letters increase the specified value, wrapping at the end.
 Uper case letters decrease them.
