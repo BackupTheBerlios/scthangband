@@ -2879,7 +2879,7 @@ logaux(x, 1) logaux(x, 0) 255
 
 /* Based on a given object_type */
 #define object_aware_p(T) \
-	((T)->sval != SV_UNKNOWN && object_aware_kp(&k_info[(T)->k_idx]))
+	(object_aware_kp(&k_info[(T)->k_idx]))
 
 /*
  * Determine if a given inventory item is "tried"

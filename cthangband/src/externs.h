@@ -1370,7 +1370,7 @@ extern void reset_visuals(void);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(OBJECT1_C))
-extern void object_info_known(object_type *j_ptr, object_type *o_ptr);
+extern void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);

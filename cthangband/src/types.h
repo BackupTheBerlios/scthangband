@@ -1386,3 +1386,15 @@ struct tval_ammo_type {
 
 
 
+#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(OBJECT1_C))
+
+/* Hack - provide a structure for things about an object which may be unknown,
+ * but are needed by various functions. */
+typedef struct object_extra object_extra;
+
+struct object_extra {
+	s16b k_idx;
+	byte tval;
+};
+
+#endif

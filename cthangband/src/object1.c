@@ -656,8 +656,14 @@ static void object_flags_pid(object_kind *k_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 /*
  * Create an object containing the known information about an object.
+ *
+ * o_ptr points to the original object.
+ * j_ptr points to the object to be created.
+ * x_ptr either points to an extra array in which is placed various information
+ * not known to the player which is needed to define the object, or is NULL.
+ * Ideally it should not be necessary.
  */
-void object_info_known(object_type *j_ptr, object_type *o_ptr)
+void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr)
 {
 	bool spoil = FALSE;
 	int i;
@@ -665,6 +671,13 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr)
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	object_wipe(j_ptr);
+
+	/* If needed, place the k_idx in x_ptr. */
+	if (x_ptr)
+	{
+		x_ptr->k_idx = o_ptr->k_idx;
+		x_ptr->tval = o_ptr->tval;
+	}
 
 	/* Some flags are always assumed to be known. */
 	j_ptr->discount = o_ptr->discount;
@@ -691,7 +704,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr)
 	else
 	{
 		j_ptr->k_idx = lookup_kind(0,0); /* != 0 */
-		j_ptr->tval = /* TV_UNKNOWN; */ o_ptr->tval;
+		j_ptr->tval = TV_UNKNOWN;
 		j_ptr->sval = SV_UNKNOWN;
 	}
 
@@ -952,7 +965,7 @@ static cptr descr_base(byte p_id)
 void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 {
 	object_type j;
-	object_info_known(&j, o_ptr);
+	object_info_known(&j, o_ptr, 0);
 	(*f1) = j.art_flags1;
 	(*f2) = j.art_flags2;
 	(*f3) = j.art_flags3;
@@ -1788,7 +1801,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		else
 		{
 			object_type j;
-			object_info_known(&j, o1_ptr);
+			object_info_known(&j, o1_ptr, 0);
 			if (j.pval)
 			{
 				g1 = j.art_flags1;
@@ -1871,10 +1884,11 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		if (spoil_value && spoil_base)
 		{
 			object_type j_body, *j_ptr = &j_body;
+			object_extra x_ptr[1];
 			s32b value;
 			bool worthless;
 
-			object_info_known(j_ptr, o1_ptr);
+			object_info_known(j_ptr, o1_ptr, x_ptr);
 
 			/* Without the appropriate spoiler flags, ignore the fact that
 			 * it is an ego item or artefact. */
@@ -1882,9 +1896,13 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 			{
 				object_type j2_ptr[1];
 				j_ptr->name2 = j_ptr->name1 = 0;
-				object_info_known(j2_ptr, j_ptr);
+				object_info_known(j2_ptr, j_ptr, 0);
 				j_ptr = j2_ptr;
 			}
+
+			/* Hack - object_value() needs a real k_idx and tval. */
+			j_ptr->k_idx = x_ptr->k_idx;
+			j_ptr->tval = x_ptr->tval;
 
 			value = object_value(j_ptr);
 			worthless = !value;
@@ -3284,7 +3302,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	if (!o1_ptr || !o1_ptr->k_idx) return;
 
 	/* Extract the known info */
-	object_info_known(o_ptr, o1_ptr);
+	object_info_known(o_ptr, o1_ptr, 0);
 
 	/* Mega-Hack -- describe activation */
 	if (o_ptr->art_flags3 & (TR3_ACTIVATE))

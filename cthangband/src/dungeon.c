@@ -17,9 +17,6 @@
 #define CHAINSWORD_NOISE 100
 
 
-extern void object_info_known(object_type *j_ptr, object_type *o_ptr);
-extern void do_cmd_rotate_stack(void);
-
 /*
  * Return what o_ptr->ident would be if a monster had just failed to pick
  * it up.
@@ -63,9 +60,9 @@ static bool is_powerful(object_type *o_ptr)
 	/* Check whether trying it added to its known powers. Only check flags,
 	 * as there is expected to be a pval based on the flags even if it isn't
 	 * known, and everything else should be the same. */
-	object_info_known(t_ptr, o_ptr);
+	object_info_known(t_ptr, o_ptr, 0);
 	o_ptr->ident &= ~IDENT_TRIED;
-	object_info_known(u_ptr, o_ptr);
+	object_info_known(u_ptr, o_ptr, 0);
 	o_ptr->ident |= IDENT_TRIED;
 	if (t_ptr->art_flags1 != u_ptr->art_flags1) return TRUE;
 	if (t_ptr->art_flags2 != u_ptr->art_flags2) return TRUE;
