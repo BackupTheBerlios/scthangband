@@ -450,80 +450,93 @@ FILE *my_fopen_temp(char *buf, int max)
  *
  * Process tabs, strip internal non-printables
  */
-errr my_fgets(FILE *fff, char *buf, huge n)
+#define TAB_COLUMNS   8
+
+errr my_fgets(FILE *fff, char *buf, size_t n)
 {
-	huge i = 0;
+	uint i, len;
+	int UNREAD(c); /* Not read if n <= 1, written to otherwise. */
 
-	char *s;
+	/* Enforce reasonable upper bound */
+	n = MIN(n, 65535);
 
-	char tmp[1024];
+	/* Leave a byte for terminating null */
+	len = n - 1;
 
-	/* Read a line */
-	if (fgets(tmp, 1024, fff))
+	/* Paranoia */
+	if (len <= 0) return PARSE_ERROR_OUT_OF_MEMORY;
+
+	/* While there's room left in the buffer */
+	for (i = 0; i < len; )
 	{
-		/* Convert weirdness */
-		for (s = tmp; *s; s++)
+		/*
+		 * Read next character - stdio buffers I/O, so there's no
+		 * need to buffer it again using fgets.
+		 */
+		c = fgetc(fff);
+
+		/* End of file */
+		if (c == EOF)
 		{
-			/* Handle newline */
-			if (*s == '\n')
+			/*
+			 * Be nice to DOS/Windows, where a last line of a file isn't
+			 * always \n terminated.
+			 */
+			buf[i] = '\0';
+
+			/* No characters read -- signal error */
+			if (i == 0)
+				return FILE_ERROR_EOF;
+			/* Treat as normal otherwise. */
+			else
+				return SUCCESS;
+		}
+
+		/* End of line */
+		if (strchr("\r\n", c))
+		{
+			/* Null terminate */
+			buf[i] = '\0';
+
+			return SUCCESS;
+		}
+
+		/* Expand a tab into spaces */
+		if (c == '\t')
+		{
+			uint tabstop;
+
+			/* Next tab stop */
+			tabstop = ((i + TAB_COLUMNS) / TAB_COLUMNS) * TAB_COLUMNS;
+
+			/* Bounds check */
+			if (tabstop >= len) break;
+
+			/* Convert it to spaces */
+			while (i < tabstop)
 			{
-				/* Terminate */
-				buf[i] = '\0';
-
-				/* Success */
-				return (0);
-			}
-
-			/* Handle tabs */
-			else if (*s == '\t')
-			{
-				/* Hack -- require room */
-				if (i + 8 >= n) break;
-
-				/* Append a space */
+				/* Store space */
 				buf[i++] = ' ';
-
-				/* Append some more spaces */
-				while (!(i % 8)) buf[i++] = ' ';
 			}
+		}
 
-			/* Handle printables */
-			else if (isprint(*s))
-			{
-				/* Copy */
-				buf[i++] = *s;
-
-				/* Check length */
-				if (i >= n) break;
-			}
+		/* Ignore non-printables */
+		else if (isprint(c))
+		{
+			/* Store character in the buffer */
+			buf[i++] = c;
 		}
 	}
 
-	/* Nothing */
-	buf[0] = '\0';
+	/* Buffer overflow - return the string obtained so far. */
+	buf[i] = '\0';
 
-	/* Failure */
-	return (1);
+	/* Allow the last (failed) character to be read later. */
+	ungetc(c, fff);
+
+	/* Error */
+	return FILE_ERROR_OVERFLOW;
 }
-
-
-#if 0
-/*
- * Hack -- replacement for "fputs()"
- *
- * Dump a string, plus a newline, to a file
- *
- * XXX XXX XXX Process internal weirdness?
- */
-errr my_fputs(FILE *fff, cptr buf, huge UNUSED n)
-{
-	/* Dump, ignore errors */
-	(void)fprintf(fff, "%s\n", buf);
-
-	/* Success */
-	return (0);
-}
-#endif
 
 /*
  * A macro to turn a format string with arguments into a normal string in the

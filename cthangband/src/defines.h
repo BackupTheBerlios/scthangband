@@ -2715,6 +2715,8 @@ logaux(x, 1) logaux(x, 0) 255)
 
 #define FILE_ERROR_CANNOT_OPEN_FILE -101
 #define FILE_ERROR_FILE_EXISTS	101
+#define FILE_ERROR_EOF 102
+#define FILE_ERROR_OVERFLOW 103
 
 #define HOOK_ERROR_NO_SUCH_HOOK	201
 #define HOOK_ERROR_OUT_OF_MEMORY 202
@@ -2724,10 +2726,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PREF_ERROR_UNKNOWN_PARAMETER 302
 #define PREF_ERROR_OUT_OF_BOUNDS	303
 #define PREF_ERROR_INCORRECT_SYNTAX	304
-
-#ifndef SUCCESS
-#define SUCCESS	0
-#endif
 
 /* Energy constants */
 #define TURN_ENERGY	1000 /* Energy used in one player turn. */

@@ -2238,7 +2238,7 @@ extern FILE *my_fopen_temp(char *buf, uint max);
 extern FILE *my_fopen_temp(char *buf, int max);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_XPJ_C) || defined(UTIL_C) || defined(XTRA1_C))
-extern errr my_fgets(FILE *fff, char *buf, huge n);
+extern errr my_fgets(FILE *fff, char *buf, size_t n);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern int my_fprintf(FILE *fff, cptr fmt, ...);
