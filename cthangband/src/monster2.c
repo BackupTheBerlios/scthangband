@@ -235,8 +235,11 @@ static void set_ghost_aux(cptr gb_name, int ghost_race)
 		g_name = format("%s, %s", gb_name, r_name+rt_ptr->name);
 	}
 
+	/* Hack - assume that the names are always in increasing order. */
+	i = r_ptr[1].name - r_ptr->name - 1;
+
 	/* Copy to r_name (r_ptr->level stores its maximum length). */
-	sprintf(r_name+r_ptr->name, "%.*s", r_ptr->level, g_name);
+	sprintf(r_name+r_ptr->name, "%.*s", i, g_name);
 
 	/* The hit dice in rt_ptr are a multiple of the base values. */
 	i = (int)(r_ptr->hdice) * rt_ptr->hdice;

@@ -3727,14 +3727,28 @@ static errr init_info_txt_final(header *head)
 			find_monster_race(0);
 			break;
 		}
-		/* *Hack* - deduce the length of the ghost's name and hide it in its
-		 * (unused) level field. */
 		case R_HEAD:
 		{
-			monster_race *r_ptr = ((monster_race*)(head->info_ptr)) +
-				MON_PLAYER_GHOST;
-			cptr rname = head->name_ptr+r_ptr->name;
-			r_ptr->level = MIN(255, strlen(rname));
+			/* Ensure that various indices mentioned in the game exist. */
+
+			/* get_rnd_q_monster */
+			int max = MON_MEPHISTOPHELES_LORD_OF_HELL-1;
+
+			/* do_cmd_suicide */
+			max = MAX(max, MON_SUICIDE);
+
+			/* take_hit */
+			max = MAX(max, MON_FATAL_POLYMORPH);
+
+			/* place_ghost */
+			max = MAX(max, MON_PLAYER_GHOST);
+
+			/* Paranoia - check that there's space for the required monsters. */
+			if (max >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			/* Check that r_info is as big as the game expects. */
+			if (error_idx < max) error_idx = max;
+
 			break;
 		}
 		case F_HEAD:
