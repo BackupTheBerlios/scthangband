@@ -462,15 +462,6 @@ static void strip_name(char *buf, int k_idx)
 
 
 /*
- * Hack -- title for each column
- *
- * XXX XXX XXX This will not work with "EBCDIC", I would think.
- */
-static char head[3] =
-{ 'a', 'A', '0' };
-
-
-/*
  * Sorting hook for wiz_create_item()
  *
  * Sort from highest frequency to lowest.
@@ -509,13 +500,16 @@ static int wiz_create_itemtype(void)
 	uint max_len;
 	int			 tval;
 
-	cptr                 tval_str;
+	cptr                 tval_str, s;
 	char                 ch;
 
 	int			 choice[60];
 
 	C_TNEW(bufx, 60*ONAME_MAX, char);
 	char		*buf[60];
+
+	/* A list of the valid options for this prompt. */
+	cptr body =	"abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRST0123456789;:'@#~<>/?";
 
 	for (i = 0; i < 60; i++) buf[i] = bufx+i*ONAME_MAX;
 
@@ -527,7 +521,7 @@ static int wiz_create_itemtype(void)
 	{
 		row = 2 + (num % 20);
 		col = 30 * (num / 20);
-		ch = head[num/20] + (num%20);
+		ch = body[num];
 		prt(format("[%c] %s", ch, tvals[num].desc), row, col);
 	}
 
@@ -543,9 +537,8 @@ static int wiz_create_itemtype(void)
 
 	/* Analyze choice */
 	num = -1;
-	if ((ch >= head[0]) && (ch < head[0] + 20)) num = ch - head[0];
-	if ((ch >= head[1]) && (ch < head[1] + 20)) num = ch - head[1] + 20;
-	if ((ch >= head[2]) && (ch < head[2] + 10)) num = ch - head[2] + 40;
+	s = strchr(body, ch);
+	if (s) num = s - body;
 
 	/* Bail out if choice is illegal */
 	if ((num < 0) || (num >= max_num))
@@ -578,7 +571,7 @@ static int wiz_create_itemtype(void)
 			/* Prepare it */
 			row = 2 + (num % 20);
 			col = 30 * (num / 20);
-			ch = head[num/20] + (num%20);
+			ch = body[num];
 
 			/* Acquire the "name" of object "i" */
 			strip_name(buf[num], i);
@@ -714,7 +707,7 @@ static int wiz_create_itemtype(void)
 	{
 		row = 2 + (i % 20);
 		col = max_len * (i / 20);
-		ch = head[i/20] + (i%20);
+		ch = body[i];
 		
 		/* Print it */
 		prt(format("[%c] %s", ch, buf[i]), row, col);
@@ -731,9 +724,8 @@ static int wiz_create_itemtype(void)
 
 	/* Analyze choice */
 	num = -1;
-	if ((ch >= head[0]) && (ch < head[0] + 20)) num = ch - head[0];
-	if ((ch >= head[1]) && (ch < head[1] + 20)) num = ch - head[1] + 20;
-	if ((ch >= head[2]) && (ch < head[2] + 20)) num = ch - head[2] + 40;
+	s = strchr(body, ch);
+	if (s) num = s - body;
 
 	/* Bail out if choice is "illegal" */
 	if ((num < 0) || (num >= max_num)) return (0);
