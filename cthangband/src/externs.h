@@ -3537,4 +3537,13 @@ extern bool macro_edit;
 #if (defined(CMD4_C) || defined(TABLES_C))
 extern force_type option_force[] ;
 #endif
+
+/* z-term.c */
+
+#if (defined(Z_TERM_C))
+extern int Term_save_aux(void);
+#endif
+#if (defined(Z_TERM_C))
+extern void Term_load_aux(int win);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

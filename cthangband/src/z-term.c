@@ -2104,6 +2104,84 @@ errr Term_inkey(char *ch, bool wait, bool take)
 
 /*** Extra routines ***/
 
+#define NUM_TERM_WINS	8
+
+static int cur_saved_term = 0;
+
+typedef struct term_win2 term_win2;
+
+struct term_win2
+{
+	term_win win; /* The "normal" term_win structure. */
+	byte wid; /* The width of the window. */
+	byte hgt; /* The height of the window. */
+	bool mem; /* Does this window need to be remembered? */
+};
+
+static term_win2 term_wins[NUM_TERM_WINS];
+
+/*
+ * Save the "requested" screen into the "memorized" screen
+ *
+ * Every "Term_save()" should match exactly one "Term_load()"
+ */
+int Term_save_aux(void)
+{
+	int w = Term->wid;
+	int h = Term->hgt;
+	int i,blank,free;
+	term_win2 *w_ptr;
+
+	/* Look for a term_win which is currently unused but already has the
+	 * correct size. */
+	for (i = blank = free = 0; i < NUM_TERM_WINS; i++)
+	{
+		w_ptr = term_wins+i;
+		if (w_ptr->mem) continue;
+		free = i+1;
+		if (!w_ptr->wid && !w_ptr->hgt) blank = i+1;
+		if (w_ptr->wid == w && w_ptr->hgt == h) break;
+	}
+
+	/* No space available, so give up rather than risk overwriting something
+	 * important. */
+	if (!free && !blank && i == NUM_TERM_WINS)
+	{
+		return 0;
+	}
+
+	/* There's a spare term_win, but it's the wrong size. */
+	if (!blank && i == NUM_TERM_WINS)
+	{
+		w_ptr = term_wins+free-1;
+		term_win_nuke(&w_ptr->win, w_ptr->wid, w_ptr->hgt);
+		blank = free;
+	}
+
+	/* There is (now) no term_win. */
+	if (i == NUM_TERM_WINS)
+	{
+		w_ptr = term_wins+blank-1;
+		w_ptr->wid = Term->wid;
+		w_ptr->hgt = Term->hgt;
+		term_win_init(&w_ptr->win, w_ptr->wid, w_ptr->hgt);
+		i = blank-1;
+	}
+
+	w_ptr = term_wins+i;
+
+	/* Grab */
+	term_win_copy(&w_ptr->win, Term->scr, w_ptr->wid, w_ptr->hgt);
+
+	/* Flag the window as saved. */
+	w_ptr->mem = TRUE;
+
+	/* Return an index. */
+	return i+1;
+}
+
+
+
 
 /*
  * Save the "requested" screen into the "memorized" screen
@@ -2112,21 +2190,11 @@ errr Term_inkey(char *ch, bool wait, bool take)
  */
 errr Term_save(void)
 {
-	int w = Term->wid;
-	int h = Term->hgt;
+	/* Paranoia - forget any term_win currently saved. */
+	if (cur_saved_term) (void)Term_load();
 
-	/* Create */
-	if (!Term->mem)
-	{
-		/* Allocate window */
-		MAKE(Term->mem, term_win);
-
-		/* Initialize window */
-		term_win_init(Term->mem, w, h);
-	}
-
-	/* Grab */
-	term_win_copy(Term->mem, Term->scr, w, h);
+	/* Save the window, remember the index. */
+	cur_saved_term = Term_save_aux();
 
 	/* Success */
 	return (0);
@@ -2137,37 +2205,47 @@ errr Term_save(void)
  *
  * Every "Term_save()" should match exactly one "Term_load()"
  */
-errr Term_load(void)
+void Term_load_aux(int win)
 {
+	term_win2 *w_ptr;
 	int y;
 
-	int w = Term->wid;
-	int h = Term->hgt;
+	/* Paranoia - ignore invalid calls. */
+	if (win <= 0 || win > NUM_TERM_WINS) return;
 
-	/* Create */
-	if (!Term->mem)
-	{
-		/* Allocate window */
-		MAKE(Term->mem, term_win);
+	w_ptr = term_wins+win-1;
 
-		/* Initialize window */
-		term_win_init(Term->mem, w, h);
-	}
+	/* Paranoia - ignore invalid calls. */
+	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt) return;
 
 	/* Load */
-	term_win_copy(Term->scr, Term->mem, w, h);
+	term_win_copy(Term->scr, &w_ptr->win, w_ptr->wid, w_ptr->hgt);
 
 	/* Assume change */
-	for (y = 0; y < h; y++)
+	for (y = 0; y < w_ptr->hgt; y++)
 	{
 		/* Assume change */
 		Term->x1[y] = 0;
-		Term->x2[y] = w - 1;
+		Term->x2[y] = w_ptr->wid - 1;
 	}
 
 	/* Assume change */
 	Term->y1 = 0;
-	Term->y2 = h - 1;
+	Term->y2 = w_ptr->hgt - 1;
+}
+
+/*
+ * Restore the "requested" contents (see above).
+ *
+ * Every "Term_save()" should match exactly one "Term_load()"
+ */
+errr Term_load(void)
+{
+	/* Paranoia - no saved term_win. */
+	if (!cur_saved_term) return (-1);
+
+	/* Restore the window from the remembered index. */
+	Term_load_aux(cur_saved_term);
 
 	/* Success */
 	return (0);
