@@ -1735,27 +1735,27 @@ static void weapon_stats_calc(object_ctype *wp_ptr,
 	 * natural_attack(), which appear to differ from the ones in dump_chaos_feature(). */
 	if (slot == INVEN_WIELD)
 	{
-		if (p_ptr->muta2 & MUT2_HORNS)
+		if (p_has_mutation(MUT_HORNS))
 		{
 			(*mut_blow)++;
 			(*damage) += 60*6*(1+2)/2;
 		}
-		if (p_ptr->muta2 & MUT2_SCOR_TAIL)
+		if (p_has_mutation(MUT_SCOR_TAIL))
 		{
 			(*mut_blow)++;
 			(*damage) += 60*7*(1+3)/2;
 		}
-		if (p_ptr->muta2 & MUT2_BEAK)
+		if (p_has_mutation(MUT_BEAK))
 		{
 			(*mut_blow)++;
 			(*damage) += 60*4*(1+2)/2;
 		}
-		if (p_ptr->muta2 & MUT2_TRUNK)
+		if (p_has_mutation(MUT_TRUNK))
 		{
 			(*mut_blow)++;
 			(*damage) += 60*4*(1+1)/2;
 		}
-		if (p_ptr->muta2 & MUT2_TENTACLES)
+		if (p_has_mutation(MUT_TENTACLES))
 		{
 			(*mut_blow)++;
 			(*damage) += 60*5*(1+2)/2;
@@ -2001,11 +2001,11 @@ static void display_player_various(void)
     int         muta_att = 0;
 	object_type		*o_ptr;
 
-	if (p_ptr->muta2 & MUT2_HORNS)     muta_att++;
-	if (p_ptr->muta2 & MUT2_SCOR_TAIL) muta_att++;
-	if (p_ptr->muta2 & MUT2_BEAK)      muta_att++;
-	if (p_ptr->muta2 & MUT2_TRUNK)     muta_att++;
-	if (p_ptr->muta2 & MUT2_TENTACLES) muta_att++;
+	if (p_has_mutation(MUT_HORNS))     muta_att++;
+	if (p_has_mutation(MUT_SCOR_TAIL)) muta_att++;
+	if (p_has_mutation(MUT_BEAK))      muta_att++;
+	if (p_has_mutation(MUT_TRUNK))     muta_att++;
+	if (p_has_mutation(MUT_TENTACLES)) muta_att++;
 
 	/* Fighting Skill (with current weapon) */
 	o_ptr = &inventory[INVEN_WIELD];
@@ -2293,61 +2293,59 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3)
         (*f2) |= (TR2_RES_CONF);
     }
     if (skill_set[SKILL_MINDCRAFTING].value >= 80) (*f3) |= TR3_TELEPATHY;
-    if (p_ptr->muta3)
-    {
-        if (p_ptr->muta3 & MUT3_FLESH_ROT)
+        if (p_has_mutation(MUT_FLESH_ROT))
         {
             (*f3) &= ~(TR3_REGEN);
         }
 
-        if ((p_ptr->muta3 & MUT3_XTRA_FAT) || 
-			(p_ptr->muta3 & MUT3_XTRA_LEGS) ||
-            (p_ptr->muta3 & MUT3_SHORT_LEG))
+        if ((p_has_mutation(MUT_XTRA_FAT)) || 
+			(p_has_mutation(MUT_XTRA_LEGS)) ||
+            (p_has_mutation(MUT_SHORT_LEG)))
         {
             (*f1) |= TR1_SPEED;
         }
 
-        if (p_ptr->muta3  & MUT3_ELEC_TOUC)
+        if (p_has_mutation(MUT_ELEC_TOUC))
         {
             (*f3) |= TR3_SH_ELEC;
         }
 
-        if (p_ptr->muta3 & MUT3_FIRE_BODY)
+        if (p_has_mutation(MUT_FIRE_BODY))
         {
             (*f3) |= TR3_SH_FIRE;
             (*f3) |= TR3_LITE;
         }
 
-        if (p_ptr->muta3 & MUT3_WINGS)
+        if (p_has_mutation(MUT_WINGS))
         {
             (*f3) |= TR3_FEATHER;
         }
 
-        if (p_ptr->muta3 & MUT3_FEARLESS)
+        if (p_has_mutation(MUT_FEARLESS))
         {
             (*f2) |= (TR2_RES_FEAR);
         }
 
-        if (p_ptr->muta3 & MUT3_REGEN)
+        if (p_has_mutation(MUT_REGEN))
         {
             (*f3) |= TR3_REGEN;
         }
 
-        if (p_ptr->muta3 & MUT3_ESP)
+        if (p_has_mutation(MUT_ESP))
         {
             (*f3) |= TR3_TELEPATHY;
         }
-		if (p_ptr->muta3 & MUT3_ESP)
+		if (p_has_mutation(MUT_ESP))
 		{
 			(*f3) |= TR3_TELEPATHY;
 		}
 		
-		if (p_ptr->muta3 & MUT3_MOTION)
+		if (p_has_mutation(MUT_MOTION))
 		{
 			(*f2) |= TR2_FREE_ACT;
 		}
 		
-		if (p_ptr->muta3 & MUT3_SUS_STATS)
+		if (p_has_mutation(MUT_SUS_STATS))
 		{
 			(*f2) |= TR2_SUST_CON;
 			if ((skill_set[SKILL_RACIAL].value/2) > 9)
@@ -2361,7 +2359,6 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3)
 			if ((skill_set[SKILL_RACIAL].value/2) > 49)
 				(*f2) |= TR2_SUST_CHR;
 		}
-    }
 }
 
 
@@ -2849,46 +2846,43 @@ static void display_player_stat_info(void)
 	/* Check stats */
 	for (stat=0; stat<6; stat++)
 	{
+		int dummy = 0;
 		/* Default */
 		a = TERM_SLATE;
 		c = '.';
 
         /* Chaos Features ... */
-        if (p_ptr->muta3)
-        {
-            int dummy = 0;
-
-            if (stat == A_STR)
+			if (stat == A_STR)
             {
-                if (p_ptr->muta3 & MUT3_HYPER_STR) dummy += 4;
-                if (p_ptr->muta3 & MUT3_PUNY)   dummy -= 4;
+                if (p_has_mutation(MUT_HYPER_STR)) dummy += 4;
+                if (p_has_mutation(MUT_PUNY))   dummy -= 4;
             }
             else if (stat == A_WIS || stat == A_INT)
             {
-                if (p_ptr->muta3 & MUT3_HYPER_INT) dummy += 4;
-                if (p_ptr->muta3 & MUT3_MORONIC) dummy -= 4;
+                if (p_has_mutation(MUT_HYPER_INT)) dummy += 4;
+                if (p_has_mutation(MUT_MORONIC)) dummy -= 4;
             }
             else if (stat == A_DEX)
             {
-				if (p_ptr->muta3 & MUT3_IRON_SKIN) dummy -= 1;
-				if (p_ptr->muta3 & MUT3_LIMBER) dummy += 3;
-				if (p_ptr->muta3 & MUT3_ARTHRITIS) dummy -= 3;
+				if (p_has_mutation(MUT_IRON_SKIN)) dummy -= 1;
+				if (p_has_mutation(MUT_LIMBER)) dummy += 3;
+				if (p_has_mutation(MUT_ARTHRITIS)) dummy -= 3;
             }
             else if (stat == A_CON)
             {
-                if (p_ptr->muta3 & MUT3_RESILIENT) dummy += 4;
-                if (p_ptr->muta3 & MUT3_XTRA_FAT) dummy += 2;
-                if (p_ptr->muta3 & MUT3_ALBINO) dummy -= 4;
-                if (p_ptr->muta3 & MUT3_FLESH_ROT) dummy -= 2;
+                if (p_has_mutation(MUT_RESILIENT)) dummy += 4;
+                if (p_has_mutation(MUT_XTRA_FAT)) dummy += 2;
+                if (p_has_mutation(MUT_ALBINO)) dummy -= 4;
+                if (p_has_mutation(MUT_FLESH_ROT)) dummy -= 2;
             }
             else if (stat == A_CHR)
             {
-                if (p_ptr->muta3 & MUT3_SILLY_VOI) dummy -= 4;
-                if (p_ptr->muta3 & MUT3_BLANK_FAC) dummy -= 1;
-                if (p_ptr->muta3 & MUT3_FLESH_ROT) dummy -= 1;
-                if (p_ptr->muta3 & MUT3_SCALES) dummy -= 1;
-                if (p_ptr->muta3 & MUT3_WART_SKIN) dummy -= 2;
-				if (p_ptr->muta3 & MUT3_ILL_NORM) dummy = 0;
+                if (p_has_mutation(MUT_SILLY_VOI)) dummy -= 4;
+                if (p_has_mutation(MUT_BLANK_FAC)) dummy -= 1;
+                if (p_has_mutation(MUT_FLESH_ROT)) dummy -= 1;
+                if (p_has_mutation(MUT_SCALES)) dummy -= 1;
+                if (p_has_mutation(MUT_WART_SKIN)) dummy -= 2;
+				if (p_has_mutation(MUT_ILL_NORM)) dummy = 0;
             }
 
 
@@ -2918,7 +2912,6 @@ static void display_player_stat_info(void)
                     if (dummy < 10) c = '0' - dummy;
 				}
 			}
-        }
 
 
 		/* Sustain */
@@ -3380,7 +3373,7 @@ static void display_player_name_stats(void)
 void display_player(int mode)
 {
 	/* XXX XXX XXX */
-    if ((p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3) && !(skip_chaos_features))
+    if (p_mutated() && !(skip_chaos_features))
         mode = (mode % 8);
     else
         mode = (mode % 7);
@@ -3791,7 +3784,7 @@ next_cave:
     }
     
 
-    if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
+    if (p_mutated())
     {
         fprintf(fff, "\n\n  [Chaos Features]\n\n");
         dump_chaos_features(fff);

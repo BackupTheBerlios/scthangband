@@ -1053,7 +1053,7 @@ void acid_dam(int dam, cptr kb_str, int monster)
 	if (p_ptr->immune_acid || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
-	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_has_mutation(MUT_VULN_ELEM)) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
@@ -1086,7 +1086,7 @@ void elec_dam(int dam, cptr kb_str, int monster)
 	if (p_ptr->immune_elec || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
-	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_has_mutation(MUT_VULN_ELEM)) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
@@ -1118,7 +1118,7 @@ void fire_dam(int dam, cptr kb_str, int monster)
 	if (p_ptr->immune_fire || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
-	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_has_mutation(MUT_VULN_ELEM)) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
@@ -1149,7 +1149,7 @@ void cold_dam(int dam, cptr kb_str, int monster)
 	if (p_ptr->immune_cold || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
-	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
+	if (p_has_mutation(MUT_VULN_ELEM)) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
@@ -4869,7 +4869,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		{
             if (fuzzy) msg_print("You are hit by a blast from the past!");
 
-			if (p_ptr->muta3 & MUT3_RES_TIME)
+			if (p_has_mutation(MUT_RES_TIME))
 			{
 				dam *= 4;
 				dam /= (randint(6) + 6);

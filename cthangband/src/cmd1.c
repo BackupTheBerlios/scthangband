@@ -1011,31 +1011,31 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 
     switch (attack)
     {
-	case MUT2_SCOR_TAIL:
+	case MUT_SCOR_TAIL:
 		dss = 3;
 		ddice = 7;
 		n_weight = 5;
 		atk_desc = "tail";
 		break;
-	case MUT2_HORNS:
+	case MUT_HORNS:
 		dss = 2;
 		ddice = 6;
 		n_weight = 15;
 		atk_desc = "horns";
 		break;
-	case MUT2_BEAK:
+	case MUT_BEAK:
 		dss = 2;
 		ddice = 4;
 		n_weight = 5;
 		atk_desc = "beak";
 		break;
-	case MUT2_TRUNK:
+	case MUT_TRUNK:
 		dss = 1;
 		ddice = 4;
 		n_weight = 35;
 		atk_desc = "trunk";
 		break;
-	case MUT2_TENTACLES:
+	case MUT_TENTACLES:
 		dss = 2;
 		ddice = 5;
 		n_weight = 5;
@@ -1091,19 +1091,19 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 		/* Damage, check for fear and mdeath */
 		switch (attack)
 		{
-		case MUT2_SCOR_TAIL:
+		case MUT_SCOR_TAIL:
 			project(0, 0, m_ptr->fy, m_ptr->fx, k, GF_POIS, PROJECT_KILL);
 			break;
-		case MUT2_HORNS:
+		case MUT_HORNS:
 			*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 			break;
-		case MUT2_BEAK:
+		case MUT_BEAK:
 			*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 			break;
-		case MUT2_TRUNK:
+		case MUT_TRUNK:
 			*mdeath = mon_take_hit(m_idx, k, fear, NULL);
 			break;
-		case MUT2_TENTACLES:
+		case MUT_TENTACLES:
 			project(0, 0, m_ptr->fy, m_ptr->fx, k, GF_HELL_FIRE, PROJECT_KILL);
 			break;
 		default:
@@ -1329,7 +1329,7 @@ void py_attack(int y, int x)
          /* Stop if friendly */
          if (m_ptr->smart & SM_ALLY &&
             ! (p_ptr->stun || p_ptr->confused || p_ptr->image ||
-              ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero) ||
+              ((p_has_mutation(MUT_BERS_RAGE)) && p_ptr->shero) ||
                 !(m_ptr->ml)))
    {
 		if (inventory[INVEN_WIELD].name1 != ART_STORMBRINGER)
@@ -1656,16 +1656,16 @@ void py_attack(int y, int x)
 	 */
     if ((!no_extra) && (randint((p_ptr->num_blow+30)/60)==1))
     {
-		if (p_ptr->muta2 & MUT2_HORNS && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT2_HORNS, &fear, &mdeath);
-		if (p_ptr->muta2 & MUT2_BEAK && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT2_BEAK, &fear, &mdeath);
-		if (p_ptr->muta2 & MUT2_SCOR_TAIL && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT2_SCOR_TAIL, &fear, &mdeath);
-		if (p_ptr->muta2 & MUT2_TRUNK && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT2_TRUNK, &fear, &mdeath);
-		if (p_ptr->muta2 & MUT2_TENTACLES && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT2_TENTACLES, &fear, &mdeath);
+		if (p_has_mutation(MUT_HORNS) && !mdeath)
+			natural_attack(c_ptr->m_idx, MUT_HORNS, &fear, &mdeath);
+		if (p_has_mutation(MUT_BEAK) && !mdeath)
+			natural_attack(c_ptr->m_idx, MUT_BEAK, &fear, &mdeath);
+		if (p_has_mutation(MUT_SCOR_TAIL) && !mdeath)
+			natural_attack(c_ptr->m_idx, MUT_SCOR_TAIL, &fear, &mdeath);
+		if (p_has_mutation(MUT_TRUNK) && !mdeath)
+			natural_attack(c_ptr->m_idx, MUT_TRUNK, &fear, &mdeath);
+		if (p_has_mutation(MUT_TENTACLES) && !mdeath)
+			natural_attack(c_ptr->m_idx, MUT_TENTACLES, &fear, &mdeath);
         }
 
 	/* Hack -- delay fear messages */
@@ -1955,7 +1955,7 @@ void move_player(int dir, int do_pickup)
 		/* Attack -- only if we can see it OR it is not in a wall */
 		if ((m_ptr->smart & SM_ALLY) &&
 			!(p_ptr->confused || p_ptr->image || !(m_ptr->ml) || p_ptr->stun
-			|| ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero))
+			|| ((p_has_mutation(MUT_BERS_RAGE)) && p_ptr->shero))
 			&& (pattern_seq((byte)py,(byte)px,(byte)y,(byte)x)) &&
 			((cave_floor_bold(y, x)) || (p_can_pass_walls)))
 		{

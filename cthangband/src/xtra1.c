@@ -1934,47 +1934,45 @@ static void calc_bonuses(bool quiet)
 	}
 
     /* I'm adding the chaos features here for the lack of a better place... */
-	if (p_ptr->muta3)
-	{
-		if (p_ptr->muta3 & MUT3_HYPER_STR)
+		if (p_has_mutation(MUT_HYPER_STR))
 		{
 			p_ptr->stat_add[A_STR] += 4;
 		}
 		
-		if (p_ptr->muta3 & MUT3_PUNY)
+		if (p_has_mutation(MUT_PUNY))
 		{
 			p_ptr->stat_add[A_STR] -= 4;
 		}
 		
-		if (p_ptr->muta3 & MUT3_HYPER_INT)
+		if (p_has_mutation(MUT_HYPER_INT))
 		{
 			p_ptr->stat_add[A_INT] += 4;
 			p_ptr->stat_add[A_WIS] += 4;
 		}
 		
-		if (p_ptr->muta3 & MUT3_MORONIC)
+		if (p_has_mutation(MUT_MORONIC))
 		{
 			p_ptr->stat_add[A_INT] -= 4;
 			p_ptr->stat_add[A_WIS] -= 4;
 		}
 		
-		if (p_ptr->muta3 & MUT3_RESILIENT)
+		if (p_has_mutation(MUT_RESILIENT))
 		{
 			p_ptr->stat_add[A_CON] += 4;
 		}
 		
-		if (p_ptr->muta3 & MUT3_XTRA_FAT)
+		if (p_has_mutation(MUT_XTRA_FAT))
 		{
 			p_ptr->stat_add[A_CON] += 2;
 			p_ptr->pspeed -= 2;
 		}
 		
-		if (p_ptr->muta3 & MUT3_ALBINO)
+		if (p_has_mutation(MUT_ALBINO))
 		{
 			p_ptr->stat_add[A_CON] -= 4;
 		}
 		
-		if (p_ptr->muta3 & MUT3_FLESH_ROT)
+		if (p_has_mutation(MUT_FLESH_ROT))
 		{
 			p_ptr->stat_add[A_CON] -= 2;
 			p_ptr->stat_add[A_CHR] -= 1;
@@ -1982,116 +1980,116 @@ static void calc_bonuses(bool quiet)
 			/* Cancel innate regeneration */
 		}
 		
-		if (p_ptr->muta3 & MUT3_SILLY_VOI)
+		if (p_has_mutation(MUT_SILLY_VOI))
 		{
 			p_ptr->stat_add[A_CHR] -= 4;
 		}
 		
-		if (p_ptr->muta3 & MUT3_BLANK_FAC)
+		if (p_has_mutation(MUT_BLANK_FAC))
 		{
 			p_ptr->stat_add[A_CHR] -= 1;
 		}
 		
-		if (p_ptr->muta3 & MUT3_XTRA_EYES)
+		if (p_has_mutation(MUT_XTRA_EYES))
 		{
 			p_ptr->skill_fos += 15;
 			p_ptr->skill_srh += 15;
 		}
 		
-		if (p_ptr->muta3 & MUT3_MAGIC_RES)
+		if (p_has_mutation(MUT_MAGIC_RES))
 		{
 			p_ptr->skill_sav += (15 + ((skill_set[SKILL_RACIAL].value/2) / 5));
 		}
 		
-		if (p_ptr->muta3 & MUT3_XTRA_NOIS)
+		if (p_has_mutation(MUT_XTRA_NOIS))
 		{
 			p_ptr->skill_stl -= 3;
 		}
 		
-		if (p_ptr->muta3 & MUT3_INFRAVIS)
+		if (p_has_mutation(MUT_INFRAVIS))
 		{
 			p_ptr->see_infra += 3;
 		}
 		
-		if (p_ptr->muta3 & MUT3_XTRA_LEGS)
+		if (p_has_mutation(MUT_XTRA_LEGS))
 		{
 			p_ptr->pspeed += 3;
 		}
 		
-		if (p_ptr->muta3 & MUT3_SHORT_LEG)
+		if (p_has_mutation(MUT_SHORT_LEG))
 		{
 			p_ptr->pspeed -= 3;
 		}
 		
-		if (p_ptr->muta3 & MUT3_ELEC_TOUC)
+		if (p_has_mutation(MUT_ELEC_TOUC))
 		{
 			p_ptr->sh_elec = TRUE;
 		}
 		
-		if (p_ptr->muta3 & MUT3_FIRE_BODY)
+		if (p_has_mutation(MUT_FIRE_BODY))
 		{
 			p_ptr->sh_fire = TRUE;
 			p_ptr->lite = TRUE;
 		}
 		
-		if (p_ptr->muta3 & MUT3_WART_SKIN)
+		if (p_has_mutation(MUT_WART_SKIN))
 		{
 			p_ptr->stat_add[A_CHR] -= 2;
 			p_ptr->ac += 5;
 			p_ptr->dis_to_a += 5;
 		}
 		
-		if (p_ptr->muta3 & MUT3_SCALES)
+		if (p_has_mutation(MUT_SCALES))
 		{
 			p_ptr->stat_add[A_CHR] -= 1;
 			p_ptr->ac += 10;
 			p_ptr->dis_to_a += 10;
 		}
 		
-		if (p_ptr->muta3 & MUT3_IRON_SKIN)
+		if (p_has_mutation(MUT_IRON_SKIN))
 		{
 			p_ptr->stat_add[A_DEX] -= 1;
 			p_ptr->ac += 25;
 			p_ptr->dis_to_a += 25;
 		}
 		
-		if (p_ptr->muta3 & MUT3_WINGS)
+		if (p_has_mutation(MUT_WINGS))
 		{
 			p_ptr->ffall = TRUE;
 		}
 		
-		if (p_ptr->muta3 & MUT3_FEARLESS)
+		if (p_has_mutation(MUT_FEARLESS))
 		{
 			p_ptr->resist_fear = TRUE;
 		}
 		
-		if (p_ptr->muta3 & MUT3_REGEN)
+		if (p_has_mutation(MUT_REGEN))
 		{
 			p_ptr->regenerate = TRUE;
 		}
 		
-		if (p_ptr->muta3 & MUT3_ESP)
+		if (p_has_mutation(MUT_ESP))
 		{
 			p_ptr->telepathy =TRUE;
 		}
 
-		if (p_ptr->muta3 & MUT3_LIMBER)
+		if (p_has_mutation(MUT_LIMBER))
 		{
 			p_ptr->stat_add[A_DEX] += 3;
 		}
 		
-		if (p_ptr->muta3 & MUT3_ARTHRITIS)
+		if (p_has_mutation(MUT_ARTHRITIS))
 		{
 			p_ptr->stat_add[A_DEX] -= 3;
 		}
 		
-		if (p_ptr->muta3 & MUT3_MOTION)
+		if (p_has_mutation(MUT_MOTION))
 		{
 			p_ptr->free_act =TRUE;
 			p_ptr->skill_stl += 1;
 		}
 		
-		if (p_ptr->muta3 & MUT3_SUS_STATS)
+		if (p_has_mutation(MUT_SUS_STATS))
 		{
 			p_ptr->sustain[A_CON] =TRUE;
 			if ((skill_set[SKILL_RACIAL].value/2) > 9)
@@ -2106,11 +2104,10 @@ static void calc_bonuses(bool quiet)
 				p_ptr->sustain[A_CHR] = TRUE;
 		}
 		
-		if (p_ptr->muta3 & MUT3_ILL_NORM)
+		if (p_has_mutation(MUT_ILL_NORM))
 		{
 			p_ptr->stat_add[A_CHR] = 0;
 		}
-	}
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -2274,7 +2271,7 @@ static void calc_bonuses(bool quiet)
 		/* Extract the new "stat_use" value for the stat */
 		use = modify_stat_value(p_ptr->stat_cur[i], p_ptr->stat_add[i]);
 
-		if ((i == A_CHR) && (p_ptr->muta3 & MUT3_ILL_NORM))
+		if ((i == A_CHR) && (p_has_mutation(MUT_ILL_NORM)))
 		{
 			/* 10 to 18/90 charisma, guaranteed, based on level */
 			if (use < 8 + 2 * (skill_set[SKILL_RACIAL].value/2))
@@ -4081,7 +4078,7 @@ static void update_skill_maxima(void)
 		ptr->max_value = ptr->value;
 
 		/* No extra chaos effect. */
-		if (chaos || ~p_ptr->muta2 & MUT2_CHAOS_GIFT) continue;
+		if (chaos || !p_has_mutation(MUT_CHAOS_GIFT)) continue;
 
 		if (rand_int(500) < chance) chaos = TRUE;
 	}

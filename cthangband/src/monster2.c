@@ -1661,9 +1661,9 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 
 
     /* Else gain permanent insanity */
-    if ((p_ptr->muta3&MUT3_MORONIC) && (p_ptr->muta2&MUT2_BERS_RAGE) &&
-        ((p_ptr->muta2&MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
-        ((p_ptr->muta2&MUT2_HALLU) || (p_ptr->resist_chaos)))
+    if (p_has_mutation(MUT_MORONIC) && p_has_mutation(MUT_BERS_RAGE) &&
+        (p_has_mutation(MUT_COWARDICE) || (p_ptr->resist_fear)) &&
+        (p_has_mutation(MUT_HALLU) || (p_ptr->resist_chaos)))
     {
         /* The poor bastard already has all possible insanities! */
         return;
@@ -1674,47 +1674,47 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
         switch(randint(4))
         {
             case 1:
-            if (!(p_ptr->muta3 & MUT3_MORONIC))
+            if (!(p_has_mutation(MUT_MORONIC)))
             {
                 msg_print("You turn into an utter moron!");
-                if (p_ptr->muta3 & MUT3_HYPER_INT)
+                if (p_has_mutation(MUT_HYPER_INT))
                 {
                     msg_print("Your brain is no longer a living computer.");
-                    p_ptr->muta3 &= ~(MUT3_HYPER_INT);
+                    p_clear_mutation(MUT_HYPER_INT);
                 }
-                p_ptr->muta3 |= MUT3_MORONIC;
+                p_set_mutation(MUT_MORONIC);
                 happened = TRUE;
             }
             break;
             case 2:
-            if (!(p_ptr->muta2 & MUT2_COWARDICE) && !(p_ptr->resist_fear))
+            if (!(p_has_mutation(MUT_COWARDICE)) && !(p_ptr->resist_fear))
             {
                 msg_print("You become paranoid!");
 
                 /* Duh, the following should never happen, but anyway... */
-                if (p_ptr->muta3 & MUT3_FEARLESS)
+                if (p_has_mutation(MUT_FEARLESS))
                 {
                     msg_print("You are no longer fearless.");
-                    p_ptr->muta3 &= ~(MUT3_FEARLESS);
+                    p_clear_mutation(MUT_FEARLESS);
                 }
 
-                p_ptr->muta2 |= MUT2_COWARDICE;
+                p_set_mutation(MUT_COWARDICE);
                 happened = TRUE;
             }
             break;
             case 3:
-            if (!(p_ptr->muta2 & MUT2_HALLU) && !(p_ptr->resist_chaos))
+            if (!(p_has_mutation(MUT_HALLU)) && !(p_ptr->resist_chaos))
             {
                 msg_print("You are afflicted by a hallucinatory insanity!");
-                p_ptr->muta2 |= MUT2_HALLU;
+                p_set_mutation(MUT_HALLU);
                 happened = TRUE;
             }
             break;
             default:
-            if (!(p_ptr->muta2 & MUT2_BERS_RAGE))
+            if (!(p_has_mutation(MUT_BERS_RAGE)))
             {
                 msg_print("You become subject to fits of berserk rage!");
-                p_ptr->muta2 |= MUT2_BERS_RAGE;
+                p_set_mutation(MUT_BERS_RAGE);
                 happened = TRUE;
             }
             break;

@@ -2876,10 +2876,8 @@ static powercosttype powercosts[] = {
 
 /* The methods by which a power may be derived. */
 #define POWER_RACIAL 1 /* Relevant if (p_ptr->prace == power % MAX_RACES). */
-#define POWER_MUTA1 2 /* Relevant if (p_ptr->muta1 & 1<<(power%32)). */
-#define POWER_MUTA2 3 /* Relevant if (p_ptr->muta2 & 1<<(power%32)). */
-#define POWER_MUTA3 4 /* Relevant if (p_ptr->muta3 & 1<<(power%32)). */
-#define POWER_DISMISS 5 /* Relevant if you have pets. */
+#define POWER_MUTA 2 /* Relevant if (p_has_mutation(power). */
+#define POWER_DISMISS 3 /* Relevant if you have pets. */
 
 typedef struct powertype powertype;
 struct powertype
@@ -2931,38 +2929,38 @@ static powertype powers[] = {
 {POWER_RACIAL, RACE_ZOMBIE, 30, 30, A_WIS, 18, "restore life",0},
 {POWER_RACIAL, RACE_VAMPIRE, 2, -3, A_CON, 9, "drain life",0},
 {POWER_RACIAL, RACE_SPRITE, 12, 12, A_INT, 15, "sleeping dust",0},
-{POWER_MUTA1, iilog(MUT1_SPIT_ACID), 9, 9, A_DEX, 15, "spit acid","dam lvl"},
-{POWER_MUTA1, iilog(MUT1_BR_FIRE), 20, -1, A_CON, 18, "fire breath","dam lvl*2"},
-{POWER_MUTA1, iilog(MUT1_HYPN_GAZE), 12, 12, A_CHR, 18, "hypnotic gaze",0},
-{POWER_MUTA1, iilog(MUT1_TELEKINES), 9, 9, A_WIS, 14, "telekinesis",0},
-{POWER_MUTA1, iilog(MUT1_VTELEPORT), 7, 7, A_WIS, 15, "teleport",0},
-{POWER_MUTA1, iilog(MUT1_MIND_BLST), 5, 3, A_WIS, 15, "mind blast",0},
-{POWER_MUTA1, iilog(MUT1_RADIATION), 15, 15, A_CON, 14, "emit radiation",0},
-{POWER_MUTA1, iilog(MUT1_VAMPIRISM), 13, -1, A_CON, 14, "vampiric drain",0},
-{POWER_MUTA1, iilog(MUT1_SMELL_MET), 3, 2, A_INT, 12, "smell metal",0},
-{POWER_MUTA1, iilog(MUT1_SMELL_MON), 5, 4, A_INT, 15, "smell monsters",0},
-{POWER_MUTA1, iilog(MUT1_BLINK), 3, 3, A_WIS, 12, "blink",0},
-{POWER_MUTA1, iilog(MUT1_EAT_ROCK), 8, 12, A_CON, 18, "eat rock",0},
-{POWER_MUTA1, iilog(MUT1_SWAP_POS), 15, 12, A_DEX, 16, "swap position",0},
-{POWER_MUTA1, iilog(MUT1_SHRIEK), 4, 4, A_CON, 6, "shriek",0},
-{POWER_MUTA1, iilog(MUT1_ILLUMINE), 3, 2, A_INT, 10, "illuminate",0},
-{POWER_MUTA1, iilog(MUT1_DET_CURSE), 7, 14, A_WIS, 14, "detect curses",0},
-{POWER_MUTA1, iilog(MUT1_BERSERK), 8, 8, A_STR, 14, "berserk",0},
-{POWER_MUTA1, iilog(MUT1_POLYMORPH), 18, 20, A_CON, 18, "polymorph",0},
-{POWER_MUTA1, iilog(MUT1_MIDAS_TCH), 10, 5, A_INT, 12, "midas touch",0},
-{POWER_MUTA1, iilog(MUT1_GROW_MOLD), 1, 6, A_CON, 14, "grow mold",0},
-{POWER_MUTA1, iilog(MUT1_RESIST), 10, 12, A_CON, 12, "resist elements",0},
-{POWER_MUTA1, iilog(MUT1_EARTHQUAKE), 12, 12, A_STR, 16, "earthquake",0},
-{POWER_MUTA1, iilog(MUT1_EAT_MAGIC), 17, 1, A_WIS, 15, "eat magic",0},
-{POWER_MUTA1, iilog(MUT1_WEIGH_MAG), 6, 6, A_INT, 10, "weigh magic",0},
-{POWER_MUTA1, iilog(MUT1_STERILITY), 20, 40, A_CHR, 18, "sterilize",0},
-{POWER_MUTA1, iilog(MUT1_PANIC_HIT), 10, 12, A_DEX, 14, "panic hit",0},
-{POWER_MUTA1, iilog(MUT1_DAZZLE), 7, 15, A_CHR, 8, "dazzle",0},
-{POWER_MUTA1, iilog(MUT1_EYE_BEAM), 7, 10, A_WIS, 9, "eye beams",0},
-{POWER_MUTA1, iilog(MUT1_RECALL), 17, 50, A_INT, 16, "recall",0},
-{POWER_MUTA1, iilog(MUT1_BANISH), 25, 25, A_WIS, 18, "banish evil",0},
-{POWER_MUTA1, iilog(MUT1_COLD_TOUCH), 2, 2, A_CON, 11, "cold touch",0},
-{POWER_MUTA1, iilog(MUT1_LAUNCHER), 1, -1, A_STR, 6, "throw object",0},
+{POWER_MUTA, iilog(MUT_SPIT_ACID), 9, 9, A_DEX, 15, "spit acid","dam lvl"},
+{POWER_MUTA, iilog(MUT_BR_FIRE), 20, -1, A_CON, 18, "fire breath","dam lvl*2"},
+{POWER_MUTA, iilog(MUT_HYPN_GAZE), 12, 12, A_CHR, 18, "hypnotic gaze",0},
+{POWER_MUTA, iilog(MUT_TELEKINES), 9, 9, A_WIS, 14, "telekinesis",0},
+{POWER_MUTA, iilog(MUT_VTELEPORT), 7, 7, A_WIS, 15, "teleport",0},
+{POWER_MUTA, iilog(MUT_MIND_BLST), 5, 3, A_WIS, 15, "mind blast",0},
+{POWER_MUTA, iilog(MUT_RADIATION), 15, 15, A_CON, 14, "emit radiation",0},
+{POWER_MUTA, iilog(MUT_VAMPIRISM), 13, -1, A_CON, 14, "vampiric drain",0},
+{POWER_MUTA, iilog(MUT_SMELL_MET), 3, 2, A_INT, 12, "smell metal",0},
+{POWER_MUTA, iilog(MUT_SMELL_MON), 5, 4, A_INT, 15, "smell monsters",0},
+{POWER_MUTA, iilog(MUT_BLINK), 3, 3, A_WIS, 12, "blink",0},
+{POWER_MUTA, iilog(MUT_EAT_ROCK), 8, 12, A_CON, 18, "eat rock",0},
+{POWER_MUTA, iilog(MUT_SWAP_POS), 15, 12, A_DEX, 16, "swap position",0},
+{POWER_MUTA, iilog(MUT_SHRIEK), 4, 4, A_CON, 6, "shriek",0},
+{POWER_MUTA, iilog(MUT_ILLUMINE), 3, 2, A_INT, 10, "illuminate",0},
+{POWER_MUTA, iilog(MUT_DET_CURSE), 7, 14, A_WIS, 14, "detect curses",0},
+{POWER_MUTA, iilog(MUT_BERSERK), 8, 8, A_STR, 14, "berserk",0},
+{POWER_MUTA, iilog(MUT_POLYMORPH), 18, 20, A_CON, 18, "polymorph",0},
+{POWER_MUTA, iilog(MUT_MIDAS_TCH), 10, 5, A_INT, 12, "midas touch",0},
+{POWER_MUTA, iilog(MUT_GROW_MOLD), 1, 6, A_CON, 14, "grow mold",0},
+{POWER_MUTA, iilog(MUT_RESIST), 10, 12, A_CON, 12, "resist elements",0},
+{POWER_MUTA, iilog(MUT_EARTHQUAKE), 12, 12, A_STR, 16, "earthquake",0},
+{POWER_MUTA, iilog(MUT_EAT_MAGIC), 17, 1, A_WIS, 15, "eat magic",0},
+{POWER_MUTA, iilog(MUT_WEIGH_MAG), 6, 6, A_INT, 10, "weigh magic",0},
+{POWER_MUTA, iilog(MUT_STERILITY), 20, 40, A_CHR, 18, "sterilize",0},
+{POWER_MUTA, iilog(MUT_PANIC_HIT), 10, 12, A_DEX, 14, "panic hit",0},
+{POWER_MUTA, iilog(MUT_DAZZLE), 7, 15, A_CHR, 8, "dazzle",0},
+{POWER_MUTA, iilog(MUT_EYE_BEAM), 7, 10, A_WIS, 9, "eye beams",0},
+{POWER_MUTA, iilog(MUT_RECALL), 17, 50, A_INT, 16, "recall",0},
+{POWER_MUTA, iilog(MUT_BANISH), 25, 25, A_WIS, 18, "banish evil",0},
+{POWER_MUTA, iilog(MUT_COLD_TOUCH), 2, 2, A_CON, 11, "cold touch",0},
+{POWER_MUTA, iilog(MUT_LAUNCHER), 1, -1, A_STR, 6, "throw object",0},
 {POWER_DISMISS, PET_DISMISS_ONE, 0, 0, 0, 0, "dismiss ally",0},
 {POWER_DISMISS, PET_DISMISS_MANY, 0, 0, 0, 0, "dismiss allies",0},
 {0,0,0,0,0,0,0,0}};
@@ -2994,9 +2992,7 @@ static int offsets[][1] =
 {
 	{0,IDX(0)},
 	{PO_RACIAL, IDX(POWER_RACIAL)},
-	{PO_MUTA1, IDX(POWER_MUTA1)},
-	{PO_MUTA2, IDX(POWER_MUTA2)},
-	{PO_MUTA3, IDX(POWER_MUTA3)},
+	{PO_MUTA, IDX(POWER_MUTA)},
 	{PO_PETS, IDX(POWER_DISMISS)},
 };
 
@@ -3035,7 +3031,7 @@ static void racial_string(byte idx, byte *x, char * text)
 	switch (pw_ptr->type)
 	{
 		/* Racial and mutated powers have a fairly complex format. */
-		case POWER_RACIAL: case POWER_MUTA1: case POWER_MUTA2: case POWER_MUTA3:
+		case POWER_RACIAL: case POWER_MUTA:
 		{
 			cptr cost;
 			cptr racstr = (pw_ptr->type == POWER_RACIAL) ? "racial, " : "";
@@ -3123,14 +3119,8 @@ static s16b count_powers(void)
 			case POWER_RACIAL:
 			if (pw_ptr->power%MAX_RACES == p_ptr->prace) available = TRUE;
 			break;
-			case POWER_MUTA1:
-			if (p_ptr->muta1 & 1<<(pw_ptr->power%32)) available = TRUE;
-			break;
-			case POWER_MUTA2:
-			if (p_ptr->muta2 & 1<<(pw_ptr->power%32)) available = TRUE;
-			break;
-			case POWER_MUTA3:
-			if (p_ptr->muta3 & 1<<(pw_ptr->power%32)) available = TRUE;
+			case POWER_MUTA:
+			if (p_has_mutation(pw_ptr->power)) available = TRUE;
 			break;
 			case POWER_DISMISS:
 			switch (pets)
@@ -3446,7 +3436,7 @@ void do_cmd_racial_power(void)
 				
 		switch (pw_ptr->type)
 		{
-			case POWER_RACIAL: case POWER_MUTA1: case POWER_MUTA2: case POWER_MUTA3:
+			case POWER_RACIAL: case POWER_MUTA:
 			/* Try to use the power. */
 			if (racial_aux(pw_ptr))
 				use_innate_power(pw_ptr);

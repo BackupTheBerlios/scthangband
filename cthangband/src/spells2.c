@@ -758,403 +758,393 @@ void self_knowledge(void)
 
     /* Handle chaos features */
 
-	if (p_ptr->muta1)
-	{
-		if (p_ptr->muta1 & MUT1_SPIT_ACID)
+		if (p_has_mutation(MUT_SPIT_ACID))
 		{
 			info[i++] = "You can spit acid (dam lvl).";
 		}
-		if (p_ptr->muta1 & MUT1_BR_FIRE)
+		if (p_has_mutation(MUT_BR_FIRE))
 		{
 			info[i++] = "You can breathe fire (dam lvl * 2).";
 		}
-		if (p_ptr->muta1 & MUT1_HYPN_GAZE)
+		if (p_has_mutation(MUT_HYPN_GAZE))
 		{
 			info[i++] = "Your gaze is hypnotic.";
 		}
-		if (p_ptr->muta1 & MUT1_TELEKINES)
+		if (p_has_mutation(MUT_TELEKINES))
 		{
 			info[i++] = "You are telekinetic.";
 		}
-		if (p_ptr->muta1 & MUT1_VTELEPORT)
+		if (p_has_mutation(MUT_VTELEPORT))
 		{
 			info[i++] = "You can teleport at will.";
 		}
-		if (p_ptr->muta1 & MUT1_MIND_BLST)
+		if (p_has_mutation(MUT_MIND_BLST))
 		{
 			info[i++] = "You can Mind Blast your enemies (3 to 12d3 dam).";
 		}
-		if (p_ptr->muta1 & MUT1_RADIATION)
+		if (p_has_mutation(MUT_RADIATION))
 		{
 			info[i++] = "You can emit hard radiation at will (dam lvl * 2).";
 		}
-		if (p_ptr->muta1 & MUT1_VAMPIRISM)
+		if (p_has_mutation(MUT_VAMPIRISM))
 		{
 			info[i++] = "You can drain life from a foe like a vampire (dam lvl * 2).";
 		}
-		if (p_ptr->muta1 & MUT1_SMELL_MET)
+		if (p_has_mutation(MUT_SMELL_MET))
 		{
 			info[i++] = "You can smell nearby precious metal.";
 		}
-		if (p_ptr->muta1 & MUT1_SMELL_MON)
+		if (p_has_mutation(MUT_SMELL_MON))
 		{
 			info[i++] = "You can smell nearby monsters.";
 		}
-		if (p_ptr->muta1 & MUT1_BLINK)
+		if (p_has_mutation(MUT_BLINK))
 		{
 			info[i++] = "You can teleport yourself short distances.";
 		}
-		if (p_ptr->muta1 & MUT1_EAT_ROCK)
+		if (p_has_mutation(MUT_EAT_ROCK))
 		{
 			info[i++] = "You can consume solid rock.";
 		}
-		if (p_ptr->muta1 & MUT1_SWAP_POS)
+		if (p_has_mutation(MUT_SWAP_POS))
 		{
 			info[i++] = "You can switch locations with another being.";
 		}
-		if (p_ptr->muta1 & MUT1_SHRIEK)
+		if (p_has_mutation(MUT_SHRIEK))
 		{
 			info[i++] = "You can emit a horrible shriek (dam 4 * lvl).";
 		}
-		if (p_ptr->muta1 & MUT1_ILLUMINE)
+		if (p_has_mutation(MUT_ILLUMINE))
 		{
 			info[i++] = "You can emit bright light.";
 		}
-		if (p_ptr->muta1 & MUT1_DET_CURSE)
+		if (p_has_mutation(MUT_DET_CURSE))
 		{
 			info[i++] = "You can feel the danger of evil magic.";
 		}
-		if (p_ptr->muta1 & MUT1_BERSERK)
+		if (p_has_mutation(MUT_BERSERK))
 		{
 			info[i++] = "You can drive yourself into a berserk frenzy.";
 		}
-		if (p_ptr->muta1 & MUT1_POLYMORPH)
+		if (p_has_mutation(MUT_POLYMORPH))
 		{
 			info[i++] = "You can polymorph yourself at will.";
 		}
-		if (p_ptr->muta1 & MUT1_MIDAS_TCH)
+		if (p_has_mutation(MUT_MIDAS_TCH))
 		{
 			info[i++] = "You can turn ordinary items to gold.";
 		}
-		if (p_ptr->muta1 & MUT1_GROW_MOLD)
+		if (p_has_mutation(MUT_GROW_MOLD))
 		{
 			info[i++] = "You can cause mold to grow near you.";
 		}
-		if (p_ptr->muta1 & MUT1_RESIST)
+		if (p_has_mutation(MUT_RESIST))
 		{
 			info[i++] = "You can harden yourself to the ravages of the elements.";
 		}
-		if (p_ptr->muta1 & MUT1_EARTHQUAKE)
+		if (p_has_mutation(MUT_EARTHQUAKE))
 		{
 			info[i++] = "You can bring down the dungeon around your ears.";
 		}
-		if (p_ptr->muta1 & MUT1_EAT_MAGIC)
+		if (p_has_mutation(MUT_EAT_MAGIC))
 		{
 			info[i++] = "You can consume magic energy for your own use.";
 		}
-		if (p_ptr->muta1 & MUT1_WEIGH_MAG)
+		if (p_has_mutation(MUT_WEIGH_MAG))
 		{
 			info[i++] = "You can feel the strength of the magics affecting you.";
 		}
-		if (p_ptr->muta1 & MUT1_STERILITY)
+		if (p_has_mutation(MUT_STERILITY))
 		{
 			info[i++] = "You can cause mass impotence.";
 		}
-		if (p_ptr->muta1 & MUT1_PANIC_HIT)
+		if (p_has_mutation(MUT_PANIC_HIT))
 		{
 			info[i++] = "You can run for your life after hitting something.";
 		}
-		if (p_ptr->muta1 & MUT1_DAZZLE)
+		if (p_has_mutation(MUT_DAZZLE))
 		{
 			info[i++] = "You can emit confusing, blinding radiation.";
 		}
-		if (p_ptr->muta1 & MUT1_EYE_BEAM)
+		if (p_has_mutation(MUT_EYE_BEAM))
 		{
 			info[i++] = "Your eyes can fire beams of light (dam 2 * lvl).";
 		}
-		if (p_ptr->muta1 & MUT1_RECALL)
+		if (p_has_mutation(MUT_RECALL))
 		{
 			info[i++] = "You can travel between town and the depths.";
 		}
-		if (p_ptr->muta1 & MUT1_BANISH)
+		if (p_has_mutation(MUT_BANISH))
 		{
 			info[i++] = "You can send evil creatures directly to Hell.";
 		}
-		if (p_ptr->muta1 & MUT1_COLD_TOUCH)
+		if (p_has_mutation(MUT_COLD_TOUCH))
 		{
 			info[i++] = "You can freeze things with a touch (dam 3 * lvl).";
 		}
-		if (p_ptr->muta1 & MUT1_LAUNCHER)
+		if (p_has_mutation(MUT_LAUNCHER))
 		{
 			info[i++] = "You can hurl objects with great force.";
 		}
-	}
-    if (p_ptr->muta2)
-    {
-		if (p_ptr->muta2 & MUT2_BERS_RAGE)
+		if (p_has_mutation(MUT_BERS_RAGE))
 		{
 			info[i++] = "You are subject to berserker fits.";
 		}
-		if (p_ptr->muta2 & MUT2_COWARDICE)
+		if (p_has_mutation(MUT_COWARDICE))
 		{
 			info[i++] = "You are subject to cowardice.";
 		}
-		if (p_ptr->muta2 & MUT2_RTELEPORT)
+		if (p_has_mutation(MUT_RTELEPORT))
 		{
 			info[i++] = "You are teleporting randomly.";
 		}
-		if (p_ptr->muta2 & MUT2_ALCOHOL)
+		if (p_has_mutation(MUT_ALCOHOL))
 		{
 			info[i++] = "Your body produces alcohol.";
 		}
-		if (p_ptr->muta2 & MUT2_HALLU)
+		if (p_has_mutation(MUT_HALLU))
 		{
 			info[i++] = "You have a hallucinatory insanity.";
 		}
-		if (p_ptr->muta2 & MUT2_FLATULENT)
+		if (p_has_mutation(MUT_FLATULENT))
 		{
 			info[i++] = "You are subject to uncontrollable flatulence.";
 		}
-		if (p_ptr->muta2 & MUT2_PROD_MANA)
+		if (p_has_mutation(MUT_PROD_MANA))
 		{
 			info[i++] = "You are producing magical energy uncontrollably.";
 		}
-		if (p_ptr->muta2 & MUT2_ATT_DEMON)
+		if (p_has_mutation(MUT_ATT_DEMON))
 		{
 			info[i++] = "You attract demons.";
 		}
-		if (p_ptr->muta2 & MUT2_SCOR_TAIL)
+		if (p_has_mutation(MUT_SCOR_TAIL))
 		{
 			info[i++] = "You have a scorpion tail (poison, 3d7).";
 		}
-		if (p_ptr->muta2 & MUT2_HORNS)
+		if (p_has_mutation(MUT_HORNS))
 		{
 			info[i++] = "You have horns (dam. 2d6).";
 		}
-		if (p_ptr->muta2 & MUT2_BEAK)
+		if (p_has_mutation(MUT_BEAK))
 		{
 			info[i++] = "You have a beak (dam. 2d4).";
 		}
-		if (p_ptr->muta2 & MUT2_SPEED_FLUX)
+		if (p_has_mutation(MUT_SPEED_FLUX))
 		{
 			info[i++] = "You move faster or slower randomly.";
 		}
-		if (p_ptr->muta2 & MUT2_BANISH_ALL)
+		if (p_has_mutation(MUT_BANISH_ALL))
 		{
 			info[i++] = "You sometimes cause nearby creatures to vanish.";
 		}
-		if (p_ptr->muta2 & MUT2_EAT_LIGHT)
+		if (p_has_mutation(MUT_EAT_LIGHT))
 		{
 			info[i++] = "You sometimes feed off of the light around you.";
 		}
-		if (p_ptr->muta2 & MUT2_TRUNK)
+		if (p_has_mutation(MUT_TRUNK))
 		{
 			info[i++] = "You have an elephantine trunk (dam 1d4).";
 		}
-		if (p_ptr->muta2 & MUT2_ATT_ANIMAL)
+		if (p_has_mutation(MUT_ATT_ANIMAL))
 		{
 			info[i++] = "You attract animals.";
 		}
-		if (p_ptr->muta2 & MUT2_TENTACLES)
+		if (p_has_mutation(MUT_TENTACLES))
 		{
 			info[i++] = "You have evil looking tentacles (dam 2d5).";
 		}
-		if (p_ptr->muta2 & MUT2_RAW_CHAOS)
+		if (p_has_mutation(MUT_RAW_CHAOS))
 		{
 			info[i++] = "You occasionally are surrounded with raw chaos.";
 		}
-		if (p_ptr->muta2 & MUT2_NORMALITY)
+		if (p_has_mutation(MUT_NORMALITY))
 		{
 			info[i++] = "You may be chaotic, but you're recovering.";
 		}
-		if (p_ptr->muta2 & MUT2_WRAITH)
+		if (p_has_mutation(MUT_WRAITH))
 		{
 			info[i++] = "You fade in and out of physical reality.";
 		}
-		if (p_ptr->muta2 & MUT2_POLY_WOUND)
+		if (p_has_mutation(MUT_POLY_WOUND))
 		{
 			info[i++] = "Your health is subject to chaotic forces.";
 		}
-		if (p_ptr->muta2 & MUT2_WASTING)
+		if (p_has_mutation(MUT_WASTING))
 		{
 			info[i++] = "You have a horrible wasting disease.";
 		}
-		if (p_ptr->muta2 & MUT2_ATT_DRAGON)
+		if (p_has_mutation(MUT_ATT_DRAGON))
 		{
 			info[i++] = "You attract dragons.";
 		}
-		if (p_ptr->muta2 & MUT2_WEIRD_MIND)
+		if (p_has_mutation(MUT_WEIRD_MIND))
 		{
 			info[i++] = "Your mind randomly expands and contracts.";
 		}
-		if (p_ptr->muta2 & MUT2_NAUSEA)
+		if (p_has_mutation(MUT_NAUSEA))
 		{
 			info[i++] = "You have a seriously upset stomach.";
 		}
-		if (p_ptr->muta2 & MUT2_CHAOS_GIFT)
+		if (p_has_mutation(MUT_CHAOS_GIFT))
 		{
 			info[i++] = "Chaos deities give you gifts.";
 		}
-		if (p_ptr->muta2 & MUT2_WALK_SHAD)
+		if (p_has_mutation(MUT_WALK_SHAD))
 		{
 			info[i++] = "You occasionally stumble into other shadows.";
 		}
-		if (p_ptr->muta2 & MUT2_WARNING)
+		if (p_has_mutation(MUT_WARNING))
 		{
 			info[i++] = "You receive warnings about your foes.";
 		}
-		if (p_ptr->muta2 & MUT2_INVULN)
+		if (p_has_mutation(MUT_INVULN))
 		{
 			info[i++] = "You occasionally feel invincible.";
 		}
-		if (p_ptr->muta2 & MUT2_SP_TO_HP)
+		if (p_has_mutation(MUT_SP_TO_HP))
 		{
 			info[i++] = "Your blood sometimes rushes to your muscles.";
 		}
-		if (p_ptr->muta2 & MUT2_HP_TO_SP)
+		if (p_has_mutation(MUT_HP_TO_SP))
 		{
 			info[i++] = "Your blood sometimes rushes to your head.";
 		}
-		if (p_ptr->muta2 & MUT2_DISARM)
+		if (p_has_mutation(MUT_DISARM))
 		{
 			info[i++] = "You occasionally stumble and drop things.";
 		}
-      }
-
-	if (p_ptr->muta3)
-	{
-		if (p_ptr->muta3 & MUT3_HYPER_STR)
+		if (p_has_mutation(MUT_HYPER_STR))
 		{
 			info[i++] = "You are superhumanly strong (+4 STR).";
 		}
-		if (p_ptr->muta3 & MUT3_PUNY)
+		if (p_has_mutation(MUT_PUNY))
 		{
 			info[i++] = "You are puny (-4 STR).";
 		}
-		if (p_ptr->muta3 & MUT3_HYPER_INT)
+		if (p_has_mutation(MUT_HYPER_INT))
 		{
 			info[i++] = "Your brain is a living computer (+4 INT/WIS).";
 		}
-		if (p_ptr->muta3 & MUT3_MORONIC)
+		if (p_has_mutation(MUT_MORONIC))
 		{
 			info[i++] = "You are moronic (-4 INT/WIS).";
 		}
-		if (p_ptr->muta3 & MUT3_RESILIENT)
+		if (p_has_mutation(MUT_RESILIENT))
 		{
 			info[i++] = "You are very resilient (+4 CON).";
 		}
-		if (p_ptr->muta3 & MUT3_XTRA_FAT)
+		if (p_has_mutation(MUT_XTRA_FAT))
 		{
 			info[i++] = "You are extremely fat (+2 CON, -2 speed).";
 		}
-		if (p_ptr->muta3 & MUT3_ALBINO)
+		if (p_has_mutation(MUT_ALBINO))
 		{
 			info[i++] = "You are albino (-4 CON).";
 		}
-		if (p_ptr->muta3 & MUT3_FLESH_ROT)
+		if (p_has_mutation(MUT_FLESH_ROT))
 		{
 			info[i++] = "Your flesh is rotting (-2 CON, -1 CHR).";
 		}
-		if (p_ptr->muta3 & MUT3_SILLY_VOI)
+		if (p_has_mutation(MUT_SILLY_VOI))
 		{
 			info[i++] = "Your voice is a silly squeak (-4 CHR).";
 		}
-		if (p_ptr->muta3 & MUT3_BLANK_FAC)
+		if (p_has_mutation(MUT_BLANK_FAC))
 		{
 			info[i++] = "Your face is featureless (-1 CHR).";
 		}
-		if (p_ptr->muta3 & MUT3_ILL_NORM)
+		if (p_has_mutation(MUT_ILL_NORM))
 		{
 			info[i++] = "Your appearance is masked with illusion.";
 		}
-		if (p_ptr->muta3 & MUT3_XTRA_EYES)
+		if (p_has_mutation(MUT_XTRA_EYES))
 		{
 			info[i++] = "You have an extra pair of eyes (+15 search).";
 		}
-		if (p_ptr->muta3 & MUT3_MAGIC_RES)
+		if (p_has_mutation(MUT_MAGIC_RES))
 		{
 			info[i++] = "You are resistant to magic.";
 		}
-		if (p_ptr->muta3 & MUT3_XTRA_NOIS)
+		if (p_has_mutation(MUT_XTRA_NOIS))
 		{
 			info[i++] = "You make a lot of strange noise (-3 stealth).";
 		}
-		if (p_ptr->muta3 & MUT3_INFRAVIS)
+		if (p_has_mutation(MUT_INFRAVIS))
 		{
 			info[i++] = "You have remarkable infravision (+3).";
 		}
-		if (p_ptr->muta3 & MUT3_XTRA_LEGS)
+		if (p_has_mutation(MUT_XTRA_LEGS))
 		{
 			info[i++] = "You have an extra pair of legs (+3 speed).";
 		}
-		if (p_ptr->muta3 & MUT3_SHORT_LEG)
+		if (p_has_mutation(MUT_SHORT_LEG))
 		{
 			info[i++] = "Your legs are short stubs (-3 speed).";
 		}
-		if (p_ptr->muta3 & MUT3_ELEC_TOUC)
+		if (p_has_mutation(MUT_ELEC_TOUC))
 		{
 			info[i++] = "Electricity is running through your veins.";
 		}
-		if (p_ptr->muta3 & MUT3_FIRE_BODY)
+		if (p_has_mutation(MUT_FIRE_BODY))
 		{
 #if 0
 			/* Unnecessary, actually... */
 			info[i++] = "Your body is enveloped in flames.";
 #endif
 		}
-		if (p_ptr->muta3 & MUT3_WART_SKIN)
+		if (p_has_mutation(MUT_WART_SKIN))
 		{
 			info[i++] = "Your skin is covered with warts (-2 CHR, +5 AC).";
 		}
-		if (p_ptr->muta3 & MUT3_SCALES)
+		if (p_has_mutation(MUT_SCALES))
 		{
 			info[i++] = "Your skin has turned into scales (-1 CHR, +10 AC).";
 		}
-		if (p_ptr->muta3 & MUT3_IRON_SKIN)
+		if (p_has_mutation(MUT_IRON_SKIN))
 		{
 			info[i++] = "Your skin is made of steel (-1 DEX, +25 AC).";
 		}
-		if (p_ptr->muta3 & MUT3_WINGS)
+		if (p_has_mutation(MUT_WINGS))
 		{
 			info[i++] = "You have wings.";
 		}
-		if (p_ptr->muta3 & MUT3_FEARLESS)
+		if (p_has_mutation(MUT_FEARLESS))
 		{
 			/* Unnecessary */
 		}
-		if (p_ptr->muta3 & MUT3_REGEN)
+		if (p_has_mutation(MUT_REGEN))
 		{
 			/* Unnecessary */
 		}
-		if (p_ptr->muta3 & MUT3_ESP)
+		if (p_has_mutation(MUT_ESP))
 		{
 			/* Unnecessary */
 		}
-		if (p_ptr->muta3 & MUT3_LIMBER)
+		if (p_has_mutation(MUT_LIMBER))
 		{
 			info[i++] = "Your body is very limber (+3 DEX).";
 		}
-		if (p_ptr->muta3 & MUT3_ARTHRITIS)
+		if (p_has_mutation(MUT_ARTHRITIS))
 		{
 			info[i++] = "Your joints ache constantly (-3 DEX).";
 		}
-		if (p_ptr->muta3 & MUT3_RES_TIME)
+		if (p_has_mutation(MUT_RES_TIME))
 		{
 			info[i++] = "You are protected from the ravages of time.";
 		}
-		if (p_ptr->muta3 & MUT3_VULN_ELEM)
+		if (p_has_mutation(MUT_VULN_ELEM))
 		{
 			info[i++] = "You are susceptible to damage from the elements.";
 		}
-		if (p_ptr->muta3 & MUT3_MOTION)
+		if (p_has_mutation(MUT_MOTION))
 		{
 			info[i++] = "Your movements are precise and forceful (+1 STL).";
 		}
-		if (p_ptr->muta3 & MUT3_SUS_STATS)
+		if (p_has_mutation(MUT_SUS_STATS))
 		{
 			/* Unnecessary */
 		}
-	}
 
 
 

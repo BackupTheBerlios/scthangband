@@ -1182,6 +1182,21 @@ static void dismiss_pets(bool some)
 }
 					
 /*
+ * Remove all mutations from the player.
+ */
+static void cure_mutations(void)
+{
+	/* Nothing to do. */
+	if (!p_mutated()) return;
+
+	/* Clear everything and update. */
+	msg_print("You are cured of all chaos features.");
+	p_clear_mutations();
+	p_ptr->update |= PU_BONUS;
+	handle_stuff();
+}
+
+/*
  * Use whatever power an object has, and set three variables to represent the
  * effect.
  *
@@ -1813,13 +1828,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
         case OBJ_POTION_NEW_LIFE+PO_K_IDX:
         {
         do_cmd_rerate();
-        if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
-        {
-            msg_print("You are cured of all chaos features.");
-            p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
-            p_ptr->update |= PU_BONUS;
-            handle_stuff();
-        }
+		cure_mutations();
         (*ident) = TRUE;
         return SUCCESS;
         }
@@ -4933,14 +4942,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             {
                 msg_print("It's the Judgement.");
                 do_cmd_rerate();
-                if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
-                {
-                    msg_print("You are cured of all chaos features.");
-                    p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
-                    p_ptr->update |= PU_BONUS;
-                    handle_stuff();
-                }
-                
+				cure_mutations();
             }
             else if (die < 120)
             {
@@ -6136,75 +6138,75 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				(void)sleep_monsters(plev);
 			return SUCCESS;
 		}
-		case iilog(MUT1_SPIT_ACID)+PO_MUTA1:
+		case MUT_SPIT_ACID+PO_MUTA:
 		{
 			msg_print("You spit acid...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			fire_ball(GF_ACID, dir, plev, 1 + (plev/30));
 			return SUCCESS;
 		}
-		case iilog(MUT1_BR_FIRE)+PO_MUTA1:
+		case MUT_BR_FIRE+PO_MUTA:
 		{
 			msg_print("You breathe fire...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			fire_ball(GF_FIRE, dir, plev * 2, -(1 + (plev/20)));
 			return SUCCESS;
 		}
-		case iilog(MUT1_HYPN_GAZE)+PO_MUTA1:
+		case MUT_HYPN_GAZE+PO_MUTA:
 		{
 			msg_print("Your eyes look mesmerizing...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void) charm_monster(dir, plev);
 			return SUCCESS;
 		}
-		case iilog(MUT1_TELEKINES)+PO_MUTA1:
+		case MUT_TELEKINES+PO_MUTA:
 		{
 			msg_print("You concentrate...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			fetch(dir, plev * 10, TRUE);
 			return SUCCESS;
 		}
-		case iilog(MUT1_VTELEPORT)+PO_MUTA1:
+		case MUT_VTELEPORT+PO_MUTA:
 		{
 			msg_print("You concentrate...");
 			teleport_player(10 + 4*(plev));
 			return SUCCESS;
 		}
-		case iilog(MUT1_MIND_BLST)+PO_MUTA1:
+		case MUT_MIND_BLST+PO_MUTA:
 		{
 			msg_print("You concentrate...");
 			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			fire_bolt(GF_PSI, dir, damroll(3 + ((plev - 1) / 5), 3));
 			return SUCCESS;
 		}
-		case iilog(MUT1_RADIATION)+PO_MUTA1:
+		case MUT_RADIATION+PO_MUTA:
 		{
 			msg_print("Radiation flows from your body!");
 			fire_ball(GF_NUKE, 0, (plev * 2), 3 + (plev / 20));
 			return SUCCESS;
 		}
-		case iilog(MUT1_VAMPIRISM)+PO_MUTA1:
+		case MUT_VAMPIRISM+PO_MUTA:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			if (fire_bolt(GF_OLD_DRAIN, dir, (plev * 2))) hp_player(plev + randint(plev));
 			return SUCCESS;
 		}
-		case iilog(MUT1_SMELL_MET)+PO_MUTA1:
+		case MUT_SMELL_MET+PO_MUTA:
 		{
 			(void)detect_treasure();
 			return SUCCESS;
 		}
-		case iilog(MUT1_SMELL_MON)+PO_MUTA1:
+		case MUT_SMELL_MON+PO_MUTA:
 		{
 			(void)detect_monsters_normal();
 			return SUCCESS;
 		}
-		case iilog(MUT1_BLINK)+PO_MUTA1:
+		case MUT_BLINK+PO_MUTA:
 		{
 			teleport_player(10);
 			return SUCCESS;
 		}
-		case iilog(MUT1_EAT_ROCK)+PO_MUTA1:
+		case MUT_EAT_ROCK+PO_MUTA:
 		{
 			int x,y;
 			cave_type *c_ptr;
@@ -6253,24 +6255,24 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case iilog(MUT1_SWAP_POS)+PO_MUTA1:
+		case MUT_SWAP_POS+PO_MUTA:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			(void)teleport_swap(dir);
 			return SUCCESS;
 		}
-		case iilog(MUT1_SHRIEK)+PO_MUTA1:
+		case MUT_SHRIEK+PO_MUTA:
 		{
 			(void)fire_ball(GF_SOUND, 0, 4 * plev, 8);
 			(void)aggravate_monsters(0);
 			return SUCCESS;
 		}
-		case iilog(MUT1_ILLUMINE)+PO_MUTA1:
+		case MUT_ILLUMINE+PO_MUTA:
 		{
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
 			return SUCCESS;
 		}
-		case iilog(MUT1_DET_CURSE)+PO_MUTA1:
+		case MUT_DET_CURSE+PO_MUTA:
 		{
 			for (i=0; i < INVEN_TOTAL; i++)
 			{
@@ -6281,24 +6283,24 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case iilog(MUT1_BERSERK)+PO_MUTA1:
+		case MUT_BERSERK+PO_MUTA:
 		{
 			(void)add_flag(TIMED_SHERO, randint(25) + 25);
 			(void)hp_player(30);
 			(void)set_flag(TIMED_AFRAID, 0);
 			return SUCCESS;
 		}
-		case iilog(MUT1_POLYMORPH)+PO_MUTA1:
+		case MUT_POLYMORPH+PO_MUTA:
 		{
 			do_poly_self();
 			return SUCCESS;
 		}
-		case iilog(MUT1_MIDAS_TCH)+PO_MUTA1:
+		case MUT_MIDAS_TCH+PO_MUTA:
 		{
 			(void)alchemy();
 			return SUCCESS;
 		}
-		case iilog(MUT1_GROW_MOLD)+PO_MUTA1:
+		case MUT_GROW_MOLD+PO_MUTA:
 		{
 			for (i=0; i < 8; i++)
 			{
@@ -6306,7 +6308,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case iilog(MUT1_RESIST)+PO_MUTA1:
+		case MUT_RESIST+PO_MUTA:
 		{
 			int num = plev/10;
 			int dur = randint(20) + 20;
@@ -6338,14 +6340,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case iilog(MUT1_EARTHQUAKE)+PO_MUTA1:
+		case MUT_EARTHQUAKE+PO_MUTA:
 		{
 			/* Prevent destruction of quest levels and town */
 			if (!is_quest(dun_level) && dun_level)
 				earthquake(py, px, 10);
 			return SUCCESS;
 		}
-		case iilog(MUT1_EAT_MAGIC)+PO_MUTA1:
+		case MUT_EAT_MAGIC+PO_MUTA:
 		{
 			object_type * o_ptr;
 			errr err;
@@ -6398,12 +6400,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			update_object(o_ptr, 0);
 			return SUCCESS;
 		}
-		case iilog(MUT1_WEIGH_MAG)+PO_MUTA1:
+		case MUT_WEIGH_MAG+PO_MUTA:
 		{
 			report_magics();
 			return SUCCESS;
 		}
-		case iilog(MUT1_STERILITY)+PO_MUTA1:
+		case MUT_STERILITY+PO_MUTA:
 		{
 			/* Fake a population explosion. */
 			msg_print("You suddenly have a headache!");
@@ -6411,7 +6413,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			num_repro += MAX_REPRO;
 			return SUCCESS;
 		}
-		case iilog(MUT1_PANIC_HIT)+PO_MUTA1:
+		case MUT_PANIC_HIT+PO_MUTA:
 		{
 			int x,y;
 
@@ -6430,25 +6432,25 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case iilog(MUT1_DAZZLE)+PO_MUTA1:
+		case MUT_DAZZLE+PO_MUTA:
 		{
 			stun_monsters(plev * 4);
 			confuse_monsters(plev * 4);
 			turn_monsters(plev * 4);
 			return SUCCESS;
 		}
-		case iilog(MUT1_EYE_BEAM)+PO_MUTA1:
+		case MUT_EYE_BEAM+PO_MUTA:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			fire_beam(GF_LITE, dir, 2*plev);
 			return SUCCESS;
 		}
-		case iilog(MUT1_RECALL)+PO_MUTA1:
+		case MUT_RECALL+PO_MUTA:
 		{
 			set_recall(FALSE);
 			return SUCCESS;
 		}
-		case iilog(MUT1_BANISH)+PO_MUTA1:
+		case MUT_BANISH+PO_MUTA:
 		{
 			int x,y;
 			cave_type *c_ptr;
@@ -6479,7 +6481,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case iilog(MUT1_COLD_TOUCH)+PO_MUTA1:
+		case MUT_COLD_TOUCH+PO_MUTA:
 		{
 			int x,y;
 			cave_type *c_ptr;
@@ -6496,7 +6498,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			fire_bolt(GF_COLD, dir, 2 * (plev));
 			return SUCCESS;
 		}
-		case iilog(MUT1_LAUNCHER)+PO_MUTA1:
+		case MUT_LAUNCHER+PO_MUTA:
 		{
 			/* Gives a multiplier of 2 at first, up to 5 at 48th */
 			do_cmd_throw(2 + (plev)/16);

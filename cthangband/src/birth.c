@@ -3699,9 +3699,8 @@ static bool quick_start_character(void)
 		/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
 		p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
 
-		p_ptr->muta1 = 0;
-		p_ptr->muta2 = 0;
-		p_ptr->muta3 = 0;
+		/* Start without chaos features. */
+		p_clear_mutations();
 
 		/* Player has no recal ritual yet */
 		p_ptr->ritual = TOWN_NONE;
@@ -4041,9 +4040,8 @@ static bool player_birth_aux(void)
 		clear_from(10);
 
 
-		p_ptr->muta1 = 0;
-		p_ptr->muta2 = 0;
-		p_ptr->muta3 = 0;
+		/* Start without chaos features. */
+		p_clear_mutations();
 
 		/* Player is ready to move... */
 		p_ptr->energy=1050; /* Should this be based on TURN_ENERGY? */

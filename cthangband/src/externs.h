@@ -3965,4 +3965,22 @@ extern bool chaos_patrons_w;
 #if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool chaos_patrons;
 #endif
+
+/* xtra2.c */
+
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+extern bool PURE p_has_mutation(int idx);
+#endif
+#if (defined(MONSTER2_C) || defined(XTRA2_C))
+extern void p_set_mutation(int idx);
+#endif
+#if (defined(MONSTER2_C) || defined(XTRA2_C))
+extern void p_clear_mutation(int idx);
+#endif
+#if (defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
+extern bool PURE p_mutated(void);
+#endif
+#if (defined(BIRTH_C) || defined(POWERS_C) || defined(XTRA2_C))
+extern void p_clear_mutations(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

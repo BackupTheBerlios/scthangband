@@ -3935,7 +3935,7 @@ static void do_cmd_knowledge_player_save(FILE *fff)
 		{
 			skill_sav = skill_set[SKILL_SAVE].value;
 
-			if (p_ptr->muta3 & MUT3_MAGIC_RES)
+			if (p_has_mutation(MUT_MAGIC_RES))
 			{
 				skill_sav += (15 + ((skill_set[SKILL_RACIAL].value/2) / 5));
 			}

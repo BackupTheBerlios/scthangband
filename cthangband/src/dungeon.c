@@ -1535,13 +1535,10 @@ static void process_chaos(void)
 {
 	int i;
 
-	/* No chaos features with random effects. */
-	if (!p_ptr->muta2) return;
-
 	/* Don't ask me... */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
-		if ((p_ptr->muta2 & MUT2_BERS_RAGE) && (randint(3000)==1))
+		if ((p_has_mutation(MUT_BERS_RAGE)) && (randint(3000)==1))
 		{
 			disturb(0);
 			msg_print("RAAAAGHH!");
@@ -1549,7 +1546,7 @@ static void process_chaos(void)
 			(void) add_flag(TIMED_SHERO, 10 + randint(skill_set[SKILL_RACIAL].value/2));
 		}
 
-		if ((p_ptr->muta2 & MUT2_COWARDICE) && (randint(3000)==13))
+		if ((p_has_mutation(MUT_COWARDICE)) && (randint(3000)==13))
 		{
 			if (!(p_ptr->resist_fear || p_ptr->hero || p_ptr->shero))
 			{
@@ -1560,9 +1557,9 @@ static void process_chaos(void)
 			}
 		}
 
-		if ((p_ptr->muta2 & MUT2_RTELEPORT) && (randint(5000)==88))
+		if ((p_has_mutation(MUT_RTELEPORT)) && (randint(5000)==88))
 		{
-			if (!(p_ptr->resist_nexus) && !(p_ptr->muta1 & MUT1_VTELEPORT)
+			if (!(p_ptr->resist_nexus) && !(p_has_mutation(MUT_VTELEPORT))
 			    && !(p_ptr->anti_tele))
 			{
 				disturb(0);
@@ -1574,7 +1571,7 @@ static void process_chaos(void)
 			}
 		}
 
-		if ((p_ptr->muta2 & MUT2_ALCOHOL) && (randint(6400)==321))
+		if ((p_has_mutation(MUT_ALCOHOL)) && (randint(6400)==321))
 		{
 			if (!(p_ptr->resist_chaos || p_ptr->resist_conf))
 			{
@@ -1607,7 +1604,7 @@ static void process_chaos(void)
 			}
 		}
 
-		if ((p_ptr->muta2 & MUT2_HALLU) && (randint(6400)==42))
+		if ((p_has_mutation(MUT_HALLU)) && (randint(6400)==42))
 		{
 			if (!(p_ptr->resist_chaos))
 			{
@@ -1616,7 +1613,7 @@ static void process_chaos(void)
 			}
 		}
 
-		if ((p_ptr->muta2 & MUT2_FLATULENT) && (randint(3000)==13))
+		if ((p_has_mutation(MUT_FLATULENT)) && (randint(3000)==13))
 		{
 			disturb(0);
 
@@ -1625,7 +1622,7 @@ static void process_chaos(void)
 			fire_ball(GF_POIS, 0, skill_set[SKILL_RACIAL].value/2,3);
 		}
 
-		if ((p_ptr->muta2 & MUT2_PROD_MANA) &&
+		if ((p_has_mutation(MUT_PROD_MANA)) &&
 		    (!(p_ptr->anti_magic)) && (randint(9000)==1))
 		{
 			int dire = 0;
@@ -1637,7 +1634,7 @@ static void process_chaos(void)
 			fire_ball(GF_MANA, dire, skill_set[SKILL_RACIAL].value, 3);
 		}
 
-		if ((p_ptr->muta2 & MUT2_ATT_DEMON) &&
+		if ((p_has_mutation(MUT_ATT_DEMON)) &&
 		    (!(p_ptr->anti_magic)) && (randint(6666)==666))
 		{
 			bool d_summon = summon_specific_aux(py, px,
@@ -1650,7 +1647,7 @@ static void process_chaos(void)
 			}
 		}
 
-		if ((p_ptr->muta2 & MUT2_SPEED_FLUX) && (randint(6000)==1))
+		if ((p_has_mutation(MUT_SPEED_FLUX)) && (randint(6000)==1))
 		{
 			
 			disturb(0);
@@ -1680,7 +1677,7 @@ static void process_chaos(void)
 			}
 			msg_print(NULL);
 		}
-		if ((p_ptr->muta2 & MUT2_BANISH_ALL) &&
+		if ((p_has_mutation(MUT_BANISH_ALL)) &&
 			(randint(9000)==1))
 		{
 			
@@ -1689,7 +1686,7 @@ static void process_chaos(void)
 			banish_monsters(100);
 			msg_print(NULL);
 		}
-		if ((p_ptr->muta2 & MUT2_EAT_LIGHT) && (randint(3000) == 1))
+		if ((p_has_mutation(MUT_EAT_LIGHT)) && (randint(3000) == 1))
 		{
 			object_type *o_ptr = &inventory[INVEN_LITE];
 
@@ -1757,7 +1754,7 @@ static void process_chaos(void)
 			*/
 			unlite_area(50, 10);
 		}
-		if ((p_ptr->muta2 & MUT2_ATT_ANIMAL) && !(p_ptr->anti_magic) &&
+		if ((p_has_mutation(MUT_ATT_ANIMAL)) && !(p_ptr->anti_magic) &&
 			(randint(7000)==1))
 		{
 			
@@ -1769,7 +1766,7 @@ static void process_chaos(void)
 				disturb(0);
 			}
 		}
-		if ((p_ptr->muta2 & MUT2_RAW_CHAOS) && !(p_ptr->anti_magic) &&
+		if ((p_has_mutation(MUT_RAW_CHAOS)) && !(p_ptr->anti_magic) &&
 			(randint(8000)==1))
 		{
 			
@@ -1778,12 +1775,12 @@ static void process_chaos(void)
 			msg_print(NULL);
 			fire_ball(GF_CHAOS, 0, skill_set[SKILL_RACIAL].value/2,8);
 		}
-		if ((p_ptr->muta2 & MUT2_NORMALITY) &&
+		if ((p_has_mutation(MUT_NORMALITY)) &&
 			(randint(5000)==1))
 		{
 			lose_chaos_feature(0);
 		}
-		if ((p_ptr->muta2 & MUT2_WRAITH) && !(p_ptr->anti_magic) &&
+		if ((p_has_mutation(MUT_WRAITH)) && !(p_ptr->anti_magic) &&
 			(randint(3000)==13))
 		{
 			
@@ -1792,12 +1789,12 @@ static void process_chaos(void)
 			msg_print(NULL);
 			add_flag(TIMED_WRAITH, randint(skill_set[SKILL_RACIAL].value/4) + (skill_set[SKILL_RACIAL].value/4));
 		}
-		if ((p_ptr->muta2 & MUT2_POLY_WOUND) &&
+		if ((p_has_mutation(MUT_POLY_WOUND)) &&
 			(randint(3000)==1))
 		{
 			do_poly_wounds(MON_DANGEROUS_MUTATION);
 		}
-		if ((p_ptr->muta2 & MUT2_WASTING) &&
+		if ((p_has_mutation(MUT_WASTING)) &&
 			(randint(3000)==13))
 		{
 			int which_stat = rand_int(6);
@@ -1809,7 +1806,7 @@ static void process_chaos(void)
 				(void)dec_stat(which_stat, randint(6)+6, randint(3)==1);
 			}
 		}
-		if ((p_ptr->muta2 & MUT2_ATT_DRAGON) && !(p_ptr->anti_magic) &&
+		if ((p_has_mutation(MUT_ATT_DRAGON)) && !(p_ptr->anti_magic) &&
 			(randint(3000)==13))
 		{
 			
@@ -1822,7 +1819,7 @@ static void process_chaos(void)
 				disturb(0);
 			}
 		}
-		if ((p_ptr->muta2 & MUT2_WEIRD_MIND) && !(p_ptr->anti_magic) &&
+		if ((p_has_mutation(MUT_WEIRD_MIND)) && !(p_ptr->anti_magic) &&
 			(randint(3000)==1))
 		{
 			if (p_ptr->tim_esp > 0)
@@ -1836,7 +1833,7 @@ static void process_chaos(void)
 				set_flag(TIMED_ESP, skill_set[SKILL_RACIAL].value/2);
 			}
 		}
-		if ((p_ptr->muta2 & MUT2_NAUSEA) && !(p_ptr->slow_digest) &&
+		if ((p_has_mutation(MUT_NAUSEA)) && !(p_ptr->slow_digest) &&
 			(randint(9000)==1))
 		{
 			
@@ -1846,14 +1843,14 @@ static void process_chaos(void)
 			set_flag(TIMED_FOOD, PY_FOOD_WEAK);
 		}
 
-		if ((p_ptr->muta2 & MUT2_WALK_SHAD) &&
+		if ((p_has_mutation(MUT_WALK_SHAD)) &&
 		   !(p_ptr->anti_magic) &&
 		    (randint(12000) == 1))
 		{
 			alter_reality();
 		}
 
-		if ((p_ptr->muta2 & MUT2_WARNING) &&
+		if ((p_has_mutation(MUT_WARNING)) &&
 			(randint(1000)==1))
 		{
 			int danger_amount = 0;
@@ -1886,7 +1883,7 @@ static void process_chaos(void)
 			else
 				msg_print("You feel lonely.");
 		}
-		if ((p_ptr->muta2 & MUT2_INVULN) && !(p_ptr->anti_magic) &&
+		if ((p_has_mutation(MUT_INVULN)) && !(p_ptr->anti_magic) &&
 			(randint(5000)==1))
 		{
 			
@@ -1895,7 +1892,7 @@ static void process_chaos(void)
 			msg_print(NULL);
 			(void)add_flag(TIMED_INVULN, randint(8) + 8);
 		}
-		if ((p_ptr->muta2 & MUT2_SP_TO_HP) &&
+		if ((p_has_mutation(MUT_SP_TO_HP)) &&
 			(randint(2000)==1))
 		{
 			int wounds = p_ptr->mhp - p_ptr->chp;
@@ -1913,7 +1910,7 @@ static void process_chaos(void)
 				p_ptr->csp -= healing;
 			}
 		}
-		if ((p_ptr->muta2 & MUT2_HP_TO_SP) && !(p_ptr->anti_magic) &&
+		if ((p_has_mutation(MUT_HP_TO_SP)) && !(p_ptr->anti_magic) &&
 			(randint(4000)==1))
 		{
 			int wounds = p_ptr->msp - p_ptr->csp;
@@ -1931,7 +1928,7 @@ static void process_chaos(void)
 				take_hit(healing, "blood rushing to the head", MON_DANGEROUS_MUTATION);
 			}
 		}
-		if ((p_ptr->muta2 & MUT2_DISARM) &&
+		if ((p_has_mutation(MUT_DISARM)) &&
 			(randint(10000)==1))
 		{
 			object_type *o_ptr = &inventory[INVEN_WIELD];

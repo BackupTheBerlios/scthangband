@@ -197,42 +197,6 @@
 #define REW_SER_DEMO    34
 #define REW_SER_MONS    35
 
-/* "Activatable" chaos features must be in MUT1_* */
-
-#define MUT1_SPIT_ACID                  0x00000001L
-#define MUT1_BR_FIRE                    0x00000002L
-#define MUT1_HYPN_GAZE                  0x00000004L
-#define MUT1_TELEKINES                  0x00000008L
-#define MUT1_VTELEPORT                  0x00000010L /* Voluntary teleport */
-#define MUT1_MIND_BLST                  0x00000020L
-#define MUT1_RADIATION                  0x00000040L
-#define MUT1_VAMPIRISM                  0x00000080L
-#define MUT1_SMELL_MET                  0x00000100L
-#define MUT1_SMELL_MON                  0x00000200L
-#define MUT1_BLINK                      0x00000400L
-#define MUT1_EAT_ROCK                   0x00000800L
-#define MUT1_SWAP_POS                   0x00001000L
-#define MUT1_SHRIEK                     0x00002000L
-#define MUT1_ILLUMINE                   0x00004000L
-#define MUT1_DET_CURSE                  0x00008000L
-#define MUT1_BERSERK                    0x00010000L
-#define MUT1_POLYMORPH                  0x00020000L
-#define MUT1_MIDAS_TCH                  0x00040000L
-#define MUT1_GROW_MOLD                  0x00080000L
-#define MUT1_RESIST                     0x00100000L
-#define MUT1_EARTHQUAKE                 0x00200000L
-#define MUT1_EAT_MAGIC                  0x00400000L
-#define MUT1_WEIGH_MAG                  0x00800000L
-#define MUT1_STERILITY                  0x01000000L
-#define MUT1_PANIC_HIT                  0x02000000L
-#define MUT1_DAZZLE                     0x04000000L
-#define MUT1_EYE_BEAM                   0x08000000L
-#define MUT1_RECALL                     0x10000000L
-#define MUT1_BANISH                     0x20000000L
-#define MUT1_COLD_TOUCH                 0x40000000L
-#define MUT1_LAUNCHER                   0x80000000L
-
-
 /* An integer logarithm function. */
 #define logaux(x,y) (x & 1<<y) ? y :
 
@@ -244,77 +208,104 @@ logaux(x,13) logaux(x,12) logaux(x,11) logaux(x,10) logaux(x, 9) logaux(x, 8) \
 logaux(x, 7) logaux(x, 6) logaux(x, 5) logaux(x, 4) logaux(x, 3) logaux(x, 2) \
 logaux(x, 1) logaux(x, 0) 255)
 
+/* Mutation indices are fixed by the save file format. */
 
-/* Randomly activating chaos features must be MUT2_* */
-#define MUT2_BERS_RAGE                  0x00000001L
-#define MUT2_COWARDICE                  0x00000002L
-#define MUT2_RTELEPORT                  0x00000004L /* Random teleport, instability */
-#define MUT2_ALCOHOL                    0x00000008L
-#define MUT2_HALLU                      0x00000010L
-#define MUT2_FLATULENT                  0x00000020L
-#define MUT2_SCOR_TAIL                  0x00000040L
-#define MUT2_HORNS                      0x00000080L
-#define MUT2_BEAK                       0x00000100L
-#define MUT2_ATT_DEMON                  0x00000200L
-#define MUT2_PROD_MANA                  0x00000400L
-#define MUT2_SPEED_FLUX                 0x00000800L
-#define MUT2_BANISH_ALL                 0x00001000L
-#define MUT2_EAT_LIGHT                  0x00002000L
-#define MUT2_TRUNK                      0x00004000L
-#define MUT2_ATT_ANIMAL                 0x00008000L
-#define MUT2_TENTACLES                  0x00010000L
-#define MUT2_RAW_CHAOS                  0x00020000L
-#define MUT2_NORMALITY                  0x00040000L
-#define MUT2_WRAITH                     0x00080000L
-#define MUT2_POLY_WOUND                 0x00100000L
-#define MUT2_WASTING                    0x00200000L
-#define MUT2_ATT_DRAGON                 0x00400000L
-#define MUT2_WEIRD_MIND                 0x00800000L
-#define MUT2_NAUSEA                     0x01000000L
-#define MUT2_CHAOS_GIFT                 0x02000000L
-#define MUT2_WALK_SHAD                  0x04000000L
-#define MUT2_WARNING                    0x08000000L
-#define MUT2_INVULN                     0x10000000L
-#define MUT2_SP_TO_HP                   0x20000000L
-#define MUT2_HP_TO_SP                   0x40000000L
-#define MUT2_DISARM                     0x80000000L
-
-
-
-/* Other chaos features will be mainly in MUT3_* */
-
-#define MUT3_HYPER_STR                  0x00000001L
-#define MUT3_PUNY                       0x00000002L
-#define MUT3_HYPER_INT                  0x00000004L
-#define MUT3_MORONIC                    0x00000008L
-#define MUT3_RESILIENT                  0x00000010L
-#define MUT3_XTRA_FAT                   0x00000020L
-#define MUT3_ALBINO                     0x00000040L
-#define MUT3_FLESH_ROT                  0x00000080L
-#define MUT3_SILLY_VOI                  0x00000100L
-#define MUT3_BLANK_FAC                  0x00000200L
-#define MUT3_ILL_NORM                   0x00000400L
-#define MUT3_XTRA_EYES                  0x00000800L
-#define MUT3_MAGIC_RES                  0x00001000L
-#define MUT3_XTRA_NOIS                  0x00002000L
-#define MUT3_INFRAVIS                   0x00004000L
-#define MUT3_XTRA_LEGS                  0x00008000L
-#define MUT3_SHORT_LEG                  0x00010000L
-#define MUT3_ELEC_TOUC                  0x00020000L
-#define MUT3_FIRE_BODY                  0x00040000L
-#define MUT3_WART_SKIN                  0x00080000L
-#define MUT3_SCALES                     0x00100000L
-#define MUT3_IRON_SKIN                  0x00200000L
-#define MUT3_WINGS                      0x00400000L
-#define MUT3_FEARLESS                   0x00800000L
-#define MUT3_REGEN                      0x01000000L
-#define MUT3_ESP                        0x02000000L
-#define MUT3_LIMBER                     0x04000000L
-#define MUT3_ARTHRITIS                  0x08000000L
-#define MUT3_RES_TIME                   0x10000000L
-#define MUT3_VULN_ELEM                  0x20000000L
-#define MUT3_MOTION                     0x40000000L
-#define MUT3_SUS_STATS                  0x80000000L
+#define MUT_SPIT_ACID                  0
+#define MUT_BR_FIRE                    1
+#define MUT_HYPN_GAZE                  2
+#define MUT_TELEKINES                  3
+#define MUT_VTELEPORT                  4 /* Voluntary teleport */
+#define MUT_MIND_BLST                  5
+#define MUT_RADIATION                  6
+#define MUT_VAMPIRISM                  7
+#define MUT_SMELL_MET                  8
+#define MUT_SMELL_MON                  9
+#define MUT_BLINK                      10
+#define MUT_EAT_ROCK                   11
+#define MUT_SWAP_POS                   12
+#define MUT_SHRIEK                     13
+#define MUT_ILLUMINE                   14
+#define MUT_DET_CURSE                  15
+#define MUT_BERSERK                    16
+#define MUT_POLYMORPH                  17
+#define MUT_MIDAS_TCH                  18
+#define MUT_GROW_MOLD                  19
+#define MUT_RESIST                     20
+#define MUT_EARTHQUAKE                 21
+#define MUT_EAT_MAGIC                  22
+#define MUT_WEIGH_MAG                  23
+#define MUT_STERILITY                  24
+#define MUT_PANIC_HIT                  25
+#define MUT_DAZZLE                     26
+#define MUT_EYE_BEAM                   27
+#define MUT_RECALL                     28
+#define MUT_BANISH                     29
+#define MUT_COLD_TOUCH                 30
+#define MUT_LAUNCHER                   31
+#define MUT_BERS_RAGE                  32
+#define MUT_COWARDICE                  33
+#define MUT_RTELEPORT                  34 /* Random teleport, instability */
+#define MUT_ALCOHOL                    35
+#define MUT_HALLU                      36
+#define MUT_FLATULENT                  37
+#define MUT_SCOR_TAIL                  38
+#define MUT_HORNS                      39
+#define MUT_BEAK                       40
+#define MUT_ATT_DEMON                  41
+#define MUT_PROD_MANA                  42
+#define MUT_SPEED_FLUX                 43
+#define MUT_BANISH_ALL                 44
+#define MUT_EAT_LIGHT                  45
+#define MUT_TRUNK                      46
+#define MUT_ATT_ANIMAL                 47
+#define MUT_TENTACLES                  48
+#define MUT_RAW_CHAOS                  49
+#define MUT_NORMALITY                  50
+#define MUT_WRAITH                     51
+#define MUT_POLY_WOUND                 52
+#define MUT_WASTING                    53
+#define MUT_ATT_DRAGON                 54
+#define MUT_WEIRD_MIND                 55
+#define MUT_NAUSEA                     56
+#define MUT_CHAOS_GIFT                 57
+#define MUT_WALK_SHAD                  58
+#define MUT_WARNING                    59
+#define MUT_INVULN                     60
+#define MUT_SP_TO_HP                   61
+#define MUT_HP_TO_SP                   62
+#define MUT_DISARM                     63
+#define MUT_HYPER_STR                  64
+#define MUT_PUNY                       65
+#define MUT_HYPER_INT                  66
+#define MUT_MORONIC                    67
+#define MUT_RESILIENT                  68
+#define MUT_XTRA_FAT                   69
+#define MUT_ALBINO                     70
+#define MUT_FLESH_ROT                  71
+#define MUT_SILLY_VOI                  72
+#define MUT_BLANK_FAC                  73
+#define MUT_ILL_NORM                   74
+#define MUT_XTRA_EYES                  75
+#define MUT_MAGIC_RES                  76
+#define MUT_XTRA_NOIS                  77
+#define MUT_INFRAVIS                   78
+#define MUT_XTRA_LEGS                  79
+#define MUT_SHORT_LEG                  80
+#define MUT_ELEC_TOUC                  81
+#define MUT_FIRE_BODY                  82
+#define MUT_WART_SKIN                  83
+#define MUT_SCALES                     84
+#define MUT_IRON_SKIN                  85
+#define MUT_WINGS                      86
+#define MUT_FEARLESS                   87
+#define MUT_REGEN                      88
+#define MUT_ESP                        89
+#define MUT_LIMBER                     90
+#define MUT_ARTHRITIS                  91
+#define MUT_RES_TIME                   92
+#define MUT_VULN_ELEM                  93
+#define MUT_MOTION                     94
+#define MUT_SUS_STATS                  95
 
 /* Melee attacks... */
 
@@ -340,9 +331,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PO_SPELL (PO_TVAL-256)
 #define PO_RACIAL (PO_SPELL-MAX_RACES*2) /* Up to two powers per race. */
 #define PO_PETS (PO_RACIAL-2) /* Only two powers are defined. */
-#define PO_MUTA1 (PO_PETS-32)
-#define PO_MUTA2 (PO_MUTA1-32)
-#define PO_MUTA3 (PO_MUTA2-32)
+#define PO_MUTA (PO_PETS-96)
 
 #define PET_DISMISS_ONE 0 /* Dismiss one pet */
 #define PET_DISMISS_MANY 1 /* Dismiss more than one pet */
