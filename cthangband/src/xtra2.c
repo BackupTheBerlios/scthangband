@@ -3386,6 +3386,26 @@ bool get_rep_dir(int *dp)
 
 
 /*
+ * Extract the target from a get_aim_dir() call.
+ * Return TRUE if a location was chosen, FALSE for a direction.
+ */
+bool get_dir_target(int *x, int *y, int dir)
+{
+	if (dir == 5 && target_okay())
+	{
+		*x = target_col;
+		*y = target_row;
+		return TRUE;
+	}
+	else
+	{
+		*x = px + 99 * ddx[dir];
+		*y = py + 99 * ddy[dir];
+		return FALSE;
+	}
+}
+
+/*
  * Run through a string backwards, replacing ". CM_ACT | MCI_ARTICLE " with an
  * indefinite article as we go. Return the start of the resulting string.
  *

@@ -2368,16 +2368,7 @@ void do_cmd_fire(void)
 	x = px;
 
 	/* Predict the "target" location */
-	tx = px + 99 * ddx[dir];
-	ty = py + 99 * ddy[dir];
-
-	/* Check for "target request" */
-	if ((dir == 5) && target_okay())
-	{
-		tx = target_col;
-		ty = target_row;
-	}
-
+	get_dir_target(&tx, &ty, dir);
 
 	/* Hack -- Handle stuff */
 	handle_stuff();
@@ -2656,16 +2647,7 @@ void do_cmd_throw(int throw_mult)
 	x = px;
 
 	/* Predict the "target" location */
-	tx = px + 99 * ddx[dir];
-	ty = py + 99 * ddy[dir];
-
-	/* Check for "target request" */
-	if ((dir == 5) && target_okay())
-	{
-		tx = target_col;
-		ty = target_row;
-	}
-
+	get_dir_target(&tx, &ty, dir);
 
 	/* Hack -- Handle stuff */
 	handle_stuff();

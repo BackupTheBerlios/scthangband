@@ -2084,10 +2084,10 @@ extern void store_init(int which);
 #if (defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern s16b ddd[9];
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern s16b ddx[10];
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern s16b ddy[10];
 #endif
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(TABLES_C))
@@ -3173,10 +3173,10 @@ extern s16b wildy;
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b target_who;
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b target_col;
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b target_row;
 #endif
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3710,7 +3710,7 @@ extern void resize_inkey(void);
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void ang_sort(vptr u, vptr v, int n);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool target_okay(void);
 #endif
 #if (defined(CMD3_C) || defined(XTRA2_C))
@@ -4045,5 +4045,11 @@ extern void set_gnext(cptr next);
 #endif
 #if (defined(SQUELCH_C) || defined(UTIL_C))
 extern bool gnext_clear(void);
+#endif
+
+/* xtra2.c */
+
+#if (defined(CMD2_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+extern bool get_dir_target(int *x, int *y, int dir);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

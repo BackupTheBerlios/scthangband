@@ -1527,15 +1527,9 @@ void do_cmd_magebolt(void)
 	if (!get_aim_dir(&dir)) return;
 
 	/* Use the given direction */
-	tx = px + 99 * ddx[dir];
-	ty = py + 99 * ddy[dir];
-
-	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay())
+	if (get_dir_target(&tx, &ty, dir))
 	{
 		flg &= ~(PROJECT_STOP);
-		tx = target_col;
-		ty = target_row;
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */

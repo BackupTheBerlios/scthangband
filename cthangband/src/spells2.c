@@ -27,26 +27,6 @@ several times... */
 static bool detect_monsters_string(cptr Match);
 
 /*
- * Extract the target from a get_aim_dir() call.
- * Return TRUE if a location was chosen, FALSE for a direction.
- */
-static bool get_dir_target(int *x, int *y, int dir)
-{
-	if (dir == 5 && target_okay())
-	{
-		*x = target_col;
-		*y = target_row;
-		return TRUE;
-	}
-	else
-	{
-		*x = px + 99 * ddx[dir];
-		*y = py + 99 * ddy[dir];
-		return FALSE;
-	}
-}
-
-/*
  * Return TRUE if the player can teleport to (x,y) with dimension door.
  */
 static bool dimension_door_success(int y, int x, int plev)
@@ -5407,17 +5387,8 @@ bool fire_ball(int typ, int dir, int dam, int rad)
 
 	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
-	/* Use the given direction */
-	tx = px + 99 * ddx[dir];
-	ty = py + 99 * ddy[dir];
-
-	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay())
-	{
-		flg &= ~(PROJECT_STOP);
-		tx = target_col;
-		ty = target_row;
-	}
+	/* Extract the target. */
+	get_dir_target(&tx, &ty, dir);
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	return (project(0, rad, ty, tx, dam, typ, flg));
