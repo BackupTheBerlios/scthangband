@@ -4107,7 +4107,7 @@ void do_cmd_activate(int item)
 static bool activate_random_artifact(object_type * o_ptr)
 {
     int plev = skill_set[SKILL_DEVICE].value/2;
-    int ii = 0, ij = 0, k, dir, dummy = 0;
+    int k, dir, dummy = 0;
 
 	if (plev == 0) plev++;
 
@@ -4831,19 +4831,7 @@ static bool activate_random_artifact(object_type * o_ptr)
 
             case ACT_DIM_DOOR:
            {
-                 msg_print("You open a dimensional gate. Choose a destination.");
-                 if (!tgt_pt(&ii,&ij)) return FALSE;
-                 p_ptr->energy -= 60 - plev;
-                 if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) || (cave[ij][ii].feat == FEAT_WATER) ||
-                 (distance(ij,ii,py,px) > plev + 2) ||
-                 (!rand_int(plev * plev / 2)))
-                 {
-                     msg_print("You fail to exit the astral plane correctly!");
-                     p_ptr->energy -= 100;
-                     teleport_player(10);
-                 }
-                 else teleport_player_to(ij,ii);
-                 o_ptr->timeout = 100;
+				if (!dimension_door(plev, 10)) return FALSE;
                  break;
             }
 

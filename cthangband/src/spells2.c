@@ -27,6 +27,34 @@ several times... */
 static bool detect_monsters_string(cptr Match);
 
 /*
+ * Teleport the player to a nearby square of the player's choice.
+ * Returns FALSE if aborted, TRUE otherwise.
+ */
+bool dimension_door(int plev, int fail_dis)
+{
+	int ii,ij;
+
+	msg_print("You open a dimensional gate. Choose a destination.");
+	if (!tgt_pt(&ii,&ij)) return FALSE;
+	p_ptr->energy -= 6*TURN_ENERGY/10 - plev*TURN_ENERGY/100;
+
+	/* Bad target or bad luck. */
+	if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) ||
+		(cave[ij][ii].feat == FEAT_WATER) ||
+		(distance(ij,ii,py,px) > plev + 2) || (!rand_int(plev * plev / 2)))
+	{
+		msg_print("You fail to exit the astral plane correctly!");
+		p_ptr->energy -= TURN_ENERGY;
+		teleport_player(fail_dis);
+	}
+	else /* Success */
+	{
+		teleport_player_to(ij,ii);
+	}
+	return TRUE;
+}
+
+/*
  * Increase players hit points, notice effects
  */
 bool hp_player(int num)

@@ -23,7 +23,7 @@ extern void player_birth(void);
 
 /* cave.c */
 
-#if (defined(CAVE_C) || defined(CMD5_C) || defined(CMD6_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
+#if (defined(CAVE_C) || defined(CMD5_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern int distance(int y1, int x1, int y2, int x2);
 #endif
 #if (defined(CAVE_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(XTRA1_C))
@@ -1244,10 +1244,10 @@ extern s16b poly_r_idx(int r_idx);
 #if (defined(CMD1_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(SPELLS1_C))
 extern void teleport_away(int m_idx, int dis);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(WIZARD2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern void teleport_player(int dis);
 #endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(WIZARD2_C))
+#if (defined(MELEE2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern void teleport_player_to(int ny, int nx);
 #endif
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(MELEE2_C) || defined(SPELLS1_C))
@@ -1292,6 +1292,9 @@ extern bool potion_smash_effect(int who, int y, int x, int o_sval);
 
 /* spells2.c */
 
+#if (defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C))
+extern bool dimension_door(int plev, int fail_dis);
+#endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool hp_player(int num);
 #endif
@@ -3230,7 +3233,7 @@ extern bool get_rep_dir(int *dp);
 #if (defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void gain_level_reward(int chosen_reward);
 #endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
+#if (defined(SPELLS2_C) || defined(XTRA2_C))
 extern  bool tgt_pt(int *x,int *y);
 #endif
 #if (defined(CMD5_C) || defined(DUNGEON_C) || defined(SPELLS1_C) || defined(WIZARD2_C) || defined(XTRA2_C))

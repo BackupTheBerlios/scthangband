@@ -1871,7 +1871,6 @@ static void wild_magic(int spell)
     return;
 }
 
-
 /*
  * Cast a spell
  */
@@ -1882,7 +1881,6 @@ void do_cmd_cast(void)
 	int	plev = 0;
 	int	spell_school = 0, dummy = 0;
 	int	i;
-	int	ii = 0, ij = 0;
 
 	bool	none_came = FALSE;
 	const cptr prayer = "spell";
@@ -2076,22 +2074,11 @@ void do_cmd_cast(void)
                  if (!get_aim_dir(&dir)) return;
                  (void) charm_monster(dir, plev);
                break;
-       case 19: /* Dimension Door */
-       {
-             msg_print("You open a dimensional gate. Choose a destination.");
-             if (!tgt_pt(&ii,&ij)) return;
-             p_ptr->energy -= 60 - plev;
-             if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) || (cave[ij][ii].feat == FEAT_WATER) ||
-             (distance(ij,ii,py,px) > plev + 2) ||
-             (!rand_int(plev * plev / 2)))
-             {
-                 msg_print("You fail to exit the astral plane correctly!");
-                 p_ptr->energy -= 100;
-                 teleport_player(10);
-             }
-             else teleport_player_to(ij,ii);
-             break;
-            }
+		case 19: /* Dimension Door */
+		{
+			if (!dimension_door(plev, 10)) return;
+			break;
+		}
 
        case 20: /* Sense Minds */
             (void)set_tim_esp(p_ptr->tim_esp + randint(30) + 25);
@@ -2587,18 +2574,7 @@ void do_cmd_cast(void)
         break;
         case 5: /* Dimension Door */
        {
-             msg_print("You open a dimensional gate. Choose a destination.");
-             if (!tgt_pt(&ii,&ij)) return;
-             p_ptr->energy -= 60 - plev;
-             if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) || (cave[ij][ii].feat == FEAT_WATER) ||
-             (distance(ij,ii,py,px) > plev + 2) ||
-             (!rand_int(plev * plev / 2)))
-             {
-                 msg_print("You fail to exit the astral plane correctly!");
-                 p_ptr->energy -= 100;
-                 teleport_player(10);
-             }
-             else teleport_player_to(ij,ii);
+			if (!dimension_door(plev, 10)) return;
              break;
             }
         case 6: /* Planar Spying */
@@ -4577,22 +4553,7 @@ void do_cmd_mindcraft(void)
 			}
 			else
 			{
-				int i = 0, j = 0;
-				msg_print("Choose a destination.");
-				if (!tgt_pt(&i,&j)) return;
-				p_ptr->energy -= 60 - psi;
-				if (!cave_empty_bold(j,i) || (cave[j][i].info & CAVE_ICKY) || (cave[j][i].feat == FEAT_WATER) ||
-				(distance(j,i,py,px) > psi + 2) || (!rand_int(psi * psi / 2)))
-				{
-					msg_print("Something disrupts your concentration!");
-					p_ptr->energy -= 100;
-					teleport_player(20);
-				}
-				else
-				{
-					teleport_player_to(j,i);
-				}
-				break;
+				if (!dimension_door(psi, 20)) return;
 			}
 			break;
 		case 3:   /* Major displace */
@@ -4669,7 +4630,7 @@ void do_cmd_mindcraft(void)
 			if (!get_aim_dir(&dir)) return;
 			b = damroll(psi/2, 6);
 			if (fire_ball(GF_PSI_DRAIN, dir, b,  0 + (psi-25)/10))
-			p_ptr->energy -= randint(150);
+			p_ptr->energy -= randint(TURN_ENERGY*15/10);
 			break;
 		case 11:   /* Telekinesis */
 			msg_print("A wave of pure physical force radiates out from your body!");
