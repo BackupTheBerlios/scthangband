@@ -224,21 +224,30 @@ X:#
 Y:%+F%f %=F
 #:object_desc() names
 
-# Foo
+# Give mushrooms, rings, amulets, potions, wands, staves, rods and scrolls
+# their names in the accustomed style.
 
 X: !
 Y:%+K of %k%=K%+E %e%=E%+A %a%=A
 #:object_desc() names
 
-# Boo
+# Give books their names in the accustomed style.
 
 X: ^
 Y:%+K %k%=K%+E %e%=E%+A %a%=A
 #:object_desc() names
 
+# Give a "s"/"es" plural.
+
 X:~
 Y:%+P%p%=P
 #:object_desc() names
+
+# Give insta-arts their normal representation.
+
+X: $
+Y:%Base %+A %a%=A
+F:k_info:N:3
 
 X:%Scroll 
 M:127
