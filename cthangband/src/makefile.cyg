@@ -13,7 +13,7 @@ CFLAGS = -Wall -O2 -fno-strength-reduce -DUSE_TRANSPARENCY -DWINDOWS -mno-cygwin
 
 
 SRCS = \
-	angband.rc \
+	Angband.rc \
 	main-win.c \
 	readdib.c \
 	z-util.c z-virt.c z-form.c z-rand.c z-term.c \
@@ -217,18 +217,18 @@ xtra1.o: xtra1.c $(INCS)
 xtra2.o: xtra2.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
-z-form.o: z-form.c $(HDRS) z-virt.h
+z-form.o: z-form.c $(HDRS) z-virt.h externs.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
-z-rand.o: z-rand.c $(HDRS) z-rand.h
+z-rand.o: z-rand.c $(HDRS) z-rand.h externs.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
-z-term.o: z-term.c $(HDRS) z-term.h z-virt.h
+z-term.o: z-term.c $(HDRS) z-term.h z-virt.h externs.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
-z-util.o: z-util.c $(HDRS)
+z-util.o: z-util.c $(HDRS) externs.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
-z-virt.o: z-virt.c $(HDRS) z-virt.h
+z-virt.o: z-virt.c $(HDRS) z-virt.h externs.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
