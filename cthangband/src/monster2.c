@@ -2754,8 +2754,7 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 
 		case UNFLAG(SUMMON_REAVER):
 		{
-			return !!(strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"Black reaver"));
+			return (r_idx == MON_BLACK_REAVER);
 		}
 
 		case UNFLAG(SUMMON_LIVING):

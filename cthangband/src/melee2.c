@@ -5817,7 +5817,7 @@ static void process_monster(int m_idx, bool is_friend)
 
 
     /* Hack! "Black Reaver" monster makes noise... */
-    if (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),"Black Reaver"))
+    if (m_ptr->r_idx == MON_BLACK_REAVER)
     {
 		if (!(m_ptr->ml))
 		{
@@ -5836,20 +5836,14 @@ static void process_monster(int m_idx, bool is_friend)
 		/* No default. */
 		cptr string = 0, file = 0;
 
-		bool is_groo = !!(strstr(format("%v", monster_desc_aux_f3,
-			r_ptr, 1, 0), "Groo"));
-
-		bool is_smeagol = !!(strstr(format("%v", monster_desc_aux_f3,
-			r_ptr, 1, 0), "Smeagol"));
- 
 		/* Find the string or file. */
-		if (is_groo)
+		if (m_ptr->r_idx == MON_GROO_THE_WANDERER)
 		{
 			if (!(m_ptr->monfear))
 				string = "says: 'A fray! A fray!'";
 			/* else say nothing. */
 		}
-		else if (is_smeagol)
+		else if (m_ptr->r_idx == MON_SMEAGOL)
 		{
 			if (m_ptr->monfear)
 				file = "smeagolr.txt";
