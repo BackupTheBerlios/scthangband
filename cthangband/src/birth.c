@@ -712,7 +712,7 @@ static void get_hermetic_skills_randomly(void);
 static bc_type get_hermetic_skills(void);
 static void get_ahw_average(void);
 static void get_money(bool randomly);
-static int get_social_average(void);
+static s16b get_social_average(byte);
 static void display_player_birth_details(void);
 static void get_final(void);
 static bool load_stat_set(bool);
@@ -1359,7 +1359,7 @@ static bool point_mod_player(void)
   			/* Set the experience factor */
   			p_ptr->expfact = rp_ptr->r_exp;
 			/* Get an average social class. */
-			p_ptr->sc = get_social_average();
+			p_ptr->sc = get_social_average(p_ptr->prace);
 			/* Get a name if computer-generated. */
 			if (!own_name) create_random_name(p_ptr->prace,player_name);
 		}
@@ -2196,46 +2196,115 @@ static void get_extra(void)
 	}
 }
 
-
 /*
- * Get an average social class for the given race using the "history charts".
+ * Helper function for get_social_average()
+ * This finds the the average social of a race for which rp_ptr->chart = chart.
+ * Total is the size of the array of charts.
+ * Oldseen is an array which indicates how often each chart has been used in the
+ * path leading to the current one, generally 0 or 1.
  */
-static int get_social_average(void)
+static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 {
-	int chart = race_info[p_ptr->prace].chart;
+	s16b i;
+	byte seen[total];
+	s16b social_class = 0;
+	byte roll = 0, droll = 0, dnext = 0;
 
-	/* social_class is actually 100 times the expected value,
-	so this is the average of randint(4) */
-	s16b social_class = 250;
+	/* We stop at nothing. */
+	if (chart == 0) return 0;
 
-	/* Go through the charts */
-	while (chart)
+	/* If we've already used this chart, we must avoid being drawn
+	 * into an infinite loop. We should probably find out the length
+	 * of the loop and sum it to infinity, but the first 10 iterations
+	 * should give a very good approximation.
+	 */
+	if (oldseen[chart] > 10) return 0;
+
+	/* Copy the chart across. */
+	for (i = 0; i < total; i++)
 	{
-		int i, next = 0, roll = 0;
+		seen[i]=oldseen[i];
+	}
+
+	/* We have now seen this chart. */
+	seen[chart] = TRUE;
+
+	/* Get the next charts. */
 		for (i=0; bg[i].chart; i++)
 		{
-			/* Restrict it to relevant charts. */
+		/* Only relevant charts count. */
 			if (chart != bg[i].chart) continue;
-			/* Add the bonus * the chance of getting that chart. */
+		
+		/* Only increasing charts count. */
+		if (bg[i].roll < roll) continue;
+
+		/* Notice the bonus from this chart. */
 			social_class += (bg[i].bonus - 50) * (bg[i].roll - roll);
-#ifdef A_WAY_OF_HANDLING_THIS
-			/* Ignore non-linear progressions as they don't
-			affect the player's social class at the moment. */
-			if (next && next != bg[i].next);
-#endif
-			/* Set next and the cumulative probability. */
-			next = bg[i].next;
+		
+		/* If this is the first appropriate chart, notice it. */
+		if (!dnext)
+		{
+			dnext = bg[i].next;
+		}
+		/* If we're changing to a different chart, get the next one. */
+		else if (dnext != bg[i].next)
+		{
+			/* Get the next chart. */
+			social_class += get_social_average_aux(seen, dnext, total)*(roll-droll)/100;
+			droll = roll;
+		}
+
+		/* Move the roll counter along. */
 			roll = bg[i].roll;
 		}
-		/* Go to the next chart */
-		chart = next;
-	}
-	/* Restrict to the range 1-100 */
-	if (social_class > 10000) social_class = 10000;
-	else if (social_class < 100) social_class = 100;
 
-	/* Return something of the expected order of magnitude. */
-	return social_class/100;
+	/* Add the last set of charts. */
+	social_class += get_social_average_aux(seen, dnext, total)*(roll-droll)/100;
+
+	/* And return the result (multiplied by 100 to minimise rounding errors). */
+	return social_class;
+	}
+
+/*
+ * Finds the average social class for a given race.
+ */
+static s16b get_social_average(byte race)
+{
+	byte chart = race_info[race].chart;
+	byte total = chart;
+
+	/* We're dealing in hundredths here, so this is the average of
+	 * randint(4).
+	 */
+	s16b i,social_class = 250;
+
+	/* Count charts */
+	for (i = 0; bg[i].chart; i++)
+	{
+		if (bg[i].chart > total) total = bg[i].chart;
+	}
+
+	if (total++)
+	{
+		/* Create an array of charts which have formed part of the
+		 * current branch. This is needed in order to recognise when
+		 * a recursion has occurred.
+		 */
+		byte seen[total];
+
+		for (i = 0; i < total; i++) seen[i] = 0;
+
+		social_class += get_social_average_aux(seen, chart, total);
+	}
+
+	/* Get a social class of the expected order of magnitude. */
+	social_class /= 100;
+
+	/* Social classes must be in the range [1,100] */
+	social_class = MIN(MAX(1,social_class),100);
+
+	/* Return an average social class for the race. */
+	return social_class;
 }
 
 /*
