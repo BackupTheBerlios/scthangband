@@ -984,6 +984,15 @@ static bool wr_savefile_new(void)
 	v_stamp = 0L;
 	x_stamp = 0L;
 
+	/* Additional u16b savefile flags. */
+	if (sf_flags_sf[0] & 1<<SF_CONTINUE)
+	{
+		for (i = 1; i < MAX_SF_VAR; i++)
+		{
+			wr_u16b(sf_flags_sf[i]);
+			if (~sf_flags_sf[i] & SF_CONTINUE) break;
+		}
+	}
 
 	/* Operating system */
 	wr_u32b(sf_xtra);
@@ -1220,17 +1229,22 @@ bool save_player(bool as_4_1_0)
 
 	char    safe[1024];
 
-	/* Find the current version. */
-	current_version(&sf_flags_sf, &sf_major, &sf_minor, &sf_patch);
-
 	/* If a 4.1.0 savefile is required, provide one. */
 	if (as_4_1_0)
 	{
-		sf_flags_sf = SF_SKILL_BASE;
+		WIPE(sf_flags_sf, sf_flags_sf);
+		sf_flags_sf[0] = SF_SKILL_BASE;
 		sf_major = 4;
 		sf_minor = 1;
 		sf_patch = 0;
 	}
+	/* If not, simply find the current version. */
+	else
+	{
+		current_version(sf_flags_sf, &sf_major, &sf_minor, &sf_patch);
+	}
+
+	
 
 #if defined(SET_UID) && defined(SECURE)
 

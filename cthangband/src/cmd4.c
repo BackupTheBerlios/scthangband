@@ -1500,7 +1500,8 @@ void do_cmd_pref(void)
 {
 	char buf[80];
 	cptr err;
-	u16b sf_flags = sf_flags_now;
+	u16b sf_flags[MAX_SF_VAR];
+	current_flags(sf_flags);
 
 	/* Default */
 	strcpy(buf, "");
@@ -1512,7 +1513,7 @@ void do_cmd_pref(void)
 	message_add(buf);
 
 	/* Process that pref command */
-	if ((err = process_pref_file_aux(buf, &sf_flags)))
+	if ((err = process_pref_file_aux(buf, sf_flags)))
 	{
 		bell(err);
 	}
@@ -2351,8 +2352,9 @@ static errr dump_visuals_aux(cptr tmp, visual_type *vs_ptr)
 		fprintf(fff, "# %s\n\n", vs_ptr->initstring);
 
 		/* This could convert to any version, but... */
-		fprintf(fff, "O:%u\n", sf_flags_now);
-		fprintf(fff, "%c:---reset---\n\n", vs_ptr->startchar);
+		fprintf(fff, "O:");
+		for (i = 0; i < MAX_SF_VAR; i++) fprintf(fff, "%u", sf_flags_now[i]);
+		fprintf(fff, "\n%c:---reset---\n\n", vs_ptr->startchar);
 
 		/* Dump entries */
 		for (i = 0; i < vs_ptr->max; i++)

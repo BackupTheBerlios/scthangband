@@ -18,7 +18,7 @@ byte sf_minor;			/* Savefile's "version_minor" */
 byte sf_patch;			/* Savefile's "version_patch" */
 /* byte sf_extra; */			/* Savefile's "version_extra" (unused) */
 
-u16b sf_flags_sf;			/* Savefile's "version flags" */
+u16b sf_flags_sf[MAX_SF_VAR]; /* Savefile's "version flags" */
 
 /*
  * Savefile information
@@ -33,17 +33,17 @@ u16b sf_saves;			/* Number of "saves" during this life */
  * This is currently a flag, but may need to change to an index as the
  * save file version grows.
  */
-static u32b object_version[] =
+static const u16b object_version[][2] =
 {
-	SF_EGO_DISTRO,
-	SF_K_INFO_1,
-	0
+	{0, SF_EGO_DISTRO},
+	{0, SF_K_INFO_1},
+	{0, 0}
 };
 
 /*
  * The table of object indices for the above indices in the same order.
  */
-static s16b object_table[][3] =
+static const s16b object_table[][3] =
 {
 	{OBJ_MAX_DISTRO, 473, 525},
 	{OBJ_NOTHING, 0, 0},
@@ -522,12 +522,12 @@ static s16b object_table[][3] =
 	{OBJ_NO_TEA, 1, 525},
 };
 
-static u32b monster_version[] =
+static const u16b monster_version[][2] =
 {
-	SF_R_INFO_1,
-	0
+	{0, SF_R_INFO_1},
+	{0, 0}
 };
-static s16b monster_table[][2] =
+static const s16b monster_table[][2] =
 {
 	{MON_PLAYER,	0},
 	{MON_NOBODY_THE_UNNAMED_GHOST______________________________________,	576},
@@ -1421,17 +1421,17 @@ static s16b monster_table[][2] =
  * This is currently a flag, but may need to change to an index as the
  * save file version grows.
  */
-static u32b owner_version[] =
+static const u16b owner_version[][2] =
 {
-	SF_QUEST_DIRECT,
-	0
+	{0, SF_QUEST_DIRECT},
+	{0, 0}
 };
 
 /*
  * The table of shopkeeper indices for the above indices in the same order.
  * Versions 0 will already have been converted from a 2d format to a 1d one.
  */
-static s16b owner_table[][2] =
+static const s16b owner_table[][2] =
 {
 	{OWN_FALILMAWEN_THE_FRIENDLY, MAX_OWNERS*(MAX_STORES_PER_TOWN*TOWN_CELEPHAIS+0)+0},
 	{OWN_VOIRIN_THE_COWARDLY, MAX_OWNERS*(MAX_STORES_PER_TOWN*TOWN_CELEPHAIS+0)+1},
@@ -1822,27 +1822,43 @@ static s16b owner_table[][2] =
 /*
  * Define the flags for the current version globally.
  */
-const u16b sf_flags_now = SF_SKILL_BASE | SF_16_IDENT | SF_CURSE | SF_Q_SAVE |
-	SF_DEATHEVENTTEXT | SF_QUEST_UNKNOWN | SF_3D_WINPRI | SF_16_CAVE_FLAG |
-	SF_SAVE_MAX_SKILLS | SF_K_INFO_1 | SF_QUEST_KNOWN | SF_R_INFO_1 |
-	SF_QUEST_DIRECT | SF_EGO_DISTRO;
+#define B(X) (1<<(X%16))
+const u16b sf_flags_now[MAX_SF_VAR] =
+{
+	B(SF_SKILL_BASE) | B(SF_16_IDENT) | B(SF_CURSE) | B(SF_Q_SAVE) |
+		B(SF_DEATHEVENTTEXT) | B(SF_QUEST_UNKNOWN) | B(SF_3D_WINPRI) | 
+		B(SF_16_CAVE_FLAG) | B(SF_SAVE_MAX_SKILLS) | B(SF_K_INFO_1) |
+		B(SF_QUEST_KNOWN) | B(SF_R_INFO_1) | B(SF_QUEST_DIRECT) |
+		B(SF_EGO_DISTRO),
+	0
+};
+
+/*
+ * Find the flags in sf in table (which must end with 0,0).
+ */
+static PURE int find_version(const u16b *sf, const u16b table[][2])
+{
+	int i;
+	for (i = 0; ; i++)
+	{
+		if (sf[table[i][0]] & 1<<table[i][1]) return i;
+		if (!table[i][1]) return i;
+	}
+}
 
 /*
  * Convert an object table from one version to another.
  * It returns what k_idx in version from_v is equivalent to in to_v.
  */
-s16b convert_k_idx(s16b idx, u32b from_v, u32b to_v)
+s16b convert_k_idx(s16b idx, const u16b *from_v, const u16b *to_v)
 {
 	/* Assume the oldest version in the absence of relevant flags. */
-	uint i, from, to, max = N_ELEMENTS(object_version)-1;
-	int max_distro;
+	uint i;
+	int from, to, max_distro;
 
-	/* Find the newest version flag which is included in each of old and new. */
-	for (i = 0, from = to = max; i < max; i++)
-	{
-		if (from_v & object_version[i]) from = i;
-		if (to_v & object_version[i]) to = i;
-	}
+	/* Find the versions in monster_version[]. */
+	from = find_version(from_v, object_version);
+	to = find_version(to_v, object_version);
 
 	/* No change. */
 	if (from == to) return idx;
@@ -1878,18 +1894,15 @@ s16b convert_k_idx(s16b idx, u32b from_v, u32b to_v)
  * Convert a monster table from one version to another.
  * It returns what idx in version from_v is equivalent to in to_v.
  */
-s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v)
+s16b convert_r_idx(s16b idx, const u16b *from_v, const u16b *to_v)
 {
 	/* Assume the oldest version in the absence of relevant flags. */
-	uint i, from, to, max = N_ELEMENTS(monster_version)-1;
-	int max_distro;
+	uint i;
+	int max_distro, from, to;
 
-	/* Find the newest version flag which is included in each of old and new. */
-	for (i = 0, from = to = max; i < max; i++)
-	{
-		if (from_v & monster_version[i]) from = i;
-		if (to_v & monster_version[i]) to = i;
-	}
+	/* Find the versions in monster_version[]. */
+	from = find_version(from_v, monster_version);
+	to = find_version(to_v, monster_version);
 
 	/* No change. */
 	if (from == to) return idx;
@@ -1928,18 +1941,15 @@ s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v)
  * Note that the version 0 table actually uses values of
  * MAX_OWNERS*(shop number)+owner
  */
-s16b convert_owner(s16b idx, u32b from_v, u32b to_v)
+s16b convert_owner(s16b idx, const u16b *from_v, const u16b *to_v)
 {
 	/* Assume the oldest version in the absence of relevant flags. */
-	uint i, from, to, max = N_ELEMENTS(owner_version)-1;
-	int max_distro;
+	uint i;
+	int from, to, max_distro;
 
-	/* Find the newest version flag which is included in each of old and new. */
-	for (i = 0, from = to = max; i < max; i++)
-	{
-		if (from_v & owner_version[i]) from = i;
-		if (to_v & owner_version[i]) to = i;
-	}
+	/* Find the versions in owner_version[]. */
+	from = find_version(from_v, owner_version);
+	to = find_version(to_v, owner_version);
 
 	/* No change. */
 	if (from == to) return idx;
@@ -1971,14 +1981,29 @@ s16b convert_owner(s16b idx, u32b from_v, u32b to_v)
 	}
 }
 
+void current_flags(u16b *flags)
+{
+	COPY(flags, sf_flags_now, sf_flags_now);
+}
+
 /*
  * Determine the current version number based on compile-time options.
  */
 void current_version(u16b *flags, byte *major, byte *minor, byte *patch)
 {
-	(*flags) = sf_flags_now;
+	current_flags(flags);
 	(*major) = SFM_SPECIAL;
 	(*minor) = (*flags)/256;
 	(*patch) = (*flags)%256;
 }
 
+/*
+ * This function determines if certain features are present in the savefile.
+ */
+bool has_flag(int flag)
+{
+	int set = flag/16;
+	u16b bit = 1<<(flag%16);
+
+	return ((sf_flags_sf[set] & bit) != 0);
+}

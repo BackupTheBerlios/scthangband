@@ -1057,7 +1057,10 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define MAX_STACK_SIZE                  100
 
-
+/*
+ * Number of u16b variables available for the savefile version.
+ */
+#define MAX_SF_VAR 2
 
 /*
  * Indexes of the various "stats" (hard-coded by savefiles, etc).

@@ -656,16 +656,16 @@ extern void init_angband(void);
 extern void cleanup_angband(void);
 #endif
 
-/* load.c */
+/* loadsave.c */
 
-#if (defined(LOAD_C) || defined(SAVE_C))
-extern bool has_flag(u16b flag);
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern bool has_flag(int flag);
 #endif
 #if (defined(DUNGEON_C) || defined(LOAD_C))
 extern bool load_player(void);
 #endif
 
-/* loadsave.c */
+
 
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern byte sf_major;
@@ -677,7 +677,7 @@ extern byte sf_minor;
 extern byte sf_patch;
 #endif
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern u16b sf_flags_sf;
+extern u16b sf_flags_sf[MAX_SF_VAR];
 #endif
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern u32b sf_xtra;
@@ -691,17 +691,17 @@ extern u16b sf_lives;
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern u16b sf_saves;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(OBJECT1_C) || defined(SAVE_C))
-extern const u16b sf_flags_now;
+#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern const u16b sf_flags_now[MAX_SF_VAR];
 #endif
 #if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern s16b convert_k_idx(s16b idx, u32b from_v, u32b to_v);
+extern s16b convert_k_idx(s16b idx, const u16b *from_v, const u16b *to_v);
 #endif
 #if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v);
+extern s16b convert_r_idx(s16b idx, const u16b *from_v, const u16b *to_v);
 #endif
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern s16b convert_owner(s16b idx, u32b from_v, u32b to_v);
+extern s16b convert_owner(s16b idx, const u16b *from_v, const u16b *to_v);
 #endif
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern void current_version(u16b *flags, byte *major, byte *minor, byte *patch);
@@ -3912,5 +3912,11 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
+#endif
+
+/* loadsave.c */
+
+#if (defined(CMD4_C) || defined(LOADSAVE_C) || defined(OBJECT1_C))
+extern void current_flags(u16b *flags);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -412,7 +412,12 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		/* Process O:<version> -- save file version for this file. */
 		case 'O': 
 		{
-			*sf_flags = strtol(buf+2, NULL, 0);
+			j = tokenize(buf+2, MAX_SF_VAR, zz);
+			if (!j) return "format not O:<ver>:<ver>:...";
+			for (i = 0; i < j; i++)
+			{
+				sf_flags[i] = strtol(zz[i], NULL, 0);
+			}
 			return 0;
 		}
 		/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
@@ -424,7 +429,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				monster_race *r_ptr;
 				i = (huge)strtol(zz[0], NULL, 0);
 				if (i < 0 || i > MAX_SHORT) return "no such monster";
-				i = convert_r_idx(i, sf_flags[0], sf_flags_now);
+				i = convert_r_idx(i, sf_flags, sf_flags_now);
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
 				if (i >= MAX_R_IDX) return "no such monster";
@@ -444,7 +449,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				object_kind *k_ptr;
 				i = (huge)strtol(zz[0], NULL, 0);
 				if (i < 0 || i > MAX_SHORT) return "no such object";
-				i = convert_k_idx(i, sf_flags[0], sf_flags_now);
+				i = convert_k_idx(i, sf_flags, sf_flags_now);
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
 				if (i >= MAX_K_IDX) return "no such object";
@@ -995,7 +1000,9 @@ errr process_pref_file(cptr name)
 
 	bool bypass = FALSE;
 
-	u16b sf_flags = 0;
+	/* Use the oldest version as a default. */
+	u16b sf_flags[MAX_SF_VAR];
+	WIPE(sf_flags, sf_flags);
 
 	/* Look in ANGBAND_DIR_PREF. */
 	if (!((fp = my_fopen_path(ANGBAND_DIR_PREF, name, "r"))) &&
@@ -1050,7 +1057,7 @@ errr process_pref_file(cptr name)
 		strcpy(buf2, buf);
 
 		/* Process the line */
-		err = process_pref_file_aux(buf2, &sf_flags);
+		err = process_pref_file_aux(buf2, sf_flags);
 
 		/* Oops */
 		if (err) break;

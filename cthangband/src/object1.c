@@ -389,15 +389,17 @@ void reset_visuals(void)
 {
 	int i;
 
-	u16b sf_flags = sf_flags_now;
+	u16b sf_flags[MAX_SF_VAR];
 
 	char buf[1024];
 
+	current_flags(sf_flags);
+
 	/* Reset various attr/char maps. */
-	process_pref_file_aux((char*)"F:---reset---", &sf_flags);
-	process_pref_file_aux((char*)"K:---reset---", &sf_flags);
-	process_pref_file_aux((char*)"U:---reset---", &sf_flags);
-	process_pref_file_aux((char*)"R:---reset---", &sf_flags);
+	process_pref_file_aux((char*)"F:---reset---", sf_flags);
+	process_pref_file_aux((char*)"K:---reset---", sf_flags);
+	process_pref_file_aux((char*)"U:---reset---", sf_flags);
+	process_pref_file_aux((char*)"R:---reset---", sf_flags);
 
 	/* Extract some info about monster memory colours. */
 	for (i = 0; i < MAX_MONCOL; i++)

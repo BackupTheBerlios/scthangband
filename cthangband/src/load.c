@@ -57,14 +57,6 @@ static u32b	v_check = 0L;
 static u32b	x_check = 0L;
 
 
-/*
- * This function determines if certain features are present in the savefile.
- */
-bool has_flag(u16b flag)
-{
-	return ((sf_flags_sf & flag) != 0);
-}
-
 
 /*
  * This function determines if the version of the savefile
@@ -1761,7 +1753,7 @@ static errr rd_savefile_new_aux(void)
 	 * in a simple way. */
 	if (sf_major & SFM_SPECIAL)
 	{
-		sf_flags_sf = sf_minor*256+sf_patch;
+		sf_flags_sf[0] = sf_minor*256+sf_patch;
 	}
 	else if(older_than(4,0,0))
 	{
@@ -1786,15 +1778,15 @@ static errr rd_savefile_new_aux(void)
 	/* For other save files, we must rely on the version number. */
 	else
 	{
-		sf_flags_sf = 0;
-		if (!older_than(4,1,0)) sf_flags_sf |= SF_SKILL_BASE;
-		if (!older_than(4,1,1)) sf_flags_sf |= SF_16_IDENT;
-		if (!older_than(4,1,1)) sf_flags_sf |= SF_CURSE;
-		if (!older_than(4,1,1)) sf_flags_sf |= SF_Q_SAVE;
-		if (!older_than(4,1,3)) sf_flags_sf |= SF_DEATHEVENTTEXT;
-		if (!older_than(4,1,4)) sf_flags_sf |= SF_QUEST_UNKNOWN;
-		if (!older_than(4,1,5)) sf_flags_sf |= SF_3D_WINPRI;
-		if (!older_than(4,1,6)) sf_flags_sf |= SF_16_CAVE_FLAG;
+		WIPE(sf_flags_sf, sf_flags_sf);
+		if (!older_than(4,1,0)) sf_flags_sf[0] |= 1<<SF_SKILL_BASE;
+		if (!older_than(4,1,1)) sf_flags_sf[0] |= 1<<SF_16_IDENT;
+		if (!older_than(4,1,1)) sf_flags_sf[0] |= 1<<SF_CURSE;
+		if (!older_than(4,1,1)) sf_flags_sf[0] |= 1<<SF_Q_SAVE;
+		if (!older_than(4,1,3)) sf_flags_sf[0] |= 1<<SF_DEATHEVENTTEXT;
+		if (!older_than(4,1,4)) sf_flags_sf[0] |= 1<<SF_QUEST_UNKNOWN;
+		if (!older_than(4,1,5)) sf_flags_sf[0] |= 1<<SF_3D_WINPRI;
+		if (!older_than(4,1,6)) sf_flags_sf[0] |= 1<<SF_16_CAVE_FLAG;
 	}
 
 	/* Strip the version bytes */
@@ -1808,6 +1800,27 @@ static errr rd_savefile_new_aux(void)
 	v_check = 0L;
 	x_check = 0L;
 
+	/* Additional u16b savefile flags. */
+	if (sf_flags_sf[0] & 1<<SF_CONTINUE)
+	{
+		for (i = 1; i < MAX_SF_VAR; i++)
+		{
+			rd_u16b(sf_flags_sf+i);
+			if (~sf_flags_sf[i] & SF_CONTINUE) goto good;
+			if (sf_flags_sf[i] & ~sf_flags_now[i]) break;
+		}
+
+		/* Error. */
+		note("Future savefiles are not valid.");
+		note("");
+		note("This savefile has a version flag which had not been defined");
+		note("at the time this version was written. It may be possible to");
+		note("convert it to a compatible form, but it cannot be loaded as is.");
+		note("");
+		note("(sorry)");
+		return (1);
+	}
+good:
 
 	/* Operating system info */
 	rd_u32b(&sf_xtra);
@@ -2367,9 +2380,8 @@ bool load_player(void)
 	/* Okay */
 	if (!err)
 	{
-		u16b cur_flags;
 		byte cur[3];
-		current_version(&cur_flags, cur, cur+1, cur+2);
+		current_version(sf_flags_sf, cur, cur+1, cur+2);
 		/* Give a conversion warning */
         if ((cur[0] != sf_major) ||
             (cur[1] != sf_minor) ||
