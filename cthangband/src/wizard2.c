@@ -777,6 +777,60 @@ static void wiz_tweak_item(object_type *o_ptr)
 
 
 /*
+ * Change an item fundamentally
+ */
+static void wiz_change_item(object_type *o_ptr)
+{
+	cptr	p;
+	char        tmp_val[80];
+	int value, count;
+
+	/* Hack -- leave artifacts alone */
+	if (allart_p(o_ptr)) return;
+
+	p = "Enter new 'tval' setting: ";
+	sprintf(tmp_val, "%d", o_ptr->tval);
+	if (!get_string(p, tmp_val, 5)) return;
+	o_ptr->tval = atoi(tmp_val);
+	wiz_display_item(o_ptr);
+
+	/* Choose a random sval if necessary */
+	count = 1000; value = o_ptr->sval;
+	while(!((o_ptr->k_idx = lookup_kind(o_ptr->tval, value))) && count--) value = randint(128);
+	wiz_display_item(o_ptr);
+	
+	p = "Enter new 'sval' setting: ";
+	sprintf(tmp_val, "%d", o_ptr->sval);
+	if (!get_string(p, tmp_val, 5)) return;
+	value = atoi(tmp_val);
+
+	/* Accept the sval if legal, choose randomly if not. */
+	count = 1000;
+	while(!((o_ptr->k_idx = lookup_kind(o_ptr->tval, value))) && count--) value = randint(128);
+	wiz_display_item(o_ptr);
+
+	/* There's no easy way to detect impossible ego items, but restricting
+	it to weapons and non-dragon armour is simple. */
+	switch (o_ptr->tval)
+	{
+		case TV_SHOT: case TV_ARROW: case TV_BOLT: case TV_BOW:
+		case TV_DIGGING: case TV_HAFTED: case TV_POLEARM: case TV_SWORD:
+		case TV_BOOTS: case TV_GLOVES: case TV_HELM: case TV_CROWN:
+		case TV_SHIELD: case TV_CLOAK: case TV_SOFT_ARMOR: case TV_HARD_ARMOR:
+		break;
+		default:
+		return;
+	}
+	
+	p = "Enter new 'ego' number: ";
+	sprintf(tmp_val, "%d", o_ptr->name2);
+	if (!get_string(p, tmp_val, 5)) return;
+	o_ptr->name2 = atoi(tmp_val);
+	wiz_display_item(o_ptr);
+}
+
+
+/*
  * Apply magic to an item or turn it into an artifact. -Bernd-
  */
 static void wiz_reroll_item(object_type *o_ptr)
@@ -1080,7 +1134,7 @@ static void do_cmd_wiz_play(void)
 
 	char ch;
 
-	bool changed;
+	bool changed, finished = FALSE;
 
 
 	/* Get an item (from equip or inven) */
@@ -1122,42 +1176,48 @@ static void do_cmd_wiz_play(void)
 
 
 	/* The main loop */
-	while (TRUE)
+	while (!finished)
 	{
 		/* Display the item */
 		wiz_display_item(q_ptr);
 
 		/* Get choice */
-		if (!get_com("[a]ccept [s]tatistics [r]eroll [t]weak [q]uantity? ", &ch))
+		(void)get_com("[a]ccept [s]tatistics [r]eroll [c]hange [t]weak [q]uantity? ", &ch);
+
+		switch (FORCELOWER(ch))
 		{
+			case ESCAPE:
 			changed = FALSE;
+			finished = TRUE;
 			break;
-		}
 
-		if (ch == 'A' || ch == 'a')
-		{
+			case 'a':
 			changed = TRUE;
+			finished = TRUE;
 			break;
-		}
 
-		if (ch == 's' || ch == 'S')
-		{
+			case 's':
 			wiz_statistics(q_ptr);
-		}
+			break;
 
-		if (ch == 'r' || ch == 'r')
-		{
+			case 'r':
 			wiz_reroll_item(q_ptr);
-		}
+			break;
 
-		if (ch == 't' || ch == 'T')
-		{
+			case 't':
 			wiz_tweak_item(q_ptr);
-		}
+			break;
 
-		if (ch == 'q' || ch == 'Q')
-		{
+			case 'q':
 			wiz_quantity_item(q_ptr);
+			break;
+			
+			case 'c':
+			wiz_change_item(q_ptr);
+			break;
+			
+			default:
+			bell();
 		}
 	}
 

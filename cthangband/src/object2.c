@@ -1556,8 +1556,10 @@ s16b lookup_kind(int tval, int sval)
 		if ((k_ptr->tval == tval) && (k_ptr->sval == sval)) return (k);
 	}
 
+#if 0
 	/* Oops */
 	msg_format("No object (%d,%d)", tval, sval);
+#endif
 
 	/* Oops */
 	return (0);
