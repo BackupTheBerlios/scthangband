@@ -1014,36 +1014,32 @@ static void brand_weapon(int brand_type)
 	if (o_ptr->k_idx && !allart_p(o_ptr) && !ego_item_p(o_ptr) && !cursed_p(o_ptr))
 	{
 		cptr act = NULL;
-		byte name2;
+		int name2 = brand_type;
 
 		switch (brand_type)
 		{
-			case 4:
+			case EGO_PLANAR:
 				act = "seems very unstable now.";
-				name2 = EGO_PLANAR;
 				break;
-			case 3:
+			case EGO_VAMPIRIC:
 				act = "thirsts for blood!";
-				name2 = EGO_VAMPIRIC;
 				break;
-			case 2:
+			case EGO_BRAND_POIS:
 				act = "is coated with poison.";
-				name2 = EGO_BRAND_POIS;
 				break;
-			case 1:
+			case EGO_CHAOTIC:
 				act = "is engulfed in raw chaos!";
-				name2 = EGO_CHAOTIC;
 				break;
 			default:
-			if (rand_int(100) < 25)
-			{
-				act = "is covered in a fiery shield!";
-				name2 = EGO_BRAND_FIRE;
-			}
-			else
+			if (one_in(4))
 			{
 				act = "glows deep, icy blue!";
 				name2 = EGO_BRAND_COLD;
+			}
+			else
+			{
+				act = "is covered in a fiery shield!";
+				name2 = EGO_BRAND_FIRE;
 			}
 		}
 
@@ -1238,6 +1234,20 @@ static bool summon_2(int type, int chance, bool group, int plev,
 		msg_format("The summoned %s gets angry!", what);
 	}
 	return friendly;
+}
+
+/*
+ * Try to restore all stats. Return TRUE if any were restored.
+ */
+static bool do_res_stats(void)
+{
+	/* Use bitwise or to force all arguments to be processed. */
+	return ((do_res_stat(A_STR) |
+		do_res_stat(A_INT) |
+		do_res_stat(A_WIS) |
+		do_res_stat(A_DEX) |
+		do_res_stat(A_CON) |
+		do_res_stat(A_CHR)) != FALSE);
 }
 
 /*
@@ -1440,12 +1450,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case OBJ_FOOD_RESTORING+PO_K_IDX:
 		{
-			if (do_res_stat(A_STR)) (*ident) = TRUE;
-			if (do_res_stat(A_INT)) (*ident) = TRUE;
-			if (do_res_stat(A_WIS)) (*ident) = TRUE;
-			if (do_res_stat(A_DEX)) (*ident) = TRUE;
-			if (do_res_stat(A_CON)) (*ident) = TRUE;
-			if (do_res_stat(A_CHR)) (*ident) = TRUE;
+			if (do_res_stats()) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -1680,12 +1685,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)set_flag(TIMED_IMAGE, 0);
 			(void)set_flag(TIMED_STUN, 0);
 			(void)set_flag(TIMED_CUT, 0);
-			(void)do_res_stat(A_STR);
-			(void)do_res_stat(A_CON);
-			(void)do_res_stat(A_DEX);
-			(void)do_res_stat(A_WIS);
-			(void)do_res_stat(A_INT);
-			(void)do_res_stat(A_CHR);
+			do_res_stats();
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -2722,12 +2722,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_RESTORATION+PO_SPELL:
 		{
 			if (restore_level()) (*ident) = TRUE;
-			if (do_res_stat(A_STR)) (*ident) = TRUE;
-			if (do_res_stat(A_INT)) (*ident) = TRUE;
-			if (do_res_stat(A_WIS)) (*ident) = TRUE;
-			if (do_res_stat(A_DEX)) (*ident) = TRUE;
-			if (do_res_stat(A_CON)) (*ident) = TRUE;
-			if (do_res_stat(A_CHR)) (*ident) = TRUE;
+			if (do_res_stats()) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -3923,7 +3918,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_ELEMENTAL_BRANDING+PO_SPELL:
 		{
-				brand_weapon(0);
+				brand_weapon(-1);
 			return SUCCESS;
 		}
 		case SP_NATURES_WRATH+PO_SPELL:
@@ -4220,7 +4215,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_CHAOS_BRANDING+PO_SPELL:
 		{
-		brand_weapon(1);
+		brand_weapon(EGO_CHAOTIC);
 			return SUCCESS;
 		}
 		case SP_BEAM_OF_GRAVITY+PO_SPELL:
@@ -4562,7 +4557,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_PLANAR_BRANDING+PO_SPELL:
 		{
-			brand_weapon(4);
+			brand_weapon(EGO_PLANAR);
 			return SUCCESS;
 		}
 		case SP_PLANAR_BEING+PO_SPELL:
@@ -4730,7 +4725,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_POISON_BRANDING+PO_SPELL:
 		{
-			brand_weapon(2);
+			brand_weapon(EGO_BRAND_POIS);
 			return SUCCESS;
 		}
 		case SP_DISPEL_GOOD+PO_SPELL:
@@ -4837,7 +4832,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_VAMPIRIC_BRANDING+PO_SPELL:
 		{
-			brand_weapon(3);
+			brand_weapon(EGO_VAMPIRIC);
 			return SUCCESS;
 		}
 		case SP_DEATH_RAY+PO_SPELL:
@@ -5069,12 +5064,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)set_flag(TIMED_CUT, 0);
 			(void)set_flag(TIMED_BLIND, 0);
 			(void)set_flag(TIMED_AFRAID, 0);
-			(void)do_res_stat(A_STR);
-			(void)do_res_stat(A_INT);
-			(void)do_res_stat(A_WIS);
-			(void)do_res_stat(A_DEX);
-			(void)do_res_stat(A_CON);
-			(void)do_res_stat(A_CHR);
+			if (do_res_stats()) (*ident) = TRUE;
 			(void)restore_level();
 			return SUCCESS;
 		}
