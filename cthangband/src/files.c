@@ -4584,8 +4584,11 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 			prt("Find: ", hgt - 1, 0);
 			if (askfor_aux(h_ptr->finder, 80))
 			{
+				/* Give repeated searching the expected result. */
+				if (!strcmp(h_ptr->shower, h_ptr->finder)) line++;
+
 				/* Find it. */
-				line = find_text(fff, h_ptr, line);
+				line = find_text(fff, h_ptr, line)-1;
 
 				/* Show it */
 				strcpy(h_ptr->shower, h_ptr->finder);
