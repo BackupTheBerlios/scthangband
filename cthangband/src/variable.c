@@ -27,7 +27,7 @@ cptr copyright[5] =
 };
 
 /* The name of the help index file */
-char syshelpfile[20];
+cptr syshelpfile;
 
 /*
  * Executable version

@@ -1272,7 +1272,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 {
 	monster_race	*r_ptr = (m_ptr) ? &r_info[m_ptr->r_idx] : r_info;
 
-	cptr name = r_name+r_ptr->name, prefix = "", suffix = "";
+	cptr name = r_name+r_ptr->name, prefix_ = "", suffix_ = "";
 
     char        silly_name[80];
 
@@ -1378,7 +1378,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 			/* XXX Check plurality for "some" */
 
 			/* Indefinite monsters need an indefinite article */
-			prefix = (is_a_vowel(name[0]) == !(r_ptr->flags4 & RF4_ODD_ART))
+			prefix_ = (is_a_vowel(name[0]) == !(r_ptr->flags4 & RF4_ODD_ART))
 				? "an " : "a ";
 		}
 
@@ -1387,9 +1387,9 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 		{
 			/* Definite monsters need a definite article */
             if (m_ptr->smart & (SM_ALLY))
-				prefix = "your ";
+				prefix_ = "your ";
             else
-				prefix = "the ";
+				prefix_ = "the ";
 		}
 
 		/* Handle the Possessive as a special afterthought */
@@ -1398,20 +1398,20 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 			/* XXX Check for trailing "s" */
 
 			/* Simply append "apostrophe" and "s" */
-			suffix = "'s";
+			suffix_ = "'s";
 		}
 	}
 	/* Copy to buf, avoiding overflow. */
 	{
-		int p = strlen(prefix);
+		int p = strlen(prefix_);
 		int n = strlen(name);
-		int s = strlen(suffix);
+		int s = strlen(suffix_);
 
 		n = MIN(n, MAX(0, MNAME_MAX-p-s));
 		s = MIN(s, MAX(0, MNAME_MAX-n-p));
 		p = MIN(p, MAX(0, MNAME_MAX-n-s));
 		
-		sprintf(buf, "%.*s%.*s%.*s", p, prefix, n, name, s, suffix);
+		sprintf(buf, "%.*s%.*s%.*s", p, prefix_, n, name, s, suffix_);
 	}
 }
 
