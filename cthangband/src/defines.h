@@ -2727,6 +2727,10 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PREF_ERROR_OUT_OF_BOUNDS	303
 #define PREF_ERROR_INCORRECT_SYNTAX	304
 
+/* Errors from genocide(), etc.. */
+#define POWER_ERROR_ABORT 401
+#define POWER_ERROR_FAIL 402
+
 /* Energy constants */
 #define TURN_ENERGY	1000 /* Energy used in one player turn. */
 #define TICK_ENERGY 100	/* Energy given in one game turn. */

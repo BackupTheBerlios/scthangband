@@ -1400,7 +1400,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
 
 		case OBJ_SCROLL_GENOCIDE:
 		{
-			(void)genocide(TRUE);
+			if (genocide(TRUE) == POWER_ERROR_ABORT) used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
@@ -1900,7 +1900,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 
 		case OBJ_STAFF_GENOCIDE:
 		{
-			(void)genocide(TRUE);
+			if (genocide(TRUE) == POWER_ERROR_ABORT) use_charge = FALSE;
 			ident = TRUE;
 			break;
 		}
@@ -3194,7 +3194,7 @@ void do_cmd_activate(object_type *o_ptr)
 			case ART_ORCS:
 			{
 				msg_print("Your armor glows deep blue...");
-				(void)genocide(TRUE);
+				if (genocide(TRUE) == POWER_ERROR_ABORT) return;
 				o_ptr->timeout = 500;
 				break;
 			}
@@ -4129,7 +4129,7 @@ static bool activate_random_artifact(object_type * o_ptr)
             case ACT_GENOCIDE:
 			{
                 msg_print("It glows deep blue...");
-				(void)genocide(TRUE);
+				if (genocide(TRUE) == POWER_ERROR_ABORT) return FALSE;
 				o_ptr->timeout = 500;
 				break;
 			}

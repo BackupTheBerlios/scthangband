@@ -1824,10 +1824,10 @@ extern bool dispel_demons(int dam);
 extern void aggravate_monsters(int who);
 #endif
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C) || defined(XTRA2_C))
-extern bool genocide(bool player_cast);
+extern errr genocide(bool player_cast);
 #endif
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C) || defined(XTRA2_C))
-extern bool mass_genocide(bool player_cast);
+extern errr mass_genocide(bool player_cast);
 #endif
 #if (defined(CMD2_C) || defined(CMD6_C) || defined(SPELLS2_C))
 extern bool probing(void);

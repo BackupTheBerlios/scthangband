@@ -4760,19 +4760,21 @@ void aggravate_monsters(int who)
 
 /*
  * Delete all non-unique monsters of a given "type" from the level
+ * Return POWER_ERROR_* value.
  */
-bool genocide(bool player_cast)
+errr genocide(bool player_cast)
 {
 	int             i;
 
 	char    typ;
 
-	bool    result = FALSE;
+	errr result = POWER_ERROR_FAIL;
 
 	int             msec = delay_factor * delay_factor * delay_factor;
 
 	/* Mega-Hack -- Get a monster symbol */
-	(void)(get_com("Choose a monster race (by symbol) to genocide: ", &typ));
+	if (!get_com("Choose a monster race (by symbol) to genocide: ", &typ))
+		return POWER_ERROR_ABORT;
 
 	/* Delete the monsters of that "type" */
 	for (i = 1; i < m_max; i++)
@@ -4820,7 +4822,7 @@ bool genocide(bool player_cast)
 		Term_xtra(TERM_XTRA_DELAY, msec);
 
 		/* Take note */
-		result = TRUE;
+		result = SUCCESS;
 	}
 
 	return (result);
@@ -4830,11 +4832,11 @@ bool genocide(bool player_cast)
 /*
  * Delete all nearby (non-unique) monsters
  */
-bool mass_genocide(bool player_cast)
+errr mass_genocide(bool player_cast)
 {
 	int             i;
 
-	bool    result = FALSE;
+	errr result = POWER_ERROR_FAIL;
 
 	int             msec = delay_factor * delay_factor * delay_factor;
 
@@ -4884,7 +4886,7 @@ bool mass_genocide(bool player_cast)
 		Term_xtra(TERM_XTRA_DELAY, msec);
 
 		/* Note effect */
-		result = TRUE;
+		result = SUCCESS;
 	}
 
 	return (result);
