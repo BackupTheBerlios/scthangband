@@ -1735,11 +1735,8 @@ char inkey(void)
 
 
 	/* Update windows if waiting. */
-	{
-		char tmp;
-		if (inkey_base || (!inkey_scan &&
-		Term_inkey(&tmp, FALSE, FALSE))) window_stuff();
-	}
+	if (inkey_base || !inkey_scan) window_stuff();
+
 
 	/* Get a key */
 	while (!ch)
