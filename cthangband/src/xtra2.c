@@ -724,6 +724,9 @@ static bool set_flag_aux(int flag, int v, bool add)
 	/* Bound the new value. */
 	v = MIN(MAX(v, 0), 20000);
 
+	/* Hack - an extra return value for notice. */
+	worsen = FALSE;
+
 	/* Determine whether further needs to be done. */
 	notice = (*t_ptr->notice)(*var, v);
 
@@ -744,9 +747,6 @@ static bool set_flag_aux(int flag, int v, bool add)
 
 	/* Hack - carry out side-effects, if any. */
 	if (worsen && t_ptr->worsen) (*t_ptr->worsen)(v);
-
-	/* Only carry out side effects once. */
-	worsen = FALSE;
 
 	/* Print the on-screen symbol, if any. */
 	prt_timer(t_ptr);

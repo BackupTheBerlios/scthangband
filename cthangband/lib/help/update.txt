@@ -9,6 +9,7 @@ sCthangband _CVS_
 * Fix the following bugs
   * It was possible to discover the identity of objects the player was not aware
     of using the preferences.
+  * Being cut or stunned had twice the intended chance of decreasing stats.
 
 sCthangband 1.0.14
 * Skill improvements become rarer, and then impossible, if the player does
