@@ -307,7 +307,7 @@ static flag_name info_flags[] =
 	{"IM_POIS", RF3, RF3_IM_POIS},
     {"RES_TELE", RF3, RF3_RES_TELE},
 	{"RES_NETH", RF3, RF3_RES_NETH},
-	{"RES_WATE", RF3, RF3_RES_WATE}, /* UNUSED */
+	{"IM_WATER", RF3, RF3_IM_WATER},
 	{"RES_PLAS", RF3, RF3_RES_PLAS},
 	{"RES_NEXU", RF3, RF3_RES_NEXU},
 	{"RES_DISE", RF3, RF3_RES_DISE},

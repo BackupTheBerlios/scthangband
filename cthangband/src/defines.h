@@ -2851,7 +2851,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RF3_IM_POIS                     0x00100000      /* Resist poison a lot */
 #define RF3_RES_TELE                    0x00200000      /* Resist teleportation */
 #define RF3_RES_NETH            0x00400000      /* Resist nether a lot */
-#define RF3_RES_WATE            0x00800000      /* Resist water */
+#define RF3_IM_WATER            0x00800000      /* Immune to water */
 #define RF3_RES_PLAS            0x01000000      /* Resist plasma */
 #define RF3_RES_NEXU            0x02000000      /* Resist nexus */
 #define RF3_RES_DISE            0x04000000      /* Resist disenchantment */

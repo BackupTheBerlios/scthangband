@@ -1342,7 +1342,7 @@ extern void get_mon_num_prep(bool (*hook)(int, int), int p);
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
 extern s16b get_mon_num(int level);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3950,7 +3950,7 @@ extern bool func_false(void);
 #if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern bool suffix(cptr s, cptr t);
 #endif
-#if (defined(CAVE_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT1_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(Z_UTIL_C))
+#if (defined(CAVE_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT1_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(Z_UTIL_C))
 extern bool prefix(cptr s, cptr t);
 #endif
 #if (defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))

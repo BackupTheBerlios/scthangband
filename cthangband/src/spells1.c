@@ -2654,20 +2654,13 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
 		/* Water (acid) damage -- Water spirits/elementals are immune */
 		case GF_WATER:
 		{
-			cptr name = format("%v", monster_desc_aux_f3, r_ptr, 1, 0);
 			if (seen) obvious = TRUE;
-            if (((r_ptr->d_char == 'E')
-                && (prefix(name, "w"))) || (strstr(name, "unmaker")))
+			if (r_ptr->flags3 & RF3_IM_WATER)
 			{
 				note = " is immune.";
 				dam = 0;
+				if (seen) r_ptr->r_flags3 |= (RF3_IM_WATER);
 			}
-            else if (r_ptr->flags3 & (RF3_RES_WATE))
-            {
-                note = " resists.";
-                dam *= 3; dam /= (randint(6) + 6);
-                if (seen) r_ptr->r_flags3 |= (RF3_RES_WATE);
-            }
 			break;
 		}
 

@@ -1098,6 +1098,7 @@ static void roff_aux(int r_idx)
 	if (flags3 & (RF3_IM_FIRE)) vp[vn++] = "fire";
 	if (flags3 & (RF3_IM_COLD)) vp[vn++] = "cold";
 	if (flags3 & (RF3_IM_POIS)) vp[vn++] = "poison";
+	if (flags3 & (RF3_IM_WATER)) vp[vn++] = "water";
 
 	/* Describe immunities */
 	if (vn)
@@ -1125,7 +1126,6 @@ static void roff_aux(int r_idx)
 	/* Collect resistances */
 	vn = 0;
 	if (flags3 & (RF3_RES_NETH)) vp[vn++] = "nether";
-	if (flags3 & (RF3_RES_WATE)) vp[vn++] = "water";
 	if (flags3 & (RF3_RES_PLAS)) vp[vn++] = "plasma";
 	if (flags3 & (RF3_RES_NEXU)) vp[vn++] = "nexus";
 	if (flags3 & (RF3_RES_DISE)) vp[vn++] = "disenchantment";
