@@ -994,7 +994,7 @@ errr init_gcu(int argc, char **argv)
 	/* Require standard size screen */
 	if ((LINES < 24) || (COLS < 80))
 	{
-		quit("Angband needs at least an 80x24 'curses' screen");
+		quit(GAME_NAME " needs at least an 80x24 'curses' screen");
 	}
 
 
