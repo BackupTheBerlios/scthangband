@@ -2224,7 +2224,7 @@ extern FILE *my_fopen_temp(char *buf, int max);
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_XPJ_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 #endif
-#if (defined(FILES_C) || defined(UTIL_C))
+#if (defined(UTIL_C))
 extern errr my_fputs(FILE *fff, cptr buf, huge n);
 #endif
 #if (!(defined(ACORN))) && (defined(CMD4_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C))
@@ -2326,7 +2326,7 @@ extern bool c_roff(byte a, cptr str);
 #if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void roff(cptr str);
 #endif
-#if (defined(BIRTH_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_roff(cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -2335,7 +2335,7 @@ extern void clear_from(int row);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern bool askfor_aux(char *buf, int len);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern bool get_string(cptr prompt, char *buf, int len);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C))
@@ -3757,7 +3757,7 @@ extern errr Term_fresh(void);
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_set_cursor(int v);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_gotoxy(int x, int y);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
@@ -3790,7 +3790,7 @@ extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
 #if (defined(CAVE_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_get_cursor(int *v);
 #endif
-#if (defined(CAVE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(CAVE_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_get_size(int *w, int *h);
 #endif
 #if (defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))

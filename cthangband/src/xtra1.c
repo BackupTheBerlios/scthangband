@@ -3593,6 +3593,7 @@ static bool init_help_files(char *buf)
 {
 	int i;
 	FILE *fff;
+	cptr s,t;
 
 	/* Open an index file. */
 	path_build(buf, 1024, ANGBAND_DIR_HELP, syshelpfile);
@@ -3607,7 +3608,7 @@ static bool init_help_files(char *buf)
 	/* Count the file references. */
 	for (i = 1; !my_fgets(fff, buf, 1024);)
 	{
-		if (prefix(buf, "***** [")) i++;
+		for (s = buf; (s = strstr(s, "*****")); s += strlen("*****/a")) i++;
 	}
 
 	/* Create the help_files array. */
@@ -3622,11 +3623,17 @@ static bool init_help_files(char *buf)
 	/* Fill the help_files array. */
 	while (!my_fgets(fff, buf, 1024))
 	{
-		/* Not a reference. */
-		if (!prefix(buf, "***** [")) continue;
-		
-		/* Fill in the help_files array (backwards). */
-		help_files[--i] = string_make(buf+strlen("***** [a] "));
+		for (s = buf; (s = strstr(s, "*****")); )
+		{
+			s += strlen("*****/a");
+			t = strchr(s, '*');
+
+			/* Paranoia. */
+			if (!t) continue;
+
+			/* Fill in the help_files array (backwards). */
+			help_files[--i] = string_make(format("%.*s", t-s, s));
+		}
 	}
 
 	my_fclose(fff);
@@ -3663,13 +3670,13 @@ void win_help_display(void)
 		while (!my_fgets(fff, buf, 1024))
 		{
 			/* Not an option heading. */
-			if (strncmp(buf, "*****", strlen("*****"))) continue;
+			if (strncmp(buf, CC_LINK_PREFIX, strlen(CC_LINK_PREFIX))) continue;
 
 			/* Not this option heading. */
 			if (!strstr(buf, format("<%s>", CUR_HELP_STR))) continue;
 
 			while (!my_fgets(fff, buf, 1024) &&
-				!prefix(buf, "*****"))
+				!prefix(buf, CC_LINK_PREFIX))
 			{
 				/* Print the line out in a possibly colourful way. */
 				mc_roff(buf);

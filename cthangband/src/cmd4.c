@@ -2976,7 +2976,7 @@ void do_cmd_save_screen(void)
 }
 
 
-#define GET_SYMBOL_LEN	(strlen("[[[[[cc]")+1)
+#define GET_SYMBOL_LEN	(strlen(CC_PREFIX "c" CC_PREFIX CC_PREFIX "w")+2)
 
 /*
  * A simple function to include a coloured symbol in a text file for
@@ -2988,7 +2988,11 @@ static cptr get_symbol_aux(byte a, char c)
 	 * so replace them with something it will display. */
 	if (!isprint(c)) c = '#';
 
-	return format("[[[[[%c%c]", atchar[a], c);
+	else if (strlen(CC_PREFIX) == 1 && c == CC_PREFIX[0])
+		return format("%s%c%s%s%sw", CC_PREFIX, atchar[a], CC_PREFIX, CC_PREFIX,
+			CC_PREFIX);
+
+	return format("%s%c%c%sw", CC_PREFIX, atchar[a], c, CC_PREFIX);
 }
 
 /*
@@ -3177,8 +3181,8 @@ static void do_cmd_knowledge_uniques(void)
 				char sym[GET_SYMBOL_LEN];
 				strcpy(sym, get_symbol(r_ptr));
 
-				fprintf(fff, " %s %c [[[[[%c%s is %s]\n", sym,
-					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', 
+				fprintf(fff, " %s %c %s%c%s is %s\n", sym,
+					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', CC_PREFIX, 
 					(dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE],
 					monster_desc_aux(m_name, r_ptr, 1, MDF_DEF),
 					(dead ? "dead" : "alive"));
@@ -3291,7 +3295,9 @@ static int count_kills(FILE *fff, bool noisy)
 		{
 			byte flags = 0;
 			if (This > 1) flags |= MDF_NUMBER;
-			else if (~r_ptr->flags1 & RF1_UNIQUE) flags |= MDF_INDEF;
+			else if (r_ptr->flags1 & RF1_UNIQUE) flags |= MDF_DEF;
+			else flags |= MDF_INDEF;
+			
 
 			fprintf(fff, " %s   ", get_symbol(r_ptr));
 			fprintf(fff, "%s\n", monster_desc_aux(0, r_ptr, This, flags));
