@@ -3249,10 +3249,6 @@ void do_cmd_activate(int item)
 	/* Sound */
 	sound(SOUND_ZAP);
 
-	/* Gain exp */
-	skill_exp(SKILL_DEVICE);
-
-
     if (o_ptr->art_name)
     {
         (void) activate_random_artifact(o_ptr);
@@ -3890,6 +3886,11 @@ void do_cmd_activate(int item)
 				break;
 			}
 		}
+
+	/* Gain experience if the activation took place. */
+	if (o_ptr->timeout)
+		skill_exp(SKILL_DEVICE);
+
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
