@@ -1256,7 +1256,10 @@ static errr init_other(void)
 	/*** Prepare the "dungeon" information ***/
 
 	/* Allocate and Wipe the object list */
-	C_MAKE(o_list, MAX_O_IDX, object_type);
+	C_MAKE(o_list, MAX_O_IDX+INVEN_TOTAL, object_type);
+
+	/* Divide the object list into player and dungeon sections. */
+	inventory = inventory + MAX_O_IDX;
 
 	/* Allocate and Wipe the monster list */
 	C_MAKE(m_list, MAX_M_IDX, monster_type);
@@ -1292,12 +1295,6 @@ static errr init_other(void)
 
 	/* Hack -- No messages yet */
 	message__tail = MESSAGE_BUF;
-
-
-	/*** Prepare the Player inventory ***/
-
-	/* Allocate it */
-	C_MAKE(inventory, INVEN_TOTAL, object_type);
 
 
 	/*** Prepare the Stores ***/
