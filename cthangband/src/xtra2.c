@@ -263,6 +263,8 @@ struct temp_effect_type
 	/* A function for a bad effect as the counter is noticed increasing. */
 	void (*worsen)(int v);
 
+	int prt_flag; /* A single thing to redraw, based on an XY_* index. */
+
 	u32b redraw; /* The following should be redrawn if something is noticed. */
 	u32b update; /* The following should be updated if something is noticed. */
 	u32b window; /* The following windows may change if something is noticed. */
@@ -548,37 +550,37 @@ static cptr const temp_effects_text[] =
 
 static const temp_effect_type temp_effects[TIMED_MAX] =
 {
-	{IDX(TIMED_BLIND) 0, notice_bool, 0, PR_MAP | PR_BLIND,
+	{IDX(TIMED_BLIND) 0, notice_bool, 0, XY_BLIND+1, PR_MAP,
 		PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_MONSTERS, PW_OVERHEAD},
-	{IDX(TIMED_CONFUSED) 2, notice_bool, 0, PR_CONFUSED, 0, 0},
-	{IDX(TIMED_POISONED) 4, notice_bool, 0, PR_POISONED, 0, 0},
-	{IDX(TIMED_AFRAID) 6, notice_bool, 0, PR_AFRAID, 0, 0},
-	{IDX(TIMED_PARALYZED) 8, notice_bool, 0, PR_STATE, 0, 0},
-	{IDX(TIMED_IMAGE) 10, notice_bool, 0,
+	{IDX(TIMED_CONFUSED) 2, notice_bool, 0, XY_CONFUSED+1, 0, 0, 0},
+	{IDX(TIMED_POISONED) 4, notice_bool, 0, XY_POISONED+1, 0, 0, 0},
+	{IDX(TIMED_AFRAID) 6, notice_bool, 0, XY_AFRAID+1, 0, 0, 0},
+	{IDX(TIMED_PARALYZED) 8, notice_bool, 0, 0, PR_STATE, 0, 0},
+	{IDX(TIMED_IMAGE) 10, notice_bool, 0, 0,
 		PR_MAP, PU_MONSTERS, PW_OVERHEAD | PW_VISIBLE},
-	{IDX(TIMED_FAST) 12, notice_bool, 0, 0, PU_BONUS, 0},
-	{IDX(TIMED_SLOW) 14, notice_bool, 0, 0, PU_BONUS, 0},
-	{IDX(TIMED_SHIELD) 16, notice_bool, 0, 0, PU_BONUS, 0},
-	{IDX(TIMED_BLESSED) 18, notice_bool, 0, 0, PU_BONUS, 0},
-	{IDX(TIMED_HERO) 20, notice_bool, 0, 0, PU_BONUS | PU_HP, 0},
-	{IDX(TIMED_SHERO) 22, notice_bool, 0, 0, PU_BONUS | PU_HP, 0},
-	{IDX(TIMED_PROTEVIL) 24, notice_bool, 0, 0, 0, 0},
-	{IDX(TIMED_WRAITH) 26, notice_bool, 0,
+	{IDX(TIMED_FAST) 12, notice_bool, 0, 0, 0, PU_BONUS, 0},
+	{IDX(TIMED_SLOW) 14, notice_bool, 0, 0, 0, PU_BONUS, 0},
+	{IDX(TIMED_SHIELD) 16, notice_bool, 0, 0, 0, PU_BONUS, 0},
+	{IDX(TIMED_BLESSED) 18, notice_bool, 0, 0, 0, PU_BONUS, 0},
+	{IDX(TIMED_HERO) 20, notice_bool, 0, 0, 0, PU_BONUS | PU_HP, 0},
+	{IDX(TIMED_SHERO) 22, notice_bool, 0, 0, 0, PU_BONUS | PU_HP, 0},
+	{IDX(TIMED_PROTEVIL) 24, notice_bool, 0, 0, 0, 0, 0},
+	{IDX(TIMED_WRAITH) 26, notice_bool, 0, 0,
 		PR_MAP, PU_MONSTERS | PU_BONUS, PW_OVERHEAD},
-	{IDX(TIMED_INVULN) 28, notice_bool, 0,
+	{IDX(TIMED_INVULN) 28, notice_bool, 0, 0,
 		PR_MAP, PU_MONSTERS | PU_BONUS, PW_OVERHEAD},
-	{IDX(TIMED_ESP) 30, notice_bool, 0, 0, PU_MONSTERS | PU_BONUS, 0},
-	{IDX(TIMED_INVIS) 32, notice_bool, 0, 0, PU_BONUS | PU_MONSTERS, 0},
-	{IDX(TIMED_INFRA) 34, notice_bool, 0, 0, PU_BONUS | PU_MONSTERS, 0},
-	{IDX(TIMED_OPPOSE_ACID) 36, notice_res, 0, PR_STUDY, 0, 0},
-	{IDX(TIMED_OPPOSE_ELEC) 39, notice_res, 0, PR_STUDY, 0, 0},
-	{IDX(TIMED_OPPOSE_FIRE) 42, notice_res, 0, PR_STUDY, 0, 0},
-	{IDX(TIMED_OPPOSE_COLD) 45, notice_res, 0, PR_STUDY, 0, 0},
-	{IDX(TIMED_OPPOSE_POIS) 48, notice_res, 0, PR_STUDY, 0, 0},
-	{IDX(TIMED_STUN) 51, notice_stun, worsen_stun, PR_STUN, PU_BONUS, 0},
-	{IDX(TIMED_CUT) 56, notice_cuts, worsen_cuts, PR_CUT, PU_BONUS, 0},
-	{IDX(TIMED_FOOD) 65, notice_food, 0, PR_HUNGER, PU_BONUS, 0},
-	{IDX(TIMED_VAMP) 75, notice_nothing, 0, 0, 0, 0},
+	{IDX(TIMED_ESP) 30, notice_bool, 0, 0, 0, PU_MONSTERS | PU_BONUS, 0},
+	{IDX(TIMED_INVIS) 32, notice_bool, 0, 0, 0, PU_BONUS | PU_MONSTERS, 0},
+	{IDX(TIMED_INFRA) 34, notice_bool, 0, 0, 0, PU_BONUS | PU_MONSTERS, 0},
+	{IDX(TIMED_OPPOSE_ACID) 36, notice_res, 0, 0, PR_STUDY, 0, 0},
+	{IDX(TIMED_OPPOSE_ELEC) 39, notice_res, 0, 0, PR_STUDY, 0, 0},
+	{IDX(TIMED_OPPOSE_FIRE) 42, notice_res, 0, 0, PR_STUDY, 0, 0},
+	{IDX(TIMED_OPPOSE_COLD) 45, notice_res, 0, 0, PR_STUDY, 0, 0},
+	{IDX(TIMED_OPPOSE_POIS) 48, notice_res, 0, 0, PR_STUDY, 0, 0},
+	{IDX(TIMED_STUN) 51, notice_stun, worsen_stun, XY_STUN+1, 0, PU_BONUS, 0},
+	{IDX(TIMED_CUT) 56, notice_cuts, worsen_cuts, XY_CUT+1, 0, PU_BONUS, 0},
+	{IDX(TIMED_FOOD) 65, notice_food, 0, XY_HUNGRY+1, 0, PU_BONUS, 0},
+	{IDX(TIMED_VAMP) 75, notice_nothing, 0, 0, 0, 0, 0},
 };
 
 /*
@@ -672,6 +674,29 @@ static bool allow_set_flag_p(int flag)
 	}
 }
 
+static void prt_timer(const temp_effect_type *t_ptr)
+{
+	const redraw_type *r_ptr;
+	int y, x, m;
+
+	/* No simple "draw" function. */
+	if (!t_ptr->prt_flag) return;
+
+	/* Find the location data. */
+ 	r_ptr = screen_coords+t_ptr->prt_flag-1;
+
+	/* Nothing to draw. */
+	if (!r_ptr->l) return;
+
+	/* Extract the location. */
+	Term_get_size(&y, &x);
+	m = y; y += r_ptr->y; y %= m;
+	m = x; x += r_ptr->x; x %= m;
+
+	/* Print it. */
+	mc_put_lfmt(y, x, r_ptr->l, "%s", prt_flag(t_ptr - temp_effects));
+}
+
 /*
  * Set one of the above variables to a specific value, and react appropriately.
  */
@@ -714,6 +739,9 @@ static bool set_flag_aux(int flag, int v, bool add)
 
 	/* Only carry out side effects once. */
 	worsen = FALSE;
+
+	/* Print the on-screen symbol, if any. */
+	prt_timer(t_ptr);
 
 	/* Recalculate various things. */
 	p_ptr->update |= t_ptr->update;
@@ -776,6 +804,20 @@ cptr PURE prt_flag_long(int flag)
 
 	/* Return the long form of the message. */
 	return temp_effects_text[n + temp_effects[flag].text + OFFSET(flag)];
+}
+
+/*
+ * Print every on-soreen timer.
+ */
+void prt_timers(void)
+{
+	const temp_effect_type *t_ptr;
+
+	FOR_ALL_IN(temp_effects, t_ptr)
+	{
+		/* Print this timer, if possible. */
+		prt_timer(t_ptr);
+	}
 }
 
 /*

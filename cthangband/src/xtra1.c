@@ -349,55 +349,6 @@ static void prt_depth(void)
 }
 
 
-/*
- * Prints status of hunger
- */
-static void prt_hunger(void)
-{
-	cptr s = prt_flag(TIMED_FOOD);
-	mc_put_lfmt(GET_YX(XY_HUNGRY), "%s", s);
-}
-
-
-/*
- * Prints Blind status
- */
-static void prt_blind(void)
-{
-	cptr s = prt_flag(TIMED_BLIND);
-	mc_put_lfmt(GET_YX(XY_BLIND), "%s", s);
-}
-
-
-/*
- * Prints Confusion status
- */
-static void prt_confused(void)
-{
-	cptr s = prt_flag(TIMED_CONFUSED);
-	mc_put_lfmt(GET_YX(XY_CONFUSED), "%s", s);
-}
-
-
-/*
- * Prints Fear status
- */
-static void prt_afraid(void)
-{
-	cptr s = prt_flag(TIMED_AFRAID);
-	mc_put_lfmt(GET_YX(XY_AFRAID), "%s", s);
-}
-
-
-/*
- * Prints Poisoned status
- */
-static void prt_poisoned(void)
-{
-	cptr s = prt_flag(TIMED_POISONED);
-	mc_put_lfmt(GET_YX(XY_POISONED), "%s", s);
-}
-
 
 /*
  * Prints Searching, Resting, Paralysis, or 'count' status
@@ -445,13 +396,13 @@ static void prt_state(void)
 	/* Sneaking */
 	else if (p_ptr->sneaking)
 	{
-		s = "Sneaking  ";
+		s = "Sneaking";
 	}
 
 	/* Nothing interesting */
 	else
 	{
-		s = "          ";
+		s = "";
 	}
 
 	/* Display the info (or blanks) */
@@ -507,22 +458,6 @@ static void prt_study(void)
 	}
 	mc_put_lfmt(GET_YX(XY_STUDY), "%s", buf);
 }
-
-
-static void prt_cut(void)
-{
-	cptr s = prt_flag(TIMED_CUT);
-	mc_put_lfmt(GET_YX(XY_CUT), "%s", s);
-}
-
-
-
-static void prt_stun(void)
-{
-	cptr s = prt_flag(TIMED_POISONED);
-	mc_put_lfmt(GET_YX(XY_POISONED), "%s", s);
-}
-
 
 
 /*
@@ -2900,6 +2835,12 @@ void redraw_stuff(void)
 		prt_map();
 	}
 
+	if (p_ptr->redraw & (PR_TIMERS))
+	{
+		p_ptr->redraw &= ~(PR_TIMERS);
+		prt_timers();
+	}
+
     if (p_ptr->redraw & (PR_EQUIPPY))
     {
         p_ptr->redraw &= ~(PR_EQUIPPY);
@@ -2969,48 +2910,6 @@ void redraw_stuff(void)
 	{
 		p_ptr->redraw &= ~(PR_HEALTH);
 		health_redraw();
-	}
-
-	if (p_ptr->redraw & (PR_CUT))
-	{
-		p_ptr->redraw &= ~(PR_CUT);
-		prt_cut();
-	}
-
-	if (p_ptr->redraw & (PR_STUN))
-	{
-		p_ptr->redraw &= ~(PR_STUN);
-		prt_stun();
-	}
-
-	if (p_ptr->redraw & (PR_HUNGER))
-	{
-		p_ptr->redraw &= ~(PR_HUNGER);
-		prt_hunger();
-	}
-
-	if (p_ptr->redraw & (PR_BLIND))
-	{
-		p_ptr->redraw &= ~(PR_BLIND);
-		prt_blind();
-	}
-
-	if (p_ptr->redraw & (PR_CONFUSED))
-	{
-		p_ptr->redraw &= ~(PR_CONFUSED);
-		prt_confused();
-	}
-
-	if (p_ptr->redraw & (PR_AFRAID))
-	{
-		p_ptr->redraw &= ~(PR_AFRAID);
-		prt_afraid();
-	}
-
-	if (p_ptr->redraw & (PR_POISONED))
-	{
-		p_ptr->redraw &= ~(PR_POISONED);
-		prt_poisoned();
 	}
 
 	if (p_ptr->redraw & (PR_STATE))

@@ -2537,6 +2537,12 @@ static void msg_flush(int x)
 }
 
 
+/* 
+ * Hack - prevent messages from being printed or remembered until further
+ * notice.
+ */
+bool no_msg_print = FALSE;
+
 /*
  * Output a message to the top line of the screen.
  *
@@ -2574,6 +2580,8 @@ void msg_print(cptr msg)
 
 	char buf[1024];
 
+	/* *Hack* - disable. */
+	if (no_msg_print) return;
 
 	/* Hack -- Reset */
 	if (!msg_flag) p = 0;

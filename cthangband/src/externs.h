@@ -2225,7 +2225,7 @@ extern spirit_type spirits[MAX_SPIRITS];
 #if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
 extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern redraw_type screen_coords[NUM_SCREEN_COORDS];
 #endif
 #if (defined(INIT1_C) || defined(MONSTER1_C) || defined(POWERS_C) || defined(TABLES_C))
@@ -2405,7 +2405,7 @@ extern void mc_put_str(const int y, const int x, cptr str);
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
-#if (defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_lfmt(const int y, const int x, const int l, cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -3869,7 +3869,7 @@ extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
 #if (defined(CAVE_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_get_cursor(bool *v);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern void Term_get_size(int *w, int *h);
 #endif
 #if (defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
@@ -3994,5 +3994,17 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* xtra2.c */
+
+#if (defined(XTRA1_C) || defined(XTRA2_C))
+extern void prt_timers(void);
+#endif
+
+/* util.c */
+
+#if (defined(DUNGEON_C) || defined(UTIL_C))
+extern bool no_msg_print;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

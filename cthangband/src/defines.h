@@ -2206,6 +2206,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Bit flags for the "p_ptr->redraw" variable
  */
+#define PR_TIMERS	(1L<<0)	/* Display various timers */
 #define PR_STATS        0x00000010L     /* Display Stats */
 #define PR_ARMOR        0x00000020L     /* Display Armor */
 #define PR_HP           0x00000040L     /* Display Hitpoints */
@@ -2214,14 +2215,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PR_DEPTH        0x00000200L     /* Display Depth */
 #define PR_EQUIPPY      0x00000400L     /* Display equippy chars */
 #define PR_HEALTH       0x00000800L     /* Display Health Bar */
-#define PR_CUT          0x00001000L     /* Display Extra (Cut) */
-#define PR_STUN         0x00002000L     /* Display Extra (Stun) */
-#define PR_HUNGER       0x00004000L     /* Display Extra (Hunger) */
 #define PR_TIME         0x00008000L     /* Display Time */
-#define PR_BLIND        0x00010000L     /* Display Extra (Blind) */
-#define PR_CONFUSED     0x00020000L     /* Display Extra (Confused) */
-#define PR_AFRAID       0x00040000L     /* Display Extra (Afraid) */
-#define PR_POISONED     0x00080000L     /* Display Extra (Poisoned) */
 #define PR_STATE        0x00100000L     /* Display Extra (State) */
 #define PR_SPEED        0x00200000L     /* Display Extra (Speed) */
 #define PR_STUDY        0x00400000L     /* Display Extra (Study) */
@@ -2237,8 +2231,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PR_WIPE (PR_WIPE_1 | PR_WIPE_0)
 
 #define PR_ALL \
-	(PR_CUT | PR_STUN | PR_HUNGER | PR_BLIND | PR_CONFUSED | PR_AFRAID | \
-	PR_POISONED | PR_STATE | PR_SPEED | PR_STUDY | PR_STATS | PR_GOLD | \
+	(PR_TIMERS | PR_STATE | PR_SPEED | PR_STUDY | PR_STATS | PR_GOLD | \
 	PR_ARMOR | PR_HP | PR_MANA | PR_DEPTH | PR_HEALTH | PR_TIME | PR_WIPE | \
 	PR_EQUIPPY | PR_SPIRIT | PR_ENERGY | PR_MAP)
 

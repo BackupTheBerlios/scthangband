@@ -1552,8 +1552,9 @@ static void process_chaos(void)
 			{
 				disturb(0);
 				msg_print("It's so dark... so scary!");
-				p_ptr->redraw |= PR_AFRAID;
-				p_ptr->afraid = (p_ptr->afraid) + 13 + randint(26);
+				no_msg_print = TRUE;
+				add_flag(TIMED_AFRAID, rand_range(14, 39));
+				no_msg_print = FALSE;
 			}
 		}
 
