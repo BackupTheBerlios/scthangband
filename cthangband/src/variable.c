@@ -886,13 +886,6 @@ bool item_tester_full;
 
 
 /*
- * Here is a "pseudo-hook" used during calls to "get_item()" and
- * "show_inven()" and "show_equip()", and the choice window routines.
- */
-byte item_tester_tval;
-
-
-/*
  * Here is a "hook" used during calls to "get_item()" and
  * "show_inven()" and "show_equip()", and the choice window routines.
  */

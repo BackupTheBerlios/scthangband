@@ -2566,34 +2566,8 @@ void process_command(void)
             }
             break;
 		}
-			/*** Use various objects ***/
 
-			/* Fuel your lantern/torch */
-		case 'F':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_refill(NULL);
-			} else {
-				do_cmd_use_object(command_cmd);
-			}
-			break;
-		}
-
-			/* Fire an item */
-		case 'f':
-		{
-			do_cmd_fire();
-			break;
-		}
-
-			/* Throw an item */
-		case 'v':
-		{
-            do_cmd_throw(1);
-			break;
-		}
-
+		/* Use a chaos/racial power. */
         case 'U':
         {
             do_cmd_racial_power();
@@ -2930,13 +2904,6 @@ void process_command(void)
 			break;
 		}
 
-
-		/* Object playing routines */
-		case CMD_DEBUG+'o':
-		{
-			do_cmd_wiz_play();
-			break;
-		}
 
 		/* Phase Door */
 		case CMD_DEBUG+'p':

@@ -1185,7 +1185,7 @@ static void wiz_quantity_item(object_type *o_ptr)
  *   - Change properties (via wiz_tweak_item)
  *   - Change the number of items (via wiz_quantity_item)
  */
-void do_cmd_wiz_play(void)
+void do_cmd_wiz_play(object_type *o_ptr)
 {
 	errr err;
 
@@ -1196,20 +1196,7 @@ void do_cmd_wiz_play(void)
 
 	char ch;
 
-	bool changed, finished = FALSE;
-
-
-	/* Get an item (from equip or inven) */
-	if (!((o_ptr = get_item(&err, "Play with which object? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to play with.");
-		return;
-	}
-
-
-	/* The item was not changed */
-	changed = FALSE;
-
+	bool changed = FALSE, finished = FALSE;
 
 	/* Icky */
 	character_icky = TRUE;

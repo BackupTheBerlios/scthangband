@@ -368,6 +368,7 @@ static bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
  */
 errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr)
 {
+	char buf[80];
 	errr err;
 
 	bool force = FALSE;
@@ -381,9 +382,11 @@ errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr)
 	/* Restrict the choices */
 	item_tester_hook = item_tester_hook_destroy;
 
+	/* Get a string. */
+	strnfmt(buf, sizeof(buf), "%^s which item%s? ", verb, dative);
+
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&err, format("%^s which item%s? ", verb, dative),
-		TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, buf, TRUE, TRUE, TRUE))))
 	{
 		if (err == -2) msg_format("You have nothing to %s%s.", verb, dative);
 		return POWER_ERROR_ABORT;
@@ -449,11 +452,13 @@ errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr)
 void do_cmd_destroy(void)
 {
 	object_type o_ptr[1];
-	if (do_cmd_destroy_aux("destroy", "", o_ptr) != POWER_ERROR_ABORT)
-	{
+
+	errr err = do_cmd_destroy_aux("destroy", "", o_ptr);
+
+	if (err != POWER_ERROR_ABORT) energy_use = extract_energy[p_ptr->pspeed];
+
+	if (!err)
 		msg_format("You have destroyed %v.", object_desc_f3, o_ptr, TRUE, 3);
-		energy_use = extract_energy[p_ptr->pspeed];
-	}
 }
 
 
@@ -604,69 +609,22 @@ void do_cmd_inscribe(object_type *o_ptr)
 }
 
 
-
-/*
- * An "item_tester_hook" for refilling lanterns
- */
-static bool item_tester_refill_lantern(object_ctype *o_ptr)
-{
-	/* Only refuel with other lanterns. */
-	if (o_ptr == &inventory[INVEN_LITE]) return FALSE;
-
-	/* Flasks of oil are okay */
-	if (o_ptr->tval == TV_FLASK) return (TRUE);
-
-	/* Lanterns are okay */
-	if (o_ptr->k_idx == OBJ_BRASS_LANTERN) return (TRUE);
-
-	/* Assume not okay */
-	return (FALSE);
-}
-
-
 /*
  * Refill the players lamp (from the pack or floor)
  */
 static void do_cmd_refill_lamp(object_type *o_ptr)
 {
-	object_type *j_ptr;
-
-
-	/* Restrict the choices */
-	item_tester_hook = item_tester_refill_lantern;
-
-	/* Get an item if we weren't passed one */
-	if (!o_ptr)
-	{
-		errr err;
-		/* Get an (from inven or floor) */
-		if (!((o_ptr = get_item(&err, "Refill with which flask? ", TRUE, TRUE, TRUE))))
-		{
-			if (err == -2) msg_print("You have no flasks of oil.");
-			return;
-		}
-	}
-
-	item_tester_hook = item_tester_refill_lantern;
-	if(!item_tester_okay(o_ptr))
-	{
-		msg_print("You can't refill a lantern from that!");
-		item_tester_hook = 0;
-		return;
-	}
-	item_tester_hook = 0;
-
-	/* Take a partial turn */
-	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
-
 	/* Access the lantern */
-	j_ptr = &inventory[INVEN_LITE];
+	object_type *j_ptr = &inventory[INVEN_LITE];
 
 	/* Refuel */
 	j_ptr->pval += o_ptr->pval;
 
 	/* No longer empty. */
 	j_ptr->ident &= ~(IDENT_EMPTY);
+
+	/* Take a partial turn */
+	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 	/* Message */
 	msg_print("You fuel your lamp.");
@@ -688,60 +646,16 @@ static void do_cmd_refill_lamp(object_type *o_ptr)
 }
 
 
-
-/*
- * An "item_tester_hook" for refilling torches
- */
-static bool item_tester_refill_torch(object_ctype *o_ptr)
-{
-	/* Only refuel with other lanterns. */
-	if (o_ptr == &inventory[INVEN_LITE]) return FALSE;
-
-	/* Torches are okay */
-	if (o_ptr->k_idx == OBJ_WOODEN_TORCH) return (TRUE);
-
-	/* Assume not okay */
-	return (FALSE);
-}
-
-
 /*
  * Refuel the players torch (from the pack or floor)
  */
 static void do_cmd_refill_torch(object_type *o_ptr)
 {
-	object_type *j_ptr;
-
-
-	/* Restrict the choices */
-	item_tester_hook = item_tester_refill_torch;
-
-	/* Get an item if we weren't passed one */
-	if(!o_ptr)
-	{
-		errr err;
-		/* Get an (from inven or floor) */
-		if (!((o_ptr = get_item(&err, "Refuel with which torch? ", TRUE, TRUE, TRUE))))
-		{
-			if (err == -2) msg_print("You have no extra torches.");
-			return;
-		}
-	}
-
-	item_tester_hook = item_tester_refill_torch;
-	if(!item_tester_okay(o_ptr))
-	{
-		msg_print("You can't refill a torch with that!");
-		item_tester_hook = 0;
-		return;
-	}
-	item_tester_hook = 0;
+	/* Access the primary torch */
+	object_type *j_ptr = &inventory[INVEN_LITE];
 
 	/* Take a partial turn */
 	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
-
-	/* Access the primary torch */
-	j_ptr = &inventory[INVEN_LITE];
 
 	/* Refuel */
 	j_ptr->pval += o_ptr->pval + 5;
@@ -756,7 +670,7 @@ static void do_cmd_refill_torch(object_type *o_ptr)
 	if (j_ptr->pval >= FUEL_TORCH)
 	{
 		j_ptr->pval = FUEL_TORCH;
-		msg_print("Your torch is fully fueled.");
+		msg_print("Your torch is fully fuelled.");
 	}
 
 	/* Refuel message */

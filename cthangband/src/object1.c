@@ -3534,6 +3534,13 @@ cptr PURE describe_use(object_ctype *o_ptr)
 }
 
 /*
+ * Here is a "pseudo-hook" used during calls to "get_item()" and
+ * "show_inven()" and "show_equip()", and the choice window routines.
+ */
+static byte item_tester_tval;
+
+
+/*
  * Check an item against the item tester info
  */
 bool item_tester_okay(object_ctype *o_ptr)
@@ -4880,14 +4887,39 @@ struct object_function
 	s16b cmd; /* Which command key does this. */
 	void (*func)(object_type *); /* Which function carries it out. */
 	cptr verb; /* How the game describes it. */
-	cptr noun;
-	bool (*ban)(void);
-	bool (*hook)(object_ctype *);
-	byte tval;
-	bool equip;
-	bool inven;
-	bool floor;
+	cptr noun; /* What sort of item the command uses (or "item"). */
+	bool (*ban)(void); /* Forbid the command from looking for objects. */
+	bool (*hook)(object_ctype *); /* Allow items which match this hook. */
+	byte tval; /* Allow items with this tval. */
+	bool equip; /* Allow equipment items. */
+	bool inven; /* Allow inventory items. */
+	bool floor; /* Allow floor items. */
 };
+
+/*
+ * Can it refuel the wielded light?
+ */
+static bool PURE item_tester_refuel(object_ctype *o_ptr)
+{
+	switch (inventory[INVEN_LITE].k_idx)
+	{
+		case OBJ_BRASS_LANTERN:
+		{
+			if (o_ptr->k_idx == OBJ_BRASS_LANTERN) return TRUE;
+			else if (o_ptr->tval == TV_FLASK) return TRUE;
+			else return FALSE;
+		}
+		case OBJ_WOODEN_TORCH:
+		{
+			if (o_ptr->k_idx == OBJ_WOODEN_TORCH) return TRUE;
+			else return FALSE;
+		}
+		default: /* Paranoia - forbid_refuel() should catch this. */
+		{
+			return FALSE;
+		}
+	}
+}
 
 /*
  * Is it not yet hidden?
@@ -4915,6 +4947,21 @@ static bool PURE item_tester_book(object_ctype *o_ptr)
 }
 
 /*
+ * Can it be dropped?
+ */
+static bool PURE item_tester_hook_drop(object_ctype *o_ptr)
+{
+	object_type j_ptr[1];
+	object_info_known(j_ptr, o_ptr);
+
+	/* Reject known cursed worn items. */
+	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
+
+	/* Accept everything else. */
+	return TRUE;
+}
+
+/*
  * Can it be activated?
  */
 static bool PURE item_tester_hook_activate(object_ctype *o_ptr)
@@ -4935,9 +4982,58 @@ static bool PURE item_tester_hook_activate(object_ctype *o_ptr)
 }
 
 /*
+ * Can it be fired with the equipped launcher?
+ */
+static bool PURE item_tester_hook_fire(object_ctype *o_ptr)
+{
+	return (o_ptr->tval == p_ptr->tval_ammo);
+}
+
+/*
+ * Check that the player is wielding a light which can be refuelled.
+ */
+static bool forbid_refuel(void)
+{
+	/* Get the light */
+	object_type *o_ptr = &inventory[INVEN_LITE];
+
+	/* It is nothing */
+	if (o_ptr->tval != TV_LITE)
+	{
+		msg_print("You are not wielding a light.");
+		return TRUE;
+	}
+	switch (o_ptr->k_idx)
+	{
+		case OBJ_BRASS_LANTERN:
+		case OBJ_WOODEN_TORCH:
+			return FALSE;
+		default:
+			msg_print("Your light cannot be refilled.");
+			return TRUE;
+	}
+}
+
+/*
+ * Check that the player has a weapon with which to fire stuff.
+ */
+static bool forbid_fire(void)
+{
+	if (!inventory[INVEN_BOW].tval)
+	{
+		msg_print("You have nothing to fire with.");
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+/*
  * Check some conditions which prevent scroll reading.
  */
-static bool PURE forbid_read(void)
+static bool forbid_read(void)
 {
 	if (p_ptr->blind)
 	{
@@ -4961,7 +5057,7 @@ static bool PURE forbid_read(void)
 /*
  * Check some conditions which prevent studying (possibly silly).
  */
-static bool PURE forbid_study(void)
+static bool forbid_study(void)
 {
 	if (p_ptr->blind)
 	{
@@ -4987,7 +5083,7 @@ static bool PURE forbid_study(void)
 /*
  * Check some conditions which prevent spellcasting.
  */
-static bool PURE forbid_cast(void)
+static bool forbid_cast(void)
 {
 	/* Forbid (and reveal) anti-magic shells. */
 	if (p_ptr->anti_magic)
@@ -5012,6 +5108,15 @@ static bool PURE forbid_cast(void)
 	return TRUE;
 }
 
+/*
+ * Paranoia - check wizard mode before running a wizard command.
+ * This is only accessible via do_cmd_debug() at present, which performs
+ * its own checks.
+ */ 
+static bool forbid_non_debug(void)
+{
+	return !cheat_wzrd;
+}
 
 static object_function object_functions[] =
 {
@@ -5043,10 +5148,6 @@ static object_function object_functions[] =
 		NULL, NULL, 0, TRUE, FALSE, FALSE},
 	{'d', do_cmd_drop, "drop", "item",
 		NULL, item_tester_hook_drop, 0, TRUE, TRUE, FALSE},
-#if 0
-	{'k', do_cmd_destroy, "destroy", "item",
-		NULL, item_tester_hook_destroy, 0, TRUE, TRUE, TRUE},
-#endif
 	{'K', do_cmd_hide_object, "hide", "item",
 		NULL, item_tester_unhidden, 0, TRUE, TRUE, TRUE},
 	{'I', do_cmd_observe, "examine", "item",
@@ -5057,18 +5158,24 @@ static object_function object_functions[] =
 		NULL, NULL, 0, TRUE, TRUE, TRUE},
 	{KTRL('u'), do_cmd_handle, "use", "item",
 		NULL, NULL, 0, TRUE, TRUE, TRUE},
-	/* Refuel */
-	/* Handle */
-	/* Fire */
-	/* Throw (throw_mult) */
+	{'f', do_cmd_fire, "fire", "item",
+		forbid_fire, item_tester_hook_fire, 0, FALSE, TRUE, TRUE},
+	{'v', do_cmd_throw, "throw", "item",
+		NULL, item_tester_hook_drop, 0, TRUE, TRUE, TRUE},
+	{'F', do_cmd_refill, "refuel", "item",
+		forbid_refuel, item_tester_refuel, 0, TRUE, TRUE, TRUE},
+	/* destroy */
+	/* *identify* */
+	{CMD_DEBUG+'o', do_cmd_wiz_play, "play with", "object",
+		forbid_non_debug, NULL, 0, TRUE, TRUE, TRUE},
 };
 
 static object_function *get_object_function(s16b cmd)
 {
 	object_function *ptr;
 
-	if (unify_commands && strchr("AEabqruz", cmd)) cmd = KTRL('u');
-		
+	/* Hack - handle unify_commands here (without changing command_cmd). */
+	if (unify_commands && strchr("AEFabqruz", cmd)) cmd = KTRL('u');
 
 	FOR_ALL_IN(object_functions, ptr)
 	{
@@ -5085,7 +5192,6 @@ static object_type *get_object(object_function *func)
 	errr err;
 	object_type *o_ptr;
 	char buf[120];
-	cptr a;
 
 	assert(func && (!func->ban || !(*func->ban)())); /* Caller. */
 
@@ -5105,8 +5211,12 @@ static object_type *get_object(object_function *func)
 	if (err == GET_ITEM_ERROR_ABORT) return NULL;
 
 	/* Give an error message for NO_ITEMS. */
-	a = (is_a_vowel(func->noun[0])) ? "an" : "a";
-	msg_format("You do not have %s %s to %s.", a, func->noun, func->verb);
+	if (!strcmp(func->noun, "item"))
+		msg_format("You do not have anything to %s.", func->verb);
+	else if (is_a_vowel(func->noun[0]))
+		msg_format("You do not have an %s to %s.", func->noun, func->verb);
+	else
+		msg_format("You do not have a %s to %s.", func->noun, func->verb);
 
 	return NULL;
 }

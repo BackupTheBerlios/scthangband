@@ -1266,72 +1266,43 @@ static void do_cmd_fire_aux(object_type *o_ptr,
  *
  * Note that Bows of "Extra Shots" give an extra shot.
  */ 
-void do_cmd_fire(void)
+void do_cmd_fire(object_type *o_ptr)
 {
-	errr err;
-
 	/* Get the "bow" (if any) */
-	object_type *o_ptr, *bow_ptr = &inventory[INVEN_BOW];
+	object_type *bow_ptr = &inventory[INVEN_BOW];
 
-	/* Require a launcher */
-	if (!bow_ptr->tval)
-	{
-		msg_print("You have nothing to fire with.");
-		return;
-	}
+	/* Use the proper number of shots */
+	int thits = p_ptr->num_fire;
 
-	/* Require proper missile */
-	item_tester_tval = p_ptr->tval_ammo;
+	/* Base damage from thrown object plus launcher bonus */
+	int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d + bow_ptr->to_d;
 
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Fire which item? ", FALSE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to fire.");
-	}
-	else
-	{
-		/* Use the proper number of shots */
-		int thits = p_ptr->num_fire;
+	int mult = get_bow_mult(bow_ptr);
 
-		/* Base damage from thrown object plus launcher bonus */
-		int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d + bow_ptr->to_d;
+	/* Base range */
+	int tdis = 10 + 5 * mult;
 
-		int mult = get_bow_mult(bow_ptr);
+	/* Chance of hitting */
+	int chance = (p_ptr->to_h + o_ptr->to_h + bow_ptr->to_h);
+	chance = (p_ptr->skill_thb + (chance * BTH_PLUS_ADJ));
 
-		/* Base range */
-		int tdis = 10 + 5 * mult;
+	/* Get extra "power" from "extra might" */
+	if (p_ptr->xtra_might) mult++;
 
-		/* Chance of hitting */
-		int chance = (p_ptr->to_h + o_ptr->to_h + bow_ptr->to_h);
-		chance = (p_ptr->skill_thb + (chance * BTH_PLUS_ADJ));
+	/* Boost the damage */
+	tdam *= mult;
 
-		/* Get extra "power" from "extra might" */
-		if (p_ptr->xtra_might) mult++;
+	/* Take a (partial) turn */
+	energy_use = (60*TURN_ENERGY / thits);
 
-		/* Boost the damage */
-		tdam *= mult;
-
-		/* Take a (partial) turn */
-		energy_use = (60*TURN_ENERGY / thits);
-
-		do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
-	}
+	do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
 }
 
-/*
- * Hook to determine if an item can be dropped or thrown.
+/* 
+ * Hack - store the multiplier here. Must be returned to 1 at the end of each
+ * action.
  */
-bool PURE item_tester_hook_drop(object_ctype *o_ptr)
-{
-	object_type j_ptr[1];
-	object_info_known(j_ptr, o_ptr);
-
-	/* Reject known cursed worn items. */
-	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
-
-	/* Accept everything else. */
-	return TRUE;
-}
+static int throw_mult = 1;
 
 /*
  * Throw an object from the pack or floor.
@@ -1342,44 +1313,41 @@ bool PURE item_tester_hook_drop(object_ctype *o_ptr)
  * to hit bonus of the weapon to have an effect?  Should it ever cause
  * the item to be destroyed?  Should it do any damage at all?
  */
-void do_cmd_throw(int mult)
+void do_cmd_throw(object_type *o_ptr)
 {
-	errr err;
-	object_type *o_ptr;
+	/* Extract a "distance multiplier" */
+	/* Changed for 'launcher' chaos feature */
+	int p = 10 + 2 * (throw_mult - 1);
 
-	/* Restrict the choices */
-	item_tester_hook = item_tester_hook_drop;
+	/* Enforce a minimum "weight" of one pound */
+	int q = ((o_ptr->weight > 10) ? o_ptr->weight : 10);
 
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Throw which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to throw.");
-	}
-	else
-	{
-		/* Extract a "distance multiplier" */
-		/* Changed for 'launcher' chaos feature */
-		int p = 10 + 2 * (mult - 1);
+	/* Hack -- Distance -- Reward strength, penalize weight */
+	int tdis = MIN((adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * p / q, 10);
 
-		/* Enforce a minimum "weight" of one pound */
-		int q = ((o_ptr->weight > 10) ? o_ptr->weight : 10);
+	/* Hack -- Base damage from thrown object */
+	int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d * throw_mult;
 
-		/* Hack -- Distance -- Reward strength, penalize weight */
-		int tdis = MIN((adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * p / q, 10);
+	/* Chance of hitting */
+	int chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
 
-		/* Hack -- Base damage from thrown object */
-		int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d * mult;
+	/* Take a turn */
+	energy_use = extract_energy[p_ptr->pspeed];
 
-		/* Chance of hitting */
-		int chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
-
-		/* Take a turn */
-		energy_use = extract_energy[p_ptr->pspeed];
-
-		do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
-	}
+	do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
 }
 
+/*
+ * Hack - throw a missile hard.
+ */
+void do_cmd_throw_hard(int mult)
+{
+	throw_mult = mult;
+
+	do_cmd_use_object('v');
+
+	throw_mult = 1;
+}
 
 /*
  * If a power has a negative cost, the cost given is a reference to this table.

@@ -6463,7 +6463,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case MUT_LAUNCHER+PO_MUTA:
 		{
 			/* Gives a multiplier of 2 at first, up to 5 at 48th */
-			do_cmd_throw(2 + (plev)/16);
+			do_cmd_throw_hard(2 + (plev)/16);
 			return SUCCESS;
 		}
 		case PET_DISMISS_ONE+PO_PETS:

@@ -3175,7 +3175,7 @@ static void store_sell(void)
 
 
 	/* Hack -- Cannot remove cursed items */
-	if (!item_tester_hook_drop(o_ptr))
+	if (is_worn_p(o_ptr) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");
