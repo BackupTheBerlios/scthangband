@@ -1200,13 +1200,20 @@ static void map_info(int y, int x, byte *ap, char *cp)
 }
 
 /* Macros similar to panel_bounds(), to keep everything sychronised. */
+
+#define panel_row_centre ((panel_row_min + panel_row_max+1) / 2)
+#define panel_col_centre ((panel_col_min + panel_col_max+1) / 2)
+
 #define PRT_MINX (COL_END+1)
 #define PRT_MAXX (Term->wid-1)
 #define PRT_MINY 1
 #define PRT_MAXY (Term->hgt-1)
 
-#define Y_SCREEN_ADJ (panel_row_min-1)
-#define X_SCREEN_ADJ (panel_col_min-COL_END-1)
+#define prt_row_min (panel_row_centre - (Term->hgt-PRT_MINY)/2)
+#define prt_col_min (panel_col_centre - (Term->wid-PRT_MINX)/2)
+
+#define Y_SCREEN_ADJ (prt_row_min-1)
+#define X_SCREEN_ADJ (prt_col_min-COL_END-1)
 
 static bool panel_contains_prt(int y, int x)
 {
