@@ -3299,28 +3299,28 @@ extern maxima *z_info;
 extern vault_type *v_info;
 #endif
 #if (defined(INIT2_C) || defined(VARIABLE_C))
-extern char *v_name;
+extern cptr v_name;
 #endif
 #if (defined(GENERATE_C) || defined(INIT2_C) || defined(VARIABLE_C))
-extern char *v_text;
+extern cptr v_text;
 #endif
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern feature_type *f_info;
 #endif
 #if (defined(CMD2_C) || defined(CMD4_C) || defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
-extern char *f_name;
+extern cptr f_name;
 #endif
 #if (defined(INIT2_C) || defined(VARIABLE_C))
-extern char *f_text;
+extern cptr f_text;
 #endif
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern object_kind *k_info;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern char *k_name;
+extern cptr k_name;
 #endif
 #if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern char *k_text;
+extern cptr k_text;
 #endif
 #if (defined(DEFINES_H) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern unident_type *u_info;
@@ -3332,19 +3332,19 @@ extern char *u_name;
 extern o_base_type *o_base;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern char *ob_name;
+extern cptr ob_name;
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern artifact_type *a_info;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern char *a_name;
+extern cptr a_name;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern ego_item_type *e_info;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern char *e_name;
+extern cptr e_name;
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern monster_race *r_info;
@@ -3353,28 +3353,28 @@ extern monster_race *r_info;
 extern char *r_name;
 #endif
 #if (defined(INIT2_C) || defined(MONSTER1_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
-extern char *r_text;
+extern cptr r_text;
 #endif
 #if (defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern death_event_type *death_event;
 #endif
 #if (defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
-extern char *event_name;
+extern cptr event_name;
 #endif
 #if (defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
-extern char *event_text;
+extern cptr event_text;
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern dun_type *dun_defs;
 #endif
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern char *dun_name;
+extern cptr dun_name;
 #endif
 #if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern town_type *town_defs;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C))
-extern char *town_name;
+extern cptr town_name;
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(QUEST_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern quest_type *q_list;
@@ -3383,7 +3383,7 @@ extern quest_type *q_list;
 extern owner_type *owners;
 #endif
 #if (defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C))
-extern char *s_name;
+extern cptr s_name;
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_SYS;

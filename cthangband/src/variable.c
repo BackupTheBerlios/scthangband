@@ -710,47 +710,47 @@ maxima *z_info = NULL;
  * The vault generation arrays
  */
 vault_type *v_info;
-char *v_name;
-char *v_text;
+cptr v_name;
+cptr v_text;
 
 /*
  * The terrain feature arrays
  */
 feature_type *f_info;
-char *f_name;
-char *f_text;
+cptr f_name;
+cptr f_text;
 
 /*
  * The object kind arrays
  */
 object_kind *k_info;
-char *k_name;
-char *k_text;
+cptr k_name;
+cptr k_text;
 
 /*
  * The unidentified object arrays
  */
 unident_type *u_info;
-char *u_name;
+char *u_name; /* This is written to in name_scrolls(). */
 
 /*
  * The base object arrays
  */
 o_base_type *o_base;
-char *ob_name;
+cptr ob_name;
 
 /*
  * The artifact arrays
  */
 artifact_type *a_info;
-char *a_name;
+cptr a_name;
 /* char *a_text; */
 
 /*
  * The ego-item arrays
  */
 ego_item_type *e_info;
-char *e_name;
+cptr e_name;
 /* char *e_text; */
 
 
@@ -758,27 +758,27 @@ char *e_name;
  * The monster race arrays
  */
 monster_race *r_info;
-char *r_name;
-char *r_text;
+char *r_name; /* This is written to during ghost creation. */
+cptr r_text;
 
 /*
  * The death event arrays
  */
 death_event_type *death_event;
-char *event_name;
-char *event_text;
+cptr event_name;
+cptr event_text;
 
 /*
  * The dungeon arrays.
  */
 dun_type *dun_defs;
-char *dun_name;
+cptr dun_name;
 
 /*
  * The town arrays.
  */
 town_type *town_defs;
-char *town_name;
+cptr town_name;
 
 /*
  * The quest array.
@@ -789,7 +789,7 @@ quest_type *q_list;
  * The shopkeeper array.
  */
 owner_type *owners;
-char *s_name;
+cptr s_name;
 
 /*
  * Hack -- The special Angband "System Suffix"
