@@ -3609,6 +3609,9 @@ static void process_player(void)
  */
 static void dungeon(void)
 {
+	/* Remember if the player is starting a new level. */
+	bool old_new_level_flag = new_level_flag;
+
 	/* Reset various flags */
 	new_level_flag = FALSE;
     hack_mind = FALSE;
@@ -3773,7 +3776,7 @@ static void dungeon(void)
 	if (!alive || death || new_level_flag) return;
 
 	/* Notice a Quest Level */
-	if (is_quest(dun_level)) quest_discovery();
+	if (is_quest(dun_level)) quest_discovery(old_new_level_flag);
 
 	/* Notice the final level of a dungeon/tower */
 	else if (dun_level && dun_level == dun_defs[cur_dungeon].max_level)

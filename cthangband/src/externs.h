@@ -1631,7 +1631,7 @@ extern int get_quest_monster(void);
 extern void print_quest_message(void);
 #endif
 #if (defined(DUNGEON_C) || defined(QUEST_C))
-extern void quest_discovery(void);
+extern void quest_discovery(bool new);
 #endif
 #if (defined(DUNGEON_C) || defined(QUEST_C))
 extern void set_guardians(void);
