@@ -507,6 +507,7 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 	bool full = (o_ptr->ident & IDENT_MENTAL);
 	bool known = object_known_p(o_ptr);
 	bool aware = object_aware_p(o_ptr);
+	bool shop = (o_ptr->ident & IDENT_STORE) != 0;
 	object_type *j_ptr = ok_ptr->obj;
 
 	/* Restrict cheating with a couple of compile-time options. */
@@ -526,16 +527,18 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 	/* The player is always aware of known items. */
 	if (known) aware = TRUE;
 
+	/* Shop items are fully known, but not generally aware. */
+	if (shop) full = known = TRUE;
+
 	/* Assume complete ignorance by default. */
 	WIPE(ok_ptr, obj_know_type);
 
 	ok_ptr->p_id = 1;
 
-	ok_ptr->u_idx = aware || !(o_ptr->ident & IDENT_STORE);
+	ok_ptr->u_idx = aware || !shop;
 
-	j_ptr->k_idx = aware || (o_ptr->ident & IDENT_STORE);
+	j_ptr->k_idx = aware || shop;
 
-	j_ptr->k_idx = aware;
 	j_ptr->iy = 1;
 	j_ptr->ix = 1;
 
