@@ -1652,6 +1652,7 @@ static bool check_screen_coords(void)
 static void check_arrays(void)
 {
 	if (!check_screen_coords()) quit("screen_coords is arranged incorrectly.");
+	if (!check_temp_effects()) quit("temp_effects is arranged incorrectly.");
 }
 #endif /* CHECK_ARRAYS */
 

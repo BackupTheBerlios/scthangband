@@ -1570,6 +1570,29 @@ static void calc_ma_armour(void)
 
 
 /*
+ * Hack - determine if the player is immune to cuts.
+ */
+bool player_no_cut(void)
+{
+	if (p_ptr->prace == RACE_GOLEM) return TRUE;
+	if (p_ptr->prace == RACE_SKELETON) return TRUE;
+	if (p_ptr->prace == RACE_SPECTRE) return TRUE;
+	if (p_ptr->prace == RACE_ZOMBIE && (skill_set[SKILL_RACIAL].value > 23))
+		return TRUE;
+	return FALSE;
+}
+
+/*
+ * Hack - determine if the player is immune to stunning.
+ */
+bool player_no_stun(void)
+{
+	if (p_ptr->prace == RACE_GOLEM) return TRUE;
+	return FALSE;
+}
+
+
+/*
  * Calculate the players current "state", taking into account
  * not only race intrinsics, but also objects being worn
  * and temporary spell effects.

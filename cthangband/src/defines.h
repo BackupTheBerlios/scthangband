@@ -2741,6 +2741,35 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TURN_ENERGY	1000 /* Energy used in one player turn. */
 #define TICK_ENERGY 100	/* Energy given in one game turn. */
 
+/* Timed effect indices */
+#define TIMED_BLIND 0
+#define TIMED_CONFUSED 1
+#define TIMED_POISONED 2
+#define TIMED_AFRAID 3
+#define TIMED_PARALYZED 4
+#define TIMED_IMAGE 5
+#define TIMED_FAST 6
+#define TIMED_SLOW 7
+#define TIMED_SHIELD 8
+#define TIMED_BLESSED 9
+#define TIMED_HERO 10
+#define TIMED_SHERO 11
+#define TIMED_PROTEVIL 12
+#define TIMED_WRAITH 13
+#define TIMED_INVULN 14
+#define TIMED_ESP 15
+#define TIMED_INVIS 16
+#define TIMED_INFRA 17
+#define TIMED_OPPOSE_ACID 18
+#define TIMED_OPPOSE_ELEC 19
+#define TIMED_OPPOSE_FIRE 20
+#define TIMED_OPPOSE_COLD 21
+#define TIMED_OPPOSE_POIS 22
+#define TIMED_STUN 23
+#define TIMED_CUT 24
+#define TIMED_FOOD 25
+#define TIMED_MAX 26
+
 /*** Macro Definitions ***/
 
 

@@ -1435,42 +1435,36 @@ static void process_regeneration(bool cave_no_regen)
  */
 static void process_timeout(void)
 {
-	int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
+	int i, adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
 
-	/* Temporary resistances */
-	if (p_ptr->oppose_acid) set_oppose_acid(p_ptr->oppose_acid - 1);
-	if (p_ptr->oppose_elec) set_oppose_elec(p_ptr->oppose_elec - 1);
-	if (p_ptr->oppose_fire) set_oppose_fire(p_ptr->oppose_fire - 1);
-	if (p_ptr->oppose_cold) set_oppose_cold(p_ptr->oppose_cold - 1);
-	if (p_ptr->oppose_pois) set_oppose_pois(p_ptr->oppose_pois - 1);
-
-	/* Temporary benefits */
-	if (p_ptr->tim_invis) set_tim_invis(p_ptr->tim_invis - 1);
-	if (p_ptr->tim_esp) set_tim_esp(p_ptr->tim_esp - 1);
-	if (p_ptr->tim_infra) set_tim_infra(p_ptr->tim_infra - 1);
-	if (p_ptr->protevil) set_protevil(p_ptr->protevil - 1);
-	if (p_ptr->invuln) set_invuln(p_ptr->invuln - 1);
-    if (p_ptr->wraith_form) set_shadow(p_ptr->wraith_form - 1);
-	if (p_ptr->hero) set_hero(p_ptr->hero - 1);
-	if (p_ptr->shero) set_shero(p_ptr->shero - 1);
-	if (p_ptr->blessed) set_blessed(p_ptr->blessed - 1);
-	if (p_ptr->shield) set_shield(p_ptr->shield - 1);
-	if (p_ptr->fast) set_fast(p_ptr->fast - 1);
-
-	/* Problems */
-	if (p_ptr->slow) set_slow(p_ptr->slow - 1);
-	if (p_ptr->image) set_image(p_ptr->image - 1);
-	if (p_ptr->blind) set_blind(p_ptr->blind - 1);
-	if (p_ptr->paralyzed) set_paralyzed(p_ptr->paralyzed - 1);
-	if (p_ptr->confused) set_confused(p_ptr->confused - 1);
-	if (p_ptr->afraid) set_afraid(p_ptr->afraid - 1);
-
-	/* Problems healed quickly by high constitution */
-	if (p_ptr->poisoned) set_poisoned(p_ptr->poisoned - adjust);
-	if (p_ptr->stun) set_stun(p_ptr->stun - adjust);
-
-	/* Hack - very severe cuts do not heal over time. */
-	if (p_ptr->cut && p_ptr->cut < 1001) set_cut(p_ptr->cut - adjust);
+	for (i = 0; i < TIMED_MAX; i++)
+	{
+		switch (i)
+		{
+			case TIMED_POISONED: case TIMED_STUN:
+			{
+				/* Problems healed quickly by high constitution */
+				add_flag(i, -adjust);
+				break;
+			}
+			case TIMED_CUT:
+			{
+				/* Hack - very severe cuts do not heal over time. */
+				if (p_ptr->cut < 1001) add_flag(i, -adjust);
+				break;
+			}
+			case TIMED_FOOD:
+			{
+				/* Food is handled in another function. */
+				break;
+			}
+			default:
+			{
+				/* Everything else uses a simple counter. */
+				add_flag(i, -1);
+			}
+		}
+	}
 }
 
 static void process_light(void)
