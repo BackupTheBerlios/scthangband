@@ -1787,126 +1787,124 @@ void random_artifact_resistance(object_type * o_ptr)
 
 
 /*
- * Mega-Hack -- Attempt to create one of the "Special Objects"
- *
- * We are only called from "make_object()", and we assume that
- * "apply_magic()" is called immediately after we return.
- *
- * Note -- see "make_artifact()" and "apply_magic()"
+ * Decide whether to create an object of a given depth and rarity.
  */
-static bool make_artifact_special(object_type *o_ptr)
-{
-	int                     i;
-
-	int                     k_idx = 0;
-
-
-	/* Check the artifact list (just the "specials") */
-	for (i = 0; i < ART_MIN_NORMAL; i++)
+static bool rarity_roll(byte level, byte rarity)
 	{
-		artifact_type *a_ptr = &a_info[i];
+	/* Roll for rarity */
+	if (rand_int(rarity)) return FALSE;
 
-		/* Skip "empty" artifacts */
-		if (!a_ptr->name) continue;
-
-		/* Cannot make an artifact twice */
-		if (a_ptr->cur_num) continue;
-
-		/* XXX XXX Enforce minimum "depth" (loosely) */
-		if (a_ptr->level > (dun_level+dun_offset))
-		{
-			/* Acquire the "out-of-depth factor" */
-			int d = (a_ptr->level - (dun_level+dun_offset)) * 2;
+	/* Only roll for depth when necessary */
+	if (level <= (dun_level+dun_offset)) return TRUE;
 
 			/* Roll for out-of-depth creation */
-			if (rand_int(d) != 0) continue;
-		}
-
-		/* Artifact "rarity roll" */
-		if (rand_int(a_ptr->rarity) != 0) return (0);
-
-		/* Find the base object */
-		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-		/* XXX XXX Enforce minimum "object" level (loosely) */
-		if (k_info[k_idx].level > object_level)
-		{
-			/* Acquire the "out-of-depth factor" */
-			int d = (k_info[k_idx].level - object_level) * 5;
-
-			/* Roll for out-of-depth creation */
-			if (rand_int(d) != 0) continue;
-		}
-
-		/* Assign the template */
-		object_prep(o_ptr, k_idx);
-
-		/* Mega-Hack -- mark the item as an artifact */
-		o_ptr->name1 = i;
-
-
-
-		/* Success */
-		return (TRUE);
-	}
-
-	/* Failure */
-	return (FALSE);
+	return (rand_int((level - (dun_level+dun_offset)) * 2) == 0);
 }
 
-
 /*
- * Attempt to change an object into an artifact
+ * Makes an artefact. Is either called from make_object() on a blank object in
+ * order to create a "special" artefact, or from apply_magic() on a real object
+ * in order to create a "normal" artefact. In the former case, apply_magic()
+ * should be called immediately afterwards.
  *
- * This routine should only be called by "apply_magic()"
+ * Returns 0 for failure, 1 for success and 2 for no available artefacts.
  *
- * Note -- see "make_artifact_special()" and "apply_magic()"
+ * If x is an artefact, rarity(x) and ood(x) how rare and out-of-depth
+ * it is, and class(x) the set of artefacts in the same group (either same tval
+ * and sval or all special), the probability of creating a particular artefact
+ * when this function is reached is:
+ *
+ * P(x) = rarity(x)*ood(x)*product(1-rarity(y)*ood(y)/2 | y in class(x))
+ *
+ * As of Cthangband 4.1.0, this means that, if first asked for a special
+ * artefact at ground level, the probability of generating the Star Essence
+ * of Polaris is 0.9968.
+ * More interestingly, both Skullkeeper and the Terror Mask have a chance
+ * of 1/5*(1-1/5/2)=18% of being generated if in depth, rather than the
+ * former having a probability of 20% and the latter 16%.
  */
-static bool make_artifact(object_type *o_ptr)
+static char make_artifact(object_type *o_ptr, bool special)
 {
-	int i;
+	int                     i, arts = 0;
 
+	/* Special artefacts are blank objects initially, others never are. */
+	int min = (special) ? 0 : ART_MIN_NORMAL;
+	int max = (special) ? ART_MIN_NORMAL : MAX_A_IDX;
+	byte order[max - min];
 
 	/* Paranoia -- no "plural" artifacts */
-	if (o_ptr->number != 1) return (FALSE);
+	if (o_ptr->number > 1) return 0;
 
-	/* Check the artifact list (skip the "specials") */
-	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
+	for (i = min; i < max; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 
 		/* Skip "empty" items */
 		if (!a_ptr->name) continue;
 
-		/* Cannot make an artifact twice */
+		/* Cannot make an artefact twice */
 		if (a_ptr->cur_num) continue;
 
-		/* Must have the correct fields */
+		/* Must have the correct fields if "normal" */
+		if (!special)
+		{
 		if (a_ptr->tval != o_ptr->tval) continue;
 		if (a_ptr->sval != o_ptr->sval) continue;
-
-		/* XXX XXX Enforce minimum "depth" (loosely) */
-		if (a_ptr->level > (dun_level+dun_offset))
-		{
-			/* Acquire the "out-of-depth factor" */
-			int d = (a_ptr->level - (dun_level+dun_offset)) * 2;
-
-			/* Roll for out-of-depth creation */
-			if (rand_int(d) != 0) continue;
-		}
-
-		/* We must make the "rarity roll" */
-		if (rand_int(a_ptr->rarity) != 0) continue;
-
-		/* Hack -- mark the item as an artifact */
-		o_ptr->name1 = i;
-
-		/* Success */
-		return (TRUE);
+		}		
+			
+		/* Note artefact */
+		order[arts++] = i;
+		/* Give a basic description */
 	}
 
+	if (!arts) return 2;
+
+	/* Roll for each of the available artefacts */
+	while (arts)
+		{
+		/* Pick an artefact from the list. */
+		artifact_type *a_ptr = &a_info[order[i = rand_int(arts--)]];
+
+		/* Remove it from further consideration. */
+		order[i] = order[arts];
+
+		/* Give a basic description */
+		if (cheat_peek)
+		{
+			char buf[ONAME_MAX];
+			object_type forge;
+			make_fake_artifact(&forge, a_ptr-a_info);
+			object_desc_store(buf, &forge, FALSE, 0);
+			msg_format("Rolling for %s", buf);
+		}
+
+		/* Roll for the artefact. */
+		if (!rarity_roll(a_ptr->level, a_ptr->rarity)) continue;
+
+		/* Normal artefacts have already passed their base object rolls. */
+		if (special)
+		{
+			/* Find the base object */
+			int k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+			object_kind *k_ptr = &k_info[k_idx];
+
+			/* Roll for the base object */
+			if (!rarity_roll(k_ptr->level, 1)) continue;
+
+			/* Assign the template */
+			object_prep(o_ptr, k_idx);
+		}
+
+		/* Mega-Hack -- mark the item as an artifact */
+		o_ptr->name1 = a_ptr-a_info;
+
+		/* Success */
+		return 1;
+	}
+
+	
 	/* Failure */
-	return (FALSE);
+	return 0;
 }
 
 
@@ -3604,8 +3602,9 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	/* Roll for artifacts if allowed */
 	for (i = 0; i < rolls; i++)
 	{
+		if (cheat_peek) msg_format("Rolling %d", i);
 		/* Roll for an artifact */
-		if (make_artifact(o_ptr)) break;
+		if (make_artifact(o_ptr, FALSE)) break;
 	}
 
 
@@ -3934,7 +3933,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 
 
 	/* Generate a special object, or a normal object */
-	if ((rand_int(prob) != 0) || !make_artifact_special(j_ptr))
+	if ((rand_int(prob) != 0) || make_artifact(j_ptr, TRUE) != 1)
 	{
 		int k_idx;
 
