@@ -1589,7 +1589,19 @@ void py_attack(int y, int x)
         /* Handle polymorph */
 		if (tmp != m_ptr->r_idx)
 		{
-            msg_format("%^s changes!", m_name);
+			monster_race *r_ptr = &r_info[m_ptr->r_idx];
+			monster_race *r2_ptr = &r_info[tmp];
+			byte i = 0;
+			/* Hack - SHAPECHANGERs change regularly anyway. */
+			if (r_ptr->flags1 & RF1_ATTR_MULTI && r_ptr->flags2 & RF2_SHAPECHANGER) i |= 1;
+			if (r2_ptr->flags1 & RF1_ATTR_MULTI && r2_ptr->flags2 & RF2_SHAPECHANGER) i |= 2;
+			switch (i)
+			{
+				case 0: msg_format("%^s changes!", m_name); break;
+				case 1: msg_format("%^s stops changing!", m_name); break;
+				case 2: msg_format("%^s starts changing rapidly!", m_name); break;
+				case 3: msg_format("%^s changes subtly!", m_name); break;
+			}
 
             /* "Kill" the "old" monster */
 			delete_monster_idx(c_ptr->m_idx,TRUE);
