@@ -3917,6 +3917,9 @@ static bool win_floor_good(void)
 	/* An imaginary floor to stand on. */
 	if (p_ptr->image) return TRUE;
 
+	/* Not a real square. */
+	if (!in_bounds2(tracked_co_ord.y, tracked_co_ord.x)) return FALSE;
+
 	/* A visible wall. */
 	return (cave[tracked_co_ord.y][tracked_co_ord.x].info & CAVE_MARK ||
 		player_can_see_bold(tracked_co_ord.y, tracked_co_ord.x));
@@ -3937,7 +3940,7 @@ static void win_floor_display(void)
 	{
 		mc_put_fmt(0, 0, "You %s something strange.\n", verb);
 	}
-	else
+	else if (in_bounds2(tracked_co_ord.y, tracked_co_ord.x))
 	{
 		int y = 0;
 		cave_type *c_ptr = &cave[tracked_co_ord.y][tracked_co_ord.x];
