@@ -215,12 +215,8 @@ static bool brand_bolts(void)
  * The calling function may remove/drain the object if use is unset, but must
  * do so if it is set.
  */
-static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
+static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *ident)
 {
-	/* plev is only used for random artefacts here, for which this is the
-	 * correct formula.
-	 */
-	const int plev = MAX(1, skill_set[SKILL_DEVICE].value/2);
 	int i;
 
 	/* Assume that the object was used without identifying it by default. */
@@ -1829,7 +1825,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
         }
 		case OBJ_WAND_WONDER:
 		{
-			return do_power(choose_random_wand(), dir, FALSE, use, ident);
+			return do_power(choose_random_wand(), plev, dir, FALSE, use, ident);
 		}
 
 		case OBJ_ROD_DOOR_STAIR_LOCATION:
@@ -3437,6 +3433,11 @@ static bool use_object(object_type *o_ptr, int dir)
 	bool ident, use, known;
 	int power = get_power(o_ptr);
 
+	/* plev is only used for random artefacts here, for which this is the
+	 * correct formula.
+	 */
+	const int plev = MAX(1, skill_set[SKILL_DEVICE].value/2);
+
 	/* "detect traps" marks the area it has been used in if the effect is
 	 * known. This is always true if the object was previously known to have
 	 * that effect, so check this.
@@ -3445,7 +3446,7 @@ static bool use_object(object_type *o_ptr, int dir)
 	object_info_known(j_ptr, o_ptr, 0);
 	known = (power == get_power(j_ptr));
 
-	switch (do_power(power, dir, known, &use, &ident))
+	switch (do_power(power, plev, dir, known, &use, &ident))
 	{
 		/* Get a direction, then try again. */
 		case POWER_ERROR_NO_SUCH_DIR:
@@ -3457,7 +3458,7 @@ static bool use_object(object_type *o_ptr, int dir)
 		case POWER_ERROR_NO_SUCH_POWER:
 		{
 			known = (o_ptr->tval == j_ptr->tval);
-			switch (do_power(-768+o_ptr->tval, dir, known, &use, &ident))
+			switch (do_power(-768+o_ptr->tval, plev, dir, known, &use, &ident))
 			{
 				case POWER_ERROR_NO_SUCH_DIR:
 				{
