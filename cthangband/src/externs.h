@@ -1314,7 +1314,7 @@ extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool 
 extern bool place_monster(int y, int x, bool slp, bool grp);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
-extern void put_quest_monster(int r_idx);
+extern bool put_quest_monster(int r_idx);
 #endif
 #if (defined(MONSTER_HORDES)) && (defined(MONSTER2_C) || defined(WIZARD2_C))
 extern bool alloc_horde(int y, int x);
@@ -3575,7 +3575,7 @@ extern void resize_window(void);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void handle_stuff(void);
 #endif
-#if (defined(CMD1_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(FILES_C) || defined(XTRA1_C))
 extern bool ma_empty_hands(void);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))

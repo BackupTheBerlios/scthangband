@@ -4399,7 +4399,7 @@ static bool room_build(int y0, int x0, int typ)
 
 
 /*
- * Generate a new dungeon level
+ * Generate a new dungeon level. Return FALSE if this attempt failed.
  *
  * Note that "dun_body" adds about 4000 bytes of memory to the stack.
  */
@@ -4696,7 +4696,7 @@ static bool cave_gen(void)
 		if (q_ptr->cur_num != 0) q_ptr->cur_num = q_ptr->cur_num_known = 0;
 		while (r_info[r_idx].cur_num < q_ptr->max_num)
 		{
-			put_quest_monster(q_ptr->r_idx);
+			if (!put_quest_monster(q_ptr->r_idx)) return FALSE;
 		}
 
 	}
