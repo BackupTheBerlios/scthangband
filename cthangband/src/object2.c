@@ -4375,3 +4375,18 @@ void display_koff(int k_idx)
 		display_spells(2, 0, q_ptr);
 	}
 }
+
+/*
+ * Hide an object.
+ */
+void object_hide(object_type *o_ptr)
+{
+	/* No longer visible. */
+	o_ptr->marked = FALSE;
+
+	/* Shall not reappear. */
+	o_ptr->ident |= IDENT_HIDDEN;
+
+	/* Redraw appropriate stuff. */
+	update_object(o_ptr, 0);
+}

@@ -494,6 +494,62 @@ void do_cmd_destroy(void)
 	item_optimize(o_ptr);
 }
 
+static bool item_tester_unhidden(object_ctype *o_ptr)
+{
+	return !hidden_p(o_ptr);
+}
+
+/*
+ * Hide an object stack on the floor, and ask if its tval should be hidden.
+ *
+ * Only floor items are considered, as the player is assumed not to 
+ */
+void do_cmd_hide_object(void)
+{
+	errr err;
+	object_type *o_ptr;
+	
+	/* Get an item */
+	item_tester_hook = item_tester_unhidden;
+	if (!((o_ptr = get_item(&err, "Hide which item? ", TRUE, TRUE, TRUE))))
+	{
+		if (err == -2) msg_print("You have nothing you can hide.");
+		return;
+	}
+
+	msg_format("You hide %v.", object_desc_f3, o_ptr, TRUE, 3);
+
+	object_hide(o_ptr);
+}
+
+/*
+ * Reveal all hidden objects on the current level.
+ */
+void do_cmd_unhide_objects(void)
+{
+	object_type *o_ptr;
+	int t = 0;
+
+	for (o_ptr = o_list; o_ptr < o_list+MAX_O_IDX; o_ptr++)
+	{
+		if (hidden_p(o_ptr)) t++;
+		o_ptr->ident &= ~(IDENT_HIDDEN);
+	}
+
+	for (o_ptr = inventory; o_ptr < inventory+INVEN_TOTAL; o_ptr++)
+	{
+		if (hidden_p(o_ptr)) t++;
+		o_ptr->ident &= ~(IDENT_HIDDEN);
+	}
+
+	/* Display any newly visible things. */
+	update_object(0, OUP_ALL);
+
+	/* Show more distant changes. */
+	p_ptr->redraw |= PR_MAP;
+
+	msg_format("You reveal %d hidden object%s.", t, (t == 1) ? "" : "s");
+}
 
 /*
  * Destroy whole pack (and equip)

@@ -2293,6 +2293,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Some useful combinations of the above flags. */
 #define OUP_CARRIED_MASK	(OUP_INVEN | OUP_EQUIP | OUP_POUCH)
 #define OUP_EQUIPPED_MASK	(OUP_EQUIP | OUP_POUCH)
+#define OUP_ALL	(OUP_FLOOR | OUP_CARRIED_MASK)
 
 /*** General index values ***/
 
@@ -2524,6 +2525,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define IDENT_POWER_AWARE	0x4000	/* Item was seen to be "powerful" when aware. */
 #define IDENT_POWER_KNOWN	(IDENT_POWER_UNAWARE | IDENT_POWER_AWARE)
 #define IDENT_POWER_ALL (IDENT_POWER_UNAWARE | IDENT_POWER_AWARE | IDENT_POWER_KNOWN)
+#define IDENT_HIDDEN 0x8000 /* Item is hidden from view. */
 
 #define IDENT_SENSE	(IDENT_SENSE_CURSED | IDENT_SENSE_VALUE) /* Item has been pseudo-identified */
 
@@ -3218,6 +3220,12 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define cursed_p(T) \
 	((T)->ident & (IDENT_CURSED))
+
+/*
+ * Hidden items.
+ */
+#define hidden_p(T) \
+	((T)->ident & (IDENT_HIDDEN))
 
 /*
  * Object kind which is created by the normal item generation routine

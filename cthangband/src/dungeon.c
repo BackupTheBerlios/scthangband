@@ -2328,6 +2328,20 @@ void process_command(void)
 			break;
 		}
 
+		/* Hide an item */
+		case 'K':
+		{
+			do_cmd_hide_object();
+			break;
+		}
+
+		/* Reveal all hidden objects. */
+		case KTRL('K'):
+		{
+			do_cmd_unhide_objects();
+			break;
+		}
+
 			/* Equipment list */
 		case 'e':
 		{

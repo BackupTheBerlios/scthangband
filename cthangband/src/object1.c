@@ -911,6 +911,9 @@ static char *object_desc_str(char *t, cptr s)
 }
 
 
+static const char hidden_name[] = {CH_ARTICLE,
+	'h','i','d','d','e','n',' ','t','h','i','n','g',
+	CI_PLURAL+CM_TRUE, 's', CI_PLURAL+CM_NORM, '\0'};
 
 /*
  * Creates a description of the item "o_ptr", and stores it in "out_val".
@@ -1065,6 +1068,9 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 
 	/* Paranoia - no known starting string. */
 	if (!r[this_level]) r[this_level] = "Mystery";
+
+	/* Hack - hidden objects have a special name. */
+	if (o_ptr->ident & IDENT_HIDDEN) r[this_level] = hidden_name;
 
 	/*
 	 * Add an article if required. This is only possible at the start
@@ -4525,6 +4531,9 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 						/* Acquire next object */
 						next_o_idx = o_ptr->next_o_idx;
 
+						/* Skip hidden items */
+						if (hidden_p(o_ptr)) continue;
+
 						/* Skip illegal items */
 						if (!item_tester_okay(o_ptr)) continue;
 
@@ -4600,12 +4609,13 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			}
 
 			/*
-			 * Select a broken item if possible.
+			 * Select a worthless item if possible.
 			 * Otherwise select a cursed item or nothing.
 			 */
 			case 'z': case 'Z':
 			{
-				object_type *start, *end, *cursed = NULL;
+				object_type *start, *end, j_ptr[1];
+				object_type *cursed = NULL, *broken = NULL, *hidden = NULL;
 				/* Find the range. */
 				if (command_wrk)
 				{
@@ -4620,25 +4630,28 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Search the items for something cursed or worthless. */
 				for (o_ptr = start ; o_ptr < end; o_ptr++)
 				{
+					object_info_known(j_ptr, o_ptr);
+
 					/* Skip invalid objects */
 					if (!get_item_okay(o_ptr)) continue;
+
 					/* Skip specified objects */
-					if (strstr(quark_str(o_ptr->note), "!k")) continue;
-					/* Skip objects which are not worthless */
-					if (object_value(o_ptr) > 0) continue;
-					/* Notice the first cursed item */
-					if (cursed_p(o_ptr) && o_ptr->ident & IDENT_SENSE_CURSED)
-					{
-						if (!cursed) cursed = o_ptr;
-					}
-					/* Return the first non-cursed worthless item */
-					else
-					{
-						break;
-					}
+					if (strstr(quark_str(j_ptr->note), "!k")) continue;
+
+					/* Found a cursed item. */
+					if (cursed_p(j_ptr)) cursed = o_ptr;
+
+					/* Found an uncursed worthless item. */
+					else if (!object_value(j_ptr)) broken = o_ptr;
+
+					/* Found a hidden item. */
+					if (hidden_p(j_ptr)) hidden = o_ptr;
 				}
-				/* No broken items, so return any cursed ones found */
-				if (o_ptr == end) o_ptr = cursed;
+
+				/* Select from each category in order. */
+				if (hidden) o_ptr = hidden;
+				else if (broken) o_ptr = broken;
+				else if (cursed) o_ptr = cursed;
 
 				/* Check that the item is suitable in various ways. */
 				get_item_valid(&o_ptr, &done, isupper(which));

@@ -602,6 +602,9 @@ void carry(int pickup)
 			{
 				int okay = TRUE;
 
+				/* Hack - ignore hidden items. */
+				if (hidden_p(o_ptr)) continue;
+
 				/* Hack -- query every item */
 				if (carry_query_flag && !strstr(quark_str(o_ptr->note), "=g"))
 				{

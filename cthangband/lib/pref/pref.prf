@@ -229,9 +229,15 @@ C:1:^M
 A:U
 C:1:O
 
-# Hack - race/mutation power activation
-A:^t
-C:1:'
+# Any suggestions?
+
+# Hide object
+#A:K
+#C:1:
+
+# Reveal hidden object
+#A:^K
+#C:1:
 
 ##### "Escape" macro #####
 A:\e

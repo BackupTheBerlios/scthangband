@@ -1365,8 +1365,8 @@ void note_spot(int y, int x)
 		/* Acquire next object */
 		next_o_idx = o_ptr->next_o_idx;
 
-		/* Memorize objects */
-		o_ptr->marked = TRUE;
+		/* Memorize legal objects */
+		if (!hidden_p(o_ptr)) o_ptr->marked = TRUE;
 	}
 
 

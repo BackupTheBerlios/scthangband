@@ -3232,7 +3232,7 @@ extern char angband_sound_name[SOUND_MAX][16];
 #if (defined(ANGBAND_H))
 extern cave_type *cave[MAX_HGT];
 #endif
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern object_type *o_list;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3948,5 +3948,20 @@ extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
 
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern cptr_ch feeling_str[];
+#endif
+
+/* cmd3.c */
+
+#if (defined(CMD3_C) || defined(DUNGEON_C))
+extern void do_cmd_hide_object(void);
+#endif
+#if (defined(CMD3_C) || defined(DUNGEON_C))
+extern void do_cmd_unhide_objects(void);
+#endif
+
+/* object2.c */
+
+#if (defined(CMD3_C) || defined(OBJECT2_C))
+extern void object_hide(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
