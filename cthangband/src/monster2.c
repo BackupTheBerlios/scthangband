@@ -2552,51 +2552,68 @@ bool put_quest_monster(int r_idx)
 }
 
 #ifdef MONSTER_HORDES
-bool alloc_horde(int y, int x, int level)
+/*
+ * Return TRUE if a horde of a monster can be created.
+ */
+static bool PURE get_mon_horde(int UNUSED p, int r_idx)
+{
+	u32b f1 = r_info[r_idx].flags1;
+
+	/* Don't create a horde of Smeagol. */
+	if (f1 & RF1_UNIQUE) return FALSE;
+
+	/* Don't create a horde of escorted monsters. */
+	if (f1 & RF1_ESCORTS) return FALSE;
+
+	/* Good enough. */
+	return TRUE;
+}
+
+/*
+ * Create a horde of monsters.
+ * Return FALSE if no monsters were generated.
+ */
+static bool alloc_horde_aux(int y, int x, int level)
 {
 
-    int r_idx;
-    monster_race * r_ptr;
-    monster_type * m_ptr;
-    int attempts = 1000;
+    int i, r_idx;
 
-    while (--attempts)
-    {
-        /* Pick a monster */
-        r_idx = get_mon_num(level);
+	get_mon_num_filter(get_mon_horde, 0);
 
-        /* Handle failure */
-        if (!r_idx) return (FALSE);
+	/* Pick a monster */
+	r_idx = get_mon_num(level);
 
-        r_ptr = &r_info[r_idx];
+	/* Couldn't find one. */
+	if (!r_idx) return (FALSE);
 
-        if (!(r_ptr->flags1 & (RF1_UNIQUE))
-            && !(r_ptr->flags1 & (RF1_ESCORTS)))
-                break;
-    }
+	/* Attempt to place the monster */
+	if (place_monster_aux(y, x, r_idx, FALSE, FALSE, FALSE, FALSE))
+	{
+		monster_type *m_ptr = &m_list[hack_m_idx_ii];
 
-    if (attempts < 1) return FALSE;
+		for (i = rand_range(6, 15); i; i--)
+		{
+			summon_specific(m_ptr->fy, m_ptr->fx, level,
+				r_info[r_idx].d_char | SUMMON_NO_UNIQUES);
+    	}
 
-    attempts = 1000;
+		return TRUE;
+	}
 
-    while (--attempts)
-    {
-        /* Attempt to place the monster */
-		if (place_monster_aux(y, x, r_idx, FALSE, FALSE, FALSE, FALSE)) break;
-    }
+	/* Couldn't find a place. */
+	return FALSE;
+}
 
-    if (attempts < 1) return FALSE;
+/*
+ * Create a horde and tidy up afterwards.
+ */
+bool alloc_horde(int y, int x, int level)
+{
+	bool rc = alloc_horde_aux(y, x, level);
 
+	get_mon_num_init();
 
-    m_ptr = &m_list[hack_m_idx_ii];
-
-    for (attempts = randint(10) + 5; attempts; attempts--)
-    {
-        (void) summon_specific(m_ptr->fy, m_ptr->fx, (dun_depth),
-			r_ptr->d_char | SUMMON_NO_UNIQUES);
-    }
-
-    return TRUE;
+	return rc;
 }
 #endif
 
@@ -2630,7 +2647,7 @@ static bool alloc_monster_aux(int dis, int level, bool slp, int bias)
 	if (rand_int(5000) < level)
 	{
 		/* Hordes never sleep. (?) */
-		rc = alloc_horde(y, x, level);
+		rc = alloc_horde_aux(y, x, level);
 
 		/* Feedbaok. */
 		if (rc && cheat_hear) msg_print("Monster horde.");
