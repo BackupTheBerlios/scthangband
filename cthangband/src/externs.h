@@ -3547,7 +3547,7 @@ extern byte ammunition_type(object_type *o_ptr);
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void update_stuff(void);
 #endif
 #if (defined(DUNGEON_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))

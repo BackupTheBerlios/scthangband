@@ -1582,17 +1582,13 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 
 	if (p2_ptr->psex != MAX_SEXES)
 	{
-		u32b old_update;
+		/* Re-run calc_bonuses() to ensure that everything not in p2_ptr is
+		 * correct. */
+		p_ptr->update |= PU_BONUS | PU_QUIET;
+		update_stuff();
 
 		/* Return p_ptr to its original state if needed. */
 		COPY(p_ptr, p2_ptr, player_type);
-
-		/* Hack - correct mystic armour as this isn't stored in p_ptr. */
-		old_update = p_ptr->update;
-		p_ptr->update = PU_MA_ARMOUR;
-		update_stuff();
-
-		p_ptr->update = old_update & ~(PU_MA_ARMOUR);
 	}
 }
 
