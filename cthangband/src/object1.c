@@ -241,7 +241,7 @@ void reset_visuals(void)
 	for (i = 0; i < MAX_MONCOL; i++)
 	{
 		/* Hack - always default to white */
-		moncol[i].attr = TERM_WHITE;
+		moncol[i].gfx.xa = TERM_WHITE;
 	}
 	/* Access the "font" or "graf" pref file, based on "use_graphics" */
 	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);

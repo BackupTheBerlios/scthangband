@@ -3591,29 +3591,32 @@ BLANK_WINDOW("Xtra-3")
 BLANK_WINDOW("Xtra-4")
 };
 
+#define MONCOL(NAME) \
+	{NAME, {TERM_WHITE, 0, TERM_WHITE, 0}}
+
 /*
  * The array of monster recall colour options
  */
 moncol_type moncol[MAX_MONCOL] = {
-{"Deaths", TERM_WHITE},
-{"Flavour text", TERM_WHITE},
-{"Depth/speed", TERM_WHITE},
-{"Defensive auras", TERM_WHITE},
-{"Escort", TERM_WHITE},
-{"Inate attacks", TERM_WHITE},
-{"Breath attacks", TERM_WHITE},
-{"Magical attacks", TERM_WHITE},
-{"AC and HP", TERM_WHITE},
-{"Door/wall/monster/object abilities.", TERM_WHITE},
-{"Ease of detection, breeding and regeneration.", TERM_WHITE},
-{"Weaknesses", TERM_WHITE},
-{"Elemental resistances", TERM_WHITE},
-{"Non-elemental resistances", TERM_WHITE},
-{"Non-elemental immunities", TERM_WHITE},
-{"How observant a monster is", TERM_WHITE},
-{"Drop at point of death", TERM_WHITE},
-{"Melee attacks", TERM_WHITE},
-{"Quest monster status", TERM_WHITE},
+	MONCOL("Deaths"),
+	MONCOL("Flavour text"),
+	MONCOL("Depth/speed"),
+	MONCOL("Defensive auras"),
+	MONCOL("Escort"),
+	MONCOL("Inate attacks"),
+	MONCOL("Breath attacks"),
+	MONCOL("Magical attacks"),
+	MONCOL("AC and HP"),
+	MONCOL("Door/wall/monster/object abilities."),
+	MONCOL("Ease of detection, breeding and regeneration."),
+	MONCOL("Weaknesses"),
+	MONCOL("Elemental resistances"),
+	MONCOL("Non-elemental resistances"),
+	MONCOL("Non-elemental immunities"),
+	MONCOL("How observant a monster is"),
+	MONCOL("Drop at point of death"),
+	MONCOL("Melee attacks"),
+	MONCOL("Quest monster status"),
 };
 
 

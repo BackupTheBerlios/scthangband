@@ -795,12 +795,12 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				char c2 = buf[3+i*3];
 				/* Read the second character first. */
 				if (strchr(atchar, c2))
-					mc_ptr->attr = strchr(atchar, c2)-atchar;
+					mc_ptr->gfx.xa = strchr(atchar, c2)-atchar;
 				else
 					return "unidentified colour";
 				/* Then read the first character, if present. */
 				if (strchr(atchar, c1))
-					mc_ptr->attr += 16*(strchr(atchar, c1)-atchar);
+					mc_ptr->gfx.xa += 16*(strchr(atchar, c1)-atchar);
 				else if (c1 != ' ')
 					return "unidentified colour";
 			}

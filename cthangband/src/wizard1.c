@@ -712,10 +712,10 @@ static void spoil_mon_info(void)
 	/* Give full information. */
 	spoil_mon = TRUE;
 
-	for (n = 0; n < MAX_MONCOL; n++) old_moncol[n] = moncol[n].attr;
+	for (n = 0; n < MAX_MONCOL; n++) old_moncol[n] = moncol[n].gfx.xa;
 
 	/* Hack - hide some information. */
-	moncol[0].attr = moncol[8].attr = moncol[18].attr = TERM_DARK;
+	moncol[0].gfx.xa = moncol[8].gfx.xa = moncol[18].gfx.xa = TERM_DARK;
 
 	/* Dump the header */
 	spoil_out("Monster Spoilers for %s Version %s\n",
@@ -837,7 +837,7 @@ static void spoil_mon_info(void)
 	spoil_mon = old_spoil_mon;
 
 	/* Restore moncol[]. */
-	for (n = 0; n < MAX_MONCOL; n++) moncol[n].attr = old_moncol[n];
+	for (n = 0; n < MAX_MONCOL; n++) moncol[n].gfx.xa = old_moncol[n];
 
 	/* Don't leave a monster display lying around. */
 	Term_clear();

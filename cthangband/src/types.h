@@ -776,7 +776,8 @@ typedef struct moncol_type moncol_type;
 struct moncol_type
 {
 	cptr name;
-	byte attr;
+
+	gfx_type gfx; /* N.B. Only the attr fields are actually read. */
 };
 
 /*

@@ -2946,9 +2946,11 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc,
 static void get_visuals_moncol(int i, cptr *name, byte *da, char UNUSED *dc,
 	byte **xa, char UNUSED **xc)
 {
+	/* Get most of the visuals. */
+	get_visuals(moncol);
+
+	/* Get the (constant) name. */
 	(*name) = moncol[i].name;
-	(*da) = TERM_WHITE;
-	(*xa) = &(moncol[i].attr);
 }
 
 /*
@@ -2995,8 +2997,8 @@ static void visual_dump_moncol(FILE *fff)
 
 	FOR_ALL_IN(moncol, mc_ptr)
 	{
-		char c1 = atchar[mc_ptr->attr/16];
-		char c2 = atchar[mc_ptr->attr%16];
+		char c1 = atchar[mc_ptr->gfx.xa/16];
+		char c2 = atchar[mc_ptr->gfx.xa%16];
 
 		/* A leading space looks neater than a leading d.*/
 		if (c1 == 'd') c1 = ' ';
