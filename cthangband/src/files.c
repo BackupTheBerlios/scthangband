@@ -4549,14 +4549,12 @@ void show_file(cptr name, cptr what)
 
 /*
  * Given the name of a link, show the file which contains it.
- * If link is NULL, use the help last requested.
+ * Display an error message if a NULL or unknown link is requested.
  */
 static char show_link_aux(cptr link)
 {
-	cptr file;
-	if (!link) link = cur_help_str();
-	if (link) file = link_name_to_file(link);
-	if (link && file)
+	cptr file = (link) ? link_name_to_file(link) : NULL;
+	if (file)
 	{
 		return show_file_aux(file, NULL, link);
 	}
@@ -4575,6 +4573,10 @@ void show_link(cptr link)
 {
 	/* Save the screen. */
 	int t = Term_save_aux();
+
+	/* Use the current link if none was specified. */
+	if (!link) link = cur_help_str();
+
 	character_icky = TRUE;
 
 	/* Allow help. */

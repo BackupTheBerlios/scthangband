@@ -8,6 +8,7 @@ read from the bottom up.
 sCthangband _CVS_
 * Fix the following bugs:
   * player_has_flag() may have given unreliable results.
+  * The redraw prefs help command displayed the wrong text.
 
 sCthangband 1.0.16
 * Fix the following bugs:
