@@ -1533,7 +1533,7 @@ static void calc_bonuses_weird(s16b (*flags)[32], int mut)
 		case MUT_ILL_NORM:
 		{
 			/* Cancel out the race/template bonuses and any other mutations. */
-			flags[TR1][TR1_CHR] = -p_ptr->stat_add[TR1_CHR];
+			flags[TR1][iilog(TR1_CHR)] = -p_ptr->stat_add[A_CHR];
 			break;
 		}
 		case MUT_MAX+RACE_GOLEM:
@@ -1914,7 +1914,7 @@ static void calc_bonuses(void)
 	calc_bonuses_muta(flags);
 
 	/* Scan the usable inventory */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (o_ptr = inventory+INVEN_WIELD; o_ptr < inventory+INVEN_TOTAL; o_ptr++)
 	{
 		/* Skip non-objects */
 		if (!o_ptr->k_idx && !o_ptr->to_a) continue;
