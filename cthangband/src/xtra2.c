@@ -1557,7 +1557,7 @@ void verify_panel(bool force)
 	int y = py;
 	int x = px;
 
-	if ((centre_view) && !((no_centre_run && running)))
+	if ((centre_view) && !((no_centre_run && command_cmd == '.')))
 	{
 		int prow_min;
 		int pcol_min;

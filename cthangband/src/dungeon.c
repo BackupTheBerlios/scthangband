@@ -2411,7 +2411,7 @@ void process_command(void)
 
 			/*** Running, Resting, Searching, Staying */
 
-			/* Begin Running -- Arg is Max Distance */
+			/* Begin/continue Running -- Arg is Max Distance */
 		case '.':
 		{
 			do_cmd_run();
@@ -3054,7 +3054,7 @@ static void process_player(void)
 	if (!avoid_abort)
 	{
 		/* Check for "player abort" (semi-efficiently for resting) */
-		if (running || command_rep || (resting && !(resting & 0x0F)))
+		if (command_rep || (resting && !(resting & 0x0F)))
 		{
 			/* Do not wait */
 			inkey_scan = TRUE;
@@ -3165,13 +3165,6 @@ static void process_player(void)
 
 			/* Take a turn */
 			energy_use = extract_energy[p_ptr->pspeed];
-		}
-
-		/* Running */
-		else if (running)
-		{
-			/* Take a step */
-			run_step(0);
 		}
 
 		/* Repeated command */

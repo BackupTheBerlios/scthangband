@@ -2174,33 +2174,6 @@ void do_cmd_walk(int pickup)
 
 
 /*
- * Start running.
- */
-void do_cmd_run(void)
-{
-	int dir;
-
-	/* Hack -- no running when confused */
-	if (p_ptr->confused)
-	{
-		msg_print("You are too confused!");
-		return;
-	}
-
-	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
-	{
-		/* Hack -- Set the run counter */
-		running = (command_arg ? command_arg : 1000);
-
-		/* First step */
-		run_step(dir);
-	}
-}
-
-
-
-/*
  * Stay still.  Search.  Enter stores.
  * Pick up treasure if "pickup" is true.
  */
@@ -3860,7 +3833,7 @@ static bool run_test(void)
 /*
  * Take one step along the current "run" path
  */
-void run_step(int dir)
+static void run_step(int dir)
 {
 	/* Start running */
 	if (dir)
@@ -3919,9 +3892,6 @@ void run_step(int dir)
 		}
 	}
 
-	/* Decrease the run counter */
-	if (--running <= 0) return;
-
 	/* Take time */
 	energy_use = extract_energy[p_ptr->pspeed]; 
 
@@ -3935,4 +3905,36 @@ void run_step(int dir)
 	move_player(py + ddy[find_current], px + ddx[find_current], always_pickup);
 
 #endif /* ALLOW_EASY_DISARM -- TNB */
+}
+
+
+/*
+ * Run around.
+ */
+void do_cmd_run(void)
+{
+	int dir;
+
+	/* Hack -- no running when confused */
+	if (p_ptr->confused)
+	{
+		msg_print("You are too confused!");
+		return;
+	}
+
+	/* Continue running. */
+	else if (command_rep)
+	{
+		run_step(0);
+	}
+
+	/* Get a "repeated" direction */
+	else if (get_rep_dir(&dir))
+	{
+		/* Hack -- Set the run counter */
+		cnv_arg_to_rep();
+
+		/* First step */
+		run_step(dir);
+	}
 }

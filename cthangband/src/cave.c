@@ -3858,6 +3858,9 @@ void disturb(int stop_stealth)
 
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
+
+		/* Calculate torch radius */
+		p_ptr->update |= (PU_TORCH);
 	}
 
 	/* Cancel Resting */
@@ -3868,16 +3871,6 @@ void disturb(int stop_stealth)
 
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
-	}
-
-	/* Cancel running */
-	if (running)
-	{
-		/* Cancel */
-		running = 0;
-
-		/* Calculate torch radius */
-		p_ptr->update |= (PU_TORCH);
 	}
 
 	/* Cancel stealth if requested */

@@ -1127,7 +1127,7 @@ static void calc_torch(void)
 	/* end experimental mods */
 
 	/* Reduce lite when running if requested */
-	if (running && view_reduce_lite)
+	if (command_cmd == '.' && view_reduce_lite)
 	{
 		/* Reduce the lite radius if needed */
 		if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;
