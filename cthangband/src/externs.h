@@ -3857,7 +3857,7 @@ extern void Term_putch(int x, int y, byte a, char c);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
@@ -3988,5 +3988,11 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
+#endif
+
+/* object1.c */
+
+#if (defined(CMD5_C) || defined(OBJECT1_C))
+extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

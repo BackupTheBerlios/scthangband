@@ -1860,9 +1860,9 @@ cptr item_activation(object_type *o_ptr)
  * Allocate and return a string listing a set of flags in a specified format.
  * This may give incorrect output on strings >1024 characters long.
  */
-static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
+cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 {
-	char *s;
+	cptr s;
 
 	/* Paranoia. */
 	if (!init || !conj) return "";
