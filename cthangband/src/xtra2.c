@@ -42,7 +42,8 @@ static s32b find_lcm(s32b ua, s32b ub)
 /*
  * The rolling routine for drop_special().
  */
-static bool death_event_roll(death_event_type *d_ptr, bool *one_dropped, s32b *total_num, s32b *total_denom)
+static bool death_event_roll(death_event_type *d_ptr,
+	bool *one_dropped, s32b *total_num, s32b *total_denom)
 {
 	s32b num = d_ptr->num;
 	s32b denom = d_ptr->denom;
@@ -77,7 +78,8 @@ static bool death_event_roll(death_event_type *d_ptr, bool *one_dropped, s32b *t
 	/* Ensure that the total probability so far is sensible. */
 	if (*total_num < num)
 	{
-		msg_format("Incoherent probabilities for event %d.\n", (d_ptr-death_event));
+		msg_format("Incoherent probabilities for event %d.\n",
+			(d_ptr-death_event));
 		*one_dropped = TRUE;
 		return FALSE;
 	}
@@ -127,7 +129,8 @@ static int drop_special(monster_type *m_ptr)
 		if (d_ptr->r_idx < m_ptr->r_idx) continue;
 
 		/* Decide whether to drop correct ones. */
-		if (!death_event_roll(d_ptr, &one_dropped, &total_num, &total_denom)) continue;
+		if (!death_event_roll(d_ptr, &one_dropped, &total_num, &total_denom))
+			continue;
 
 		/* Give some feedback to cheaters. */
 		if (cheat_xtra) msg_format("Processing death event %d", i);
@@ -163,7 +166,9 @@ static int drop_special(monster_type *m_ptr)
 					int wy, wx, j;
 					int max = (i_ptr->strict) ? 1 : 10;
 
-					/* Try to place within the given distance, but do accept greater distances if allowed. */
+					/* Try to place within the given distance, but do accept
+					 * greater distances if allowed.
+					 */
 					for (j = 0; j < max; j++)
 					{
 						int d = i_ptr->radius;
@@ -176,7 +181,9 @@ static int drop_special(monster_type *m_ptr)
 					break;
 
 good_DM:
-					/* As creating the monster can give a message, give this message first. */
+					/* As creating the monster can give a message, give this
+					 * message first.
+					 */
 					if (player_can_see_bold(wy, wx) && !seen)
 					{
 						if (d_ptr->text) msg_format(event_text+d_ptr->text);
@@ -184,9 +191,10 @@ good_DM:
 						d_ptr->flags |= EF_KNOWN;
 					}
 					/* Actually place the monster (which should not fail) */
-					(void)place_monster_one(wy, wx, i_ptr->num, FALSE, !!(m_ptr->smart & SM_ALLY), FALSE);
+					(void)place_monster_one(wy, wx, i_ptr->num, FALSE,
+						!!(m_ptr->smart & SM_ALLY), FALSE);
 				}
-				/* Only let the player know anything happened if it happened in LOS. */
+				/* Only let the player know anything happened if within LOS. */
 				break;
 			}
 			/* Cause an explosion centred on the monster */
@@ -201,16 +209,20 @@ good_DM:
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 
 				/* Give cheaters a basic explanation. */
-				if (cheat_xtra) msg_format("Explosion of radius %d, power %d and type %d triggered.", i_ptr->radius, damage, typ);
+				if (cheat_xtra) msg_format(
+					"Explosion of radius %d, power %d and type %d triggered.",
+					i_ptr->radius, damage, typ);
 
 				/* Then cause an explosion. */
-				(void)project(m_ptr, i_ptr->radius, m_ptr->fy, m_ptr->fx, damage, i_ptr->method, typ);
+				(void)project(m_ptr, i_ptr->radius, m_ptr->fy, m_ptr->fx,
+					damage, i_ptr->method, typ);
 				d_ptr->flags |= EF_KNOWN;
 				break;
 			}
 			/* Hack - force the coin drop (later) to be of a specific type.
-			 * This does not actually do anything itself, so a drop of (for instance) 20 pieces of
-			 * silver would be best achieved via a coin artefact with a pval of 20.
+			 * This does not actually do anything itself, so a drop of (for
+			 * instance) 20 pieces of silver would be best achieved via a coin
+			 * artefact with a pval of 20.
 			 */
 			case DEATH_COIN:
 			{
@@ -649,8 +661,8 @@ void check_temp_effects(void)
 		 * accidentally. */
 		if ((ptr->notice != notice_nothing) && (*ptr->notice)(-1, 1) < 0 &&
 			(*ptr->notice)(0, 1) < 0 && (*ptr->notice)(20000, 0) < 0)
-			quit_fmt("Notice function not expressive enough for temp_effects index %d.",
-				ptr->idx);
+			quit_fmt("Notice function not expressive enough for temp_effects "
+				"index %d.", ptr->idx);
 	}
 }
 #endif /* CHECK_ARRAYS */
@@ -875,7 +887,9 @@ void lose_skills(s32b amount)
 	{
 		if (lost[i] > 0)
 		{
-			msg_format("Your %s skill has been lost (%d%%->%d%%)",skill_set[i].name,skill_set[i].value+lost[i],skill_set[i].value);
+			player_skill *sk_ptr = &skill_set[i];
+			msg_format("Your %s skill has been lost (%d%%->%d%%)",
+				sk_ptr->name,sk_ptr->value+lost[i],sk_ptr->value);
 
 			/* Window stuff */
 			p_ptr->window |= PW_PLAYER_SKILLS;
@@ -981,7 +995,6 @@ void monster_death(int m_idx)
 	int dump_gold = 0;
 
 	int number = 0;
-	int total = 0;
 	int coin_type;
 
 	bool quest = FALSE;
@@ -1093,8 +1106,13 @@ void monster_death(int m_idx)
 		/* Wipe the object */
 		object_wipe(q_ptr);
 
+			/* The first two items for a quest monster are great */
+		if (quest && j < 2)
+		{
+			if (!make_object(q_ptr, TRUE, TRUE, FOUND_QUEST, 0)) continue;
+		}
 		/* Make Gold, but not for first two quest items */
-		if ((!quest || (j > 1)) && do_gold && (!do_item || (rand_int(100) < 50)))
+		else if ((!quest || (j > 1)) && do_gold && (!do_item || one_in(2)))
 		{
 			/* Make some gold */
 			if (!make_gold(q_ptr, FOUND_MONSTER, m_ptr->r_idx, coin_type))
@@ -1108,16 +1126,8 @@ void monster_death(int m_idx)
 		else
 		{
 			/* Make an object */
-			if (!quest || (j>1))
-			{
-				if (!make_object(q_ptr, good, great, FOUND_MONSTER,
-					m_ptr->r_idx)) continue;
-			}
-			else
-			{
-				/* The first two items for a quest monster are great */
-				if (!make_object(q_ptr, TRUE, TRUE, FOUND_QUEST, 0)) continue;
-			}
+			if (!make_object(q_ptr, good, great, FOUND_MONSTER,
+				m_ptr->r_idx)) continue;
 
 			/* XXX XXX XXX */
 			dump_item++;
@@ -1145,20 +1155,19 @@ void monster_death(int m_idx)
 	/* Count incomplete quests (Heino Vander Sanden) */
 	for (i = 0; i < MAX_Q_IDX; i++)
 	{
-		if (q_list[i].level || (q_list[i].cur_num != q_list[i].max_num)) total++;
+		quest_type *q_ptr = &q_list[i];
+		if (q_ptr->level || (q_ptr->cur_num != q_ptr->max_num)) goto nowin;
 	}
 
-	/* Nothing left, game over... */
-	if (!total)
-	{
-		/* Total winner */
-		total_winner = TRUE;
+	/* Total winner */
+	total_winner = TRUE;
 
-		/* Congratulations */
-		msg_print("*** CONGRATULATIONS ***");
-		msg_print("You have won the game!");
-		msg_print("You may retire (commit suicide) when you are ready.");
-	}
+	/* Congratulations */
+	msg_print("*** CONGRATULATIONS ***");
+	msg_print("You have won the game!");
+	msg_print("You may retire (commit suicide) when you are ready.");
+
+nowin: /* An unfinished quest was found. */
 
 	/* Need some stairs if not at the max level */
 	if (dun_level < dun_defs[cur_dungeon].max_level)
@@ -1229,8 +1238,6 @@ void monster_death(int m_idx)
  */
 bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 {
-	char tmp[1024];
-
 	monster_type *m_ptr = &m_list[m_idx];
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1269,30 +1276,26 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		if (speak_unique && (r_ptr->flags2 & (RF2_CAN_SPEAK)))
+		{
+			/* Dump a message */
+			msg_format("%^s says: %v", m_name,
+				get_rnd_line_f1, "mondeath.txt");
+
+			if (one_in(REWARD_CHANCE))
 			{
-				int reward=0;
+				int reward;
 
-				/* Dump a message */
-				msg_format("%^s says: %v", m_name,
-					get_rnd_line_f1, "mondeath.txt");
+				msg_format("There was a price on %s's head.", m_name);
+				msg_format("%^s was wanted for %v", m_name,
+					get_rnd_line_f1, "crime.txt");
+				reward = 250 * (rand_range(-4, 6) + r_ptr->level);
+				reward = MIN(MAX(reward, 250), 32000); /* Force 'good' values */
 
-				if (randint(REWARD_CHANCE)==1)
-				{
-					msg_format("There was a price on %s's head.", m_name);
-					msg_format("%^s was wanted for %v", m_name,
-						get_rnd_line_f1, "crime.txt");
-					reward = 250 * (randint (10) + r_ptr->level - 5);
-
-					if (reward > 32000) reward = 32000;/* Force 'good' values */
-					else if (reward < 250) reward = 250;
-
-					msg_format("You collect a reward of %d gold pieces.", reward);
-					p_ptr -> au += reward;
-					p_ptr->redraw |= (PR_GOLD);
-
-
-				}
+				msg_format("You collect a reward of %d gold pieces.", reward);
+				p_ptr->au += reward;
+				p_ptr->redraw |= (PR_GOLD);
 			}
+		}
 
 
 
@@ -1377,12 +1380,16 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		 * Remove the slain bone file */
 		if (m_ptr->r_idx == MON_PLAYER_GHOST)
 		{
+			char file[1024], level[8];
+			sprintf(level, "bone.%03d", dun_level);
+
 			r_ptr->max_num = 1;
 
 			/* Delete the bones file */
-			sprintf(tmp, "%s%sbone.%03d", ANGBAND_DIR_BONE, PATH_SEP, dun_depth);
+			strnfmt(file, sizeof(file), "%v",
+				path_build_f2, ANGBAND_DIR_BONE, dun_depth);
 
-			fd_kill(tmp);
+			fd_kill(file);
 		}
 
 		/* Recall even invisible uniques or winners */
@@ -2299,7 +2306,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				s2 = "carrying ";
 
 				/* Scan all objects being carried */
-				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx;
+					this_o_idx = next_o_idx)
 				{
 					object_type *o_ptr;
 
@@ -2682,7 +2690,8 @@ static sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2)
  * The first two result from information being lost from the dungeon arrays,
  * which requires changes elsewhere
  */
-static sint draw_path(u16b *path, char *c, byte *a, int y1, int x1, int y2, int x2)
+static sint draw_path(u16b *path, char *c, byte *a,
+	int y1, int x1, int y2, int x2)
 {
 	int i;
 	sint max;
@@ -2746,7 +2755,8 @@ static sint draw_path(u16b *path, char *c, byte *a, int y1, int x1, int y2, int 
 			colour = TERM_YELLOW;
 		}
 		/* Known walls are blue. */
-		else if (!cave_floor_bold(y,x) && (c_ptr->info & CAVE_MARK || player_can_see_bold(y,x)))
+		else if (!cave_floor_bold(y,x) && (c_ptr->info & CAVE_MARK ||
+			player_can_see_bold(y,x)))
 		{
 			/* Hallucination sometimes alters the player's
 			 * perception. */
@@ -3504,6 +3514,7 @@ static const int chaos_weapon[][2] =
 
 void gain_level_reward(int effect, int skill)
 {
+	cptr c_name = chaos_patron_shorts[p_ptr->chaos_patron];
 	char wrath_reason[32] = "";
 	int i;
 
@@ -3516,8 +3527,7 @@ void gain_level_reward(int effect, int skill)
 
 		if (one_in(6))
 		{
-			msg_format("%^s rewards you with a chaos feature!",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("%^s rewards you with a chaos feature!", c_name);
 			(void)gain_chaos_feature(0);
 			return;
 		}
@@ -3537,39 +3547,33 @@ void gain_level_reward(int effect, int skill)
 		}
 	}
 
-	sprintf(wrath_reason, "the Wrath of %s",
-		chaos_patron_shorts[p_ptr->chaos_patron]);
+	sprintf(wrath_reason, "the Wrath of %s", c_name);
 
 	switch (effect)
 	{
 		case REW_POLY_SLF:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Thou needst a new form, mortal!'");
 			do_poly_self();
 			break;
 		case REW_GAIN_EXP:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Well done, mortal! Lead on!'");
 			msg_print("You feel more experienced.");
 			gain_skills(200);
 			break;
 		case REW_LOSE_EXP:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Thou didst not deserve that, slave.'");
 			lose_skills(5);
 			break;
 		case REW_GOOD_OBJ:
-			msg_format("The voice of %s whispers:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s whispers:", c_name);
 			msg_print("'Use my gift wisely.'");
 			acquirement(py, px, 1, FALSE);
 			break;
 		case REW_GREA_OBJ:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Use my gift wisely.'");
 			acquirement(py, px, 1, TRUE);
 			break;
@@ -3584,8 +3588,7 @@ void gain_level_reward(int effect, int skill)
 			for (i = 0; wp >= chaos_weapon[i][1]; i++);
 
 			/* Message. */
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Thy deed hath earned thee a worthy blade.'");
 
 			/* Create the weapon. */
@@ -3603,26 +3606,22 @@ void gain_level_reward(int effect, int skill)
 			break;
 		}
 		case REW_GOOD_OBS:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Thy deed hath earned thee a worthy reward.'");
 			acquirement(py, px, randint(2) + 1, FALSE);
 			break;
 		case REW_GREA_OBS:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Behold, mortal, how generously I reward thy loyalty.'");
 			acquirement(py, px, randint(2) + 1, TRUE);
 			break;
 		case REW_TY_CURSE:
-			msg_format("The voice of %s thunders:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s thunders:", c_name);
 			msg_print("'Thou art growing arrogant, mortal.'");
 			activate_ty_curse();
 			break;
 		case REW_SUMMON_M:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'My pets, destroy the arrogant mortal!'");
 			for (i = 0; i < rand_range(2, 6); i++)
 			{
@@ -3630,20 +3629,17 @@ void gain_level_reward(int effect, int skill)
 			}
 			break;
 		case REW_H_SUMMON:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Thou needst worthier opponents!'");
 			activate_hi_summon();
 			break;
 		case REW_DO_HAVOC:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Death and destruction! This pleaseth me!'");
 			call_chaos(skill/2);
 			break;
 		case REW_GAIN_ABL:
-			msg_format("The voice of %s rings out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s rings out:", c_name);
 			msg_print("'Stay, mortal, and let me mould thee.'");
 			if ((randint(3)==1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
@@ -3651,8 +3647,7 @@ void gain_level_reward(int effect, int skill)
 				do_inc_stat((randint(6))-1);
 			break;
 		case REW_LOSE_ABL:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'I grow tired of thee, mortal.'");
 			if ((randint(3)==1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
@@ -3660,8 +3655,7 @@ void gain_level_reward(int effect, int skill)
 				(void) do_dec_stat(randint(6)-1);
 			break;
 		case REW_RUIN_ABL:
-			msg_format("The voice of %s thunders:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s thunders:", c_name);
 			msg_print("'Thou needst a lesson in humility, mortal!'");
 			msg_print("You feel less powerful!");
 			for (i = 0; i < A_MAX; i++)
@@ -3670,13 +3664,11 @@ void gain_level_reward(int effect, int skill)
 			}
 			break;
 		case REW_POLY_WND:
-			msg_format("You feel the power of %s touch you.",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("You feel the power of %s touch you.", c_name);
 			do_poly_wounds(MON_CHAOS_PATRON);
 			break;
 		case REW_AUGM_ABL:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Receive this modest gift from me!'");
 			for (i = 0; i < A_MAX; i++)
 			{
@@ -3684,15 +3676,13 @@ void gain_level_reward(int effect, int skill)
 			}
 			break;
 		case REW_HURT_LOT:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Suffer, pathetic fool!'");
 			fire_ball(GF_DISINTEGRATE, 0, (skill/2 * 4), 4);
 			take_hit(skill/2 * 4, wrath_reason, MON_CHAOS_PATRON);
 			break;
 		case REW_HEAL_FUL:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Rise, my servant!'");
 			restore_level();
 			(void)set_flag(TIMED_POISONED, 0);
@@ -3705,20 +3695,17 @@ void gain_level_reward(int effect, int skill)
 			do_res_stats();
 			break;
 		case REW_CURSE_WP:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Thou reliest too much on thy weapon.'");
 			(void)curse_weapon();
 			break;
 		case REW_CURSE_AR:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Thou reliest too much on thine equipment.'");
 			(void)curse_armor();
 			break;
 		case REW_PISS_OFF:
-			msg_format("The voice of %s whispers:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s whispers:", c_name);
 			msg_print("'Now thou shalt pay for annoying me.'");
 			switch(randint(4))
 			{
@@ -3740,8 +3727,7 @@ void gain_level_reward(int effect, int skill)
 			}
 			break;
 		case REW_WRATH:
-			msg_format("The voice of %s thunders:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s thunders:", c_name);
 			msg_print("'Die, mortal!'");
 			take_hit(skill/2 * 4, wrath_reason, MON_CHAOS_PATRON);
 			for (i = 0; i < A_MAX; i++)
@@ -3754,50 +3740,47 @@ void gain_level_reward(int effect, int skill)
 			if (randint(2)==1) (void)curse_armor();
 			break;
 		case REW_DESTRUCT:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Death and destruction! This pleaseth me!'");
 			destroy_area(py, px, 25, TRUE);
 			break;
 		case REW_GENOCIDE:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Let me relieve thee of thine oppressors!'");
 			(void) genocide(FALSE);
 			break;
 		case REW_MASS_GEN:
-			msg_format("The voice of %s booms out:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s booms out:", c_name);
 			msg_print("'Let me relieve thee of thine oppressors!'");
 			(void) mass_genocide(FALSE);
 			break;
 		case REW_DISPEL_C:
 			msg_format("You can feel the power of %s assault your enemies!",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+				c_name);
 			(void) dispel_monsters(skill/2 * 4);
 			break;
 		case REW_IGNORE:
-			msg_format("%s ignores you.",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("%s ignores you.", c_name);
 			break;
 		case REW_SER_DEMO:
-			msg_format("%s rewards you with a demonic servant!",chaos_patron_shorts[p_ptr->chaos_patron]);
-			if (!(summon_specific_friendly(py, px, (dun_depth), SUMMON_DEMON, FALSE)))
-			msg_print("Nobody ever turns up...");
+			msg_format("%s rewards you with a demonic servant!", c_name);
+			if (!(summon_specific_friendly(py, px, dun_depth, SUMMON_DEMON,
+				FALSE)))
+				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_MONS:
-			msg_format("%s rewards you with a servant!",chaos_patron_shorts[p_ptr->chaos_patron]);
-			if (!(summon_specific_friendly(py, px, (dun_depth), SUMMON_NO_UNIQUES, FALSE)))
-			msg_print("Nobody ever turns up...");
+			msg_format("%s rewards you with a servant!",c_name);
+			if (!(summon_specific_friendly(py, px, dun_depth, 0, FALSE)))
+				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_UNDE:
-			msg_format("%s rewards you with an undead servant!",chaos_patron_shorts[p_ptr->chaos_patron]);
-			if (!(summon_specific_friendly(py, px, (dun_depth), SUMMON_UNDEAD, FALSE)))
-			msg_print("Nobody ever turns up...");
+			msg_format("%s rewards you with an undead servant!",c_name);
+			if (!(summon_specific_friendly(py, px, dun_depth, SUMMON_UNDEAD,
+				FALSE)))
+				msg_print("Nobody ever turns up...");
 			break;
 		default:
-			msg_format("The voice of %s stammers:",
-				chaos_patron_shorts[p_ptr->chaos_patron]);
+			msg_format("The voice of %s stammers:", c_name);
 			msg_format("'Uh... uh... the answer's %d, what's the question?'",
 				effect);
 		}
