@@ -797,32 +797,17 @@ static void wiz_change_item(object_type *o_ptr)
 {
 	cptr	p;
 	char        tmp_val[80];
-	int value, count;
 
 	/* Hack -- leave artifacts alone */
 	if (allart_p(o_ptr)) return;
 
-	p = "Enter new 'tval' setting: ";
-	sprintf(tmp_val, "%d", o_ptr->tval);
+	p = "Enter new 'k_idx' setting: ";
+	sprintf(tmp_val, "%d", o_ptr->k_idx);
 	if (!get_string(p, tmp_val, 5)) return;
-	o_ptr->tval = atoi(tmp_val);
+	o_ptr->k_idx = atoi(tmp_val);
 	wiz_display_item(o_ptr);
-
-	/* Choose a random sval if necessary */
-	count = 1000; value = o_ptr->sval;
-	while(!((o_ptr->k_idx = lookup_kind(o_ptr->tval, value))) && count--) value = randint(128);
 	wiz_display_item(o_ptr);
 	
-	p = "Enter new 'sval' setting: ";
-	sprintf(tmp_val, "%d", o_ptr->sval);
-	if (!get_string(p, tmp_val, 5)) return;
-	value = atoi(tmp_val);
-
-	/* Accept the sval if legal, choose randomly if not. */
-	count = 1000;
-	while(!((o_ptr->k_idx = lookup_kind(o_ptr->tval, value))) && count--) value = randint(128);
-	wiz_display_item(o_ptr);
-
 	/* There's no easy way to detect impossible ego items, but restricting
 	it to weapons and non-dragon armour is simple. */
 	switch (o_ptr->tval)
