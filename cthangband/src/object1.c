@@ -290,6 +290,12 @@ void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f3) |= e_ptr->flags3;
 	}
 
+	/* Hack - IDENT_CURSED needs to be set for an item to be cursed. */
+	if (~o_ptr->ident & IDENT_CURSED)
+	{
+		(*f3) &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
+	}
+
 	/* Random artifact ! */
 	if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
 	{
