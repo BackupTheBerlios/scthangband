@@ -3165,8 +3165,6 @@ static void player_birth_quests(void)
 			(q_list[i].level >= dun_defs[j].max_level + dun_defs[j].offset));
 
 		q_list[i].dungeon = j;
-		q_list[i].level -= dun_defs[j].offset;
-
 		q_list[i].max_num = get_number_monster(i);
 	}
 
