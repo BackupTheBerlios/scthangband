@@ -407,15 +407,20 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case '%': 
 		{
 			/* Attempt to Process the given file */
-			process_pref_file(buf + 2);
+			if (process_pref_file(buf + 2))
+				return "Sub-file failed.";
+			else
+				return 0;
 		}
 		/* Process O:<version> -- save file version for this file. */
 		case 'O': 
 		{
-			j = tokenize(buf+2, MAX_SF_VAR, zz);
-			if (!j) return "format not O:<ver>:<ver>:...";
+			j = tokenize(buf+2, 16, zz);
+			if (!j || j > MAX_SF_VAR) return "format not O:<ver>:<ver>:...";
 			for (i = 0; i < j; i++)
 			{
+				if (*zz[i] < '0' || *zz[i] > '9')
+					return "Non-numerical parameter.";
 				sf_flags[i] = strtol(zz[i], NULL, 0);
 			}
 			return 0;
@@ -733,46 +738,42 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		}
 		case 'L':
 		{
-			int i = tokenize(buf+2, 3, zz);
-			if (i == 3 || i == 4)
+			int x, y, i = tokenize(buf+2, 16, zz);
+			redraw_type *co_ptr;
+
+			/* L:<display>:<x>:<y> is allowed but deprecated. */
+			if (i < 3 || i > 5)
+				return "format not L:<display>:<x>:<y>:<length>";
+
+			FOR_ALL_IN(screen_coords, co_ptr)
 			{
-				int x,y;
-				redraw_type *co_ptr;
-				for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords);
-					co_ptr++)
-				{
-					if (!strcmp(co_ptr->name, zz[0])) goto L_okay;
-				}
-				return "no such display";
+				if (!strcmp(co_ptr->name, zz[0])) goto L_okay;
+			}
+			return "no such display";
 L_okay:
 
-				for (j = 1; j < i; j++)
-					if (!isdigit(zz[j][0])) return "non-numerical co-ordinate";
+			for (j = 1; j < i; j++)
+				if (!isdigit(zz[j][0])) return "non-numerical co-ordinate";
 
-				x = atoi(zz[1]);
-				y = atoi(zz[2]);
+			x = atoi(zz[1]);
+			y = atoi(zz[2]);
 
-				if (x < -255 || x > 255 || y < -255 || y > 255)
-					return "co-ordinates must be between -255 and 255";
+			if (x < -255 || x > 255 || y < -255 || y > 255)
+				return "co-ordinates must be between -255 and 255";
 
-				co_ptr->x = x;
-				co_ptr->y = y;
+			co_ptr->x = x;
+			co_ptr->y = y;
 
-				/* Read (optional) length. */
-				if (i > 3)
-				{
-					int l = atoi(zz[3]);
-					if (l < 0 || l > 255)
-						return "length must be between 0 and 255.";
-					co_ptr->l = l;
-				}
-
-				return SUCCESS;
-			}
-			else
+			/* Read (optional) length. */
+			if (i > 3)
 			{
-				return "format not L:<display>:<x>:<y>";
+				int l = atoi(zz[3]);
+				if (l < 0 || l > 255)
+					return "length must be between 0 and 255.";
+				co_ptr->l = l;
 			}
+
+			return SUCCESS;
 		}
 		default:
 		{
