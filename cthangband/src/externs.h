@@ -2297,9 +2297,6 @@ extern bool show_details;
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool show_choices_main;
 #endif
-
-
-
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool ring_bell;
 #endif
@@ -2315,6 +2312,9 @@ extern bool find_ignore_stairs;
 #if (defined(CMD1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool find_ignore_doors;
 #endif
+
+
+
 #if (defined(CMD1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool find_cut;
 #endif
@@ -2342,12 +2342,6 @@ extern bool disturb_dawn;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool disturb_minor;
 #endif
-
-
-
-
-
-
 #if (defined(CMD2_C) || defined(CMD4_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool alert_failure;
 #endif
@@ -2360,6 +2354,9 @@ extern bool speak_unique;
 #if (defined(CMD4_C) || defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool small_levels;
 #endif
+
+
+
 #if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool empty_levels;
 #endif
@@ -2396,9 +2393,6 @@ extern bool disturb_allies;
 #if (defined(CMD2_C) || defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool multi_stair;
 #endif
-
-
-
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool centre_view;
 #endif
@@ -2414,6 +2408,9 @@ extern bool maximise_mode;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool use_autoroller;
 #endif
+
+
+
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spend_points;
 #endif
@@ -3531,6 +3528,9 @@ extern bool is_keymap_or_macro(void);
 #if (defined(OBJECT1_C) || defined(VARIABLE_C))
 extern player_type p_body;
 #endif
+
+
+
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool macro_edit;
 #endif

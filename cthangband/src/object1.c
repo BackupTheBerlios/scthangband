@@ -2673,6 +2673,10 @@ static void res_stat_details_comp(player_type *po_ptr, player_type *pn_ptr, int 
 		{
 			descr(format("It restores your %s.", stats[j]));
 		}
+		else if (CMPJ(stat_use))
+		{
+			descr(format("It adds %d to your %s.", dif, stats[j]));
+		}
 
 		/* No effect, so boring. */
 		if (!CMPJ(stat_use)) continue;
@@ -2680,7 +2684,6 @@ static void res_stat_details_comp(player_type *po_ptr, player_type *pn_ptr, int 
 		switch (j)
 		{
 			case A_CHR:
-			if (CMPS(adj_mag_study)) descr(format("  It causes you to annoy spirits %s.", DIF_LES));
 			if (CMPS(adj_mag_study)) descr(format("  It causes you to annoy spirits %s.", DIF_LES));
 			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF));
 			if (CMPS(adj_mag_stat)) descr(format("  It %s your spiritual success rates.", DIF_INC));
@@ -2845,11 +2848,11 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 	if (o_ptr->art_flags1 & TR1_CHR) *stat |= 1<<A_CHR;
 
 	/* If one of these flags exist, the modifier refers to it. */
-	if (stat) *pval = o_ptr->pval;
+	if (*stat) *pval = o_ptr->pval;
 	else *pval = 0;
 
 	/* Look for stat-affecting potions, food, etc..*/
-	for (j = 0, *act = *stat = 0; conv[j].tval; j++)
+	for (j = 0, *act = 0; conv[j].tval; j++)
 	{
 		if (conv[j].tval == o_ptr->tval && conv[j].sval == o_ptr->sval)
 		{
