@@ -738,6 +738,12 @@ static errr rd_store(int n)
 		/* Read the item */
 		rd_item(q_ptr);
 
+		/* Set IDENT_STORE as needed. */
+		if (st_ptr->type != STORE_HOME && st_ptr->type != STORE_PAWN)
+		{
+			q_ptr->ident |= IDENT_STORE;
+		}
+
 		/* Acquire valid items */
 		if (st_ptr->stock_num < STORE_INVEN_MAX)
 		{
