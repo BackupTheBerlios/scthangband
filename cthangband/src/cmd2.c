@@ -436,9 +436,6 @@ static void chest_death(int y, int x, s16b o_idx)
 	/* Determine how much to drop (see above) */
 	number = chest_number(k_ptr);
 
-	/* Opening a chest */
-	opening_chest = TRUE;
-
 	/* Determine the "value" of the items */
 	object_level = ABS(o_ptr->pval) + 10;
 
@@ -472,9 +469,6 @@ static void chest_death(int y, int x, s16b o_idx)
 
 	/* Reset the object level */
 	object_level = dun_depth;
-
-	/* No longer opening a chest */
-	opening_chest = FALSE;
 
 	/* Empty */
 	o_ptr->pval = 0;

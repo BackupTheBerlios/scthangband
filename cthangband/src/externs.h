@@ -2645,15 +2645,15 @@ extern bool inkey_flag;
 
 
 
-#if (defined(CMD2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
-extern bool opening_chest;
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern bool shimmer_monsters;
 #endif
-#if (defined(DUNGEON_C) || defined(VARIABLE_C))
-extern bool shimmer_objects;
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern bool repair_monsters;
 #endif
@@ -3287,7 +3287,7 @@ extern s16b alloc_kind_size;
 #if (defined(INIT2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern alloc_entry *alloc_kind_table;
 #endif
-#if (defined(INIT2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
+#if (defined(INIT2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern s16b alloc_race_size;
 #endif
 #if (defined(INIT2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))

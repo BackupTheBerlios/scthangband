@@ -3353,7 +3353,6 @@ static void dungeon(void)
 
 	/* Check visual effects */
 	shimmer_monsters = TRUE;
-	shimmer_objects = TRUE;
 	repair_monsters = TRUE;
 	repair_objects = TRUE;
 

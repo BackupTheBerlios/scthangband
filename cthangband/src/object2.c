@@ -665,35 +665,42 @@ object_type *o_pop(void)
 
 
 /*
- * Apply a "object restriction function" to the "object allocation table"
+ * Reset alloc_kind_table[] to its default values.
  */
-static errr get_obj_num_prep(bool (*hook)(int))
+static void get_obj_num_init(void)
 {
 	int i;
-
-	/* Get the entry */
-	alloc_entry *table = alloc_kind_table;
 
 	/* Scan the allocation table */
 	for (i = 0; i < alloc_kind_size; i++)
 	{
-		/* Accept objects which pass the restriction, if any */
-		if (!hook || (*hook)(table[i].index))
-		{
-			/* Accept this object */
-			table[i].prob2 = table[i].prob1;
-		}
+		/* Accept this object */
+		alloc_kind_table[i].prob2 = alloc_kind_table[i].prob1;
+	}
+}
 
-		/* Do not use this object */
-		else
+
+
+/*
+ * Apply an "object restriction function" to the "object allocation table".
+ * Do not remove any existing restrictions.
+ */
+static void get_obj_num_filter(bool (*hook)(int))
+{
+	int i;
+
+	assert(hook); /* Caller */
+
+	/* Scan the allocation table */
+	for (i = 0; i < alloc_kind_size; i++)
+	{
+		/*  Reject objects which fail the restriction. */
+		if (!(*hook)(alloc_kind_table[i].index))
 		{
 			/* Decline this object */
-			table[i].prob2 = 0;
+			alloc_kind_table[i].prob2 = 0;
 		}
 	}
-
-	/* Success */
-	return (0);
 }
 
 
@@ -715,22 +722,18 @@ static errr get_obj_num_prep(bool (*hook)(int))
  */
 s16b get_obj_num(int level)
 {
-	int                     i, j, p;
+	int i, p;
 
-	int                     k_idx;
+	long value, total;
 
-	long            value, total;
-
-	object_kind             *k_ptr;
-
-	alloc_entry             *table = alloc_kind_table;
+	alloc_entry *table = alloc_kind_table;
 
 
 	/* Boost level */
 	if (level > 0)
 	{
 		/* Occasional "boost" */
-		if (rand_int(GREAT_OBJ) == 0)
+		if (one_in(GREAT_OBJ))
 		{
 			/* What a bizarre calculation */
 			level = 1 + (level * MAX_DEPTH / randint(MAX_DEPTH));
@@ -738,104 +741,40 @@ s16b get_obj_num(int level)
 	}
 
 
-	/* Reset total */
-	total = 0L;
-
-	/* Process probabilities */
-	for (i = 0; i < alloc_kind_size; i++)
+	/* Count the total probability. */
+	for (total = i = 0; i < alloc_kind_size; i++)
 	{
 		/* Objects are sorted by depth */
 		if (table[i].level > level) break;
 
-		/* Default */
-		table[i].prob3 = 0;
-
-		/* Access the index */
-		k_idx = table[i].index;
-
-		/* Access the actual kind */
-		k_ptr = &k_info[k_idx];
-
-		/* Hack -- prevent embedded chests */
-		if (opening_chest && (k_ptr->tval == TV_CHEST)) continue;
-
-		/* Accept */
-		table[i].prob3 = table[i].prob2;
-
-		/* Total */
 		total += table[i].prob3;
 	}
 
 	/* No legal objects */
 	if (total <= 0) return (0);
 
-
-	/* Pick an object */
-	value = rand_int(total);
-
-	/* Find the object */
-	for (i = 0; i < alloc_kind_size; i++)
-	{
-		/* Found the entry */
-		if (value < table[i].prob3) break;
-
-		/* Decrement */
-		value = value - table[i].prob3;
-	}
-
-
 	/* Power boost */
 	p = rand_int(100);
+	i = (p < 40) ? 1 : (p < 90) ? 2 : 3;
 
-	/* Try for a "better" object once (50%) or twice (10%) */
-	if (p < 60)
+	/* Roll up to three times for an object. */
+	for (value = 0; i; i--)
 	{
-		/* Save old */
-		j = i;
-
-		/* Pick a object */
-		value = rand_int(total);
-
-		/* Find the monster */
-		for (i = 0; i < alloc_kind_size; i++)
-		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
-		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
+		long v = rand_int(total);
+		if (v > value) value = v;
 	}
 
-	/* Try for a "better" object twice (10%) */
-	if (p < 10)
+	/* Find the object. */
+	for (i = 0; i < alloc_race_size; i++)
 	{
-		/* Save old */
-		j = i;
+		/* Decrement */
+		value -= table[i].prob2;
 
-		/* Pick a object */
-		value = rand_int(total);
-
-		/* Find the object */
-		for (i = 0; i < alloc_kind_size; i++)
-		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
-		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
+		if (value < 0) return table[i].index;
 	}
 
-
-	/* Result */
-	return (table[i].index);
+	/* Paranoia. */
+	return 0;
 }
 
 
@@ -3280,6 +3219,13 @@ static bool PURE kind_is_good(int k_idx)
 	return ((k_info[k_idx].flags3 & TR3_GOOD) != 0);
 }
 
+/*
+ * Hack -- determine if an object is something other than a chest.
+ */
+static bool PURE forbid_chests(int k_idx)
+{
+	return (k_info[k_idx].tval != TV_CHEST);
+}
 
 
 
@@ -3296,7 +3242,6 @@ bool make_object(object_type *j_ptr, bool good, bool great, int how, int idx)
 {
 	int prob, base;
 
-
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);
 
@@ -3308,22 +3253,31 @@ bool make_object(object_type *j_ptr, bool good, bool great, int how, int idx)
 	if ((rand_int(prob) != 0) || (make_artifact(j_ptr, TRUE) != SUCCESS))
 	{
 		int k_idx;
+		bool change = FALSE;
 
 		/* Good objects */
 		if (good)
 		{
 			/* Prepare "good" allocation table */
-			get_obj_num_prep(kind_is_good);
+			get_obj_num_filter(kind_is_good);
+			change = TRUE;
+		}
+
+		/* Hack - use "how" to identify chests. */
+		if (how == FOUND_CHEST)
+		{
+			get_obj_num_filter(forbid_chests);
+			change = TRUE;
 		}
 
 		/* Pick a random object */
 		k_idx = get_obj_num(base);
 
-		/* Good objects */
-		if (good)
+		/* Reset the table if it has been changed. */
+		if (change)
 		{
 			/* Prepare normal allocation table */
-			get_obj_num_prep(NULL);
+			get_obj_num_init();
 		}
 
 		/* Handle failure */
