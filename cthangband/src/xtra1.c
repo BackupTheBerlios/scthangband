@@ -3676,28 +3676,14 @@ static bool win_visible_good(void)
 	return FALSE;
 }
 
-/* The following code to display visible monsters is taken from Eyangband 0.3.3
- * and uses a few strategic #defines to minimise the number of  changes needed
- * to do this.
- *
- * In actual fact, the only changes to the functions themselves are in the
- * definition of who[x].u_idx and the removal of the Term_clear().
- */
-
 typedef struct monster_list_entry monster_list_entry;
 
 struct monster_list_entry
 {
 	s16b r_idx;			/* Monster race index */
-	s16b u_idx;			/* Unique index (for uniques) */
-
 	byte amount;
 };
 
-
-#define get_lore_idx(idx, unused) (&(r_info[idx]))
-#define get_monster_fake(idx, unused) (&(r_info[idx]))
-#define monster_lore monster_race
 
 /*
  * Sorting hook -- Comp function -- see below
@@ -3720,8 +3706,8 @@ static bool ang_mon_sort_comp_hook(vptr u, vptr v, int a, int b)
 	if (*why >= 4)
 	{
 		/* Extract player kills */
-		z1 = get_lore_idx(r1,who[a].u_idx)->r_pkills;
-		z2 = get_lore_idx(r2,who[b].u_idx)->r_pkills;
+		z1 = r_info[r1].r_pkills;
+		z2 = r_info[r2].r_pkills;
 
 		/* Compare player kills */
 		if (z1 < z2) return (TRUE);
@@ -3732,8 +3718,8 @@ static bool ang_mon_sort_comp_hook(vptr u, vptr v, int a, int b)
 	if (*why >= 3)
 	{
 		/* Extract total kills */
-		z1 = get_lore_idx(r1,who[a].u_idx)->r_tkills;
-		z2 = get_lore_idx(r2,who[b].u_idx)->r_tkills;
+		z1 = r_info[r1].r_tkills;
+		z2 = r_info[r2].r_tkills;
 
 		/* Compare total kills */
 		if (z1 < z2) return (TRUE);
@@ -3744,8 +3730,8 @@ static bool ang_mon_sort_comp_hook(vptr u, vptr v, int a, int b)
 	if (*why >= 2)
 	{
 		/* Extract levels */
-		z1 = get_monster_fake(r1,who[a].u_idx)->level;
-		z2 = get_monster_fake(r2,who[b].u_idx)->level;
+		z1 = r_info[r1].level;
+		z2 = r_info[r2].level;
 
 		/* Compare levels */
 		if (z1 < z2) return (TRUE);
@@ -3756,8 +3742,8 @@ static bool ang_mon_sort_comp_hook(vptr u, vptr v, int a, int b)
 	if (*why >= 1)
 	{
 		/* Extract experience */
-		z1 = get_monster_fake(r1,who[a].u_idx)->mexp;
-		z2 = get_monster_fake(r2,who[b].u_idx)->mexp;
+		z1 = r_info[r1].mexp;
+		z2 = r_info[r2].mexp;
 
 		/* Compare experience */
 		if (z1 < z2) return (TRUE);
@@ -3785,6 +3771,23 @@ static void ang_mon_sort_swap_hook(vptr u, vptr UNUSED v, int a, int b)
 	who[a] = who[b];
 	who[b] = holder;
 }
+
+/*
+ * Dump a monster description to the screen.
+ */
+static void dump_race(int w, int h, int num, char attr, monster_race *r_ptr)
+{
+	int flags, x = num/(h-1)*w, y = num%(h-1)+1;
+
+	/* Give a number unless it's boring. */
+	if (num != 0) flags = MDF_NUMBER;
+	else flags = 0;
+
+	/* Dump the monster name. */
+	mc_put_fmt(y, x, "%v $%c%.*v", get_symbol_f2, r_ptr->x_attr,
+		r_ptr->x_char, attr, w-3, monster_desc_aux_f3, r_ptr, num, flags);
+}
+
 
 /*
  * Display the visible monster list in a window.
@@ -3840,7 +3843,6 @@ static void win_visible_display(void)
 		if (!found)
 		{
 			who[items].r_idx = m_ptr->r_idx;
-			who[items].u_idx = !!(r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE);
 			who[items].amount = 1;
 
 			items++;
@@ -3853,9 +3855,8 @@ static void win_visible_display(void)
 	/* Are monsters visible? */
 	if (items)
 	{
-		int w, h, num, len;
+		int w, h, num;
 		u16b why = 1;
-		cptr name;
 
 		/* First, sort the monsters by expereince*/
 		ang_sort_comp = ang_mon_sort_comp_hook;
@@ -3875,57 +3876,36 @@ static void win_visible_display(void)
 		/* Print the monsters in reverse order */
 		for (i = items - 1, num = 0; i >= 0; i--, num++)
 		{
-			monster_lore *l_ptr = get_lore_idx(who[i].r_idx, who[i].u_idx);
-			monster_race *r_ptr = get_monster_fake(who[i].r_idx, who[i].u_idx);
+			monster_race *r_ptr = r_info+who[i].r_idx;
 
 			/* Default Colour */
-			byte attr = TERM_WHITE;
+			char attr = 'w';
 
 			/* Uniques */
-			if (who[i].u_idx)
+			if (r_ptr->flags1 & RF1_UNIQUE)
 			{
-				attr = TERM_L_RED;
+				attr = 'R';
 			}
 
 			/* Have we ever killed one? */
-			if (l_ptr->r_tkills)
+			if (r_ptr->r_tkills)
 			{
 				if (r_ptr->level > dun_depth)
 				{
-					attr = TERM_VIOLET;
+					attr = 'v';
 
-					if (who[i].u_idx)
+					if (r_ptr->flags1 & RF1_UNIQUE)
 					{
-						attr = TERM_RED;
+						attr = 'r';
 					}
 				}
 			}
 			else
 			{
-				if (!who[i].u_idx) attr = TERM_SLATE;
+				if (!r_ptr->flags1 & RF1_UNIQUE) attr = 's';
 			}			
 			
-			/* Dump the monster character (not tracking shapechangers) */
-			Term_putch((num / (h - 1)) * w, (num % (h - 1)) + 1, r_ptr->x_attr, r_ptr->x_char);
-
-
-			/* Dump the monster name */
-			if (who[i].amount == 1)
-			{
-				len = w-3;
-			}
-			else
-			{
-				len = w-3-strlen(format(" (x%d)", who[i].amount));
-			}
-			name = format("%.*v", len, monster_desc_aux_f3,
-				r_info+who[i].r_idx, who[i].amount, 0);
-
-			if (who[i].amount != 1)
-			{
-				name = format("%s (x%d)", name, who[i].amount);
-			}
-			c_prt(attr, name, (num % (h - 1)) + 1, (num / (h - 1)) * w +2);
+			dump_race(w, h, num, attr, r_ptr);
 		}
 	}
 	else
