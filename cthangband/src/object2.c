@@ -706,7 +706,7 @@ static void get_obj_num_filter(bool (*hook)(int))
  * Choose an object kind that seems "appropriate" to the given level
  *
  * This function uses the "prob2" field of the "object allocation table",
- * and various local information, to calculate the "prob3" field of the
+ * and various local information, to calculate the "prob2" field of the
  * same table, which is then used to choose an "appropriate" object, in
  * a relatively efficient manner.
  *
@@ -744,7 +744,7 @@ s16b get_obj_num(int level)
 		/* Objects are sorted by depth */
 		if (table[i].level > level) break;
 
-		total += table[i].prob3;
+		total += table[i].prob2;
 	}
 
 	/* No legal objects */
