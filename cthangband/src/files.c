@@ -3927,10 +3927,21 @@ int color_char_to_attr(char c)
 }
 
 
+typedef struct link_det link_det;
+struct link_det
+{
+	char file[32];
+	char key;
+	int x;
+	int y;
+	int line;
+};
+
 /*
  * A structure to hold (some of == XXX) the hyperlink information.
  * This prevents excessive use of stack.
  */
+typedef struct hyperlink hyperlink_type;
 struct hyperlink
 {
 	/* Path buffer */
@@ -3949,14 +3960,12 @@ struct hyperlink
 	char caption[128];
 
 	/* Hypertext info */
-	char link[400][32], link_key[400];
-	int  link_x[400], link_y[400], link_line[400];
+	link_det link[400];
 
 	int cur_link;	/* Currently selected link. */
 	int max_link;	/* Number of links known. */
 };
 
-typedef struct hyperlink hyperlink_type;
 
 /*
  * Attempt to open a file in a standard Angband directory for show_file_aux().
@@ -4132,12 +4141,12 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 
 	/* Get a cur_link which is on screen if possible. */
 	while ((h_ptr->cur_link > 0) &&
-		(h_ptr->link_y[h_ptr->cur_link] >= minline + (maxy - miny + 1)))
+		(h_ptr->link[h_ptr->cur_link].y >= minline + (maxy - miny + 1)))
 	{
 		h_ptr->cur_link--;
 	}
 	while ((h_ptr->cur_link < h_ptr->max_link) &&
-		(h_ptr->link_y[h_ptr->cur_link] < minline))
+		(h_ptr->link[h_ptr->cur_link].y < minline))
 	{
 		h_ptr->cur_link++;
 	}
@@ -4197,8 +4206,8 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 				}
 				xx++;
 
-				if ((h_ptr->link_x[h_ptr->cur_link] == x) &&
-					(h_ptr->link_y[h_ptr->cur_link] == l))
+				if ((h_ptr->link[h_ptr->cur_link].x == x) &&
+					(h_ptr->link[h_ptr->cur_link].y == l))
 					thiscol = link_color_sel;
 				else
 					thiscol = link_color;
@@ -4354,7 +4363,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 	/* Wipe the links */
 	for (i = 0; i < 400; i++)
 	{
-		h_ptr->link_x[i] = -1;
+		h_ptr->link[i].x = -1;
 	}
 
 	/* Hack XXX XXX XXX */
@@ -4461,28 +4470,28 @@ static char show_file_aux(cptr name, cptr what, int line)
 
 				for (z = 0; z < 20; z++) tmp[z] = '\0';
 
-				h_ptr->link_x[h_ptr->max_link] = x;
-				h_ptr->link_y[h_ptr->max_link] = next;
+				h_ptr->link[h_ptr->max_link].x = x;
+				h_ptr->link[h_ptr->max_link].y = next;
 
 				if (buf[xx] == '/')
 				{
 					xx++;
-					h_ptr->link_key[h_ptr->max_link] = buf[xx];
+					h_ptr->link[h_ptr->max_link].key = buf[xx];
 					xx++;
 					xdeb += 2;
 				}
 				else
 				{
-					h_ptr->link_key[h_ptr->max_link] = 0;
+					h_ptr->link[h_ptr->max_link].key = 0;
 				}
 
 				/* Zap the link info */
 				while (buf[xx] != '*')
 				{
-					h_ptr->link[h_ptr->max_link][xx - xdeb] = buf[xx];
+					h_ptr->link[h_ptr->max_link].file[xx - xdeb] = buf[xx];
 					xx++;
 				}
-				h_ptr->link[h_ptr->max_link][xx - xdeb] = '\0';
+				h_ptr->link[h_ptr->max_link].file[xx - xdeb] = '\0';
 				xx++;
 				stmp = xx;
 				while (buf[xx] != '[')
@@ -4492,7 +4501,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 				}
 				xx++;
 				tmp[xx - stmp] = '\0';
-				h_ptr->link_line[h_ptr->max_link] = -atoi(tmp);
+				h_ptr->link[h_ptr->max_link].line = -atoi(tmp);
 				h_ptr->max_link++;
 			}
 			x++;
@@ -4646,10 +4655,10 @@ static char show_file_aux(cptr name, cptr what, int line)
 			if (h_ptr->cur_link >= h_ptr->max_link)
 				h_ptr->cur_link = h_ptr->max_link - 1;
 
-			if (h_ptr->link_y[h_ptr->cur_link] < line)
-				line = h_ptr->link_y[h_ptr->cur_link];
-			if (h_ptr->link_y[h_ptr->cur_link] >= line + (hgt - 4))
-				line = h_ptr->link_y[h_ptr->cur_link] - (hgt - 4);
+			if (h_ptr->link[h_ptr->cur_link].y < line)
+				line = h_ptr->link[h_ptr->cur_link].y;
+			if (h_ptr->link[h_ptr->cur_link].y >= line + (hgt - 4))
+				line = h_ptr->link[h_ptr->cur_link].y - (hgt - 4);
 		}
 		/* Return one link */
 		else if (k == '4')
@@ -4657,20 +4666,20 @@ static char show_file_aux(cptr name, cptr what, int line)
 			h_ptr->cur_link--;
 			if (h_ptr->cur_link < 0) h_ptr->cur_link = 0;
 
-			if (h_ptr->link_y[h_ptr->cur_link] < line)
-				line = h_ptr->link_y[h_ptr->cur_link];
-			if (h_ptr->link_y[h_ptr->cur_link] >= line + (hgt - 4))
-				line = h_ptr->link_y[h_ptr->cur_link] - (hgt - 4);
+			if (h_ptr->link[h_ptr->cur_link].y < line)
+				line = h_ptr->link[h_ptr->cur_link].y;
+			if (h_ptr->link[h_ptr->cur_link].y >= line + (hgt - 4))
+				line = h_ptr->link[h_ptr->cur_link].y - (hgt - 4);
 		}
 
 		/* Recurse on numbers */
 		else if (k == '\r')
 		{
-			if (h_ptr->link_x[h_ptr->cur_link] != -1)
+			if (h_ptr->link[h_ptr->cur_link].x != -1)
 			{
 				/* Recurse on that file */
-				k = show_file_aux(h_ptr->link[h_ptr->cur_link], NULL,
-					h_ptr->link_line[h_ptr->cur_link]);
+				k = show_file_aux(h_ptr->link[h_ptr->cur_link].file, NULL,
+					h_ptr->link[h_ptr->cur_link].line);
 			}
 		}
 		else
@@ -4678,8 +4687,8 @@ static char show_file_aux(cptr name, cptr what, int line)
 			/* No other key ? lets look for a shortcut */
 			for (i = 0; i < h_ptr->max_link; i++)
 			{
-				if (h_ptr->link_key[i] != k) continue;
-				k = show_file_aux(h_ptr->link[i], NULL, h_ptr->link_line[i]);
+				if (h_ptr->link[i].key != k) continue;
+				k = show_file_aux(h_ptr->link[i].file, NULL, h_ptr->link[i].line);
 				break;
 			}
 		}
