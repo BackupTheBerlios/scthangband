@@ -2155,7 +2155,7 @@ extern byte chest_traps[64];
 #if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(TABLES_C))
 extern cptr color_names[16];
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(TABLES_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern cptr atchar;
 #endif
 #if (defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
