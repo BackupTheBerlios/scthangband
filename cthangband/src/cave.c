@@ -3570,7 +3570,7 @@ bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2,
 	assert(okay); /* Caller */
 
 	/* Set (*xx, *yy) to the square before the first on which okay() fail. */
-	for (d = 0, x = x1, y = y1; !d || (*okay)(y, x, d); d++)
+	for (d = 0, x = x1, y = y1; ; d++)
 	{
 		r = (d) ? (*okay)(y, x, d) : MVD_CONTINUE;
 
