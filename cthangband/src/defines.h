@@ -696,6 +696,7 @@ logaux(x, 1) logaux(x, 0) 255)
 
 #define SCH_HEDGE 4
 #define SCH_SPIRIT 5
+#define SCH_MIND 6
 
 #define SP_VIS 0
 #define SP_NATURAE 1

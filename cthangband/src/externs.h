@@ -3584,14 +3584,14 @@ extern bool skill_check_possible(int index);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void skill_exp(int index);
 #endif
-#if (defined(CMD5_C) || defined(XTRA1_C))
-extern void gain_spell_exp(magic_type *spell);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(XTRA1_C))
+
+/* cmd5.c */
+
+#if (defined(CMD2_C) || defined(CMD5_C))
 extern u16b spell_energy(u16b skill,u16b min);
 #endif
 #if (defined(CMD5_C) || defined(XTRA1_C))
-extern byte spell_skill(magic_type *spell);
+extern int spell_skill(const magic_type *s_ptr);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern int find_object(object_type *o_ptr);

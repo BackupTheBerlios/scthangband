@@ -30,37 +30,123 @@ static void annoy_spirit(spirit_type *s_ptr,u32b amount);
 
 
 
+static int sschool_to_skill(const int i)
+{
+	switch (i)
+	{
+		case SCH_THAUMATURGY: return SKILL_THAUMATURGY;
+		case SCH_SORCERY: return SKILL_SORCERY;
+		case SCH_CONJURATION: return SKILL_CONJURATION;
+		case SCH_NECROMANCY: return SKILL_NECROMANCY;
+		case SCH_HEDGE: return SKILL_HEDGE;
+		case SCH_SPIRIT: return SKILL_SHAMAN;
+		default: return 0;
+	}
+}
+
+static int stype_to_skill(const int i)
+{
+	switch (i)
+	{
+		case SP_CORPORIS: return SKILL_CORPORIS;
+		case SP_NATURAE: return SKILL_NATURAE;
+		case SP_VIS: return SKILL_VIS;
+		case SP_ANIMAE: return SKILL_ANIMAE;
+
+		/* A spell which only uses one skill. */
+		case SP_NONE: return -1;
+
+		default: return 0;
+	}
+}
 
 /*
- * Returns spell chance of failure for spell            -RAK-
+ *
+ * Combine the relevant skills for a given spell, then
+ * divide the total by four to give an effective 'level'
+ * of spellcasting
+ *
+ * This function always returns a minimum of 1
+ * even if the skill levels are zero
+ *
  */
-static int spell_chance(int spell,int school)
+int spell_skill(const magic_type *s_ptr)
 {
-	int             chance, minfail;
+	int total, skill;
 
-	magic_type      *s_ptr;
+	skill = sschool_to_skill(s_ptr->sschool);
+	total = skill_set[skill].value;
 
+	skill = stype_to_skill(s_ptr->stype);
+	if (skill < 0)
+		total *= 2;
+	else
+		total += skill_set[skill].value;
 
-	/* Access the spell */
-    s_ptr = &mp_ptr->info[school][spell];
+	total /= 4; /* This gives a total of 0-50 */
+	if (total == 0) total++; /* So that we have a minimum of 1 */
+	return (total);
+}
 
+static int spell_stat(const magic_type *s_ptr)
+{
+	switch (s_ptr->sschool)
+	{
+		case SCH_THAUMATURGY:
+		case SCH_SORCERY:
+		case SCH_CONJURATION:
+		case SCH_NECROMANCY:
+		case SCH_HEDGE:
+			return A_INT;
+		case SCH_MIND:
+			return A_WIS;
+		case SCH_SPIRIT:
+			return A_CHR;
+		default: /* Paranoia */
+			return A_STR;
+	}
+}
+			
+
+/*
+ * Check for low mana, etc., and adjust the fail rate appropriately.
+ */
+static void low_mana_check(int *chance, const magic_type *s_ptr)
+{
+	switch (s_ptr->sschool)
+	{
+		case SCH_SORCERY:
+		case SCH_NECROMANCY:
+		case SCH_THAUMATURGY:
+		case SCH_CONJURATION:
+		{
+			if (s_ptr->smana > p_ptr->csp)
+			{
+				(*chance) += 5 * (s_ptr->smana - p_ptr->csp);
+			}
+			return;
+		}
+	}
+}
+
+/*
+ * Returns spell chance of failure for an arbitrary spell
+ */
+static int spell_chance_aux(const magic_type *s_ptr)
+{
 	/* Extract the base spell failure rate */
-	chance = s_ptr->sfail;
+	int chance = s_ptr->sfail;
+	const int stat = spell_stat(s_ptr);
+	const int minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
 	/* Reduce failure rate by "effective" level adjustment */
 	chance -= 3 * (spell_skill(s_ptr) - s_ptr->minskill);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_INT]] - 1);
+	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
 
 	/* Not enough mana to cast */
-	if (s_ptr->smana > p_ptr->csp)
-	{
-		chance += 5 * (s_ptr->smana - p_ptr->csp);
-	}
-
-	/* Extract the minimum failure rate */
-	minfail = adj_mag_fail[p_ptr->stat_ind[A_INT]];
+	low_mana_check(&chance, s_ptr);
 
 	/* Minimum failure rate */
 	if (chance < minfail) chance = minfail;
@@ -76,7 +162,52 @@ static int spell_chance(int spell,int school)
 	return (chance);
 }
 
+/*
+ * Returns spell chance of failure for spell
+ */
+static int spell_chance(int spell,int school)
+{
+    return spell_chance_aux(&mp_ptr->info[school][spell]);
+}
 
+/*
+ * Returns cantrip chance of failure
+ */
+static s16b cantrip_chance(int ctp)
+{
+	return spell_chance_aux(&cantrip_info[ctp]);
+}
+
+/*
+ * Returns favour chance of failure
+ */
+static s16b favour_chance(int fav,int sphere)
+{
+	return spell_chance_aux(&favour_info[sphere][fav]);
+}
+
+/* Give experience to spell skills for a spell */
+static void gain_spell_exp(magic_type *spell)
+{
+	bool check_mana = FALSE;
+	int min_skill = spell->minskill * 2;
+
+	int skill = sschool_to_skill(spell->sschool);
+	if (skill_set[skill].value < min_skill + 50)
+	{
+		skill_exp(skill);
+		check_mana = TRUE;
+	}
+
+	skill = stype_to_skill(spell->stype);
+	if (skill >= 0 && skill_set[skill].value < min_skill + 50)
+	{
+		skill_exp(skill);
+		check_mana = TRUE;
+	}
+
+	if (check_mana) skill_exp(SKILL_MANA);
+}
 
 /*
  * Extra information on a spell         -DRS-
@@ -187,6 +318,34 @@ switch (school)
 
 }
 #endif
+}
+
+/*
+ * Return the energy used by casting a spell
+ * This starts at 100 and then drops exponentially until
+ * it reaches 10, then stops
+ */
+u16b spell_energy(u16b skill,u16b min)
+{
+	u32b en;
+	
+	/* Safety check to prevent overflows */
+	if (min >= skill) 
+	{
+		/* Base calculation gives a square curve */
+		en=TURN_ENERGY+((min-skill)*(min-skill)*TURN_ENERGY/100);
+		if (en > 3*TURN_ENERGY) en = 3*TURN_ENERGY;
+	}
+	else
+	{
+		/* base calculation to give an inverse curve */
+		en = 3*TURN_ENERGY/(skill-min);
+		/* Force limits */
+		if (en > TURN_ENERGY) en = TURN_ENERGY;
+		if (en < TURN_ENERGY/10) en = TURN_ENERGY/10;
+	}
+
+	return (u16b)(en);
 }
 
 /*
@@ -951,46 +1110,6 @@ static bool favour_okay(int fav,  int sphere)
 }
 
 /*
- * Returns cantrip chance of failure (much simpler than 'spell_chance')
- */
-static s16b cantrip_chance(int ctp)
-{
-	int             chance, minfail;
-	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
-
-	magic_type      *s_ptr;
-
-
-	/* Access the spell */
-    s_ptr = &(cantrip_info[ctp]);
-
-	/* Extract the base spell failure rate */
-	chance = s_ptr->sfail;
-
-	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 3 * (plev - s_ptr->minskill);
-
-	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_INT]] - 1);
-
-	/* Extract the minimum failure rate */
-	minfail = adj_mag_fail[p_ptr->stat_ind[A_INT]];
-
-	/* Minimum failure rate */
-	if (chance < minfail) chance = minfail;
-
-	/* Stunning makes spells harder */
-	if (p_ptr->stun > 50) chance += 25;
-	else if (p_ptr->stun) chance += 15;
-
-	/* Always a 5 percent chance of working */
-	if (chance > 95) chance = 95;
-
-	/* Return the chance */
-	return (chance);
-}
-
-/*
  * Allow user to choose a favour from the given spirit.
  *
  * If a valid favour is chosen, saves it in '*sn' and returns TRUE
@@ -1281,46 +1400,6 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 
 	/* Clear the bottom line */
 	prt("", y + i + 1, x);
-}
-
-/*
- * Returns favour chance of failure (much simpler than 'spell_chance')
- */
-static s16b favour_chance(int fav,int sphere)
-{
-	int             chance, minfail;
-	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
-
-	magic_type      *s_ptr;
-
-
-	/* Access the spell */
-    s_ptr = &(favour_info[sphere][fav]);
-
-	/* Extract the base spell failure rate */
-	chance = s_ptr->sfail;
-
-	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 3 * (plev - s_ptr->minskill);
-
-	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_CHR]] - 1);
-
-	/* Extract the minimum failure rate */
-	minfail = adj_mag_fail[p_ptr->stat_ind[A_CHR]];
-
-	/* Minimum failure rate */
-	if (chance < minfail) chance = minfail;
-
-	/* Stunning makes spells harder */
-	if (p_ptr->stun > 50) chance += 25;
-	else if (p_ptr->stun) chance += 15;
-
-	/* Always a 5 percent chance of working */
-	if (chance > 95) chance = 95;
-
-	/* Return the chance */
-	return (chance);
 }
 
 /*
