@@ -1223,7 +1223,7 @@ struct player_type
 	s16b num_blow;		/* Number of blows */
 	s16b num_fire;		/* Number of shots */
 
-	byte tval_xtra;		/* Correct xtra tval */
+	byte tval_xtra;		/* Correct xtra tval (unused) */
 
 	byte tval_ammo;		/* Correct ammo tval */
 

@@ -1302,6 +1302,12 @@ bool player_no_stun(void)
 	return FALSE;
 }
 
+/* Flag sets. */
+#define TR0 0
+#define TR1	1
+#define TR2 2
+#define TR3 3
+
 /* "Fake" object flags for calc_bonuses_object. 
  * These are really fake, as they're never represented as flags... 
  */
@@ -1312,6 +1318,18 @@ bool player_no_stun(void)
 #define TR0_AC	4	/* Modifier to AC. */
 #define TR0_DIS_AC	5	/* Known base AC. */
 #define TR0_DIS_TO_A	6	/* Known bonus to AC. */
+#define TR0_WEIRD	7	/* An unusual bonus. */
+#define TR0_SAVE	8	/* A direct saving throw bonus. */
+
+/*
+ * Is this flag associated with an integer (rather than a boolean)?
+ */
+static bool PURE is_pval_flag(int set, u32b flag)
+{
+	if (set == TR0) return TRUE;
+	else if (set == TR1) return (flag & TR1_PVAL_MASK) != 0;
+	else return FALSE;
+}
 
 /*
  * Add the flags on an object to the flags table.
@@ -1334,16 +1352,19 @@ static void calc_bonuses_object(s16b (*flags)[32], object_ctype *o_ptr)
 	/* Add the flags, setting to the pval or TRUE as appropriate. */
 	for (i = 0, a = 1; i < 32; i++, a *= 2)
 	{
-		for (j = 1; j < 4; j++)
+		for (j = TR1; j <= TR3; j++)
 		{
 			/* Absent flags. */
-			if (~f[j-1] & a) continue;
+			if (~f[j-TR1] & a) continue;
 
-			/* Pval-based flags. */
-			else if (!j && a & TR1_PVAL_MASK) flags[j][i] += o_ptr->pval;
-
-			/* Binary flags. */
-			else flags[j][i] = TRUE;
+			if (is_pval_flag(j, i))
+			{
+				flags[j][i] += o_ptr->pval;
+			}
+			else
+			{
+				flags[j][i] = TRUE;
+			}
 		}
 	}
 
@@ -1355,6 +1376,235 @@ static void calc_bonuses_object(s16b (*flags)[32], object_ctype *o_ptr)
 	if (!is_weapon) flags[0][TR0_TO_D] += o_ptr->to_d;
 	if (!is_weapon && known) flags[0][TR0_DIS_TO_H] += o_ptr->to_h;
 	if (!is_weapon && known) flags[0][TR0_DIS_TO_D] += o_ptr->to_d;
+}
+
+typedef struct race_bonus_type race_bonus_type;
+struct race_bonus_type
+{
+	byte type;
+	byte skill;
+	byte min;
+	byte set;
+	u32b flag;
+	int value;
+};
+
+static race_bonus_type race_bonuses[] =
+{
+	{RACE_ELF, 0, 0, TR2, TR2_RES_LITE, TRUE},
+	{RACE_HOBBIT, 0, 0, TR2, TR2_SUST_DEX, TRUE},
+	{RACE_GNOME, 0, 0, TR2, TR2_FREE_ACT, TRUE},
+	{RACE_DWARF, 0, 0, TR2, TR2_RES_BLIND, TRUE},
+	{RACE_HALF_ORC, 0, 0, TR2, TR2_RES_DARK, TRUE},
+	{RACE_HALF_TROLL, 0, 0, TR2, TR2_SUST_STR, TRUE},
+	{RACE_HALF_TROLL, SKILL_RACIAL, 30, TR3, TR3_REGEN, TRUE},
+	{RACE_GREAT, 0, 0, TR2, TR2_SUST_CON, TRUE},
+	{RACE_GREAT, 0, 0, TR3, TR3_REGEN, TRUE},
+	{RACE_HIGH_ELF, 0, 0, TR2, TR2_RES_LITE, TRUE},
+	{RACE_HIGH_ELF, 0, 0, TR3, TR3_SEE_INVIS, TRUE},
+	{RACE_BARBARIAN, 0, 0, TR2, TR2_RES_FEAR, TRUE},
+	{RACE_HALF_OGRE, 0, 0, TR2, TR2_RES_DARK, TRUE},
+	{RACE_HALF_OGRE, 0, 0, TR2, TR2_SUST_STR, TRUE},
+	{RACE_HALF_GIANT, 0, 0, TR2, TR2_SUST_STR, TRUE},
+	{RACE_HALF_GIANT, 0, 0, TR2, TR2_RES_SHARDS, TRUE},
+	{RACE_HALF_TITAN, 0, 0, TR2, TR2_RES_CHAOS, TRUE},
+	{RACE_HALF_TITAN, 0, 0, TR2, TR2_RES_CONF, TRUE},
+	{RACE_CYCLOPS, 0, 0, TR2, TR2_RES_SOUND, TRUE},
+	{RACE_YEEK, 0, 0, TR2, TR2_RES_ACID, TRUE},
+	{RACE_YEEK, SKILL_RACIAL, 40, TR2, TR2_IM_ACID, TRUE},
+	{RACE_KLACKON, 0, 0, TR2, TR2_RES_ACID, TRUE},
+	{RACE_KLACKON, 0, 0, TR2, TR2_RES_CONF, TRUE},
+	{RACE_KOBOLD, 0, 0, TR2, TR2_RES_POIS, TRUE},
+	{RACE_NIBELUNG, 0, 0, TR2, TR2_RES_DISEN, TRUE},
+	{RACE_NIBELUNG, 0, 0, TR2, TR2_RES_DARK, TRUE},
+	{RACE_DRACONIAN, 0, 0, TR3, TR3_FEATHER, TRUE},
+	{RACE_DRACONIAN, SKILL_RACIAL, 10, TR2, TR2_RES_FIRE, TRUE},
+	{RACE_DRACONIAN, SKILL_RACIAL, 20, TR2, TR2_RES_COLD, TRUE},
+	{RACE_DRACONIAN, SKILL_RACIAL, 30, TR2, TR2_RES_ACID, TRUE},
+	{RACE_DRACONIAN, SKILL_RACIAL, 40, TR2, TR2_RES_ELEC, TRUE},
+	{RACE_DRACONIAN, SKILL_RACIAL, 70, TR2, TR2_RES_POIS, TRUE},
+	{RACE_MIND_FLAYER, 0, 0, TR2, TR2_SUST_INT, TRUE},
+	{RACE_MIND_FLAYER, 0, 0, TR2, TR2_SUST_WIS, TRUE},
+	{RACE_MIND_FLAYER, SKILL_RACIAL, 30, TR3, TR3_SEE_INVIS, TRUE},
+	{RACE_MIND_FLAYER, SKILL_RACIAL, 60, TR3, TR3_TELEPATHY, TRUE},
+	{RACE_IMP, 0, 0, TR2, TR2_RES_FIRE, TRUE},
+	{RACE_IMP, SKILL_RACIAL, 20, TR3, TR3_SEE_INVIS, TRUE},
+	{RACE_GOLEM, 0, 0, TR2, TR2_RES_POIS, TRUE},
+	{RACE_GOLEM, 0, 0, TR2, TR2_FREE_ACT, TRUE},
+	{RACE_GOLEM, 0, 0, TR3, TR3_SEE_INVIS, TRUE},
+	{RACE_GOLEM, 0, 0, TR3, TR3_SLOW_DIGEST, TRUE},
+	{RACE_GOLEM, 0, 0, TR0, TR0_WEIRD, MUT_MAX+RACE_GOLEM},
+	{RACE_GOLEM, SKILL_RACIAL, 70, TR2, TR2_HOLD_LIFE, TRUE},
+	{RACE_SKELETON, 0, 0, TR2, TR2_RES_SHARDS, TRUE},
+	{RACE_SKELETON, 0, 0, TR2, TR2_RES_POIS, TRUE},
+	{RACE_SKELETON, 0, 0, TR2, TR2_HOLD_LIFE, TRUE},
+	{RACE_SKELETON, 0, 0, TR3, TR3_SEE_INVIS, TRUE},
+	{RACE_SKELETON, SKILL_RACIAL, 20, TR2, TR2_RES_COLD, TRUE},
+	{RACE_ZOMBIE, 0, 0, TR2, TR2_RES_NETHER, TRUE},
+	{RACE_ZOMBIE, 0, 0, TR2, TR2_HOLD_LIFE, TRUE},
+	{RACE_ZOMBIE, 0, 0, TR3, TR3_SEE_INVIS, TRUE},
+	{RACE_ZOMBIE, 0, 0, TR2, TR2_RES_POIS, TRUE},
+	{RACE_ZOMBIE, 0, 0, TR3, TR3_SLOW_DIGEST, TRUE},
+	{RACE_ZOMBIE, SKILL_RACIAL, 10, TR2, TR2_RES_COLD, TRUE},
+	{RACE_VAMPIRE, 0, 0, TR2, TR2_RES_DARK, TRUE},
+	{RACE_VAMPIRE, 0, 0, TR2, TR2_HOLD_LIFE, TRUE},
+	{RACE_VAMPIRE, 0, 0, TR2, TR2_RES_NETHER, TRUE},
+	{RACE_VAMPIRE, 0, 0, TR2, TR2_RES_COLD, TRUE},
+	{RACE_VAMPIRE, 0, 0, TR2, TR2_RES_POIS, TRUE},
+	{RACE_VAMPIRE, 0, 0, TR3, TR3_LITE, TRUE},
+	{RACE_SPECTRE, 0, 0, TR2, TR2_RES_NETHER, TRUE},
+	{RACE_SPECTRE, 0, 0, TR2, TR2_HOLD_LIFE, TRUE},
+	{RACE_SPECTRE, 0, 0, TR3, TR3_SEE_INVIS, TRUE},
+	{RACE_SPECTRE, 0, 0, TR2, TR2_RES_POIS, TRUE},
+	{RACE_SPECTRE, 0, 0, TR3, TR3_SLOW_DIGEST, TRUE},
+	{RACE_SPECTRE, 0, 0, TR2, TR2_RES_COLD, TRUE},
+	{RACE_SPECTRE, SKILL_RACIAL, 70, TR3, TR3_TELEPATHY, TRUE},
+	{RACE_SPRITE, 0, 0, TR2, TR2_RES_LITE, TRUE},
+	{RACE_SPRITE, 0, 0, TR3, TR3_FEATHER, TRUE},
+	{RACE_BROO, 0, 0, TR2, TR2_RES_SOUND, TRUE},
+	{RACE_BROO, 0, 0, TR2, TR2_RES_CONF, TRUE},
+};
+
+static race_bonus_type muta_bonuses[] =
+{
+	{MUT_HYPER_STR, 0, 0, TR1, TR1_STR, 4},
+	{MUT_PUNY, 0, 0, TR1, TR1_STR, -4},
+	{MUT_HYPER_INT, 0, 0, TR1, TR1_INT, 4},
+	{MUT_HYPER_INT, 0, 0, TR1, TR1_WIS, 4},
+	{MUT_MORONIC, 0, 0, TR1, TR1_INT, -4},
+	{MUT_MORONIC, 0, 0, TR1, TR1_WIS, -4},
+	{MUT_RESILIENT, 0, 0, TR1, TR1_CON, 4},
+	{MUT_XTRA_FAT, 0, 0, TR1, TR1_CON, 2},
+	{MUT_XTRA_FAT, 0, 0, TR1, TR1_SPEED, -2},
+	{MUT_ALBINO, 0, 0, TR1, TR1_CON, -4},
+	{MUT_FLESH_ROT, 0, 0, TR1, TR1_CON, -2},
+	{MUT_FLESH_ROT, 0, 0, TR1, TR1_CHR, -1},
+	{MUT_FLESH_ROT, 0, 0, TR3, TR3_REGEN, FALSE},
+	{MUT_SILLY_VOI, 0, 0, TR1, TR1_CHR, -4},
+	{MUT_BLANK_FAC, 0, 0, TR1, TR1_CHR, -1},
+	{MUT_XTRA_EYES, 0, 0, TR1, TR1_SEARCH, 3},
+	{MUT_MAGIC_RES, 0, 0, TR0, TR0_WEIRD, MUT_MAGIC_RES},
+	{MUT_XTRA_NOIS, 0, 0, TR1, TR1_STEALTH, -3},
+	{MUT_INFRAVIS, 0, 0, TR1, TR1_INFRA, 3},
+	{MUT_XTRA_LEGS, 0, 0, TR1, TR1_SPEED, 3},
+	{MUT_SHORT_LEG, 0, 0, TR1, TR1_SPEED, -3},
+	{MUT_ELEC_TOUC, 0, 0, TR3, TR3_SH_ELEC, TRUE},
+	{MUT_FIRE_BODY, 0, 0, TR3, TR3_SH_FIRE, TRUE},
+	{MUT_FIRE_BODY, 0, 0, TR3, TR3_LITE, TRUE},
+	{MUT_WART_SKIN, 0, 0, TR1, TR1_CHR, -2},
+	{MUT_WART_SKIN, 0, 0, TR0, TR0_AC, 5},
+	{MUT_WART_SKIN, 0, 0, TR0, TR0_DIS_TO_A, 5},
+	{MUT_SCALES, 0, 0, TR1, TR1_CHR, -1},
+	{MUT_SCALES, 0, 0, TR0, TR0_AC, 10},
+	{MUT_SCALES, 0, 0, TR0, TR0_DIS_TO_A, 10},
+	{MUT_IRON_SKIN, 0, 0, TR1, TR1_DEX, -1},
+	{MUT_IRON_SKIN, 0, 0, TR0, TR0_AC, 25},
+	{MUT_IRON_SKIN, 0, 0, TR0, TR0_DIS_TO_A, 25},
+	{MUT_WINGS, 0, 0, TR3, TR3_FEATHER, TRUE},
+	{MUT_FEARLESS, 0, 0, TR2, TR2_RES_FEAR, TRUE},
+	{MUT_REGEN, 0, 0, TR3, TR3_REGEN, TRUE},
+	{MUT_ESP, 0, 0, TR3, TR3_TELEPATHY, TRUE},
+	{MUT_LIMBER, 0, 0, TR1, TR1_DEX, 3},
+	{MUT_ARTHRITIS, 0, 0, TR1, TR1_DEX, -3},
+	{MUT_MOTION, 0, 0, TR1, TR1_STEALTH, 1},
+	{MUT_MOTION, 0, 0, TR2, TR2_FREE_ACT, TRUE},
+	{MUT_SUS_STATS, 0, 0, TR2, TR2_SUST_CON, TRUE},
+	{MUT_SUS_STATS, SKILL_RACIAL, 20, TR2, TR2_SUST_STR, TRUE},
+	{MUT_SUS_STATS, SKILL_RACIAL, 40, TR2, TR2_SUST_DEX, TRUE},
+	{MUT_SUS_STATS, SKILL_RACIAL, 60, TR2, TR2_SUST_WIS, TRUE},
+	{MUT_SUS_STATS, SKILL_RACIAL, 80, TR2, TR2_SUST_INT, TRUE},
+	{MUT_SUS_STATS, SKILL_RACIAL, 100, TR2, TR2_SUST_CHR, TRUE},
+	{MUT_ILL_NORM, 0, 0, TR0, TR0_WEIRD, MUT_ILL_NORM},
+};
+
+/*
+ * Hack - add in the permanent effects of a mutation which behaves in an unusual
+ * way.
+ */
+static void calc_bonuses_weird(s16b (*flags)[32], int mut)
+{
+	switch (mut)
+	{
+		case MUT_MAGIC_RES:
+		{
+			flags[TR0][TR0_SAVE] += (15 + skill_set[SKILL_RACIAL].value/10);
+			break;
+		}
+		case MUT_ILL_NORM:
+		{
+			/* Cancel out the race/template bonuses and any other mutations. */
+			flags[TR1][TR1_CHR] = -p_ptr->stat_add[TR1_CHR];
+			break;
+		}
+		case MUT_MAX+RACE_GOLEM:
+		{
+			flags[TR0][TR0_AC] += 20 + skill_set[SKILL_RACIAL].value/10;
+			flags[TR0][TR0_DIS_TO_A] += 20 + skill_set[SKILL_RACIAL].value/10;
+			break;
+		}
+	}
+}
+
+/*
+ * Give a sufficiently skilled player the permanent effects of a race/mutation.
+ */
+static void calc_bonuses_muta_aux(s16b (*flags)[32], race_bonus_type *ptr)
+{
+	s16b *this = &flags[ptr->set][ptr->flag];
+
+	/* Not skilled enough yet. */
+	if (ptr->min > skill_set[ptr->skill].value) return;
+
+	/* Weird stuff. */
+	if (ptr->set == TR0 && ptr->flag == TR0_WEIRD)
+	{
+		calc_bonuses_weird(flags, ptr->value);
+	}
+
+	/* Numerical modifier. */
+	else if (is_pval_flag(ptr->set, ptr->flag))
+	{
+		*this += ptr->value;
+	}
+	/* Boolean flag. */
+	else
+	{
+		*this = ptr->value;
+	}
+}
+
+/*
+ * Add in the permanent effects of various mutations.
+ */
+static void calc_bonuses_muta(s16b (*flags)[32])
+{
+	race_bonus_type *ptr;
+	FOR_ALL_IN(muta_bonuses, ptr)
+	{
+		/* Check for mutation. */
+		if (p_has_mutation(ptr->type))
+		{
+			/* Check skills and add in the mutation. */
+			calc_bonuses_muta_aux(flags, ptr);
+		}
+	}
+}
+
+/*
+ * Add the intrinsic flags the player has to the flags table.
+ */
+static void calc_bonuses_race(s16b (*flags)[32])
+{
+	race_bonus_type *ptr;
+	FOR_ALL_IN(race_bonuses, ptr)
+	{
+		/* Check for race. */
+		if (p_ptr->prace == ptr->type)
+		{
+			/* Check skills and add in the mutation. */
+			calc_bonuses_muta_aux(flags, ptr);
+		}
+	}
 }
 
 /*
@@ -1386,6 +1636,9 @@ static void calc_bonuses_add(s16b (*flags)[32])
 
 	/* Affect digging (factor of 20) */
 	p_ptr->skill_dig += flags[1][iilog(TR1_TUNNEL)] * 20;
+
+	/* Affect saving throw. */
+	p_ptr->skill_sav += flags[0][TR0_SAVE];
 
 	/* Affect speed */
 	p_ptr->pspeed += flags[1][iilog(TR1_SPEED)];
@@ -1440,7 +1693,7 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	if (flags[2][iilog(TR2_RES_NETHER)]) p_ptr->resist_neth = TRUE;
 
 	if (flags[2][iilog(TR2_REFLECT)]) p_ptr->reflect = TRUE;
-	if (flags[3][iilog(TR3_SH_FIRE)]) p_ptr->sh_fire = TRUE;
+	if (flags[3][iilog(TR3_SH_FIRE)]) p_ptr->sh_fire = p_ptr->lite = TRUE;
 	if (flags[3][iilog(TR3_SH_ELEC)]) p_ptr->sh_elec = TRUE;
 	if (flags[3][iilog(TR3_NO_MAGIC)]) p_ptr->anti_magic = TRUE;
 	if (flags[3][iilog(TR3_NO_TELE)]) p_ptr->anti_tele = TRUE;
@@ -1593,6 +1846,18 @@ static void calc_bonuses(void)
 	p_ptr->immune_fire = FALSE;
 	p_ptr->immune_cold = FALSE;
 
+	/* Start with "normal" speed */
+	p_ptr->pspeed = 110;
+
+	/* Start with a single blow per turn */
+	p_ptr->num_blow = 60;
+
+	/* Start with a single shot per turn */
+	p_ptr->num_fire = 60;
+
+	/* Reset the "ammo" tval */
+	p_ptr->tval_ammo = 0;
+
 
 
 	/* Base infravision (purely racial) */
@@ -1620,222 +1885,9 @@ static void calc_bonuses(void)
 	/* Base skill -- digging */
 	p_ptr->skill_dig = 0;
 
-
-	/* Elf */
-	if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
-
-	/* Hobbit */
-	if (p_ptr->prace == RACE_HOBBIT) p_ptr->sustain[A_DEX] = TRUE;
-
-	/* Gnome */
-	if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
-
-	/* Dwarf */
-	if (p_ptr->prace == RACE_DWARF) p_ptr->resist_blind = TRUE;
-
-	/* Half-Orc */
-	if (p_ptr->prace == RACE_HALF_ORC) p_ptr->resist_dark = TRUE;
-
-	/* Half-Troll */
-    if (p_ptr->prace == RACE_HALF_TROLL)
-    {
-        p_ptr->sustain[A_STR] = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2)>14)
-            {
-                p_ptr->regenerate = TRUE;
-                /* High level trolls heal fast... */
-            }
-            
-    }
-
-	/* Dunadan */
-    if (p_ptr->prace == RACE_GREAT)
-    {
-            p_ptr->sustain[A_CON] = TRUE;
-            p_ptr->regenerate = TRUE;  /* Great ones heal fast... */
-
-    }
-
-	/* High Elf */
-	if (p_ptr->prace == RACE_HIGH_ELF) p_ptr->resist_lite = TRUE;
-	if (p_ptr->prace == RACE_HIGH_ELF) p_ptr->see_inv = TRUE;
-
-    if (p_ptr->prace == RACE_BARBARIAN) p_ptr->resist_fear = TRUE;
-    else if (p_ptr->prace == RACE_HALF_OGRE)
-    {   p_ptr->resist_dark = TRUE;
-        p_ptr->sustain[A_STR] = TRUE;
-    }
-    else if (p_ptr->prace == RACE_HALF_GIANT)
-    {
-        p_ptr->sustain[A_STR] = TRUE;
-        p_ptr->resist_shard = TRUE;
-    }
-    else if (p_ptr->prace == RACE_HALF_TITAN)
-    {
-        p_ptr->resist_chaos = TRUE;
-    }
-    else if (p_ptr->prace == RACE_CYCLOPS)
-    {
-        p_ptr->resist_sound = TRUE;
-    }
-    else if (p_ptr->prace == RACE_YEEK)
-    {
-        p_ptr->resist_acid = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 19)
-        {
-            p_ptr->immune_acid = TRUE;
-        }
-    }
-    else if (p_ptr->prace == RACE_KLACKON)
-    {
-        p_ptr->resist_conf = TRUE;
-        p_ptr->resist_acid = TRUE;
-    }
-    else if (p_ptr->prace == RACE_KOBOLD)
-    {
-        p_ptr->resist_pois = TRUE;
-    }
-    else if (p_ptr->prace == RACE_NIBELUNG)
-    {
-        p_ptr->resist_disen = TRUE;
-        p_ptr->resist_dark = TRUE;
-    }
-    else if (p_ptr->prace == RACE_DARK_ELF)
-    {
-        p_ptr->resist_dark = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 19)
-        {
-            p_ptr->see_inv = TRUE;
-        }
-    }
-    else if (p_ptr->prace == RACE_DRACONIAN)
-    {
-        p_ptr->ffall = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 4)
-        {
-            p_ptr->resist_fire = TRUE;
-        }
-        if ((skill_set[SKILL_RACIAL].value/2) > 9)
-        {
-            p_ptr->resist_cold = TRUE;
-        }
-        if ((skill_set[SKILL_RACIAL].value/2) > 14)
-        {
-            p_ptr->resist_acid = TRUE;
-        }
-        if ((skill_set[SKILL_RACIAL].value/2) > 19)
-        {
-            p_ptr->resist_elec = TRUE;
-        }
-        if ((skill_set[SKILL_RACIAL].value/2) > 34)
-        {
-            p_ptr->resist_pois = TRUE;
-        }
-
-    }
-    else if (p_ptr->prace == RACE_MIND_FLAYER)
-    {
-        p_ptr->sustain[A_INT] = TRUE;
-        p_ptr->sustain[A_WIS] = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 14)
-        {
-            p_ptr->see_inv = TRUE;
-        }
-        if ((skill_set[SKILL_RACIAL].value/2) > 29)
-        {
-            p_ptr->telepathy = TRUE;
-        }
-    }
-    else if (p_ptr->prace == RACE_IMP)
-    {
-        p_ptr->resist_fire = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 9)
-        {
-            p_ptr->see_inv = TRUE;
-        }
-    }
-    else if (p_ptr->prace == RACE_GOLEM)
-    {
-        if ((skill_set[SKILL_RACIAL].value/2) > 34)
-        {
-            p_ptr->hold_life = TRUE;
-        }
-        p_ptr->slow_digest = TRUE;
-        p_ptr->free_act = TRUE;
-        p_ptr->see_inv = TRUE;
-        p_ptr->resist_pois = TRUE;
-    }
-    else if (p_ptr->prace == RACE_SKELETON)
-    {
-        p_ptr->resist_shard = TRUE;
-        p_ptr->hold_life = TRUE;
-        p_ptr->see_inv = TRUE;
-        p_ptr->resist_pois = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 9)
-        {
-            p_ptr->resist_cold = TRUE;
-        }
-    }
-    else if (p_ptr->prace == RACE_ZOMBIE)
-    {
-        p_ptr->resist_neth = TRUE;
-        p_ptr->hold_life = TRUE;
-        p_ptr->see_inv = TRUE;
-        p_ptr->resist_pois = TRUE;
-        p_ptr->slow_digest = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 4)
-        {
-            p_ptr->resist_cold = TRUE;
-        }
-    }
-    else if (p_ptr->prace == RACE_VAMPIRE)
-    {
-        p_ptr->resist_dark = TRUE;
-        p_ptr->hold_life = TRUE;
-        p_ptr->resist_neth = TRUE;
-        p_ptr->resist_cold = TRUE;
-        p_ptr->resist_pois = TRUE;
-        p_ptr->lite = TRUE;
-    }
-    else if (p_ptr->prace == RACE_SPECTRE)
-    {
-        p_ptr->resist_neth = TRUE;
-        p_ptr->hold_life = TRUE;
-        p_ptr->see_inv = TRUE;
-        p_ptr->resist_pois = TRUE;
-        p_ptr->slow_digest = TRUE;
-        p_ptr->resist_cold = TRUE;
-        if ((skill_set[SKILL_RACIAL].value/2) > 34)
-        {
-            p_ptr->telepathy = TRUE;
-        }
-    }
-    else if (p_ptr->prace == RACE_SPRITE)
-    {
-        p_ptr->ffall = TRUE;
-        p_ptr->resist_lite = TRUE;
-    }
-    else if (p_ptr->prace == RACE_BROO)
-    {
-        p_ptr->resist_conf  = TRUE;
-        p_ptr->resist_sound = TRUE;
-    }
-
-	/* Start with "normal" speed */
-	p_ptr->pspeed = 110;
-
-	/* Start with a single blow per turn */
-	p_ptr->num_blow = 60;
-
-	/* Start with a single shot per turn */
-	p_ptr->num_fire = 60;
-
-	/* Reset the "xtra" tval */
-	p_ptr->tval_xtra = 0;
-
-	/* Reset the "ammo" tval */
-	p_ptr->tval_ammo = 0;
-
+	/* Extract the race-based flags. */
+	WIPE(flags, flags);
+	calc_bonuses_race(flags);
 
 	/* Hack -- apply racial/template stat maxes */
 	if (maximise_mode)
@@ -1858,183 +1910,8 @@ static void calc_bonuses(void)
 		p_ptr->update &= ~(PU_MA_ARMOUR);
 	}
 
-    /* I'm adding the chaos features here for the lack of a better place... */
-		if (p_has_mutation(MUT_HYPER_STR))
-		{
-			p_ptr->stat_add[A_STR] += 4;
-		}
-		
-		if (p_has_mutation(MUT_PUNY))
-		{
-			p_ptr->stat_add[A_STR] -= 4;
-		}
-		
-		if (p_has_mutation(MUT_HYPER_INT))
-		{
-			p_ptr->stat_add[A_INT] += 4;
-			p_ptr->stat_add[A_WIS] += 4;
-		}
-		
-		if (p_has_mutation(MUT_MORONIC))
-		{
-			p_ptr->stat_add[A_INT] -= 4;
-			p_ptr->stat_add[A_WIS] -= 4;
-		}
-		
-		if (p_has_mutation(MUT_RESILIENT))
-		{
-			p_ptr->stat_add[A_CON] += 4;
-		}
-		
-		if (p_has_mutation(MUT_XTRA_FAT))
-		{
-			p_ptr->stat_add[A_CON] += 2;
-			p_ptr->pspeed -= 2;
-		}
-		
-		if (p_has_mutation(MUT_ALBINO))
-		{
-			p_ptr->stat_add[A_CON] -= 4;
-		}
-		
-		if (p_has_mutation(MUT_FLESH_ROT))
-		{
-			p_ptr->stat_add[A_CON] -= 2;
-			p_ptr->stat_add[A_CHR] -= 1;
-			p_ptr->regenerate = FALSE;
-			/* Cancel innate regeneration */
-		}
-		
-		if (p_has_mutation(MUT_SILLY_VOI))
-		{
-			p_ptr->stat_add[A_CHR] -= 4;
-		}
-		
-		if (p_has_mutation(MUT_BLANK_FAC))
-		{
-			p_ptr->stat_add[A_CHR] -= 1;
-		}
-		
-		if (p_has_mutation(MUT_XTRA_EYES))
-		{
-			p_ptr->skill_fos += 15;
-			p_ptr->skill_srh += 15;
-		}
-		
-		if (p_has_mutation(MUT_MAGIC_RES))
-		{
-			p_ptr->skill_sav += (15 + ((skill_set[SKILL_RACIAL].value/2) / 5));
-		}
-		
-		if (p_has_mutation(MUT_XTRA_NOIS))
-		{
-			p_ptr->skill_stl -= 3;
-		}
-		
-		if (p_has_mutation(MUT_INFRAVIS))
-		{
-			p_ptr->see_infra += 3;
-		}
-		
-		if (p_has_mutation(MUT_XTRA_LEGS))
-		{
-			p_ptr->pspeed += 3;
-		}
-		
-		if (p_has_mutation(MUT_SHORT_LEG))
-		{
-			p_ptr->pspeed -= 3;
-		}
-		
-		if (p_has_mutation(MUT_ELEC_TOUC))
-		{
-			p_ptr->sh_elec = TRUE;
-		}
-		
-		if (p_has_mutation(MUT_FIRE_BODY))
-		{
-			p_ptr->sh_fire = TRUE;
-			p_ptr->lite = TRUE;
-		}
-		
-		if (p_has_mutation(MUT_WART_SKIN))
-		{
-			p_ptr->stat_add[A_CHR] -= 2;
-			p_ptr->ac += 5;
-			p_ptr->dis_to_a += 5;
-		}
-		
-		if (p_has_mutation(MUT_SCALES))
-		{
-			p_ptr->stat_add[A_CHR] -= 1;
-			p_ptr->ac += 10;
-			p_ptr->dis_to_a += 10;
-		}
-		
-		if (p_has_mutation(MUT_IRON_SKIN))
-		{
-			p_ptr->stat_add[A_DEX] -= 1;
-			p_ptr->ac += 25;
-			p_ptr->dis_to_a += 25;
-		}
-		
-		if (p_has_mutation(MUT_WINGS))
-		{
-			p_ptr->ffall = TRUE;
-		}
-		
-		if (p_has_mutation(MUT_FEARLESS))
-		{
-			p_ptr->resist_fear = TRUE;
-		}
-		
-		if (p_has_mutation(MUT_REGEN))
-		{
-			p_ptr->regenerate = TRUE;
-		}
-		
-		if (p_has_mutation(MUT_ESP))
-		{
-			p_ptr->telepathy =TRUE;
-		}
-
-		if (p_has_mutation(MUT_LIMBER))
-		{
-			p_ptr->stat_add[A_DEX] += 3;
-		}
-		
-		if (p_has_mutation(MUT_ARTHRITIS))
-		{
-			p_ptr->stat_add[A_DEX] -= 3;
-		}
-		
-		if (p_has_mutation(MUT_MOTION))
-		{
-			p_ptr->free_act =TRUE;
-			p_ptr->skill_stl += 1;
-		}
-		
-		if (p_has_mutation(MUT_SUS_STATS))
-		{
-			p_ptr->sustain[A_CON] =TRUE;
-			if ((skill_set[SKILL_RACIAL].value/2) > 9)
-				p_ptr->sustain[A_STR] = TRUE;
-			if ((skill_set[SKILL_RACIAL].value/2) > 19)
-				p_ptr->sustain[A_DEX] = TRUE;
-			if ((skill_set[SKILL_RACIAL].value/2) > 29)
-				p_ptr->sustain[A_WIS] = TRUE;
-			if ((skill_set[SKILL_RACIAL].value/2) > 39)
-				p_ptr->sustain[A_INT] = TRUE;
-			if ((skill_set[SKILL_RACIAL].value/2) > 49)
-				p_ptr->sustain[A_CHR] = TRUE;
-		}
-		
-		if (p_has_mutation(MUT_ILL_NORM))
-		{
-			p_ptr->stat_add[A_CHR] = 0;
-		}
-
-	WIPE(flags, flags);
+	/* Extract the mutation-based flags. */
+	calc_bonuses_muta(flags);
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -2049,15 +1926,6 @@ static void calc_bonuses(void)
 	/* Copy the flags to p_ptr. */
 	calc_bonuses_add(flags);
 
-
-    /* Hack -- aura of fire also provides light */
-    if (p_ptr->sh_fire) p_ptr->lite = TRUE;
-
-    if (p_ptr->prace == RACE_GOLEM) /* Golems also get an intrinsic AC bonus */
-    {
-        p_ptr->ac += 20 + ((skill_set[SKILL_RACIAL].value/2) / 5);
-        p_ptr->dis_to_a += 20 + ((skill_set[SKILL_RACIAL].value/2) / 5);
-    }
 
 	/* Calculate stats */
 	for (i = 0; i < 6; i++)
