@@ -948,7 +948,7 @@ typedef struct player_skill player_skill;
 struct player_skill
 {
 #ifdef CHECK_ARRAYS
-	player_skill *idx;
+	int idx;
 #endif /* CHECK_ARRAYS */
 	cptr name; /* Skill name */
 	cptr increase; /* Message printed on an increase */

@@ -1661,7 +1661,7 @@ static void check_skill_set(void)
 	const player_skill *ptr;
 	for (ptr = skill_set; ptr < END_PTR(skill_set); ptr++)
 	{
-		if (ptr->idx != skill_set+idx)
+		if (ptr != skill_set+idx)
 		{
 			quit_fmt("The %s skill has index %d rather than %d.", ptr->name,
 				ptr - skill_set, ptr->idx);
