@@ -239,16 +239,16 @@ F:WEIRD_MIND | BASH_DOOR |
 F:ANIMAL
 D:It is about four feet long and carnivorous.
 
-N:20:White icky thing
+N:20:Townsman of Ib
 G:i:w
 I:110:1:3d5:12:7:10
 W:1:1:0:2
 B:TOUCH:HURT:1d2
 F:RAND_50 | RAND_25 | 
 F:EMPTY_MIND
-D:It is a smallish, slimy, icky creature.
+D:It is a soft, icky, humanoid.
 
-N:21:Clear icky thing
+N:21:Magician of Ib
 G:i:B
 I:110:1:2d5:12:6:10
 W:1:1:0:1
@@ -256,7 +256,7 @@ B:TOUCH:HURT:1d2
 F:ATTR_CLEAR | 
 F:RAND_50 | RAND_25 | 
 F:INVISIBLE | EMPTY_MIND
-D:It is a smallish, slimy, icky, blobby creature.
+D:It is a soft, icky, humanoid that can turn invisible.
 
 N:22:Giant white mouse
 G:r:w
@@ -387,7 +387,7 @@ S:1_IN_4 |
 S:SHRIEK
 D:Yum!  These look quite tasty.
 
-N:35:Blubbering icky thing
+N:35:Thief of Ib
 G:i:g
 I:110:1:5d6:14:4:10
 W:2:1:0:8
@@ -398,7 +398,7 @@ B:DROOL
 F:RAND_50 | DROP_90 | 
 F:EMPTY_MIND | TAKE_ITEM | KILL_BODY | 
 F:IM_POIS
-D:It is a smallish, slimy, icky, hungry creature.
+D:It is a soft, disgusting humanoid with a dripping knife.
 
 N:36:Metallic green centipede
 G:c:G
@@ -931,14 +931,14 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | IM_POIS
 D:It a man-sized figure with the all too recognizable face of a kobold.
 
-N:83:Grey icky thing
+N:83:Soldier of Ib
 G:i:s
 I:110:1:4d8:14:12:15
 W:5:1:0:10
 B:TOUCH:HURT:1d5
 F:RAND_50 | 
 F:EMPTY_MIND
-D:It is a smallish, slimy, icky, nasty creature.
+D:It is a soft humanoid with a slightly more erect posture.
 
 N:84:Disenchanter eye
 G:e:v
@@ -1201,7 +1201,7 @@ F:HURT_LITE |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 D:It is a large pulsating mound of red flesh.
 
-N:107:Green icky thing
+N:107:Alchemist of Ib
 G:i:G
 I:110:1:5d8:14:12:20
 W:7:2:0:18
@@ -1209,7 +1209,7 @@ B:TOUCH:ACID:2d5
 F:RAND_50 | 
 F:EMPTY_MIND | 
 F:IM_ACID
-D:It is a smallish, slimy, icky, acidic creature.
+D:It is a soft, disgusting humanoid with flasks to break on you.
 
 N:108:Lost soul
 G:G:u
@@ -1430,7 +1430,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:ANIMAL | IM_COLD
 D:A large white figure covered in shaggy fur.
 
-N:127:Bloodshot icky thing
+N:127:Cursed one of Ib
 G:i:r
 I:110:2:7d8:14:18:20
 W:9:3:0:24
@@ -1441,7 +1441,8 @@ F:EMPTY_MIND |
 F:IM_POIS
 S:1_IN_11 | 
 S:DRAIN_MANA
-D:It is a strange, slimy, icky creature.
+D:It must have done something to offend Bokrub.  It wanders aimlessly,
+D: pieces of skin flaking off with an acrid smell.
 
 N:128:Giant grey rat
 G:r:s
@@ -1662,7 +1663,7 @@ S:1_IN_12
 S:MISSILE
 D:A dark elven figure in armour and ready with his sword.
 
-N:145:Quiver slot
+N:145:Archer mushroom
 G:,:U
 I:120:2:1d1:4:1:0
 W:10:2:0:3
@@ -1672,7 +1673,8 @@ F:STUPID | EMPTY_MIND |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_5
 S:ARROW_1
-D:An arrow hole in the floor, covered in fungal tendrils.
+D:A large mushroom that fires hard, arrow-shaped spore pods.  Perhaps
+D: one will stick in you and you can help spread the species.
 
 N:146:Grishnakh, the Hill Orc
 G:o:u
@@ -2230,7 +2232,7 @@ S:1_IN_10 |
 S:BR_COLD
 D:It is a large fly that drips frost.
 
-N:192:Blue icky thing
+N:192:Witch of Ib
 G:i:b
 I:100:2:10d6:15:20:20
 W:14:4:0:20
@@ -2241,11 +2243,12 @@ B:HIT:HURT:1d4
 F:FORCE_SLEEP | 
 F:RAND_50 | 
 F:MULTIPLY | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | IM_POIS
+F:EVIL | IM_POIS |
+F:FEMALE 
 S:1_IN_8 | 
 S:BLIND | CONF | SCARE
-D:It is a strange, slimy, icky creature, with rudimentary intelligence, 
-D:but evil cunning.  It hungers for food, and you look tasty.
+D:It is a soft, disgusting humanoid that gains strength in numbers,
+D: and knows how to find more of its kind.  It may be female.
 
 N:193:Gibbering mouther
 G:j:o
@@ -2277,7 +2280,7 @@ F:EVIL | GIANT | MALE
 D:A ten foot tall humanoid with powerful muscles.
 
 N:196:Flesh golem
-G:g:o
+G:A:o
 I:110:2:12d8:12:30:10
 W:14:1:0:50
 B:HIT:HURT:1d6
@@ -2835,7 +2838,7 @@ D:The size of a large bird, this fly drips caustic acid.
 ##### Level 19 #####
 
 N:240:Stone golem
-G:g:s
+G:A:s
 I:100:2:28d8:12:75:10
 W:19:2:0:100
 B:HIT:HURT:1d10
@@ -3015,7 +3018,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:ANIMAL | IM_COLD
 D:A tall shaggy, furry humanoid, it could call the yeti brother.
 
-N:254:The Icky Queen
+N:254:The Queen of Ib
 G:i:R
 I:120:3:40d10:20:50:10
 W:20:5:0:400
@@ -3030,7 +3033,8 @@ F:WEIRD_MIND | TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | IM_ACID | IM_ELEC | IM_FIRE | IM_COLD | IM_POIS
 S:1_IN_5 | 
 S:DRAIN_MANA | BLIND | CONF | SCARE
-D:And you thought her offspring were icky!
+D:Soft and swollen, her skin gleams evilly as she orders her subjects
+D: to kill you.
 
 N:255:Dark elven lord
 G:h:D
@@ -3160,7 +3164,7 @@ F:ANIMAL
 D:It is a giant beetle with vicious claws.
 
 N:265:Iron golem
-G:g:W
+G:A:W
 I:110:1:80d12:12:80:10
 W:22:2:0:160
 B:HIT:HURT:1d12
@@ -3173,7 +3177,7 @@ S:SLOW
 D:It is a massive metal statue that moves steadily towards you.
 
 N:266:Auto-roller
-G:g:s
+G:A:s
 I:120:5:70d12:10:80:12
 W:22:2:0:230
 B:CRUSH:HURT:1d8
@@ -3432,7 +3436,7 @@ D:It is a ghostly woman's form that wails mournfully.
 ##### Level 25 #####
 
 N:286:Silent watcher
-G:g:s
+G:A:s
 I:110:3:80d20:42:80:10
 W:25:5:0:590
 B:GAZE:TERRIFY
@@ -3448,7 +3452,7 @@ D:A figure carved from stone, with three vulture faces. Their eyes glow
 D:a malevolent light...
 
 N:287:Pukelman
-G:g:u
+G:A:u
 I:110:2:80d12:12:80:10
 W:25:3:0:600
 B:HIT:HURT:3d6
@@ -3604,7 +3608,7 @@ D:skin suggestive of fishskin, hopping irregularly and
 D:casting spells with a croaking, baying voice.
 
 N:299:Ghoul
-G:z:U
+G:g:U
 I:110:3:15d9:30:30:20
 W:26:1:0:95
 B:CLAW:POISON:1d4
@@ -3791,7 +3795,7 @@ S:SCARE | HASTE
 D:A scaly bird larger than an elephant, with a horse-like head.
 
 N:313:Colbran
-G:g:b
+G:A:b
 I:120:5:80d12:12:80:10
 W:27:2:0:900
 B:HIT:ELEC:3d8
@@ -3906,7 +3910,7 @@ D:A humanoid form with a gruesome head, tentacular mouth, and piercing
 D:eyes.  Claws reach out for you and you feel a presence invade your mind.
 
 N:321:The Ultimate Dungeon Cleaner
-G:g:D
+G:A:D
 I:120:6:70d12:10:80:12
 W:28:2:0:555
 B:CRUSH:HURT:2d10
@@ -4087,7 +4091,7 @@ D:rich bronze hue, and its shape masks its true form.
 ##### Level 30 #####
 
 N:333:Mithril golem
-G:g:B
+G:A:B
 I:110:4:80d15:12:100:10
 W:30:4:0:500
 B:HIT:HURT:3d8
@@ -4717,7 +4721,7 @@ S:BLINK | TPORT | TELE_TO | CAUSE_1
 D:This little creature has a fiendish gleam in its eyes.
 
 N:377:Eog golem
-G:g:D
+G:A:D
 I:100:5:100d20:12:125:10
 W:35:4:0:1200
 B:HIT:HURT:8d6
@@ -4932,7 +4936,7 @@ S:BO_WATE | BA_POIS | BR_NETH
 D:A sentient arcane tome casting spells with malevolent intent.
 
 N:392:Colossus
-G:g:y
+G:A:y
 I:100:5:30d100:15:150:10
 W:36:4:0:900
 B:HIT:HURT:10d10
@@ -6279,7 +6283,7 @@ D:very touch abuses and disrupts the flow of life, and its unearthly limbs,
 D:of purest black, crush rock and flesh with ease.
 
 N:479:Drolem
-G:g:g
+G:A:g
 I:120:6:30d100:25:130:30
 W:44:3:0:12000
 B:BITE:HURT:5d8
@@ -7419,7 +7423,7 @@ D:destructive blasts of elements.
 ##### Level 71 #####
 
 N:542:Bone golem
-G:g:D
+G:A:D
 I:120:6:35d100:20:170:50
 W:71:3:0:23000
 B:HIT:UN_BONUS:6d8
