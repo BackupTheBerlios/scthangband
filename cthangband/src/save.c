@@ -958,8 +958,13 @@ static void wr_extra(void)
 	{
 		wr_byte(skill_set[i].value);
 		wr_byte(skill_set[i].max_value);
-		wr_byte(skill_set[i].base);
-		wr_byte(skill_set[i].ceiling);
+#ifdef SF_SKILL_BASE
+		if (has_flag(SF_SKILL_BASE))
+		{
+			wr_byte(skill_set[i].base);
+			wr_byte(skill_set[i].ceiling);
+		}
+#endif
 		wr_u16b(skill_set[i].exp_to_raise);
 		wr_u16b(skill_set[i].experience);
 	}

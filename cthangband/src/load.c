@@ -961,7 +961,7 @@ static void rd_ghost(void)
 
 
 
-
+	
 /*
  * Read the "extra" information
  */
