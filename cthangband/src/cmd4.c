@@ -1864,6 +1864,92 @@ void do_cmd_macros(void)
 
 #ifdef ALLOW_VISUALS
 
+typedef struct visual_type visual_type;
+
+struct visual_type {
+	cptr text;	/* A text string describing the option */
+	void (*dump)(FILE *fff); /* A function that dumps the preferences to an open file. */
+	/* A function that retrieves the attrs and chars for the current entry. */
+	void (*load)(s16b n, byte *da, byte *dc, byte *ca, byte *cc);
+	/* A function that retrieves the name for the current entry. */
+	char* (*name)(char *buf, s16b n);
+	/* A function that saves the attrs and chars for the current entry. */
+	void (*save)(s16b n, byte ca, byte cc);
+	bool (*reject)(s16b n);
+	s16b max; /* The number of entries available. */
+	bool attr; /* Has a colour. */
+	bool chars; /* Has a character. */
+};
+
+static visual_type visual[5];
+	
+/* Just in case a specific reference needs to be made. */
+#define VISUAL_MONSTER	(&visual[0])
+#define VISUAL_OBJECT	(&visual[1])
+#define VISUAL_FEATURE	(&visual[2])
+#define VISUAL_MONCOL	(&visual[3])
+#define VISUAL_UNIDENT	(&visual[4])
+
+/*
+ * Find the name of an unidentified object.
+ */
+static char *visual_name_unident(char *buf, s16b n)
+{
+	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
+	object_kind hack_k, *k_ptr = &k_info[1];
+	object_type hack_o, *o_ptr = &hack_o;
+
+	/* Put *k_ptr somewhere safe and clear it. */
+	COPY(&hack_k, k_ptr, object_kind);
+	WIPE(k_ptr, object_kind);
+
+	/* Set up *k_ptr and *o_ptr. The tval is arbitrary. */
+	k_ptr->tval = TV_FOOD;
+	k_ptr->cost = 1;
+	k_ptr->u_idx = n;
+	object_prep(o_ptr, k_ptr-k_info);
+
+	/* Get the name. */
+	object_desc(buf, o_ptr, FALSE, 0);
+
+	/* Replace the real *k_ptr */
+	COPY(k_ptr, &hack_k, object_kind);
+	
+	return buf;
+}
+
+static char *visual_name_mon(char *buf, s16b n)
+{
+	strcpy(buf, r_name+r_info[n].name);
+	return buf;
+}
+
+static char *visual_name_feat(char *buf, s16b n)
+{
+	strcpy(buf, f_name+f_info[n].name);
+	return buf;
+}
+
+static char *visual_name_moncol(char *buf, s16b n)
+{
+	strcpy(buf, moncol[n].name);
+	return buf;
+}
+
+static char *visual_name_obj(char *buf, s16b n)
+{
+	/* Create the object */
+	object_type forge;
+	object_prep(&forge, n);
+
+	/* Describe the object */
+	object_desc_store(buf, &forge, FALSE, 0);
+	
+	/* Return the description */
+	return buf;
+}
+	
+
 /*
  * Dump an arbitrary set of attr/char definitions to an open file.
  *
@@ -1883,23 +1969,24 @@ void do_cmd_macros(void)
  * formatted as a comment as it is printed.
  */
  
-#define dump_visual(max, x_info, x_name, startchar, initstring) \
+#define dump_visual(vs_ptr, x_info, startchar, initstring) \
 {\
 	s16b i; \
+	char buf[1024]; \
 \
 	/* Start dumping */ \
 	fprintf(fff, "\n\n"); \
 	fprintf(fff, "# %s\n\n", initstring); \
 \
 	/* Dump entries */ \
-	for (i = 0; i < max; i++) \
+	for (i = 0; i < vs_ptr->max; i++) \
 	{ \
 \
 		/* Skip non-entries */ \
-		if (!(x_info[i].name)) continue; \
+		if ((*vs_ptr->reject)(i)) continue; \
 \
 		/* Dump a comment */ \
-		fprintf(fff, "# %s\n", x_name+x_info[i].name); \
+		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i)); \
 \
 		/* Dump the attr/char info */ \
 		fprintf(fff, "%c:%d:0x%02X:0x%02X\n\n", startchar, \
@@ -1911,17 +1998,20 @@ void do_cmd_macros(void)
 }
 
 static void visual_dump_mon(FILE *fff)
-dump_visual(MAX_R_IDX, r_info, r_name, 'R', "Monster attr/char definitions")
+dump_visual(VISUAL_MONSTER, r_info, 'R', "Monster attr/char definitions")
 
 static void visual_dump_obj(FILE *fff)
-dump_visual(MAX_K_IDX, k_info, k_name, 'K', "Object attr/char definitions")
+dump_visual(VISUAL_OBJECT, k_info, 'K', "Object attr/char definitions")
 
 static void visual_dump_feat(FILE *fff)
-dump_visual(MAX_F_IDX, f_info, f_name, 'F', "Feature attr/char definitions")
+dump_visual(VISUAL_FEATURE, f_info, 'F', "Feature attr/char definitions")
 
 static void visual_dump_unident(FILE *fff)
 {
 	s16b i;
+	char buf[ONAME_MAX];
+
+	visual_type *vs_ptr = VISUAL_UNIDENT;
 
 	/* Start dumping */
 	fprintf(fff, "\n\n");
@@ -1933,10 +2023,10 @@ static void visual_dump_unident(FILE *fff)
 		unident_type *u_ptr = &u_info[i];
 
 		/* Skip non-entries */
-		if (!(u_ptr->name)) continue;
+		if ((*vs_ptr->reject)(i)) continue;
 
 		/* Dump a comment */
-		fprintf(fff, "# %s\n", u_name+u_ptr->name);
+		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i));
 
 		/* Dump the attr/char info */
 		fprintf(fff, "%c:%d:%d:0x%02X:0x%02X\n\n", 'U',
@@ -1963,19 +2053,18 @@ static void visual_dump_unident(FILE *fff)
 	(*dc) = (byte)(x_info[n].d_char); \
 	(*ca) = (byte)(x_info[n].x_attr); \
 	(*cc) = (byte)(x_info[n].x_char); \
-	strcpy(name, x_name+x_info[n].name); \
 }
 
-static void visual_load_mon(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+static void visual_load_mon(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
 load_visual(r_info, r_name)
 
-static void visual_load_feat(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+static void visual_load_feat(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
 load_visual(f_info, f_name)
 
-static void visual_load_unident(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+static void visual_load_unident(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
 load_visual(u_info, u_name)
 
-static void visual_load_obj(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+static void visual_load_obj(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
 	load_visual(k_info, k_name)
 
 /*
@@ -2022,12 +2111,11 @@ static void visual_dump_moncol(FILE *fff)
 	fprintf(fff, "\n\n\n\n");
 }
 
-static void visual_load_moncol(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+static void visual_load_moncol(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
 {
 	moncol_type *mc_ptr = &moncol[n];
 	(*da) = TERM_WHITE;
 	(*ca) = mc_ptr->attr;
-	strcpy(name, mc_ptr->name);
 }
 
 static void visual_save_moncol(s16b n, byte ca, byte cc)
@@ -2043,8 +2131,21 @@ static bool visual_reject_feat(s16b n)
 
 static bool visual_reject_unident(s16b n)
 {
-	return (u_info[n].s_id == 0);
+	return (u_info[n].s_id == SID_BASE);
 }
+
+static bool visual_reject_obj(s16b n)
+{
+	return (k_info[n].name == 0);
+}
+
+static visual_type visual[5] = {
+	{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_name_mon, visual_save_mon, 0, MAX_R_IDX, TRUE, TRUE},
+	{"object attr/chars", visual_dump_obj, visual_load_obj, visual_name_obj, visual_save_obj, visual_reject_obj, MAX_K_IDX, TRUE, TRUE},
+	{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_name_feat, visual_save_feat, visual_reject_feat, MAX_F_IDX, TRUE, TRUE},
+	{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_name_moncol, visual_save_moncol, 0, MAX_MONCOL, TRUE, FALSE},
+	{"unidentified object attr/chars", visual_dump_unident, visual_load_unident, visual_name_unident, visual_save_unident, visual_reject_unident, 0, TRUE, TRUE},
+};
 
 #endif /* ALLOW_VISUALS */
 
@@ -2054,35 +2155,6 @@ static bool visual_reject_unident(s16b n)
 void do_cmd_visuals(void)
 {
 #ifdef ALLOW_VISUALS
-	typedef struct visual_type visual_type;
-
-	struct visual_type {
-		cptr text;	/* A text string describing the option */
-		void (*dump)(FILE *fff); /* A function that dumps the preferences to an open file. */
-		/* A function that retrieves the attrs and chars for the current entry. */
-		void (*load)(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name);
-		/* A function that saves the attrs and chars for the current entry. */
-		void (*save)(s16b n, byte ca, byte cc);
-		bool (*reject)(s16b n);
-		s16b max; /* The number of entries available. */
-		bool attr; /* Has a colour. */
-		bool chars; /* Has a character. */
-	};
-	
-	visual_type visual[] = {
-		{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_save_mon, 0, MAX_R_IDX, TRUE, TRUE},
-		{"object attr/chars", visual_dump_obj, visual_load_obj, visual_save_obj, 0, MAX_K_IDX, TRUE, TRUE},
-		{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_save_feat, visual_reject_feat, MAX_F_IDX, TRUE, TRUE},
-		{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_save_moncol, 0, MAX_MONCOL, TRUE, FALSE},
-		{"unidentified object attr/chars", visual_dump_unident, visual_load_unident, visual_save_unident, visual_reject_unident, MAX_U_IDX, TRUE, TRUE},
-	};
-
-/* Just in case a specific reference needs to be made. */
-#define VISUAL_MONSTER	(&visual[0])
-#define VISUAL_OBJECT	(&visual[1])
-#define VISUAL_FEATURE	(&visual[2])
-#define VISUAL_MONCOL	(&visual[3])
-#define VISUAL_UNIDENT	(&visual[4])
 
 /* The number of members of the visual[] array. */
 #define VISUALS (sizeof(visual)/sizeof(visual_type))
@@ -2104,6 +2176,8 @@ void do_cmd_visuals(void)
 
 	char buf[1024];
 
+	/* Hack - MAX_U_IDX is a variable. */
+	VISUAL_UNIDENT->max = MAX_U_IDX;
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -2213,7 +2287,9 @@ void do_cmd_visuals(void)
 		{
 			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
 
-			s16b r = -1, inc;
+			s16b r = vs_ptr->max-1, inc;
+
+			bool started = FALSE;
 
 			prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
 
@@ -2221,16 +2297,17 @@ void do_cmd_visuals(void)
 			while (1)
 			{
 				byte da, dc, ca, cc;
-				char name[80];
 				char *text;
 
 				/* Grab the information for the current entry.*/
-				(*(vs_ptr->load))(r, &da, &dc, &ca, &cc, name);
+				(*(vs_ptr->load))(r, &da, &dc, &ca, &cc);
+				
+				(*(vs_ptr->name))(buf, r);
 
 				/* Label the object */
 				Term_putstr(5, CMDLINE+2, -1, TERM_WHITE,
 				            format("Number = %d, Name = %-40.40s",
-				                   r, name));
+				                   r, buf));
 
 				/* Display the default/current attr/char. */
 				Term_putstr(40, CMDLINE+4, -1, TERM_WHITE, "<< ? >>");
@@ -2266,8 +2343,15 @@ void do_cmd_visuals(void)
 					    (vs_ptr->chars) ? "/c/C" : ""));
 
 				/* Get a command */
-				if (r >= 0) i = inkey();
-				else i = 'n';
+				if (started)
+				{
+					i = inkey();
+				}
+				else
+				{
+					i = 'n';
+					started = TRUE;
+				}
 
 				/* All done */
 				if (i == ESCAPE) break;
