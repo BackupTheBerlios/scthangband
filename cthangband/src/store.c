@@ -3466,15 +3466,17 @@ static void store_process_command(void)
 							}
 							else
 							{
-								p_ptr->au -= price;
 								/* Say "okay" */
 								say_comment_1();
 								/* Make a sound */
 								sound(SOUND_BUY);
+								if (enchant_spell(0,0,4))
+								{
+									p_ptr->au -= price;
 								/* Be happy */
 								decrease_insults();
 								store_prt_gold();
-								enchant_spell(0,0,4);
+								}
 							}
 							p_ptr->window |= (PW_PLAYER);
 							handle_stuff();
@@ -3491,15 +3493,17 @@ static void store_process_command(void)
 							}
 							else
 							{
-								p_ptr->au -= price;
 								/* Say "okay" */
 								say_comment_1();
 								/* Make a sound */
 								sound(SOUND_BUY);
+								if (enchant_spell(4,4,0))
+								{
+									p_ptr->au -= price;
 								/* Be happy */
 								decrease_insults();
 								store_prt_gold();
-								enchant_spell(4,4,0);
+								}
 							}
 							p_ptr->window |= (PW_PLAYER);
 							handle_stuff();
