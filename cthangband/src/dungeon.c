@@ -4034,14 +4034,14 @@ void play_game(bool new_game)
 	{
 		char buf[1024];
 		FILE *fp;
-		Term_clear();
+		clear_from(1);
 		fp = my_fopen_path(ANGBAND_DIR_FILE, "news.txt", "r");
 		if (fp)
 		{
-			int i = 0;
-			while (0 == my_fgets(fp, buf, 1024))
+			for (i = 0; !my_fgets(fp, buf, 1024); i++)
 			{
-				Term_putstr(0, i++, -1, TERM_WHITE, buf);
+				/* Leave the top line alone. */
+				if (i) put_str(buf, i, 0);
 			}
 			my_fclose(fp);
 		}

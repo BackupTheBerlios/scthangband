@@ -2362,7 +2362,6 @@ bool load_player(bool new_game)
 			/* Message */
 			msg_format("Converted a %d.%d.%d savefile.",
 						sf_major, sf_minor, sf_patch);
-			msg_print(NULL);
 		}
 
 		/* Player is dead */

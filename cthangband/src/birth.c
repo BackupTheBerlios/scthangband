@@ -3132,6 +3132,9 @@ static bool player_birth_aux(void)
 
 	/*** Intro ***/
 
+	/* Clear any pending messages. */
+	msg_print(NULL);
+
 	/* Clear screen */
 	Term_clear();
 
