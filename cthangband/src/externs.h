@@ -2160,7 +2160,7 @@ extern int chaos_rewards[MAX_PATRON][20];
 extern martial_arts ma_blows[MAX_MA];
 #endif
 #if (defined(CMD5_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS];
+extern magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS];
 #endif
 #if (defined(ANGBAND_H))
 extern window_type windows[8];

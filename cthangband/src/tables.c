@@ -2778,21 +2778,29 @@ martial_arts ma_blows[MAX_MA] =
 #endif
 };
 
-
-mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS] = {
-    /* Skill gained,  cost,  %fail,  name */
-        { 0,   1,  15, "Precognition" },       /* Det. monsters/traps */
-        { 1,   1,  20, "Neural Blast" },     /* ~MM */
-        { 3,   2,  25, "Minor Displacement" }, /* Phase/dimension door */
-        { 7,   6,  35, "Major Displacement" }, /* Tele. Self / All */
-        { 9,   7,  50, "Domination" },
-        { 11,  7,  30, "Pulverise" },      /* Telekinetic "bolt" */
-        { 13, 12,  50, "Character Armour" },   /* Psychic/physical defenses */
-        { 15, 12,  60, "Psychometry" },
-        { 18, 10,  45, "Mind Wave" },          /* Ball -> LOS */
-        { 23, 15,  50, "Adrenaline Channeling" },
-        { 25, 10,  40, "Psychic Drain" },      /* Convert enemy HP to mana */
-        { 29, 20,  45, "Telekinetic Wave" },   /* Ball -> LOS */
+magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
+{
+	/* Det. monsters/traps */
+	{"Precognition", "", 0, 1, 15, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	/* ~MM */
+	{"Neural Blast", "", 1, 1, 20, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0}, 
+	/* Phase/dimension door */
+	{"Minor Displacement", "", 3, 2, 25, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	/* Tele. Self / All */
+	{"Major Displacement", "", 7, 6, 35, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0}, 
+	{"Domination", "", 9, 7, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	/* Telekinetic "bolt" */
+	{"Pulverise", "", 11, 7, 30, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	/* Psychic/physical defenses */
+	{"Character Armour", "", 13, 12, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	{"Psychometry", "", 15, 12, 60, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	/* Ball -> LOS */
+	{"Mind Wave", "", 18, 10, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	{"Adrenaline Channeling", "", 23, 15, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+ 	/* Convert enemy HP to mana */
+ 	{"Psychic Drain", "", 25, 10, 40, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
+	/* Ball -> LOS */
+	{"Telekinetic Wave", "", 29, 20, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},
 };
 
 
