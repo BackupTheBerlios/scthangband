@@ -145,6 +145,105 @@ static cptr comment_6[MAX_COMMENT_6] =
 	"Sorry, what was that again?"
 };
 
+/* Shop service names, in the order r,z */
+static cptr service_name[MAX_STORE_TYPES][2] =
+{
+	{"", ""},	/* General */
+	{"Enchant your armour",""},	/* Armoury */
+	{"Enchant your weapon",""},	/* Weapon Shop */
+	{"buy Restoration","Spirit Initiation"}, /* Temple */
+	{"Identify all",""}, /* Alchemists' Shop */
+	{"ritual of Recall","Learn Folk Magic"},	/* Magic Shop */
+	{"",""},	/* Black Market */
+	{"Rest a while",""},	/* Home */
+	{"Research a spell",""},	/* Library */
+	{"hire a Room",""},	/* Inn */
+	{"Buy a house",""},	/* Hall */
+	{"",""}	/* Pawn Shop */
+};
+
+static s32b cur_ask, final_ask;
+static cptr pmt;
+static bool noneedtobargain(s32b minprice);
+
+/*
+ * Determine if haggling is necessary.
+ * purse should be 0 if buying as infinity isn't an s32b.
+ */
+
+static bool needtohaggle(s32b purse)
+{
+	int noneed = noneedtobargain(final_ask);
+	char message[80];
+	bool maxpayout = ((purse > 0) && (final_ask >= purse));
+
+	/* No need to haggle */
+	if (noneed || auto_haggle || maxpayout)
+	{
+
+		/* No reason to haggle */
+		if (maxpayout)
+		{
+			/* Message */
+			sprintf(message, "You instantly agree upon the price.");
+
+			/* Offer full purse */
+			final_ask = purse;
+		}
+
+		/* No need to haggle */
+		else if (noneed)
+		{
+			/* Message summary */
+			sprintf(message, "You eventually agree upon the price.");
+		}
+
+		/* No haggle option */
+		else if (auto_haggle)
+		{
+			/* Message summary */
+			sprintf(message, "You quickly agree upon the price.");
+
+			/* Apply Sales Tax */
+			if (purse == 0)
+			{
+				/* Buying */
+				final_ask = final_ask * 11 / 10;
+			}
+			else
+			{
+				/* Selling */
+				final_ask = final_ask * 9 / 10;
+			}
+		}
+
+		/* Final price */
+		cur_ask = final_ask;
+
+		if (verbose_haggle)
+		{
+			/* Print the message */
+			msg_print(message);
+			msg_print(NULL);
+			pmt = "Final Offer";
+		}
+		else
+		{
+			/* Take it or leave it. */
+			if (purse)
+				pmt = "Accept";
+			else
+				pmt = "Pay";
+		}
+
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
 /*
  * Rest for a night in the Inn or House
  * If the night flag is set, then rest until nightfalll instead of daybreak
@@ -258,6 +357,8 @@ bool free_homes(void)
 static void say_comment_1(void)
 {
     char rumour[80];
+
+	if (!auto_haggle || verbose_haggle)
 	msg_print(comment_1[rand_int(MAX_COMMENT_1)]);
     if (randint(RUMOR_CHANCE) == 1 && speak_unique )
        { msg_print("The shopkeeper whispers something into your ear:");
@@ -2153,7 +2254,6 @@ static bool receive_offer(cptr pmt, s32b *poffer,
  */
 static bool purchase_haggle(object_type *o_ptr, s32b *price)
 {
-	s32b               cur_ask, final_ask;
 	s32b               last_offer, offer;
 	s32b               x1, x2, x3;
 	s32b               min_per, max_per;
@@ -2161,12 +2261,10 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	int                annoyed = 0, final = FALSE;
 
 	bool		cancel = FALSE;
-
-	cptr		pmt = "Asking";
-
 	char		out_val[160];
+	char		o_name[80];
 
-
+	pmt = "Asking";
 	*price = 0;
 
 
@@ -2174,44 +2272,24 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	cur_ask = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
 	final_ask = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
-	/* Determine if haggling is necessary */
-	noneed = noneedtobargain(final_ask);
-
-	/* No need to haggle */
-	if (noneed || auto_haggle)
-	{
-		/* No need to haggle */
-		if (noneed)
-		{
-			/* Message summary */
-			msg_print("You eventually agree upon the price.");
-			msg_print(NULL);
-		}
-
-		/* No haggle option */
-		else
-		{
-			/* Message summary */
-			msg_print("You quickly agree upon the price.");
-			msg_print(NULL);
-
-			/* Apply Sales Tax */
-			final_ask += final_ask / 10;
-		}
-
-		/* Final price */
-		cur_ask = final_ask;
-
-		/* Go to final offer */
-		pmt = "Final Offer";
-		final = TRUE;
-	}
+	/* Determine if haggling is necessary. */
+	final = needtohaggle(0);
 
 
 	/* Haggle for the whole pile */
 	cur_ask *= o_ptr->number;
 	final_ask *= o_ptr->number;
 
+	if ((auto_haggle || noneed) && !verbose_haggle)
+	{
+		if(cur_store_type == STORE_PAWN)
+			object_desc(o_name, o_ptr, TRUE, 3);
+		else
+		object_desc_store(o_name, o_ptr, TRUE, 3);
+		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
+		*price = final_ask;
+		return !get_check(out_val);
+	}
 
 	/* Haggle parameters */
 	min_per = ot_ptr->haggle_per;
@@ -2323,22 +2401,19 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 /* Haggle for a fixed price service from a store owner */
 /* Altered form of purchase_haggle by DA */
-static bool service_haggle(s32b service_cost, s32b *price)
+static bool service_haggle(s32b service_cost, s32b *price, cptr service)
 {
-	s32b               cur_ask, final_ask;
 	s32b               last_offer, offer;
 	s32b               x1, x2, x3;
 	s32b               min_per, max_per;
-	int                flag, loop_flag, noneed;
+	int                flag, loop_flag;
 	int                annoyed = 0, final = FALSE;
 
 	bool		cancel = FALSE;
-
-	cptr		pmt = "Asking";
-
 	char		out_val[160];
 
 
+	pmt = "Asking";
 	*price = 0;
 
 
@@ -2346,39 +2421,15 @@ static bool service_haggle(s32b service_cost, s32b *price)
 	cur_ask = service_cost * 2;
 	final_ask = service_cost;
 
-	/* Determine if haggling is necessary */
-	noneed = noneedtobargain(final_ask);
+	/* Determine if haggling is necessary. */
+	final = needtohaggle(0);
 
-	/* No need to haggle */
-	if (noneed || auto_haggle)
-	{
-		/* No need to haggle */
-		if (noneed)
+	if (auto_haggle && !verbose_haggle)
 		{
-			/* Message summary */
-			msg_print("You eventually agree upon the price.");
-			msg_print(NULL);
+		sprintf(out_val, "%s %ld to %s? ", pmt, cur_ask, service);
+		*price = final_ask;
+		return !get_check(out_val);
 		}
-
-		/* No haggle option */
-		else
-		{
-			/* Message summary */
-			msg_print("You quickly agree upon the price.");
-			msg_print(NULL);
-
-			/* Apply Sales Tax */
-			final_ask += final_ask / 10;
-		}
-
-		/* Final price */
-		cur_ask = final_ask;
-
-		/* Go to final offer */
-		pmt = "Final Offer";
-		final = TRUE;
-	}
-
 
 	/* Haggle parameters */
 	min_per = ot_ptr->haggle_per;
@@ -2496,21 +2547,18 @@ static bool service_haggle(s32b service_cost, s32b *price)
  */
 static bool sell_haggle(object_type *o_ptr, s32b *price)
 {
-	s32b               purse, cur_ask, final_ask;
 	s32b               last_offer = 0, offer = 0;
 	s32b               x1, x2, x3;
 	s32b               min_per, max_per;
 
-	int			flag, loop_flag, noneed;
+	int			flag, loop_flag;
 	int			annoyed = 0, final = FALSE;
 
 	bool		cancel = FALSE;
-
-	cptr		pmt = "Offer";
-
 	char		out_val[160];
+	char		o_name[80];
 
-
+	pmt = "Offer";
 	*price = 0;
 
 
@@ -2518,57 +2566,20 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	cur_ask = price_item(o_ptr, ot_ptr->max_inflate, TRUE);
 	final_ask = price_item(o_ptr, ot_ptr->min_inflate, TRUE);
 
-	/* Determine if haggling is necessary */
-	noneed = noneedtobargain(final_ask);
-
-	/* Get the owner's payout limit */
-	purse = (s32b)(ot_ptr->max_cost);
-
-	/* No need to haggle */
-	if (noneed || auto_haggle || (final_ask >= purse))
-	{
-		/* No reason to haggle */
-		if (final_ask >= purse)
-		{
-			/* Message */
-			msg_print("You instantly agree upon the price.");
-			msg_print(NULL);
-
-			/* Offer full purse */
-			final_ask = purse;
-		}
-
-		/* No need to haggle */
-		else if (noneed)
-		{
-			/* Message */
-			msg_print("You eventually agree upon the price.");
-			msg_print(NULL);
-		}
-
-		/* No haggle option */
-		else
-		{
-			/* Message summary */
-			msg_print("You quickly agree upon the price.");
-			msg_print(NULL);
-
-			/* Apply Sales Tax */
-			final_ask -= final_ask / 10;
-		}
-
-		/* Final price */
-		cur_ask = final_ask;
-
-		/* Final offer */
-		final = TRUE;
-		pmt = "Final Offer";
-	}
+	/* Determine if haggling is necessary. */
+	final = needtohaggle(ot_ptr->max_cost);
 
 	/* Haggle for the whole pile */
 	cur_ask *= o_ptr->number;
 	final_ask *= o_ptr->number;
 
+	if (auto_haggle && !verbose_haggle)
+	{
+		object_desc(o_name, o_ptr, TRUE, 3);
+		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
+		*price = final_ask;
+		return !get_check(out_val);
+	}
 
 	/* XXX XXX XXX Display commands */
 
@@ -2769,7 +2780,7 @@ static void store_purchase(void)
 	if (o_ptr->number > 1)
 	{
 		/* Hack -- note cost of "fixed" items */
-		if ((cur_store_type != 7) && (o_ptr->ident & (IDENT_FIXED)))
+		if ((cur_store_type != 7) && (o_ptr->ident & (IDENT_FIXED)) && verbose_haggle)
 		{
 			msg_format("That costs %ld gold per item.", (long)(best));
 		}
@@ -2801,7 +2812,7 @@ static void store_purchase(void)
 	if (cur_store_type != 7)
 	{
 		/* Fixed price, quick buy */
-		if (o_ptr->ident & (IDENT_FIXED))
+		if ((o_ptr->ident & (IDENT_FIXED)) && verbose_haggle)
 		{
 			/* Assume accept */
 			choice = 0;
@@ -2823,8 +2834,11 @@ static void store_purchase(void)
 				object_desc_store(o_name, j_ptr, TRUE, 3);
 			}
 			/* Message */
+			if (!auto_haggle || verbose_haggle)
+			{
 			msg_format("Buying %s (%c).", o_name, I2A(item));
 			msg_print(NULL);
+			}
 
 			/* Haggle for a final price */
 			choice = purchase_haggle(j_ptr, &price);
@@ -2868,6 +2882,8 @@ static void store_purchase(void)
 				object_desc(o_name, j_ptr, TRUE, 3);
 
 				/* Message */
+				if (!auto_haggle || verbose_haggle)
+				{
 				if (cur_store_type ==STORE_PAWN)
 				{
 					msg_format("You bought back %s for %ld gold.",o_name,(long)price);
@@ -2875,6 +2891,7 @@ static void store_purchase(void)
 				else
 				{
 					msg_format("You bought %s for %ld gold.", o_name, (long)price);
+				}
 				}
 
 				/* Erase the inscription */
@@ -3119,8 +3136,11 @@ static void store_sell(void)
 	if (cur_store_type != STORE_HOME)
 	{
 		/* Describe the transaction */
+		if (!auto_haggle || verbose_haggle)
+		{
 		msg_format("Selling %s (%c).", o_name, index_to_label(item));
 		msg_print(NULL);
+		}
 
 		/* Haggle for it */
 		choice = sell_haggle(q_ptr, &price);
@@ -3171,6 +3191,9 @@ static void store_sell(void)
 			/* Modify quantity */
 			q_ptr->number = amt;
 
+			/* Clear inscription (again?) */
+			q_ptr->note = 0;
+
 			/* Get the "actual" value */
 			if (cur_store_type == STORE_PAWN)
 			{
@@ -3184,6 +3207,8 @@ static void store_sell(void)
 			}
 
 
+			if (!auto_haggle || verbose_haggle)
+			{
 			if (cur_store_type != STORE_PAWN)
 			{
 			/* Describe the result (in message buffer) */
@@ -3192,6 +3217,7 @@ static void store_sell(void)
 			else
 			{
 				msg_format("You pawn %s for %ld gold.",o_name,(long)price);
+			}
 			}
 
 			/* Analyze the prices (and comment verbally) */
@@ -3355,6 +3381,7 @@ static void store_process_command(void)
 {
 	s32b price,cost;
 	int i;
+	char buf[80];
 
  #ifdef ALLOW_REPEAT /* TNB */
  
@@ -3461,7 +3488,7 @@ static void store_process_command(void)
 				   }
 			   case STORE_ARMOURY:
 				   {
-						if (!service_haggle(400,&price))
+						if (!service_haggle(400,&price, service_name[cur_store_type][0]))
 						{
 							if (price >= p_ptr->au)
 							{
@@ -3486,7 +3513,7 @@ static void store_process_command(void)
 				   }
 			   case STORE_WEAPON:
 				   {
-						if (!service_haggle(800,&price))
+						if (!service_haggle(800,&price, service_name[cur_store_type][0]))
 						{
 							if (price >= p_ptr->au)
 							{
@@ -3511,7 +3538,7 @@ static void store_process_command(void)
 				   }
 			   case STORE_TEMPLE:
 					{
-						if (!service_haggle(750,&price))
+						if (!service_haggle(750,&price, service_name[cur_store_type][0]))
 						{
 							if (price >= p_ptr->au)
 							{
@@ -3542,7 +3569,7 @@ static void store_process_command(void)
 					}
 				case STORE_ALCHEMIST:
 					{
-						if (!service_haggle(500,&price))
+						if (!service_haggle(500,&price, service_name[cur_store_type][0]))
 						{
 							if (price >= p_ptr->au)
 							{
@@ -3579,7 +3606,7 @@ static void store_process_command(void)
 							cost = cost * cost;
 							/* minimum of 100 gold */
 							if(cost < 100) cost = 100;
-							if (!service_haggle(cost,&price))
+							if (!service_haggle(cost,&price, service_name[cur_store_type][0]))
 							{
 								if (price >= p_ptr->au)
 								{
@@ -3645,7 +3672,7 @@ static void store_process_command(void)
 						}
 						else
 						{
-							if (!service_haggle(10,&price))
+							if (!service_haggle(10,&price, service_name[cur_store_type][0]))
 							{
 								if (price >= p_ptr->au)
 								{
@@ -3689,7 +3716,7 @@ static void store_process_command(void)
 					   }
 					   else
 					   {
-							if (!service_haggle(town_defs[cur_town].house_price,&price))
+							if (!service_haggle(town_defs[cur_town].house_price,&price, service_name[cur_store_type][0]))
 							{
 								if (price >= p_ptr->au)
 								{
@@ -3740,10 +3767,12 @@ static void store_process_command(void)
 					}
 					else /* We got a spirit back */
 					{
+						sprintf(buf, "Form a pact with %s", spirits[i].name);
+
 						switch(spirits[i].favour_flags)
 						{
 						case 0x000000ff:
-							if (!service_haggle(100,&price))
+							if (!service_haggle(100,&price, buf))
 							{
 								if (price >= p_ptr->au)
 								{
@@ -3766,7 +3795,7 @@ static void store_process_command(void)
 							}
 							break;
 						case 0x0000ff00:
-							if (!service_haggle(1000,&price))
+							if (!service_haggle(1000,&price, buf), service_name[cur_store_type][1])
 							{
 								if (price >= p_ptr->au)
 								{
@@ -3791,7 +3820,7 @@ static void store_process_command(void)
 							}
 							break;
 						   case 0x00ff0000:
-								if (!service_haggle(5000,&price))
+								if (!service_haggle(5000,&price, buf), service_name[cur_store_type][1])
 							{
 								if (price >= p_ptr->au)
 								{
@@ -3818,7 +3847,7 @@ static void store_process_command(void)
 							}
 							break;
 					   case 0xff000000:
-								if (!service_haggle(25000,&price))
+								if (!service_haggle(25000,&price, buf))
 							{
 								if (price >= p_ptr->au)
 								{
@@ -4101,6 +4130,7 @@ void do_cmd_store(void)
 
 	cave_type		*c_ptr;
 
+ 	char			buf[80];
 
 	/* Access the player grid */
 	c_ptr = &cave[py][px];
@@ -4237,55 +4267,15 @@ void do_cmd_store(void)
 
 		/* Special for each store */
 
-		switch (cur_store_type)
-		{
-		case STORE_ARMOURY:
+		if (service_name[cur_store_type][0][0])
 			{
-				prt(" r) Enchant your armour.", 23,56);
-				break;
+			sprintf(buf, " r) %s", service_name[cur_store_type][0]);
+			prt(buf, 23, 56);
 			}
-		case STORE_WEAPON:
+		if (service_name[cur_store_type][1][0])
 			{
-				prt(" r) Enchant your weapon.", 23,56);
-				break;
-			}
-		case STORE_TEMPLE:
-			{
-				prt(" r) buy Restoration.", 23,56);
-				prt(" z) Spirit Initiation.",21,56);
-				break;
-			}
-		case STORE_ALCHEMIST:
-			{
-				prt(" r) Identify all.", 23,56);
-				break;
-			}
-		case STORE_MAGIC:
-			{
-				prt(" z) Learn Folk Magic.",21,56);
-				prt(" r) ritual of Recall.", 23,56);
-				break;
-			}
-		case STORE_HOME:
-			{
-				prt(" r) Rest a while.",23,56);
-				break;
-			}
-		case STORE_LIBRARY:
-			{
-				prt(" r) Research a spell.",23,56);
-				break;
-			}
-		case STORE_INN:
-			{
-				prt(" r) hire a Room.", 23,56);
-				break;
-			}
-		case STORE_HALL:
-			{
-				prt(" r) Buy a house.", 23,56);
-				break;
-			}
+			sprintf(buf, " z) %s", service_name[cur_store_type][1]);
+			prt(buf, 21, 56);
 		}
 
   		/* Prompt */

@@ -2781,6 +2781,7 @@ bool get_check(cptr prompt)
 		i = inkey();
 		if (quick_messages) break;
 		if (i == ESCAPE) break;
+		if (i == '\r') break;
 		if (strchr("YyNn", i)) break;
 		bell();
 	}
@@ -2789,7 +2790,7 @@ bool get_check(cptr prompt)
 	prt("", 0, 0);
 
 	/* Normal negation */
-	if ((i != 'Y') && (i != 'y')) return (FALSE);
+	if ((i != 'Y') && (i != 'y') && (i != '\r')) return (FALSE);
 
 	/* Success */
 	return (TRUE);

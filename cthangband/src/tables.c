@@ -3229,6 +3229,9 @@ option_type option_info[] =
 	{ &auto_haggle,                 TRUE,  6,      1, 0,
 	"auto_haggle",                  "Auto-haggle in stores" },
 
+	{ &verbose_haggle,	FALSE,	6, 2, 25,
+	"verbose_haggle", "Verbose auto_haggle messages" },
+
 	{ &auto_scum,                   TRUE,  6,      1, 1,
 	"auto_scum",                    "Auto-scum for good levels" },
 

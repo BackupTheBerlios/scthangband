@@ -201,6 +201,7 @@ bool show_details;			/* Show details in certain sub-windows */
 
 bool ring_bell;				/* Ring the bell (on errors, etc) */
 bool use_color;				/* Use color if possible (slow) */
+bool verbose_haggle;		/* Verbose messages if auto_haggle is set */
 
 
 /* Option Set 2 -- Disturbance */
