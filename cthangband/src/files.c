@@ -4120,6 +4120,16 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 }
 
 /*
+ * Return TRUE if s is a non-printed line which is preserved by reflow_file().
+ */
+static bool fake_line(cptr s)
+{
+	if (prefix(s, CC_LINK_PREFIX)) return TRUE;
+	if (prefix(s, "|||||")) return TRUE;
+	return FALSE;
+}
+
+/*
  * Find the specified text in a file after a point, return the line
  * at which it occurs.
  */
@@ -4134,31 +4144,22 @@ static int find_text(FILE *fff, hyperlink_type *h_ptr, int minline)
 	rewind(fff);
 
 	/* Find and skip the indicated line. */
-	for (y = 0; y <= minline; y++)
+	for (y = 0; y <= minline; )
 	{
 		/* Skip a line */
 		if (my_fgets(fff, h_ptr->rbuf, 1024)) return minline;
+		if (!fake_line(h_ptr->rbuf)) y++;
 	}
 
 	/* Search from it. */
 	while (!my_fgets(fff, h_ptr->rbuf, 1024))
 	{
-		if (strstr(h_ptr->rbuf, h_ptr->finder)) return y;
-		y++;
+		if (strstr(h_ptr->rbuf, h_ptr->finder)) return y+1;
+		if (!fake_line(h_ptr->rbuf)) y++;
 	}
 
 	/* No match, so do nothing. */
 	return minline;
-}
-
-/*
- * Return TRUE if s is a non-printed line which is preserved by reflow_file().
- */
-static bool fake_line(cptr s)
-{
-	if (prefix(s, CC_LINK_PREFIX)) return TRUE;
-	if (prefix(s, "|||||")) return TRUE;
-	return FALSE;
 }
 
 /*
