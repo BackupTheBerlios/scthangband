@@ -980,6 +980,8 @@ static bool point_mod_player(void)
 
 			/* Get the average age, height and weight (not affected by template) */
 			if (i != 7) get_ahw_average();
+			/* Set the experience factor (not affected by template) */
+			if (i != 7) p_ptr->expfact = rp_ptr->r_exp;
 			/* Get a default weapon (not affected by race) */
 			if (i != 6) wield_weapons(TRUE);
 
