@@ -3377,4 +3377,4 @@ extern int PlayerUID;
 #define screen_load() Term_load()
 
 /* String used in mc_roff to indicate a colour change. */
-#define CC_PREFIX	"#####"
+#define CC_PREFIX	"$"
