@@ -2403,7 +2403,7 @@ extern cptr quark_str(u16b i);
 extern s16b message_num(void);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA1_C))
-extern void message_str_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+extern void message_str_f1(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(LOAD_C) || defined(STORE_C) || defined(UTIL_C))
 extern void message_add(cptr str);

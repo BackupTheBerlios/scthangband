@@ -2872,7 +2872,7 @@ static void win_message_display(void)
 	for (i = 0; i < h; i++)
 	{
 		/* Dump the message on the appropriate line */
-		mc_put_fmt((h-1)-i, 0, "%v", message_str_f1, i);
+		mc_put_fmt((h-1)-i, 0, "%$v", message_str_f1, i);
 	}
 }
 

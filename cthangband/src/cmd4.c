@@ -221,7 +221,7 @@ void do_cmd_messages(void)
 	/* Total messages */
 	for (n = message_num(); n; n--)
 	{
-		my_fprintf(fff, "%v\n", message_str_f1, n-1);
+		my_fprintf(fff, "%$v\n", message_str_f1, n-1);
 	}
 
 	/* Close the file */

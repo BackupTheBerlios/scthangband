@@ -2109,13 +2109,14 @@ s16b message_num(void)
 }
 
 /*
- * Copy the colour and "text" of a saved message to buf.
+ * Copy the "text" of a saved message to buf.
+ * If there is a $ in the format string, also provide an initial colour string.
  */
-void message_str_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+void message_str_f1(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	u16b x, o;
 	cptr s;
-	char a;
+	cptr p;
 	int age = va_arg(*vp, int);
 
 	/* Forgotten messages have no text */
@@ -2124,16 +2125,21 @@ void message_str_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	/* Acquire the "logical" index */
 	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
 
+	/* Neither add nor remove colour codes. */
+	if (!strchr(fmt, '$'))
+	{
+		p = "";
+	}
 	/* Deduce the colour. */
-	if ((u16b)(message__next - x) < (u16b)(message__turn - x))
+	else if ((u16b)(message__next - x) < (u16b)(message__turn - x))
 	{
 		/* Recent messages are white. */
-		a = 'w';
+		p = "$w$<";
 	}
 	else
 	{
 		/* Older messages are grey. */
-		a = 'W';
+		p = "$W$<";
 	}
 
 	/* Get the "offset" for the message */
@@ -2143,7 +2149,7 @@ void message_str_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	s = &message__buf[o];
 
 	/* Copy the message and the colour to buf. */
-	strnfmt(buf, max, "$%c$<%s", a, s);
+	strnfmt(buf, max, "%s%s", p, s);
 }
 
 
