@@ -2890,10 +2890,14 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /*
  * Give the adj_stat_x index for a given stat value.
+ * The indices go up as follows:
+ * 3, 4, ..., 17, 18, 18/10-19, 18/20-29, ..., 18/210-219, 18/220+
  */
 #define ind_stat(X) \
 	((X < 4) ? 0 : (X < 18) ? X-3 : (X < 18+220) ? 15+(X-18)/10 : 37)
 
+/* How many stat indices there are (depends on above). */
+#define NUM_STAT_INDICES 38
 
 
 /*

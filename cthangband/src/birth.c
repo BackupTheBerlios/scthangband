@@ -1119,11 +1119,6 @@ static void display_player_birth(int points, bool details, bool rolled)
 	prt(format("['a' to roll%s, or '?' for help.]", arstr), 23, 2);
 }
 
-/* Just in case */
-#ifndef ind_stat
-#define ind_stat(X) \
-	((X < 4) ? 0 : (X < 18) ? X-3 : (X < 18+220) ? 15+(X-18)/10 : 37)
-#endif
 /*
  * Display various things there isn't space for normally during character creation.
  * It could be argued that this would be better placed in files.c, but it's easier here.

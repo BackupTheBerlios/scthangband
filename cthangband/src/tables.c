@@ -54,7 +54,7 @@ char hexsym[16] =
  * Stat Table: (INT) -- Number of half-spells per level
  * (CHR) -- Decrease in the annoyance of a favour
  */
-byte adj_mag_study[] =
+const byte adj_mag_study[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -100,7 +100,7 @@ byte adj_mag_study[] =
 /*
  * Stat Table (INT/WIS) -- extra quarter-mana/chi-points per skill percent
  */
-byte adj_mag_mana[] =
+const byte adj_mag_mana[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -146,7 +146,7 @@ byte adj_mag_mana[] =
 /*
  * Stat Table (INT/WIS/CHR) -- Minimum failure rate (percentage)
  */
-byte adj_mag_fail[] =
+const byte adj_mag_fail[NUM_STAT_INDICES] =
 {
 	99      /* 3 */,
 	99      /* 4 */,
@@ -192,7 +192,7 @@ byte adj_mag_fail[] =
 /*
  * Stat Table: (INT/WIS/CHR) -- Decreases failure rate (*3-3)
  */
-byte adj_mag_stat[] =
+const byte adj_mag_stat[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -238,7 +238,7 @@ byte adj_mag_stat[] =
 /*
  * Stat Table (CHR) -- payment percentages
  */
-byte adj_chr_gold[] =
+const byte adj_chr_gold[NUM_STAT_INDICES] =
 {
 	130     /* 3 */,
 	125     /* 4 */,
@@ -284,7 +284,7 @@ byte adj_chr_gold[] =
 /*
  * Stat Table (INT) -- Magic devices
  */
-byte adj_int_dev[] =
+const byte adj_int_dev[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -330,7 +330,7 @@ byte adj_int_dev[] =
 /*
  * Stat Table (WIS) -- Saving throw
  */
-byte adj_wis_sav[] =
+const byte adj_wis_sav[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -376,7 +376,7 @@ byte adj_wis_sav[] =
 /*
  * Stat Table (DEX) -- disarming
  */
-byte adj_dex_dis[] =
+const byte adj_dex_dis[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -422,7 +422,7 @@ byte adj_dex_dis[] =
 /*
  * Stat Table (INT) -- disarming
  */
-byte adj_int_dis[] =
+const byte adj_int_dis[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -468,7 +468,7 @@ byte adj_int_dis[] =
 /*
  * Stat Table (DEX) -- bonus to ac (plus 128)
  */
-byte adj_dex_ta[] =
+const byte adj_dex_ta[NUM_STAT_INDICES] =
 {
 	128 + -4        /* 3 */,
 	128 + -3        /* 4 */,
@@ -514,7 +514,7 @@ byte adj_dex_ta[] =
 /*
  * Stat Table (STR) -- bonus to dam (plus 128)
  */
-byte adj_str_td[] =
+const byte adj_str_td[NUM_STAT_INDICES] =
 {
 	128 + -2        /* 3 */,
 	128 + -2        /* 4 */,
@@ -560,7 +560,7 @@ byte adj_str_td[] =
 /*
  * Stat Table (DEX) -- bonus to hit (plus 128)
  */
-byte adj_dex_th[] =
+const byte adj_dex_th[NUM_STAT_INDICES] =
 {
 	128 + -3        /* 3 */,
 	128 + -2        /* 4 */,
@@ -606,7 +606,7 @@ byte adj_dex_th[] =
 /*
  * Stat Table (STR) -- bonus to hit (plus 128)
  */
-byte adj_str_th[] =
+const byte adj_str_th[NUM_STAT_INDICES] =
 {
 	128 + -3        /* 3 */,
 	128 + -2        /* 4 */,
@@ -652,7 +652,7 @@ byte adj_str_th[] =
 /*
  * Stat Table (STR) -- weight limit in deca-pounds
  */
-byte adj_str_wgt[] =
+const byte adj_str_wgt[NUM_STAT_INDICES] =
 {
 	5       /* 3 */,
 	6       /* 4 */,
@@ -698,7 +698,7 @@ byte adj_str_wgt[] =
 /*
  * Stat Table (STR) -- weapon weight limit in pounds
  */
-byte adj_str_hold[] =
+const byte adj_str_hold[NUM_STAT_INDICES] =
 {
 	4       /* 3 */,
 	5       /* 4 */,
@@ -744,7 +744,7 @@ byte adj_str_hold[] =
 /*
  * Stat Table (STR) -- digging value
  */
-byte adj_str_dig[] =
+const byte adj_str_dig[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -790,7 +790,7 @@ byte adj_str_dig[] =
 /*
  * Stat Table (STR) -- help index into the "blow" table
  */
-byte adj_str_blow[] =
+const byte adj_str_blow[NUM_STAT_INDICES] =
 {
 	3       /* 3 */,
 	4       /* 4 */,
@@ -836,7 +836,7 @@ byte adj_str_blow[] =
 /*
  * Stat Table (DEX) -- index into the "blow" table
  */
-byte adj_dex_blow[] =
+const byte adj_dex_blow[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -882,7 +882,7 @@ byte adj_dex_blow[] =
 /*
  * Stat Table (DEX) -- chance of avoiding "theft" and "falling"
  */
-byte adj_dex_safe[] =
+const byte adj_dex_safe[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	1       /* 4 */,
@@ -928,7 +928,7 @@ byte adj_dex_safe[] =
 /*
  * Stat Table (CON) -- base regeneration rate
  */
-byte adj_con_fix[] =
+const byte adj_con_fix[NUM_STAT_INDICES] =
 {
 	0       /* 3 */,
 	0       /* 4 */,
@@ -974,7 +974,7 @@ byte adj_con_fix[] =
 /*
  * Stat Table (CON) -- extra half-hitpoints per level (plus 128)
  */
-byte adj_con_mhp[] =
+const byte adj_con_mhp[NUM_STAT_INDICES] =
 {
 	128 + -5        /* 3 */,
 	128 + -3        /* 4 */,

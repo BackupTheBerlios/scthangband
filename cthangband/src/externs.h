@@ -2019,67 +2019,67 @@ extern s16b ddy_ddd[9];
 extern char hexsym[16];
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_mag_study[];
+extern const byte adj_mag_study[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_mag_mana[];
+extern const byte adj_mag_mana[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C))
-extern byte adj_mag_fail[];
+extern const byte adj_mag_fail[NUM_STAT_INDICES];
 #endif
 #if (defined(CMD5_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C))
-extern byte adj_mag_stat[];
+extern const byte adj_mag_stat[NUM_STAT_INDICES];
 #endif
 #if (defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C))
-extern byte adj_chr_gold[];
+extern const byte adj_chr_gold[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_int_dev[];
+extern const byte adj_int_dev[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_wis_sav[];
+extern const byte adj_wis_sav[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_dex_dis[];
+extern const byte adj_dex_dis[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_int_dis[];
+extern const byte adj_int_dis[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_dex_ta[];
+extern const byte adj_dex_ta[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_str_td[];
+extern const byte adj_str_td[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_dex_th[];
+extern const byte adj_dex_th[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_str_th[];
+extern const byte adj_str_th[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_str_wgt[];
+extern const byte adj_str_wgt[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_str_hold[];
+extern const byte adj_str_hold[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_str_dig[];
+extern const byte adj_str_dig[NUM_STAT_INDICES];
 #endif
 #if (defined(CMD2_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_str_blow[];
+extern const byte adj_str_blow[NUM_STAT_INDICES];
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_dex_blow[];
+extern const byte adj_dex_blow[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(TABLES_C))
-extern byte adj_dex_safe[];
+extern const byte adj_dex_safe[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(TABLES_C))
-extern byte adj_con_fix[];
+extern const byte adj_con_fix[NUM_STAT_INDICES];
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern byte adj_con_mhp[];
+extern const byte adj_con_mhp[NUM_STAT_INDICES];
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern byte blows_table[12][12];

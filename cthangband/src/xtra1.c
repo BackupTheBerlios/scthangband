@@ -2352,14 +2352,8 @@ static void calc_bonuses(bool quiet)
 		}
 
 
-		/* Values: 3, 4, ..., 17 */
-		if (use <= 18) ind = (use - 3);
-
-		/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
-		else if (use <= 18+219) ind = (15 + (use - 18) / 10);
-
-		/* Range: 18/220+ */
-		else ind = (37);
+		/* Calculate the index for the stat in use (see defines.h) */
+		ind = ind_stat(use);
 
 		/* Notice changes */
 		if (p_ptr->stat_ind[i] != ind)
