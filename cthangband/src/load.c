@@ -198,28 +198,24 @@ static void rd_s32b(s32b *ip)
 
 
 /*
- * Hack -- read a string
+ * Hack -- read a string, truncating if necessary to prevent overflow.
  */
 static void rd_string(char *str, int max)
 {
-	char c;
-	int i;
+	char *s = str;
 
 	/* Read the string */
-	for (i = 0, c = 1; c && i < max-1; i++)
+	while (1)
 	{
 		/* Read a char */
-		rd_char(str+i);
+		rd_char(s);
 		
-		/* Put it somewhere convenient. */
-		c = str[i];
+		/* Stop at the end of the string. */
+		if (!*s) break;
+
+		/* Advance if safe. */
+		if (s < str+max-1) s++;
 	}
-
-	/* Terminate if a termination character wasn't read above. */
-	if (c) str[max-1] = '\0';
-
-	/* Read any extra characters at the end. */
-	while (c) rd_char(&c);
 }
 
 

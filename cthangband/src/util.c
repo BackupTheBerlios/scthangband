@@ -2339,7 +2339,7 @@ void message_add(cptr str)
 		if (*t)
 		{
 			/* Message is too small */
-			if (strlen(buf) < 6) break;
+			if (t - buf < 2) break;
 
 			/* Drop the space */
 			*(t - 1) = '\0';
