@@ -2057,30 +2057,7 @@ void do_cmd_cast(void)
 		       break;
 	   case 23: /* Word of Recall */
 			{
-                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
-                {
-                    if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv = dun_level;
-
-                }
-				if (!p_ptr->word_recall)
-				{
-					p_ptr->word_recall = rand_int(21) + 15;
-					if (dun_level > 0)
-					{
-						recall_dungeon = cur_dungeon;
-					}
-					else
-					{
-						cur_dungeon = recall_dungeon;
-					}
-					msg_print("The air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print("A tension leaves the air around you...");
-				}
+				set_recall(TRUE);
 				break;
 			}
        case 24: /* Stasis */
@@ -2632,30 +2609,7 @@ void do_cmd_cast(void)
         break;
         case 14: /* Word of Recall */
 			{
-                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
-                {
-                    if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv = dun_level;
-
-                }
-				if (!p_ptr->word_recall)
-				{
-					p_ptr->word_recall = rand_int(21) + 15;
-					if (dun_level > 0)
-					{
-						recall_dungeon = cur_dungeon;
-					}
-					else
-					{
-						cur_dungeon = recall_dungeon;
-					}
-					msg_print("The air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print("A tension leaves the air around you...");
-				}
+				set_recall(TRUE);
 				break;
 			}
         case 15: /* Banish */
@@ -3496,30 +3450,7 @@ void do_cmd_cantrip(void)
         break;
         case 30: /* Word of Recall */
 			{
-                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
-                {
-                    if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv = dun_level;
-
-                }
-				if (!p_ptr->word_recall)
-				{
-					p_ptr->word_recall = rand_int(21) + 15;
-					if (dun_level > 0)
-					{
-						recall_dungeon = cur_dungeon;
-					}
-					else
-					{
-						cur_dungeon = recall_dungeon;
-					}
-					msg_print("The air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print("A tension leaves the air around you...");
-				}
+			set_recall(TRUE);
 				break;
             }
         case 31: /* Clairvoyance */

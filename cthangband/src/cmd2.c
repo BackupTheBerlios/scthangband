@@ -3539,30 +3539,7 @@ static void use_power(powertype *pw_ptr)
 				fire_beam(GF_LITE, dir, 2*plev);
 				break;
 			case iilog(MUT1_RECALL):
-				if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
-				{
-					if (get_check("Reset recall depth? "))
-					p_ptr->max_dlv = dun_level;
-				}
-
-				if (p_ptr->word_recall == 0)
-				{
-					p_ptr->word_recall = randint(20) + 15;
-					if (dun_level > 0)
-				{
-						recall_dungeon = cur_dungeon;
-				}
-					else
-				{
-						cur_dungeon = recall_dungeon;
-				}
-					msg_print("The air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print("A tension leaves the air around you...");
-				}
+				set_recall(FALSE);
 				break;
 			case iilog(MUT1_BANISH):
 			{

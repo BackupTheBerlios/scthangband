@@ -1308,31 +1308,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
 
 		case OBJ_SCROLL_WORD_OF_RECALL:
 		{
-                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
-                {
-                    if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv = dun_level;
-
-                }
-            
-			if (p_ptr->word_recall == 0)
-			{
-				p_ptr->word_recall = randint(20) + 15;
-				if (dun_level > 0)
-				{
-					recall_dungeon = cur_dungeon;
-				}
-				else
-				{
-					cur_dungeon = recall_dungeon;
-				}
-				msg_print("The air about you becomes charged...");
-			}
-			else
-			{
-				p_ptr->word_recall = 0;
-				msg_print("A tension leaves the air around you...");
-			}
+			set_recall(FALSE);
 			ident = TRUE;
 			break;
 		}
@@ -2688,31 +2664,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 
 		case OBJ_ROD_RECALL:
 		{
-                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
-                {
-                    if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv = dun_level;
-
-                }
-            
-			if (p_ptr->word_recall == 0)
-			{
-				msg_print("The air about you becomes charged...");
-				if (dun_level > 0)
-				{
-					recall_dungeon = cur_dungeon;
-				}
-				else
-				{
-					cur_dungeon = recall_dungeon;
-				}
-				p_ptr->word_recall = 15 + randint(20);
-			}
-			else
-			{
-				msg_print("A tension leaves the air around you...");
-				p_ptr->word_recall = 0;
-			}
+			set_recall(FALSE);
 			ident = TRUE;
 			break;
 		}
@@ -3210,31 +3162,7 @@ void do_cmd_activate(object_type *o_ptr)
 				(void)detect_stairs();
                 if (get_check("Activate recall? "))
                 {
-                    if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
-                        {
-                            if (get_check("Reset recall depth? "))
-                            p_ptr->max_dlv = dun_level;
-
-                        }
-
-                    if (p_ptr->word_recall == 0)
-                    {
-                        p_ptr->word_recall = randint(20) + 15;
-						if (dun_level > 0)
-						{
-							recall_dungeon = cur_dungeon;
-						}
-						else
-						{
-							cur_dungeon = recall_dungeon;
-						}
-                        msg_print("The air about you becomes charged...");
-                    }
-                    else
-                    {
-                        p_ptr->word_recall = 0;
-                        msg_print("A tension leaves the air around you...");
-                    }
+					set_recall(FALSE);
                 }
 
                 o_ptr->timeout = rand_int(20) + 20;
@@ -3704,24 +3632,7 @@ void do_cmd_activate(object_type *o_ptr)
                 }
                 
 				msg_print("Your scythe glows soft white...");
-				if (p_ptr->word_recall == 0)
-				{
-					p_ptr->word_recall = randint(20) + 15;
-					if (dun_level > 0)
-					{
-						recall_dungeon = cur_dungeon;
-					}
-					else
-					{
-						cur_dungeon = recall_dungeon;
-					}
-					msg_print("The air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print("A tension leaves the air around you...");
-				}
+				set_recall(FALSE);
 				o_ptr->timeout = 200;
 				break;
 			}
@@ -4768,24 +4679,7 @@ static bool activate_random_artifact(object_type * o_ptr)
                 }
                 
                 msg_print("It glows soft white...");
-				if (p_ptr->word_recall == 0)
-				{
-					p_ptr->word_recall = randint(20) + 15;
-					if (dun_level > 0)
-					{
-						recall_dungeon = cur_dungeon;
-					}
-					else
-					{
-						cur_dungeon = recall_dungeon;
-					}
-					msg_print("The air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print("A tension leaves the air around you...");
-				}
+				set_recall(FALSE);
 				o_ptr->timeout = 200;
 				break;
 			}
