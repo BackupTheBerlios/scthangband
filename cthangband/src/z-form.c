@@ -618,7 +618,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
  */
 char *vformat(cptr fmt, va_list vp)
 {
-	static char *format_buf = NULL, *output_buf;
+	static char *format_buf = NULL, *output_buf = NULL;
 	static huge format_len = 0;
 	bool grown = FALSE;
 
