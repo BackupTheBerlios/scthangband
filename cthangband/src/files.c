@@ -323,7 +323,6 @@ static cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 		for (i = 0; i < MAX_K_IDX; i++)
 		{
 			k_info[i].squelch = HIDE_NONE;
-			k_info[i].note = 0;
 		}
 	}
 	else if (n == 2 && !strcmp(zz[0], "allow_squelch"))
