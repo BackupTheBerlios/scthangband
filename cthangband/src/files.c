@@ -644,18 +644,36 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		}
 
 
-		/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
+		/* Process "E:<tv>:<a>" -- attr/char for equippy chars */
 		case 'E':
 		{
-			if (tokenize(buf+2, 3, zz) == 3)
+			/* The default colour is a uniform white. */
+			if (!strcmp(buf+2, "---reset---"))
 			{
-				j = (byte)strtol(zz[0], NULL, 0) % 128;
-				n1 = strtol(zz[1], NULL, 0);
-				n2 = strtol(zz[2], NULL, 0);
-				if (n1) tval_to_attr[j] = n1;
-				return (0);
+				byte *p;
+				for (p = tval_to_attr; p < END_PTR(tval_to_attr); p++)
+				{
+					*p = TERM_WHITE;
+				}
+				return SUCCESS;
 			}
-			else return "format not E:<tv>:<a>/<c>";
+			else if (tokenize(buf+2, 16, zz) == 2)
+			{
+				long t = strtol(zz[0], NULL, 0);
+				int a = color_char_to_attr(zz[1][0]);
+
+				if (t < 0 || t >= (long)N_ELEMENTS(tval_to_attr))
+					return "no such tval";
+
+				if (a < 0) return "no such colour";
+
+				tval_to_attr[t] = a;
+				return SUCCESS;
+			}
+			else
+			{
+				return "format not E:<tv>:<a>";
+			}
 		}
 
 

@@ -212,147 +212,6 @@ void flavor_init(void)
 
 
 /*
- * Hack -- prepare the default object attr codes by tval
- *
- * XXX XXX XXX Off-load to "pref.prf" file
- */
-static byte default_tval_to_attr(int tval)
-{
-	switch (tval)
-	{
-		case TV_SKELETON:
-		case TV_BOTTLE:
-		case TV_JUNK:
-		{
-			return (TERM_WHITE);
-		}
-
-		case TV_CHEST:
-		{
-			return (TERM_SLATE);
-		}
-
-		case TV_SHOT:
-		case TV_BOLT:
-		case TV_ARROW:
-		{
-			return (TERM_L_UMBER);
-		}
-
-		case TV_LITE:
-		{
-			return (TERM_YELLOW);
-		}
-
-		case TV_SPIKE:
-		{
-			return (TERM_SLATE);
-		}
-
-		case TV_BOW:
-		{
-			return (TERM_UMBER);
-		}
-
-		case TV_DIGGING:
-		{
-			return (TERM_SLATE);
-		}
-
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_SWORD:
-		{
-			return (TERM_L_WHITE);
-		}
-
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CROWN:
-		case TV_HELM:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		{
-			return (TERM_L_UMBER);
-		}
-
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		{
-			return (TERM_SLATE);
-		}
-
-		case TV_AMULET:
-		{
-			return (TERM_ORANGE);
-		}
-
-		case TV_RING:
-		{
-		return (TERM_ORANGE);
-		}
-
-		case TV_STAFF:
-		{
-		return (TERM_VIOLET);
-		}
-
-		case TV_WAND:
-		{
-		return (TERM_VIOLET);
-		}
-
-		case TV_ROD:
-		{
-		return (TERM_VIOLET);
-		}
-
-		case TV_SCROLL:
-		{
-			return (TERM_WHITE);
-		}
-
-		case TV_POTION:
-		{
-		return (TERM_BLUE);
-		}
-
-		case TV_FLASK:
-		{
-			return (TERM_YELLOW);
-		}
-
-		case TV_FOOD:
-		{
-		return (TERM_GREEN);
-		}
-
-	case TV_SORCERY_BOOK:
-		{
-		return (TERM_L_BLUE);
-		}
-
-	case TV_THAUMATURGY_BOOK:
-		{
-			return (TERM_L_RED);
-		}
-
-	case TV_CONJURATION_BOOK:
-		{
-			return (TERM_ORANGE);
-		}
-	case TV_NECROMANCY_BOOK:
-		{
-			return (TERM_SLATE);
-		}
-	}
-
-	return (TERM_WHITE);
-}
-
-
-/*
  * Reset the "visual" lists
  *
  * This involves resetting various things to their "default"
@@ -376,6 +235,7 @@ void reset_visuals(void)
 	process_pref_file_aux((char*)"K:---reset---", sf_flags);
 	process_pref_file_aux((char*)"U:---reset---", sf_flags);
 	process_pref_file_aux((char*)"R:---reset---", sf_flags);
+	process_pref_file_aux((char*)"E:---reset---", sf_flags);
 
 	/* Extract some info about monster memory colours. */
 	for (i = 0; i < MAX_MONCOL; i++)
@@ -383,13 +243,6 @@ void reset_visuals(void)
 		/* Hack - always default to white */
 		moncol[i].attr = TERM_WHITE;
 	}
-	/* Extract attr/chars for equippy items (by tval) */
-	for (i = 0; i < 128; i++)
-	{
-		/* Extract a default attr */
-		tval_to_attr[i] = default_tval_to_attr(i);
-	}
-
 	/* Access the "font" or "graf" pref file, based on "use_graphics" */
 	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
 

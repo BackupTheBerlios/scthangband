@@ -1244,7 +1244,7 @@ static void inscription_dump(FILE *fff)
 		}
 
 		/* Save the setting. */
-		fprintf(fff, "{:%d:%s\n\n", i, quark_str(k_info[i].note));
+		fprintf(fff, "}:%d:%s\n\n", i, quark_str(k_info[i].note));
 	}
 }
 
@@ -1809,6 +1809,34 @@ static void do_cmd_options_squelch(void)
 }
 
 /*
+ * Save the tval_to_attr settings to an open stream.
+ */
+static void tval_attr_dump(FILE *fff)
+{
+	int i;
+
+	/* Introduction. */
+	fprintf(fff, "\n\n# Inventory colour dump\n\n");
+
+	/* Reset. */
+	fprintf(fff, "# Reset inventory colours to white\nE:---reset---\n\n");
+
+	/* Comment. */
+	fprintf(fff, "# Setting various inventory colours\n\n");
+
+	/* Save each non-default setting in turn. */
+	for (i = 0; i < 128; i++)
+	{
+		int a = tval_to_attr[i];
+
+		/* Nothing new to say. */
+		if (a == TERM_WHITE) continue;
+
+		fprintf(fff, "E:%d:%c\n", i, atchar[a]);
+	}
+}
+
+/*
  * Actually dump options to an open file.
  *
  * This does not dump cheat options on the assumption that this is desired.
@@ -1893,6 +1921,9 @@ static errr option_dump_aux(cptr fname)
 
 	/* Save the default inscriptions. */
 	inscription_dump(fff);
+
+	/* Save the default tval colours. */
+	tval_attr_dump(fff);
 
 	/* Mention options which can't be read. */
 	fprintf(fff, "\n\n# Unparsable options\n\n");
