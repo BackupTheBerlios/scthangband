@@ -6,6 +6,8 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Prevent monsters from recovering from fear if one of the player's previous
+  attacks would kill them now.
 * Generate dungeon-specific monsters asleep at level creation.
 * Never generate light-sensitive monsters during the day on the surface.
 * Seal the entrance to the orc tower during the day.

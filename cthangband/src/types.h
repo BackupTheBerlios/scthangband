@@ -678,6 +678,8 @@ struct monster_type
 
 #endif
 
+	s16b pl_mdam;	/* Maximum damage the player has caused in a turn. */
+	s16b pl_cdam;	/* Damage the player caused in this turn. */
 };
 
 

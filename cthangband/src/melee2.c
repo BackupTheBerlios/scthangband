@@ -6717,6 +6717,13 @@ void process_monsters(void)
 		/* Not enough energy to move */
 		if (m_ptr->energy < 1000) continue;
 
+		/* Work out how much damage has been done in the last turn. */
+		if (m_ptr->pl_cdam)
+		{
+			m_ptr->pl_mdam = MAX(m_ptr->pl_mdam, m_ptr->pl_cdam);
+			m_ptr->pl_cdam = 0;
+		}
+
 		/* Use up "some" energy */
 		m_ptr->energy -= extract_energy[m_ptr->mspeed]; 
 

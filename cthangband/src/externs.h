@@ -604,6 +604,12 @@ extern void generate_spirit_name(spirit_type *s_ptr);
 #if (defined(BIRTH_C) || defined(GENERATE_C))
 extern void generate_spirit_names(void);
 #endif
+#if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(WIZARD2_C))
+extern bool PURE cave_empty_bold_p(int y, int  x);
+#endif
+#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
+extern bool PURE daytime_p(void);
+#endif
 #if (defined(CMD1_C) || defined(GENERATE_C) || defined(SPELLS2_C))
 extern void replace_secret_door(int y, int x);
 #endif
@@ -2612,9 +2618,6 @@ extern s16b num_repro;
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b object_level;
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s32b turn;
 #endif
@@ -3944,9 +3947,6 @@ extern bool func_true(void);
 #if (defined(XTRA1_C) || defined(Z_UTIL_C))
 extern bool func_false(void);
 #endif
-
-
-
 #if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern bool suffix(cptr s, cptr t);
 #endif
@@ -4000,14 +4000,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* generate.c */
-
-#if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(WIZARD2_C))
-extern bool PURE cave_empty_bold_p(int y, int  x);
-#endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
-extern bool PURE daytime_p(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

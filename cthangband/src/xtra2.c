@@ -1261,6 +1261,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	/* Hurt it */
 	m_ptr->hp -= dam;
 
+	/* Notice how much it has been hurt. */
+	m_ptr->pl_cdam += dam;
+
 	/* It is dead now */
 	if (m_ptr->hp < 0)
 	{
@@ -1419,8 +1422,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 #ifdef ALLOW_FEAR
 
-	/* Mega-Hack -- Pain cancels fear */
-	if (m_ptr->monfear && (dam > 0))
+	/* Mega-Hack -- Pain cancels fear if the monster can survive another hit. */
+	if (m_ptr->monfear && (dam > 0) && m_ptr->hp > m_ptr->pl_mdam)
 	{
 		int tmp = randint(dam);
 

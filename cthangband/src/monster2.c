@@ -2198,6 +2198,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	m_ptr->stunned = 0;
 	m_ptr->confused = 0;
 	m_ptr->monfear = 0;
+	m_ptr->pl_cdam = m_ptr->pl_mdam = 0;
 
          /* Friendly? */
 
