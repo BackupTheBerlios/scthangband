@@ -716,6 +716,15 @@ static s16b get_social_average(byte);
 static void display_player_birth_details(void);
 static void get_final(void);
 static bool load_stat_set(bool);
+static void roll_stats_auto(bool point_mod);
+static void get_stats(void);
+
+/* A macro to determine whether use_autoroller can be set and is set. */
+#ifdef ALLOW_AUTOROLLER
+#define USE_AUTOROLLER	use_autoroller
+#else
+#define USE_AUTOROLLER FALSE
+#endif
 
 /* Return codes for birth_choice() */
 #define BC_OKAY	0
@@ -1013,11 +1022,13 @@ int maxstat(int race, int temp, int stat)
 }
 
 /* Display player information for point_mod_player(). */
-static void display_player_birth(int points, bool details)
+static void display_player_birth(int points, bool details, bool rolled)
 {
 	char b1 = '[';
 	char b2 = ']';
 	char modpts[4];
+	byte attr;
+	bool canexit = TRUE;
 
 	/* Display details if required. */
 	if (details)
@@ -1048,28 +1059,27 @@ static void display_player_birth(int points, bool details)
 
 
 	Term_gotoxy(2, 21);
-		Term_addch(TERM_WHITE, b1);
-		if(points == 0)
-		{
-			Term_addstr(-1, TERM_GREEN, modpts);
-		}
-		else if(points > 0)
-		{
-			Term_addstr(-1, TERM_YELLOW, modpts);
-		}
-		else
-		{
-			Term_addstr(-1, TERM_RED, modpts);
-		}
-	Term_addstr(-1, TERM_WHITE, " points left. Press ");
-	if (points >= 0)
+	Term_addch(TERM_WHITE, b1);
+	if (points == 0) attr = TERM_GREEN;
+	else if (points > 0) attr = TERM_YELLOW;
+	else if (rolled) attr = TERM_L_BLUE;
+	else
 	{
-		Term_addstr(-1, TERM_WHITE, "'ESC' to finish, ");
+		attr = TERM_RED;
+		canexit = FALSE;
 	}
+
+	Term_addstr(-1, attr, modpts);
+
+	Term_addstr(-1, TERM_WHITE, " points left. Press ");
+	if (canexit) Term_addstr(-1, TERM_WHITE, "'ESC' to finish, ");
+
 	Term_addstr(-1, TERM_WHITE, "'Q' to quit, 'X' to restart,");
 		Term_addch(TERM_WHITE, b2);
-	Term_putstr(2, 22, -1, TERM_WHITE, "['f' to save, 'l' to load, '/' to change display, '=' for options]");
-	Term_putstr(2, 23, -1, TERM_WHITE, "[or '?' for help.]");
+	Term_putstr(2, 22, -1, TERM_WHITE, "['f' to save, 'l' to load, '/' to change display, '=' for options,]");
+	Term_putstr(2, 23, -1, TERM_WHITE, "['a' to roll");
+	if (USE_AUTOROLLER) Term_addstr(-1, TERM_WHITE, " with minima");
+	Term_addstr(-1, TERM_WHITE, ", or '?' for help.]");
 }
 
 /* Just in case */
@@ -1180,7 +1190,9 @@ static void display_player_birth_details(void)
 #define IDX_SEX	0x1000
 #define IDX_OPTION	0x2000
 #define IDX_HELP	0x4000
+#define IDX_ROLL	0x8000
 #define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
+
 
 /* Allow player to modify the character by spending points */
 static bool point_mod_player(void)
@@ -1194,7 +1206,7 @@ static bool point_mod_player(void)
 	 * change it. We will change the name whenever a new character is
 	 * generated, but not if the user has selected a name himself.
 	 */
-	bool own_name = FALSE;
+	bool own_name = FALSE, rolled = FALSE;
 	
 	while(i != IDX_FINISH)
 	{ 
@@ -1272,9 +1284,27 @@ static bool point_mod_player(void)
 			case ESCAPE:
 				i = IDX_FINISH;
 				break;
+			case 'a': case 'A':
+				i = IDX_ROLL;
+				break;
 			default:
 				i = 0;
 			}  
+		}
+
+		/* Roll for stats, with minima if desired. */
+		if (i == IDX_ROLL)
+		{
+			if (USE_AUTOROLLER)
+				roll_stats_auto(TRUE);
+			else
+				get_stats();
+			rolled = TRUE;
+		}
+		/* The "rolled" status is reset by most changes. */
+		else if (i & (IDX_ALL | IDX_LOAD | IDX_STATS | IDX_SEX))
+		{
+			rolled = FALSE;
 		}
 
 		/* Don't finish on negative points */
@@ -1387,6 +1417,7 @@ static bool point_mod_player(void)
 			p_ptr->stat_cur[i-1]=p_ptr->stat_max[i-1]=newstat;
 				}
 
+
 		/* Avoid inappropriate stats.
 		 * In maximise mode, p_ptr->stat_cur[j] can always be as low as 8 and
 		 * modify_stat_value(p_ptr->stat_cur[j],rp_ptr->r_adj[j]+cp_ptr->c_adj[j])
@@ -1398,45 +1429,46 @@ static bool point_mod_player(void)
 		 * This also sets the points total (setting them from scratch every
 		 * time is simpler than adjusting them as necessary).
 		 */
-		if (i & (IDX_ALL | IDX_LOAD | IDX_STATS | IDX_SEX))
-			{
+		if (i & (IDX_ALL | IDX_LOAD | IDX_STATS | IDX_SEX | IDX_ROLL))
+		{
 			byte j;
+
 			/* A character with stats of 0 has 64 points. */
 			points = 64;
 
 			for (j = 0; j < A_MAX; j++)
-				{
+			{
 				if (maximise_mode)
-					{
+				{
 					byte min = MIN(8, modify_stat_value(3, -rp_ptr->r_adj[j]-cp_ptr->c_adj[j]));
 					if (p_ptr->stat_cur[j] < min)
 					{
 						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = min;
-				}
+					}
 					else if (p_ptr->stat_cur[j] > 17)
 					{
 						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = 17;
-			}
-		}
+					}
+				}
 				else
-			{
+				{
 					byte max = maxstat(p_ptr->prace, p_ptr->ptemplate, j);
 					if (p_ptr->stat_cur[j] < 3)
-				{ 
+					{ 
 						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = 3;
-				}
+					}
 					else if (p_ptr->stat_cur[j] > max)
-				{
+					{
 						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = max;
-			}
-			}
+					}
+				}
 				points += change_points_by_stat(0, p_ptr->stat_cur[j]);
 			}
-			
 		}
 
 		/* Update various things and display everything if something has changed. */
-		if (i & (IDX_ALL | IDX_STATS | IDX_DETAILS | IDX_NAME | IDX_SEX)) 
+		if (i & (IDX_ALL | IDX_STATS | IDX_DETAILS | IDX_NAME | IDX_SEX | 
+			IDX_ROLL | IDX_OPTION))
 		{
 			/* Calculate the bonuses and hitpoints */
 			p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
@@ -1455,7 +1487,7 @@ static bool point_mod_player(void)
 			get_money(FALSE);
 
 			/* Display everything */
-			display_player_birth(points, details);
+			display_player_birth(points, details, rolled);
 		}
 		/* Randomise the skill bonuses and set magic up as the player
 		 * wants. If the player aborts the latter, we return here. */
@@ -2543,14 +2575,14 @@ static void birth_put_stats(void)
 		{
 			p = 1000L * stat_match[i] / auto_round;
 			attr = (p < 100) ? TERM_YELLOW : TERM_L_GREEN;
-			sprintf(buf, "%3d.%d%%", p/10, p%10);
+			sprintf(buf, "%3d.%d%% ", p/10, p%10);
 			c_put_str(attr, buf, 2 + i, 73);
 		}
 
 		/* Never happened */
 		else
 		{
-			c_put_str(TERM_RED, "(NONE)", 2 + i, 73);
+			c_put_str(TERM_RED, "(NONE) ", 2 + i, 73);
 		}
 	}
 }
@@ -3157,6 +3189,270 @@ static void get_final(void)
 	p_ptr->cchi = p_ptr->mchi;
 }
 
+static void roll_stats_auto(bool point_mod)
+{
+	/* Access via point mod mode needs a more careful layout. */
+	const int x = (point_mod) ? 73 : 73;
+	const int y = (point_mod) ? 1 : 9;
+
+	if (point_mod)
+	{
+		int i;
+		for (i = 0; i < A_MAX; i++)
+		{
+			int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+			stat_limit[i] = adjust_stat(p_ptr->stat_max[i], bonus, FALSE);
+		}
+	}
+
+	/* Auto-roll */
+	while (1)
+	{
+		int i;
+		bool accept = TRUE;
+		bool flag = FALSE;
+
+		/* Get a new character */
+		get_stats();
+
+		/* Advance the round */
+		auto_round++;
+
+		/* Hack -- Prevent overflow */
+		if (auto_round >= 1000000L) break;
+
+		/* Check and count acceptable stats */
+		for (i = 0; i < 6; i++)
+		{
+			/* This stat is okay */
+			if (p_ptr->stat_use[i] >= stat_limit[i])
+			{
+				stat_match[i]++;
+			}
+
+			/* This stat is not okay */
+			else
+			{
+				accept = FALSE;
+			}
+		}
+
+		/* Break if "happy" */
+		if (accept) break;
+
+		/* Take note every 25 rolls */
+		flag = (!(auto_round % 25L));
+
+		/* Update display occasionally */
+		if (flag || (auto_round < last_round + 100))
+		{
+			/* Dump data */
+			birth_put_stats();
+			/* Dump round if allowed. */
+			put_str(format("%6ld", auto_round), y, x);
+			/* Make sure they see everything */
+			Term_fresh();
+			/* Delay 1/10 second */
+			if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
+			/* Do not wait for a key */
+			inkey_scan = TRUE;
+			/* Check for a keypress */
+			if (inkey()) break;
+		}
+	}
+}
+
+/*
+ * Roll some stats. Return TRUE if the player finished with ESCAPE, FALSE
+ * on S.
+ */
+static bool roll_stats(void)
+{
+	char b1 = '[';
+	char b2 = ']';
+	char c;
+
+	bool prev = FALSE;
+
+	/* Roll */
+	while (TRUE)
+	{
+		int mode;
+
+		/* Feedback */
+		if (USE_AUTOROLLER)
+		{
+			Term_clear();
+
+			put_str("Name        :", 2, 1);
+			put_str("Sex         :", 3, 1);
+			put_str("Race        :", 4, 1);
+			put_str("Template    :", 5, 1);
+
+			c_put_str(TERM_L_BLUE, player_name, 2, 15);
+			c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
+			c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 15);
+			c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
+
+			/* Label stats */
+			put_str("STR:", 2 + A_STR, 61);
+			put_str("INT:", 2 + A_INT, 61);
+			put_str("WIS:", 2 + A_WIS, 61);
+			put_str("DEX:", 2 + A_DEX, 61);
+			put_str("CON:", 2 + A_CON, 61);
+			put_str("CHR:", 2 + A_CHR, 61);
+
+			/* Note when we started */
+			last_round = auto_round;
+
+			/* Indicate the state */
+			put_str("(Hit ESC to abort)", 11, 61);
+
+			/* Label count */
+			put_str("Round:", 9, 61);
+
+			/* Roll for it. */
+			roll_stats_auto(FALSE);
+		}
+
+		/* Otherwise just get a character */
+		else
+		{
+			get_stats();
+		}
+
+		/* Flush input */
+		flush();
+
+
+		/*** Display ***/
+
+		/* Mode */
+		mode = 0;
+
+		/* Roll for base hitpoints */
+		get_extra();
+
+		/* Roll for age/height/weight */
+		get_ahw();
+
+		/* Roll for social class */
+		get_history();
+
+		/* Roll for gold */
+		get_money(TRUE);
+
+		/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
+		p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
+
+		/* Input loop */
+		while (TRUE)
+		{
+			/* Calculate the bonuses and hitpoints */
+			p_ptr->update |= (PU_BONUS | PU_HP);
+
+			/* Update stuff */
+			update_stuff();
+
+			/* Fully healed */
+			p_ptr->chp = p_ptr->mhp;
+	
+			/* Fully rested */
+			p_ptr->csp = p_ptr->msp;
+			p_ptr->cchi = p_ptr->mchi;
+
+			/* Display the player */
+			display_player(mode);
+
+			/* Prepare a prompt (must squeeze everything in) */
+			Term_gotoxy(2, 23);
+			Term_addch(TERM_WHITE, b1);
+			Term_addstr(-1, TERM_WHITE, "'r' to reroll");
+			if (prev) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
+			if (mode) Term_addstr(-1, TERM_WHITE, ", 'h' for Misc.");
+			else Term_addstr(-1, TERM_WHITE, ", 'h' for History");
+			Term_addstr(-1, TERM_WHITE, ", or ESC to accept");
+			Term_addch(TERM_WHITE, b2);
+
+			/* Prompt and get a command */
+			c = inkey();
+
+			/* Quit */
+			if (c == 'Q') quit(NULL);
+
+			/* Start over */
+			if (c == 'S') return (FALSE);
+
+			/* Escape accepts the roll */
+			if (c == ESCAPE) break;
+
+			/* Reroll this character */
+			if ((c == ' ') || (c == 'r')) break;
+
+			/* Previous character */
+			if (prev && (c == 'p'))
+			{
+				load_prev_data();
+				continue;
+			}
+
+			/* Toggle the display */
+			if ((c == 'H') || (c == 'h'))
+			{
+				mode = ((mode != 0) ? 0 : 1);
+				continue;
+			}
+
+			/* Help */
+			if (c == '?')
+			{
+				do_cmd_help(syshelpfile);
+				continue;
+			}
+
+			/* Warning */
+			bell();
+		}
+
+		/* Are we done? */
+		if (c == ESCAPE) break;
+
+		/* Save this for the "previous" character */
+		save_prev_data();
+
+		/* Note that a previous roll exists */
+		prev = TRUE;
+	}
+
+	/* Clear prompt */
+	clear_from(23);
+
+
+	/*** Finish up ***/
+
+	/* Get a name, recolor it, prepare savefile */
+
+	/* Allow name to be edited, recolor it, prepare savefile
+	 * The user has already had an opportunity to do so with point_mod */
+	get_name();
+
+
+	/* Prompt for it */
+	prt("['Q' to suicide, 'S' to start over, or ESC to continue]", 23, 10);
+
+	/* Get a key */
+	c = inkey();
+
+	/* Quit */
+	if (c == 'Q') quit(NULL);
+
+	/* Start over */
+	if (c == 'S') return (FALSE);
+
+	/* Accept */
+	return (TRUE);
+}
+
 /*
  * Helper function for 'player_birth()'
  *
@@ -3248,20 +3544,12 @@ static bool player_birth_aux(void)
 	/* Now set point_mod and autoroll correctly. */
 	point_mod = spend_points;
 
-#ifdef ALLOW_AUTOROLLER
-	
-	if (use_autoroller)
-	{
-		autoroll = TRUE;
-		point_mod = FALSE;
-	}
-	else
-	{
-#endif
-	autoroll = FALSE;
-#ifdef ALLOW_AUTOROLLER
-	}
-#endif
+	/* Decide whether to use the autoroller or point_mod interface.
+	 * Note that setting both now gives a point_mod interface with the
+	 * ability to use the autoroller.
+	 */
+	point_mod = spend_points;
+	autoroll = USE_AUTOROLLER && !spend_points;
 
 	/* Clean up */
 	clear_from(15);
@@ -3750,6 +4038,7 @@ static bool player_birth_aux(void)
 		if (c == 'S') return (FALSE);
 
 		/* Accept */
+		return TRUE;
 	}
 	else /* Interactive character */
 	{
@@ -4041,240 +4330,11 @@ static bool player_birth_aux(void)
 			return point_mod_player();
 		}
 		
-		/* Roll */
-		while (TRUE)
+		else
 		{
-			/* Feedback */
-			if (autoroll)
-			{
-				Term_clear();
-
-				put_str("Name        :", 2, 1);
-				put_str("Sex         :", 3, 1);
-				put_str("Race        :", 4, 1);
-				put_str("Template    :", 5, 1);
-
-				c_put_str(TERM_L_BLUE, player_name, 2, 15);
-				c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
-				c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 15);
-				c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
-
-				/* Label stats */
-				put_str("STR:", 2 + A_STR, 61);
-				put_str("INT:", 2 + A_INT, 61);
-				put_str("WIS:", 2 + A_WIS, 61);
-				put_str("DEX:", 2 + A_DEX, 61);
-				put_str("CON:", 2 + A_CON, 61);
-				put_str("CHR:", 2 + A_CHR, 61);
-
-				/* Note when we started */
-				last_round = auto_round;
-
-				/* Indicate the state */
-				put_str("(Hit ESC to abort)", 11, 61);
-
-				/* Label count */
-				put_str("Round:", 9, 61);
-			}
-
-			/* Otherwise just get a character */
-			else
-			{
-					get_stats();
-				}
-
-			/* Auto-roll */
-			while (autoroll)
-			{
-				bool accept = TRUE;
-
-				/* Get a new character */
-				get_stats();
-
-				/* Advance the round */
-				auto_round++;
-
-				/* Hack -- Prevent overflow */
-				if (auto_round >= 1000000L) break;
-
-				/* Check and count acceptable stats */
-				for (i = 0; i < 6; i++)
-				{
-					/* This stat is okay */
-					if (p_ptr->stat_use[i] >= stat_limit[i])
-					{
-						stat_match[i]++;
-					}
-
-					/* This stat is not okay */
-					else
-					{
-						accept = FALSE;
-					}
-				}
-
-				/* Break if "happy" */
-				if (accept) break;
-
-				/* Take note every 25 rolls */
-				flag = (!(auto_round % 25L));
-
-				/* Update display occasionally */
-				if (flag || (auto_round < last_round + 100))
-				{
-					/* Dump data */
-					birth_put_stats();
-
-					/* Dump round */
-					put_str(format("%6ld", auto_round), 9, 73);
-
-					/* Make sure they see everything */
-					Term_fresh();
-
-					/* Delay 1/10 second */
-					if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
-
-					/* Do not wait for a key */
-					inkey_scan = TRUE;
-
-					/* Check for a keypress */
-					if (inkey()) break;
-				}
-			}
-
-			/* Flush input */
-			flush();
-
-
-			/*** Display ***/
-
-			/* Mode */
-			mode = 0;
-
-			/* Roll for base hitpoints */
-			get_extra();
-
-			/* Roll for age/height/weight */
-			get_ahw();
-
-			/* Roll for social class */
-			get_history();
-
-			/* Roll for gold */
-			get_money(TRUE);
-
-			/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
-			p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
-
-			/* Input loop */
-			while (TRUE)
-			{
-				/* Calculate the bonuses and hitpoints */
-				p_ptr->update |= (PU_BONUS | PU_HP);
-
-				/* Update stuff */
-				update_stuff();
-
-				/* Fully healed */
-				p_ptr->chp = p_ptr->mhp;
-	
-				/* Fully rested */
-				p_ptr->csp = p_ptr->msp;
-				p_ptr->cchi = p_ptr->mchi;
-
-				/* Display the player */
-				display_player(mode);
-
-				/* Prepare a prompt (must squeeze everything in) */
-				Term_gotoxy(2, 23);
-				Term_addch(TERM_WHITE, b1);
-				Term_addstr(-1, TERM_WHITE, "'r' to reroll");
-				if (prev) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
-				if (mode) Term_addstr(-1, TERM_WHITE, ", 'h' for Misc.");
-				else Term_addstr(-1, TERM_WHITE, ", 'h' for History");
-				Term_addstr(-1, TERM_WHITE, ", or ESC to accept");
-				Term_addch(TERM_WHITE, b2);
-
-				/* Prompt and get a command */
-				c = inkey();
-
-				/* Quit */
-				if (c == 'Q') quit(NULL);
-
-				/* Start over */
-				if (c == 'S') return (FALSE);
-
-				/* Escape accepts the roll */
-				if (c == ESCAPE) break;
-
-				/* Reroll this character */
-				if ((c == ' ') || (c == 'r')) break;
-
-				/* Previous character */
-				if (prev && (c == 'p'))
-				{
-					load_prev_data();
-					continue;
-				}
-
-				/* Toggle the display */
-				if ((c == 'H') || (c == 'h'))
-				{
-					mode = ((mode != 0) ? 0 : 1);
-					continue;
-				}
-
-				/* Help */
-				if (c == '?')
-				{
-					do_cmd_help(syshelpfile);
-					continue;
-				}
-
-				/* Warning */
-				bell();
-			}
-
-			/* Are we done? */
-			if (c == ESCAPE) break;
-
-			/* Save this for the "previous" character */
-			save_prev_data();
-
-			/* Note that a previous roll exists */
-			prev = TRUE;
+			return roll_stats();
 		}
-
-		/* Clear prompt */
-		clear_from(23);
-
-
-		/*** Finish up ***/
-
-		/* Get a name, recolor it, prepare savefile */
-
-		/* Allow name to be edited, recolor it, prepare savefile
-		 * The user has already had an opportunity to do so with point_mod */
-		get_name();
-
-
-		/* Prompt for it */
-		prt("['Q' to suicide, 'S' to start over, or ESC to continue]", 23, 10);
-
-		/* Get a key */
-		c = inkey();
-
-		/* Quit */
-		if (c == 'Q') quit(NULL);
-
-		/* Start over */
-		if (c == 'S') return (FALSE);
-
-		/* Accept */
-		return (TRUE);
 	}
-	/* Just in case */
-	return (TRUE);
 }
 
 
