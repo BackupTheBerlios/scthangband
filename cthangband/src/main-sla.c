@@ -87,7 +87,7 @@ static void init_pair(int index, char *foreground, char *background)
 #define COLOR_MAGENTA   "magenta"
 #define COLOR_YELLOW    "brown"
 #define COLOR_WHITE     "lightgray"
-#define COLOR_BBLACK     "gray"
+#define COLOR_BBLACK     "grey"
 #define COLOR_BBLUE      "brightblue"
 #define COLOR_BGREEN     "brightgreen"
 #define COLOR_BCYAN      "brightcyan"

@@ -642,21 +642,21 @@ static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
  * Note the "special lighting effects" which can be activated for floor
  * grids using the "view_special_lite" option (for "white" floor grids),
  * causing certain grids to be displayed using special colors.  If the
- * player is "blind", we will use "dark gray", else if the grid is lit
+ * player is "blind", we will use "dark grey", else if the grid is lit
  * by the torch, and the "view_yellow_lite" option is set, we will use
- * "yellow", else if the grid is "dark", we will use "dark gray", else
+ * "yellow", else if the grid is "dark", we will use "dark grey", else
  * if the grid is not "viewable", and the "view_bright_lite" option is
- * set, and the we will use "slate" (gray).  We will use "white" for all
+ * set, and the we will use "slate" (grey).  We will use "white" for all
  * other cases, in particular, for illuminated viewable floor grids.
  *
  * Note the "special lighting effects" which can be activated for wall
  * grids using the "view_granite_lite" option (for "white" wall grids),
  * causing certain grids to be displayed using special colors.  If the
- * player is "blind", we will use "dark gray", else if the grid is lit
+ * player is "blind", we will use "dark grey", else if the grid is lit
  * by the torch, and the "view_yellow_lite" option is set, we will use
  * "yellow", else if the "view_bright_lite" option is set, and the grid
  * is not "viewable", or is "dark", or is glowing, but not when viewed
- * from the player's current location, we will use "slate" (gray).  We
+ * from the player's current location, we will use "slate" (grey).  We
  * will use "white" for all other cases, in particular, for correctly
  * illuminated viewable wall grids.
  *
@@ -757,7 +757,7 @@ static void map_info(int y, int x, byte *ap, char *cp)
 					}
 					else
 					{
-						/* Use "dark gray" */
+						/* Use "dark grey" */
 						a = TERM_L_DARK;
 					}
 				}
@@ -791,7 +791,7 @@ static void map_info(int y, int x, byte *ap, char *cp)
 					}
 					else
 					{
-						/* Use "dark gray" */
+						/* Use "dark grey" */
 						a = TERM_L_DARK;
 					}
 				}
@@ -809,7 +809,7 @@ static void map_info(int y, int x, byte *ap, char *cp)
 						}
 						else
 						{
-							/* Use "gray" */
+							/* Use "grey" */
 							a = TERM_SLATE;
 						}
 					}
@@ -873,7 +873,7 @@ static void map_info(int y, int x, byte *ap, char *cp)
 					}
 					else
 					{
-						/* Use "dark gray" */
+						/* Use "dark grey" */
 						a = TERM_L_DARK;
 					}
 				}
@@ -913,7 +913,7 @@ static void map_info(int y, int x, byte *ap, char *cp)
 						}
 						else
 						{
-							/* Use "gray" */
+							/* Use "grey" */
 							a = TERM_SLATE;
 						}
 					}
@@ -931,7 +931,7 @@ static void map_info(int y, int x, byte *ap, char *cp)
 						}
 						else
 						{
-							/* Use "gray" */
+							/* Use "grey" */
 							a = TERM_SLATE;
 						}
 					}
@@ -954,7 +954,7 @@ static void map_info(int y, int x, byte *ap, char *cp)
 							}
 							else
 							{
-								/* Use "gray" */
+								/* Use "grey" */
 								a = TERM_SLATE;
 							}
 						}

@@ -176,7 +176,7 @@ static hist_type bg[] =
 	{"You have hazel eyes, ",					 70, 50, 51, 50},
 	{"You have green eyes, ",					 80, 50, 51, 50},
 	{"You have blue eyes, ",					 90, 50, 51, 50},
-	{"You have blue-gray eyes, ",				100, 50, 51, 50},
+	{"You have blue-grey eyes, ",				100, 50, 51, 50},
 
 	{"straight ",						 70, 51, 52, 50},
 	{"wavy ",							 90, 51, 52, 50},
@@ -439,7 +439,7 @@ static hist_type bg[] =
     {"You have a hazel eye, ",                    70, 109, 110, 50},
     {"You have a green eye, ",                    80, 109, 110, 50},
     {"You have a blue eye, ",                     90, 109, 110, 50},
-    {"You have a blue-gray eye, ",               100, 109, 110, 50},
+    {"You have a blue-grey eye, ",               100, 109, 110, 50},
 
     {"straight ",                        70, 110, 111, 50},
     {"wavy ",                            90, 110, 111, 50},
@@ -498,7 +498,7 @@ static hist_type bg[] =
      {"feral yellow eyes, ", 75, 121, 122, 50 },
      {"bloodshot red eyes, ", 100, 121, 122, 50 },
 
-    {" and a deathly gray complexion. ", 100, 122, 123, 50 },
+    {" and a deathly grey complexion. ", 100, 122, 123, 50 },
     {"An eerie green aura surrounds you.", 100, 123, 0, 50 },
 
     {"Your parents were ", 100, 124, 125, 50 },
@@ -536,7 +536,7 @@ static hist_type bg[] =
     {"oily ",                           100, 131, 132, 50},
 
     {"brown fur, ",                    33, 132, 133, 50},
-    {"gray fur, ",                    66, 132, 133, 50},
+    {"grey fur, ",                    66, 132, 133, 50},
     {"albino fur, ",                  100, 132, 133, 50},
 
     {"and the hooves of a goat.",      50, 133, 0, 50 },

@@ -213,7 +213,7 @@ static int colors[16]=
 	F_BLUE,                     /* Blue */
 	F_BROWN,                    /* Brown */
 	F_BLACK|INTENSITY,          /* Dark-grey */
-	F_WHITE,                    /* XXX Light gray */
+	F_WHITE,                    /* XXX Light grey */
 	F_MAGENTA,                  /* Purple */
 	F_YELLOW|INTENSITY,         /* Yellow */
 	F_RED|INTENSITY,            /* Light Red */
@@ -320,7 +320,7 @@ static void Term_nuke_emx(term *t)
 	/* Restore the cursor (not necessary) */
 	v_ctype(curs_start, curs_end);
 
-	/* Set attribute to gray on black */
+	/* Set attribute to grey on black */
 	v_attrib(F_WHITE);
 
 	/* Clear the screen */
