@@ -4068,27 +4068,6 @@ static void store_process_command(void)
 			break;
 		}
 
-			/* Interact with macros */
-		case '@':
-		{
-			do_cmd_macros();
-			break;
-		}
-
-			/* Interact with visuals */
-		case '%':
-		{
-			do_cmd_visuals();
-			break;
-		}
-
-			/* Interact with colors */
-		case '&':
-		{
-			do_cmd_colors();
-			break;
-		}
-
 			/* Interact with options */
 		case '=':
 		{

@@ -590,6 +590,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define OPTS_SAVE	-3
 #define OPTS_WINDOW	-4
 #define OPTS_REDRAW -5 /* Co-ordinates of redraw_stuff() things. */
+#define OPTS_MACRO -6
+#define OPTS_VISUAL -7
+#define OPTS_COLOUR -8
 
 #define OPTS_TO_FILE -10
 #define OPTS_FROM_FILE -11

@@ -293,15 +293,15 @@ extern void do_cmd_options(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
 extern void do_cmd_pref(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
-extern void do_cmd_macros(void);
-#endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
-extern void do_cmd_visuals(void);
-#endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
-extern void do_cmd_colors(void);
-#endif
+
+
+
+
+
+
+
+
+
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
 extern void do_cmd_note(void);
 #endif

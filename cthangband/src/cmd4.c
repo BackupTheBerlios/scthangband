@@ -25,7 +25,7 @@
  * selecting various things, such as graphics mode, so it must call
  * the "TERM_XTRA_REACT" hook before redrawing the windows.
  */
-extern void do_cmd_redraw(void)
+void do_cmd_redraw(void)
 {
 	int j;
 
@@ -1016,9 +1016,6 @@ static void do_cmd_options_redraw(void)
 	/* Add a special resize hook. */
 	add_resize_hook(resize_inkey);
 
-	/* Help stuff. */
-	help_track("option=redraw");
-
 	for (c = KTRL('R'), n = 0, clear = FALSE; c != ESCAPE; c = inkey())
 	{
 		int inc = isupper(c) ? -1 : 1;
@@ -1091,9 +1088,6 @@ static void do_cmd_options_redraw(void)
 		put_str("Command (n/N/x/X/y/Y/Tab/?):", 10, COL_END+2);
 	}
 
-	/* Help stuff. */
-	help_track(NULL);
-
 	/* Remove the resize hook. */
 	delete_resize_hook(resize_inkey);
 
@@ -1106,9 +1100,6 @@ static void do_cmd_options_redraw(void)
  */
 static void do_cmd_options_delay(void)
 {
-	/* Track this option. */
-	help_track("base_delay");
-
 	/* Prompt */
 	prt("Command: Base Delay Factor", 18, 0);
 
@@ -1124,9 +1115,6 @@ static void do_cmd_options_delay(void)
 		if (isdigit(k)) delay_factor = D2I(k);
 		else bell();
 		}
-
-	/* The help needed has changed. */
-	help_track(NULL);
 	}
 
 /*
@@ -1134,9 +1122,6 @@ static void do_cmd_options_delay(void)
  */
 static void do_cmd_options_hp(void)
 {
-	/* Track this option. */
-	help_track("hitpoint_warning");
-
 	/* Prompt */
 	prt("Command: Hitpoint Warning", 18, 0);
 
@@ -1152,9 +1137,6 @@ static void do_cmd_options_hp(void)
 		if (isdigit(k)) hitpoint_warn = D2I(k);
 		else bell();
 	}
-
-	/* The help needed has changed. */
-	help_track(NULL);
 }
 
 /*
@@ -1340,17 +1322,22 @@ static option_list opt_lists[] =
 	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 43, 4},
 	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 43, 5},
 	{"Autosave Options", NULL, OPTS_SAVE, 'A', 43, 6},
-	{"Window Flags", NULL, OPTS_WINDOW, 'W', 43, 7},
-	{"Status Flags", NULL, OPTS_REDRAW, 'T', 43, 8},
-	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 10},
-	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', 43, 11},
-	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 12},
-	{0,0,0,0,0,0}
+	{"Window Options", NULL, OPTS_WINDOW, 'W', 43, 7},
+	{"Redraw Options", NULL, OPTS_REDRAW, 'R', 43, 8},
+	{"Interact with Macros", NULL, OPTS_MACRO, 'M', 43, 9},
+	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', 43, 10},
+	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', 43, 11},
+	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 13},
+	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', 43, 14},
+	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 15},
 };
 
 
 /* Forward declare. */
 static errr preference_dump(void);
+static void do_cmd_macros(void);
+static void do_cmd_visuals(void);
+static void do_cmd_colors(void);
 
 /*
  * Set or unset various options.
@@ -1376,6 +1363,8 @@ void do_cmd_options(void)
 	/* Interact */
 	while (1)
 	{
+		char buf[] = "option= ";
+
 		/* Clear screen */
 		Term_clear();
 
@@ -1383,7 +1372,7 @@ void do_cmd_options(void)
 		prt("Game Options", 2, 0);
 
 		/* Give some choices */
-		for (ol_ptr = opt_lists; ol_ptr->title; ol_ptr++)
+		for (ol_ptr = opt_lists; ol_ptr < END_PTR(opt_lists); ol_ptr++)
 		{
 			prt(format("(%c) %s", ol_ptr->ch, ol_ptr->title), ol_ptr->y,
 				ol_ptr->x);
@@ -1399,70 +1388,92 @@ void do_cmd_options(void)
 		if (k == ESCAPE) break;
 
 		/* Analyze */
-		for (ol_ptr = opt_lists;; ol_ptr++)
+		for (ol_ptr = opt_lists; ol_ptr < END_PTR(opt_lists); ol_ptr++)
 		{
-			if (!ol_ptr->title)
+			if (FORCEUPPER(k) == ol_ptr->ch) goto good;
+		}
+
+		/* Failure. */
+		bell();
+		continue;
+
+good:	/* Success */
+
+		/* Track the help for this sub-menu (as e.g. option=1). */
+		strchr(buf, '\0')[-1] = ol_ptr->ch;
+		help_track(buf);
+
+		/* Give a message (usually cleared immediately). */
+		roff(ol_ptr->title);
+
+		if (ol_ptr->num > -1)
+		{
+			do_cmd_options_aux(ol_ptr->num, ol_ptr->title, ol_ptr->text);
+		}
+		else switch (ol_ptr->num)
+		{
+			case OPTS_DELAY:
 			{
-				bell();
+				do_cmd_options_delay();
 				break;
 			}
-			if (FORCEUPPER(k) != ol_ptr->ch) continue;
-
-			/* Give a message (usually cleared immediately). */
-			roff(ol_ptr->title);
-
-			if (ol_ptr->num > -1)
+			case OPTS_HP:
 			{
-				do_cmd_options_aux(ol_ptr->num, ol_ptr->title, ol_ptr->text);
+				do_cmd_options_hp();
+				break;
 			}
-			else switch (ol_ptr->num)
+			case OPTS_SAVE:
 			{
-				case OPTS_DELAY:
-				{
-					do_cmd_options_delay();
-					break;
-				}
-				case OPTS_HP:
-				{
-					do_cmd_options_hp();
-					break;
-				}
-				case OPTS_SAVE:
-				{
-					do_cmd_options_autosave("Autosave");
-					break;
-				}
-				case OPTS_WINDOW:
-				{
-					do_cmd_options_win();
-					break;
-				}
-				case OPTS_REDRAW:
-				{
-					do_cmd_options_redraw();
-					break;
-				}
-				case OPTS_TO_FILE:
-				{
-					dco_feedback(option_dump());
-					break;
-				}
-				case OPTS_ALL_TO_FILE:
-				{
-					dco_feedback(preference_dump());
-					break;
-				}
-				case OPTS_FROM_FILE:
-				{
-					dco_feedback(option_load());
-					break;
-				}
+				do_cmd_options_autosave("Autosave");
+				break;
 			}
-			break;
+			case OPTS_WINDOW:
+			{
+				do_cmd_options_win();
+				break;
+			}
+			case OPTS_REDRAW:
+			{
+				do_cmd_options_redraw();
+				break;
+			}
+			case OPTS_TO_FILE:
+			{
+				dco_feedback(option_dump());
+				break;
+			}
+			case OPTS_ALL_TO_FILE:
+			{
+				dco_feedback(preference_dump());
+				break;
+			}
+			case OPTS_FROM_FILE:
+			{
+				dco_feedback(option_load());
+				break;
+			}
+			case OPTS_MACRO:
+			{
+				do_cmd_macros();
+				break;
+			}
+			case OPTS_VISUAL:
+			{
+				do_cmd_visuals();
+				break;
+			}
+			case OPTS_COLOUR:
+			{
+				do_cmd_colors();
+				break;
+			}
 		}
 
 		/* Flush messages */
 		msg_print(NULL);
+
+		/* Flush help */
+		help_track(NULL);
 	}
 
 	/* Remove the help */
@@ -1707,7 +1718,7 @@ static errr keymap_dump(cptr fname)
  *
  * Could use some helpful instructions on this page.  XXX XXX XXX
  */
-void do_cmd_macros(void)
+static void do_cmd_macros(void)
 {
 	int i;
 
@@ -1720,13 +1731,6 @@ void do_cmd_macros(void)
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
-
-
-	/* Enter "icky" mode */
-	character_icky = TRUE;
-
-	/* Save screen */
-	Term_save();
 
 
 	/* Process requests until done */
@@ -2091,11 +2095,6 @@ void do_cmd_macros(void)
 		/* Flush messages */
 		msg_print(NULL);
 	}
-
-	character_icky = FALSE;
-
-	/* Load screen */
-	Term_load();
 }
 
 #ifdef ALLOW_VISUALS
@@ -2575,7 +2574,7 @@ static void modify_visuals(visual_type *vs_ptr)
 /*
  * Interact with "visuals"
  */
-void do_cmd_visuals(void)
+static void do_cmd_visuals(void)
 {
 #ifdef ALLOW_VISUALS
 
@@ -2596,13 +2595,6 @@ void do_cmd_visuals(void)
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
-
-
-	/* Enter "icky" mode */
-	character_icky = TRUE;
-
-	/* Save the screen */
-	Term_save();
 
 
 	/* Interact until done */
@@ -2690,13 +2682,6 @@ void do_cmd_visuals(void)
 		/* Flush messages */
 		msg_print(NULL);
 	}
-
-
-	/* Restore the screen */
-	Term_load();
-
-	/* Leave "icky" mode */
-	character_icky = FALSE;
 }
 
 #ifdef ALLOW_COLORS
@@ -2764,7 +2749,7 @@ static errr dump_colours_aux(cptr file)
 /*
  * Interact with "colors"
  */
-void do_cmd_colors(void)
+static void do_cmd_colors(void)
 {
 	int i;
 
@@ -2773,13 +2758,6 @@ void do_cmd_colors(void)
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
-
-
-	/* Enter "icky" mode */
-	character_icky = TRUE;
-
-	/* Save the screen */
-	Term_save();
 
 
 	/* Interact until done */
@@ -2934,13 +2912,6 @@ void do_cmd_colors(void)
 		/* Flush messages */
 		msg_print(NULL);
 	}
-
-
-	/* Restore the screen */
-	Term_load();
-
-	/* Leave "icky" mode */
-	character_icky = FALSE;
 }
 
 
