@@ -53,7 +53,7 @@ SRCS = \
   store.c birth.c load.c \
   wizard1.c wizard2.c \
   generate.c dungeon.c init1.c init2.c \
-  quest.c \
+  quest.c main-cap.c \
   main-xpj.c main-gtk.c main-gcu.c main-x11.c maid-x11.c main-xaw.c main.c
 
 OBJS = \
@@ -66,7 +66,7 @@ OBJS = \
   store.o birth.o load.o \
   wizard1.o wizard2.o \
   generate.o dungeon.o init1.o init2.o \
-  quest.o \
+  quest.o main-cap.o \
   main-xpj.o main-gtk.o main-gcu.o main-x11.o maid-x11.o main-xaw.o main.o
 
 
@@ -120,97 +120,46 @@ CC = gcc
 # Specifying -ansi -pedantic generates a number of irrelevant warnings, but
 # it doesn't prevent compiling and generates some important warnings.
 
-CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" -D"USE_XPJ" \
-	-D"USE_TRANSPARENCY" -D"USE_GTK" `gtk-config --cflags` \
+STD_CFLAGS = -O3 -fno-strength-reduce -pipe -g  \
 	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
 	-Wno-long-long -Wwrite-strings -Wpointer-arith -Wredundant-decls \
-	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
-	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes \
-#	-ansi -pedantic -D"NO_VARIABLE_ARRAYS" \
+	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP \
+	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes
 
-LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib `gtk-config --libs` 
+# Test that Cthangband does not require obviously non-c89 things.
+ANSI_CFLAGS = -std=c89 -pedantic -D"NO_VARIABLE_ARRAYS"
 
-##
-## Variation -- Only support "main-x11.c" and "main-gcu.c", not "main-gtk.c"
-##
-#CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" \
-#	-D"USE_TRANSPARENCY" \
-#	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
-#	-Wno-long-long -Wwrite-strings -Wpointer-arith \
-#	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
-#	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes \
-#	#-Wredundant-decls \
-#
-#LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
+X11_CFLAGS = -D"USE_X11"
+X11_LIBS = -L/usr/X11R6/lib -lX11 
 
-##
-## Variation -- Only support "main-x11.c" (not "main-gcu.c")
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11"
-#LIBS = -lX11
+XAW_CFLAGS = -D"USE_XAW"
+XAW_LIBS = -L/usr/X11R6/lib -lXaw -lXmu -lXt -lX11
 
+GCU_CFLAGS = -D"USE_GCU"
+GCU_LIBS = -lcurses -ltermcap
 
-##
-## Variation -- Only support "main-gcu.c" (not "main-x11.c")
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU"
-#LIBS = -lcurses -ltermcap
+XPJ_CFLAGS = -D"USE_XPJ"
+XPJ_LIBS = $(X11_LIBS)
+
+GTK_CFLAGS = -D"USE_GTK" `gtk-config --cflags`
+GTK_LIBS = `gtk-config --libs` 
+
+CAP_CFLAGS = -D"USE_CAP"
+CAP_LIBS = -ltermcap
+
+# One possible set of CFLAGS/LIBS. Add/remove matching pairs as desired.
+CFLAGS = $(STD_CFLAGS) $(X11_CFLAGS) $(GCU_CFLAGS) $(GTK_CFLAGS)
+LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
 
 
-##
-## Variation -- Use "main-xaw.c" instead of "main-x11.c"
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_XAW" -D"USE_GCU"
-#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
-
-
-##
-## Variation -- Use "main-gtk.c" instead of "main-x11.c"
-## Note: gtk-config adds GTK and X11 includes and libraries as appropriate.
-##
-#CFLAGS = -Wall -O `gtk-config --cflags` -g -D"USE_GTK" -D"USE_GCU"
-#LIBS = `gtk-config --libs` -lcurses -ltermcap
-
-
-##
-## Variation -- Use "main-cap.c" instead of "main-gcu.c"
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_CAP"
-#LIBS = -lX11 -ltermcap
-
-
-##
-## Variation -- Only work on simple vt100 terminals
-##
-#CFLAGS = -Wall -O1 -pipe -g -D"USE_CAP" -D"USE_HARDCODE"
-
-
-##
-## Variation -- compile for Linux
-##
-## Allows the use of Angband in the console using ncurses,
-## as well as under X11.
-##
-#CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses -Wall \
-#         -O2 -fno-strength-reduce \
-#         -D"USE_X11" -D"USE_GCU" -D"USE_NCURSES" --ansi -pedantic -W
-#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lncurses
-
-
-##
-## Variation -- compile for Linux
-##
-## Allows the use of Angband in the console using curses.
-##
-#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -D"USE_GCU"
-#LIBS = -lcurses
 
 
 ##
 ## Variation -- compile for Linux
 ##
 ## Allows the use of Angband in X11 using the Athena Widget set.
-##
+## Does it ever need -lXext, -lSM or -lICE?
+#
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g -D"USE_XAW"
 #LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11
 
@@ -224,6 +173,12 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib `gtk-config --libs`
 #         -D"USE_TPOSIX" -D"USE_CURS_SET"
 #LIBS = -lX11 -lncurses
 #LDFLAGS = -s
+
+
+##
+## Variation -- Only work on simple vt100 terminals
+##
+#CFLAGS = -Wall -O1 -pipe -g -D"USE_CAP" -D"USE_HARDCODE"
 
 
 ##
