@@ -470,7 +470,7 @@ static cptr comment_7b[MAX_COMMENT_7B] =
 {
 	"Damn!",
 	"You bastard!",
-	"The shopkeeper curses at you.",
+	"The shopkeeper points at you, then curses.", /* NetHack */
 	"The shopkeeper glares at you."
 };
 
