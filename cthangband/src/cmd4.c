@@ -1844,7 +1844,6 @@ static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, ch
  */
 static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
 {
-	C_TNEW(o_name, ONAME_MAX, char);
 	object_type forge;
 
 	/* Get most of the visuals. */
@@ -1853,14 +1852,8 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, ch
 	/* Create the object */
 	object_prep(&forge, i);
 
-	/* Describe the object without flavour. */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, &forge, FALSE, 0);
-
 	/* Place in a temporary buffer. */
-	(*name) = format("%s", o_name);
-
-	/* And release the string if necessary. */
-	TFREE(o_name);
+	(*name) = format("%v", object_desc_store_f3, &forge, FALSE, 0);
 }
 
 /*
@@ -1888,7 +1881,6 @@ static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa
 	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
 	object_kind hack_k, *k_ptr = &k_info[1];
 	object_type o_ptr[1];
-	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get most of the visuals (including a mangled name). */
 	get_visuals(u_info, (char*)NULL);
@@ -1903,17 +1895,11 @@ static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa
 	k_ptr->u_idx = i;
 	object_prep(o_ptr, k_ptr-k_info);
 
-	/* Get the name. */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
+	/* Place the name in a temporary buffer. */
+	(*name) = format("%v", object_desc_f3, o_ptr, FALSE, 0);
 
 	/* Replace the real *k_ptr */
 	COPY(k_ptr, &hack_k, object_kind);
-
-	/* Place the name in a temporary buffer. */
-	(*name) = format("%s", o_name);
-
-	/* And release the string if necessary. */
-	TFREE(o_name);
 }
 
 /*

@@ -973,21 +973,16 @@ static void touch_zap_player(monster_type *m_ptr)
         {
             if (!(p_ptr->immune_fire))
             {
-
-                char aura_dam[80];
-
                 aura_damage
                     = damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
-
-            /* Hack -- Get the "died from" name */
-             strnfmt(aura_dam, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x88);
 
                 msg_print("You are suddenly very hot!");
 
                 if (p_ptr->oppose_fire) aura_damage = (aura_damage+2) / 3;
                 if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
 
-                take_hit(aura_damage, aura_dam);
+                take_hit(aura_damage,
+					format("%v", monster_desc_f2, m_ptr, 0x88));
                 r_ptr->r_flags2 |= RF2_AURA_FIRE;
                 handle_stuff();
             }
@@ -998,19 +993,15 @@ static void touch_zap_player(monster_type *m_ptr)
         {
             if (!(p_ptr->immune_elec))
             {
-                char aura_dam[80];
-
                 aura_damage
                     = damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
-
-            /* Hack -- Get the "died from" name */
-             strnfmt(aura_dam, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x88);
 
                 if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
                 if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;
                 
                 msg_print("You get zapped!");
-                take_hit(aura_damage, aura_dam);
+                take_hit(aura_damage,
+					format("%v", monster_desc_f2, m_ptr, 0x88));
                 r_ptr->r_flags2 |= RF2_AURA_ELEC;
                 handle_stuff();
             }
@@ -1025,7 +1016,6 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
     int             n_weight = 0;
     monster_type    *m_ptr = &m_list[m_idx];
     monster_race    *r_ptr = &r_info[m_ptr->r_idx];
-	C_TNEW(m_name, MNAME_MAX, char);
 
     int dss, ddd;
 
@@ -1071,9 +1061,6 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
             atk_desc = "undefined body part";
     }
 
-    /* Extract monster name (or "it") */
-	strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 
 	/* Calculate the "attack quality" */
     bonus = p_ptr->to_h;
@@ -1085,7 +1072,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 			/* Sound */
 			sound(SOUND_HIT);
 
-            msg_format("You hit %s with your %s.", m_name, atk_desc);
+            msg_format("You hit %v with your %s.",
+				monster_desc_f2, m_ptr, 0, atk_desc);
 			
 			/* Give experience if it wasn't too easy */
 			if (chance < (r_ptr->ac * 3))
@@ -1111,7 +1099,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 
             if (m_ptr->smart & SM_ALLY)
             {
-                msg_format("%^s gets angry!", m_name);
+                msg_format("%^s gets angry!", monster_desc_f2, m_ptr, 0);
                 m_ptr->smart &= ~SM_ALLY;
             }
 
@@ -1146,10 +1134,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 			sound(SOUND_MISS);
 
             /* Message */
-			msg_format("You miss %s.", m_name);
+			msg_format("You miss %s.", monster_desc_f2, m_ptr, 0);
 		}
-
-	TFREE(m_name);
 }
 
 

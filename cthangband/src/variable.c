@@ -420,7 +420,7 @@ char player_base[NAME_LEN];
 /*
  * What killed the player
  */
-char died_from[80];
+cptr died_from;
 
 /*
  * Hack -- Textual "history" for the Player
