@@ -2706,7 +2706,7 @@ static void alloc_ifa(ifa_type *i_ptr, cptr str)
  */
 static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int *i, ifa_type *info, byte act)
 {
-	int j,dif, dif2;
+	int j,dif;
 	byte attr;
 	cptr stats[6] = {"strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"};
 
@@ -2772,14 +2772,28 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 			if (CMP(dis_to_h)) descr(format("  It %s your chance to hit opponents by %d.", DIF_INC, DIF));
 			/* Fix me - this also covers stunning, but is affected by saving throw. */
 			if (CMPS(adj_dex_safe)) descr(format("  It makes you %d%% %s resistant to theft.", DIF, DIF_MOR));
-			if ((dif2 = CMPS(adj_dex_dis)+CMPT(adj_int_dis, A_INT))) { dif = dif2; descr(format("  It %s your disarming skill.", DIF_INC));}
-			if ((CMP(num_blow))) descr(format("  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60));
+			if ((CMP(num_blow))) 
 			break;
 			case A_STR:
 			if (CMP(dis_to_d)) descr(format("  It %s your ability to damage opponents by %d.", DIF_INC, DIF));
 			if (CMPS(adj_str_wgt)) descr(format("  It %s your maximum carrying capacity by %d.", DIF_INC, DIF));
 			if (CMPS(adj_str_hold)) descr(format("  It makes you %s able to use heavy weapons.", DIF_MOR));
 			if (CMP(skill_dig)) descr(format("  It allows you to dig %s effectively.", DIF_MOR));
+		}
+
+		/* A couple of things which depend on two stats. */
+		if (j == A_DEX || (j == A_STR && !CMPU(stat_ind[A_DEX])))
+		{
+			if (CMP(num_blow)) descr(format("  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60));
+		}
+		if (j == A_DEX || (j == A_INT && !CMPU(stat_ind[A_DEX])))
+		{
+			int dif2;
+			if ((dif2 = CMPS(adj_dex_dis)+CMPT(adj_int_dis, A_INT)))
+			{
+				dif = dif2;
+				descr(format("  It %s your disarming skill.", DIF_INC));
+			}
 		}
 	}
 }
