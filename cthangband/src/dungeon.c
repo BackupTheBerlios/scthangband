@@ -385,6 +385,9 @@ static void sense_inventory(void)
  */
 void change_level(s16b new_level, byte come_from)
 {
+	/* Display any pending text. */
+	msg_print(NULL);
+
 	/* Save if desired. */
 	if (autosave_l)
 	{
