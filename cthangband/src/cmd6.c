@@ -996,7 +996,6 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 static bool curse_object(int o_idx, int e_idx, cptr where)
 {
 	object_type *o_ptr = inventory+o_idx;
-	ego_item_type *e_ptr = e_info+e_idx;
 
 	if (!o_ptr->k_idx) return FALSE;
 
