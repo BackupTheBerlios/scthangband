@@ -4798,11 +4798,11 @@ static errr top_twenty(void)
 #endif
 
 	/* Quitters are not scored */
-	if (!score_quitters
+	if ((!score_quitters
 #ifndef SCORE_QUITTERS
 	|| TRUE
 #endif
-	&& !total_winner && streq(died_from, "Suicide"))
+	) && !total_winner && streq(died_from, "Suicide"))
 	{
 		msg_print("Score not registered due to quitting.");
 		msg_print(NULL);

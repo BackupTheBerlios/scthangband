@@ -3398,6 +3398,9 @@ option_type option_info[] =
 	{ &no_centre_run,               FALSE,  5, 2, 17,
     "no_centre_run",                "Do not centre view whilst running" },
 
+	{ &score_quitters,		FALSE,   7, 2, 29,
+	"score_quitter",			"Remember scores of those who quit the game" },
+
 	{ &maximise_mode,               TRUE,  7, 2, 18,
     "maximise_mode",                "Include race/template bonuses in stat calcs" },
 
