@@ -1107,7 +1107,7 @@ bool make_attack_normal(int m_idx)
 
 				/* Hack - FORCE_SLEEP monsters only knock a properly prepared
 				 * character out after a warning. */
-				if (m_ptr->mflag & MFLAG_NICE) k = MIN(k, 99);
+				if (m_ptr->mflag & MFLAG_NICE) k = MIN(k, 99-p_ptr->stun);
 
 				/* Apply the stun */
 				if (k) (void)add_flag(TIMED_STUN, k);
