@@ -413,6 +413,9 @@ void do_cmd_messages(void)
 }
 
 
+#define DCO_ERROR_ABORT 1
+#define DCO_ERROR_FILE 2
+
 /* Option-handling code */
 
 static option_type autosave_info[3] =
@@ -1139,6 +1142,27 @@ static void do_cmd_options_hp(void)
 }
 
 /*
+ * Give some feedback for one of the above functions.
+ * Note that a user abort passes unmentioned.
+ */
+static void dco_feedback(errr err)
+{
+	switch (err)
+	{
+		case DCO_ERROR_FILE:
+		{
+			msg_print("Failed!");
+			break;
+		}
+		case SUCCESS:
+		{
+			msg_print("Done.");
+			break;
+		}
+	}
+}
+
+/*
  * Dump a version string to an open file.
  */
 static void dump_version(FILE *fff)
@@ -1161,13 +1185,54 @@ static void dump_version(FILE *fff)
 }
 
 /*
+ * Open the named file, dump something to it, and close it again.
+ */
+static errr save_preferences_aux(void (*func)(FILE *fff), cptr fname)
+{
+	FILE *fff;
+
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Drop priv's */
+	safe_setuid_drop();
+
+	/* Append to the file */
+	fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
+
+	/* Grab priv's */
+	safe_setuid_grab();
+
+	/* Failure */
+	if (!fff)
+	{
+		return DCO_ERROR_FILE;
+	}
+	else
+	{
+		/* Save the version. */
+		dump_version(fff);
+
+		/* Dump the preferences. */
+		(*func)(fff);
+
+		/* Finally close the file again. */
+		my_fclose(fff);
+
+		return SUCCESS;
+	}
+}
+
+
+/*
  * Save some preferences to a file which shall be chosen by the player at the
  * given line on the screen and saved with the given function.
  */
 static void save_preferences(void (*func)(FILE *fff))
 {
-	FILE *fff;
-
 	char ftmp[256];
 
 	/* Default filename */
@@ -1176,30 +1241,8 @@ static void save_preferences(void (*func)(FILE *fff))
 	/* Request the desired filename, handle abort. */
 	if (!get_string("File: ", ftmp, sizeof(ftmp))) return;
 
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
-	/* Append to the file */
-	fff = my_fopen_path(ANGBAND_DIR_USER, ftmp, "a");
-
-	/* Failure */
-	if (!fff)
-	{
-		msg_print("Failed!");
-		return;
-	}
-
-	/* Save the version. */
-	dump_version(fff);
-
-	/* Call the dump function. */
-	(*func)(fff);
-
-	/* Close */
-	my_fclose(fff);
-
-	/* Success */
-	msg_print("Done");
+	/* Save the preferences, report success or failure. */
+	dco_feedback(save_preferences_aux(func, ftmp));
 }
 
 /*
@@ -1533,7 +1576,7 @@ static void do_cmd_options_inscribe(void)
 
 		ymax = display_entry_list(choice, max, 2, TRUE);
 
-		mc_put_fmt(ymax+1, 0, "[Ctrl-S] Save squelch/inscription settings");
+		mc_put_fmt(ymax+1, 0, "[Ctrl-S] Save inscription settings");
 
 		if (!get_com(&ch,
 			"Inscribe what kind of object? [%c-%c, or Ctrl-S]",
@@ -1777,7 +1820,7 @@ static void do_cmd_options_squelch(void)
 
 		mc_put_fmt(ymax+1, 0, "[Ctrl-A] %sable auto-squelching",
 			(allow_squelch) ? "dis" : "en");
-		mc_put_fmt(ymax+2, 0, "[Ctrl-S] Save squelch/inscription settings");
+		mc_put_fmt(ymax+2, 0, "[Ctrl-S] Save squelch settings");
 
 		/* Choose! */
 		if (!get_com(&ch, "Destroy what kind of object? [%c-%c, Ctrl-A or Ctrl-S]",
@@ -1837,114 +1880,105 @@ static void tval_attr_dump(FILE *fff)
 }
 
 /*
- * Actually dump options to an open file.
- *
- * This does not dump cheat options on the assumption that this is desired.
- * It does not dump autosave frequency, base delay or hitpoint warning level
- * as the game has no way of loading these.
+ * Save the "normal" options to a file.
+ * Also mention those which cannot be stored in a save file.
  */
-static errr option_dump_aux(cptr fname)
+static void dump_normal_options(FILE *fff)
 {
-	const redraw_type *co_ptr;
-	uint i,j;
-
-	FILE *fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
-
-	if (!fff) return -1;
-
-	/* Skip some lines */
-	fprintf(fff, "\n\n");
+	option_type *op_ptr;
+	char y;
 
 	/* Start dumping */
-	fprintf(fff, "# Automatic option dump\n\n");
+	fprintf(fff, "\n\n# Automatic option dump\n\n");
 
-	for (i = 0; option_info[i].o_var; i++)
+	/* Dump each of the normal options in turn. */
+	for (op_ptr = option_info; op_ptr->o_var; op_ptr++)
 	{
 		/* Paranoia - require a real option */
-		if (!option_info[i].o_text) continue;
+		if (!op_ptr->o_text) continue;
 
 		/* Require a non-cheat option. */
-		if (option_info[i].o_page == OPTS_CHEAT) continue;
+		if (op_ptr->o_page == OPTS_CHEAT) continue;
 
 		/* Comment */
-		fprintf(fff, "# Option '%s'\n", option_info[i].o_desc);
+		fprintf(fff, "# Option '%s'\n", op_ptr->o_desc);
+
+		/* Is the option set? */
+		y = ((*op_ptr->o_var)) ? 'Y' : 'N';
 
 		/* Dump the option */
-		if ((*option_info[i].o_var))
-		{
-			fprintf(fff, "Y:%s\n\n", option_info[i].o_text);
-		}
-		else
-		{
-			fprintf(fff, "X:%s\n\n", option_info[i].o_text);
-		}
+		fprintf(fff, "%c:%s\n\n", y, op_ptr->o_text);
 	}
-
-	/* Dump window flags */
-
-	fprintf(fff, "# Reset window flags\n");
-	fprintf(fff, "W:---reset---\n");
-
-	for (i = 1; i < N_ELEMENTS(windows); i++)
-	{
-		/* Comment */
-		fprintf(fff, "\n#Window '%s'\n", windows[i].name);
-
-		for (j = 0; j < NUM_DISPLAY_FUNCS; j++)
-		{
-			cptr goodpri = ".abcdefghij";
-
-			/* Not set. */
-			if (!windows[i].rep[j] && !windows[i].pri[j]) continue;
-
-			/* Dump the values. */
-			fprintf(fff, "W:%s:%s:%c:%c\n", windows[i].name,
-				display_func[j].name, goodpri[windows[i].rep[j]],
-				goodpri[windows[i].pri[j]]);
-		}
-	}
-
-	/* Dump redraw flags */
-
-	fprintf(fff, "\n\n# Status description locations\n\n");
-	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
-	{
-		fprintf(fff, "L:%s:%d:%d:%d\n",
-			co_ptr->name, co_ptr->x, co_ptr->y, co_ptr->l);
-	}
-
-	/* Dump the current version, as squelch settings use k_idx indices. */
-	dump_version(fff);
-
-	/* Save the squelch settings. */
-	squelch_dump(fff);
-
-	/* Save the default inscriptions. */
-	inscription_dump(fff);
-
-	/* Save the default tval colours. */
-	tval_attr_dump(fff);
 
 	/* Mention options which can't be read. */
 	fprintf(fff, "\n\n# Unparsable options\n\n");
 	fprintf(fff, "# Base delay factor %d\n",
 		delay_factor * delay_factor * delay_factor);
 	fprintf(fff, "# Hitpoint warning %d\n", hitpoint_warn * 10);
-	fprintf(fff, "# Autosave frequency %d\n\n", autosave_freq);
-
-	fclose(fff);
-
-	return SUCCESS;
+	fprintf(fff, "# Autosave frequency %d\n", autosave_freq);
 }
 
-#define DCO_ERROR_ABORT 1
-#define DCO_ERROR_FILE 2
+/*
+ * Save the window flags to a file.
+ */
+static void dump_window_options(FILE *fff)
+{
+	window_type *w_ptr;
+	int j;
+	cptr goodpri = ".abcdefghij";
+
+
+	/* Start dumping. */
+	fprintf(fff, "\n\n# Window option dump\n\n");
+
+	/* Reset. */
+	fprintf(fff, "# Reset window flags\nW:---reset---\n\n");
+
+	/* Dump each window in turn. */
+	FOR_ALL_IN(windows, w_ptr)
+	{
+		/* Comment */
+		fprintf(fff, "\n#Window '%s'\n", w_ptr->name);
+
+		for (j = 0; j < NUM_DISPLAY_FUNCS; j++)
+		{
+			/* Not set. */
+			if (!w_ptr->rep[j] && !w_ptr->pri[j]) continue;
+
+			/* Dump the values. */
+			fprintf(fff, "W:%s:%s:%c:%c\n", w_ptr->name, display_func[j].name,
+				goodpri[w_ptr->rep[j]], goodpri[w_ptr->pri[j]]);
+		}
+	}
+}
+
+/*
+ * Dump redraw text locations and lengths.
+ */
+static void dump_redraw_options(FILE *fff)
+{
+	const redraw_type *co_ptr;
+
+	/* Comment. */
+	fprintf(fff, "\n\n# Status description locations\n\n");
+
+	/* Dump every redraw style. */
+	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
+	{
+		fprintf(fff, "L:%s:%d:%d:%d\n",
+			co_ptr->name, co_ptr->x, co_ptr->y, co_ptr->l);
+	}
+}
 
 /*
  * Dump the options to a file.
+ * This is intended to provide two methods to dump every preference line, one
+ * of which is always preference_dump().
  */
 static errr option_dump(void)
 {
+	FILE *fff;
+
 	char ftmp[256];
 
 	/* Prompt */
@@ -1956,7 +1990,34 @@ static errr option_dump(void)
 	/* Handle abort. */
 	if (!askfor_aux(ftmp, 256)) return DCO_ERROR_ABORT;
 
-	if (option_dump_aux(ftmp)) return DCO_ERROR_FILE;
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Drop priv's */
+	safe_setuid_drop();
+
+	/* Append to the file */
+	fff = my_fopen_path(ANGBAND_DIR_USER, ftmp, "a");
+
+	/* Grab priv's */
+	safe_setuid_grab();
+
+	if (!fff) return DCO_ERROR_FILE;
+
+	/* Dump options */
+	dump_normal_options(fff);
+
+	/* Dump window flags */
+	dump_window_options(fff);
+
+	/* Dump redraw flags */
+	dump_redraw_options(fff);
+
+	/* Dump the current version, as squelch settings use k_idx indices. */
+	dump_version(fff);
+
+	/* Save the default tval colours. */
+	tval_attr_dump(fff);
 
 	return SUCCESS;
 }
@@ -1981,27 +2042,6 @@ static errr option_load(void)
 	if (process_pref_file(ftmp)) return DCO_ERROR_FILE;
 
 	return SUCCESS;
-}
-
-/*
- * Give some feedback for one of the above functions.
- * Note that a user abort passes unmentioned.
- */
-static void dco_feedback(errr err)
-{
-	switch (err)
-	{
-		case DCO_ERROR_FILE:
-		{
-			msg_print("Failed!");
-			break;
-		}
-		case SUCCESS:
-		{
-			msg_print("Done.");
-			break;
-		}
-	}
 }
 
 typedef struct option_list option_list;
@@ -2251,30 +2291,14 @@ void do_cmd_pref(void)
 #ifdef ALLOW_MACROS
 
 /*
- * Hack -- append all current macros to the given file
+ * Save macros to an open file.
  */
-static errr macro_dump(cptr fname)
+static void macro_dump(FILE *fff)
 {
 	int i;
 
-	FILE *fff;
-
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
-	/* Append to the file */
-	fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
-
-	/* Failure */
-	if (!fff) return (-1);
-
-
-	/* Skip space */
-	fprintf(fff, "\n\n");
-
 	/* Start dumping */
-	fprintf(fff, "# Automatic macro dump\n\n");
+	fprintf(fff, "\n\n# Automatic macro dump\n\n");
 
 	/* Dump them */
 	for (i = 0; i < macro__num; i++)
@@ -2288,18 +2312,7 @@ static errr macro_dump(cptr fname)
 		/* Dump the trigger. */
 		my_fprintf(fff, "P:%v\n\n", ascii_to_text_f1, macro__pat[i]);
 	}
-
-	/* Start dumping */
-	fprintf(fff, "\n\n\n\n");
-
-
-	/* Close */
-	my_fclose(fff);
-
-	/* Success */
-	return (0);
 }
-
 
 /*
  * Hack -- ask for a "trigger" (see below)
@@ -2384,30 +2397,14 @@ static void do_cmd_macro_aux_keymap(char *buf)
 /*
  * Hack -- append all keymaps to the given file
  */
-static errr keymap_dump(cptr fname)
+static void keymap_dump(FILE *fff)
 {
 	int i;
 
-	FILE *fff;
-
 	int mode = keymap_mode();
 
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
-	/* Append to the file */
-	fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
-
-	/* Failure */
-	if (!fff) return (-1);
-
-
-	/* Skip space */
-	fprintf(fff, "\n\n");
-
 	/* Start dumping */
-	fprintf(fff, "# Automatic keymap dump\n\n");
+	fprintf(fff, "\n\n# Automatic keymap dump\n\n");
 
 	/* Dump ---reset--- so that no extras are carried forward. */
 	fprintf(fff, "C:---reset---\n");
@@ -2431,16 +2428,6 @@ static errr keymap_dump(cptr fname)
 		my_fprintf(fff, "A:%v\nC:%d:%v\n", ascii_to_text_f1, act,
 			mode, ascii_to_text_f1, buf);
 	}
-
-	/* Start dumping */
-	fprintf(fff, "\n\n\n");
-
-
-	/* Close */
-	my_fclose(fff);
-
-	/* Success */
-	return (0);
 }
 #endif /* ALLOW_MACROS */
 
@@ -2557,13 +2544,13 @@ static void do_cmd_macros(void)
 			if (!askfor_aux(tmp, 80)) continue;
 
 			/* Drop priv's */
-		safe_setuid_drop();
+			safe_setuid_drop();
 
 			/* Dump the macros */
-			(void)macro_dump(tmp);
+			save_preferences_aux(macro_dump, tmp);
 
 			/* Grab priv's */
-		safe_setuid_grab();
+			safe_setuid_grab();
 
 			/* Prompt */
 			msg_print("Appended macros.");
@@ -2682,15 +2669,15 @@ static void do_cmd_macros(void)
 			/* Drop priv's */
 			safe_setuid_drop();
 
-			/* Dump the macros */
-			(void)keymap_dump(tmp);
+			/* Dump the keymaps */
+			save_preferences_aux(keymap_dump, tmp);
 
 			/* Grab priv's */
 			safe_setuid_grab();
 
 			/* Prompt */
 			msg_print("Appended keymaps.");
-}
+		}
 
 		/* Query a keymap */
 		else if (i == '7')
@@ -3032,22 +3019,9 @@ static visual_type visual[5] =
 		0, "Unidentified object attr/char definitions", 0, 'U', TRUE, TRUE},
 };
 
-static errr dump_visuals_aux(cptr tmp, visual_type *vs_ptr)
+static void dump_visuals_aux(FILE *fff, visual_type *vs_ptr)
 {
 	int i;
-	FILE *fff;
-
-	/* Drop priv's */
-	safe_setuid_drop();
-
-	/* Append to the file */
-	fff = my_fopen_path(ANGBAND_DIR_USER, tmp, "a");
-
-	/* Grab priv's */
-	safe_setuid_grab();
-
-	/* Failure */
-	if (!fff) return -1;
 
 	/* This requires a normal pref file output. */
 	if (vs_ptr->pref_str)
@@ -3093,13 +3067,12 @@ static errr dump_visuals_aux(cptr tmp, visual_type *vs_ptr)
 
 	/* Close */
 	my_fclose(fff);
-
-	return SUCCESS;
 }
 
 static void dump_visuals(visual_type *vs_ptr)
 {
 	char tmp[71];
+	FILE *fff;
 
 	/* Prompt */
 	prt(format("Command: Dump %s", vs_ptr->text), CMDLINE, 0);
@@ -3113,12 +3086,28 @@ static void dump_visuals(visual_type *vs_ptr)
 	/* Get a filename */
 	if (!askfor_aux(tmp, sizeof(tmp)-1)) return;
 
-	if (dump_visuals_aux(tmp, vs_ptr))
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Drop priv's */
+	safe_setuid_drop();
+
+	/* Append to the file */
+	fff = my_fopen_path(ANGBAND_DIR_USER, tmp, "a");
+
+	/* Grab priv's */
+	safe_setuid_grab();
+
+
+	if (!fff)
 	{
 		msg_format("Failed to dump %s.", vs_ptr->text);
 	}
 	else
 	{
+		/* Actually dump the file. */
+		dump_visuals_aux(fff, vs_ptr);
+
 		/* Message */
 		msg_format("Dumped %s.", vs_ptr->text);
 	}
@@ -3392,26 +3381,12 @@ static void do_cmd_visuals(void)
 /*
  * Dump colour definitions to a named file.
  */
-static errr dump_colours_aux(cptr file)
+static void dump_colours(FILE *fff)
 {
-	FILE *fff;
 	int i;
 
-	/* Drop priv's */
-	safe_setuid_drop();
-
-	/* Append to the file */
-	fff = my_fopen_path(ANGBAND_DIR_USER, file, "a");
-
-	/* Grab priv's */
-	safe_setuid_grab();
-
-	/* Failure */
-	if (!fff) return -1;
-
 	/* Start dumping */
-	fprintf(fff, "\n\n");
-	fprintf(fff, "# Color redefinitions\n\n");
+	fprintf(fff, "\n\n# Color redefinitions\n\n");
 
 	/* Dump colors */
 	for (i = 0; i < 256; i++)
@@ -3436,15 +3411,8 @@ static errr dump_colours_aux(cptr file)
 		fprintf(fff, "V:%d:0x%02X:0x%02X:0x%02X:0x%02X\n\n",
 				i, kv, rv, gv, bv);
 	}
-
-	/* All done */
-	fprintf(fff, "\n\n\n\n");
-
-	/* Close */
-	my_fclose(fff);
-
-	return SUCCESS;
 }
+
 #endif /* ALLOW_COLORS */
 
 /*
@@ -3528,7 +3496,7 @@ static void do_cmd_colors(void)
 			/* Get a filename */
 			if (!askfor_aux(tmp, 70)) continue;
 
-			if (dump_colours_aux(tmp)) continue;
+			if (save_preferences_aux(dump_colours, tmp)) continue;
 
 			/* Message */
 			msg_print("Dumped color redefinitions.");
@@ -3619,6 +3587,7 @@ static void do_cmd_colors(void)
  */
 static errr preference_dump(void)
 {
+	FILE *fff;
 	char ftmp[256];
 	visual_type *vs_ptr;
 
@@ -3634,28 +3603,62 @@ static errr preference_dump(void)
 	/* Handle abort. */
 	if (!askfor_aux(ftmp, 256)) return DCO_ERROR_ABORT;
 
-	/* Dump options. */
-	if (option_dump_aux(ftmp)) return DCO_ERROR_FILE;
+
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Hack -- drop permissions */
+	safe_setuid_drop();
+
+	/* Append to the file */
+	fff = my_fopen_path(ANGBAND_DIR_USER, ftmp, "w");
+
+	/* Hack -- grab permissions */
+	safe_setuid_grab();
+
+	if (!fff) return DCO_ERROR_FILE;
+
+	/* Dump the current version. */
+	dump_version(fff);
+
+	/* Dump options */
+	dump_normal_options(fff);
+
+	/* Dump window flags */
+	dump_window_options(fff);
+
+	/* Dump redraw flags */
+	dump_redraw_options(fff);
+
+	/* Save the squelch settings. */
+	squelch_dump(fff);
+
+	/* Save the default inscriptions. */
+	inscription_dump(fff);
+
+	/* Save the default tval colours. */
+	tval_attr_dump(fff);
 
 #ifdef ALLOW_MACROS
 	/* Dump macros. */
-	if (macro_dump(ftmp)) return DCO_ERROR_FILE;
+	macro_dump(fff);
 
-	/* Dump keymaps. */
-	if (keymap_dump(ftmp)) return DCO_ERROR_FILE;
+	/* Dump keymaps */
+	keymap_dump(fff);
+
 #endif /* ALLOW_MACROS */
 
 #ifdef ALLOW_VISUALS
 	/* Dump visuals. */
 	for (vs_ptr = visual; vs_ptr < END_PTR(visual); vs_ptr++)
 	{
-		if (dump_visuals_aux(ftmp, vs_ptr)) return DCO_ERROR_FILE;
+		dump_visuals_aux(fff, vs_ptr);
 	}
 #endif /* ALLOW_VISUALS */
 
 #ifdef ALLOW_COLORS
 	/* Dump colours. */
-	if (dump_colours_aux(ftmp)) return DCO_ERROR_FILE;
+	dump_colours(fff);
 #endif /* ALLOW_COLORS */
 
 	/* Messgage. */
