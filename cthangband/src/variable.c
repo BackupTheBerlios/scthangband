@@ -227,7 +227,6 @@ bool wear_confirm;		/* Confirm before putting on known cursed items */
 bool confirm_wear_all;		/* Confirm before wearing items with unknown cursed status */
 bool disturb_allies;		/* Allies moving nearby disturb us */
 bool multi_stair;         /* Multiple level staircases */
-bool unify_commands; /* Combine object commands into a single 'u'se command */
 bool centre_view; /* Centre view on player */
 bool no_centre_run; /* Stop centring when running */
 bool preserve_mode; /* Don't lose missed artifacts */

@@ -2396,9 +2396,9 @@ extern bool disturb_allies;
 #if (defined(CMD2_C) || defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool multi_stair;
 #endif
-#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool unify_commands;
-#endif
+
+
+
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool centre_view;
 #endif
