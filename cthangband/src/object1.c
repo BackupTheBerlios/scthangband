@@ -776,7 +776,7 @@ static void set_known_fields(object_type *j_ptr, object_ctype *o_ptr,
 	OIK_MASK_SPECIAL(to_d, k_info[j_ptr->k_idx].to_d)
 	OIK_MASK_SPECIAL(to_a, k_info[j_ptr->k_idx].to_a)
 	OIK_MASK_SPECIAL(ac, k_info[j_ptr->k_idx].ac)
-	OIK_MASK_SPECIAL(pval, k_info[j_ptr->k_idx].pval)
+	OIK_MASK(pval)
 	OIK_MASK(timeout)
 	OIK_MASK(weight)
 	OIK_MASK_SPECIAL(dd, k_info[j_ptr->k_idx].dd)
@@ -917,6 +917,14 @@ static char *object_desc_str(char *t, cptr s)
 	return (t);
 }
 
+/*
+ * Return TRUE if the pval an object has relates to its flags.
+ */
+static bool PURE pval_is_normal_p(object_type *o_ptr)
+{
+	int i = wield_slot(o_ptr);
+	return (i >= INVEN_WIELD && i <= INVEN_FEET);
+}
 
 static const char hidden_name[] = {CH_ARTICLE,
 	'h','i','d','d','e','n',' ','t','h','i','n','g',
@@ -1364,7 +1372,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 
 
 	/* Dump "pval" flags for wearable items */
-	if (o_ptr->flags1 & TR1_PVAL_MASK && o_ptr->pval)
+	if (pval_is_normal_p(o_ptr) && o_ptr->pval)
 	{
 		/* Dump the pval. */
 		t += sprintf(t, " (%+d", o_ptr->pval);

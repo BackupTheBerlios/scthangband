@@ -22,6 +22,7 @@ sCthangband _CVS_
   * Potions of detect invisible did nothing.
   * Inscriptions containing ! could crash the game.
   * Objects were described as "powerful" incorrectly.
+  * Identifying an object didn't always reveal its pval.
   * The 'z' key could select items with curses the player knew nothing about.
   * Compiling with BCC still led to frequent crashes.
   * Characters could get a chaos power on creation if patrons were disabled.
