@@ -245,7 +245,7 @@ static void sense_inventory(void)
 {
 	int		i;
 
-	int		plev = (skill_set[SKILL_PSEUDOID].value/2);
+	int		plev = skill_set[SKILL_PSEUDOID].value;
 
 	bool	heavy = FALSE;
 
@@ -262,7 +262,7 @@ static void sense_inventory(void)
 	if (p_ptr->confused) return;
 
 	/* Okay sensing for everyone*/
-	if (0 != rand_int(20000L / (plev * plev + 40))) return;
+	if (0 != rand_int(80000L / (plev * plev + 160))) return;
 
 	/*** Sense everything ***/
 
@@ -272,9 +272,9 @@ static void sense_inventory(void)
 		bool okay = FALSE, repeat;
 		u16b oldident;
 
-		/* Pseudo-id heavily at 60+, lightly at 20- and sometimes do either
+		/* Pseudo-id heavily at 50+, lightly at 30- and sometimes do either
 		 * in between. */
-		heavy = rand_range_test(20, 59, skill_set[SKILL_PSEUDOID].value);
+		heavy = rand_range_test(30, 49, skill_set[SKILL_PSEUDOID].value);
 
 		o_ptr = &inventory[i];
 
