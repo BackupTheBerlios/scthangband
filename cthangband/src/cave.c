@@ -1608,13 +1608,18 @@ void display_map(int *cy, int *cx, int *my, int *mx)
 
 
 	/* Draw the corners */
-	mc[0][0] = mc[0][map_wid] = mc[map_hgt][0] = mc[map_hgt][map_wid] = '+';
+	mc[0][0] = '+';
+	mc[0][map_wid] = '+';
+	mc[map_hgt][0] = '+';
+	mc[map_hgt][map_wid] = '+';
 
 	/* Draw the horizontal edges */
-	for (x = 1; x < map_wid; x++) mc[0][x] = mc[map_hgt][x] = '-';
+	for (x = 1; x < map_wid; x++) mc[0][x] = '-';
+	for (x = 1; x < map_wid; x++) mc[map_hgt][x] = '-';
 
 	/* Draw the vertical edges */
-	for (y = 1; y < map_hgt; y++) mc[y][0] = mc[y][map_wid] = '|';
+	for (y = 1; y < map_hgt; y++) mc[y][0] = '|';
+	for (y = 1; y < map_hgt; y++) mc[y][map_wid] = '|';
 
 
 	/* Display each map line in order */
