@@ -13,7 +13,6 @@
 
 #include "angband.h"
 
-
 /*
  * Forward declare
  */
