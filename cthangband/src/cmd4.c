@@ -412,41 +412,96 @@ void do_cmd_messages(void)
 	character_icky = FALSE;
 }
 
-
 #define DCO_ERROR_ABORT 1
 #define DCO_ERROR_FILE 2
 
 /* Option-handling code */
 
-static option_type autosave_info[3] =
+/*
+ * An option structure.
+ */
+typedef struct option_special option_special;
+struct option_special
 {
-	{ &autosave_l,      FALSE, 255, 0x01, 0x00,
-		"autosave_l",    "Autosave when entering new levels" },
+	void (*print_f1)(char *, uint, cptr, va_list *);
+	const s16b *vals; /* A list of the values this option can take. */
+	u16b nvals; /* N_ELEMENTS(vals) */
+	void *var; /* A pointer to the variable being set. Normally a s16b. */
+	cptr text; /* The name by which the option may be referred. */
+	cptr desc; /* A short description of the option. */
+};
 
-	{ &autosave_t,      FALSE, 255, 0x02, 0x00,
-		"autosave_t",   "Timed autosave" },
-
-	{ &autosave_q,      FALSE, 255, 0x04, 0x00,
-		"autosave_q",   "Quiet autosaves" },
-	};
-
-static s16b toggle_frequency(s16b current)
+static const s16b frequency_list[] =
 {
-	s16b freqs[] =
-	{
-		50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000
-	}, *p;
+	0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000
+};
 
-	/* Go to the next frequency in the list. */
-	FOR_ALL_IN(freqs, p)
+static const s16b delay_factors[] =
+{
+	0, 1, 8, 27, 64, 125, 216, 343, 512, 729
+};
+
+static const s16b hitpoint_warns[] =
+{
+	0, 10, 20, 30, 40, 50, 60, 70, 80, 90
+};
+
+/*
+ * Increase/decrease *var to the next element of array[], if possible.
+ * Assume that *var >= 0.
+ */
+static void set_s16b(s16b *var, bool inc, const s16b *array, uint max)
+{
+	const s16b *high, *low;
+
+	for (low = high = array; high < array+max; high++)
 	{
-		if (current < *p) return *p;
+		if (*var < *high) break;
+		else if (*var > *high) low = high;
 	}
 
-	/* If the current frequency is 25000, go back to 0. */
-	return 0;
+	if (!inc) *var = *low;
+	else if (*high > *var) *var = *high;
 }
 
+/*
+ * Print a bool option setting into buf.
+ */
+static void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	bool v = *((bool*)(va_arg(*vp, void *)));
+	strnfmt(buf, max, "%s", (v) ? "yes" : "no");
+}
+
+/*
+ * Print a s16b option setting into buf.
+ */
+static void print_s16b_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	s16b v = *((s16b*)(va_arg(*vp, void *)));
+	strnfmt(buf, max, (v) ? "%d" : "off", v);
+}
+
+static option_special autosave_info[] =
+{
+	{print_bool_f1, NULL, 0, &autosave_l,
+		"autosave_l", "Autosave when entering new levels"},
+
+	{print_bool_f1, NULL, 0, &autosave_t,
+		"autosave_t", "Timed autosave"},
+
+	{print_bool_f1, NULL, 0, &autosave_q,
+		"autosave_q", "Quiet autosaves"},
+
+	{print_s16b_f1, ARRAY(frequency_list), &autosave_freq,
+		"autosave_freq", "Turns between autosaves"},
+
+	{print_s16b_f1, ARRAY(delay_factors), &delay_factor,
+		"base delay factor", "Delay (in ms) for various graphical effects"},
+
+	{print_s16b_f1, ARRAY(hitpoint_warns), &hitpoint_warn, "hitpoint warning",
+		"Percent of HP at which to give a special warning"},
+};
 
 /*
  * Give a description of an unidentified object.
@@ -503,14 +558,14 @@ static void o_base_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 }
 
 /*
- * Interact with some options for cheating
+ * Interact with some "special" options.
+ * As repeated increases/decreases make sense for some of the options in
+ * this menu, setting an option here does not change the currently selected
+ * option.
  */
 static void do_cmd_options_autosave(cptr info)
 {
-	char ch;
-
-	int     i, k = 0, n = 3;
-
+	int i, k = 0, n = N_ELEMENTS(autosave_info);
 
 	/* Clear screen */
 	Term_clear();
@@ -518,37 +573,46 @@ static void do_cmd_options_autosave(cptr info)
 	/* Interact with the player */
 	while (TRUE)
 	{
+		cptr opts[2] =
+		{
+			"-8 \n\r2yY6nN4",
+			"--    yyynnn"
+		};
+		char ch;
+
+		option_special *this = &autosave_info[k];
+
 		/* Prompt XXX XXX XXX */
-		mc_put_fmt(0, 0, "%s (RET to advance, y/n to set,"
-			" 'F' for frequency, ESC to accept)%v", info, clear_f0);
+		mc_put_fmt(0, 0, "%s (RET to advance, y/n to set, ESC to accept)%v",
+			info, clear_f0);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
-			option_type *op_ptr = &autosave_info[i];
+			option_special *op_ptr = &autosave_info[i];
 
 			/* Highlight the current option in blue. */
 			char a = (i == k) ? 'B' : 'w';
 
 			/* Display the option text */
-			mc_put_fmt(i+2, 0, "$%c$!%-48s: %s  (%s)", a, op_ptr->o_desc,
-				(*op_ptr->o_var) ? "yes" : "no ", op_ptr->o_text);
+			mc_put_fmt(i+2, 0, "$%c$!%-48s: %-5.5v (%s)", a, op_ptr->desc,
+				op_ptr->print_f1, op_ptr->var, op_ptr->text);
 		}
-
-		mc_put_fmt(5, 0, "Timed autosave frequency: every %d turns",
-			autosave_freq);
 
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
 
 		/* Track this option. */
-		help_track(autosave_info[k].o_text);
+		help_track(this->text);
 
 		/* Get a key */
 		ch = inkey();
 
 		/* Assume the help needed has changed. */
 		help_track(NULL);
+
+		for (i = 0; opts[0][i] && opts[0][i] != ch; i++) ;
+		ch = opts[1][i];
 
 		/* Analyze */
 		switch (ch)
@@ -558,47 +622,22 @@ static void do_cmd_options_autosave(cptr info)
 				return;
 			}
 
-			case '-':
-			case '8':
+			case '-': case ' ':
 			{
-				k = (n + k - 1) % n;
+				int inc = (ch == ' ') ? 1 : -1;
+				k = (k + n + inc) % n;
 				break;
 			}
 
-			case ' ':
-			case '\n':
-			case '\r':
-			case '2':
+			case 'y': case 'n':
 			{
-				k = (k + 1) % n;
-				break;
-			}
+				bool inc = (ch == 'y');
 
-			case 'y':
-			case 'Y':
-			case '6':
-			{
-
-				(*autosave_info[k].o_var) = TRUE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'n':
-			case 'N':
-			case '4':
-			{
-				(*autosave_info[k].o_var) = FALSE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'f':
-			case 'F':
-			{
-				autosave_freq = toggle_frequency(autosave_freq);
-				prt(format("Timed autosave frequency: every %d turns",
-					autosave_freq), 5, 0);
+				/* Hack - use print_f1 to identify boolean variables. */
+				if (this->print_f1 == print_bool_f1)
+					*((bool*)(this->var)) = inc;
+				else
+					set_s16b(this->var, inc, this->vals, this->nvals);
 				break;
 			}
 
@@ -1134,54 +1173,6 @@ static void do_cmd_options_redraw(void)
 
 	/* Return to "icky" option menus. */
 	character_icky = TRUE;
-}
-
-/*
- * Set the base delay factor.
- */
-static void do_cmd_options_delay(void)
-{
-	/* Prompt */
-	prt("Command: Base Delay Factor", 18, 0);
-
-	/* Get a new value */
-	while (1)
-	{
-		int k;
-		mc_put_fmt(22, 0, "Current base delay factor: %d msec%v",
-			delay_factor, clear_f0);
-		prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
-		k = inkey();
-		if (k == ESCAPE) break;
-		else if (ISDIGIT(k))
-		{
-			int i = D2I(k);
-			delay_factor = i*i*i;
-		}
-		else bell(0);
-	}
-}
-
-/*
- * Set the HP warning level.
- */
-static void do_cmd_options_hp(void)
-{
-	/* Prompt */
-	prt("Command: Hitpoint Warning", 18, 0);
-
-	/* Get a new value */
-	while (1)
-	{
-		int k;
-		mc_put_fmt(22, 0, "Current hitpoint warning: %d%%%v",
-			hitpoint_warn, clear_f0);
-		prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
-		k = inkey();
-		if (k == ESCAPE) break;
-		if (ISDIGIT(k)) hitpoint_warn = 10 * D2I(k);
-		else bell(0);
-	}
 }
 
 /*
@@ -2119,19 +2110,17 @@ static option_list opt_lists[] =
 	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', LEFT, 13},
 	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', LEFT, 14},
 	{"Help", NULL, OPTS_HELP, '?', LEFT, 16},
-	{"Autosave Options", NULL, OPTS_SAVE, 'A', RIGHT, 4},
-	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', RIGHT, 5},
-	{"Hitpoint Warning", NULL, OPTS_HP, 'H', RIGHT, 6},
-	{"Window Options", NULL, OPTS_WINDOW, 'W', RIGHT, 7},
-	{"Redraw Options", NULL, OPTS_REDRAW, 'R', RIGHT, 8},
-	{"Interact with Macros", NULL, OPTS_MACRO, 'M', RIGHT, 9},
-	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', RIGHT, 10},
-	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', RIGHT, 11},
-	{"Squelch Settings", NULL, OPTS_SQUELCH, 'Q', RIGHT, 12},
-	{"Inscription settings", NULL, OPTS_INSCRIBE, 'I', RIGHT, 13},
-	{"Save options", NULL, OPTS_TO_FILE, 'U', RIGHT, 15},
-	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', RIGHT, 16},
-	{"Load preferences", NULL, OPTS_FROM_FILE, 'O', RIGHT, 17},
+	{"Misc. Numerical Options", NULL, OPTS_SAVE, 'N', RIGHT, 4},
+	{"Window Options", NULL, OPTS_WINDOW, 'W', RIGHT, 5},
+	{"Redraw Options", NULL, OPTS_REDRAW, 'R', RIGHT, 6},
+	{"Interact with Macros", NULL, OPTS_MACRO, 'M', RIGHT, 7},
+	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', RIGHT, 8},
+	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', RIGHT, 9},
+	{"Squelch Settings", NULL, OPTS_SQUELCH, 'Q', RIGHT, 10},
+	{"Inscription settings", NULL, OPTS_INSCRIBE, 'I', RIGHT, 11},
+	{"Save options", NULL, OPTS_TO_FILE, 'U', RIGHT, 13},
+	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', RIGHT, 14},
+	{"Load preferences", NULL, OPTS_FROM_FILE, 'O', RIGHT, 15},
 };
 
 
@@ -2214,19 +2203,9 @@ good: /* Success */
 		}
 		else switch (ol_ptr->num)
 		{
-			case OPTS_DELAY:
-			{
-				do_cmd_options_delay();
-				break;
-			}
-			case OPTS_HP:
-			{
-				do_cmd_options_hp();
-				break;
-			}
 			case OPTS_SAVE:
 			{
-				do_cmd_options_autosave("Autosave");
+				do_cmd_options_autosave(ol_ptr->title);
 				break;
 			}
 			case OPTS_WINDOW:
