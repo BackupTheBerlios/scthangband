@@ -378,18 +378,7 @@ u16b spell_energy(u16b skill,u16b min)
 /*
  * Determine the energy required to cast a given spell
  */
-static u16b spellcast_energy(int spell_school, int spell)
-{
-	magic_type	*s_ptr = &magic_info[spell_school][spell];
-	const int plev = spell_skill(s_ptr);
-
-	return spell_energy((u16b)plev,(u16b)(s_ptr->min));
-}
-
-/*
- * Determine the energy required to cast a given spell
- */
-static u16b spellcast_energy_b(magic_type *s_ptr)
+static u16b magic_energy(magic_type *s_ptr)
 {
 	return spell_energy(spell_skill(s_ptr), s_ptr->min);
 }
@@ -490,7 +479,7 @@ static void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_p
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
 		I2A(i), s_ptr->name, type, s_ptr->min*2, s_ptr->mana,
-			spellcast_energy_b(s_ptr), spell_chance(s_ptr), comment);
+			magic_energy(s_ptr), spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -1255,16 +1244,6 @@ static int get_favour(int *sn, int spirit,int sphere)
 }
 
 /*
- * Determine the energy used to invoke a specified favour.
- */
-static int spirit_energy(int favour_sphere, int spell)
-{
-	int plev = MAX((skill_set[SKILL_SHAMAN].value/2), 1);
-	magic_type *f_ptr = &(favour_info[favour_sphere][spell]);
-	return spell_energy(plev,(u16b)(f_ptr->min));
-}
-
-/*
  * Print a list of favours (for invoking)
  */
 static void print_favours(byte *spells, int num, int y, int x, int sphere)
@@ -1312,7 +1291,7 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 		/* Dump the favour --(-- */
 		sprintf(out_val, "  %c) %-35s%2d %4d %3d%%%s",
 		I2A(i), favour_info[sphere][spell].name, /* sphere, spell */
-		s_ptr->min*2, spirit_energy(sphere, spell), spell_chance(s_ptr), comment);
+		s_ptr->min*2, magic_energy(s_ptr), spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -4085,7 +4064,7 @@ void do_cmd_invoke(void)
 	chance = spell_chance(f_ptr);
 
 	/* Normal energy use. */
-	energy_use = spirit_energy(favour_sphere, spell);
+	energy_use = magic_energy(f_ptr);
 
 	/* Don't punish those silly enough to pray to an angry spirit too harshly. */
 	if (s_ptr->annoyance)
@@ -4456,14 +4435,6 @@ void do_cmd_invoke(void)
 
 
 /*
- * Calculate the enrgy required for a given mindcrafting power.
- */
-static int mindcraft_energy(magic_type *s_ptr)
-{
-	return spellcast_energy_b(s_ptr);
-}
-
-/*
  * Display mindcrafting powers
  * Returns the y co-ordinate of the lowest line used.
  */
@@ -4501,7 +4472,7 @@ static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
 		/* Dump the spell --(-- */
 		sprintf(psi_desc, "  %c) %-30s%2d %4d %4d %3d%%%s",
 		I2A(i), s_ptr->name,
-		s_ptr->min*2, s_ptr->mana, mindcraft_energy(s_ptr), chance, comment);
+		s_ptr->min*2, s_ptr->mana, magic_energy(s_ptr), chance, comment);
 		prt(psi_desc, y++, x);
 	}
 
@@ -5012,7 +4983,7 @@ void do_cmd_mindcraft(void)
 		}
 	}
 	/* Take a turn */
-	energy_use = mindcraft_energy(s_ptr);
+	energy_use = magic_energy(s_ptr);
 
 	/* Sufficient mana */
 	if (s_ptr->mana <= p_ptr->cchi)
