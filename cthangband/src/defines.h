@@ -2288,38 +2288,45 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Legal restrictions for "summon_specific()"
  */
-#define SUMMON_ALL 0x0200 /* 0 is a perfectly good "summon by char" type. */
-#define SUMMON_NO_UNIQUES	0xF000 /* Prevent unique summoning. */
-#define SUMMON_ANT              ('a' | SUMMON_NO_UNIQUES)
-#define SUMMON_SPIDER           ('S' | SUMMON_NO_UNIQUES)
-#define SUMMON_HOUND            (0x0100 | SUMMON_NO_UNIQUES)
-#define SUMMON_HYDRA            ('M' | SUMMON_NO_UNIQUES)
-#define SUMMON_CTHULOID         (0x0101 | SUMMON_NO_UNIQUES)
-#define SUMMON_DEMON            (0x0102 | SUMMON_NO_UNIQUES)
-#define SUMMON_UNDEAD           (0x0103 | SUMMON_NO_UNIQUES)
-#define SUMMON_DRAGON           (0x0104 | SUMMON_NO_UNIQUES)
-#define SUMMON_HI_UNDEAD        (0x0105)
-#define SUMMON_HI_DRAGON        ('D')
-#define SUMMON_GOO              (0x0106)
-#define SUMMON_UNIQUE           (0x0107)
-#define SUMMON_MOULD         ('m' | SUMMON_NO_UNIQUES)
-#define SUMMON_BAT         ('b' | SUMMON_NO_UNIQUES)
-#define SUMMON_QUYLTHULG         ('Q' | SUMMON_NO_UNIQUES)
-#define SUMMON_VORTEX         ('v' | SUMMON_NO_UNIQUES)
-#define SUMMON_TREASURE         ('$' | SUMMON_NO_UNIQUES)
-#define SUMMON_MIMIC         (0x0108 | SUMMON_NO_UNIQUES)
-#define SUMMON_REAVER           (0x0109 | SUMMON_NO_UNIQUES)
-#define SUMMON_KIN              (0x010A | SUMMON_NO_UNIQUES)
-#define SUMMON_ANIMAL           (0x010B | SUMMON_NO_UNIQUES)
-#define SUMMON_ANIMAL_RANGER    (0x010C | SUMMON_NO_UNIQUES)
-#define SUMMON_PHANTOM          (0x010D | SUMMON_NO_UNIQUES)
-#define SUMMON_ELEMENTAL        (0x010E | SUMMON_NO_UNIQUES)
-#define SUMMON_ORC				(0x010F | SUMMON_NO_UNIQUES)
-#define SUMMON_YEEK				('y' | SUMMON_NO_UNIQUES)
-#define SUMMON_HUMAN			('p' | SUMMON_NO_UNIQUES)
-#define SUMMON_KOBOLD			('k' | SUMMON_NO_UNIQUES)
-#define SUMMON_IB	('i' | SUMMON_NO_UNIQUES)
-#define SUMMON_LIVING	(0x0110 | SUMMON_NO_UNIQUES)
+#define SUMMON_ALL 0
+#define SUMMON_NO_UNIQUES	0x8000 /* Prevent unique summoning. */
+#define SUMMON_FLAG 0x4000 /* Check for a specific flag. */
+#define SUMMON_CHAR 0x2000 /* Check for the low byte as a symbol. */
+
+/* Summon by d_char. */
+#define SUMMON_ANT              ('a' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_SPIDER           ('S' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_HYDRA            ('M' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_HI_DRAGON        ('D' | SUMMON_CHAR)
+#define SUMMON_YEEK				('y' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_HUMAN			('p' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_KOBOLD			('k' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_IB	('i' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_MOULD         ('m' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_BAT         ('b' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_QUYLTHULG         ('Q' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_VORTEX         ('v' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_TREASURE         ('$' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+
+/* Summon by a flag. */
+#define SUMMON_CTHULOID         (3*32 | iilog(RF3_CTHULOID) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
+#define SUMMON_DEMON            (3*32 | iilog(RF3_DEMON) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
+#define SUMMON_UNDEAD           (3*32 | iilog(RF3_UNDEAD) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
+#define SUMMON_DRAGON           (3*32 | iilog(RF3_DRAGON) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
+#define SUMMON_GOO              (3*32 | iilog(RF3_GREAT_OLD_ONE) | SUMMON_FLAG)
+#define SUMMON_UNIQUE           (1*32 | iilog(RF1_UNIQUE) | SUMMON_FLAG)
+#define SUMMON_ORC				(3*32 | iilog(RF3_ORC) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
+#define SUMMON_ANIMAL           (3*32 | iilog(RF3_ANIMAL) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
+
+/* Unusual summon types - see summon_specific_okay(). */
+#define SUMMON_HOUND	(0x0100 | SUMMON_NO_UNIQUES) /* CZ */
+#define SUMMON_HI_UNDEAD	(0x0101) /* LVW */
+#define SUMMON_MIMIC	(0x0102 | SUMMON_NO_UNIQUES) /* !?=$| */
+#define SUMMON_REAVER	(0x0103 | SUMMON_NO_UNIQUES) /* "Black reaver" */
+#define SUMMON_ANIMAL_RANGER	(0x0105 | SUMMON_NO_UNIQUES)
+#define SUMMON_PHANTOM	(0x0106 | SUMMON_NO_UNIQUES) /* "Phantom" */
+#define SUMMON_ELEMENTAL	(0x0107 | SUMMON_NO_UNIQUES) /* "lemental" */
+#define SUMMON_LIVING	(0x0108 | SUMMON_NO_UNIQUES)
 
 
 /*

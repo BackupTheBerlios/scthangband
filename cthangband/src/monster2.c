@@ -2663,93 +2663,67 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 		(r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);
 
 	/* Hack - summon by symbol. */
-	if (!(UNFLAG(summon_specific_type) & 0xFF00))
+	if (summon_specific_type & SUMMON_CHAR)
 	{
-		return (r_ptr->d_char == (summon_specific_type & ~SUMMON_NO_UNIQUES));
+		return (r_ptr->d_char == (summon_specific_type & 0x00FF));
+	}
+	else if (summon_specific_type & SUMMON_FLAG)
+	{
+		u32b *rflag, flag = 1L << (summon_specific_type % 32);
+		int set = (summon_specific_type / 32) % 8;
+		switch (set)
+		{
+			case 1: rflag = &(r_ptr->flags1); break;
+			case 2: rflag = &(r_ptr->flags1); break;
+			case 3: rflag = &(r_ptr->flags1); break;
+			default:
+			{
+				/* Paranoia - no other summon types are possible. */
+				if (alert_failure) 
+					msg_format("Strange summon type %lx", summon_specific_type);
+				return FALSE;
+			}
+		}
+
+		return !!(*rflag & flag);
 	}
 
 	/* Check our requirements */
-	switch (UNFLAG(summon_specific_type))
+	else switch (UNFLAG(summon_specific_type))
 	{
 		case UNFLAG(SUMMON_HOUND):
 		{
 			return ((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z'));
 		}
 
-		case UNFLAG(SUMMON_CTHULOID):
-		{
-			return !!(r_ptr->flags3 & (RF3_CTHULOID));
-		}
-
-		case UNFLAG(SUMMON_DEMON):
-		{
-			return !!(r_ptr->flags3 & (RF3_DEMON));
-		}
-
-		case UNFLAG(SUMMON_UNDEAD):
-		{
-			return !!(r_ptr->flags3 & (RF3_UNDEAD));
-		}
-
-		case UNFLAG(SUMMON_DRAGON):
-		{
-			return !!(r_ptr->flags3 & (RF3_DRAGON));
-		}
-
 		case UNFLAG(SUMMON_HI_UNDEAD):
 		{
-			return ((r_ptr->d_char == 'L') ||
-			        (r_ptr->d_char == 'V') ||
-			        (r_ptr->d_char == 'W'));
+			return !!strchr("LVW", r_ptr->d_char);
 		}
 
-		case UNFLAG(SUMMON_GOO):
+		case UNFLAG(SUMMON_MIMIC):
 		{
-            return !!(r_ptr->flags3 & (RF3_GREAT_OLD_ONE)); 
+			return !!strchr("!?=$|", r_ptr->d_char);
 		}
 
-		case UNFLAG(SUMMON_UNIQUE):
-		{
-			return !!(r_ptr->flags1 & (RF1_UNIQUE));
-		}
-
-        case UNFLAG(SUMMON_ORC):
-		{
-			return !!(r_ptr->flags3 & (RF3_ORC));
-		}
-
-        case UNFLAG(SUMMON_MIMIC):
-		{
-			return ((r_ptr->d_char == '!') ||
-                     (r_ptr->d_char == '?') ||
-                     (r_ptr->d_char == '=') ||
-                     (r_ptr->d_char == '$') ||
-                     (r_ptr->d_char == '|'));
-		}
-
-        case UNFLAG(SUMMON_REAVER):
-        {
-            return !!(strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"Black reaver"));
-        }
-
-
-        case UNFLAG(SUMMON_ANIMAL):
-		{
-			return !!(r_ptr->flags3 & (RF3_ANIMAL));
-		}
-
-        case UNFLAG(SUMMON_ANIMAL_RANGER):
+		case UNFLAG(SUMMON_ANIMAL_RANGER):
 		{
 			return ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-                   (strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
-                   !(r_ptr->flags3 & (RF3_DRAGON))&&
-                   !(r_ptr->flags3 & (RF3_EVIL)) &&
-                   !(r_ptr->flags3 & (RF3_UNDEAD))&&
-                   !(r_ptr->flags3 & (RF3_DEMON)) &&
-                   !(r_ptr->flags3 & (RF3_CTHULOID)) &&
-                   !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6));
-           }
+				(strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
+				!(r_ptr->flags3 & (RF3_DRAGON))&&
+				!(r_ptr->flags3 & (RF3_EVIL)) &&
+				!(r_ptr->flags3 & (RF3_UNDEAD))&&
+				!(r_ptr->flags3 & (RF3_DEMON)) &&
+				!(r_ptr->flags3 & (RF3_CTHULOID)) &&
+				!(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6));
+		}
+
+		case UNFLAG(SUMMON_REAVER):
+		{
+			return !!(strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
+				"Black reaver"));
+		}
+
 		case UNFLAG(SUMMON_PHANTOM):
         {
 			return !!strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
@@ -2764,7 +2738,7 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 		{
 			return live_monster_p(r_ptr);
 		}
-		case UNFLAG(SUMMON_ALL): /* No restrictions. */
+		case 0: /* No restrictions. */
 		{
 			return TRUE;
 		}

@@ -3634,7 +3634,7 @@ void gain_level_reward(int chosen_reward)
             msg_print("'My pets, destroy the arrogant mortal!'");
             for (dummy = 0; dummy < randint(5) + 1; dummy++)
             {
-                (void) summon_specific(py, px, (dun_depth), SUMMON_ALL);
+                (void) summon_specific(py, px, (dun_depth), 0);
             }
             break;
         case REW_H_SUMMON:

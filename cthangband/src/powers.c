@@ -1873,7 +1873,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			for (; i; i--)
 			{
-				if (summon_specific(py, px, (dun_depth), SUMMON_ALL))
+				if (summon_specific(py, px, (dun_depth), 0))
 				{
 					(*ident) = TRUE;
 				}
@@ -2229,7 +2229,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			for (; i; i--)
 			{
-				if (summon_specific(py, px, (dun_depth), SUMMON_ALL))
+				if (summon_specific(py, px, (dun_depth), 0))
 				{
 					(*ident) = TRUE;
 				}
@@ -5052,7 +5052,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             }
             else
             {
-                if (summon_specific(py, px, plev, SUMMON_ALL))
+                if (summon_specific(py, px, plev, 0))
                 {
                     msg_print("The summoned creature gets angry!");
                 }
@@ -5310,7 +5310,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                 }
                 else
                 {
-                    if (summon_specific(py, px, plev, SUMMON_ALL))
+                    if (summon_specific(py, px, plev, 0))
                     {
                         msg_print("A summoned creature gets angry!");
                         b = FALSE;
