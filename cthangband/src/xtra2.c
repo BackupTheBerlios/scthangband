@@ -1869,6 +1869,36 @@ bool set_cut(int v)
 	return (TRUE);
 }
 
+/*
+ * Spread the contents of a now ineligible square to the surrounding squares.
+ */
+static void scatter_objects(int y, int x)
+{
+	cave_type *c_ptr;
+	s16b o_idx;
+
+	/* Refuse "illegal" locations */
+	if (!in_bounds(y, x)) return;
+
+	/* Grid */
+	c_ptr = &cave[y][x];
+
+	/* Scan all objects in the grid */
+	for (o_idx = c_ptr->o_idx; o_idx;)
+	{
+		/* Acquire object */
+		object_type *o_ptr = &o_list[o_idx];
+
+		/* Hopefully find somewhere appropriate for object */
+		(void)drop_near(o_ptr, -1, y, x);
+
+		/* Acquire next object */
+		o_idx = o_ptr->next_o_idx;
+	}
+
+	/* Remove objects from original square. */
+	c_ptr->o_idx = 0;
+}
 
 /*
  * Set "p_ptr->food", notice observable changes
@@ -2383,9 +2413,6 @@ void monster_death(int m_idx)
 				y = ny; x = nx;
 			}
 
-			/* XXX XXX XXX */
-			delete_object(y, x);
-
 			/* Explain the stairway */
 			msg_print("A magical stairway appears...");
 
@@ -2399,6 +2426,9 @@ void monster_death(int m_idx)
 				/* Create stairs down */
 				cave_set_feat(y, x, FEAT_MORE);
 			}
+
+			/* Clear the stairs */
+			scatter_objects(y, x);
 
 			/* Remember to update everything */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
