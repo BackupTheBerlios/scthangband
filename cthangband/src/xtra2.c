@@ -2227,7 +2227,6 @@ void monster_death(int m_idx)
 
 	int number = 0;
 	int total = 0;
-	int q_idx = 0;
 
 	bool quest = FALSE;
 	
@@ -2315,7 +2314,7 @@ void monster_death(int m_idx)
 			/* Remove the block on normal generation. */
 			r_ptr->flags1 &= ~(RF1_GUARDIAN);
 			
-			/* Drop at least 2 items (the stair will probably destroy one */
+			/* Drop at least 2 items. */
 			number += 2;
 			quest = TRUE;
 			q_ptr->level=0;
@@ -2385,11 +2384,8 @@ void monster_death(int m_idx)
 	}
 
 
-	/* Only process "Quest Monsters" */
-	if (!(r_ptr->flags1 & RF1_GUARDIAN)) return;
-
-	/* Check if quest is complete (Heino Vander Sanden) */
-	if (q_list[q_idx].cur_num != q_list[q_idx].max_num) return;
+	/* Only process completed monster quests. */
+	if (!quest) return;
 
 	/* Count incomplete quests (Heino Vander Sanden) */
 	for (i = 0; i < MAX_Q_IDX; i++)
@@ -2397,49 +2393,8 @@ void monster_death(int m_idx)
 		if (q_list[i].level || (q_list[i].cur_num != q_list[i].max_num)) total++;
 	}
 
-
-
-	/* Need some stairs */
-	if (total)
-	{
-		/* but only if not at the max level */
-		if (dun_level < dun_defs[cur_dungeon].max_level)
-		{
-			/* Stagger around */
-			while (!cave_valid_bold(y, x))
-			{
-				int d = 1;
-
-				/* Pick a location */
-				scatter(&ny, &nx, y, x, d, 0);
-
-				/* Stagger */
-				y = ny; x = nx;
-			}
-
-			/* Explain the stairway */
-			msg_print("A magical stairway appears...");
-
-			if (dun_defs[cur_dungeon].flags & DF_TOWER)
-			{
-				/* Create stairs up */
-				cave_set_feat(y, x, FEAT_LESS);
-			}
-			else
-			{
-				/* Create stairs down */
-				cave_set_feat(y, x, FEAT_MORE);
-			}
-
-			/* Clear the stairs */
-			scatter_objects(y, x);
-
-			/* Remember to update everything */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
-		}
-	}
 	/* Nothing left, game over... */
-	else
+	if (!total)
 	{
 		/* Total winner */
 		total_winner = TRUE;
@@ -2451,6 +2406,42 @@ void monster_death(int m_idx)
 		msg_print("*** CONGRATULATIONS ***");
 		msg_print("You have won the game!");
 		msg_print("You may retire (commit suicide) when you are ready.");
+	}
+
+	/* Need some stairs if not at the max level */
+	if (dun_level < dun_defs[cur_dungeon].max_level)
+	{
+		/* Stagger around */
+		while (!cave_valid_bold(y, x))
+		{
+			int d = 1;
+
+			/* Pick a location */
+			scatter(&ny, &nx, y, x, d, 0);
+
+			/* Stagger */
+			y = ny; x = nx;
+		}
+
+		/* Explain the stairway */
+		msg_print("A magical stairway appears...");
+
+		if (dun_defs[cur_dungeon].flags & DF_TOWER)
+		{
+			/* Create stairs up */
+			cave_set_feat(y, x, FEAT_LESS);
+		}
+		else
+		{
+			/* Create stairs down */
+			cave_set_feat(y, x, FEAT_MORE);
+		}
+
+		/* Clear the stairs */
+		scatter_objects(y, x);
+
+		/* Remember to update everything */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
 }
 
