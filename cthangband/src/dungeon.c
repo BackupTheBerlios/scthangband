@@ -4605,6 +4605,9 @@ void play_game(bool new_game)
 			{
 				resurrect(FALSE);
 			}
+			/* *Hack* - assume that code which set alive && death allocated
+			 * died_from. */
+			if (!death) FREE(died_from);
 		}
 
 		/* Handle "death" */

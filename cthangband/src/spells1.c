@@ -766,13 +766,10 @@ void take_hit(int damage, cptr hit_from, int monster)
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
-	/* hit_from may be a format string, so copy it across now. */
-	if ((p_ptr->chp < 0) && (p_ptr->ritual == MAX_TOWNS + 1))
+	/* hit_from may be a format string, so copy it across before format__buf
+	 * can be contaminated. */
+	if (p_ptr->chp < 0)
 	{
-		/* This allocation isn't tracked as it is freed on termination.
-		 * This does mean that being reincarnated via cheat_live may clutter
-		 * up the memory unnecessarily.
-		 */
 		cptr imstr = (p_ptr->image) ? "(?)" : "";
 		died_from = string_make(format("%s%s", hit_from, imstr));
 	}
