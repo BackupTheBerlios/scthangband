@@ -3615,13 +3615,20 @@ errr file_character(cptr name, bool UNUSED full)
 next_cave:
 			continue; /* Don't ask me, it just prevents a GCC warning. */
 		}
-			
+
+		fprintf(fff, "\n");
+
+		for (i = y = 0; i < z_info->quests; i++)
+		{
+			if (q_list[i].cur_num == q_list[i].max_num) y++;
+		}
+		if (y) fprintf(fff, " You have completed %d quests.", y);
 
         if (Total < 1)
-            fprintf(fff,"\n You have defeated no enemies yet.\n");
+            fprintf(fff," You have defeated no enemies yet.\n");
         else if (Total == 1)
 
-            fprintf(fff,"\n You have defeated one enemy.\n");
+            fprintf(fff," You have defeated one enemy.\n");
         else
            fprintf(fff,"\n You have defeated %lu enemies.\n", Total);
     }

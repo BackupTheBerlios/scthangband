@@ -2825,7 +2825,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	}
 
 	/* Describe use of the base object, if any. */
-	if (spoil_base && k_info[o_ptr->k_idx].text)
+	if (spoil_base && !brief && k_info[o_ptr->k_idx].text)
 	{
 		info[i++].txt = k_text+k_info[o_ptr->k_idx].text;
 
@@ -3292,7 +3292,10 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
         info[i++].txt = "It carries an ancient foul curse.";
     }
 
-	if ((o_ptr->flags3 & (TR3_IGNORE_ALL)) == TR3_IGNORE_ALL)
+	/* Hack - simple items don't get ignore flags listed. */
+	if (brief && o_ptr->flags3 & TR3_EASY_KNOW);
+	
+	else if ((o_ptr->flags3 & (TR3_IGNORE_ALL)) == TR3_IGNORE_ALL)
 	{
 		info[i++].txt = "It cannot be harmed by the elements.";
 	}
