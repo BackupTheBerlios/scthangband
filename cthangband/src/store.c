@@ -1858,6 +1858,9 @@ static void store_prt_gold(void)
 	prt("Gold Remaining: ", y, 53);
 
 	prt(format("%9ld", (long)p_ptr->au), y, 68);
+
+	/* Hack - redraw it once the player leaves here. */
+	p_ptr->redraw |= PR_GOLD;
 }
 
 
