@@ -12,16 +12,13 @@
 
 
 /*
- * This file defines some "XImage" manipulation functions for X11.
+ * This file contains some auxiliary functions for X11-based display modules.
  *
  * Original code by Desvignes Sebastien (desvigne@solar12.eerie.fr).
  *
  * BMP format support by Denis Eropkin (denis@dream.homepage.ru).
  *
  * Major fixes and cleanup by Ben Harrison (benh@phial.com).
- *
- * This file is designed to be "included" by "main-x11.c" or "main-xaw.c",
- * which will have already "included" several relevant header files.
  */
 
 #include "angband.h"
@@ -39,6 +36,19 @@ static int gamma_val = 0;
 #endif /* SUPPORT_GAMMA */
 
 
+/* Constant system-wide default fonts, which are specified in config.h. */
+static cptr const default_fonts[ANGBAND_TERM_MAX] =
+{
+	DEFAULT_X11_FONT_0,
+	DEFAULT_X11_FONT_1,
+	DEFAULT_X11_FONT_2,
+	DEFAULT_X11_FONT_3,
+	DEFAULT_X11_FONT_4,
+	DEFAULT_X11_FONT_5,
+	DEFAULT_X11_FONT_6,
+	DEFAULT_X11_FONT_7,
+};
+
 /*
  * Get the name of the default font to use for the term.
  */
@@ -48,68 +58,22 @@ cptr get_default_font(int term_num)
 
 	char buf[80];
 
+	/* No port should try to support more than ANGBAND_TERM_MAX windows. */
+	assert(term_num >= 0 && term_num < ANGBAND_TERM_MAX);
+
 	/* Window specific font name */
 	sprintf(buf, "ANGBAND_X11_FONT_%d", term_num);
 
 	/* Check environment for that font */
 	font = getenv(buf);
+	if (font) return font;
 
 	/* Check environment for "base" font */
-	if (!font) font = getenv("ANGBAND_X11_FONT");
+	font = getenv("ANGBAND_X11_FONT");
+	if (font) return font;
 
 	/* No environment variables, use default font */
-	if (!font)
-	{
-		switch (term_num)
-		{
-			case 0:
-			{
-				font = DEFAULT_X11_FONT_0;
-			}
-			break;
-			case 1:
-			{
-				font = DEFAULT_X11_FONT_1;
-			}
-			break;
-			case 2:
-			{
-				font = DEFAULT_X11_FONT_2;
-			}
-			break;
-			case 3:
-			{
-				font = DEFAULT_X11_FONT_3;
-			}
-			break;
-			case 4:
-			{
-				font = DEFAULT_X11_FONT_4;
-			}
-			break;
-			case 5:
-			{
-				font = DEFAULT_X11_FONT_5;
-			}
-			break;
-			case 6:
-			{
-				font = DEFAULT_X11_FONT_6;
-			}
-			break;
-			case 7:
-			{
-				font = DEFAULT_X11_FONT_7;
-			}
-			break;
-			default:
-			{
-				font = DEFAULT_X11_FONT;
-			}
-		}
-	}
-
-	return (font);
+	return default_fonts[term_num];
 }
 
 #endif /* USE_X11 || USE_XAW || USE_XPJ || USE_GTK */
