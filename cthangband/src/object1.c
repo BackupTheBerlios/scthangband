@@ -1156,7 +1156,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 	/* tmp_val_base is twice as large as necessary as little bounds checking
 	 * is performed. This probably isn't good enough. */
-	C_TNEW(tmp_val_base, len*2, char);
+	C_TNEW(tmp_val_base, len+80, char);
 	char		*tmp_val = tmp_val_base;
 
 	object_kind	*k_ptr;
@@ -3813,16 +3813,14 @@ bool item_tester_okay(object_type *o_ptr)
  */
 void display_inven(void)
 {
-	register        int i, n, z = 0;
+	int i, wid, z = 0;
 
 	object_type *o_ptr;
 
 	byte    attr = TERM_WHITE;
 
-	char    tmp_val[80];
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
+	Term_get_size(&wid, &i);
 
 	/* Find the "final" slot */
 	for (i = 0; i < INVEN_PACK; i++)
@@ -3842,27 +3840,9 @@ void display_inven(void)
 		/* Examine the item */
 		o_ptr = &inventory[i];
 
-		/* Start with an empty "index" */
-		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
-
-		/* Is this item "acceptable"? */
+		/* Display the index if this item is "acceptable" */
 		if (item_tester_okay(o_ptr))
-		{
-			/* Prepare an "index" */
-			tmp_val[0] = (byte)(index_to_label(i)); 
-
-			/* Bracket the "index" --(-- */
-			tmp_val[1] = ')';
-		}
-
-		/* Display the index (or blank space) */
-		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
-
-		/* Obtain an item description */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-		/* Obtain the length of the description */
-		n = strlen(o_name);
+			put_str(format("%c) ", index_to_label(i)), i, 0);
 
 		/* Get a color */
 		attr = tval_to_attr[o_ptr->tval % 128];
@@ -3871,27 +3851,16 @@ void display_inven(void)
 		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the entry itself */
-		Term_putstr(3, i, n, attr, o_name);
-
-		/* Erase the rest of the line */
-		Term_erase(3+n, i, 255);
+		c_put_str(attr, format("%.*v", (show_weights) ? wid-12 : wid-3,
+			object_desc_f3, o_ptr, TRUE, 3), i, 3);
 
 		/* Display the weight if needed */
 		if (show_weights && o_ptr->weight)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
+			put_str(format("%3d.%1d lb", wgt / 10, wgt % 10), i, wid-9);
 		}
 	}
-
-	/* Erase the rest of the window */
-	for (i = z; i < Term->hgt; i++)
-	{
-		/* Erase the line */
-		Term_erase(0, i, 255);
-	}
-	TFREE(o_name);
 }
 
 
@@ -3901,14 +3870,11 @@ void display_inven(void)
  */
 void display_equip(void)
 {
-	register        int i, n;
+	int i, wid;
 	object_type *o_ptr;
 	byte    attr = TERM_WHITE;
 
-	char    tmp_val[80];
-
-	C_TNEW(o_name, ONAME_MAX, char);
-
+	Term_get_size(&wid, &i);
 
 	/* Display the equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -3916,27 +3882,9 @@ void display_equip(void)
 		/* Examine the item */
 		o_ptr = &inventory[i];
 
-		/* Start with an empty "index" */
-		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
-
-		/* Is this item "acceptable"? */
+		/* Display the index if this item is "acceptable" */
 		if (item_tester_okay(o_ptr))
-		{
-			/* Prepare an "index" */
-			tmp_val[0] = (byte)(index_to_label(i));
-
-			/* Bracket the "index" --(-- */
-			tmp_val[1] = ')';
-		}
-
-		/* Display the index (or blank space) */
-		Term_putstr(0, i - INVEN_WIELD, 3, TERM_WHITE, tmp_val);
-
-		/* Obtain an item description */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-		/* Obtain the length of the description */
-		n = strlen(o_name);
+			put_str(format("%c) ", index_to_label(i)), i, 0);
 
 		/* Get the color */
 		attr = tval_to_attr[o_ptr->tval % 128];
@@ -3945,35 +3893,24 @@ void display_equip(void)
 		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the entry itself */
-		Term_putstr(3, i - INVEN_WIELD, n, attr, o_name);
-
-		/* Erase the rest of the line */
-		Term_erase(3+n, i - INVEN_WIELD, 255);
+		c_put_str(attr, format("%.*v",
+			wid-3 - (show_weights) ? 9 : 0 - (show_labels) ? 19 : 0,
+			object_desc_f3, o_ptr, TRUE, 3), i-INVEN_WIELD, 3);
 
 		/* Display the slot description (if needed) */
 		if (show_labels)
 		{
-			Term_putstr(61, i - INVEN_WIELD, -1, TERM_WHITE, "<--");
-			Term_putstr(65, i - INVEN_WIELD, -1, TERM_WHITE, mention_use(i));
+			put_str(format("<--- %s", mention_use(i)), i-INVEN_WIELD, wid-19);
 		}
 
 		/* Display the weight (if needed) */
-		if (show_weights && o_ptr->weight)
+		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			int col = (show_labels ? 52 : 71);
-			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			Term_putstr(col, i - INVEN_WIELD, -1, TERM_WHITE, tmp_val);
+			put_str(format("%3d.%1d lb", wgt / 10, wgt % 10), i-INVEN_WIELD,
+				(show_labels) ? wid-9 : wid-28);
 		}
 	}
-
-	/* Erase the rest of the window */
-	for (i = INVEN_TOTAL - INVEN_WIELD; i < Term->hgt; i++)
-	{
-		/* Clear that line */
-		Term_erase(0, i, 255);
-	}
-	TFREE(o_name);
 }
 
 
@@ -3989,7 +3926,7 @@ void display_equip(void)
 void show_inven(void)
 {
 	int             i, j, k, l, z = 0;
-	int             col, len, lim;
+	int             col, len, lim, wid;
 
 	object_type     *o_ptr;
 
@@ -4007,11 +3944,14 @@ void show_inven(void)
 	/* Starting column */
 	col = command_gap;
 
+	/* Get size */
+	Term_get_size(&wid, &i);
+
 	/* Default "max-length" */
-	len = 79 - col;
+	len = wid - 1 - col;
 
 	/* Maximum space allowed for descriptions */
-	lim = 79 - 3;
+	lim = wid - 1 - 3;
 
 	/* Require space for weight (if needed) */
 	if (show_weights) lim -= 9;
@@ -4067,7 +4007,7 @@ void show_inven(void)
 	}
 
 	/* Find the column to start in */
-	col = (len > 76) ? 0 : (79 - len);
+	col = (len > wid - 4) ? 0 : (wid - 1 - len);
 
 	/* Output each entry */
 	for (j = 0; j < k; j++)
@@ -4108,7 +4048,7 @@ void show_inven(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, " %3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, j + 1, 71);
+			put_str(tmp_val, j + 1, wid-9);
 		}
 	}
 
@@ -4131,7 +4071,7 @@ void show_inven(void)
 void show_equip(void)
 {
 	int                     i, j, k, l;
-	int                     col, len, lim;
+	int                     col, len, lim, wid;
 
 	object_type             *o_ptr;
 
@@ -4150,11 +4090,14 @@ void show_equip(void)
 	/* Starting column */
 	col = command_gap;
 
+	/* Get size */
+	Term_get_size(&wid, &i);
+
 	/* Maximal length */
-	len = 79 - col;
+	len = wid - 1 - col;
 
 	/* Maximum space allowed for descriptions */
-	lim = 79 - 3;
+	lim = wid - 1 - 3;
 
 	/* Require space for labels (if needed) */
 	if (show_labels) lim -= (14 + 2);
@@ -4200,7 +4143,7 @@ void show_equip(void)
 	}
 
 	/* Hack -- Find a column to start in */
-	col = (len > 76) ? 0 : (79 - len);
+	col = (len > wid - 4) ? 0 : (wid - 1 - len);
 
 	/* Output each entry */
 	for (j = 0; j < k; j++)
@@ -4255,7 +4198,7 @@ void show_equip(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, " %3d.%d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, j+1, 71);
+			put_str(tmp_val, j+1, wid-9);
 		}
 	}
 
