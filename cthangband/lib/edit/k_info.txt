@@ -14,7 +14,7 @@
 # === Understanding object.txt ===
 
 # N: serial number : & object name~
-# G: symbol : color
+# G: symbol : color : unidentified class
 # I: tval : pval : extra
 # W: rating : weight : cost
 # P: (base damage) (hit bonus, damage bonus) [base armour, armour bonus]
@@ -27,8 +27,8 @@
 # include articles and pluralization as necessary to ensure
 # grammatical correctness in object descriptions.
 
-# 'G' is for graphics - symbol and color. There are 15 colors,as
-# follows:
+# 'G' is for graphics - symbol, color and unidentified object class. There are
+# 15 colors,as follows:
 
 # D - Dark Gray    w - White          s - Gray          o - Orange
 # r - Red          g - Green          b - Blue          u - Brown
@@ -36,8 +36,12 @@
 # G - Light Green  B - Light Blue     U - Light Brown
 
 # One colour,"d",and one symbol," ",are used to indicate that the colour
-# and symbol are derived from the equivalent "flavoured" item in u_info.txt.
+# and symbol are derived from the equivalent unidentified item in u_info.txt.
 # For unflavoured items,both turn the object invisible.
+# The unidentified object class determines which set of unidentified
+# descriptions (based on o_base.txt, and u_info.txt for flavoured items) an
+# object has. The unidentified graphics are used if the object type is
+# unidentified, or if specified as above.
 
 # 'I' is for basic information. The tval is for the type of item,the
 # sval identifies the subtype and the pval indicates the amount of
