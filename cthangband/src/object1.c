@@ -454,45 +454,11 @@ void reset_visuals(void)
 
 	char buf[1024];
 
-	/* Extract some info about terrain features */
-	for (i = 0; i < MAX_F_IDX; i++)
-	{
-		feature_type *f_ptr = &f_info[i];
-
-		/* Assume we will use the underlying values */
-		f_ptr->x_attr = f_ptr->d_attr;
-		f_ptr->x_char = f_ptr->d_char;
-	}
-
-	/* Extract some info about objects */
-	for (i = 0; i < MAX_K_IDX; i++)
-	{
-		object_kind *k_ptr = &k_info[i];
-
-		/* Assume we will use the underlying values */
-		k_ptr->x_attr = k_ptr->d_attr;
-		k_ptr->x_char = k_ptr->d_char;
-	}
-
-	/* Extract some info about unidentified objects */
-	for (i = 0; i < MAX_U_IDX; i++)
-	{
-		unident_type *u_ptr = &u_info[i];
-		
-		/* Assume we will use the underlying values */
-		u_ptr->x_attr = u_ptr->d_attr;
-		u_ptr->x_char = u_ptr->d_char;
-	}
-
-	/* Extract some info about monsters */
-	for (i = 0; i < MAX_R_IDX; i++)
-	{
-		/* Extract the "underlying" attr */
-		r_info[i].x_attr = r_info[i].d_attr;
-
-		/* Extract the "underlying" char */
-		r_info[i].x_char = r_info[i].d_char;
-	}
+	/* Reset various attr/char maps. */
+	process_pref_file_aux("F:---reset---");
+	process_pref_file_aux("K:---reset---");
+	process_pref_file_aux("U:---reset---");
+	process_pref_file_aux("R:---reset---");
 
 	/* Extract some info about monster memory colours. */
 	for (i = 0; i < MAX_MONCOL; i++)

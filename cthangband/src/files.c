@@ -376,9 +376,25 @@ errr process_pref_file_aux(char *buf)
 	}
 
 
+/*
+ * A macro to cause this particular set of maps to be reset to default
+ * if required.
+ */
+#define reset_check(x_info, max) \
+	if (!strcmp(buf+2, "---reset---")) \
+	{ \
+		for (i = 0; i < max; i++) \
+		{ \
+			x_info[i].x_attr = x_info[i].d_attr; \
+			x_info[i].x_char = x_info[i].d_char; \
+		} \
+		return 0; \
+	} \
+
 	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
 	if (buf[0] == 'R')
 	{
+		reset_check(r_info, MAX_R_IDX)
 		if (tokenize(buf+2, 3, zz) == 3)
 		{
 			monster_race *r_ptr;
@@ -397,6 +413,7 @@ errr process_pref_file_aux(char *buf)
 	/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
 	else if (buf[0] == 'K')
 	{
+		reset_check(k_info, MAX_K_IDX)
 		if (tokenize(buf+2, 3, zz) == 3)
 		{
 			object_kind *k_ptr;
@@ -414,6 +431,7 @@ errr process_pref_file_aux(char *buf)
 	/* Process "U:<p_id>:<s_id>:<a>/<c>"  -- attr/char for unidentified objects */
 	else if (buf[0] == 'U')
 	{
+		reset_check(u_info, MAX_U_IDX)
 		if (tokenize(buf+2, 4, zz) == 4)
 		{
 			unident_type *u_ptr;
@@ -436,6 +454,7 @@ errr process_pref_file_aux(char *buf)
 	/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
 	else if (buf[0] == 'F')
 	{
+		reset_check(f_info, MAX_F_IDX)
 		if (tokenize(buf+2, 3, zz) == 3)
 		{
 			feature_type *f_ptr;
@@ -446,28 +465,6 @@ errr process_pref_file_aux(char *buf)
 			f_ptr = &f_info[i];
 			if (n1) f_ptr->x_attr = n1;
 			if (n2) f_ptr->x_char = n2;
-			return (0);
-		}
-	}
-
-
-	/* Process "U:<tv>:<a>/<c>" -- attr/char for unaware items */
-	else if (buf[0] == 'U')
-	{
-		if (tokenize(buf+2, 3, zz) == 3)
-		{
-			j = (huge)strtol(zz[0], NULL, 0);
-			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
-			for (i = 1; i < MAX_K_IDX; i++)
-			{
-				object_kind *k_ptr = &k_info[i];
-				if (k_ptr->tval == j)
-				{
-					if (n1) k_ptr->d_attr = n1;
-					if (n2) k_ptr->d_char = n2;
-				}
-			}
 			return (0);
 		}
 	}

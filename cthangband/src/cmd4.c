@@ -2045,7 +2045,8 @@ static char *visual_name_obj(char *buf, uint n)
 \
 	/* Start dumping */ \
 	fprintf(fff, "\n\n"); \
-	fprintf(fff, "# %s\n\n", initstring); \
+	fprintf(fff, "# %s\n", initstring); \
+	fprintf(fff, "%c:---reset---\n\n", startchar); \
 \
 	/* Dump entries */ \
 	for (i = 0; i < vs_ptr->max; i++) \
@@ -2053,6 +2054,10 @@ static char *visual_name_obj(char *buf, uint n)
 \
 		/* Skip non-entries */ \
 		if (vs_ptr->reject && (*vs_ptr->reject)(i)) continue; \
+\
+		/* Skip default entries */ \
+		if ((x_info[i].x_attr == x_info[i].d_attr) && \
+			(x_info[i].x_char == x_info[i].d_char)) continue; \
 \
 		/* Dump a comment */ \
 		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i)); \
@@ -2085,6 +2090,7 @@ static void visual_dump_unident(FILE *fff)
 	/* Start dumping */
 	fprintf(fff, "\n\n");
 	fprintf(fff, "# %s\n\n", "Unidentified object attr/char definitions");
+	fprintf(fff, "%c:---reset---\n\n", 'U');
 
 	/* Dump entries */
 	for (i = 0; i < MAX_U_IDX; i++)
@@ -2093,6 +2099,10 @@ static void visual_dump_unident(FILE *fff)
 
 		/* Skip non-entries */
 		if ((*vs_ptr->reject)(i)) continue;
+
+		/* Skip default entries */ \
+		if ((u_info[i].x_attr == u_info[i].d_attr) &&
+			(u_info[i].x_char == u_info[i].d_char)) continue;
 
 		/* Dump a comment */
 		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i));
