@@ -864,6 +864,9 @@ void object_known(object_type *o_ptr)
 
 	/* And we even know if it's cursed */
 	o_ptr->ident |= (IDENT_SENSE_CURSED);
+
+	/* Update stuff. */
+	update_object(o_ptr);
 }
 
 
@@ -877,6 +880,9 @@ void object_aware(object_type *o_ptr)
 {
 	/* Fully aware of the effects */
 	k_info[o_ptr->k_idx].aware = TRUE;
+
+	/* Update stuff. */
+	update_object(o_ptr);
 }
 
 
@@ -3881,7 +3887,7 @@ void item_increase(object_type *o_ptr, int num)
 		total_weight += (num * o_ptr->weight);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 	}
 }
 
@@ -4077,7 +4083,7 @@ object_type *inven_carry(object_type *o_ptr)
 	total_weight += (o_ptr->number * o_ptr->weight);
 
 	/* Recalculate/redraw various things. */
-	update_object(j_ptr, 0);
+	update_object(j_ptr);
 
 	return j_ptr;
 }
@@ -4446,5 +4452,5 @@ void object_hide(object_type *o_ptr)
 	o_ptr->ident |= IDENT_HIDDEN;
 
 	/* Redraw appropriate stuff. */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 }

@@ -478,7 +478,7 @@ errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value)
 		o_ptr->ident |= (IDENT_SENSE_HEAVY);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 
 		/* Done */
 		return POWER_ERROR_FAIL;
@@ -566,7 +566,7 @@ void do_cmd_unhide_objects(void)
 	}
 
 	/* Display any newly visible things. */
-	update_object(0, OUP_ALL);
+	update_objects(OUP_ALL);
 
 	/* Show more distant changes. */
 	p_ptr->update |= PU_UN_VIEW | PU_VIEW;
@@ -666,7 +666,7 @@ void do_cmd_uninscribe(void)
 	o_ptr->note = 0;
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 }
 
 
@@ -703,7 +703,7 @@ void do_cmd_inscribe(void)
 		o_ptr->note = quark_add(out_val);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 	}
 
 		/* Make a note of the change. */

@@ -382,7 +382,7 @@ static void sense_inventory(void)
 		if (feel != SENSE_U_OBJ) skill_exp(SKILL_PSEUDOID);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 	}
 }
 
@@ -823,7 +823,7 @@ bool psychometry(void)
 		object_desc_f3, o_ptr, FALSE, 0, really , is, feeling_str[feel].str);
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
     /* Something happened */
     return (TRUE);
@@ -1970,7 +1970,7 @@ static void process_recharge(object_type *o_ptr, int mode)
 		recharged_notice(o_ptr);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(0, mode);
+		update_object(o_ptr);
 	}
 }
 

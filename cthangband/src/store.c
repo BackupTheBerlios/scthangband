@@ -3265,7 +3265,7 @@ static void store_sell(void)
 		}
 
 		/* Combine / Reorder the pack (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 
 		/* Get local object */
 		q_ptr = &forge;

@@ -1208,7 +1208,7 @@ bool lose_all_info(void)
 
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(0, OUP_CARRIED_MASK);
+	update_objects(OUP_CARRIED_MASK);
 
 	/* Mega-Hack -- Forget the map */
 	wiz_dark();
@@ -2289,7 +2289,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Success */
 	return (TRUE);
@@ -3920,7 +3920,7 @@ bool ident_spell(void)
 	object_known(o_ptr);
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Describe the object. */
 	ident_describe(o_ptr);
@@ -3960,7 +3960,7 @@ bool identify_fully(void)
 	o_ptr->ident |= (IDENT_MENTAL);
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -4119,7 +4119,7 @@ bool recharge(int num)
 	}
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Forget obsolete stacking information. */
 	set_stack_number(o_ptr);

@@ -767,7 +767,7 @@ static bool brand_bolts(void)
 		apply_magic_2(o_ptr, dun_depth);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 
 		/* Enchant */
 		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
@@ -6397,7 +6397,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				p_ptr->csp = p_ptr->msp;
 			}
 
-			update_object(o_ptr, 0);
+			update_object(o_ptr);
 			return SUCCESS;
 		}
 		case MUT_WEIGH_MAG+PO_MUTA:

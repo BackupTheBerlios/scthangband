@@ -3636,7 +3636,7 @@ extern void skill_exp(int index);
 extern int find_object(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
-extern void update_object(object_type *o_ptr, int where);
+extern void update_object(object_type *o_ptr);
 #endif
 
 /* xtra2.c */
@@ -4015,5 +4015,11 @@ extern bool cheat_save;
 
 #if (defined(XTRA1_C) || defined(XTRA2_C))
 extern cptr PURE prt_flag(int flag);
+#endif
+
+/* xtra1.c */
+
+#if (defined(CMD3_C) || defined(SPELLS2_C) || defined(XTRA1_C))
+extern void update_objects(int where);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

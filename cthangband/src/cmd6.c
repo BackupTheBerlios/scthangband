@@ -181,7 +181,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 	object_tried(o_ptr);
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Food can feed the player */
 	switch (p_ptr->prace)
@@ -282,7 +282,7 @@ void do_cmd_quaff_potion(object_type *o_ptr)
     }
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* The item has been tried */
 	object_tried(o_ptr);
@@ -421,7 +421,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
 
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* The item was tried */
 	object_tried(o_ptr);
@@ -572,7 +572,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Tried the item */
 	object_tried(o_ptr);
@@ -709,7 +709,7 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	use_object(o_ptr, dir);
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Mark it as tried */
 	object_tried(o_ptr);
@@ -839,7 +839,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 
 
 	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
+	update_object(o_ptr);
 
 	/* Tried the object */
 	object_tried(o_ptr);

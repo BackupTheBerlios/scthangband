@@ -959,7 +959,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 		object_copy(o_ptr, q_ptr);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 	}
 }
 
@@ -1275,7 +1275,7 @@ void do_cmd_wiz_play(void)
 		object_copy(o_ptr, q_ptr);
 
 		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
+		update_object(o_ptr);
 	}
 
 	/* Ignore change */

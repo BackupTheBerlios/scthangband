@@ -760,7 +760,7 @@ static PURE bool destroy_it(object_ctype *o1_ptr)
 
 /*
  * If o_ptr points to a stack of objects in which one or more is to be
- * squelched, set *o_ptr to the object after it and return TRUE.
+ * squelched, set *o_ptr to it and return TRUE.
  * Otherwise, set *o_ptr to NULL and return FALSE.
  */
 static bool squelch_object(object_type **o_ptr)
@@ -768,16 +768,7 @@ static bool squelch_object(object_type **o_ptr)
 	/* Find the next squelched object, if any. */
 	for (; *o_ptr; next_object(o_ptr))
 	{
-		if (destroy_it(*o_ptr))
-		{
-			/* Highlight this object. */
-			object_track(*o_ptr);
-
-			/* Return the next object, as this one may not exist later. */
-			next_object(o_ptr);
-
-			return TRUE;
-		}
+		if (destroy_it(*o_ptr)) return TRUE;
 	}
 
 	/* Nothing left to squelch, so finish. */
@@ -847,9 +838,6 @@ static void process_objects(object_type *o_ptr)
 				/* None left. */
 				break;
 			}
-
-			/* Start the keymap again. */
-			inkey_gnext = keymap;
 		}
 
 		/* Weird conditions. */
@@ -862,6 +850,15 @@ static void process_objects(object_type *o_ptr)
 
 		/* Hack - let the player clear any pending keys. */
 		msg_print(NULL);
+
+		/* Highlight this object. */
+		object_track(o_ptr);
+
+		/* Find the next object now, as this one may not exist later. */
+		next_object(&o_ptr);
+
+		/* Start the keymap again. */
+		inkey_gnext = keymap;
 
 		/* Get a command (normal) */
 		request_command(FALSE);

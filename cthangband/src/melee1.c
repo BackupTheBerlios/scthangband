@@ -441,7 +441,7 @@ bool make_attack_normal(int m_idx)
 							set_stack_number(o_ptr);
 
 							/* Recalculate/redraw stuff (later) */
-							update_object(o_ptr, 0);
+							update_object(o_ptr);
 
 							/* Done */
 							break;

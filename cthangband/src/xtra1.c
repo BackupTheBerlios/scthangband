@@ -4017,7 +4017,11 @@ int find_object(object_ctype *o_ptr)
 	/* Floor item. */
 	if (o_ptr >= o_list && o_ptr < o_list+MAX_O_IDX)
 	{
-		return OUP_FLOOR;
+		/* Here. */
+		if (o_ptr->iy == py && o_ptr->ix == px) return OUP_FLOOR;
+
+		/* Somewhere else. */
+		else return 0;
 	}
 	/* Inventory item. */
 	else if (o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
@@ -4033,20 +4037,18 @@ int find_object(object_ctype *o_ptr)
 }
 
 /*
- * Update everything which needs to be updated after an object changes.
+ * Update everything which may change after one or more objects in a class has
+ * been changed.
  */
-void update_object(object_type *o_ptr, int where)
+void update_objects(int where)
 {
-	/* Find the object if it is unknown. */
-	if (!where && o_ptr) where = find_object(o_ptr);
-
 	if (where & OUP_FLOOR)
 	{
 		/* Squelch the item if needed. */
 		p_ptr->notice |= PN_FSQUELCH;
 
 		/* Display the floor under the player, as the object may be there. */
-		if (o_ptr && o_ptr->iy == py && o_ptr->ix == px) cave_track(py, px);
+		cave_track(py, px);
 	}
 	if (where & OUP_INVEN)
 	{
@@ -4082,11 +4084,17 @@ void update_object(object_type *o_ptr, int where)
 		/* Display the player window, as some changes may not do this. (?) */
 		p_ptr->window |= PW_PLAYER;
 	}
+}
 
+/*
+ * Update everything which needs to be updated after an object changes.
+ */
+void update_object(object_type *o_ptr)
+{
 	/* Hack - Give the changed object a valid stack number if appropriate.
 	 * There may be a better place to put this. */
-	if (o_ptr && !o_ptr->stack)
-	{
-		set_stack_number(o_ptr);
-	}
+	if (!o_ptr->stack) set_stack_number(o_ptr);
+
+	return update_objects(find_object(o_ptr));
 }
+
