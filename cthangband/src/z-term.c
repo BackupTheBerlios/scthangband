@@ -2143,9 +2143,9 @@ void init_term_wins(void)
 }
 
 /*
- * Forget a saved term window.
+ * Release a saved term window.
  */
-static void Term_forget(int win)
+void Term_release(int win)
 {
 	/* Paranoia */
 	if (win < 1 || win > NUM_TERM_WINS) return;
@@ -2223,7 +2223,7 @@ int Term_save_aux(void)
 errr Term_save(void)
 {
 	/* Paranoia - forget any term_win currently saved. */
-	if (cur_saved_term) Term_forget(cur_saved_term);
+	if (cur_saved_term) Term_release(cur_saved_term);
 
 	/* Save the window, remember the index. */
 	cur_saved_term = Term_save_aux();
@@ -2265,20 +2265,11 @@ bool Term_load_aux(int win)
 	Term->y1 = 0;
 	Term->y2 = Term->hgt - 1;
 
-	/* Assume the term is no longer needed. */
-	w_ptr->mem = FALSE;
-
 	/* The screen size has changed since this was saved, so the screen should
 	 * really be redrawn. */
 	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt)
 	{
-		/* Execute the "resize_hook" hook, if available */
-		if (Term->resize_hook)
-		{
-			Term->resize_hook();
-		}
-
-		/* Warn the calling function, in case it knows a better hook. */
+		/* Warn the calling function that things didn't work correctly. */
 		return FALSE;
 	}
 
@@ -2295,6 +2286,9 @@ errr Term_load(void)
 
 	/* Restore the window from the remembered index. */
 	if (!Term_load_aux(cur_saved_term)) return (-1);
+
+	/* Don't use this image again. */
+	Term_release(cur_saved_term);
 
 	/* Forget the saved term_win. */
 	cur_saved_term = 0;

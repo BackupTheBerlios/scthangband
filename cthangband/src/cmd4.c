@@ -739,9 +739,11 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 				win_help_display();
 				(void)inkey();
 				Term_load_aux(t);
+				Term_release(t);
+				break;
 			}
 			default:
-		{
+			{
 				bell();
 				break;
 			}

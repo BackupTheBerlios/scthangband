@@ -4785,7 +4785,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	char tmp_val[160];
 	char out_val[160];
 
-	int term = UNREAD_VALUE;
+	int term = 0;
 	void (*old_resize_hook)(void);
 
 #ifdef ALLOW_REPEAT /* TNB */
@@ -5067,7 +5067,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* Show/hide the list */
 				if (!command_see)
 				{
-					term = Term_save_aux();
+					if (!term) term = Term_save_aux();
 					command_see = TRUE;
 				}
 				else
@@ -5091,7 +5091,6 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				if (command_see)
 				{
 					Term_load_aux(term);
-					term = Term_save_aux();
 				}
 
 				/* Switch inven/equip */
@@ -5372,6 +5371,9 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 
 	/* Fix the screen if necessary */
 	if (command_see) Term_load_aux(term);
+
+	/* Forget the saved screen, if any. */
+	Term_release(term);
 
 	/* Hack -- Cancel "display" */
 	command_see = FALSE;
