@@ -70,7 +70,7 @@
 # TOWER: This indicates that any stairs placed here lead to a tower rather
 # than a dungeon. Towers are harder at higher levels rather than lower ones,
 # consist entirely of 1x1 levels and start at a round building rather than a
-# set of stairs leading into the ground.
+# set of stairs leading into the ground. Towers cannot exist in towns.
 # START: This allows the player to start the game in this town (or dungeon).
 # KADATH: This causes monsters generated on the surface to have a Cthuloid
 # bias rather than following the bias of the dungeon.

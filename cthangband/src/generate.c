@@ -952,7 +952,12 @@ static void terrain_gen(void)
 
 	if(wild_grid[wildy][wildx].dungeon < MAX_CAVES)
 	{
-		if (dun_defs[wild_grid[wildy][wildx].dungeon].flags & DF_TOWER)
+		dun_type *d_ptr = dun_defs+wild_grid[wildy][wildx].dungeon;
+		if (!d_ptr->max_level)
+		{
+			/* No dungeon. */
+		}
+		else if (d_ptr->flags & DF_TOWER)
 		{
 			s16b i;
 			/* Place the tower */
@@ -4874,7 +4879,6 @@ static void build_store(int n, int yy, int xx)
 static void town_gen_hack(void)
 {
 	int y, x, k, n;
-	int dummy = 0;
 
 	cave_type *c_ptr;
 
@@ -5003,35 +5007,39 @@ static void town_gen_hack(void)
 	c_ptr->feat = FEAT_OPEN;
 	c_ptr->info |= CAVE_MARK;
 
-	/* Place the stairs */
-	while (dummy < SAFE_MAX_ATTEMPTS)
+	/* Place the stairs, if any. */
+	if (dun_defs[cur_town].max_level)
 	{
-		dummy++;
-
-		/* Pick a location within the central area */
-		y = rand_range(12, 29);
-		x = rand_range(17,46);
-
-		/* Require a "naked" floor grid */
-		if (cave_naked_bold(y, x)) break;
-	}
-
-	if (dummy >= SAFE_MAX_ATTEMPTS)
-	{
-		if (cheat_room)
+		int dummy;
+		for (dummy = 0; dummy < SAFE_MAX_ATTEMPTS; dummy++)
 		{
-			msg_print("Warning! Could not place stairs!");
+			dummy++;
+
+			/* Pick a location within the central area */
+			y = rand_range(12, 29);
+			x = rand_range(17,46);
+
+			/* Require a "naked" floor grid */
+			if (cave_naked_bold(y, x)) break;
 		}
+
+		if (dummy >= SAFE_MAX_ATTEMPTS)
+		{
+			if (cheat_room)
+			{
+				msg_print("Warning! Could not place stairs!");
+			}
+		}
+
+		/* Access the stair grid */
+		c_ptr = &cave[y][x];
+
+		/* Clear previous contents, add down stairs */
+		c_ptr->feat = FEAT_MORE;
+
+		/* Memorize the stairs */
+		c_ptr->info |= (CAVE_MARK);
 	}
-
-	/* Access the stair grid */
-	c_ptr = &cave[y][x];
-
-	/* Clear previous contents, add down stairs */
-	c_ptr->feat = FEAT_MORE;
-
-	/* Memorize the stairs */
-	c_ptr->info |= (CAVE_MARK);
 
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;

@@ -3872,7 +3872,7 @@ static void dungeon(void)
 	if (is_quest(dun_level)) quest_discovery();
 
 	/* Notice the final level of a dungeon/tower */
-	else if (dun_level == dun_defs[cur_dungeon].max_level)
+	else if (dun_level && dun_level == dun_defs[cur_dungeon].max_level)
 	{
 		msg_print("You suddenly feel that you can't go on.");
 	}
