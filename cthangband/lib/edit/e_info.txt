@@ -18,7 +18,7 @@
 # N: serial number : ego type
 # X: rating : special
 # P: max to-hit : max to-dam : max to-ac : pval
-# W: rarity : cost
+# W: chance : cost
 # O: min object : max object
 # F: flag | flag | etc
 
@@ -32,11 +32,10 @@
 # 'P' is for power bonusses - maximum to-hit, to-dam, to-ac, and
 # pval. Cursed ego-items will negate the given value.
 
-# 'W' is for extra information. Rarity determines how common the ego type is
+# 'W' is for extra information. Chance determines how common the ego type is
 # and cost is the item's extra value. An object has a chance of becoming a
 # suitable ego item (see 'O' below) with the same cursed/uncursed status
-# proportional to its rarity, but there is no connection between the rarity of
-# an uncursed shield and that of a cursed pair of boots.
+# proportional to its chance field.
 # Finally, a rarity of 255 is treated in a special way which gets more common
 # with depth.
 
