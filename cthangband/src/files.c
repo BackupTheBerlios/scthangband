@@ -4178,7 +4178,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 	/* Dump the next 20 (or more in bigscreen) lines of the file */
 	for (y = miny, l = minline; y <= maxy; l++)
 	{
-		int x;
+		cptr s;
 		out_ptr = out_buf;
 
 		/* Get a line of the file or stop */
@@ -4200,31 +4200,30 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		}
 
 		/* Dump the line */
-		x = 0;
-		while (buf[x])
+		for (s = buf; *s; )
 		{
 			/* Link */
-			if (h_ptr->shower[0] && prefix(buf+x, h_ptr->shower))
+			if (h_ptr->shower[0] && prefix(s, h_ptr->shower))
 			{
 				out_ptr += sprintf(out_ptr, "$<$y%s$>", h_ptr->shower);
 
-				x += strlen(h_ptr->shower);
-				continue;
+				s += strlen(h_ptr->shower);
 			}
 			/* Hyperlink ? */
-			else if (prefix(buf + x, "*****"))
+			else if (prefix(s, "*****"))
 			{
 				int thiscol;
-				int xx = x + 5;
 
 				/* Zap the link info */
-				while (buf[xx] != '[')
-				{
-					xx++;
-				}
-				xx++;
+				cptr u = strchr(s, '[');
 
-				if ((h_ptr->link[h_ptr->cur_link].x == x) &&
+				/* Not a real link. */
+				if (!u)
+				{
+					*out_ptr++ = *s++;
+				}
+
+				if ((h_ptr->link[h_ptr->cur_link].x == s-buf) &&
 					(h_ptr->link[h_ptr->cur_link].y == l))
 					thiscol = link_colour_sel;
 				else
@@ -4233,57 +4232,36 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 				out_ptr += sprintf(out_ptr, "$<$%c", thiscol);
 
 				/* Ok print the link name */
-				while (buf[xx] && buf[xx] != ']')
+				while (*u && *u != ']')
 				{
-					if (prefix(buf+xx, "$")) xx++;
-					*out_ptr++ = buf[xx++];
+					if (prefix(u, "$")) u++;
+					*out_ptr++ = *u++;
 				}
 				out_ptr += sprintf(out_ptr, "$>");
-				x = xx;
+				s = (*u) ? u+1 : u;
 			}
 			/* Remove HTML ? */
-			else if (prefix(buf + x, "{{{{{"))
+			else if (prefix(s, "{{{{{"))
 			{
-				int xx = x + 6;
-
-				/* Ok remove this section */
-				while (buf[xx] != '}')
+				cptr u = strchr(s, '}');
+				if (u)
 				{
-					xx++;
+					s = u+1;
 				}
-				x = xx;
+				else
+				{
+					*out_ptr++ = *s++;
+				}
 			}
 			else
 			{
-				*out_ptr++ = buf[x];
+				*out_ptr++ = *s++;
 			}
-
-			x++;
 		}
 
 		/* Print the line. */
 		strcpy(out_ptr, "\n");
 		mc_roff(out_buf);
-
-		/* Hilite "h_ptr->shower" */
-		if (h_ptr->shower[0])
-		{
-			cptr str = buf;
-
-			/* Display matches */
-			while ((str = strstr(str, h_ptr->shower)) != NULL)
-			{
-				int len = strlen(h_ptr->shower);
-
-				/* Display the match */
-#if 0 /* Broken */
-				Term_putstr(str-buf, y+2, len, TERM_YELLOW, h_ptr->shower);
-#endif
-
-				/* Advance */
-				str += len;
-			}
-		}
 
 		/* Count the printed lines */
 		y++;
