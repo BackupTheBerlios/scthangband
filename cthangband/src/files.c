@@ -4535,7 +4535,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 					}
 					xx++;
 					/* Ok print the link name */
-					while (buf[xx] != ']')
+					while (buf[xx] != ']' || buf[xx+1] == ']')
 					{
 						if ((h_ptr->link_x[cur_link] == x) && (h_ptr->link_y[cur_link] == line + i))
 							Term_putch(print_x, i + 2, link_color_sel, buf[xx]);
@@ -4552,7 +4552,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 					int xx = x + 6;
 
 					/* Ok print the link name */
-					while (buf[xx] != ']')
+					while (buf[xx] != ']' || buf[xx+1] == ']')
 					{
 						Term_putch(print_x, i + 2, color_char_to_attr(buf[x + 5]), buf[xx]);
 						xx++;
