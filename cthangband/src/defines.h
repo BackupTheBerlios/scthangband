@@ -3642,6 +3642,26 @@ extern int PlayerUID;
 #define is_fake_monster(R_PTR) \
 	((R_PTR)->rarity == 0)
 
+/* Various indices for object_found. */
+#define FOUND_UNKNOWN 1 /* Of unknown origin. */
+#define FOUND_CHEAT 2 /* Created by a debug command. */
+#define FOUND_MIXED 3 /* Created by various methods. */
+#define FOUND_FLOOR 4 /* Floor item. */
+#define FOUND_VAULT 5 /* Vault item. */
+#define FOUND_QUEST 6 /* Quest reward. */
+#define FOUND_DIG 7 /* Dug up from the terrain. */
+#define FOUND_CHEST 8 /* Found in a chest. */
+#define FOUND_SHOP 9 /* Bought from a shop. */
+#define FOUND_BIRTH 10 /* Given at the start of the game. */
+#define FOUND_SPELL 11 /* Created by magic. */
+#define FOUND_CHAOS 12 /* Given by a chaos patron. */
+#define FOUND_MONSTER 128 /* Hack - dropped by a monster (128-255). */
+
+#define FOUND_LEV_UNKNOWN 255 /* Level not known (e.g. for old objects). */
+
+#define FOUND_DUN_UNKNOWN 255 /* Dungeon not known. */
+#define FOUND_DUN_WILD 255 /* Wilderness. */
+
 /* Current monster indices. */
 #define MON_PLAYER 0
 #define MON_NOBODY_THE_UNNAMED_GHOST______________________________________ 1

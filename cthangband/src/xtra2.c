@@ -144,7 +144,7 @@ static void drop_special(monster_type *m_ptr)
 				object_type o_ptr[1];
 
 				/* Create the item from the definition. */
-				make_item(o_ptr, &d_ptr->par.item);
+				make_item(o_ptr, &d_ptr->par.item, FOUND_MONSTER, m_ptr->r_idx);
 
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 				drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);
@@ -1092,7 +1092,7 @@ void monster_death(int m_idx)
 		if ((!quest || (j > 1)) && do_gold && (!do_item || (rand_int(100) < 50)))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr)) continue;
+			if (!make_gold(q_ptr, FOUND_MONSTER, m_ptr->r_idx)) continue;
 
 			/* XXX XXX XXX */
 			dump_gold++;
@@ -1104,12 +1104,13 @@ void monster_death(int m_idx)
 			/* Make an object */
 			if (!quest || (j>1))
 			{
-				if (!make_object(q_ptr, good, great)) continue;
+				if (!make_object(q_ptr, good, great, FOUND_MONSTER,
+					m_ptr->r_idx)) continue;
 			}
 			else
 			{
 				/* The first two items for a quest monster are great */
-				if (!make_object(q_ptr, TRUE, TRUE)) continue;
+				if (!make_object(q_ptr, TRUE, TRUE, FOUND_QUEST, 0)) continue;
 			}
 
 			/* XXX XXX XXX */
@@ -3631,6 +3632,10 @@ void gain_level_reward(int chosen_reward)
                 object_prep(q_ptr, dummy2);
                 q_ptr->name2 = EGO_CHAOTIC;
 				apply_magic_2(q_ptr, dun_depth);
+
+				/* Set the "how it was found" information. */
+				set_object_found(q_ptr, FOUND_CHAOS, p_ptr->chaos_patron+1);
+
                 q_ptr->to_h = 3 + (randint((dun_depth)))%10;
                 q_ptr->to_d = 3 + (randint((dun_depth)))%10;
                 /* Drop it in the dungeon */

@@ -452,17 +452,18 @@ static void chest_death(int y, int x, s16b o_idx)
 		object_wipe(q_ptr);
 
 		/* Small chests often drop gold */
-		if (small && (rand_int(100) < 75))
+		if (small && !one_in(4))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr)) continue;
+			if (!make_gold(q_ptr, FOUND_CHEST, o_ptr->k_idx)) continue;
 		}
 
 		/* Otherwise drop an item */
 		else
 		{
 			/* Make an object */
-			if (!make_object(q_ptr, FALSE, FALSE)) continue;
+			if (!make_object(q_ptr, FALSE, FALSE, FOUND_CHEST, o_ptr->k_idx))
+				continue;
 		}
 
 		/* Drop it in the dungeon */
@@ -1142,7 +1143,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		{
 			case WALL_GOLD:
 			{
-				place_gold(y,x);
+				place_gold(y,x, FOUND_DIG, c_ptr->feat);
 				found = TRUE;
 				break;
 			}
@@ -1150,7 +1151,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			if (rand_int(100) < 10)
 			{
 				/* Create a simple object */
-				place_object(y, x, FALSE, FALSE);
+				place_object(y, x, FALSE, FALSE, FOUND_DIG, c_ptr->feat);
 
 				/* Observe new object */
 				if (player_can_see_bold(y, x)) found = TRUE;

@@ -161,6 +161,24 @@ static void wr_item(object_type *o_ptr)
 
 	/* Set the stack number. */
 	if (has_flag(SF_STACK_IDX)) wr_byte(o_ptr->stack);
+
+	if (has_flag(SF_OBJECT_HISTORY))
+	{
+		if (o_ptr->found.how >= FOUND_MONSTER)
+		{
+			int r = (o_ptr->found.how - FOUND_MONSTER) * 256 + o_ptr->found.idx;
+			r = MAX(0, convert_r_idx(r, sf_flags_now, sf_flags_sf));
+			wr_byte(FOUND_MONSTER + (r / 256));
+			wr_byte(r % 256);
+		}
+		else
+		{
+			wr_byte(o_ptr->found.how);
+			wr_byte(o_ptr->found.idx);
+		}
+		wr_byte(o_ptr->found.dungeon);
+		wr_byte(o_ptr->found.level);
+	}
 }
 
 

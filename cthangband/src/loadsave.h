@@ -101,3 +101,8 @@
  * previous one from the player would kill them now.
  */
 #define SF_FEAR_DAMAGE 19
+
+/*
+ * Load/save information about how each object was generated.
+ */
+#define SF_OBJECT_HISTORY 20

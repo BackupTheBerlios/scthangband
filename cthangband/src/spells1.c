@@ -1769,6 +1769,8 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 			/* Quartz / Magma with treasure */
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
 			{
+				int feat = c_ptr->feat;
+
 				/* Message */
 				if (c_ptr->info & (CAVE_MARK))
 				{
@@ -1784,7 +1786,7 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 				cave_set_feat(y, x, FEAT_FLOOR);
 
 				/* Place some gold */
-				place_gold(y, x);
+				place_gold(y, x, FOUND_DIG, feat);
 			}
 
 			/* Quartz / Magma */
@@ -1807,6 +1809,8 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 			/* Rubble */
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
+				int feat = c_ptr->feat;
+
 				/* Message */
 				if (c_ptr->info & (CAVE_MARK))
 				{
@@ -1831,7 +1835,7 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					}
 
 					/* Place gold */
-					place_object(y, x, FALSE, FALSE);
+					place_object(y, x, FALSE, FALSE, FOUND_DIG, feat);
 				}
 			}
 

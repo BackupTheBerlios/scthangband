@@ -574,6 +574,16 @@ struct cave_type
  * is holding the object.  Objects being held have "ix=0" and "iy=0".
  */
 
+/* Where was this object found? */
+typedef struct object_found object_found;
+struct object_found
+{
+	byte how; /* Found under this set of circumstances. */
+	byte idx; /* Shop, vault, etc., index for this situation. */
+	byte dungeon; /* Found in/near this dungeon (255 for wilderness). */
+	byte level; /* Found on this level within the dungeon. */
+};
+
 typedef struct object_type object_type;
 typedef const object_type object_ctype;
 
@@ -618,6 +628,8 @@ struct object_type
 	
 	s16b next_o_idx;	/* Next object in stack (if any) */
 	s16b held_m_idx;	/* Monster holding us (if any) */
+
+	object_found found;	/* Describe where the object was found. */
 };
 
 

@@ -1650,6 +1650,56 @@ static u16b merge_quarks(cptr s, cptr t)
 }
 
 /*
+ * Remove from *to any discovery information which differs from that in *from.
+ */
+static void merge_found(object_found *to, const object_found *from)
+{
+	if (to->dungeon != from->dungeon) to->dungeon = FOUND_DUN_UNKNOWN;
+	if (to->level != from->level) to->level = FOUND_LEV_UNKNOWN;
+	if (to->how >= FOUND_MONSTER && from->how >= FOUND_MONSTER)
+	{
+		if (to->how != from->how || to->idx != from->idx)
+		{
+			to->how = FOUND_MONSTER;
+			to->idx = 0;
+		}
+	}
+	else if (to->how != from->how)
+	{
+		to->how = FOUND_MIXED;
+	}
+	else if (to->idx != from->idx)
+	{
+		to->idx = 0;
+	}
+}
+
+
+/*
+ * Allow a store item to absorb another item
+ * Returns true if the entire stack was absorbed.
+ */
+bool store_object_absorb(object_type *j_ptr, object_type *o_ptr)
+{
+	int total = o_ptr->number + j_ptr->number;
+
+	merge_found(&j_ptr->found, &o_ptr->found);
+
+	if (total <= MAX_STACK_SIZE-1)
+	{
+		j_ptr->number = total;
+		return TRUE;
+	}
+	else
+	{
+		j_ptr->number = MAX_STACK_SIZE-1;
+		o_ptr->number = total-MAX_STACK_SIZE+1;
+		return FALSE;
+	}
+}
+
+
+/*
  * Allow one item to "absorb" another, assuming they are similar
  * Return true if every object was completely absorbed.
  */
@@ -1749,6 +1799,12 @@ void object_prep(object_type *o_ptr, int k_idx)
 	o_ptr->ac = k_ptr->ac;
 	o_ptr->dd = k_ptr->dd;
 	o_ptr->ds = k_ptr->ds;
+
+	/* Default found information. */
+	o_ptr->found.how = FOUND_UNKNOWN;
+	o_ptr->found.idx = 0;
+	o_ptr->found.dungeon = FOUND_DUN_UNKNOWN;
+	o_ptr->found.level = FOUND_LEV_UNKNOWN;
 
 	/* Hack -- worthless items are always "broken" */
 	if (k_ptr->cost <= 0) o_ptr->ident |= (IDENT_BROKEN);
@@ -2584,43 +2640,11 @@ static bool PURE aux3_can_curse(int k_idx)
 
 
 /*
- * Set a quark to the depth of the item in question, return it.
- */
-static cptr depth_string(void)
-{
-	/* Not wanted. */
-	if (!inscribe_depth) return "";
-
-	/* Suppress on the surface (I think I prefer it this way...). */
-	else if (!dun_level) return "";
-
-	/* Use the normal depth format from prt_depth() */
-	else if (depth_in_feet) return format("%d'", dun_depth*50);
-
-	else return format("L%d", dun_depth);
-}
-
-/*
- * Combine the kind-based and depth-based inscriptions for a new object and
- * return the combination.
+ * Return the quark added to an object at point of creation.
  */
 static u16b default_quark(object_ctype *o_ptr)
 {
-	cptr note = quark_str(k_info[o_ptr->k_idx].note);
-	cptr depth = depth_string();
-
-	if (*note && *depth)
-	{
-		return quark_add(format("%s %s", depth, note));
-	}
-	else if (*note || *depth)
-	{
-		return quark_add(format("%s%s", depth, note));
-	}
-	else
-	{
-		return 0;
-	}
+	return k_info[o_ptr->k_idx].note;
 }
 
 /*
@@ -3130,8 +3154,27 @@ void apply_magic_2(object_type *o_ptr, const int lev)
 
 }
 
+void set_object_found(object_type *o_ptr, int how, int idx)
+{
+	object_found *ptr = &o_ptr->found;
 
-void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
+	if (how == FOUND_MONSTER)
+	{
+		assert(idx >= 0 && idx < z_info->r_max);
+		ptr->how = how + idx / 256;
+		ptr->idx = idx % 256;
+	}
+	else
+	{
+		assert(idx >= 0 && idx < 256);
+		ptr->how = how;
+		ptr->idx = idx;
+	}
+	ptr->level = dun_level;
+	ptr->dungeon = cur_dungeon;
+}
+
+void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, int how, int idx)
 {
 	/* Maximum "level" for various things */
 	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
@@ -3139,18 +3182,21 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	/* Turn the object into an ego-item or artefact (or not). */
 	apply_magic_1(o_ptr, lev, okay, good, great);
 
-	/* Hack - inscribe with creation depth if desired. */
+	/* Hack - inscribe with default quark, if any. */
 	o_ptr->note = default_quark(o_ptr);
 
 	/* Give it any bonuses its ego- or artefact type requires, and add random
 	 * bonuses to rings and armour. */
 	apply_magic_2(o_ptr, lev);
+
+	/* Set the "how it was found" information. */
+	set_object_found(o_ptr, how, idx);
 }
 
 /*
  * Create an item based on a make_item_type template (as from death_event).
  */
-void make_item(object_type *o_ptr, make_item_type *i_ptr)
+void make_item(object_type *o_ptr, make_item_type *i_ptr, int how, int idx)
 {
 	bool ego = (i_ptr->flags & EI_EGO) != 0;
 	bool art = (i_ptr->flags & EI_ART) != 0;
@@ -3183,8 +3229,14 @@ void make_item(object_type *o_ptr, make_item_type *i_ptr)
 
 	o_ptr->number = rand_range(i_ptr->min, i_ptr->max);
 
+	/* Hack - inscribe with creation depth if desired. */
+	o_ptr->note = default_quark(o_ptr);
+
 	/* Add any special bonuses this ego type expects. */
 	apply_magic_2(o_ptr, object_level);
+
+	/* Set the "how it was found" information. */
+	set_object_found(o_ptr, how, idx);
 }
 
 /*
@@ -3244,7 +3296,7 @@ static bool PURE kind_is_good(int k_idx)
  *
  * We assume that the given object has been "wiped".
  */
-bool make_object(object_type *j_ptr, bool good, bool great)
+bool make_object(object_type *j_ptr, bool good, bool great, int how, int idx)
 {
 	int prob, base;
 
@@ -3286,7 +3338,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 	}
 
 	/* Apply magic (allow artifacts) */
-	apply_magic(j_ptr, object_level, TRUE, good, great);
+	apply_magic(j_ptr, object_level, TRUE, good, great, how, idx);
 
 	/* Hack -- generate multiple spikes/missiles */
 	switch (j_ptr->tval)
@@ -3329,7 +3381,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
  *
  * This routine requires a clean floor grid destination.
  */
-void place_object(int y, int x, bool good, bool great)
+void place_object(int y, int x, bool good, bool great, int how, int idx)
 {
 	cave_type *c_ptr;
 
@@ -3351,7 +3403,7 @@ void place_object(int y, int x, bool good, bool great)
 	object_wipe(q_ptr);
 
 	/* Make an object (if possible) */
-	if (!make_object(q_ptr, good, great)) return;
+	if (!make_object(q_ptr, good, great, how, idx)) return;
 
 
 	/* Make an object */
@@ -3408,7 +3460,7 @@ void place_object(int y, int x, bool good, bool great)
  *
  * The location must be a legal, clean, floor grid.
  */
-bool make_gold(object_type *j_ptr)
+bool make_gold(object_type *j_ptr, int how, int idx)
 {
 	int i;
 
@@ -3439,6 +3491,12 @@ bool make_gold(object_type *j_ptr)
 	/* Determine how much the treasure is "worth" */
 	j_ptr->pval = (base + (8L * randint(base)) + randint(8));
 
+	/* Hack - inscribe with creation depth if desired. */
+	j_ptr->note = default_quark(j_ptr);
+
+	/* Set the "how it was found" information. */
+	set_object_found(j_ptr, how, idx);
+
 	/* Success */
 	return (TRUE);
 }
@@ -3449,7 +3507,7 @@ bool make_gold(object_type *j_ptr)
  *
  * The location must be a legal, clean, floor grid.
  */
-void place_gold(int y, int x)
+void place_gold(int y, int x, int how, int idx)
 {
 	cave_type *c_ptr;
 
@@ -3471,7 +3529,7 @@ void place_gold(int y, int x)
 	object_wipe(q_ptr);
 
 	/* Make some gold */
-	if (!make_gold(q_ptr)) return;
+	if (!make_gold(q_ptr, how, idx)) return;
 
 
 	/* Make an object */
@@ -3838,7 +3896,7 @@ void acquirement(int y1, int x1, int num, bool great)
 		object_wipe(q_ptr);
 
 		/* Make a good (or great) object (if possible) */
-		if (!make_object(q_ptr, TRUE, great)) continue;
+		if (!make_object(q_ptr, TRUE, great, FOUND_SPELL, 0)) continue;
 
 		/* Drop the object */
 		drop_near(q_ptr, -1, y1, x1);

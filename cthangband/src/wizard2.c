@@ -809,6 +809,9 @@ void wiz_create_named_art(int a_idx)
 
 	apply_magic_2(q_ptr, dun_depth);
 
+	/* Set the "how it was found" information. */
+	set_object_found(q_ptr, FOUND_CHEAT, 0);
+
 	/* Drop the artifact from heaven */
 	drop_near(q_ptr, -1, py, px);
 
@@ -943,21 +946,21 @@ static void wiz_reroll_item(object_type *o_ptr)
 		else if (ch == 'n' || ch == 'N')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, (dun_depth), FALSE, FALSE, FALSE);
+			apply_magic(q_ptr, (dun_depth), FALSE, FALSE, FALSE, FOUND_CHEAT, 0);
 		}
 
 		/* Apply good magic, but first clear object */
 		else if (ch == 'g' || ch == 'g')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, (dun_depth), FALSE, TRUE, FALSE);
+			apply_magic(q_ptr, (dun_depth), FALSE, TRUE, FALSE, FOUND_CHEAT, 0);
 		}
 
 		/* Apply great magic, but first clear object */
 		else if (ch == 'e' || ch == 'e')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, (dun_depth), FALSE, TRUE, TRUE);
+			apply_magic(q_ptr, (dun_depth), FALSE, TRUE, TRUE, FOUND_CHEAT, 0);
 		}
 	}
 
@@ -1085,7 +1088,7 @@ static void wiz_statistics(object_type *o_ptr)
 			object_wipe(q_ptr);
 
 			/* Create an object */
-			make_object(q_ptr, good, great);
+			make_object(q_ptr, good, great, FOUND_CHEAT, 0);
 
 
 			/* XXX XXX XXX Mega-Hack -- allow multiple artifacts */
@@ -1305,7 +1308,7 @@ void wiz_create_item(int k_idx)
 	object_prep(q_ptr, k_idx);
 
 	/* Apply magic (no messages, no artifacts) */
-	apply_magic(q_ptr, (dun_depth), FALSE, FALSE, FALSE);
+	apply_magic(q_ptr, (dun_depth), FALSE, FALSE, FALSE, FOUND_CHEAT, 0);
 
 	/* Drop the object from heaven */
 	drop_near(q_ptr, -1, py, px);

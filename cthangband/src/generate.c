@@ -1621,13 +1621,13 @@ static void alloc_object(int set, int typ, int num)
 
 			case ALLOC_TYP_GOLD:
 			{
-				place_gold(y, x);
+				place_gold(y, x, FOUND_FLOOR, 0);
 				break;
 			}
 
 			case ALLOC_TYP_OBJECT:
 			{
-				place_object(y, x, FALSE, FALSE);
+				place_object(y, x, FALSE, FALSE, FOUND_FLOOR, 0);
 				break;
 			}
 		}
@@ -1803,7 +1803,7 @@ static void destroy_level(void)
 
 /*
  * Create up to "num" objects near the given coordinates
- * Only really called by some of the "vault" routines.
+ * Only really called by some of the "special room" routines.
  */
 static void vault_objects(int y, int x, int num)
 {
@@ -1843,13 +1843,13 @@ static void vault_objects(int y, int x, int num)
 			/* Place an item */
 			if (rand_int(100) < 75)
 			{
-				place_object(j, k, FALSE, FALSE);
+				place_object(j, k, FALSE, FALSE, FOUND_FLOOR, 0);
 			}
 
 			/* Place gold */
 			else
 			{
-				place_gold(j, k);
+				place_gold(j, k, FOUND_FLOOR, 0);
 			}
 
 			/* Placement accomplished */
@@ -2326,13 +2326,13 @@ static void build_type3(int yval, int xval)
 			}
 
 			/* Place a treasure in the vault */
-			place_object(yval, xval, FALSE, FALSE);
+			place_object(yval, xval, FALSE, FALSE, FOUND_FLOOR, 0);
 
 			/* Let's guard the treasure well */
-			vault_monsters(yval, xval, rand_int(2) + 3);
+			vault_monsters(yval, xval, rand_range(3, 4));
 
 			/* Traps naturally */
-			vault_traps(yval, xval, 4, 4, rand_int(3) + 2);
+			vault_traps(yval, xval, 4, 4, rand_range(3, 4));
 
 			break;
 		}
@@ -2540,7 +2540,7 @@ static void build_type4(int yval, int xval)
 		/* Object (80%) */
 		if (rand_int(100) < 80)
 		{
-			place_object(yval, xval, FALSE, FALSE);
+			place_object(yval, xval, FALSE, FALSE, FOUND_FLOOR, 0);
 		}
 
 		/* Stairs (20%) */
@@ -2623,8 +2623,10 @@ static void build_type4(int yval, int xval)
 			vault_monsters(yval, xval + 2, randint(2));
 
 			/* Objects */
-			if (rand_int(3) == 0) place_object(yval, xval - 2, FALSE, FALSE);
-			if (rand_int(3) == 0) place_object(yval, xval + 2, FALSE, FALSE);
+			if (one_in(3))
+				place_object(yval, xval - 2, FALSE, FALSE, FOUND_FLOOR, 0);
+			if (one_in(3))
+				place_object(yval, xval + 2, FALSE, FALSE, FOUND_FLOOR, 0);
 		}
 
 		break;
@@ -3650,12 +3652,26 @@ static void build_type6(int yval, int xval)
 }
 
 
+/*
+ * Place an object at a level deeper than its current one (for vaults).
+ */
+static void place_object_gen(int y, int x, bool good, bool great, int how,
+	int idx, int level)
+{
+	object_level += level;
+	place_object(y, x, good, great, how, idx);
+	object_level -= level;
+}
 
 /*
  * Hack -- fill in "vault" rooms
  */
-static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
+static void build_vault(int yval, int xval, int vault)
 {
+	const int ymax = v_info[vault].hgt;
+	const int xmax = v_info[vault].wid;
+	cptr const data = v_text + v_info[vault].text;
+
 	int dx, dy, x, y;
 
 	cptr t;
@@ -3705,7 +3721,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				case '*':
 				if (rand_int(100) < 75)
 				{
-					place_object(y, x, FALSE, FALSE);
+					place_object(y, x, FALSE, FALSE, FOUND_VAULT, vault);
 				}
 				else
 				{
@@ -3760,9 +3776,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				case '9':
 				{
 					place_monster(y, x, dun_depth+9, TRUE, TRUE);
-					object_level = (dun_depth) + 7;
-					place_object(y, x, TRUE, FALSE);
-					object_level = (dun_depth);
+					place_object_gen(y, x, TRUE, FALSE, FOUND_VAULT, vault, 7);
 					break;
 				}
 
@@ -3770,9 +3784,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				case '8':
 				{
 					place_monster(y, x, dun_depth+40, TRUE, TRUE);
-					object_level = (dun_depth) + 20;
-					place_object(y, x, TRUE, TRUE);
-					object_level = (dun_depth);
+					place_object_gen(y, x, TRUE, TRUE, FOUND_VAULT, vault, 20);
 					break;
 				}
 
@@ -3785,9 +3797,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 					}
 					if (rand_int(100) < 50)
 					{
-						object_level = (dun_depth) + 7;
-						place_object(y, x, FALSE, FALSE);
-						object_level = (dun_depth);
+						place_object_gen(y, x, FALSE, FALSE, FOUND_VAULT, vault, 7);
 					}
 					break;
 				}
@@ -3822,9 +3832,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 
                 case 'A':
                 {
-                    object_level = (dun_depth) + 12;
-					place_object(y, x, TRUE, FALSE);
-					object_level = (dun_depth);
+					place_object_gen(y, x, TRUE, FALSE, FOUND_VAULT, vault, 12);
                 }
                 break;
 
@@ -3895,7 +3903,7 @@ static void build_type7_or_8(int yval, int xval, int typ)
 	}
 
 	/* Hack -- Build the vault */
-	build_vault(yval, xval, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
+	build_vault(yval, xval, v_ptr - v_info);
 }
 
 

@@ -225,10 +225,6 @@ Display "labels" (what an object is being used for) for objects in all "equipmen
 $GShow weights in all object listings [show_weights]
 Display "weights" (in pounds) of objects in all "inventory", "equipment", "store items", and "home items" listings.
 
-%%%%% <inscribe_depth>
-$GInscribe depth on items at creation [inscribe_depth] (21/5/2001)
-Inscribe the depth or level at which an item is found on it when it is created.
-
 %%%%% <stack_allow_items>
 $GAllow weapons and armor to stack [stack_allow_items]
 Allow identical weapons and armor to be combined into a stack. This also allows unidentified, but identical, ammo to be combined, which may result in the auto-identification of some of the ammo, but which makes it a lot easier to actually use unidentified ammo.

@@ -992,28 +992,6 @@ static bool PURE store_object_similar(object_ctype *o_ptr, object_ctype *j_ptr)
 
 
 /*
- * Allow a store item to absorb another item
- * Returns true if the entire stack was absorbed.
- */
-bool store_object_absorb(object_type *j_ptr, object_type *o_ptr)
-{
-	int total = o_ptr->number + j_ptr->number;
-
-	if (total <= MAX_STACK_SIZE-1)
-	{
-		j_ptr->number = total;
-		return TRUE;
-	}
-	else
-	{
-		j_ptr->number = MAX_STACK_SIZE-1;
-		o_ptr->number = total-MAX_STACK_SIZE+1;
-		return FALSE;
-	}
-}
-
-
-/*
  * Check to see if the shop will be carrying too many objects	-RAK-
  * Note that the shop, just like a player, will not accept things
  * it cannot hold.  Before, one could "nuke" potions this way.
@@ -1600,7 +1578,8 @@ static void store_create(void)
 		object_prep(q_ptr, i);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(q_ptr, level, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, level, FALSE, FALSE, FALSE, FOUND_SHOP,
+			FEAT_SHOP_HEAD+st_ptr->type);
 
 		/* Store objects never get inscriptions. */
 		q_ptr->note = 0;

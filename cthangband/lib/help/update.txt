@@ -11,6 +11,8 @@ sCthangband _CVS_
   attempt to "fire" it instead.
 * Objects can have default inscriptions which are given to all such items as
   they are created.
+* Objects get a line in their "examine" text describing where they were found.
+* Remove the (redundant) inscribe_depth option.
 * Monsters can be set to drop ego items in r_info.txt.
 * Fix the following bugs:
   * Starting the game with -n gave too many quests.

@@ -152,7 +152,6 @@ s32b total_friend_levels = 0;
 
 /* Option Set 1 -- User Interface */
 
-bool inscribe_depth;			/* Inscribe a new object with the depth made at. */
 bool rogue_like_commands;	/* Rogue-like commands */
 bool quick_messages;		/* Activate quick messages */
 bool quick_prompt;		/* Activate quick [y/n] prompts */

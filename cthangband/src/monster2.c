@@ -1203,6 +1203,8 @@ static void monster_desc_aux(char *buf, uint max, cptr name, int num,
  * "%v", monster_desc_aux_f3, (monster_race*)r_ptr, (int)num, (byte)flags
  * or:
  * "%.*v", (int)len, monster_desc_aux_f3, r_ptr, num, flags
+ * or even:
+ * "%v", monster_desc_aux_f3, (cptr)name, (int)num, (byte)flags
  *
  * Note that max is expected to be >= 2*len, which is true for normal values
  * of each.

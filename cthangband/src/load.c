@@ -387,6 +387,28 @@ static void rd_item(object_type *o_ptr)
 	/* Set the stack number. */
 	if (has_flag(SF_STACK_IDX)) rd_byte(&o_ptr->stack);
 
+	if (has_flag(SF_OBJECT_HISTORY))
+	{
+		rd_byte(&o_ptr->found.how);
+		rd_byte(&o_ptr->found.idx);
+		if (o_ptr->found.how >= FOUND_MONSTER)
+		{
+			int r = (o_ptr->found.how - FOUND_MONSTER) * 256 + o_ptr->found.idx;
+
+			r = MAX(0, convert_r_idx(r, sf_flags_sf, sf_flags_now));
+			o_ptr->found.idx = r % 256;
+			o_ptr->found.how = FOUND_MONSTER + (r / 256);
+		}
+		rd_byte(&o_ptr->found.dungeon);
+		rd_byte(&o_ptr->found.level);
+	}
+	else
+	{
+		o_ptr->found.how = FOUND_UNKNOWN;
+		o_ptr->found.dungeon = FOUND_DUN_UNKNOWN;
+		o_ptr->found.level = FOUND_LEV_UNKNOWN;
+	}
+
 	if (o_ptr->k_idx < 0 || o_ptr->k_idx >= MAX_K_IDX)
 	{
 		note("Destroying object with a bad k_idx.");

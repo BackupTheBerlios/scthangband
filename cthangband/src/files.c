@@ -307,6 +307,14 @@ cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
 	} \
 
 /*
+ * A table of options which are no longer used.
+ */
+static cptr old_options[] =
+{
+	"inscribe_depth",
+};
+
+/*
  * Parse a sub-file of the "extra info" (format shown below)
  *
  * Each "action" line has an "action symbol" in the first column,
@@ -655,6 +663,16 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case 'Y': case 'X':
 		{
 			const option_type *op_ptr;
+			cptr *old_ptr;
+			FOR_ALL_IN(old_options, old_ptr)
+			{
+				if (!strcmp(*old_ptr, buf+2))
+				{
+					msg_format("Ignoring obsolete option \"%s\".", *old_ptr);
+					return SUCCESS;
+				}
+			}
+
 			for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 			{
 				if (op_ptr->o_var && op_ptr->o_text &&

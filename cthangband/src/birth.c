@@ -2637,7 +2637,7 @@ static void make_birth_item(make_item_type *i_ptr)
 	if (!i_ptr->k_idx) return;
 
 	/* Actually create the item. */
-	make_item(o_ptr, i_ptr);
+	make_item(o_ptr, i_ptr, FOUND_BIRTH, 0);
 
 	/* Hack - torches have a special pval. */
 	if (o_ptr->k_idx == OBJ_WOODEN_TORCH) o_ptr->pval = rand_range(3, 7) * 500;

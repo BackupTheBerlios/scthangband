@@ -562,6 +562,16 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 
 	j_ptr->pval = known;
 
+	/* 
+	 * The player always knows where the object was found. The game does not
+	 * attempt to predict whether the player can tell which monster dropped it,
+	 * but this knowledge doesn't help much for an identified item.
+	 */
+	j_ptr->found.how = known;
+	j_ptr->found.idx = known;
+	j_ptr->found.dungeon = TRUE;
+	j_ptr->found.level = TRUE;
+
 	/* Hack - this should distinguish between knowing timeout and knowing
 	 * whether timeout is 0. Only the latter actually happens, so I've kept
 	 * it simple. */
@@ -802,6 +812,10 @@ static void set_known_fields(object_type *j_ptr, object_ctype *o_ptr,
 	OIK_MASK(art_name)
 	OIK_MASK(next_o_idx)
 	OIK_MASK(held_m_idx)
+	OIK_MASK_SPECIAL(found.how, FOUND_UNKNOWN);
+	OIK_MASK(found.idx);
+	OIK_MASK_SPECIAL(found.dungeon, FOUND_DUN_UNKNOWN);
+	OIK_MASK_SPECIAL(found.level, FOUND_LEV_UNKNOWN);
 }
 
 /*
@@ -2628,6 +2642,127 @@ byte PURE ammunition_type(object_ctype *o_ptr)
 	alloc_ifa(info+i++, list_flags(init, conj, flags, total))
 
 /*
+ * Add a description of how an object was found to *info.
+ * Call as "identify_fully_found_f1, (object_type *)o_ptr"
+ */
+static void identify_fully_found_f1(char *buf, uint max, cptr UNUSED fmt,
+	va_list *vp)
+{
+	object_ctype *o_ptr = va_arg(*vp, object_ctype *);
+	const object_found *found = &o_ptr->found;
+	char *end = buf+max, *p = buf;
+	const bool plural = (o_ptr->number != 1);
+	const bool unknown = (found->idx == 0);
+	cptr a = (plural) ? "" : "a ";
+	cptr s = (plural) ? "s" : "";
+
+	if (plural)
+		p += strnfmt(p, end-p, "It was");
+	else
+		p += strnfmt(p, end-p, "They were");
+
+	switch (found->how)
+	{
+		case FOUND_UNKNOWN: case FOUND_MIXED:
+			p += strnfmt(p, end-p, " found");
+			break;
+		case FOUND_FLOOR:
+			p += strnfmt(p, end-p, " found on the floor");
+			break;
+		case FOUND_VAULT:
+			/* Don't name the vault, as the names are a bit odd. */
+			p += strnfmt(p, end-p, " found in %svault%s", a, s);
+			break;
+		case FOUND_QUEST:
+			p += strnfmt(p, end-p, " %squest reward%s", a, s);
+			break;
+		case FOUND_DIG:
+			if (unknown)
+				p += strnfmt(p, end-p, " found buried in the ground");
+			else
+				p += strnfmt(p, end-p, " found in %v",
+					feature_desc_f2, found->idx, FDF_INDEF);
+			break;
+		case FOUND_CHEST:
+			if (unknown)
+				p += strnfmt(p, end-p, " found in %schest%s", a, s);
+			else
+				p += strnfmt(p, end-p, " found in %v",
+					object_k_name_f1, found->idx);
+			break;
+		case FOUND_SHOP:
+			if (unknown)
+				p += strnfmt(p, end-p, "bought from %sshop%s", a, s);
+			else
+				p += strnfmt(p, end-p, " bought from %v",
+					feature_desc_f2, found->idx, FDF_INDEF);
+			break;
+		case FOUND_BIRTH:
+			p += strnfmt(p, end-p, " yours from the beginning");
+			break;
+		case FOUND_SPELL:
+			p += strnfmt(p, end-p, " conjured out of thin air");
+			break;
+		case FOUND_CHAOS:
+			p += strnfmt(p, end-p, " given to you by %s",
+				(unknown) ? "your patron" : chaos_patron_shorts[found->idx-1]);
+			break;
+		case FOUND_CHEAT:
+			p += strnfmt(p, end-p, " created to aid debugging");
+			break;
+		default:
+		{
+			/* Hack - monster drops use a 15 bit index. */
+			if (found->how >= FOUND_MONSTER)
+			{
+				int r_idx = (found->how - FOUND_MONSTER) * 256 + found->idx;
+
+				if (!r_idx)
+				{
+					/* Hack - 0 represents an unknown monster. */
+					p += strnfmt(p, end-p, "dropped by %smonster%s", a, s);
+				}
+				else if (r_idx == MON_PLAYER_GHOST)
+				{
+					/* Hack - ghosts have unpredictable names. */
+					p += strnfmt(p, end-p, "dropped by %splayer ghost%s", a, s);
+				}
+				else
+				{
+					/* Hack - assume only one monster dropped it. */
+					p += strnfmt(p, end-p, " dropped by %v",
+						monster_desc_aux_f3, r_info+r_idx, plural ? 2 : 1,
+						MDF_INDEF);
+				}
+			}
+			/* Paranoia */
+			else
+			{
+				p += strnfmt(p, end-p, " obtained mysteriously");
+			}
+		}
+	}
+	if (found->dungeon == FOUND_DUN_WILD)
+		strnfmt(p, end-p, " in the wilderness.");
+	else if (found->dungeon == FOUND_DUN_UNKNOWN)
+		strnfmt(p, end-p, " somewhere.");
+	else if (found->level == FOUND_LEV_UNKNOWN)
+		strnfmt(p, end-p, " somewhere in %s.",
+			dun_name+dun_defs[found->dungeon].name);
+	else if (found->level == 0)
+		strnfmt(p, end-p, " in %s.", town_name+town_defs[found->dungeon].name);
+	else
+	{
+		int depth = dun_defs[found->dungeon].offset+found->level;
+		cptr dun = dun_name+dun_defs[found->dungeon].name;
+		if (depth_in_feet)
+			p += strnfmt(p, end-p, " at %d' in %s.", 50*depth, dun);
+		else
+			p += strnfmt(p, end-p, " on level %d in %s.", depth, dun);
+	}
+}
+
+/*
  * Find the strings which describe the flags of o_ptr, place them in info
  * and note whether each was allocated.
  *
@@ -3186,6 +3321,14 @@ nextbit:
 		{
 			do_list_flags(format("It %s be harmed by", board[j]), "and", board, j);
 		}
+	}
+
+	/* Nothing is known, so print nothing. */
+	if (o_ptr->found.how != FOUND_UNKNOWN ||
+		o_ptr->found.dungeon != FOUND_DUN_UNKNOWN ||
+		o_ptr->found.level != FOUND_LEV_UNKNOWN)
+	{
+		alloc_ifa(info+i++, "%v", identify_fully_found_f1, o_ptr);
 	}
 }
 
