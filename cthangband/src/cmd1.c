@@ -159,6 +159,52 @@ static s16b critical_norm(int weight, int plus, int dam)
 }
 
 
+typedef struct flag_type flag_type;
+struct flag_type
+{
+	int set;
+	u32b flag;
+};
+
+typedef struct slay_type slay_type;
+struct slay_type
+{
+	flag_type obj;
+	flag_type mon;
+	s16b mult;
+	bool have; /* Should the monster have the flag (a slay) or not (a brand)? */
+};
+
+/* 
+ * Array of the slays and brands an object can have, with the relevant monster
+ * flags for each.
+ */
+static slay_type slay_flags[] =
+{
+	{{TR1, TR1_SLAY_ANIMAL}, {RF3, RF3_ANIMAL}, 2, TRUE},
+	{{TR1, TR1_SLAY_EVIL}, {RF3, RF3_EVIL}, 2, TRUE},
+	{{TR1, TR1_SLAY_UNDEAD}, {RF3, RF3_UNDEAD}, 3, TRUE},
+	{{TR1, TR1_SLAY_DEMON}, {RF3, RF3_DEMON}, 3, TRUE},
+	{{TR1, TR1_SLAY_ORC}, {RF3, RF3_ORC}, 3, TRUE},
+	{{TR1, TR1_SLAY_TROLL}, {RF3, RF3_TROLL}, 3 , TRUE},
+	{{TR1, TR1_SLAY_GIANT}, {RF3, RF3_GIANT}, 3, TRUE},
+	{{TR1, TR1_SLAY_DRAGON}, {RF3, RF3_DRAGON}, 3, TRUE},
+	{{TR1, TR1_KILL_DRAGON}, {RF3, RF3_DRAGON}, 5, TRUE},
+	{{TR1, TR1_X15_DRAGON}, {RF3, RF3_DRAGON}, 15, TRUE},
+	{{TR1, TR1_BRAND_ACID}, {RF3, RF3_IM_ACID}, 3, FALSE},
+	{{TR1, TR1_BRAND_ELEC}, {RF3, RF3_IM_ELEC}, 3, FALSE},
+	{{TR1, TR1_BRAND_FIRE}, {RF3, RF3_IM_FIRE}, 3, FALSE},
+	{{TR1, TR1_BRAND_COLD}, {RF3, RF3_IM_COLD}, 3, FALSE},
+	{{TR1, TR1_BRAND_POIS}, {RF3, RF3_IM_POIS}, 3, FALSE},
+};
+
+/*
+ * Check if the flag is present in the flags array.
+ */
+static bool flag_p(u32b *flags, flag_type *flag)
+{
+	return ((flags[flag->set] & flag->flag) == flag->flag);
+}
 
 /*
  * Extract the "total damage" from a given object hitting a given monster.
@@ -171,227 +217,50 @@ static s16b critical_norm(int weight, int plus, int dam)
  */
 s16b tot_dam_aux(object_ctype *o_ptr, int tdam, monster_type *m_ptr)
 {
+	slay_type *slay;
+
 	int mult = 1;
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	u32b f1, f2, f3;
+	u32b f[MAX_FLAG_SETS], *rf[MAX_FLAG_SETS];
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, f+TR1, f+TR2, f+TR3);
 
-	/* Some "weapons" and "ammo" do extra damage */
-	switch (o_ptr->tval)
+	f[RF1] = r_ptr->flags1;
+	f[RF2] = r_ptr->flags2;
+	f[RF3] = r_ptr->flags3;
+	/* f[RF4] = r_ptr->flags4; */
+	/* f[RF5] = r_ptr->flags5; */
+	/* f[RF6] = r_ptr->flags6; */
+
+	rf[RF1] = &r_ptr->r_flags1;
+	rf[RF2] = &r_ptr->r_flags2;
+	rf[RF3] = &r_ptr->r_flags3;
+	/* *rf[RF4] = &r_ptr->r_flags4; */
+	/* *rf[RF5] = &r_ptr->r_flags5; */
+	/* *rf[RF6] = &r_ptr->r_flags6; */
+
+	FOR_ALL_IN(slay_flags, slay)
 	{
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_DIGGING:
+		bool has = flag_p(f, &slay->mon);
+
+		/* The object doesn't have the flag. */
+		if (!flag_p(f, &slay->obj)) continue;
+
+		/* The monster is susceptible to this slay/brand. */
+		if (slay->have == has)
 		{
-			/* Slay Animal */
-			if ((f1 & (TR1_SLAY_ANIMAL)) &&
-			    (r_ptr->flags3 & (RF3_ANIMAL)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_ANIMAL);
-				}
+			if (mult < slay->mult) mult = slay->mult;
+		}
 
-				if (mult < 2) mult = 2;
-			}
-
-			/* Slay Evil */
-			if ((f1 & (TR1_SLAY_EVIL)) &&
-			    (r_ptr->flags3 & (RF3_EVIL)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_EVIL);
-				}
-
-				if (mult < 2) mult = 2;
-			}
-
-			/* Slay Undead */
-			if ((f1 & (TR1_SLAY_UNDEAD)) &&
-			    (r_ptr->flags3 & (RF3_UNDEAD)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_UNDEAD);
-				}
-
-				if (mult < 3) mult = 3;
-			}
-
-			/* Slay Demon */
-			if ((f1 & (TR1_SLAY_DEMON)) &&
-			    (r_ptr->flags3 & (RF3_DEMON)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_DEMON);
-				}
-
-				if (mult < 3) mult = 3;
-			}
-
-			/* Slay Orc */
-			if ((f1 & (TR1_SLAY_ORC)) &&
-			    (r_ptr->flags3 & (RF3_ORC)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_ORC);
-				}
-
-				if (mult < 3) mult = 3;
-			}
-
-			/* Slay Troll */
-			if ((f1 & (TR1_SLAY_TROLL)) &&
-			    (r_ptr->flags3 & (RF3_TROLL)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_TROLL);
-				}
-
-
-
-				if (mult < 3) mult = 3;
-			}
-
-			/* Slay Giant */
-			if ((f1 & (TR1_SLAY_GIANT)) &&
-			    (r_ptr->flags3 & (RF3_GIANT)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_GIANT);
-				}
-
-				if (mult < 3) mult = 3;
-			}
-
-			/* Slay Dragon  */
-			if ((f1 & (TR1_ALL_SLAY_DRAGON)) &&
-			    (r_ptr->flags3 & (RF3_DRAGON)))
-			{
-				if (m_ptr->ml)
-				{
-					r_ptr->r_flags3 |= (RF3_DRAGON);
-				}
-
-				switch (f1 & (TR1_ALL_SLAY_DRAGON))
-				{
-					case TR1_SLAY_DRAGON: mult = 3; break;
-					case TR1_KILL_DRAGON: mult = 5; break;
-					case TR1_X15_DRAGON: mult = 15; break;
-				}
-			}
-
-			/* Brand (Acid) */
-			if (f1 & (TR1_BRAND_ACID))
-			{
-				/* Notice immunity */
-				if (r_ptr->flags3 & (RF3_IM_ACID))
-				{
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags3 |= (RF3_IM_ACID);
-					}
-				}
-
-				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < 3) mult = 3;
-				}
-			}
-
-			/* Brand (Elec) */
-			if (f1 & (TR1_BRAND_ELEC))
-			{
-				/* Notice immunity */
-				if (r_ptr->flags3 & (RF3_IM_ELEC))
-				{
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags3 |= (RF3_IM_ELEC);
-					}
-				}
-
-				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < 3) mult = 3;
-				}
-			}
-
-			/* Brand (Fire) */
-			if (f1 & (TR1_BRAND_FIRE))
-			{
-				/* Notice immunity */
-				if (r_ptr->flags3 & (RF3_IM_FIRE))
-				{
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags3 |= (RF3_IM_FIRE);
-					}
-				}
-
-				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < 3) mult = 3;
-				}
-			}
-
-			/* Brand (Cold) */
-			if (f1 & (TR1_BRAND_COLD))
-			{
-				/* Notice immunity */
-				if (r_ptr->flags3 & (RF3_IM_COLD))
-				{
-					if (m_ptr->ml)
-					{
-						r_ptr->r_flags3 |= (RF3_IM_COLD);
-					}
-				}
-				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < 3) mult = 3;
-				}
-			}
-
-	    /* Brand (Poison) - Zangband*/
-	    if (f1 & (TR1_BRAND_POIS))
-			{
-				/* Notice immunity */
-		if (r_ptr->flags3 & (RF3_IM_POIS))
-				{
-					if (m_ptr->ml)
-					{
-			r_ptr->r_flags3 |= (RF3_IM_POIS);
-					}
-				}
-
-				/* Otherwise, take the damage */
-				else
-				{
-					if (mult < 3) mult = 3;
-				}
-			}
-
-			break;
+		/* The monster has the relevant flag. */
+		if (m_ptr->ml && has)
+		{
+			*rf[slay->mon.set] |= slay->mon.flag;
 		}
 	}
-
 
 	/* Return the total damage */
 	return (tdam * mult);
