@@ -377,10 +377,20 @@ static void prt_spirit(void)
 static void prt_depth(void)
 {
 	char depths[32];
+	s16b level = dun_level + dun_offset;
+	cptr descr[2][2] = {
+	{"(Lev %d)", "%d ft"},
+	{"/(Lev %d)\\", "/%d ft\\"}
+	};
+	if (depth_in_feet) level *= 50;
 
-	if (dun_level==0)
+
+	if (dun_level)
 	{
-		if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
+		(void)sprintf(depths, descr[(int)dun_defs[cur_dungeon].tower][(int)depth_in_feet], level);
+	}
+	
+	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
 		{
 			(void)strcpy(depths, dun_defs[wild_grid[wildy][wildx].dungeon].shortname);
 		}
@@ -388,29 +398,6 @@ static void prt_depth(void)
 		{
 			(void)sprintf(depths, "Wild (%d,%d)",wildx,wildy);
 		}
-	}
-	else if (depth_in_feet)
-	{
-		if (dun_defs[cur_dungeon].tower)
-		{
-			(void)sprintf(depths, "/%d ft\\",dun_level * 50);
-		}
-		else
-		{
-			(void)sprintf(depths, "(%d ft)",(dun_depth) * 50);
-		}
-	}
-	else
-	{
-		if (dun_defs[cur_dungeon].tower)
-		{
-			(void)sprintf(depths, "/(Lev %d)\\", dun_level);
-		}
-		else
-		{
-			(void)sprintf(depths, "(Lev %d)", (dun_depth));
-		}
-	}
 	/* Right-Adjust the "depth", and clear old values */
 	prt(format("%9s", depths), 23, COL_DEPTH);
 }
