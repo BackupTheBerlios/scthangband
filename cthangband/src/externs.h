@@ -431,7 +431,7 @@ extern void play_game(bool new_game);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_C) || defined(WIZARD1_C))
 extern void safe_setuid_drop(void);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_C) || defined(WIZARD1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(WIZARD1_C))
 extern void safe_setuid_grab(void);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C))
@@ -679,8 +679,14 @@ extern errr init_dos(void);
 
 /* main-gcu.c */
 
+#if ((defined(USE_GCU)) && defined(USE_NCURSES)) && (defined(MAIN_GCU_C) || defined(MAIN_C))
+extern const char help_gcu[] ;
+#endif
+#if ((defined(USE_GCU)) && !(defined(USE_NCURSES))) && (defined(MAIN_GCU_C) || defined(MAIN_C))
+extern const char help_gcu[] ;
+#endif
 #if (defined(USE_GCU)) && (defined(MAIN_GCU_C) || defined(MAIN_C))
-extern errr init_gcu(int UNUSED argc, char UNUSED **argv);
+extern errr init_gcu(int argc, char **argv);
 #endif
 
 /* main-ibm.c */
@@ -742,7 +748,7 @@ extern char a2e[];
 #if ((defined(USE_VME) || defined(VM))) && (defined(MAIN_VME_C))
 extern char DISP[26];
 #endif
-#if ((defined(USE_VME) || defined(VM))) && (defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C))
+#if ((defined(USE_VME) || defined(VM))) && (defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C))
 extern int rows, cols;
 #endif
 #if ((defined(USE_VME) || defined(VM))) && (defined(MAIN_VME_C))
@@ -859,7 +865,7 @@ extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdL
 
 /* main-x11.c */
 
-#if (defined(USE_X11)) && (defined(MAIN_X11_C))
+#if (defined(USE_X11)) && (defined(MAIN_X11_C) || defined(MAIN_C))
 extern const char help_x11[] ;
 #endif
 #if (defined(USE_X11)) && (defined(MAIN_X11_C) || defined(MAIN_C))
@@ -1831,7 +1837,7 @@ extern martial_arts ma_blows[MAX_MA] ;
 #if (defined(CMD5_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS] ;
 #endif
-#if (defined(DEFINES_H) || defined(CMD4_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(READDIB_C) || defined(SAVE_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(DEFINES_H) || defined(CMD4_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(READDIB_C) || defined(SAVE_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern window_type windows[8] ;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(STORE_C) || defined(TABLES_C))
@@ -1867,7 +1873,7 @@ extern int usleep(huge usecs);
 #if (defined(SET_UID)) && (defined(MAIN_C) || defined(UTIL_C))
 extern void user_name(char *buf, int id);
 #endif
-#if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
+#if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 #endif
 #if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ACN_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
@@ -1877,6 +1883,9 @@ extern FILE *my_fopen(cptr file, cptr mode);
 extern errr my_fclose(FILE *fff);
 #endif
 #if (defined(HAVE_MKSTEMP)) && (defined(CMD4_C) || defined(UTIL_C))
+extern FILE *my_fopen_temp(char *buf, int max);
+#endif
+#if (!(defined(HAVE_MKSTEMP))) && (defined(CMD4_C) || defined(UTIL_C))
 extern FILE *my_fopen_temp(char *buf, int max);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_MAC_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -2003,7 +2012,7 @@ extern bool get_com(cptr prompt, char *command);
 extern s16b get_quantity(cptr prompt, int max,bool allbydefault);
 #endif
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(UTIL_C))
-extern void pause_line(int row);
+extern void pause_line(void);
 #endif
 #if (defined(CMD4_C) || defined(UTIL_C))
 extern int keymap_mode(void);
@@ -2056,7 +2065,7 @@ extern bool arg_wizard;
 #if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern bool arg_sound;
 #endif
-#if (defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(VARIABLE_C))
+#if (defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern bool arg_graphics;
 #endif
 #if (defined(DUNGEON_C) || defined(MAIN_C) || defined(VARIABLE_C))
@@ -2191,7 +2200,7 @@ extern bool cheat_wzrd;
 #if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool use_sound;
 #endif
-#if (defined(CAVE_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
+#if (defined(CAVE_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
 extern bool use_graphics;
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_WIN_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -2430,6 +2439,9 @@ extern bool disturb_allies;
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool multi_stair;
+#endif
+#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool unify_commands;
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool centre_view;
@@ -2812,7 +2824,7 @@ extern u32b option_flag[8];
 #if (defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern u32b option_mask[8];
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(VARIABLE_C))
 extern byte angband_color_table[256][4] ;
 #endif
 #if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(VARIABLE_C))
@@ -3062,7 +3074,55 @@ extern void do_cmd_spoilers(void);
 extern void do_cmd_rerate(void);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void wiz_create_named_art(int a_idx);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_hack_ben(void);
+#endif
+#if ((defined(ALLOW_WIZARD)) && defined(MONSTER_HORDES)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_summon_horde(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_bamf(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_change(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_play(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void wiz_create_item(int k_idx);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_cure_all(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_jump(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_learn(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_summon(int num);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_named(int r_idx, int slp);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_named_friendly(int r_idx, int slp);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_zap(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_magebolt(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_debug(void);
+#endif
+#if (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void do_cmd_wiz_help(void);
 #endif
 
 /* xtra1.c */
@@ -3286,7 +3346,7 @@ extern uint strfmt(char *buf, cptr fmt, ...);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern char *format(cptr fmt, ...);
 #endif
-#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_FORM_C))
+#if (defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_FORM_C))
 extern void plog_fmt(cptr fmt, ...);
 #endif
 #if (defined(FILES_C) || defined(INIT2_C) || defined(MAID_X11_C) || defined(MAIN_DOS_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_FORM_C))
@@ -3328,7 +3388,7 @@ extern s16b maxroll(int num, int sides);
 
 /* z-term.c */
 
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern term *Term ;
 #endif
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(Z_TERM_C))
@@ -3453,7 +3513,7 @@ extern bool streq(cptr a, cptr b);
 #if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern bool suffix(cptr s, cptr t);
 #endif
-#if (defined(FILES_C) || defined(MAIN_X11_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_UTIL_C))
+#if (defined(FILES_C) || defined(MAIN_GCU_C) || defined(MAIN_X11_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_UTIL_C))
 extern bool prefix(cptr s, cptr t);
 #endif
 #if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
@@ -3462,13 +3522,13 @@ extern void (*plog_aux)(cptr) ;
 #if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_FORM_C) || defined(Z_UTIL_C))
 extern void plog(cptr str);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
+#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern void (*quit_aux)(cptr) ;
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_UTIL_C))
 extern void quit(cptr str);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
+#if (defined(MAIN_ACN_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
 extern void (*core_aux)(cptr) ;
 #endif
 #if (defined(MAIN_ACN_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_VIRT_C))
@@ -3497,71 +3557,5 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
-#endif
-
-/* util.c */
-
-#if (!(defined(HAVE_MKSTEMP))) && (defined(CMD4_C) || defined(UTIL_C))
-extern FILE *my_fopen_temp(char *buf, int max);
-#endif
-
-/* variable.c */
-
-#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool unify_commands;
-#endif
-
-/* wizard2.c */
-
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void wiz_create_named_art(int a_idx);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_hack_ben(void);
-#endif
-#if ((defined(ALLOW_WIZARD)) && defined(MONSTER_HORDES)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_summon_horde(void);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_bamf(void);
-#endif
-
-
-
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_change(void);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_play(void);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void wiz_create_item(int k_idx);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_cure_all(void);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_jump(void);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_learn(void);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_summon(int num);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_named(int r_idx, int slp);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_named_friendly(int r_idx, int slp);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_zap(void);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_magebolt(void);
-#endif
-#if (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_help(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

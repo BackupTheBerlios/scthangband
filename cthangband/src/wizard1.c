@@ -373,11 +373,6 @@ static void spoil_obj_desc(cptr fname)
 #define MAX_LINE_LEN 75
 
 /*
- * Given an array, determine how many elements are in the array
- */
-#define N_ELEMENTS(a) (sizeof (a) / sizeof ((a)[0]))
-
-/*
  * The artifacts categorized by type
  */
 static grouper group_artifact[] =

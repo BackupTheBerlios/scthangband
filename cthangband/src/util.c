@@ -3110,7 +3110,7 @@ s16b get_quantity(cptr prompt, int max,bool allbydefault)
 /*
  * Pause for user response XXX XXX XXX
  */
-void pause_line(int row)
+static void pause_line_aux(int row)
 {
 	int i;
 	prt("", row, 0);
@@ -3119,6 +3119,10 @@ void pause_line(int row)
 	prt("", row, 0);
 }
 
+void pause_line(void)
+{
+	pause_line_aux(Term->hgt - 1);
+}
 
 /*
  * Hack -- special buffer to hold the action of the current keymap

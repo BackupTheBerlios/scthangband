@@ -77,6 +77,12 @@
 
 
 /*
+ * Maximum amount of Angband windows.
+ */
+#define ANGBAND_TERM_MAX 8
+
+
+/*
  * Total number of stores (see "store.c", etc)
  */
 #define MAX_STORES_PER_TOWN			12
@@ -823,28 +829,30 @@ logaux(x, 1) logaux(x, 0) 255
 #define ROW_HUNGRY	ROW_STUN+1	/* 23 */
 #define COL_HUNGRY              0       /* "Weak" / "Hungry" / "Full" / "Gorged" */
 
-#define ROW_BLIND               23
+#define ROW_BOTTOM	(term_screen->hgt-1)
+
+#define ROW_BLIND               ROW_BOTTOM
 #define COL_BLIND               7       /* "Blind" */
 
-#define ROW_CONFUSED    23
+#define ROW_CONFUSED    ROW_BOTTOM
 #define COL_CONFUSED    13      /* "Confused" */
 
-#define ROW_AFRAID              23
+#define ROW_AFRAID              ROW_BOTTOM
 #define COL_AFRAID              22      /* "Afraid" */
 
-#define ROW_POISONED    23
+#define ROW_POISONED    ROW_BOTTOM
 #define COL_POISONED    29      /* "Poisoned" */
 
-#define ROW_STATE               23
+#define ROW_STATE               ROW_BOTTOM
 #define COL_STATE               38      /* <state> */
 
-#define ROW_SPEED               23
+#define ROW_SPEED               ROW_BOTTOM
 #define COL_SPEED               49      /* "Slow (-NN)" or "Fast (+NN)" */
 
-#define ROW_STUDY               23
+#define ROW_STUDY               ROW_BOTTOM
 #define COL_STUDY               63      /* "Study" */
 
-#define ROW_DEPTH               23
+#define ROW_DEPTH               ROW_BOTTOM
 #define COL_DEPTH               69      /* "Lev NNN" / "NNNN ft" */
 
 
@@ -3301,3 +3309,8 @@ extern int PlayerUID;
 
 /* Shopping command set. Ditto. (not yet implemented) */
 #define CMD_SHOP	-7680
+
+/*
+ * Given an array, determine how many elements are in the array.
+ */
+#define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))

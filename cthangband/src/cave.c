@@ -1411,10 +1411,10 @@ void prt_map(void)
 	(void)Term_set_cursor(0);
 
 	/* Dump the map */
-	for (y = panel_row_min; y <= panel_row_max; y++)
+	for (y = panel_row_min; y - panel_row_prt < Term->hgt-1; y++)
 	{
 		/* Scan the columns of row "y" */
-		for (x = panel_col_min; x <= panel_col_max; x++)
+		for (x = panel_col_min; x - panel_col_prt < Term->wid; x++)
 		{
 			byte a;
 			char c;
@@ -1422,9 +1422,27 @@ void prt_map(void)
 #ifdef USE_TRANSPARENCY
 			byte ta;
 			char tc;
+#endif /* USE_TRANSPARENCY */
 
+			if (x < cur_wid && y < cur_hgt)
+			{
+#ifdef USE_TRANSPARENCY
 			/* Determine what is there */
 			map_info(y, x, &a, &c, &ta, &tc);
+#else /* USE_TRANSPARENCY */
+			map_info(y, x, &a, &c);
+#endif /* USE_TRANSPARENCY */
+			}
+			else
+			{
+				/* Fake it. */
+				a = TERM_DARK;
+				c = ' ';
+#ifdef USE_TRANSPARENCY
+				ta = TERM_DARK;
+				tc = ' ';
+#endif /* USE_TRANSPARENCY */
+			}
 
 			/* Hack -- fake monochrome */
 			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
@@ -1433,18 +1451,9 @@ void prt_map(void)
 				&& (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
 
 			/* Efficiency -- Redraw that grid of the map */
+#ifdef USE_TRANSPARENCY
 			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
-			/* Determine what is there */
-			map_info(y, x, &a, &c);
-
-			/* Hack -- fake monochrome */
-			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->invuln || !use_color)) a = TERM_WHITE;
-			else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
-
-			/* Efficiency -- Redraw that grid of the map */
 			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
 		}

@@ -4175,7 +4175,7 @@ void play_game(bool new_game)
 
 #if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
 	/* Wait for response if required */
-	if (display_credits) pause_line(23);
+	if (display_credits) pause_line();
 #endif
 
 

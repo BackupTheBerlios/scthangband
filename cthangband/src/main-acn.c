@@ -1682,7 +1682,7 @@ int main(int argc, char *argv[])
 	{
 		strcpy(savefile, translate_name(argv[1]));
 		game_in_progress=1;
-		pause_line(23);
+		pause_line();
 		flush();
 		play_game(FALSE);
 		quit(NULL);
