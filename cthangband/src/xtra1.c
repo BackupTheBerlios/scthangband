@@ -3960,7 +3960,7 @@ static void win_visible_display(void)
 				len = 23-strlen(format(" (x%d)", who[i].amount));
 			}
 			name = format("%.*s", len,
-				monster_desc_aux(0, r_info+who[i].r_idx, 2, 0));
+				monster_desc_aux(0, r_info+who[i].r_idx, who[i].amount, 0));
 
 			if (who[i].amount != 1)
 			{

@@ -1255,7 +1255,6 @@ static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 	const char artstr_art[2] = {CM_ACT | MCI_ARTICLE, '\0'};
 		
 	bool number = (flags & MDF_NUMBER) != 0;
-	bool capital = (flags & MDF_CAPITAL) != 0;
 	cptr s;
 	char *t;
 	byte reject = 0;
@@ -1321,9 +1320,6 @@ static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 			if (((*t++ = *s++)) == '\0') break;
 		}
 	}
-
-	/* Setting capital forces the initial letter to be capitalised. */
-	if (capital) *out = FORCEUPPER(*out);
 
 	TFREE(buf);
 

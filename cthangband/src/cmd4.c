@@ -3176,7 +3176,7 @@ static void do_cmd_knowledge_uniques(void)
 				fprintf(fff, " %s %c [[[[[%c%s is %s]\n", sym,
 					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', 
 					(dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE],
-					monster_desc_aux(m_name, r_ptr, 1, 0),
+					monster_desc_aux(m_name, r_ptr, 1, MDF_DEF),
 					(dead ? "dead" : "alive"));
 			}
 		}

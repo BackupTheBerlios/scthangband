@@ -77,7 +77,7 @@ void print_quest_message(void)
 	int q_idx = get_quest_number();
 	monster_race	*r_ptr = &r_info[q_list[q_idx].r_idx];
 	int q_num = q_list[q_idx].max_num - q_list[q_idx].cur_num_known;
-	byte flag = (q_list[q_idx].max_num == 1) ? 0 : MDF_NUMBER;
+	byte flag = (q_list[q_idx].max_num == 1) ? MDF_DEF : MDF_NUMBER;
 	cptr name = monster_desc_aux(0, r_ptr, q_num, flag);
 
 	msg_format("You still have to kill %s.", name);
@@ -110,9 +110,9 @@ void quest_discovery(void)
 	if (q_num > 1)
 		flags = MDF_NUMBER;
 	else if (~r_ptr->flags1 & RF1_UNIQUE)
-		flags = MDF_INDEF;
+		flags = MDF_DEF;
 	else
-		flags = 0;
+		flags = MDF_INDEF;
 	monster_desc_aux(name, r_ptr, q_num, flags);
 
 	msg_print (find_quest[rand_range(0,4)]);
