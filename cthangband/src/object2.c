@@ -800,6 +800,9 @@ static s32b object_value_base(object_type *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
+	s16b i;
+	s32b cost = 0;
+
 	/* Aware item -- use template cost */
 	if (object_aware_p(o_ptr)) return (k_ptr->cost);
 
@@ -831,8 +834,21 @@ static s32b object_value_base(object_type *o_ptr)
 		case TV_AMULET: return (45L);
 	}
 
-	/* Paranoia -- Oops */
-	return (0L);
+	/* No default, so find the cheapest thing it could be. */
+	for (i = 0; i < MAX_K_IDX; i++)
+	{
+		object_kind *k2_ptr = &k_info[i];
+
+		/* Reject worthless items. */
+		if (!k2_ptr->cost) continue;
+
+		/* Reject items with a different p_id. */
+		if (u_info[k2_ptr->u_idx].p_id != u_info[k_ptr->u_idx].p_id) continue;
+		
+		/* Reduce cost if necessary. */
+		if (!cost || k2_ptr->cost < cost) cost = k2_ptr->cost;
+	}
+	return cost;
 }
 
 /* Return the value of the flags the object has... */
