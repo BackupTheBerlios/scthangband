@@ -1245,10 +1245,10 @@ s16b get_mon_num(int level)
  *  10 TRUE  -     FALSE  "the Newts"
  *  10 TRUE  -     TRUE   "the 10 Newts"
  */
-static void monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
+static void monster_desc_aux(char *out, char *buf, uint max, cptr name,
 	int num, byte flags)
 {
-	cptr artstr = UNREAD_VALUE;
+	cptr artstr = "";
 	cptr s;
 	char *t;
 	byte reject = 0;
@@ -1285,7 +1285,7 @@ static void monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
 	if (flags & MDF_NUMBER)
 	{
 		/* out is just used as a temporary buffer here... */
-		sprintf(out, "%s%d", (artstr[0]) ? " " : "", num);
+		sprintf(out, "%s%s%d", artstr, (artstr[0]) ? " " : "", num);
 		artstr = out;
 	}
 
@@ -1381,7 +1381,7 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	}
 
 	/* Create the name now the arguments are known. */
-	monster_desc_aux_2(buf, buf+len, len, name, num, flags);
+	monster_desc_aux(buf, buf+len, len, name, num, flags);
 }
 
 /*
