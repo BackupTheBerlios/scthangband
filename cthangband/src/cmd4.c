@@ -815,7 +815,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
  * Add lots of space. This is useful when writing to a line of the screen
  * which should be cleared.
  */
-static void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp)
+void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp)
 {
 	if (max > 256) max = 256;
 	memset(buf, ' ', max-1);

@@ -677,7 +677,7 @@ static void regenmana(int percent)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
-		p_ptr->window |= (PW_PLAYER);
+		p_ptr->window |= (PW_SPELL);
 	}
 }
 

@@ -15,7 +15,6 @@
 #include "angband.h"
 
 
-static void print_favours(byte *spells, book_type *b_ptr, int num, int y, int x);
 static bool spirit_okay(int spirit, bool call);
 static void print_spirits(int *valid_spirits,int num,int y, int x);
 static s32b favour_annoyance(magic_type *f_ptr);
@@ -58,11 +57,6 @@ static int book_to_school(book_type *b_ptr)
 		/* Not one of these books. */
 		default: return -1;
 	}
-}
-
-static int k_idx_to_school(int i)
-{
-	return book_to_school(k_idx_to_book(i));
 }
 
 static book_type *spirit_to_book(int i)
@@ -465,100 +459,161 @@ static u16b magic_energy(magic_type *s_ptr)
 }
 
 /*
- * Print a list of spells (for browsing or casting or viewing)
+ * Create a string describing a spell in a particular style.
+ *
+ * i is the index of the spell.
+ * s_ptr is the spell (or 0 for the top line).
+ * comment is the magic info for the spell's desc parameter.
+ *
+ * It should return the intended top line if called with s_ptr = 0.
+ * Otherwise, it should return the desired description.
+ * In either case, a return of 0 causes 
  */
-static void print_spells(byte *spells, int num, int y, int x, book_type *b_ptr)
+
+static cptr cantrip_string(int i, magic_type *s_ptr, cptr comment)
 {
-	int                     i, spell;
+	if (!s_ptr) return format("     %35s%s", "Name", "Sk Fail Info");
 
-	magic_type              *s_ptr;
+	if (spell_skill(s_ptr) < s_ptr->min) comment = " too hard";
 
-	cptr            comment, type;
+	return format("  %c) %-35s%2d %3d%%%s",
+		I2A(i), s_ptr->name, s_ptr->min*2, spell_chance(s_ptr), comment);
+}
 
-	char            info[80];
+static cptr favour_string(int i, magic_type *s_ptr, cptr comment)
+{
+	if (!s_ptr) return format("     %-35s%s", "Name", "Sk Time Fail Info");
 
-	char            out_val[160];
+	if (spell_skill(s_ptr) < s_ptr->min) comment = " too hard";
+
+	return format("  %c) %-35s%2d %4d %3d%%%s",
+		I2A(i), s_ptr->name, s_ptr->min*2, magic_energy(s_ptr),
+		spell_chance(s_ptr), comment);
+}
+
+static cptr mindcraft_string(int i, magic_type *s_ptr, cptr comment)
+{
+	if (!s_ptr) return format("     %-30s%s", "Name","Sk  Chi Time Fail Info");
+
+	/* Don't print "too hard" spells at all. */
+	if (spell_skill(s_ptr) < s_ptr->min) return 0;
+
+	return format("  %c) %-30s%2d %4d %4d %3d%%%s", I2A(i), s_ptr->name,
+		s_ptr->min*2, s_ptr->mana, magic_energy(s_ptr), spell_chance(s_ptr),
+		comment);
+}
+
+/*
+ * As above, but with some colour information.
+ */
+static cptr c_mindcraft_string(int i, magic_type *s_ptr, cptr comment)
+{
+	cptr str = mindcraft_string(i, s_ptr, comment);
+	if (s_ptr && s_ptr->mana > p_ptr->cchi) str = format("$o%s", str);
+	return str;
+}
+
+static cptr spell_string(int i, magic_type *s_ptr, cptr comment)
+{
+	cptr type;
+
+	if (!s_ptr)
+		return format("     %-26s%s", "Name", "Ty(Sk) Mana Time Fail Info");
+
+	switch(s_ptr->skill2)
+	{
+		case SKILL_CORPORIS: type = "Co"; break;
+		case SKILL_NATURAE: type = "Na"; break;
+		case SKILL_VIS: type = "Vi"; break;
+		case SKILL_ANIMAE: type = "An"; break;
+		default: type = "  ";
+	}
+
+	if (s_ptr->flags & MAGIC_FORGOT)
+	{
+		comment = " forgotten";
+	}
+	else if (~s_ptr->flags & MAGIC_LEARNED)
+	{
+		if (spell_skill(s_ptr)<s_ptr->min)
+		{
+			 comment = " too hard";
+		}
+		else
+		{
+			comment = " unknown";
+		}
+	}
+	else if (~s_ptr->flags & MAGIC_WORKED)
+	{
+		comment = " untried";
+	}
 
 
-	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
+	return format("  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
+		I2A(i), s_ptr->name, type, s_ptr->min*2, s_ptr->mana,
+		magic_energy(s_ptr), spell_chance(s_ptr), comment);
+}
+
+/*
+ * Print a list of spells of some sort (for casting or learning)
+ */
+static int print_spell_list(byte *spells, book_type *b_ptr, int num,
+	int y, int x, cptr (*get)(int, magic_type *, cptr))
+{
+	int i;
+	char info[80];
+	cptr str;
+
+ 	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
 	if (x == -1) x = 15;
 
-	assert(b_ptr);
+   /* Title the list */
+    prt((*get)(0, 0, 0), y++, x);
 
-    /* Title the list */
-
-
-    prt("", y, x);
-	put_str("Name", y, x + 5);
-	put_str("Ty(Sk) Mana Time Fail Info", y, x + 31);
-
-
-    /* Dump the spells */
+    /* Dump the spells. */
 	for (i = 0; i < num; i++)
 	{
-		/* Access the spell */
-		spell = spells[i];
+		/* Access the spell. */
+		magic_type *s_ptr = &(b_ptr->info[spells[i]]);
 
-	/* Access the spell */
+		get_magic_info(info, sizeof(info), s_ptr);
+			
+		/* Get the spell description. */
+		str = (*get)(i, s_ptr, info);
 
-		s_ptr = &b_ptr->info[spell];
-
-		/* XXX XXX Could label spells above the players level */
-
-		/* Get extra info */
-		get_magic_info(info, 15, s_ptr);
-
-		/* Use that info */
-		comment = info;
-
-		/* Analyze the spell */
-		if (s_ptr->flags & MAGIC_FORGOT)
-		{
-			comment = " forgotten";
-		}
-		else if (~s_ptr->flags & MAGIC_LEARNED)
-		{
-			if (spell_skill(s_ptr)<s_ptr->min)
-			{
-				 comment = " too hard";
-			}
-			else
-			{
-				comment = " unknown";
-			}
-		}
-		else if (~s_ptr->flags & MAGIC_WORKED)
-		{
-			comment = " untried";
-		}
-
-		switch(s_ptr->skill2)
-		{
-			case SKILL_CORPORIS:
-				type = "Co";
-				break;
-			case SKILL_NATURAE:
-				type = "Na";
-				break;
-			case SKILL_VIS:
-				type = "Vi";
-				break;
-			case SKILL_ANIMAE:
-				type = "An";
-				break;
-			default:
-				type = "  ";
-		}
-
-		/* Dump the spell --(-- */
-		sprintf(out_val, "  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
-		I2A(i), s_ptr->name, type, s_ptr->min*2, s_ptr->mana,
-			magic_energy(s_ptr), spell_chance(s_ptr), comment);
-		prt(out_val, y + i + 1, x);
+		/* Print if allowed. */
+		if (str) mc_put_fmt(y++, x, "%s%v", str, clear_f0);
 	}
 
 	/* Clear the bottom line */
-	prt("", y + i + 1, x);
+	prt("", y, x);
+
+	/* Return it. */
+	return y;
+}
+
+static int print_cantrips(byte *spells, book_type *b_ptr, int num, int y, int x)
+{
+	return print_spell_list(spells, b_ptr, num, y, x, cantrip_string);
+}
+
+static int print_favours(byte *spells, book_type *b_ptr, int num, int y, int x)
+{
+	return print_spell_list(spells, b_ptr, num, y, x, favour_string);
+}
+
+static int print_spells(byte *spells, int num, int y, int x, book_type *b_ptr)
+{
+	return print_spell_list(spells, b_ptr, num, y, x, spell_string);
+}
+
+static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
+{
+	byte spells[MAX_SPELLS_PER_BOOK];
+	int num = build_spell_list(spells, b_ptr);
+	return print_spell_list(spells, b_ptr, num, y, x, (colour) ?
+		c_mindcraft_string : mindcraft_string);
 }
 
 /*
@@ -805,57 +860,6 @@ static int get_spell(int *sn, cptr prompt, bool known, book_type *b_ptr)
 }
 
 /*
- * Print a list of cantrips (for casting or learning)
- */
-static void print_cantrips(book_type *b_ptr, byte *spells, int num,
-	int y, int x)
-{
-	int                     i, spell;
-
-	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
-	magic_type              *s_ptr;
-
-	cptr            comment;
-
-	char info[80];
-
-	char            out_val[160];
-
-    /* Title the list */
-    prt("", y, x);
-	put_str("Name", y, x + 5);
-	put_str("Sk Fail Info", y, x + 40);
-
-
-    /* Dump the favours */
-	for (i = 0; i < num; i++)
-	{
-		/* Access the favour */
-		spell = spells[i];
-
-		s_ptr = &(b_ptr->info[spell]);
-
-		get_magic_info(info, 15, s_ptr);
-
-		comment = info;
-
-		if (s_ptr->min > plev)
-		{
-			comment = " too hard";
-		}
-			
-		/* Dump the favour --(-- */
-		sprintf(out_val, "  %c) %-35s%2d %3d%%%s",
-		I2A(i), b_ptr->info[spell].name, /* spell */
-		s_ptr->min*2, spell_chance(s_ptr), comment);
-		prt(out_val, y + i + 1, x);
-	}
-
-	/* Clear the bottom line */
-	prt("", y + i + 1, x);
-}
-
-/*
  * Allow user to choose a cantrip from the given charm.
  *
  * If a valid cantrip is chosen, saves it in '*sn' and returns TRUE
@@ -925,7 +929,7 @@ static int get_cantrip(int *sn, book_type *b_ptr)
 		/* Show list */
 		redraw = TRUE;
 		Term_save();
-		print_cantrips(b_ptr, spells, num, 1, 20);
+		print_cantrips(spells, b_ptr, num, 1, 20);
 	}		
 	else
 	{
@@ -961,7 +965,7 @@ static int get_cantrip(int *sn, book_type *b_ptr)
 				Term_save();
 
 				/* Display a list of spells */
-				print_cantrips(b_ptr, spells, num, 1, 20);
+				print_cantrips(spells, b_ptr, num, 1, 20);
 			}
 
 			/* Hide the list */
@@ -1252,59 +1256,6 @@ static int get_favour(int *sn, book_type *b_ptr)
  
 	/* Success */
 	return (TRUE);
-}
-
-/*
- * Print a list of favours (for invoking)
- */
-static void print_favours(byte *spells, book_type *b_ptr, int num, int y, int x)
-{
-	int                     i, spell;
-
-	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
-	magic_type              *s_ptr;
-
-	cptr            comment;
-
-	char info[80];
-
-	char            out_val[160];
-
-	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
-	if (x == -1) x = 15;
-
-    /* Title the list */
-    prt("", y, x);
-	put_str("Name", y, x + 5);
-	put_str("Sk Time Fail Info", y, x + 40);
-
-
-    /* Dump the favours */
-	for (i = 0; i < num; i++)
-	{
-		/* Access the favour */
-		spell = spells[i];
-
-		s_ptr = &b_ptr->info[spell];
-
-		get_magic_info(info, 80, s_ptr);
-
-		comment = info;
-
-		if (s_ptr->min > plev)
-		{
-			comment = " too hard";
-		}
-			
-		/* Dump the favour --(-- */
-		sprintf(out_val, "  %c) %-35s%2d %4d %3d%%%s",
-		I2A(i), s_ptr->name, s_ptr->min*2, magic_energy(s_ptr),
-			spell_chance(s_ptr), comment);
-		prt(out_val, y + i + 1, x);
-	}
-
-	/* Clear the bottom line */
-	prt("", y + i + 1, x);
 }
 
 /*
@@ -2295,54 +2246,6 @@ void do_cmd_invoke(void)
 }
 
 
-
-/*
- * Display mindcrafting powers
- * Returns the y co-ordinate of the lowest line used.
- */
-static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
-{
-	int i, chance, psi = spell_skill(&b_ptr->info[0]);
-	magic_type *s_ptr;
-	char		comment[80];
-	/* Display a list of spells */
-	prt("", y, x);
-	put_str("Name", y, x + 5);
-	put_str("Sk  Chi Time Fail Info", y, x + 35);
-
-	/* Dump the spells */
-	for (i = 0, y++; i < MAX_SPELLS_PER_BOOK; i++)
-	{
-		byte a = TERM_WHITE;
-		char psi_desc[80];
-
-		if (~b_ptr->flags & (1L << i)) continue;
-
-		/* Access the spell */
-		s_ptr = &b_ptr->info[i];
-
-		if (s_ptr->min > psi)   break;
-
-		chance = spell_chance(s_ptr);
-
-		/* Warn if there's not enough mana to cast */
-		if (colour && s_ptr->mana > p_ptr->cchi) a = TERM_ORANGE;
-
-		/* Get info */
-		get_magic_info(comment, 80, s_ptr);
-				    
-		/* Dump the spell --(-- */
-		sprintf(psi_desc, "  %c) %-30s%2d %4d %4d %3d%%%s",
-		I2A(i), s_ptr->name,
-		s_ptr->min*2, s_ptr->mana, magic_energy(s_ptr), chance, comment);
-		prt(psi_desc, y++, x);
-	}
-
-	/* Clear the bottom line */
-	prt("", y, x);
-
-	return y;
-}
 
 /*
  * Return a line of help text appropriate for the given mindcraft power
