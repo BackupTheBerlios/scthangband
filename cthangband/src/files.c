@@ -1263,15 +1263,19 @@ void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max)
 {
 	cptr temp = format(" %d/%d", cur, max);
 	byte attr = percent_to_colour(cur, max);
+	uint len = maxx+1-minx;
+	
+	/* Paranoia */
+	if (maxx < minx) return;
 
 	/* Clear a space. */
-	Term_erase(minx, y, maxx-minx+1);
+	Term_erase(minx, y, len);
 
 	/* Print the text string in white. */
 	if (txt) put_str(txt, y, minx);
 
 	/* Trim initial numbers if the number string would be too long. */
-	if (strlen(temp) > maxx-minx+1) temp += strlen(temp)-maxx+minx-1;
+	if (strlen(temp) > len) temp += strlen(temp)-len;
 
 	/* Print the number string in colour. */
 	c_put_str(attr, temp, y, maxx-strlen(temp));
