@@ -931,7 +931,7 @@ bool angband_keymap_flag = TRUE;
 
 
 /* Hack, violet uniques */
-byte violet_uniques = 1;
+bool violet_uniques = FALSE;
 
  #ifdef ALLOW_EASY_OPEN
  bool easy_open = TRUE;

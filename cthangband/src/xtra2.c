@@ -3704,29 +3704,29 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
 /*
  * Hack - uniques flash violet in target mode.
- * The violet_uniques variable gives uniques a special colour when
- * violet_uniques == 2 Setting it to 0 disables the effect, making it act like
- * a boolean when not within target_set().
+ * The violet_uniques variable gives uniques, etc., a special colour when TRUE.
  */
 static void do_violet_uniques(bool swap)
 {
 	int i;
-	switch (violet_uniques)
-	{
-		case 1: if (swap) violet_uniques = 2; break;
-		case 2: violet_uniques = 1; break;
-	}
-
+	if (!violet_uniques && swap)
+		violet_uniques = TRUE;
+	else
+		violet_uniques = FALSE;
+	
 	/* Redraw all visible monsters. */
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
 		/* Ignore unseen monsters */
 		if (!m_ptr->ml) continue;
 
-		/* Ignore colour-changing uniques half of the time unless hallucinating. */
-		if (r_ptr->flags1 & RF1_UNIQUE && r_ptr->flags1 & RF1_ATTR_MULTI && !p_ptr->image && violet_uniques == 2) continue;
+		/* Ignore colour-changing uniques half of the time unless
+		 * hallucinating. This gives them the desired slow colour change. */
+		if (r_ptr->flags1 & RF1_UNIQUE && r_ptr->flags1 & RF1_ATTR_MULTI &&
+			!p_ptr->image && violet_uniques) continue;
 
 		/* Redraw everything else. */		
 		lite_spot(m_ptr->fy, m_ptr->fx);

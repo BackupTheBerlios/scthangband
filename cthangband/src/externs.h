@@ -3458,7 +3458,7 @@ extern bool (*get_obj_num_hook)(int k_idx);
 extern bool angband_keymap_flag;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
-extern byte violet_uniques;
+extern bool violet_uniques;
 #endif
 #if (defined(ALLOW_EASY_OPEN)) && (defined(CMD2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern  bool easy_open;
