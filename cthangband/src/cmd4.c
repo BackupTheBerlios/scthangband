@@ -663,10 +663,21 @@ void opt_special_effect(const option_type * const op_ptr)
 {
 	if (op_ptr->o_page == OPTS_CHEAT)
 	{
-		/* Hack - save the game when the player first starts cheating. */
-		if (!noscore) do_cmd_save_game(TRUE);
+		u16b old_noscore = noscore;
 
-		noscore |= (1L<<op_ptr->o_bit);
+		/* cheat_wzrd is special as it prevents bones files from being made. */
+		if (op_ptr->o_var == &cheat_wzrd)
+		{
+			noscore |= NOSCORE_WIZARD;
+		}
+		/* "Knowledge" cheat options only prevent scoring. */
+		else
+		{
+			noscore |= NOSCORE_CHEAT;
+		}
+
+		/* Hack - save the game when noscore changes. */
+		if (noscore != old_noscore) do_cmd_save_game(TRUE);
 	}
 	if (op_ptr->o_var == &equippy_chars)
 	{

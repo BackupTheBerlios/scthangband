@@ -5016,48 +5016,46 @@ static void center_string(char *buf, cptr str)
 static void make_bones(void)
 {
 	FILE                *fp;
+	char tmp[8];
 
 	/* Undead can't be raised as undead. */
 	if (rp_ptr->grace == RACE_UNDEAD) return;
 
 	/* Ignore wizards and borgs */
-	if (!(noscore & 0x00FF))
-	{
-		/* Ignore people who die in town (and on impossible levels). */
-		if (dun_level > 0 && dun_level < 1000)
-		{
-			/* XXX XXX XXX "Bones" name */
-			char tmp[8];
-			sprintf(tmp, "bone.%03d", dun_depth);
+	if (noscore & NOSCORE_NO_BONES) return;
 
-			/* Attempt to open the bones file */
-			fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "r");
+	/* Ignore people who die in town (and on impossible levels). */
+	if (dun_level <= 0 || dun_level >= 1000) return;
 
-			/* Close it right away */
-			if (fp) my_fclose(fp);
+	/* XXX XXX XXX "Bones" name */
+	sprintf(tmp, "bone.%03d", dun_depth);
 
-			/* Do not over-write a previous ghost */
-			if (fp) return;
+	/* Attempt to open the bones file */
+	fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "r");
 
-			/* File type is "TEXT" */
-			FILE_TYPE(FILE_TYPE_TEXT);
+	/* Close it right away */
+	if (fp) my_fclose(fp);
 
-			/* Try to write a new "Bones File" */
-			fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "w");
+	/* Do not over-write a previous ghost */
+	if (fp) return;
 
-			/* Not allowed to write it?  Weird. */
-			if (!fp) return;
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
 
-			/* Save the info */
-			fprintf(fp, "%s\n", player_name);
-			fprintf(fp, "%d\n", p_ptr->mhp);
-			fprintf(fp, "%d\n", p_ptr->prace);
-			fprintf(fp, "%d\n", p_ptr->ptemplate);
+	/* Try to write a new "Bones File" */
+	fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "w");
 
-			/* Close and save the Bones file */
-			my_fclose(fp);
-		}
-	}
+	/* Not allowed to write it?  Weird. */
+	if (!fp) return;
+
+	/* Save the info */
+	fprintf(fp, "%s\n", player_name);
+	fprintf(fp, "%d\n", p_ptr->mhp);
+	fprintf(fp, "%d\n", p_ptr->prace);
+	fprintf(fp, "%d\n", p_ptr->ptemplate);
+
+	/* Close and save the Bones file */
+	my_fclose(fp);
 }
 
 
@@ -5867,7 +5865,7 @@ static errr top_twenty(void)
 
 #ifndef SCORE_BORGS
 	/* Borg-mode pre-empts scoring */
-	if (noscore & 0x00F0)
+	if (noscore & NOSCORE_BORG)
 	{
 		msg_print("Score not registered for borgs.");
 		msg_print(NULL);
@@ -5878,7 +5876,7 @@ static errr top_twenty(void)
 
 #ifndef SCORE_CHEATERS
 	/* Cheaters are not scored */
-	if (noscore & 0xFF02)
+	if (noscore & (NOSCORE_CHEAT_ALL))
 	{
 		msg_print("Score not registered for cheaters.");
 		msg_print(NULL);

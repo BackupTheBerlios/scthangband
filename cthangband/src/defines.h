@@ -834,6 +834,15 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Maximum number of options in a do_cmd_options_aux() option set. */
 #define MAX_OPTS_PER_PAGE 24
 
+#define NOSCORE_BORG 0x00F0 /* Borg mode */
+
+#define NOSCORE_WIZARD 0x000F /* World-changing cheat commands. */
+#define NOSCORE_CHEAT 0xFF00 /* Knowledge based cheat commands. */
+
+#define NOSCORE_CHEAT_ALL (NOSCORE_WIZARD | NOSCORE_CHEAT) /* Cheat options. */
+#define NOSCORE_NO_BONES (NOSCORE_WIZARD | NOSCORE_BORG) /* Bones-suppression */
+
+
 /* Squelch settings. */
 #define HIDE_NONE    0
 #define HIDE_V_BAD 1
