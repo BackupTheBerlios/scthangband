@@ -2609,6 +2609,10 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 			random_resistance(o_ptr, FALSE, rand_range(17,38));
 			return TRUE;
 		}
+		case E_SPEC_LOW:
+		{
+			random_resistance(o_ptr, FALSE, rand_range(5, 16));
+		}
 		case E_SPEC_RESIST:
 		{
 			random_resistance(o_ptr, FALSE, rand_range(5, 38));

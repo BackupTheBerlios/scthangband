@@ -2110,6 +2110,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define E_SPEC_SUSTAIN 5 /* Add a random sustain. */
 #define E_SPEC_HIGH	6 /* Add a random high resistance. */
 #define E_SPEC_RESIST 7 /* Add a random resistance. */
+#define E_SPEC_LOW 8 /* Add a random low resistance. */
 
 #define E_SPEC_PLANAR 10 /* Give flags as if it was a Planar weapon. */
 #define E_SPEC_DF 11 /* ... a Defender weapon. */
