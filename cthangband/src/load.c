@@ -710,8 +710,9 @@ static errr rd_store(int n)
 	/* Pick a new owner if the current one has been removed. */
 	if (st_ptr->owner < 0 || st_ptr->owner > NUM_OWNERS)
 	{
-		msg_format("Strange shopkeeper in shop %d - finding a new one.", n);
-		store_shuffle(n);
+		/* Not all shops can have an owner. */
+		if (store_shuffle(n))
+			msg_format("Strange shopkeeper in shop %d - finding a new one.", n);
 	}
 
 #else /* SF_QUEST_DIRECT */

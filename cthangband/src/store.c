@@ -4331,8 +4331,9 @@ static void choose_owner(void)
 
 /*
  * Shuffle one of the stores.
+ * Returns TRUE if it does something.
  */
-void store_shuffle(int which)
+bool store_shuffle(int which)
 {
 	int i;
 
@@ -4340,7 +4341,7 @@ void store_shuffle(int which)
 	if (store[which].owner != -1)
 	{
 		/* Ignore home, hall and pawnbroker */
-		if (store[which].type == 7 || store[which].type > 9) return;
+		if (store[which].type == 7 || store[which].type > 9) return FALSE;
 	}
 
 	/* Save the store index */
@@ -4384,6 +4385,8 @@ void store_shuffle(int which)
 		/* Hack -- Items are no longer "fixed price" */
 		o_ptr->ident &= ~(IDENT_FIXED);
 	}
+
+	return TRUE;
 }
 
 
