@@ -5522,7 +5522,7 @@ static u32b noise = 0L;
  *
  * A "direction" of "5" means "pick a random direction".
  */
-static void process_monster(int m_idx, bool is_friend)
+static void process_monster(int m_idx)
 {
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
@@ -5776,21 +5776,11 @@ static void process_monster(int m_idx, bool is_friend)
 			}
 		}
 
-		if (m_ptr->smart & SM_ALLY)
-		{
-			is_friend = TRUE;
-		}
-			else
-		{
-			is_friend = FALSE;
-		}
-
-
 		/* Hack -- multiply slower in crowded areas */
 		if ((k < 4) && (!k || !rand_int(k * MONSTER_MULT_ADJ)))
 		{
 			/* Try to multiply */
-			if (multiply_monster(m_ptr, is_friend, FALSE))
+			if (multiply_monster(m_ptr, !!(m_ptr->smart & SM_ALLY), FALSE))
 			{
 				/* Take note if visible */
 				if (m_ptr->ml)
@@ -6609,7 +6599,6 @@ void process_monsters(void)
 	int                     fx, fy;
 
 	bool            test;
-	bool            is_friend = FALSE;
 
 	monster_type    *m_ptr;
 	monster_race    *r_ptr;
@@ -6744,11 +6733,8 @@ void process_monsters(void)
 		/* Do nothing */
 		if (!test) continue;
 
-		if ((m_ptr->smart) &  (SM_ALLY))
-			is_friend = TRUE;
-
 		/* Process the monster */
-		process_monster(i, is_friend);
+		process_monster(i);
 
 		/* Hack -- notice death or departure */
 		if (!alive || death || new_level_flag) break;
