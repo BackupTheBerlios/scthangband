@@ -178,7 +178,7 @@ static int spell_stat(const magic_type *s_ptr)
  */
 static bool use_spell(const magic_type *s_ptr)
 {
-	return use_known_power(PO_SPELL + s_ptr->power, spell_skill(s_ptr));
+	return use_known_power(s_ptr->power, spell_skill(s_ptr));
 }
 
 /*
@@ -186,7 +186,7 @@ static bool use_spell(const magic_type *s_ptr)
  */
 static cptr spell_help(const magic_type *s_ptr)
 {
-	return describe_power(PO_SPELL + s_ptr->power, spell_skill(s_ptr));
+	return describe_power(s_ptr->power, spell_skill(s_ptr));
 }
 
 /*

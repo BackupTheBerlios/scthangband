@@ -281,6 +281,9 @@ extern void do_cmd_message_one(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_messages(void);
 #endif
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(INIT2_C))
+extern bool showfile(cptr name, int y);
+#endif
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void opt_special_effect(const option_type * const op_ptr);
 #endif
@@ -2396,26 +2399,20 @@ extern void c_put_str(byte attr, cptr str, int row, int col);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
 extern void put_str(cptr str, int row, int col);
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void prt(cptr str, int row, int col);
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(UTIL_C))
 extern void mc_roff_xy(int x, int y, cptr s);
 #endif
-
-
-
 #if (defined(MONSTER1_C) || defined(UTIL_C))
 extern void c_roff(byte a, cptr str);
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_str(const int y, const int x, cptr str);
+#endif
+#if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C))
+extern void mc_add_fmt(cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
@@ -3907,17 +3904,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* cmd4.c */
-
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(INIT2_C))
-extern bool showfile(cptr name, int y);
-#endif
-
-/* util.c */
-
-#if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C))
-extern void mc_add_fmt(cptr fmt, ...);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

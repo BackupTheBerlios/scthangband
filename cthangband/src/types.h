@@ -872,11 +872,10 @@ struct magic_type
 	byte min; /* Required skill (to learn) */
 	byte mana; /* Required mana (to cast) */
 	byte fail; /* Minimum chance of failure */
-	byte exp; /* Encoded experience bonus */
+	byte flags; /* (Variable) MAGIC_* flags. */
 	byte skill1; /* School of spell */
 	byte skill2; /* Type of spell (or NONE) */
-	byte power; /* The index of the spell effect (offset). */
-	byte flags; /* (Variable) MAGIC_* flags. */
+	s16b power; /* The index of the spell effect (offset). */
 };
 
 typedef struct book_type book_type;
