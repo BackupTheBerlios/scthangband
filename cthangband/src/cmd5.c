@@ -100,6 +100,9 @@ int spell_skill(const magic_type *s_ptr)
 	return (total);
 }
 
+/*
+ * Give the stat a spell uses.
+ */
 static int spell_stat(const magic_type *s_ptr)
 {
 	switch (s_ptr->skill1)
@@ -119,6 +122,14 @@ static int spell_stat(const magic_type *s_ptr)
 	}
 }
 			
+
+/*
+ * Cast a spell (listed at an offset).
+ */
+static bool use_spell(magic_type *s_ptr)
+{
+	return use_known_power(-1024 + s_ptr->power, spell_skill(s_ptr));
+}
 
 /*
  * Check for low mana, etc., and adjust the fail rate appropriately.
@@ -330,14 +341,14 @@ static cptr magic_info_special(magic_type *s_ptr)
 	int l = spell_skill(s_ptr);
 	switch (s_ptr->power)
 	{
-		case MIND_DISP_1:
+		case SP_MINOR_DISPLACEMENT:
 		{
 			if (l < 25)
 				return " range 10";
 			else
 				return " range LEV+2";
 		}
-		case MIND_TK_WAVE:
+		case SP_TELEKINETIC_WAVE:
 		{
 			if (l < 40)
 				return " dam LEV*3";
@@ -4497,13 +4508,14 @@ static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
 
 /*
  * Return a line of help text appropriate for the given mindcraft power
- * at the given level. This is used immediately, so the format buffer is fine.
+ * at the given level. 
+ * NB: This may return the format buffer.
  */
 static cptr mindcraft_help(const int power, const int skill)
 {
 	switch (power)
 	{
-		case MIND_PRECOG:
+		case SP_PRECOGNITION:
 		{
 			cptr board[6], init = "Detects";
 			int j = 0;
@@ -4520,30 +4532,30 @@ static cptr mindcraft_help(const int power, const int skill)
 			if (skill >= 60) board[j++] = "objects";
 			return list_flags(init, "and", board, j);
 		}
-		case MIND_BLAST:
+		case SP_NEURAL_BLAST:
 		{
 			return "Fires a bolt of mental energy at a monster.";
 		}
-		case MIND_DISP_1:
+		case SP_MINOR_DISPLACEMENT:
 		{
 			if (skill < 50) return "Teleports you a short distance away.";
 			else return "Teleports you to a nearby spot of your choosing.";
 		}
-		case MIND_DISP_2:
+		case SP_MAJOR_DISPLACEMENT:
 		{
 			if (skill < 60) return "Teleports you far away.";
 			else return "Teleports you, and other nearby monsters, far away.";
 		}
-		case MIND_DOMINATION:
+		case SP_DOMINATION:
 		{
 			if (skill < 60) return "Charms a monster.";
 			else return "Charms all nearby monsters.";
 		}
-		case MIND_PULVERISE:
+		case SP_PULVERISE:
 		{
 			return "Creates a ball of sound at a location of your choosing.";
 		}
-		case MIND_ARMOUR:
+		case SP_CHARACTER_ARMOUR:
 		{
 			cptr board[6];
 			cptr init = "Gives AC and resistance to";
@@ -4560,30 +4572,30 @@ static cptr mindcraft_help(const int power, const int skill)
 			else
 				return "Helps to protect you from melee attack.";
 		}
-		case MIND_PSYCH:
+		case SP_PSYCHOMETRY:
 		{
 			if (skill >= 80) return "Identifies an object.";
 			else return "Pseudo-identifies an object.";
 		}
-		case MIND_M_WAVE:
+		case SP_MIND_WAVE:
 		{
 			if (skill >= 50)
 				return "Fires mental energy at all visible monsters.";
 			else
 				return "Fires mental energy at nearby monsters.";
 		}
-		case MIND_ADRENALINE:
+		case SP_ADRENALINE_CHANNELING:
 		{
 			if (skill >= 70)
 				return "Heals you, hastes you and drives you berserk.";
 			else
 				return "Heals you, hastes you and makes you heroic.";
 		}
-		case MIND_PSY_DRAIN:
+		case SP_PSYCHIC_DRAIN:
 		{
 			return "Fires mental energy at nearby monsters to gain extra chi.";
 		}
-		case MIND_TK_WAVE:
+		case SP_TELEKINETIC_WAVE:
 		{
 			return "Harms, stuns and teleports nearby monsters.";
 		}
@@ -4729,7 +4741,7 @@ static int get_mindcraft_power(book_type *b_ptr, int *sn)
 
 			/* Print a description of the power, given space. */
 			if (redraw)
-				put_str(mindcraft_help(i, psi*2), maxy, x);
+				put_str(mindcraft_help(s_ptr->power, psi*2), maxy, x);
 
 			/* Prompt */
             strnfmt(tmp_val, 78, "Use %s? ", b_ptr->info[i].name);
@@ -4781,7 +4793,6 @@ void do_cmd_mindcraft(void)
 {
     int   n = 0,  b = 0;
     int chance;
-    int dir;
 	book_type *b_ptr = MINDCRAFT_BOOK;
     int psi = spell_skill(&b_ptr->info[0]);
 	magic_type *s_ptr;
@@ -4852,143 +4863,9 @@ void do_cmd_mindcraft(void)
 	}
 	else
 	{
-	    /* spell code */
-	    switch (n)
-		{
-		case MIND_PRECOG:
-			if (psi > 44)
-			{
-				wiz_lite();
-			}
-			else if (psi > 19)
-			{
-				map_area();
-			}
-			if (psi < 30)
-			{
-				b = detect_monsters_normal();
-				if (psi > 19)  b |=  detect_monsters_invis();
-				if (psi > 14)
-				{
-					b |= detect_doors();
-					b |= detect_stairs();
-				}
-				if (psi > 4)
-				{
-					b |=  detect_traps();
-				}
-			}
-			else
-			{
-				b = detect_all();
-			}
-			if (!b)  msg_print("You feel safe.");
-			break;
-		case MIND_BLAST:
-			if (!get_aim_dir(&dir)) return;
-			if (randint(100) < psi * 2)
-			{
-				fire_beam(GF_PSI, dir, damroll(3 + ((psi - 1) / 4), (3+psi/15)));
-			}
-			else
-			{
-				fire_ball(GF_PSI, dir, damroll(3 + ((psi - 1) / 4), (3+psi/15)), 0);
-			}
-			break;
-		case MIND_DISP_1:
-			if (psi < 25)
-			{
-				teleport_player(10);
-			}
-			else
-			{
-				if (!dimension_door(psi, 20)) return;
-			}
-			break;
-		case MIND_DISP_2:
-			if (psi > 29) banish_monsters(psi);
-			teleport_player(psi * 5);
-			break;
-		case MIND_DOMINATION:
-			if (psi < 30)
-			{
-				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_DOMINATION, dir, psi, 0);
-			}
-			else
-			{
-				charm_monsters(psi * 2);
-			}
-			break;
-		case MIND_PULVERISE:
-			if (!get_aim_dir(&dir)) return;
-			fire_ball(GF_SOUND, dir, damroll(8+((psi-5)/4), 8),(psi > 20 ? (psi-20)/8 + 1 : 0));
-			break;
-		case MIND_ARMOUR:
-			add_flag(TIMED_SHIELD, psi);
-			if (psi > 14)   add_flag(TIMED_OPPOSE_ACID, psi);
-			if (psi > 19)   add_flag(TIMED_OPPOSE_FIRE, psi);
-			if (psi > 24)   add_flag(TIMED_OPPOSE_COLD, psi);
-			if (psi > 29)   add_flag(TIMED_OPPOSE_ELEC, psi);
-			if (psi > 34)   add_flag(TIMED_OPPOSE_POIS, psi);
-			break;
-		case MIND_PSYCH:
-			if (psi < 40)
-			{
-				psychometry();
-			}
-			else
-			{
-				ident_spell();
-			}
-			break;
-		case MIND_M_WAVE:
-			msg_print("Mind-warping forces emanate from your brain!");
-			if (psi < 25)
-			{
-				project(0, 2+psi/10, py, px,(psi*3)/2, GF_PSI, PROJECT_KILL);
-			}
-			else
-			{
-				(void)mindblast_monsters(psi * ((psi-5) / 10 + 1));
-			}
-			break;
-		case MIND_ADRENALINE:
-			set_flag(TIMED_AFRAID, 0);
-			set_flag(TIMED_STUN, 0);
-			hp_player(psi);
-			b = 10 + randint((psi*3)/2);
-			if (psi < 35)
-			{
-				add_flag(TIMED_HERO, b);
-			}
-			else
-			{
-				add_flag(TIMED_SHERO, b);
-			}
-			if (!p_ptr->fast)
-			{   /* Haste */
-				(void)set_flag(TIMED_FAST, b);
-			}
-			else
-			{
-				(void)add_flag(TIMED_FAST, b);
-			}
-			break;
-		case MIND_PSY_DRAIN:
-			if (!get_aim_dir(&dir)) return;
-			b = damroll(psi/2, 6);
-			if (fire_ball(GF_PSI_DRAIN, dir, b,  0 + (psi-25)/10))
-			p_ptr->energy -= randint(TURN_ENERGY*15/10);
-			break;
-		case MIND_TK_WAVE:
-			msg_print("A wave of pure physical force radiates out from your body!");
-			project(0, 3+psi/10, py, px,
-            psi * (psi > 39 ? 4 : 3), GF_TELEKINESIS, PROJECT_KILL|PROJECT_ITEM|PROJECT_GRID);
-			break;
-	    default:
-			msg_print("Zap?");
-		}
+		/* Aborted. */
+		if (!use_spell(s_ptr)) return;
+		
 		/* Get some practice */
 		if (skill_set[SKILL_MINDCRAFTING].value < s_ptr->min * 2 + 50) {
 			skill_exp(SKILL_MINDCRAFTING);

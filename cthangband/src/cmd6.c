@@ -217,6 +217,7 @@ static bool brand_bolts(void)
  */
 static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *ident)
 {
+	bool b;
 	int i;
 
 	/* Assume that the object was used without identifying it by default. */
@@ -3389,6 +3390,162 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
+		case SP_PRECOGNITION-1024:
+		{
+			if (plev > 44)
+			{
+				wiz_lite();
+			}
+			else if (plev > 19)
+			{
+				map_area();
+			}
+			if (plev < 30)
+			{
+				b = detect_monsters_normal();
+				if (plev > 19)  b |=  detect_monsters_invis();
+				if (plev > 14)
+				{
+					b |= detect_doors();
+					b |= detect_stairs();
+				}
+				if (plev > 4)
+				{
+					b |=  detect_traps();
+				}
+			}
+			else
+			{
+				b = detect_all();
+			}
+			if (!b)  msg_print("You feel safe.");
+			return SUCCESS;
+		}
+		case SP_NEURAL_BLAST-1024:
+		{
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			if (randint(100) < plev * 2)
+			{
+				fire_beam(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3+plev/15)));
+			}
+			else
+			{
+				fire_ball(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3+plev/15)), 0);
+			}
+			return SUCCESS;
+		}
+		case SP_MINOR_DISPLACEMENT-1024:
+		{
+			if (plev < 25)
+			{
+				teleport_player(10);
+			}
+			else
+			{
+				if (!dimension_door(plev, 20)) (*use) = FALSE;
+			}
+			return SUCCESS;
+		}
+		case SP_MAJOR_DISPLACEMENT-1024:
+		{
+			if (plev > 29) banish_monsters(plev);
+			teleport_player(plev * 5);
+			return SUCCESS;
+		}
+		case SP_DOMINATION-1024:
+		{
+			if (plev < 30)
+			{
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				fire_ball(GF_DOMINATION, dir, plev, 0);
+			}
+			else
+			{
+				charm_monsters(plev * 2);
+			}
+			return SUCCESS;
+		}
+		case SP_PULVERISE-1024:
+		{
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			fire_ball(GF_SOUND, dir, damroll(8+((plev-5)/4), 8),(plev > 20 ? (plev-20)/8 + 1 : 0));
+			return SUCCESS;
+		}
+		case SP_CHARACTER_ARMOUR-1024:
+		{
+			add_flag(TIMED_SHIELD, plev);
+			if (plev > 14)   add_flag(TIMED_OPPOSE_ACID, plev);
+			if (plev > 19)   add_flag(TIMED_OPPOSE_FIRE, plev);
+			if (plev > 24)   add_flag(TIMED_OPPOSE_COLD, plev);
+			if (plev > 29)   add_flag(TIMED_OPPOSE_ELEC, plev);
+			if (plev > 34)   add_flag(TIMED_OPPOSE_POIS, plev);
+			return SUCCESS;
+		}
+		case SP_PSYCHOMETRY-1024:
+		{
+			if (plev < 40)
+			{
+				psychometry();
+			}
+			else
+			{
+				ident_spell();
+			}
+			return SUCCESS;
+		}
+		case SP_MIND_WAVE-1024:
+		{
+			msg_print("Mind-warping forces emanate from your brain!");
+			if (plev < 25)
+			{
+				project(0, 2+plev/10, py, px,(plev*3)/2, GF_PSI, PROJECT_KILL);
+			}
+			else
+			{
+				(void)mindblast_monsters(plev * ((plev-5) / 10 + 1));
+			}
+			return SUCCESS;
+		}
+		case SP_ADRENALINE_CHANNELING-1024:
+		{
+			set_flag(TIMED_AFRAID, 0);
+			set_flag(TIMED_STUN, 0);
+			hp_player(plev);
+			b = 10 + randint((plev*3)/2);
+			if (plev < 35)
+			{
+				add_flag(TIMED_HERO, b);
+			}
+			else
+			{
+				add_flag(TIMED_SHERO, b);
+			}
+			if (!p_ptr->fast)
+			{   /* Haste */
+				(void)set_flag(TIMED_FAST, b);
+			}
+			else
+			{
+				(void)add_flag(TIMED_FAST, b);
+			}
+			return SUCCESS;
+		}
+		case SP_PSYCHIC_DRAIN-1024:
+		{
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			b = damroll(plev/2, 6);
+			if (fire_ball(GF_PSI_DRAIN, dir, b,  0 + (plev-25)/10))
+			p_ptr->energy -= randint(TURN_ENERGY*15/10);
+			return SUCCESS;
+		}
+		case SP_TELEKINETIC_WAVE-1024:
+		{
+			msg_print("A wave of pure physical force radiates out from your body!");
+			project(0, 3+plev/10, py, px,
+            plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS, PROJECT_KILL|PROJECT_ITEM|PROJECT_GRID);
+			return SUCCESS;
+		}
+
 		default:
 		{
 			/* The object wasn't handled here... */
@@ -3402,6 +3559,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
  * As the appropriate power can be derived from one of several places, some
  * of these are offset to separate them. This gives the following ranges:
  *
+ * -1023--769: spell power (byte)
  * -768--513: tval (byte, not determined here)
  * -511--257: name1 (byte)
  * -255--1: activation (byte)
@@ -3485,6 +3643,26 @@ static bool use_object(object_type *o_ptr, int dir)
 	return use;
 }
 
+/*
+ * Use a power listed by index.
+ */
+bool use_known_power(int power, int plev)
+{
+	bool ident, use;
+	errr err = do_power(power, plev, 0, TRUE, &use, &ident);
+	if (err == POWER_ERROR_NO_SUCH_DIR)
+	{
+		int dir;
+		if (!get_aim_dir(&dir)) return FALSE;
+		err = do_power(power, plev, dir, TRUE, &use, &ident);
+	}
+	if (err == POWER_ERROR_NO_SUCH_POWER)
+	{
+		bell("Unknown power: %d", power);
+		return FALSE;
+	}
+	return use;
+}
 
 
 /*

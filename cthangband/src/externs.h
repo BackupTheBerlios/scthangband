@@ -422,7 +422,7 @@ extern cptr find_feeling(object_type *o_ptr);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern void change_level(s16b new_level, byte come_from);
 #endif
-#if (defined(CMD5_C) || defined(DUNGEON_C))
+#if (defined(CMD6_C) || defined(DUNGEON_C))
 extern bool psychometry(void);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
@@ -1646,7 +1646,7 @@ extern bool apply_disenchant(int mode);
 #if (defined(CMD5_C) || defined(SPELLS1_C))
 extern void chaos_feature_shuffle(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD5_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD5_C) || defined(CMD6_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool project(int who, int rad, int y, int x, int dam, int typ, int flg);
 #endif
 #if (defined(CMD2_C) || defined(CMD6_C) || defined(SPELLS1_C))
@@ -1721,7 +1721,7 @@ extern bool detect_objects_normal(void);
 #if (defined(CMD5_C) || defined(SPELLS2_C))
 extern bool detect_objects_magic(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS2_C))
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C))
 extern bool detect_monsters_normal(void);
 #endif
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C))
@@ -1946,10 +1946,10 @@ extern  bool stun_monsters(int dam);
 #if (defined(CMD5_C) || defined(SPELLS2_C))
 extern  bool stasis_monsters(int dam);
 #endif
-#if (defined(CMD5_C) || defined(SPELLS2_C))
+#if (defined(CMD6_C) || defined(SPELLS2_C))
 extern  bool mindblast_monsters(int dam);
 #endif
-#if (defined(CMD5_C) || defined(DUNGEON_C) || defined(SPELLS2_C))
+#if (defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(SPELLS2_C))
 extern  bool banish_monsters(int dist);
 #endif
 #if (defined(CMD5_C) || defined(SPELLS2_C))
@@ -4033,5 +4033,11 @@ extern void display_spells(int y, int x, object_type *o_ptr);
 #endif
 #if (defined(CHECK_ARRAYS)) && (defined(CMD5_C) || defined(INIT2_C))
 extern void check_magic_info(void);
+#endif
+
+/* cmd6.c */
+
+#if (defined(CMD5_C) || defined(CMD6_C))
+extern bool use_known_power(int power, int plev);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -854,7 +854,7 @@ struct magic_type
 	byte exp;	/* Encoded experience bonus */
 	byte skill1;	/* School of spell */
 	byte skill2;	/* Type of spell (or NONE) */
-	s16b power; /* The index of the spell effect. */
+	byte power; /* The index of the spell effect (offset). */
 	byte flags; /* (Variable) MAGIC_* flags. */
 };
 
