@@ -3159,18 +3159,17 @@ extern int PlayerUID;
 
 /*
  * Decide whether to display an object by its u_info representation.
- * Always do it with unknown objects.
  * Never do it with objects which have no u_info counterpart.
- * If possible, do it with dark objects.
+ * Always do it with unknown objects.
+ * If possible, do it with objects represented as a dark space.
  */
-#define use_u_info(T) \
-	(!object_aware_p(T) || (!k_info[(T)->k_idx].x_attr && u_info[k_info[(T)->k_idx].u_idx].x_attr))
 
 /*
  * Return the "attr" for a given item.
  */
 #define object_attr(T) \
-    ((use_u_info(T)) ? \
+    (((k_info[(T)->k_idx].u_idx) && ((!object_aware_p(T)) || \
+	(k_info[(T)->k_idx].x_attr == TERM_DARK))) ? \
     (u_info[k_info[(T)->k_idx].u_idx].x_attr) : \
     (k_info[(T)->k_idx].x_attr))
 
@@ -3178,7 +3177,8 @@ extern int PlayerUID;
  * Return the "char" for a given item.
  */
 #define object_char(T) \
-    ((use_u_info(T)) ? \
+    (((k_info[(T)->k_idx].u_idx) && ((!object_aware_p(T)) || \
+	(k_info[(T)->k_idx].x_char == ' '))) ? \
     (u_info[k_info[(T)->k_idx].u_idx].x_char) : \
     (k_info[(T)->k_idx].x_char))
 
