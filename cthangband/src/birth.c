@@ -1345,6 +1345,31 @@ static bool point_mod_player(void)
 	return X; \
 }
 
+/* 
+ * Actually copy the contents of a stat_default_type to the player.
+ */
+static void load_stat_set_aux(stat_default_type *sd_ptr)
+{
+	int i;
+	if (p_ptr->prace == RACE_NONE)
+	{
+		p_ptr->psex = sd_ptr->sex;
+		sp_ptr = &sex_info[sd_ptr->sex];
+
+		p_ptr->prace = sd_ptr->race;
+		rp_ptr = &race_info[sd_ptr->race];
+
+		p_ptr->ptemplate = sd_ptr->template;
+		cp_ptr = &template_info[sd_ptr->template];
+
+		strncpy(player_name, quark_str(sd_ptr->name), 31);
+	}
+	for (i = 0; i < A_MAX; i++)
+	{
+		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = sd_ptr->stat[i];
+	}
+}
+
 /*
  * Load a set of stats.
  *
@@ -1352,7 +1377,7 @@ static bool point_mod_player(void)
  */
 static bc_type load_stat_set(bool menu)
 {
-	C_TNEW(temp_stat_default, stat_default_total+1, s16b);
+	C_TNEW(temp_stat_default, stat_default_total+1, stat_default_type *);
 	bc_type rc;
 	int x;
 	s16b y;
@@ -1392,7 +1417,7 @@ static bc_type load_stat_set(bool menu)
 			(sd_ptr->race == p_ptr->prace &&
 			sd_ptr->template == p_ptr->ptemplate))
 		{
-			temp_stat_default[y++] = x;
+			temp_stat_default[y++] = sd_ptr;
 		}
 	}
 
@@ -1419,7 +1444,7 @@ static bc_type load_stat_set(bool menu)
 		clear_from(start);
 		for (x = 0; x < y; x++)
 		{
-			stat_default_type *sd_ptr = &stat_default[temp_stat_default[x]];
+			stat_default_type *sd_ptr = temp_stat_default[x];
 			char buf[120]="";
 			int z;
 			sprintf(buf, "%c) %s (", rtoa(x), quark_str(sd_ptr->name));
@@ -1466,44 +1491,23 @@ static bc_type load_stat_set(bool menu)
 		/* Finally clean up. */
 		clear_from(start);
 
-		/* Pass the return to the caller. */
-		RETURN(rc);
+		/* Load the stats, if acceptable. */
+		if (rc == BC_OKAY) load_stat_set_aux(temp_stat_default[x]);
 	}
 	/* We're starting for the first time, so give the player the last set saved. */
 	else if (!p_ptr->stat_cur[0])
 	{
-		x = y-1;
+		load_stat_set_aux(temp_stat_default[y-1]);
+		rc = BC_OKAY;
 	}
 	/* The player has already chosen stats, and hasn't asked to load new ones,
 	 * so do nothing. */
 	else
 	{
-		RETURN(BC_ABORT);
+		rc = BC_ABORT;
 	}
-	/* Something has been chosen, so copy everything across. */
-	if (x != -1)
-	{
-		stat_default_type *sd_ptr = &stat_default[temp_stat_default[x]];
-		if (p_ptr->prace == RACE_NONE)
-		{
-			p_ptr->psex = sd_ptr->sex;
-			sp_ptr = &sex_info[sd_ptr->sex];
 
-			p_ptr->prace = sd_ptr->race;
-			rp_ptr = &race_info[sd_ptr->race];
-
-			p_ptr->ptemplate = sd_ptr->template;
-			cp_ptr = &template_info[sd_ptr->template];
-
-			strncpy(player_name, quark_str(sd_ptr->name), 31);
-		}
-		for (y = 0; y < A_MAX; y++)
-		{
-			s16b tmp = sd_ptr->stat[y];
-			p_ptr->stat_cur[y] = p_ptr->stat_max[y] = tmp;
-		}
-	}
-	RETURN(BC_OKAY);
+	RETURN(rc);
 }
 
 /*
