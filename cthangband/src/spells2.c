@@ -334,8 +334,12 @@ static int remove_curse_aux(int all)
         if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
             o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
 
-		/* Take note */
-		o_ptr->note = quark_add("uncursed");
+		/* Let the player know if an object is known to be worthless. */
+		if (broken_p(o_ptr))
+			o_ptr->note = quark_add("worthless");
+		/* Let the player know that the curse has gone otherwise. */
+		else
+			o_ptr->note = quark_add("uncursed");
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
