@@ -4210,21 +4210,13 @@ void show_equip(void)
  *
  * The item can be negative to mean "item on floor".
  */
-static bool verify(cptr prompt, int item)
+static bool verify(cptr prompt, object_type *o_ptr)
 {
-	C_TNEW(o_name, ONAME_MAX, char);
-
-	char    out_val[160];
-
-	object_type *o_ptr = cnv_idx_to_obj(item);
-
-	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
+	char    out_val[256];
 
 	/* Prompt */
-	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
-
-	TFREE(o_name);
+	(void)strnfmt(out_val, 256, "%s %v? ", prompt,
+		object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Query */
 	return (get_check(out_val));
@@ -4236,11 +4228,9 @@ static bool verify(cptr prompt, int item)
  *
  * The item can be negative to mean "item on floor".
  */
-static bool get_item_allow(int item)
+static bool get_item_allow(object_type *o_ptr)
 {
 	cptr s;
-
-	object_type *o_ptr = cnv_idx_to_obj(item);
 
 	/* Find a '!' */
 	s = strchr(quark_str(o_ptr->note), '!');
@@ -4252,7 +4242,7 @@ static bool get_item_allow(int item)
 		if ((s[1] == command_cmd) || (s[1] == '*'))
 		{
 			/* Verify the choice */
-			if (!verify("Really try", item)) return (FALSE);
+			if (!verify("Really try", o_ptr)) return (FALSE);
 		}
 
 		/* Find another '!' */
@@ -4268,13 +4258,13 @@ static bool get_item_allow(int item)
 /*
  * Auxiliary function for "get_item()" -- test an index
  */
-static bool get_item_okay(int i)
+static bool get_item_okay(object_type *o_ptr)
 {
 	/* Illegal items */
-	if ((i < 0) || (i >= INVEN_TOTAL)) return (FALSE);
+	if (!is_inventory_p(o_ptr)) return (FALSE);
 
 	/* Verify the item */
-	if (!item_tester_okay(&inventory[i])) return (FALSE);
+	if (!item_tester_okay(o_ptr)) return (FALSE);
 
 	/* Assume okay */
 	return (TRUE);
@@ -4291,7 +4281,7 @@ static bool get_item_okay(int i)
  * Also, the tag "@xn" will work as well, where "n" is a tag-char,
  * and "x" is the "current" command_cmd code.
  */
-static int get_tag(int *cp, char tag)
+static object_type *get_tag(char tag)
 {
 	int i;
 	cptr s;
@@ -4314,21 +4304,15 @@ static int get_tag(int *cp, char tag)
 			/* Check the normal tags */
 			if (s[1] == tag)
 			{
-				/* Save the actual inventory ID */
-				*cp = i;
-
 				/* Success */
-				return (TRUE);
+				return o_ptr;
 			}
 
 			/* Check the special tags */
 			else if (s[2] == tag && s[1] == command_cmd)
 			{
-				/* Save the actual inventory ID */
-				*cp = i;
-
 				/* Success */
-				return (TRUE);
+				return o_ptr;
 			}
 
 			/* Find another '@' */
@@ -4337,7 +4321,7 @@ static int get_tag(int *cp, char tag)
 	}
 
 	/* No such tag */
-	return (FALSE);
+	return NULL;
 }
 
 
@@ -4398,7 +4382,9 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 
 	char n1, n2, which = ' ';
 
-	int k, i1, i2, e1, e2;
+	int k;
+
+	object_type *i1, *i2, *e1, *e2;
 
     bool done;
     int ver;
@@ -4443,7 +4429,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
          }
          
          /* Verify the item */
-         else if (get_item_okay(cnv_obj_to_idx(o_ptr))) {
+         else if (get_item_okay(o_ptr)) {
          
  	        /* Forget the item_tester_tval restriction */
  	        item_tester_tval = 0;
@@ -4470,11 +4456,11 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 
 
 	/* Full inventory */
-	i1 = 0;
-	i2 = INVEN_PACK - 1;
+	i1 = inventory;
+	i2 = inventory + INVEN_PACK - 1;
 
 	/* Forbid inventory */
-	if (!inven) i2 = -1;
+	if (!inven) i2 = NULL;
 
 	/* Restrict inventory indexes */
 	while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
@@ -4482,11 +4468,11 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 
 
 	/* Full equipment */
-	e1 = INVEN_WIELD;
-	e2 = INVEN_TOTAL - 1;
+	e1 = inventory + INVEN_WIELD;
+	e2 = inventory + INVEN_TOTAL - 1;
 
 	/* Forbid equipment */
-	if (!equip) e2 = -1;
+	if (!equip) e2 = NULL;
 
 	/* Restrict equipment indexes */
 	while ((e1 <= e2) && (!get_item_okay(e1))) e1++;
@@ -4580,8 +4566,8 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 		if (!command_wrk)
 		{
 			/* Extract the legal requests */
-			n1 = I2A(i1);
-			n2 = I2A(i2);
+			n1 = I2A(cnv_obj_to_idx(i1));
+			n2 = I2A(cnv_obj_to_idx(i2));
 
 			/* Redraw if needed */
 			if (command_see) show_inven();
@@ -4591,8 +4577,8 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 		else
 		{
 			/* Extract the legal requests */
-			n1 = I2A(e1 - INVEN_WIELD);
-			n2 = I2A(e2 - INVEN_WIELD);
+			n1 = I2A(cnv_obj_to_idx(e1) - INVEN_WIELD);
+			n2 = I2A(cnv_obj_to_idx(e1) - INVEN_WIELD);
 
 			/* Redraw if needed */
 			if (command_see) show_equip();
@@ -4608,8 +4594,8 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			if (i1 <= i2)
 			{
 				/* Build the prompt */
-				sprintf(tmp_val, " %c-%c,",
-					index_to_label(i1), index_to_label(i2));
+				sprintf(tmp_val, " %c-%c,", index_to_label(cnv_obj_to_idx(i1)),
+					index_to_label(cnv_obj_to_idx(i1)));
 
 				/* Append */
 				strcat(out_val, tmp_val);
@@ -4632,8 +4618,8 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			if (e1 <= e2)
 			{
 				/* Build the prompt */
-				sprintf(tmp_val, " %c-%c,",
-					index_to_label(e1), index_to_label(e2));
+				sprintf(tmp_val, " %c-%c,", index_to_label(cnv_obj_to_idx(e1)),
+					index_to_label(cnv_obj_to_idx(e1)));
 
 				/* Append */
 				strcat(out_val, tmp_val);
@@ -4739,10 +4725,10 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 						if (!item_tester_okay(o_ptr)) continue;
 
 						/* Skip non-verified items */
-						if (other_query_flag && !verify("Try", 0 - this_o_idx)) continue;
+						if (other_query_flag && !verify("Try", o_ptr)) continue;
 
 						/* Skip non-acceptable items */
-						if (other_query_flag && !get_item_allow(0 - this_o_idx)) continue;
+						if (other_query_flag && !get_item_allow(o_ptr)) continue;
 
 						done = TRUE;
 						break;
@@ -4763,13 +4749,11 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			case '7': case '8': case '9':
 			{
 				/* XXX XXX Look up that tag */
-				if (!get_tag(&k, which))
+				if (!((o_ptr = get_tag(which))))
 				{
 					bell();
 					break;
 				}
-
-				o_ptr = cnv_idx_to_obj(cnv_obj_to_idx(o_ptr));
 
 				/* Hack -- Verify item */
 				if (is_worn_p(o_ptr) ? !inven : !equip)
@@ -4779,14 +4763,14 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(cnv_obj_to_idx(o_ptr)))
+				if (!get_item_okay(o_ptr))
 				{
 					bell();
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(cnv_obj_to_idx(o_ptr)))
+				if (!get_item_allow(o_ptr))
 				{
 					o_ptr = NULL;
 					done = TRUE;
@@ -4804,13 +4788,13 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Choose "default" inventory item */
 				if (!command_wrk && i1 == i2)
 				{
-					o_ptr = inventory+i1;
+					o_ptr = i1;
 				}
 
 				/* Choose "default" equipment item */
 				else if (command_wrk && e1 == e2)
 				{
-					o_ptr = inventory+e1;
+					o_ptr = e1;
 				}
 				/* No "default" item. */
 				else
@@ -4820,14 +4804,14 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(cnv_obj_to_idx(o_ptr)))
+				if (!get_item_okay(o_ptr))
 				{
 					bell();
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(cnv_obj_to_idx(o_ptr)))
+				if (!get_item_allow(o_ptr))
 				{
 					o_ptr = NULL;
 					done = TRUE;
@@ -4861,7 +4845,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				for (o_ptr = start ; o_ptr < end; o_ptr++)
 				{
 					/* Skip invalid objects */
-					if (!get_item_okay(cnv_obj_to_idx(o_ptr))) continue;
+					if (!get_item_okay(o_ptr)) continue;
 					/* Skip specified objects */
 					if (strstr(quark_str(o_ptr->note), "!k")) continue;
 					/* Skip objects which are not worthless */
@@ -4914,7 +4898,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				for (o_ptr = start, best = NULL; o_ptr < end; o_ptr++)
 				{
 					s32b this_price;
-					if (!get_item_okay(cnv_obj_to_idx(o_ptr))) continue;
+					if (!get_item_okay(o_ptr)) continue;
 					this_price = object_value(o_ptr) * o_ptr->number;
 					if (best >= start)
 					{
@@ -4963,14 +4947,14 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(cnv_obj_to_idx(o_ptr)))
+				if (!get_item_okay(o_ptr))
 				{
 					bell();
 					break;
 				}
 
 				/* Verify, abort if requested */
-				if (ver && !verify("Try", cnv_obj_to_idx(o_ptr)))
+				if (ver && !verify("Try", o_ptr))
 				{
 					o_ptr = NULL;
 					done = TRUE;
@@ -4978,7 +4962,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(cnv_obj_to_idx(o_ptr)))
+				if (!get_item_allow(o_ptr))
 				{
 					o_ptr = NULL;
 					done = TRUE;
