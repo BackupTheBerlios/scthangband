@@ -595,45 +595,8 @@ static void roff_aux(int r_idx)
 	{
 		char buf[2048];
 
-#ifdef DELAY_LOAD_R_TEXT
-
-		int fd;
-
-		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_DATA, "r_info.raw");
-
-		/* Open the "raw" file */
-		fd = fd_open(buf, O_RDONLY);
-
-		/* Use file */
-		if (fd >= 0)
-		{
-			huge pos;
-
-			/* Starting position */
-			pos = r_ptr->text;
-
-			/* Additional offsets */
-			pos += r_head->head_size;
-			pos += r_head->info_size;
-			pos += r_head->name_size;
-
-			/* Seek */
-			(void)fd_seek(fd, pos);
-
-			/* Read a chunk of data */
-			(void)fd_read(fd, buf, 2048);
-
-			/* Close it */
-			(void)fd_close(fd);
-		}
-
-#else
-
 		/* Simple method */
 		strcpy(buf, r_text + r_ptr->text);
-
-#endif
 
 		/* Dump it */
 		c_roff(MONCOL_FLAVOUR, buf);

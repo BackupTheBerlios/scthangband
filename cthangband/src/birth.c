@@ -3582,7 +3582,7 @@ static bool player_birth_aux(void)
 					Term_fresh();
 
 					/* Delay 1/10 second */
-					if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
+					if (flag) Term_xtra(TERM_XTRA_DELAY, z_info->ar_delay);
 
 					/* Do not wait for a key */
 					inkey_scan = TRUE;

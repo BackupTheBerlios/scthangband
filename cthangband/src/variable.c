@@ -715,6 +715,9 @@ byte spell_order[128];	/* order spells learned/remembered/forgotten */
 s16b player_hp[100];
 
 
+/* Various maxima */
+maxima *z_info;
+
 /*
  * The vault generation arrays
  */
@@ -726,7 +729,6 @@ char *v_text;
 /*
  * The terrain feature arrays
  */
-header *f_head;
 feature_type *f_info;
 char *f_name;
 char *f_text;
@@ -734,7 +736,6 @@ char *f_text;
 /*
  * The object kind arrays
  */
-header *k_head;
 object_kind *k_info;
 char *k_name;
 char *k_text;
@@ -742,7 +743,6 @@ char *k_text;
 /*
  * The unidentified object arrays
  */
-header *u_head;
 unident_type *u_info;
 char *u_name;
 s16b *pid_base;

@@ -2061,10 +2061,10 @@ static bool visual_reject_obj(uint n)
 }
 
 static visual_type visual[5] = {
-	{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_name_mon, visual_save_mon, 0, MAX_R_IDX, TRUE, TRUE},
-	{"object attr/chars", visual_dump_obj, visual_load_obj, visual_name_obj, visual_save_obj, visual_reject_obj, MAX_K_IDX, TRUE, TRUE},
-	{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_name_feat, visual_save_feat, visual_reject_feat, MAX_F_IDX, TRUE, TRUE},
-	{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_name_moncol, visual_save_moncol, 0, MAX_MONCOL, TRUE, FALSE},
+	{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_name_mon, visual_save_mon, 0, 0, TRUE, TRUE},
+	{"object attr/chars", visual_dump_obj, visual_load_obj, visual_name_obj, visual_save_obj, visual_reject_obj, 0, TRUE, TRUE},
+	{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_name_feat, visual_save_feat, visual_reject_feat, 0, TRUE, TRUE},
+	{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_name_moncol, visual_save_moncol, 0, 0, TRUE, FALSE},
 	{"unidentified object attr/chars", visual_dump_unident, visual_load_unident, visual_name_unident, visual_save_unident, visual_reject_unident, 0, TRUE, TRUE},
 };
 
@@ -2098,8 +2098,15 @@ void do_cmd_visuals(void)
 
 	char buf[1024];
 
-	/* Hack - MAX_U_IDX is a variable. */
+	/* Hack - fill in the visual[x].max. */
+	if (!VISUAL_MONSTER->max)
+	{
+		VISUAL_MONSTER->max = MAX_R_IDX;
+		VISUAL_OBJECT->max = MAX_K_IDX;
+		VISUAL_FEATURE->max = MAX_F_IDX;
+		VISUAL_MONCOL->max = MAX_MONCOL;
 		VISUAL_UNIDENT->max = MAX_U_IDX;
+	}
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);

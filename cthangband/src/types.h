@@ -78,7 +78,11 @@
  * arguments to the relevent functions.
  */
 
+#if (defined(INIT1_C) || defined(INIT2_C) || defined(VARIABLE_C))
+
 typedef struct header header;
+
+typedef errr (*parse_info_txt_func)(char *buf, header *head);
 
 struct header
 {
@@ -93,15 +97,58 @@ struct header
 	u16b info_len;		/* Size of each "info" record */
 
 
-	u16b	head_size;		/* Size of the "header" in bytes */
-
 	u32b info_size;		/* Size of the "info" array in bytes */
 
-	u16b	name_size;		/* Size of the "name" array in bytes */
+	u32b name_size;		/* Size of the "name" array in bytes */
 
 	u32b text_size;		/* Size of the "text" array in bytes */
+
+	cptr file_name;		/* Base name of the file to be parsed. */
+
+	void *info_ptr;
+	char *name_ptr;
+	char *text_ptr;
+
+	parse_info_txt_func parse_info_txt;
+
+	u16b header_num;
+	u32b head_size; /* KILLME */
 };
 
+#endif
+
+/*
+ * Information about maximal indices of certain arrays
+ * Actually, these are not the maxima, but the maxima plus one
+ */
+typedef struct maxima maxima;
+struct maxima
+{
+#ifdef ALLOW_TEMPLATES
+	u32b fake_text_size;
+	u32b fake_name_size;
+	u32b fake_info_size;
+#else /* ALLOW_TEMPLATES */
+	u32b unused[3];
+#endif /* ALLOW_TEMPLATES */
+
+	u16b o_max;		/* Max size for "o_list[]" */
+	u16b m_max;		/* Max size for "m_list[]" */
+	u16b ar_delay;	/* Delay between rolls of the auto-roller. */
+
+	u16b v_max;		/* Total size for "v_info[]" */
+	u16b f_max;		/* Total size for "f_info[]" */
+	u16b k_max;		/* Total size for "k_info[]" */
+	u16b u_max;		/* Total size for "u_info[]" */
+	u16b a_max;		/* Total size for "a_info[]" */
+	u16b e_max;		/* Total size for "e_info[]" */
+	u16b r_max;		/* Total size for "r_info[]" */
+	u16b event_max;	/* Total size for "death_events[]" */
+	u16b p_max;		/* Total size for "p_info[]" */
+	u16b h_max;		/* Total size for "h_info[]" */
+	u16b b_max;		/* Total size per element of "b_info[]" */
+	u16b flavor_max; /* Total size for "flavor_info[]" */
+};
 
 
 /*

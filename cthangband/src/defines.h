@@ -318,23 +318,21 @@ logaux(x, 1) logaux(x, 0) 255
 /*
  * Maximum array bounds for template based arrays
  */
-#define MAX_F_IDX       103      /* Max size for "f_info[]" */
-#define MAX_K_IDX       576     /* Max size for "k_info[]" */
-#define UB_U_IDX	((int)(MAX_U16B/sizeof(unident_type)))	/* Max possible size for u_info[] */
-#define MAX_U_IDX	(u_head->info_num)	/* Actual size of u_info[] */
-#define MAX_A_IDX       128     /* Max size for "a_info[]" */
-#define MAX_E_IDX       128     /* Max size for "e_info[]" */
-#define MAX_R_IDX   577 /* Max size for "r_info[]" */
-#define MAX_V_IDX   114  /* Max size for "v_info[]" Was 16*/
-#define MAX_DEATH_EVENTS	(65535/sizeof(death_event_type))	/* Max size for death_events[] */
+#define MAX_F_IDX	(z_info->f_max)	/* Max size for "f_info[]" */
+#define MAX_K_IDX	(z_info->k_max)	/* Max size for "k_info[]" */
+#define MAX_U_IDX	(z_info->u_max)	/* Actual size of u_info[] */
+#define MAX_A_IDX	(z_info->a_max)	/* Max size for "a_info[]" */
+#define MAX_E_IDX	(z_info->e_max)	/* Max size for "e_info[]" */
+#define MAX_R_IDX	(z_info->r_max)	/* Max size for "r_info[]" */
+#define MAX_V_IDX	(z_info->v_max)	/* Max size for "v_info[]" Was 16*/
+#define MAX_DEATH_EVENTS (z_info->event_max)	/* Max size for death_events[] */
 
 
 /*
  * Maximum array bounds for entity list arrays
  */
-#define MAX_O_IDX       256     /* Max size for "o_list[]" */
-#define MAX_M_IDX       512     /* Max size for "m_list[]" */
-#define MAX_P_IDX       512     /* Max size for "p_list[]" */
+#define MAX_O_IDX       (z_info->o_max)     /* Max size for "o_list[]" */
+#define MAX_M_IDX       (z_info->m_max)     /* Max size for "m_list[]" */
 
 /*
  * Maximum number of quests 
@@ -3262,3 +3260,7 @@ extern int PlayerUID;
 
 /* Size of player_name */
 #define NAME_LEN 32
+
+/* Header identities. */
+#define U_HEAD	21 
+#define Z_HEAD	26

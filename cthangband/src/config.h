@@ -258,12 +258,6 @@
 #define DELAY_LOAD_E_TEXT
 
 /*
- * OPTION: Delay the loading of the "r_text" array until it is actually
- * needed, saving ~60K, but "simplifying" the "monster" descriptions.
- */
-/* #define DELAY_LOAD_R_TEXT */
-
-/*
  * OPTION: Delay the loading of the "v_text" array until it is actually
  * needed, saving ~1K, but "destroying" the "vault" generation.
  */
