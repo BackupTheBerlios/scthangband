@@ -901,6 +901,19 @@ struct player_sex
 
 
 /*
+ * A template to create an item with.
+ */
+typedef struct make_item_type make_item_type;
+struct make_item_type {
+	s16b	k_idx;	/* k_idx of item */
+	byte	x_idx;	/* Artefact or ego number where appropriate. */
+	byte	flags;	/* EI_* flags */
+	u16b	name;	/* Name (offset) */
+	byte	min;	/* Minimum number which can be created. */
+	byte	max;	/* Maximum number which can be created. */
+};
+
+/*
  * Player racial info
  */
 
@@ -986,6 +999,9 @@ struct player_template
 
 	s16b skill[19];		/* Skill improvements */
 
+	/* Objects to be given at the start (including backups for items which
+	 * are useless for the chosen race). */
+	make_item_type items[MAX_TPL_ITEMS*2];	
 };
 
 
@@ -1308,17 +1324,6 @@ struct wild_type {
 /*
  * The various types of event used by death_event_type events below.
  */
-
-/* Items of all kinds. */
-typedef struct make_item_type make_item_type;
-struct make_item_type {
-	u16b	name;	/* Name (offset) */
-	byte	flags;	/* EI_* flags */
-	s16b	k_idx;	/* k_idx of item */
-	byte	x_idx;	/* Artefact or ego number where appropriate. */
-	byte	min;	/* Minimum number which can be created. */
-	byte	max;	/* Maximum number which can be created. */
-};
 
 /* Monsters */
 typedef struct make_monster_type make_monster_type;

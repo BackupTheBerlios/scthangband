@@ -2833,136 +2833,24 @@ static void player_wipe(void)
 	noscore = 0;
 }
 
-
-
-
 /*
- * Each player starts out with a few items, given as k_idx.
- * In addition, he always has some food and a few torches.
- *
- * The last object if the player has a power from one of the earlier objects
- * intrinsically.
+ * Create an object from a template for the player's initial inventory.
  */
+static void make_birth_item(object_type *o_ptr, make_item_type *i_ptr)
+{		
+	/* Actually create the item. */
+	make_item(o_ptr, i_ptr);
 
-static s16b player_init[MAX_TEMPLATE][6] =
-{
-	{
-		/* Adventurer */
-		OBJ_RING_RES_FEAR, /* Warriors need it! */
-		OBJ_CUTLASS,
-		OBJ_LUMP_OF_SULPHUR,
-		OBJ_RING_SUSTAIN_STR,
-		0,0
-	},
+	/* These objects are "storebought" */
+	o_ptr->ident |= IDENT_STOREB;
 
-	{
-		/* Swashbuckler */
-		OBJ_POTION_SPEED,
-		OBJ_RAPIER,
-		OBJ_HARD_LEATHER_ARMOUR,
-		0,0,0
-	},
+	/* They are known. */
+	object_aware(o_ptr);
+	object_known(o_ptr);
 
-	{
-		/* Gladiator */
-		OBJ_RING_FREE_ACTION,
-		OBJ_BROAD_SWORD,
-		OBJ_SMALL_METAL_SHIELD,
-		OBJ_RING_RES_FEAR,
-		0,0
-	},
-
-	{
-		/* Warrior Monk */
-		OBJ_RING_SUSTAIN_DEX,
-		OBJ_SCROLL_MONSTER_CONFUSION,
-		OBJ_SOFT_LEATHER_ARMOUR,
-		OBJ_RING_SUSTAIN_STR,
-		0,0
-	},
-
-	{
-		/* Zen Monk */
-		OBJ_RING_SUSTAIN_WIS,
-		OBJ_SOFT_LEATHER_ARMOUR,
-		OBJ_SCROLL_MONSTER_CONFUSION,
-		OBJ_RING_SUSTAIN_CON,
-		0,0
-	},
-
-	{
-		/* Assassin */
-		OBJ_RING_RES_POISON,
-		OBJ_DAGGER,
-		OBJ_SOFT_LEATHER_ARMOUR,
-		OBJ_RING_RES_DISENCHANTMENT,
-		0,0
-    },
-
-	{
-        /* Ranger */
-		OBJ_LONG_BOW,
-		OBJ_ARROW,
-		OBJ_HARD_LEATHER_ARMOUR,
-		0,0,0
-    },
-
-    {
-        /* Shaman */
-		OBJ_QUARTERSTAFF,
-		OBJ_POTION_HEALING,
-		OBJ_SCROLL_PROTECTION_FROM_EVIL,
-		0,0,0
-	},
-
-    {
-        /* Mindcrafter */
-		OBJ_RING_SUSTAIN_WIS,
-		OBJ_SHORT_SWORD,
-		OBJ_SOFT_LEATHER_ARMOUR,
-		OBJ_RING_RES_CONFUSION,
-		0,0
-    },
-
-    {
-        /* Wizard */
-		OBJ_RING_SUSTAIN_INT,
-		OBJ_POTION_RES_MANA,
-		OBJ_SOFT_LEATHER_ARMOUR,
-		OBJ_RING_RES_LIGHT_AND_DARKNESS,
-		0,0
-    },
-
-	{
-        /* Warlock */
-		OBJ_RING_SUSTAIN_INT,
-		OBJ_SMALL_SWORD,
-		OBJ_SOFT_LEATHER_ARMOUR,
-		OBJ_RING_SUSTAIN_STR,
-		0,0
-	},
-
-	{
-		/* Powerweaver */
-		OBJ_RING_SUSTAIN_INT,
-		OBJ_RING_SUSTAIN_WIS,
-		OBJ_POTION_RES_MANA,
-		OBJ_RING_SEE_INVIS,
-		OBJ_RING_RES_LIGHT_AND_DARKNESS,
-		0
-	},
-
-	{
-		/* Tourist */
-		OBJ_DAGGER,
-		OBJ_HARD_LEATHER_BOOTS,
-		OBJ_CLOAK,
-		0,0,0
-	},
-
-};
-
-
+	/* And they are in the player's inventory. */
+	inven_carry(o_ptr);
+}
 
 /*
  * Init players with some belongings
@@ -2973,15 +2861,11 @@ static void player_outfit(void)
 {
 	int i;
 
-	object_type	forge;
-	object_type	*q_ptr;
+	object_type	q_ptr[1];
 	u32b f[3];
 
 	/* Find out about the player. */
 	player_flags(f, f+1, f+2);
-
-	/* Get local object */
-	q_ptr = &forge;
 
     if (p_ptr->prace == RACE_GOLEM || p_ptr->prace == RACE_SKELETON ||
         p_ptr->prace == RACE_ZOMBIE || p_ptr->prace == RACE_VAMPIRE ||
@@ -3011,9 +2895,6 @@ static void player_outfit(void)
     }
 
 
-        /* Get local object */
-        q_ptr = &forge;
-
 
     if (p_ptr->prace == RACE_VAMPIRE)
     {
@@ -3028,9 +2909,6 @@ static void player_outfit(void)
         q_ptr->ident |= IDENT_STOREB;
 
         (void)inven_carry(q_ptr);
-
-        /* Get local object */
-        q_ptr = &forge;
 
         /* Hack -- Give the player scrolls of DARKNESS! */
         object_prep(q_ptr, OBJ_SCROLL_DARKNESS);
@@ -3065,7 +2943,6 @@ static void player_outfit(void)
 			OBJ_NECROMANCY_BLACK_PRAYERS
 		};
 
-		q_ptr = &forge;
 		i = 0;
 		/* Allow books the player has some skill with. */
 		if (skill_set[SKILL_SORCERY].value > 0) gbook[i++] = book[0];
@@ -3089,49 +2966,22 @@ static void player_outfit(void)
         	 		
 
     /* Hack -- Give the player three useful objects */
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < MAX_TPL_ITEMS; i++)
 	{
 		/* Look up standard equipment */
-		s16b k = player_init[p_ptr->ptemplate][i];
+		make_item_type *i_ptr = &cp_ptr->items[i];
+		object_kind *k_ptr = &k_info[i_ptr->k_idx];
 
 		/* Hack - avoid rings which duplicate the player's powers. */
-		if (k_info[k].flags1 & f[0] || k_info[k].flags2 & f[1] ||
-			k_info[k].flags3 & f[2])
+		if (k_ptr->flags1 & f[0] || k_ptr->flags2 & f[1] ||
+			k_ptr->flags3 & f[2])
 		{
-			/* Give the character the alternative item. */
-			int k2 = player_init[p_ptr->ptemplate][i+3];
-
-			/* Paranoia - all absent alternatives should be unused, but
-			 * someone may have changed the objects. */
-			if (k2) k = k2;
+			/* Give the player an alternative item, if available. */
+			if (i_ptr[MAX_TPL_ITEMS].k_idx) i_ptr += MAX_TPL_ITEMS;
 		}
 
-		/* Get local object */
-		q_ptr = &forge;
-
-		/* Hack -- Give the player an object */
-		object_prep(q_ptr, k);
-
-
-		if (k == OBJ_ARROW)
-		{
-			/* If we have an arrow, we need more than one */
-			q_ptr->number = (char)rand_range(15,45);
-		}
-
-        /* Assassins begin the game with a poisoned dagger */
-		if (k == OBJ_DAGGER && p_ptr->ptemplate == TPL_ASSASSIN)
-        {
-            q_ptr->name2 = EGO_BRAND_POIS;
-			apply_magic_2(q_ptr, 0);
-        }
-
-        /* These objects are "storebought" */
-        q_ptr->ident |= IDENT_STOREB;
-
-		object_aware(q_ptr);
-		object_known(q_ptr);
-		(void)inven_carry(q_ptr);
+		/* Give the player the object. */
+		make_birth_item(q_ptr, i_ptr);
 	}
 }
 

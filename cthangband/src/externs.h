@@ -1561,7 +1561,7 @@ extern void object_prep(object_type *o_ptr, int k_idx);
 #if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(OBJECT2_C))
 extern void check_bonus_table(void);
 #endif
-#if (defined(BIRTH_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD6_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void apply_magic_2(object_type *o_ptr, const int lev);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C))
@@ -4010,7 +4010,7 @@ extern void do_dec_stat_time(int stat, bool msg);
 
 /* object2.c */
 
-#if (defined(OBJECT2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(OBJECT2_C) || defined(XTRA2_C))
 extern void make_item(object_type *o_ptr, make_item_type *i_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

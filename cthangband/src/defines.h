@@ -1076,6 +1076,9 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Hack - stat set 0 is the universal default */
 #define DEFAULT_STATS 0
 
+/* Generate 3 items for each template at the start of the game. */
+#define MAX_TPL_ITEMS	3
+
 /*
  * Player sex constants (hard-coded by save-files, arrays, etc)
  */

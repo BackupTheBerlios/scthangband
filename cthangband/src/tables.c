@@ -1527,91 +1527,196 @@ player_template template_info[MAX_TEMPLATE] =
 		{ 3, 1, -1, 2, 2, -1},
 		{20, 20, 20, 20, 20,
 		1, 5, 5, 10, 20, 5, 5,
-		0, 0, 0, 0, 5, 0, 20}
+		0, 0, 0, 0, 5, 0, 20},
+		{
+			{OBJ_RING_RES_FEAR, 0, 0, 0, 1, 1},
+			{OBJ_CUTLASS, 0, 0, 0, 1, 1},
+			{OBJ_LUMP_OF_SULPHUR, 0, 0, 0, 1, 1},
+			{OBJ_RING_SUSTAIN_STR, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Swashbuckler", 0, BIAS_WARRIOR, 0, 0,
 		{1, 0, -2, 3, 2, 1},
 		{15, 35, 15, 15, 15,
 		1, 5, 5, 15, 15, 5, 5,
-		0, 0, 0, 0, 0, 0, 30}
+		0, 0, 0, 0, 0, 0, 30},
+		{
+			{OBJ_POTION_SPEED, 0, 0, 0, 1, 1},
+			{OBJ_RAPIER, 0, 0, 0, 1, 1},
+			{OBJ_HARD_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Gladiator", 0, BIAS_WARRIOR, 0, 0,
 		{5, -1, -1, 1, 3, -1},
 		{30, 30, 30, 30, 10,
 		2, 5, 5, 10, 10, 5, 5,
-		1, 0, 0, 0, 0, 0, 40}
+		1, 0, 0, 0, 0, 0, 40},
+		{
+			{OBJ_RING_FREE_ACTION, 0, 0, 0, 1, 1},
+			{OBJ_BROAD_SWORD, 0, 0, 0, 1, 1},
+			{OBJ_SMALL_METAL_SHIELD, 0, 0, 0, 1, 1},
+			{OBJ_RING_RES_FEAR, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Warrior-Monk", 0, BIAS_WARRIOR, 0, 0,
 		{ 2, 0, -2, 5, 1, -1},
 		{35, 10, 10, 10, 10,
 		1, 5, 5, 15, 10, 5, 15,
-		4, 0, 0, 0, 0, 0, 30}
+		4, 0, 0, 0, 0, 0, 30},
+		{
+			{OBJ_RING_SUSTAIN_DEX, 0, 0, 0, 1, 1},
+			{OBJ_SCROLL_MONSTER_CONFUSION, 0, 0, 0, 1, 1},
+			{OBJ_SOFT_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{OBJ_RING_SUSTAIN_STR, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Zen-Monk", 0, BIAS_PRIESTLY, 0, 40,
 		{ 2, -1, 2, 2, 0, -1},
 		{25, 10, 10, 10, 10,
 		0, 5, 5, 15, 10, 10, 10,
-		2, 1, 1, 0, 0, 0, 40}
+		2, 1, 1, 0, 0, 0, 40},
+		{
+			{OBJ_RING_SUSTAIN_WIS, 0, 0, 0, 1, 1},
+			{OBJ_SOFT_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{OBJ_SCROLL_MONSTER_CONFUSION, 0, 0, 0, 1, 1},
+			{OBJ_RING_SUSTAIN_CON, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Assassin", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{ 1, 0, 0, 3, 2, -2},
 		{30, 20, 20, 20, 10,
 		0, 5, 20, 20, 10, 20, 30,
-		0, 0, 0, 0, 0, 0, 30}
-    },
-    {
+		0, 0, 0, 0, 0, 0, 30},
+ 		{
+			{OBJ_RING_RES_POISON, 0, 0, 0, 1, 1},
+			{OBJ_DAGGER, EGO_BRAND_POIS, EI_EGO, 0, 1, 1},
+			{OBJ_SOFT_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{OBJ_RING_RES_DISENCHANTMENT, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
+	},
+	{
 		"Ranger", 0, BIAS_RANGER, BIAS_WARRIOR, 30,
 		{ 2, -1, -1, 3, 3, 2},
 		{15, 15, 15, 15, 35,
 		1, 5, 10, 30, 10, 20, 20,
-		0, 0, 0, 2, 0, 0, 10}
+		0, 0, 0, 2, 0, 0, 10},
+		{
+			{OBJ_LONG_BOW, 0, 0, 0, 1, 1},
+			{OBJ_ARROW, 0, 0, 0, 15, 45},
+			{OBJ_HARD_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Shaman", 0, BIAS_PRIESTLY, 0, 0,
 		{ -1, 1, 1, -2, 2, 5},
 		{15, 15, 15, 15, 15,
 		0, 10, 5, 15, 20, 10, 5,
-		0, 0, 0, 5, 0, 0, 20}
+		0, 0, 0, 5, 0, 0, 20},
+		{
+			{OBJ_QUARTERSTAFF, 0, 0, 0, 1, 1},
+			{OBJ_POTION_HEALING, 0, 0, 0, 1, 1},
+			{OBJ_SCROLL_PROTECTION_FROM_EVIL, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
 	{
 		"Mindcrafter", 0, BIAS_PRIESTLY, 0, 40,
 		{ -2, 2, 5, -1, 0, 1},
 		{15, 15, 15, 15, 15,
 		0, 10, 5, 15, 15, 10, 5,
-		0, 4, 2, 0, 0, 0, 15}
+		0, 4, 2, 0, 0, 0, 15},
+		{
+			{OBJ_RING_SUSTAIN_WIS, 0, 0, 0, 1, 1},
+			{OBJ_SHORT_SWORD, 0, 0, 0, 1, 1},
+			{OBJ_SOFT_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{OBJ_RING_RES_CONFUSION, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Wizard", 3, BIAS_MAGE, 0, 0,
 		{-2, 5, 2, 1, -1, 1},
 		{10, 10, 10, 10, 10,
 		0, 25, 5, 15, 20, 10, 5,
-		0, 0, 0, 0, 0, 4, 5}
+		0, 0, 0, 0, 0, 4, 5},
+		{
+
+			{OBJ_RING_SUSTAIN_INT, 0, 0, 0, 1, 1},
+			{OBJ_POTION_RES_MANA, 0, 0, 0, 1, 1},
+			{OBJ_SOFT_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{OBJ_RING_RES_LIGHT_AND_DARKNESS, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Warlock", 1, BIAS_MAGE, 0, 0,
 		{1, 3, -1, 0, 2, -1},
 		{15, 15, 15, 20, 10,
 		1, 10, 5, 10, 15, 10, 5,
-		0, 0, 0, 0, 0, 2, 10}
+		0, 0, 0, 0, 0, 2, 10},
+		{
+			{OBJ_RING_SUSTAIN_INT, 0, 0, 0, 1, 1},
+			{OBJ_SMALL_SWORD, 0, 0, 0, 1, 1},
+			{OBJ_SOFT_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
+			{OBJ_RING_SUSTAIN_STR, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Powerweaver", 2, BIAS_MAGE, 0, 0,
 		{-3, 3, 3, -2, -2, 3},
 		{5, 5, 5, 5, 5,
 		0, 15, 5, 10, 15, 10, 5,
-		0, 3, 2, 3, 0, 2, 10}
+		0, 3, 2, 3, 0, 2, 10},
+		{
+			{OBJ_RING_SUSTAIN_INT, 0, 0, 0, 1, 1},
+			{OBJ_RING_SUSTAIN_WIS, 0, 0, 0, 1, 1},
+			{OBJ_POTION_RES_MANA, 0, 0, 0, 1, 1},
+			{OBJ_RING_SEE_INVIS, 0, 0, 0, 1, 1},
+			{OBJ_RING_RES_LIGHT_AND_DARKNESS, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Tourist", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{0, 0, 0, 0, 2, -1},
 		{10, 10, 10, 10, 10,
 		0, 5, 5, 5, 5, 5, 5,
-		0, 0, 0, 0, 0, 0, 20}
+		0, 0, 0, 0, 0, 0, 20},
+		{
+			{OBJ_DAGGER, 0, 0, 0, 1, 1},
+			{OBJ_HARD_LEATHER_BOOTS, 0, 0, 0, 1, 1},
+			{OBJ_CLOAK, 0, 0, 0, 1, 1},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 };
 
