@@ -226,6 +226,19 @@ cptr find_feeling(object_type *o_ptr)
 }
 
 /*
+ * A function for "(rand_range(min, max) < x)" which only calls rand_int()
+ * where necessary.
+ */
+static bool rand_range_test(u32b min, u32b max, u32b x)
+{
+	if (x <= min) return FALSE;
+	else if (x > max) return TRUE;
+	else if (rand_range(min, max) < x) return TRUE;
+	else return FALSE;
+}
+
+
+/*
  * Sense the inventory
  */
 static void sense_inventory(void)
@@ -259,18 +272,9 @@ static void sense_inventory(void)
 		bool okay = FALSE, repeat;
 		u16b oldident;
 
-		/* Pseudo-id heaviness increases with level. Note that it becomes
-		 * harder to tell that a "good" object isn't "excellent" at higher
-		 * skill levels <60 because you're less likely to ever get the second
-		 * "good" message you get when it is pseudo-identified first lightly
-		 * and then heavily. */
-		if (skill_set[SKILL_PSEUDOID].value > 59) heavy = TRUE;
-		else if (skill_set[SKILL_PSEUDOID].value < 21) heavy = FALSE;
-		else
-		{
-			/* I could just use this for the calculation, but... */
-			heavy = (rand_range(20, 59) < skill_set[SKILL_PSEUDOID].value);
-		}
+		/* Pseudo-id heavily at 60+, lightly at 20- and sometimes do either
+		 * in between. */
+		heavy = rand_range_test(20, 59, skill_set[SKILL_PSEUDOID].value);
 
 		o_ptr = &inventory[i];
 
@@ -356,8 +360,8 @@ static void sense_inventory(void)
 		(i >= INVEN_WIELD) ? format("you are %s", describe_use(i)) : "in your pack",
 		(repeat ? "really " : ""), ((o_ptr->number == 1) ? "is" : "are"), feel);
 
-		/* Get a bit better (ignore average objects to lessen the
-		 * benefit of starting with >39 skill). */
+		/* Get a bit better (this does allow objects to boost skill twice
+		 * in the 21-59 range). */
 		if (strcmp(feel, "average")) skill_exp(SKILL_PSEUDOID);
 
 		/* We have "felt" it */
