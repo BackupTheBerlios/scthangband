@@ -2536,7 +2536,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			/* Analyze the method */
 			for (n1 = 0; n1 < NUM_BLOW_METHODS; n1++)
 			{
-				if (streq(s, blow_methods[n1].flagname) break;
+				if (streq(s, blow_methods[n1].flagname)) break;
 			}
 
 			/* Invalid method */
