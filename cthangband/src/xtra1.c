@@ -874,7 +874,7 @@ static void calc_spells(bool quiet)
 
 		j=(j%32);
 
-		s_ptr = &mp_ptr->info[school][j];
+		s_ptr = &magic_info[school][j];
 
 		/* Skip spells we are allowed to know */
 		if (s_ptr->minskill <= spell_skill(s_ptr)) continue;
@@ -967,7 +967,7 @@ static void calc_spells(bool quiet)
 		j=(j%32);
 
 		/* Access the spell */
-           s_ptr = &mp_ptr->info[school][j];
+           s_ptr = &magic_info[school][j];
 
 		/* Skip spells we cannot remember */
 		if (s_ptr->minskill > spell_skill(s_ptr)) continue;
@@ -1009,7 +1009,7 @@ static void calc_spells(bool quiet)
 			school = 3;
 
 		/* Access the spell */
-        s_ptr = &mp_ptr->info[school][j%32];
+        s_ptr = &magic_info[school][j%32];
 
 		/* Skip spells we cannot remember */
 		if (s_ptr->minskill > spell_skill(s_ptr)) continue;
@@ -1128,6 +1128,8 @@ bool cumber_helm(object_type *o_ptr)
 	return TRUE;
 }
 
+#define MAX_SPELL_WEIGHT 300 /* Max weight for spellcasting */
+
 /*
  * Calculate maximum mana.  You do not need to know any spells.
  * Note that mana is lowered by heavy (or inappropriate) armor.
@@ -1191,7 +1193,7 @@ static void calc_mana(bool quiet)
 	cur_wgt += inventory[INVEN_FEET].weight;
 
 	/* Determine the weight allowance */
-	max_wgt = mp_ptr->spell_weight;
+	max_wgt = MAX_SPELL_WEIGHT;
 
 	/* Heavy armor penalizes mana */
 	if (((cur_wgt - max_wgt) / 10) > 0)

@@ -2099,8 +2099,8 @@ extern player_race race_info[MAX_RACES];
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(TABLES_C))
 extern player_template template_info[MAX_TEMPLATE];
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern player_magic magic_info;
+#if (defined(CMD5_C) || defined(TABLES_C) || defined(XTRA1_C))
+extern magic_type magic_info[MAX_SCHOOL][32];
 #endif
 #if (defined(CMD5_C) || defined(TABLES_C))
 extern magic_type favour_info[MAX_SPHERE][32];
@@ -3254,9 +3254,9 @@ extern player_race *rp_ptr;
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern player_template *cp_ptr;
 #endif
-#if (defined(CMD5_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern player_magic *mp_ptr;
-#endif
+
+
+
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern u32b spell_learned[MAX_SCHOOL];
 #endif

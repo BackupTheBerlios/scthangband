@@ -198,7 +198,7 @@ static void spell_info(char *p, int spell, int school)
 
 #ifdef DRS_SHOW_SPELL_INFO
 {
-	magic_type *spell_ptr = &mp_ptr->info[school][spell];
+	magic_type *spell_ptr = &magic_info[school][spell];
 	const int plev = spell_skill(spell_ptr);
 
 	/* Analyze the spell */
@@ -327,7 +327,7 @@ u16b spell_energy(u16b skill,u16b min)
  */
 static u16b spellcast_energy(int spell_school, int spell)
 {
-	magic_type	*s_ptr = &mp_ptr->info[spell_school][spell];
+	magic_type	*s_ptr = &magic_info[spell_school][spell];
 	const int plev = spell_skill(s_ptr);
 
 	return spell_energy((u16b)plev,(u16b)(s_ptr->minskill));
@@ -371,7 +371,7 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 
 	/* Access the spell */
 
-	s_ptr = &mp_ptr->info[school][spell];
+	s_ptr = &magic_info[school][spell];
 
 		/* XXX XXX Could label spells above the players level */
 
@@ -442,7 +442,7 @@ static bool spell_okay(int spell, bool known, int school)
 	magic_type *s_ptr;
 
 	/* Access the spell */
-    s_ptr = &mp_ptr->info[school][spell];
+    s_ptr = &magic_info[school][spell];
 
 	/* Spell is illegal */
 	if (s_ptr->minskill > spell_skill(s_ptr)) return (FALSE);
@@ -748,7 +748,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 			char tmp_val[160];
 
 			/* Access the spell */
-			s_ptr = &mp_ptr->info[school_no][spell%32];
+			s_ptr = &magic_info[school_no][spell%32];
 
 			/* Prompt */
 			strnfmt(tmp_val, 78, "%^s %s (%d mana, %d%% fail)? ",
@@ -2368,7 +2368,7 @@ void do_cmd_cast(void)
 
 
 	/* Access the spell */
-	s_ptr = &mp_ptr->info[spell_school][spell];
+	s_ptr = &magic_info[spell_school][spell];
 
 	plev = spell_skill(s_ptr);
 
@@ -4118,7 +4118,7 @@ void do_cmd_invoke(void)
 	f_ptr = &(favour_info[favour_sphere][spell]);
 
 	/* Spell failure chance */
-	chance = spell_chance(s_ptr);
+	chance = spell_chance(f_ptr);
 
 	/* Normal energy use. */
 	energy_use = spirit_energy(favour_sphere, spell);

@@ -692,7 +692,6 @@ player_type *p_ptr = &p_body;
 player_sex *sp_ptr;
 player_race *rp_ptr;
 player_template *cp_ptr;
-player_magic *mp_ptr = &magic_info;
 
 
 /*
