@@ -69,6 +69,7 @@ static book_type *spirit_to_book(spirit_type *s_ptr)
 	}
 }
 
+#define MINDCRAFT_BOOK (book_info+BK_MIND)
 
 
 
@@ -132,6 +133,15 @@ static void low_mana_check(int *chance, const magic_type *s_ptr)
 			if (s_ptr->mana > p_ptr->csp)
 			{
 				(*chance) += 5 * (s_ptr->mana - p_ptr->csp);
+			}
+			return;
+		}
+		case SKILL_MINDCRAFTING:
+		{
+			/* Not enough mana to cast */
+			if (s_ptr->mana > p_ptr->cchi)
+			{
+				chance += 5 * (s_ptr->mana - p_ptr->cchi);
 			}
 			return;
 		}
@@ -4580,22 +4590,19 @@ static void mindcraft_info(char *p, int power)
 /*
  * Calculate the enrgy required for a given mindcrafting power.
  */
-static int mindcraft_energy(int power)
+static int mindcraft_energy(magic_type *s_ptr)
 {
-    int psi = skill_set[SKILL_MINDCRAFTING].value/2;
-	magic_type *spell = &mindcraft_powers[power];
-
-	return spell_energy(psi, spell->min);
+	return spellcast_energy_b(s_ptr);
 }
 
 /*
  * Display mindcrafting powers
  * Returns the y co-ordinate of the lowest line used.
  */
-static int print_mindcraft(int x, int y)
+static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
 {
-	int i, chance, minfail, psi = skill_set[SKILL_MINDCRAFTING].value/2;
-	magic_type *spell;
+	int i, chance, psi = spell_skill(&b_ptr->info[0]);
+	magic_type *s_ptr;
 	char		comment[80];
 	/* Display a list of spells */
 	prt("", y, x);
@@ -4603,54 +4610,37 @@ static int print_mindcraft(int x, int y)
 	put_str("Sk  Chi Time Fail Info", y, x + 35);
 
 	/* Dump the spells */
-	for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
+	for (i = 0, y++; i < MAX_SPELLS_PER_BOOK; i++)
 	{
+		byte a = TERM_WHITE;
 		char psi_desc[80];
 
+		if (~b_ptr->flags & (1L << i)) continue;
+
 		/* Access the spell */
-		spell = &mindcraft_powers[i];
-		if (spell->min > psi)   break;
+		s_ptr = &b_ptr->info[i];
 
-		chance = spell->fail;
-		/* Reduce failure rate by "effective" level adjustment */
-		chance -= 3 * ((skill_set[SKILL_MINDCRAFTING].value/2) - spell->min);
+		if (s_ptr->min > psi)   break;
 
-		/* Reduce failure rate by INT/WIS adjustment */
-		chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_WIS]] - 1);
+		chance = spell_chance(s_ptr);
 
-		/* Not enough mana to cast */
-		if (spell->mana > p_ptr->cchi)
-		{
-			chance += 5 * (spell->mana - p_ptr->cchi);
-		}
-		
-		/* Extract the minimum failure rate */
-		minfail = adj_mag_fail[p_ptr->stat_ind[A_WIS]];
-				    
-		/* Minimum failure rate */
-		if (chance < minfail) chance = minfail;
+		/* Warn if there's not enough mana to cast */
+		if (colour && s_ptr->mana > p_ptr->cchi) a = TERM_ORANGE;
 
-		/* Stunning makes spells harder */
-		if (p_ptr->stun > 50) chance += 25;
-		else if (p_ptr->stun) chance += 15;
-
-		/* Always a 5 percent chance of working */
-		if (chance > 95) chance = 95;
-				    
 		/* Get info */
-		mindcraft_info(comment, i);
+		spell_info_b(comment, 80, s_ptr);
 				    
 		/* Dump the spell --(-- */
 		sprintf(psi_desc, "  %c) %-30s%2d %4d %4d %3d%%%s",
-		I2A(i), spell->name,
-		spell->min*2, spell->mana, mindcraft_energy(i), chance, comment);
-		prt(psi_desc, y + i + 1, x);
+		I2A(i), s_ptr->name,
+		s_ptr->min*2, s_ptr->mana, mindcraft_energy(s_ptr), chance, comment);
+		prt(psi_desc, y++, x);
 	}
 
 	/* Clear the bottom line */
-	prt("", y + i + 1, x);
+	prt("", y, x);
 
-	return y+i+1;
+	return y;
 }
 
 #define MIND_PRECOG 0 /* Precognition (Detection) */
@@ -4779,19 +4769,19 @@ static cptr mindcraft_help(const int power, const int skill)
  * when you run it. It's probably easy to fix but I haven't tried,
  * sorry.
  */
-static int get_mindcraft_power(int *sn)
+static int get_mindcraft_power(book_type *b_ptr, int *sn)
 {
 	int                     i;
 
 	int                     num = 0;
     int y = 1, UNREAD(maxy);
     int x = 15;
-        int  psi = skill_set[SKILL_MINDCRAFTING].value/2;
+	int  psi = spell_skill(&b_ptr->info[0]);
     bool            flag, redraw;
     int             ask;
 	char            choice;
 	char            out_val[160];
-	magic_type *spell;
+	magic_type *s_ptr;
     
     cptr p = "power";
 
@@ -4804,7 +4794,7 @@ static int get_mindcraft_power(int *sn)
      if (repeat_pull(sn)) {
          
          /* Verify the spell */
-         if (mindcraft_powers[*sn].min <= psi) {
+         if (b_ptr->info[*sn].min <= psi) {
  
              /* Success */
              return (TRUE);
@@ -4821,7 +4811,7 @@ static int get_mindcraft_power(int *sn)
 		/* Show list */
 		redraw = TRUE;
 		Term_save();
-		maxy = print_mindcraft(x,y);
+		maxy = print_mindcraft(b_ptr, x, y, FALSE);
 	}		
 	else
 	{
@@ -4829,9 +4819,10 @@ static int get_mindcraft_power(int *sn)
 	redraw = FALSE;
 	}
 
-       for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
-	      if (mindcraft_powers[i].min <= psi)
-		num++;
+	for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
+	{
+		if (b_ptr->info[i].min <= psi) num++;
+	}
 
 	/* Build a prompt (accept all spells) */
     strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) Use which %s? ",
@@ -4853,7 +4844,7 @@ static int get_mindcraft_power(int *sn)
 				Term_save();
 
 			    /* Display a list of spells */
-				maxy = print_mindcraft(x,y);
+				maxy = print_mindcraft(b_ptr, x,y, FALSE);
 			}
 
 			/* Hide the list */
@@ -4890,7 +4881,7 @@ static int get_mindcraft_power(int *sn)
 		}
 
 		/* Save the spell index */
-		spell = &mindcraft_powers[i];
+		s_ptr = &b_ptr->info[i];
 
         /* Verify it */
 		if (ask)
@@ -4902,7 +4893,7 @@ static int get_mindcraft_power(int *sn)
 				put_str(mindcraft_help(i, psi*2), maxy, x);
 
 			/* Prompt */
-            strnfmt(tmp_val, 78, "Use %s? ", mindcraft_powers[i].name);
+            strnfmt(tmp_val, 78, "Use %s? ", b_ptr->info[i].name);
 
 			/* Belay that order */
 			if (!get_check(tmp_val))
@@ -4952,8 +4943,8 @@ void do_cmd_mindcraft(void)
     int   n = 0,  b = 0;
     int chance;
     int dir;
-    int minfail = 0;
-    int psi = skill_set[SKILL_MINDCRAFTING].value/2;
+	book_type *b_ptr = MINDCRAFT_BOOK;
+    int psi = spell_skill(&b_ptr->info[0]);
 	magic_type *s_ptr;
     
     /* not if confused */
@@ -4962,10 +4953,10 @@ void do_cmd_mindcraft(void)
 	return;
     }
     
-    /* get power */
-    if (!get_mindcraft_power(&n))  return;
+	/* get power */
+	if (!get_mindcraft_power(b_ptr, &n))  return;
 	
-	s_ptr = &mindcraft_powers[n];
+	s_ptr = &b_ptr->info[n];
     
     /* Verify "dangerous" spells */
     if (s_ptr->mana > p_ptr->cchi) {
@@ -4976,31 +4967,7 @@ void do_cmd_mindcraft(void)
     }
     
     /* Spell failure chance */
-    chance = s_ptr->fail;
-    /* Reduce failure rate by "effective" level adjustment */
-    chance -= 3 * (psi - s_ptr->min);
-
-    /* Reduce failure rate by INT/WIS adjustment */
-    chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_WIS]] - 1);
-
-    /* Not enough mana to cast */
-    if (s_ptr->mana > p_ptr->cchi)
-	{
-	    chance += 5 * (s_ptr->mana - p_ptr->cchi);
-	}
-
-    /* Extract the minimum failure rate */
-    minfail = adj_mag_fail[p_ptr->stat_ind[A_WIS]];
-				    
-    /* Minimum failure rate */
-    if (chance < minfail) chance = minfail;
-
-    /* Stunning makes spells harder */
-    if (p_ptr->stun > 50) chance += 25;
-    else if (p_ptr->stun) chance += 15;
-
-    /* Always a 5 percent chance of working */
-    if (chance > 95) chance = 95;
+    chance = spell_chance(s_ptr);
 
     /* Failed spell */
 	if (rand_int(100) < chance)
@@ -5190,7 +5157,7 @@ void do_cmd_mindcraft(void)
 		}
 	}
 	/* Take a turn */
-	energy_use = mindcraft_energy(n);
+	energy_use = mindcraft_energy(s_ptr);
 
 	/* Sufficient mana */
 	if (s_ptr->mana <= p_ptr->cchi)
@@ -5247,70 +5214,5 @@ void do_cmd_mindcraft(void)
  */
 void display_spell_list(void)
 {
-	int             i;
-	int             y = 1;
-	int             x = 1;
-	int             minfail = 0;
-	const int plev = MAX(1, skill_set[SKILL_MINDCRAFTING].value/2);
-	int             chance = 0;
-	magic_type *s_ptr;
-	char            comment[80];
-	char            psi_desc[80];
-
-	/* Erase window */
-	clear_from(0);
-
-
-	/* Display a list of spells */
-	prt("", y, x);
-	put_str("Name", y, x + 5);
-	put_str("Lv Mana Fail Info", y, x + 35);
-
-	/* Dump the spells */
-	for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
-	{
-		byte a = TERM_WHITE;
-
-		/* Access the available spell */
-		s_ptr = &mindcraft_powers[i];
-		if (s_ptr->min > plev) break;
-
-		/* Get the failure rate */
-		chance = s_ptr->fail;
-
-		/* Reduce failure rate by "effective" level adjustment */
-		chance -= 3 * (plev - s_ptr->min);
-
-		/* Reduce failure rate by INT/WIS adjustment */
-		chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_WIS]] - 1);
-
-		/* Not enough mana to cast */
-		if (s_ptr->mana > p_ptr->cchi)
-		{
-			chance += 5 * (s_ptr->mana - p_ptr->cchi);
-			a = TERM_ORANGE;
-		}
-
-		/* Extract the minimum failure rate */
-		minfail = adj_mag_fail[p_ptr->stat_ind[A_WIS]];
-
-		/* Minimum failure rate */
-		if (chance < minfail) chance = minfail;
-
-		/* Stunning makes spells harder */
-		if (p_ptr->stun > 50) chance += 25;
-		else if (p_ptr->stun) chance += 15;
-
-		/* Always a 5 percent chance of working */
-		if (chance > 95) chance = 95;
-
-		/* Get info */
-		mindcraft_info(comment, i);
-
-		/* Dump the spell */
-		sprintf(psi_desc, "  %c) %-30s%2d %4d %3d%%%s",
-			I2A(i), s_ptr->name,
-			s_ptr->min, s_ptr->mana, chance, comment);
-		Term_putstr(x, y + i + 1, -1, a, psi_desc);
-	}
+	print_mindcraft(MINDCRAFT_BOOK, 1, 1, TRUE);
 }

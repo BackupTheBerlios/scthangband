@@ -1876,7 +1876,10 @@ static magic_type cantrip_info[32] =
 	{"Clairvoyance", "", 50, 125, 80, 0, SKILL_HEDGE, SKILL_NONE, 0},
 };
 
-book_type book_info[31] =
+/* Forward declare. */
+static magic_type mindcraft_powers[];
+
+book_type book_info[MAX_BK] =
 {
 	{IDX(BK_SORC_0) magic_info[SCH_SORCERY], 0x000000ff},
 	{IDX(BK_SORC_1) magic_info[SCH_SORCERY], 0x0000ff00},
@@ -1909,6 +1912,7 @@ book_type book_info[31] =
 	{IDX(BK_WILD_1) favour_info[SPIRIT_NATURE], 0x0000ff00},
 	{IDX(BK_WILD_2) favour_info[SPIRIT_NATURE], 0x00ff0000},
 	{IDX(BK_WILD_3) favour_info[SPIRIT_NATURE], 0xff000000},
+	{IDX(BK_MIND) mindcraft_powers, 0x0000fff},
 };
 
 /* Bitwise mask for spells to split them into books */
@@ -2759,7 +2763,7 @@ martial_arts ma_blows[MAX_MA] =
 #endif
 };
 
-magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
+static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
 {
 	/* Det. monsters/traps */
 	{"Precognition", "", 0, 1, 15, 0, SKILL_MINDCRAFTING, SKILL_NONE, 0},

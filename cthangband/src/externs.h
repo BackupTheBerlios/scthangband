@@ -2159,9 +2159,9 @@ extern int chaos_rewards[MAX_PATRON][20];
 #if (defined(CMD1_C) || defined(TABLES_C))
 extern martial_arts ma_blows[MAX_MA];
 #endif
-#if (defined(CMD5_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS];
-#endif
+
+
+
 #if (defined(ANGBAND_H))
 extern window_type windows[8];
 #endif
@@ -2336,7 +2336,7 @@ extern void mc_put_str(const int y, const int x, cptr str);
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void clear_from(int row);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(WIZARD2_C))
@@ -3854,7 +3854,7 @@ extern errr Term_addstr(int n, byte a, cptr s);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern void Term_putch(int x, int y, byte a, char c);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
@@ -4016,8 +4016,8 @@ extern void core_fmt(cptr fmt, ...);
 
 /* tables.c */
 
-#if (defined(CMD5_C) || defined(INIT2_C) || defined(TABLES_C))
-extern book_type book_info[31];
+#if (defined(CMD5_C) || defined(INIT2_C) || defined(TABLES_C) || defined(XTRA1_C))
+extern book_type book_info[MAX_BK];
 #endif
 
 

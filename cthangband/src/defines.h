@@ -745,6 +745,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define BK_WILD_1 28
 #define BK_WILD_2 29
 #define BK_WILD_3 30
+#define BK_MIND 31
+
+#define MAX_BK 32
 
 /*
  * Maximum number of "normal" pack slots, and the index of the "overflow"

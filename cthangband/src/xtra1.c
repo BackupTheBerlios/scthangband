@@ -3282,7 +3282,8 @@ static bool win_equip_good(void)
 static bool win_spell_good(void)
 {
 	/* Boring without any powers */
-	return (mindcraft_powers[0].min > skill_set[SKILL_MINDCRAFTING].value/2);
+	return (book_info[BK_MIND].info[0].min <=
+		skill_set[SKILL_MINDCRAFTING].value/2);
 }
 
 
