@@ -1176,7 +1176,7 @@ void help_track(cptr str)
 	}
 
 	/* Window stuff */
-	p_ptr->window |= PW_HELP;
+	if (!is_keymap_or_macro()) p_ptr->window |= PW_HELP;
 }
 
 /*

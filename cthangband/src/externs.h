@@ -3520,6 +3520,9 @@ extern void help_track(cptr str);
 extern int color_char_to_attr(char c);
 #endif
 
+/* util.c */
 
-
+#if (defined(UTIL_C) || defined(XTRA1_C))
+extern bool is_keymap_or_macro(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -1597,6 +1597,23 @@ static char (*inkey_hack)(int flush_first) = NULL;
 
 
 /*
+ * Hack - are there key ready to be processed?
+ */
+bool is_keymap_or_macro(void)
+{
+	char c;
+
+	/* Keymap */
+	if (inkey_next && *inkey_next) return TRUE;
+	
+	/* Macro */
+	if (!Term_inkey(&c, FALSE, FALSE) && c & 0xE0) return TRUE;
+
+	/* Nothing */
+	return FALSE;
+}
+
+/*
  * Get a keypress from the user.
  *
  * This function recognizes a few "global parameters".  These are variables
