@@ -1785,8 +1785,25 @@ static cptr inkey_next = NULL;
  * *Hack* - a second such sequence which can be added from the game code
  * as necessary. This is checked before the above.
  */
-cptr inkey_gnext = NULL;
+static cptr inkey_gnext = NULL;
 
+/*
+ * Set inkey_gnext. Notice if it was already set, but don't do anything yet
+ * as the appropriate course of action is not obvious.
+ */
+void set_gnext(cptr next)
+{
+	assert(next); /* Caller */
+
+	if (*inkey_gnext && alert_failure) bell("inkey_gnext overlap error.");
+
+	inkey_gnext = next;
+}
+
+bool gnext_clear(void)
+{
+	return (!inkey_gnext || !*inkey_gnext);
+}
 
 #ifdef ALLOW_BORG
 

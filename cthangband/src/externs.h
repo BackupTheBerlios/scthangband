@@ -2351,9 +2351,9 @@ extern void sound(int val);
 #if (defined(MAIN_CRB_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool screen_is_icky(void);
 #endif
-#if (defined(SQUELCH_C) || defined(UTIL_C))
-extern cptr inkey_gnext;
-#endif
+
+
+
 #if (defined(FILES_C) || defined(UTIL_C))
 extern bool is_keymap_or_macro(void);
 #endif
@@ -4036,5 +4036,14 @@ extern bool PURE player_is_undead(void);
 
 #if (defined(DUNGEON_C) || defined(POWERS_C))
 extern void process_some_user_pref_files(void);
+#endif
+
+/* util.c */
+
+#if (defined(SQUELCH_C) || defined(UTIL_C))
+extern void set_gnext(cptr next);
+#endif
+#if (defined(SQUELCH_C) || defined(UTIL_C))
+extern bool gnext_clear(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

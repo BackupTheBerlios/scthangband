@@ -830,7 +830,7 @@ static void process_objects(object_type *o_ptr)
 		if (fresh_before) Term_fresh();
 
 		/* Select a new squelched object if the old one is finished with. */
-		if (!inkey_gnext || !*inkey_gnext)
+		if (gnext_clear())
 		{
 			/* Find the next object. */
 			if (!squelch_object(&o_ptr))
@@ -858,7 +858,7 @@ static void process_objects(object_type *o_ptr)
 		next_object(&o_ptr);
 
 		/* Start the keymap again. */
-		inkey_gnext = keymap;
+		set_gnext(keymap);
 
 		/* Get a command (normal) */
 		request_command(FALSE);
