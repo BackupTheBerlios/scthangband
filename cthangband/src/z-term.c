@@ -1448,15 +1448,15 @@ void Term_draw(int x, int y, byte a, char c)
  * positive value (warning), future calls to either function will
  * return negative ones (errors).
  */
-errr Term_addch(byte a, char c)
+void Term_addch(byte a, char c)
 {
 	int w = Term->wid;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return TERM_ERROR_OUT_OF_BOUNDS;
+	if (Term->scr->cu) return /* TERM_ERROR_OUT_OF_BOUNDS */;
 
 	/* Paranoia -- no illegal chars */
-	if (!c) return TERM_ERROR_BAD_INPUT;
+	if (!c) return /* TERM_ERROR_BAD_INPUT */;
 
 	/* Queue the given character for display */
 	Term_queue_char(Term->scr->cx, Term->scr->cy, a, c, 0, 0);
@@ -1465,13 +1465,13 @@ errr Term_addch(byte a, char c)
 	Term->scr->cx++;
 
 	/* Success */
-	if (Term->scr->cx < w) return SUCCESS;
+	if (Term->scr->cx < w) return /* SUCCESS */;
 
 	/* Note "Useless" cursor */
 	Term->scr->cu = 1;
 
 	/* Note "Useless" cursor */
-	return WARN(TERM_ERROR_OUT_OF_BOUNDS);
+	return /* WARN(TERM_ERROR_OUT_OF_BOUNDS) */;
 }
 
 
@@ -1494,7 +1494,7 @@ errr Term_addch(byte a, char c)
  * positive value, future calls to either function will
  * return negative ones.
  */
-errr Term_addstr(int n, byte a, cptr s)
+void Term_addstr(int n, byte a, cptr s)
 {
 	int k;
 
@@ -1503,7 +1503,7 @@ errr Term_addstr(int n, byte a, cptr s)
 	errr res = 0;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return TERM_ERROR_OUT_OF_BOUNDS;
+	if (Term->scr->cu) return /* TERM_ERROR_OUT_OF_BOUNDS */;
 
 	/* Obtain maximal length */
 	k = (n < 0) ? (w + 1) : n;
@@ -1524,7 +1524,7 @@ errr Term_addstr(int n, byte a, cptr s)
 	if (res) Term->scr->cu = 1;
 
 	/* Success (usually) */
-	return (res);
+	return /* (res) */;
 }
 
 
@@ -1533,16 +1533,11 @@ errr Term_addstr(int n, byte a, cptr s)
  */
 void Term_putch(int x, int y, byte a, char c)
 {
-	errr res;
-
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return /* (res) */;
+	if (Term_gotoxy(x, y)) return;
 
 	/* Then add the char */
-	if ((res = Term_addch(a, c)) != 0) return /* (res) */;
-
-	/* Success */
-	return /* (0) */;
+	Term_addch(a, c);
 }
 
 
@@ -1551,16 +1546,11 @@ void Term_putch(int x, int y, byte a, char c)
  */
 void Term_putstr(int x, int y, int n, byte a, cptr s)
 {
-	errr res;
-
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return /* (res) */;
+	if (Term_gotoxy(x, y)) return;
 
 	/* Then add the string */
-	if ((res = Term_addstr(n, a, s)) != 0) return /* (res) */;
-
-	/* Success */
-	return /* (0) */;
+	Term_addstr(n, a, s);
 }
 
 
@@ -1588,7 +1578,7 @@ errr Term_erase(int x, int y, int n)
 	char *scr_tcc;
 
 	/* Place cursor */
-	if (Term_gotoxy(x, y)) return (-1);
+	if (Term_gotoxy(x, y)) return TERM_ERROR_OUT_OF_BOUNDS;
 
 	/* Force legal size */
 	if (x + n > w) n = w - x;
@@ -1636,7 +1626,7 @@ errr Term_erase(int x, int y, int n)
 	}
 
 	/* Success */
-	return (0);
+	return SUCCESS;
 }
 
 
@@ -1645,7 +1635,7 @@ errr Term_erase(int x, int y, int n)
  *
  * Note the use of the special "total_erase" code
  */
-errr Term_clear(void)
+void Term_clear(void)
 {
 	int x, y;
 
@@ -1691,9 +1681,6 @@ errr Term_clear(void)
 
 	/* Force "total erase" */
 	Term->total_erase = TRUE;
-
-	/* Success */
-	return (0);
 }
 
 
@@ -1703,23 +1690,20 @@ errr Term_clear(void)
 /*
  * Redraw (and refresh) the whole window.
  */
-errr Term_redraw(void)
+void Term_redraw(void)
 {
 	/* Force "total erase" */
 	Term->total_erase = TRUE;
 
 	/* Hack -- Refresh */
 	Term_fresh();
-
-	/* Success */
-	return (0);
 }
 
 
 /*
  * Redraw part of a widow.
  */
-errr Term_redraw_section(int x1, int y1, int x2, int y2)
+void Term_redraw_section(int x1, int y1, int x2, int y2)
 {
 	int i, j;
 
@@ -1754,9 +1738,6 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 
 	/* Hack -- Refresh */
 	Term_fresh();
-
-	/* Success */
-	return (0);
 }
 
 
@@ -1790,17 +1771,11 @@ void Term_get_size(int *w, int *h)
 /*
  * Extract the current cursor location
  */
-errr Term_locate(int *x, int *y)
+void Term_locate(int *x, int *y)
 {
 	/* Access the cursor */
 	(*x) = Term->scr->cx;
 	(*y) = Term->scr->cy;
-
-	/* Warn about "useless" cursor */
-	if (Term->scr->cu) return (1);
-
-	/* Success */
-	return (0);
 }
 
 
