@@ -817,41 +817,120 @@ void wield_weapons(bool wield)
 	}
 }
 
-/* Allow player to modify the character by spending points */
-static bool point_mod_player(void)
+/*
+ * Change the number of points available as a result of a change in a stat.
+ */
+static int change_points_by_stat(s16b from, s16b to)
+{
+	s16b points = 0;
+	/* Remove the last digit to simplify matters */
+	if (from > 18) from = 18 + (from-18)/10;
+	if (to > 18) to = 18 + (to-18)/10;
+
+	if (from < to) /* Increase stat case */
+	{ 
+		while (from < to)
+		{
+			from++;
+
+			/* Higher stats linearly cost more */
+			if(from > 25) points--;
+			if(from > 22) points--;
+			if(from > 18) points--;
+			if(from > 14) points--;
+			if(from > 3) points--;
+			continue;
+		}
+	}
+	else	/* Reduce stat case */
+	{
+		while (from > to)
+		{
+			from--;
+
+			/* Higher stats yield more mod points */
+			if(from > 24) points++;
+			if(from > 21) points++;
+			if(from > 17) points++;
+			if(from > 13) points++;
+			if(from > 2) points++;
+			continue;
+		}
+	}
+	return points;
+}
+
+/* Save the current stats */
+static errr save_stats(void)
+{
+	FILE *fff;
+	char buf[1024];
+	byte i,j,k,l;
+
+	/* Drop priv's */
+	safe_setuid_drop();
+
+	/* Find user.prf. */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "user.prf");
+
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff) return (-1);
+
+	/* Start dumping */
+	fprintf(fff, "\n\n# Initial stat dump\n\n");
+
+	for (i = 0; i < MAX_RACES; i++)
+		for (j = 0; j < MAX_TEMPLATE; j++)
+			for (k = 0; k < 2; k++)
+				if (stat_default[i][j][k][0])
+				{
+					fprintf(fff, "D:%c:%c:%d", rtoa(i), rtoa(j), k);
+					for (l = A_STR; l<= A_CHR; l++)
+							fprintf(fff, ":%d",stat_default[i][j][k][l]);
+					fprintf(fff, "\n");
+				}
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Grab priv's */
+	safe_setuid_grab();
+
+	/* Success */
+	return (0);
+}
+
+/*
+ * Determine the maximum value for a stat given a specific race and a specific template.
+ */
+int maxstat(int race, int temp, int stat)
+{
+	int x;
+	x = (race_info[race].r_adj[stat] + template_info[temp].c_adj[stat]);
+	if(x > 8) x = 8;
+	if(x > 0) x *= 13;
+	if(x >= 0) x = (x/10)*10+28;
+	else x+=19;
+ 	return x;
+}
+
+/* Display player information for point_mod_player(). */
+static void display_player_birth(int points)
 {
 	char b1 = '[';
 	char b2 = ']';
-	char stat;
-	char modpts[4] = "none";
-	int x = 0;
-	int i = 32767;
-	int points = 34;
+	char modpts[4];
 
-	sprintf(modpts,"%d",points);
-	clear_from(23);
-	while(1)
-	{ 
-		/* Calculate the bonuses and hitpoints */
-		p_ptr->update |= (PU_BONUS | PU_HP);
-
-		/* Update stuff */
-		update_stuff();
-
-		/* Fully healed */
-		p_ptr->chp = p_ptr->mhp;
-
-		/* Fully rested */
-		p_ptr->csp = p_ptr->msp;
-		p_ptr->cchi = p_ptr->mchi;
-
-		/* Find the initial money. */
-		get_money(FALSE);
-
-		/* Display the player */
+	/* Display the usual information. */
 		display_player(0);
 
-		/* Display Stat Menu */
+	/* Display the information required during creation. */
 		clear_from(23);
 		sprintf(modpts,"%d",points);
 		
@@ -862,7 +941,8 @@ static bool point_mod_player(void)
 		Term_putstr(73,6,-1,TERM_WHITE,"<-C/c->");
 		Term_putstr(73,7,-1,TERM_WHITE,"<-H/h->");
 
-		Term_gotoxy(2, 23);
+
+	Term_gotoxy(2, 22);
 		Term_addch(TERM_WHITE, b1);
 		if(points == 0)
 		{
@@ -876,72 +956,82 @@ static bool point_mod_player(void)
 		{
 			Term_addstr(-1, TERM_RED, modpts);
 		}
-		Term_addstr(-1, TERM_WHITE, " points left. Press 'ESC' whilst on 0 points to finish or 'Q' to quit.");
+	Term_addstr(-1, TERM_WHITE, " points left. Press ");
+	if (points >= 0)
+	{
+		Term_addstr(-1, TERM_WHITE, "'ESC' to finish, ");
+	}
+	Term_addstr(-1, TERM_WHITE, "'f' to save or 'Q' to quit.");
 		Term_addch(TERM_WHITE, b2);
-		/* Hack - use (i==32767) to initialise various things. */
-		if (i<32767)
+}
+
+/* Indexes for point_mod_player (0-6 hard-coded as stats and nothing) */
+#define IDX_RACE 8
+#define IDX_TEMPLATE 16
+#define IDX_FILE 32
+#define IDX_FINISH 64
+#define IDX_LOAD 256
+#define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
+
+/* Allow player to modify the character by spending points */
+static bool point_mod_player(void)
+{
+	char stat; /* Never used when i = IDX_ALL, and initialised below otherwise. */
+	int x = 0;
+	int i = IDX_ALL;
+	int points = 64;
+
+	
+	while(i != IDX_FINISH)
+	{ 
+		/* Hack - use IDX_ALL to initialise various things. */
+		if (i == IDX_ALL)
+		{
+			/* Only do this once */
+			i |= 1;
+		}
+		else
 		{
 			/* Get an entry */
 			stat = inkey();
-
-			/* ESC goes back to previous menu */
-			if((stat == ESCAPE) && (points == 0)) break;
 
 			/* Assign values to entries, stats 0 to 5 */
 			switch(stat)
 			{
 
 			/* The index to a specific stat is retrieved */
-			case 's':
+			case 's': case 'S':
 				i = 1;
 				break;
-			case 'S':
-				i = 1;
-				break;
-			case 'i':
+			case 'i': case 'I':
 				i = 2;
 				break;
-			case 'I':
-				i = 2;
-				break;
-			case 'w':
+			case 'w': case 'W':
 				i = 3;
 				break;
-			case 'W':
-				i = 3;
-				break;
-			case 'd':
+			case 'd': case 'D':
 				i = 4;
 				break;
-			case 'D':
-				i = 4;
-				break;
-			case 'c':
+			case 'c': case 'C':
 				i = 5;
 				break;
-			case 'C':
-				i = 5;
-				break;
-			case 'h':
+			case 'h': case 'H':
 				i = 6;
 				break;
-			case 'H':
-				i = 6;
+			case 'r': case 'R':
+				i = IDX_RACE;
 				break;
-			case 'r':
-				i = 7;
+			case 't': case 'T':
+				i = IDX_TEMPLATE;
 				break;
-			case 'R':
-				i = 7;
-				break;
-			case 't':
-				i = 8;
-				break;
-			case 'T':
-				i = 8;
+			case 'f': case 'F':
+				i = IDX_FILE;
 				break;
 			case 'Q':
 				quit(NULL);
+				break;
+			case ESCAPE:
+				i = IDX_FINISH;
 				break;
 			default:
 				i = 0;
@@ -949,63 +1039,101 @@ static bool point_mod_player(void)
 		}
 		/* Test for invalid key */
 		if(!i) continue;
-		i--;
 
-		/* Test for race/template changes first. Also catch initialisation. */
-		if (i > 5)
+		/* Don't finish on negative points */
+		if (i == IDX_FINISH && points < 0) i = 0;
+		
+		/* Save current stats to a pref file */
+		if (i == IDX_FILE)
 		{
-			/* Race */
-			if (i == 6)
+			/* Set the current stats as default */
+			for (x = A_STR; x <= A_CHR; x++)
+		{
+					stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x] = p_ptr->stat_max[x];
+			}
+			/* Save to user.prf */
+			if (!save_stats()) Term_putstr(2, 21, -1, TERM_L_GREEN, "Save successful.");
+		}
+				
+		/* Load saved stats at startup and on demand */
+		if (i & IDX_LOAD)
+		{
+			for (x = A_STR; x <= A_CHR; x++)
+		{
+				s16b tmp = stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x];
+				if (tmp > 0)
+				{
+					/* Correct the points allocation */
+					points += change_points_by_stat(p_ptr->stat_cur[x], tmp);
+					/* Then change the stat */
+					p_ptr->stat_cur[x] = p_ptr->stat_max[x] = tmp;
+				}
+			}
+		}
+
+		/* Modify the player's race. */
+		if (i == IDX_RACE)
 			{
 				p_ptr->prace += (islower(stat) ? 1 : -1);
 				p_ptr->prace %= MAX_RACES;
 				rp_ptr = &race_info[p_ptr->prace];
 				create_random_name(p_ptr->prace,player_name);
 			}
-			/* Template */
-			else if (i == 7)
+
+		/* Modify the player's template. */
+		if (i == IDX_TEMPLATE)
 			{
 				p_ptr->ptemplate += (islower(stat) ? 1 : -1);
 				p_ptr->ptemplate %= MAX_TEMPLATE;
 				cp_ptr = &template_info[p_ptr->ptemplate];
 			}
+
+		if (i & IDX_ALL)
+		{
 			/* Correct the skill set. These will be finalised later. */
 			get_starting_skills(p_ptr->prace);
 			get_hermetic_skills_randomly();
 			get_init_spirit(FALSE);
 			get_random_skills(FALSE);
 
-			/* Get the average age, height and weight (not affected by template) */
-			if (i != 7) get_ahw_average();
-			/* Set the experience factor (not affected by template) */
-			if (i != 7) p_ptr->expfact = rp_ptr->r_exp;
-			/* Get the average social class (not affected by template). */
-			if (i != 7) p_ptr->sc = get_social_average();
-			/* Get a default weapon (not affected by race) */
-			if (i != 6) wield_weapons(TRUE);
-
 			/* Avoid stats which are too low. */
-			/* This relies on no single change from race to race or template to
-			template involving a stat change of more than 15 points. */
 			if (maximise_mode)
 			{
-				for (i = A_STR; i<= A_CHR; i++)
+				int j;
+				for (j = A_STR; j<= A_CHR; j++)
 				{
-					while ((p_ptr->stat_cur[i] + rp_ptr->r_adj[i] + cp_ptr->c_adj[i]) < 3)
+					int adj = rp_ptr->r_adj[j] + cp_ptr->c_adj[j];
+					if (p_ptr->stat_cur[j] + adj < 3)
 					{
-						p_ptr->stat_cur[i] = ++p_ptr->stat_max[i];
-						if(p_ptr->stat_max[i] > 97) points--; 
-						if(p_ptr->stat_max[i] > 67) points--;
-						if(p_ptr->stat_max[i] > 18) points--;
-						if(p_ptr->stat_max[i] > 14) points--;
-						if(p_ptr->stat_max[i] > 3) points--;
+						points += change_points_by_stat(p_ptr->stat_cur[j], 3-adj);
+						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = 3-adj;
 					}
 				}
 			}
 		}
+
+		if (i & IDX_RACE)
+		{
+			/* Get an average age, height and weight. */
+			get_ahw_average();
+  			/* Set the experience factor */
+  			p_ptr->expfact = rp_ptr->r_exp;
+			/* Get an average social class. */
+			p_ptr->sc = get_social_average();
+		}
+		if (i & IDX_TEMPLATE)
+		{
+			/* Get a default weapon */
+ 			wield_weapons(TRUE);
+		}
+
 		/* Test for lower case (add to stat) or 
 		upper case (subtract stat) */
-		else if (islower(stat)) /* ('a' < stat) */
+		if (i && i < 7)
+		{
+			/* Remember what the stat has been changed from */
+			int old_stat = p_ptr->stat_cur[--i];
+			if (islower(stat)) /* ('a' < stat) */
 		{
 			/* different conditions for maximize on */
 			if(maximise_mode) 
@@ -1015,18 +1143,11 @@ static bool point_mod_player(void)
 				{
 					p_ptr->stat_cur[i] = ++p_ptr->stat_max[i];
 				}
-				else
-				{
-					continue;
-				}
 			}
 			else
 			{
 				/* Max stat increase, maximize off */
-				x = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
-				if(x > 8) x = 8;
-				if(x > 0) x *= 13;
-				if(p_ptr->stat_max[i] < 18 + x)    
+				if(p_ptr->stat_max[i] < maxstat(p_ptr->prace, p_ptr->ptemplate, i))
 				{
 					if(p_ptr->stat_max[i]> 17)
 					{
@@ -1038,19 +1159,7 @@ static bool point_mod_player(void)
 						p_ptr->stat_cur[i] = ++p_ptr->stat_max[i];
 					}
 				}
-				else
-				{
-					continue;
-				}
 			}
-
-			/* Higher stats linearly cost more */
-			if(p_ptr->stat_max[i] > 97) points--; 
-			if(p_ptr->stat_max[i] > 67) points--;
-			if(p_ptr->stat_max[i] > 18) points--;
-			if(p_ptr->stat_max[i] > 14) points--;
-			if(p_ptr->stat_max[i] > 3) points--;
-			continue;
 		}
 		else    /* Reduce stat case */
 		{ 
@@ -1066,17 +1175,42 @@ static bool point_mod_player(void)
 					p_ptr->stat_cur[i] = --p_ptr->stat_max[i];
 				}
 			}
+			}
+			if (old_stat != p_ptr->stat_cur[i])
+			{
+				/* Adjust the points appropriately */
+				points += change_points_by_stat(old_stat, p_ptr->stat_cur[i]);
+				/* Don't leave i at 0 */
+				i++;
+			}
 			else
 			{
-				continue;
+				/* Nothing happened. */
+				i = 0;
 			}
-			/* Higher stats yield more mod points */
-			if(p_ptr->stat_max[i] > 87) points++; 
-			if(p_ptr->stat_max[i] > 57) points++;
-			if(p_ptr->stat_max[i] > 17) points++;
-			if(p_ptr->stat_max[i] > 13) points++;
-			if(p_ptr->stat_max[i] > 2) points++;
-			continue;
+		}
+
+		/* Update various things and display everything if something has changed. */
+		if (i & (IDX_ALL | 7)) 
+		{
+			/* Calculate the bonuses and hitpoints */
+			p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+
+			/* Update stuff */
+			update_stuff();
+
+			/* Fully healed */
+			p_ptr->chp = p_ptr->mhp;
+
+			/* Fully rested */
+			p_ptr->csp = p_ptr->msp;
+			p_ptr->cchi = p_ptr->mchi;
+
+			/* Find the initial money. */
+			get_money(FALSE);
+
+			/* Display everything */
+			display_player_birth(points);
 		}
 	}
 	/* Finally randomise the skill bonuses and set magic up as the player wants. */
@@ -1683,9 +1817,11 @@ static int get_social_average(void)
 			if (chart != bg[i].chart) continue;
 			/* Add the bonus * the chance of getting that chart. */
 			social_class += (bg[i].bonus - 50) * (bg[i].roll - roll);
+#ifdef A_WAY_OF_HANDLING_THIS
 			/* Ignore non-linear progressions as they don't
 			affect the player's social class at the moment. */
 			if (next && next != bg[i].next);
+#endif
 			/* Set next and the cumulative probability. */
 			next = bg[i].next;
 			roll = bg[i].roll;
@@ -3418,10 +3554,6 @@ static bool player_birth_aux()
 				/* Get a new character */
 				if (point_mod)
 				{
-					for(i=0;i<6;i++)
-					{
-						p_ptr->stat_cur[i] = p_ptr->stat_max[i] = 8;
-					}
 					point_mod_player();  
 				}
 				else

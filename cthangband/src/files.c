@@ -243,6 +243,9 @@ s16b tokenize(char *buf, s16b num, char **tokens)
  *
  * Specify visual information, given an index, and some data
  *   V:<num>:<kv>:<rv>:<gv>:<bv>
+ *
+ * Specify a default set of initial statistics for spend_points
+ *   D:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>
  */
 errr process_pref_file_aux(char *buf)
 {
@@ -452,6 +455,37 @@ errr process_pref_file_aux(char *buf)
 		}
 	}
 
+	/*
+	 * Process D:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr> for initial stats 
+	 */
+	else if (buf[0] == 'D')
+	{
+		if (tokenize(buf+2, 9, zz) == 9)
+		{
+			int prace = ator(*zz[0]);
+			int ptemplate = ator(*zz[1]);
+			int pmaximise = strtol(zz[2], NULL, 0);
+			if (prace >= 0 && prace < MAX_RACES && ptemplate >= 0 && ptemplate < MAX_TEMPLATE)
+			{
+				for (i = A_STR; i<= A_CHR; i++)
+				{
+					s16b stat = strtol(zz[i+3], NULL, 0);
+					/* Fail if figures are impossible (maximise mode) */
+					if (pmaximise)
+					{
+						if (stat < 3 || stat > 17) return (1);
+					}
+					/* (and non-maximise mode) */
+					else
+					{
+						if (stat < 3 || stat > maxstat(prace, ptemplate, i)) return (1);
+					}
+					stat_default[prace][ptemplate][pmaximise][i] = stat;
+				}
+				return (0);
+			}
+		}
+	}
 
 	/* Failure */
 	return (1);

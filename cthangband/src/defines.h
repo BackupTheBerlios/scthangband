@@ -2872,6 +2872,11 @@ extern int PlayerUID;
 #endif
 
 
+/* Replaces letters and numbers with numbers in the range 0-35 */
+#define ator(x) ((x > 47 && x < 58) ? (x - 22) : (isalpha(x)) ? A2I(FORCELOWER(x)) : -1)
+/* And vice versa */
+#define rtoa(x) ((x < 26) ? I2A(x) : (x < 36) ? (x + 22) : -1)
+
 
 /*** Color constants ***/
 

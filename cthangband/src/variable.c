@@ -913,3 +913,5 @@ bool mystic_notify_aux;
  bool easy_disarm = TRUE;
  #endif /* ALLOW_EASY_DISARM -- TNB */
 
+/* Default stats for a given race/class combination */
+s16b stat_default[MAX_RACES][MAX_TEMPLATE][2][6];

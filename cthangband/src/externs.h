@@ -72,6 +72,7 @@ extern mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS];
 extern town_type town_defs[MAX_TOWNS];
 extern dun_type dun_defs[MAX_CAVES];
 extern wild_type wild_grid[12][12];
+extern s16b stat_default[MAX_RACES][MAX_TEMPLATE][2][6];
 
 /* variable.c */
 extern cptr copyright[5];
@@ -408,6 +409,7 @@ extern spirit_type spirits[MAX_SPIRITS];
 /* birth.c */
 extern void create_random_name(int type, char *name);
 extern void player_birth(void);
+extern int maxstat(int, int, int);
 
 /* cave.c */
 extern int distance(int y1, int x1, int y2, int x2);
