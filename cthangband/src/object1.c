@@ -2968,25 +2968,26 @@ static int launcher_type(object_type *o_ptr)
  *
  * Return the total number of strings.
  */
-static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
+static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 {
 	int                     i = 0, j;
 
 	u32b f1, f2, f3;
-	object_type forge, *j_ptr=&forge;
 
 	cptr board[16];
 
+	object_type o_ptr[1];
+
 	/* Paranoia - no object. */
-	if (!o_ptr || !o_ptr->k_idx) return 0;
+	if (!o1_ptr || !o1_ptr->k_idx) return 0;
 
 	/* Extract the known info */
-	object_info_known(j_ptr, o_ptr);
+	object_info_known(o_ptr, o1_ptr);
 
 	/* Copy the flags to the traditional variables. */
-	f1 = j_ptr->art_flags1;
-	f2 = j_ptr->art_flags2;
-	f3 = j_ptr->art_flags3;
+	f1 = o_ptr->art_flags1;
+	f2 = o_ptr->art_flags2;
+	f3 = o_ptr->art_flags3;
 
 	/* Mega-Hack -- describe activation */
 	if (f3 & (TR3_ACTIVATE))
@@ -3163,13 +3164,13 @@ static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
 	if (f1 & (TR1_BLOWS)) board[j++] = "attack speed";
 	if (j)
 	{
-		if (j_ptr->pval > 0)
+		if (o_ptr->pval > 0)
 	{
-			board[j] = format("It adds %d to your", j_ptr->pval);
+			board[j] = format("It adds %d to your", o_ptr->pval);
 	}
-		else if (j_ptr->pval < 0)
+		else if (o_ptr->pval < 0)
 	{
-			board[j] = format("It removes %d from your", -j_ptr->pval);
+			board[j] = format("It removes %d from your", -o_ptr->pval);
 	}
 		else
 	{
@@ -3268,8 +3269,8 @@ static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
 		}
 
 		/* Give the damage a weapon does, excluding throwing weapons in brief mode. */
-		if (!brief || (wield_slot(j_ptr) == INVEN_WIELD) ||
-			(wield_slot(j_ptr) == INVEN_BOW) || (launcher_type(j_ptr) != -1))
+		if (!brief || (wield_slot(o_ptr) == INVEN_WIELD) ||
+			(wield_slot(o_ptr) == INVEN_BOW) || (launcher_type(o_ptr) != -1))
 		{
 		weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 		count = 0;
@@ -3471,9 +3472,9 @@ static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
 		info[i++] = "It fires missiles excessively fast.";
 	}
 
-	if (cumber_glove(j_ptr))
+	if (cumber_glove(o_ptr))
 	{
-		if (j_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
+		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
 			info[i++] = "It inhibits spellcasting.";
 		}
@@ -3483,9 +3484,9 @@ static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
 		}
 	}
 
-	if (cumber_helm(j_ptr))
+	if (cumber_helm(o_ptr))
 	{
-		if (j_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
+		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
 			info[i++] = "It inhibits mindcrafting.";
 		}
@@ -3592,7 +3593,7 @@ static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
 
 	/* Return the number of strings found. */
 	return i;
-	}
+}
 
 
 
