@@ -2142,7 +2142,7 @@ F:EVIL
 D:He is eyeing your purse suspiciously.
 
 N:192:Fthssssss, Champion of Cats
-G:f:y
+G:f:w
 I:+10:5:10d10:40:30:0
 W:10:2:45
 B:CLAW:HURT:1d11
@@ -7611,7 +7611,7 @@ D:cloaked figure floats towards you.
 ##### Level 64 #####
 
 N:568:Bast, Goddess of Cats
-G:f:o
+G:f:v
 I:+20:8:48d100:100:200:0
 W:64:3:30500
 B:HIT:CONFUSE:12d12
