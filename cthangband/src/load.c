@@ -26,6 +26,8 @@
  * can know the size, interested people can know the type, and the actual
  * data is available to the parsing routines that acknowledge the type.
  *
+ * Note that MAX_CAVES, MAX_TOWNS, MAX_QUESTS, MAX_SCHOOL and MAX_SPIRITS are
+ * assumed to be constant here.
  *
  * XXX XXX XXX
  */
@@ -242,17 +244,6 @@ static void strip_bytes(int n)
  *
  * This function attempts to "repair" old savefiles, and to extract
  * the most up to date values for various object fields.
- *
- * Note that Angband 2.7.9 introduced a new method for object "flags"
- * in which the "flags" on an object are actually extracted when they
- * are needed from the object kind, artifact index, ego-item index,
- * and two special "xtra" fields which are used to encode any "extra"
- * power of certain ego-items.  This had the side effect that items
- * imported from pre-2.7.9 savefiles will lose any "extra" powers they
- * may have had, and also, all "uncursed" items will become "cursed"
- * again, including Calris, even if it is being worn at the time.  As
- * a complete hack, items which are inscribed with "uncursed" will be
- * "uncursed" when imported from pre-2.7.9 savefiles.
  */
 static void rd_item(object_type *o_ptr)
 {
@@ -343,9 +334,13 @@ static void rd_item(object_type *o_ptr)
 	rd_string(buf, 128);
 	if (buf[0]) o_ptr->art_name = quark_add(buf);
 
-	/* Mega-Hack -- handle "dungeon objects" later */
-	if ((o_ptr->k_idx >= 445) && (o_ptr->k_idx <= 479)) return;
-
+	if (o_ptr->k_idx < 0 || o_ptr->k_idx >= MAX_K_IDX)
+	{
+		note("Destroying object with a bad k_idx.");
+		excise_object_idx(o_ptr-o_list);
+		object_wipe(o_ptr);
+		return;
+	}
 
 	/* Obtain the "kind" template */
 	k_ptr = &k_info[o_ptr->k_idx];
@@ -391,6 +386,9 @@ static void rd_item(object_type *o_ptr)
 	{
 		artifact_type *a_ptr;
 
+		/* Treat an out of bounds name1 as mundane. */
+		if (o_ptr->name1 >= MAX_A_IDX) o_ptr->name1 = 0;
+
 		/* Obtain the artifact info */
 		a_ptr = &a_info[o_ptr->name1];
 
@@ -402,6 +400,9 @@ static void rd_item(object_type *o_ptr)
 	if (o_ptr->name2)
 	{
 		ego_item_type *e_ptr;
+
+		/* Treat an out of bounds name2 as mundane. */
+		if (o_ptr->name2 >= MAX_E_IDX) o_ptr->name2 = 0;
 
 		/* Obtain the ego-item info */
 		e_ptr = &e_info[o_ptr->name2];
@@ -498,6 +499,13 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->monfear);
     rd_u32b(&m_ptr->smart);
 	rd_byte(&tmp8u);
+
+	if (m_ptr->r_idx < 0 || m_ptr->r_idx >= MAX_R_IDX ||
+		!r_info[m_ptr->r_idx].name)
+	{
+		note("Deleting monster with an unknown race.");
+		delete_monster_idx(m_ptr-m_list, FALSE);
+	}
 }
 
 
@@ -507,11 +515,9 @@ static void rd_monster(monster_type *m_ptr)
 /*
  * Read the monster lore
  */
-static void rd_lore(int r_idx)
+static void rd_lore(monster_race *r_ptr)
 {
 	byte tmp8u;
-
-	monster_race *r_ptr = &r_info[r_idx];
 
 		/* Count sights/deaths/kills */
 		rd_s16b(&r_ptr->r_sights);
@@ -580,7 +586,7 @@ static void rd_lore(int r_idx)
  */
 static void rd_death(void)
 {
-	uint i,j;
+	int i,j;
 	u16b tmp16u;
 	for (i = 0;; i++)
 	{
@@ -589,7 +595,7 @@ static void rd_death(void)
 		{
 			death_event_type *d_ptr = &death_event[15*i+j];
 			/* Don't leave the array */
-			if (15*i+j >= MAX_DEATH_EVENTS) return;
+			if (15*i+j >= MAX_DEATH_EVENTS) break;
 			if (tmp16u & 1<<i) d_ptr->flags |= EF_KNOWN;
 		}
 		if (tmp16u & 1<<15) break;
@@ -1489,12 +1495,11 @@ func_false();
 	/* Verify maximum */
 	if (limit >= MAX_O_IDX)
 	{
-		note(format("Too many (%d) object entries!", limit));
-		return (151);
+		msg_format("Too many (%d) object entries! Killing a few.", limit);
 	}
 
 	/* Read the dungeon items */
-	for (i = 1; i < limit; i++)
+	for (i = 1; i < MIN(limit, MAX_O_IDX); i++)
 	{
 		int o_idx;
 
@@ -1549,6 +1554,12 @@ func_false();
 			c_ptr->o_idx = o_idx;
 		}
 	}
+	/* Strip extra items from the end if necessary. */
+	while (limit-- > MAX_O_IDX)
+	{
+		object_type dummy;
+		rd_item(&dummy);
+	}
 
 
 	/*** Monsters ***/
@@ -1556,15 +1567,14 @@ func_false();
 	/* Read the monster count */
 	rd_u16b(&limit);
 
-	/* Hack -- verify */
+	/* Too many monsters. */
 	if (limit >= MAX_M_IDX)
 	{
-		note(format("Too many (%d) monster entries!", limit));
-		return (161);
+		msg_format("Too many (%d) monster entries! Killing a few.", limit);
 	}
 
 	/* Read the monsters */
-	for (i = 1; i < limit; i++)
+	for (i = 1; i < MIN(MAX_M_IDX, limit); i++)
 	{
 		int m_idx;
 
@@ -1604,6 +1614,13 @@ func_false();
 		/* Count XXX XXX XXX */
 		r_ptr->cur_num++;
 	}
+	/* Strip extra items from the end if necessary. */
+	while (limit-- > MAX_M_IDX)
+	{
+		monster_type dummy;
+		rd_monster(&dummy);
+	}
+
 
 	/*
 	 * Reenable quest
@@ -1759,24 +1776,26 @@ static errr rd_savefile_new_aux(void)
 	/* Monster Memory */
 	rd_u16b(&tmp16u);
 
-	/* Incompatible save files */
+	/* r_info has shrunk. */
 	if (tmp16u > MAX_R_IDX)
 	{
-		note(format("Too many (%u) monster races!", tmp16u));
-		return (21);
+		msg_format("Too many (%u) monster memories. Killing a few.", tmp16u);
 	}
 
 	/* Read the available records */
-	for (i = 0; i < tmp16u; i++)
+	for (i = 0; i < MIN(MAX_R_IDX, tmp16u); i++)
 	{
-		monster_race *r_ptr;
-
 		/* Read the lore */
-		rd_lore(i);
-
-		/* Access that monster */
-		r_ptr = &r_info[i];
+		rd_lore(r_info+i);
 	}
+
+	/* Forget the last few unused memories. */
+	while (tmp16u-- > MAX_R_IDX)
+	{
+		monster_race dummy;
+		rd_lore(&dummy);
+	}
+
 	if (arg_fiddle) note("Loaded Monster Memory");
 
 	/* Death Events */
@@ -1785,18 +1804,15 @@ static errr rd_savefile_new_aux(void)
 	/* Object Memory */
 	rd_u16b(&tmp16u);
 
-	/* Incompatible save files */
+	/* k_info has shrunk. */
 	if (tmp16u > MAX_K_IDX)
 	{
-		note(format("Too many (%u) object kinds!", tmp16u));
-		return (22);
+		msg_format("Too many (%u) object kinds. Killing a few.", tmp16u);
 	}
 
 	/* Read the object memory */
-	for (i = 0; i < tmp16u; i++)
+	for (i = 0; i < MIN(tmp16u, MAX_K_IDX); i++)
 	{
-		byte tmp8u;
-
 		object_kind *k_ptr = &k_info[i];
 
 		rd_byte(&tmp8u);
@@ -1804,6 +1820,10 @@ static errr rd_savefile_new_aux(void)
 		k_ptr->aware = (tmp8u & 0x01) ? TRUE: FALSE;
 		k_ptr->tried = (tmp8u & 0x02) ? TRUE: FALSE;
 	}
+
+	/* Forget the last few unused memories. */
+	while (tmp16u-- > MAX_K_IDX) strip_bytes(1);
+
 	if (arg_fiddle) note("Loaded Object Memory");
 
 
@@ -1853,15 +1873,14 @@ static errr rd_savefile_new_aux(void)
 	/* Load the Artifacts */
 	rd_u16b(&tmp16u);
 
-	/* Incompatible save files */
+	/* a_info has shrunk. */
 	if (tmp16u > MAX_A_IDX)
 	{
-		note(format("Too many (%u) artifacts!", tmp16u));
-		return (24);
+		msg_format("Too many (%u) artifact. Killing a few.", tmp16u);
 	}
 
 	/* Read the artifact flags */
-	for (i = 0; i < tmp16u; i++)
+	for (i = 0; i < MIN(MAX_A_IDX, tmp16u); i++)
 	{
 		rd_byte(&tmp8u);
 		a_info[i].cur_num = tmp8u;
@@ -1869,6 +1888,9 @@ static errr rd_savefile_new_aux(void)
 		rd_byte(&tmp8u);
 		rd_byte(&tmp8u);
 	}
+	/* Forget vanished artefacts. */
+	while (tmp16u-- > MAX_A_IDX) strip_bytes(4);
+
 	if (arg_fiddle) note("Loaded Artifacts");
 
 

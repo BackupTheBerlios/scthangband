@@ -3237,23 +3237,6 @@ W:10:0:4:0
 A:10/1
 P:0:1d1:0:0:0
 
-##### Items 440 to 444 reserved (old "fake" objects) #####
-
-##### Items 445 to 479 reserved (old "terrain" objects) #####
-
-
-# The old "notice_seams" option is currently unused, but much of its
-# old functionality can be obtained by clever use of 'F' commands in
-# a pref file which define "quartz" and "magma" to look like "granite".
-
-# Note that the "player" picture does not really fit in anywhere, and I
-# have no idea how to go about allowing "redefinition" of that picture.
-# Perhaps by using "monster 0" or "object 0" or "feature 0" or even a
-# special "player picture" which might yield a simple way to show the
-# player in different colors or whatever for different "states", or even
-# a different picture for various "class" or "race" choices.
-
-
 ##### And here starts the gold/gems #####
 
 T:100 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
@@ -3614,7 +3597,3 @@ N:525:No tea
 G:t:w:0
 I:90:90:0
 W:0:0:0:10000
-
-# *Hack* - put something at the old endpoint for easy save file compatibility.
-
-N:575:End

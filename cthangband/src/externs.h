@@ -916,7 +916,7 @@ extern void display_roff(int r_idx);
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
 extern s16b place_ghost(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void delete_monster_idx(int i,bool visibly);
 #endif
 #if (defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS2_C))
