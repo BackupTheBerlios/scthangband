@@ -1861,6 +1861,9 @@ errr Term_keypress(int k)
 	/* Hack -- Refuse to enqueue non-keys */
 	if (!k) return TERM_ERROR_BAD_INPUT;
 
+	/* Do nothing without a queue. */
+	if (!Term->key_size) return TERM_ERROR_OUT_OF_MEMORY;
+
 	/* Find where the following character should be copied. */
 	next_char = Term->key_head+1;
 	if (next_char == Term->key_size) next_char = 0;
@@ -1885,6 +1888,9 @@ errr Term_key_push(int k)
 {
 	/* Hack -- Refuse to enqueue non-keys */
 	if (!k) return TERM_ERROR_BAD_INPUT;
+
+	/* Do nothing without a queue. */
+	if (!Term->key_size) return TERM_ERROR_OUT_OF_MEMORY;
 
 	/* Hack -- Overflow may induce circular queue */
 	if (Term->key_tail == 0) Term->key_tail = Term->key_size;
