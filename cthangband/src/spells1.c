@@ -732,8 +732,6 @@ void take_hit(int damage, cptr hit_from)
 
     bool pen_invuln = FALSE;
 
-    char death_message[80];
-
 	int warning = (p_ptr->mhp * hitpoint_warn / 10);
 
 
@@ -790,8 +788,7 @@ void take_hit(int damage, cptr hit_from)
 			}
 			else
 			{
-				(void)get_rnd_line("death.txt", death_message);
-				msg_print(death_message);
+				msg_format("%v", get_rnd_line_f1, "death.txt");
 			}
 		}
 		/* Note cause of death */

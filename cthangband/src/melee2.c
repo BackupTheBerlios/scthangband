@@ -6063,60 +6063,45 @@ static void process_monster(int m_idx, bool is_friend)
 	}
 
 
-    if (speak_unique)
-    {
-        if (randint(SPEAK_CHANCE)==1)
-        {
-            if (player_has_los_bold(oy, ox) && (r_ptr->flags2 & (RF2_CAN_SPEAK)))
-			{
-				C_TNEW(m_name, MNAME_MAX, char);
-                char bravado[80];
+    if (speak_unique && (r_ptr->flags2 & (RF2_CAN_SPEAK)) &&
+		player_has_los_bold(oy, ox) && !rand_int(SPEAK_CHANCE))
+	{
+		/* No default. */
+		cptr string = 0, file = 0;
 
-				bool is_groo = !!(strstr(format("%v", monster_desc_aux_f3,
-					r_ptr, 1, 0), "Groo"));
+		bool is_groo = !!(strstr(format("%v", monster_desc_aux_f3,
+			r_ptr, 1, 0), "Groo"));
 
-				bool is_smeagol = !!(strstr(format("%v", monster_desc_aux_f3,
-					r_ptr, 1, 0), "Smeagol"));
+		bool is_smeagol = !!(strstr(format("%v", monster_desc_aux_f3,
+			r_ptr, 1, 0), "Smeagol"));
  
+		/* Find the string or file. */
+		if (is_groo)
+		{
+			if (!(m_ptr->monfear))
+				string = "says: 'A fray! A fray!'";
+			/* else say nothing. */
+		}
+		else if (is_smeagol)
+		{
+			if (m_ptr->monfear)
+				file = "smeagolr.txt";
+			else
+				file = "smeagol.txt";
+		}
+		else
+		{
+			if (m_ptr->monfear)
+				file = "monfear.txt";
+			else
+				file = "bravado.txt";
+		}
 
-
-				/* Acquire the monster name/poss */
-                if (m_ptr->ml)
-                    strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-				/* Some of smeagol.txt requires that he be male. */
-                else if (is_smeagol)
-                    strcpy(m_name, "He");
-                else
-                    strcpy(m_name, "It");
-
-				/* Dump a message */
-                if (is_groo)
-                {
-                    if (!(m_ptr->monfear))
-                        msg_format("%^s says: 'A fray! A fray!'",m_name);
-
-                        /* Why not just msg_print "Groo says fray" ?
-                           Well, we could be hallucinating... */
-                }
-                else if (is_smeagol)
-                {
-                        if (m_ptr->monfear)
-                            get_rnd_line("smeagolr.txt", bravado);
-                        else
-                            get_rnd_line("smeagol.txt", bravado);
-                        msg_format("%^s %s", m_name, bravado);
-                }
-                else
-                {
-                if (m_ptr->monfear)
-                    get_rnd_line("monfear.txt", bravado);
-                else
-                    get_rnd_line("bravado.txt", bravado);
-                msg_format("%^s %s", m_name, bravado);
-                }
-				TFREE(m_name);
-			}
-        }
+		if (string)
+			msg_format("%^v %s", monster_desc_f2, m_ptr, 0x14, string);
+		else if (file)
+			msg_format("%^v %v", monster_desc_f2, m_ptr, 0x14,
+				get_rnd_line_f1, file);
 
     }
 	/* Attempt to cast a spell */

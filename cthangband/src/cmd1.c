@@ -1515,7 +1515,7 @@ void py_attack(int y, int x)
             if ((o_ptr->name1 == ART_DEMONBLADE) && randint(2)!=1)
             {
                 char chainsword_noise[80];
-                get_rnd_line("chainswd.txt", chainsword_noise);
+                msg_format("%v", get_rnd_line_f1, "chainswd.txt");
                 msg_print(chainsword_noise);
             }
 

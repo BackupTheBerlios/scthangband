@@ -525,7 +525,7 @@ extern void close_game(void);
 extern void exit_game_panic(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
-extern errr get_rnd_line(const char * file_name, char * output);
+extern void get_rnd_line_f1(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(FILES_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_ROS_C) || defined(MAIN_C))
 extern void signals_init(void);
@@ -2221,9 +2221,9 @@ extern int usleep(huge usecs);
 #if (defined(SET_UID)) && (defined(MAIN_C) || defined(UTIL_C))
 extern void user_name(char *buf, int id);
 #endif
-#if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
-extern errr path_build(char *buf, int max, cptr path, cptr file);
-#endif
+
+
+
 #if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern FILE *my_fopen(cptr file, cptr mode);
 #endif
@@ -2272,12 +2272,12 @@ extern errr fd_close(int fd);
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern void move_cursor(int row, int col);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
-extern void text_to_ascii(char *buf, cptr str);
-#endif
-#if (defined(CMD1_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C))
-extern void ascii_to_text(char *buf, cptr str);
-#endif
+
+
+
+
+
+
 #if (defined(CMD4_C) || defined(MAIN_GTK_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern sint macro_find_exact(cptr pat);
 #endif
@@ -3930,5 +3930,17 @@ extern errr string_free(cptr str);
 
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
+#endif
+
+/* util.c */
+
+#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
+extern void text_to_ascii(char *buf, cptr str);
+#endif
+#if (defined(CMD1_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C))
+extern void ascii_to_text(char *buf, cptr str);
+#endif
+#if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
+extern errr path_build(char *buf, int max, cptr path, cptr file);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

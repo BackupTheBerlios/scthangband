@@ -362,16 +362,13 @@ static bool free_homes(void)
  */
 static void say_comment_1(void)
 {
-    char rumour[80];
-
 	if (!auto_haggle || verbose_haggle)
 	msg_print(comment_1[rand_int(MAX_COMMENT_1)]);
     if (randint(RUMOR_CHANCE) == 1 && speak_unique )
-       { msg_print("The shopkeeper whispers something into your ear:");
-
-        get_rnd_line("rumors.txt", rumour);
-        msg_print(rumour);
-        }
+	{
+		msg_print("The shopkeeper whispers something into your ear:");
+        msg_format("%v", get_rnd_line_f1, "rumors.txt");
+	}
 }
 
 

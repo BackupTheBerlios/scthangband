@@ -1653,16 +1653,16 @@ void do_cmd_read_scroll(int item)
             msg_print(NULL);
             switch(randint(20))
             {   case 1:
-                    get_rnd_line("chainswd.txt", Rumor);
+                    msg_format("%v", get_rnd_line_f1, "chainswd.txt");
                     break;
                 case 2:
-                    get_rnd_line("error.txt", Rumor);
+                    msg_format("%v", get_rnd_line_f1, "error.txt");
                     break;
                 case 3: case 4: case 5:
-                    get_rnd_line("death.txt", Rumor);
+                    msg_format("%v", get_rnd_line_f1, "death.txt");
                     break;
                 default:
-                    get_rnd_line("rumors.txt", Rumor);
+                    msg_format("%v", get_rnd_line_f1, "rumors.txt");
 
             }
             msg_format("%s", Rumor);

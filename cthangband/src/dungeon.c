@@ -1718,9 +1718,7 @@ static void process_world(void)
             activate_ty_curse();
         if ((o_ptr->name1 == ART_DEMONBLADE) && randint(CHAINSWORD_NOISE) == 1)
         {
-            char noise[80];
-            get_rnd_line("chainswd.txt", noise);
-            msg_print(noise);
+            msg_format("%v", get_rnd_line_f1, "chainswd.txt");
             disturb(FALSE, FALSE);
         }
 
@@ -2401,8 +2399,6 @@ static void do_cmd_script(void)
 static void process_command(void)
 {
 
-                char error_m[80];
-
 	char track_str[20]="cmd=";
 	cptr t;
 
@@ -2450,8 +2446,7 @@ static void process_command(void)
 			{
 				if (randint(2)==1)
 				{
-					get_rnd_line("error.txt", error_m);
-					msg_print(error_m);
+					msg_format("%v", get_rnd_line_f1, "error.txt");
 				}
 				else
 				{
@@ -3366,8 +3361,7 @@ static void process_command(void)
 		{
             if (randint(2)==1)
             {
-                get_rnd_line("error.txt", error_m);
-                msg_print(error_m);
+                msg_format("%v", get_rnd_line_f1, "error.txt");
             }
             else
                 prt("Type '?' for help.", 0, 0);

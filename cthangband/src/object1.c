@@ -81,12 +81,13 @@ void get_table_name(char * out_string)
 
     else
     {
-        char Syllable[80];
         testcounter = (randint(2)) + 1;
         while (testcounter--)
         {
-            get_rnd_line("elvish.txt", Syllable);
-            strcat(out_string, Syllable);
+			/* out_string is new_name in create_artifact. */
+			int len = strlen(out_string);
+            strnfmt(out_string+len, 80-len, "%v",
+				get_rnd_line_f1, "elvish.txt");
         }
     }
 

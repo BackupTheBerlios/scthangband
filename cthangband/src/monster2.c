@@ -1532,11 +1532,9 @@ static void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 				 * article here. Luckily, monster_desc() only deals with
 				 * singular monsters...
 				 */
-				silly_name[0] = CM_TRUE | MCI_ARTICLE;
-				silly_name[1] = CM_ACT | MCI_ARTICLE;
-				silly_name[2] = ' ';
-				silly_name[3] = CM_NORM | MCI_ARTICLE;
-				get_rnd_line("silly.txt", silly_name+4);
+				strnfmt(silly_name, sizeof(silly_name), "%c%c %c%v",
+					CM_TRUE | MCI_ARTICLE, CM_ACT | MCI_ARTICLE,
+					CM_NORM | MCI_ARTICLE, get_rnd_line_f1, "silly.txt");
 				name = silly_name;
 	        }
 	    }

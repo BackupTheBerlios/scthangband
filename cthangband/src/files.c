@@ -5919,7 +5919,7 @@ void exit_game_panic(void)
 }
 
 
-errr get_rnd_line(const char * file_name, char * output)
+static errr get_rnd_line(const char * file_name, uint len, char * output)
 {
 	FILE        *fp;
 
@@ -5953,12 +5953,50 @@ errr get_rnd_line(const char * file_name, char * output)
         break;
     }
 
-    strcpy (output, buf);
+    sprintf(output, "%.*s", len-1, buf);
 
 	/* Close the file */
     my_fclose(fp);
 
     return (0);
+}
+
+/*
+ * Process the above as a vstrnfmt_aux function.
+ *
+ * Format: 
+ * "%v", get_rnd_line_f1, (cptr)file_name
+ * or:
+ * "%.*v", (int)len, get_rnd_line_f1, file_name
+ */
+void get_rnd_line_f1(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	cptr s, file_name = va_arg(*vp, cptr);
+	uint len;
+
+	/* Use %.123v to specify a maximum length of 123. */
+	if ((s = strchr(fmt, '.')))
+	{
+		long m = strtol(s+1, 0, 0);
+		len = MAX(0, m+1);
+	}
+	else
+	{
+		len = ONAME_MAX;
+	}
+
+	/* Ensure that the buffer fits within buf. */
+	if (max < len) len = max;
+
+	/* Report errors. */
+	switch (get_rnd_line(file_name, len, buf))
+	{
+		case -1:
+			strnfmt(buf, max, "Error: '%s' not found.", file_name);
+			break;
+		case 1:
+			strnfmt(buf, max, "Error: '%s' failed to parse.", file_name);
+	}
 }
 
 #ifdef HANDLE_SIGNALS

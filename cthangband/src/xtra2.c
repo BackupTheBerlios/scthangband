@@ -2522,19 +2522,17 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
        if (speak_unique && (r_ptr->flags2 & (RF2_CAN_SPEAK)))
 			{
-                char line_got[80];
                 int reward=0;
 
                 /* Dump a message */
-
-                get_rnd_line("mondeath.txt", line_got);
-                msg_format("%^s says: %s", m_name, line_got);
+                msg_format("%^s says: %v", m_name,
+					get_rnd_line_f1, "mondeath.txt");
 
                 if (randint(REWARD_CHANCE)==1)
                 {
                     msg_format("There was a price on %s's head.", m_name);
-                    get_rnd_line("crime.txt", line_got);
-                    msg_format("%^s was wanted for %s", m_name, line_got);
+                    msg_format("%^s was wanted for %s", m_name,
+						get_rnd_line_f1, "crime.txt");
                     reward = 250 * (randint (10) + r_ptr->level - 5);
  
                     if (reward > 32000) reward = 32000;/* Force 'good' values */

@@ -4080,7 +4080,7 @@ static void get_random_name(char * return_name, bool armour, int power)
 
     }
 
-    get_rnd_line(NameFile, return_name);
+    strnfmt(return_name, 80, "%v", get_rnd_line_f1, NameFile);
     }
 }
 
