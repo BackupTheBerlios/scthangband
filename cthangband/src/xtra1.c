@@ -152,21 +152,22 @@ static void prt_field(cptr info, int row, int col)
  * Translate a negative co-ordinate into one relative to the far edge of the
  * screen.
  */
-static int PURE get_y(const redraw_type *t)
+static int PURE get_y(int i)
 {
+	const redraw_type *t = screen_coords+i;
 	if (t->y >= 0) return t->y;
 	else return Term->hgt + t->y;
 }
 
-static int PURE get_x(const redraw_type *t)
+static int PURE get_x(int i)
 {
+	const redraw_type *t = screen_coords+i;
 	if (t->x >= 0) return t->x;
 	else return Term->wid + t->x;
 }
 
 /* Shorten "put it where the table says it should go" for y,x functions. */
-#define GET_YX(T) get_y(screen_coords+T), get_x(screen_coords+T), \
-	screen_coords[T].l
+#define GET_YX(T) get_y(T), get_x(T), screen_coords[T].l
 
 static void prt_equippy(void)
 {
@@ -556,11 +557,9 @@ static void health_redraw(void)
 		len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
 	}
 
-	/* Default to "unknown" */
-	mc_put_lfmt(GET_YX(XY_INFO), str);
-
 	/* Dump the current "health" (use '*' symbols) */
-	mc_put_lfmt(GET_YX(XY_INFO), "$%c%.*s", attr, len, smb);
+	mc_put_lfmt(GET_YX(XY_INFO), "%c$%c%.*s$w%s",
+		str[0], attr, len, smb, str+len+1);
 
 #endif
 
