@@ -46,7 +46,7 @@ sCthangband 1.0.11
 * Consider critical hits in calculating average weapon damage.
 * Calculate average martial arts damage fairly accurately.
 * The last object to be highlighted can be selected with !.
-* Avoid using energy whenever a magic device is used.
+* Avoid using energy whenever the player cancels using a magic device.
 * The game will attempt to increase the size of o_list and m_list as necessary
   with an appropriate compile-time option.
 * Give specific help for some spells if the player selects them with a capital
