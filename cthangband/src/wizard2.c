@@ -1240,10 +1240,10 @@ void do_cmd_wiz_cure_all(void)
 /*
  * Go to any level
  */
-void do_cmd_wiz_jump(void)
+void do_cmd_wiz_jump(int level)
 {
 	/* Ask for level */
-	if (command_arg <= 0)
+	if (level <= 0)
 	{
 		char	ppp[80];
 
@@ -1259,26 +1259,27 @@ void do_cmd_wiz_jump(void)
 		if (!get_string(ppp, tmp_val, 10)) return;
 
 		/* Extract request */
-		command_arg = atoi(tmp_val);
+		level = atoi(tmp_val);
 	}
 
 	/* Paranoia */
-	if (command_arg < 0) command_arg = 0;
+	if (level < 0) level = 0;
 
 	/* Paranoia */
-	if (command_arg > dun_defs[cur_dungeon].max_level) command_arg = dun_defs[cur_dungeon].max_level;
+	if (level > dun_defs[cur_dungeon].max_level)
+		level = dun_defs[cur_dungeon].max_level;
 
 	/* Accept request */
-	msg_format("You jump to dungeon level %d.", command_arg);
+	msg_format("You jump to dungeon level %d.", level);
 
-	change_level(command_arg, START_RANDOM);
+	change_level(level, START_RANDOM);
 }
 
 
 /*
  * Become aware of a lot of objects
  */
-void do_cmd_wiz_learn(void)
+void do_cmd_wiz_learn(int max_level)
 {
 	int i;
 
@@ -1291,7 +1292,7 @@ void do_cmd_wiz_learn(void)
 		object_kind *k_ptr = &k_info[i];
 
 		/* Induce awareness */
-		if (object_k_level(k_ptr) <= command_arg)
+		if (object_k_level(k_ptr) <= max_level)
 		{
 			/* Get local object */
 			q_ptr = &forge;

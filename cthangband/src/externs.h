@@ -2516,7 +2516,7 @@ extern u32b seed_wild;
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_cmd;
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_arg;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
@@ -3438,10 +3438,10 @@ extern void wiz_create_item(int k_idx);
 extern void do_cmd_wiz_cure_all(void);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_jump(void);
+extern void do_cmd_wiz_jump(int level);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_learn(void);
+extern void do_cmd_wiz_learn(int max_level);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_wiz_summon(int num);

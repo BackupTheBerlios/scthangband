@@ -2828,7 +2828,7 @@ void process_command(void)
 		/* Go up or down in the dungeon */
 		case CMD_DEBUG+'j':
 		{
-			do_cmd_wiz_jump();
+			do_cmd_wiz_jump(command_arg);
 			break;
 		}
 
@@ -2842,7 +2842,7 @@ void process_command(void)
 		/* Learn about objects */
 		case CMD_DEBUG+'l':
 		{
-			do_cmd_wiz_learn();
+			do_cmd_wiz_learn(command_arg);
 			break;
 		}
 
