@@ -121,7 +121,8 @@ static void wr_item(object_type *o_ptr)
 
 	if (!has_flag(SF_16_IDENT))
 	{
-		byte temp = (o_ptr->ident & 0xFE) | (0x01 * ((o_ptr->ident & IDENT_SENSE) == IDENT_SENSE));
+		byte temp = (o_ptr->ident & 0xFE) | (0x01 * 
+			((o_ptr->ident & IDENT_SENSE) == IDENT_SENSE));
 		wr_byte(temp);
 	}
 	else
@@ -1049,7 +1050,8 @@ static bool wr_savefile_new(void)
 	/* Dump the monster lore */
 	tmp16u = convert_r_idx(MAX_R_IDX, sf_flags_now, sf_flags_sf);
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++) wr_lore(MAX(0, convert_r_idx(i, sf_flags_sf, sf_flags_now)));
+	for (i = 0; i < tmp16u; i++) wr_lore(MAX(0,
+		convert_r_idx(i, sf_flags_sf, sf_flags_now)));
 
 	/* Dump the death event lore */
 	if (has_flag(SF_DEATHEVENTTEXT)) wr_death();

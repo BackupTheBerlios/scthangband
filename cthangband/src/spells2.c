@@ -550,7 +550,8 @@ bool alchemy(void)
 	if (price <= 0)
 	{
 		/* Message */
-		msg_format("You have turned %v to fool's gold.", object_desc_f3, o_ptr, 3);
+		msg_format("You have turned %v to fool's gold.",
+			object_desc_f3, o_ptr, 3);
 	}
 	else
 	{
@@ -1937,7 +1938,8 @@ void stair_creation(void)
 	{
 		return;
 	}
-	else if (is_quest(dun_level) || (dun_level >= dun_defs[cur_dungeon].max_level))
+	else if (is_quest(dun_level) ||
+		(dun_level >= dun_defs[cur_dungeon].max_level))
 	{
 		if(dun_defs[cur_dungeon].flags & DF_TOWER)
 		{
@@ -2833,94 +2835,70 @@ static void random_misc (object_type * o_ptr, bool is_scroll)
 	{
 	case 1:
 	o_ptr->flags2 |= TR2_SUST_STR;
-/*  if (is_scroll) msg_print ("It makes you feel you cannot become weaker."); */
-	if (!artifact_bias)
-		artifact_bias = BIAS_STR;
+	if (!artifact_bias) artifact_bias = BIAS_STR;
 	break;
 	case 2:
 	o_ptr->flags2 |= TR2_SUST_INT;
-/*  if (is_scroll) msg_print ("It makes you feel you cannot become more stupid.");*/
-	if (!artifact_bias)
-		artifact_bias = BIAS_INT;
+	if (!artifact_bias) artifact_bias = BIAS_INT;
 	break;
 	case 3:
 	o_ptr->flags2 |= TR2_SUST_WIS;
-/*  if (is_scroll) msg_print ("It makes you feel you cannot become simpler.");*/
-	if (!artifact_bias)
-		artifact_bias = BIAS_WIS;
+	if (!artifact_bias) artifact_bias = BIAS_WIS;
 	break;
 	case 4:
 	o_ptr->flags2 |= TR2_SUST_DEX;
-/*  if (is_scroll) msg_print ("It makes you feel you cannot become clumsier.");*/
-	if (!artifact_bias)
-		artifact_bias = BIAS_DEX;
+	if (!artifact_bias) artifact_bias = BIAS_DEX;
 	break;
 	case 5:
 	o_ptr->flags2 |= TR2_SUST_CON;
-/*  if (is_scroll) msg_print ("It makes you feel you cannot become less healthy.");*/
-	if (!artifact_bias)
-		artifact_bias = BIAS_CON;
+	if (!artifact_bias) artifact_bias = BIAS_CON;
 	break;
 	case 6:
 	o_ptr->flags2 |= TR2_SUST_CHR;
-/*  if (is_scroll) msg_print ("It makes you feel you cannot become uglier.");*/
-	if (!artifact_bias)
-		artifact_bias = BIAS_CHR;
+	if (!artifact_bias) artifact_bias = BIAS_CHR;
 	break;
 	case 7: case 8: case 14:
 	o_ptr->flags2 |= TR2_FREE_ACT;
-/*  if (is_scroll) msg_print ("It makes you feel like a young rebel!");*/
 	break;
 	case 9:
 	o_ptr->flags2 |= TR2_HOLD_LIFE;
-/*  if (is_scroll) msg_print ("It makes you feel immortal.");*/
-	if (!artifact_bias && (randint(5)==1))
-		artifact_bias = BIAS_PRIESTLY;
-	else if (!artifact_bias && (randint(6)==1))
-		artifact_bias = BIAS_NECROMANTIC;
+	if (!artifact_bias && one_in(5)) artifact_bias = BIAS_PRIESTLY;
+	else if (!artifact_bias && one_in(6)) artifact_bias = BIAS_NECROMANTIC;
 	break;
 	case 10: case 11:
 	o_ptr->flags3 |= TR3_LITE;
-/*  if (is_scroll) msg_print ("It starts shining.");*/
 	break;
 	case 12: case 13:
 	o_ptr->flags3 |= TR3_FEATHER;
-/*  if (is_scroll) msg_print ("It feels lighter.");*/
 	break;
 	case 15: case 16: case 17:
 	o_ptr->flags3 |= TR3_SEE_INVIS;
-/*  if (is_scroll) msg_print ("It makes you see the air!");*/
 	break;
 	case 18:
 	o_ptr->flags3 |= TR3_TELEPATHY;
-/*  if (is_scroll) msg_print ("It makes you hear voices inside your head!");*/
-	if (!artifact_bias && (randint(9)==1))
-		artifact_bias = BIAS_MAGE;
+	if (!artifact_bias && (one_in(9))) artifact_bias = BIAS_MAGE;
 	break;
 	case 19: case 20:
 	o_ptr->flags3 |= TR3_SLOW_DIGEST;
-/*  if (is_scroll) msg_print ("It makes you feel less hungry.");*/
 	break;
 	case 21: case 22:
 	o_ptr->flags3 |= TR3_REGEN;
-/*  if (is_scroll) msg_print ("It looks as good as new.");*/
 	break;
 	case 23:
 	o_ptr->flags3 |= TR3_TELEPORT;
-/*  if (is_scroll) msg_print ("Its position feels uncertain!");*/
 	break;
 	case 24: case 25: case 26:
 	if (o_ptr->tval>=TV_BOOTS) random_misc(o_ptr, is_scroll);
 	else
 	{
 		o_ptr->flags3 |= TR3_SHOW_MODS;
-		o_ptr->to_a = 4 + (randint(11));
+		o_ptr->to_a = rand_range(5, 15);
 	}
 	break;
 	case 27: case 28: case 29:
 	o_ptr->flags3 |= TR3_SHOW_MODS;
-	o_ptr->to_h += 4 + (randint(11));
-	o_ptr->to_d += 4 + (randint(11));
+	o_ptr->to_h += rand_range(5, 15);
+	o_ptr->to_d += rand_range(5, 15);
 	break;
 	case 30:
 		o_ptr->flags3 |= TR3_NO_MAGIC;
@@ -3378,9 +3356,8 @@ static void give_activation_power (object_type * o_ptr)
 				break;
 			case ACT_DISP_EVIL: case ACT_BA_MISS_3: case ACT_DISP_GOOD:
 			case ACT_BANISH_EVIL: case ACT_GENOCIDE: case ACT_MASS_GENO:
-			case ACT_CHARM_UNDEAD: case ACT_CHARM_OTHER: case ACT_SUMMON_PHANTOM:
-			case ACT_REST_ALL:
-			case ACT_RUNE_EXPLO:
+			case ACT_CHARM_UNDEAD: case ACT_CHARM_OTHER:
+			case ACT_SUMMON_PHANTOM: case ACT_REST_ALL: case ACT_RUNE_EXPLO:
 				chance = 33;
 				break;
 			case ACT_CALL_CHAOS: case ACT_SHARD:
@@ -3594,8 +3571,9 @@ if (a_scroll)
 		strcpy(dummy_name, "");
 		identify_fully_aux(o_ptr, FALSE);
 		o_ptr->ident |= IDENT_STOREB; /* This will be used later on... */
-		if (!(get_string("What do you want to call the artifact? ", dummy_name, 80)))
-		strcpy(new_name,"(a DIY Artifact)");
+		if (!(get_string("What do you want to call the artifact? ",
+			dummy_name, 80)))
+			strcpy(new_name,"(a DIY Artifact)");
 		else
 		{
 			strcpy(new_name,"called '");
@@ -3665,27 +3643,29 @@ bool artifact_scroll(void)
 
 	if (o_ptr->name1 || o_ptr->art_name)
 	{
-	msg_format("The %s %s already %s!",
+		msg_format("The %s %s already %s!",
 			o_name, ((o_ptr->number > 1) ? "are" : "is"),
 			((o_ptr->number > 1) ? "artifacts" : "an artifact"));
-	okay = FALSE;
-		}
+		okay = FALSE;
+	}
 
-	else   if (o_ptr->name2)
+	else if (o_ptr->name2)
 	{
-	msg_format("The %s %s already %s!",
+		msg_format("The %s %s already %s!",
 			o_name, ((o_ptr->number > 1) ? "are" : "is"),
 			((o_ptr->number > 1) ? "ego items" : "an ego item"));
-	okay = FALSE;
+		okay = FALSE;
 	}
 
 	else
 	{
-	if (o_ptr->number > 1)
+		if (o_ptr->number > 1)
 		{
-		msg_print("Not enough enough energy to enchant more than one object!");
-	msg_format("%d of your %s %s destroyed!",(o_ptr->number)-1, o_name, (o_ptr->number>2?"were":"was"));
-		o_ptr->number = 1;
+			msg_print("Not enough enough energy to enchant more than one "
+				"object!");
+			msg_format("%d of your %s %s destroyed!", (o_ptr->number)-1,
+				o_name, (o_ptr->number>2?"were":"was"));
+			o_ptr->number = 1;
 		}
 		okay = create_artifact(o_ptr, TRUE);
 	}
@@ -4200,7 +4180,8 @@ errr genocide(bool player_cast)
 		if (player_cast)
 		{
 			/* Take damage */
-			take_hit(randint(4), "the strain of casting Genocide", MON_CASTING_GENOCIDE);
+			take_hit(randint(4), "the strain of casting Genocide",
+				MON_CASTING_GENOCIDE);
 		}
 
 		/* Visual feedback */
@@ -4265,7 +4246,8 @@ errr mass_genocide(bool player_cast)
 		if (player_cast)
 		{
 			/* Hack -- visual feedback */
-			take_hit(randint(3), "the strain of casting Mass Genocide", MON_CASTING_MASS_GENOCIDE);
+			take_hit(randint(3), "the strain of casting Mass Genocide",
+				MON_CASTING_MASS_GENOCIDE);
 		}
 
 		move_cursor_relative(py, px);
@@ -4716,7 +4698,8 @@ void earthquake(int cy, int cx, int r)
 					}
 
 					/* Scream in pain */
-					msg_format("%^v wails out in pain!", monster_desc_f2, m_ptr, 0);
+					msg_format("%^v wails out in pain!",
+						monster_desc_f2, m_ptr, 0);
 
 					/* Take damage from the quake */
 					damage = (sn ? damroll(4, 8) : 200);
@@ -4731,7 +4714,8 @@ void earthquake(int cy, int cx, int r)
 					if (m_ptr->hp < 0)
 					{
 						/* Message */
-						msg_format("%^v is embedded in the rock!", monster_desc_f2, m_ptr, 0);
+						msg_format("%^v is embedded in the rock!",
+							monster_desc_f2, m_ptr, 0);
 
 						/* Delete the monster */
 						delete_monster(yy, xx);
@@ -5736,7 +5720,8 @@ bool detect_monsters_nonliving(void)
  */
 void set_recall(bool spell)
 {
-	if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
+	if (dun_level && (p_ptr->max_dlv > dun_level) &&
+		(cur_dungeon == recall_dungeon))
 	{
 		if (get_check("Reset recall depth? "))
 		p_ptr->max_dlv = dun_level;
