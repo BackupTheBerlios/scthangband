@@ -164,7 +164,7 @@ cptr find_feeling(object_type *o_ptr)
 			case TV_FOOD: case TV_POTION: case TV_SCROLL:
 			case TV_ROD: case TV_WAND: case TV_STAFF:
 		return "tried";
-		/* Amulets and rings can have sval-specific curses... */
+		/* Amulets and rings can have k_idx-specific curses... */
 			case TV_RING: case TV_AMULET:
 		/* ... as might weapons and armour, at least in theory... */
 			case TV_DRAG_ARMOR: case TV_HARD_ARMOR: case TV_SOFT_ARMOR:
@@ -1287,7 +1287,7 @@ static void process_world(void)
 
 #ifdef ALLOW_WIZARD
 	/* Hack - for a wizard, amulets of adornment become amulets of no digestion */
-	if (cheat_wzrd && inventory[INVEN_NECK].sval == SV_AMULET_ADORNMENT);
+	if (cheat_wzrd && inventory[INVEN_NECK].k_idx == OBJ_AMULET_ADORNMENT);
 	else
 #endif
 	/* Digest normally */
@@ -1687,8 +1687,8 @@ static void process_world(void)
     /* Rarely, take damage from the Jewel of Judgement */
     if ((randint(999)==1) && !(p_ptr->anti_magic))
     {
-        if ((inventory[INVEN_LITE].tval) && !(p_ptr->invuln)
-            && (inventory[INVEN_LITE].sval == SV_LITE_THRAIN))
+        if ((inventory[INVEN_LITE].k_idx == OBJ_GEMSTONE_TRAPEZODEDRON) &&
+			!(p_ptr->invuln))
         {
             msg_print("The Jewel of Judgement drains life from you!");
             take_hit(MIN(skill_set[SKILL_TOUGH].value/2, 50), "the Jewel of Judgement");

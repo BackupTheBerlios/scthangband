@@ -1634,10 +1634,10 @@ byte ammunition_type(object_type *o_ptr)
 {
 	tval_ammo_type *tv_ptr;
 
-	for (tv_ptr = tval_ammo; tv_ptr->bow_sval; tv_ptr++)
+	for (tv_ptr = tval_ammo; tv_ptr->bow_kidx; tv_ptr++)
 	{
 		/* Found something */
-		if (tv_ptr->bow_sval == o_ptr->sval) return tv_ptr->ammo_tval;
+		if (tv_ptr->bow_kidx == o_ptr->k_idx) return tv_ptr->ammo_tval;
 	}
 
 	/* Nothing */

@@ -1486,7 +1486,7 @@ extern bool object_similar(object_type *o_ptr, object_type *j_ptr);
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern bool object_absorb(object_type *o_ptr, object_type *j_ptr);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD6_C) || defined(INIT1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern s16b lookup_kind(int tval, int sval);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
@@ -3956,6 +3956,6 @@ extern errr string_free(cptr str);
 /* object1.c */
 
 #if (defined(FILES_C) || defined(OBJECT1_C))
-extern byte launcher_type(object_type *o_ptr);
+extern s16b launcher_type(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

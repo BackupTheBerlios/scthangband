@@ -815,9 +815,8 @@ static bool item_tester_refill_lantern(object_type *o_ptr)
 	/* Flasks of oil are okay */
 	if (o_ptr->tval == TV_FLASK) return (TRUE);
 
-	/* Torches are okay */
-	if ((o_ptr->tval == TV_LITE) &&
-	    (o_ptr->sval == SV_LITE_LANTERN)) return (TRUE);
+	/* Lanterns are okay */
+	if (o_ptr->k_idx == OBJ_BRASS_LANTERN) return (TRUE);
 
 	/* Assume not okay */
 	return (FALSE);
@@ -916,8 +915,7 @@ static void do_cmd_refill_lamp(int item)
 static bool item_tester_refill_torch(object_type *o_ptr)
 {
 	/* Torches are okay */
-	if ((o_ptr->tval == TV_LITE) &&
-	    (o_ptr->sval == SV_LITE_TORCH)) return (TRUE);
+	if (o_ptr->k_idx == OBJ_WOODEN_TORCH) return (TRUE);
 
 	/* Assume not okay */
 	return (FALSE);
@@ -1034,13 +1032,13 @@ void do_cmd_refill(int item)
 	}
 
 	/* It's a lamp */
-	else if (o_ptr->sval == SV_LITE_LANTERN)
+	else if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
 	{
 		do_cmd_refill_lamp(item);
 	}
 
 	/* It's a torch */
-	else if (o_ptr->sval == SV_LITE_TORCH)
+	else if (o_ptr->k_idx == OBJ_WOODEN_TORCH)
 	{
 		do_cmd_refill_torch(item);
 	}

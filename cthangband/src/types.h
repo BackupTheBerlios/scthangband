@@ -1410,7 +1410,7 @@ struct death_event_type {
 
 typedef struct tval_ammo_type tval_ammo_type;
 struct tval_ammo_type {
-	byte	bow_sval;	/* sval of the bow being used. */
+	s16b	bow_kidx;	/* k_idx of the bow being used. */
 	byte	ammo_tval;	/* tval of the ammunition it uses. */
 };
 

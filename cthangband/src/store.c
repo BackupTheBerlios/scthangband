@@ -2013,7 +2013,7 @@ static cptr store_title_aux(void)
 			tmp_str = string_make(format("%s (%s)", owner_name, race_name));
 
 		/* Hack - Create a 10000gp item for price_item() */
-		object_prep(&tmp, lookup_kind(TV_PRICE_COMPARE, SV_PRICE_COMPARE));
+		object_prep(&tmp, OBJ_NO_TEA);
 		object_aware(&tmp);
 
 			/* Hack - standardise the player's charisma. */
@@ -2575,7 +2575,7 @@ static void service_help(byte type)
 		case STORE_TEMPLE: /* Restoration */
 		{
 			object_type forge;
-			object_prep(&forge, lookup_kind(TV_FOOD, SV_FOOD_RESTORING));
+			object_prep(&forge, OBJ_FOOD_RESTORING);
 			/* This gives an unwelcome "Item attributes" description. */
 			if (!identify_fully_aux(&forge, TRUE))
 				msg_print("This won't help you at present.");

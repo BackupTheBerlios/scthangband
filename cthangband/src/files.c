@@ -1311,7 +1311,7 @@ static void choose_ammunition(object_type *wp_ptr, object_type **am_ptr)
 static void choose_bow(object_type *am_ptr, object_type **wp_ptr)
 {
 	object_type *o_ptr;
-	byte sval;
+	s16b k_idx;
 
 	/* Use a launcher from inventory if appropriate and marked. */
 	for (o_ptr = inventory; o_ptr <= inventory+INVEN_PACK; o_ptr++)
@@ -1330,17 +1330,17 @@ static void choose_bow(object_type *am_ptr, object_type **wp_ptr)
 	}
 
 	/* Find an appropriate bow. */
-	sval = launcher_type(am_ptr);
+	k_idx = launcher_type(am_ptr);
 
 	/* No launcher. */
-	if (sval == SV_UNKNOWN)
+	if (k_idx == OBJ_NOTHING)
 	{
 		object_wipe(*wp_ptr);
 		return;
 	}
 	else
 	{
-		object_prep(*wp_ptr, lookup_kind(TV_BOW, sval));
+		object_prep(*wp_ptr, k_idx);
 		return;
 	}
 }

@@ -892,12 +892,12 @@ static void wield_weapons(bool wield)
 		int k;
 
 		if (p_ptr->ptemplate == TPL_SWASHBUCKLER)
-			k = lookup_kind(TV_SWORD, SV_RAPIER);
+			k = OBJ_RAPIER;
 		else	
-			k = lookup_kind(TV_HAFTED, SV_WHIP);
+			k = OBJ_WHIP;
 
 		object_prep(&inventory[INVEN_WIELD], k);
-		object_prep(&inventory[INVEN_BOW], lookup_kind(TV_BOW, SV_LONG_BOW));
+		object_prep(&inventory[INVEN_BOW], OBJ_LONG_BOW);
 	}
 	else
 	{
@@ -2848,97 +2848,98 @@ static void player_wipe(void)
  * In addition, he always has some food and a few torches.
  */
 
-static byte player_init[MAX_TEMPLATE][3][2] =
+static s16b player_init[MAX_TEMPLATE][3] =
 {
 	{
 		/* Adventurer */
-        { TV_RING, SV_RING_RES_FEAR }, /* Warriors need it! */
-		{ TV_SWORD, SV_CUTLASS },
-		{ TV_CHARM, 0 }
+		OBJ_RING_RES_FEAR, /* Warriors need it! */
+		OBJ_CUTLASS,
+		OBJ_LUMP_OF_SULPHUR
 	},
 
 	{
 		/* Swashbuckler */
-        { TV_POTION, SV_POTION_SPEED },
-		{ TV_SWORD, SV_RAPIER },
-        { TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
+		OBJ_POTION_SPEED,
+		OBJ_RAPIER,
+		OBJ_HARD_LEATHER_ARMOUR 
 	},
 
 	{
 		/* Gladiator */
-        { TV_RING, SV_RING_FREE_ACTION },
-		{ TV_SWORD, SV_BROAD_SWORD },
-        { TV_SHIELD, SV_SMALL_METAL_SHIELD }
+		OBJ_RING_FREE_ACTION,
+		OBJ_BROAD_SWORD,
+		OBJ_SMALL_METAL_SHIELD 
 	},
 
 	{
 		/* Warrior Monk */
-        { TV_RING, SV_RING_SUSTAIN_DEX },
-        { TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR }
+		OBJ_RING_SUSTAIN_DEX,
+		OBJ_SCROLL_MONSTER_CONFUSION,
+		OBJ_SOFT_LEATHER_ARMOUR 
 	},
 
 	{
 		/* Zen Monk */
-        { TV_RING, SV_RING_SUSTAIN_WIS },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-        { TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION }
+		OBJ_RING_SUSTAIN_WIS,
+		OBJ_SOFT_LEATHER_ARMOUR,
+		OBJ_SCROLL_MONSTER_CONFUSION 
 	},
 
 	{
 		/* Assassin */
-        { TV_RING, SV_RING_RESIST_POIS },
-		{ TV_SWORD, SV_DAGGER },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR }
+		OBJ_RING_RES_POISON,
+		OBJ_DAGGER,
+		OBJ_SOFT_LEATHER_ARMOUR 
     },
 
 	{
         /* Ranger */
-        { TV_BOW, SV_LONG_BOW },
-        { TV_ARROW, SV_AMMO_NORMAL },
-        { TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
+		OBJ_LONG_BOW,
+		OBJ_ARROW,
+		OBJ_HARD_LEATHER_ARMOUR 
     },
 
     {
         /* Shaman */
-        { TV_HAFTED, SV_QUARTERSTAFF },
-		{ TV_POTION, SV_POTION_HEALING },
-        { TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL }
+		OBJ_QUARTERSTAFF,
+		OBJ_POTION_HEALING,
+		OBJ_SCROLL_PROTECTION_FROM_EVIL 
 	},
 
     {
         /* Mindcrafter */
-        { TV_RING,SV_RING_SUSTAIN_WIS },
-        { TV_SWORD, SV_SHORT_SWORD },
-        { TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+		OBJ_RING_SUSTAIN_WIS,
+		OBJ_SHORT_SWORD,
+		OBJ_SOFT_LEATHER_ARMOUR,
     },
 
     {
         /* Wizard */
-        { TV_RING, SV_RING_SUSTAIN_INT },
-        { TV_POTION, SV_POTION_RESTORE_MANA },
-        { TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+		OBJ_RING_SUSTAIN_INT,
+		OBJ_POTION_RES_MANA,
+		OBJ_SOFT_LEATHER_ARMOUR,
     },
 
 	{
         /* Warlock */
-        { TV_RING, SV_RING_SUSTAIN_INT },
-		{ TV_SWORD, SV_SMALL_SWORD },
-        { TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR}
+		OBJ_RING_SUSTAIN_INT,
+		OBJ_SMALL_SWORD,
+		OBJ_SOFT_LEATHER_ARMOUR,
+
 	},
 
 	{
 		/* Powerweaver */
-		{TV_RING,SV_RING_SUSTAIN_INT},
-		{ TV_POTION,SV_POTION_RESTORE_MANA },
-		{TV_RING,SV_RING_SUSTAIN_WIS},
+		OBJ_RING_SUSTAIN_INT,
+		OBJ_POTION_RES_MANA,
+		OBJ_RING_SUSTAIN_WIS,
 	},
 
 	{
 		/* Tourist */
-        { TV_SWORD,SV_DAGGER },
-		{ TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
-        { TV_CLOAK,SV_CLOAK }
+		OBJ_DAGGER,
+		OBJ_HARD_LEATHER_BOOTS,
+		OBJ_CLOAK 
 	},
 
 };
@@ -2952,7 +2953,7 @@ static byte player_init[MAX_TEMPLATE][3][2] =
  */
 static void player_outfit(void)
 {
-	int i, tv, sv;
+	int i;
 
 	object_type	forge;
 	object_type	*q_ptr;
@@ -2966,7 +2967,7 @@ static void player_outfit(void)
         p_ptr->prace == RACE_SPECTRE)
     {
         /* Hack -- Give the player scrolls of satisfy hunger */
-        object_prep(q_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
+        object_prep(q_ptr, OBJ_SCROLL_SATISFY_HUNGER);
         q_ptr->number = (char)rand_range(2,5);
         object_aware(q_ptr);
         object_known(q_ptr);
@@ -2981,7 +2982,7 @@ static void player_outfit(void)
     else
     {
         /* Hack -- Give the player some food */
-        object_prep(q_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+        object_prep(q_ptr, OBJ_RATION_OF_FOOD);
         q_ptr->number = (char)rand_range(3, 7);
         object_aware(q_ptr);
         object_known(q_ptr);
@@ -2997,7 +2998,7 @@ static void player_outfit(void)
     {
 
         /* Hack -- Give the player scrolls of light */
-        object_prep(q_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_LIGHT));
+        object_prep(q_ptr, OBJ_SCROLL_LIGHT);
         q_ptr->number = (char)rand_range(3,7);
         object_aware(q_ptr);
         object_known(q_ptr);
@@ -3011,7 +3012,7 @@ static void player_outfit(void)
         q_ptr = &forge;
 
         /* Hack -- Give the player scrolls of DARKNESS! */
-        object_prep(q_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DARKNESS));
+        object_prep(q_ptr, OBJ_SCROLL_DARKNESS);
         q_ptr->number = (char)rand_range(2,5);
         object_aware(q_ptr);
         object_known(q_ptr);
@@ -3026,7 +3027,7 @@ static void player_outfit(void)
     {
 
         /* Hack -- Give the player some torches */
-        object_prep(q_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
+        object_prep(q_ptr, OBJ_WOODEN_TORCH);
         q_ptr->number = (char)rand_range(3, 7);
         q_ptr->pval = (char)rand_range(3, 7) * 500;
         object_aware(q_ptr);
@@ -3090,35 +3091,28 @@ static void player_outfit(void)
     for (i = 0; i < 3; i++)
 	{
 		/* Look up standard equipment */
-        tv = player_init[p_ptr->ptemplate][i][0];
-		sv = player_init[p_ptr->ptemplate][i][1];
+		s16b k = player_init[p_ptr->ptemplate][i];
 
-
-        if (tv == TV_RING && sv == SV_RING_RES_FEAR &&
+        if (k == OBJ_RING_RES_FEAR &&
                  p_ptr->prace == RACE_BARBARIAN)
         /* Barbarians do not need a ring of resist fear */
-                 sv = SV_RING_SUSTAIN_STR;
+                 k = OBJ_RING_SUSTAIN_STR;
 
 		/* Get local object */
 		q_ptr = &forge;
 
 		/* Hack -- Give the player an object */
-		object_prep(q_ptr, lookup_kind(tv, sv));
+		object_prep(q_ptr, k);
 
 
-		if (tv == TV_ARROW)
+		if (k == OBJ_ARROW)
 		{
 			/* If we have an arrow, we need more than one */
 			q_ptr->number = (char)rand_range(15,45);
 		}
 
-		if (tv == TV_CHARM)
-		{
-			q_ptr->pval = 0; /* Sulphur - it is the easiest to use */
-		}
-
         /* Assassins begin the game with a poisoned dagger */
-        if (tv == TV_SWORD && p_ptr->ptemplate == TPL_ASSASSIN)
+		if (k == OBJ_DAGGER && p_ptr->ptemplate == TPL_ASSASSIN)
         {
             q_ptr->name2 = EGO_BRAND_POIS;
         }

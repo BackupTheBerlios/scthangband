@@ -2455,38 +2455,38 @@ void do_cmd_fire(void)
 	tmul = 1;
 
 	/* Analyze the launcher */
-	switch (j_ptr->sval)
+	switch (j_ptr->k_idx)
 	{
 		/* Sling and ammo */
-		case SV_SLING:
+		case OBJ_SLING:
 		{
 			tmul = 2;
 			break;
 		}
 
 		/* Short Bow and Arrow */
-		case SV_SHORT_BOW:
+		case OBJ_SHORT_BOW:
 		{
 			tmul = 2;
 			break;
 		}
 
 		/* Long Bow and Arrow */
-		case SV_LONG_BOW:
+		case OBJ_LONG_BOW:
 		{
 			tmul = 3;
 			break;
 		}
 
 		/* Light Crossbow and Bolt */
-		case SV_LIGHT_XBOW:
+		case OBJ_LIGHT_CROSSBOW:
 		{
 			tmul = 3;
 			break;
 		}
 
 		/* Heavy Crossbow and Bolt */
-		case SV_HEAVY_XBOW:
+		case OBJ_HEAVY_CROSSBOW:
 		{
 			tmul = 4;
 			break;

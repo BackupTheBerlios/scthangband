@@ -4016,10 +4016,10 @@ spirit_type spirits[MAX_SPIRITS] =
 /* Table to determine p_ptr->tval_ammo based on bow sval. */
 tval_ammo_type tval_ammo[] =
 {
-	{SV_SLING, TV_SHOT},
-	{SV_SHORT_BOW, TV_ARROW},
-	{SV_LONG_BOW, TV_ARROW},
-	{SV_LIGHT_XBOW, TV_BOLT},
-	{SV_HEAVY_XBOW, TV_BOLT},
+	{OBJ_SLING, TV_SHOT},
+	{OBJ_SHORT_BOW, TV_ARROW},
+	{OBJ_LONG_BOW, TV_ARROW},
+	{OBJ_LIGHT_CROSSBOW, TV_BOLT},
+	{OBJ_HEAVY_CROSSBOW, TV_BOLT},
 	{0,0}
 };

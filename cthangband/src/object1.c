@@ -3217,20 +3217,20 @@ static void identify_fully_clear(ifa_type *i_ptr)
 static bool brief = FALSE;
 
 /*
- * Find the sval of a launcher which can fire a given missile.
+ * Find the k_idx of a launcher which can fire a given missile.
  */
-byte launcher_type(object_type *o_ptr)
+s16b launcher_type(object_type *o_ptr)
 {
 	tval_ammo_type *tv_ptr;
 
-	for (tv_ptr = tval_ammo; tv_ptr->bow_sval; tv_ptr++)
+	for (tv_ptr = tval_ammo; tv_ptr->bow_kidx; tv_ptr++)
 	{
 		/* Found something */
-		if (tv_ptr->ammo_tval == o_ptr->tval) return tv_ptr->bow_sval;
+		if (tv_ptr->ammo_tval == o_ptr->tval) return tv_ptr->bow_kidx;
 	}
 
 	/* Nothing */
-	return SV_UNKNOWN;
+	return OBJ_NOTHING;
 }
 
 /* A wrapper around list_flags() for identify_fully_get(), provided for
@@ -3451,7 +3451,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 
 		/* Give the damage a weapon does, excluding throwing weapons in brief mode. */
 		if (!brief || (wield_slot(o_ptr) == INVEN_WIELD) ||
-			(wield_slot(o_ptr) == INVEN_BOW) || (launcher_type(o_ptr) != SV_UNKNOWN))
+			(wield_slot(o_ptr) == INVEN_BOW) || (launcher_type(o_ptr) != OBJ_NOTHING))
 		{
 			weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			j = 0;
