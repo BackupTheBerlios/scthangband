@@ -2564,18 +2564,18 @@ void do_cmd_fire(void)
 
 
 /*
- * Hook to determine if an item is not both worn and cursed.
+ * Hook to determine if an item can be dropped or thrown.
  */
-bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
+bool PURE item_tester_hook_drop(object_ctype *o_ptr)
 {
-	/* Accept all uncursed items. */
-	if (!cursed_p(o_ptr)) return TRUE;
+	object_type j_ptr[1];
+	object_info_known(j_ptr, o_ptr);
 
-	/* Accept all non-worn items. */
-	if (o_ptr < &inventory[INVEN_WIELD] || o_ptr > &inventory[INVEN_FEET]) return TRUE;
+	/* Reject known cursed worn items. */
+	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
 
-	/* Reject everything else. */
-	return FALSE;
+	/* Accept everything else. */
+	return TRUE;
 }
 
 /*
@@ -2609,7 +2609,7 @@ void do_cmd_throw(int throw_mult)
 	int msec = delay_factor * delay_factor * delay_factor;
 
 	/* Restrict the choices */
-	item_tester_hook = item_tester_hook_destroy;
+	item_tester_hook = item_tester_hook_drop;
 
 	/* Get an item (from inven or floor) */
 	if (!((o_ptr = get_item(&err, "Throw which item? ", TRUE, TRUE, TRUE))))

@@ -215,7 +215,7 @@ extern void do_cmd_rest(void);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_fire(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(SPELLS2_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(SPELLS2_C))
 extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C))
@@ -436,7 +436,7 @@ extern void do_cmd_activate(object_type *o_ptr);
 #if (defined(DUNGEON_C) || defined(MELEE2_C))
 extern u16b ident_power(object_ctype *o_ptr);
 #endif
-#if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern cptr PURE find_feeling(object_ctype *o_ptr);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
@@ -1381,7 +1381,7 @@ extern void reset_visuals(void);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
 extern void object_info_known(object_type *j_ptr, object_ctype *o_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
@@ -1402,7 +1402,7 @@ extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern object_ctype PURE *get_real_obj(object_ctype *o_ptr);
 #endif
-#if (defined(CMD6_C) || defined(OBJECT1_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(OBJECT1_C))
 extern bool PURE is_worn_p(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C))
@@ -3936,5 +3936,11 @@ extern bool grow_o_list(void);
 
 #if (defined(CMD5_C) || defined(UTIL_C))
 extern void mc_roff_xy(int x, int y, cptr s);
+#endif
+
+/* cmd2.c */
+
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(STORE_C))
+extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -350,7 +350,7 @@ void do_cmd_drop(void)
 
 
 	/* Hack -- Cannot remove cursed items */
-	if (!item_tester_hook_destroy(o_ptr))
+	if (!item_tester_hook_drop(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");
@@ -378,6 +378,30 @@ void do_cmd_drop(void)
 	inven_drop(o_ptr, amt);
 
     p_ptr->redraw |= (PR_EQUIPPY);
+}
+
+/*
+ * Hook to determine if an item can be destroyed (or turned to gold).
+ */
+bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
+{
+	object_type j_ptr[1];
+
+	cptr feel = find_feeling(o_ptr);
+	object_info_known(j_ptr, o_ptr);
+
+	/* Reject known artefacts. */
+	if (allart_p(j_ptr)) return FALSE;
+
+	/* Reject known cursed worn items. */
+	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
+
+	/* Reject felt artefacts. */
+	if (!strcmp(feel, "special") || !strcmp(feel, "terrible") ||
+		!strcmp(feel, "unbreakable")) return FALSE;
+
+	/* Accept everything else. */
+	return TRUE;
 }
 
 /*
