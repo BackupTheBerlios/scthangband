@@ -2230,6 +2230,10 @@ static void display_player_flag_aux(int row, int col,
 	if (n == 2 && flag & TR2_RES_FIRE) i |= OPPOSE_COL(p_ptr->oppose_fire)*2;
 	if (n == 2 && flag & TR2_RES_COLD) i |= OPPOSE_COL(p_ptr->oppose_cold)*2;
 	if (n == 2 && flag & TR2_RES_POIS) i |= OPPOSE_COL(p_ptr->oppose_pois)*2;
+	if (n == 2 && flag & TR2_RES_FEAR && !(f[1] & TR2_RES_FEAR))
+		i |= OPPOSE_COL(MAX(p_ptr->hero, p_ptr->shero))*2;
+	if (n == 3 && flag & TR3_TELEPATHY && !(f[2] & TR3_TELEPATHY))
+		i |= OPPOSE_COL(p_ptr->tim_esp)*2;
 
 	if (i == 1)
 		n = TERM_WHITE;
