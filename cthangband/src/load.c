@@ -540,15 +540,26 @@ static void rd_item(object_type *o_ptr)
 
 /*
  * Read a monster
+ * Return FALSE if an invalid r_idx is given.
  */
-static void rd_monster(monster_type *m_ptr)
+static bool rd_monster(monster_type *m_ptr)
 {
+	monster_type dummy[1];
 	byte tmp8u;
 
 	/* Read the monster race */
 	rd_s16b(&m_ptr->r_idx);
 
 	m_ptr->r_idx = convert_r_idx(m_ptr->r_idx, sf_flags_sf, sf_flags_now);
+
+	if (m_ptr->r_idx < 0 || m_ptr->r_idx >= MAX_R_IDX ||
+		!r_info[m_ptr->r_idx].name)
+	{
+		note("Deleting monster with an unknown race.");
+
+		m_ptr->r_idx = 0;
+		m_ptr = dummy;
+	}
 
 	/* Read the other information */
 	rd_byte(&m_ptr->fy);
@@ -571,12 +582,8 @@ static void rd_monster(monster_type *m_ptr)
 		rd_s16b(&m_ptr->pl_cdam);
 	}
 
-	if (m_ptr->r_idx < 0 || m_ptr->r_idx >= MAX_R_IDX ||
-		!r_info[m_ptr->r_idx].name)
-	{
-		note("Deleting monster with an unknown race.");
-		delete_monster_idx(m_ptr-m_list, FALSE);
-	}
+	/* Succeed if the information hasn't been discarded. */
+	return (m_ptr != dummy);
 }
 
 
@@ -1624,7 +1631,7 @@ static errr rd_dungeon(void)
 		m_ptr = &m_list[m_idx];
 
 		/* Read the monster */
-		rd_monster(m_ptr);
+		if (!rd_monster(m_ptr)) continue;
 
 
 		/* Access grid */
