@@ -736,6 +736,52 @@ static void init_x_final(int num)
 
 
 
+/*
+ * Sort features in priority_table by priority.
+ */
+static bool ang_sort_comp_priority(vptr UNUSED u, vptr UNUSED v, int a, int b)
+{
+	return (priority_table[a]->priority >= priority_table[b]->priority);
+}
+
+/*
+ * Swap hook for features in priority_table.
+ */
+static void ang_sort_swap_priority(vptr UNUSED u, vptr UNUSED v, int a, int b)
+{
+	feature_type *f_ptr = priority_table[a];
+	priority_table[a] = priority_table[b];
+	priority_table[b] = f_ptr;
+}
+
+/*
+ * Initialise the priority table for the small scale dungeon map.
+ * This could be stored in a raw file if desired.
+ */
+static void init_feature_priorities(void)
+{
+	feature_type *f_ptr;
+	int t;
+	for (f_ptr = f_info, t = 0; f_ptr < f_info+z_info->f_max; f_ptr++)
+	{
+		if (f_info+f_ptr->mimic == f_ptr) t++;
+	}
+
+	feature_priorities = t;
+	priority_table = C_NEW(t, feature_type *);
+
+	for (f_ptr = f_info, t = 0; f_ptr < f_info+z_info->f_max; f_ptr++)
+	{
+		if (f_info+f_ptr->mimic == f_ptr)
+		{
+			priority_table[t++] = f_ptr;
+		}
+	}
+
+	/* Sort by decreasing priority, so that only the first match matters. */
+	ang_sort(0, 0, t, ang_sort_comp_priority, ang_sort_swap_priority);
+}
+
 /*** Initialize others ***/
 
 
@@ -853,6 +899,9 @@ static errr init_other(void)
 
 	/* Initialise the chaos feature information. */
 	init_chaos();
+
+	/* Initialise the feature priority table. */
+	init_feature_priorities();
 
 	/* Success */
 	return (0);

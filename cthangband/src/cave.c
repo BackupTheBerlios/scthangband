@@ -1532,32 +1532,20 @@ void prt_map(void)
 static byte priority(byte f, byte a, char c)
 {
 	feature_type *f_ptr = f_info+f_info[f].mimic;
-
-	int priority;
+	int i;
 
 	/* Use the priority of this terrain type if the terrain is visible. */
 	if (f_ptr->x_char == c && f_ptr->x_attr == a) return f_ptr->priority;
 
 	/* Otherwise, look to see if it looks like terrain. */
-	for (f_ptr = f_info, priority = -1; f_ptr < f_info+MAX_F_IDX; f_ptr++)
+	for (i = 0; i < feature_priorities; i++)
 	{
-		if (f_ptr->priority >= priority &&
-			f_ptr->x_char == c && f_ptr->x_attr == a)
-		{
-			priority = f_ptr->priority;
-		}
+		f_ptr = priority_table[i];
+		if (f_ptr->x_char == c && f_ptr->x_attr == a) return f_ptr->priority;
 	}
 
 	/* Not the char/attr of a feature, so give a known priority. */
-	if (priority == -1)
-	{
-		return 100;
-	}
-	/* Give it the highest priority of any similar terrain. */
-	else
-	{
-		return priority;
-	}
+	return 100;
 }
 
 /*

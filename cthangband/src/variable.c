@@ -658,6 +658,13 @@ cptr f_name;
 /* cptr f_text; */
 
 /*
+ * A table of features in order of priority, for the small scale dungeon map.
+ */
+feature_type **priority_table;
+int feature_priorities;
+
+
+/*
  * The object kind arrays
  */
 object_kind *k_info;

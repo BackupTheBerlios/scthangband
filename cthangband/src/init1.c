@@ -3724,6 +3724,23 @@ static errr init_info_txt_final(header *head)
 				MON_PLAYER_GHOST;
 			cptr rname = head->name_ptr+r_ptr->name;
 			r_ptr->level = MIN(255, strlen(rname));
+			break;
+		}
+		/* Forbid features which mimic mimics as pointless obfuscation. */
+		case F_HEAD:
+		{
+			feature_type *finfo = head->info_ptr;
+			int i;
+			for (i = 0; i < head->info_num; i++)
+			{
+				if (finfo[finfo[i].mimic].mimic != finfo[i].mimic)
+				{
+					msg_format("Feature %d cannot be a mimic, "
+						"as feature %d already mimics it.", finfo[i].mimic, i);
+					return PARSE_ERROR_GENERIC;
+				}
+			}
+			break;
 		}
 	}
 	return SUCCESS;
