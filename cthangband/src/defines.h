@@ -1914,6 +1914,7 @@
 /* xxx */
 #define PU_FLOW         0x10000000L     /* Update flow */
 /* xxx (many) */
+#define PU_QUIET	0x80000000L	/* Give no messages */
 
 
 /*
@@ -2723,6 +2724,14 @@
  */
 #define cursed_p(T) \
 	((T)->ident & (IDENT_CURSED))
+
+
+
+/*
+ * Give the adj_stat_x index for a given stat value.
+ */
+#define ind_stat(X) \
+	((X < 4) ? 0 : (X < 18) ? X-3 : (X < 18+220) ? 15+(X-18)/10 : 37)
 
 
 

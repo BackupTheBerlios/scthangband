@@ -1938,8 +1938,12 @@ return FALSE;
  * are actually added in later, at the appropriate place.
  *
  * This function induces various "status" messages.
+ *
+ * The "quiet" option disables all status change messages, used as
+ * identify_fully_aux() may call this routine several times without
+ * player intervention.
  */
-static void calc_bonuses(void)
+static void calc_bonuses(bool quiet)
 {
 	int			i, j, hold;
 
@@ -1977,7 +1981,7 @@ static void calc_bonuses(void)
 	/* Can we assign a weapon skill? */
 	if (!(p_ptr->wield_skill=wield_skill(o_ptr->tval, o_ptr->sval)))
 			{
-			msg_print("Unknown weapon tval wielded - defaulting to close combat skill.");
+			if (!quiet) msg_print("Unknown weapon tval wielded - defaulting to close combat skill.");
 			p_ptr->wield_skill = SKILL_CLOSE;
 	}
 
@@ -3140,8 +3144,10 @@ static void calc_bonuses(void)
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot)
 	{
+		/* No message */
+		if (quiet);
 		/* Message */
-		if (p_ptr->heavy_shoot)
+		else if (p_ptr->heavy_shoot)
 		{
 			msg_print("You have trouble wielding such a heavy bow.");
 		}
@@ -3162,8 +3168,10 @@ static void calc_bonuses(void)
 	/* Take note when "heavy weapon" changes */
 	if (p_ptr->old_heavy_wield != p_ptr->heavy_wield)
 	{
+		/* No message */
+		if (quiet);
 		/* Message */
-		if (p_ptr->heavy_wield)
+		else if (p_ptr->heavy_wield)
 		{
 			msg_print("You have trouble wielding such a heavy weapon.");
 		}
@@ -3181,9 +3189,11 @@ static void calc_bonuses(void)
 	}
 
     if (mystic_armour_aux != mystic_notify_aux)
-
         {
-            if (ma_heavy_armor())
+		/* No message */
+		if (quiet);
+		/* Message */
+		else if (ma_heavy_armor())
                 msg_print("The weight of your armor disrupts your balance.");
             else
                 msg_print("You regain your balance.");
@@ -3224,14 +3234,30 @@ void notice_stuff(void)
  */
 void update_stuff(void)
 {
+	bool quiet;
+
 	/* Update stuff */
 	if (!p_ptr->update) return;
 
+	/*
+	 * If quiet is set, this should calculate the changes
+	 * but not comment on them. Only currently used for
+	 * calc_bonuses.
+	 */
+	if (p_ptr->update & (PU_QUIET))
+	{
+		p_ptr->update &= ~(PU_QUIET);
+		quiet = TRUE;
+	}
+	else
+	{
+		quiet = FALSE;
+	}
 
 	if (p_ptr->update & (PU_BONUS))
 	{
 		p_ptr->update &= ~(PU_BONUS);
-		calc_bonuses();
+		calc_bonuses(quiet);
 	}
 
 	if (p_ptr->update & (PU_TORCH))
