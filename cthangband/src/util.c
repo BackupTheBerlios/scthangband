@@ -3025,7 +3025,7 @@ bool get_string(cptr prompt, char *buf, int len)
  */
 bool get_check(cptr prompt)
 {
-	int i;
+	char i[2]=" ";
 
 	cptr tmp = format("%.*s[y/n] ", Term->wid-strlen("[y/n] "), prompt);
 
@@ -3041,11 +3041,11 @@ bool get_check(cptr prompt)
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
-		i = inkey();
+		*i = inkey();
 		if (quick_prompt) break;
-		if (i == ESCAPE) break;
-		if (i == '\r') break;
-		if (strchr("YyNn", i)) break;
+		if (*i == ESCAPE) break;
+		if (*i == '\r') break;
+		if (strchr("YyNn", *i)) break;
 		bell();
 	}
 
@@ -3053,13 +3053,13 @@ bool get_check(cptr prompt)
 	help_track(NULL);
 
 	/* Leave a record */
-	msg_format("%s%v", tmp, ascii_to_text_f1, format("%c", i));
+	message_add(format("%s%v", tmp, ascii_to_text_f1, i));
 	
 	/* Erase the prompt */
 	prt("", 0, 0);
 
 	/* Tell the calling routine */
-	return (strchr("Yy\r", i)) ? TRUE : FALSE;
+	return (strchr("Yy\r", *i)) ? TRUE : FALSE;
 }
 
 

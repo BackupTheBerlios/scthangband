@@ -2631,7 +2631,7 @@ static void service_help(byte type)
  */
 static bool get_check_service(cptr prompt, byte type)
 {
-	int i;
+	char i[2] = " ";
 
 	/* Create a single-line prompt. */
 	cptr tmp = format("%.*s[y/n/?] ", Term->wid-strlen("[y/n/?] "), prompt);
@@ -2648,11 +2648,11 @@ static bool get_check_service(cptr prompt, byte type)
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
-		i = inkey();
-		if (i == ESCAPE) break;
-		if (i == '\r') break;
-		if (strchr("YyNn", i)) break;
-		if (i == '?') 
+		*i = inkey();
+		if (*i == ESCAPE) break;
+		else if (*i == '\r') break;
+		else if (strchr("YyNn", *i)) break;
+		else if (*i == '?') 
 		{
 			service_help(type);
 			prt(tmp, 0, 0);
@@ -2667,13 +2667,13 @@ static bool get_check_service(cptr prompt, byte type)
 	help_track(NULL);
 
 	/* Leave a record */
-	msg_format("%s%v", tmp, ascii_to_text_f1, format("%c", i));
+	message_add(format("%s%v", tmp, ascii_to_text_f1, i));
 	
 	/* Erase the prompt */
 	prt("", 0, 0);
 
 	/* Tell the calling routine */
-	return (strchr("Yy\r", i)) ? TRUE : FALSE;
+	return (strchr("Yy\r", *i)) ? TRUE : FALSE;
 }
 
 /* Haggle for a fixed price service from a store owner */

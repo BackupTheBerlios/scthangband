@@ -511,7 +511,7 @@ void search(void)
  */
 static char get_check_ynq(cptr prompt)
 {
-	char i;
+	char i[2]=" ";
 
 	/* Create a single-line prompt. */
 	cptr tmp = format("%.*s[y/n/q] ", Term->wid-strlen("[y/n/q] "), prompt);
@@ -528,10 +528,10 @@ static char get_check_ynq(cptr prompt)
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
-		i = inkey();
+		*i = inkey();
 		if (quick_prompt) break;
-		if (i == ESCAPE) break;
-		if (strchr("YyNnQq", i)) break;
+		if (*i == ESCAPE) break;
+		if (strchr("YyNnQq", *i)) break;
 		bell();
 	}
 
@@ -539,13 +539,13 @@ static char get_check_ynq(cptr prompt)
 	help_track(NULL);
 
 	/* Leave a record */
-	msg_format("%s%v", tmp, ascii_to_text_f1, format("%c", i));
+	message_add(format("%s%v", tmp, ascii_to_text_f1, i));
 	
 	/* Erase the prompt */
 	prt("", 0, 0);
 
 	/* Return output (default to no). */
-	switch (i)
+	switch (*i)
 	{
 		case 'y': case 'Y': return 'y';
 		case 'q': case 'Q': return 'q';
