@@ -2935,10 +2935,10 @@ void process_command(void)
 		}
 # endif /* ALLOW_SPOILERS */
 
-		/* Debug help (should be in help?) */
+		/* Debug help. */
 		case CMD_DEBUG+'?':
 		{
-			do_cmd_wiz_help();
+			display_help("brief debug");
 			break;
 		}
 		
