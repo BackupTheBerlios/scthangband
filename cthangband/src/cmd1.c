@@ -1160,9 +1160,7 @@ void py_attack(int y, int x)
     bool        backstab = FALSE, vorpal_cut = FALSE, chaos_effect = FALSE;
     bool        stab_fleeing = FALSE;
     bool        do_quake = FALSE;
-    bool        drain_msg = TRUE;
-    int         drain_result = 0, drain_heal = 0;
-    int         drain_left = MAX_VAMPIRIC_DRAIN;
+	bool		drain_msg = TRUE, drain_life = FALSE;
     u32b        f1, f2, f3; /* A massive hack -- life-draining weapons */
     bool        no_extra = FALSE;
 
@@ -1288,9 +1286,7 @@ void py_attack(int y, int x)
 	   {
         chaos_effect = FALSE;
         if (!((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING)))
-		drain_result = m_ptr->hp;
-	    else
-		drain_result = 0;
+		drain_life = TRUE;
 
 	}
 
@@ -1481,6 +1477,16 @@ void py_attack(int y, int x)
 				msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
 			}
 
+		/* Drain the life. */
+		if (drain_life && k > 0)
+		{
+			s16b drain_heal = damroll(4,(k / 6));
+			if (drain_heal > MAX_VAMPIRIC_DRAIN) drain_heal = MAX_VAMPIRIC_DRAIN;
+			if (drain_msg) msg_format("Your weapon drains life from %s!", m_name);
+			hp_player(k);
+		}	
+
+
 			/* Damage, check for fear and death */
             if (mon_take_hit(c_ptr->m_idx, k, &fear, NULL))
             {
@@ -1496,55 +1502,20 @@ void py_attack(int y, int x)
 
         touch_zap_player(m_ptr);
 
-        /* Are we draining it?  A little note: If the monster is
-	    dead, the drain does not work... */
 
-	    if (drain_result)
-	    {
-           drain_result -= m_ptr->hp;  /* Calculate the difference */
-
-
-		if (drain_result > 0) /* Did we really hurt it? */
-		{
-            drain_heal = damroll(4,(drain_result / 6));
-
-            if (cheat_xtra)
-            {
-                msg_format("Draining left: %d", drain_left);
-            }
-
-            if (drain_left)
-            {
-                if (drain_heal < drain_left)
-                {
-                    drain_left -= drain_heal;
-                }
-                else
-                {
-                    drain_heal = drain_left;
-                    drain_left = 0;
-                }
-                if (drain_msg)
-                {
-                    msg_format("Your weapon drains life from %s!", m_name);
-                    drain_msg = FALSE;
-                }
-                hp_player(drain_heal);
-                /* We get to keep some of it! */
-            }
-
-            }
-	    }
 			/* Confusion attack */
             if ((p_ptr->confusing) || (chaos_effect && (randint(10)!=1)))
 			{
 				/* Cancel glowing hands */
+			if (p_ptr->confusing)
+			{
 				p_ptr->confusing = FALSE;
-
-				/* Message */
-                if (!chaos_effect)
 				msg_print("Your hands stop glowing.");
-                else chaos_effect = FALSE;
+			}
+
+			/* Prevent chaotic effects further down */
+			chaos_effect = FALSE;
+
 
 				/* Confuse the monster */
 				if (r_ptr->flags3 & (RF3_NO_CONF))
@@ -1583,11 +1554,9 @@ void py_attack(int y, int x)
         if (!((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)))
         {
 
+				/* Pick a "new" monster race */
         int tmp = poly_r_idx(m_ptr->r_idx);
         chaos_effect = FALSE;
-
-        /* Pick a "new" monster race */
-
 
         /* Handle polymorph */
 		if (tmp != m_ptr->r_idx)
