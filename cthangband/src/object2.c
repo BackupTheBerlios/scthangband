@@ -839,6 +839,14 @@ void object_tried(object_type *o_ptr)
 	k_info[o_ptr->k_idx].tried = TRUE;
 }
 
+/*
+ * Something has been touched (or is generated exempt, e.g. in a shop).
+ */
+void object_touch(object_type *o_ptr)
+{
+	/* Mark it as touched. */
+	o_ptr->ident |= IDENT_TOUCHED;
+}
 
 
 /*

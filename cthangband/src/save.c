@@ -619,6 +619,8 @@ static void wr_extra(void)
 		wr_u16b(skill_set[i].experience);
 	}
 
+	if (has_flag(SF_OBJECT_SKILL)) wr_byte(object_skill_count);
+
 	wr_s16b(p_ptr->mhp);
 	wr_s16b(p_ptr->chp);
 	wr_u16b(p_ptr->chp_frac);

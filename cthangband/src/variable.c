@@ -196,7 +196,8 @@ bool centre_view; /* Centre view on player */
 bool macro_edit; /* Use macros as edit keys in string prompts */
 bool no_centre_run; /* Stop centring when running */
 bool track_mouse; /* Track the cursor in extra windows */
-bool auto_more;
+bool auto_more; /* Automatically clear '-more-' prompts */
+bool object_skill; /* Make skills checks depend on touching objecs. */
 
 /* Option Set B -- Birth Options */
 
@@ -844,3 +845,5 @@ u16b rebuild_raw = 0;
 
 #endif /* ALLOW_TEMPLATES */
 
+/* Number of skill checks the player has had since touching a new object. */
+byte object_skill_count;

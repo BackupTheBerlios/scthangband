@@ -356,6 +356,15 @@ s32b rand_int(u32b m)
 	}
 }
 
+/*
+ * Evaluate to TRUE m percent of the time.
+ */
+bool percent(int m)
+{
+	if (m > 99) return TRUE;
+	if (m < 1) return FALSE;
+	return rand_int(100) < m;
+}
 
 
 /*

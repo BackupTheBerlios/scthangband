@@ -108,3 +108,8 @@
  * Load/save information about how each object was generated.
  */
 #define SF_OBJECT_HISTORY 20
+
+/*
+ * Only allow a few skill checks after a new object has been touched.
+ */
+#define SF_OBJECT_SKILL 21

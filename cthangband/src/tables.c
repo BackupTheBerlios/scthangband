@@ -2733,7 +2733,7 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Available Options (full to 3,24).
+ * Available Options (full to 3,25).
  * In addition, 7,2 and 7,8-15 are used for cheat options, and the
  * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.
  *
@@ -3037,6 +3037,9 @@ option_type option_info[] =
 
 	{ &auto_more,                   FALSE,  OPTS_DISTURB,      3, 12,
 	"auto_more",                    "Automatically clear '-more-' prompts" },
+
+	{ &object_skill, TRUE, OPTS_OBJ, 3, 25,
+	"object_skill", "Testing: make skill checks depend on touching objects" },
 
 #ifdef SCORE_QUITTERS
 	{ &score_quitters_w, FALSE, OPTS_BIRTH, 0, 26,

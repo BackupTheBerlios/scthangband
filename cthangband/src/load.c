@@ -1133,6 +1133,7 @@ static void rd_extra(void)
 
 	if (tmp8u < SKILL_PSEUDOID) skill_copy(SKILL_PSEUDOID, SKILL_DEVICE);
 
+	if (has_flag(SF_OBJECT_SKILL)) rd_byte(&object_skill_count);
 
 	rd_s16b(&p_ptr->mhp);
 	rd_s16b(&p_ptr->chp);

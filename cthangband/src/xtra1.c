@@ -3657,11 +3657,39 @@ static void update_skill_maxima(void)
 	if (chaos && chaos_patrons) gain_level_reward(0, skill_set[chaos].value);
 }
 
+/*
+ * Chance of succeeding on the nth skill check after touching a new object.
+ * Based on a sine wave for want of a better shape.
+ */
+static int object_skill_table[] =
+{
+	100, 100, 99, 97, 95, 92, 89, 85, 81, 76,
+	70, 65, 59, 52, 45, 38, 31, 23, 16, 8
+};
+
+/*
+ * Not encountering new objects leads to boredom (you should be exploring, not
+ * studying) and a reduction in skill gain.
+ */
+static bool PURE object_skill_fail(void)
+{
+	/* Disable this via an option. */
+	if (!object_skill) return TRUE;
+
+	/* 0% chance. */
+	if (object_skill_count > (int)N_ELEMENTS(object_skill_table)) return FALSE;
+
+	/* Use the table above. */
+	return percent(object_skill_table[object_skill_count++]);
+}
 
 /* Test whether a skill can be tested on the current level */
-bool skill_check_possible(int index)
+bool PURE skill_check_possible(int index)
 {
-	return (dun_level && ((dun_depth) >= (((skill_set[index].value - skill_set[index].base) * 2) / 3)));
+	player_skill *sk_ptr = &skill_set[index];
+
+	/* Never on the surface or too shallow a level. */
+	return (dun_level && dun_depth >= (sk_ptr->value - sk_ptr->base) * 2 / 3);
 }
 
 /* Give experience to a skill after usage */
@@ -3684,6 +3712,15 @@ void skill_exp(int index)
 			msg_format("You are not tense enough to improve your %s skill.",skill_set[index].name);
 		}
 		return;
+	}
+
+	if (object_skill_fail())
+	{
+		if (cheat_skll)
+		{
+			msg_format("You are not inquisitive enough to improve your %s skill.",
+				skill_set[index].name);
+		}
 	}
 
 	/* Debugging message */

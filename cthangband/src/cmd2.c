@@ -2067,6 +2067,16 @@ static void carry(int pickup)
 		{
 			bool pickup_this = FALSE;
 
+			/* Notice previously untouched items. */
+			if (~o_ptr->ident & IDENT_TOUCHED)
+			{
+				/* Allow further skill checks. */
+				object_skill_count = 0;
+
+				/* Only do this once per item. */
+				object_touch(o_ptr);
+			}
+
 			/* Hack - ignore hidden items altogether. */
 			if (hidden_p(o_ptr)) continue;
 

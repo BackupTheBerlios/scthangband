@@ -2526,6 +2526,9 @@ static void make_birth_item(make_item_type *i_ptr)
 	object_aware(o_ptr);
 	object_known(o_ptr);
 
+	/* They have been touched. */
+	object_touch(o_ptr);
+
 	/* And they are in the player's inventory. */
 	inven_carry(o_ptr);
 }

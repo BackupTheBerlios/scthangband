@@ -1584,6 +1584,9 @@ static void store_create(void)
 		/* Store objects never get inscriptions. */
 		q_ptr->note = 0;
 
+		/* Store objects can't affect skill checks. */
+		object_touch(q_ptr);
+
 		/* Hack -- Charge lite's */
 		if (q_ptr->tval == TV_LITE)
 		{

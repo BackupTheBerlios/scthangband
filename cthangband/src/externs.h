@@ -3528,7 +3528,7 @@ extern void handle_stuff(void);
 extern bool ma_empty_hands(void);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))
-extern bool skill_check_possible(int index);
+extern bool PURE skill_check_possible(int index);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void skill_exp(int index);
@@ -3886,5 +3886,26 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* object2.c */
+
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(OBJECT2_C) || defined(STORE_C))
+extern void object_touch(object_type *o_ptr);
+#endif
+
+/* variable.c */
+
+#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern bool object_skill;
+#endif
+#if (defined(CMD2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern byte object_skill_count;
+#endif
+
+/* z-rand.c */
+
+#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
+extern bool percent(int m);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
