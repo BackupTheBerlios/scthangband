@@ -3330,57 +3330,56 @@ static void store_sell(void)
 }
 
 
- /*
-  * Examine an item in a store             -JDL-
-  */
- static void store_examine(void)
- {
-   int item;
+/*
+ * Examine an item in a store             -JDL-
+ */
+static void store_examine(void)
+{
+	int item;
 
-   object_type *o_ptr;
+	object_type *o_ptr;
 
 	cptr prompt;
 
-   /* Empty? */
-   if (st_ptr->stock_num <= 0)
-   {
-       if (cur_store_type == STORE_HOME) msg_print("Your home is empty.");
-       else if (cur_store_type == STORE_PAWN) msg_print("I have nothing of yours.");
-       else msg_print("I am currently out of stock.");
-       return;
-   }
-
-
-   /* Prompt */
-	prompt = "Which item do you want to examine? ";
-
-   /* Get the item number to be examined */
-   if (!get_stock(&item, prompt)) return;
-
-   /* Get the actual index */
-   item = item + store_top;
-
-   /* Get the actual item */
-   o_ptr = &st_ptr->stock[item];
-
-   /* If it is a spell book then browse it */
-   if ((o_ptr->tval == TV_SORCERY_BOOK) ||
-        (o_ptr->tval == TV_THAUMATURGY_BOOK) ||
-        (o_ptr->tval == TV_CONJURATION_BOOK) || (o_ptr->tval == TV_NECROMANCY_BOOK))
+	/* Empty? */
+	if (st_ptr->stock_num <= 0)
 	{
-		do_cmd_browse(o_ptr);
+		if (cur_store_type == STORE_HOME) msg_print("Your home is empty.");
+		else if (cur_store_type == STORE_PAWN) msg_print("I have nothing of yours.");
+		else msg_print("I am currently out of stock.");
 		return;
 	}
 
-   /* Description */
-	msg_format("Examining %v...", object_desc_f3, o_ptr, TRUE, 3);
 
-	/* Make it look as though we are aware of the item if necessary. */
-	if (!identify_fully_aux(o_ptr, 0))
-		msg_print("You see nothing special.");
+	/* Prompt */
+	prompt = "Which item do you want to examine? ";
 
-   return;
- }
+	/* Get the item number to be examined */
+	if (!get_stock(&item, prompt)) return;
+
+	/* Get the actual index */
+	item = item + store_top;
+
+	/* Get the actual item */
+	o_ptr = &st_ptr->stock[item];
+
+	/* If it is a spell book then browse it */
+	if (display_spells_p(o_ptr))
+	{
+		do_cmd_browse(o_ptr);
+	}
+	else
+	{
+		/* Description */
+		msg_format("Examining %v...", object_desc_f3, o_ptr, TRUE, 3);
+
+		/* Make it look as though we are aware of the item if necessary. */
+		if (!identify_fully_aux(o_ptr, 0))
+			msg_print("You see nothing special.");
+
+		return;
+	}
+}
 
 
 
