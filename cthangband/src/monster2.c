@@ -1593,6 +1593,39 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 	}
 }
 
+/*
+ * Call monster_desc() as a vstrnfmt_aux function.
+ *
+ * Format: 
+ * "%v", monster_desc_f2, (monster_type*)m_ptr, (int)mode
+ * or:
+ * "%.*v", (int)len, monster_desc_aux_f3, m_ptr, mode
+ *
+ */
+void monster_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	monster_type *m_ptr = va_arg(*vp, monster_type *);
+	int mode = va_arg(*vp, int);
+	cptr s;
+	uint len;
+
+	/* Use %.123v to specify a maximum length of 123. */
+	if ((s = strchr(fmt, '.')))
+	{
+		long m = strtol(s+1, 0, 0);
+		len = MAX(0, m);
+	}
+	else
+	{
+		len = MNAME_MAX;
+	}
+
+	/* Ensure that the buffer fits within buf. */
+	if (max < len) len = max;
+
+	/* Copy the string to buf. */
+	monster_desc(buf, m_ptr, mode, len);
+}
 
 
 
