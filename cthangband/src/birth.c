@@ -711,6 +711,7 @@ static void get_hermetic_skills(void);
 static void get_ahw_average(void);
 static void get_money(bool randomly);
 static int get_social_average(void);
+static void display_player_birth_details(void);
 
 /*
  * For characters starting with shaman skill, start them with a spirit
@@ -921,7 +922,7 @@ int maxstat(int race, int temp, int stat)
 }
 
 /* Display player information for point_mod_player(). */
-static void display_player_birth(int points)
+static void display_player_birth(int points, bool details)
 {
 	char b1 = '[';
 	char b2 = ']';
@@ -929,6 +930,9 @@ static void display_player_birth(int points)
 
 	/* Display the usual information. */
 		display_player(0);
+
+	/* Display details if required. */
+	if (details) display_player_birth_details();
 
 	/* Display the information required during creation. */
 		clear_from(23);
@@ -961,9 +965,59 @@ static void display_player_birth(int points)
 	{
 		Term_addstr(-1, TERM_WHITE, "'ESC' to finish, ");
 	}
-	Term_addstr(-1, TERM_WHITE, "'f' to save or 'Q' to quit.");
+	Term_addstr(-1, TERM_WHITE, "'Q' to quit, 'f' to save,");
 		Term_addch(TERM_WHITE, b2);
+	Term_putstr(2, 23, -1, TERM_WHITE, "[or '/' to change display.]");
 }
+
+/* Just in case */
+#ifndef ind_stat
+#define ind_stat(X) \
+	((X < 4) ? 0 : (X < 18) ? X-3 : (X < 18+220) ? 15+(X-18)/10 : 37)
+#endif
+/*
+ * Display various things there isn't space for normally during character creation.
+ * It could be argued that this would be better placed in files.c, but it's easier here.
+ */
+static void display_player_birth_details(void)
+{
+	byte i;
+	cptr dpbd_strings[8] = {
+	"Spells at 100%",
+	"SP at 100%",
+	"Min spell fail",
+	"Min favour fail",
+	"Chi at 100%",
+	"Min mindcraft fail",
+	"Weight limit",
+	"Regeneration rate",
+	};
+
+	for (i = 0; i < 4; i++)
+	{
+		/* Clear some space */
+		Term_erase(0, 16+i, 55);
+
+		/* Insert the strings. */
+		put_str(dpbd_strings[i], 16+i, 1);
+		put_str(dpbd_strings[i+4], 16+i, 28);
+
+		/* Add a colon for each. */
+		put_str(":", 16+i, 19);
+		put_str(":", 16+i, 46);
+	}
+	/* Insert the numbers. */
+	c_put_str(TERM_L_GREEN, format("%d", adj_mag_study[ind_stat(p_ptr->stat_top[A_INT])]*25+1), 16, 21);
+	c_put_str(TERM_L_GREEN, format("%d", adj_mag_mana[ind_stat(p_ptr->stat_top[A_INT])]*25+1), 17, 21);
+	c_put_str(TERM_L_GREEN, format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_INT])]), 18, 21);
+	c_put_str(TERM_L_GREEN, format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_CHR])]), 19, 21);
+
+	c_put_str(TERM_L_GREEN, format("%d", adj_mag_mana[ind_stat(p_ptr->stat_top[A_WIS])]*25+1), 16, 48);
+	c_put_str(TERM_L_GREEN, format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_WIS])]), 17, 48);
+	c_put_str(TERM_L_GREEN, format("%d", adj_str_wgt[ind_stat(p_ptr->stat_top[A_STR])]*10), 18, 48);
+	c_put_str(TERM_L_GREEN, format("%d", adj_con_fix[ind_stat(p_ptr->stat_top[A_CON])]), 19, 48);
+}
+
 
 /* Indexes for point_mod_player (0-6 hard-coded as stats and nothing) */
 #define IDX_STATS	((A_STR+1) | (A_INT+1) | (A_WIS+1) | (A_DEX+1) | (A_CON+1) | (A_CHR+1))
@@ -974,11 +1028,13 @@ static void display_player_birth(int points)
 #define IDX_RAND_ONE	0x0080
 #define IDX_LOAD	0x0100
 #define IDX_START	0x0200
+#define IDX_DETAILS	0x0400
 #define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
 
 /* Allow player to modify the character by spending points */
 static bool point_mod_player(void)
 {
+	bool details = FALSE;
 	char stat; /* Never used when i = IDX_ALL, and initialised below otherwise. */
 	s16b points; /* Initialised when i = IDX_ALL */
 	u16b i = IDX_START;
@@ -1033,6 +1089,9 @@ static bool point_mod_player(void)
 			case 'z': case 'Z':
 				i = IDX_RAND_ONE;
 				break;
+			case '/':
+				i = IDX_DETAILS;
+				break;
 			case 'Q':
 				quit(NULL);
 				break;
@@ -1047,6 +1106,11 @@ static bool point_mod_player(void)
 		/* Don't finish on negative points */
 		if (i == IDX_FINISH && points < 0) i = 0;
 		
+		/* Toggle details if required. */
+		if (i == IDX_DETAILS)
+		{
+			details = !details;
+		}
 		/* Save current stats to a pref file */
 		if (i == IDX_FILE)
 		{
@@ -1182,7 +1246,7 @@ static bool point_mod_player(void)
 		}
 
 		/* Update various things and display everything if something has changed. */
-		if (i & (IDX_ALL | IDX_STATS)) 
+		if (i & (IDX_ALL | IDX_STATS | IDX_DETAILS)) 
 		{
 			/* Calculate the bonuses and hitpoints */
 			p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
@@ -1201,7 +1265,7 @@ static bool point_mod_player(void)
 			get_money(FALSE);
 
 			/* Display everything */
-			display_player_birth(points);
+			display_player_birth(points, details);
 		}
 	}
 	/* Finally randomise the skill bonuses and set magic up as the player wants. */
