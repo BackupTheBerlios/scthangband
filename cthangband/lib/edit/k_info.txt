@@ -99,7 +99,6 @@ V:_CVS_
 
 N:0:(nothing)
 G:&:w:0
-F:EASY_KNOW
 
 # The price of this object is used as a price comparison in shops.
 # The name and graphic representation are used for the special "stack" image.
@@ -1308,7 +1307,7 @@ G: :d:2
 I:Ring:0:0
 W:0:0.2lb:0
 A:5/1
-F:CURSED | AGGRAVATE | EASY_KNOW
+F:CURSED | AGGRAVATE
 
 N:149:Weakness
 G: :d:2
@@ -1329,21 +1328,21 @@ G: :d:2
 I:Ring:0:0
 W:0:0.2lb:200
 A:5/1
-F:FEATHER | EASY_KNOW
+F:FEATHER
 
 N:152:Teleportation
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:250
 A:5/1
-F:CURSED | TELEPORT | EASY_KNOW
+F:CURSED | TELEPORT
 
 N:153:Slow Digestion
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:250
 A:5/1
-F:SLOW_DIGEST | EASY_KNOW
+F:SLOW_DIGEST
 
 N:154:Searching
 G: :d:2
@@ -1357,63 +1356,63 @@ G: :d:2
 I:Ring:0:0
 W:0:0.2lb:250
 A:10/1
-F:RES_FIRE | IGNORE_FIRE | EASY_KNOW
+F:RES_FIRE | IGNORE_FIRE
 
 N:156:Resist Cold
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:250
 A:10/1
-F:RES_COLD | IGNORE_COLD | EASY_KNOW
+F:RES_COLD | IGNORE_COLD
 
 N:157:See Invisible
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:340
 A:30/1
-F:SEE_INVIS | EASY_KNOW
+F:SEE_INVIS
 
 N:158:Sustain Charisma
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:500
 A:30/1
-F:SUST_CHR | EASY_KNOW
+F:SUST_CHR
 
 N:159:Sustain Intelligence
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:600
 A:30/1
-F:SUST_INT | EASY_KNOW
+F:SUST_INT
 
 N:160:Sustain Wisdom
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:600
 A:30/1
-F:SUST_WIS | EASY_KNOW
+F:SUST_WIS
 
 N:161:Sustain Strength
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:750
 A:30/1
-F:SUST_STR | EASY_KNOW
+F:SUST_STR
 
 N:162:Sustain Constitution
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:750
 A:30/1
-F:SUST_CON | EASY_KNOW
+F:SUST_CON
 
 N:163:Sustain Dexterity
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:750
 A:30/1
-F:SUST_DEX | EASY_KNOW
+F:SUST_DEX
 
 N:164:Protection
 G: :d:2
@@ -1499,84 +1498,84 @@ G: :d:2
 I:Ring:0:0
 W:0:0.2lb:3,00
 A:10/2
-F:RES_FEAR | EASY_KNOW
+F:RES_FEAR
 
 N:176:Free Action
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:1,500
 A:20/1
-F:FREE_ACT | EASY_KNOW
+F:FREE_ACT
 
 N:177:Confusion Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:3,000
 A:22/2
-F:RES_CONF | EASY_KNOW
+F:RES_CONF
 
 N:178:Nexus Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:3,000
 A:24/2
-F:RES_NEXUS | EASY_KNOW
+F:RES_NEXUS
 
 N:179:Shard Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:3,000
 A:25/2
-F:RES_SHARDS | EASY_KNOW
+F:RES_SHARDS
 
 N:180:Sound Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:3,000
 A:26/2
-F:RES_SOUND | EASY_KNOW
+F:RES_SOUND
 
 N:181:Light and Darkness Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:3,000
 A:30/2
-F:RES_LITE | RES_DARK | EASY_KNOW
+F:RES_LITE | RES_DARK
 
 N:182:Blindness Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:7,500
 A:60/2
-F:RES_BLIND | EASY_KNOW
+F:RES_BLIND
 
 N:183:Chaos Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:13,000
 A:50/2
-F:RES_CHAOS | RES_CONF | EASY_KNOW
+F:RES_CHAOS | RES_CONF
 
 N:184:Nether Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:14,500
 A:34/2
-F:RES_NETHER | HOLD_LIFE | EASY_KNOW
+F:RES_NETHER | HOLD_LIFE
 
 N:185:Disenchantment Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:15,000
 A:90/10
-F:RES_DISEN | EASY_KNOW
+F:RES_DISEN
 
 N:186:Poison Resistance
 G: :d:2
 I:Ring:0:0
 W:0:0.2lb:16,000
 A:60/2
-F:RES_POIS | EASY_KNOW
+F:RES_POIS
 
 N:187:Speed
 G: :d:2
@@ -1613,28 +1612,27 @@ G: :d:3
 I:Amulet:0:0
 W:0:0.3lb:20
 A:15/1
-F:EASY_KNOW
 
 N:192:Slow Digestion
 G: :d:3
 I:Amulet:0:0
 W:0:0.3lb:200
 A:15/1
-F:SLOW_DIGEST | EASY_KNOW
+F:SLOW_DIGEST
 
 N:193:Teleportation
 G: :d:3
 I:Amulet:0:0
 W:0:0.3lb:250
 A:15/1
-F:CURSED | TELEPORT | EASY_KNOW
+F:CURSED | TELEPORT
 
 N:194:Resist Acid
 G: :d:3
 I:Amulet:0:0
 W:0:0.3lb:300
 A:20/1
-F:RES_ACID | IGNORE_ACID | EASY_KNOW
+F:RES_ACID | IGNORE_ACID
 
 N:195:Brilliance
 G: :d:3
@@ -1695,7 +1693,7 @@ G: :d:3
 I:Amulet:0:0
 W:0:0.3lb:30,000
 A:60/4
-F:REFLECT | EASY_KNOW
+F:REFLECT
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ##### Scrolls #####

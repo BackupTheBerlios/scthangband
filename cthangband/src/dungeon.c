@@ -2215,6 +2215,9 @@ extern void do_cmd_borg(void);
  */
 static void do_cmd_script(void)
 {
+	int i;
+	for (i = 0; i < z_info->k_max; i++)
+		if (k_info[i].flags3 & TR3_EASY_KNOW) puts(format("%v", object_k_name_f1, i));
 	msg_print("You are NOT allowed to do THAT!");
 }
 

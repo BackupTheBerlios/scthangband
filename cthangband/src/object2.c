@@ -2154,6 +2154,9 @@ static bool PURE get_ego_test(object_ctype *o_ptr, const ego_item_type *e_ptr,
 {
 	bool ecursed = !(e_ptr->cost);
 
+	/* Some ego types are never used on creation. */
+	if (!e_ptr->max_obj) return FALSE;
+
 	/* Not true if the range is wrong. */
 	if (e_ptr->min_obj > o_ptr->k_idx) return FALSE;
 	if (e_ptr->max_obj < o_ptr->k_idx) return FALSE;
@@ -2432,8 +2435,12 @@ static bonus_type bonus_table[] =
 	{OBJ_RING_SLAYING, 1, 7, 10, BV_TO_D, BT_VARY},
 	{OBJ_AMULET_BRILLIANCE, 1, 1, 5, BV_PVAL, BT_VARY},
 	{OBJ_AMULET_INC_CHR, 1, 1, 5, BV_PVAL, BT_VARY},
+
+	/* Hack - pretend to set a random value purely to make these randomly
+	 * cursed or otherwise. */
 	{OBJ_AMULET_ANTI_MAGIC, 0, 0, 0, BV_PVAL, BT_VARY},
 	{OBJ_AMULET_ANTI_TELEPORTATION, 0, 0, 0, BV_PVAL, BT_VARY},
+
 	{OBJ_AMULET_SEARCHING, 1, 5, 5, BV_PVAL, BT_VARY},
 	{OBJ_AMULET_THE_MAGI, 1, 5, 5, BV_PVAL, BT_UNCURSED},
 	{OBJ_AMULET_THE_MAGI, 1, 5, 5, BV_TO_A, BT_UNCURSED},
@@ -4569,4 +4576,86 @@ void object_hide(object_type *o_ptr)
 
 	/* Redraw appropriate stuff. */
 	update_object(o_ptr);
+}
+
+/*
+ * Set TR3_EASY_KNOW for various object_kinds which are always the same.
+ * This makes various assumptions about how apply_magic() works.
+ * In particular, it assumes that any RNG call after the choose_magic_power()
+ * call has some effect on the object created.
+ *
+ * As choose_magic_power() is called by apply_magic(), a version of the latter
+ * (albeit one without several unnecessary sections) is embedded in this
+ * function.
+ */
+void init_easy_know(void)
+{
+	int i, k;
+	object_type o_ptr[1];
+
+	/* Use a local array to track which object_kinds have random properties. */
+	C_TNEW(random, z_info->k_max, bool);
+	WIPE(random, random);
+
+	/*
+	 * Hack - don't create EASY_KNOW artefacts.
+	 * This may not be appropriate for objects which are only created as a
+	 * single artefact, but artefacts do not stack, and making identification
+	 * give permanent access to an activation is not necessarily beneficial.
+	 */
+	for (i = 0; i < z_info->a_max; i++)
+	{
+		if (a_info[i].name) random[a_info[i].k_idx] = TRUE;
+	}
+
+	/* The following code needs to check if the RNG has been called. To do
+	 * this, it uses the simple RNG and checks what it does to the random state.
+	 */
+	Rand_quick = TRUE;
+
+#ifdef CHECK_ARRAYS
+	/* Paranoia - Rand_value must not return to 0 too quickly. */
+	for (i = 2, Rand_value = 0; i < 100; i++)
+	{
+		(void)rand_int(i);
+		assert(Rand_value);
+	}
+#endif /* CHECK_ARRAYS */
+
+	for (k = 0; k < z_info->k_max; k++)
+	{
+		/* Not a real object_kind. */
+		if (!k_info[k].name) continue;
+
+		/* One which is already known to be random. */
+		if (random[k]) continue;
+
+		/* If apply_magic() can curse an object, it shouldn't be EASY_KNOW. */
+		if (magic_can_curse(k)) continue;
+
+		/* Create an object. */
+		object_prep(o_ptr, k);
+
+		/* Reset the RNG. */
+		Rand_value = 0;
+
+		/* Hack - perform the interesting parts of apply_magic() on an object
+		 * of this type at various power ratings.
+		 */
+		for (i = -2; i <= 2; i++)
+		{
+			apply_magic_1(o_ptr, 50, i);
+			apply_magic_2(o_ptr, 50);
+		}
+
+		/* Something has used the RNG in producing this item. */
+		if (Rand_value) continue;
+
+		/* Set EASY_KNOW for all non-"random" object_kinds. */
+		k_info[k].flags3 |= TR3_EASY_KNOW;
+	}
+
+	/* Clean up. */
+	Rand_quick = FALSE;
+	TFREE(random);
 }

@@ -8,6 +8,7 @@ read from the bottom up.
 sCthangband _CVS_
 * List the actual name of a hidden object when it is examined.
 * Allow an ego type to be selected when creating an object in wizard mode.
+* Set the EASY_KNOW flag for non-random items in the source.
 * Fix the following bugs
   * It was possible to discover the identity of objects the player was not aware
     of using the preferences.

@@ -1418,7 +1418,7 @@ extern cptr find_next_good_flag(cptr s, byte reject, byte require);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(WIZARD2_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(WIZARD2_C))
 extern void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(OBJECT1_C) || defined(POWERS_C))
@@ -3692,10 +3692,10 @@ extern void core_fmt(cptr fmt, ...);
 #if (defined(TABLES_C) || defined(Z_RAND_C))
 extern bool rand_unbiased;
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(Z_RAND_C))
+#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
 extern bool Rand_quick;
 #endif
-#if (defined(GENERATE_C) || defined(OBJECT1_C) || defined(Z_RAND_C))
+#if (defined(GENERATE_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
 extern u32b Rand_value;
 #endif
 #if (defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C))
@@ -3901,5 +3901,11 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* object2.c */
+
+#if (defined(INIT2_C) || defined(OBJECT2_C))
+extern void init_easy_know(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

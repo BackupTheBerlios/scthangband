@@ -929,6 +929,9 @@ static void init_other(void)
 
 	/* Finish off the gf_info[] colour table. */
 	init_gf_info();
+
+	/* Set the EASY_KNOW flag for various appropriate objects. */
+	init_easy_know();
 }
 
 
