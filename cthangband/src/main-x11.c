@@ -1937,10 +1937,14 @@ static void paste_x11_accept(const XSelectionEvent *ptr)
 
 		/* Set data to the string, and catch errors. */
 		if (XGetWindowProperty(Metadpy->dpy, Infowin->win, XA_STRING, offset,
-			32767, TRUE, XA_STRING, &type, &fmt, &nitems, &left, &data)) break;
+			32767, TRUE, XA_STRING, &type, &fmt, &nitems, &left, &data)
+			!= Success) break;
 
 		/* Paste the text. */
 		err = type_string(data, nitems);
+
+		/* Free the data pasted. */
+		XFree(data);
 
 		/* No room. */
 		if (err == PARSE_ERROR_OUT_OF_MEMORY)
@@ -1953,9 +1957,6 @@ static void paste_x11_accept(const XSelectionEvent *ptr)
 		{
 			break;
 		}
-
-		/* Free the data pasted. */
-		XFree(data);
 
 		/* Pasted everything. */
 		if (!left) return;
