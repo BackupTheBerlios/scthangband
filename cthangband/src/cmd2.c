@@ -1043,12 +1043,9 @@ void do_cmd_close(void)
  * This will, however, produce grids which are NOT illuminated
  * (or darkened) along with the rest of the room.
  */
-static bool twall(int y, int x)
+static void twall(int y, int x)
 {
 	cave_type	*c_ptr = &cave[y][x];
-
-	/* Paranoia -- Require a wall or door or some such */
-	if (cave_floor_bold(y, x)) return (FALSE);
 
 	/* Forget the wall */
 	c_ptr->info &= ~(CAVE_MARK);
@@ -1058,18 +1055,28 @@ static bool twall(int y, int x)
 
 	/* Update some things */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
-
-	/* Result */
-	return (TRUE);
 }
 
 
 
+/* Special wall features for do_cmd_tunnel_aux(). */
+#define WALL_GOLD	1	/* Contains gold. */
+#define WALL_OBJ	2	/* May contain an object */
+#define WALL_DOOR	3	/* Is really a secret door. */
+#define WALL_NO_DIG	4	/* Undiggable. */
+
+/* Messages given by a particular type of wall. */
+#define WMSG_TREE	0	/* Tree, Bush */
+#define WMSG_WATER	1	/* Water */
+#define WMSG_WALL	2	/* Walls (all types), Door */
+#define WMSG_GOLD	3	/* Walls with gold in them (no success message) */
+#define WMSG_RUBBLE	4	/* Rubble */
+#define WMSG_MAX	5
+
 /*
  * Perform the basic "tunnel" command
  *
- * Assumes that the destination is a wall, a vein, a secret
- * door, or rubble.
+ * Assumes that the feature type is in wall_info[].feature below.
  *
  * Assumes that no monster is blocking the destination
  *
@@ -1078,6 +1085,58 @@ static bool twall(int y, int x)
 static bool do_cmd_tunnel_aux(int y, int x, int dir)
 {
 	cave_type *c_ptr;
+
+	typedef struct wall_type wall_type;
+	typedef struct wall_message_type wall_message_type;
+
+	struct wall_type
+	{
+		byte feature;	/* Name of the feature being dug. */
+		byte skill_min;	/* Minimum p_ptr->skill_dig to dig through the wall. */
+		s16b skill_rand;	/* Random factor for digging. */
+		byte special;	/* WALL_* entry for special cases. */
+		byte msg;	/* The set of messages to use (see wall_message) */
+		cptr name;	/* Name of the wall type. Derived from f_name if none. */
+	};
+
+	struct wall_message_type
+	{
+		cptr cont;
+		cptr fail;
+		cptr succeed;
+	};
+
+	wall_type wall_info[] =
+	{
+		{FEAT_SECRET, 30, 1200, WALL_DOOR, WMSG_WALL, NULL},
+		{FEAT_RUBBLE, 0, 200, WALL_OBJ, WMSG_RUBBLE, "rubble"},
+		{FEAT_MAGMA, 10, 400, 0, WMSG_WALL, NULL},
+		{FEAT_QUARTZ, 20, 800, 0, WMSG_WALL, NULL},
+		{FEAT_MAGMA_H, 10, 400, WALL_GOLD, WMSG_GOLD, NULL},
+		{FEAT_QUARTZ_H, 20, 800, WALL_GOLD, WMSG_GOLD, NULL},
+		{FEAT_MAGMA_K, 10, 400, WALL_GOLD, WMSG_GOLD, "magma vein"},
+		{FEAT_QUARTZ_K, 20, 800, WALL_GOLD, WMSG_GOLD, "quartz vein"},
+		{FEAT_WALL_EXTRA, 40, 1600, 0, WMSG_WALL, NULL},
+		{FEAT_WALL_INNER, 40, 1600, 0, WMSG_WALL, NULL},
+		{FEAT_WALL_OUTER, 40, 1600, 0, WMSG_WALL, NULL},
+		{FEAT_WALL_SOLID, 40, 1600, 0, WMSG_WALL, NULL},
+		{FEAT_PERM_BUILDING, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+		{FEAT_PERM_INNER, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+		{FEAT_PERM_OUTER, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+		{FEAT_PERM_SOLID, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+		{FEAT_WATER, 0, 0, WALL_NO_DIG, WMSG_WATER, NULL},
+		{FEAT_TREE, 40, 100, 0, WMSG_TREE, NULL},
+		{FEAT_BUSH, 0, 1, 0, WMSG_TREE, NULL},
+		{FEAT_NONE,0,0,0,0,0}
+	}, *w_ptr;
+	wall_message_type wall_message[WMSG_MAX] =
+	{
+		{"You hack away at the %s.", "You leave no mark on the %s.", "You have chopped down the %s."},
+		{"You empty out the %s.", "The %s fills up your tunnel as quickly as you dig!", "You have removed the %s."},
+		{"You tunnel into the %s.", "You make no impression on the %s.", "You have finished the tunnel."},
+		{"You tunnel into the %s.", "You make no impression on the %s.", ""},
+		{"You dig in the %s.", "You make no impression on the %s.", "You have removed the %s."},
+	}, *wm_ptr;
 
 	bool more = FALSE;
 
@@ -1090,170 +1149,69 @@ static bool do_cmd_tunnel_aux(int y, int x, int dir)
 	/* Sound */
 	sound(SOUND_DIG);
 
-	/* Tree */
-	if (c_ptr->feat == FEAT_TREE)
-	{
-		if ((p_ptr->skill_dig > 40 + rand_int(100)) && twall(y,x))
-		{
-			msg_print("You have  chopped down the tree.");
-		}
-		else
-		{
-			msg_print("You hack away at the tree.");
-			more=TRUE;
-		}
-	}
-	/* Bush */
-	else if (c_ptr->feat == FEAT_BUSH)
-	{
-		if (twall(y,x))
-		{
-			msg_print("You have chopped down the bush.");
-		}
-		else
-		{
-			msg_print("You hack away at the bush.");
-			more=TRUE;
-		}
-	}
-	/* Water */
-	else if (c_ptr->feat == FEAT_WATER)
-	{
-		msg_print("The water fills up your tunnel as quickly as you dig!");
-	}
-	/* Brick */
-	else if (c_ptr->feat >= FEAT_PERM_BUILDING)
-	{
-		msg_print("This seems to be permanent rock.");
-	}
-	/* Granite */
-	else if (c_ptr->feat >= FEAT_WALL_EXTRA)
-	{
-		/* Tunnel */
-		if ((p_ptr->skill_dig > 40 + rand_int(1600)) && twall(y, x))
-		{
-			msg_print("You have finished the tunnel.");
-		}
+	for (w_ptr = wall_info; w_ptr->feature != FEAT_NONE; w_ptr++)
+		if (w_ptr->feature == c_ptr->feat) break;
 
-		/* Keep trying */
-		else
+	/* Paranoia - not a valid wall (should not reach here). */
+	if (w_ptr->feature == FEAT_NONE)
 		{
-			/* We may continue tunelling */
-			msg_print("You tunnel into the granite wall.");
-			more = TRUE;
-		}
+		if (alert_failure) msg_print("Strange wall type found!");
+		return FALSE;
 	}
 
-	/* Quartz / Magma */
-	else if (c_ptr->feat >= FEAT_MAGMA)
-	{
-		bool okay = FALSE;
-		bool gold = FALSE;
-		bool hard = FALSE;
+	/* the "name" field is only used if the name in f_name isn't suitable. */
+	if (!w_ptr->name) w_ptr->name = f_name+f_info[f_info[w_ptr->feature].mimic].name;
 
-		/* Found gold */
-		if (c_ptr->feat >= FEAT_MAGMA_H) gold = TRUE;
+	/* Find the message set. */
+	wm_ptr = &wall_message[w_ptr->msg];
 
-		/* Extract "quartz" flag XXX XXX XXX */
-		if ((c_ptr->feat - FEAT_MAGMA) & 0x01) hard = TRUE;
-
-		/* Quartz */
-		if (hard)
+	/* Certain failure */
+	if (w_ptr->special == WALL_NO_DIG || p_ptr->skill_dig <= w_ptr->skill_min)
 		{
-			okay = (p_ptr->skill_dig > 20 + rand_int(800));
+		msg_format(wm_ptr->fail, w_ptr->name);
 		}
-
-		/* Magma */
-		else
+	/* Normal failure */
+	else if (p_ptr->skill_dig <= w_ptr->skill_min + rand_int(w_ptr->skill_rand))
 		{
-			okay = (p_ptr->skill_dig > 10 + rand_int(400));
-		}
+		msg_format(wm_ptr->cont, w_ptr->name);
+		more = TRUE;
 
+		/* Occasional Search XXX XXX */
+		if (w_ptr->special == WALL_DOOR && rand_int(100) < 25) search();
+	}
 		/* Success */
-		if (okay && twall(y, x))
-		{
-			/* Found treasure */
-			if (gold)
+	else
 			{
-				/* Place some gold */
-				place_gold(y, x);
+		bool found = FALSE;
+
+		/* Actually tunnel through wall. */
+		twall(y, x);
 
 				/* Message */
-				msg_print("You have found something!");
-			}
+		msg_format(wm_ptr->succeed, w_ptr->name);
 
-			/* Found nothing */
-			else
-			{
-				/* Message */
-				msg_print("You have finished the tunnel.");
-			}
-		}
-
-		/* Failure (quartz) */
-		else if (hard)
+		/* Handle special cases. */
+		switch (w_ptr->special)
 		{
-			/* Message, continue digging */
-			msg_print("You tunnel into the quartz vein.");
-			more = TRUE;
-		}
-
-		/* Failure (magma) */
-		else
+			case WALL_GOLD:
 		{
-			/* Message, continue digging */
-			msg_print("You tunnel into the magma vein.");
-			more = TRUE;
-		}
+				place_gold(y,x);
+				found = TRUE;
 	}
-
-	/* Rubble */
-	else if (c_ptr->feat == FEAT_RUBBLE)
-	{
-		/* Remove the rubble */
-		if ((p_ptr->skill_dig > rand_int(200)) && twall(y, x))
-		{
-			/* Message */
-			msg_print("You have removed the rubble.");
-
-			/* Hack -- place an object */
+			break;
+			case WALL_OBJ:
 			if (rand_int(100) < 10)
 			{
 				/* Create a simple object */
 				place_object(y, x, FALSE, FALSE);
 
 				/* Observe new object */
-				if (player_can_see_bold(y, x))
-				{
-					msg_print("You have found something!");
-				}
+				if (player_can_see_bold(y, x)) found = TRUE;
 			}
+			break;
 		}
 
-		else
-		{
-			/* Message, keep digging */
-			msg_print("You dig in the rubble.");
-			more = TRUE;
-		}
-	}
-
-	/* Default to secret doors */
-	else /* if (c_ptr->feat == FEAT_SECRET) */
-	{
-		/* Message, keep digging */
-		msg_print("You tunnel into the granite wall.");
-		more = TRUE;
-
-		/* Hack -- Search */
-		search();
-	}
-
-	/* Notice new floor grids */
-	if (!cave_floor_bold(y, x))
-	{
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		if (found) msg_print("You have found something!");
 	}
 
 	/* Result */
