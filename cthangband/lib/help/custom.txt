@@ -2,9 +2,12 @@
 
 Most of the "options" are accessible through the '=' command, which provides an interface to the various "sets" of options available to the player.
 In the decriptions below, each option is listed as the textual summary which is shown on the "options" screen, plus the internal name of the option in brackets, followed by a textual description of the option.
-Note that the internal name of the option can be used in user pref files to force the option to a given setting, see "command.txt" for more info.
+
+Note that the internal name of the option can be used in user pref files to force the option to a given setting, see *****general.txt*0[general.txt] for more info.
+
 Various concepts are mentioned in the descriptions below, including "disturb", (cancel any running, resting, or repeated commands, which are in progress), "flush" (forget any keypresses waiting in the keypress queue, including any macros in progress), "fresh" (dump any pending output to the screen), and "sub-windows" (see below).
 
+A date/version in brackets refers to when the option was added, or when it was substantially modified. No annotation indicates an option which was present in Cthangband 4.0.1, and usually much earlier.
 
 %%%%%
 === User Interface options ===
@@ -14,11 +17,11 @@ $GRogue-like commands [rogue_like_commands]
 Selects the "roguelike" command set (see "command.txt" for info).
 
 %%%%% <quick_messages>
-$GQuick -more- prompts [quick_messages]
+$GQuick -more- prompts [quick_messages] (altered 17/1/2001)
 Allows the use of any keypress as a response to the "-more-" prompt (useful for monster farming).
 
 %%%%% <quick_prompt>
-$GQuick [y/n] prompts [quick_messages]
+$GQuick [y/n] prompts [quick_messages] (17/1/2001)
 Allows most keys to mean "no" to any "[y/n]" prompt.
 
 %%%%% <other_query_flag>
@@ -42,7 +45,7 @@ $GShow details in certain sub-windows [show_details]
 Display "details" (including number of monsters killed, and textual descriptions) in monster descriptions. are displaying the monster.
 
 %%%%% <show_choices_main>
-$GShow certain choices in the main window [show_choices]
+$GShow certain choices in the main window [show_choices] (12/12/2000)
 Displays equipment lists, spell lists, etc., as appropriate on the main without requiring the player to prompt for it first.
 
 %%%%% <ring_bell>
@@ -70,11 +73,11 @@ $GCentre view around player [centre_view]
 Keeps the player's character in the center of the screen, and moves the dungeon around the player. Can be useful to prevent off-screen breaths.
 
 %%%%% <macro_edit>
-$GUse macros as edit keys in prompts [macro_edit]
+$GUse macros as edit keys in prompts [macro_edit] (1.0.1)
 String prompts (such as with the "Inscribe" command) have a small number of edit commands available (see prompts.txt for details). If this option is off, the special command mode is turned on and off with the Tab (or Ctrl-I) key. If this option is on, accessing these keys through a macro (on many systems this happens when you use the number pad) gives them their special meaning and accessing them without a macro does not. Turn this off if you have trouble inscribing an object with "1" or using the edit commands.
 
 %%%%% <scroll_edge>
-$GScroll until detection reaches the edge [scroll_edge]
+$GScroll until detection reaches the edge [scroll_edge] (1.0.4)
 This only has an effect if the main window is larger than the default size, so that the visible area is larger than the detection area. If set, the map moves until the player's detection area includes the corner. If unset, the map stops moving when the visible area includes the corner.
 
 %%%%%
@@ -97,7 +100,7 @@ $GRun into potential corners [find_examine]
 Fully explore "potential corners" in hallways.
 
 %%%%% <stop_corner>
-$GStop at corners [stop_corner]
+$GStop at corners [stop_corner] (9/3/2001)
 Stop running at every corner you reach.
 
 %%%%% <disturb_move>
@@ -117,7 +120,7 @@ $GDisturb whenever player state changes [disturb_state]
 This option causes you to be disturbed whenever the player state changes, including changes in hunger, resistance, confusion, etc.
 
 %%%%% <disturb_dawn>
-$GDisturb when the sun rises or sets [disturb_dawn]
+$GDisturb when the sun rises or sets [disturb_dawn] (1/6/2001)
 The option causes you to be disturbed at sunrise or sunset on the surface (useful if you are waiting for sunrise).
 
 %%%%% <disturb_minor>
@@ -137,7 +140,7 @@ $GAllow quantity specification [allow_quantity]
 Prompt for a quantity when necessary, instead of defaulting to a single object.
 
 %%%%% <auto_more>
-$GAutomatically clear -more- prompts [auto_more]
+$GAutomatically clear -more- prompts [auto_more] (1.0.1)
 The game does not wait for a keypress when it comes to a -more- prompt, but carries on going.
 
 %%%%% <alert_failure>
@@ -195,7 +198,7 @@ $GMerge inscriptions when stacking [stack_force_notes]
 Force otherwise identical objects to merge, even if one has an empty inscription and the other does not. The resulting stack keeps the non-empty inscription.
 
 %%%%% <stack_force_notes_all>
-$GMerge all inscriptions when stacking [stack_force_notes_all]
+$GMerge all inscriptions when stacking [stack_force_notes_all] (21/5/2001)
 Force otherwise identical objects to merge, even if they have differing inscriptions. The combined pile then has a somewhat random inscription.
 
 %%%%% <stack_force_costs>
@@ -211,7 +214,7 @@ $GShow weights in all object listings [show_weights]
 Display "weights" (in pounds) of objects in all "inventory", "equipment", "store items", and "home items" listings.
 
 %%%%% <inscribe_depth>
-$GInscribe depth on items at creation [inscribe_depth]
+$GInscribe depth on items at creation [inscribe_depth] (21/5/2001)
 Inscribe the depth or level at which an item is found on it when it is created.
 
 %%%%% <stack_allow_items>
@@ -221,10 +224,6 @@ Allow identical weapons and armor to be combined into a stack. This also allows 
 %%%%% <stack_allow_wands>
 $GAllow wands/staffs/rods to stack [stack_allow_wands]
 Allow identical wands/staffs/rods to be combined into a stack. This may force the items to be "unstacked" to use them, which may result in "overflow" of the stack. Also, the entire stack can be recharged (and possibly destroyed) at the same time.
-
-%%%%% <stack_allow_rods>
-$GAllow recharging rods to stack [stack_allow_rods]
-Turning this on allows rods with different recharge times to stack. It is a new option, and so it may not be entirely stable.
 
 %%%%% <equippy_chars>
 $GDisplay 'equippy' chars [equippy_chars]
@@ -243,7 +242,7 @@ $GConfirm to wear/wield known cursed items [confirm_wear]
 Some players may occasionally, due to a typing mistake, find themselves wearing an item which they knew was cursed. If this option is set, you should be safe from such typing mistakes: you will be prompted if you attempt to wear or wield an item if your character knows it is cursed.
 
 %%%%% <confirm_wear_all>
-$GConfirm to wear/wield potentially cursed items [confirm_wear_all]
+$GConfirm to wear/wield potentially cursed items [confirm_wear_all] (1/6/2001)
 If this option is set, you will be asked to confirm any attempt to wear an object which isn't known by some method to be uncursed.
 
 %%%%% <unify_commands>
@@ -255,7 +254,7 @@ $GAllow objects to stack on the floor [testing_stack]
 Allows a cave grid to hold more than one object (or one kind of object).
 
 %%%%% <show_piles>
-$GShow stacks with a special colour/character [show_piles]
+$GShow stacks with a special colour/character [show_piles] (1.0.9)
 Display stacks of items on the floor with a special character (& by default).
 
 %%%%%
@@ -278,7 +277,7 @@ $GAvoid processing special colours [avoid_other]
 Avoid processing the "multi-hued" or "clear" attributes of monsters. This will cause all "multi-hued" monsters to appear "violet" and all "clear" monsters to appear "white", and will cause "trappers" and "lurkers" to be visible on some machines, but it may greatly increase efficiency especially when telepathy is active. Certain systems may choose to set this option if they are unable to support the special "colour" processing, but if they handle graphics "correctly", by using attr/char pairs with the "high bits" set, then not only will the game correctly avoid using any "dangerous" colour processing, but it will allow such processing to occur when it is not dangerous. So if you are using graphics, and you use a "normal" attr/char for the "floor" grids, then you can use the "special lighting effects" for floors.
 
 %%%%% <flush_error>
-$GFlush input on incorrect keypresses [flush_error]
+$GFlush input on incorrect keypresses [flush_error] (1.0.7)
 This option forces the game to flush all pending input when input is encountered which does not make sense to the game. If this option is not set, such input will be ignored (although it may still cause a beep).
 
 %%%%% <flush_failure>
@@ -334,7 +333,7 @@ $GDo not centre view whilst running [no_centre_run]
 This causes the game to act as if centre_view was turned off if the player is running at the time.
 
 %%%%% <track_mouse>
-$GTrack the cursor in various extra windows [track_mouse]
+$GTrack the cursor in various extra windows [track_mouse] (1.0.10)
 This causes floor squares, objects and monsters to be displayed in extra windows as the mouse is moved over the map window.
 
 %%%%? [NOT [EQU $SYS x11]]
@@ -361,7 +360,7 @@ $GAuto-haggle in stores [auto_haggle]
 Disable "haggling" in stores, resulting in a ten percent sales penalty on items which you would have otherwise been forced to haggle for. When this option is on, all prices listed in stores will be the actual price that you pay for an item, as opposed to the price that the shop-keeper will suggest.
 
 %%%%% <verbose_haggle>
-$GVerbose auto_haggle messages [verbose_haggle]
+$GVerbose auto_haggle messages [verbose_haggle] (4/12/2000)
 If this option is turned on, the messages produced by the game with auto_haggle turned on will be similar to those with it turned off. If it is turned off, the player need only select an item, optionally select a quantity, and confirm it.
 
 %%%%% <auto_scum>
@@ -437,7 +436,7 @@ $GTimed autosave [autosave_t]
 If this option is set, the program will attempt to save your character every n game turns, where n is the "frequency". To set frequency press n: it will increase the frequency to the next category (and from 25000 to 0), the categories being every 50, 100, 250, 500, 1000, 2500, 5000, 10000 and 25000 turns. Note that the frequency must be higher than 0 and the "Timed autosave" set to "yes" for timed autosaves to take place.
 
 %%%%% <autosave_q>
-$GQuiet autosave [autosave_q]
+$GQuiet autosave [autosave_q] (21/5/2001)
 If this option is set, no messages will be printed, or input required, as the game is being saved via one of the autosave options above.
 
 %%%%%
@@ -505,35 +504,35 @@ Uper case letters decrease them.
 Several of these options affect the things which are displayed about objects which the player has not used a scroll of *identify* or equivalent on. These affect how the object is portrayed on the character information screen ('C') and the object information display ('I').
 
 %%%%% <spoil_base>
-$GGain knowledge of normal items [spoil_base]
+$GGain knowledge of normal items [spoil_base] (17/1/2001)
 This displays the guaranteed features of a potion or a suit of chaos dragon scale mail.
 
 %%%%% <spoil_ego>
-$GGain knowledge of ego items [spoil_ego]
+$GGain knowledge of ego items [spoil_ego] (17/1/2001)
 This displays the guaranteed features of an ego item of Free Action or of Permanence.
 
 %%%%% <spoil_art>
-$GGain knowledge of standard artifacts [spoil_art]
+$GGain knowledge of standard artifacts [spoil_art] (17/1/2001)
 This displays the guaranteed features of the Star Essence of Polaris or of "Deathwreaker".
 
 %%%%% <spoil_value>
-$GGain knowledge of the apparent prices of items [spoil_value]
+$GGain knowledge of the apparent prices of items [spoil_value] (17/1/2001)
 If you know enough about the way a shopkeeper calculates the value of an object, and know the values for each base item, ego-item and artefact, you can work out how much a shopkeeper would give for a particular item based on those of the above spoiler options which are set. It allows two extra options at object prompts: x (X if a confirmation prompt is required) selects the cheapest item in the selection and y (or Y) the dearest.  It cannot be set if spoil_base is unset as no meaningful valuation can be given unless the value of the base item is known.
 
 %%%%% <spoil_dam>
-$GGain knowledge of melee weapon damage. [spoil_dam]
+$GGain knowledge of melee weapon damage. [spoil_dam] (1/6/2001)
 This causes the game to calculate the damage a particular weapon would do against a variety of foes based on the information the player knows about it.
 
 %%%%% <spoil_stat>
-$GGain knowledge of the effects of stat changes [spoil_stat]
+$GGain knowledge of the effects of stat changes [spoil_stat] (9/3/2001)
 This tells you the effects of the stat changes wearing/wielding an object or consuming a stat boosting/restoring item will have on the player.
 
 %%%%% <spoil_flag>
-$GGain knowledge of the effects of various flags. [spoil_flag]
+$GGain knowledge of the effects of various flags. [spoil_flag] (2/3/2002)
 This tells you how much damage each of a monster's spell effects (but not breaths) does and informs the player about things which become evident simply from wearing/wielding it if the player has done so.
 
 %%%%% <spoil_mon>
-$GGain knowledge of monsters [spoil_mon]
+$GGain knowledge of monsters [spoil_mon] (17/1/2001)
 This tells you the information which can be gained about each type of monster which can be gained through fighting and killing many of them, experiencing all that they can do and can be done to them... or by reading mon-info.spo.
 
 %%%%%
@@ -578,7 +577,7 @@ This sets cheat_live and cheat_skll, forces special monster drops to always occu
 === Birth options ===
 
 %%%%% <score_quitter>
-$GRemember scores of those who quit the game [score_quitter]
+$GRemember scores of those who quit the game [score_quitter] (1.0.6)
 This causes games which end with the player quitting to be recorded on the same basis as those which end with the player dying.
 
 %%%%% <maximise_mode>
@@ -591,20 +590,20 @@ $GArtifacts are not lost if you never saw them [preserve_mode]
 If preserve mode is "off", you can get a level feeling that you *NEVER* get with preserve mode "on": a "special" feeling. This means that there is an artifact, a pit or a vault on the level: and while a pit or vault may not necessarily cause a special feeling, an artifact CERTAINLY will. This is principally of use in finding out which levels are *not* "special", i.e. which ones can be left in a hurry without worrying about leaving something behind - if it's not "special", there is no artifact unless a monster has dropped one when you killed it. This is particularly important because, with preserve mode off, no artifact can be generated more than once in the game. If it's on a level and you miss it, it's gone forever. With preserve mode "on", if you miss an artifact, it can turn up later provided you didn't identify it the first time (in which case there is no excuse for losing it.) But you don't get the "special" feeling. (Chances are that a vault will provide a good level feeling anyway, and quite possibly a couple of good items which may or may not include an artifact.)
 
 %%%%% <allow_quickstart>
-$GAllow the player to start by using Quick-Start [allow_quickstart]
+$GAllow the player to start by using Quick-Start [allow_quickstart] (21/5/2001)
 Quick-Start is a mechanism by which you can put character generation completely in the game's hands. It will generate a reasonable character according to its algorithm, choosing the race, template and stats automatically.
 
 This option is provided so that players who never wish to take advantage of this can avoid the prompt it gives.
 
 %%%%% <allow_pickstats>
-$GAllow the player to choose pre-set stats [allow_pickstats]
+$GAllow the player to choose pre-set stats [allow_pickstats] (21/5/2001)
 If the preference files contain some pre-set stats and this option is set, the player will be given a list of character templates at the start of character generation and be able to choose one with a single keypress.
 
 If this option is not set, the player will not get this prompt, but will still be able to choose pre-set stats by using the 'l' key on the stat modifying screen.
 
 %%%%? [NOT [IOR [EQU $SYS mac] [EQU $SYS win] [EQU $SYS acn]]]
 %%%%% <display_credits>
-$GRequire a keypress to clear the initial screen [display_credits]
+$GRequire a keypress to clear the initial screen [display_credits] (21/5/2001)
 On some systems, the game only needs a keypress after initialisation rather than a savefile selection, etc.. As this doesn't give the game any additional information, unsetting this option prevents the game from waiting for this keypress.
 
 %%%%? 1
@@ -627,5 +626,5 @@ $GShops (except for libraries) are locked [ironman_shop]
 This option closes all shops except for libraries (which are open as normal).
 
 %%%%% <ironman_feeling>
-$GLevel feelings are only given after 2500 turns [ironman_feeling]
+$GLevel feelings are only given after 2500 turns [ironman_feeling] (1.0.1)
 This option causes level feelings to be given after 2500 turns on the level instead of giving the feeling immediately. 
