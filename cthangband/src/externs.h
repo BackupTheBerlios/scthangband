@@ -581,6 +581,9 @@ extern s16b error_line;
 #if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C))
 extern void init_angband(void);
 #endif
+#if (defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_C))
+extern void cleanup_angband(void);
+#endif
 
 /* load.c */
 
@@ -1208,24 +1211,6 @@ extern const char help_x11[] ;
 extern errr init_x11(int argc, char **argv);
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* main-xaw.c */
 
 #if (defined(USE_XAW)) && (defined(MAIN_XAW_C) || defined(MAIN_C))
@@ -1486,7 +1471,7 @@ extern bool object_similar(object_type *o_ptr, object_type *j_ptr);
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern bool object_absorb(object_type *o_ptr, object_type *j_ptr);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b lookup_kind(int tval, int sval);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
@@ -3304,7 +3289,7 @@ extern object_kind *k_info;
 #if (defined(CMD4_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *k_name;
 #endif
-#if (defined(INIT2_C) || defined(VARIABLE_C))
+#if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *k_text;
 #endif
 #if (defined(DEFINES_H) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))

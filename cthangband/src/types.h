@@ -181,7 +181,7 @@ typedef struct object_kind object_kind;
 struct object_kind
 {
 	u16b name;			/* Name (offset) */
-	u16b text;			/* Text (offset) */
+	u32b text;			/* Text (offset) */
 
 	byte tval;			/* Object type */
 	byte sval;			/* Object sub type */

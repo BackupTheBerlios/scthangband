@@ -667,20 +667,34 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr)
 	object_wipe(j_ptr);
 
 	/* Some flags are always assumed to be known. */
-	j_ptr->k_idx = o_ptr->k_idx;
-	j_ptr->tval = o_ptr->tval;
-	j_ptr->sval = o_ptr->sval;
 	j_ptr->discount = o_ptr->discount;
 	j_ptr->number = o_ptr->number;
 	j_ptr->weight = o_ptr->weight;
-	j_ptr->ac = o_ptr->ac;
-	j_ptr->dd = o_ptr->dd;
-	j_ptr->ds = o_ptr->ds;
 	j_ptr->timeout = !!(o_ptr->timeout); /* The player is never told how long it is. */
 	j_ptr->ident = o_ptr->ident;
 	/* j_ptr->handed = o_ptr->handed; */ /* Unused */
 	j_ptr->note = o_ptr->note;
 	
+	/* Some flags are known for aware objects. */
+	if (object_aware_p(o_ptr))
+	{
+		j_ptr->k_idx = o_ptr->k_idx;
+		j_ptr->tval = o_ptr->tval;
+		j_ptr->sval = o_ptr->sval;
+		j_ptr->dd = o_ptr->dd;
+		j_ptr->ds = o_ptr->ds;
+		j_ptr->ac = o_ptr->ac;
+	}
+	/* As values of 0 are often special, use a blank object and special sval
+	 * if unaware (don't use a special tval for now, as the game uses this for
+	 * object_value_base() amongst other things). */
+	else
+	{
+		j_ptr->k_idx = lookup_kind(0,0); /* != 0 */
+		j_ptr->tval = /* TV_UNKNOWN; */ o_ptr->tval;
+		j_ptr->sval = SV_UNKNOWN;
+	}
+
 	/* Some flags are known for identified objects. */
 	if (object_known_p(o_ptr))
 	{
@@ -3280,6 +3294,11 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		info[i++].txt = "...if it is being worn.";
 	}
 
+	/* Describe use of the base object, if any. */
+	if (spoil_base && k_info[o_ptr->k_idx].text)
+	{
+		info[i++].txt = k_text+k_info[o_ptr->k_idx].text;
+	}
 
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE)
@@ -4839,7 +4858,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	char tmp_val[160];
 	char out_val[160];
 
-	int term;
+	int term = UNREAD_VALUE;
 	void (*old_resize_hook)(void);
 
 #ifdef ALLOW_REPEAT /* TNB */

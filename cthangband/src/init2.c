@@ -1949,7 +1949,7 @@ void init_angband(void)
 	note("[Initializing user pref files...]");
 
 	/* build a name for the basic 'help' index */
-	syshelpfile = "contents.txt";
+	syshelpfile = "help.hlp";
 
 	/* Access the "basic" pref file */
 	strcpy(buf, "pref.prf");

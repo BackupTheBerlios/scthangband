@@ -1323,7 +1323,14 @@ void do_cmd_read_scroll(int item)
 
 		case SV_SCROLL_SUMMON_MONSTER:
 		{
-			for (k = 0; k < randint(3); k++)
+			switch (rand_int(9))
+			{
+				case 0: case 1: case 2: k = 1; break;
+				case 3: case 4: case 5: case 6: k = 2; break;
+				default: k = 3;
+			}
+
+			for (; k; k--)
 			{
 				if (summon_specific(py, px, (dun_depth), 0))
 				{
@@ -1335,7 +1342,14 @@ void do_cmd_read_scroll(int item)
 
 		case SV_SCROLL_SUMMON_UNDEAD:
 		{
-			for (k = 0; k < randint(3); k++)
+			switch (rand_int(9))
+			{
+				case 0: case 1: case 2: k = 1; break;
+				case 3: case 4: case 5: case 6: k = 2; break;
+				default: k = 3;
+			}
+
+			for (; k; k--)
 			{
 				if (summon_specific(py, px, (dun_depth), SUMMON_UNDEAD))
 				{
@@ -1862,7 +1876,18 @@ void do_cmd_use_staff(int item)
 
 		case SV_STAFF_SUMMONING:
 		{
-			for (k = 0; k < randint(4); k++)
+			switch (rand_int(32))
+			{
+				case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+					k = 1; break;
+				case 20: case 21: case 22: case 23: case 24: case 25: case 26:
+				case 27: case 28:
+					k = 3; break;
+				case 29: case 30: case 31:
+					k = 4; break;
+				default: k = 2; break;
+			}
+			for (; k; k--)
 			{
 				if (summon_specific(py, px, (dun_depth), 0))
 				{

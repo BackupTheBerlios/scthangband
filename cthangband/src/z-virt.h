@@ -126,7 +126,6 @@
 #define MAKE(P,T) \
        ((P)=ZNEW(T))
 
-
 /* Free something at P, return NULL */
 #define FREE2(P) \
 		(rnfree(P))

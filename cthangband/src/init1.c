@@ -1300,14 +1300,14 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 /*
  * Add a text to the text-storage and store offset to it.
  *
- * Returns FALSE when there isn't enough space available to store
+ * Returns an error when there isn't enough space available to store
  * the text.
  */
-static bool add_text(u32b *offset, header *head, cptr buf)
+static errr add_text(u32b *offset, header *head, cptr buf)
 {
 	/* Hack -- Verify space */
 	if (head->text_size + strlen(buf) + 8 > z_info->fake_text_size)
-		return (FALSE);
+		return PARSE_ERROR_OUT_OF_MEMORY;
 
 	/* New text? */
 	if (*offset == 0)
@@ -1323,7 +1323,7 @@ static bool add_text(u32b *offset, header *head, cptr buf)
 	head->text_size += strlen(buf);
 
 	/* Success */
-	return (TRUE);
+	return SUCCESS;
 }
 
 
@@ -1545,11 +1545,8 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 			/* Acquire the text */
 			s = buf+2;
 
-			/* Store the text */
-			if (!add_text(&(v_ptr->text), head, s))
-				return (PARSE_ERROR_OUT_OF_MEMORY);
-
-			return SUCCESS;
+			/* Store the text and continue. */
+			return add_text(&(v_ptr->text), head, s);
 		}
 
 
@@ -1895,6 +1892,15 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 
 			/* Next... */
 			return SUCCESS;
+		}
+		/* Process 'D' for Description */
+		case 'D':
+		{
+			/* Acquire the text */
+			s = buf+2;
+
+			/* Store the text and continue. */
+			return add_text(&(k_ptr->text), head, s);
 		}
 		default:
 		{
@@ -2727,11 +2733,8 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			/* Acquire the text */
 			s = buf+2;
 
-			/* Store the text */
-			if (!add_text(&(r_ptr->text), head, s))
-				return (PARSE_ERROR_OUT_OF_MEMORY);
-
-			return SUCCESS;
+			/* Store the text and continue. */
+			return add_text(&(r_ptr->text), head, s);
 		}
 
 		/* Process 'G' for "Graphics" (one line only) */

@@ -1369,8 +1369,11 @@ logaux(x, 1) logaux(x, 0) 255
 #define TV_NECROMANCY_BOOK  93
 #define TV_CHARM	94
 #define TV_GOLD         100     /* Gold can only be picked up by players */
+#define TV_UNKNOWN	255
 
 
+
+#define SV_UNKNOWN	255	/* A sval for unknown objects. */
 
 /* The "sval" codes for TV_SHOT/TV_ARROW/TV_BOLT */
 #define SV_AMMO_LIGHT           0       /* pebbles */
@@ -2876,7 +2879,7 @@ logaux(x, 1) logaux(x, 0) 255
 
 /* Based on a given object_type */
 #define object_aware_p(T) \
-	(object_aware_kp(&k_info[(T)->k_idx]))
+	((T)->sval != SV_UNKNOWN && object_aware_kp(&k_info[(T)->k_idx]))
 
 /*
  * Determine if a given inventory item is "tried"
