@@ -29,6 +29,7 @@ sCthangband _CVS_
   * Messages given when destroying part of a stack referred to the total size.
   * C and c (and possibly A and a) didn't work correctly in the visual prefs.
   * Skeletons could multiply normal food by trying to eat some from a pile.
+  * Reduced stats were displayed incorrectly on the character screen.
 
 sCthangband 1.0.12
 * Dodging blows because of martial arts gives experience in the skill.

@@ -3322,20 +3322,14 @@ static void display_player_name_stats(void)
 				/* Use lowercase stat name */
 				put_str(stat_names_reduced[i], 2 + i, 61);
 
-				/* Get the current stat */
-				value = p_ptr->stat_use[i];
-
 				/* Obtain the current stat (modified) */
-				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_max[i]);
+				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
 
 				/* Display the current stat (modified) */
 				c_put_str(TERM_YELLOW, buf, 2 + i, 66);
 
-				/* Acquire the max stat */
-				value = p_ptr->stat_top[i];
-
 				/* Obtain the maximum stat (modified) */
-				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, value);
+				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_top[i]);
 
 				/* Display the maximum stat (modified) */
 				c_put_str(TERM_L_GREEN, buf, 2 + i, 73);
