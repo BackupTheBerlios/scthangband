@@ -1477,6 +1477,9 @@ static errr keymap_dump(cptr fname)
 	/* Start dumping */
 	fprintf(fff, "# Automatic keymap dump\n\n");
 
+	/* Dump ---reset--- so that no extras are carried forward. */
+	fprintf(fff, "C:---reset---\n");
+
 	/* Dump them */
 	for (i = 0; i < 256; i++)
 	{

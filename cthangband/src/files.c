@@ -517,6 +517,20 @@ errr process_pref_file_aux(char *buf)
 
 		char tmp[1024];
 
+		/* Hack - handle ---reset--- as a special case */
+		if (!strcmp(buf+2, "---reset---"))
+		{
+			for (i = 0; i < MAX_UCHAR; i++)
+			{
+				for (mode = 0; mode < KEYMAP_MODES; mode++)
+				{
+					string_free(keymap_act[mode][i]);
+				}
+			}
+			C_WIPE(keymap_act, (MAX_UCHAR+1)*KEYMAP_MODES, cptr);
+			return SUCCESS;
+		}
+
 		if (tokenize(buf+2, 2, zz) != 2) return (1);
 
 		mode = strtol(zz[0], NULL, 0);
