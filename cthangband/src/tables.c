@@ -3120,7 +3120,7 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options (full to 3,10), 7 reserved for cheat options
+ * Available Options (full to 3,11), 7 reserved for cheat options
  */
 option_type option_info[] =
 {
@@ -3395,6 +3395,9 @@ option_type option_info[] =
 
 	{ &centre_view,               TRUE, OPTS_UI, 2, 16,
     "centre_view",                "Centre view around player (v.slow)" },
+
+	{&macro_edit, TRUE, OPTS_UI, 3, 11,
+	"macro_edit", "Use macros as edit keys in prompts" },
 
 	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
     "no_centre_run",                "Do not centre view whilst running" },

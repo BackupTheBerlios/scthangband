@@ -1473,7 +1473,7 @@ static char inkey_aux(void)
 	if (k < 0) return (ch);
 
 	/* Remember the macro */
-	is_macro = TRUE;
+	if (macro_edit) is_macro = TRUE;
 	
 
 	/* Wait for a macro, or a timeout */
@@ -1705,7 +1705,7 @@ char inkey(void)
 	inkey_next = NULL;
 
 	/* No macro in progress */
-	is_macro = FALSE;
+	if (macro_edit) is_macro = FALSE;
 
 #ifdef ALLOW_BORG
 
@@ -2722,6 +2722,8 @@ bool askfor_aux(char *buf, int len)
 	Term_erase(x, y, len);
 	Term_putstr(x, y, -1, TERM_YELLOW, buf);
 
+	/* Reset is_macro to ensure that each prompt is the same. */
+	if (!macro_edit) is_macro = FALSE;
 
 	/* Process input */
 	while (!done)
@@ -2758,8 +2760,12 @@ bool askfor_aux(char *buf, int len)
 			break;
 
 			case '\t':
-			if (!k) k = strlen(buf);
-			l = k;
+			if (!k)
+			{
+				k = strlen(buf);
+				l = k;
+			}
+			if (!macro_edit) is_macro = !is_macro;
 			break;
 
 			/*

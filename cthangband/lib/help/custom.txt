@@ -104,6 +104,18 @@ Centre view around player              [centre_view]
     Keeps the player's character in the center of the screen, and moves the 
     dungeon around the player. Can be useful to prevent off-screen breaths.
 
+***** <macro_edit>
+Use macros as edit keys in prompts      [macro_edit]
+    String prompts (such as with the "Inscribe" command) have a small number
+    of edit commands available (see prompts.txt for details). If this option
+    is off, the special command mode is turned on and off with the Tab (or
+	Ctrl-I) key. If this option is on, accessing these keys through a macro
+    (on many systems this happens when you use the number pad) gives them
+    their special meaning and accessing them without a macro does not.
+
+    Turn this off if you have trouble inscribing an object with "1" or using
+    the edit commands.
+
 *****
 === Disturbance options ===
 

@@ -225,6 +225,7 @@ bool confirm_wear_all;		/* Confirm before wearing items with unknown cursed stat
 bool disturb_allies;		/* Allies moving nearby disturb us */
 bool multi_stair;         /* Multiple level staircases */
 bool centre_view; /* Centre view on player */
+bool macro_edit; /* Use macros as edit keys in string prompts */
 bool no_centre_run; /* Stop centring when running */
 bool preserve_mode; /* Don't lose missed artifacts */
 bool maximise_mode; /* Unify stat bonuses */

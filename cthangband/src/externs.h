@@ -3531,4 +3531,7 @@ extern bool is_keymap_or_macro(void);
 #if (defined(OBJECT1_C) || defined(VARIABLE_C))
 extern player_type p_body;
 #endif
+#if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
+extern bool macro_edit;
+#endif
 #endif /* INCLUDED_EXTERNS_H */
