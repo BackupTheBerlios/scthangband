@@ -2289,12 +2289,7 @@ void do_cmd_cast(void)
             break;
         case 20: /* Alter Reality */
 			msg_print("The world changes!");
-                if (autosave_l)
-                {
-                    do_cmd_save_game(TRUE);
-                }
-			new_level_flag = TRUE;
-			came_from=START_RANDOM;
+			change_level(dun_level, START_RANDOM);
 			break;
         case 21: /* Polymorph Self */
             do_poly_self();

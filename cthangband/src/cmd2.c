@@ -282,8 +282,6 @@ void do_cmd_go_down(void)
 				/* Go down */
 			use_stairs(!dun_defs[cur_dungeon].tower, !fall_trap);
 				}
-				/* Hack - If you've gone 'down' to level 0  then go down again to level 1 */
-				if(dun_level == 0) change_level(1, START_STAIRS);
 		}
 	}
 

@@ -694,18 +694,13 @@ static void hit_trap(void)
                 msg_print("You fell through a trap door!");
 				dam = damroll(2, 8);
                 name = "a trap door";
-                if ((autosave_l) && (p_ptr->chp >= 0))
-                {
-					do_cmd_save_game(TRUE);
-                }
-                new_level_flag = TRUE;
 		   		if (dun_defs[cur_dungeon].tower)
 				{
-					dun_level--;
+					change_level(dun_level-1, START_RANDOM);
 				}
 				else
 				{
-                dun_level++;
+					change_level(dun_level+1, START_RANDOM);
 				}
 			}
 			break;
@@ -1991,12 +1986,7 @@ void move_player(int dir, int do_pickup)
 					cur_town = wild_grid[wildy][wildx].dungeon;
 					msg_format("You stumble into %s.",town_defs[cur_town].name);
 				}
-				new_level_flag=TRUE;
-				came_from=START_WALK;
-                if (autosave_l)
-                {
-					do_cmd_save_game(TRUE);
-                }
+				change_level(0, START_WALK);
 			}
 			
 			/* Closed door */
@@ -2088,12 +2078,7 @@ void move_player(int dir, int do_pickup)
 					cur_town = wild_grid[wildy][wildx].dungeon;
 					msg_format("You enter %s.",town_defs[cur_town].name);
 				}
-				new_level_flag=TRUE;
-				came_from=START_WALK;
-                if (autosave_l)
-                {
-					do_cmd_save_game(TRUE);
-                }
+				change_level(0, START_WALK);
 			}
 
 			/* Closed doors */
