@@ -3141,7 +3141,8 @@ static void player_birth_quests(void)
 			/* No 2 quests on the same level (?) */
 			for (j = 0; j<i; j++)
 			{
-				if (q_list[i].level == q_list[j].level)
+				if (q_list[i].level ==
+					q_list[j].level + dun_defs[q_list[j].dungeon].offset)
 				{
 					same_level = TRUE;
 					break;
