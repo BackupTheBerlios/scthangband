@@ -92,11 +92,44 @@ blow_method_type *get_blow_method(byte idx)
 		return NULL;
 }
 
+#define MAX_BLOWS_PER_MONSTER 4
+
+/*
+ * Return a random blow the specified monster has available.
+ */
+static monster_blow *choose_blow(monster_type *m_ptr, monster_blow *blows)
+{
+	int i;
+	monster_blow *b_ptr, *b[MAX_BLOWS_PER_MONSTER];
+
+	/* Count the suitable blows. */
+	for (b_ptr = blows, i = 0; b_ptr < blows+MAX_BLOWS_PER_MONSTER; b_ptr++)
+	{
+		blow_method_type *bm_ptr = get_blow_method(b_ptr->method);
+
+		/* No such blow. */
+		if (!bm_ptr) continue;
+
+		/* Nice monsters don't use 300 point attacks without warning. */
+		if (m_ptr->mflag & MFLAG_NICE && b_ptr->effect == RBE_SHATTER) continue;
+
+		/* Allow this one. */
+		b[i++] = b_ptr;
+	}
+
+	/* Return a random blow. */
+	if (i) return b[rand_int(i)];
+
+	/* Failed to find one. */
+	return 0;
+}
+
 /*
  * Attack the player via physical attacks.
  */
 bool make_attack_normal(int m_idx)
 {
+	monster_blow *mb_ptr;
 	blow_method_type *b_ptr;
 
 	monster_type	*m_ptr = &m_list[m_idx];
@@ -104,8 +137,6 @@ bool make_attack_normal(int m_idx)
 	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
 
 	
-
-	int			ap_cnt,blow_types;
 
 	int			i, j, k, tmp, rlev;
 	int			do_cut, do_stun;
@@ -159,26 +190,10 @@ bool make_attack_normal(int m_idx)
 	/* Assume no blink */
 	blinked = FALSE;
 	
-	/*
-	 * Scan through all four blows 
-	 * until we find one that is valid
-	 */
-	blow_types=4;
-	for(ap_cnt=3;ap_cnt>0;ap_cnt--)
-	{
-		if(!(r_ptr->blow[ap_cnt].method))
-		{
-			blow_types = ap_cnt;
-		}
-	}
-
 	/* Give back movement energy */	
 	m_ptr->energy += extract_energy[m_ptr->mspeed];
 	/* And take some attack energy instead */
 	m_ptr->energy -= (TURN_ENERGY/r_ptr->num_blows);
-
-	/* Select an attack at random */
-	ap_cnt=rand_range(0,blow_types-1);
 
 		 visible = FALSE;
 		 obvious = FALSE;
@@ -188,11 +203,17 @@ bool make_attack_normal(int m_idx)
 
 		 act = NULL;
 
+		/* Choose an attack randomly. */
+		mb_ptr = choose_blow(m_ptr, r_ptr->blow);
+
+		/* No valid attacks. */
+		if (!mb_ptr) return FALSE;
+
 		/* Extract the attack infomation */
-		 effect = r_ptr->blow[ap_cnt].effect;
-		 method = r_ptr->blow[ap_cnt].method;
-		 d_dice = r_ptr->blow[ap_cnt].d_dice;
-		 d_side = r_ptr->blow[ap_cnt].d_side;
+		 effect = mb_ptr->effect;
+		 method = mb_ptr->method;
+		 d_dice = mb_ptr->d_dice;
+		 d_side = mb_ptr->d_side;
 
 		/* Extract the attack details. */
 		b_ptr = get_blow_method(method);
@@ -1084,6 +1105,10 @@ bool make_attack_normal(int m_idx)
 					default: k = 200; break;
 				}
 
+				/* Hack - FORCE_SLEEP monsters only knock a properly prepared
+				 * character out after a warning. */
+				if (m_ptr->mflag & MFLAG_NICE) k = MIN(k, 99);
+
 				/* Apply the stun */
 				if (k) (void)add_flag(TIMED_STUN, k);
 			}
@@ -1160,13 +1185,15 @@ bool make_attack_normal(int m_idx)
 		/* Analyze "visible" monsters only */
 		if (visible)
 		{
+			int blow = mb_ptr-r_ptr->blow;
+
 			/* Count "obvious" attacks (and ones that cause damage) */
-			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10))
+			if (obvious || damage || (r_ptr->r_blows[blow] > 10))
 			{
 				/* Count attacks of this type */
-				if (r_ptr->r_blows[ap_cnt] < MAX_UCHAR)
+				if (r_ptr->r_blows[blow] < MAX_UCHAR)
 				{
-					r_ptr->r_blows[ap_cnt]++;
+					r_ptr->r_blows[blow]++;
 				}
 			}
 		}
