@@ -36,8 +36,8 @@ sCthangband _CVS_
   * Non-fatal errors on loading gave a -more- prompt after the message had gone.
   * Incorrect monster indices, etc., in pref files may have caused inappropriate
     memory access.
-  * The spirit display on the map screen was squashed, and wasn't redrawn when
-    a new spirit was contacted.
+  * The spirit display on the map screen was squashed and inverted, and wasn't
+    redrawn when a new spirit was contacted.
   * Aggravate monster scrolls, and most other sources, did not affect monster 1.
 
 sCthangband 1.0.13

@@ -277,8 +277,8 @@ static void prt_spirit(void)
 		spirit_type *s_ptr = spirits+i;
 
 		/* Add to the appropriate string. */
-		if (i % 2) s = &ls;
-		else s = &ws;
+		if (i % 2) s = &ws;
+		else s = &ls;
 
 		if(!(s_ptr->pact))
 		{
