@@ -2885,7 +2885,7 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 	 * Carry out a pessimistic version of any restore/increase the item
 	 * gives.
 	 */
-	if (stat & (A_RESTORE | A_INCREASE)) change_stat_min(stat, act);
+	if (act & (A_RESTORE | A_INCREASE)) change_stat_min(stat, act);
 
 	/* A worn item. */
 	if ((o_ptr >= inventory+INVEN_WIELD) && (o_ptr < inventory+INVEN_TOTAL))
