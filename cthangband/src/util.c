@@ -2722,7 +2722,7 @@ void mc_roff(cptr s)
 	cptr t;
 	int attr, nattr;
 	
-	for (t = s, attr = TERM_WHITE; (t = strstr(t+1, CC_PREFIX));)
+	for (t = s, attr = TERM_WHITE; (t = strstr(t, CC_PREFIX)); t++)
 	{
 		if (!c_roff(attr, format("%.*s", t-s, s))) return;
 		s = t + strlen(CC_PREFIX)+1;
@@ -2736,7 +2736,7 @@ void mc_roff(cptr s)
 		}
 		else
 		{
-			s -= 2;
+			s = t;
 		}
 	}
 	c_roff(attr, s);
