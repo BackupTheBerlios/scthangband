@@ -1263,9 +1263,6 @@ static void highlight_map_square(const int y, const int x)
 
 	/* Track the square. */
 	cave_track(y, x);
-
-	/* Display the changes now. */
-	window_stuff();
 }
 
 /*

@@ -1928,6 +1928,9 @@ errr Term_inkey(char *ch, bool wait, bool take)
 		{
 			/* Process events (wait for one) */
 			Term_xtra(TERM_XTRA_EVENT, TRUE);
+
+			/* Handle various in-game things any event may trigger. */
+			if (Term->key_head == Term->key_tail) event_stuff();
 		}
 	}
 

@@ -4164,6 +4164,18 @@ void toggle_inven_equip(void)
 }
 
 /*
+ * Update various things in response to non-keypress events.
+ */
+void event_stuff(void)
+{
+	/* Call window_stuff() if the event affects it. */
+	if (p_ptr->window & WINDOW_STUFF_MASK & ~(PW_RETURN))
+	{
+		window_stuff();
+	}
+}
+
+/*
  * Redraw the current term via a display function.
  */
 void resize_window(void)

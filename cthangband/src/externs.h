@@ -3575,7 +3575,7 @@ extern void win_help_display(void);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(XTRA1_C))
 extern display_func_type display_func[NUM_DISPLAY_FUNCS+1];
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void window_stuff(void);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA1_C))
@@ -4048,5 +4048,11 @@ extern void open_aux_crb(cptr pathname);
 #endif
 #if (((defined(MACINTOSH) || defined(MACH_O_CARBON))) && defined(MAC_MPW)) && (defined(MAIN_CRB_C))
 extern void convert_pathname(char* path);
+#endif
+
+/* xtra1.c */
+
+#if (defined(XTRA1_C) || defined(Z_TERM_C))
+extern void event_stuff(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
