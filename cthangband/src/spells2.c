@@ -2121,6 +2121,9 @@ bool detect_monsters_normal(void)
 		msg_print("You sense the presence of monsters!");
 	}
 
+	/* Update window */
+	p_ptr->window |= PW_VISIBLE;
+
 	/* Result */
 	return (flag);
 }
@@ -2188,6 +2191,9 @@ bool detect_monsters_invis(void)
 		/* Describe result */
 		msg_print("You sense the presence of invisible creatures!");
 	}
+
+	/* Update window */
+	p_ptr->window |= PW_VISIBLE;
 
 	/* Result */
 	return (flag);
@@ -2258,6 +2264,9 @@ bool detect_monsters_evil(void)
 		msg_print("You sense the presence of evil creatures!");
 	}
 
+	/* Update window */
+	p_ptr->window |= PW_VISIBLE;
+
 	/* Result */
 	return (flag);
 }
@@ -2326,6 +2335,9 @@ bool detect_monsters_string(cptr Match)
 		/* Describe result */
         msg_print("You sense the presence of monsters!");
 	}
+
+	/* Update window */
+	p_ptr->window |= PW_VISIBLE;
 
 	/* Result */
 	return (flag);
@@ -2403,6 +2415,9 @@ bool detect_monsters_xxx(u32b match_flag)
 		/* Describe result */
 		msg_format("You sense the presence of %s!", desc_monsters);
 		msg_print(NULL);
+
+		/* Update window */
+		p_ptr->window |= PW_VISIBLE;
 	}
 
 	/* Result */
@@ -6425,6 +6440,9 @@ Ego weapons and normal weapons can be blessed automatically. */
    {
        /* Describe result */
        msg_print("You sense the presence of unnatural beings!");
+
+	/* Update window */
+	p_ptr->window |= PW_VISIBLE;
    }
 
    /* Result */

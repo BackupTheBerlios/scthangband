@@ -3083,7 +3083,7 @@ cptr window_flag_desc[32] =
 	"Display equipment",
 	"Display spell list",
 	"Display character",
-	NULL,
+	"Display nearby monsters",
 	NULL,
 	"Display messages",
 	"Display overhead view",

@@ -4043,6 +4043,8 @@ void play_game(bool new_game)
 	/* Process */
 	while (TRUE)
 	{
+		p_ptr->window |= PW_VISIBLE;
+
 		/* Process the level */
 		dungeon();
 

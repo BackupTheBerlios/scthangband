@@ -568,7 +568,7 @@ bool set_image(int v)
 	p_ptr->update |= (PU_MONSTERS);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
+	p_ptr->window |= (PW_OVERHEAD | PW_VISIBLE);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -2599,6 +2599,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		/* Delete the monster */
 		delete_monster_idx(m_idx,TRUE);
+
+		/* Update window */
+		p_ptr->window |= PW_VISIBLE;
 
 		/* Not afraid */
 		(*fear) = FALSE;
