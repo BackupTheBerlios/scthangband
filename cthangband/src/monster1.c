@@ -276,6 +276,82 @@ static cptr roff_monster(u32b flags2, u32b flags3)
 }
 	
 
+static cptr convert_spell_text(cptr string, monster_race *r_ptr)
+{
+
+	cptr t=0;
+
+	/* Dump */
+
+	/* Is there a LEV term to evaluate? */
+	if (r_ptr->r_tkills || spoil_mon) t = strchr(string, '(');
+	if (t && spoil_flag) t = strstr(t, "LEV");
+	/* Unknown/missing level term, so give the formula. */
+	if (!t)
+	{
+		return string;
+	}
+	/* Use spoil_flag to hide all of this information. */
+	else if (!spoil_flag)
+	{
+		return (cptr)format("%.*s", t-string-1, string);
+	}
+	else
+	{
+		char op = 0;
+		cptr end,s, good="0123456789+-/*";
+		int d;
+
+		/* Find the first bad character. */
+		for (s = end = t+3; strchr(good, *end); end++);
+
+		/* If LEV+AdE is found, end should be at the +. */
+		if (*end == 'd')
+		{
+			while (strchr("0123456789d", *end)) end--;
+		}
+		/* If LEV+foo is found, end should be at the +. */
+		else if (strchr("+-/*", end[-1]))
+		{
+			end--;
+		}
+
+		/* Evaluate the LEV term from left to right. */
+		for (d = r_ptr->level; s < end; s++)
+		{
+			if (isdigit(*s))
+			{
+				long num = strtol(s,0,0);
+
+				/* Find the end of the number. */
+				while (s < end && isdigit(*s)) s++; s--;
+							
+				switch (op)
+				{
+					case '+': d += num; break;
+					case '-': d -= num; break;
+					case '*': d *= num; break;
+					case '/': d /= num; break;
+					default: s--; goto stop; /* Paranoia */
+				}
+			}
+			else
+			{
+				op = *s;
+			}
+		}
+stop:
+		/* Hack - turn (123) into 123. */
+		if (t[-1] == '(' && s[0] == ')')
+		{
+			t--;
+			s++;
+		}
+
+		return (cptr)format("%.*s%d%s", t-string, string, d, s);
+	}
+}
+
 /*
  * Hack -- display monster information using "roff()"
  *
@@ -749,10 +825,10 @@ static void roff_aux(int r_idx)
 	if (flags4 & (RF4_SHRIEK))		vp[vn++] = "shriek for help";
 	if (flags4 & (RF4_XXX3))		vp[vn++] = "do something";
     if (flags4 & (RF4_SHARD))      vp[vn++] = "produce shard balls";
-	if (flags4 & (RF4_ARROW_1))		vp[vn++] = "fire an arrow";
-	if (flags4 & (RF4_ARROW_2))		vp[vn++] = "fire arrows";
-	if (flags4 & (RF4_ARROW_3))		vp[vn++] = "fire a missile";
-	if (flags4 & (RF4_ARROW_4))		vp[vn++] = "fire missiles";
+	if (flags4 & (RF4_ARROW_1))		vp[vn++] = "fire an arrow (1d6)";
+	if (flags4 & (RF4_ARROW_2))		vp[vn++] = "fire arrows (3d6)";
+	if (flags4 & (RF4_ARROW_3))		vp[vn++] = "fire a missile (5d6)";
+	if (flags4 & (RF4_ARROW_4))		vp[vn++] = "fire missiles (7d6)";
 
 	/* Describe inate attacks */
 	if (vn)
@@ -826,37 +902,42 @@ static void roff_aux(int r_idx)
 
 
 	/* Collect spells */
+
+	/* If "LEV" is followed by some mathematical terms, the game will combine
+	 * them into a single number. Because of this, the format is important.
+	 * In fact, it should always be LEV*A/B+C+EdF. */
+
 	vn = 0;
-	if (flags5 & (RF5_BA_ACID))		vp[vn++] = "produce acid balls";
-	if (flags5 & (RF5_BA_ELEC))		vp[vn++] = "produce lightning balls";
-	if (flags5 & (RF5_BA_FIRE))		vp[vn++] = "produce fire balls";
-	if (flags5 & (RF5_BA_COLD))		vp[vn++] = "produce frost balls";
-	if (flags5 & (RF5_BA_POIS))		vp[vn++] = "produce poison balls";
-	if (flags5 & (RF5_BA_NETH))		vp[vn++] = "produce nether balls";
-	if (flags5 & (RF5_BA_WATE))		vp[vn++] = "produce water balls";
-    if (flags4 & (RF4_BA_NUKE))     vp[vn++] = "produce balls of radiation";
-	if (flags5 & (RF5_BA_MANA))		vp[vn++] = "invoke mana storms";
-	if (flags5 & (RF5_BA_DARK))		vp[vn++] = "invoke darkness storms";
-    if (flags4 & (RF4_BA_CHAO))     vp[vn++] = "invoke raw chaos";
-    if (flags6 & (RF6_DREAD_CURSE))        vp[vn++] = "invoke the Dread Curse of Azathoth";
+	if (flags5 & (RF5_BA_ACID))		vp[vn++] = "produce acid balls (LEV*3+15)";
+	if (flags5 & (RF5_BA_ELEC))		vp[vn++] = "produce lightning balls (LEV*3/2+8)";
+	if (flags5 & (RF5_BA_FIRE))		vp[vn++] = "produce fire balls (LEV*7/2+10)";
+	if (flags5 & (RF5_BA_COLD))		vp[vn++] = "produce frost balls (LEV*3/2+10)";
+	if (flags5 & (RF5_BA_POIS))		vp[vn++] = "produce poison balls (12d2)";
+	if (flags5 & (RF5_BA_NETH))		vp[vn++] = "produce nether balls (LEV+50+10d10)";
+	if (flags5 & (RF5_BA_WATE))		vp[vn++] = "produce water balls (50+1d(LEV*5/2))";
+    if (flags4 & (RF4_BA_NUKE))     vp[vn++] = "produce balls of radiation (LEV+10d6)";
+	if (flags5 & (RF5_BA_MANA))		vp[vn++] = "invoke mana storms (LEV*5+10d10)";
+	if (flags5 & (RF5_BA_DARK))		vp[vn++] = "invoke darkness storms (LEV*5+10d10)";
+    if (flags4 & (RF4_BA_CHAO))     vp[vn++] = "invoke raw chaos (LEV*2+10d10)";
+    if (flags6 & (RF6_DREAD_CURSE))        vp[vn++] = "invoke the Dread Curse of Azathoth (66-90% of HP)";
 	if (flags5 & (RF5_DRAIN_MANA))	vp[vn++] = "drain mana";
-	if (flags5 & (RF5_MIND_BLAST))	vp[vn++] = "cause mind blasting";
-	if (flags5 & (RF5_BRAIN_SMASH))	vp[vn++] = "cause brain smashing";
-    if (flags5 & (RF5_CAUSE_1))     vp[vn++] = "cause light wounds and cursing";
-    if (flags5 & (RF5_CAUSE_2))     vp[vn++] = "cause serious wounds and cursing";
-    if (flags5 & (RF5_CAUSE_3))     vp[vn++] = "cause critical wounds and cursing";
-	if (flags5 & (RF5_CAUSE_4))		vp[vn++] = "cause mortal wounds";
-	if (flags5 & (RF5_BO_ACID))		vp[vn++] = "produce acid bolts";
-	if (flags5 & (RF5_BO_ELEC))		vp[vn++] = "produce lightning bolts";
-	if (flags5 & (RF5_BO_FIRE))		vp[vn++] = "produce fire bolts";
-	if (flags5 & (RF5_BO_COLD))		vp[vn++] = "produce frost bolts";
-	if (flags5 & (RF5_BO_POIS))		vp[vn++] = "produce poison bolts";
-	if (flags5 & (RF5_BO_NETH))		vp[vn++] = "produce nether bolts";
-	if (flags5 & (RF5_BO_WATE))		vp[vn++] = "produce water bolts";
-	if (flags5 & (RF5_BO_MANA))		vp[vn++] = "produce mana bolts";
-	if (flags5 & (RF5_BO_PLAS))		vp[vn++] = "produce plasma bolts";
-	if (flags5 & (RF5_BO_ICEE))		vp[vn++] = "produce ice bolts";
-	if (flags5 & (RF5_MISSILE))		vp[vn++] = "produce magic missiles";
+	if (flags5 & (RF5_MIND_BLAST))	vp[vn++] = "cause mind blasting (8d8)";
+	if (flags5 & (RF5_BRAIN_SMASH))	vp[vn++] = "cause brain smashing (12d15)";
+    if (flags5 & (RF5_CAUSE_1))     vp[vn++] = "cause light wounds (3d8) and cursing";
+    if (flags5 & (RF5_CAUSE_2))     vp[vn++] = "cause serious wounds (8d8) and cursing";
+    if (flags5 & (RF5_CAUSE_3))     vp[vn++] = "cause critical wounds (10d15) and cursing";
+	if (flags5 & (RF5_CAUSE_4))		vp[vn++] = "cause mortal wounds (15d15)";
+	if (flags5 & (RF5_BO_ACID))		vp[vn++] = "produce acid bolts (LEV/3+7d8)";
+	if (flags5 & (RF5_BO_ELEC))		vp[vn++] = "produce lightning bolts (LEV/3+4d8)";
+	if (flags5 & (RF5_BO_FIRE))		vp[vn++] = "produce fire bolts (LEV/3+9d8)";
+	if (flags5 & (RF5_BO_COLD))		vp[vn++] = "produce frost bolts (LEV/3+6d8)";
+	if (flags5 & (RF5_BO_POIS))		vp[vn++] = "do nothing (RF5_BO_POIS)";
+	if (flags5 & (RF5_BO_NETH))		vp[vn++] = "produce nether bolts (LEV*3/2+30+5d5)";
+	if (flags5 & (RF5_BO_WATE))		vp[vn++] = "produce water bolts (LEV+10d10)";
+	if (flags5 & (RF5_BO_MANA))		vp[vn++] = "produce mana bolts (50+1d(LEV*7/2))";
+	if (flags5 & (RF5_BO_PLAS))		vp[vn++] = "produce plasma bolts (LEV+10+8d7)";
+	if (flags5 & (RF5_BO_ICEE))		vp[vn++] = "produce ice bolts (LEV+6d6)";
+	if (flags5 & (RF5_MISSILE))		vp[vn++] = "produce magic missiles (LEV/3+2d6)";
 	if (flags5 & (RF5_SCARE))		vp[vn++] = "terrify";
 	if (flags5 & (RF5_BLIND))		vp[vn++] = "blind";
 	if (flags5 & (RF5_CONF))		vp[vn++] = "confuse";
@@ -926,7 +1007,7 @@ static void roff_aux(int r_idx)
 			else c_roff(MONCOL_MAGIC, " or ");
 
 			/* Dump */
-			c_roff(MONCOL_MAGIC, vp[n]);
+			c_roff(MONCOL_MAGIC, convert_spell_text(vp[n], r_ptr));
 		}
 	}
 
