@@ -3539,6 +3539,110 @@ static void do_cmd_knowledge_kill_count(void)
 
 
 /*
+ * Sorting hook for do_cmd_knowledge_deaths().
+ *
+ * Sort from high number of kills to low, and then from low monster level to high.
+ */
+static bool ang_sort_comp_deaths(vptr u, vptr v, int a, int b)
+{
+	s16b *races = (s16b*)u;
+	bool dif = r_info[races[a]].r_deaths-r_info[races[b]].r_deaths;
+	if (!dif) dif = r_info[races[b]].level-r_info[races[a]].level;
+	return (dif >= 0);
+}
+
+/*
+ * Swapping hook for do_cmd_knowledge_deaths()
+ */
+static void ang_sort_swap_deaths(vptr u, vptr v, int a, int b)
+{
+	s16b *races = (s16b*)u;
+	s16b c = races[a];
+	races[a]=races[b];
+	races[b]=c;
+}
+/*
+ * Display those monsters who have directly killed players in the current
+ * save file. Note that non-living causes (e.g. poison) aren't recorded.
+ */
+static void do_cmd_knowledge_deaths(void)
+{
+	FILE *fff;
+
+	char file_name[1024];
+
+	typedef struct death_type death_type;
+	
+	s16b races[MAX_R_IDX];
+
+	s32b i, Uniques = 0, Races = 0, Deaths = 0;
+
+	/* Temporary file */
+	if (path_temp(file_name, 1024)) return;
+
+	/* Open a new file */
+	fff = my_fopen(file_name, "w");
+
+	/* Count the monsters who have killed some ancestors. */
+	for (i = 0; i < MAX_R_IDX; i++)
+	{
+		if (r_info[i].r_deaths) races[Races++] = i;
+	}
+	
+	/* Are there any? */
+	if (!Races)
+	{
+		fprintf(fff, "None of your ancestors have been killed directly by a monster here.");
+	}
+	else
+	{
+		/* Sort the list by numbers of deaths. */
+		ang_sort_comp = ang_sort_comp_deaths;
+		ang_sort_swap = ang_sort_swap_deaths;
+		ang_sort(races, 0, Races);
+		fprintf(fff, "The following monster%s have claimed some of your ancestors' deaths here:\n", (Races == 1) ? "" : "s");
+
+		/* Display the sorted list. */
+		for (i = 0; i < Races; i++)
+		{
+			char string[80];
+			monster_race *r_ptr = &r_info[races[i]];
+			bool plural = r_ptr->r_deaths > 1 && ~r_ptr->flags1 & RF1_UNIQUE;
+			bool article = r_ptr->r_deaths == 1 && ~r_ptr->flags1 & RF1_UNIQUE;
+
+			/* Grab the string. */
+			strcpy(string, r_name+r_ptr->name);
+
+			/* Don't leave a single capital letter in non-unique names as it looks odd. */
+			if (~r_ptr->flags1 & RF1_UNIQUE) string[0] = FORCELOWER(string[0]);
+
+			/* Pluralise or add an indefinite article as required. */
+			full_name(string, plural, article, FALSE);
+
+			/* Format the string, including the monster's ASCII representation. */
+			fprintf(fff, " %c   %d w%s killed by %s\n", r_ptr->d_char, r_ptr->r_deaths, (r_ptr->r_deaths == 1) ? "as" : "ere", string);
+
+			/* Count the total. */
+			Deaths+=r_ptr->r_deaths;
+			if (r_ptr->flags1 & RF1_UNIQUE) Uniques+=r_ptr->r_deaths;
+		}
+
+		/* Display a summary at the bottom. */
+		fprintf(fff,"----------------------------------------------\n");
+		fprintf(fff,"Total: Killed %lu times by %lu types of creature (%lu times by uniques).\n", Deaths, Races, Uniques);
+	}
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Display the file contents */
+	show_file(file_name, "Causes of death");
+
+	/* Remove the file */
+	fd_kill(file_name);
+}
+
+/*
  * Display known objects
  */
 static void do_cmd_knowledge_objects(void)
@@ -3650,6 +3754,21 @@ void do_cmd_knowledge(void)
 	/* Interact until done */
 	while (1)
 	{
+		typedef struct knowledge_type knowledge_type;
+		struct knowledge_type {
+		cptr text;
+		void (*func)();
+		};
+		knowledge_type knowledge[] = {
+		{"known artifacts", do_cmd_knowledge_artifacts},
+		{"knwon uniques", do_cmd_knowledge_uniques},
+		{"known objects", do_cmd_knowledge_objects},
+		{"kill count", do_cmd_knowledge_kill_count},
+		{"ancestral causes of death", do_cmd_knowledge_deaths},
+		{"chaos features", do_cmd_knowledge_chaos_features},
+		{"current allies", do_cmd_knowledge_pets},
+		};
+		byte max_knowledge = sizeof(knowledge)/sizeof(knowledge_type);
 		/* Clear screen */
 		Term_clear();
 
@@ -3657,15 +3776,14 @@ void do_cmd_knowledge(void)
 		prt("Display current knowledge", 2, 0);
 
 		/* Give some choices */
-		prt("(1) Display known artifacts", 4, 5);
-		prt("(2) Display known uniques", 5, 5);
-		prt("(3) Display known objects", 6, 5);
-		prt("(4) Display kill count", 7, 5);
-		prt("(5) Display chaos features", 8, 5);
-		prt("(6) Display current allies", 9, 5);
+		for (i = 0; i < max_knowledge; i++)
+		{
+			knowledge_type *kn_ptr = &knowledge[i];
+			prt(format("(%d) Display %s", i+1, kn_ptr->text), 4+i, 5);
+		}
 
 		/* Prompt */
-		prt("Command: ", 11, 0);
+		prt("Command: ", 5+i, 0);
 
 		/* Prompt */
 		i = inkey();
@@ -3673,46 +3791,11 @@ void do_cmd_knowledge(void)
 		/* Done */
 		if (i == ESCAPE) break;
 
-		/* Artifacts */
-		if (i == '1')
+		/* Known options (see above) */
+		else if (i > '0' && i < '1'+max_knowledge)
 		{
-			/* Spawn */
-			do_cmd_knowledge_artifacts();
-		}
-
-		/* Uniques */
-		else if (i == '2')
-		{
-			/* Spawn */
-			do_cmd_knowledge_uniques();
-		}
-
-        
-		/* Objects */
-		else if (i == '3')
-		{
-			/* Spawn */
-			do_cmd_knowledge_objects();
-		}
-
-		/* Kill count  */
-		else if (i == '4')
-		{
-			/* Spawn */
-			do_cmd_knowledge_kill_count();
-		}
-
-		/* Chaos Features */
-		else if (i == '5')
-		{
-			/* Spawn */
-			do_cmd_knowledge_chaos_features();
-		}
-
-		/* Pets */
-		else if (i == '6')
-		{
-			do_cmd_knowledge_pets();
+			knowledge_type *kn_ptr = &knowledge[i-'1'];
+			(*(kn_ptr->func))();
 		}
 
 		/* Unknown option */
