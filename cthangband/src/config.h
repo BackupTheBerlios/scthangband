@@ -469,16 +469,16 @@
 /*
  * OPTION: Default font (when using X11).
  */
-#define DEFAULT_X11_FONT		"9x15"
+#define DEFAULT_X11_FONT		"5x8"
 
-/*
- * OPTION: Default fonts (when using X11)
- */
-#define DEFAULT_X11_FONT_SCREEN		DEFAULT_X11_FONT
-#define DEFAULT_X11_FONT_MIRROR		"6x12"
-#define DEFAULT_X11_FONT_RECALL		"6x12"
-#define DEFAULT_X11_FONT_CHOICE		"6x12"
-
+#define DEFAULT_X11_FONT_0            "9x15"
+#define DEFAULT_X11_FONT_1            "6x12"
+#define DEFAULT_X11_FONT_2            "6x12"
+#define DEFAULT_X11_FONT_3            "6x12"
+#define DEFAULT_X11_FONT_4            "5x8"
+#define DEFAULT_X11_FONT_5            "5x8"
+#define DEFAULT_X11_FONT_6            "5x8"
+#define DEFAULT_X11_FONT_7            "5x8"
 
 
 /*

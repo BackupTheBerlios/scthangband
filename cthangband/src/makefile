@@ -54,7 +54,7 @@ SRCS = \
   wizard1.c wizard2.c \
   generate.c dungeon.c init1.c init2.c \
   quest.c \
-  main-gcu.c main-x11.c main.c
+  main-gcu.c main-x11.c maid-x11.c main.c
 
 OBJS = \
   z-util.o z-virt.o z-form.o z-rand.o z-term.o \
@@ -67,7 +67,7 @@ OBJS = \
   wizard1.o wizard2.o \
   generate.o dungeon.o init1.o init2.o \
   quest.o \
-  main-gcu.o main-x11.o main.o
+  main-gcu.o main-x11.o maid-x11.o main.o
 
 
 
@@ -178,7 +178,8 @@ init1.o: init1.c $(INCS)
 init2.o: init2.c $(INCS)
 load.o: load.c $(INCS) loadsave.h
 main-gcu.o: main-gcu.c $(INCS)
-main-x11.o: main-x11.c $(INCS)
+main-x11.o: main-x11.c $(INCS) maid-x11.h
+maid-x11.o: maid-x11.c $(INCS) maid-x11.h
 main.o: main.c $(INCS)
 melee1.o: melee1.c $(INCS)
 melee2.o: melee2.c $(INCS)

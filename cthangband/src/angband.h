@@ -42,7 +42,9 @@
  */
 #include "defines.h"
 #include "types.h"
+#ifndef DELAY_EXTERNS_H
 #include "externs.h"
+#endif
 
 
 

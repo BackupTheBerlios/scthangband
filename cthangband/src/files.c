@@ -3895,7 +3895,7 @@ static bool do_cmd_help_aux(cptr name, cptr what, int line)
 		}
 
 		/* Show a general "title" */
-		prt(format("[%s %d.%d.%d, %s, Line %d/%d]", GAME_NAME, 
+		prt(format("[%s %d.%d.%d, %s, Line %d/%d]", GAME_NAME,
 		           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
 		           caption, line, size), 0, 0);
 
