@@ -5738,9 +5738,6 @@ done_reflect: /* Success */
 		y = gy[i];
 		x = gx[i];
 
-		/* Find the closest point in the blast. */
-		if (breath) 
-
 		/* Check features */
 		if (flg & (PROJECT_GRID))
 		{
