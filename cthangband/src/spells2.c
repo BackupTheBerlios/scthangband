@@ -2861,22 +2861,27 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 }
 
 
+/*
+ * Make it bad, or if it's already bad, make it worse!
+ */
 static void curse_artifact (object_type * o_ptr)
 {
-	    if (o_ptr->pval) o_ptr->pval = 0 - ((o_ptr->pval) + randint(4));
-	    if (o_ptr->to_a) o_ptr->to_a = 0 - ((o_ptr->to_a) + randint(4));
-	    if (o_ptr->to_h) o_ptr->to_h = 0 - ((o_ptr->to_h) + randint(4));
-	    if (o_ptr->to_d) o_ptr->to_d = 0 - ((o_ptr->to_d) + randint(4));
-	    o_ptr->flags3 |= ( TR3_HEAVY_CURSE | TR3_CURSED );
-	    if (randint(4)==1) o_ptr-> flags3 |= TR3_PERMA_CURSE;
-	    if (randint(3)==1) o_ptr-> flags3 |= TR3_TY_CURSE;
-	    if (randint(2)==1) o_ptr-> flags3 |= TR3_AGGRAVATE;
-	    if (randint(3)==1) o_ptr-> flags3 |= TR3_DRAIN_EXP;
-	    if (randint(2)==1) o_ptr-> flags3 |= TR3_TELEPORT;
-        else if (randint(3)==1) o_ptr->flags3 |= TR3_NO_TELE;
-        if (randint(3)==1) o_ptr->flags3 |= TR3_NO_MAGIC;
-	    o_ptr->ident |= IDENT_CURSED;
+	if (o_ptr->pval) o_ptr->pval = 0 - ((o_ptr->pval) + randint(4));
+	if (o_ptr->to_a) o_ptr->to_a = 0 - ((o_ptr->to_a) + randint(4));
+	if (o_ptr->to_h) o_ptr->to_h = 0 - ((o_ptr->to_h) + randint(4));
+	if (o_ptr->to_d) o_ptr->to_d = 0 - ((o_ptr->to_d) + randint(4));
+	o_ptr->flags3 |= ( TR3_HEAVY_CURSE | TR3_CURSED );
 
+	/* Perma-cursed objects which cannot be instantly recognised are bad. */
+/*	if (randint(4)==1) o_ptr-> flags3 |= TR3_PERMA_CURSE; */
+
+	if (randint(3)==1) o_ptr-> flags3 |= TR3_TY_CURSE;
+	if (randint(2)==1) o_ptr-> flags3 |= TR3_AGGRAVATE;
+	if (randint(3)==1) o_ptr-> flags3 |= TR3_DRAIN_EXP;
+	if (randint(2)==1) o_ptr-> flags3 |= TR3_TELEPORT;
+    else if (randint(3)==1) o_ptr->flags3 |= TR3_NO_TELE;
+    if (randint(3)==1) o_ptr->flags3 |= TR3_NO_MAGIC;
+	o_ptr->ident |= IDENT_CURSED;
 }
 
 static void random_plus (object_type * o_ptr, bool is_scroll)
