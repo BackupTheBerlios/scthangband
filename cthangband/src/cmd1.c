@@ -279,7 +279,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 			}
 
 			/* Slay Dragon  */
-			if ((f1 & (TR1_SLAY_DRAGON)) &&
+			if ((f1 & (TR1_ALL_SLAY_DRAGON)) &&
 			    (r_ptr->flags3 & (RF3_DRAGON)))
 			{
 				if (m_ptr->ml)
@@ -287,25 +287,13 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= (RF3_DRAGON);
 				}
 
-				if (mult < 3) mult = 3;
-			}
-
-			/* Execute Dragon */
-			if ((f1 & (TR1_KILL_DRAGON)) &&
-			    (r_ptr->flags3 & (RF3_DRAGON)))
-			{
-				if (m_ptr->ml)
+				switch (f1 & (TR1_ALL_SLAY_DRAGON))
 				{
-					r_ptr->r_flags3 |= (RF3_DRAGON);
+					case TR1_SLAY_DRAGON: mult = 3; break;
+					case TR1_KILL_DRAGON: mult = 5; break;
+					case TR1_X15_DRAGON: mult = 15; break;
 				}
-
-
-				if (mult < 5) mult = 5;
-
-                if ((o_ptr->name1 == ART_LIGHTNING))
-                    mult *= 3;
 			}
-
 
 			/* Brand (Acid) */
 			if (f1 & (TR1_BRAND_ACID))

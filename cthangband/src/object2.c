@@ -933,8 +933,12 @@ s32b flag_cost(object_type * o_ptr, bool all)
     if (f1 & TR1_SLAY_ORC) total += 3000;
     if (f1 & TR1_SLAY_TROLL) total += 3500;
     if (f1 & TR1_SLAY_GIANT) total += 3500;
-    if (f1 & TR1_SLAY_DRAGON) total += 3500;
-    if (f1 & TR1_KILL_DRAGON) total += 5500;
+	switch (f1 & TR1_ALL_SLAY_DRAGON)
+	{
+		case TR1_SLAY_DRAGON: total += 3500; break;
+		case TR1_KILL_DRAGON: total += 5500; break;
+		case TR1_X15_DRAGON: total += 10000; break;
+	}
     if (f1 & TR1_VORPAL) total += 5000;
     if (f1 & TR1_IMPACT) total += 5000;
     if (f1 & TR1_BRAND_POIS) total += 7500;

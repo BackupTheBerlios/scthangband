@@ -6848,13 +6848,19 @@ static void process_monster(int m_idx, bool is_friend)
 					monster_desc(m_name, m_ptr, 0x04);
 
 					/* React to objects that hurt the monster */
-					if (r_ptr->flags3 & (RF3_DRAGON)) f1_want |= (TR1_KILL_DRAGON | TR1_SLAY_DRAGON);
-					if (r_ptr->flags3 & (RF3_TROLL)) f1_want |= (TR1_SLAY_TROLL);
-					if (r_ptr->flags3 & (RF3_GIANT)) f1_want |= (TR1_SLAY_GIANT);
+					if (r_ptr->flags3 & (RF3_DRAGON)) f1_want |=
+						(TR1_ALL_SLAY_DRAGON);
+					if (r_ptr->flags3 & (RF3_TROLL)) f1_want |=
+						(TR1_SLAY_TROLL);
+					if (r_ptr->flags3 & (RF3_GIANT)) f1_want |=
+						(TR1_SLAY_GIANT);
 					if (r_ptr->flags3 & (RF3_ORC)) f1_want |= (TR1_SLAY_ORC);
-					if (r_ptr->flags3 & (RF3_DEMON)) f1_want |= (TR1_SLAY_DEMON);
-					if (r_ptr->flags3 & (RF3_UNDEAD)) f1_want |= (TR1_SLAY_UNDEAD);
-					if (r_ptr->flags3 & (RF3_ANIMAL)) f1_want |= (TR1_SLAY_ANIMAL);
+					if (r_ptr->flags3 & (RF3_DEMON)) f1_want |=
+						(TR1_SLAY_DEMON);
+					if (r_ptr->flags3 & (RF3_UNDEAD)) f1_want |=
+						(TR1_SLAY_UNDEAD);
+					if (r_ptr->flags3 & (RF3_ANIMAL)) f1_want |=
+						(TR1_SLAY_ANIMAL);
 					if (r_ptr->flags3 & (RF3_EVIL)) f1_want |= (TR1_SLAY_EVIL);
 
 					/* The object cannot be picked up by the monster */

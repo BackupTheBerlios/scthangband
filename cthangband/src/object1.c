@@ -3427,14 +3427,26 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		s16b tohit, todam, weap_blow, mut_blow;
 		s32b dam;
 		bool slay = FALSE;
-		/* Calculate execute dragon */
+		/* Calculate x15 slays. */
 		j = 0;
-		if (o_ptr->art_flags1 & TR1_KILL_DRAGON) board[j++] = "dragons";
+		if ((o_ptr->art_flags1 & TR1_ALL_SLAY_DRAGON) == TR1_X15_DRAGON)
+			board[j++]  = "dragons";
+		if (j)
+		{
+			weapon_stats(o_ptr, 15, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			slay = TRUE;
+			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+				"and", board, j);
+		}
+
+		/* Calculate x5 slays. */
+		j = 0;
+		if ((o_ptr->art_flags1 & TR1_ALL_SLAY_DRAGON) == TR1_KILL_DRAGON)
+			board[j++] = "dragons";
 
 		if (j)
 		{
-			int mult = (o_ptr->name1 == ART_LIGHTNING) ? 15 : 5;
-			weapon_stats(o_ptr, mult, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			weapon_stats(o_ptr, 5, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
 			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
 				"and", board, j);
@@ -3442,8 +3454,8 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 
 		/* Calculate x3 slays */
 		j = 0;
-		if ((o_ptr->art_flags1 & TR1_SLAY_DRAGON) &&
-			(~o_ptr->art_flags1 & TR1_KILL_DRAGON)) board[j++] = "dragons";
+		if ((o_ptr->art_flags1 & TR1_ALL_SLAY_DRAGON) == TR1_SLAY_DRAGON)
+			board[j++] = "dragons";
 		if (o_ptr->art_flags1 & TR1_SLAY_ORC) board[j++] = "orcs";
 		if (o_ptr->art_flags1 & TR1_SLAY_TROLL) board[j++] = "trolls";
 		if (o_ptr->art_flags1 & TR1_SLAY_GIANT) board[j++] = "giants";
@@ -3513,62 +3525,53 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	/* Without spoil_dam, simply list the slays. */
 	else
 	{
-		if (o_ptr->art_flags1 & (TR1_BRAND_ACID))
+		/* Calculate brands */
+		j = 0;
+		if (o_ptr->art_flags1 & TR1_BRAND_FIRE) board[j++] = "fire";
+		if (o_ptr->art_flags1 & TR1_BRAND_COLD) board[j++] = "cold";
+		if (o_ptr->art_flags1 & TR1_BRAND_ELEC) board[j++] = "electricity";
+		if (o_ptr->art_flags1 & TR1_BRAND_ACID) board[j++] = "acid";
+		if (o_ptr->art_flags1 & TR1_BRAND_POIS) board[j++] = "poison";
+		if (j)
 		{
-			info[i++].txt = "It does extra damage from acid.";
+			do_list_flags("It causes extra damage via", "and", board, j);
 		}
-		if (o_ptr->art_flags1 & (TR1_BRAND_ELEC))
+		
+		j = 0;
+		if ((o_ptr->art_flags1 & TR1_ALL_SLAY_DRAGON) == TR1_X15_DRAGON)
 		{
-			info[i++].txt = "It does extra damage from electricity.";
+			board[j++] = "dragons";
 		}
-		if (o_ptr->art_flags1 & (TR1_BRAND_FIRE))
+		if (j)
 		{
-			info[i++].txt = "It does extra damage from fire.";
-		}
-		if (o_ptr->art_flags1 & (TR1_BRAND_COLD))
-		{
-			info[i++].txt = "It does extra damage from frost.";
+			do_list_flags("It causes a huge amount of extra damage to", "and",
+				board, j);
 		}
 
-		if (o_ptr->art_flags1 & (TR1_BRAND_POIS))
+		j = 0;
+		if ((o_ptr->art_flags1 & TR1_ALL_SLAY_DRAGON) == TR1_KILL_DRAGON)
 		{
-		        info[i++].txt = "It poisons your foes.";
+			board[j++] = "dragons";
 		}
-		if (o_ptr->art_flags1 & (TR1_KILL_DRAGON))
+		if (j)
 		{
-			info[i++].txt = "It is a great bane of dragons.";
+			do_list_flags("It causes a lot of extra damage to", "and", board,
+				j);
 		}
-		else if (o_ptr->art_flags1 & (TR1_SLAY_DRAGON))
+
+		j = 0;
+		if ((o_ptr->art_flags1 & TR1_ALL_SLAY_DRAGON) == TR1_SLAY_DRAGON)
+			board[j++] = "dragons";
+		if (o_ptr->art_flags1 & TR1_SLAY_ORC) board[j++] = "orcs";
+		if (o_ptr->art_flags1 & TR1_SLAY_TROLL) board[j++] = "trolls";
+		if (o_ptr->art_flags1 & TR1_SLAY_GIANT) board[j++] = "giants";
+		if (o_ptr->art_flags1 & TR1_SLAY_DEMON) board[j++] = "demons";
+		if (o_ptr->art_flags1 & TR1_SLAY_UNDEAD) board[j++] = "undead";
+		if (o_ptr->art_flags1 & TR1_SLAY_EVIL) board[j++] = "evil monsters";
+		if (o_ptr->art_flags1 & TR1_SLAY_ANIMAL) board[j++] = "animals";
+		if (j)
 		{
-			info[i++].txt = "It is especially deadly against dragons.";
-		}
-		if (o_ptr->art_flags1 & (TR1_SLAY_ORC))
-		{
-			info[i++].txt = "It is especially deadly against orcs.";
-		}
-		if (o_ptr->art_flags1 & (TR1_SLAY_TROLL))
-		{
-			info[i++].txt = "It is especially deadly against trolls.";
-		}
-		if (o_ptr->art_flags1 & (TR1_SLAY_GIANT))
-		{
-			info[i++].txt = "It is especially deadly against giants.";
-		}
-		if (o_ptr->art_flags1 & (TR1_SLAY_DEMON))
-		{
-			info[i++].txt = "It strikes at demons with holy wrath.";
-		}
-		if (o_ptr->art_flags1 & (TR1_SLAY_UNDEAD))
-		{
-			info[i++].txt = "It strikes at undead with holy wrath.";
-		}
-		if (o_ptr->art_flags1 & (TR1_SLAY_EVIL))
-		{
-			info[i++].txt = "It fights against evil with holy fury.";
-		}
-		if (o_ptr->art_flags1 & (TR1_SLAY_ANIMAL))
-		{
-			info[i++].txt = "It is especially deadly against natural creatures.";
+			do_list_flags("It causes extra damage to", "and", board, j);
 		}
 	}
 

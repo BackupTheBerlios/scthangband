@@ -41,13 +41,15 @@
 /* A macro for how large the current info array can grow before it overflows. */
 #define MAX_I	(int)(z_info->fake_info_size/head->info_len)
 
-/*
- * Hack -- error tracking
- */
-extern s16b error_idx;
-extern s16b error_line;
 
+typedef struct flag_name flag_name;
 
+struct flag_name
+{
+	cptr name; /* The name of the flag in the text file. */
+	int set; /* The set into which the flag is to be sent. */
+	u32b flag; /* The flag being set. */
+};
 
 /*** Helper arrays for parsing ascii template files ***/
 
@@ -361,118 +363,105 @@ static cptr r_info_flags6[] =
 /*
  * Object flags
  */
-static cptr k_info_flags1[] =
+static flag_name info_flags[] =
 {
-	"STR",
-	"INT",
-	"WIS",
-	"DEX",
-	"CON",
-	"CHR",
-	"XXX1",
-	"XXX2",
-	"STEALTH",
-	"SEARCH",
-	"INFRA",
-	"TUNNEL",
-	"SPEED",
-	"BLOWS",
-    "CHAOTIC",
-    "VAMPIRIC",
-	"SLAY_ANIMAL",
-	"SLAY_EVIL",
-	"SLAY_UNDEAD",
-	"SLAY_DEMON",
-	"SLAY_ORC",
-	"SLAY_TROLL",
-	"SLAY_GIANT",
-	"SLAY_DRAGON",
-	"KILL_DRAGON",
-    "VORPAL",
-	"IMPACT",
-    "BRAND_POIS",
-	"BRAND_ACID",
-	"BRAND_ELEC",
-	"BRAND_FIRE",
-	"BRAND_COLD"
-};
-
-/*
- * Object flags
- */
-static cptr k_info_flags2[] =
-{
-	"SUST_STR",
-	"SUST_INT",
-	"SUST_WIS",
-	"SUST_DEX",
-	"SUST_CON",
-	"SUST_CHR",
-	"RAND_RESIST",
-	"RAND_POWER",
-	"IM_ACID",
-	"IM_ELEC",
-	"IM_FIRE",
-	"IM_COLD",
-	"RAND_EXTRA",
-    "REFLECT",
-	"FREE_ACT",
-	"HOLD_LIFE",
-	"RES_ACID",
-	"RES_ELEC",
-	"RES_FIRE",
-	"RES_COLD",
-	"RES_POIS",
-    "RES_FEAR",
-	"RES_LITE",
-	"RES_DARK",
-	"RES_BLIND",
-	"RES_CONF",
-	"RES_SOUND",
-	"RES_SHARDS",
-	"RES_NETHER",
-	"RES_NEXUS",
-	"RES_CHAOS",
-	"RES_DISEN"
-};
-
-/*
- * Object flags
- */
-static cptr k_info_flags3[] =
-{
-    "SH_FIRE",
-    "SH_ELEC",
-	"XXX3",
-	"AUTO_CURSE",
-    "NO_TELE",
-    "NO_MAGIC",
-    "WRAITH",
-    "TY_CURSE",
-	"EASY_KNOW",
-	"HIDE_TYPE",
-	"SHOW_MODS",
-	"INSTA_ART",
-	"FEATHER",
-	"LITE",
-	"SEE_INVIS",
-	"TELEPATHY",
-	"SLOW_DIGEST",
-	"REGEN",
-	"XTRA_MIGHT",
-	"XTRA_SHOTS",
-	"IGNORE_ACID",
-	"IGNORE_ELEC",
-	"IGNORE_FIRE",
-	"IGNORE_COLD",
-	"ACTIVATE",
-	"DRAIN_EXP",
-	"TELEPORT",
-	"AGGRAVATE",
-	"BLESSED",
-	"CURSED",
-	"HEAVY_CURSE",
-	"PERMA_CURSE"
+	{"STR", 0, TR1_STR},
+	{"INT", 0, TR1_INT},
+	{"WIS", 0, TR1_WIS},
+	{"DEX", 0, TR1_DEX},
+	{"CON", 0, TR1_CON},
+	{"CHR", 0, TR1_CHR},
+/*	{"XXX1", 0, TR1_XXX1}, */
+/*	{"XXX2", 0, TR1_XXX2}, */
+	{"STEALTH", 0, TR1_STEALTH},
+	{"SEARCH", 0, TR1_SEARCH},
+	{"INFRA", 0, TR1_INFRA},
+	{"TUNNEL", 0, TR1_TUNNEL},
+	{"SPEED", 0, TR1_SPEED},
+	{"BLOWS", 0, TR1_BLOWS},
+    {"CHAOTIC", 0, TR1_CHAOTIC},
+    {"VAMPIRIC", 0, TR1_VAMPIRIC},
+	{"SLAY_ANIMAL", 0, TR1_SLAY_ANIMAL},
+	{"SLAY_EVIL", 0, TR1_SLAY_EVIL},
+	{"SLAY_UNDEAD", 0, TR1_SLAY_UNDEAD},
+	{"SLAY_DEMON", 0, TR1_SLAY_DEMON},
+	{"SLAY_ORC", 0, TR1_SLAY_ORC},
+	{"SLAY_TROLL", 0, TR1_SLAY_TROLL},
+	{"SLAY_GIANT", 0, TR1_SLAY_GIANT},
+	{"SLAY_DRAGON", 0, TR1_SLAY_DRAGON},
+	{"KILL_DRAGON", 0, TR1_KILL_DRAGON},
+	{"X15_DRAGON", 0, TR1_X15_DRAGON},
+    {"VORPAL", 0, TR1_VORPAL},
+	{"IMPACT", 0, TR1_IMPACT},
+    {"BRAND_POIS", 0, TR1_BRAND_POIS},
+	{"BRAND_ACID", 0, TR1_BRAND_ACID},
+	{"BRAND_ELEC", 0, TR1_BRAND_ELEC},
+	{"BRAND_FIRE", 0, TR1_BRAND_FIRE},
+	{"BRAND_COLD", 0, TR1_BRAND_COLD},
+	{"SUST_STR", 1, TR2_SUST_STR},
+	{"SUST_INT", 1, TR2_SUST_INT},
+	{"SUST_WIS", 1, TR2_SUST_WIS},
+	{"SUST_DEX", 1, TR2_SUST_DEX},
+	{"SUST_CON", 1, TR2_SUST_CON},
+	{"SUST_CHR", 1, TR2_SUST_CHR},
+	{"RAND_RESIST", 1, TR2_RAND_RESIST},
+	{"RAND_POWER", 1, TR2_RAND_POWER},
+	{"IM_ACID", 1, TR2_IM_ACID},
+	{"IM_ELEC", 1, TR2_IM_ELEC},
+	{"IM_FIRE", 1, TR2_IM_FIRE},
+	{"IM_COLD", 1, TR2_IM_COLD},
+	{"RAND_EXTRA", 1, TR2_RAND_EXTRA},
+    {"REFLECT", 1, TR2_REFLECT},
+	{"FREE_ACT", 1, TR2_FREE_ACT},
+	{"HOLD_LIFE", 1, TR2_HOLD_LIFE},
+	{"RES_ACID", 1, TR2_RES_ACID},
+	{"RES_ELEC", 1, TR2_RES_ELEC},
+	{"RES_FIRE", 1, TR2_RES_FIRE},
+	{"RES_COLD", 1, TR2_RES_COLD},
+	{"RES_POIS", 1, TR2_RES_POIS},
+    {"RES_FEAR", 1, TR2_RES_FEAR},
+	{"RES_LITE", 1, TR2_RES_LITE},
+	{"RES_DARK", 1, TR2_RES_DARK},
+	{"RES_BLIND", 1, TR2_RES_BLIND},
+	{"RES_CONF", 1, TR2_RES_CONF},
+	{"RES_SOUND", 1, TR2_RES_SOUND},
+	{"RES_SHARDS", 1, TR2_RES_SHARDS},
+	{"RES_NETHER", 1, TR2_RES_NETHER},
+	{"RES_NEXUS", 1, TR2_RES_NEXUS},
+	{"RES_CHAOS", 1, TR2_RES_CHAOS},
+	{"RES_DISEN", 1, TR2_RES_DISEN},
+    {"SH_FIRE", 2, TR3_SH_FIRE},
+    {"SH_ELEC", 2, TR3_SH_ELEC},
+/*	{"XXX3", 2, TR3_XXX3},*/
+	{"AUTO_CURSE", 2, TR3_AUTO_CURSE},
+    {"NO_TELE", 2, TR3_NO_TELE},
+    {"NO_MAGIC", 2, TR3_NO_MAGIC},
+    {"WRAITH", 2, TR3_WRAITH},
+    {"TY_CURSE", 2, TR3_TY_CURSE},
+	{"EASY_KNOW", 2, TR3_EASY_KNOW},
+	{"HIDE_TYPE", 2, TR3_HIDE_TYPE},
+	{"SHOW_MODS", 2, TR3_SHOW_MODS},
+	{"INSTA_ART", 2, TR3_INSTA_ART},
+	{"FEATHER", 2, TR3_FEATHER},
+	{"LITE", 2, TR3_LITE},
+	{"SEE_INVIS", 2, TR3_SEE_INVIS},
+	{"TELEPATHY", 2, TR3_TELEPATHY},
+	{"SLOW_DIGEST", 2, TR3_SLOW_DIGEST},
+	{"REGEN", 2, TR3_REGEN},
+	{"XTRA_MIGHT", 2, TR3_XTRA_MIGHT},
+	{"XTRA_SHOTS", 2, TR3_XTRA_SHOTS},
+	{"IGNORE_ACID", 2, TR3_IGNORE_ACID},
+	{"IGNORE_ELEC", 2, TR3_IGNORE_ELEC},
+	{"IGNORE_FIRE", 2, TR3_IGNORE_FIRE},
+	{"IGNORE_COLD", 2, TR3_IGNORE_COLD},
+	{"ACTIVATE", 2, TR3_ACTIVATE},
+	{"DRAIN_EXP", 2, TR3_DRAIN_EXP},
+	{"TELEPORT", 2, TR3_TELEPORT},
+	{"AGGRAVATE", 2, TR3_AGGRAVATE},
+	{"BLESSED", 2, TR3_BLESSED},
+	{"CURSED", 2, TR3_CURSED},
+	{"HEAVY_CURSE", 2, TR3_HEAVY_CURSE},
+	{"PERMA_CURSE", 2, TR3_PERMA_CURSE},
 };
 
 /* A list of the flags for explosion types understood by project(). */
@@ -606,6 +595,17 @@ static errr check_version(char *buf, header *head)
 }
 
 /*
+ * A macro to run a given function which returns errr, and return any error
+ * it gives.
+ */
+#define try(X) \
+{ \
+	errr err = X; \
+	if (err != SUCCESS) return err; \
+}
+
+
+/*
  * Compress %x strings into single characters within a NUL-terminated string.
  *
  * As my_fgets() only outputs printable characters and '\0's, the
@@ -711,13 +711,6 @@ static errr compress_string(char *buf)
 	}
 
 	return SUCCESS;
-}
-
-/* A macro to give effect to the return code of the above. */
-#define do_compress_string(buff) \
-{ \
-	errr err = compress_string(buff); \
-	if (err) return err; \
 }
 
 
@@ -988,7 +981,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 			clear_escapes(buf);
 
 			/* Also convert the %x sequences used in sequences for objects. */
-			do_compress_string(buf);
+			try(compress_string(buf));
 
 			/* Save the monster index */
 			d_ptr->r_idx = r_idx;
@@ -1582,37 +1575,21 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 /*
  * Grab one flag in an object_kind from a textual string
  */
-static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
+static errr grab_one_object_flag(u32b **flag, cptr what)
 {
-	int i;
+	uint i;
 
-	/* Check flags1 */
-	for (i = 0; i < 32; i++)
+	/* Check flags */
+	for (i = 0; i < N_ELEMENTS(info_flags); i++)
 	{
-		if (streq(what, k_info_flags1[i]))
-		{
-			k_ptr->flags1 |= (1L << i);
-			return (0);
-		}
-	}
+		flag_name *f_ptr = info_flags+i;
 
-	/* Check flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags2[i]))
-		{
-			k_ptr->flags2 |= (1L << i);
-			return (0);
-		}
-	}
+		if (!flag[f_ptr->set]) continue;
 
-	/* Check flags3 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags3[i]))
+		if (streq(what, f_ptr->name))
 		{
-			k_ptr->flags3 |= (1L << i);
-			return (0);
+			*(flag[f_ptr->set]) |= f_ptr->flag;
+			return SUCCESS;
 		}
 	}
 
@@ -1623,6 +1600,16 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 	return (1);
 }
 
+static errr grab_one_kind_flag(object_kind *ptr, cptr what)
+{
+	u32b *f[3] =
+	{
+		&(ptr->flags1),
+		&(ptr->flags2),
+		&(ptr->flags3),
+	};
+	return grab_one_object_flag(f, what);
+}
 
 
 static object_kind *kt_info = NULL;
@@ -1678,7 +1665,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			*extra = k_ptr = (object_kind*)head->info_ptr + i;
 
 			/* Compress the string */
-			do_compress_string(s);
+			try(compress_string(s));
 
 			/* Store the name */
 			if (!(k_ptr->name = add_name(head, s)))
@@ -2044,7 +2031,7 @@ errr parse_u_info(char *buf, header *head, vptr UNUSED *extra)
 			u_ptr = (unident_type*)head->info_ptr+error_idx;
 
 			/* Compress the string */
-			do_compress_string(s);
+			try(compress_string(s));
 
 			/* Store the name */
 			if (!(u_ptr->name = add_name(head, s)))
@@ -2214,45 +2201,15 @@ errr parse_u_info(char *buf, header *head, vptr UNUSED *extra)
 /*
  * Grab one flag in an artifact_type from a textual string
  */
-static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
+static errr grab_one_artifact_flag(artifact_type *ptr, cptr what)
 {
-	int i;
-
-	/* Check flags1 */
-	for (i = 0; i < 32; i++)
+	u32b *f[3] =
 	{
-		if (streq(what, k_info_flags1[i]))
-		{
-			a_ptr->flags1 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Check flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags2[i]))
-		{
-			a_ptr->flags2 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Check flags3 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags3[i]))
-		{
-			a_ptr->flags3 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Oops */
-	msg_format("Unknown artifact flag '%s'.", what);
-
-	/* Error */
-	return (1);
+		&(ptr->flags1),
+		&(ptr->flags2),
+		&(ptr->flags3),
+	};
+	return grab_one_object_flag(f, what);
 }
 
 
@@ -2401,46 +2358,17 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 /*
  * Grab one flag in a ego-item_type from a textual string
  */
-static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what)
+static errr grab_one_ego_item_flag(ego_item_type *ptr, cptr what)
 {
-	int i;
-
-	/* Check flags1 */
-	for (i = 0; i < 32; i++)
+	u32b *f[3] =
 	{
-		if (streq(what, k_info_flags1[i]))
-		{
-			e_ptr->flags1 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Check flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags2[i]))
-		{
-			e_ptr->flags2 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Check flags3 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags3[i]))
-		{
-			e_ptr->flags3 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Oops */
-	msg_format("Unknown ego-item flag '%s'.", what);
-
-	/* Error */
-	return (1);
+		&(ptr->flags1),
+		&(ptr->flags2),
+		&(ptr->flags3),
+	};
+	return grab_one_object_flag(f, what);
 }
+
 
 
 

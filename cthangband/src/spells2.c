@@ -1616,15 +1616,17 @@ void self_knowledge(void)
 		{
 			info[i++] = "Your weapon is especially deadly against giants.";
 		}
-		if (f1 & (TR1_SLAY_DRAGON))
+		switch (f1 & TR1_ALL_SLAY_DRAGON)
 		{
+			case TR1_SLAY_DRAGON:
 			info[i++] = "Your weapon is especially deadly against dragons.";
-		}
-
-		/* Special "kill" flags */
-		if (f1 & (TR1_KILL_DRAGON))
-		{
+			break;
+			case TR1_KILL_DRAGON:
 			info[i++] = "Your weapon is a great bane of dragons.";
+			break;
+			case TR1_X15_DRAGON:
+			info[i++] = "Your weapon is incredibly deadly against dragons.";
+			break;
 		}
 	}
 

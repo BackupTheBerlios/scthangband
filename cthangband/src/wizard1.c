@@ -471,7 +471,8 @@ static flag_desc slay_flags_desc[] =
 	{ TR1_SLAY_TROLL,         "Troll" },
 	{ TR1_SLAY_GIANT,         "Giant" },
 	{ TR1_SLAY_DRAGON,        "Dragon" },
-	{ TR1_KILL_DRAGON,        "Xdragon" }
+	{ TR1_KILL_DRAGON,        "Xdragon" },
+	{ TR1_X15_DRAGON,	"x15-dragon" },
 };
 
 /*

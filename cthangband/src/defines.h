@@ -2373,6 +2373,8 @@ logaux(x, 1) logaux(x, 0) 255
 #define TR1_SLAY_GIANT          0x00400000L
 #define TR1_SLAY_DRAGON         0x00800000L
 #define TR1_KILL_DRAGON         0x01000000L     /* Execute Dragon */
+#define TR1_X15_DRAGON	0x01800000L
+#define TR1_ALL_SLAY_DRAGON	(TR1_SLAY_DRAGON | TR1_KILL_DRAGON | TR1_X15_DRAGON)
 #define TR1_VORPAL                      0x02000000L     /* Later */
 #define TR1_IMPACT                      0x04000000L     /* Cause Earthquakes */
 #define TR1_BRAND_POIS                  0x08000000L
