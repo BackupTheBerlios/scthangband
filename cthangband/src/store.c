@@ -4474,6 +4474,9 @@ void do_cmd_store(void)
 	/* Hack -- Cancel "see" mode */
 	command_see = FALSE;
 	
+	/* Reset the resize hook. */
+	delete_resize_hook(resize_store);
+
 	/* Restore the saved screen, if any. */
 	if (t)
 	{
@@ -4482,9 +4485,6 @@ void do_cmd_store(void)
 	}
 	else
 	{
-		/* Reset the resize hook. */
-		delete_resize_hook(resize_store);
-
 		/* Update everything */
 		do_cmd_redraw();
 	}		
