@@ -221,34 +221,34 @@ extern void do_cmd_racial_power(void);
 
 /* cmd3.c */
 
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_inven(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_equip(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_wield(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_takeoff(void);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_drop(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_destroy(void);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void destroy_pack(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_observe(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_uninscribe(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_inscribe(void);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
@@ -263,7 +263,7 @@ extern void do_cmd_look(void);
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_locate(void);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_query_symbol(void);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
@@ -275,22 +275,22 @@ extern void do_cmd_handle(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(STORE_C) || defined(WIZARD2_C))
 extern void do_cmd_redraw(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_change_name(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_message_one(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_messages(void);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C))
 extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_options(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_pref(void);
 #endif
 
@@ -302,13 +302,13 @@ extern void do_cmd_pref(void);
 
 
 
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_note(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_version(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_feeling(bool FeelingOnly);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
@@ -479,7 +479,7 @@ extern void display_player(int mode);
 #if (defined(CMD4_C) || defined(FILES_C))
 extern errr file_character(cptr name, bool UNUSED full);
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C))
 extern void do_cmd_help(cptr name);
 #endif
 #if (defined(FILES_C) || defined(INIT1_C) || defined(OBJECT1_C) || defined(UTIL_C))
@@ -3578,7 +3578,7 @@ extern display_func_type display_func[NUM_DISPLAY_FUNCS+1];
 #if (defined(DUNGEON_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void window_stuff(void);
 #endif
-#if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(XTRA1_C))
 extern void toggle_inven_equip(void);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA1_C))
@@ -3821,7 +3821,7 @@ extern u32b Rand_simple(u32b m);
 #if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_VCS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_XXX_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern term *Term;
 #endif
-#if (defined(DUNGEON_C) || defined(STORE_C) || defined(Z_TERM_C))
+#if (defined(DUNGEON_C) || defined(Z_TERM_C))
 extern errr Term_user(int n);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
@@ -3998,4 +3998,13 @@ extern int find_object(object_type *o_ptr);
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void update_object(object_type *o_ptr, int where);
 #endif
+
+/* dungeon.c */
+
+#if (defined(DUNGEON_C) || defined(STORE_C))
+extern void process_command(void);
+#endif
+
+/* (null) */
+
 #endif /* INCLUDED_EXTERNS_H */

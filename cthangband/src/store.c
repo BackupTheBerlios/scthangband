@@ -3471,14 +3471,6 @@ static void store_process_command(void)
 			break;
 		}
 
-			/* Redraw */
-		case KTRL('R'):
-		{
-			do_cmd_redraw();
-			display_store();
-			break;
-		}
-
 			/* Get (purchase) */
 		case 'g':
 		{
@@ -3946,197 +3938,29 @@ static void store_process_command(void)
 
 
 
-			/*** Inventory Commands ***/
+		/*** Non-store Commands ***/
 
-			/* Wear/wield equipment */
-		case 'w':
+		/* Most of these simply use the normal process_command() function. */
+		case 'w': case 't': case 'k': case 'e': case 'i': case 'I': case '{':
+		case '}': case '?': case '/': case '!': case '"': case '=': case ':':
+		case 'V': case '~': case '|': case '(': case ')': case 'C':
+		case KTRL('F'): case KTRL('I'): case KTRL('O'): case KTRL('P'):
+		case KTRL('R'):
 		{
-			do_cmd_wield();
+			process_command();
 			break;
 		}
 
-			/* Take off equipment */
-		case 't':
-		{
-			do_cmd_takeoff();
-			break;
-		}
-
-			/* Destroy an item */
-		case 'k':
-		{
-			do_cmd_destroy();
-			break;
-		}
-
-			/* Equipment list */
-		case 'e':
-		{
-			do_cmd_equip();
-			break;
-		}
-
-			/* Inventory list */
-		case 'i':
-		{
-			do_cmd_inven();
-			break;
-		}
-
-
-			/*** Various commands ***/
-
-			/* Identify an object */
-		case 'I':
-		{
-			do_cmd_observe();
-			break;
-		}
-
-			/* Hack -- toggle windows */
-		case KTRL('I'):
-		{
-			toggle_inven_equip();
-			break;
-		}
-
-
-
-			/*** Use various objects ***/
-
-			/* Browse a book */
+		/* b is handled separately, as the "unified" version is inappropriate
+		 * in a shop.
+		 */
 		case 'b':
 		{
 			do_cmd_browse(NULL);
 			break;
 		}
 
-			/* Inscribe an object */
-		case '{':
-		{
-			do_cmd_inscribe();
-			break;
-		}
-
-			/* Uninscribe an object */
-		case '}':
-		{
-			do_cmd_uninscribe();
-			break;
-		}
-
-
-
-			/*** Help and Such ***/
-
-			/* Help */
-		case '?':
-		{
-			do_cmd_help(NULL);
-			break;
-		}
-
-			/* Identify symbol */
-		case '/':
-		{
-			do_cmd_query_symbol();
-			break;
-		}
-
-			/* Character description */
-		case 'C':
-		{
-			do_cmd_change_name();
-            display_store();
-			break;
-		}
-
-
-			/*** System Commands ***/
-
-			/* Hack -- User interface */
-		case '!':
-		{
-			(void)Term_user(0);
-			break;
-		}
-
-			/* Single line from a pref file */
-		case '"':
-		{
-			do_cmd_pref();
-			break;
-		}
-
-			/* Interact with options */
-		case '=':
-		{
-			do_cmd_options();
-			break;
-		}
-
-
-			/*** Misc Commands ***/
-
-			/* Take notes */
-		case ':':
-		{
-			do_cmd_note();
-			break;
-		}
-
-			/* Version info */
-		case 'V':
-		{
-			do_cmd_version();
-			break;
-		}
-
-			/* Repeat level feeling */
-		case KTRL('F'):
-		{
-			do_cmd_feeling(FALSE);
-			break;
-		}
-
-			/* Show previous message */
-		case KTRL('O'):
-		{
-			do_cmd_message_one();
-			break;
-		}
-
-			/* Show previous messages */
-		case KTRL('P'):
-		{
-			do_cmd_messages();
-			break;
-		}
-
-            /* Check artifacts, uniques etc. */
-		case '~':
-		case '|':
-		{
-            do_cmd_knowledge();
-			break;
-		}
-
-			/* Load "screen dump" */
-		case '(':
-		{
-			do_cmd_load_screen();
-			break;
-		}
-
-			/* Save "screen dump" */
-		case ')':
-		{
-			do_cmd_save_screen();
-			break;
-		}
-
-
-			/* Hack -- Unknown command */
+		/* Hack -- Unknown command */
 		default:
 		{
 			msg_print("That command does not work in stores.");

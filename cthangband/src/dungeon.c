@@ -2226,7 +2226,7 @@ static void do_cmd_script(void)
  *
  * XXX XXX XXX Make some "blocks"
  */
-static void process_command(void)
+void process_command(void)
 {
 	char help_str[20];
 	cptr cmd_str;
