@@ -2395,7 +2395,7 @@ extern char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C))
 extern bool get_check(cptr prompt);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool get_com(cptr prompt, char *command);
 #endif
 #if (defined(CMD3_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C))

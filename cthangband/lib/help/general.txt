@@ -349,9 +349,27 @@ Allow you to interact with macros. You may load or save macros from user pref fi
 $GInteract with visuals (%)
 Allow you to interact with visuals. You may load or save visuals from user pref files, or modify the attr/char mappings for the monsters, objects, and terrain features. You must use the "redraw" command (Ctrl-R) to redraw the map after changing attr/char mappings.
 
+In the "Change" options, the following keys are valid:
+
+n: Move to a valid object, monster, etc..
+a: Change (by index) the colour used for this object.
+c: Change (by index) the character used for this object.
+
+Lower case letters (n, a, c) increase the specified value, wrapping at the end.
+Upper case letters (N, A, C) decrease them.
+Pressing Ctrl with the letter allows you to type in the desired number. As this may not be possible on all terminals, pressing ^ and then the letter gives the same effect.
+
 %%%%% <cmd=&>
 $GInteract with colors (&)
 Allow the user to interact with colors. This command only works on some systems.
+
+In the "Modify" option, the following keys are valid:
+
+      n: Move to the next colour.
+r, g, b: Change the amount of red, blue or green in the indicated colour.
+
+Lower case letters increase the specified value, wrapping at the end.
+Uper case letters decrease them.
 
 %%%%% <cmd=">
 $GEnter a user pref command (")

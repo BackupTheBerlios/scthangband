@@ -2409,6 +2409,14 @@ dcv_retry:
 				/* All done */
 				if (i == ESCAPE) break;
 
+				/* Hack - allow control codes to be entered separately. */
+				if (i == '^')
+				{
+					char c;
+					if (get_com("Control: ", &c)) i = KTRL(c);
+					else continue;
+				}
+
 				/* Split i into base character and modifier. */
 				inc = (iscntrl(i)) ? 0 : (islower(i)) ? 1 : -1;
 				i = 'a'+i-(iscntrl(i) ? KTRL('A') : (islower(i)) ? 'a' : 'A');
