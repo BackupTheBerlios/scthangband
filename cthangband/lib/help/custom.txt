@@ -11,27 +11,7 @@ Various concepts are mentioned in the descriptions below, including "disturb", (
 A date/version in brackets refers to when the option was added, or when it was substantially modified. No annotation indicates an option which was present in Cthangband 4.0.1, and usually much earlier.
 
 %%%%%
-=== User Interface options ===
-
-%%%%% <rogue_like_commands>
-$GRogue-like commands [rogue_like_commands]
-Selects the "roguelike" command set (see "command.txt" for info).
-
-%%%%% <quick_messages>
-$GQuick -more- prompts [quick_messages] (altered 17/1/2001)
-Allows the use of any keypress as a response to the "-more-" prompt (useful for monster farming).
-
-%%%%% <quick_prompt>
-$GQuick [y/n] prompts [quick_messages] (17/1/2001)
-Allows most keys to mean "no" to any "[y/n]" prompt.
-
-%%%%% <other_query_flag>
-$GPrompt for various information [other_query_flag]
-Allows the user to select objects from the center of stacks. Without this option, the uppermost appropriate object will always be selected.
-
-%%%%% <always_repeat>
-$GRepeat obvious commands [always_repeat]
-Tells the game that when you attempt to "open" a door or chest, "bash" a door, "tunnel" through walls, "disarm" traps or chests, or "alter" any grid, that you wish to automatically "repeat" the command 99 times (see "command.txt"), unless an explicit repeat count was given.
+=== Display options ===
 
 %%%%% <depth_in_feet>
 $GShow dungeon level in feet [depth_in_feet]
@@ -65,21 +45,48 @@ If this option has been compiled in, it allows you to display your character usi
 $GHilite the player with the cursor [hilite_player]
 Place the visible cursor on the player. This looks fine on some Unix machines, but horrible on most graphics machines. Note that only some machines are able to *not* show the cursor, but on those machines, hiding the cursor often speeds up the game and looks better.
 
-%%%%% <confirm_stairs>
-$GPrompt before exiting a dungeon level [confirm_stairs]
-Some players often accidentally press the '<' key and exit a Special feeling level. If this option is set, the program asks for confirmation before you go up or down the stairs. Others may find the prompt annoying, they should of course not set this option. :-)
-
 %%%%% <centre_view>
 $GCentre view around player [centre_view]
 Keeps the player's character in the center of the screen, and moves the dungeon around the player. Can be useful to prevent off-screen breaths.
 
-%%%%% <macro_edit>
-$GUse macros as edit keys in prompts [macro_edit] (1.0.1)
-String prompts (such as with the "Inscribe" command) have a small number of edit commands available (see prompts.txt for details). If this option is off, the special command mode is turned on and off with the Tab (or Ctrl-I) key. If this option is on, accessing these keys through a macro (on many systems this happens when you use the number pad) gives them their special meaning and accessing them without a macro does not. Turn this off if you have trouble inscribing an object with "1" or using the edit commands.
-
 %%%%% <scroll_edge>
 $GScroll until detection reaches the edge [scroll_edge] (1.0.4)
 This only has an effect if the main window is larger than the default size, so that the visible area is larger than the detection area. If set, the map moves until the player's detection area includes the corner. If unset, the map stops moving when the visible area includes the corner.
+
+%%%%% <allow_fake_colour> (_CVS_)
+$GUse special monochrome display for emphasis [allow_fake_colour]
+This causes the screen to turn monochrome if one of a small number of special things happen.
+
+%%%%%
+=== User Interface options ===
+
+%%%%% <rogue_like_commands>
+$GRogue-like commands [rogue_like_commands]
+Selects the "roguelike" command set (see "command.txt" for info).
+
+%%%%% <quick_messages>
+$GQuick -more- prompts [quick_messages] (altered 17/1/2001)
+Allows the use of any keypress as a response to the "-more-" prompt (useful for monster farming).
+
+%%%%% <quick_prompt>
+$GQuick [y/n] prompts [quick_messages] (17/1/2001)
+Allows most keys to mean "no" to any "[y/n]" prompt.
+
+%%%%% <other_query_flag>
+$GPrompt for various information [other_query_flag]
+Allows the user to select objects from the center of stacks. Without this option, the uppermost appropriate object will always be selected.
+
+%%%%% <always_repeat>
+$GRepeat obvious commands [always_repeat]
+Tells the game that when you attempt to "open" a door or chest, "bash" a door, "tunnel" through walls, "disarm" traps or chests, or "alter" any grid, that you wish to automatically "repeat" the command 99 times (see "command.txt"), unless an explicit repeat count was given.
+
+%%%%% <confirm_stairs>
+$GPrompt before exiting a dungeon level [confirm_stairs]
+Some players often accidentally press the '<' key and exit a Special feeling level. If this option is set, the program asks for confirmation before you go up or down the stairs. Others may find the prompt annoying, they should of course not set this option. :-)
+
+%%%%% <macro_edit>
+$GUse macros as edit keys in prompts [macro_edit] (1.0.1)
+String prompts (such as with the "Inscribe" command) have a small number of edit commands available (see prompts.txt for details). If this option is off, the special command mode is turned on and off with the Tab (or Ctrl-I) key. If this option is on, accessing these keys through a macro (on many systems this happens when you use the number pad) gives them their special meaning and accessing them without a macro does not. Turn this off if you have trouble inscribing an object with "1" or using the edit commands.
 
 %%%%% <beginner_help>
 $GDisplay beginner help on startup [beginner_help] (1.0.12)

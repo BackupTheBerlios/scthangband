@@ -2125,7 +2125,7 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Available Options (full to 3,23).
+ * Available Options (full to 3,24).
  * In addition, 7,2 7,8-11 and 7,13-15 are used for cheat options, and the
  * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.
  *
@@ -2419,8 +2419,14 @@ option_type option_info[] =
 	{&macro_edit, TRUE, OPTS_UI, 3, 11,
 	"macro_edit", "Use macros as edit keys in prompts" },
 
+	{ &beginner_help, TRUE, OPTS_UI, 0, 25,
+	"beginner_help",	"Display beginner help on startup" },
+
 	{&scroll_edge, FALSE, OPTS_DISPLAY, 3, 13,
 	"scroll_edge", "Scroll until detection reaches the edge"},
+
+	{&allow_fake_colour, TRUE, OPTS_DISPLAY, 3, 24,
+	"allow_fake_colour", "Use special monochrome display for emphasis"},
 
 	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
     "no_centre_run",                "Do not centre view whilst running" },
@@ -2539,9 +2545,6 @@ option_type option_info[] =
 
 	/*** End of Table ***/
 
-	{ &beginner_help, TRUE, OPTS_UI, 0, 25,
-	"beginner_help",	"Display beginner help on startup" },
-
 	{ NULL,                 0, 0, 0, 0,
 	NULL,                   NULL }
 };
@@ -2555,6 +2558,7 @@ force_type option_force[] =
 	{&wear_confirm, FALSE, &confirm_wear_all},
 	{&flow_by_sound, FALSE, &flow_by_smell},
 	{&use_graphics, TRUE, &use_color},
+	{&use_color, FALSE, &allow_fake_colour},
 	{0, 0, 0}
 };
 

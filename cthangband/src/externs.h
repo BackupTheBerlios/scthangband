@@ -3989,4 +3989,10 @@ extern void p_clear_mutations(void);
 #if (defined(SPELLS2_C) || defined(XTRA2_C))
 extern int add_chaos_features(cptr *info, bool (*reject)(int));
 #endif
+
+/* variable.c */
+
+#if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool allow_fake_colour;
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -180,6 +180,7 @@ bool verbose_haggle;		/* Verbose messages if auto_haggle is set */
 bool scroll_edge;	/* Scroll until detection reaches the edge. */
 bool show_piles; /* Show stacks with a special colour/character. */
 bool beginner_help; /* Show a special help file at start-up. */
+bool allow_fake_colour; /* Allow "fake" colours */
 
 
 /* Option Set 2 -- Disturbance */

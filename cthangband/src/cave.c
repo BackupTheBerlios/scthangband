@@ -1223,6 +1223,8 @@ void move_cursor_relative(int row, int col)
  */
 static void fake_colour(byte *a)
 {
+	if (!allow_fake_colour) return;
+
 	/* Graphics prevent fake colours, except with main-ibm.c. */
 	if (use_graphics && strcmp(ANGBAND_SYS, "ibm")) return;
 
