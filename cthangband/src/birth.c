@@ -2837,64 +2837,80 @@ static void player_wipe(void)
 /*
  * Each player starts out with a few items, given as k_idx.
  * In addition, he always has some food and a few torches.
+ *
+ * The last object if the player has a power from one of the earlier objects
+ * intrinsically.
  */
 
-static s16b player_init[MAX_TEMPLATE][3] =
+static s16b player_init[MAX_TEMPLATE][6] =
 {
 	{
 		/* Adventurer */
 		OBJ_RING_RES_FEAR, /* Warriors need it! */
 		OBJ_CUTLASS,
-		OBJ_LUMP_OF_SULPHUR
+		OBJ_LUMP_OF_SULPHUR,
+		OBJ_RING_SUSTAIN_STR,
+		0,0
 	},
 
 	{
 		/* Swashbuckler */
 		OBJ_POTION_SPEED,
 		OBJ_RAPIER,
-		OBJ_HARD_LEATHER_ARMOUR 
+		OBJ_HARD_LEATHER_ARMOUR,
+		0,0,0
 	},
 
 	{
 		/* Gladiator */
 		OBJ_RING_FREE_ACTION,
 		OBJ_BROAD_SWORD,
-		OBJ_SMALL_METAL_SHIELD 
+		OBJ_SMALL_METAL_SHIELD,
+		OBJ_RING_RES_FEAR,
+		0,0
 	},
 
 	{
 		/* Warrior Monk */
 		OBJ_RING_SUSTAIN_DEX,
 		OBJ_SCROLL_MONSTER_CONFUSION,
-		OBJ_SOFT_LEATHER_ARMOUR 
+		OBJ_SOFT_LEATHER_ARMOUR,
+		OBJ_RING_SUSTAIN_STR,
+		0,0
 	},
 
 	{
 		/* Zen Monk */
 		OBJ_RING_SUSTAIN_WIS,
 		OBJ_SOFT_LEATHER_ARMOUR,
-		OBJ_SCROLL_MONSTER_CONFUSION 
+		OBJ_SCROLL_MONSTER_CONFUSION,
+		OBJ_RING_SUSTAIN_CON,
+		0,0
 	},
 
 	{
 		/* Assassin */
 		OBJ_RING_RES_POISON,
 		OBJ_DAGGER,
-		OBJ_SOFT_LEATHER_ARMOUR 
+		OBJ_SOFT_LEATHER_ARMOUR,
+		OBJ_RING_RES_DISENCHANTMENT,
+		0,0
     },
 
 	{
         /* Ranger */
 		OBJ_LONG_BOW,
 		OBJ_ARROW,
-		OBJ_HARD_LEATHER_ARMOUR 
+		OBJ_HARD_LEATHER_ARMOUR,
+		0,0,0
     },
 
     {
         /* Shaman */
 		OBJ_QUARTERSTAFF,
 		OBJ_POTION_HEALING,
-		OBJ_SCROLL_PROTECTION_FROM_EVIL 
+		OBJ_SCROLL_PROTECTION_FROM_EVIL,
+		0,0,0
 	},
 
     {
@@ -2902,6 +2918,8 @@ static s16b player_init[MAX_TEMPLATE][3] =
 		OBJ_RING_SUSTAIN_WIS,
 		OBJ_SHORT_SWORD,
 		OBJ_SOFT_LEATHER_ARMOUR,
+		OBJ_RING_RES_CONFUSION,
+		0,0
     },
 
     {
@@ -2909,6 +2927,8 @@ static s16b player_init[MAX_TEMPLATE][3] =
 		OBJ_RING_SUSTAIN_INT,
 		OBJ_POTION_RES_MANA,
 		OBJ_SOFT_LEATHER_ARMOUR,
+		OBJ_RING_RES_LIGHT_AND_DARKNESS,
+		0,0
     },
 
 	{
@@ -2916,21 +2936,26 @@ static s16b player_init[MAX_TEMPLATE][3] =
 		OBJ_RING_SUSTAIN_INT,
 		OBJ_SMALL_SWORD,
 		OBJ_SOFT_LEATHER_ARMOUR,
-
+		OBJ_RING_SUSTAIN_STR,
+		0,0
 	},
 
 	{
 		/* Powerweaver */
 		OBJ_RING_SUSTAIN_INT,
-		OBJ_POTION_RES_MANA,
 		OBJ_RING_SUSTAIN_WIS,
+		OBJ_POTION_RES_MANA,
+		OBJ_RING_SEE_INVIS,
+		OBJ_RING_RES_LIGHT_AND_DARKNESS,
+		0
 	},
 
 	{
 		/* Tourist */
 		OBJ_DAGGER,
 		OBJ_HARD_LEATHER_BOOTS,
-		OBJ_CLOAK 
+		OBJ_CLOAK,
+		0,0,0
 	},
 
 };
@@ -2948,7 +2973,10 @@ static void player_outfit(void)
 
 	object_type	forge;
 	object_type	*q_ptr;
-	
+	u32b f[3];
+
+	/* Find out about the player. */
+	player_flags(f, f+1, f+2);
 
 	/* Get local object */
 	q_ptr = &forge;
@@ -3064,10 +3092,17 @@ static void player_outfit(void)
 		/* Look up standard equipment */
 		s16b k = player_init[p_ptr->ptemplate][i];
 
-        if (k == OBJ_RING_RES_FEAR &&
-                 p_ptr->prace == RACE_BARBARIAN)
-        /* Barbarians do not need a ring of resist fear */
-                 k = OBJ_RING_SUSTAIN_STR;
+		/* Hack - avoid rings which duplicate the player's powers. */
+		if (k_info[k].flags1 & f[0] || k_info[k].flags2 & f[1] ||
+			k_info[k].flags3 & f[2])
+		{
+			/* Give the character the alternative item. */
+			int k2 = player_init[p_ptr->ptemplate][i+3];
+
+			/* Paranoia - all absent alternatives should be unused, but
+			 * someone may have changed the objects. */
+			if (k2) k = k2;
+		}
 
 		/* Get local object */
 		q_ptr = &forge;

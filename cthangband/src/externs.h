@@ -4078,4 +4078,10 @@ extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,
 	va_list *vp)
 ;
 #endif
+
+/* files.c */
+
+#if (defined(BIRTH_C) || defined(FILES_C))
+extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
