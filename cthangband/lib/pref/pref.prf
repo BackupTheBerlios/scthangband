@@ -247,7 +247,7 @@ C:1:'
 ?:[EQU $SYS mac]
 %:pref-mac.prf
 
-?:[IOR [EQU $SYS win] [EQU $SYS dos] [EQU $SYS ibm]]
+?:[IOR [EQU $SYS w2k] [EQU $SYS win] [EQU $SYS dos] [EQU $SYS ibm]]
 %:pref-win.prf
 
 ?:[EQU $SYS emx]
