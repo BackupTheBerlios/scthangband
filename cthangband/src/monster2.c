@@ -2221,12 +2221,8 @@ monster_type *place_monster_one(int y, int x, int r_idx, bool slp, bool charm, b
 		repair_monsters = TRUE;
 	}
 
-	/* Hack -- see "process_monsters()" */
-	if (c_ptr->m_idx < hack_m_idx)
-	{
-		/* Monster is still being born */
-		m_ptr->mflag |= (MFLAG_BORN);
-	}
+	/* Prevent the monster from moving on the game turn of creation. */
+	m_ptr->mflag |= (MFLAG_BORN);
 
 
 	/* Update the monster */

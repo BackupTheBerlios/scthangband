@@ -6679,15 +6679,8 @@ void process_monsters(void)
 		if (!m_ptr->r_idx) continue;
 
 
-		/* Handle "fresh" monsters */
-		if (m_ptr->mflag & (MFLAG_BORN))
-		{
-			/* No longer "fresh" */
-			m_ptr->mflag &= ~(MFLAG_BORN);
-
-			/* Skip */
-			continue;
-		}
+		/* Ignore "fresh" monsters */
+		if (m_ptr->mflag & (MFLAG_BORN)) continue;
 
 
 		/* Give this monster some energy */
@@ -6755,9 +6748,6 @@ void process_monsters(void)
 		/* Do nothing */
 		if (!test) continue;
 
-		/* Save global index */
-		hack_m_idx = i;
-
         if ((m_ptr->smart) &  (SM_ALLY))
             is_friend = TRUE;
 
@@ -6768,8 +6758,11 @@ void process_monsters(void)
 		if (!alive || death || new_level_flag) break;
 	}
 
-	/* Reset global index */
-	hack_m_idx = 0;
+	/* Every monster has been born now. */
+	for (i = 1; i < m_max; i++)
+	{
+		m_list[i].mflag &= ~(MFLAG_BORN);
+	}
 
 
 	/* Tracking a monster race (the same one we were before) */

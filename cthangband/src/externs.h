@@ -2684,9 +2684,9 @@ extern s16b m_max;
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern s16b m_cnt;
 #endif
-#if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
-extern s16b hack_m_idx;
-#endif
+
+
+
 
 
 
