@@ -2666,9 +2666,9 @@ extern bool hack_mind;
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(VARIABLE_C))
 extern bool hack_chaos_feature;
 #endif
-#if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
-extern int artifact_bias;
-#endif
+
+
+
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern s16b o_max;
 #endif

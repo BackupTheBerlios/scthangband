@@ -1960,8 +1960,6 @@ static void random_artifact_resistance(object_type * o_ptr)
 		add_ability(o_ptr);
 	}
 
-	artifact_bias = 0;
-
 	if (give_resistance)
 	{
 		random_resistance(o_ptr, FALSE, ((randint(22))+16));
@@ -2335,14 +2333,12 @@ static void dragon_resist(object_type * o_ptr)
 {
 	do
 	{
-		artifact_bias = 0;
-
 		if (randint(4)==1)
 			random_resistance(o_ptr, FALSE, rand_range(5, 18));
 		else
 			random_resistance(o_ptr, FALSE, rand_range(17, 38));
-		}
-		while (one_in(2));
+	}
+	while (one_in(2));
 }
 
 
@@ -2354,8 +2350,6 @@ static void a_m_aux_2(object_type *o_ptr, const int level, const int power)
 	const int toac1 = randint(5) + m_bonus(5, level);
 
 	const int toac2 = m_bonus(10, level);
-
-	artifact_bias = 0;
 
 	/* Good */
 	if (power > 0)
@@ -2785,7 +2779,6 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		/* Hack - turn into a randart, not an ego item. */
 		case E_SPEC_RANDART:
 		{
-			artifact_bias = 0;
 			o_ptr->name2 = 0;
 			create_artifact(o_ptr, FALSE);
 			return TRUE;

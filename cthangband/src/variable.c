@@ -115,7 +115,6 @@ s16b total_weight; /* Total weight being carried */
 
 bool hack_mind; /* Prevent sanity_blast() on the first turn. */
 bool hack_chaos_feature; /* Give a new character a chaos feature. */
-int artifact_bias; /* Produce a particular sort of artefact. */
 
 s16b o_max = 1; /* Number of allocated objects */
 s16b o_cnt = 0; /* Number of live objects */

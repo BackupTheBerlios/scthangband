@@ -2223,6 +2223,8 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 }
 
 
+static int artifact_bias; /* Produce a particular sort of artefact. */
+
 /*
  * Make it bad, or if it's already bad, make it worse!
  */
