@@ -391,16 +391,16 @@ static cptr magic_info_special(const magic_type *s_ptr)
 		case SP_MINOR_DISPLACEMENT:
 		{
 			if (l < 25)
-				return " range 10";
+				return "range 10";
 			else
-				return " range LEV+2";
+				return "range LEV+2";
 		}
 		case SP_TELEKINETIC_WAVE:
 		{
 			if (l < 40)
-				return " dam LEV*3";
+				return "dam LEV*3";
 			else
-				return " dam LEV*4";
+				return "dam LEV*4";
 		}
 		default:
 		{
@@ -473,11 +473,11 @@ static u16b magic_energy(const magic_type *s_ptr)
 
 static cptr cantrip_string(int i, const magic_type *s_ptr, cptr comment)
 {
-	if (!s_ptr) return format("     %35s%s", "Name", "Sk Fail Info");
+	if (!s_ptr) return format("     %-35s%s", "Name", "Sk Fail Info");
 
-	if (spell_skill(s_ptr) < s_ptr->min) comment = " too hard";
+	if (spell_skill(s_ptr) < s_ptr->min) comment = "too hard";
 
-	return format("  %c) %-35s%2d %3d%%%s",
+	return format("  %c) %-35s%2d %3d%% %s",
 		I2A(i), s_ptr->name, s_ptr->min*2, spell_chance(s_ptr), comment);
 }
 
@@ -485,9 +485,9 @@ static cptr favour_string(int i, const magic_type *s_ptr, cptr comment)
 {
 	if (!s_ptr) return format("     %-35s%s", "Name", "Sk Time Fail Info");
 
-	if (spell_skill(s_ptr) < s_ptr->min) comment = " too hard";
+	if (spell_skill(s_ptr) < s_ptr->min) comment = "too hard";
 
-	return format("  %c) %-35s%2d %4d %3d%%%s",
+	return format("  %c) %-35s%2d %4d %3d%% %s",
 		I2A(i), s_ptr->name, s_ptr->min*2, magic_energy(s_ptr),
 		spell_chance(s_ptr), comment);
 }
@@ -499,7 +499,7 @@ static cptr mindcraft_string(int i, const magic_type *s_ptr, cptr comment)
 	/* Don't print "too hard" spells at all. */
 	if (spell_skill(s_ptr) < s_ptr->min) return 0;
 
-	return format("  %c) %-30s%2d %4d %4d %3d%%%s", I2A(i), s_ptr->name,
+	return format("  %c) %-30s%2d %4d %4d %3d%% %s", I2A(i), s_ptr->name,
 		s_ptr->min*2, s_ptr->mana, magic_energy(s_ptr), spell_chance(s_ptr),
 		comment);
 }
@@ -538,20 +538,20 @@ static cptr spell_string(int i, const magic_type *s_ptr, cptr comment)
 	{
 		if (spell_skill(s_ptr)<s_ptr->min)
 		{
-			 comment = " too hard";
+			 comment = "too hard";
 		}
 		else
 		{
-			comment = " unknown";
+			comment = "unknown";
 		}
 	}
 	else if (~s_ptr->flags & MAGIC_WORKED)
 	{
-		comment = " untried";
+		comment = "untried";
 	}
 
 
-	return format("  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
+	return format("  %c) %-26s%s(%2d) %4d %4d %3d%% %s",
 		I2A(i), s_ptr->name, type, s_ptr->min*2, s_ptr->mana,
 		magic_energy(s_ptr), spell_chance(s_ptr), comment);
 }
