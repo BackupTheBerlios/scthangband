@@ -5728,7 +5728,7 @@ static void process_monster(int m_idx, bool is_friend)
        }
 
 	/* Handle "fear" */
-	if (m_ptr->monfear)
+	if (m_ptr->monfear && m_ptr->hp > m_ptr->pl_mdam)
 	{
 		/* Amount of "boldness" */
 		int d = randint(r_ptr->level / 10 + 1);

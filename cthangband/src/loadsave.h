@@ -95,3 +95,9 @@
  * Remember if the player has seen an object at some point.
  */
 #define SF_OBJECT_SEEN 18
+
+/*
+ * Scared monsters do not recover from fear if a single blow similar to a
+ * previous one from the player would kill them now.
+ */
+#define SF_FEAR_DAMAGE 19

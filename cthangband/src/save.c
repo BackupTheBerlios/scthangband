@@ -183,6 +183,12 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->monfear);
     wr_u32b(m_ptr->smart);
 	wr_byte(0);
+
+	if (has_flag(SF_FEAR_DAMAGE))
+	{
+		wr_s16b(m_ptr->pl_mdam);
+		wr_s16b(m_ptr->pl_cdam);
+	}
 }
 
 

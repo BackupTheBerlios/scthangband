@@ -551,6 +551,12 @@ static void rd_monster(monster_type *m_ptr)
     rd_u32b(&m_ptr->smart);
 	rd_byte(&tmp8u);
 
+	if (has_flag(SF_FEAR_DAMAGE))
+	{
+		rd_s16b(&m_ptr->pl_mdam);
+		rd_s16b(&m_ptr->pl_cdam);
+	}
+
 	if (m_ptr->r_idx < 0 || m_ptr->r_idx >= MAX_R_IDX ||
 		!r_info[m_ptr->r_idx].name)
 	{
