@@ -16,6 +16,43 @@
 #define CHAINSWORD_NOISE 100
 
 
+extern void object_info_known(object_type *j_ptr, object_type *o_ptr);
+extern void do_cmd_rotate_stack(void);
+
+/*
+ * Test whether an object has been observed to have special powers which
+ * could not hav e been expected based on its current level of identification.
+ */
+static bool is_powerful(object_type *o_ptr)
+{
+	object_type t,u, *t_ptr=&t, *u_ptr=&u;
+
+	/* Hack - Allow the IDENT_SENSE_POWER flag to bypass this code.
+	 * This is not totally safe, as there's no way to find out what monster
+	 * gave it this flag if the player has since learnt that it has some
+	 * slays.
+	 */
+	if (o_ptr->ident & IDENT_SENSE_POWER) return TRUE;
+
+	/* If the player hasn't tried it, there's no other way to know its
+	 * powers. */
+	if (~o_ptr->ident & IDENT_TRIED) return FALSE;
+
+	/* Check whether trying it added to its known powers. Only check flags,
+	 * as there is expected to be a pval based on the flags even if it isn't
+	 * known, and everything else should be the same. */
+	object_info_known(t_ptr, o_ptr);
+	o_ptr->ident &= ~IDENT_TRIED;
+	object_info_known(u_ptr, o_ptr);
+	o_ptr->ident |= IDENT_TRIED;
+	if (t_ptr->art_flags1 != u_ptr->art_flags1) return TRUE;
+	if (t_ptr->art_flags2 != u_ptr->art_flags2) return TRUE;
+	if (t_ptr->art_flags3 != u_ptr->art_flags3) return TRUE;
+
+	return FALSE;
+}
+
+
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
@@ -64,7 +101,7 @@ static cptr value_check_aux1(object_type *o_ptr)
  */
 static cptr value_check_aux2(object_type *o_ptr)
 {
-	bool powerful = (o_ptr->ident & IDENT_SENSE_POWER) && spoil_base;
+	bool powerful = is_powerful(o_ptr);
 
 	/* Cursed items (all of them) */
 	/* Should this be "very cursed", or would that just be confusing? */
@@ -139,8 +176,7 @@ cptr find_feeling(object_type *o_ptr)
 			}
 		case IDENT_SENSE_CURSED:
 		{
-			/* Never give "powerful" flags for identified items. */
-			bool powerful = !object_known_p(o_ptr) && (o_ptr->ident & IDENT_SENSE_POWER);
+			bool powerful = is_powerful(o_ptr);
 
 			if (o_ptr->ident & IDENT_CURSED)
 				return (powerful) ? "very bad" : "cursed";
@@ -160,7 +196,10 @@ cptr find_feeling(object_type *o_ptr)
 				/* This should never happen, but... */
 				return "Strangely normal";
 		default:
-			return "";
+		{
+			bool powerful = is_powerful(o_ptr);
+			return (powerful) ? "powerful" : "";
+		}
 	}
 }
 

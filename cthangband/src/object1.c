@@ -648,7 +648,7 @@ static void object_flags_pid(object_kind *k_ptr, u32b *f1, u32b *f2, u32b *f3)
 /*
  * Create an object containing the known information about an object.
  */
-static void object_info_known(object_type *j_ptr, object_type *o_ptr)
+void object_info_known(object_type *j_ptr, object_type *o_ptr)
 {
 	bool spoil = FALSE;
 	int i;
