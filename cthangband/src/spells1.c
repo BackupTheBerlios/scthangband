@@ -2191,12 +2191,12 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam,
 	/* Never affect projector */
 	if (mw_ptr == m_ptr) RETURN(FALSE);
 	
-	/* Never affect a monster which has already been hit once. */
+	/* Never affect a monster which has already been hit once.
+	 * This is only set when something is teleported, as the effect will not
+	 * affect a single square twice.
+	 */
 	for (; *m_hurt; m_hurt++)
 		if (*m_hurt == c_ptr->m_idx) RETURN(FALSE);
-
-	/* Notice that the monster has been hit. */
-	*m_hurt = c_ptr->m_idx;
 
 	/* Reduce damage by distance */
 	dam = (dam + r) / (r + 1);
@@ -3944,6 +3944,9 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam,
 		/* Message */
 		note = " disappears!";
 
+		/* Remember that this monster has been hit. */
+		*m_hurt = c_ptr->m_idx;
+
 		/* Teleport */
 		teleport_away(c_ptr->m_idx, do_dist);
 
@@ -4757,7 +4760,8 @@ static bool project_p(monster_type *m_ptr, int r, int y, int x, int dam,
 	for (; *m_hurt; m_hurt++)
 		if (*m_hurt == -1) return FALSE;
 
-	/* Remember that the player has been hit. */
+	/* Remember that the player has been hit (always, as teleporting attacks
+	 * are handled in several places, unlike in project_m). */
 	*m_hurt = -1;
 
 	if (p_ptr->reflect && !a_rad && !one_in(10))
@@ -5476,11 +5480,9 @@ done_reflect: /* Success */
 	}
 
 	/*
-	 * Hack - List the monsters and players which have been hit by this attack,
-	 * and ensure that something which has been affected is not affected
-	 * again.
-	 * This only comes into play for teleporting attacks, for which this
-	 * is too rare to provide interesting gameplay.
+	 * Hack - List the monsters and players which have been teleported by this
+	 * attack, if any, and ensure that something which has been teleported is
+	 * not affected again on its destination square.
 	 * Indirect attacks (such as from exploding potions) are handled separately.
 	 */
 	{

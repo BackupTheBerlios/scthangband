@@ -8,6 +8,7 @@ read from the bottom up.
 sCthangband _CVS_
 * Fix the following bugs:
   * The game could crash if a keymap was used.
+  * Ranged attacks did not affect most monsters in some versions.
   * Setting/resetting maximise mode before choosing a template could crash the
     game.
   * The options listed as race choices at the start of the game were incorrect.
