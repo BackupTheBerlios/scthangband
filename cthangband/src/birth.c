@@ -705,7 +705,7 @@ static char *cthuloid_syllable3[] =
 	"l","a","u","oa","oggua","oth","ath","aggua","lu","lo","loth","lotha","agn","axl",
 };
 
-void get_starting_skills(int race);
+void get_starting_skills(void);
 void get_hermetic_skills_randomly(void);
 void get_hermetic_skills(void);
 static void get_ahw_average(void);
@@ -1091,7 +1091,7 @@ static bool point_mod_player(void)
 		if (i & IDX_ALL)
 		{
 			/* Correct the skill set. These will be finalised later. */
-			get_starting_skills(p_ptr->prace);
+			get_starting_skills();
 			get_hermetic_skills_randomly();
 			get_init_spirit(FALSE);
 			get_random_skills(FALSE);
@@ -1214,7 +1214,7 @@ static bool point_mod_player(void)
 		}
 	}
 	/* Finally randomise the skill bonuses and set magic up as the player wants. */
-	get_starting_skills(p_ptr->prace);
+	get_starting_skills();
 	get_hermetic_skills();
 	get_init_spirit(TRUE);
 	get_random_skills(TRUE);
@@ -1308,7 +1308,7 @@ void create_random_name(int race, char *name)
 /*
  * Initialise the skills for a new character
  */
-void get_starting_skills(int race)
+void get_starting_skills(void)
 {
 	int i;
 	/* Wipe skills */
@@ -2751,7 +2751,7 @@ static bool player_birth_aux()
 		c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
 		
 		/* Get skill values */
-		get_starting_skills(p_ptr->prace);
+		get_starting_skills();
 		get_hermetic_skills_randomly();
 		get_init_spirit(FALSE);
 		get_random_skills(TRUE);
@@ -3389,7 +3389,7 @@ static bool player_birth_aux()
 		/* With point_mod, this will be done later. */
 		if (!point_mod)
 		{
-			get_starting_skills(p_ptr->prace);
+			get_starting_skills();
 			get_hermetic_skills();
 			get_init_spirit(TRUE);
 			get_random_skills(TRUE);
