@@ -662,15 +662,6 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		x_ptr->u_idx = k_ptr->u_idx;
 	}
 
-	/* Some flags are always assumed to be known. */
-	j_ptr->discount = o_ptr->discount;
-	j_ptr->number = o_ptr->number;
-	j_ptr->weight = o_ptr->weight;
-	j_ptr->ident = o_ptr->ident;
-	/* j_ptr->handed = o_ptr->handed; */ /* Unused */
-	j_ptr->note = o_ptr->note;
-	
-
 	if (cheat_item && (
 #ifdef SPOIL_ARTIFACTS
 	/* Full knowledge for some artifacts */
@@ -682,8 +673,20 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 #endif
 	(!allart_p(o_ptr) && !ego_item_p(o_ptr))))
 	{
-		j_ptr->ident |= IDENT_MENTAL | IDENT_KNOWN;
+		/* Given full knowledge, everything is easy. */
+		object_copy(j_ptr, o_ptr);
+		object_flags(o_ptr, &j_ptr->flags1, &j_ptr->flags2, &j_ptr->flags3);
+		return;
 	}
+
+	/* Some flags are always assumed to be known. */
+	j_ptr->discount = o_ptr->discount;
+	j_ptr->number = o_ptr->number;
+	j_ptr->weight = o_ptr->weight;
+	j_ptr->ident = o_ptr->ident;
+	/* j_ptr->handed = o_ptr->handed; */ /* Unused */
+	j_ptr->note = o_ptr->note;
+	
 
 	/* Hack - set k_idx correctly now so that macros for it work. It will
 	 * be unset later if appropriate. */
