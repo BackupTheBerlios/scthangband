@@ -4394,6 +4394,11 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
  	        /* Success */
 			return o_ptr;
          }
+		/* Invalid item. */
+		 else
+		{
+			o_ptr = NULL;
+		}
      }
  
  #endif /* ALLOW_REPEAT -- TNB */
