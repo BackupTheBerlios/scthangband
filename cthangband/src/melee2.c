@@ -757,7 +757,7 @@ static bool clean_shot(int y1, int x1, int y2, int x2)
 	int y, x;
 
 	/* Does it get to the end before clean_shot_p() fails? */
-	return move_in_direction(&x, &y, x1, x2, y1, y2, clean_shot_p);
+	return move_in_direction(&x, &y, x1, y1, x2, y2, clean_shot_p);
 }
 
 
