@@ -257,4 +257,4 @@ This favour will hurt all nearby monsters greatly, cause an earthquake to occur 
 Warning
 =======
 
-If the player calls on a spirit to grant a favour, the spirit may refuse to do so. 
+If the player calls on a spirit to grant a favour, the spirit may refuse to do so. A particularly inept call to a powerful spirit may cause the spirit to take great offense. Most of the time, this merely results in the spirit taking rather longer to calm down again. However, spirits have the power to call down monsters to teach the player humility, and a very angry spirit may simply abandon the player altogether.
