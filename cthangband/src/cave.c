@@ -1199,6 +1199,24 @@ static void map_info(int y, int x, byte *ap, char *cp)
 	}
 }
 
+/* Macros similar to panel_bounds(), to keep everything sychronised. */
+#define PRT_MINX (COL_END+1)
+#define PRT_MAXX (Term->wid-1)
+#define PRT_MINY 1
+#define PRT_MAXY (Term->hgt-1)
+
+#define Y_SCREEN_ADJ (panel_row_min-1)
+#define X_SCREEN_ADJ (panel_col_min-COL_END-1)
+
+static bool panel_contains_prt(int y, int x)
+{
+	y -= Y_SCREEN_ADJ;
+	x -= X_SCREEN_ADJ;
+	if (y < PRT_MINY || y >= PRT_MAXY) return FALSE;
+	if (x < PRT_MINX || x >= PRT_MAXX) return FALSE;
+	return TRUE;
+}
+
 
 
 /*
@@ -1207,8 +1225,8 @@ static void map_info(int y, int x, byte *ap, char *cp)
 void move_cursor_relative(int row, int col)
 {
 	/* Real co-ords convert to screen positions */
-	row -= panel_row_prt;
-	col -= panel_col_prt;
+	row -= Y_SCREEN_ADJ;
+	col -= X_SCREEN_ADJ;
 
 	/* Go there */
 	Term_gotoxy(col, row);
@@ -1222,7 +1240,7 @@ void move_cursor_relative(int row, int col)
 void print_rel(char c, byte a, int y, int x)
 {
 	/* Only do "legal" locations */
-	if (panel_contains(y, x))
+	if (panel_contains_prt(y, x))
 	{
 		/* Hack -- fake monochrome */
         if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
@@ -1231,7 +1249,7 @@ void print_rel(char c, byte a, int y, int x)
              && (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
 
 		/* Draw the char using the attr */
-		Term_draw(x-panel_col_prt, y-panel_row_prt, a, c);
+		Term_draw(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c);
 	}
 }
 
@@ -1366,7 +1384,6 @@ void note_spot(int y, int x)
 	}
 }
 
-
 /*
  * Redraw (on the screen) a given MAP location
  *
@@ -1375,7 +1392,7 @@ void note_spot(int y, int x)
 void lite_spot(int y, int x)
 {
 	/* Redraw if on screen */
-	if (panel_contains(y, x))
+	if (panel_contains_prt(y, x))
 	{
 		byte a;
 		char c;
@@ -1395,7 +1412,7 @@ void lite_spot(int y, int x)
 			&& (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
 
 		/* Hack -- Queue it */
-		Term_queue_char_w(x-panel_col_prt, y-panel_row_prt, a, c, ta, tc);
+		Term_queue_char_w(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c, ta, tc);
 	}
 }
 
@@ -1422,14 +1439,14 @@ void prt_map(void)
 	(void)Term_set_cursor(0);
 
 	/* Dump the map */
-	for (cy = 1; cy < Term->hgt-1; cy++)
+	for (cy = PRT_MINY; cy < PRT_MAXY; cy++)
 	{
-		int y = cy+panel_row_min-1;
+		int y = cy+Y_SCREEN_ADJ;
 
 		/* Scan the columns of row "y" */
-		for (cx = COL_END+1; cx < Term->wid-1; cx++)
+		for (cx = PRT_MINX; cx < PRT_MAXX; cx++)
 		{
-			int x = cx+panel_col_min-COL_END-1;
+			int x = cx+X_SCREEN_ADJ;
 
 			byte a;
 			char c;
