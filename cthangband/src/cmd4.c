@@ -4861,8 +4861,8 @@ void shops_display(int town)
 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
 
 		/* Display the symbol and name of the store. */
-		mc_put_fmt(j++, 0, "%v%s", get_symbol_f2, f_ptr->x_attr, f_ptr->x_char,
-			store_title(i+offset));
+		mc_put_fmt(j++, 0, "%v%v", get_symbol_f2, f_ptr->x_attr, f_ptr->x_char,
+			store_title_f1, i+offset);
 	}
 }
 

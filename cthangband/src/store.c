@@ -2378,10 +2378,9 @@ static void store_prt_gold(void)
 /*
  * Work out the title of the current shop.
  */
-static cptr store_title_aux(void)
+static void store_title_aux_f0(char *buf, uint max, cptr UNUSED fmt,
+	va_list UNUSED *vp)
 {
-	cptr out;
-
 	switch (cur_store_type)
 	{
 		/* The "Home" is special */
@@ -2390,7 +2389,7 @@ static cptr store_title_aux(void)
 			/* Already yours. */
 			if (st_ptr->bought)
 			{
-				out = format("%28s%s", "", "Your Home");
+				strnfmt(buf, max, "%28s%s", "", "Your Home");
 			}
 			/* Name and price. */
 			else
@@ -2402,60 +2401,51 @@ static cptr store_title_aux(void)
 				/* Hack - Must be the same as needtohaggle(). */
 				if (auto_haggle) price = price*11/10;
 
-				out = format("%28s%s (%ld)", "", "House for Sale", price);
+				strnfmt(buf, max, "%28s%s (%ld)", "", "House for Sale", price);
 			}
 			break;
 		}
 		/* So is the Hall */
 		case STORE_HALL:
 		{
-			out = format("%28s%s", "", "Hall of Records");
+			strnfmt(buf, max, "%28s%s", "", "Hall of Records");
 			break;
-	}
-	/* Normal stores */
+		}
+		/* Normal stores */
 		default:
-	{
-			cptr tmp_str;
-		cptr owner_name = (s_name+ot_ptr->name);
-		cptr race_name = race_info[ot_ptr->owner_race].title;
-		object_type tmp;
+		{
+			cptr owner_name = (s_name+ot_ptr->name);
+			cptr race_name = race_info[ot_ptr->owner_race].title;
+			object_type tmp;
 			s16b old_charisma;
 
-		/* Put the owner name and race */
-			tmp_str = string_make(format("%s (%s)", owner_name, race_name));
-
-		/* Hack - Create a 10000gp item for price_item() */
-		object_prep(&tmp, OBJ_PRICE_COMPARE);
-		object_aware(&tmp);
+			/* Hack - Create a 10000gp item for price_item() */
+			object_prep(&tmp, OBJ_PRICE_COMPARE);
+			object_aware(&tmp);
 
 			/* Hack - standardise the player's charisma. */
 			old_charisma = p_ptr->stat_ind[A_CHR];
 			p_ptr->stat_ind[A_CHR] = CHR_PRICE_COMPARE;
 
-		/* Show the max price in the store (above prices) */
-			out = format("%10s%-40s%v (%ld) [%ld]", "", tmp_str,
-				feature_desc_f2, FEAT_SHOP_HEAD+st_ptr->type, 0,
-				(long)(ot_ptr->max_cost),
+			/* Show the max price in the store (above prices) */
+			strnfmt(buf, max, "%10s%-40v%v (%ld) [%ld]", "", vstrnfmt_fn,
+				"%s (%s)", owner_name, race_name, feature_desc_f2,
+				FEAT_SHOP_HEAD+st_ptr->type, 0, ot_ptr->max_cost,
 				price_item(&tmp, ot_ptr->min_inflate, TRUE));
 
 			/* Hack - return real charisma. */
 			p_ptr->stat_ind[A_CHR] = old_charisma;
-
-			FREE(tmp_str);
 		}
 	}
-
-	/* Done. */
-	return out;
 }
 
 /*
  * A wrapper around store_title_aux to remove the assumption that the static
  * variables are correct.
  */
-cptr store_title(int store_num)
+void store_title_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
-	cptr out;
+	int store_num = va_arg(*vp, int);
 
 	/* Hack - price_item() requires correct cur_store_type and ot_ptr as well
 	 * as correct parameters. */
@@ -2470,15 +2460,13 @@ cptr store_title(int store_num)
 	cur_store_type = st_ptr->type;
 
 	/* Determine the title. */
-	out = store_title_aux();
+	strnfmt(buf, max, "%v", store_title_aux_f0);
 
 	/* Hack - return static variables to original values. */
 	store_num = real_cur_store_num;
 	st_ptr = real_st_ptr;
 	ot_ptr = real_ot_ptr;
 	cur_store_type = real_cur_store_type;
-
-	return out;
 }
 
 
@@ -2493,7 +2481,7 @@ static void display_store(void)
 	clear_from(1);
 
 	/* Display the title. */
-	put_str(store_title_aux(), 3, 0);
+	mc_put_fmt(3, 0, "%v", store_title_aux_f0);
 
 	/* The "Home" is special */
 	if (cur_store_type == STORE_HOME)
@@ -2509,7 +2497,7 @@ static void display_store(void)
 	}
 
 	/* Normal stores */
-	if ((cur_store_type != STORE_HOME) && (cur_store_type != STORE_HALL))
+	else if (cur_store_type != STORE_HALL)
 	{
 		/* Label the item descriptions */
 		put_str("Item Description", 5, 3);
