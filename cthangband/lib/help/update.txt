@@ -15,6 +15,7 @@ sCthangband _CVS_
   * The maximum length of a ghost's name wasn't calculated correctly.
   * Loading a game which contains more monster races than the current r_info
     could cause undefined behaviour.
+  * The labels in the extra inventory window were corrupted.
 
 sCthangband 1.0.14
 * Skill improvements become rarer, and then impossible, if the player does

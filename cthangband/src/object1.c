@@ -3679,7 +3679,7 @@ void display_inven(bool equip)
 			sprintf(label, "%c) ", index_to_label(o_ptr));
 
 		/* Display the entry itself (including the slot description). */
-		mc_put_fmt(i - min, 3, "%c) $%c%.*v%s%s%s", label, attr, wid,
+		mc_put_fmt(i - min, 3, "%s$%c%.*v%s%s%s", label, attr, wid,
 			object_desc_f3, o_ptr, TRUE, 3, wgt, slot1, slot2);
 	}
 }
