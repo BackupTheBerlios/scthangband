@@ -4697,33 +4697,36 @@ static bool cave_gen(void)
 	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3));
 	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3));
 
-	if ((empty_level) && (randint(DARK_EMPTY)!=1 || (randint(100) > (dun_depth))))
+	if (empty_level && (!one_in(DARK_EMPTY) || !percent(dun_depth)))
 		wiz_lite();
 
-	/* Ghosts love to inhabit destroyed levels, but will live elsewhere */
-	i = (destroyed) ? 11 : 1;
-
-	/* Try to place the ghost */
-	while (i-- > 0)
+	/* Ghosts are never used in the first few levels. */
+	if (dun_depth < 6)
 	{
+		i = 0;
+	}
+	/* Ghosts love to inhabit destroyed levels. */
+	else if (destroyed)
+	{
+		i = 11;
+	}
+	/* They can exist elsewhere, though. */
+	else
+	{
+		i = 1;
+	}
 
-		/* Attempt to place a ghost */
-		if (place_ghost())
-		{
+	/* Roll for it. */
+	while (i && rand_int(dun_depth/2*3+36) >= dun_depth/2-2) i--;
 
-			/* Hack -- increase the rating */
-			rating += 10;
-
-			/* A ghost makes the level special */
-			good_item_flag = TRUE;
-
-			/* Stop trying to place the ghost */
-			break;
-		}
+	/* Attempt to place a ghost, if allowed */
+	if (i && place_ghost())
+	{
+		/* A ghost makes the level special */
+		good_item_flag = TRUE;
 	}
 
 	return TRUE;
-
 }
 
 
