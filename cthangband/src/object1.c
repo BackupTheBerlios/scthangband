@@ -3508,25 +3508,30 @@ s16b index_to_label(int i)
 }
 
 
+
 /*
  * Convert a label into the index of an item in the "inven"
  * Return "-1" if the label does not indicate a real item
  */
-static s16b label_to_inven(int c)
+static object_type *label_to_inven(int c)
 {
+	object_type *o_ptr;
 	int i;
 
 	/* Convert */
 	i = (islower(c) ? A2I(c) : -1);
 
 	/* Verify the index */
-	if ((i < 0) || (i > INVEN_PACK)) return (-1);
+	if ((i < 0) || (i > INVEN_PACK)) return NULL;
+
+	/* Get the object. */
+	o_ptr = inventory+i;
 
 	/* Empty slots can never be chosen */
-	if (!inventory[i].k_idx) return (-1);
+	if (!o_ptr->k_idx) return NULL;
 
-	/* Return the index */
-	return (i);
+	/* Return the object */
+	return o_ptr;
 }
 
 
@@ -3534,21 +3539,25 @@ static s16b label_to_inven(int c)
  * Convert a label into the index of a item in the "equip"
  * Return "-1" if the label does not indicate a real item
  */
-static s16b label_to_equip(int c)
+static object_type *label_to_equip(int c)
 {
+	object_type *o_ptr;
 	int i;
 
 	/* Convert */
 	i = (islower(c) ? A2I(c) : -1) + INVEN_WIELD;
 
 	/* Verify the index */
-	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return (-1);
+	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return NULL;
+
+	/* Get the object. */
+	o_ptr = inventory+i;
 
 	/* Empty slots can never be chosen */
-	if (!inventory[i].k_idx) return (-1);
+	if (!o_ptr->k_idx) return NULL;
 
 	/* Return the index */
-	return (i);
+	return o_ptr;
 }
 
 
@@ -4937,13 +4946,13 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Convert letter to inventory index */
 				if (!command_wrk)
 				{
-					o_ptr = cnv_idx_to_obj(label_to_inven(which));
+					o_ptr = label_to_inven(which);
 				}
 
 				/* Convert letter to equipment index */
 				else
 				{
-					o_ptr = cnv_idx_to_obj(label_to_equip(which));
+					o_ptr = label_to_equip(which);
 				}
 
 				/* Validate the item */
