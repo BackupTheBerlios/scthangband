@@ -710,7 +710,7 @@ void do_cmd_options_squelch(void)
 				{
 					int k = choice[s-body];
 					char buf[80];
-					sprintf(buf, quark_str(k_info[k].note));
+					sprintf(buf, "%.79s", quark_str(k_info[k].note));
 					if (get_string("Inscription: ", buf, sizeof(buf)) && *buf)
 					{
 						k_info[k].note = quark_add(buf);
