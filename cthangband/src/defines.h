@@ -3446,6 +3446,19 @@ extern int PlayerUID;
 #define GRAPHICS_ANY          3
 #define GRAPHICS_HALF_3D      4
 
+/* Parameter for display_player(). */
+#define DPLAY_PLAYER 0 /* Shows weapons, exp. factor, etc. */
+#define DPLAY_SKILLS 1 /* Shows skill tables. */
+#define DPLAY_STATS 2 /* Shows stat breakdown. */
+#define DPLAY_FLAGS 3 /* Shows a list of flags. */
+#define DPLAY_FLAG_1 4 /* Shows some flags by object. */
+#define DPLAY_FLAG_2 5 /* Shows some flags by object. */
+#define DPLAY_CHAOS 6 /* Shows chaos features if allowed. */
+#define DPLAY_MAX 7 /* Max for the change_name() loop. */
+
+/* Displays not available to change_name(). */
+#define DPLAY_BIRTH -1 /* Show stat-related effects. */
+
 /*
  * Decide whether to display an object by its u_info representation.
  * Never do it with objects which have no u_info counterpart.

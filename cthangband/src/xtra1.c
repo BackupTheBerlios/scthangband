@@ -2970,7 +2970,7 @@ static bool win_spell_good(void)
 static void win_player_display(void)
 {
 	/* Display player */
-	display_player(0);
+	display_player(DPLAY_PLAYER);
 }
 
 
@@ -2980,7 +2980,7 @@ static void win_player_display(void)
 static void win_player_skills_display(void)
 {
 	/* Display player */
-	display_player(2);
+	display_player(DPLAY_SKILLS);
 }
 
 

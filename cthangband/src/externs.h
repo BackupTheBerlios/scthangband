@@ -518,7 +518,7 @@ extern int equip_mod(int i);
 extern bool PURE player_has_flag_known(int set, u32b flag);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
-extern void display_player(int mode);
+extern bool display_player(int mode);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void file_character(cptr name);
@@ -2843,7 +2843,7 @@ extern bool player_symbols;
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool equippy_chars;
 #endif
-#if (defined(CMD4_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool skip_chaos_features;
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3737,7 +3737,7 @@ extern  bool tgt_pt(int *x,int *y);
 #if (defined(INIT2_C) || defined(XTRA2_C))
 extern void init_chaos(void);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
+#if (defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern bool PURE p_mutated(void);
 #endif
 #if (defined(BIRTH_C) || defined(POWERS_C) || defined(XTRA2_C))

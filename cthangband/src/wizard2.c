@@ -259,7 +259,7 @@ static void do_cmd_wiz_change_aux(void)
 		dun_level = 0;
 
 		/* Display the current skill table. */
-		display_player(2);
+		display_player(DPLAY_SKILLS);
 
 		dun_level = real_dun_level;
 

@@ -115,18 +115,23 @@ void do_cmd_change_name(void)
 	/* Forever */
 	while (1)
 	{
-		cptr name = (mode == 0) ? "'c' to change name, " : "";
-		cptr help = (mode == 1) ? "'?' for help, " : "";
+		cptr name = (mode == DPLAY_PLAYER) ? "'c' to change name, " : "";
+		cptr help = (mode == DPLAY_SKILLS) ? "'?' for help, " : "";
 
 		/* Display the player */
-		display_player(mode);
+		bool okay = display_player(mode);
 
 		/* Prompt */
 		mc_put_fmt(23, 2, "[%s'f' to file, 'h' to change mode, %sor ESC]",
 			name, help);
 
 		/* Query */
-		c = inkey();
+		if (okay)
+			c = inkey();
+
+		/* Automatically advance from empty displays. */
+		else
+			c = 'h';
 
 		/* Exit */
 		if (c == ESCAPE) break;
@@ -153,9 +158,7 @@ void do_cmd_change_name(void)
 		/* Toggle mode */
 		else if (c == 'h')
 		{
-			mode++;
-			if (!skip_chaos_features && p_mutated()) mode %= 7;
-			else mode %= 6;
+			mode = (mode+1) % DPLAY_MAX;
 		}
 
 		else if (c == '?' && *help)
@@ -875,7 +878,7 @@ static void do_cmd_options_win(void)
 		Term_gotoxy(35 + x * 5+((second) ? 1 : 0), y + 5);
 
 		/* Copy the display name locally. */
-		sprintf(buf, "%.71s", display_func[y].name);
+		sprintf(buf+8, "%.71s", display_func[y].name);
 
 		/* Track this option. */
 		help_track(buf);

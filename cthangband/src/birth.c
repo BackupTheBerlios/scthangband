@@ -1068,12 +1068,12 @@ static void display_player_birth(int points, bool details, bool rolled)
 	/* Display details if required. */
 	if (details)
 	{
-		display_player(-1);
+		display_player(DPLAY_BIRTH);
 		display_player_birth_details();
 	}
 	else
 	{
-		display_player(0);
+		display_player(DPLAY_PLAYER);
 	}
 	/* Display the information required during creation. */
 	clear_from(23);
@@ -3345,7 +3345,7 @@ static bool quick_start_character(void)
 		/*** Display ***/
 
 		/* Mode */
-		mode = 0;
+		mode = DPLAY_PLAYER;
 
 		/* Roll for base hitpoints */
 		get_extra();
@@ -3429,7 +3429,7 @@ static bool quick_start_character(void)
 			/* Toggle the display */
 			if ((c == 'H') || (c == 'h'))
 			{
-				mode = ((mode != 0) ? 0 : 1);
+				mode = ((mode != DPLAY_PLAYER) ? DPLAY_PLAYER : DPLAY_BIRTH);
 				continue;
 			}
 

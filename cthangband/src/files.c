@@ -3224,15 +3224,17 @@ void dump_history(FILE *fff)
  * Mode 4 = current flags (part 1)
  * Mode 5 = current flags (part 2)
  * Mode 6 = chaos features
+ *
+ * Returns TRUE if something has been displayed.
  */
-void display_player(int mode)
+bool display_player(int mode)
 {
 	/* Erase screen */
 	clear_from(0);
 
 	switch (mode)
 	{
-		case -1: /* During character creation only. */
+		case DPLAY_BIRTH: /* During character creation only. */
 		{
 			/* Name, sex, race, template and exp. factor. */
 			display_player_basics();
@@ -3247,9 +3249,9 @@ void display_player(int mode)
 
 			/* HP, etc. */
 			display_player_right();
-			break;
+			return TRUE;
 		}
-		case 0:
+		case DPLAY_PLAYER:
 		{
 			/* Name, sex, race, template and exp. factor. */
 			display_player_basics();
@@ -3268,15 +3270,15 @@ void display_player(int mode)
 			mc_put_fmt(15, 0, "%.50v", centre_f1, "(Miscellaneous Abilities)");
 			display_player_various();
 
-			break;
+			return TRUE;
 		}
-		case 1:
+		case DPLAY_SKILLS:
 		{
 			/* Show skills */
 			display_player_skills();
-			break;
+			return TRUE;
 		}
-		case 2: /* Special */
+		case DPLAY_STATS: /* Special */
 		{
 			/* See "http://www.cs.berkeley.edu/~davidb/angband.html" */
 
@@ -3284,21 +3286,39 @@ void display_player(int mode)
 			display_player_misc_info();
 			display_player_stat_info();
 			display_player_flag_info();
-			break;
+			return TRUE;
 		}
-		case 3: /* Special */
+		case DPLAY_FLAGS: /* Special */
 		{
 			display_player_ben();
-			break;
+			return TRUE;
 		}
-		case 6:
+		case DPLAY_CHAOS:
 	    {
-	        do_cmd_knowledge_chaos_features();
-			break;
+			/* Nothing happens without permission or mutations. */
+			if (!skip_chaos_features && p_mutated())
+			{
+	        	do_cmd_knowledge_chaos_features();
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
 	    }
-		default: /* Special */
+		case DPLAY_FLAG_1:
 		{
-			display_player_ben_one(mode % 2);
+			display_player_ben_one(0);
+			return TRUE;
+		}
+		case DPLAY_FLAG_2:
+		{
+			display_player_ben_one(1);
+			return TRUE;
+		}
+		default: /* Paranoia */
+		{
+			return FALSE;
 		}
 	}
 }
@@ -3456,13 +3476,13 @@ void file_character(cptr name)
 
 
 	/* Display player */
-	display_player(0);
+	display_player(DPLAY_PLAYER);
 
 	/* Save it to the file. */
 	dump_area_mono(fff, 2, 20, 0, 79);
 
 	/* Show Skills */
-	display_player(1);
+	display_player(DPLAY_SKILLS);
 
 	/* Save it to the file. */
 	dump_area_mono(fff, 1, 21, 0, 79);
@@ -4839,7 +4859,7 @@ void process_player_name(void)
 /*
  * Gets a name for the character, reacting to name changes.
  *
- * Assumes that "display_player(0)" has just been called
+ * Assumes that "display_player(DPLAY_PLAYER)" has just been called
  *
  * Perhaps we should NOT ask for a name (at "birth()") on
  * Unix machines?  XXX XXX
@@ -5300,7 +5320,7 @@ static void show_info(void)
 
 
 	/* Display player */
-	display_player(0);
+	display_player(DPLAY_PLAYER);
 
 	/* Prompt for inventory */
 	prt("Hit any key to see more information (ESC to abort): ", 23, 0);
