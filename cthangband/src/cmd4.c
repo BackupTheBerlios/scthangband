@@ -173,12 +173,6 @@ void do_cmd_change_name(void)
 
 	/* Leave "icky" mode */
 	character_icky = FALSE;
-
-
-	/* Redraw everything */
-	p_ptr->redraw |= (PR_ALL);
-
-	handle_stuff();
 }
 
 
