@@ -24,7 +24,7 @@
 
 #include "angband.h"
 
-typedef struct add_timed_type add_timed_type;
+typedef const struct add_timed_type add_timed_type;
 struct add_timed_type
 {
 	s16b power;
@@ -119,9 +119,6 @@ static cptr timer_verbs[TIMED_MAX] =
 	"feeds you",
 	"TIMED_VAMP"
 };
-
-#define FOR_ALL_IN(ARRAY, PTR) \
-	for ((PTR) = (ARRAY); (PTR) < END_PTR(ARRAY); (PTR)++)
 
 /*
  * Return 0 if the TIMED_* flag cannot be increased, 1 if it can be at present,
@@ -2739,7 +2736,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BO_MISS_1+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows extremely brightly...");
 				fire_bolt(GF_MISSILE, dir, damroll(2, 6));
 				return SUCCESS;
 			}
@@ -2747,7 +2743,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_POIS_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It throbs deep green...");
 				fire_ball(GF_POIS, dir, 12, 3);
 				return SUCCESS;
 			}
@@ -2755,7 +2750,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BO_ELEC_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It is covered in sparks...");
 				fire_bolt(GF_ELEC, dir, damroll(4, 8));
 				return SUCCESS;
 			}
@@ -2763,7 +2757,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BO_ACID_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It is covered in acid...");
 				fire_bolt(GF_ACID, dir, damroll(5, 8));
 				return SUCCESS;
 			}
@@ -2771,7 +2764,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BO_COLD_1+PO_ACTIVATION:
             {
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It is covered in frost...");
 				fire_bolt(GF_COLD, dir, damroll(6, 8));
 				return SUCCESS;
 			}
@@ -2779,7 +2771,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BO_FIRE_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It is covered in fire...");
 				fire_bolt(GF_FIRE, dir, damroll(9, 8));
 				return SUCCESS;
 			}
@@ -2787,7 +2778,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_COLD_1+PO_ACTIVATION:
             {
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It is covered in frost...");
 				fire_ball(GF_COLD, dir, 48, 2);
 				return SUCCESS;
 			}
@@ -2795,7 +2785,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_FIRE_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows an intense red...");
 				fire_ball(GF_FIRE, dir, 72, 2);
 				return SUCCESS;
 			}
@@ -2804,7 +2793,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             {
 
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows black...");
                 if (drain_life(dir, 100))
 				return SUCCESS;
 			}
@@ -2812,7 +2800,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_COLD_2+PO_ACTIVATION:
             {
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows an intense blue...");
 				fire_ball(GF_COLD, dir, 100, 2);
 				return SUCCESS;
 			}
@@ -2820,7 +2807,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_ELEC_2+PO_ACTIVATION:
             {
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It crackles with electricity...");
                 fire_ball(GF_ELEC, dir, 100, 3);
 				return SUCCESS;
 			}
@@ -2828,7 +2814,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_DRAIN_2+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows black...");
 				drain_life(dir, 120);
 				return SUCCESS;
 			}
@@ -2847,7 +2832,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BO_MISS_2+PO_ACTIVATION:
             {
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It grows magical spikes...");
 				fire_bolt(GF_ARROW, dir, 150);
 				return SUCCESS;
 			}
@@ -2855,7 +2839,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_FIRE_2+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows deep red...");
 				fire_ball(GF_FIRE, dir, 120, 3);
 				return SUCCESS;
 			}
@@ -2863,7 +2846,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_COLD_3+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows bright white...");
 				fire_ball(GF_COLD, dir, 200, 3);
 				return SUCCESS;
 			}
@@ -2871,7 +2853,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_BA_ELEC_3+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows deep blue...");
 				fire_ball(GF_ELEC, dir, 250, 3);
 				return SUCCESS;
 			}
@@ -2913,7 +2894,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_CALL_CHAOS+PO_ACTIVATION:
             {
-                msg_print("It glows in scintillating colours...");
                 call_chaos(skill_set[SKILL_DEVICE].value/2);
                 return SUCCESS;
             }
@@ -2928,7 +2908,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_DISP_EVIL+PO_ACTIVATION:
 			{
-                msg_print("It floods the area with goodness...");
 				dispel_evil(plev * 5);
 				return SUCCESS;
 			}
@@ -2943,7 +2922,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_DISP_GOOD+PO_ACTIVATION:
 			{
-                msg_print("It floods the area with evil...");
                 dispel_good(plev * 5);
 				return SUCCESS;
 			}
@@ -2951,14 +2929,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_CONFUSE+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It glows in scintillating colours...");
 				confuse_monster(dir, 20);
 				return SUCCESS;
 			}
 
             case ACT_SLEEP+PO_ACTIVATION:
 			{
-                msg_print("It glows deep blue...");
 				sleep_monsters_touch((skill_set[SKILL_DEVICE].value/2));
 				return SUCCESS;
 			}
@@ -2992,14 +2968,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_GENOCIDE+PO_ACTIVATION:
 			{
-                msg_print("It glows deep blue...");
 				if (genocide(TRUE) == POWER_ERROR_ABORT) (*use) = FALSE;
 				return SUCCESS;
 			}
 
             case ACT_MASS_GENO+PO_ACTIVATION:
             {
-                msg_print("It lets out a long, shrill note...");
 				(void)mass_genocide(TRUE);
 				return SUCCESS;
 			}
@@ -3045,8 +3019,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_SUMMON_PHANTOM+PO_ACTIVATION:
             {
-                msg_print("You summon a phantasmal servant.");
                 (void)summon_specific_friendly(py, px, (dun_depth), SUMMON_PHANTOM, TRUE);
+                msg_print("You summon a phantasmal servant.");
                 return SUCCESS;
             }
 
@@ -3115,7 +3089,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_CURE_MW+PO_ACTIVATION:
             {
-                msg_print("It radiates deep purple...");
 				hp_player(damroll(4, 8));
 				(void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
 				return SUCCESS;
@@ -3123,7 +3096,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_CURE_POISON+PO_ACTIVATION:
 			{
-                msg_print("It glows deep blue...");
 				(void)set_flag(TIMED_AFRAID, 0);
 				(void)set_flag(TIMED_POISONED, 0);
 				return SUCCESS;
@@ -3131,14 +3103,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_REST_LIFE+PO_ACTIVATION:
             {
-                msg_print("It glows a deep red...");
 				restore_level();
 				return SUCCESS;
 			}
 
             case ACT_REST_ALL+PO_ACTIVATION:
             {
-                msg_print("It glows a deep green...");
                 (void)do_res_stat(A_STR);
                 (void)do_res_stat(A_INT);
                 (void)do_res_stat(A_WIS);
@@ -3151,7 +3121,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_CURE_700+PO_ACTIVATION:
 			{
-                msg_print("It glows deep blue...");
 				msg_print("You feel a warm tingling inside...");
                 (void)hp_player(700);
 				(void)set_flag(TIMED_CUT, 0);
@@ -3160,7 +3129,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_CURE_1000+PO_ACTIVATION:
 			{
-                msg_print("It glows a bright white...");
 				msg_print("You feel much better...");
 				(void)hp_player(1000);
 				(void)set_flag(TIMED_CUT, 0);
@@ -3169,7 +3137,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_PROT_EVIL+PO_ACTIVATION:
             {
-                msg_print("It lets out a shrill wail...");
 				i = 3 * plev;
 				(void)add_flag(TIMED_PROTEVIL, randint(25) + i);
 				return SUCCESS;
@@ -3177,7 +3144,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_RESIST_ALL+PO_ACTIVATION:
 			{
-                msg_print("It glows many colours...");
                 (void)add_flag(TIMED_OPPOSE_ACID, randint(40) + 40);
                 (void)add_flag(TIMED_OPPOSE_ELEC, randint(40) + 40);
                 (void)add_flag(TIMED_OPPOSE_FIRE, randint(40) + 40);
@@ -3188,7 +3154,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_SPEED+PO_ACTIVATION:
 			{
-                msg_print("It glows bright green...");
 				if (!p_ptr->fast)
 				{
 					(void)set_flag(TIMED_FAST, randint(20) + 20);
@@ -3202,7 +3167,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_XTRA_SPEED+PO_ACTIVATION:
 			{
-                msg_print("It glows brightly...");
 				if (!p_ptr->fast)
 				{
 					(void)set_flag(TIMED_FAST, randint(75) + 75);
@@ -3222,14 +3186,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_LIGHT+PO_ACTIVATION:
             {
-                msg_print("It wells with clear light...");
 				lite_area(damroll(2, 15), 3);
 				return SUCCESS;
 			}
 
             case ACT_MAP_LIGHT+PO_ACTIVATION:
 			{
-                msg_print("It shines brightly...");
 				map_area();
 				lite_area(damroll(2, 15), 3);
 				return SUCCESS;
@@ -3237,7 +3199,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_DETECT_ALL+PO_ACTIVATION:
 			{
-                msg_print("It glows bright white...");
 				msg_print("An image forms in your mind...");
 				detect_all();
 				return SUCCESS;
@@ -3245,7 +3206,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_DETECT_XTRA+PO_ACTIVATION:
 			{
-                msg_print("It glows brightly...");
                 detect_all();
 				probing();
                 identify_fully();
@@ -3254,7 +3214,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_ID_FULL+PO_ACTIVATION:
             {
-            msg_print("It glows yellow...");
             identify_fully();
                    return SUCCESS;
                 }
@@ -3268,14 +3227,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_RUNE_EXPLO+PO_ACTIVATION:
             {
-                msg_print("It glows bright red...");
                    explosive_rune();
                    return SUCCESS;
             }
 
             case ACT_RUNE_PROT+PO_ACTIVATION:
             {
-                    msg_print("It glows light blue...");
                    warding_glyph();
                    return SUCCESS;
                 }
@@ -3288,7 +3245,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_DEST_DOOR+PO_ACTIVATION:
             {
-                msg_print("It glows bright red...");
 				destroy_doors_touch();
 				return SUCCESS;
 			}
@@ -3296,7 +3252,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_STONE_MUD+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("It pulsates...");
 				wall_to_mud(dir);
 				return SUCCESS;
 			}
@@ -3310,7 +3265,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_ALCHEMY+PO_ACTIVATION:
             {
-                    msg_print("It glows bright yellow...");
                    (void) alchemy();
                    return SUCCESS;
                 }
@@ -3323,7 +3277,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_TELEPORT+PO_ACTIVATION:
 			{
-                msg_print("It twists space around you...");
 				teleport_player(100);
 				return SUCCESS;
 			}
@@ -3336,7 +3289,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case ACT_RECALL+PO_ACTIVATION:
 		{
-			msg_print("It glows soft white...");
 			set_recall(FALSE);
 			return SUCCESS;
 		}
@@ -3493,14 +3445,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			case ART_POLARIS+PO_NAME1:
             {
-				msg_print("The essence wells with clear light...");
 				lite_area(damroll(2, 15), 3);
 				return SUCCESS;
 			}
 
 			case ART_XOTH+PO_NAME1:
 			{
-				msg_print("The essence shines brightly...");
 				map_area();
 				lite_area(damroll(2, 15), 3);
 				return SUCCESS;
@@ -3508,7 +3458,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_TRAPEZOHEDRON+PO_NAME1:
 			{
-                msg_print("The gemstone flashes bright red!");
 				wiz_lite();
                 msg_print("The gemstone drains your vitality...");
                 take_hit(damroll(3,8), "the Gemstone 'Trapezohedron'", MON_DANGEROUS_EQUIPMENT);
@@ -3525,7 +3474,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_LOBON+PO_NAME1:
 			{
-				msg_print("The amulet lets out a shrill wail...");
 				i = 3 * (skill_set[SKILL_DEVICE].value/2);
 				(void)add_flag(TIMED_PROTEVIL, randint(25) + i);
 				return SUCCESS;
@@ -3533,7 +3481,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_ALHAZRED+PO_NAME1:
 			{
-				msg_print("The amulet floods the area with goodness...");
 				dispel_evil((skill_set[SKILL_DEVICE].value/2) * 5);
 				return SUCCESS;
 			}
@@ -3542,14 +3489,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			{
 
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("You order Frakir to strangle your opponent.");
                 if (drain_life(dir, 100))
 				return SUCCESS;
 			}
 
 			case ART_BAST+PO_NAME1:
 			{
-				msg_print("The ring glows brightly...");
 				if (!p_ptr->fast)
 				{
 					(void)set_flag(TIMED_FAST, randint(75) + 75);
@@ -3564,7 +3509,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_ELEMFIRE+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("The ring glows deep red...");
 				fire_ball(GF_FIRE, dir, 120, 3);
 				return SUCCESS;
 			}
@@ -3572,7 +3516,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_ELEMICE+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("The ring glows bright white...");
 				fire_ball(GF_COLD, dir, 200, 3);
 				return SUCCESS;
 			}
@@ -3580,7 +3523,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_ELEMSTORM+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("The ring glows deep blue...");
 				fire_ball(GF_ELEC, dir, 250, 3);
 				return SUCCESS;
 			}
@@ -3588,14 +3530,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_NYARLATHOTEP+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("The ring glows intensely black...");
 				ring_of_power(dir);
 				return SUCCESS;
 			}
 
 			case ART_RAZORBACK+PO_NAME1:
 			{
-				msg_print("Your armor is surrounded by lightning...");
 				for (i = 0; i < 8; i++) fire_ball(GF_ELEC, ddd[i], 150, 3);
 				return SUCCESS;
 			}
@@ -3620,7 +3560,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_SOULKEEPER+PO_NAME1:
 			{
-				msg_print("Your armor glows a bright white...");
 				msg_print("You feel much better...");
 				(void)hp_player(1000);
 				(void)set_flag(TIMED_CUT, 0);
@@ -3629,7 +3568,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_VAMPLORD+PO_NAME1:
 			{
-                msg_print("A heavenly choir sings...");
                 (void)set_flag(TIMED_POISONED, 0);
                 (void)set_flag(TIMED_CUT, 0);
                 (void)set_flag(TIMED_STUN, 0);
@@ -3642,14 +3580,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_ORCS+PO_NAME1:
 			{
-				msg_print("Your armor glows deep blue...");
 				if (genocide(TRUE) == POWER_ERROR_ABORT) (*use) = FALSE;
 				return SUCCESS;
 			}
 
 			case ART_OGRELORDS+PO_NAME1:
 			{
-				msg_print("Your armor glows bright red...");
 				destroy_doors_touch();
 				return SUCCESS;
 			}
@@ -3664,7 +3600,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_SKULLKEEPER+PO_NAME1:
 			{
-				msg_print("Your helm glows bright white...");
 				msg_print("An image forms in your mind...");
 				detect_all();
 				return SUCCESS;
@@ -3672,7 +3607,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_SUN+PO_NAME1:
 			{
-				msg_print("Your crown glows deep yellow...");
 				msg_print("You feel a warm tingling inside...");
                 (void)hp_player(700);
 				(void)set_flag(TIMED_CUT, 0);
@@ -3681,7 +3615,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_BARZAI+PO_NAME1:
 			{
-				msg_print("Your cloak glows many colours...");
 				(void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
 				(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
 				(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
@@ -3692,28 +3625,24 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_DARKNESS+PO_NAME1:
 			{
-				msg_print("Your cloak glows deep blue...");
 				sleep_monsters_touch((skill_set[SKILL_DEVICE].value/2));
 				return SUCCESS;
 			}
 
 			case ART_SWASHBUCKLER+PO_NAME1:
 			{
-				msg_print("Your cloak glows bright yellow...");
 				recharge(60);
 				return SUCCESS;
 			}
 
 			case ART_SHIFTER+PO_NAME1:
 			{
-				msg_print("Your cloak twists space around you...");
 				teleport_player(100);
 				return SUCCESS;
 			}
 
 			case ART_NYOGTHA+PO_NAME1:
 			{
-				msg_print("Your cloak glows a deep red...");
 				restore_level();
 				return SUCCESS;
 			}
@@ -3721,7 +3650,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_LIGHT+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your gloves glow extremely brightly...");
 				fire_bolt(GF_MISSILE, dir, damroll(2, 6));
 				return SUCCESS;
 			}
@@ -3729,7 +3657,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_IRONFIST+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your gauntlets are covered in fire...");
 				fire_bolt(GF_FIRE, dir, damroll(9, 8));
 				return SUCCESS;
 			}
@@ -3737,7 +3664,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_GHOULS+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your gauntlets are covered in frost...");
 				fire_bolt(GF_COLD, dir, damroll(6, 8));
 				return SUCCESS;
 			}
@@ -3745,7 +3671,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_WHITESPARK+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your gauntlets are covered in sparks...");
 				fire_bolt(GF_ELEC, dir, damroll(4, 8));
 				return SUCCESS;
 			}
@@ -3753,7 +3678,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_DEAD+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your gauntlets are covered in acid...");
 				fire_bolt(GF_ACID, dir, damroll(5, 8));
 				return SUCCESS;
 			}
@@ -3761,14 +3685,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_COMBAT+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your cesti grows magical spikes...");
 				fire_bolt(GF_ARROW, dir, 150);
 				return SUCCESS;
 			}
 
 			case ART_ITHAQUA+PO_NAME1:
 			{
-				msg_print("A wind swirls around your boots...");
 				if (!p_ptr->fast)
 				{
 					(void)set_flag(TIMED_FAST, randint(20) + 20);
@@ -3782,7 +3704,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_DANCING+PO_NAME1:
 			{
-				msg_print("Your boots glow deep blue...");
 				(void)set_flag(TIMED_AFRAID, 0);
 				(void)set_flag(TIMED_POISONED, 0);
 				return SUCCESS;
@@ -3791,7 +3712,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_FAITH+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your dagger is covered in fire...");
 				fire_bolt(GF_FIRE, dir, damroll(9, 8));
 				return SUCCESS;
 			}
@@ -3799,7 +3719,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_HOPE+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your dagger is covered in frost...");
 				fire_bolt(GF_COLD, dir, damroll(6, 8));
 				return SUCCESS;
 			}
@@ -3807,7 +3726,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_CHARITY+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your dagger is covered in sparks...");
 				fire_bolt(GF_ELEC, dir, damroll(4, 8));
 				return SUCCESS;
 			}
@@ -3815,7 +3733,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_THOTH+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your dagger throbs deep green...");
 				fire_ball(GF_POIS, dir, 12, 3);
 				return SUCCESS;
 			}
@@ -3823,7 +3740,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_ICICLE+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your dagger is covered in frost...");
 				fire_ball(GF_COLD, dir, 48, 2);
 				return SUCCESS;
 			}
@@ -3853,14 +3769,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_STARLIGHT+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your sword glows an intense blue...");
 				fire_ball(GF_COLD, dir, 100, 2);
 				return SUCCESS;
 			}
 
             case ART_DAWN+PO_NAME1:
             {
-                msg_print("Your sword flickers black for a moment...");
                 (void)summon_specific_friendly(py, px, (dun_depth), SUMMON_REAVER, TRUE);
                 return SUCCESS;
             }
@@ -3868,7 +3782,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_EVERFLAME+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your sword glows an intense red...");
 				fire_ball(GF_FIRE, dir, 72, 2);
 				return SUCCESS;
 			}
@@ -3876,7 +3789,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_THEODEN+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your axe blade glows black...");
 				drain_life(dir, 120);
 				return SUCCESS;
 			}
@@ -3884,7 +3796,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_ODIN+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("Your spear crackles with electricity...");
                 fire_ball(GF_ELEC, dir, 100, 3);
 				return SUCCESS;
 			}
@@ -3892,21 +3803,18 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_DESTINY+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your spear pulsates...");
 				wall_to_mud(dir);
 				return SUCCESS;
 			}
 
 			case ART_TROLLS+PO_NAME1:
 			{
-				msg_print("Your axe lets out a long, shrill note...");
 				(void)mass_genocide(TRUE);
 				return SUCCESS;
 			}
 
 			case ART_SPLEENSLICER+PO_NAME1:
 			{
-				msg_print("Your battle axe radiates deep purple...");
 				hp_player(damroll(4, 8));
 				(void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
 				return SUCCESS;
@@ -3915,14 +3823,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_GNORRI+PO_NAME1:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your trident glows deep red...");
 				teleport_monster(dir);
 				return SUCCESS;
 			}
 
 			case ART_GHARNE+PO_NAME1:
 			{
-				msg_print("Your scythe glows soft white...");
 				set_recall(FALSE);
 				return SUCCESS;
 			}
@@ -3930,7 +3836,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_TOTILA+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your flail glows in scintillating colours...");
 				confuse_monster(dir, 20);
 				return SUCCESS;
 			}
@@ -3938,14 +3843,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_FIRESTAR+PO_NAME1:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your morning star rages in fire...");
 				fire_ball(GF_FIRE, dir, 72, 3);
 				return SUCCESS;
 			}
 
 			case ART_THUNDER+PO_NAME1:
 			{
-				msg_print("Your mace glows bright green...");
 				if (!p_ptr->fast)
 				{
 					(void)set_flag(TIMED_FAST, randint(20) + 20);
@@ -3959,14 +3862,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_ERIRIL+PO_NAME1:
 			{
-				msg_print("Your quarterstaff glows yellow...");
 				if (!ident_spell()) (*use) = FALSE;
 				return SUCCESS;
 			}
 
 			case ART_ATAL+PO_NAME1:
 			{
-				msg_print("Your quarterstaff glows brightly...");
                 detect_all();
 				probing();
                 identify_fully();
@@ -3976,14 +3877,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_JUSTICE+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				msg_print("Your hammer glows white...");
 				drain_life(dir, 90);
 				return SUCCESS;
 			}
 
 			case ART_DEATH+PO_NAME1:
 			{
-				msg_print("Your crossbow glows deep red...");
 				(void)brand_bolts();
 				return SUCCESS;
 			}

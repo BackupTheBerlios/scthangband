@@ -1812,7 +1812,7 @@ static void check_arrays(void)
 	check_temp_effects();
 	check_options();
 	check_skill_set();
-	check_timeouts();
+	check_activation_info();
 	check_book_info();
 	check_magic_info();
 	check_ma_blows();

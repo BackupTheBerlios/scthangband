@@ -3999,7 +3999,7 @@ extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 /* cmd6.c */
 
 #if (defined(CHECK_ARRAYS)) && (defined(CMD6_C) || defined(INIT2_C))
-extern void check_timeouts(void);
+extern void check_activation_info(void);
 #endif
 
 /* files.c */

@@ -136,6 +136,13 @@
  */
 #define END_PTR(X) ((X) + N_ELEMENTS(X))
 
+/*
+ * Given an array with known size, set a pointer to each element in turn with
+ * a for loop.
+ */
+#define FOR_ALL_IN(ARRAY, PTR) \
+	for ((PTR) = (ARRAY); (PTR) < END_PTR(ARRAY); (PTR)++)
+
 /* Try to mark unused variables as such in a way the compiler understands. */
 #if defined(__GNUC__) || defined(__TINYC__)
 #define UNUSED __attribute__((__unused__))
