@@ -2384,9 +2384,6 @@ void monster_death(int m_idx)
 	/* Check if quest is complete (Heino Vander Sanden) */
 	if (q_list[q_idx].cur_num != q_list[q_idx].max_num) return;
 
-	/* No longer quest monster (Heino Vander Sanden) */
-	r_ptr->flags1 ^= (RF1_GUARDIAN);
-
 	/* Count incomplete quests (Heino Vander Sanden) */
 	for (i = 0; i < MAX_Q_IDX; i++)
 	{

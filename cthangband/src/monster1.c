@@ -1404,7 +1404,14 @@ static void roff_aux(int r_idx)
 	/* Notice "Quest" monsters */
 	if (flags1 & (RF1_GUARDIAN))
 	{
+		if (r_ptr->max_num)
+		{
 		c_roff(MONCOL_QUEST, "You feel an intense desire to kill this monster...  ");
+	}
+		else
+		{
+			c_roff(MONCOL_QUEST, "You felt an intense desire to kill this monster...  ");
+		}
 	}
 
 

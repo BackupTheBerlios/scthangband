@@ -3282,8 +3282,8 @@ static void do_cmd_knowledge_uniques(void)
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
-				/* Print a message */
-				fprintf(fff, "     %s is %s\n",
+				fprintf(fff, " %c %c %s is %s\n",
+				 r_ptr->d_char, (r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ',
 				        (r_name + r_ptr->name),
 				        (dead ? "dead" : "alive"));
 			}
@@ -3423,11 +3423,12 @@ static void do_cmd_knowledge_pets(void)
 		if (m_ptr->smart & (SM_ALLY))
 		{
 			char pet_name[80];
+			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			t_friends++;
-			t_levels += r_info[m_ptr->r_idx].level;
+			t_levels += r_ptr->level;
 			monster_desc(pet_name, m_ptr, 0x88);
 			strcat(pet_name, "\n");
-			fprintf(fff,pet_name);
+			fprintf(fff,"%c %s\n", r_ptr->d_char, pet_name);
 		}
 	}
 
@@ -3482,9 +3483,9 @@ static int count_kills(FILE *fff, bool noisy)
 			full_name(string, This > 1, FALSE, FALSE);
 
 			if (r_ptr->flags1 & (RF1_UNIQUE) && This == 1)
-				fprintf(fff, "     %s\n", (r_name + r_ptr->name));
+				fprintf(fff, " %c   %s\n", r_ptr->d_char, (r_name + r_ptr->name));
 			else
-				fprintf(fff, "     %d %s\n", This, string);
+				fprintf(fff, " %c   %d %s\n", r_ptr->d_char, This, string);
 		}
 	}
 	return Total;
