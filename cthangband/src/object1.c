@@ -2697,8 +2697,9 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 	}
 
 	/* Hack - describe the wield skill of weaponry. */
-	alloc_ifa(info+i++,
-		"It trains your %s skill.", skill_set[wield_skill(o_ptr)].name);
+	j = wield_skill(o_ptr);
+	if (j < MAX_SKILLS) alloc_ifa(info+i++,
+		"It trains your %s skill.", skill_set[j].name);
 
 
 	/* And then describe it fully */

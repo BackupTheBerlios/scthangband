@@ -1190,7 +1190,7 @@ int PURE wield_skill(object_ctype *o_ptr)
 		}
 		default:
 		{
-			return 0;
+			return MAX_SKILLS;
 		}
 	}
 }
@@ -1719,7 +1719,8 @@ static void calc_bonuses(void)
 	o_ptr = &inventory[INVEN_WIELD];
 
 	/* Can we assign a weapon skill? */
-	if (!(p_ptr->wield_skill=wield_skill(o_ptr)))
+	p_ptr->wield_skill = wield_skill(&inventory[INVEN_WIELD]);
+	if (p_ptr->wield_skill >= MAX_SKILLS)
 	{
 		msg_print("Unknown weapon type wielded - "
 			"defaulting to close combat skill.");
