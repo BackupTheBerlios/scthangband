@@ -3618,7 +3618,6 @@ static void do_violet_uniques(bool swap)
 	{
 		case 1: if (swap) violet_uniques = 2; break;
 		case 2: violet_uniques = 1; break;
-		default:
 	}
 
 	/* Redraw all visible monsters. */
@@ -4524,7 +4523,7 @@ bool get_rep_dir(int *dp)
 }
 
 
-int get_chaos_patron()
+int get_chaos_patron(void)
 {
     return (((p_ptr->age)+(p_ptr->sc)+(p_ptr->birthday))%MAX_PATRON);
 }

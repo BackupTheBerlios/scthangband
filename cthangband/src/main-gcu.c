@@ -477,7 +477,7 @@ static errr Term_xtra_gcu_alive(int v)
 /*
  * Init the "curses" system
  */
-static void Term_init_gcu(term *t)
+static void Term_init_gcu(term UNUSED *t)
 {
 	/* Count init's, handle first */
 	if (active++ != 0) return;
@@ -499,7 +499,7 @@ static void Term_init_gcu(term *t)
 /*
  * Nuke the "curses" system
  */
-static void Term_nuke_gcu(term *t)
+static void Term_nuke_gcu(term UNUSED *t)
 {
 	/* Count nuke's, handle last */
 	if (--active != 0) return;
@@ -773,7 +773,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
  *
  * Someone should really check the semantics of "initscr()"
  */
-errr init_gcu(int argc, char **argv)
+errr init_gcu(int UNUSED argc, char UNUSED **argv)
 {
 	int i;
 

@@ -198,10 +198,17 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
 {
 	stat_default_type *sd_ptr;
 	byte i;
-	s16b stat[A_MAX] = {st, in, wi, dx, co, ch};
+	s16b stat[A_MAX];
 
 	/* Don't even try after character generation. */
 	if (!stat_default) return SUCCESS;
+
+	stat[A_STR] = st;
+	stat[A_INT] = in;
+	stat[A_WIS] = wi;
+	stat[A_DEX] = dx;
+	stat[A_CON] = co;
+	stat[A_CHR] = ch;
 
 	/* Ignore nonsense values */
 	if (maximise != DEFAULT_STATS)
@@ -1401,7 +1408,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	}
 	else
 	{
-		s32b junk, f3;
+		u32b junk, f3;
 
 		/* Mega-Hack -- Extract the "base power" */
 		if (wp_ptr->k_idx) power = (wp_ptr->sval % 10);
@@ -2146,7 +2153,7 @@ static void display_player_equippy(int y, int x)
 }
 
 
-void print_equippy()
+void print_equippy(void)
 {
     display_player_equippy(ROW_EQUIPPY, COL_EQUIPPY);
 }
@@ -2155,7 +2162,7 @@ void print_equippy()
  * Helper function, see below
  */
 static void display_player_flag_aux(int row, int col,
-			char *header, int n, u32b flag)
+			const char *header, int n, u32b flag)
 {
 	int i;
 
@@ -3256,7 +3263,7 @@ void dump_final_messages(FILE * OutFile)
  * XXX XXX XXX Allow the "full" flag to dump additional info,
  * and trigger its usage from various places in the code.
  */
-errr file_character(cptr name, bool full)
+errr file_character(cptr name, bool UNUSED full)
 {
 	int			i, x, y;
 
@@ -5585,7 +5592,7 @@ void exit_game_panic(void)
 }
 
 
-errr get_rnd_line(char * file_name, char * output)
+errr get_rnd_line(const char * file_name, char * output)
 {
 	FILE        *fp;
 

@@ -1471,7 +1471,7 @@ typedef struct
 
 
 /* converts images from bit to byte format */
-void convert_grx_bitmap(int width, int height, unsigned char *src, unsigned char *dest) 
+void convert_grx_bitmap(int width, int height, unsigned char *src, unsigned char *dest)
 {
 	unsigned short x, y, bytes_per_line;
 	unsigned char bitpos, bitset;

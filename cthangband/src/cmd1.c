@@ -1068,7 +1068,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 
     int dss, ddd;
 
-    char * atk_desc;
+	const char * atk_desc;
 	
 	/* Slow down the attack */
 	energy_use += 10;
@@ -3007,7 +3007,7 @@ void run_step(int dir)
 /*
  * Get town at given coordinates
  */
-byte get_cur_town(y,x)
+byte get_cur_town(int y, int x)
 {
 	int i;
 	for(i=0;i<MAX_TOWNS;i++)

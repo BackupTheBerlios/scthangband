@@ -4212,7 +4212,7 @@ else
 }
 
 
-bool artifact_scroll()
+bool artifact_scroll(void)
 {
 	int                     item;
 	bool            okay = FALSE;
@@ -6140,7 +6140,7 @@ void call_chaos(int plev)
 			}
 }
 
-void activate_ty_curse()
+void activate_ty_curse(void)
 {
     int i = 0;
     do

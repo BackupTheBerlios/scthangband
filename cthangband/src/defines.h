@@ -319,7 +319,7 @@ logaux(x, 1) logaux(x, 0) 255
  */
 #define MAX_F_IDX       103      /* Max size for "f_info[]" */
 #define MAX_K_IDX       576     /* Max size for "k_info[]" */
-#define UB_U_IDX	(MAX_U16B/sizeof(unident_type))	/* Max possible size for u_info[] */
+#define UB_U_IDX	((int)(MAX_U16B/sizeof(unident_type)))	/* Max possible size for u_info[] */
 #define MAX_U_IDX	(u_head->info_num)	/* Actual size of u_info[] */
 #define MAX_A_IDX       128     /* Max size for "a_info[]" */
 #define MAX_E_IDX       128     /* Max size for "e_info[]" */

@@ -580,7 +580,7 @@ static void rd_lore(int r_idx)
  */
 static void rd_death(void)
 {
-	int i,j;
+	uint i,j;
 	u16b tmp16u;
 	for (i = 0;; i++)
 	{
