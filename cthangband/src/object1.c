@@ -4090,6 +4090,29 @@ static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
 	}
 }
 
+
+/*
+ * Set *o_ptr to the next object in a stack, if known.
+ * Set *o_ptr to NULL if none known.
+ */
+static void next_object(object_type **o_ptr)
+{
+	/* Get the next object to squelch, if any. */
+	if (is_inventory_p(*o_ptr))
+	{
+		/* Search the inventory backwards to minimise reordering problems. */
+		if (*o_ptr > inventory) (*o_ptr)--;
+		else *o_ptr = NULL;
+	}
+	else
+	{
+		if (o_ptr[0]->next_o_idx) *o_ptr = o_list+o_ptr[0]->next_o_idx;
+		else *o_ptr = NULL;
+	}
+}
+
+
+
 /*
  * Find an inventory object with the given "tag" in its inscription in the
  * player's inventory or equipment.
@@ -4105,17 +4128,15 @@ static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
  * "o_ptr" is set to the selected item (or is left alone if none is chosen).
  * "tag" is the "n" in the above description.
  * "cmd" is the "x" in the above description.
- * "equip" controls whether the game should search the player's equipment or
- * inventory for the tag.
+ * "j_ptr" i
  */
-static bool get_tag(object_type **o_ptr, char tag, s16b cmd, bool equip)
+static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 {
 	char cmd_str[3] = "", buf[2*MAX_ASCII_LEN+1];
-	int i, len;
+	int len;
 	cptr s;
 
-	int min = (equip) ? INVEN_WIELD : 0;
-	int max = (equip) ? INVEN_TOTAL : INVEN_WIELD;
+	object_type *j_ptr;
 
 	/* Turn the command into an ASCII representation. */
 	if (cmd & 0xFF00)
@@ -4127,9 +4148,10 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, bool equip)
 	len = strlen(buf);
 
 	/* Check every object */
-	for (i = min; i < max; ++i)
+	for (j_ptr = first; j_ptr; next_object(&j_ptr))
 	{
-		object_type *j_ptr = &inventory[i];
+		/* Only check equipment if we were doing it first. */
+		if (j_ptr == inventory+INVEN_WIELD && j_ptr > first) break;
 
 		/* Skip non-objects */
 		if (!j_ptr->k_idx) continue;
@@ -4561,15 +4583,27 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			{
 				bool tmp;
 
+				object_type *first;
+
 				/* Assume no object by default. */
 				o_ptr = NULL;
 
+				first = inventory + ((command_wrk) ? INVEN_WIELD : 0);
+
 				/* XXX XXX Look up that tag */
-				tmp = get_tag(&o_ptr, which, command_cmd, command_wrk);
+				tmp = get_tag(&o_ptr, which, command_cmd, first);
+
+				first = inventory + ((command_wrk) ? 0 : INVEN_WIELD);
 
 				/* Look it up in the rest of the inventory if allowed. */
 				if (!tmp && equip && inven)
-					get_tag(&o_ptr, which, command_cmd, !command_wrk);
+					tmp = get_tag(&o_ptr, which, command_cmd, first);
+
+				first = o_list + c_ptr->o_idx;
+
+				/* Look it up on the floor if allowed. */
+				if (!tmp && allow_floor)
+					tmp = get_tag(&o_ptr, which, command_cmd, first);
 
 				if (!o_ptr)
 				{
