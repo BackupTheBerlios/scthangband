@@ -808,69 +808,7 @@ logaux(x, 1) logaux(x, 0) 255)
 
 #define COL_START	0	/* First character in left border */
 #define COL_END	    12	/* Last character in left border */	
-
-#define ROW_TIME                1
-#define COL_TIME               0       /* 12:34 10 Jan */
-
-#define ROW_GOLD	ROW_TIME+2
-#define COL_GOLD                0       /* "AU xxxxxxxxx" */
-
-#define ROW_EQUIPPY	ROW_GOLD+1
-#define COL_EQUIPPY             0       /* equippy chars */
-
-#define ROW_STAT	ROW_EQUIPPY+1
-#define COL_STAT                0       /* "xxx   xxxxxx" */
-
-#define ROW_AC	ROW_STAT+7	/* Stats take 6 rows, leaving one blank. */
-#define COL_AC                  0       /* "Cur AC xxxxx" */
-
-#define ROW_HP	ROW_AC+1	/* "HP: xxx/yyy, etc." */
-#define ROW_SP	ROW_HP+1	/* "SP: xxx/yyy, etc." */
-#define ROW_CHI	ROW_SP+1	/* "CH: xxx/yyy, etc." */
-
-#define ROW_LIFE	ROW_CHI+2	/* "Life: a c e g"*/
-#define ROW_WILD	ROW_LIFE+1	/* "Wild: b d f h"*/
-
-#define ROW_INFO	ROW_WILD+1
-#define COL_INFO                0       /* "xxxxxxxxxxxx" */
-
-#define ROW_ENERGY	ROW_INFO+1	/* LE: xxx */
-
-#define ROW_CUT	ROW_ENERGY+1
-#define COL_CUT                 0       /* <cut> */
-
-#define ROW_STUN	ROW_CUT+1
-#define COL_STUN                0       /* <stun> */
-
-#define ROW_HUNGRY	ROW_STUN+1	/* 23 */
-#define COL_HUNGRY              0       /* "Weak" / "Hungry" / "Full" / "Gorged" */
-
-#define ROW_BOTTOM	(term_screen->hgt-1)
-
-#define ROW_BLIND               ROW_BOTTOM
-#define COL_BLIND               7       /* "Blind" */
-
-#define ROW_CONFUSED    ROW_BOTTOM
-#define COL_CONFUSED    13      /* "Confused" */
-
-#define ROW_AFRAID              ROW_BOTTOM
-#define COL_AFRAID              22      /* "Afraid" */
-
-#define ROW_POISONED    ROW_BOTTOM
-#define COL_POISONED    29      /* "Poisoned" */
-
-#define ROW_STATE               ROW_BOTTOM
-#define COL_STATE               38      /* <state> */
-
-#define ROW_SPEED               ROW_BOTTOM
-#define COL_SPEED               49      /* "Slow (-NN)" or "Fast (+NN)" */
-
-#define ROW_STUDY               ROW_BOTTOM
-#define COL_STUDY               63      /* "Study" */
-
-#define ROW_DEPTH               ROW_BOTTOM
-#define COL_DEPTH               69      /* "Lev NNN" / "NNNN ft" */
-
+#define BORDER_WIDTH (COL_END-COL_START) /* The length of a border string. */
 
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/

@@ -147,39 +147,143 @@ static void prt_field(cptr info, int row, int col)
 	c_put_str(TERM_L_BLUE, info, row, col);
 }
 #endif
+typedef struct co_ord co_ord;
+struct co_ord
+{
+#ifdef CHECK_ARRAYS
+	co_ord *idx;
+#endif /* CHECK_ARRAYS */
+	int x;
+	int y;
+};
 
+/* Check that the indices used for various arrays are correct. */
+/* #define CHECK_ARRAYS */
 
+#ifdef CHECK_ARRAYS
+#define IDX(idx) idx,
+#else /* CHECK_ARRAYS */
+#define IDX(idx)
+#endif /* CHECK_ARRAYS */
+
+static co_ord screen_coords[] =
+{
+	{IDX(XY_TIME) 0, 1},
+	{IDX(XY_GOLD) 0, 3},
+	{IDX(XY_EQUIPPY) 0, 4},
+	{IDX(XY_STAT+A_STR) 0, 5},
+	{IDX(XY_STAT+A_INT) 0, 6},
+	{IDX(XY_STAT+A_WIS) 0, 7},
+	{IDX(XY_STAT+A_DEX) 0, 8},
+	{IDX(XY_STAT+A_CON) 0, 9},
+	{IDX(XY_STAT+A_CHR) 0, 10},
+	{IDX(XY_AC) 0, 12},
+	{IDX(XY_HP) 0, 13},
+	{IDX(XY_SP) 0, 14},
+	{IDX(XY_CHI) 0, 15},
+	{IDX(XY_LIFE_SPIRIT) 0, 17},
+	{IDX(XY_WILD_SPIRIT) 0, 18},
+	{IDX(XY_INFO) 0, 19},
+	{IDX(XY_ENERGY) 0, 20},
+	{IDX(XY_CUT) 0, 21},
+	{IDX(XY_STUN) 0, 22},
+	{IDX(XY_HUNGRY) 0, 23},
+	{IDX(XY_BLIND) 7, -1},
+	{IDX(XY_CONFUSED) 13, -1},
+	{IDX(XY_AFRAID) 22, -1},
+	{IDX(XY_POISONED) 29, -1},
+	{IDX(XY_STATE) 38, -1},
+	{IDX(XY_SPEED) 49, -1},
+	{IDX(XY_STUDY) 63, -1},
+	{IDX(XY_DEPTH) 69, -1},
+};
+
+/*** Screen Locations ***/
+
+/*
+ * Some screen locations for various display routines
+ * Defined relatively to make rearrangement easier
+ */
+#define XY_TIME (screen_coords+0) /* 12:34 10 Jan */
+#define XY_GOLD (screen_coords+1) /* "AU xxxxxxxxx" */
+#define XY_EQUIPPY (screen_coords+2) /* equippy chars */
+#define XY_STAT (screen_coords+3) /* "xxx:  xxxxxx" */
+#define XY_AC (screen_coords+9) /* "AC:    xxxxx" */
+#define XY_HP (screen_coords+10) /* "HP: xxx/yyy, etc." */
+#define XY_SP (screen_coords+11) /* "SP: xxx/yyy, etc." */
+#define XY_CHI (screen_coords+12) /* "CH: xxx/yyy, etc." */
+#define XY_LIFE_SPIRIT (screen_coords+13) /* "Life: a c e g"*/
+#define XY_WILD_SPIRIT (screen_coords+14) /* "Wild: b d f h"*/
+#define XY_INFO (screen_coords+15) /* "xxxxxxxxxxxx" (monster info) */
+#define XY_ENERGY (screen_coords+16) /* LE: xxx */
+#define XY_CUT (screen_coords+17) /* <cut> */
+#define XY_STUN (screen_coords+18) /* <stun> */
+#define XY_HUNGRY (screen_coords+19) /* "Weak" / "Hungry" / "Full" / "Gorged" */
+#define XY_BLIND (screen_coords+20) /* "Blind" */
+#define XY_CONFUSED (screen_coords+21) /* "Confused" */
+#define XY_AFRAID (screen_coords+22) /* "Afraid" */
+#define XY_POISONED (screen_coords+23) /* "Poisoned" */
+#define XY_STATE (screen_coords+24) /* <state> */
+#define XY_SPEED (screen_coords+25) /* "Slow (-NN)" or "Fast (+NN)" */
+#define XY_STUDY (screen_coords+26) /* "Study" */
+#define XY_DEPTH (screen_coords+27) /* "Lev NNN" / "NNNN ft" */
+
+/*
+ * Translate a negative co-ordinate into one relative to the far edge of the
+ * screen.
+ */
+static int get_y(co_ord *t)
+{
+	if (t->y >= 0) return t->y;
+	else return Term->hgt + t->y;
+}
+
+static int get_x(co_ord *t)
+{
+	if (t->x >= 0) return t->x;
+	else return Term->wid - t->x;
+}
+
+/* Shorten "put it where the table says it should go" for y,x functions. */
+#define GET_YX(T) get_y(T), get_x(T)
+
+static void prt_equippy(void)
+{
+    display_player_equippy(GET_YX(XY_EQUIPPY));
+}
 
 /*
  * Print character stat in given row, column
  */
 static void prt_stat(int stat)
 {
-	char tmp[32];
-	byte attr;
+	char attr, colon;
 	cptr name;
 
 	/* Choose a colour (white >18/219, yellow reduced, light green normal. */
-	if (p_ptr->stat_use[stat] > 18+219) attr = TERM_WHITE;
-	else if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat]) attr = TERM_YELLOW;
-	else attr = TERM_L_GREEN;
+	if (p_ptr->stat_use[stat] > 18+219) attr = 'w';
+	else if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat]) attr = 'y';
+	else attr = 'G';
 	
 	/* Choose a name style (reduced or normal) */
-	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat]) name = stat_names_reduced[stat];
-	else name = stat_names[stat];
-
-	/* Display name */
-	put_str(name, ROW_STAT + stat, 0);
+	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
+		name = stat_names_reduced[stat];
+	else
+		name = stat_names[stat];
 
 	/* Indicate natural maximum */
 	if (p_ptr->stat_max[stat] == 18+100)
 	{
-		put_str("!", ROW_STAT + stat, 3);
+		colon = '!';
+	}
+	else
+	{
+		colon = ':';
 	}
 
-	/* Display number */
-	strnfmt(tmp, sizeof(tmp), "%v", cnv_stat_f1, p_ptr->stat_use[stat]);
-	c_put_str(attr, tmp, ROW_STAT + stat, COL_STAT + 6);
+	/* Display name and number */
+	mc_put_fmt(GET_YX(XY_STAT+stat), "%.3s%c  $%c%v",
+		name, colon, attr, cnv_stat_f1, p_ptr->stat_use[stat]);
 }
 
 /*
@@ -187,11 +291,7 @@ static void prt_stat(int stat)
  */
 static void prt_gold(void)
 {
-	char tmp[32];
-
-	put_str("AU ", ROW_GOLD, COL_GOLD);
-	sprintf(tmp, "%9ld", (long)p_ptr->au);
-	c_put_str(TERM_L_GREEN, tmp, ROW_GOLD, COL_GOLD + 3);
+	mc_put_fmt(GET_YX(XY_GOLD), "AU $G%9ld", (long)p_ptr->au);
 }
 
 /*
@@ -200,26 +300,14 @@ static void prt_gold(void)
 static void prt_time(void)
 {
 	int minute = ((turn % ((10L * TOWN_DAWN)) * 1440) / ((10L * TOWN_DAWN)));
-	int hour = ((minute/60)-6)%24; /* 0 to 23 */
-	s16b day = 0;
+	int hour = ((minute/60)+6)%24; /* 0 to 23 */
+	int day = (turn + (10L * TOWN_DAWN / 4)) / (10L * TOWN_DAWN) + 1;
 
 	/* Only keep loose minutes */
 	minute = minute % 60;
 
-	/* Work out day */
-	if (turn <= 3*(10L * TOWN_DAWN)/4)
-	{
-		day = 1;
-	}
-	else
-	{
-		day = (turn - 3*(10L * TOWN_DAWN / 4)) / (10L * TOWN_DAWN) + 2;
-	}
-
-	hour = (hour+12) % 24;
-
-	put_str(format("%2d:%02d %v", hour, minute,
-		day_to_date_f1, day+p_ptr->startdate), ROW_TIME, COL_TIME);
+	mc_put_fmt(GET_YX(XY_TIME), "%2d:%02d %v",
+		hour, minute, day_to_date_f1, day+p_ptr->startdate);
 }
 
 
@@ -228,11 +316,7 @@ static void prt_time(void)
  */
 static void prt_ac(void)
 {
-	char tmp[32];
-
-	put_str("AC:", ROW_AC, COL_AC);
-	sprintf(tmp, "%5d", p_ptr->dis_ac + p_ptr->dis_to_a);
-	c_put_str(TERM_L_GREEN, tmp, ROW_AC, COL_AC + 7);
+	mc_put_fmt(GET_YX(XY_AC), "AC:    $G%5d", p_ptr->dis_ac+p_ptr->dis_to_a);
 }
 
 /*
@@ -240,18 +324,17 @@ static void prt_ac(void)
  */
 static void prt_energy(void)
 {
-	char tmp[32];
-	put_str("LE:", ROW_ENERGY, COL_START);
-	sprintf(tmp, "%4d", old_energy_use);
-	c_put_str(TERM_L_GREEN, tmp, ROW_ENERGY, COL_END-4);
- }
+	mc_put_fmt(GET_YX(XY_ENERGY), "LE:     $G%4d", old_energy_use);
+}
 
 /*
  * Prints Cur/Max hit points
  */
 static void prt_hp(void)
 {
-	prt_nums("HP:", ROW_HP, COL_START, COL_END, p_ptr->chp, p_ptr->mhp);
+	int x = get_x(XY_HP);
+	int y = get_y(XY_HP);
+	prt_nums("HP:", y, x, x+BORDER_WIDTH, p_ptr->chp, p_ptr->mhp);
 }
 
 
@@ -260,8 +343,12 @@ static void prt_hp(void)
  */
 static void prt_sp(void)
 {
-	prt_nums("SP:", ROW_SP, COL_START, COL_END, p_ptr->csp, p_ptr->msp);
-	prt_nums("CH:", ROW_CHI, COL_START, COL_END, p_ptr->cchi, p_ptr->mchi);
+	int x = get_x(XY_SP);
+	int y = get_y(XY_SP);
+	prt_nums("SP:", y, x, x+BORDER_WIDTH, p_ptr->csp, p_ptr->msp);
+	x = get_x(XY_CHI);
+	y = get_y(XY_CHI);
+	prt_nums("CH:", y, x, x+BORDER_WIDTH, p_ptr->cchi, p_ptr->mchi);
 }
 
 /*
@@ -273,48 +360,53 @@ static void prt_sp(void)
  * Red = Furious or angry
  * Yellow = Annoyed or irriated
  * Green = Placated
- *
  */
-  
 static void prt_spirit(void)
 {
-	int	i, j, colour;
-	char	il[2];
-	byte plev = skill_set[SKILL_SHAMAN].value/2;
+	const int row_wild = get_y(XY_WILD_SPIRIT);
+	const int col_wild = get_x(XY_WILD_SPIRIT);
+	const int end_wild = col_wild+BORDER_WIDTH;
+	const int row_life = get_y(XY_LIFE_SPIRIT);
+	const int col_life = get_x(XY_LIFE_SPIRIT);
+	const int end_life = col_life+BORDER_WIDTH;
+
+	int	i, j;
+	char	il[4];
+	byte plev = MIN(1, skill_set[SKILL_SHAMAN].value/2);
 	spirit_type	*s_ptr;
 	if(plev == 0) plev++;
-	put_str("Life", ROW_LIFE, COL_START);
-	put_str("Wild", ROW_WILD, COL_START);
+	put_str("Life", row_life, col_life);
+	put_str("Wild", row_wild, col_wild);
 	j=0;
-	for (i=0;i<MAX_SPIRITS;i++) {
+	for (i=0;i<MAX_SPIRITS;i++)
+	{
 		s_ptr=&(spirits[i]);
-		if(!(s_ptr->pact)) {
- 			colour=0;
-			sprintf(il,"#");
+		if(!(s_ptr->pact))
+		{
+			sprintf(il,"$d#");
 		}
-   		else if (s_ptr->minskill > plev) {
- 			colour=8;
- 			sprintf(il,"#");
+   		else if (s_ptr->minskill > plev)
+		{
+ 			sprintf(il,"$D#");
  		}
- 		else if(s_ptr->annoyance > 8) {
- 			colour=4;
- 			sprintf(il, "%c", I2A(j));
+ 		else if(s_ptr->annoyance > 8)
+		{
+ 			sprintf(il, "$r%c", I2A(j++));
  			j++;
  		}
- 		else if(s_ptr->annoyance > 0) {
- 			colour=11;
- 			sprintf(il, "%c", I2A(j));
- 			j++;
+ 		else if(s_ptr->annoyance > 0)
+		{
+ 			sprintf(il, "$y%c", I2A(j++));
  		}
- 		else {
- 			colour=13;
- 			sprintf(il, "%c", I2A(j));
- 			j++;
- 		}
- 		if (i % 2 == 0)
- 			c_put_str(colour, il, ROW_LIFE, COL_END-MAX_SPIRITS+1+i);
  		else
- 			c_put_str(colour, il, ROW_WILD, COL_END-MAX_SPIRITS+i);
+		{
+ 			sprintf(il, "$G%c", I2A(j++));
+ 		}
+		/* Should this check the sphere parameter? */
+ 		if (i % 2 == 0)
+ 			mc_put_str(il, row_life, end_life-MAX_SPIRITS+1+i);
+ 		else
+ 			mc_put_str(il, row_wild, end_wild-MAX_SPIRITS+i);
 	}
 }
 
@@ -331,7 +423,6 @@ static void prt_depth(void)
 	};
 	if (depth_in_feet) level *= 50;
 
-
 	if (dun_level)
 	{
 		depths = format(
@@ -347,7 +438,7 @@ static void prt_depth(void)
 		depths = format("Wild (%d,%d)",wildx,wildy);
 	}
 	/* Right-Adjust the "depth", and clear old values */
-	prt(format("%9s", depths), ROW_DEPTH, COL_DEPTH);
+	mc_put_fmt(GET_YX(XY_DEPTH), "%9s", depths);
 }
 
 
@@ -356,41 +447,26 @@ static void prt_depth(void)
  */
 static void prt_hunger(void)
 {
+	cptr str;
 	/* Fainting / Starving */
-	if (p_ptr->food < PY_FOOD_FAINT)
-	{
-		c_put_str(TERM_RED, "Weak  ", ROW_HUNGRY, COL_HUNGRY);
-	}
+	if (p_ptr->food < PY_FOOD_FAINT) str = "$rWeak";
 
 	/* Weak */
-	else if (p_ptr->food < PY_FOOD_WEAK)
-	{
-		c_put_str(TERM_ORANGE, "Weak  ", ROW_HUNGRY, COL_HUNGRY);
-	}
+	else if (p_ptr->food < PY_FOOD_WEAK) str = "$oWeak";
 
 	/* Hungry */
-	else if (p_ptr->food < PY_FOOD_ALERT)
-	{
-		c_put_str(TERM_YELLOW, "Hungry", ROW_HUNGRY, COL_HUNGRY);
-	}
+	else if (p_ptr->food < PY_FOOD_ALERT) str = "$yHungry";
 
 	/* Normal */
-	else if (p_ptr->food < PY_FOOD_FULL)
-	{
-		c_put_str(TERM_L_GREEN, "      ", ROW_HUNGRY, COL_HUNGRY);
-	}
+	else if (p_ptr->food < PY_FOOD_FULL) str = "";
 
 	/* Full */
-	else if (p_ptr->food < PY_FOOD_MAX)
-	{
-		c_put_str(TERM_L_GREEN, "Full  ", ROW_HUNGRY, COL_HUNGRY);
-	}
+	else if (p_ptr->food < PY_FOOD_MAX) str = "$GFull";
 
 	/* Gorged */
-	else
-	{
-		c_put_str(TERM_GREEN, "Gorged", ROW_HUNGRY, COL_HUNGRY);
-	}
+	else str = "$gGorged";
+
+	mc_put_fmt(GET_YX(XY_HUNGRY), "%-8s", str);
 }
 
 
@@ -401,11 +477,11 @@ static void prt_blind(void)
 {
 	if (p_ptr->blind)
 	{
-		c_put_str(TERM_ORANGE, "Blind", ROW_BLIND, COL_BLIND);
+		c_put_str(TERM_ORANGE, "Blind", GET_YX(XY_BLIND));
 	}
 	else
 	{
-		put_str("     ", ROW_BLIND, COL_BLIND);
+		put_str("     ", GET_YX(XY_BLIND));
 	}
 }
 
@@ -417,11 +493,11 @@ static void prt_confused(void)
 {
 	if (p_ptr->confused)
 	{
-		c_put_str(TERM_ORANGE, "Confused", ROW_CONFUSED, COL_CONFUSED);
+		c_put_str(TERM_ORANGE, "Confused", GET_YX(XY_CONFUSED));
 	}
 	else
 	{
-		put_str("        ", ROW_CONFUSED, COL_CONFUSED);
+		put_str("        ", GET_YX(XY_CONFUSED));
 	}
 }
 
@@ -433,11 +509,11 @@ static void prt_afraid(void)
 {
 	if (p_ptr->afraid)
 	{
-		c_put_str(TERM_ORANGE, "Afraid", ROW_AFRAID, COL_AFRAID);
+		c_put_str(TERM_ORANGE, "Afraid", GET_YX(XY_AFRAID));
 	}
 	else
 	{
-		put_str("      ", ROW_AFRAID, COL_AFRAID);
+		put_str("      ", GET_YX(XY_AFRAID));
 	}
 }
 
@@ -449,11 +525,11 @@ static void prt_poisoned(void)
 {
 	if (p_ptr->poisoned)
 	{
-		c_put_str(TERM_ORANGE, "Poisoned", ROW_POISONED, COL_POISONED);
+		c_put_str(TERM_ORANGE, "Poisoned", GET_YX(XY_POISONED));
 	}
 	else
 	{
-		put_str("        ", ROW_POISONED, COL_POISONED);
+		put_str("        ", GET_YX(XY_POISONED));
 	}
 }
 
@@ -570,7 +646,7 @@ static void prt_state(void)
 	}
 
 	/* Display the info (or blanks) */
-	c_put_str(attr, text, ROW_STATE, COL_STATE);
+	c_put_str(attr, text, GET_YX(XY_STATE));
 }
 
 
@@ -580,8 +656,6 @@ static void prt_state(void)
 static void prt_speed(void)
 {
 	int i = p_ptr->pspeed;
-
-	byte attr = TERM_WHITE;
 	char buf[32] = "";
 
 	/* Hack -- Visually "undo" the Sneak Mode Slowdown */
@@ -590,19 +664,17 @@ static void prt_speed(void)
 	/* Fast */
 	if (i > 110)
 	{
-		attr = TERM_L_GREEN;
-		sprintf(buf, "Fast (+%d)", (i - 110));
+		sprintf(buf, "$GFast (+%d)", (i - 110));
 	}
 
 	/* Slow */
 	else if (i < 110)
 	{
-		attr = TERM_L_UMBER;
-		sprintf(buf, "Slow (-%d)", (110 - i));
+		sprintf(buf, "$USlow (-%d)", (110 - i));
 	}
 
 	/* Display the speed */
-	c_put_str(attr, format("%-14s", buf), ROW_SPEED, COL_SPEED);
+	mc_put_fmt(GET_YX(XY_SPEED), "%-16s", buf);
 }
 
 /*
@@ -614,84 +686,88 @@ static void prt_study(void)
 {
 	if (p_ptr->oppose_acid || p_ptr->oppose_elec || p_ptr->oppose_fire || p_ptr->oppose_cold || p_ptr->oppose_pois) 
 	{
-		put_str("     ", ROW_STUDY, COL_STUDY);
-		Term_putch(COL_STUDY, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_acid), 'A');
-		Term_putch(COL_STUDY+1, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_elec), 'E');
-		Term_putch(COL_STUDY+2, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_fire), 'F');
-		Term_putch(COL_STUDY+3, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_cold), 'C');
-		Term_putch(COL_STUDY+4, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_pois), 'P');
+		move_cursor(GET_YX(XY_STUDY));
+		Term_addch(OPPOSE_COL(p_ptr->oppose_acid), 'A');
+		Term_addch(OPPOSE_COL(p_ptr->oppose_elec), 'E');
+		Term_addch(OPPOSE_COL(p_ptr->oppose_fire), 'F');
+		Term_addch(OPPOSE_COL(p_ptr->oppose_cold), 'C');
+		Term_addch(OPPOSE_COL(p_ptr->oppose_pois), 'P');
 	}
 	else if (p_ptr->new_spells)
 	{
-		put_str("Study", ROW_STUDY, COL_STUDY);
+		put_str("Study", GET_YX(XY_STUDY));
 	}
 	else
 	{
-		put_str("     ", ROW_STUDY, COL_STUDY);
+		put_str("     ", GET_YX(XY_STUDY));
 	}
 }
 
 
 static void prt_cut(void)
 {
+	cptr str;
 	int c = p_ptr->cut;
 
 	if (c > 1000)
 	{
-		c_put_str(TERM_L_RED, "Mortal wound", ROW_CUT, COL_CUT);
+		str = "$RMortal wound";
 	}
 	else if (c > 200)
 	{
-		c_put_str(TERM_RED, "Deep gash   ", ROW_CUT, COL_CUT);
+		str = "$rDeep gash   ";
 	}
 	else if (c > 100)
 	{
-		c_put_str(TERM_RED, "Severe cut  ", ROW_CUT, COL_CUT);
+		str = "$rSevere cut  ";
 	}
 	else if (c > 50)
 	{
-		c_put_str(TERM_ORANGE, "Nasty cut   ", ROW_CUT, COL_CUT);
+		str = "$oNasty cut   ";
 	}
 	else if (c > 25)
 	{
-		c_put_str(TERM_ORANGE, "Bad cut     ", ROW_CUT, COL_CUT);
+		str = "$oBad cut     ";
 	}
 	else if (c > 10)
 	{
-		c_put_str(TERM_YELLOW, "Light cut   ", ROW_CUT, COL_CUT);
+		str = "$yLight cut   ";
 	}
 	else if (c)
 	{
-		c_put_str(TERM_YELLOW, "Graze       ", ROW_CUT, COL_CUT);
+		str = "$yGraze       ";
 	}
 	else
 	{
-		put_str("            ", ROW_CUT, COL_CUT);
+		str = "            ";
 	}
+	mc_put_str(str, GET_YX(XY_CUT));
 }
 
 
 
 static void prt_stun(void)
 {
+	cptr str;
 	int s = p_ptr->stun;
 
 	if (s > 100)
 	{
-		c_put_str(TERM_RED, "Knocked out ", ROW_STUN, COL_STUN);
+		str = "$rKnocked out ";
 	}
 	else if (s > 50)
 	{
-		c_put_str(TERM_ORANGE, "Heavy stun  ", ROW_STUN, COL_STUN);
+		str = "$oHeavy stun  ";
 	}
 	else if (s)
 	{
-		c_put_str(TERM_ORANGE, "Stun        ", ROW_STUN, COL_STUN);
+		str = "$oStun        ";
 	}
 	else
 	{
-		put_str("            ", ROW_STUN, COL_STUN);
+		str = "            ";
 	}
+	mc_put_str(str, GET_YX(XY_STUN));
 }
 
 
@@ -717,32 +793,34 @@ static void health_redraw(void)
 
 #ifdef DRS_SHOW_HEALTH_BAR
 
+	cptr str;
+
 	/* Not tracking */
 	if (!health_who)
 	{
 		/* Erase the health bar */
-		Term_erase(COL_INFO, ROW_INFO, 12);
+		str = "            ";
 	}
 
 	/* Tracking an unseen monster */
 	else if (!m_list[health_who].ml)
 	{
 		/* Indicate that the monster health is "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		str = "[----------]";
 	}
 
 	/* Tracking a hallucinatory monster */
 	else if (p_ptr->image)
 	{
 		/* Indicate that the monster health is "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		str = "[----------]";
 	}
 
 	/* Tracking a dead monster (???) */
 	else if (!m_list[health_who].hp < 0)
 	{
 		/* Indicate that the monster health is "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		str = "[----------]";
 	}
 
 	/* Tracking a visible monster */
@@ -754,46 +832,46 @@ static void health_redraw(void)
 		monster_type *m_ptr = &m_list[health_who];
 
 		/* Default to almost dead */
-		byte attr = TERM_RED;
+		char attr = 'r';
 		smb = "**********";
 
 		/* Extract the "percent" of health */
 		pct = 100L * m_ptr->hp / m_ptr->maxhp;
 
 		/* Badly wounded */
-		if (pct >= 10) attr = TERM_L_RED;
+		if (pct >= 10) attr = 'R';
 
 		/* Wounded */
-		if (pct >= 25) attr = TERM_ORANGE;
+		if (pct >= 25) attr = 'o';
 
 		/* Somewhat Wounded */
-		if (pct >= 60) attr = TERM_YELLOW;
+		if (pct >= 60) attr = 'y';
 
 		/* Healthy */
-		if (pct >= 100) attr = TERM_L_GREEN;
+		if (pct >= 100) attr = 'G';
 
 		/* Afraid */
 		if (m_ptr->monfear) {
-			attr = TERM_VIOLET;
+			attr = 'v';
 			smb = "AFRAID****";
 		}
 		/* Asleep */
 		if (m_ptr->csleep) {
-			attr = TERM_BLUE;
+			attr = 'B';
 			smb = "SLEEPING**";
 		}
 		if (m_ptr->smart & SM_ALLY) {
-			attr = TERM_L_UMBER;
+			attr = 'U';
 			smb = "ALLY******";
 		}
 		/* Convert percent into "health" */
 		len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
 
 		/* Default to "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		put_str("[----------]", GET_YX(XY_INFO));
 
 		/* Dump the current "health" (use '*' symbols) */
-		Term_putstr(COL_INFO + 1, ROW_INFO, len, attr, smb);
+		mc_put_fmt(GET_YX(XY_INFO), "$%c%.*s", attr, len, smb);
 	}
 
 #endif
@@ -3167,7 +3245,7 @@ void redraw_stuff(void)
     if (p_ptr->redraw & (PR_EQUIPPY))
     {
         p_ptr->redraw &= ~(PR_EQUIPPY);
-        print_equippy(); /* To draw / delete equippy chars */
+        prt_equippy(); /* To draw / delete equippy chars */
     }
 
 	if (p_ptr->redraw & (PR_MISC))
@@ -4031,8 +4109,7 @@ static void win_floor_display(void)
 
 	if (p_ptr->image)
 	{
-		mc_put_str(format("You %s something strange.\n", verb),
-			0, 0);
+		mc_put_fmt(0, 0, "You %s something strange.\n", verb);
 	}
 	else
 	{
@@ -4040,14 +4117,14 @@ static void win_floor_display(void)
 		cave_type *c_ptr = &cave[WFY][WFX];
 		object_type *o_ptr = o_list+c_ptr->o_idx;
 
-		mc_put_str(format("You %s %v.\n", verb, feature_desc_f2,
-			c_ptr->feat, FDF_MIMIC | FDF_INDEF), 0, 0);
+		mc_put_fmt(0, 0, "You %s %v.\n", verb, feature_desc_f2,
+			c_ptr->feat, FDF_MIMIC | FDF_INDEF);
 
 		for (y = 1; y < Term->hgt && o_ptr != o_list;
 			y++, o_ptr = o_list+o_ptr->next_o_idx)
 		{
-			mc_put_str(format("%v %v", get_symbol_f2, object_attr(o_ptr),
-				object_char(o_ptr), object_desc_f3, o_ptr, FALSE, 3), y, 0);
+			mc_put_fmt(y, 0, "%v %v", get_symbol_f2, object_attr(o_ptr),
+				object_char(o_ptr), object_desc_f3, o_ptr, FALSE, 3);
 		}
 	}
 }

@@ -536,6 +536,11 @@ errr my_fputs(FILE *fff, cptr buf, huge UNUSED n)
 	vformat((fmt), vp); \
 	va_end(vp);
 
+#define get_va_arg_buf(buf, fmt) \
+	va_list vp; \
+	va_start(vp, (fmt)); \
+	vstrnfmt((buf), sizeof(buf), (fmt), vp); \
+	va_end(vp);
 
 /*
  * A version of "fprintf()" which uses strnfmt to process its arguments.
@@ -2836,6 +2841,19 @@ void mc_put_str(cptr str, const int y, const int x)
 	int attr, dattr = attr = TERM_WHITE;
 	if (Term_gotoxy(x, y)) return;
 	mc_add(str, &dattr, &attr);
+}
+
+/*
+ * Write a line of formatted multicolour text to the screen using mc_add().
+ * Note that the format string is decoded before the colour string.
+ */
+void mc_put_fmt(const int y, const int x, cptr fmt, ...)
+{
+	/* The screen can only be 255 characters wide, so this is enough. */
+	char buf[256];
+
+	get_va_arg_buf(buf, fmt);
+	mc_put_str(buf, y, x);
 }
 
 /*

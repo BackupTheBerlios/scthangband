@@ -2192,7 +2192,7 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 /*
  * Equippy chars
  */
-static void display_player_equippy(int y, int x)
+void display_player_equippy(int y, int x)
 {
 	int i;
 
@@ -2223,11 +2223,6 @@ static void display_player_equippy(int y, int x)
 	}
 }
 
-
-void print_equippy(void)
-{
-    display_player_equippy(ROW_EQUIPPY, COL_EQUIPPY);
-}
 
 /*
  * Helper function, see below
