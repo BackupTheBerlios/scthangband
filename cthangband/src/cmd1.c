@@ -1823,7 +1823,7 @@ void move_to(s16b y, s16b x)
 		p_ptr->update |= (PU_DISTANCE);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
+		p_ptr->window |= (PW_OVERHEAD | PW_FLOOR);
 }
 
 /*

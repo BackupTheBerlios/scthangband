@@ -1928,7 +1928,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PW_MONSTER	(1L<<8)	/* Display monster recall */
 #define PW_OBJECT	(1L<<9)	/* Display object recall */
 #define PW_OBJECT_DETAILS (1L<<10)	/* Display object details */
-/* xxx */
+#define PW_FLOOR (1L<<11) /* Display a list of objects on the floor. */
 #define PW_SHOPS	(1L<<12)	/* Display shop information */
 #define PW_HELP	(1L<<13)	/* Display context-sensitive help */
 /* xxx */
@@ -1939,13 +1939,14 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /* Count how many of the above displays there are (excluding PW_ROTATE,
  * PW_RETURN and PW_NONE). */
-#define NUM_DISPLAY_FUNCS	13
+#define NUM_DISPLAY_FUNCS	14
 #define DISPLAY_NONE NUM_DISPLAY_FUNCS /* "Hidden" index for PW_NONE. */
 
 /* The set of windows affected by window_stuff(). */
 #define WINDOW_STUFF_MASK (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | \
 	PW_VISIBLE | PW_PLAYER_SKILLS | PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
-	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_HELP | PW_ROTATE | PW_RETURN)
+	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_HELP | PW_FLOOR | \
+	PW_ROTATE | PW_RETURN)
 
 /*** General index values ***/
 

@@ -166,6 +166,9 @@ void delete_dun_object(object_type *j_ptr)
 
 		/* Visual update */
 		lite_spot(y, x);
+
+		/* Window stuff (if appropriate). */
+		if (y == py && x == px) p_ptr->window |= PW_FLOOR;
 	}
 
 	/* Wipe the object */
@@ -3237,6 +3240,9 @@ static void drop_near_finish(int chance, int by, int bx)
 	{
 		msg_print("You feel something roll beneath your feet.");
 	}
+
+	/* Window stuff (if needed) */
+	if (by == py && bx == px) p_ptr->window |= PW_FLOOR;
 }
 
 /*

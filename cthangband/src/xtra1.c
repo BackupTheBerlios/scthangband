@@ -3991,6 +3991,36 @@ static void win_visible_display(void)
 }
 
 /*
+ * Check whether there are objects on the same square as the player.
+ */
+static bool win_floor_good(void)
+{
+	/* The player has a character, so there must be a floor. */
+	return character_dungeon;
+}
+
+
+/*
+ * Display a list of objects on the floor.
+ */
+static void win_floor_display(void)
+{
+	int y;
+	object_type *o_ptr = o_list+cave[py][px].o_idx;
+
+	mc_put_str(format("You are standing on %s.\n",
+		f_name+f_info[cave[py][px].feat].name), 0, 0);
+
+	for (y = 1; y < Term->hgt && o_ptr != o_list;
+		y++, o_ptr = o_list+o_ptr->next_o_idx)
+	{
+		mc_put_str(format("%v %v", get_symbol_f2, object_attr(o_ptr),
+			object_char(o_ptr), object_desc_f3, o_ptr, FALSE, 3), y, 0);
+	}
+}
+
+
+/*
  * The list of display functions.
  * This has an extra element to store PW_NONE, although it should not be set
  * by normal mechanisms.
@@ -4010,6 +4040,7 @@ display_func_type display_func[NUM_DISPLAY_FUNCS+1] =
 	{PW_OBJECT, "object recall", win_object_good, win_object_display},
 	{PW_OBJECT_DETAILS, "object details", win_object_details_good,
 		win_object_details_display},
+	{PW_FLOOR, "floor information", win_floor_good, win_floor_display},
 	{PW_HELP, "help", win_help_good, win_help_display},
 	{PW_NONE, "", func_false, func_nothing},
 };

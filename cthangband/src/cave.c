@@ -3506,6 +3506,9 @@ void cave_set_feat(int y, int x, int feat)
 
 	/* Redraw */
 	lite_spot(y, x);
+
+	/* Window stuff, if needed. */
+	if (y == py && x == px) p_ptr->window |= PW_FLOOR;
 }
 
 
