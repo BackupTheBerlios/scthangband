@@ -965,28 +965,18 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	}
 
 
-	/* Bypassing this prompt is fine as the player can back out later if he isn't
-	doing this by a macro. */
-	if (bypass_prompt && call && total == 1)
+	if (show_choices_main)
 	{
-		i = valid_spirits[0];
-		flag = TRUE;
+		/* Show list */
+		redraw = TRUE;
+		Term_save();
+		print_spirits(valid_spirits,total,1, -1);
+	}
+	else
+	{
+		/* No redraw yet */
 		redraw = FALSE;
 	}
-	else
-	{
-		if (show_choices_main)
-		{
-			/* Show list */
-			redraw = TRUE;
-			Term_save();
-			print_spirits(valid_spirits,total,1, -1);
-	}
-	else
-	{
-			/* No redraw yet */
-			redraw = FALSE;
-		}
 	/* Build a prompt (accept all spirits) */
 	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) %^s which spirit? ",
 		I2A(0), I2A(total - 1), prompt);
@@ -1024,6 +1014,11 @@ int get_spirit(int *sn, cptr prompt, bool call)
 			continue;
 		}
 
+		/* Default option if unambiguous. */
+		if (choice == '\n' && total == 1)
+		{
+			choice = 'a';
+		}
 
 		/* Note verify */
 		ask = (isupper(choice));
@@ -1051,7 +1046,6 @@ int get_spirit(int *sn, cptr prompt, bool call)
 
 		/* Stop the loop */
 		flag = TRUE;
-	}
 	}
 
 	/* Restore the screen */

@@ -2297,9 +2297,9 @@ extern bool show_details;
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool show_choices_main;
 #endif
-#if (defined(CMD5_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool bypass_prompt;
-#endif
+
+
+
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool ring_bell;
 #endif

@@ -104,12 +104,6 @@ Centre view around player              [centre_view]
     Keeps the player's character in the center of the screen, and moves the 
     dungeon around the player. Can be useful to prevent off-screen breaths.
 
-***** <bypass_prompt>
-Bypass spirit selection prompt where appropriate   [bypass_prompt]
-    If only one spirit is available to the player, this automatically chooses
-    this spirit instead of prompting for a choice (equivalent to a keymap from
-    "p" to "pa").
-
 *****
 === Disturbance options ===
 

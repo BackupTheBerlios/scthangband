@@ -3461,9 +3461,6 @@ option_type option_info[] =
 	{ &spoil_dam,	FALSE, OPTS_SPOIL,	3,	8,
 	"spoil_dam",	"Gain knowledge of melee weapon damage."},
 
-	{ &bypass_prompt,		FALSE, OPTS_UI,	2, 24,
-	"bypass_prompt",	"Bypass spirit selection prompt where appropriate" },
-
 	/*** End of Table ***/
 
 	{ NULL,                 0, 0, 0, 0,
