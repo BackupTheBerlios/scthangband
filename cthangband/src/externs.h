@@ -2375,7 +2375,7 @@ extern cptr message_str(s16b age);
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(LOAD_C) || defined(STORE_C) || defined(UTIL_C))
 extern void message_add(cptr str);
 #endif
-#if (defined(DUNGEON_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool no_msg_print;
 #endif
 #if (defined(ANGBAND_H))

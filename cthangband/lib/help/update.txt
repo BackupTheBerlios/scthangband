@@ -6,8 +6,10 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
-* Prevent monsters from recovering from fear if one of the player's previous
-  attacks would kill them now.
+* Monsters do not recover from fear if they have too few HP to survive one of
+  your past attacks on them.
+* Monsters will not paralyse a paralysed character, and damaging attacks may
+  wake the player.
 * Generate dungeon-specific monsters asleep at level creation.
 * Never generate light-sensitive monsters during the day on the surface.
 * Seal the entrance to the orc tower during the day.

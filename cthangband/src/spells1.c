@@ -745,6 +745,9 @@ void take_hit(int damage, cptr hit_from, int monster)
 	/* Paranoia */
 	if (death) return;
 
+	/* Nothing to de. */
+	if (damage <= 0) return;
+
 	/* Disturb */
 	disturb(1);
 
@@ -830,6 +833,15 @@ void take_hit(int damage, cptr hit_from, int monster)
         }
 		/* Dead */
 		return;
+	}
+
+	/* Hack - paralysis */
+	if (p_ptr->paralyzed && one_in(2))
+	{
+		msg_print("The pain shakes you from your torpor!");
+		no_msg_print = TRUE;
+		set_flag(TIMED_PARALYZED, 0);
+		no_msg_print = FALSE;
 	}
 
 	/* Hitpoint warning */

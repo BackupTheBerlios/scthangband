@@ -812,15 +812,17 @@ bool make_attack_normal(int m_idx)
 
 				case RBE_PARALYZE:
 				{
-					
-					/* Make sure at least a point of damage
-					    to stop infinite paralysis */
-					if(damage == 0) damage = 1;
+					bool old_paralyzed = p_ptr->paralyzed != 0;
+
 					/* Take damage */
 					take_hit(damage, ddesc, m_ptr->r_idx);
 
 					/* Increase "paralyzed" */
-					if (p_ptr->free_act)
+					if (old_paralyzed)
+					{
+						/* Do nothing. */
+					}
+					else if (p_ptr->free_act)
 					{
 						msg_print("You are unaffected!");
 						obvious = TRUE;
@@ -831,12 +833,9 @@ bool make_attack_normal(int m_idx)
 						skill_exp(SKILL_SAVE);
 						obvious = TRUE;
 					}
-					else
+					else if (add_flag(TIMED_PARALYZED, 3 + randint(rlev)))
 					{
-						if (add_flag(TIMED_PARALYZED, 3 + randint(rlev)))
-						{
-							obvious = TRUE;
-						}
+						obvious = TRUE;
 					}
 
 					/* Learn about the player */
