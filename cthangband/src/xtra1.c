@@ -2933,7 +2933,7 @@ static bool is_isolated_room_p(int y, int x)
 
 	for (i = 0; i < N_ELEMENTS(xs); i++)
 	{
-		if (is_room_p(y+ys[i], x+xs[i])) return FALSE;
+		if (cave[y+ys[i]][x+xs[i]].info & CAVE_ROOM) return FALSE;
 	}
 	return TRUE;
 }
