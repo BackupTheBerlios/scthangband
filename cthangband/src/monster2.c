@@ -2507,12 +2507,12 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
  *
  * Attempt to find a monster appropriate to the "monster_level"
  */
-bool place_monster(int y, int x, bool slp, bool grp)
+bool place_monster(int y, int x, int level, bool slp, bool grp)
 {
 	int r_idx;
 
 	/* Pick a monster */
-	r_idx = get_mon_num(monster_level);
+	r_idx = get_mon_num(level);
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);
@@ -2551,7 +2551,7 @@ bool put_quest_monster(int r_idx)
 }
 
 #ifdef MONSTER_HORDES
-bool alloc_horde(int y, int x)
+bool alloc_horde(int y, int x, int level)
 {
 
     int r_idx;
@@ -2562,7 +2562,7 @@ bool alloc_horde(int y, int x)
     while (--attempts)
     {
         /* Pick a monster */
-        r_idx = get_mon_num(monster_level);
+        r_idx = get_mon_num(level);
 
         /* Handle failure */
         if (!r_idx) return (FALSE);
@@ -2608,7 +2608,7 @@ bool alloc_horde(int y, int x)
  *
  * Use "monster_level" for the monster level
  */
-bool alloc_monster(int dis, int slp)
+bool alloc_monster(int dis, int level, bool slp)
 {
 	int			y, x;
 
@@ -2621,7 +2621,7 @@ bool alloc_monster(int dis, int slp)
 #ifdef MONSTER_HORDES
     if (randint(5000)<=(dun_depth))
     {
-        if (alloc_horde(y, x))
+        if (alloc_horde(y, x, level))
         {
             if (cheat_hear) msg_print("Monster horde.");
             return (TRUE);
@@ -2637,7 +2637,7 @@ bool alloc_monster(int dis, int slp)
 		}
 		else
 		{
-			if (place_monster(y, x, slp != 0, TRUE)) return (TRUE);
+			if (place_monster(y, x, level, slp, TRUE)) return (TRUE);
 		}
 
 #ifdef MONSTER_HORDES

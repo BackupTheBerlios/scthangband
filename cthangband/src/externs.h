@@ -1367,16 +1367,16 @@ extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, boo
 extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, bool force);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
-extern bool place_monster(int y, int x, bool slp, bool grp);
+extern bool place_monster(int y, int x, int level, bool slp, bool grp);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
 extern bool put_quest_monster(int r_idx);
 #endif
 #if (defined(MONSTER_HORDES)) && (defined(MONSTER2_C) || defined(WIZARD2_C))
-extern bool alloc_horde(int y, int x);
+extern bool alloc_horde(int y, int x, int level);
 #endif
 #if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
-extern bool alloc_monster(int dis, int slp);
+extern bool alloc_monster(int dis, int level, bool slp);
 #endif
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C))
 extern bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm);
@@ -2612,9 +2612,9 @@ extern s16b num_repro;
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b object_level;
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
-extern s16b monster_level;
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s32b turn;
 #endif

@@ -1164,7 +1164,7 @@ static void terrain_gen(void)
 	/* Make some wilderness monsters (same number as dungeon level) */
 	for (x = 0; x < MIN_M_ALLOC_LEVEL; x++)
 	{
-		(void)alloc_monster(3, TRUE);
+		(void)alloc_monster(3, dun_depth, TRUE);
 	}
 
 }
@@ -1912,9 +1912,7 @@ static void vault_monsters(int y1, int x1, int num)
 			if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
 
 			/* Place the monster (allow groups) */
-			monster_level = (dun_depth) + 2;
-			(void)place_monster(y, x, TRUE, TRUE);
-			monster_level = (dun_depth);
+			(void)place_monster(y, x, dun_depth+2, TRUE, TRUE);
 		}
 	}
 }
@@ -3744,27 +3742,21 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				/* Monster */
 				case '&':
 				{
-					monster_level = (dun_depth) + 5;
-					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_depth);
+					place_monster(y, x, dun_depth+5, TRUE, TRUE);
 					break;
 				}
 
 				/* Meaner monster */
 				case '@':
 				{
-					monster_level = (dun_depth) + 11;
-					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_depth);
+					place_monster(y, x, dun_depth+11, TRUE, TRUE);
 					break;
 				}
 
 				/* Meaner monster, plus treasure */
 				case '9':
 				{
-					monster_level = (dun_depth) + 9;
-					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_depth);
+					place_monster(y, x, dun_depth+9, TRUE, TRUE);
 					object_level = (dun_depth) + 7;
 					place_object(y, x, TRUE, FALSE);
 					object_level = (dun_depth);
@@ -3774,9 +3766,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				/* Nasty monster and treasure */
 				case '8':
 				{
-					monster_level = (dun_depth) + 40;
-					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_depth);
+					place_monster(y, x, dun_depth+40, TRUE, TRUE);
 					object_level = (dun_depth) + 20;
 					place_object(y, x, TRUE, TRUE);
 					object_level = (dun_depth);
@@ -3788,9 +3778,7 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				{
 					if (rand_int(100) < 50)
 					{
-						monster_level = (dun_depth) + 3;
-						place_monster(y, x, TRUE, TRUE);
-						monster_level = (dun_depth);
+						place_monster(y, x, dun_depth+3, TRUE, TRUE);
 					}
 					if (rand_int(100) < 50)
 					{
@@ -4725,7 +4713,7 @@ static bool cave_gen(void)
 	/* Put some monsters in the dungeon */
 	for (i = i + k; i > 0; i--)
 	{
-		(void)alloc_monster(0, TRUE);
+		(void)alloc_monster(0, dun_depth, TRUE);
 	}
 
 
@@ -5171,14 +5159,16 @@ static void town_gen(void)
 
 		replace_all_friends();
 		/* Make some day-time residents */
-		for (i = 0; i < MIN_M_ALLOC_TD; i++) (void)alloc_monster(3, TRUE);
+		for (i = 0; i < MIN_M_ALLOC_TD; i++)
+			(void)alloc_monster(3, dun_depth, TRUE);
 	}
 
 	/* Night Time */
 	else
 	{
 		/* Make some night-time residents */
-		for (i = 0; i < MIN_M_ALLOC_TN; i++) (void)alloc_monster(3, TRUE);
+		for (i = 0; i < MIN_M_ALLOC_TN; i++)
+			(void)alloc_monster(3, dun_depth, TRUE);
 	}
 }
 
@@ -5308,9 +5298,6 @@ void generate_cave(void)
 			/* Wipe a whole row at a time */
 			C_WIPE(cave[i], MAX_WID, cave_type);
 		}
-
-		/* Reset the monster generation level */
-		monster_level = (dun_depth);
 
 		/* Reset the object generation level */
 		object_level = (dun_depth);

@@ -93,7 +93,6 @@ byte recall_dungeon; /* Last dungeon recalled from */
 byte came_from;       /* Location player has come from onto this level */
 s16b num_repro;			/* Current reproducer count */
 s16b object_level;		/* Current object creation level */
-s16b monster_level;		/* Current monster creation level */
 
 s32b turn;				/* Current game turn */
 s32b old_turn;			/* Turn when level began (feelings) */

@@ -113,7 +113,7 @@ void do_cmd_summon_horde(void)
                 scatter(&wy, &wx, py, px, 3, 0);
                 if (cave_naked_bold(wy, wx)) break;
             }
-            (void)alloc_horde(wy, wx);
+            (void)alloc_horde(wy, wx, dun_depth);
 }
 #endif
 

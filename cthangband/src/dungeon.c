@@ -1121,7 +1121,7 @@ static void process_monsters_new(void)
 	if ((full_grid > MAX_SIGHT + 5) && (rand_int(MAX_M_ALLOC_CHANCE) == 0))
 	{
 		/* Make a new monster */
-		(void)alloc_monster(MAX_SIGHT + 5, FALSE);
+		(void)alloc_monster(MAX_SIGHT + 5, dun_level, FALSE);
 	}
 
 	/* Hack -- Check for creature regeneration */
@@ -3751,9 +3751,6 @@ static void dungeon(void)
 
 
 	/*** Process this dungeon level ***/
-
-	/* Reset the monster generation level */
-	monster_level = (dun_depth);
 
 	/* Reset the object generation level */
 	object_level = (dun_depth);
