@@ -2200,7 +2200,7 @@ extern cptr stat_names_reduced[6];
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C))
 extern cptr window_flag_desc[32];
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(SAVE_C) || defined(TABLES_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C))
 extern option_type option_info[];
 #endif
 #if (defined(CMD4_C) || defined(TABLES_C))
@@ -3987,5 +3987,23 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
+#endif
+
+/* variable.c */
+
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool preserve_mode_w;
+#endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool maximise_mode_w;
+#endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool ironman_shop_w;
+#endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool ironman_feeling_w;
+#endif
+#if (defined(SCORE_QUITTERS)) && (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool score_quitters_w;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -726,6 +726,28 @@ static void get_stats(void);
 #define USE_AUTOROLLER FALSE
 #endif
 
+/*
+ * Copy birth options to somewhere where they are read.
+ */ 
+static void get_birth_options(void)
+{
+	option_type *op_ptr, *o2_ptr;
+
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+	{
+		/* Not a birth option. */
+		if (op_ptr->o_page != OPTS_BIRTH) continue;
+
+		o2_ptr = op_ptr+1;
+
+		/* Not an option with a BIRTHR equivalent. */
+		if (o2_ptr->o_page != OPTS_BIRTHR) continue;
+
+		/* Copy the option across. */
+		*(o2_ptr->o_var) = *(op_ptr->o_var);
+	}
+}
+
 /* Return codes for birth_choice() */
 #define BC_OKAY	0
 #define BC_ABORT	1
@@ -740,7 +762,13 @@ static bc_type birth_option(void)
 	bool old_allow_pickstats = allow_pickstats;
 	bool old_maximise_mode = maximise_mode;
 	Term_save();
+
+	/* Modify the birth options as desired. */
 	do_cmd_options_aux(7, "Startup Options", NULL);
+
+	/* Copy the birth options to active locations. */
+	get_birth_options();
+
 	Term_load();
 	/* Start again if the set of questions being asked changes.
 	 * This does not include show_credits because this takes
@@ -1221,6 +1249,9 @@ static bool point_mod_player(void)
 	char stat = UNREAD_VALUE; /* Never used when i = IDX_ALL, and initialised below otherwise. */
 	s16b points = UNREAD_VALUE; /* Initialised when i = IDX_ALL */
 	u16b i;
+
+	/* Synchronise the birth options initially. */
+	get_birth_options();
 
 	/* Set cheat_item to ensure that the weapons are described fully. Note
 	 * that this has no long-term effects. */

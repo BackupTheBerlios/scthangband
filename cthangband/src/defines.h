@@ -557,10 +557,11 @@ logaux(x, 1) logaux(x, 0) 255)
 #define OPTS_OBJ	4	/* Object Options */
 #define OPTS_PERF	5	/* Performance Options */
 #define OPTS_MISC	6	/* Miscellaneous Options */
-#define OPTS_BIRTH	7	/* Birth Options */
+#define OPTS_BIRTH	7	/* Birth Options (can be set) */
 #define OPTS_SPOIL	8	/* Spoiler Options */
+#define OPTS_BIRTHR 9	/* Birth Options (are read) */
 
-#define OPTS_MAX	9
+#define OPTS_MAX	10
 
 /* Special option sets which are not handled by do_cmd_options_aux(). */
 #define OPTS_DELAY	-1

@@ -223,12 +223,18 @@ bool centre_view; /* Centre view on player */
 bool macro_edit; /* Use macros as edit keys in string prompts */
 bool no_centre_run; /* Stop centring when running */
 bool auto_more;
+bool preserve_mode_w; 
 bool preserve_mode; /* Don't lose missed artifacts */
+bool maximise_mode_w;
 bool maximise_mode; /* Unify stat bonuses */
 bool use_autoroller; /* Autoroll characters */
 bool spend_points; /* Spend points on stats */
+bool ironman_shop_w;
 bool ironman_shop; /* Not allowed in shops */
+bool ironman_feeling_w;
+bool ironman_feeling;	/* Only give real feeling after 2500 turns. */
 #ifdef SCORE_QUITTERS
+bool score_quitters_w;
 bool score_quitters; /* Quitting can give a high score */
 #endif /* SCORE_QUITTERS */
 
@@ -318,8 +324,6 @@ bool allow_quickstart;	/* Allow Quick-Start */
 bool display_credits;	/* Require a keypress to clear the initial credit screen. */
 #endif
 bool allow_pickstats;	/* Allow the player to choose a stat template. */
-
-bool ironman_feeling;	/* Only give real feeling after 2500 turns. */
 
 s16b hitpoint_warn = 2;		/* Hitpoint warning (0 to 9) */
 

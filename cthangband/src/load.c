@@ -815,11 +815,42 @@ static void rd_options(void)
 						/* Clear */
 						option_flag[n] &= ~(1L << i);
 					}
-				}                           
+				}
 			}
 		}
 	}
 
+	/* Copy across the birth options if they weren't previously known. */
+	{
+		option_type *op_ptr, *o2_ptr;
+		for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+		{
+			if (op_ptr->o_page == OPTS_BIRTHR) break;
+		}
+
+		/* Only do something if this option wasn't in the mask. */
+		if (!(mask[op_ptr->o_set] & (1L << op_ptr->o_bit)))
+		{
+			for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+			{
+				if (op_ptr->o_page != OPTS_BIRTH) continue;
+				o2_ptr = op_ptr+1;
+
+				/* Only some birth options affect the game afterwards. */
+				if (o2_ptr->o_page != OPTS_BIRTHR) continue;
+
+				/* Copy the BIRTH option to the BIRTHR equivalent. */
+				if (option_flag[op_ptr->o_set] & 1L << (op_ptr->o_bit))
+				{
+					option_flag[o2_ptr->o_set] |= 1L << (o2_ptr->o_bit);
+				}
+				else
+				{
+					option_flag[o2_ptr->o_set] &= ~(1L << (o2_ptr->o_bit));
+				}
+			}
+		}
+	}
 
 	/*** Window Options ***/
 

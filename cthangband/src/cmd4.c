@@ -641,17 +641,34 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
-			byte a = TERM_WHITE;
+			int a;
+			cptr state, effective;
 
 			/* Color current option */
-			if (i == k) a = TERM_L_BLUE;
+			if (i == k)
+				a = TERM_L_BLUE;
+			else
+				a = TERM_WHITE;
+
+			if (page != OPTS_BIRTH)
+				effective = "";
+			else if (option_info[opt[i]+1].o_page != OPTS_BIRTHR)
+				effective = ".... ";
+			else if (*option_info[opt[i]+1].o_var)
+				effective = "(yes)";
+			else
+				effective = "(no) ";
+
+			if (opt_is_forced(opt[i]))
+				state = "N/A";
+			else if (*option_info[opt[i]].o_var)
+				state = "yes";
+			else
+				state = "no ";
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%s)",
-			        option_info[opt[i]].o_desc,
-			        (opt_is_forced(opt[i])) ? "N/A" :
-			        (*option_info[opt[i]].o_var ? "yes" : "no "),
-			        option_info[opt[i]].o_text);
+			sprintf(buf, "%-48s: %s  %s(%s)", option_info[opt[i]].o_desc,
+				state, effective, option_info[opt[i]].o_text);
 			c_prt(a, buf, i + 2, 0);
 }
 
@@ -1152,8 +1169,9 @@ static option_list opt_lists[] =
 	{"Object Options", NULL, OPTS_OBJ, '4', 5, 7},
 	{"Performance Options", NULL, OPTS_PERF, '5', 5, 8},
 	{"Miscellaneous Options", NULL, OPTS_MISC, '6', 5, 9},
-	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 5, 11},
-	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', 5, 12},
+	{"Birth Options", NULL, OPTS_BIRTH, 'B', 5, 11},
+	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 5, 12},
+	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', 5, 13},
 	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 43, 4},
 	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 43, 5},
 	{"Autosave Options", NULL, OPTS_SAVE, 'A', 43, 6},

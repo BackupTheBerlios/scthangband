@@ -508,38 +508,47 @@ This sets cheat_live and cheat_skll, forces special monster drops to always occu
 %%%%%
 === Birth options ===
 
-%%%%% <spend_points>
-$GAllow stats to be chosen by spending points [spend_points]
-This allows the player to create a specific character without rolling it as long as the stats are not too high.
+%%%%% <score_quitter>
+$GRemember scores of those who quit the game [score_quitter]
+This causes games which end with the player quitting to be recorded on the same basis as those which end with the player dying.
+
+%%%%% <maximise_mode>
+$GInclude race/template bonuses in stat calc [maximise_mode]
+Normally, if a character should find potions that permanently increase his stats, the maximum that can be achieved without equipment bonuses is 18/100. If maximize mode is on (which is the default), then the race and template bonuses and penalties apply to this limit, so your half-troll will have a greater maximum possible strength (unassisted by his equipment) than a hobbit. With maximize mode off, all characters max out at 18/100 for all stats. This also affects the start of the game, because race and template bonuses are applied as if they were "rings" in maximize mode (at an exact rate of 0/10 percentile points equals 1 point for stats over 18), and as "potions" in non-maximize mode (drinking six potions of [stat] will probably increase your stat by more than 0/60 if it was at 18 to start with.) To cut a long story short and a 
+confusing explanation simple, you get better starting stats in non-maximize mode, but can't get as good at what you're supposed to be best at in the later stages of the game.
+
+%%%%% <preserve_mode>
+$GArtifacts are not lost if you never saw them [preserve_mode]
+If preserve mode is "off", you can get a level feeling that you *NEVER* get with preserve mode "on": a "special" feeling. This means that there is an artifact, a pit or a vault on the level: and while a pit or vault may not necessarily cause a special feeling, an artifact CERTAINLY will. This is principally of use in finding out which levels are *not* "special", i.e. which ones can be left in a hurry without worrying about leaving something behind - if it's not "special", there is no artifact unless a monster has dropped one when you killed it. This is particularly important because, with preserve mode off, no artifact can be generated more than once in the game. If it's on a level and you miss it, it's gone forever. With preserve mode "on", if you miss an artifact, it can turn up later provided you didn't identify it the first time (in which case there is no excuse for losing it.) But you don't get the "special" feeling. (Chances are that a vault will provide a good level feeling anyway, and quite possibly a couple of good items which may or may not include an artifact.)
+
+%%%%% <allow_quickstart>
+$GAllow the player to start by using Quick-Start [allow_quickstart]
+Quick-Start is a mechanism by which you can put character generation completely in the game's hands. It will generate a reasonable character according to its algorithm, choosing the race, template and stats automatically.
+
+This option is provided so that players who never wish to take advantage of this can avoid the prompt it gives.
+
+%%%%% <allow_pickstats>
+$GAllow the player to choose pre-set stats [allow_pickstats]
+If the preference files contain some pre-set stats and this option is set, the player will be given a list of character templates at the start of character generation and be able to choose one with a single keypress.
+
+If this option is not set, the player will not get this prompt, but will still be able to choose pre-set stats by using the 'l' key on the stat modifying screen.
+
+%%%%% <display_credits>
+$GRequire a keypress to clear the initial screen [display_credits]
+On some systems, the game only needs a keypress after initialisation rather than a savefile selection, etc.. As this doesn't give the game any additional information, unsetting this option prevents the game from waiting for this keypress.
 
 %%%%% <use_autoroller>
 $GAllow stats to be rolled repeatedly with minima [use_autoroller]
 This causes the "roll" command in the birth screen to generate characters with the specified race, class and sex until one of them has stats at least equal to the entered ones instead of simply generating a single random stat set.
 
-%%%%% <birth_maximize>
-$GMaximize effect of race/class bonuses [birth_maximize]
-Normally, if a character should find potions that permanently increase his stats, the maximum that can be achieved without equipment bonuses is 18/100. If maximize mode is on (which is the default), then the race and class bonuses and penalties apply to this limit, so your half-troll will have a greater maximum possible strength (unassisted by his equipment) than a hobbit. With maximize mode off, all characters max out at 18/100 for all stats. This also affects the start of the game, because race and clas
+%%%%% <spend_points>
+$GAllow stats to be chosen by spending points [spend_points]
+This allows the player to create a specific character without rolling it as long as the stats are not too high.
 
-%%%%% <birth_preserve>
-$GPreserve artifacts on leaving level [birth_preserve]
-If preserve mode is "off", you can get a level feeling that you *NEVER* get with preserve mode "on": a "special" feeling. This means that there is an artifact, a pit or a vault on the level: and while a pit or vault may not necessarily cause a special feeling, an artifact CERTAINLY will. This is principally of use in finding out which levels are *not* "special", i.e. which ones can be left in a hurry without worrying about leaving something behind - if it's not "special", there is no artifact unless a monster has dropped one when you killed it. This is particularly important because, with preserve mode off, no artifact can be generated more than once in the game. If it's on a level and you miss it, it's gone forever. With preserve mode "on", if you miss an artifact, it can turn up later provided you didn't pick it up and identify it the first time (in which case there is no excuse for losing it.) But you don't get the "special" feeling. (Chances are that a vault will provide a good level feeling anyway, and quite possibly a couple of good items which may or may not include an artifact.)
+%%%%% <ironman_shop>
+$GShops (except for libraries) are locked [ironman_shop]
+This option closes all shops except for libraries (which are open as normal).
 
-%%%%% <birth_ironman>
-$GRestrict the use of stairs/recall [birth_ironman]
-This option, not recommended for non-advanced players, prevents the generation of up staircases, and makes the scroll and effect of Word of Recall not function: and teleport-level always goes down, as does the spell of stair-creation, except on the quest levels of Sauron and Morgoth.
-
-%%%%% <birth_no_stores>
-$GRestrict the use of stores/home [birth_no_stores]
-The stores are all closed. The home is someone else's, and locked. You can keep nothing but what you carry with you, and get nothing but what you find in the dungeon. No selling items, or buying potions of restore stat... Not recommended for new players, or indeed for sane players.
-
-%%%%% <birth_no_artifacts>
-$GRestrict the creation of artifacts [birth_no_artifacts]
-No artifacts will be created. Ever. Just *how* masochistic are you?
-
-%%%%% <birth_rand_artifacts>
-$GRandomize some of the artifacts [birth_rand_artifacts]
-A different set of artifacts will be created, in place of the standard ones. This is intended primarily for people who have played enough to know what most of the standard artifacts do and have got bored with them. Note that savefiles with random artifacts are not guaranteed to be compatible between different Angband versions!
-
-%%%%% <birth_no_stacking>
-$GDon't stack objects on the floor [birth_no_stacking]
-Items dropped on the floor will spread out instead of stacking. Normal items will disappear if there is no empty grid within a radius of three squares.
+%%%%% <ironman_feeling>
+$GLevel feelings are only given after 2500 turns [ironman_feeling]
+This option causes level feelings to be given after 2500 turns on the level instead of giving the feeling immediately. 

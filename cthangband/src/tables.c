@@ -2432,7 +2432,13 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options (full to 3,12), 7 reserved for cheat options
+ * Available Options (full to 3,17), 7 reserved for cheat options
+ *
+ * Note that birth options should always be followed by BIRTHR ones which
+ * store the value used in the game.
+ *
+ * Note also that these BIRTHR options have no text name. This, and the lack
+ * of a BIRTHR option screen, prevents them from being set.
  */
 option_type option_info[] =
 {
@@ -2724,15 +2730,21 @@ option_type option_info[] =
 	"auto_more",                    "Automatically clear '-more-' prompts" },
 
 #ifdef SCORE_QUITTERS
-	{ &score_quitters,		FALSE, OPTS_BIRTH, 2, 29,
-	"score_quitters",			"Remember scores of those who quit the game" },
+	{ &score_quitters_w,		FALSE, OPTS_BIRTH, 2, 29,
+	"score_quitter",			"Remember scores of those who quit the game" },
+
+	{ &score_quitters, 0, OPTS_BIRTHR, 3, 14, 0, ""},
 #endif /* SCORE_QUITTERS */
 
-	{ &maximise_mode,               TRUE, OPTS_BIRTH, 2, 18,
+	{ &maximise_mode_w,               TRUE, OPTS_BIRTH, 2, 18,
     "maximise_mode",                "Include race/template bonuses in stat calcs" },
 
-	{ &preserve_mode,               TRUE, OPTS_BIRTH, 2, 19,
+	{ &maximise_mode, 0, OPTS_BIRTHR, 3, 15, 0, ""},
+
+	{ &preserve_mode_w,               TRUE, OPTS_BIRTH, 2, 19,
     "preserve_mode",                "Artifacts are not lost if you never saw them" },
+
+	{ &preserve_mode, 0, OPTS_BIRTHR, 3, 16, 0, ""},
 
 	{ &allow_quickstart,		TRUE,	OPTS_BIRTH, 3, 4,
 	"allow_quickstart",	"Allow the player to start by using Quick-Start"},
@@ -2751,11 +2763,15 @@ option_type option_info[] =
 	{ &spend_points,               FALSE, OPTS_BIRTH, 2, 21,
     "spend_points",                "Allow stats to be chosen by spending points" },
 
-	{ &ironman_shop,               FALSE, OPTS_BIRTH, 2, 22,
+	{ &ironman_shop_w,               FALSE, OPTS_BIRTH, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },
 
-	{ &ironman_feeling,	FALSE, OPTS_BIRTH, 3, 3,
+	{ &ironman_shop, 0, OPTS_BIRTHR, 3, 17, 0, ""},
+
+	{ &ironman_feeling_w,	FALSE, OPTS_BIRTH, 3, 3,
 	"ironman_feeling",	"Level feelings are only given after 2500 turns" },
+
+	{ &ironman_feeling, 0, OPTS_BIRTHR, 3, 18, 0, ""},
 
 	{ &spoil_base,			FALSE, OPTS_SPOIL,	2, 31,
 	"spoil_base",			"Gain knowledge of normal items" },
