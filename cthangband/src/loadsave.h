@@ -66,11 +66,6 @@
 #define SF_R_INFO_1	0x1000
 
 /*
- * Use a compressed display_func[] table.
- */
-#define SF_DISPLAY_COMPRESS 0x2000
-
-/*
  * Read quests directly into q_info rather than from the dungeon definition.
  */
 #define SF_QUEST_DIRECT	0x4000
