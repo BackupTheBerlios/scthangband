@@ -403,25 +403,29 @@ void change_level(s16b new_level, byte come_from)
 
 static void pattern_teleport(void)
 {
-	char highestquest;
-	
 	/* Ask for level */
-    if (get_check("Teleport level? "))
+	if (get_check("Teleport level? "))
 	{
 		char	ppp[80];
 
 		char	tmp_val[160];
 		int i;
 		
-		highestquest=99;
+		int highestquest = dun_defs[cur_dungeon].max_level;
 
 		for (i = 0; i < MAX_Q_IDX; i++)
 		{
-			if ((q_list[i].level || (q_list[i].cur_num != q_list[i].max_num)) && (q_list[i].level < highestquest))   highestquest = q_list[i].level;
+			quest_type *q_ptr = q_list+i;
+			if ((q_ptr->level || (q_ptr->cur_num != q_ptr->max_num))
+				&& (q_ptr->level < highestquest) &&
+				q_ptr->dungeon == cur_dungeon)
+			{
+				highestquest = q_ptr->level;
+			}
 		}
-		if(highestquest > dun_defs[cur_dungeon].max_level) highestquest = dun_defs[cur_dungeon].max_level;
+
 		/* Prompt */
-        sprintf(ppp, "Teleport to level (0-%d): ", highestquest);
+		sprintf(ppp, "Teleport to level (0-%d): ", highestquest);
 
 		/* Default */
 		sprintf(tmp_val, "%d", dun_level);
@@ -431,28 +435,23 @@ static void pattern_teleport(void)
 
 		/* Extract request */
 		command_arg = atoi(tmp_val);
+
+		/* Paranoia */
+		if (command_arg < 1) command_arg = 1;
+
+		/* Paranoia */
+	    if (command_arg > highestquest) command_arg = highestquest;
+
+		/* Accept request */
+	    msg_format("You teleport to dungeon level %d.", command_arg);
+
+		/* Change level */
+		change_level(command_arg, START_RANDOM);
 	}
     else if (get_check("Normal teleport? "))
     {
         teleport_player(200);
-        return;
     }
-    else
-    {
-        return;
-    }
-
-	/* Paranoia */
-	if (command_arg < 1) command_arg = 1;
-
-	/* Paranoia */
-    if (command_arg > highestquest) command_arg = highestquest;
-
-	/* Accept request */
-    msg_format("You teleport to dungeon level %d.", command_arg);
-
-	/* Change level */
-	change_level(command_arg, START_RANDOM);
 }
 
 
