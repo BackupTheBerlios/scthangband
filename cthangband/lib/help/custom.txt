@@ -601,10 +601,12 @@ If the preference files contain some pre-set stats and this option is set, the p
 
 If this option is not set, the player will not get this prompt, but will still be able to choose pre-set stats by using the 'l' key on the stat modifying screen.
 
+%%%%? [NOT [IOR [EQU $SYS mac] [EQU $SYS win] [EQU $SYS acn]]]
 %%%%% <display_credits>
 $GRequire a keypress to clear the initial screen [display_credits]
 On some systems, the game only needs a keypress after initialisation rather than a savefile selection, etc.. As this doesn't give the game any additional information, unsetting this option prevents the game from waiting for this keypress.
 
+%%%%? 1
 %%%%% <use_autoroller>
 $GAllow stats to be rolled repeatedly with minima [use_autoroller]
 This causes the "roll" command in the birth screen to generate characters with the specified race, class and sex until one of them has stats at least equal to the entered ones instead of simply generating a single random stat set.
