@@ -434,9 +434,11 @@ bool alchemy(void) /* Turns an object into gold, gain some of its value in a sho
 	/* Hack -- force destruction */
 	if (command_arg > 0) force = TRUE;
 
+	/* Restrict the choices */
+	item_tester_hook = item_tester_hook_destroy;
 
-	/* Get an item (from inven or floor) */
-    if (!get_item(&item, "Turn which item to gold? ", FALSE, TRUE, TRUE))
+	/* Get an item (from equip or inven or floor) */
+    if (!get_item(&item, "Turn which item to gold? ", TRUE, TRUE, TRUE))
 	{
 	if (item == -2) msg_print("You have nothing to turn to gold.");
 	return FALSE;
@@ -4462,7 +4464,7 @@ bool recharge(int num)
 	item_tester_hook = item_tester_hook_recharge;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Recharge which item? ", FALSE, TRUE, TRUE))
+	if (!get_item(&item, "Recharge which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to recharge.");
 		return (FALSE);

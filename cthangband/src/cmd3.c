@@ -516,9 +516,11 @@ void do_cmd_destroy(void)
 	/* Hack -- force destruction */
 	if (command_arg > 0) force = TRUE;
 
+	/* Restrict the choices */
+	item_tester_hook = item_tester_hook_destroy;
 
-	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Destroy which item? ", FALSE, TRUE, TRUE))
+	/* Get an item (from equip or inven or floor) */
+	if (!get_item(&item, "Destroy which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to destroy.");
 		return;

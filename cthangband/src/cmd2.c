@@ -2718,6 +2718,21 @@ static int throw_mult = 1;
 
 
 /*
+ * Hook to determine if an item is not both worn and cursed.
+ */
+bool item_tester_hook_destroy(object_type *o_ptr)
+{
+	/* Accept all uncursed items. */
+	if (!cursed_p(o_ptr)) return TRUE;
+
+	/* Accept all non-worn items. */
+	if (o_ptr < &inventory[INVEN_WIELD] || o_ptr > &inventory[INVEN_FEET]) return TRUE;
+
+	/* Reject everything else. */
+	return FALSE;
+}
+
+/*
  * Throw an object from the pack or floor.
  *
  * Note: "unseen" monsters are very hard to hit.
@@ -2748,9 +2763,11 @@ void do_cmd_throw(void)
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
+	/* Restrict the choices */
+	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Throw which item? ", FALSE, TRUE, TRUE))
+	if (!get_item(&item, "Throw which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to throw.");
 		return;
@@ -4255,7 +4272,7 @@ void do_cmd_racial_power(void)
 
 					/* Get an item */
 					q = "Drain which item? ";
-					if (!get_item(&item, q, FALSE,TRUE,TRUE)) break;
+				if (!get_item(&item, q, TRUE,TRUE,TRUE)) break;
 
 					if (item >= 0)
 					{

@@ -512,6 +512,7 @@ extern void do_cmd_stay(int pickup);
 extern void do_cmd_run(void);
 extern void do_cmd_rest(void);
 extern void do_cmd_fire(void);
+extern bool item_tester_hook_destroy(object_type *);
 extern void do_cmd_throw(void);
 extern int chest_check(int y, int x);
 
