@@ -114,7 +114,7 @@ extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(XTRA2_C))
-extern void object_track(object_ctype *o_ptr);
+extern void object_track(object_type *o_ptr);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(OBJECT2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void cave_track(const int y, const int x);
