@@ -4,6 +4,35 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband 1.0.10
+* Allow the charges of objects in slots to be drained.
+* Allow inscriptions such as @^A1 to be interpreted correctly.
+* Allow text to be copied directly from/to the game in the X11 port.
+* Give information about the square under the mouse cursor in the X11 port.
+* Give the unique cats distinctive colours.
+* Give meaningful error messages for some errors which cause beeps.
+* Give an error message if the "enter pref line" command is not parsed.
+* Remove confusing age references from the docs.
+* Omit help text for some options which don't exist as compiled.
+* Add code to check for some bugs in the options table during initialisation.
+* Fix the following bugs:
+  * Barbarians could not be selected from the "pick a race" screen.
+  * Branding, but not enchanting, ammunition did not rearrange the pack.
+  * Keymap dumps were the wrong way around.
+  * Some potions could not be created directly in debug mode.
+  * Bad rings/amulets could sometimes gain a positive pval, etc..
+  * Macintosh-style text files were not read correctly by the game.
+  * Some format strings could return nonsense.
+  * Monster speed boosts were calculated the wrong way around.
+  * Reflected attacks always went down and to the right.
+  * Cone-shaped attacks never caused the stated amount of damage.
+  * Martial arts AC was only modified when the player stopped being encumbered.
+  * The game used the keymap of a keymap to see where the player was moving to.
+  * +, - and the number keys in roguelike mode did not work correctly.
+  * Bones files were not saved correctly.
+  * It was possible to overflow player_name and a macro buffer.
+* Clean up some code.
+
 sCthangband 1.0.9
 * Allow the layout of the main window to be controlled from the options menu.
 * Add an option to use a special character for piles of stuff.
