@@ -109,6 +109,11 @@
  */
 #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
 
+/*
+ * Given an array, find the pointer at the end of it.
+ */
+#define END_PTR(a) ((a) + N_ELEMENTS(a))
+
 /* Try to mark unused variables as such in a way the compiler understands. */
 #ifdef __GNUC__
 #define UNUSED __attribute__((unused))

@@ -540,3 +540,7 @@
  * on cmd4.c being recompiled whenever the game is compiled.
  */
 /* #define SHOW_COMPILE_TIME */
+
+
+/* OPTION: Check that the indices used for various arrays are correct. */
+#define CHECK_ARRAYS

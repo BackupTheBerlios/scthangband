@@ -1622,6 +1622,16 @@ static errr init_alloc(void)
 
 
 
+#ifdef CHECK_ARRAYS
+/*
+ * Check that the members of various arrays are in the correct order.
+ */
+static void check_arrays(void)
+{
+	if (check_screen_coords()) quit("screen_coords is arranged incorrectly.");
+}
+#endif /* CHECK_ARRAYS */
+
 /*
  * Hack -- take notes on line 23
  */
@@ -1937,6 +1947,11 @@ void init_angband(void)
 
 	/* Process that file */
 	process_pref_file(buf);
+
+#ifdef CHECK_ARRAYS
+	/* Check that various arrays are in the correct order. */
+	check_arrays();
+#endif /* CHECK_ARRAYS */
 
 	/* Done */
 	note("[Initialization complete]");

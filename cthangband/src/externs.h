@@ -4033,4 +4033,10 @@ extern bool show_piles;
 #if (defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
+
+/* xtra1.c */
+
+#if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(XTRA1_C))
+extern bool check_screen_coords(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
