@@ -462,24 +462,11 @@ static tval_desc tvals[] =
  */
 static void strip_name(char *buf, int k_idx)
 {
-	char *t;
+	object_type forge;
 
-	object_kind *k_ptr = &k_info[k_idx];
+	object_prep(&forge, k_idx);
 
-	cptr str = (k_name + k_ptr->name);
-
-
-	/* Skip past leading characters */
-	while ((*str == ' ') || (*str == '&')) str++;
-
-	/* Copy useful chars */
-	for (t = buf; *str; str++)
-	{
-		if (*str != '~') *t++ = *str;
-	}
-
-	/* Terminate the new name */
-	*t = '\0';
+	object_desc_store(buf, &forge, FALSE, 0);
 }
 
 
@@ -493,6 +480,30 @@ static char head[3] =
 
 
 /*
+ * Sorting hook for wiz_create_item()
+ *
+ * Sort from highest frequency to lowest.
+ */
+static bool ang_sort_comp_wci(vptr u, vptr v, int a, int b)
+{
+	int *has_sub = (int*)u;
+	int *order = (int*)v;
+	return (has_sub[order[a]] >= has_sub[order[b]]);
+}
+
+/*
+ * Swapping hook for wiz_create_item()
+ */
+static void ang_sort_swap_wci(vptr unused, vptr v, int a, int b)
+{
+	int *order = (int*)v;
+	int temp;
+	temp = order[a];
+	order[a] = order[b];
+	order[b] = temp;
+}
+
+/*
  * Specify tval and sval (type and subtype of object) originally
  * by RAK, heavily modified by -Bernd-
  *
@@ -503,7 +514,7 @@ static char head[3] =
 static int wiz_create_itemtype(void)
 {
 	int                  i, num, max_num;
-	int                  col, row;
+	int                  col, row, max_len;
 	int			 tval;
 
 	cptr                 tval_desc;
@@ -511,7 +522,7 @@ static int wiz_create_itemtype(void)
 
 	int			 choice[60];
 
-	char		buf[160];
+	char		buf[60][ONAME_MAX];
 
 
 	/* Clear screen */
@@ -568,14 +579,143 @@ static int wiz_create_itemtype(void)
 			ch = head[num/20] + (num%20);
 
 			/* Acquire the "name" of object "i" */
-			strip_name(buf, i);
-
-			/* Print it */
-			prt(format("[%c] %s", ch, buf), row, col);
+			strip_name(buf[num], i);
 
 			/* Remember the object index */
 			choice[num++] = i;
 		}
+	}
+
+	max_len = 80/((num+19)/20);
+
+	/*
+	 * Remove words to make every string short enough.
+	 * Starting with the commonest word present in a too-long string,
+	 * words are removed until the total length is within the maximum.
+	 * 
+	 * There are max_len spaces between the starts of adjacent entries.
+	 * The actual format is "[x] entry ", making 5 unavailable.
+	 *
+	 * This may treat repeated words inconsistently, e.g. by
+	 * removing the first "of" in "pack of cards of Tarot"
+	 * when a "die of dodecahedral shape" is shortened,
+	 */
+
+	/* Look for prefixes to cut. */
+	for (i = 0; i < num; i++)
+	{
+		char this[strlen(buf[i])+1];
+		int j,k,l;
+		char *sub[10];
+		int has_sub[10], times[10], order[10];
+
+		/* Short enough already. */
+		if (strlen(buf[i]) < max_len-4) continue;
+
+		/* Copy to temporary string. */
+		strcpy(this, buf[i]);
+
+		/* Locate each word. */
+		for (j = 0; j < 10; j++)
+		{
+			/* Find the end of the current word or the start of the string. */
+			if (j)
+				sub[j] = strchr(sub[j-1], ' ');
+			else
+				sub[j] = this;
+
+			/* Set times and order to default values. */
+			times[j] = 1;
+			order[j] = j;
+			has_sub[j] = 0;
+			
+			/* Don't continue past the end of the name. */
+			if (!sub[j]) break;
+
+			/* Don't change the string for the first word. */
+			if (!j) continue;
+
+			/* End last word and advance. */
+			*(sub[j]++) = '\0';
+		}
+		
+		/* Look for duplicated words. */
+		for (k = 1; k < j; k++)
+		{
+			for (l = 0; l < k; l++)
+			{
+				/* Ignore different words. */
+				if (strcmp(sub[l], sub[k])) continue;
+				
+				/* Increment the number of previous occurrences */
+				times[k]++;
+			}
+		}
+		/* Calculate how often each word appears in other entries. */
+		for (k = 0; k < j; k++)
+		{
+			for (l = has_sub[k] = 0; l < num; l++)
+			{
+				cptr time;
+				int m;
+				for (m = 1, time = buf[l];; m++)
+				{
+					/* Find the next copy. */
+					time = strstr(time, sub[k]);
+
+					/* Not enough found. */
+					if (!time) break;
+					
+					/* Don't consider this copy again. */
+					time++;
+
+					/* Go to the next copy. */
+					if (m < times[k]) continue;
+
+					/* This is a real substring. */
+					has_sub[k]++;
+
+					/* Finish. */
+					break;
+				}
+			}
+		}
+		
+		/* Sort the list. */
+		ang_sort_comp = ang_sort_comp_wci;
+		ang_sort_swap = ang_sort_swap_wci;
+		ang_sort(has_sub, order, j);
+		
+		k = 0;
+		/* Remove words, most common first. */
+		while (strlen(buf[i]) > max_len-5)
+		{
+			/* Replace the word in every string in which it appears. */
+			for (l = 0;l < num; l++)
+			{
+				char *a, *b;
+
+				/* Does it appear here? */
+				if (!((a = strstr(buf[l], sub[k])))) continue;
+
+				/* Actually remove the substring. */
+				for (b = a--+strlen(sub[k]); *a = *b; a++, b++);
+			}
+			
+			/* Mext. */
+			k++;
+		}
+	}
+	
+	/* Print everything */
+	for (i = 0; i < num; i++)
+	{
+		row = 2 + (i % 20);
+		col = max_len * (i / 20);
+		ch = head[i/20] + (i%20);
+		
+		/* Print it */
+		prt(format("[%c] %s", ch, buf[i]), row, col);
 	}
 
 	/* Me need to know the maximal possible remembered object_index */
