@@ -8,6 +8,8 @@ read from the bottom up.
 sCthangband _CVS_
 * Fix the following bugs:
   * The game could crash if a keymap was used.
+  * Setting/resetting maximise mode before choosing a template could crash the
+    game.
 
 sCthangband 1.0.17
 * Create the player on a random staircase on entering a level.
