@@ -598,9 +598,12 @@ void carry(int pickup)
 			/* Note that the pack is too full */
 			if (!inven_carry_okay(o_ptr))
 			{
-				msg_format("You have no room for %v.",
-					object_desc_f3, o_ptr, TRUE, 3);
-				continue;
+				if (always_pickup)
+				{
+					msg_format("You have no room for %v.",
+						object_desc_f3, o_ptr, TRUE, 3);
+					continue;
+				}
 			}
 			else if (strstr(quark_str(o_ptr->note), "=g"))
 			{
