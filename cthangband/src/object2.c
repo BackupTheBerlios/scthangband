@@ -2878,85 +2878,79 @@ static byte k_ego_special(object_kind *k_ptr)
  */
 
 /*
- * Turn an ordinary object into an ego item or artefact, and give it appropriate
- * bonuses.
+ * Choose how powerful a newly created object should be, and how many times
+ * the game may attempt to replace it with an artefact.
  */
-static void apply_magic_1(object_type *o_ptr, const int lev, const bool okay,
-	const bool good, const bool great)
+static void choose_magic_power(int *power, int *rolls,
+	int lev, bool okay, bool good, bool great)
 {
-	int i, rolls, f1, f2, power;
+	/* Chance of being "good" */
+	int f1 = MIN(lev + 10, 75);
 
-	/* Normal artefacts have no business here. */
-	if (o_ptr->name1) return;
-
-
-	/* Base chance of being "good" */
-	f1 = lev + 10;
-
-	/* Maximal chance of being "good" */
-	if (f1 > 75) f1 = 75;
-
-	/* Base chance of being "great" */
-	f2 = f1 / 2;
-
-	/* Maximal chance of being "great" */
-	if (f2 > 20) f2 = 20;
-
+	/* Chance of being "great" */
+	int f2 = MIN(lev/2 + 5, 20);
 
 	/* Assume normal */
-	power = 0;
+	*power = 0;
 
 	/* Roll for "good" */
 	if (good || percent(f1))
 	{
 		/* Assume "good" */
-		power = 1;
+		*power = 1;
 
 		/* Roll for "great" */
-		if (great || percent(f2)) power = 2;
+		if (great || percent(f2)) *power = 2;
 	}
 
 	/* Roll for "cursed" */
 	else if (percent(f1))
 	{
 		/* Assume "cursed" */
-		power = -1;
+		*power = -1;
 
 		/* Roll for "broken" */
-		if (percent(f2)) power = -2;
+		if (percent(f2)) *power = -2;
 	}
-
 
 	/* Assume no rolls */
-	rolls = 0;
+	*rolls = 0;
 
 	/* Get one roll if excellent */
-	if (power >= 2) rolls = 1;
+	if (*power >= 2) *rolls = 1;
 
 	/* Hack -- Get four rolls if forced great */
-	if (great) rolls = 4;
+	if (great) *rolls = 4;
 
 	/* Hack -- Get no rolls if not allowed */
-	if (!okay) rolls = 0;
+	if (!okay) *rolls = 0;
 
-	/* Roll for artifacts if allowed */
-	for (i = 0; i < rolls; i++)
+}
+
+/*
+ * Try to turn "o_ptr" into an artefact "rolls" times.
+ * If it succeeds, or if it cannot succeed, return immediately.
+ */
+static void art_roll(object_type *o_ptr, int rolls)
+{
+	while (rolls--)
 	{
-		errr err;
-		if (cheat_peek) msg_format("Rolling %d", i);
+		if (cheat_peek) msg_format("Rolling %d", rolls);
+
 		/* Roll for an artifact */
-		err = make_artifact(o_ptr, FALSE);
+		if (make_artifact(o_ptr, FALSE)
 
-		/* Continue if the roll went against us. */
-		if (err == MAKE_ART_RANDOM_FAIL) continue;
-
-		/* Return if an artefact has been produced. */
-		else if (err == SUCCESS) return;
-
-		/* Finish if it failed for some other reason. */
-		else break;
+		/* Finish unless it fails because of bad luck. */
+			!= MAKE_ART_RANDOM_FAIL) return;
 	}
+}
 
+/*
+ * Turn an ordinary object into an ego item or artefact, and give it appropriate
+ * bonuses.
+ */
+static void apply_magic_1(object_type *o_ptr, int lev, int power)
+{
 	/* Apply magic */
 	switch (o_ptr->tval)
 	{
@@ -3118,6 +3112,9 @@ void apply_magic_2(object_type *o_ptr, const int lev)
 
 }
 
+/*
+ * Set o_ptr->found according to the circumstances of creation.
+ */
 void set_object_found(object_type *o_ptr, int how, int idx)
 {
 	object_found *ptr = &o_ptr->found;
@@ -3138,13 +3135,28 @@ void set_object_found(object_type *o_ptr, int how, int idx)
 	}
 }
 
+/*
+ * Carry out a range of things which happen to an object after it has had its
+ * k_idx decided.
+ */
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, int how, int idx)
 {
+	int power, rolls;
+
 	/* Maximum "level" for various things */
 	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
 
+	/* 
+	 * Calculate the "power" the new object should have, and how many times
+	 * the game may try to turn it into a special artefact.
+	 */
+	choose_magic_power(&power, &rolls, lev, okay, good, great);
+
+	/* Roll for an artefact, if allowed. */
+	art_roll(o_ptr, rolls);
+
 	/* Turn the object into an ego-item or artefact (or not). */
-	apply_magic_1(o_ptr, lev, okay, good, great);
+	if (!o_ptr->name1) apply_magic_1(o_ptr, lev, power);
 
 	/* Give it any bonuses its ego- or artefact type requires, and add random
 	 * bonuses to rings and armour. */
