@@ -421,6 +421,7 @@ extern bool angband_keymap_flag; /* Hack for main-win.c */
 extern bool mystic_armour_aux;
 extern bool mystic_notify_aux;
 extern spirit_type spirits[MAX_SPIRITS];
+extern tval_ammo_type tval_ammo[];
 extern bool cheat_item;
 extern bool spoil_art;
 extern bool spoil_mon;
@@ -591,6 +592,7 @@ extern void curse(object_type *o_ptr);
 extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens);
+extern void weapon_stats(object_type *, byte, s16b *, s16b *, s16b *, s16b *, s16b *);
 extern void display_player(int mode);
 extern errr file_character(cptr name, bool full);
 extern errr process_pref_file_aux(char *buf);
@@ -987,6 +989,7 @@ extern void calc_hitpoints(void);
 extern void calc_mana(void);
 extern void calc_spells(void);
 extern int wield_skill(byte, byte);
+extern byte ammunition_type(object_type *o_ptr);
 
 /* xtra2.c */
 extern bool set_blind(int v);

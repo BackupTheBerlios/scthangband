@@ -1227,30 +1227,316 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
 }
 
 
+/* Just in case */
+#ifndef quarkstr
+#define quarkstr(x) ((x) ? quark_str(x) : "")
+#endif
+
+/*
+ * Calculate the number of blows and the damage done by a given weapon using
+ * a specified slay multiplier, together with the to-hit and to-damage bonuses
+ * of the weapon.
+ */
+void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s16b *damage)
+{
+	s16b i, power, damsides, damdice, dicedam;
+	s16b slot = wield_slot(o_ptr);
+
+	/* wp_ptr and am_ptr point to the weapon and (where appropriate) ammunition
+	 * being considered. wp and am are temporary representations of these, which
+	 * differ in one crucial respect: am is discarded at the end, but the contents
+	 * of wp is copied to wp_ptr. */
+	object_type wp, am, *wp_ptr, *am_ptr;
+
+	/* Initialise everything. */
+	(*tohit) = (*todam) = (*weap_blow) = (*mut_blow) = (*damage) = 0;
+
+	/* Find out which weapon and ammunition we should use. */
+	switch (slot)
+	{
+		case INVEN_WIELD: /* Melee weapons */
+		wp_ptr = &inventory[INVEN_WIELD];
+		am_ptr = 0;
+		break;
+		case INVEN_BOW: /* Missile weapons */
+		wp_ptr = &inventory[INVEN_BOW];
+		am_ptr = 0;
+		break;
+		case INVEN_NONE: /* Either a missile or an empty slot. */
+		if (o_ptr == &inventory[INVEN_WIELD]) /* Calculate martial arts (inaccurately) */
+		{
+			wp_ptr = &inventory[INVEN_WIELD];
+			am_ptr = 0;
+			slot = INVEN_WIELD;
+			break;
+		}
+		else if (o_ptr == &inventory[INVEN_BOW]) /* No bow, no damage */
+		{
+			return;
+		}
+		/* else fall through */
+		default: /* Missiles */
+		wp_ptr = 0;
+		am_ptr = o_ptr;
+		break;
+	}
+	/* Wield the weapon, if known. */
+	if (wp_ptr)
+	{
+		object_copy(&wp, wp_ptr);
+		object_copy(wp_ptr, o_ptr);
+		p_ptr->update |= PU_BONUS;
+		update_stuff();
+	}
+	/* Find an appropriate bow for ammunition, and vice versa. */
+	switch (slot)
+	{
+		case INVEN_BOW:
+		/* Use missiles from inventory if appropriate. */
+		for (i = 0; i <= INVEN_PACK; i++)
+		{
+			object_type *j_ptr = &inventory[i];
+			if (j_ptr->tval != p_ptr->tval_ammo) continue;
+			if (!strstr(quarkstr(j_ptr->note), "@ff")) continue;
+			am_ptr = j_ptr;
+			break;
+		}
+		if (am_ptr) break;
+		/* Use a (+0,+0) missile of the appropriate type. */
+		for (i = 0; i < 256; i++)
+		{
+			if (!lookup_kind(p_ptr->tval_ammo, i)) continue;
+			object_prep(&am, lookup_kind(p_ptr->tval_ammo, i));
+			am_ptr = &am;
+			break;
+		}
+		if (am_ptr) break;
+		/* Use a null object if this is a missile weapon in name only. */
+		object_wipe(&am);
+		am_ptr = &am;
+		break;
+		case INVEN_WIELD: /* Melee weapons work alone, but give an empty missile type for convenience. */
+		object_wipe(&am);
+		am_ptr = &am;
+		default:
+		/* First put the existing bow (if any) in a safe place. */
+
+		/* Use an inscribed bow from inventory if available.
+		 * This is very nasty as only calc_bonuses() knows what missiles each bow uses. */
+		if (!wp_ptr)
+		{
+			for (i = 0; i <= INVEN_PACK; i++)
+			{
+				if (!strstr(quarkstr(inventory[i].note), "@ff")) continue;
+				if (ammunition_type(&inventory[i]) != o_ptr->tval) continue;
+				wp_ptr = &inventory[INVEN_BOW];
+				object_copy(&wp, wp_ptr);
+				object_copy(wp_ptr, &inventory[i]);
+				break;
+			}
+		}		
+
+		/* If not, use the wielded bow if of an appropriate type. */
+		if (!wp_ptr && p_ptr->tval_ammo == o_ptr->tval)
+		{
+			wp_ptr = &inventory[INVEN_BOW];
+			object_copy(&wp, wp_ptr);
+		}
+
+
+		/* Find the first type of bow which matches. We assume that this is a normal type of bow. */
+		if (!wp_ptr)
+		{
+			object_type *j_ptr = &inventory[INVEN_BOW];
+			object_copy(&wp, j_ptr);
+			object_wipe(j_ptr);
+			for (i = 0; i < 256; i++)
+			{
+				if (!lookup_kind(TV_BOW, i)) continue;
+				object_prep(j_ptr, lookup_kind(TV_BOW, i));
+				if (ammunition_type(j_ptr) != o_ptr->tval) continue;
+				wp_ptr = &inventory[INVEN_BOW];
+				break;
+			}
+		}
+		/* We're not dealing with a normal missile. */
+		if (!wp_ptr)
+		{
+			wp_ptr = &inventory[INVEN_BOW];
+			object_wipe(wp_ptr);
+		}
+		p_ptr->update |= PU_BONUS;
+		update_stuff();
+		break;
+	}
+
+	/* Now that's done, we do some statistical stuff.
+	 * We want to know the to-hit bonus, the damage bonus, the number of blows
+	 * per turn and the average damage per turn. */
+
+	/* Weapons use the intrinsic damage bonus */
+	if (slot == INVEN_WIELD) (*todam) = p_ptr->dis_to_d;
+	else (*todam) = 0;
+	
+	/* Everything uses the intrinsic hit bonus */
+	(*tohit) = p_ptr->dis_to_h;
+
+	/* Add in the weapons' bonuses */
+	if (object_known_p(wp_ptr)) (*tohit) += wp_ptr->to_h;
+	if (object_known_p(wp_ptr)) (*todam) += wp_ptr->to_d;
+
+	if (object_known_p(am_ptr)) (*tohit) += am_ptr->to_h;
+	if (object_known_p(am_ptr)) (*todam) += am_ptr->to_d;
+
+	/* Calculate the power and number of blows */
+	if (slot == INVEN_WIELD)
+	{
+		power = 1;
+		(*weap_blow) = p_ptr->num_blow;
+	}
+	else
+	{
+		s32b junk, f3;
+
+		/* Mega-Hack -- Extract the "base power" */
+		if (wp_ptr->k_idx) power = (wp_ptr->sval % 10);
+		/* Without a launcher everything has a power equal to throw_mult in cmd2.c */
+		else power = 1;
+	
+		object_flags_known(wp_ptr, &junk, &junk, &f3);
+
+		/* Apply the "Extra Might" flag */
+		if (f3 & (TR3_XTRA_MIGHT)) power++;
+
+		(*weap_blow) = p_ptr->num_fire;
+	}
+
+	/* Then add the weapon's dice damage, if known. */
+	if (!object_aware_p(o_ptr))
+	{
+		damsides = damdice = 0;
+	}
+	else if (slot == INVEN_WIELD)
+	{
+		damsides = wp_ptr->ds;
+		damdice = wp_ptr->dd;
+	}
+	else
+	{
+		damsides = am_ptr->ds;
+		damdice = am_ptr->dd;
+	}
+	
+	/* Calculate damage from dice, if any. */
+	if (damsides && damdice)
+	{
+		dicedam = 60*damdice*(1+damsides)/2;
+	}
+	else
+	{
+		dicedam = 0;
+	}
+
+	/* Calculate the damage bonus. */
+	(*damage) += 60*(*todam);
+	
+	/* Add in the slays. */
+	if (slot == INVEN_WIELD)
+	{
+		(*damage) += dicedam * slay;
+	}
+	else
+	{
+		(*damage) += dicedam;
+		(*damage) *= slay;
+	}
+
+	/* Consider the number of blows and bow multiplier. */
+	(*damage) = (*damage)*power*(*weap_blow)/60;
+
+	/* Hack - bows without arrows can neither hit nor damage */
+	if (slot == INVEN_BOW && !am_ptr->k_idx) (*tohit) = (*todam) = (*weap_blow) = (*damage) = 0;
+
+	/* Finally, add the mutated attacks. The numbers are based on those in
+	 * natural_attack(), which appear to differ from the ones in dump_chaos_feature(). */
+	if (slot == INVEN_WIELD)
+	{
+		if (p_ptr->muta2 & MUT2_HORNS)
+		{
+			(*mut_blow)++;
+			(*damage) += 60*6*(1+2)/2;
+		}
+		if (p_ptr->muta2 & MUT2_SCOR_TAIL)
+		{
+			(*mut_blow)++;
+			(*damage) += 60*7*(1+3)/2;
+		}
+		if (p_ptr->muta2 & MUT2_BEAK)
+		{
+			(*mut_blow)++;
+			(*damage) += 60*4*(1+2)/2;
+		}
+		if (p_ptr->muta2 & MUT2_TRUNK)
+		{
+			(*mut_blow)++;
+			(*damage) += 60*4*(1+1)/2;
+		}
+		if (p_ptr->muta2 & MUT2_TENTACLES)
+		{
+			(*mut_blow)++;
+			(*damage) += 60*5*(1+2)/2;
+		}
+	}
+
+	/* Now that's done, we need only replace the standard weapon. */
+	object_copy(wp_ptr, &wp);
+
+	/* And update everything. */
+	p_ptr->update |= PU_BONUS;
+	update_stuff();
+}
 
 /*
  * Prints the following information on the screen.
+ *
+ * If missile is false, melee damage is shown.
+ * Otherwise, if there is ammunition for the equipped missile weapon which
+ * is inscribed with @ff, missile damage with those missiles is shown.
+ * Otherwise, damage with (+0,+0) missiles of the appropriate type with an
+ * sval of 1 is shown.
  */
-static void display_player_sides(void)
+static void display_player_sides(bool missile)
 {
-	int show_tohit = p_ptr->dis_to_h;
-	int show_todam = p_ptr->dis_to_d;
+	s16b show_tohit, show_todam, weap_blow, mut_blow, damage;
+	cptr temp;
 
-	object_type *o_ptr = &inventory[INVEN_WIELD];
+	/* The last column of the numbers. See prt_num() */
+	const byte col = 1+strlen("+ To Damage ")+3+6;
 
-	/* Hack -- add in weapon info if known */
-	if (object_known_p(o_ptr)) show_tohit += o_ptr->to_h;
-	if (object_known_p(o_ptr)) show_todam += o_ptr->to_d;
+	object_type *o_ptr = &inventory[(missile) ? INVEN_BOW : INVEN_WIELD];
+
+	weapon_stats(o_ptr, 1, &show_tohit, &show_todam, &weap_blow, &mut_blow, &damage);
+
+	put_str((missile) ? "Missile" : "Melee", 9, 3);
 
 	/* Dump the bonuses to hit/dam */
-	prt_num("+ To Hit    ", show_tohit, 9, 1, TERM_L_BLUE);
-	prt_num("+ To Damage ", show_todam, 10, 1, TERM_L_BLUE);
+	prt_num("+ To Hit    ", show_tohit, 10, 1, TERM_L_BLUE);
+	prt_num("+ To Damage ", show_todam, 11, 1, TERM_L_BLUE);
 
-	/* Dump the armor class bonus */
-	prt_num("+ To AC     ", p_ptr->dis_to_a, 11, 1, TERM_L_BLUE);
+	/* Dump the number of attack per round */
+	put_str("Attack/Round", 12, 1);
+	if (!mut_blow)
+		temp = format("%d,%d", weap_blow/60, weap_blow%60);
+	else
+		temp = format("%d,%d+%d", weap_blow/60, weap_blow%60, mut_blow);
+	/* Display string, right-aligned. */
+	c_put_str(TERM_L_BLUE, temp, 12, col-strlen(temp));
 
-	/* Dump the total armor class */
-	prt_num("  Base AC   ", p_ptr->dis_ac, 12, 1, TERM_L_BLUE);
+	/* Dump the damage per round */
+	put_str("Damage/Round", 13, 1);
+	temp = format("%d,%d", damage/60, damage%60);
+	c_put_str(TERM_L_BLUE, temp, 13, col-strlen(temp));
+
 	prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
 
 	if (p_ptr->chp >= p_ptr->mhp)
@@ -1492,30 +1778,11 @@ static void display_player_various(void)
 	c_put_str(likert_color, desc, 19, 42);
 
 
-	put_str("Blows/Round:", 16, 55);
-    if (!muta_att)
-        put_str(format("%d,%d", p_ptr->num_blow/60, p_ptr->num_blow%60), 16, 69);
-    else
-	  put_str(format("%d,%d+%d", p_ptr->num_blow/60, p_ptr->num_blow%60, muta_att), 16, 69);
+	put_str("+ To AC:", 16, 55);
+	put_str(format("%6ld", p_ptr->dis_to_a), 16, 69);
 
-	put_str("Shots/Round:", 17, 55);
-	put_str(format("%d,%d", p_ptr->num_fire/60, p_ptr->num_fire%60), 17, 69);
-
- 	put_str("Avg. dmg/rnd:", 18, 55);
- 	if ((damdice == 0) || (damsides == 0)) {
- 		if (dambonus <= 0)
- 			desc = "nil!";
- 		else
- 			tmp = blows * dambonus;
- 			desc = format("%d,%d", tmp/60, tmp%60);
- 		} else {
-		/* damsides+1 gives the average for two blows.
-		tmp is exact as blows is even here. */
- 		tmp=blows/2*(damdice*(damsides+1)+dambonus*2);
- 		desc=format("%d,%d", tmp/60, tmp%60);
- 	}
- 	put_str(desc, 18, 69);
-
+	put_str("Base AC:", 17, 55);
+	put_str(format("%6ld", p_ptr->dis_ac), 17, 69);
 
 	put_str("Infra-Vision:", 19, 55);
 	put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);
@@ -2682,39 +2949,14 @@ static void display_player_ben_one(int mode)
 	}
 }
 
-
 /*
- * Display the character on the screen (various modes)
- *
- * The top two and bottom two lines are left blank.
- *
- * Mode 0 = standard display with skills
- * Mode 1 = standard display with history and bonus details
- * Mode 2 = skills display
- * Mode 3 = summary of various things
- * Mode 4 = current flags (combined)
- * Mode 5 = current flags (part 1)
- * Mode 6 = current flags (part 2)
- * Mode 7 = chaos features
+ * Display the name, sex, race, template and stats.
  */
-void display_player(int mode)
+void display_player_name_stats(void)
 {
-	int i;
-
 	char	buf[80];
+	byte i;
 
-	/* XXX XXX XXX */
-    if ((p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3) && !(skip_chaos_features))
-        mode = (mode % 8);
-    else
-        mode = (mode % 7);
-
-	/* Erase screen */
-	clear_from(0);
-
-	/* Standard */
-	if ((mode == 0) || (mode == 1))
-	{
 		/* Name, Sex, Race, template */
 		put_str("Name        :", 2, 1);
 		put_str("Sex         :", 3, 1);
@@ -2778,43 +3020,85 @@ void display_player(int mode)
 				c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
 			}
 		}
+}
 
-		/* Extra info */
-		display_player_sides();
+/*
+ * Display the character on the screen (various modes)
+ *
+ * The top two and bottom two lines are left blank.
+ *
+ * Mode 0 = standard display with skills
+ * Mode 1 = standard display with history and bonus details
+ * Mode 2 = skills display
+ * Mode 3 = summary of various things
+ * Mode 4 = current flags (combined)
+ * Mode 5 = current flags (part 1)
+ * Mode 6 = current flags (part 2)
+ * Mode 7 = chaos features
+ */
+void display_player(int mode)
+{
+	/* XXX XXX XXX */
+    if ((p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3) && !(skip_chaos_features))
+        mode = (mode % 8);
+    else
+        mode = (mode % 7);
 
-		if ((mode == 1) || !display_player_bonus())
+	/* Erase screen */
+	clear_from(0);
+
+	switch (mode)
+	{
+		case 0:
 		{
+			/* Name, sex, race, template, age, height, weight, social class and stats. */
+			display_player_name_stats();
+
+			/* Extra info (melee) */
+			display_player_sides(FALSE);
+
+			/* Temporary bonuses */
+			if (!display_player_bonus())
+
+			/* Experience if no temporary bonuses */
 			display_player_xp();
+
+			/* Display "various" info */
+			put_str("(Miscellaneous Abilities)", 15, 25);
+			display_player_various();
+
+			break;
 		}
+		case 1:
+		{
+			byte i;
+
+			/* Name, sex, race, template, age, height, weight, social class and stats. */
+			display_player_name_stats();
+
+			/* Extra info (missile) */
+			display_player_sides(TRUE);
+
+			/* Experience */
+			display_player_xp();
 
 		/* Display "history" info */
-		if (mode == 1)
-		{
 			put_str("(Character Background)", 15, 25);
 
 			for (i = 0; i < 4; i++)
 			{
 				put_str(history[i], i + 16, 10);
 			}
-		}
 
-		/* Display "various" info */
-		else
-		{
-			put_str("(Miscellaneous Abilities)", 15, 25);
-
-			display_player_various();
-		}
+			break;
 	}
-
-	else if (mode == 2)
+		case 2:
 	{
 		/* Do nothing */
 		display_player_skills();
+			break;
 	}
-	
-	/* Special */
-	else if (mode == 3)
+		case 3: /* Special */
 	{
 		/* See "http://www.cs.berkeley.edu/~davidb/angband.html" */
 
@@ -2822,24 +3106,23 @@ void display_player(int mode)
 		display_player_misc_info();
 		display_player_stat_info();
 		display_player_flag_info();
+			break;
 	}
-	
-	/* Special */
-	else if (mode == 4)
+		case 4: /* Special */
 	{
 		display_player_ben();
+			break;
 	}
-
-    else if (mode == 7)
+		case 7:
     {
         do_cmd_knowledge_chaos_features();
+			break;
     }
-	
-	/* Special */
-	else
+		default: /* Special */
 	{
 		display_player_ben_one((mode-1) % 2);
 	}
+}
 }
 
 void dump_final_messages(FILE * OutFile)

@@ -644,6 +644,7 @@ logaux(x, 1) logaux(x, 0) 255
 /*
  * Indexes used for various "equipment" slots (hard-coded by savefiles, etc).
  */
+#define INVEN_NONE	-1 /* Return code for wield_slot() */
 #define INVEN_WIELD             24
 #define INVEN_BOW       25
 #define INVEN_LEFT      26

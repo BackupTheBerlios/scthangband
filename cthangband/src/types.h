@@ -1344,7 +1344,11 @@ struct death_event_type {
 	de_par	par;	/* The parameters for this event type (see above) */
 };
 
-
+typedef struct tval_ammo_type tval_ammo_type;
+struct tval_ammo_type {
+	byte	bow_sval;	/* sval of the bow being used. */
+	byte	ammo_tval;	/* tval of the ammunition it uses. */
+};
 
 
 

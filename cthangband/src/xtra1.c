@@ -2139,6 +2139,23 @@ return FALSE;
 }
 
 /*
+ * Find the ammunition tval used by a given launcher.
+ */
+byte ammunition_type(object_type *o_ptr)
+{
+	tval_ammo_type *tv_ptr;
+
+	for (tv_ptr = tval_ammo; tv_ptr->bow_sval; tv_ptr++)
+	{
+		/* Found something */
+		if (tv_ptr->bow_sval == o_ptr->sval) return tv_ptr->ammo_tval;
+	}
+
+	/* Nothing */
+	return 0;
+}
+
+/*
  * Calculate the players current "state", taking into account
  * not only race intrinsics, but also objects being worn
  * and temporary spell effects.
@@ -3140,13 +3157,15 @@ static void calc_bonuses(bool quiet)
 	/* Compute "extra shots" if needed */
 	if (o_ptr->k_idx && !p_ptr->heavy_shoot)
 	{
-		/* Take note of required "tval" for missiles, and add additional shots for
-		   player skill, depending on weapon. */
+		/* Take note of required "tval" for missiles (should this rely
+		 * on !p_ptr->heavy_shoot?). */
+		p_ptr->tval_ammo = ammunition_type(o_ptr);
+
+		/* Add additional shots for player skill, depending on weapon. */
 		switch (o_ptr->sval)
 		{
 			case SV_SLING:
 			{
-				p_ptr->tval_ammo = TV_SHOT;
 				if (skill_set[SKILL_MISSILE].value==100)
 					extra_shots += 120;
 				else if (skill_set[SKILL_MISSILE].value>22)
@@ -3157,7 +3176,6 @@ static void calc_bonuses(bool quiet)
 			case SV_SHORT_BOW:
 			case SV_LONG_BOW:
 			{
-				p_ptr->tval_ammo = TV_ARROW;
 				if (skill_set[SKILL_MISSILE].value==100)
 					extra_shots += 180;
 				if (skill_set[SKILL_MISSILE].value>15)
@@ -3168,7 +3186,6 @@ static void calc_bonuses(bool quiet)
 			case SV_LIGHT_XBOW:
 			case SV_HEAVY_XBOW:
 			{
-				p_ptr->tval_ammo = TV_BOLT;
 				/* At 100 skill, a crossbow gives 1 1/6 extra shots anyway. */
 				if (skill_set[SKILL_MISSILE].value>30)
 					extra_shots += (skill_set[SKILL_MISSILE].value-30);
