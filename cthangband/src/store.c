@@ -3070,24 +3070,11 @@ static void store_sell(void)
 	/* Assume one item */
 	amt = 1;
 
-	/* Find out how many the player wants (letter means "all") */
-	if (o_ptr->number > 1)
-	{
-		/* Get a quantity */
-		amt = get_quantity(NULL, o_ptr->number,TRUE);
-
-		/* Allow user abort */
-		if (amt <= 0) return;
-	}
-
 	/* Get local object */
 	q_ptr = &forge;
 	
 	/* Get a copy of the object */
 	object_copy(q_ptr, o_ptr);
-
-	/* Modify quantity */
-	q_ptr->number = amt;
 
 	/* Get a full description */
 	object_desc(o_name, q_ptr, TRUE, 3);
@@ -3104,6 +3091,19 @@ static void store_sell(void)
 		return;
 	}
 
+
+	/* Find out how many the player wants (letter means "all") */
+	if (o_ptr->number > 1)
+	{
+		/* Get a quantity */
+		amt = get_quantity(NULL, o_ptr->number,TRUE);
+
+		/* Allow user abort */
+		if (amt <= 0) return;
+	}
+
+	/* Modify quantity */
+	q_ptr->number = amt;
 
 	/* Real store */
 	if (cur_store_type != STORE_HOME)
