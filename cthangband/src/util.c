@@ -2729,6 +2729,7 @@ void mc_roff(cptr s)
 		if (prefix(s-1, CC_PREFIX))
 		{
 			s--;
+			t += strlen(CC_PREFIX);
 		}
 		else if (((nattr = color_char_to_attr(s[-1]))) != -1)
 		{
@@ -2737,6 +2738,7 @@ void mc_roff(cptr s)
 		else
 		{
 			s = t;
+			t += strlen(CC_PREFIX);
 		}
 	}
 	c_roff(attr, s);
