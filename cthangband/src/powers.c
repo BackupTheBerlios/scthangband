@@ -941,71 +941,61 @@ void do_poly_self(void)
 
 
 
- /* Fetch an item (teleport it right underneath the caster) */
+/* Fetch an item (teleport it right underneath the caster) */
 static void fetch(int dir, int wgt, bool require_los)
- {
-       int ty, tx, i;
-       bool flag;
-       cave_type *c_ptr;
-   object_type *o_ptr;
+{
+	int x, y, tx, ty, i;
+	cave_type *c_ptr;
+	object_type *o_ptr;
 
-   /* Check to see if an object is already there */
-   if(cave[py][px].o_idx)
-   {
-       msg_print("You can't fetch when you're already standing on something.");
-       return;
-   }
+	/* Check to see if an object is already there */
+	if(cave[py][px].o_idx)
+	{
+		msg_print("You can't fetch when you're already standing on something.");
+		return;
+	}
 
-   /* Use a target */
-   if(dir==5 && target_okay())
-   {
-       tx = target_col;
-       ty = target_row;
-       if(distance(py, px, ty, tx)>MAX_RANGE)
-       {
-           msg_print("You can't fetch something that far away!");
-           return;
-       }
-       c_ptr = &cave[ty][tx];
+	/* Use a target */
+	if (get_dir_target(&tx, &ty, dir))
+	{
+		if(distance(py, px, ty, tx)>MAX_RANGE)
+		{
+			msg_print("You can't fetch something that far away!");
+			return;
+		}
+		if (require_los && (!player_has_los_bold(ty,tx)))
+		{
+			msg_print("You have no direct line of sight to that location.");
+			return;
+		}
+		c_ptr = &cave[ty][tx];
+	}
+	else
+	{
+		for (x = tx, y = ty; !cave[y][x].o_idx;
+			mmove2(&y, &x, py, px, ty, tx))
+		{
+			if (!cave_floor_bold(ty, tx)) return;
+			if (distance(py, px, y, x) > MAX_RANGE) return;
+		}
+		c_ptr = &cave[y][x];
+	}
 
-       if (require_los && (!player_has_los_bold(ty,tx)))
-       {
-            msg_print("You have no direct line of sight to that location.");
-            return;
-        }
-   }
-   else
-   {
-       /* Use a direction */
-       ty = py; /* Where to drop the item */
-       tx = px;
-       flag = FALSE;
-       do
-       {
-           ty += ddy[dir];
-           tx += ddx[dir];
-           c_ptr = &cave[ty][tx];
-           if ((distance(py, px, ty, tx)> MAX_RANGE)
-               || !cave_floor_bold(ty, tx)) return;
-       } while(!c_ptr->o_idx);
-   }
-   o_ptr = &o_list[c_ptr->o_idx];
-   if (o_ptr->weight > wgt)
-   {   /* Too heavy to 'fetch' */
-       msg_print("The object is too heavy.");
-       return;
-   }
-   i = c_ptr->o_idx;
-   c_ptr->o_idx = 0;
-   cave[py][px].o_idx = i; /* 'move' it */
-   o_ptr->iy = (byte)py;
-   o_ptr->ix = (byte)px;
+	o_ptr = &o_list[c_ptr->o_idx];
+	if (o_ptr->weight > wgt)
+	{   /* Too heavy to 'fetch' */
+		msg_print("The object is too heavy.");
+		return;
+	}
+	i = c_ptr->o_idx;
+	c_ptr->o_idx = 0;
+	cave[py][px].o_idx = i; /* 'move' it */
+	o_ptr->iy = (byte)py;
+	o_ptr->ix = (byte)px;
 
-
-   note_spot(py,px);
-   p_ptr->redraw |= PR_MAP;
-
- }
+	note_spot(py,px);
+	p_ptr->redraw |= PR_MAP;
+}
 
 static void brand_weapon(int brand_type)
 {

@@ -95,7 +95,7 @@ extern void wiz_dark(void);
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern void cave_set_feat(int y, int x, int feat);
 #endif
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(MELEE2_C) || defined(SPELLS1_C))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C))
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 #endif
 #if (defined(CAVE_C) || defined(MELEE2_C) || defined(XTRA2_C))
@@ -3167,10 +3167,10 @@ extern s16b wildy;
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b target_who;
 #endif
-#if (defined(POWERS_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b target_col;
 #endif
-#if (defined(POWERS_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b target_row;
 #endif
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3710,7 +3710,7 @@ extern void resize_inkey(void);
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void ang_sort(vptr u, vptr v, int n);
 #endif
-#if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool target_okay(void);
 #endif
 #if (defined(CMD3_C) || defined(XTRA2_C))
@@ -3728,7 +3728,7 @@ extern bool get_rep_dir(int *dp);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
 extern bool get_rep_target(int *x, int *y);
 #endif
-#if (defined(CMD1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool get_dir_target(int *x, int *y, int dir);
 #endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
