@@ -1726,8 +1726,7 @@ static void process_world(void)
             }
             else
                 {
-                if ((!disturb_other) ||
-                    (strchr(quark_str(o_ptr->note),'.')))
+                if (strchr(quark_str(o_ptr->note),'.'))
                     {
                         /* Do nothing */
                         /* msg_print("Teleport aborted.") */ ;

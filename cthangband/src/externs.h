@@ -2342,9 +2342,9 @@ extern bool disturb_dawn;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool disturb_minor;
 #endif
-#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool disturb_other;
-#endif
+
+
+
 #if (defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool alert_hitpoint;
 #endif

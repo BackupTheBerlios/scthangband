@@ -164,13 +164,6 @@ Disturb whenever boring things happen    [disturb_minor]
     monsters bashing down doors, inventory feelings, beginning to run
     out of fuel and spirits becoming content after being called upon.
 
-***** <disturb_other>
-Disturb whenever random things happen    [disturb_other]
-    This option causes you to be disturbed whenever an item attempts to
-    teleport you around randomly. If it is unset, you are never
-    teleported, an effect which is also achieved by inscribing it with a
-    dot.
-    
 ***** <verify_destroy>
 Verify destruction of objects    [verify_destroy]
     Prompt for verification of the "destroy" command.

@@ -206,7 +206,6 @@ bool disturb_panel;			/* Disturb whenever map panel changes */
 bool disturb_state;			/* Disturn whenever player state changes */
 bool disturb_dawn;	/* Disturb at sunrise or sunset on the surface. */
 bool disturb_minor;			/* Disturb whenever boring things happen */
-bool disturb_other;			/* Disturb whenever various things happen */
 
 
 bool alert_hitpoint;		/* Alert user to critical hitpoints */
