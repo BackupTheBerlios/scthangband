@@ -3510,7 +3510,7 @@ static bool inven_cnt(void)
  * XXX XXX XXX Allow the "full" flag to dump additional info,
  * and trigger its usage from various places in the code.
  */
-errr file_character(cptr name, bool UNUSED full)
+errr file_character(cptr name)
 {
 	int			i, x, y;
 
@@ -4922,7 +4922,7 @@ void do_cmd_save_game(bool is_autosave)
     if (!is_autosave)
     {
         /* Disturb the player */
-        disturb(1, 0);
+        disturb(1);
 
 #ifdef ALLOW_410_SAVES
 	/* Determine the appropriate save version */
@@ -5252,7 +5252,7 @@ static void show_info(void)
 		Term_save();
 
 		/* Dump a character file */
-		(void)file_character(out_val, FALSE);
+		(void)file_character(out_val);
 
 		/* Load screen */
 		Term_load();
@@ -6171,7 +6171,7 @@ void exit_game_panic(void)
 	prt("", 0, 0);
 
 	/* Hack -- turn off some things */
-	disturb(1, 0);
+	disturb(1);
 
 	/* Mega-Hack -- Delay death */
 	if (p_ptr->chp < 0) death = FALSE;

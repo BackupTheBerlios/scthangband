@@ -3819,11 +3819,8 @@ void cave_track(const int y, const int x)
  *
  * All disturbance cancels repeated commands, resting, and running.
  */
-void disturb(int stop_stealth, int unused_flag)
+void disturb(int stop_stealth)
 {
-	/* Unused */
-	unused_flag = unused_flag;
-
 	/* Cancel auto-commands */
 	/* command_new = 0; */
 

@@ -442,7 +442,7 @@ void search(void)
 					skill_exp(SKILL_PERCEPTION);
 
 					/* Disturb */
-					disturb(0, 0);
+					disturb(0);
 				}
 
 				/* Secret door */
@@ -460,7 +460,7 @@ void search(void)
 					replace_secret_door(y, x);
 
 					/* Disturb */
-					disturb(0, 0);
+					disturb(0);
 				}
 
 				/* Scan all objects in the grid */
@@ -494,7 +494,7 @@ void search(void)
 						object_known(o_ptr);
 
 						/* Notice it */
-						disturb(0, 0);
+						disturb(0);
 					}
 				}
 			}
@@ -552,7 +552,7 @@ void carry(int pickup)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Hack -- disturb */
-		disturb(0, 0);
+		disturb(0);
 
 		/* Pick up gold */
 		if (o_ptr->tval == TV_GOLD)
@@ -655,7 +655,7 @@ static void hit_trap(void)
 
 
 	/* Disturb the player */
-	disturb(0, 0);
+	disturb(0);
 
 	/* Get the cave grid */
 	c_ptr = &cave[py][px];
@@ -1291,7 +1291,7 @@ void py_attack(int y, int x)
     }
 
 	/* Disturb the player */
-	/*disturb(1, 0);*/
+	/*disturb(1);*/
 
 
 	/* Disturb the monster */
@@ -1720,7 +1720,7 @@ void do_cmd_attack(void)
 	}
 
 	/* Cancel repetition unless we can continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(0);
 }
 
 static bool pattern_tile(byte y, byte x)
@@ -1998,7 +1998,7 @@ void move_player(int dir, int do_pickup)
 	   (c_ptr->feat == FEAT_WATER))
 	{
 		/* Disturb the player */
-		disturb(0, 0);
+		disturb(0);
 
 		/* Notice things in the dark */
 		if (!(c_ptr->info & (CAVE_MARK)) &&
@@ -2200,7 +2200,7 @@ void move_player(int dir, int do_pickup)
                 {
                     energy_use = 0;
                 }
-                disturb(0,0); /* To avoid a loop with running */
+                disturb(0); /* To avoid a loop with running */
 				TFREE(m_name);
                 return;
     }
@@ -2240,7 +2240,7 @@ void move_player(int dir, int do_pickup)
 		    (c_ptr->feat <= FEAT_SHOP_TAIL))
 		{
 			/* Disturb */
-			disturb(0, 0);
+			disturb(0);
 
 			/* Hack -- Enter store */
 			command_new = KTRL('E');
@@ -2250,7 +2250,7 @@ void move_player(int dir, int do_pickup)
 		else if (c_ptr->feat == FEAT_INVIS)
 		{
 			/* Disturb */
-			disturb(0, 0);
+			disturb(0);
 
 			/* Message */
 			msg_print("You found a trap!");
@@ -2267,7 +2267,7 @@ void move_player(int dir, int do_pickup)
 			 (c_ptr->feat <= FEAT_TRAP_TAIL))
 		{
 			/* Disturb */
-			disturb(0, 0);
+			disturb(0);
 
 			/* Hit the trap */
 			hit_trap();
@@ -2991,7 +2991,7 @@ void run_step(int dir)
 			msg_print("You cannot run in that direction.");
 
 			/* Disturb */
-			disturb(0, 0);
+			disturb(0);
 
 			/* Done */
 			return;
@@ -3018,7 +3018,7 @@ void run_step(int dir)
 			|| !(m_list[ignm_idx].r_idx) || !(m_list[ignm_idx].ml))
 		{
 			/* Disturb */
-			disturb(0, 0);
+			disturb(0);
 
 			/* Done */
 			return;
@@ -3031,7 +3031,7 @@ void run_step(int dir)
 		if (run_test())
 		{
 			/* Disturb */
-			disturb(0, 0);
+			disturb(0);
 
 			/* Done */
 			return;

@@ -559,7 +559,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_open_aux(int y, int x, int UNUSED dir)
+static bool do_cmd_open_aux(int y, int x)
 {
 	int i, j;
 
@@ -749,12 +749,12 @@ void do_cmd_open(void)
 		else
 		{
 			/* Open the door */
-			more = do_cmd_open_aux(y, x, dir);
+			more = do_cmd_open_aux(y, x);
 		}
 	}
 
 	/* Cancel repeat unless we may continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(0);
 }
 
 
@@ -768,7 +768,7 @@ void do_cmd_open(void)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_close_aux(int y, int x, int UNUSED dir)
+static bool do_cmd_close_aux(int y, int x)
 {
 	cave_type	*c_ptr;
 
@@ -876,12 +876,12 @@ void do_cmd_close(void)
 		else
 		{
 			/* Close the door */
-			more = do_cmd_close_aux(y, x, dir);
+			more = do_cmd_close_aux(y, x);
 		}
 	}
 
 	/* Cancel repeat unless we may continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(0);
 }
 
 
@@ -987,7 +987,7 @@ static const wall_message_type wall_message[WMSG_MAX] =
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
+static bool do_cmd_tunnel_aux(int y, int x)
 {
 	cave_type *c_ptr;
 	wall_type *w_ptr;
@@ -1157,12 +1157,12 @@ void do_cmd_tunnel(void)
 		else
 		{
 			/* Tunnel through walls */
-			more = do_cmd_tunnel_aux(y, x, dir);
+			more = do_cmd_tunnel_aux(y, x);
 		}
 	}
 
 	/* Cancel repetition unless we can continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(0);
 }
 
  #ifdef ALLOW_EASY_OPEN
@@ -1567,7 +1567,7 @@ void do_cmd_disarm(void)
 	}
 
 	/* Cancel repeat unless told not to */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(0);
 }
 
 
@@ -1742,7 +1742,7 @@ void do_cmd_bash(void)
 	}
 
 	/* Unless valid action taken, cancel bash */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(0);
 }
 
 
@@ -1847,7 +1847,7 @@ void do_cmd_alter(void)
 				(c_ptr->feat == FEAT_BUSH))
 		{
 			/* Tunnel */
-			more = do_cmd_tunnel_aux(y, x, dir);
+			more = do_cmd_tunnel_aux(y, x);
 			alter_cmd = 'T';
 		}
 
@@ -1865,7 +1865,7 @@ void do_cmd_alter(void)
             && (c_ptr->feat < FEAT_MINOR_GLYPH))
 		{
 			/* Tunnel */
-			more = do_cmd_open_aux(y, x, dir);
+			more = do_cmd_open_aux(y, x);
 			alter_cmd = 'o';
 		}
 
@@ -1890,7 +1890,7 @@ void do_cmd_alter(void)
 	/* Cancel repetition unless we can continue */
 	if (!more)
 	{
-		disturb(0, 0);
+		disturb(0);
 		alter_cmd = 0;
 	}
 }
@@ -2038,7 +2038,7 @@ void do_cmd_walk(int pickup)
 	}
 
 	/* Cancel repeat unless we may continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(0);
 }
 
 
@@ -2119,7 +2119,7 @@ void do_cmd_stay(int pickup)
 	    (c_ptr->feat <= FEAT_SHOP_TAIL))
 	{
 		/* Disturb */
-		disturb(0, 0);
+		disturb(0);
 
 		/* Hack -- enter store */
 		command_new = KTRL('E');

@@ -1847,7 +1847,7 @@ void update_mon(int m_idx, bool full)
 			/* Disturb on appearance */
             if (disturb_move)
             {   if (disturb_allies || !(m_ptr->smart & (SM_ALLY)))
-                    disturb(0, 0);
+                    disturb(0);
                 }
 		}
 
@@ -1888,7 +1888,7 @@ void update_mon(int m_idx, bool full)
             if (disturb_move)
             {
                 if (disturb_allies || !(m_ptr->smart & (SM_ALLY)))
-                    disturb(0, 0);
+                    disturb(0);
                 }
 		}
 	}
@@ -1916,7 +1916,7 @@ void update_mon(int m_idx, bool full)
             if (disturb_near)
             {
                 if (disturb_allies || !(m_ptr->smart & (SM_ALLY)))
-                    disturb(0, 0);
+                    disturb(0);
                 }
 
 		}
@@ -1935,7 +1935,7 @@ void update_mon(int m_idx, bool full)
             if (disturb_near)
             {
                 if (disturb_allies || !(m_ptr->smart & (SM_ALLY)))
-                    disturb(0, 0);
+                    disturb(0);
             }
 		}
 	}

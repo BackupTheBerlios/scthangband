@@ -648,7 +648,7 @@ static bool set_flag_aux(int flag, int v, bool add)
 	if (msg) msg_print(msg);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(0);
 
 	/* Hack - carry out side-effects, if any. */
 	if (worsen && t_ptr->worsen) (*t_ptr->worsen)(v);
@@ -1474,7 +1474,7 @@ void verify_panel(void)
 		if ((prow == panel_row) && (pcol == panel_col)) return;
 
 		/* Hack -- optional disturb on "panel change" */
-		if (disturb_panel) disturb(0, 0);
+		if (disturb_panel) disturb(0);
 
 		/* Save the new panel info */
 		panel_row = prow;

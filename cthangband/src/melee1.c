@@ -263,7 +263,7 @@ bool make_attack_normal(int m_idx)
 		if (!effect || check_hit(power, rlev))
 		{
 			/* Always disturbing */
-			disturb(1, 0);
+			disturb(1);
 
 
 			/* Hack -- Apply "protection from evil" */
@@ -1179,7 +1179,7 @@ bool make_attack_normal(int m_idx)
 				if (m_ptr->ml)
 				{
 					/* Disturbing */
-					disturb(1, 0);
+					disturb(1);
 
 					/* Message */
 					msg_format(b_ptr->missmsg, m_name, "you");

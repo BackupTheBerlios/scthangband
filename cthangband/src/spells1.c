@@ -736,7 +736,7 @@ void take_hit(int damage, cptr hit_from, int monster)
 	if (death) return;
 
 	/* Disturb */
-	disturb(1, 0);
+	disturb(1);
 
 	/* Mega-Hack -- Apply "invulnerability" */
     if (p_ptr->invuln && (damage < 9000))
@@ -4411,7 +4411,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 
         project(0, 0, t_y, t_x, dam, typ,
             (PROJECT_STOP|PROJECT_KILL));
-        disturb(1, 0);
+        disturb(1);
 		TFREE(m_name);
 		TFREE(killer);
         return TRUE;
@@ -5045,7 +5045,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 
 
 	/* Disturb */
-	disturb(1, 0);
+	disturb(1);
 
 
 	TFREE(killer);

@@ -120,7 +120,7 @@ extern void object_track(object_type *o_ptr);
 extern void cave_track(const int y, const int x);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
-extern void disturb(int stop_stealth, int unused_flag);
+extern void disturb(int stop_stealth);
 #endif
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool is_quest(int level);
@@ -503,7 +503,7 @@ extern bool PURE player_has_flag_known(int set, u32b flag);
 extern void display_player(int mode);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
-extern errr file_character(cptr name, bool UNUSED full);
+extern errr file_character(cptr name);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
 extern void do_cmd_help(cptr name);

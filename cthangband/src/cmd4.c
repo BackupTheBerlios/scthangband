@@ -147,7 +147,7 @@ void do_cmd_change_name(void)
 	{
 				if (tmp[0] && (tmp[0] != ' '))
 		{
-					file_character(tmp, FALSE);
+					file_character(tmp);
 				}
 			}
 		}

@@ -342,7 +342,7 @@ static void sense_inventory(void)
 		if (streq(feel, quark_str(o_ptr->note))) continue;
 		
 		/* Stop everything */
-		if (disturb_minor) disturb(0, 0);
+		if (disturb_minor) disturb(0);
 
 		/* Message */
 		msg_format("You feel the %v (%c) %s %s%s %s...", object_desc_f3, o_ptr,
@@ -862,7 +862,7 @@ static void check_time_load(void)
 	if (closing_flag <= 2)
 	{
 		/* Disturb */
-		disturb(0, 0);
+		disturb(0);
 
 		/* Count warnings */
 		closing_flag++;
@@ -964,7 +964,7 @@ static void process_sun(const bool dawn)
 	msg_format("The sun has %s.", msg);
 
 	/* Disturb */
-	if (disturb_dawn) disturb(0,0);
+	if (disturb_dawn) disturb(0);
 
 	/* Hack -- Scan the town */
 	for (y = 0; y < cur_hgt; y++)
@@ -1327,7 +1327,7 @@ static void process_food(void)
 		{
 			/* Message */
 			msg_print("You faint from the lack of food.");
-			disturb(1, 0);
+			disturb(1);
 
 			/* Hack -- faint (bypass free action) */
 			(void)add_flag(TIMED_PARALYZED, 1 + rand_int(5));
@@ -1499,7 +1499,7 @@ static void process_light(void)
 	/* The light is now out */
 	if (o_ptr->pval == 0)
 	{
-		disturb(0, 0);
+		disturb(0);
 		msg_print("Your light has gone out!");
 
 		/* Remember it. */
@@ -1509,7 +1509,7 @@ static void process_light(void)
 	/* The light is getting dim */
 	else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
 	{
-		if (disturb_minor) disturb(0, 0);
+		if (disturb_minor) disturb(0);
 		msg_print("Your light is growing faint.");
 	}
 }
@@ -1529,7 +1529,7 @@ static void process_chaos(void)
 	{
 		if ((p_ptr->muta2 & MUT2_BERS_RAGE) && (randint(3000)==1))
 		{
-			disturb(0,0);
+			disturb(0);
 			msg_print("RAAAAGHH!");
 			msg_print("You feel a fit of rage coming over you!");
 			(void) add_flag(TIMED_SHERO, 10 + randint(skill_set[SKILL_RACIAL].value/2));
@@ -1539,7 +1539,7 @@ static void process_chaos(void)
 		{
 			if (!(p_ptr->resist_fear || p_ptr->hero || p_ptr->shero))
 			{
-				disturb(0,0);
+				disturb(0);
 				msg_print("It's so dark... so scary!");
 				p_ptr->redraw |= PR_AFRAID;
 				p_ptr->afraid = (p_ptr->afraid) + 13 + randint(26);
@@ -1551,7 +1551,7 @@ static void process_chaos(void)
 			if (!(p_ptr->resist_nexus) && !(p_ptr->muta1 & MUT1_VTELEPORT)
 			    && !(p_ptr->anti_tele))
 			{
-				disturb(0,0);
+				disturb(0);
 
 				/* Teleport player */
 				msg_print("Your position suddenly seems very uncertain...");
@@ -1564,7 +1564,7 @@ static void process_chaos(void)
 		{
 			if (!(p_ptr->resist_chaos || p_ptr->resist_conf))
 			{
-				disturb(0,0);
+				disturb(0);
 				msg_print("You feel a SSSCHtupor cOmINg over yOu... *HIC*!");
 
 				if (randint(20)==1)
@@ -1597,14 +1597,14 @@ static void process_chaos(void)
 		{
 			if (!(p_ptr->resist_chaos))
 			{
-				disturb(0,0);
+				disturb(0);
 				(void)add_flag(TIMED_IMAGE, rand_int(50) + 20);
 			}
 		}
 
 		if ((p_ptr->muta2 & MUT2_FLATULENT) && (randint(3000)==13))
 		{
-			disturb(0,0);
+			disturb(0);
 
 			msg_print("BRRAAAP! Oops.");
 			msg_print(NULL);
@@ -1615,7 +1615,7 @@ static void process_chaos(void)
 		    (!(p_ptr->anti_magic)) && (randint(9000)==1))
 		{
 			int dire = 0;
-			disturb(0,0);
+			disturb(0);
 			msg_print("Magical energy flows through you! You must release it!");
 			flush();
 			msg_print(NULL);
@@ -1632,14 +1632,14 @@ static void process_chaos(void)
 			if (d_summon)
 			{
 				msg_print("You have attracted a demon!");
-				disturb(0,0);
+				disturb(0);
 			}
 		}
 
 		if ((p_ptr->muta2 & MUT2_SPEED_FLUX) && (randint(6000)==1))
 		{
 			
-			disturb(0,0);
+			disturb(0);
 			if (randint(2)==1)
 			{
 				msg_print("You feel less energetic.");
@@ -1670,7 +1670,7 @@ static void process_chaos(void)
 			(randint(9000)==1))
 		{
 			
-			disturb(0,0);
+			disturb(0);
 			msg_print("You suddenly feel almost lonely.");
 			banish_monsters(100);
 			msg_print(NULL);
@@ -1724,14 +1724,14 @@ static void process_chaos(void)
                     /* The light is now out */
                     else if (o_ptr->pval == 0)
                     {
-                            disturb(0, 0);
+                            disturb(0);
                             msg_print("Your light has gone out!");
                     }
 
                     /* The light is getting dim */
                     else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
                     {
-                            if (disturb_minor) disturb(0, 0);
+                            if (disturb_minor) disturb(0);
                             msg_print("Your light is growing faint.");
                     }
 				}
@@ -1752,14 +1752,14 @@ static void process_chaos(void)
 			if (a_summon)
 			{
 				msg_print("You have attracted an animal!");
-				disturb(0,0);
+				disturb(0);
 			}
 		}
 		if ((p_ptr->muta2 & MUT2_RAW_CHAOS) && !(p_ptr->anti_magic) &&
 			(randint(8000)==1))
 		{
 			
-			disturb(0,0);
+			disturb(0);
 			msg_print("You feel the world warping around you!");
 			msg_print(NULL);
 			fire_ball(GF_CHAOS, 0, skill_set[SKILL_RACIAL].value/2,8);
@@ -1773,7 +1773,7 @@ static void process_chaos(void)
 			(randint(3000)==13))
 		{
 			
-			disturb(0,0);
+			disturb(0);
 			msg_print("You feel insubstantial!");
 			msg_print(NULL);
 			add_flag(TIMED_WRAITH, randint(skill_set[SKILL_RACIAL].value/4) + (skill_set[SKILL_RACIAL].value/4));
@@ -1789,7 +1789,7 @@ static void process_chaos(void)
 			int which_stat = rand_int(6);
 			if (!p_ptr->sustain[which_stat])
 			{
-				disturb(0,0);
+				disturb(0);
 				msg_print("You can feel yourself wasting away!");
 				msg_print(NULL);
 				(void)dec_stat(which_stat, randint(6)+6, randint(3)==1);
@@ -1805,7 +1805,7 @@ static void process_chaos(void)
 			if (d_summon)
 			{
 				msg_print("You have attracted a dragon!");
-				disturb(0,0);
+				disturb(0);
 			}
 		}
 		if ((p_ptr->muta2 & MUT2_WEIRD_MIND) && !(p_ptr->anti_magic) &&
@@ -1826,7 +1826,7 @@ static void process_chaos(void)
 			(randint(9000)==1))
 		{
 			
-			disturb(0,0);
+			disturb(0);
 			msg_print("Your stomach roils, and you lose your lunch!");
 			msg_print(NULL);
 			set_flag(TIMED_FOOD, PY_FOOD_WEAK);
@@ -1876,7 +1876,7 @@ static void process_chaos(void)
 			(randint(5000)==1))
 		{
 			
-			disturb(0,0);
+			disturb(0);
 			msg_print("You feel invincible!");
 			msg_print(NULL);
 			(void)add_flag(TIMED_INVULN, randint(8) + 8);
@@ -1922,7 +1922,7 @@ static void process_chaos(void)
 		{
 			object_type *o_ptr = &inventory[INVEN_WIELD];
 
-			disturb(0,0);
+			disturb(0);
 			msg_print("You trip over your own feet!");
 			take_hit(randint(p_ptr->wt/6), "tripping", MON_DANGEROUS_MUTATION);
 			
@@ -1993,7 +1993,7 @@ static void process_equip(object_type *o_ptr)
 	if ((o_ptr->name1 == ART_DEMONBLADE) && randint(CHAINSWORD_NOISE) == 1)
 	{
 		msg_format("%v", get_rnd_line_f1, "chainswd.txt");
-		disturb(FALSE, FALSE);
+		disturb(FALSE);
 	}
 
 	/* Hack: Uncursed teleporting items (e.g. Planar Weapons)
@@ -2003,7 +2003,7 @@ static void process_equip(object_type *o_ptr)
 	{
 		if ((o_ptr->ident & IDENT_CURSED) && !(p_ptr->anti_tele))
 		{
-			 disturb(0,0);
+			 disturb(0);
 			/* Teleport player */
 			teleport_player(40);
 		}
@@ -2022,7 +2022,7 @@ static void process_equip(object_type *o_ptr)
 			}
 			else if (get_check("Teleport? "))
 			{
-				disturb(0,0);
+				disturb(0);
 				teleport_player(50);
 			}
 		}
@@ -2052,7 +2052,7 @@ static void process_spirit(spirit_type *s_ptr)
 	p_ptr->redraw |= PR_SPIRIT;
 
 	/* Disturb if newly placated and requested. */
-	if (!s_ptr->annoyance && disturb_minor) disturb(0, 0);
+	if (!s_ptr->annoyance && disturb_minor) disturb(0);
 }
 
 /*
@@ -2067,7 +2067,7 @@ static void process_recall(void)
 	if (--p_ptr->word_recall) return;
 	
 	/* Disturbing! */
-	disturb(0, 0);
+	disturb(0);
 
 	/* Sound */
 	sound(SOUND_TPLEVEL);
@@ -3234,7 +3234,7 @@ static void process_player(void)
                 (p_ptr->csp >= p_ptr->msp) &&
 				(p_ptr->cchi >= p_ptr->mchi))
 			{
-				disturb(0, 0);
+				disturb(0);
 			}
 		}
 
@@ -3251,7 +3251,7 @@ static void process_player(void)
 			    !p_ptr->slow && !p_ptr->paralyzed &&
 			    !p_ptr->image && !p_ptr->word_recall)
 			{
-				disturb(0, 0);
+				disturb(0);
 			}
 		}
 	}
@@ -3272,7 +3272,7 @@ static void process_player(void)
 				flush();
 
 				/* Disturb */
-				disturb(0, 0);
+				disturb(0);
 
 				/* Hack -- Show a Message */
 				msg_print("Cancelled.");
@@ -3314,7 +3314,7 @@ static void process_player(void)
 			o_ptr = &inventory[item];
 
 			/* Disturbing */
-			disturb(0, 0);
+			disturb(0);
 
 			/* Warning */
 			msg_print("Your pack overflows!");
@@ -3573,7 +3573,7 @@ static void dungeon(void)
 
 
 	/* Disturb */
-	disturb(1, 0);
+	disturb(1);
 
 
 	/* Track maximum dungeon level */
