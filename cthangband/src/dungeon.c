@@ -3498,6 +3498,12 @@ static void dungeon(void)
 	/* Notice a Quest Level */
 	if (is_quest(dun_level)) quest_discovery();
 
+	/* Notice the final level of a dungeon/tower */
+	else if (dun_level == dun_defs[cur_dungeon].max_level)
+	{
+		msg_print("You suddenly feel that you can't go on.");
+	}
+
 	/*** Process this dungeon level ***/
 
 	/* Reset the monster generation level */
