@@ -32,8 +32,6 @@
 #ifndef __CEXTRACT__
 #include "angband.h"
 
-/* #include "main.h" */
-
 #include "vers.h"
 
 #ifndef __GNUC__

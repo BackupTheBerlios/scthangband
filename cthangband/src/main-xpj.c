@@ -39,8 +39,6 @@
 
 #ifdef USE_XPJ
 
-/* #include "main.h" */
-
 #ifndef USE_GRAPHICS
 #error Must have USE_GRAPHICS compile-time flag on.
 #endif
@@ -67,16 +65,6 @@
 #define BRIGHT_WALLS 0
 
 
-
-
-/* Rest of the dependencies */
-
-#ifndef __MAKEDEPEND__
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
-#include <X11/keysymdef.h>
-#endif /* __MAKEDEPEND__ */
 
 
 /*

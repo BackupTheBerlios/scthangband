@@ -663,6 +663,7 @@ errr fd_copy(cptr out, cptr in)
 }
 
 
+#ifdef PRIVATE_USER_PATH
 /*
  * Create a directory.
  * Return 0 if successful.
@@ -685,6 +686,7 @@ errr my_mkdir(cptr path, uint mode)
 	
 	else return FILE_ERROR_CANNOT_OPEN_FILE;
 }
+#endif /* PRIVATE_USER_PATH */
 
 /*
  * Hack -- attempt to open a file descriptor (create file)

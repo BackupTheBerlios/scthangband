@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_XXX_C
 /* File: main-xxx.c */
 
@@ -73,9 +72,6 @@
 
 #ifdef USE_XXX
 
-/* #include "main.h" */
-
-#include "externs.h"
 /*
  * Extra data to associate with each "window"
  *

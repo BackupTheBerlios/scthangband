@@ -28,8 +28,6 @@
 
 #ifdef USE_SLA
 
-/* #include "main.h" */
-
 
 #include <slang.h>
 #include "externs.h"

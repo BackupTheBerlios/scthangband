@@ -101,20 +101,11 @@
 
 #ifdef USE_X11
 
-/* #include "main.h" */
-
-#ifndef __MAKEDEPEND__
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
-#include <X11/keysymdef.h>
-#endif /* __MAKEDEPEND__ */
-
-
 /*
  * Include some helpful X11 code.
  */
 #include "maid-x11.h"
+#include "externs.h"
 
 
 /*

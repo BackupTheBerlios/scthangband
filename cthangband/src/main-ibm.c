@@ -56,8 +56,6 @@
 
 #ifdef USE_IBM
 
-/* #include "main.h" */
-
 /*
  * Use a "virtual" screen to "buffer" screen writes.
  */
@@ -1131,7 +1129,6 @@ extern void _farnspokeb(unsigned long offset, unsigned char value);
 #include <dpmi.h>
 #include <go32.h>
 #include <sys/farptr.h>
-#include "externs.h"
 
 #endif /* USE_WAT */
 
@@ -1192,6 +1189,7 @@ void enable_graphic_font(const char *font)
 
 #endif /* ALLOW_GRAPH */
 
+#include "externs.h"
 
 const char help_ibm[] = "IBM Visual Display Support";
 

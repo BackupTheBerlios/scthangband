@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_CAP_C
 /* File: main-cap.c */
 
@@ -37,9 +36,6 @@
 
 
 #ifdef USE_CAP
-
-/* #include "main.h" */
-#include "externs.h"
 
 /*
  * Require a "system"

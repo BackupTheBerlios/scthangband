@@ -29,8 +29,6 @@
 
 #ifdef USE_VCS
 
-/* #include "main.h" */
-
 #include <sys/ioctl.h>
 #include <termios.h>
 #include "externs.h"

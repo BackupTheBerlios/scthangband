@@ -23,9 +23,6 @@
 #include <X11/keysymdef.h>
 #endif /* __MAKEDEPEND__ */
 
-/* The typedefs needed for externs.h will certainly be available now. */
-#include "externs.h"
-
 #ifndef IsModifierKey
 
 /*

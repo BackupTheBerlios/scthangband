@@ -74,8 +74,6 @@
 
 #ifdef USE_DOS
 
-/* #include "main.h" */
-
 #include <allegro.h>
 
 #ifdef USE_MOD_FILES

@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_GTK_C
 /* File: main-gtk.c */
 
@@ -28,8 +27,6 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-
-#include "externs.h"
 
 const char help_gtk[] =
 {

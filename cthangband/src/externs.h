@@ -2287,7 +2287,7 @@ extern errr fd_move(cptr file, cptr what);
 #if (!(defined(ACORN))) && (defined(INIT2_C) || defined(UTIL_C))
 extern errr fd_copy(cptr out, cptr in);
 #endif
-#if (!(defined(ACORN))) && (defined(INIT2_C) || defined(UTIL_C))
+#if ((!(defined(ACORN))) && defined(PRIVATE_USER_PATH)) && (defined(INIT2_C) || defined(UTIL_C))
 extern errr my_mkdir(cptr path, uint mode);
 #endif
 #if (!(defined(ACORN))) && (defined(INIT2_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))

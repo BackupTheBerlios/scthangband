@@ -16,8 +16,6 @@
 
 #ifdef USE_LSL
 
-/* #include "main.h" */
-
 /* Standard C header files */
 #include <stdio.h>
 #include <stdlib.h>

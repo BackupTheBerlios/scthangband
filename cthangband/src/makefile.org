@@ -302,6 +302,7 @@ generate.o: generate.c $(INCS)
 init1.o: init1.c $(INCS)
 init2.o: init2.c $(INCS)
 load.o: load.c $(INCS) loadsave.h
+loadsave.o: loadsave.c $(INCS) loadsave.h
 main-gcu.o: main-gcu.c $(INCS)
 main-x11.o: main-x11.c $(INCS) maid-x11.h
 maid-x11.o: maid-x11.c $(INCS) maid-x11.h
