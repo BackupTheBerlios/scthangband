@@ -17,7 +17,7 @@
 
 static bool spirit_okay(int spirit, bool call);
 static void print_spirits(int *valid_spirits,int num,int y, int x);
-static s32b favour_annoyance(magic_type *f_ptr);
+static s32b favour_annoyance(const magic_type *f_ptr);
 static void annoy_spirit(spirit_type *s_ptr,u32b amount);
 
 /*
@@ -78,7 +78,7 @@ static book_type *spirit_to_book(int i)
 /*
  * Find the number a hermetic spell is associated with.
  */
-static int spell_to_num(magic_type *s_ptr)
+static int spell_to_num(const magic_type *s_ptr)
 {
 	book_type *b_ptr;
 	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
@@ -172,7 +172,7 @@ static int spell_stat(const magic_type *s_ptr)
 /*
  * Cast a spell (listed at an offset).
  */
-static bool use_spell(magic_type *s_ptr)
+static bool use_spell(const magic_type *s_ptr)
 {
 	return use_known_power(-1024 + s_ptr->power, spell_skill(s_ptr));
 }
@@ -270,7 +270,7 @@ static bool magic_okay(const magic_type *s_ptr)
 }
 
 /* Give experience to spell skills for a spell */
-static void gain_spell_exp(magic_type *spell)
+static void gain_spell_exp(const magic_type *spell)
 {
 	bool check_mana = FALSE;
 	int min_skill = spell->min * 2;
@@ -383,7 +383,7 @@ static void convert_magic_text_f3(char *buf, uint max, cptr UNUSED fmt,
 /*
  * Hack - describe powers which are too strange to describe below.
  */
-static cptr magic_info_special(magic_type *s_ptr)
+static cptr magic_info_special(const magic_type *s_ptr)
 {
 	int l = spell_skill(s_ptr);
 	switch (s_ptr->power)
@@ -409,7 +409,7 @@ static cptr magic_info_special(magic_type *s_ptr)
 	}
 }
 
-static void get_magic_info(char *p, uint max, magic_type *s_ptr)
+static void get_magic_info(char *p, uint max, const magic_type *s_ptr)
 {
 	cptr str = s_ptr->desc;
 	if (!str) str = magic_info_special(s_ptr);
@@ -454,7 +454,7 @@ u16b spell_energy(u16b skill,u16b min)
 /*
  * Determine the energy required to cast a given spell
  */
-static u16b magic_energy(magic_type *s_ptr)
+static u16b magic_energy(const magic_type *s_ptr)
 {
 	return spell_energy(spell_skill(s_ptr), s_ptr->min);
 }
@@ -471,7 +471,7 @@ static u16b magic_energy(magic_type *s_ptr)
  * In either case, a return of 0 causes 
  */
 
-static cptr cantrip_string(int i, magic_type *s_ptr, cptr comment)
+static cptr cantrip_string(int i, const magic_type *s_ptr, cptr comment)
 {
 	if (!s_ptr) return format("     %35s%s", "Name", "Sk Fail Info");
 
@@ -481,7 +481,7 @@ static cptr cantrip_string(int i, magic_type *s_ptr, cptr comment)
 		I2A(i), s_ptr->name, s_ptr->min*2, spell_chance(s_ptr), comment);
 }
 
-static cptr favour_string(int i, magic_type *s_ptr, cptr comment)
+static cptr favour_string(int i, const magic_type *s_ptr, cptr comment)
 {
 	if (!s_ptr) return format("     %-35s%s", "Name", "Sk Time Fail Info");
 
@@ -492,7 +492,7 @@ static cptr favour_string(int i, magic_type *s_ptr, cptr comment)
 		spell_chance(s_ptr), comment);
 }
 
-static cptr mindcraft_string(int i, magic_type *s_ptr, cptr comment)
+static cptr mindcraft_string(int i, const magic_type *s_ptr, cptr comment)
 {
 	if (!s_ptr) return format("     %-30s%s", "Name","Sk  Chi Time Fail Info");
 
@@ -507,14 +507,14 @@ static cptr mindcraft_string(int i, magic_type *s_ptr, cptr comment)
 /*
  * As above, but with some colour information.
  */
-static cptr c_mindcraft_string(int i, magic_type *s_ptr, cptr comment)
+static cptr c_mindcraft_string(int i, const magic_type *s_ptr, cptr comment)
 {
 	cptr str = mindcraft_string(i, s_ptr, comment);
 	if (s_ptr && s_ptr->mana > p_ptr->cchi) str = format("$o%s", str);
 	return str;
 }
 
-static cptr spell_string(int i, magic_type *s_ptr, cptr comment)
+static cptr spell_string(int i, const magic_type *s_ptr, cptr comment)
 {
 	cptr type;
 
@@ -560,7 +560,7 @@ static cptr spell_string(int i, magic_type *s_ptr, cptr comment)
  * Print a list of spells of some sort (for casting or learning)
  */
 static int print_spell_list(byte *spells, book_type *b_ptr, int num,
-	int y, int x, cptr (*get)(int, magic_type *, cptr))
+	int y, int x, cptr (*get)(int, const magic_type *, cptr))
 {
 	int i;
 	char info[80];
@@ -576,7 +576,7 @@ static int print_spell_list(byte *spells, book_type *b_ptr, int num,
 	for (i = 0; i < num; i++)
 	{
 		/* Access the spell. */
-		magic_type *s_ptr = &(b_ptr->info[spells[i]]);
+		const magic_type *s_ptr = &(b_ptr->info[spells[i]]);
 
 		get_magic_info(info, sizeof(info), s_ptr);
 			
@@ -622,7 +622,7 @@ static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
  * The spell must be legible, not forgotten, and also, to cast,
  * it must be known, and to study, it must not be known.
  */
-static bool spell_okay(magic_type *s_ptr, bool known)
+static bool spell_okay(const magic_type *s_ptr, bool known)
 {
 	/* Spell is illegal */
 	if (!magic_okay(s_ptr)) return (FALSE);
@@ -669,7 +669,7 @@ static int get_spell(int *sn, cptr prompt, bool known, book_type *b_ptr)
 	bool		flag, redraw, okay;
 	char		choice;
 
-	magic_type	*s_ptr;
+	const magic_type	*s_ptr;
 
 	char		out_val[160];
 
@@ -880,7 +880,7 @@ static int get_cantrip(int *sn, book_type *b_ptr)
 	bool		flag, redraw, okay;
 	char		choice;
 
-	magic_type	*s_ptr;
+	const magic_type	*s_ptr;
 
 	char		out_val[160];
 
@@ -1080,7 +1080,7 @@ static int get_favour(int *sn, book_type *b_ptr)
 	bool		flag, redraw, okay;
 	char		choice;
 
-	magic_type	*s_ptr;
+	const magic_type	*s_ptr;
 
 	char		out_val[160];
 
@@ -1929,7 +1929,7 @@ void do_cmd_cantrip(void)
 
 	object_type	*o_ptr;
 
-	magic_type	*s_ptr;
+	const magic_type	*s_ptr;
 	book_type *b_ptr;
 
 	/* Require lite */
@@ -2043,7 +2043,7 @@ void do_cmd_cantrip(void)
 /*
  * calculate the annoyance factor of a favour
  */
-static s32b favour_annoyance(magic_type *f_ptr)
+static s32b favour_annoyance(const magic_type *f_ptr)
 {
 	s32b annoy;
 
@@ -2096,7 +2096,7 @@ static void annoy_spirit(spirit_type *s_ptr,u32b amount)
  *
  * Return the extra anger this should cause to avoid double messages.
  */
-static int spirit_punish(spirit_type *s_ptr, magic_type *f_ptr)
+static int spirit_punish(spirit_type *s_ptr, const magic_type *f_ptr)
 {
 	s32b i = rand_int(100000);
 
@@ -2161,7 +2161,7 @@ void do_cmd_invoke(void)
 
 	spirit_type	*s_ptr;
 	book_type *b_ptr;
-	magic_type	*f_ptr;
+	const magic_type	*f_ptr;
 
 	/* Not when confused */
 	if (p_ptr->confused)
@@ -2374,7 +2374,7 @@ static int get_mindcraft_power(book_type *b_ptr, int *sn)
     int             ask;
 	char            choice;
 	char            out_val[160];
-	magic_type *s_ptr;
+	const magic_type *s_ptr;
     
     cptr p = "power";
 
@@ -2537,7 +2537,7 @@ void do_cmd_mindcraft(void)
     int chance;
 	book_type *b_ptr = MINDCRAFT_BOOK;
     int psi = spell_skill(&b_ptr->info[0]);
-	magic_type *s_ptr;
+	const magic_type *s_ptr;
     
     /* not if confused */
     if (p_ptr->confused) {

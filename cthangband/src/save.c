@@ -976,7 +976,7 @@ static void wr_spell_flags(void)
 		for (j = 0; j < MAX_SPELLS_PER_BOOK; j++)
 		{
 			u32b f = 1L << j;
-			magic_type *s_ptr = num_to_spell(i*MAX_SPELLS_PER_BOOK+j);
+			const magic_type *s_ptr = num_to_spell(i*MAX_SPELLS_PER_BOOK+j);
 
 			/* Not a real spell. */
 			if (!s_ptr) continue;
