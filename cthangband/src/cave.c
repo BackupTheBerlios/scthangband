@@ -3737,9 +3737,9 @@ bool scatter(int *yp, int *xp, int y, int x, int d, bool (*accept)(int, int))
 	/* Pick a location. */
 	t = rand_int(t);
 
-	for (ny = -d; ny <= d; ny++)
+	for (ny = y-d; ny <= y+d; ny++)
 	{
-		for (nx = -d; nx <= d; nx++)
+		for (nx = x-d; nx <= x+d; nx++)
 		{
 			/* Not the chosen location. */
 			if (!scatter_good(ny, nx, y, x, d, accept) || t--) continue;
