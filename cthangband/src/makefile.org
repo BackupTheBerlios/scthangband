@@ -91,7 +91,7 @@ OBJS = \
 # This is my compiler of choice, it seems to work most everywhere
 #
 CC = gcc
-
+STD_CFLAGS = $(GCC_CFLAGS)
 
 #
 # Standard version (see main-x11.c, main-gtk.c and main-gcu.c)
@@ -114,11 +114,14 @@ CC = gcc
 # Specifying -ansi -pedantic generates a number of irrelevant warnings, but
 # it doesn't prevent compiling and generates some important warnings.
 
-STD_CFLAGS = -O3 -fno-strength-reduce -pipe -g  \
+GCC_CFLAGS = -O3 -fno-strength-reduce -pipe -g  \
 	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
 	-Wno-long-long -Wwrite-strings -Wpointer-arith -Wredundant-decls \
 	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP \
 	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes
+
+# An alternative set of compiler flags for a different compiler.
+TCC_CFLAGS = -D"HAVE_MKSTEMP" -g
 
 # Test that Cthangband does not require obviously non-c89 things.
 ANSI_CFLAGS = -std=c89 -pedantic -D"NO_VARIABLE_ARRAYS"
@@ -233,7 +236,7 @@ LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
 GAME = Cthangband
 
 #
-# Hack -- "install" as the base target
+# Base target.
 #
 default: sCthangband
 
@@ -248,7 +251,7 @@ install: default
 # Hack - build without optimisation for debugging.
 #
 
-debug: CFLAGS += -O0 -fno-inline-functions
+debug: CFLAGS := $(CFLAGS) -O0
 debug: default
 
 #

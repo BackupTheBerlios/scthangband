@@ -115,7 +115,7 @@
 #define END_PTR(X) ((X) + N_ELEMENTS(X))
 
 /* Try to mark unused variables as such in a way the compiler understands. */
-#ifdef __GNUC__
+#if defined(__GNUC__) || defined(__TINYC__)
 #define UNUSED __attribute__((unused))
 #else
 #define UNUSED
