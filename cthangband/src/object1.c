@@ -2624,10 +2624,10 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 #define dotest(x,y,str) if ((dif = test(x,y))) descr(str)
 
 #define DIF ABS(dif)
-#define DIF_INC ((dif < 0) ? "increases" : "decreases")
-#define DIF_DEC ((dif > 0) ? "increases" : "decreases")
-#define DIF_MOR ((dif < 0) ? "more" : "less")
-#define DIF_LES ((dif > 0) ? "more" : "less")
+#define DIF_INC ((dif > 0) ? "increases" : "decreases")
+#define DIF_DEC ((dif < 0) ? "increases" : "decreases")
+#define DIF_MOR ((dif > 0) ? "more" : "less")
+#define DIF_LES ((dif < 0) ? "more" : "less")
 
 #define CERT ((act & (A_INCREASE | A_DEC10 | A_DEC25)) ? "at least " : "")
 
@@ -2654,7 +2654,7 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
  * As the modifications have taken place, this just queries the old and new
  * versions of p_ptr to see what has changed.
  */
-static void res_stat_details_comp(player_type *po_ptr, player_type *pn_ptr, int *i, cptr *info, bool *info_a, byte act)
+static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int *i, cptr *info, bool *info_a, byte act)
 {
 	int j,dif, dif2;
 	cptr stats[6] = {"strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"};
@@ -2665,7 +2665,7 @@ static void res_stat_details_comp(player_type *po_ptr, player_type *pn_ptr, int 
 		{
 			descr(format("It adds %s%d to your %s.", CERT, dif, stats[j]));
 		}
-		else if (dif < 0)
+		else if (dif)
 		{
 			descr(format("It removes %s%d from your %s.", CERT, -dif, stats[j]));
 		}
@@ -2673,9 +2673,13 @@ static void res_stat_details_comp(player_type *po_ptr, player_type *pn_ptr, int 
 		{
 			descr(format("It restores your %s.", stats[j]));
 		}
-		else if (CMPJ(stat_use))
+		else if (CMPJ(stat_add) > 0)
 		{
 			descr(format("It adds %d to your %s.", dif, stats[j]));
+		}
+		else if (dif)
+		{
+			descr(format("It removes %d from your %s.", -dif, stats[j]));
 		}
 
 		/* No effect, so boring. */
