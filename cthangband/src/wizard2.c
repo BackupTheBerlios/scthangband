@@ -256,9 +256,7 @@ static void do_cmd_wiz_change_aux(void)
 	}
 
 	/* Sort. */
-	ang_sort_swap = ang_sort_swap_skills;
-	ang_sort_comp = ang_sort_comp_skills;
-	ang_sort(skills, 0, MAX_SKILLS);
+	ang_sort(skills, 0, MAX_SKILLS, ang_sort_comp_skills, ang_sort_swap_skills);
 
 	win = Term_save_aux();
 

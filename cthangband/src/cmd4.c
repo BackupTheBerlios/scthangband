@@ -4409,9 +4409,7 @@ static void do_cmd_knowledge_deaths(void)
 	else
 	{
 		/* Sort the list by numbers of deaths. */
-		ang_sort_comp = ang_sort_comp_deaths;
-		ang_sort_swap = ang_sort_swap_deaths;
-		ang_sort(races, 0, Races);
+		ang_sort(races, 0, Races, ang_sort_comp_deaths, ang_sort_swap_deaths);
 		fprintf(fff, "The following monster%s have claimed some of your ancestors' deaths here:\n", (Races == 1) ? "" : "s");
 
 		/* Display the sorted list. */

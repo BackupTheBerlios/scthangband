@@ -336,7 +336,7 @@ extern magic_type *num_to_spell(int i);
 extern int spell_skill(const magic_type *s_ptr);
 #endif
 #if (defined(CMD5_C) || defined(MONSTER1_C) || defined(SPELLS2_C))
-extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,	va_list *vp);
+extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(CMD1_C) || defined(CMD5_C))
 extern u16b spell_energy(u16b skill,u16b min);
@@ -2016,10 +2016,10 @@ extern void alter_reality(void);
 /* squelch.c */
 
 #if (defined(CMD4_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
-extern void get_names(char **obuf, char *this, int num, int *choice, uint len,	void (*print_f1)(char *, uint, cptr, va_list *));
+extern void get_names(char **obuf, char *this, int num, int *choice, uint len, void (*print_f1)(char *, uint, cptr, va_list *));
 #endif
 #if (defined(CMD4_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
-extern int display_item_category(int *max, bool (*item_good)(int, name_centry *),	name_centry *start, name_centry **choice);
+extern int display_item_category(int *max, bool (*item_good)(int, name_centry *), name_centry *start, name_centry **choice);
 #endif
 #if (defined(SQUELCH_C) || defined(XTRA1_C))
 extern void squelch_grid(void);
@@ -3458,12 +3458,12 @@ extern cptr ANGBAND_DIR_XTRA;
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool (*item_tester_hook)(object_ctype*);
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern bool (*ang_sort_comp)(vptr u, vptr v, int a, int b);
-#endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
-#endif
+
+
+
+
+
+
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool violet_uniques;
 #endif
@@ -3684,7 +3684,7 @@ extern void resize_map(void);
 extern void resize_inkey(void);
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern void ang_sort(vptr u, vptr v, int n);
+extern void ang_sort(vptr u, vptr v, int n, bool (*comp)(vptr, vptr, int, int), void (*swap)(vptr, vptr, int, int));
 #endif
 #if (defined(CMD3_C) || defined(XTRA2_C))
 extern bool target_set(int mode);

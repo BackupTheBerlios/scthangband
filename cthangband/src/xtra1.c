@@ -3361,11 +3361,8 @@ static void win_visible_display(void)
 		u16b why = 1;
 
 		/* First, sort the monsters by expereince*/
-		ang_sort_comp = ang_mon_sort_comp_hook;
-		ang_sort_swap = ang_mon_sort_swap_hook;
-
-		/* Sort the array */
-		ang_sort(who, &why, items);
+		ang_sort(who, &why, items, ang_mon_sort_comp_hook,
+			ang_mon_sort_swap_hook);
 
 		/* Then, display them */
 		(void)Term_get_size(&w, &h);

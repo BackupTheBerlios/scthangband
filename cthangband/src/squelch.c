@@ -134,9 +134,7 @@ void get_names(char **obuf, char *this, int num, int *choice, uint len,
 		}
 		
 		/* Sort the list. */
-		ang_sort_comp = ang_sort_comp_wci;
-		ang_sort_swap = ang_sort_swap_wci;
-		ang_sort(has_sub, order, j);
+		ang_sort(has_sub, order, j, ang_sort_comp_wci, ang_sort_swap_wci);
 		
 		k = 0;
 		/* Remove words, most common first. */

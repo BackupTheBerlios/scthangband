@@ -1712,15 +1712,18 @@ static cptr look_mon_desc(int m_idx)
 
 
 
+
+
 /*
  * Angband sorting algorithm -- quick sort in place
  *
  * Note that the details of the data we are sorting is hidden,
- * and we rely on the "ang_sort_comp()" and "ang_sort_swap()"
+ * and we rely on the "comp()" and "swap()"
  * function hooks to interact with the data, which is given as
  * two pointers, and which may have any user-defined form.
  */
-static void ang_sort_aux(vptr u, vptr v, int p, int q)
+static void ang_sort_aux(vptr u, vptr v, int p, int q,
+	bool (*comp)(vptr, vptr, int, int), void (*swap)(vptr, vptr, int, int))
 {
 	int z, a, b;
 
@@ -1738,26 +1741,26 @@ static void ang_sort_aux(vptr u, vptr v, int p, int q)
 	while (TRUE)
 	{
 		/* Slide i2 */
-		while (!(*ang_sort_comp)(u, v, b, z)) b--;
+		while (!(*comp)(u, v, b, z)) b--;
 
 		/* Slide i1 */
-		while (!(*ang_sort_comp)(u, v, z, a)) a++;
+		while (!(*comp)(u, v, z, a)) a++;
 
 		/* Done partition */
 		if (a >= b) break;
 
 		/* Swap */
-		(*ang_sort_swap)(u, v, a, b);
+		(*swap)(u, v, a, b);
 
 		/* Advance */
 		a++, b--;
 	}
 
 	/* Recurse left side */
-	ang_sort_aux(u, v, p, b);
+	ang_sort_aux(u, v, p, b, comp, swap);
 
 	/* Recurse right side */
-	ang_sort_aux(u, v, b+1, q);
+	ang_sort_aux(u, v, b+1, q, comp, swap);
 }
 
 
@@ -1769,10 +1772,11 @@ static void ang_sort_aux(vptr u, vptr v, int p, int q)
  * function hooks to interact with the data, which is given as
  * two pointers, and which may have any user-defined form.
  */
-void ang_sort(vptr u, vptr v, int n)
+void ang_sort(vptr u, vptr v, int n, bool (*comp)(vptr, vptr, int, int),
+	void (*swap)(vptr, vptr, int, int))
 {
 	/* Sort the array */
-	ang_sort_aux(u, v, 0, n-1);
+	ang_sort_aux(u, v, 0, n-1, comp, swap);
 }
 
 
@@ -2100,12 +2104,9 @@ static void target_set_prepare(int mode)
 		}
 	}
 
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_distance;
-	ang_sort_swap = ang_sort_swap_distance;
-
 	/* Sort the positions */
-	ang_sort(temp_x, temp_y, temp_n);
+	ang_sort(temp_x, temp_y, temp_n, ang_sort_comp_distance,
+		ang_sort_swap_distance);
 }
 
 

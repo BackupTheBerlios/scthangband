@@ -1009,12 +1009,8 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	/* Sort if needed */
 	if (why)
 	{
-		/* Select the sort method */
-		ang_sort_comp = ang_sort_comp_hook;
-		ang_sort_swap = ang_sort_swap_hook;
-
 		/* Sort the array */
-		ang_sort(who, &why, n);
+		ang_sort(who, &why, n, ang_sort_comp_hook, ang_sort_swap_hook);
 	}
 
 

@@ -4466,9 +4466,7 @@ void reorder_pack(void)
 	for (i = 0; i < INVEN_PACK; i++) inventory[i].ix = i;
 
 	/* Sort the pack using the above functions. */
-	ang_sort_comp = ang_sort_comp_pack;
-	ang_sort_swap = ang_sort_swap_pack;
-	ang_sort(inventory, 0, INVEN_PACK);
+	ang_sort(inventory, 0, INVEN_PACK, ang_sort_comp_pack, ang_sort_swap_pack);
 
 	/* Hack - erase the order again. */
 	for (i = 0; i < INVEN_PACK; i++) inventory[i].ix = 0;
