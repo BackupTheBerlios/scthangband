@@ -587,60 +587,67 @@ void carry(int pickup)
 		/* Pick up objects */
 		else
 		{
+			bool pickup_this = FALSE;
+
+			/* Hack - ignore hidden items altogether. */
+			if (hidden_p(o_ptr)) continue;
+
 			/* Display description if needed. */
 			object_track(o_ptr);
 
-			/* Describe the object */
-			if (!pickup)
-			{
-				msg_format("You see %v.", object_desc_f3, o_ptr, TRUE, 3);
-			}
-
 			/* Note that the pack is too full */
-			else if (!inven_carry_okay(o_ptr))
+			if (!inven_carry_okay(o_ptr))
 			{
 				msg_format("You have no room for %v.",
 					object_desc_f3, o_ptr, TRUE, 3);
 			}
+			else if (strstr(quark_str(o_ptr->note), "=g"))
+			{
+				pickup_this = TRUE;
+			}
+			else if (!pickup)
+			{
+				pickup_this = FALSE;
+			}
+			else if (carry_query_flag)
+			{
+				char c = get_check_ynq(format("Pick up %.*v? ",
+					Term->wid-strlen("Pick up ? "),
+					object_desc_f3, o_ptr, TRUE, 3));
 
-			/* Pick up the item (if requested and allowed) */
+				/* Pick up no more objects. */
+				gold_only = (c == 'q');
+
+				/* Pick up this object. */
+				if (c == 'y') pickup_this = TRUE;
+
+				/* Say nothing more. */
+				else continue;
+			}
 			else
 			{
-				int okay = TRUE;
+				pickup_this = TRUE;
+			}
 
-				/* Hack - ignore hidden items. */
-				if (hidden_p(o_ptr)) continue;
+			if (pickup_this)
+			{
+				/* Carry the item */
+				object_type *j_ptr = inven_carry(o_ptr);
 
-				/* Hack -- query every item */
-				if (carry_query_flag && !strstr(quark_str(o_ptr->note), "=g"))
-				{
-					char c = get_check_ynq(format("Pick up %.*v? ",
-						Term->wid-strlen("Pick up ? "),
-						object_desc_f3, o_ptr, TRUE, 3));
+				/* Message */
+				msg_format("You have %v (%c).",
+					object_desc_f3, j_ptr, TRUE, 3, index_to_label(j_ptr));
 
-					/* Pick up this object. */
-					okay = (c == 'y');
+				/* Remember the object */
+				object_track(j_ptr);
 
-					/* Pick up no more objects. */
-					gold_only = (c == 'q');
-				}
-
-				/* Attempt to pick up an object. */
-				if (okay)
-				{
-					/* Carry the item */
-					object_type *j_ptr = inven_carry(o_ptr);
-
-					/* Message */
-					msg_format("You have %v (%c).",
-						object_desc_f3, j_ptr, TRUE, 3, index_to_label(j_ptr));
-
-					/* Remember the object */
-					object_track(j_ptr);
-
-					/* Delete the object */
-					delete_dun_object(o_ptr);
-				}
+				/* Delete the object */
+				delete_dun_object(o_ptr);
+			}
+			else
+			{
+				/* Give a message. */
+				msg_format("You see %v.", object_desc_f3, o_ptr, TRUE, 3);
 			}
 		}
 	}
