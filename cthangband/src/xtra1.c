@@ -324,9 +324,9 @@ static void prt_spirit(void)
  		}
 		/* Should this check the sphere parameter? */
  		if (i % 2 == 0)
- 			mc_put_str(il, row_life, end_life-MAX_SPIRITS+1+i);
+ 			mc_put_str(row_life, end_life-MAX_SPIRITS+1+i, il);
  		else
- 			mc_put_str(il, row_wild, end_wild-MAX_SPIRITS+i);
+ 			mc_put_str(row_wild, end_wild-MAX_SPIRITS+i, il);
 	}
 }
 
@@ -661,7 +661,7 @@ static void prt_cut(void)
 	{
 		str = "            ";
 	}
-	mc_put_str(str, GET_YX(XY_CUT));
+	mc_put_str(GET_YX(XY_CUT), str);
 }
 
 
@@ -687,7 +687,7 @@ static void prt_stun(void)
 	{
 		str = "            ";
 	}
-	mc_put_str(str, GET_YX(XY_STUN));
+	mc_put_str(GET_YX(XY_STUN), str);
 }
 
 

@@ -2386,10 +2386,10 @@ extern bool c_roff(byte a, cptr str);
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C))
 extern void roff(cptr str);
 #endif
-#if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
-extern void mc_put_str(cptr str, const int y, const int x);
+#if (defined(UTIL_C) || defined(XTRA1_C))
+extern void mc_put_str(const int y, const int x, cptr str);
 #endif
-#if (defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))

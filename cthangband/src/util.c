@@ -2836,7 +2836,7 @@ void roff(cptr str)
  * Write a line of (possibly multicolour) text to the screen using mc_add()
  * above.
  */ 
-void mc_put_str(cptr str, const int y, const int x)
+void mc_put_str(const int y, const int x, cptr str)
 {
 	int attr, dattr = attr = TERM_WHITE;
 	if (Term_gotoxy(x, y)) return;
@@ -2853,7 +2853,7 @@ void mc_put_fmt(const int y, const int x, cptr fmt, ...)
 	char buf[256];
 
 	get_va_arg_buf(buf, fmt);
-	mc_put_str(buf, y, x);
+	mc_put_str(y, x, buf);
 }
 
 /*

@@ -1668,8 +1668,8 @@ void roff_top(int r_idx)
 	Term_erase(0, 0, 255);
 
 	/* Dump the name */
-	mc_put_str(format("%^v (%v)/(%v):", monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
-		get_symbol_f2, a1, c1, get_symbol_f2, a2, c2), 0, 0);
+	mc_put_fmt(0, 0, "%^v (%v)/(%v):", monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
+		get_symbol_f2, a1, c1, get_symbol_f2, a2, c2);
 }
 
 
