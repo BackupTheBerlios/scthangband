@@ -3843,7 +3843,7 @@ static void dungeon(void)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | PW_SHOPS);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_MONSTER);
+	p_ptr->window |= (PW_MONSTER | PW_VISIBLE);
 
 	/* Redraw dungeon */
     p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_EQUIPPY);
@@ -4562,8 +4562,6 @@ void play_game(bool new_game)
 	/* Process */
 	while (TRUE)
 	{
-		p_ptr->window |= PW_VISIBLE;
-
 		/* Process the level */
 		dungeon();
 
