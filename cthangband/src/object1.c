@@ -1612,7 +1612,7 @@ copyback:
 void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	object_type *o_ptr = va_arg(*vp, object_type *);
-	byte pref = va_arg(*vp, byte);
+	int pref = va_arg(*vp, int);
 	int mode = va_arg(*vp, int);
 	cptr s;
 	uint len;
