@@ -1690,6 +1690,22 @@ static void rustproof(void)
 	return;
 }
 
+/*
+ * It's a book if it's got a book_type associated with it.
+ */
+static bool item_tester_book(object_type *o_ptr)
+{
+	switch (o_ptr->k_idx)
+	{
+		case TV_SORCERY_BOOK:
+		case TV_THAUMATURGY_BOOK:
+		case TV_CONJURATION_BOOK:
+		case TV_NECROMANCY_BOOK:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
 
 /*
  * Peruse the spells/prayers in a Book
@@ -1708,13 +1724,14 @@ void do_cmd_browse(object_type *o_ptr)
 	byte		spells[64];
 
 
-	/* Restrict choices to "useful" books */
-	item_tester_tval = TV_SORCERY_BOOK;
-
 	/* Get an item if we do not already have one */
 	if(!o_ptr)
 	{
 		errr err;
+
+		/* Restrict choices to books */
+		item_tester_hook = item_tester_book;
+
 		/* Get an item (from inven or floor) */
 		if (!((o_ptr = get_item(&err, "Browse which book? ", FALSE, TRUE, TRUE))))
 		{
@@ -1723,16 +1740,12 @@ void do_cmd_browse(object_type *o_ptr)
 		}
 	}
 
-	item_tester_tval = TV_SORCERY_BOOK;
+	item_tester_hook = item_tester_book;
 	if(!item_tester_okay(o_ptr))
 	{
 		msg_print("You can't read that.");
-	
-
-		item_tester_tval = 0;
 		return;
 	}
-	item_tester_tval = 0;
 
 	/* Access the item's sval */
 	sval = k_info[o_ptr->k_idx].extra;
@@ -1816,7 +1829,7 @@ void do_cmd_study(void)
 
 
 	/* Restrict choices to "useful" books */
-	item_tester_tval = TV_SORCERY_BOOK;
+	item_tester_hook = item_tester_book;
 
 	/* Get an item (from inven or floor) */
 	if (!((o_ptr = get_item(&err, "Study which book? ", FALSE, TRUE, TRUE))))
@@ -2336,7 +2349,7 @@ void do_cmd_cast(void)
 
 
 	/* Restrict choices to spell books */
-	item_tester_tval = TV_SORCERY_BOOK;
+	item_tester_hook = item_tester_book;
 
 	/* Get an item (from inven or floor) */
 	if (!((o_ptr = get_item(&err, "Use which book? ", FALSE, TRUE, TRUE))))

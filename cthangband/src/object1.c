@@ -3530,11 +3530,7 @@ bool item_tester_okay(object_type *o_ptr)
 	/* Check the tval */
 	if (item_tester_tval)
 	{
-	/* Is it a spellbook? If so, we need a hack -- TY */
-	if (item_tester_tval<=TV_NECROMANCY_BOOK && item_tester_tval>=TV_SORCERY_BOOK)
-	    return ((o_ptr->tval <= TV_NECROMANCY_BOOK) && (o_ptr->tval >= TV_SORCERY_BOOK));
-	else
-	    if (!(item_tester_tval == o_ptr->tval)) return (FALSE);
+		if (item_tester_tval != o_ptr->tval) return (FALSE);
 	}
 
 	/* Check the hook */
