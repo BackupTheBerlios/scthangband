@@ -1076,93 +1076,6 @@ static char *object_desc_str(char *t, cptr s)
 
 
 /*
- * Print an unsigned number "n" into a string "t", as if by
- * sprintf(t, "%u", n), and return a pointer to the terminator.
- */
-static char *object_desc_num(char *t, uint n)
-{
-	uint p;
-
-	/* Find "size" of "n" */
-	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
-
-	/* Dump each digit */
-	while (p >= 1)
-	{
-		/* Dump the digit */
-		*t++ = '0' + n / p;
-
-		/* Remove the digit */
-		n = n % p;
-
-		/* Process next digit */
-		p = p / 10;
-	}
-
-	/* Terminate */
-	*t = '\0';
-
-	/* Result */
-	return (t);
-}
-
-
-
-
-/*
- * Print an signed number "v" into a string "t", as if by
- * sprintf(t, "%+d", n), and return a pointer to the terminator.
- * Note that we always print a sign, either "+" or "-".
- */
-static char *object_desc_int(char *t, sint v)
-{
-	uint p, n;
-
-	/* Negative */
-	if (v < 0)
-	{
-		/* Take the absolute value */
-		n = 0 - v;
-
-		/* Use a "minus" sign */
-		*t++ = '-';
-	}
-
-	/* Positive (or zero) */
-	else
-	{
-		/* Use the actual number */
-		n = v;
-
-		/* Use a "plus" sign */
-		*t++ = '+';
-	}
-
-	/* Find "size" of "n" */
-	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
-
-	/* Dump each digit */
-	while (p >= 1)
-	{
-		/* Dump the digit */
-		*t++ = '0' + n / p;
-
-		/* Remove the digit */
-		n = n % p;
-
-		/* Process next digit */
-		p = p / 10;
-	}
-
-	/* Terminate */
-	*t = '\0';
-
-	/* Result */
-	return (t);
-}
-
-
-/*
  * Creates a description of the item "o_ptr", and stores it in "out_val".
  *
  * One can choose the "verbosity" of the description, including whether
@@ -1243,10 +1156,6 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 	cptr	r[MAX_NAME_LEVEL];
 	char            *t;
-
-	char            p1 = '(', p2 = ')';
-	char            b1 = '[', b2 = ']';
-	char            c1 = '{', c2 = '}';
 
 	/* tmp_val_base is twice as large as necessary as little bounds checking
 	 * is performed. This probably isn't good enough. */
@@ -1356,8 +1265,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	/* Extract the number */
 	else if (o_ptr->number > 1)
 	{
-		t = object_desc_num(t, o_ptr->number);
-		t = object_desc_chr(t, ' ');
+		t += sprintf(t, "%d ", o_ptr->number);
 	}
 
 	/* Hack -- The only one of its kind */
@@ -1559,11 +1467,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		if (o_ptr->flags3 & (TR3_XTRA_MIGHT)) power++;
 
 		/* Append a special "damage" string */
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, p1);
-		t = object_desc_chr(t, 'x');
-		t = object_desc_num(t, power);
-		t = object_desc_chr(t, p2);
+		t += sprintf(t, " (x%d)", power);
 
 		/* All done */
 		break;
@@ -1571,12 +1475,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		/* Everything else is displayed as a melee weapon. */
 		default:
 
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, p1);
-		t = object_desc_num(t, o1_ptr->dd);
-		t = object_desc_chr(t, 'd');
-		t = object_desc_num(t, o1_ptr->ds);
-		t = object_desc_chr(t, p2);
+		t += sprintf(t, " (%dd%d)", o_ptr->dd, o_ptr->ds);
 	}
 
 	/* Add the weapon bonuses */
@@ -1585,30 +1484,19 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		/* Show the tohit/todam on request */
 		if (show_weapon)
 		{
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o_ptr->to_h);
-			t = object_desc_chr(t, ',');
-			t = object_desc_int(t, o_ptr->to_d);
-			t = object_desc_chr(t, p2);
+			t += sprintf(t, " (%+d,%+d)", o_ptr->to_h, o_ptr->to_d);
 		}
 
 		/* Show the tohit if needed */
 		else if (o_ptr->to_h)
 		{
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o_ptr->to_h);
-			t = object_desc_chr(t, p2);
+			t += sprintf(t, " (%+d)", o_ptr->to_h);
 		}
 
 		/* Show the todam if needed */
 		else if (o_ptr->to_d)
 		{
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o_ptr->to_d);
-			t = object_desc_chr(t, p2);
+			t += sprintf(t, " (%+d)", o_ptr->to_d);
 		}
 	}
 
@@ -1619,31 +1507,20 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		/* Show the armor class info */
 		if (show_armour)
 		{
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, b1);
-			t = object_desc_num(t, o_ptr->ac);
-			t = object_desc_chr(t, ',');
-			t = object_desc_int(t, o_ptr->to_a);
-			t = object_desc_chr(t, b2);
+			t += sprintf(t, " [%d,%+d]", o_ptr->ac, o_ptr->to_a);
 		}
 
 		/* No base armor, but does increase armor */
 		else if (o_ptr->to_a)
 		{
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, b1);
-			t = object_desc_int(t, o_ptr->to_a);
-			t = object_desc_chr(t, b2);
+			t += sprintf(t, " [%+d]", o_ptr->to_a);
 		}
 	}
 
 	/* Hack -- always show base armor */
 	else if (show_armour)
 	{
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, b1);
-		t = object_desc_num(t, o_ptr->ac);
-		t = object_desc_chr(t, b2);
+		t += sprintf(t, " [%d]", o_ptr->ac);
 	}
 
 
@@ -1657,33 +1534,23 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	     (o_ptr->tval == TV_WAND)))
 	{
 		/* Dump " (N charges)" */
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, p1);
-		t = object_desc_num(t, o_ptr->pval);
-		t = object_desc_str(t, " charge");
-		if (o_ptr->pval != 1) t = object_desc_chr(t, 's');
-		t = object_desc_chr(t, p2);
+		t += sprintf(t, " (%d charge%s)",
+			o_ptr->pval, o_ptr->pval == 1 ? "" : "s");
 	}
 
 	/* Hack -- Process Lanterns/Torches */
 	else if ((o_ptr->tval == TV_LITE) && o_ptr->pval && (!allart_p(o_ptr)))
 	{
 		/* Hack -- Turns of light for normal lites */
-		t = object_desc_str(t, " (with ");
-		t = object_desc_num(t, o_ptr->pval);
-		t = object_desc_str(t, " turns of light)");
+		t += sprintf(t, " (with %d turns of light)", o_ptr->pval);
 	}
 
 
 	/* Dump "pval" flags for wearable items */
 	if (o_ptr->flags1 & TR1_PVAL_MASK && o_ptr->pval)
 	{
-		/* Start the display */
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, p1);
-
-		/* Dump the "pval" itself */
-		t = object_desc_int(t, o_ptr->pval);
+		/* Dump the pval. */
+		t += sprintf(t, " (%+d", o_ptr->pval);
 
 		/* Differentiate known pvals from deduced ones. */
 		if (!known) t = object_desc_chr(t, '?');
@@ -1698,8 +1565,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 /* What actually needs to be done with the strings below. */
 #define ADD_PV(X) \
-	t = object_desc_chr(t, ' '); \
-	t = object_desc_str(t, (X))
+	t = object_desc_str(t, " " X)
 
 			/* Give details about a single bonus. */
 			switch (o_ptr->flags1 & TR1_PVAL_MASK)
@@ -1720,7 +1586,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		}
 
 		/* Finish the display */
-		t = object_desc_chr(t, p2);
+		t = object_desc_chr(t, ')');
 	}
 
 	/* Indicate "charging" things */
@@ -1802,8 +1668,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 		if (i && t < tmp_val+len-4)
 		{
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, c1);
+			t = object_desc_str(t, " {");
 
 			/* Append the inscriptions from bottom to top. */
 			while (i-- && t < tmp_val+len-2)
@@ -1815,7 +1680,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 				/* Put a comma if there is room for at least one character after it. */
 				if (i && t < tmp_val+len-4) t = object_desc_str(t, ", ");
 			}
-			t = object_desc_chr(t, c2);
+			t = object_desc_chr(t, '}');
 		}
 	}
 
