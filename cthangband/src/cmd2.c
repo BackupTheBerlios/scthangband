@@ -3931,7 +3931,6 @@ void do_cmd_run(void)
 	if (p_ptr->confused)
 	{
 		msg_print("You are too confused!");
-		return;
 	}
 
 	/* Continue running. */
@@ -3943,6 +3942,9 @@ void do_cmd_run(void)
 	/* Get a "repeated" direction */
 	else if (get_rep_dir(&dir))
 	{
+		/* Run until stopped unless told otherwise. */
+		if (!command_arg) command_arg = -1;
+
 		/* Hack -- Set the run counter */
 		cnv_arg_to_rep();
 
