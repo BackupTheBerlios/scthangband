@@ -3965,10 +3965,4 @@ extern bool chaos_patrons_w;
 #if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool chaos_patrons;
 #endif
-
-/* xtra2.c */
-
-#if (defined(BIRTH_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern bool PURE chaos_race(void);
-#endif
 #endif /* INCLUDED_EXTERNS_H */

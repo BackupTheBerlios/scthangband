@@ -9,7 +9,7 @@ sCthangband 1.0.12
 * Dodging blows because of martial arts gives experience in the skill.
 * A player who is capable of martial arts gains a +5 AC bonus because of this.
 * Allow chaos patrons to be eliminated with a birth option.
-* Make the "chaos patron" corruption give the same corruption chance as a Broo.
+* Make the "chaos patron" corruption give extra chaos rewards, if allowed.
 * Add a special help file for new users.
 * Find the next copy of a string if a player searches for it twice in a file.
 * Pressing ? displays the skills help on the skill display screen.

@@ -3309,13 +3309,6 @@ static int get_chaos_patron(void)
 }
 #endif
 
-bool PURE chaos_race(void)
-{
-	if (p_ptr->prace == RACE_BROO) return TRUE;
-	if (p_ptr->muta2 & MUT2_CHAOS_GIFT) return TRUE;
-	return FALSE;
-}
-
 void gain_level_reward(int chosen_reward)
 {
     int type, effect;
@@ -3330,7 +3323,8 @@ void gain_level_reward(int chosen_reward)
 	skill_used = skill_set[SKILL_THAUMATURGY].value/2;
 
 	/* Broo might have got here through their racial ability */
-	if (chaos_race) skill_used = MAX(skill_used, skill_set[SKILL_RACIAL].value);
+	if (p_ptr->prace == RACE_BROO)
+		skill_used = MAX(skill_used, skill_set[SKILL_RACIAL].value);
 
     if (!chosen_reward)
     {

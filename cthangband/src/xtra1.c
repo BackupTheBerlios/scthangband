@@ -4051,26 +4051,43 @@ static void update_skill_maxima(void)
 {
 	player_skill *ptr;
 
+	/* Assume no chaos effect for now. */
+	bool chaos = !chaos_patrons;
+
 	/* Broo might get a gift as they get better */
 	ptr = &skill_set[SKILL_RACIAL];
-	if (chaos_race() && (ptr->value > ptr->max_value))
+	if (!chaos && (p_ptr->prace == RACE_BROO) && (ptr->value > ptr->max_value))
 	{
 		int chance = MIN(90, MAX(10, ptr->value));
-		if (chaos_patrons && rand_int(100) < chance) gain_level_reward(0);
+		if (rand_int(100) < chance) chaos = TRUE;
 	}
 	/* Anyone with a thaumaturgy skill has been calling out to chaos */
 	ptr = &skill_set[SKILL_THAUMATURGY];
-	if (ptr->value > ptr->max_value)
+	if (!chaos && ptr->value > ptr->max_value)
 	{
 		int chance = MIN(90, MAX(10, ptr->value));
-		if (chaos_patrons && rand_int(100) < chance) gain_level_reward(0);
+		if (rand_int(100) < chance) chaos = TRUE;
 	}
 
 	/* Now update all the maxima */
 	for (ptr = skill_set; ptr < skill_set+MAX_SKILLS; ptr++)
 	{
-		if (ptr->value > ptr->max_value) ptr->max_value = ptr->value;
+		int chance = MIN(90, MAX(10, ptr->value));
+
+		/* No increase. */
+		if (ptr->value <= ptr->max_value) continue;
+
+		/* Accept the increase. */
+		ptr->max_value = ptr->value;
+
+		/* No extra chaos effect. */
+		if (chaos || ~p_ptr->muta2 & MUT2_CHAOS_GIFT) continue;
+
+		if (rand_int(500) < chance) chaos = TRUE;
 	}
+
+	/* Give a chaos reward, if allowed. */
+	if (chaos && chaos_patrons) gain_level_reward(0);
 }
 
 
