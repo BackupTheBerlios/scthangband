@@ -2180,11 +2180,11 @@ static void dragon_resist(object_type * o_ptr)
  * Hack -- note special processing for crown/helm
  * Hack -- note special processing for robe of permanence
  */
-static void a_m_aux_2(object_type *o_ptr, int level, int power)
+static void a_m_aux_2(object_type *o_ptr, const int level, const int power)
 {
-	int toac1 = randint(5) + m_bonus(5, level);
+	const int toac1 = randint(5) + m_bonus(5, level);
 
-	int toac2 = m_bonus(10, level);
+	const int toac2 = m_bonus(10, level);
 
     artifact_bias = 0;
 
@@ -2220,7 +2220,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 	}
 }
 
-typedef struct bonus_type bonus_type;
+typedef const struct bonus_type bonus_type;
 struct bonus_type
 {
 	s16b k_idx;
@@ -2336,8 +2336,8 @@ static bonus_type bonus_table[] =
 	{OBJ_STAFF_STAR_DESTRUCTION, 2, 4, 0, BV_PVAL, 2},
 };
 
-static void set_var_aux(object_type *o_ptr, bonus_type *b_ptr, int level,
-	int power)
+static void set_var_aux(object_type *o_ptr, bonus_type *b_ptr, const int level,
+	const int power)
 {
 	s16b *var;
 	switch (b_ptr->var)
@@ -2370,7 +2370,7 @@ static void set_var_aux(object_type *o_ptr, bonus_type *b_ptr, int level,
 
 #define END(X) (X+N_ELEMENTS(X))
 
-static void set_var(object_type *o_ptr, int level, int power)
+static void set_var(object_type *o_ptr, const int level, const int power)
 {
 	bonus_type *b_ptr;
 	for (b_ptr = bonus_table; b_ptr < END(bonus_table); b_ptr++)
@@ -2387,7 +2387,7 @@ static void set_var(object_type *o_ptr, int level, int power)
  * Hack -- note that some items must be cursed (or blessed)
  * Hack -- note the special code for various items
  */
-static void a_m_aux_3(object_type *o_ptr, int level, int power)
+static void a_m_aux_3(object_type *o_ptr, const int level, const int power)
 {
 	/* Apply magic (good or bad) according to type */
 	if (o_ptr->k_idx == OBJ_WOODEN_TORCH || o_ptr->k_idx == OBJ_BRASS_LANTERN
@@ -2686,16 +2686,13 @@ static byte k_ego_special(object_kind *k_ptr)
  * Turn an ordinary object into an ego item or artefact, and give it appropriate
  * bonuses.
  */
-static void apply_magic_1(object_type *o_ptr, int lev, bool okay, bool good,
-	bool great)
+static void apply_magic_1(object_type *o_ptr, const int lev, const bool okay,
+	const bool good, const bool great)
 {
 	int i, rolls, f1, f2, power;
 
 	/* Normal artefacts have no business here. */
 	if (o_ptr->name1) return;
-
-	/* Maximum "level" for various things */
-	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
 
 
 	/* Base chance of being "good" */
@@ -2807,7 +2804,7 @@ static void apply_magic_1(object_type *o_ptr, int lev, bool okay, bool good,
  * Put the finishing touches on ego items and artefacts, and give random
  * bonuses to a few rings, amulets and armour.
  */
-void apply_magic_2(object_type *o_ptr, int lev)
+void apply_magic_2(object_type *o_ptr, const int lev)
 {
 	object_kind *k_ptr = k_info+o_ptr->k_idx;
 	artifact_type *a_ptr = a_info+o_ptr->name1;
@@ -2924,6 +2921,9 @@ void apply_magic_2(object_type *o_ptr, int lev)
 
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 {
+	/* Maximum "level" for various things */
+	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
+
 	/* Turn the object into an ego-item or artefact (or not). */
 	apply_magic_1(o_ptr, lev, okay, good, great);
 

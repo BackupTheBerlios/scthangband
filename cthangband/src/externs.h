@@ -1544,7 +1544,7 @@ extern void object_prep(object_type *o_ptr, int k_idx);
 extern void random_artifact_resistance(object_type * o_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(XTRA2_C))
-extern void apply_magic_2(object_type *o_ptr, int lev);
+extern void apply_magic_2(object_type *o_ptr, const int lev);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
