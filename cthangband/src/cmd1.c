@@ -1179,7 +1179,7 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 				else
 				{
 					/* Message */
-					message_pain(c_ptr->m_idx, tdam);
+					message_pain(m_ptr, tdam);
 
 					/* Anger friends */
 					if ((m_ptr->smart & SM_ALLY)

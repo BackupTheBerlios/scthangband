@@ -371,7 +371,7 @@ bool make_attack_normal(int m_idx)
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_POIS);
+					update_smart_learn(m_ptr, DRS_POIS);
 
 					break;
 				}
@@ -389,7 +389,7 @@ bool make_attack_normal(int m_idx)
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_DISEN);
+					update_smart_learn(m_ptr, DRS_DISEN);
 
 					break;
 				}
@@ -683,7 +683,7 @@ bool make_attack_normal(int m_idx)
 					acid_dam(damage, ddesc, m_ptr->r_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_ACID);
+					update_smart_learn(m_ptr, DRS_ACID);
 
 					break;
 				}
@@ -700,7 +700,7 @@ bool make_attack_normal(int m_idx)
 					elec_dam(damage, ddesc, m_ptr->r_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_ELEC);
+					update_smart_learn(m_ptr, DRS_ELEC);
 
 					break;
 				}
@@ -717,7 +717,7 @@ bool make_attack_normal(int m_idx)
 					fire_dam(damage, ddesc, m_ptr->r_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_FIRE);
+					update_smart_learn(m_ptr, DRS_FIRE);
 
 					break;
 				}
@@ -734,7 +734,7 @@ bool make_attack_normal(int m_idx)
 					cold_dam(damage, ddesc, m_ptr->r_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_COLD);
+					update_smart_learn(m_ptr, DRS_COLD);
 
 					break;
 				}
@@ -754,7 +754,7 @@ bool make_attack_normal(int m_idx)
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_BLIND);
+					update_smart_learn(m_ptr, DRS_BLIND);
 
 					break;
 				}
@@ -774,7 +774,7 @@ bool make_attack_normal(int m_idx)
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_CONF);
+					update_smart_learn(m_ptr, DRS_CONF);
 
 					break;
 				}
@@ -805,7 +805,7 @@ bool make_attack_normal(int m_idx)
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_FEAR);
+					update_smart_learn(m_ptr, DRS_FEAR);
 
 					break;
 				}
@@ -839,7 +839,7 @@ bool make_attack_normal(int m_idx)
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_FREE);
+					update_smart_learn(m_ptr, DRS_FREE);
 
 					break;
 				}

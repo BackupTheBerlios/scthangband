@@ -3270,7 +3270,7 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
 			if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
 
 			/* Attempt to clone. */
-			if (multiply_monster(c_ptr->m_idx, is_friend, TRUE))
+			if (multiply_monster(m_ptr, is_friend, TRUE))
 			{
 				note = " spawns!";
 			}
@@ -4265,7 +4265,7 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
 			if (note && seen) msg_format("%^s%s", m_name, note);
 
 			/* Hack -- Pain message */
-			else if (dam > 0) message_pain(c_ptr->m_idx, dam);
+			else if (dam > 0) message_pain(m_ptr, dam);
 
 			/* Hack -- handle sleep */
 			if (do_sleep) m_ptr->csleep = do_sleep;
@@ -4290,7 +4290,7 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
 			if (note && seen) msg_format("%^s%s", m_name, note);
 
 			/* Hack -- Pain message */
-			else if (dam > 0) message_pain(c_ptr->m_idx, dam);
+			else if (dam > 0) message_pain(m_ptr, dam);
 
 			/* Take note */
 			if ((fear || do_fear) && (m_ptr->ml))

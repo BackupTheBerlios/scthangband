@@ -1424,11 +1424,9 @@ void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp)
 /*
  * Learn about a monster (by "probing" it)
  */
-void lore_do_probe(int m_idx)
+void lore_do_probe(int r_idx)
 {
-	monster_type *m_ptr = &m_list[m_idx];
-
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Hack -- Memorize some flags */
 	r_ptr->r_flags1 = r_ptr->flags1;
@@ -1436,7 +1434,7 @@ void lore_do_probe(int m_idx)
 	r_ptr->r_flags3 = r_ptr->flags3;
 
 	/* Update monster recall window */
-	if (monster_race_idx == m_ptr->r_idx)
+	if (monster_race_idx == r_idx)
 	{
 		/* Window stuff */
 		p_ptr->window |= (PW_MONSTER);
@@ -1457,11 +1455,9 @@ void lore_do_probe(int m_idx)
  * gold and items are dropped, and remembers that information to be
  * described later by the monster recall code.
  */
-void lore_treasure(int m_idx, int num_item, int num_gold)
+void lore_treasure(int r_idx, int num_item, int num_gold)
 {
-	monster_type *m_ptr = &m_list[m_idx];
-
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Note the number of things dropped */
 	if (num_item > r_ptr->r_drop_item) r_ptr->r_drop_item = num_item;
@@ -1472,7 +1468,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 	if (r_ptr->flags1 & (RF1_DROP_GREAT)) r_ptr->r_flags1 |= (RF1_DROP_GREAT);
 
 	/* Update monster recall window */
-	if (monster_race_idx == m_ptr->r_idx)
+	if (monster_race_idx == r_idx)
 	{
 		/* Window stuff */
 		p_ptr->window |= (PW_MONSTER);
@@ -2821,9 +2817,9 @@ bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok)
  *
  * Note that "reproduction" REQUIRES empty space.
  */
-bool multiply_monster(int m_idx, bool charm, bool clone)
+bool multiply_monster(monster_type *m_ptr, bool charm, bool clone)
 {
-	monster_type *m2_ptr, *m_ptr = &m_list[m_idx];
+	monster_type *m2_ptr;
 
 	int y, x;
 
@@ -2849,117 +2845,62 @@ bool multiply_monster(int m_idx, bool charm, bool clone)
 
 
 
+static cptr pain_races[4] = {"jmvQ", "CZ", "FIKMRSXabclqrst", NULL};
+
+static int pain_states[7] = {10, 20, 35, 50, 75, 95, 100};
+
+static cptr pain_str[4][7] =
+{
+	{"jerks limply" , "writhes in agony", "writhes about", "quivers in pain",
+		"squelches", "flinches", "barely notices"},
+	{"yelps feebly" , "writhes in agony", "howls in agony", "howls in pain",
+		"yelps in pain", "snarls with pain", "shrugs off the attack"},
+	{"cries out feebly", "writhes in agony", "shrieks in agony",
+		"shrieks in pain", "squeals in pain", "grunts with pain",
+		"ignores the attack"},
+	{"cries out feebly", "writhes in agony", "screams in agony",
+		"screams in pain", "cries out in pain", "grunts with pain",
+		"shrugs off the attack"},
+};
 
 /*
  * Dump a message describing a monster's reaction to damage
  *
  * Technically should attempt to treat "Beholder"'s as jelly's
  */
-void message_pain(int m_idx, int dam)
+void message_pain(monster_type *m_ptr, int dam)
 {
-	long oldhp, newhp, tmp;
-	int percentage;
-
-	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	C_TNEW(m_name, MNAME_MAX, char);
-
-
-	/* Get the monster name */
-	strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
+	cptr str;
 
 	/* Notice non-damage */
-	if (dam == 0)
+	if (dam == 0) 
 	{
-		msg_format("%^s is unharmed.", m_name);
-		TFREE(m_name);
-		return;
+		str = "is_unharmed";
 	}
-
-	/* Note -- subtle fix -CFT */
-	newhp = (long)(m_ptr->hp);
-	oldhp = newhp + (long)(dam);
-	tmp = (newhp * 100L) / oldhp;
-	percentage = (int)(tmp);
-
-
-	/* Jellies, Moulds, Vortices, Qs */
-	if (strchr("jmvQ", r_ptr->d_char))
-	{
-		if (percentage > 95)
-			msg_format("%^s barely notices.", m_name);
-		else if (percentage > 75)
-			msg_format("%^s flinches.", m_name);
-		else if (percentage > 50)
-			msg_format("%^s squelches.", m_name);
-		else if (percentage > 35)
-			msg_format("%^s quivers in pain.", m_name);
-		else if (percentage > 20)
-			msg_format("%^s writhes about.", m_name);
-		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
-		else
-			msg_format("%^s jerks limply.", m_name);
-	}
-
-	/* Dogs and Hounds */
-	else if (strchr("CZ", r_ptr->d_char))
-	{
-		if (percentage > 95)
-			msg_format("%^s shrugs off the attack.", m_name);
-		else if (percentage > 75)
-			msg_format("%^s snarls with pain.", m_name);
-		else if (percentage > 50)
-			msg_format("%^s yelps in pain.", m_name);
-		else if (percentage > 35)
-			msg_format("%^s howls in pain.", m_name);
-		else if (percentage > 20)
-			msg_format("%^s howls in agony.", m_name);
-		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
-		else
-			msg_format("%^s yelps feebly.", m_name);
-	}
-
-	/* One type of monsters (ignore,squeal,shriek) */
-	else if (strchr("FIKMRSXabclqrst", r_ptr->d_char))
-	{
-		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
-		else if (percentage > 75)
-			msg_format("%^s grunts with pain.", m_name);
-		else if (percentage > 50)
-			msg_format("%^s squeals in pain.", m_name);
-		else if (percentage > 35)
-			msg_format("%^s shrieks in pain.", m_name);
-		else if (percentage > 20)
-			msg_format("%^s shrieks in agony.", m_name);
-		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
-		else
-			msg_format("%^s cries out feebly.", m_name);
-	}
-
-	/* Another type of monsters (shrug,cry,scream) */
+	/* Obtain a string based on the percentage of HP just lost. */
 	else
 	{
-		if (percentage > 95)
-			msg_format("%^s shrugs off the attack.", m_name);
-		else if (percentage > 75)
-			msg_format("%^s grunts with pain.", m_name);
-		else if (percentage > 50)
-			msg_format("%^s cries out in pain.", m_name);
-		else if (percentage > 35)
-			msg_format("%^s screams in pain.", m_name);
-		else if (percentage > 20)
-			msg_format("%^s screams in agony.", m_name);
-		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
-		else
-			msg_format("%^s cries out feebly.", m_name);
+		long newhp = (long)(m_ptr->hp);
+		long oldhp = newhp + (long)(dam);
+		long tmp = (newhp * 100L) / oldhp;
+		int percentage = (int)(tmp);
+		uint race, pain;
+		char d_char = r_info[m_ptr->r_idx].d_char;
+
+		/* Find the message set by race, the last being a default set. */
+		for (race = 0; race < N_ELEMENTS(pain_races)-1; race++)
+			if (strchr(pain_races[race], d_char)) break;
+
+		/* percentage <= 100 anyway, but... */
+		for (pain = 0; pain < N_ELEMENTS(pain_states)-1; pain++)
+			if (pain_states[pain] <= percentage) break;
+
+		str = pain_str[race][pain];
 	}
-	TFREE(m_name);
+
+	/* Print the message. */
+	msg_format("%v %s.", monster_desc_f2, m_ptr, 0, str);
+
 }
 
 
@@ -2967,12 +2908,10 @@ void message_pain(int m_idx, int dam)
 /*
  * Learn about an "observed" resistance.
  */
-void update_smart_learn(int m_idx, int what)
+void update_smart_learn(monster_type *m_ptr, int what)
 {
 
 #ifdef DRS_SMART_OPTIONS
-
-	monster_type *m_ptr = &m_list[m_idx];
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 

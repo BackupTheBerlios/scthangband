@@ -1135,7 +1135,7 @@ void monster_death(int m_idx)
 	if (visible && (dump_item || dump_gold))
 	{
 		/* Take notes on treasure */
-		lore_treasure(m_idx, dump_item, dump_gold);
+		lore_treasure(m_ptr->r_idx, dump_item, dump_gold);
 	}
 
 
@@ -1672,9 +1672,8 @@ void resize_inkey(void)
 /*
  * Monster health description
  */
-static cptr look_mon_desc(int m_idx)
+static cptr look_mon_desc(monster_type *m_ptr)
 {
-	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	int           perc;
 
@@ -2262,10 +2261,10 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					else
 					{
 						/* Describe, and prompt for recall */
-						sprintf(out_val, "%s%s%s%s (%s)%s%s[r,%s]",
-								s1, s2, s3, m_name, look_mon_desc(c_ptr->m_idx),
+						sprintf(out_val, "%s%s%s%s (%s)%s%s [r,%s]",
+							s1, s2, s3, m_name, look_mon_desc(m_ptr),
 							(m_ptr->smart & SM_CLONED ? " (clone)": ""),
-							(m_ptr->smart & SM_ALLY ? " (allied) " : " "), info);
+							(m_ptr->smart & SM_ALLY ? " (allied)" : ""), info);
 
 						prt(out_val, 0, 0);
 

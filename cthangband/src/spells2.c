@@ -4370,7 +4370,7 @@ bool probing(void)
 				m_ptr->hp);
 
 			/* Learn all of the non-spell, non-treasure flags */
-			lore_do_probe(i);
+			lore_do_probe(m_ptr->r_idx);
 
 			/* Probe worked */
 			probe = TRUE;

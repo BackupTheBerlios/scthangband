@@ -1320,10 +1320,10 @@ extern void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp);
 extern void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(MONSTER2_C) || defined(SPELLS2_C))
-extern void lore_do_probe(int m_idx);
+extern void lore_do_probe(int r_idx);
 #endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
-extern void lore_treasure(int m_idx, int num_item, int num_gold);
+extern void lore_treasure(int r_idx, int num_item, int num_gold);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void update_mon(int m_idx, bool full);
@@ -1365,13 +1365,13 @@ extern bool summon_specific(int y1, int x1, int lev, int type);
 extern bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok);
 #endif
 #if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
-extern bool multiply_monster(int m_idx, bool charm, bool clone);
+extern bool multiply_monster(monster_type *m_ptr, bool charm, bool clone);
 #endif
 #if (defined(CMD1_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
-extern void message_pain(int m_idx, int dam);
+extern void message_pain(monster_type *m_ptr, int dam);
 #endif
 #if (defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C))
-extern void update_smart_learn(int m_idx, int what);
+extern void update_smart_learn(monster_type *m_ptr, int what);
 #endif
 
 /* object1.c */
