@@ -981,7 +981,7 @@ extern void object_info_known(object_type *j_ptr, object_type *o_ptr);
 extern void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern void object_desc(char *buf, object_type *o_ptr, int pref, int mode);
+extern void object_desc(char *buf, object_type *o1_ptr, int pref, int mode);
 #endif
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode);

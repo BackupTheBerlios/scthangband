@@ -1586,7 +1586,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
  *
  * This can never decrease the total value of the merged stacks.
  */
-byte merge_discounts(object_type *o_ptr, object_type *j_ptr)
+static byte merge_discounts(object_type *o_ptr, object_type *j_ptr)
 {
 	int d1 = o_ptr->discount, d2 = j_ptr->discount;
 	int n1 = o_ptr->number, n2 = j_ptr->number;
