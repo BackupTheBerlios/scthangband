@@ -1108,10 +1108,10 @@ void init_ascii_text_conv(void)
 void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	cptr str = va_arg(*vp, cptr);
-	byte *s = buf;
+	char *s = buf;
 	int i;
 
-	for (; *str && (char*)s+MAX_ASCII_LEN < buf+max-1; )
+	for (; *str && s+MAX_ASCII_LEN < buf+max-1; )
 	{
 		for (i = 0; i < 512; i++)
 		{
