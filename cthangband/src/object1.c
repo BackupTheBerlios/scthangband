@@ -2715,10 +2715,6 @@ static void identify_fully_clear(ifa_type *i_ptr)
 	while ((++i_ptr)->txt);
 }
 
-/* Set brief to suppress various strings in identify_fully_get(). */
-static bool brief = FALSE;
-
-
 /*
  * Hack - Determine the multiplier for a bow.
  * This is stored in a non-traditional field, and relies upon the bow doing
@@ -2800,8 +2796,10 @@ byte ammunition_type(object_type *o_ptr)
  * and note whether each was allocated.
  *
  * Return the total number of strings.
+ *
+ * If brief is set, various less interesting things are omitted.
  */
-static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
+static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 {
 	int                     i = 0, j;
 
@@ -3351,14 +3349,14 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		object_known(o_ptr);
 		object_aware(o_ptr);
 
-		identify_fully_get(o_ptr, info);
+		identify_fully_get(o_ptr, info, FALSE);
 	
 		if (!hack_aware) k_info[o_ptr->k_idx].aware = FALSE;
 		if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
 	}
 	else
 	{
-		identify_fully_get(o_ptr, info);
+		identify_fully_get(o_ptr, info, FALSE);
 	}
 
 	if (paged)
@@ -3387,21 +3385,14 @@ void identify_fully_file(object_type *o_ptr, FILE *fff)
 
 	C_WIPE(info, MAX_IFA, ifa_type);
 
-	/* Set "brief" mode. */
-	brief = TRUE;
-
 	/* Grab the flags. */
-	identify_fully_get(o_ptr, info);
+	identify_fully_get(o_ptr, info, TRUE);
 
 	/* Dump the flags, wrapping at 80 characters. */
 	identify_fully_dump_file(fff, info);
 
 	/* Clear any allocated strings. */
 	identify_fully_clear(info);
-
-
-	/* Leave "brief" mode. */
-	brief = FALSE;
 }
 
 /*

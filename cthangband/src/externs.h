@@ -4012,7 +4012,4 @@ extern bool flush_error;
 #if (defined(TABLES_C) || defined(VARIABLE_C))
 extern bool speak_unique_w;
 #endif
-
-/* (null) */
-
 #endif /* INCLUDED_EXTERNS_H */
