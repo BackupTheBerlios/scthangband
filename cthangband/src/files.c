@@ -4101,6 +4101,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
  */
 void win_help_display_aux(FILE *fff)
 {
+	cptr path;
 	int x,y;
 	hyperlink_type h_ptr[1];
 
@@ -4119,8 +4120,20 @@ void win_help_display_aux(FILE *fff)
 		fprintf(ftmp, "%s", h_ptr->rbuf);
 	}
 
-	fclose(ftmp);
-	ftmp = my_fopen(h_ptr->path, "r");
+	my_fclose(ftmp);
+
+	/* Put the temporary file name somewhere safe. */
+	path = string_make(h_ptr->path);
+
+	/* Open this file for reading. */
+	ftmp = my_fopen(path, "r");
+
+	/* Reformat the text to fit in the window. */
+	ftmp = reflow_file(ftmp, h_ptr);
+
+	/* Delete the old temporary file. */
+	fd_kill(path);
+	FREE(path);
 
 	/* Find the height of the window. */
 	Term_get_size(&x, &y);
