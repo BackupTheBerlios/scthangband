@@ -1269,7 +1269,7 @@ void py_attack(int y, int x)
             }
 			else
 			{
-                msg_format("You backstab the fleeing %s!",
+                msg_format("You backstab the fleeing %v!",
                     monster_desc_aux_f3, r_ptr, 1, 0);
 				skill_exp(SKILL_STEALTH);
 			}
