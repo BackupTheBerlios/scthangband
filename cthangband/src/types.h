@@ -997,6 +997,8 @@ struct player_template
 
 	s16b c_adj[A_MAX];		/* Template stat modifier */
 
+	s16b qmin[A_MAX];	/* Minimum quick-start stats -max+17 */
+
 	s16b skill[19];		/* Skill improvements */
 
 	/* Objects to be given at the start (including backups for items which

@@ -1120,24 +1120,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RACE_ZOMBIE               29
 #define RACE_NONE 255
 
-/*
- * Player template constants (hard-coded by save-files, arrays, etc)
- */
-#define TPL_ADVENTURER   0
-#define TPL_SWASHBUCKLER              1
-#define TPL_GLADIATOR    2
-#define TPL_WARRIOR_MONK             3
-#define TPL_ZEN_MONK    4
-#define TPL_ASSASSIN   5
-#define TPL_RANGER 6
-#define TPL_SHAMAN 7
-#define TPL_MINDCRAFTER 8
-#define TPL_MAGE 9
-#define TPL_WARLOCK 10
-#define TPL_POWERWEAVER 11
-#define TPL_TOURIST 12
-
-
 /*** Screen Locations ***/
 
 /*

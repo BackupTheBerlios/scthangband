@@ -3238,7 +3238,7 @@ static bool quick_start_character(void)
 		clear_from(10);
 		/* Prompt for the minimum stats */
 		put_str("Enter minimum attribute for: ", 15, 2);
-		/* Output the maximum stats */
+		/* Store the maximum/minimum stats */
 		for (i = 0; i < A_MAX; i++)
 		{
 			/* Reset the "success" counter */
@@ -3249,162 +3249,9 @@ static bool quick_start_character(void)
 			m = adjust_stat(17, (s16b)j, TRUE);
 			/* Save the maximum */
 			mval[i] = m;
-		}
-		/* Hack in the minimum stats */
-		for (i = 0; i < A_MAX; i++)
-		{
-			stat_limit[i] = 0;
-		}
-		/* Save the minimum stat depending on template */
-		switch(p_ptr->ptemplate)
-		{
-		case TPL_ADVENTURER:
-			stat_limit[A_STR]=mval[A_STR]-1;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			stat_limit[A_CON]=mval[A_CON]-2;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			stat_limit[A_DEX]=mval[A_DEX]-4;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			break;
-		case TPL_SWASHBUCKLER:
-			stat_limit[A_DEX]=mval[A_DEX]-1;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			stat_limit[A_STR]=mval[A_STR]-2;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			stat_limit[A_CHR]=mval[A_CHR]-4;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			break;
-		case TPL_GLADIATOR:
-			stat_limit[A_CON]=mval[A_CON]-1;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			stat_limit[A_STR]=mval[A_STR]-2;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			stat_limit[A_DEX]=mval[A_DEX]-4;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			break;
-		case TPL_WARRIOR_MONK:
-			stat_limit[A_DEX]=mval[A_DEX]-1;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			stat_limit[A_CON]=mval[A_CON]-2;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			stat_limit[A_STR]=mval[A_STR]-4;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			break;
-		case TPL_ZEN_MONK:
-			stat_limit[A_DEX]=mval[A_DEX]-1;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			stat_limit[A_WIS]=mval[A_WIS]-2;
-			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-			stat_limit[A_CON]=mval[A_CON]-4;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			break;
-		case TPL_ASSASSIN:
-			stat_limit[A_DEX]=mval[A_DEX]-1;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			stat_limit[A_CON]=mval[A_CON]-2;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			stat_limit[A_INT]=mval[A_INT]-4;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			break;
-		case TPL_RANGER:
-			stat_limit[A_CON]=mval[A_CON]-1;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			stat_limit[A_CHR]=mval[A_CHR]-2;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			stat_limit[A_DEX]=mval[A_DEX]-4;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			break;
-		case TPL_SHAMAN:
-			stat_limit[A_CHR]=mval[A_CHR]-1;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			stat_limit[A_WIS]=mval[A_WIS]-2;
-			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-			stat_limit[A_CON]=mval[A_CON]-4;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			break;
-		case TPL_MINDCRAFTER:
-			stat_limit[A_WIS]=mval[A_WIS]-1;
-			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-			stat_limit[A_INT]=mval[A_INT]-2;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			stat_limit[A_CON]=mval[A_CON]-4;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			break;
-		case TPL_MAGE:
-			stat_limit[A_INT]=mval[A_INT]-1;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			stat_limit[A_DEX]=mval[A_DEX]-2;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-			stat_limit[A_CON]=mval[A_CON]-4;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			break;
-		case TPL_WARLOCK:
-			stat_limit[A_CON]=mval[A_CON]-1;
-			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-			stat_limit[A_INT]=mval[A_INT]-2;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			stat_limit[A_STR]=mval[A_STR]-4;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-			break;
-		case TPL_POWERWEAVER:
-			stat_limit[A_INT]=mval[A_INT]-1;
-			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-			stat_limit[A_WIS]=mval[A_WIS]-2;
-			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-			stat_limit[A_CHR]=mval[A_CHR]-4;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-			break;
-		case TPL_TOURIST:
-			/* No stat limits */
-			break;
+
+			/* Save the minimum, if any. The adjustment should be <=0. */
+			stat_limit[i] = adjust_stat(mval[i], cp_ptr->qmin[i]-17, TRUE);
 		}
 	}
 
