@@ -5,7 +5,7 @@ is today:
 Ken Dubuc, Mario Feldberg, Justin Rail and Iain Maclean for porting it to
 various operating systems.
 
-Dario, James Gordon, Doug G., Leon Marrick, Rob Rowe, Andrew Sidwell,
+James Gordon, Doug G., Leon Marrick, Rob Rowe, Dario Saccavino, Andrew Sidwell,
 Stig E Sandø and Wesley Weimer for various bug reports and fixes.
 
 Various people (including DarkGod, Steven Fuerst, Leon Marrick, Iain McFall and

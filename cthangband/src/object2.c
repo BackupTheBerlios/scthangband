@@ -3138,7 +3138,7 @@ void set_object_found(object_type *o_ptr, int how, int idx)
 	if (how != FOUND_BIRTH)
 	{
 		ptr->level = dun_level;
-		ptr->dungeon = wild_grid[wildy][wildx].dungeon;
+		ptr->dungeon = cur_dungeon;
 	}
 }
 
