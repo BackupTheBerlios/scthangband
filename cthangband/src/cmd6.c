@@ -697,9 +697,6 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	/* Sound */
 	sound(SOUND_ZAP);
 
-	/* Gain exp */
-	skill_exp(SKILL_DEVICE);
-
 	/* Use the object (which always takes a charge). */
 	use_object(o_ptr, dir);
 
@@ -711,6 +708,9 @@ void do_cmd_aim_wand(object_type *o_ptr)
 
 	/* Use a single charge */
 	o_ptr->pval--;
+
+	/* Gain exp */
+	skill_exp(SKILL_DEVICE);
 
 	/* Hack -- unstack if necessary */
 	if ((is_inventory_p(o_ptr)) && (o_ptr->number > 1))
@@ -826,9 +826,6 @@ void do_cmd_zap_rod(object_type *o_ptr)
 	/* Sound */
 	sound(SOUND_ZAP);
 
-	/* Gain exp */
-	skill_exp(SKILL_DEVICE);
-
 	/* Analyze the rod */
 	use_charge = use_object(o_ptr, dir);
 
@@ -857,6 +854,9 @@ void do_cmd_zap_rod(object_type *o_ptr)
 		int *t = timeout_table[-1-o_ptr->pval];
 		o_ptr->timeout = rand_range(t[0], t[1]);
 	}
+
+	/* Gain exp */
+	skill_exp(SKILL_DEVICE);
 
 	/* XXX Hack -- unstack if necessary */
 	if ((is_inventory_p(o_ptr)) && (o_ptr->number > 1))
@@ -1199,5 +1199,8 @@ void do_cmd_activate(object_type *o_ptr)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* Gain exp */
+		skill_exp(SKILL_DEVICE);
 	}
 }
