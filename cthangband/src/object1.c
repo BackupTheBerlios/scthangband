@@ -675,13 +675,13 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		j_ptr->ds = o_ptr->ds;
 		j_ptr->ac = o_ptr->ac;
 	}
-	/* As values of 0 are often special, use a blank object and special sval
-	 * if unaware (don't use a special tval for now, as the game uses this for
-	 * object_value_base() amongst other things). */
+	/* As values of 0 are often special, use a blank object, the tval from the
+	 * base type and and a special sval for unaware objects.
+	 */
 	else
 	{
 		j_ptr->k_idx = lookup_kind(0,0); /* != 0 */
-		j_ptr->tval = TV_UNKNOWN;
+		j_ptr->tval = o_base[u_info[k_ptr->u_idx].p_id].tval;
 		j_ptr->sval = SV_UNKNOWN;
 	}
 
@@ -2904,7 +2904,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 /*
  * Find out what, if any, stat changes the given item causes.
  */
-static void res_stat_details(object_type *o_ptr, int *i, ifa_type *info)
+static void res_stat_details(object_type *o_ptr, object_extra *x_ptr, int *i, ifa_type *info)
 {
 	byte stat, act;
 	s16b pval;
@@ -2967,6 +2967,21 @@ static void res_stat_details(object_type *o_ptr, int *i, ifa_type *info)
 		/* Put the currently worn item somewhere safe. */
 		object_copy(j_ptr, inventory+slot);
 
+		/* Hack - the player should know how to wear everything. */
+		if (slot == -1)
+		{
+			object_type tmp;
+			object_prep(&tmp, x_ptr->k_idx);
+			slot = wield_slot(&tmp);
+
+			/* Paranoia - not a wearable item? */
+			if (slot == -1)
+			{
+				p_ptr = &p_body;
+				return;
+			}
+		}
+
 		/* Put o_ptr in its place. */
 		object_copy(inventory+slot, o_ptr);
 
@@ -2977,8 +2992,8 @@ static void res_stat_details(object_type *o_ptr, int *i, ifa_type *info)
 		/* Compare the original with the same with this object wielded. */
 		res_stat_details_comp(p2_ptr, &p_body, i, info, act);
 
-		/* Replace inveotory+slot */
-		object_copy(inventory+slot, j_ptr);
+			/* Replace inveotory+slot */
+			object_copy(inventory+slot, j_ptr);
 	}
 
 	/* Return p_ptr to normal. */
@@ -3207,12 +3222,13 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	cptr board[16];
 
 	object_type o_ptr[1];
+	object_extra x_ptr[1];
 
 	/* Paranoia - no object. */
 	if (!o1_ptr || !o1_ptr->k_idx) return;
 
 	/* Extract the known info */
-	object_info_known(o_ptr, o1_ptr, 0);
+	object_info_known(o_ptr, o1_ptr, x_ptr);
 
 	/* Mega-Hack -- describe activation */
 	if (o_ptr->flags3 & (TR3_ACTIVATE))
@@ -3273,7 +3289,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	/* Recognise items which affect stats (detailed) */
 	if (!brief && spoil_stat)
 	{
-		res_stat_details(o_ptr, &i, info);
+		res_stat_details(o_ptr, x_ptr, &i, info);
 	}
 	/* If brevity is required or spoilers are not, put stats with the other
 	 * pval effects. */

@@ -2956,6 +2956,7 @@ static errr init_info_txt_pre(header *head)
  */
 static void find_ob_flags(header *head)
 {
+	bool ob_used[256];
 	int i;
 	o_base_type *obase = head->info_ptr;
 	for (i = 0; i < 256; i++)
@@ -2963,6 +2964,7 @@ static void find_ob_flags(header *head)
 		obase[i].flags1 = 0xFFFFFFFF;
 		obase[i].flags2 = 0xFFFFFFFF;
 		obase[i].flags3 = 0xFFFFFFFF;
+		ob_used[i] = FALSE;
 	}
 	for (i = 0; i < z_info->k_max; i++)
 	{
@@ -2971,9 +2973,22 @@ static void find_ob_flags(header *head)
 		/* Hack - object_kind.u_idx stores p_id during initialisation. */
 		o_base_type *ob_ptr = obase+k_ptr->u_idx;
 
+		/* Prune the flags as appropriate. */
 		ob_ptr->flags1 &= k_ptr->flags1;
 		ob_ptr->flags2 &= k_ptr->flags2;
 		ob_ptr->flags3 &= k_ptr->flags3;
+
+		/* Set tval on the first such object. */
+		if (!ob_used[k_ptr->u_idx])
+		{
+			ob_used[k_ptr->u_idx] = TRUE;
+			ob_ptr->tval = k_ptr->tval;
+		}
+		/* And unset it if the tval is unknown. */
+		else if (ob_ptr->tval != k_ptr->tval)
+		{
+			ob_ptr->tval = TV_UNKNOWN;
+		}
 	}
 }
 

@@ -458,19 +458,6 @@ logaux(x, 1) logaux(x, 0) 255
 
 
 /*
- * u_info flags
- */
-/* Base flags */
-#define UNID_BASE_ONLY	0x01	/* All items have a s_id of 0 */
-
-/* Non-base flags */
-#define UNID_SCROLL_N	0x10	/* A normal "scroll" entry */
-#define UNID_NO_BASE	0x20	/* Use this as the base item. */
-
-/* s_id of base item */
-#define SID_BASE	0
-
-/*
  * Special name characters.
  */
 #define CM_NORM	0x00	/* Negate both CM_TRUE and CM_FALSE. */

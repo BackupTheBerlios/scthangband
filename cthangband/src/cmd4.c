@@ -1992,11 +1992,6 @@ static bool visual_reject_feat(uint n)
 	return (f_info[n].mimic != n);
 }
 
-static bool visual_reject_unident(uint n)
-{
-	return (u_info[n].s_id == SID_BASE);
-}
-
 static bool visual_reject_obj(uint n)
 {
 	return (k_info[n].name == 0);
@@ -2050,9 +2045,8 @@ void do_cmd_visuals(void)
 		{"monster memory attrs", get_visuals_moncol, visual_dump_moncol, 0,
 			0, "Monster memory attr definitions", &max_moncol, 'M', TRUE, FALSE},
 		{"unidentified object attr/chars", get_visuals_unident, 0,
-			pref_str_unident, visual_reject_unident,
-			"Unidentified object attr/char definitions", &MAX_U_IDX, 'U', TRUE,
-			TRUE},
+			pref_str_unident, 0, "Unidentified object attr/char definitions",
+			&MAX_U_IDX, 'U', TRUE, TRUE},
 	};
 
 	/* File type is "TEXT" */

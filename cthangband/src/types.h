@@ -278,6 +278,7 @@ struct o_base_type
 	u32b flags1;	/* Expected flags, set 1 */
 	u32b flags2;	/* Expected flags, set 2 */
 	u32b flags3;	/* Expected flags, set 3 */
+	byte tval;	/* The tval for this base type, TV_UNKNOWN if none. */
 };
 
 /*
