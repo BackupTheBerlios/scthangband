@@ -3907,7 +3907,7 @@ static bool get_item_okay(object_ctype *o_ptr)
 /*
  * Allow the game and the player to reject an item at a prompt.
  */
-static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
+static void get_item_valid(object_type **o_ptr, bool *done, errr *err, bool ver)
 {
 	/* Validate the item */
 	if (!*o_ptr || !get_item_okay(*o_ptr))
@@ -3920,12 +3920,14 @@ static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
 	else if ((ver && !verify("Try", *o_ptr)) || !get_item_allow(*o_ptr))
 	{
 		*o_ptr = NULL;
+		*err = GET_ITEM_ERROR_ABORT;
 		*done = TRUE;
 	}
 
 	/* Good, so accept the item and finish. */
 	else
 	{
+		*err = SUCCESS;
 		*done = TRUE;
 	}
 }
@@ -4435,7 +4437,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, ISUPPER(which));
+				get_item_valid(&o_ptr, &done, err, ISUPPER(which));
 
 				break;
 			}
@@ -4462,7 +4464,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, FALSE);
+				get_item_valid(&o_ptr, &done, err, FALSE);
 
 				break;
 			}
@@ -4506,7 +4508,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, FALSE);
+				get_item_valid(&o_ptr, &done, err, FALSE);
 				break;
 			}
 
@@ -4557,7 +4559,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				else if (cursed) o_ptr = cursed;
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, ISUPPER(which));
+				get_item_valid(&o_ptr, &done, err, ISUPPER(which));
 
 				break;
 			}
@@ -4613,7 +4615,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, upper);
+				get_item_valid(&o_ptr, &done, err, upper);
 
 				break;
 			}
@@ -4636,7 +4638,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, upper);
+				get_item_valid(&o_ptr, &done, err, upper);
 
 				break;
 			}
