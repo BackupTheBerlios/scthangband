@@ -574,7 +574,7 @@ static void health_redraw(void)
  * Note that this function induces various "status" messages,
  * which must be bypasses until the character is created.
  */
-static void calc_spells(bool quiet)
+static void calc_spells(void)
 {
 	const s16b old_new_spells = p_ptr->new_spells;
 
@@ -645,8 +645,7 @@ static void calc_spells(bool quiet)
 			s_ptr->flags &= ~MAGIC_LEARNED;
 
 			/* Message */
-			if (!quiet)
-				msg_format("You have forgotten the %s of %s.", p, s_ptr->name);
+			msg_format("You have forgotten the %s of %s.", p, s_ptr->name);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -681,8 +680,7 @@ static void calc_spells(bool quiet)
 			s_ptr->flags &= ~MAGIC_LEARNED;
 
 			/* Message */
-			if (!quiet)
-				msg_format("You have forgotten the %s of %s.", p, s_ptr->name);
+			msg_format("You have forgotten the %s of %s.", p, s_ptr->name);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -718,8 +716,7 @@ static void calc_spells(bool quiet)
 			s_ptr->flags |= MAGIC_LEARNED;
 
 			/* Message */
-			if (!quiet)
-				msg_format("You have remembered the %s of %s.", p, s_ptr->name);
+			msg_format("You have remembered the %s of %s.", p, s_ptr->name);
 
 			/* One less can be learned */
 			p_ptr->new_spells--;
@@ -754,7 +751,7 @@ static void calc_spells(bool quiet)
 	{
 
 		/* Message if needed and allowed. */
-		if (p_ptr->new_spells && !quiet)
+		if (p_ptr->new_spells)
 		{
 			/* Message */
 			msg_format("You can learn %d more %s%s.",
@@ -846,7 +843,7 @@ bool PURE cumber_helm(object_ctype *o_ptr)
  *
  * This function also calculates maximum chi
  */
-static void calc_mana(bool quiet)
+static void calc_mana(void)
 {
 	int	msp, levels, cur_wgt, max_wgt;
 	int     mchi;
@@ -1007,10 +1004,8 @@ static void calc_mana(bool quiet)
 	/* Take note when "glove state" changes */
 	if (old_cumber_glove != p_ptr->cumber_glove)
 	{
-		/* No message */
-		if (quiet);
 		/* Message */
-		else if (p_ptr->cumber_glove)
+		if (p_ptr->cumber_glove)
 		{
 			msg_print("Your covered hands feel unsuitable for spellcasting.");
 		}
@@ -1023,10 +1018,8 @@ static void calc_mana(bool quiet)
 	/* Take note when "helm state" changes */
 	if (old_cumber_helm != p_ptr->cumber_helm)
 	{
-		/* No message */
-		if (quiet);
 		/* Message */
-		else if (p_ptr->cumber_helm)
+		if (p_ptr->cumber_helm)
 		{
 			msg_print("Your covered head feels unsuitable for mindcrafting.");
 		}
@@ -1039,10 +1032,8 @@ static void calc_mana(bool quiet)
 	/* Take note when "armor state" changes */
 	if (old_cumber_armor != p_ptr->cumber_armor)
 	{
-		/* No message */
-		if (quiet);
 		/* Message */
-		else if (p_ptr->cumber_armor)
+		if (p_ptr->cumber_armor)
 		{
 			msg_print("The weight of your armor encumbers your movement.");
 		}
@@ -1332,12 +1323,8 @@ bool player_no_stun(void)
  * are actually added in later, at the appropriate place.
  *
  * This function induces various "status" messages.
- *
- * The "quiet" option disables all status change messages, used as
- * identify_fully_aux() may call this routine several times without
- * player intervention.
  */
-static void calc_bonuses(bool quiet)
+static void calc_bonuses(void)
 {
 	int			i, j, hold;
 
@@ -1379,9 +1366,9 @@ static void calc_bonuses(bool quiet)
 
 	/* Can we assign a weapon skill? */
 	if (!(p_ptr->wield_skill=wield_skill(o_ptr)))
-			{
-			if (!quiet) msg_print("Unknown weapon tval wielded - defaulting to close combat skill.");
-			p_ptr->wield_skill = SKILL_CLOSE;
+	{
+		msg_print("Unknown weapon tval wielded - defaulting to close combat skill.");
+		p_ptr->wield_skill = SKILL_CLOSE;
 	}
 
 
@@ -2495,10 +2482,8 @@ static void calc_bonuses(bool quiet)
 	/* Take note when "heavy bow" changes */
 	if (old_heavy_shoot != p_ptr->heavy_shoot)
 	{
-		/* No message */
-		if (quiet);
 		/* Message */
-		else if (p_ptr->heavy_shoot)
+		if (p_ptr->heavy_shoot)
 		{
 			msg_print("You have trouble wielding such a heavy bow.");
 		}
@@ -2516,10 +2501,8 @@ static void calc_bonuses(bool quiet)
 	/* Take note when "heavy weapon" changes */
 	if (old_heavy_wield != p_ptr->heavy_wield)
 	{
-		/* No message */
-		if (quiet);
 		/* Message */
-		else if (p_ptr->heavy_wield)
+		if (p_ptr->heavy_wield)
 		{
 			msg_print("You have trouble wielding such a heavy weapon.");
 		}
@@ -2535,10 +2518,8 @@ static void calc_bonuses(bool quiet)
 
 	if (old_ma_cumber_armour != p_ptr->ma_cumber_armour)
 	{
-		/* No message */
-		if (quiet);
 		/* Message */
-		else if (p_ptr->ma_cumber_armour)
+		if (p_ptr->ma_cumber_armour)
 			msg_print("The weight of your armor disrupts your balance.");
 		else
 			msg_print("You regain your balance.");
@@ -2680,14 +2661,13 @@ void update_stuff(void)
 	if (!p_ptr->update) return;
 
 	/*
-	 * If quiet is set, this should calculate the changes but not comment
-	 * on them. It should be included in any routines which print messages.
-	 * The changes are still made, however.
+	 * If quiet is set, this carries out the changes but does not comment
+	 * on them.
 	 */
 	if (p_ptr->update & (PU_QUIET))
 	{
 		p_ptr->update &= ~(PU_QUIET);
-		quiet = TRUE;
+		no_msg_print = quiet = TRUE;
 	}
 	else
 	{
@@ -2697,7 +2677,7 @@ void update_stuff(void)
 	if (p_ptr->update & (PU_BONUS))
 	{
 		p_ptr->update &= ~(PU_BONUS);
-		calc_bonuses(quiet);
+		calc_bonuses();
 	}
 
 	if (p_ptr->update & (PU_MA_ARMOUR))
@@ -2721,15 +2701,17 @@ void update_stuff(void)
 	if (p_ptr->update & (PU_MANA))
 	{
 		p_ptr->update &= ~(PU_MANA);
-		calc_mana(quiet);
+		calc_mana();
 	}
 
 	if (p_ptr->update & (PU_SPELLS))
 	{
 		p_ptr->update &= ~(PU_SPELLS);
-		calc_spells(quiet);
+		calc_spells();
 	}
 
+	/* Hack - allow messages again. */
+	no_msg_print = FALSE;
 
 	/* Only making temporary changes, no screen updates */
 	if (quiet) return;

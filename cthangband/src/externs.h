@@ -4004,7 +4004,7 @@ extern void prt_timers(void);
 
 /* util.c */
 
-#if (defined(DUNGEON_C) || defined(UTIL_C))
+#if (defined(DUNGEON_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool no_msg_print;
 #endif
 #endif /* INCLUDED_EXTERNS_H */
