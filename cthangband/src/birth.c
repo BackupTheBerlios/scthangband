@@ -31,7 +31,7 @@ struct birther
 
 	s32b au;
 
-	s16b stat[6];
+	s16b stat[A_MAX];
 
 	char history[4][60];
 };
@@ -557,12 +557,12 @@ static hist_type bg[] =
 /*
  * Autoroll limit
  */
-static s16b stat_limit[6];
+static s16b stat_limit[A_MAX];
 
 /*
  * Autoroll matches
  */
-static s32b stat_match[6];
+static s32b stat_match[A_MAX];
 
 /*
  * Autoroll round
@@ -891,7 +891,7 @@ static errr save_stats(void)
 				if (stat_default[i][j][k][0])
 				{
 					fprintf(fff, "D:%c:%c:%d", rtoa(i), rtoa(j), k);
-					for (l = A_STR; l<= A_CHR; l++)
+					for (l = 0; l< A_MAX; l++)
 							fprintf(fff, ":%d",stat_default[i][j][k][l]);
 					fprintf(fff, "\n");
 				}
@@ -1051,7 +1051,7 @@ static bool point_mod_player(void)
 		if (i == IDX_FILE)
 		{
 			/* Set the current stats as default */
-			for (x = A_STR; x <= A_CHR; x++)
+			for (x = 0; x < A_MAX; x++)
 		{
 					stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x] = p_ptr->stat_max[x];
 			}
@@ -1062,7 +1062,7 @@ static bool point_mod_player(void)
 		/* Load saved stats at startup and on demand */
 		if (i & IDX_LOAD)
 		{
-			for (x = A_STR; x <= A_CHR; x++)
+			for (x = 0; x < A_MAX; x++)
 		{
 				s16b tmp = stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x];
 				if (tmp > 0)
@@ -1110,7 +1110,7 @@ static bool point_mod_player(void)
 			if (maximise_mode)
 			{
 				int j;
-				for (j = A_STR; j<= A_CHR; j++)
+				for (j = 0; j< A_MAX; j++)
 				{
 					int adj = rp_ptr->r_adj[j] + cp_ptr->c_adj[j];
 					if (p_ptr->stat_cur[j] + adj < 3)
@@ -1526,7 +1526,7 @@ static void save_prev_data(void)
 	prev.au = p_ptr->au;
 
 	/* Save the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		prev.stat[i] = p_ptr->stat_max[i];
 	}
@@ -1560,7 +1560,7 @@ static void load_prev_data(void)
 	temp.birthday = p_ptr->birthday;
 
 	/* Save the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		temp.stat[i] = p_ptr->stat_max[i];
 	}
@@ -1582,7 +1582,7 @@ static void load_prev_data(void)
 	p_ptr->au = prev.au;
 
 	/* Load the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		p_ptr->stat_max[i] = prev.stat[i];
 		p_ptr->stat_cur[i] = prev.stat[i];
@@ -1605,7 +1605,7 @@ static void load_prev_data(void)
 	prev.au = temp.au;
 
 	/* Save the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		prev.stat[i] = temp.stat[i];
 	}
@@ -1721,7 +1721,7 @@ static void get_stats(void)
 	}
 
 	/* Acquire the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Extract 5 + 1d3 + 1d4 + 1d5 */
 		j = 5 + dice[3*i] + dice[3*i+1] + dice[3*i+2];
@@ -2016,7 +2016,7 @@ static void get_money(bool random)
 	gold = (p_ptr->sc * 6) + (random ? randint(100) : 51) + 300;
 
 	/* Process the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Mega-Hack -- reduce gold for high stats */
 		if (p_ptr->stat_use[i] >= 18+50) gold -= 300;
@@ -2048,7 +2048,7 @@ static void birth_put_stats(void)
 
 
 	/* Put the stats (and percents) */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Put the stat */
 		cnv_stat(p_ptr->stat_use[i], buf);
@@ -2782,7 +2782,7 @@ static bool player_birth_aux()
 		/* Initialize */
 		if (autoroll)
 		{
-			int mval[6];
+			int mval[A_MAX];
 			/* Clear fields */
 			auto_round = 0L;
 			last_round = 0L;
@@ -2791,7 +2791,7 @@ static bool player_birth_aux()
 			/* Prompt for the minimum stats */
 			put_str("Enter minimum attribute for: ", 15, 2);
 			/* Output the maximum stats */
-			for (i = 0; i < 6; i++)
+			for (i = 0; i < A_MAX; i++)
 			{
 				/* Reset the "success" counter */
 				stat_match[i] = 0;
@@ -2803,7 +2803,7 @@ static bool player_birth_aux()
 				mval[i] = m;
 			}
 			/* Hack in the minimum stats */
-			for (i = 0; i < 6; i++)
+			for (i = 0; i < A_MAX; i++)
 			{
 				stat_limit[i] = 0;
 			}
@@ -3026,7 +3026,7 @@ static bool player_birth_aux()
 				if (auto_round >= 1000000L) break;
 
 				/* Check and count acceptable stats */
-				for (i = 0; i < 6; i++)
+				for (i = 0; i < A_MAX; i++)
 				{
 					/* This stat is okay */
 					if (p_ptr->stat_use[i] >= stat_limit[i])
@@ -3425,7 +3425,7 @@ static bool player_birth_aux()
 		/* Initialize Autoroller if necessary */
 		if (autoroll)
 		{
-			int mval[6];
+			int mval[A_MAX];
 
 
 
@@ -3440,7 +3440,7 @@ static bool player_birth_aux()
 			put_str("Enter minimum attribute for: ", 15, 2);
 
 			/* Output the maximum stats */
-			for (i = 0; i < 6; i++)
+			for (i = 0; i < A_MAX; i++)
 			{
 				/* Reset the "success" counter */
 				stat_match[i] = 0;
@@ -3477,7 +3477,7 @@ static bool player_birth_aux()
 			}
 
 			/* Input the minimum stats */
-			for (i = 0; i < 6; i++)
+			for (i = 0; i < A_MAX; i++)
 			{
 				/* Get a minimum stat */
 				while (TRUE)
