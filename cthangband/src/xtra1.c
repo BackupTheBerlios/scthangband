@@ -277,8 +277,11 @@ static void prt_spirit(void)
 		spirit_type *s_ptr = spirits+i;
 
 		/* Add to the appropriate string. */
-		if (i % 2) s = &ws;
-		else s = &ls;
+		if (s_ptr->sphere == SPIRIT_NATURE) s = &ws;
+		else if (s_ptr->sphere == SPIRIT_LIFE) s = &ls;
+
+		/* Paranoia - an unidentified sphere. */
+		else continue;
 
 		if(!(s_ptr->pact))
 		{

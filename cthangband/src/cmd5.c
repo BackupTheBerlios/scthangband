@@ -41,22 +41,6 @@ static book_type *k_idx_to_book(int i)
 	}
 }
 
-static book_type *spirit_to_book(int i)
-{
-	switch (i)
-	{
-		case 0: return book_info+BK_LIFE_0;
-		case 2: return book_info+BK_LIFE_1;
-		case 4: return book_info+BK_LIFE_2;
-		case 6: return book_info+BK_LIFE_3;
-		case 1: return book_info+BK_WILD_0;
-		case 3: return book_info+BK_WILD_1;
-		case 5: return book_info+BK_WILD_2;
-		case 7: return book_info+BK_WILD_3;
-		default: return 0;
-	}
-}
-
 /*
  * Find the number a hermetic spell is associated with.
  */
@@ -1671,7 +1655,7 @@ void do_cmd_invoke(void)
 	s_ptr = &(spirits[spirit]);
 
 	/* Get a pointer to its spells. */
-	b_ptr = spirit_to_book(spirit);
+	b_ptr = book_info+s_ptr->book;
 
 	/* Hack -- Handle stuff */
 	handle_stuff();

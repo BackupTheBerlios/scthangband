@@ -1319,12 +1319,16 @@ typedef struct spirit_type spirit_type;
 struct spirit_type {
 	char name[20]; /* The name of the spirit */
 	cptr desc; /* The description of the spirit */
-	u32b favour_flags; /* Like the 'spell_flags' array */
 	u32b annoyance; /* How annoyed the spirit is with the player */
+
 	bool pact; /* Whether the player has a pact with this spirit */
 	byte sphere; /* sphere of influence */
 	byte minskill; /* Minimum skill to form a pact */
 	byte punish_chance; /* How likely the spirit is to punish the player. */
+
+	s16b cost; /* The base cost of associating with this spirit. */
+	byte stat; /* The stats drained by associating with this spirit. */
+	byte book; /* The index of the book_type associated with this spirit. */
 };
 
 /* Stat defaults */

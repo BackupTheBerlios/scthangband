@@ -3925,6 +3925,67 @@ static s32b max_player_skill(void)
 	return (s32b)max;
 }
 
+/* Stat loss for spirit_associate(). */
+static name_centry spirit_stats[A_MAX] =
+{
+	{A_CHR, "You recieve scars during the ritual."},
+	{A_CON, "The fasting damages your constitution."},
+	{A_STR, "The blood sacrifice saps your strength."},
+	{A_DEX, "The halucinagenic herbs give you a twitch."},
+};
+
+/*
+ * Allow the player to gain access to a spirit.
+ */
+static void spirit_associate(void)
+{
+	s32b price;
+	int i;
+
+	if (!get_spirit(&i,"Form a pact with",FALSE))
+	{
+		if (i == -2)
+		{
+			msg_print("There are no spirits that you can form a pact with.");
+		}
+	}
+	else if (service_haggle(spirits[i].cost, &price,
+		format("form a pact with %s", spirits[i].name), i + 128))
+	{
+		/* Failure to agree a price gives its own error messages. */
+	}
+	else if (price > p_ptr->au)
+	{
+		msg_print("You do not have the gold!");
+	}
+	else
+	{
+		name_centry *ptr;
+
+		p_ptr->au -= price;
+		/* Say "okay" */
+		say_comment_1();
+		/* Make a sound */
+		sound(SOUND_BUY);
+		/* Be happy */
+		decrease_insults();
+		store_prt_gold();
+		spirits[i].pact=TRUE;
+
+		FOR_ALL_IN(spirit_stats, ptr)
+		{
+			if (spirits[i].stat & 1<<(ptr->idx))
+			{
+				dec_stat(ptr->idx, 10, TRUE);
+				msg_print(ptr->str);
+			}
+		}
+
+		/* Redraw stuff (later). */
+		p_ptr->redraw |= PR_SPIRIT;
+	}
+}
+
 /*
  * Process a command in a store
  *
@@ -3936,8 +3997,6 @@ static s32b max_player_skill(void)
 static void store_process_command(void)
 {
 	s32b price,cost;
-	int i;
-	char buf[80];
 
 	const int items = STORE_ITEMS_PER_PAGE;
 
@@ -4285,130 +4344,10 @@ static void store_process_command(void)
 				switch(cur_store_type)
 				{
 				case STORE_TEMPLE:
-					if (!get_spirit(&i,"Form a pact with",FALSE))
-					{
-						if (i == -2)
-						{
-							msg_print("There are no spirits that you can form a pact with.");
-							break;
-						}
-					}
-					else /* We got a spirit back */
-					{
-						sprintf(buf, "form a pact with %s", spirits[i].name);
-
-						switch(spirits[i].favour_flags)
-						{
-						case 0x000000ff:
-							if (!service_haggle(100,&price, buf, i + 128))
-							{
-								if (price > p_ptr->au)
-								{
-									msg_print("You do not have the gold!");
-								}
-								else
-								{
-									p_ptr->au -= price;
-									/* Say "okay" */
-									say_comment_1();
-									/* Make a sound */
-									sound(SOUND_BUY);
-									/* Be happy */
-									decrease_insults();
-									store_prt_gold();
-									spirits[i].pact=TRUE;
-									dec_stat(A_CHR,10,TRUE);
-									msg_print("You recieve scars during the ritual.");
-								}
-							}
-							break;
-						case 0x0000ff00:
-							if (!service_haggle(1000,&price, buf, i + 128))
-							{
-								if (price > p_ptr->au)
-								{
-									msg_print("You do not have the gold!");
-								}
-								else
-								{
-									p_ptr->au -= price;
-									/* Say "okay" */
-									say_comment_1();
-									/* Make a sound */
-									sound(SOUND_BUY);
-									/* Be happy */
-									decrease_insults();
-									store_prt_gold();
-									dec_stat(A_CHR,10,TRUE);
-									dec_stat(A_CON,10,TRUE);
-									spirits[i].pact=TRUE;
-									msg_print("You recieve scars during the ritual.");
-									msg_print("The fasting damages your constitution.");
-								}
-							}
-							break;
-							case 0x00ff0000:
-								if (!service_haggle(5000,&price, buf, i + 128))
-							{
-								if (price > p_ptr->au)
-								{
-									msg_print("You do not have the gold!");
-								}
-								else
-								{
-									p_ptr->au -= price;
-									/* Say "okay" */
-									say_comment_1();
-									/* Make a sound */
-									sound(SOUND_BUY);
-									/* Be happy */
-									decrease_insults();
-									store_prt_gold();
-									dec_stat(A_CHR,10,TRUE);
-									dec_stat(A_CON,10,TRUE);
-									dec_stat(A_STR,10,TRUE);
-									spirits[i].pact=TRUE;
-									msg_print("You recieve scars during the ritual.");
-									msg_print("The fasting damages your constitution.");
-									msg_print("The blood sacrifice saps your strength.");
-								}
-							}
-							break;
-						case 0xff000000:
-								if (!service_haggle(25000,&price, buf, i + 128))
-							{
-								if (price > p_ptr->au)
-								{
-									msg_print("You do not have the gold!");
-								}
-								else
-								{
-									p_ptr->au -= price;
-									/* Say "okay" */
-									say_comment_1();
-									/* Make a sound */
-									sound(SOUND_BUY);
-									/* Be happy */
-									decrease_insults();
-									store_prt_gold();
-									dec_stat(A_CHR,10,TRUE);
-									dec_stat(A_CON,10,TRUE);
-									dec_stat(A_STR,10,TRUE);
-									dec_stat(A_DEX,10,TRUE);
-									spirits[i].pact=TRUE;
-									msg_print("You recieve scars during the ritual.");
-									msg_print("The fasting damages your constitution.");
-									msg_print("The blood sacrifice saps your strength.");
-									msg_print("The halucinagenic herbs give you a twitch.");
-								}
-							}
-							break;
-						}
-
-						/* Redraw stuff (later). */
-						p_ptr->redraw |= PR_SPIRIT;
-					}
+				{
+					spirit_associate();
 					break;
+				}
 				default:
 					msg_print("That command does not work in this store.");
 					break;

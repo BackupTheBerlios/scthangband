@@ -3634,20 +3634,30 @@ wild_type wild_grid[12][12] =
 	{WGT(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)},
 };
 
+/* Stat loss for various types of spirit. */
+#define H (1<<A_CHR)
+#define CH (H | (1<<A_CON))
+#define SCH (CH | (1<<A_STR))
+#define SDCH (SCH | (1<<A_DEX))
+
+/* Hide the variable fields. */
+#define SPIRIT(STR, SPHERE, MINSKILL, PUNISH, COST, STAT, BOOK) \
+	{"", STR, 0, FALSE, SPHERE, MINSKILL, PUNISH, COST, STAT, BOOK}
+
 /* Shamanic spirits */
 spirit_type spirits[MAX_SPIRITS] =
 {
-	{"","a minor life spirit",0x000000ff,0,0,SPIRIT_LIFE,1, 15},
-	{"","a minor wild spirit",0x000000ff,0,0,SPIRIT_NATURE,1, 15},
+	SPIRIT("a minor life spirit", SPIRIT_LIFE, 1, 15, 100, H, BK_LIFE_0),
+	SPIRIT("a minor wild spirit", SPIRIT_NATURE, 1, 15, 100, H, BK_WILD_0),
 
-	{"","a lesser life spirit",0x0000ff00,0,0,SPIRIT_LIFE,7, 30},
-	{"","a lesser wild spirit",0x0000ff00,0,0,SPIRIT_NATURE,5, 30},
+	SPIRIT("a lesser life spirit", SPIRIT_LIFE, 7, 30, 1000, CH, BK_LIFE_1),
+	SPIRIT("a lesser wild spirit", SPIRIT_NATURE, 5, 30, 1000, CH, BK_WILD_1),
 
-	{"","a greater life spirit",0x00ff0000,0,0,SPIRIT_LIFE,15, 45},
-	{"","a greater wild spirit",0x00ff0000,0,0,SPIRIT_NATURE,7, 45},
+	SPIRIT("a greater life spirit", SPIRIT_LIFE, 15, 45, 5000, SCH, BK_LIFE_2),
+	SPIRIT("a greater wild spirit", SPIRIT_NATURE, 7, 45, 5000, SCH, BK_WILD_2),
 
-	{"","a major life spirit",0xff000000,0,0,SPIRIT_LIFE,5, 60},
-	{"","a major wild spirit",0xff000000,0,0,SPIRIT_NATURE,20, 60},
+	SPIRIT("a major life spirit", SPIRIT_LIFE, 5, 60, 25000, SDCH, BK_LIFE_3),
+	SPIRIT("a major wild spirit",SPIRIT_NATURE, 20, 60, 25000, SDCH, BK_WILD_3),
 };
 
 /*
