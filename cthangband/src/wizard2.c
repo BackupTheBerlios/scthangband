@@ -13,55 +13,8 @@
 
 #include "angband.h"
 
-/*
- * Hack -- Rerate Hitpoints
- */
-void do_cmd_rerate(void)
-{
-	int i;
-	int lastroll,j;
-
-	/* Pre-calculate level 1 hitdice */
-	player_hp[0] = p_ptr->hitdie;
-
-	/* Roll out the hitpoints */
-
-	/* 'Roll' the hitpoint values */
-	lastroll = p_ptr->hitdie;
-	for (i = 1; i < 100; i++)
-	{
-		player_hp[i]=lastroll;
-		lastroll--;
-		if(lastroll<1) lastroll = p_ptr->hitdie;
-	}
-	/* Now shuffle them */
-	for(i=1;i<100;i++)
-	{
-		j=randint(99);
-		lastroll=player_hp[i];
-		player_hp[i]=player_hp[j];
-		player_hp[j]=lastroll;
-	}
-	/* Make each a cumulative score */
-	for(i=1;i<100;i++)
-	{
-	player_hp[i] = player_hp[i-1] +player_hp[i];
-	}
-
-	/* Update and redraw hitpoints */
-	p_ptr->update |= (PU_HP);
-	p_ptr->redraw |= (PR_HP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
-
-	/* Handle stuff */
-	handle_stuff();
-}
-
-
-
 #ifdef ALLOW_WIZARD
+
 
 /*
  * Run a suitable function, return the screen to its appearance before the
@@ -1419,10 +1372,10 @@ void do_cmd_debug(void)
 }
 
 
-#else
+#else /* ALLOW_WIZARD */
 
 #ifdef MACINTOSH
 static int i = 0;
 #endif
 
-#endif
+#endif /* ALLOW_WIZARD */

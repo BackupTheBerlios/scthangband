@@ -1992,53 +1992,6 @@ static void get_stats(void)
 
 
 /*
- * Roll for some info that the auto-roller ignores
- */
-static void get_extra(void)
-{
-	int		i, j;
-	int		lastroll;
-    
-
-
-	/* Experience factor */
-	p_ptr->expfact = rp_ptr->r_exp; /* + cp_ptr->c_exp; */
-
-	/* Hitdice */
-	p_ptr->hitdie = rp_ptr->r_mhp; /* + cp_ptr->c_mhp; */
-
-	/* Initial hitpoints */
-	p_ptr->mhp = p_ptr->hitdie/2;
-
-	/* Pre-calculate level 1 hitdice */
-	player_hp[0] = p_ptr->hitdie;
-
-	/* Roll out the hitpoints */
-
-	/* 'Roll' the hitpoint values */
-	lastroll = p_ptr->hitdie;
-	for (i = 1; i < 100; i++)
-	{
-		player_hp[i]=lastroll;
-		lastroll--;
-		if(lastroll<1) lastroll = p_ptr->hitdie;
-	}
-	/* Now shuffle them */
-	for(i=1;i<100;i++)
-	{
-		j=randint(99);
-		lastroll=player_hp[i];
-		player_hp[i]=player_hp[j];
-		player_hp[j]=lastroll;
-	}
-	/* Make each a cumulative score */
-	for(i=1;i<100;i++)
-	{
-	player_hp[i] = player_hp[i-1] +player_hp[i];
-	}
-}
-
-/*
  * Helper function for get_social_average()
  * This finds the the average social of a race for which rp_ptr->chart = chart.
  * Total is the size of the array of charts.
@@ -2728,8 +2681,14 @@ static void player_birth_quests(void)
  */
 static void get_final(void)
 {
-	/* Roll for base hitpoints */
-	get_extra();
+	/* Experience factor */
+	p_ptr->expfact = rp_ptr->r_exp;
+
+	/* Hitdice */
+	p_ptr->hitdie = rp_ptr->r_mhp;
+
+	/* Calculate hit points. */
+	do_cmd_rerate();
 
 	/* Roll for age/height/weight */
 	get_ahw();
@@ -2743,8 +2702,8 @@ static void get_final(void)
 	/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
 	p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
 
-	/* Calculate the bonuses and hitpoints */
-	p_ptr->update |= (PU_BONUS | PU_HP);
+	/* Calculate the bonuses. */
+	p_ptr->update |= (PU_BONUS);
 
 	/* Update stuff */
 	update_stuff();

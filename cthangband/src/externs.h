@@ -3248,7 +3248,7 @@ extern player_template *cp_ptr;
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern byte spell_order[128];
 #endif
-#if (defined(BIRTH_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b player_hp[100];
 #endif
 #if (defined(ANGBAND_H))
@@ -3417,9 +3417,9 @@ extern u16b rebuild_raw;
 extern void do_cmd_spoilers(void);
 #endif
 
-/* wizard2.c */
+/* spells2.c */
 
-#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(WIZARD2_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C))
 extern void do_cmd_rerate(void);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
@@ -3527,7 +3527,7 @@ extern void event_stuff(void);
 #if (defined(DUNGEON_C) || defined(XTRA1_C))
 extern void resize_window(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void handle_stuff(void);
 #endif
 #if (defined(CMD1_C) || defined(FILES_C) || defined(XTRA1_C))
