@@ -2368,12 +2368,10 @@ static void set_var_aux(object_type *o_ptr, bonus_type *b_ptr, const int level,
 	}
 }
 
-#define END(X) (X+N_ELEMENTS(X))
-
 static void set_var(object_type *o_ptr, const int level, const int power)
 {
 	bonus_type *b_ptr;
-	for (b_ptr = bonus_table; b_ptr < END(bonus_table); b_ptr++)
+	for (b_ptr = bonus_table; b_ptr < END_PTR(bonus_table); b_ptr++)
 	{
 		if (b_ptr->k_idx == o_ptr->k_idx)
 			set_var_aux(o_ptr, b_ptr, level, power+b_ptr->power);
@@ -2895,8 +2893,6 @@ void apply_magic_2(object_type *o_ptr, const int lev)
 	/* Examine real objects */
 	if (o_ptr->k_idx && !o_ptr->name1 && !o_ptr->name2)
 	{
-		object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
 		/* Hack -- acquire "broken" flag */
 		if (!k_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 

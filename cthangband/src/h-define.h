@@ -112,7 +112,7 @@
 /*
  * Given an array, find the pointer at the end of it.
  */
-#define END_PTR(a) ((a) + N_ELEMENTS(a))
+#define END_PTR(X) ((X) + N_ELEMENTS(X))
 
 /* Try to mark unused variables as such in a way the compiler understands. */
 #ifdef __GNUC__
