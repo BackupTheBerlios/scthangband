@@ -2869,7 +2869,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 /*
  * Find out what, if any, stat changes the given item causes.
  */
-static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_a)
+static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_a, bool worn)
 {
 	byte stat, act;
 	s16b pval;
@@ -2894,8 +2894,18 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 	 */
 	if (act & (A_RESTORE | A_INCREASE)) change_stat_min(stat, act);
 
+	/* An item that gives no effects for being worn. */
+	if (!pval)
+	{
+		/* Correct bonuses quietly. */
+		p_ptr->update = PU_BONUS | PU_QUIET;
+		update_stuff();
+
+		/* Compare the original with the same with this object wielded. */
+		res_stat_details_comp(p2_ptr, &p_body, i, info, info_a, act);
+	}
 	/* A worn item. */
-	if ((o_ptr >= inventory+INVEN_WIELD) && (o_ptr < inventory+INVEN_TOTAL))
+	else if (worn)
 	{
 		/* Put o_ptr somewhere safe. */
 		object_copy(j_ptr, o_ptr);
@@ -2912,7 +2922,7 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 		object_copy(o_ptr, j_ptr);
 	}
 	/* A wearable item. */
-	else if (pval)
+	else
 	{
 		int slot = wield_slot(o_ptr);
 
@@ -2931,16 +2941,6 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 
 		/* Replace inveotory+slot */
 		object_copy(inventory+slot, j_ptr);
-	}
-	/* A usable item. */
-	else
-	{
-		/* Correct bonuses quietly. */
-		p_ptr->update = PU_BONUS | PU_QUIET;
-		update_stuff();
-
-		/* Compare the original with the same with this object wielded. */
-		res_stat_details_comp(p2_ptr, &p_body, i, info, info_a, act);
 	}
 
 	/* Return p_ptr to normal. */
@@ -3160,8 +3160,13 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 
 	object_type o_ptr[1];
 
+	bool worn;
+
 	/* Paranoia - no object. */
 	if (!o1_ptr || !o1_ptr->k_idx) return 0;
+
+	/* Hack - notice worn objects. */
+	worn = (o1_ptr >= inventory+INVEN_WIELD && o1_ptr < inventory+INVEN_TOTAL);
 
 	/* Extract the known info */
 	object_info_known(o_ptr, o1_ptr);
@@ -3225,7 +3230,7 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	/* Recognise items which affect stats (detailed) */
 	if (!brief && spoil_stat)
 	{
-		res_stat_details(o_ptr, &i, info, info_a);
+		res_stat_details(o_ptr, &i, info, info_a, worn);
 	}
 	/* If brevity is required or spoilers are not, put stats with the other
 	 * pval effects. */
