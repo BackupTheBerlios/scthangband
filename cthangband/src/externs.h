@@ -650,9 +650,9 @@ extern byte sf_minor;
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern byte sf_patch;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C))
-extern byte sf_extra;
-#endif
+
+
+
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern u16b sf_flags_sf;
 #endif

@@ -44,7 +44,7 @@ static FILE	*fff;
 /*
  * Hack -- old "encryption" byte
  */
-static byte	xor_byte;
+static byte	xor_byte, sf_extra;
 
 /*
  * Hack -- simple "checksum" on the actual values
