@@ -20,6 +20,7 @@ sCthangband _CVS_
   * The labels in the extra inventory window were corrupted.
   * The damage from monster breaths was described incorrectly.
   * Ego boots, ego elven cloaks and weapons of Law were never created.
+  * No template was given hermetic magic skills at start-up.
 
 sCthangband 1.0.14
 * Skill improvements become rarer, and then impossible, if the player does
