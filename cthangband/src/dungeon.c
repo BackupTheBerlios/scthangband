@@ -2235,6 +2235,9 @@ void process_command(void)
 
 #endif /* ALLOW_REPEAT -- TNB */
 
+	/* A new command has been requested. */
+	new_message_turn = TRUE;
+
 	/* Look up various object commands from a table. */
 	if (do_cmd_use_object(command_cmd)) return;
 

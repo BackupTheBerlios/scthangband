@@ -2084,6 +2084,7 @@ static u16b message__next; /* The next "free" index to use */
 static u16b message__last; /* The index of the oldest message. */
 static u16b message__head; /* The next "free" offset */
 static u16b message__tail = MESSAGE_BUF; /* The oldest used char offset */
+static u16b message__turn; /* The index at the start of the last turn. */
 
 
 /*
@@ -2107,22 +2108,33 @@ s16b message_num(void)
 	return (n);
 }
 
-
-
 /*
- * Recall the "text" of a saved message
+ * Copy the colour and "text" of a saved message to buf.
  */
-cptr message_str(s16b age)
+void message_str_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
-	s16b x;
-	s16b o;
+	u16b x, o;
 	cptr s;
+	char a;
+	int age = va_arg(*vp, int);
 
 	/* Forgotten messages have no text */
-	if ((age < 0) || (age >= message_num())) return ("");
+	if ((age < 0) || (age >= message_num())) return;
 
 	/* Acquire the "logical" index */
 	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
+
+	/* Deduce the colour. */
+	if ((u16b)(message__next - x) < (u16b)(message__turn - x))
+	{
+		/* Recent messages are white. */
+		a = 'w';
+	}
+	else
+	{
+		/* Older messages are grey. */
+		a = 'W';
+	}
 
 	/* Get the "offset" for the message */
 	o = message__ptr[x];
@@ -2130,8 +2142,8 @@ cptr message_str(s16b age)
 	/* Access the message text */
 	s = &message__buf[o];
 
-	/* Return the message text */
-	return (s);
+	/* Copy the message and the colour to buf. */
+	strnfmt(buf, max, "$%c$<%s", a, s);
 }
 
 
@@ -2226,6 +2238,10 @@ void message_add(cptr str)
 			n = strlen(str);
 		}
 
+		/* Put the colour break before this message. */
+		if (new_message_turn) message__turn = message__next-1;
+		new_message_turn = FALSE;
+
 		/* Done */
 		break;
 	}
@@ -2257,6 +2273,10 @@ void message_add(cptr str)
 
 		/* Get the next message index, advance */
 		x = message__next++;
+
+		/* Put the colour break before this message. */
+		if (new_message_turn) message__turn = message__next-1;
+		new_message_turn = FALSE;
 
 		/* Handle wrap */
 		if (message__next == MESSAGE_MAX) message__next = 0;

@@ -462,6 +462,10 @@ u16b *message__ptr;
  */
 char *message__buf;
 
+/*
+ * Boolean - the next message belongs to a new turn.
+ */
+bool new_message_turn; /* Allow message__turn to be reset. */
 
 /*
  * Global table of color definitions

@@ -3342,7 +3342,7 @@ static void dump_final_messages(FILE * OutFile)
 	/* Reverse order */
 	for(i=9;i>=0;i--)
 	{
-		fprintf(OutFile,"%s\n",message_str(i));
+		my_fprintf(OutFile,"%v\n",message_str_f1, i);
 	}
 }
 

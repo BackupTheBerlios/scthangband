@@ -2403,7 +2403,7 @@ extern cptr quark_str(u16b i);
 extern s16b message_num(void);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA1_C))
-extern cptr message_str(s16b age);
+extern void message_str_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(LOAD_C) || defined(STORE_C) || defined(UTIL_C))
 extern void message_add(cptr str);
@@ -3907,5 +3907,11 @@ extern cptr safe_string_make(cptr str);
 
 #if (defined(INIT2_C) || defined(OBJECT2_C))
 extern void init_easy_know(void);
+#endif
+
+/* variable.c */
+
+#if (defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C))
+extern bool new_message_turn;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

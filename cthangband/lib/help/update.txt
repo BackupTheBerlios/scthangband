@@ -6,6 +6,7 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Display messages from previous turns in a darker colour.
 * Fix the following bugs:
   * player_has_flag() may have given unreliable results.
   * The redraw prefs help command displayed the wrong text.

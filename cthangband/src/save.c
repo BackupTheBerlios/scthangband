@@ -1044,7 +1044,7 @@ static bool wr_savefile_new(void)
 	/* Dump the messages (oldest first!) */
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
-		wr_string(message_str((short)i));
+		wr_string(format("%v", message_str_f1, i));
 	}
 
 
