@@ -1815,10 +1815,10 @@ void display_wild_map(uint xmin)
 
 	c_put_str(TERM_UMBER,"* = dungeon entrance",num_towns+2,xmin+19);
 	tmp = "(Places that still have guardians are marked in red)";
-	if (xmin+strlen(tmp) > Term->wid)
+	if (xmin+strlen(tmp)+18 > Term->wid)
 		tmp = "(red = has guardian)";
-	c_put_str(TERM_RED,tmp,MAX_TOWNS+4,xmin+18);
-	c_put_str(TERM_YELLOW,"@ = you",MAX_TOWNS+6,xmin+18);
+	c_put_str(TERM_RED,tmp,num_towns+4,xmin+18);
+	c_put_str(TERM_YELLOW,"@ = you",num_towns+6,xmin+18);
 
 	TFREE(dungeon_has_guardians);
 }
