@@ -195,6 +195,7 @@ static cptr r_info_flags2[] =
 	"KILL_BODY",
 	"TAKE_ITEM",
 	"KILL_ITEM",
+      "RUN_AWAY",
 	"BRAIN_1",
 	"BRAIN_2",
 	"BRAIN_3",
@@ -202,7 +203,6 @@ static cptr r_info_flags2[] =
 	"BRAIN_5",
 	"BRAIN_6",
 	"BRAIN_7",
-	"BRAIN_8"
 };
 
 /*

@@ -80,7 +80,7 @@ G:t:W
 I:110:1:1d2:6:1:0
 W:0:1:0:0
 B:WORSHIP
-F:MALE | FRIENDS | RAND_25
+F:MALE | FRIENDS | RAND_25 | RUN_AWAY
 D:A rather cute child with large trusting eyes.
 
 N:6:Hobo

@@ -1347,6 +1347,13 @@ bool make_attack_normal(int m_idx)
                 }
                 touched = FALSE;
             }
+
+            if (r_ptr->flags2 & RF2_RUN_AWAY)
+		{
+                              r_ptr->r_flags2 |= (RF2_RUN_AWAY);
+			msg_format("%^s runs away.", m_name);
+			delete_monster(m_ptr->fy, m_ptr->fx);
+		}
         }
 
 		/* Monster missed player */

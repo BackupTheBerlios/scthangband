@@ -2548,14 +2548,14 @@ logaux(x, 1) logaux(x, 0) 255
 #define RF2_KILL_BODY           0x00200000      /* Monster can kill monsters */
 #define RF2_TAKE_ITEM           0x00400000      /* Monster can pick up items */
 #define RF2_KILL_ITEM           0x00800000      /* Monster can crush items */
-#define RF2_BRAIN_1                     0x01000000
-#define RF2_BRAIN_2                     0x02000000
-#define RF2_BRAIN_3                     0x04000000
-#define RF2_BRAIN_4                     0x08000000
-#define RF2_BRAIN_5                     0x10000000
-#define RF2_BRAIN_6                     0x20000000
-#define RF2_BRAIN_7                     0x40000000
-#define RF2_BRAIN_8                     0x80000000
+#define RF2_RUN_AWAY                    0x01000000      /* Hit once, then run */
+#define RF2_BRAIN_1                     0x02000000
+#define RF2_BRAIN_2                     0x04000000
+#define RF2_BRAIN_3                     0x08000000
+#define RF2_BRAIN_4                     0x10000000
+#define RF2_BRAIN_5                     0x20000000
+#define RF2_BRAIN_6                     0x40000000
+#define RF2_BRAIN_7                     0x80000000
 
 /*
  * New monster race bit flags

@@ -682,6 +682,11 @@ static void roff_aux(int r_idx)
         c_roff(MONCOL_AURA, format("%^s reflects bolt spells.  ", wd_he[msex]));
     }
 
+      if (flags2 & (RF2_RUN_AWAY))
+      {
+              roff(format("%^s runs away after attacking.  ", wd_he[msex]));
+      }
+
 
 	/* Describe escorts */
 	if ((flags1 & (RF1_ESCORT)) || (flags1 & (RF1_ESCORTS)))
