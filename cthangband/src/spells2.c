@@ -5891,12 +5891,6 @@ bool lite_line(int dir)
 	return (project_hook(GF_LITE_WEAK, dir, damroll(6, 8), flg));
 }
 
-bool drain_life(int dir, int dam)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_DRAIN, dir, dam, flg));
-}
-
 bool wall_to_mud(int dir)
 {
 	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -5920,80 +5914,6 @@ bool disarm_trap(int dir)
 	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
 	return (project_hook(GF_KILL_TRAP, dir, 0, flg));
 }
-
-bool heal_monster(int dir)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_HEAL, dir, damroll(4, 6), flg));
-}
-
-bool speed_monster(int dir,int dam)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_SPEED, dir, dam, flg));
-}
-
-bool slow_monster(int dir,int dam)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_SLOW, dir, dam, flg));
-}
-
-bool sleep_monster(int dir,int dam)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_SLEEP, dir, dam, flg));
-}
-
-bool stasis_monster(int dir,int dam)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-    return (project_hook(GF_STASIS, dir, dam, flg));
-}
-
-bool confuse_monster(int dir, int plev)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_CONF, dir, plev, flg));
-}
-
-bool stun_monster(int dir, int plev)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-    return (project_hook(GF_STUN, dir, plev, flg));
-}
-
-bool poly_monster(int dir,int dam)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_POLY, dir, dam, flg));
-}
-
-bool clone_monster(int dir)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_OLD_CLONE, dir, 0, flg));
-}
-
-bool fear_monster(int dir, int plev)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(GF_TURN_ALL, dir, plev, flg));
-}
-
-bool death_ray(int dir, int plev)
-{
-	int flg = PROJECT_STOP | PROJECT_KILL;
-    return (project_hook(GF_DEATH_RAY, dir, plev, flg));
-}
-
-bool teleport_monster(int dir)
-{
-	int flg = PROJECT_BEAM | PROJECT_KILL;
-	return (project_hook(GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg));
-}
-
-
 
 /*
  * Hooks -- affect adjacent grids (radius 1 ball attack)

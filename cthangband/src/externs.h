@@ -1879,9 +1879,9 @@ extern bool fire_bolt_or_beam(int prob, int typ, int dir, int dam);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool lite_line(int dir);
 #endif
-#if (defined(CMD1_C) || defined(POWERS_C) || defined(SPELLS2_C))
-extern bool drain_life(int dir, int dam);
-#endif
+
+
+
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool wall_to_mud(int dir);
 #endif
@@ -1894,42 +1894,42 @@ extern bool destroy_door(int dir);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool disarm_trap(int dir);
 #endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool heal_monster(int dir);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool speed_monster(int dir,int dam);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool slow_monster(int dir,int dam);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool sleep_monster(int dir,int dam);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool stasis_monster(int dir,int dam);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool confuse_monster(int dir, int plev);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool stun_monster(int dir, int plev);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool poly_monster(int dir,int dam);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool clone_monster(int dir);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool fear_monster(int dir, int plev);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool death_ray(int dir, int plev);
-#endif
-#if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool teleport_monster(int dir);
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool door_creation(void);
 #endif

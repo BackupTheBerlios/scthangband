@@ -546,7 +546,7 @@ bool grow_m_list(void)
 	size_t new_size = new_max*sizeof(monster_type);
 
 	/* Can't store m_list's new size. */
-	if (new_max <= z_info->m_max || new_max > MAX_U16B) return FALSE;
+	if (new_max <= z_info->m_max || new_max > MAX_SHORT) return FALSE;
 
 	/* Can't request m_list's new size. */
 	if (new_size <= sizeof(monster_type) * z_info->m_max) return FALSE;

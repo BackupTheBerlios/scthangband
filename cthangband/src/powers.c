@@ -2442,28 +2442,41 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_WAND_HEAL_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (heal_monster(dir)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_HEAL, dir, damroll(4, 6))) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_HASTE_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (speed_monster(dir, plev)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_SPEED, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_CLONE_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (clone_monster(dir)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_CLONE, dir, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_TELEPORT_OTHER+PO_K_IDX:
+		case OBJ_ROD_TELEPORT_OTHER+PO_K_IDX:
+		case ART_GNORRI+PO_NAME1:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (teleport_monster(dir)) (*ident) = TRUE;
+			if (fire_beam(GF_AWAY_ALL, dir, MAX_SIGHT * 5)) (*ident) = TRUE;
+			return SUCCESS;
+		}
+
+		case ACT_TELE_AWAY+PO_ACTIVATION:
+		case SP_TELEPORT_AWAY+PO_SPELL:
+		case SP_TELEPORT_OTHER+PO_SPELL:
+		case SP_TELEPORT_AWAY_2+PO_SPELL:
+		case SP_TELEPORT_AWAY_3+PO_SPELL:
+		{
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			if (fire_beam(GF_AWAY_ALL, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2500,42 +2513,42 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_WAND_SLEEP_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (sleep_monster(dir, plev)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_SLEEP, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_SLOW_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (slow_monster(dir, plev)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_SLOW, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_CONFUSE_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (confuse_monster(dir, 10)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_CONF, dir, 10)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_SCARE_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (fear_monster(dir, 10)) (*ident) = TRUE;
+			if (fire_bolt(GF_TURN_ALL, dir, 10)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_DRAIN_LIFE+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (drain_life(dir, 75)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_DRAIN, dir, 75)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_POLYMORPH+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (poly_monster(dir, plev)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_POLY, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2582,7 +2595,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_WAND_ANNIHILATION+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (drain_life(dir, 125)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_DRAIN, dir, 125)) (*ident) = TRUE;
 			return SUCCESS;
 		}
         case OBJ_WAND_SHARD_BALL+PO_K_IDX:
@@ -2689,13 +2702,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case OBJ_ROD_TELEPORT_OTHER+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (teleport_monster(dir)) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
 		case OBJ_ROD_DISARMING+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -2715,28 +2721,28 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_ROD_SLEEP_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (sleep_monster(dir, plev)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_SLEEP, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_ROD_SLOW_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (slow_monster(dir, plev)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_SLOW, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_ROD_DRAIN_LIFE+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (drain_life(dir, 75)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_DRAIN, dir, 75)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_ROD_POLYMORPH+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (poly_monster(dir, plev)) (*ident) = TRUE;
+			if (fire_bolt(GF_OLD_POLY, dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2826,14 +2832,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             {
 
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                if (drain_life(dir, 100))
+                if (fire_bolt(GF_OLD_DRAIN, dir, 100))
 				return SUCCESS;
 			}
 
             case ACT_DRAIN_2+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				drain_life(dir, 120);
+				fire_bolt(GF_OLD_DRAIN, dir, 120);
 				return SUCCESS;
 			}
 
@@ -2842,7 +2848,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
                for (i = 0; i < 3; i++)
                {
-                   if (drain_life(dir, 50))
+                   if (fire_bolt(GF_OLD_DRAIN, dir, 50))
                        hp_player(50);
                     }
                    return SUCCESS;
@@ -2883,7 +2889,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
                for (i = 0; i < 3; i++)
                {
-                   if (drain_life(dir, 100))
+                   if (fire_bolt(GF_OLD_DRAIN, dir, 100))
                        hp_player(100);
                     }
 
@@ -2927,7 +2933,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ACT_CONFUSE+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				confuse_monster(dir, 20);
+				fire_bolt(GF_OLD_CONF, dir, 20);
 				return SUCCESS;
 			}
 
@@ -2948,12 +2954,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                 turn_monsters(40 + plev);
                 return SUCCESS;
             }
-            case ACT_TELE_AWAY+PO_ACTIVATION:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                   (void)fire_beam(GF_AWAY_ALL, dir, plev);
-                   return SUCCESS;
-			}
 
             case ACT_BANISH_EVIL+PO_ACTIVATION:
             {
@@ -3462,7 +3462,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			{
 
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                if (drain_life(dir, 100))
+                if (fire_bolt(GF_OLD_DRAIN, dir, 100))
 				return SUCCESS;
 			}
 
@@ -3713,7 +3713,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_THEODEN+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				drain_life(dir, 120);
+				fire_bolt(GF_OLD_DRAIN, dir, 120);
 				return SUCCESS;
 			}
 
@@ -3737,13 +3737,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-			case ART_GNORRI+PO_NAME1:
-			{
-				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				teleport_monster(dir);
-				return SUCCESS;
-			}
-
 			case ART_GHARNE+PO_NAME1:
 			{
 				set_recall(FALSE);
@@ -3753,7 +3746,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_TOTILA+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				confuse_monster(dir, 20);
+				fire_bolt(GF_OLD_CONF, dir, 20);
 				return SUCCESS;
 			}
 
@@ -3787,7 +3780,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_JUSTICE+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				drain_life(dir, 90);
+				fire_bolt(GF_OLD_DRAIN, dir, 90);
 				return SUCCESS;
 			}
 
@@ -3839,14 +3832,10 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_NEURAL_BLAST+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (randint(100) < plev * 2)
-			{
-				fire_beam(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3+plev/15)));
-			}
-			else
-			{
-				fire_ball(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3+plev/15)), 0);
-			}
+
+			fire_bolt_or_beam(plev*2-1, GF_PSI, dir,
+				damroll(3 + ((plev - 1) / 4), (3+plev/15)));
+
 			return SUCCESS;
 		}
 		case SP_MINOR_DISPLACEMENT+PO_SPELL:
@@ -4375,7 +4364,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_CONFUSE_MONSTER+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            (void)confuse_monster(dir, ( plev * 3) / 2 );
+            (void)fire_bolt(GF_OLD_CONF, dir, ( plev * 3) / 2 );
 			return SUCCESS;
 		}
 		case SP_TELEPORT+PO_SPELL:
@@ -4386,7 +4375,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_SLEEP_MONSTER+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)sleep_monster(dir,plev);
+			(void)fire_bolt(GF_OLD_SLEEP, dir,plev);
 			return SUCCESS;
 		}
 		case SP_RECHARGING+PO_SPELL:
@@ -4407,18 +4396,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_SLOW_MONSTER+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)slow_monster(dir,plev);
+			(void)fire_bolt(GF_OLD_SLOW, dir,plev);
 			return SUCCESS;
 		}
 		case SP_MASS_SLEEP+PO_SPELL:
 		{
 			(void)sleep_monsters(plev);
-			return SUCCESS;
-		}
-		case SP_TELEPORT_AWAY+PO_SPELL:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               (void)fire_beam(GF_AWAY_ALL, dir, plev);
 			return SUCCESS;
 		}
 		case SP_HASTE_SELF+PO_SPELL:
@@ -4489,7 +4472,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_STASIS+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)stasis_monster(dir,plev);
+			(void)fire_bolt(GF_STASIS, dir,plev);
 			return SUCCESS;
 		}
 		case SP_TELEKINESIS+PO_SPELL:
@@ -4599,15 +4582,15 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                if (!dir) return POWER_ERROR_NO_SUCH_DIR;
                if (die > 100)
                    msg_print ("You feel a surge of power!");
-               if (die < 8) clone_monster (dir);
-               else if (die < 14) speed_monster (dir,plev);
-               else if (die < 26) heal_monster (dir);
-               else if (die < 31) poly_monster (dir,plev);
+               if (die < 8) fire_bolt(GF_OLD_CLONE, dir, 0);
+               else if (die < 14) fire_bolt(GF_OLD_SPEED, dir, plev);
+               else if (die < 26) fire_bolt(GF_OLD_HEAL, dir, plev);
+               else if (die < 31) fire_bolt(GF_OLD_POLY, dir, plev);
                else if (die < 36)
                    fire_bolt_or_beam (plev - 10,
                    GF_MISSILE, dir,
                    damroll(3 + ((plev - 1) / 5), 4));
-               else if (die < 41) confuse_monster (dir, plev);
+               else if (die < 41) fire_bolt(GF_OLD_CONF, dir, plev);
                else if (die < 46) fire_ball (GF_POIS, dir, 20 + (plev / 2), 3);
                else if (die < 51) lite_line (dir);
                else if (die < 56)
@@ -4622,16 +4605,16 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                else if (die < 71)
                    fire_bolt_or_beam (plev, GF_FIRE, dir,
                    damroll(8+((plev-5)/4),8));
-               else if (die < 76) drain_life (dir, 75);
-               else if (die < 81) fire_ball (GF_ELEC, dir, 30 + plev / 2, 2);
-               else if (die < 86) fire_ball (GF_ACID, dir, 40 + plev, 2);
-               else if (die < 91) fire_ball (GF_ICE, dir, 70 + plev, 3);
-               else if (die < 96) fire_ball (GF_FIRE, dir, 80 + plev, 3);
-               else if (die < 101) drain_life (dir, 100 + plev);
-               else if (die < 104) earthquake (py, px, 12);
-               else if (die < 106) destroy_area (py, px, 15, TRUE);
+               else if (die < 76) fire_bolt(GF_OLD_DRAIN, dir, 75);
+               else if (die < 81) fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
+               else if (die < 86) fire_ball(GF_ACID, dir, 40 + plev, 2);
+               else if (die < 91) fire_ball(GF_ICE, dir, 70 + plev, 3);
+               else if (die < 96) fire_ball(GF_FIRE, dir, 80 + plev, 3);
+               else if (die < 101) fire_bolt(GF_OLD_DRAIN, dir, 100 + plev);
+               else if (die < 104) earthquake(py, px, 12);
+               else if (die < 106) destroy_area(py, px, 15, TRUE);
                else if (die < 108) genocide(TRUE);
-               else if (die < 110) dispel_monsters (120);
+               else if (die < 110) dispel_monsters(120);
                else /* RARE */
                {
                    dispel_monsters (150);
@@ -4668,12 +4651,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 					55 + (plev), 2);
 			return SUCCESS;
 		}
-		case SP_TELEPORT_OTHER+PO_SPELL:
-		{
-           if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               (void)fire_beam(GF_AWAY_ALL, dir, plev);
-			return SUCCESS;
-		}
 		case SP_WORD_OF_DESTRUCTION+PO_SPELL:
 		{
 			destroy_area(py, px, 15, TRUE);
@@ -4689,7 +4666,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_POLYMORPH_OTHER+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)poly_monster(dir,plev);
+			(void)fire_bolt(GF_OLD_POLY, dir,plev);
 			return SUCCESS;
 		}
 		case SP_CHAIN_LIGHTNING+PO_SPELL:
@@ -5021,12 +4998,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
             }
-		case SP_TELEPORT_AWAY_2+PO_SPELL:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               (void)fire_beam(GF_AWAY_ALL, dir, plev);
-			return SUCCESS;
-		}
 		case SP_SUMMON_OBJECT+PO_SPELL:
 		{
              if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -5463,14 +5434,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_BLACK_SLEEP+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)sleep_monster(dir,plev);
+			(void)fire_bolt(GF_OLD_SLEEP, dir,plev);
 			return SUCCESS;
 		}
 		case SP_HORRIFY+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)fear_monster(dir, plev);
-            (void) stun_monster(dir, plev);
+			(void)fire_bolt(GF_TURN_ALL, dir, plev);
+            (void) fire_bolt(GF_STUN, dir, plev);
 			return SUCCESS;
 		}
 		case SP_ENSLAVE_UNDEAD+PO_SPELL:
@@ -5503,7 +5474,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
        if (!dir) return POWER_ERROR_NO_SUCH_DIR;
        i = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
-                 if (drain_life(dir, i)) {
+                 if (fire_bolt(GF_OLD_DRAIN, dir, i)) {
            (void)hp_player(i);
            /* Gain nutritional sustenance: 150/hp drained */
            /* A Food ration gives 5000 food points (by contrast) */
@@ -5562,49 +5533,49 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                msg_print("Your head is invaded by a horde of gibbering spectral voices...");
                add_flag(TIMED_CONFUSED, randint(4) + 4);
                } else if (die < 31) {
-               poly_monster (dir,plev);
+               fire_bolt(GF_OLD_POLY, dir,plev);
                } else if (die < 36) {
-               fire_bolt_or_beam (plev - 10,
+               fire_bolt_or_beam(plev - 10,
                           GF_MISSILE, dir,
                           damroll(3 + ((plev - 1) / 5), 4));
                } else if (die < 41) {
-               confuse_monster (dir, plev);
+               fire_bolt(GF_OLD_CONF, dir, plev);
                } else if (die < 46) {
                fire_ball (GF_POIS, dir, 20 + (plev / 2), 3);
                } else if (die < 51) {
-               lite_line (dir);
+               lite_line(dir);
                } else if (die < 56) {
-               fire_bolt_or_beam (plev - 10, GF_ELEC, dir,
+               fire_bolt_or_beam(plev - 10, GF_ELEC, dir,
                           damroll(3+((plev-5)/4),8));
                } else if (die < 61) {
-               fire_bolt_or_beam (plev - 10, GF_COLD, dir,
+               fire_bolt_or_beam(plev - 10, GF_COLD, dir,
                           damroll(5+((plev-5)/4),8));
                } else if (die < 66) {
-               fire_bolt_or_beam (plev, GF_ACID, dir,
+               fire_bolt_or_beam(plev, GF_ACID, dir,
                           damroll(6+((plev-5)/4),8));
                } else if (die < 71) {
-               fire_bolt_or_beam (plev, GF_FIRE, dir,
+               fire_bolt_or_beam(plev, GF_FIRE, dir,
                           damroll(8+((plev-5)/4),8));
                } else if (die < 76) {
-               drain_life (dir, 75);
+               fire_bolt(GF_OLD_DRAIN, dir, 75);
                } else if (die < 81) {
-               fire_ball (GF_ELEC, dir, 30 + plev / 2, 2);
+               fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
                } else if (die < 86) {
-               fire_ball (GF_ACID, dir, 40 + plev, 2);
+               fire_ball(GF_ACID, dir, 40 + plev, 2);
                } else if (die < 91) {
-               fire_ball (GF_ICE, dir, 70 + plev, 3);
+               fire_ball(GF_ICE, dir, 70 + plev, 3);
                } else if (die < 96) {
-               fire_ball (GF_FIRE, dir, 80 + plev, 3);
+               fire_ball(GF_FIRE, dir, 80 + plev, 3);
                } else if (die < 101) {
-               drain_life (dir, 100 + plev);
+               fire_bolt(GF_OLD_DRAIN, dir, 100 + plev);
                } else if (die < 104) {
-               earthquake (py, px, 12);
+               earthquake(py, px, 12);
                } else if (die < 106) {
-               destroy_area (py, px, 15, TRUE);
+               destroy_area(py, px, 15, TRUE);
                } else if (die < 108) {
                genocide(TRUE);
                } else if (die < 110) {
-               dispel_monsters (120);
+               dispel_monsters(120);
                } else { /* RARE */
                dispel_monsters (150);
                slow_monsters(plev);
@@ -5644,7 +5615,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
            for (i = 0; i < 3; i++)
            {
-               if (drain_life(dir, 100))
+               if (fire_bolt(GF_OLD_DRAIN, dir, 100))
                    hp_player(100);
                 }
 			return SUCCESS;
@@ -5662,7 +5633,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_DEATH_RAY+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)death_ray(dir, plev);
+			(void)fire_bolt(GF_DEATH_RAY, dir, plev);
 			return SUCCESS;
 		}
 		case SP_RAISE_THE_DEAD+PO_SPELL:
@@ -5894,12 +5865,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)ident_spell();
 			return SUCCESS;
 		}
-		case SP_TELEPORT_AWAY_3+PO_SPELL:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               (void)fire_beam(GF_AWAY_ALL, dir, plev);
-			return SUCCESS;
-		}
 		case SP_ELEMENTAL_BALL+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -6040,7 +6005,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You make a horrible scream!");
-			(void)fear_monster(dir, plev);
+			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
 		case RACE_KLACKON+PO_RACIAL:
@@ -6126,7 +6091,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			msg_print("You grin and bare your fangs...");
 			dummy = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
-			if (!drain_life(dir, dummy))
+			if (!fire_bolt(GF_OLD_DRAIN, dir, dummy))
 			{
 				msg_print("Yechh. That tastes foul.");
 			}
@@ -6152,14 +6117,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			msg_print("You emit an eldritch howl!");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)fear_monster(dir, plev);
+			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
 		case RACE_BROO+PO_RACIAL:
 		{
 			msg_print("You emit a fearsome growl!");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			(void)fear_monster(dir, plev);
+			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
 		case RACE_SPRITE+PO_RACIAL:
@@ -6221,7 +6186,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case iilog(MUT1_VAMPIRISM)+PO_MUTA1:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
-			if (drain_life(dir, (plev * 2))) hp_player(plev + randint(plev));
+			if (fire_bolt(GF_OLD_DRAIN, dir, (plev * 2))) hp_player(plev + randint(plev));
 			return SUCCESS;
 		}
 		case iilog(MUT1_SMELL_MET)+PO_MUTA1:

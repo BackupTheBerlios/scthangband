@@ -273,7 +273,7 @@ bool grow_o_list(void)
 	size_t new_size = new_max*sizeof(object_type);
 
 	/* Can't store o_list's new size. */
-	if (new_max <= z_info->o_max || new_max > MAX_U16B) return FALSE;
+	if (new_max <= z_info->o_max || new_max > MAX_SHORT) return FALSE;
 
 	/* Can't request m_list's new size. */
 	if (new_size <= sizeof(object_type) * z_info->o_max) return FALSE;
