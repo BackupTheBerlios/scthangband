@@ -1406,20 +1406,25 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 		/* Process 'G' for "Graphics" (one line only) */
 		case 'G':
 		{
-			int tmp;
+			int pri;
+			char sym, col;
 
-			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d:%c:%c", &pri, &sym, &col))
+			{
+				return PARSE_ERROR_MISSING_RECORD_HEADER;
+			}
 
-			/* Extract the color */
-			tmp = color_char_to_attr(buf[4]);
-			if (tmp < 0) return (1);
+			/* Extract and check the color */
+			if (color_char_to_attr(col) < 0) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			/* Check the priority. */
+			if (pri < 0 || pri > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
 
 			/* Save the values */
-			f_ptr->d_char = buf[2];
-			f_ptr->d_attr = tmp;
+			f_ptr->priority = pri;
+			f_ptr->d_char = sym;
+			f_ptr->d_attr = color_char_to_attr(col);
 
 			return SUCCESS;
 		}

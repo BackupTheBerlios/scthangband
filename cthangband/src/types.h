@@ -181,6 +181,7 @@ struct feature_type
 	u16b text;			/* Text (offset) */
 
 	byte mimic;			/* Feature to mimic */
+	byte priority;		/* Priority for small-scale map. See priority(). */
 
 	byte d_attr;		/* Object "attribute" */
 	char d_char;		/* Object "symbol" */

@@ -1472,83 +1472,41 @@ void prt_map(void)
 #define MAP_WID (MAX_WID / RATIO)
 
 /*
- * Hack -- priority array (see below)
- *
- * Note that all "walls" always look like "secret doors" (see "map_info()").
- */
-static byte priority_table[][2] =
-{
-	/* Dark */
-	{ FEAT_NONE, 2 },
-
-	/* Dark (no traps) */
-	{ FEAT_NONE_TD, 3 },
-
-	/* Floors */
-	{ FEAT_FLOOR, 5 },
-
-	/* Walls */
-	{ FEAT_SECRET, 10 },
-
-	/* Quartz */
-	{ FEAT_QUARTZ, 11 },
-
-	/* Magma */
-	{ FEAT_MAGMA, 12 },
-
-	/* Rubble */
-	{ FEAT_RUBBLE, 13 },
-
-	/* Open doors */
-	{ FEAT_OPEN, 15 },
-	{ FEAT_BROKEN, 15 },
-
-	/* Closed doors */
-	{ FEAT_DOOR_HEAD + 0x00, 17 },
-
-	/* Hidden gold */
-	{ FEAT_QUARTZ_K, 19 },
-	{ FEAT_MAGMA_K, 19 },
-
-	/* Stairs */
-	{ FEAT_LESS, 25 },
-	{ FEAT_MORE, 25 },
-
-	/* End */
-	{ 0, 0 }
-};
-
-
-/*
  * Hack -- a priority function (see below)
+ *
+ * This uses the priorities of terrians which are never shown because they are
+ * mimics, as these can be capable of being shown if f_info.txt is written in
+ * an obfuscated way.
  */
-static byte priority(byte a, char c)
+static byte priority(byte f, byte a, char c)
 {
-	int i, p0, p1;
+	feature_type *f_ptr = f_info+f_info[f].mimic;
 
-	feature_type *f_ptr;
+	int priority;
 
-	/* Scan the table */
-	for (i = 0; TRUE; i++)
+	/* Use the priority of this terrain type if the terrain is visible. */
+	if (f_ptr->x_char == c && f_ptr->x_attr == a) return f_ptr->priority;
+
+	/* Otherwise, look to see if it looks like terrain. */
+	for (f_ptr = f_info, priority = -1; f_ptr < f_info+MAX_F_IDX; f_ptr++)
 	{
-		/* Priority level */
-		p1 = priority_table[i][1];
-
-		/* End of table */
-		if (!p1) break;
-
-		/* Feature index */
-		p0 = priority_table[i][0];
-
-		/* Access the feature */
-		f_ptr = &f_info[p0];
-
-		/* Check character and attribute, accept matches */
-		if ((f_ptr->x_char == c) && (f_ptr->x_attr == a)) return (p1);
+		if (f_ptr->priority >= priority &&
+			f_ptr->x_char == c && f_ptr->x_attr == a)
+		{
+			priority = f_ptr->priority;
+		}
 	}
 
-	/* Default */
-	return (20);
+	/* Not the char/attr of a feature, so give a known priority. */
+	if (priority == -1)
+	{
+		return 100;
+	}
+	/* Give it the highest priority of any similar terrain. */
+	else
+	{
+		return priority;
+	}
 }
 
 
@@ -1641,7 +1599,7 @@ void display_map(int *cy, int *cx, bool max)
 			map_info(j, i, &ta, &tc, &ta, &tc);
 
 			/* Extract the priority of that attr/char */
-			tp = priority(ta, tc);
+			tp = priority(cave[j][i].feat, ta, tc);
 
 			/* Save "best" */
 			if (mp[y][x] < tp)
