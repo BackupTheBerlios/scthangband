@@ -3330,7 +3330,7 @@ void gain_level_reward(int chosen_reward)
 	skill_used = skill_set[SKILL_THAUMATURGY].value/2;
 
 	/* Broo might have got here through their racial ability */
-	if (chaos_race) skill_used = MAX(skill, skill_set[SKILL_RACIAL].value);
+	if (chaos_race) skill_used = MAX(skill_used, skill_set[SKILL_RACIAL].value);
 
     if (!chosen_reward)
     {
