@@ -634,7 +634,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept) ", info);
+		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept, ? for help) ", info);
 		prt(buf, 0, 0);
 	
 		/* Display the options */
@@ -725,6 +725,16 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 				k = (k + 1) % n;
 				} while(opt_is_forced(opt[k]));
 				break;
+			}
+			case '?':
+			{
+				/* Hack - show help on the main term. */
+				int t = Term_save_aux();
+				help_track(option_info[opt[k]].o_text);
+				clear_from(0);
+				win_help_display();
+				(void)inkey();
+				Term_load_aux(t);
 			}
 			default:
 			{

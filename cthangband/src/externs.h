@@ -3540,10 +3540,16 @@ extern force_type option_force[] ;
 
 /* z-term.c */
 
-#if (defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(Z_TERM_C))
 extern int Term_save_aux(void);
 #endif
-#if (defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(Z_TERM_C))
 extern void Term_load_aux(int win);
+#endif
+
+/* xtra1.c */
+
+#if (defined(CMD4_C) || defined(XTRA1_C))
+extern void win_help_display(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

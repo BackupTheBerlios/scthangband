@@ -1260,7 +1260,7 @@ static void mc_roff(cptr s)
 	c_roff(attr, s);
 }
 
-static void win_help_display(void)
+void win_help_display(void)
 {
 	char buf[1024];
 	FILE *fff;
