@@ -1281,7 +1281,7 @@ static int home_carry(object_type *o_ptr)
 		/* The home acts just like the player */
 		if (object_similar_2(j_ptr, o_ptr) &&
 			/* Save the new number of items */
-			object_absorb_2(j_ptr, o_ptr))
+			object_absorb(j_ptr, o_ptr))
 
 			/* All done */
 			return (slot);

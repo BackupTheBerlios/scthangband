@@ -1584,7 +1584,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
  * Allow one item to "absorb" another, assuming they are similar
  * Return true if every object was ab
  */
-bool object_absorb_2(object_type *o_ptr, object_type *j_ptr)
+bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 {
 	/* Hack -- blend "known" status */
 	if (object_known_p(j_ptr)) object_known(o_ptr);
@@ -1609,11 +1609,6 @@ bool object_absorb_2(object_type *o_ptr, object_type *j_ptr)
 
 	/* Add together the stacks, and return TRUE if the second is empty. */
 	return store_object_absorb(o_ptr, j_ptr);
-}
-
-static void object_absorb(object_type *o_ptr, object_type *j_ptr)
-{
-	(void)object_absorb_2(o_ptr, j_ptr);
 }
 
 
@@ -4515,7 +4510,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		if (object_similar(o_ptr, j_ptr))
 		{
 			/* Combine the items */
-			object_absorb(o_ptr, j_ptr);
+			(void)object_absorb(o_ptr, j_ptr);
 
 			/* Remember the combined item */
 			o_idx = o_ptr - o_list;
@@ -5009,7 +5004,7 @@ s16b inven_carry(object_type *o_ptr, bool final)
 			if (object_similar(j_ptr, o_ptr))
 			{
 				/* Combine the items */
-				object_absorb(j_ptr, o_ptr);
+				(void)object_absorb(j_ptr, o_ptr);
 
 				/* Increase the weight */
 				total_weight += (o_ptr->number * o_ptr->weight);
@@ -5334,7 +5329,7 @@ void combine_pack(void)
 			{
 				/* Add together the item counts, continue looking if o_ptr
 				 * isn't empty. */
-				if (!object_absorb_2(j_ptr, o_ptr)) continue;
+				if (!object_absorb(j_ptr, o_ptr)) continue;
 
 				/* Take note */
 				flag = TRUE;
