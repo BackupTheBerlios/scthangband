@@ -91,15 +91,6 @@
 
 
 
-/* Free an array of N things of type T at P, return ??? */
-#define C_FREE(P,N,T) \
-        (rnfree(P))
-
-/* Free one thing of type T at P, return ??? */
-#define FREE(P,T) \
-        (rnfree(P))
-
-
 /* Allocate and return an array of N things of type T */
 #define C_NEW(N,T) \
         ((T*)(ralloc(C_SIZE(N,T))))
@@ -127,22 +118,14 @@
        ((P)=ZNEW(T))
 
 /* Free something at P, return NULL */
-#define FREE2(P) \
+#define FREE(P) \
 		(rnfree(P))
 
 
 
-/* Free an array of N things of type T at P, and reset P to NULL */
-#define C_KILL(P,N,T) \
-        (C_FREE(P,N,T), (P)=NULL)
-
-/* Free a single thing of type T at P, and reset P to NULL */
-#define KILL(P,T) \
-        (FREE(P,T), (P)=NULL)
-
-/* As above, new style. */
-#define KILL2(P) \
-		((P)=FREE2(P))
+/* Free a thing at location P and set P to NULL */
+#define KILL(P) \
+	((P)=FREE(P))
 
 /*
  * C_TNEW() and TKILL() declare an array which is only used in the local

@@ -1695,15 +1695,15 @@ void display_map(int *cy, int *cx, bool max)
 	/* Free each line in the maps */
 	for (i = 0; i < map_hgt + 2; i++)
 	{
-		FREE2(ma[i]);
-		FREE2(mc[i]);
-		FREE2(mp[i]);
+		FREE(ma[i]);
+		FREE(mc[i]);
+		FREE(mp[i]);
 	}
 
 	/* Free arrays */
-	FREE2(ma);
-	FREE2(mc);
-	FREE2(mp);
+	FREE(ma);
+	FREE(mc);
+	FREE(mp);
 
 	if (max)
 	{

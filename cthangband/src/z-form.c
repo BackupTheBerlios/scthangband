@@ -674,7 +674,7 @@ static char *vformat(cptr fmt, va_list vp)
 		if (len < format_len-1) break;
 
 		/* Grow the buffer */
-		C_KILL(format_buf, format_len, char);
+		KILL(format_buf);
 		format_len = format_len * 2;
 		C_MAKE(format_buf, format_len, char);
 	}

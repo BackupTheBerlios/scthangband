@@ -2845,7 +2845,7 @@ static XImage *ReadFONT(Display *dpy, char *Name, u16b size)
 	/* Failure */
 	if (Res == NULL)
 	{
-		KILL2(Data);
+		KILL(Data);
 		fclose(fp);
 
 		return (NULL);
@@ -3323,7 +3323,7 @@ errr init_xpj(int argc, char **argv)
 			use_graphics = TRUE;
 
 			/* And use tiles */
-/*			ANGBAND_GRAF = "new";*/
+			ANGBAND_GRAF = "new";
 		}
 		else
 		{
@@ -3332,7 +3332,7 @@ errr init_xpj(int argc, char **argv)
 			arg_graphics = TRUE;
 
 			/* But not for monsters / items */
-/*			ANGBAND_GRAF = "none";*/
+			ANGBAND_GRAF = "none";
 		}
 
 		use_transparency = TRUE;

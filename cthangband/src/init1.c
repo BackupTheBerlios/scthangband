@@ -3210,7 +3210,7 @@ static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
 								strcpy(buf2, buf3);
 									
 								t = strchr(buf2, '\0');
-								C_KILL(buf3, sizeof(buf3), char);
+								KILL(buf3);
 								done++;
 							}
 						}

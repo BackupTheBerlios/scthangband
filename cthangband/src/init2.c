@@ -1914,14 +1914,14 @@ void init_angband(void)
 		v_name, v_text, v_max, V_HEAD)
 
 	/* Delete the fake arrays, we're done with them. */
-	KILL2(head->fake_info_ptr);
-	KILL2(head->fake_name_ptr);
-	KILL2(head->fake_text_ptr);
+	KILL(head->fake_info_ptr);
+	KILL(head->fake_name_ptr);
+	KILL(head->fake_text_ptr);
 
 	/* Delete the initialisation macro arrays, we're done with them. */
-	KILL2(macro_info);
-	KILL2(macro_text);
-	KILL2(macro_name);
+	KILL(macro_info);
+	KILL(macro_text);
+	KILL(macro_name);
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (other)]");

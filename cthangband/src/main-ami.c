@@ -2345,7 +2345,7 @@ static void process_gfx(char *param)
 	{
 		use_graphics = TRUE;
 		screen_enhanced = TRUE;
-/*		ANGBAND_GRAF = "new";*/
+		ANGBAND_GRAF = "new";
 	}
 }
 
@@ -5244,9 +5244,9 @@ static void amiga_gfx(int type)
 		Term_load();
 		/* XXX XXX XXX */
 		if (screen_enhanced)
-/*			ANGBAND_GRAF = "new";*/
+			ANGBAND_GRAF = "new";
 		else
-/*			ANGBAND_GRAF = "old";*/
+			ANGBAND_GRAF = "old";
 
 		reset_visuals();
 		do_cmd_redraw();

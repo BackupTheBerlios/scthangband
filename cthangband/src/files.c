@@ -4347,7 +4347,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 		msg_print(NULL);
 
 		/* Free hyperlink info */
-		KILL(h_ptr, hyperlink_type);
+		KILL(h_ptr);
 
 		/* Oops */
 		return (TRUE);
@@ -4469,7 +4469,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 			if (!fff)
 			{
 				/* Free hyperlink info */
-				KILL(h_ptr, hyperlink_type);
+				KILL(h_ptr);
 
 				return (FALSE);
 			}
@@ -4790,7 +4790,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 	my_fclose(fff);
 
 	/* Free hyperlink buffers */
-	KILL(h_ptr, hyperlink_type);
+	KILL(h_ptr);
 
 	/* Escape */
 	if (k == ESCAPE) return (FALSE);

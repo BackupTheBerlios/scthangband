@@ -1517,7 +1517,7 @@ static void win_visible_display(void)
 	}
 
 	/* XXX XXX Free the "who" array */
-	C_FREE(who, m_max, monster_list_entry);
+	FREE(who);
 }
 
 /*

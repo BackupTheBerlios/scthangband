@@ -2408,7 +2408,7 @@ errr init_x11(int argc, char **argv)
 
 			pict_wid = pict_hgt = 16;
 
-/*			ANGBAND_GRAF = "new";*/
+			ANGBAND_GRAF = "new";
 		}
 		else
 		{
@@ -2423,7 +2423,7 @@ errr init_x11(int argc, char **argv)
 
 				pict_wid = pict_hgt = 8;
 
-/*				ANGBAND_GRAF = "old";*/
+				ANGBAND_GRAF = "old";
 			}
 		}
 	}

@@ -1827,10 +1827,10 @@ static bool init_graphics(void)
 			 * Set the graphics mode to "new" if Adam Bolt's
 			 * new 16x16 tiles are used.
 			 */
-/*			ANGBAND_GRAF = get_config_string(section, "graf-mode", "old");*/
+			ANGBAND_GRAF = get_config_string(section, "graf-mode", "old");
 
 			/* Use transparent blits */
-/*			if (streq(ANGBAND_GRAF, "new"))*/
+			if (streq(ANGBAND_GRAF, "new"))
 				use_transparency = TRUE;
 
 			/* Select the bitmap pallete */

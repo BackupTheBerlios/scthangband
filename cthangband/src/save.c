@@ -380,7 +380,7 @@ static errr rd_savefile(void)
 
 
 	/* Kill array XXX XXX XXX */
-	C_KILL(data_head, 65535, byte);
+	KILL(data_head);
 
 
 	/* Success */

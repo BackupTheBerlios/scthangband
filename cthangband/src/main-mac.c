@@ -3498,9 +3498,9 @@ static void menu(long mc)
 
 				case 7:
 				{
-/*					if (streq(ANGBAND_GRAF, "old"))*/
+					if (streq(ANGBAND_GRAF, "old"))
 					{
-/*						ANGBAND_GRAF = "new";*/
+						ANGBAND_GRAF = "new";
 						arg_transparency = true;
 						pictID = 1002;
 						maskID = 1003;
@@ -3509,7 +3509,7 @@ static void menu(long mc)
 					}
 					else
 					{
-/*						ANGBAND_GRAF = "old";*/
+						ANGBAND_GRAF = "old";
 						arg_transparency = false;
 						pictID = 1001;
 						maskID = 1001;
