@@ -1245,7 +1245,7 @@ void py_attack(int y, int x)
     }
 
 	/* Disturb the player */
-	disturb(1, 0);
+	/*disturb(1, 0);*/
 
 
 	/* Disturb the monster */
@@ -2629,6 +2629,8 @@ static void run_init(int dir)
 }
 
 
+static s16b ignm_idx;
+
 /*
  * Update the current "run" path
  *
@@ -2675,7 +2677,7 @@ static bool run_test(void)
 
 
 		/* Visible monsters abort running */
-		if (c_ptr->m_idx)
+		if (c_ptr->m_idx && c_ptr->m_idx != ignm_idx)
 		{
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
@@ -3033,8 +3035,28 @@ void run_step(int dir)
 
 		/* Initialize */
 		run_init(dir);
+
+		/* Hack - attempting to run into a monster turns the run command
+		 * into a command which attempts to fight the monster until the
+		 * player is disturbed or the monster dies. */
+		ignm_idx = cave[py+ddy[find_current]][px+ddx[find_current]].m_idx;
+		if (!m_list[ignm_idx].r_idx || !m_list[ignm_idx].ml) ignm_idx = 0;
 	}
 
+	/* Keep fighting */
+	else if (ignm_idx)
+	{
+		/* If the expected monster isn't seen to be there, stop running. */
+		if ((cave[py+ddy[find_current]][px+ddx[find_current]].m_idx != ignm_idx)
+			|| !(m_list[ignm_idx].r_idx) || !(m_list[ignm_idx].ml))
+		{
+			/* Disturb */
+			disturb(0, 0);
+
+			/* Done */
+			return;
+		}
+	}
 	/* Keep running */
 	else
 	{

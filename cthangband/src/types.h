@@ -82,24 +82,24 @@ typedef struct header header;
 
 struct header
 {
-	byte	v_major;		/* Version -- major */
-	byte	v_minor;		/* Version -- minor */
-	byte	v_patch;		/* Version -- patch */
-	byte	v_extra;		/* Version -- extra */
+	byte v_major;		/* Version -- major */
+	byte v_minor;		/* Version -- minor */
+	byte v_patch;		/* Version -- patch */
+	byte v_extra;		/* Version -- extra */
 
 
-	u16b	info_num;		/* Number of "info" records */
+	u16b info_num;		/* Number of "info" records */
 
-	u16b	info_len;		/* Size of each "info" record */
+	u16b info_len;		/* Size of each "info" record */
 
 
 	u16b	head_size;		/* Size of the "header" in bytes */
 
-	u32b	info_size;		/* Size of the "info" array in bytes */
+	u32b info_size;		/* Size of the "info" array in bytes */
 
 	u16b	name_size;		/* Size of the "name" array in bytes */
 
-	u32b	text_size;		/* Size of the "text" array in bytes */
+	u32b text_size;		/* Size of the "text" array in bytes */
 };
 
 

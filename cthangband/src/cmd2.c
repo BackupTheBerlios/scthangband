@@ -1798,6 +1798,42 @@ void do_cmd_bash(void)
 }
 
 
+/*
+ * Attack a monster at a given location, return FALSE if it dies or disappears.
+ *
+ * This only aborts the repetition when the player is unable to continue
+ * attacking. Any abort desired based on the monster's actions should be
+ * handled elsewhere.
+ */
+static bool alter_monster(int y, int x)
+{
+	cave_type *c_ptr = cave[y]+x;
+
+	monster_type *m_ptr = m_list+c_ptr->m_idx;
+	
+	/* Paranoia */
+	if (!cave[y][x].m_idx || !m_ptr->r_idx) return FALSE;
+
+	/* Attack it. */
+	py_attack(y, x);
+
+	/* Dead monster. */
+	if (!m_ptr->r_idx) return FALSE;
+
+	/* Vanished monster. */
+	if (!m_ptr->ml) return FALSE;
+
+	/* Still there to hit again. */
+	return TRUE;
+}
+
+/* Track the command actually being executed by do_cmd_alter().
+ * This is necessary to enable the "fight" command to be repeated without
+ * the command continuing after the fight has finished. */
+static char alter_cmd = 0;
+
+/* Hack - set an arbitrary key as the game lacks a "fight" command. */
+#define FAKE_CMD_FIGHT	' '
 
 /*
  * Manipulate an adjacent grid in some way
@@ -1844,11 +1880,20 @@ void do_cmd_alter(void)
 		/* Take a turn */
 		energy_use = extract_energy[p_ptr->pspeed];
 
+		/* Avoid continuing after the monster has gone. */
+		if ((alter_cmd == FAKE_CMD_FIGHT) && !(c_ptr->m_idx))
+		{
+			energy_use = 0;
+			disturb(0, 0);
+			return;
+		}
+		
 		/* Attack monsters */
-		if (c_ptr->m_idx)
+		if (c_ptr->m_idx || alter_cmd == FAKE_CMD_FIGHT)
 		{
 			/* Attack */
-			py_attack(y, x);
+			more = alter_monster(y, x);
+			alter_cmd = FAKE_CMD_FIGHT;
 		}
 
 		/* Tunnel through walls */
@@ -1860,6 +1905,7 @@ void do_cmd_alter(void)
 		{
 			/* Tunnel */
 			more = do_cmd_tunnel_aux(y, x, dir);
+			alter_cmd = 'T';
 		}
 
 		/* Bash jammed doors */
@@ -1868,6 +1914,7 @@ void do_cmd_alter(void)
 		{
 			/* Tunnel */
 			more = do_cmd_bash_aux(y, x, dir);
+			alter_cmd = 'B';
 		}
 
 		/* Open closed doors */
@@ -1876,6 +1923,7 @@ void do_cmd_alter(void)
 		{
 			/* Tunnel */
 			more = do_cmd_open_aux(y, x, dir);
+			alter_cmd = 'o';
 		}
 
 		/* Disarm traps */
@@ -1884,6 +1932,7 @@ void do_cmd_alter(void)
 		{
 			/* Tunnel */
 			more = do_cmd_disarm_aux(y, x, dir);
+			alter_cmd = 'D';
 		}
 
 		/* Oops */
@@ -1891,11 +1940,16 @@ void do_cmd_alter(void)
 		{
 			/* Oops */
 			msg_print("You attack the empty air.");
+			alter_cmd = ',';
 		}
 	}
 
 	/* Cancel repetition unless we can continue */
-	if (!more) disturb(0, 0);
+	if (!more)
+	{
+		disturb(0, 0);
+		alter_cmd = 0;
+	}
 }
 
 
