@@ -98,6 +98,9 @@ extern void cave_set_feat(int y, int x, int feat);
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 #endif
+#if (defined(CAVE_C) || defined(MELEE2_C) || defined(WIZARD2_C))
+extern bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*okay)(int, int, int));
+#endif
 #if (defined(CAVE_C) || defined(MELEE2_C) || defined(XTRA2_C))
 extern bool projectable(int y1, int x1, int y2, int x2);
 #endif
@@ -137,11 +140,11 @@ extern void do_cmd_attack(void);
 #if (defined(CMD1_C) || defined(OBJECT1_C))
 extern void do_cmd_fire(object_type *o_ptr);
 #endif
-#if (defined(CMD1_C) || defined(POWERS_C))
-extern void do_cmd_throw_hard(int mult);
-#endif
 #if (defined(CMD1_C) || defined(OBJECT1_C))
 extern void do_cmd_throw(object_type *o_ptr);
+#endif
+#if (defined(CMD1_C) || defined(POWERS_C))
+extern void do_cmd_throw_hard(int mult);
 #endif
 #if (defined(CMD1_C) || defined(DUNGEON_C))
 extern void do_cmd_racial_power(void);
@@ -206,9 +209,9 @@ extern void run_step(int dir);
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_inven(bool equip);
 #endif
-
-
-
+#if (defined(CMD3_C) || defined(OBJECT1_C))
+extern bool PURE item_tester_hook_wear(object_ctype *o_ptr);
+#endif
 #if (defined(CMD3_C) || defined(OBJECT1_C))
 extern void do_cmd_wield(object_type *o_ptr);
 #endif
@@ -284,9 +287,6 @@ extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_options(void);
 #endif
@@ -336,9 +336,7 @@ extern magic_type *num_to_spell(int i);
 extern int spell_skill(const magic_type *s_ptr);
 #endif
 #if (defined(CMD5_C) || defined(MONSTER1_C) || defined(SPELLS2_C))
-extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,
-	va_list *vp)
-;
+extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,	va_list *vp);
 #endif
 #if (defined(CMD1_C) || defined(CMD5_C))
 extern u16b spell_energy(u16b skill,u16b min);
@@ -587,7 +585,7 @@ extern void generate_spirit_name(spirit_type *s_ptr);
 extern void generate_spirit_names(void);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(WIZARD2_C))
-extern bool PURE cave_empty_bold_p(int y, int  x);
+extern bool PURE cave_empty_bold_p(int y, int x);
 #endif
 #if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
 extern bool PURE daytime_p(void);
@@ -743,9 +741,7 @@ extern XImage *ReadBMP(Display *dpy, char *Name);
 extern bool smoothRescaling;
 #endif
 #if (((defined(USE_X11) || defined(USE_XAW) || defined(USE_XPJ) || defined(USE_GTK))) && defined(USE_GRAPHICS)) && (defined(MAID_X11_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C))
-extern XImage *ResizeImage(Display *dpy, XImage *Im,
-                           int ix, int iy, int ox, int oy)
-;
+extern XImage *ResizeImage(Display *dpy, XImage *Im, int ix, int iy, int ox, int oy);
 #endif
 
 /* main-ami.c */
@@ -1210,14 +1206,10 @@ extern bool paletted;
 extern bool colors16;
 #endif
 #if ((defined(WINDOWS)) && defined(USE_SAVER)) && (defined(MAIN_WIN_C))
-extern LRESULT FAR PASCAL AngbandSaverProc(HWND hWnd, UINT uMsg,
-                                            WPARAM wParam, LPARAM lParam)
-;
+extern LRESULT FAR PASCAL AngbandSaverProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
 #if (defined(WINDOWS)) && (defined(MAIN_WIN_C))
-extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
-                       LPSTR lpCmdLine, int nCmdShow)
-;
+extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow);
 #endif
 
 /* main-x11.c */
@@ -1276,12 +1268,6 @@ extern void curse_equipment(int chance, int heavy_chance);
 #if (defined(DUNGEON_C) || defined(MELEE2_C))
 extern void process_monsters(void);
 #endif
-
-
-
-
-
-
 
 /* monster1.c */
 
@@ -1405,6 +1391,9 @@ extern void object_info_known(object_type *j_ptr, object_ctype *o_ptr);
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern void object_flags_known(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C))
+extern cptr PURE get_inscription(object_ctype *o_ptr);
+#endif
 #if (defined(MONSTER2_C) || defined(OBJECT1_C))
 extern cptr find_next_good_flag(cptr s, byte reject, byte require);
 #endif
@@ -1459,20 +1448,23 @@ extern bool item_tester_okay(object_ctype *o_ptr);
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern void display_inven(bool equip);
 #endif
-
-
-
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern void show_inven(bool equip, bool all);
 #endif
-
-
-
 #if (defined(OBJECT1_C) || defined(SQUELCH_C))
 extern void next_object(object_type **o_ptr);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor);
+#endif
+#if (defined(OBJECT1_C) || defined(SPELLS2_C))
+extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
+#endif
+#if (defined(CMD1_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
+extern object_type *get_object_from_function(void (*func)(object_type *));
+#endif
+#if (defined(DUNGEON_C) || defined(OBJECT1_C))
+extern bool do_cmd_use_object(s16b cmd);
 #endif
 
 /* object2.c */
@@ -1529,6 +1521,9 @@ extern int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr);
 extern bool PURE object_similar(object_ctype *o_ptr, object_ctype *j_ptr);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C))
+extern bool store_object_absorb(object_type *j_ptr, object_type *o_ptr);
+#endif
+#if (defined(OBJECT2_C) || defined(STORE_C))
 extern bool object_absorb(object_type *o_ptr, object_type *j_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
@@ -1545,6 +1540,9 @@ extern void check_bonus_table(void);
 #endif
 #if (defined(CMD6_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void apply_magic_2(object_type *o_ptr, const int lev);
+#endif
+#if (defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+extern void set_object_found(object_type *o_ptr, int how, int idx);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C))
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, int how, int idx);
@@ -1831,6 +1829,9 @@ extern bool artifact_scroll(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool ident_spell(void);
 #endif
+#if (defined(OBJECT1_C) || defined(SPELLS2_C))
+extern void do_identify_fully(object_type *o_ptr);
+#endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool identify_fully(void);
 #endif
@@ -2012,30 +2013,14 @@ extern void teleport_swap(int dir);
 extern void alter_reality(void);
 #endif
 
-
-
-
-
-
-
 /* squelch.c */
 
 #if (defined(CMD4_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
-extern int display_item_category(int *max, bool (*item_good)(int, name_centry *),
-	name_centry *start, name_centry **choice)
-;
+extern void get_names(char **obuf, char *this, int num, int *choice, uint len,	void (*print_f1)(char *, uint, cptr, va_list *));
 #endif
 #if (defined(CMD4_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
-extern void get_names(char **obuf, char *this, int num, int *choice, uint len,
-	void (*print_f1)(char *, uint, cptr, va_list *))
-;
+extern int display_item_category(int *max, bool (*item_good)(int, name_centry *),	name_centry *start, name_centry **choice);
 #endif
-
-
-
-
-
-
 #if (defined(SQUELCH_C) || defined(XTRA1_C))
 extern void squelch_grid(void);
 #endif
@@ -2043,11 +2028,8 @@ extern void squelch_grid(void);
 extern void squelch_inventory(void);
 #endif
 
-/* object2.c */
+/* store.c */
 
-#if (defined(OBJECT2_C) || defined(STORE_C))
-extern bool store_object_absorb(object_type *j_ptr, object_type *o_ptr);
-#endif
 #if (defined(CMD4_C) || defined(STORE_C))
 extern cptr store_title(int store_num);
 #endif
@@ -2318,11 +2300,17 @@ extern errr fd_close(int fd);
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void move_cursor(int row, int col);
 #endif
+#if (defined(INIT2_C) || defined(UTIL_C))
+extern void init_ascii_text_conv(void);
+#endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C))
 extern void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(CMD4_C) || defined(UTIL_C))
 extern void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
+#if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(UTIL_C))
+extern void s16b_to_string_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(CMD4_C) || defined(MAIN_GTK_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern sint macro_find_exact(cptr pat);
@@ -2711,9 +2699,6 @@ extern int total_friends;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(VARIABLE_C))
 extern s32b total_friend_levels;
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool rogue_like_commands;
 #endif
@@ -3107,6 +3092,9 @@ extern bool autosave_q;
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern s16b autosave_freq;
 #endif
+#if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(VARIABLE_C))
+extern bool allow_squelch;
+#endif
 #if (defined(CMD4_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern s16b feeling;
 #endif
@@ -3167,12 +3155,6 @@ extern s16b wildy;
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b target_who;
 #endif
-
-
-
-
-
-
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern s16b health_who;
 #endif
@@ -3473,12 +3455,6 @@ extern cptr ANGBAND_DIR_USER;
 #if (defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_DIR_XTRA;
 #endif
-
-
-
-
-
-
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool (*item_tester_hook)(object_ctype*);
 #endif
@@ -3710,9 +3686,6 @@ extern void resize_inkey(void);
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void ang_sort(vptr u, vptr v, int n);
 #endif
-
-
-
 #if (defined(CMD3_C) || defined(XTRA2_C))
 extern bool target_set(int mode);
 #endif
@@ -4003,62 +3976,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* cave.c */
-
-#if (defined(CAVE_C) || defined(MELEE2_C) || defined(WIZARD2_C))
-extern bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*okay)(int, int, int));
-#endif
-
-/* cmd3.c */
-
-#if (defined(CMD3_C) || defined(OBJECT1_C))
-extern bool PURE item_tester_hook_wear(object_ctype *o_ptr);
-#endif
-
-/* object1.c */
-
-#if (defined(DUNGEON_C) || defined(OBJECT1_C))
-extern bool do_cmd_use_object(s16b cmd);
-#endif
-#if (defined(OBJECT1_C) || defined(SPELLS2_C))
-extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
-#endif
-#if (defined(CMD1_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
-extern object_type *get_object_from_function(void (*func)(object_type *));
-#endif
-
-/* spells2.c */
-
-#if (defined(OBJECT1_C) || defined(SPELLS2_C))
-extern void do_identify_fully(object_type *o_ptr);
-#endif
-
-/* util.c */
-
-#if (defined(INIT2_C) || defined(UTIL_C))
-extern void init_ascii_text_conv(void);
-#endif
-#if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(UTIL_C))
-extern void s16b_to_string_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
-#endif
-
-/* object2.c */
-
-#if (defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern void set_object_found(object_type *o_ptr, int how, int idx);
-#endif
-
-/* object1.c */
-
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C))
-extern cptr PURE get_inscription(object_ctype *o_ptr);
-#endif
-
-/* variable.c */
-
-#if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(VARIABLE_C))
-extern bool allow_squelch;
 #endif
 #endif /* INCLUDED_EXTERNS_H */
