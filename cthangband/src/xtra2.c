@@ -333,11 +333,8 @@ static int notice_stun_aux(int old, int new, int *t, int *t2)
 	/* Getting better. */
 	if (new < old)
 	{
-		/* No message for a decrease. */
-		if (new && new < old) return 0;
-
-		/* The effect is gone. */
-		if (!new && old) return 1;
+		/* Only mention a decrease if the effect goes completely. */
+		return new ? 0 : 1;
 	}
 	else
 	{
