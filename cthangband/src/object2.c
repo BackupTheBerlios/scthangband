@@ -1989,89 +1989,6 @@ static char make_artifact(object_type *o_ptr, bool special)
 	return (o_ptr->name1 != 0);
 }
 
-
-/*
- * Charge a new wand.
- */
-static void charge_wand(object_type *o_ptr)
-{
-	switch (o_ptr->k_idx)
-	{
-		case OBJ_WAND_HEAL_MONSTER:              o_ptr->pval = randint(20) + 8; break;
-		case OBJ_WAND_HASTE_MONSTER:             o_ptr->pval = randint(20) + 8; break;
-		case OBJ_WAND_CLONE_MONSTER:             o_ptr->pval = randint(5)  + 3; break;
-		case OBJ_WAND_TELEPORT_OTHER:             o_ptr->pval = randint(5)  + 6; break;
-		case OBJ_WAND_DISARMING:                 o_ptr->pval = randint(5)  + 4; break;
-		case OBJ_WAND_TRAP_DOOR_DESTRUCTION:    o_ptr->pval = randint(8)  + 6; break;
-        case OBJ_WAND_STONE_TO_MUD:              o_ptr->pval = randint(8)  + 3; break;
-		case OBJ_WAND_LIGHT:                              o_ptr->pval = randint(10) + 6; break;
-        case OBJ_WAND_SLEEP_MONSTER:             o_ptr->pval = randint(15) + 8; break;
-		case OBJ_WAND_SLOW_MONSTER:              o_ptr->pval = randint(10) + 6; break;
-		case OBJ_WAND_CONFUSE_MONSTER:   o_ptr->pval = randint(12) + 6; break;
-		case OBJ_WAND_SCARE_MONSTER:              o_ptr->pval = randint(5)  + 3; break;
-		case OBJ_WAND_DRAIN_LIFE:                o_ptr->pval = randint(3)  + 3; break;
-		case OBJ_WAND_POLYMORPH:                 o_ptr->pval = randint(8)  + 6; break;
-		case OBJ_WAND_STINKING_CLOUD:    o_ptr->pval = randint(8)  + 6; break;
-		case OBJ_WAND_MAGIC_MISSILE:             o_ptr->pval = randint(10) + 6; break;
-		case OBJ_WAND_ACID_BOLT:                 o_ptr->pval = randint(8)  + 6; break;
-        case OBJ_WAND_TAME_MONSTER:             o_ptr->pval = randint(6)  + 2; break;
-		case OBJ_WAND_FIRE_BOLT:                 o_ptr->pval = randint(8)  + 6; break;
-		case OBJ_WAND_COLD_BOLT:                 o_ptr->pval = randint(5)  + 6; break;
-		case OBJ_WAND_ACID_BALL:                 o_ptr->pval = randint(5)  + 2; break;
-		case OBJ_WAND_ELEC_BALL:                 o_ptr->pval = randint(8)  + 4; break;
-		case OBJ_WAND_FIRE_BALL:                 o_ptr->pval = randint(4)  + 2; break;
-		case OBJ_WAND_COLD_BALL:                 o_ptr->pval = randint(6)  + 2; break;
-		case OBJ_WAND_WONDER:                    o_ptr->pval = randint(15) + 8; break;
-		case OBJ_WAND_ANNIHILATION:              o_ptr->pval = randint(2)  + 1; break;
-		case OBJ_WAND_DRAGON_FIRE:               o_ptr->pval = randint(3)  + 1; break;
-		case OBJ_WAND_DRAGON_COLD:               o_ptr->pval = randint(3)  + 1; break;
-		case OBJ_WAND_DRAGON_BREATH:             o_ptr->pval = randint(3)  + 1; break;
-	case OBJ_WAND_SHARD_BALL:           o_ptr->pval = randint(2)  + 1; break;
-	}
-}
-
-
-
-/*
- * Charge a new staff.
- */
-static void charge_staff(object_type *o_ptr)
-{
-	switch (o_ptr->k_idx)
-	{
-		case OBJ_STAFF_DARKNESS:                 o_ptr->pval = randint(8)  + 8; break;
-		case OBJ_STAFF_SLOWNESS:                 o_ptr->pval = randint(8)  + 8; break;
-		case OBJ_STAFF_HASTE_MONSTERS:   o_ptr->pval = randint(8)  + 8; break;
-		case OBJ_STAFF_SUMMONING:                o_ptr->pval = randint(3)  + 1; break;
-		case OBJ_STAFF_TELEPORTATION:    o_ptr->pval = randint(4)  + 5; break;
-		case OBJ_STAFF_PERCEPTION:                 o_ptr->pval = randint(15) + 5; break;
-		case OBJ_STAFF_REMOVE_CURSE:             o_ptr->pval = randint(3)  + 4; break;
-		case OBJ_STAFF_STARLIGHT:                 o_ptr->pval = randint(5)  + 6; break;
-		case OBJ_STAFF_LIGHT:                             o_ptr->pval = randint(20) + 8; break;
-		case OBJ_STAFF_ENLIGHTENMENT:                  o_ptr->pval = randint(5)  + 5; break;
-		case OBJ_STAFF_TREASURE_LOCATION:              o_ptr->pval = randint(20) + 8; break;
-		case OBJ_STAFF_OBJECT_LOCATION:              o_ptr->pval = randint(15) + 6; break;
-		case OBJ_STAFF_TRAP_LOCATION:              o_ptr->pval = randint(5)  + 6; break;
-		case OBJ_STAFF_DOOR_STAIR_LOCATION:              o_ptr->pval = randint(8)  + 6; break;
-		case OBJ_STAFF_DETECT_INVIS:             o_ptr->pval = randint(15) + 8; break;
-		case OBJ_STAFF_DETECT_EVIL:              o_ptr->pval = randint(15) + 8; break;
-		case OBJ_STAFF_CURE_LIGHT:               o_ptr->pval = randint(5)  + 6; break;
-		case OBJ_STAFF_CURING:                   o_ptr->pval = randint(3)  + 4; break;
-		case OBJ_STAFF_HEALING:                  o_ptr->pval = randint(2)  + 1; break;
-		case OBJ_STAFF_THE_MAGI:                 o_ptr->pval = randint(2)  + 2; break;
-		case OBJ_STAFF_SLEEP_MONSTERS:   o_ptr->pval = randint(5)  + 6; break;
-		case OBJ_STAFF_SLOW_MONSTERS:    o_ptr->pval = randint(5)  + 6; break;
-		case OBJ_STAFF_SPEED:                    o_ptr->pval = randint(3)  + 4; break;
-		case OBJ_STAFF_PROBING:                  o_ptr->pval = randint(6)  + 2; break;
-		case OBJ_STAFF_DISPEL_EVIL:              o_ptr->pval = randint(3)  + 4; break;
-		case OBJ_STAFF_POWER:                    o_ptr->pval = randint(3)  + 1; break;
-		case OBJ_STAFF_HOLINESS:                 o_ptr->pval = randint(2)  + 2; break;
-		case OBJ_STAFF_GENOCIDE:                 o_ptr->pval = randint(2)  + 1; break;
-		case OBJ_STAFF_EARTHQUAKES:              o_ptr->pval = randint(5)  + 3; break;
-		case OBJ_STAFF_STAR_DESTRUCTION:              o_ptr->pval = randint(3)  + 1; break;
-	}
-}
-
 /*
  * Test that an ego type is suitable for the current object.
  */
@@ -2324,7 +2241,165 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 	}
 }
 
+typedef struct bonus_type bonus_type;
+struct bonus_type
+{
+	s16b k_idx;
+	s16b min;
+	s16b max;
+	s16b bonus; /* Should always be >0, but is signed anyway. */
+	s16b var; /* The variable, as in the definitions below. */
+	s16b power; /* A modifier to the "power" variable before any effects. */
+};
 
+#define BV_PVAL	1
+#define BV_TO_H 2
+#define BV_TO_D 3
+#define BV_TO_A 4
+
+/* A large table of modifiers.
+ * Power acts as a modifier for the bonus. If power+bonus_type.power < 0,
+ * the object becomes cursed and the current modifier is negated.
+ * The power plays no other role at present.
+ */
+static bonus_type bonus_table[] =
+{
+	{OBJ_RING_EXTRA_ATTACKS, 0, 0, 3, BV_PVAL, 0},
+	{OBJ_RING_INC_STR, 1, 1, 5, BV_PVAL, 0},
+	{OBJ_RING_INC_CON, 1, 1, 5, BV_PVAL, 0},
+	{OBJ_RING_INC_DEX, 1, 1, 5, BV_PVAL, 0},
+	{OBJ_RING_INC_INT, 1, 1, 5, BV_PVAL, 0},
+	{OBJ_RING_SPEED, 1, 5, 5, BV_PVAL, 0},
+	{OBJ_RING_LORDLY_PROTECTION, 11, 15, 10, BV_TO_A, 2},
+	{OBJ_RING_SEARCHING, 1, 1, 5, BV_PVAL, 0},
+	{OBJ_RING_FIRE, 6, 10, 10, BV_TO_A, 2},
+	{OBJ_RING_ACID, 6, 10, 10, BV_TO_A, 2},
+	{OBJ_RING_ICE, 6, 10, 10, BV_TO_A, 2},
+	{OBJ_RING_DEC_STR, 1, 1, 5, BV_PVAL, -2},
+	{OBJ_RING_DEC_INT, 1, 1, 5, BV_PVAL, -2},
+	{OBJ_RING_WOE, 1, 1, 5, BV_PVAL, -2},
+	{OBJ_RING_WOE, 5, 5, 5, BV_TO_A, -2},
+	{OBJ_RING_DAMAGE, 6, 13, 10, BV_TO_D, 0},
+	{OBJ_RING_ACCURACY, 6, 13, 10, BV_TO_H, 0},
+	{OBJ_RING_PROTECTION, 6, 13, 10, BV_TO_A, 0},
+	{OBJ_RING_SLAYING, 1, 7, 10, BV_TO_H, 0},
+	{OBJ_RING_SLAYING, 1, 7, 10, BV_TO_D, 0},
+	{OBJ_AMULET_BRILLIANCE, 1, 1, 5, BV_PVAL, 0},
+	{OBJ_AMULET_INC_CHR, 1, 1, 5, BV_PVAL, 0},
+	{OBJ_AMULET_ANTI_MAGIC, 0, 0, 0, BV_PVAL, 0},
+	{OBJ_AMULET_ANTI_TELEPORTATION, 0, 0, 0, BV_PVAL, 0},
+	{OBJ_AMULET_SEARCHING, 1, 5, 5, BV_PVAL, 0},
+	{OBJ_AMULET_THE_MAGI, 1, 5, 5, BV_PVAL, 2},
+	{OBJ_AMULET_THE_MAGI, 1, 5, 5, BV_TO_A, 2},
+	{OBJ_AMULET_DOOM, 1, 5, 5, BV_PVAL, -2},
+	{OBJ_AMULET_DOOM, 1, 5, 5, BV_TO_A, -2},
+	{OBJ_WOODEN_TORCH, 1, 4000, 0, BV_PVAL, 2},
+	{OBJ_BRASS_LANTERN, 1, 7500, 0, BV_PVAL, 2},
+	{OBJ_WAND_HEAL_MONSTER, 9, 28, 0, BV_PVAL, 2},
+	{OBJ_WAND_HASTE_MONSTER, 9, 28, 0, BV_PVAL, 2},
+	{OBJ_WAND_CLONE_MONSTER, 4, 8, 0, BV_PVAL, 2},
+	{OBJ_WAND_TELEPORT_OTHER, 7, 11, 0, BV_PVAL, 2},
+	{OBJ_WAND_DISARMING, 5, 9, 0, BV_PVAL, 2},
+	{OBJ_WAND_TRAP_DOOR_DESTRUCTION, 7, 14, 0, BV_PVAL, 2},
+	{OBJ_WAND_STONE_TO_MUD, 4, 11, 0, BV_PVAL, 2},
+	{OBJ_WAND_LIGHT, 7, 16, 0, BV_PVAL, 2},
+	{OBJ_WAND_SLEEP_MONSTER, 9, 23, 0, BV_PVAL, 2},
+	{OBJ_WAND_SLOW_MONSTER, 7, 16, 0, BV_PVAL, 2},
+	{OBJ_WAND_CONFUSE_MONSTER, 7, 18, 0, BV_PVAL, 2},
+	{OBJ_WAND_SCARE_MONSTER, 4, 8, 0, BV_PVAL, 2},
+	{OBJ_WAND_DRAIN_LIFE, 4, 6, 0, BV_PVAL, 2},
+	{OBJ_WAND_POLYMORPH, 7, 14, 0, BV_PVAL, 2},
+	{OBJ_WAND_STINKING_CLOUD, 7, 14, 0, BV_PVAL, 2},
+	{OBJ_WAND_MAGIC_MISSILE, 7, 16, 0, BV_PVAL, 2},
+	{OBJ_WAND_ACID_BOLT, 7, 14, 0, BV_PVAL, 2},
+	{OBJ_WAND_TAME_MONSTER, 3, 8, 0, BV_PVAL, 2},
+	{OBJ_WAND_FIRE_BOLT, 7, 14, 0, BV_PVAL, 2},
+	{OBJ_WAND_COLD_BOLT, 7, 11, 0, BV_PVAL, 2},
+	{OBJ_WAND_ACID_BALL, 3, 7, 0, BV_PVAL, 2},
+	{OBJ_WAND_ELEC_BALL, 5, 12, 0, BV_PVAL, 2},
+	{OBJ_WAND_FIRE_BALL, 3, 6, 0, BV_PVAL, 2},
+	{OBJ_WAND_COLD_BALL, 3, 8, 0, BV_PVAL, 2},
+	{OBJ_WAND_WONDER, 9, 23, 0, BV_PVAL, 2},
+	{OBJ_WAND_ANNIHILATION, 2, 3, 0, BV_PVAL, 2},
+	{OBJ_WAND_DRAGON_FIRE, 2, 4, 0, BV_PVAL, 2},
+	{OBJ_WAND_DRAGON_COLD, 2, 4, 0, BV_PVAL, 2},
+	{OBJ_WAND_DRAGON_BREATH, 2, 4, 0, BV_PVAL, 2},
+	{OBJ_WAND_SHARD_BALL, 2, 3, 0, BV_PVAL, 2},
+	{OBJ_STAFF_DARKNESS, 9, 16, 0, BV_PVAL, 2},
+	{OBJ_STAFF_SLOWNESS, 9, 16, 0, BV_PVAL, 2},
+	{OBJ_STAFF_HASTE_MONSTERS, 9, 16, 0, BV_PVAL, 2},
+	{OBJ_STAFF_SUMMONING, 2, 4, 0, BV_PVAL, 2},
+	{OBJ_STAFF_TELEPORTATION, 6, 9, 0, BV_PVAL, 2},
+	{OBJ_STAFF_PERCEPTION, 6, 20, 0, BV_PVAL, 2},
+	{OBJ_STAFF_REMOVE_CURSE, 5, 7, 0, BV_PVAL, 2},
+	{OBJ_STAFF_STARLIGHT, 7, 11, 0, BV_PVAL, 2},
+	{OBJ_STAFF_LIGHT, 9, 28, 0, BV_PVAL, 2},
+	{OBJ_STAFF_ENLIGHTENMENT, 6, 10, 0, BV_PVAL, 2},
+	{OBJ_STAFF_TREASURE_LOCATION, 9, 28, 0, BV_PVAL, 2},
+	{OBJ_STAFF_OBJECT_LOCATION, 7, 21, 0, BV_PVAL, 2},
+	{OBJ_STAFF_TRAP_LOCATION, 7, 11, 0, BV_PVAL, 2},
+	{OBJ_STAFF_DOOR_STAIR_LOCATION, 7, 14, 0, BV_PVAL, 2},
+	{OBJ_STAFF_DETECT_INVIS, 9, 23, 0, BV_PVAL, 2},
+	{OBJ_STAFF_DETECT_EVIL, 9, 23, 0, BV_PVAL, 2},
+	{OBJ_STAFF_CURE_LIGHT, 7, 11, 0, BV_PVAL, 2},
+	{OBJ_STAFF_CURING, 5, 7, 0, BV_PVAL, 2},
+	{OBJ_STAFF_HEALING, 2, 3, 0, BV_PVAL, 2},
+	{OBJ_STAFF_THE_MAGI, 3, 4, 0, BV_PVAL, 2},
+	{OBJ_STAFF_SLEEP_MONSTERS, 7, 11, 0, BV_PVAL, 2},
+	{OBJ_STAFF_SLOW_MONSTERS, 7, 11, 0, BV_PVAL, 2},
+	{OBJ_STAFF_SPEED, 5, 7, 0, BV_PVAL, 2},
+	{OBJ_STAFF_PROBING, 3, 8, 0, BV_PVAL, 2},
+	{OBJ_STAFF_DISPEL_EVIL, 5, 7, 0, BV_PVAL, 2},
+	{OBJ_STAFF_POWER, 2, 4, 0, BV_PVAL, 2},
+	{OBJ_STAFF_HOLINESS, 3, 4, 0, BV_PVAL, 2},
+	{OBJ_STAFF_GENOCIDE, 2, 3, 0, BV_PVAL, 2},
+	{OBJ_STAFF_EARTHQUAKES, 4, 8, 0, BV_PVAL, 2},
+	{OBJ_STAFF_STAR_DESTRUCTION, 2, 4, 0, BV_PVAL, 2},
+};
+
+static void set_var_aux(object_type *o_ptr, bonus_type *b_ptr, int level,
+	int power)
+{
+	s16b *var;
+	switch (b_ptr->var)
+	{
+		case BV_PVAL: var = &o_ptr->pval; break;
+		case BV_TO_H: var = &o_ptr->to_h; break;
+		case BV_TO_D: var = &o_ptr->to_d; break;
+		case BV_TO_A: var = &o_ptr->to_a; break;
+		default:
+		{
+			if (alert_failure)
+				msg_format("Strange var request in set_var_aux(): %d.\n",
+					b_ptr->var);
+			return;
+		}
+	}
+	(*var) = rand_range(b_ptr->min, b_ptr->max) + m_bonus(b_ptr->bonus, level);
+
+	if (power < 0)
+	{
+		/* Broken */
+		o_ptr->ident |= (IDENT_BROKEN);
+
+		/* Cursed */
+		o_ptr->ident |= (IDENT_CURSED);
+
+		(*var) *= -1;
+	}
+}
+
+#define END(X) (X+N_ELEMENTS(X))
+
+static void set_var(object_type *o_ptr, int level, int power)
+{
+	bonus_type *b_ptr;
+	for (b_ptr = bonus_table; b_ptr < END(bonus_table); b_ptr++)
+	{
+		if (b_ptr->k_idx == o_ptr->k_idx)
+			set_var_aux(o_ptr, b_ptr, level, power+b_ptr->power);
+	}
+}
 
 /*
  * Apply magic to an item known to be a "ring" or "amulet"
@@ -2337,350 +2412,48 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
     artifact_bias = 0;
 
-	/* Apply magic (good or bad) according to type */
-	switch (o_ptr->tval)
+	/* Set most of the values as in the table above. */
+	set_var(o_ptr, level, power);
+
+	/* Set the unusual powers first. */
+	switch (o_ptr->k_idx)
 	{
-		case TV_RING:
+		case OBJ_RING_EXTRA_ATTACKS:
 		{
-			/* Analyze */
-			switch (o_ptr->k_idx)
+			/* Prevent a 0 pval. */
+			if (!o_ptr->pval) o_ptr->pval = 1;
+			break;
+		}
+		/* Ring of Speed! */
+		case OBJ_RING_SPEED:
+		{
+			/* Cursed rings can become very bad, uncursed ones very good. */
+			int mod = (cursed_p(o_ptr)) ? -1 : 1;
+
+			/* Super-charge the ring */
+			while (one_in(2)) o_ptr->pval += mod;
+			break;
+		}
+		case OBJ_RING_LORDLY_PROTECTION:
+		{
+			do
 			{
-				/* Strength, Constitution, Dexterity, Intelligence */
-                case OBJ_RING_EXTRA_ATTACKS:
-				{
-					/* Stat bonus */
-                    o_ptr->pval = m_bonus(3, level);
-                    if (o_ptr->pval < 1) o_ptr->pval = 1;
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
-					}
-
-					break;
-				}
-
-				case OBJ_RING_INC_STR:
-				case OBJ_RING_INC_CON:
-				case OBJ_RING_INC_DEX:
-				case OBJ_RING_INC_INT:
-				{
-					/* Stat bonus */
-					o_ptr->pval = 1 + m_bonus(5, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
-					}
-
-					break;
-				}
-
-				/* Ring of Speed! */
-				case OBJ_RING_SPEED:
-				{
-					/* Base speed (1 to 10) */
-					o_ptr->pval = randint(5) + m_bonus(5, level);
-
-					/* Super-charge the ring */
-					while (rand_int(100) < 50) o_ptr->pval++;
-
-					/* Cursed Ring */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
-
-						break;
-					}
-
-					break;
-				}
-
-                case OBJ_RING_LORDLY_PROTECTION:
-                {
-                    do
-                    {
-                    random_resistance(o_ptr, FALSE, ((randint(20))+18));
-                    }
-                    while(randint(4)==1);
-					/* Bonus to armor class */
-                    o_ptr->to_a = 10 + randint(5) + m_bonus(10, level);
-                }
-                break;
-
-				/* Searching */
-				case OBJ_RING_SEARCHING:
-				{
-					/* Bonus to searching */
-					o_ptr->pval = 1 + m_bonus(5, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
-					}
-
-					break;
-				}
-
-				/* Flames, Acid, Ice */
-				case OBJ_RING_FIRE:
-				case OBJ_RING_ACID:
-				case OBJ_RING_ICE:
-				{
-					/* Bonus to armor class */
-					o_ptr->to_a = 5 + randint(5) + m_bonus(10, level);
-					break;
-				}
-
-				/* Weakness, Stupidity */
-				case OBJ_RING_DEC_STR:
-				case OBJ_RING_DEC_INT:
-				{
-					/* Broken */
-					o_ptr->ident |= (IDENT_BROKEN);
-
-					/* Cursed */
-					o_ptr->ident |= (IDENT_CURSED);
-
-					/* Penalize */
-					o_ptr->pval = 0 - (1 + m_bonus(5, level));
-
-					break;
-				}
-
-				/* WOE, Stupidity */
-				case OBJ_RING_WOE:
-				{
-					/* Broken */
-					o_ptr->ident |= (IDENT_BROKEN);
-
-					/* Cursed */
-					o_ptr->ident |= (IDENT_CURSED);
-
-					/* Penalize */
-					o_ptr->to_a = 0 - (5 + m_bonus(10, level));
-					o_ptr->pval = 0 - (1 + m_bonus(5, level));
-
-					break;
-				}
-
-				/* Ring of damage */
-				case OBJ_RING_DAMAGE:
-				{
-					/* Bonus to damage */
-                    o_ptr->to_d = 5 + randint(8) + m_bonus(10, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse bonus */
-						o_ptr->to_d = 0 - (o_ptr->to_d);
-					}
-
-					break;
-				}
-
-				/* Ring of Accuracy */
-				case OBJ_RING_ACCURACY:
-				{
-					/* Bonus to hit */
-                    o_ptr->to_h = 5 + randint(8) + m_bonus(10, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse tohit */
-						o_ptr->to_h = 0 - (o_ptr->to_h);
-					}
-
-					break;
-				}
-
-				/* Ring of Protection */
-				case OBJ_RING_PROTECTION:
-				{
-					/* Bonus to armor class */
-                    o_ptr->to_a = 5 + randint(8) + m_bonus(10, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse toac */
-						o_ptr->to_a = 0 - (o_ptr->to_a);
-					}
-
-					break;
-				}
-
-				/* Ring of Slaying */
-				case OBJ_RING_SLAYING:
-				{
-					/* Bonus to damage and to hit */
-                    o_ptr->to_d = randint(7) + m_bonus(10, level);
-                    o_ptr->to_h = randint(7) + m_bonus(10, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse bonuses */
-						o_ptr->to_h = 0 - (o_ptr->to_h);
-						o_ptr->to_d = 0 - (o_ptr->to_d);
-					}
-
-					break;
-				}
+				random_resistance(o_ptr, FALSE, ((randint(20))+18));
 			}
-
+			while(one_in(4));
 			break;
 		}
 
-		case TV_AMULET:
+		case OBJ_AMULET_RESISTANCE:
 		{
-			/* Analyze */
-			switch (o_ptr->k_idx)
-			{
-				/* Amulet of brilliance/charisma */
-				case OBJ_AMULET_BRILLIANCE:
-				case OBJ_AMULET_INC_CHR:
-				{
-					o_ptr->pval = 1 + m_bonus(5, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse bonuses */
-						o_ptr->pval = 0 - (o_ptr->pval);
-					}
-
-					break;
-				}
-
-                case OBJ_AMULET_ANTI_MAGIC: case OBJ_AMULET_ANTI_TELEPORTATION:
-                {
-                    if (power < 0)
-                    {
-                        o_ptr->ident |= (IDENT_CURSED);
-                    }
-                    break;
-                }
-
-                case OBJ_AMULET_RESISTANCE:
-                {
-                    if (randint(3)==1) random_resistance(o_ptr, FALSE, ((randint(34))+4));
-                    if (randint(5)==1) o_ptr->flags2 |= TR2_RES_POIS;
-                }
-                break;
-
-				/* Amulet of searching */
-				case OBJ_AMULET_SEARCHING:
-				{
-					o_ptr->pval = randint(5) + m_bonus(5, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Broken */
-						o_ptr->ident |= (IDENT_BROKEN);
-
-						/* Cursed */
-						o_ptr->ident |= (IDENT_CURSED);
-
-						/* Reverse bonuses */
-						o_ptr->pval = 0 - (o_ptr->pval);
-					}
-
-					break;
-				}
-
-				/* Amulet of the Magi -- never cursed */
-				case OBJ_AMULET_THE_MAGI:
-				{
-					o_ptr->pval = randint(5) + m_bonus(5, level);
-					o_ptr->to_a = randint(5) + m_bonus(5, level);
-
-                    if (randint(3)==1) o_ptr->flags3 |= TR3_SLOW_DIGEST;
-
-					break;
-				}
-
-				/* Amulet of Doom -- always cursed */
-				case OBJ_AMULET_DOOM:
-				{
-					/* Broken */
-					o_ptr->ident |= (IDENT_BROKEN);
-
-					/* Cursed */
-					o_ptr->ident |= (IDENT_CURSED);
-
-					/* Penalize */
-					o_ptr->pval = 0 - (randint(5) + m_bonus(5, level));
-					o_ptr->to_a = 0 - (randint(5) + m_bonus(5, level));
-
-					break;
-				}
-			}
-
+			if (randint(3)==1) random_resistance(o_ptr, FALSE, ((randint(34))+4));
+			if (randint(5)==1) o_ptr->flags2 |= TR2_RES_POIS;
+			break;
+		}
+		/* Amulet of the Magi -- never cursed */
+		case OBJ_AMULET_THE_MAGI:
+		{
+			if (randint(3)==1) o_ptr->flags3 |= TR3_SLOW_DIGEST;
 			break;
 		}
 	}
@@ -2692,57 +2465,28 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr, int UNUSED level, int UNUSED power)
+static void a_m_aux_4(object_type *o_ptr, int level, int power)
 {
 	/* Apply magic (good or bad) according to type */
-	switch (o_ptr->tval)
+	if (o_ptr->k_idx == OBJ_WOODEN_TORCH || o_ptr->k_idx = OBJ_BRASS_LANTERN)
 	{
-		case TV_LITE:
-		{
-			/* Hack -- Torches -- random fuel */
-			if (o_ptr->k_idx == OBJ_WOODEN_TORCH)
-			{
-				if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
-			}
+		if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+	}
+	else if (o_ptr->tval == TV_CHEST)
+	{
+		/* Hack -- skip ruined chests */
+		if (!chest_number(&k_info[o_ptr->k_idx])) return;
 
-			/* Hack -- Lanterns -- random fuel */
-			if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
-			{
-				if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
-			}
+		/* Hack -- pick a "difficulty" */
+		o_ptr->pval = randint(k_info[o_ptr->k_idx].pval);
 
-			break;
-		}
-
-		case TV_WAND:
-		{
-			/* Hack -- charge wands */
-			charge_wand(o_ptr);
-
-			break;
-		}
-
-		case TV_STAFF:
-		{
-			/* Hack -- charge staffs */
-			charge_staff(o_ptr);
-
-			break;
-		}
-
-		case TV_CHEST:
-		{
-			/* Hack -- skip ruined chests */
-			if (!chest_number(&k_info[o_ptr->k_idx])) break;
-
-			/* Hack -- pick a "difficulty" */
-			o_ptr->pval = randint(k_info[o_ptr->k_idx].pval);
-
-			/* Never exceed "difficulty" of 55 to 59 */
-			if (o_ptr->pval > 55) o_ptr->pval = (short)(55 + rand_int(5)); 
-
-			break;
-		}
+		/* Never exceed "difficulty" of 55 to 59 */
+		if (o_ptr->pval > 55) o_ptr->pval = (short)(55 + rand_int(5)); 
+	}
+	else
+	{
+		/* Set most of the values as in the table above. */
+		set_var(o_ptr, level, power);
 	}
 }
 
