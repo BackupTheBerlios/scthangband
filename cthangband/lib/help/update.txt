@@ -4,6 +4,92 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband 1.0.3 changes:
+
+Allow the map to be nearly as large as the main window, and the top line as
+long as space allows in many cases. Update the display as the screen is resized
+in a few cases.
+
+Make "use" print a list of cantrips for a charm rather than giving an error.
+
+If no missile weapon is equipped, the missile damage given on the character
+information screen is that of the first missile in the player's inventory
+enscribed with @ff, 0 if there are none.
+
+Replace the main-*.c files with versions based on those in Angband 3.0.0.
+
+Make the level generation loop a bit more efficient.
+
+Unify the initial help files, so that help.hlp is used on every system.
+
+Use a VARIABLE_ARRAYS macro to indicate whether it is safe to define an array
+the size of which is set at runtime. Use this in many places if it is, falling
+back to C_NEW() and C_FREE() otherwise.
+
+Fix a bug which prevented the "use racial/other powers" command from working
+(thanks to James Gordon for pointing it out).
+
+Fix a bug which caused objects to be incorrectly described as being bad for
+spellcasting/mindcraft.
+
+Fix a bug whereby objects were incorrectly marked as encumbering
+spells/mindcraft in identify_fully_aux().
+
+Always display the last message before leaving the level.
+
+Change k_ptr->d_char for flavoured items to ' ', so that they always use the
+flavour version of everything.
+
+Comment out unused features to prevent them from appearing in the preferences.
+
+Turn a couple of the long sections in play_game() into separate functions.
+Move the exit point in generate_cave() to the end of the loop. Also move the
+"give up on autoscum" check to the end of the generation loop, and move a few
+more things outside the loop.
+
+Fix a bug whereby items which affect strength didn't indicate an effect on how
+many blows the player had.
+
+Restore the commented sections of makefile.org I'd deleted.
+Make "make -f makefile.org clean" ignore any missing files.
+Add a (possibly working) makefile.cyg.
+
+Replace main.c and main-gcu.c with Angband 3.0.0 versions.
+Make the command line option loop a little clearer.
+Replace various main-*.c files with Angband 3.0.0 versions (untested).
+
+Use rtoa for everything in birth_choice(), so that the race choice is A-Z,0-3
+everywhere.
+
+Remove all temporary buffers except "silly_name" from monster_desc().
+
+Fix a potentially fatal bug whereby the size of the object_desc() buffer wasn't
+fixed, and so the attempt to trim it to a length of ONAME_MAX could affect an
+arbitrary piece of memory.
+
+Replace the format() calls in object_desc() with a couple of local strings.
+
+Make object_desc() use a lower case "t" in "the".
+
+Fix a missing break; statement that caused a bug when the autosave options
+were used.
+
+Make the input to quark_str() unsigned, as its input (almost?) invariably is.
+
+Optimise the "find useful ammunition" loop a bit.
+
+Remove the (now unused) strfmt function.
+
+Fix a mysterious bug whereby the boundary walls couldn't be targetted.
+
+Force the number of an entry in visual preferences to take up as much space as
+the last valid number.
+
+Reduce the number of macros and the amount of special case code from the visual
+preferences.
+
+Fix several other bugs and clean up various pieces of code.
+
 sCthangband 1.0.2 changes:
 
 Call debug commands from process_command().
