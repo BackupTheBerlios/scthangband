@@ -1829,7 +1829,7 @@ static bool target_able(int m_idx)
  *
  * We return TRUE if the target is "okay" and FALSE otherwise.
  */
-bool target_okay(void)
+static bool target_okay(void)
 {
 	/* Accept stationary targets */
 	if (target_who < 0) return (TRUE);

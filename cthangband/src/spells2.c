@@ -5309,16 +5309,8 @@ static bool project_hook(int typ, int dir, int dam, int flg)
 	/* Pass through the target if needed */
 	flg |= (PROJECT_THRU);
 
-	/* Use the given direction */
-	tx = px + ddx[dir];
-	ty = py + ddy[dir];
-
-	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay())
-	{
-		tx = target_col;
-		ty = target_row;
-	}
+	/* Find the target co-ordinates. */
+	get_dir_target(&tx, &ty, dir);
 
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return (project(0, 0, ty, tx, dam, typ, flg));
@@ -6198,16 +6190,12 @@ void teleport_swap(int dir)
 	monster_type * m_ptr;
 	monster_race * r_ptr;
 	
-	if ((dir == 5) && target_okay())
+	if (!get_dir_target(&tx, &ty, dir))
 	{
-		tx = target_col;
-		ty = target_row;
+		/* A direction always refers to an adjacent square. */
+		mmove2(&ty, &tx, px, py, tx, ty);
 	}
-	else
-	{
-		tx = px + ddx[dir];
-		ty = py + ddy[dir];
-	}
+
 	c_ptr = &cave[ty][tx];
 	
 	if (!c_ptr->m_idx)
