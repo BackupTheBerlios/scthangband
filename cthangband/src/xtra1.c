@@ -3674,10 +3674,10 @@ static int object_skill_table[] =
 static bool PURE object_skill_fail(void)
 {
 	/* Disable this via an option. */
-	if (!object_skill) return TRUE;
+	if (!object_skill) return FALSE;
 
 	/* 0% chance. */
-	if (object_skill_count > (int)N_ELEMENTS(object_skill_table)) return FALSE;
+	if (object_skill_count > (int)N_ELEMENTS(object_skill_table)) return TRUE;
 
 	/* Use the table above. */
 	return !percent(object_skill_table[object_skill_count++]);
