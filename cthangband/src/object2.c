@@ -4775,7 +4775,7 @@ object_type *inven_carry(object_type *o_ptr)
 
 
 	/* Check for combining */
-	for (j = 0, empty = NULL; j < INVEN_PACK; j++)
+	for (j = 0, empty = NULL; j <= INVEN_PACK; j++)
 	{
 		j_ptr = &inventory[j];
 
@@ -4807,8 +4807,8 @@ object_type *inven_carry(object_type *o_ptr)
 	}
 
 
-	/* Paranoia */
-	if (!empty) return NULL;
+	/* Paranoia - destroy the overflow slot if all were full. */
+	if (!empty) empty = inventory+INVEN_PACK;
 
 
 	/* Acquire a copy of the item */
