@@ -3080,14 +3080,15 @@ static void do_cmd_knowledge_uniques(void)
 		if (r_ptr->flags1 & (RF1_UNIQUE))
 		{
 			bool dead = (r_ptr->max_num == 0);
+			quest_type *q_ptr = cnv_monster_to_quest(r_ptr);
+			char quest = (q_ptr && q_ptr->known) ? '!' : ' ';
 
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
 				my_fprintf(fff, " %v %c %s%c%v is %s\n", get_symbol(r_ptr),
-					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', CC_PREFIX,
-					(dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE],
-					monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
+					quest, CC_PREFIX,	(dead) ? atchar[TERM_L_DARK] :
+					atchar[TERM_WHITE], monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
 					(dead) ? "dead" : "alive");
 			}
 		}

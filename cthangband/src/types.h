@@ -760,17 +760,18 @@ struct moncol_type
  * Structure for the "quests"
  */
 
-typedef struct quest quest;
+typedef struct quest_type quest_type;
 
-struct quest
+struct quest_type
 {
-	int level;		/* Dungeon level */
-	int r_idx;		/* Monster race */
+	s16b r_idx;		/* Monster race */
+	byte level;		/* Dungeon level */
 	byte dungeon; /* Dungeon containing quest */
 
-	int cur_num;	/* Number killed */
-	int cur_num_known;	/* Number known by the player to have been killed */
-	int max_num;	/* Number required */
+	byte cur_num;	/* Number killed */
+	byte cur_num_known;	/* Number known by the player to have been killed */
+	byte max_num;	/* Number required */
+	bool known;	/* The player has entered this quest. */
 };
 
 

@@ -2273,19 +2273,19 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	 */
 	if ((r_ptr->flags1 & RF1_GUARDIAN) && !force)
 	{
-		int q_idx = get_quest_number();
-		if (q_idx<0)
+		quest_type *q_ptr = get_quest();
+		if (!q_ptr)
 		{
 			/* Not a quest level */
 			return(FALSE);
 		}
-		if (r_idx != q_list[q_idx].r_idx)
+		if (r_idx != q_ptr->r_idx)
 		{
 			/* Not your turn yet */
 			return(FALSE);
 		}
 
-		if (r_ptr->cur_num >= (q_list[q_idx].max_num - q_list[q_idx].cur_num))
+		if (r_ptr->cur_num >= (q_ptr->max_num - q_ptr->cur_num))
 		{
 			/* Too many already */
 			return (FALSE);

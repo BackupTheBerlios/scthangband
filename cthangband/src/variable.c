@@ -609,7 +609,7 @@ monster_type *m_list;
 /*
  * Hack -- Quest array (Heino Vander Sanden)
  */
-quest q_list[MAX_QUESTS];
+quest_type q_list[MAX_QUESTS];
 int MAX_Q_IDX;
 
 

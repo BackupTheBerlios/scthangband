@@ -1838,15 +1838,17 @@ static errr rd_savefile_new_aux(void)
 		/* Load the Quests */
 		for (i = 0; i < MAX_Q_IDX; i++)
 		{
+			quest_type *q_ptr = q_list+i;
+
 			rd_byte(&tmp8u);
-			q_list[i].level = tmp8u;
+			q_ptr->level = tmp8u;
 			rd_s16b((short *)&tmp16u);
-			q_list[i].r_idx = tmp16u;
-			rd_byte(&q_list[i].dungeon);
+			q_ptr->r_idx = tmp16u;
+			rd_byte(&q_ptr->dungeon);
 			rd_byte(&tmp8u);
-			q_list[i].cur_num = tmp8u;
+			q_ptr->cur_num = tmp8u;
 			rd_byte(&tmp8u);
-			q_list[i].max_num = tmp8u;
+			q_ptr->max_num = tmp8u;
 #ifdef SF_QUEST_UNKNOWN
 			if (has_flag(SF_QUEST_UNKNOWN))
 			{
@@ -1856,6 +1858,27 @@ static errr rd_savefile_new_aux(void)
 			else
 			{
 				q_list[i].cur_num_known = 0;
+			}
+#endif
+#ifdef SF_QUEST_KNOWN
+			if (has_flag(SF_QUEST_KNOWN))
+			{
+				rd_byte(&q_ptr->known);
+			}
+			else
+			{
+				/* The default set of known quests is the set of fixed quests. */
+				dun_type *d_ptr;
+				q_ptr->known = FALSE;
+				for (d_ptr = dun_defs; d_ptr < dun_defs+MAX_CAVES; d_ptr++)
+				{
+					if (d_ptr->first_guardian == q_ptr->r_idx ||
+						d_ptr->second_guardian == q_ptr->r_idx)
+					{
+						q_ptr->known = TRUE;
+						break;
+					}
+				}
 			}
 #endif
 		}

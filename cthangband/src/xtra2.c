@@ -2303,14 +2303,14 @@ void monster_death(int m_idx)
     if (cloned) number = 0; /* Clones drop no stuff */
  	if ((is_quest(dun_level)) && (r_ptr->flags1 & RF1_GUARDIAN))
 	{
-		q_idx = get_quest_number ();
-		q_list[q_idx].cur_num++;
-		if (visible) q_list[q_idx].cur_num_known++;
+		quest_type *q_ptr = get_quest();
+		q_ptr->cur_num++;
+		if (visible) q_ptr->cur_num_known++;
 
-		if (q_list[q_idx].cur_num == q_list[q_idx].max_num)
+		if (q_ptr->cur_num == q_ptr->max_num)
 		{
 			/* The quest monsters must have all died. */
-			note_monster_death(r_ptr, q_list[q_idx].cur_num-q_list[q_idx].cur_num_known);
+			note_monster_death(r_ptr, q_ptr->cur_num-q_ptr->cur_num_known);
 
 			/* Remove the block on normal generation. */
 			r_ptr->flags1 &= ~(RF1_GUARDIAN);
@@ -2318,7 +2318,7 @@ void monster_death(int m_idx)
 			/* Drop at least 2 items (the stair will probably destroy one */
 			number += 2;
 			quest = TRUE;
-			q_list[q_idx].level=0;
+			q_ptr->level=0;
 		}
 
 	}

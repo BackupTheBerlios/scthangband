@@ -113,13 +113,16 @@ extern void object_kind_track(int k_idx);
 #if (defined(CAVE_C) || defined(OBJECT1_C) || defined(XTRA1_C))
 extern object_type *cnv_idx_to_obj(s16b index);
 #endif
+#if (defined(CAVE_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern s16b cnv_obj_to_idx(object_type *o_ptr);
+#endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(XTRA2_C))
 extern void object_track(object_type *o_ptr);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void disturb(int stop_stealth, int unused_flag);
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool is_quest(int level);
 #endif
 
@@ -380,6 +383,9 @@ extern void do_cmd_mindcraft(void);
 
 /* cmd6.c */
 
+#if (defined(CMD5_C) || defined(CMD6_C))
+extern s16b item_use_energy(object_type *o_ptr);
+#endif
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
 extern void do_cmd_eat_food(object_type *o_ptr);
 #endif
@@ -1237,6 +1243,9 @@ extern void process_monsters(void);
 #if (defined(MONSTER1_C) || defined(WIZARD1_C))
 extern cptr describe_death_events(int r_idx, cptr he, bool omniscient);
 #endif
+#if (defined(MONSTER1_C) || defined(WIZARD1_C))
+extern cptr roff_monster(u32b flags2, u32b flags3);
+#endif
 #if (defined(CMD3_C) || defined(MONSTER1_C))
 extern void roff_top(int r_idx);
 #endif
@@ -1309,6 +1318,9 @@ extern bool alloc_horde(int y, int x);
 #if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
 extern bool alloc_monster(int dis, int slp);
 #endif
+#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C))
+extern bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm);
+#endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool summon_specific(int y1, int x1, int lev, int type);
 #endif
@@ -1359,6 +1371,9 @@ extern void object_desc_store_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
 extern cptr item_activation(object_type *o_ptr);
+#endif
+#if (defined(CMD3_C) || defined(CMD6_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern bool is_worn_p(object_type *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern int get_bow_mult(object_type *o_ptr);
@@ -1495,30 +1510,18 @@ extern void pick_trap(int y, int x);
 #if (defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS1_C))
 extern void place_trap(int y, int x);
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#if (defined(CMD6_C) || defined(OBJECT2_C))
+extern void item_charges(object_type *o_ptr);
+#endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern void item_increase(object_type *o_ptr, int num);
+#endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern void item_describe(object_type *o_ptr);
+#endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern void item_optimize(object_type *o_ptr);
+#endif
 #if (defined(CMD1_C) || defined(OBJECT2_C) || defined(STORE_C))
 extern bool inven_carry_okay(object_type *o_ptr);
 #endif
@@ -1565,13 +1568,16 @@ extern void display_koff(int k_idx);
 extern int get_quest_monster(void);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(XTRA2_C))
-extern int get_quest_number(void);
+extern quest_type *get_quest(void);
 #endif
 #if (defined(CMD4_C) || defined(QUEST_C))
 extern void print_quest_message(void);
 #endif
 #if (defined(DUNGEON_C) || defined(QUEST_C))
 extern void quest_discovery(void);
+#endif
+#if (defined(DUNGEON_C) || defined(QUEST_C))
+extern void set_guardians(void);
 #endif
 
 /* readdib.c */
@@ -2653,9 +2659,6 @@ extern s16b hack_m_idx_ii;
 #if (defined(DUNGEON_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool multi_rew;
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(VARIABLE_C))
 extern int total_friends;
 #endif
@@ -3211,8 +3214,8 @@ extern object_type *o_list;
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern monster_type *m_list;
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
-extern quest q_list[MAX_QUESTS];
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(QUEST_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+extern quest_type q_list[MAX_QUESTS];
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(QUEST_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern int MAX_Q_IDX;
@@ -3247,7 +3250,7 @@ extern cptr keymap_act[KEYMAP_MODES][256];
 #if (defined(OBJECT1_C) || defined(VARIABLE_C))
 extern player_type p_body;
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_WIN_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_WIN_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern player_type *p_ptr;
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C))
@@ -3953,54 +3956,9 @@ extern cptr string_make(cptr str);
 extern errr string_free(cptr str);
 #endif
 
-/* monster2.c */
-
-#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C))
-extern bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm);
-#endif
-
-/* monster1.c */
-
-#if (defined(MONSTER1_C) || defined(WIZARD1_C))
-extern cptr roff_monster(u32b flags2, u32b flags3);
-#endif
-
-/* cave.c */
-
-#if (defined(CAVE_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern s16b cnv_obj_to_idx(object_type *o_ptr);
-#endif
-
-/* object2.c */
-
-#if (defined(CMD6_C) || defined(OBJECT2_C))
-extern void item_charges(object_type *o_ptr);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern void item_increase(object_type *o_ptr, int num);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern void item_describe(object_type *o_ptr);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern void item_optimize(object_type *o_ptr);
-#endif
-
-/* object1.c */
-
-#if (defined(CMD3_C) || defined(CMD6_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern bool is_worn_p(object_type *o_ptr);
-#endif
-
-/* cmd6.c */
-
-#if (defined(CMD5_C) || defined(CMD6_C))
-extern s16b item_use_energy(object_type *o_ptr);
-#endif
-
 /* quest.c */
 
-#if (defined(DUNGEON_C) || defined(QUEST_C))
-extern void set_guardians(void);
+#if (defined(CMD4_C) || defined(QUEST_C))
+extern quest_type *cnv_monster_to_quest(monster_race *r_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

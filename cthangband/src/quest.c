@@ -23,50 +23,36 @@
  #include "angband.h"
 
 /*
+ * Get the current quest, if any.
+ */
+quest_type *get_quest(void)
+{
+	quest_type *q_ptr;
+
+	for (q_ptr = q_list; q_ptr < q_list+MAX_Q_IDX; q_ptr++)
+	{
+		if ((q_ptr->level == dun_level) && (q_ptr->dungeon == cur_dungeon))
+		{
+			return q_ptr;
+		}
+	}
+	return NULL;
+}
+
+/*
  * Search quests for correct monster
  */
 int get_quest_monster(void)
 {
-	int i;
-
-	for (i = 0; i < MAX_Q_IDX; i++)
+	quest_type *q_ptr = get_quest();
+	if (q_ptr)
 	{
-		if ((q_list[i].level == dun_level) && (q_list[i].dungeon == cur_dungeon)) return (q_list[i].r_idx);
+		return q_ptr->r_idx;
 	}
-	return 0;
-}
-
-#if 0
-/*
- * Search quests for number of monsters
- */
-static int get_max_monster(void)
-{
-	int i;
-
-	for (i = 0; i < MAX_Q_IDX; i++)
+	else
 	{
-		if ((q_list[i].level == dun_level) && (q_list[i].dungeon == cur_dungeon)) return (q_list[i].max_num);
+		return 0;
 	}
-	return 0;
-}
-#endif
-
-/*
- * Get quest number
- */
-int get_quest_number(void)
-{
-	int i;
-
-	for (i=0; i < MAX_Q_IDX; i++)
-	{
-                if ((q_list[i].level == dun_level) &&(q_list[i].dungeon == cur_dungeon)) 
-				{
-					return (i);
-				}
-	}
-	return -1;
 }
 
 /*
@@ -74,10 +60,10 @@ int get_quest_number(void)
  */
 void print_quest_message(void)
 {
-	int q_idx = get_quest_number();
-	monster_race	*r_ptr = &r_info[q_list[q_idx].r_idx];
-	int q_num = q_list[q_idx].max_num - q_list[q_idx].cur_num_known;
-	byte flag = (q_list[q_idx].max_num == 1) ? MDF_DEF : MDF_NUMBER;
+	quest_type *q_ptr = get_quest();
+	monster_race	*r_ptr = &r_info[q_ptr->r_idx];
+	int q_num = q_ptr->max_num - q_ptr->cur_num_known;
+	byte flag = (q_ptr->max_num == 1) ? MDF_DEF : MDF_NUMBER;
 
 	msg_format("You still have to kill %v.", monster_desc_aux_f3, r_ptr,
 		q_num, flag);
@@ -98,9 +84,9 @@ static cptr find_quest[5] =
  */
 void quest_discovery(void)
 {
-	int 	q_idx = get_quest_number();
-	monster_race	*r_ptr = &r_info[q_list[q_idx].r_idx];
-	int q_num = q_list[q_idx].max_num;
+	quest_type *q_ptr = get_quest();
+	monster_race	*r_ptr = &r_info[q_ptr->r_idx];
+	int q_num = q_ptr->max_num;
 
 	/* Get a properly formatted name. Note that no monster will actually
 	be given an article as only uniques are currently allowed to be
@@ -117,6 +103,9 @@ void quest_discovery(void)
 	msg_print (NULL);
 	msg_format("Beware, this level is protected by %v!", monster_desc_aux_f3,
 		r_ptr, q_num, flags);
+
+	/* Once discovered, always known. */
+	q_ptr->known = TRUE;
 }
 
 /*
@@ -125,7 +114,7 @@ void quest_discovery(void)
 void set_guardians(void)
 {
 	monster_race *r_ptr;
-	quest *q_ptr;
+	quest_type *q_ptr;
 
 	/* Remove any previous quest monster status. */
 	for (r_ptr = r_info; r_ptr < r_info+MAX_R_IDX; r_ptr++)
@@ -146,19 +135,14 @@ void set_guardians(void)
 	}
 }
 
-/*
- * Search the next quest level
- */
-#if 0
-static int next_quest_level(void)
+quest_type *cnv_monster_to_quest(monster_race *r_ptr)
 {
-	int i;
+	quest_type *q_ptr;
 
-	for(i = p_ptr->max_dlv[cur_dungeon]; i < 127; i++)
+	/* Set quest monster status for the current quest and any unique quests. */
+	for (q_ptr = q_list; q_ptr < q_list+MAX_Q_IDX; q_ptr++)
 	{
-		if (is_quest(i))
-			return i;
+		if (r_ptr-r_info == q_ptr->r_idx) return q_ptr;
 	}
-	return 127;
+	return NULL;
 }
-#endif

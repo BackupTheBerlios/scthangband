@@ -53,3 +53,8 @@
  * Reorganise k_info.txt a bit
  */
 #define SF_K_INFO_1 0x0400
+
+/*
+ * Track which quests have been encountered.
+ */
+#define SF_QUEST_KNOWN	0x0800

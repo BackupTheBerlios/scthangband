@@ -2656,6 +2656,7 @@ static void initialise_quests(void)
 			q_list[j].r_idx = dun_defs[i].first_guardian;
 			q_list[j].dungeon = i;
 			q_list[j].max_num = 1;
+			q_list[j].known = TRUE;
 		}
 		j++;
 		/* Second Guardian? */
@@ -2665,6 +2666,7 @@ static void initialise_quests(void)
 			q_list[j].r_idx = dun_defs[i].second_guardian;
 			q_list[j].dungeon = i;
 			q_list[j].max_num = 1;
+			q_list[j].known = TRUE;
 		}
 	}
 }

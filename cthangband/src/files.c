@@ -3526,7 +3526,7 @@ errr file_character(cptr name, bool UNUSED full)
 		for (i = y = 0; i < MAX_CAVES; i++)
 		{
 			dun_type *d_ptr = dun_defs+i;
-			quest *q_ptr;
+			quest_type *q_ptr;
 			
 			/* Find the deepest guaranteed quest, if any. */
 			if (d_ptr->first_level > d_ptr->second_level) q_ptr = q_list+2*i;

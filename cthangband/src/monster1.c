@@ -744,7 +744,7 @@ static void roff_aux(int r_idx)
 			int i;
 			for (i = 0; i < MAX_Q_IDX; i++)
 			{
-				quest *q_ptr = &q_list[i];
+				quest_type *q_ptr = &q_list[i];
 				if (q_ptr->r_idx == r_ptr-r_info)
 				{
 					depth = q_ptr->level+dun_defs[q_ptr->dungeon].offset;
