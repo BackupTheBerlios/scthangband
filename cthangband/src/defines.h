@@ -1200,6 +1200,7 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /* Traps */
 #define FEAT_TRAP_HEAD  0x10
+#define FEAT_TRAP_DOOR (FEAT_TRAP_HEAD+0x00)
 #define FEAT_TRAP_TAIL  0x1F
 
 /* Doors */

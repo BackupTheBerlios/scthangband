@@ -123,37 +123,61 @@ static int chest_check(int y, int x);
  * deeper stores whether we are moving to a deeper or a shallower level.
  * stairs stores whether we want stairs at the player's feet or not.
  */
-static void use_stairs(bool deeper, byte stairs)
+static void use_stairs(cptr dir, bool deeper, bool trapdoor)
 {
-	byte j = (multi_stair) ? randint(5) : 1;
-	byte start = (stairs) ? START_STAIRS : START_RANDOM;
-	if (j > dun_level) j = 1;
+	int i, j = (multi_stair) ? randint(5) : 1;
+	int start = (trapdoor) ? START_RANDOM : START_STAIRS;
+
+	if (dun_level && confirm_stairs)
+	{
+		if (!get_check("Really leave the level? ")) return;
+	}
+
+	/* Take some time... */
+	energy_use = extract_energy[p_ptr->pspeed];
+
+	if (trapdoor)
+	{
+		msg_print("You deliberately jump through the trap door.");
+	}
+	else if (!dun_level)
+	{
+		cur_dungeon = wild_grid[wildy][wildx].dungeon;
+		p_ptr->max_dlv = 1;
+		msg_format("You enter %s",dun_name+dun_defs[cur_dungeon].name);
+	}
+	else
+	{
+		msg_format("You enter a maze of %s staircases.", dir);
+	}
+
+	if (j > dun_level+1) j = 1;
 
 	/* Don't allow the player to pass a quest level.
 	 * This is very inefficient, but it's a very simple process.
 	 */
-	if (deeper)
+	if (!deeper)
 	{
-		byte i;
+		j *= -1;
+	}
+	else
+	{
 		for (i = 1; i < j; i++)
 		{
 			if (is_quest(dun_level+i)) break;
 			if (dun_level+i == dun_defs[cur_dungeon].max_level) break;
 		}
-		change_level(dun_level+i, start);
+		j = i;
 	}
-	else
-	{
-		change_level(dun_level-j, start);
 
-		/* Check for leaving dungeon */
-		if(dun_level == 0)
-		{
-			recall_dungeon = cur_dungeon;
-			wildx=dun_defs[cur_dungeon].x;
-			wildy=dun_defs[cur_dungeon].y;
-			cur_town = cur_dungeon;
-		}
+	change_level(dun_level+j, start);
+
+	/* Check for leaving dungeon */
+	if(!dun_level)
+	{
+		recall_dungeon = cur_dungeon;
+		wildx=dun_defs[cur_dungeon].x;
+		wildy=dun_defs[cur_dungeon].y;
 	}
 }
 
@@ -162,11 +186,9 @@ static void use_stairs(bool deeper, byte stairs)
  */
 void do_cmd_go_up(void)
 {
-    bool go_up = FALSE;
-	cave_type *c_ptr;
-
 	/* Player grid */
-	c_ptr = &cave[py][px];
+	cave_type *c_ptr = &cave[py][px];
+	bool deeper;
 
 	/* Verify stairs */
 	if (c_ptr->feat != FEAT_LESS)
@@ -174,49 +196,9 @@ void do_cmd_go_up(void)
 		msg_print("I see no up staircase here.");
 		return;
 	}
-	else
-    {
-		if (dun_level <= 0)
-		{
-			go_up = TRUE;
-		}
-		else
-		{
-			if (confirm_stairs)
-			{
-				if (get_check("Really leave the level? "))
-				{
-					go_up = TRUE;
-				}
-			}
-			else
-			{
-				go_up = TRUE;
-			}
-		}
 
-		if(go_up == FALSE) msg_print("'go_up' = FALSE");
-
-		if (go_up)
-		{
-			energy_use = 0;
-			/* Success */
-			/* Check for entering a tower */
-			if(dun_level==0)
-			{
-				cur_dungeon = wild_grid[wildy][wildx].dungeon;
-				p_ptr->max_dlv = 1;
-				msg_format("You enter %s",dun_name+dun_defs[cur_dungeon].name);
-			}
-			else
-			{
-				msg_print("You enter a maze of up staircases.");
-			}
-
-			/* Actually go up. */
-			use_stairs(!!(dun_defs[cur_dungeon].flags & DF_TOWER), TRUE);
-		}
-   }
+	deeper = (!dun_level || dun_defs[cur_dungeon].flags & DF_TOWER);
+	use_stairs("up", deeper, FALSE);
 }
 
 
@@ -225,69 +207,21 @@ void do_cmd_go_up(void)
  */
 void do_cmd_go_down(void)
 {
-	cave_type *c_ptr;
-    bool go_down = FALSE;
-    bool fall_trap = FALSE;
-
 	/* Player grid */
-	c_ptr = &cave[py][px];
-
-    if (c_ptr->feat == (FEAT_TRAP_HEAD + 0x00)) fall_trap = TRUE;
-
+	cave_type *c_ptr = &cave[py][px];
+	bool deeper, trapdoor;
 
 	/* Verify stairs */
-    if ((c_ptr->feat != FEAT_MORE) && !(fall_trap))
+    if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_TRAP_DOOR))
 	{
 		msg_print("I see no down staircase here.");
 		return;
 	}
-    else
-    {
-		if (dun_level < 1)
-		{
-			go_down = TRUE;
-		}
-		else
-		{
-			if (confirm_stairs)
-			{
-				if (get_check("Really leave the level? "))
-				{
-					go_down = TRUE;
-				}
-			}
-			else
-			{
-				go_down = TRUE;
-			}
-		}
-		if (go_down)
-		{
-			energy_use = 0;
-			if (fall_trap)
-			{
-				msg_print("You deliberately jump through the trap door.");
-			}
-			else
-			{
-				/* Success */
-				/* Check for entering a dungeon */
-				if(dun_level==0)
-				{
-					cur_dungeon = wild_grid[wildy][wildx].dungeon;
-					p_ptr->max_dlv = 1;
-					msg_format("You enter %s",dun_name+dun_defs[cur_dungeon].name);
-				}
-				else
-				{
-					msg_print("You enter a maze of down staircases.");
-				}
-			}
-				/* Go down */
-			use_stairs(!(dun_defs[cur_dungeon].flags & DF_TOWER), !fall_trap);
-				}
-		}
-	}
+
+	deeper = (!dun_level || ~dun_defs[cur_dungeon].flags & DF_TOWER);
+	trapdoor = (c_ptr->feat == FEAT_TRAP_DOOR);
+	use_stairs("down", deeper, trapdoor);
+}
 
 
 /*
