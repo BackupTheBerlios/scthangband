@@ -712,6 +712,7 @@ struct quest
 	byte dungeon; /* Dungeon containing quest */
 
 	int cur_num;	/* Number killed */
+	int cur_num_known;	/* Number known by the player to have been killed */
 	int max_num;	/* Number required */
 };
 

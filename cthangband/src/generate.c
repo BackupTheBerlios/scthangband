@@ -4688,7 +4688,7 @@ static bool cave_gen(void)
 
 		r_idx = get_quest_monster();
 		q_idx = get_quest_number();
-		if (q_list[q_idx].cur_num != 0) q_list[q_idx].cur_num = 0;
+		if (q_list[q_idx].cur_num != 0) q_list[q_idx].cur_num = q_list[q_idx].cur_num_known = 0;
 		while (r_info[r_idx].cur_num < q_list[q_idx].max_num)
 		{
 			put_quest_monster(q_list[q_idx].r_idx);

@@ -2551,6 +2551,7 @@ void initialise_quests()
 		q_list[i].level = 0;
 		q_list[i].r_idx = 0;
 		q_list[i].cur_num = 0;
+		q_list[i].cur_num_known = 0;
 		q_list[i].max_num = 0;
 	}
 

@@ -74,7 +74,7 @@ void print_quest_message(void)
 	int q_idx = get_quest_number();
 	monster_race	*r_ptr = &r_info[q_list[q_idx].r_idx];
 	cptr name = (r_name + r_ptr->name);
-	int q_num = q_list[q_idx].max_num - q_list[q_idx].cur_num;
+	int q_num = q_list[q_idx].max_num - q_list[q_idx].cur_num_known;
 
 	if (q_list[q_idx].max_num == 1)
 		msg_format("You still have to kill %s.", name);

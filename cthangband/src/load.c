@@ -1644,6 +1644,15 @@ static errr rd_savefile_new_aux(void)
 			q_list[i].cur_num = tmp8u;
 			rd_byte(&tmp8u);
 			q_list[i].max_num = tmp8u;
+			if (!older_than(4,1,4))
+			{
+				rd_byte(&tmp8u);
+				q_list[i].cur_num_known = tmp8u;
+			}
+			else
+			{
+				q_list[i].cur_num_known = 0;
+			}
 		}
 
 

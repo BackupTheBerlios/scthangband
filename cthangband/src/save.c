@@ -1399,6 +1399,7 @@ static bool wr_savefile_new(void)
 		wr_byte((byte)(q_list[i].dungeon));
 		wr_byte((byte)(q_list[i].cur_num));
 		wr_byte((byte)(q_list[i].max_num));
+		if (vpatch > 3) wr_byte((byte)(q_list[i].cur_num_known));
 	}
 
 	/* Hack -- Dump the artifacts */

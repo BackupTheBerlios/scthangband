@@ -2131,6 +2131,22 @@ void lose_skills(s32b amount)
 
 
 
+/*
+ * Alters the number of a type of monster which have been killed.
+ */
+static void note_monster_death(monster_race *r_ptr, s16b deaths)
+{
+	s16b max = MAX_SHORT-deaths;
+	/* Count kills this life */
+	if (r_ptr->r_pkills < max) r_ptr->r_pkills += deaths;
+
+	/* Count kills in all lives */
+	if (r_ptr->r_tkills < max) r_ptr->r_tkills += deaths;
+
+	/* Hack -- Auto-recall */
+	monster_race_track(r_ptr-r_info);
+}
+
 
 /*
  * Handle the "death" of a monster.
@@ -2233,9 +2249,13 @@ void monster_death(int m_idx)
 	{
 		q_idx = get_quest_number ();
 		q_list[q_idx].cur_num++;
+		if (visible) q_list[q_idx].cur_num_known++;
 
 		if (q_list[q_idx].cur_num == q_list[q_idx].max_num)
 		{
+			/* The quest monsters must have all died. */
+			note_monster_death(r_ptr, q_list[q_idx].cur_num-q_list[q_idx].cur_num_known);
+			
 			/* Drop at least 2 items (the stair will probably destroy one */
 			number += 2;
 			quest = TRUE;
@@ -2574,14 +2594,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Recall even invisible uniques or winners */
 		if (m_ptr->ml || (r_ptr->flags1 & (RF1_UNIQUE)))
 		{
-			/* Count kills this life */
-			if (r_ptr->r_pkills < MAX_SHORT) r_ptr->r_pkills++;
-
-			/* Count kills in all lives */
-			if (r_ptr->r_tkills < MAX_SHORT) r_ptr->r_tkills++;
-
-			/* Hack -- Auto-recall */
-			monster_race_track(m_ptr->r_idx);
+			note_monster_death(r_ptr, 1);
 		}
 
 		/* Delete the monster */
