@@ -2821,7 +2821,7 @@ void curse_equipment(int chance, int heavy_chance)
 }
 
 
-static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, bool thrown_spell, bool seen)
+static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int thrown_spell, bool seen)
 {
 	int k, count;
 	const bool direct = TRUE;
