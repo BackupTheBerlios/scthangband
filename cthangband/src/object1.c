@@ -689,6 +689,12 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	j_ptr->ident = o_ptr->ident;
 	j_ptr->note = o_ptr->note;
 	
+	/* The player always knows if something is recharging, but never how long
+	 * it will take. */
+	j_ptr->timeout = !!(o_ptr->timeout);
+
+	/* Similarly for unidentified rods. */
+	if (o_ptr->tval == TV_ROD) j_ptr->pval = o_ptr->pval;
 
 	/* Hack - set k_idx correctly now so that macros for it work. It will
 	 * be unset later if appropriate. */
@@ -714,8 +720,6 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		j_ptr->to_d = o_ptr->to_d;
 		j_ptr->to_a = o_ptr->to_a;
 		j_ptr->pval = o_ptr->pval;
-		/* The player never knows how long the timeout is. */
-		j_ptr->timeout = !!(o_ptr->timeout); 
 	}
 
 	/* Some flags are only used internally */
@@ -1233,7 +1237,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 	int                     power,i;
 
-	bool	aware, known;
+	bool	known;
 
 	bool	show_weapon = FALSE, show_armour = FALSE;
 
@@ -1248,8 +1252,6 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	 * is performed. This probably isn't good enough. */
 	C_TNEW(tmp_val_base, len*2, char);
 	char		*tmp_val = tmp_val_base;
-
-	u32b            f1, f2, f3;
 
 	object_kind	*k_ptr;
 	unident_type *u_ptr;
@@ -1268,10 +1270,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	u_ptr = u_info+x_ptr->u_idx;
 	ob_ptr = o_base+u_ptr->p_id;
 
-	object_flags(o1_ptr, &f1, &f2, &f3);
-
 	known = (object_known_p(o_ptr) ? TRUE : FALSE);
-	aware = (object_aware_p(o_ptr) ? TRUE : FALSE);
 
 	reject = current = 0;
 
@@ -1279,7 +1278,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	strings[CI_FLAVOUR] = u_name+u_ptr->name;
 	strings[CI_K_IDX] = k_name+k_ptr->name;
 	strings[CI_EGO] = e_name+e_info[o_ptr->name2].name;
-	if (o1_ptr->art_name)
+	if (o_ptr->art_name)
 		strings[CI_ARTEFACT] = quark_str(o_ptr->art_name);
 	else
 		strings[CI_ARTEFACT] = a_name+a_info[o_ptr->name1].name;
@@ -1293,7 +1292,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 	/* Identified artefacts, and all identified objects if
 	 * show_flavors is unset, do not include a FLAVOUR string. */
-	if (aware && (artifact_p(o_ptr) || plain_descriptions))
+	if ((~reject & CI_K_IDX) && (artifact_p(o_ptr) || plain_descriptions))
 		reject |= 1 << CI_FLAVOUR;
 
 	/* Singular objects take no plural. */
@@ -1357,7 +1356,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	/* Extract the number */
 	else if (o_ptr->number > 1)
 	{
-		t = object_desc_num(t, o1_ptr->number);
+		t = object_desc_num(t, o_ptr->number);
 		t = object_desc_chr(t, ' ');
 	}
 
@@ -1470,15 +1469,15 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		}
 
 			/* May be "empty" */
-		else if (!o1_ptr->pval)
+		else if (!o_ptr->pval)
 			{
 				t = object_desc_str(t, " (empty)");
 			}
 
 		/* May be "disarmed" */
-		else if (o1_ptr->pval < 0)
+		else if (o_ptr->pval < 0)
 		{
-			if (chest_traps[o1_ptr->pval])
+			if (chest_traps[o_ptr->pval])
 			{
 				t = object_desc_str(t, " (disarmed)");
 			}
@@ -1540,37 +1539,16 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 
 	/* Display the item like a weapon */
-	if (f3 & (TR3_SHOW_MODS)) show_weapon = TRUE;
+	if (o_ptr->flags3 & (TR3_SHOW_MODS)) show_weapon = TRUE;
 	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
 
 	/* Display the item like armour */
-	if (f3 & TR3_SHOW_ARMOUR) show_armour = TRUE;
+	if (o_ptr->flags3 & TR3_SHOW_ARMOUR) show_armour = TRUE;
 	if (o_ptr->ac) show_armour = TRUE;
 
 	/* Dump base weapon info if known. */
-	if (aware) switch (o_ptr->tval)
+	if (show_weapon) switch (o_ptr->tval)
 	{
-		/* Missiles and Weapons */
-		case TV_SHOT:
-		case TV_BOLT:
-		case TV_ARROW:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_DIGGING:
-
-		/* Append a "damage" string */
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, p1);
-		t = object_desc_num(t, o_ptr->dd);
-		t = object_desc_chr(t, 'd');
-		t = object_desc_num(t, o_ptr->ds);
-		t = object_desc_chr(t, p2);
-
-		/* All done */
-		break;
-
-
 		/* Bows get a special "damage string" */
 		case TV_BOW:
 
@@ -1578,7 +1556,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		power = get_bow_mult(o_ptr);
 
 		/* Apply the "Extra Might" flag */
-		if (f3 & (TR3_XTRA_MIGHT)) power++;
+		if (o_ptr->flags3 & (TR3_XTRA_MIGHT)) power++;
 
 		/* Append a special "damage" string */
 		t = object_desc_chr(t, ' ');
@@ -1590,19 +1568,16 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		/* All done */
 		break;
 
-		/* Other stuff, if allowed */
+		/* Everything else is displayed as a melee weapon. */
 		default:
-		if (spoil_dam && o_ptr->ds && o_ptr->dd)
-		{
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, p1);
-			t = object_desc_num(t, o1_ptr->dd);
-			t = object_desc_chr(t, 'd');
-			t = object_desc_num(t, o1_ptr->ds);
-			t = object_desc_chr(t, p2);
-		}
-	}
 
+		t = object_desc_chr(t, ' ');
+		t = object_desc_chr(t, p1);
+		t = object_desc_num(t, o1_ptr->dd);
+		t = object_desc_chr(t, 'd');
+		t = object_desc_num(t, o1_ptr->ds);
+		t = object_desc_chr(t, p2);
+	}
 
 	/* Add the weapon bonuses */
 	if (known)
@@ -1648,7 +1623,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 			t = object_desc_chr(t, b1);
 			t = object_desc_num(t, o_ptr->ac);
 			t = object_desc_chr(t, ',');
-			t = object_desc_int(t, o1_ptr->to_a);
+			t = object_desc_int(t, o_ptr->to_a);
 			t = object_desc_chr(t, b2);
 		}
 
@@ -1678,20 +1653,20 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 	/* Hack -- Wands and Staffs have charges */
 	if (known &&
-	    ((o1_ptr->tval == TV_STAFF) ||
-	     (o1_ptr->tval == TV_WAND)))
+	    ((o_ptr->tval == TV_STAFF) ||
+	     (o_ptr->tval == TV_WAND)))
 	{
 		/* Dump " (N charges)" */
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
-		t = object_desc_num(t, o1_ptr->pval);
+		t = object_desc_num(t, o_ptr->pval);
 		t = object_desc_str(t, " charge");
-		if (o1_ptr->pval != 1) t = object_desc_chr(t, 's');
+		if (o_ptr->pval != 1) t = object_desc_chr(t, 's');
 		t = object_desc_chr(t, p2);
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && (!allart_p(o1_ptr)))
+	else if ((o_ptr->tval == TV_LITE) && o_ptr->pval && (!allart_p(o_ptr)))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, " (with ");
@@ -1701,42 +1676,20 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 
 	/* Dump "pval" flags for wearable items */
-	if (f1 & TR1_PVAL_MASK)
-	{
-		u32b g1;
-		if (known)
-		{
-			g1 = f1;
-		}
-		/* Find the known flags if the pval is known. */
-		else
-		{
-			object_type j;
-			object_info_known(&j, o1_ptr, 0);
-			if (j.pval)
-			{
-				g1 = j.flags1;
-			}
-			else
-			{
-				g1 = 0;
-			}
-		}
-
-		if (g1 & (TR1_PVAL_MASK))
+	if (o_ptr->flags1 & TR1_PVAL_MASK && o_ptr->pval)
 	{
 		/* Start the display */
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
 
-			/* Dump the "pval" itself */
-			t = object_desc_int(t, o1_ptr->pval);
+		/* Dump the "pval" itself */
+		t = object_desc_int(t, o_ptr->pval);
 
-			/* Differentiate known pvals from deduced ones. */
-			if (!known) t = object_desc_chr(t, '?');
+		/* Differentiate known pvals from deduced ones. */
+		if (!known) t = object_desc_chr(t, '?');
 
 		/* Do not display the "pval" flags */
-		if (f3 & (TR3_HIDE_TYPE))
+		if (o_ptr->flags3 & (TR3_HIDE_TYPE))
 		{
 			/* Nothing */
 		}
@@ -1749,7 +1702,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	t = object_desc_str(t, (X))
 
 			/* Give details about a single bonus. */
-			switch (g1 & TR1_PVAL_MASK)
+			switch (o_ptr->flags1 & TR1_PVAL_MASK)
 			{
 				case TR1_STR: ADD_PV("str"); break;
 				case TR1_INT: ADD_PV("int"); break;
@@ -1769,10 +1722,9 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		/* Finish the display */
 		t = object_desc_chr(t, p2);
 	}
-	}
 
 	/* Indicate "charging" things */
-	if (o1_ptr->timeout)
+	if (o_ptr->timeout)
 	{
 		/* Hack -- Dump " (charging)" if relevant */
 		t = object_desc_str(t, " (charging)");
@@ -1794,23 +1746,21 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		 * differs from the present value, put parentheses around the number.
 		 * Hack - suppress for empty slots.
 		 */
-		if (spoil_value && spoil_base && o1_ptr->k_idx)
+		if (spoil_value && spoil_base && o_ptr->k_idx)
 		{
-			object_type j_body, *j_ptr = &j_body;
-			object_extra x_ptr[1];
 			s32b value;
 			bool worthless;
-
-			object_info_known(j_ptr, o1_ptr, x_ptr);
+			object_type *j_ptr = o_ptr, j_body;
 
 			/* Without the appropriate spoiler flags, ignore the fact that
-			 * it is an ego item or artefact. */
-			if ((!spoil_ego && j_ptr->name2) || (!spoil_art && j_ptr->name1))
+			 * it is an ego item or artefact. Keep any known flags, as
+			 * they have a separate price.
+			 */
+			if ((!spoil_ego && o_ptr->name2) || (!spoil_art && o_ptr->name1))
 			{
-				object_type j2_ptr[1];
+				j_ptr = &j_body;
+				object_copy(j_ptr, o_ptr);
 				j_ptr->name2 = j_ptr->name1 = 0;
-				object_info_known(j2_ptr, j_ptr, 0);
-				j_ptr = j2_ptr;
 			}
 
 			/* Hack - object_value() needs a real k_idx and tval. */
@@ -1839,14 +1789,16 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		}
 
 		/* Hack - this must be <9 character long. See above. */
-		if (o1_ptr->discount)
+		if (o_ptr->discount)
 		{
-			sprintf(tmp2[1], "%d%% off", o1_ptr->discount);
+			sprintf(tmp2[1], "%d%% off", o_ptr->discount);
 			k[i++] = tmp2[1];
 		}
 
+		/* find_feeling() gives hints about the real object. */
 		if (*((k[i] = find_feeling(o1_ptr))) != '\0') i++;
-		if (o1_ptr->note) k[i++] = quark_str(o1_ptr->note);
+
+		if (o_ptr->note) k[i++] = quark_str(o_ptr->note);
 
 		if (i && t < tmp_val+len-4)
 		{
