@@ -2616,8 +2616,8 @@ byte ammunition_type(object_type *o_ptr)
 
 /* A special version of the above for weapon slays. */
 #define do_list_flags_weap(DAM, BOARD, J) \
-	do_list_flags(format("It causes %ld %ld/60 damage to", dam/60, dam%60), \
-	"and", board, j)
+	do_list_flags(format((dam % 60) ? "It causes %ld %ld/60 damage to" : \
+	"It causes %ld damage to", dam/60, dam%60), "and", board, j)
 
 /*
  * Find the strings which describe the flags of o_ptr, place them in info
