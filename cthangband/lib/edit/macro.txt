@@ -1602,4 +1602,4 @@ F:s_info:I:3
 # Omit a waste parameter from r_info.txt.
 X::
 Y::0:
-F:r_info:W:2
+F:r_info:W:4
