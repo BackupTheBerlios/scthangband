@@ -20,6 +20,7 @@ sCthangband _CVS_
 * Correct/alter some documentation.
 * Fix the following bugs:
   * Potions of detect invisible did nothing.
+  * Inscriptions containing ! could crash the game.
   * Objects were described as "powerful" incorrectly.
   * The 'z' key could select items with curses the player knew nothing about.
   * Compiling with BCC still led to frequent crashes.

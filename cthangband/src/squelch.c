@@ -748,7 +748,7 @@ static PURE bool destroy_it(object_ctype *o1_ptr)
 
 	/* Things inscribed with !k or !K won't be destroyed! */
 	s = quark_str(o_ptr->note);
-	while ((s = strchr(s, '!'))) if (strchr("Kk", s[1])) return FALSE;
+	if (strstr(s, "!k") || strstr(s, "!K")) return FALSE;
 
 	/*
 	 * Other things are destroyed if the "destroy" setting is at least as good
