@@ -2304,6 +2304,20 @@ extern void do_cmd_borg(void);
 
 
 /*
+ * A temporary script to run on the game.
+ */
+static void do_cmd_script(void)
+{
+	monster_race *r_ptr;
+	for (r_ptr = r_info; r_ptr < r_info + MAX_R_IDX; r_ptr++)
+	{
+		if (~r_ptr->flags1 & RF1_UNIQUE) continue;
+		if (r_ptr->flags3 & RF3_NO_CONF) continue;
+		msg_format("%s is one", r_name+r_ptr->name);
+	} 
+}
+
+/*
  * Parse and execute the current command
  * Give "Warning" on illegal commands.
  *
@@ -3009,6 +3023,12 @@ static void process_command(void)
 			break;
 		}
 
+		/* Hack - process a temporary function. */
+		case '$':
+		{
+			do_cmd_script();
+			break;
+		}
 			/* Hack -- Unknown command */
 		default:
 		{
