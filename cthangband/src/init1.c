@@ -432,7 +432,7 @@ static flag_name info_flags[] =
 	{"RES_DISEN", 1, TR2_RES_DISEN},
     {"SH_FIRE", 2, TR3_SH_FIRE},
     {"SH_ELEC", 2, TR3_SH_ELEC},
-/*	{"XXX3", 2, TR3_XXX3},*/
+	{"SHOW_ARMOUR", 2, TR3_SHOW_ARMOUR},
 	{"AUTO_CURSE", 2, TR3_AUTO_CURSE},
     {"NO_TELE", 2, TR3_NO_TELE},
     {"NO_MAGIC", 2, TR3_NO_MAGIC},
@@ -606,112 +606,15 @@ static errr check_version(char *buf, header *head)
 
 
 /*
- * Compress %x strings into single characters within a NUL-terminated string.
- *
- * As my_fgets() only outputs printable characters and '\0's, the
- * range 1-31 can be used in any way desired.
- *
- * This does not replace unparsable characters (such as %f without preceding
- * %F), so object_desc() does not need to check this.
- *
- * NULs will be added from the end of the output string to the end of the
- * input (which is always at least as large).
- *
- * As the output characters are chosen without regard to their meaning, no
- * part of a compress string should be printed directly.
+ * A simple bounds check function for "unsigned char", etc..
  */
-static errr compress_string(char *buf)
+static errr byte_ok(int value)
 {
-	typedef struct compression_type compression_type;
-	struct compression_type {
-		cptr orig;
-		char new;
-	};
-	char *i,*j;
-	char require;
-	bool changed = FALSE;
-	compression_type *cm_ptr;
-	compression_type compression[] = {
-		/* Require the flag */
-		{"%+A", CM_TRUE+CI_ARTICLE},
-		{"%+K", CM_TRUE+CI_K_IDX},
-		{"%+F", CM_TRUE+CI_FLAVOUR},
-		{"%+P", CM_TRUE+CI_PLURAL},
-		
-		/* Require the absence of the flag */
-		{"%-A", CM_FALSE+CI_ARTICLE},
-		{"%-K", CM_FALSE+CI_K_IDX},
-		{"%-F", CM_FALSE+CI_FLAVOUR},
-		{"%-P", CM_FALSE+CI_PLURAL},
-		
-		/* No requirements regarding the flag. */
-		{"%A", CM_NORM+CI_ARTICLE},
-		{"%K", CM_NORM+CI_K_IDX},
-		{"%F", CM_NORM+CI_FLAVOUR},
-		{"%P", CM_NORM+CI_PLURAL},
-		
-		/* Insert a substring. */
-		{"%a", CM_ACT+CI_ARTICLE},
-		{"%k", CM_ACT+CI_K_IDX},
-		{"%f", CM_ACT+CI_FLAVOUR},
-		{"%p", CM_ACT+CI_PLURAL},
-		
-		/* Enable %s in strings */
-		{"%%", '%'},
-		
-		/* Terminate */
-		{"", 0}
-	};
-	/* Literal replacements. */
-	for (i = j = buf; *i;)
-	{
-		for (cm_ptr = compression; cm_ptr->new; cm_ptr++)
-		{
-			if (!strncmp(cm_ptr->orig, i, strlen(cm_ptr->orig))) break;
-		}
-		/* New combinations */
-		if (cm_ptr->new)
-		{
-			*(j++) = cm_ptr->new;
-			i+=strlen(cm_ptr->orig);
-			changed = TRUE;
-		}
-		/* Normal letters/numbers */
-		else
-		{
-			*(j++) = *(i++);
-		}
-	}
-	/* Finish off */
-	for (; j < i; j++) *j = '\0';
-
-	/* Verify that the CM_ACT flags are legal. */
-	for (i = buf, require = 0x00;*i;i++)
-	{
-		byte flag;
-
-		/* Normal characters */
-		if (*i & 0xE0) continue;
-
-		flag = 1<<find_ci(*i);
-		
-		switch (find_cm(*i))
-		{
-			case CM_FALSE:
-			case CM_NORM:
-				require &= ~flag;
-				break;
-			case CM_TRUE:
-				require |= flag;
-				break;
-			case CM_ACT:
-				if (~require & flag) return PARSE_ERROR_GENERIC;
-				break;
-		}
-	}
-
+	if (value < 0) return PARSE_ERROR_OUT_OF_BOUNDS;
+	if (value > MAX_UCHAR) return PARSE_ERROR_OUT_OF_BOUNDS;
 	return SUCCESS;
 }
+
 
 
 /* A macro to indicate if a character is used to terminate a name. */
@@ -979,9 +882,6 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 			 * a ^ as \^. There should hopefully not be many of these.
 			 */
 			clear_escapes(buf);
-
-			/* Also convert the %x sequences used in sequences for objects. */
-			try(compress_string(buf));
 
 			/* Save the monster index */
 			d_ptr->r_idx = r_idx;
@@ -1321,6 +1221,49 @@ static errr add_text(u32b *offset, header *head, cptr buf)
 
 
 /*
+ * Check that a name-like string is reasonable.
+ *
+ * This only actually checks that CM_ACT characters are always preceded
+ * by the appropriate CM_TRUE ones, i.e. that the string referred to is
+ * known to exist.
+ */
+static errr check_string(cptr buf)
+{
+	cptr i;
+	char require;
+
+	/* Verify that the CM_ACT flags are legal. */
+	for (i = buf, require = 0x00;*i;i++)
+	{
+		byte flag = 1<<find_ci(*i);
+		byte action = find_cm(*i);
+
+		/* The definition scheme used here only applies to
+		 * the 28 numbers between 1 and 31 which are not multiples
+		 * of 8. */
+		if (~*i & 0x07 || *i & 0xE0) continue;
+
+		switch (action)
+		{
+			case CM_FALSE:
+			case CM_NORM:
+				require &= ~flag;
+				break;
+			case CM_TRUE:
+				require |= flag;
+				break;
+			case CM_ACT:
+				if (~require & flag) return PARSE_ERROR_GENERIC;
+				break;
+			default: /* Paranoia. */
+				quit_fmt("find_cm() is giving bizarre output: %d.", action);
+		}
+	}
+
+	return SUCCESS;
+}
+
+/*
  * Add a name to the name-storage and return an offset to it.
  *
  * Returns 0 when there isn't enough space available to store
@@ -1333,6 +1276,13 @@ static u32b add_name(header *head, cptr buf)
 	/* Hack -- Verify space */
 	if (head->name_size + strlen(buf) + 8 > z_info->fake_name_size)
 		return (0);
+
+	/* Check object names for incorrect flags. */
+	switch (head->header_num)
+	{
+		case K_HEAD: case A_HEAD: case E_HEAD: case OB_HEAD: case U_HEAD:
+		if (check_string(buf)) return 0;
+	}
 
 	/* Advance and save the name index */
 	index = ++head->name_size;
@@ -1626,8 +1576,6 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 	/* Current entry */
 	object_kind *k_ptr = *extra;
 	
-	if (!kt_info) C_MAKE(kt_info, 256, object_kind);
-
 	/* If this isn't the start of a record, there should already be one. */
 	if (!strchr("NT", *buf) && !k_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
 
@@ -1642,11 +1590,8 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			/* Verify that colon */
 			if (!s) return (1);
 
-			/* Nuke the colon, advance to the name */
-			*s++ = '\0';
-
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*++s) return (1);
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -1664,9 +1609,6 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			/* Point at the "info" */
 			*extra = k_ptr = (object_kind*)head->info_ptr + i;
 
-			/* Compress the string */
-			try(compress_string(s));
-
 			/* Store the name */
 			if (!(k_ptr->name = add_name(head, s)))
 				return (PARSE_ERROR_OUT_OF_MEMORY);
@@ -1683,7 +1625,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			i = atoi(buf+2);
 			
 			/* Verify information */
-			if (i < 0 || i > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+			try(byte_ok(i));
 			
 			/* Point at the "info" */
 			kt_ptr = &kt_info[i];
@@ -1898,218 +1840,237 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 }
 
 
-static s16b scrolls = 0, scroll_base = 0;
-static unident_type *u_ptr = NULL;
 
 /*
- * First check that the entry is reasonable in all of its fields.
- *
- * Then add an arbitrary number of scroll entries derived from a single base
- * element if required. These are assigned s_ids between 1 and *scrolls.
+ * Initialize the "o_base" array, by parsing an ascii "template" file
  */
-static errr u_finish_off(s16b scroll_base, s16b *scrolls, unident_type *u_ptr, header *head)
+errr parse_o_base(char *buf, header *head, vptr *extra)
 {
-	unident_type *ub_ptr = (unident_type*)head->info_ptr+scroll_base;
-	s16b i;
-
-	/* Nothing started. */
-	if (!u_ptr) return SUCCESS;
-
-	/* Check that the flags are appropriate. */
-	if (u_ptr->s_id == SID_BASE)
-	{
-		if ((*scrolls && !scroll_base) || (!*scrolls && scroll_base))
-		{
-			msg_print("Both a SCROLL flag and a number are needed.");
-			return ERR_PARSE;
-		}
-		else if (u_ptr->flags & UNID_BASE_ONLY && scroll_base)
-		{
-			msg_print("Scrolls cannot be BASE_ONLY.");
-			return ERR_PARSE;
-		}
-		else if (u_ptr->flags & UNID_NO_BASE)
-		{
-			msg_print("This is a base entry itself.");
-			return ERR_PARSE;
-		}
-	}
-	else
-	{
-		if (*scrolls || scroll_base || u_ptr->flags & UNID_BASE_ONLY)
-		{
-			msg_print("Flag restricted to base items found.");
-			return ERR_PARSE;
-		}
-	}
-
-	/* No scrolls to write. */
-	if (!(*scrolls)) return SUCCESS;
-	
-	for (i = 1; i <= (*scrolls); i++)
-	{
-		error_idx++;
-
-		/* Hack -- Verify space */
-		if (error_idx >= MAX_I) return ERR_MEMORY;
-		if ((u32b)head->name_size + MAX_SCROLL_LEN + 8 > z_info->fake_name_size) return ERR_MEMORY;
-
-		/* Select the new entry. */
-		u_ptr = (unident_type*)head->info_ptr + error_idx;
-
-		/* Copy the structure across. */
-		COPY(u_ptr, ub_ptr, unident_type);
-
-		/* Set the s_id */
-		u_ptr->s_id = i;
-
-		/* Set the flags */
-		u_ptr->flags = UNID_SCROLL_N;
-
-		/* Advance and Save the name index */
-		u_ptr->name = ++head->name_size;
-
-		/* Save a default name. */
-		strcpy(head->name_ptr+u_ptr->name, "Untitled");
-
-		/* Advance the indices */
-		head->name_size += MAX_SCROLL_LEN;
-	}
-
-	/* Don't do this again. */
-	(*scrolls) = 0;
-	
-	return SUCCESS;
-}
-
-/* A macro for the above */
-#define do_u_finish_off \
-if (scrolls) \
-{ \
-	errr err = u_finish_off(scroll_base, &scrolls, u_ptr, head); \
-	if (!scrolls) scroll_base = 0; \
-	if (err) return err; \
-}
-
-/*
- * Initialize the "u_info" array, by parsing an ascii "template" file
- */
-errr parse_u_info(char *buf, header *head, vptr UNUSED *extra)
-{
-	char *s;
+	/* Current entry */
+	o_base_type *ob_ptr = *extra;
 
 	/* If this isn't the start of a record, there should already be one. */
-	if (!strchr("MN", *buf) && !u_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
-
-
 	switch (*buf)
-		{
+	{
+		case 'N': case 'M': break; /* N and M need nothing. */
+		case 'C': /* C needs an existing record. */
+		if (!ob_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER; break;
+		default: /* Nothing else makes sense. */
+		return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+	}
+
+	/* Process 'N' for "New/Number/Name" */
+	switch (*buf)
+	{
 		case 'N':
 		{
-			/* Add scrolls, if any. */
-			do_u_finish_off;
+			/* Get the index */
+			int i = atoi(buf+2);
 
 			/* Find the colon before the name */
-			s = strchr(buf, ':');
+			char *s = strchr(buf+2, ':');
 
 			/* Verify that colon */
-			if (!s) return ERR_PARSE;
+			if (!s) return (PARSE_ERROR_GENERIC);
 
 			/* Advance to the name */
 			s++;
 
 			/* Paranoia -- require a name */
-			if (!*s) return ERR_PARSE;
+			if (!*s) return (PARSE_ERROR_GENERIC);
 
-			/* Increment the index */
-			error_idx++;
+			/* Verify index. */
+			try(byte_ok(i));
 
-			/* Paranoia */
-			if (error_idx >= MAX_I) return ERR_MEMORY;
+			/* Advance the index */
+			error_idx = i;
+
+			/* Paranoia - there should always be space for 256 entries. */
+			if (error_idx >= MAX_I) return (PARSE_ERROR_OUT_OF_MEMORY);
 
 			/* Point at the "info" */
-			u_ptr = (unident_type*)head->info_ptr+error_idx;
-
-			/* Compress the string */
-			try(compress_string(s));
+			*extra = ob_ptr = (o_base_type*)head->info_ptr + error_idx;
 
 			/* Store the name */
-			if (!(u_ptr->name = add_name(head, s)))
+			if (!(ob_ptr->name = add_name(head, s)))
 				return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Next... */
 			return SUCCESS;
 		}
-
+		/* This copies one base entry to another, so that there
+		 * can be several sets of (for instance) scrolls.
+		 * It must be after the original entry and not within
+		 * an entry itself
+		 * The latter restriction is inessential, but it allows
+		 * this to be directly after the entry it mimics, which
+		 * would not be possible if this didn't "finish off" the
+		 * previous entry first. */
 		case 'M':
 		{
-			int oldpid, newpid;
-			s16b n;
-
-			do_u_finish_off;
+			int oldp_id, newp_id;
+			o_base_type *ob2_ptr;
 
 			if (2 != sscanf(buf+2, "%d:%d",
-			                &oldpid, &newpid)) return ERR_PARSE;
+				&oldp_id, &newp_id)) return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Check for valid indices */
-			if (oldpid < 0 || oldpid > 255 || newpid < 0 || newpid > 255)
-				return ERR_PARSE;
+			try(byte_ok(oldp_id));
+			try(byte_ok(newp_id));
 
-			/* Increment the index */
-			error_idx++;
-			
-			/* Paranoia */
-			if (error_idx >= MAX_I) return ERR_MEMORY;
+			error_idx = newp_id;
 
-			/* Point at the "info" */
-			u_ptr = (unident_type*)head->info_ptr+error_idx;
-			
-			/* Look for the original entry */
-			for (n = 0; n < error_idx; n++)
-			{
-				unident_type *u2_ptr = (unident_type*)head->info_ptr+n;
+			ob2_ptr = (o_base_type*)head->info_ptr + oldp_id;
+			ob_ptr = (o_base_type*)head->info_ptr + newp_id;
 
-				/* Only consider base entries. */
-				if (u2_ptr->s_id != SID_BASE) continue;
-				
-				/* Look for the specified p_id. */
-				if (u2_ptr->p_id != oldpid) continue;
-				
-				/* Copy the structure across. */
-				COPY(u_ptr, u2_ptr, unident_type);
-				
-				/* Correct the p_id */
-				u2_ptr->p_id = newpid;
-				
-				/* Finished */
-				break;
-			}
-			
-			/* Complain if none found. */
-			if (n == error_idx) return ERR_MISSING;
-			
-			/* Next... */
+			/* Check that the new entry does not already exist. */
+			if (ob_ptr->name) return PARSE_ERROR_GENERIC;
+
+			/* Check that the earlier entry exists. */
+			if (!ob2_ptr->name) return PARSE_ERROR_GENERIC;
+
+			/* Copy across. */
+			ob_ptr->name = ob2_ptr->name;
+			ob_ptr->cost = ob2_ptr->cost;
+
+			/* End of entry. */
+			*extra = ob_ptr = NULL;
+
 			return SUCCESS;
 		}
-		case 'G':
+		case 'C':
+		{
+			long cost = 0;
+
+			/* There better be a current k_ptr */
+			if (!ob_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
+
+			/* Work out the lowest cost this item might have. */
+			if (!strncmp(buf+2, "default", strlen("default")))
+			{
+				int i;
+				for (i = 0; i < z_info->k_max; i++)
+				{
+					object_kind *k_ptr = &k_info[i];
+
+					/* Reject worthless items. */
+					if (!k_ptr->cost) continue;
+
+					/* Reject items with a different p_id. */
+					if (k_ptr->u_idx != error_idx) continue;
+		
+					/* Reduce cost if necessary. */
+					if (!cost || k_ptr->cost < cost) cost = k_ptr->cost;
+				}
+			}
+			else
+			{
+				/* Scan for the values */
+				if (1 != sscanf(buf+2, "%ld", &cost)) return (PARSE_ERROR_GENERIC);
+			}
+
+			/* Save the value */
+			ob_ptr->cost = cost;
+
+			return SUCCESS;
+		}
+		default: /* Never reached. */
+		{
+			return UNREAD_VALUE;
+		}
+	}
+}
+
+/*
+ * Put entries in u_info for each type of flavourless description defined in
+ * o_base.
+ */
+static errr parse_unid_flavourless(header *head)
+{
+	int i;
+
+	/* Create the flavourless entries. */
+	for (i = 0; i < z_info->ob_max; i++)
+	{
+		o_base_type *ob_ptr = &o_base[i];
+		unident_type *u_ptr;
+
+		/* No entry. */
+		if (!ob_ptr->name) continue;
+
+		/* Not flavourless. */
+		if (strchr(o_base_name+ob_ptr->name, CM_ACT+CI_FLAVOUR)) continue;
+			
+		/* Check that u_info is large enough. */
+		if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+		/* Set u_ptr. */
+		u_ptr = (unident_type*)head->info_ptr + error_idx;
+			
+		/* Set its p_id appropriately. */
+		u_ptr->name = 0;
+		u_ptr->p_id = i;
+	}
+	return SUCCESS;
+}
+
+/*
+ * Parse part of the "unid_info" array from a string.
+ */
+errr parse_u_info(char *buf, header *head, vptr *extra)
+{
+	/* Current entry */
+	unident_type *u_ptr = *extra;
+	char *s;
+
+	/* 
+	 * Only 'N' entries can set u_ptr.
+	 */
+	/* There better be a current u_ptr. */
+	if ((*buf != 'N') && !u_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
+		
+	/* Actually parse the current field. */
+	switch (buf[0])
+	{
+		case 'N': /* Name */
+		{
+			/* Advance to the name */
+			s = buf+2;
+
+			/* Paranoia -- require a name */
+			if (!*s) return (PARSE_ERROR_INCORRECT_SYNTAX);
+
+			/* Check that u_info is large enough. */
+			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			/* Set u_ptr */
+			*extra = u_ptr = (unident_type*)head->info_ptr + error_idx;
+			
+			/* Store the name. */
+			if (!(u_ptr->name = add_name(head, s)))
+				return PARSE_ERROR_OUT_OF_MEMORY;
+
+			return SUCCESS;
+		}
+
+		case 'G': /* Graphics */
 		{
 			char sym, col;
 			int p_id, s_id;
 			s16b i;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%c:%c:%d:%d", &sym, &col, &p_id, &s_id)) return ERR_PARSE;
+			if (4 != sscanf(buf+2, "%c:%c:%d:%d", &sym, &col, &p_id, &s_id)) return PARSE_ERROR_GENERIC;
 
 			/* Paranoia */
 			if (color_char_to_attr(col) < 0)
 			{
 				msg_print("Illegal colour.");
-				return ERR_PARSE;
+				return (PARSE_ERROR_GENERIC);
 			}
 			if (!isgraph(sym))
 			{
 				msg_print("Illegal symbol.");
-				return ERR_PARSE;
+				return (PARSE_ERROR_GENERIC);
 			}
 			/* Extract the char */
 			u_ptr->d_char = sym;
@@ -2118,14 +2079,10 @@ errr parse_u_info(char *buf, header *head, vptr UNUSED *extra)
 			u_ptr->d_attr = color_char_to_attr(col);
 			
 			/* Verify indices' legality */
-			if (p_id < 0 || p_id > 255 ||
-				s_id < 0 || s_id > 255)
-			{
-				msg_print("Illegal index.");
-				return ERR_PARSE;
-			}
+			try(byte_ok(p_id));
+			try(byte_ok(s_id));
 
-			/* Extract the primary index */
+			/* Change the primary index to an o_base one. */
 			u_ptr->p_id = p_id;
 			
 			/* Extract the secondary index */
@@ -2134,69 +2091,23 @@ errr parse_u_info(char *buf, header *head, vptr UNUSED *extra)
 			/* Verify uniqueness */
 			for (i = 0; i < error_idx; i++)
 			{
-				unident_type *u2_ptr = (unident_type*)head->info_ptr+i;
+				unident_type *u2_ptr = (unident_type*)head->info_ptr + i;
 				if (u2_ptr->p_id != u_ptr->p_id) continue;
 				if (u2_ptr->s_id != u_ptr->s_id) continue;
-				msg_print("Duplicated indices.");
-				return ERR_PARSE;
+				msg_format("Duplicated indices (%d,%d).", u_ptr->p_id, u_ptr->s_id);
+				return (PARSE_ERROR_GENERIC);
 			}
 
-			/* Next... */
 			return SUCCESS;
 		}
-		case 'F':
+
+		default: /* Oops */
 		{
-			/* Parse every entry textually */
-			for (s = buf + 2; *s; )
-			{
-				char *t;
-
-				/* Find the end of this entry */
-				for (t = s; *t && (*t != ':'); ++t) /* loop */;
-
-				/* Nuke and skip any dividers */
-				if (*t)
-				{
-					*t++ = '\0';
-					while (*t == ':') t++;
-				}
-
-				/* Parse this entry */
-				if (!strcmp(s, "BASE_ONLY"))
-				{
-					u_ptr->flags |= UNID_BASE_ONLY;
-				}
-				else if (!strcmp(s, "SCROLL"))
-				{
-					scroll_base = u_ptr-(unident_type*)head->info_ptr;
-				}
-				else if (!strcmp(s, "NO_BASE"))
-				{
-					u_ptr->flags |= UNID_NO_BASE;
-				}
-				else if (atoi(s))
-				{
-					scrolls = atoi(s);
-				}
-				else
-				{
-					return ERR_FLAG;
-				}
-
-				/* Start the next entry */
-				s = t;
-			}
-
-			/* Next... */
-			return SUCCESS;
-		}
-		default:
-		{
-			/* Oops */
-			return ERR_DIRECTIVE;
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		}
 	}
 }
+
 
 /*
  * Grab one flag in an artifact_type from a textual string
@@ -2877,7 +2788,7 @@ static int is_streq(cptr in, cptr *strings)
 	int i;
 	for (i = 0; strings[i]; i++)
 	{
-		if (!strncmp(in, strings[i], strlen(strings[i])))
+		if (prefix(in, strings[i]))
 		{
 			return i;
 		}
@@ -2919,11 +2830,8 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 			/* Paranoia -- require a name */
 			if (!*s) return (PARSE_ERROR_GENERIC);
 
-			/* Advance the index (not counting the current macro) */
-			z_info->macros=++error_idx;
-
-			/* Verify information */
-			if (error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+			/* Advance the index and check for overflow. */
+			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
 
 			/* Point at the "info" */
 			*extra = ptr = (init_macro_type*)head->info_ptr + error_idx;
@@ -2942,11 +2850,8 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 			{
 				init_macro_type *macro2_ptr;
 
-				/* Advance the index */
-				z_info->macros=++error_idx;
-
-				/* Verify information */
-				if (error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+				/* Advance the index and check for overflow. */
+				if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
 
 				/* Point at the "info" */
 				macro2_ptr = (init_macro_type*)head->info_ptr + error_idx;
@@ -2975,7 +2880,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 				cptr header_names[] =
 				{
 					"z_info",
-					"macro_info",
+					"macros",
 					"f_info",
 					"k_info",
 					"u_info",
@@ -2984,26 +2889,23 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 					"r_info",
 					"r_event",
 					"v_info",
+					"o_base",
 				};
-			
-	
 				uint i;
+
+				/* Look for a matching entry. */
 				for (i = 0; i < N_ELEMENTS(header_names); i++)
-				{
-					/* Only notice matching entries. */
-					if (strcmp_pf(s, header_names[i])) continue;
+					if (prefix(s, header_names[i])) break;
 	
-					/* Set the file to the next number (0 is nothing) */
-					ptr->file = i+1;
+				if (i == N_ELEMENTS(header_names))
+					return PARSE_ERROR_INVALID_FLAG;
+
+				/* Set the file to the next number (0 is nothing) */
+				ptr->file = i+1;
 	
-					/* Find the end of the string. */
-					s += strlen(header_names[i]);
-	
-					goto found;
-				}
-				return PARSE_ERROR_INVALID_FLAG;
+				/* Find the end of the string. */
+				s += strlen(header_names[i]);
 			}
-found:
 			s = strchr(s, ':');
 			if (s == NULL || *(++s) == '\0')
 			{
@@ -3067,19 +2969,13 @@ found:
 			for (s--; s; s = strchr(s, ',')) 
 			{
 				int i = atoi(++s);
-				if (i < 0 || i > 255)
-				{
-					return PARSE_ERROR_OUT_OF_BOUNDS;
-				}
-				else if (head->text_size+9 > z_info->fake_text_size)
+				try(byte_ok(i));
+
+				if (head->text_size+9 > z_info->fake_text_size)
 				{
 					return PARSE_ERROR_OUT_OF_MEMORY;
 				}
-				else
-				{
-					macro_text[head->text_size] = i;
-					head->text_size = head->text_size + 1;
-				}
+				macro_text[head->text_size++] = i;
 			}
 			return SUCCESS;
 		}
@@ -3114,7 +3010,7 @@ found:
 /*
  * Do any file-specific things which needs to be done before parsing starts.
  */
-static void init_info_txt_pre(header *head)
+static errr init_info_txt_pre(header *head)
 {
 	switch (head->header_num)
 	{
@@ -3129,7 +3025,21 @@ static void init_info_txt_pre(header *head)
 			macro_name = head->name_ptr;
 			break;
 		}
+		case OB_HEAD:
+		{
+			/* Paranoia - o_base[] expects to have enough space for 256 entries. */
+			if (MAX_I < 256) return PARSE_ERROR_OUT_OF_MEMORY;
+			break;
+		}
+		case K_HEAD:
+		{
+			/* kt_info contains some flags which are always set for a given
+			 * tval. */
+			C_MAKE(kt_info, 256, object_kind);
+			break;
+		}
 	}
+	return SUCCESS;
 }
 
 #define ITFE(W,X) \
@@ -3158,14 +3068,16 @@ static errr init_info_txt_final(header *head)
 			ITFE(mname, 'D')
 			break;
 		}
-		/* Add in any necessary scrolls. */
+		/* Add in any unflavoured objects. */
 		case U_HEAD:
 		{
-			do_u_finish_off
+			try(parse_unid_flavourless(head));
 			break;
 		}
 		case K_HEAD:
 		{
+			/* o_base bases its defaults on k_info. */
+			rebuild_raw |= 1<<OB_HEAD;
 			KILL2(kt_info);
 			break;
 		}
@@ -3173,10 +3085,27 @@ static errr init_info_txt_final(header *head)
 		{
 			/* Force all later raw files to be rebuilt, as this changes them. */
 			rebuild_raw = 0xFFFF & ~(1<<MACRO_HEAD | 1<<Z_HEAD);
+			break;
+		}
+		case OB_HEAD:
+		{
+			/* There should always be 256 entries. */
+			error_idx = 255;
+
+			/* The p_ids stored in u_info are derived from
+			 * o_base[]. */
+			rebuild_raw |= 1<<U_HEAD;
+			break;
 		}
 	}
 	return SUCCESS;
 }
+
+/* Define how many macros are available for this file. */
+#define NUM_MACROS ((head->header_num == Z_HEAD) ? 0 :  \
+	(head->header_num == MACRO_HEAD) ? error_idx : z_info->macros)
+
+
 
 #define NO_VERSION	-2
 
@@ -3268,14 +3197,14 @@ static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
 		}
 
 		/* Copy across, substituting and parsing. */
-		for (s = buf; t && t < buf2end && *s; s++)
+		for (s = buf; (!t || t < buf2end) && *s; s++)
 		{
 			/* Count the fields if required, starting each at the colon. */
 			if (macro_ptr->field && *s == ':') field++;
 
 			/* A match has been found. */
 			if (field == macro_ptr->field && 
-				!strncmp(s, macro_name+macro_ptr->name, strlen(macro_name+macro_ptr->name)))
+				prefix(s, macro_name+macro_ptr->name))
 			{
 				switch (macro_ptr->conv)
 				{
@@ -3360,7 +3289,7 @@ static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
 		}
 
 		/* Finish off. */
-		(*t) = '\0';
+		if (t) (*t) = '\0';
 
 		/* Nothing happened. */
 		if (!done);
@@ -3376,7 +3305,7 @@ static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
 				for (i = 0; i < done; i++)
 				{
 					strcpy(buf, macro_text+macro_ptr->text);
-					try(parse_info_line(buf, head, z_info->macros, extra));
+					try(parse_info_line(buf, head, NUM_MACROS, extra));
 				}
 
 				/* All done. */
@@ -3391,7 +3320,7 @@ static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
 				for (j = 0; j < done; j++)
 				{
 					strcpy(buf, macro_text+macro_ptr->text);
-					try(parse_info_line(buf, head, z_info->macros, extra));
+					try(parse_info_line(buf, head, NUM_MACROS, extra));
 				}
 
 				/* Parse the rest of this string. */
@@ -3434,18 +3363,25 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	head->text_size = 0;
 
 	/* Carry out any pre-initialisation stuff. */
-	init_info_txt_pre(head);
+	try(init_info_txt_pre(head));
 
 	/* Parse */
 	while (0 == my_fgets(fp, buf, 1024))
 	{
-		/* No macros are available for z_info, some for macro_info, and all for
-		 * other files. */
-		int macros = (head->header_num == Z_HEAD) ? 0 :  z_info->macros;
-
 		error_line++;
-		try(parse_info_line(buf, head, macros, &extra));
+
+		if (head->header_num == Z_HEAD)
+		{
+			try(parse_info_line_aux(buf, head, &extra));
+		}
+		else
+		{
+			try(parse_info_line(buf, head, NUM_MACROS, &extra));
+		}
 	}
+
+	/* Carry out any post-initialisation checks. */
+	try(init_info_txt_final(head));
 
 	/* Set the info size. */
 	head->info_num = error_idx+1;
@@ -3454,9 +3390,6 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	/* Complete the "name" and "text" sizes */
 	if (head->name_size) head->name_size++;
 	if (head->text_size) head->text_size++;
-
-	/* Carry out any post-initialisation checks. */
-	try(init_info_txt_final(head));
 
 	/* This doesn't need to be rebuilt. */
 	rebuild_raw &= ~(head->header_num);
@@ -3464,94 +3397,9 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	/* No version yet */
 	if (error_idx == NO_VERSION) return (PARSE_ERROR_OBSOLETE_FILE);
 
-	/* Carry out any post-initialisation checks and finish. */
-	return init_info_txt_final(head);
+	/* All done. */
+	return SUCCESS;;
 }
-
-#if 0
-/*
- * Initialize an "*_info" array, by parsing an ascii "template" file
- */
-errr init_info_txt(FILE *fp, char *buf, header *head)
-{
-	errr err;
-	vptr extra = NULL;
-
-	/* Not ready yet */
-	bool okay = FALSE;
-
-	/* Just before the first record */
-	error_idx = -1;
-
-	/* Just before the first line */
-	error_line = 0;
-
-
-	/* Prepare the "fake" stuff */
-	head->name_size = 0;
-	head->text_size = 0;
-
-	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
-	{
-		/* Advance the line number */
-		error_line++;
-
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (PARSE_ERROR_GENERIC);
-
-
-		/* Hack -- Process 'V' for "Version" */
-		if (buf[0] == 'V')
-		{
-			int v1, v2, v3;
-
-			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
-				(v1 != head->v_major) ||
-				(v2 != head->v_minor) ||
-				(v3 != head->v_patch))
-			{
-				return (PARSE_ERROR_OBSOLETE_FILE);
-			}
-
-			/* Okay to proceed */
-			okay = TRUE;
-
-			/* Continue */
-			continue;
-		}
-
-		/* No version yet */
-		if (!okay) return (PARSE_ERROR_OBSOLETE_FILE);
-
-		/* Parse the line */
-		if ((err = (*(head->parse_info_txt))(buf, head, &extra)) != 0)
-			return (err);
-	}
-
-
-	/* Complete the "name" and "text" sizes */
-	if (head->name_size) head->name_size++;
-	if (head->text_size) head->text_size++;
-
-	/* Set the info size. */
-	head->info_num = error_idx+1;
-	head->info_size = head->info_len * head->info_num;
-
-	/* No version yet */
-	if (!okay) return (PARSE_ERROR_OBSOLETE_FILE);
-
-	/* Carry out any post-initialisation checks. */
-	if ((err = init_info_txt_final(head))) return err;
-
-	/* Success */
-	return SUCCESS;
-}
-#endif
 
 #else	/* ALLOW_TEMPLATES */
 

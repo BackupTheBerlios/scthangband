@@ -6,91 +6,69 @@
 # Do not modify this file unless you know exactly what you are doing,
 # unless you wish to risk possible system crashes and broken savefiles.
 
-# After modifying this file, delete the "lib/raw/k_info.raw" file.
+# After modifying this file, delete the "lib/raw/u_info.raw" file.
 
 # The fields are as follows:
 # N:name
 # G:char:colour:p_id:s_id
-# F:flag:flag:flag...
 
-# M:old p_id:new p_id
+# M:Base:old p_id:new p_id 
+# or
+# M:Item:p_id:s_id:copies
 
-# This contains two somewhat different types of entry, both of which
-# use the same indices.
+# 'N'
 
-# Base entries are the usual starting point for the object name.
-# Flavour entries are usually acessed via the base entry.
-# The char and colour fields are usually only signficant for unidentified
-# entries as these represent real objects.
-# Base entries are distinguished by having a s_id of 0.
-
-# -name is the full name of the entry, containing various information.
+# name is the full name of the entry, containing various information.
 # There are a number of flags starting with % which can be used in this:
 
 # %+X precedes a string which is only printed if the string has quality x.
-# %-X precedes a string which is only printed if the string does not have quality x.
+# %-X precedes a string which is only printed if the string does not have ality x.
 # %X precedes a string which is ambivalent about quality x (the default).
 # %x prints a string specified by quality x. This must be preceded by %+X
 # to avoid requesting a string which may not exist.
 
 # x can be one of:
-# a: article - inserts either "a " or "an ". Only used at the start of the
-# name as routines which add an article themselves do so at the beginning.
 # f: flavour - inserts the flavour string for this item.
 # k: k_name - inserts the name string for this object in k_info.txt.
 # p: plural - inserts a simple plural.
 
-# -char is the default character for the item
-# -colour is the default colour
-# -p_id is the index of this type of object. This unidentified description
-# may be used for any object with the same index, and any number between 0
-# and 255 may be used as an index (although an index without a corresponding
-# k_info entry will never appear in the game).
-# -s_id is the sub-index of this object. Its main significance is that
-# items with an index of 0 are used in brief identified item descriptions
-# (as in shops), rather than those of unidentified objects. No pair of indices
-# may appear more than once in this file, and there must be an entry with an
-# s_id of 0 for each p_id present.
+# In addition, there are flags which do not share this format. They are:
 
-# The flags which can be used on base items are:
-# BASE_ONLY: No flavoured items exist, so this contains the format for every
-# item.
-# SCROLL: Followed by a number as "F:SCROLL:12", this indicates that there
-# should be a number of items generated which have this p_id and use the
-# in-game scroll name generator to create their names. The scrolls created
-# have s_ids between 1 and (in this case) 12, and look by default identical
-# to the base item.
+# %&: causes item description to start with "a" or "an" where appropriate.
 
-# Flavour items can take the following flag:
-# NO_BASE: The description from this item starts with this flavour item
-# rather than the base item. This enables a set of items to have one
-# format most of the time, but to have exceptions.
+# %Base : causes description to start from this string rather than the
+# base one. Has no effect if used in a base string.
 
-# The M directive creates a new base item which is almost identical to an
-# earlier one. old p_id is the original one, and new p_id is the p_id which
-# is to be given to the new copy. Apart from that change, and the absence
-# of any scroll-related flags from the new copy, they are identical in every
-# way. It is possible to modify the fields by adding other lines after the
-# M entry.
+# 'G'
+
+# char is the default character for the item when unidentified[1].
+
+# colour is the default colour of this item when unidentified[1].
 
 # Note that items which are coloured dark in k_info.txt derive their colour
 # and symbol from this file rather than actually being dark. This can, of
 # course be changed by the user.
 
+# p_id is the index of this type of object. This unidentified description
+# may be used for any object with the same index, and any number between 0
+# and 255 may be used as an index (although an index without a corresponding
+# k_info entry will never appear in the game).
+
+# s_id is the secondary index of this object. It is used with p_id in
+# preference files to specify the object, and every entry should have
+# a unique combination of p_id and s_id.
+
+# [1] These can be overridden by the user. Although these colours do not,
+# in general, affect identified objects, objects which the user has set
+# to be black will use the colour and character of the unidentified
+# version even if identified.
+
+
 # Version stamp (required)
 
 V:1.0.3
 
-##### Unflavoured items #####
-
-N:%+K%k%K
-G:.:d:0:0
-F:BASE_ONLY
-
 ##### Mushrooms #####
-
-N:%+A%a%A%+F%f %FMushroom%+P%p%P%+K of %k%K
-G:,:d:1:0
 
 N:Black
 G:,:D:1:1
@@ -180,11 +158,6 @@ N:Yellow
 G:,:y:1:29
 
 ##### Rings #####
-
-N:%+A%a%A%+F%f %FRing%+P%p%P%+K of %k%K
-G:=:d:2:0
-
-M:2:12
 
 N:Adamantite
 G:=:G:2:1
@@ -417,13 +390,12 @@ G:=:u:2:76
 N:Zircon
 G:=:U:2:77
 
+##### The One Ring #####
+
 N:Plain Gold
 G:=:y:12:1
 
 ##### Amulets #####
-
-N:%+A%a%A%+F%f %FAmulet%+P%p%P%+K of %k%K
-G:":d:3:0
 
 N:Agate
 G:":W:3:1
@@ -530,15 +502,7 @@ G:":U:3:34
 N:White Gold
 G:":w:3:35
 
-##### Potions #####
-
-N:%+A%a%A%+F%f %FPotion%+P%p%P%+K of %k%K
-G:!:d:4:0
-
-M:4:5
-M:4:6
-M:4:7
-M:4:8
+##### Fixed Potions #####
 
 N:Clear
 G:!:w:4:1
@@ -551,6 +515,8 @@ G:!:g:6:1
 
 N:xxx
 G:!:o:7:1
+
+##### Random Potions #####
 
 N:Acidic Orange
 G:!:o:8:1
@@ -842,9 +808,6 @@ G:!:y:8:96
 
 ##### Wands #####
 
-N:%+A%a%A%+F%f %FWand%+P%p%P%+K of %k%K
-G:-:d:9:0
-
 N:Adamantite
 G:-:v:9:1
 
@@ -988,9 +951,6 @@ G:-:W:9:47
 
 ##### Staffs #####
 
-N:%+A%a%A%+F%f %FStaff%+P%p%P%+K of %k%K
-G:_:d:10:0
-
 N:Ashen
 G:_:s:10:1
 
@@ -1097,9 +1057,6 @@ N:Willow
 G:_:U:10:35
 
 ##### Rods #####
-
-N:%+A%a%A%+F%f %FRod%+P%p%P%+K of %k%K
-G:-:d:11:0
 
 N:Adamantite
 G:-:v:11:1
@@ -1246,40 +1203,74 @@ G:-:W:11:47
 
 # Just an example...
 
-N:%+F%-K%f%F%+K%k%K
-G:.:d:13:0
-
-N:%+A%a%ASamurai Sword%+P%p%P
+N:& Samurai Sword~
 G:|:W:13:1
 
 ##### Scrolls #####
 
 # Names generated by the in-game name-mangler, so only a default is needed.
 
-N:%+A%a%AScroll%+P%p%P%+F titled "%f"%F%+K of %k%K
-G:?:w:200:0
-F:SCROLL:47
+# A default scroll. The length defines the maximum length of the name
+# it eventually has, and the SCROLL flag forces the game to randomise it.
 
-N:%+A%a%ACrumpled Scroll%+P%p%P%+K of %k%K
+# N:%Scroll ---length 16---
+# G:?:w:200:x
+
+# The following makes 49 copies of the item below, where x goes from
+# 1 to 49. It is actually defined in macros.txt.
+
+s:1
+s:2
+s:3
+s:4
+s:5
+s:6
+s:7
+s:8
+s:9
+s:10
+s:11
+s:12
+s:13
+s:14
+s:15
+s:16
+s:17
+s:18
+s:19
+s:20
+s:21
+s:22
+s:23
+s:24
+s:25
+s:26
+s:27
+s:28
+s:29
+s:30
+s:31
+s:32
+s:33
+s:34
+s:35
+s:36
+s:37
+s:38
+s:39
+s:40
+s:41
+s:42
+s:43
+s:44
+s:45
+s:46
+s:47
+s:48
+s:49
+
+# And this makes a scroll which does not use the usual scheme to generate
+# its name.
+
+N:%Base & Crumpled Scroll~ !
 G:?:w:200:50
-F:NO_BASE
-
-##### Spellbooks #####
-
-# Always identified, but listed here to define the base object.
-
-N:%+A%a%ASorcery Book%+P%p%P%+K %k%K
-G:?:d:201:0
-F:BASE_ONLY
-
-N:%+A%a%AThaumaturgy Book%+P%p%P%+K %k%K
-G:?:d:202:0
-F:BASE_ONLY
-
-N:%+A%a%AConjuration Book%+P%p%P%+K %k%K
-G:?:d:203:0
-F:BASE_ONLY
-
-N:%+A%a%ANecromancy Book%+P%p%P%+K %k%K
-G:?:d:204:0
-F:BASE_ONLY

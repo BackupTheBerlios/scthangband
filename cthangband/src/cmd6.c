@@ -1098,6 +1098,7 @@ bool curse_armor(void)
         o_ptr->art_flags1 = 0;
         o_ptr->art_flags2 = 0;
         o_ptr->art_flags3 = 0;
+		o_ptr->art_name = 0;
 
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
@@ -1174,6 +1175,7 @@ bool curse_weapon(void)
         o_ptr->art_flags1 = 0;
         o_ptr->art_flags2 = 0;
         o_ptr->art_flags3 = 0;
+		o_ptr->art_name = 0;
 
 
 		/* Curse it */

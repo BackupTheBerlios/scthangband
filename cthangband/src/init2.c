@@ -198,6 +198,7 @@ static cptr err_str[PARSE_ERROR_MAX] =
 	"too many arguments",
 	"too many allocation entries",
 	"invalid spell frequency",
+	"incorrect syntax",
 };
 
 
@@ -565,60 +566,36 @@ static void init_info(header *head)
 	if (err) quit(format("Cannot parse '%s.raw' file.", filename));
 }
 
-
-static void init_u_info_final(void)
+static errr init_u_info_final(void)
 {
-	s16b i,p_id;
-
-	/* Allocate the p_id array */
-	pid_base = C_NEW(256, s16b);
-
-	/* Set defaults */
-	for (i = 0; i < 256; i++) pid_base[i] = -1;
-	
-	/* Find real p_ids */
-	for (i = 0; i < MAX_U_IDX; i++)
-	{
-		unident_type *u_ptr = &u_info[i];
-		if (u_ptr->s_id == SID_BASE)
-		{
-			pid_base[u_ptr->p_id] = i;
-		}
-	}
+	int i,p_id;
 
 	/* Check that there are enough entries for each p_id to cover
 	 * the object kinds, with one extra per p_id for plain_descriptions. */
 	for (p_id = 0; p_id < 256; p_id++)
 	{
 		s16b bal;
-		byte flags;
 
-		for (i = bal = 0; i < MAX_K_IDX; i++)
+		for (i = bal = 0; i < z_info->k_max; i++)
 		{
 			if (k_info[i].u_idx == p_id) bal++;
 		}
-		if (!bal) continue;
-
-		/* Extract the flags from the base item. */
-		if (pid_base[p_id] >= 0)
-			flags = u_info[pid_base[p_id]].flags;
-		else
-			flags = 0;
-
-		/* Hack - always-aware items need only one listing */
-		if (flags & UNID_BASE_ONLY) bal = 0;
-
-		for (i = 0; i < MAX_U_IDX; i++)
+		for (i = 0; bal > 0 && i < z_info->u_max; i++)
 		{
-			if (u_info[i].p_id == p_id) bal--;
+			unident_type *u_ptr = &u_info[i];
+			if (u_ptr->p_id != p_id) continue;
+
+			/* Unnamed objects need no extra elements. */
+			if (u_ptr->name == 0) bal = 0;
+			else bal--;
 		}
 		/* And if there aren't enough, complain. */
-		if (bal >= 0)
+		if (bal > 0)
 		{
-			quit_fmt("Insufficient u_info entries with p_id %d: %d missing.", p_id, bal+1);
+			quit_fmt("Insufficient u_info entries with p_id %d: %d missing.", p_id, bal);
 		}
 	}
-	return;
+	return SUCCESS;
 }
 
 /*
@@ -1903,6 +1880,9 @@ void init_angband(void)
 
 	init_x_info("objects", object_kind, parse_k_info, "k_info", k_info,
 		k_name, k_text, k_max, K_HEAD)
+
+	init_x_info("base objects", o_base_type, parse_o_base, "o_base", o_base,
+		o_base_name, dummy, ob_max, OB_HEAD)
 
 	/* Initialize unidentified object info
 	 * This leaves space for scrolls, and checks that it is large

@@ -473,18 +473,30 @@ logaux(x, 1) logaux(x, 0) 255
 /*
  * Special name characters.
  */
-#define CM_ACT	0x00	/* Insert the relevant CI term. */
+#define CM_NORM	0x00	/* Negate both CM_TRUE and CM_FALSE. */
 #define CM_TRUE	0x08	/* Require the relevant CI flag. */
 #define CM_FALSE	0x10	/* Require the absence of the CI flag */
-#define CM_NORM	0x18	/* Negate both CM_TRUE and CM_FALSE. */
+#define CM_ACT	0x18	/* Insert the relevant CI term. */
 
-#define CI_ARTICLE	0x01	/* Article. */
-#define CI_K_IDX	0x02	/* "extname" */
-#define CI_FLAVOUR	0x03	/* "modstr" */
+/* The CI_* fields should be sorted in increasing order of priority as
+ * bases for the name. */
+
+#define CI_BASE	0x00	/* "basename" (not in CI mask) */
+#define CI_FLAVOUR	0x02	/* "modstr" */
+#define CI_K_IDX	0x03	/* "extname" */
 #define CI_PLURAL	0x04	/* Plural */
+#define CI_EGO	0x05	/* Ego name */
+#define CI_ARTEFACT	0x06	/* Artefact name */
+
+#define CH_ARTICLE	0x08	/* Put article at start. Only for first character. */
+#define CH_IS_BASE		0x10	/* Use as basis of name (see object_desc()) */
+#define CH_ACT_BASE	(CH_ACT+CI_BASE)	/* Insert "basename". Not CI, as "basename" is always present. */
+#define CH_SCROLL	0x7F	/* Give it a scroll-like name. Only for first character, removed in flavor_init(). */
 
 #define find_cm(c) ((c) & (CM_ACT | CM_TRUE | CM_FALSE | CM_NORM))
-#define find_ci(c) ((c) & (CI_ARTICLE | CI_K_IDX | CI_FLAVOUR | CI_PLURAL))
+#define find_ci(c) ((c) & (CI_K_IDX | CI_FLAVOUR | CI_PLURAL | \
+	CI_EGO | CI_ARTEFACT))
+#define is_cx_char(c) (c && (c == find_cm(c) + find_ci(c)))
 
 /*
  * Store constants
@@ -2419,7 +2431,7 @@ logaux(x, 1) logaux(x, 0) 255
 
 #define TR3_SH_FIRE							0x00000001L     /* Immolation (Fire) */
 #define TR3_SH_ELEC							0x00000002L     /* Electric Sheath */
-#define TR3_XXX3						   	0x00000004L     /* Later */
+#define TR3_SHOW_ARMOUR						   	0x00000004L     /* Always show AC */
 #define TR3_AUTO_CURSE          0x00000008L     /* Item is self-cursing */
 #define TR3_NO_TELE                     0x00000010L     /* Anti-teleportation */
 #define TR3_NO_MAGIC                    0x00000020L     /* Anti-magic */
@@ -2845,8 +2857,9 @@ logaux(x, 1) logaux(x, 0) 255
 #define PARSE_ERROR_TOO_MANY_ARGUMENTS      10
 #define PARSE_ERROR_TOO_MANY_ALLOCATIONS    11
 #define PARSE_ERROR_INVALID_SPELL_FREQ      12
+#define PARSE_ERROR_INCORRECT_SYNTAX	13 /* sscanf() failure or equivalent. */
 
-#define PARSE_ERROR_MAX                     13
+#define PARSE_ERROR_MAX                     14
 
 #ifndef SUCCESS
 #define SUCCESS	0
@@ -2877,7 +2890,7 @@ logaux(x, 1) logaux(x, 0) 255
 /* Based on a given object_kind */
 #define object_aware_kp(T) \
 	(((T)->aware) || \
-	(u_info[(T)->u_idx].flags & UNID_BASE_ONLY))
+	(u_info[(T)->u_idx].name == 0))
 
 /* Based on a given object_type */
 #define object_aware_p(T) \
@@ -3292,6 +3305,7 @@ extern int PlayerUID;
 #define R_HEAD	8
 #define EVENT_HEAD	9
 #define V_HEAD	10
+#define OB_HEAD	11
 
 
 /*
@@ -3326,10 +3340,10 @@ extern int PlayerUID;
 #define PRT_MAXY (Term->hgt-1)
 
 /* init_macro_type conversion types */
-#define MACRO_CONV_REPLACE	0	/* Replace "name" with "text". */
-#define MACRO_CONV_AFTER	1	/* Process the line "text" after the current one. */
-#define MACRO_CONV_BEFORE	2	/* Process the line "text" before the current one. */
-#define MACRO_CONV_SPECIAL	3	/* Do something special. */
+#define MACRO_CONV_REPLACE	1	/* Replace "name" with "text". */
+#define MACRO_CONV_AFTER	2	/* Process the line "text" after the current one. */
+#define MACRO_CONV_BEFORE	3	/* Process the line "text" before the current one. */
+#define MACRO_CONV_SPECIAL	4	/* Do something special. */
 
 /*
  * Special macros are macros whose effects are hard-coded, but are listed

@@ -100,11 +100,31 @@ void get_table_name(char * out_string)
 }
 
 /*
+ * Determine the u_idx of an item with a given k_idx.
+ *
+ * Return -2 if no match is found.
+ */
+s16b lookup_unident(byte p_id, byte s_id)
+{
+	s16b i;
+
+	for (i = 0; i < MAX_U_IDX; i++)
+		{
+		unident_type *u_ptr = &u_info[i];
+		if (u_ptr->p_id != p_id) continue;
+		if (u_ptr->s_id != s_id) continue;
+		return i;
+	}
+	return -2;
+}
+
+
+/*
  * Give a name to a scroll.
  *
- * out_string must be able to accept MAX_SCROLL_LEN-1 characters.
+ * out_string must be able to accept length characters.
  */
-static void get_scroll_name(char * out_string)
+static void get_scroll_name(char * out_string, uint length)
 {
 	(*out_string) = '\0';
 	/* Collect words until done */
@@ -128,7 +148,7 @@ static void get_scroll_name(char * out_string)
 		}
 
 		/* Stop before getting too long */
-		if (strlen(out_string) + 1 + strlen(tmp) >= MAX_SCROLL_LEN) return;
+		if (strlen(out_string) + 1 + strlen(tmp) > length) return;
 
 		/* Add a space */
 		if (strlen(out_string)) strcat(out_string, " ");
@@ -139,23 +159,55 @@ static void get_scroll_name(char * out_string)
 }
 
 /*
- * Determine the u_idx of an item with a given k_idx.
- *
- * Return -2 if no match is found.
+ * Randomly generate names where appropriate.
  */
-s16b lookup_unident(byte p_id, byte s_id)
-		{
-	s16b i;
+static void name_scrolls(void)
+{
+	u16b scroll_idx[z_info->u_max];
+	int i, j, scrolls;
 
-	for (i = 0; i < MAX_U_IDX; i++)
-		{
+	/* Iterate through the scrolls, renaming each in turn. */
+	for (i = 0, scrolls = -1; i < z_info->u_max; i++)
+	{
 		unident_type *u_ptr = &u_info[i];
-		if (u_ptr->p_id != p_id) continue;
-		if (u_ptr->s_id != s_id) continue;
-		return i;
+		uint length;
+		char *s = u_name+u_ptr->name;
+
+		/* Ignore non-scrolls. */
+		if (*s != CH_SCROLL) continue;
+
+		/* Recognise IS_BASE scrolls. */
+		if (*(s+1) == CH_IS_BASE)
+		{
+			*(s++) = CH_IS_BASE;
 		}
-	return -2;
+
+		/* Make a note of this scroll. */
+		scroll_idx[++scrolls] = i;
+
+		/* Notice the maximum length. */
+		length = strlen(s);
+
+		do
+		{
+			/* Get a name */
+			get_scroll_name(s, length);
+
+			/* Check for duplicate names (first 4 characters) */
+			for (j = 0; j < scrolls; j++)
+			{
+				unident_type *u2_ptr = &u_info[scroll_idx[j]];
+
+				/* Ignore different scrolls. */
+				if (strncmp(u_name+u_ptr->name, u_name+u2_ptr->name, 4)) continue;
+
+				/* Too close. */
+				break;
+			}
+		} while (j < scrolls);
 	}
+}
+
 
 
 /*
@@ -164,23 +216,18 @@ s16b lookup_unident(byte p_id, byte s_id)
 void flavor_init(void)
 {
 	int i,j;
-	C_TNEW(k_ptr_p_id, MAX_K_IDX, byte);
-	C_TNEW(k_ptr_s_id, MAX_K_IDX, byte);
-	C_TNEW(k_idx, MAX_K_IDX, int);
-	C_TNEW(u_idx, MAX_U_IDX, int);
+	int base_only[256];
+	C_TNEW(k_ptr_p_id, z_info->k_max, int);
 
+	/* The default value of base_only is -1 so that a map from [0,255]
+	 * is obvious. */
+	for (i = 0; i < 256; i++) base_only[i] = -1;
 
-	/* Hack - setting cheat_wzrd and cheat_extra generates a lot of messages */
-	bool old_cheat_wzrd = cheat_wzrd;
-	cheat_wzrd = FALSE;
-
-	/* p_id and s_id values for objects will be calculated here, so 
-	 * set the temporary values first. */
-	for (i = 0; i < MAX_K_IDX; i++)
+	/* The p_id is stored in the u_idx field in init_k_info,
+	 * so extract it to a separate array to avoid confusion. */
+	for (i = 0; i < z_info->k_max; i++)
 	{
-		/* Hack - the p_id is stored in the u_idx field in init_k_info. */
 		k_ptr_p_id[i] = k_info[i].u_idx;
-		k_ptr_s_id[i] = 0;
 	}
 
 	/* Hack -- Use the "simple" RNG */
@@ -189,97 +236,65 @@ void flavor_init(void)
 	/* Hack -- Induce consistant flavors */
 	Rand_value = seed_flavor;
 
-	/* First, fill in the names of the random scrolls */
-	for (i = 0; i < MAX_U_IDX; i++)
-		{
-		unident_type *u_ptr = &u_info[i], *u2_ptr;
-
-		/* Ignore non-scrolls. */
-		if (~u_ptr->flags & UNID_SCROLL_N) continue;
-
-		do
-	{
-			/* Get a name */
-			get_scroll_name(u_name+u_ptr->name);
-
-			/* Check for duplicate names (first 4 characters) */
-			for (u2_ptr = u_info; u2_ptr < u_ptr; u2_ptr++)
-		{
-				/* Ignore non-scrolls. */
-				if (~u_ptr->flags & UNID_SCROLL_N) continue;
-
-				/* Ignore different scrolls. */
-				if (strncmp(u_name+u_ptr->name, u_name+u2_ptr->name, 4)) continue;
-
-				/* Too close. */
-					break;
-		}
-		} while (u2_ptr != u_ptr);
-	}
+	/* Give names to the scroll entries in u_info. */
+	name_scrolls();
 
 	/*
-	 * Flavourless items with a base item type take that as their s_id
+	 * Then set the u_idxs of flavourless items appropriately.
 	 */
-	for (i = 0; i < MAX_K_IDX; i++)
+	for (i = 0; i < z_info->u_max; i++)
 	{
-		if (u_info[pid_base[k_ptr_p_id[i]]].flags & UNID_BASE_ONLY) k_ptr_s_id[i] = SID_BASE;
-	}
+		unident_type *u_ptr = &u_info[i];
 
+		if (!u_ptr->name)
+			base_only[u_ptr->p_id] = i;
+	}
+	for (i = 0; i < z_info->k_max; i++)
+	{
+		if (base_only[k_ptr_p_id[i]] != -1)
+			k_info[i].u_idx = base_only[k_ptr_p_id[i]];
+	}
 	/*
 	 * Finally, give each k_idx with a variable description a valid s_id.
 	 * We've already checked that there are enough to go around.
 	 */
 	for (i = 0; i < 256; i++)
-		{
+	{
+		s16b k_idx[z_info->k_max], u_idx[z_info->u_max];
 		s16b k_top, u_top;
 
-		/* Ignore constant/special p_ids */
-		if (u_info[pid_base[i]].flags & UNID_BASE_ONLY) continue;
+		/* Ignore flavourless p_ids */
+		if (base_only[i] != -1) continue;
 
 		/* Count all entried with this p_id in k_info */
-		for (j = 0, k_top = 0; j < MAX_K_IDX; j++)
+		for (j = 0, k_top = 0; j < z_info->k_max; j++)
 		{
-			if (k_ptr_p_id[j] != i) continue;
-			k_idx[k_top++] = j;
+			if (k_ptr_p_id[j] == i) k_idx[k_top++] = j;
 		}
 
-		/* And all the non-base ones in u_info */
-		for (j = 0, u_top = 0; j < MAX_U_IDX; j++)
+		/* And all those in u_info */
+		for (j = 0, u_top = 0; j < z_info->u_max; j++)
 		{
-			if (u_info[j].s_id == SID_BASE) continue;
-			if (u_info[j].p_id != i) continue;
-			u_idx[u_top++] = j;
+			if (u_info[j].p_id == i) u_idx[u_top++] = j;
 		}
 
 		for (j = 0; j < k_top; j++)
 		{
 			/* Pick a description from the list. */
 			s16b k = rand_int(u_top--);
-			
+
 			/* Assign it to the k_idx in question */
-			k_ptr_s_id[k_idx[j]] = u_info[u_idx[k]].s_id;
+			k_info[k_idx[j]].u_idx = u_idx[k];
 
 			/* Remove it from further consideration. */
 			u_idx[k] = u_idx[u_top];
 		}
 	}
 
-	/* Set k_ptr->u_idx according to the p_id and s_id values */
-	for (i = 0; i < MAX_K_IDX; i++)
-	{
-		k_info[i].u_idx = lookup_unident(k_ptr_p_id[i], k_ptr_s_id[i]);
-	}
-
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
 
-	/* Hack - reset cheat_wzrd if desired */
-	cheat_wzrd = old_cheat_wzrd;
-
 	TFREE(k_ptr_p_id);
-	TFREE(k_ptr_s_id);
-	TFREE(k_idx);
-	TFREE(u_idx);
 }
 
 
@@ -633,7 +648,7 @@ static void object_flags_pid(object_kind *k_ptr, u32b *f1, u32b *f2, u32b *f3)
 		object_kind *k2_ptr = &k_info[i];
 
 		/* Can't look like this item. */
-		if (u_info[k2_ptr->u_idx].p_id != p_id) continue;
+		if (u_info[k_ptr->u_idx].p_id != p_id) continue;
 
 		/* Already identified this item. */
 		if (object_aware_kp(k2_ptr)) continue;
@@ -703,7 +718,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	 * object_value_base() amongst other things). */
 	else
 	{
-		j_ptr->k_idx = lookup_kind(0,0); /* != 0 */
+		j_ptr->k_idx = lookup_kind(TV_UNKNOWN,SV_UNKNOWN);
 		j_ptr->tval = TV_UNKNOWN;
 		j_ptr->sval = SV_UNKNOWN;
 	}
@@ -976,6 +991,69 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 /*
+ * Parse through the string until the combination of
+ * flags is compatible with the current rejection
+ * criteria or the end of the string is reached.
+ * Return the first "safe" character.
+ */
+static cptr find_next_good_flag(cptr s, byte reject, byte require)
+{
+	int bad;
+
+	/* If this string doesn't actually start with a flag-altering
+	 * character, there is nothing to do. */
+	if (!is_cx_char(*s))
+	{
+		return s;
+	}
+
+	for (bad = 0;;s++)
+	{
+		char flag = 1<<find_ci(*s);
+		char mod = find_cm(*s);
+
+		/* Ordinary characters do nothing. */
+		if (*s & 0xE0);
+				
+		/* NULs are parsed elewhere. */
+		else if (*s == '\0') return s;
+
+		/* CH_NORM always reduces restrictions */
+		else if (mod == CM_NORM)
+		{
+			bad &= ~(flag);
+		}
+
+		/*
+		 * If a flag which isn't present is required
+		 * or a flag which is present is forbidden,
+		 * the set of "wrong" flags increases.
+		 */
+		else if (((mod == CM_TRUE) && (reject & flag)) ||
+			((mod == CM_FALSE) && (require & flag)))
+		{
+			bad |= flag;
+		}
+		/*
+		 * If a flag which is present is required
+		 * or a flag which isn't present is forbidden,
+		 * the set of "wrong" flags decreases.
+		 */
+		else if (((mod == CM_TRUE) && (require & flag)) ||
+			((mod == CM_FALSE) && (reject & flag)))
+		{
+			bad &= ~flag;
+		}
+
+		if (!bad) break;
+	}
+
+	/* The loop finished with a flag-altering character, but
+	 * the character after it may be printable. */
+ 	return s+1;
+}
+
+/*
  * Print a char "c" into a string "t", as if by sprintf(t, "%c", c),
  * and return a pointer to the terminator (t + 1).
  */
@@ -1147,21 +1225,39 @@ static char *object_desc_int(char *t, sint v)
 /* Julian Lighton's improved code */
 void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 {
-	cptr            basenm, modstr, extstr;
+	/* The strings from which buf is compiled. */
+	C_TNEW(strings, 8, cptr) = {0,0,0,0,0,0,0,0};
+
+/* If a CH_ARTICLE would cause an article to be prepended, this is set
+ * to ARTICLE_REQUEST. If one is found, it is changed to ARTICLE_LETTER.
+ * Once the initial name-writing loop is finished, the program searches
+ * the output string for the first letter or number, and adds "a" or "an"
+ * to the beginning as appropriate. */
+
+#define ARTICLE_NO	0
+#define ARTICLE_REQUEST	1
+#define ARTICLE_LETTER	2
+
+	int wants_article = ARTICLE_NO;
+
+/* The number of strings which can be in the process of being printed at once. */
+#define MAX_NAME_LEVEL	5
+
+	int this_level = 0;
+
+	byte reject, current;
+
+
+	cptr s;
+
 	int                     power;
 
-	bool            aware = FALSE;
-	bool            known = FALSE;
+	bool	aware, known;
 
-	bool            show_weapon = FALSE;
-	bool            show_armour = FALSE;
-
-	byte this_level=0;
+	bool	show_weapon = FALSE, show_armour = FALSE;
 
 	cptr	r[MAX_NAME_LEVEL];
 	char            *t;
-
-	char	reject, done;
 
 	char            p1 = '(', p2 = ')';
 	char            b1 = '[', b2 = ']';
@@ -1169,268 +1265,171 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	/* tmp_val_base is twice as large as necessary as little bounds checking
 	 * is performed. This probably isn't good enough. */
-	char            tmp_val_base[ONAME_MAX*2];
-
+	C_TNEW(tmp_val_base, ONAME_MAX*2, char);
 	char		*tmp_val = tmp_val_base;
 
 	u32b            f1, f2, f3;
 
-	object_kind             *k_ptr = &k_info[o1_ptr->k_idx];
+	object_kind	*k_ptr = &k_info[o1_ptr->k_idx];
+	unident_type *u_ptr;
+	o_base_type *ob_ptr;
 
-	/* Extract some flags */
+	/* If k_ptr is nonsensical, use k_info[0] instead. */
+	if (!k_ptr->name) k_ptr = k_info;
+
+	u_ptr = u_info+k_ptr->u_idx;
+	ob_ptr = o_base+u_ptr->p_id;
+
 	object_flags(o1_ptr, &f1, &f2, &f3);
 
+	known = (object_known_p(o1_ptr) ? TRUE : FALSE);
+	aware = (object_aware_p(o1_ptr) ? TRUE : FALSE);
 
-	/* See if the object is "aware" */
-	if (object_aware_p(o1_ptr)) aware = TRUE;
+	reject = current = 0;
 
-	/* See if the object is "known" */
-	if (object_known_p(o1_ptr)) known = TRUE;
+	strings[CI_BASE] = o_base_name+ob_ptr->name;
+	strings[CI_FLAVOUR] = u_name+u_ptr->name;
+	strings[CI_K_IDX] = k_name+k_ptr->name;
+	strings[CI_EGO] = e_name+e_info[o1_ptr->name2].name;
+	if (o1_ptr->art_name)
+		strings[CI_ARTEFACT] = quark_str(o1_ptr->art_name);
+	else
+		strings[CI_ARTEFACT] = a_name+a_info[o1_ptr->name1].name;
 
-	/* Analyze the object */
-	switch (o1_ptr->tval)
-	{
-			/* Missiles/ Bows/ Weapons */
-		case TV_SHOT:
-		case TV_BOLT:
-		case TV_ARROW:
-		case TV_BOW:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_DIGGING:
-		{
-			show_weapon = TRUE;
-			/* And fall through... */
-		}
-			/* Armour */
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_CROWN:
-		case TV_HELM:
-		case TV_SHIELD:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		{
-			if (!show_weapon) show_armour = TRUE;
-			/* And fall through... */
-		}
-		/* Normal objects */
-		case TV_LITE:
-		case TV_SKELETON:
-		case TV_BOTTLE:
-		case TV_JUNK:
-		case TV_SPIKE:
-		case TV_FLASK:
-		case TV_CHEST:
-		case TV_FOOD:
-		case TV_RING:
-		case TV_AMULET:
-		case TV_SCROLL:
-		case TV_POTION:
-		case TV_WAND:
-		case TV_STAFF:
-		case TV_ROD:
-		case TV_CHARM:
-	case TV_SORCERY_BOOK:
-	case TV_THAUMATURGY_BOOK:
-    case TV_CONJURATION_BOOK:
-    case TV_NECROMANCY_BOOK:
-		case TV_GOLD:
-		{
-			unident_type *u_ptr = &u_info[k_ptr->u_idx];
+	/* Unaware items do not include a k_info string. */
+	if (!aware) reject |= (1<<CI_K_IDX);
 
-			/* See strings to default. */
-			basenm = modstr = extstr = "";
+	/* Unidentified items do not include an artefact string or an
+	 * ego string. */
+	if (!known) reject |= (1<<CI_ARTEFACT) | (1<<CI_EGO);
 
-			reject = done = 0;
+	/* Identified artefacts, and all identified objects if
+	 * show_flavors is unset, do not include a FLAVOUR string. */
+	if (aware && (artifact_p(o1_ptr) || plain_descriptions))
+		reject |= 1 << CI_FLAVOUR;
 
-			/* Aware items have a k_name string */
-			if (aware)
-		{
-				extstr = k_name+k_ptr->name;
-			}
-			else
-			{
-				reject |= 1<<CI_K_IDX;
-		}
+	/* Singular objects take no plural. */
+	if (o1_ptr->number == 1) reject |= 1 << CI_PLURAL;
 
-			/*
-			 * Most items have a u_name string.
-			 * Unaware items always do.
-			 * Aware standard artefacts never do.
-			 * Store-bought items never do.
-			 * Other items do iff "plain_descriptions" is turned off.
-			 */
-			if (aware && artifact_p(o1_ptr))
-			{
-				basenm = k_name+k_ptr->name;
-			}
-			else if (!aware || (!artifact_p(o1_ptr) && !plain_descriptions && (~o1_ptr->ident & IDENT_STOREB)))
-			{
-				/* If desired, this can be the base name */
-				if (u_ptr->flags & UNID_NO_BASE)
-				{
-					basenm = modstr = u_name+u_ptr->name;
-				}
-				/* If not, use the standard base item. */
-			else
-				{
-					modstr = u_name+u_ptr->name;
-					basenm = descr_base(u_ptr->p_id);
-				}
-			}
-			/* But all have a base name of some description. */
-			else
-			{
-				basenm = descr_base(u_ptr->p_id);
-				reject |= 1<<CI_FLAVOUR;
-			}
+	/* Non-ego items need no ego string. */
+	if (!o1_ptr->name2) reject |= 1 << CI_EGO;
 
-			/* Notice if the object is singular. */
-			if (o1_ptr->number == 1) reject |= 1<<CI_PLURAL;
-			break;
-		}
-		default:
-		{
-			strcpy(buf, "(nothing)");
-			return;
-		}
-	}
-
+	/* Non-artefacts need no artefact string. */
+	if (!allart_p(o1_ptr)) reject |= 1 << CI_ARTEFACT;	
 
 	/* Start dumping the result */
 	t = tmp_val;
 
+	/* Find start, looking for first CH_IS_BASE. */
+	for (power = 7;; power--)
+	{
+		/* Default to CI_BASE. */
+		if (power == -1)
+		{
+			current |= 1<< CI_BASE;
+			r[this_level] = strings[CI_BASE];
+			break;
+		}
+
+		s = strings[power];
+
+		/* Reject non-strings. */
+		if (!s) continue;
+
+		/* Reject rejected strings. */
+		if (reject & 1<<power) continue;
+
+		/* Accept if initial character is CH_IS_BASE */
+		if (*s == CH_IS_BASE)
+		{
+			current |= 1<< power;
+			r[this_level] = strings[power]+1;
+			break;
+		}
+	}
+
 	/*
-	 * Add an article if required. This needs to be at the start
-	 * of the output string because of the way strings where no
-	 * article is added are handled.
+	 * Add an article if required. This is only possible at the start
+	 * of the output string because of the grammatical problems
+	 * that are created if I do otherwise. It also makes it easier
+	 * to work with.
 	 */
 
-	/* Assume no requested article will be added. */
-	reject |= 1<<CI_ARTICLE;
+	/* No prefix */
+	if (!pref)
+	{
+		/* Nothing */
+	}
 
-		/* No prefix */
-		if (!pref)
-		{
-			/* Nothing */
-		}
+	/* Hack -- None left */
+	else if (o1_ptr->number <= 0 && o1_ptr->k_idx)
+	{
+		t = object_desc_str(t, "no more ");
+	}
 
-		/* Hack -- None left */
-		else if (o1_ptr->number <= 0)
-		{
-			t = object_desc_str(t, "no more ");
-		}
+	/* Extract the number */
+	else if (o1_ptr->number > 1)
+	{
+		t = object_desc_num(t, o1_ptr->number);
+		t = object_desc_chr(t, ' ');
+	}
 
-		/* Extract the number */
-		else if (o1_ptr->number > 1)
-		{
-			t = object_desc_num(t, o1_ptr->number);
-			t = object_desc_chr(t, ' ');
-		}
-
-		/* Hack -- The only one of its kind */
+	/* Hack -- The only one of its kind */
 	else if (known && allart_p(o1_ptr))
-		{
-			t = object_desc_str(t, "the ");
-		}
+	{
+		t = object_desc_str(t, "the ");
+	}
 	/* A single one (later) */
 	else
-		{
-		reject &= ~(1<<CI_ARTICLE);
-		}
+	{
+		wants_article = ARTICLE_REQUEST;
 
-	r[this_level] = basenm;
+		/* Leave enough space to prepend "An ". */
+		tmp_val += 3;
+		t += 3;
+	}
 
 	/* Copy the string */
-	while (47 != 13)
-		{
+	while (TRUE)
+	{
 		/* Normal */
 		if (*r[this_level] & 0xE0)
 		{
 			/* Copy */
 			*t++ = *r[this_level]++;
-	}
+		}
 		/* Return to original string or finish. */
 		else if (*r[this_level] == '\0')
-	{
+		{
 			if (this_level)
-		{
+			{
 				r[--this_level]++;
-		}
-		else
-		{
+			}
+			else
+			{
 				*t = '\0';
 				break;
+			}
 		}
-	}
+		/* Handle CH_ARTICLE later. */
+		else if (*r[this_level] == CH_ARTICLE)
+		{
+			r[this_level]++;
+			if (wants_article == ARTICLE_REQUEST)
+				wants_article = ARTICLE_LETTER;
+		}
 		/* Normalise flag */
 		else if (find_cm(*r[this_level]) == CM_NORM)
 		{
 			r[this_level]++;
 		}
-		/* Change flags */
+		/* Change flags. As this returns a switch flag,
+		 * advance to the next potential active character. */
 		else if (find_cm(*r[this_level]) != CM_ACT)
 		{
-			/* 
-			 * Parse through the string until the combination of
-			 * flags is compatible with the current rejection
-			 * criteria.
-			 */
-			byte bad = 0;
-			do
-	{
-				char flag = 1<<find_ci(*r[this_level]);
-				char mod = find_cm(*r[this_level]);
-
-				/* Ordinary characters do nothing. */
-				if (*r[this_level] & 0xE0);
-				
-				/* NULs are parsed elewhere. */
-				else if (*r[this_level] == '\0') break;
-
-				/* CH_NORM always reduces restrictions */
-				else if (mod == CM_NORM)
-		{
-					bad &= ~(flag);
-		}
-
-				/*
-				 * If a flag which isn't present is required
-				 * or a flag which is present is forbidden,
-				 * the set of "wrong" flags increases.
-				 */
-				else if (((mod == CM_TRUE) && (reject & flag)) ||
-					((mod == CM_FALSE) && (~reject & flag)))
-		{
-					if (~bad & flag) bad |= flag;
-		}
-				/*
-				 * If a flag which is present is required
-				 * or a flag which isn't present is forbidden,
-				 * the set of "wrong" flags decreases.
-				 */
-				else if (((mod == CM_TRUE) && (~reject & flag)) ||
-					((mod == CM_FALSE) && (reject & flag)))
-		{
-					if (bad & flag) bad &= ~flag;
-	}
-				/* Try next character. */
-				r[this_level]++;
-			} while (bad);
-
-		}
-		/* Article (later) */
-		else if (*r[this_level] == CM_ACT+CI_ARTICLE)
-	{
-			t+=2;
-			*(t++) = *(r[this_level]++);
-			done |= 1<<CI_ARTICLE;
-	}
-		/* Pluralizer */
+			r[this_level] = find_next_good_flag(r[this_level], reject | current, ~(reject | current));
+	  	}
+		/* Pluralizer (internal) */
 		else if (*r[this_level] == CM_ACT+CI_PLURAL)
 		{
 			/* Add a plural if possible */
@@ -1448,21 +1447,20 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 			}
 			r[this_level]++;
 		}
-		/* Paranoia - too many levels. */
+		/* Paranoia - too many levels.
+		 * As "current" prevents the same string from being
+		 * started recursively, this can't happen. */
 		else if (this_level == MAX_NAME_LEVEL-1)
 		{
 			r[this_level]++;
 		}
-		/* Modifier */
-		else if (*r[this_level] == CM_ACT+CI_FLAVOUR)
+		/* Switch to another string */
+		else if (strings[find_ci(*r[this_level])])
 		{
-			r[++this_level] = modstr;
+			int temp = find_ci(*r[this_level]);
+			current |= 1<<temp;
+			r[++this_level] = strings[temp];
 		}
-		/* k_info name */
-		else if (*r[this_level] == CM_ACT+CI_K_IDX)
-		{
-			r[++this_level] = extstr;
-	}
 		/* Paranoia - nothing else makes sense. */
 		else
 		{
@@ -1471,70 +1469,26 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	}
 
 	/* Replace articles now the following string is known. */
-	if (done & 1<<CI_ARTICLE)
+	if (wants_article == ARTICLE_LETTER)
 	{
-		byte article = 0;
-		char *s, *u;
-		for (s = u = t-1;; s--, u--)
+		/* Find the first letter/number. */
+		for (s = tmp_val; !isalnum(*s) && *s; s++);
+
+		/* And copy an article to it without termination if one is found. */
+		if (is_a_vowel(*s) || *s == '8')
 		{
-			/* article characters are preceded by two spaces,
-			 * so a 3-character string can be inserted without
-			 * increasing the string length. */
-			if (*s == CI_ARTICLE+CM_ACT)
-			{
-				/* Print "a " or "an " as appropriate. */
-				if (article) *(u--) = ' ';
-				if (article == 1) *(u--) = 'n';
-				if (article) *(u) = 'a';
-
-				/* Both 'a' and 'an' start with a vowel. */
-				if (article) article = 1;
-
-				/* Don't move t without an article. */
-				if (!article) u++;
-				s-=2;
-			}
-			else
-	{
-				*u = *s;
-				if (*s == '8' || is_a_vowel(*s)) article = 1;
-				else if (isalnum(*s)) article = 2;
-			}
-			if (s == tmp_val) break;
+			tmp_val -= 3;
+			strncpy(tmp_val, "an ", 3);
 		}
-		tmp_val = u;
+		else if (isalnum(*s))
+		{
+			tmp_val -= 2;
+			strncpy(tmp_val, "a ", 2);
+  		}
 	}
 
-	/* Hack -- Append "Artifact" or "Special" names */
-	if (known)
-    {
-
-	/* Is it a new random artifact ? */
-	if (o1_ptr->art_name)
-    {
-		t = object_desc_chr(t, ' ');
-        t = object_desc_str(t, quark_str(o1_ptr->art_name));
-	}
-
-	/* Grab any artifact name */
-	else if (o1_ptr->name1)
-	{
-		artifact_type *a_ptr = &a_info[o1_ptr->name1];
-
-		t = object_desc_chr(t, ' ');
-		t = object_desc_str(t, (a_name + a_ptr->name));
-	}
-
-	/* Grab any ego-item name */
-		else if (o1_ptr->name2)
-	{
-		ego_item_type *e_ptr = &e_info[o1_ptr->name2];
-
-		t = object_desc_chr(t, ' ');
-		t = object_desc_str(t, (e_name + e_ptr->name));
-	}
-	}
-
+	/* The rest follows a hard-coded format. */
+	TFREE(strings);
 
 	/* No more details wanted */
 	if (mode < 1) goto copyback;
@@ -1627,7 +1581,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	/* Display the item like armour */
 	if (o1_ptr->ac) show_armour = TRUE;
-
+	if (f3 & TR3_SHOW_ARMOUR) show_armour = TRUE;
 
 	/* Dump base weapon info */
 	switch (o1_ptr->tval)
@@ -1880,8 +1834,10 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		/* Find the sections of inscription. */
 
 		/* Obtain the value this would have if uncursed if allowed. If this
-		 * differs from the present value, put parentheses around the number. */
-		if (spoil_value && spoil_base)
+		 * differs from the present value, put parentheses around the number.
+		 * Hack - suppress for empty slots.
+		 */
+		if (spoil_value && spoil_base && o1_ptr->k_idx)
 		{
 			object_type j_body, *j_ptr = &j_body;
 			object_extra x_ptr[1];
@@ -1959,6 +1915,8 @@ copyback:
 	tmp_val[ONAME_MAX-1] = '\0';
 	t = tmp_val;
 	while((*(buf++) = *(t++))) ; /* copy the string over */
+
+	TFREE(tmp_val_base);
 }
 
 
@@ -4547,6 +4505,14 @@ void show_equip(void)
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
 
+		/* Indicate AC from a lack of armour where appropriate */
+		if (ma_empty_hands() && !mystic_notify_aux && (j = mystic_armour(i)) > 0)
+		{
+			o_ptr->ac = j;
+			o_ptr->art_flags3 |= TR3_SHOW_ARMOUR;
+		}
+/*			sprintf(strchr(out_desc[k], '\0'), " [%d]", j);*/
+
 		/* Description */
 		object_desc(o_name, o_ptr, TRUE, 3);
 
@@ -4557,10 +4523,6 @@ void show_equip(void)
 		out_index[k] = i;
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
 		(void)strcpy(out_desc[k], o_name);
-
-		/* Indicate AC from a lack of armour where appropriate */
-		if (ma_empty_hands() && !mystic_notify_aux && (j = mystic_armour(i)) > 0)
-			sprintf(out_desc[k], "nothing [%d]", j);
 
 		/* Extract the maximal length (see below) */
 		l = strlen(out_desc[k]) + (2 + 3);

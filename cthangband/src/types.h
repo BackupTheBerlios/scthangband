@@ -160,6 +160,7 @@ struct maxima
 	u16b f_max;		/* Total size for "f_info[]" */
 	u16b k_max;		/* Total size for "k_info[]" */
 	u16b u_max;		/* Total size for "u_info[]" */
+	u16b ob_max;	/* Total size for "o_base[]" */
 	u16b a_max;		/* Total size for "a_info[]" */
 	u16b e_max;		/* Total size for "e_info[]" */
 	u16b r_max;		/* Total size for "r_info[]" */
@@ -258,16 +259,22 @@ struct unident_type
 {
 	u16b name;	/* Name (offset) */
 
-	byte p_id;	/* Primary index (must match corresponding item) */
+	byte p_id;	/* Primary index */
 	byte s_id;	/* Secondary index (internally generated) */
-
-	byte flags;	/* UNID_* flags */
 
 	byte d_attr;		/* Default colour */
 	char d_char;		/* Default symbol */
 
 	byte x_attr;		/* The desired attr for this object */
 	char x_char;		/* The desired char for this object */
+};
+
+typedef struct o_base_type o_base_type;
+
+struct o_base_type
+{
+	u32b name;	/* Name (offset) */
+	s32b cost;	/* Unaware cost */
 };
 
 /*

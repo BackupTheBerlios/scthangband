@@ -411,7 +411,7 @@ F:RES_BLIND | SEE_INVIS | ACTIVATE
 
 # The Terror Mask (for warriors only...)
 
-N:41:'Terror Mask'
+N:41:%Base & Terror Mask
 I:32:5:-1
 W:20:5:75:0
 P:5:1d3:25:25:10

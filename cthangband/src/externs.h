@@ -552,7 +552,10 @@ extern errr parse_v_info(char *buf, header *head, vptr *extra);
 extern errr parse_k_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_u_info(char *buf, header *head, vptr UNUSED *extra);
+extern errr parse_o_base(char *buf, header *head, vptr *extra);
+#endif
+#if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
+extern errr parse_u_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
 extern errr parse_a_info(char *buf, header *head, vptr *extra);
@@ -569,9 +572,6 @@ extern errr parse_macro_info(char *buf, header *head, vptr *extra);
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
 extern errr init_info_txt(FILE *fp, char *buf, header *head);
 #endif
-
-
-
 
 /* init2.c */
 
@@ -2557,7 +2557,7 @@ extern s32b old_turn;
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern s32b curse_turn;
 #endif
-#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool cheat_wzrd;
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
@@ -3271,7 +3271,7 @@ extern byte spell_order[128];
 #if (defined(BIRTH_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern s16b player_hp[100];
 #endif
-#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(INIT1_C) || defined(INIT2_C) || defined(VARIABLE_C))
+#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern maxima *z_info;
 #endif
 #if (defined(GENERATE_C) || defined(INIT2_C) || defined(VARIABLE_C))
@@ -3307,8 +3307,14 @@ extern unident_type *u_info;
 #if (defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *u_name;
 #endif
-#if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(VARIABLE_C))
 extern s16b *pid_base;
+#endif
+#if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
+extern o_base_type *o_base;
+#endif
+#if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+extern char *o_base_name;
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern artifact_type *a_info;
@@ -3724,7 +3730,7 @@ extern char *format(cptr fmt, ...);
 #if (defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_FORM_C))
 extern void plog_fmt(cptr fmt, ...);
 #endif
-#if (defined(FILES_C) || defined(INIT2_C) || defined(MAID_X11_C) || defined(MAIN_DOS_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_FORM_C))
+#if (defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAID_X11_C) || defined(MAIN_DOS_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_FORM_C))
 extern void quit_fmt(cptr fmt, ...);
 #endif
 
@@ -3888,12 +3894,12 @@ extern bool streq(cptr a, cptr b);
 #if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern bool suffix(cptr s, cptr t);
 #endif
-#if (defined(FILES_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_UTIL_C))
+#if (defined(FILES_C) || defined(INIT1_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_UTIL_C))
 extern bool prefix(cptr s, cptr t);
 #endif
-#if (defined(INIT1_C) || defined(Z_UTIL_C))
-extern int strcmp_pf(cptr s, cptr t);
-#endif
+
+
+
 #if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
 extern void (*plog_aux)(cptr) ;
 #endif

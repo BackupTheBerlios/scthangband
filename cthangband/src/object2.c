@@ -832,55 +832,10 @@ static s32b object_value_base(object_type *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-	s16b i;
-	s32b cost = 0;
-
 	/* Aware item -- use template cost */
 	if (object_aware_p(o_ptr)) return (k_ptr->cost);
 
-	/* Analyze the type */
-	switch (o_ptr->tval)
-	{
-		/* Un-aware Food */
-		case TV_FOOD: return (5L);
-
-		/* Un-aware Potions */
-		case TV_POTION: return (20L);
-
-		/* Un-aware Scrolls */
-		case TV_SCROLL: return (20L);
-
-		/* Un-aware Staffs */
-		case TV_STAFF: return (70L);
-
-		/* Un-aware Wands */
-		case TV_WAND: return (50L);
-
-		/* Un-aware Rods */
-		case TV_ROD: return (90L);
-
-		/* Un-aware Rings */
-		case TV_RING: return (45L);
-
-		/* Un-aware Amulets */
-		case TV_AMULET: return (45L);
-	}
-
-	/* No default, so find the cheapest thing it could be. */
-	for (i = 0; i < MAX_K_IDX; i++)
-	{
-		object_kind *k2_ptr = &k_info[i];
-
-		/* Reject worthless items. */
-		if (!k2_ptr->cost) continue;
-
-		/* Reject items with a different p_id. */
-		if (u_info[k2_ptr->u_idx].p_id != u_info[k_ptr->u_idx].p_id) continue;
-		
-		/* Reduce cost if necessary. */
-		if (!cost || k2_ptr->cost < cost) cost = k2_ptr->cost;
-	}
-	return cost;
+	else return (o_base[u_info[k_ptr->u_idx].p_id].cost);
 }
 
 /*
@@ -980,7 +935,7 @@ s32b flag_cost(object_type * o_ptr, bool all)
     if (f2 & TR2_RES_DISEN) total += 10000;
     if (f3 & TR3_SH_FIRE) total += 3750;
     if (f3 & TR3_SH_ELEC) total += 5000;
-    if (f3 & TR3_XXX3) total += 0;
+    if (f3 & TR3_SHOW_ARMOUR) total += 0;
     if (f3 & TR3_NO_TELE) total += 2500;
     if (f3 & TR3_NO_MAGIC) total += 2500;
     if (f3 & TR3_WRAITH) total += 250000;

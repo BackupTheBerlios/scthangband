@@ -1,24 +1,24 @@
-# File: macro.txt
+# File: macros.txt
 
 
-# This file is used to initialize the "lib/data/macro.raw" file, which is
-# used to initialize the "text file macro" information for the Angband game.
+# This file is used to initialize the "lib/data/macros.raw" file, which is
+# used to initialize the "text file macros" information for the Angband game.
 
 # Do not modify this file unless you know exactly what you are doing,
 # unless you wish to risk possible system crashes and broken savefiles.
-# After modifying this file, delete the "lib/data/macro.raw" file.
+# After modifying this file, delete the "lib/data/macros.raw" file.
 
-# "lib/data/macro.raw" can be safely deleted if ALLOW_TEMPLATES is undefined.
+# "lib/data/macros.raw" can be safely deleted if ALLOW_TEMPLATES is undefined.
 
-# === Understanding macro.txt ===
+# === Understanding macros.txt ===
 
 # The purpose of this file is to provide a convenient way of replacing
 # an arbitrary string in a text file with another arbitrary string.
 
 # Macros are applied to a line in a file in order from the last one to
-# the first. This is to enable macros to be defined for macro.txt itself.
+# the first. This is to enable macros to be defined for macros.txt itself.
 
-# The format of macro.txt is as follows:
+# The format of macros.txt is as follows:
 
 # X:name
 # Y:definition
@@ -53,11 +53,13 @@
 
 # If there is a file entry, substitutions will only be made in the specified
 # file. 
+
 # If there is a character entry, substitutions will only be made in lines
 # which begin with the specified character.
-# If there is a field entry, substitutions will only be made in the given
-# entry in the line where colons distinguish entries. Entry 1 is usually
-# the initial character.
+
+# Each line is divided into field. The first field starts at the first
+# character, and each successive field starts at successive :s following it.
+# E.g. in "::egg:", ":egg" is the second field. In "g::egg:", it is the third.
 
 # If there are multiple 'F' lines, lines in info files which meet any one of
 # them are changed by the given macro.
@@ -67,6 +69,315 @@
 # Version stamp (required)
 
 V:1.0.3
+
+# There are several macros which apply to all files used by object_desc().
+# To simplify things, these macros create them with a single line.
+
+X:#:object_desc() names
+A:F:r_event:E
+F:macros:#
+
+X:#:object_desc() names
+A:F:k_info:N:3
+F:macros:#
+
+X:#:object_desc() names
+A:F:u_info:N:2
+F:macros:#
+
+X:#:object_desc() names
+A:F:e_info:N:3
+F:macros:#
+
+X:#:object_desc() names
+A:F:a_info:N:3
+F:macros:#
+
+X:#:object_desc() names
+A:F:o_base:N:3
+F:macros:#
+
+# % masking (part 2)
+
+X:%%*
+Y:%
+#:object_desc() names
+
+# Object name macros (required)
+
+# As the input expected by the program can't be directly read from
+# a file, macros are needed to turn a text string (such as one of
+# the ones below) into the expected low ASCII characters.
+
+X:%=F
+M:2
+#:object_desc() names
+
+X:%+F
+M:10
+#:object_desc() names
+
+X:%-F
+M:18
+#:object_desc() names
+
+X:%f
+M:26
+#:object_desc() names
+
+X:%=K
+M:3
+#:object_desc() names
+
+X:%+K
+M:11
+#:object_desc() names
+
+X:%-K
+M:19
+#:object_desc() names
+
+X:%k
+M:27
+#:object_desc() names
+
+X:%=P
+M:4
+#:object_desc() names
+
+X:%+P
+M:12
+#:object_desc() names
+
+X:%-P
+M:20
+#:object_desc() names
+
+X:%p
+M:28
+#:object_desc() names
+
+X:%=E
+M:5
+#:object_desc() names
+
+X:%+E
+M:13
+#:object_desc() names
+
+X:%-E
+M:21
+#:object_desc() names
+
+X:%e
+M:29
+#:object_desc() names
+
+X:%=A
+M:6
+#:object_desc() names
+
+X:%+A
+M:14
+#:object_desc() names
+
+X:%-A
+M:22
+#:object_desc() names
+
+X:%a
+M:30
+#:object_desc() names
+
+X:%&
+M:8
+#:object_desc() names
+
+X:%b
+M:24
+#:object_desc() names
+
+# %Base flags are always at the beginning to make searching for them
+# more efficient.
+
+X:%Base 
+M:16
+#:object_desc() names
+
+X:%Base 
+S:move to front
+#:object_desc() names
+
+# % masking (part 1)
+
+X:%%
+Y:%%*
+#:object_desc() names
+
+# Object name macros (optional)
+
+X:& 
+Y:%&
+#:object_desc() names
+
+X:# 
+Y:%+F%f %=F
+#:object_desc() names
+
+# Foo
+
+X: !
+Y:%+K of %k%=K%+E %e%=E%+A %a%=A
+#:object_desc() names
+
+# Boo
+
+X: ^
+Y:%+K %k%=K%+E %e%=E%+A %a%=A
+#:object_desc() names
+
+X:~
+Y:%+P%p%=P
+#:object_desc() names
+
+X:%Scroll 
+M:127
+F:u_info:N:2
+
+X:%Scroll 
+S:move to front
+F:u_info:N:2
+
+# Unidentified scroll names.
+
+X:s
+Y:G:?:w:200
+F:u_info:s
+
+X:s
+B:N:%Scroll ---length 16---
+F:u_info:s
+
+# Ensure that tvals are expressed as numbers.
+
+X:Boots
+Y:30
+F:k_info:I:2
+
+X:Gloves
+Y:31
+F:k_info:I:2
+
+X:Helmet
+Y:32
+F:k_info:I:2
+
+X:Crown
+Y:33
+F:k_info:I:2
+
+X:Shield
+Y:34
+F:k_info:I:2
+
+X:Cloak
+Y:35
+F:k_info:I:2
+
+X:S-Armour
+Y:36
+F:k_info:I:2
+
+X:H-Armour
+Y:37
+F:k_info:I:2
+
+X:D-Armour
+Y:38
+F:k_info:I:2
+
+# Add SHOW_ARMOUR to armour
+
+X:I:Boots
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:Gloves
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:Helmet
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:Crown
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:Shield
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:Cloak
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:S-Armour
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:H-Armour
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+X:I:D-Armour
+A:F:SHOW_ARMOUR
+F:k_info:I:1
+
+# All artefacts ignore the elements
+
+X:N
+A:F:IGNORE_FIRE|IGNORE_COLD|IGNORE_ACID|IGNORE_ELEC
+F:a_info:N:1
+
+# Ensure that tvals are expressed as words for the above macros.
+# Must be reverse of above set.
+
+X:30
+Y:Boots
+F:k_info:I:2
+
+X:31
+Y:Gloves
+F:k_info:I:2
+
+X:32
+Y:Helmet
+F:k_info:I:2
+
+X:33
+Y:Crown
+F:k_info:I:2
+
+X:34
+Y:Shield
+F:k_info:I:2
+
+X:35
+Y:Cloak
+F:k_info:I:2
+
+X:36
+Y:S-Armour
+F:k_info:I:2
+
+X:37
+Y:H-Armour
+F:k_info:I:2
+
+X:38
+Y:D-Armour
+F:k_info:I:2
 
 # Vault types
 
@@ -81,3 +392,38 @@ F:v_info:X:2
 X:x
 Y::
 F:v_info:X:4
+
+# r_info.txt generates two raw files in two separate functions.
+# This masks the unused ones with #.
+
+X:E
+Y:#E
+F:r_info:E:1
+
+X:D
+Y:#D
+F:r_event:D:1
+
+X:G
+Y:#G
+F:r_event:G:1
+
+X:I
+Y:#I
+F:r_event:I:1
+
+X:W
+Y:#W
+F:r_event:W:1
+
+X:B
+Y:#B
+F:r_event:B:1
+
+X:F
+Y:#F
+F:r_event:F:1
+
+X:S
+Y:#S
+F:r_event:S:1

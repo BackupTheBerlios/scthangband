@@ -371,7 +371,7 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->weight = k_ptr->weight;
 
 		/* Paranoia */
-		o_ptr->name1 = o_ptr->name2 = 0;
+		o_ptr->name1 = o_ptr->name2 = o_ptr->art_name = 0;
 
 		/* All done */
 		return;
