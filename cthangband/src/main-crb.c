@@ -1,3 +1,4 @@
+#define MAIN_CRB_C
 /* File: main-crb.c */
 
 /*
@@ -225,17 +226,8 @@
  * ---(developer CD gcc + makefile porting notes, for Angband 3.0.2)-------
  * 1. Compiling the binary
  *
- * If you try this on OS X + gcc, please use makefile.std, replacing
- * main.c and main.o with main-crb.c and main-crb.o, removing all main-xxx.c
- * and main-xxx.o from SRCS and OBJS, and, and use these settings:
- *
- * COPTS = -Wall -O1 -g -fpascal-strings
- * INCLUDES =
- * DEFINES = -DMACH_O_CARBON -DANGBAND30X
- * LIBS = -framework CoreFoundation -framework QuickTime -framework Carbon
- *
- * -DANGBAND30X only affects main-crb.c. This is because I'm also compiling
- * a couple of variants, and this arrangement makes my life easier.
+ * If you try this on OS X + gcc, please use the OSX section of makefile.org
+ * as indicated in that file - KD.
  *
  * Never, ever #define MACINTOSH.  It'll wreck havoc in system interface
  * (mostly because of totally different pathname convention).
@@ -245,11 +237,11 @@
  *
  * For the best compatibility with the Classic ports and my PEF Carbon
  * ports, my_fopen, fd_make and fd_open [in util.c] should call
- *   (void)fsetfileinfo(buf, _fcreator, _ftype);
+ *   open_aux_crb(buf);
  * when a file is successfully opened.  Or you'll see odd icons for some files
  * in the lib folder.  In order to do so, extern.h should contain these lines,
  * within #ifdef MACH_O_CARBON:
- *   extern int fsetfileinfo(char *path, u32b fcreator, u32b ftype);
+ *   extern void open_aux_crb(cptr);
  *   extern u32b _fcreator;
  *   extern u32b _ftype;
  * And enable the four FILE_TYPE macros in h-config.h for defined(MACH_O_CARBON)
@@ -458,6 +450,10 @@
  *   appropriate one(s) in your A-mac-h.pch.
  */
 
+#include "angband.h"
+
+
+#if defined(MACINTOSH) || defined(MACH_O_CARBON)
 
 /*
  * Force Carbon-compatible APIs
@@ -483,12 +479,6 @@
 
 #endif /* !MACH_O_CARBON */
 
-
-#include "angband.h"
-
-
-#if defined(MACINTOSH) || defined(MACH_O_CARBON)
-
 /*
  * Variant-dependent features:
  *
@@ -505,10 +495,13 @@
  * that has some interesting features.
  */
 
-/* Angband 3.0.x characteristics */
+/* sCthAngband 1.0.x characteristics (I hope - KD) */
 #define USE_DOUBLE_TILES
 #define ALLOW_BIG_SCREEN
 #define NEW_ZVIRT_HOOKS
+#define ZANG_AUTO_SAVE
+#define ANG281_RESET_VISUALS
+
 /* I can't ditch these, yet, because there are many variants */
 #define USE_TRANSPARENCY
 #define huge size_t
@@ -593,8 +586,6 @@
 
 #endif /* MACH_O_CARBON */
 
-
-
 /*
  * Use "malloc()" instead of "NewPtr()"
  */
@@ -613,8 +604,8 @@ static RGBColor color_info[256];
  * Creator signature and file type - Didn't I say that I abhor file name
  * extentions?  Names and metadata are entirely different set of notions.
  */
-OSType _fcreator;
-OSType _ftype;
+u32b _fcreator;
+u32b _ftype;
 
 #endif /* MACH_O_CARBON || MAC_MPW */
 
@@ -706,12 +697,12 @@ static long  app_dir;
 /*
  * Delay handling of double-clicked savefiles
  */
-Boolean open_when_ready = FALSE;
+static Boolean open_when_ready = FALSE;
 
 /*
  * Delay handling of pre-emptive "quit" event
  */
-Boolean quit_when_ready = FALSE;
+static Boolean quit_when_ready = FALSE;
 
 
 /*
@@ -740,7 +731,7 @@ static WindowPtr active = NULL;
 /*
  * Maximum number of terms
  */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 
 /*
@@ -810,7 +801,7 @@ static OSErr spec_to_path(const FSSpec *spec, char *buf, size_t size)
  * Set creator and filetype of a file specified by POSIX-style pathname.
  * Returns 0 on success, -1 in case of errors.
  */
-void fsetfileinfo(cptr pathname, OSType fcreator, OSType ftype)
+static void fsetfileinfo(cptr pathname, OSType fcreator, OSType ftype)
 {
 	OSErr err;
 	FSSpec spec;
@@ -831,6 +822,14 @@ void fsetfileinfo(cptr pathname, OSType fcreator, OSType ftype)
 	return;
 }
 
+/*
+ * A wrapper around fsetfileinfo() to hide things which (according to the
+ * comment above) should be constant.
+ */
+void open_aux_crb(cptr pathname)
+{
+	fsetfileinfo(pathname, _fcreator, _ftype);
+}
 
 #else /* MACH_O_CARBON */
 
@@ -1009,7 +1008,7 @@ static int get_modification_time(cptr path, u32b *mod_time)
  * A (non-Mach-O) Mac OS version of check_modification_time, for those
  * compilers without good enough POSIX-compatibility libraries XXX XXX
  */
-errr check_modification_date(int fd, cptr template_file)
+static errr check_modification_date(int fd, cptr template_file)
 {
 #pragma unused(fd)
 	u32b txt_stat, raw_stat;
@@ -1018,7 +1017,8 @@ errr check_modification_date(int fd, cptr template_file)
 	char buf[1024];
 
 	/* Build the file name */
-	path_build(buf, sizeof(buf), ANGBAND_DIR_EDIT, template_file);
+	strnfmt(buf, sizeof(buf), "%v", path_build_f2, ANGBAND_DIR_EDIT,
+		template_file);
 
 	/* XXX XXX XXX */
 	convert_pathname(buf);
@@ -1039,7 +1039,7 @@ errr check_modification_date(int fd, cptr template_file)
 	strcpy(p, ".raw");
 
 	/* Build the file name of the raw file */
-	path_build(buf, sizeof(buf), ANGBAND_DIR_DATA, fname);
+	strnfmt(buf, sizeof(buf), "%v", path_build_f2, ANGBAND_DIR_DATA, fname);
 
 	/* XXX XXX XXX */
 	convert_pathname(buf);
@@ -3436,20 +3436,22 @@ static void load_pref_short(const char *key, short *vptr)
 	return;
 }
 
-
 /*
  * Save preferences to preferences file for current host+current user+
  * current application.
  */
 static void cf_save_prefs()
 {
-	int i;
+	int i, v[4];
+
+	/* Hack - obtain some version numbers. */
+	get_version_mac(v);
 
 	/* Version stamp */
-	save_pref_short("version.major", VERSION_MAJOR);
-	save_pref_short("version.minor", VERSION_MINOR);
-	save_pref_short("version.patch", VERSION_PATCH);
-	save_pref_short("version.extra", VERSION_EXTRA);
+	save_pref_short("version.major", v[0]);
+	save_pref_short("version.minor", v[1]);
+	save_pref_short("version.patch", v[2]);
+	save_pref_short("version.extra", v[3]);
 
 	/* Gfx settings */
 	save_pref_short("arg.arg_sound", arg_sound);
@@ -3494,7 +3496,10 @@ static void cf_load_prefs()
 {
 	bool ok;
 	short pref_major, pref_minor, pref_patch, pref_extra;
-	int i;
+	int i, v[4];
+
+	/* Hack - obtain some version numbers. */
+	get_version_mac(v);
 
 	/* Assume nothing is wrong, yet */
 	ok = TRUE;
@@ -3518,10 +3523,10 @@ static void cf_load_prefs()
 #if 0
 
 	/* Check version */
-	if ((pref_major != VERSION_MAJOR) ||
-		(pref_minor != VERSION_MINOR) ||
-		(pref_patch != VERSION_PATCH) ||
-		(pref_extra != VERSION_EXTRA))
+	if ((pref_major != v[0]) ||
+		(pref_minor != v[1]) ||
+		(pref_patch != v[2]) ||
+		(pref_extra != v[3]))
 	{
 		/* Message */
 		mac_warning(
@@ -3897,7 +3902,10 @@ static void handle_open_when_ready(void)
 		game_in_progress = 1;
 
 		/* Wait for it */
-		pause_line(Term->hgt - 1);
+		/* If this just forces a player to press a key before the credits
+		 * vanish, it should be "if (display_credits) pause_line();". KD
+		 */
+		pause_line();
 
 		/* Flush input */
 		flush();
@@ -4405,7 +4413,7 @@ static void setup_menus(void)
 #ifdef HAS_SCORE_MENU
 
 	/* Enable "score" */
-	if (initialized && character_generated && !character_icky)
+	if (initialized && character_generated && !screen_is_icky())
 	{
 		EnableMenuItem(m, ITEM_SCORE);
 	}
@@ -4883,7 +4891,7 @@ static void menu(long mc)
 					char buf[1024];
 
 					/* Paranoia */
-					if (!initialized || character_icky ||
+					if (!initialized || screen_is_icky() ||
 					    !game_in_progress || !character_generated)
 					{
 						/* Can't happen but just in case */
@@ -4893,8 +4901,8 @@ static void menu(long mc)
 					}
 
 					/* Build the pathname of the score file */
-					path_build(buf, sizeof(buf), ANGBAND_DIR_APEX,
-						"scores.raw");
+					strnfmt(buf, sizeof(buf), "%v", path_build_f2,
+						ANGBAND_DIR_APEX, "scores.raw");
 
 					/* Hack - open the score file for reading */
 					highscore_fd = fd_open(buf, O_RDONLY);
@@ -6122,7 +6130,7 @@ static void hook_core(cptr str)
 	mac_warning("Fatal error.\rI will now attempt to save and quit.");
 
 	/* Attempt to save */
-	if (!save_player()) mac_warning("Warning -- save failed!");
+	if (!save_player(FALSE)) mac_warning("Warning -- save failed!");
 
 	/* Quit */
 	quit(NULL);
@@ -6199,7 +6207,8 @@ static void init_stuff(void)
 		init_file_paths(path);
 
 		/* Build the filename */
-		path_build(path, sizeof(path), ANGBAND_DIR_FILE, "news.txt");
+		strnfmt(buf, sizeof(buf), "%v", path_build_f2, ANGBAND_DIR_FILE,
+			"news.txt");
 
 		/* Attempt to open and close that file */
 		if (0 == fd_close(fd_open(path, O_RDONLY))) break;
@@ -6395,6 +6404,8 @@ int main(void)
 	quit_aux = hook_quit;
 	core_aux = hook_core;
 
+	/* Hook in an "init2.c" hook. */
+	check_modification_date_hook = check_modification_hook;
 
 	/* Initialize colors */
 	for (i = 0; i < 256; i++)

@@ -33,7 +33,7 @@ SRCS = \
   main-xpj.c main-xxx.c main.c melee1.c melee2.c monster1.c monster2.c \
   object1.c object2.c quest.c readdib.c save.c spells1.c spells2.c store.c \
   tables.c util.c variable.c wizard1.c wizard2.c xtra1.c xtra2.c z-form.c \
-  z-rand.c z-term.c z-util.c z-virt.c 
+  z-rand.c z-term.c z-util.c z-virt.c main-crb.o
 
 OBJS = \
   birth.o cave.o cmd1.o cmd2.o cmd3.o cmd4.o cmd5.o cmd6.o dungeon.o files.o \
@@ -43,7 +43,7 @@ OBJS = \
   main-xpj.o main-xxx.o main.o melee1.o melee2.o monster1.o monster2.o \
   object1.o object2.o quest.o readdib.o save.o spells1.o spells2.o store.o \
   tables.o util.o variable.o wizard1.o wizard2.o xtra1.o xtra2.o z-form.o \
-  z-rand.o z-term.o z-util.o z-virt.o 
+  z-rand.o z-term.o z-util.o z-virt.o main-crb.o
 
 
 
@@ -143,6 +143,10 @@ VCS_CFLAGS = -D"USE_VCS"
 CAP_CFLAGS = -D"USE_CAP"
 CAP_LIBS = -ltermcap
 
+# (Untested) OSX/gcc port.
+OSX_CFLAGS = -D"MACH_O_CARBON"
+OSX_LIBS = -framework CoreFoundation -framework QuickTime -framework Carbon
+
 # One possible set of CFLAGS/LIBS. Add/remove matching pairs as desired.
 CFLAGS = $(STD_CFLAGS) $(X11_CFLAGS) $(GCU_CFLAGS) $(GTK_CFLAGS)
 LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
@@ -214,6 +218,12 @@ LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
 #LIBS = -lcurses -ltermcap
 
 
+
+##
+## Variation -- compile for OSX with gcc.
+##
+#CFLAGS = $(STD_CFLAGS) $(OSX_CFLAGS)
+#LIBS   =               $(OSX_LIBS)
 
 GAME = Cthangband
 
