@@ -4101,19 +4101,31 @@ static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
 }
 
 /*
- * Find the "first" inventory object with the given "tag".
+ * Find an inventory object with the given "tag" in its inscription in the
+ * player's inventory or equipment.
  *
- * A "tag" is a char "n" appearing as "@n" anywhere in the
- * inscription of an object.
+ * If there is an object with "@xn" in its inscription, set o_ptr to the first
+ * such object and return TRUE.
  *
- * Also, the tag "@xn" will work as well, where "n" is a tag-char,
- * and "x" is a particular command code.
+ * If there is not, but there is one inscribed with "@n", set o_ptr to the first
+ * such object and return FALSE.
+ *
+ * Otherwise, leave o_ptr as it is and return FALSE.
+ *
+ * "o_ptr" is set to the selected item (or is left alone if none is chosen).
+ * "tag" is the "n" in the above description.
+ * "cmd" is the "x" in the above description.
+ * "equip" controls whether the game should search the player's equipment or
+ * inventory for the tag.
  */
-static object_type *get_tag(char tag, s16b cmd)
+static bool get_tag(object_type **o_ptr, char tag, s16b cmd, bool equip)
 {
 	char cmd_str[3] = "", buf[2*MAX_ASCII_LEN+1];
 	int i, len;
 	cptr s;
+
+	int min = (equip) ? INVEN_WIELD : 0;
+	int max = (equip) ? INVEN_TOTAL : INVEN_WIELD;
 
 	/* Turn the command into an ASCII representation. */
 	if (cmd & 0xFF00)
@@ -4125,40 +4137,38 @@ static object_type *get_tag(char tag, s16b cmd)
 	len = strlen(buf);
 
 	/* Check every object */
-	for (i = 0; i < INVEN_TOTAL; ++i)
+	for (i = min; i < max; ++i)
 	{
-		object_type *o_ptr = &inventory[i];
+		object_type *j_ptr = &inventory[i];
 
 		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+		if (!j_ptr->k_idx) continue;
 
-		/* Find a '@' */
-		s = strchr(quark_str(o_ptr->note), '@');
+		/* Get the inscription. */
+		s = quark_str(j_ptr->note);
 
 		/* Process all tags */
-		while (s)
+		while ((s = strchr(s, '@')))
 		{
-			/* Check the normal tags */
-			if (s[1] == tag)
+			/* Advance and check for short tags. */
+			if (*++s == tag)
 			{
 				/* Success */
-				return o_ptr;
+				if (!*o_ptr) *o_ptr = j_ptr;
 			}
 
-			/* Check the special tags */
-			else if (s[len+1] == tag && prefix(s+1, buf))
+			/* Check the specific tags */
+			else if (s[len] == tag && prefix(s, buf))
 			{
 				/* Success */
-				return o_ptr;
+				*o_ptr = j_ptr;
+				return TRUE;
 			}
-
-			/* Find another '@' */
-			s = strchr(s + 1, '@');
 		}
 	}
 
-	/* No such tag */
-	return NULL;
+	/* No @xn tag. */
+	return FALSE;
 }
 
 
@@ -4586,17 +4596,21 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			case '4': case '5': case '6':
 			case '7': case '8': case '9':
 			{
-				/* XXX XXX Look up that tag */
-				if (!((o_ptr = get_tag(which, command_cmd))))
-				{
-					bell(0);
-					break;
-				}
+				bool tmp;
 
-				/* Hack -- Verify item */
-				if (is_worn_p(o_ptr) ? !equip : !inven)
+				/* Assume no object by default. */
+				o_ptr = NULL;
+
+				/* XXX XXX Look up that tag */
+				tmp = get_tag(&o_ptr, which, command_cmd, command_wrk);
+
+				/* Look it up in the rest of the inventory if allowed. */
+				if (!tmp && equip && inven)
+					get_tag(&o_ptr, which, command_cmd, !command_wrk);
+
+				if (!o_ptr)
 				{
-					bell(0);
+					bell("No such tag");
 					break;
 				}
 
