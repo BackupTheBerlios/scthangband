@@ -949,7 +949,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	doing this by a macro. */
 	if (bypass_prompt && call && total == 1)
 	{
-		i = 0;
+		i = valid_spirits[0];
 		flag = TRUE;
 		redraw = FALSE;
 	}
