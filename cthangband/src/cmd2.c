@@ -3380,6 +3380,7 @@ static void use_power(powertype *pw_ptr)
 			case iilog(MUT1_SHRIEK):
 				(void)fire_ball(GF_SOUND, 0, 4 * plev, 8);
 				(void)aggravate_monsters(0);
+				break;
 			case iilog(MUT1_ILLUMINE):
 				(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
 				break;

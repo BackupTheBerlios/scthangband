@@ -3012,6 +3012,8 @@ errr parse_q_list(char *buf, header *head, vptr *extra)
 			q_ptr->dungeon = n;
 			q_ptr->max_num = num;
 			q_ptr->known = TRUE; /* Fixed quests are known from the start. */
+
+			return SUCCESS;
 		}
 		case 'D': case 'I': case 'T': case 'S': case 'F':
 		{
