@@ -4345,9 +4345,9 @@ int add_chaos_features(cptr *info, bool (*reject)(int))
 
 	assert(info && info+MUT_MAX); /* Caller */
 
-	for (i = j = 0; i < MUT_MAX; i++)
+	for (i = 1, j = 0; i <= MUT_MAX; i++)
 	{
-		if (p_has_mutation(i) && !(*reject)(i))
+		if (p_has_mutation(i) && reject && !(*reject)(i))
 		{
 			info[j++] = chaos_info[i].desc;
 		}
