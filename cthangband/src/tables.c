@@ -2441,8 +2441,8 @@ option_type option_info[] =
 	{ &use_autoroller,               TRUE, OPTS_BIRTH, 2, 20,
     "use_autoroller",                "Allow stats to be rolled repeatedly with minima" },
 
-	{ &spend_points,               FALSE, OPTS_BIRTH, 2, 21,
-    "spend_points",                "Allow stats to be chosen by spending points" },
+	{ &spend_points, TRUE, OPTS_BIRTH, 2, 21,
+    "spend_points", "Allow stats to be chosen by spending points" },
 
     { &speak_unique_w,                FALSE, OPTS_BIRTH,      0, 29,
        "speak_unique",              "Allow shopkeepers and uniques to speak" },
