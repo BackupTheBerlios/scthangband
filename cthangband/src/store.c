@@ -4468,6 +4468,8 @@ void do_cmd_store(void)
 	/* Interact with player */
 	while (!leave_store)
 	{
+		msg_print(NULL);
+
 		/* Hack -- Clear line 1 */
 		prt("", 1, 0);
 
