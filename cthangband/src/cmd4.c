@@ -115,8 +115,8 @@ void do_cmd_change_name(void)
 	/* Forever */
 	while (1)
 	{
-		cptr name = (mode < 2) ? "'c' to change name, " : "";
-		cptr help = (mode == 2) ? "'?' for help, " : "";
+		cptr name = (mode == 0) ? "'c' to change name, " : "";
+		cptr help = (mode == 1) ? "'?' for help, " : "";
 
 		/* Display the player */
 		display_player(mode);
@@ -154,7 +154,8 @@ void do_cmd_change_name(void)
 		else if (c == 'h')
 		{
 			mode++;
-			mode %= 56;
+			if (!skip_chaos_features && p_mutated()) mode %= 7;
+			else mode %= 6;
 		}
 
 		else if (c == '?' && *help)
@@ -188,7 +189,7 @@ void do_cmd_message_one(void)
 {
 	/* Recall one message XXX XXX XXX */
 	prt(format("> %s", message_str(0)), 0, 0);
-		}
+}
 
 
 /*
@@ -3623,6 +3624,11 @@ static long count_kills(FILE *fff, bool noisy)
 	return Total;
 }
 
+long PURE num_kills(void)
+{
+	return count_kills(NULL, FALSE);
+}
+
 /*
  * Total kill count
  *
@@ -3641,13 +3647,13 @@ static void do_cmd_knowledge_kill_count(void)
 	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	/* Count monsters slain */
-	Total = count_kills(fff, FALSE);
+	Total = num_kills();
 
-		if (Total < 1)
-			fprintf(fff,"You have defeated no enemies yet.\n\n");
-		else if (Total == 1)
-			fprintf(fff,"You have defeated one enemy.\n\n");
-		else
+	if (Total < 1)
+		fprintf(fff,"You have defeated no enemies yet.\n\n");
+	else if (Total == 1)
+		fprintf(fff,"You have defeated one enemy.\n\n");
+	else
 		fprintf(fff,"You have defeated %ld enemies.\n\n", Total);
 
 	/* Display the species-by-species breakdown. */
@@ -4072,6 +4078,10 @@ static void do_cmd_knowledge_player(void)
 	char file_name[1024];
 	FILE *fff = my_fopen_temp(file_name, 1024);
 	if (!fff) return;
+
+	/* Save the player history to the file. */
+	dump_history(fff);
+	fprintf(fff, "\n");
 
 	/* Introduction - this is (of course) all based on known information. */
 	fprintf(fff, "If your equipment has no unknown qualities:\n\n");

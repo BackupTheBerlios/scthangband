@@ -1803,6 +1803,40 @@ void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam, s16b *
 	COPY(p_ptr, p2_ptr, player_type);
 }
 
+static void display_player_weapon(const bool missile,
+	 const int x1, const int x2, const int y1)
+{
+	s16b show_tohit, show_todam, weap_blow, mut_blow;
+	s32b damage;
+	cptr temp;
+
+	object_type j_ptr[1], *o_ptr = &inventory[(missile) ? INVEN_BOW : INVEN_WIELD];
+
+	object_info_known(j_ptr, o_ptr);
+
+	weapon_stats(j_ptr, 1, &show_tohit, &show_todam, &weap_blow, &mut_blow, &damage);
+
+	put_str((missile) ? "Missile" : "Melee", y1, x1+2);
+
+	/* Dump the bonuses to hit/dam */
+	mc_put_fmt(y1+1, x1, "+ To Hit    $B%9ld", show_tohit);
+	mc_put_fmt(y1+2, x1, "+ To Damage $B%9ld", show_todam);
+
+	/* Dump the number of attack per round */
+	put_str("Attack/Round", y1+3, x1);
+	if (!mut_blow)
+		temp = format("%d,%d", weap_blow/60, weap_blow%60);
+	else
+		temp = format("%d,%d+%d", weap_blow/60, weap_blow%60, mut_blow);
+	/* Display string, right-aligned. */
+	c_put_str(TERM_L_BLUE, temp, y1+3, x2-strlen(temp));
+
+	/* Dump the damage per round */
+	put_str("Damage/Round", y1+4, x1);
+	temp = format("%ld,%ld", damage/60, damage%60);
+	c_put_str(TERM_L_BLUE, temp, y1+4, x2-strlen(temp));
+}
+
 /*
  * Prints the following information on the screen.
  *
@@ -1812,140 +1846,54 @@ void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam, s16b *
  * Otherwise, damage with (+0,+0) missiles of the appropriate type with an
  * sval of 1 is shown.
  */
-static void display_player_sides(bool missile)
+static void display_player_right(void)
 {
-	s16b show_tohit, show_todam, weap_blow, mut_blow;
-	s32b damage;
-	cptr temp;
-
-	/* The last column of the numbers. See prt_num() */
-	const int col = 1+strlen("+ To Damage ")+3+6;
-
-	object_type j_ptr[1], *o_ptr = &inventory[(missile) ? INVEN_BOW : INVEN_WIELD];
-
-	object_info_known(j_ptr, o_ptr);
-
-	weapon_stats(j_ptr, 1, &show_tohit, &show_todam, &weap_blow, &mut_blow, &damage);
-
-	put_str((missile) ? "Missile" : "Melee", 9, 3);
-
-	/* Dump the bonuses to hit/dam */
-	mc_put_fmt(10, 1, "+ To Hit    $B%9ld", show_tohit);
-	mc_put_fmt(11, 1, "+ To Damage $B%9ld", show_todam);
-
-	/* Dump the number of attack per round */
-	put_str("Attack/Round", 12, 1);
-	if (!mut_blow)
-		temp = format("%d,%d", weap_blow/60, weap_blow%60);
-	else
-		temp = format("%d,%d+%d", weap_blow/60, weap_blow%60, mut_blow);
-	/* Display string, right-aligned. */
-	c_put_str(TERM_L_BLUE, temp, 12, col-strlen(temp));
-
-	/* Dump the damage per round */
-	put_str("Damage/Round", 13, 1);
-	temp = format("%ld,%ld", damage/60, damage%60);
-	c_put_str(TERM_L_BLUE, temp, 13, col-strlen(temp));
-
 	prt_nums("Hit Points:", 9, 52, 24, p_ptr->chp, p_ptr->mhp);
 	prt_nums("Spell Points:", 10, 52, 24, p_ptr->csp, p_ptr->msp);
 	prt_nums("Chi Points:", 11, 52, 24, p_ptr->cchi, p_ptr->mchi);
 
-	mc_put_fmt(13, 52, "Gold           $G%9ld", p_ptr->au);
+	mc_put_fmt(13, 52, "Gold:          $G%9ld", p_ptr->au);
+	mc_put_fmt(14, 52, "Experience:    $G%9ld", p_ptr->exp);
+
+	mc_put_fmt(16, 52, "+ To AC:          $G%6d", p_ptr->dis_to_a);
+	mc_put_fmt(17, 52, "Base AC:          $G%6d", p_ptr->dis_ac);
+	mc_put_fmt(19, 52, "Infra-Vision:   $G%3d feet", p_ptr->see_infra*10);
 }
 
-/*
- * Prints the following information on the screen.
- */
-static void display_player_xp(void)
+static name_centry likert_table[] =
 {
-	mc_put_fmt(10, 28, "Experience $G%9ld", p_ptr->exp);
-	mc_put_fmt(13, 28, "Exp Factor $G%9ld", p_ptr->expfact);
-}
-
-
-/*
- * Hack -- pass color info around this file
- */
-static byte likert_color = TERM_WHITE;
-
+	{0, "$DVery Bad"},
+	{2, "$rBad"},
+	{3, "$RPoor"},
+	{5, "$oFair"},
+	{6, "$yGood"},
+	{7, "$yVery Good"},
+	{9, "$GExcellent"},
+	{14, "$gSuperb"},
+	{18, "$bIncredible"},
+	{MAX_SHORT, "$vStupendous"},
+};
 
 /*
  * Returns a "rating" of x depending on y
  */
 static cptr likert(int x, int y)
 {
-	/* Paranoia */
-	if (y <= 0) y = 1;
+	name_centry *ptr;
 
-	/* Negative value */
-	if (x < 0)
+	assert(y > 0); /* Caller */
+
+	/* Hack - ensure that -1/100 is negative. */
+	x = (x+y)/y-1;
+
+	FOR_ALL_IN(likert_table, ptr)
 	{
-		likert_color = TERM_L_DARK;
-		return ("Very Bad");
+		if (ptr->idx > x) return ptr->str;
 	}
 
-	/* Analyze the value */
-	switch ((x / y))
-	{
-		case 0:
-		case 1:
-		{
-			likert_color = TERM_RED;
-			return ("Bad");
-		}
-		case 2:
-		{
-			likert_color = TERM_L_RED;
-			return ("Poor");
-		}
-		case 3:
-		case 4:
-		{
-			likert_color = TERM_ORANGE;
-			return ("Fair");
-		}
-		case 5:
-		{
-			likert_color = TERM_YELLOW;
-			return ("Good");
-		}
-		case 6:
-		{
-			likert_color = TERM_YELLOW;
-			return ("Very Good");
-		}
-		case 7:
-		case 8:
-		{
-			likert_color = TERM_L_GREEN;
-			return ("Excellent");
-		}
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-		{
-			likert_color = TERM_GREEN;
-			return ("Superb");
-		}
-		case 14:
-		case 15:
-		case 16:
-		case 17:
-		{
-			likert_color = TERM_BLUE;
-			return ("Incredible");
-		}
-		default:
-		{
-			likert_color = TERM_VIOLET;
-			return ("Stupendous");
-		}
-	}
+	/* Paranoia - cheaters can get a stealth of MAX_SHORT. */
+	return ptr[-1].str;
 }
-
 
 /*
  * Prints ratings on certain abilities
@@ -1954,12 +1902,9 @@ static cptr likert(int x, int y)
  */
 static void display_player_various(void)
 {
-    int         tmp, damdice, damsides, dambonus, blows;
-	int			xthn, xthb, xfos, xsrh;
-	int			xdis, xdev, xsav, xstl;
-	cptr	  desc;
-    int         muta_att = 0;
-	object_type		*o_ptr;
+    int tmp, damdice, damsides, dambonus, blows;
+	int xthn, xthb, muta_att = 0;
+	object_type *o_ptr;
 
 	if (p_has_mutation(MUT_HORNS))     muta_att++;
 	if (p_has_mutation(MUT_SCOR_TAIL)) muta_att++;
@@ -1989,55 +1934,14 @@ static void display_player_various(void)
 
      /* Basic abilities */
 
-	xdis = p_ptr->skill_dis;
-	xdev = p_ptr->skill_dev;
-	xsav = p_ptr->skill_sav;
-	xstl = p_ptr->skill_stl;
-	xsrh = p_ptr->skill_srh;
-	xfos = p_ptr->skill_fos;
-
-	put_str("Fighting    :", 16, 1);
-	desc = likert(xthn, 12);
-	c_put_str(likert_color, desc, 16, 15);
-
-	put_str("Bows/Throw  :", 17, 1);
-	desc = likert(xthb, 12);
-	c_put_str(likert_color, desc, 17, 15);
-
-	put_str("Saving Throw:", 18, 1);
-	desc = likert(xsav, 6);
-	c_put_str(likert_color, desc, 18, 15);
-
-	put_str("Stealth     :", 19, 1);
-	desc = likert(xstl, 1);
-	c_put_str(likert_color, desc, 19, 15);
-
-
-	put_str("Perception  :", 16, 28);
-	desc = likert(xfos, 6);
-	c_put_str(likert_color, desc, 16, 42);
-
-	put_str("Searching   :", 17, 28);
-	desc = likert(xsrh, 6);
-	c_put_str(likert_color, desc, 17, 42);
-
-	put_str("Disarming   :", 18, 28);
-	desc = likert(xdis, 8);
-	c_put_str(likert_color, desc, 18, 42);
-
-	put_str("Magic Device:", 19, 28);
-	desc = likert(xdev, 6);
-	c_put_str(likert_color, desc, 19, 42);
-
-
-	put_str("+ To AC:", 16, 55);
-	put_str(format("%6d", p_ptr->dis_to_a), 16, 69);
-
-	put_str("Base AC:", 17, 55);
-	put_str(format("%6d", p_ptr->dis_ac), 17, 69);
-
-	put_str("Infra-Vision:", 19, 55);
-	put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);
+	mc_put_fmt(16, 1, "Fighting    : %s", likert(xthn, 12));
+	mc_put_fmt(17, 1, "Bows/Throw  : %s", likert(xthb, 12));
+	mc_put_fmt(18, 1, "Saving Throw: %s", likert(p_ptr->skill_sav, 6));
+	mc_put_fmt(19, 1, "Stealth     : %s", likert(p_ptr->skill_stl, 1));
+	mc_put_fmt(16, 28, "Perception  : %s", likert(p_ptr->skill_fos, 6));
+	mc_put_fmt(17, 28, "Searching   : %s", likert(p_ptr->skill_srh, 6));
+	mc_put_fmt(18, 28, "Disarming   : %s", likert(p_ptr->skill_dis, 8));
+	mc_put_fmt(19, 28, "Magic Device: %s", likert(p_ptr->skill_dev, 6));
 }
 
 
@@ -2887,6 +2791,16 @@ static void display_player_stat_info(void)
     }
 }
 
+static void display_player_basics(void)
+{
+	/* Name, Sex, Race, template */
+	mc_put_fmt(2, 1, "Name        : $B$!%s", player_name);
+	mc_put_fmt(3, 1, "Sex         : $B$!%s", sp_ptr->title);
+	mc_put_fmt(4, 1, "Race        : $B$!%s", rp_ptr->title);
+	mc_put_fmt(5, 1, "Template    : $B$!%s", cp_ptr->title);
+	mc_put_fmt(6, 1, "Exp. factor : $B%ld", p_ptr->expfact);
+}
+
 /*
  * Display how race and class affect stats, but compressed to fit into type
  * 1 display.
@@ -2899,17 +2813,6 @@ static void display_player_stat_info_birth(void)
 	int row;
 
 	char buf[80];
-
-	/* Name, Sex, Race, template */
-	put_str("Name        :", 2, 1);
-	put_str("Sex         :", 3, 1);
-	put_str("Race        :", 4, 1);
-	put_str("Template    :", 5, 1);
-
-	c_put_str(TERM_L_BLUE, player_name, 2, 15);
-	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
-	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 15);
-	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
 
 	/* Column */
 	stat_col = 42;
@@ -3248,12 +3151,6 @@ static void display_player_name_stats(void)
 {
 	int i;
 
-	/* Name, Sex, Race, template */
-	mc_put_fmt(2, 1, "Name        : $B$!%s", player_name);
-	mc_put_fmt(3, 1, "Sex         : $B$!%s", sp_ptr->title);
-	mc_put_fmt(4, 1, "Race        : $B$!%s", rp_ptr->title);
-	mc_put_fmt(5, 1, "Template    : $B$!%s", cp_ptr->title);
-
 	/* Age, Height, Weight, Social, Birthday */
 	mc_put_fmt(2, 32, "Age             $B%6d", p_ptr->age);
 	mc_put_fmt(3, 32, "Height          $B%6d", p_ptr->ht);
@@ -3283,28 +3180,53 @@ static void display_player_name_stats(void)
 	}
 }
 
+
+/*
+ * Place enough spaces before a string to centre it in a buffer max-1 spaces
+ * long (or Term->wid if this is very large).
+ */
+static void centre_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	cptr str = va_arg(*vp, cptr);
+	uint len = strlen(str);
+
+	/* Default to the screen width. */
+	if (max > 256) max = Term->wid;
+
+	/* Save the centre of the string if insufficient space. */
+	if (max <= len)
+		sprintf(buf, "%.*s", max-1, str+(len-max+1)/2);
+
+	/* Centre the string. */
+	else
+		sprintf(buf, "%*s%s", (max-len-1)/2, "", str);
+}
+
+void dump_history(FILE *fff)
+{
+	char (*s)[60];
+	my_fprintf(fff, "%.80v\n", centre_f1, "(Character Background)");
+	for (s = history; **s && s < history+4; s++)
+	{
+		my_fprintf(fff, "%.80v\n", centre_f1, *s);
+	}
+}
+
 /*
  * Display the character on the screen (various modes)
  *
  * The top two and bottom two lines are left blank.
  *
  * Mode 0 = standard display with skills
- * Mode 1 = standard display with history and bonus details
- * Mode 2 = skills display
- * Mode 3 = summary of various things
- * Mode 4 = current flags (combined)
- * Mode 5 = current flags (part 1)
- * Mode 6 = current flags (part 2)
- * Mode 7 = chaos features
+ * Mode 1 = skills display
+ * Mode 2 = summary of various things
+ * Mode 3 = current flags (combined)
+ * Mode 4 = current flags (part 1)
+ * Mode 5 = current flags (part 2)
+ * Mode 6 = chaos features
  */
 void display_player(int mode)
 {
-	/* XXX XXX XXX */
-    if (p_mutated() && !(skip_chaos_features))
-        mode = (mode % 8);
-    else
-        mode = (mode % 7);
-
 	/* Erase screen */
 	clear_from(0);
 
@@ -3312,87 +3234,73 @@ void display_player(int mode)
 	{
 		case -1: /* During character creation only. */
 		{
-			/* Name, sex, race, template and stats (compressed) */
+			/* Name, sex, race, template and exp. factor. */
+			display_player_basics();
+
+			/* Stats (compressed), various stat-based info. */
+			mc_put_fmt(15, 0, "%.50v", centre_f1, "(Miscellaneous Abilities)");
 			display_player_stat_info_birth();
 
-			/* Extra info (missile) */
-			display_player_sides(TRUE);
+			/* Extra info */
+			display_player_weapon(FALSE, 1, 22, 9);
+			display_player_weapon(TRUE, 28, 49, 9); 
 
-			/* Experience */
-			display_player_xp();
+			/* HP, etc. */
+			display_player_right();
 			break;
 		}
 		case 0:
 		{
-			/* Name, sex, race, template, age, height, weight, social class and stats. */
+			/* Name, sex, race, template and exp. factor. */
+			display_player_basics();
+
+			/* Age, height, weight, social class and stats. */
 			display_player_name_stats();
 
-			/* Extra info (melee) */
-			display_player_sides(FALSE);
+			/* Extra info */
+			display_player_weapon(FALSE, 1, 22, 9);
+			display_player_weapon(TRUE, 28, 49, 9); 
 
-			/* Experience. */
-			display_player_xp();
+			/* HP, etc. */
+			display_player_right();
 
 			/* Display "various" info */
-			put_str("(Miscellaneous Abilities)", 15, 25);
+			mc_put_fmt(15, 0, "%.50v", centre_f1, "(Miscellaneous Abilities)");
 			display_player_various();
 
 			break;
 		}
 		case 1:
 		{
-			byte i;
-
-			/* Name, sex, race, template, age, height, weight, social class and stats. */
-			display_player_name_stats();
-
-			/* Extra info (missile) */
-			display_player_sides(TRUE);
-
-			/* Experience */
-			display_player_xp();
-
-		/* Display "history" info */
-			put_str("(Character Background)", 15, 25);
-
-			for (i = 0; i < 4; i++)
-			{
-				put_str(history[i], i + 16, 10);
-			}
-
+			/* Show skills */
+			display_player_skills();
 			break;
-	}
-		case 2:
-	{
-		/* Do nothing */
-		display_player_skills();
+		}
+		case 2: /* Special */
+		{
+			/* See "http://www.cs.berkeley.edu/~davidb/angband.html" */
+
+			/* Dump the info */
+			display_player_misc_info();
+			display_player_stat_info();
+			display_player_flag_info();
 			break;
-	}
+		}
 		case 3: /* Special */
-	{
-		/* See "http://www.cs.berkeley.edu/~davidb/angband.html" */
-
-		/* Dump the info */
-		display_player_misc_info();
-		display_player_stat_info();
-		display_player_flag_info();
+		{
+			display_player_ben();
 			break;
-	}
-		case 4: /* Special */
-	{
-		display_player_ben();
+		}
+		case 6:
+	    {
+	        do_cmd_knowledge_chaos_features();
 			break;
-	}
-		case 7:
-    {
-        do_cmd_knowledge_chaos_features();
-			break;
-    }
+	    }
 		default: /* Special */
-	{
-		display_player_ben_one((mode-1) % 2);
+		{
+			display_player_ben_one(mode % 2);
+		}
 	}
-}
 }
 
 static void dump_final_messages(FILE * OutFile)
@@ -3435,17 +3343,57 @@ static bool inven_cnt(void)
 }
 
 /*
+ * Dump a monochrome text representation of part of the visible screen.
+ */
+static void dump_area_mono(FILE *fff, int miny, int maxy, int minx, int maxx)
+{
+	int x,y;
+	assert(maxx < minx+256);
+
+	for (y = miny; y <= maxy; y++)
+	{
+		char buf[257], *s;
+		byte a;
+
+		for (x = minx, s = buf; x <= maxx; x++, s++)
+		{
+			/* Get the attr/char */
+			Term_what(x, y, &a, s);
+
+			/* Avoid low ASCII. */
+			if (iscntrl(*s)) *s = '#';
+		}
+
+		/* Ignore trailing spaces. */
+		while (s > buf && s[-1] == ' ') s--;
+
+		/* Dump it. */
+		fprintf(fff, "%.*s\n", s-buf, buf);
+	}
+}
+
+static cptr option_values[3] =
+{
+	"OFF",
+	"ON",
+	"Always",
+};
+
+static void dump_pref(FILE *fff, cptr init, int option)
+{
+	uint len = 19-strlen(init);
+	fprintf(fff, "\n %s:%*s%s", init, len, "", option_values[option]);
+}
+
+/*
  * Hack -- Dump a character description file
  *
  * XXX XXX XXX Allow the "full" flag to dump additional info,
  * and trigger its usage from various places in the code.
  */
-errr file_character(cptr name)
+void file_character(cptr name)
 {
 	int			i, x, y;
-
-	byte		a;
-	char		c;
 
 	cptr		paren = ")";
 
@@ -3455,6 +3403,7 @@ errr file_character(cptr name)
 
 	char		buf[1024];
 
+	long kills;
 
 	/* Drop priv's */
 	safe_setuid_drop();
@@ -3498,7 +3447,7 @@ errr file_character(cptr name)
 		msg_print(NULL);
 
 		/* Error */
-		return (-1);
+		return /*(-1)*/;
 	}
 
 
@@ -3509,204 +3458,88 @@ errr file_character(cptr name)
 	/* Display player */
 	display_player(0);
 
-	/* Dump part of the screen */
-	for (y = 2; y < 22; y++)
-	{
-		/* Dump each row */
-		for (x = 0; x < 79; x++)
-		{
-			/* Get the attr/char */
-			(void)(Term_what(x, y, &a, &c));
-
-			/* Dump it */
-			buf[x] = c;
-		}
-
-		/* Terminate */
-		buf[x] = '\0';
-
-		/* End the row */
-		fprintf(fff, "%s\n", buf);
-	}
+	/* Save it to the file. */
+	dump_area_mono(fff, 2, 20, 0, 79);
 
 	/* Show Skills */
-	display_player(2);
-
-	/* Dump part of the screen */
-	for (y = 1; y < 22; y++)
-	{
-		/* Dump each row */
-		for (x = 0; x < 79; x++)
-		{
-			/* Get the attr/char */
-			(void)(Term_what(x, y, &a, &c));
-
-			/* Dump it */
-			buf[x] = c;
-		}
-
-		/* Terminate */
-		buf[x] = '\0';
-
-		/* End the row */
-		fprintf(fff, "%s\n", buf);
-	}
-
-
-	/* Display history */
 	display_player(1);
 
-	/* Dump part of the screen */
-	for (y = 15; y < 20; y++)
+	/* Save it to the file. */
+	dump_area_mono(fff, 1, 21, 0, 79);
+
+	/* Dump history */
+	dump_history(fff);
+
+	fprintf(fff, "\n\n  [Miscellaneous information]\n");
+
+	dump_pref(fff, "Ironman Shops", ironman_shop);
+	dump_pref(fff, "Maximise Mode", maximise_mode);
+	dump_pref(fff, "Preserve Mode", preserve_mode);
+	dump_pref(fff, "Autoscum", auto_scum);
+	dump_pref(fff, "Small Levels", (dungeon_small) ? 2 : small_levels);
+	dump_pref(fff, "Arena Levels", empty_levels);
+	dump_pref(fff, "Long Stairs", multi_stair);
+	dump_pref(fff, "Stupid Monsters", stupid_monsters);
+	
+	i = p_ptr->max_dlv+dun_defs[cur_dungeon].offset;
+	fprintf(fff, "\n Recall:             Level %d (%d') in %s\n",
+		i, 50*i, dun_name+dun_defs[cur_dungeon].name);
+
+
+	if (noscore)
+		fprintf(fff, "\n You have done something illegal.");
+
+	for (i = y = 0; i < MAX_CAVES; i++)
 	{
-		/* Dump each row */
-		for (x = 0; x < 79; x++)
-		{
-			/* Get the attr/char */
-			(void)(Term_what(x, y, &a, &c));
+		dun_type *d_ptr = dun_defs+i;
+		quest_type *q_ptr;
+		bool quests_exist = FALSE;
 
-			/* Dump it */
-			buf[x] = c;
+		for (q_ptr = q_list; q_ptr < q_list+z_info->quests; q_ptr++)
+		{
+			/* Skip quests elsewhere. */
+			if (q_ptr->dungeon != i) continue;
+
+			/* Unfinished quests found. */
+			if (q_ptr->cur_num < q_ptr->max_num) goto next_cave;
+
+			/* Found a finished quest. */
+			quests_exist = TRUE;
 		}
 
-		/* Terminate */
-		buf[x] = '\0';
+		/* No quests found. */
+		if (!quests_exist) continue;
 
-		/* End the row */
-		fprintf(fff, "%s\n", buf);
-	}
+		/* Put a gap before and after the section. */
+		if (!y) fprintf(fff, "\n");
+		y = 1;
 
-
-        fprintf(fff, "\n\n  [Miscellaneous information]\n");
-        if (ironman_shop)
-            fprintf(fff, "\n Ironman Shops:     ON");
-        else
-            fprintf(fff, "\n Ironman Shops:     OFF");
-
-        if (maximise_mode)
-            fprintf(fff, "\n Maximize Mode:      ON");
-        else
-            fprintf(fff, "\n Maximize Mode:      OFF");
-
-        if (preserve_mode)
-            fprintf(fff, "\n Preserve Mode:      ON");
-        else
-            fprintf(fff, "\n Preserve Mode:      OFF");
-
-        if (auto_scum)
-            fprintf(fff, "\n Autoscum:           ON");
-        else
-            fprintf(fff, "\n Autoscum:           OFF");
-
-		if (dungeon_small)
-			fprintf(fff, "\n Small Levels:       Always");
-		else
-		{
-			if (small_levels)
-				fprintf(fff, "\n Small Levels:       ON");
-			else
-				fprintf(fff, "\n Small Levels:       OFF");
-		}
-
-        if (empty_levels)
-            fprintf(fff, "\n Arena Levels:       ON");
-        else
-            fprintf(fff, "\n Arena Levels:       OFF");
-
-        if (multi_stair)
-            fprintf(fff, "\n Long Stairs:       ON");
-        else
-            fprintf(fff, "\n Long Stairs:       OFF");
-
-		i = p_ptr->max_dlv+dun_defs[cur_dungeon].offset;
-		fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", i, 50 *i);
-
-
-        if (noscore)
-            fprintf(fff, "\n You have done something illegal.");
-
-        if (stupid_monsters)
-            fprintf(fff, "\n Your opponents are behaving stupidly.");
-
-
-    { /* Monsters slain */
-        int k;
-        s32b Total = 0;
-
-        for (k = 1; k < MAX_R_IDX; k++)
-        {
-            monster_race *r_ptr = &r_info[k];
-
-			/* Skip "fake" monsters. */
-			if (is_fake_monster(r_ptr)) continue;
-
-            if (r_ptr->flags1 & (RF1_UNIQUE))
-            {
-                bool dead = (r_ptr->max_num == 0);
-                if (dead)
-                {
-                    Total++;
-                }
-            }
-            else
-            {
-                s16b This = r_ptr->r_pkills;
-                if (This > 0)
-                {
-                    Total += This;
-                }
-            }
-        }
-
-		for (i = y = 0; i < MAX_CAVES; i++)
-		{
-			dun_type *d_ptr = dun_defs+i;
-			quest_type *q_ptr;
-			bool quests_exist = FALSE;
-			
-			for (q_ptr = q_list; q_ptr < q_list+z_info->quests; q_ptr++)
-			{
-				/* Skip quests elsewhere. */
-				if (q_ptr->dungeon != i) continue;
-
-				/* Unfinished quests found. */
-				if (q_ptr->cur_num < q_ptr->max_num) goto next_cave;
-
-				/* Found a finished quest. */
-				quests_exist = TRUE;
-			}
-
-			/* No quests found. */
-			if (!quests_exist) continue;
-
-			/* Put a gap before and after the section. */
-			if (!y) fprintf(fff, "\n");
-			y = 1;
-
-			/* Print a message. */
-			fprintf(fff, " You have conquered %s.\n", dun_name+d_ptr->name);
+		/* Print a message. */
+		fprintf(fff, " You have conquered %s.\n", dun_name+d_ptr->name);
 
 next_cave:
-			continue; /* Don't ask me, it just prevents a GCC warning. */
-		}
+		continue; /* Don't ask me, it just prevents a GCC warning. */
+	}
 
-		fprintf(fff, "\n");
+	fprintf(fff, "\n");
 
-		for (i = y = 0; i < z_info->quests; i++)
-		{
-			if (q_list[i].cur_num == q_list[i].max_num) y++;
-		}
-		if (y) fprintf(fff, " You have completed %d quest%s.",
-			y, y == 1 ? "" : "s");
+	for (i = y = 0; i < z_info->quests; i++)
+	{
+		if (q_list[i].cur_num == q_list[i].max_num) y++;
+	}
+	if (y) fprintf(fff, " You have completed %d quest%s.",
+		y, y == 1 ? "" : "s");
 
-        if (Total < 1)
-            fprintf(fff," You have defeated no enemies yet.\n");
-        else if (Total == 1)
+	/* Monsters slain */
+	kills = num_kills();
 
-            fprintf(fff," You have defeated one enemy.\n");
-        else
-           fprintf(fff,"\n You have defeated %ld enemies.\n", Total);
-    }
+	if (kills < 1)
+		fprintf(fff," You have defeated no enemies yet.\n");
+	else if (kills == 1)
+		fprintf(fff," You have defeated one enemy.\n");
+	else
+		fprintf(fff,"\n You have defeated %ld enemies.\n", kills);
+
     
 
     if (p_mutated())
@@ -3787,7 +3620,7 @@ next_cave:
 	msg_print(NULL);
 
 	/* Success */
-	return (0);
+	return /*(0)*/;
 }
 
 
@@ -4693,13 +4526,14 @@ void show_file(cptr name, cptr what)
  */
 static char show_link_aux(cptr link)
 {
+	cptr file;
 	if (!link) link = cur_help_str();
-	if (link)
+	if (link) file = link_name_to_file(link);
+	if (link && file)
 	{
-		cptr file = link_name_to_file(link);
 		return show_file_aux(file, NULL, link);
 	}
-	/* Paranoia - no links available. */
+	/* Paranoia - no links available, or link not present. */
 	else
 	{
 		bell("No help string selected!");
@@ -4866,16 +4700,6 @@ void init_help_files(void)
 	init_links();
 }
 
-/*
- * Centre a string on a specified line of the current term.
- */
-static void put_str_centre(cptr str, int y)
-{
-	int l = strlen(str);
-	int x = MAX(0, (Term->wid-l)/2);
-	put_str(str, y, x);
-}
-
 void display_help_page(cptr str)
 {
 	FILE *fff;
@@ -4907,11 +4731,11 @@ void display_help_page(cptr str)
 	}
 
 	/* Oops - no-one's written the rquested help file. */
-	put_str_centre(
-		"Sorry, help for this command is not available.", Term->hgt/2-1);
+	mc_put_fmt(Term->hgt/2-1, 0, "%v", centre_f1,
+		"Sorry, help for this command is not available.");
 
-	put_str_centre(
-		"Please contact " MAINTAINER " for further information.", Term->hgt/2+1);
+	mc_put_fmt(Term->hgt/2+1, 0, "%v", centre_f1,
+		"Please contact " MAINTAINER " for further information.");
 }
 
 

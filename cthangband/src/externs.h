@@ -521,7 +521,7 @@ extern bool PURE player_has_flag_known(int set, u32b flag);
 extern void display_player(int mode);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
-extern errr file_character(cptr name);
+extern void file_character(cptr name);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
 extern void do_cmd_help(cptr name);
@@ -2411,7 +2411,7 @@ extern void roff(cptr str);
 #if (defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_str(const int y, const int x, cptr str);
 #endif
-#if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
 #if (defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -2843,7 +2843,7 @@ extern bool player_symbols;
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool equippy_chars;
 #endif
-#if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool skip_chaos_features;
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3737,7 +3737,7 @@ extern  bool tgt_pt(int *x,int *y);
 #if (defined(INIT2_C) || defined(XTRA2_C))
 extern void init_chaos(void);
 #endif
-#if (defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern bool PURE p_mutated(void);
 #endif
 #if (defined(BIRTH_C) || defined(POWERS_C) || defined(XTRA2_C))
@@ -4012,5 +4012,17 @@ extern void do_dec_stat_time(int stat, bool msg);
 
 #if (defined(BIRTH_C) || defined(OBJECT2_C) || defined(XTRA2_C))
 extern void make_item(object_type *o_ptr, make_item_type *i_ptr);
+#endif
+
+/* cmd4.c */
+
+#if (defined(CMD4_C) || defined(FILES_C))
+extern long PURE num_kills(void);
+#endif
+
+/* files.c */
+
+#if (defined(CMD4_C) || defined(FILES_C))
+extern void dump_history(FILE *fff);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -338,6 +338,8 @@ The + and - keys can be used to view each town with shops in turn, and pressing 
 $gDisplay character features <~ 9> <! 9>
 This displays various things about your character which are not listed elsewhere. At the moment, this comprises your saving throw and some of the effects your AC has. These calculations are based on information known to the player, so objects which are not fully identified may make the numbers inaccurate.
 
+It also displays a brief description of your character. This has no effect on the game.
+
 %%%%% <cmd=!>
 $GInteract with the system (!)
 This allows some of the system-specific commands for altering the user interface.

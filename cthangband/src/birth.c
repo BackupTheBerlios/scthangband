@@ -1138,12 +1138,10 @@ static void display_player_birth_details(void)
 	byte i;
 
 		/* Clear some space */
-	for (i = 15; i < 20; i++)
+	for (i = 16; i < 20; i++)
 	{
 		Term_erase(0, i, 80);
 	}
-
-	put_str("(Miscellaneous Abilities)", 15, 25);
 
 	for (i = 0; i < 12; i++)
 	{
@@ -1207,13 +1205,7 @@ static void display_player_birth_details(void)
 			temp = "Error!";
 		}
 		/* Insert the string. */
-		put_str(string, 16+r, 1+27*c);
-
-		/* Add a colon. */
-		put_str(":", 16+r, 19+27*c);
-
-		/* Insert the number. */
-		c_put_str(TERM_L_GREEN, temp, 16+r, 21+27*c);
+		mc_put_fmt(16+r, 1+51*c/2, "%-19s: $G%s", string, temp);
 	}
 }
 
