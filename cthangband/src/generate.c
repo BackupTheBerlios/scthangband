@@ -5086,6 +5086,9 @@ static void town_gen(void)
 {
 	int i, y, x;
 	
+	/* Identify the town. */
+	cur_town = wild_grid[wildy][wildx].dungeon;
+
 	/* Hack -- Start with basic floors */
 	for (y = 0; y < cur_hgt; y++)
 	{
