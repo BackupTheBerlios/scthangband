@@ -586,3 +586,9 @@
  * (by Keldon Jones)
  */
 #define CHECK_MODIFICATION_TIME
+
+/*
+ * Allows the game to be saved in a form compatible with 4.1.0b,
+ * generating an extra [y/n] prompt to do so.
+ */
+/* #define ALLOW_410_SAVES */

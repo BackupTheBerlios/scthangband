@@ -3,6 +3,7 @@
 /* Purpose: support for loading savefiles -BEN- */
 
 #include "angband.h"
+#include "loadsave.h"
 
 
 /*
@@ -52,6 +53,14 @@ static u32b	v_check = 0L;
  */
 static u32b	x_check = 0L;
 
+
+/*
+ * This function determines if certain features are present in the savefile.
+ */
+bool has_flag(u16b flag)
+{
+	return ((sf_flags & flag) != 0);
+}
 
 
 /*
@@ -288,11 +297,12 @@ static void rd_item(object_type *o_ptr)
 		rd_byte(&old_dd);
 		rd_byte(&old_ds);
 
+#ifdef SF_16_IDENT
 		/* ident enlarged to enable splitting of IDENT_SENSE */
-		if (!older_than(4,1,1))
+		if (has_flag(SF_16_IDENT))
 		{
 			rd_u16b(&o_ptr->ident);
-			if (older_than(4,1,2) && o_ptr->discount)
+			if (o_ptr->discount)
 			{
 				o_ptr->ident |= IDENT_SENSE;
 			}
@@ -304,6 +314,9 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->ident = (u32b)(temp & ~0x01);
 			if ((temp & 0x01) || (o_ptr->discount)) (o_ptr->ident)+=IDENT_SENSE;
 		}
+#else
+		rd_byte(&o_ptr->ident);
+#endif
 
 		rd_byte(&o_ptr->marked);
 
@@ -556,6 +569,7 @@ static void rd_lore(int r_idx)
 
 
 
+#ifdef SF_DEATHEVENTTEXT
 /*
  * Read the death events
  */
@@ -576,6 +590,7 @@ static void rd_death(void)
 		if (tmp16u & 1<<15) break;
 	}
 }
+#endif
 
 
 
@@ -721,11 +736,13 @@ static void rd_options(void)
 
 		rd_byte(&autosave_l);
 		rd_byte(&autosave_t);
-		if (autosave_t & 2)
+#ifdef SF_Q_SAVE
+		if (has_flag(SF_Q_SAVE))
 		{
-			autosave_t -= 2;
-			autosave_q = 1;
+			autosave_q = autosave_t & 0x02;
+			autosave_t &= 0x01;
 		}
+#endif
 		rd_s16b(&autosave_freq);
 
 
@@ -770,23 +787,15 @@ static void rd_options(void)
 
 	/*** Window Options ***/
 
+#ifdef SF_3D_WINPRI
 	/* Read the window flags */
-	if (older_than(4,1,5))
+	if (has_flag(SF_3D_WINPRI))
 	{
 	for (n = 0; n < 8; n++)
 	{
-			u32b temp;
-			rd_u32b(&temp);
 		for (i = 0; i < 32; i++)
 		{
-				if (temp & 1<<i)
-				{
-					flagw[n][i] = 5;
-				}
-				else
-					{
-					flagw[n][i] = 0;
-				}
+				rd_byte(&flagw[n][i]);
 			}
 		}
 					}
@@ -794,9 +803,18 @@ static void rd_options(void)
 					{
 		for (n = 0; n < 8; n++)
 		{
+			u32b temp;
+			rd_u32b(&temp);
 			for (i = 0; i < 32; i++)
 			{
-				rd_byte(&flagw[n][i]);
+				if (temp & 1<<i)
+				{
+					flagw[n][i] = 0x55;
+				}
+				else
+				{
+					flagw[n][i] = 0x00;
+				}
 					}
 					}
 				}                           
@@ -825,6 +843,43 @@ static void rd_options(void)
 			}
 		}
 	}
+#else
+	/* Read the option flags */
+	for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
+
+	/* Read the option masks */
+	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
+
+	/* Analyze the options */
+	for (n = 0; n < 8; n++)
+	{
+		/* Analyze the options */
+		for (i = 0; i < 32; i++)
+		{
+			/* Process valid flags */
+			if (mask[n] & (1L << i))
+			{
+				/* Process valid flags */
+				if (option_mask[n] & (1L << i))
+				{
+					/* Set */
+					if (flag[n] & (1L << i))
+					{
+						/* Set */
+						option_flag[n] |= (1L << i);
+					}
+				
+					/* Clear */
+					else
+					{
+						/* Clear */
+						option_flag[n] &= ~(1L << i);
+					}
+				}                           
+			}
+		}
+	}
+#endif
 }
 
 
@@ -948,13 +1003,15 @@ static void rd_extra(void)
 	{
 		rd_byte(&(skill_set[i].value));
 		rd_byte(&(skill_set[i].max_value));
-		if (!older_than(4,1,0)) {
+#ifdef SF_SKILL_BASE
+		if (has_flag(SF_SKILL_BASE)) {
 			rd_byte(&(skill_set[i].base));
 			rd_byte(&(skill_set[i].ceiling));
 		} else {
 			skill_set[i].base = 0;
 			skill_set[i].ceiling = 100;
 		}
+#endif
 		rd_u16b(&(skill_set[i].exp_to_raise));
 		rd_u16b(&(skill_set[i].experience));
 	}
@@ -1090,9 +1147,11 @@ static void rd_extra(void)
 	/* Current turn */
 	rd_s32b(&turn);
 
+#ifdef SF_CURSE
 	/* Turn on which auto-cursing will next occur */
-	if (!older_than(4,1,1))
+	if (has_flag(SF_CURSE))
 		rd_s32b(&curse_turn);
+#endif
 }
 
 
@@ -1297,14 +1356,18 @@ static errr rd_dungeon(void)
 	{
 		/* Grab RLE info */
 		rd_byte(&count);
-		if (older_than(4,1,6))
+#ifdef SF_16_CAVE_FLAG
+		if (has_flag(SF_16_CAVE_FLAG))
+#else
+		if (FALSE)
+#endif
 		{
-		rd_byte(&tmp8u);
-			tmp16u = tmp8u;
+			rd_u16b(&tmp16u);
 		}
 		else
 		{
-			rd_u16b(&tmp16u);
+			rd_byte(&tmp8u);
+			tmp16u = tmp8u;
 		}
 
 		/* Apply the RLE info */
@@ -1327,6 +1390,7 @@ static errr rd_dungeon(void)
 			}
 		}
 	}
+func_false();
 
 
 	/*** Run length decoding ***/
@@ -1528,7 +1592,13 @@ static errr rd_savefile_new_aux(void)
 	note(format("Loading a %d.%d.%d savefile...",
 		sf_major, sf_minor, sf_patch));
 
-	if(older_than(4,0,0))
+	/* A savefile with the SFM_SPECIAL bit set has the required flags saved
+	 * in a simple way. */
+	if (sf_major & SFM_SPECIAL)
+	{
+		sf_flags = sf_minor*256+sf_patch;
+	}
+	else if(older_than(4,0,0))
 	{
 		note("Pre-v4.0.0 savefiles are no longer valid.");
 		note ("");
@@ -1538,7 +1608,7 @@ static errr rd_savefile_new_aux(void)
 		note("(sorry)");
 		return (1);
 	}
-	if(older_than(4,0,1))
+	else if(older_than(4,0,1))
 	{
 		note("v4.0.0 savefiles are no longer valid.");
 		note ("");
@@ -1547,6 +1617,39 @@ static errr rd_savefile_new_aux(void)
 		note("");
 		note("(sorry)");
 		return (1);
+	}
+	/* For other save files, we must rely on the version number. */
+	else
+	{
+		sf_flags = 0;
+#ifdef SF_SKILL_BASE
+		if (!older_than(4,1,0)) sf_flags |= SF_SKILL_BASE;
+#endif
+
+#ifdef SF_16_IDENT
+		if (!older_than(4,1,1)) sf_flags |= SF_16_IDENT;
+#endif
+#ifdef SF_CURSE
+		if (!older_than(4,1,1)) sf_flags |= SF_CURSE;
+#endif
+#ifdef SF_Q_SAVE
+		if (!older_than(4,1,1)) sf_flags |= SF_Q_SAVE;
+#endif
+#ifdef SF_SENSE_FROM_DISCOUNT
+		if (!older_than(4,1,2)) sf_flags |= SF_SENSE_FROM_DISCOUNT;
+#endif
+#ifdef SF_DEATHEVENTTEXT
+		if (!older_than(4,1,3)) sf_flags |= SF_DEATHEVENTTEXT;
+#endif
+#ifdef SF_QUEST_UNKNOWN
+		if (!older_than(4,1,4)) sf_flags |= SF_QUEST_UNKNOWN;
+#endif
+#ifdef SF_3D_WINPRI
+		if (!older_than(4,1,5)) sf_flags |= SF_3D_WINPRI;
+#endif
+#ifdef SF_16_CAVE_FLAG
+		if (!older_than(4,1,6)) sf_flags |= SF_16_CAVE_FLAG;
+#endif
 	}
 
 	/* Strip the version bytes */
@@ -1620,8 +1723,7 @@ static errr rd_savefile_new_aux(void)
 	if (arg_fiddle) note("Loaded Monster Memory");
 
 	/* Death Events */
-	if (!older_than(4,1,3)) rd_death();
-
+	if (has_flag(SF_DEATHEVENTTEXT)) rd_death();
 
 	/* Object Memory */
 	rd_u16b(&tmp16u);
@@ -1674,7 +1776,8 @@ static errr rd_savefile_new_aux(void)
 			q_list[i].cur_num = tmp8u;
 			rd_byte(&tmp8u);
 			q_list[i].max_num = tmp8u;
-			if (!older_than(4,1,4))
+#ifdef SF_QUEST_UNKNOWN
+			if (has_flag(SF_QUEST_UNKNOWN))
 			{
 				rd_byte(&tmp8u);
 				q_list[i].cur_num_known = tmp8u;
@@ -1683,6 +1786,7 @@ static errr rd_savefile_new_aux(void)
 			{
 				q_list[i].cur_num_known = 0;
 			}
+#endif
 		}
 
 

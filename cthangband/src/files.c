@@ -4229,8 +4229,10 @@ void do_cmd_save_game(bool is_autosave)
         /* Disturb the player */
         disturb(1, 0);
 
+#ifdef ALLOW_410_SAVES
 	/* Determine the appropriate save version */
 	as_4_1_0 = get_check("Save a 4.1.0 save file? ");
+#endif
     }
 	else if (!autosave_q)
 	{
