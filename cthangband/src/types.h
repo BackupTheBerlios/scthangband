@@ -976,7 +976,11 @@ struct player_template
 {
 	cptr title;			/* Type of template */
 
-	int choices;		/* Number of choices for hermetic skills */
+	byte choices;		/* Number of choices for hermetic skills */
+
+	byte art1_bias;	/* Possible bias for artefact_scroll(). */
+	byte art2_bias;	/* Alternative bias for artefact_scroll(). */
+	byte art2_chance;	/* Chance of choosing art2 if a bias is used. */
 
 	s16b c_adj[A_MAX];		/* Template stat modifier */
 

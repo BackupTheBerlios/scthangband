@@ -3625,50 +3625,26 @@ static void get_random_name(char * return_name, bool armour, int power)
 
 bool create_artifact(object_type *o_ptr, bool a_scroll)
 {
+	char new_name[80] = "";
+	int has_pval = 0;
+	int powers = randint(5) + 1;
+	int max_type = (o_ptr->tval<TV_BOOTS?7:5);
+	int power_level;
+	s32b total_flags;
+	bool a_cursed = FALSE;
 
-char new_name[80];
-int has_pval = 0;
-int powers = randint(5) + 1;
-int max_type = (o_ptr->tval<TV_BOOTS?7:5);
-int power_level;
-s32b total_flags;
-bool a_cursed = FALSE;
-
-int warrior_artifact_bias = 0;
-
-artifact_bias = 0;
-
-if (a_scroll && (randint(4)==1))
-{
-    switch (p_ptr->ptemplate)
-    {
-	case TPL_SWASHBUCKLER:
-	case TPL_GLADIATOR: case TPL_WARRIOR_MONK:
-	    artifact_bias = BIAS_WARRIOR;
-	    break;
-    case TPL_MAGE: case TPL_WARLOCK: case TPL_POWERWEAVER:
-	    artifact_bias = BIAS_MAGE;
-	    break;
-	case TPL_SHAMAN:
-	    artifact_bias = BIAS_PRIESTLY;
-	    break;
-	case TPL_ASSASSIN: case TPL_TOURIST: case TPL_ADVENTURER:
-	    artifact_bias = BIAS_ROGUE;
-	    warrior_artifact_bias = 25;
-	    break;
-	case TPL_RANGER:
-	    artifact_bias = BIAS_RANGER;
-	    warrior_artifact_bias = 30;
-	    break;
-    case TPL_MINDCRAFTER: case TPL_ZEN_MONK:
-        if (randint(5)>2) artifact_bias = BIAS_PRIESTLY;
-        break;
-    }
-}
-
-if ((randint(100) <= warrior_artifact_bias) && a_scroll) artifact_bias = BIAS_WARRIOR;
-
-strcpy(new_name,"");
+	if (!a_scroll || !one_in(4))
+	{
+		artifact_bias = 0;
+	}
+	else if (magik(cp_ptr->art2_chance))
+	{
+		artifact_bias = cp_ptr->art2_bias;
+	}
+	else
+	{
+		artifact_bias = cp_ptr->art_bias;
+	}
 
 if ((!a_scroll) && (randint(A_CURSED)==1)) a_cursed = TRUE;
 

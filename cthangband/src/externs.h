@@ -3338,7 +3338,7 @@ extern player_sex *sp_ptr;
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(POWERS_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern player_race *rp_ptr;
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern player_template *cp_ptr;
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))

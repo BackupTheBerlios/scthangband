@@ -1509,102 +1509,105 @@ player_race race_info[MAX_RACES] =
 /*
  * Player Templates
  *
- *      Title, choices
- *      {STR,INT,WIS,DEX,CON,CHR},
- *      {CLOSE, SLASH, STAB, CRUSH, MISSILE,
- *      TOUGH, DEVICE, DISARM, PERCEPTION, SAVE, SEARCH, STEALTH,
- *      MA, MINDCRAFT, CHI, SHAMAN, HEDGE, MANA, PSEUDO-ID}
+ * Title, choices, art_bias, art2_bias, art2_chance,
+ * {STR,INT,WIS,DEX,CON,CHR},
+ * {CLOSE, SLASH, STAB, CRUSH, MISSILE,
+ * TOUGH, DEVICE, DISARM, PERCEPTION, SAVE, SEARCH, STEALTH,
+ * MA, MINDCRAFT, CHI, SHAMAN, HEDGE, MANA, PSEUDO-ID}
  *
- *      Hermetic skills are handled separately.
+ * 1/4 of the time, artifact_scroll() will use a bias derived from this template
+ * in deciding which artefact to create.
+ * art2_chance% of the time, this bias is art2_bias. Otherwise, it is art_bias.
+ * 0 creates an artefact via the normal process, adding biases randomly.
  */
 player_template template_info[MAX_TEMPLATE] =
 {
 	{
-		"Adventurer", 0,
+		"Adventurer", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{ 3, 1, -1, 2, 2, -1},
 		{20, 20, 20, 20, 20,
 		1, 5, 5, 10, 20, 5, 5,
 		0, 0, 0, 0, 5, 0, 20}
 	},
 	{
-		"Swashbuckler", 0,
+		"Swashbuckler", 0, BIAS_WARRIOR, 0, 0,
 		{1, 0, -2, 3, 2, 1},
 		{15, 35, 15, 15, 15,
 		1, 5, 5, 15, 15, 5, 5,
 		0, 0, 0, 0, 0, 0, 30}
 	},
 	{
-		"Gladiator", 0,
+		"Gladiator", 0, BIAS_WARRIOR, 0, 0,
 		{5, -1, -1, 1, 3, -1},
 		{30, 30, 30, 30, 10,
 		2, 5, 5, 10, 10, 5, 5,
 		1, 0, 0, 0, 0, 0, 40}
 	},
 	{
-		"Warrior-Monk", 0,
+		"Warrior-Monk", 0, BIAS_WARRIOR, 0, 0,
 		{ 2, 0, -2, 5, 1, -1},
 		{35, 10, 10, 10, 10,
 		1, 5, 5, 15, 10, 5, 15,
 		4, 0, 0, 0, 0, 0, 30}
 	},
 	{
-		"Zen-Monk", 0,
+		"Zen-Monk", 0, BIAS_PRIESTLY, 0, 40,
 		{ 2, -1, 2, 2, 0, -1},
 		{25, 10, 10, 10, 10,
 		0, 5, 5, 15, 10, 10, 10,
 		2, 1, 1, 0, 0, 0, 40}
 	},
 	{
-		"Assassin", 0,
+		"Assassin", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{ 1, 0, 0, 3, 2, -2},
 		{30, 20, 20, 20, 10,
 		0, 5, 20, 20, 10, 20, 30,
 		0, 0, 0, 0, 0, 0, 30}
     },
     {
-		"Ranger", 0,
+		"Ranger", 0, BIAS_RANGER, BIAS_WARRIOR, 30,
 		{ 2, -1, -1, 3, 3, 2},
 		{15, 15, 15, 15, 35,
 		1, 5, 10, 30, 10, 20, 20,
 		0, 0, 0, 2, 0, 0, 10}
 	},
 	{
-		"Shaman", 0,
+		"Shaman", 0, BIAS_PRIESTLY, 0, 0,
 		{ -1, 1, 1, -2, 2, 5},
 		{15, 15, 15, 15, 15,
 		0, 10, 5, 15, 20, 10, 5,
 		0, 0, 0, 5, 0, 0, 20}
     },
 	{
-		"Mindcrafter", 0,
+		"Mindcrafter", 0, BIAS_PRIESTLY, 0, 40,
 		{ -2, 2, 5, -1, 0, 1},
 		{15, 15, 15, 15, 15,
 		0, 10, 5, 15, 15, 10, 5,
 		0, 4, 2, 0, 0, 0, 15}
 	},
 	{
-		"Wizard", 3,
+		"Wizard", 3, BIAS_MAGE, 0, 0,
 		{-2, 5, 2, 1, -1, 1},
 		{10, 10, 10, 10, 10,
 		0, 25, 5, 15, 20, 10, 5,
 		0, 0, 0, 0, 0, 4, 5}
 	},
 	{
-		"Warlock", 1,
+		"Warlock", 1, BIAS_MAGE, 0, 0,
 		{1, 3, -1, 0, 2, -1},
 		{15, 15, 15, 20, 10,
 		1, 10, 5, 10, 15, 10, 5,
 		0, 0, 0, 0, 0, 2, 10}
 	},
 	{
-		"Powerweaver", 2,
+		"Powerweaver", 2, BIAS_MAGE, 0, 0,
 		{-3, 3, 3, -2, -2, 3},
 		{5, 5, 5, 5, 5,
 		0, 15, 5, 10, 15, 10, 5,
 		0, 3, 2, 3, 0, 2, 10}
 	},
 	{
-		"Tourist", 0,
+		"Tourist", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{0, 0, 0, 0, 2, -1},
 		{10, 10, 10, 10, 10,
 		0, 5, 5, 5, 5, 5, 5,
