@@ -1299,7 +1299,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 
 
 		/* Brute force: split on the possibilities */
-		switch (kind + (mode & 0x07))
+		switch (kind | (mode & 0x07))
 		{
 			/* Neuter, or unknown */
 			case 0x00: name = "it"; break;
