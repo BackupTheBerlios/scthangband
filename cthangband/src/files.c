@@ -4267,7 +4267,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
  * Display a screen of text in a non-interactive way.
  * fff is initially positioned after the current section marker.
  */
-void win_help_display_aux(FILE *fff)
+static void display_help_page_aux(FILE *fff)
 {
 	cptr path;
 	int x,y;
@@ -4706,6 +4706,196 @@ void show_file(cptr name, cptr what)
 	add_resize_hook(resize_inkey);
 	show_file_aux(name, what, 0);
 	delete_resize_hook(resize_inkey);
+}
+
+static cptr *help_files = NULL;
+
+typedef struct link_type link_type;
+struct link_type
+{
+	cptr str; /* The line which includes the links. */
+	cptr file; /* The file the links appear in. */
+	long pos; /* The position in the file of the line after the link. */
+};
+
+static link_type *links = NULL;
+static int num_links;
+
+#define MAX_LINKS 1024
+
+static void init_links(void)
+{
+	cptr *file;
+	char buf[1025];
+	int max;
+	link_type ilinks[MAX_LINKS];
+
+	/* Paranoia. */
+	if (links || !help_files) quit("init_links called unexpectedly");
+
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	for (file = help_files, max = 0; *file; file++)
+	{
+		FILE *fff = my_fopen_path(ANGBAND_DIR_HELP, *file, "r");
+
+		if (!fff) quit_fmt("Could not open %s.", *file);
+
+		while (!my_fgets_long(buf, sizeof(buf), fff))
+		{
+			/* Not a link. */
+			if (!prefix(buf, CC_LINK_PREFIX)) continue;
+
+			/* Too many links. */
+			if (max == MAX_LINKS) quit("Too many links found");
+
+			/* Ignore overflowing links. */
+			if (!strchr(buf, '\n')) continue;
+
+			ilinks[max].str = string_make(buf+CC_LINK_LEN);
+			ilinks[max].file = *file;
+			ilinks[max].pos = ftell(fff);
+			max++;
+		}
+
+		fclose(fff);
+	}
+
+	/* Copy everything to a permanent location. */
+	C_MAKE(links, max, link_type);
+	C_COPY(links, ilinks, max, link_type);
+	num_links = max;
+}
+
+/*
+ * Find the specified position in a file, if legal.
+ * Return TRUE if this is successful.
+ *
+ * Hack - this function does not react to changes in the files.
+ */
+static bool find_link(FILE *fff, const link_type *l_ptr)
+{
+	/* Try to return to the known file position. */
+	if (l_ptr->pos >= 0)
+	{
+		return (!fseek(fff, l_ptr->pos, SEEK_SET));
+	}
+	/* Find the link from scratch. */
+	else
+	{
+		char buf[1025];
+		while (!my_fgets_long(buf, sizeof(buf), fff))
+		{
+			/* Found it. */
+			if (prefix(buf, CC_LINK_PREFIX) &&
+				!strcmp(buf+CC_LINK_LEN, l_ptr->str)) return TRUE;
+		}
+	}
+	/* Failed. */
+	return FALSE;
+}
+
+/*
+ * Initialise the help_files[] array above.
+ * Return false if the base help file was not found, true otherwise.
+ */
+void init_help_files(void)
+{
+	int i;
+	FILE *fff;
+	cptr s,t;
+	char buf[1024];
+
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	if (!((fff = my_fopen_path(ANGBAND_DIR_HELP, syshelpfile, "r"))))
+	{
+		quit_fmt("Cannot open '%s'!", syshelpfile);
+	}
+		
+
+	/* Count the file references. */
+	for (i = 1; !my_fgets(fff, buf, 1024);)
+	{
+		for (s = buf; (s = strstr(s, "*****")); s += strlen("*****/a")) i++;
+	}
+
+	/* Create the help_files array. */
+	help_files = C_NEW(i, cptr);
+
+	/* Hack - The last element must be NULL. */
+	help_files[--i] = NULL;
+
+	/* Return to the start of the file. */
+	fseek(fff, 0, SEEK_SET);
+
+	/* Fill the help_files array. */
+	while (!my_fgets(fff, buf, 1024))
+	{
+		for (s = buf; (s = strstr(s, "*****")); )
+		{
+			s += strlen("*****/a");
+			t = strchr(s, '*');
+
+			/* Paranoia. */
+			if (!t) continue;
+
+			/* Fill in the help_files array (backwards). */
+			help_files[--i] = string_make(format("%.*s", t-s, s));
+		}
+	}
+
+	my_fclose(fff);
+
+	init_links();
+}
+
+/*
+ * Centre a string on a specified line of the current term.
+ */
+static void put_str_centre(cptr str, int y)
+{
+	int l = strlen(str);
+	int x = MAX(0, (Term->wid-l)/2);
+	put_str(str, y, x);
+}
+
+void display_help_page(cptr str)
+{
+	FILE *fff;
+	link_type *l_ptr;
+
+	for (l_ptr = links; l_ptr < links+num_links; l_ptr++)
+	{
+		if (strstr(l_ptr->str, str))
+		{
+			FILE_TYPE(FILE_TYPE_TEXT);
+
+			/* Open the file. */
+			fff = my_fopen_path(ANGBAND_DIR_HELP, l_ptr->file, "r");
+			if (!fff) return;
+
+			/* Find a previously remembered position in it. */
+			if (find_link(fff, l_ptr))
+			{
+				/* Display it. */
+				display_help_page_aux(fff);
+			}
+
+			/* And finally close it. */
+			fclose(fff);
+
+			/* Done. */
+			return;
+		}
+	}
+
+	/* Oops - no-one's written the rquested help file. */
+	put_str_centre(
+		"Sorry, help for this command is not available.", Term->hgt/2-1);
+
+	put_str_centre(
+		"Please contact " MAINTAINER " for further information.", Term->hgt/2+1);
 }
 
 
