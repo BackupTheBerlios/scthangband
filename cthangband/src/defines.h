@@ -544,9 +544,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define MAGIC_WORKED 0x02
 #define MAGIC_FORGOT 0x04
 
-/* Mindcraft */
-#define MAX_MINDCRAFT_POWERS  12
-
 /*
  * Maximum array bounds for template based arrays
  */
@@ -905,22 +902,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PY_REGEN_MNBASE         524     /* Min amount mana regen*2^16 */
 
 #define MAX_SCHOOL          4
-
-/* Schools and types of spells */
-#define SCH_SORCERY 0
-#define SCH_THAUMATURGY 1
-#define SCH_CONJURATION 2
-#define SCH_NECROMANCY 3
-
-/* #define SCH_HEDGE 4 */
-/* #define SCH_SPIRIT 5 */
-/* #define SCH_MIND 6 */
-
-/* #define SP_VIS 0 */
-/* #define SP_NATURAE 1 */
-/* #define SP_CORPORIS 2 */
-/* #define SP_ANIMAE 3 */
-/* #define SP_NONE 4 */
 
 /* Spirit 'Spheres' */
 #define MAX_SPHERE 2

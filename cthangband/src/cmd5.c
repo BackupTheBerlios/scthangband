@@ -41,23 +41,6 @@ static book_type *k_idx_to_book(int i)
 	}
 }
 
-/* Find an arbitrary spell in a book. */
-#define a_spell_from(B) ((B)->info+iilog((B)->flags))
-
-static int book_to_school(book_type *b_ptr)
-{
-	switch (a_spell_from(b_ptr)->skill1)
-	{
-		case SKILL_SORCERY: return SCH_SORCERY;
-		case SKILL_THAUMATURGY: return SCH_THAUMATURGY;
-		case SKILL_CONJURATION: return SCH_CONJURATION;
-		case SKILL_NECROMANCY: return SCH_NECROMANCY;
-
-		/* Not one of these books. */
-		default: return -1;
-	}
-}
-
 static book_type *spirit_to_book(int i)
 {
 	switch (i)
@@ -82,13 +65,12 @@ static int spell_to_num(const magic_type *s_ptr)
 	book_type *b_ptr;
 	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
 	{
-		int s = book_to_school(b_ptr);
-		assert(s < MAX_SCHOOL);
-		if (s < 0) continue;
+		/* Spells in this book need not be learnt. */
+		if (b_ptr->learn == 255) continue;
 
-		if (s_ptr >= b_ptr->info && s_ptr < b_ptr->info+MAX_SPELLS_PER_BOOK)
+		if (s_ptr >= b_ptr->info && s_ptr < b_ptr->info+b_ptr->max)
 		{
-			return s_ptr - b_ptr->info + MAX_SPELLS_PER_BOOK * s;
+			return s_ptr - b_ptr->info + b_ptr->learn;
 		}
 	}
 	return -1;
@@ -104,13 +86,9 @@ magic_type *num_to_spell(int i)
 
 	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
 	{
-		int s = book_to_school(b_ptr);
-		assert(s < MAX_SCHOOL);
-		if (s < 0) continue;
-
-		if (i/MAX_SPELLS_PER_BOOK == s)
+		if (i >= b_ptr->learn && i < b_ptr->learn+b_ptr->max)
 		{
-			return b_ptr->info + i%MAX_SPELLS_PER_BOOK;
+			return b_ptr->info + (i - b_ptr->learn);
 		}
 	}
 	return NULL;
@@ -227,14 +205,10 @@ static int build_spell_list(byte *s, const book_type *b_ptr)
 	assert(b_ptr);
 
 	/* Extract spells */
-	for (i = j = 0; i < MAX_SPELLS_PER_BOOK; i++)
+	for (i = j = 0; i < b_ptr->max; i++)
 	{
-		/* Check for this spell */
-		if (b_ptr->flags & (1L << i))
-		{
-			/* Collect this spell */
-			s[j++] = i;
-		}
+		/* Collect this spell */
+		s[j++] = i;
 	}
 	return j;
 }
@@ -1956,14 +1930,12 @@ void check_magic_info(void)
 
 		if (b_ptr->idx != j) quit_fmt("Book %d has index %d", j, b_ptr->idx);
 
-		if (!b_ptr->flags) quit_fmt("Book %d is empty.", j);
+		if (!b_ptr->max) quit_fmt("Book %d is empty.", j);
 
 		if (!b_ptr->info) quit_fmt("Book %d has no spells.", j);
 
-		for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
+		for (i = 0; i < b_ptr->max; i++)
 		{
-			if (~b_ptr->flags & (1L << i)) continue;
-
 			s_ptr = b_ptr->info+i;
 
 			/* Try to generate the extra string. Failure gives an assert()

@@ -871,13 +871,15 @@ struct magic_type
 {
 	cptr name; /* Name listed in spell book, etc. */
 	cptr desc; /* Information about the spell. */
+
 	byte min; /* Required skill (to learn) */
 	byte mana; /* Required mana (to cast) */
 	byte fail; /* Minimum chance of failure */
 	byte flags; /* (Variable) MAGIC_* flags. */
+
 	byte skill1; /* School of spell */
 	byte skill2; /* Type of spell (or NONE) */
-	s16b power; /* The index of the spell effect (offset). */
+	s16b power; /* The index of the spell effect. */
 };
 
 typedef struct book_type book_type;
@@ -886,8 +888,11 @@ struct book_type
 #ifdef CHECK_ARRAYS
 	int idx;
 #endif /* CHECK_ARRAYS */
-	magic_type *info; /* A superset of the spells available in this book. */
-	u32b flags; /* The set of spells from info in this book. */
+
+	magic_type *info; /* A list of the spells available in this book. */
+
+	byte max; /* The number of spells in this book. */
+	byte learn; /* Index offset for learning (or 0). */
 };
 
 /*

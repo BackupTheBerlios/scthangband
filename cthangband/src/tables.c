@@ -2071,7 +2071,8 @@ player_race race_info[MAX_RACES] =
  *
  *   Array of { Name, extra info, lev, Mana, Fail, 0, school, type, spell }
  */
-static magic_type sorcery_spells[32] =
+
+static magic_type sorcery_spells_0[8] =
 {
 	{"Detect Monsters", "", 1, 1, 23, 
 		0, SKILL_SORCERY, SKILL_ANIMAE, SP_DETECT_MONSTERS},
@@ -2089,6 +2090,10 @@ static magic_type sorcery_spells[32] =
 		0, SKILL_SORCERY, SKILL_ANIMAE, SP_SLEEP_MONSTER},
 	{"Recharging", "", 7, 7, 75, 
 		0, SKILL_SORCERY, SKILL_VIS, SP_RECHARGING},
+};
+
+static magic_type sorcery_spells_1[8] =
+{
 	{"Magic Mapping", "", 9, 7, 75, 
 		0, SKILL_SORCERY, SKILL_NATURAE, SP_MAGIC_MAPPING},
 	{"Identify", "", 10, 7, 75, 
@@ -2105,6 +2110,10 @@ static magic_type sorcery_spells[32] =
 		0, SKILL_SORCERY, SKILL_ANIMAE, SP_DETECTION_TRUE},
 	{"Identify True", "", 33, 30, 75, 
 		0, SKILL_SORCERY, SKILL_NATURAE, SP_IDENTIFY_TRUE},
+};
+
+static magic_type sorcery_spells_2[8] =
+{
 	{"Detect Objects & Treasure", "", 3, 3, 25, 
 		0, SKILL_SORCERY, SKILL_NATURAE, SP_DETECT_OBJECTS_AND_TREASURE},
 	{"Detect Enchantment", "", 10, 10, 70, 
@@ -2121,6 +2130,10 @@ static magic_type sorcery_spells[32] =
 		0, SKILL_SORCERY, SKILL_CORPORIS, SP_TELEPORT_LEVEL},
 	{"Word of Recall", "delay 15+d21", 25, 25, 75, 
 		0, SKILL_SORCERY, SKILL_CORPORIS, SP_WORD_OF_RECALL},
+};
+
+static magic_type sorcery_spells_3[8] =
+{
 	{"Stasis", "", 10, 10, 40, 
 		0, SKILL_SORCERY, SKILL_VIS, SP_STASIS},
 	{"Telekinesis", "max wgt LEV*15/10;.LEV*15%10", 25, 25, 75, 
@@ -2139,7 +2152,7 @@ static magic_type sorcery_spells[32] =
 		0, SKILL_SORCERY, SKILL_ANIMAE, SP_GLOBE_OF_INVULNERABILITY},
 };
 
-static magic_type thaumaturgy_info[32] =
+static magic_type thaumaturgy_spells_0[8] =
 {
 	{"Magic Missile", "dam LEV-1/5+3;d4", 1, 1, 20, 
 		0, SKILL_THAUMATURGY, SKILL_NATURAE, SP_MAGIC_MISSILE},
@@ -2157,6 +2170,10 @@ static magic_type thaumaturgy_info[32] =
 		0, SKILL_THAUMATURGY, SKILL_VIS, SP_FIST_OF_FORCE},
 	{"Teleport Self", "range LEV*5", 15, 9, 35, 
 		0, SKILL_THAUMATURGY, SKILL_CORPORIS, SP_TELEPORT},
+};
+
+static magic_type thaumaturgy_spells_1[8] =
+{
 	{"Wonder", "random", 17, 10, 25, 
 		0, SKILL_THAUMATURGY, SKILL_VIS, SP_WONDER},
 	{"Chaos Bolt", "dam LEV-5/4+10;d8", 19, 12, 45, 
@@ -2173,6 +2190,10 @@ static magic_type thaumaturgy_info[32] =
 		0, SKILL_THAUMATURGY, SKILL_ANIMAE, SP_WORD_OF_DESTRUCTION},
 	{"Invoke Chaos", "dam LEV+66", 35, 40, 85, 
 		0, SKILL_THAUMATURGY, SKILL_NATURAE, SP_INVOKE_CHAOS},
+};
+
+static magic_type thaumaturgy_spells_2[8] =
+{
 	{"Polymorph Other", "", 11, 7, 45, 
 		0, SKILL_THAUMATURGY, SKILL_CORPORIS, SP_POLYMORPH_OTHER},
 	{"Chain Lightning", "dam LEV/10+5;d8", 15, 15, 80, 
@@ -2189,6 +2210,10 @@ static magic_type thaumaturgy_info[32] =
 		0, SKILL_THAUMATURGY, SKILL_NATURAE, SP_CHAOS_BRANDING},
 	{"Summon Demon", "", 47, 100, 90, 
 		0, SKILL_THAUMATURGY, SKILL_ANIMAE, SP_SUMMON_DEMON},
+};
+
+static magic_type thaumaturgy_spells_3[8] =
+{
 	{"Beam of Gravity", "dam LEV/10+9;d8", 20, 20, 66, 
 		0, SKILL_THAUMATURGY, SKILL_NATURAE, SP_BEAM_OF_GRAVITY},
 	{"Meteor Swarm", "dam LEV*3/2; each", 35, 32, 85, 
@@ -2207,7 +2232,7 @@ static magic_type thaumaturgy_info[32] =
 		0, SKILL_THAUMATURGY, SKILL_ANIMAE, SP_CALL_THE_VOID},
 };
 
-static magic_type conjuration_spells[32] =
+static magic_type conjuration_spells_0[8] =
 {
 	{"Phase Door", "range 10", 1, 1, 50, 
 		0, SKILL_CONJURATION, SKILL_CORPORIS, SP_PHASE_DOOR},
@@ -2225,6 +2250,10 @@ static magic_type conjuration_spells[32] =
 		0, SKILL_CONJURATION, SKILL_VIS, SP_PLANAR_SPYING},
 	{"Teleport Away", "", 17, 15, 60, 
 		0, SKILL_CONJURATION, SKILL_CORPORIS, SP_TELEPORT_OTHER},
+};
+
+static magic_type conjuration_spells_1[8] =
+{
 	{"Summon Object", "max wgt LEV*15/10;.LEV*15%10", 20, 20, 80, 
 		0, SKILL_CONJURATION, SKILL_NATURAE, SP_SUMMON_OBJECT},
 	{"Summon Animal", "", 24, 22, 60, 
@@ -2241,6 +2270,10 @@ static magic_type conjuration_spells[32] =
 		0, SKILL_CONJURATION, SKILL_CORPORIS, SP_WORD_OF_RECALL},
 	{"Banish", "", 42, 40, 70, 
 		0, SKILL_CONJURATION, SKILL_ANIMAE, SP_BANISH},
+};
+
+static magic_type conjuration_spells_2[8] =
+{
 	{"Joker Card", "", 15, 15, 80, 
 		0, SKILL_CONJURATION, SKILL_VIS, SP_JOKER_CARD},
 	{"Summon Spiders", "", 24, 24, 70, 
@@ -2257,6 +2290,10 @@ static magic_type conjuration_spells[32] =
 		0, SKILL_CONJURATION, SKILL_VIS, SP_DEATH_DEALING},
 	{"Summon Reaver", "", 45, 100, 90, 
 		0, SKILL_CONJURATION, SKILL_ANIMAE, SP_SUMMON_REAVER},
+};
+
+static magic_type conjuration_spells_3[8] =
+{
 	{"Planar Divination", "", 30, 30, 60, 
 		0, SKILL_CONJURATION, SKILL_ANIMAE, SP_PLANAR_DIVINATION},
 	{"Planar Lore", "", 35, 50, 90, 
@@ -2275,7 +2312,7 @@ static magic_type conjuration_spells[32] =
 		0, SKILL_CONJURATION, SKILL_ANIMAE, SP_SUMMON_GREATER_UNDEAD},
 };
 
-static magic_type necromancy_spells[32] =
+static magic_type necromancy_spells_0[8] =
 {
 	{"Detect Unlife", "", 1, 1, 25, 
 		0, SKILL_NECROMANCY, SKILL_ANIMAE, SP_DETECT_UNLIFE},
@@ -2293,6 +2330,10 @@ static magic_type necromancy_spells[32] =
 		0, SKILL_NECROMANCY, SKILL_CORPORIS, SP_HORRIFY},
 	{"Enslave Undead", "", 10, 10, 30, 
 		0, SKILL_NECROMANCY, SKILL_ANIMAE, SP_ENSLAVE_UNDEAD},
+};
+
+static magic_type necromancy_spells_1[8] =
+{
 	{"Orb of Entropy", "dam 3d6+LEV*5/4", 12, 12, 40, 
 		0, SKILL_NECROMANCY, SKILL_VIS, SP_ORB_OF_ENTROPY},
 	{"Nether Bolt", "dam LEV-5/4+6;d8", 13, 12, 30, 
@@ -2309,6 +2350,10 @@ static magic_type necromancy_spells[32] =
 		0, SKILL_NECROMANCY, SKILL_CORPORIS, SP_GENOCIDE},
 	{"Restore Life", "", 45, 50, 95, 
 		0, SKILL_NECROMANCY, SKILL_CORPORIS, SP_RESTORE_LIFE},
+};
+
+static magic_type necromancy_spells_2[8] =
+{
 	{"Berserk", "dur 25+d25", 10, 20, 80, 
 		0, SKILL_NECROMANCY, SKILL_CORPORIS, SP_BERSERK},
 	{"Invoke Spirits", "random", 10, 15, 80, 
@@ -2325,6 +2370,10 @@ static magic_type necromancy_spells[32] =
 		0, SKILL_NECROMANCY, SKILL_VIS, SP_DARKNESS_STORM},
 	{"Mass Genocide", "", 40, 75, 80, 
 		0, SKILL_NECROMANCY, SKILL_CORPORIS, SP_MASS_GENOCIDE},
+};
+
+static magic_type necromancy_spells_3[8] =
+{
 	{"Death Ray", "", 20, 20, 75, 
 		0, SKILL_NECROMANCY, SKILL_VIS, SP_DEATH_RAY},
 	{"Raise the Dead", "", 25, 66, 95, 
@@ -2595,7 +2644,7 @@ static magic_type geode_spells[4] =
 		0, SKILL_HEDGE, SKILL_NONE, SP_IDENTIFY},
 };
 
-static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
+static magic_type mindcraft_powers[12] =
 {
 	/* Det. monsters/traps */
 	{"Precognition", "", 0, 1, 15, 
@@ -2632,41 +2681,44 @@ static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
 		0, SKILL_MINDCRAFTING, SKILL_NONE, SP_TELEKINETIC_WAVE},
 };
 
+/* Reduce the repetition in passing an array and its size. */
+#define ARRAY(A) \
+	A, N_ELEMENTS(A)
 
 book_type book_info[MAX_BK] =
 {
-	{IDX(BK_SORC_0) sorcery_spells, 0x000000ff},
-	{IDX(BK_SORC_1) sorcery_spells, 0x0000ff00},
-	{IDX(BK_SORC_2) sorcery_spells, 0x00ff0000},
-	{IDX(BK_SORC_3) sorcery_spells, 0xff000000},
-	{IDX(BK_NECRO_0) necromancy_spells, 0x000000ff},
-	{IDX(BK_NECRO_1) necromancy_spells, 0x0000ff00},
-	{IDX(BK_NECRO_2) necromancy_spells, 0x00ff0000},
-	{IDX(BK_NECRO_3) necromancy_spells, 0xff000000},
-	{IDX(BK_THAUM_0) thaumaturgy_info, 0x000000ff},
-	{IDX(BK_THAUM_1) thaumaturgy_info, 0x0000ff00},
-	{IDX(BK_THAUM_2) thaumaturgy_info, 0x00ff0000},
-	{IDX(BK_THAUM_3) thaumaturgy_info, 0xff000000},
-	{IDX(BK_CONJ_0) conjuration_spells, 0x000000ff},
-	{IDX(BK_CONJ_1) conjuration_spells, 0x0000ff00},
-	{IDX(BK_CONJ_2) conjuration_spells, 0x00ff0000},
-	{IDX(BK_CONJ_3) conjuration_spells, 0xff000000},
-	{IDX(BK_CHARM_SULPHUR) sulphur_spells, 0x0000003F},
-	{IDX(BK_CHARM_HEMLOCK) hemlock_spells, 0x0000001F},
-	{IDX(BK_CHARM_UNICORN) unicorn_spells, 0x0000000F},
-	{IDX(BK_CHARM_CRYSTAL) crystal_spells, 0x0000001F},
-	{IDX(BK_CHARM_AGARIC) agaric_spells, 0x0000000F},
-	{IDX(BK_CHARM_GARLIC) garlic_spells, 0x0000000F},
-	{IDX(BK_CHARM_GEODE) geode_spells, 0x000000000F},
-	{IDX(BK_LIFE_0) minor_life_spells, 0x000000ff},
-	{IDX(BK_LIFE_1) lesser_life_spells, 0x000000ff},
-	{IDX(BK_LIFE_2) greater_life_spells, 0x000000ff},
-	{IDX(BK_LIFE_3) major_life_spells, 0x000000ff},
-	{IDX(BK_WILD_0) minor_wild_spells, 0x000000ff},
-	{IDX(BK_WILD_1) lesser_wild_spells, 0x000000ff},
-	{IDX(BK_WILD_2) greater_wild_spells, 0x000000ff},
-	{IDX(BK_WILD_3) major_wild_spells, 0x000000ff},
-	{IDX(BK_MIND) mindcraft_powers, 0x0000fff},
+	{IDX(BK_SORC_0) ARRAY(sorcery_spells_0), 0},
+	{IDX(BK_SORC_1) ARRAY(sorcery_spells_1), 8},
+	{IDX(BK_SORC_2) ARRAY(sorcery_spells_2), 16},
+	{IDX(BK_SORC_3) ARRAY(sorcery_spells_3), 24},
+	{IDX(BK_NECRO_0) ARRAY(necromancy_spells_0), 96},
+	{IDX(BK_NECRO_1) ARRAY(necromancy_spells_1), 104},
+	{IDX(BK_NECRO_2) ARRAY(necromancy_spells_2), 112},
+	{IDX(BK_NECRO_3) ARRAY(necromancy_spells_3), 120},
+	{IDX(BK_THAUM_0) ARRAY(thaumaturgy_spells_0), 32},
+	{IDX(BK_THAUM_1) ARRAY(thaumaturgy_spells_1), 40},
+	{IDX(BK_THAUM_2) ARRAY(thaumaturgy_spells_2), 48},
+	{IDX(BK_THAUM_3) ARRAY(thaumaturgy_spells_3), 56},
+	{IDX(BK_CONJ_0) ARRAY(conjuration_spells_0), 64},
+	{IDX(BK_CONJ_1) ARRAY(conjuration_spells_1), 72},
+	{IDX(BK_CONJ_2) ARRAY(conjuration_spells_2), 80},
+	{IDX(BK_CONJ_3) ARRAY(conjuration_spells_3), 88},
+	{IDX(BK_CHARM_SULPHUR) ARRAY(sulphur_spells), 255},
+	{IDX(BK_CHARM_HEMLOCK) ARRAY(hemlock_spells), 255},
+	{IDX(BK_CHARM_UNICORN) ARRAY(unicorn_spells), 255},
+	{IDX(BK_CHARM_CRYSTAL) ARRAY(crystal_spells), 255},
+	{IDX(BK_CHARM_AGARIC) ARRAY(agaric_spells), 255},
+	{IDX(BK_CHARM_GARLIC) ARRAY(garlic_spells), 255},
+	{IDX(BK_CHARM_GEODE) ARRAY(geode_spells), 255},
+	{IDX(BK_LIFE_0) ARRAY(minor_life_spells), 255},
+	{IDX(BK_LIFE_1) ARRAY(lesser_life_spells), 255},
+	{IDX(BK_LIFE_2) ARRAY(greater_life_spells), 255},
+	{IDX(BK_LIFE_3) ARRAY(major_life_spells), 255},
+	{IDX(BK_WILD_0) ARRAY(minor_wild_spells), 255},
+	{IDX(BK_WILD_1) ARRAY(lesser_wild_spells), 255},
+	{IDX(BK_WILD_2) ARRAY(greater_wild_spells), 255},
+	{IDX(BK_WILD_3) ARRAY(major_wild_spells), 255},
+	{IDX(BK_MIND) ARRAY(mindcraft_powers), 255},
 };
 
 /*
