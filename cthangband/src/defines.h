@@ -3292,6 +3292,7 @@ extern int PlayerUID;
 
 /* String used in show_file_aux() to indicate a non-ToME link target. */
 #define CC_LINK_PREFIX	"%%%%%"
+#define CC_LINK_LEN 5 /* strlen(CC_LINK_PREFIX) */
 
 /* String used in show_file_aux() to indicate a conditional paragraph. */
 #define CC_IF_PREFIX "%%%%? "

@@ -3525,6 +3525,91 @@ static bool win_help_good(void)
 
 static cptr *help_files = NULL;
 
+typedef struct link_type link_type;
+struct link_type
+{
+	cptr str; /* The line which includes the links. */
+	cptr file; /* The file the links appear in. */
+	long pos; /* The position in the file of the line after the link. */
+};
+
+static link_type *links = NULL;
+static int num_links;
+
+#define MAX_LINKS 1024
+
+static void init_links(void)
+{
+	cptr *file;
+	char buf[1025];
+	int max;
+	link_type ilinks[MAX_LINKS];
+
+	/* Paranoia. */
+	if (links || !help_files) quit("init_links called unexpectedly");
+
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	for (file = help_files, max = 0; *file; file++)
+	{
+		FILE *fff = my_fopen_path(ANGBAND_DIR_HELP, *file, "r");
+
+		if (!fff) quit_fmt("Could not open %s.", *file);
+
+		while (!my_fgets_long(buf, sizeof(buf), fff))
+		{
+			/* Not a link. */
+			if (!prefix(buf, CC_LINK_PREFIX)) continue;
+
+			/* Too many links. */
+			if (max == MAX_LINKS) quit("Too many links found");
+
+			/* Ignore overflowing links. */
+			if (!strchr(buf, '\n')) continue;
+
+			ilinks[max].str = string_make(buf+CC_LINK_LEN);
+			ilinks[max].file = *file;
+			ilinks[max].pos = ftell(fff);
+			max++;
+		}
+
+		fclose(fff);
+	}
+
+	/* Copy everything to a permanent location. */
+	C_MAKE(links, max, link_type);
+	C_COPY(links, ilinks, max, link_type);
+	num_links = max;
+}
+
+/*
+ * Find the specified position in a file, if legal.
+ * Return TRUE if this is successful.
+ *
+ * Hack - this function does not react to changes in the files.
+ */
+static bool find_link(FILE *fff, const link_type *l_ptr)
+{
+	/* Try to return to the known file position. */
+	if (l_ptr->pos >= 0)
+	{
+		return (!fseek(fff, l_ptr->pos, SEEK_SET));
+	}
+	/* Find the link from scratch. */
+	else
+	{
+		char buf[1025];
+		while (!my_fgets_long(buf, sizeof(buf), fff))
+		{
+			/* Found it. */
+			if (prefix(buf, CC_LINK_PREFIX) &&
+				!strcmp(buf+CC_LINK_LEN, l_ptr->str)) return TRUE;
+		}
+	}
+	/* Failed. */
+	return FALSE;
+}
+
 /*
  * Initialise the help_files[] array above.
  * Return false if the base help file was not found, true otherwise.
@@ -3535,6 +3620,8 @@ static bool init_help_files(void)
 	FILE *fff;
 	cptr s,t;
 	char buf[1024];
+
+	FILE_TYPE(FILE_TYPE_TEXT);
 
 	if (!((fff = my_fopen_path(ANGBAND_DIR_HELP, syshelpfile, "r"))))
 	{
@@ -3576,6 +3663,8 @@ static bool init_help_files(void)
 
 	my_fclose(fff);
 
+	init_links();
+
 	return TRUE;
 }
 
@@ -3592,7 +3681,7 @@ static void put_str_centre(cptr str, int y)
 void win_help_display(void)
 {
 	FILE *fff;
-	cptr *str;
+	link_type *l_ptr;
 
 	/* Nothing to show. */
 	if (!help_strs) return;
@@ -3600,49 +3689,29 @@ void win_help_display(void)
 	/* Try to read the list of files at first. */
 	if (!help_files && !init_help_files()) return;
 
-	/* Search every potentially relevant file (should use an index, but...) */
-	for (str = help_files; *str; str++)
+	for (l_ptr = links; l_ptr < links+num_links; l_ptr++)
 	{
-		char buf[1024];
-
-		/* No such file? */
-		if (!((fff = my_fopen_path(ANGBAND_DIR_HELP, *str, "r"))))
+		if (strstr(l_ptr->str, CUR_HELP_STR))
 		{
-			prt(format("Cannot open '%s'!", buf), Term->hgt/2, 0);
-			return;
-		}
+			FILE_TYPE(FILE_TYPE_TEXT);
 
-		Term_gotoxy(0,0);
+			/* Open the file. */
+			fff = my_fopen_path(ANGBAND_DIR_HELP, l_ptr->file, "r");
+			if (!fff) return;
 
-		while (1)
-		{
-			errr err = my_fgets(fff, buf, 1024);
-
-			/* Something went wrong. */
-			if (err != SUCCESS && err != FILE_ERROR_OVERFLOW) break;
-
-			/* Found an option heading. */
-			if (prefix(buf, CC_LINK_PREFIX) &&
-
-			/* Found this option heading. */
-				strstr(buf+strlen(CC_LINK_PREFIX), CUR_HELP_STR))
+			/* Find a previously remembered position in it. */
+			if (find_link(fff, l_ptr))
 			{
-				/* Paranoia - option heading lines should be short. */
-				while (err == FILE_ERROR_OVERFLOW)
-					err = my_fgets(fff, buf, 1024);
-
+				/* Display it. */
 				win_help_display_aux(fff);
-
-				/* Only expect one match. */
-				my_fclose(fff);
-				return;
 			}
 
-			/* Find the end of the line. */
-			while (err == FILE_ERROR_OVERFLOW) err = my_fgets(fff, buf, 1024);
-		}
+			/* And finally close it. */
+			fclose(fff);
 
-		my_fclose(fff);
+			/* Done. */
+			return;
+		}
 	}
 
 	/* Oops - no-one's written the rquested help file. */

@@ -548,6 +548,36 @@ errr my_fgets(FILE *fff, char *buf, size_t n)
 }
 
 /*
+ * A wrapper around my_fgets() which doesn't treat overflow as an error, but
+ * appends \n to calls which don't overflow.
+ */
+errr my_fgets_long(char *buf, size_t n, FILE *fff)
+{
+	errr err;
+
+	/* Paranoia - no room for anything. */
+	if (!n) return PARSE_ERROR_OUT_OF_MEMORY;
+
+	err = my_fgets(fff, buf, n-1);
+	switch (err)
+	{
+		case FILE_ERROR_OVERFLOW:
+		{
+			return SUCCESS;
+		}
+		case SUCCESS:
+		{
+			strcat(buf, "\n");
+			return SUCCESS;
+		}
+		default:
+		{
+			return err;
+		}
+	}
+}
+
+/*
  * A macro to turn a format string with arguments into a normal string in the
  * format buffer.
  */
