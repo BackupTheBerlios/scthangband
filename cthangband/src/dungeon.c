@@ -250,20 +250,14 @@ static void sense_inventory(void)
 
 	object_type *o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 
 	/*** Check for "sensing" ***/
 
 	/* No sensing when confused */
-	if (p_ptr->confused ||
+	if (p_ptr->confused) return;
 
 	/* Okay sensing for everyone*/
-		0 != rand_int(80000L / (plev * plev + 160)))
-	{
-		TFREE(o_name);
-		return;
-	}
+	if (rand_int(80000L / (plev * plev + 160))) return;
 
 	/*** Sense everything ***/
 
@@ -322,9 +316,6 @@ static void sense_inventory(void)
 		if ((o_ptr->ident & (IDENT_KNOWN)) || ((o_ptr->ident & IDENT_SENSE)
 		&& ((o_ptr->ident & IDENT_SENSE_HEAVY) || (!heavy)))) continue;
 
-		/* Get an object description */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
 		/* Remember how things used to be */
 		oldident = o_ptr->ident;
 		feel = find_feeling(o_ptr);
@@ -374,7 +365,6 @@ static void sense_inventory(void)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
-	TFREE(o_name);
 }
 
 /*

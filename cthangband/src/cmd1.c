@@ -621,14 +621,14 @@ void carry(int pickup)
 				if (okay)
 				{
 					/* Carry the item */
-					o_ptr = inven_carry(o_ptr);
+					object_type *j_ptr = inven_carry(o_ptr);
 
 					/* Message */
 					msg_format("You have %v (%c).",
-						object_desc_f3, o_ptr, TRUE, 3, index_to_label(o_ptr));
+						object_desc_f3, j_ptr, TRUE, 3, index_to_label(j_ptr));
 
 					/* Remember the object */
-					object_track(o_ptr);
+					object_track(j_ptr);
 
 					/* Delete the object */
 					delete_dun_object(o_ptr);

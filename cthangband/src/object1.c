@@ -4334,7 +4334,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	s16b this_o_idx, next_o_idx = 0;
 	object_type *o_ptr = UNREAD_VALUE;
 
-	char n1, n2, which = ' ';
+	char which = ' ';
 
 	int k;
 
@@ -4516,10 +4516,6 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 		}
 
-		/* Extract the legal requests */
-		n1 = index_to_label(i1);
-		n2 = index_to_label(i2);
-		
 		/* Only show a prompt. */
 		if (!command_see);
 
@@ -4545,7 +4541,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			{
 				/* Build the prompt */
 				sprintf(tmp_val, " %c-%c,", index_to_label(i1),
-					index_to_label(i1));
+					index_to_label(i2));
 
 				/* Append */
 				strcat(out_val, tmp_val);
@@ -4569,7 +4565,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			{
 				/* Build the prompt */
 				sprintf(tmp_val, " %c-%c,", index_to_label(e1),
-					index_to_label(e1));
+					index_to_label(e2));
 
 				/* Append */
 				strcat(out_val, tmp_val);

@@ -4424,7 +4424,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 	ou_ptr = o_pop();
 
 	/* Failure */
-	if (ou_ptr == o_list)
+	if (!ou_ptr)
 	{
 		/* Message */
 		msg_format("The %s disappear%s.",
@@ -4673,11 +4673,13 @@ void item_optimize(object_type *o_ptr)
 	/* Only optimize empty items */
 	if (o_ptr->number) return;
 
+	/* Floor. */
 	if (!is_inventory_p(o_ptr))
 	{
 		/* Delete the object */
 		delete_dun_object(o_ptr);
 	}
+	/* Inventory. */
 	else if (o_ptr < inventory+INVEN_WIELD)
 	{
 		object_type *j_ptr;
@@ -4699,6 +4701,7 @@ void item_optimize(object_type *o_ptr)
 		p_ptr->window |= (PW_INVEN | PW_SPELL);
 
 	}
+	/* Equipment. */
 	else
 	{
 		/* Erase the empty slot */
@@ -4768,26 +4771,20 @@ bool inven_carry_okay(object_type *o_ptr)
 object_type *inven_carry(object_type *o_ptr)
 {
 	int j;
-	int n = -1;
-	bool full;
-
-	object_type     *j_ptr;
+	object_type     *j_ptr, *empty;
 
 
 	/* Check for combining */
-	for (j = 0, full = TRUE; j < INVEN_PACK; j++)
+	for (j = 0, empty = NULL; j < INVEN_PACK; j++)
 	{
 		j_ptr = &inventory[j];
 
 		/* Skip non-objects */
 		if (!j_ptr->k_idx)
 		{
-			full = FALSE;
+			if (!empty) empty = j_ptr;
 			continue;
 		}
-
-		/* Hack -- track last item */
-		n = j;
 
 		/* Check if the two items can be combined */
 		if (object_similar(j_ptr, o_ptr))
@@ -4811,23 +4808,14 @@ object_type *inven_carry(object_type *o_ptr)
 
 
 	/* Paranoia */
-	if (full) return NULL;
+	if (!empty) return NULL;
 
-
-	/* Find an empty slot */
-	for (j = 0; j <= INVEN_PACK; j++)
-	{
-		j_ptr = &inventory[j];
-
-		/* Use it if found */
-		if (!j_ptr->k_idx) break;
-	}
 
 	/* Acquire a copy of the item */
-	object_copy(&inventory[j], o_ptr);
+	object_copy(empty, o_ptr);
 
 	/* Access new object */
-	o_ptr = &inventory[j];
+	o_ptr = empty;
 
 	/* Clean out unused fields */
 	o_ptr->iy = o_ptr->ix = 0;
@@ -4856,7 +4844,6 @@ object_type *inven_carry(object_type *o_ptr)
 		if (o_ptr->ident & IDENT_TEMP)
 		{
 			o_ptr->ident &= ~IDENT_TEMP;
-			j = o_ptr-inventory;
 			break;
 		}
 	}
@@ -5125,7 +5112,7 @@ static void ang_sort_swap_pack(vptr u, vptr UNUSED v, int a, int b)
 {
 	object_type *inv = u, tmp[1];
 	object_copy(tmp, inv+a);
-	object_copy(inv+a, inventory+b);
+	object_copy(inv+a, inv+b);
 	object_copy(inv+b, tmp);
 }
 
