@@ -1052,7 +1052,27 @@ void move_cursor(int row, int col)
 
 
 
-static cptr ascii_text_conv[256];
+static cptr ascii_text_conv[512];
+
+/* Hard-coded conversions, to be used in preference to the value-based ones. */
+typedef struct ascii_conv ascii_conv;
+struct ascii_conv
+{
+	byte ch;
+	cptr str;
+};
+
+static ascii_conv ascii_text_conv_hardcoded[] =
+{
+	{ESCAPE, "\\e"},
+	{' ', "\\s"},
+	{'\b', "\\b"},
+	{'\t', "\\t"},
+	{'\n', "\\n"},
+	{'\r', "\\r"},
+	{'^', "\\^"},
+	{'\\', "\\\\"}
+};
 
 /*
  * Fill the ascii_text_conv[] table with strings for each ascii character.
@@ -1060,56 +1080,39 @@ static cptr ascii_text_conv[256];
 void init_ascii_text_conv(void)
 {
 	int i;
+	ascii_conv *ptr;
 	for (i = 0; i < 256; i++)
 	{
-		char buf[MAX_ASCII_LEN+1], *s = buf;
+		char buf[MAX_ASCII_LEN+1];
+		cptr s = NULL;
 
-		if (i == ESCAPE)
+		FOR_ALL_IN(ascii_text_conv_hardcoded, ptr)
 		{
-			strcpy(s, "\\e");
+			if (i == ptr->ch) s = ptr->str;
 		}
-		else if (i == ' ')
+		
+		if (i < 32)
 		{
-			strcpy(s, "\\s");
-		}
-		else if (i == '\b')
-		{
-			strcpy(s, "\\b");
-		}
-		else if (i == '\t')
-		{
-			strcpy(s, "\\t");
-		}
-		else if (i == '\n')
-		{
-			strcpy(s, "\\n");
-		}
-		else if (i == '\r')
-		{
-			strcpy(s, "\\r");
-		}
-		else if (i == '^')
-		{
-			strcpy(s, "\\^");
-		}
-		else if (i == '\\')
-		{
-			strcpy(s, "\\\\");
-		}
-		else if (i < 32)
-		{
-			sprintf(s, "^%c", i+64);
+			sprintf(buf, "^%c", i+64);
 		}
 		else if (i < 127)
 		{
-			sprintf(s, "%c", i);
+			sprintf(buf, "%c", i);
 		}
 		else
 		{
-			sprintf(s, "\\x%c%c", hexsym[i/16], hexsym[i%16]);
+			sprintf(buf, "\\x%c%c", hexsym[i/16], hexsym[i%16]);
 		}
 
-		ascii_text_conv[i] = string_make(s);
+		if (s)
+		{
+			ascii_text_conv[i] = s;
+			ascii_text_conv[i+256] = string_make(buf);
+		}
+		else
+		{
+			ascii_text_conv[i] = ascii_text_conv[i+256] = string_make(buf);
+		}
 	}
 }
 
@@ -1125,21 +1128,25 @@ void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	byte *s = buf;
 	int i;
 
-	for (; *str && (char*)s+MAX_ASCII_LEN < buf+max-1; str++)
+	for (; *str && (char*)s+MAX_ASCII_LEN < buf+max-1; )
 	{
-		for (i = 0; i < 256; i++)
+		for (i = 0; i < 512; i++)
 		{
 			if (prefix(str, ascii_text_conv[i]))
 			{
-				*s++ = i;
+				*s++ = i % 256;
+				str += strlen(ascii_text_conv[i]);
 				goto next;
 			}
 		}
 		/* Paranoia - an unrecognised sequence. */
-		*s++ = *str;
+		*s++ = *str++;
 next:
 		continue;
 	}
+
+	/* Finish the string off. */
+	*s = '\0';
 }
 
 /*
