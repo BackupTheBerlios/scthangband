@@ -1589,3 +1589,20 @@ struct natural_attack
 	cptr desc; /* The name of the body part used. */
 };
 
+/* Some basic information about a GF_* flag. */
+typedef struct gf_type gf_type;
+struct gf_type
+{
+	byte idx;
+
+	/* Graphics stuff */
+	byte bolt_graf_attr;
+	byte ball_graf_char;
+	byte base_bolt_char;
+
+	/* Colours used. */
+	char colour[16];
+
+	cptr flag; /* The name of the flag, used in text files. */
+	cptr desc; /* A textual description of this effect. */
+};

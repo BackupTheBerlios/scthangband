@@ -784,7 +784,26 @@ static void init_feature_priorities(void)
 
 /*** Initialize others ***/
 
+/*
+ * Turn gf_type.colour into a form which is easier for a computer to read.
+ */
+static void init_gf_info(void)
+{
+	gf_type *gf_ptr;
+	char *t;
 
+	FOR_ALL_IN(gf_info, gf_ptr)
+	{
+		/* Store the attr, as this is what spell_color() returns. */
+		for (t = gf_ptr->colour; *t; t++)
+		{
+			*t = color_char_to_attr(*t);
+		}
+
+		/* Store the string length. */
+		gf_ptr->colour[15] = t - gf_ptr->colour;
+	}
+}
 
 /*
  * Initialize some other arrays
@@ -907,6 +926,9 @@ static void init_other(void)
 	/* Copy across the sizes of the visual tables. */
 	init_visuals();
 #endif /* ALLOW_VISUALS */
+
+	/* Finish off the gf_info[] colour table. */
+	init_gf_info();
 }
 
 

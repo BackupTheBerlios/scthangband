@@ -961,6 +961,18 @@ static errr parse_monster(make_monster_type *i_ptr, char *buf)
  */
 static errr parse_explosion(make_explosion_type *i_ptr, char *buf)
 {
+	cptr explode_flags[N_ELEMENTS(gf_info)+1], *s;
+	gf_type *gf_ptr;
+
+	for (gf_ptr = gf_info, s = explode_flags; gf_ptr < END_PTR(gf_info);
+		gf_ptr++, s++)
+	{
+		*s = gf_ptr->flag;
+	}
+
+	/* Terminate the array. */
+	*s = NULL;
+
 	i_ptr->method = find_string(buf, explode_flags);
 	readclearnum(i_ptr->radius,'r');
 	readclearnum(i_ptr->dice,'(');

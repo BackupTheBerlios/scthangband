@@ -194,7 +194,7 @@ static cptr describe_death_events(int r_idx, cptr he, bool omniscient)
 			{
 				make_explosion_type *i_ptr = &d_ptr->par.explosion;
 				s = format("%s%s %s explode in a ball of %s of radius %d", s,
-					he, DDE_MAY, explode_flags[i_ptr->method-1], i_ptr->radius);
+					he, DDE_MAY, lookup_gf(i_ptr->method)->desc, i_ptr->radius);
 				break;
 			}
 			case DEATH_COIN:

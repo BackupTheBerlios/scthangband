@@ -281,6 +281,18 @@ extern void do_cmd_message_one(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_messages(void);
 #endif
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern void print_s16b_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern bool parse_bool(void *out, cptr in);
+#endif
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern bool parse_s16b(void *out, cptr in);
+#endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C))
 extern bool showfile(cptr name, int y);
 #endif
@@ -515,7 +527,7 @@ extern void file_character(cptr name);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
 extern void do_cmd_help(cptr name);
 #endif
-#if (defined(FILES_C) || defined(INIT1_C) || defined(UTIL_C))
+#if (defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(UTIL_C))
 extern int color_char_to_attr(char c);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))
@@ -1700,6 +1712,9 @@ extern void teleport_player_to(int ny, int nx);
 #if (defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C))
 extern void teleport_player_level(void);
 #endif
+#if (defined(MONSTER1_C) || defined(POWERS_C) || defined(SPELLS1_C))
+extern gf_type *lookup_gf(int type);
+#endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern void take_hit(int damage, cptr hit_from, int monster);
 #endif
@@ -2192,6 +2207,9 @@ extern option_type option_info[];
 #if (defined(CMD4_C) || defined(TABLES_C))
 extern force_type option_force[];
 #endif
+#if (defined(CMD4_C) || defined(FILES_C) || defined(TABLES_C))
+extern option_special autosave_info[6];
+#endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern cptr chaos_patron_shorts[MAX_PATRON];
 #endif
@@ -2222,8 +2240,8 @@ extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern redraw_type screen_coords[NUM_SCREEN_COORDS];
 #endif
-#if (defined(INIT1_C) || defined(MONSTER1_C) || defined(POWERS_C) || defined(TABLES_C))
-extern cptr explode_flags[];
+#if (defined(INIT1_C) || defined(INIT2_C) || defined(SPELLS1_C) || defined(TABLES_C))
+extern gf_type gf_info[71];
 #endif
 #if (defined(INIT1_C) || defined(MONSTER1_C) || defined(TABLES_C))
 extern cptr coin_types[];
@@ -2666,9 +2684,6 @@ extern bool hack_mind;
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(VARIABLE_C))
 extern bool hack_chaos_feature;
 #endif
-
-
-
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern s16b o_max;
 #endif
@@ -3886,26 +3901,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* cmd4.c */
-
-#if (defined(CMD4_C) || defined(TABLES_C))
-extern void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
-#endif
-#if (defined(CMD4_C) || defined(TABLES_C))
-extern void print_s16b_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
-#endif
-#if (defined(CMD4_C) || defined(TABLES_C))
-extern bool parse_bool(void *out, cptr in);
-#endif
-#if (defined(CMD4_C) || defined(TABLES_C))
-extern bool parse_s16b(void *out, cptr in);
-#endif
-
-/* tables.c */
-
-#if (defined(CMD4_C) || defined(FILES_C) || defined(TABLES_C))
-extern option_special autosave_info[6];
 #endif
 #endif /* INCLUDED_EXTERNS_H */

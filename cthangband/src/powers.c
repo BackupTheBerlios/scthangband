@@ -398,7 +398,7 @@ static cptr balls_to_strings(project_ball_type **table, int total)
 
 	for (i = 0; i < total; i++)
 	{
-		str[i] = explode_flags[table[i]->type-1];
+		str[i] = lookup_gf(table[i]->type)->desc;
 	}
 	if (table[0]->rad < 0) pre = "It fires a breath of";
 	else pre = "It fires a ball of";
