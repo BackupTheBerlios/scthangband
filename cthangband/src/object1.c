@@ -2699,6 +2699,8 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 	if (hidden_p(o_ptr)) alloc_ifa(info+i++, "It is really %v.", object_desc_f3,
 		o1_ptr, OD_ART | OD_NOHIDE, 0);
 
+	i += desc_spell_list(info+i, o_ptr);
+
 	/* Mega-Hack -- describe activation */
 	if (o_ptr->flags3 & (TR3_ACTIVATE))
 	{

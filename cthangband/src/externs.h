@@ -365,13 +365,13 @@ extern u16b spell_energy(u16b skill,u16b min);
 #if (defined(CMD5_C) || defined(STORE_C))
 extern int get_spirit(int *sn, cptr prompt, bool call);
 #endif
-#if (defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C))
+#if (defined(CMD5_C) || defined(OBJECT1_C))
 extern bool PURE item_tester_spells(object_ctype *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(XTRA1_C))
 extern void display_spells(int y, int x, object_ctype *o_ptr);
 #endif
-#if (defined(CMD3_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(CMD5_C) || defined(OBJECT1_C))
 extern void do_cmd_browse(object_type *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(OBJECT1_C))
@@ -3899,7 +3899,7 @@ extern char *string_make(cptr str);
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern void safe_free(vptr p);
 #endif
-#if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
+#if (defined(CMD5_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
 #endif
 
@@ -3913,5 +3913,11 @@ extern void init_easy_know(void);
 
 #if (defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool new_message_turn;
+#endif
+
+/* cmd5.c */
+
+#if (defined(CMD5_C) || defined(OBJECT1_C))
+extern int desc_spell_list(cptr *info, object_ctype *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

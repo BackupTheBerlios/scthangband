@@ -3851,20 +3851,12 @@ static void store_examine(void)
 	
 	if (!o_ptr) return;
 
-	/* If it is a spell book then browse it */
-	if (item_tester_spells(o_ptr))
-	{
-		do_cmd_browse(o_ptr);
-	}
-	else
-	{
-		/* Description */
-		msg_format("Examining %v...", object_desc_f3, o_ptr, TRUE, 3);
+	/* Description */
+	msg_format("Examining %v...", object_desc_f3, o_ptr, TRUE, 3);
 
-		/* Make it look as though we are aware of the item if necessary. */
-		if (!identify_fully_aux(o_ptr, 0))
-			msg_print("You see nothing special.");
-	}
+	/* Make it look as though we are aware of the item if necessary. */
+	if (!identify_fully_aux(o_ptr, 0))
+		msg_print("You see nothing special.");
 }
 
 
