@@ -3647,7 +3647,6 @@ bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*
 
 		mmove2(&y, &x, y1, x1, y2, x2);
 	}
-	while ((*okay)(y, x, d));
 
 	/* Not okay. */
 	return FALSE;
@@ -3660,7 +3659,7 @@ bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*
 static bool PURE projectable_p(int y, int x, int d)
 {
 	/* Too far. */
-	if (d > MAX_RANGE || in_bounds2(y, x)) return FALSE;
+	if (d > MAX_RANGE || !in_bounds2(y, x)) return FALSE;
 
 	/* Floor */
 	else if (cave_floor_bold(y, x)) return TRUE;
@@ -3682,7 +3681,7 @@ static bool PURE projectable_p(int y, int x, int d)
 bool projectable(int y1, int x1, int y2, int x2)
 {
 	/* See "project()" */
-	return move_in_direction(NULL, NULL, x1, x2, y1, y2, projectable_p);
+	return move_in_direction(NULL, NULL, x1, y1, x2, y2, projectable_p);
 }
 
 /*
