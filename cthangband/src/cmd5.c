@@ -49,7 +49,7 @@ static book_type *k_idx_to_book(int i)
 		case OBJ_FLY_AGARIC_TOADSTOOL: return book_info+BK_CHARM_AGARIC;
 		case OBJ_CLOVE_OF_GARLIC: return book_info+BK_CHARM_GARLIC;
 		case OBJ_GEODE: return book_info+BK_CHARM_GEODE;
-		default: return book_info;
+		default: return 0;
 	}
 }
 
@@ -65,7 +65,7 @@ static book_type *spirit_to_book(spirit_type *s_ptr)
 		case 3: return book_info+BK_WILD_1;
 		case 5: return book_info+BK_WILD_2;
 		case 7: return book_info+BK_WILD_3;
-		default: return book_info;
+		default: return 0;
 	}
 }
 
@@ -192,6 +192,11 @@ static void gain_spell_exp(magic_type *spell)
 	}
 
 	if (check_mana) skill_exp(SKILL_MANA);
+}
+
+static void spell_info_b(char *p, uint max, magic_type *s_ptr)
+{
+	sprintf(p, "%.*s", max-1, s_ptr->desc);
 }
 
 /*
@@ -334,7 +339,7 @@ u16b spell_energy(u16b skill,u16b min)
 }
 
 /*
- * Determine the energy required to cast a given s_ptr->
+ * Determine the energy required to cast a given spell
  */
 static u16b spellcast_energy(int spell_school, int spell)
 {
@@ -345,15 +350,26 @@ static u16b spellcast_energy(int spell_school, int spell)
 }
 
 /*
- * Print a list of spells (for browsing or casting or viewing)
+ * Determine the energy required to cast a given spell
  */
-void print_spells(byte *spells, int num, int y, int x, int school)
+static u16b spellcast_energy_b(magic_type *s_ptr)
+{
+	return spell_energy(spell_skill(s_ptr), s_ptr->min);
+}
+/*
+ * Print a list of spells (for browsing or casting or viewing)
+ *
+ * TODO: Access spell_forgotten[], etc., via b_ptr.
+ * Write spell_info_b().
+ */
+void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_ptr,
+	int school)
 {
 	int                     i, spell;
 
 	magic_type              *s_ptr;
 
-	cptr            comment,type;
+	cptr            comment, type;
 
 	char            info[80];
 
@@ -363,8 +379,7 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
 	if (x == -1) x = 15;
 
-    if ((school<0 || school>MAX_SCHOOL - 1) && cheat_wzrd)
-	msg_print ("Warning! print_spells called with null school");
+	assert((school >= 0 && school < MAX_SCHOOL) || (b_ptr != 0));
 
     /* Title the list */
 
@@ -382,59 +397,68 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 
 	/* Access the spell */
 
-	s_ptr = &magic_info[school][spell];
+		if (b_ptr)
+			s_ptr = &b_ptr->info[spell];
+		else
+			s_ptr = &magic_info[school][spell];
 
 		/* XXX XXX Could label spells above the players level */
 
 		/* Get extra info */
-	spell_info(info, spell, school);
+		if (b_ptr)
+			spell_info_b(info, 15, s_ptr);
+		else
+			spell_info(info, spell, school);
 
 		/* Use that info */
 		comment = info;
 
-	/* Analyze the spell */
-	if (spell_forgotten[school] & (1L << (spell)))
+		if (school >= 0)
 		{
-			comment = " forgotten";
-		}
-	else if (!(spell_learned[school] & (1L << (spell))))
-		{
-			if (spell_skill(s_ptr)<s_ptr->min)
+			/* Analyze the spell */
+			if (spell_forgotten[school] & (1L << (spell)))
 			{
-				 comment = " too hard";
+				comment = " forgotten";
 			}
-			else
+			else if (!(spell_learned[school] & (1L << (spell))))
 			{
-				comment = " unknown";
+				if (spell_skill(s_ptr)<s_ptr->min)
+				{
+					 comment = " too hard";
+				}
+				else
+				{
+					comment = " unknown";
+				}
 			}
-		}
-	else if (!(spell_worked[school] & (1L << (spell))))
-		{
-			comment = " untried";
+			else if (!(spell_worked[school] & (1L << (spell))))
+			{
+				comment = " untried";
+			}
 		}
 
-	switch(s_ptr->skill2)
-	{
-	case SKILL_CORPORIS:
-		type = "Co";
-		break;
-	case SKILL_NATURAE:
-		type = "Na";
-		break;
-	case SKILL_VIS:
-		type = "Vi";
-		break;
-	case SKILL_ANIMAE:
-		type = "An";
-		break;
-	default:
-		type = "--";
-	}
+		switch(s_ptr->skill2)
+		{
+			case SKILL_CORPORIS:
+				type = "Co";
+				break;
+			case SKILL_NATURAE:
+				type = "Na";
+				break;
+			case SKILL_VIS:
+				type = "Vi";
+				break;
+			case SKILL_ANIMAE:
+				type = "An";
+				break;
+			default:
+				type = "  ";
+		}
 
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
-		I2A(i), magic_info[school][spell].name, /* school, spell */
-		type,s_ptr->min*2, s_ptr->mana, spellcast_energy(school, spell), spell_chance(s_ptr), comment);
+		I2A(i), s_ptr->name, type, s_ptr->min*2, s_ptr->mana,
+			spellcast_energy_b(s_ptr), spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -442,6 +466,15 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 	prt("", y + i + 1, x);
 }
 
+void print_spells(byte *spells, int num, int y, int x, int school)
+{
+	print_spells_aux(spells, num, y, x, 0, school);
+}
+
+static void print_spells_b(byte *spells, int num, int y, int x, book_type *b_ptr)
+{
+	print_spells_aux(spells, num, y, x, b_ptr, -1);
+}
 
 /*
  * Determine if a spell is "okay" for the player to cast or study
@@ -877,7 +910,7 @@ void print_cantrips(byte *spells, int num, int y, int x)
  * If there are no legal choices, returns FALSE, and sets '*sn' to -2
  *
  */
-int get_cantrip(int *sn, int sval)
+static int get_cantrip(int *sn, int sval)
 {
 	int		i;
 	int		spell = -1;
@@ -1702,11 +1735,11 @@ static void rustproof(void)
 }
 
 /*
- * It's a book if it's got a book_type associated with it.
+ * Is it a book?
  */
-static bool item_tester_book(object_type *o_ptr)
+static PURE bool item_tester_book(object_type *o_ptr)
 {
-	switch (o_ptr->k_idx)
+	switch (o_ptr->tval)
 	{
 		case TV_SORCERY_BOOK:
 		case TV_THAUMATURGY_BOOK:
@@ -1719,6 +1752,14 @@ static bool item_tester_book(object_type *o_ptr)
 }
 
 /*
+ * Does it have a book_type associated with it?
+ */
+static PURE bool item_tester_book_etc(object_type *o_ptr)
+{
+	return (k_idx_to_book(o_ptr->k_idx) != 0);
+}
+
+/*
  * Peruse the spells/prayers in a Book
  *
  * Note that *all* spells in the book are listed
@@ -1728,7 +1769,7 @@ static bool item_tester_book(object_type *o_ptr)
  */
 void do_cmd_browse(object_type *o_ptr)
 {
-	int		sval;
+	book_type *b_ptr;
 	int		spell = -1;
 	int		num = 0;
 
@@ -1741,7 +1782,7 @@ void do_cmd_browse(object_type *o_ptr)
 		errr err;
 
 		/* Restrict choices to books */
-		item_tester_hook = item_tester_book;
+		item_tester_hook = item_tester_book_etc;
 
 		/* Get an item (from inven or floor) */
 		if (!((o_ptr = get_item(&err, "Browse which book? ", FALSE, TRUE, TRUE))))
@@ -1751,7 +1792,7 @@ void do_cmd_browse(object_type *o_ptr)
 		}
 	}
 
-	item_tester_hook = item_tester_book;
+	item_tester_hook = item_tester_book_etc;
 	if(!item_tester_okay(o_ptr))
 	{
 		msg_print("You can't read that.");
@@ -1759,7 +1800,7 @@ void do_cmd_browse(object_type *o_ptr)
 	}
 
 	/* Access the item's sval */
-	sval = k_info[o_ptr->k_idx].extra;
+	b_ptr = k_idx_to_book(o_ptr->k_idx);
 
 	/* Track the object kind */
 	object_kind_track(o_ptr->k_idx);
@@ -1772,7 +1813,7 @@ void do_cmd_browse(object_type *o_ptr)
 	for (spell = 0; spell < 32; spell++)
 	{
 		/* Check for this spell */
-		if ((spell_flags[sval] & (1L << spell)))
+		if ((b_ptr->flags & (1L << spell)))
 		{
 			/* Collect this spell */
 			spells[num++] = spell;
@@ -1784,7 +1825,7 @@ void do_cmd_browse(object_type *o_ptr)
 	Term_save();
 
 	/* Display the spells */
-	print_spells(spells, num, 1, -1, (o_ptr->tval-90));
+	print_spells_b(spells, num, 1, -1, b_ptr);
 
 	/* Clear the top line */
 	prt("", 0, 0);

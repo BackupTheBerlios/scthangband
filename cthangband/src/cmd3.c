@@ -1498,16 +1498,11 @@ void do_cmd_handle(void)
 	case TV_THAUMATURGY_BOOK:
 	case TV_CONJURATION_BOOK:
 	case TV_NECROMANCY_BOOK:
+	case TV_CHARM:
 		{
 			do_cmd_browse(o_ptr);
 			break;
 		}
-	case TV_CHARM:
-	{
-		int i;
-		get_cantrip(&i, k_info[o_ptr->k_idx].extra);
-		break;
-	}
 	default:
 		{
 			item_tester_hook=item_tester_hook_wear;

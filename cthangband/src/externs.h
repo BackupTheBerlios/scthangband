@@ -338,9 +338,9 @@ extern void do_cmd_knowledge(void);
 #if (defined(CMD5_C) || defined(OBJECT2_C))
 extern void print_cantrips(byte *spells, int num, int y, int x);
 #endif
-#if (defined(CMD3_C) || defined(CMD5_C))
-extern int get_cantrip(int *sn, int sval);
-#endif
+
+
+
 #if (defined(CMD5_C) || defined(STORE_C))
 extern int get_spirit(int *sn, cptr prompt, bool call);
 #endif
@@ -4018,5 +4018,13 @@ extern void core_fmt(cptr fmt, ...);
 
 #if (defined(CMD5_C) || defined(INIT2_C) || defined(TABLES_C))
 extern book_type book_info[31];
+#endif
+
+/* cmd5.c */
+
+#if (defined(CMD5_C))
+extern void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_ptr,
+	int school)
+;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -863,8 +863,8 @@ struct book_type
 #ifdef CHECK_ARRAYS
 	int idx;
 #endif /* CHECK_ARRAYS */
-	magic_type *info;
-	u32b flags;
+	magic_type *info; /* A superset of the spells available in this book. */
+	u32b flags; /* The set of spells from info in this book. */
 };
 
 /*
