@@ -1877,7 +1877,7 @@ static void add_power(object_type *o_ptr)
 /*
  * Add random resistances and powers to a new normal artefact as required.
  */
-void random_artifact_resistance(object_type * o_ptr)
+static void random_artifact_resistance(object_type * o_ptr)
 {
 	artifact_type *a_ptr = &a_info[o_ptr->name1];
 	bool give_resistance = a_ptr->flags2 & TR2_RAND_RESIST;

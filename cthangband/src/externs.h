@@ -290,6 +290,9 @@ extern void do_cmd_message_one(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_messages(void);
 #endif
+#if (defined(CMD4_C) || defined(DUNGEON_C))
+extern void display_help(cptr help);
+#endif
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void opt_special_effect(const option_type * const op_ptr);
 #endif
@@ -1303,7 +1306,7 @@ extern errr get_mon_num_prep(bool (*hook)(int));
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
 extern s16b get_mon_num(int level);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(WIZARD1_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -1513,13 +1516,10 @@ extern void object_copy(object_type *o_ptr, object_ctype *j_ptr);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_prep(object_type *o_ptr, int k_idx);
 #endif
-#if (defined(OBJECT2_C) || defined(WIZARD2_C))
-extern void random_artifact_resistance(object_type * o_ptr);
-#endif
 #if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(OBJECT2_C))
 extern void check_bonus_table(void);
 #endif
-#if (defined(BIRTH_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void apply_magic_2(object_type *o_ptr, const int lev);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
@@ -2202,6 +2202,9 @@ extern cptr explode_flags[];
 #endif
 #if (defined(INIT1_C) || defined(MONSTER1_C) || defined(TABLES_C))
 extern cptr coin_types[];
+#endif
+#if (defined(CMD3_C) || defined(TABLES_C) || defined(WIZARD2_C))
+extern name_centry ident_info[];
 #endif
 
 /* util.c */
@@ -3460,7 +3463,7 @@ extern u16b rebuild_raw;
 
 /* wizard1.c */
 
-#if (defined(ALLOW_SPOILERS)) && (defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD1_C))
+#if (defined(ALLOW_SPOILERS)) && (defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern bool make_fake_artifact(object_type *o_ptr, int name1);
 #endif
 #if (defined(ALLOW_SPOILERS)) && (defined(DUNGEON_C) || defined(WIZARD1_C))
@@ -3473,9 +3476,6 @@ extern void do_cmd_spoilers(void);
 extern void do_cmd_rerate(void);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void wiz_create_named_art(int a_idx);
-#endif
-#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_wiz_hack_ben(void);
 #endif
 #if ((defined(ALLOW_WIZARD)) && defined(MONSTER_HORDES)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
@@ -3486,6 +3486,9 @@ extern void do_cmd_wiz_bamf(void);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_wiz_change(void);
+#endif
+#if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
+extern void wiz_create_named_art(int a_idx);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_wiz_play(void);
@@ -3520,9 +3523,6 @@ extern void do_cmd_magebolt(void);
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_debug(void);
 #endif
-
-
-
 
 /* xtra1.c */
 
@@ -3915,11 +3915,5 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
-#endif
-
-/* cmd4.c */
-
-#if (defined(CMD4_C) || defined(DUNGEON_C))
-extern void display_help(cptr help);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

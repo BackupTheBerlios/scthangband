@@ -1457,3 +1457,14 @@ struct co_ord
 typedef void (*Signal_Handler_t)(int);
 
 #endif
+
+/*
+ * Associate numbers with names for one reason or another.
+ */
+typedef const struct name_entry name_centry;
+typedef struct name_entry name_entry;
+struct name_entry
+{
+	int idx;
+	cptr str;
+};

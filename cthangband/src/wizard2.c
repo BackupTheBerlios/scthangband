@@ -63,62 +63,34 @@ void do_cmd_rerate(void)
 
 #ifdef ALLOW_WIZARD
 
+/*
+ * Run a suitable function, return the screen to its appearance before the
+ * function was run (if possible) and return the function's return code.
+ */
+static int choose_on_screen(int (*aux)(void))
+{
+	/* Save the screen */
+	int i, t = Term_save_aux();
+
+	/* Icky */
+	character_icky = TRUE;
+
+	/* Run the auxiliary function, remember its return. */
+	i = (*aux)();
+
+	/* Not Icky */
+	character_icky = FALSE;
+
+	/* Restore the screen */
+	Term_load_aux(t);
+
+	/* Forget the saved copy. */
+	Term_release(t);
+
+	/* Return the remembered value. */
+	return i;
+}
   
- /*
-  * Create the artifact of the specified number -- DAN
-  */
-void wiz_create_named_art(int a_idx)
- {
-
-       object_type forge;
-       object_type *q_ptr;
-       int i;
-
-       artifact_type *a_ptr = &a_info[a_idx];
-
-       /* Get local object */
-       q_ptr = &forge;
-
-       /* Wipe the object */
-       object_wipe(q_ptr);
-
-       /* Ignore "empty" artifacts */
-       if (!a_ptr->name) return;
-
-       /* Acquire the "kind" index */
-       i = a_ptr->k_idx;
-
-       /* Oops */
-       if (i <= 0 || i >= MAX_K_IDX) return;
-
-       /* Create the artifact */
-       object_prep(q_ptr, i);
-
-       /* Save the name */
-       q_ptr->name1 = a_idx;
-
-       /* Extract the fields */
-       q_ptr->pval = a_ptr->pval;
-       q_ptr->ac = a_ptr->ac;
-       q_ptr->dd = a_ptr->dd;
-       q_ptr->ds = a_ptr->ds;
-       q_ptr->to_a = a_ptr->to_a;
-       q_ptr->to_h = a_ptr->to_h;
-       q_ptr->to_d = a_ptr->to_d;
-       q_ptr->weight = a_ptr->weight;
-
-       /* Hack -- acquire "cursed" flag */
-       if (a_ptr->flags3 & (TR3_CURSED)) q_ptr->ident |= (IDENT_CURSED);
-
-       random_artifact_resistance(q_ptr);
-
-       /* Drop the artifact from heaven */
-       drop_near(q_ptr, -1, py, px);
-
-       /* All done */
-       msg_print("Allocated.");
- }
-
 
 /*
  * Hack -- quick debugging hook
@@ -455,18 +427,9 @@ static void wiz_display_item(object_type *o_ptr)
 
 
 /*
- * A structure to hold a tval and its description
- */
-typedef struct tval_desc
-{
-	int        tval;
-	cptr       desc;
-} tval_desc;
-
-/*
  * A list of tvals and their textual names
  */
-static tval_desc tvals[] =
+static name_centry tvals[] =
 {
 	{ TV_SWORD,             "Sword"                },
 	{ TV_POLEARM,           "Polearm"              },
@@ -575,12 +538,12 @@ static int wiz_create_itemtype(void)
 	Term_clear();
 
 	/* Print all tval's and their descriptions */
-	for (num = 0; (num < 60) && tvals[num].tval; num++)
+	for (num = 0; (num < 60) && tvals[num].idx; num++)
 	{
 		row = 2 + (num % 20);
 		col = 30 * (num / 20);
 		ch = body[num];
-		prt(format("[%c] %s", ch, tvals[num].desc), row, col);
+		prt(format("[%c] %s", ch, tvals[num].str), row, col);
 	}
 
 	/* Me need to know the maximal possible tval_index */
@@ -606,8 +569,8 @@ static int wiz_create_itemtype(void)
 	}
 
 	/* Base object type chosen, fill in tval */
-	tval = tvals[num].tval;
-	tval_str = tvals[num].desc;
+	tval = tvals[num].idx;
+	tval_str = tvals[num].str;
 
 
 	/*** And now we go for k_idx ***/
@@ -791,6 +754,239 @@ static int wiz_create_itemtype(void)
 	/* And return successful */
 	return (choice[num]);
 }
+
+/*
+ * Display a two-part prompt to select an item.
+ * It uses a name_entry to describe the entries in the first part, which
+ * should start at start.
+ * type is the description used in the first prompt (e.g. "object").
+ * max is the number of valid items.
+ * If sym_from_cat is set, the int in each name_entry is used for the symbol
+ * at the first prompt (the second never does so).
+ * Otherwise, the ones in the body array are used.
+ * item_good returns whether an item is something which can be generated and
+ * belongs to the specified category.
+ * print_f1 is a vstrnfmt_aux style function which copies the name of the item
+ * specified by number into buf.
+ */
+static int choose_something(name_centry *start, cptr type, int max,
+	bool sym_from_cat, bool (*item_good)(int, name_centry *),
+	void (*print_f1)(char *, uint, cptr, va_list *))
+{
+	int i, num;
+	int col, row;
+	uint len;
+	name_centry *cat;
+
+	cptr s;
+	char ch;
+
+	int	choice[60];
+
+	/* A list of the valid options for this prompt. */
+	cptr body =	"abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRST0123456789;:'@#~<>/?";
+	char sym[61], buf[80];
+	WIPE(sym, sym);
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Print all tval's and their descriptions */
+	for (num = 0, cat = start; (num < 60) && cat->idx; cat++)
+	{
+		for (i = 0; i < max; i++)
+		{
+			if ((*item_good)(i, cat)) break;
+		}
+
+		/* No good options exist in this category. */
+		if (i == max) continue;
+
+		row = 2 + (num % 20);
+		col = 30 * (num / 20);
+		if (sym_from_cat) sym[num] = cat->idx;
+		else sym[num] = body[num];
+
+		choice[num] = cat-tvals;
+		mc_put_fmt(row, col, "$![%c] %.25s", sym[num++], cat->str);
+	}
+
+	/* Choose! */
+	sprintf(buf, "Get what type of %.60s? ", type);
+	if (!get_com(buf, &ch)) return (0);
+
+	/* Analyze choice */
+	s = strchr(sym, ch);
+
+	/* Bail out if choice is not recognised. */
+	if (!s) return (0);
+
+	/* Base object type chosen, fill in tval */
+	cat = &tvals[choice[s - sym]];
+
+
+	/*** And now we go for a_idx ***/
+
+	/* Clear screen */
+	Term_clear();
+
+	/* We have to search the whole itemlist. */
+	for (num = 0, i = 1; (num < 60) && (i < max); i++)
+	{
+		/* Remember the object index */
+		if (item_good(i, cat)) choice[num++] = i;
+	}
+
+	/* Paranoia - empty categories shouldn't have reached the list. */
+	if (!num) return 0;
+
+	len = 80/((num+19)/20);
+
+	/* Print everything */
+	for (i = 0; i < num; i++)
+	{
+		row = 2 + (i % 20);
+		col = len * (i / 20);
+		ch = body[i];
+		
+		/* Print it */
+		mc_put_fmt(row, col, "$![%c] %.*^v", ch, len-4, print_f1, choice[i]);
+	}
+
+	/* Choose! */
+	if (!get_com(format("What Kind of %s? ", cat->str), &ch)) return (0);
+
+	/* Analyze choice */
+	s = strchr(body, ch);
+
+	/* Bail out if choice is not recognised. */
+	if (!s || s >= body+num) return 0;
+
+	/* And return successful */
+	return (choice[s - body]);
+}
+
+/*
+ * Return whether a_info[i] can be generated and is part of the specified
+ * category.
+ */
+static bool good_cat_artefact(int a, name_centry *cat)
+{
+	const artifact_type *a_ptr = a_info+a;
+
+	/* Not a real artefact. */
+	if (!a_ptr->name) return FALSE;
+
+	/* Wrong symbol. */
+	if (k_info[a_ptr->k_idx].tval != cat->idx) return FALSE;
+
+	return TRUE;
+}
+
+/*
+ * Return the name of an artefact specified by a_idx in buf.
+ */
+static void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int n = va_arg(*vp, int);
+	object_type q_ptr[1];
+
+	if (!make_fake_artifact(q_ptr, n)) return;
+
+	strnfmt(buf, max, "%v", object_desc_f3, q_ptr, 0, 0);
+}
+
+/*
+ * Select an artefact from a list.
+ */
+static int choose_artefact(void)
+{
+	return choose_something(tvals, "artifact", MAX_A_IDX,
+		FALSE, good_cat_artefact, artefact_name_f1);
+}
+
+/*
+ * Return whether r_info[i] can be generated and is part of the specified
+ * category.
+ */
+static bool good_cat_monster(int r, name_centry *cat)
+{
+	const monster_race *r_ptr = &r_info[r];
+
+	/* Not a valid monster. */
+	if (is_fake_monster(r_ptr)) return FALSE;
+
+	/* Not of this category. */
+	if (r_ptr->d_char != cat->idx) return FALSE;
+
+	return TRUE;
+}
+
+/*
+ * Return the name of a monster specified by r_idx in buf.
+ */
+static void monster_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int n = va_arg(*vp, int);
+	strnfmt(buf, max, "%v", monster_desc_aux_f3, r_info+n, 1, 0);
+}
+
+/*
+ * Select a race of monster to create based first on the character used,
+ * then on the race itself.
+ *
+ * Hack - this function relies on there being no more than 60 symbols which
+ * are used to represent monsters, or 60 monsters with a symbol. 
+ */
+static int choose_monster_type(void)
+{
+	return choose_something(ident_info, "monster", MAX_R_IDX,
+		FALSE, good_cat_monster, monster_name_f1);
+}
+
+/*
+ * Create the artifact of the specified number -- DAN
+ */
+void wiz_create_named_art(int a_idx)
+{
+	object_type q_ptr[1];
+	int i;
+
+	artifact_type *a_ptr;
+
+	/* Give a selection if needed. */
+	if (!a_idx || !a_info[a_idx].name)
+		a_idx = choose_on_screen(choose_artefact);
+
+	/* Give up if nothing valid is selected. */
+	if (a_idx < 0 || a_idx >= MAX_A_IDX || !a_info[a_idx].name) return;
+
+	a_ptr = &a_info[a_idx];
+
+	/* Wipe the object */
+	object_wipe(q_ptr);
+
+	/* Acquire the "kind" index */
+	i = a_ptr->k_idx;
+
+	/* Oops */
+	if (i <= 0 || i >= MAX_K_IDX) return;
+
+	/* Create the artifact */
+	object_prep(q_ptr, i);
+
+	/* Save the name */
+	q_ptr->name1 = a_idx;
+
+	apply_magic_2(q_ptr, dun_depth);
+
+	/* Drop the artifact from heaven */
+	drop_near(q_ptr, -1, py, px);
+
+	/* All done */
+	msg_print("Allocated.");
+}
+
 
 
 /*
@@ -1282,37 +1478,17 @@ void do_cmd_wiz_play(void)
  */
 void wiz_create_item(int k_idx)
 {
-	object_type	forge;
-	object_type *q_ptr;
+	object_type q_ptr[1];
 
 	/* Ensure reasonable input */
 	if (k_idx < 0 || k_idx >= MAX_K_IDX) k_idx = 0;
 	else if (!k_info[k_idx].name) k_idx = 0;
 
 	/* No meaningful input. */
-	if (!k_idx)
-	{
-	/* Icky */
-	character_icky = TRUE;
-
-	/* Save the screen */
-	Term_save();
-
-	/* Get object base type */
-	k_idx = wiz_create_itemtype();
-
-	/* Restore the screen */
-	Term_load();
-
-	/* Not Icky */
-	character_icky = FALSE;
-	}
+	if (!k_idx) k_idx = choose_on_screen(wiz_create_itemtype);
 
 	/* Return if failed */
 	if (!k_idx) return;
-
-	/* Get local object */
-	q_ptr = &forge;
 
 	/* Create the item */
 	object_prep(q_ptr, k_idx);
@@ -1460,21 +1636,21 @@ void do_cmd_wiz_summon(int num)
 	}
 }
 
-
 /*
  * Summon a creature of the specified type
  *
  * XXX XXX XXX This function is rather dangerous
  */
-void do_cmd_wiz_named(int r_idx, int slp)
+static void do_cmd_wiz_named_aux(int r_idx, int slp, bool friend)
 {
 	int i, x, y;
 
-	/* Paranoia */
-	/* if (!r_idx) return; */
+	/* Request a choice if none supplied. */
+	if (!r_idx) r_idx = choose_on_screen(choose_monster_type);
 
 	/* Prevent illegal monsters */
-	if (r_idx >= MAX_R_IDX || is_fake_monster(r_info+r_idx)) return;
+	if (r_idx >= MAX_R_IDX || r_idx <= 0 || is_fake_monster(r_info+r_idx))
+		return;
 
 	/* Try 10 times */
 	for (i = 0; i < 10; i++)
@@ -1488,40 +1664,24 @@ void do_cmd_wiz_named(int r_idx, int slp)
 		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
 
 		/* Place it (allow groups) */
-        if (place_monster_aux(y, x, r_idx, slp != 0, TRUE, FALSE, TRUE)) break;
+        if (place_monster_aux(y, x, r_idx, slp != 0, TRUE, friend, TRUE)) break;
 	}
 }
 
+/*
+ * Make a hostile monster.
+ */
+void do_cmd_wiz_named(int r_idx, int slp)
+{
+	do_cmd_wiz_named_aux(r_idx, slp, FALSE);
+}
 
 /*
- * Summon a creature of the specified type
- *
- * XXX XXX XXX This function is rather dangerous
+ * Make a friendly monster.
  */
 void do_cmd_wiz_named_friendly(int r_idx, int slp)
 {
-	int i, x, y;
-
-	/* Paranoia */
-	/* if (!r_idx) return; */
-
-	/* Prevent illegal monsters */
-	if (r_idx >= MAX_R_IDX || is_fake_monster(r_info+r_idx)) return;
-
-	/* Try 10 times */
-	for (i = 0; i < 10; i++)
-	{
-		int d = 1;
-
-		/* Pick a location */
-		scatter(&y, &x, py, px, d, 0);
-
-		/* Require empty grids */
-		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
-
-		/* Place it (allow groups) */
-        if (place_monster_aux(y, x, r_idx, slp != 0, TRUE, TRUE, TRUE)) break;
-	}
+	do_cmd_wiz_named_aux(r_idx, slp, TRUE);
 }
 
 /*

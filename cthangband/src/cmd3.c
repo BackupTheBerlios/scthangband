@@ -962,111 +962,6 @@ void do_cmd_locate(void)
 
 
 
-/*
- * The table of "symbol info" -- each entry is a string of the form
- * "X:desc" where "X" is the trigger, and "desc" is the "info".
- */
-static cptr ident_info[] =
-{
-	" :A dark grid",
-	"!:A potion (or oil)",
-	"\":An amulet (or necklace)",
-	"#:A wall (or secret door)",
-	"$:Treasure (gold or gems)",
-	"%:A vein (magma or quartz)",
-	/* "&:unused", */
-	"':An open door",
-	"(:Soft armor",
-	"):A shield",
-	"*:A vein with treasure",
-	"+:A closed door",
-	",:Food (or mushroom patch)",
-	"-:A wand (or rod)",
-	".:Floor",
-	"/:A polearm (Axe/Pike/etc)",
-	/* "0:unused", */
-	"1:Entrance to General Store",
-	"2:Entrance to Armory",
-	"3:Entrance to Weaponsmith",
-	"4:Entrance to Temple",
-	"5:Entrance to Alchemy shop",
-	"6:Entrance to Magic store",
-	"7:Entrance to Black Market",
-	"8:Entrance to your home",
-	"9:Entrance to Book Store",
-	"::Rubble",
-    ";:A glyph of warding / explosive rune",
-	"<:An up staircase",
-	"=:A ring",
-	">:A down staircase",
-	"?:A scroll",
-	"@:You",
-	"A:Golem",
-	"B:Bird",
-	"C:Canine",
-	"D:Ancient Dragon/Wyrm",
-	"E:Elemental",
-	"F:Dragon Fly",
-	"G:Ghost",
-	"H:Hybrid",
-	"I:Insect",
-	"J:Snake",
-	"K:Killer Beetle",
-	"L:Lich",
-	"M:Multi-Headed Reptile",
-	/* "N:unused", */
-	"O:Ogre",
-	"P:Giant Humanoid",
-	"Q:Quylthulg (Pulsing Flesh Mound)",
-	"R:Reptile/Amphibian",
-	"S:Spider/Scorpion/Tick",
-	"T:Troll",
-	"U:Major Demon",
-	"V:Vampire",
-	"W:Wight/Wraith/etc",
-	"X:Xorn/Xaren/etc",
-	"Y:Yeti",
-	"Z:Zephyr Hound",
-	"[:Hard armor",
-	"\\:A hafted weapon (mace/whip/etc)",
-	"]:Misc. armor",
-	"^:A trap",
-	"_:A staff",
-	/* "`:unused", */
-	"a:Ant",
-	"b:Bat",
-	"c:Centipede",
-	"d:Dragon",
-	"e:Floating Eye",
-	"f:Feline",
-	"g:Ghoul",
-	"h:Hobbit/Elf/Dwarf",
-	"i:Beings of Ib",
-	"j:Jelly",
-	"k:Kobold",
-	"l:Louse",
-	"m:Mold",
-	"n:Naga",
-	"o:Orc",
-	"p:Person/Human",
-	"q:Quadruped",
-	"r:Rodent",
-	"s:Skeleton",
-	"t:Townsperson",
-	"u:Minor Demon",
-	"v:Vortex",
-	"w:Worm/Worm-Mass",
-	/* "x:unused", */
-	"y:Yeek",
-	"z:Zombie/Mummy",
-	"{:A missile (arrow/bolt/shot)",
-	"|:An edged weapon (sword/dagger/etc)",
-	"}:A launcher (bow/crossbow/sling)",
-	"~:A tool (or miscellaneous item)",
-	NULL
-};
-
-
 
 /*
  * Sorting hook -- Comp function -- see below
@@ -1193,14 +1088,16 @@ static void do_cmd_query_symbol_aux(u16b *who)
 
 	u16b	why = 0;
 
+	name_centry *nam_ptr;
 
 	/* Get a character, or abort */
 	if (!get_com("Enter character to be identified: ", &sym)) return;
 
-	/* Find that character info, and describe it */
-	for (i = 0; ident_info[i]; ++i)
+	/* Find that character info, and describe it.
+	 * This assumes that no monster uses \0 as its symbol. */
+	for (nam_ptr = ident_info; nam_ptr->idx; nam_ptr++)
 	{
-		if (sym == ident_info[i][0]) break;
+		if (sym == nam_ptr->idx) break;
 	}
 
 	/* Describe */
@@ -1220,31 +1117,23 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	}
 	else if (sym == KTRL('S'))
 	{
+		char *s;
+
 		/* No name. */
 		strcpy(buf, "Name: ");
 		if (!get_string("Enter the name: ", buf+6, sizeof(buf)-6)) return;
 		string = TRUE;
-	}
-	else if (ident_info[i])
-	{
-		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
-		symbol = TRUE;
+
+		for (s = buf+6; *s; s++) if (isupper(*s)) *s = tolower(*s);
 	}
 	else
 	{
-		sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
+		sprintf(buf, "%c - %s.", sym, nam_ptr->str);
 		symbol = TRUE;
 	}
 
 	/* Display the result */
 	prt(buf, 0, 0);
-
-	/* String searching is case insensitive, so make the case predictable. */
-	if (string)
-	{
-		char *s;
-		for (s = buf+6; *s; s++) if (isupper(*s)) *s = tolower(*s);
-	}
 
 
 	/* Collect matching monsters */
