@@ -2893,7 +2893,7 @@ void message_pain(monster_type *m_ptr, int dam)
 
 		/* percentage <= 100 anyway, but... */
 		for (pain = 0; pain < N_ELEMENTS(pain_states)-1; pain++)
-			if (pain_states[pain] <= percentage) break;
+			if (percentage <= pain_states[pain]) break;
 
 		str = pain_str[race][pain];
 	}
