@@ -1223,6 +1223,10 @@ static bool point_mod_player(void)
 	char stat = UNREAD_VALUE; /* Never used when i = IDX_ALL, and initialised below otherwise. */
 	s16b points = UNREAD_VALUE; /* Initialised when i = IDX_ALL */
 	u16b i;
+
+	/* Set cheat_item to ensure that the weapons are described fully. Note
+	 * that this has no long-term effects. */
+	cheat_item = TRUE;
 	
 	/* The game inserts a name at the beginning, but the player can
 	 * change it. We will change the name whenever a new character is
@@ -1539,8 +1543,11 @@ static bool point_mod_player(void)
 	get_random_skills(TRUE);
 	get_final();
 
-	/* Ensure that the player has  */
+	/* Ensure that the player has a filename. */
 	if (!own_name) process_player_name();
+
+	/* Reset cheat_item. */
+	cheat_item = FALSE;
 
 	return TRUE;
 }
