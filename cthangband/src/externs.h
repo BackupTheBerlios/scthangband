@@ -2260,7 +2260,7 @@ extern FILE *my_fopen(cptr file, cptr mode);
 #if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern errr my_fclose(FILE *fff);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
+#if (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern void path_build_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER2_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))

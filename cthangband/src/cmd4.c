@@ -2290,6 +2290,257 @@ static bool visual_reject_obj(uint n)
 	return (k_info[n].name == 0);
 }
 
+/* The number of members of the visual[] array. */
+#define VISUALS N_ELEMENTS(visual)
+
+/* The line on which the command prompt appears. */
+#define CMDLINE (7+2*VISUALS)
+
+	/* Enter in the data for the various types of thing being altered. */
+static visual_type visual[5] =
+{
+	{"monster attr/chars", get_visuals_mon, 0, pref_str_std,
+		0, "Monster attr/char definitions", 0, 'R', TRUE, TRUE},
+	{"object attr/chars", get_visuals_obj, 0, pref_str_std,
+		visual_reject_obj, "Object attr/char definitions", 0, 'K', TRUE, TRUE},
+	{"feature attr/chars", get_visuals_feat, 0, pref_str_std,
+		visual_reject_feat, "Feature attr/char definitions", 0, 'F', TRUE, TRUE},
+	{"monster memory attrs", get_visuals_moncol, visual_dump_moncol, 0,
+		0, "Monster memory attr definitions", 0, 'M', TRUE, FALSE},
+	{"unidentified object attr/chars", get_visuals_unident, 0, pref_str_unident,
+		0, "Unidentified object attr/char definitions", 0, 'U', TRUE, TRUE},
+};
+
+static void dump_visuals(visual_type *vs_ptr)
+{
+	int i;
+	FILE *fff;
+	char tmp[71];
+
+	/* Prompt */
+	prt(format("Command: Dump %s", vs_ptr->text), CMDLINE, 0);
+
+	/* Prompt */
+	prt("File: ", CMDLINE+2, 0);
+
+	/* Default filename */
+	sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, sizeof(tmp)-1)) return;
+
+	/* Drop priv's */
+	safe_setuid_drop();
+
+	/* Append to the file */
+	fff = my_fopen_path(ANGBAND_DIR_USER, tmp, "a");
+
+	/* Grab priv's */
+	safe_setuid_grab();
+
+	/* Failure */
+	if (!fff) return;
+
+	/* This requires a normal pref file output. */
+	if (vs_ptr->pref_str)
+	{
+		/* Start dumping */
+		fprintf(fff, "\n\n");
+		fprintf(fff, "# %s\n\n", vs_ptr->initstring);
+
+		/* This could convert to any version, but... */
+		fprintf(fff, "O:%u\n", sf_flags_now);
+		fprintf(fff, "%c:---reset---\n\n", vs_ptr->startchar);
+
+		/* Dump entries */
+		for (i = 0; i < vs_ptr->max; i++)
+		{
+			cptr name;
+			byte da, *xa;
+			char dc, *xc;
+			(*vs_ptr->get)(i, &name, &da, &dc, &xa, &xc);
+
+			/* Skip non-entries */
+			if (vs_ptr->reject && (*vs_ptr->reject)(i)) continue;
+
+			/* Skip default entries */
+			if ((*xa == da) && (*xc == dc)) continue;
+
+			/* Dump a comment */
+			fprintf(fff, "# %s\n", name);
+
+			/* Dump the attr/char info */
+			(*vs_ptr->pref_str)(fff, i, vs_ptr->startchar, *xa, *xc);
+		}
+
+		/* All done */
+		fprintf(fff, "\n\n\n\n");
+	}
+	/* An arbitrary dump function. */
+	else
+	{
+		(*(vs_ptr->dump))(fff);
+	}
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_format("Dumped %s.", vs_ptr->text);
+}
+
+static void modify_visuals(visual_type *vs_ptr)
+{
+	char i;
+	int inc, max, num;
+	uint r = vs_ptr->max-1, *out;
+
+	bool started = FALSE;
+
+	/* Make a note of log(*vs_ptr->max-1)/log(10) */
+	const uint numlen = strlen(format("%d", r));
+
+	prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
+
+	/* Hack -- query until done */
+	while (1)
+	{
+		char dcl, *ccl;
+		byte dal, *cal;
+
+		uint da, dc, ca, cc = 50;
+		cptr prompt, text;
+
+		(*vs_ptr->get)(r, &text, &dal, &dcl, &cal, &ccl);
+
+		da = dal;
+		dc = (byte)dcl;
+		if (cal) ca = *cal;
+		if (ccl) cc = (byte)*ccl;
+
+		/* Clear the line first. */
+		Term_erase(0, CMDLINE+2, Term->wid);
+
+		/* Write name first as it may be in the format buffer. */
+		put_str(text, CMDLINE+2, 5+numlen+strlen("Number = , Name = "));
+
+		/* Label the object */
+		put_str(format("Number = %*d, Name = ", numlen, r),
+			CMDLINE+2, 5);
+
+		/* Display the default/current attr/char. */
+		mc_put_fmt(CMDLINE+4, 40, "<< $%c%c $w>>", (vs_ptr->attr) ? atchar[da] : 'w', (vs_ptr->chars) ? dc : '#');
+		mc_put_fmt(CMDLINE+5, 40, "<< $%c%c $w>>", (vs_ptr->attr) ? atchar[ca] : 'w', (vs_ptr->chars) ? cc : '#');
+
+		if (vs_ptr->attr && vs_ptr->chars)
+		{
+			mc_put_fmt(CMDLINE+4, 10, "Default attr/char = %3u / %3u", da, dc);
+			mc_put_fmt(CMDLINE+5, 10, "Current attr/char = %3u / %3u", ca, cc);
+		}
+		else if (vs_ptr->attr)
+		{
+			mc_put_fmt(CMDLINE+4, 10, "Default attr = %3u", da);
+			mc_put_fmt(CMDLINE+5, 10, "Current attr = %3u", ca);
+		}
+		else if (vs_ptr->chars)
+		{
+			mc_put_fmt(CMDLINE+4, 10, "Default char = %3u", dc);
+			mc_put_fmt(CMDLINE+5, 10, "Current char = %3u", cc);
+		}
+		else
+		{
+			mc_put_fmt(CMDLINE+4, 10, "A white #");
+			mc_put_fmt(CMDLINE+5, 10, "A white #");
+		}
+
+		/* Prompt */
+		mc_put_fmt(CMDLINE+7, 0, "Command (n/N%s%s): ", 
+			(vs_ptr->attr) ? "/a/A" : "", (vs_ptr->chars) ? "/c/C" : "");
+
+		/* Get a command */
+		if (started)
+		{
+			i = inkey();
+		}
+		else
+		{
+			i = 'n';
+			started = TRUE;
+		}
+
+		/* All done */
+		if (i == ESCAPE) break;
+
+		/* Hack - allow control codes to be entered separately. */
+		if (i == '^')
+		{
+			if (get_com("Control: ", &i)) i = KTRL(i);
+			else continue;
+		}
+
+		/* Split i into base character and modifier. */
+		inc = (iscntrl(i)) ? 0 : (islower(i)) ? 1 : -1;
+		i = 'a'+i-(iscntrl(i) ? KTRL('A') : (islower(i)) ? 'a' : 'A');
+
+		switch (i)
+		{
+			case 'n':
+				prompt = "Select number of desired entry: ";
+				out = &r;
+				max = vs_ptr->max;
+				break;
+			case 'a':
+				prompt = "Select number of desired colour: ";
+				out = &ca;
+				max = 256;
+				break;
+			case 'c':
+				prompt = "Select number of desired character: ";
+				out = &cc;
+				max = 256;
+				break;
+			/* Not a valid response, so ask again. */
+			default:
+				continue;
+		}
+
+		/* Analyze */
+		if (inc == 0)
+		{
+			char str[5] = "";
+
+			inc = 0;
+
+			if (get_string(prompt, str, sizeof(str)-1))
+			{
+				num = strtol(str, NULL, 0);
+
+				/* Number out of bounds. */
+				if (num < 0 || num >= max) continue;
+
+				/* Invalid number in bounds. */
+				if (i == 'n' && vs_ptr->reject &&
+					(*vs_ptr->reject)(num)) continue;
+
+				/* Everything as it should be. */
+				(*out) = num;
+			}
+		}
+		else
+		{
+			/* Handle rejection criteria if necessary. */
+			do
+			{
+				(*out) = ((*out) + max + inc) % max;
+			}
+			while (i == 'n' && vs_ptr->reject && (*vs_ptr->reject)(r));
+		}
+		/* Save the information if it has changed.*/
+		if (i == 'a' && cal) (*cal) = ca;
+		if (i == 'c' && ccl) (*ccl) = cc;
+	}
+}
+
 #endif /* ALLOW_VISUALS */
 
 
@@ -2300,43 +2551,13 @@ void do_cmd_visuals(void)
 {
 #ifdef ALLOW_VISUALS
 
-/* The number of members of the visual[] array. */
-#define VISUALS (sizeof(visual)/sizeof(visual_type))
-
 #else /* ALLOW_VISUALS */
 
 #define VISUALS 0
 
 #endif /* ALLOW_VISUALS */
 
-/* The line on which the command prompt appears. */
-#define CMDLINE (7+2*VISUALS)
-
 	uint i;
-
-	FILE *fff;
-
-	char tmp[160];
-
-	char buf[1024];
-
-	/* Enter in the data for the various types of thing being altered. */
-	visual_type visual[5] =
-	{
-		{"monster attr/chars", get_visuals_mon, 0, pref_str_std,
-			0, "Monster attr/char definitions", 0, 'R', TRUE, TRUE},
-		{"object attr/chars", get_visuals_obj, 0, pref_str_std,
-			visual_reject_obj, "Object attr/char definitions", 0, 'K',
-			TRUE, TRUE},
-		{"feature attr/chars", get_visuals_feat, 0, pref_str_std,
-			visual_reject_feat, "Feature attr/char definitions", 0, 'F', TRUE,
-			TRUE},
-		{"monster memory attrs", get_visuals_moncol, visual_dump_moncol, 0,
-			0, "Monster memory attr definitions", 0, 'M', TRUE, FALSE},
-		{"unidentified object attr/chars", get_visuals_unident, 0,
-			pref_str_unident, 0, "Unidentified object attr/char definitions",
-			0, 'U', TRUE, TRUE},
-	};
 
 	/* Enter the maxima separately, as they are determined at run-time. */
 	visual[0].max = MAX_R_IDX;
@@ -2389,6 +2610,8 @@ void do_cmd_visuals(void)
 		/* Load a 'pref' file */
 		else if (i == 'a')
 		{
+			char tmp[71];
+
 			/* Prompt */
 			prt("Command: Load a user pref file", CMDLINE, 0);
 
@@ -2399,7 +2622,7 @@ void do_cmd_visuals(void)
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
 
 			/* Query */
-			if (!askfor_aux(tmp, 70)) continue;
+			if (!askfor_aux(tmp, sizeof(tmp)-1)) continue;
 
 			/* Process the given filename */
 			(void)process_pref_file(tmp);
@@ -2410,243 +2633,14 @@ void do_cmd_visuals(void)
 		/* Dump a visual file. */
 		else if (i > 'a' && i < 'b'+VISUALS)
 		{
-			visual_type *vs_ptr = &visual[i-'b'];
-
-			/* Prompt */
-			prt(format("Command: Dump %s", vs_ptr->text), CMDLINE, 0);
-
-			/* Prompt */
-			prt("File: ", CMDLINE+2, 0);
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_USER, tmp);
-
-			/* Drop priv's */
-			safe_setuid_drop();
-
-			/* Append to the file */
-			fff = my_fopen_path(ANGBAND_DIR_USER, tmp, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* This requires a normal pref file output. */
-			if (vs_ptr->pref_str)
-			{
-				/* Start dumping */
-				fprintf(fff, "\n\n");
-				fprintf(fff, "# %s\n\n", vs_ptr->initstring);
-
-				/* This could convert to any version, but... */
-				fprintf(fff, "O:%u\n", sf_flags_now);
-				fprintf(fff, "%c:---reset---\n\n", vs_ptr->startchar);
-
-				/* Dump entries */
-				for (i = 0; i < vs_ptr->max; i++)
-				{
-					cptr name;
-					byte da, *xa;
-					char dc, *xc;
-					(*vs_ptr->get)(i, &name, &da, &dc, &xa, &xc);
-
-					/* Skip non-entries */
-					if (vs_ptr->reject && (*vs_ptr->reject)(i)) continue;
-
-					/* Skip default entries */
-					if ((*xa == da) && (*xc == dc)) continue;
-
-					/* Dump a comment */
-					fprintf(fff, "# %s\n", name);
-
-					/* Dump the attr/char info */
-					(*vs_ptr->pref_str)(fff, i, vs_ptr->startchar, *xa, *xc);
-				}
-
-				/* All done */
-				fprintf(fff, "\n\n\n\n");
-			}
-			/* An arbitrary dump function. */
-			else
-			{
-				(*(vs_ptr->dump))(fff);
-			}
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_format("Dumped %s.", vs_ptr->text);
+			dump_visuals(visual+i-'b');
 		}
 
 		/* Modify a visual function. */
 		else if (i > 'a'+VISUALS && i < 'b'+2*VISUALS)
 		{
-			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
-
-			int inc, max, num;
-			uint r = vs_ptr->max-1, *out;
-
-			bool started = FALSE;
-
-			/* Make a note of log(*vs_ptr->max-1)/log(10) */
-			const uint numlen = strlen(format("%d", r));
-
-			prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				char dcl, *ccl;
-				byte dal, *cal;
-
-				uint da, dc, ca, cc = 50;
-				cptr text;
-				cptr prompt;
-dcv_retry:
-				(*vs_ptr->get)(r, &text, &dal, &dcl, &cal, &ccl);
-
-				da = dal;
-				dc = (byte)dcl;
-				if (cal) ca = *cal;
-				if (ccl) cc = (byte)*ccl;
-
-				/* Clear the line first. */
-				Term_erase(0, CMDLINE+2, Term->wid);
-
-				/* Write name first as it may be in the format buffer. */
-				put_str(text, CMDLINE+2, 5+numlen+strlen("Number = , Name = "));
-
-				/* Label the object */
-				put_str(format("Number = %*d, Name = ", numlen, r),
-					CMDLINE+2, 5);
-
-				/* Display the default/current attr/char. */
-				Term_putstr(40, CMDLINE+4, -1, TERM_WHITE, "<< ? >>");
-				Term_putstr(40, CMDLINE+5, -1, TERM_WHITE, "<< ? >>");
-
-				Term_putch(43, CMDLINE+4, (vs_ptr->attr) ? da : TERM_WHITE, (vs_ptr->chars) ? dc : '#');
-				Term_putch(43, CMDLINE+5, (vs_ptr->attr) ? ca : TERM_WHITE, (vs_ptr->chars) ? cc : '#');
-
-				if (vs_ptr->attr && vs_ptr->chars)
-					text = format("Default attr/char = %3u / %3u", da, dc);
-				else if (vs_ptr->attr)
-					text = format("Default attr = %3u", da);
-				else if (vs_ptr->chars)
-					text = format("Default char = %3u", dc);
-				else
-					text = "A white #";
-				Term_putstr(10, CMDLINE+4, -1, TERM_WHITE, text);
-
-				if (vs_ptr->attr && vs_ptr->chars)
-					text = format("Current attr/char = %3u / %3u", ca, cc);
-				else if (vs_ptr->attr)
-					text = format("Current attr = %3u", ca);
-				else if (vs_ptr->chars)
-					text = format("Current char = %3u", cc);
-				else
-					text = "A white #";
-				Term_putstr(10, CMDLINE+5, -1, TERM_WHITE, text);
-
-				/* Prompt */
-				Term_putstr(0, CMDLINE+7, -1, TERM_WHITE,
-				            format("Command (n/N%s%s): ", 
-					    (vs_ptr->attr) ? "/a/A" : "",
-					    (vs_ptr->chars) ? "/c/C" : ""));
-
-				/* Get a command */
-				if (started)
-				{
-					i = inkey();
-				}
-				else
-				{
-					i = 'n';
-					started = TRUE;
-				}
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Hack - allow control codes to be entered separately. */
-				if (i == '^')
-				{
-					char c;
-					if (get_com("Control: ", &c)) i = KTRL(c);
-					else continue;
-				}
-
-				/* Split i into base character and modifier. */
-				inc = (iscntrl(i)) ? 0 : (islower(i)) ? 1 : -1;
-				i = 'a'+i-(iscntrl(i) ? KTRL('A') : (islower(i)) ? 'a' : 'A');
-
-				switch (i)
-				{
-					case 'n':
-						prompt = "Select number of desired entry: ";
-						out = &r;
-						max = vs_ptr->max;
-						break;
-					case 'a':
-						prompt = "Select number of desired colour: ";
-						out = &ca;
-						max = 256;
-						break;
-					case 'c':
-						prompt = "Select number of desired character: ";
-						out = &cc;
-						max = 256;
-						break;
-					/* Not a valid response. */
-					default:
-						goto dcv_retry;
-				}
-
-				/* Analyze */
-				if (inc == 0)
-				{
-					char str[5] = "";
-
-					inc = 0;
-
-					if (get_string(prompt, str, 4))
-					{
-						num = strtol(str, NULL, 0);
-
-						/* Number out of bounds. */
-						if (num < 0 || num >= max) continue;
-
-						/* Invalid number in bounds. */
-						if (i == 'n' && vs_ptr->reject &&
-							(*vs_ptr->reject)(num)) continue;
-
-						/* Everything as it should be. */
-						(*out) = num;
-					}
-				}
-				else
-				{
-					/* Handle rejection criteria if necessary. */
-					do
-					{
-						(*out) = ((*out) + max + inc) % max;
-					}
-					while (i == 'n' && vs_ptr->reject && (*vs_ptr->reject)(r));
-				}
-				/* Save the information if it has changed.*/
-				if (i == 'a' && cal) (*cal) = ca;
-				if (i == 'c' && ccl) (*ccl) = cc;
-			}
+			modify_visuals(visual+i-'b'-VISUALS);
 		}
-
 #endif
 
 		/* Reset visuals */
