@@ -1,7 +1,7 @@
 
 
                           *************************
-                          ** sCthangband 1.0.3   **
+                          ** sCthangband _CVS_   **
                           *************************
 
            Based on Moria:    Copyright (c) 1985 Robert Alan Koeneke
@@ -69,13 +69,16 @@ further modifications otherwise.
 Of course, if you have a compiler, you can compile a (possibly customized)
 executable on almost any system.  You will need the "source archive" (as
 above), which contains the standard "src" and "lib" directories, and for
-some platforms (including Macintosh and Windows), you will also need an
+some platforms (including Macintosh* and Windows), you will also need an
 appropriate "extra archive", which contains some extra platform specific
 files, and instructions about how to use them.  Some "extra archives" may
-be found at the sCthangband Web-site (including "ext-mac.sit.bin" and
+be found at the sCthangband Web-site (including "ext-dos.zip" and
 "ext-win.zip"), but be sure that you get a version of the "extra archive"
 designed for this version of sCthangband.
 
+* There is no Macintosh archive at present, as I do not have a Linux dearchiver
+for the versions I would otherwise adapt. A recent Macintosh archive for
+another variant may be suitable, however.
 
 === Special instructions for certain platforms ===
 
@@ -236,7 +239,8 @@ These files should not be modified unless you know exactly what you are doing.
 
 === Directory "lib/help" ===
 
-The "lib/help" directory contains the "online help" files.
+The "lib/help" directory contains the "online help" files, including the
+version history in update.txt.
 
 This directory is used to search for normal "online help" files.
 
