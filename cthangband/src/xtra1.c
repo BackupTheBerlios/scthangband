@@ -3908,6 +3908,9 @@ static void win_visible_display(void)
 		/* Then, display them */
 		(void)Term_get_size(&w, &h);
 
+		/* Find the optimal width of one entry. */
+		w = MAX(26, w/((items+h-2)/(h-1)));
+
 		c_prt(TERM_WHITE,format("You can see %d monster%s", c, (c > 1 ? "s:" : ":")), 0, 0);
 
 		/* Print the monsters in reverse order */
@@ -3944,7 +3947,7 @@ static void win_visible_display(void)
 			}			
 			
 			/* Dump the monster character (not tracking shapechangers) */
-			Term_putch((num / (h - 1)) * 26, (num % (h - 1)) + 1, r_ptr->x_attr, r_ptr->x_char);
+			Term_putch((num / (h - 1)) * w, (num % (h - 1)) + 1, r_ptr->x_attr, r_ptr->x_char);
 
 
 			/* Dump the monster name */
@@ -3963,7 +3966,7 @@ static void win_visible_display(void)
 			{
 				name = format("%s (x%d)", name, who[i].amount);
 			}
-			c_prt(attr, name, (num % (h - 1)) + 1, (num / (h - 1)) * 26+2);
+			c_prt(attr, name, (num % (h - 1)) + 1, (num / (h - 1)) * w +2);
 		}
 	}
 	else
