@@ -1961,8 +1961,11 @@ F:DROP_1D2 | ONLY_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | IM_FIRE | ANIMAL
 S:1_IN_6
 S:HEAL | BLIND | DARKNESS | CONF | CAUSE_2
-D:A great greyish-white slippery toad-creature with a mass of pink 
-D:tentacles on the end of its snout.
+D:"Great greyish-white slippery things which could expand and 
+D:contract at will, and whose principle shape... was that of a 
+D:sort of toad without any eyes, but with a curious vibrating mass 
+D:of short pink tentacles on the end of its blung, vague snout."
+# H. P. Lovecraft: The Dream Quest of Unknown Kadath
 
 N:170:& Master yeek~
 G:y:g
@@ -3606,9 +3609,14 @@ F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:IM_ACID | IM_POIS | NO_CONF | NO_SLEEP
 S:1_IN_3 | 
 S:BLIND | CONF | SCARE | FORGET | MISSILE
-D:A batrachian humanoid with large eyes and a scaly 
-D:skin suggestive of fishskin, hopping irregularly and 
-D:casting spells with a croaking, baying voice.
+D:"I thought their predominant color was a greyish-green, 
+D:though they had white bellies. They were mostly shiny and 
+D:slippery, but the ridges of their backs were scaly. Their 
+D:forms vaguely suggested the anthropoid, while their heads were 
+D:the heads of fish, with prodigious bulging eyes that never 
+D:closed. At the sides of their necks were palpitating gills and 
+D:their long paws were webbed." 
+# H. P. Lovecraft: The Shadow Over Innsmouth
 
 N:299:& Ghoul~
 G:g:U
@@ -3981,6 +3989,8 @@ F:CTHULOID
 S:1_IN_9
 S:BR_ACID
 D:A gigantic worm dripping with acid.
+# This is probably supposed to be a dhole, but it (unlike the dholes) is
+# indifferent to light and are harmful on contact.
 
 N:326:& Dimensional shambler~
 G:h:B
@@ -5083,7 +5093,13 @@ F:CTHULOID
 S:1_IN_4 |
 S:SCARE | TELE_AWAY | BA_NUKE | CAUSE_4 | BA_POIS |
 S:CONF | S_CTHULOID | S_UNDEAD
-D:It is barrel-shaped, with horizontal arms and a starfish head.
+D:"...some ridged barrel-shaped objects with thin 
+D:horizontal arms radiating spoke-like from a central ring and with 
+D:vertical knobs or bulbs projecting from the head and base of the 
+D:barrel. Each of these knobs was the hub of a system of five long, 
+D:flat, triangularly tapering arms arranged around it like the arms 
+D:of a starfish."
+# H. P. Lovecraft: Dreams in the Witch-House
 
 N:402:& Ice elemental~
 G:E:w
@@ -5630,7 +5646,11 @@ F:EVIL
 S:1_IN_5 | 
 S:SCARE | CONF | HOLD | S_DEMON | 
 S:MIND_BLAST | HEAL | HASTE | FORGET | BRAIN_SMASH
-D:A huge subterranean worm whose body ends in a mass of groping tentacles.
+D:"Flowing tentacles and a pulpy gray-black elongated sack of a body... 
+D:no distinguishing features at all other than the reaching, groping 
+D:tentacles. Or was there -- yes! -- a lump in the upper body of 
+D:the thing... a container of sorts for the brain, ganglia, or 
+D:whichever diseased organ governed this horror's loathsome life!" 
 
 N:438:& Night mare~
 G:q:v
@@ -6019,7 +6039,15 @@ F:REGENERATE | ONLY_ITEM | KILL_ITEM | DROP_2D2 | DROP_90 | DROP_60
 F:BASH_DOOR | EVIL | NO_CONF | NO_SLEEP | KILL_BODY | CTHULOID
 F:FORCE_MAXHP | FORCE_SLEEP | HURT_LITE | POWERFUL | ELDRITCH_HORROR |
 F:IM_ACID | IM_FIRE | RES_PLAS | IM_POIS | IM_COLD | IM_ELEC | RES_TELE
-D:A nightmarish fetid, black irididescence oozing towards you.
+D:"The nightmare, plastic column of fetid, black iridescence oozed 
+D:tightly onward... A shapeless congerie of protoplasmic bubbles, 
+D:faintly self-luminous and with myriads of temporary eyes forming 
+D:and unforming as pustules of greenish light all over the 
+D:tunnel-filling front that bore down upon us, crushing the frantic 
+D:penguins and slithering over glistening floor that it and its 
+D:kind had swept so evilly free of all litter. Still came that eldritch 
+D:mocking cry -- 'Tekeli-li! Tekeli-li!'" 
+# H. P. Lovecraft: At the Mountains of Madness
 
 N:464:& Servitor~ of the outer gods
 G:U:y
@@ -6054,7 +6082,12 @@ F:EVIL | NO_CONF | NO_SLEEP | HURT_FIRE | IM_POIS
 S:1_IN_9 | 
 S:BO_FIRE | BO_ACID | 
 S:S_CTHULOID | MIND_BLAST | DARKNESS | 
-D:A black, protean being of amorphous slime.
+D:"...living things that oozed along stone channels... 
+D:But they were not toads like Tsathoggua himself. Far worse -- 
+D:they were amorphous lumps of viscous black slime that took 
+D:temporary shapes for various purposes."
+# H. P. Lovecraft, Zealia Bishop: The Mound
+
 
 ##### Level 42 #####
 
@@ -7837,8 +7870,10 @@ S:1_IN_3
 S:SCARE | CONF | S_CTHULOID | S_UNDEAD | DRAIN_MANA | BR_ACID |
 S:BR_FIRE | TPORT | S_MONSTERS | BRAIN_SMASH | BR_NETH |
 S:HEAL | MIND_BLAST | BA_NUKE
-D:The last remnants of sanity threaten to leave your brain as you 
-D:behold this titanic bat-winged, octopus-headed unholy abomination.
+D:"They all lay in stone houses in their great city of R'lyeh, 
+D:preserved by the spells of mighty Cthulhu for a glorious 
+D:resurrection when the stars and the earth might once more 
+D:be ready..."
 
 ##### Level 90 #####
 
@@ -7878,7 +7913,11 @@ F:EVIL | IM_ACID | IM_COLD | IM_ELEC | IM_POIS | IM_FIRE | NO_CONF | NO_SLEEP
 S:1_IN_3 |
 S:BO_MANA | BRAIN_SMASH | BA_MANA | S_MONSTERS | S_REAVER |
 S:BA_CHAO | S_CTHULOID | S_HI_UNDEAD | S_HOUND | BR_MANA | BR_DISI
-D:An outer god whose form resembles a mass of great floating globes.
+D:"It was an All-in-One and One-in-All of limitless being and self - not merely 
+D:a thing of one space-time continuum, but allied to the ultimate animating 
+D:essence of existence's whole unbounded sweep - the last, utter sweep which 
+D:has no confines and which outreaches fancy and mathematics alike."
+# H.P.Lovecraft: Through the Gates of the Silver Key
 
 N:566:& Great Wyrm~ of Power
 G:D:y
@@ -7989,6 +8028,7 @@ D:Toad shaped and sleepy, don't let his inoffensive appearance
 D:fool you. He still bears all the power of a Great Old One.
 
 
+
 ##### Level 95 #####
 
 N:571:Gothmog, the High Captain of Balrogs
@@ -8035,9 +8075,13 @@ S:TPORT | SCARE | BLIND | MIND_BLAST | BRAIN_SMASH | DRAIN_MANA |
 S:BR_POIS | BR_ACID | BR_FIRE | CONF | DARKNESS | FORGET | S_HI_UNDEAD |
 S:BR_NUKE | BR_NETH | BR_CHAO | BR_DISE | BR_DARK | BR_PLAS | BR_CONF
 S:BR_NEXU | S_CTHULOID | S_REAVER | S_KIN | BR_DISI | DREAD_CURSE
-D:This creature is death incarnate. "A monster of vaguely anthropoid 
-D:outline, but with an octopus-like head... and long narrow wings behind... 
-D:A mountain walked or stumbled."
+D:"If I say that my somewhat extravagant imagination yielded simultaneous 
+D:pictures of an octopus, a dragon, and a human caricature, I shall not be 
+D:unfaithful to the spirit of the thing... It lumbered slobberingly into sight 
+D:and gropingly squeezed its gelatinous green immensity through the 
+D:black doorway... A mountain walked or stumbled."
+# H.P.Lovecraft: The Call of Cthulhu
+
 
 # Sauron is no longer a quest monster (in Cthangband), just a "normal" one.
 
@@ -8093,8 +8137,8 @@ S:TELE_TO | CONF | BO_MANA | BA_FIRE | BRAIN_SMASH | BA_NETH |
 S:BO_ICEE | CAUSE_4 | BA_WATE | BO_PLAS | TELE_LEVEL | TELE_AWAY |
 S:FORGET | DARKNESS | BA_MANA | S_HI_DRAGON | S_HI_UNDEAD | BA_CHAO
 S:S_GOO | S_REAVER | DREAD_CURSE
-D:The Crawling Chaos in it's most monstrous form. It will do all in its 
-D:power to keep you away from its master, Azathoth.
+D:"Nyarlathotep, horror of infinite shapes and dread soul and messenger of the 
+D:Other Gods"
 
 # Morgoth is replaced by Azathoth, the final "quest" monster
 # in Cthangband.
@@ -8130,7 +8174,7 @@ D:Azathoth, whose name no lips dare speak aloud, and who gnaws hungrily
 D:in inconceivable, unlighted chambers beyond time amidst the muffled, 
 D:maddening beating of vile drums and the thin monotonous whine of 
 D:accursed flutes"
-# H.P.Lovecraft, "The Dream Quest of Unknown Kadath"
+# H.P.Lovecraft: The Dream Quest of Unknown Kadath
 
 # Hack - the last monster in the file should always be reserved for ghosts.
 
