@@ -3476,11 +3476,8 @@ static void win_object_details_display(void)
 	identify_fully_aux(o_ptr, 2);
 	
 	/* Put the name at the top. */
-	Term_putstr(2, 0, Term->wid-2, TERM_WHITE,
-		format("%v", object_desc_f3, o_ptr, TRUE, 3));
-
-	/* Put the character used at the top. */
-	Term_putch(0, 0, object_attr(o_ptr), object_char(o_ptr));
+	mc_put_fmt(0, 0, "%v %v", get_symbol_f2, object_attr(o_ptr),
+		object_char(o_ptr), object_desc_f3, o_ptr, TRUE, 3);
 }
 
 /* The option currently selected */
