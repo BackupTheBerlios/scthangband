@@ -2792,14 +2792,17 @@ static bool summon_specific_okay(int r_idx)
         {
 			return !!strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
 				"Phantom");
-            break;
         }
         case UNFLAG(SUMMON_ELEMENTAL):
         {
             return !!strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
 				"lemental");
-            break;
         }
+		case UNFLAG(SUMMON_LIVING):
+		{
+			return (!r_ptr->flags3 &
+				(RF3_EVIL | RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING));
+		}
 		case 0: /* No restrictions. */
 		{
 			return TRUE;

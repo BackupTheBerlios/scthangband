@@ -3546,6 +3546,59 @@ static void annoy_spirit(spirit_type *s_ptr,u32b amount)
 }
 
 /*
+ * Give a special "angry spirit" effect some of the time (dependent on favour
+ * level).
+ *
+ * This makes more severe punishments more common for high level spells,
+ * compounding the relative rarity that any punishment will occur.
+ */
+static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
+{
+	s32b i = rand_int(10000000);
+
+	/* Do nothing most of the time. */
+	if (i%100 >= f_ptr->minskill) return;
+
+	/* Reduce the scale of the number. */
+ 	i /= 100;
+
+ 	/* Abandonment. up to 2% chance for a level 45 favour. */
+	if (i < f_ptr->minskill * f_ptr->minskill)
+	{
+		msg_format("%s disowns you!", s_ptr->name);
+
+		s_ptr->pact = FALSE;
+	}
+
+	/* Summoning, up to 43% chance for a level 45 favour. */
+	else if (i < f_ptr->minskill * 1000)
+	{
+		/* Choose an appropriate summon type most of the time. */
+		int j, type = (!rand_int(3)) ? 0 : (s_ptr->sphere == SPIRIT_NATURE) ?
+			SUMMON_ANIMAL : SUMMON_LIVING;
+
+		msg_format("%s sends some monsters to teach you a lesson!", s_ptr->name);
+
+		for (j = 0; j < 1000; j++)
+		{
+			if (summon_specific(py, px, dun_depth, type) && rand_int(2)) break;
+		}
+
+		/* Nothing happened. */
+		if (j == 1000) msg_format("They get lost on the way...");
+	}
+
+	/* Hostility, and plenty of it. */
+	else
+	{
+		/* Annoy the spirit even more.
+		 * Hack - this can currently give a double message...
+		 */
+		annoy_spirit(s_ptr, rand_range(15, 150));
+	}
+}
+
+/*
  * invoke a favour
  */
 void do_cmd_invoke(void)
@@ -3605,6 +3658,9 @@ void do_cmd_invoke(void)
 	/* Spell failure chance */
 	chance = favour_chance(spell,favour_sphere);
 
+	/* Normal energy use. */
+	energy_use = spirit_energy(favour_sphere, spell);
+
 	/* Don't punish those silly enough to pray to an angry spirit too harshly. */
 	if (s_ptr->annoyance)
 	{
@@ -3618,22 +3674,14 @@ void do_cmd_invoke(void)
 	{
 		if (flush_failure) flush();
 		msg_format("%s refuses your call!",s_ptr->name);
-		/* the call still took energy */
-		energy_use = spirit_energy(favour_sphere, spell);
 		/* The spirit still gets somewhat pissed off */
 		annoy_spirit(s_ptr,rand_int(favour_annoyance(f_ptr)));
 		/* Chance for retribution based on level of favour */
-		if(rand_int(100) < spell)
-		{
-			msg_format("%s curses you",s_ptr->name);
-			activate_ty_curse();
-		}
+		spirit_punish(s_ptr, f_ptr);
 	}
 	/* Process spell */
 	else
 	{
-		/* the call takes energy */
-		energy_use = spirit_energy(favour_sphere, spell);
 		/* The spirit gets pissed off */
 		annoy_spirit(s_ptr,favour_annoyance(f_ptr));
 

@@ -2110,6 +2110,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SUMMON_HUMAN			('p' | SUMMON_NO_UNIQUES)
 #define SUMMON_KOBOLD			('k' | SUMMON_NO_UNIQUES)
 #define SUMMON_IB	('i' | SUMMON_NO_UNIQUES)
+#define SUMMON_LIVING	(0x0110 | SUMMON_NO_UNIQUES)
 
 
 /*
