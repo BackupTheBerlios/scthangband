@@ -1405,16 +1405,20 @@ void win_visible_display(void)
 				if (!who[i].u_idx) attr = TERM_SLATE;
 			}			
 			
+			/* Dump the monster character (not tracking shapechangers) */
+			Term_putch((num / (h - 1)) * 26, (num % (h - 1)) + 1, r_ptr->x_attr, r_ptr->x_char);
+
+
 			/* Dump the monster name */
 			if (who[i].amount == 1)
 			{
 				c_prt(attr, monster_name_idx(who[i].r_idx, who[i].u_idx), (num % (h - 1)) + 1, 
-					(num / (h - 1) * 26));
+					(num / (h - 1) * 26)+2);
 			}
 			else
 			{
 				c_prt(attr, format("%s (x%d)", monster_name_idx(who[i].r_idx, who[i].u_idx),
-					who[i].amount), (num % (h - 1)) + 1, (num / (h - 1)) * 26);
+					who[i].amount), (num % (h - 1)) + 1, (num / (h - 1)) * 26+2);
 			}
 
 			num++;
