@@ -3164,6 +3164,9 @@ option_type option_info[] =
 	{ &show_weights,                TRUE,  4,      0, 11,
 	"show_weights",                 "Show weights in object listings" },
 
+	{ &inscribe_depth,	TRUE,	4,	3,	2,
+	"inscribe_depth",	"Inscribe depth on items at creation" },
+
 	{ &show_choices,                TRUE,  1,      0, 12,
 	"show_choices",                 "Show choices in certain sub-windows" },
 

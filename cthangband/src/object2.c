@@ -3999,6 +3999,19 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		if (cheat_peek) object_mention(j_ptr);
 	}
 	
+	/* Make a note of the level if desired if in the dungeon. */
+	if (inscribe_depth && dun_level)
+	{
+		if (!depth_in_feet)
+		{
+			j_ptr->note = quark_add(format("L%d", dun_depth));
+		}
+		else
+		{
+			j_ptr->note = quark_add(format("%d'", dun_depth*50));
+		}
+	}
+
 	/* Success */
 	return (TRUE);
 }

@@ -256,6 +256,7 @@ extern bool dungeon_stair;
 extern bool dungeon_small;
 extern bool smart_learn;
 extern bool smart_cheat;
+extern bool inscribe_depth;
 extern bool show_labels;
 extern bool show_weights;
 extern bool show_choices;
