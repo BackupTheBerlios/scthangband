@@ -2227,8 +2227,15 @@ void do_cmd_visuals(void)
 				if (i == ESCAPE) break;
 
 				/* Analyze */
-				if (i == 'n') f = (f + MAX_F_IDX + 1) % MAX_F_IDX;
-				if (i == 'N') f = (f + MAX_F_IDX - 1) % MAX_F_IDX;
+				if (FORCELOWER(i) == 'n')
+				{
+					/* Find the next 'real' definition */
+					int add = (islower(i)) ? 1 : MAX_F_IDX-1;
+					do
+					{
+						f = (f + add) % MAX_F_IDX;
+					} while (f_info[f].mimic != f);
+				}
 				if (i == 'a') f_info[f].z_attr = (byte)(ca + 1);
 				if (i == 'A') f_info[f].z_attr = (byte)(ca - 1);
 				if (i == 'c') f_info[f].z_char = (byte)(cc + 1);
