@@ -3914,4 +3914,10 @@ extern feature_type **priority_table;
 #if (defined(CAVE_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern int feature_priorities;
 #endif
+
+/* cmd4.c */
+
+#if (defined(ALLOW_VISUALS)) && (defined(CMD4_C) || defined(INIT2_C))
+extern void init_visuals(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

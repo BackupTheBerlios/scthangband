@@ -1875,7 +1875,7 @@ static void tval_attr_dump(FILE *fff)
 		/* Nothing new to say. */
 		if (a == TERM_WHITE) continue;
 
-		my_fprintf(fff, "# %v\nE:k:%d:%c\n", object_k_name_f1, i, i, a);
+		my_fprintf(fff, "# %v\nE:k:%d:%c\n\n", object_k_name_f1, i, i, a);
 	}
 }
 
@@ -1904,7 +1904,7 @@ static void dump_normal_options(FILE *fff)
 		fprintf(fff, "# Option '%s'\n", op_ptr->o_desc);
 
 		/* Is the option set? */
-		y = ((*op_ptr->o_var)) ? 'Y' : 'N';
+		y = ((*op_ptr->o_var)) ? 'Y' : 'X';
 
 		/* Dump the option */
 		fprintf(fff, "%c:%s\n\n", y, op_ptr->o_text);
@@ -2964,24 +2964,21 @@ static void pref_str_unident(FILE *fff, int i, char startchar, byte a, char c)
  */
 static void visual_dump_moncol(FILE *fff)
 {
-	s16b n;
-	char out[80] = "M";
+	char out[2+N_ELEMENTS(moncol)*3] = "M", *s = out+1;
+	moncol_type *mc_ptr;
 
-	for (n = 0; n < MAX_MONCOL; n++)
+	FOR_ALL_IN(moncol, mc_ptr)
 	{
-		moncol_type *mc_ptr = &moncol[n];
 		char c1 = atchar[mc_ptr->attr/16];
 		char c2 = atchar[mc_ptr->attr%16];
 
 		/* A leading space looks neater than a leading d.*/
 		if (c1 == 'd') c1 = ' ';
-		strcat(out, format(":%c%c", c1, c2));
+		s += sprintf(s, ":%c%c", c1, c2);
 	}
-	/* Start dumping */
-	fprintf(fff, "\n\n");
-	fprintf(fff, "# Monster memory attr definitions\n\n");
-	fprintf(fff, out);
-	fprintf(fff, "\n\n\n\n");
+
+	/* Dump it with a comment. */
+	fprintf(fff, "\n\n# Monster memory attr definitions\n\n%s\n\n\n\n", out);
 }
 
 
@@ -3019,6 +3016,21 @@ static visual_type visual[5] =
 		0, "Unidentified object attr/char definitions", 0, 'U', TRUE, TRUE},
 };
 
+/*
+ * Hack - set a few elements of visual[] which are only set at run-time.
+ */
+void init_visuals(void)
+{
+	if (visual[0].max) return;
+
+	/* Enter the maxima separately, as they are determined at run-time. */
+	visual[0].max = MAX_R_IDX;
+	visual[1].max = MAX_K_IDX;
+	visual[2].max = MAX_F_IDX;
+	visual[3].max = MAX_MONCOL;
+	visual[4].max = MAX_U_IDX;
+}
+
 static void dump_visuals_aux(FILE *fff, visual_type *vs_ptr)
 {
 	int i;
@@ -3029,9 +3041,6 @@ static void dump_visuals_aux(FILE *fff, visual_type *vs_ptr)
 		/* Start dumping */
 		fprintf(fff, "\n\n");
 		fprintf(fff, "# %s\n", vs_ptr->initstring);
-
-		/* Print the version. */
-		dump_version(fff);
 
 		fprintf(fff, "\n%c:---reset---\n\n", vs_ptr->startchar);
 
@@ -3064,9 +3073,6 @@ static void dump_visuals_aux(FILE *fff, visual_type *vs_ptr)
 	{
 		(*(vs_ptr->dump))(fff);
 	}
-
-	/* Close */
-	my_fclose(fff);
 }
 
 static void dump_visuals(visual_type *vs_ptr)
@@ -3105,8 +3111,14 @@ static void dump_visuals(visual_type *vs_ptr)
 	}
 	else
 	{
+		/* Print the version. */
+		dump_version(fff);
+
 		/* Actually dump the file. */
 		dump_visuals_aux(fff, vs_ptr);
+
+		/* Close */
+		my_fclose(fff);
 
 		/* Message */
 		msg_format("Dumped %s.", vs_ptr->text);
@@ -3278,17 +3290,6 @@ static void do_cmd_visuals(void)
 #endif /* ALLOW_VISUALS */
 
 	uint i;
-
-	/* Enter the maxima separately, as they are determined at run-time. */
-	visual[0].max = MAX_R_IDX;
-	visual[1].max = MAX_K_IDX;
-	visual[2].max = MAX_F_IDX;
-	visual[3].max = MAX_MONCOL;
-	visual[4].max = MAX_U_IDX;
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
 
 	/* Interact until done */
 	while (1)
@@ -3650,7 +3651,7 @@ static errr preference_dump(void)
 
 #ifdef ALLOW_VISUALS
 	/* Dump visuals. */
-	for (vs_ptr = visual; vs_ptr < END_PTR(visual); vs_ptr++)
+	FOR_ALL_IN(visual, vs_ptr)
 	{
 		dump_visuals_aux(fff, vs_ptr);
 	}
@@ -3661,8 +3662,8 @@ static errr preference_dump(void)
 	dump_colours(fff);
 #endif /* ALLOW_COLORS */
 
-	/* Messgage. */
-	msg_print("Dumped preferences.");
+	/* Close */
+	my_fclose(fff);
 
 	return SUCCESS;
 }

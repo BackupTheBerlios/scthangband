@@ -903,6 +903,11 @@ static errr init_other(void)
 	/* Initialise the feature priority table. */
 	init_feature_priorities();
 
+#ifdef ALLOW_VISUALS
+	/* Copy across the sizes of the visual tables. */
+	init_visuals();
+#endif /* ALLOW_VISUALS */
+
 	/* Success */
 	return (0);
 }
