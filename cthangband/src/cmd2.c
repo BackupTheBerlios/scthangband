@@ -1332,11 +1332,11 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
  */
  #ifdef ALLOW_EASY_DISARM
  
-bool do_cmd_disarm_aux(int y, int x, int dir)
+bool do_cmd_disarm_aux(int y, int x)
  
  #else /* ALLOW_EASY_DISARM -- TNB */
  
-static bool do_cmd_disarm_aux(int y, int x, int dir)
+static bool do_cmd_disarm_aux(int y, int x)
  
  #endif /* ALLOW_EASY_DISARM -- TNB */
 {
@@ -1394,12 +1394,12 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
  #ifdef ALLOW_EASY_DISARM
  
  		/* Move the player onto the trap */
- 		move_player(dir, easy_disarm);
+ 		move_player(y, x, easy_disarm);
  
  #else /* ALLOW_EASY_DISARM -- TNB */
  
   		/* move the player onto the trap grid */
-  		move_player(dir, FALSE);
+  		move_player(y, x, FALSE);
  
  #endif /* ALLOW_EASY_DISARM -- TNB */
 	}
@@ -1426,12 +1426,12 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
  #ifdef ALLOW_EASY_DISARM
  
  		/* Move the player onto the trap */
- 		move_player(dir, easy_disarm);
+ 		move_player(y, x, easy_disarm);
  
  #else /* ALLOW_EASY_DISARM -- TNB */
  
   		/* Move the player onto the trap */
-  		move_player(dir, FALSE);
+  		move_player(y, x, FALSE);
  
  #endif /* ALLOW_EASY_DISARM -- TNB */
 	}
@@ -1529,7 +1529,7 @@ void do_cmd_disarm(void)
 		else
 		{
 			/* Disarm the trap */
-			more = do_cmd_disarm_aux(y, x, coords_to_dir(y, x));
+			more = do_cmd_disarm_aux(y, x);
 		}
 	}
 
@@ -1547,7 +1547,7 @@ void do_cmd_disarm(void)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_bash_aux(int y, int x, int dir)
+static bool do_cmd_bash_aux(int y, int x)
 {
 	int			bash, temp;
 
@@ -1600,7 +1600,7 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
 		sound(SOUND_OPENDOOR);
 
 		/* Hack -- Fall through the door */
-		move_player(dir, FALSE);
+		move_player(y, x, FALSE);
 
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_LITE);
@@ -1700,7 +1700,7 @@ void do_cmd_bash(void)
 		else
 		{
 			/* Bash the door */
-			more = do_cmd_bash_aux(y, x, coords_to_dir(y, x));
+			more = do_cmd_bash_aux(y, x);
 		}
 	}
 
@@ -1815,7 +1815,7 @@ void do_cmd_alter(void)
             && (c_ptr->feat < FEAT_MINOR_GLYPH))
 		{
 			/* Tunnel */
-			more = do_cmd_bash_aux(y, x, coords_to_dir(y, x));
+			more = do_cmd_bash_aux(y, x);
 			alter_cmd = 'B';
 		}
 
@@ -1833,7 +1833,7 @@ void do_cmd_alter(void)
             && (c_ptr->feat < FEAT_MINOR_GLYPH))
 		{
 			/* Tunnel */
-			more = do_cmd_disarm_aux(y, x, coords_to_dir(y, x));
+			more = do_cmd_disarm_aux(y, x);
 			alter_cmd = 'D';
 		}
 
@@ -1961,7 +1961,7 @@ void do_cmd_spike(void)
  */
 void do_cmd_walk(int pickup)
 {
-	int dir;
+	int x, y;
 
 	bool more = FALSE;
 
@@ -1980,13 +1980,13 @@ void do_cmd_walk(int pickup)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
 		/* Take a turn */
 		energy_use = extract_energy[p_ptr->pspeed]; 
 
 		/* Actually move the character */
-		move_player(dir, pickup);
+		move_player(y, x, pickup);
 
 		/* Allow more walking */
 		more = TRUE;

@@ -1773,10 +1773,8 @@ void move_to(s16b y, s16b x)
  * any monster which might be in the destination grid.  Previously,
  * moving into walls was "free" and did NOT hit invisible monsters.
  */
-void move_player(int dir, int do_pickup)
+void move_player(int y, int x, int do_pickup)
 {
-	int                     y, x;
-
 	cave_type               *c_ptr;
 	monster_type    *m_ptr;
 
@@ -1785,10 +1783,6 @@ void move_player(int dir, int do_pickup)
 	bool p_can_pass_walls = FALSE;
 	bool wall_is_perma = FALSE;
 	bool stormbringer = FALSE;
-
-    /* Find the result of moving */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
 
 	/* Examine the destination */
 	c_ptr = &cave[y][x];
@@ -1869,7 +1863,7 @@ void move_player(int dir, int do_pickup)
  		(c_ptr->feat >= FEAT_TRAP_HEAD) &&
  		(c_ptr->feat <= FEAT_TRAP_TAIL))
  	{
- 		(void) do_cmd_disarm_aux(y, x, dir);
+ 		(void) do_cmd_disarm_aux(y, x);
 		TFREE(m_name);
  		return;
  	}
@@ -2929,15 +2923,15 @@ void run_step(int dir)
 	energy_use = extract_energy[p_ptr->pspeed]; 
 
 	/* Move the player, using the "pickup" flag */
- #ifdef ALLOW_EASY_DISARM
- 
- 	move_player(find_current, FALSE);
- 
- #else /* ALLOW_EASY_DISARM -- TNB */
- 
- 	move_player(find_current, always_pickup);
- 
- #endif /* ALLOW_EASY_DISARM -- TNB */
+#ifdef ALLOW_EASY_DISARM
+
+	move_player(py + ddy[find_current], px + ddx[find_current], FALSE);
+
+#else /* ALLOW_EASY_DISARM -- TNB */
+
+	move_player(py + ddy[find_current], px + ddx[find_current], always_pickup);
+
+#endif /* ALLOW_EASY_DISARM -- TNB */
 }
 
 /*

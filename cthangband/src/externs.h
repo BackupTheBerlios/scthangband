@@ -153,7 +153,7 @@ extern void do_cmd_attack(void);
 extern void move_to(s16b y, s16b x);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C))
-extern void move_player(int dir, int do_pickup);
+extern void move_player(int y, int x, int do_pickup);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C))
 extern void run_step(int dir);
@@ -186,7 +186,7 @@ extern void do_cmd_tunnel(void);
 extern  bool easy_open_door(int y, int x);
 #endif
 #if (defined(ALLOW_EASY_DISARM)) && (defined(CMD1_C) || defined(CMD2_C))
-extern bool do_cmd_disarm_aux(int y, int x, int dir);
+extern bool do_cmd_disarm_aux(int y, int x);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_disarm(void);
