@@ -91,6 +91,27 @@ static bool know_damage(int r_idx, int i)
 }
 
 
+/* Colourful monster descriptions to make the important points more obvious. */
+#define MONCOL_DEATH	TERM_WHITE	/* How many times you've fought to the death */
+#define MONCOL_FLAVOUR	TERM_WHITE	/* The flavour text from r_info.txt */
+#define MONCOL_DEPTH	TERM_WHITE	/* Normal depth and speed */
+#define MONCOL_AURA	TERM_WHITE	/* Any defensive auras it may have */
+#define MONCOL_ESCORT	TERM_WHITE	/* Any escort it may have */
+#define MONCOL_INATE	TERM_YELLOW	/* Any inate attacks it may have */
+#define MONCOL_BREATH	TERM_YELLOW	/* Any breath attacks it may have */
+#define MONCOL_MAGIC	TERM_YELLOW	/* Any magical attacks it may have */
+#define MONCOL_ACHP	TERM_WHITE	/* The AC and HP of the monster */
+#define MONCOL_ABLE1	TERM_WHITE	/* Bashing down doors, destroying items, etc. */
+#define MONCOL_ABLE2	TERM_WHITE	/* Breeding explosively, invisibility, etc. */
+#define MONCOL_WEAK	TERM_WHITE	/* Susceptibilities to specific attacks */
+#define MONCOL_ELEM	TERM_L_GREEN	/* Elemental resistances */
+#define MONCOL_RESIST	TERM_L_GREEN	/* Other resistances */
+#define MONCOL_IMMUN	TERM_L_GREEN	/* Immunity to stunning, fear, confusion or sleep */
+#define MONCOL_OBSERVE	TERM_WHITE	/* How observant it is */
+#define MONCOL_DROP	TERM_WHITE	/* What it can drop */
+#define MONCOL_ATTACK	TERM_YELLOW	/* What melee attacks it has */
+#define MONCOL_QUEST	TERM_L_RED	/* If it is a quest monster */
+
 /*
  * Hack -- display monster information using "roff()"
  *
@@ -252,20 +273,20 @@ static void roff_aux(int r_idx)
 		if (r_ptr->r_deaths)
 		{
 			/* Killed ancestors */
-			roff(format("%^s has slain %d of your ancestors",
+			c_roff(MONCOL_DEATH, format("%^s has slain %d of your ancestors",
 			            wd_he[msex], r_ptr->r_deaths));
 
 			/* But we've also killed it */
 			if (dead)
 			{
-				roff(format(", but you have avenged %s!  ",
+				c_roff(MONCOL_DEATH, format(", but you have avenged %s!  ",
 				            plural(r_ptr->r_deaths, "him", "them")));
 			}
 
 			/* Unavenged (ever) */
 			else
 			{
-				roff(format(", who %s unavenged.  ",
+				c_roff(MONCOL_DEATH, format(", who %s unavenged.  ",
 				            plural(r_ptr->r_deaths, "remains", "remain")));
 			}
 		}
@@ -273,7 +294,7 @@ static void roff_aux(int r_idx)
 		/* Dead unique who never hurt us */
 		else if (dead)
 		{
-			roff("You have slain this foe.  ");
+			c_roff(MONCOL_DEATH, "You have slain this foe.  ");
 		}
 	}
 
@@ -281,27 +302,27 @@ static void roff_aux(int r_idx)
 	else if (r_ptr->r_deaths)
 	{
 		/* Dead ancestors */
-		roff(format("%d of your ancestors %s been killed by this creature, ",
+		c_roff(MONCOL_DEATH, format("%d of your ancestors %s been killed by this creature, ",
 		            r_ptr->r_deaths, plural(r_ptr->r_deaths, "has", "have")));
 
 		/* Some kills this life */
 		if (r_ptr->r_pkills)
 		{
-			roff(format("and you have exterminated at least %d of the creatures.  ",
+			c_roff(MONCOL_DEATH, format("and you have exterminated at least %d of the creatures.  ",
 			            r_ptr->r_pkills));
 		}
 
 		/* Some kills past lives */
 		else if (r_ptr->r_tkills)
 		{
-			roff(format("and %s have exterminated at least %d of the creatures.  ",
+			c_roff(MONCOL_DEATH, format("and %s have exterminated at least %d of the creatures.  ",
 			            "your ancestors", r_ptr->r_tkills));
 		}
 
 		/* No kills */
 		else
 		{
-			roff(format("and %s is not ever known to have been defeated.  ",
+			c_roff(MONCOL_DEATH, format("and %s is not ever known to have been defeated.  ",
 			            wd_he[msex]));
 		}
 	}
@@ -312,21 +333,21 @@ static void roff_aux(int r_idx)
 		/* Killed some this life */
 		if (r_ptr->r_pkills)
 		{
-			roff(format("You have killed at least %d of these creatures.  ",
+			c_roff(MONCOL_DEATH, format("You have killed at least %d of these creatures.  ",
 			            r_ptr->r_pkills));
 		}
 
 		/* Killed some last life */
 		else if (r_ptr->r_tkills)
 		{
-			roff(format("Your ancestors have killed at least %d of these creatures.  ",
+			c_roff(MONCOL_DEATH, format("Your ancestors have killed at least %d of these creatures.  ",
 			            r_ptr->r_tkills));
 		}
 
 		/* Killed none */
 		else
 		{
-			roff("No battles to the death are recalled.  ");
+			c_roff(MONCOL_DEATH, "No battles to the death are recalled.  ");
 		}
 	}
 
@@ -377,8 +398,8 @@ static void roff_aux(int r_idx)
 #endif
 
 		/* Dump it */
-		roff(buf);
-		roff("  ");
+		c_roff(MONCOL_FLAVOUR, buf);
+		c_roff(MONCOL_FLAVOUR, "  ");
 	}
 
 
@@ -388,19 +409,19 @@ static void roff_aux(int r_idx)
 	/* Describe location */
 	if (r_ptr->level == 0)
 	{
-		roff(format("%^s lives in the town", wd_he[msex]));
+		c_roff(MONCOL_DEPTH, format("%^s lives in the town", wd_he[msex]));
 		old = TRUE;
 	}
 	else if (r_ptr->r_tkills)
 	{
 		if (depth_in_feet)
 		{
-			roff(format("%^s is normally found at depths of %d feet",
+			c_roff(MONCOL_DEPTH, format("%^s is normally found at depths of %d feet",
 			            wd_he[msex], r_ptr->level * 50));
 		}
 		else
 		{
-			roff(format("%^s is normally found on dungeon level %d",
+			c_roff(MONCOL_DEPTH, format("%^s is normally found on dungeon level %d",
 			            wd_he[msex], r_ptr->level));
 		}
 		old = TRUE;
@@ -413,14 +434,14 @@ static void roff_aux(int r_idx)
 		/* Introduction */
 		if (old)
 		{
-			roff(", and ");
+			c_roff(MONCOL_DEPTH, ", and ");
 		}
 		else
 		{
-			roff(format("%^s ", wd_he[msex]));
+			c_roff(MONCOL_DEPTH, format("%^s ", wd_he[msex]));
 			old = TRUE;
 		}
-		roff("moves");
+		c_roff(MONCOL_DEPTH, "moves");
 
 		/* Random-ness */
 		if ((flags1 & (RF1_RAND_50)) || (flags1 & (RF1_RAND_25)))
@@ -428,40 +449,40 @@ static void roff_aux(int r_idx)
 			/* Adverb */
 			if ((flags1 & (RF1_RAND_50)) && (flags1 & (RF1_RAND_25)))
 			{
-				roff(" extremely");
+				c_roff(MONCOL_DEPTH, " extremely");
 			}
 			else if (flags1 & (RF1_RAND_50))
 			{
-				roff(" somewhat");
+				c_roff(MONCOL_DEPTH, " somewhat");
 			}
 			else if (flags1 & (RF1_RAND_25))
 			{
-				roff(" a bit");
+				c_roff(MONCOL_DEPTH, " a bit");
 			}
 
 			/* Adjective */
-			roff(" erratically");
+			c_roff(MONCOL_DEPTH, " erratically");
 
 			/* Hack -- Occasional conjunction */
-			if (r_ptr->speed != 110) roff(", and");
+			if (r_ptr->speed != 110) c_roff(MONCOL_DEPTH, ", and");
 		}
 
 		/* Speed */
 		if (r_ptr->speed > 110)
 		{
-			if (r_ptr->speed > 130) roff(" incredibly");
-			else if (r_ptr->speed > 120) roff(" very");
-			roff(" quickly");
+			if (r_ptr->speed > 130) c_roff(MONCOL_DEPTH, " incredibly");
+			else if (r_ptr->speed > 120) c_roff(MONCOL_DEPTH, " very");
+			c_roff(MONCOL_DEPTH, " quickly");
 		}
 		else if (r_ptr->speed < 110)
 		{
-			if (r_ptr->speed < 90) roff(" incredibly");
-			else if (r_ptr->speed < 100) roff(" very");
-			roff(" slowly");
+			if (r_ptr->speed < 90) c_roff(MONCOL_DEPTH, " incredibly");
+			else if (r_ptr->speed < 100) c_roff(MONCOL_DEPTH, " very");
+			c_roff(MONCOL_DEPTH, " slowly");
 		}
 		else
 		{
-			roff(" at normal speed");
+			c_roff(MONCOL_DEPTH, " at normal speed");
 		}
 	}
 
@@ -471,22 +492,22 @@ static void roff_aux(int r_idx)
 		/* Introduce */
 		if (old)
 		{
-			roff(", but ");
+			c_roff(MONCOL_DEPTH, ", but ");
 		}
 		else
 		{
-			roff(format("%^s ", wd_he[msex]));
+			c_roff(MONCOL_DEPTH, format("%^s ", wd_he[msex]));
 			old = TRUE;
 		}
 
 		/* Describe */
-		roff("does not deign to chase intruders");
+		c_roff(MONCOL_DEPTH, "does not deign to chase intruders");
 	}
 
 	/* End this sentence */
 	if (old)
 	{
-		roff(".  ");
+		c_roff(MONCOL_DEPTH, ".  ");
 		old = FALSE;
 	}
 
@@ -494,34 +515,34 @@ static void roff_aux(int r_idx)
 
     if ((flags2 & (RF2_AURA_FIRE)) && (flags2 & (RF2_AURA_ELEC)))
     {
-        roff(format("%^s is surrounded by flames and electricity.  ", wd_he[msex]));
+        c_roff(MONCOL_AURA, format("%^s is surrounded by flames and electricity.  ", wd_he[msex]));
     }
     else if (flags2 & (RF2_AURA_FIRE))
     {
-        roff(format("%^s is surrounded by flames.  ", wd_he[msex]));
+        c_roff(MONCOL_AURA, format("%^s is surrounded by flames.  ", wd_he[msex]));
     }
     else if (flags2 & (RF2_AURA_ELEC))
     {
-        roff(format("%^s is surrounded by electricity.  ", wd_he[msex]));
+        c_roff(MONCOL_AURA, format("%^s is surrounded by electricity.  ", wd_he[msex]));
     }
 
     if (flags2 & (RF2_REFLECTING))
     {
-        roff(format("%^s reflects bolt spells.  ", wd_he[msex]));
+        c_roff(MONCOL_AURA, format("%^s reflects bolt spells.  ", wd_he[msex]));
     }
 
 
 	/* Describe escorts */
 	if ((flags1 & (RF1_ESCORT)) || (flags1 & (RF1_ESCORTS)))
 	{
-		roff(format("%^s usually appears with escorts.  ",
+		c_roff(MONCOL_ESCORT, format("%^s usually appears with escorts.  ",
 		            wd_he[msex]));
 	}
 
 	/* Describe friends */
 	else if ((flags1 & (RF1_FRIEND)) || (flags1 & (RF1_FRIENDS)))
 	{
-		roff(format("%^s usually appears in groups.  ",
+		c_roff(MONCOL_ESCORT, format("%^s usually appears in groups.  ",
 		            wd_he[msex]));
 	}
 
@@ -541,22 +562,22 @@ static void roff_aux(int r_idx)
 	if (vn)
 	{
 		/* Intro */
-		roff(format("%^s", wd_he[msex]));
+		c_roff(MONCOL_INATE, format("%^s", wd_he[msex]));
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" may ");
-			else if (n < vn-1) roff(", ");
-			else roff(" or ");
+			if (n == 0) c_roff(MONCOL_INATE, " may ");
+			else if (n < vn-1) c_roff(MONCOL_INATE, ", ");
+			else c_roff(MONCOL_INATE," or ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_INATE,vp[n]);
 		}
 
 		/* End */
-		roff(".  ");
+		c_roff(MONCOL_INATE, ".  ");
 	}
 
 
@@ -592,18 +613,18 @@ static void roff_aux(int r_idx)
 		breath = TRUE;
 
 		/* Intro */
-		roff(format("%^s", wd_he[msex]));
+		c_roff(MONCOL_BREATH, format("%^s", wd_he[msex]));
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" may breathe ");
-			else if (n < vn-1) roff(", ");
-			else roff(" or ");
+			if (n == 0) c_roff(MONCOL_BREATH, " may breathe ");
+			else if (n < vn-1) c_roff(MONCOL_BREATH, ", ");
+			else c_roff(MONCOL_BREATH, " or ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_BREATH, vp[n]);
 		}
 	}
 
@@ -687,29 +708,29 @@ static void roff_aux(int r_idx)
 		/* Intro */
 		if (breath)
 		{
-			roff(", and is also");
+			c_roff(MONCOL_MAGIC, ", and is also");
 		}
 		else
 		{
-			roff(format("%^s is", wd_he[msex]));
+			c_roff(MONCOL_MAGIC, format("%^s is", wd_he[msex]));
 		}
 
 		/* Verb Phrase */
-		roff(" magical, casting spells");
+		c_roff(MONCOL_MAGIC, " magical, casting spells");
 
 		/* Adverb */
-		if (flags2 & (RF2_SMART)) roff(" intelligently");
+		if (flags2 & (RF2_SMART)) c_roff(MONCOL_MAGIC, " intelligently");
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" which ");
-			else if (n < vn-1) roff(", ");
-			else roff(" or ");
+			if (n == 0) c_roff(MONCOL_MAGIC, " which ");
+			else if (n < vn-1) c_roff(MONCOL_MAGIC, ", ");
+			else c_roff(MONCOL_MAGIC, " or ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_MAGIC, vp[n]);
 		}
 	}
 
@@ -726,18 +747,18 @@ static void roff_aux(int r_idx)
 		/* Describe the spell frequency */
 		if (m > 100)
 		{
-			roff(format("; 1 time in %d", 100 / n));
+			c_roff(MONCOL_MAGIC, format("; 1 time in %d", 100 / n));
 		}
 
 		/* Guess at the frequency */
 		else if (m)
 		{
 			n = ((n + 9) / 10) * 10;
-			roff(format("; about 1 time in %d", 100 / n));
+			c_roff(MONCOL_MAGIC, format("; about 1 time in %d", 100 / n));
 		}
 
 		/* End this sentence */
-		roff(".  ");
+		c_roff(MONCOL_MAGIC, ".  ");
 	}
 
 
@@ -745,20 +766,20 @@ static void roff_aux(int r_idx)
 	if (know_armour(r_idx))
 	{
 		/* Armor */
-		roff(format("%^s has an armor rating of %d",
+		c_roff(MONCOL_ACHP, format("%^s has an armor rating of %d",
 		            wd_he[msex], r_ptr->ac));
 
 		/* Maximized hitpoints */
 		if (flags1 & (RF1_FORCE_MAXHP))
 		{
-			roff(format(" and a life rating of %d.  ",
+			c_roff(MONCOL_ACHP, format(" and a life rating of %d.  ",
 			            r_ptr->hdice * r_ptr->hside));
 		}
 
 		/* Variable hitpoints */
 		else
 		{
-			roff(format(" and a life rating of %dd%d.  ",
+			c_roff(MONCOL_ACHP, format(" and a life rating of %dd%d.  ",
 			            r_ptr->hdice, r_ptr->hside));
 		}
 	}
@@ -780,49 +801,49 @@ static void roff_aux(int r_idx)
 	if (vn)
 	{
 		/* Intro */
-		roff(format("%^s", wd_he[msex]));
+		c_roff(MONCOL_ABLE1, format("%^s", wd_he[msex]));
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" can ");
-			else if (n < vn-1) roff(", ");
-			else roff(" and ");
+			if (n == 0) c_roff(MONCOL_ABLE1, " can ");
+			else if (n < vn-1) c_roff(MONCOL_ABLE1, ", ");
+			else c_roff(MONCOL_ABLE1, " and ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_ABLE1, vp[n]);
 		}
 
 		/* End */
-		roff(".  ");
+		c_roff(MONCOL_ABLE1, ".  ");
 	}
 
 
 	/* Describe special abilities. */
 	if (flags2 & (RF2_INVISIBLE))
 	{
-		roff(format("%^s is invisible.  ", wd_he[msex]));
+		c_roff(MONCOL_ABLE2, format("%^s is invisible.  ", wd_he[msex]));
 	}
 	if (flags2 & (RF2_COLD_BLOOD))
 	{
-		roff(format("%^s is cold blooded.  ", wd_he[msex]));
+		c_roff(MONCOL_ABLE2, format("%^s is cold blooded.  ", wd_he[msex]));
 	}
 	if (flags2 & (RF2_EMPTY_MIND))
 	{
-		roff(format("%^s is not detected by telepathy.  ", wd_he[msex]));
+		c_roff(MONCOL_ABLE2, format("%^s is not detected by telepathy.  ", wd_he[msex]));
 	}
 	if (flags2 & (RF2_WEIRD_MIND))
 	{
-		roff(format("%^s is rarely detected by telepathy.  ", wd_he[msex]));
+		c_roff(MONCOL_ABLE2, format("%^s is rarely detected by telepathy.  ", wd_he[msex]));
 	}
 	if (flags2 & (RF2_MULTIPLY))
 	{
-		roff(format("%^s breeds explosively.  ", wd_he[msex]));
+		c_roff(MONCOL_ABLE2, format("%^s breeds explosively.  ", wd_he[msex]));
 	}
 	if (flags2 & (RF2_REGENERATE))
 	{
-		roff(format("%^s regenerates quickly.  ", wd_he[msex]));
+		c_roff(MONCOL_ABLE2, format("%^s regenerates quickly.  ", wd_he[msex]));
 	}
 
 
@@ -837,22 +858,22 @@ static void roff_aux(int r_idx)
 	if (vn)
 	{
 		/* Intro */
-		roff(format("%^s", wd_he[msex]));
+		c_roff(MONCOL_WEAK, format("%^s", wd_he[msex]));
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" is hurt by ");
-			else if (n < vn-1) roff(", ");
-			else roff(" and ");
+			if (n == 0) c_roff(MONCOL_WEAK, " is hurt by ");
+			else if (n < vn-1) c_roff(MONCOL_WEAK, ", ");
+			else c_roff(MONCOL_WEAK, " and ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_WEAK, vp[n]);
 		}
 
 		/* End */
-		roff(".  ");
+		c_roff(MONCOL_WEAK, ".  ");
 	}
 
 
@@ -868,22 +889,22 @@ static void roff_aux(int r_idx)
 	if (vn)
 	{
 		/* Intro */
-		roff(format("%^s", wd_he[msex]));
+		c_roff(MONCOL_ELEM, format("%^s", wd_he[msex]));
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" resists ");
-			else if (n < vn-1) roff(", ");
-			else roff(" and ");
+			if (n == 0) c_roff(MONCOL_ELEM, " resists ");
+			else if (n < vn-1) c_roff(MONCOL_ELEM, ", ");
+			else c_roff(MONCOL_ELEM, " and ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_ELEM, vp[n]);
 		}
 
 		/* End */
-		roff(".  ");
+		c_roff(MONCOL_ELEM, ".  ");
 	}
 
 
@@ -900,22 +921,22 @@ static void roff_aux(int r_idx)
 	if (vn)
 	{
 		/* Intro */
-		roff(format("%^s", wd_he[msex]));
+		c_roff(MONCOL_RESIST, format("%^s", wd_he[msex]));
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" resists ");
-			else if (n < vn-1) roff(", ");
-			else roff(" and ");
+			if (n == 0) c_roff(MONCOL_RESIST, " resists ");
+			else if (n < vn-1) c_roff(MONCOL_RESIST, ", ");
+			else c_roff(MONCOL_RESIST, " and ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_RESIST, vp[n]);
 		}
 
 		/* End */
-		roff(".  ");
+		c_roff(MONCOL_RESIST, ".  ");
 	}
 
 
@@ -930,22 +951,22 @@ static void roff_aux(int r_idx)
 	if (vn)
 	{
 		/* Intro */
-		roff(format("%^s", wd_he[msex]));
+		c_roff(MONCOL_IMMUN, format("%^s", wd_he[msex]));
 
 		/* Scan */
 		for (n = 0; n < vn; n++)
 		{
 			/* Intro */
-			if (n == 0) roff(" cannot be ");
-			else if (n < vn-1) roff(", ");
-			else roff(" or ");
+			if (n == 0) c_roff(MONCOL_IMMUN, " cannot be ");
+			else if (n < vn-1) c_roff(MONCOL_IMMUN, ", ");
+			else c_roff(MONCOL_IMMUN, " or ");
 
 			/* Dump */
-			roff(vp[n]);
+			c_roff(MONCOL_IMMUN, vp[n]);
 		}
 
 		/* End */
-		roff(".  ");
+		c_roff(MONCOL_IMMUN, ".  ");
 	}
 
 
@@ -1001,7 +1022,7 @@ static void roff_aux(int r_idx)
 			act = "is ever vigilant for";
 		}
 
-		roff(format("%^s %s intruders, which %s may notice from %d feet.  ",
+		c_roff(MONCOL_OBSERVE, format("%^s %s intruders, which %s may notice from %d feet.  ",
 		            wd_he[msex], act, wd_he[msex], 10 * r_ptr->aaf));
 	}
 
@@ -1013,7 +1034,7 @@ static void roff_aux(int r_idx)
 		sin = FALSE;
 
 		/* Intro */
-		roff(format("%^s may carry", wd_he[msex]));
+		c_roff(MONCOL_DROP, format("%^s may carry", wd_he[msex]));
 
 		/* Count maximum drop */
 		n = MAX(r_ptr->r_drop_gold, r_ptr->r_drop_item);
@@ -1021,20 +1042,20 @@ static void roff_aux(int r_idx)
 		/* One drop (may need an "n") */
 		if (n == 1)
 		{
-			roff(" a");
+			c_roff(MONCOL_DROP, " a");
 			sin = TRUE;
 		}
 
 		/* Two drops */
 		else if (n == 2)
 		{
-			roff(" one or two");
+			c_roff(MONCOL_DROP, " one or two");
 		}
 
 		/* Many drops */
 		else
 		{
-			roff(format(" up to %d", n));
+			c_roff(MONCOL_DROP, format(" up to %d", n));
 		}
 
 
@@ -1062,13 +1083,13 @@ static void roff_aux(int r_idx)
 		if (r_ptr->r_drop_item)
 		{
 			/* Handle singular "an" */
-			if (sin) roff("n");
+			if (sin) c_roff(MONCOL_DROP, "n");
 			sin = FALSE;
 
 			/* Dump "object(s)" */
-			if (p) roff(p);
-			roff(" object");
-			if (n != 1) roff("s");
+			if (p) c_roff(MONCOL_DROP, p);
+			c_roff(MONCOL_DROP, " object");
+			if (n != 1) c_roff(MONCOL_DROP, "s");
 
 			/* Conjunction replaces variety, if needed for "gold" below */
 			p = " or";
@@ -1081,17 +1102,17 @@ static void roff_aux(int r_idx)
 			if (!p) sin = FALSE;
 
 			/* Handle singular "an" */
-			if (sin) roff("n");
+			if (sin) c_roff(MONCOL_DROP, "n");
 			sin = FALSE;
 
 			/* Dump "treasure(s)" */
-			if (p) roff(p);
-			roff(" treasure");
-			if (n != 1) roff("s");
+			if (p) c_roff(MONCOL_DROP, p);
+			c_roff(MONCOL_DROP, " treasure");
+			if (n != 1) c_roff(MONCOL_DROP, "s");
 		}
 
 		/* End this sentence */
-		roff(".  ");
+		c_roff(MONCOL_DROP, ".  ");
 	}
 
 
@@ -1197,15 +1218,15 @@ static void roff_aux(int r_idx)
 		/* Introduce the attack description */
 		if (!r)
 		{
-			roff(format("%^s can ", wd_he[msex]));
+			c_roff(MONCOL_ATTACK, format("%^s can ", wd_he[msex]));
 		}
 		else if (r < n-1)
 		{
-			roff(", ");
+			c_roff(MONCOL_ATTACK, ", ");
 		}
 		else
 		{
-			roff(", and ");
+			c_roff(MONCOL_ATTACK, ", and ");
 		}
 
 
@@ -1213,22 +1234,22 @@ static void roff_aux(int r_idx)
 		if (!p) p = "do something weird";
 
 		/* Describe the method */
-		roff(p);
+		c_roff(MONCOL_ATTACK, p);
 
 
 		/* Describe the effect (if any) */
 		if (q)
 		{
 			/* Describe the attack type */
-			roff(" to ");
-			roff(q);
+			c_roff(MONCOL_ATTACK, " to ");
+			c_roff(MONCOL_ATTACK, q);
 
 			/* Describe damage (if known) */
 			if (d1 && d2 && know_damage(r_idx, m))
 			{
 				/* Display the damage */
-				roff(" with damage");
-				roff(format(" %dd%d", d1, d2));
+				c_roff(MONCOL_ATTACK, " with damage");
+				c_roff(MONCOL_ATTACK, format(" %dd%d", d1, d2));
 			}
 		}
 
@@ -1240,26 +1261,26 @@ static void roff_aux(int r_idx)
 	/* Finish sentence above */
 	if (r)
 	{
-		roff(".  ");
+		c_roff(MONCOL_ATTACK, ".  ");
 	}
 
 	/* Notice lack of attacks */
 	else if (flags1 & (RF1_NEVER_BLOW))
 	{
-		roff(format("%^s has no physical attacks.  ", wd_he[msex]));
+		c_roff(MONCOL_ATTACK, format("%^s has no physical attacks.  ", wd_he[msex]));
 	}
 
 	/* Or describe the lack of knowledge */
 	else
 	{
-		roff(format("Nothing is known about %s attack.  ", wd_his[msex]));
+		c_roff(MONCOL_ATTACK, format("Nothing is known about %s attack.  ", wd_his[msex]));
 	}
 
 
 	/* Notice "Quest" monsters */
 	if (flags1 & (RF1_GUARDIAN))
 	{
-		roff("You feel an intense desire to kill this monster...  ");
+		c_roff(MONCOL_QUEST, "You feel an intense desire to kill this monster...  ");
 	}
 
 
