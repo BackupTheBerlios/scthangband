@@ -1552,8 +1552,9 @@ static bool point_mod_player(void)
 		/* Give a special mention to the help text at the start. */
 		if (i == IDX_ALL)
 		{
-			/* Display the help text prominently. */
-			put_str("Press ? and then b for detailed instructions.", 0, 0);
+			/* Display the help text prominently.
+			 * Hack - must match help.hlp. */
+			put_str("Press ? and then a for detailed instructions.", 0, 0);
 		}
 
 
