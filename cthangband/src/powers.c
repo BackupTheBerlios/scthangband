@@ -2873,9 +2873,9 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
              cave_type       *c_ptr;
              monster_type    *m_ptr;
 
-             for (dir = 0; dir <= 9; dir++) {
-                 y = py + ddy[dir];
-                 x = px + ddx[dir];
+             for (dir = 0; dir < 8; dir++) {
+                 y = py + ddy_ddd[dir];
+                 x = px + ddx_ddd[dir];
                  c_ptr = &cave[y][x];
 
                  /* Get the monster */
@@ -4283,9 +4283,9 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
          cave_type       *c_ptr;
          monster_type    *m_ptr;
 
-         for (dir = 0; dir <= 9; dir++) {
-             y = py + ddy[dir];
-             x = px + ddx[dir];
+         for (dir = 0; dir < 8; dir++) {
+             y = py + ddy_ddd[dir];
+             x = px + ddx_ddd[dir];
              c_ptr = &cave[y][x];
 
              /* Get the monster */

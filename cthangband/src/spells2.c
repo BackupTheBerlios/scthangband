@@ -4690,8 +4690,8 @@ void earthquake(int cy, int cx, int r)
 		for (i = 0; i < 8; i++)
 		{
 			/* Access the location */
-			y = py + ddy[i];
-			x = px + ddx[i];
+			y = py + ddy_ddd[i];
+			x = px + ddx_ddd[i];
 
 			/* Skip non-empty grids */
 			if (!cave_empty_bold(y, x)) continue;
@@ -4812,8 +4812,8 @@ void earthquake(int cy, int cx, int r)
 						for (i = 0; i < 8; i++)
 						{
 							/* Access the grid */
-							y = yy + ddy[i];
-							x = xx + ddx[i];
+							y = yy + ddy_ddd[i];
+							x = xx + ddx_ddd[i];
 
 							/* Skip non-empty grids */
 							if (!cave_empty_bold(y, x)) continue;

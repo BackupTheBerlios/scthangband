@@ -2072,16 +2072,16 @@ extern void store_init(int which);
 #if (defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern s16b ddd[9];
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(XTRA2_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern s16b ddx[10];
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(XTRA2_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern s16b ddy[10];
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(TABLES_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C))
 extern s16b ddx_ddd[9];
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(TABLES_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(TABLES_C))
 extern s16b ddy_ddd[9];
 #endif
 #if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_IBM_C) || defined(MAIN_VCS_C) || defined(MAIN_WIN_C) || defined(TABLES_C) || defined(UTIL_C))
