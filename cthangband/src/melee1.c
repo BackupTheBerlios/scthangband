@@ -691,7 +691,7 @@ bool make_attack_normal(int m_idx)
                         if (allart_p(o_ptr)) continue;
 
 						/* Get a description */
-						object_desc(o_name, o_ptr, FALSE, 3);
+						strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
 
 						/* Message */
 						msg_format("%sour %s (%c) was stolen!",
@@ -809,7 +809,7 @@ bool make_attack_normal(int m_idx)
 						if (o_ptr->tval != TV_FOOD) continue;
 
 						/* Get a description */
-						object_desc(o_name, o_ptr, FALSE, 0);
+						strnfmt(o_name, o_ptr, FALSE, 0);
 
 						/* Message */
 						msg_format("%sour %s (%c) was eaten!",

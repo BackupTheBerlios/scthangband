@@ -323,7 +323,7 @@ static void sense_inventory(void)
 		&& ((o_ptr->ident & IDENT_SENSE_HEAVY) || (!heavy)))) continue;
 
 		/* Get an object description */
-		object_desc(o_name, o_ptr, FALSE, 0);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 		/* Remember how things used to be */
 		oldident = o_ptr->ident;
@@ -809,7 +809,7 @@ bool psychometry(void)
 	feel = find_feeling(o_ptr);
 
     /* Get an object description */
-    object_desc(o_name, o_ptr, FALSE, 0);
+    strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
     
     /* Skip non-feelings */
     if (feel == "") {
@@ -877,7 +877,7 @@ static void recharged_notice(object_type *o_ptr)
 			cptr gen = (allart_p(o_ptr)) ? "The" : "Your";
 
 			/* Describe (briefly) */
-			object_desc(o_name, o_ptr, FALSE, 0);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 			/* Notify the player */
 			msg_format("%s %s %s recharged.", gen, o_name, verb);
@@ -1207,7 +1207,7 @@ static void process_world(void)
             char ouch [80];
 
             /* Get an object description */
-            object_desc(o_name, o_ptr, FALSE, 0);
+            strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 
             msg_format("The %s scorches your undead flesh!", o_name);
@@ -1215,7 +1215,7 @@ static void process_world(void)
             cave_no_regen = TRUE;
 
             /* Get an object description */
-            object_desc(o_name, o_ptr, TRUE, 0);
+            strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 0);
 
             sprintf(ouch, "wielding %s", o_name);
             if (!(p_ptr->invuln))
@@ -1710,7 +1710,7 @@ static void process_world(void)
 	{
 		C_TNEW(o_name, ONAME_MAX, char);
 		curse(o_ptr);
-		object_desc(o_name, o_ptr, FALSE, 0);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 		msg_format("The %s suddenly feels deathly cold!", o_name);
 		TFREE(o_name);
 	}
@@ -3510,7 +3510,7 @@ static void process_player(void)
 			msg_print("Your pack overflows!");
 
 			/* Describe */
-			object_desc(o_name, o_ptr, TRUE, 3);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 			/* Message */
 			msg_format("You drop %s (%c).", o_name, index_to_label(item));

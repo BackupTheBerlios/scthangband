@@ -1602,7 +1602,7 @@ static void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
  * "%.*v", (int)len, monster_desc_aux_f3, m_ptr, mode
  *
  */
-void monster_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	monster_type *m_ptr = va_arg(*vp, monster_type *);
 	int mode = va_arg(*vp, int);

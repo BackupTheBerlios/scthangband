@@ -3565,7 +3565,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					next_o_idx = o_ptr->next_o_idx;
 
 					/* Obtain an object description */
-					object_desc(o_name, o_ptr, TRUE, 3);
+					strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 					/* Describe the object */
 					sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
@@ -3617,7 +3617,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				boring = FALSE;
 
 				/* Obtain an object description */
-				object_desc(o_name, o_ptr, TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 				/* Describe the object */
 				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);

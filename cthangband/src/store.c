@@ -1821,7 +1821,7 @@ static void display_entry(int pos)
 		if (show_weights) maxwid -= 10;
 
 		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 		o_name[maxwid] = '\0';
 		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
 
@@ -1847,7 +1847,7 @@ static void display_entry(int pos)
 		/* Describe the object (fully) */
 		if (cur_store_type == STORE_PAWN)
 		{
-			object_desc(o_name, o_ptr, TRUE, 3);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 		}
 		else
 		{
@@ -2446,7 +2446,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	if ((auto_haggle || final) && !verbose_haggle)
 	{
 		if(cur_store_type == STORE_PAWN)
-			object_desc(o_name, o_ptr, TRUE, 3);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 		else
 		object_desc_store(o_name, o_ptr, TRUE, 3);
 		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
@@ -2864,7 +2864,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	if (auto_haggle && !verbose_haggle)
 	{
 		C_TNEW(o_name, ONAME_MAX, char);
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
 		TFREE(o_name);
 		*price = final_ask;
@@ -3109,7 +3109,7 @@ static void store_purchase_aux(char *o_name)
 			/* Describe the object (fully) */
 			if(cur_store_type == STORE_PAWN)
 			{
-				object_desc(o_name, j_ptr, TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
 			}
 			else
 			{
@@ -3164,7 +3164,7 @@ static void store_purchase_aux(char *o_name)
 				j_ptr->ident &= ~(IDENT_STORE);
 
 				/* Describe the transaction */
-				object_desc(o_name, j_ptr, TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
 
 				/* Message */
 				if (!auto_haggle || verbose_haggle)
@@ -3186,7 +3186,7 @@ static void store_purchase_aux(char *o_name)
 				item_new = inven_carry(j_ptr, FALSE);
 
 				/* Describe the final result */
-				object_desc(o_name, &inventory[item_new], TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[item_new], TRUE, 3);
 
 				/* Message */
 				msg_format("You have %s (%c).",
@@ -3266,7 +3266,7 @@ static void store_purchase_aux(char *o_name)
 		item_new = inven_carry(j_ptr, FALSE);
 
 		/* Describe just the result */
-		object_desc(o_name, &inventory[item_new], TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[item_new], TRUE, 3);
 
 		/* Message */
 		msg_format("You have %s (%c).", o_name, index_to_label(item_new));
@@ -3372,7 +3372,7 @@ static void store_sell_aux(char *o_name)
 	object_copy(q_ptr, o_ptr);
 
 	/* Get a full description */
-	object_desc(o_name, q_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 
 	/* Remove any inscription for stores */
 	if (cur_store_type != 7) q_ptr->note = 0;
@@ -3474,7 +3474,7 @@ static void store_sell_aux(char *o_name)
 			{
 				value = object_value(q_ptr) * q_ptr->number;
 				/* Get the description all over again */
-				object_desc(o_name, q_ptr, TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 			}
 
 
@@ -3603,7 +3603,7 @@ static void store_sell(void)
    if (cur_store_type == STORE_HOME || cur_store_type == STORE_PAWN)
 	{
 		C_TNEW(o_name, ONAME_MAX, char);
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 		msg_format("Examining %s...", o_name);
 		if (!identify_fully_aux(o_ptr, FALSE)) msg_print("You see nothing special.");
 		TFREE(o_name);
@@ -4649,7 +4649,7 @@ void do_cmd_store(void)
 				object_copy(q_ptr, o_ptr);
 
 				/* Describe it */
-				object_desc(o_name, q_ptr, TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 
 				/* Message */
 				msg_format("You drop %s (%c).", o_name, index_to_label(item));

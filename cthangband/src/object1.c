@@ -1205,7 +1205,8 @@ static char *object_desc_int(char *t, sint v)
 #define MAX_NAME_LEVEL	8
 
 /* Julian Lighton's improved code */
-void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
+static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
+	int mode)
 {
 	/* The strings from which buf is compiled. */
 	cptr strings[8] = {0,0,0,0,0,0,0,0};
@@ -1244,7 +1245,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	/* tmp_val_base is twice as large as necessary as little bounds checking
 	 * is performed. This probably isn't good enough. */
-	C_TNEW(tmp_val_base, ONAME_MAX*2, char);
+	C_TNEW(tmp_val_base, len*2, char);
 	char		*tmp_val = tmp_val_base;
 
 	u32b            f1, f2, f3;
@@ -1853,20 +1854,20 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		if (*((k[i] = find_feeling(o1_ptr))) != '\0') i++;
 		if (o1_ptr->note) k[i++] = quark_str(o1_ptr->note);
 
-		if (i && t < tmp_val+ONAME_MAX-4)
+		if (i && t < tmp_val+len-4)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, c1);
 
 			/* Append the inscriptions from bottom to top. */
-			while (i-- && t < tmp_val+ONAME_MAX-2)
+			while (i-- && t < tmp_val+len-2)
 			{ 
 				/* This leaves enough space for formatting. */
-				sprintf(t, "%.*s", MAX(0, ONAME_MAX-(t-tmp_val)-2), k[i]);
+				sprintf(t, "%.*s", MAX(0, len-(t-tmp_val)-2), k[i]);
 				t = strchr(t, '\0');
 
 				/* Put a comma if there is room for at least one character after it. */
-				if (i && t < tmp_val+ONAME_MAX-4) t = object_desc_str(t, ", ");
+				if (i && t < tmp_val+len-4) t = object_desc_str(t, ", ");
 			}
 			t = object_desc_chr(t, c2);
 		}
@@ -1874,13 +1875,37 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 copyback:
 	/* Here's where we dump the built string into buf. */
-	tmp_val[ONAME_MAX-1] = '\0';
+	tmp_val[len-1] = '\0';
 	t = tmp_val;
 	while((*(buf++) = *(t++))) ; /* copy the string over */
 
 	TFREE(tmp_val_base);
 }
 
+void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	object_type *o_ptr = va_arg(*vp, object_type *);
+	int pref = va_arg(*vp, int);
+	int mode = va_arg(*vp, int);
+	cptr s;
+	uint len;
+
+	/* Use %.123v to specify a maximum length of 123. */
+	if ((s = strchr(fmt, '.')))
+	{
+		long m = strtol(s+1, 0, 0);
+		len = MAX(0, m);
+	}
+	else
+	{
+		len = ONAME_MAX;
+	}
+
+	/* Ensure that the buffer fits within buf. */
+	if (max < len) len = max;
+
+	object_desc(buf, len, o_ptr, pref, mode);
+}
 
 /*
  * Hack -- describe an item currently in a store's inventory
@@ -1913,7 +1938,7 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 	plain_descriptions = TRUE;
 
 	/* Describe the object */
-	object_desc(buf, o_ptr, pref, mode);
+	strnfmt(buf, ONAME_MAX, "%v", object_desc_f3, o_ptr, pref, mode);
 
 
 	/* Restore "aware" flag */
@@ -3993,7 +4018,7 @@ void display_inven(void)
 		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
 
 		/* Obtain an item description */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 		/* Obtain the length of the description */
 		n = strlen(o_name);
@@ -4067,7 +4092,7 @@ void display_equip(void)
 		Term_putstr(0, i - INVEN_WIELD, 3, TERM_WHITE, tmp_val);
 
 		/* Obtain an item description */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 		/* Obtain the length of the description */
 		n = strlen(o_name);
@@ -4174,7 +4199,7 @@ void show_inven(void)
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 		/* Hack -- enforce max length */
 		o_name[lim] = '\0';
@@ -4306,7 +4331,7 @@ void show_equip(void)
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Description */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 		/* Truncate the description */
 		o_name[lim] = 0;
@@ -4435,7 +4460,7 @@ static bool verify(cptr prompt, int item)
 	}
 	
 	/* Describe */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Prompt */
 	(void)sprintf(out_val, "%s %s? ", prompt, o_name);

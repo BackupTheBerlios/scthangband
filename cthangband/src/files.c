@@ -3597,7 +3597,7 @@ errr file_character(cptr name, bool UNUSED full)
 		fprintf(fff, "  [Character Equipment]\n\n");
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 		{
-			object_desc(o_name, &inventory[i], TRUE, 3);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[i], TRUE, 3);
 			fprintf(fff, "%c%s %s\n",
 			        index_to_label(i), paren, o_name);
 
@@ -3611,7 +3611,7 @@ errr file_character(cptr name, bool UNUSED full)
 	fprintf(fff, "  [Character Inventory]\n\n");
 	for (i = 0; i < INVEN_PACK && inventory[i].k_idx; i++)
 	{
-		object_desc(o_name, &inventory[i], TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[i], TRUE, 3);
 		fprintf(fff, "%c%s %s\n",
 		        index_to_label(i), paren, o_name);
 
@@ -3639,7 +3639,7 @@ errr file_character(cptr name, bool UNUSED full)
 		fprintf(fff, "[Home Inventory (%s)]\n\n", dun_defs[town].shortname);
 		for (i = 0; i < st_ptr->stock_num; i++)
 		{
-			object_desc(o_name, &st_ptr->stock[i], TRUE, 3);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &st_ptr->stock[i], TRUE, 3);
 			fprintf(fff, "%c%s %s\n", I2A(i%12), paren, o_name);
 
 			/* Describe random object attributes */

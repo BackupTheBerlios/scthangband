@@ -4224,7 +4224,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	if (j_ptr->number != 1) plural = TRUE;
 
 	/* Describe object */
-	object_desc(o_name, j_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, FALSE, 0);
 
 
 	/* Handle normal "breakage" */
@@ -4625,7 +4625,7 @@ void inven_item_describe(int item)
 	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get a description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Print a message */
 	msg_format("You have %s.", o_name);
@@ -4783,7 +4783,7 @@ void floor_item_describe(int item)
 	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get a description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Print a message */
 	msg_format("You see %s.", o_name);
@@ -5120,7 +5120,7 @@ s16b inven_takeoff(int item, int amt)
 		C_TNEW(o_name, ONAME_MAX, char);
 
 		/* Describe the object */
-		object_desc(o_name, q_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 
 		/* Message */
 		msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
@@ -5184,7 +5184,7 @@ void inven_drop(int item, int amt)
 	q_ptr->number = amt;
 
 	/* Describe local object */
-	object_desc(o_name, q_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 
 	/* Message */
 	msg_format("You drop %s (%c).", o_name, index_to_label(item));

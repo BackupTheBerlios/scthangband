@@ -187,7 +187,7 @@ static void do_cmd_wield_aux(char *o_name)
 	if (cursed_p(&inventory[slot]))
 	{
 		/* Describe it */
-		object_desc(o_name, &inventory[slot], FALSE, 0);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[slot], FALSE, 0);
 
 		/* Message */
 		msg_format("The %s you are %s appears to be cursed.",
@@ -205,7 +205,7 @@ static void do_cmd_wield_aux(char *o_name)
         char dummy[512];
 
 		/* Describe it */
-        object_desc(o_name, o_ptr, FALSE, 0);
+        strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
         sprintf(dummy, "Really use the %s {cursed}? ", o_name);
         if (!(get_check(dummy)))
@@ -219,7 +219,7 @@ static void do_cmd_wield_aux(char *o_name)
 		char dummy[512];
 
 		/* Describe it */
-		object_desc(o_name, o_ptr, FALSE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
 		
 		sprintf(dummy, "Really use the %s? ", o_name);
 		if (!(get_check(dummy))) return;
@@ -293,7 +293,7 @@ static void do_cmd_wield_aux(char *o_name)
 	}
 
 	/* Describe the result */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Message */
 	msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
@@ -520,7 +520,7 @@ static void do_cmd_destroy_aux(char *o_name)
 	/* Describe the object */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
@@ -663,7 +663,7 @@ void do_cmd_observe(void)
 		C_TNEW(o_name, ONAME_MAX, char);
 	
 		/* Description */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 
 		/* Describe */
@@ -764,7 +764,7 @@ void do_cmd_inscribe(void)
 	}
 
 	/* Describe the activity */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Message */
 	msg_format("Inscribing %s.", o_name);

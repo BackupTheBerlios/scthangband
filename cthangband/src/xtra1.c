@@ -3528,7 +3528,7 @@ static void win_object_details_display(void)
 	identify_fully_aux(o_ptr, 2);
 	
 	/* Put the name at the top. */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 	Term_putstr(2, 0, Term->wid-2, TERM_WHITE, o_name);
 
 	/* Put the character used at the top. */

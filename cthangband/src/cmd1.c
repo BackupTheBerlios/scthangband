@@ -596,7 +596,7 @@ void carry(int pickup)
 		if (o_ptr->tval == TV_GOLD)
 		{
 			/* Describe the object */
-			object_desc(o_name, o_ptr, FALSE, 0);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 			/* Message */
             msg_format("You collect %ld gold pieces worth of %s.",
@@ -623,7 +623,7 @@ void carry(int pickup)
 		else
 		{
 			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 			/* Display description if needed. */
 			object_track(o_ptr);
@@ -670,7 +670,7 @@ void carry(int pickup)
 					o_ptr = &inventory[slot];
 
 					/* Describe the object */
-					object_desc(o_name, o_ptr, TRUE, 3);
+					strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 					/* Message */
 					msg_format("You have %s (%c).", o_name, index_to_label(slot));

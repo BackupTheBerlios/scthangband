@@ -2694,7 +2694,7 @@ void curse_equipment(int chance, int heavy_chance)
     if ((o3 & (TR3_BLESSED)) && (randint(888) > chance))
     {   
         char o_name[256];
-        object_desc(o_name, o_ptr, FALSE, 0);
+        strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
         msg_format("Your %s resist%s cursing!", o_name,
        ((o_ptr->number > 1) ? "" : "s"));
        /* Hmmm -- can we wear multiple items? If not, this is unnecessary */
@@ -6654,7 +6654,7 @@ static void process_monster(int m_idx, bool is_friend)
 					object_flags(o_ptr, &f1, &f2, &f3);
 
 					/* Acquire the object name */
-					object_desc(o_name, o_ptr, TRUE, 3);
+					strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 					/* Acquire the monster name */
 					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x04);

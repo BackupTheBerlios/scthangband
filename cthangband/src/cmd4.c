@@ -1943,7 +1943,7 @@ static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa
 	object_prep(o_ptr, k_ptr-k_info);
 
 	/* Get the name. */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 	/* Replace the real *k_ptr */
 	COPY(k_ptr, &hack_k, object_kind);

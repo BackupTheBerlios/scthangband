@@ -512,7 +512,7 @@ bool alchemy(void)
 	/* Describe the object */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
@@ -2825,7 +2825,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 	/* Describe */
 	msg_format("%s %s glow%s brightly!",
@@ -2848,7 +2848,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	}
 	else
 	{
-		object_desc(o_name, o_ptr, TRUE, 1);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 1);
 	
 		/* Describe again */
 		msg_format("You now %s %s", (item >= 0) ? "have" : "see", o_name);
@@ -4297,7 +4297,7 @@ bool artifact_scroll(void)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 	/* Describe */
     msg_format("%s %s radiate%s a blinding light!",
@@ -4396,7 +4396,7 @@ bool ident_spell(void)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Describe */
 	if (item >= INVEN_WIELD)
@@ -4477,7 +4477,7 @@ bool identify_fully(void)
 	handle_stuff();
 
 	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Describe */
 	if (item >= INVEN_WIELD)
@@ -6411,7 +6411,7 @@ void bless_weapon(void)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
         /* Extract the flags */
     object_flags(o_ptr, &f1, &f2, &f3);

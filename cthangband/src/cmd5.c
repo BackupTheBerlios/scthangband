@@ -1211,7 +1211,7 @@ static void rustproof(void)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 	o_ptr->flags3 |= TR3_IGNORE_ACID;
 
@@ -1639,7 +1639,7 @@ static void brand_weapon(int brand_type)
 		cptr act = NULL;
 
 		C_TNEW(o_name, ONAME_MAX, char);
-        object_desc(o_name, o_ptr, FALSE, 0); /* Let's get the name before
+        strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0); /* Let's get the name before
                                                 it is changed... */
 
     switch (brand_type)

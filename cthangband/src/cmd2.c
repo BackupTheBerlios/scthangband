@@ -2429,7 +2429,7 @@ void do_cmd_fire(void)
 
 
 	/* Describe the object */
-	object_desc(o_name, q_ptr, FALSE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, FALSE, 3);
 
 	/* Find the color and symbol for the object for throwing */
 	missile_attr = object_attr(q_ptr);
@@ -2764,7 +2764,7 @@ void do_cmd_throw(void)
 
 
 	/* Description */
-	object_desc(o_name, q_ptr, FALSE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, FALSE, 3);
 
 	/* Find the color and symbol for the object for throwing */
 	missile_attr = object_attr(q_ptr);

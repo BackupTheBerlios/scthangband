@@ -1053,7 +1053,7 @@ bool curse_armor(void)
 
 
 	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
     if (allart_p(o_ptr) && (rand_int(100) < 50))
@@ -1130,7 +1130,7 @@ bool curse_weapon(void)
 
 
 	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
     if (allart_p(o_ptr) && (rand_int(100) < 50))
