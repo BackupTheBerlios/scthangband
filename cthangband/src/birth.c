@@ -554,11 +554,6 @@ static hist_type bg[] =
 
 
 /*
- * Current stats
- */
-static s16b stat_use[6];
-
-/*
  * Autoroll limit
  */
 static s16b stat_limit[6];
@@ -713,6 +708,7 @@ void get_starting_skills(int race);
 void get_hermetic_skills_randomly(void);
 void get_hermetic_skills(void);
 static void get_ahw_average(void);
+static void get_money(bool randomly);
 
 /*
  * For characters starting with shaman skill, start them with a spirit
@@ -850,6 +846,9 @@ static bool point_mod_player(void)
 		/* Fully rested */
 		p_ptr->csp = p_ptr->msp;
 		p_ptr->cchi = p_ptr->mchi;
+
+		/* Find the initial social class and money */
+		get_money(FALSE);
 
 		/* Display the player */
 		display_player(0);
@@ -1598,17 +1597,17 @@ static void get_stats(void)
 			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
 
 			/* Efficiency -- Apply the racial/template bonuses */
-			stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
+			p_ptr->stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
 		}
 
 		/* Fixed stat maxes */
 		else
 		{
 			/* Apply the bonus to the stat (somewhat randomly) */
-			stat_use[i] = adjust_stat(p_ptr->stat_max[i], (s16b)bonus, FALSE);
+			p_ptr->stat_use[i] = adjust_stat(p_ptr->stat_max[i], (s16b)bonus, FALSE);
 
 			/* Save the resulting stat maximum */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
+			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = p_ptr->stat_use[i];
 		}
 	}
 }
@@ -1985,21 +1984,21 @@ static void get_ahw(void)
 /*
  * Get the player's starting money
  */
-static void get_money(void)
+static void get_money(bool random)
 {
 	int        i, gold;
 
 	/* Social Class determines starting gold */
-	gold = (p_ptr->sc * 6) + randint(100) + 300;
+	gold = (p_ptr->sc * 6) + (random ? randint(100) : 51) + 300;
 
 	/* Process the stats */
 	for (i = 0; i < 6; i++)
 	{
 		/* Mega-Hack -- reduce gold for high stats */
-		if (stat_use[i] >= 18+50) gold -= 300;
-		else if (stat_use[i] >= 18+20) gold -= 200;
-		else if (stat_use[i] > 18) gold -= 150;
-		else gold -= (stat_use[i] - 8) * 10;
+		if (p_ptr->stat_use[i] >= 18+50) gold -= 300;
+		else if (p_ptr->stat_use[i] >= 18+20) gold -= 200;
+		else if (p_ptr->stat_use[i] > 18) gold -= 150;
+		else gold -= (p_ptr->stat_use[i] - 8) * 10;
 	}
 
 	/* Minimum 100 gold */
@@ -2028,7 +2027,7 @@ static void birth_put_stats(void)
 	for (i = 0; i < 6; i++)
 	{
 		/* Put the stat */
-		cnv_stat(stat_use[i], buf);
+		cnv_stat(p_ptr->stat_use[i], buf);
 		c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
 
 		/* Put the percent */
@@ -3006,7 +3005,7 @@ static bool player_birth_aux()
 				for (i = 0; i < 6; i++)
 				{
 					/* This stat is okay */
-					if (stat_use[i] >= stat_limit[i])
+					if (p_ptr->stat_use[i] >= stat_limit[i])
 					{
 						stat_match[i]++;
 					}
@@ -3066,7 +3065,7 @@ static bool player_birth_aux()
 			get_history();
 
 			/* Roll for gold */
-			get_money();
+			get_money(TRUE);
 
 			/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
 			p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
@@ -3571,7 +3570,7 @@ static bool player_birth_aux()
 				for (i = 0; i < 6; i++)
 				{
 					/* This stat is okay */
-					if (stat_use[i] >= stat_limit[i])
+					if (p_ptr->stat_use[i] >= stat_limit[i])
 					{
 						stat_match[i]++;
 					}
@@ -3631,7 +3630,7 @@ static bool player_birth_aux()
 			get_history();
 
 			/* Roll for gold */
-			get_money();
+			get_money(TRUE);
 
 			/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
 			p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
