@@ -299,7 +299,7 @@ extern void opt_special_effect(const option_type * const op_ptr);
 #if (defined(BIRTH_C) || defined(CMD4_C))
 extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #endif
-#if (defined(CMD4_C) || defined(CMD5_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(XTRA2_C))
 extern void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C))

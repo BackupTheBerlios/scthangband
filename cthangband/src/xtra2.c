@@ -2195,11 +2195,13 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 		{
-			object_type *o_ptr;
-		
 			/* Acquire object */
-			o_ptr = &o_list[this_o_idx];
+			object_type *o_ptr = &o_list[this_o_idx];
 
+			/* Count the number of characters the name can take up. */
+			int len = Term->wid - strlen(s1) - strlen(s2) - strlen(s3) -
+				strlen(info) - strlen(" []");
+		
 			/* Acquire next object */
 			next_o_idx = o_ptr->next_o_idx;
 
@@ -2210,8 +2212,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			boring = FALSE;
 
 			/* Describe the object */
-			mc_put_fmt(0, 0, "%s%s%s%v [%s]%255s", s1, s2, s3,
-				object_desc_f3, o_ptr, TRUE, 3, info, "");
+			mc_put_fmt(0, 0, "%s%s%s%.*v [%s]%v", s1, s2, s3,
+				len, object_desc_f3, o_ptr, TRUE, 3, info, clear_f0);
 
 			move_cursor_relative(y, x);
 			query = inkey();

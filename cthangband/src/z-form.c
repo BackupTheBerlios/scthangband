@@ -566,7 +566,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				tmp_func = va_arg(vp, vstrnfmt_aux_func);
 
 				/* Format the "user data" */
-				tmp_func(tmp, 1000, aux, &vp);
+				tmp_func(tmp, max+1, aux, &vp);
 
 				/* Done */
 				break;
