@@ -411,14 +411,16 @@ static bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
  * verb and dative are used to construct various sentences below.
  * dative0 replaces dative in the final statement if the object was worthless.
  * *value is used to store the value of the object(s) destroyed.
+ * q_ptr is a pointer to an object which is used to store the object destroyed
+ * on successful completion. It is junk otherwise.
  */
-errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value)
+errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr)
 {
 	errr err;
 
-	bool		force = FALSE;
+	bool force = FALSE;
 
-	object_type		*o_ptr, q_ptr[1];
+	object_type *o_ptr;
 
 
 	/* Hack -- force destruction */
@@ -464,9 +466,6 @@ errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value)
 	/* Artifacts cannot be destroyed */
 	if (allart_p(o_ptr))
 	{
-
-        energy_use = 0;
-
 		/* Message */
 		msg_format("You cannot %s %v%s.",
 			verb, object_desc_f3, q_ptr, TRUE, 3, dative);
@@ -484,12 +483,6 @@ errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value)
 		return POWER_ERROR_FAIL;
 	}
 
-	/* Find the value for alchemy. */
-	(*value) = object_value(q_ptr, TRUE) * q_ptr->number;
-
-	/* Save the name for a "success" message from the caller. */
-	(*name) = format("%v", object_desc_f3, q_ptr, TRUE, 3);
-
 	/* Eliminate the item */
 	item_increase(o_ptr, -q_ptr->number);
 	item_describe(o_ptr);
@@ -503,11 +496,10 @@ errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value)
  */
 void do_cmd_destroy(void)
 {
-	cptr name;
-	s32b u;
-	if (do_cmd_destroy_aux("destroy", "", &name, &u) != POWER_ERROR_ABORT)
+	object_type o_ptr[1];
+	if (do_cmd_destroy_aux("destroy", "", o_ptr) != POWER_ERROR_ABORT)
 	{
-		msg_format("You destroy %s.", name);
+		msg_format("You have destroyed %v.", object_desc_f3, o_ptr, TRUE, 3);
 		energy_use = extract_energy[p_ptr->pspeed];
 	}
 }

@@ -443,21 +443,24 @@ bool restore_level(void)
 bool alchemy(void)
 {
 	s32b price;
-	cptr name;
-	if (do_cmd_destroy_aux("turn", " to gold", &name, &price)) return FALSE;
+	object_type o_ptr[1];
+	if (do_cmd_destroy_aux("turn", " to gold", o_ptr)) return FALSE;
+
+	/* Find the value for alchemy. */
+	price = object_value(o_ptr, TRUE) * o_ptr->number;
 
 	if (price <= 0)
 	{
 		/* Message */
-		msg_format("You turn %s to fool's gold.", name);
+		msg_format("You have turned %v to fool's gold.", object_desc_f3, o_ptr, 3);
 	}
 	else
 	{
 		price /= 3;
 
 		if (price > 30000) price = 30000;
-		msg_format("You turn %s to %ld coins worth of gold.",
-			name, price);
+		msg_format("You have turned %v to %ld coins worth of gold.",
+			object_desc_f3, o_ptr, 3, price);
 		p_ptr->au += price;
 
 		/* Redraw gold */

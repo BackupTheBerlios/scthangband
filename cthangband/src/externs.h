@@ -243,7 +243,7 @@ extern void do_cmd_takeoff(void);
 extern void do_cmd_drop(void);
 #endif
 #if (defined(CMD3_C) || defined(SPELLS2_C))
-extern errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value);
+extern errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_destroy(void);
@@ -1528,7 +1528,7 @@ extern void object_tried(object_type *o_ptr);
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern s32b PURE flag_cost(object_ctype *o_ptr, bool all);
 #endif
-#if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
+#if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern s32b PURE object_value(object_ctype *o1_ptr, bool full);
 #endif
 #if (defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
