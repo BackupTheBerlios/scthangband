@@ -755,14 +755,13 @@ bool psychometry(void)
 
 	object_type             *o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-        cptr            feel, oldfeel;
+	cptr            feel, oldfeel;
+	cptr really, is;
 
 	/* Get an item (from equip or inven or floor) */
     if (!((o_ptr = get_item(&err, "Meditate on which item? ", TRUE, TRUE, TRUE))))
 	{
         if (err == -2) msg_print("You have nothing appropriate.");
-		TFREE(o_name);
 		return (FALSE);
 	}
 
@@ -770,7 +769,6 @@ bool psychometry(void)
 	if ((object_known_p(o_ptr)) || (o_ptr->ident & IDENT_SENSE_HEAVY))
 	{
 		msg_print("You cannot find out anything more about that.");
-		TFREE(o_name);
 		return TRUE;
 	}
 
@@ -786,27 +784,30 @@ bool psychometry(void)
     /* Check for a feeling */
 	feel = find_feeling(o_ptr);
 
-    /* Get an object description */
-    strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-    
     /* Skip non-feelings */
-    if (feel == "") {
-    	msg_format("You do not perceive anything unusual about the %s.",
-			o_name);
-		TFREE(o_name);
+	if (feel[0] == '\0')
+	{
+    	msg_format("You do not perceive anything unusual about the %v.",
+			"%v", object_desc_f3, o_ptr, FALSE, 0);
 		return TRUE;
     }
 
-	msg_format("You feel that the %s %s%s %s...",
-	o_name, (strcmp(feel, oldfeel) ? "" : "really "),((o_ptr->number == 1) ? "is" : "are"), feel);
+	/* Say "really" if this merely repeats a previous light feeling. */
+	if (strcmp(feel, oldfeel)) really = "";
+	else really = "really ";
 
-    /* Combine / Reorder the pack (later) */
-    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Handle plurals correctly. */
+	if (o_ptr->number == 1) is = "is";
+	else is = "are";
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	msg_format("You feel that the %v %s%s %s...", "%v",
+		object_desc_f3, o_ptr, FALSE, 0, really , is, feel);
 
-	TFREE(o_name);
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+  
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
     /* Something happened */
     return (TRUE);
@@ -835,37 +836,15 @@ void curse(object_type *o_ptr)
  */
 static void recharged_notice(object_type *o_ptr)
 {
-	char o_name[120];
-
-	cptr s;
-
-	/* No inscription */
-	if (!o_ptr->note) return;
-
-	/* Find a '!' */
-	s = strchr(quark_str(o_ptr->note), '!');
-
 	/* Process notification request. */
-	while (s)
+	if (strstr(quark_str(o_ptr->note), "!!"))
 	{
-		/* Find another '!' */
-		if (s[1] == '!')
-		{
-			cptr verb = (o_ptr->number == 1) ? "is" : "are";
-			cptr gen = (allart_p(o_ptr)) ? "The" : "Your";
+		cptr verb = (o_ptr->number == 1) ? "is" : "are";
+		cptr gen = (allart_p(o_ptr)) ? "The" : "Your";
 
-			/* Describe (briefly) */
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
-			/* Notify the player */
-			msg_format("%s %s %s recharged.", gen, o_name, verb);
-
-			/* Done. */
-			return;
-		}
-
-		/* Keep looking for '!'s */
-		s = strchr(s + 1, '!');
+		/* Notify the player */
+		msg_format("%s %v %s recharged.", 
+			gen, object_desc_f3, o_ptr, FALSE, 0, verb);
 	}
 }
 
@@ -3368,8 +3347,6 @@ static void process_player(void)
 		{
 			int item = INVEN_PACK;
 
-			C_TNEW(o_name, ONAME_MAX, char);
-
 			object_type *o_ptr;
 
 			/* Access the slot to be dropped */
@@ -3381,11 +3358,9 @@ static void process_player(void)
 			/* Warning */
 			msg_print("Your pack overflows!");
 
-			/* Describe */
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
 			/* Message */
-			msg_format("You drop %s (%c).", o_name, index_to_label(o_ptr));
+			msg_format("You drop %v (%c).",
+				object_desc_f3, o_ptr, TRUE, 3, index_to_label(o_ptr));
 
 			/* Drop it (carefully) near the player */
 			drop_near(o_ptr, 0, py, px);
@@ -3403,8 +3378,6 @@ static void process_player(void)
 
 			/* Redraw stuff (if needed) */
 			if (p_ptr->redraw) redraw_stuff();
-
-			TFREE(o_name);
 		}
 
 		/* Hack -- cancel "lurking browse mode" */
