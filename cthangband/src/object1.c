@@ -4322,7 +4322,7 @@ void show_inven(void)
 
 	int             out_index[23];
 	byte    out_color[23];
-	char    *out_desc[23];
+	cptr	out_desc[23];
 
 	/* Ensure that unset out_desc strings are NULL. */
 	C_WIPE(out_desc, 23, char*);
@@ -4464,7 +4464,7 @@ void show_equip(void)
 
 	int                     out_index[23];
 	byte            out_color[23];
-	char            *out_desc[23];
+	cptr out_desc[23];
 
 
 	/* Ensure that unset out_desc strings are NULL. */
