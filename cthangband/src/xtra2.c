@@ -2232,13 +2232,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			{
 				bool recall = FALSE;
 
-				C_TNEW(m_name, MNAME_MAX, char);
-
 				/* Not boring */
 				boring = FALSE;
-
-				/* Get the monster name ("a kobold") */
-				strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x08);
 
 				/* Hack -- track this monster race */
 				monster_race_track(m_ptr->r_idx);
@@ -2274,14 +2269,12 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					/* Normal */
 					else
 					{
-						/* Describe, and prompt for recall */
-						sprintf(out_val, "%s%s%s%v (%s)%s%s [r,%s]",
-							s1, s2, s3, monster_desc_f2, m_ptr, 0x08,
-							look_mon_desc(m_ptr),
-							(m_ptr->smart & SM_CLONED ? " (clone)": ""),
-							(m_ptr->smart & SM_ALLY ? " (allied)" : ""), info);
+						cptr clo = (m_ptr->smart & SM_CLONED) ? " (clone)": "";
+						cptr all = (m_ptr->smart & SM_ALLY) ? " (allied)" : "";
 
-						prt(out_val, 0, 0);
+						mc_put_fmt(0, 0, "%s%s%s%v (%s)%s%s [r,%s]%v",
+							s1, s2, s3, monster_desc_f2, m_ptr, 0x08,
+							look_mon_desc(m_ptr), clo, all, info, clear_f0);
 
 						/* Place cursor */
 						move_cursor_relative(y, x);
@@ -2296,8 +2289,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					/* Toggle recall */
 					recall = !recall;
 				}
-
-				TFREE(m_name);
 
 				/* Always stop at "normal" keys */
 				if ((query != '\r') && (query != '\n') && (query != ' ')) break;
@@ -2328,8 +2319,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					next_o_idx = o_ptr->next_o_idx;
 
 					/* Describe the object */
-					mc_put_fmt(0, 0, "%s%s%s%v [%s]%255s", s1, s2, s3,
-						object_desc_f3, o_ptr, TRUE, 3, info, "");
+					mc_put_fmt(0, 0, "%s%s%s%v [%s]%v", s1, s2, s3,
+						object_desc_f3, o_ptr, TRUE, 3, info, clear_f0);
 					move_cursor_relative(y, x);
 					query = inkey();
 
