@@ -1579,6 +1579,20 @@ static void react_keypress(XKeyEvent *ev)
 
 
 
+static void pixel_to_square(int * const x, int * const y,
+	const int ox, const int oy)
+{
+	(*x) = (ox - Infowin->ox) / Infofnt->wid;
+	(*y) = (oy - Infowin->oy) / Infofnt->hgt;
+}
+
+static void square_to_pixel(int * const x, int * const y,
+	const int ox, const int oy)
+{
+	(*x) = ox * Infofnt->wid + Infowin->ox;
+	(*y) = oy * Infofnt->hgt + Infowin->oy;
+}
+
 
 /*
  * Process events
@@ -1592,7 +1606,7 @@ static errr CheckEvent(bool wait)
 	term_data *td = NULL;
 	infowin *iwin = NULL;
 
-	int i, x, y;
+	int i;
 	int window = 0;
 
 	/* Do not wait unless requested */
@@ -1636,13 +1650,14 @@ static errr CheckEvent(bool wait)
 	/* Switch on the Type */
 	switch (xev->type)
 	{
-
-#if 0
-
 		case ButtonPress:
 		case ButtonRelease:
 		{
-			int z = 0;
+			/* Where is the mouse */
+			int UNUSED x = xev->xbutton.x;
+			int UNUSED y = xev->xbutton.y;
+
+			int z;
 
 			/* Which button is involved */
 			if (xev->xbutton.button == Button1) z = 1;
@@ -1650,10 +1665,7 @@ static errr CheckEvent(bool wait)
 			else if (xev->xbutton.button == Button3) z = 3;
 			else if (xev->xbutton.button == Button4) z = 4;
 			else if (xev->xbutton.button == Button5) z = 5;
-
-			/* Where is the mouse */
-			x = xev->xbutton.x;
-			y = xev->xbutton.y;
+			else z = 0;
 
 			/* XXX Handle */
 
@@ -1664,8 +1676,8 @@ static errr CheckEvent(bool wait)
 		case LeaveNotify:
 		{
 			/* Where is the mouse */
-			x = xev->xcrossing.x;
-			y = xev->xcrossing.y;
+			int UNUSED x = xev->xcrossing.x;
+			int UNUSED y = xev->xcrossing.y;
 
 			/* XXX Handle */
 
@@ -1675,8 +1687,13 @@ static errr CheckEvent(bool wait)
 		case MotionNotify:
 		{
 			/* Where is the mouse */
-			x = xev->xmotion.x;
-			y = xev->xmotion.y;
+			int x = xev->xmotion.x;
+			int y = xev->xmotion.y;
+
+			/* Convert to co-ordinates Angband understands. */
+			pixel_to_square(&x, &y, x, y);
+
+			highlight_square(window, y, x);
 
 			/* XXX Handle */
 
@@ -1689,13 +1706,11 @@ static errr CheckEvent(bool wait)
 			break;
 		}
 
-#endif
-
 		case KeyPress:
 		{
 			/* Save the mouse location */
-			x = xev->xkey.x;
-			y = xev->xkey.y;
+			int UNUSED x = xev->xkey.x;
+			int UNUSED y = xev->xkey.y;
 
 			/* Hack -- use "old" term */
 			Term_activate(&old_td->t);
@@ -2161,7 +2176,8 @@ static errr term_data_init(term_data *td, int i)
 	                 Metadpy->fg, Metadpy->bg);
 
 	/* Ask for certain events */
-	Infowin_set_mask(ExposureMask | StructureNotifyMask | KeyPressMask);
+	Infowin_set_mask(ExposureMask | StructureNotifyMask | KeyPressMask |
+		PointerMotionMask);
 
 	/* Set the window name */
 	Infowin_set_name(name);

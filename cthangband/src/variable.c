@@ -216,6 +216,7 @@ bool unify_commands; /* Combine object commands into a single 'u'se command */
 bool centre_view; /* Centre view on player */
 bool macro_edit; /* Use macros as edit keys in string prompts */
 bool no_centre_run; /* Stop centring when running */
+bool track_mouse; /* Track the cursor in extra windows */
 bool auto_more;
 
 /* Option Set B -- Birth Options */

@@ -2384,7 +2384,7 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Available Options (full to 3,21), 7 reserved for cheat options
+ * Available Options (full to 3,22), 7 reserved for cheat options
  *
  * Note that birth options should always be followed by BIRTHR ones which
  * store the value used in the game.
@@ -2680,6 +2680,11 @@ option_type option_info[] =
 
 	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
     "no_centre_run",                "Do not centre view whilst running" },
+
+#ifdef USE_X11
+	{ &track_mouse, TRUE, OPTS_PERF, 3, 22,
+	"track_mouse", "Track the cursor in various extra windows." },
+#endif
 
 	{ &auto_more,                   FALSE,  OPTS_DISTURB,      3, 12,
 	"auto_more",                    "Automatically clear '-more-' prompts" },

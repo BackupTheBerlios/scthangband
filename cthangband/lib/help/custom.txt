@@ -328,7 +328,14 @@ This option causes a less biased, but slightly slower, RNG to be used for all ca
 $GDo not centre view whilst running [no_centre_run]
 This causes the game to act as if centre_view was turned off if the player is running at the time.
 
-%%%%%
+%%%%% <track_mouse>
+$GTrack the cursor in various extra windows [track_mouse]
+This causes floor squares, objects and monsters to be displayed in extra windows as the mouse is moved over the map window.
+
+%%%%% ?:[NOT [EQU $SYS x11]]
+This option is currently only effective for the x11 display module, although this will change as support is added.
+
+%%%%% ?:1
 === Miscellaneous options ===
 
 %%%%% <last_words>

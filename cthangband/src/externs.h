@@ -2450,7 +2450,7 @@ extern bool arg_force_roguelike;
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool character_generated;
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool character_dungeon;
 #endif
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
@@ -3575,7 +3575,7 @@ extern void win_help_display(void);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(XTRA1_C))
 extern display_func_type display_func[NUM_DISPLAY_FUNCS+1];
 #endif
-#if (defined(DUNGEON_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void window_stuff(void);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA1_C))
@@ -4015,5 +4015,17 @@ extern void cave_track(const int y, const int x);
 
 #if (defined(INIT2_C) || defined(MAIN_ROS_C))
 extern errr (*check_modification_date_hook)(int fd, cptr template_file);
+#endif
+
+/* cave.c */
+
+#if (defined(CAVE_C) || defined(MAIN_X11_C))
+extern void highlight_square(int win, int y, int x);
+#endif
+
+/* variable.c */
+
+#if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool track_mouse;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

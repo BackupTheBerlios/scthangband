@@ -1237,6 +1237,55 @@ void print_rel(char c, byte a, int y, int x)
 	}
 }
 
+/*
+ * Activate various external displays based on the contents of a specified
+ * map square.
+ */
+static void highlight_map_square(const int y, const int x)
+{
+	cave_type *c_ptr = &cave[y][x];
+	monster_type *m_ptr = m_list+c_ptr->m_idx;
+	object_type *o_ptr = o_list+c_ptr->o_idx;
+
+	/* Track a monster, if any. */
+	if (c_ptr->m_idx && m_ptr->ml)
+	{
+		health_track(c_ptr->m_idx);
+		monster_race_track(m_ptr->r_idx);
+	}
+
+	/* Track an object, if any. */
+	if (c_ptr->o_idx && o_ptr->marked)
+	{
+		object_track(o_ptr);
+		object_kind_track(o_ptr->k_idx);
+	}
+
+	/* Track the square. */
+	cave_track(y, x);
+
+	/* Display the changes now. */
+	window_stuff();
+}
+
+/*
+ * Highlight a square in a particular window.
+ */
+void highlight_square(int win, int y, int x)
+{
+	/* If over a known section of map, display details.
+	 * Note that this does not check where the map is actually visible.
+	 */
+	if (character_dungeon && track_mouse && win == 0)
+	{
+		int ys = y + Y_SCREEN_ADJ;
+		int xs = x + X_SCREEN_ADJ;
+		if (panel_contains_prt(ys, xs) && in_bounds2(ys, xs))
+		{
+			highlight_map_square(ys, xs);
+		}
+	}
+}
 
 
 
