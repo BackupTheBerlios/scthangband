@@ -886,73 +886,6 @@ static void health_redraw(void)
 }
 
 
-
-/*
- * Display basic info (mostly left of map)
- */
-static void prt_frame_basic(void)
-{
-	int i;
-
-	/* All Stats */
-	for (i = 0; i < 6; i++) prt_stat(i);
-
-	/* Time */
-	prt_time();
-	/* Armor */
-	prt_ac();
-
-	/* Energy */
-	prt_energy();
- 
-	/* Hitpoints */
-	prt_hp();
-
-	/* Spellpoints */
-	prt_sp();
-	
- 	/* Spirit relationships */
- 	prt_spirit();
- 
-	/* Gold */
-	prt_gold();
-
-	/* Current depth */
-	prt_depth();
-
-	/* Special */
-	health_redraw();
-}
-
-
-/*
- * Display extra info (mostly below map)
- */
-static void prt_frame_extra(void)
-{
-	/* Cut/Stun */
-	prt_cut();
-	prt_stun();
-
-	/* Food */
-	prt_hunger();
-
-	/* Various */
-	prt_blind();
-	prt_confused();
-	prt_afraid();
-	prt_poisoned();
-
-	/* State */
-	prt_state();
-
-	/* Speed */
-	prt_speed();
-
-	/* Study spells */
-	prt_study();
-}
-
 /*
  * Calculate number of spells player should have, and forget,
  * or remember, spells until that number is properly reflected.
@@ -3237,18 +3170,6 @@ void redraw_stuff(void)
 		prt_map();
 	}
 
-
-	if (p_ptr->redraw & (PR_BASIC))
-	{
-		p_ptr->redraw &= ~(PR_BASIC);
-		p_ptr->redraw &= ~(PR_MISC | PR_TITLE | PR_STATS);
-		p_ptr->redraw &= ~(PR_LEV | PR_EXP | PR_GOLD);
-		p_ptr->redraw &= ~(PR_ARMOR | PR_HP | PR_MANA);
-		p_ptr->redraw &= ~(PR_DEPTH | PR_HEALTH);
-		p_ptr->redraw &= ~(PR_TIME);
-		prt_frame_basic();
-	}
-
     if (p_ptr->redraw & (PR_EQUIPPY))
     {
         p_ptr->redraw &= ~(PR_EQUIPPY);
@@ -3323,18 +3244,6 @@ void redraw_stuff(void)
 	{
 		p_ptr->redraw &= ~(PR_HEALTH);
 		health_redraw();
-	}
-
-
-	if (p_ptr->redraw & (PR_EXTRA))
-	{
-		p_ptr->redraw &= ~(PR_EXTRA);
-		p_ptr->redraw &= ~(PR_CUT | PR_STUN);
-		p_ptr->redraw &= ~(PR_HUNGER);
-		p_ptr->redraw &= ~(PR_BLIND | PR_CONFUSED);
-		p_ptr->redraw &= ~(PR_AFRAID | PR_POISONED);
-		p_ptr->redraw &= ~(PR_STATE | PR_SPEED | PR_STUDY);
-		prt_frame_extra();
 	}
 
 	if (p_ptr->redraw & (PR_CUT))

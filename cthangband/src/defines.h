@@ -1856,14 +1856,21 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PR_SPEED        0x00200000L     /* Display Extra (Speed) */
 #define PR_STUDY        0x00400000L     /* Display Extra (Study) */
 #define PR_SPIRIT		0x00800000L		/* Display Spirit Annoyance */
-#define PR_EXTRA        0x01000000L     /* Display Extra Info */
-#define PR_BASIC        0x02000000L     /* Display Basic Info */
+#define PR_ENERGY       0x01000000L     /* Display last turn's energy use */
+#define PR_WIPE_1       0x02000000L     /* Hack -- row from line 1 */
 #define PR_MAP          0x04000000L     /* Display Map */
 #define PR_WIPE         0x08000000L     /* Hack -- Total Redraw */
-#define PR_ENERGY	0x10000000L	/* Display last turn's energy use */
-#define PR_WIPE_1	0x20000000L /* Hack -- row from line 1 */
 /* xxx */
 /* xxx */
+
+/* A couple of more extensive redraw requests. */
+#define PR_EXTRA \
+	(PR_CUT | PR_STUN | PR_HUNGER | PR_BLIND | PR_CONFUSED | PR_AFRAID | \
+	PR_POISONED | PR_STATE | PR_SPEED | PR_STUDY)
+
+#define PR_BASIC \
+	(PR_MISC | PR_TITLE | PR_STATS | PR_LEV | PR_EXP | PR_GOLD | PR_ARMOR | \
+	PR_HP | PR_MANA | PR_DEPTH | PR_HEALTH | PR_TIME)
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)
