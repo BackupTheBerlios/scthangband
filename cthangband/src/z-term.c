@@ -2104,6 +2104,23 @@ errr Term_inkey(char *ch, bool wait, bool take)
 
 /*** Extra routines ***/
 
+/*
+ * term_win routines.
+ *
+ * As windows are protected from destruction until they are loaded, a window
+ * saved with Term_save_aux() will remain until it is loaded again.
+ *
+ * After a window has been loaded, it is only certain to be safe until
+ * Term_save_aux() is next called.
+ *
+ * Term_save() is different as it effectively uses a single term_win to save
+ * everything. In this case, only the last Term_save() has results which can
+ * be retrieved, and then only until the first Term_load() call.
+ */
+
+/* The size of the term_wins[] array. This should be chosen so that it is at
+ * least as high as the greatest number of displays the game will have saved
+ * at once. */
 #define NUM_TERM_WINS	8
 
 static int cur_saved_term = 0;
@@ -2155,8 +2172,8 @@ int Term_save_aux(void)
 	{
 		w_ptr = term_wins+i;
 		if (w_ptr->mem) continue;
-		free = i+1;
-		if (!w_ptr->wid && !w_ptr->hgt) blank = i+1;
+		if (!free) free = i+1;
+		if (!blank && !w_ptr->wid && !w_ptr->hgt) blank = i+1;
 		if (w_ptr->wid == w && w_ptr->hgt == h) break;
 	}
 
@@ -2201,9 +2218,7 @@ int Term_save_aux(void)
 
 
 /*
- * Save the "requested" screen into the "memorized" screen
- *
- * Every "Term_save()" should match exactly one "Term_load()"
+ * Save the "requested" screen into cur_saved_term.
  */
 errr Term_save(void)
 {
@@ -2221,43 +2236,47 @@ errr Term_save(void)
  * Restore the "requested" contents (see above).
  *
  * Every "Term_save()" should match exactly one "Term_load()"
+ *
+ * Return TRUE if successful, FALSE otherwise.
  */
-void Term_load_aux(int win)
+bool Term_load_aux(int win)
 {
 	term_win2 *w_ptr;
 	int y;
 
 	/* Paranoia - ignore invalid calls. */
-	if (win <= 0 || win > NUM_TERM_WINS) return;
+	if (win <= 0 || win > NUM_TERM_WINS) return FALSE;
 
 	w_ptr = term_wins+win-1;
 
-	/* Paranoia - ignore invalid calls. */
-	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt) return;
-
 	/* Load */
-	term_win_copy(Term->scr, &w_ptr->win, w_ptr->wid, w_ptr->hgt);
+	term_win_copy(Term->scr, &w_ptr->win,
+		MIN(Term->wid, w_ptr->wid), MIN(Term->hgt, w_ptr->hgt));
 
 	/* Assume change */
-	for (y = 0; y < w_ptr->hgt; y++)
+	for (y = 0; y < Term->hgt; y++)
 	{
 		/* Assume change */
 		Term->x1[y] = 0;
-		Term->x2[y] = w_ptr->wid - 1;
+		Term->x2[y] = Term->wid - 1;
 	}
 
 	/* Assume change */
 	Term->y1 = 0;
-	Term->y2 = w_ptr->hgt - 1;
+	Term->y2 = Term->hgt - 1;
 
 	/* Assume the term is no longer needed. */
 	w_ptr->mem = FALSE;
+
+	/* The screen size has changed since this was saved, so the screen should
+	 * really be redrawn. */
+	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt) return FALSE;
+
+	return TRUE;
 }
 
 /*
- * Restore the "requested" contents (see above).
- *
- * Every "Term_save()" should match exactly one "Term_load()"
+ * Restore the "requested" screen from cur_saved_term.
  */
 errr Term_load(void)
 {
@@ -2265,7 +2284,7 @@ errr Term_load(void)
 	if (!cur_saved_term) return (-1);
 
 	/* Restore the window from the remembered index. */
-	Term_load_aux(cur_saved_term);
+	if (!Term_load_aux(cur_saved_term)) return (-1);
 
 	/* Forget the saved term_win. */
 	cur_saved_term = 0;
@@ -2336,7 +2355,6 @@ errr Term_resize(int w, int h)
 
 	term_win *hold_old;
 	term_win *hold_scr;
-	term_win *hold_mem;
 	term_win *hold_tmp;
 
 
@@ -2367,9 +2385,6 @@ errr Term_resize(int w, int h)
 	hold_scr = Term->scr;
 
 	/* Save old window */
-	hold_mem = Term->mem;
-
-	/* Save old window */
 	hold_tmp = Term->tmp;
 
 	/* Create new scanners */
@@ -2393,19 +2408,6 @@ errr Term_resize(int w, int h)
 
 	/* Save the contents */
 	term_win_copy(Term->scr, hold_scr, wid, hgt);
-
-	/* If needed */
-	if (hold_mem)
-	{
-		/* Create new window */
-		MAKE(Term->mem, term_win);
-
-		/* Initialize new window */
-		term_win_init(Term->mem, w, h);
-
-		/* Save the contents */
-		term_win_copy(Term->mem, hold_mem, wid, hgt);
-	}
 
 	/* If needed */
 	if (hold_tmp)
@@ -2443,20 +2445,6 @@ errr Term_resize(int w, int h)
 	/* Illegal cursor */
 	if (Term->scr->cx >= w) Term->scr->cu = 1;
 	if (Term->scr->cy >= h) Term->scr->cu = 1;
-
-	/* If needed */
-	if (hold_mem)
-	{
-		/* Nuke */
-		term_win_nuke(hold_mem, Term->wid, Term->hgt);
-
-		/* Kill */
-		KILL(hold_mem, term_win);
-
-		/* Illegal cursor */
-		if (Term->mem->cx >= w) Term->mem->cu = 1;
-		if (Term->mem->cy >= h) Term->mem->cu = 1;
-	}
 
 	/* If needed */
 	if (hold_tmp)
@@ -2574,16 +2562,6 @@ errr term_nuke(term *t)
 
 	/* Kill "requested" */
 	KILL(t->scr, term_win);
-
-	/* If needed */
-	if (t->mem)
-	{
-		/* Nuke "memorized" */
-		term_win_nuke(t->mem, w, h);
-
-		/* Kill "memorized" */
-		KILL(t->mem, term_win);
-	}
 
 	/* If needed */
 	if (t->tmp)

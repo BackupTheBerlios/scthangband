@@ -205,7 +205,6 @@ struct term
 	term_win *scr;
 
 	term_win *tmp;
-	term_win *mem;
 
 	void (*init_hook)(term *t);
 	void (*nuke_hook)(term *t);

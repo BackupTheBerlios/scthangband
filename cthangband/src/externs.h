@@ -3544,7 +3544,7 @@ extern force_type option_force[] ;
 extern int Term_save_aux(void);
 #endif
 #if (defined(CMD4_C) || defined(Z_TERM_C))
-extern void Term_load_aux(int win);
+extern bool Term_load_aux(int win);
 #endif
 
 /* xtra1.c */
