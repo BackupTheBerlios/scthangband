@@ -756,6 +756,7 @@ static void hit_trap(void)
 				{
 					change_level(dun_level+1, START_RANDOM);
 				}
+			take_hit(dam, name);
 			}
 			break;
 		}
@@ -846,7 +847,6 @@ static void hit_trap(void)
 						dam = dam * 2;
 						(void)set_poisoned(p_ptr->poisoned + randint(dam));
 					}
-				take_hit(dam, name);
 				}
 
 				/* Take the damage */
