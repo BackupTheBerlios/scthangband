@@ -3240,8 +3240,8 @@ static void store_sell(void)
 		/* Describe the transaction */
 		if (!auto_haggle || verbose_haggle)
 		{
-		msg_format("Selling %s (%c).", o_name, index_to_label(o_ptr));
-		msg_print(NULL);
+			msg_format("Selling %s (%c).", o_name, index_to_label(o_ptr));
+			msg_print(NULL);
 		}
 
 		/* Haggle for it */
@@ -3250,81 +3250,80 @@ static void store_sell(void)
 		/* Kicked out */
 		if (st_ptr->store_open >= turn) return;
 
-		/* Sold... */
-		if (choice == 0)
-		{
-			/* Say "okay" */
-			say_comment_1();
+		/* No sale. */
+		if (choice != 0) return;
 
-			/* Make a sound */
-			sound(SOUND_SELL);
+		/* Say "okay" */
+		say_comment_1();
 
-			/* Be happy */
-			decrease_insults();
+		/* Make a sound */
+		sound(SOUND_SELL);
 
-			/* Get some money */
-			p_ptr->au += price;
+		/* Be happy */
+		decrease_insults();
 
-			/* Update the display */
-			store_prt_gold();
+		/* Get some money */
+		p_ptr->au += price;
 
-			/* Get the "apparent" value */
-			dummy = object_value(q_ptr) * q_ptr->number;
+		/* Update the display */
+		store_prt_gold();
+
+		/* Get the "apparent" value */
+		dummy = object_value(q_ptr) * q_ptr->number;
 			
-			if (cur_store_type != STORE_PAWN)
-			{
-				/* Identify original item */
-				object_aware(o_ptr);
-				object_known(o_ptr);
-			}
+		if (cur_store_type != STORE_PAWN)
+		{
+			/* Identify original item */
+			object_aware(o_ptr);
+			object_known(o_ptr);
+		}
 
-			/* Combine / Reorder the pack (later) */
-			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-			/* Get local object */
-			q_ptr = &forge;
+		/* Get local object */
+		q_ptr = &forge;
 	
-			/* Get a copy of the object */
-			object_copy(q_ptr, o_ptr);
+		/* Get a copy of the object */
+		object_copy(q_ptr, o_ptr);
 
-			/* Modify quantity */
-			q_ptr->number = amt;
+		/* Modify quantity */
+		q_ptr->number = amt;
 
-			/* Clear inscription (again?) */
-			q_ptr->note = 0;
+		/* Clear inscription (again?) */
+		q_ptr->note = 0;
 
-			/* Get the "actual" value */
-			if (cur_store_type == STORE_PAWN)
-			{
-				value = dummy;
-			}
-			else
-			{
-				value = object_value(q_ptr) * q_ptr->number;
-				/* Get the description all over again */
-				o_name = format("%v", object_desc_f3, q_ptr, TRUE, 3);
-			}
+		/* Get the "actual" value */
+		if (cur_store_type == STORE_PAWN)
+		{
+			value = dummy;
+		}
+		else
+		{
+			value = object_value(q_ptr) * q_ptr->number;
+			/* Get the description all over again */
+			o_name = format("%v", object_desc_f3, q_ptr, TRUE, 3);
+		}
 
 
-			if (!auto_haggle || verbose_haggle)
-			{
+		if (!auto_haggle || verbose_haggle)
+		{
 			if (cur_store_type != STORE_PAWN)
 			{
-			/* Describe the result (in message buffer) */
+				/* Describe the result (in message buffer) */
 				msg_format("You sold %s for %ld gold.", o_name, (long)price);
 			}
 			else
 			{
 				msg_format("You pawn %s for %ld gold.",o_name,(long)price);
 			}
-			}
-
-			/* Analyze the prices (and comment verbally) */
-				purchase_analyze(price, value, dummy);
 		}
+
+		/* Analyze the prices (and comment verbally) */
+		purchase_analyze(price, value, dummy);
 	}
 
 	/* Player is at home */
