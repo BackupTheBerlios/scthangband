@@ -1237,7 +1237,7 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
  * a specified slay multiplier, together with the to-hit and to-damage bonuses
  * of the weapon.
  */
-void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s16b *damage)
+void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s32b *damage)
 {
 	s16b i, power, damsides, damdice, dicedam;
 	s16b slot = wield_slot(o_ptr);
@@ -1247,6 +1247,13 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	 * differ in one crucial respect: am is discarded at the end, but the contents
 	 * of wp is copied to wp_ptr. */
 	object_type wp, am, *wp_ptr, *am_ptr;
+
+	/* A backup copy of p_ptr for if the original is changed. This is because
+	 * there is no way to find out what would happen if a change was made
+	 * without of actually making that change.
+	 * It assumes that p_ptr contains everything update_stuff affects. */
+	player_type p2_body, *p2_ptr = &p2_body;
+	p2_ptr->psex = MAX_SEXES;
 
 	/* Initialise everything. */
 	(*tohit) = (*todam) = (*weap_blow) = (*mut_blow) = (*damage) = 0;
@@ -1285,7 +1292,8 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	{
 		object_copy(&wp, wp_ptr);
 		object_copy(wp_ptr, o_ptr);
-		p_ptr->update |= PU_BONUS;
+		if (p2_ptr->psex == MAX_SEXES) COPY(p2_ptr, p_ptr, player_type);
+		p_ptr->update |= PU_BONUS | PU_QUIET;
 		update_stuff();
 	}
 	/* Find an appropriate bow for ammunition, and vice versa. */
@@ -1321,8 +1329,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 		default:
 		/* First put the existing bow (if any) in a safe place. */
 
-		/* Use an inscribed bow from inventory if available.
-		 * This is very nasty as only calc_bonuses() knows what missiles each bow uses. */
+		/* Use an inscribed bow from inventory by preference. */
 		if (!wp_ptr)
 		{
 			for (i = 0; i <= INVEN_PACK; i++)
@@ -1365,7 +1372,8 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 			wp_ptr = &inventory[INVEN_BOW];
 			object_wipe(wp_ptr);
 		}
-		p_ptr->update |= PU_BONUS;
+		if (p2_ptr->psex == MAX_SEXES) COPY(p2_ptr, p_ptr, player_type);
+		p_ptr->update |= PU_BONUS | PU_QUIET;
 		update_stuff();
 		break;
 	}
@@ -1451,6 +1459,33 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 		(*damage) *= slay;
 	}
 
+	/* Add extra melee damage from the VORPAL flag (see py_attack()). */
+	if (slot == INVEN_WIELD)
+	{
+		u32b f1,f2,f3;
+		object_flags_known(wp_ptr, &f1, &f2, &f3);
+
+		/* Not VORPAL, so do nothing. */
+		if (~f1 & TR1_VORPAL);
+		/* Hack - Vorpal Blade has a different formula. */
+		else if (wp_ptr->name1 == ART_VORPAL_BLADE)
+		{
+			(*damage) = (*damage) * 4 / 3;
+		}
+		/* Other VORPAL weapons. */
+		else
+		{
+			(*damage) = (*damage) * 19 / 18;
+		}			
+	}
+
+	/* BUG - this considers negative rolls. */
+	(*damage) = MAX((*damage), 0);
+	
+	/* Round blows/turn up according to the energy used. 
+	 * Hack - do not round mutated blows here, although they are rounded. */
+	(*weap_blow) = 6000/(6000/(*weap_blow));
+
 	/* Consider the number of blows and bow multiplier. */
 	(*damage) = (*damage)*power*(*weap_blow)/60;
 
@@ -1491,9 +1526,11 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	/* Now that's done, we need only replace the standard weapon. */
 	object_copy(wp_ptr, &wp);
 
-	/* And update everything. */
-	p_ptr->update |= PU_BONUS;
-	update_stuff();
+	/* And return p_ptr to its original state if needed. */
+	if (p2_ptr->psex != MAX_SEXES)
+	{
+		COPY(p_ptr, p2_ptr, player_type);
+	}
 }
 
 /*
@@ -1507,7 +1544,8 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
  */
 static void display_player_sides(bool missile)
 {
-	s16b show_tohit, show_todam, weap_blow, mut_blow, damage;
+	s16b show_tohit, show_todam, weap_blow, mut_blow;
+	s32b damage;
 	cptr temp;
 
 	/* The last column of the numbers. See prt_num() */
@@ -2266,10 +2304,10 @@ byte skill_colour(int skill_index)
 {
 	player_skill *sk_ptr = &skill_set[skill_index];
 
-	/* The skill is either at the highest possible for this level, or is at 0%
+	/* The skill either cannot be increased at this level, or is at 0%
 	 * and has never been successfully used. */
 	bool max = ((!sk_ptr->max_value && !sk_ptr->experience)
-		|| (sk_ptr->max_value == 100) || !skill_check_possible(skill_index));
+		|| (sk_ptr->value == 100) || !skill_check_possible(skill_index));
 
 	/* The skill is below its maximum value */
 	bool drained = (sk_ptr->max_value > sk_ptr->value);

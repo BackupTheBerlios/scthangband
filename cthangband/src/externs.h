@@ -586,7 +586,7 @@ extern void curse(object_type *o_ptr);
 extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens);
-extern void weapon_stats(object_type *, byte, s16b *, s16b *, s16b *, s16b *, s16b *);
+extern void weapon_stats(object_type *, byte, s16b *, s16b *, s16b *, s16b *, s32b *);
 extern void display_player(int mode);
 extern errr file_character(cptr name, bool full);
 extern errr process_pref_file_aux(char *buf);

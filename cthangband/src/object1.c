@@ -2959,7 +2959,8 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	 * This only considers slays and brands at the moment. */
 	if (spoil_dam)
 	{
-		s16b tohit, todam, weap_blow, mut_blow, dam;
+		s16b tohit, todam, weap_blow, mut_blow;
+		s32b dam;
 		bool slay = FALSE;
 		byte count;
 		cptr board[6];
