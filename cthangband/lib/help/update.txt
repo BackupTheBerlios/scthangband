@@ -8,7 +8,6 @@ read from the bottom up.
 sCthangband _CVS_
 * Skill improvements become rarer, and then impossible, if the player does
   enough things without coming across a new object in the process.
-* Dimension door only allows the player to teleport to squares in line of sight.
 * An inscription of (e.g.) ~vf on an object causes the "throw" command to 
   attempt to "fire" it instead.
 * Selecting "z" at an object prompt only selects squelched objects.

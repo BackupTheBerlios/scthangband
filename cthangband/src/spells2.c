@@ -42,12 +42,6 @@ static bool dimension_door_success(int y, int x, int plev)
 	/* Too far. */
 	if (distance(py, px, y, x) > plev+2) return FALSE;
 
-	/* No direct path. */
-	if (!los(py, px, y, x)) return FALSE;
-
-	/* Random failure. */
-	if (one_in(plev*plev/2)) return FALSE;
-
 	/* Success. */
 	return TRUE;
 }
@@ -55,8 +49,6 @@ static bool dimension_door_success(int y, int x, int plev)
 /*
  * Teleport the player to a nearby square of the player's choice.
  * Returns FALSE if aborted, TRUE otherwise.
- *
- * I have no idea why this effect is so expensive.
  */
 bool dimension_door(int plev, int fail_dis)
 {
@@ -99,7 +91,7 @@ bool dimension_door(int plev, int fail_dis)
 	energy_use += 6*TURN_ENERGY/10 - plev*TURN_ENERGY/100;
 
 	/* Bad target or bad luck. */
-	if (!dimension_door_success(y, x, plev))
+	if (one_in(plev*plev/2) || !dimension_door_success(y, x, plev))
 	{
 		msg_print("You fail to exit the astral plane correctly!");
 		energy_use += TURN_ENERGY;
