@@ -3992,4 +3992,10 @@ extern errr my_fgets_long(char *buf, size_t n, FILE *fff);
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void opt_special_effect(const option_type * const op_ptr);
 #endif
+
+/* xtra1.c */
+
+#if (defined(INIT2_C) || defined(XTRA1_C))
+extern void init_help_files(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -2032,6 +2032,9 @@ void init_angband(void)
 	/* build a name for the basic 'help' index */
 	syshelpfile = "help.hlp";
 
+	/* Initialise the help file links. */
+	init_help_files();
+
 	/* Access the "basic" pref file */
 	strcpy(buf, "pref.prf");
 

@@ -3614,7 +3614,7 @@ static bool find_link(FILE *fff, const link_type *l_ptr)
  * Initialise the help_files[] array above.
  * Return false if the base help file was not found, true otherwise.
  */
-static bool init_help_files(void)
+void init_help_files(void)
 {
 	int i;
 	FILE *fff;
@@ -3625,8 +3625,7 @@ static bool init_help_files(void)
 
 	if (!((fff = my_fopen_path(ANGBAND_DIR_HELP, syshelpfile, "r"))))
 	{
-		prt(format("Cannot open '%s'!", syshelpfile), Term->hgt/2, 0);
-		return FALSE;
+		quit_fmt("Cannot open '%s'!", syshelpfile);
 	}
 		
 
@@ -3664,8 +3663,6 @@ static bool init_help_files(void)
 	my_fclose(fff);
 
 	init_links();
-
-	return TRUE;
 }
 
 /*
@@ -3685,9 +3682,6 @@ void win_help_display(void)
 
 	/* Nothing to show. */
 	if (!help_strs) return;
-
-	/* Try to read the list of files at first. */
-	if (!help_files && !init_help_files()) return;
 
 	for (l_ptr = links; l_ptr < links+num_links; l_ptr++)
 	{
