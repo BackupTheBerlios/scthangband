@@ -3328,24 +3328,16 @@ static bool win_message_good(void)
  */
 static void win_message_display(void)
 {
-	int i;
-	int w, h;
-	int x, y;
+	int i, h;
 
 	/* Get size */
-	Term_get_size(&w, &h);
+	Term_get_size(&i, &h);
 
 	/* Dump messages */
 	for (i = 0; i < h; i++)
 	{
 		/* Dump the message on the appropriate line */
-		Term_putstr(0, (h - 1) - i, -1, TERM_WHITE, message_str((short)i));
-
-		/* Cursor */
-		Term_locate(&x, &y);
-
-		/* Clear to end of line */
-		Term_erase(x, y, 255);
+		prt(message_str(i), (h-1)-i, 0);
 	}
 }
 

@@ -3854,7 +3854,7 @@ extern errr Term_putch(int x, int y, byte a, char c);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
@@ -3872,7 +3872,7 @@ extern void Term_get_cursor(bool *v);
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_get_size(int *w, int *h);
 #endif
-#if (defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_locate(int *x, int *y);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
