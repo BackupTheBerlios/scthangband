@@ -734,7 +734,9 @@ extern void object_tried(object_type *o_ptr);
 extern s32b object_value(object_type *o_ptr);
 extern s32b object_value_real(object_type *o_ptr);
 extern bool object_similar(object_type *o_ptr, object_type *j_ptr);
+extern int object_similar_2(object_type *o_ptr, object_type *j_ptr);
 extern void object_absorb(object_type *o_ptr, object_type *j_ptr);
+extern bool object_absorb_2(object_type *o_ptr, object_type *j_ptr);
 extern s16b lookup_kind(int tval, int sval);
 extern void object_wipe(object_type *o_ptr);
 extern void object_prep(object_type *o_ptr, int k_idx);
@@ -904,6 +906,7 @@ extern void store_maint(int which);
 extern void store_init(int which);
 extern void move_to_black_market(object_type * o_ptr);
 extern int get_which_store(void);
+extern bool store_object_absorb(object_type *j_ptr, object_type *o_ptr);
 extern void do_store_browse( object_type *o_ptr);
 /* util.c */
 extern errr path_parse(char *buf, int max, cptr file);

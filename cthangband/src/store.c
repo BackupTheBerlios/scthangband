@@ -988,7 +988,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
  * Allow a store item to absorb another item
  * Returns true if the entire stack was absorbed.
  */
-static bool store_object_absorb(object_type *j_ptr, object_type *o_ptr)
+bool store_object_absorb(object_type *j_ptr, object_type *o_ptr)
 {
 	int total = o_ptr->number + j_ptr->number;
 
@@ -1276,15 +1276,13 @@ static int home_carry(object_type *o_ptr)
 		j_ptr = &st_ptr->stock[slot];
 
 		/* The home acts just like the player */
-		if (object_similar(j_ptr, o_ptr))
-		{
+		if (object_similar_2(j_ptr, o_ptr) &&
 			/* Save the new number of items */
-			object_absorb(j_ptr, o_ptr);
+			object_absorb_2(j_ptr, o_ptr))
 
 			/* All done */
 			return (slot);
 		}
-	}
 
 	/* No space? */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);

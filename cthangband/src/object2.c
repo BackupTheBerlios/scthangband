@@ -1353,8 +1353,9 @@ s32b object_value(object_type *o_ptr)
  *
  * Chests, and activatable items, never stack (for various reasons).
  */
-bool object_similar(object_type *o_ptr, object_type *j_ptr)
+int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 {
+
 	int total = o_ptr->number + j_ptr->number;
 
 
@@ -1365,7 +1366,8 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Analyze the items */
 	switch (o_ptr->tval)
 	{
-		/* Chests */
+		/* Chests and money */
+		case TV_GOLD:
 		case TV_CHEST:
 		{
 			/* Never okay */
@@ -1513,25 +1515,28 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (!stack_force_costs && !strchr(quarkstr(o_ptr->note), '%') && !strchr(quarkstr(j_ptr->note), '%') && (o_ptr->discount != j_ptr->discount)) return (0);
 
 
-	/* Maximal "stacking" limit */
-	if (total >= MAX_STACK_SIZE) return (0);
+	/* They can't all stack, so return how many do. */
+	if (total >= MAX_STACK_SIZE) return MAX_STACK_SIZE-1-o_ptr->number;
 
 
-	/* They match, so they must be similar */
-	return (TRUE);
+	/* They can, so remove how many there are. */
+	return j_ptr->number;
 }
 
 
+bool object_similar(object_type *o_ptr, object_type *j_ptr)
+{
+	return (object_similar_2(o_ptr, j_ptr) == j_ptr->number);
+}
+
+extern bool store_object_absorb(object_type *o_ptr, object_type *j_ptr);
+
 /*
  * Allow one item to "absorb" another, assuming they are similar
+ * Return true if every object was ab
  */
-void object_absorb(object_type *o_ptr, object_type *j_ptr)
+bool object_absorb_2(object_type *o_ptr, object_type *j_ptr)
 {
-	int total = o_ptr->number + j_ptr->number;
-
-	/* Add together the item counts */
-	o_ptr->number = ((total < MAX_STACK_SIZE) ? total : (MAX_STACK_SIZE - 1));
-
 	/* Hack -- blend "known" status */
 	if (object_known_p(j_ptr)) object_known(o_ptr);
 
@@ -1552,6 +1557,14 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
 	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;
+
+	/* Add together the stacks, and return TRUE if the second is empty. */
+	return store_object_absorb(o_ptr, j_ptr);
+}
+
+void object_absorb(object_type *o_ptr, object_type *j_ptr)
+{
+	(void)object_absorb_2(o_ptr, j_ptr);
 }
 
 
@@ -5271,14 +5284,15 @@ void combine_pack(void)
 			/* Skip empty items */
 			if (!j_ptr->k_idx) continue;
 
-			/* Can we drop "o_ptr" onto "j_ptr"? */
-			if (object_similar(j_ptr, o_ptr))
+			/* Can we drop any of "o_ptr" onto "j_ptr"? */
+			if (object_similar_2(j_ptr, o_ptr))
 			{
+				/* Add together the item counts, continue looking if o_ptr
+				 * isn't empty. */
+				if (!object_absorb_2(j_ptr, o_ptr)) continue;
+
 				/* Take note */
 				flag = TRUE;
-
-				/* Add together the item counts */
-				object_absorb(j_ptr, o_ptr);
 
 				/* One object is gone */
 				inven_cnt--;
