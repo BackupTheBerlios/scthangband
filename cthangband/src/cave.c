@@ -428,7 +428,7 @@ static cptr image_monster_hack = \
 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 static cptr image_monster_hack_ibm = \
-"ÉÑÖÜáàâäçéèêëíïñôöõúùûü°€®©Øƒ¾„¥µ…½æ«Ã‹Œ¹×ğŞşı·’“ÂËÈÊÍÎÏÌÓÔ•ÒÚÛÙ–—¯˜™š¸›œ";
+"\006\026\037\311\321\326\334\341\340\342\344\347\351\350\352\353\355\357\361\364\366\365\372\371\373\374\260\200\256\251\201\330\203\276\204\245\265\217\205\275\346\253\303\213\214\271\327\215\360\336\376\375\267\222\223\302\313\310\312\315\316\317\314\323\324\225\322\332\333\331\236\226\227\257\230\231\232\270\233\234";
 
 
 /*
@@ -438,7 +438,7 @@ static void image_monster(byte *ap, char *cp)
 {
 	if (use_graphics)
 	{
-		int n = strlen(image_monster_hack_ibm);
+		int n = strlen(image_monster_hack);
 		(*cp) = (image_monster_hack[rand_int(n)]);
 
 		/* Random color */
