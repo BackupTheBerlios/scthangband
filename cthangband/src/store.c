@@ -3270,10 +3270,7 @@ static void store_sell(void)
 		}
 
 		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		update_object(o_ptr, 0);
 
 		/* Get local object */
 		q_ptr = &forge;

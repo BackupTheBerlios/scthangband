@@ -3506,8 +3506,7 @@ static void use_power(powertype *pw_ptr)
 					p_ptr->csp = p_ptr->msp;
                     }
 
-				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-				p_ptr->window |= (PW_INVEN);
+				update_object(o_ptr, 0);
 				break;
                 }
 			case iilog(MUT1_WEIGH_MAG):

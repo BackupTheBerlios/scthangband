@@ -311,9 +311,6 @@ void do_cmd_eat_food(object_type *o_ptr)
 	}
 
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 	/* We have tried it */
 	object_tried(o_ptr);
 
@@ -323,9 +320,8 @@ void do_cmd_eat_food(object_type *o_ptr)
 		object_aware(o_ptr);
 	}
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* Food can feed the player */
 	switch (p_ptr->prace)
@@ -963,8 +959,8 @@ void do_cmd_quaff_potion(object_type *o_ptr)
         potion_smash_effect(0, py, px, o_ptr->k_idx);
     }
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* The item has been tried */
 	object_tried(o_ptr);
@@ -974,9 +970,6 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 	{
 		object_aware(o_ptr);
 	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 
 	/* Potions can feed the player */
@@ -1499,8 +1492,8 @@ void do_cmd_read_scroll(object_type *o_ptr)
 	}
 
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* The item was tried */
 	object_tried(o_ptr);
@@ -1510,9 +1503,6 @@ void do_cmd_read_scroll(object_type *o_ptr)
 	{
 		object_aware(o_ptr);
 	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 
 	/* Hack -- allow certain scrolls to be "preserved" */
@@ -1931,8 +1921,8 @@ void do_cmd_use_staff(object_type *o_ptr)
 	}
 
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* Tried the item */
 	object_tried(o_ptr);
@@ -1942,9 +1932,6 @@ void do_cmd_use_staff(object_type *o_ptr)
 	{
 		object_aware(o_ptr);
 	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 
 	/* Hack -- some uses are "free" */
@@ -2355,8 +2342,8 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	}
 
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* Mark it as tried */
 	object_tried(o_ptr);
@@ -2366,9 +2353,6 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	{
 		object_aware(o_ptr);
 	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 
 	/* Use a single charge */
@@ -2753,8 +2737,8 @@ void do_cmd_zap_rod(object_type *o_ptr)
 	}
 
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* Tried the object */
 	object_tried(o_ptr);
@@ -2764,9 +2748,6 @@ void do_cmd_zap_rod(object_type *o_ptr)
 	{
 		object_aware(o_ptr);
 	}
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Do nothing more if cancelled. */
 	if (!use_charge) return;
@@ -2937,8 +2918,8 @@ static bool brand_bolts(void)
 		o_ptr->name2 = EGO_FLAME;
 		apply_magic_2(o_ptr, dun_depth);
 
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Recalculate/redraw stuff (later) */
+		update_object(o_ptr, 0);
 
 		/* Enchant */
 		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);

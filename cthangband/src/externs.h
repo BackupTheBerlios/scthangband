@@ -1397,7 +1397,7 @@ extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
 extern cptr item_activation(object_type *o_ptr);
 #endif
-#if (defined(CMD6_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
+#if (defined(CMD6_C) || defined(OBJECT1_C))
 extern bool is_worn_p(object_type *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C))
@@ -3988,5 +3988,14 @@ extern cptr string_make(cptr str);
 
 #if (defined(HANDLE_SIGNALS)) && (defined(FILES_C) || defined(MAIN_SLA_C))
 extern Signal_Handler_t (*signal_aux)(int, Signal_Handler_t);
+#endif
+
+/* xtra1.c */
+
+#if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
+extern int find_object(object_type *o_ptr);
+#endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+extern void update_object(object_type *o_ptr, int where);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

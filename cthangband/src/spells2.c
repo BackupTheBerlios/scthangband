@@ -450,8 +450,6 @@ bool alchemy(void)
 
 	object_type             *o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	char            out_val[160];
 
 
@@ -465,7 +463,6 @@ bool alchemy(void)
     if (!((o_ptr = get_item(&err, "Turn which item to gold? ", TRUE, TRUE, TRUE))))
 	{
 		if (err == -2) msg_print("You have nothing to turn to gold.");
-		TFREE(o_name);
 		return FALSE;
 	}
 
@@ -477,18 +474,13 @@ bool alchemy(void)
 		amt = get_quantity(NULL, o_ptr->number,TRUE);
 
 		/* Allow user abort */
-		if (amt <= 0)
-		{
-			TFREE(o_name);
-			return FALSE;
-		}
+		if (amt <= 0) return FALSE;
 	}
 
 
 	/* Describe the object */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
@@ -497,12 +489,9 @@ bool alchemy(void)
         if (!((auto_destroy) && (object_value(o_ptr)<1)))
         {
             /* Make a verification */
-            sprintf(out_val, "Really turn %s to gold? ", o_name);
-            if (!get_check(out_val))
-			{
-				TFREE(o_name);
-				return FALSE;
-			}
+            strnfmt(out_val, sizeof(out_val), "Really turn %v to gold? ",
+				object_desc_f3, o_ptr, TRUE, 3);
+            if (!get_check(out_val)) return FALSE;
         }
 	}
 
@@ -510,18 +499,14 @@ bool alchemy(void)
     if (allart_p(o_ptr))
 	{
 		/* Message */
-		msg_format("You fail to turn %s to gold!", o_name);
+		msg_format("You fail to turn %v to gold!",
+			object_desc_f3, o_ptr, TRUE, 3);
 
 		/* We have "felt" it (again) */
 		o_ptr->ident |= (IDENT_SENSE_VALUE);
 
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		TFREE(o_name);
+		/* Recalculate/redraw stuff (later) */
+		update_object(o_ptr, 0);
 
 		/* Done */
 		return FALSE;
@@ -530,22 +515,26 @@ bool alchemy(void)
     price = object_value_real(o_ptr);
 
     if (price <= 0)
-	/* Message */
-	msg_format("You turn %s to fool's gold.", o_name);
+	{
+		/* Message */
+		msg_format("You turn %v to fool's gold.",
+			object_desc_f3, o_ptr, TRUE, 3);
+	}
     else
 	{
 	    price /= 3;
 
-	if (amt > 1) price *= amt;
+		if (amt > 1) price *= amt;
 
-	    if (price > 30000) price = 30000;
-	    msg_format("You turn %s to %ld coins worth of gold.", o_name, price);
-	    p_ptr->au += price;
+		if (price > 30000) price = 30000;
+		msg_format("You turn %v to %ld coins worth of gold.",
+			object_desc_f3, o_ptr, TRUE, 3, price);
+		p_ptr->au += price;
 
-	    /* Redraw gold */
-			p_ptr->redraw |= (PR_GOLD);
+		/* Redraw gold */
+		p_ptr->redraw |= (PR_GOLD);
 
-			/* Window stuff */
+		/* Window stuff */
 	    p_ptr->window |= (PW_PLAYER);
 
 	}
@@ -1673,14 +1662,9 @@ bool lose_all_info(void)
 		o_ptr->ident &= ~(IDENT_POWER_ALL);
 	}
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(0, OUP_CARRIED_MASK);
 
 	/* Mega-Hack -- Forget the map */
 	wiz_dark();
@@ -2745,14 +2729,9 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	/* Failure */
 	if (!res) return (FALSE);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* Success */
 	return (TRUE);
@@ -4319,6 +4298,34 @@ bool artifact_scroll(void)
 	return (TRUE);
 }
 
+/*
+ * Describe an item, giving its location.
+ */
+static void ident_describe(object_type *o_ptr)
+{
+	/* Describe */
+	switch (find_object(o_ptr))
+	{
+		case OUP_EQUIP: case OUP_POUCH:
+		{
+			msg_format("%^s: %v (%c).", describe_use(o_ptr),
+				object_desc_f3, o_ptr, TRUE, 3, index_to_label(o_ptr));
+			break;
+		}
+		/* Remove the verb from describe_use() for inventory. */
+		case OUP_INVEN:
+		{
+			msg_format("In your pack: %v (%c).",
+				object_desc_f3, o_ptr, TRUE, 3, index_to_label(o_ptr));
+			break;
+		}
+		case OUP_FLOOR:
+		{
+			msg_format("On the ground: %v.", object_desc_f3, o_ptr, TRUE, 3);
+			break;
+		}
+	}
+}
 
 /*
  * Identify an object in the inventory (or on the floor)
@@ -4330,8 +4337,6 @@ bool ident_spell(void)
 	errr                     err;
 
 	object_type             *o_ptr;
-
-	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Only unidentified items */
 	item_tester_hook = item_tester_unknown;
@@ -4349,36 +4354,11 @@ bool ident_spell(void)
 	object_aware(o_ptr);
 	object_known(o_ptr);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
-	/* Description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-	/* Describe */
-	if (is_worn_p(o_ptr))
-	{
-		msg_format("%^s: %s (%c).",
-			   describe_use(o_ptr), o_name, index_to_label(o_ptr));
-	}
-	else if (is_inventory_p(o_ptr))
-	{
-		msg_format("In your pack: %s (%c).",
-			   o_name, index_to_label(o_ptr));
-	}
-	else
-	{
-		msg_format("On the ground: %s.",
-			   o_name);
-	}
-
-	TFREE(o_name);
+	/* Describe the object. */
+	ident_describe(o_ptr);
 
 	/* Something happened */
 	return (TRUE);
@@ -4396,8 +4376,6 @@ bool identify_fully(void)
 
 	object_type             *o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	/* Only un-*id*'ed items */
 	item_tester_hook = item_tester_unknown_star;
 
@@ -4405,7 +4383,6 @@ bool identify_fully(void)
 	if (!((o_ptr = get_item(&err, "Identify which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (err == -2) msg_print("You have nothing to identify.");
-		TFREE(o_name);
 		return (FALSE);
 	}
 
@@ -4417,42 +4394,17 @@ bool identify_fully(void)
 	/* Mark the item as fully known */
 	o_ptr->ident |= (IDENT_MENTAL);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* Handle stuff */
 	handle_stuff();
 
-	/* Description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-	/* Describe */
-	if (is_worn_p(o_ptr))
-	{
-		msg_format("%^s: %s (%c).",
-			   describe_use(o_ptr), o_name, index_to_label(o_ptr));
-	}
-	else if (is_inventory_p(o_ptr))
-	{
-		msg_format("In your pack: %s (%c).",
-			   o_name, index_to_label(o_ptr));
-	}
-	else
-	{
-		msg_format("On the ground: %s.",
-			   o_name);
-	}
+	/* Describe the object. */
+	ident_describe(o_ptr);
 
 	/* Describe it fully */
 	identify_fully_aux(o_ptr, FALSE);
-
-	TFREE(o_name);
 
 	/* Success */
 	return (TRUE);
@@ -4601,11 +4553,8 @@ bool recharge(int num)
 		}
 	}
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	/* Something was done */
 	return (TRUE);

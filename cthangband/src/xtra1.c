@@ -3428,7 +3428,7 @@ static bool win_object_details_good(void)
 	if (!o_ptr || !(o_ptr->k_idx)) return FALSE;
 
 	/* Invisible floor objects are boring. */
-	if (is_floor_item_p(o_ptr) && !los(py, px, o_ptr->iy, o_ptr->ix))
+	if (find_object(o_ptr) == OUP_FLOOR && !los(py, px, o_ptr->iy, o_ptr->ix))
 	{
 		return FALSE;
 	}
@@ -3445,7 +3445,10 @@ static void win_object_details_display(void)
 	if (!o_ptr || !(o_ptr->k_idx)) return;
 	
 	/* Never display invisible floor objects */
-	if (is_floor_item_p(o_ptr) && !los(py, px, o_ptr->iy, o_ptr->ix)) return;
+	if (find_object(o_ptr) == OUP_FLOOR && !los(py, px, o_ptr->iy, o_ptr->ix))
+	{
+		return;
+	}
 	
 	/* Describe fully. */
 	identify_fully_aux(o_ptr, 2);
@@ -4419,4 +4422,79 @@ byte spell_skill(magic_type *spell)
 	total= (total/4); /* This gives a total of 0-50 */
 	if (total == 0) total++; /* So that we have a minimum of 1 */
 	return (total);
+}
+
+/*
+ * Determine where an object is in terms of OUP_* flags.
+ */
+int find_object(object_type *o_ptr)
+{
+	int slot;
+	/* Floor item. */
+	if (o_ptr >= o_list && o_ptr < o_list+MAX_O_IDX)
+	{
+		return OUP_FLOOR;
+	}
+	/* Inventory item. */
+	else if (o_ptr >= inventory && o_ptr < inventory+INVEN_MAX)
+	{
+		slot = o_ptr-inventory;
+		if (slot <= INVEN_PACK) return OUP_INVEN;
+		if (slot >= INVEN_POUCH_1 && slot <= INVEN_POUCH_6) return OUP_POUCH;
+		if (slot >= INVEN_WIELD && slot <= INVEN_FEET) return OUP_EQUIP;
+	}
+	/* Unknown. */
+	else
+	{
+		return 0;
+	}
+}
+
+/*
+ * Update everything which needs to be updated after an object changes.
+ */
+void update_object(object_type *o_ptr, int where)
+{
+	/* Find the object if it is unknown. */
+	if (!where && o_ptr) where = find_object(o_ptr);
+
+	if (where & OUP_FLOOR)
+	{
+		/* Display the floor under the player, as the object may be there. */
+		p_ptr->window |= PW_FLOOR;
+	}
+	if (where & OUP_INVEN)
+	{
+		/* Put the object in the correct position. */
+		p_ptr->notice |= PN_COMBINE | PN_REORDER;
+
+		/* Correct the speed, for if the weight has changed. */
+		p_ptr->update |= PU_BONUS;
+
+		/* Display the inventory window. */
+		p_ptr->window |= PW_INVEN;
+	}
+	/* Pouches are . */
+	if (where & OUP_POUCH)
+	{
+		/* Correct the speed, for if the weight has changed. */
+		p_ptr->update |= PU_BONUS;
+
+		/* Display the equipment window. */
+		p_ptr->window |= PW_EQUIP;
+	}
+	if (where & OUP_EQUIP)
+	{
+		/* Update various item bonuses. */
+		p_ptr->update |= PU_BONUS;
+
+		/* Update separately for cumber_*() and armour weight. */
+		p_ptr->update |= PU_MANA;
+
+		/* Display the equipment window. */
+		p_ptr->window |= PW_EQUIP;
+
+		/* Display the player window, as some changes may not do this. (?) */
+		p_ptr->window |= PW_PLAYER;
+	}
 }

@@ -3689,22 +3689,13 @@ void item_increase(object_type *o_ptr, int num)
 	o_ptr->number += num;
 
 	/* Change the number and weight for inventory items. */
-	if (is_inventory_p(o_ptr) && num)
+	if (find_object(o_ptr) & OUP_CARRIED_MASK)
 	{
 		/* Add the weight */
 		total_weight += (num * o_ptr->weight);
 
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Recalculate mana XXX */
-		p_ptr->update |= (PU_MANA);
-
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Recalculate/redraw stuff (later) */
+		update_object(o_ptr, 0);
 	}
 }
 
@@ -3715,20 +3706,24 @@ void item_describe(object_type *o_ptr)
 {
 	cptr verb;
 
-	if (is_inventory_p(o_ptr))
+	switch (find_object(o_ptr))
 	{
-		verb = "have";
-	}
-	else if (is_floor_item_p(o_ptr))
-	{
-		verb = "see";
-	}
-	/* Remark upon bizarre calls here. Related calls usually invoke this
-	 * function, so this should be enough to diagnose bad calls. */
-	else 
-	{
-		if (alert_failure) msg_print("Unusual item requesed.");
-		verb = "imagine";
+		case OUP_INVEN: case OUP_EQUIP: case OUP_POUCH:
+		{
+			verb = "have";
+			break;
+		}
+		case OUP_FLOOR:
+		{
+			verb = "see";
+			break;
+		}
+		/* Paranoia. */
+		default:
+		{
+			if (alert_failure) msg_print("Unusual item requesed.");
+			verb = "imagine";
+		}
 	}
 
 	msg_format("You %s %v", verb, object_desc_f3, o_ptr, TRUE, 3);
@@ -3837,8 +3832,6 @@ bool inven_carry_okay(object_type *o_ptr)
  *
  * Note that this code must remove any location/stack information
  * from the object once it is placed into the inventory.
- *
- * This does not produce a sorted pack, but does combine items.
  */
 object_type *inven_carry(object_type *o_ptr)
 {
@@ -3897,17 +3890,13 @@ object_type *inven_carry(object_type *o_ptr)
 	/* Increase the weight */
 	total_weight += (o_ptr->number * o_ptr->weight);
 
-	/* Display the object if required */
-	object_track(o_ptr);
-
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
 	/* Hack - track this object. */
 	o_ptr->ident |= IDENT_TEMP;
 
-	/* Combine and Reorder pack */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
+
+	/* Reorder the pack now. */
 	notice_stuff();
 
 	/* Find (part of) the object again. */
@@ -3920,8 +3909,8 @@ object_type *inven_carry(object_type *o_ptr)
 		}
 	}
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_SPELL);
+	/* Display the object if required */
+	object_track(j_ptr);
 
 	/* Return the slot */
 	return j_ptr;

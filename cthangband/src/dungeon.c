@@ -357,11 +357,8 @@ static void sense_inventory(void)
 		/* We have "felt" it */
 		o_ptr->ident |= (IDENT_SENSE);
 
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Recalculate/redraw stuff (later) */
+		update_object(o_ptr, 0);
 	}
 }
 
@@ -803,11 +800,8 @@ bool psychometry(void)
 	msg_format("You feel that the %v %s%s %s...", "%v",
 		object_desc_f3, o_ptr, FALSE, 0, really , is, feel);
 
-	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-  
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
     /* Something happened */
     return (TRUE);
@@ -1948,10 +1942,6 @@ static void process_chaos(void)
 	}
 }
 
-#define PRM_EQUIP 0
-#define PRM_INVEN 1
-#define PRM_FLOOR 2
-
 /*
  * Recharge a charging object.
  */
@@ -1961,7 +1951,7 @@ static void process_recharge(object_type *o_ptr, int mode)
 	if (!o_ptr->k_idx) return;
 
 	/* Skip non-rods (except when equipped). */
-	if (mode != PRM_EQUIP && o_ptr->tval != TV_ROD) return;
+	if (mode != OUP_EQUIP && o_ptr->tval != TV_ROD) return;
 
 	/* Skip recharged rods. */
 	if (!o_ptr->timeout) return;
@@ -1969,23 +1959,13 @@ static void process_recharge(object_type *o_ptr, int mode)
 	/* Charge it, do nothing else if still recharging. */
 	if (--o_ptr->timeout) return;
 
-	if (mode == PRM_INVEN)
+	if (mode & OUP_CARRIED_MASK)
 	{
 		/* Tell the player if requested. */
 		recharged_notice(o_ptr);
 
-		/* Combine pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN);
-	}
-	else if (mode == PRM_EQUIP)
-	{
-		recharged_notice(o_ptr);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
+		/* Recalculate/redraw stuff (later) */
+		update_object(0, mode);
 	}
 }
 
@@ -2049,7 +2029,7 @@ static void process_equip(object_type *o_ptr)
 	}
 
 	/* Recharge if it is activatable. */
-	process_recharge(o_ptr, PRM_EQUIP);
+	process_recharge(o_ptr, OUP_EQUIP);
 
     /* Hack - handle damage from the Gemstone 'Trapezohedron'. */
 	if (o_ptr->name1 == ART_TRAPEZOHEDRON && !p_ptr->invuln &&
@@ -2173,7 +2153,7 @@ static void process_world(void)
 	/* Process equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) process_equip(inventory+i);
 
-	for (i = 0; i < INVEN_PACK; i++) process_recharge(inventory+i, PRM_INVEN);
+	for (i = 0; i < INVEN_PACK; i++) process_recharge(inventory+i, OUP_INVEN);
 	
 	/* calm down spirits */
 	for (i=0;i<MAX_SPIRITS;i++) process_spirit(spirits+i);
@@ -2182,7 +2162,7 @@ static void process_world(void)
 	sense_inventory();
 
 	/*** Process Objects ***/
-	for (i = 1; i < o_max; i++) process_recharge(o_list+i, PRM_FLOOR);
+	for (i = 1; i < o_max; i++) process_recharge(o_list+i, OUP_FLOOR);
 
 	/* Delayed Word-of-Recall */
 	process_recall();

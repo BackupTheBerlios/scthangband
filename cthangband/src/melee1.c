@@ -410,11 +410,8 @@ bool make_attack_normal(int m_idx)
 							/* Uncharge */
 							o_ptr->pval = 0;
 
-							/* Combine / Reorder the pack */
-							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-							/* Window stuff */
-							p_ptr->window |= (PW_INVEN);
+							/* Recalculate/redraw stuff (later) */
+							update_object(o_ptr, 0);
 
 							/* Done */
 							break;

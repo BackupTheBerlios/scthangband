@@ -1948,6 +1948,18 @@ logaux(x, 1) logaux(x, 0) 255)
 	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_HELP | PW_FLOOR | \
 	PW_ROTATE | PW_RETURN)
 
+/*
+ * Bit flags for the update_object() function.
+ */
+#define OUP_FLOOR	(1<<0)	/* The object is on the floor. */
+#define OUP_INVEN	(1<<1)	/* ... in the player's inventory. */
+#define OUP_EQUIP	(1<<2)	/* ... equipped by the player. */
+#define OUP_POUCH	(1<<3)	/* ... equipped in a pouch. */
+
+/* Some useful combinations of the above flags. */
+#define OUP_CARRIED_MASK	(OUP_INVEN | OUP_EQUIP | OUP_POUCH)
+#define OUP_EQUIPPED_MASK	(OUP_EQUIP | OUP_POUCH)
+
 /*** General index values ***/
 
 
@@ -3236,9 +3248,6 @@ extern int PlayerUID;
 
 #define is_inventory_p(O_PTR) \
 	(O_PTR >= inventory && O_PTR < inventory+INVEN_TOTAL)
-
-#define is_floor_item_p(O_PTR) \
-	(o_ptr >= o_list && o_ptr < o_list+MAX_O_IDX)
 
 
 /* Identify a monster which is never generated normally. */

@@ -454,13 +454,8 @@ void do_cmd_destroy(void)
 		/* We know that it's extraordinary. */
 		o_ptr->ident |= (IDENT_SENSE_HEAVY);
 
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-      p_ptr->redraw |= (PR_EQUIPPY);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Recalculate/redraw stuff (later) */
+		update_object(o_ptr, 0);
 
 		/* Done */
 		return;
@@ -567,11 +562,8 @@ void do_cmd_uninscribe(void)
 	/* Remove the incription */
 	o_ptr->note = 0;
 
-	/* Combine the pack */
-	p_ptr->notice |= (PN_COMBINE);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 }
 
 
@@ -607,11 +599,8 @@ void do_cmd_inscribe(void)
 		/* Save the inscription */
 		o_ptr->note = quark_add(out_val);
 
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Recalculate/redraw stuff (later) */
+		update_object(o_ptr, 0);
 	}
 
 		/* Make a note of the change. */
