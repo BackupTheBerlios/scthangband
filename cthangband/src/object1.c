@@ -1426,30 +1426,17 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 		{
 			s32b value;
 			bool worthless;
-			object_type *j_ptr = o_ptr, j_body;
 
-			/* Without the appropriate spoiler flags, ignore the fact that
-			 * it is an ego item or artefact. Keep any known flags, as
-			 * they have a separate price.
-			 */
-			if ((!spoil_ego && o_ptr->name2) || (!spoil_art && o_ptr->name1))
-			{
-				j_ptr = &j_body;
-				object_copy(j_ptr, o_ptr);
-				j_ptr->name2 = j_ptr->name1 = 0;
-			}
-
-			/* Hack - object_value() needs a real k_idx and tval. */
-			j_ptr->k_idx = o1_ptr->k_idx;
-			j_ptr->tval = o1_ptr->tval;
-
-			value = object_value(j_ptr);
+			value = object_value(o_ptr, FALSE);
 			worthless = !value;
-			if (worthless && cursed_p(j_ptr))
+			if (worthless && cursed_p(o_ptr))
 			{
+				object_type j_ptr[1];
+				object_copy(j_ptr, o_ptr);
+
 				j_ptr->ident &= ~(IDENT_CURSED);
 				j_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
-	 			value = object_value(j_ptr);
+	 			value = object_value(j_ptr, FALSE);
 			}
 
 			/* Let the player know when a known cursed item is not broken. */
@@ -4692,14 +4679,14 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 					if (!get_item_okay(o_ptr)) continue;
 
 					/* Skip specified objects */
-					if (strstr(quark_str(j_ptr->note), "!k")) continue;
-					if (strstr(quark_str(j_ptr->note), "!K")) continue;
+					if (strstr(quark_str(o_ptr->note), "!k")) continue;
+					if (strstr(quark_str(o_ptr->note), "!K")) continue;
 
 					/* Found a cursed item. */
-					if (cursed_p(j_ptr)) cursed = o_ptr;
+					if (cursed_p(o_ptr)) cursed = o_ptr;
 
 					/* Found an uncursed worthless item. */
-					else if (!object_value(j_ptr)) broken = o_ptr;
+					else if (!object_value(o_ptr, FALSE)) broken = o_ptr;
 
 					/* Found a hidden item. */
 					if (hidden_p(j_ptr)) hidden = o_ptr;
@@ -4719,7 +4706,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			/* Select the most/least valuable object in the selection. */
 			case 'x': case 'X': case 'y': case 'Y':
 			{
-				object_type *start, *end, *j_ptr = NULL;
+				object_type *start, *end, *j_ptr;
 				bool high = strchr("Xx", which) != NULL;
 				bool upper = isupper(which);
 				s32b UNREAD(best_price);
@@ -4744,7 +4731,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				{
 					s32b this_price;
 					if (!get_item_okay(j_ptr)) continue;
-					this_price = object_value(j_ptr) * j_ptr->number;
+					this_price = object_value(j_ptr, FALSE) * j_ptr->number;
 					if (o_ptr >= start)
 					{
 						if (high)

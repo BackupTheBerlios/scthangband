@@ -728,7 +728,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 
 
 	/* Get the value of one of the items */
-	price = object_value(o_ptr);
+	price = object_value(o_ptr, TRUE);
 
 	/* Worthless items */
 	if (price <= 0) return (0L);
@@ -800,7 +800,7 @@ static void mass_produce(object_type *o_ptr)
 	int size = 1;
 	int discount = 0;
 
-	s32b cost = object_value(o_ptr);
+	s32b cost = object_value(o_ptr, TRUE);
 
 
 	/* Analyze the type */
@@ -1233,7 +1233,7 @@ static bool store_will_buy(object_ctype *o_ptr)
 	}
 
 	/* XXX XXX XXX Ignore "worthless" items */
-	if (object_value(o_ptr) <= 0) return (FALSE);
+	if (object_value(o_ptr, TRUE) <= 0) return (FALSE);
 
 	/* Okay if there's room */
 	return (store_check_num(o_ptr));
@@ -1264,7 +1264,7 @@ static int store_carry(object_type *o_ptr)
 		(cur_store_type == STORE_PAWN);
 
 	/* Evaluate the object */
-	value = object_value(o_ptr);
+	value = object_value(o_ptr, TRUE);
 
 	if (!is_home)
 	{
@@ -1336,7 +1336,7 @@ static int store_carry(object_type *o_ptr)
        }
   
         /* Evaluate that slot */
-		j_value = object_value(j_ptr);
+		j_value = object_value(j_ptr, !is_home);
 
 		/* Objects sort by decreasing value */
 		if (value > j_value) break;
@@ -1608,17 +1608,14 @@ static void store_create(void)
 			if (black_market_crap(q_ptr)) continue;
 
 			/* Hack -- No "cheap" items */
-			if (object_value(q_ptr) < 10) continue;
-
-			/* No "worthless" items */
-			/* if (object_value(q_ptr) <= 0) continue; */
+			if (object_value(q_ptr, TRUE) < 10) continue;
 		}
 
 		/* Prune normal stores */
 		else
 		{
 			/* No "worthless" items */
-			if (object_value(q_ptr) <= 0) continue;
+			if (object_value(q_ptr, TRUE) <= 0) continue;
 		}
 
 
@@ -2686,6 +2683,17 @@ static bool service_haggle(s32b service_cost, s32b *price, cptr service, byte ty
 
 
 /*
+ * Objects being sold to the store are in a strange position.
+ * If the player is aware of the object, the shopkeeper knows all about it.
+ * Otherwise, he's no better off than the player.
+ */
+static s32b PURE object_value_sell(object_ctype *o_ptr)
+{
+	return object_value(o_ptr, object_aware_p(o_ptr));
+}
+
+
+/*
  * Haggling routine					-RAK-
  *
  * Return TRUE if purchase is NOT successful
@@ -2731,7 +2739,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	max_per = min_per * 3;
 
 	/* Mega-Hack -- artificial "last offer" value */
-	last_offer = object_value(o_ptr) * o_ptr->number;
+	last_offer = object_value_sell(o_ptr) * o_ptr->number;
 	last_offer = last_offer * ot_ptr->max_inflate / 100L;
 
 	/* No offer yet */
@@ -3248,7 +3256,7 @@ static void store_sell(void)
 		store_prt_gold();
 
 		/* Get the "apparent" value */
-		dummy = object_value(q_ptr) * q_ptr->number;
+		dummy = object_value_sell(q_ptr) * q_ptr->number;
 			
 		if (cur_store_type != STORE_PAWN)
 		{
@@ -3279,7 +3287,7 @@ static void store_sell(void)
 		}
 		else
 		{
-			value = object_value(q_ptr) * q_ptr->number;
+			value = object_value(q_ptr, TRUE) * q_ptr->number;
 		}
 
 

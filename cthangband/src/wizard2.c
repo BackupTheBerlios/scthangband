@@ -392,7 +392,7 @@ static void wiz_display_item(object_type *o_ptr)
 	           o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d);
 
 	mc_put_fmt(7, j, "name1 = %-4d  name2 = %-4d  cost = %ld",
-	           o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr));
+	           o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr, TRUE));
 
 	mc_put_fmt(8, j, "ident = %04x  timeout = %-d",
 		o_ptr->ident, o_ptr->timeout);

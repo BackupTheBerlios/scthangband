@@ -487,7 +487,7 @@ bool alchemy(void)
 	/* Verify unless quantity given */
 	if (!force)
 	{
-        if (!((auto_destroy) && (object_value(o_ptr)<1)))
+        if (!((auto_destroy) && (object_value(o_ptr, FALSE)<1)))
         {
             /* Make a verification */
             strnfmt(out_val, sizeof(out_val), "Really turn %v to gold? ",
@@ -513,7 +513,7 @@ bool alchemy(void)
 		return FALSE;
 	}
 
-    price = object_value_real(o_ptr);
+    price = object_value(o_ptr, TRUE);
 
     if (price <= 0)
 	{

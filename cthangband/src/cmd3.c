@@ -451,7 +451,7 @@ void do_cmd_destroy(void)
 	/* Verify unless quantity given */
 	if (!force)
 	{
-		if (!((auto_destroy) && (object_value(o_ptr)<1)))
+		if (!((auto_destroy) && (object_value(o_ptr, FALSE)<1)))
 		{
 			/* Make a verification */
 			if (!get_check(format("Really destroy %v? ",

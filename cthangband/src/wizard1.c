@@ -158,7 +158,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 	(*lev) = object_k_level(k_ptr);
 
 	/* Value */
-	(*val) = object_value(q_ptr);
+	(*val) = object_value(q_ptr, FALSE);
 
 
 	/* Hack */

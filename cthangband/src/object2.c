@@ -893,20 +893,6 @@ void object_tried(object_type *o_ptr)
 
 
 /*
- * Return the "value" of an "unknown" item
- * Make a guess at the value of non-aware items
- */
-static s32b PURE object_value_base(object_ctype *o_ptr)
-{
-	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-	/* Aware item -- use template cost */
-	if (object_aware_p(o_ptr)) return (k_ptr->cost);
-
-	else return (o_base[u_info[k_ptr->u_idx].p_id].cost);
-}
-
-/*
  * Return the value of the flags the object has...
  * Consider all flags if this is being done to find an appropriate randart.
  * If this is being done to price an item, flags based on the k_idx, name1
@@ -1158,7 +1144,7 @@ static s32b PURE mod_cost(object_ctype *o_ptr)
 
 
 /*
- * Return the "real" price of a "known" item, not including discounts
+ * Return the "real" price of an "aware" item, not including discounts
  *
  * Wand and staffs get cost for each charge
  *
@@ -1178,7 +1164,7 @@ static s32b PURE mod_cost(object_ctype *o_ptr)
  *
  * Every wearable item with a "pval" bonus is worth extra (see below).
  */
-s32b PURE object_value_real(object_ctype *o_ptr)
+static s32b PURE object_value_aux(object_ctype *o_ptr)
 {
 	s32b value;
 
@@ -1342,58 +1328,41 @@ s32b PURE object_value_real(object_ctype *o_ptr)
 
 
 /*
- * Return the price of an item including plusses (and charges)
+ * Return the price of an item including plusses (and charges) if known.
  *
- * This function returns the "value" of the given item (qty one)
- *
- * Never notice "unknown" bonuses or properties, including "curses",
- * since that would give the player information he did not have.
- *
- * Note that discounted items stay discounted forever, even if
- * the discount is "forgotten" by the player via memory loss.
+ * If full is set, the object should be valued as if it was fully known.
+ * It also represents the difference between the value of an object as it is
+ * and its value as the player sees it.
  */
-s32b PURE object_value(object_ctype *o_ptr)
+s32b PURE object_value(object_ctype *o1_ptr, bool full)
 {
 	s32b value;
+	object_type j_ptr[1], o_ptr[1];
 
+	/* j_ptr is the object with the desired extra knowledge. */
+	object_copy(j_ptr, o1_ptr);
+	if (full) j_ptr->ident |= IDENT_MENTAL;
 
-	/* Known items -- acquire the actual value */
-	if (object_known_p(o_ptr))
-	{
-		/* Broken items -- worthless */
-		if (broken_p(o_ptr)) return (0L);
+	/* o_ptr is what the player would be assumed to know about j_ptr. */
+	object_info_known(o_ptr, j_ptr);
 
-		/* Cursed items -- worthless */
-		if (cursed_p(o_ptr)) return (0L);
+	/* The player can't always value ego items correctly. */
+	if (!full && ((!spoil_ego && o_ptr->name2) || (!spoil_art && o_ptr->name1)))
+		o_ptr->name1 = o_ptr->name2 = 0;
 
-		/* Real value (see above) */
-		value = object_value_real(o_ptr);
-	}
+	/* Known broken and cursed items are worthless. */
+	if (broken_p(o_ptr) || cursed_p(o_ptr)) value = 0;
 
-	/* Unknown items -- acquire a base value */
-	else
-	{
-		/* Hack -- Felt broken items */
-		if ((o_ptr->ident & (IDENT_SENSE_VALUE)) && broken_p(o_ptr)
-		/* *Hack* -- only consider tried ego-items or artefacts, as their
-		 * brokenness is probably due to things which aren't known. */
-		&& ((!o_ptr->name1 && !o_ptr->name2) || o_ptr->ident & (IDENT_TRIED)))
-			return (0L);
+	/* aware items are handled elsewhere. */
+	else if (o_ptr->k_idx != OBJ_UNKNOWN) value = object_value_aux(o_ptr);
 
-		/* Hack -- Felt cursed items */
-		if ((o_ptr->ident & (IDENT_SENSE_CURSED)) && cursed_p(o_ptr)) return (0L);
-
-		/* Base value (see above) */
-		value = object_value_base(o_ptr);
-	}
-
+	/* Extract the assumed price from o_base. */
+	else value = o_base[u_info[k_info[o1_ptr->k_idx].u_idx].p_id].cost;
 
 	/* Apply discount (if any) */
 	if (o_ptr->discount) value -= (value * o_ptr->discount / 100L);
 
-
-	/* Return the final value */
-	return (value);
+	return value;
 }
 
 
@@ -4353,7 +4322,7 @@ static bool ang_sort_comp_pack_aux(object_ctype *a_ptr, object_ctype *b_ptr)
 	}
 
 	/* Objects sort by decreasing value. */
-	dif = object_value(a_ptr) - object_value(b_ptr);
+	dif = object_value(a_ptr, FALSE) - object_value(b_ptr, FALSE);
 	if (dif) return (dif > 0);
 
 	/* Objects sort by decreasing stack size. */

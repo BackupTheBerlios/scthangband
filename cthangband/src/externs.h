@@ -1381,7 +1381,7 @@ extern void reset_visuals(void);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SQUELCH_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SQUELCH_C))
 extern void object_info_known(object_type *j_ptr, object_ctype *o_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
@@ -1486,11 +1486,11 @@ extern void object_tried(object_type *o_ptr);
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern s32b PURE flag_cost(object_ctype *o_ptr, bool all);
 #endif
-#if (defined(OBJECT2_C) || defined(SPELLS2_C))
-extern s32b PURE object_value_real(object_ctype *o_ptr);
-#endif
+
+
+
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
-extern s32b PURE object_value(object_ctype *o_ptr);
+extern s32b PURE object_value(object_ctype *o1_ptr, bool full);
 #endif
 #if (defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern void set_stack_number(object_type *o_ptr);
@@ -2974,13 +2974,13 @@ extern bool testing_stack;
 #if (defined(MELEE1_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool testing_carry;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_art;
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_mon;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_ego;
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
