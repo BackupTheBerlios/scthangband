@@ -3093,7 +3093,7 @@ static void start_screensaver(void)
 /*
  * Display a help file
  */
-static void display_help(cptr filename)
+static void display_help_win(cptr filename)
 {
 	char tmp[1024];
 
@@ -3107,7 +3107,7 @@ static void display_help(cptr filename)
 
 #else /* HTML_HELP */
 
-		char buf[1024];
+		char buf[1036];
 
 		sprintf(buf, "winhelp.exe %s", tmp);
 		WinExec(buf, SW_NORMAL);
@@ -3661,13 +3661,13 @@ static void process_menus(WORD wCmd)
 
 		case IDM_HELP_GENERAL:
 		{
-			display_help(HELP_GENERAL);
+			display_help_win(HELP_GENERAL);
 			break;
 		}
 
 		case IDM_HELP_SPOILERS:
 		{
-			display_help(HELP_SPOILERS);
+			display_help_win(HELP_SPOILERS);
 			break;
 		}
 	}

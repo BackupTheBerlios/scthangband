@@ -551,11 +551,14 @@ static void do_cmd_options_autosave(cptr info)
 /*
  * Display help in the main window. Remove it at the next keypress.
  */
-static void display_help(void)
+void display_help(cptr help)
 {
 	/* Save the screen somewhere. */
 	int t = Term_save_aux();
 	bool v;
+
+	/* Display the help, if any. */
+	if (help) help_track(help);
 
 	/* Show the help. */
 	clear_from(0);
@@ -570,6 +573,9 @@ static void display_help(void)
 	/* Restore the screen. */
 	Term_load_aux(t);
 	Term_release(t);
+
+	/* Forget the help, if any. */
+	if (help) help_track(NULL);
 }
 
 /*
@@ -792,15 +798,9 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			}
 			case '?':
 			{
-				/* Track this option (again). */
-				help_track(option_info[opt[k]].o_text);
-
 				/* Hack - show help on the main term. */
-				display_help();
+				display_help(option_info[opt[k]].o_text);
 				break;
-
-				/* Clear the remembered option. */
-				help_track(NULL);
 			}
 			default:
 			{
@@ -1048,7 +1048,7 @@ static void do_cmd_options_redraw(void)
 			case '?':
 			{
 				/* Hack - show help on the main term. */
-				display_help();
+				display_help(NULL);
 				break;
 			}
 			default:
