@@ -4813,7 +4813,10 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	char tmp_val[160];
 	char out_val[160];
 
- #ifdef ALLOW_REPEAT /* TNB */
+	/* Hack - suppress screen redraw. */
+	character_icky = TRUE;
+
+#ifdef ALLOW_REPEAT /* TNB */
      
      /* Get the item index */
      if (repeat_pull(cp)) {
@@ -5429,6 +5432,9 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
      if (item) repeat_push(*cp);
      
  #endif /* ALLOW_REPEAT */
+
+	/* Reset character_icky. */
+	character_icky = FALSE;
 
 	/* Return TRUE if something was picked */
 	return (item);

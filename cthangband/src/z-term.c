@@ -2270,7 +2270,17 @@ bool Term_load_aux(int win)
 
 	/* The screen size has changed since this was saved, so the screen should
 	 * really be redrawn. */
-	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt) return FALSE;
+	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt)
+	{
+		/* Execute the "resize_hook" hook, if available */
+		if (Term->resize_hook)
+		{
+			Term->resize_hook();
+		}
+
+		/* Warn the calling function, in case it knows a better hook. */
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -2479,6 +2489,11 @@ errr Term_resize(int w, int h)
 	Term->y1 = 0;
 	Term->y2 = h - 1;
 
+	/* Execute the "resize_hook" hook, if available */
+	if (Term->resize_hook)
+	{
+		Term->resize_hook();
+	}
 
 	/* Success */
 	return (0);

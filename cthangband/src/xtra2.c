@@ -2879,6 +2879,30 @@ void verify_panel(void)
 	p_ptr->window |= (PW_OVERHEAD);
 }
 
+/*
+ * Map resizing whenever the main term changes size
+ */
+void resize_map(void)
+{
+	/* Only if the dungeon exists */
+	if (!character_dungeon) return;
+
+	/* Recalculate the map size. */
+	panel_bounds_prt();
+
+	/* Redraw everything (even the left-hand bar, which is unchanged). */
+	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+
+	/* Hack -- update */
+	redraw_stuff();
+
+	/* Place the cursor on the player */
+	move_cursor_relative(px, py);
+
+	/* Refresh */
+	Term_fresh();
+}
+
 
 
 /*

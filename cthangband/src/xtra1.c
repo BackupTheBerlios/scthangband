@@ -4092,16 +4092,16 @@ void window_stuff(void)
 		 * is used.
 		 */
 		if (window_stuff_rotate)
-	{
+		{
 			n = w_ptr->current;
 			for (n = (w_ptr->current+1)%32; n != w_ptr->current; n=(n+1)%32)
-	{
+			{
 				if (REP(m,n) == 0) continue; /* Don't stop at a priority of 0. */
 				if ((*display_func[n].good)()) break; /* Stop at an interesting display. */
 			}
 			/* If there are no displays assigned to this window, do nothing. */
 			if (REP(m,n) == 0) n = DISPLAY_NONE;
-	}
+		}
 		else
 		{
 			int i, n_good;
@@ -4113,7 +4113,7 @@ void window_stuff(void)
 			 * if the every display has a priority of 0.
 			 */
 			for (n_good = 0, i = w_ptr->current; i < w_ptr->current + 32; i++)
-	{
+			{
 				/* Decide whether display i is better than display n. */
 				int i_good;
 				
@@ -4125,32 +4125,32 @@ void window_stuff(void)
 
 				/* If display i is better, set n to i. */
 				if (i_good > n_good)
-	{
+				{
 					n = i%32;
 					n_good = i_good;
-	}
+				}
 			}
 			/* If no positive priorities are found, do nothing. */
 			if (!n_good) n = DISPLAY_NONE;
-	}
+		}
 
 		/* If different display is to be shown, show it. */
 		if (n != w_ptr->current || old_window & 1<<n)
 		{
-		/* Set the current display. */
+			/* Set the current display. */
 			if (n != w_ptr->current) w_ptr->current = n;
 
 			/* Return to this routine next time. */
 			if (n != DISPLAY_NONE) p_ptr->window |= PW_RETURN;
 
-		/* Clear it. */
-		Term_activate(w_ptr->term);
+			/* Clear it. */
+			Term_activate(w_ptr->term);
 			clear_from(0);
 
-		/* And draw it. */
-		(*(display_func[w_ptr->current].display))();
-		Term_fresh();
-	}
+			/* And draw it. */
+			(*(display_func[w_ptr->current].display))();
+			Term_fresh();
+		}
 	}
 
 	/* Restore the original terminal. */
@@ -4158,7 +4158,7 @@ void window_stuff(void)
 
 	/* Reset window_stuff_rotate. */
 	window_stuff_rotate = FALSE;
-	}
+}
 
 
 /*
@@ -4167,12 +4167,48 @@ void window_stuff(void)
  * called.
  */
 void toggle_inven_equip(void)
-	{
+{
 	/* Turn rotation on. */
 	window_stuff_rotate = TRUE;
 
 	/* Update everything. */
 	p_ptr->window |= WINDOW_STUFF_MASK;
+}
+
+/*
+ * Redraw the current term via a display function.
+ */
+void resize_window(void)
+{
+	int i;
+
+	/* Hack - don't call during birth or level creation. */
+	if (!character_dungeon) return;
+
+	/* Paranoia - never call for term_screen */
+	if (Term == term_screen) return;
+
+
+	/* Hack -- react to changes (does this ever do anything?) */
+	Term_xtra(TERM_XTRA_REACT, 0);
+
+	/* Hack - find the window. */
+	for (i = 0; i < ANGBAND_TERM_MAX; i++)
+	{
+		if (windows[i].term == Term)
+		{
+			/* Clear the window. */
+			clear_from(0);
+
+			/* Draw the window. */
+			(*(display_func[windows[i].current].display))();
+
+			/* Refresh */
+			Term_fresh();
+
+			return;
+		}
+	}
 }
 
 

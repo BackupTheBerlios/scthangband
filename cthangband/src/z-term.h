@@ -225,6 +225,7 @@ struct term
 	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp);
 #endif /* USE_TRANSPARENCY */
 
+	void (*resize_hook)(void);
 };
 
 

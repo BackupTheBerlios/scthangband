@@ -4374,6 +4374,19 @@ void play_game(bool new_game)
 	/* Hack -- turn off the cursor */
 	(void)Term_set_cursor(0);
 
+	/* Initialise the resize hook XXX XXX XXX */
+	term_screen->resize_hook = resize_map;
+
+	/* Terms controlled by window_stuff() always use resize_window(). */
+	for (i = 1; i < ANGBAND_TERM_MAX; i++)
+	{
+		if (windows[i].term)
+		{
+			/* Add redraw hook */
+			windows[i].term->resize_hook = resize_window;
+		}
+	}
+
 	/*
 	 * In win32 settings we are unlikely to have a command argument passed,
 	 * but on the other hand we have a dialog box so that we will have already
