@@ -990,6 +990,59 @@ static void twall(int y, int x)
 #define WMSG_RUBBLE	4	/* Rubble */
 #define WMSG_MAX	5
 
+
+typedef struct wall_type wall_type;
+typedef struct wall_message_type wall_message_type;
+
+struct wall_type
+{
+	byte feature;	/* Name of the feature being dug. */
+	s16b sk_min;	/* Minimum p_ptr->skill_dig to dig through the wall. */
+	s16b sk_max;	/* Minimum skill to dig through the wall at once. */
+	byte special;	/* WALL_* entry for special cases. */
+	byte msg;	/* The set of messages to use (see wall_message) */
+	cptr name;	/* Name of the wall type. Derived from f_name if none. */
+};
+
+struct wall_message_type
+{
+	cptr cont;
+	cptr fail;
+	cptr succeed;
+};
+
+static wall_type wall_info[] =
+{
+	{FEAT_SECRET, 31, 1230, WALL_DOOR, WMSG_WALL, NULL},
+	{FEAT_RUBBLE, 0, 200, WALL_OBJ, WMSG_RUBBLE, "rubble"},
+	{FEAT_MAGMA, 11, 410, 0, WMSG_WALL, NULL},
+	{FEAT_QUARTZ, 21, 820, 0, WMSG_WALL, NULL},
+	{FEAT_MAGMA_H, 11, 410, WALL_GOLD, WMSG_GOLD, NULL},
+	{FEAT_QUARTZ_H, 21, 820, WALL_GOLD, WMSG_GOLD, NULL},
+	{FEAT_MAGMA_K, 11, 410, WALL_GOLD, WMSG_GOLD, "magma vein"},
+	{FEAT_QUARTZ_K, 21, 820, WALL_GOLD, WMSG_GOLD, "quartz vein"},
+	{FEAT_WALL_EXTRA, 41, 1640, 0, WMSG_WALL, NULL},
+	{FEAT_WALL_INNER, 41, 1640, 0, WMSG_WALL, NULL},
+	{FEAT_WALL_OUTER, 41, 1640, 0, WMSG_WALL, NULL},
+	{FEAT_WALL_SOLID, 41, 1640, 0, WMSG_WALL, NULL},
+	{FEAT_PERM_BUILDING, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+	{FEAT_PERM_INNER, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+	{FEAT_PERM_OUTER, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+	{FEAT_PERM_SOLID, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
+	{FEAT_WATER, 0, 0, WALL_NO_DIG, WMSG_WATER, NULL},
+	{FEAT_TREE, 41, 140, 0, WMSG_TREE, NULL},
+	{FEAT_BUSH, 0, 0, 0, WMSG_TREE, NULL},
+};
+
+static const wall_message_type wall_message[WMSG_MAX] =
+{
+	{"You hack away at the %s.", "You leave no mark on the %s.", "You have chopped down the %s."},
+	{"You empty out the %s.", "The %s fills up your tunnel as quickly as you dig!", "You have removed the %s."},
+	{"You tunnel into the %s.", "You make no impression on the %s.", "You have finished the tunnel."},
+	{"You tunnel into the %s.", "You make no impression on the %s.", ""},
+	{"You dig in the %s.", "You make no impression on the %s.", "You have removed the %s."},
+};
+
 /*
  * Perform the basic "tunnel" command
  *
@@ -1002,58 +1055,8 @@ static void twall(int y, int x)
 static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 {
 	cave_type *c_ptr;
-
-	typedef struct wall_type wall_type;
-	typedef struct wall_message_type wall_message_type;
-
-	struct wall_type
-	{
-		byte feature;	/* Name of the feature being dug. */
-		byte skill_min;	/* Minimum p_ptr->skill_dig to dig through the wall. */
-		s16b skill_rand;	/* Random factor for digging. */
-		byte special;	/* WALL_* entry for special cases. */
-		byte msg;	/* The set of messages to use (see wall_message) */
-		cptr name;	/* Name of the wall type. Derived from f_name if none. */
-	};
-
-	struct wall_message_type
-	{
-		cptr cont;
-		cptr fail;
-		cptr succeed;
-	};
-
-	wall_type wall_info[] =
-	{
-		{FEAT_SECRET, 30, 1200, WALL_DOOR, WMSG_WALL, NULL},
-		{FEAT_RUBBLE, 0, 200, WALL_OBJ, WMSG_RUBBLE, "rubble"},
-		{FEAT_MAGMA, 10, 400, 0, WMSG_WALL, NULL},
-		{FEAT_QUARTZ, 20, 800, 0, WMSG_WALL, NULL},
-		{FEAT_MAGMA_H, 10, 400, WALL_GOLD, WMSG_GOLD, NULL},
-		{FEAT_QUARTZ_H, 20, 800, WALL_GOLD, WMSG_GOLD, NULL},
-		{FEAT_MAGMA_K, 10, 400, WALL_GOLD, WMSG_GOLD, "magma vein"},
-		{FEAT_QUARTZ_K, 20, 800, WALL_GOLD, WMSG_GOLD, "quartz vein"},
-		{FEAT_WALL_EXTRA, 40, 1600, 0, WMSG_WALL, NULL},
-		{FEAT_WALL_INNER, 40, 1600, 0, WMSG_WALL, NULL},
-		{FEAT_WALL_OUTER, 40, 1600, 0, WMSG_WALL, NULL},
-		{FEAT_WALL_SOLID, 40, 1600, 0, WMSG_WALL, NULL},
-		{FEAT_PERM_BUILDING, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
-		{FEAT_PERM_INNER, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
-		{FEAT_PERM_OUTER, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
-		{FEAT_PERM_SOLID, 0, 0, WALL_NO_DIG, WMSG_WALL, NULL},
-		{FEAT_WATER, 0, 0, WALL_NO_DIG, WMSG_WATER, NULL},
-		{FEAT_TREE, 40, 100, 0, WMSG_TREE, NULL},
-		{FEAT_BUSH, 0, 1, 0, WMSG_TREE, NULL},
-		{FEAT_NONE,0,0,0,0,0}
-	}, *w_ptr;
-	wall_message_type wall_message[WMSG_MAX] =
-	{
-		{"You hack away at the %s.", "You leave no mark on the %s.", "You have chopped down the %s."},
-		{"You empty out the %s.", "The %s fills up your tunnel as quickly as you dig!", "You have removed the %s."},
-		{"You tunnel into the %s.", "You make no impression on the %s.", "You have finished the tunnel."},
-		{"You tunnel into the %s.", "You make no impression on the %s.", ""},
-		{"You dig in the %s.", "You make no impression on the %s.", "You have removed the %s."},
-	}, *wm_ptr;
+	wall_type *w_ptr;
+	const wall_message_type *wm_ptr;
 
 	bool more = FALSE;
 
@@ -1066,30 +1069,36 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 	/* Sound */
 	sound(SOUND_DIG);
 
-	for (w_ptr = wall_info; w_ptr->feature != FEAT_NONE; w_ptr++)
+	for (w_ptr = wall_info;; w_ptr++)
+	{
 		if (w_ptr->feature == c_ptr->feat) break;
-
-	/* Paranoia - not a valid wall (should not reach here). */
-	if (w_ptr->feature == FEAT_NONE)
+		
+		/* Paranoia - not a valid wall (should not reach here). */
+		if (w_ptr == wall_info+N_ELEMENTS(wall_info))
 		{
-		if (alert_failure) msg_print("Strange wall type found!");
-		return FALSE;
+			if (alert_failure) msg_print("Strange wall type found!");
+			return FALSE;
+		}
 	}
 
-	/* the "name" field is only used if the name in f_name isn't suitable. */
-	if (!w_ptr->name) w_ptr->name = f_name+f_info[f_info[w_ptr->feature].mimic].name;
+	/* If a name is given here, use it. */
+	/* If no name has been set, read it from f_name. */
+	if (!w_ptr->name)
+	{
+		w_ptr->name = f_name+f_info[f_info[w_ptr->feature].mimic].name;
+	}
 
 	/* Find the message set. */
 	wm_ptr = &wall_message[w_ptr->msg];
 
 	/* Certain failure */
-	if (w_ptr->special == WALL_NO_DIG || p_ptr->skill_dig <= w_ptr->skill_min)
-		{
+	if (w_ptr->special == WALL_NO_DIG || p_ptr->skill_dig < w_ptr->sk_min)
+	{
 		msg_format(wm_ptr->fail, w_ptr->name);
-		}
+	}
 	/* Normal failure */
-	else if (p_ptr->skill_dig <= w_ptr->skill_min + rand_int(w_ptr->skill_rand))
-		{
+	else if (p_ptr->skill_dig < rand_range(w_ptr->sk_min, w_ptr->sk_max))
+	{
 		msg_format(wm_ptr->cont, w_ptr->name);
 		more = TRUE;
 
@@ -1098,24 +1107,24 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 	}
 		/* Success */
 	else
-			{
+	{
 		bool found = FALSE;
 
 		/* Actually tunnel through wall. */
 		twall(y, x);
 
-				/* Message */
+		/* Message */
 		msg_format(wm_ptr->succeed, w_ptr->name);
 
 		/* Handle special cases. */
 		switch (w_ptr->special)
 		{
 			case WALL_GOLD:
-		{
+			{
 				place_gold(y,x);
 				found = TRUE;
-	}
-			break;
+				break;
+			}
 			case WALL_OBJ:
 			if (rand_int(100) < 10)
 			{
@@ -1124,10 +1133,9 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 
 				/* Observe new object */
 				if (player_can_see_bold(y, x)) found = TRUE;
+				break;
 			}
-			break;
 		}
-
 		if (found) msg_print("You have found something!");
 	}
 
