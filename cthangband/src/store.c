@@ -159,7 +159,7 @@ static cptr service_name[MAX_STORE_TYPES][2] =
 	{"Enchant your weapon",""},	/* Weapon Shop */
 	{"buy Restoration","Spirit Initiation"}, /* Temple */
 	{"Identify all",""}, /* Alchemists' Shop */
-	{"ritual of Recall","Learn Folk Magic"},	/* Magic Shop */
+	{"ritual of Recall",""},	/* Magic Shop */
 	{"",""},	/* Black Market */
 	{"Rest a while",""},	/* Home */
 	{"Research a spell",""},	/* Library */
@@ -3799,10 +3799,6 @@ static void store_process_command(void)
 		   case 'z': case 'a':   /* 'z' typed in turns to 'a' in roguelike keyset. */
 			   switch(cur_store_type)
 			   {
-			   case STORE_MAGIC:
-				   get_cantrip(&i,0);
-				   msg_print("You learn some folk magic.");
-				   break;
 			   case STORE_TEMPLE:
 					if (!get_spirit(&i,"Form a pact with",FALSE))
 					{
