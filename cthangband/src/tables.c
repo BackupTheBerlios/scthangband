@@ -1509,7 +1509,7 @@ player_race race_info[MAX_RACES] =
 /*
  * Player Templates
  *
- * Title, choices, art_bias, art2_bias, art2_chance,
+ * Title, choices, art1_bias, art2_bias, art2_chance,
  * {STR,INT,WIS,DEX,CON,CHR},
  * {CLOSE, SLASH, STAB, CRUSH, MISSILE,
  * TOUGH, DEVICE, DISARM, PERCEPTION, SAVE, SEARCH, STEALTH,
@@ -1517,7 +1517,7 @@ player_race race_info[MAX_RACES] =
  *
  * 1/4 of the time, artifact_scroll() will use a bias derived from this template
  * in deciding which artefact to create.
- * art2_chance% of the time, this bias is art2_bias. Otherwise, it is art_bias.
+ * art2_chance% of the time, this bias is art2_bias. Otherwise, it is art1_bias.
  * 0 creates an artefact via the normal process, adding biases randomly.
  */
 player_template template_info[MAX_TEMPLATE] =

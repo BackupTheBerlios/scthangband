@@ -3643,7 +3643,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	}
 	else
 	{
-		artifact_bias = cp_ptr->art_bias;
+		artifact_bias = cp_ptr->art1_bias;
 	}
 
 if ((!a_scroll) && (randint(A_CURSED)==1)) a_cursed = TRUE;
