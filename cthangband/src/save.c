@@ -478,7 +478,7 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->ix);
 
 	wr_byte(o_ptr->tval);
-	wr_byte(o_ptr->sval);
+	wr_byte(0); /* Was sval, but sval is unused in all versions. */
 	wr_s16b(o_ptr->pval);
 
 	wr_byte(o_ptr->discount);

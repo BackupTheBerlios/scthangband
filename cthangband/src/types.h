@@ -40,7 +40,7 @@
  * clearing of many variables at once.
  *
  * Certain data is saved in multiple places for efficient access, currently,
- * this includes the tval/sval/weight fields in "object_type", various fields
+ * this includes the tval/weight fields in "object_type", various fields
  * in "header_type", and the "m_idx" and "o_idx" fields in "cave_type".  All
  * of these could be removed, but this would, in general, slow down the game
  * and increase the complexity of the code.
@@ -200,23 +200,20 @@ typedef struct object_kind object_kind;
 
 struct object_kind
 {
-	u16b name;			/* Name (offset) */
 	u32b text;			/* Text (offset) */
 
+	u16b name;			/* Name (offset) */
 	byte tval;			/* Object type */
-	byte sval;			/* Object sub type */
+	byte extra;			/* Extra information related to the tval. */
 
 	s16b pval;			/* Object extra info */
-
 	s16b to_h;			/* Bonus to hit */
+
 	s16b to_d;			/* Bonus to damage */
 	s16b to_a;			/* Bonus to armor */
 
 	s16b ac;			/* Base armor */
-
 	byte dd, ds;		/* Damage dice/sides */
-
-	s16b weight;		/* Weight */
 
 	s32b cost;			/* Object "base cost" */
 
@@ -227,21 +224,17 @@ struct object_kind
 	byte locale[4];		/* Allocation level(s) */
 	byte chance[4];		/* Allocation chance(s) */
 
+	s16b weight;		/* Weight */
 	byte level;			/* Level */
-	byte extra;			/* Something */
-
+	/* byte extra2; */	/* Nothing */
 
 	byte d_attr;		/* Default object attribute */
 	char d_char;		/* Default object character */
-
-
 	byte x_attr;		/* Desired object attribute */
 	char x_char;		/* Desired object character */
 
 	u16b u_idx;	/* The u_info[] entry which represents this item. */
-
 	bool aware;			/* The player is "aware" of the item's effects */
-
 	bool tried;			/* The player has "tried" one of the items */
 };
 
@@ -577,45 +570,36 @@ typedef struct object_type object_type;
 struct object_type
 {
 	s16b k_idx;			/* Kind index (zero if "dead") */
-
 	byte iy;			/* Y-position on map, or zero */
 	byte ix;			/* X-position on map, or zero */
 
 	byte tval;			/* Item type (from kind) */
-	byte sval;			/* Item sub-type (from kind) */
-
-	s16b pval;			/* Item extra-parameter */
-
 	byte discount;		/* Discount (if any) */
-
 	byte number;		/* Number of items */
-
-	s16b weight;		/* Item weight */
+	byte marked;		/* Object is marked */
 
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
-
 	byte xtra1;			/* Extra info type */
 	byte xtra2;			/* Extra info index */
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
-	s16b to_a;			/* Plusses to AC */
 
+	s16b to_a;			/* Plusses to AC */
 	s16b ac;			/* Normal AC */
 
-	byte dd, ds;		/* Damage dice/sides */
-
+	s16b pval;			/* Item extra-parameter */
 	s16b timeout;		/* Timeout Counter */
 
+	s16b weight;		/* Item weight */
+	byte dd, ds;		/* Damage dice/sides */
+
 	u16b ident;			/* Special flags  */
-	
-	byte handed;     /* Number of hands needed to wield  */
-
-	byte marked;		/* Object is marked */
-
 	u16b note;			/* Inscription index */
+
     u16b art_name;      /* Artifact name (random artifacts) */
+	/* u16b nothing; */	/* Unused */
 
     u32b flags1;        /* Flags, set 1 */
     u32b flags2;        /* Flags, set 2 */
@@ -623,7 +607,6 @@ struct object_type
 
 	
 	s16b next_o_idx;	/* Next object in stack (if any) */
-
 	s16b held_m_idx;	/* Monster holding us (if any) */
 };
 
@@ -840,10 +823,6 @@ struct store_type
 	s16b bad_buy;			/* Number of "bad" buys */
 
 	s32b store_open;		/* Closed until this turn */
-
-	s16b table_num;			/* Killme */
-	s16b table_size;		/* Killme */
-	s16b *table;			/* Killme */
 
 	s16b stock_num;			/* Stock -- Number of entries */
 	s16b stock_size;		/* Stock -- Total Size of Array */

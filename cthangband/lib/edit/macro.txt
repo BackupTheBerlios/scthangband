@@ -799,41 +799,41 @@ F:r_event:S:1
 
 X:CLOSE
 Y:8
-F:k_info:W:3
+F:k_info:I:4
 
 X:STAB
 Y:22
-F:k_info:W:3
+F:k_info:I:4
 
 X:SLASH
 Y:23
-F:k_info:W:3
+F:k_info:I:4
 
 X:CRUSH
 Y:24
-F:k_info:W:3
+F:k_info:I:4
 
 # Chests
 
 X:SMALL
 Y:1
-F:k_info:W:3
+F:k_info:I:4
 
 X:LARGE
 Y:2
-F:k_info:W:3
+F:k_info:I:4
 
 X: WOOD
 Y:1
-F:k_info:W:3
+F:k_info:I:4
 
 X: IRON
 Y:2
-F:k_info:W:3
+F:k_info:I:4
 
 X: STEEL
 Y:3
-F:k_info:W:3
+F:k_info:I:4
 
 # Bows
 

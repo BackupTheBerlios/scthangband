@@ -684,7 +684,6 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	j_ptr->number = o_ptr->number;
 	j_ptr->weight = o_ptr->weight;
 	j_ptr->ident = o_ptr->ident;
-	/* j_ptr->handed = o_ptr->handed; */ /* Unused */
 	j_ptr->note = o_ptr->note;
 	
 
@@ -696,15 +695,10 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	if (object_aware_p(o_ptr))
 	{
 		j_ptr->tval = o_ptr->tval;
-		j_ptr->sval = o_ptr->sval;
 	}
-	/* As values of 0 are often special, use a blank object, the tval from the
-	 * base type and and a special sval for unaware objects.
-	 */
 	else
 	{
 		j_ptr->tval = o_base[u_info[k_ptr->u_idx].p_id].tval;
-		j_ptr->sval = SV_UNKNOWN;
 	}
 
 	/* Some flags are known for identified objects. */

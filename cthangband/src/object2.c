@@ -1618,9 +1618,8 @@ void object_prep(object_type *o_ptr, int k_idx)
 	/* Save the kind index */
 	o_ptr->k_idx = k_idx;
 
-	/* Efficiency -- tval/sval */
+	/* Efficiency -- tval */
 	o_ptr->tval = k_ptr->tval;
-	o_ptr->sval = k_ptr->sval;
 
 	/* Default "pval" */
 	o_ptr->pval = k_ptr->pval;

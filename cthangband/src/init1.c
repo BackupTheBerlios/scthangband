@@ -1627,16 +1627,16 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 
 		case 'I':
 		{
-			int tval, sval, pval;
+			int tval, pval, extra;
 
 			/* Scan for the values */
 			if (3 != sscanf(buf+2, "%d:%d:%d",
-			                &tval, &sval, &pval)) return (1);
+			                &tval, &pval, &extra)) return (1);
 
 			/* Save the values */
 			k_ptr->tval = tval;
-			k_ptr->sval = sval;
 			k_ptr->pval = pval;
+			k_ptr->extra = extra;
 
 			/* Next... */
 			return SUCCESS;
@@ -1645,16 +1645,15 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 		/* Process 'W' for "More Info" (one line only) */
 		case 'W':
 		{
-			int level, extra, wgt;
+			int level, wgt;
 			long cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			                &level, &extra, &wgt, &cost)) return (1);
+			if (3 != sscanf(buf+2, "%d:%d:%ld",
+			                &level, &wgt, &cost)) return (1);
 
 			/* Save the values */
 			k_ptr->level = level;
-			k_ptr->extra = extra;
 			k_ptr->weight = wgt;
 			k_ptr->cost = cost;
 

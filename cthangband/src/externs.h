@@ -401,12 +401,12 @@ extern void do_cmd_use_staff(int item);
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
 extern void do_cmd_aim_wand(int item);
 #endif
-
-
-
-
-
-
+#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
+extern void do_cmd_zap_rod(int item);
+#endif
+#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
+extern void do_cmd_activate(int item);
+#endif
 
 /* dungeon.c */
 
@@ -595,6 +595,9 @@ extern s16b error_idx;
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
 extern s16b error_line;
+#endif
+#if (defined(INIT2_C) || defined(STORE_C))
+extern s16b store_table[MAX_STORE_TYPES][STORE_CHOICES];
 #endif
 #if (defined(INIT2_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C))
 extern void init_angband(void);
@@ -1345,8 +1348,14 @@ extern void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
 extern cptr item_activation(object_type *o_ptr);
 #endif
+#if (defined(CMD2_C) || defined(OBJECT1_C))
+extern int get_bow_mult(object_type *o_ptr);
+#endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern s16b launcher_type(object_type *o_ptr);
+#endif
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA1_C))
+extern byte ammunition_type(object_type *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C))
 extern bool identify_fully_aux(object_type *o_ptr, byte flags);
@@ -1435,9 +1444,6 @@ extern bool object_similar(object_type *o_ptr, object_type *j_ptr);
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern bool object_absorb(object_type *o_ptr, object_type *j_ptr);
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_wipe(object_type *o_ptr);
 #endif
@@ -2179,9 +2185,6 @@ extern wild_type wild_grid[12][12];
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(TABLES_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern spirit_type spirits[MAX_SPIRITS];
 #endif
-
-
-
 
 /* util.c */
 
@@ -3484,9 +3487,6 @@ extern bool cumber_helm(object_type *o_ptr);
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern int wield_skill(object_type *o_ptr);
 #endif
-#if (defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA1_C))
-extern byte ammunition_type(object_type *o_ptr);
-#endif
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
@@ -3900,26 +3900,5 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
-#endif
-
-/* init2.c */
-
-#if (defined(INIT2_C) || defined(STORE_C))
-extern s16b store_table[MAX_STORE_TYPES][STORE_CHOICES];
-#endif
-
-/* cmd6.c */
-
-#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
-extern void do_cmd_zap_rod(int item);
-#endif
-#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
-extern void do_cmd_activate(int item);
-#endif
-
-/* object1.c */
-
-#if (defined(CMD2_C) || defined(OBJECT1_C))
-extern int get_bow_mult(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

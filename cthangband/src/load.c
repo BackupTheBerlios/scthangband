@@ -266,7 +266,7 @@ static void rd_item(object_type *o_ptr)
 
 	/* Type/Subtype */
 	rd_byte(&o_ptr->tval);
-	rd_byte(&o_ptr->sval);
+	strip_bytes(1); /* Was sval. */
 
 	/* Special pval */
 	rd_s16b(&o_ptr->pval);
@@ -345,9 +345,8 @@ static void rd_item(object_type *o_ptr)
 	/* Obtain the "kind" template */
 	k_ptr = &k_info[o_ptr->k_idx];
 
-	/* Obtain tval/sval from k_info */
+	/* Obtain tval from k_info */
 	o_ptr->tval = k_ptr->tval;
-	o_ptr->sval = k_ptr->sval;
 
 
 	/* Hack -- notice "broken" items */

@@ -295,7 +295,7 @@ void do_cmd_wiz_change(void)
  * - wiz_display_item()
  *     display an item's debug-info
  * - wiz_create_itemtype()
- *     specify tval and sval (type and subtype of object)
+ *     specify tval (category) and object
  * - wiz_tweak_item()
  *     specify pval, +AC, +tohit, +todam
  *     Note that the wizard can leave this function anytime,
@@ -306,7 +306,7 @@ void do_cmd_wiz_change(void)
  * - wiz_roll_item()
  *     Get some statistics about the rarity of an item:
  *     We create a lot of fake items and see if they are of the
- *     same type (tval and sval), then we compare pval and +AC.
+ *     same type (k_idx), then we compare pval and +AC.
  *     If the fake-item is better or equal it is counted.
  *     Note that cursed items that are better or equal (absolute values)
  *     are counted, too.
@@ -358,9 +358,9 @@ static void wiz_display_item(object_type *o_ptr)
 
 	prt(buf, 2, j);
 
-	prt(format("kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
+	prt(format("kind = %-5d  level = %-4d  tval = %-5d  extra = %-5d",
 	           o_ptr->k_idx, k_info[o_ptr->k_idx].level,
-	           o_ptr->tval, o_ptr->sval), 4, j);
+	           o_ptr->tval, k_info[o_ptr->k_idx].extra), 4, j);
 
 	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
 	           o_ptr->number, o_ptr->weight,
@@ -504,7 +504,7 @@ static void ang_sort_swap_wci(vptr UNUSED u, vptr v, int a, int b)
 }
 
 /*
- * Specify tval and sval (type and subtype of object) originally
+ * Specify tval (category) and object. Originally
  * by RAK, heavily modified by -Bernd-
  *
  * This function returns the k_idx of an object type, or zero if failed
@@ -1032,9 +1032,8 @@ static void wiz_statistics(object_type *o_ptr)
 			if (artifact_p(q_ptr)) a_info[q_ptr->name1].cur_num = 0;
 
 
-			/* Test for the same tval and sval. */
-			if ((o_ptr->tval) != (q_ptr->tval)) continue;
-			if ((o_ptr->sval) != (q_ptr->sval)) continue;
+			/* Test for the same k_idx. */
+			if ((o_ptr->k_idx) != (q_ptr->k_idx)) continue;
 
 			/* Check for match */
 			if ((q_ptr->pval == o_ptr->pval) &&
