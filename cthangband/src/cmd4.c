@@ -1499,8 +1499,14 @@ void do_cmd_pref(void)
 	/* Ask for a "user pref command" */
 	if (!get_string("Pref: ", buf, 80)) return;
 
+	/* Remember the request. */
+	message_add(buf);
+
 	/* Process that pref command */
-	(void)process_pref_file_aux(buf, &sf_flags);
+	if (process_pref_file_aux(buf, &sf_flags))
+	{
+		msg_print("Failed!");
+	}
 }
 
 
