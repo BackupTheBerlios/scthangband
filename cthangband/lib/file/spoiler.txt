@@ -1,10 +1,3 @@
 Although the use of spoilers is not punished within the game, it provides the
 player with information which the player might prefer to discover during the
 course of the game.
-
-You should also note that the first two items do not give a complete list of
-the effects of the items described as certain features are randomised. As these
-options only reveal features which are true for every instance of an object,
-these features will not be mentioned. As the character information screen does
-not indicate the presence or absence of random features, you will not be able
-to tell which items may have such features through using this patch alone.
