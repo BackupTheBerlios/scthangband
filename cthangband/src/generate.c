@@ -1052,9 +1052,13 @@ static void terrain_gen(void)
 				cave[y-14][x+i].feat = FEAT_PERM_BUILDING;
 				cave[y-14][x+i].info |= (CAVE_MARK | CAVE_GLOW);
 			}
-			/* Access the stair grid */
-			cave[y][x].feat=FEAT_LESS;
-			cave[y][x].info |= (CAVE_MARK | CAVE_GLOW);
+
+			if (~d_ptr->flags & DF_NIGHTTIME || !daytime_p())
+			{
+				/* Access the stair grid */
+				cave[y][x].feat=FEAT_LESS;
+				cave[y][x].info |= (CAVE_MARK | CAVE_GLOW);
+			}
 			/* Clear a space around the entrance */
 			for(i=-3;i<4;i++)
 			{
@@ -1104,7 +1108,15 @@ static void terrain_gen(void)
 			cave[y-1][x+1].feat = FEAT_FLOOR;
 			cave[y][x-2].feat = FEAT_FLOOR;
 			cave[y][x-1].feat = FEAT_FLOOR;
-			cave[y][x].feat = FEAT_MORE;
+			if (d_ptr->flags & DF_NIGHTTIME && daytime_p())
+			{
+				/* Someone leaves a rock over the door. */
+				cave[y][x].feat=FEAT_PERM_BUILDING;
+			}
+			else
+			{
+				cave[y][x].feat = FEAT_MORE;
+			}
 			cave[y][x+1].feat = FEAT_FLOOR;
 			cave[y][x+2].feat = FEAT_FLOOR;
 			cave[y+1][x-1].feat = FEAT_FLOOR;

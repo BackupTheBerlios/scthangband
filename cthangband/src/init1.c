@@ -439,6 +439,7 @@ static flag_name info_flags[] =
 	{"START", DF, DF_START},
 	{"KADATH", DF, DF_KADATH},
 	{"NO_UNIQUES", DF, DF_NO_UNIQUES},
+	{"NIGHTTIME", DF, DF_NIGHTTIME},
 
 	/* Shop "flags". */
 	{"GENERAL", SHOP, STORE_GENERAL},

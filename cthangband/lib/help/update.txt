@@ -6,6 +6,9 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Generate dungeon-specific monsters asleep at level creation.
+* Never generate light-sensitive monsters during the day on the surface.
+* Seal the entrance to the orc tower during the day.
 * Allow coloured recall messages.
 * Ignore the "hidden" flag for objects shown in character dumps.
 * Allow the player to display the spell list of a charm in a shop.
@@ -16,7 +19,6 @@ sCthangband _CVS_
 * Make the description of encumbering armour in the display menu clearer.
 * Correct/alter some documentation.
 * Fix the following bugs:
-  * Dungeon-specific monsters were always generated awake.
   * Objects were described as "powerful" incorrectly.
   * The 'z' key could select items with curses the player knew nothing about.
   * Compiling with BCC still led to frequent crashes.
