@@ -8129,7 +8129,8 @@ D:and bubbles at the centre of all infinity - the boundless daemon sultan
 D:Azathoth, whose name no lips dare speak aloud, and who gnaws hungrily 
 D:in inconceivable, unlighted chambers beyond time amidst the muffled, 
 D:maddening beating of vile drums and the thin monotonous whine of 
-D:accursed flutes" - H.P.Lovecraft, "The Dream Quest of Unknown Kadath"
+D:accursed flutes"
+# H.P.Lovecraft, "The Dream Quest of Unknown Kadath"
 
 # Hack - the last monster in the file should always be reserved for ghosts.
 
