@@ -778,6 +778,12 @@ static void object_info_known(object_type *j_ptr, object_type *o_ptr)
 		j_ptr->art_flags3 |= a_ptr->flags3;
 	}
 
+	/* The random powers of *IDENTIFIED* items are known. */
+	if (spoil || o_ptr->ident & IDENT_MENTAL)
+	{
+		j_ptr->art_flags2 &= ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
+	}
+
 	/* Check for both types of cursing */
 	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
 		j_ptr->art_flags3 |= TR3_CURSED;
