@@ -1238,7 +1238,8 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 
 	/* Identified artefacts, and all identified objects if
 	 * show_flavors is unset, do not include a FLAVOUR string. */
-	if ((~reject & CI_K_IDX) && (artifact_p(o_ptr) || plain_descriptions))
+	if ((~reject & CI_K_IDX) && (artifact_p(o_ptr) || plain_descriptions ||
+		(o_ptr->ident & IDENT_STOREB)))
 		reject |= 1 << CI_FLAVOUR;
 
 	/* Singular objects take no plural. */
