@@ -3827,127 +3827,127 @@ dun_type dun_defs[MAX_CAVES] = {
 /* x,y (Zero now, filled in during wilderness or town creation),tower
  * offset,max_depth,bias
  * first_guardian,second_guardian,first_level,second_level
- * name
+ * name, shortname, symbol
  */
 
 /* The first (MAX_TOWNS) entries are each found in a town */
 	/* 0 = Under Celephais */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '0',
 	0, 3,0,
 	0,0,0,0,
 	"the Sewers under Celephais","Celephais"},
 
 	/* 1 = Under Ulthar */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '1',
 	0, 7,0,
 	156,0,7,0, /* The Champion of Cats */
 	"the Sewers under Ulthar","Ulthar"},
 	
 	/* 2 = Under Dylath-Leen */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '2',
 	1, 9,0,
 	0,0,0,0,
 	"the Sewers under Dylath Leen","Dylath Leen"},
 	
 	/* 3 = Under Kadath */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '3',
 	50, 75, SUMMON_CTHULOID,
 	574,575,49,50, /* Nyarlathotep/Azathoth */
 	"the Catacombs under Kadath","Kadath"},
 	
 	/* 4 = Under Hlanth */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '4',
 	0, 5,0,
 	0,0,0,0,
 	"the Sewers under Hlanth","Hlanth"},
 	
 	/* 5 = Under Ilek-Vad */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '5',
 	0, 5,0,
 	0,0,0,0,
 	"the Sewers under Ilek-Vad","Ilek-Vad"},
 	
 	/* 6 = Under Inganok */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '6',
 	0, 5,0,
 	0,0,0,0,
 	"the Sewers under Inganok","Inganok"},
 	
 	/* 7 = Under Nir */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, '7',
 	0, 7,SUMMON_HUMAN,
 	112,0,7,0, /* Robin Hood */
 	"the Sewers under Nir","Nir"},
 
 /* The rest are found outside */
 	/* 8 */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, 'y',
 	2, 8,SUMMON_YEEK,
 	143,183,7,8, /* Orfax/Boldor */
 	"the Yeek King's Lair","Yeek Lair"},
 
 	/* 9 */
-	{ 0, 0,TRUE,
+	{ 0, 0,TRUE, 'o',
 	3,17 ,SUMMON_ORC,
 	243,270,16,17, /* Bolg/Azog */
 	"the Orc Tower","Orc Tower"},
 	
 	/* 10 */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, 'z',
 	4, 21,SUMMON_UNDEAD,
 	92,294,1,21, /* Disembodied Hand/Khufu */
 	"Khufu's Tomb","Tomb"},
 
 	/* 11 */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, 'C',
 	30, 20,0,
 	505,0,20,0, /* Collector */
 	"the Collector's Cave","Cave"},
 
 	/* 12 */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, 'V',
 	10, 30,0,
 	484,0,30,0, /* Stormbringer */
 	"the Vault of the Sword","Vault"},
 
 	/* 13 */
-	{ 0, 0,FALSE,
+	{ 0, 0,FALSE, 'D',
 	15, 35,SUMMON_DRAGON,
 	492,526,34,35, /* Glaurung/Ancalagon */
 	"the Dragon's Lair","Dragon Lair"},
 
 	/* 14 */
-	{ 0, 0,TRUE,
+	{ 0, 0,TRUE, 'N',
 	30, 40,SUMMON_HI_UNDEAD,
 	368,546,1,40, /* Fire Phantom/Vecna */
 	"the Necropolis","Necropolis"},
 
 	/* 15 */
-	{ 0, 0, TRUE,
+	{ 0, 0, TRUE, 'u',
 	15, 20, SUMMON_DEMON,
 	220,459,1,20, /* The Emmisary/Glaryssa */
 	"the Demon Spire","Spire"},
 
 	/* 16 */
-	{ 0, 0, TRUE,
+	{ 0, 0, TRUE, 'E',
 	20, 20, SUMMON_ELEMENTAL,
 	433,474,15,20, /* Lasha/Grom */
 	"the Conflux of the Elements","Conflux"},
 
 	/* 17 */
-	{ 0,0,TRUE,
+	{ 0,0,TRUE, 'S',
 	13, 17, SUMMON_SPIDER,
 	342,0,17,0, /* Shelob */
 	"Shelob's Tower","Tower"},
 
 	/* 18 */
-	{ 0, 0, TRUE,
+	{ 0, 0, TRUE, 'k',
 	1,5, SUMMON_KOBOLD,
 	110,0,5,0, /* Vort */
 	"the Kobold Fort","Fort"},
 
 	/* 19 */
-	{ 0, 0, TRUE,
+	{ 0, 0, TRUE, 'K',
 	40, 20, SUMMON_CTHULOID,
 	322,525,1,20, /* Father Dagon/Tulzscha */
 	"the Tower of Koth","Koth"}

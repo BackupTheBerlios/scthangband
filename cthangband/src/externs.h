@@ -623,9 +623,51 @@ extern void cleanup_angband(void);
 #if (defined(LOAD_C) || defined(SAVE_C))
 extern bool has_flag(u16b flag);
 #endif
+#if (defined(DUNGEON_C) || defined(LOAD_C))
+extern bool load_player(void);
+#endif
 
+/* loadsave.c */
 
-
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern byte sf_major;
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern byte sf_minor;
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern byte sf_patch;
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C))
+extern byte sf_extra;
+#endif
+#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(OBJECT1_C) || defined(SAVE_C))
+extern u16b sf_flags;
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern u32b sf_xtra;
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern u32b sf_when;
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern u16b sf_lives;
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern u16b sf_saves;
+#endif
+#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(OBJECT1_C) || defined(SAVE_C))
+extern const u16b sf_flags_now;
+#endif
+#if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern s16b convert_k_idx(s16b idx, u32b from_v, u32b to_v);
+#endif
+#if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v);
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern void current_version(u16b *flags, byte *major, byte *minor, byte *patch);
+#endif
 
 /* maid-x11.c */
 
@@ -1564,11 +1606,11 @@ extern void display_koff(int k_idx);
 
 /* quest.c */
 
-#if (defined(GENERATE_C) || defined(QUEST_C))
-extern int get_quest_monster(void);
-#endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(XTRA2_C))
 extern quest_type *get_quest(void);
+#endif
+#if (defined(GENERATE_C) || defined(QUEST_C))
+extern int get_quest_monster(void);
 #endif
 #if (defined(CMD4_C) || defined(QUEST_C))
 extern void print_quest_message(void);
@@ -1579,6 +1621,9 @@ extern void quest_discovery(void);
 #if (defined(DUNGEON_C) || defined(QUEST_C))
 extern void set_guardians(void);
 #endif
+#if (defined(CMD4_C) || defined(QUEST_C))
+extern quest_type *cnv_monster_to_quest(monster_race *r_ptr);
+#endif
 
 /* readdib.c */
 
@@ -1586,46 +1631,10 @@ extern void set_guardians(void);
 extern BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo);
 #endif
 
-/* loadsave.c */
+/* save.c */
 
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern byte sf_major;
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern byte sf_minor;
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern byte sf_patch;
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C))
-extern byte sf_extra;
-#endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(OBJECT1_C) || defined(SAVE_C))
-extern u16b sf_flags;
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern u32b sf_xtra;
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern u32b sf_when;
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern u16b sf_lives;
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern u16b sf_saves;
-#endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(OBJECT1_C) || defined(SAVE_C))
-extern const u16b sf_flags_now;
-#endif
-#if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern s16b convert_k_idx(s16b idx, u32b from_v, u32b to_v);
-#endif
 #if (defined(FILES_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(SAVE_C))
 extern bool save_player(bool as_4_1_0);
-#endif
-#if (defined(DUNGEON_C) || defined(LOAD_C))
-extern bool load_player(void);
 #endif
 
 /* spells1.c */
@@ -3954,20 +3963,5 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
-#endif
-
-/* quest.c */
-
-#if (defined(CMD4_C) || defined(QUEST_C))
-extern quest_type *cnv_monster_to_quest(monster_race *r_ptr);
-#endif
-
-/* loadsave.c */
-
-#if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v);
-#endif
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern void current_version(u16b *flags, byte *major, byte *minor, byte *patch);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

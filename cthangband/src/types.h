@@ -1300,7 +1300,9 @@ typedef struct dun_type dun_type;
 struct dun_type {
 		s16b x;
 		s16b y;
+
 		bool tower; /* Is this dungeon a tower */
+		char sym; /* A letter used to represent the dungeon on the map. */
 
 		byte  offset; /* Offset to level to apply to Monster/Object creation */
 		byte  max_level; /* Maximum dungeon level allowed */

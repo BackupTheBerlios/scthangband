@@ -1685,32 +1685,6 @@ void display_wild_map(uint xmin)
 	char buffer[60];
 	cptr tmp;
 
-	char symbol_conv[MAX_CAVES];
-
-	/* The towns use numbers */
-	for (i = 0; i < MAX_TOWNS; i++) symbol_conv[i] = '0'+i;
-	
-	/* The dungeons use '*' */
-	for (i = MAX_TOWNS; i < MAX_CAVES; i++) symbol_conv[i] = '*';
-
-	/* Give the dungeon locations. */
-	if (TRUE)
-	{
-		/* The other dungeons uses letters */
-		symbol_conv[8] = 'y';
-		symbol_conv[9] = 'o';
-		symbol_conv[10] = 'z';
-		symbol_conv[11] = 'C';
-		symbol_conv[12] = 'V';
-		symbol_conv[13] = 'D';
-		symbol_conv[14] = 'N';
-		symbol_conv[15] = 'u';
-		symbol_conv[16] = 'E';
-		symbol_conv[17] = 'S';
-		symbol_conv[18] = 'k';
-		symbol_conv[19] = 'K';
-	}
-
 	/* First work out which dungeons have guardians left */
 	for(i=0;i<MAX_CAVES;i++)
 	{
@@ -1728,34 +1702,38 @@ void display_wild_map(uint xmin)
 	{
 		for(x=0;x<12;x++)
 		{
-			wild_map_symbol = '^';
-			wild_map_attr = TERM_GREEN;
-			if (wild_grid[y][x].dungeon < MAX_CAVES)
+			wild_type *w_ptr = &wild_grid[y][x];
+
+			if (w_ptr->dungeon < MAX_CAVES)
 			{
-				wild_map_symbol = symbol_conv[wild_grid[y][x].dungeon];
-				wild_map_attr = TERM_UMBER;
-				if(dungeon_has_guardians[wild_grid[y][x].dungeon])
+				wild_map_symbol = dun_defs[w_ptr->dungeon].sym;
+				if(dungeon_has_guardians[w_ptr->dungeon])
 				{
 					wild_map_attr = TERM_RED;
 				}
-			}
-			if(wild_grid[y][x].dungeon < MAX_TOWNS)
-			{
-				wild_map_attr = TERM_WHITE;
-				if(dungeon_has_guardians[wild_grid[y][x].dungeon])
+				else if (w_ptr->dungeon < MAX_TOWNS)
 				{
-					wild_map_attr = TERM_RED;
+					wild_map_attr = TERM_WHITE;
+				}
+				else
+				{
+					wild_map_attr = TERM_UMBER;
 				}
 			}
-			if((wildx == x) && (wildy == y))
+			else if((wildx == x) && (wildy == y))
 			{
 				wild_map_symbol = '@';
 				wild_map_attr = TERM_YELLOW;
 			}
-			if((x == 0) || (y == 0) || (x == 11) || (y == 11))
+			else if((x == 0) || (y == 0) || (x == 11) || (y == 11))
 			{
 				wild_map_symbol = '~';
 				wild_map_attr = TERM_BLUE;
+			}
+			else
+			{
+				wild_map_symbol = '^';
+				wild_map_attr = TERM_GREEN;
 			}
 			Term_putch(xmin+x+1, y+2, wild_map_attr, wild_map_symbol);
 		}
@@ -1779,15 +1757,17 @@ void display_wild_map(uint xmin)
 	for (y=0;y<MAX_TOWNS;y++)
 	{
 		if (l+xmin+23 > Term->wid)
-			sprintf(buffer,"%d = %s",y,dun_defs[y].shortname);
+			tmp = format("%d = %s",y,dun_defs[y].shortname);
 		else
-		sprintf(buffer,"%d = %s",y,town_defs[y].name);
+			tmp = format("%d = %s",y,town_defs[y].name);
 		c_put_str(TERM_WHITE,buffer,y+1,xmin+19);
 	}
 
 	/* Print dungeon legend */
 	for (i = MAX_TOWNS; i < MAX_CAVES; i++)
 	{
+		dun_type *d_ptr = dun_defs+i;
+
 		x = (i - MAX_TOWNS) % 2;
 		x = (xmin+(x*Term->wid))/(1+x);
 		y = MAX(16, MAX_TOWNS+8) + (i-MAX_TOWNS)/2;
@@ -1799,9 +1779,9 @@ void display_wild_map(uint xmin)
 
 		/* If the name is too long, use the short name instead. */
 		if ((strlen(tmp)+4)*2+xmin >= Term->wid)
-			tmp = format("%c = %s", symbol_conv[i], dun_defs[i].shortname);
+			tmp = format("%c = %s", d_ptr->sym, d_ptr->shortname);
 		else
-			tmp = format("%c = %s", symbol_conv[i], tmp);
+			tmp = format("%c = %s", d_ptr->sym, tmp);
 		c_put_str(TERM_WHITE, tmp, y, x);
 	}
 
