@@ -5733,20 +5733,32 @@ static void cave_temp_room_unlite(void)
 
 
 /*
- * Aux function -- see below
+ * Mark area to be lit by lite_room() with CAVE_TEMP.
  */
 static void cave_temp_room_aux(int y, int x)
 {
 	cave_type *c_ptr = &cave[y][x];
+	int i,t;
 
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
-	/* Do not "leave" the current room */
-	if (!(c_ptr->info & (CAVE_ROOM))) return;
-
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
+
+	/* Hack - don't check the first two squares, as the below will always
+	 * fail. */
+	if (temp_n > 2)
+	{
+		/* Do not "leave" the current room */
+		for (i = t = 0; i < 10; i++)
+		{
+			if (cave[y+ddy[i]][x+ddx[i]].info & CAVE_TEMP) t++;
+		}
+
+		/* At least one other adjacent square must be marked. */
+		if (t < 2) return;
+	}
 
 	/* Mark the grid as "seen" */
 	c_ptr->info |= (CAVE_TEMP);
