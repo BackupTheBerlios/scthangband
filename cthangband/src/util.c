@@ -2939,15 +2939,13 @@ bool get_check(cptr prompt)
 {
 	int i;
 
-	char buf[80];
+	C_TNEW(buf, Term->wid, char);
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
-	/* Hack -- Build a "useful" prompt */
-	strnfmt(buf, 78, "%.70s[y/n] ", prompt);
-
-	/* Prompt for it */
+	/* Prompt for it (should "? " be added to long prompts?). */
+	sprintf(buf, "%.*s[y/n] ", Term->wid-8, prompt);
 	prt(buf, 0, 0);
 
 	/* Help */
@@ -2978,8 +2976,11 @@ bool get_check(cptr prompt)
 		i = 'y';
 		
 	/* Leave a (mildly inaccurate) record */
-	message_add(format("%.70s[y/n] %c", prompt, i));
-	
+	sprintf(strchr(buf, '\0'), " %c", i);
+	message_add(buf);
+
+	TFREE(buf);
+
 	/* Tell the calling routine */
 	return (i == 'y') ? TRUE : FALSE;
 }
