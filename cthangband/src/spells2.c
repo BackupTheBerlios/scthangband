@@ -2587,6 +2587,23 @@ bool item_tester_hook_armour(object_type *o_ptr)
 	return (FALSE);
 }
 
+static bool item_tester_unknown(object_type *o_ptr)
+{
+	if (object_known_p(o_ptr))
+		return FALSE;
+	else
+		return TRUE;
+}
+
+
+static bool item_tester_unknown_star(object_type *o_ptr)
+{
+	if (o_ptr->ident & IDENT_MENTAL)
+		return FALSE;
+	else
+		return TRUE;
+}
+
 
 
 /*
@@ -4316,6 +4333,8 @@ bool ident_spell(void)
 
 	C_TNEW(o_name, ONAME_MAX, char);
 
+	/* Only unidentified items */
+	item_tester_hook = item_tester_unknown;
 
 	/* Get an item (from equip or inven or floor) */
 	if (!((o_ptr = get_item(&err, "Identify which item? ", TRUE, TRUE, TRUE))))
@@ -4379,6 +4398,8 @@ bool identify_fully(void)
 
 	C_TNEW(o_name, ONAME_MAX, char);
 
+	/* Only un-*id*'ed items */
+	item_tester_hook = item_tester_unknown_star;
 
 	/* Get an item (from equip or inven or floor) */
 	if (!((o_ptr = get_item(&err, "Identify which item? ", TRUE, TRUE, TRUE))))
