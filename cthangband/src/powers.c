@@ -669,8 +669,6 @@ static void call_the_(void)
 	}
 }
 
-#define RAND_ELEMENT(X) (X[rand_int(N_ELEMENTS(X))])
-
 /*
  * Choose a random wand from a list for the effect of a wand of wonder.
  */

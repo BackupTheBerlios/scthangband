@@ -2266,8 +2266,6 @@ struct bias_type
 	byte chance;
 };
 
-#define NONE {0, 0} /* Make empty bias_types more obvious. */
-
 typedef const struct unbiased_flag_type unbiased_flag_type;
 struct unbiased_flag_type
 {
@@ -2276,6 +2274,14 @@ struct unbiased_flag_type
 	u32b flag;
 	bool (*test)(object_ctype *);
 	bias_type bias[4];
+};
+
+typedef struct biased_activation_type biased_activation_type;
+struct biased_activation_type
+{
+	byte bias;
+	s16b chance;
+	byte activation;
 };
 
 /* Fake flags for apply_special_bonus below. */
@@ -2395,6 +2401,8 @@ static bool PURE weird_test(object_ctype UNUSED *o_ptr)
 {
 	return one_in(WEIRD_LUCK);
 }
+
+#define NONE {0, 0} /* Make empty bias_types more obvious. */
 
 static biased_flag_type biased_pval_flags[] =
 {
@@ -2573,259 +2581,198 @@ static unbiased_flag_type unbiased_slay_flags[] =
 	{2, TR1, TR1_CHAOTIC, NULL, {{BIAS_CHAOS, 1}, NONE, NONE, NONE}},
 };
 
-static int artifact_bias; /* Produce a particular sort of artefact. */
+static unbiased_flag_type unbiased_bow_flags[] =
+{
+	{1, TR3, TR3_XTRA_MIGHT, NULL, {{BIAS_RANGER, 1}, {0, 9}, NONE, NONE}},
+	{1, TR3, TR3_XTRA_SHOTS, NULL, {{BIAS_RANGER, 1}, {0, 9}, NONE, NONE}},
+};
+
+static biased_activation_type biased_activations[] =
+{
+	{BIAS_ELEC, 10, ACT_BO_ELEC_1},
+	{BIAS_ELEC, 4, ACT_BA_ELEC_2},
+	{BIAS_ELEC, 1, ACT_BA_ELEC_3},
+	{BIAS_POIS, 1, ACT_BA_POIS_1},
+	{BIAS_FIRE, 10, ACT_BO_FIRE_1},
+	{BIAS_FIRE, 4, ACT_BA_FIRE_1},
+	{BIAS_FIRE, 1, ACT_BA_FIRE_2},
+	{BIAS_COLD, 18, ACT_BO_COLD_1},
+	{BIAS_COLD, 6, ACT_BA_COLD_1},
+	{BIAS_COLD, 2, ACT_BA_COLD_2},
+	{BIAS_COLD, 1, ACT_BA_COLD_3},
+	{BIAS_CHAOS, 6, 0},
+	{BIAS_CHAOS, 5, ACT_CALL_CHAOS},
+	{BIAS_CHAOS, 1, ACT_SUMMON_DEMON},
+	{BIAS_PRIESTLY, 5, ACT_CURE_MW},
+	{BIAS_PRIESTLY, 1, ACT_CHARM_UNDEAD},
+	{BIAS_PRIESTLY, 1, ACT_BANISH_EVIL},
+	{BIAS_PRIESTLY, 1, ACT_DISP_EVIL},
+	{BIAS_PRIESTLY, 1, ACT_PROT_EVIL},
+	{BIAS_PRIESTLY, 1, ACT_CURE_1000},
+	{BIAS_PRIESTLY, 1, ACT_CURE_700},
+	{BIAS_PRIESTLY, 1, ACT_REST_ALL},
+	{BIAS_PRIESTLY, 1, ACT_REST_LIFE},
+	{BIAS_NECROMANTIC, 11200, ACT_VAMPIRE_1},
+	{BIAS_NECROMANTIC, 2340, ACT_MASS_GENO},
+	{BIAS_NECROMANTIC, 2340, ACT_GENOCIDE},
+	{BIAS_NECROMANTIC, 2240, ACT_CHARM_UNDEAD},
+	{BIAS_NECROMANTIC, 1755, ACT_DISP_GOOD},
+	{BIAS_NECROMANTIC, 1680, ACT_VAMPIRE_2},
+	{BIAS_NECROMANTIC, 1260, ACT_SUMMON_UNDEAD},
+	{BIAS_NECROMANTIC, 351, ACT_WRAITH},
+	{BIAS_LAW, 21, ACT_PROT_EVIL},
+	{BIAS_LAW, 7, ACT_DISP_EVIL},
+	{BIAS_LAW, 4, ACT_BANISH_EVIL},
+	{BIAS_ROGUE, 343, ACT_ID_PLAIN},
+	{BIAS_ROGUE, 196, ACT_SLEEP},
+	{BIAS_ROGUE, 196, ACT_DETECT_ALL},
+	{BIAS_ROGUE, 49, ACT_ID_FULL},
+	{BIAS_ROGUE, 16, ACT_SPEED},
+	{BIAS_MAGE, 22572, ACT_ESP},
+	{BIAS_MAGE, 17000, 0},
+	{BIAS_MAGE, 5643, ACT_RUNE_EXPLO},
+	{BIAS_MAGE, 3135, ACT_SUMMON_PHANTOM},
+	{BIAS_MAGE, 1650, ACT_SUMMON_ELEMENTAL},
+	{BIAS_WARRIOR, 396, ACT_BERSERK},
+	{BIAS_WARRIOR, 100, 0},
+	{BIAS_WARRIOR, 4, ACT_INVULN},
+	{BIAS_RANGER, 570, ACT_CURE_POISON},
+	{BIAS_RANGER, 285, ACT_RESIST_ALL},
+	{BIAS_RANGER, 285, ACT_SATIATE},
+	{BIAS_RANGER, 228, ACT_SUMMON_ANIMAL},
+	{BIAS_RANGER, 228, ACT_CHARM_ANIMAL},
+	{BIAS_RANGER, 84, ACT_CHARM_ANIMALS},
+};
+
+static byte unbiased_activations[][2] =
+{
+	{100, ACT_SUNLIGHT},
+	{100, ACT_BO_MISS_1},
+	{100, ACT_BA_POIS_1},
+	{100, ACT_BO_ELEC_1},
+	{100, ACT_BO_ACID_1},
+	{100, ACT_BO_COLD_1},
+	{100, ACT_BO_FIRE_1},
+	{100, ACT_CONFUSE},
+	{100, ACT_SLEEP},
+	{100, ACT_QUAKE},
+	{100, ACT_CURE_LW},
+	{100, ACT_CURE_MW},
+	{100, ACT_CURE_POISON},
+	{100, ACT_BERSERK},
+	{100, ACT_LIGHT},
+	{100, ACT_MAP_LIGHT},
+	{100, ACT_DEST_DOOR},
+	{100, ACT_STONE_MUD},
+	{100, ACT_TELEPORT},
+	{84, ACT_BA_COLD_1},
+	{84, ACT_BA_FIRE_1},
+	{84, ACT_DRAIN_1},
+	{84, ACT_TELE_AWAY},
+	{84, ACT_ESP},
+	{84, ACT_RESIST_ALL},
+	{84, ACT_DETECT_ALL},
+	{84, ACT_RECALL},
+	{84, ACT_SATIATE},
+	{84, ACT_RECHARGE},
+	{74, ACT_TERROR},
+	{74, ACT_PROT_EVIL},
+	{74, ACT_ID_PLAIN},
+	{65, ACT_DRAIN_2},
+	{65, ACT_VAMPIRE_1},
+	{65, ACT_BO_MISS_2},
+	{65, ACT_BA_FIRE_2},
+	{65, ACT_REST_LIFE},
+	{49, ACT_BA_COLD_3},
+	{49, ACT_BA_ELEC_3},
+	{49, ACT_WHIRLWIND},
+	{49, ACT_VAMPIRE_2},
+	{49, ACT_CHARM_ANIMAL},
+	{39, ACT_SUMMON_ANIMAL},
+	{32, ACT_DISP_EVIL},
+	{32, ACT_BA_MISS_3},
+	{32, ACT_DISP_GOOD},
+	{32, ACT_BANISH_EVIL},
+	{32, ACT_GENOCIDE},
+	{32, ACT_MASS_GENO},
+	{32, ACT_CHARM_UNDEAD},
+	{32, ACT_CHARM_OTHER},
+	{32, ACT_SUMMON_PHANTOM},
+	{32, ACT_REST_ALL},
+	{32, ACT_RUNE_EXPLO},
+	{24, ACT_CALL_CHAOS},
+	{24, ACT_SHARD},
+	{24, ACT_CHARM_ANIMALS},
+	{24, ACT_CHARM_OTHERS},
+	{24, ACT_SUMMON_ELEMENTAL},
+	{24, ACT_CURE_700},
+	{24, ACT_SPEED},
+	{24, ACT_ID_FULL},
+	{24, ACT_RUNE_PROT},
+	{9, ACT_CURE_1000},
+	{9, ACT_XTRA_SPEED},
+	{9, ACT_DETECT_XTRA},
+	{9, ACT_DIM_DOOR},
+	{4, ACT_SUMMON_UNDEAD},
+	{4, ACT_SUMMON_DEMON},
+	{4, ACT_WRAITH},
+	{4, ACT_INVULN},
+	{4, ACT_ALCHEMY},
+};
 
 /*
  * Give a random bonus to an object. Return FALSE if the object chosen is
  * ineligible for this bonus.
  * This isn't actually possible at present, but the code looks at the return.
  */
-static bool random_bow_bonus(object_type *o_ptr)
+static void give_activation_power(object_type *o_ptr, int *bias)
 {
-	if (one_in(2))
+	int type;
+	long max = 0;
+	biased_activation_type *ptr;
+
+	/* Count up the chance in this array for this bias. */
+	FOR_ALL_IN(biased_activations, ptr)
 	{
-		o_ptr->flags3 |= TR3_XTRA_MIGHT;
+		if (ptr->bias == *bias) max += ptr->chance;
+	}
+
+	/* Found some to choose between. */
+	if (max)
+	{
+		/* Pick one element. */
+		max = rand_int(max);
+
+		/* Find it. */
+		FOR_ALL_IN(biased_activations, ptr)
+		{
+			if (ptr->bias != *bias) continue;
+			max -= ptr->chance;
+			if (max < 0) break;
+		}
+
+		/* Remember the choice (which may be 0). */
+		type = ptr->activation;
 	}
 	else
 	{
-		o_ptr->flags3 |= TR3_XTRA_SHOTS;
+		/* No choice yet. */
+		type = 0;
 	}
 
-	if (!artifact_bias && one_in(9)) artifact_bias = BIAS_RANGER;
-
-	return TRUE;
-}
-
-/*
- * Give a random bonus to an object. Return FALSE if the object chosen is
- * ineligible for this bonus.
- * This isn't actually possible at present, but the code looks at the return.
- */
-static void give_activation_power(object_type *o_ptr)
-{
-	int type = 0, chance = 0;
-
-	if (artifact_bias)
+	/* Pick an unbiased power at random. */
+	if (!type)
 	{
-		if (artifact_bias == BIAS_ELEC)
+		byte (*this)[2];
+		FOR_ALL_IN(unbiased_activations, this) max += **this;
+		max = rand_int(max);
+		FOR_ALL_IN(unbiased_activations, this)
 		{
-			if (randint(3)!=1)
-			{
-				type = ACT_BO_ELEC_1;
-			}
-			else if (randint(5)!=1)
-			{
-				type = ACT_BA_ELEC_2;
-			}
-			else
-			{
-				type = ACT_BA_ELEC_3;
-			}
-			chance = 101;
+			max -= **this;
+			if (max < 0) break;
 		}
-		else if (artifact_bias == BIAS_POIS)
-		{
-			type = ACT_BA_POIS_1;
-			chance = 101;
-		}
-		else if (artifact_bias == BIAS_FIRE)
-		{
-			if (randint(3)!=1)
-			{
-				type = ACT_BO_FIRE_1;
-			}
-			else if (randint(5)!=1)
-			{
-				type = ACT_BA_FIRE_1;
-			}
-			else
-			{
-				type = ACT_BA_FIRE_2;
-			}
-			chance = 101;
-		}
-		else if (artifact_bias == BIAS_COLD)
-		{
-			chance = 101;
-			if (randint(3)!=1)
-				type = ACT_BO_COLD_1;
-			else if (randint(3)!=1)
-				type = ACT_BA_COLD_1;
-			else if (randint(3)!=1)
-				type = ACT_BA_COLD_2;
-			else
-				type = ACT_BA_COLD_3;
-		}
-		else if (artifact_bias == BIAS_CHAOS)
-		{
-			chance = 50;
-			if (randint(6)==1)
-				type = ACT_SUMMON_DEMON;
-			else
-				type = ACT_CALL_CHAOS;
-		}
-		else if (artifact_bias == BIAS_PRIESTLY)
-		{
-			chance = 101;
 
-			if (randint(13)==1)
-				type = ACT_CHARM_UNDEAD;
-			else if (randint(12)==1)
-				type = ACT_BANISH_EVIL;
-			else if (randint(11)==1)
-				type = ACT_DISP_EVIL;
-			else if (randint(10)==1)
-				type = ACT_PROT_EVIL;
-			else if (randint(9)==1)
-				type = ACT_CURE_1000;
-			else if (randint(8)==1)
-				type = ACT_CURE_700;
-			else if (randint(7)==1)
-				type = ACT_REST_ALL;
-			else if (randint(6)==1)
-				type = ACT_REST_LIFE;
-			else
-				type = ACT_CURE_MW;
-		}
-		else if (artifact_bias == BIAS_NECROMANTIC)
-		{
-			chance = 101;
-			if (randint(66)==1)
-				type = ACT_WRAITH;
-			else if (randint(13)==1)
-				type = ACT_DISP_GOOD;
-			else if (randint(9)==1)
-				type = ACT_MASS_GENO;
-			else if (randint(8)==1)
-				type = ACT_GENOCIDE;
-			else if (randint(13)==1)
-				type = ACT_SUMMON_UNDEAD;
-			else if (randint(9)==1)
-				type = ACT_VAMPIRE_2;
-			else if (randint(6)==1)
-				type = ACT_CHARM_UNDEAD;
-			else
-				type = ACT_VAMPIRE_1;
-		}
-		else if (artifact_bias == BIAS_LAW)
-		{
-			chance = 101;
-			if (randint(8)==1)
-				type = ACT_BANISH_EVIL;
-			else if (randint(4)==1)
-				type = ACT_DISP_EVIL;
-			else
-				type = ACT_PROT_EVIL;
-		}
-		else if (artifact_bias == BIAS_ROGUE)
-		{
-			chance = 101;
-			if (randint(50)==1)
-				type = ACT_SPEED;
-			else if (randint(4)==1)
-				type = ACT_SLEEP;
-			else if (randint(3)==1)
-				type = ACT_DETECT_ALL;
-			else if (randint(8)==1)
-				type = ACT_ID_FULL;
-			else
-				type = ACT_ID_PLAIN;
-		}
-		else if (artifact_bias == BIAS_MAGE)
-		{
-			chance = 66;
-			if (randint(20)==1)
-				type = SUMMON_ELEMENTAL;
-			else if (randint(10)==1)
-				type = SUMMON_PHANTOM;
-			else if (randint(5)==1)
-				type = ACT_RUNE_EXPLO;
-			else
-				type = ACT_ESP;
-		}
-		else if (artifact_bias == BIAS_WARRIOR)
-		{
-			chance = 80;
-				if (randint(100)==1)
-					type = ACT_INVULN;
-				else
-					type = ACT_BERSERK;
-		}
-		else if (artifact_bias == BIAS_RANGER)
-		{
-			chance = 101;
-			if (randint(20)==1)
-				type = ACT_CHARM_ANIMALS;
-			else if (randint(7)==1)
-				type = ACT_SUMMON_ANIMAL;
-			else if (randint(6)==1)
-				type = ACT_CHARM_ANIMAL;
-			else if (randint(4)==1)
-				type = ACT_RESIST_ALL;
-			else if (randint(3)==1)
-				type = ACT_SATIATE;
-			else
-				type = ACT_CURE_POISON;
-		}
-	}
-
-	while (!(type) || (randint(100)>=chance))
-	{
-		type = randint(255);
-		switch (type)
-		{
-			case ACT_SUNLIGHT: case ACT_BO_MISS_1:
-			case ACT_BA_POIS_1: case ACT_BO_ELEC_1:
-			case ACT_BO_ACID_1: case ACT_BO_COLD_1: case ACT_BO_FIRE_1:
-			case ACT_CONFUSE: case ACT_SLEEP: case ACT_QUAKE:
-			case ACT_CURE_LW: case ACT_CURE_MW: case ACT_CURE_POISON:
-			case ACT_BERSERK: case ACT_LIGHT: case ACT_MAP_LIGHT:
-			case ACT_DEST_DOOR: case ACT_STONE_MUD: case ACT_TELEPORT:
-				chance = 101;
-				break;
-			case ACT_BA_COLD_1: case ACT_BA_FIRE_1: case ACT_DRAIN_1:
-			case ACT_TELE_AWAY: case ACT_ESP: case ACT_RESIST_ALL:
-			case ACT_DETECT_ALL: case ACT_RECALL:
-			case ACT_SATIATE: case ACT_RECHARGE:
-				chance = 85;
-				break;
-			case ACT_TERROR: case ACT_PROT_EVIL: case ACT_ID_PLAIN:
-				chance = 75;
-				break;
-			case ACT_DRAIN_2: case ACT_VAMPIRE_1: case ACT_BO_MISS_2:
-			case ACT_BA_FIRE_2: case ACT_REST_LIFE:
-				chance = 66;
-				break;
-			case ACT_BA_COLD_3: case ACT_BA_ELEC_3: case ACT_WHIRLWIND:
-			case ACT_VAMPIRE_2: case ACT_CHARM_ANIMAL:
-				chance = 50;
-				break;
-			case ACT_SUMMON_ANIMAL:
-				chance = 40;
-				break;
-			case ACT_DISP_EVIL: case ACT_BA_MISS_3: case ACT_DISP_GOOD:
-			case ACT_BANISH_EVIL: case ACT_GENOCIDE: case ACT_MASS_GENO:
-			case ACT_CHARM_UNDEAD: case ACT_CHARM_OTHER:
-			case ACT_SUMMON_PHANTOM: case ACT_REST_ALL: case ACT_RUNE_EXPLO:
-				chance = 33;
-				break;
-			case ACT_CALL_CHAOS: case ACT_SHARD:
-			case ACT_CHARM_ANIMALS: case ACT_CHARM_OTHERS:
-			case ACT_SUMMON_ELEMENTAL: case ACT_CURE_700:
-			case ACT_SPEED: case ACT_ID_FULL: case ACT_RUNE_PROT:
-				chance = 25;
-				break;
-			case ACT_CURE_1000: case ACT_XTRA_SPEED:
-			case ACT_DETECT_XTRA: case ACT_DIM_DOOR:
-				chance = 10;
-				break;
-			case ACT_SUMMON_UNDEAD: case ACT_SUMMON_DEMON:
-			case ACT_WRAITH: case ACT_INVULN: case ACT_ALCHEMY:
-				chance = 5;
-				break;
-			default:
-				chance = 0;
-		}
+		type = (*this)[1];
 	}
 
 	/* A type was chosen... */
@@ -3064,15 +3011,15 @@ static bool unbiased_bonus(object_type *o_ptr, int *bias,
 static bool combined_bonus(object_type *o_ptr, int *bias,
 	biased_flag_type *barray, int bnum, unbiased_flag_type *uarray, int unum)
 {
-	return (biased_bonus(o_ptr, *bias, barray, bnum) ||
-		unbiased_bonus(o_ptr, bias, uarray, unum));
+	return ((bnum && biased_bonus(o_ptr, *bias, barray, bnum)) ||
+		(unum && unbiased_bonus(o_ptr, bias, uarray, unum)));
 }
 
 bool create_artifact(object_type *o_ptr, bool a_scroll)
 {
 	char new_name[80] = "";
-	int has_pval = 0;
-	int powers = randint(5) + 1;
+	int artifact_bias, has_pval = 0;
+	int powers = rand_range(2, 6);
 	int max_type = is_weapon(o_ptr) ? 7 : 5;
 	int power_level;
 	s32b total_flags;
@@ -3121,7 +3068,8 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 				break;
 			case 6: case 7:
 				if (o_ptr->tval == TV_BOW)
-					while (!random_bow_bonus(o_ptr)) ;
+					while (!combined_bonus(o_ptr, &artifact_bias,
+						NULL, 0, ARRAY(unbiased_bow_flags))) ;
 				else
 					while (!combined_bonus(o_ptr, &artifact_bias,
 						ARRAY(biased_slay_flags), ARRAY(unbiased_slay_flags))) ;
@@ -3164,7 +3112,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		: ACTIVATION_CHANCE))
 	{
 		o_ptr->activation = 0;
-		give_activation_power(o_ptr);
+		give_activation_power(o_ptr, &artifact_bias);
 	}
 
 
