@@ -2540,7 +2540,7 @@ extern s16b command_cmd;
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_arg;
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b command_rep;
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA2_C))
