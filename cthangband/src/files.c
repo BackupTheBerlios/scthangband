@@ -4103,7 +4103,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 				else
 					thiscol = link_color;
 
-				out_ptr += sprintf(out_ptr, "$%c", atchar[thiscol]);
+				out_ptr += sprintf(out_ptr, "$<$%c", atchar[thiscol]);
 
 				/* Ok print the link name */
 				while (buf[xx] && buf[xx] != ']')
@@ -4111,6 +4111,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 					if (prefix(buf+xx, "$")) xx++;
 					*out_ptr++ = buf[xx++];
 				}
+				out_ptr += sprintf(out_ptr, "$>");
 				x = xx;
 			}
 			/* Remove HTML ? */
