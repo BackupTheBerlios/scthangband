@@ -146,7 +146,7 @@ struct term_data
 /*
  * Maximum number of windows
  */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 
 /*
@@ -158,7 +158,7 @@ static term_data data[MAX_TERM_DATA];
 /*
  * Current number of windows open
  */
-static int num_term = 1;
+static int num_term = ANGBAND_TERM_DEFAULT;
 
 /*
  * New fields for the Angband widget record

@@ -102,7 +102,7 @@
 #endif /* __CEXTRACT__ */
 
 #include "externs.h"
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 /* Maximum length a filename (including a path) can reach. Somewhat arbitary */
 #define MAX_PATH_LENGTH		160

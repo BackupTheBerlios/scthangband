@@ -206,7 +206,7 @@ struct term_data
 };
 
 /* Max number of windows on screen */
-#define MAX_TERM_DATA 4
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 4)
 
 /* Information about our windows */
 static term_data data[MAX_TERM_DATA];

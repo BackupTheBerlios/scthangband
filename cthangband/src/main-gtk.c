@@ -45,7 +45,7 @@ const char help_gtk[] =
 /*
  * Largest possible number of terminal windows supported by the game
  */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 /*
  * Extra data to associate with each "window"
@@ -125,7 +125,7 @@ static bool gtk_exitgame = FALSE;
 /*
  * Number of active terms
  */
-static int num_term = 3;
+static int num_term = ANGBAND_TERM_DEFAULT;
 
 
 #ifdef SUPPORT_GAMMA

@@ -334,7 +334,7 @@ static WindowPtr active = NULL;
 /*
  * Maximum number of terms
  */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 
 /*

@@ -77,6 +77,11 @@
  */
 #define ANGBAND_TERM_MAX 8
 
+/*
+ * Default number of Angband windows.
+ */
+#define ANGBAND_TERM_DEFAULT 3
+
 
 /*
  * Total number of stores (see "store.c", etc)

@@ -421,7 +421,7 @@ struct _term_data
 /*
  * Maximum number of windows XXX XXX XXX
  */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 
 /*

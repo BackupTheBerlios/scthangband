@@ -1459,7 +1459,7 @@ struct term_data
 /*
  * The number of term data structures
  */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 /*
  * The array of term data structures
@@ -2276,7 +2276,7 @@ errr init_x11(int argc, char **argv)
 
 	cptr dpy_name = "";
 
-	int num_term = 1;
+	int num_term = ANGBAND_TERM_DEFAULT;
 
 #ifdef USE_GRAPHICS
 

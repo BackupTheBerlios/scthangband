@@ -120,7 +120,7 @@
 /*
  * Maximum windows
  */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 /*
  * Keypress input modifier flags (copied from main-ibm.c)

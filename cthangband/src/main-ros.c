@@ -162,7 +162,7 @@
 #endif
 
 /* Maximum terminals */
-#define MAX_TERM_DATA 8
+#define MAX_TERM_DATA MIN(ANGBAND_TERM_MAX, 8)
 
 /* Menu entry numbers */
 #define IBAR_MENU_INFO			0
@@ -4342,7 +4342,7 @@ static void initialise_terms(void)
 		windows[i].term = &(data[i].t);
 	}
 
-	windows[8].term = &(data[0].t);
+	windows[0].term = &(data[0].t);
 	Term_activate(&(data[0].t));
 }
 
