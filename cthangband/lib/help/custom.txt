@@ -343,6 +343,11 @@ Confirm to wear/wield potentially cursed items    [confirm_wear_all]
     If this option is set, you will be asked to confirm any attempt to wear an
     object which isn't known by some method to be uncursed.
     
+***** <unify_commands>
+Use a single 'u'se command for all objects    [unify_commands]
+    This causes b, A, E, F, a, z, q, r and u to carry out whichever of the
+    associated actions is most appropriate for the chosen item.
+
 ***** <testing_stack>
 Allow objects to stack on the floor   [testing_stack]
      Allows a cave grid to hold more than one object (or one kind of object).

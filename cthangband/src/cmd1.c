@@ -2277,7 +2277,7 @@ void move_player(int dir, int do_pickup)
 			disturb(0, 0);
 
 			/* Hack -- Enter store */
-			command_new = '_';
+			command_new = KTRL('E');
 		}
 
 		/* Discover invisible traps */

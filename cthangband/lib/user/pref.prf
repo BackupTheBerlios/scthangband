@@ -206,6 +206,10 @@ C:1:a
 A:h
 C:1:^W
 
+# Hurt a monster
+A:H
+C:1:^G
+
 # Use mindcrafting (Power)
 A:P
 C:1:^M

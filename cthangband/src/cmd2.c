@@ -2183,7 +2183,7 @@ void do_cmd_stay(int pickup)
 		disturb(0, 0);
 
 		/* Hack -- enter store */
-		command_new = '_';
+		command_new = KTRL('E');
 	}
 }
 

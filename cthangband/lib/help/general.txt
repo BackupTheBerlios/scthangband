@@ -136,12 +136,12 @@ Go down staircase (>)
         This command takes some energy.
 
 
-***** <cmd=_>
-Enter store (_)
+***** <cmd=^E>
+Enter store (Ctrl-E)
         When standing on the door of a store, this command allows the character
         to enter the store. Walking into the door will do the same (in fact,
 		walking into the door explicitly calls this command, so a keymap for
-		_ will be triggered whenever you enter a store).
+		^E will be triggered whenever you enter a store).
 
 *****
 --- Resting Commands ---

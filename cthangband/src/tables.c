@@ -3387,6 +3387,9 @@ option_type option_info[] =
 	{ &rand_unbiased,    FALSE, OPTS_PERF,2,12,
 	"rand_unbiased","Random numbers have bias removed (slow)"},
 
+	{ &unify_commands,  FALSE, OPTS_OBJ,2,13,
+	"unify_commands","Use a single 'u'se command for all objects"},
+
 	{ &testing_stack,               TRUE, OPTS_OBJ, 2, 14,
     "testing_stack",                "Allow objects to stack on floor" },
 

@@ -2650,7 +2650,7 @@ static void process_command(void)
 			/*** Stairs and Doors and Chests and Traps ***/
 
 			/* Enter store */
-		case '_':
+		case KTRL('E'):
 		{
 			do_cmd_store();
 			break;
@@ -2719,7 +2719,12 @@ static void process_command(void)
 			/* Browse a book */
 		case 'b':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_browse(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
@@ -2800,21 +2805,36 @@ static void process_command(void)
 			/* Activate an artifact */
 		case 'A':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_activate(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
 			/* Eat some food */
 		case 'E':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_eat_food(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
 			/* Fuel your lantern/torch */
 		case 'F':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_refill(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
@@ -2835,42 +2855,60 @@ static void process_command(void)
 			/* Aim a wand */
 		case 'a':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_aim_wand(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
 			/* Zap a rod */
 		case 'z':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_zap_rod(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
 			/* Quaff a potion */
 		case 'q':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_quaff_potion(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
 			/* Read a scroll */
 		case 'r':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_read_scroll(-999);
-			break;
+			} else {
+				do_cmd_handle();
 		}
-
-		/* Unified use function. */
-		case KTRL('u'):
-		{
-			do_cmd_handle();
 			break;
 		}
 
 			/* Use a staff */
 		case 'u':
 		{
+			if(!unify_commands)
+			{
 			do_cmd_use_staff(-999);
+			} else {
+				do_cmd_handle();
+			}
 			break;
 		}
 
