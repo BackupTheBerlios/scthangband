@@ -531,7 +531,7 @@ extern void close_game(void);
 extern void exit_game_panic(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
-extern void get_rnd_line_f1(char *buf, uint max, cptr fmt, va_list *vp);
+extern void get_rnd_line_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(HANDLE_SIGNALS)) && (defined(FILES_C) || defined(MAIN_SLA_C))
 extern Signal_Handler_t (*signal_aux)(int, Signal_Handler_t);
@@ -3738,7 +3738,7 @@ extern bool get_rep_dir(int *dp);
 extern void convert_articles(char *str);
 #endif
 #if (defined(CMD2_C) || defined(CMD4_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern void feature_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
+extern void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void gain_level_reward(int chosen_reward);

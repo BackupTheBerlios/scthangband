@@ -152,6 +152,15 @@ uint func_nothing_f0(char UNUSED *buf, uint UNUSED max, cptr UNUSED fmt, vptr UN
 	return 0;
 }
 
+/*
+ * Extract the number from "%.123v".
+ */
+static long PURE get_precision(cptr s)
+{
+	s = strchr(s, '.');
+	if (!s) return -1;
+	else return strtol(s+1, 0, 0);
+}
 
 /*
  * Basic "vararg" format function.
@@ -546,6 +555,12 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			case 'v':
 			{
 				vstrnfmt_aux_func tmp_func;
+
+				/* Extract the requested precision now. */
+				long max = get_precision(aux);
+
+				/* Catch "unspecified" max and enforce a maximum. */
+				if (max < 0 || max > 1000) max = 1000;
 
 				/* Extract the function to call */
 				tmp_func = va_arg(vp, vstrnfmt_aux_func);

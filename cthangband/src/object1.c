@@ -1497,24 +1497,14 @@ void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	object_type *o_ptr = va_arg(*vp, object_type *);
 	int pref = va_arg(*vp, int);
 	int mode = va_arg(*vp, int);
-	cptr s;
-	uint len;
 
-	/* Use %.123v to specify a maximum length of 123. */
-	if ((s = strchr(fmt, '.')))
+	/* Use a length of ONAME_MAX as a default. */
+	if (!strchr(fmt, '.'))
 	{
-		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m+1);
-	}
-	else
-	{
-		len = ONAME_MAX;
+		max = MIN(ONAME_MAX, max);
 	}
 
-	/* Ensure that the buffer fits within buf. */
-	if (max < len) len = max;
-
-	object_desc(buf, len, o_ptr, pref, mode);
+	object_desc(buf, max, o_ptr, pref, mode);
 }
 
 /*

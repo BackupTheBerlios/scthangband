@@ -6109,27 +6109,12 @@ static errr get_rnd_line(const char * file_name, uint len, char * output)
  * or:
  * "%.*v", (int)len, get_rnd_line_f1, file_name
  */
-void get_rnd_line_f1(char *buf, uint max, cptr fmt, va_list *vp)
+void get_rnd_line_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
-	cptr s, file_name = va_arg(*vp, cptr);
-	uint len;
-
-	/* Use %.123v to specify a maximum length of 123. */
-	if ((s = strchr(fmt, '.')))
-	{
-		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m+1);
-	}
-	else
-	{
-		len = ONAME_MAX;
-	}
-
-	/* Ensure that the buffer fits within buf. */
-	if (max < len) len = max;
+	cptr file_name = va_arg(*vp, cptr);
 
 	/* Report errors. */
-	switch (get_rnd_line(file_name, len, buf))
+	switch (get_rnd_line(file_name, max, buf))
 	{
 		case -1:
 			strnfmt(buf, max, "Error: '%s' not found.", file_name);

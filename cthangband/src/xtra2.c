@@ -3295,19 +3295,10 @@ static void feature_desc(char *buf, uint max, int feat, int flags)
 	convert_articles(buf);
 }
 
-void feature_desc_f2(char *buf, uint max, cptr fmt, va_list *vp)
+void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	int feat = va_arg(*vp, int);
 	int flags = va_arg(*vp, int);
-
-	cptr s;
-
-	/* Use %.123v to specify a maximum length of 123. */
-	if ((s = strchr(fmt, '.')))
-	{
-		long m = strtol(s+1, 0, 0)+1;
-		if (m > 0 && m < (long)max) max = m;
-	}
 
 	feature_desc(buf, max, feat, flags);
 }

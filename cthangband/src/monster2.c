@@ -1051,22 +1051,13 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	vptr *r_ptr = va_arg(*vp, vptr);
 	int num = va_arg(*vp, int);
 	uint flags = va_arg(*vp, uint);
-	uint len;
-	cptr s, name;
+	cptr name;
 
-	/* Use %.123v to specify a maximum length of 123. */
-	if ((s = strchr(fmt, '.')))
+	/* Use a length of MNAME_MAX if unspecified. */
+	if (!strchr(fmt, '.'))
 	{
-		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m)+1;
+		max = MIN(MNAME_MAX, max);
 	}
-	else
-	{
-		len = MNAME_MAX;
-	}
-
-	/* Ensure that both buffers fit within buf. */
-	if (max < len) len = max;
 
 	/*
 	 * The first argument is either a monster_race * or a cptr.
@@ -1084,7 +1075,7 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	}
 
 	/* Create the name now the arguments are known. */
-	monster_desc_aux(buf, len, name, num, flags);
+	monster_desc_aux(buf, max, name, num, flags);
 }
 
 /*
@@ -1304,25 +1295,15 @@ void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	monster_type *m_ptr = va_arg(*vp, monster_type *);
 	int mode = va_arg(*vp, int);
-	cptr s;
-	uint len;
 
-	/* Use %.123v to specify a maximum length of 123. */
-	if ((s = strchr(fmt, '.')))
+	/* Use a length of MNAME_MAX if unspecified. */
+	if (!strchr(fmt, '.'))
 	{
-		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m)+1;
+		max = MIN(MNAME_MAX, max);
 	}
-	else
-	{
-		len = MNAME_MAX;
-	}
-
-	/* Ensure that the buffer fits within buf. */
-	if (max < len) len = max;
 
 	/* Copy the string to buf. */
-	monster_desc(buf, m_ptr, mode, len);
+	monster_desc(buf, m_ptr, mode, max);
 }
 
 
