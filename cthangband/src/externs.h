@@ -582,6 +582,9 @@ extern bool has_flag(u16b flag);
 extern errr rd_savefile_new(void);
 #endif
 
+
+
+
 /* main-acn.c */
 
 #if (defined(__riscos)) && (defined(MAIN_ACN_C))
@@ -2273,10 +2276,10 @@ extern bool always_repeat;
 #if (defined(MONSTER1_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool depth_in_feet;
 #endif
-#if (defined(CMD4_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool stack_force_notes;
 #endif
-#if (defined(CMD4_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool stack_force_notes_all;
 #endif
 #if (defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -2312,9 +2315,6 @@ extern bool find_ignore_stairs;
 #if (defined(CMD1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool find_ignore_doors;
 #endif
-
-
-
 #if (defined(CMD1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool find_cut;
 #endif
@@ -2351,7 +2351,7 @@ extern bool last_words;
 #if (defined(MELEE2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool speak_unique;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool small_levels;
 #endif
 
@@ -2381,10 +2381,10 @@ extern bool auto_destroy;
 #if (defined(CMD2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool confirm_stairs;
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD3_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool wear_confirm;
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD3_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool confirm_wear_all;
 #endif
 #if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -2393,10 +2393,10 @@ extern bool disturb_allies;
 #if (defined(CMD2_C) || defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool multi_stair;
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool centre_view;
 #endif
-#if (defined(CMD4_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool no_centre_run;
 #endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -2408,9 +2408,6 @@ extern bool maximise_mode;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool use_autoroller;
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spend_points;
 #endif
@@ -2450,13 +2447,13 @@ extern bool dungeon_align;
 #if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool dungeon_stair;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool dungeon_small;
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CAVE_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool flow_by_sound;
 #endif
-#if (defined(CMD4_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool flow_by_smell;
 #endif
 #if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3533,5 +3530,11 @@ extern player_type p_body;
 
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool macro_edit;
+#endif
+
+/* tables.c */
+
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern force_type option_force[] ;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

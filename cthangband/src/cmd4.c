@@ -585,28 +585,10 @@ static bool showfile(cptr name, byte col)
  */
 static bool opt_is_forced(int i)
 {
-	typedef struct force_type force_type;
-
-	struct force_type
-	{
-		bool *forcing_opt;
-		bool forcing_value;
-		bool *forced_opt;
-	};
-
-	force_type *fs_ptr, force[] =
-	{
-		{&small_levels, FALSE, &dungeon_small},
-		{&centre_view, FALSE, &no_centre_run},
-		{&stack_force_notes, FALSE, &stack_force_notes_all},
-		{&wear_confirm, FALSE, &confirm_wear_all},
-		{&flow_by_sound, FALSE, &flow_by_smell},
-		{0, 0, 0}
-	};
-
 	bool *o_var = option_info[i].o_var;
+	force_type *fs_ptr;
 
-	for (fs_ptr = force; fs_ptr->forcing_opt; fs_ptr++)
+	for (fs_ptr = option_force; fs_ptr->forcing_opt; fs_ptr++)
 	{
 		if (o_var == fs_ptr->forced_opt &&
 			*(fs_ptr->forcing_opt) == fs_ptr->forcing_value) return TRUE;

@@ -675,6 +675,18 @@ struct option_type
 };
 
 
+/*
+ * Structure to specify how some options can override other options.
+ */
+typedef struct force_type force_type;
+
+struct force_type
+{
+	bool *forcing_opt;
+	bool forcing_value;
+	bool *forced_opt;
+};
+
 
 /*
  * Structure for monster memory colour map.

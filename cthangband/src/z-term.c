@@ -2132,7 +2132,6 @@ errr Term_save(void)
 	return (0);
 }
 
-
 /*
  * Restore the "requested" contents (see above).
  *

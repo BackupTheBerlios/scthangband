@@ -3490,6 +3490,16 @@ option_type option_info[] =
 	NULL,                   NULL }
 };
 
+/* "if (option_force[].1 == option_force[].2) option_force[].3 is irrelevant." */
+force_type option_force[] =
+{
+	{&small_levels, FALSE, &dungeon_small},
+	{&centre_view, FALSE, &no_centre_run},
+	{&stack_force_notes, FALSE, &stack_force_notes_all},
+	{&wear_confirm, FALSE, &confirm_wear_all},
+	{&flow_by_sound, FALSE, &flow_by_smell},
+	{0, 0, 0}
+};
 
 cptr chaos_patron_shorts[MAX_PATRON] =
 {
