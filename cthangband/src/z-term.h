@@ -216,7 +216,8 @@ struct term
 
 	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
 
-	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp);
+	errr (*pict_hook)(int x, int y, int n,
+		const byte *ap, const char *cp, const byte *tap, const char *tcp);
 
 	void (*resize_hook)(void);
 };

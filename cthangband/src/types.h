@@ -897,7 +897,7 @@ struct window_type
 	term *term;	/* The window in question */
 	char name[16]; /* Name of the window */
 	byte pri[32]; /* Priority of the specified display type for this window. */
-	byte rep[32]; /* Maximum priority of display which this display type can replace. */
+	byte rep[32]; /* Maximum priority of display which this one can replace. */
 	byte current; /* Current display for this window */
 	u32b mask;
 };
@@ -993,7 +993,7 @@ struct player_skill
 	byte max_value; /* Maximum value the skill has had */
 	byte base; /* The skill level that may be raised to at dungeon level zero */
 	byte ceiling; /* The absolute maximum the skill may be raised to */
-	u16b exp_to_raise; /* The number of times the skill needs to be used for each raise */
+	u16b exp_to_raise; /* The number of times the skill must be used to raise */
 	byte x; /* The x co-ordinate used in player_skills(). */
 	byte y; /* The y co-ordinate used in player_skills(). */
 };
@@ -1282,7 +1282,7 @@ struct spirit_type {
 	u32b annoyance; /* How annoyed the spirit is with the player */
 	bool pact; /* Whether the player has a pact with this spirit */
 	byte sphere; /* sphere of influence */
-	byte minskill; /* Minimum skill to form a pact (= min skill of easiest favour) */
+	byte minskill; /* Minimum skill to form a pact */
 	byte punish_chance; /* How likely the spirit is to punish the player. */
 };
 
@@ -1353,7 +1353,7 @@ struct make_monster_type {
 	byte	min;	/* Minimum number which can be created. */
 	byte	max;	/* Maximum number which can be created. */
 	byte	radius;	/* Distance between the dead monster and the resulting ones */
-	bool	strict;	/* Only place monsters within radius, rather than merely preferring to. */
+	bool	strict;	/* Never place monsters outside radius. */
 };
 
 /* Explosions centred on the deceased monster. */

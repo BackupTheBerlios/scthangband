@@ -28,7 +28,8 @@
 #define SF_DEATHEVENTTEXT 4
 
 /*
- * Create an option to suppress the prompt given by autosave (see quietsave.diff).
+ * Create an option to suppress the prompt given by autosave (see
+ * quietsave.diff).
  */
 #define SF_Q_SAVE 5
 
@@ -65,7 +66,8 @@
 #define SF_QUEST_KNOWN 11
 
 /*
- * Rearrange r_info.txt so that all of the unusual monsters are at the beginning.
+ * Rearrange r_info.txt so that all of the unusual monsters are at the
+ * beginning.
  * Add Bokrug and various causes of death to it.
  */
 #define SF_R_INFO_1 12
