@@ -2361,7 +2361,7 @@ extern void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 extern void s16b_to_string_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(CMD4_C) || defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(UTIL_C))
-extern sint macro_find_exact(cptr pat);
+extern cptr find_macro(cptr pat);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(UTIL_C))
 extern void macro_add(cptr pat, cptr act);

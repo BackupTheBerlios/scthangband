@@ -180,7 +180,7 @@ void react_keypress(XKeyEvent *ev)
 
 
 	/* Hack -- auto-define macros as needed */
-	if (n && (macro_find_exact(msg) < 0))
+	if (n && !find_macro(msg))
 	{
 		/* Create a macro */
 		macro_add(msg, buf);

@@ -1194,7 +1194,7 @@ static bool macro__use[256];
 /*
  * Find the macro (if any) which exactly matches the given pattern
  */
-sint macro_find_exact(cptr pat)
+static int macro_find_exact(cptr pat)
 {
 	int i;
 
@@ -1218,6 +1218,20 @@ sint macro_find_exact(cptr pat)
 	return (-1);
 }
 
+/*
+ * Return the action associated with a macro trigger, NULL if none.
+ */
+cptr find_macro(cptr pat)
+{
+	/* Find the index of the macro. */
+	int i = macro_find_exact(pat);
+
+	/* No such trigger. */
+	if (i < 0) return NULL;
+
+	/* Return the action. */
+	return macro__act[i];
+}
 
 /*
  * Find the first macro (if any) which contains the given pattern

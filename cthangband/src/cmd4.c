@@ -2474,7 +2474,7 @@ static void do_cmd_macros(void)
 		/* Query a macro */
 		else if (i == '3')
 		{
-			int k;
+			cptr s;
 
 			/* Prompt */
 			prt("Command: Query a macro", 16, 0);
@@ -2486,11 +2486,11 @@ static void do_cmd_macros(void)
 			do_cmd_macro_aux(buf, sizeof(buf));
 
 			/* Acquire action */
-			k = macro_find_exact(buf);
+			s = find_macro(buf);
 
 			/* Nothing found */
-			if (k < 0)
-		{
+			if (!s)
+			{
 				/* Prompt */
 				msg_print("Found no macro.");
 			}
@@ -2499,7 +2499,7 @@ static void do_cmd_macros(void)
 			else
 			{
 				/* Obtain the action */
-				strcpy(macro__buf, macro__act[k]);
+				strcpy(macro__buf, s);
 
 				/* Analyze the current action */
 				strnfmt(buf, sizeof(buf), "%v", ascii_to_text_f1, macro__buf);
@@ -2510,7 +2510,7 @@ static void do_cmd_macros(void)
 				/* Prompt */
 				msg_print("Found a macro.");
 			}
-			}
+		}
 
 		/* Create a macro */
 		else if (i == '4')
