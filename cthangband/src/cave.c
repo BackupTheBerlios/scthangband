@@ -1427,10 +1427,10 @@ void prt_map(void)
 			if (x < cur_wid && y < cur_hgt)
 			{
 #ifdef USE_TRANSPARENCY
-			/* Determine what is there */
-			map_info(y, x, &a, &c, &ta, &tc);
+				/* Determine what is there */
+				map_info(y, x, &a, &c, &ta, &tc);
 #else /* USE_TRANSPARENCY */
-			map_info(y, x, &a, &c);
+				map_info(y, x, &a, &c);
 #endif /* USE_TRANSPARENCY */
 			}
 			else

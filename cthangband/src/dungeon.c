@@ -2417,7 +2417,7 @@ static void process_command(void)
 	/* Parse the command */
 	switch (command_cmd)
 	{
-		/* Ignore */
+			/* Ignore */
 		case ESCAPE: case CMD_DEBUG+ESCAPE: 
 		case ' ': case CMD_DEBUG+' ':
 		case '\r': case CMD_DEBUG+'\r':
@@ -3356,7 +3356,7 @@ static void process_command(void)
 			do_cmd_script();
 			break;
 		}
-		/* Hack -- Unknown command */
+			/* Hack -- Unknown command */
 		default:
 		{
             if (randint(2)==1)
@@ -3527,7 +3527,6 @@ static void process_player(void)
 			/* Redraw stuff (if needed) */
 			if (p_ptr->redraw) redraw_stuff();
 		}
-
 
 		/* Hack -- cancel "lurking browse mode" */
 		if (!command_new) command_see = FALSE;

@@ -322,7 +322,7 @@ static void prt_depth(void)
 			(void)sprintf(depths, "Wild (%d,%d)",wildx,wildy);
 		}
 	/* Right-Adjust the "depth", and clear old values */
-	prt(format("%9s", depths), 23, COL_DEPTH);
+	prt(format("%9s", depths), ROW_DEPTH, COL_DEPTH);
 }
 
 

@@ -68,7 +68,7 @@ void do_cmd_rerate(void)
   * Create the artifact of the specified number -- DAN
   */
 void wiz_create_named_art(int a_idx)
-{
+ {
 
        object_type forge;
        object_type *q_ptr;
@@ -1565,6 +1565,7 @@ void do_cmd_magebolt(void)
 void do_cmd_debug(void)
 {
 	char		cmd;
+
 
 	/* Get a "debug command" */
 	(void)(get_com("Wizard Command: ", &cmd));

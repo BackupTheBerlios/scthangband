@@ -676,13 +676,7 @@ extern void convert_grx_bitmap(int width, int height, unsigned char *src, unsign
 #if (defined(USE_DOS)) && (defined(MAIN_DOS_C) || defined(MAIN_C))
 extern errr init_dos(void);
 #endif
-
-/* main-gcu.c */
-
 #if ((defined(USE_GCU)) && defined(USE_NCURSES)) && (defined(MAIN_GCU_C) || defined(MAIN_C))
-extern const char help_gcu[] ;
-#endif
-#if ((defined(USE_GCU)) && !(defined(USE_NCURSES))) && (defined(MAIN_GCU_C) || defined(MAIN_C))
 extern const char help_gcu[] ;
 #endif
 #if (defined(USE_GCU)) && (defined(MAIN_GCU_C) || defined(MAIN_C))
@@ -1885,9 +1879,6 @@ extern errr my_fclose(FILE *fff);
 #if (defined(HAVE_MKSTEMP)) && (defined(CMD4_C) || defined(UTIL_C))
 extern FILE *my_fopen_temp(char *buf, int max);
 #endif
-#if (!(defined(HAVE_MKSTEMP))) && (defined(CMD4_C) || defined(UTIL_C))
-extern FILE *my_fopen_temp(char *buf, int max);
-#endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_MAC_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 #endif
@@ -2017,9 +2008,6 @@ extern void pause_line(void);
 #if (defined(CMD4_C) || defined(UTIL_C))
 extern int keymap_mode(void);
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C))
 extern void request_command(bool shopping);
 #endif
@@ -2950,18 +2938,12 @@ extern artifact_type *a_info;
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *a_name;
 #endif
-
-
-
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern ego_item_type *e_info;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *e_name;
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern monster_race *r_info;
 #endif
@@ -3557,5 +3539,17 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
+#endif
+
+/* main-gcu.c */
+
+#if ((defined(USE_GCU)) && !(defined(USE_NCURSES))) && (defined(MAIN_GCU_C) || defined(MAIN_C))
+extern const char help_gcu[] ;
+#endif
+
+/* util.c */
+
+#if (!(defined(HAVE_MKSTEMP))) && (defined(CMD4_C) || defined(UTIL_C))
+extern FILE *my_fopen_temp(char *buf, int max);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

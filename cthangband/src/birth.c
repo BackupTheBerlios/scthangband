@@ -2287,7 +2287,7 @@ static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 
 	/* And return the result (multiplied by 100 to minimise rounding errors). */
 	return social_class;
-}
+	}
 
 /*
  * Finds the average social class for a given race.

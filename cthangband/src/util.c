@@ -3348,20 +3348,20 @@ void request_command(bool shopping)
 		/* Look up applicable keymap if allowed. */
 		if (!(cmd & 0xFF00))
 		{
-			act = get_keymap((byte)(cmd));
+		act = get_keymap((byte)(cmd));
 
-			/* Apply keymap if not inside a keymap already */
-			if (act && !inkey_next)
-			{
-				/* Install the keymap (limited buffer size) */
-				strnfmt(request_command_buffer, 256, "%s", act);
+		/* Apply keymap if not inside a keymap already */
+		if (act && !inkey_next)
+		{
+			/* Install the keymap (limited buffer size) */
+			strnfmt(request_command_buffer, 256, "%s", act);
 
-				/* Start using the buffer */
-				inkey_next = request_command_buffer;
+			/* Start using the buffer */
+			inkey_next = request_command_buffer;
 
-				/* Continue */
-				continue;
-			}
+			/* Continue */
+			continue;
+		}
 		}
 
 

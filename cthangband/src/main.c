@@ -417,7 +417,7 @@ int main(int argc, char *argv[])
 
 #  endif /* defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX) */
 
-#  if 0	/* XXX XXX XXX */
+#  if 0 /* XXX XXX XXX */
 
 	/* Redundant setting necessary in case root is running the game */
 	/* If not root or game not setuid the following two calls do nothing */
@@ -606,7 +606,6 @@ int main(int argc, char *argv[])
 	process_player_name();
 
 
-
 	/* Install "quit" hook */
 	quit_aux = quit_hook;
 
@@ -617,12 +616,12 @@ int main(int argc, char *argv[])
 		if (!mstr || (streq(mstr, modules[i].name)))
 		{
 			if (0 == modules[i].init(argc, argv))
-	{
+			{
 				ANGBAND_SYS = modules[i].name;
-			done = TRUE;
+				done = TRUE;
 				break;
+			}
 		}
-	}
 	}
 
 	/* Make sure we have a display! */

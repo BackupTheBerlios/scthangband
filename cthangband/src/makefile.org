@@ -110,7 +110,6 @@ CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" \
 	-Wno-long-long -Wwrite-strings -Wpointer-arith \
 	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
 	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes \
-	--std=c89 -pedantic -D"C89_COMPAT" \
 	#-Wredundant-decls \
 
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib $(PYLIB)

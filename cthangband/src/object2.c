@@ -1962,7 +1962,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 
 	/* Roll for each of the available artefacts */
 	while (arts)
-	{
+		{
 		/* Pick an artefact from the list. */
 		artifact_type *a_ptr = &a_info[order[i = rand_int(arts--)]];
 

@@ -1195,5 +1195,3 @@ errr init_gcu(int argc, char **argv)
 
 
 #endif /* USE_GCU */
-
-

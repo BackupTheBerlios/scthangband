@@ -1893,7 +1893,6 @@ void init_angband(void)
 	init_x_info("maxima", maxima, parse_z_info, "z_info", z_info,
 		dummy, dummy, u_max, Z_HEAD);
 
-
 	/* Initialise the fake arrays now their sizes are known. */
 	C_MAKE(head->fake_info_ptr, z_info->fake_info_size, char);
 	C_MAKE(head->fake_name_ptr, z_info->fake_name_size, char);

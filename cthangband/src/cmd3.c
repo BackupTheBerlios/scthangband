@@ -1500,6 +1500,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	/* Display the result */
 	prt(buf, 0, 0);
 
+
 	/* Collect matching monsters */
 	for (n = 0, i = 1; i < MAX_R_IDX-1; i++)
 	{

@@ -230,7 +230,7 @@ void flavor_init(void)
 	 * We've already checked that there are enough to go around.
 	 */
 	for (i = 0; i < 256; i++)
-	{
+		{
 		s16b k_top, u_top;
 
 		/* Ignore constant/special p_ids */
@@ -1119,10 +1119,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	char            b1 = '[', b2 = ']';
 	char            c1 = '{', c2 = '}';
 
-	/* tmp_val_base is twice as large as necessary as little bounds checking
-	 * is performed. */
-	char            tmp_val_base[ONAME_MAX*2];
-
+	char            tmp_val_base[160];
 	char		*tmp_val = tmp_val_base;
 
 	u32b            f1, f2, f3;
@@ -1427,7 +1424,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	{
 		byte article = 0;
 		char *s, *u;
-		for (s = u = t-1; ; s--, u--)
+		for (s = u = t-1;; s--, u--)
 		{
 			/* article characters are preceded by two spaces,
 			 * so a 3-character string can be inserted without
@@ -1826,9 +1823,6 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		cptr k[4];
 		int i = 0;
 
-		/* This is long enough for "(2147483647)" and for "100% off".*/
-		char tmp2[2][13];
-
 		/* Find the sections of inscription. */
 
 		/* Obtain the value this would have if uncursed if allowed. If this
@@ -1863,21 +1857,18 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 			/* Let the player known when a known cursed item is not broken. */
 			if (worthless && value)
 			{
-	 			sprintf(tmp2[0], "(%ld)", value);
+				/* Hack - use an offset to the format buffer to allow a second
+				 * temporary string. */
+	 			k[i++] = format("          (%ld)", value)+10;
 			}
 			else
 			{
-	 			sprintf(tmp2[0], "%ld", value);
+				k[i++] = format("          %ld", value)+10;
 			}
-			k[i++] = tmp2[0];
 		}
 
 		/* Hack - this must be <9 character long. See above. */
-		if (o1_ptr->discount)
-		{
-			sprintf(tmp2[1], "%d%% off", o1_ptr->discount);
-			k[i++] = tmp2[1];
-		}
+		if (o1_ptr->discount) k[i++] = format("%d%% off", o1_ptr->discount);
 
 		if (*((k[i] = find_feeling(o1_ptr))) != '\0') i++;
 		if (o1_ptr->note) k[i++] = quark_str(o1_ptr->note);
@@ -3050,7 +3041,7 @@ static void identify_fully_show(ifa_type *i_ptr)
 	prt("     Item Attributes:", 1, minx);
 
 	/* We will print on top of the map. */
-	for (k = 2; ;)
+	for (k = 2;;)
 	{
 		/* Hack - turn the default colour (black) into white. */
 		byte attr = (i_ptr->attr) ? i_ptr->attr : TERM_WHITE;
@@ -3155,7 +3146,7 @@ static void identify_fully_dump_file(FILE *fff, ifa_type *i_ptr)
 	int j,k, len, x, xlen = 80;
 	cptr s = "";
 
-	for (k = 2, j = 0; ;)
+	for (k = 2, j = 0;;)
 	{
 		/* Grab the next string. */
 		if (*s == '\0')
@@ -4406,7 +4397,7 @@ void show_inven(void)
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
+			(void)sprintf(tmp_val, " %3d.%1d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, j + 1, 71);
 		}
 	}
@@ -4550,7 +4541,7 @@ void show_equip(void)
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
+			(void)sprintf(tmp_val, " %3d.%d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, j+1, 71);
 		}
 	}
