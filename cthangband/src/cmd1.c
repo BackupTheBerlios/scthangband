@@ -1414,7 +1414,8 @@ void py_attack(int y, int x)
 
         if (vorpal_cut)
         {
-            int step_k = k;
+			int chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
+            int i;
 
             if ((o_ptr->name1 == ART_DEMONBLADE) && randint(2)!=1)
             {
@@ -1425,9 +1426,13 @@ void py_attack(int y, int x)
                 msg_print("Your Vorpal Blade goes snicker-snack!");
             else
                 msg_format("Your weapon cuts deep into %s!", m_name);
-            do { k += step_k; }
-            while (randint((o_ptr->name1 == ART_VORPAL_BLADE)?2:4)==1);
 
+			/* Paranoia - it's only improbable. */
+			for (i = 0; i < 32767 && one_in(chance); i++) ;
+
+			/* Multiply to get the new damage. */
+			if (32767 / i < k) k = 32767;
+			else k *= i;
         }
 
         k += o_ptr->to_d;
