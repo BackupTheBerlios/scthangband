@@ -412,13 +412,13 @@ void do_cmd_messages(void)
 
 static option_type autosave_info[3] =
 {
-	{ (bool *)&autosave_l,      FALSE, 255, 0x01, 0x00,
+	{ &autosave_l,      FALSE, 255, 0x01, 0x00,
 	    "autosave_l",    "Autosave when entering new levels" },
 
-	{ (bool *)&autosave_t,      FALSE, 255, 0x02, 0x00,
+	{ &autosave_t,      FALSE, 255, 0x02, 0x00,
 	    "autosave_t",   "Timed autosave" },
 
-	{ (bool *)&autosave_q,      FALSE, 255, 0x04, 0x00,
+	{ &autosave_q,      FALSE, 255, 0x04, 0x00,
 	    "autosave_q",   "Quiet autosaves" },
 	};
        

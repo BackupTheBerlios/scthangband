@@ -363,6 +363,7 @@ static void wr_options(void)
 	int i;
 
 	u16b c;
+	byte tmp8u;
 
 
 	/*** Oops ***/
@@ -397,10 +398,11 @@ static void wr_options(void)
 
     /* Autosave info */
     wr_byte(autosave_l);
+	tmp8u = (autosave_t) ? 1 : 0;
 #ifdef SF_Q_SAVE
-	if (has_flag(SF_Q_SAVE) && autosave_q) autosave_t |= 2;
+	if (has_flag(SF_Q_SAVE) && autosave_q) tmp8u |= 2;
 #endif
-    wr_byte(autosave_t);
+    wr_byte(tmp8u);
     wr_s16b(autosave_freq);
 
 	/*** Extract options ***/

@@ -330,9 +330,9 @@ s16b hitpoint_warn = 2;		/* Hitpoint warning (0 to 9) */
 
 s16b delay_factor = 4;		/* Delay factor (0 to 9) */
 
-byte autosave_l;        /* Autosave before entering new levels */
-byte autosave_t;        /* Timed autosave */
-byte autosave_q;        /* Quiet autosave */
+bool autosave_l;        /* Autosave before entering new levels */
+bool autosave_t;        /* Timed autosave */
+bool autosave_q;        /* Quiet autosave */
 s16b autosave_freq;     /* Autosave frequency */
 
 

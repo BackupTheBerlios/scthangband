@@ -3044,13 +3044,13 @@ extern s16b hitpoint_warn;
 extern s16b delay_factor;
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern byte autosave_l;
+extern bool autosave_l;
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern byte autosave_t;
+extern bool autosave_t;
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern byte autosave_q;
+extern bool autosave_q;
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern s16b autosave_freq;

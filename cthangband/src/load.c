@@ -771,12 +771,12 @@ static void rd_options(void)
 	cheat_skll = (c & 0x4000) ? TRUE : FALSE;
 
 		rd_byte(&autosave_l);
-		rd_byte(&autosave_t);
+		rd_byte(&b);
+		autosave_t = b & 0x01 != 0;
 #ifdef SF_Q_SAVE
 		if (has_flag(SF_Q_SAVE))
 		{
-			autosave_q = autosave_t & 0x02;
-			autosave_t &= 0x01;
+			autosave_q = b & 0x02 != 0;
 		}
 #endif
 		rd_s16b(&autosave_freq);

@@ -722,7 +722,7 @@ typedef struct option_type option_type;
 
 struct option_type
 {
-	char	*o_var;
+	bool	*o_var;
 
 	byte	o_norm;
 
