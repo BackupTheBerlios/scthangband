@@ -2207,10 +2207,10 @@ extern co_ord screen_coords[NUM_SCREEN_COORDS];
 
 /* util.c */
 
-#if (!(defined(HAS_MEMSET))) && (defined(Z_VIRT_H) || defined(CMD4_C) || defined(MAIN_AMI_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
+#if (!(defined(HAS_MEMSET))) && (defined(ANGBAND_H) || defined(Z_VIRT_H))
 extern char *memset(char *s, int c, huge n);
 #endif
-#if (!(defined(HAS_STRICMP))) && (defined(H_CONFIG_H) || defined(MAIN_AMI_C) || defined(UTIL_C))
+#if (!(defined(HAS_STRICMP))) && (defined(ANGBAND_H) || defined(H_CONFIG_H))
 extern int stricmp(cptr a, cptr b);
 #endif
 #if ((defined(SET_UID)) && !(defined(HAS_USLEEP))) && (defined(MAIN_CAP_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
@@ -3803,7 +3803,7 @@ extern void Rand_state_init(u32b seed);
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
 extern s16b randnor(int mean, int stand);
 #endif
-#if (defined(Z_RAND_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(MAIN_AMI_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
+#if (defined(ANGBAND_H) || defined(Z_RAND_H) || defined(Z_RAND_C))
 extern s32b rand_int(u32b m);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C) || defined(Z_RAND_C))
@@ -3822,10 +3822,10 @@ extern u32b Rand_simple(u32b m);
 extern term *Term;
 #endif
 #if (defined(DUNGEON_C) || defined(Z_TERM_C))
-extern errr Term_user(int n);
+extern void Term_user(void);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
-extern errr Term_xtra(int n, int v);
+extern void Term_xtra(int n, int v);
 #endif
 #if (defined(CAVE_C) || defined(Z_TERM_C))
 extern void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc);
@@ -3977,7 +3977,7 @@ extern vptr (*rpanic_aux)(huge);
 #if (defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(Z_VIRT_C))
 extern vptr (*ralloc_aux)(huge);
 #endif
-#if (defined(Z_VIRT_H) || defined(MAIN_WIN_C) || defined(Z_VIRT_C))
+#if (defined(ANGBAND_H) || defined(Z_VIRT_H) || defined(Z_VIRT_C))
 extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))

@@ -394,25 +394,25 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 /*
  * Execute the "Term->user_hook" hook, if available (see above).
  */
-errr Term_user(int n)
+void Term_user(void)
 {
 	/* Verify the hook */
-	if (!Term->user_hook) return (-1);
+	if (Term->user_hook) return;
 
 	/* Call the hook */
-	return ((*Term->user_hook)(n));
+	(*Term->user_hook)(0);
 }
 
 /*
  * Execute the "Term->xtra_hook" hook, if available (see above).
  */
-errr Term_xtra(int n, int v)
+void Term_xtra(int n, int v)
 {
 	/* Verify the hook */
-	if (!Term->xtra_hook) return (-1);
+	if (!Term->xtra_hook) return;
 
 	/* Call the hook */
-	return ((*Term->xtra_hook)(n, v));
+	(*Term->xtra_hook)(n, v);
 }
 
 

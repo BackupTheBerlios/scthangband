@@ -2816,7 +2816,7 @@ void process_command(void)
 			/* Hack -- User interface */
 		case '!':
 		{
-			(void)Term_user(0);
+			Term_user();
 			break;
 		}
 
