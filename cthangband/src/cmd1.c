@@ -925,18 +925,8 @@ void do_cmd_attack(void)
 	bool		more = FALSE;
 
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a direction to attack, or Abort */
 	if (get_rep_target(&x, &y))

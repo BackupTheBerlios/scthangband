@@ -2516,10 +2516,10 @@ extern u32b seed_wild;
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_cmd;
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_arg;
 #endif
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b command_rep;
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -3898,5 +3898,11 @@ extern int build_choice_list_2(name_entry *list, int idx, int listm, int items, 
 #endif
 #if (defined(BIRTH_C) || defined(UI_C))
 extern int display_entry_list_bounded(name_centry *list, int num, int truncate, int minx, int miny, int maxx, int maxy);
+#endif
+
+/* cmd2.c */
+
+#if (defined(CMD1_C) || defined(CMD2_C))
+extern void cnv_arg_to_rep(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

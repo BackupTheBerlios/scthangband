@@ -329,24 +329,32 @@ static void search(void)
 }
 
 
+/*
+ * If command_arg is set, set command_rep to it (less 1 for this iteration).
+ * Otherwise, do nothing.
+ */
+void cnv_arg_to_rep(void)
+{
+	if (!command_arg) return;
+
+	/* Set repeat count */
+	command_rep = command_arg - 1;
+
+	/* Redraw the state */
+	p_ptr->redraw |= (PR_STATE);
+
+	/* Cancel the arg */
+	command_arg = 0;
+}
+
 
 /*
  * Simple command to "search" for one turn
  */
 void do_cmd_search(void)
 {
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Take a turn */
 	energy_use = extract_energy[p_ptr->pspeed];
@@ -774,18 +782,8 @@ void do_cmd_open(void)
  
  #endif /* ALLOW_EASY_OPEN -- TNB */
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a "repeated" direction */
 	if (get_rep_target(&x, &y))
@@ -909,18 +907,8 @@ void do_cmd_close(void)
  
  #endif /* ALLOW_EASY_OPEN -- TNB */
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a "repeated" direction */
 	if (get_rep_target(&x, &y))
@@ -1178,18 +1166,8 @@ void do_cmd_tunnel(void)
 	bool		more = FALSE;
 
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a direction to tunnel, or Abort */
 	if (get_rep_target(&x, &y))
@@ -1573,18 +1551,8 @@ void do_cmd_disarm(void)
  
  #endif /* ALLOW_EASY_DISARM -- TNB */
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a direction (or abort) */
 	if (get_rep_target(&x, &y))
@@ -1752,18 +1720,8 @@ void do_cmd_bash(void)
 	bool		more = FALSE;
 
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a "repeated" direction */
 	if (get_rep_target(&x, &y))
@@ -1858,18 +1816,8 @@ void do_cmd_alter(void)
 	bool		more = FALSE;
 
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a direction */
 	if (get_rep_target(&x, &y))
@@ -2220,18 +2168,8 @@ void do_cmd_walk(int pickup)
 	bool more = FALSE;
 
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 	/* Get a "repeated" direction */
 	if (get_rep_target(&x, &y))
@@ -2288,18 +2226,8 @@ void do_cmd_stay(int pickup)
 	cave_type *c_ptr = &cave[py][px];
 
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
+	/* Set repeat if requested. */
+	cnv_arg_to_rep();
 
 
 	/* Take a turn */
