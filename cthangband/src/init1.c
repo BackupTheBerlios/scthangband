@@ -1939,6 +1939,23 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 	}
 }
 
+static errr parse_unid_flavourless_aux(header *head, int p_id)
+{
+	/* Find the next element in u_info. */
+	unident_type *u_ptr = (unident_type*)head->info_ptr + (++error_idx);
+
+	/* Check that u_info is large enough. */
+	if (error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+	/* Set the fields as required. */
+	u_ptr->name = 0;
+	u_ptr->p_id = p_id;
+	u_ptr->d_attr = TERM_DARK;
+	u_ptr->d_char = ' ';
+
+	return SUCCESS;
+}
+
 /*
  * Put entries in u_info for each type of flavourless description defined in
  * o_base.
@@ -1951,7 +1968,6 @@ static errr parse_unid_flavourless(header *head)
 	for (i = 0; i < z_info->ob_max; i++)
 	{
 		o_base_type *ob_ptr = &o_base[i];
-		unident_type *u_ptr;
 
 		/* No entry. */
 		if (!ob_ptr->name) continue;
@@ -1959,31 +1975,15 @@ static errr parse_unid_flavourless(header *head)
 		/* Not flavourless. */
 		if (strchr(ob_name+ob_ptr->name, CM_ACT+CI_FLAVOUR)) continue;
 			
-		/* Check that u_info is large enough. */
-		if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
-
-		/* Set u_ptr. */
-		u_ptr = (unident_type*)head->info_ptr + error_idx;
-			
-		/* Set its p_id appropriately. */
-		u_ptr->name = 0;
-		u_ptr->p_id = i;
+		/* Add an entry. */
+		try(parse_unid_flavourless_aux(head, i));
 	}
 
 	/* Hack - there must always be at least one flavourless entry. */
 	if (((unident_type*)(head->info_ptr))[error_idx].name)
 	{
-		unident_type *u_ptr;
-
-		/* Check that u_info is large enough. */
-		if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
-
-		/* Set u_ptr. */
-		u_ptr = (unident_type*)head->info_ptr + error_idx;
-
-		/* Set a dummy p_id. */
-		u_ptr->name = 0;
-		u_ptr->p_id = 0;
+		/* Add a dummy entry. */
+		try(parse_unid_flavourless_aux(head, 0));
 	}
 
 	return SUCCESS;
