@@ -74,8 +74,6 @@ bool alive;				/* True if game is running */
 
 bool death;				/* True if player has died */
 
-s16b resting;			/* Current counter for resting, if any */
-
 s16b cur_hgt;			/* Current dungeon height */
 s16b cur_wid;			/* Current dungeon width */
 s16b dun_level;			/* Current dungeon level */

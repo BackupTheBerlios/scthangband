@@ -163,7 +163,7 @@ static void process_objects(object_type *o_ptr)
 		}
 
 		/* Weird conditions. */
-		if (p_ptr->paralyzed || p_ptr->stun >= 100 || resting || command_rep ||
+		if (p_ptr->paralyzed || p_ptr->stun >= 100 || command_rep ||
 			!alive || death || new_level_flag || inventory[INVEN_PACK].k_idx)
 		{
 			break;

@@ -348,36 +348,38 @@ static void prt_state(void)
 {
 	char text[16];
 	cptr s;
+	int rep = (command_rep >= 1000) ? command_rep/100*100 : command_rep;
 
 	/* Paralysed */
 	if ((s = prt_flag(TIMED_PARALYZED))) ;
 
-	/* Timed resting */
-	else if (resting > 0)
+	/* Repeated command. */
+	else if (rep)
 	{
-		int i = (resting >= 1000) ? resting/100*100 : resting;
-		sprintf(text, "Rest %5d", i);
-		s = text;
-	}
-	/* Resting until recovered HP/SP. */
-	else if (resting == -1)
-	{
-		s = "Rest *****";
-	}
-	/* Resting until completely healed. */
-	else if (resting == -2)
-	{
-		s = "Rest &&&&&";
-	}
-	else if (command_rep >= 1000)
-	{
-		sprintf(text, "Rep. %3d00", command_rep / 100);
-		s = text;
-	}
-	else if (command_rep)
-	{
-		sprintf(text, "Repeat %3d", command_rep);
-		s = text;
+		/* Timed resting */
+		if (command_cmd == 'R')
+		{
+			/* Resting until recovered HP/SP. */
+			if (rep == -2)
+			{
+				s = "Rest *****";
+			}
+			/* Resting until completely healed. */
+			else if (rep == -3)
+			{
+				s = "Rest &&&&&";
+			}
+			else
+			{
+				sprintf(text, "Rest %5d", rep);
+				s = text;
+			}
+		}
+		else
+		{
+			sprintf(text, "Rep%s %3d", (rep > 1000) ? "." : "eat", rep);
+			s = text;
+		}
 	}
 
 	/* Sneaking */

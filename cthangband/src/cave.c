@@ -3863,16 +3863,6 @@ void disturb(int stop_stealth)
 		p_ptr->update |= (PU_TORCH);
 	}
 
-	/* Cancel Resting */
-	if (resting)
-	{
-		/* Cancel */
-		resting = 0;
-
-		/* Redraw the state (later) */
-		p_ptr->redraw |= (PR_STATE);
-	}
-
 	/* Cancel stealth if requested */
 	if (stop_stealth && p_ptr->sneaking)
 	{

@@ -2229,6 +2229,9 @@ void do_cmd_stay(int pickup)
  */
 void do_cmd_rest(void)
 {
+	/* Don't actually do anything if already resting. */
+	if (command_rep) return;
+
 	/* Prompt for time if needed */
 	if (command_arg <= 0)
 	{
@@ -2271,7 +2274,7 @@ void do_cmd_rest(void)
 	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Save the rest code */
-	resting = command_arg;
+	cnv_arg_to_rep();
 
 	/* Cancel sneaking */
 	p_ptr->sneaking = FALSE;

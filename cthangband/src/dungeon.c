@@ -1382,7 +1382,7 @@ static int get_regen_amount(void)
 	int mult = 1;
 
 	/* Sneaking or Resting */
-	if (p_ptr->sneaking || resting)
+	if (p_ptr->sneaking || command_cmd == 'R')
 	{
 		mult *= 2;
 	}
@@ -3014,10 +3014,10 @@ static void process_player(void)
 	/*** Check for interupts ***/
 
 	/* Complete resting */
-	if (resting < 0)
+	if (command_cmd == 'R')
 	{
 		/* Basic resting */
-		if (resting == -1)
+		if (command_rep == -2)
 		{
 			/* Stop resting */
 			if ((p_ptr->chp == p_ptr->mhp) &&
@@ -3029,7 +3029,7 @@ static void process_player(void)
 		}
 
 		/* Complete resting */
-		else if (resting == -2)
+		else if (command_rep == -3)
 		{
 			/* Stop resting */
 			if ((p_ptr->chp == p_ptr->mhp) &&
@@ -3054,7 +3054,7 @@ static void process_player(void)
 	if (!avoid_abort)
 	{
 		/* Check for "player abort" (semi-efficiently for resting) */
-		if (command_rep || (resting && !(resting & 0x0F)))
+		if (command_rep && !(command_cmd == 'R' && command_rep & 0x0F))
 		{
 			/* Do not wait */
 			inkey_scan = TRUE;
@@ -3146,22 +3146,8 @@ static void process_player(void)
 		/* Paralyzed or Knocked Out */
 		if ((p_ptr->paralyzed) || (p_ptr->stun >= 100))
 		{
-			/* Take a turn */
-			energy_use = extract_energy[p_ptr->pspeed];
-		}
-
-		/* Resting */
-		else if (resting)
-		{
-			/* Timed rest */
-			if (resting > 0)
-			{
-				/* Reduce rest count */
-				resting--;
-
-				/* Redraw the state */
-				p_ptr->redraw |= (PR_STATE);
-			}
+			/* Update the windows if needed. */
+			window_stuff();
 
 			/* Take a turn */
 			energy_use = extract_energy[p_ptr->pspeed];
@@ -3170,16 +3156,7 @@ static void process_player(void)
 		/* Repeated command */
 		else if (command_rep)
 		{
-			/* Count this execution */
-			command_rep--;
-
-			/* Redraw the state */
-			p_ptr->redraw |= (PR_STATE);
-
-			/* Redraw stuff */
-			redraw_stuff();
-
-			/* Redraw stuff (if needed) */
+			/* Update the windows if needed. */
 			window_stuff();
 
 			/* Hack -- Assume messages were seen */
@@ -3190,6 +3167,12 @@ static void process_player(void)
 
 			/* Process the command */
 			process_command();
+
+			/* Count this execution, if finite. */
+			if (command_rep > 0) command_rep--;
+
+			/* Redraw the state */
+			p_ptr->redraw |= (PR_STATE);
 		}
 
 		/* Normal command */

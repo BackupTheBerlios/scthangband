@@ -2555,9 +2555,9 @@ extern bool death;
 
 
 
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern s16b resting;
-#endif
+
+
+
 #if (defined(ANGBAND_H))
 extern s16b cur_hgt;
 #endif
