@@ -109,6 +109,10 @@
 #include <sys/stat.h>
 #endif /* HAS_STAT */
 
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+#define USE_MAIN_C
+#endif
+
 #endif
 
 

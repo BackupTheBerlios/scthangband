@@ -2712,7 +2712,7 @@ option_type option_info[] =
 	{ &allow_pickstats,		TRUE,	OPTS_BIRTH, 3, 6,
 	"allow_pickstats",	"Allow the player to choose pre-set stats"},
 
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+#ifdef USE_MAIN_C
 	{ &display_credits,	TRUE,	OPTS_BIRTH, 3, 5,
 	"display_credits",	"Require a keypress to clear the initial screen"},
 #endif

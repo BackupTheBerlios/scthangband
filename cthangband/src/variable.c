@@ -321,7 +321,7 @@ bool cheat_skll;        /* Peek into skill rolls */
 /* Special options */
 
 bool allow_quickstart;	/* Allow Quick-Start */
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+#ifdef USE_MAIN_C
 bool display_credits;	/* Require a keypress to clear the initial credit screen. */
 #endif
 bool allow_pickstats;	/* Allow the player to choose a stat template. */

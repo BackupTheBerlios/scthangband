@@ -18,7 +18,7 @@
  */
 
 
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+#ifdef USE_MAIN_C
 
 
 
@@ -621,4 +621,4 @@ int main(int argc, char *argv[])
 	return (0);
 }
 
-#endif /* !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN) */
+#endif /* USE_MAIN_C */

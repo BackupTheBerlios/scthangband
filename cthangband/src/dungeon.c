@@ -4237,7 +4237,7 @@ void play_game(bool new_game)
 	}
 #endif /* WINDOWS */
 
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+#ifdef USE_MAIN_C
 	/* Display news.txt again, as in init_angband(). This
 	 * is done because news.txt was removed when the save game
 	 * was loaded, and we didn't know whether to wait below without
@@ -4326,7 +4326,7 @@ void play_game(bool new_game)
 		}
 	}
 
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+#ifdef USE_MAIN_C
 	/* Wait for response if required */
 	if (display_credits) pause_line();
 #endif

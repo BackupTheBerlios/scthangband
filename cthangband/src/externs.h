@@ -3014,7 +3014,7 @@ extern bool cheat_skll;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool allow_quickstart;
 #endif
-#if ((!defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN))) && (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(USE_MAIN_C)) && (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool display_credits;
 #endif
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
