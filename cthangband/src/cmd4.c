@@ -2006,19 +2006,25 @@ struct visual_type
  * (byte*)(&x_info[i].x_attr)
  * (char*)(&x_info[i].x_char)
  */
-#define get_visuals(x_info, x_name) \
+#define get_visuals(x_info) \
+	((*da) = x_info[i].d_attr, \
+	(*dc) = x_info[i].d_char, \
+	(*xa) = &(x_info[i].x_attr), \
+	(*xc) = &(x_info[i].x_char))
+
+#define get_name(x_info, x_name) \
+	if (name) (*name) = x_name+x_info[i].name;
+
+#define get_all(x_info, x_name) \
 { \
-	if (name) (*name) = x_name+x_info[i].name; \
-	(*da) = x_info[i].d_attr; \
-	(*dc) = x_info[i].d_char; \
-	(*xa) = &(x_info[i].x_attr); \
-	(*xc) = &(x_info[i].x_char); \
+	get_visuals(x_info); \
+	get_name(x_info, x_name); \
 }
 
 /* Wrapers for the above for each type used here. */
 
 static void get_visuals_feat(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
-get_visuals(f_info, f_name)
+get_all(f_info, f_name)
 
 /* Non-standard get_visuals_* functions. */
 
@@ -2027,7 +2033,7 @@ get_visuals(f_info, f_name)
  */
 static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
 {
-	get_visuals(r_info, (char*)NULL)
+	get_visuals(r_info);
 	*name = format("%v", monster_desc_aux_f3, r_info+i, 1, 0);
 }
 
@@ -2039,7 +2045,7 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, ch
 	object_type forge;
 
 	/* Get most of the visuals. */
-	get_visuals(k_info, (char*)NULL);
+	get_visuals(k_info);
 
 	/* Create the object */
 	object_prep(&forge, i);
@@ -2075,7 +2081,7 @@ static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa
 	object_type o_ptr[1];
 
 	/* Get most of the visuals (including a mangled name). */
-	get_visuals(u_info, (char*)NULL);
+	get_visuals(u_info);
 
 	/* Put *k_ptr somewhere safe and clear it. */
 	COPY(&hack_k, k_ptr, object_kind);
