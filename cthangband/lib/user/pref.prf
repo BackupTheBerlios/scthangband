@@ -63,6 +63,9 @@ C:0:^C
 A:w0
 C:0:X
 
+# Enter shop
+A:^E
+C:0:_
 
 ##### Roguelike Keyset Mappings #####
 
@@ -230,6 +233,9 @@ C:1:O
 A:^t
 C:1:'
 
+# Enter shop
+A:^E
+C:1:_
 
 ##### System Specific Subfiles #####
 
