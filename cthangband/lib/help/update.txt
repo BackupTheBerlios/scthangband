@@ -4,7 +4,7 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
-sCthangband 1.0.3 changes:
+sCthangband 1.0.3
 * Allow the map to be nearly as large as the main window, and the top line
   as long as space allows in many cases. Update the display as the screen is
   resized in a few cases.
@@ -62,7 +62,7 @@ sCthangband 1.0.3 changes:
 * Fix several other bugs and clean up various pieces of code.
 
 
-sCthangband 1.0.2 changes:
+sCthangband 1.0.2
 * Call debug commands from process_command().
 * Provide context-sensitive help for debug commands.
 * Fix a bug whereby the races represented by numbers could not be selected, and
@@ -70,7 +70,7 @@ sCthangband 1.0.2 changes:
 * Change numerous arrays which had a size determined at run-time because of
   z_info into dynamic ones, or ones which have a constant size.
 
-sCthangband 1.0.1 changes:
+sCthangband 1.0.1
 * Remove the level feelings delay (although the original behaviour exists as an
   option), as it can make the difference between being given a level feeling
   before you clear a level and getting one afterwards.
@@ -105,10 +105,10 @@ sCthangband 1.0.1 changes:
 * Display maximum and current chi total in the character screen, make the other
   displays more compact.
 * Use the average discount when piles are combined.
-* Make the knowledge screens a bit more colourful, with a picture for each entry
-  and a darker colour for dead uniques. As this uses the show_file function
-  copied from ToME, it shares the bug whereby a monster represented by ] cannot
-  have its true colour.
+* Make the knowledge screens a bit more colourful, with a picture for each
+  entry and a darker colour for dead uniques. As this uses the show_file
+  function copied from ToME, it shares the bug whereby a monster represented
+  by ] cannot have its true colour.
 * Create an auto_more option to cause --more-- prompts to be cleared
   immediately.
 * Create a macro_edit option to allow the use of number keys to edit strings to
@@ -126,13 +126,13 @@ sCthangband 1.0.1 changes:
 * Create a "dimension door" function to handle every attempt to do this.
 * Make identify_fully_aux() use a single array containing both the info[] and
   info_a[] fields. Use an empty element to indicate the end of the used array.
-* Remove the redundant f? variables.
-* Rearrange init?.c to be more like Angband 3.0.0, except that there is only one
-  local header which is wiped after each file is parsed, the pointer used in
-  most of the parsing functions is passed through init_info_txt() rather than
-  being declared static, and the fake arrays (including a fake info array
-  provided to allow the size of the info array to be determined as it is parsed)
-  remain for most of initialisation.
+* Remove the redundant f? variables from identify_fully_aux().
+* Rearrange init?.c to be more like Angband 3.0.0, except that there is only
+  one local header which is wiped after each file is parsed, the pointer used
+  in most of the parsing functions is passed through init_info_txt() rather
+  than being declared static, and the fake arrays (including a fake info array
+  provided to allow the size of the info array to be determined as it is
+  parsed) remain for most of initialisation.
 * The game ignores the last few elements of m_list[], k_info[], etc., in a save
   file rather than refusing to load it. It prints a message as it does so so
   that the player can abort if removing an item was a mistake.
@@ -147,8 +147,8 @@ sCthangband 1.0.1 changes:
   the format buffer for temporary storage rather than creating several large
   strings which are usually unused. Remove the call to snprintf() from it.
 * Make monster_desc() respect MNAME_MAX.
-* Rename o_ptr as o1_ptr in object_desc(), in preparation for moving most of the
-  attempts to examine the object to an object generated from it by
+* Rename o_ptr as o1_ptr in object_desc(), in preparation for moving most of
+  the attempts to examine the object to an object generated from it by
   object_info_known(). I haven't started to do so yet, however.
 * Unsetting flow_by_sound disables flow_by_smell.
 * Place option_force[] in tables.c instead of cmd4.c.
@@ -156,11 +156,11 @@ sCthangband 1.0.1 changes:
   this sort of thing work by changing the current window display).
 * Move cheat options into option_info to unify the handling functions.
 * Remove a few potentially harmful user-initiated buffer overruns.
-* Create a rand_range_test() function to decide where a constant was in relation
-  to a random range.
+* Create a rand_range_test() function to decide where a constant was in
+  relation to a random range.
 * Give an informative message when a pref file loads/doesn't load.
-* Put most of load_all_pref_files() in user.prf, and make this safe to do before
-  rp_ptr and cp_ptr have been initialised.
+* Put most of load_all_pref_files() in user.prf, and make this safe to do
+  before rp_ptr and cp_ptr have been initialised.
 * Objects now lose the IDENT_SENSE_POWER flag as they become better identified,
   and *identified* items cannot be called "powerful".
 * Make quark_str(0) return "", as this is often a good thing.
@@ -183,8 +183,8 @@ sCthangband 1.0.1 changes:
 * Create separate functions to calculate the energy taken by mindcraft and
   shamanism.
 * Remove the do_cmd_stay() call from do_cmd_invoke().
-* Separate the handling of spoil_stat from identify_fully_get(). Make it read a
-  few more values from update_stuff() rather than trying to calculate them
+* Separate the handling of spoil_stat from identify_fully_get(). Make it read
+  a few more values from update_stuff() rather than trying to calculate them
   itself.
 * Stop spoil_value from giving the real value of an object which has not been
   *identified* yet.
@@ -196,11 +196,12 @@ sCthangband 1.0.1 changes:
 * Change Term_save() so that several images can be saved from a term at once.
   This does mean that failing to load a term, or loading it twice, can cause
   problems. The return code from Term_load() is not handled, although the
-  program should do something if the window has changed size since it was saved.
+  program should do something if the window has changed size since it was
+  saved.
 * Fix a bug whereby identified katanas were still called "Samurai Swords". I
   hadn't realised how simple it was...
-* Provide a ^U (^Z with roguelike keyset) function which carries out the unified
-  object action whether or not unify_commands is set.
+* Provide a ^U (^Z with roguelike keyset) function which carries out the
+  unified object action whether or not unify_commands is set.
 * Change the "Enter shop" key to ^E so that it can have a macro assigned to it
   without disruption.
 * Remove the time/date display from do_cmd_version(). As they were based on a
@@ -434,7 +435,6 @@ Cthangband 3.0.1
 * Bug in display code preventing unidentified potions/scrolls being
   shown properly in text mode fixed.
 
-
 Cthangband 3.0.0
 * Finding secret doors earns 1xp, like picking locks.
 * Wilderness areas with dungeons have tougher monsters to make it easier
@@ -482,4 +482,3 @@ Cthangband 2.1.0 (12/7/98)
   than 1 (except for buying things).
 * Adam Bolt's graphics used for DOS version.
 * Lots of redundant code removed.
-

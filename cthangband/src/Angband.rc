@@ -78,26 +78,26 @@ ANGBAND MENU
 
                 POPUP "I&ncrease Tile Height"
                 {
-                        MENUITEM "sCthAngband", 260
-                        MENUITEM "Mirror", 261
-                        MENUITEM "Recall", 262
-                        MENUITEM "Choice", 263
-                        MENUITEM "Xtra-1", 264
-                        MENUITEM "Xtra-2", 265
-                        MENUITEM "Xtra-3", 266
-                        MENUITEM "Xtra-4", 267
+                        MENUITEM "&sCthAngband", 260
+                        MENUITEM "&Mirror", 261
+                        MENUITEM "&Recall", 262
+                        MENUITEM "&Choice", 263
+                        MENUITEM "Xtra-&1", 264
+                        MENUITEM "Xtra-&2", 265
+                        MENUITEM "Xtra-&3", 266
+                        MENUITEM "Xtra-&4", 267
                 }
 
                 POPUP "D&ecrease Tile Height"
                 {
-                        MENUITEM "sCthAngband", 270
-                        MENUITEM "Mirror", 271
-                        MENUITEM "Recall", 272
-                        MENUITEM "Choice", 273
-                        MENUITEM "Xtra-1", 274
-                        MENUITEM "Xtra-2", 275
-                        MENUITEM "Xtra-3", 276
-                        MENUITEM "Xtra-4", 277
+                        MENUITEM "&sCthAngband", 270
+                        MENUITEM "&Mirror", 271
+                        MENUITEM "&Recall", 272
+                        MENUITEM "&Choice", 273
+                        MENUITEM "Xtra-&1", 274
+                        MENUITEM "Xtra-&2", 275
+                        MENUITEM "Xtra-&3", 276
+                        MENUITEM "Xtra-&4", 277
                 }
         }
 
