@@ -625,6 +625,12 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 
+struct object_extra {
+	s16b k_idx;
+	s16b tval;
+	s16b u_idx;
+};
+
 /*
  * Create an object containing the known information about an object.
  *
@@ -648,13 +654,13 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	{
 		x_ptr->k_idx = o_ptr->k_idx;
 		x_ptr->tval = o_ptr->tval;
+		x_ptr->u_idx = k_ptr->u_idx;
 	}
 
 	/* Some flags are always assumed to be known. */
 	j_ptr->discount = o_ptr->discount;
 	j_ptr->number = o_ptr->number;
 	j_ptr->weight = o_ptr->weight;
-	j_ptr->timeout = !!(o_ptr->timeout); /* The player is never told how long it is. */
 	j_ptr->ident = o_ptr->ident;
 	/* j_ptr->handed = o_ptr->handed; */ /* Unused */
 	j_ptr->note = o_ptr->note;
@@ -689,6 +695,8 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		j_ptr->to_d = o_ptr->to_d;
 		j_ptr->to_a = o_ptr->to_a;
 		j_ptr->pval = o_ptr->pval;
+		/* The player never knows how long the timeout is. */
+		j_ptr->timeout = !!(o_ptr->timeout); 
 	}
 
 	/* Some flags are only used internally */
@@ -1185,7 +1193,7 @@ static char *object_desc_int(char *t, sint v)
  */
 
 /* The number of strings which can be in the process of being printed at once. */
-#define MAX_NAME_LEVEL	5
+#define MAX_NAME_LEVEL	8
 
 /* Julian Lighton's improved code */
 void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
@@ -1205,9 +1213,6 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	int wants_article = ARTICLE_NO;
 
-/* The number of strings which can be in the process of being printed at once. */
-#define MAX_NAME_LEVEL	5
-
 	int this_level = 0;
 
 	byte reject, current;
@@ -1215,7 +1220,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	cptr s;
 
-	int                     power;
+	int                     power,i;
 
 	bool	aware, known;
 
@@ -1238,49 +1243,50 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	object_kind	*k_ptr = &k_info[o1_ptr->k_idx];
 	unident_type *u_ptr;
 	o_base_type *ob_ptr;
+	object_type o_ptr[1];
+	object_extra x_ptr[1];
+
+	/* Extract the known information. */
+	object_info_known(o_ptr, o1_ptr, x_ptr);
+
+	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* If k_ptr is nonsensical, use k_info[0] instead. */
 	if (!k_ptr->name) k_ptr = k_info;
 
-	u_ptr = u_info+k_ptr->u_idx;
+	u_ptr = u_info+x_ptr->u_idx;
 	ob_ptr = o_base+u_ptr->p_id;
 
 	object_flags(o1_ptr, &f1, &f2, &f3);
 
-	known = (object_known_p(o1_ptr) ? TRUE : FALSE);
-	aware = (object_aware_p(o1_ptr) ? TRUE : FALSE);
+	known = (object_known_p(o_ptr) ? TRUE : FALSE);
+	aware = (object_aware_p(o_ptr) ? TRUE : FALSE);
 
 	reject = current = 0;
 
 	strings[CI_BASE] = ob_name+ob_ptr->name;
 	strings[CI_FLAVOUR] = u_name+u_ptr->name;
 	strings[CI_K_IDX] = k_name+k_ptr->name;
-	strings[CI_EGO] = e_name+e_info[o1_ptr->name2].name;
+	strings[CI_EGO] = e_name+e_info[o_ptr->name2].name;
 	if (o1_ptr->art_name)
-		strings[CI_ARTEFACT] = quark_str(o1_ptr->art_name);
+		strings[CI_ARTEFACT] = quark_str(o_ptr->art_name);
 	else
-		strings[CI_ARTEFACT] = a_name+a_info[o1_ptr->name1].name;
+		strings[CI_ARTEFACT] = a_name+a_info[o_ptr->name1].name;
 
-	/* Unaware items do not include a k_info string. */
-	if (!aware) reject |= (1<<CI_K_IDX);
-
-	/* Unidentified items do not include an artefact string or an
-	 * ego string. */
-	if (!known) reject |= (1<<CI_ARTEFACT) | (1<<CI_EGO);
+	/* If any of the above have been set to an empty string, they shall be
+	 * ignored. */
+	for (i = 0; i < 8; i++)
+	{
+		if (strings[i] && !strings[i][0]) reject |= 1 <<i;
+	}
 
 	/* Identified artefacts, and all identified objects if
 	 * show_flavors is unset, do not include a FLAVOUR string. */
-	if (aware && (artifact_p(o1_ptr) || plain_descriptions))
+	if (aware && (artifact_p(o_ptr) || plain_descriptions))
 		reject |= 1 << CI_FLAVOUR;
 
 	/* Singular objects take no plural. */
-	if (o1_ptr->number == 1) reject |= 1 << CI_PLURAL;
-
-	/* Non-ego items need no ego string. */
-	if (!o1_ptr->name2) reject |= 1 << CI_EGO;
-
-	/* Non-artefacts need no artefact string. */
-	if (!allart_p(o1_ptr)) reject |= 1 << CI_ARTEFACT;	
+	if (o_ptr->number == 1) reject |= 1 << CI_PLURAL;
 
 	/* Start dumping the result */
 	t = tmp_val;
@@ -1327,20 +1333,20 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	}
 
 	/* Hack -- None left */
-	else if (o1_ptr->number <= 0 && o1_ptr->k_idx)
+	else if (o_ptr->number <= 0 && o_ptr->k_idx)
 	{
 		t = object_desc_str(t, "no more ");
 	}
 
 	/* Extract the number */
-	else if (o1_ptr->number > 1)
+	else if (o_ptr->number > 1)
 	{
 		t = object_desc_num(t, o1_ptr->number);
 		t = object_desc_chr(t, ' ');
 	}
 
 	/* Hack -- The only one of its kind */
-	else if (known && allart_p(o1_ptr))
+	else if (allart_p(o_ptr))
 	{
 		t = object_desc_str(t, "the ");
 	}
@@ -1460,7 +1466,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 
 	/* Hack -- Chests must be described in detail */
-	if (o1_ptr->tval == TV_CHEST)
+	if (o_ptr->tval == TV_CHEST)
 	{
 		/* Not searched yet */
 		if (!known)
@@ -1491,7 +1497,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		else
 		{
 			/* Describe the traps */
-			switch (chest_traps[o1_ptr->pval])
+			switch (chest_traps[o_ptr->pval])
 			{
 				case 0:
 				{
@@ -1540,16 +1546,14 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	/* Display the item like a weapon */
 	if (f3 & (TR3_SHOW_MODS)) show_weapon = TRUE;
-
-	/* Display the item like a weapon */
-	if (o1_ptr->to_h && o1_ptr->to_d) show_weapon = TRUE;
+	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
 
 	/* Display the item like armour */
-	if (o1_ptr->ac) show_armour = TRUE;
 	if (f3 & TR3_SHOW_ARMOUR) show_armour = TRUE;
+	if (o_ptr->ac) show_armour = TRUE;
 
-	/* Dump base weapon info */
-	switch (o1_ptr->tval)
+	/* Dump base weapon info if known. */
+	if (aware) switch (o_ptr->tval)
 	{
 		/* Missiles and Weapons */
 		case TV_SHOT:
@@ -1563,9 +1567,9 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		/* Append a "damage" string */
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
-		t = object_desc_num(t, o1_ptr->dd);
+		t = object_desc_num(t, o_ptr->dd);
 		t = object_desc_chr(t, 'd');
-		t = object_desc_num(t, o1_ptr->ds);
+		t = object_desc_num(t, o_ptr->ds);
 		t = object_desc_chr(t, p2);
 
 		/* All done */
@@ -1593,7 +1597,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 		/* Other stuff, if allowed */
 		default:
-		if (spoil_dam && object_aware_p(o1_ptr) && (o1_ptr->ds && o1_ptr->dd))
+		if (spoil_dam && o_ptr->ds && o_ptr->dd)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
@@ -1613,27 +1617,27 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o1_ptr->to_h);
+			t = object_desc_int(t, o_ptr->to_h);
 			t = object_desc_chr(t, ',');
-			t = object_desc_int(t, o1_ptr->to_d);
+			t = object_desc_int(t, o_ptr->to_d);
 			t = object_desc_chr(t, p2);
 		}
 
 		/* Show the tohit if needed */
-		else if (o1_ptr->to_h)
+		else if (o_ptr->to_h)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o1_ptr->to_h);
+			t = object_desc_int(t, o_ptr->to_h);
 			t = object_desc_chr(t, p2);
 		}
 
 		/* Show the todam if needed */
-		else if (o1_ptr->to_d)
+		else if (o_ptr->to_d)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o1_ptr->to_d);
+			t = object_desc_int(t, o_ptr->to_d);
 			t = object_desc_chr(t, p2);
 		}
 	}
@@ -1647,18 +1651,18 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
-			t = object_desc_num(t, o1_ptr->ac);
+			t = object_desc_num(t, o_ptr->ac);
 			t = object_desc_chr(t, ',');
 			t = object_desc_int(t, o1_ptr->to_a);
 			t = object_desc_chr(t, b2);
 		}
 
 		/* No base armor, but does increase armor */
-		else if (o1_ptr->to_a)
+		else if (o_ptr->to_a)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
-			t = object_desc_int(t, o1_ptr->to_a);
+			t = object_desc_int(t, o_ptr->to_a);
 			t = object_desc_chr(t, b2);
 		}
 	}
@@ -1668,7 +1672,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	{
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, b1);
-		t = object_desc_num(t, o1_ptr->ac);
+		t = object_desc_num(t, o_ptr->ac);
 		t = object_desc_chr(t, b2);
 	}
 
@@ -1692,18 +1696,18 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	}
 
 	/* Hack -- Rods have a "charging" indicator */
-	else if (known && (o1_ptr->tval == TV_ROD))
+	else if (o_ptr->tval == TV_ROD)
 	{
 		/* Hack -- Dump " (charging)" if relevant */
-		if (o1_ptr->pval) t = object_desc_str(t, " (charging)");
+		if (o_ptr->pval) t = object_desc_str(t, " (charging)");
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o1_ptr->tval == TV_LITE) && (!allart_p(o1_ptr)))
+	else if ((o_ptr->tval == TV_LITE) && (!allart_p(o1_ptr)))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, " (with ");
-		t = object_desc_num(t, o1_ptr->pval);
+		t = object_desc_num(t, o_ptr->pval);
 		t = object_desc_str(t, " turns of light)");
 	}
 
@@ -1783,7 +1787,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	if (known && o1_ptr->timeout)
 	{
 		/* Hack -- Dump " (charging)" if relevant */
-		t = object_desc_str(t, " (charging)");
+		t = object_desc_str(t, " (g)");
 	}
 
 

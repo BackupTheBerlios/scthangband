@@ -1422,8 +1422,7 @@ struct tval_ammo_type {
  * but are needed by various functions. */
 typedef struct object_extra object_extra;
 
+#if 0 /* Only currently used in object1.c, so defined there. */
 struct object_extra {
-	s16b k_idx;
-	byte tval;
 };
-
+#endif
