@@ -918,7 +918,7 @@ struct player_template
 
 	s16b c_adj[A_MAX];		/* Template stat modifier */
 
-	s16b skill[18];		/* Skill improvements */
+	s16b skill[19];		/* Skill improvements */
 
 };
 

@@ -2404,6 +2404,7 @@ static void display_player_skills(void)
 	y++;
 	display_player_skills_aux(SKILL_PERCEPTION, x, y++);
 	display_player_skills_aux(SKILL_SEARCH, x, y++);
+	display_player_skills_aux(SKILL_PSEUDOID, x, y++);
 	y++;
 	display_player_skills_aux(SKILL_DISARM, x, y++);
 	display_player_skills_aux(SKILL_STEALTH, x, y++);

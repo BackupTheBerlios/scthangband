@@ -3198,7 +3198,7 @@ extern int PlayerUID;
  * Player Skill Indices
  */
 
-#define MAX_SKILLS 27
+#define MAX_SKILLS 28
 
 #define SKILL_TOUGH 0
 #define SKILL_MANA 1
@@ -3227,6 +3227,7 @@ extern int PlayerUID;
 #define SKILL_CRUSH 24
 #define SKILL_SHAMAN 25
 #define SKILL_HEDGE 26
+#define SKILL_PSEUDOID 27
 
 /* Spoiler flags */
 #define SPOIL_EGO_ITEMS	0

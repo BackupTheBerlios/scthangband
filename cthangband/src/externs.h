@@ -941,11 +941,19 @@ extern bool has_flag(u16b flag);
 #if 0
 #else
 #endif
+#ifdef SF_SKILL_BASE
+#endif
+#if 0 /* exp_to_raise is only set at program start. */
+#endif
 #ifdef SF_SAVE_MAX_SKILLS
 #endif /* SF_SAVE_MAX_SKILLS */
 #ifdef SF_SKILL_BASE
 #endif
 #ifdef SF_SKILL_BASE
+#endif /* SF_SKILL_BASE */
+#ifdef SF_SKILL_BASE
+# ifdef SKILL_PSEUDOID
+# endif /* SKILL_PSEUDOID */
 #endif /* SF_SKILL_BASE */
 #ifdef SF_CURSE
 #endif
@@ -4257,7 +4265,7 @@ extern bool ma_heavy_armor(void);
 #if defined(FILES_C) || defined(XTRA1_C)
 extern bool skill_check_possible(int index);
 #endif
-#if defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C)
+#if defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C)
 extern void skill_exp(int index);
 #endif
 #if defined(CMD5_C) || defined(XTRA1_C)

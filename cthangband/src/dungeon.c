@@ -211,7 +211,7 @@ static void sense_inventory(void)
 {
 	int		i;
 
-	int		plev = (skill_set[SKILL_DEVICE].value/2);
+	int		plev = (skill_set[SKILL_PSEUDOID].value/2);
 
 	bool	heavy = FALSE;
 
@@ -326,6 +326,10 @@ static void sense_inventory(void)
 			           o_name, index_to_label(i),
 		(i >= INVEN_WIELD) ? format("you are %s", describe_use(i)) : "in your pack",
 		(repeat ? "really " : ""), ((o_ptr->number == 1) ? "is" : "are"), feel);
+
+		/* Get a bit better (ignore average objects to lessen the
+		 * benefit of starting with >39 skill). */
+		if (strcmp(feel, "average")) skill_exp(SKILL_PSEUDOID);
 
 		/* We have "felt" it */
 		o_ptr->ident |= (IDENT_SENSE);

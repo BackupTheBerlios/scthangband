@@ -961,7 +961,27 @@ static void rd_ghost(void)
 
 
 
+/*
+ * Copy the variable parts of skill_set[from] to skill_set[to].
+ */
+static void skill_copy(int to, int from)
+{
+	player_skill *sf_ptr = skill_set+from;
+	player_skill *st_ptr = skill_set+to;
 	
+	st_ptr->value = sf_ptr->value;
+	st_ptr->max_value = sf_ptr->max_value;
+#ifdef SF_SKILL_BASE
+	st_ptr->base = sf_ptr->base;
+	st_ptr->ceiling = sf_ptr->ceiling;
+#endif
+#if 0 /* exp_to_raise is only set at program start. */
+	st_ptr->exp_to_raise = sf_ptr->exp_to_raise;
+#endif
+	st_ptr->experience = sf_ptr->experience;
+}
+
+
 /*
  * Read the "extra" information
  */
@@ -1045,6 +1065,13 @@ static void rd_extra(void)
 #endif /* SF_SKILL_BASE */
 	}
 	
+#ifdef SF_SKILL_BASE
+# ifdef SKILL_PSEUDOID
+	if (tmp8u < SKILL_PSEUDOID) skill_copy(SKILL_PSEUDOID, SKILL_DEVICE);
+# endif /* SKILL_PSEUDOID */
+#endif /* SF_SKILL_BASE */
+
+
 	rd_s16b(&p_ptr->mhp);
 	rd_s16b(&p_ptr->chp);
 	rd_u16b(&p_ptr->chp_frac);

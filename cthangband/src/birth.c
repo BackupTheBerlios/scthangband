@@ -1760,6 +1760,7 @@ static void get_starting_skills(void)
 	skill_set[SKILL_SHAMAN].value+=cp_ptr->skill[15];
 	skill_set[SKILL_HEDGE].value+=cp_ptr->skill[16];
 	skill_set[SKILL_MANA].value+=cp_ptr->skill[17];
+	skill_set[SKILL_PSEUDOID].value+=cp_ptr->skill[18];
 
 	/* Template skills will become base skills - you can start advancing 
 	 * them immediately */

@@ -2207,7 +2207,7 @@ player_race race_info[MAX_RACES] =
  *      {STR,INT,WIS,DEX,CON,CHR},
  *      {CLOSE, SLASH, STAB, CRUSH, MISSILE,
  *      TOUGH, DEVICE, DISARM, PERCEPTION, SAVE, SEARCH, STEALTH,
- *      MA, MINDCRAFT, CHI, SHAMAN, HEDGE, MANA}
+ *      MA, MINDCRAFT, CHI, SHAMAN, HEDGE, MANA, PSEUDO-ID}
  *
  *      Hermetic skills are handled separately.
  */
@@ -2218,91 +2218,91 @@ player_template template_info[MAX_TEMPLATE] =
 		{ 3, 1, -1, 2, 2, -1},
 		{20, 20, 20, 20, 20,
 		1, 5, 5, 10, 20, 5, 5,
-		0, 0, 0, 0, 5, 0}
+		0, 0, 0, 0, 5, 0, 20}
 	},
 	{
 		"Swashbuckler", 0,
 		{1, 0, -2, 3, 2, 1},
 		{15, 35, 15, 15, 15,
 		1, 5, 5, 15, 15, 5, 5,
-		0, 0, 0, 0, 0, 0}
+		0, 0, 0, 0, 0, 0, 30}
 	},
 	{
 		"Gladiator", 0,
 		{5, -1, -1, 1, 3, -1},
 		{30, 30, 30, 30, 10,
 		2, 5, 5, 10, 10, 5, 5,
-		1, 0, 0, 0, 0, 0}
+		1, 0, 0, 0, 0, 0, 40}
 	},
 	{
 		"Warrior-Monk", 0,
 		{ 2, 0, -2, 5, 1, -1},
 		{35, 10, 10, 10, 10,
 		1, 5, 5, 15, 10, 5, 15,
-		4, 0, 0, 0, 0, 0}
+		4, 0, 0, 0, 0, 0, 30}
 	},
 	{
 		"Zen-Monk", 0,
 		{ 2, -1, 2, 2, 0, -1},
 		{25, 10, 10, 10, 10,
 		0, 5, 5, 15, 10, 10, 10,
-		2, 1, 1, 0, 0, 0}
+		2, 1, 1, 0, 0, 0, 40}
 	},
 	{
 		"Assassin", 0,
 		{ 1, 0, 0, 3, 2, -2},
 		{30, 20, 20, 20, 10,
 		0, 5, 20, 20, 10, 20, 30,
-		0, 0, 0, 0, 0, 0}
+		0, 0, 0, 0, 0, 0, 30}
     },
     {
 		"Ranger", 0,
 		{ 2, -1, -1, 3, 3, 2},
 		{15, 15, 15, 15, 35,
 		1, 5, 10, 30, 10, 20, 20,
-		0, 0, 0, 2, 0, 0}
+		0, 0, 0, 2, 0, 0, 10}
 	},
 	{
 		"Shaman", 0,
 		{ -1, 1, 1, -2, 2, 5},
 		{15, 15, 15, 15, 15,
 		0, 10, 5, 15, 20, 10, 5,
-		0, 0, 0, 5, 0, 0}
+		0, 0, 0, 5, 0, 0, 20}
     },
 	{
 		"Mindcrafter", 0,
 		{ -2, 2, 5, -1, 0, 1},
 		{15, 15, 15, 15, 15,
 		0, 10, 5, 15, 15, 10, 5,
-		0, 4, 2, 0, 0, 0}
+		0, 4, 2, 0, 0, 0, 15}
 	},
 	{
 		"Mage", 3,
 		{-2, 5, 2, 1, -1, 1},
 		{10, 10, 10, 10, 10,
 		0, 25, 5, 15, 20, 10, 5,
-		0, 0, 0, 0, 0, 4}
+		0, 0, 0, 0, 0, 4, 5}
 	},
 	{
 		"Warlock", 1,
 		{1, 3, -1, 0, 2, -1},
 		{15, 15, 15, 20, 10,
 		1, 10, 5, 10, 15, 10, 5,
-		0, 0, 0, 0, 0, 2}
+		0, 0, 0, 0, 0, 2, 10}
 	},
 	{
 		"Powerweaver", 2,
 		{-3, 3, 3, -2, -2, 3},
 		{5, 5, 5, 5, 5,
 		0, 15, 5, 10, 15, 10, 5,
-		0, 3, 2, 3, 0, 2}
+		0, 3, 2, 3, 0, 2, 10}
 	},
 	{
 		"Tourist", 0,
 		{0, 0, 0, 0, 2, -1},
 		{10, 10, 10, 10, 10,
 		0, 5, 5, 5, 5, 5, 5,
-		0, 0, 0, 0, 0, 0}
+		0, 0, 0, 0, 0, 0, 20}
 	},
 };
 
@@ -2948,7 +2948,8 @@ cptr favour_names[MAX_SPHERE][32]=
 	 { "Slashing Weapons","Your skill with slashing weapons is improving.",0,0,0,0,0,10},
 	 { "Crushing Weapons","Your skill with crushing weapons is improving.",0,0,0,0,0,10},
 	 { "Spirit Lore","You are learning more about the spirit world",0,0,0,0,0,6},
-	 { "Hedge Magic","You are getting better at hedge magic.",0,0,0,0,0,3}
+	 { "Hedge Magic","You are getting better at hedge magic.",0,0,0,0,0,3},
+	 { "Item Sensing","You feel more able to judge items.",0,0,0,0,0,1},
  };
 
 /*
