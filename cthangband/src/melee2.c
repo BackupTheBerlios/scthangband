@@ -6215,15 +6215,15 @@ static void process_monster(int m_idx, bool is_friend)
     /* Hack! "Black Reaver" monster makes noise... */
     if (strstr((r_name + r_ptr->name),"Black Reaver"))
     {
-        if (randint(REAVERNOISE)==1)
-        {
-            if (!(m_ptr->ml))
-               {
-                disturb(FALSE, FALSE);
-                msg_print("You hear heavy steps.");
-                }
-            }
-    }
+		if (!(m_ptr->ml))
+		{
+			if (randint(REAVERNOISE)==1)
+			{
+				if (disturb_move) disturb(FALSE, FALSE);
+				msg_print("You hear heavy steps.");
+			}
+		}
+	}
 
 
     if (speak_unique)
