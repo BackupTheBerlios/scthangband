@@ -2427,23 +2427,23 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 
 		if (CMPJ(stat_max) > 0)
 		{
-			alloc_ifa(info+*i++, "It adds %s%d to your %s.", CERT, dif, stats[j]);
+			alloc_ifa(info+(*i)++, "It adds %s%d to your %s.", CERT, dif, stats[j]);
 		}
 		else if (dif)
 		{
-			alloc_ifa(info+*i++, "It removes %s%d from your %s.", CERT, -dif, stats[j]);
+			alloc_ifa(info+(*i)++, "It removes %s%d from your %s.", CERT, -dif, stats[j]);
 		}
 		else if (CMPJ(stat_cur))
 		{
-			alloc_ifa(info+*i++, "It restores your %s.", stats[j]);
+			alloc_ifa(info+(*i)++, "It restores your %s.", stats[j]);
 		}
 		else if (CMPJ(stat_add) > 0)
 		{
-			alloc_ifa(info+*i++, "It adds %d to your %s.", dif, stats[j]);
+			alloc_ifa(info+(*i)++, "It adds %d to your %s.", dif, stats[j]);
 		}
 		else if (dif)
 		{
-			alloc_ifa(info+*i++, "It removes %d from your %s.", -dif, stats[j]);
+			alloc_ifa(info+(*i)++, "It removes %d from your %s.", -dif, stats[j]);
 		}
 
 		/* No effect, so boring. */
@@ -2455,45 +2455,45 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 		switch (j)
 		{
 			case A_CHR:
-			if (CMPS(adj_mag_study)) alloc_ifa(info+*i++, "$W  It causes you to annoy spirits %s.", DIF_LES);
-			if (CMPS(adj_mag_fail)) alloc_ifa(info+*i++, "$W  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF);
-			if (CMPS(adj_mag_stat)) alloc_ifa(info+*i++, "$W  It %s your spiritual success rates.", DIF_INC);
-			if (CMPS(adj_chr_gold)) alloc_ifa(info+*i++, "$W  It %s your bargaining power.", DIF_DEC);
+			if (CMPS(adj_mag_study)) alloc_ifa(info+(*i)++, "$W  It causes you to annoy spirits %s.", DIF_LES);
+			if (CMPS(adj_mag_fail)) alloc_ifa(info+(*i)++, "$W  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF);
+			if (CMPS(adj_mag_stat)) alloc_ifa(info+(*i)++, "$W  It %s your spiritual success rates.", DIF_INC);
+			if (CMPS(adj_chr_gold)) alloc_ifa(info+(*i)++, "$W  It %s your bargaining power.", DIF_DEC);
 			break;
 			case A_WIS:
-			if (CMPS(adj_mag_mana)) alloc_ifa(info+*i++, "$W  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mchi));
-			if (CMPS(adj_mag_fail)) alloc_ifa(info+*i++, "$W  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF);
-			if (CMPS(adj_mag_stat)) alloc_ifa(info+*i++, "$W  It %s your mindcraft success rates.", DIF_INC);
-			if (CMPS(adj_wis_sav)) alloc_ifa(info+*i++, "$W  It %s your saving throw by %d%%.", DIF_INC, DIF);
+			if (CMPS(adj_mag_mana)) alloc_ifa(info+(*i)++, "$W  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mchi));
+			if (CMPS(adj_mag_fail)) alloc_ifa(info+(*i)++, "$W  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF);
+			if (CMPS(adj_mag_stat)) alloc_ifa(info+(*i)++, "$W  It %s your mindcraft success rates.", DIF_INC);
+			if (CMPS(adj_wis_sav)) alloc_ifa(info+(*i)++, "$W  It %s your saving throw by %d%%.", DIF_INC, DIF);
 			break;
 			case A_INT: /* Rubbish in the case of icky gloves or heavy armour. */
-			if (CMPS(adj_mag_study)) alloc_ifa(info+*i++, "$W  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR);
-			if (CMPS(adj_mag_mana)) alloc_ifa(info+*i++, "$W  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(msp));
-			if (CMPS(adj_mag_fail)) alloc_ifa(info+*i++, "$W  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF);
-			if (CMPS(adj_mag_stat)) alloc_ifa(info+*i++, "$W  It %s your spellcasting success rates.", DIF_INC);
-			if (CMP(skill_dev)) alloc_ifa(info+*i++, "$W  It %s your success rate with magical devices.", DIF_INC);
+			if (CMPS(adj_mag_study)) alloc_ifa(info+(*i)++, "$W  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR);
+			if (CMPS(adj_mag_mana)) alloc_ifa(info+(*i)++, "$W  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(msp));
+			if (CMPS(adj_mag_fail)) alloc_ifa(info+(*i)++, "$W  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF);
+			if (CMPS(adj_mag_stat)) alloc_ifa(info+(*i)++, "$W  It %s your spellcasting success rates.", DIF_INC);
+			if (CMP(skill_dev)) alloc_ifa(info+(*i)++, "$W  It %s your success rate with magical devices.", DIF_INC);
 			break;
 			case A_CON:
-			if (CMPS(adj_con_fix)) alloc_ifa(info+*i++, "$W  It %s your regeneration rate.", DIF_INC);
-			if (CMPS(adj_con_mhp)) alloc_ifa(info+*i++, "$W  It gives you %d %s hit points at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mhp));
+			if (CMPS(adj_con_fix)) alloc_ifa(info+(*i)++, "$W  It %s your regeneration rate.", DIF_INC);
+			if (CMPS(adj_con_mhp)) alloc_ifa(info+(*i)++, "$W  It gives you %d %s hit points at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mhp));
 			break;
 			case A_DEX:
-			if (CMP(dis_to_a)) alloc_ifa(info+*i++, "$W  It %s your AC by %d.", DIF_INC, DIF);
-			if (CMP(dis_to_h)) alloc_ifa(info+*i++, "$W  It %s your chance to hit opponents by %d.", DIF_INC, DIF);
+			if (CMP(dis_to_a)) alloc_ifa(info+(*i)++, "$W  It %s your AC by %d.", DIF_INC, DIF);
+			if (CMP(dis_to_h)) alloc_ifa(info+(*i)++, "$W  It %s your chance to hit opponents by %d.", DIF_INC, DIF);
 			/* Fix me - this also covers stunning, but is affected by saving throw. */
-			if (CMPS(adj_dex_safe)) alloc_ifa(info+*i++, "$W  It makes you %d%% %s resistant to theft.", DIF, DIF_MOR);
+			if (CMPS(adj_dex_safe)) alloc_ifa(info+(*i)++, "$W  It makes you %d%% %s resistant to theft.", DIF, DIF_MOR);
 			break;
 			case A_STR:
-			if (CMP(dis_to_d)) alloc_ifa(info+*i++, "$W  It %s your ability to damage opponents by %d.", DIF_INC, DIF);
-			if (CMPS(adj_str_wgt)) alloc_ifa(info+*i++, "$W  It %s your maximum carrying capacity by %d.", DIF_INC, DIF);
-			if (CMPS(adj_str_hold)) alloc_ifa(info+*i++, "$W  It makes you %s able to use heavy weapons.", DIF_MOR);
-			if (CMP(skill_dig)) alloc_ifa(info+*i++, "$W  It allows you to dig %s effectively.", DIF_MOR);
+			if (CMP(dis_to_d)) alloc_ifa(info+(*i)++, "$W  It %s your ability to damage opponents by %d.", DIF_INC, DIF);
+			if (CMPS(adj_str_wgt)) alloc_ifa(info+(*i)++, "$W  It %s your maximum carrying capacity by %d.", DIF_INC, DIF);
+			if (CMPS(adj_str_hold)) alloc_ifa(info+(*i)++, "$W  It makes you %s able to use heavy weapons.", DIF_MOR);
+			if (CMP(skill_dig)) alloc_ifa(info+(*i)++, "$W  It allows you to dig %s effectively.", DIF_MOR);
 		}
 
 		/* A couple of things which depend on two stats. */
 		if (j == A_DEX || (j == A_STR && !CMPU(stat_ind[A_DEX])))
 		{
-			if (CMP(num_blow)) alloc_ifa(info+*i++, "$W  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60);
+			if (CMP(num_blow)) alloc_ifa(info+(*i)++, "$W  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60);
 		}
 		if (j == A_DEX || (j == A_INT && !CMPU(stat_ind[A_DEX])))
 		{
@@ -2501,7 +2501,7 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 			if ((dif2 = CMPS(adj_dex_dis)+CMPT(adj_int_dis, A_INT)))
 			{
 				dif = dif2;
-				alloc_ifa(info+*i++, "$W  It %s your disarming skill.", DIF_INC);
+				alloc_ifa(info+(*i)++, "$W  It %s your disarming skill.", DIF_INC);
 			}
 		}
 	}
