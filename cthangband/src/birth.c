@@ -887,14 +887,16 @@ static void get_random_skills(bool random)
  */
 static void wield_weapons(bool wield)
 {
-	int sv;
 	if (wield)
 	{
+		int k;
+
 		if (p_ptr->ptemplate == TPL_SWASHBUCKLER)
-			sv = SV_RAPIER;
+			k = lookup_kind(TV_SWORD, SV_RAPIER);
 		else	
-			sv = SV_WHIP;
-		object_prep(&inventory[INVEN_WIELD], lookup_kind(TV_SWORD, sv));
+			k = lookup_kind(TV_HAFTED, SV_WHIP);
+
+		object_prep(&inventory[INVEN_WIELD], k);
 		object_prep(&inventory[INVEN_BOW], lookup_kind(TV_BOW, SV_LONG_BOW));
 	}
 	else
