@@ -1640,20 +1640,25 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 		bc_type b;
 
 		/* Start half-way down the screen if possible. */
-		byte start = 14;
+		int start = 14, blank = 0;
 
 		/* Allow more room if we need to display a race and template. */
-		byte width = (p_ptr->prace != RACE_NONE) ? 40 : 80;
+		int width = (p_ptr->prace != RACE_NONE) ? 40 : 80;
 		
+		int minx = (Term->wid >= 82) ? 2 : 0;
+
 		/* If not, start at the top. This should be enough... */
-		if (y > 560/width) start = 0;
+		if (y > (Term->hgt-17)*80/width) start = 2;
+
+		/* If there's lots of space, leave a blank line. */
+		if (y < (Term->hgt-17)*80/width) blank = 1;
 
 		clear_from(start);
 		for (x = 0; x < y; x++)
 		{
 			stat_default_type *sd_ptr = &stat_default[temp_stat_default[x]];
 			char buf[120];
-			byte z;
+			int z;
 			sprintf(buf, "%c) %s (", rtoa(x), quark_str(sd_ptr->name));
 
 			/* If we're just starting, we need to know the race & template. */
@@ -1663,7 +1668,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 			}
 			for (z = 0; z < A_MAX; z++)
 			{
-				byte w = sd_ptr->stat[z];
+				int w = sd_ptr->stat[z];
 				char stat[32];
 				if (sd_ptr->maximise)
 				{
@@ -1680,19 +1685,18 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 
 			if (width > 40)
 			{
-				put_str(buf, start+2+x, 0);
-			}
-			else if (x%2)
-			{
-				put_str(buf, start+2+x/2, 40);
+				put_str(buf, start+blank+2+x, minx);
 			}
 			else
 			{
-				put_str(buf, start+2+x/2, 0);
+				put_str(buf, start+blank+2+x/2, minx + 40 * (x%2));
 			}
 		}
+		prt("Stat templates provide a quick method of obtaining a specific character.", start-2, 5);
+		prt("Selecting a character will set the sex, race, template and stats as shown.",  start-1, 5);
+
 		/* Ask for a choice */
-		b = birth_choice(start+1, y, "Choose a template", &x, TRUE);
+		b = birth_choice(start+1, y, "Choose a stat template", &x, TRUE);
 		if (b == BC_ABORT)
 		{
 			x = -1;
@@ -3813,22 +3817,22 @@ static bool player_birth_aux(void)
 	/*** Instructions ***/
 
 	/* Display some helpful information */
-	Term_putstr(5, 10, -1, TERM_WHITE,
+	Term_putstr(5, 7, -1, TERM_WHITE,
 		"Please answer the following questions.  Most of the questions");
-	Term_putstr(5, 11, -1, TERM_WHITE,
+	Term_putstr(5, 8, -1, TERM_WHITE,
 		"display a set of standard answers, and many will also accept");
-	Term_putstr(5, 12, -1, TERM_WHITE,
+	Term_putstr(5, 9, -1, TERM_WHITE,
 		"special responses, including 'Q' to quit, '=' to change options");
-	Term_putstr(5, 13, -1, TERM_WHITE,
+	Term_putstr(5, 10, -1, TERM_WHITE,
 		"or '?' for help.  Note that 'Q' and 'S' must be capitalized.");
 
 
 	/*** Quick-Start ***/
 
 	/* Extra info */
-	Term_putstr(5, 15, -1, TERM_WHITE,
+	Term_putstr(5, 12, -1, TERM_WHITE,
 		"Quick-Start gives you a completely random character without");
-	Term_putstr(5, 16, -1, TERM_WHITE,
+	Term_putstr(5, 13, -1, TERM_WHITE,
 		"further prompting.");
 
 	/* Choose */
@@ -3840,8 +3844,7 @@ static bool player_birth_aux(void)
 			c = 'n';
 			break;
 		}
-		sprintf(buf, "Quick-Start? (y/n/Q/S/?/=): ");
-		put_str(buf, 20, 2);
+		put_str("Quick-Start? (y/n/Q/S/?/=): ", 15, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 		else if (c == 'S') return (FALSE);
@@ -3879,11 +3882,12 @@ static bool player_birth_aux(void)
 		 */
 		if (p_ptr->prace == RACE_NONE)
 		{
+			clear_from(12);
 
 			/*** Player sex ***/
 	
 			/* Extra info */
-			Term_putstr(5, 15, -1, TERM_WHITE,
+			Term_putstr(5, 12, -1, TERM_WHITE,
 			"Your 'sex' does not have any significant gameplay effects.");
 	
 			/* Prompt for "Sex" */
@@ -3896,11 +3900,11 @@ static bool player_birth_aux(void)
 	
 				/* Display */
 				sprintf(buf, "%c%c %s", I2A(n), p2, str);
-				put_str(buf, 21 + (n/5), 2 + 15 * (n%5));
+				put_str(buf, 17 + (n/5), 2 + 15 * (n%5));
 			}
 	
 			/* Choose */
-			if (birth_choice(20, MAX_SEXES, "Choose a sex", &k, FALSE) == BC_RESTART) return FALSE;
+			if (birth_choice(15, MAX_SEXES, "Choose a sex", &k, FALSE) == BC_RESTART) return FALSE;
 	
 			/* Set sex */
 			p_ptr->psex = k;
@@ -3911,13 +3915,13 @@ static bool player_birth_aux(void)
 			c_put_str(TERM_L_BLUE, str, 3, 15);
 	
 			/* Clean up */
-			clear_from(15);
+			clear_from(12);
 	
 	
 			/*** Player race ***/
-	
+
 			/* Extra info */
-			Term_putstr(5, 15, -1, TERM_WHITE,
+			Term_putstr(5, 12, -1, TERM_WHITE,
 			"Your 'race' determines various intrinsic factors and bonuses.");
 	
 			/* Dump races */
@@ -3931,11 +3935,11 @@ static bool player_birth_aux(void)
 				/* Display */
 	
 				sprintf(buf, "%c%c %s", rtoa(n), p2, str);
-				put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
+				put_str(buf, 17 + (n/5), 2 + 15 * (n%5));
 			}
 	
 			/* Choose */
-			if (birth_choice(17, MAX_RACES, "Choose a race", &k, FALSE) == BC_RESTART) return FALSE;
+			if (birth_choice(15, MAX_RACES, "Choose a race", &k, FALSE) == BC_RESTART) return FALSE;
 	
 			/* Set race */
 			p_ptr->prace = k;
@@ -3946,15 +3950,17 @@ static bool player_birth_aux(void)
 			c_put_str(TERM_L_BLUE, str, 4, 15);
 			
 			/* Clean up */
-			clear_from(15);
+			clear_from(12);
 	
 	
 			/*** Player template ***/
 	
+			clear_from(12);
+
 			/* Extra info */
-			Term_putstr(5, 15, -1, TERM_WHITE,
+			Term_putstr(5, 12, -1, TERM_WHITE,
 			"Your 'template' determines various starting abilities and bonuses.");
-			Term_putstr(5, 16, -1, TERM_WHITE,
+			Term_putstr(5, 13, -1, TERM_WHITE,
 			"Any entries in parentheses should only be used by advanced players.");
 	
 			/* Dump templates */
@@ -3976,10 +3982,10 @@ static bool player_birth_aux(void)
 					sprintf(buf, "%c%c %s%s", I2A(n), p2, str, mod);
 				}
 				/* Display */
-				put_str(buf, 19 + (n/3), 2 + 20 * (n%3));
+				put_str(buf, 17 + (n/3), 2 + 20 * (n%3));
 			}
 	
-			if (birth_choice(18, MAX_TEMPLATE, "Choose a template", &k, FALSE) == BC_RESTART) return FALSE;
+			if (birth_choice(15, MAX_TEMPLATE, "Choose a template", &k, FALSE) == BC_RESTART) return FALSE;
 	
 			/* Set template */
 			p_ptr->ptemplate = k;
