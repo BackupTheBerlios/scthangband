@@ -2010,6 +2010,11 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			k_ptr->sval = sval;
 			k_ptr->pval = pval;
 
+			/* Include the tval-dependent flags, if any. */
+			k_ptr->flags1 |= kt_info[k_ptr->tval].flags1;
+			k_ptr->flags2 |= kt_info[k_ptr->tval].flags2;
+			k_ptr->flags3 |= kt_info[k_ptr->tval].flags3;
+
 			/* Next... */
 			continue;
 		}
@@ -2658,10 +2663,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			a_head->name_size += strlen(s);
 
 			/* Ignore everything */
-			a_ptr->flags3 |= (TR3_IGNORE_ACID);
-			a_ptr->flags3 |= (TR3_IGNORE_ELEC);
-			a_ptr->flags3 |= (TR3_IGNORE_FIRE);
-			a_ptr->flags3 |= (TR3_IGNORE_COLD);
+			a_ptr->flags3 |= (TR3_IGNORE_ALL);
 
 			/* Next... */
 			continue;

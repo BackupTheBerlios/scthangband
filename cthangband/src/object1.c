@@ -3225,23 +3225,54 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
         info[i++] = "It carries an ancient foul curse.";
     }
 
-	if (f3 & (TR3_IGNORE_ACID))
+	if ((f3 & (TR3_IGNORE_ALL)) == TR3_IGNORE_ALL)
 	{
-		info[i++] = "It cannot be harmed by acid.";
+		info[i++] = "It cannot be harmed by the elements.";
 	}
-	if (f3 & (TR3_IGNORE_ELEC))
+	else if (!(f3 & (TR3_IGNORE_ALL)))
 	{
-		info[i++] = "It cannot be harmed by electricity.";
+		/* Say nothing. */
 	}
-	if (f3 & (TR3_IGNORE_FIRE))
+	/* Full knowledge brings certainty. */
+	else if (o_ptr->ident & IDENT_MENTAL || cheat_item)
 	{
-		info[i++] = "It cannot be harmed by fire.";
-	}
-	if (f3 & (TR3_IGNORE_COLD))
+	if (~f3 & (TR3_IGNORE_ACID))
 	{
-		info[i++] = "It cannot be harmed by cold.";
+		info[i++] = "It can be harmed by acid.";
 	}
-
+	if (~f3 & (TR3_IGNORE_ELEC))
+	{
+		info[i++] = "It can be harmed by electricity.";
+	}
+	if (~f3 & (TR3_IGNORE_FIRE))
+	{
+		info[i++] = "It can be harmed by fire.";
+	}
+	if (~f3 & (TR3_IGNORE_COLD))
+	{
+		info[i++] = "It can be harmed by cold.";
+	}
+	}
+	/* Incomplete knowledge brings doubt. */
+	else
+	{
+		if (~f3 & (TR3_IGNORE_ACID))
+		{
+			info[i++] = "It may be able to be harmed by acid.";
+		}
+		if (~f3 & (TR3_IGNORE_ELEC))
+		{
+			info[i++] = "It may be able to be harmed by electricity.";
+		}
+		if (~f3 & (TR3_IGNORE_FIRE))
+		{
+			info[i++] = "It may be able to be harmed by fire.";
+		}
+		if (~f3 & (TR3_IGNORE_COLD))
+		{
+			info[i++] = "It may be able to be harmed by cold.";
+		}
+	}
 
 	/* Return item to its normal stat if needed */
 	if (full)

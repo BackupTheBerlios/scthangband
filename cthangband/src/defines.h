@@ -2376,6 +2376,7 @@ logaux(x, 1) logaux(x, 0) 255
 #define TR3_IGNORE_ELEC         0x00200000L     /* Item ignores Elec Damage */
 #define TR3_IGNORE_FIRE         0x00400000L     /* Item ignores Fire Damage */
 #define TR3_IGNORE_COLD         0x00800000L     /* Item ignores Cold Damage */
+#define TR3_IGNORE_ALL	(TR3_IGNORE_ACID | TR3_IGNORE_ELEC | TR3_IGNORE_FIRE | TR3_IGNORE_COLD) /* Many items ignore all four. */
 #define TR3_ACTIVATE            0x01000000L     /* Item can be activated */
 #define TR3_DRAIN_EXP           0x02000000L     /* Item drains Experience */
 #define TR3_TELEPORT            0x04000000L     /* Item teleports player */

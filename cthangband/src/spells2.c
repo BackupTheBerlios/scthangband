@@ -4085,8 +4085,7 @@ if (has_pval)
 	    o_ptr->to_h += randint(o_ptr->to_h>19?1:20-o_ptr->to_h);
 	    o_ptr->to_d += randint(o_ptr->to_d>19?1:20-o_ptr->to_d);
 	}
-    o_ptr->art_flags3 |= ( TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
-			    TR3_IGNORE_FIRE | TR3_IGNORE_COLD); /* Just to be sure */
+    o_ptr->art_flags3 |= (TR3_IGNORE_ALL); /* Just to be sure */
     total_flags = flag_cost(o_ptr, o_ptr->pval);
     if (cheat_peek) msg_format("%ld", total_flags);
 

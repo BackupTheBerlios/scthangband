@@ -1205,7 +1205,6 @@ void cold_dam(int dam, cptr kb_str)
 
 
 
-
 /*
  * Increases a stat by one randomized level             -RAK-
  *
