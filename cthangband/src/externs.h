@@ -3425,7 +3425,7 @@ extern char *macro_text;
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern u16b rebuild_raw;
 #endif
-#if (defined(CMD2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CMD2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern byte object_skill_count;
 #endif
 

@@ -837,14 +837,23 @@ void gain_exp(s32b amount)
 	p_ptr->exp += amount;
 }
 
-/* Gain random skills */
+/*
+ * Gain random skills
+ *
+ * Hack - play with object_skill_count to allow a large number of skill gains.
+ */
 void gain_skills(s32b amount)
 {
-	int i;
-	for(i=0;i<amount;i++)
+	const int old = object_skill_count;
+
+	while (amount-- > 0)
 	{
+		object_skill_count = 0;
+
 		skill_exp(rand_int(MAX_SKILLS));
 	}
+
+	object_skill_count = old;
 }
 
 /*
