@@ -2402,7 +2402,7 @@ extern void roff(cptr str);
 #if (defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_str(const int y, const int x, cptr str);
 #endif
-#if (defined(CMD4_C) || defined(CMD5_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))

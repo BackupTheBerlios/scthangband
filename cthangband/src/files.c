@@ -1328,33 +1328,6 @@ errr check_load_init(void)
 
 
 /*
- * Print long number with header at given row, column
- * Use the color for the number, not the header
- */
-static void prt_lnum(cptr str, s32b num, int row, int col, byte color)
-{
-	int len = strlen(str);
-	char out_val[32];
-	put_str(str, row, col);
-	(void)sprintf(out_val, "%9ld", (long)num);
-	c_put_str(color, out_val, row, col + len);
-}
-
-/*
- * Print number with header at given row, column
- */
-static void prt_num(cptr str, int num, int row, int col, byte color)
-{
-	int len = strlen(str);
-	char out_val[32];
-	put_str(str, row, col);
-	put_str("   ", row, col + len);
-	(void)sprintf(out_val, "%6ld", (long)num);
-	c_put_str(color, out_val, row, col + len + 3);
-}
-
-
-/*
  * Determine the colour of a display based on the proportion of maximum.
  */
 static byte percent_to_colour(s16b cur, s16b max)
@@ -1838,8 +1811,8 @@ static void display_player_sides(bool missile)
 	put_str((missile) ? "Missile" : "Melee", 9, 3);
 
 	/* Dump the bonuses to hit/dam */
-	prt_num("+ To Hit    ", show_tohit, 10, 1, TERM_L_BLUE);
-	prt_num("+ To Damage ", show_todam, 11, 1, TERM_L_BLUE);
+	mc_put_fmt(10, 1, "+ To Hit    $B%9ld", show_tohit);
+	mc_put_fmt(11, 1, "+ To Damage $B%9ld", show_todam);
 
 	/* Dump the number of attack per round */
 	put_str("Attack/Round", 12, 1);
@@ -1859,20 +1832,16 @@ static void display_player_sides(bool missile)
 	prt_nums("Spell Points:", 10, 52, 76, p_ptr->csp, p_ptr->msp);
 	prt_nums("Chi Points:", 11, 52, 76, p_ptr->cchi, p_ptr->mchi);
 
-	prt_lnum("Gold           ", p_ptr->au, 13, 52, TERM_L_GREEN);
+	mc_put_fmt(13, 52, "Gold           $G%9ld", p_ptr->au);
 }
 
 /*
  * Prints the following information on the screen.
- *
- * For this to look right, the following should be spaced the
- * same as in the prt_lnum code... -CFT
  */
 static void display_player_xp(void)
 {
-	prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_L_GREEN);
-
-	prt_lnum("Exp Factor ", p_ptr->expfact, 13, 28, TERM_L_GREEN);
+	mc_put_fmt(10, 28, "Experience $G%9ld", p_ptr->exp);
+	mc_put_fmt(13, 28, "Exp Factor $G%9ld", p_ptr->expfact);
 }
 
 
@@ -3288,66 +3257,41 @@ static void display_player_ben_one(int mode)
  */
 static void display_player_name_stats(void)
 {
-	char	buf[80];
-	byte i;
+	int i;
 
-		/* Name, Sex, Race, template */
-		put_str("Name        :", 2, 1);
-		put_str("Sex         :", 3, 1);
-		put_str("Race        :", 4, 1);
-		put_str("Template    :", 5, 1);
+	/* Name, Sex, Race, template */
+	mc_put_fmt(2, 1, "Name        : $B$!%s", player_name);
+	mc_put_fmt(3, 1, "Sex         : $B$!%s", sp_ptr->title);
+	mc_put_fmt(4, 1, "Race        : $B$!%s", rp_ptr->title);
+	mc_put_fmt(5, 1, "Template    : $B$!%s", cp_ptr->title);
 
-		c_put_str(TERM_L_BLUE, player_name, 2, 15);
-		c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
-		c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 15);
-		c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
+	/* Age, Height, Weight, Social, Birthday */
+	mc_put_fmt(2, 32, "Age             $B%6d", p_ptr->age);
+	mc_put_fmt(3, 32, "Height          $B%6d", p_ptr->ht);
+	mc_put_fmt(4, 32, "Weight          $B%6d", p_ptr->wt);
+	mc_put_fmt(5, 32, "Social Class    $B%6d", p_ptr->sc);
+	mc_put_fmt(6, 32, "Birthday        $B%v", day_to_date_f1, p_ptr->birthday);
 
-		/* Age, Height, Weight, Social, Birthday */
-		prt_num("Age          ", (int)p_ptr->age, 2, 32, TERM_L_BLUE);
-		prt_num("Height       ", (int)p_ptr->ht, 3, 32, TERM_L_BLUE);
-		prt_num("Weight       ", (int)p_ptr->wt, 4, 32, TERM_L_BLUE);
-		prt_num("Social Class ", (int)p_ptr->sc, 5, 32, TERM_L_BLUE);
-		put_str("Birthday",6,32);
-		c_put_str(TERM_L_BLUE,format("%v", day_to_date_f1, p_ptr->birthday),
-			6,48);
-
-		/* Display the stats */
-		for (i = 0; i < 6; i++)
+	/* Display the stats */
+	for (i = 0; i < A_MAX; i++)
+	{
+		/* Special treatment of "injured" stats */
+		if (p_ptr->stat_cur[i] < p_ptr->stat_max[i])
 		{
-			/* Special treatment of "injured" stats */
-			if (p_ptr->stat_cur[i] < p_ptr->stat_max[i])
-			{
-				int value;
-
-				/* Use lowercase stat name */
-				put_str(stat_names_reduced[i], 2 + i, 61);
-
-				/* Obtain the current stat (modified) */
-				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
-
-				/* Display the current stat (modified) */
-				c_put_str(TERM_YELLOW, buf, 2 + i, 66);
-
-				/* Obtain the maximum stat (modified) */
-				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_top[i]);
-
-				/* Display the maximum stat (modified) */
-				c_put_str(TERM_L_GREEN, buf, 2 + i, 73);
-			}
-
-			/* Normal treatment of "normal" stats */
-			else
-			{
-				/* Assume uppercase stat name */
-				put_str(stat_names[i], 2 + i, 61);
-
-				/* Obtain the current stat (modified) */
-				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
-
-				/* Display the current stat (modified) */
-				c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
-			}
+			/* Display as (e.g.) Str:     17  19/20 */
+			mc_put_fmt(2+i, 61, "%-5s$y%6v $G%6v", stat_names_reduced[i],
+				cnv_stat_f1, p_ptr->stat_use[i],
+				cnv_stat_f1, p_ptr->stat_top[i]);
 		}
+
+		/* Normal treatment of "normal" stats */
+		else
+		{
+			/* Display as (e.g.) STR:  19/20 */
+			mc_put_fmt(2+i, 61, "%-5s$G%6v",
+				stat_names[i], cnv_stat_f1, p_ptr->stat_use[i]);
+		}
+	}
 }
 
 /*
