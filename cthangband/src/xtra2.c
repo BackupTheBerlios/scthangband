@@ -2728,7 +2728,7 @@ static void panel_bounds_prt(void)
 {
 	int panel_row_centre = ((panel_row_min + panel_row_max+1) / 2);
 	int panel_col_centre = ((panel_col_min + panel_col_max+1) / 2);
-	bool top, bottom, left, right;
+	bool top, bottom, left, right, high, wide;
 
 	panel_row_prt = (panel_row_centre - (Term->hgt-PRT_MINY)/2);
 	panel_col_prt = (panel_col_centre - (Term->wid-PRT_MINX)/2);
@@ -2739,27 +2739,35 @@ static void panel_bounds_prt(void)
 	/* Look for space around the map edge. */
 	top = (panel_row_prt < 0);
 	bottom = (panel_row_prt > cur_hgt - (PRT_MAXY-PRT_MINY));
+	high = (cur_hgt > PRT_MAXY - PRT_MINY);
 	left = (panel_col_prt < 0);
 	right = (panel_col_prt > cur_wid - (PRT_MAXX-PRT_MINX));
+	wide = (cur_wid > PRT_MAXX - PRT_MINX);
+
+	/* Only move if this increases the dungeon area shown. */
+	if (top == bottom);
 
 	/* Kill space above the map. */
-	if (top && !bottom)
+	else if (top == high)
 	{
 		panel_row_prt = 0;
 	}
 	/* Kill space below the map. */
-	else if (bottom && !top)
+	else
 	{
 		panel_row_prt = cur_hgt - (PRT_MAXY-PRT_MINY);
 	}
 
+	/* Only move if this increases the dungeon area shown. */
+	if (left == right);
+
 	/* Kill space to the left of the map. */
-	if (left && !right)
+	else if (left == wide)
 	{
 		panel_col_prt = 0;
 	}
 	/* Kill space to the right of the map. */
-	else if (right && !left)
+	else
 	{
 		panel_col_prt = cur_wid - (PRT_MAXX-PRT_MINX);
 	}
