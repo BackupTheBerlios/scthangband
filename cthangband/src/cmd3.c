@@ -367,7 +367,7 @@ void do_cmd_drop(void)
 
 
 	/* Hack -- Cannot remove cursed items */
-	if (is_worn_p(o_ptr) && cursed_p(o_ptr))
+	if (!item_tester_hook_destroy(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");
@@ -1427,7 +1427,7 @@ void do_cmd_handle(void)
 	}
 
 	/* First test Wielded items */
-	if (is_worn_p(o_ptr))
+	if (o_ptr >= inventory+INVEN_WIELD && o_ptr <= inventory+INVEN_FEET)
 	{
 		/* Try to activate the wielded item, whatever it is */
 		do_cmd_activate(o_ptr);

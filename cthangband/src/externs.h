@@ -215,7 +215,7 @@ extern void do_cmd_rest(void);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_fire(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(SPELLS2_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern bool item_tester_hook_destroy(object_type *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))
@@ -1414,7 +1414,7 @@ extern void object_desc_store_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
 extern cptr item_activation(object_type *o_ptr);
 #endif
-#if (defined(CMD3_C) || defined(CMD6_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C))
+#if (defined(CMD6_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
 extern bool is_worn_p(object_type *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C))
