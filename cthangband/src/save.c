@@ -800,14 +800,9 @@ static void wr_rle_cave(int size, u32b (*get)(cave_type *))
 	}
 }
 
-static u32b get_cave_info_16(cave_type *c_ptr)
+static u32b get_cave_info(cave_type *c_ptr)
 {
-	return c_ptr->info;
-}
-
-static u32b get_cave_info_8(cave_type *c_ptr)
-{
-	return c_ptr->info & 0xFF;
+	return c_ptr->info & (CAVE_MARK | CAVE_GLOW | CAVE_ICKY | CAVE_TRAP);
 }
 
 static u32b get_cave_feat(cave_type *c_ptr)
@@ -848,9 +843,9 @@ static void wr_dungeon(void)
 
 	/* Encode cave_type.info. */
 	if (has_flag(SF_16_CAVE_FLAG))
-		wr_rle_cave(2, get_cave_info_16);
+		wr_rle_cave(2, get_cave_info);
 	else
-		wr_rle_cave(1, get_cave_info_8);
+		wr_rle_cave(1, get_cave_info);
 
 	/* Encode cave_type.feat. */
 	wr_rle_cave(1, get_cave_feat);

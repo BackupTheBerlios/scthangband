@@ -1438,7 +1438,8 @@ static void rd_rle_cave(int size, void (*set)(cave_type *, u32b))
 
 static void set_cave_info(cave_type *c_ptr, u32b v)
 {
-	c_ptr->info = (u16b)v;
+	/* Avoid loading flags we can calculate from scratch anyway. */
+	c_ptr->info = ((u16b)v) & (CAVE_MARK | CAVE_GLOW | CAVE_ICKY | CAVE_TRAP);
 }
 
 static void set_cave_feat(cave_type *c_ptr, u32b v)
