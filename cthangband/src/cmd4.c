@@ -1101,10 +1101,12 @@ void do_cmd_options(void)
 				case OPTS_SAVE:
 				{
 					do_cmd_options_autosave("Autosave");
+					break;
 				}
 				case OPTS_WINDOW:
 				{
 					do_cmd_options_win();
+					break;
 				}
 			}
 			break;
