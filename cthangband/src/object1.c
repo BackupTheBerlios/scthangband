@@ -677,9 +677,6 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		j_ptr->k_idx = o_ptr->k_idx;
 		j_ptr->tval = o_ptr->tval;
 		j_ptr->sval = o_ptr->sval;
-		j_ptr->dd = o_ptr->dd;
-		j_ptr->ds = o_ptr->ds;
-		j_ptr->ac = o_ptr->ac;
 	}
 	/* As values of 0 are often special, use a blank object, the tval from the
 	 * base type and and a special sval for unaware objects.
@@ -818,7 +815,21 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	j_ptr->flags2 |= k_ptr->flags2;
 	j_ptr->flags3 |= k_ptr->flags3;
 	}
-		
+
+	/*
+	 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC.
+	 * Aware objects also do so.
+	 */
+	if (object_aware_p(o_ptr) || (j_ptr->flags3 & TR3_SHOW_MODS))
+	{
+		j_ptr->dd = o_ptr->dd;
+		j_ptr->ds = o_ptr->ds;
+	}
+	if (object_aware_p(o_ptr) || j_ptr->flags3 & TR3_SHOW_ARMOUR)
+	{
+		j_ptr->ac = o_ptr->ac;
+	}
+
 	/* Must be identified for further details. */
 	if (!object_known_p(o_ptr)) return;
 
