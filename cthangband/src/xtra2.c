@@ -1593,16 +1593,16 @@ bool set_stun(int v)
             msg_print("A vicious blow hits your head.");
             if(randint(3)==1)
             {
-                if (!p_ptr->sustain_int) { (void) do_dec_stat(A_INT); }
-                if (!p_ptr->sustain_wis) { (void) do_dec_stat(A_WIS); }
+                if (!p_ptr->sustain[A_INT]) { (void) do_dec_stat(A_INT); }
+                if (!p_ptr->sustain[A_WIS]) { (void) do_dec_stat(A_WIS); }
             }
             else if (randint(2)==1)
             {
-                if (!p_ptr->sustain_int) { (void) do_dec_stat(A_INT); }
+                if (!p_ptr->sustain[A_INT]) { (void) do_dec_stat(A_INT); }
             }
             else
             {
-                if (!p_ptr->sustain_wis) { (void) do_dec_stat(A_WIS); }
+                if (!p_ptr->sustain[A_WIS]) { (void) do_dec_stat(A_WIS); }
             }
         }
 
@@ -1813,7 +1813,7 @@ bool set_cut(int v)
 
     if (randint(1000)<v || randint(16)==1)
         { 
-            if(!p_ptr->sustain_chr)
+            if(!p_ptr->sustain[A_CHR])
             {
             msg_print("You have been horribly scarred.");
 

@@ -1729,12 +1729,7 @@ static void calc_bonuses(bool quiet)
 	p_ptr->hold_life = FALSE;
 	p_ptr->telepathy = FALSE;
 	p_ptr->lite = FALSE;
-	p_ptr->sustain_str = FALSE;
-	p_ptr->sustain_int = FALSE;
-	p_ptr->sustain_wis = FALSE;
-	p_ptr->sustain_con = FALSE;
-	p_ptr->sustain_dex = FALSE;
-	p_ptr->sustain_chr = FALSE;
+	C_WIPE(p_ptr->sustain, A_MAX, bool);
 	p_ptr->resist_acid = FALSE;
 	p_ptr->resist_elec = FALSE;
 	p_ptr->resist_fire = FALSE;
@@ -1794,7 +1789,7 @@ static void calc_bonuses(bool quiet)
 	if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
 
 	/* Hobbit */
-	if (p_ptr->prace == RACE_HOBBIT) p_ptr->sustain_dex = TRUE;
+	if (p_ptr->prace == RACE_HOBBIT) p_ptr->sustain[A_DEX] = TRUE;
 
 	/* Gnome */
 	if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
@@ -1808,7 +1803,7 @@ static void calc_bonuses(bool quiet)
 	/* Half-Troll */
     if (p_ptr->prace == RACE_HALF_TROLL)
     {
-        p_ptr->sustain_str = TRUE;
+        p_ptr->sustain[A_STR] = TRUE;
         if ((skill_set[SKILL_RACIAL].value/2)>14)
             {
                 p_ptr->regenerate = TRUE;
@@ -1820,7 +1815,7 @@ static void calc_bonuses(bool quiet)
 	/* Dunadan */
     if (p_ptr->prace == RACE_GREAT)
     {
-            p_ptr->sustain_con = TRUE;
+            p_ptr->sustain[A_CON] = TRUE;
             p_ptr->regenerate = TRUE;  /* Great ones heal fast... */
 
     }
@@ -1832,11 +1827,11 @@ static void calc_bonuses(bool quiet)
     if (p_ptr->prace == RACE_BARBARIAN) p_ptr->resist_fear = TRUE;
     else if (p_ptr->prace == RACE_HALF_OGRE)
     {   p_ptr->resist_dark = TRUE;
-        p_ptr->sustain_str = TRUE;
+        p_ptr->sustain[A_STR] = TRUE;
     }
     else if (p_ptr->prace == RACE_HALF_GIANT)
     {
-        p_ptr->sustain_str = TRUE;
+        p_ptr->sustain[A_STR] = TRUE;
         p_ptr->resist_shard = TRUE;
     }
     else if (p_ptr->prace == RACE_HALF_TITAN)
@@ -1904,8 +1899,8 @@ static void calc_bonuses(bool quiet)
     }
     else if (p_ptr->prace == RACE_MIND_FLAYER)
     {
-        p_ptr->sustain_int = TRUE;
-        p_ptr->sustain_wis = TRUE;
+        p_ptr->sustain[A_INT] = TRUE;
+        p_ptr->sustain[A_WIS] = TRUE;
         if ((skill_set[SKILL_RACIAL].value/2) > 14)
         {
             p_ptr->see_inv = TRUE;
@@ -2178,17 +2173,17 @@ static void calc_bonuses(bool quiet)
 		
 		if (p_ptr->muta3 & MUT3_SUS_STATS)
 		{
-			p_ptr->sustain_con =TRUE;
+			p_ptr->sustain[A_CON] =TRUE;
 			if ((skill_set[SKILL_RACIAL].value/2) > 9)
-				p_ptr->sustain_str = TRUE;
+				p_ptr->sustain[A_STR] = TRUE;
 			if ((skill_set[SKILL_RACIAL].value/2) > 19)
-				p_ptr->sustain_dex = TRUE;
+				p_ptr->sustain[A_DEX] = TRUE;
 			if ((skill_set[SKILL_RACIAL].value/2) > 29)
-				p_ptr->sustain_wis = TRUE;
+				p_ptr->sustain[A_WIS] = TRUE;
 			if ((skill_set[SKILL_RACIAL].value/2) > 39)
-				p_ptr->sustain_int = TRUE;
+				p_ptr->sustain[A_INT] = TRUE;
 			if ((skill_set[SKILL_RACIAL].value/2) > 49)
-				p_ptr->sustain_chr = TRUE;
+				p_ptr->sustain[A_CHR] = TRUE;
 		}
 		
 		if (p_ptr->muta3 & MUT3_ILL_NORM)
@@ -2293,12 +2288,12 @@ static void calc_bonuses(bool quiet)
         if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
 		/* Sustain flags */
-		if (f2 & (TR2_SUST_STR)) p_ptr->sustain_str = TRUE;
-		if (f2 & (TR2_SUST_INT)) p_ptr->sustain_int = TRUE;
-		if (f2 & (TR2_SUST_WIS)) p_ptr->sustain_wis = TRUE;
-		if (f2 & (TR2_SUST_DEX)) p_ptr->sustain_dex = TRUE;
-		if (f2 & (TR2_SUST_CON)) p_ptr->sustain_con = TRUE;
-		if (f2 & (TR2_SUST_CHR)) p_ptr->sustain_chr = TRUE;
+		if (f2 & (TR2_SUST_STR)) p_ptr->sustain[A_STR] = TRUE;
+		if (f2 & (TR2_SUST_INT)) p_ptr->sustain[A_INT] = TRUE;
+		if (f2 & (TR2_SUST_WIS)) p_ptr->sustain[A_WIS] = TRUE;
+		if (f2 & (TR2_SUST_DEX)) p_ptr->sustain[A_DEX] = TRUE;
+		if (f2 & (TR2_SUST_CON)) p_ptr->sustain[A_CON] = TRUE;
+		if (f2 & (TR2_SUST_CHR)) p_ptr->sustain[A_CHR] = TRUE;
 
 		/* Modify the base armor class */
 		p_ptr->ac += o_ptr->ac;

@@ -178,19 +178,8 @@ bool do_dec_stat(int stat)
 {
 	bool sust = FALSE;
 
-	/* Access the "sustain" */
-	switch (stat)
-	{
-		case A_STR: if (p_ptr->sustain_str) sust = TRUE; break;
-		case A_INT: if (p_ptr->sustain_int) sust = TRUE; break;
-		case A_WIS: if (p_ptr->sustain_wis) sust = TRUE; break;
-		case A_DEX: if (p_ptr->sustain_dex) sust = TRUE; break;
-		case A_CON: if (p_ptr->sustain_con) sust = TRUE; break;
-		case A_CHR: if (p_ptr->sustain_chr) sust = TRUE; break;
-	}
-
 	/* Sustain */
-	if (sust)
+	if (p_ptr->sustain[stat])
 	{
 		/* Message */
 		msg_format("You feel %s for a moment, but the feeling passes.",
@@ -1431,27 +1420,27 @@ void self_knowledge(void)
 	}
 
 
-	if (p_ptr->sustain_str)
+	if (p_ptr->sustain[A_STR])
 	{
 		info[i++] = "Your strength is sustained.";
 	}
-	if (p_ptr->sustain_int)
+	if (p_ptr->sustain[A_INT])
 	{
 		info[i++] = "Your intelligence is sustained.";
 	}
-	if (p_ptr->sustain_wis)
+	if (p_ptr->sustain[A_WIS])
 	{
 		info[i++] = "Your wisdom is sustained.";
 	}
-	if (p_ptr->sustain_con)
+	if (p_ptr->sustain[A_CON])
 	{
 		info[i++] = "Your constitution is sustained.";
 	}
-	if (p_ptr->sustain_dex)
+	if (p_ptr->sustain[A_DEX])
 	{
 		info[i++] = "Your dexterity is sustained.";
 	}
-	if (p_ptr->sustain_chr)
+	if (p_ptr->sustain[A_CHR])
 	{
 		info[i++] = "Your charisma is sustained.";
 	}

@@ -1822,34 +1822,7 @@ static void process_chaos(void)
 			(randint(3000)==13))
 		{
 			int which_stat = rand_int(6);
-			int sustained = FALSE;
-			
-			switch (which_stat)
-			{
-			case A_STR:
-				if (p_ptr->sustain_str) sustained = TRUE;
-				break;
-			case A_INT:
-				if (p_ptr->sustain_int) sustained = TRUE;
-				break;
-			case A_WIS:
-				if (p_ptr->sustain_wis) sustained = TRUE;
-				break;
-			case A_DEX:
-				if (p_ptr->sustain_dex) sustained = TRUE;
-				break;
-			case A_CON:
-				if (p_ptr->sustain_con) sustained = TRUE;
-				break;
-			case A_CHR:
-				if (p_ptr->sustain_chr) sustained = TRUE;
-				break;
-			default:
-				msg_print("Invalid stat chosen!");
-				sustained = TRUE;
-			}
-			
-			if (!sustained)
+			if (!p_ptr->sustain[which_stat])
 			{
 				disturb(0,0);
 				msg_print("You can feel yourself wasting away!");
