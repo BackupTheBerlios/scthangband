@@ -1941,18 +1941,23 @@ void display_spell_list(void)
 #ifdef CHECK_ARRAYS
 
 /*
- * Check various things about the magic_info[] array.
+ * Check various things about the book_info[] array (and its associated spells).
  */
 void check_magic_info(void)
 {
 	cptr error = 0;
-	const book_type *b_ptr;
 	const magic_type *s_ptr;
 	char buf[1024];
-	int i;
-	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
+	int i, j;
+	for (j = 0; j < N_ELEMENTS(book_info); j++)
 	{
-		if (!b_ptr->flags) quit_fmt("Book %d is empty.", b_ptr-book_info);
+		book_type *b_ptr = book_info+j;
+
+		if (b_ptr->idx != j) quit_fmt("Book %d has index %d", i, b_ptr->idx);
+
+		if (!b_ptr->flags) quit_fmt("Book %d is empty.", j);
+
+		if (!b_ptr->info) quit_fmt("Book %d has no spells.", j);
 
 		for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
 		{

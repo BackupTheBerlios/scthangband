@@ -1210,24 +1210,6 @@ static void check_options(void)
 }
 
 /*
- * Check that book_info[] uses the correct indices.
- */
-static void check_book_info(void)
-{
-	const book_type *ptr;
-	FOR_ALL_IN(book_info, ptr)
-	{
-		int i = ptr - book_info;
-
-		/* Bad index. */
-		if (ptr->idx != i) quit_fmt("Book %d has index %d.", i, ptr->idx);
-
-		/* Bad value. */
-		if (!ptr->info || !ptr->flags) quit_fmt("Book %d is malformed.", i);
-	}
-}
-
-/*
  * Check various things about ma_blows[].
  */
 static void check_ma_blows(void)
@@ -1295,7 +1277,6 @@ static void check_arrays(void)
 	check_options();
 	check_skill_set();
 	check_activation_info();
-	check_book_info();
 	check_magic_info();
 	check_ma_blows();
 	check_feeling_str();
