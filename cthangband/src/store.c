@@ -2012,15 +2012,15 @@ static cptr store_title_aux(void)
 		object_aware(&tmp);
 
 			/* Hack - standardise the player's charisma. */
-			old_charisma = p_ptr->stat_use[A_CHR];
-			p_ptr->stat_use[A_CHR] = CHR_PRICE_COMPARE;
+			old_charisma = p_ptr->stat_ind[A_CHR];
+			p_ptr->stat_ind[A_CHR] = CHR_PRICE_COMPARE;
 
 		/* Show the max price in the store (above prices) */
 			out = format("%10s%-40s%s (%ld) [%ld]", "", tmp_str, store_name, (long)(ot_ptr->max_cost),
 			price_item(&tmp, ot_ptr->min_inflate, TRUE));
 
 			/* Hack - return real charisma. */
-			p_ptr->stat_use[A_CHR] = old_charisma;
+			p_ptr->stat_ind[A_CHR] = old_charisma;
 
 			string_free(tmp_str);
 		}

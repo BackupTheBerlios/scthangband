@@ -1841,7 +1841,7 @@ logaux(x, 1) logaux(x, 0) 255
  */
 #define TV_PRICE_COMPARE 90
 #define SV_PRICE_COMPARE 90
-#define CHR_PRICE_COMPARE 18 /* Gives an adj_chr_gold[] of 100%. */
+#define CHR_PRICE_COMPARE (18-3) /* Gives an adj_chr_gold[] of 100%. */
 
 /*
  * Handedness Values for Weapons
