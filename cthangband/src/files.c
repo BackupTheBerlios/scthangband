@@ -860,6 +860,8 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 
 				if (!(*op_ptr->parse)(op_ptr->var, zz[1]))
 					return "invalid value for option";
+
+				return SUCCESS;
 			}
 
 			return "no such option";
