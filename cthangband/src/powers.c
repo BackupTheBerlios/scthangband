@@ -788,7 +788,7 @@ static bool brand_bolts(void)
 
 
 
-void rustproof(void)
+static void rustproof(void)
 {
 	errr err;
 

@@ -428,7 +428,7 @@ static void wiz_display_item(object_type *o_ptr)
 /*
  * A list of tvals and their textual names
  */
-name_centry tval_names[] =
+static name_centry tval_names[] =
 {
 	{TV_SWORD,	"Sword"},
 	{TV_POLEARM,	"Pole-arm"},

@@ -1495,9 +1495,9 @@ extern s32b PURE object_value(object_ctype *o1_ptr, bool full);
 #if (defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern void set_stack_number(object_type *o_ptr);
 #endif
-#if (defined(OBJECT2_C))
-extern bool PURE same_stack(object_ctype *o_ptr, object_ctype *j_ptr);
-#endif
+
+
+
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr);
 #endif
@@ -1588,9 +1588,9 @@ extern void display_koff(int k_idx);
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(POWERS_C))
 extern cptr describe_power(int power, int lev);
 #endif
-#if (defined(POWERS_C))
-extern void rustproof(void);
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern void do_poly_wounds(int cause);
 #endif
@@ -3996,11 +3996,11 @@ extern void squelch_grid(void);
 extern void squelch_inventory(void);
 #endif
 
-/* cmd3.c */
 
-#if (defined(CMD3_C))
-extern bool item_tester_unhidden(object_ctype *o_ptr);
-#endif
+
+
+
+
 
 /* cmd4.c */
 
@@ -4023,11 +4023,11 @@ extern bool k_can_sense(int k_idx);
 extern void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 
+
+
+
 /* object2.c */
 
-#if (defined(OBJECT2_C))
-extern u16b merge_quarks(cptr s, cptr t);
-#endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C))
 extern bool PURE magic_can_curse(int k_idx);
 #endif
@@ -4038,11 +4038,11 @@ extern bool PURE magic_can_curse(int k_idx);
 extern cptr option_chars;
 #endif
 
-/* wizard2.c */
 
-#if (defined(ALLOW_WIZARD)) && (defined(WIZARD2_C))
-extern name_centry tval_names[];
-#endif
+
+
+
+
 
 /* object1.c */
 

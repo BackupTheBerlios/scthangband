@@ -1404,7 +1404,7 @@ void set_stack_number(object_type *o_ptr)
 /*
  * Return TRUE if the specified objects came from the same stack originally.
  */
-bool PURE same_stack(object_ctype *o_ptr, object_ctype *j_ptr)
+static bool PURE same_stack(object_ctype *o_ptr, object_ctype *j_ptr)
 {
 	return (o_ptr->stack && o_ptr->stack == j_ptr->stack);
 }
@@ -1626,7 +1626,7 @@ static PURE byte merge_discounts(object_ctype *o_ptr, object_ctype *j_ptr)
  * Combine two strings, adding a space between them if necessary, and return
  * as a quark.
  */
-u16b merge_quarks(cptr s, cptr t)
+static u16b merge_quarks(cptr s, cptr t)
 {
 	assert(s && t); /* quark_str() does not return 0. */
 
