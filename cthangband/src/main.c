@@ -346,6 +346,37 @@ static void change_path(cptr info)
 
 
 /*
+ * Dump usage information and quit.
+ */
+static void show_usage(void)
+{
+	int i;
+
+	printf("Usage: %s [options] [-- subopts]\n", argv0);
+	puts("  -n       Start a new character");
+	puts("  -f       Request fiddle (verbose) mode");
+	puts("  -w       Request wizard mode");
+	puts("  -v       Request sound mode");
+	puts("  -g       Request graphics mode");
+	puts("  -o       Request original keyset (default) ");
+	puts("  -r       Request rogue-like keyset");
+	puts("  -s<num>  Show <num> high scores");
+	puts("  -u<who>  Use your <who> savefile");
+	puts("  -d<def>  Define a 'lib' dir sub-path");
+	puts("  -m<sys>  Force 'main-<sys>.c' usage");
+
+	/* Print the name and help for each available module */
+	for (i = 0; i < (int)N_ELEMENTS(modules); i++)
+	{
+		printf("     %s   %s\n",
+		       modules[i].name, modules[i].help);
+	}
+
+	/* Actually abort the process */
+	quit(NULL);
+}
+
+/*
  * Simple "main" function for multiple platforms.
  *
  * Note the special "--" option which terminates the processing of
@@ -476,84 +507,91 @@ int main(int argc, char *argv[])
 		cptr arg = argv[i];
 
 		/* Require proper options */
-		if (*arg++ != '-') goto usage;
+		if (*arg++ != '-') show_usage();
+
+		puts(arg);
+
+		/* Check option format */
+		switch (FORCELOWER(*arg))
+		{
+			/* Some never take an argument. */
+			case 'n': case 'f': case 'v': case 'g': case 'r': case 'o': case '-':
+			{
+				if (arg[1] != '\0') show_usage();
+				break;
+			}
+			/* Some always take an argument. */
+			case 'u': case 'm': case 'd':
+			{
+				if (arg[1] == '\0') show_usage();
+				break;
+			}
+			/* 's' can either take or not take an argument. */
+			case 's':
+			{
+				break;
+			}
+			/* Nothing else is understood by the parser. */
+			default:
+			{
+				show_usage();
+			}
+		}
 
 		/* Analyze option */
-		switch (*arg++)
+		switch (FORCELOWER(*arg))
 		{
-			case 'N':
 			case 'n':
 			{
 				new_game = TRUE;
 				break;
 			}
-
-			case 'F':
 			case 'f':
 			{
 				arg_fiddle = TRUE;
 				break;
 			}
-
-			case 'V':
 			case 'v':
 			{
 				arg_sound = TRUE;
 				break;
 			}
-
-			case 'G':
 			case 'g':
 			{
 				arg_graphics = TRUE;
 				break;
 			}
-
-			case 'R':
 			case 'r':
 			{
 				arg_force_roguelike = TRUE;
 				break;
 			}
-
-			case 'O':
 			case 'o':
 			{
 				arg_force_original = TRUE;
 				break;
 			}
-
-			case 'S':
 			case 's':
 			{
-				show_score = atoi(arg);
+				show_score = atoi(arg+1);
 				if (show_score <= 0) show_score = 10;
 				break;
 			}
-
 			case 'u':
-			case 'U':
 			{
-				if (!*arg) goto usage;
-				sprintf(player_name, "%.*s", NAME_LEN-1, arg);
+				sprintf(player_name, "%.*s", NAME_LEN-1, arg+1);
 				break;
 			}
-
 			case 'm':
-			case 'M':
 			{
-				if (!*arg) goto usage;
-				mstr = arg;
+				mstr = arg+1;
 				break;
 			}
-
 			case 'd':
-			case 'D':
 			{
-				change_path(arg);
+				change_path(arg+1);
 				break;
 			}
-
 			case '-':
 			{
 				argv[i] = argv[0];
@@ -562,36 +600,7 @@ int main(int argc, char *argv[])
 				args = FALSE;
 				break;
 			}
-
-			default:
-			usage:
-			{
-				/* Dump usage information */
-				printf("Usage: %s [options] [-- subopts]\n", *argv);
-				puts("  -n       Start a new character");
-				puts("  -f       Request fiddle (verbose) mode");
-				puts("  -w       Request wizard mode");
-				puts("  -v       Request sound mode");
-				puts("  -g       Request graphics mode");
-				puts("  -o       Request original keyset (default) ");
-				puts("  -r       Request rogue-like keyset");
-				puts("  -s<num>  Show <num> high scores");
-				puts("  -u<who>  Use your <who> savefile");
-				puts("  -d<def>  Define a 'lib' dir sub-path");
-				puts("  -m<sys>  Force 'main-<sys>.c' usage");
-
-				/* Print the name and help for each available module */
-				for (i = 0; i < (int)N_ELEMENTS(modules); i++)
-				{
-					printf("     %s   %s\n",
-					       modules[i].name, modules[i].help);
-				}
-
-				/* Actually abort the process */
-				quit(NULL);
-			}
 		}
-		if (*arg) goto usage;
 	}
 
 	/* Hack -- Forget standard args */
