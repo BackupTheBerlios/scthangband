@@ -4007,4 +4007,7 @@ extern cptr safe_string_make(cptr str);
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(WIZARD2_C))
 extern bool PURE cave_empty_bold_p(int y, int  x);
 #endif
+#if (defined(DUNGEON_C) || defined(GENERATE_C))
+extern bool PURE daytime_p(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

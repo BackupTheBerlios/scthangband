@@ -582,6 +582,12 @@ static int terrain_table[6][9] =
 };
 
 
+bool PURE daytime_p(void)
+{
+	return ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2));
+}
+
+
 /*
  * Generate a terrain level using ``plasma'' fractals.
  *
@@ -1150,7 +1156,7 @@ static void terrain_gen(void)
 	}
 
 	/* Day Light */
-	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
+	if (daytime_p())
 	{
 		/* Lite up the town */
 		for (y = 0; y < cur_hgt; y++)
@@ -5089,7 +5095,7 @@ static void town_gen(void)
 
 
 	/* Day Light */
-	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
+	if (daytime_p())
 	{
 		/* Lite up the town */
 		for (y = 0; y < cur_hgt; y++)

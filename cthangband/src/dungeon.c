@@ -973,9 +973,10 @@ static void process_midnight(const int day)
 /*
  * Handle sunrise and sunset.
  */
-static void process_sun(const bool dawn)
+static void process_sun(void)
 {
 	int x, y;
+	const bool dawn = daytime_p();
 	cptr msg = (dawn) ? "risen" : "set";
 
 	/* No sun underground, and towers are all windowless. */
@@ -1085,19 +1086,14 @@ static void process_time(void)
 	/* Check the date every six hours. */
 	switch (turn % (10L * TOWN_DAWN))
 	{
-		case 0:
+		case 0: case ((20L*TOWN_DAWN)/4):
 		{
-			process_sun(TRUE);
+			process_sun();
 			break;
 		}
 		case ((10L*TOWN_DAWN)/4):
 		{
 			process_midday(day);
-			break;
-		}
-		case ((20L*TOWN_DAWN)/4):
-		{
-			process_sun(FALSE);
 			break;
 		}
 		case ((30L*TOWN_DAWN)/4):
@@ -1191,7 +1187,7 @@ static bool process_damage_sunlight(void)
 	if (p_ptr->prace != RACE_VAMPIRE) return FALSE;
 
 	/* Only happens on the surface during the day. */
-	if (dun_level || (turn / ((10L * TOWN_DAWN)/2)) % 2) return FALSE;
+	if (dun_level || !daytime_p()) return FALSE;
 
 	/* Resistance prevents all ill effects. */
 	if (p_ptr->resist_lite || p_ptr->invuln) return FALSE;
