@@ -6666,7 +6666,7 @@ static void process_monster(int m_idx, bool is_friend)
 						if (testing_carry)
 						{
 							/* Excise the object */
-							excise_object_idx(this_o_idx);
+							excise_dun_object(o_ptr);
 
 							/* Forget mark */
 							o_ptr->marked = FALSE;
@@ -6688,7 +6688,7 @@ static void process_monster(int m_idx, bool is_friend)
 						else
 						{
 							/* Delete the object */
-							delete_object_idx(this_o_idx);
+							delete_dun_object(o_ptr);
 						}
 					}
 
@@ -6706,7 +6706,7 @@ static void process_monster(int m_idx, bool is_friend)
 						}
 
 						/* Delete the object */
-						delete_object_idx(this_o_idx);
+						delete_dun_object(o_ptr);
 					}
 					TFREE(o_name);
 					TFREE(m_name);

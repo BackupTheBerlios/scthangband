@@ -694,7 +694,7 @@ void delete_monster_idx(int i,bool visibly)
 		o_ptr->held_m_idx = 0;
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx);
+		delete_dun_object(o_ptr);
 	}
 
 

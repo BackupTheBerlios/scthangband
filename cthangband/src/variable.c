@@ -403,7 +403,7 @@ s16b object_kind_idx;
 /*
  * Object to track
  */
-s16b object_idx;
+object_type *tracked_o_ptr;
 
 /*
  * User info

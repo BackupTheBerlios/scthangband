@@ -2280,7 +2280,7 @@ void monster_death(int m_idx)
 		object_copy(q_ptr, o_ptr);
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx);
+		delete_dun_object(o_ptr);
 
 		/* Drop it */
 		drop_near(q_ptr, -1, y, x);

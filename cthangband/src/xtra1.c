@@ -3514,13 +3514,16 @@ static void win_object_display(void)
  */
 static bool win_object_details_good(void)
 {
-	object_type *o_ptr = cnv_idx_to_obj(object_idx);
+	object_type *o_ptr = tracked_o_ptr;
 
 	/* Non-objects are boring. */
 	if (!o_ptr || !(o_ptr->k_idx)) return FALSE;
 
 	/* Invisible floor objects are boring. */
-	if (object_idx < 0 && !los(py, px, o_ptr->iy, o_ptr->ix)) return FALSE;
+	if (is_floor_item_p(o_ptr) && !los(py, px, o_ptr->iy, o_ptr->ix))
+	{
+		return FALSE;
+	}
 
 	/* Other objects are interesting. */
 	return TRUE;
@@ -3528,26 +3531,23 @@ static bool win_object_details_good(void)
 
 static void win_object_details_display(void)
 {
-	object_type *o_ptr = cnv_idx_to_obj(object_idx);
-	C_TNEW(o_name, ONAME_MAX, char);
-	
+	object_type *o_ptr = tracked_o_ptr;
+
 	/* Never display non-objects. */
 	if (!o_ptr || !(o_ptr->k_idx)) return;
 	
 	/* Never display invisible floor objects */
-	if (object_idx < 0 && !los(py, px, o_ptr->iy, o_ptr->ix)) return;
+	if (is_floor_item_p(o_ptr) && !los(py, px, o_ptr->iy, o_ptr->ix)) return;
 	
 	/* Describe fully. */
 	identify_fully_aux(o_ptr, 2);
 	
 	/* Put the name at the top. */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-	Term_putstr(2, 0, Term->wid-2, TERM_WHITE, o_name);
+	Term_putstr(2, 0, Term->wid-2, TERM_WHITE,
+		format("%v", object_desc_f3, o_ptr, TRUE, 3));
 
 	/* Put the character used at the top. */
 	Term_putch(0, 0, object_attr(o_ptr), object_char(o_ptr));
-
-	TFREE(o_name);
 }
 
 /* The option currently selected */

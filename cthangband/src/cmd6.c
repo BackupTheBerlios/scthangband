@@ -2141,7 +2141,6 @@ static int choose_random_wand(void)
  */
 void do_cmd_aim_wand(object_type *o_ptr)
 {
-	int item;
 	int			ident, k_idx, dir;
 
 
@@ -2491,7 +2490,7 @@ void do_cmd_aim_wand(object_type *o_ptr)
 		/* Unstack the used item */
 		o_ptr->number--;
 		total_weight -= q_ptr->weight;
-		item = inven_carry(q_ptr);
+		inven_carry(q_ptr);
 
 		/* Message */
 		msg_print("You unstack your wand.");

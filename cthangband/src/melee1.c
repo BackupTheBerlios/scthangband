@@ -696,24 +696,19 @@ bool make_attack_normal(int m_idx)
 						/* Message */
 						msg_format("%sour %s (%c) was stolen!",
 						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           o_name, index_to_label(i));
+						           o_name, index_to_label(o_ptr));
 
 						/* Option */
 						if (testing_carry)
 						{
-							s16b o_idx;
+							object_type *j_ptr;
 
 							/* Make an object */
-							o_idx = o_pop();
+							j_ptr = o_pop();
 
 							/* Success */
-							if (o_idx)
+							if (j_ptr)
 							{
-								object_type *j_ptr;
-
-								/* Get new object */
-								j_ptr = &o_list[o_idx];
-
 								/* Copy object */
 								object_copy(j_ptr, o_ptr);
 
@@ -730,7 +725,7 @@ bool make_attack_normal(int m_idx)
 								j_ptr->next_o_idx = m_ptr->hold_o_idx;
 
 								/* Build stack */
-								m_ptr->hold_o_idx = o_idx;
+								m_ptr->hold_o_idx = j_ptr - o_list;
 							}
                         }
 
@@ -740,21 +735,17 @@ bool make_attack_normal(int m_idx)
                             if (strstr(format("%v", monster_desc_aux_f3, r_ptr,
 								1, 0), "black market") && randint(2)!=1)
                                 {
-                                s16b o_idx;
+                                   object_type *j_ptr;
 
                                 /* Make an object */
-                                o_idx = o_pop();
+                                j_ptr = o_pop();
 
                                 /* Success */
-                                if (o_idx)
+                                if (j_ptr)
                                  {
-                                    object_type *j_ptr;
                                     if (cheat_xtra || cheat_peek)
                                           msg_print("Moving object to black market...");
 
-
-                                    /* Get new object */
-                                    j_ptr = &o_list[o_idx];
 
                                     /* Copy object */
                                     object_copy(j_ptr, o_ptr);
@@ -814,7 +805,7 @@ bool make_attack_normal(int m_idx)
 						/* Message */
 						msg_format("%sour %s (%c) was eaten!",
 						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           o_name, index_to_label(i));
+						           o_name, index_to_label(o_ptr));
 
 						/* Steal the items */
 						item_increase(o_ptr, -1);

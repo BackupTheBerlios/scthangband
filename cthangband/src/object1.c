@@ -3408,8 +3408,10 @@ void identify_fully_file(object_type *o_ptr, FILE *fff)
  * Convert an inventory index into a one character label
  * Note that the label does NOT distinguish inven/equip.
  */
-s16b index_to_label(int i)
+s16b index_to_label(object_type *o_ptr)
 {
+	int i = o_ptr - inventory;
+
 	/* Indexes for "inven" are easy */
 	if (i < INVEN_WIELD) return (I2A(i));
 
@@ -3630,57 +3632,51 @@ static cptr mention_use(int i)
  * Return a string describing how a given item is being worn.
  * Currently, only used for items in the equipment, not inventory.
  */
-cptr describe_use(int i)
+cptr describe_use(object_type *o_ptr)
 {
-	cptr p;
-
-	switch (i)
+	switch (o_ptr - inventory)
 	{
-		case INVEN_WIELD: p = "attacking monsters with"; break;
-		case INVEN_BOW:   p = "shooting missiles with"; break;
-		case INVEN_LEFT:  p = "wearing on your left hand"; break;
-		case INVEN_RIGHT: p = "wearing on your right hand"; break;
-		case INVEN_NECK:  p = "wearing around your neck"; break;
-		case INVEN_LITE:  p = "using to light the way"; break;
-		case INVEN_BODY:  p = "wearing on your body"; break;
-		case INVEN_OUTER: p = "wearing on your back"; break;
-		case INVEN_ARM:   p = "wearing on your arm"; break;
-		case INVEN_HEAD:  p = "wearing on your head"; break;
-		case INVEN_HANDS: p = "wearing on your hands"; break;
-		case INVEN_FEET:  p = "wearing on your feet"; break;
-		case INVEN_POUCH_1: p = "carrying in a pouch";break;
-		case INVEN_POUCH_2: p = "carrying in a pouch";break;
-		case INVEN_POUCH_3: p = "carrying in a pouch";break;
-		case INVEN_POUCH_4: p = "carrying in a pouch";break;
-		case INVEN_POUCH_5: p = "carrying in a pouch";break;
-		case INVEN_POUCH_6: p = "carrying in a pouch";break;
-		default:          p = "carrying in your pack"; break;
-	}
-
-	/* Hack -- Heavy weapon */
-	if (i == INVEN_WIELD)
-	{
-		object_type *o_ptr;
-		o_ptr = &inventory[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+		case INVEN_WIELD:
 		{
-			p = "just lifting";
+			if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+			{
+				return "just lifting";
+			}
+			else
+			{
+				return "attacking monsters with";
+			}
 		}
-	}
-
-	/* Hack -- Heavy bow */
-	if (i == INVEN_BOW)
-	{
-		object_type *o_ptr;
-		o_ptr = &inventory[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+		case INVEN_BOW:
 		{
-			p = "just holding";
+			if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
+			{
+				return "just holding";
+			}
+			else
+			{
+				return "shooting missiles with";
+			}
 		}
-	}
 
-	/* Return the result */
-	return p;
+		case INVEN_LEFT:  return "wearing on your left hand";
+		case INVEN_RIGHT: return "wearing on your right hand";
+		case INVEN_NECK:  return "wearing around your neck";
+		case INVEN_LITE:  return "using to light the way";
+		case INVEN_BODY:  return "wearing on your body";
+		case INVEN_OUTER: return "wearing on your back";
+		case INVEN_ARM:   return "wearing on your arm";
+		case INVEN_HEAD:  return "wearing on your head";
+		case INVEN_HANDS: return "wearing on your hands";
+		case INVEN_FEET:  return "wearing on your feet";
+		case INVEN_POUCH_1: return "carrying in a pouch";
+		case INVEN_POUCH_2: return "carrying in a pouch";
+		case INVEN_POUCH_3: return "carrying in a pouch";
+		case INVEN_POUCH_4: return "carrying in a pouch";
+		case INVEN_POUCH_5: return "carrying in a pouch";
+		case INVEN_POUCH_6: return "carrying in a pouch";
+		default:          return "carrying in your pack";
+	}
 }
 
 /*
@@ -3754,7 +3750,7 @@ void display_inven(void)
 
 		/* Display the index if this item is "acceptable" */
 		if (item_tester_okay(o_ptr))
-			put_str(format("%c) ", index_to_label(i)), i, 0);
+			put_str(format("%c) ", index_to_label(o_ptr)), i, 0);
 
 		/* Get a color */
 		attr = tval_to_attr[o_ptr->tval % 128];
@@ -3793,7 +3789,7 @@ void display_equip(void)
 
 		/* Display the index if this item is "acceptable" */
 		if (item_tester_okay(o_ptr))
-			put_str(format("%c) ", index_to_label(i)), i, 0);
+			put_str(format("%c) ", index_to_label(o_ptr)), i, 0);
 
 		/* Get the color */
 		attr = tval_to_attr[o_ptr->tval % 128];
@@ -3928,7 +3924,7 @@ void show_inven(void)
 		prt("", j + 1, col ? col - 2 : col);
 
 		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", index_to_label(i));
+		sprintf(tmp_val, "%c)", index_to_label(o_ptr));
 
 		/* Clear the line with the (possibly indented) index */
 		put_str(tmp_val, j + 1, col);
@@ -4064,7 +4060,7 @@ void show_equip(void)
 		prt("", j + 1, col ? col - 2 : col);
 
 		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", index_to_label(i));
+		sprintf(tmp_val, "%c)", index_to_label(o_ptr));
 
 		/* Clear the line with the (possibly indented) index */
 		put_str(tmp_val, j+1, col);
@@ -4117,6 +4113,48 @@ void show_equip(void)
 	/* Clean up. */
 	for (k = 0; k < 23; k++) string_free(out_desc[k]);
 	TFREE(o_name);
+}
+
+
+
+/*
+ * Returns the object referred to by the given object_idx.
+ */
+static object_type *cnv_idx_to_obj(s16b index)
+{
+	if (index < 0)
+	{
+		return &o_list[-index];
+	}
+	else if (index < INVEN_TOTAL)
+	{
+		return &inventory[index];
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+
+/*
+ * Returns the object_idx appropriate for a given item.
+ */
+static s16b cnv_obj_to_idx(object_type *o_ptr)
+{
+	if (o_ptr >= inventory && o_ptr-inventory < INVEN_TOTAL)
+	{
+		return o_ptr-inventory;
+	}
+	else if (o_ptr >= o_list && o_ptr-o_list < MAX_O_IDX)
+	{
+		return o_list-o_ptr;
+	}
+	else
+	{
+		return INVEN_TOTAL;
+	}
 }
 
 
@@ -4266,11 +4304,8 @@ static object_type *get_tag(char tag, char cmd)
  * use of "capital" letters will "examine" an inventory/equipment item,
  * and prompt for its use.
  *
- * If a legal item is selected, we save it in "cp" and return a pointer to it.
- * If this "legal" item is on the floor, we use a "cp" equal to zero
- * minus the dungeon index of the item on the floor.
- *
- * Otherwise, we return NULL, and set "cp" to an error code above.
+ * If a legal item is selected, we set "err" to 0 and return a pointer to it.
+ * Otherwise, we return NULL, and set "err" to an error code above.
  *
  * Global "command_new" is used when viewing the inventory or equipment
  * to allow the user to enter a command while viewing those screens, and
@@ -4481,26 +4516,22 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 		}
 
+		/* Extract the legal requests */
+		n1 = index_to_label(i1);
+		n2 = index_to_label(i2);
+		
+		/* Only show a prompt. */
+		if (!command_see);
+
 		/* Inventory screen */
-		if (!command_wrk)
+		else if (!command_wrk)
 		{
-			/* Extract the legal requests */
-			n1 = I2A(cnv_obj_to_idx(i1));
-			n2 = I2A(cnv_obj_to_idx(i2));
-
-			/* Redraw if needed */
-			if (command_see) show_inven();
+			show_inven();
 		}
-
 		/* Equipment screen */
 		else
 		{
-			/* Extract the legal requests */
-			n1 = I2A(cnv_obj_to_idx(e1) - INVEN_WIELD);
-			n2 = I2A(cnv_obj_to_idx(e1) - INVEN_WIELD);
-
-			/* Redraw if needed */
-			if (command_see) show_equip();
+			show_equip();
 		}
 
 		/* Viewing inventory */
@@ -4513,8 +4544,8 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			if (i1 <= i2)
 			{
 				/* Build the prompt */
-				sprintf(tmp_val, " %c-%c,", index_to_label(cnv_obj_to_idx(i1)),
-					index_to_label(cnv_obj_to_idx(i1)));
+				sprintf(tmp_val, " %c-%c,", index_to_label(i1),
+					index_to_label(i1));
 
 				/* Append */
 				strcat(out_val, tmp_val);
@@ -4537,8 +4568,8 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			if (e1 <= e2)
 			{
 				/* Build the prompt */
-				sprintf(tmp_val, " %c-%c,", index_to_label(cnv_obj_to_idx(e1)),
-					index_to_label(cnv_obj_to_idx(e1)));
+				sprintf(tmp_val, " %c-%c,", index_to_label(e1),
+					index_to_label(e1));
 
 				/* Append */
 				strcat(out_val, tmp_val);
@@ -4788,7 +4819,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				{
 					bool upper = isupper(which);
 					/* Continue, preserving case */
-					which = index_to_label(cnv_obj_to_idx(o_ptr));
+					which = index_to_label(o_ptr);
 					if (upper) which += 'A'-'a';
 				}
 			}
@@ -4843,7 +4874,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				{
 					bool upper = isupper(which);
 					/* Continue, preserving case */
-					which = index_to_label(cnv_obj_to_idx(best));
+					which = index_to_label(best);
 					if (upper) which += 'A'-'a';
 				}
 			}

@@ -148,12 +148,8 @@ static bool item_tester_hook_wear(object_type *o_ptr)
 void do_cmd_wield(void)
 {
 	errr err;
-	int  slot;
-
 	object_type forge;
-	object_type *q_ptr;
-
-	object_type *o_ptr;
+	object_type *q_ptr, *o_ptr, *j_ptr;
 
 	cptr act;
 
@@ -170,14 +166,14 @@ void do_cmd_wield(void)
 
 
 	/* Check the slot */
-	slot = wield_slot(o_ptr);
+	j_ptr = inventory + wield_slot(o_ptr);
 
 	/* Prevent wielding into a cursed slot */
-	if (cursed_p(&inventory[slot]))
+	if (cursed_p(j_ptr))
 	{
 		/* Message */
 		msg_format("The %v you are %s appears to be cursed.", object_desc_f3,
-			&inventory[slot], FALSE, 0, describe_use(slot));
+			j_ptr, FALSE, 0, describe_use(j_ptr));
 
 		/* Cancel the command */
 		return;
@@ -219,13 +215,13 @@ void do_cmd_wield(void)
 	item_optimize(o_ptr);
 
 	/* Access the wield slot */
-	o_ptr = &inventory[slot];
+	o_ptr = j_ptr;
 
 	/* Take off existing item */
 	if (o_ptr->k_idx)
 	{
 		/* Take off existing item */
-		(void)inven_takeoff(slot, 255);
+		(void)inven_takeoff(o_ptr, 255);
 	}
 
 	/* Wear the new stuff */
@@ -238,30 +234,20 @@ void do_cmd_wield(void)
 	equip_cnt++;
 
 	/* Where is the item now */
-	if (slot == INVEN_WIELD)
+	switch (j_ptr - inventory)
 	{
-		act = "You are wielding";
-	}
-	else if (slot == INVEN_BOW)
-	{
-		act = "You are shooting with";
-	}
-	else if (slot == INVEN_LITE)
-	{
-		act = "Your light source is";
-	}
-	else if (slot >= INVEN_POUCH_1)
-	{
-		act = "You have readied";
-	}
-	else
-	{
-		act = "You are wearing";
+		case INVEN_WIELD: act = "You are wielding"; break;
+		case INVEN_BOW: act = "You are shooting with"; break;
+		case INVEN_LITE: act = "Your light source is"; break;
+		case INVEN_POUCH_1: case INVEN_POUCH_2: case INVEN_POUCH_3:
+		case INVEN_POUCH_4: case INVEN_POUCH_5: case INVEN_POUCH_6:
+			act = "You have readied"; break;
+		default: act = "You are wearing";
 	}
 
 	/* Message */
 	msg_format("%s %v (%c).", act,
-		object_desc_f3, o_ptr, TRUE, 3, index_to_label(slot));
+		object_desc_f3, o_ptr, TRUE, 3, index_to_label(o_ptr));
 
 	/* Auto-curse */
 	{
@@ -342,7 +328,7 @@ void do_cmd_takeoff(void)
 	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Take off the item */
-	(void)inven_takeoff(cnv_obj_to_idx(o_ptr), 255);
+	(void)inven_takeoff(o_ptr, 255);
 
     p_ptr->redraw |= (PR_EQUIPPY);
 }
@@ -392,7 +378,7 @@ void do_cmd_drop(void)
 	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 	/* Drop (some of) the item */
-	inven_drop(cnv_obj_to_idx(o_ptr), amt);
+	inven_drop(o_ptr, amt);
 
     p_ptr->redraw |= (PR_EQUIPPY);
 }
@@ -1481,8 +1467,8 @@ void do_cmd_handle(void)
 		}
 	case TV_CHARM:
 	{
-		int item = cnv_obj_to_idx(o_ptr);
-		get_cantrip(&item, k_info[o_ptr->k_idx].extra);
+		int i;
+		get_cantrip(&i, k_info[o_ptr->k_idx].extra);
 		break;
 	}
 	default:

@@ -3653,7 +3653,7 @@ next_cave:
 		{
 			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[i], TRUE, 3);
 			fprintf(fff, "%c%s %s\n",
-			        index_to_label(i), paren, o_name);
+			        index_to_label(&inventory[i]), paren, o_name);
 
 			/* Describe random object attributes */
 			identify_fully_file(inventory+i, fff);
@@ -3667,7 +3667,7 @@ next_cave:
 	{
 		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[i], TRUE, 3);
 		fprintf(fff, "%c%s %s\n",
-		        index_to_label(i), paren, o_name);
+		        index_to_label(&inventory[i]), paren, o_name);
 
 		/* Describe random object attributes */
 		identify_fully_file(inventory+i, fff);

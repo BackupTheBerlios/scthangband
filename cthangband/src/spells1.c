@@ -957,7 +957,7 @@ static int inven_damage(inven_func typ, int perc)
 					   ((o_ptr->number > 1) ?
 					    ((amt == o_ptr->number) ? "All of y" :
 					     (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-					   o_name, index_to_label(i),
+					   o_name, index_to_label(o_ptr),
 					   ((amt > 1) ? "were" : "was"));
 
                    /* Potions smash open */
@@ -1459,7 +1459,7 @@ bool apply_disenchant(int mode)
 	{
 		/* Message */
 		msg_format("Your %s (%c) resist%s disenchantment!",
-			   o_name, index_to_label(t),
+			   o_name, index_to_label(o_ptr),
 			   ((o_ptr->number != 1) ? "" : "s"));
 
 		TFREE(o_name);
@@ -1485,7 +1485,7 @@ bool apply_disenchant(int mode)
 
 	/* Message */
 	msg_format("Your %s (%c) %s disenchanted!",
-		   o_name, index_to_label(t),
+		   o_name, index_to_label(o_ptr),
 		   ((o_ptr->number != 1) ? "were" : "was"));
 
 	/* Recalculate bonuses */
@@ -2254,7 +2254,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
 
 				/* Delete the object */
-				delete_object_idx(this_o_idx);
+				delete_dun_object(o_ptr);
 
                    /* Potions produce effects when 'shattered' */
                    if (is_potion) {

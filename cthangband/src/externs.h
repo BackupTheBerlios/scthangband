@@ -110,12 +110,12 @@ extern void monster_race_track(int r_idx);
 #if (defined(CAVE_C) || defined(CMD5_C))
 extern void object_kind_track(int k_idx);
 #endif
-#if (defined(CAVE_C) || defined(OBJECT1_C) || defined(XTRA1_C))
-extern object_type *cnv_idx_to_obj(s16b index);
-#endif
-#if (defined(CAVE_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern s16b cnv_obj_to_idx(object_type *o_ptr);
-#endif
+
+
+
+
+
+
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(XTRA2_C))
 extern void object_track(object_type *o_ptr);
 #endif
@@ -1448,13 +1448,13 @@ extern bool identify_fully_aux(object_type *o_ptr, byte flags);
 extern void identify_fully_file(object_type *o_ptr, FILE *fff);
 #endif
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern s16b index_to_label(int i);
+extern s16b index_to_label(object_type *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA1_C))
 extern s16b wield_slot(object_type *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
-extern cptr describe_use(int i);
+extern cptr describe_use(object_type *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT1_C))
 extern bool item_tester_okay(object_type *o_ptr);
@@ -1478,10 +1478,10 @@ extern object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool f
 /* object2.c */
 
 #if (defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT2_C))
-extern void excise_object_idx(int o_idx);
+extern void excise_dun_object(object_type *j_ptr);
 #endif
 #if (defined(CMD1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
-extern void delete_object_idx(int o_idx);
+extern void delete_dun_object(object_type *j_ptr);
 #endif
 #if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS2_C))
 extern void delete_object(int y, int x);
@@ -1496,7 +1496,7 @@ extern void compact_objects(int size);
 extern void wipe_o_list(void);
 #endif
 #if (defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT2_C))
-extern s16b o_pop(void);
+extern object_type *o_pop(void);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern s16b get_obj_num(int level);
@@ -1556,7 +1556,7 @@ extern bool make_gold(object_type *j_ptr);
 extern void place_gold(int y, int x);
 #endif
 #if (defined(CMD2_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern s16b drop_near(object_type *j_ptr, int chance, int y, int x);
+extern object_type *drop_near(object_type *j_ptr, int chance, int y, int x);
 #endif
 #if (defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(XTRA2_C))
 extern void acquirement(int y1, int x1, int num, bool great);
@@ -1583,13 +1583,13 @@ extern void item_optimize(object_type *o_ptr);
 extern bool inven_carry_okay(object_type *o_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(STORE_C))
-extern s16b inven_carry(object_type *o_ptr);
+extern object_type *inven_carry(object_type *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT2_C))
-extern s16b inven_takeoff(int item, int amt);
+extern object_type *inven_takeoff(object_type *o_ptr, int amt);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C) || defined(OBJECT2_C))
-extern void inven_drop(int item, int amt);
+extern void inven_drop(object_type *o_ptr, int amt);
 #endif
 #if (defined(OBJECT2_C) || defined(XTRA1_C))
 extern void combine_pack(void);
@@ -3122,7 +3122,7 @@ extern s16b monster_race_idx;
 extern s16b object_kind_idx;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern s16b object_idx;
+extern object_type *tracked_o_ptr;
 #endif
 #if (defined(FILES_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern int player_uid;
@@ -3238,7 +3238,7 @@ extern monster_type *m_list;
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern store_type *store;
 #endif
-#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern object_type *inventory;
 #endif
 #if (defined(INIT2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
@@ -3769,7 +3769,7 @@ extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
 #if (defined(OBJECT1_C) || defined(UTIL_C) || defined(Z_FORM_C))
 extern char *vformat(cptr fmt, va_list vp);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern uint strnfmt(char *buf, uint max, cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))

@@ -2964,7 +2964,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 static void store_purchase_aux(char *o_name)
 {
 	int i, amt, choice;
-	int item, item_new;
+	int item;
 
 	s32b price, best;
 
@@ -3151,14 +3151,14 @@ static void store_purchase_aux(char *o_name)
 				j_ptr->note = 0;
 
 				/* Give it to the player */
-				item_new = inven_carry(j_ptr);
+				j_ptr = inven_carry(j_ptr);
 
 				/* Describe the final result */
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[item_new], TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
 
 				/* Message */
 				msg_format("You have %s (%c).",
-				           o_name, index_to_label(item_new));
+				           o_name, index_to_label(j_ptr));
 
 				/* Handle stuff */
 				handle_stuff();
@@ -3231,13 +3231,13 @@ static void store_purchase_aux(char *o_name)
 	else
 	{
 		/* Give it to the player */
-		item_new = inven_carry(j_ptr);
+		j_ptr = inven_carry(j_ptr);
 
 		/* Describe just the result */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[item_new], TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
 
 		/* Message */
-		msg_format("You have %s (%c).", o_name, index_to_label(item_new));
+		msg_format("You have %s (%c).", o_name, index_to_label(j_ptr));
 
 		/* Handle stuff */
 		handle_stuff();
@@ -3366,7 +3366,7 @@ static void store_sell_aux(char *o_name)
 		/* Describe the transaction */
 		if (!auto_haggle || verbose_haggle)
 		{
-		msg_format("Selling %s (%c).", o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
+		msg_format("Selling %s (%c).", o_name, index_to_label(o_ptr));
 		msg_print(NULL);
 		}
 
@@ -3481,7 +3481,7 @@ static void store_sell_aux(char *o_name)
 	else
 	{
 		/* Describe */
-		msg_format("You drop %s (%c).", o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
+		msg_format("You drop %s (%c).", o_name, index_to_label(o_ptr));
 
 		/* Take it from the players inventory */
 		item_increase(o_ptr, -amt);
@@ -4623,7 +4623,7 @@ void do_cmd_store(void)
 				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 
 				/* Message */
-				msg_format("You drop %s (%c).", o_name, index_to_label(item));
+				msg_format("You drop %s (%c).", o_name, index_to_label(o_ptr));
 
 				/* Remove it from the players inventory */
 				item_increase(o_ptr, -255);

@@ -572,7 +572,7 @@ void carry(int pickup)
 			p_ptr->window |= (PW_PLAYER);
 
 			/* Delete the gold */
-			delete_object_idx(this_o_idx);
+			delete_dun_object(o_ptr);
 		}
 
 		/* gold_only cancels the collection of objects, but gold is picked up
@@ -620,23 +620,18 @@ void carry(int pickup)
 				/* Attempt to pick up an object. */
 				if (okay)
 				{
-					int slot;
-
 					/* Carry the item */
-					slot = inven_carry(o_ptr);
-
-					/* Get the item again */
-					o_ptr = &inventory[slot];
+					o_ptr = inven_carry(o_ptr);
 
 					/* Message */
 					msg_format("You have %v (%c).",
-						object_desc_f3, o_ptr, TRUE, 3, index_to_label(slot));
+						object_desc_f3, o_ptr, TRUE, 3, index_to_label(o_ptr));
 
 					/* Remember the object */
 					object_track(o_ptr);
 
 					/* Delete the object */
-					delete_object_idx(this_o_idx);
+					delete_dun_object(o_ptr);
 				}
 			}
 		}

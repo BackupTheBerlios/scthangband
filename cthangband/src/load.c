@@ -343,7 +343,7 @@ static void rd_item(object_type *o_ptr)
 	if (o_ptr->k_idx < 0 || o_ptr->k_idx >= MAX_K_IDX)
 	{
 		note("Destroying object with a bad k_idx.");
-		excise_object_idx(o_ptr-o_list);
+		excise_dun_object(o_ptr);
 		object_wipe(o_ptr);
 		return;
 	}
@@ -1580,13 +1580,17 @@ func_false();
 	/* Read the dungeon items */
 	for (i = 1; i < MIN(limit, MAX_O_IDX); i++)
 	{
+		
 		int o_idx;
 
 		object_type *o_ptr;
 
 
 		/* Get a new record */
-		o_idx = o_pop();
+		o_ptr = o_pop();
+
+		/* Note index. */
+		o_idx = o_ptr - o_list;
 
 		/* Oops */
 		if (i != o_idx)
@@ -1595,9 +1599,6 @@ func_false();
 			return (152);
 		}
 
-
-		/* Acquire place */
-		o_ptr = &o_list[o_idx];
 
 		/* Read the item */
 		rd_item(o_ptr);

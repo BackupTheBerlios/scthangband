@@ -3692,69 +3692,25 @@ void object_kind_track(int k_idx)
 
 
 /*
- * Returns the object referred to by the given object_idx.
- */
-object_type *cnv_idx_to_obj(s16b index)
-{
-	if (index < 0)
-	{
-		return &o_list[-index];
-	}
-	else if (index < INVEN_TOTAL)
-	{
-		return &inventory[index];
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-
-
-/*
- * Returns the object_idx appropriate for a given item.
- */
-s16b cnv_obj_to_idx(object_type *o_ptr)
-{
-	if (o_ptr >= inventory && o_ptr-inventory < INVEN_TOTAL)
-	{
-		return o_ptr-inventory;
-	}
-	else if (o_ptr >= o_list && o_ptr-o_list < MAX_O_IDX)
-	{
-		return o_list-o_ptr;
-	}
-	else
-	{
-		return INVEN_TOTAL;
-	}
-}
-
-
-
-/*
  * Track the given item.
  */
 void object_track(object_type *o_ptr)
 {
-	s16b index = cnv_obj_to_idx(o_ptr);
-
 	/* object_track(0) means "forget it, whatever it was". */
 	if (!o_ptr)
 	{
-		object_idx = INVEN_TOTAL;
+		tracked_o_ptr = o_ptr;
 	}
 	/* Always remember real objects. */
 	else if (o_ptr->k_idx)
 	{
 		/* Save the object ID */
-		object_idx = index;
+		tracked_o_ptr = o_ptr;
 	}
 	/* A repeated call to a now-blank object means "forget it". */
-	else if (object_idx == index)
+	else if (o_ptr == tracked_o_ptr)
 	{
-		object_idx = INVEN_TOTAL;
+		tracked_o_ptr = NULL;
 	}
 	/* A call to an untracked blank object is ignored totally. */
 	else

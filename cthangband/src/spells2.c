@@ -4360,12 +4360,12 @@ bool ident_spell(void)
 	if (is_worn_p(o_ptr))
 	{
 		msg_format("%^s: %s (%c).",
-			   describe_use(cnv_obj_to_idx(o_ptr)), o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
+			   describe_use(o_ptr), o_name, index_to_label(o_ptr));
 	}
 	else if (is_inventory_p(o_ptr))
 	{
 		msg_format("In your pack: %s (%c).",
-			   o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
+			   o_name, index_to_label(o_ptr));
 	}
 	else
 	{
@@ -4429,12 +4429,12 @@ bool identify_fully(void)
 	if (is_worn_p(o_ptr))
 	{
 		msg_format("%^s: %s (%c).",
-			   describe_use(cnv_obj_to_idx(o_ptr)), o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
+			   describe_use(o_ptr), o_name, index_to_label(o_ptr));
 	}
 	else if (is_inventory_p(o_ptr))
 	{
 		msg_format("In your pack: %s (%c).",
-			   o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
+			   o_name, index_to_label(o_ptr));
 	}
 	else
 	{

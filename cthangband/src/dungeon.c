@@ -356,9 +356,9 @@ static void sense_inventory(void)
 		if (disturb_minor) disturb(0, 0);
 
 		/* Message */
-		msg_format("You feel the %s (%c) %s %s%s %s...",
-			           o_name, index_to_label(i),
-		(i >= INVEN_WIELD) ? format("you are %s", describe_use(i)) : "in your pack",
+		msg_format("You feel the %v (%c) %s %s%s %s...", object_desc_f3, o_ptr,
+			FALSE, 0, index_to_label(o_ptr), (i >= INVEN_WIELD) ?
+			format("you are %s", describe_use(o_ptr)) : "in your pack",
 		(repeat ? "really " : ""), ((o_ptr->number == 1) ? "is" : "are"), feel);
 
 		/* Get a bit better (this does allow objects to boost skill twice
@@ -2174,7 +2174,7 @@ static void process_world(void)
 			if (o_ptr->k_idx)
 			{
 				msg_print("You drop your weapon!");
-				inven_drop(INVEN_WIELD,1);
+				inven_drop(o_ptr,1);
 			}
         }
 	}
@@ -3483,7 +3483,7 @@ static void process_player(void)
 			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 			/* Message */
-			msg_format("You drop %s (%c).", o_name, index_to_label(item));
+			msg_format("You drop %s (%c).", o_name, index_to_label(o_ptr));
 
 			/* Drop it (carefully) near the player */
 			drop_near(o_ptr, 0, py, px);
