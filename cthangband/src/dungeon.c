@@ -2937,7 +2937,6 @@ void process_command(void)
 		
             /* Check artifacts, uniques, objects */
 		case '~':
-        case '|':
 		{
             do_cmd_knowledge();
 			break;

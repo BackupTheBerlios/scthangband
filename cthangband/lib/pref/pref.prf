@@ -88,6 +88,11 @@ A:=K
 C:0:&
 C:1:&
 
+# Provide an alternative key for "Display current knowledge".
+A:~
+C:0:|
+C:1:|
+
 ##### Original Keyset Mappings #####
 
 # Hack -- Return

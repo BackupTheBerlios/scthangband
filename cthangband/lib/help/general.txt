@@ -297,7 +297,7 @@ h - Change the page of information being displayed.
 f - Save various information about your character to a text file.
 
 %%%%% <cmd=~>
-$GCheck knowledge (~) (|)
+$GCheck knowledge (~)
 This command allows you to ask about the knowledge possessed by your character. It brings up a menu at which you enter one of the following numbers to access the information it stores. Pressing escape exits the command.
 
 %%%%% <cmd=~1>
