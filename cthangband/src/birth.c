@@ -2506,7 +2506,7 @@ static void player_wipe(void)
 /*
  * Create an object from a template for the player's initial inventory.
  */
-static void make_birth_item(make_item_type *i_ptr)
+static void make_birth_item(make_item_type *i_ptr, cptr names)
 {
 	object_type o_ptr[1];
 
@@ -2514,7 +2514,7 @@ static void make_birth_item(make_item_type *i_ptr)
 	if (!i_ptr->k_idx) return;
 
 	/* Actually create the item. */
-	make_item(o_ptr, i_ptr, FOUND_BIRTH, 0);
+	make_item(o_ptr, i_ptr, names, FOUND_BIRTH, 0);
 
 	/* Hack - torches have a special pval. */
 	if (o_ptr->k_idx == OBJ_WOODEN_TORCH) o_ptr->pval = rand_range(3, 7) * 500;
@@ -2580,7 +2580,8 @@ static void player_outfit(void)
 	/* Give the player some basic things. */
 	for (i = 0; i < MAX_RACE_ITEMS; i++)
 	{
-		make_birth_item(&rp_ptr->items[i]);
+		/* Hack - don't support named racial equipment... */
+		make_birth_item(&rp_ptr->items[i], NULL);
 	}
 
 	/* Find out about the player. */
@@ -2602,7 +2603,7 @@ static void player_outfit(void)
 		}
 
 		/* Give the player the object. */
-		make_birth_item(i_ptr);
+		make_birth_item(i_ptr, NULL);
 	}
 }
 

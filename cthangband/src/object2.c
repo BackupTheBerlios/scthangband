@@ -3186,7 +3186,8 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 /*
  * Create an item based on a make_item_type template (as from death_event).
  */
-void make_item(object_type *o_ptr, make_item_type *i_ptr, int how, int idx)
+void make_item(object_type *o_ptr, make_item_type *i_ptr, cptr names, int how,
+	int idx)
 {
 	bool ego = (i_ptr->flags & EI_EGO) != 0;
 	bool art = (i_ptr->flags & EI_ART) != 0;
@@ -3203,7 +3204,7 @@ void make_item(object_type *o_ptr, make_item_type *i_ptr, int how, int idx)
 		/* Use a name if specified */
 		if (i_ptr->name)
 		{
-			o_ptr->art_name = quark_add(event_name+i_ptr->name);
+			o_ptr->art_name = quark_add(names+i_ptr->name);
 		}
 	}
 	if (rand && ego)

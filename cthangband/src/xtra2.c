@@ -144,7 +144,8 @@ static int drop_special(monster_type *m_ptr)
 				object_type o_ptr[1];
 
 				/* Create the item from the definition. */
-				make_item(o_ptr, &d_ptr->par.item, FOUND_MONSTER, m_ptr->r_idx);
+				make_item(o_ptr, &d_ptr->par.item, event_name, FOUND_MONSTER,
+					m_ptr->r_idx);
 
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 				drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);

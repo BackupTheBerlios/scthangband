@@ -1548,7 +1548,7 @@ extern void set_object_found(object_type *o_ptr, int how, int idx);
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, int how, int idx);
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT2_C) || defined(XTRA2_C))
-extern void make_item(object_type *o_ptr, make_item_type *i_ptr, int how, int idx);
+extern void make_item(object_type *o_ptr, make_item_type *i_ptr, cptr names, int how, int idx);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C))
 extern bool PURE magic_can_curse(int k_idx);
@@ -3317,7 +3317,7 @@ extern cptr r_text;
 #if (defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern death_event_type *death_event;
 #endif
-#if (defined(INIT2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
+#if (defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern cptr event_name;
 #endif
 #if (defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
