@@ -1155,9 +1155,28 @@ logaux(x, 1) logaux(x, 0) 255)
 #define XY_SPEED 25 /* "Slow (-NN)" or "Fast (+NN)" */
 #define XY_STUDY 26 /* "Study" */
 #define XY_DEPTH 27 /* "Lev NNN" / "NNNN ft" */
+#define XY_PARALYSED 28 /* Paralysed (also STATE) */
+#define XY_IMAGE 29 /* Hallucinating */
+#define XY_FAST 30 /* Faster */
+#define XY_SLOW 31 /* Slower */
+#define XY_SHIELD 32 /* Stone */
+#define XY_BLESSED 33 /* Blessed */
+#define XY_HERO 34 /* Heroic */
+#define XY_BERSERK 35 /* Berserk */
+#define XY_PROTEVIL 36 /* ProtEvil */
+#define XY_WRAITH 37 /* Wraith */
+#define XY_INVULN 38 /* Invulnerable */
+#define XY_ESP 39 /* ESP */
+#define XY_INVIS 40 /* SeeInvisible */
+#define XY_INFRA 41 /* Infravision */
+#define XY_RACID 42 /* Acid */
+#define XY_RELEC 43 /* Elec */
+#define XY_RFIRE 44 /* Fire */
+#define XY_RCOLD 45 /* Cold */
+#define XY_RPOIS 46 /* Pois */
 
 /* The size of the screen_coords[] array. */
-#define NUM_SCREEN_COORDS 28
+#define NUM_SCREEN_COORDS 47
 
 /* Handle the CHECK_ARRAYS information for an array. */
 #ifdef CHECK_ARRAYS
