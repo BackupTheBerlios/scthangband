@@ -3786,7 +3786,11 @@ F:EVIL | UNDEAD | FRIENDS | IM_POIS | IM_COLD | NO_CONF | NO_SLEEP
 F:COLD_BLOOD | HURT_LITE
 S:1_IN_9
 S:SCARE | HOLD
-D:Flesh is falling off in chunks from this decaying abomination.
+D:"These figures were seldom completely human, but often approached humanity 
+D:in varying degree. Most of the bodies, while roughly bipedal, had a forward 
+D:slumping, and a vaguely canine cast. The texture of the majority was a kind 
+D:of unpleasant rubberiness."
+# H. P. Lovecraft: Pickman's Model
 
 ##### Level 27 #####
 
