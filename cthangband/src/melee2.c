@@ -6458,7 +6458,7 @@ static void process_monster(int m_idx, bool is_friend)
 						if (player_has_los_bold(ny, nx))
 						{
 							/* Dump a message */
-							msg_format("%^s picks up %v.", 
+							msg_format("%^v picks up %v.", 
 								monster_desc_f2, m_ptr, 0x04,
 								object_desc_f3, o_ptr, TRUE, 3);
 						}
