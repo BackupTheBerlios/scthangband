@@ -1576,7 +1576,8 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- blend "inscriptions" */
 	if (j_ptr->note && o_ptr->note && j_ptr->note != o_ptr->note)
 	{
-		o_ptr->note = quark_add(format("%s %s", o_ptr->note, j_ptr->note));
+		o_ptr->note = quark_add(format("%s %s", quark_str(o_ptr->note),
+			quark_str(j_ptr->note)));
 	}
 	else if (j_ptr->note)
 	{
