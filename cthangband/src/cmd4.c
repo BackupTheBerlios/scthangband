@@ -164,7 +164,7 @@ void do_cmd_change_name(void)
 		else if (c == '?' && *help)
 		{
 			sprintf(tmp, "cmd=C%d", mode);
-			show_link(tmp);
+			do_cmd_help(tmp);
 		}
 
 		/* Oops */
@@ -632,7 +632,7 @@ static void do_cmd_options_autosave(cptr info)
 			case '?':
 			{
 				/* Hack - show help on the main term. */
-				show_link(this->text);
+				do_cmd_help(this->text);
 				break;
 			}
 			default:
@@ -882,7 +882,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case '?':
 			{
 				/* Hack - show help on the main term. */
-				show_link(option_info[opt[k]].o_text);
+				do_cmd_help(option_info[opt[k]].o_text);
 				break;
 			}
 			default:
@@ -1136,7 +1136,7 @@ static void do_cmd_options_redraw(void)
 			case '?':
 			{
 				/* Hack - show help on the main term. */
-				show_link(NULL);
+				do_cmd_help(NULL);
 				break;
 			}
 			default:

@@ -539,9 +539,9 @@ extern void help_track(cptr str);
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void show_file(cptr name, cptr what);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
-extern void show_link(cptr link);
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C))
 extern void init_help_files(void);
 #endif

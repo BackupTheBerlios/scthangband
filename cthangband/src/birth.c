@@ -661,7 +661,7 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option,
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 		else if (c == 'S') return BC_RESTART;
-		else if (c == '?') do_cmd_help(NULL);
+		else if (c == '?') do_cmd_help(syshelpfile);
 		else if (c == ESCAPE && allow_abort) return BC_ABORT;
 		else if (c == '=')
 		{
@@ -1132,7 +1132,7 @@ static bool point_mod_player(void)
 		}
 		if (i == IDX_HELP)
 		{
-			do_cmd_help(NULL);
+			do_cmd_help(syshelpfile);
 		}
 		/* Toggle details if required. */
 		if (i == IDX_DETAILS)
@@ -2802,7 +2802,7 @@ static bool quick_start_character(void)
 			/* Help */
 			if (c == '?')
 			{
-				do_cmd_help(NULL);
+				do_cmd_help(syshelpfile);
 				continue;
 			}
 
@@ -2869,7 +2869,7 @@ static bc_type ask_quick_start(void)
 			case 'S': return BC_RESTART;
 			case 'y': case 'Y': return BC_OKAY;
 			case 'n': case 'N': return BC_ABORT;
-			case '?': do_cmd_help(NULL); break;
+			case '?': do_cmd_help(syshelpfile); break;
 			case '=':
 				Term_save();
 				do_cmd_options_aux(7, "Startup Options", NULL);

@@ -3655,16 +3655,41 @@ next_cave:
 
 
 
+/* Forward declare. */
+static char show_link_aux(cptr link);
+
 /*
- * Peruse the On-Line-Help, starting at the given file.
+ * Peruse the On-Line-Help, starting at the given link.
  */
 void do_cmd_help(cptr name)
 {
-	/* Hack -- default file */
-	if (!name) name = syshelpfile;
+	/* Save the screen. */
+	int t = Term_save_aux();
 
-	/* Peruse the help file. */
-	show_link(name);
+	/* Use the current link if none was specified. */
+	if (!name) name = cur_help_str();
+
+	character_icky = TRUE;
+
+	/* Allow help. */
+	help_track("option=?");
+
+	/* Allow resize. */
+	add_resize_hook(resize_inkey);
+
+	/* Display the file. */
+	show_link_aux(name);
+
+	/* Forget resize. */
+	delete_resize_hook(resize_inkey);
+
+	/* Forget help. */
+	help_track(NULL);
+
+	/* Restore the screen. */
+	character_icky = FALSE;
+	Term_load_aux(t);
+	Term_release(t);
 }
 
 
@@ -4155,9 +4180,6 @@ static cptr link_name_to_file(cptr link)
 	return NULL;
 }
 
-/* Forward declare. */
-static char show_link_aux(cptr link);
-
 /*
  * A show_file() function based on ToME's version.
  */
@@ -4564,40 +4586,6 @@ static char show_link_aux(cptr link)
 		bell("No help string selected!");
 		return 0;
 	}
-}
-
-/*
- * Display some help text via show_file_aux() based on its link name.
- */
-void show_link(cptr link)
-{
-	/* Save the screen. */
-	int t = Term_save_aux();
-
-	/* Use the current link if none was specified. */
-	if (!link) link = cur_help_str();
-
-	character_icky = TRUE;
-
-	/* Allow help. */
-	help_track("option=?");
-
-	/* Allow resize. */
-	add_resize_hook(resize_inkey);
-
-	/* Display the file. */
-	show_link_aux(link);
-
-	/* Forget resize. */
-	delete_resize_hook(resize_inkey);
-
-	/* Forget help. */
-	help_track(NULL);
-
-	/* Restore the screen. */
-	character_icky = FALSE;
-	Term_load_aux(t);
-	Term_release(t);
 }
 
 /*

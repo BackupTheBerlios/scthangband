@@ -2533,7 +2533,7 @@ void process_command(void)
 			/* Help */
 		case '?':
 		{
-			do_cmd_help(NULL);
+			do_cmd_help(syshelpfile);
 			break;
 		}
 
@@ -2696,7 +2696,7 @@ void process_command(void)
 		/* Debug help. */
 		case CMD_DEBUG+'?':
 		{
-			show_link("brief debug");
+			do_cmd_help("brief debug");
 			break;
 		}
 
