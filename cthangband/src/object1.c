@@ -2015,22 +2015,31 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 		switch (j)
 		{
 			case A_CHR:
-			if (CMPS(adj_mag_study)) alloc_ifa(info+(*i)++, "$W  It causes you to annoy spirits %s.", DIF_LES);
-			if (CMPS(adj_mag_fail)) alloc_ifa(info+(*i)++, "$W  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF);
-			if (CMPS(adj_mag_stat)) alloc_ifa(info+(*i)++, "$W  It %s your spiritual success rates.", DIF_INC);
+			if (!pn_ptr->anti_magic && CMPS(adj_mag_study))
+				alloc_ifa(info+(*i)++, "$W  It causes you to annoy spirits %s.", DIF_LES);
+			if (!pn_ptr->anti_magic && CMPS(adj_mag_fail))
+				alloc_ifa(info+(*i)++, "$W  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF);
+			if (!pn_ptr->anti_magic && CMPS(adj_mag_stat))
+				alloc_ifa(info+(*i)++, "$W  It %s your spiritual success rates.", DIF_INC);
 			if (CMPS(adj_chr_gold)) alloc_ifa(info+(*i)++, "$W  It %s your bargaining power.", DIF_DEC);
 			break;
 			case A_WIS:
-			if (CMPS(adj_mag_mana)) alloc_ifa(info+(*i)++, "$W  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mchi));
-			if (CMPS(adj_mag_fail)) alloc_ifa(info+(*i)++, "$W  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF);
-			if (CMPS(adj_mag_stat)) alloc_ifa(info+(*i)++, "$W  It %s your mindcraft success rates.", DIF_INC);
-			if (CMPS(adj_wis_sav)) alloc_ifa(info+(*i)++, "$W  It %s your saving throw by %d%%.", DIF_INC, DIF);
+			if (CMPS(adj_mag_mana))
+				alloc_ifa(info+(*i)++, "$W  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mchi));
+			if (!pn_ptr->anti_magic && CMPS(adj_mag_fail))
+				alloc_ifa(info+(*i)++, "$W  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF);
+			if (!pn_ptr->anti_magic && CMPS(adj_mag_stat))
+				alloc_ifa(info+(*i)++, "$W  It %s your mindcraft success rates.", DIF_INC);
+			if (CMP(skill_sav))
+				alloc_ifa(info+(*i)++, "$W  It %s your saving throw by %d%%.", DIF_INC, DIF);
 			break;
 			case A_INT: /* Rubbish in the case of icky gloves or heavy armour. */
 			if (CMPS(adj_mag_study)) alloc_ifa(info+(*i)++, "$W  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR);
 			if (CMPS(adj_mag_mana)) alloc_ifa(info+(*i)++, "$W  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(msp));
-			if (CMPS(adj_mag_fail)) alloc_ifa(info+(*i)++, "$W  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF);
-			if (CMPS(adj_mag_stat)) alloc_ifa(info+(*i)++, "$W  It %s your spellcasting success rates.", DIF_INC);
+			if (!pn_ptr->anti_magic && CMPS(adj_mag_fail))
+				alloc_ifa(info+(*i)++, "$W  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF);
+			if (!pn_ptr->anti_magic && CMPS(adj_mag_stat))
+				alloc_ifa(info+(*i)++, "$W  It %s your spellcasting success rates.", DIF_INC);
 			if (CMP(skill_dev)) alloc_ifa(info+(*i)++, "$W  It %s your success rate with magical devices.", DIF_INC);
 			break;
 			case A_CON:
