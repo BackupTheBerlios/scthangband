@@ -107,11 +107,14 @@ static bool use_object(object_type *o_ptr, int dir)
 		return FALSE;
 	}
 
+	/* Notice that it has been tried if it was used. */
+	if (use) object_tried(o_ptr);
+
 	/* Become aware of the object if it's now known. */
-	if (ident && !object_aware_p(o_ptr))
-	{
-		object_aware(o_ptr);
-	}
+	if (ident) object_aware(o_ptr);
+
+	/* Recalculate/redraw stuff (later) */
+	update_object(o_ptr, 0);
 
 	return use;
 }
@@ -169,12 +172,6 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 	/* Process the object's effects. */
 	normal_food = !use_object(o_ptr, 0);
-
-	/* We have tried it */
-	object_tried(o_ptr);
-
-	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
 
 	/* Food can feed the player */
 	switch (p_ptr->prace)
@@ -273,12 +270,6 @@ void do_cmd_quaff_potion(object_type *o_ptr)
         potion_smash_effect(0, py, px, o_ptr->k_idx);
     }
 
-	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
-
-	/* The item has been tried */
-	object_tried(o_ptr);
-
 
 	/* Potions can feed the player (should this be altered for skeletons?) */
 	(void)add_flag(TIMED_FOOD, o_ptr->pval);
@@ -361,8 +352,6 @@ bool curse_weapon(void)
  */
 void do_cmd_read_scroll(object_type *o_ptr)
 {
-	int used_up;
-
 	/* Check some conditions */
 	if (p_ptr->blind)
 	{
@@ -409,18 +398,12 @@ void do_cmd_read_scroll(object_type *o_ptr)
 	energy_use = item_use_energy(o_ptr);
 
 	/* Analyze the scroll */
-	used_up = use_object(o_ptr, 0);
-
-
-	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
-
-	/* The item was tried */
-	object_tried(o_ptr);
-
-	/* Hack -- allow certain scrolls to be "preserved" */
-	if (!used_up) return;
-
+	if (!use_object(o_ptr, 0))
+	{
+		/* Aborting an object use is free. */
+		energy_use = 0;
+		return;
+	}
 
 	/* Destroy a scroll */
 	item_increase(o_ptr, -1);
@@ -498,9 +481,6 @@ static bool use_device_p(object_type *o_ptr)
  */
 void do_cmd_use_staff(object_type *o_ptr)
 {
-	bool use_charge;
-
-
 	/* Restrict choices to wands */
 	item_tester_tval = TV_STAFF;
 
@@ -560,18 +540,14 @@ void do_cmd_use_staff(object_type *o_ptr)
 
 
 	/* Analyze the staff */
-	use_charge = use_object(o_ptr, 0);
+	if (!use_object(o_ptr, 0))
+	{
+		/* Aborting an object use is free. */
+		energy_use = 0;
+		return;
+	}
 
 
-	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
-
-	/* Tried the item */
-	object_tried(o_ptr);
-
-
-	/* Hack -- some uses are "free" */
-	if (!use_charge) return;
 
 
 	/* Use a single charge */
@@ -697,14 +673,13 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	/* Sound */
 	sound(SOUND_ZAP);
 
-	/* Use the object (which always takes a charge). */
-	use_object(o_ptr, dir);
-
-	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
-
-	/* Mark it as tried */
-	object_tried(o_ptr);
+	/* Use the object. */
+	if (!use_object(o_ptr, dir))
+	{
+		/* Aborting an object use is free. */
+		energy_use = 0;
+		return;
+	}
 
 	/* Use a single charge */
 	o_ptr->pval--;
@@ -755,9 +730,6 @@ void do_cmd_aim_wand(object_type *o_ptr)
 void do_cmd_zap_rod(object_type *o_ptr)
 {
 	int dir;
-
-	/* Hack -- let perception get aborted */
-	bool use_charge = TRUE;
 
 
 	/* Restrict choices to rods */
@@ -827,17 +799,12 @@ void do_cmd_zap_rod(object_type *o_ptr)
 	sound(SOUND_ZAP);
 
 	/* Analyze the rod */
-	use_charge = use_object(o_ptr, dir);
-
-
-	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
-
-	/* Tried the object */
-	object_tried(o_ptr);
-
-	/* Do nothing more if cancelled. */
-	if (!use_charge) return;
+	if (!use_object(o_ptr, dir))
+	{
+		/* Aborting an object use is free. */
+		energy_use = 0;
+		return;
+	}
 
 	/* Most rods simply use the pval to decide their recharging rate. */
 	if (o_ptr->pval >= 0) o_ptr->timeout = o_ptr->pval;
