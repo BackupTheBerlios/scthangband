@@ -1199,31 +1199,22 @@ static void map_info(int y, int x, byte *ap, char *cp)
 	}
 }
 
-/* Macros similar to panel_bounds(), to keep everything sychronised. */
+/* A factor to convert between map and screen co-ordinates. */
 
-#define panel_row_centre ((panel_row_min + panel_row_max+1) / 2)
-#define panel_col_centre ((panel_col_min + panel_col_max+1) / 2)
+#define Y_SCREEN_ADJ (panel_row_prt-PRT_MINY)
+#define X_SCREEN_ADJ (panel_col_prt-PRT_MINX)
 
-#define PRT_MINX (COL_END+1)
-#define PRT_MAXX (Term->wid-1)
-#define PRT_MINY 1
-#define PRT_MAXY (Term->hgt-1)
-
-#define prt_row_min (panel_row_centre - (Term->hgt-PRT_MINY)/2)
-#define prt_col_min (panel_col_centre - (Term->wid-PRT_MINX)/2)
-
-#define Y_SCREEN_ADJ (prt_row_min-1)
-#define X_SCREEN_ADJ (prt_col_min-COL_END-1)
-
+/*
+ * Does the (x,y) point on the map appear on-screen?
+ */
 static bool panel_contains_prt(int y, int x)
 {
 	y -= Y_SCREEN_ADJ;
 	x -= X_SCREEN_ADJ;
 	if (y < PRT_MINY || y >= PRT_MAXY) return FALSE;
-	if (x < PRT_MINX || x >= PRT_MAXX) return FALSE;
+	if (x < PRT_MINX || y >= PRT_MAXX) return FALSE;
 	return TRUE;
 }
-
 
 
 /*

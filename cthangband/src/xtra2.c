@@ -2725,6 +2725,46 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 
 /*
+ * Calculate which square to print at the top-left corner of the map.
+ */
+static void panel_bounds_prt(void)
+{
+	s16b panel_row_centre = ((panel_row_min + panel_row_max+1) / 2);
+	s16b panel_col_centre = ((panel_col_min + panel_col_max+1) / 2);
+
+	panel_row_prt = (panel_row_centre - (Term->hgt-PRT_MINY)/2);
+	panel_col_prt = (panel_col_centre - (Term->wid-PRT_MINX)/2);
+
+	/* Blank space is fine if the dungeon doesn't fill the screen. */
+	if (PRT_MAXY-PRT_MINY > cur_hgt);
+
+	/* Kill space above the map. */
+	else if (panel_row_prt < 0)
+	{
+		panel_row_prt = 0;
+	}
+	/* Kill space below the map. */
+	else if (panel_row_prt > cur_hgt - (PRT_MAXY-PRT_MINY))
+	{
+		panel_row_prt = cur_hgt - (PRT_MAXY-PRT_MINY);
+	}
+
+	if (PRT_MAXX-PRT_MINX > cur_wid);
+
+	/* Kill space to the left of the map. */
+	else if (panel_col_prt < 0)
+	{
+		panel_col_prt = 0;
+	}
+	/* Kill space to the right of the map. */
+	else if (panel_col_prt > cur_wid - (PRT_MAXX-PRT_MINX))
+	{
+		panel_col_prt = cur_wid - (PRT_MAXX-PRT_MINX);
+	}
+}
+
+
+/*
  * Calculates current boundaries
  * Called below and from "do_cmd_locate()".
  */
@@ -2732,20 +2772,22 @@ void panel_bounds(void)
 {
 	panel_row_min = panel_row * (SCREEN_HGT / 2);
 	panel_row_max = panel_row_min + SCREEN_HGT - 1;
-	panel_row_prt = panel_row_min - 1;
 	panel_col_min = panel_col * (SCREEN_WID / 2);
 	panel_col_max = panel_col_min + SCREEN_WID - 1;
-	panel_col_prt = panel_col_min - 13;
+
+	/* Calculate the printed area. */
+	panel_bounds_prt();
 }
 
 void panel_bounds_center(void)
 {
 	panel_row = panel_row_min / (SCREEN_HGT / 2);
 	panel_row_max = panel_row_min + SCREEN_HGT - 1;
-	panel_row_prt = panel_row_min - 1;
 	panel_col = panel_col_min / (SCREEN_WID / 2);
 	panel_col_max = panel_col_min + SCREEN_WID - 1;
-	panel_col_prt = panel_col_min - 13;
+
+	/* Calculate the printed area. */
+	panel_bounds_prt();
 }
 
 

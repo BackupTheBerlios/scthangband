@@ -3304,3 +3304,11 @@ extern int PlayerUID;
  * Given an array, determine how many elements are in the array.
  */
 #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+
+/*
+ * The boundaries of the map.
+ */
+#define PRT_MINX (COL_END+1)
+#define PRT_MAXX (Term->wid-1)
+#define PRT_MINY (1)
+#define PRT_MAXY (Term->hgt-1)

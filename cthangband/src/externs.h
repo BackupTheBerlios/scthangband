@@ -2643,10 +2643,10 @@ extern s16b panel_col_min;
 #if (defined(DEFINES_H) || defined(CAVE_C) || defined(GENERATE_C) || defined(MAIN_WIN_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_col_max;
 #endif
-#if (defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_col_prt;
 #endif
-#if (defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_row_prt;
 #endif
 #if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3333,7 +3333,7 @@ extern s16b maxroll(int num, int sides);
 
 /* z-term.c */
 
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern term *Term ;
 #endif
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(Z_TERM_C))
