@@ -950,12 +950,9 @@ void do_cmd_quaff_potion(int item)
 
 		case SV_POTION_EXPERIENCE:
 		{
-			if (p_ptr->exp < PY_MAX_EXP)
-			{
 				msg_print("You feel more experienced.");
 				gain_skills(200);
 				ident = TRUE;
-			}
 			break;
 		}
 

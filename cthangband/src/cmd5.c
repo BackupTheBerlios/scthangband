@@ -2532,12 +2532,9 @@ void do_cmd_cast(void)
             else
             {
                 msg_print("It's the World.");
-                if (p_ptr->exp < PY_MAX_EXP)
-                {
                     msg_print("You feel more experienced.");
 					gain_skills(100);
                 }
-            }
 
            }
         break;
