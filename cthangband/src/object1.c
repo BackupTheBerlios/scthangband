@@ -5185,8 +5185,10 @@ static object_function object_functions[] =
 		forbid_refuel, item_tester_refuel, 0, TRUE, TRUE, TRUE},
 	{CMD_DEBUG+'f', do_identify_fully, "identify", "item",
 		forbid_non_debug, item_tester_unknown_star, 0, TRUE, TRUE, TRUE},
+#ifdef ALLOW_WIZARD
 	{CMD_DEBUG+'o', do_cmd_wiz_play, "play with", "object",
 		forbid_non_debug, NULL, 0, TRUE, TRUE, TRUE},
+#endif /* ALLOW_WIZARD */
 };
 
 static object_function PURE *get_object_function(s16b cmd)
