@@ -104,7 +104,7 @@ The children of dragons that assumed human form, draconians always fall lightly,
 
 Dwarf (EXP Factor 125%, HD 11)
 {STR:+2 INT:-2 WIS:+2 DEX:-2 CON:+2 CHR:-3}
-Dwarves were created out of Earth, and then given life and intelligence. They are very skilled with mechanics, and have the gift that they may never be blinded.  Wise dwarves can examine the area they are in and find traps, doors, and stairs.
+Misshapen, bearded and squat, a thing that dared to defy all natural laws by being more broad than long. They are very skilled with mechanics, and have the gift that they may never be blinded.  Wise dwarves can examine the area they are in and find traps, doors, and stairs.
 
 Elf (EXP Factor 120%, HD 8, no power)
 {STR:-1 INT:+2 WIS:+2 DEX:+1 CON:-2 CHR:+2}
