@@ -1106,13 +1106,13 @@ void monster_death(int m_idx)
 		/* Wipe the object */
 		object_wipe(q_ptr);
 
-			/* The first two items for a quest monster are great */
+		/* The first two items for a quest monster are great */
 		if (quest && j < 2)
 		{
 			if (!make_object(q_ptr, TRUE, TRUE, FOUND_QUEST, 0)) continue;
 		}
 		/* Make Gold, but not for first two quest items */
-		else if ((!quest || (j > 1)) && do_gold && (!do_item || one_in(2)))
+		else if (do_gold && (!do_item || one_in(2)))
 		{
 			/* Make some gold */
 			if (!make_gold(q_ptr, FOUND_MONSTER, m_ptr->r_idx, coin_type))
