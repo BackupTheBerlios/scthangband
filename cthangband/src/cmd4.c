@@ -154,7 +154,7 @@ void do_cmd_change_name(void)
 		else if (c == 'h')
 		{
 			mode++;
-			mode %= 7;
+			mode %= 56;
 		}
 
 		else if (c == '?' && *help)
