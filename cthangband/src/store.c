@@ -3314,7 +3314,7 @@ static void store_sell(void)
 	else
 	{
 		/* Describe */
-		msg_format("You drop %v (%c).", object_desc_f3, q_ptr, FALSE, 0,
+		msg_format("You drop %v (%c).", object_desc_f3, q_ptr, TRUE, 3,
 			index_to_label(o_ptr));
 	}
 
