@@ -3419,7 +3419,7 @@ next_cave:
 				object_desc_f3, &inventory[i], OD_ART | OD_NOHIDE, 3);
 
 			/* Describe random object attributes */
-			identify_fully_file(inventory+i, fff);
+			identify_fully_file(inventory+i, fff, FALSE);
 		}
 		fprintf(fff, "\n\n");
 	}
@@ -3432,7 +3432,7 @@ next_cave:
 			object_desc_f3, &inventory[i], OD_ART | OD_NOHIDE, 3);
 
 		/* Describe random object attributes */
-		identify_fully_file(inventory+i, fff);
+		identify_fully_file(inventory+i, fff, FALSE);
 	}
 	fprintf(fff, "\n\n");
 
@@ -3459,7 +3459,7 @@ next_cave:
 				object_desc_f3, &st_ptr->stock[i], OD_ART | OD_NOHIDE, 3);
 
 			/* Describe random object attributes */
-			identify_fully_file(&st_ptr->stock[i], fff);
+			identify_fully_file(&st_ptr->stock[i], fff, FALSE);
 		}
 		fprintf(fff, "\n");
 	}

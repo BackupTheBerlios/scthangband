@@ -1576,7 +1576,7 @@ void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  * Determine the "Activation" (if any) for an artifact
  * Return a string, or NULL for "no activation"
  */
-cptr PURE item_activation(object_ctype *o_ptr)
+static cptr PURE item_activation(object_ctype *o_ptr)
 {
 	u32b f1, f2, f3;
 
@@ -2767,6 +2767,9 @@ static void identify_fully_found_f1(char *buf, uint max, cptr UNUSED fmt,
 	}
 }
 
+#define IGET_BRIEF 0x01 /* Omit "less interesting" things. */
+#define IGET_NPLAYER 0x02 /* Omit player-specific things. */
+
 /*
  * Find the strings which describe the flags of o_ptr, place them in info
  * and note whether each was allocated.
@@ -2775,8 +2778,11 @@ static void identify_fully_found_f1(char *buf, uint max, cptr UNUSED fmt,
  *
  * If brief is set, various less interesting things are omitted.
  */
-static void identify_fully_get(object_ctype *o1_ptr, cptr *info, bool brief)
+static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 {
+	const bool brief = (flags & IGET_BRIEF) != 0;
+	const bool player = (flags & IGET_NPLAYER) == 0;
+
 	int                     i = 0, j;
 
 	cptr board[16];
@@ -2814,7 +2820,7 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, bool brief)
 	}
 
 	j = get_device_chance_dec(o_ptr);
-	if (j) alloc_ifa(info+i++,
+	if (j && player) alloc_ifa(info+i++,
 		"You have a %d.%d%% chance of successfully using it %s.",
 		j/10, j%10, ((o_ptr->flags3 & TR3_ACTIVATE) && !is_worn_p(o_ptr))
 		? "if you wear it" : "at present");
@@ -2853,7 +2859,7 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, bool brief)
 	j = 0;
 	
 	/* Recognise items which affect stats (detailed) */
-	if (!brief && spoil_stat)
+	if (!brief && player && spoil_stat)
 	{
 		res_stat_details(o_ptr, o1_ptr->k_idx, &i, info);
 	}
@@ -2914,7 +2920,7 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, bool brief)
 
 	/* Calculate actual damage of weapons. 
 	 * This only considers slays and brands at the moment. */
-	if (spoil_dam)
+	if (spoil_dam && player)
 	{
 		cptr s;
 		s16b tohit, todam, weap_blow, mut_blow;
@@ -3329,9 +3335,9 @@ nextbit:
 	}
 
 	/* Nothing is known, so print nothing. */
-	if (o_ptr->found.how != FOUND_UNKNOWN ||
+	if (player && (o_ptr->found.how != FOUND_UNKNOWN ||
 		o_ptr->found.dungeon != FOUND_DUN_UNKNOWN ||
-		o_ptr->found.level != FOUND_LEV_UNKNOWN)
+		o_ptr->found.level != FOUND_LEV_UNKNOWN))
 	{
 		alloc_ifa(info+i++, "%v", identify_fully_found_f1, o_ptr);
 	}
@@ -3361,11 +3367,11 @@ bool identify_fully_aux(object_ctype *o_ptr, byte flags)
 		object_known(q_ptr);
 		object_aware(q_ptr);
 
-		identify_fully_get(o_ptr, info, FALSE);
+		identify_fully_get(o_ptr, info, 0);
 	}
 	else
 	{
-		identify_fully_get(o_ptr, info, FALSE);
+		identify_fully_get(o_ptr, info, 0);
 	}
 
 	/* Nothing was revealed, so show nothing. */
@@ -3390,14 +3396,18 @@ bool identify_fully_aux(object_ctype *o_ptr, byte flags)
 /*
  * Describe item details to a specified stream.
  */
-void identify_fully_file(object_ctype *o_ptr, FILE *fff)
+void identify_fully_file(object_ctype *o_ptr, FILE *fff, bool spoil)
 {
 	cptr info[MAX_IFA];
+	byte flags = IGET_BRIEF;
+
+	/* Spoilers do not include any player-specific information. */
+	if (spoil) flags |= IGET_NPLAYER;
 
 	WIPE(info, info);
 
 	/* Grab the flags. */
-	identify_fully_get(o_ptr, info, TRUE);
+	identify_fully_get(o_ptr, info, flags);
 
 	/* Dump the flags, wrapping at 80 characters. */
 	identify_fully_dump_file(fff, info);

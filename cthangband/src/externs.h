@@ -1382,7 +1382,7 @@ extern void flavor_init(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C))
 extern void reset_visuals(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
 #if (defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SQUELCH_C))
@@ -1403,9 +1403,9 @@ extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #if (defined(CMD4_C) || defined(OBJECT1_C) || defined(WIZARD2_C))
 extern void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
-#if (defined(OBJECT1_C) || defined(WIZARD1_C))
-extern cptr PURE item_activation(object_ctype *o_ptr);
-#endif
+
+
+
 #if (defined(OBJECT1_C) || defined(POWERS_C))
 extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 #endif
@@ -1430,8 +1430,8 @@ extern byte PURE ammunition_type(object_ctype *o_ptr);
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C))
 extern bool identify_fully_aux(object_ctype *o_ptr, byte flags);
 #endif
-#if (defined(FILES_C) || defined(OBJECT1_C))
-extern void identify_fully_file(object_ctype *o_ptr, FILE *fff);
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(WIZARD1_C))
+extern void identify_fully_file(object_ctype *o_ptr, FILE *fff, bool spoil);
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern s16b PURE index_to_label(object_ctype *o_ptr);
@@ -1496,7 +1496,7 @@ extern object_type *o_pop(void);
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern s16b get_obj_num(int level);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C))
 extern void object_known(object_type *o_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD6_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C))
@@ -2261,7 +2261,7 @@ extern errr my_fgets(FILE *fff, char *buf, size_t n);
 #if (defined(FILES_C) || defined(UTIL_C))
 extern errr my_fgets_long(char *buf, size_t n, FILE *fff);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(WIZARD1_C))
 extern int my_fprintf(FILE *fff, cptr fmt, ...);
 #endif
 #if (!(defined(ACORN))) && (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C))
@@ -3017,7 +3017,7 @@ extern bool testing_stack;
 #if (defined(MELEE1_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool testing_carry;
 #endif
-#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
 extern bool spoil_art;
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
@@ -3029,7 +3029,7 @@ extern bool spoil_ego;
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_value;
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
 extern bool spoil_base;
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3053,7 +3053,7 @@ extern bool cheat_room;
 #if (defined(CMD1_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool cheat_xtra;
 #endif
-#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
 extern bool cheat_item;
 #endif
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3305,7 +3305,7 @@ extern cptr keymap_act[KEYMAP_MODES][256];
 #if (defined(OBJECT1_C) || defined(VARIABLE_C))
 extern player_type p_body;
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_WIN_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_WIN_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern player_type *p_ptr;
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C))
