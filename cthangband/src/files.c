@@ -972,6 +972,14 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 	return (v);
 }
 
+/*
+ * Helper function for process_pref_file().
+ */
+static bool process_pref_file_expr_p(char *str)
+{
+	char c;
+	return strcmp(process_pref_file_expr(&str, &c), "0");
+}
 
 /*
  * Process the "user pref file" with the given name
@@ -1023,18 +1031,8 @@ errr process_pref_file(cptr name)
 		/* Process "?:<expr>" */
 		if ((buf[0] == '?') && (buf[1] == ':'))
 		{
-			char f;
-			cptr v;
-			char *s;
-
-			/* Start */
-			s = buf + 2;
-
 			/* Parse the expr */
-			v = process_pref_file_expr(&s, &f);
-
-			/* Set flag */
-			bypass = (streq(v, "0") ? TRUE : FALSE);
+			bypass = !process_pref_file_expr_p(buf+2);
 
 			/* Continue */
 			continue;
