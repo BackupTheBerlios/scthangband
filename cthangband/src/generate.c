@@ -5231,6 +5231,10 @@ void generate_cave(void)
 		dun_bias = dun_defs[wild_grid[wildy][wildx].dungeon].bias;
 	}
 
+	/* Reset the suitable monster list. */
+	get_mon_num_prep(NULL, 0);
+
+
 	/* Nothing special here yet (if setting this to TRUE doesn't stop the
 	 * loop instantly, it never will do, so don't reset it later). */
 	if (!preserve_mode) good_item_flag = FALSE;

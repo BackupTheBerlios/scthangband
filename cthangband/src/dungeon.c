@@ -4377,11 +4377,11 @@ void play_game(bool new_game)
 	/* Set quest monsters. */
 	set_guardians();
 
-	/* Reset the suitable monster list. */
-	get_mon_num_prep(NULL, 0);
-
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
+
+	/* Reset the suitable monster list if not done above. */
+	else get_mon_num_prep(NULL, 0);
 
 
 	/* Character is now "complete" */
@@ -4469,9 +4469,6 @@ void play_game(bool new_game)
 
 		/* Set quest monsters for the new level. */
 		set_guardians();
-
-		/* Reset the suitable monster list. */
-		get_mon_num_prep(NULL, 0);
 
 		/* Make a new level */
  		generate_cave();
