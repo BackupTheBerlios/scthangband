@@ -2987,7 +2987,7 @@ static void start_screensaver(void)
 	sprintf(player_name, "%.*s", NAME_LEN-1, saverfilename);
 
 	/* Set 'savefile' to a valid name */
-	process_player_name(TRUE);
+	process_player_name();
 
 	/* Does the savefile already exist? */
 	file_exists = check_file(savefile);

@@ -1294,7 +1294,7 @@ void angbandThread(void *arg)
 	                 player_name)) quit(NULL);
 
 	/* Process the player name */
-	process_player_name(TRUE);
+	process_player_name();
 
 	/* Tell "quit()" to call "Term_nuke()" */
 	quit_aux = quit_hook;
