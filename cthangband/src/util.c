@@ -2866,10 +2866,17 @@ bool get_check(cptr prompt)
 	prt("", 0, 0);
 
 	/* Normal negation */
-	if ((i != 'Y') && (i != 'y') && (i != '\r')) return (FALSE);
-
+	if ((i != 'Y') && (i != 'y') && (i != '\r'))
+		i = 'n';
 	/* Success */
-	return (TRUE);
+	else
+		i = 'y';
+		
+	/* Leave a (mildly inaccurate) record */
+	message_add(format("%.70s[y/n] %c", prompt, i));
+	
+	/* Tell the calling routine */
+	return (i == 'y') ? TRUE : FALSE;
 }
 
 
