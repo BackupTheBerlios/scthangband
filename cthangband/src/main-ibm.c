@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_IBM_C
 /* File: main-ibm.c */
 
@@ -108,7 +107,7 @@
 /*
  * Hack -- write directly to video card
  */
-extern int directvideo = 1;
+/* extern int */ directvideo = 1;
 
 /*
  * Hack -- no virtual screen
@@ -1010,7 +1009,7 @@ static void Term_nuke_ibm(term *t)
  * Note the use of "intr()" instead of "int86()" so we can pass
  * segment registers.
  */
-void enable_graphic_font(void *font)
+static void enable_graphic_font(void *font)
 {
 	union REGPACK regs =
 	{0};
@@ -1079,7 +1078,7 @@ typedef union
 	} h;
 } __dpmi_regs;
 
-unsigned  __dpmi_allocate_dos_memory(int size, unsigned *selector)
+static unsigned  __dpmi_allocate_dos_memory(int size, unsigned *selector)
 {
 	union REGPACK regs =
 	{0};
@@ -1092,7 +1091,7 @@ unsigned  __dpmi_allocate_dos_memory(int size, unsigned *selector)
 	return (regs.w.ax);
 };
 
-void __dpmi_free_dos_memory(unsigned sel)
+static void __dpmi_free_dos_memory(unsigned sel)
 {
 	union REGPACK regs =
 	{0};
@@ -1102,7 +1101,7 @@ void __dpmi_free_dos_memory(unsigned sel)
 	intr(0x31, &regs);       /* DPMI interface */
 };
 
-void __dpmi_int(int intno, __dpmi_regs *dblock)
+static void __dpmi_int(int intno, __dpmi_regs *dblock)
 {
 	union REGPACK regs =
 	{0};
@@ -1114,9 +1113,9 @@ void __dpmi_int(int intno, __dpmi_regs *dblock)
 	intr(0x31, &regs);            /* DPMI interface */
 };
 
-unsigned short __dpmi_sel = 0x0000;
+static unsigned short __dpmi_sel = 0x0000;
 #define _farsetsel(x) __dpmi_sel=(x)
-extern void _farnspokeb(unsigned long offset, unsigned char value);
+/* extern void _farnspokeb(unsigned long offset, unsigned char value); */
 #pragma aux _farnspokeb =        \
           "push   fs"            \
           "mov    fs,__dpmi_sel" \
@@ -1142,7 +1141,7 @@ extern void _farnspokeb(unsigned long offset, unsigned char value);
  * DPMI - Dos Protected Mode Interface provides functions that let
  *        us do that.
  */
-void enable_graphic_font(const char *font)
+static void enable_graphic_font(const char *font)
 {
 	__dpmi_regs dblock = {{0}};
 
@@ -1188,8 +1187,6 @@ void enable_graphic_font(const char *font)
 #endif /* USE_286 */
 
 #endif /* ALLOW_GRAPH */
-
-#include "externs.h"
 
 const char help_ibm[] = "IBM Visual Display Support";
 

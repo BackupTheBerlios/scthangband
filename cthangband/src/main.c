@@ -129,8 +129,8 @@ __near long __stack = 32768L;
  */
 #ifdef USE_286
 # include <dos.h>
-extern unsigned _stklen = 32768U;
-extern unsigned _ovrbuffer = 0x1500;
+/* extern unsigned */ _stklen = 32768U;
+/* extern unsigned */ _ovrbuffer = 0x1500;
 #endif /* USE_286 */
 
 /*

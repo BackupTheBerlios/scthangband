@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_DOS_C
 /* File: main-dos.c */
 
@@ -85,7 +84,6 @@
 #include <keys.h>
 #include <unistd.h>
 #include <dir.h>
-#include "externs.h"
 
 /*
  * Index of the first standard Angband color.
@@ -157,7 +155,7 @@ static int resolution;
 /*
  * The background images
  */
-BITMAP *background[17];
+static BITMAP *background[17];
 
 #endif /* USE_BACKGROUND */
 

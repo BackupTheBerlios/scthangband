@@ -872,11 +872,11 @@ extern const char help_cap[];
 extern errr init_cap(int argc, char **argv);
 #endif
 
+
+
+
 /* main-dos.c */
 
-#if ((defined(USE_DOS)) && defined(USE_BACKGROUND)) && (defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_SLA_C))
-extern BITMAP *background[17];
-#endif
 #if (defined(USE_DOS)) && (defined(MAIN_DOS_C) || defined(MAIN_C))
 extern const char help_dos[];
 #endif
@@ -926,29 +926,29 @@ extern const char help_gtk[];
 extern errr init_gtk(int argc, char **argv);
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* main-ibm.c */
 
-#if ((defined(USE_IBM)) && defined(USE_CONIO)) && (defined(MAIN_IBM_C))
-extern int directvideo;
-#endif
-#if (((defined(USE_IBM)) && defined(USE_GRAPHICS)) && defined(USE_286)) && (defined(MAIN_IBM_C))
-extern void enable_graphic_font(void *font);
-#endif
-#if ((((defined(USE_IBM)) && defined(USE_GRAPHICS)) && !(defined(USE_286))) && defined(USE_WAT)) && (defined(MAIN_IBM_C))
-extern unsigned  __dpmi_allocate_dos_memory(int size, unsigned *selector);
-#endif
-#if ((((defined(USE_IBM)) && defined(USE_GRAPHICS)) && !(defined(USE_286))) && defined(USE_WAT)) && (defined(MAIN_IBM_C))
-extern void __dpmi_free_dos_memory(unsigned sel);
-#endif
-#if ((((defined(USE_IBM)) && defined(USE_GRAPHICS)) && !(defined(USE_286))) && defined(USE_WAT)) && (defined(MAIN_IBM_C))
-extern void __dpmi_int(int intno, __dpmi_regs *dblock);
-#endif
-#if ((((defined(USE_IBM)) && defined(USE_GRAPHICS)) && !(defined(USE_286))) && defined(USE_WAT)) && (defined(MAIN_IBM_C))
-extern unsigned short __dpmi_sel;
-#endif
-#if (((defined(USE_IBM)) && defined(USE_GRAPHICS)) && !(defined(USE_286))) && (defined(MAIN_IBM_C))
-extern void enable_graphic_font(const char *font);
-#endif
 #if (defined(USE_IBM)) && (defined(MAIN_IBM_C) || defined(MAIN_C))
 extern const char help_ibm[];
 #endif
@@ -1235,12 +1235,12 @@ extern errr init_xxx(int argc, char **argv);
 #if (((!defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN))) && defined(AMIGA)) && (defined(MAIN_C))
 extern __near long __stack;
 #endif
-#if (((!defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN))) && defined(USE_286)) && (defined(MAIN_C))
-extern unsigned _stklen;
-#endif
-#if (((!defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN))) && defined(USE_286)) && (defined(MAIN_C))
-extern unsigned _ovrbuffer;
-#endif
+
+
+
+
+
+
 
 /* melee1.c */
 
