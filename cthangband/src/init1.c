@@ -479,6 +479,325 @@ static cptr k_info_flags3[] =
 	"PERMA_CURSE"
 };
 
+/* A list of the flags for explosion types understood by project(). */
+static cptr explode_flags[] =
+{
+	"ELEC",
+	"POIS",
+	"ACID",
+	"COLD",
+	"FIRE",
+	"","","","",
+	"MISSILE",
+	"ARROW",
+	"PLASMA",
+	"",
+	"WATER",
+	"LITE",
+	"DARK",
+	"LITE_WEAK",
+	"DARK_WEAK",
+	"",
+	"SHARDS",
+	"SOUND",
+	"CONFUSION",
+	"FORCE",
+	"INERTIA",
+	"",
+	"MANA",
+	"METEOR",
+	"ICE",
+	"",
+	"CHAOS",
+	"NETHER",
+	"DISENCHANT",
+	"NEXUS",
+	"TIME",
+	"GRAVITY",
+	"","","","",
+	"KILL_WALL",
+	"KILL_DOOR",
+	"KILL_TRAP",
+	"","",
+	"MAKE_WALL",
+	"MAKE_DOOR",
+	"MAKE_TRAP",
+	"","","",
+	"OLD_CLONE",
+	"OLD_POLY",
+	"OLD_HEAL",
+	"OLD_SPEED",
+	"OLD_SLOW",
+	"OLD_CONF",
+	"OLD_SLEEP",
+	"OLD_DRAIN",
+	"","",
+	"AWAY_UNDEAD",
+	"AWAY_EVIL",
+	"AWAY_ALL",
+	"TURN_UNDEAD",
+	"TURN_EVIL",
+	"TURN_ALL",
+	"DISP_UNDEAD",
+	"DISP_EVIL",
+	"DISP_ALL",
+	"DISP_DEMON",
+	"DISP_LIVING",
+	"SHARD",
+	"NUKE",
+	"MAKE_GLYPH",
+	"STASIS",
+	"STONE_WALL",
+	"DEATH_RAY",
+	"STUN",
+	"HOLY_FIRE",
+	"HELL_FIRE",
+	"DISINTEGRATE",
+	"CHARM",
+	"CONTROL_UNDEAD",
+	"CONTROL_ANIMAL",
+	"PSI",
+	"PSI_DRAIN",
+	"TELEKINESIS",
+	"JAM_DOOR",
+	"DOMINATION",
+	"DISP_GOOD",
+	NULL
+};
+
+/* A list of the types of death event in order */
+static cptr death_flags[] =
+{
+	"ARTEFACT",
+	"MONSTER",
+	"OBJECT",
+	"EXPLODE",
+	"COIN",
+	"NOTHING",
+	NULL
+};
+
+/* A list of the types of coins. */
+static cptr coin_types[] =
+{
+	"","COPPER",
+	"","","SILVER",
+	"","","","","GOLD",
+	"","","","","","MITHRIL",
+	"ADAMANTIUM",
+	NULL
+};
+
+/* If chr exists within buf, return the integer immediately after it. */
+#define readnum(chr, num) if (strchr(buf, chr)) num = atoi(strchr(buf, chr)+1); else num = 0
+
+/* Look though the x_info array (the maximum of which is at max) for a name (stored within the x_name array) contained within buf. Store in w. */
+#define readstr(x_name,x_info,max,w) for (i = max-1; i; i--) if (x_info[i].name && strstr(buf, x_name+x_info[i].name)) break; if (i) w = i
+
+/*
+ * Check that the given string includes the current version number.
+ */
+static errr check_version(char *buf, header *head)
+{
+	int v1, v2, v3;
+
+	/* Scan for the values */
+	if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+	    (v1 != head->v_major) ||
+	    (v2 != head->v_minor) ||
+	    (v3 != head->v_patch))
+	{
+		return ERR_VERSION;
+	}
+	else
+	{
+		return SUCCESS;
+	}
+}
+
+/*
+ * Return the string within an array which also exists within a string, 
+ * returning (for example) 1 for the first element.
+ * Returns 0 if there isn't exactly one such string.
+ */
+static s16b find_string(cptr buf, cptr *array)
+{
+	s16b i, value = 0;
+	for (i = 0; array[i]; i++)
+	{
+		if (strlen(array[i]) && strstr(buf, array[i]))
+		{
+			if (value) return 0;
+			value = i + 1;
+		}
+	}
+	return value;
+}
+
+/*
+ * Initialize the "death_event" array, by parsing part of the "r_info.txt" file
+ * Note that unparsed characters are ignored, rather than producing an error. 
+ */
+errr init_r_event_txt(FILE *fp, char *buf)
+{
+	s16b r_idx = 0;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+
+	/* Current entry */
+	death_event_type *d_ptr = NULL;
+
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Start the "fake" stuff */
+	event_head->name_size = 0;
+	event_head->text_size = 0;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+ 		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return ERR_PARSE;
+
+
+		/* Process based on the initial character. */
+		switch (*buf)
+		{
+			case 'V': /* Version */
+		{
+				if (check_version(buf, event_head))
+					return ERR_VERSION;
+				else
+			okay = TRUE;
+ 				break;
+		}
+
+			case 'N': /* New/Number/Name (extracting number) */
+		{
+				/* Get the number */
+			r_idx = atoi(buf+2);
+				break;
+		}
+
+			case 'E': /* (Death) Events */
+			{
+				int i,j;
+				/* Find an unused event slot */
+				if (++error_idx >= MAX_DEATH_EVENTS) return ERR_MEMORY;
+				d_ptr = &death_event[error_idx];
+
+				/* Look for a text string to avoid problems with keywords within it. */
+				if (strchr(buf, '"'))
+				{
+					cptr r, s = strchr(buf, '"') + 1;
+					/* Find end of string. */
+					cptr t = strrchr(s, '"');
+					/* Use the end of the line without an explicit ". */
+					if (!t) t = s + strlen(s);
+					/* There should be space. */
+					if (t - s + event_head->text_size > fake_text_size)
+					{
+						printf("%ld > %ld", t-s+event_head->text_size, fake_text_size);
+						return ERR_MEMORY;
+					}
+					/* Advance and save the text index. */
+					if (!d_ptr->text) d_ptr->text = ++event_head->text_size;
+					/* Append characters to the text. */
+					strncpy(event_text + event_head->text_size, s, t-s);
+					/* Remove string from the buffer. */
+					for (r = s; r <= t; r++)
+						*r=' ';
+					/* Advance the index. */
+					event_head->text_size += t - s;
+				}
+
+
+				/* Now find the name of an event type. */
+				d_ptr->type = find_string(buf, death_flags);
+
+				/* Nothing can be done without a valid monster */
+				if (!r_idx) return ERR_MISSING;
+
+				d_ptr->r_idx = r_idx;
+
+
+				/* Look for flags compatible with the event type */
+				if (strchr(buf, 'p')) d_ptr->num = atoi(strchr(buf, 'p')+1);
+				if (strchr(buf, '/')) d_ptr->denom = atoi(strchr(buf, '/')+1);
+			if (strstr(buf, "ONLY_ONE")) d_ptr->flags |= EF_ONLY_ONE;
+				switch (d_ptr->type)
+			{
+					case DEATH_ARTEFACT:
+					readnum('n', EP_NUM);
+					readstr(a_name, a_info, MAX_A_IDX, EP_NUM);
+					break;
+					case DEATH_MONSTER:  
+					readnum('n', EP_NUM);
+					readstr(r_name, r_info, MAX_R_IDX, EP_NUM);
+					readnum('r', EP_RADIUS);
+					readnum('(', EP_MIN);
+					readnum('-', EP_MAX);
+					if (!EP_NUM || EP_NUM >= MAX_R_IDX) return ERR_FLAG;
+					break;
+					case DEATH_OBJECT:
+					readnum('t', i);
+					readnum('s', j);
+					EP_NUM = lookup_kind(i, j);
+					readstr(k_name, k_info, MAX_K_IDX, EP_NUM);
+					readnum('e', EP_EGO);
+					readstr(e_name, e_info, MAX_E_IDX, EP_EGO);
+					readnum('(', EP_MIN);
+					readnum('-', EP_MAX);
+					if (!EP_NUM) return ERR_FLAG;
+					break;
+					case DEATH_EXPLODE:
+					readnum('r', EP_RADIUS);
+					readnum('(', EP_DICE);
+					readnum('d', EP_SIDES);
+					EP_METHOD = find_string(buf, explode_flags);
+					break;
+					case DEATH_COIN:
+					EP_METAL = find_string(buf, coin_types);
+					if (EP_METAL == -1) return ERR_FLAG;
+					break;
+					case DEATH_NOTHING:
+					break;
+					default: /* i.e. no valid flag */
+					return ERR_MISSING;
+			}
+				break;
+		}		
+			/* Ignore irrelevant lines */
+			case 'D': case 'G': case 'I': case 'W': case 'B': case 'F': case 'S':
+			break;
+			default: /* Oops */
+			return ERR_DIRECTIVE;
+	}
+	}
+
+	/* Complete the "name" and "text" sizes */
+	++event_head->name_size;
+	++event_head->text_size;
+
+	/* No version yet */
+	if (!okay) return ERR_VERSION;
+
+	/* Success */
+	return SUCCESS;
+}
 
 /*
  * Convert a "color letter" into an "actual" color
@@ -2161,6 +2480,9 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
+
+		/* Ignore 'E' (death event) lines */
+		if (buf[0] == 'E') continue;
 
 		/* Oops */
 		return (6);

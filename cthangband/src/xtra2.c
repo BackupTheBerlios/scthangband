@@ -21,7 +21,232 @@ extern bool curse_weapon();
 extern bool curse_armor();
 extern void random_resistance(object_type * q_ptr, bool is_scroll, int specific);
 
+#define MAX_NUM 2147483647
 
+/* Simply gives the larger of two numbers */
+#define max(A,B) ((A > B) ? A : B)
+/* Ensure that something is always positive */
+#define min1(A) max(A, 1)
+/* A range function which gives a sensible value even with nonsense parameters */
+#define safe_range(A, B) ((A > 0 && B > A) ? rand_range(A, B) : (A > 0) ? A : (B > 0) ? randint(B) : 1)
+
+ /*
+ * Find the lowest common multiple of two s32bs
+  */
+static s32b find_lcm(s32b ua, s32b ub)
+{
+	s32b a = ua, b = ub;
+	/* Avoid problems from incorrect input. */
+	if (a < 1 || b < 1) return 0;
+	while (a && b)
+	{
+		if (a < b)
+			b -= b/a*a;
+		else
+			a -= a/b*b;
+	}
+	a += b;
+	/* Avoid overflow */
+	if (MAX_NUM/ua < ub/a) return 0;
+	else return ua/a*ub;
+}
+
+/*
+ * The rolling routine for drop_special().
+ */
+static bool death_event_roll(int i, bool *one_dropped, s32b *total_num, s32b *total_denom)
+{
+	death_event_type *d_ptr = &death_event[i];
+	s32b num = min1(d_ptr->num);
+	s32b denom = max(d_ptr->denom, num);
+	s32b lcm;
+
+	/* Wizards always get everything */
+	if (cheat_wzrd) return TRUE;
+
+	/* It's easy without ONLY_ONE. */
+	if (!d_ptr->flags & EF_ONLY_ONE) return (num > rand_int(denom));
+
+	/* No more drops possible */
+	if (*one_dropped) return FALSE;
+
+	/* Now arrange things so that denom = total_denom */
+	
+	/* Try to represent the fraction exactly. */
+	if ((lcm = find_lcm(*total_denom, denom)))
+{
+		num *= (lcm/denom);
+		*total_num *= (lcm/(*total_denom));
+		*total_denom = lcm;
+	}
+	/* But use the largest available denominator if impossible. */
+	else
+	{
+		num *= MAX_NUM/denom;
+		*total_num *= MAX_NUM/(*total_denom);
+		*total_denom = MAX_NUM;
+	}
+
+	/* Ensure that the total probability so far is sensible. */
+	if (*total_num < num)
+	{
+		msg_format("Incoherent probabilities for event %d.\n", (d_ptr-death_event));
+		*one_dropped = TRUE;
+		return FALSE;
+	}
+
+	/* Ensure that the next roll uses a correct number. */
+	*total_num -= num;
+
+	/* Finally, roll a number. */
+	if (num > rand_int(*total_denom))
+	{
+		/* Don't try again */
+		*one_dropped = TRUE;
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+
+/*
+ * Create something at the point of death.
+ * There are many things 
+ */
+static void drop_special(monster_type *m_ptr)
+{
+	s32b total_num = 1;
+	s32b total_denom = 1;
+	int i;
+	bool one_dropped = FALSE;
+	
+	for (i = 0; i < MAX_DEATH_EVENTS; ++i)
+	{
+		death_event_type *d_ptr = &death_event[i];
+
+		/* Ignore incorrect entries */
+		if (d_ptr->r_idx > m_ptr->r_idx) break;
+		if (!d_ptr->r_idx) break;
+		if (d_ptr->r_idx < m_ptr->r_idx) continue;
+
+		/* Decide whether to drop correct ones. */
+		if (!death_event_roll(i, &one_dropped, &total_num, &total_denom)) continue;
+
+		/* Give some feedback to wizards. */
+		if (cheat_wzrd) msg_format("Processing death event %d", i);
+
+		/* Actually carry out event */
+		switch (d_ptr->type)
+		{
+		/* Drop an artefact normally */
+			case DEATH_ARTEFACT:
+			{
+				artifact_type *a_ptr = &a_info[EP_NUM];
+				msg_format("Making artefact %d", a_ptr-a_info);
+				/* Ensure the request is reasonable first */
+				if (a_ptr->name && a_ptr->cur_num == 0)
+				{
+					object_type *o_ptr=malloc(sizeof(object_type));
+					object_prep(o_ptr, lookup_kind(a_ptr->tval, a_ptr->sval));
+					o_ptr->name1 = EP_NUM;
+					apply_magic(o_ptr, -1, TRUE, TRUE, TRUE);
+					if (d_ptr->text) msg_print(event_text+d_ptr->text);
+					drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);
+					d_ptr->flags |= EF_KNOWN;
+				}
+				break;
+				}
+			/* Drop a pile of objects */
+			case DEATH_OBJECT:
+			{
+				object_type *o_ptr=malloc(sizeof(object_type));
+				object_prep(o_ptr, EP_NUM);
+				o_ptr->name2 = EP_EGO;
+				apply_magic(o_ptr, dun_level, FALSE, FALSE, FALSE);
+				o_ptr->number = safe_range(EP_MIN, EP_MAX);
+				if (d_ptr->text) msg_print(event_text+d_ptr->text);
+				drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);
+				d_ptr->flags |= EF_KNOWN;
+				break;
+				}
+			/* Create a monster nearby. */
+		case DEATH_MONSTER:
+		{
+			int i, num = safe_range(EP_MIN, EP_MAX);
+				bool seen = FALSE;
+			for (i = 0; i < num; i++)
+			{
+				int wy, wx, j;
+				int distance = min1(EP_RADIUS);
+				
+				for (j = 0; j < 100; j++)
+				{
+					scatter(&wy, &wx, m_ptr->fy, m_ptr->fx, distance+j/10, 0);
+					if (in_bounds(wy,wx) && cave_floor_bold(wy,wx)) break;
+			}
+
+				/* Give up if there's nowhere appropriate */
+					if (j == 100) break;
+
+				/* Actually place the monster (which should not fail) */
+				(void)place_monster_one(wy, wx, EP_NUM, FALSE, !!(m_ptr->smart & SM_ALLY));
+
+					/* Only let the player know if he can see what has happened */
+					if (player_can_see_bold(wy, wx)) seen = TRUE;
+		}
+				if (seen) 
+				{
+					d_ptr->flags |= EF_KNOWN;
+					if (d_ptr->text) msg_format(event_text+d_ptr->text);
+	}
+				break;
+}
+			/* Cause an explosion centred on the monster */
+			case DEATH_EXPLODE:
+			{
+				/* Set up the parameters. */
+				byte typ = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+				int damage = damroll(min1(EP_DICE), min1(EP_SIDES));
+				int distance = min1(EP_RADIUS);
+				int method = EP_METHOD;
+				/* Set the default action type */
+				if (method<1) method = GF_MISSILE;
+
+				/* Print any specified text. */
+				if (d_ptr->text) msg_print(event_text+d_ptr->text);
+
+				/* Give the wizards a basic explanation. */
+				if (cheat_wzrd) msg_format("Explosion of radius %d, power %d and type %d triggered.", distance, damage, typ);
+
+				(void)project((m_ptr - m_list), distance, m_ptr->fy, m_ptr->fx, damage, method, typ);
+				d_ptr->flags |= EF_KNOWN;
+				break;
+			}
+			/* Hack - make coin drop of a specific type. */
+			/* Do not set EF_KNOWN as we can't know what has happened until something is dropped. */
+			case DEATH_COIN:
+			{
+				coin_type = EP_METAL;
+				if (d_ptr->text) msg_print(event_text+d_ptr->text);
+				break;
+			}
+			/* A non-event for those personalised death messages. */
+			case DEATH_NOTHING:
+			{
+				if (d_ptr->text) msg_print(event_text+d_ptr->text);
+				d_ptr->flags |= EF_KNOWN;
+				break;
+			}
+			default: /* How did we get here? */
+			{
+				msg_format("What strange action is %d?", d_ptr->type);
+			}
+		}
+	}
+}
 /*
  * Set "p_ptr->blind", notice observable changes
  *
@@ -1891,39 +2116,6 @@ void lose_skills(s32b amount)
 
 
 /*
- * Hack -- Return the "automatic coin type" of a monster race
- * Used to allocate proper treasure when "Creeping coins" die
- *
- * XXX XXX XXX Note the use of actual "monster names"
- */
-static int get_coin_type(monster_race *r_ptr)
-{
-	cptr name = (r_name + r_ptr->name);
-
-	/* Analyze "coin" monsters */
-	if (r_ptr->d_char == '$')
-	{
-		/* Look for textual clues */
-		if (strstr(name, " copper ")) return (2);
-		if (strstr(name, " silver ")) return (5);
-		if (strstr(name, " gold ")) return (10);
-		if (strstr(name, " mithril ")) return (16);
-		if (strstr(name, " adamantite ")) return (17);
-
-		/* Look for textual clues */
-		if (strstr(name, "Copper ")) return (2);
-		if (strstr(name, "Silver ")) return (5);
-		if (strstr(name, "Gold ")) return (10);
-		if (strstr(name, "Mithril ")) return (16);
-		if (strstr(name, "Adamantite ")) return (17);
-	}
-
-	/* Assume nothing */
-	return (0);
-}
-
-
-/*
  * Handle the "death" of a monster.
  *
  * Disperse treasures centered at the monster location based on the
@@ -1967,8 +2159,6 @@ void monster_death(int m_idx)
 
     bool cloned = FALSE;
 
-	int force_coin = get_coin_type(r_ptr);
-
 	object_type forge;
 	object_type *q_ptr;
 
@@ -2010,167 +2200,8 @@ void monster_death(int m_idx)
 	/* Forget objects */
 	m_ptr->hold_o_idx = 0;
 
-    /* Mega^1.8-hack -- destroying the Stormbringer gives it us! */
-    if (strstr((r_name + r_ptr->name),"Stormbringer"))
-	{
-		/* Get local object */
-		q_ptr = &forge;
-
-            /* Mega-Hack -- Prepare to make "Stormbringer" */
-            object_prep(q_ptr, lookup_kind(TV_SWORD, SV_RUNESWORD));
-
-            /* Mega-Hack -- Mark this item as "Stormbringer" */
-            q_ptr->name1 = ART_STORMBRINGER;
-
-            /* Mega-Hack -- Actually create "Stormbringer" */
-            apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
-
-		/* Drop it in the dungeon */
-        drop_near(q_ptr, -1, y, x);
-
-    }
-
-    /* Mega^3-hack: killing an 'Avatar of Nyarlathotep' is likely to
-       spawn another in the fallen one's place! */
-    else if (strstr((r_name + r_ptr->name),"Avatar of Nyarlathotep"))
-    {
-        if (!(randint(15)==13))
-        {
-            int wy = py, wx = px;
-            int attempts = 100;
-
-            do {
-                scatter(&wy, &wx, py, px, 20, 0);
-                }
-                while (!(in_bounds(wy,wx) && cave_floor_bold(wy,wx)) && (cave[wy][wx].feat != FEAT_WATER) &&
-                       --attempts);
-
-            if (attempts > 0)
-            {
-             if (m_ptr->smart & SM_ALLY)
-             {
-                 if (summon_specific_friendly(wy, wx, 100, SUMMON_AVATAR, FALSE))
-                 {
-                    if (player_can_see_bold(wy, wx))
-                         msg_print ("Nyarlathotep creates a new avatar!");
-                 }
-             }
-             else
-             {
-                 if (summon_specific(wy, wx, 100, SUMMON_AVATAR))
-                 {
-                     if (player_can_see_bold(wy, wx))
-                         msg_print ("Nyarlathotep creates a new avatar!");
-                 }
-             }
-            }
-        }
-        
-    }
-
-    /* One more ultra-hack: An Unmaker goes out with a big bang! */
-    else if (strstr((r_name + r_ptr->name),"Unmaker"))
-    {
-    int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-    (void)project(m_idx, 6, y, x, 100, GF_CHAOS, flg);
-    }
-
-	/* Mega-Hack -- drop "winner" treasures */
-    else if (r_ptr->flags1 & (RF1_DROP_CHOSEN))
-	{
-        if (strstr((r_name + r_ptr->name),"Azathoth"))
-        {
-
-            /* Get local object */
-            q_ptr = &forge;
-
-            /* Mega-Hack -- Prepare to make "Mighty Hammer of Worlds" */
-            object_prep(q_ptr, lookup_kind(TV_HAFTED, SV_WORLDS));
-
-            /* Mega-Hack -- Mark this item as "Mighty Hammer of Worlds" */
-            q_ptr->name1 = ART_WORLDS;
-
-            /* Mega-Hack -- Actually create "Mighty Hammer of Worlds" */
-            apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
-
-            /* Drop it in the dungeon */
-            drop_near(q_ptr, -1, y, x);
-
-
-            /* Get local object */
-            q_ptr = &forge;
-
-            /* Mega-Hack -- Prepare to make "Crown of the Universe" */
-            object_prep(q_ptr, lookup_kind(TV_CROWN, SV_UNIVERSE));
-
-            /* Mega-Hack -- Mark this item as "Crown of the Universe" */
-            q_ptr->name1 = ART_UNIVERSE;
-
-            /* Mega-Hack -- Actually create "Crown of the Universe" */
-            apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
-
-            /* Drop it in the dungeon */
-            drop_near(q_ptr, -1, y, x);
-        }
-        else
-        {
-            byte a_idx = 0;
-            int chance = 0;
-            int I_kind = 0;
-
-            if (strstr((r_name + r_ptr->name),"Groo"))
-            {
-                a_idx = ART_GROO;
-                chance = 75;
-            }
-
-            if ((a_idx > 0) && ((randint(99)<chance) || (cheat_wzrd)))
-            {
-                if (a_info[a_idx].cur_num == 0)
-                {
-                   artifact_type *a_ptr = &a_info[a_idx];
-
-                   /* Get local object */
-                   q_ptr = &forge;
-
-                   /* Wipe the object */
-                   object_wipe(q_ptr);
-
-                   /* Acquire the "kind" index */
-                   I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-                   /* Create the artifact */
-                   object_prep(q_ptr, I_kind);
-
-                   /* Save the name */
-                   q_ptr->name1 = a_idx;
-
-                   /* Extract the fields */
-                   q_ptr->pval = a_ptr->pval;
-                   q_ptr->ac = a_ptr->ac;
-                   q_ptr->dd = a_ptr->dd;
-                   q_ptr->ds = a_ptr->ds;
-                   q_ptr->to_a = a_ptr->to_a;
-                   q_ptr->to_h = a_ptr->to_h;
-                   q_ptr->to_d = a_ptr->to_d;
-                   q_ptr->weight = a_ptr->weight;
-
-                    /* Hack -- acquire "cursed" flag */
-                    if (a_ptr->flags3 & (TR3_CURSED)) q_ptr->ident |= (IDENT_CURSED);
-
-                    random_artifact_resistance(q_ptr);
-
-                    a_info[a_idx].cur_num = 1;
-
-                   /* Drop the artifact from heaven */
-                   drop_near(q_ptr, -1, y, x);
-                    
-
-                }
-            }
-        }
-	}
-
+	/* Do special things when appropriate. */
+	drop_special(m_ptr);
 
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & (RF1_DROP_60)) && (rand_int(100) < 60)) number++;
@@ -2197,9 +2228,6 @@ void monster_death(int m_idx)
 
 
 
-
-	/* Hack -- handle creeping coins */
-	coin_type = force_coin;
 
 	/* Average dungeon and monster levels */
 	object_level = ((dun_level+dun_offset) + r_ptr->level) / 2;

@@ -384,6 +384,10 @@ extern header *r_head;
 extern monster_race *r_info;
 extern char *r_name;
 extern char *r_text;
+extern header *event_head;
+extern death_event_type *death_event;
+extern char *event_name;
+extern char *event_text;
 extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_DIR;
 extern cptr ANGBAND_DIR_APEX;
@@ -614,6 +618,7 @@ extern errr init_k_info_txt(FILE *fp, char *buf);
 extern errr init_a_info_txt(FILE *fp, char *buf);
 extern errr init_e_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
+extern errr init_r_event_txt(FILE *fp, char *buf);
 
 /* init.c */
 extern void init_file_paths(char *path);

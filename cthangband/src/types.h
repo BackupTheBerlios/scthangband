@@ -1251,3 +1251,17 @@ struct wild_type {
 		s16b dun_min; /* Minimum depth to have caves */
 		s16b dun_max; /* Maximum depth to have caves */
 };
+
+typedef struct death_event_type death_event_type;
+struct death_event_type {
+
+	u32b	name;	/* Name (offset) */
+	u32b	text;	/* Text (offset) */
+
+	s16b	r_idx;	/* The number of the monster involved. */
+	u16b	num;	/* The numerator in the probability of causing the event */
+	u16b	denom;	/* The denominator in the probability of causing the event */
+	bool	flags;	/* Only one event with this flag will occur when a single monster dies */
+	byte	type;	/* The type of event. */
+	s16b	par[4];	/* Extra information. For details, see xtra2.c */
+};

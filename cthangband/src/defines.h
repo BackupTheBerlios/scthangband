@@ -307,6 +307,7 @@
 #define MAX_E_IDX       128     /* Max size for "e_info[]" */
 #define MAX_R_IDX   577 /* Max size for "r_info[]" */
 #define MAX_V_IDX   114  /* Max size for "v_info[]" Was 16*/
+#define MAX_DEATH_EVENTS	2048	/* Max size for death_events[] */
 
 
 /*
@@ -2662,6 +2663,42 @@
      RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
      RF6_S_GOO | RF6_S_UNIQUE)
 
+
+
+/* death_event types */
+
+#define DEATH_ARTEFACT 1 /* Format: artefact number */
+#define DEATH_MONSTER 2 /* Format: monster number, distance, min. no., max. no. */
+#define DEATH_OBJECT 3 /* Format: tval, sval, min. no., max. no., ego type */
+#define DEATH_EXPLODE 4  /* Format: radius, effect, damage dice, damage sides */
+#define DEATH_COIN 5 /* Format: type (handled as standard drop) */
+#define DEATH_NOTHING 6  /* No valid parameters */
+
+/* Death event flags */
+#define EF_ONLY_ONE	0x01
+#define EF_KNOWN	0x02
+
+/* Parameters for the various types */
+#define EP_NUM	d_ptr->par[0]
+#define EP_EGO	d_ptr->par[1]
+#define EP_MIN	d_ptr->par[2]
+#define EP_MAX	d_ptr->par[3]
+#define EP_METHOD	d_ptr->par[0]
+#define EP_RADIUS	d_ptr->par[1]
+#define EP_DICE	d_ptr->par[2]
+#define EP_SIDES	d_ptr->par[3]
+#define EP_METAL	d_ptr->par[0]
+
+/* Error codes from err_str */
+
+#define SUCCESS 0
+#define ERR_PARSE 1
+#define ERR_VERSION 2
+#define ERR_MISSING 3
+#define ERR_ORDER 4
+#define ERR_FLAG 5
+#define ERR_DIRECTIVE 6
+#define ERR_MEMORY 7
 
 /*** Macro Definitions ***/
 
