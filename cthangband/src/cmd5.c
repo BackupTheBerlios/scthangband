@@ -1012,17 +1012,17 @@ int get_spirit(int *sn, cptr prompt, bool call)
 		if (ask) choice = tolower(choice);
 
 		/* Extract request */
-		i = (islower(choice) ? A2I(choice) : -1);
+		i = (islower(choice) ? valid_spirits[A2I(choice)] : isdigit(choice) ? choice-'0' : -1);
 
 		/* Totally Illegal */
-		if ((i < 0) || (i >= total))
+		if ((i < 0) || (i >= MAX_SPIRITS))
 		{
 			bell();
 			continue;
 		}
 
 		/* Require "okay" spells */
-		if (!spirit_okay(valid_spirits[i], call))
+		if (!spirit_okay(i, call))
 		{
 			bell();
 			msg_format("You may not %s that spirit.", prompt);
@@ -1050,7 +1050,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	if (!flag) return (FALSE);
 
 	/* Save the choice */
-	(*sn) = valid_spirits[i];
+	(*sn) = i;
 
  #ifdef ALLOW_REPEAT /* TNB */
  
@@ -1150,8 +1150,8 @@ void print_spirits(int *valid_spirits,int num,int y, int x)
 		/* Pre-process the spirit name and description */
 		sprintf(full_name,"%s, %s",s_ptr->name,s_ptr->desc);
 		/* Now insert it into the line */
-		sprintf(out_val, "  %c) %-42s%s",
-		I2A(i), full_name,comment);
+		sprintf(out_val, "  %c/%d) %-42s%s",
+		I2A(i), valid_spirits[i], full_name,comment);
 		prt(out_val, y + i + 1, x);
 	}
 
