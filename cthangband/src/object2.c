@@ -1574,7 +1574,14 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (j_ptr->ident & (IDENT_MENTAL)) o_ptr->ident |= (IDENT_MENTAL);
 
 	/* Hack -- blend "inscriptions" */
-	if (j_ptr->note) o_ptr->note = j_ptr->note;
+	if (j_ptr->note && o_ptr->note && j_ptr->note != o_ptr->note)
+	{
+		o_ptr->note = quark_add(format("%s %s", o_ptr->note, j_ptr->note));
+	}
+	else if (j_ptr->note)
+	{
+		o_ptr->note = j_ptr->note;
+	}
 
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
