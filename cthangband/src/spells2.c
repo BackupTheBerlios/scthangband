@@ -537,13 +537,13 @@ bool alchemy(void)
 	if (do_cmd_destroy_aux("turn", " to gold", q_ptr, o_ptr)) return FALSE;
 
 	/* Find the value for alchemy. */
-	price = object_value(o_ptr, TRUE) * o_ptr->number;
+	price = object_value(q_ptr, TRUE) * q_ptr->number;
 
 	if (price <= 0)
 	{
 		/* Message */
 		msg_format("You have turned %v to fool's gold.",
-			object_desc_f3, o_ptr, 3);
+			object_desc_f3, q_ptr, 3);
 	}
 	else
 	{
@@ -551,7 +551,7 @@ bool alchemy(void)
 
 		if (price > 30000) price = 30000;
 		msg_format("You have turned %v to %ld coins worth of gold.",
-			object_desc_f3, o_ptr, 3, price);
+			object_desc_f3, q_ptr, 3, price);
 		p_ptr->au += price;
 
 		/* Redraw gold */
