@@ -533,7 +533,7 @@ static cptr spell_string(int i, const magic_type *s_ptr, cptr comment)
 	cptr type;
 
 	if (!s_ptr)
-		return format("     %-26s%s", "Name", "Ty(Sk) Mana Time Fail Info");
+		return format("     %-26s%s", "Name", "Ty(Sk ) Mana Time Fail Info");
 
 	switch(s_ptr->skill2)
 	{
@@ -565,7 +565,7 @@ static cptr spell_string(int i, const magic_type *s_ptr, cptr comment)
 	}
 
 
-	return format("  %c) %-26s%s(%2d) %4d %4d %3d%% %s",
+	return format("  %c) %-26s%s(%3d) %4d %4d %3d%% %s",
 		I2A(i), s_ptr->name, type, s_ptr->min*2, s_ptr->mana,
 		magic_energy(s_ptr), spell_chance(s_ptr), comment);
 }
