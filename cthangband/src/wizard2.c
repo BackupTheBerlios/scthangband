@@ -143,13 +143,27 @@ static void prt_binary(u32b flags, int row, int col)
 }
 
 
+static bool cave_floor_bold_p(int y, int x, int UNUSED d)
+{
+	return cave_floor_bold(y, x);
+}
+
 /*
  * Hack -- Teleport to the target
  */
 void do_cmd_wiz_bamf(void)
 {
-	/* Must have a target */
-	if (!target_who) return;
+	int d, x, y;
+
+	/* Hack - start with the "pick a location" display, but allow directions. */
+	set_gnext("*op");
+
+	if (!get_aim_dir(&d)) return;
+
+	if (!get_dir_target(&x, &y, d))
+	{
+		move_in_direction(&x, &y, px, py, x, y, cave_floor_bold_p);
+	}
 
 	/* Teleport to the target */
 	teleport_player_to(target_row, target_col);

@@ -29,7 +29,7 @@ r = Gain level reward.
 x = Practice skills (if in dungeon).
 
 %%%%% <cmd=\xE1b>
-b = Teleport to target (use * to select).
+b = Teleport to target
 
 %%%%% <cmd=\xE1j>
 j = Teleport to another level.

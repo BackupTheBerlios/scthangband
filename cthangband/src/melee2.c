@@ -730,40 +730,34 @@ static bool summon_possible(int y1, int x1)
 
 
 /*
+ * Return TRUE if (x,y) is a clear square without a monster.
+ */
+static bool PURE clean_shot_p(int y, int x, int UNUSED d)
+{
+	int m_idx = cave[y][x].m_idx;
+
+	/* Never pass through walls */
+	if (!cave_floor_bold(y, x)) return FALSE;
+
+	/* Never pass through hostile monsters */
+	if (m_idx && ~m_list[m_idx].smart & SM_ALLY) return FALSE;
+
+	/* Pass through other things. */
+	return TRUE;
+}
+
+/*
  * Determine if a bolt spell will hit the player.
  *
  * This is exactly like "projectable", but it will return FALSE if a monster
- * is in the way.
+ * or the pattern is in the way.
  */
 static bool clean_shot(int y1, int x1, int y2, int x2)
 {
-   int dist, y, x;
+	int dist, y, x;
 
-   /* Start at the initial location */
-   y = y1, x = x1;
-
-   /* See "project()" and "projectable()" */
-   for (dist = 0; dist <= MAX_RANGE; dist++)
-   {
-       /* Never pass through walls */
-       if (dist && !cave_floor_bold(y, x)) break;
-
-       /* Never pass through monsters */
-       if (dist && cave[y][x].m_idx > 0)
-       {
-        if (!(m_list[cave[y][x].m_idx].smart & SM_ALLY))
-           break;
-        }
-
-       /* Check for arrival at "final target" */
-       if ((x == x2) && (y == y2)) return (TRUE);
-
-       /* Calculate the new location */
-       mmove2(&y, &x, y1, x1, y2, x2);
-   }
-
-   /* Assume obstruction */
-   return (FALSE);
+	/* Does it get to the end before clean_shot_p() fails? */
+	return move_in_direction(&x, &y, x1, x2, y1, y2, clean_shot_p);
 }
 
 

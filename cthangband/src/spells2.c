@@ -60,7 +60,7 @@ static bool dimension_door_success(int y, int x, int plev)
  */
 bool dimension_door(int plev, int fail_dis)
 {
-	int dir, x,y;
+	int dir, x, y;
 
 	msg_print("You open a dimensional gate. Choose a destination.");
 	msg_print(NULL);
@@ -75,17 +75,21 @@ bool dimension_door(int plev, int fail_dis)
 	if (!get_dir_target(&x, &y, dir))
 	{
 		/* Handle directions in a sensible way. */
-		int x2 = px, y2 = py;
+		int x2 = px, y2 = py, x3, y3;
 
 		/* Find the first square on which dimension door would fail. */
 		do
 		{
+			x3 = x2;
+			y3 = y2;
+
 			mmove2(&y2, &x2, py, px, y, x);
 		}
 		while (dimension_door_success(y2, x2, plev));
 
 		/* Move back one square. */
-		mmove2(&y2, &x2, y, x, py, px);
+		x2 = x3;
+		y2 = y3;
 
 		/* Remember the new target. */
 		x = x2;

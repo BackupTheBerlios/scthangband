@@ -3650,6 +3650,53 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 
 
 /*
+ * Move from (ox,oy) to (nx,ny), stopping at the last square which was "okay".
+ *
+ * Return TRUE if the entire path (excluding the starting position) is "okay".
+ */
+bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*okay)(int, int, int))
+{
+	int x, y, d;
+
+	/* Set (*xx, *yy) to the square before the first on which okay() fail. */
+	for (d = 0, x = x1, y = y1; !d || (*okay)(y, x, d); d++)
+	{
+		/* Save the new location if desired. */
+		if (xx) *xx = x;
+		if (yy) *yy = y;
+
+		/* Okay for the entire distance. */
+		if (x == x2 && y == y2) return TRUE;
+
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+	while ((*okay)(y, x, d));
+
+	/* Not okay. */
+	return FALSE;
+}
+
+/*
+ * Return TRUE if (x,y) is a "floor" grid, part of the pattern or an explosive
+ * rune.
+ */
+static bool PURE projectable_p(int y, int x, int d)
+{
+	/* Too far. */
+	if (d > MAX_RANGE) return FALSE;
+
+	/* Floor */
+	else if (cave_floor_bold(y, x)) return TRUE;
+
+	/* Pattern or explosive rune. */
+	else if ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
+              (cave[y][x].feat >= FEAT_MINOR_GLYPH)) return TRUE;
+
+	/* Bad terrain feature. */
+	else return FALSE;
+}
+
+/*
  * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
  * at the final destination, assuming no monster gets in the way.
  *
@@ -3657,33 +3704,8 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
  */
 bool projectable(int y1, int x1, int y2, int x2)
 {
-	int dist, y, x;
-
-	/* Start at the initial location */
-	y = y1, x = x1;
-
 	/* See "project()" */
-	for (dist = 0; dist <= MAX_RANGE; dist++)
-	{
-		/* Check for arrival at "final target" */
-	    /* NB: this check was AFTER the 'never pass
-	     * thru walls' clause, below. Switching them
-	     * lets monsters shoot a the player if s/he is
-	     * visible but in a wall. */
-		if ((x == x2) && (y == y2)) return (TRUE);
-
-		/* Never pass through walls */
-        if (dist && !cave_floor_bold(y, x) &&
-            !((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
-              (cave[y][x].feat >= FEAT_MINOR_GLYPH))) break;
-
-		/* Calculate the new location */
-		mmove2(&y, &x, y1, x1, y2, x2);
-	}
-
-
-	/* Assume obstruction */
-	return (FALSE);
+	return move_in_direction(NULL, NULL, x1, x2, y1, y2, projectable_p);
 }
 
 /*

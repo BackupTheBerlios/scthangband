@@ -95,7 +95,7 @@ extern void wiz_dark(void);
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern void cave_set_feat(int y, int x, int feat);
 #endif
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 #endif
 #if (defined(CAVE_C) || defined(MELEE2_C) || defined(XTRA2_C))
@@ -2342,7 +2342,7 @@ extern void sound(int val);
 #if (defined(MAIN_CRB_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool screen_is_icky(void);
 #endif
-#if (defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C))
+#if (defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void set_gnext(cptr next);
 #endif
 #if (defined(SQUELCH_C) || defined(UTIL_C))
@@ -3164,7 +3164,7 @@ extern s16b wildx;
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b wildy;
 #endif
-#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b target_who;
 #endif
 #if (defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
@@ -4003,5 +4003,11 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* cave.c */
+
+#if (defined(CAVE_C) || defined(MELEE2_C) || defined(WIZARD2_C))
+extern bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*okay)(int, int, int));
 #endif
 #endif /* INCLUDED_EXTERNS_H */
