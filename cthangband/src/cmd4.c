@@ -1514,7 +1514,7 @@ static errr keymap_dump(cptr fname)
 	for (i = 0; i < 256; i++)
 	{
 		cptr act;
-		char buf[2]=" ";
+		char buf[2];
 
 		/* Loop up the keymap */
 		act = keymap_act[mode][i];
@@ -1523,7 +1523,7 @@ static errr keymap_dump(cptr fname)
 		if (!act) continue;
 
 		/* Encode the key */
-		buf[0] = i;
+		sprintf(buf, "%c", i);
 
 		/* Dump the macro */
 		my_fprintf(fff, "A:%v\nC:%d:%v\n", ascii_to_text_f1, buf,
@@ -2644,10 +2644,10 @@ void do_cmd_colors(void)
 			/* Dump colors */
 			for (i = 0; i < 256; i++)
 			{
-				int kv = angband_color_table[i][0];
-				int rv = angband_color_table[i][1];
-				int gv = angband_color_table[i][2];
-				int bv = angband_color_table[i][3];
+				uint kv = angband_color_table[i][0];
+				uint rv = angband_color_table[i][1];
+				uint gv = angband_color_table[i][2];
+				uint bv = angband_color_table[i][3];
 
 				cptr name = "unknown";
 
@@ -3379,7 +3379,7 @@ static void do_cmd_knowledge_pets(void)
  * Count the number of monsters killed. As we want to calculate the total before
  * displaying anything, we run this first without output, and then with.
  */
-static int count_kills(FILE *fff, bool noisy)
+static long count_kills(FILE *fff, bool noisy)
 {
 	/* Monsters slain */
 	int kk, Total = 0;
@@ -3419,7 +3419,7 @@ static void do_cmd_knowledge_kill_count(void)
 
 	char file_name[1024];
 
-	s32b Total = 0;
+	long Total = 0;
 
 
 	/* Open a new file */
@@ -3439,7 +3439,7 @@ static void do_cmd_knowledge_kill_count(void)
 	(void)count_kills(fff, TRUE);
 
 	fprintf(fff,"----------------------------------------------\n");
-	fprintf(fff,"   Total: %lu creature%s killed.\n", Total, (Total==1?"":"s"));
+	fprintf(fff,"   Total: %ld creature%s killed.\n", Total, (Total==1?"":"s"));
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3493,7 +3493,7 @@ static void do_cmd_knowledge_deaths(void)
 	
 	C_TNEW(races, MAX_R_IDX, s16b);
 
-	s32b i, Uniques = 0, Races = 0, Deaths = 0;
+	long i, Uniques = 0, Races = 0, Deaths = 0;
 
 	/* Count the monsters who have killed some ancestors. */
 	for (i = 0; i < MAX_R_IDX; i++)
@@ -3545,7 +3545,7 @@ static void do_cmd_knowledge_deaths(void)
 
 		/* Display a summary at the bottom. */
 		fprintf(fff,"----------------------------------------------\n");
-		fprintf(fff,"Total: Killed %lu times by %lu different things (%lu times by uniques).\n", Deaths, Races, Uniques);
+		fprintf(fff,"Total: Killed %ld times by %ld different things (%ld times by uniques).\n", Deaths, Races, Uniques);
 	}
 
 	TFREE(races);

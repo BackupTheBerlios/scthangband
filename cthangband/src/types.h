@@ -1256,7 +1256,7 @@ struct stat_default_type {
 	byte	template;	/* Template */
 	bool	maximise;	/* Whether maximise mode is used in this stat set */
 	byte	stat[A_MAX];	/* The stats used */
-	s16b	name;	/* The quark containing the name */
+	u16b	name;	/* The quark containing the name */
 };
 
 /* Towns */

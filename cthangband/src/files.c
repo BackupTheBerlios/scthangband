@@ -473,7 +473,8 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				if (n2) u_ptr->x_char = n2;
 				return (0);
 			}
-	}
+			else return (1);
+		}
 
 		/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
 		case 'F':
@@ -491,6 +492,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				if (n2) f_ptr->x_char = n2;
 				return (0);
 			}
+			else return (1);
 		}
 
 
@@ -506,6 +508,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				if (n2) tval_to_char[j] = n2;
 				return (0);
 			}
+			else return (1);
 		}
 
 
@@ -575,6 +578,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				angband_color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
 				return (0);
 			}
+			else return (1);
 		}
 	
 	
@@ -591,6 +595,8 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 					return (0);
 				}
 			}
+			/* Not a real option. */
+			return (1);
 		}
 	
 		/* Process M:<attr>:<attr>... -- set monster memory colours */
@@ -630,6 +636,8 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 					return (0);
 				}
 			}
+			/* Not a real option. */
+			return (1);
 		}
 		/* Process W:<term name>:<display name>:<triggered>:<untriggered>
 		 * to a window flag.
@@ -694,10 +702,10 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			errr err;
 			/* We can accept D with or without a name, but everything else must be there. */
 			switch (total)
-				{
+			{
 				/* No name given, so make one up. */
 				case 10:
-						{
+				{
 					char name[32];
 					create_random_name(ator(*zz[1]), name);
 					err = add_stats(ator(*zz[0]), ator(*zz[1]),
@@ -706,9 +714,9 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 					 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
 					 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), name);
 					break;
-						}
+				}
 				case 11:
-						{
+				{
 					err = add_stats(ator(*zz[0]), ator(*zz[1]),
 					 ator(*zz[2]), strtol(zz[3], NULL, 0),
 					 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
@@ -3655,7 +3663,7 @@ next_cave:
 
             fprintf(fff," You have defeated one enemy.\n");
         else
-           fprintf(fff,"\n You have defeated %lu enemies.\n", Total);
+           fprintf(fff,"\n You have defeated %ld enemies.\n", Total);
     }
     
 
@@ -5632,10 +5640,10 @@ static void get_details(high_score *the_score)
 	sprintf(the_score->pts, "%9ld", MIN(999999999, total_points()));
 
 	/* Save the current gold */
-	sprintf(the_score->gold, "%9lu", MIN(999999999, p_ptr->au));
+	sprintf(the_score->gold, "%9ld", MIN(999999999, p_ptr->au));
 
 	/* Save the current turn */
-	sprintf(the_score->turns, "%9lu", MIN(999999999, turn));
+	sprintf(the_score->turns, "%9ld", MIN(999999999, turn));
 
 #ifdef HIGHSCORE_DATE_HACK
 	/* Save the date in a hacked up form (9 chars) */
@@ -5649,7 +5657,7 @@ static void get_details(high_score *the_score)
 	sprintf(the_score->who, "%-.15s", player_name);
 
 	/* Save the player info XXX XXX XXX */
-	sprintf(the_score->uid, "%7u", player_uid);
+	sprintf(the_score->uid, "%7d", player_uid);
 	sprintf(the_score->sex, "%c", (p_ptr->psex ? 'm' : 'f'));
 	sprintf(the_score->p_r, "%2d", p_ptr->prace);
 	sprintf(the_score->p_c, "%2d", p_ptr->ptemplate);
