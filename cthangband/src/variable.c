@@ -55,7 +55,7 @@ bool character_dungeon;		/* The character has a dungeon */
 bool character_loaded;		/* The character was loaded from a savefile */
 bool character_saved;		/* The character was just saved to a savefile */
 
-bool character_icky;		/* The game is in an icky full screen mode */
+byte character_icky;		/* The game is in an icky full screen mode */
 bool character_xtra;		/* The game is in an icky startup mode */
 
 u32b seed_flavor;		/* Hack -- consistent object colors */
