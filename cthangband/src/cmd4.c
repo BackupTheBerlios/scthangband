@@ -997,6 +997,135 @@ static void do_cmd_options_hp(void)
 	help_track(NULL);
 }
 
+/*
+ * Actually dump options to an open file.
+ *
+ * This does not dump cheat options on the assumption that this is desired.
+ * It does not dump autosave frequency, base delay or hitpoint warning level
+ * as the game has no way of loading these.
+ */
+static void option_dump_aux(FILE *fff)
+{
+	uint i,j;
+
+	/* Skip some lines */
+	fprintf(fff, "\n\n");
+
+	/* Start dumping */
+	fprintf(fff, "# Automatic option dump\n\n");
+
+	for (i = 0; option_info[i].o_var; i++)
+	{
+		/* Paranoia - require a real option */
+		if (!option_info[i].o_text) continue;
+
+		/* Require a non-cheat option. */
+		if (option_info[i].o_page == OPTS_CHEAT) continue;
+
+		/* Comment */
+		fprintf(fff, "# Option '%s'\n", option_info[i].o_desc);
+
+		/* Dump the option */
+		if ((*option_info[i].o_var))
+		{
+			fprintf(fff, "Y:%s\n\n", option_info[i].o_text);
+		}
+		else
+		{
+			fprintf(fff, "X:%s\n\n", option_info[i].o_text);
+		}
+	}
+
+	/* Dump window flags */
+
+	fprintf(fff, "# Reset window flags\n");
+	fprintf(fff, "W:---reset---\n");
+
+	for (i = 1; i < N_ELEMENTS(windows); i++)
+	{
+		/* Comment */
+		fprintf(fff, "\n#Window '%s'\n", windows[i].name);
+
+		for (j = 0; j < N_ELEMENTS(window_flag_desc); j++)
+		{
+			cptr goodpri = ".abcdefghij";
+
+			/* Not a real display. */
+			if (!window_flag_desc[j]) continue;
+
+			/* Not set. */
+			if (!windows[i].rep[j] && !windows[i].pri[j]) continue;
+
+			/* Dump the values. */
+			fprintf(fff, "W:%s:%s:%c:%c\n", windows[i].name,
+				window_flag_desc[j]+8, goodpri[windows[i].rep[j]],
+				goodpri[windows[i].pri[j]]);
+		}
+	}
+
+	/* Mention options which can't be read. */
+	fprintf(fff, "\n\n# Unparsable options\n\n");
+	fprintf(fff, "# Base delay factor %d\n",
+		delay_factor * delay_factor * delay_factor);
+	fprintf(fff, "# Hitpoint warning %d\n", hitpoint_warn * 10);
+	fprintf(fff, "# Autosave frequency %d\n\n", autosave_freq);
+}
+
+#define DCO_ERROR_ABORT	1
+#define DCO_ERROR_FILE	2
+
+/*
+ * Dump the options to a file.
+ */
+static errr option_dump(void)
+{
+	FILE *fff;
+	char ftmp[256];
+
+	/* Prompt */
+	prt("Command: Append options to a file", 21, 0);
+
+	/* Prompt */
+	prt("File: ", 21, 0);
+
+	/* Default filename */
+	sprintf(ftmp, "%.251s.prf", player_base);
+
+	/* Handle abort. */
+	if (!askfor_aux(ftmp, 256)) return DCO_ERROR_ABORT;
+
+	fff = my_fopen_path(ANGBAND_DIR_USER, ftmp, "a");
+
+	if (!fff) return DCO_ERROR_FILE;
+
+	option_dump_aux(fff);
+
+	fclose(fff);
+
+	return SUCCESS;
+}
+
+static errr option_load(void)
+{
+	char ftmp[256];
+
+	/* Prompt */
+	prt("Command: Append options to a file", 21, 0);
+
+	prt("File: ", 21, 0);
+
+	/* Default filename */
+	sprintf(ftmp, "%.251s.prf", player_base);
+
+	/* Handle abort. */
+	if (!askfor_aux(ftmp, 256)) return DCO_ERROR_ABORT;
+
+	/* Try to process the named file. */
+	if (process_pref_file(ftmp)) return DCO_ERROR_FILE;
+
+	return SUCCESS;
+}
+
 typedef struct option_list option_list;
 struct option_list
 {
@@ -1004,6 +1133,7 @@ struct option_list
 	cptr text;
 	int num;
 	char ch;
+	byte x;
 	byte y;
 };
 
@@ -1011,22 +1141,26 @@ struct option_list
 #define OPTS_HP	-2
 #define OPTS_SAVE	-3
 #define OPTS_WINDOW	-4
+#define OPTS_TO_FILE -5
+#define OPTS_FROM_FILE -6
 
 static option_list opt_lists[] =
 {
-	{"User Interface Options", NULL, OPTS_UI, '1', 4},
-	{"Disturbance Options", NULL, OPTS_DISTURB, '2', 5},
-	{"Creature Options", NULL, OPTS_MON, '3', 6},
-	{"Object Options", NULL, OPTS_OBJ, '4', 7},
-	{"Performance Options", NULL, OPTS_PERF, '5', 8},
-	{"Miscellaneous Options", NULL, OPTS_MISC, '6', 9},
-	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 11},
-	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 12},
-	{"Autosave Options", NULL, OPTS_SAVE, 'A', 13},
-	{"Window Flags", NULL, OPTS_WINDOW, 'W', 14},
-	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 16},
-	{"Cheating Optins", "o_cheat.txt", OPTS_CHEAT, 'C', 17},
-	{0,0,0,0,0}
+	{"User Interface Options", NULL, OPTS_UI, '1', 5, 4},
+	{"Disturbance Options", NULL, OPTS_DISTURB, '2', 5, 5},
+	{"Creature Options", NULL, OPTS_MON, '3', 5, 6},
+	{"Object Options", NULL, OPTS_OBJ, '4', 5, 7},
+	{"Performance Options", NULL, OPTS_PERF, '5', 5, 8},
+	{"Miscellaneous Options", NULL, OPTS_MISC, '6', 5, 9},
+	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 5, 11},
+	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', 5, 12},
+	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 43, 4},
+	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 43, 5},
+	{"Autosave Options", NULL, OPTS_SAVE, 'A', 43, 6},
+	{"Window Flags", NULL, OPTS_WINDOW, 'W', 43, 7},
+	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 9},
+	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 10},
+	{0,0,0,0,0,0}
 };
 
 
@@ -1064,7 +1198,8 @@ void do_cmd_options(void)
 		/* Give some choices */
 		for (ol_ptr = opt_lists; ol_ptr->title; ol_ptr++)
 		{
-			prt(format("(%c) %s", ol_ptr->ch, ol_ptr->title), ol_ptr->y, 5);
+			prt(format("(%c) %s", ol_ptr->ch, ol_ptr->title), ol_ptr->y,
+				ol_ptr->x);
 		}
 
 		/* Prompt */
@@ -1085,6 +1220,10 @@ void do_cmd_options(void)
 				break;
 			}
 			if (FORCEUPPER(k) != ol_ptr->ch) continue;
+
+			/* Give a message (usually cleared immediately). */
+			roff(ol_ptr->title);
+
 			if (ol_ptr->num > -1)
 			{
 				do_cmd_options_aux(ol_ptr->num, ol_ptr->title, ol_ptr->text);
@@ -1109,6 +1248,32 @@ void do_cmd_options(void)
 				case OPTS_WINDOW:
 				{
 					do_cmd_options_win();
+					break;
+				}
+				case OPTS_TO_FILE:
+				{
+					errr err = option_dump();
+					if (err == DCO_ERROR_FILE)
+					{
+						msg_print("Failed!");
+					}
+					else if (err == SUCCESS)
+					{
+						msg_print("Done.");
+					}
+					break;
+				}
+				case OPTS_FROM_FILE:
+				{
+					errr err = option_load();
+					if (err == DCO_ERROR_FILE)
+					{
+						msg_print("Failed!");
+					}
+					else if (err == SUCCESS)
+					{
+						msg_print("Done.");
+					}
 					break;
 				}
 			}

@@ -369,6 +369,9 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
  * Turn an option on, given its name
  *   Y:<str>
  *
+ * Set the priority for a particular display and a given window
+ *   W:<term name>:<display name>:<triggered>:<untriggered>
+ *
  * Specify visual information, given an index, and some data
  *   V:<num>:<kv>:<rv>:<gv>:<bv>
  *
@@ -628,7 +631,60 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				}
 			}
 		}
-	
+		/* Process W:<term name>:<display name>:<triggered>:<untriggered>
+		 * to a window flag.
+		 */
+		case 'W':
+		{
+			cptr goodpri = ".abcdefghij";
+			uint term, display, pri, rep;
+
+			if (!strcmp(buf+2, "---reset---"))
+			{
+				for (display = 0; display < N_ELEMENTS(window_flag_desc);
+					display++)
+				{
+					for (term = 0; term < N_ELEMENTS(windows); term++)
+					{
+						windows[term].rep[display] = 0;
+						windows[term].pri[display] = 0;
+					}
+				}
+				return SUCCESS;
+			}
+
+
+			if (tokenize(buf+2, 4, zz) != 4)
+				return PREF_ERROR_INCORRECT_SYNTAX;
+
+			/* Identify the term and display strings. */
+			for (term = 0;; term++)
+			{
+				if (term == N_ELEMENTS(windows))
+					return PREF_ERROR_UNKNOWN_PARAMETER;
+				if (!strcmp(windows[term].name, zz[0])) break;
+			}
+			for (display = 0;; display++)
+			{
+				if (display == N_ELEMENTS(window_flag_desc))
+					return PREF_ERROR_UNKNOWN_PARAMETER;
+				if (!window_flag_desc[display]) continue;
+				if (!strcmp(window_flag_desc[display]+8, zz[1])) break;
+			}
+
+			/* Identify the triggered and untriggered numbers. */
+			if (!strchr(goodpri, zz[2][0]) || zz[2][1])
+				return PREF_ERROR_OUT_OF_BOUNDS;
+			if (!strchr(goodpri, zz[3][0]) || zz[3][1])
+				return PREF_ERROR_OUT_OF_BOUNDS;
+			rep = strchr(goodpri, zz[2][0])-goodpri;
+			pri = strchr(goodpri, zz[3][0])-goodpri;
+
+			/* Enact the requests and return. */
+			windows[term].rep[display] = rep;
+			windows[term].pri[display] = pri;
+			return SUCCESS;
+		}
 		/*
 		 * Process D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name> for initial stats 
 		 */

@@ -2830,6 +2830,12 @@ logaux(x, 1) logaux(x, 0) 255)
 
 #define PARSE_ERROR_MAX                     14
 
+/* Errors from process_pref_file_aux(). */
+#define PREF_ERROR_GENERIC	1
+#define PREF_ERROR_UNKNOWN_PARAMETER 3
+#define PREF_ERROR_OUT_OF_BOUNDS	8
+#define PREF_ERROR_INCORRECT_SYNTAX	13
+
 #ifndef SUCCESS
 #define SUCCESS	0
 #endif
