@@ -860,23 +860,19 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 /*
  * Determine if a cantrip is "okay" for the player to cast
  */
-static bool cantrip_okay(int fav)
+static bool cantrip_okay(const magic_type *s_ptr)
 {
-	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
-	magic_type *s_ptr;
+	const int plev = spell_skill(s_ptr);
 
-	/* Access the favour */
-    s_ptr = &(cantrip_info[fav]);
-
-	/* Cantrip is illegal */
-	if (s_ptr->min > plev) return (FALSE);
-	return (TRUE);
+	/* Okay. */
+	return (s_ptr->min <= plev);
 }
 
 /*
  * Print a list of cantrips (for casting or learning)
  */
-static void print_cantrips(byte *spells, int num, int y, int x)
+static void print_cantrips(book_type *b_ptr, byte *spells, int num,
+	int y, int x)
 {
 	int                     i, spell;
 
@@ -901,9 +897,9 @@ static void print_cantrips(byte *spells, int num, int y, int x)
 		/* Access the favour */
 		spell = spells[i];
 
-		s_ptr = &(cantrip_info[spell]);
+		s_ptr = &(b_ptr->info[spell]);
 
-		get_cantrip_info(info,spell);
+		spell_info_b(info, 15, s_ptr);
 
 		comment = info;
 
@@ -914,7 +910,7 @@ static void print_cantrips(byte *spells, int num, int y, int x)
 			
 		/* Dump the favour --(-- */
 		sprintf(out_val, "  %c) %-35s%2d %3d%%%s",
-		I2A(i), cantrip_info[spell].name, /* spell */
+		I2A(i), b_ptr->info[spell].name, /* spell */
 		s_ptr->min*2, spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
@@ -931,7 +927,7 @@ static void print_cantrips(byte *spells, int num, int y, int x)
  * If there are no legal choices, returns FALSE, and sets '*sn' to -2
  *
  */
-static int get_cantrip(int *sn, int sval)
+static int get_cantrip(int *sn, book_type *b_ptr)
 {
 	int		i;
 	int		spell = -1;
@@ -953,7 +949,7 @@ static int get_cantrip(int *sn, int sval)
      if (repeat_pull(sn)) {
          
          /* Verify the spell */
-         if (cantrip_okay(*sn)) {
+         if (cantrip_okay(&b_ptr->info[*sn])) {
                     
              /* Success */
              return (TRUE);
@@ -963,16 +959,8 @@ static int get_cantrip(int *sn, int sval)
  #endif /* ALLOW_REPEAT -- TNB */
  
 
-	/* Extract spells */
-	for (spell = 0; spell < 32; spell++)
-	{
-		/* Check for this spell */
-		if ((cantrip_flags[sval] & (1L << spell)))
-		{
-			/* Collect this spell */
-			spells[num++] = spell;
-		}
-	}
+	/* Count the spells out. */
+	num = build_spell_list(spells, b_ptr);
 
 	/* Assume no usable spells */
 	okay = FALSE;
@@ -984,7 +972,7 @@ static int get_cantrip(int *sn, int sval)
 	for (i = 0; i < num; i++)
 	{
 		/* Look for "okay" spells */
-		if (cantrip_okay(spells[i])) okay = TRUE;
+		if (cantrip_okay(b_ptr->info+spells[i])) okay = TRUE;
 	}
 
 	/* No "okay" spells */
@@ -1001,7 +989,7 @@ static int get_cantrip(int *sn, int sval)
 		/* Show list */
 		redraw = TRUE;
 		Term_save();
-		print_cantrips(spells, num, 1, 20);
+		print_cantrips(b_ptr, spells, num, 1, 20);
 	}		
 	else
 	{
@@ -1037,7 +1025,7 @@ static int get_cantrip(int *sn, int sval)
 				Term_save();
 
 				/* Display a list of spells */
-				print_cantrips(spells, num, 1, 20);
+				print_cantrips(b_ptr, spells, num, 1, 20);
 			}
 
 			/* Hide the list */
@@ -1075,7 +1063,7 @@ static int get_cantrip(int *sn, int sval)
 		spell = spells[i];
 
 		/* Require "okay" spells */
-		if (!cantrip_okay(spell))
+		if (!cantrip_okay(&b_ptr->info[spell]))
 		{
 			bell(0);
 			msg_print("You may not cast that cantrip.");
@@ -1088,12 +1076,11 @@ static int get_cantrip(int *sn, int sval)
 			char tmp_val[160];
 
 			/* Access the spell */
-			s_ptr = &(cantrip_info[spell]);
+			s_ptr = &(b_ptr->info[spell]);
 
 			/* Prompt */
 			strnfmt(tmp_val, 78, "cast %s (%d%% fail)? ",
-				cantrip_info[spell].name,
-				spell_chance(s_ptr));
+				&b_ptr->info[spell].name, spell_chance(s_ptr));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -3776,7 +3763,7 @@ void do_cmd_cast(void)
 void do_cmd_cantrip(void)
 {
 	errr err;
-	int	sval, spell, dir;
+	int	spell, dir;
 	int	chance, beam;
 	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
 	int	dummy = 0;
@@ -3787,6 +3774,7 @@ void do_cmd_cantrip(void)
 	object_type	*o_ptr;
 
 	magic_type	*s_ptr;
+	book_type *b_ptr;
 
 	/* Require lite */
 	if (p_ptr->blind || no_lite())
@@ -3813,8 +3801,8 @@ void do_cmd_cantrip(void)
 		return;
 	}
 
-	/* Access the item's sval */
-	sval = k_info[o_ptr->k_idx].extra;
+	/* Access the item's spell list. */
+	b_ptr = k_idx_to_book(o_ptr->k_idx);
 
 	/* Track the object kind */
 	object_kind_track(o_ptr->k_idx);
@@ -3823,14 +3811,14 @@ void do_cmd_cantrip(void)
 	handle_stuff();
 
 	/* Ask for a spell */
-	if (!get_cantrip(&spell,sval))
+	if (!get_cantrip(&spell, b_ptr))
 	{
 		if (spell == -2)
 		msg_format("You don't know any %ss for that charm.", prayer);
 		return;
 	}
 
-	s_ptr = &(cantrip_info[spell]);
+	s_ptr = &(b_ptr->info[spell]);
 
 	/* Spell failure chance */
 	chance = spell_chance(s_ptr);

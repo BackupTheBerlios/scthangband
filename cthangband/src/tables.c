@@ -1840,7 +1840,7 @@ magic_type favour_info[MAX_SPHERE][32] =
 	},
 };
 
-magic_type cantrip_info[32] =
+static magic_type cantrip_info[32] =
 {
 	{"Zap", "", 1, 1, 20, 0, SKILL_HEDGE, SKILL_NONE, 0},
 	{"Wizard Lock", "", 1, 1, 33, 0, SKILL_HEDGE, SKILL_NONE, 0},
@@ -1919,25 +1919,6 @@ u32b spell_flags[4]=
     0x0000ff00,
     0x00ff0000,
     0xff000000
-};
-
-/*
- * 
- * Bitwise mask for cantrips to split them into charms.
- * Note the strange values, because cantrips are ordered
- * by difficulty, but charms each hold cantrips of a given
- * theme.
- *
- */
-u32b cantrip_flags[7]=
-{
-	0x10300221, /* Elemental cantrips (Charm = Sulphur)*/
-	0x4a080010, /* Movement cantrips (Charm = Hemlock)*/
-	0x00442080, /* Healing cantrips (Charm = Unicorn Horn) */
-	0x20001508, /* Visions cantrips (Charm = Crystal)*/
-	0x80800804, /* Illusion cantrips (Charm = Fly Agaric)*/
-	0x0003c000, /* Protection cantrips (Charm = Garlic)*/
-	0x05000042 /* Artifice cantrips (Charm = Geode)*/
 };
 
 /*

@@ -2105,15 +2105,15 @@ extern magic_type magic_info[MAX_SCHOOL][32];
 #if (defined(CMD5_C) || defined(TABLES_C))
 extern magic_type favour_info[MAX_SPHERE][32];
 #endif
-#if (defined(CMD5_C) || defined(TABLES_C))
-extern magic_type cantrip_info[32];
-#endif
+
+
+
 #if (defined(CMD5_C) || defined(TABLES_C))
 extern u32b spell_flags[4];
 #endif
-#if (defined(CMD5_C) || defined(TABLES_C))
-extern u32b cantrip_flags[7];
-#endif
+
+
+
 
 
 
