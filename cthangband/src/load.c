@@ -2118,7 +2118,7 @@ static errr rd_savefile_new_aux(void)
 		for (i = 0; i < tmp16u - MAX_STORES_TOTAL; i++) rd_store(0);
 	}
 	
-	for (i = 0; i < MAX(MAX_STORES_TOTAL, tmp16u); i++)
+	for (i = 0; i < MIN(MAX_STORES_TOTAL, tmp16u); i++)
 	{
 		if (rd_store(i)) return (22);
 	}
