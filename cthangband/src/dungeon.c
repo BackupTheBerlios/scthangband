@@ -4131,7 +4131,7 @@ static void create_character(void)
 		for(j=0;j<12;j++)
 		{
 			wild_grid[i][j].seed=rand_int(0x10000000);
-			wild_grid[i][j].dungeon=MAX_CAVES; /* 0-(MAX_CAVES-1) indicates dungeon */
+			wild_grid[i][j].dungeon=TOWN_NONE;
 			wild_grid[i][j].road_map=0;
 		}
 	}

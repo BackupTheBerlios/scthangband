@@ -75,9 +75,11 @@
 # KADATH: This causes monsters generated on the surface to have a Cthuloid
 # bias rather than following the bias of the dungeon.
 
-# Note that quests added or removed will only have an effect for the next
-# character to be created. Other changes take place as soon as the game is
-# restarted.
+# Some of the changes which can be made to this file (including all changes
+# relating to quests apart from removing the level a quest is on) only have
+# an effect at the start of the next game, or have a strange effect mid-game.
+# Because of this, you are strongly advised to keep a copy of your savefile
+# somewhere safe if you do intend to alter this file mid-game.
 
 # Version stamp (required)
 

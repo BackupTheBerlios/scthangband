@@ -1137,7 +1137,7 @@ static void rd_extra(void)
 		}
 	}
 #else /* SF_QUEST_DIRECT */
-	for(i=0;i<MAX_CAVES;i++)
+	for(i=0;i<20;i++)
 	{
 		rd_s16b(&p_ptr->max_dlv[i]);
 	}
@@ -1224,6 +1224,10 @@ static void rd_extra(void)
 			rd_u32b(&tmp32u);
 			wild_grid[i][j].seed=tmp32u;
 			rd_byte(&tmp8u);
+#ifdef SF_QUEST_DIRECT
+			/* TOWN_NONE indicates no dungeon as MAX_CAVES can move. */
+			if (!has_flag(SF_QUEST_DIRECT) && tmp8u >= 20) tmp8u = TOWN_NONE;
+#endif /* SF_QUEST_DIRECT */
 			wild_grid[i][j].dungeon=tmp8u;
 
 			/* Fill in the town and dungeon locations if possible */
@@ -2086,11 +2090,19 @@ static errr rd_savefile_new_aux(void)
 
 	/* Read the stores */
 	rd_u16b(&tmp16u);
-	for (i = 0; i < tmp16u; i++)
+
+	/* Too many stores, so delete the first few. */
+	if (tmp16u > MAX_STORES_TOTAL)
+	{
+		msg_format("Deleting %u unrecognised stores", tmp16u - MAX_STORES_TOTAL);
+		for (i = 0; i < tmp16u - MAX_STORES_TOTAL; i++) rd_store(0);
+	}
+	
+	for (i = 0; i < MAX(MAX_STORES_TOTAL, tmp16u); i++)
 	{
 		if (rd_store(i)) return (22);
 	}
-
+	
 	/* I'm not dead yet... */
 	if (!death)
 	{
