@@ -6102,7 +6102,16 @@ struct line_list
 static line_list line_lists[16];
 static uint num_line_lists = 0;
 
-static errr init_rnd_line(cptr file_name)
+/* An error message. */
+static cptr null = NULL;
+
+/*
+ * Read the lines in a file (excluding any comments) into a line_list.
+ * Set name to file_name.
+ * If successful, set max to the number of lines, and file[] to the lines.
+ * On failure, set max to 1 and file[0] to null.
+ */
+static void init_rnd_line(cptr file_name)
 {
 	char buf[1024];
 	cptr *s;
@@ -6111,8 +6120,6 @@ static errr init_rnd_line(cptr file_name)
 	FILE *fp = my_fopen_path(ANGBAND_DIR_FILE, file_name, "r");
 
 	line_list *l_ptr;
-
-	if (!fp) return FILE_ERROR_CANNOT_OPEN_FILE;
 
 	/* Count the files used. */
 	assert(num_line_lists < N_ELEMENTS(line_lists));
@@ -6123,33 +6130,38 @@ static errr init_rnd_line(cptr file_name)
 	/* Save the file name. */
 	l_ptr->name = string_make(file_name);
 
-	/* Look for a non-comment. */
-	for (buf[0] = '\0'; !buf[0] || buf[0] == '#'; )
+	/* Count the lines (as long as the file was opened). */
+	if (fp) while (!my_fgets(fp, buf, sizeof(buf)))
 	{
-		/* Can't find a number. */
-		if (my_fgets(fp, buf, sizeof(buf))) return FILE_ERROR_EOF;
+		if (*buf && *buf != '#') l_ptr->max++;
 	}
 
-	/* The first non-comment should be the number of lines present. */
-	l_ptr->max = atoi(buf);
-
-	/* It isn't? */
-	if (l_ptr->max <= 0) return PARSE_ERROR_MISSING_RECORD_HEADER;
-
-	/* Provide space for the strings. */
-	l_ptr->list = C_NEW(l_ptr->max, cptr);
-
-	for (s = l_ptr->list; s < l_ptr->list+l_ptr->max; s++)
+	if (l_ptr->max)
 	{
-		/* Premature EOF. */
-		if (my_fgets(fp, buf, sizeof(buf))) return FILE_ERROR_EOF;
+		/* Provide space for the strings. */
+		s = l_ptr->list = C_NEW(l_ptr->max, cptr);
 
-		/* Save the string. */
-		*s = string_make(buf);
+		/* Start from the beginning. */
+		rewind(fp);
+
+		/* Read the lines in. */
+		while (!my_fgets(fp, buf, sizeof(buf)))
+		{
+			if (*buf && *buf != '#') *s++ = string_make(buf);
+		}
+	}
+	/* Paranoia - return an error message if there are no lines to use or
+	 * if the file could not be opened. */
+	else
+	{
+		/* One "string". */
+		l_ptr->max = 1;
+
+		/* And it's a null pointer. */
+		l_ptr->list = &null;
 	}
 
-	/* All went as expected. */
-	return SUCCESS;
+	my_fclose(fp);
 }
 
 /*
@@ -6163,14 +6175,12 @@ static line_list *get_rnd_line_file(cptr file_name)
 	{
 		if (!strcmp(l_ptr->name, file_name)) return l_ptr;
 	}
-	if (!init_rnd_line(file_name))
-	{
-		return get_rnd_line_file(file_name);
-	}
-	else
-	{
-		return NULL;
-	}
+
+	/* Initialise the file. */
+	init_rnd_line(file_name);
+
+	/* Try again. */
+	return get_rnd_line_file(file_name);
 }
 
 /*
