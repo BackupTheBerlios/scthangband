@@ -190,15 +190,14 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 				object_type o, *o_ptr = &o;
 				C_TNEW(o_name, ONAME_MAX, char);
 				object_prep(o_ptr, i_ptr->k_idx);
+				if (i_ptr->max > 1) o_ptr->number = UNKNOWN_OBJECT_NUMBER;
 				if (i_ptr->flags & EI_ART)
 					o_ptr->name1 = i_ptr->x_idx;
 #ifdef ALLOW_EGO_DROP
 				if (i_ptr->flags & EI_EGO)
 				o_ptr->name2 = EP_EGO;
 #endif
-				object_desc_store(o_name, o_ptr, FALSE, 0);
-				/* Note that no "unusual article" flag exists for objects. */
-				full_name(o_name, i_ptr->max > 1, TRUE, FALSE);
+				object_desc_store(o_name, o_ptr, TRUE, 0);
 				(*out)(format("%s %s drop %s", he, DDE_MAY, o_name));
 				TFREE(o_name);
 				break;

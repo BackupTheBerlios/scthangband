@@ -3357,6 +3357,8 @@ extern int PlayerUID;
 /* The number of special macros. */
 #define MAX_MACRO_SPECIAL	1
 
+/* Default values for various unknown things. */
+#define UNKNOWN_OBJECT_NUMBER	255	/* object_type.number */
 
 /*
  * The key sent by resize_inkey. This is an arbitary control key to ensure that

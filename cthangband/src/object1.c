@@ -1345,6 +1345,11 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		t = object_desc_str(t, "no more ");
 	}
 
+	else if (o_ptr->number == UNKNOWN_OBJECT_NUMBER)
+	{
+		t = object_desc_str(t, "some ");
+	}
+
 	/* Extract the number */
 	else if (o_ptr->number > 1)
 	{
