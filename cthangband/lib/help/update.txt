@@ -4,6 +4,26 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband 1.0.8
+* Reduce the danger of failing to use a spirit favour.
+* Make more of the game use the full size of the main window.
+* Create an extra window to show information about the square the player is on.
+* Turn speak_unique into a birth option.
+* Set the rarities (and, to an extent, the random properties) of ego items from
+  e_info.txt.
+* Set the chance of producing a random artefact in e_info.txt.
+* Set the boost to the level feeling from each base item in k_info.txt.
+* Rearrange the P lines in k_info.txt and a_info.txt so that it looks more like
+  an object description.
+* Set the article features get in f_info.txt so that you don't see "a water".
+* Make extra characters at the end of a line in lib/edit cause an error.
+* List a few more things in the '~' character screen.
+* Make the 'I' description of non-weapons and objects with anti-magic a bit
+  more appropriate.
+* Clean up some code.
+* Fix a few bugs (some possibly fatal).
+
+
 sCthangband 1.0.7
 * Create an option to flush input if invalid input is given.
 * Add instructions for the stat choice screen, and mention them on it.
