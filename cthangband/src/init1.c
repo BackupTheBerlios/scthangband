@@ -1378,14 +1378,14 @@ errr init_v_info_txt(FILE *fp, char *buf)
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
-
+	
 		/* Verify correct "colon" format */
 		if (buf[1] != ':') return (1);
 
 
 		/* Hack -- Process 'V' for "Version" */
 		if (buf[0] == 'V')
-		{
+{
 			int v1, v2, v3;
 
 			/* Scan for the values */
@@ -1393,22 +1393,22 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			    (v1 != v_head->v_major) ||
 			    (v2 != v_head->v_minor) ||
 			    (v3 != v_head->v_patch))
-			{
+	{
 				return (2);
-			}
+	}
 
 			/* Okay to proceed */
 			okay = TRUE;
 
 			/* Continue */
 			continue;
-		}
+}
 
 		/* No version yet */
 		if (!okay) return (2);
 
 
-		/* Process 'N' for "New/Number/Name" */
+	/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
@@ -1509,7 +1509,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 
 		/* Oops */
 		return (6);
-	}
+		}
 
 
 	/* Complete the "name" and "text" sizes */
@@ -1523,7 +1523,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 
 	/* Success */
 	return (0);
-}
+	}
 
 
 
@@ -1648,7 +1648,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 
 		/* Process 'M' for "Mimic" (one line only) */
 		if (buf[0] == 'M')
-		{
+			{
 			int mimic;
 
 			/* Scan for the values */
@@ -1703,6 +1703,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 	/* Success */
 	return (0);
 }
+
 
 
 
@@ -1821,7 +1822,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		if (!okay) return (2);
 
 
-		/* Process 'N' for "New/Number/Name" */
+	/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
@@ -2088,9 +2089,9 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		}
 
 
-		/* Oops */
+			/* Oops */
 		return (6);
-	}
+		}
 
 
 	/* Complete the "name" and "text" sizes */
@@ -2243,7 +2244,7 @@ errr init_u_info_txt(FILE *fp, char *buf)
 
 		/* Hack -- Process 'V' for "Version" */
 		if (buf[0] == 'V')
-		{
+	{
 			errr err = check_version(buf, u_head);
 			if (err) return err;
 			okay = TRUE;
@@ -2460,10 +2461,10 @@ errr init_u_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
-
-		/* Oops */
-		return ERR_DIRECTIVE;
-	}
+		
+			/* Oops */
+			return ERR_DIRECTIVE;
+		}
 
 	do_u_finish_off;
 
@@ -2479,7 +2480,7 @@ errr init_u_info_txt(FILE *fp, char *buf)
 
 	/* Success */
 	return SUCCESS;
-}
+	}
 
 /*
  * Grab one flag in an artifact_type from a textual string

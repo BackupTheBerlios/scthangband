@@ -368,7 +368,7 @@ static errr init_f_info(void)
 
 		err = check_modification_date(fd, "f_info.txt");
         if (err) msg_print("f_info.raw file has old modification time.");
-        
+
 #endif /* CHECK_MODIFICATION_TIME */
 		/* Attempt to parse the "raw" file */
 		if (!err) err = init_f_info_raw(fd);
@@ -376,13 +376,13 @@ static errr init_f_info(void)
 		/* Close it */
 		(void)fd_close(fd);
 
-		/* Success */
+	/* Success */
 		if (!err) return (0);
 
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'f_info.raw' file.");
 		msg_print(NULL);
-	}
+}
 
 
 	/*** Make the fake arrays ***/
@@ -418,19 +418,19 @@ static errr init_f_info(void)
 
 	/* Errors */
 	if (err)
-	{
-		cptr oops;
+{
+	cptr oops;
 
-		/* Error string */
-		oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
+	/* Error string */
+	oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
-		/* Oops */
+	/* Oops */
 		msg_format("Error %d at line %d of 'f_info.txt'.", err, error_line);
-		msg_format("Record %d contains a '%s' error.", error_idx, oops);
-		msg_format("Parsing '%s'.", buf);
+	msg_format("Record %d contains a '%s' error.", error_idx, oops);
+	msg_format("Parsing '%s'.", buf);
 		msg_print(NULL);
 
-		/* Quit */
+	/* Quit */
 		quit("Error in 'f_info.txt' file.");
 	}
 
@@ -466,7 +466,7 @@ static errr init_f_info(void)
 
 		/* Close */
 		(void)fd_close(fd);
-	}
+}
 
 
 	/*** Kill the fake arrays ***/
@@ -482,7 +482,7 @@ static errr init_f_info(void)
 	fake_name_size = 0;
 	fake_text_size = 0;
 
-#endif	/* ALLOW_TEMPLATES */
+#endif /* ALLOW_TEMPLATES */
 
 
 	/*** Load the binary image file ***/
@@ -644,7 +644,7 @@ static errr init_k_info(void)
 	}
 
 
-	/*** Make the fake arrays ***/
+		/*** Make the fake arrays ***/
 
 	/* Fake the size of "k_name" and "k_text" */
 	fake_name_size = 20 * 1024L;
@@ -658,24 +658,24 @@ static errr init_k_info(void)
 	C_MAKE(k_text, fake_text_size, char);
 
 
-	/*** Load the ascii template file ***/
+		/*** Load the ascii template file ***/
 
-	/* Build the filename */
+		/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_EDIT, "k_info.txt");
 
-	/* Open the file */
-	fp = my_fopen(buf, "r");
+		/* Open the file */
+		fp = my_fopen(buf, "r");
 
-	/* Parse it */
+		/* Parse it */
 	if (!fp) quit("Cannot open 'k_info.txt' file.");
 
-	/* Parse the file */
+		/* Parse the file */
 	err = init_k_info_txt(fp, buf);
 
-	/* Close it */
-	my_fclose(fp);
+		/* Close it */
+		my_fclose(fp);
 
-	/* Errors */
+		/* Errors */
 	if (err)
 	{
 		cptr oops;
@@ -694,24 +694,24 @@ static errr init_k_info(void)
 	}
 
 
-	/*** Dump the binary image file ***/
+		/*** Dump the binary image file ***/
 
-	/* File type is "DATA" */
-	FILE_TYPE(FILE_TYPE_DATA);
+		/* File type is "DATA" */
+		FILE_TYPE(FILE_TYPE_DATA);
 
-	/* Build the filename */
+		/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "k_info.raw");
 
 	/* Kill the old file */
 	(void)fd_kill(buf);
 
 	/* Attempt to create the raw file */
-	fd = fd_make(buf, mode);
+			fd = fd_make(buf, mode);
 
-	/* Dump to the file */
-	if (fd >= 0)
-	{
-		/* Dump it */
+		/* Dump to the file */
+		if (fd >= 0)
+		{
+			/* Dump it */
 		fd_write(fd, (char*)(k_head), k_head->head_size);
 
 		/* Dump the "k_info" array */
@@ -723,12 +723,12 @@ static errr init_k_info(void)
 		/* Dump the "k_text" array */
 		fd_write(fd, (char*)(k_text), k_head->text_size);
 
-		/* Close */
+			/* Close */
 		(void)fd_close(fd);
-	}
+		}
 
 
-	/*** Kill the fake arrays ***/
+		/*** Kill the fake arrays ***/
 
 	/* Free the "k_info" array */
 	C_KILL(k_info, k_head->info_num, object_kind);
@@ -741,32 +741,32 @@ static errr init_k_info(void)
 	fake_name_size = 0;
 	fake_text_size = 0;
 
-#endif	/* ALLOW_TEMPLATES */
+#endif /* ALLOW_TEMPLATES */
 
 
-	/*** Load the binary image file ***/
+		/*** Load the binary image file ***/
 
-	/* Build the filename */
+		/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "k_info.raw");
 
-	/* Attempt to open the "raw" file */
-	fd = fd_open(buf, O_RDONLY);
+		/* Attempt to open the "raw" file */
+		fd = fd_open(buf, O_RDONLY);
 
-	/* Process existing "raw" file */
+		/* Process existing "raw" file */
 	if (fd < 0) quit("Cannot load 'k_info.raw' file.");
 
-	/* Attempt to parse the "raw" file */
+		/* Attempt to parse the "raw" file */
 	err = init_k_info_raw(fd);
 
-	/* Close it */
+		/* Close it */
 	(void)fd_close(fd);
 
-	/* Error */
+		/* Error */
 	if (err) quit("Cannot parse 'k_info.raw' file.");
 
 	/* Success */
 	return (0);
-}
+	}
 
 /*
  * Initialise the "u_info" array, by parsing a binary "image" file
@@ -816,7 +816,7 @@ static errr init_u_info_raw(int fd)
 static errr init_u_info_final(void)
 {
 	s16b i,p_id;
-	
+
 	/* Allocate the p_id array */
 	pid_base = C_NEW(256, s16b);
 
@@ -991,8 +991,8 @@ static errr init_u_info(void)
 
 		/* Quit */
 		quit("Error in 'k_info.txt' file.");
-	}
-
+}
+		
 
 	/*** Dump the binary image file ***/
 
@@ -1022,8 +1022,8 @@ static errr init_u_info(void)
 
 		/* Close */
 		(void)fd_close(fd);
-	}
-
+}
+	
 
 	/*** Kill the fake arrays ***/
 

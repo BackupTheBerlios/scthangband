@@ -2099,7 +2099,7 @@ void do_cmd_visuals(void)
 	char buf[1024];
 
 	/* Hack - MAX_U_IDX is a variable. */
-	VISUAL_UNIDENT->max = MAX_U_IDX;
+		VISUAL_UNIDENT->max = MAX_U_IDX;
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
