@@ -3212,18 +3212,22 @@ bool get_string(cptr prompt, char *buf, int len)
  */
 char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to)
 {
-	char i[2]=" ";
+	char i[2]=" ", buf[257];
 	cptr c;
-	bool alloc_prompt = (prompt == format(0));
 
-	if (alloc_prompt) prompt = string_make(prompt);
+	/* The format buffer is likely to be overwritten. */
+	if (prompt == format(0))
+	{
+		/* Limit to the maximum screen width for X11. */
+		sprintf(buf, "%.256s", prompt);
+		prompt = buf;
+	}
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
 	/* Prompt for it (should "? " be added to long prompts?). */
-	prt(format(text, Term->wid-strlen(text)+5, prompt, "", func_nothing_f0),
-		0, 0);
+	mc_put_fmt(0, 0, text, Term->wid-strlen(text)+5, prompt, "", clear_f0);
 
 	/* Get an acceptable answer */
 	while (TRUE)
@@ -3235,7 +3239,7 @@ char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to)
 			c = conv_from;
 			break;
 		}
-		bell(0);
+		bell("Illegal response to a prompt");
 	}
 
 	/* Erase the prompt */
@@ -3243,8 +3247,6 @@ char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to)
 
 	/* Leave a record somewhere convenient. */
 	format(text, Term->wid-strlen(text)+5, prompt, " ", ascii_to_text_f1, i);
-
-	if (alloc_prompt) FREE(prompt);
 
 	/* Tell the calling routine */
 	return conv_to[c - conv_from];
@@ -3265,7 +3267,7 @@ bool get_check(cptr prompt)
 	/* Help */
 	help_track("yn_prompt");
 
-	rc = get_check_aux(prompt, "%.*s[y/n]%s%v", "nN\033yY\r", "\0\0\0\1\1\1");
+	rc = get_check_aux(prompt, "$!%.*s[y/n]%s%v", "nN\033yY\r", "\0\0\0\1\1\1");
 
 	/* Leave a message. */
 	message_add(format(0));

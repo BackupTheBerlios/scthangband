@@ -145,14 +145,6 @@
 typedef void (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
 
 /*
- * Hack - do nothing.
- */
-uint func_nothing_f0(char UNUSED *buf, uint UNUSED max, cptr UNUSED fmt, vptr UNUSED arg)
-{
-	return 0;
-}
-
-/*
  * Extract the number from "%.123v".
  */
 static long PURE get_precision(cptr s)

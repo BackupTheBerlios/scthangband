@@ -299,7 +299,7 @@ extern void opt_special_effect(const option_type * const op_ptr);
 #if (defined(BIRTH_C) || defined(CMD4_C))
 extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #endif
-#if (defined(CMD4_C) || defined(CMD5_C) || defined(XTRA2_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C))
@@ -3683,11 +3683,11 @@ extern bool get_hack_dir(int *dp);
 extern void dump_chaos_features(FILE * OutFile);
 #endif
 
+
+
+
 /* z-form.c */
 
-#if (defined(UTIL_C) || defined(Z_FORM_C))
-extern uint func_nothing_f0(char UNUSED *buf, uint UNUSED max, cptr UNUSED fmt, vptr UNUSED arg);
-#endif
 #if (defined(UTIL_C) || defined(Z_FORM_C))
 extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
 #endif
