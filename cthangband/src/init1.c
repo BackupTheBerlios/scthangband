@@ -450,27 +450,28 @@ static flag_name info_flags[] =
 	{"S_UNIQUE", RF6, RF6_S_UNIQUE},
 
 	/* Summoning "flags". */
-	{"CTHULOID", SUMMON, SUMMON_CTHULOID},
-	{"DEMON", SUMMON, SUMMON_DEMON},
-	{"UNDEAD", SUMMON, SUMMON_UNDEAD},
-	{"DRAGON", SUMMON, SUMMON_DRAGON},
-	{"GREAT_OLD_ONE", SUMMON, SUMMON_GOO},
-	{"ORC", SUMMON, SUMMON_ORC},
-	{"ANIMAL", SUMMON, SUMMON_ANIMAL},
-	{"UNIQUE", SUMMON, SUMMON_UNIQUE},
-	{"HI_UNDEAD", SUMMON, SUMMON_HI_UNDEAD},
-	{"HI_DRAGON", SUMMON, SUMMON_HI_DRAGON},
-	{"HOUND", SUMMON, SUMMON_HOUND},
-	{"MIMIC", SUMMON, SUMMON_MIMIC},
-	{"ANIMAL_RANGER", SUMMON, SUMMON_ANIMAL_RANGER},
-	{"REAVER", SUMMON, SUMMON_REAVER},
-	{"PHANTOM", SUMMON, SUMMON_PHANTOM},
-	{"ELEMENTAL", SUMMON, SUMMON_ELEMENTAL},
+	{"CTHULOID", SUMMON, SUMMON_CTHULOID & ~SUMMON_NO_UNIQUES},
+	{"DEMON", SUMMON, SUMMON_DEMON & ~SUMMON_NO_UNIQUES},
+	{"UNDEAD", SUMMON, SUMMON_UNDEAD & ~SUMMON_NO_UNIQUES},
+	{"DRAGON", SUMMON, SUMMON_DRAGON & ~SUMMON_NO_UNIQUES},
+	{"GREAT_OLD_ONE", SUMMON, SUMMON_GOO & ~SUMMON_NO_UNIQUES},
+	{"ORC", SUMMON, SUMMON_ORC & ~SUMMON_NO_UNIQUES},
+	{"ANIMAL", SUMMON, SUMMON_ANIMAL & ~SUMMON_NO_UNIQUES},
+	{"UNIQUE", SUMMON, SUMMON_UNIQUE & ~SUMMON_NO_UNIQUES},
+	{"HI_UNDEAD", SUMMON, SUMMON_HI_UNDEAD & ~SUMMON_NO_UNIQUES},
+	{"HI_DRAGON", SUMMON, SUMMON_HI_DRAGON & ~SUMMON_NO_UNIQUES},
+	{"HOUND", SUMMON, SUMMON_HOUND & ~SUMMON_NO_UNIQUES},
+	{"MIMIC", SUMMON, SUMMON_MIMIC & ~SUMMON_NO_UNIQUES},
+	{"ANIMAL_RANGER", SUMMON, SUMMON_ANIMAL_RANGER & ~SUMMON_NO_UNIQUES},
+	{"REAVER", SUMMON, SUMMON_REAVER & ~SUMMON_NO_UNIQUES},
+	{"PHANTOM", SUMMON, SUMMON_PHANTOM & ~SUMMON_NO_UNIQUES},
+	{"ELEMENTAL", SUMMON, SUMMON_ELEMENTAL & ~SUMMON_NO_UNIQUES},
 
 	/* Dungeon flags. */
 	{"TOWER", DF, DF_TOWER},
 	{"START", DF, DF_START},
 	{"KADATH", DF, DF_KADATH},
+	{"NO_UNIQUES", DF, DF_NO_UNIQUES},
 
 	/* Shop "flags". */
 	{"GENERAL", SHOP, STORE_GENERAL},
@@ -2792,12 +2793,12 @@ errr parse_dun_defs(char *buf, header *head, vptr *extra)
 				u32b f = 0;
 				/* Grab a pre-defined summon type. */
 				try(grab_one_summon_flag(&f, t));
-				ptr->bias = f;
-			}			
+				ptr->bias |= f;
+			}
 			else if (i == 3)
 			{
 				/* Grab a character to summon. */
-				ptr->bias = *t | SUMMON_NO_UNIQUES;
+				ptr->bias |= *t;
 			}
 
 			return SUCCESS;
@@ -2822,7 +2823,15 @@ errr parse_dun_defs(char *buf, header *head, vptr *extra)
 				/* Parse this entry */
 				try(grab_one_dungeon_flag(&f, s));
 
-				ptr->flags |= f;
+				/* Hack - DF_NO_UNIQUES affects the summon type, not the flags. */
+				if (f == DF_NO_UNIQUES)
+				{
+					ptr->bias |= SUMMON_NO_UNIQUES;
+				}
+				else
+				{
+					ptr->flags |= f;
+				}
 
 				/* Start the next entry */
 				s = t;

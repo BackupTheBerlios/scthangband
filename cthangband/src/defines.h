@@ -124,6 +124,7 @@
 #define DF_TOWER 0x01 /* Is this a tower? */
 #define DF_START 0x02 /* Can the player start the game here? */
 #define DF_KADATH 0x04 /* Hack - use Cthuloid monsters at level 35 outside. */
+#define DF_NO_UNIQUES 0x80 /* Don't summon uniques of the summon type. */
 
 /*
  * Total number of owners per store (see "store.c", etc)

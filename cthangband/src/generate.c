@@ -4888,7 +4888,14 @@ static void town_gen_hack(void)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant town layout */
-	Rand_value = town_defs[cur_town].seed;
+	if (town_defs[cur_town].seed)
+	{
+		Rand_value = town_defs[cur_town].seed;
+	}
+	else
+	{
+		Rand_value = wild_grid[wildy][wildx].seed;
+	}
 
 
 	/* Prepare an Array of "remaining stores", and count them */

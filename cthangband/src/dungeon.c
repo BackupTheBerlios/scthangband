@@ -4113,87 +4113,92 @@ static void resurrect(bool wizard)
 }
 
 /*
- * Create a new character, and all that goes with it.
+ * Initialise the towns and map.
+ * Place towns on the map.
  */
-static void create_character(void)
+static void place_towns(void)
 {
-	int i,j,x,y;
-
-	/* The dungeon is not ready */
-	character_dungeon = FALSE;
+	int good_squares[64][2];
+	int i, t, x, y;
 
 	/* Hack -- seeds for flavors and wilderness*/
 	seed_flavor = rand_int(0x10000000);
 	seed_wild = rand_int(0x10000000);
 	/* Initialise wilderness grid */
-	for (i=0;i<12;i++)
+	for (x=0; x<12; x++)
 	{
-		for(j=0;j<12;j++)
+		for(y=0; y<12; y++)
 		{
-			wild_grid[i][j].seed=rand_int(0x10000000);
-			wild_grid[i][j].dungeon=TOWN_NONE;
-			wild_grid[i][j].road_map=0;
+			wild_grid[x][y].seed=rand_int(0x10000000);
+			wild_grid[x][y].dungeon=TOWN_NONE;
+			wild_grid[x][y].road_map=0;
 		}
-	}
-
-	/* Hack -- seed for town layouts */
-	for (i = 0; i < MAX_TOWNS; i++)
-	{
-		town_defs[i].seed = rand_int(0x10000000);
 	}
 
 	/* Place towns and dungeons */
 	for(i=0;i<MAX_CAVES;i++)
 	{
-		if(i < MAX_TOWNS && town_defs[i].name)
+		bool town = i < MAX_TOWNS && town_defs[i].name;
+
+		/* Towns can't be generated next to other towns. */
+		for (t = 0, x = 2; x < 10; x++)
 		{
-			j=0;
-			while(j == 0)
+			for (y = 2; y < 10; y++)
 			{
-				x=rand_range(2,9);
-				y=rand_range(2,9);
-				j=1;
-				if((wild_grid[y][x].dungeon < MAX_CAVES) ||
-					(wild_grid[y-1][x].dungeon < MAX_CAVES) ||
-					(wild_grid[y+1][x].dungeon < MAX_CAVES) ||
-					(wild_grid[y][x-1].dungeon < MAX_CAVES) ||
-					(wild_grid[y][x+1].dungeon < MAX_CAVES) ||
-					(wild_grid[y-1][x+1].dungeon < MAX_CAVES) ||
-					(wild_grid[y+1][x+1].dungeon < MAX_CAVES) ||
-					(wild_grid[y-1][x-1].dungeon < MAX_CAVES) ||
-					(wild_grid[y+1][x-1].dungeon < MAX_CAVES))
+				/* Dungeons can't share a location. */
+				if((wild_grid[y][x].dungeon != TOWN_NONE)) continue;
+
+				/* Towns can't be next to other towns. */
+				if (town && (is_town_p(y-1, x-1) || is_town_p(y-1, x) ||
+					is_town_p(y-1, x+1) || is_town_p(y, x-1) ||
+					is_town_p(y, x+1) || is_town_p(y+1, x-1) ||
+					is_town_p(y+1, x) || is_town_p(y+1, x+1)))
 				{
-					j=0;
+					continue;
 				}
+
+				/* This is a suitable location for this dungeon. */
+					good_squares[t][0] = x;
+					good_squares[t++][1] = y;
 			}
 		}
-		else
+
+		/* Locations were found, so pick one. */
+		if (t)
 		{
-			j=0;
-			while(j == 0)
+			i = rand_int(t);
+			x = good_squares[i][0];
+			y = good_squares[i][1];
+
+			/* There are no dungeons next to this */
+			wild_grid[y][x].dungeon = i;
+
+			/* now let the town & dungeon know where they are */
+			if (is_town_p(y,x))
 			{
-				x=rand_range(2,9);
-				y=rand_range(2,9);
-				j=1;
-				if(wild_grid[y][x].dungeon < MAX_CAVES)
-				{
-					j=0;
-				}
+				town_defs[i].x=x;
+				town_defs[i].y=y;
 			}
+			dun_defs[i].x=x;
+			dun_defs[i].y=y;
 		}
-		/* There are no dungeons next to this */
-		wild_grid[y][x].dungeon=i;
-		/* now let the town & dungeon know where they are */
-		if (is_town_p(y,x))
-		{
-			town_defs[i].x=x;
-			town_defs[i].y=y;
-		}
-		dun_defs[i].x=x;
-		dun_defs[i].y=y;
 	}
-			
-	/* Generate road map... */
+
+	/* Choose a starting town. */
+	do
+	{
+		cur_town = rand_int(MAX_CAVES);
+	}
+	while(!(dun_defs[cur_town].flags & DF_START) || !(dun_defs[cur_town].x));
+}
+
+/*
+ * Generate roads to connect the towns together.
+ */
+static void place_roads(void)
+{
+	int i;
+
 	for(i=0;i<MAX_TOWNS-1;)
 	{
 		int cur_x,cur_y,dest_x,dest_y;
@@ -4288,14 +4293,24 @@ static void create_character(void)
 			}
 		}
 	}
+}
+
+/*
+ * Create a new character, and all that goes with it.
+ */
+static void create_character(void)
+{
+	/* The dungeon is not ready */
+	character_dungeon = FALSE;
+
+	/* Initialise stuff and add towns in. */
+	place_towns();
+
+	/* Generate road map... */
+	place_roads();
 
 	/* Start in town 0 */
 	dun_level = 0;
-	do
-	{
-		cur_town = (byte)rand_range(0,MAX_TOWNS-1);
-	}
-	while(~dun_defs[cur_town].flags & DF_START);
 	cur_dungeon = cur_town;
 	p_ptr->max_dlv = 0;
 	dun_offset = 0;
@@ -4307,13 +4322,13 @@ static void create_character(void)
 	/* Roll up a new character */
 	player_birth();
 
-	/* Hack -- enter the world at day unless undead*/
+	/* Hack -- enter the world at dawn unless undead*/
 	if ((p_ptr->prace == RACE_SPECTRE) ||
 		 (p_ptr->prace == RACE_ZOMBIE) ||
 		 (p_ptr->prace == RACE_SKELETON) ||
 		 (p_ptr->prace == RACE_VAMPIRE))
 	{
-		turn=50001;
+		turn=5*TOWN_DAWN+1;
 	}
 	else
 	{
