@@ -79,28 +79,28 @@ G: :d
 
 # 0x0B --> nothing
 
-N:11:unused
-G:#:g
+# N:11:unused
+# G:#:g
 
 # 0x0C --> nothing
 
-N:12:unused
-G:5:b
+# N:12:unused
+# G:5:b
 
 # 0x0D --> nothing
 
-N:13:unused
-G:6:r
+# N:13:unused
+# G:6:r
 
 # 0x0E --> nothing
 
-N:14:unused
-G:7:D
+# N:14:unused
+# G:7:D
 
 # 0x0F --> unused
 
-N:15:nothing
-G:8:y
+# N:15:nothing
+# G:8:y
 
 # 0x10 --> visible trap -- trap door
 
@@ -461,35 +461,35 @@ G:H:y
 N:85:Pawnbrokers
 G:P:g
 
-N:86:nothing
-G:x:w
+# N:86:nothing
+# G:x:w
 
-N:87:nothing
-G:x:w
+# N:87:nothing
+# G:x:w
 
-N:88:nothing
-G:x:w
+# N:88:nothing
+# G:x:w
 
-N:89:nothing
-G:x:w
+# N:89:nothing
+# G:x:w
 
-N:90:nothing
-G:x:w
+# N:90:nothing
+# G:x:w
 
-N:91:nothing
-G:x:w
+# N:91:nothing
+# G:x:w
 
-N:92:nothing
-G:x:w
+# N:92:nothing
+# G:x:w
 
-N:93:nothing
-G:x:w
+# N:93:nothing
+# G:x:w
 
-N:94:nothing
-G:x:w
+# N:94:nothing
+# G:x:w
 
-N:95:nothing
-G:x:w
+# N:95:nothing
+# G:x:w
 
 N:96:town gate
 G:+:u
