@@ -136,7 +136,7 @@ static int PURE value_check_aux2(object_ctype *o_ptr)
 		return (powerful) ? SENSE_GP_OBJ : SENSE_G_OBJ;
 
 	/* No feeling */
-	return (powerful) ? SENSE_UP_OBJ : SENSE_NONE;
+	return (powerful) ? SENSE_QP_OBJ : SENSE_NONE;
 }
 
 /*
@@ -190,14 +190,14 @@ int PURE find_feeling(object_ctype *o_ptr)
 			if (o_ptr->ident & IDENT_CURSED)
 				return (powerful) ? SENSE_CP_OBJ : SENSE_C_OBJ;
 			else
-				return (powerful) ? SENSE_UP_OBJ : SENSE_U_OBJ;
+				return (powerful) ? SENSE_QP_OBJ : SENSE_NONE;
 		}
 		/* IDENT_SENSE_VALUE is only set alone by an attempt to break an
 		 * artefact, so has few plausible values. */
 		case IDENT_SENSE_VALUE:
 			if (allart_p(o_ptr))
 				/* Artefacts */
-				return SENSE_U_ART;
+				return SENSE_Q_ART;
 			else if (o_ptr->ident & IDENT_BROKEN)
 				/* Artefacts which have been shattered */
 				return SENSE_BROKEN;
@@ -206,7 +206,7 @@ int PURE find_feeling(object_ctype *o_ptr)
 		default:
 		{
 			bool powerful = is_powerful(o_ptr);
-			return (powerful) ? SENSE_UP_OBJ : SENSE_NONE;
+			return (powerful) ? SENSE_QP_OBJ : SENSE_NONE;
 		}
 	}
 }

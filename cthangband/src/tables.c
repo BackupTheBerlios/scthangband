@@ -3182,7 +3182,6 @@ cptr_ch feeling_str[SENSE_MAX] =
 	{IDX(SENSE_C_OBJ) "cursed"},
 	{IDX(SENSE_BROKEN) "useless"},
 	{IDX(SENSE_U_OBJ) "average"},
-	{IDX(SENSE_UP_OBJ) "powerful"},
 	{IDX(SENSE_G_OBJ) "good"},
 	{IDX(SENSE_GP_OBJ) "very good"},
 	{IDX(SENSE_G_EGO) "excellent"},
@@ -3190,5 +3189,7 @@ cptr_ch feeling_str[SENSE_MAX] =
 	{IDX(SENSE_EMPTY) "empty"},
 	{IDX(SENSE_TRIED) "tried"},
 	{IDX(SENSE_PCURSE) "poss. cursed"},
-	{IDX(SENSE_U_ART) "unbreakable"},
+	{IDX(SENSE_Q_OBJ) "uncursed"},
+	{IDX(SENSE_QP_OBJ) "powerful"},
+	{IDX(SENSE_Q_ART) "unbreakable"},
 };

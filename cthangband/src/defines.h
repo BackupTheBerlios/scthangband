@@ -2539,16 +2539,17 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SENSE_C_OBJ 4
 #define SENSE_BROKEN 5
 #define SENSE_U_OBJ 6
-#define SENSE_UP_OBJ 7
-#define SENSE_G_OBJ 8
-#define SENSE_GP_OBJ 9
-#define SENSE_G_EGO 10
-#define SENSE_G_ART 11
-#define SENSE_EMPTY 12
-#define SENSE_TRIED 13
-#define SENSE_PCURSE 14
-#define SENSE_U_ART 15
-#define SENSE_MAX 16
+#define SENSE_G_OBJ 7
+#define SENSE_GP_OBJ 8
+#define SENSE_G_EGO 9
+#define SENSE_G_ART 10
+#define SENSE_EMPTY 11
+#define SENSE_TRIED 12
+#define SENSE_PCURSE 13
+#define SENSE_Q_OBJ 14
+#define SENSE_QP_OBJ 15
+#define SENSE_Q_ART 16
+#define SENSE_MAX 17
 
 /*
  * Special Monster Flags (all temporary)

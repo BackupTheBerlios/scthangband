@@ -397,7 +397,7 @@ bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
 	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
 
 	/* Reject felt artefacts. */
-	if (feel == SENSE_C_ART || feel == SENSE_G_ART || feel == SENSE_U_ART)
+	if (feel == SENSE_C_ART || feel == SENSE_G_ART || feel == SENSE_Q_ART)
 		return FALSE;
 
 	/* Accept everything else. */
