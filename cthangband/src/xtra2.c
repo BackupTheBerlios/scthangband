@@ -3148,38 +3148,46 @@ bool target_set(int mode)
  *
  * Note that confusion over-rides any (explicit?) user choice.
  */
-bool get_aim_dir(int *dp)
+static bool get_aim_dir_aux(int *dp, bool allow_repeat)
 {
 	int		dir;
+    cptr    p;
+    char command;
 
-	char	command;
+	if (allow_repeat)
+	{
 
-	cptr	p;
+#ifdef ALLOW_REPEAT
 
- #ifdef ALLOW_REPEAT
- 
- 	if (repeat_pull(dp)) {
- 	
- 		/* Confusion? */
- 
- 		/* Verify */
- 		if (!(*dp == 5 && !target_okay())) {
- 			return (TRUE);
- 		}
- 	}
-     
- #endif /* ALLOW_REPEAT -- TNB */
+		if (repeat_pull(dp)) {
 
-	/* Initialize */
-	(*dp) = 0;
+			/* Confusion? */
 
-	/* Global direction */
-	dir = command_dir;
+			/* Verify */
+			if (!(*dp == 5 && !target_okay())) {
+				return (TRUE);
+			}
+		}
 
-	/* Hack -- auto-target if requested */
-	if (use_old_target && target_okay()) dir = 5;
+#endif /* ALLOW_REPEAT -- TNB */
 
-	/* Ask until satisfied */
+		if (use_old_target && target_okay())
+		{
+			/* Hack -- auto-target if requested */
+			dir = 5;
+		}
+		else
+		{
+			/* Global direction */
+			dir = command_dir;
+		}
+	}
+	else
+	{
+		dir = 0;
+	}
+
+     /* Ask until satisfied */
 	while (!dir)
 	{
 		/* Choose a prompt */
@@ -3231,7 +3239,11 @@ bool get_aim_dir(int *dp)
 	}
 
 	/* No direction */
-	if (!dir) return (FALSE);
+	if (!dir)
+	{
+		(*dp) = 0;
+		return (FALSE);
+	}
 
 	/* Save the direction */
 	command_dir = dir;
@@ -3253,19 +3265,34 @@ bool get_aim_dir(int *dp)
 
 	/* Save direction */
 	(*dp) = dir;
-
+ 
  #ifdef ALLOW_REPEAT
  
      repeat_push(dir);
  
  #endif /* ALLOW_REPEAT -- TNB */
- 
 
 	/* A "valid" direction was entered */
 	return (TRUE);
 }
 
+/*
+ * A normal get_aim_dir() function as above.
+ */
+bool get_aim_dir(int *dp)
+{
+	return get_aim_dir_aux(dp, TRUE);
+}
 
+/*
+ * A version of get_aim_dir which doesn't use previously stored targets, etc..
+ * This is desirable when the player did not initiate the target call in the
+ * first place (as with MUT_PROD_MANA).
+ */
+bool get_hack_dir(int *dp)
+{
+	return get_aim_dir_aux(dp, FALSE);
+}
 
 /*
  * Request a "movement" direction (1,2,3,4,6,7,8,9) from the user,
@@ -4515,105 +4542,3 @@ void dump_chaos_features(FILE * OutFile)
 		fprintf(OutFile, " %s\n", info[i]);
 	}
 }
-
-
-bool get_hack_dir(int *dp)
-{
-	int		dir;
-    cptr    p;
-    char command;
-
-
-	/* Initialize */
-	(*dp) = 0;
-
-	/* Global direction */
-    dir = 0;
-
-    /* (No auto-targetting */
-
-     /* Ask until satisfied */
-	while (!dir)
-	{
-		/* Choose a prompt */
-		if (!target_okay())
-		{
-			p = "Direction ('*' to choose a target, Escape to cancel)? ";
-		}
-		else
-		{
-			p = "Direction ('5' for target, '*' to re-target, Escape to cancel)? ";
-		}
-
-		/* Get a command (or Cancel) */
-		if (!get_com(p, &command)) break;
-
-		/* Convert various keys to "standard" keys */
-		switch (command)
-		{
-			/* Use current target */
-			case 'T':
-			case 't':
-			case '.':
-			case '5':
-			case '0':
-			{
-				dir = 5;
-				break;
-			}
-
-			/* Set new target */
-			case '*':
-			{
-				if (target_set(TARGET_KILL)) dir = 5;
-				break;
-			}
-
-			default:
-			{
-				dir = get_keymap_dir(command);
-				break;
-			}
-		}
-
-		/* Verify requested targets */
-		if ((dir == 5) && !target_okay()) dir = 0;
-
-		/* Error */
-		if (!dir) bell(0);
-	}
-
-	/* No direction */
-	if (!dir) return (FALSE);
-
-	/* Save the direction */
-	command_dir = dir;
-
-	/* Check for confusion */
-	if (p_ptr->confused)
-	{
-		/* XXX XXX XXX */
-		/* Random direction */
-		dir = ddd[rand_int(8)];
-	}
-
-	/* Notice confusion */
-	if (command_dir != dir)
-	{
-		/* Warn the user */
-		msg_print("You are confused.");
-	}
-
-	/* Save direction */
-	(*dp) = dir;
- 
- #ifdef ALLOW_REPEAT
- 
-     repeat_push(dir);
- 
- #endif /* ALLOW_REPEAT -- TNB */
-
-	/* A "valid" direction was entered */
-	return (TRUE);
-}
-
