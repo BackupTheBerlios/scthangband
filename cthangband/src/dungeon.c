@@ -2115,6 +2115,8 @@ static void process_world(void)
 		{
 			spirits[i].annoyance--;
 			p_ptr->redraw |= PR_SPIRIT;
+		if (!spirits[i].annoyance && disturb_minor)
+			disturb(0, 0);
 		}
 	}
 
