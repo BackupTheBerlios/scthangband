@@ -1167,8 +1167,9 @@ player_sex sex_info[MAX_SEXES] =
  *      Male (Hgt, Wgt),
  *      Female (Hgt, Wgt)
  *      infra,
- *      template-choices
- *      initial template
+ *      template-choices,
+ *      initial history chart,
+ *      starting inventory (3 items),
  */
 player_race race_info[MAX_RACES] =
 {
@@ -1182,6 +1183,11 @@ player_race race_info[MAX_RACES] =
         78,  6, 190, 15,
         0,
         0x004E5,1,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Broo",
@@ -1193,6 +1199,11 @@ player_race race_info[MAX_RACES] =
         61,  6, 120, 15,
         0,
         0x06E5,129,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Cyclops",
@@ -1204,6 +1215,11 @@ player_race race_info[MAX_RACES] =
         80,  8, 235, 60,
         1,
         0x0007,77,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Dark-Elf",
@@ -1215,6 +1231,11 @@ player_race race_info[MAX_RACES] =
 		54,  4, 80,  6,
         5,
         0x0FFF,69,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Draconian",
@@ -1226,6 +1247,11 @@ player_race race_info[MAX_RACES] =
         72,  1, 130,  5,
         2,
         0x0F7F,89,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
 	{
 		"Dwarf",
@@ -1237,6 +1263,11 @@ player_race race_info[MAX_RACES] =
 		46,  3, 120, 10,
 		5,
         0x0065,16,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Elf",
@@ -1248,7 +1279,11 @@ player_race race_info[MAX_RACES] =
 		54,  4, 80,  6,
 		3,
         0x0FFF,7,
-
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Gnome",
@@ -1260,6 +1295,11 @@ player_race race_info[MAX_RACES] =
 		39,  3, 75,  3,
 		4,
         0x0F3F,13,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
     {
         "Golem",
@@ -1271,6 +1311,11 @@ player_race race_info[MAX_RACES] =
         62,  1, 180,  6,
         4,
         0x0005,98,
+		{
+			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
 	{
         "Great-One",
@@ -1282,6 +1327,11 @@ player_race race_info[MAX_RACES] =
 		78,  6, 180, 15,
 		0,
         0x0FFF,67,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Half-Elf",
@@ -1293,6 +1343,11 @@ player_race race_info[MAX_RACES] =
 		62,  6, 100, 10,
 		2,
         0x0FFF,4,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
     {
         "Half-Giant",
@@ -1304,6 +1359,11 @@ player_race race_info[MAX_RACES] =
         80, 10, 240, 64,
         3,
         0x0045,75,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Half-Ogre",
@@ -1315,6 +1375,11 @@ player_race race_info[MAX_RACES] =
         80,  8, 235, 60,
 		3,
         0x04C5,74,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
 	{
 		"Half-Orc",
@@ -1326,6 +1391,11 @@ player_race race_info[MAX_RACES] =
 		62,  1, 120,  5,
 		3,
         0x0FFF,19,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
     {
         "Half-Titan",
@@ -1337,6 +1407,11 @@ player_race race_info[MAX_RACES] =
         99, 11, 250, 86,
         0,
         0x0FFF,76,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
 	{
 		"Half-Troll",
@@ -1348,6 +1423,11 @@ player_race race_info[MAX_RACES] =
 		84,  8, 225, 40,
 		3,
         0x00C5,22,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"High-Elf",
@@ -1359,6 +1439,11 @@ player_race race_info[MAX_RACES] =
 		82, 10, 180, 15,
 		4,
         0x0FFF,7,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
 	{
 		"Hobbit",
@@ -1370,6 +1455,11 @@ player_race race_info[MAX_RACES] =
 		33,  3, 50,  3,
 		4,
         0x06E7,10,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
 	{
 		"Human",
@@ -1381,6 +1471,11 @@ player_race race_info[MAX_RACES] =
 		66,  4, 150, 20,
 		0,
         0x0FFF,1,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
 	},
     {
         "Imp",
@@ -1392,6 +1487,11 @@ player_race race_info[MAX_RACES] =
         64,  1, 120,  5,
         3,
         0x0627,94,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Klackon",
@@ -1403,6 +1503,11 @@ player_race race_info[MAX_RACES] =
         54,  3, 70,  4,
         2,
         0x047D,84,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Kobold",
@@ -1414,6 +1519,11 @@ player_race race_info[MAX_RACES] =
         55,  1, 100,  5,
         3,
         0x0465,82,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Mind-Flayer",
@@ -1425,6 +1535,11 @@ player_race race_info[MAX_RACES] =
         63,  6, 112, 10,
         4,
         0x0F21,92,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Nibelung",
@@ -1436,6 +1551,11 @@ player_race race_info[MAX_RACES] =
         40,  3, 78,  3,
         5,
         0x0F25,87,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Skeleton",
@@ -1447,6 +1567,11 @@ player_race race_info[MAX_RACES] =
         66,  4, 50, 5,
         2,
         0x0F3F,102,
+		{
+			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
          "Spectre",
@@ -1458,6 +1583,11 @@ player_race race_info[MAX_RACES] =
         66, 4, 100, 20,
          5,
          0x0F21,110,
+		{
+			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Sprite",
@@ -1469,6 +1599,11 @@ player_race race_info[MAX_RACES] =
         29,  2, 65,  2,
         4,
         0x0EE3,124,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
          "Vampire",
@@ -1480,6 +1615,11 @@ player_race race_info[MAX_RACES] =
            66,  4, 150, 20,
          5,
          0x0FFF,113,
+		{
+			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
+			{OBJ_SCROLL_LIGHT, 0, 0, 0, 3, 7},
+			{OBJ_SCROLL_DARKNESS, 0, 0, 0, 2, 5},
+		},
     },
     {
         "Yeek",
@@ -1491,6 +1631,11 @@ player_race race_info[MAX_RACES] =
         50,  3, 75,  3,
         2,
         0x0FE7,78,
+		{
+			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     },
     {
         "Zombie",
@@ -1502,6 +1647,11 @@ player_race race_info[MAX_RACES] =
         66, 4, 100, 20,
         2,
         0x0005,107,
+		{
+			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
+			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
+			{0, 0, 0, 0, 0, 0},
+		},
     }
 };
 

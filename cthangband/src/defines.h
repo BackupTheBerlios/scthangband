@@ -1076,7 +1076,8 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Hack - stat set 0 is the universal default */
 #define DEFAULT_STATS 0
 
-/* Generate 3 items for each template at the start of the game. */
+/* Generate 3 items for each race and template at the start of the game. */
+#define MAX_RACE_ITEMS	3
 #define MAX_TPL_ITEMS	3
 
 /*

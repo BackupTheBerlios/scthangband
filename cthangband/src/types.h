@@ -955,6 +955,8 @@ struct player_race
     u16b choice;        /* Legal template choices */
 	byte chart;		/* Initial chart for get_history() */
 /*    byte choice_xtra;   */
+
+	make_item_type items[MAX_RACE_ITEMS]; /* Objects to be given at birth. */
 };
 
 /* 

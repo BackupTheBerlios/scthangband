@@ -2809,10 +2809,15 @@ static void player_wipe(void)
 /*
  * Create an object from a template for the player's initial inventory.
  */
-static void make_birth_item(object_type *o_ptr, make_item_type *i_ptr)
+static void make_birth_item(make_item_type *i_ptr)
 {		
+	object_type o_ptr[1];
+
 	/* Actually create the item. */
 	make_item(o_ptr, i_ptr);
+
+	/* Hack - torches have a special pval. */
+	if (o_ptr->k_idx == OBJ_WOODEN_TORCH) o_ptr->pval = rand_range(3, 7) * 500;
 
 	/* These objects are "storebought" */
 	o_ptr->ident |= IDENT_STOREB;
@@ -2833,81 +2838,13 @@ static void make_birth_item(object_type *o_ptr, make_item_type *i_ptr)
 static void player_outfit(void)
 {
 	int i;
-
-	object_type	q_ptr[1];
 	u32b f[3];
 
-	/* Find out about the player. */
-	player_flags(f, f+1, f+2);
-
-    if (p_ptr->prace == RACE_GOLEM || p_ptr->prace == RACE_SKELETON ||
-        p_ptr->prace == RACE_ZOMBIE || p_ptr->prace == RACE_VAMPIRE ||
-        p_ptr->prace == RACE_SPECTRE)
-    {
-        /* Hack -- Give the player scrolls of satisfy hunger */
-        object_prep(q_ptr, OBJ_SCROLL_SATISFY_HUNGER);
-        q_ptr->number = (char)rand_range(2,5);
-        object_aware(q_ptr);
-        object_known(q_ptr);
-
-        /* These objects are "storebought" */
-        q_ptr->ident |= IDENT_STOREB;
-
-        (void)inven_carry(q_ptr);
-
-                                        
-    }
-    else
-    {
-        /* Hack -- Give the player some food */
-        object_prep(q_ptr, OBJ_RATION_OF_FOOD);
-        q_ptr->number = (char)rand_range(3, 7);
-        object_aware(q_ptr);
-        object_known(q_ptr);
-        (void)inven_carry(q_ptr);
-    }
-
-
-
-    if (p_ptr->prace == RACE_VAMPIRE)
-    {
-
-        /* Hack -- Give the player scrolls of light */
-        object_prep(q_ptr, OBJ_SCROLL_LIGHT);
-        q_ptr->number = (char)rand_range(3,7);
-        object_aware(q_ptr);
-        object_known(q_ptr);
-
-        /* These objects are "storebought" */
-        q_ptr->ident |= IDENT_STOREB;
-
-        (void)inven_carry(q_ptr);
-
-        /* Hack -- Give the player scrolls of DARKNESS! */
-        object_prep(q_ptr, OBJ_SCROLL_DARKNESS);
-        q_ptr->number = (char)rand_range(2,5);
-        object_aware(q_ptr);
-        object_known(q_ptr);
-
-        /* These objects are "storebought" */
-        q_ptr->ident |= IDENT_STOREB;
-
-        (void)inven_carry(q_ptr);
-
-    }
-    else
-    {
-
-        /* Hack -- Give the player some torches */
-        object_prep(q_ptr, OBJ_WOODEN_TORCH);
-        q_ptr->number = (char)rand_range(3, 7);
-        q_ptr->pval = (char)rand_range(3, 7) * 500;
-        object_aware(q_ptr);
-        object_known(q_ptr);
-        (void)inven_carry(q_ptr);
-    }
     /* For characters starting with magical skill, give them a spellbook */
-    if (skill_set[SKILL_MANA].value > 0) {
+    if (skill_set[SKILL_MANA].value > 0)
+	{
+		object_type q_ptr[1];
+
 		int gbook[4], book[4] =
 		{
 			OBJ_SORCERY_BEGINNERS_HANDBOOK,
@@ -2936,9 +2873,17 @@ static void player_outfit(void)
 		object_known(q_ptr);
 		(void)inven_carry(q_ptr);
     }
-        	 		
 
-    /* Hack -- Give the player three useful objects */
+	/* Give the player some basic things. */
+	for (i = 0; i < MAX_RACE_ITEMS; i++)
+	{
+		make_birth_item(&rp_ptr->items[i]);
+	}
+
+	/* Find out about the player. */
+	player_flags(f, f+1, f+2);
+
+    /* Give the player three useful objects */
     for (i = 0; i < MAX_TPL_ITEMS; i++)
 	{
 		/* Look up standard equipment */
@@ -2954,7 +2899,7 @@ static void player_outfit(void)
 		}
 
 		/* Give the player the object. */
-		make_birth_item(q_ptr, i_ptr);
+		make_birth_item(i_ptr);
 	}
 }
 
