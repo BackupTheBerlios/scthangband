@@ -143,7 +143,7 @@ bool always_repeat; /* Repeat obvious commands */
 bool depth_in_feet; /* Show dungeon level in feet */
 
 bool stack_force_notes; /* Merge inscriptions when stacking */
-bool stack_force_notes_all; /* Merge all inscriptions when stacking (inc. dissimilar ones) */
+bool stack_force_notes_all; /* Merge all inscriptions when stacking */
 bool stack_force_costs; /* Merge discounts when stacking */
 
 bool show_labels; /* Show labels in object listings */
@@ -185,10 +185,10 @@ bool equippy_chars; /* Back by popular demand... */
 bool skip_chaos_features; /* Skip chaos feature screen even if we have it */
 bool plain_descriptions; /* Plain object descriptions */
 bool stupid_monsters; /* Monsters use old AI */
-bool auto_destroy; /* Known worthless items are destroyed without confirmation */
+bool auto_destroy; /* No query to destroy known worthless items */
 bool confirm_stairs; /* Prompt before staircases... */
 bool wear_confirm; /* Confirm before putting on known cursed items */
-bool confirm_wear_all; /* Confirm before wearing items with unknown cursed status */
+bool confirm_wear_all; /* Confirm to wear/wield potentially cursed items */
 bool disturb_allies; /* Allies moving nearby disturb us */
 bool multi_stair;         /* Multiple level staircases */
 bool unify_commands; /* Combine object commands into a single 'u'se command */
@@ -304,7 +304,7 @@ bool cheat_save; /* Prevent automatic saving on game events. */
 
 bool allow_quickstart; /* Allow Quick-Start */
 #ifdef USE_MAIN_C
-bool display_credits; /* Require a keypress to clear the initial credit screen. */
+bool display_credits; /* Require a keypress to clear the initial screen. */
 #endif
 bool allow_pickstats; /* Allow the player to choose a stat template. */
 
@@ -330,7 +330,11 @@ bool good_item_flag; /* True if "Artifact" on this level */
 
 bool new_level_flag; /* Start a new level */
 
-int full_grid; /* Monsters can't be created outside a circle of radius full_grid around the player */
+/* 
+ * There is no room further than this many squares from the player for monster
+ * creation.
+ */
+int full_grid; 
 
 
 /*

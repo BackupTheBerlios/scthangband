@@ -98,7 +98,8 @@ static name_centry group_item[] =
 /*
  * Describe the kind
  */
-static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int k)
+static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
+	int k)
 {
 	object_type forge;
 	object_type *q_ptr;
