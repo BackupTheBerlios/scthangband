@@ -1041,6 +1041,7 @@ bool curse_armor(void)
         o_ptr->flags2 = 0;
         o_ptr->flags3 = 0;
 		o_ptr->art_name = 0;
+		o_ptr->activation = 0;
 
 		/* Curse it */
 		o_ptr->ident |= (IDENT_CURSED);
@@ -1118,6 +1119,7 @@ bool curse_weapon(void)
         o_ptr->flags2 = 0;
         o_ptr->flags3 = 0;
 		o_ptr->art_name = 0;
+		o_ptr->activation = 0;
 
 
 		/* Curse it */
@@ -3115,7 +3117,7 @@ void do_cmd_activate(object_type *o_ptr)
 	/* Sound */
 	sound(SOUND_ZAP);
 
-    if (o_ptr->art_name)
+    if (o_ptr->activation)
     {
         (void) activate_random_artifact(o_ptr);
 		/* Window stuff */
@@ -3722,18 +3724,6 @@ void do_cmd_activate(object_type *o_ptr)
 
 
 
-    else if (o_ptr->name2 == EGO_PLANAR)
-    {
-        teleport_player(100);
-        o_ptr->timeout = 50 + randint(50);
-
-        /* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Done */
-		return;
-    }
-
 
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	if (o_ptr->tval == TV_DRAG_ARMOR)
@@ -3928,6 +3918,10 @@ void do_cmd_activate(object_type *o_ptr)
 }
 
 
+/*
+ * Activate an object via the object_type.activation field.
+ * Returns TRUE if something happened.
+ */
 static bool activate_random_artifact(object_type * o_ptr)
 {
     int plev = skill_set[SKILL_DEVICE].value/2;
@@ -3935,11 +3929,11 @@ static bool activate_random_artifact(object_type * o_ptr)
 
 	if (plev == 0) plev++;
 
-    if (!(o_ptr->art_name)) return FALSE; /* oops? */
+    if (!(o_ptr->activation)) return FALSE; /* oops? */
 
 
-/* Activate for attack */
-    switch (o_ptr->xtra2)
+	/* Activate for attack */
+    switch (o_ptr->activation)
     {
             case ACT_SUNLIGHT:
             {
@@ -4668,6 +4662,18 @@ static bool activate_random_artifact(object_type * o_ptr)
 				break;
 			}
 
+			case ACT_TELEPORT_WAIT:
+			{
+				teleport_player(100);
+				o_ptr->timeout = 50 + randint(50);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+				/* Done */
+				return TRUE;
+			}
+
             case ACT_RECALL:
 			{
                 if (dun_level && (p_ptr->max_dlv > dun_level) && (recall_dungeon == cur_dungeon))
@@ -4683,7 +4689,7 @@ static bool activate_random_artifact(object_type * o_ptr)
 				break;
 			}
             default:
-                msg_format("Unknown activation effect: %d.", o_ptr->xtra2);
+                msg_format("Unknown activation effect: %d.", o_ptr->activation);
                 return FALSE;
         }
     return TRUE;

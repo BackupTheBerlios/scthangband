@@ -143,8 +143,24 @@ static void wr_item(object_type *o_ptr)
 	wr_s16b(o_ptr->held_m_idx);
 
 	/* Extra information */
+#ifdef SF_EGO_DISTRO
+	if (has_flag(SF_EGO_DISTRO))
+	{
+		wr_byte(o_ptr->activation);
+	}
+	else if (o_ptr->activation)
+	{
+		wr_byte(4); /* EGO_XTRA_ACTIVATE */
+		wr_byte(o_ptr->activation);
+	}
+	else /* Luckily, no other EGO_XTRA_* flags need to be recreated. */
+	{
+		strip_bytes(2);
+	}
+#else /* SF_EGO_DISTRO */
 	wr_byte(o_ptr->xtra1);
 	wr_byte(o_ptr->xtra2);
+#endif /* SF_EGO_DISTRO */
 
 	/* Save the inscription (if any) */
 	wr_string(quark_str(o_ptr->note));

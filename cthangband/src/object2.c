@@ -968,7 +968,7 @@ s32b flag_cost(object_type * o_ptr, bool all)
 
     if ((o_ptr->art_name) && (o_ptr->flags3 & (TR3_ACTIVATE)))
     {
-        int type = o_ptr->xtra2;
+        int type = o_ptr->activation;
 
         if (type == ACT_SUNLIGHT) total += 250;
         else if (type == ACT_BO_MISS_1) total += 250;
@@ -1462,7 +1462,7 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
-			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
+			if (o_ptr->activation) return (FALSE);
 
 			/* Hack -- Never stack recharging items */
 			if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
@@ -1734,16 +1734,14 @@ static s16b m_bonus(int max, int level)
  */
 static void object_mention(object_type *o_ptr)
 {
-	C_TNEW(o_name, ONAME_MAX, char);
-
-	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, OD_SHOP, 0);
+	/* Only tell cheaters about objects on creation. */
+	if (!cheat_peek) return;
 
 	/* Artifact */
 	if (artifact_p(o_ptr))
 	{
 		/* Silly message */
-		msg_format("Artifact (%s)", o_name);
+		msg_format("Artifact (%v)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
 
     else if (o_ptr->art_name)
@@ -1755,45 +1753,101 @@ static void object_mention(object_type *o_ptr)
 	else if (ego_item_p(o_ptr))
 	{
 		/* Silly message */
-		msg_format("Ego-item (%s)", o_name);
+		msg_format("Ego-item (%s)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
 
 	/* Normal item */
 	else
 	{
 		/* Silly message */
-		msg_format("Object (%s)", o_name);
+		msg_format("Object (%s)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
-	TFREE(o_name);
 }
 
 
+/*
+ * Add a random sustain to *o_ptr.
+ */
+static void add_sustain(object_type *o_ptr)
+{
+	switch (rand_int(6))
+	{
+		case 0: o_ptr->flags2 |= (TR2_SUST_STR); return;
+		case 1: o_ptr->flags2 |= (TR2_SUST_INT); return;
+		case 2: o_ptr->flags2 |= (TR2_SUST_WIS); return;
+		case 3: o_ptr->flags2 |= (TR2_SUST_DEX); return;
+		case 4: o_ptr->flags2 |= (TR2_SUST_CON); return;
+		case 5: o_ptr->flags2 |= (TR2_SUST_CHR); return;
+	}
+}
+
+/*
+ * Add a random ability to *o_ptr.
+ */
+static void add_ability(object_type *o_ptr)
+{
+	switch (rand_int(8))
+	{
+		case 0: o_ptr->flags3 |= (TR3_FEATHER); return;
+		case 1: o_ptr->flags3 |= (TR3_LITE); return;
+		case 2: o_ptr->flags3 |= (TR3_SEE_INVIS); return;
+		case 3: o_ptr->flags3 |= (TR3_TELEPATHY); return;
+		case 4: o_ptr->flags3 |= (TR3_SLOW_DIGEST); return;
+		case 5: o_ptr->flags3 |= (TR3_REGEN); return;
+		case 6: o_ptr->flags2 |= (TR2_FREE_ACT); return;
+		case 7: o_ptr->flags2 |= (TR2_HOLD_LIFE); return;
+	}
+}
+		
+/*
+ * Add a random power to *o_ptr.
+ */
+static void add_power(object_type *o_ptr)
+{
+	switch (rand_int(11))
+	{
+		case 0: o_ptr->flags2 |= (TR2_RES_BLIND); return;
+		case 1: o_ptr->flags2 |= (TR2_RES_CONF); return;
+		case 2: o_ptr->flags2 |= (TR2_RES_SOUND); return;
+		case 3: o_ptr->flags2 |= (TR2_RES_SHARDS); return;
+		case 4: o_ptr->flags2 |= (TR2_RES_NETHER); return;
+		case 5: o_ptr->flags2 |= (TR2_RES_NEXUS); return;
+		case 6: o_ptr->flags2 |= (TR2_RES_CHAOS); return;
+		case 7: o_ptr->flags2 |= (TR2_RES_DISEN); return;
+		case 8: o_ptr->flags2 |= (TR2_RES_POIS); return;
+		case 9: o_ptr->flags2 |= (TR2_RES_DARK); return;
+		case 10: o_ptr->flags2 |= (TR2_RES_LITE); return;
+	}
+}
+
+/*
+ * Add random resistances and powers to a new normal artefact as required.
+ */
 void random_artifact_resistance(object_type * o_ptr)
 {
 	artifact_type *a_ptr = &a_info[o_ptr->name1];
 	bool give_resistance = a_ptr->flags2 & TR2_RAND_RESIST;
 	bool give_power = a_ptr->flags2 & TR2_RAND_POWER;
 	if (a_ptr->flags2 & TR2_RAND_EXTRA)
-        {
-		if (rand_int(2))
-            give_resistance = TRUE;
+	{
+		if (one_in(2))
+			give_resistance = TRUE;
 		else
-            give_power = TRUE;
-        }
+			give_power = TRUE;
+	}
 	if (o_ptr->name1 == ART_STORMBRINGER)
-		{
-			/* Give something nice. */
-			if (randint(2)==1)
-				o_ptr->flags3 |= TR3_DRAIN_EXP;
-			else
-				o_ptr->flags3 |= TR3_AGGRAVATE;
-		}
+	{
+		/* Give something nice. */
+		if (randint(2)==1)
+			o_ptr->flags3 |= TR3_DRAIN_EXP;
+		else
+			o_ptr->flags3 |= TR3_AGGRAVATE;
+	}
 
     if (give_power)
     {
-                    o_ptr->xtra1 = EGO_XTRA_ABILITY;
         /* Randomize the "xtra" power */
-		if (o_ptr->xtra1) o_ptr->xtra2 = randint(256);
+		add_ability(o_ptr);
     }
 
     artifact_bias = 0;
@@ -1801,7 +1855,7 @@ void random_artifact_resistance(object_type * o_ptr)
     if (give_resistance)
     {
         random_resistance(o_ptr, FALSE, ((randint(22))+16));
-    }   
+    }
 }
 
 
@@ -2018,6 +2072,74 @@ static void charge_staff(object_type *o_ptr)
 	}
 }
 
+/*
+ * Test that an ego type is suitable for the current object.
+ */
+static bool get_ego_test(const object_type *o_ptr, const ego_item_type *e_ptr,
+	bool cursed)
+{
+	bool ecursed = !(e_ptr->cost);
+
+	/* Not true if the range is wrong. */
+	if (e_ptr->min_obj > o_ptr->k_idx) return FALSE;
+	if (e_ptr->max_obj < o_ptr->k_idx) return FALSE;
+
+	/* True if the cursed status matches the desired one. */
+	return cursed == ecursed;
+}
+
+/* 
+ * Choose an ego type appropriate for o_ptr at random.
+ */
+static byte get_ego_item(const object_type *o_ptr, int level, bool cursed)
+{
+	int e_idx, num;
+
+	/* Paranoia. */
+	if (o_ptr->name1 || o_ptr->name2 || o_ptr->art_name) return o_ptr->name2;
+
+	for (e_idx = num = 0; e_idx < z_info->e_max; e_idx++)
+	{
+		ego_item_type *e_ptr = e_info+e_idx;
+
+		if (!get_ego_test(o_ptr, e_ptr, cursed)) continue;
+
+		/* Hack - 255 gives a special rarity. */
+		if (e_ptr->chance == 255)
+		{
+			if (rand_int(MAX_DEPTH) < level)
+			{
+				return e_idx;
+			}
+		}
+		num += e_ptr->chance;
+	}
+
+	/* No appropriate ego types. */
+	if (!num) return 0;
+
+	num = rand_int(num);
+
+	for (e_idx = 0; e_idx < z_info->e_max; e_idx++)
+	{
+		ego_item_type *e_ptr = e_info+e_idx;
+
+		if (!get_ego_test(o_ptr, e_ptr, cursed)) continue;
+
+		num -= e_ptr->chance;
+
+		if (num < 0)
+		{
+			return e_idx;
+		}
+	}
+
+	/* Paranoia - should never get here. */
+	if (alert_failure) msg_format("Failed to find an ego type for %s %v!",
+		(cursed) ? "a cursed" : "an uncursed", object_desc_f3, o_ptr, FALSE, 0);
+
+	return 0;
+}
 
 
 /*
@@ -2025,7 +2147,6 @@ static void charge_staff(object_type *o_ptr)
  *
  * Hack -- note special base damage dice boosting
  * Hack -- note special processing for weapon/digger
- * Hack -- note special rating boost for dragon scale mail
  */
 static void a_m_aux_1(object_type *o_ptr, int level, int power)
 {
@@ -2034,8 +2155,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 
 	int tohit2 = m_bonus(10, level);
 	int todam2 = m_bonus(10, level);
-
-    artifact_bias = 0;
 
 	/* Good */
 	if (power > 0)
@@ -2072,21 +2191,13 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 		if (o_ptr->to_h + o_ptr->to_d < 0) o_ptr->ident |= (IDENT_CURSED);
 	}
 
-
 	/* Analyze type */
 	switch (o_ptr->tval)
 	{
 		case TV_DIGGING:
 		{
-			/* Very good */
-			if (power > 1)
-			{
-				/* Special Ego-item */
-				o_ptr->name2 = EGO_DIGGING;
-			}
-
 			/* Very bad */
-			else if (power < -1)
+			if (power < -1)
 			{
 				/* Hack -- Horrible digging bonus */
 				o_ptr->pval = 0 - (5 + randint(5));
@@ -2106,303 +2217,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
-		{
-            /* Very Good */
-			if (power > 1)
-			{
-				/* Roll for an ego-item */
-                switch (randint((o_ptr->tval == TV_POLEARM)?40:42))
-				{
-					case 1:
-					{
-						o_ptr->name2 = EGO_HA;
-                        if (randint(4)==1)
-                            { o_ptr->flags1 |= TR1_BLOWS;
-                              if (o_ptr->pval > 2) o_ptr->pval =
-                                         o_ptr->pval - (randint(2));
-                            }
-						break;
-					}
-
-					case 2:
-					{
-						o_ptr->name2 = EGO_DF;
-                        if (randint(3)==1) o_ptr->flags2 |= TR2_RES_POIS;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-						break;
-					}
-
-					case 3:
-					{
-						o_ptr->name2 = EGO_BRAND_ACID;
-						break;
-					}
-
-					case 4:
-					{
-						o_ptr->name2 = EGO_BRAND_ELEC;
-						break;
-					}
-
-					case 5:
-					{
-						o_ptr->name2 = EGO_BRAND_FIRE;
-						break;
-					}
-
-					case 6:
-					{
-						o_ptr->name2 = EGO_BRAND_COLD;
-						break;
-					}
-
-					case 7: case 8:
-					{
-						o_ptr->name2 = EGO_SLAY_ANIMAL;
-						if (rand_int(100) < 20)
-						{
-							o_ptr->name2 = EGO_KILL_ANIMAL;
-						}
-						break;
-					}
-
-					case 9: case 10:
-					{
-						o_ptr->name2 = EGO_SLAY_DRAGON;
-                        random_resistance(o_ptr, FALSE, ((randint(12))+4));
-						if (rand_int(100) < 20)
-						{
-                            if (randint(3)==1) o_ptr->flags2 |= TR2_RES_POIS;
-                            random_resistance(o_ptr, FALSE, ((randint(14))+4));
-							o_ptr->name2 = EGO_KILL_DRAGON;
-						}
-						break;
-					}
-
-					case 11: case 12:
-					{
-						o_ptr->name2 = EGO_SLAY_EVIL;
-						if (rand_int(100) < 20)
-						{
-                            o_ptr->flags2 |= TR2_RES_FEAR;
-                            o_ptr->flags3 |= TR3_BLESSED;
-							o_ptr->name2 = EGO_KILL_EVIL;
-						}
-						break;
-					}
-
-					case 13: case 14:
-					{
-						o_ptr->name2 = EGO_SLAY_UNDEAD;
-                        o_ptr->flags2 |= TR2_HOLD_LIFE;
-						if (rand_int(100) < 20)
-						{
-                            o_ptr->flags2 |= TR2_RES_NETHER;
-							o_ptr->name2 = EGO_KILL_UNDEAD;
-						}
-						break;
-					}
-
-					case 15: case 16: case 17:
-					{
-						o_ptr->name2 = EGO_SLAY_ORC;
-						if (rand_int(100) < 20)
-						{
-							o_ptr->name2 = EGO_KILL_ORC;
-						}
-						break;
-					}
-
-					case 18: case 19: case 20:
-					{
-						o_ptr->name2 = EGO_SLAY_TROLL;
-						if (rand_int(100) < 20)
-						{
-							o_ptr->name2 = EGO_KILL_TROLL;
-						}
-						break;
-					}
-
-					case 21: case 22: case 23:
-					{
-						o_ptr->name2 = EGO_SLAY_GIANT;
-						if (rand_int(100) < 20)
-						{
-							o_ptr->name2 = EGO_KILL_GIANT;
-						}
-						break;
-					}
-
-					case 24: case 25: case 26:
-					{
-						o_ptr->name2 = EGO_SLAY_DEMON;
-						if (rand_int(100) < 20)
-						{
-							o_ptr->name2 = EGO_KILL_DEMON;
-						}
-						break;
-					}
-
-					case 27:
-					{
-						o_ptr->name2 = EGO_WEST;
-                        if (randint(3)==1) o_ptr->flags2 |= TR2_RES_FEAR;
-						break;
-					}
-
-					case 28:
-					{
-						o_ptr->name2 = EGO_BLESS_BLADE;
-						break;
-					}
-
-                    case 29: case 30:
-					{
-						o_ptr->name2 = EGO_ATTACKS;
-						break;
-					}
-
-                    case 31: case 32:
-					{
-                        o_ptr->name2 = EGO_VAMPIRIC;
-						break;
-                    }
-                    case 33:
-					{
-                        o_ptr->name2 = EGO_BRAND_POIS;
-						break;
-                    }
-                    case 34:
-					{
-                        o_ptr->name2 = EGO_CHAOTIC;
-                        random_resistance(o_ptr, FALSE, ((randint(34))+4));
-						break;
-                    }
-                    case 35:
-                    {
-                        create_artifact(o_ptr, FALSE);
-                        break;
-                    }
-                    case 36: case 37:
-                    {
-                       o_ptr->name2 = EGO_SLAYING_WEAPON;
-                       if (randint(3)==1) /* double damage */
-                            o_ptr->dd *= 2;
-                       else
-                       { do { o_ptr->dd++; } while (randint(o_ptr->dd)==1);
-                         do { o_ptr->ds++; } while (randint(o_ptr->ds)==1);
-                        }
-                       if (randint(5)==1)
-                       {
-                            o_ptr->flags1 |= TR1_BRAND_POIS;
-                        }
-                       if (o_ptr->tval == TV_SWORD && (randint(3)==1))
-                       {
-                            o_ptr->flags1 |= TR1_VORPAL;
-                        }
-                       break;
-                    }
-                    case 38: case 39:
-                    {
-                        o_ptr->name2 = EGO_PLANAR;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-                        if (randint(5)==1) o_ptr->flags1 |= TR1_SLAY_DEMON;
-                        break;
-                    }
-                    case 40:
-                    {
-                        o_ptr->name2 = EGO_PATTERN;
-                        if (randint(3)==1) o_ptr->flags2 |= TR2_HOLD_LIFE;
-                        if (randint(3)==1) o_ptr->flags1 |= TR1_DEX;
-                        if (randint(5)==1) o_ptr->flags2 |= TR2_RES_FEAR;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-                        break;
-                    }
-                    default: /* 2 slots for TV_SWORD and TV_HAFTED */
-                    {
-                        if (o_ptr->tval == TV_SWORD)
-                        {
-                            o_ptr->name2 = EGO_SHARPNESS;
-                            o_ptr->pval = m_bonus(5, level) + 1;
-                        }
-                        else /* Hafted */
-                        {
-                            o_ptr->name2 = EGO_EARTHQUAKES;
-                            if (randint(3)==1) o_ptr->flags1 |= TR1_BLOWS;
-                            o_ptr->pval = m_bonus(3, level);
-                        }
-                    }
-                }
-
-
-
-				/* Hack -- Super-charge the damage dice */
-				while (rand_int(10L * o_ptr->dd * o_ptr->ds) == 0) o_ptr->dd++;
-
-				/* Hack -- Lower the damage dice */
-				if (o_ptr->dd > 9) o_ptr->dd = 9;
-			}
-
-			/* Very cursed */
-			else if (power < -1)
-			{
-				/* Roll for ego-item */
-				if (rand_int(MAX_DEPTH) < level)
-				{
-					o_ptr->name2 = EGO_MORGUL;
-                    if (randint(6)==1) o_ptr->flags3 |= TR3_TY_CURSE;
-				}
-			}
-
-			break;
-		}
-
-
-		case TV_BOW:
-		{
-			/* Very good */
-			if (power > 1)
-			{
-				/* Roll for ego-item */
-                switch (randint(21))
-				{
-                    case 1: case 11:
-					{
-						o_ptr->name2 = EGO_EXTRA_MIGHT;
-                        random_resistance(o_ptr, FALSE, ((randint(34))+4));
-						break;
-					}
-
-                    case 2: case 12:
-					{
-						o_ptr->name2 = EGO_EXTRA_SHOTS;
-						break;
-					}
-
-					case 3: case 4: case 5: case 6:
-                    case 13: case 14: case 15: case 16:
-					{
-						o_ptr->name2 = EGO_VELOCITY;
-						break;
-					}
-
-					case 7: case 8: case 9: case 10:
-                    case 17: case 18: case 19: case 20:
-					{
-						o_ptr->name2 = EGO_ACCURACY;
-						break;
-					}
-                    default:
-                    {
-                        create_artifact(o_ptr, FALSE);
-                    }
-				}
-			}
-
-			break;
-		}
-
-
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
@@ -2410,73 +2224,10 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 			/* Very good */
 			if (power > 1)
 			{
-				/* Roll for ego-item */
-                switch (randint(12))
-				{
-					case 1: case 2: case 3:
-					{
-						o_ptr->name2 = EGO_WOUNDING;
-						break;
-					}
-
-					case 4:
-					{
-						o_ptr->name2 = EGO_FLAME;
-						break;
-					}
-
-					case 5:
-					{
-						o_ptr->name2 = EGO_FROST;
-						break;
-					}
-
-					case 6: case 7:
-					{
-						o_ptr->name2 = EGO_HURT_ANIMAL;
-						break;
-					}
-
-					case 8: case 9:
-					{
-						o_ptr->name2 = EGO_HURT_EVIL;
-						break;
-					}
-
-					case 10:
-					{
-						o_ptr->name2 = EGO_HURT_DRAGON;
-						break;
-					}
-
-                    case 11:
-                    {
-                        o_ptr->name2 = EGO_LIGHTNING_BOLT;
-                        break;
-                    }
-
-                    case 12:
-                    {
-                        o_ptr->name2 = EGO_SLAYING_BOLT;
-                        o_ptr->dd++;
-                        break;
-                    }
-				}
-
 				/* Hack -- super-charge the damage dice */
-				while (rand_int(10L * o_ptr->dd * o_ptr->ds) == 0) o_ptr->dd++;
-
-				/* Hack -- restrict the damage dice */
-				if (o_ptr->dd > 9) o_ptr->dd = 9;
-			}
-
-			/* Very cursed */
-			else if (power < -1)
-			{
-				/* Roll for ego-item */
-				if (rand_int(MAX_DEPTH) < level)
+				while (o_ptr->dd < 9 && !rand_int(10L * o_ptr->dd * o_ptr->ds))
 				{
-					o_ptr->name2 = EGO_BACKBITING;
+					o_ptr->dd++;
 				}
 			}
 
@@ -2492,9 +2243,9 @@ static void dragon_resist(object_type * o_ptr)
         artifact_bias = 0;
 
         if (randint(4)==1)
-            random_resistance(o_ptr, FALSE, ((randint(14))+4));
+            random_resistance(o_ptr, FALSE, rand_range(5, 18));
         else
-            random_resistance(o_ptr, FALSE, ((randint(22))+16));
+            random_resistance(o_ptr, FALSE, rand_range(17, 38));
         }
         while (randint(2)==1);
 }
@@ -2513,6 +2264,33 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 	int toac2 = m_bonus(10, level);
 
     artifact_bias = 0;
+
+	/* Give a bonus to any object with an appropriate k_idx. */
+	switch (k_info[o_ptr->k_idx].extra)
+	{
+		case XT_ARMOUR_DRAGON:
+		{
+			dragon_resist(o_ptr);
+			break;
+		}
+		case XT_ARMOUR_RNDPVAL:
+		{
+			o_ptr->pval = rand_int(o_ptr->pval);
+			break;
+		}
+		case 0:
+		{
+			break;
+		}
+		/* Paranoia. */
+		default:
+		{
+			if (!alert_failure) break;
+			msg_print("Strange weapon extra quality found.");
+			msg_format("k_info[%d].extra = %d.",
+				o_ptr->k_idx, k_info[o_ptr->k_idx].extra);
+		}
+	}
 
 	/* Good */
 	if (power > 0)
@@ -2544,554 +2322,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		/* Cursed (if "bad") */
 		if (o_ptr->to_a < 0) o_ptr->ident |= (IDENT_CURSED);
 	}
-
-
-	/* Analyze type */
-	switch (o_ptr->tval)
-	{
-		case TV_DRAG_ARMOR:
-		{
-			/* Rating boost */
-			rating += 30;
-
-			/* Mention the item */
-			if (cheat_peek) object_mention(o_ptr);
-
-			break;
-		}
-
-
-		case TV_HARD_ARMOR:
-		case TV_SOFT_ARMOR:
-		{
-			/* Very good */
-			if (power > 1)
-			{
-				/* Hack -- Try for "Robes of the Magi" */
-				if ((o_ptr->k_idx == OBJ_ROBE) &&
-				    (rand_int(100) < 10))
-				{
-					o_ptr->name2 = EGO_PERMANENCE;
-					break;
-				}
-
-				/* Roll for ego-item */
-                switch (randint(21))
-				{
-					case 1: case 2: case 3: case 4:
-					{
-						o_ptr->name2 = EGO_RESIST_ACID;
-						break;
-					}
-
-					case 5: case 6: case 7: case 8:
-					{
-						o_ptr->name2 = EGO_RESIST_ELEC;
-						break;
-					}
-
-					case 9: case 10: case 11: case 12:
-					{
-						o_ptr->name2 = EGO_RESIST_FIRE;
-						break;
-					}
-
-					case 13: case 14: case 15: case 16:
-					{
-						o_ptr->name2 = EGO_RESIST_COLD;
-						break;
-					}
-
-					case 17: case 18:
-					{
-						o_ptr->name2 = EGO_RESISTANCE;
-                        if (randint(4)==1) o_ptr->flags2 |= TR2_RES_POIS;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-						break;
-					}
-
-                    case 20: case 21:
-					{
-						o_ptr->name2 = EGO_ELVENKIND;
-						break;
-					}
-                    default:
-                    {
-                        create_artifact (o_ptr, FALSE);
-                    }
-
-				}
-			}
-
-			break;
-		}
-
-
-		case TV_SHIELD:
-		{
-
-            if (o_ptr->k_idx == OBJ_DRAGON_SHIELD)
-            {
-                /* Rating boost */
-                rating += 5;
-
-                /* Mention the item */
-                if (cheat_peek) object_mention(o_ptr);
-                dragon_resist(o_ptr);
-            }
-            else
-            {
-			/* Very good */
-			if (power > 1)
-			{
-				/* Roll for ego-item */
-                switch (randint(23))
-				{
-                    case 1: case 11:
-					{
-						o_ptr->name2 = EGO_ENDURE_ACID;
-						break;
-					}
-
-					case 2: case 3: case 4:
-                    case 12: case 13: case 14:
-					{
-						o_ptr->name2 = EGO_ENDURE_ELEC;
-						break;
-					}
-
-					case 5: case 6:
-                    case 15: case 16:
-					{
-						o_ptr->name2 = EGO_ENDURE_FIRE;
-						break;
-					}
-
-					case 7: case 8: case 9:
-                    case 17: case 18: case 19:
-					{
-						o_ptr->name2 = EGO_ENDURE_COLD;
-						break;
-					}
-
-                    case 10: case 20:
-					{
-                    random_resistance(o_ptr, FALSE, ((randint(34))+4));
-                    if (randint(4)==1) o_ptr->flags2 |= TR2_RES_POIS;
-                    o_ptr->name2 = EGO_ENDURANCE;
-                    break;
-					}
-                    case 21: case 22:
-                    {
-                        o_ptr->name2 = EGO_REFLECTION;
-                        break;
-                    }
-                    default:
-                    {
-                        create_artifact (o_ptr, FALSE);
-                    }
-				}
-			}
-            }
-            break;
-		}
-
-
-		case TV_GLOVES:
-		{
-			/* Very good */
-			if (power > 1)
-			{
-                if (randint(20)==1)
-                    create_artifact(o_ptr, FALSE);
-                else
-                {
-				/* Roll for ego-item */
-				switch (randint(10))
-				{
-					case 1: case 2: case 3: case 4:
-					{
-						o_ptr->name2 = EGO_FREE_ACTION;
-						break;
-					}
-
-					case 5: case 6: case 7:
-					{
-						o_ptr->name2 = EGO_SLAYING;
-						break;
-					}
-
-					case 8: case 9:
-					{
-						o_ptr->name2 = EGO_AGILITY;
-						break;
-					}
-
-					case 10:
-					{
-						o_ptr->name2 = EGO_POWER;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-						break;
-					}
-                }
-				}
-			}
-
-			/* Very cursed */
-			else if (power < -1)
-			{
-				/* Roll for ego-item */
-				switch (randint(2))
-				{
-					case 1:
-					{
-						o_ptr->name2 = EGO_CLUMSINESS;
-						break;
-					}
-					default:
-					{
-						o_ptr->name2 = EGO_WEAKNESS;
-						break;
-					}
-				}
-			}
-
-			break;
-		}
-
-
-		case TV_BOOTS:
-		{
-			/* Very good */
-			if (power > 1)
-			{
-                if (randint(20)==1)
-                    create_artifact(o_ptr, FALSE);
-                else
-                {
-				/* Roll for ego-item */
-				switch (randint(24))
-				{
-					case 1:
-					{
-						o_ptr->name2 = EGO_SPEED;
-						break;
-					}
-
-					case 2: case 3: case 4: case 5:
-					{
-						o_ptr->name2 = EGO_MOTION;
-						break;
-					}
-
-					case 6: case 7: case 8: case 9:
-					case 10: case 11: case 12: case 13:
-					{
-						o_ptr->name2 = EGO_QUIET;
-						break;
-					}
-
-					default:
-					{
-						o_ptr->name2 = EGO_SLOW_DESCENT;
-                        if (randint (2) == 1)
-                        {
-                            random_resistance(o_ptr, FALSE, ((randint(22))+16));
-                        }
-						break;
-					}
-				}
-            }
-			}
-
-			/* Very cursed */
-			else if (power < -1)
-			{
-				/* Roll for ego-item */
-				switch (randint(3))
-				{
-					case 1:
-					{
-						o_ptr->name2 = EGO_NOISE;
-						break;
-					}
-					case 2:
-					{
-						o_ptr->name2 = EGO_SLOWNESS;
-						break;
-					}
-					case 3:
-					{
-						o_ptr->name2 = EGO_ANNOYANCE;
-						break;
-					}
-				}
-			}
-
-			break;
-		}
-
-
-		case TV_CROWN:
-		{
-			/* Very good */
-			if (power > 1)
-			{
-                if (randint(20)==1)
-                    create_artifact(o_ptr, FALSE);
-                else
-                {
-				/* Roll for ego-item */
-				switch (randint(8))
-				{
-					case 1:
-					{
-						o_ptr->name2 = EGO_MAGI;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-						break;
-					}
-					case 2:
-					{
-						o_ptr->name2 = EGO_MIGHT;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-						break;
-					}
-					case 3:
-					{
-						o_ptr->name2 = EGO_TELEPATHY;
-						break;
-					}
-					case 4:
-					{
-						o_ptr->name2 = EGO_REGENERATION;
-						break;
-					}
-					case 5: case 6:
-					{
-						o_ptr->name2 = EGO_LORDLINESS;
-                        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-						break;
-					}
-					default:
-					{
-						o_ptr->name2 = EGO_SEEING;
-                        if (randint(3)==1) o_ptr->flags3 |= TR3_TELEPATHY;
-						break;
-					}
-                }
-				}
-			}
-
-			/* Very cursed */
-			else if (power < -1)
-			{
-				/* Roll for ego-item */
-				switch (randint(7))
-				{
-					case 1: case 2:
-					{
-						o_ptr->name2 = EGO_STUPIDITY;
-						break;
-					}
-					case 3: case 4:
-					{
-						o_ptr->name2 = EGO_NAIVETY;
-						break;
-					}
-					case 5:
-					{
-						o_ptr->name2 = EGO_UGLINESS;
-						break;
-					}
-					case 6:
-					{
-						o_ptr->name2 = EGO_SICKLINESS;
-						break;
-					}
-					case 7:
-					{
-						o_ptr->name2 = EGO_TELEPORTATION;
-						break;
-					}
-				}
-			}
-
-			break;
-		}
-
-
-		case TV_HELM:
-		{
-
-            if (o_ptr->k_idx == OBJ_DRAGON_HELM)
-            {
-                /* Rating boost */
-                rating += 5;
-
-                /* Mention the item */
-                if (cheat_peek) object_mention(o_ptr);
-                dragon_resist(o_ptr);
-
-            }
-            else
-            {
-			/* Very good */
-			if (power > 1)
-			{
-                if (randint(20)==1)
-                    create_artifact(o_ptr, FALSE);
-                else
-                {
-				/* Roll for ego-item */
-				switch (randint(14))
-				{
-					case 1: case 2:
-					{
-						o_ptr->name2 = EGO_INTELLIGENCE;
-						break;
-					}
-					case 3: case 4:
-					{
-						o_ptr->name2 = EGO_WISDOM;
-						break;
-					}
-					case 5: case 6:
-					{
-						o_ptr->name2 = EGO_BEAUTY;
-						break;
-					}
-					case 7: case 8:
-					{
-						o_ptr->name2 = EGO_SEEING;
-                        if (randint(7)==1) o_ptr->flags3 |= TR3_TELEPATHY;
-						break;
-					}
-					case 9: case 10:
-					{
-						o_ptr->name2 = EGO_LITE;
-						break;
-					}
-					default:
-					{
-						o_ptr->name2 = EGO_INFRAVISION;
-						break;
-					}
-                }
-				}
-			}
-
-			/* Very cursed */
-			else if (power < -1)
-			{
-				/* Roll for ego-item */
-				switch (randint(7))
-				{
-					case 1: case 2:
-					{
-						o_ptr->name2 = EGO_STUPIDITY;
-						break;
-					}
-					case 3: case 4:
-					{
-						o_ptr->name2 = EGO_NAIVETY;
-						break;
-					}
-					case 5:
-					{
-						o_ptr->name2 = EGO_UGLINESS;
-						break;
-					}
-					case 6:
-					{
-						o_ptr->name2 = EGO_SICKLINESS;
-						break;
-					}
-					case 7:
-					{
-						o_ptr->name2 = EGO_TELEPORTATION;
-						break;
-					}
-				}
-			}
-            }
-			break;
-		}
-
-
-		case TV_CLOAK:
-		{
-            if (o_ptr->k_idx == OBJ_ELVEN_CLOAK)
-                o_ptr->pval = randint(4); /* No cursed elven cloaks...? */
-
-            /* Very good */
-			if (power > 1)
-			{
-                if (randint(20)==1)
-                    create_artifact(o_ptr, FALSE);
-                else
-                {
-				/* Roll for ego-item */
-                switch (randint(19))
-				{
-					case 1: case 2: case 3: case 4:
-					case 5: case 6: case 7: case 8:
-					{
-						o_ptr->name2 = EGO_PROTECTION;
-						break;
-					}
-
-					case 9: case 10: case 11: case 12:
-					case 13: case 14: case 15: case 16:
-					{
-						o_ptr->name2 = EGO_STEALTH;
-						break;
-					}
-
-					case 17:
-					{
-						o_ptr->name2 = EGO_AMAN;
-						break;
-					}
-                    case 18:
-                    {
-                        o_ptr->name2 = EGO_AURA_ELEC;
-                        break;
-                    }
-                    default:
-                    {
-                        o_ptr->name2 = EGO_AURA_FIRE;
-                    }
-				}
-            }
-			}
-
-			/* Very cursed */
-			else if (power < -1)
-			{
-				/* Choose some damage */
-				switch (randint(3))
-				{
-					case 1:
-					{
-						o_ptr->name2 = EGO_IRRITATION;
-						break;
-					}
-					case 2:
-					{
-						o_ptr->name2 = EGO_VULNERABILITY;
-						break;
-					}
-					case 3:
-					{
-						o_ptr->name2 = EGO_ENVELOPING;
-						break;
-					}
-				}
-			}
-
-			break;
-		}
-	}
 }
 
 
@@ -3099,8 +2329,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 /*
  * Apply magic to an item known to be a "ring" or "amulet"
  *
- * Hack -- note special rating boost for ring of speed
- * Hack -- note special rating boost for amulet of the magi
  * Hack -- note special "pval boost" code for ring of speed
  * Hack -- note that some items must be cursed (or blessed)
  */
@@ -3188,12 +2416,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						break;
 					}
 
-					/* Rating boost */
-					rating += 25;
-
-					/* Mention the item */
-					if (cheat_peek) object_mention(o_ptr);
-
 					break;
 				}
 
@@ -3206,7 +2428,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                     while(randint(4)==1);
 					/* Bonus to armor class */
                     o_ptr->to_a = 10 + randint(5) + m_bonus(10, level);
-                    rating += 5;
                 }
                 break;
 
@@ -3440,12 +2661,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
                     if (randint(3)==1) o_ptr->flags3 |= TR3_SLOW_DIGEST;
 
-					/* Boost the rating */
-					rating += 25;
-
-					/* Mention the item */
-					if (cheat_peek) object_mention(o_ptr);
-
 					break;
 				}
 
@@ -3550,6 +2765,164 @@ static u16b depth_string(void)
 }
 
 
+/*
+ * Add a special ego effect to an object.
+ * Returns FALSE if the effect was unidentified.
+ */
+static bool add_ego_special(object_type *o_ptr, byte special, int level)
+{
+	/* Hack - handle special ego types. */
+	switch (special)
+	{
+		case E_SPEC_ELDER_SIGN:
+		{
+			add_sustain(o_ptr);
+			if (rand_int(4)) return TRUE;
+			o_ptr->flags1 |= TR1_BLOWS;
+			if (o_ptr->pval > 2) o_ptr->pval -= randint(2);
+			return TRUE;
+		}
+		case E_SPEC_DF:
+		{
+			add_sustain(o_ptr);
+			if (one_in(3)) o_ptr->flags2 |= TR2_RES_POIS;
+			random_resistance(o_ptr, FALSE, ((randint(22))+16));
+			return TRUE;
+		}
+		case E_SPEC_PLANAR:
+		{
+			if (one_in(7)) add_ability(o_ptr);
+			if (one_in(5)) o_ptr->flags1 |= TR1_SLAY_DEMON;
+			random_resistance(o_ptr, FALSE, ((randint(22))+16));
+			o_ptr->activation = ACT_TELEPORT_WAIT;
+			return TRUE;
+		}
+		case E_SPEC_KADATH:
+		{
+			if (one_in(3)) o_ptr->flags2 |= TR2_RES_FEAR;
+			return TRUE;
+		}
+		case E_SPEC_SLAYING:
+		{
+			if (one_in(3))
+			{
+				o_ptr->dd *= 2;
+			}
+			else
+			{
+				do { o_ptr->dd++; } while (one_in(o_ptr->dd));
+				do { o_ptr->ds++; } while (one_in(o_ptr->ds));
+			}
+			if (one_in(5)) o_ptr->flags1 |= TR1_BRAND_POIS;
+			if (o_ptr->tval == TV_SWORD && one_in(3))
+			{
+				o_ptr->flags1 |= TR1_VORPAL;
+			}
+			return TRUE;
+		}
+		case E_SPEC_DRAGON_BANE:
+		{
+			random_resistance(o_ptr, FALSE, rand_range(5, 16));
+			random_resistance(o_ptr, FALSE, rand_range(5, 18));
+			if (one_in(3)) o_ptr->flags2 |= TR2_RES_POIS;
+			return TRUE;
+		}
+		case E_SPEC_A_RESISTANCE:
+		{
+			if (one_in(4)) o_ptr->flags2 |= TR2_RES_POIS;
+			random_resistance(o_ptr, FALSE, rand_range(17,38));
+			return TRUE;
+		}
+		case E_SPEC_S_RESISTANCE:
+		{
+			if (one_in(4)) o_ptr->flags2 |= TR2_RES_POIS;
+			random_resistance(o_ptr, FALSE, rand_range(5,38));
+			return TRUE;
+		}
+		case E_SPEC_SEEING:
+		{
+			if (one_in(3)) o_ptr->flags3 |= TR3_TELEPATHY;
+			return TRUE;
+		}
+		case E_SPEC_SHARPNESS:
+		{
+			o_ptr->pval = m_bonus(5, level)+1;
+			return TRUE;
+		}
+		case E_SPEC_EARTHQUAKES:
+		{
+			o_ptr->pval = m_bonus(3, level);
+			return TRUE;
+		}
+		case E_SPEC_LAW:
+		{
+			random_resistance(o_ptr, FALSE, rand_range(17, 38));
+			if (one_in(3)) o_ptr->flags2 |= TR2_HOLD_LIFE;
+			if (one_in(3)) o_ptr->flags1 |= TR1_DEX;
+			if (one_in(5)) o_ptr->flags2 |= TR2_RES_FEAR;
+			return TRUE;
+		}
+		case E_SPEC_LENG:
+		{
+			if (one_in(6)) o_ptr->flags3 |= TR3_TY_CURSE;
+			return TRUE;
+		}
+		case E_SPEC_DIE:
+		{
+			o_ptr->dd++;
+			return TRUE;
+		}
+		/* Hack - hide the fact that this was a very good/bad item. */
+		case E_SPEC_NO_EGO:
+		{
+			o_ptr->name2 = 0;
+			return TRUE;
+		}
+		/* Hack - turn into a randart, not an ego item. */
+		case E_SPEC_RANDART:
+		{
+		    artifact_bias = 0;
+			o_ptr->name2 = 0;
+			create_artifact(o_ptr, FALSE);
+			return TRUE;
+		}
+		case E_SPEC_ABILITY:
+		{
+			add_ability(o_ptr);
+			return TRUE;
+		}
+		case E_SPEC_POWER:
+		{
+			add_power(o_ptr);
+			return TRUE;
+		}
+		case E_SPEC_SUSTAIN:
+		{
+			add_sustain(o_ptr);
+			return TRUE;
+		}
+		case E_SPEC_HIGH:
+		{
+			random_resistance(o_ptr, FALSE, rand_range(17,38));
+			return TRUE;
+		}
+		case E_SPEC_RESIST:
+		{
+			random_resistance(o_ptr, FALSE, rand_range(5, 38));
+			return TRUE;
+		}
+		/* Nothing. */
+		case 0:
+		{
+			return TRUE;
+		}
+		/* Unidentified power. */
+		default:
+		{
+			return FALSE;
+		}
+	}
+}
 
 /*
  * Complete the "creation" of an object by applying "magic" to the item
@@ -3688,7 +3061,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		good_item_flag = TRUE;
 
 		/* Cheat -- peek at the item */
-		if (cheat_peek) object_mention(o_ptr);
+		object_mention(o_ptr);
 
 		/* Done */
 		return;
@@ -3707,7 +3080,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			if (power) a_m_aux_1(o_ptr, lev, power);
+			a_m_aux_1(o_ptr, lev, power);
 			break;
 		}
 
@@ -3721,16 +3094,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		case TV_GLOVES:
 		case TV_BOOTS:
 		{
-#if 1
-            if (power ||
-                ((o_ptr->tval == TV_HELM) && (o_ptr->k_idx == OBJ_DRAGON_HELM)) ||
-                ((o_ptr->tval == TV_SHIELD) && (o_ptr->k_idx == OBJ_DRAGON_SHIELD))
-                || ((o_ptr->tval == TV_CLOAK) && (o_ptr->k_idx == OBJ_ELVEN_CLOAK)))
-                a_m_aux_2(o_ptr, lev, power);
-#else
-            if (power)
-                a_m_aux_2(o_ptr, lev, power);
-#endif
+			a_m_aux_2(o_ptr, lev, power);
 			break;
 		}
 
@@ -3749,79 +3113,19 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		}
 	}
 
-
-
-    if (o_ptr->art_name) rating += 40;
+	/* Turn into an ego item, if allowed. */
+	if (ABS(power) > 1) o_ptr->name2 = get_ego_item(o_ptr, lev, power < -1);
 
 	/* Hack -- analyze ego-items */
-       else if (o_ptr->name2)
+	if (o_ptr->name2)
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-		/* Hack -- extra powers */
-		switch (o_ptr->name2)
-		{
-			/* Weapon (Holy Avenger) */
-			case EGO_HA:
-			{
-				o_ptr->xtra1 = EGO_XTRA_SUSTAIN;
-				break;
-			}
-
-			/* Weapon (Defender) */
-			case EGO_DF:
-			{
-				o_ptr->xtra1 = EGO_XTRA_SUSTAIN;
-				break;
-			}
-
-			/* Weapon (Blessed) */
-			case EGO_BLESS_BLADE:
-			{
-				o_ptr->xtra1 = EGO_XTRA_ABILITY;
-				break;
-			}
-
-            /* Planar weapon */
-            case EGO_PLANAR:
-            {
-                if (randint(7)==1) o_ptr->xtra1 = EGO_XTRA_ABILITY;
-                break;
-            }
-
-			/* Robe of Permanance */
-			case EGO_PERMANENCE:
-			{
-				o_ptr->xtra1 = EGO_XTRA_POWER;
-				break;
-			}
-
-			/* Armor of Elvenkind */
-			case EGO_ELVENKIND:
-			{
-				o_ptr->xtra1 = EGO_XTRA_POWER;
-				break;
-			}
-
-			/* Crown of the Magi */
-			case EGO_MAGI:
-			{
-				o_ptr->xtra1 = EGO_XTRA_ABILITY;
-				break;
-			}
-
-			/* Cloak of Aman */
-			case EGO_AMAN:
-			{
-				o_ptr->xtra1 = EGO_XTRA_POWER;
-				break;
-			}
-		}
-
-		/* Randomize the "xtra" power */
-        if ((o_ptr->xtra1) && (!(o_ptr->art_name)))
-                o_ptr->xtra2 = randint(256);
-
+ 
+		rating += e_ptr->rating;
+ 
+		/* Add special effects from the ego type. */
+		add_ego_special(o_ptr, e_ptr->special, lev);
+		
 		/* Hack -- acquire "broken" flag */
 		if (!e_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
@@ -3856,15 +3160,12 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		rating += e_ptr->rating;
 
 		/* Cheat -- describe the item */
-		if (cheat_peek) object_mention(o_ptr);
-
-		/* Done */
-		return;
+		object_mention(o_ptr);
 	}
 
 
 	/* Examine real objects */
-	if (o_ptr->k_idx)
+	else if (o_ptr->k_idx)
 	{
 		object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -3873,6 +3174,14 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 
 		/* Hack -- acquire "cursed" flag */
 		if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
+	}
+
+	/* Give a rating boost for all items apart from artefacts (?). */
+	if (o_ptr->k_idx)
+	{
+		object_kind *k_ptr = k_info+o_ptr->k_idx;
+		rating += k_ptr->rating;
+		if (k_ptr->rating) object_mention(o_ptr);
 	}
 }
 
@@ -3968,7 +3277,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		rating += (object_k_level(k_info+j_ptr->k_idx) - (dun_depth));
 
 		/* Cheat -- peek at items */
-		if (cheat_peek) object_mention(j_ptr);
+		object_mention(j_ptr);
 	}
 	
 	/* Success */

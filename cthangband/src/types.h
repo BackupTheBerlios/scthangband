@@ -229,6 +229,7 @@ struct object_kind
 
 	s32b cost;			/* Object "base cost" */
 	s16b weight;		/* Weight */
+	byte rating;		/* Bonus to level rating. */
 
 	byte d_attr;		/* Default object attribute */
 	char d_char;		/* Default object character */
@@ -238,8 +239,6 @@ struct object_kind
 	u16b u_idx;	/* The u_info[] entry which represents this item. */
 	bool aware;			/* The player is "aware" of the item's effects */
 	bool tried;			/* The player has "tried" one of the items */
-
-	/* u16b blank; */	/* Nothing */
 };
 
 
@@ -329,11 +328,13 @@ struct ego_item_type
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
 
-	byte slot;			/* Standard slot value */
 	byte rating;		/* Rating boost */
+	byte special;		/* Index into random item modifications on creation. */
 
-	byte level;			/* Minimum level */
-	byte rarity;		/* Object rarity */
+	byte chance;		/* Chance of being created. */
+
+	s16b min_obj;	/* Minimum legal object. */
+	s16b max_obj;	/* Maximum legal object. */
 
 	byte max_to_h;		/* Maximum to-hit bonus */
 	byte max_to_d;		/* Maximum to-dam bonus */
@@ -580,12 +581,12 @@ struct object_type
 	byte tval;			/* Item type (from kind) */
 	byte discount;		/* Discount (if any) */
 	byte number;		/* Number of items */
-	byte marked;		/* Object is marked */
+	bool marked;		/* Object is marked */
 
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
-	byte xtra1;			/* Extra info type */
-	byte xtra2;			/* Extra info index */
+	byte activation;	/* Object activation (e.g. as randart) */
+	/* byte nothing; */	/* Unused */
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */

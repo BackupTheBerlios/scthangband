@@ -465,78 +465,15 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
     /* Random artifact ! */
     if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
     {
-	(*f1) |= o_ptr->flags1;
-	(*f2) |= o_ptr->flags2;
-	(*f3) |= o_ptr->flags3;
+		(*f1) |= o_ptr->flags1;
+		(*f2) |= o_ptr->flags2;
+		(*f3) |= o_ptr->flags3;
 
-	/* Hack - cursing an object via flags3 totally supercedes default values */
-	if ((o_ptr->flags3 & TR3_CURSED) && !(o_ptr->flags3 & TR3_HEAVY_CURSE))
-		*f3 &= ~TR3_HEAVY_CURSE;
-    }
-
-	/* Extra powers */
-    if (!(o_ptr->art_name))
-    {
-        switch (o_ptr->xtra1)
-        {
-            case EGO_XTRA_SUSTAIN:
-            {
-                /* Choose a sustain */
-                switch (o_ptr->xtra2 % 6)
-                {
-                    case 0: (*f2) |= (TR2_SUST_STR); break;
-                    case 1: (*f2) |= (TR2_SUST_INT); break;
-                    case 2: (*f2) |= (TR2_SUST_WIS); break;
-                    case 3: (*f2) |= (TR2_SUST_DEX); break;
-                        case 4: (*f2) |= (TR2_SUST_CON); break;
-                    case 5: (*f2) |= (TR2_SUST_CHR); break;
-                }
-
-                break;
-                }
-
-            case EGO_XTRA_POWER:
-            {
-                /* Choose a power */
-                    switch (o_ptr->xtra2 % 11)
-                {
-                    case 0: (*f2) |= (TR2_RES_BLIND); break;
-                    case 1: (*f2) |= (TR2_RES_CONF); break;
-                    case 2: (*f2) |= (TR2_RES_SOUND); break;
-                    case 3: (*f2) |= (TR2_RES_SHARDS); break;
-                        case 4: (*f2) |= (TR2_RES_NETHER); break;
-                    case 5: (*f2) |= (TR2_RES_NEXUS); break;
-                    case 6: (*f2) |= (TR2_RES_CHAOS); break;
-                        case 7: (*f2) |= (TR2_RES_DISEN); break;
-                    case 8: (*f2) |= (TR2_RES_POIS); break;
-                    case 9: (*f2) |= (TR2_RES_DARK); break;
-                    case 10: (*f2) |= (TR2_RES_LITE); break;
-                }
-
-                break;
-            }
-
-            case EGO_XTRA_ABILITY:
-            {
-                /* Choose an ability */
-                switch (o_ptr->xtra2 % 8)
-                {
-                    case 0: (*f3) |= (TR3_FEATHER); break;
-                    case 1: (*f3) |= (TR3_LITE); break;
-                    case 2: (*f3) |= (TR3_SEE_INVIS); break;
-                    case 3: (*f3) |= (TR3_TELEPATHY); break;
-                    case 4: (*f3) |= (TR3_SLOW_DIGEST); break;
-                        case 5: (*f3) |= (TR3_REGEN); break;
-                    case 6: (*f2) |= (TR2_FREE_ACT); break;
-                    case 7: (*f2) |= (TR2_HOLD_LIFE); break;
-                }
-
-                break;
-            }
-
-        }
-        }
-    }
+		/* Hack - cursing an object via flags3 totally supercedes default values */
+		if ((o_ptr->flags3 & TR3_CURSED) && !(o_ptr->flags3 & TR3_HEAVY_CURSE))
+			*f3 &= ~TR3_HEAVY_CURSE;
+	}
+}
 
 
 
@@ -777,75 +714,11 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		j_ptr->flags3 |= TR3_IGNORE_ALL & o_ptr->flags3;
 	}
 
-
-    if (~j_ptr->ident & IDENT_MENTAL);
-	else if (o_ptr->art_name)
+	/* Copy the activation if *identified*. */
+	if (j_ptr->ident & IDENT_MENTAL)
 	{
-		j_ptr->xtra1 = o_ptr->xtra1;
-		j_ptr->xtra2 = o_ptr->xtra2;
+		j_ptr->activation = o_ptr->activation;
 	}
-	else
-    {
-        /* Extra powers */
-        switch (o_ptr->xtra1)
-        {
-            case EGO_XTRA_SUSTAIN:
-            {
-                /* Choose a sustain */
-                switch (o_ptr->xtra2 % 6)
-                {
-                    case 0: j_ptr->flags2 |= (TR2_SUST_STR); break;
-                    case 1: j_ptr->flags2 |= (TR2_SUST_INT); break;
-                    case 2: j_ptr->flags2 |= (TR2_SUST_WIS); break;
-                    case 3: j_ptr->flags2 |= (TR2_SUST_DEX); break;
-                    case 4: j_ptr->flags2 |= (TR2_SUST_CON); break;
-                    case 5: j_ptr->flags2 |= (TR2_SUST_CHR); break;
-                }
-
-                break;
-            }
-
-            case EGO_XTRA_POWER:
-            {
-                /* Choose a power */
-                switch (o_ptr->xtra2 % 11)
-                {
-                    case 0: j_ptr->flags2 |= (TR2_RES_BLIND); break;
-                    case 1: j_ptr->flags2 |= (TR2_RES_CONF); break;
-                    case 2: j_ptr->flags2 |= (TR2_RES_SOUND); break;
-                    case 3: j_ptr->flags2 |= (TR2_RES_SHARDS); break;
-                    case 4: j_ptr->flags2 |= (TR2_RES_NETHER); break;
-                    case 5: j_ptr->flags2 |= (TR2_RES_NEXUS); break;
-                    case 6: j_ptr->flags2 |= (TR2_RES_CHAOS); break;
-                    case 7: j_ptr->flags2 |= (TR2_RES_DISEN); break;
-                    case 8: j_ptr->flags2 |= (TR2_RES_POIS); break;
-                    case 9: j_ptr->flags2 |= (TR2_RES_DARK); break;
-                    case 10: j_ptr->flags2 |= (TR2_RES_LITE); break;
-                }
-
-                break;
-            }
-
-            case EGO_XTRA_ABILITY:
-            {
-                /* Choose an ability */
-                switch (o_ptr->xtra2 % 8)
-                {
-                    case 0: j_ptr->flags3 |= (TR3_FEATHER); break;
-                    case 1: j_ptr->flags3 |= (TR3_LITE); break;
-                    case 2: j_ptr->flags3 |= (TR3_SEE_INVIS); break;
-                    case 3: j_ptr->flags3 |= (TR3_TELEPATHY); break;
-                    case 4: j_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
-                    case 5: j_ptr->flags3 |= (TR3_REGEN); break;
-                    case 6: j_ptr->flags2 |= (TR2_FREE_ACT); break;
-                    case 7: j_ptr->flags2 |= (TR2_HOLD_LIFE); break;
-                }
-
-                break;
-            }
-        }
-    }
-
 
 	/*
 	 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC,
@@ -1648,10 +1521,8 @@ cptr item_activation(object_type *o_ptr)
 	/* Require activation ability */
 	if (!(f3 & (TR3_ACTIVATE))) return "nothing";
 
-	/* Randarts set xtra1 to denote the use of xtra2 for their activations. */
-    if (o_ptr->xtra1 == EGO_XTRA_ACTIVATE)
-    {
-        switch (o_ptr->xtra2)
+	/* Randarts store their activations in object_type. */
+        switch (o_ptr->activation)
         {
             case ACT_SUNLIGHT:
                 return "beam of sunlight every 10 turns";
@@ -1797,12 +1668,15 @@ cptr item_activation(object_type *o_ptr)
                 return "dimension door every 100 turns";
             case ACT_TELEPORT:
                 return "teleport (range 100) every 45 turns";
+			case ACT_TELEPORT_WAIT:
+				return "teleport (range 100) every 50+d50 turns";
             case ACT_RECALL:
                 return "word of recall every 200 turns";
+			case 0:
+				break;
             default:
                 return "a bad randart activation";
         }
-    }
 
 	/* Some artifacts can be activated */
 	switch (o_ptr->name1)
@@ -1921,11 +1795,6 @@ cptr item_activation(object_type *o_ptr)
             return "rays of fear in every direction";
 	}
 
-
-    if (o_ptr->name2 == EGO_PLANAR)
-    {
-       return "teleport every 50+d50 turns";
-    }
 
 	/* Rings and DSM. */
 	switch (o_ptr->k_idx)

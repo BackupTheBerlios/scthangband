@@ -3976,8 +3976,7 @@ static void give_activation_power (object_type * o_ptr)
     }
 
     /* A type was chosen... */
-	o_ptr->xtra1 = EGO_XTRA_ACTIVATE;
-    o_ptr->xtra2 = type;
+    o_ptr->activation = type;
     o_ptr->flags3 |= TR3_ACTIVATE;
     o_ptr->timeout = 0;
 }
@@ -4165,7 +4164,7 @@ if ((!a_cursed)
     && (randint((o_ptr->tval>=TV_BOOTS)
         ?ACTIVATION_CHANCE * 2:ACTIVATION_CHANCE)==1))
 {
-    o_ptr->xtra2 = 0;
+    o_ptr->activation = 0;
     give_activation_power(o_ptr);
 }
 

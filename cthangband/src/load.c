@@ -328,8 +328,74 @@ static void rd_item(object_type *o_ptr)
 		rd_s16b(&o_ptr->held_m_idx);
 
 	/* Special powers */
+#ifdef SF_EGO_DISTRO
+	if (has_flag(SF_EGO_DISTRO))
+	{
+		rd_byte(&o_ptr->activation);
+	}
+	else
+	{
+		byte xtra1, xtra2;
+		rd_byte(&xtra1);
+		rd_byte(&xtra2);
+		switch (xtra1)
+		{
+			case 1: /* sustain */
+			{
+				switch (xtra2 % 6)
+				{
+					case 0: o_ptr->flags2 |= (TR2_SUST_STR); break;
+					case 1: o_ptr->flags2 |= (TR2_SUST_INT); break;
+					case 2: o_ptr->flags2 |= (TR2_SUST_WIS); break;
+					case 3: o_ptr->flags2 |= (TR2_SUST_DEX); break;
+					case 4: o_ptr->flags2 |= (TR2_SUST_CON); break;
+					case 5: o_ptr->flags2 |= (TR2_SUST_CHR); break;
+				}
+				break;
+			}
+			case 2: /* power */
+			{
+				switch (xtra2 % 11)
+				{
+					case 0: o_ptr->flags2 |= (TR2_RES_BLIND); break;
+					case 1: o_ptr->flags2 |= (TR2_RES_CONF); break;
+					case 2: o_ptr->flags2 |= (TR2_RES_SOUND); break;
+					case 3: o_ptr->flags2 |= (TR2_RES_SHARDS); break;
+					case 4: o_ptr->flags2 |= (TR2_RES_NETHER); break;
+					case 5: o_ptr->flags2 |= (TR2_RES_NEXUS); break;
+					case 6: o_ptr->flags2 |= (TR2_RES_CHAOS); break;
+					case 7: o_ptr->flags2 |= (TR2_RES_DISEN); break;
+					case 8: o_ptr->flags2 |= (TR2_RES_POIS); break;
+					case 9: o_ptr->flags2 |= (TR2_RES_DARK); break;
+					case 10: o_ptr->flags2 |= (TR2_RES_LITE); break;
+				}
+				break;
+			}
+			case 3: /* ability */
+			{
+				switch (xtra2 % 8)
+				{
+					case 0: o_ptr->flags3 |= (TR3_FEATHER); break;
+					case 1: o_ptr->flags3 |= (TR3_LITE); break;
+					case 2: o_ptr->flags3 |= (TR3_SEE_INVIS); break;
+					case 3: o_ptr->flags3 |= (TR3_TELEPATHY); break;
+					case 4: o_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
+					case 5: o_ptr->flags3 |= (TR3_REGEN); break;
+					case 6: o_ptr->flags2 |= (TR2_FREE_ACT); break;
+					case 7: o_ptr->flags2 |= (TR2_HOLD_LIFE); break;
+				}
+				break;
+			}
+			case 4: /* activation */
+			{
+				o_ptr->activation = xtra2;
+			}
+		}
+	}
+#else /* SF_EGO_DISTRO */
 	rd_byte(&o_ptr->xtra1);
 	rd_byte(&o_ptr->xtra2);
+#endif /* SF_EGO_DISTRO */
 
 	/* Inscription */
 	rd_string(buf, 128);

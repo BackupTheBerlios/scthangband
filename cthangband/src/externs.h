@@ -1798,7 +1798,7 @@ extern bool enchant(object_type *o_ptr, int n, int eflag);
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern bool enchant_spell(int num_hit, int num_dam, int num_ac);
 #endif
-#if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern void random_resistance (object_type * o_ptr, bool is_scroll, int specific);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA2_C))
@@ -3307,7 +3307,7 @@ extern byte spell_order[128];
 #if (defined(BIRTH_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern s16b player_hp[100];
 #endif
-#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern maxima *z_info;
 #endif
 #if (defined(GENERATE_C) || defined(INIT2_C) || defined(VARIABLE_C))

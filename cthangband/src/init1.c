@@ -1692,13 +1692,15 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 		/* Process 'W' for "More Info" (one line only) */
 		case 'W':
 		{
-			int wgt;
+			int krating, wgt;
 			long cost;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%ld", &wgt, &cost)) return (1);
+			if (3 != sscanf(buf+2, "%d:%d:%ld", &krating, &wgt, &cost))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
+			k_ptr->rating = krating;
 			k_ptr->weight = wgt;
 			k_ptr->cost = cost;
 
@@ -2305,15 +2307,15 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 		/* Process 'X' for "Xtra" (one line only) */
 		case 'X':
 		{
-			int slot, erating;
+			int r,s;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%d",
-			                &slot, &erating)) return (1);
+			if (2 != sscanf(buf+2, "%d:%d", &r, &s))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
-			e_ptr->slot = slot;
-			e_ptr->rating = erating;
+			e_ptr->rating = r;
+			e_ptr->special = s;
 
 			return SUCCESS;
 		}
@@ -2321,24 +2323,22 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 		/* Process 'W' for "More Info" (one line only) */
 		case 'W':
 		{
-			int level, rarity, pad2;
+			int chance;
 			long cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			                &level, &rarity, &pad2, &cost)) return (1);
+			if (2 != sscanf(buf+2, "%d:%ld", &chance, &cost))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
-			e_ptr->level = level;
-			e_ptr->rarity = rarity;
-			/* e_ptr->weight = wgt; */
+			e_ptr->chance = chance;
 			e_ptr->cost = cost;
 
 			return SUCCESS;
 		}
 
-		/* Hack -- Process 'C' for "creation" */
-		case 'C':
+		/* Process 'P' for "potential power". */
+		case 'P':
 		{
 			int th, td, ta, pv;
 
@@ -2354,6 +2354,35 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 			return SUCCESS;
 		}
 
+		/* Process 'O' for object range. */
+		case 'O':
+		{
+			int min, max;
+			switch (sscanf(buf+2, "%d:%d", &min, &max))
+			{
+				case 1:
+				{
+					max = min;
+					/* Fall through. */
+				}
+				case 2:
+				{
+					/* Check for sanity. */
+					if (!min || max >= z_info->k_max || max < min)
+						return PARSE_ERROR_OUT_OF_BOUNDS;
+
+					/* Set stuff. */
+					e_ptr->min_obj = min;
+					e_ptr->max_obj = max;
+					return SUCCESS;
+				}
+				default:
+				{
+					return PARSE_ERROR_INCORRECT_SYNTAX;
+				}
+			}
+		}
+		
 		/* Hack -- Process 'F' for flags */
 		case 'F':
 		{

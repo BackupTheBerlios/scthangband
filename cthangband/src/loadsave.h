@@ -69,3 +69,9 @@
  * Read quests directly into q_info rather than from the dungeon definition.
  */
 #define SF_QUEST_DIRECT	0x4000
+
+/*
+ * Distribute most ego items based on contents of e_info.txt.
+ * Rearranges k_info to make this easier and removes object_type.xtra*.
+ */
+#define SF_EGO_DISTRO	0x8000
