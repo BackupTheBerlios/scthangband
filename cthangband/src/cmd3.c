@@ -809,6 +809,9 @@ void do_cmd_inscribe(void)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* Make a note of the change. */
+		message_add(format("Inscribed %s as %s.", o_name, quark_str(o_ptr->note)));
 	}
 }
 
