@@ -3639,12 +3639,12 @@ void notice_stuff(void)
 /*
  * Is cave[y][x] in a room?
  *
- * Do this by looking for two squares adjacent to the current square which
- * are both floor squares.
+ * Do this by looking for either three adjacent or four arbitrary surrounding
+ * squares.
  */
 static bool is_room_func_p(int y, int x)
 {
-	int i,t;
+	int i,adj,tot;
 
 	/* An array which rotates around 0,0 anticlockwise. */
 	int xs[9] = { 1, 1, 0,-1,-1,-1, 0, 1, 1};
@@ -3653,13 +3653,13 @@ static bool is_room_func_p(int y, int x)
 	/* Assume that non-floor squares are dealt with elsewhere. */
 	if (!cave_floor_bold(y,x)) return TRUE;
 
-	for (i = t = 0; i < 9; i++)
+	for (i = tot = adj = 0; i < 9; i++)
 	{
 		if (!cave_floor_bold(y+ys[i], x+xs[i]))
 		{
-			t = 0;
+			adj = 0;
 		}
-		else if (t++ == 2)
+		else if ((i && tot++ == 3) || adj++ == 2)
 		{
 			return TRUE;
 		}
