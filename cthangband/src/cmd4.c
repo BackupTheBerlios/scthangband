@@ -432,16 +432,18 @@ static option_type autosave_info[3] =
 
 static s16b toggle_frequency(s16b current)
 {
-	if (current == 0) return 50;
-	if (current == 50) return 100;
-	if (current == 100) return 250;
-	if (current == 250) return 500;
-	if (current == 500) return 1000;
-	if (current == 1000) return 2500;
-	if (current == 2500) return 5000;
-	if (current == 5000) return 10000;
-	if (current == 10000) return 25000;
+	s16b freqs[] =
+	{
+		50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000
+	}, *p;
 
+	/* Go to the next frequency in the list. */
+	FOR_ALL_IN(freqs, p)
+	{
+		if (current < *p) return *p;
+	}
+
+	/* If the current frequency is 25000, go back to 0. */
 	return 0;
 }
 
@@ -1936,12 +1938,14 @@ static void dump_normal_options(FILE *fff)
 		fprintf(fff, "%c:%s\n\n", y, op_ptr->o_text);
 	}
 
-	/* Mention options which can't be read. */
-	fprintf(fff, "\n\n# Unparsable options\n\n");
-	fprintf(fff, "# Base delay factor %d\n",
-		delay_factor * delay_factor * delay_factor);
-	fprintf(fff, "# Hitpoint warning %d\n", hitpoint_warn * 10);
-	fprintf(fff, "# Autosave frequency %d\n", autosave_freq);
+	/* Mention miscellaneous options. */
+	fprintf(fff, "\n\n# Miscellaneous options\n\n");
+	fprintf(fff, "# Base delay factor (0-9)\nZ:base delay factor:%d\n\n",
+		delay_factor);
+	fprintf(fff, "# Hitpoint warning (0-9)\nZ:hitpoint warning:%d\n\n",
+		hitpoint_warn);
+	fprintf(fff, "# Autosave frequency (>= 0)\nZ:autosave frequency:%d\n\n",
+		autosave_freq);
 }
 
 /*
@@ -2044,6 +2048,9 @@ static errr option_dump(void)
 
 	/* Save the default tval colours. */
 	tval_attr_dump(fff);
+
+	/* Close */
+	my_fclose(fff);
 
 	return SUCCESS;
 }

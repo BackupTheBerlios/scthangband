@@ -843,6 +843,47 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			/* Not a real option. */
 			return "no such option";
 		}
+		/* Process Z:<option>:<setting> for miscellaneous options. */
+		case 'Z':
+		{
+			/* All options take one parameter, although this can be changed. */
+			if (2 != tokenize(buf+2, 16, zz))
+			{
+				return "format not Z:<option>:<setting>";
+			}
+			else if (!strcmp(zz[0], "base delay factor"))
+			{
+				long l = strtol(zz[1], NULL, 0);
+				if (!isdigit(zz[1][0]) || l < 0 || l > 9)
+					return "invalid base delay factor";
+
+				/* delay_factor would probably make more sense cubed... */
+				delay_factor = l;
+			}
+			else if (!strcmp(zz[0], "hitpoint warning"))
+			{
+				long l = strtol(zz[1], NULL, 0);
+				if (!isdigit(zz[1][0]) || l < 0 || l > 9)
+					return "invalid hitpoint warning";
+
+				/* hitpoint_warn would probably make more sense in 100ths... */
+				hitpoint_warn = l;
+			}
+			else if (!strcmp(zz[0], "autosave frequency"))
+			{
+				long l = strtol(zz[1], NULL, 0);
+				if (!isdigit(zz[1][0]) || l < 0 || l > MAX_SHORT)
+					return "invalid autosave frequency";
+
+				/* hitpoint_warn would probably make more sense in 100ths... */
+				autosave_freq = l;
+			}
+			else
+			{
+				return "no such option";
+			}
+			return SUCCESS;
+		}
 		/* Process W:<term name>:<display name>:<triggered>:<untriggered>
 		 * to a window flag.
 		 */

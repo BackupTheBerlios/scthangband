@@ -3035,7 +3035,7 @@ extern bool allow_pickstats;
 #if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
 extern s16b hitpoint_warn;
 #endif
-#if (defined(CMD1_C) || defined(CMD4_C) || defined(LOAD_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
+#if (defined(CMD1_C) || defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern s16b delay_factor;
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
@@ -3047,7 +3047,7 @@ extern bool autosave_t;
 #if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern bool autosave_q;
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern s16b autosave_freq;
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(VARIABLE_C))
