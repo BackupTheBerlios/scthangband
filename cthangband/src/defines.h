@@ -3256,8 +3256,10 @@ logaux(x, 1) logaux(x, 0) 255)
  * into those features which block line of sight and those that
  * do not, allowing an extremely fast single bit check below.
  */
-#define cave_floor_bold(Y,X) \
-    (((!(cave[Y][X].feat & 0x20)) && (!(cave[Y][X].feat == FEAT_BUSH))) || (cave[Y][X].feat == FEAT_WATER))
+#define cave_floor_grid(C) \
+    ((!((C)->feat & 0x20) && (!((C)->feat == FEAT_BUSH))) || ((C)->feat == FEAT_WATER))
+
+#define cave_floor_bold(Y,X) cave_floor_grid(&cave[Y][X])
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid
@@ -3265,9 +3267,11 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 1 -- forbid non-floors
  * Line 2 -- forbid normal objects
  */
-#define cave_clean_bold(Y,X) \
-    ((cave[Y][X].feat == FEAT_FLOOR) && \
-     (!cave[Y][X].o_idx))
+#define cave_clean_grid(C) \
+    (((C)->feat == FEAT_FLOOR) && \
+     (!(C)->o_idx))
+
+#define cave_clean_bold(Y,X) cave_clean_grid(&cave[Y][X])
 
 /*
  * Determine if a "legal" grid is an "empty" floor grid
@@ -3276,10 +3280,12 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 2 -- forbid normal monsters
  * Line 3 -- forbid the player
  */
-#define cave_empty_bold(Y,X) \
-    (cave_floor_bold(Y,X) && \
-     !(cave[Y][X].m_idx) && \
-     !(((Y) == py) && ((X) == px)))
+#define cave_empty_grid(C) \
+    (cave_floor_grid(C) && \
+     !((C)->m_idx) && \
+     !((C) == &cave[py][px]))
+
+#define cave_empty_bold(Y,X) cave_empty_grid(&cave[Y][X])
 
 /*
  * Determine if a "legal" grid is an "naked" floor grid
@@ -3289,11 +3295,13 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 3 -- forbid normal monsters
  * Line 4 -- forbid the player
  */
-#define cave_naked_bold(Y,X) \
-    ((cave[Y][X].feat == FEAT_FLOOR) && \
-     !(cave[Y][X].o_idx) && \
-     !(cave[Y][X].m_idx) && \
-     !((Y == py) && (X == px)))
+#define cave_naked_grid(C) \
+    (((C)->feat == FEAT_FLOOR) && \
+     !((C)->o_idx) && \
+     !((C)->m_idx) && \
+     !((C) == &cave[py][px]))
+
+#define cave_naked_bold(Y,X) cave_naked_grid(&cave[Y][X])
 
 
 /*
@@ -3304,51 +3312,6 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 4 -- town gate
  * Line 5-6 -- shop doors
  */
-#define cave_perma_bold(Y,X) \
-    ((cave[Y][X].feat >= FEAT_PERM_BUILDING) || \
-     ((cave[Y][X].feat == FEAT_LESS) || \
-      (cave[Y][X].feat == FEAT_MORE)) || \
-	  (cave[Y][X].feat == FEAT_WILD_BORDER) || \
-	  (cave[Y][X].feat == FEAT_PATH_BORDER) || \
-     ((cave[Y][X].feat >= FEAT_SHOP_HEAD) && \
-      (cave[Y][X].feat <= FEAT_SHOP_TAIL)))
-
-
-/*
- * Grid based version of "cave_floor_bold()"
- */
-#define cave_floor_grid(C) \
-    ((!((C)->feat & 0x20) && (!((C)->feat == FEAT_BUSH))) || ((C)->feat == FEAT_WATER))
-
-
-/*
- * Grid based version of "cave_clean_bold()"
- */
-#define cave_clean_grid(C) \
-    (((C)->feat == FEAT_FLOOR) && \
-     (!(C)->o_idx))
-
-/*
- * Grid based version of "cave_empty_bold()"
- */
-#define cave_empty_grid(C) \
-    (cave_floor_grid(C) && \
-     !((C)->m_idx) && \
-     !((C) == &cave[py][px]))
-
-/*
- * Grid based version of "cave_empty_bold()"
- */
-#define cave_naked_grid(C) \
-    (((C)->feat == FEAT_FLOOR) && \
-     !((C)->o_idx) && \
-     !((C)->m_idx) && \
-     !((C) == &cave[py][px]))
-
-
-/*
- * Grid based version of "cave_perma_bold()"
- */
 #define cave_perma_grid(C) \
     (((C)->feat >= FEAT_PERM_BUILDING) || \
      (((C)->feat == FEAT_LESS) || \
@@ -3357,7 +3320,7 @@ logaux(x, 1) logaux(x, 0) 255)
      (((C)->feat >= FEAT_SHOP_HEAD) && \
       ((C)->feat <= FEAT_SHOP_TAIL)))
 
-
+#define cave_perma_bold(Y,X) cave_perma_grid(&cave[Y][X])
 
 /*
  * Determine if a "legal" grid is within "los" of the player
