@@ -2192,7 +2192,8 @@ static void get_visuals_feat(int i, cptr *name, byte *da, char *dc, byte **xa, c
 /*
  * The strings in r_name are processed before they are printed.
  */
-static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+static void get_visuals_mon(int i, cptr *name, byte *da, char *dc,
+	byte **xa, char **xc)
 {
 	get_visuals(r_info);
 	*name = format("%v", monster_desc_aux_f3, r_info+i, 1, 0);
@@ -2201,7 +2202,8 @@ static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, ch
 /*
  * The strings in k_name are processed before they are printed.
  */
-static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+static void get_visuals_obj(int i, cptr *name, byte *da, char *dc,
+	byte **xa, char **xc)
 {
 	object_type forge;
 
@@ -2220,22 +2222,20 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, ch
  * the things they do have are stored in a different way to reflect the
  * fact that the defaults are set at compile-time rather than run-time.
  */
-static void get_visuals_moncol(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+static void get_visuals_moncol(int i, cptr *name, byte *da, char UNUSED *dc,
+	byte **xa, char UNUSED **xc)
 {
 	(*name) = moncol[i].name;
 	(*da) = TERM_WHITE;
 	(*xa) = &(moncol[i].attr);
-
-	/* Characters aren't defined. */
-	(*dc) = (char)NULL;
-	(*xc) = NULL;
 }
 
 /*
  * The strings in u_name are processed before they are printed (using a fake
  * object kind to allow object_desc() to be used).
  */
-static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+static void get_visuals_unident(int i, cptr *name, byte *da, char *dc,
+	byte **xa, char **xc)
 {
 	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
 	object_kind hack_k, *k_ptr = &k_info[1];
@@ -2530,17 +2530,20 @@ static void modify_visuals(visual_type *vs_ptr)
 				max = vs_ptr->max;
 				break;
 			case 'a':
+				if (!vs_ptr->attr) goto err;
 				prompt = "Select number of desired colour: ";
 				out = &ca;
 				max = 256;
 				break;
 			case 'c':
+				if (!vs_ptr->chars) goto err;
 				prompt = "Select number of desired character: ";
 				out = &cc;
 				max = 256;
 				break;
-			/* Not a valid response, so ask again. */
 			default:
+err:			/* Not a valid response, so ask again. */
+				bell();
 				continue;
 		}
 
