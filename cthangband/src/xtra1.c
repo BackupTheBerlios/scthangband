@@ -1304,7 +1304,7 @@ static void win_help_display(void)
 				roff("\n");
 			}
 			/* Only expect one match. */
-			return;
+			break;
 		}
 		
 		my_fclose(fff);
