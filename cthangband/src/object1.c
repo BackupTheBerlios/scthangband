@@ -2400,6 +2400,7 @@ static void alloc_ifa(ifa_type *i_ptr, cptr str, ...)
 #define A_INCRES	(A_INCREASE | A_RESTORE)
 #define A_DEC10	0x04	/* A small temporary decrease, as do_dec_stat(). */
 #define A_DEC25	0x08	/* A large permanent decrease, as a potion of ruination. */
+#define A_WIELD	0x10	/* Hack - indicates a melee weapon. */
 
 /* Just in case birthrand.diff isn't applied. */
 #ifndef A_MAX
@@ -2498,7 +2499,12 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 		/* A couple of things which depend on two stats. */
 		if (j == A_DEX || (j == A_STR && !CMPU(stat_ind[A_DEX])))
 		{
-			if (CMP(num_blow)) alloc_ifa(info+(*i)++, "$W  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60);
+			if ((~act & A_WIELD) && CMP(num_blow))
+			{
+				alloc_ifa(info+(*i)++,
+					"$W  It %s your number of blows by %d,%d",
+					DIF_INC, DIF/60, DIF%60);
+			}
 		}
 		if (j == A_DEX || (j == A_INT && !CMPU(stat_ind[A_DEX])))
 		{
@@ -2650,6 +2656,9 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 			*act |= conv[j].act;
 		}
 	}
+	/* Hack - res_stat_details_comp() needs to recognise melee weapons, so
+	 * set it up here. */
+	if (wield_slot(o_ptr) == INVEN_WIELD) *act |= A_WIELD;
 }
 
 /*
