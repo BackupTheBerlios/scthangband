@@ -1462,6 +1462,7 @@ static bool point_mod_player(void)
  */
 static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 {
+	bc_type rc;
 	int x;
 	s16b y;
 
@@ -1510,8 +1511,6 @@ static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 	/* Give the player the choices. */
 	if (menu)
 	{
-		bc_type b;
-
 		/* Start half-way down the screen if possible. */
 		int start = 14, blank = 0;
 
@@ -1569,18 +1568,16 @@ static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 		prt("Selecting a character will set the sex, race, template and stats as shown.",  start-1, 5);
 
 		/* Ask for a choice */
-		b = birth_choice(start+1, y, "Choose a stat template", &x, TRUE);
+		rc = birth_choice(start+1, y, "Choose a stat template", &x, TRUE);
 
 		/* Finally clean up. */
 		clear_from(start);
-
-		/* Pass the return to the caller. */
-		return b;
 	}
 	/* We're starting for the first time, so give the player the last set saved. */
 	else if (!p_ptr->stat_cur[0])
 	{
 		x = y-1;
+		rc = BC_OKAY;
 	}
 	/* The player has already chosen stats, and hasn't asked to load new ones,
 	 * so do nothing. */
@@ -1611,7 +1608,7 @@ static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 			p_ptr->stat_cur[y] = p_ptr->stat_max[y] = tmp;
 		}
 	}
-	return BC_OKAY;
+	return rc;
 }
 
 /*
