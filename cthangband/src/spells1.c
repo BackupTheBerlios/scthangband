@@ -175,7 +175,7 @@ void teleport_away(int m_idx, int dis)
 /*
  * Teleport monster next to the player
  */
-void teleport_to_player(int m_idx)
+static void teleport_to_player(int m_idx)
 {
 	int                     ny, nx, oy, ox, d, i, min;
     int dis = 2;

@@ -25,7 +25,7 @@
  * selecting various things, such as graphics mode, so it must call
  * the "TERM_XTRA_REACT" hook before redrawing the windows.
  */
-void do_cmd_redraw(void)
+extern void do_cmd_redraw(void)
 {
 	int j;
 
@@ -556,7 +556,7 @@ static option_type autosave_info[3] =
 	    "autosave_q",   "Quiet autosaves" },
 };
        
-s16b toggle_frequency(s16b current)
+static s16b toggle_frequency(s16b current)
 {
 	if (current == 0) return 50;
 	if (current == 50) return 100;
@@ -3112,7 +3112,7 @@ void do_cmd_save_screen(void)
 /*
  * Check the status of "artifacts"
  */
-void do_cmd_knowledge_artifacts(void)
+static void do_cmd_knowledge_artifacts(void)
 {
 	int i, k, z, x, y;
 

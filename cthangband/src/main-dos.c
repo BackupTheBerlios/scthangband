@@ -1541,7 +1541,7 @@ static unsigned char **load_grx_bmps(PACKFILE *f, FNTfile_header *hdr,
 
 
 /* main import routine for the GRX font format */
-FONT *import_grx_font(char *fname)
+static FONT *import_grx_font(char *fname)
 {
 	PACKFILE *f;
 

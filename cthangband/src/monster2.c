@@ -921,7 +921,7 @@ void remove_non_pets(void)
  * This is an efficient method of simulating multiple calls to the
  * "delete_monster()" function, with no visual effects.
  */
-void wipe_m_list(void)
+static void wipe_m_list(void)
 {
 	int i;
 
@@ -1478,7 +1478,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 
 
 
-void sanity_blast (monster_type * m_ptr, bool necro)
+static void sanity_blast (monster_type * m_ptr, bool necro)
 {
     bool happened = FALSE;
     int power = 100;

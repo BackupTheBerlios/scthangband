@@ -878,7 +878,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr)
  * This is taken as the unidentified object with the same p_id,
  * and a s_id of SID_BASE, which is never re-mapped.
  */
-cptr descr_base(byte p_id)
+static cptr descr_base(byte p_id)
 {
 	s16b u_idx = pid_base[p_id];
 	switch (u_idx)
@@ -2948,7 +2948,7 @@ static bool brief = FALSE;
 /*
  * Find the sval of a launcher which can fire a given missile.
  */
-int launcher_type(object_type *o_ptr)
+static int launcher_type(object_type *o_ptr)
 {
 	tval_ammo_type *tv_ptr;
 
@@ -3831,7 +3831,7 @@ s16b wield_slot(object_type *o_ptr)
 /*
  * Return a string mentioning how a given item is carried
  */
-cptr mention_use(int i)
+static cptr mention_use(int i)
 {
 	cptr p;
 

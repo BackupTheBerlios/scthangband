@@ -17,7 +17,7 @@
  * Set the value of each of 'n' bytes starting at 's' to 'c', return 's'
  * If 'n' is negative, you will erase a whole lot of memory.
  */
-char *memset_ang(char *s, int c, huge n)
+char *memset(char *s, int c, huge n)
 {
 	char *t;
 	for (t = s; len--; ) *t++ = c;
@@ -63,7 +63,7 @@ int stricmp(cptr a, cptr b)
  *
  * Fake "usleep()" function grabbed from the inl netrek server -cba
  */
-int usleep_ang(huge usecs)
+int usleep(huge usecs)
 {
 	struct timeval      Timer;
 
@@ -191,7 +191,7 @@ void user_name(char *buf, int id)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-errr path_parse_1(char *buf, int UNUSED max, cptr file)
+errr path_parse(char *buf, int UNUSED max, cptr file)
 {
 	cptr		u, s;
 	struct passwd	*pw;
@@ -259,7 +259,7 @@ errr path_parse_1(char *buf, int UNUSED max, cptr file)
  * This requires no special processing on simple machines,
  * except for verifying the size of the filename.
  */
-errr path_parse_2(char *buf, int max, cptr file)
+errr path_parse(char *buf, int max, cptr file)
 {
 	/* Accept the filename */
 	strnfmt(buf, max, "%s", file);
@@ -277,7 +277,7 @@ errr path_parse_2(char *buf, int max, cptr file)
  *
  * This filename is always in "system-specific" form.
  */
-errr path_temp_ang(char *buf, int max)
+errr path_temp(char *buf, int max)
 {
 	cptr s;
 
@@ -346,7 +346,7 @@ errr path_build(char *buf, int max, cptr path, cptr file)
 /*
  * Hack -- replacement for "fopen()"
  */
-FILE *my_fopen_ang(cptr file, cptr mode)
+FILE *my_fopen(cptr file, cptr mode)
 {
 	char                buf[1024];
 
@@ -361,7 +361,7 @@ FILE *my_fopen_ang(cptr file, cptr mode)
 /*
  * Hack -- replacement for "fclose()"
  */
-errr my_fclose_ang(FILE *fff)
+errr my_fclose(FILE *fff)
 {
 	/* Require a file */
 	if (!fff) return (-1);
@@ -509,7 +509,7 @@ extern long lseek(int, long, int);
 /*
  * Hack -- attempt to delete a file
  */
-errr fd_kill_ang(cptr file)
+errr fd_kill(cptr file)
 {
 	char                buf[1024];
 
@@ -527,7 +527,7 @@ errr fd_kill_ang(cptr file)
 /*
  * Hack -- attempt to move a file
  */
-errr fd_move_ang(cptr file, cptr what)
+errr fd_move(cptr file, cptr what)
 {
 	char                buf[1024];
 	char                aux[1024];
@@ -549,7 +549,7 @@ errr fd_move_ang(cptr file, cptr what)
 /*
  * Hack -- attempt to copy a file
  */
-errr fd_copy(cptr file, cptr what)
+static errr fd_copy(cptr file, cptr what)
 {
 	char                buf[1024];
 	char                aux[1024];
@@ -581,7 +581,7 @@ errr fd_copy(cptr file, cptr what)
  * of "O_RDONLY", "O_WRONLY", and "O_RDWR" in "A-win-h", and then
  * we must simulate the effect of the proper "open()" call below.
  */
-int fd_make_ang(cptr file, int mode)
+int fd_make(cptr file, int mode)
 {
 	char                buf[1024];
 
@@ -614,7 +614,7 @@ int fd_make_ang(cptr file, int mode)
  *
  * Note that we assume that the file should be "binary"
  */
-int fd_open_ang(cptr file, int flags)
+int fd_open(cptr file, int flags)
 {
 	char                buf[1024];
 
@@ -631,7 +631,7 @@ int fd_open_ang(cptr file, int flags)
  *
  * Legal lock types -- F_UNLCK, F_RDLCK, F_WRLCK
  */
-errr fd_lock_ang(int fd, int what)
+errr fd_lock(int fd, int what)
 {
 	/* XXX XXX */
 	what = what ? what : 0;
@@ -693,7 +693,7 @@ errr fd_lock_ang(int fd, int what)
 /*
  * Hack -- attempt to seek on a file descriptor
  */
-errr fd_seek_ang(int fd, huge n)
+errr fd_seek(int fd, huge n)
 {
 	long p;
 
@@ -717,7 +717,7 @@ errr fd_seek_ang(int fd, huge n)
 /*
  * Hack -- attempt to truncate a file descriptor
  */
-errr fd_chop(int fd, huge n)
+static errr fd_chop(int fd, huge n)
 {
 	/* XXX XXX */
 	n = n ? n : 0;
@@ -738,7 +738,7 @@ errr fd_chop(int fd, huge n)
 /*
  * Hack -- attempt to read data from a file descriptor
  */
-errr fd_read_ang(int fd, char *buf, huge n)
+errr fd_read(int fd, char *buf, huge n)
 {
 	/* Verify the fd */
 	if (fd < 0) return (-1);
@@ -771,7 +771,7 @@ errr fd_read_ang(int fd, char *buf, huge n)
 /*
  * Hack -- Attempt to write data to a file descriptor
  */
-errr fd_write_ang(int fd, cptr buf, huge n)
+errr fd_write(int fd, cptr buf, huge n)
 {
 	/* Verify the fd */
 	if (fd < 0) return (-1);
@@ -804,7 +804,7 @@ errr fd_write_ang(int fd, cptr buf, huge n)
 /*
  * Hack -- attempt to close a file descriptor
  */
-errr fd_close_ang(int fd)
+errr fd_close(int fd)
 {
 	/* Verify the fd */
 	if (fd < 0) return (-1);
@@ -1324,7 +1324,7 @@ errr macro_add(cptr pat, cptr act)
 /*
  * Initialize the "macro" package
  */
-errr macro_init(void)
+static errr macro_init(void)
 {
 	/* Macro patterns */
 	C_MAKE(macro__pat, MACRO_MAX, cptr);

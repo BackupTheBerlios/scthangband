@@ -5820,29 +5820,34 @@ static void handle_signal_abort(int sig)
 }
 
 
+#endif /* HANDLE_SIGNALS */
 
 
 /*
  * Ignore SIGTSTP signals (keyboard suspend)
  */
-void signals_ignore_tstp_1(void)
+void signals_ignore_tstp(void)
 {
 
-#ifdef SIGTSTP
+#ifdef HANDLE_SIGNALS
+# ifdef SIGTSTP
 	(void)signal(SIGTSTP, SIG_IGN);
-#endif
+# endif
+#endif /* HANDLE_SIGNALS */
 
 }
 
 /*
  * Handle SIGTSTP signals (keyboard suspend)
  */
-void signals_handle_tstp_1(void)
+void signals_handle_tstp(void)
 {
 
-#ifdef SIGTSTP
+#ifdef HANDLE_SIGNALS
+# ifdef SIGTSTP
 	(void)signal(SIGTSTP, handle_signal_suspend);
-#endif
+# endif
+#endif /* HANDLE_SIGNALS */
 
 }
 
@@ -5850,9 +5855,9 @@ void signals_handle_tstp_1(void)
 /*
  * Prepare to handle the relevant signals
  */
-void signals_init_1(void)
+void signals_init(void)
 {
-
+#ifdef HANDLE_SIGNALS
 #ifdef SIGHUP
 	(void)signal(SIGHUP, SIG_IGN);
 #endif
@@ -5927,38 +5932,5 @@ void signals_init_1(void)
 #ifdef SIGPWR
 	(void)signal(SIGPWR, handle_signal_abort);
 #endif
-
-}
-
-
-#else	/* HANDLE_SIGNALS */
-
-
-/*
- * Do nothing
- */
-void signals_ignore_tstp_2(void)
-{
-}
-
-/*
- * Do nothing
- */
-void signals_handle_tstp_2(void)
-{
-}
-
-/*
- * Do nothing
- */
-void signals_init_2(void)
-{
-}
-
-
-
-
-
-
-
 #endif /* HANDLE_SIGNALS */
+}

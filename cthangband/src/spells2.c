@@ -29,6 +29,7 @@ extern int artifact_bias;
 extern void get_table_name(char * out_string);
 extern s32b flag_cost(object_type * o_ptr, int plusses);
 
+static bool detect_monsters_string(cptr Match);
 
 /*
  * Increase players hit points, notice effects
@@ -2315,7 +2316,7 @@ bool detect_monsters_evil(void)
 /*
  * Detect all (string) monsters on current panel
  */
-bool detect_monsters_string(cptr Match)
+static bool detect_monsters_string(cptr Match)
 {
 	int             i, y, x;
 
@@ -2385,6 +2386,7 @@ bool detect_monsters_string(cptr Match)
 /*
  * A "generic" detect monsters routine, tagged to flags3
  */
+#if 0
 bool detect_monsters_xxx(u32b match_flag)
 {
 	int             i, y, x;
@@ -2461,6 +2463,7 @@ bool detect_monsters_xxx(u32b match_flag)
 	/* Result */
 	return (flag);
 }
+#endif
 
 
 /*
@@ -2816,7 +2819,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 }
 
 
-void curse_artifact (object_type * o_ptr)
+static void curse_artifact (object_type * o_ptr)
 {
 	    if (o_ptr->pval) o_ptr->pval = 0 - ((o_ptr->pval) + randint(4));
 	    if (o_ptr->to_a) o_ptr->to_a = 0 - ((o_ptr->to_a) + randint(4));
@@ -2834,7 +2837,7 @@ void curse_artifact (object_type * o_ptr)
 
 }
 
-void random_plus (object_type * o_ptr, bool is_scroll)
+static void random_plus (object_type * o_ptr, bool is_scroll)
 {
 
     int this_type = (o_ptr->tval<TV_BOOTS?23:19);
@@ -3332,7 +3335,7 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
     }
 }
 
-void random_misc (object_type * o_ptr, bool is_scroll)
+static void random_misc (object_type * o_ptr, bool is_scroll)
 {
 
     if (artifact_bias == BIAS_RANGER)
@@ -3512,7 +3515,7 @@ void random_misc (object_type * o_ptr, bool is_scroll)
 
 }
 
-void random_slay (object_type * o_ptr, bool is_scroll)
+static void random_slay (object_type * o_ptr, bool is_scroll)
 {
 
     if (artifact_bias == BIAS_CHAOS && !(o_ptr->tval == TV_BOW))
@@ -3752,7 +3755,7 @@ void random_slay (object_type * o_ptr, bool is_scroll)
 
 }
 
-void give_activation_power (object_type * o_ptr)
+static void give_activation_power (object_type * o_ptr)
 {
 
     int type = 0, chance = 0;
@@ -3987,7 +3990,7 @@ void give_activation_power (object_type * o_ptr)
     o_ptr->timeout = 0;
 }
 
-void get_random_name(char * return_name, bool armour, int power)
+static void get_random_name(char * return_name, bool armour, int power)
 {
     if (randint(100)<=TABLE_NAME)
 	get_table_name(return_name);
@@ -4703,7 +4706,7 @@ bool banish_evil(int dist)
 /*
  * Turn undead
  */
-bool turn_undead(int dam)
+static bool turn_undead(int dam)
 {
 	return (project_hack(GF_TURN_UNDEAD, dam));
 }
@@ -5701,7 +5704,7 @@ static void cave_temp_room_aux(int y, int x)
 /*
  * Illuminate any room containing the given location.
  */
-void lite_room(int y1, int x1)
+static void lite_room(int y1, int x1)
 {
 	int i, x, y;
 
@@ -6583,10 +6586,10 @@ Ego weapons and normal weapons can be blessed automatically. */
 
   * Death-ray all monsters (note: OBSCENELY powerful)
   */
- bool deathray_monsters(int dam)
- {
+static bool deathray_monsters(int dam)
+{
      return (project_hack(GF_DEATH_RAY, dam));
- }
+}
 
 
 

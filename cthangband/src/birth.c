@@ -2542,7 +2542,7 @@ static void birth_put_stats(void)
 /*
  *  Initialise the matrix of quests
  */
-void initialise_quests(void)
+static void initialise_quests(void)
 {
 	int i,j;
 
@@ -3043,7 +3043,7 @@ static void player_outfit(void)
  * Generate the additional quests
  * Heino Vander Sanden, Jimmy De Laet, and Robert Ruehlmann
  */
-void player_birth_quests(void)
+static void player_birth_quests(void)
 {
 	int i,j;
 	bool same_level;

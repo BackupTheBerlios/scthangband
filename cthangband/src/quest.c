@@ -39,7 +39,7 @@ int get_quest_monster(void)
 /*
  * Search quests for number of monsters
  */
-int get_max_monster(void)
+static int get_max_monster(void)
 {
 	int i;
 
@@ -124,7 +124,7 @@ void quest_discovery(void)
  * Search the next quest level
  */
 
-int next_quest_level(void)
+static int next_quest_level(void)
 {
 	int i;
 

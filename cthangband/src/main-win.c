@@ -2579,7 +2579,7 @@ static int old_rogue_like_commands = -1;
 static int old_always_pickup = -1;
 static int old_total_winner = -1;
 
-bool angband_keymap_find(cptr str, char *out)
+static bool angband_keymap_find(cptr str, char *out)
 {
 	int i, j, ch, n, mode;
 	int match, max_len;

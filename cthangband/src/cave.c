@@ -676,9 +676,9 @@ static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
  * then a whole lot of code should be changed...  XXX XXX
  */
 #ifdef USE_TRANSPARENCY
-void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
+static void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 #else /* USE_TRANSPARENCY */
-void map_info(int y, int x, byte *ap, char *cp)
+static void map_info(int y, int x, byte *ap, char *cp)
 #endif /* USE_TRANSPARENCY */
 {
 	cave_type *c_ptr;
@@ -3141,7 +3141,7 @@ static int flow_n = 0;
 /*
  * Hack -- forget the "flow" information
  */
-void forget_flow(void)
+static void forget_flow(void)
 {
 
 #ifdef MONSTER_FLOW
@@ -3740,7 +3740,7 @@ object_type *cnv_idx_to_obj(s16b index)
 /*
  * Returns the object_idx appropriate for a given item.
  */
-s16b cnv_obj_to_idx(object_type *o_ptr)
+static s16b cnv_obj_to_idx(object_type *o_ptr)
 {
 	if (o_ptr >= inventory && o_ptr-inventory < INVEN_TOTAL)
 	{

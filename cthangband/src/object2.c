@@ -1563,8 +1563,6 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 	return (object_similar_2(o_ptr, j_ptr) == j_ptr->number);
 }
 
-extern bool store_object_absorb(object_type *o_ptr, object_type *j_ptr);
-
 /*
  * Allow one item to "absorb" another, assuming they are similar
  * Return true if every object was ab
@@ -1596,7 +1594,7 @@ bool object_absorb_2(object_type *o_ptr, object_type *j_ptr)
 	return store_object_absorb(o_ptr, j_ptr);
 }
 
-void object_absorb(object_type *o_ptr, object_type *j_ptr)
+static void object_absorb(object_type *o_ptr, object_type *j_ptr)
 {
 	(void)object_absorb_2(o_ptr, j_ptr);
 }

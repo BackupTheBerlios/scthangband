@@ -2865,7 +2865,7 @@ void curse_equipment(int chance, int heavy_chance)
  * Note the special "MFLAG_NICE" flag, which prevents a monster from using
  * any spell attacks until the player has had a single chance to move.
  */
-bool make_attack_spell(int m_idx)
+static bool make_attack_spell(int m_idx)
 {
     int                     k, chance, thrown_spell, rlev, failrate;
 

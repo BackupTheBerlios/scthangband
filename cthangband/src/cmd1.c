@@ -49,7 +49,7 @@ bool test_hit_fire(int chance, int ac, int vis)
  *
  * Note -- Always miss 5%, always hit 5%, otherwise random.
  */
-bool test_hit_norm(int chance, int ac, int vis)
+static bool test_hit_norm(int chance, int ac, int vis)
 {
 	int k;
 
@@ -117,7 +117,7 @@ s16b critical_shot(int weight, int plus, int dam)
  *
  * Factor in weapon weight, total plusses, player level.
  */
-s16b critical_norm(int weight, int plus, int dam)
+static s16b critical_norm(int weight, int plus, int dam)
 {
 	int i, k;
 
@@ -1003,7 +1003,7 @@ static void hit_trap(void)
 }
 
 
-void touch_zap_player(monster_type *m_ptr)
+static void touch_zap_player(monster_type *m_ptr)
 {
         int             aura_damage = 0;
         monster_race    *r_ptr = &r_info[m_ptr->r_idx];
@@ -3007,7 +3007,7 @@ void run_step(int dir)
 /*
  * Get town at given coordinates
  */
-byte get_cur_town(int y, int x)
+static byte get_cur_town(int y, int x)
 {
 	int i;
 	for(i=0;i<MAX_TOWNS;i++)

@@ -3110,7 +3110,7 @@ static void dismiss_pets(bool some);
 static void racial_confirm_string(byte choice, char * out);
 static bool racial_aux(powertype *pw_ptr);
 static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom);
-byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, char *), byte, cptr, cptr, cptr);
+static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, char *), byte, cptr, cptr, cptr);
 static void racial_string(byte num, byte *x, char * text);
 static s16b count_powers(void);
 static void use_power(powertype *pw_ptr);
@@ -3863,7 +3863,7 @@ static s16b count_powers(void)
  * of the option as a parameter. It should return the player's response.
  * The function returns the index of the option chosen, 255 if none are chosen.
  */
-byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, char *), byte num, cptr string1, cptr string2, cptr substring)
+static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, char *), byte num, cptr string1, cptr string2, cptr substring)
 				{
 	bool ask, started = FALSE;
 	char choice;

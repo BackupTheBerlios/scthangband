@@ -13,7 +13,7 @@
 
 #include "angband.h"
 
-void do_cmd_wiz_help(void);
+static void do_cmd_wiz_help(void);
 
 /*
  * Hack -- Rerate Hitpoints
@@ -1790,7 +1790,7 @@ static int i = 0;
 
 #endif
 
-void do_cmd_wiz_help(void)
+static void do_cmd_wiz_help(void)
 {
 	/* Enter "icky" mode */
 	character_icky = TRUE;

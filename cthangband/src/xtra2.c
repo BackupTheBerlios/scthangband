@@ -2847,7 +2847,7 @@ void verify_panel(void)
 /*
  * Monster health description
  */
-cptr look_mon_desc(int m_idx)
+static cptr look_mon_desc(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -2903,7 +2903,7 @@ cptr look_mon_desc(int m_idx)
  * function hooks to interact with the data, which is given as
  * two pointers, and which may have any user-defined form.
  */
-void ang_sort_aux(vptr u, vptr v, int p, int q)
+static void ang_sort_aux(vptr u, vptr v, int p, int q)
 {
 	int z, a, b;
 
@@ -2979,7 +2979,7 @@ void ang_sort(vptr u, vptr v, int n)
  * Future versions may restrict the ability to target "trappers"
  * and "mimics", but the semantics is a little bit weird.
  */
-bool target_able(int m_idx)
+static bool target_able(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
@@ -4523,7 +4523,7 @@ bool get_rep_dir(int *dp)
 }
 
 
-int get_chaos_patron(void)
+static int get_chaos_patron(void)
 {
     return (((p_ptr->age)+(p_ptr->sc)+(p_ptr->birthday))%MAX_PATRON);
 }

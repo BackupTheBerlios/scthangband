@@ -169,6 +169,7 @@ static cptr service_name[MAX_STORE_TYPES][2] =
 static s32b cur_ask, final_ask;
 static cptr pmt;
 static bool noneedtobargain(s32b minprice);
+static int get_which_store(void);
 
 /*
  * Determine if haggling is necessary.
@@ -252,7 +253,7 @@ static bool needtohaggle(s32b purse)
  * Rest for a night in the Inn or House
  * If the night flag is set, then rest until nightfalll instead of daybreak
   */
-void room_rest(bool night)
+static void room_rest(bool night)
 {
 	int n;
 	int temp_store_num;
@@ -340,7 +341,7 @@ void room_rest(bool night)
  * Free Homes - check if the town has any homes for sale
   */
 
-bool free_homes(void)
+static bool free_homes(void)
 {
 	int i,tot;
 	tot=0;
@@ -3601,7 +3602,7 @@ static void store_sell(void)
 static bool leave_store = FALSE;
 
 /* Work out the player's maximum skill */
-s32b max_player_skill(void)
+static s32b max_player_skill(void)
 {
 	int i;
 	byte max = 0;
@@ -4882,7 +4883,7 @@ void move_to_black_market(object_type * o_ptr)
         object_wipe(o_ptr); /* Don't leave a bogus object behind... */
 }
 
-int get_which_store(void)
+static int get_which_store(void)
 {
 	int i;
 

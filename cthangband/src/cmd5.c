@@ -236,7 +236,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 /*
  * Determine if a cantrip is "okay" for the player to cast
  */
-bool cantrip_okay(int fav)
+static bool cantrip_okay(int fav)
 {
 	byte plev = skill_set[SKILL_HEDGE].value/2;
 	cantrip_type *s_ptr;
@@ -516,7 +516,7 @@ int get_cantrip(int *sn, int sval)
 /*
  * Determine if a favour is "okay" for the player to cast
  */
-bool favour_okay(int fav,  int sphere)
+static bool favour_okay(int fav,  int sphere)
 {
 	byte plev = skill_set[SKILL_SHAMAN].value/2;
 	favour_type *s_ptr;
@@ -1788,7 +1788,7 @@ static void call_the_(void)
 
 
 
-void wild_magic(int spell)
+static void wild_magic(int spell)
 {
     int counter = 0;
     int type = SUMMON_BIZARRE1 - 1 + (randint(6));

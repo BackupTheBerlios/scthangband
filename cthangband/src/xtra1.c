@@ -172,7 +172,7 @@ static void prt_gold(void)
 /*
  * Prints current time
  */
-void prt_time(void)
+static void prt_time(void)
 {
 	int minute = ((turn % ((10L * TOWN_DAWN)) * 1440) / ((10L * TOWN_DAWN)));
 	int hour = ((minute/60)-6)%24; /* 0 to 23 */
@@ -1066,7 +1066,7 @@ static bool win_shops_good(void)
 /*
  * Give a list of shops in the current town.
  */
-void win_shops_display(void)
+static void win_shops_display(void)
 	{
 	shops_display(cur_town);
 }
@@ -1289,7 +1289,7 @@ static void ang_mon_sort_swap_hook(vptr u, vptr UNUSED v, int a, int b)
 /*
  * Display the visible monster list in a window.
  */
-void win_visible_display(void)
+static void win_visible_display(void)
 {
 	int i, j;
 	int c = 0;
@@ -4087,7 +4087,7 @@ bool ma_heavy_armor(void)
 /*
  * Update the maxima for each skill, and possibly give chaos patron rewards
  */
-void update_skill_maxima(void)
+static void update_skill_maxima(void)
 {
 	int i,chance;
 

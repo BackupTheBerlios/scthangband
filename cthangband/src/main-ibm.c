@@ -1005,7 +1005,7 @@ static void Term_nuke_ibm(term *t)
  * Note the use of "intr()" instead of "int86()" so we can pass
  * segment registers.
  */
-void enable_graphic_font_286(void *font)
+void enable_graphic_font(void *font)
 {
 	union REGPACK regs =
 	{0};
@@ -1137,7 +1137,7 @@ extern void _farnspokeb(unsigned long offset, unsigned char value);
  * DPMI - Dos Protected Mode Interface provides functions that let
  *        us do that.
  */
-void enable_graphic_font_386(const char *font)
+void enable_graphic_font(const char *font)
 {
 	__dpmi_regs dblock = {{0}};
 
