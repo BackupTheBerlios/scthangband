@@ -1256,10 +1256,14 @@ static errr init_other(void)
 	/*** Prepare the "dungeon" information ***/
 
 	/* Allocate and Wipe the object list */
-	C_MAKE(o_list, MAX_O_IDX+INVEN_TOTAL, object_type);
+	C_MAKE(obj_list, MAX_O_IDX+INVEN_TOTAL, object_type);
 
-	/* Divide the object list into player and dungeon sections. */
-	inventory = o_list + MAX_O_IDX;
+	/* Divide the object list into player and dungeon sections.
+	 * It needs to be this way around as it allows the game to skip
+	 * unused dungeon items.
+	 */
+	inventory = obj_list;
+	o_list = obj_list + INVEN_TOTAL;
 
 	/* Allocate and Wipe the monster list */
 	C_MAKE(m_list, MAX_M_IDX, monster_type);

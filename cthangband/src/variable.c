@@ -238,6 +238,7 @@ bool auto_scum;				/* Auto-scum for good levels */
 
 bool stack_allow_items;		/* Allow weapons and armor to stack */
 bool stack_allow_wands;		/* Allow wands/staffs/rods to stack */
+bool stack_allow_rods;	/* Allow recharging rods to stack */
 
 bool expand_look;			/* Expand the power of the look command */
 bool expand_list;			/* Expand the power of the list commands */
@@ -600,6 +601,11 @@ cave_type *cave[MAX_HGT];
  * The array of dungeon items [MAX_O_IDX]
  */
 object_type *o_list;
+
+/*
+ * The base array of all globally defined items [MAX_O_IDX+INVEN_TOTAL]
+ */
+object_type *obj_list;
 
 /*
  * The array of dungeon monsters [MAX_M_IDX]

@@ -1541,7 +1541,7 @@ extern bool make_gold(object_type *j_ptr);
 extern void place_gold(int y, int x);
 #endif
 #if (defined(CMD2_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern s16b drop_near(object_type *j_ptr, int chance, int y, int x);
+extern object_type *drop_near(object_type *j_ptr, int chance, int y, int x);
 #endif
 #if (defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(XTRA2_C))
 extern void acquirement(int y1, int x1, int num, bool great);
@@ -3217,7 +3217,7 @@ extern char angband_sound_name[SOUND_MAX][16];
 #if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern cave_type *cave[MAX_HGT];
 #endif
-#if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern object_type *o_list;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3544,7 +3544,7 @@ extern bool cumber_helm(object_type *o_ptr);
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern int wield_skill(object_type *o_ptr);
 #endif
-#if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3963,5 +3963,32 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
+#endif
+
+/* object2.c */
+
+#if (defined(CMD6_C) || defined(OBJECT2_C))
+extern void reorder_rod(object_type *o_ptr);
+#endif
+#if (defined(OBJECT2_C))
+extern void reorder_rods(void);
+#endif
+
+/* variable.c */
+
+#if (defined(CMD6_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool stack_allow_rods;
+#endif
+
+/* object1.c */
+
+#if (defined(OBJECT1_C) || defined(OBJECT2_C))
+extern int object_number(object_type *o_ptr);
+#endif
+
+/* variable.c */
+
+#if (defined(DUNGEON_C) || defined(INIT2_C) || defined(VARIABLE_C))
+extern object_type *obj_list;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

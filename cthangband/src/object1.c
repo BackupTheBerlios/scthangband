@@ -521,6 +521,27 @@ void reset_visuals(void)
 
 
 
+/*
+ * Determine the number of items in something.
+ * For inventory objects, this uses the number in that slot.
+ */
+int object_number(object_type *o_ptr)
+{
+	if (is_inventory_p(o_ptr))
+	{
+		int i;
+		for (i = 0; o_ptr != o_list; o_ptr = o_list+o_ptr->next_o_idx)
+		{
+			i += o_ptr->number;
+		}
+		return i;
+	}
+	/* Non-inventory items are simple. */
+	else
+	{
+		return o_ptr->number;
+	}
+}
 
 
 
@@ -638,6 +659,7 @@ struct object_extra {
 	s16b k_idx;
 	s16b tval;
 	s16b u_idx;
+	s16b num_charging; /* How many objects in this stack are recharging. */
 };
 
 /*
@@ -657,14 +679,6 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 
 	object_wipe(j_ptr);
 
-	/* If needed, place the k_idx in x_ptr. */
-	if (x_ptr)
-	{
-		x_ptr->k_idx = o_ptr->k_idx;
-		x_ptr->tval = o_ptr->tval;
-		x_ptr->u_idx = k_ptr->u_idx;
-	}
-
 	if (cheat_item && (
 #ifdef SPOIL_ARTIFACTS
 	/* Full knowledge for some artifacts */
@@ -679,283 +693,309 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		/* Given full knowledge, everything is easy. */
 		object_copy(j_ptr, o_ptr);
 		object_flags(o_ptr, &j_ptr->flags1, &j_ptr->flags2, &j_ptr->flags3);
-		return;
-	}
-
-	/* Some flags are always assumed to be known. */
-	j_ptr->discount = o_ptr->discount;
-	j_ptr->number = o_ptr->number;
-	j_ptr->weight = o_ptr->weight;
-	j_ptr->ident = o_ptr->ident;
-	j_ptr->note = o_ptr->note;
-	
-	/* The player always knows if something is recharging, but never how long
-	 * it will take. */
-	j_ptr->timeout = !!(o_ptr->timeout);
-
-	/* Similarly for unidentified rods. */
-	if (o_ptr->tval == TV_ROD) j_ptr->pval = o_ptr->pval;
-
-	/* Hack - set k_idx correctly now so that macros for it work. It will
-	 * be unset later if appropriate. */
-	j_ptr->k_idx = o_ptr->k_idx;
-
-	/* Some flags are known for aware objects. */
-	if (object_aware_p(o_ptr))
-	{
-		j_ptr->tval = o_ptr->tval;
 	}
 	else
 	{
-		j_ptr->tval = o_base[u_info[k_ptr->u_idx].p_id].tval;
-	}
-
-	/* Some flags are known for identified objects. */
-	if (object_known_p(j_ptr))
-	{
-		j_ptr->name1 = o_ptr->name1;
-		j_ptr->name2 = o_ptr->name2;
-		j_ptr->art_name = o_ptr->art_name;
-		j_ptr->to_h = o_ptr->to_h;
-		j_ptr->to_d = o_ptr->to_d;
-		j_ptr->to_a = o_ptr->to_a;
-		j_ptr->pval = o_ptr->pval;
-	}
-
-	/* Some flags are only used internally */
-	/* j_ptr->next_o_idx = o_ptr->next_o_idx; */
-	/* j_ptr->held_m_idx = o_ptr->held_m_idx; */
-
-	/* Hack - as the inventory list is only differentiated by location,
-	 * and this cannot be transferred to j_ptr, use a null iy and non-null ix
-	 * to indicate the slot used.
-	 */
-	if (o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
-	{
-		j_ptr->iy = 0;
-		j_ptr->ix = o_ptr-inventory+1;
-	}
-	else
-	{
-		j_ptr->iy = o_ptr->iy;
-		j_ptr->ix = o_ptr->ix;
-	}
-
-	/* Assume that the player has noticed certain things when using an
-	 * unidentified item. The IDENT_TRIED flag is currently only set when
-	 * an item is worn, which works as none of the flags below have an
-	 * effect otherwise, and the flag is only checked here.
-	 */
-	if (spoil_flag && j_ptr->ident & IDENT_TRIED)
-	{
-		/* Get all flags */
-		object_flags(o_ptr, &(j_ptr->flags1), &(j_ptr->flags2), &(j_ptr->flags3));
+		/* Some flags are always assumed to be known. */
+		j_ptr->discount = o_ptr->discount;
+		j_ptr->weight = o_ptr->weight;
+		j_ptr->ident = o_ptr->ident;
+		j_ptr->note = o_ptr->note;
 		
-		/* Clear non-obvious flags */
-	 	j_ptr->flags1 &= (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR | TR1_INFRA | TR1_SPEED | TR1_BLOWS);
-
-		/* *Hack* - notice if the modifier is cancelled out by other modifiers */
-		for (i = 0; i < 6; i++)
+		/* The player always knows if something is recharging, but never how long
+		 * it will take. */
+		j_ptr->timeout = !!(o_ptr->timeout);
+	
+		/* Similarly for unidentified rods. */
+		if (o_ptr->tval == TV_ROD) j_ptr->pval = o_ptr->pval;
+	
+		/* Hack - set k_idx correctly now so that macros for it work. It will
+		 * be unset later if appropriate. */
+		j_ptr->k_idx = o_ptr->k_idx;
+	
+		/* Some flags are known for aware objects. */
+		if (object_aware_p(o_ptr))
 		{
-			if (p_ptr->stat_top[i] == 3 && (j_ptr->flags1 & TR1_STR << i) && equip_mod(i) >= 0)
-			{
-				j_ptr->flags1 &= ~(TR1_STR << i);
-			}
+			j_ptr->tval = o_ptr->tval;
 		}
-		/* This should just check the effect of the weapon, but it's easier this way. */
-		if (p_ptr->num_blow == 1) j_ptr->flags1 &= ~(TR1_BLOWS);
-				
-		j_ptr->flags2 = 0L;
-		j_ptr->flags3 &= (TR3_LITE | TR3_XTRA_MIGHT | TR3_XTRA_SHOTS);
-		/* Don't assume that the multiplier is always known. */
-		if (!spoil_base) j_ptr->flags3 &= ~(TR3_XTRA_MIGHT);
-
-		/* Hack - Set flags known through cumber_*(). Luckily, a mysterious
-		 * failure to encumber the player can only mean one thing. */
-		switch (wield_slot(j_ptr))
+		else
 		{
-			case INVEN_HANDS:
-			{
-				if (cumber_glove(j_ptr) && !cumber_glove(o_ptr))
-					j_ptr->flags2 |= TR2_FREE_ACT;
-				break;
-			}
-			case INVEN_HEAD:
-			{
-				/* Telepathy is fairly obvious, but this makes it clear. */
-				if (cumber_helm(j_ptr) && !cumber_helm(o_ptr))
-					j_ptr->flags3 |= TR3_TELEPATHY;
-				break;
-			}
+			j_ptr->tval = o_base[u_info[k_ptr->u_idx].p_id].tval;
 		}
-			
-			
-
-		/* If a pval-based flag is known from experience, set the pval. */
-		if (j_ptr->flags1 & TR1_PVAL_MASK)
+	
+		/* Some flags are known for identified objects. */
+		if (object_known_p(j_ptr))
 		{
+			j_ptr->name1 = o_ptr->name1;
+			j_ptr->name2 = o_ptr->name2;
+			j_ptr->art_name = o_ptr->art_name;
+			j_ptr->to_h = o_ptr->to_h;
+			j_ptr->to_d = o_ptr->to_d;
+			j_ptr->to_a = o_ptr->to_a;
 			j_ptr->pval = o_ptr->pval;
 		}
+	
+		/* Some flags are only used internally */
+		/* j_ptr->next_o_idx = o_ptr->next_o_idx; */
+		/* j_ptr->held_m_idx = o_ptr->held_m_idx; */
+	
+		/* Hack - as the inventory list is only differentiated by location,
+		 * and this cannot be transferred to j_ptr, use a null iy and non-null ix
+		 * to indicate the slot used.
+		 */
+		if (o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
+		{
+			j_ptr->iy = 0;
+			j_ptr->ix = o_ptr-inventory+1;
+		}
+		else
+		{
+			j_ptr->iy = o_ptr->iy;
+			j_ptr->ix = o_ptr->ix;
+		}
+	
+		/* Assume that the player has noticed certain things when using an
+		 * unidentified item. The IDENT_TRIED flag is currently only set when
+		 * an item is worn, which works as none of the flags below have an
+		 * effect otherwise, and the flag is only checked here.
+		 */
+		if (spoil_flag && j_ptr->ident & IDENT_TRIED)
+		{
+			/* Get all flags */
+			object_flags(o_ptr, &(j_ptr->flags1), &(j_ptr->flags2), &(j_ptr->flags3));
+			
+			/* Clear non-obvious flags */
+		 	j_ptr->flags1 &= (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR | TR1_INFRA | TR1_SPEED | TR1_BLOWS);
+	
+			/* *Hack* - notice if the modifier is cancelled out by other modifiers */
+			for (i = 0; i < 6; i++)
+			{
+				if (p_ptr->stat_top[i] == 3 && (j_ptr->flags1 & TR1_STR << i) && equip_mod(i) >= 0)
+				{
+					j_ptr->flags1 &= ~(TR1_STR << i);
+				}
+			}
+			/* This should just check the effect of the weapon, but it's easier this way. */
+			if (p_ptr->num_blow == 1) j_ptr->flags1 &= ~(TR1_BLOWS);
+					
+			j_ptr->flags2 = 0L;
+			j_ptr->flags3 &= (TR3_LITE | TR3_XTRA_MIGHT | TR3_XTRA_SHOTS);
+			/* Don't assume that the multiplier is always known. */
+			if (!spoil_base) j_ptr->flags3 &= ~(TR3_XTRA_MIGHT);
+	
+			/* Hack - Set flags known through cumber_*(). Luckily, a mysterious
+			 * failure to encumber the player can only mean one thing. */
+			switch (wield_slot(j_ptr))
+			{
+				case INVEN_HANDS:
+				{
+					if (cumber_glove(j_ptr) && !cumber_glove(o_ptr))
+						j_ptr->flags2 |= TR2_FREE_ACT;
+					break;
+				}
+				case INVEN_HEAD:
+				{
+					/* Telepathy is fairly obvious, but this makes it clear. */
+					if (cumber_helm(j_ptr) && !cumber_helm(o_ptr))
+						j_ptr->flags3 |= TR3_TELEPATHY;
+					break;
+				}
+			}
+				
+				
+	
+			/* If a pval-based flag is known from experience, set the pval. */
+			if (j_ptr->flags1 & TR1_PVAL_MASK)
+			{
+				j_ptr->pval = o_ptr->pval;
+			}
+		}
+	
+		/* Find the flags the player can know about unaware items.
+		 * Hack - ignore other things the player is certain to know, as the
+		 * player wants clear potions and the like.
+		 */
+		if (spoil_base && !object_aware_p(j_ptr))
+		{
+			o_base_type *ob_ptr = o_base+u_info[k_ptr->u_idx].p_id;
+	
+			j_ptr->flags1 |= ob_ptr->flags1;
+			j_ptr->flags2 |= ob_ptr->flags2;
+			j_ptr->flags3 |= ob_ptr->flags3;
+		}
+			
+	
+		/* Check for cursing even if unidentified */
+		if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
+			j_ptr->flags3 |= TR3_CURSED;
+	
+		/* Base objects */
+		if ((spoil_base || j_ptr->ident & IDENT_MENTAL) &&
+		(object_known_p(j_ptr) || object_aware_p(j_ptr)))
+		{
+			j_ptr->flags1 |= k_ptr->flags1;
+			j_ptr->flags2 |= k_ptr->flags2;
+			j_ptr->flags3 |= k_ptr->flags3;
+		}
+	
+	    /* Ego-item (known basic flags) */
+		if (j_ptr->name2 && (spoil_ego || j_ptr->ident & IDENT_MENTAL))
+		{
+			ego_item_type *e_ptr = &e_info[j_ptr->name2];
+	
+			j_ptr->flags1 |= e_ptr->flags1;
+			j_ptr->flags2 |= e_ptr->flags2;
+			j_ptr->flags3 |= e_ptr->flags3;
+		}
+	
+		/* Pre-defined artifacts (known basic flags) */
+		if (j_ptr->name1 && (spoil_art || j_ptr->ident & IDENT_MENTAL))
+		{
+			artifact_type *a_ptr = &a_info[j_ptr->name1];
+	
+			j_ptr->flags1 |= a_ptr->flags1;
+			j_ptr->flags2 |= a_ptr->flags2;
+			j_ptr->flags3 |= a_ptr->flags3;
+		}
+	
+		/* Check for both types of cursing */
+		if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
+			j_ptr->flags3 |= TR3_CURSED;
+		else if (j_ptr->ident & IDENT_SENSE_CURSED)
+			j_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
+	
+	    /* Random artifact ! */
+		if (j_ptr->ident & IDENT_MENTAL)
+	    {
+			j_ptr->flags1 |= o_ptr->flags1;
+			j_ptr->flags2 |= o_ptr->flags2;
+			j_ptr->flags3 |= o_ptr->flags3;
+	
+			/* Hack - the random powers of *IDENTIFIED* items are known. */
+			j_ptr->flags2 &= ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
+	    }
+		/* *Hack* - randarts are always immune to the elements. */
+		else if (j_ptr->art_name && spoil_art)
+		{
+			j_ptr->flags3 |= TR3_IGNORE_ALL & o_ptr->flags3;
+		}
+	
+	
+	    if (~j_ptr->ident & IDENT_MENTAL);
+		else if (o_ptr->art_name)
+		{
+			j_ptr->xtra1 = o_ptr->xtra1;
+			j_ptr->xtra2 = o_ptr->xtra2;
+		}
+		else
+	    {
+	        /* Extra powers */
+	        switch (o_ptr->xtra1)
+	        {
+	            case EGO_XTRA_SUSTAIN:
+	            {
+	                /* Choose a sustain */
+	                switch (o_ptr->xtra2 % 6)
+	                {
+	                    case 0: j_ptr->flags2 |= (TR2_SUST_STR); break;
+	                    case 1: j_ptr->flags2 |= (TR2_SUST_INT); break;
+	                    case 2: j_ptr->flags2 |= (TR2_SUST_WIS); break;
+	                    case 3: j_ptr->flags2 |= (TR2_SUST_DEX); break;
+	                    case 4: j_ptr->flags2 |= (TR2_SUST_CON); break;
+	                    case 5: j_ptr->flags2 |= (TR2_SUST_CHR); break;
+	                }
+	
+	                break;
+	            }
+	
+	            case EGO_XTRA_POWER:
+	            {
+	                /* Choose a power */
+	                switch (o_ptr->xtra2 % 11)
+	                {
+	                    case 0: j_ptr->flags2 |= (TR2_RES_BLIND); break;
+	                    case 1: j_ptr->flags2 |= (TR2_RES_CONF); break;
+	                    case 2: j_ptr->flags2 |= (TR2_RES_SOUND); break;
+	                    case 3: j_ptr->flags2 |= (TR2_RES_SHARDS); break;
+	                    case 4: j_ptr->flags2 |= (TR2_RES_NETHER); break;
+	                    case 5: j_ptr->flags2 |= (TR2_RES_NEXUS); break;
+	                    case 6: j_ptr->flags2 |= (TR2_RES_CHAOS); break;
+	                    case 7: j_ptr->flags2 |= (TR2_RES_DISEN); break;
+	                    case 8: j_ptr->flags2 |= (TR2_RES_POIS); break;
+	                    case 9: j_ptr->flags2 |= (TR2_RES_DARK); break;
+	                    case 10: j_ptr->flags2 |= (TR2_RES_LITE); break;
+	                }
+	
+	                break;
+	            }
+	
+	            case EGO_XTRA_ABILITY:
+	            {
+	                /* Choose an ability */
+	                switch (o_ptr->xtra2 % 8)
+	                {
+	                    case 0: j_ptr->flags3 |= (TR3_FEATHER); break;
+	                    case 1: j_ptr->flags3 |= (TR3_LITE); break;
+	                    case 2: j_ptr->flags3 |= (TR3_SEE_INVIS); break;
+	                    case 3: j_ptr->flags3 |= (TR3_TELEPATHY); break;
+	                    case 4: j_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
+	                    case 5: j_ptr->flags3 |= (TR3_REGEN); break;
+	                    case 6: j_ptr->flags2 |= (TR2_FREE_ACT); break;
+	                    case 7: j_ptr->flags2 |= (TR2_HOLD_LIFE); break;
+	                }
+	
+	                break;
+	            }
+	        }
+	    }
+	
+	
+		/*
+		 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC,
+		 * as does awareness.
+		 */
+		if (object_aware_p(j_ptr) || (j_ptr->flags3 & TR3_SHOW_MODS))
+		{
+			j_ptr->dd = o_ptr->dd;
+			j_ptr->ds = o_ptr->ds;
+		}
+		if (object_aware_p(j_ptr) || j_ptr->flags3 & TR3_SHOW_ARMOUR)
+		{
+			j_ptr->ac = o_ptr->ac;
+		}
+	
+		/* Hack - unset j_ptr->k_idx if it isn't known. */
+		if (!object_aware_p(j_ptr)) j_ptr->k_idx = OBJ_UNKNOWN;
 	}
 
-	/* Find the flags the player can know about unaware items.
-	 * Hack - ignore other things the player is certain to know, as the
-	 * player wants clear potions and the like.
-	 */
-	if (spoil_base && !object_aware_p(j_ptr))
-	{
-		o_base_type *ob_ptr = o_base+u_info[k_ptr->u_idx].p_id;
-
-		j_ptr->flags1 |= ob_ptr->flags1;
-		j_ptr->flags2 |= ob_ptr->flags2;
-		j_ptr->flags3 |= ob_ptr->flags3;
-	}
-		
-
-	/* Check for cursing even if unidentified */
-	if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
-		j_ptr->flags3 |= TR3_CURSED;
-
-	/* Base objects */
-	if ((spoil_base || j_ptr->ident & IDENT_MENTAL) &&
-	(object_known_p(j_ptr) || object_aware_p(j_ptr)))
-	{
-		j_ptr->flags1 |= k_ptr->flags1;
-		j_ptr->flags2 |= k_ptr->flags2;
-		j_ptr->flags3 |= k_ptr->flags3;
-	}
-
-    /* Ego-item (known basic flags) */
-	if (j_ptr->name2 && (spoil_ego || j_ptr->ident & IDENT_MENTAL))
-	{
-		ego_item_type *e_ptr = &e_info[j_ptr->name2];
-
-		j_ptr->flags1 |= e_ptr->flags1;
-		j_ptr->flags2 |= e_ptr->flags2;
-		j_ptr->flags3 |= e_ptr->flags3;
-	}
-
-	/* Pre-defined artifacts (known basic flags) */
-	if (j_ptr->name1 && (spoil_art || j_ptr->ident & IDENT_MENTAL))
-	{
-		artifact_type *a_ptr = &a_info[j_ptr->name1];
-
-		j_ptr->flags1 |= a_ptr->flags1;
-		j_ptr->flags2 |= a_ptr->flags2;
-		j_ptr->flags3 |= a_ptr->flags3;
-	}
-
-	/* Check for both types of cursing */
-	if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
-		j_ptr->flags3 |= TR3_CURSED;
-	else if (j_ptr->ident & IDENT_SENSE_CURSED)
-		j_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
-
-    /* Random artifact ! */
-	if (j_ptr->ident & IDENT_MENTAL)
-    {
-		j_ptr->flags1 |= o_ptr->flags1;
-		j_ptr->flags2 |= o_ptr->flags2;
-		j_ptr->flags3 |= o_ptr->flags3;
-
-		/* Hack - the random powers of *IDENTIFIED* items are known. */
-		j_ptr->flags2 &= ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
-    }
-	/* *Hack* - randarts are always immune to the elements. */
-	else if (j_ptr->art_name && spoil_art)
-	{
-		j_ptr->flags3 |= TR3_IGNORE_ALL & o_ptr->flags3;
-	}
-
-
-    if (~j_ptr->ident & IDENT_MENTAL);
-	else if (o_ptr->art_name)
-	{
-		j_ptr->xtra1 = o_ptr->xtra1;
-		j_ptr->xtra2 = o_ptr->xtra2;
-	}
-	else
-    {
-        /* Extra powers */
-        switch (o_ptr->xtra1)
-        {
-            case EGO_XTRA_SUSTAIN:
-            {
-                /* Choose a sustain */
-                switch (o_ptr->xtra2 % 6)
-                {
-                    case 0: j_ptr->flags2 |= (TR2_SUST_STR); break;
-                    case 1: j_ptr->flags2 |= (TR2_SUST_INT); break;
-                    case 2: j_ptr->flags2 |= (TR2_SUST_WIS); break;
-                    case 3: j_ptr->flags2 |= (TR2_SUST_DEX); break;
-                    case 4: j_ptr->flags2 |= (TR2_SUST_CON); break;
-                    case 5: j_ptr->flags2 |= (TR2_SUST_CHR); break;
-                }
-
-                break;
-            }
-
-            case EGO_XTRA_POWER:
-            {
-                /* Choose a power */
-                switch (o_ptr->xtra2 % 11)
-                {
-                    case 0: j_ptr->flags2 |= (TR2_RES_BLIND); break;
-                    case 1: j_ptr->flags2 |= (TR2_RES_CONF); break;
-                    case 2: j_ptr->flags2 |= (TR2_RES_SOUND); break;
-                    case 3: j_ptr->flags2 |= (TR2_RES_SHARDS); break;
-                    case 4: j_ptr->flags2 |= (TR2_RES_NETHER); break;
-                    case 5: j_ptr->flags2 |= (TR2_RES_NEXUS); break;
-                    case 6: j_ptr->flags2 |= (TR2_RES_CHAOS); break;
-                    case 7: j_ptr->flags2 |= (TR2_RES_DISEN); break;
-                    case 8: j_ptr->flags2 |= (TR2_RES_POIS); break;
-                    case 9: j_ptr->flags2 |= (TR2_RES_DARK); break;
-                    case 10: j_ptr->flags2 |= (TR2_RES_LITE); break;
-                }
-
-                break;
-            }
-
-            case EGO_XTRA_ABILITY:
-            {
-                /* Choose an ability */
-                switch (o_ptr->xtra2 % 8)
-                {
-                    case 0: j_ptr->flags3 |= (TR3_FEATHER); break;
-                    case 1: j_ptr->flags3 |= (TR3_LITE); break;
-                    case 2: j_ptr->flags3 |= (TR3_SEE_INVIS); break;
-                    case 3: j_ptr->flags3 |= (TR3_TELEPATHY); break;
-                    case 4: j_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
-                    case 5: j_ptr->flags3 |= (TR3_REGEN); break;
-                    case 6: j_ptr->flags2 |= (TR2_FREE_ACT); break;
-                    case 7: j_ptr->flags2 |= (TR2_HOLD_LIFE); break;
-                }
-
-                break;
-            }
-        }
-    }
-
-
-	/*
-	 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC,
-	 * as does awareness.
-	 */
-	if (object_aware_p(j_ptr) || (j_ptr->flags3 & TR3_SHOW_MODS))
-	{
-		j_ptr->dd = o_ptr->dd;
-		j_ptr->ds = o_ptr->ds;
-	}
-	if (object_aware_p(j_ptr) || j_ptr->flags3 & TR3_SHOW_ARMOUR)
-	{
-		j_ptr->ac = o_ptr->ac;
-	}
+	/* Hack - the displayed number may be more complex. */
+	j_ptr->number = object_number(o_ptr);
 
 	/* Hack - resist_chaos by any means gives resist_conf. */
 	if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
+	
+	/* Add various extra things to x_ptr. */
+	if (x_ptr)
+	{
+		x_ptr->k_idx = o_ptr->k_idx;
+		x_ptr->tval = o_ptr->tval;
+		x_ptr->u_idx = k_ptr->u_idx;
 
-	/* Hack - unset j_ptr->k_idx if it isn't known. */
-	if (!object_aware_p(j_ptr)) j_ptr->k_idx = OBJ_UNKNOWN;
+		if (o_ptr->tval != TV_ROD)
+		{
+			x_ptr->num_charging = (o_ptr->timeout) ? o_ptr->number : 0;
+		}
+		/* Hack - j_ptr->number stores the total size of the (recharging)
+		 * stack. */
+		else if (o_ptr->timeout)
+		{
+			x_ptr->num_charging = j_ptr->number;
+		}
+		else
+		{
+			x_ptr->num_charging = j_ptr->number - o_ptr->number;
+		}
+	}
 }
 
 
@@ -1580,10 +1620,18 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	}
 
 	/* Indicate "charging" things */
-	if (o_ptr->timeout)
+	if (x_ptr->num_charging)
 	{
-		/* Hack -- Dump " (charging)" if relevant */
-		t = object_desc_str(t, " (charging)");
+		/* All recharging. */
+		if (o_ptr->number == x_ptr->num_charging)
+		{
+			t = object_desc_str(t, " (charging)");
+		}
+		/* Some recharging. */
+		else
+		{
+			t += sprintf(t, " (%d charging)", x_ptr->num_charging);
+		}		
 	}
 
 
