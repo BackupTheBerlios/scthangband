@@ -225,120 +225,126 @@ static void gain_spell_exp(magic_type *spell)
 	if (check_mana) skill_exp(SKILL_MANA);
 }
 
-static void spell_info_b(char *p, uint max, magic_type *s_ptr)
+/*
+ * Replace vstr with v in str, and evaluate formulae it appears in from left
+ * to right.
+ *
+ * Hack - this can only interpret fairly simple formulae, and may need to be
+ * replaced if this becomes insufficient.
+ */
+static void convert_magic_text(char *buf, uint max, cptr str,
+	cptr vstr, int v)
 {
-	sprintf(p, "%.*s", max-1, s_ptr->desc);
+	const int vl = strlen(vstr);
+	int i;
+	cptr s;
+	char *t, op;
+	for (s = str, t = buf, i = 0, op = ';'; *s && t < buf+max-1; )
+	{
+		long d = 0;
+		if (prefix(s, vstr))
+		{
+			/* Interpret the symbol. */
+			d = v;
+			s += vl;
+			op = '=';
+		}
+		else if (op == ';')
+		{
+			/* Formulae always start with vstr. */
+			*t++ = *s++;
+			continue;
+		}
+		else if (isdigit(*s))
+		{
+			d = strtol(s, 0, 0);
+			while (isdigit(*s)) s++;
+		}
+		else if (*s == ';')
+		{
+			/* Add the number. */
+			t += strnfmt(t, buf+max-t, "%d", i);
+		}
+
+		if (d)
+		{
+			switch (op)
+			{
+				case '=': i = d; break;
+				case '+': i += d; break;
+				case '-': i -= d; break;
+				case '*': i *= d; break;
+				case '/': i /= d; break;
+				case '%': i %= d; break;
+
+				/* Paranoia - bad symbol. */
+				default: *t++ = *s++;
+			}
+		}
+		else
+		{
+			op = *s++;
+ 			assert(strchr(";+-*/%", op));
+ 		}
+	}
+
+	if (op != ';')
+		/* Add the final number. */
+		strnfmt(t, buf+max-t, "%d", i);
+	else
+		/* Simply terminate. */
+		*t = '\0';
+}
+
+static void convert_magic_text_f3(char *buf, uint max, cptr UNUSED fmt,
+	va_list *vp)
+{
+	cptr str = va_arg(*vp, cptr);
+	cptr vstr = va_arg(*vp, cptr);
+	int v = va_arg(*vp, int);
+
+	convert_magic_text(buf, max, str, vstr, v); 
 }
 
 /*
- * Extra information on a spell         -DRS-
- *
- * We can use up to 14 characters of the buffer 'p'
- *
- * The strings in this function were extracted from the code in the
- * functions "do_cmd_cast()" and may be dated.
+ * Hack - describe powers which are too strange to describe below.
  */
-static void spell_info(char *p, int spell, int school)
+static cptr magic_info_special(magic_type *s_ptr)
 {
-	/* Default */
-	strcpy(p, "");
-
-#ifdef DRS_SHOW_SPELL_INFO
-{
-	magic_type *spell_ptr = &magic_info[school][spell];
-	const int plev = spell_skill(spell_ptr);
-
-	/* Analyze the spell */
-switch (school)
-    {
-    case 0: /* Sorcery */
-
-		switch (spell)
+	int l = spell_skill(s_ptr);
+	switch (s_ptr->power)
+	{
+		case MIND_DISP_1:
 		{
-            case 1: strcpy(p, " range 10"); break;
-            case 3: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-            case 5: sprintf(p, " range %d", plev * 5); break;
-            case 13: sprintf(p, " dur %d+d%d", plev, (plev+20)); break;
-            case 19: sprintf(p, " range %d", plev+2); break;
-            case 20: strcpy(p, " dur 25+d30"); break;
-            case 23: strcpy(p, " delay 15+d21"); break;
-            case 25: sprintf(p, "max wgt %d", plev * 15 / 10); break;
-            case 26: sprintf(p, " dam 7d7+%d", (plev/2)); break;
-            case 27: strcpy(p, " dur 25+d30"); break;
-            case 31: strcpy(p, " dur 8+d8"); break;
-        }
-        break;
-    case 1: /* Chaos */
-        switch (spell)
-        {
-            case 0: sprintf(p, " dam %dd4", 3+((plev-1)/5)); break;
-            case 2: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-            case 4: sprintf(p, " dam 3d5+%d", plev + (plev / 4)); break;
-            case 5: sprintf(p, " dam %dd8", (6+((plev-5)/4))); break;
-            case 6: sprintf(p, " dam %dd8", (8+((plev-5)/4))); break;
-            case 7: sprintf(p, " range %d", plev * 5); break;
-            case 8: strcpy(p, " random"); break;
-            case 9: sprintf(p, " dam %dd8", (10+((plev-5)/4))); break;
-            case 10: sprintf(p, " dam %d", 45 + plev); break;
-            case 11: sprintf(p, " dam %dd8", (11+((plev-5)/4))); break;
-            case 12: sprintf(p, " dam %d", 55 + plev); break;
-            case 15: sprintf(p, " dam %d", 66 + plev); break;
-            case 17: sprintf(p, " dam %dd8", (5+((plev)/10))); break;
-            case 19: sprintf(p, " dam %d", 80 + plev); break;
-            case 24: sprintf(p, " dam %dd8", (9 + ((plev/10)))); break;
-            case 25: sprintf(p, " dam %d each", (3*plev)/2); break;
-            case 26: sprintf(p, " dam %d", 75 + plev); break;
-            case 27: strcpy (p, " dam 75 / 150"); break;
-            case 28: sprintf(p, " dam %d", 120 + plev); break;
-            case 29: sprintf(p, " dam %d", 300 + (plev * 2)); break;
-            case 30: sprintf(p, " dam %d", p_ptr->chp); break;
-            case 31: strcpy (p, " dam 3 * 175"); break;
-        }
-        break;
-    case 2: /* Conjuration */
-        switch(spell)
-        {
-            case 0: strcpy(p, " range 10"); break;
-            case 1: sprintf(p, " dam %dd3", 3 + ((plev-1)/5)); break;
-            case 2: strcpy(p, " random"); break;
-            case 4: sprintf(p, " range %d", plev * 4); break;
-            case 5: sprintf(p, " range %d", plev+2); break;
-            case 6: strcpy(p, " dur 25+d30"); break;
-            case 8: sprintf(p, " max wgt %d", plev * 15 / 10); break;
-            case 14: strcpy(p, " delay 15+d21"); break;
-            case 22: sprintf(p, " dam %d", plev * 3); break;
-        }
-        break;
-    case 3: /* Necromancy */
-        switch(spell)
-        {
-            case 1: sprintf(p, " dam %dd3", (3 + ((plev-1)/5))); break;
-            case 3: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-            case 5: sprintf(p, " dur 20+d20"); break;
-            case 8: sprintf(p, " dam 3d6+%d", plev + (plev / 4)); break;
-            case 9: sprintf(p, " dam %dd8", (6+((plev-5)/4))); break;
-            case 11: sprintf(p, " dm %d* 5+d15", 2 + (plev/15)); break;
-            case 13: sprintf (p, " dam %d", 4 * plev); break;
-            case 16: strcpy(p, " dur 25+d25"); break;
-            case 17: strcpy(p, " random"); break;
-            case 18: sprintf(p, " dam %dd8", (4+((plev-5)/4))); break;
-            case 19: strcpy(p, " max dur 50"); break;
-            case 20: strcpy(p, " dam 3*100"); break;
-            case 22: strcpy(p, " dam 120"); break;
-            case 27: sprintf(p, " dam %d", plev * 3); break;
-            case 28: sprintf(p, " dam %d", plev * 4); break;
-            case 29: strcpy(p, " dam 666"); break;
-            case 31: sprintf(p, " dur %d+d%d", (plev/2), (plev/2)); break;
-        }  
-        break;
-    default:
-        sprintf(p, "Unknown type: %d.", school);
-
-
-    }
-
+			if (l < 25)
+				return " range 10";
+			else
+				return " range LEV+2";
+		}
+		case MIND_TK_WAVE:
+		{
+			if (l < 40)
+				return " dam LEV*3";
+			else
+				return " dam LEV*4";
+		}
+		default:
+		{
+			return "";
+		}
+	}
 }
-#endif
+
+static void get_magic_info(char *p, uint max, magic_type *s_ptr)
+{
+	cptr str = s_ptr->desc;
+	if (!str) str = magic_info_special(s_ptr);
+
+	/* Convert the symbols in str, if any. */
+	str = format("%v", convert_magic_text_f3, str, "LEV", spell_skill(s_ptr));
+	str = format("%v", convert_magic_text_f3, str, "CHP", p_ptr->chp);
+
+	sprintf(p, "%.*s", max-1, str);
 }
 
 /*
@@ -391,7 +397,6 @@ static u16b spellcast_energy_b(magic_type *s_ptr)
  * Print a list of spells (for browsing or casting or viewing)
  *
  * TODO: Access spell_forgotten[], etc., via b_ptr.
- * Write spell_info_b().
  */
 static void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_ptr, int school)
 {
@@ -435,10 +440,7 @@ static void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_p
 		/* XXX XXX Could label spells above the players level */
 
 		/* Get extra info */
-		if (b_ptr)
-			spell_info_b(info, 15, s_ptr);
-		else
-			spell_info(info, spell, school);
+		get_magic_info(info, 15, s_ptr);
 
 		/* Use that info */
 		comment = info;
@@ -539,118 +541,6 @@ static bool spell_okay(int spell, bool known, int school)
 	return (!known);
 }
 
-
-
-/*
- * Extra information on a favour         -DRS-
- *
- * We can use up to 14 characters of the buffer 'p'
- *
- * The strings in this function were extracted from the code in the
- * functions "do_cmd_invoke()" and may be dated.
- */
-static void get_favour_info(char *p, int spell, int sphere)
-{
-	/* Default */
-	strcpy(p, "");
-
-#ifdef DRS_SHOW_SPELL_INFO
-{
-	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
-
-   /* See below */
-        int orb = (plev / 4);
-
-	/* Analyze the spell */
-switch (sphere)
-    {
-    case 0: /* Life */
-		switch (spell)
-		{
-            case 1: strcpy(p, " heal 2d10"); break;
-            case 2: strcpy(p, " dur 12+d12 turns"); break;
-            case 4: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-            case 6: strcpy(p, " heal 4d10"); break;
-            case 10: strcpy (p, " heal 8d10"); break;
-            case 11: strcpy (p, " dur 24+d24"); break;
-            case 12: sprintf (p, " dam 3d6+%d", (plev + orb)); break;
-            case 13: sprintf (p, " dur d25+%d", 3 * (plev)); break;
-            case 14: strcpy (p, " heal 300"); break;
-            case 16: sprintf (p, " dam %d+%d", plev, plev); break;
-            case 18: sprintf (p, " dam %d+%d", 3 * plev, 3 * plev); break;
-            case 20: sprintf (p, " dam %d", 4 * plev); break;
-            case 22: sprintf(p, " d %d/h 1000", 4 * plev); break;
-            case 24: strcpy (p, " dur 25+d25"); break;
-            case 25: strcpy (p, " dur 48+d48"); break;
-            case 28: strcpy (p, " heal 2000"); break;
-            case 30: sprintf (p, " h300/d%d+388", plev * 4); break;
-            case 31: strcpy (p, " dur 7+d7"); break;
-		}
-	break;
-    case 1: /* Nature */
-		switch (spell)
-		{
-            case 1: strcpy(p, " heal 2d8"); break;
-            case 4: sprintf(p, " dam %d", 10 + (plev / 2)); break;
-            case 6: strcpy(p, " dur 20+d20"); break;
-            case 9: sprintf(p, " dam %dd8", (3+((plev-5)/4))); break;
-            case 11:sprintf(p, " dam %dd8", (5+((plev-5)/4))); break;
-            case 12: strcpy(p, " dam 6d8"); break;
-            case 15: strcpy(p, " heal 1000"); break;
-            case 18: strcpy(p, " dur 20+d30"); break;
-            case 19: strcpy(p, " dur 20+d20"); break;
-            case 24: strcpy(p, " rad 10"); break;
-            case 26: sprintf(p, " dam %d", 70+plev); break;
-            case 27: sprintf(p, " dam %d", 90+plev); break;
-            case 28: sprintf(p, " dam %d", 100+plev); break;
-            case 29: strcpy(p, " dam 75"); break;
-            case 31: sprintf(p, " dam %d+%d", 4*plev,100+plev); break;
-        }
-        break;
-    default:
-        sprintf(p, "Unknown type: %d.", sphere);
-    }
-}
-#endif
-}
-
-
-/*
- * Extra information on a cantrip         -DRS-
- *
- * We can use up to 14 characters of the buffer 'p'
- *
- * The strings in this function were extracted from the code in the
- * functions "do_cmd_invoke()" and may be dated.
- */
-static void get_cantrip_info(char *p, int spell)
-{
-	/* Default */
-	strcpy(p, "");
-
-#ifdef DRS_SHOW_SPELL_INFO
-{
-	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
-
-	switch (spell)
-	{
-        case 0: sprintf(p, " dam %dd3", 3 + ((plev-1)/5)); break;
-        case 4: strcpy(p, " range 10"); break;
-        case 5: sprintf(p, " dam 2d%d", plev / 2); break;
-        case 7: strcpy(p, " heal 2d8"); break;
-        case 14: case 15: case 16: case 17:
-                strcpy(p, " dur 20+d20"); break;
-        case 18: strcpy(p, " heal 4d8"); break;
-        case 19: sprintf(p, " range %d", plev * 5); break;
-        case 21: strcpy(p, " dam 6d8"); break;
-        case 23: strcpy(p, " dur 24+d24"); break;
-        case 28: sprintf(p, " dam %d", 75 + (plev)); break;
-        case 30: strcpy(p, " delay 15+d21"); break;
-        case 31: strcpy(p, " dur 25+30"); break;
-	}
-}
-#endif
-}
 
 
 /*
@@ -909,7 +799,7 @@ static void print_cantrips(book_type *b_ptr, byte *spells, int num,
 
 		s_ptr = &(b_ptr->info[spell]);
 
-		spell_info_b(info, 15, s_ptr);
+		get_magic_info(info, 15, s_ptr);
 
 		comment = info;
 
@@ -1410,7 +1300,7 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 
 		s_ptr = &(favour_info[sphere][spell]);
 
-		get_favour_info(info,spell,sphere);
+		get_magic_info(info, 80, s_ptr);
 
 		comment = info;
 
@@ -4565,28 +4455,6 @@ void do_cmd_invoke(void)
 
 
 
-static void mindcraft_info(char *p, int power)
-{
-	const int plev = MAX(1, skill_set[SKILL_MINDCRAFTING].value/2);
-
-    strcpy(p, "");
-
-    switch (power) {
-     case 0:  break;
-     case 1:  sprintf(p, " dam %dd%d", 3 + ((plev - 1) / 4), 3 + plev/15); break;
-     case 2:  sprintf(p, " range %d", (plev < 25 ? 10 : plev + 2)); break;
-     case 3:  sprintf(p, " range %d", plev * 5);  break;
-     case 4:  break;
-     case 5:  sprintf(p, " dam %dd8", 8+((plev-5)/4));  break;
-     case 6:  sprintf(p, " dur %d", plev);  break;
-     case 7:  break;
-     case 8:  sprintf(p, " dam %d", plev * ((plev-5) / 10 + 1)); break;
-     case 9:  sprintf(p, " dur 11-%d", plev + plev/2);  break;
-     case 10: sprintf(p, " dam %dd6", plev/2);  break;
-     case 11: sprintf(p, " dam %d", plev * (plev > 39 ? 4: 3)); break;
-    }
-}
-
 /*
  * Calculate the enrgy required for a given mindcrafting power.
  */
@@ -4628,7 +4496,7 @@ static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
 		if (colour && s_ptr->mana > p_ptr->cchi) a = TERM_ORANGE;
 
 		/* Get info */
-		spell_info_b(comment, 80, s_ptr);
+		get_magic_info(comment, 80, s_ptr);
 				    
 		/* Dump the spell --(-- */
 		sprintf(psi_desc, "  %c) %-30s%2d %4d %4d %3d%%%s",
@@ -4642,19 +4510,6 @@ static int print_mindcraft(book_type *b_ptr, int x, int y, bool colour)
 
 	return y;
 }
-
-#define MIND_PRECOG 0 /* Precognition (Detection) */
-#define MIND_BLAST 1 /* Neural Blast */
-#define MIND_DISP_1 2 /* Minor Displacement */
-#define MIND_DISP_2 3 /* Major Displacement */
-#define MIND_DOMINATION 4 /* Domination */
-#define MIND_PULVERISE 5 /* Pulverise */
-#define MIND_ARMOUR 6 /* Character armour */
-#define MIND_PSYCH 7 /* Psychometry (ID) */
-#define MIND_M_WAVE 8 /* Mind wave */
-#define MIND_ADRENALINE 9 /* Adrenaline Channeling */
-#define MIND_PSY_DRAIN 10 /* Psychic Drain */
-#define MIND_TK_WAVE 11 /* Telekinetic Wave */
 
 /*
  * Return a line of help text appropriate for the given mindcraft power

@@ -328,6 +328,19 @@ logaux(x, 1) logaux(x, 0) 255)
 # define MA_KNEE 2
 # define MA_SLOW 3
 
+#define MIND_PRECOG 0 /* Precognition (Detection) */
+#define MIND_BLAST 1 /* Neural Blast */
+#define MIND_DISP_1 2 /* Minor Displacement */
+#define MIND_DISP_2 3 /* Major Displacement */
+#define MIND_DOMINATION 4 /* Domination */
+#define MIND_PULVERISE 5 /* Pulverise */
+#define MIND_ARMOUR 6 /* Character armour */
+#define MIND_PSYCH 7 /* Psychometry (ID) */
+#define MIND_M_WAVE 8 /* Mind wave */
+#define MIND_ADRENALINE 9 /* Adrenaline Channeling */
+#define MIND_PSY_DRAIN 10 /* Psychic Drain */
+#define MIND_TK_WAVE 11 /* Telekinetic Wave */
+
 /* Mindcraft */
 #define MAX_MINDCRAFT_POWERS  12
 
