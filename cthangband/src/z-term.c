@@ -476,6 +476,7 @@ static errr Term_text_hack(int x, int y, int n, byte a, const char *cp)
 	return (-1);
 }
 
+
 /*
  * Hack -- fake hook for "Term_pict()" (see above)
  */
@@ -495,7 +496,6 @@ static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp)
 	/* Oops */
 	return (-1);
 }
-
 
 
 /*** Efficient routines ***/
@@ -769,7 +769,6 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 
 	byte *old_aa = Term->old->a[y];
 	char *old_cc = Term->old->c[y];
-
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
 
@@ -891,8 +890,8 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 
 #ifdef USE_TRANSPARENCY
 
-		/* Hack -- Draw the special attr/char pair */
-		(void)((*Term->pict_hook)(x, y, 1, &na, &nc, &nta, &ntc));
+			/* Hack -- Draw the special attr/char pair */
+			(void)((*Term->pict_hook)(x, y, 1, &na, &nc, &nta, &ntc));
 
 #else /* USE_TRANSPARENCY */
 
@@ -1748,7 +1747,7 @@ errr Term_erase(int x, int y, int n)
 		/* Save the "literal" information */
 		scr_aa[x] = na;
 		scr_cc[x] = nc;
-
+		
 #ifdef USE_TRANSPARENCY
 		scr_taa[x] = 0;
 		scr_tcc[x] = 0;
@@ -1901,6 +1900,7 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	/* Success */
 	return (0);
 }
+
 
 
 
@@ -2578,5 +2578,3 @@ errr term_init(term *t, int w, int h, int k)
 	/* Success */
 	return (0);
 }
-
-

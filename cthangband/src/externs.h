@@ -3427,7 +3427,7 @@ extern bool prefix(cptr s, cptr t);
 #if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
 extern void (*plog_aux)(cptr) ;
 #endif
-#if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_VIRT_C))
+#if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_FORM_C) || defined(Z_UTIL_C))
 extern void plog(cptr str);
 #endif
 #if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
@@ -3446,10 +3446,10 @@ extern void core(cptr str);
 /* z-virt.c */
 
 #if (defined(MAIN_MAC_C) || defined(Z_VIRT_C))
-extern errr (*rnfree_aux)(vptr, huge) ;
+extern vptr (*rnfree_aux)(vptr) ;
 #endif
 #if (defined(Z_VIRT_H) || defined(MAIN_WIN_C) || defined(Z_VIRT_C))
-extern errr rnfree(vptr p, huge len);
+extern vptr rnfree(vptr p);
 #endif
 #if (defined(MAIN_MAC_C) || defined(Z_VIRT_C))
 extern vptr (*rpanic_aux)(huge) ;

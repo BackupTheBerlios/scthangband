@@ -10,7 +10,7 @@
  * Memory management routines.
  *
  * Set ralloc_aux to modify the memory allocation routine.
- * Set rnfree_aux to modify the memory de-allocation routine.
+ * Set _aux to modify the memory de-allocation routine.
  * Set rpanic_aux to let the program react to memory failures.
  *
  * These routines will not work as well if the program calls malloc/free.
@@ -50,12 +50,27 @@
 
 /* Bool: True when P1 and P2 both point to N T's, which have same contents */
 #define C_SAME(P1,P2,N,T) \
-        (!memcmp((char*)(P1),(char*)(P2),C_SIZE(N,T)))
+        (!memcmp((const char*)(P1),(const char*)(P2),C_SIZE(N,T)))
 
 /* Bool: True when P1 and P2 both point to T's, and they have same contents */
 #define SAME(P1,P2,T) \
-        (!memcmp((char*)(P1),(char*)(P2),SIZE(T)))
+		(C_SAME(P1,P2,1,T))
 
+/* Compare two arrays of type T[N], at locations P1 and P2 */
+#define C_DIFF(P1,P2,N,T) \
+	(!C_SAME(P1,P2,N,T))
+
+/* Compare two things of type T, at locations P1 and P2 */
+#define DIFF(P1,P2,T) \
+	(!SAME(P1,P2,T))
+
+/* Set every byte in an array of type T[N], at location P, to V, and return P */
+#define C_BSET(P,V,N,T) \
+	(T*)(memset((char*)(P),(V),C_SIZE(N,T)))
+
+/* Set every byte in a thing of type T, at location P, to V, and return P */
+#define BSET(P,V,T) \
+	(T*)(memset((char*)(P),(V),SIZE(T)))
 
 /* Wipe an array of N things of type T at location P, return T */
 #define C_WIPE(P,N,T) \
@@ -78,11 +93,11 @@
 
 /* Free an array of N things of type T at P, return ??? */
 #define C_FREE(P,N,T) \
-        (rnfree(P,C_SIZE(N,T)))
+        (rnfree(P))
 
 /* Free one thing of type T at P, return ??? */
 #define FREE(P,T) \
-        (rnfree(P,SIZE(T)))
+        (rnfree(P))
 
 
 /* Allocate and return an array of N things of type T */
@@ -105,22 +120,29 @@
 
 /* Allocate a wiped array of N things of type T, let P point at them */
 #define C_MAKE(P,N,T) \
-        (P)=C_ZNEW(N,T)
+        ((P)=C_ZNEW(N,T))
 
 /* Allocate a wiped thing of type T, let P point at it */
 #define MAKE(P,T) \
-        (P)=ZNEW(T)
+       ((P)=ZNEW(T))
+
+/* Free something at P, return NULL */
+#define FREE2(P) \
+		(rnfree(P))
+
 
 
 /* Free an array of N things of type T at P, and reset P to NULL */
 #define C_KILL(P,N,T) \
-        (C_FREE(P,N,T), (P)=(T*)NULL)
+        (C_FREE(P,N,T), (P)=NULL)
 
 /* Free a single thing of type T at P, and reset P to NULL */
 #define KILL(P,T) \
-        (FREE(P,T), (P)=(T*)NULL)
+        (FREE(P,T), (P)=NULL)
 
-
+/* As above, new style. */
+#define KILL2(P) \
+		((P)=FREE2(P))
 
 /* Mega-Hack -- Cleanly "grow" 'P' from N1 T's to N2 T's */
 #define GROW(P,N1,N2,T) \
