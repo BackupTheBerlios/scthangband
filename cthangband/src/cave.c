@@ -1219,6 +1219,18 @@ void move_cursor_relative(int row, int col)
 
 
 /*
+ * Hack - provide fake monochrome under certain circumstances.
+ */
+static void fake_colour(attr *a)
+{
+	/* Graphics prevent fake colours, except with main-ibm.c. */
+	if (use_graphics && strcmp(ANGBAND_SYS, "ibm")) return;
+
+	if (p_ptr->invuln) a = TERM_WHITE;
+	else if (p_ptr->wraith_form) a = TERM_L_DARK;
+}
+
+/*
  * Place an attr/char pair at the given map coordinate, if legal.
  */
 void print_rel(char c, byte a, int y, int x)
@@ -1227,10 +1239,7 @@ void print_rel(char c, byte a, int y, int x)
 	if (panel_contains_prt(y, x))
 	{
 		/* Hack -- fake monochrome */
-        if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-                && (p_ptr->invuln)) a = TERM_WHITE;
-        else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-             && (p_ptr->wraith_form)) a = TERM_L_DARK;
+		fake_colour(&a);
 
 		/* Draw the char using the attr */
 		Term_draw(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c);
@@ -1444,10 +1453,7 @@ void lite_spot(int y, int x)
 		map_info(y, x, &a, &c, &ta, &tc);
 
 		/* Hack -- fake monochrome */
-		if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-			&& (p_ptr->invuln)) a = TERM_WHITE;
-		else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-			&& (p_ptr->wraith_form)) a = TERM_L_DARK;
+		fake_colour(&a);
 
 		/* Hack -- Queue it */
 		Term_queue_char(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c, ta, tc);
