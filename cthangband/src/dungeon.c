@@ -486,12 +486,21 @@ static void wreck_the_pattern(void)
 }
 
 
-/* Returns TRUE if we are on the Pattern... */
-static bool pattern_effect(void)
+/*
+ * Return TRUE if we are on the pattern.
+ */
+static bool pattern_effect_p(void)
 {
-    if ((cave[py][px].feat < FEAT_PATTERN_START)
-        || (cave[py][px].feat > FEAT_PATTERN_XTRA2))
-        return FALSE;
+	return (cave[py][px].feat >= FEAT_PATTERN_START &&
+		cave[py][px].feat <= FEAT_PATTERN_XTRA2);
+}
+
+/* 
+ * Give effect to standing on various pattern squares.
+ */
+static void pattern_effect(void)
+{
+	if (!pattern_effect_p()) return;
 
 
     if ((p_ptr->prace == RACE_GREAT) && (p_ptr->cut>0) &&
@@ -543,17 +552,11 @@ static bool pattern_effect(void)
 
      else
      {
-        if ((p_ptr->prace == RACE_GREAT) && (randint(2)!=1))
-            return TRUE;
-        else
-            if (!(p_ptr->invuln))
-                take_hit(damroll(1,3),
-                    "walking the Pattern", MON_PATTERN);
+        if ((!p_ptr->invuln) && ((p_ptr->prace != RACE_GREAT) || (rand_int(2))))
+		{
+			take_hit(damroll(1,3), "walking the Pattern", MON_PATTERN);
+		}
      }
-
-    return TRUE;
-
-
 }
 
 
@@ -866,273 +869,267 @@ static void recharged_notice(object_type *o_ptr)
 	}
 }
 
+
 /*
- * Handle certain things once every 10 game turns
+ * Finish the game if the computer load or the current time are deemed
+ * incompatible with playing it.
  */
-static void process_world(void)
+static void check_time_load(void)
 {
-	int		x, y, i, j;
+	/* Only finish on the third problem. */
+	static int closing_flag = 0;
 
-	int		regen_amount;
-    bool    cave_no_regen = FALSE;
-    int     upkeep_factor = 0;
-	s16b day;
+	/* Only do this rarely. */
+	if (turn % 1000) return;
 
-	cave_type		*c_ptr;
+	/* No time/load problems. */
+	if (!check_time() && !check_load()) return;
 
-	object_type		*o_ptr;
-    u32b            f1 = 0 , f2 = 0 , f3 = 0;
-
-
-
-	/* Every 10 game turns */
-	if (turn % 10) return;
-
-	/* Redraw Time */
-	p_ptr->redraw |= PR_TIME;
-
-	/*** Check the Time and Load ***/
-
-	if (!(turn % 1000))
+	/* Warning */
+	if (closing_flag <= 2)
 	{
-		/* Check time and load */
-		if ((0 != check_time()) || (0 != check_load()))
-		{
-			/* Warning */
-			if (closing_flag <= 2)
-			{
-				/* Disturb */
-				disturb(0, 0);
+		/* Disturb */
+		disturb(0, 0);
 
-				/* Count warnings */
-				closing_flag++;
+		/* Count warnings */
+		closing_flag++;
 
-				/* Message */
-				msg_print("The Gates of Slumber are closing...");
-				msg_print("Please finish up and/or save your game.");
-			}
-
-			/* Slam the gate */
-			else
-			{
-				/* Message */
-				msg_print("The Gates of Slumber are now closed.");
-
-				/* Stop playing */
-				alive = FALSE;
-			}
-		}
+		/* Message */
+		msg_print("The Gates of Slumber are closing...");
+		msg_print("Please finish up and/or save your game.");
 	}
 
-    /*** Attempt timed autosave ***/
-    if (autosave_t && autosave_freq)
-    {
-        if (!(turn % ((s32b) autosave_freq * 10 )))
-        {
-	   do_cmd_save_game(TRUE);
-        }
-    }
-
-	/* Handle special dates */
-	if ((turn % (10L* TOWN_DAWN)) == ((10L*TOWN_DAWN)/4))
-	{
-		/* It's Noon */
-		/* Work out day */
-		if (turn <= 3*(10L * TOWN_DAWN)/4)
-		{
-			day = 1;
-		}
-		else
-		{
-			day = (turn - 3*(10L * TOWN_DAWN / 4)) / (10L * TOWN_DAWN) + 2;
-		}
-		day += p_ptr->startdate;
-
-		if (YEARDAY(p_ptr->birthday) == YEARDAY(day))
-		{
-			/* It's your birthday... */
-			msg_print("Happy Birthday!");
-
-			/* Those born on 29th Feb. get lots of presents */
-			if (YEARDAY(day) == 59)
-				acquirement(py, px, damroll(3,4), TRUE);
-			else
-				acquirement(py, px, 1+randint(2), TRUE);
-			p_ptr->age++;
-		}
-
-		/* You don't appear to have a birthday this year... */
-		else if (YEARDAY(p_ptr->birthday) < YEARDAY(day-1) && YEARDAY(p_ptr->birthday) > YEARDAY(day))
-		{
-			p_ptr->age++;
-		}
-	}
-	if ((turn % (10L* TOWN_DAWN)) == ((30L*TOWN_DAWN)/4))
-	{
-		/* It's Midnight */
-		/* Work out day */
-		if (turn <= 3*(10L * TOWN_DAWN)/4)
-		{
-			day = 1;
-		}
-		else
-		{
-			day = (turn - 3*(10L * TOWN_DAWN / 4)) / (10L * TOWN_DAWN) + 2;
-		}
-		day += p_ptr->startdate;
-
-		/* Specials on some nights of the year */
-		switch (YEARDAY(day))
-		{
-		case 0: /* January 1st */
-			{
-				msg_print("Happy New Year!");
-				acquirement(py,px,randint(2)+1,FALSE);
-				break;
-			}
-		case 305: /* November 1st (Night of October 31st) */
-			{
-				msg_print("All Hallows Eve and the ghouls come out to play...");
-				summon_specific(py,px,dun_depth,SUMMON_UNDEAD);
-				break;
-			}
-		default: /* Any other night */
-			{
-				break;
-			}
-		}
-	}
-	
-
-	/*** Handle the "town" (stores and sunshine) ***/
-
-	/* While in town */
-	if (dun_level <= 0)
-	{
-		/* Hack -- Daybreak/Nighfall in town */
-		if (!(turn % ((10L * TOWN_DAWN) / 2)))
-		{
-			bool dawn;
-
-			/* Check for dawn */
-			dawn = (!(turn % (10L * TOWN_DAWN)));
-
-			/* Day breaks */
-			if (dawn)
-			{
-				/* Message */
-				msg_print("The sun has risen.");
-
-				/* Disturb */
-				if (disturb_dawn) disturb(0,0);
-
-				/* Hack -- Scan the town */
-				for (y = 0; y < cur_hgt; y++)
-				{
-					for (x = 0; x < cur_wid; x++)
-					{
-						/* Get the cave grid */
-						c_ptr = &cave[y][x];
-
-						/* Assume lit */
-						c_ptr->info |= (CAVE_GLOW);
-
-						/* Hack -- Memorize lit grids if allowed */
-						if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
-
-						/* Hack -- Notice spot */
-						note_spot(y, x);
-					}
-				}
-			}
-
-			/* Night falls */
-			else
-			{
-				/* Message */
-				msg_print("The sun has fallen.");
-
-				/* Disturb */
-				if (disturb_dawn) disturb(0,0);
-
-				/* Hack -- Scan the town */
-				for (y = 0; y < cur_hgt; y++)
-				{
-					for (x = 0; x < cur_wid; x++)
-					{
-						/* Get the cave grid */
-						c_ptr = &cave[y][x];
-
-						/* Darken "boring" features */
-						if (c_ptr->feat <= FEAT_INVIS)
-						{
-							/* Forget the grid */
-							c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
-
-							/* Hack -- Notice spot */
-							note_spot(y, x);
-						}
-					}
-				}
-			}
-
-			/* Update the monsters */
-			p_ptr->update |= (PU_MONSTERS);
-
-			/* Redraw map */
-			p_ptr->redraw |= (PR_MAP);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_OVERHEAD);
-		}
-	}
-
-
-	/* While in the dungeon */
+	/* Slam the gate */
 	else
 	{
-		/*** Update the Stores ***/
+		/* Message */
+		msg_print("The Gates of Slumber are now closed.");
 
-		/* Update the stores once a day (while in dungeon) */
-		if (!(turn % (10L * STORE_TURNS)))
+		/* Stop playing */
+		alive = FALSE;
+	}
+}
+
+/*
+ * Attempt timed autosave if requested.
+ */
+static void process_autosave(void)
+{
+	/* No request. */
+    if (!autosave_t || !autosave_freq) return;
+
+	/* Wrong time. */
+	if ((turn % ((s32b) autosave_freq * 10 ))) return;
+
+	/* Save (possibly quietly). */
+	do_cmd_save_game(TRUE);
+}
+
+
+/*
+ * Process events at midday.
+ */
+static void process_midday(const int day)
+{
+	bool leap = YEARDAY(p_ptr->birthday) == 59;
+
+	/* It's your birthday. */
+	if (YEARDAY(p_ptr->birthday) == YEARDAY(day))
+	{
+		/* It's your birthday... */
+		msg_print("Happy Birthday!");
+
+		/* Those born on 29th Feb. get lots of presents */
+		if (leap)
+			acquirement(py, px, damroll(3,4), TRUE);
+		else
+			acquirement(py, px, 1+randint(2), TRUE);
+
+		p_ptr->age++;
+	}
+	/* You don't appear to have a birthday this year... */
+	else if (leap && YEARDAY(day) - YEARDAY(day-1) != 1)
+	{
+		p_ptr->age++;
+	}
+}
+
+/*
+ * Process events at midnight.
+ */
+static void process_midnight(const int day)
+{
+	switch (YEARDAY(day))
+	{
+		case 0: /* January 1st */
 		{
-			int n;
+			msg_print("Happy New Year!");
+			acquirement(py,px,randint(2)+1,FALSE);
+			break;
+		}
+		case 305: /* November 1st (Night of October 31st) */
+		{
+			msg_print("All Hallows Eve and the ghouls come out to play...");
+			summon_specific(py,px,dun_depth,SUMMON_UNDEAD);
+			break;
+		}
+	}
+}
 
-			/* Message */
-			if (cheat_xtra) msg_print("Updating Shops...");
+/*
+ * Handle sunrise and sunset.
+ */
+static void process_sun(bool dawn)
+{
+	int x, y;
+	cptr msg = (dawn) ? "risen" : "set";
 
-			/* Maintain each shop */
-			for (n = 0; n < MAX_STORES_TOTAL; n++)
+	/* No sun underground, and towers are all windowless. */
+	if (dun_level) return;
+
+	/* Message */
+	msg_format("The sun has %s.", msg);
+
+	/* Disturb */
+	if (disturb_dawn) disturb(0,0);
+
+	/* Hack -- Scan the town */
+	for (y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			/* Get the cave grid */
+			cave_type *c_ptr = &cave[y][x];
+
+			if (dawn)
 			{
-				/* Ignore home, hall  and pawnbrokers */
-				if ((store[n].type != 99) &&
-					(store[n].type != STORE_HOME) &&
-					(store[n].type != STORE_HALL) &&
-					(store[n].type != STORE_PAWN))
-				{
-					/* Maintain */
-					store_maint(n);
-				}
-			}
+				/* Assume lit */
+				c_ptr->info |= (CAVE_GLOW);
 
-			/* Sometimes, shuffle the shop-keepers */
-			if (rand_int(STORE_SHUFFLE) == 0)
+				/* Hack -- Memorize lit grids if allowed */
+				if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+
+			}
+			else
 			{
-				/* Message */
-				if (cheat_xtra) msg_print("Shuffling a Shopkeeper...");
+				/* Only darken "boring" features. */
+				if (c_ptr->feat > FEAT_INVIS) continue;
 
-				/* Shuffle a random shop */
-				store_shuffle(rand_int(MAX_STORES_TOTAL));
+				/* Forget the grid */
+				c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
 			}
-
-			/* Message */
-			if (cheat_xtra) msg_print("Done.");
+			/* Hack -- Notice spot */
+			note_spot(y, x);
 		}
 	}
 
+	/* Update the monsters */
+	p_ptr->update |= (PU_MONSTERS);
 
-	/*** Process the monsters ***/
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
 
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+}
+
+
+/*
+ * Update the shops as necessary.
+ */
+static void process_shops(void)
+{
+	int n;
+
+	/* No updates when the player is on the surface. */
+	if (!dun_level) return;
+
+	/* Only update once a day. */
+	if ((turn % (10L * STORE_TURNS))) return;
+
+	/* Message */
+	if (cheat_xtra) msg_print("Updating Shops...");
+
+	/* Maintain each shop */
+	for (n = 0; n < MAX_STORES_TOTAL; n++)
+	{
+		/* Ignore home, hall  and pawnbrokers */
+		if ((store[n].type != 99) &&
+			(store[n].type != STORE_HOME) &&
+			(store[n].type != STORE_HALL) &&
+			(store[n].type != STORE_PAWN))
+		{
+			/* Maintain */
+			store_maint(n);
+		}
+	}
+
+	/* Sometimes, shuffle the shop-keepers */
+	if (rand_int(STORE_SHUFFLE) == 0)
+	{
+		/* Message */
+		if (cheat_xtra) msg_print("Shuffling a Shopkeeper...");
+
+		/* Shuffle a random shop */
+		store_shuffle(rand_int(MAX_STORES_TOTAL));
+	}
+
+	/* Message */
+	if (cheat_xtra) msg_print("Done.");
+}
+
+/*
+ * Handle various periodic activities.
+ */
+static void process_time(void)
+{
+	int day;
+
+	/* Work out the date. */
+	if (turn <= 3*(10L * TOWN_DAWN)/4)
+	{
+		day = 1;
+	}
+	else
+	{
+		day = (turn - 3*(10L * TOWN_DAWN / 4)) / (10L * TOWN_DAWN) + 2;
+	}
+	day += p_ptr->startdate;
+
+	/* Check the date every six hours. */
+	switch (turn % (10L * TOWN_DAWN))
+	{
+		case 0:
+		{
+			process_sun(FALSE);
+			break;
+		}
+		case ((10L*TOWN_DAWN)/4):
+		{
+			process_midday(day);
+			break;
+		}
+		case ((20L*TOWN_DAWN)/4):
+		{
+			process_sun(TRUE);
+			break;
+		}
+		case ((30L*TOWN_DAWN)/4):
+		{
+			process_midnight(day);
+			break;
+		}
+	}
+
+	/* Check the shops as required. */
+	process_shops();
+}
+
+/*
+ * Handle periodic monster-related things.
+ */
+static void process_monsters_new(void)
+{
 	/* Check for creature generation */
 	if ((full_grid > MAX_SIGHT + 5) && (rand_int(MAX_M_ALLOC_CHANCE) == 0))
 	{
@@ -1142,135 +1139,180 @@ static void process_world(void)
 
 	/* Hack -- Check for creature regeneration */
 	if (!(turn % 100)) regen_monsters();
+}
 
 
-	/*** Damage over Time ***/
+/*
+ * Take damage from poison. Returns TRUE if regeneration is impossible.
+ */
+static bool process_damage_poison(void)
+{
+	/* No poison. */
+	if (!p_ptr->poisoned) return FALSE;
 
-	/* Take damage from poison */
-    if ((p_ptr->poisoned) && !(p_ptr->invuln))
+	/* Immune to damage. */
+	if (p_ptr->invuln) return TRUE;
+
+	/* Take damage. */
+	take_hit(1, "poison", MON_POISON);
+
+	return TRUE;
+}
+
+/*
+ * Take damage from cuts. Returns TRUE if regeneration is impossible.
+ */
+static bool process_damage_cuts(void)
+{
+	int i;
+
+	/* No cuts. */
+	if (!p_ptr->cut) return FALSE;
+
+	/* Immune to damage. */
+	if (p_ptr->invuln) return TRUE;
+
+	/* Mortal wound or Deep Gash */
+	if (p_ptr->cut > 200)
 	{
-		/* Take damage */
-		take_hit(1, "poison", MON_POISON);
+		i = 3;
 	}
 
-
-
-
-
-       /* (Vampires) Take damage from sunlight */
-   if (p_ptr->prace == RACE_VAMPIRE)
-
-    {
-       if ((dun_level <= 0)
-           && (!(p_ptr->resist_lite)) && !(p_ptr->invuln)
-           && (!((turn / ((10L * TOWN_DAWN)/2)) % 2)))
-       {
-           if (cave[py][px].info & (CAVE_GLOW))
-           {
-            /* Take damage */
-            msg_print("The sun's rays scorch your undead flesh!");
-            take_hit(1, "sunlight", MON_LIGHT);
-            cave_no_regen = TRUE;
-           }
-       }
-
-       if ((allart_p(&inventory[INVEN_LITE]))
-            && !(p_ptr->resist_lite))
-        {
-            o_ptr = &inventory[INVEN_LITE];
-            char o_name [80];
-            char ouch [80];
-
-            /* Get an object description */
-            strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
-
-            msg_format("The %s scorches your undead flesh!", o_name);
-
-            cave_no_regen = TRUE;
-
-            /* Get an object description */
-            strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 0);
-
-            sprintf(ouch, "wielding %s", o_name);
-            if (!(p_ptr->invuln))
-                take_hit(1, ouch, MON_LIGHT);
-        }
-    }
-
-         /* Spectres -- take damage when moving through walls */
-         /* Added: ANYBODY takes damage if inside through walls
-            without wraith form -- NOTE: Spectres will never be
-            reduced below 0 hp by being inside a stone wall; others
-            WILL BE!  */
-
-       if ((!cave_floor_bold(py, px)) && (cave[py][px].feat != FEAT_BUSH))  {
-
-       cave_no_regen = TRUE;
-       if (!(p_ptr->invuln)
-        && !(p_ptr->wraith_form) && ((p_ptr->chp > ((skill_set[SKILL_TOUGH].value)/10))
-                                    || (p_ptr->prace != RACE_SPECTRE)))
-        {
-            cptr dam_desc;
-           if (p_ptr->prace == RACE_SPECTRE)
-           {
-               msg_print("Your body feels disrupted!");
-               dam_desc = "density";
-
-            }
-            else
-            {
-                msg_print("You are being crushed!");
-                dam_desc = "solid rock";
-            }
-
-               take_hit(1 + ((skill_set[SKILL_TOUGH].value)/10), dam_desc, MON_SOLID_ROCK);
-        }
-
-   }
-
-
-	/* Take damage from cuts */
-    if ((p_ptr->cut) && !(p_ptr->invuln))
+	/* Severe cut */
+	else if (p_ptr->cut > 100)
 	{
-		/* Mortal wound or Deep Gash */
-		if (p_ptr->cut > 200)
-		{
-			i = 3;
-		}
-
-		/* Severe cut */
-		else if (p_ptr->cut > 100)
-		{
-			i = 2;
-		}
-
-		/* Other cuts */
-		else
-		{
-			i = 1;
-		}
-
-		/* Take damage */
-		take_hit(i, "a fatal wound", MON_BLEEDING);
+		i = 2;
 	}
 
+	/* Other cuts */
+	else
+	{
+		i = 1;
+	}
 
-	/*** Check the Food, and Regenerate ***/
+	/* Take damage */
+	take_hit(i, "a fatal wound", MON_BLEEDING);
+
+	return TRUE;
+}
+
+/*
+ * Take damage from sunlight. Returns TRUE if regeneration is impossible.
+ */
+static bool process_damage_sunlight(void)
+{
+	/* Only vampires have this weakness. */
+	if (p_ptr->prace != RACE_VAMPIRE) return FALSE;
+
+	/* Only happens on the surface during the day. */
+	if (dun_level || (turn / ((10L * TOWN_DAWN)/2)) % 2) return FALSE;
+
+	/* Resistance prevents all ill effects. */
+	if (p_ptr->resist_lite || p_ptr->invuln) return FALSE;
+
+	/* Darkened areas are safe. */
+	if (~cave[py][px].info & CAVE_GLOW) return FALSE;
+
+    /* Take damage */
+    msg_print("The sun's rays scorch your undead flesh!");
+    take_hit(1, "sunlight", MON_LIGHT);
+
+	return TRUE;
+}
+
+/*
+ * Take damage from artefact lights. Returns TRUE if regeneration is impossible.
+ */
+static bool process_damage_artlight(void)
+{
+	cptr ouch;
+	object_type *o_ptr = inventory+INVEN_LITE;
+
+	/* Only vampires have this weakness. */
+	if (p_ptr->prace != RACE_VAMPIRE) return FALSE;
+
+	/* Only wielded artefact light sources are dangerous. */
+	if (!o_ptr->k_idx || allart_p(o_ptr)) return FALSE;
+
+	/* Resistance prevents all ill effects. */
+	if (p_ptr->resist_lite) return FALSE;
+
+	msg_format("The %v scorches your undead flesh!",
+		object_desc_f3, o_ptr, FALSE, 0);
+
+	/* Invulnerability prevents damage. */
+	if (p_ptr->invuln) return TRUE;
+
+	/* Take damage. */
+	ouch = format("wielding %v", object_desc_f3, o_ptr, TRUE, 0);
+	take_hit(1, ouch, MON_LIGHT);
+
+	return TRUE;
+}
+
+/*
+ * Take damage from being in a wall. Returns TRUE if regeneration is impossible.
+ */
+static bool process_damage_walls(void)
+{
+	cptr dam_desc;
+
+	/* Not in a wall. */
+	if (cave_floor_bold(py, px) || cave[py][px].feat == FEAT_BUSH) return FALSE;
+
+	if (p_ptr->invuln || p_ptr->wraith_form) return TRUE;
+	
+	if ((p_ptr->prace == RACE_SPECTRE) &&
+		(p_ptr->chp <= skill_set[SKILL_TOUGH].value/10)) return TRUE;
+
+	if (p_ptr->prace == RACE_SPECTRE)
+	{
+		msg_print("Your body feels disrupted!");
+		dam_desc = "density";
+	}
+	else
+	{
+		msg_print("You are being crushed!");
+		dam_desc = "solid rock";
+	}
+	take_hit(1 + ((skill_set[SKILL_TOUGH].value)/10), dam_desc, MON_SOLID_ROCK);
+
+	return TRUE;
+}
+
+/*
+ * Take damage by various methods as appropriate. Returns TRUE if regeneration
+ * is impossible because of this.
+ * pattern_effect_p() causes no direct damage, but it does prevent regeneration.
+ */
+static bool process_damage(void)
+{
+	return process_damage_cuts() || process_damage_poison() ||
+		process_damage_sunlight() || process_damage_artlight() ||
+		process_damage_walls() || pattern_effect_p();
+}
+
+
+/*
+ * Use up food at the appropriate rate.
+ */
+static void process_food(void)
+{
 
 #ifdef ALLOW_WIZARD
 	/* Hack - for a wizard, amulets of adornment become amulets of no digestion */
-	if (cheat_wzrd && inventory[INVEN_NECK].k_idx == OBJ_AMULET_ADORNMENT);
-	else
+	if (cheat_wzrd && inventory[INVEN_NECK].k_idx == OBJ_AMULET_ADORNMENT) return;
 #endif
+
 	/* Digest normally */
 	if (p_ptr->food < PY_FOOD_MAX)
 	{
 		/* Every 100 game turns */
 		if (!(turn % 100))
 		{
+
 			/* Basic digestion rate no longer based on speed */
-			i = 20;
+			int i = 20;
 
 			/* Regeneration takes more food */
 			if (p_ptr->regenerate) i += 30;
@@ -1297,434 +1339,226 @@ static void process_world(void)
 	if (p_ptr->food < PY_FOOD_STARVE)
 	{
 		/* Calculate damage */
-		i = (PY_FOOD_STARVE - p_ptr->food) / 10;
+		int i = (PY_FOOD_STARVE - p_ptr->food) / 10;
 
 		/* Take damage */
         if (!(p_ptr->invuln))
             take_hit(i, "starvation", MON_STARVATION);
 	}
 
-	/* Default regeneration */
-	regen_amount = PY_REGEN_NORMAL;
-
-	/* Getting Weak */
-	if (p_ptr->food < PY_FOOD_WEAK)
+	/* Getting Faint */
+	if (p_ptr->food < PY_FOOD_FAINT)
 	{
-		/* Lower regeneration */
-		if (p_ptr->food < PY_FOOD_STARVE)
+		/* Faint occasionally */
+		if (!p_ptr->paralyzed && (rand_int(100) < 10))
 		{
-			regen_amount = 0;
-		}
-		else if (p_ptr->food < PY_FOOD_FAINT)
-		{
-			regen_amount = PY_REGEN_FAINT;
-		}
-		else
-		{
-			regen_amount = PY_REGEN_WEAK;
-		}
+			/* Message */
+			msg_print("You faint from the lack of food.");
+			disturb(1, 0);
 
-		/* Getting Faint */
-		if (p_ptr->food < PY_FOOD_FAINT)
-		{
-			/* Faint occasionally */
-			if (!p_ptr->paralyzed && (rand_int(100) < 10))
-			{
-				/* Message */
-				msg_print("You faint from the lack of food.");
-				disturb(1, 0);
-
-				/* Hack -- faint (bypass free action) */
-				(void)set_paralyzed(p_ptr->paralyzed + 1 + rand_int(5));
-			}
+			/* Hack -- faint (bypass free action) */
+			(void)set_paralyzed(p_ptr->paralyzed + 1 + rand_int(5));
 		}
 	}
+}
 
+static int process_upkeep(void)
+{
+	/* No pets, no upkeep. */
+    if (!total_friends) return 0;
 
+#ifdef TRACK_FRIENDS
+	if (cheat_wzrd)
+	msg_format("Total friends: %d.", total_friends);
+#endif
+	if (total_friends > 1 + (skill_set[SKILL_RACIAL].value / 40))
+	{
+		int i = (total_friend_levels);
 
-    /* Are we walking the pattern? */
+		/* Put i within reasonable bounds. */
+		i = MIN(MAX(i, 10), 100);
 
-    if (pattern_effect())
-    {
-        cave_no_regen = TRUE;
+#ifdef TRACK_FRIENDS
+		if (cheat_wzrd)
+			msg_format("Levels %d, upkeep %d", total_friend_levels, i);
+#endif
+		return i;
     }
-    else
-    {
-    /* Regeneration ability */
-       if (p_ptr->regenerate)
-       {
-                   regen_amount = regen_amount * 2;
-       }
-    }
+	else
+	{
+		return 0;
+	}
+}
 
+static int get_regen_amount(void)
+{
+	int mult = 1;
 
 	/* Sneaking or Resting */
 	if (p_ptr->sneaking || resting)
 	{
-		regen_amount = regen_amount * 2;
+		mult *= 2;
 	}
 
-    if (total_friends)
-    {
-        int upkeep_divider = 20;
+	/* Regeneration, except on the pattern (?). */
+	if (p_ptr->regenerate && !pattern_effect_p())
+	{
+		mult *= 2;
+	}
 
-#ifdef TRACK_FRIENDS
-        if (cheat_wzrd)
-        msg_format("Total friends: %d.", total_friends);
-#endif
-        if (total_friends > 1 + (skill_set[SKILL_RACIAL].value / (upkeep_divider*2)))
-        {
-            upkeep_factor = (total_friend_levels);
+	/* Lower regeneration */
+	if (p_ptr->food < PY_FOOD_STARVE)
+	{
+		return 0;
+	}
+	else if (p_ptr->food < PY_FOOD_FAINT)
+	{
+		return PY_REGEN_FAINT;
+	}
+	else if (p_ptr->food < PY_FOOD_WEAK)
+	{
+		return PY_REGEN_WEAK;
+	}
+	else
+	{
+		return PY_REGEN_NORMAL;
+	}
+}
 
-            if (upkeep_factor > 100) upkeep_factor = 100;
-            else if (upkeep_factor < 10) upkeep_factor = 10;
-
-#ifdef TRACK_FRIENDS
-        if (cheat_wzrd)
-        msg_format("Levels %d, upkeep %d", total_friend_levels, upkeep_factor);
-#endif
-        }
-    }
+static void process_regeneration(bool cave_no_regen)
+{
+	const int regen_amount = get_regen_amount();
 
 	/* Regenerate the mana */
 	if ((p_ptr->csp < p_ptr->msp) || (p_ptr->cchi < p_ptr->mchi))
 	{
-        if (upkeep_factor)
-        {
-            s16b upkeep_regen = (((100 - upkeep_factor) * regen_amount) / 100);
-            regenmana(upkeep_regen);
+		int upkeep_factor = process_upkeep();
+
+		if (upkeep_factor)
+		{
+			int upkeep_regen = (((100 - upkeep_factor) * regen_amount) / 100);
+			regenmana(upkeep_regen);
 
 #ifdef TRACK_FRIENDS
-            if (cheat_wzrd)
-            msg_format("Regen: %d/%d", upkeep_regen,
-                                        regen_amount);
+			if (cheat_wzrd)
+				msg_format("Regen: %d/%d", upkeep_regen, regen_amount);
 #endif
-        }
-        else
-        {
-            regenmana(regen_amount);
-        }
+		}
+		else
+		{
+			regenmana(regen_amount);
+		}
 	}
-
-	/* Poisoned or cut yields no healing */
-	if (p_ptr->poisoned) regen_amount = 0;
-	if (p_ptr->cut) regen_amount = 0;
-
-    /* Special floor -- Pattern, in a wall -- yields no healing */
-    if (cave_no_regen) regen_amount = 0;
 
 	/* Regenerate Hit Points if needed */
-    if ((p_ptr->chp < p_ptr->mhp) && !(cave_no_regen))
+	if ((p_ptr->chp < p_ptr->mhp) && !(cave_no_regen))
 	{
-        if ((cave[py][px].feat < FEAT_PATTERN_END) &&
-            (cave[py][px].feat >= FEAT_PATTERN_START))
-            regenhp(regen_amount / 5); /* Hmmm. this should never happen? */
-        else
-            regenhp(regen_amount);
+		regenhp(regen_amount);
+	}
+}
+
+/*
+ * Timeout various p_ptr variables.
+ */
+static void process_timeout(void)
+{
+	int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
+
+	/* Temporary resistances */
+	if (p_ptr->oppose_acid) set_oppose_acid(p_ptr->oppose_acid - 1);
+	if (p_ptr->oppose_elec) set_oppose_elec(p_ptr->oppose_elec - 1);
+	if (p_ptr->oppose_fire) set_oppose_fire(p_ptr->oppose_fire - 1);
+	if (p_ptr->oppose_cold) set_oppose_cold(p_ptr->oppose_cold - 1);
+	if (p_ptr->oppose_pois) set_oppose_pois(p_ptr->oppose_pois - 1);
+
+	/* Temporary benefits */
+	if (p_ptr->tim_invis) set_tim_invis(p_ptr->tim_invis - 1);
+	if (p_ptr->tim_esp) set_tim_esp(p_ptr->tim_esp - 1);
+	if (p_ptr->tim_infra) set_tim_infra(p_ptr->tim_infra - 1);
+	if (p_ptr->protevil) set_protevil(p_ptr->protevil - 1);
+	if (p_ptr->invuln) set_invuln(p_ptr->invuln - 1);
+    if (p_ptr->wraith_form) set_shadow(p_ptr->wraith_form - 1);
+	if (p_ptr->hero) set_hero(p_ptr->hero - 1);
+	if (p_ptr->shero) set_shero(p_ptr->shero - 1);
+	if (p_ptr->blessed) set_blessed(p_ptr->blessed - 1);
+	if (p_ptr->shield) set_shield(p_ptr->shield - 1);
+	if (p_ptr->fast) set_fast(p_ptr->fast - 1);
+
+	/* Problems */
+	if (p_ptr->slow) set_slow(p_ptr->slow - 1);
+	if (p_ptr->image) set_image(p_ptr->image - 1);
+	if (p_ptr->blind) set_blind(p_ptr->blind - 1);
+	if (p_ptr->paralyzed) set_paralyzed(p_ptr->paralyzed - 1);
+	if (p_ptr->confused) set_confused(p_ptr->confused - 1);
+	if (p_ptr->afraid) set_afraid(p_ptr->afraid - 1);
+
+	/* Problems healed quickly by high constitution */
+	if (p_ptr->poisoned) set_poisoned(p_ptr->poisoned - adjust);
+	if (p_ptr->stun) set_stun(p_ptr->stun - adjust);
+
+	/* Hack - very severe cuts do not heal over time. */
+	if (p_ptr->cut && p_ptr->cut < 1001) set_cut(p_ptr->cut - adjust);
+}
+
+static void process_light(void)
+{
+	object_type *o_ptr = inventory+INVEN_LITE;
+
+	/* No object. */
+	if (!o_ptr->k_idx) return;
+
+	/* Don't burn strange objects. */
+	if (o_ptr->tval != TV_LITE) return;
+
+	/* Don't burn permanent lights. */
+	if (allart_p(o_ptr)) return;
+
+	/* Do nothing with known exhausted lights. */
+	if (o_ptr->ident & IDENT_EMPTY) return;
+
+	/* Decrease life-span if possible. */
+	if (o_ptr->pval) o_ptr->pval--;
+
+	/* Hack -- notice interesting fuel steps */
+	if ((o_ptr->pval < 100) || (!(o_ptr->pval % 100)))
+	{
+		/* Window stuff */
+		p_ptr->window |= (PW_EQUIP);
+
+		/* Calculate torch radius */
+		p_ptr->update |= (PU_TORCH);
 	}
 
-
-	/*** Timeout Various Things ***/
-
-	/* Hack -- Hallucinating */
-	if (p_ptr->image)
+	/* The light is now out */
+	if (o_ptr->pval == 0)
 	{
-		(void)set_image(p_ptr->image - 1);
+		disturb(0, 0);
+		msg_print("Your light has gone out!");
+
+		/* Remember it. */
+		o_ptr->ident |= IDENT_EMPTY;
 	}
 
-	/* Blindness */
-	if (p_ptr->blind)
+	/* The light is getting dim */
+	else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
 	{
-		(void)set_blind(p_ptr->blind - 1);
+		if (disturb_minor) disturb(0, 0);
+		msg_print("Your light is growing faint.");
 	}
+}
 
-	/* Times see-invisible */
-	if (p_ptr->tim_invis)
-	{
-		(void)set_tim_invis(p_ptr->tim_invis - 1);
-	}
+/*
+ * Process chaos feature effects.
+ */
+static void process_chaos(void)
+{
+	int i;
 
-    if (multi_rew)
-    {
-        multi_rew = FALSE;
-    }
+	/* No chaos features with random effects. */
+	if (!p_ptr->muta2) return;
 
-    /* Timed esp */
-    if (p_ptr->tim_esp)
-	{
-        (void)set_tim_esp(p_ptr->tim_esp - 1);
-	}
-
-	/* Timed infra-vision */
-	if (p_ptr->tim_infra)
-	{
-		(void)set_tim_infra(p_ptr->tim_infra - 1);
-	}
-
-	/* Paralysis */
-	if (p_ptr->paralyzed)
-	{
-		(void)set_paralyzed(p_ptr->paralyzed - 1);
-	}
-
-	/* Confusion */
-	if (p_ptr->confused)
-	{
-		(void)set_confused(p_ptr->confused - 1);
-	}
-
-	/* Afraid */
-	if (p_ptr->afraid)
-	{
-		(void)set_afraid(p_ptr->afraid - 1);
-	}
-
-	/* Fast */
-	if (p_ptr->fast)
-	{
-		(void)set_fast(p_ptr->fast - 1);
-	}
-
-	/* Slow */
-	if (p_ptr->slow)
-	{
-		(void)set_slow(p_ptr->slow - 1);
-	}
-
-	/* Protection from evil */
-	if (p_ptr->protevil)
-	{
-		(void)set_protevil(p_ptr->protevil - 1);
-	}
-
-	/* Invulnerability */
-	if (p_ptr->invuln)
-	{
-		(void)set_invuln(p_ptr->invuln - 1);
-	}
-
-    /* Wraith form */
-    if (p_ptr->wraith_form)
-	{
-        (void)set_shadow(p_ptr->wraith_form - 1);
-	}
-
-	/* Heroism */
-	if (p_ptr->hero)
-	{
-		(void)set_hero(p_ptr->hero - 1);
-	}
-
-	/* Super Heroism */
-	if (p_ptr->shero)
-	{
-		(void)set_shero(p_ptr->shero - 1);
-	}
-
-	/* Blessed */
-	if (p_ptr->blessed)
-	{
-		(void)set_blessed(p_ptr->blessed - 1);
-	}
-
-	/* Shield */
-	if (p_ptr->shield)
-	{
-		(void)set_shield(p_ptr->shield - 1);
-	}
-
-	/* Oppose Acid */
-	if (p_ptr->oppose_acid)
-	{
-		(void)set_oppose_acid(p_ptr->oppose_acid - 1);
-	}
-
-	/* Oppose Lightning */
-	if (p_ptr->oppose_elec)
-	{
-		(void)set_oppose_elec(p_ptr->oppose_elec - 1);
-	}
-
-	/* Oppose Fire */
-	if (p_ptr->oppose_fire)
-	{
-		(void)set_oppose_fire(p_ptr->oppose_fire - 1);
-	}
-
-	/* Oppose Cold */
-	if (p_ptr->oppose_cold)
-	{
-		(void)set_oppose_cold(p_ptr->oppose_cold - 1);
-	}
-
-	/* Oppose Poison */
-	if (p_ptr->oppose_pois)
-	{
-		(void)set_oppose_pois(p_ptr->oppose_pois - 1);
-	}
-
-
-	/*** Poison and Stun and Cut ***/
-
-	/* Poison */
-	if (p_ptr->poisoned)
-	{
-		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
-
-		/* Apply some healing */
-		(void)set_poisoned(p_ptr->poisoned - adjust);
-	}
-
-	/* Stun */
-	if (p_ptr->stun)
-	{
-		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
-
-		/* Apply some healing */
-		(void)set_stun(p_ptr->stun - adjust);
-	}
-
-	/* Cut */
-	if (p_ptr->cut)
-	{
-		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
-
-		/* Hack -- Truly "mortal" wound */
-		if (p_ptr->cut > 1000) adjust = 0;
-
-		/* Apply some healing */
-		(void)set_cut(p_ptr->cut - adjust);
-	}
-
-
-
-	/*** Process Light ***/
-
-	/* Check for light being wielded */
-	o_ptr = &inventory[INVEN_LITE];
-
-	/* Burn some fuel in the current lite */
-	if (o_ptr->tval == TV_LITE)
-	{
-		/* Hack -- Use some fuel (except on artifacts) */
-		if (!allart_p(o_ptr) && (o_ptr->pval > 0))
-		{
-			/* Decrease life-span */
-			o_ptr->pval--;
-
-			/* Hack -- notice interesting fuel steps */
-			if ((o_ptr->pval < 100) || (!(o_ptr->pval % 100)))
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_EQUIP);
-			}
-
-			/* Hack -- Special treatment when blind */
-			if (p_ptr->blind)
-			{
-				/* Hack -- save some light for later */
-				if (o_ptr->pval == 0) o_ptr->pval++;
-			}
-
-			/* The light is now out */
-			else if (o_ptr->pval == 0)
-			{
-				disturb(0, 0);
-				msg_print("Your light has gone out!");
-			}
-
-			/* The light is getting dim */
-			else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
-			{
-				if (disturb_minor) disturb(0, 0);
-				msg_print("Your light is growing faint.");
-			}
-		}
-	}
-
-	/* Calculate torch radius */
-	p_ptr->update |= (PU_TORCH);
-
-
-	/*** Process Inventory ***/
-
-	/* Handle experience draining */
-	if (p_ptr->exp_drain)
-	{
-		if ((rand_int(5000) < 10) && (p_ptr->exp > 0))
-		{
-			lose_skills(1);
-		}
-	}
-
-    /* Rarely, take damage from the Jewel of Judgement */
-    if ((randint(999)==1) && !(p_ptr->anti_magic))
-    {
-        if ((inventory[INVEN_LITE].k_idx == OBJ_GEMSTONE_TRAPEZODEDRON) &&
-			!(p_ptr->invuln))
-        {
-            msg_format("The %v drains life from you!",
-				object_desc_f3, inventory+INVEN_LITE, FALSE, 0);
-            take_hit(MIN(skill_set[SKILL_TOUGH].value/2, 50), "the Shining Trapezohedron", MON_DANGEROUS_EQUIPMENT);
-        }
-    }
-
-
-	/* Process equipment */
-	for (j = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
-		/* Get the object */
-		o_ptr = &inventory[i];
-
-        object_flags(o_ptr, &f1, &f2, &f3);
-
-	/*
-	 * Auto-curse
-	 * Curse_turn is set in remove_curse_aux()).
-	 */
-	if (f3 & TR3_AUTO_CURSE && ~(o_ptr->ident) & IDENT_CURSED && turn > curse_turn)
-	{
-		C_TNEW(o_name, ONAME_MAX, char);
-		curse(o_ptr);
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-		msg_format("The %s suddenly feels deathly cold!", o_name);
-		TFREE(o_name);
-	}
-        if ((f3 & TR3_TY_CURSE) && (randint(TY_CURSE_CHANCE)==1))
-            activate_ty_curse();
-        if ((o_ptr->name1 == ART_DEMONBLADE) && randint(CHAINSWORD_NOISE) == 1)
-        {
-            msg_format("%v", get_rnd_line_f1, "chainswd.txt");
-            disturb(FALSE, FALSE);
-        }
-
-        /* Hack: Uncursed teleporting items (e.g. Planar Weapons)
-        can actually be useful! */
-
-        if ((f3 & TR3_TELEPORT) && (rand_int(100)<1))
-        {
-            if ((o_ptr->ident & IDENT_CURSED) && !(p_ptr->anti_tele))
-            {
-                 disturb(0,0);
-                /* Teleport player */
-                teleport_player(40);
-            }
-            else
-                {
-                if (strchr(quark_str(o_ptr->note),'.'))
-                    {
-                        /* Do nothing */
-                        /* msg_print("Teleport aborted.") */ ;
-                    }
-                else if (get_check("Teleport? "))
-                    {
-                        disturb(0,0);
-                        teleport_player(50);
-                    }
-                }
-        }
-	/*** Process chaos feature effects ***/
-	if (p_ptr->muta2)
+	/* Don't ask me... */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
 		if ((p_ptr->muta2 & MUT2_BERS_RAGE) && (randint(3000)==1))
 		{
@@ -1878,6 +1712,8 @@ static void process_world(void)
 		}
 		if ((p_ptr->muta2 & MUT2_EAT_LIGHT) && (randint(3000) == 1))
 		{
+			object_type *o_ptr = &inventory[INVEN_LITE];
+
 			msg_print("A shadow passes over you.");
 			msg_print(NULL);
 
@@ -1886,8 +1722,6 @@ static void process_world(void)
 			{
                 hp_player(10);
 			}
-
-			o_ptr = &inventory[INVEN_LITE];
 
 			/* Absorb some fuel in the current lite */
 			if (o_ptr->tval == TV_LITE)
@@ -2148,12 +1982,13 @@ static void process_world(void)
 		if ((p_ptr->muta2 & MUT2_DISARM) &&
 			(randint(10000)==1))
 		{
+			object_type *o_ptr = &inventory[INVEN_WIELD];
+
 			disturb(0,0);
 			msg_print("You trip over your own feet!");
 			take_hit(randint(p_ptr->wt/6), "tripping", MON_DANGEROUS_MUTATION);
 			
 			msg_print(NULL);
-			o_ptr = &inventory[INVEN_WIELD];
 			if (o_ptr->k_idx)
 			{
 				msg_print("You drop your weapon!");
@@ -2161,133 +1996,246 @@ static void process_world(void)
 			}
         }
 	}
+}
 
+#define PRM_EQUIP 0
+#define PRM_INVEN 1
+#define PRM_FLOOR 2
 
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+/*
+ * Recharge a charging object.
+ */
+static void process_recharge(object_type *o_ptr, int mode)
+{
+	/* Skip non-objects. */
+	if (!o_ptr->k_idx) return;
 
-		/* Recharge activatable objects */
-		if (o_ptr->timeout > 0)
-		{
-			/* Recharge */
-			o_ptr->timeout--;
+	/* Skip non-rods (except when equipped). */
+	if (mode != PRM_EQUIP && o_ptr->tval != TV_ROD) return;
 
-			/* Notice changes */
-			if (!(o_ptr->timeout))
-			{
-				j++;
-				recharged_notice(o_ptr);
-			}
-		}
-	}
+	/* Skip recharged rods. */
+	if (!o_ptr->timeout) return;
 
-	/* Notice changes */
-	if (j)
+	/* Charge it, do nothing else if still recharging. */
+	if (--o_ptr->timeout) return;
+
+	if (mode == PRM_INVEN)
 	{
-		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
-	}
+		/* Tell the player if requested. */
+		recharged_notice(o_ptr);
 
-	/* Recharge rods */
-	for (j = 0, i = 0; i < INVEN_PACK; i++)
-	{
-		o_ptr = &inventory[i];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Examine all charging rods */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
-		{
-			/* Charge it */
-			if (--o_ptr->timeout == 0)
-			{
-				/* Notice changes */
-				j++;
-				recharged_notice(o_ptr);
-			}
-		}
-	}
-
-	/* Notice changes */
-	if (j)
-	{
 		/* Combine pack */
 		p_ptr->notice |= (PN_COMBINE);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN);
 	}
-
-
-	/* calm down spirits */
-	for (i=0;i<MAX_SPIRITS;i++)
+	else if (mode == PRM_EQUIP)
 	{
-		if(spirits[i].annoyance)
+		recharged_notice(o_ptr);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_EQUIP);
+	}
+}
+
+/*
+ * Do various things to an object known to be equipped.
+ */
+static void process_equip(object_type *o_ptr)
+{
+	u32b f1, f2, f3;
+
+	/* Skip non-objects */
+	if (!o_ptr->k_idx) return;
+
+	object_flags(o_ptr, &f1, &f2, &f3);
+
+	/*
+	 * Auto-curse.
+	 * Curse_turn is set in remove_curse_aux()).
+	 */
+	if (f3 & TR3_AUTO_CURSE && ~(o_ptr->ident) & IDENT_CURSED &&
+		turn > curse_turn)
+	{
+		curse(o_ptr);
+		msg_format("The %v suddenly feels deathly cold!",
+			object_desc_f3, o_ptr, FALSE, 0);
+	}
+
+	/* TY-curse. */
+	if ((f3 & TR3_TY_CURSE) && (randint(TY_CURSE_CHANCE)==1))
+		activate_ty_curse();
+	if ((o_ptr->name1 == ART_DEMONBLADE) && randint(CHAINSWORD_NOISE) == 1)
+	{
+		msg_format("%v", get_rnd_line_f1, "chainswd.txt");
+		disturb(FALSE, FALSE);
+	}
+
+	/* Hack: Uncursed teleporting items (e.g. Planar Weapons)
+	can actually be useful! */
+
+	if ((f3 & TR3_TELEPORT) && (rand_int(100)<1))
+	{
+		if ((o_ptr->ident & IDENT_CURSED) && !(p_ptr->anti_tele))
 		{
-			spirits[i].annoyance--;
-			p_ptr->redraw |= PR_SPIRIT;
-		if (!spirits[i].annoyance && disturb_minor)
-			disturb(0, 0);
+			 disturb(0,0);
+			/* Teleport player */
+			teleport_player(40);
+		}
+		else
+		{
+			if (strchr(quark_str(o_ptr->note),'.'))
+			{
+				/* Do nothing */
+				/* msg_print("Teleport aborted.") */ ;
+			}
+			else if (get_check("Teleport? "))
+			{
+				disturb(0,0);
+				teleport_player(50);
+			}
 		}
 	}
+
+	/* Recharge if it is activatable. */
+	process_recharge(o_ptr, PRM_EQUIP);
+
+    /* Hack - handle damage from the Gemstone 'Trapezohedron'. */
+	if (o_ptr->name1 == ART_TRAPEZOHEDRON && !p_ptr->invuln &&
+		!p_ptr->anti_magic && !rand_int(999))
+    {
+		msg_format("The %v drains life from you!",
+			object_desc_f3, o_ptr, FALSE, 0);
+		take_hit(MIN(skill_set[SKILL_TOUGH].value/2, 50),
+			"the Shining Trapezohedron", MON_DANGEROUS_EQUIPMENT);
+    }
+}
+
+static void process_spirit(spirit_type *s_ptr)
+{
+	/* Nothing to do. */
+	if(!s_ptr->annoyance) return;
+
+	/* Become less annoyed, and redraw just in case it should look different. */
+	s_ptr->annoyance--;
+	p_ptr->redraw |= PR_SPIRIT;
+
+	/* Disturb if newly placated and requested. */
+	if (!s_ptr->annoyance && disturb_minor) disturb(0, 0);
+}
+
+/*
+ * Move the player to the dungeon/surface.
+ */
+static void process_recall(void)
+{
+	/* Not started. */
+	if (!p_ptr->word_recall) return;
+
+	/* Not finished. */
+	if (--p_ptr->word_recall) return;
+	
+	/* Disturbing! */
+	disturb(0, 0);
+
+	/* Sound */
+	sound(SOUND_TPLEVEL);
+
+	/* Determine the level */
+	if (dun_level)
+	{
+		msg_print("You feel yourself yanked downwards!");
+
+		change_level(MAX(1, p_ptr->max_dlv), START_RANDOM);
+
+		cur_dungeon=recall_dungeon;
+	}
+	else
+	{
+		msg_print("You feel yourself yanked upwards!");
+	
+		change_level(0, START_RANDOM);
+
+		wildx=town_defs[cur_town].x;
+		wildy=town_defs[cur_town].y;
+
+		came_from=START_RANDOM;
+	}
+}
+
+/*
+ * Handle certain things once every 10 game turns
+ */
+static void process_world(void)
+{
+	int		i;
+    bool    cave_no_regen;
+
+	/* Every 10 game turns */
+	if (turn % 10) return;
+
+	/* Redraw Time */
+	p_ptr->redraw |= PR_TIME;
+
+	/* Check the time and load. */
+	check_time_load();
+
+	/* Check autosave. */
+	process_autosave();
+
+	/* Handle special times and dates */
+	process_time();
+
+	/* Handle monster generation and regeneration. */
+	process_monsters_new();
+
+	/* Process most of the things which cause physical damage over time. */
+	cave_no_regen = process_damage();
+
+	/* Digest food. */
+	process_food();
+
+	/* Carry out the effects of standing on the pattern. */
+	pattern_effect();
+
+	/* Regenerate HP and SP. */
+	process_regeneration(cave_no_regen);
+
+	/* Allow another chaos reward now. Is this rare enough to be redundant? */
+	multi_rew = FALSE;
+
+	/* Process most timed player_type parameters. */
+	process_timeout();
+
+	/* Burn fuel or the player as appropriate. */
+	process_light();
+
+	/* Handle experience draining */
+	if (p_ptr->exp_drain && p_ptr->exp > 0 && !rand_int(500))
+	{
+			lose_skills(1);
+	}
+
+	/* Process randomly activating chaos features. */
+	process_chaos();
+
+	/* Process equipment */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) process_equip(inventory+i);
+
+	for (i = 0; i < INVEN_PACK; i++) process_recharge(inventory+i, PRM_INVEN);
+	
+	/* calm down spirits */
+	for (i=0;i<MAX_SPIRITS;i++) process_spirit(spirits+i);
 
 	/* Feel the inventory */
 	sense_inventory();
 
-
 	/*** Process Objects ***/
-
-	/* Process objects */
-	for (i = 1; i < o_max; i++)
-	{
-		/* Access object */
-		o_ptr = &o_list[i];
-
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Recharge rods on the ground */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout)) o_ptr->timeout--;
-	}
+	for (i = 1; i < o_max; i++) process_recharge(o_list+i, PRM_FLOOR);
 
 	/* Delayed Word-of-Recall */
-	if (p_ptr->word_recall)
-	{
-		/* Count down towards recall */
-		p_ptr->word_recall--;
-
-		/* Activate the recall */
-		if (!p_ptr->word_recall)
-		{
-			/* Disturbing! */
-			disturb(0, 0);
-
-			/* Determine the level */
-			if (dun_level != 0)
-			{
-				msg_print("You feel yourself yanked upwards!");
-
-				change_level(0, START_RANDOM);
-                
-				wildx=town_defs[cur_town].x;
-				wildy=town_defs[cur_town].y;
-
-				came_from=START_RANDOM;
-			}
-			else
-			{
-				msg_print("You feel yourself yanked downwards!");
-
-				change_level(MAX(1, p_ptr->max_dlv), START_RANDOM);
-
-				cur_dungeon=recall_dungeon;
-			}
-			
-			/* Sound */
-			sound(SOUND_TPLEVEL);
-		}
-	}
+	process_recall();
 }
 
 

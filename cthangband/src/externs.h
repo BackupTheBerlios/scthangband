@@ -3067,9 +3067,9 @@ extern bool good_item_flag;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool new_level_flag;
 #endif
-#if (defined(DUNGEON_C) || defined(VARIABLE_C))
-extern bool closing_flag;
-#endif
+
+
+
 #if (defined(CMD1_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern int full_grid;
 #endif

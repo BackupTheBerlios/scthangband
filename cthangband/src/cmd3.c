@@ -678,6 +678,9 @@ static void do_cmd_refill_lamp(object_type *o_ptr)
 	/* Refuel */
 	j_ptr->pval += o_ptr->pval;
 
+	/* No longer empty. */
+	j_ptr->ident &= ~(IDENT_EMPTY);
+
 	/* Message */
 	msg_print("You fuel your lamp.");
 
@@ -752,6 +755,9 @@ static void do_cmd_refill_torch(object_type *o_ptr)
 
 	/* Refuel */
 	j_ptr->pval += o_ptr->pval + 5;
+
+	/* No longer empty. */
+	j_ptr->ident &= ~(IDENT_EMPTY);
 
 	/* Message */
 	msg_print("You combine the torches.");

@@ -347,8 +347,6 @@ bool good_item_flag;		/* True if "Artifact" on this level */
 
 bool new_level_flag;		/* Start a new level */
 
-bool closing_flag;		/* Dungeon is closing */
-
 int full_grid;	/* Monsters can't be created outside a circle of radius full_grid around the player */
 
 
