@@ -2434,7 +2434,7 @@ static void modify_visuals(visual_type *vs_ptr)
 {
 	char i;
 	int inc, max, num;
-	uint r = vs_ptr->max-1, *out;
+	uint r = vs_ptr->max-1, ca, cc;
 
 	/* Make a note of log(*vs_ptr->max-1)/log(10) */
 	const uint numlen = strlen(format("%d", r));
@@ -2450,7 +2450,7 @@ static void modify_visuals(visual_type *vs_ptr)
 		char dcl, *ccl;
 		byte dal, *cal;
 
-		uint da, dc, ca, cc = 50;
+		uint *out, da, dc;
 		cptr prompt, text;
 
 		/* Get a command */
@@ -2481,7 +2481,7 @@ static void modify_visuals(visual_type *vs_ptr)
 				if (!vs_ptr->attr) goto err;
 				prompt = "Select number of desired colour: ";
 				out = &ca;
-				max = 256;
+				max = 16;
 				break;
 			case 'c':
 				if (!vs_ptr->chars) goto err;

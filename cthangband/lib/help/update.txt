@@ -27,6 +27,7 @@ sCthangband _CVS_
   * skip_chaos_feature was always treated as being set.
   * The player could try to refuel a lamp with itself.
   * Messages given when destroying part of a stack referred to the total size.
+  * C and c (and possibly A and a) didn't work correctly in the visual prefs.
 
 sCthangband 1.0.12
 * Dodging blows because of martial arts gives experience in the skill.
