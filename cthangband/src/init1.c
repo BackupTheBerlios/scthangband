@@ -2095,15 +2095,23 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 		}
 		case 'I':
 		{
-			int tval, sval, pval;
+			int tval, sval, k_idx, pval;
 
+			if (3 == sscanf(buf+2, "%d:%d:%d", &tval, &sval, &pval))
+			{
+				a_ptr->tval = tval;
+				a_ptr->sval = sval;
+			}
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
-			                &tval, &sval, &pval)) return (1);
-
+			else if (2 == sscanf(buf+2, "%d:%d",
+			                &k_idx, &pval))
+			{
 			/* Save the values */
-			a_ptr->tval = tval;
-			a_ptr->sval = sval;
+				a_ptr->tval = k_info[k_idx].tval;
+				a_ptr->sval = k_info[k_idx].sval;
+			}
+			else return 1;
+
 			a_ptr->pval = pval;
 
 			/* Next... */
