@@ -368,7 +368,7 @@ extern int get_spirit(int *sn, cptr prompt, bool call);
 #if (defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C))
 extern bool PURE item_tester_spells(object_ctype *o_ptr);
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C))
+#if (defined(CMD5_C) || defined(XTRA1_C))
 extern void display_spells(int y, int x, object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C))
@@ -1553,7 +1553,7 @@ extern void object_wipe(object_type *o_ptr);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_copy(object_type *o_ptr, object_ctype *j_ptr);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void object_prep(object_type *o_ptr, int k_idx);
 #endif
 #if (defined(OBJECT2_C) || defined(WIZARD1_C))
@@ -1634,9 +1634,9 @@ extern void combine_pack(void);
 #if (defined(OBJECT2_C) || defined(XTRA1_C))
 extern void reorder_pack(void);
 #endif
-#if (defined(OBJECT2_C) || defined(XTRA1_C))
-extern void display_koff(int k_idx);
-#endif
+
+
+
 #if (defined(CMD3_C) || defined(OBJECT2_C))
 extern void object_hide(object_type *o_ptr);
 #endif
@@ -2438,7 +2438,7 @@ extern void mc_put_str(const int y, const int x, cptr str);
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern void mc_add_fmt(cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
 #if (defined(UI_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3764,7 +3764,7 @@ extern void Term_putch(int x, int y, byte a, char c);
 #if (defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(WIZARD1_C) || defined(Z_TERM_C))

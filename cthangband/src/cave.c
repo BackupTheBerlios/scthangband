@@ -1269,7 +1269,6 @@ static void highlight_map_square(const int y, const int x)
 	if (c_ptr->o_idx && o_ptr->marked)
 	{
 		object_track(o_ptr);
-		object_kind_track(o_ptr->k_idx);
 	}
 
 	/* Track the square. */

@@ -7,10 +7,12 @@ read from the bottom up.
 
 sCthangband _CVS_
 * Display messages from previous turns in a darker colour.
+* Only update the "object recall" when manipulating spellbooks.
 * Fix the following bugs:
   * player_has_flag() may have given unreliable results.
   * The redraw prefs help command displayed the wrong text.
   * Restoring wisdom did not recalculate the chi total.
+  * The track_mouse option could reveal the identities of unidentified things.
 
 sCthangband 1.0.16
 * Fix the following bugs:

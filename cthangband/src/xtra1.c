@@ -2965,7 +2965,7 @@ static void win_monster_display(void)
  */
 static bool win_object_good(void)
 {
-	/* Boring with a remembered object */
+	/* Boring without a remembered object */
 	return (object_kind_idx != 0);
 }
 
@@ -2974,8 +2974,19 @@ static bool win_object_good(void)
  */
 static void win_object_display(void)
 {
-	/* Display object kind info */
-	if (object_kind_idx) display_koff(object_kind_idx);
+	object_type q_ptr[1];
+
+	/* Boring... */
+	if (!win_object_good()) return;
+
+	/* Prepare the object */
+	object_prep(q_ptr, object_kind_idx);
+
+	/* Mention the object name */
+	mc_put_fmt(0, 0, "%v", object_desc_f3, q_ptr, 0, 0);
+
+	/* Display spells in books */
+	display_spells(2, 0, q_ptr);
 }
 
 

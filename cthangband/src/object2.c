@@ -4519,51 +4519,6 @@ void reorder_pack(void)
 }
 
 /*
- * Hack -- display an object kind in the current window
- *
- * Include list of usable spells for books
- */
-void display_koff(int k_idx)
-{
-	int y;
-
-	object_type forge;
-	object_type *q_ptr;
-
-
-	/* Erase the window */
-	for (y = 0; y < Term->hgt; y++)
-	{
-		/* Erase the line */
-		Term_erase(0, y, 255);
-	}
-
-	/* No info */
-	if (!k_idx)
-	{
-		return;
-	}
-
-
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Prepare the object */
-	object_wipe(q_ptr);
-
-	/* Prepare the object */
-	object_prep(q_ptr, k_idx);
-
-
-	/* Mention the object name */
-	mc_put_fmt(0, 0, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
-
-
-	/* Display spells in books */
-	display_spells(2, 0, q_ptr);
-}
-
-/*
  * Hide an object.
  */
 void object_hide(object_type *o_ptr)
