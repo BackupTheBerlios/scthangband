@@ -18,7 +18,8 @@
  */
 static void day_to_date(int day,char *date)
 {
-	cptr mon[13]={"","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+	cptr mon[13]={"","Jan","Feb","Mar","Apr","May","Jun",
+		"Jul","Aug","Sep","Oct","Nov","Dec"};
 	s16b days[13]={0,31,60,91, 121,152,182, 213,244,274,305,335,366};
 
 	byte i;
@@ -309,7 +310,6 @@ static void prt_spirit(void)
  */
 static void prt_depth(void)
 {
-	cptr depths;
 	s16b level = dun_level + dun_offset;
 	cptr descr[2][2] = {
 	{"(Lev %d)", "%d ft"},
@@ -319,20 +319,19 @@ static void prt_depth(void)
 
 	if (dun_level)
 	{
-		depths = format(
-			descr[!!(dun_defs[cur_dungeon].flags & DF_TOWER)][(int)depth_in_feet], level);
+		bool tower = (dun_defs[cur_dungeon].flags & DF_TOWER) != 0;
+		mc_put_lfmt(GET_YX(XY_DEPTH), descr[!!tower][!!depth_in_feet], level);
 	}
 
 	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
 	{
-		depths = dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].shortname;
+		mc_put_lfmt(GET_YX(XY_DEPTH), "%s", 
+			dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].shortname);
 	}
 	else
 	{
-		depths = format("Wild (%d,%d)",wildx,wildy);
+		mc_put_lfmt(GET_YX(XY_DEPTH), "Wild (%d,%d)",wildx,wildy);
 	}
-	/* Right-Adjust the "depth", and clear old values */
-	mc_put_lfmt(GET_YX(XY_DEPTH), "%9s", depths);
 }
 
 
@@ -421,15 +420,16 @@ static void prt_speed(void)
 }
 
 /*
- * Displays temporary resistance in preference to studying ability as there's not
- * much call for libraries in the dungeon.
+ * Displays temporary resistance in preference to studying ability as there's
+ * not much call for libraries in the dungeon.
  */
 
 static void prt_study(void)
 {
 	char buf[16], *t = buf;
 
-	if (p_ptr->oppose_acid || p_ptr->oppose_elec || p_ptr->oppose_fire || p_ptr->oppose_cold || p_ptr->oppose_pois)
+	if (p_ptr->oppose_acid || p_ptr->oppose_elec || p_ptr->oppose_fire ||
+		p_ptr->oppose_cold || p_ptr->oppose_pois)
 	{
 		t += sprintf(t, "$%cA", atchar[OPPOSE_COL(p_ptr->oppose_acid)]);
 		t += sprintf(t, "$%cE", atchar[OPPOSE_COL(p_ptr->oppose_elec)]);
@@ -1044,7 +1044,8 @@ static void calc_hitpoints(void)
 	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
 
 	/* Calculate hitpoints */
-	mhp = player_hp[skill_set[SKILL_TOUGH].value-1]/2 + (bonus*skill_set[SKILL_TOUGH].value/4);
+	mhp = player_hp[skill_set[SKILL_TOUGH].value-1]/2 +
+		(bonus*skill_set[SKILL_TOUGH].value/4);
 
 	/* Always have at least one hitpoint per level */
 	if (mhp < skill_set[SKILL_TOUGH].value) mhp = skill_set[SKILL_TOUGH].value;
@@ -1200,7 +1201,7 @@ int PURE wield_skill(object_ctype *o_ptr)
 static bool ma_heavy_armor(void)
 {
 
-	u16b arm_wgt = 0;
+	int arm_wgt = 0;
 	arm_wgt += inventory[INVEN_BODY].weight;
 	arm_wgt += inventory[INVEN_HEAD].weight;
 	arm_wgt += inventory[INVEN_ARM].weight;
@@ -1208,7 +1209,7 @@ static bool ma_heavy_armor(void)
 	arm_wgt += inventory[INVEN_HANDS].weight;
 	arm_wgt += inventory[INVEN_FEET].weight;
 
-	return (arm_wgt > (u16b)((u16b)100 + (u16b)(skill_set[SKILL_MA].value * 2))) ;
+	return (arm_wgt > 100 + skill_set[SKILL_MA].value * 2);
 }
 
 
@@ -1600,7 +1601,8 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	if (flags[3][iilog(TR3_FEATHER)]) p_ptr->ffall = TRUE;
 	if (flags[2][iilog(TR2_FREE_ACT)]) p_ptr->free_act = TRUE;
 	if (flags[2][iilog(TR2_HOLD_LIFE)]) p_ptr->hold_life = TRUE;
-	if (flags[3][iilog(TR3_WRAITH)]) p_ptr->wraith_form = MAX(p_ptr->wraith_form, 20);
+	if (flags[3][iilog(TR3_WRAITH)])
+		p_ptr->wraith_form = MAX(p_ptr->wraith_form, 20);
 
 	/* Immunity flags */
 	if (flags[2][iilog(TR2_IM_FIRE)]) p_ptr->immune_fire = TRUE;
@@ -1719,7 +1721,8 @@ static void calc_bonuses(void)
 	/* Can we assign a weapon skill? */
 	if (!(p_ptr->wield_skill=wield_skill(o_ptr)))
 	{
-		msg_print("Unknown weapon tval wielded - defaulting to close combat skill.");
+		msg_print("Unknown weapon type wielded - "
+			"defaulting to close combat skill.");
 		p_ptr->wield_skill = SKILL_CLOSE;
 	}
 
@@ -2410,7 +2413,9 @@ static bool is_room_func_p(int y, int x)
 	int xs[] = { 1, 1,-1,-1, 1,  1, 0,-1, 0, 1};
 	int ys[] = { 1,-1,-1, 1, 1,  0, 1, 0,-1, 0};
 
-	/* Hack - assume that ineligible non-floor squares are excluded elsewhere. */
+	/* Hack - assume that ineligible non-floor squares are excluded
+	 * elsewhere.
+	 */
 	if (!cave_floor_bold(y,x)) return TRUE;
 
 	for (i = adj = 0; i < N_ELEMENTS(xs); i++)
@@ -3701,21 +3706,24 @@ bool PURE skill_check_possible(int index)
 /* Give experience to a skill after usage */
 void skill_exp(int index)
 {
+	player_skill *sk_ptr = &skill_set[index];
+
 	/* No experience is gained on the surface */
 	if (!dun_level) return;
 
 	if (cheat_skll)
 	{
-		msg_format("Check %s skill, values %d/%d, exp %d/%d.",skill_set[index].name,
-			skill_set[index].value, skill_set[index].base, skill_set[index].experience,
-			skill_set[index].exp_to_raise);
+		msg_format("Check %s skill, values %d/%d, exp %d/%d.",
+			sk_ptr->name, sk_ptr->value, sk_ptr->base,
+			sk_ptr->experience, sk_ptr->exp_to_raise);
 	}
 
 	if (!skill_check_possible(index))
 	{
 		if (cheat_skll)
 		{
-			msg_format("You are not tense enough to improve your %s skill.",skill_set[index].name);
+			msg_format("You are not tense enough to improve your %s skill.",
+				sk_ptr->name);
 		}
 		return;
 	}
@@ -3724,8 +3732,8 @@ void skill_exp(int index)
 	{
 		if (cheat_skll)
 		{
-			msg_format("You are not inquisitive enough to improve your %s skill.",
-				skill_set[index].name);
+			msg_format("You are not inquisitive enough to "
+				"improve your %s skill.", sk_ptr->name);
 		}
 		return;
 	}
@@ -3733,23 +3741,25 @@ void skill_exp(int index)
 	/* Debugging message */
 	if (cheat_skll)
 	{
-		msg_format("Skill check for %s.",skill_set[index].name);
+		msg_format("Skill check for %s.",sk_ptr->name);
 	}
 
-	skill_set[index].experience+= 100; /* Means a player with an expfact of 100 has a 1-1 mapping */
-	if(skill_set[index].experience >= skill_set[index].exp_to_raise * rp_ptr->r_exp)
+	/* Means a player with an expfact of 100 has a 1-1 mapping */
+	sk_ptr->experience += 100; 
+
+	if(sk_ptr->experience >= sk_ptr->exp_to_raise * rp_ptr->r_exp)
 	{
 
 		/* Debugging message */
 		if (cheat_skll)
 		{
-			msg_format("%s tested.",skill_set[index].name);
+			msg_format("%s tested.",sk_ptr->name);
 		}
 
-		skill_set[index].experience-=skill_set[index].exp_to_raise * rp_ptr->r_exp;
-		if(((byte)rand_int(100)>=(skill_set[index].value)) && (skill_set[index].value < 100))
+		sk_ptr->experience-=sk_ptr->exp_to_raise * rp_ptr->r_exp;
+		if(((byte)rand_int(100)>=(sk_ptr->value)) && (sk_ptr->value < 100))
 		{
-			skill_set[index].value++;
+			sk_ptr->value++;
 
 			/* Update other skill-related variables. */
 			switch (index)
@@ -3761,13 +3771,14 @@ void skill_exp(int index)
 			}
 			update_stuff();
 
-			msg_format("%s %c%d%%->%d%%%c",skill_set[index].increase,
-			(skill_check_possible(index) ? '(' : '['),skill_set[index].value-1,
-			skill_set[index].value, (skill_check_possible(index) ? ')' : ']'));
+			msg_format("%s %c%d%%->%d%%%c",sk_ptr->increase,
+			(skill_check_possible(index) ? '(' : '['),sk_ptr->value-1,
+			sk_ptr->value, (skill_check_possible(index) ? ')' : ']'));
 
 			p_ptr->window |= PW_PLAYER_SKILLS; /* Window stuff */
 
-			update_skill_maxima(); /* Update the maxima and possibly give rewards */
+			/* Update the maxima and possibly give rewards */
+			update_skill_maxima();
 		}
 	}
 }
