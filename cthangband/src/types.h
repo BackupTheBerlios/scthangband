@@ -78,8 +78,6 @@
  * arguments to the relevent functions.
  */
 
-#if (defined(INIT1_C) || defined(INIT2_C))
-
 typedef struct header header;
 
 typedef errr (*parse_info_txt_func)(char *buf, header *head, vptr *extra);
@@ -114,8 +112,6 @@ struct header
 
 	u16b header_num;
 };
-
-#endif
 
 /*
  * Information about maximal indices of certain arrays

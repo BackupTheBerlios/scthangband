@@ -1,3 +1,4 @@
+#define DELAY_EXTERNS_H
 #define MAIN_GCU_C
 /* File: main-gcu.c */
 
@@ -49,6 +50,8 @@
 
 #ifdef USE_GCU
 
+/* #include "main.h" */
+#include "externs.h"
 
 /*
  * Hack -- play games with "bool" and "term"
