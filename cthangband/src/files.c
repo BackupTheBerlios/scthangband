@@ -6037,9 +6037,18 @@ static errr get_rnd_line(const char * file_name, uint len, char * output)
 
 
 	/* Parse the file */
-    if (0 == my_fgets(fp, buf, 80))
-        lines = atoi(buf);
-    else return (1);
+	while (!my_fgets(fp, buf, 80))
+	{
+		/* Stop at the first line which is neither empty nor a comment. */
+		if (buf[0] && buf[0] != '#')
+		{
+			lines = atoi(buf);
+			break;
+		}
+	}
+
+	/* Some sort of file error occurred. */
+	if (!lines) return (1);
 
     line = randint(lines);
     for (counter = 0; counter <= line; counter++)
