@@ -268,10 +268,7 @@ static void pattern_teleport(void)
 
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+		  do_cmd_save_game(TRUE);
                 }
 
 	/* Change level */
@@ -717,10 +714,7 @@ static void process_world(void)
     {
         if (!(turn % ((s32b) autosave_freq * 10 )))
         {
-            is_autosave = TRUE;
-            msg_print("Autosaving the game...");
-            do_cmd_save_game();
-            is_autosave = FALSE;
+	   do_cmd_save_game(TRUE);
         }
     }
 
@@ -2073,10 +2067,7 @@ static void process_world(void)
 
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+		  do_cmd_save_game(TRUE);
                 }
                 
 				dun_level = 0;
@@ -2092,10 +2083,7 @@ static void process_world(void)
 
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+		  do_cmd_save_game(TRUE);
                 }
 				cur_dungeon=recall_dungeon;
 				dun_level = p_ptr->max_dlv[cur_dungeon];
@@ -2823,8 +2811,7 @@ static void process_command(void)
 			/* Hack -- Save and don't quit */
 		case KTRL('S'):
 		{
-            is_autosave = FALSE;
-			do_cmd_save_game();
+			do_cmd_save_game(FALSE);
 			break;
 		}
 

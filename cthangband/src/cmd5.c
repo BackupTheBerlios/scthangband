@@ -2268,10 +2268,7 @@ void do_cmd_cast(void)
 			msg_print("The world changes!");
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+                    do_cmd_save_game(TRUE);
                 }
 			new_level_flag = TRUE;
 			came_from=START_RANDOM;

@@ -536,13 +536,16 @@ static void do_cmd_options_cheat(cptr info)
 }
 
 
-static option_type autosave_info[2] =
+static option_type autosave_info[3] =
 {
 	{ (bool *)&autosave_l,      FALSE, 255, 0x01, 0x00,
 	    "autosave_l",    "Autosave when entering new levels" },
 
 	{ (bool *)&autosave_t,      FALSE, 255, 0x02, 0x00,
 	    "autosave_t",   "Timed autosave" },
+
+	{ (bool *)&autosave_q,      FALSE, 255, 0x04, 0x00,
+	    "autosave_q",   "Quiet autosaves" },
 };
        
 s16b toggle_frequency(s16b current)
@@ -568,7 +571,7 @@ static void do_cmd_options_autosave(cptr info)
 {
 	char	ch;
 
-	int     i, k = 0, n = 2;
+	int     i, k = 0, n = 3;
 
 	char	buf[80];
 

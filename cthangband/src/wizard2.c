@@ -1195,10 +1195,7 @@ static void do_cmd_wiz_jump(void)
 
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+                    do_cmd_save_game(TRUE);
                 }
 
 	/* Change level */

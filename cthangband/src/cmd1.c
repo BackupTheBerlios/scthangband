@@ -691,10 +691,7 @@ static void hit_trap(void)
 				take_hit(dam, name);
                 if ((autosave_l) && (p_ptr->chp >= 0))
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+					do_cmd_save_game(TRUE);
                 }
                 new_level_flag = TRUE;
                 dun_level++;
@@ -2017,10 +2014,7 @@ void move_player(int dir, int do_pickup)
 				came_from=START_WALK;
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+					do_cmd_save_game(TRUE);
                 }
 			}
 			
@@ -2111,10 +2105,7 @@ void move_player(int dir, int do_pickup)
 				came_from=START_WALK;
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+					do_cmd_save_game(TRUE);
                 }
 			}
 

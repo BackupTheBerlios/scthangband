@@ -3801,7 +3801,7 @@ void do_cmd_suicide(void)
 /*
  * Save the game
  */
-void do_cmd_save_game(void)
+void do_cmd_save_game(bool is_autosave)
 {
     /* Autosaves do not disturb */
     if (!is_autosave)
@@ -3809,15 +3809,19 @@ void do_cmd_save_game(void)
         /* Disturb the player */
         disturb(1, 0);
     }
+	else if (!autosave_q)
+	{
+		msg_print("Autosaving the game...");
+	}
 
 	/* Clear messages */
-	msg_print(NULL);
+	if (!is_autosave || !autosave_q) msg_print(NULL);
 
 	/* Handle stuff */
 	handle_stuff();
 
 	/* Message */
-	prt("Saving game...", 0, 0);
+	if (!is_autosave || !autosave_q) prt("Saving game...", 0, 0);
 
 	/* Refresh */
 	Term_fresh();
@@ -3831,7 +3835,7 @@ void do_cmd_save_game(void)
 	/* Save the player */
 	if (save_player())
 	{
-		prt("Saving game... done.", 0, 0);
+		if (!is_autosave || !autosave_q) prt("Saving game... done.", 0, 0);
 	}
 
 	/* Save failed (oops) */
@@ -4999,9 +5003,8 @@ void close_game(void)
 	/* Still alive */
 	else
 	{
-        is_autosave = FALSE;
 		/* Save the game */
-		do_cmd_save_game();
+		do_cmd_save_game(FALSE);
 
 		/* Prompt for scores XXX XXX XXX */
 		prt("Press Return (or Escape).", 0, 40);

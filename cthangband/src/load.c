@@ -682,6 +682,11 @@ static void rd_options(void)
 
 		rd_byte(&autosave_l);
 		rd_byte(&autosave_t);
+		if (autosave_t & 2)
+		{
+			autosave_t -= 2;
+			autosave_q = 1;
+		}
 		rd_s16b(&autosave_freq);
 
 

@@ -174,10 +174,7 @@ void do_cmd_go_up(void)
 
 			if (autosave_l)
 			{
-				is_autosave = TRUE;
-				msg_print("Autosaving the game...");
-				do_cmd_save_game();
-				is_autosave = FALSE;
+				do_cmd_save_game(TRUE);
 			}
 
 			/* Check which way 'up' is */
@@ -301,10 +298,7 @@ void do_cmd_go_down(void)
 				/* Now actually go down */
 				if (autosave_l)
 				{
-					is_autosave = TRUE;
-					msg_print("Autosaving the game...");
-					do_cmd_save_game();
-					is_autosave = FALSE;
+					do_cmd_save_game(TRUE);
 				}
 			}
 			if (dun_defs[cur_dungeon].tower)
@@ -3263,10 +3257,7 @@ static void cmd_racial_power_aux (void)
                     msg_print("You start walking around. Your surroundings change.");
                     if (autosave_l)
                     {
-                        is_autosave = TRUE;
-                        msg_print("Autosaving the game...");
-                        do_cmd_save_game();
-                        is_autosave = FALSE;
+                        do_cmd_save_game(TRUE);
                     }
 
                     new_level_flag = TRUE;

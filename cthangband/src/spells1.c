@@ -452,10 +452,7 @@ void teleport_player_level(void)
 		msg_print("You sink through the floor.");
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+			do_cmd_save_game(TRUE);
                 }
 		dun_level++;
 		new_level_flag = TRUE;
@@ -465,10 +462,7 @@ void teleport_player_level(void)
 		msg_print("You rise up through the ceiling.");
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+                    do_cmd_save_game(TRUE);
                 }
 		dun_level--;
 		new_level_flag = TRUE;
@@ -478,10 +472,7 @@ void teleport_player_level(void)
 		msg_print("You rise up through the ceiling.");
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+			do_cmd_save_game(TRUE);
                 }
 		dun_level--;
 		new_level_flag = TRUE;
@@ -492,10 +483,7 @@ void teleport_player_level(void)
 		msg_print("You sink through the floor.");
                 if (autosave_l)
                 {
-                    is_autosave = TRUE;
-                    msg_print("Autosaving the game...");
-                    do_cmd_save_game();
-                    is_autosave = FALSE;
+                    do_cmd_save_game(TRUE);
                 }
 		dun_level++;
 		new_level_flag = TRUE;

@@ -2911,7 +2911,7 @@ static void menu(long mc)
 					msg_flag = FALSE;
 
 					/* Hack -- Save the game */
-					do_cmd_save_game();
+					do_cmd_save_game(FALSE);
 
 					break;
 				}
@@ -2954,7 +2954,7 @@ static void menu(long mc)
 						msg_flag = FALSE;
 
 						/* Save the game */
-						do_cmd_save_game();
+						do_cmd_save_game(FALSE);
 					}
 
 					/* Quit */

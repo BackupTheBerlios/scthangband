@@ -760,7 +760,7 @@ static int save_handler(bits event_code, toolbox_action *event,
 
 	msg_flag=FALSE;
 
-	do_cmd_save_game();
+	do_cmd_save_game(FALSE);
 
 	saveas_file_save_completed(1, id->this_obj, save->file_name);
 
@@ -774,7 +774,7 @@ static int defaultsave_handler(bits event_code, toolbox_action *event,
 {
 	msg_flag=FALSE;
 
-	do_cmd_save_game();
+	do_cmd_save_game(FALSE);
 
 	return 1;
 }
@@ -1030,7 +1030,7 @@ static int quitmenu_handler(bits event_code, toolbox_action *event,
 		msg_flag = FALSE;
 
 		/* Save the game */
-		do_cmd_save_game();
+		do_cmd_save_game(FALSE);
 	}
 
 	/* Quit */

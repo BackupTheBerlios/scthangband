@@ -797,6 +797,7 @@ static void wr_options(void)
 
     /* Autosave info */
     wr_byte(autosave_l);
+	if (vpatch > 0 && autosave_q) autosave_t |= 2;
     wr_byte(autosave_t);
     wr_s16b(autosave_freq);
 

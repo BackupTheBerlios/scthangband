@@ -6813,10 +6813,7 @@ void alter_reality(void)
 
 	if (autosave_l)
 	{
-		is_autosave = TRUE;
-		msg_print("Autosaving the game...");
-		do_cmd_save_game();
-		is_autosave = FALSE;
+		do_cmd_save_game(TRUE);
 	}
 
 	/* Leaving */

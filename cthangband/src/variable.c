@@ -155,7 +155,6 @@ s16b inven_nxt;			/* Hack -- unused */
 bool hack_mind;
 bool hack_chaos_feature;
 int artifact_bias;
-bool is_autosave = FALSE;
 
 s16b inven_cnt;			/* Number of items in inventory */
 s16b equip_cnt;			/* Number of items in equipment */
@@ -332,6 +331,7 @@ s16b delay_factor = 4;		/* Delay factor (0 to 9) */
 
 byte autosave_l;        /* Autosave before entering new levels */
 byte autosave_t;        /* Timed autosave */
+byte autosave_q;        /* Quiet autosave */
 s16b autosave_freq;     /* Autosave frequency */
 
 
