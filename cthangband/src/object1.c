@@ -2596,6 +2596,10 @@ cptr item_activation(object_type *o_ptr)
  * that it restores the given stat. Stat potions do actually have both flags.
  *
  * Note that pval may not be the same as o_ptr->pval.
+ *
+ * As p_ptr isn't p_body here, most of the effects could be deduced by judicious
+ * calls to update_stuff() rather than calculating them from the stats here.
+ * Maybe later...
  */
 static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, cptr *info)
 {
@@ -2801,6 +2805,7 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		byte stat = 0;
 		s16b pval = 0;
 		object_type forge;
+		player_type *p2_ptr = NULL;
 		struct convtype {
 		byte tval;
 		byte sval;
@@ -2849,9 +2854,6 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		{0,0,0,0},
 		};
 
-		u32b old_update = p_ptr->update;
-		p_ptr->update = 0;
-
 		/* Start with the permanent modifiers items in */
 		if (f1 & TR1_STR) stat |= 1<<A_STR;
 		if (f1 & TR1_INT) stat |= 1<<A_INT;
@@ -2872,25 +2874,34 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 			}
 
 		/* Remove item if equipped to correct bonuses */
+		if (o_ptr > inventory+INVEN_PACK && o_ptr < inventory+INVEN_TOTAL)
+		{
+			/* As update_stuff() can cause potentially irreversible changes,
+			* make a backup of player_type first. */
+			player_type p2_body;
+			p2_ptr = &p2_body;
+
+			COPY(p2_ptr, p_ptr, player_type);
+
 		object_copy(&forge, o_ptr);
 		object_wipe(o_ptr);
 
-
-		/* Correct bonuses and set "quiet" flag. */
-		p_ptr->update |= PU_BONUS | PU_QUIET;
+			/* Correct bonuses quietly. */
+			p_ptr->update = PU_BONUS | PU_QUIET;
 		update_stuff();
+		}
 
 		/* Output the results. */
 		if (stat) res_stat_details(stat, pval, &forge, &i, info);
 
-		/* Replace object */
+		/* Replace object if needed */
+		if (p2_ptr)
+		{
 		object_copy(o_ptr, &forge);
 
-		/* Return the bonuses to their real values (again quietly) */
-		p_ptr->update |= PU_BONUS | PU_QUIET;
-		update_stuff();
-		
-		p_ptr->update = old_update;
+			/* Return the bonuses to their real values */
+			COPY(p_ptr, p2_ptr, player_type);
+		}
 	}
 
 	/* Notice what effect res_stat_details has on i. */

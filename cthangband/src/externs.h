@@ -984,9 +984,6 @@ extern void skill_exp(int);
 extern void gain_spell_exp(magic_type*);
 extern u16b spell_energy(u16b,u16b);
 extern byte spell_skill(magic_type*);
-extern void calc_hitpoints(void);
-extern void calc_mana(void);
-extern void calc_spells(void);
 extern int wield_skill(byte, byte);
 extern byte ammunition_type(object_type *o_ptr);
 

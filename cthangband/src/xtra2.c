@@ -2163,9 +2163,17 @@ void lose_skills(s32b amount)
 		}
 	}
 	/* Re-calculate some things */
-	calc_hitpoints(); /* The hit-points might have changed */
-	calc_mana(); /* As might mana */
-	calc_spells(); /* And spells */
+	{
+		/* Hack - prevent the update of arbitrary things (I haven't checked
+		 * that this is necessary, but it may be). */
+		u32b hack_update = p_ptr->update;
+
+		/* Recalculate hit points, mana and spells, but nothing else. */
+		p_ptr->update = PU_HP | PU_MANA | PU_SPELLS;
+		update_stuff();
+
+		p_ptr->update = hack_update;
+	}
 
 	/* Redraw spirits, as a reduction may render some inaccessible. */
 	if (lost[SKILL_SHAMAN])

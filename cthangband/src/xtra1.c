@@ -1437,7 +1437,7 @@ void win_visible_display(void)
  * Note that this function induces various "status" messages,
  * which must be bypasses until the character is created.
  */
-void calc_spells(void)
+static void calc_spells(bool quiet)
 {
 	int			i, j, k;
 	int			num_allowed, num_known;
@@ -1520,7 +1520,7 @@ void calc_spells(void)
 			spell_learned[school] &= ~(1L << j);
 
 			/* Message */
-			msg_format("You have forgotten the %s of %s.", p,
+			if (!quiet) msg_format("You have forgotten the %s of %s.", p,
                        spell_names[school][j%32]);
 
 			/* One more can be learned */
@@ -1564,7 +1564,7 @@ void calc_spells(void)
 				spell_learned[school] &= ~(1L << j);
 
 			/* Message */
-			msg_format("You have forgotten the %s of %s.", p,
+			if (!quiet) msg_format("You have forgotten the %s of %s.", p,
                        spell_names[school][j%32]);
 
 			/* One more can be learned */
@@ -1613,7 +1613,7 @@ void calc_spells(void)
 			spell_learned[school] |= (1L << j);
 
 			/* Message */
-			msg_format("You have remembered the %s of %s.",
+			if (!quiet) msg_format("You have remembered the %s of %s.",
                        p, spell_names[school][j%32]);
 
 			/* One less can be learned */
@@ -1664,8 +1664,9 @@ void calc_spells(void)
 	/* Spell count changed */
 	if (p_ptr->old_spells != p_ptr->new_spells)
 	{
-		/* Message if needed */
-		if (p_ptr->new_spells)
+
+		/* Message if needed and allowed. */
+		if (p_ptr->new_spells && !quiet)
 		{
 			/* Message */
 			msg_format("You can learn %d more %s%s.",
@@ -1724,7 +1725,7 @@ int mystic_armour(int slot)
  *
  * This function also calculates maximum chi
  */
-void calc_mana(void)
+static void calc_mana(bool quiet)
 {
 	int	msp, levels, cur_wgt, max_wgt;
 	int     mchi;
@@ -1835,9 +1836,6 @@ void calc_mana(void)
 	/* Hack -- add one chi */
 	mchi++;
 
-	/* Assume player is not encumbered by a helmet */
-	p_ptr->cumber_helm = FALSE;
-
 	/* Get the helmet */
 	o_ptr = &inventory[INVEN_HEAD];
 
@@ -1855,6 +1853,12 @@ void calc_mana(void)
 		/* Reduce mana */
 		mchi = (3 * mchi) / 4;
 	}
+	/* Special helms do not. */
+	else
+	{
+		p_ptr->cumber_helm = FALSE;
+	}
+	
 
 	/* Chi can never be negative */
 	if (mchi < 0) mchi = 0;
@@ -1889,8 +1893,10 @@ void calc_mana(void)
 	/* Take note when "glove state" changes */
 	if (p_ptr->old_cumber_glove != p_ptr->cumber_glove)
 	{
+		/* No message */
+		if (quiet);
 		/* Message */
-		if (p_ptr->cumber_glove)
+		else if (p_ptr->cumber_glove)
 		{
 			msg_print("Your covered hands feel unsuitable for spellcasting.");
 		}
@@ -1906,8 +1912,10 @@ void calc_mana(void)
 	/* Take note when "helm state" changes */
 	if (p_ptr->old_cumber_helm != p_ptr->cumber_helm)
 	{
+		/* No message */
+		if (quiet);
 		/* Message */
-		if (p_ptr->cumber_helm)
+		else if (p_ptr->cumber_helm)
 		{
 			msg_print("Your covered head feels unsuitable for mindcrafting.");
 		}
@@ -1923,8 +1931,10 @@ void calc_mana(void)
 	/* Take note when "armor state" changes */
 	if (p_ptr->old_cumber_armor != p_ptr->cumber_armor)
 	{
+		/* No message */
+		if (quiet);
 		/* Message */
-		if (p_ptr->cumber_armor)
+		else if (p_ptr->cumber_armor)
 		{
 			msg_print("The weight of your armor encumbers your movement.");
 		}
@@ -1945,7 +1955,7 @@ void calc_mana(void)
  * Calculate the players (maximal) hit points
  * Adjust current hitpoints if necessary
  */
-void calc_hitpoints(void)
+static void calc_hitpoints(void)
 {
 	int bonus, mhp;
 
@@ -3483,9 +3493,9 @@ void update_stuff(void)
 	if (!p_ptr->update) return;
 
 	/*
-	 * If quiet is set, this should calculate the changes
-	 * but not comment on them. Only currently used for
-	 * calc_bonuses.
+	 * If quiet is set, this should calculate the changes but not comment
+	 * on them. It should be included in any routines which print messages.
+	 * The changes are still made, however.
 	 */
 	if (p_ptr->update & (PU_QUIET))
 	{
@@ -3518,13 +3528,13 @@ void update_stuff(void)
 	if (p_ptr->update & (PU_MANA))
 	{
 		p_ptr->update &= ~(PU_MANA);
-		calc_mana();
+		calc_mana(quiet);
 	}
 
 	if (p_ptr->update & (PU_SPELLS))
 	{
 		p_ptr->update &= ~(PU_SPELLS);
-		calc_spells();
+		calc_spells(quiet);
 	}
 
 
@@ -4122,8 +4132,8 @@ void skill_exp(int index)
 		{
 			skill_set[index].value++;
 			calc_hitpoints(); /* The hit-points might have changed */
-			calc_mana(); /* As might mana */
-			calc_spells(); /* And spells */
+			calc_mana(FALSE); /* As might mana */
+			calc_spells(FALSE); /* And spells */
 			msg_format("%s %c%d%%->%d%%%c",skill_set[index].increase,
 			(skill_check_possible(index) ? '(' : '['),skill_set[index].value-1,
 			skill_set[index].value, (skill_check_possible(index) ? ')' : ']'));

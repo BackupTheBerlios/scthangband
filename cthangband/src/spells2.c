@@ -402,12 +402,20 @@ bool restore_level(void)
 
 	if (did_it)
 	{
+		/* Hack - prevent the update of arbitrary things (I haven't checked
+		 * that this is necessary, but it may be). */
+		u32b hack_update = p_ptr->update;
+		
 		/* Message */
 		msg_print("You feel your life energies returning.");
 		/* Did something */
-		calc_hitpoints(); /* The hit-points might have changed */
-		calc_mana(); /* As might mana */
-		calc_spells(); /* And spells */
+
+		/* Recalculate hit points, mana and spells, but nothing else. */
+		p_ptr->update = PU_HP | PU_MANA | PU_SPELLS;
+		update_stuff();
+
+		p_ptr->update = hack_update;
+
 		return (TRUE);
 	}
 
