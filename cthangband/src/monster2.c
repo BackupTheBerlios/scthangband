@@ -84,34 +84,9 @@ static cptr funny_comments[MAX_COMMENT] =
 };
 
 /*
- * Ghost generation info
- */
- 
-
-static int ghost_race;
-
-static char gb_name[32];
-
-
-
-/*
- * Set a "blow" record for the ghost
- */
-static void ghost_blow(int i, int m, int e, int d, int s)
-{
-	monster_race *g = &r_info[MON_PLAYER_GHOST];
-
-	/* Save the data */
-	g->blow[i].method = m;
-	g->blow[i].effect = e;
-	g->blow[i].d_dice = d;
-	g->blow[i].d_side = s;
-}
-
-/*
  * Prepare the ghost.
  */
-static void set_ghost_aux(void)
+static void set_ghost_aux(cptr gb_name, int ghost_race)
 {
 	monster_race *r_ptr;
 
@@ -245,8 +220,10 @@ static void set_ghost_aux(void)
  * we do not really need a "full" random seed, we could just use a
  * random value from which random numbers can be extracted.  (?)
  */
-static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
+static void set_ghost(cptr pname, int hp, int grace, int lev)
 {
+	char gb_name[32];
+
 	int i;
 
 	monster_race *r_ptr = &r_info[MON_PLAYER_GHOST];
@@ -279,11 +256,8 @@ static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
 	/* Extract the basic hit dice and sides */
 	r_ptr->hdice = r_ptr->hside = i;
 
-	/* Save the race and class */
-	ghost_race = grace;
-
 	/* Prepare the ghost */
-	set_ghost_aux();
+	set_ghost_aux(gb_name, grace);
 }
 
 
@@ -293,7 +267,7 @@ static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
  */
 bool place_ghost(void)
 {
-	int y, x, hp, level, grace, gclass;
+	int y, x, hp, level, grace, dummy[1];
 
 	monster_race *r_ptr = &r_info[MON_PLAYER_GHOST];
 
@@ -335,7 +309,7 @@ bool place_ghost(void)
 	if (!fp) return (FALSE);
 
 	/* Scan the file */
-	err = (fscanf(fp, "%[^\n]\n%d\n%d\n%d", name, &hp, &grace, &gclass) != 4);
+	err = (fscanf(fp, "%[^\n]\n%d\n%d\n%d", name, &hp, &grace, dummy) != 4);
 
 
 	/* Close the file */
@@ -349,7 +323,7 @@ bool place_ghost(void)
 	}
 
 	/* Set up the ghost */
-	set_ghost(name, hp, grace, gclass, level);
+	set_ghost(name, hp, grace, level);
 
 
 	/* Hack -- pick a nice (far away) location */
