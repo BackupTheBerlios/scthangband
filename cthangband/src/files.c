@@ -1664,8 +1664,13 @@ static void weapon_stats_calc(object_type *wp_ptr, object_type *am_ptr,
 	/* Calculate the damage bonus. */
 	(*damage) += 60*(*todam);
 	
+	/* Martial arts damage. */
+	if (slot == INVEN_WIELD && ma_empty_hands())
+	{
+		(*damage) += average_ma_damage();
+	}
 	/* Add in the slays. */
-	if (slot == INVEN_WIELD)
+	else if (slot == INVEN_WIELD)
 	{
 		(*damage) +=
 			critical_average(wp_ptr->weight, wp_ptr->to_h, dicedam * slay);
