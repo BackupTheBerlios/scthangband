@@ -105,6 +105,10 @@ X:#:monster_desc() names
 A:F:d_quest:Q:4
 F:macros:#
 
+X:#:feature_desc() names
+A:F:f_info:N:3
+F:macros:#
+
 # % masking (part 2)
 
 X:%%*
@@ -206,20 +210,23 @@ M:24
 
 X:%=I
 M:5
-#:object_desc() names
 #:monster_desc() names
+#:feature_desc() names
 
 X:%+I
 M:13
 #:monster_desc() names
+#:feature_desc() names
 
 X:%-I
 M:21
 #:monster_desc() names
+#:feature_desc() names
 
 X:%i
 M:29
 #:monster_desc() names
+#:feature_desc() names
 
 # %Base flags are always at the beginning to make searching for them
 # more efficient.
@@ -290,6 +297,7 @@ F:u_info:s
 X:& 
 Y:%+I%i %=I
 #:monster_desc() names
+#:feature_desc() names
 
 # Ensure that tvals are expressed as numbers.
 

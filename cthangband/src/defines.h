@@ -486,6 +486,15 @@ logaux(x, 1) logaux(x, 0) 255)
 #define MDF_YOUR	0x08	/* Give a possessive "article" (your ...). */
 #define MDF_MANY	0x80	/* Not 1 object. */
 
+/* monster_desc_aux_f3() special characters. */
+#define MCI_PLURAL	0x04
+#define MCI_ARTICLE	0x05
+
+
+/* feature_desc_f2() flags. */
+#define FDF_MIMIC	0x01 /* Use the feature the specified one is mimicking. */
+#define FDF_INDEF	0x02 /* Give an indefinite article (a ...). */
+
 /*
  * Store constants
  */

@@ -1057,6 +1057,7 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 	cave_type *c_ptr;
 	wall_type *w_ptr;
 	const wall_message_type *wm_ptr;
+	cptr w_name;
 
 	bool more = FALSE;
 
@@ -1083,9 +1084,13 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 
 	/* If a name is given here, use it. */
 	/* If no name has been set, read it from f_name. */
-	if (!w_ptr->name)
+	if (w_ptr->name)
 	{
-		w_ptr->name = f_name+f_info[f_info[w_ptr->feature].mimic].name;
+		w_name = w_ptr->name;
+	}
+	else
+	{
+		w_name = format("%v", feature_desc_f2, w_ptr->feature, FDF_MIMIC);
 	}
 
 	/* Find the message set. */
@@ -1094,12 +1099,12 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 	/* Certain failure */
 	if (w_ptr->special == WALL_NO_DIG || p_ptr->skill_dig < w_ptr->sk_min)
 	{
-		msg_format(wm_ptr->fail, w_ptr->name);
+		msg_format(wm_ptr->fail, w_name);
 	}
 	/* Normal failure */
 	else if (p_ptr->skill_dig < rand_range(w_ptr->sk_min, w_ptr->sk_max))
 	{
-		msg_format(wm_ptr->cont, w_ptr->name);
+		msg_format(wm_ptr->cont, w_name);
 		more = TRUE;
 
 		/* Occasional Search XXX XXX */
@@ -1114,7 +1119,7 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 		twall(y, x);
 
 		/* Message */
-		msg_format(wm_ptr->succeed, w_ptr->name);
+		msg_format(wm_ptr->succeed, w_name);
 
 		/* Handle special cases. */
 		switch (w_ptr->special)
@@ -1444,7 +1449,7 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
 	c_ptr = &cave[y][x];
 
 	/* Access trap name */
-	name = (f_name + f_info[c_ptr->feat].name);
+	name = format("%v", feature_desc_f2, c_ptr->feat, FDF_MIMIC);
 
 	/* Get the "disarm" factor */
 	i = p_ptr->skill_dis;

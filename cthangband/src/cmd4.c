@@ -2012,21 +2012,16 @@ struct visual_type
 	(*xa) = &(x_info[i].x_attr), \
 	(*xc) = &(x_info[i].x_char))
 
-#define get_name(x_info, x_name) \
-	(*name) = x_name+x_info[i].name;
 
-#define get_all(x_info, x_name) \
-{ \
-	get_visuals(x_info); \
-	get_name(x_info, x_name); \
-}
 
-/* Wrapers for the above for each type used here. */
-
+/*
+ * The strings in f_name are processed before they are printed.
+ */
 static void get_visuals_feat(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
-get_all(f_info, f_name)
-
-/* Non-standard get_visuals_* functions. */
+{
+	get_visuals(f_info);
+	*name = format("%v", feature_desc_f2, i, 0);
+}
 
 /*
  * The strings in r_name are processed before they are printed.

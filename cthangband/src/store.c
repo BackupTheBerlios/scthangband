@@ -1902,7 +1902,6 @@ static cptr store_title_aux(void)
 		default:
 	{
 			cptr tmp_str;
-			cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + st_ptr->type].name);
 		cptr owner_name = (s_name+ot_ptr->name);
 		cptr race_name = race_info[ot_ptr->owner_race].title;
 		object_type tmp;
@@ -1920,8 +1919,10 @@ static cptr store_title_aux(void)
 			p_ptr->stat_ind[A_CHR] = CHR_PRICE_COMPARE;
 
 		/* Show the max price in the store (above prices) */
-			out = format("%10s%-40s%s (%ld) [%ld]", "", tmp_str, store_name, (long)(ot_ptr->max_cost),
-			price_item(&tmp, ot_ptr->min_inflate, TRUE));
+			out = format("%10s%-40s%v (%ld) [%ld]", "", tmp_str,
+				feature_desc_f2, FEAT_SHOP_HEAD+st_ptr->type, FDF_MIMIC,
+				(long)(ot_ptr->max_cost),
+				price_item(&tmp, ot_ptr->min_inflate, TRUE));
 
 			/* Hack - return real charisma. */
 			p_ptr->stat_ind[A_CHR] = old_charisma;

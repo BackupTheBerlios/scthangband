@@ -968,9 +968,6 @@ s16b get_mon_num(int level)
 
 
 
-#define MCI_PLURAL	0x04
-#define MCI_ARTICLE	0x05
-
 /* Add a string at t (within buf) if there is enough room. */
 #define MDA_ADD(X) \
 { \

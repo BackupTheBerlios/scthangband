@@ -3652,7 +3652,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		/* Terrain feature if needed */
 		if (boring || (feat > FEAT_INVIS))
 		{
-			cptr name = f_name + f_info[feat].name;
+			cptr name = format("%v", feature_desc_f2, feat, FDF_INDEF);
 
 			/* Hack -- handle unknown grids */
 			if (feat == FEAT_NONE) name = "unknown grid";
@@ -3663,12 +3663,12 @@ static int target_set_aux(int y, int x, int mode, cptr info)
             else if (*s2 && (feat >= FEAT_DOOR_HEAD)) s2 = "in ";
 
 			/* Pick proper indefinite article */
-			s3 = (is_a_vowel(name[0])) ? "an " : "a ";
+			s3 = "";
 
 			/* Hack -- special introduction for store doors */
 			if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
 			{
-				s3 = (is_a_vowel(name[0])) ? "the entrance to an " : "the entrance to a ";
+				s3 = "the entrance to ";
 			}
 
 			/* Display a message */
@@ -4608,6 +4608,97 @@ bool get_rep_dir(int *dp)
 	return (TRUE);
 }
 
+
+/*
+ * Run through a string backwards, replacing ". CM_ACT | MCI_ARTICLE " with an
+ * indefinite article as we go. Return the start of the resulting string.
+ *
+ * NB: This assumes that CM_ACT | MCI_ARTICLE is never used at the start of the
+ * string.
+ */
+static void convert_articles(char *str)
+{
+	cptr s, a;
+	char *t;
+	
+	/* Parse backwards, deciphering articles. */
+	for (s = t = strchr(str, '\0'), a = "!";; s--, t--)
+	{
+		if (*s == (CM_ACT | MCI_ARTICLE))
+		{
+			if (a[1]) *t-- = a[1];
+			*t = a[0];
+			s--;
+		}
+		else if (s != t)
+		{
+			*t = *s;
+		}
+		if (!isalnum(*t)) ;
+		else if (strchr("aeiouAEIOU8", *t)) a = "an";
+		else a = "a";
+
+		if (s == str) break;
+	}
+
+	/* Copy to the start of the string if necessary. */
+	if (t != str) for (s = t, t = str; ((*t++ = *s++)););
+}
+
+#define FCI_ARTICLE	0x05
+
+/*
+ * Describe the name of a feature.
+ */
+static void feature_desc(char *buf, uint max, int feat, int flags)
+{
+	cptr s;
+	char *t;
+	byte reject = 0;
+	
+	if (flags & FDF_MIMIC) feat = f_info[feat].mimic;
+	if (~flags & FDF_INDEF) reject |= 1<<FCI_ARTICLE;
+
+	/* Copy the appropriate sections of string across. */
+	for (s = f_name+f_info[feat].name, t = buf; *s && t < buf+max-1; s++)
+	{
+		if (*s & 0xE0)
+		{
+			*t++ = *s;
+		}
+		else if (find_cm(*s) == CM_NORM);
+		else if (find_cm(*s) != CM_ACT)
+		{
+			s = find_next_good_flag(s, reject, ~reject)-1;
+		}
+		else if (find_ci(*s) == MCI_ARTICLE)
+		{
+			if (t >= buf+max-4) break;
+			t += sprintf(t, ".%c", CM_ACT | MCI_ARTICLE);
+		}
+	}
+	*t = '\0';
+
+	/* Turn any article strings into normal characters. */
+	convert_articles(buf);
+}
+
+void feature_desc_f2(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	int feat = va_arg(*vp, int);
+	int flags = va_arg(*vp, int);
+
+	cptr s;
+
+	/* Use %.123v to specify a maximum length of 123. */
+	if ((s = strchr(fmt, '.')))
+	{
+		long m = strtol(s+1, 0, 0)+1;
+		if (m > 0 && m < (long)max) max = m;
+	}
+
+	feature_desc(buf, max, feat, flags);
+}
 
 #if 0
 static int get_chaos_patron(void)

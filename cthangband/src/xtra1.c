@@ -4023,8 +4023,8 @@ static void win_floor_display(void)
 		int y;
 		object_type *o_ptr = o_list+cave[py][px].o_idx;
 
-		mc_put_str(format("You are standing on %s.\n",
-			f_name+f_info[cave[py][px].feat].name), 0, 0);
+		mc_put_str(format("You are standing on %v.\n",
+			feature_desc_f2, cave[py][px].feat, FDF_MIMIC | FDF_INDEF), 0, 0);
 
 		for (y = 1; y < Term->hgt && o_ptr != o_list;
 			y++, o_ptr = o_list+o_ptr->next_o_idx)
