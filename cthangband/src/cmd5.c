@@ -775,8 +775,10 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 				t_list = Term_save_aux();
 			}
 			/* Load the other screen. */
-			int t_new = (redraw) ? t_clear : t_list;
-			Term_load_aux(t_new);
+			if (redraw)
+				Term_load_aux(t_clear);
+			else
+				Term_load_aux(t_list);
 
 			/* Remember the change. */
 			redraw = !redraw;
