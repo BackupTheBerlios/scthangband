@@ -4371,6 +4371,9 @@ void player_birth(void)
 		if (player_birth_aux()) break;
 	}
 
+	/* Process the player name, if necessary. */
+	process_player_name();
+
 
 	/* Note player birth in the message recall */
 	message_add(" ");
