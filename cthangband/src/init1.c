@@ -278,7 +278,7 @@ static flag_name info_flags[] =
 	{"KILL_ITEM", RF2, RF2_KILL_ITEM},
       {"RUN_AWAY", RF2, RF2_RUN_AWAY},
 	{"ELEMENTAL", RF2, RF2_ELEMENTAL},
-/*	{"BRAIN_2", RF2, RF2_BRAIN_2}, */
+	{"MIMIC", RF2, RF2_MIMIC},
 /*	{"BRAIN_3", RF2, RF2_BRAIN_3}, */
 /*	{"BRAIN_4", RF2, RF2_BRAIN_4}, */
 /*	{"BRAIN_5", RF2, RF2_BRAIN_5}, */

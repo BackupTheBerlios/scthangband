@@ -2738,11 +2738,6 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 			return !!strchr("LVW", r_ptr->d_char);
 		}
 
-		case UNFLAG(SUMMON_MIMIC):
-		{
-			return !!strchr("!?=$|", r_ptr->d_char);
-		}
-
 		case UNFLAG(SUMMON_ANIMAL_RANGER):
 		{
 			return ((r_ptr->flags3 & (RF3_ANIMAL)) &&

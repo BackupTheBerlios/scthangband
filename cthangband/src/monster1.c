@@ -254,6 +254,7 @@ cptr roff_monster(u32b flags2, u32b flags3)
 		{3, RF3_TROLL, "trollish", "troll"},
 		{3, RF3_ORC, "orcish", "orc"},
 		{2, RF2_ELEMENTAL, "elemental", "elemental spirit"},
+		{2, RF2_MIMIC, "mimicking", "mimic"},
 		{3, RF3_GREAT_OLD_ONE, "Great Old One", "Great Old One"},
 	};
 
