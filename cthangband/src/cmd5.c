@@ -101,7 +101,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 		/* Show list */
 		redraw = TRUE;
 		Term_save();
-		print_spells(spells, num, 1, 20, school_no);
+		print_spells(spells, num, 1, -1, school_no);
 	}		
 	else
 	{
@@ -137,7 +137,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 				Term_save();
 
 				/* Display a list of spells */
-				print_spells(spells, num, 1, 20, school_no);
+				print_spells(spells, num, 1, -1, school_no);
 			}
 
 			/* Hide the list */
@@ -650,7 +650,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 		/* Show list */
 		redraw = TRUE;
 		Term_save();
-		print_favours(spells, num, 1, 20, sphere);
+		print_favours(spells, num, 1, -1, sphere);
 	}		
 	else
 	{
@@ -686,7 +686,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 				Term_save();
 
 				/* Display a list of spells */
-				print_favours(spells, num, 1, 20, sphere);
+				print_favours(spells, num, 1, -1, sphere);
 			}
 
 			/* Hide the list */
@@ -782,6 +782,16 @@ static int get_favour(int *sn, int spirit,int sphere)
 }
 
 /*
+ * Determine the energy used to invoke a specified favour.
+ */
+static int spirit_energy(int favour_sphere, int spell)
+{
+	int plev = MAX((skill_set[SKILL_SHAMAN].value/2), 1);
+	favour_type *f_ptr = &(favour_info[favour_sphere][spell]);
+	return spell_energy(plev,(u16b)(f_ptr->minskill));
+}
+
+/*
  * Print a list of favours (for invoking)
  */
 void print_favours(byte *spells, int num, int y, int x, int sphere)
@@ -797,6 +807,9 @@ void print_favours(byte *spells, int num, int y, int x, int sphere)
 
 	char            out_val[160];
 
+	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
+	if (x == -1) x = 15;
+
 	if (plev == 0) plev++;
     if ((sphere<0 || sphere>MAX_SPHERE - 1) && cheat_wzrd)
 	msg_print ("Warning! print_favours called with null sphere");
@@ -804,7 +817,7 @@ void print_favours(byte *spells, int num, int y, int x, int sphere)
     /* Title the list */
     prt("", y, x);
 	put_str("Name", y, x + 5);
-	put_str("Sk Fail Info", y, x + 40);
+	put_str("Sk Time Fail Info", y, x + 40);
 
 
     /* Dump the favours */
@@ -825,9 +838,9 @@ void print_favours(byte *spells, int num, int y, int x, int sphere)
 		}
 			
 		/* Dump the favour --(-- */
-		sprintf(out_val, "  %c) %-35s%2d %3d%%%s",
+		sprintf(out_val, "  %c) %-35s%2d %4d %3d%%%s",
 		I2A(i), favour_names[sphere][spell], /* sphere, spell */
-		s_ptr->minskill*2, favour_chance(spell,sphere), comment);
+		s_ptr->minskill*2, spirit_energy(sphere, spell), favour_chance(spell,sphere), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -960,7 +973,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
 			/* Show list */
 			redraw = TRUE;
 			Term_save();
-			print_spirits(valid_spirits,total,1, 20);
+			print_spirits(valid_spirits,total,1, -1);
 	}
 	else
 	{
@@ -987,7 +1000,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
 				Term_save();
 
 				/* Display a list of spirits */
-				print_spirits(valid_spirits,total,1, 20);
+				print_spirits(valid_spirits,total,1, -1);
 			}
 
 			/* Hide the list */
@@ -1105,6 +1118,10 @@ void print_spirits(int *valid_spirits,int num,int y, int x)
 	cptr            comment;
 	char            out_val[160];
 	char			full_name[80];
+
+	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
+	if (x == -1) x = 15;
+
 	if(plev == 0) plev++;
     /* Title the list */
     prt("", y, x);
@@ -1291,7 +1308,7 @@ void do_cmd_browse(int item)
 	Term_save();
 
 	/* Display the spells */
-	print_spells(spells, num, 1, 20, (o_ptr->tval-90));
+	print_spells(spells, num, 1, -1, (o_ptr->tval-90));
 
 	/* Clear the top line */
 	prt("", 0, 0);
@@ -4123,9 +4140,6 @@ void do_cmd_invoke(void)
 		if (skill_set[SKILL_SHAMAN].value < f_ptr->minskill * 2 + 50) {
 			skill_exp(SKILL_SHAMAN);
 		}
-
-	/* Take some time - a spell of your level takes 100, lower level spells take less */
-	energy_use = spell_energy((u16b)plev,(u16b)(f_ptr->minskill));
 	}
 
 	/* Window stuff */
@@ -4158,6 +4172,17 @@ void mindcraft_info(char *p, int power)
 }
 
 /*
+ * Calculate the enrgy required for a given mindcrafting power.
+ */
+static int mindcraft_energy(int power)
+{
+    int psi = skill_set[SKILL_MINDCRAFTING].value/2;
+    mindcraft_power spell = mindcraft_powers[power];
+
+	return spell_energy((u16b)psi,(u16b)(spell.min_lev));
+}
+
+/*
  * Display mindcrafting powers
  */
 static void print_mindcraft(int x, int y)
@@ -4168,7 +4193,7 @@ static void print_mindcraft(int x, int y)
 	/* Display a list of spells */
 	prt("", y, x);
 	put_str("Name", y, x + 5);
-	put_str("Sk  Chi Fail Info", y, x + 35);
+	put_str("Sk  Chi Time Fail Info", y, x + 35);
 
 	/* Dump the spells */
 	for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
@@ -4209,9 +4234,9 @@ static void print_mindcraft(int x, int y)
 		mindcraft_info(comment, i);
 				    
 		/* Dump the spell --(-- */
-		sprintf(psi_desc, "  %c) %-30s%2d %4d %3d%%%s",
+		sprintf(psi_desc, "  %c) %-30s%2d %4d %4d %3d%%%s",
 		I2A(i), spell.name,
-		spell.min_lev*2, spell.mana_cost, chance, comment);
+		spell.min_lev*2, spell.mana_cost, mindcraft_energy(i), chance, comment);
 		prt(psi_desc, y + i + 1, x);
 	}
 
@@ -4239,7 +4264,7 @@ static int get_mindcraft_power(int *sn)
 
 	int                     num = 0;
     int y = 1;
-    int x = 20;
+    int x = 15;
         int  psi = skill_set[SKILL_MINDCRAFTING].value/2;
     bool            flag, redraw;
     int             ask;

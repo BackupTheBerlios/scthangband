@@ -5859,6 +5859,17 @@ void get_cantrip_info(char *p, int spell)
 
 
 /*
+ * Determine the energy required to cast a given spell.
+ */
+static u16b spellcast_energy(int spell_school, int spell)
+{
+	magic_type	*s_ptr = &mp_ptr->info[spell_school][spell];
+	int plev = spell_skill(s_ptr);
+
+	return spell_energy((u16b)plev,(u16b)(s_ptr->minskill));
+}
+
+/*
  * Print a list of spells (for browsing or casting or viewing)
  */
 void print_spells(byte *spells, int num, int y, int x, int school)
@@ -5874,6 +5885,9 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 	char            out_val[160];
 
 
+	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
+	if (x == -1) x = 15;
+
     if ((school<0 || school>MAX_SCHOOL - 1) && cheat_wzrd)
 	msg_print ("Warning! print_spells called with null school");
 
@@ -5882,7 +5896,7 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 
     prt("", y, x);
 	put_str("Name", y, x + 5);
-	put_str("Ty(Sk) Mana Fail Info", y, x + 31);
+	put_str("Ty(Sk) Mana Time Fail Info", y, x + 31);
 
 
     /* Dump the spells */
@@ -5894,14 +5908,6 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 	/* Access the spell */
 
 	s_ptr = &mp_ptr->info[school][spell];
-
-	/* Skip illegible spells */
-	if (s_ptr->minskill >= 99)
-		{
-			sprintf(out_val, "  %c) %-30s", I2A(i), "(illegible)");
-			prt(out_val, y + i + 1, x);
-			continue;
-	}
 
 		/* XXX XXX Could label spells above the players level */
 
@@ -5951,9 +5957,9 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 	}
 
 		/* Dump the spell --(-- */
-		sprintf(out_val, "  %c) %-26s%s(%2d) %4d %3d%%%s",
+		sprintf(out_val, "  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
 		I2A(i), spell_names[school][spell], /* school, spell */
-		type,s_ptr->minskill*2, s_ptr->smana, spell_chance(spell,school), comment);
+		type,s_ptr->minskill*2, s_ptr->smana, spellcast_energy(school, spell), spell_chance(spell,school), comment);
 		prt(out_val, y + i + 1, x);
 	}
 

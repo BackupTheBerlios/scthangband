@@ -4938,7 +4938,7 @@ void do_store_browse( object_type *o_ptr)
 	Term_save();
 
 	/* Display the spells */
-	print_spells(spells, num, 1, 20, (o_ptr->tval-90));
+	print_spells(spells, num, 1, -1, (o_ptr->tval-90));
 
 	/* Clear the top line */
 	prt("", 0, 0);
