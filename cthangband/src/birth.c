@@ -549,6 +549,7 @@ static hist_type bg[] =
 
     {"You have ", 100, 134, 120, 50 },
 
+    {"", 0, 0, 0, 0 }
 };
 
 
@@ -709,6 +710,7 @@ void get_hermetic_skills_randomly(void);
 void get_hermetic_skills(void);
 static void get_ahw_average(void);
 static void get_money(bool randomly);
+static int get_social_average(void);
 
 /*
  * For characters starting with shaman skill, start them with a spirit
@@ -847,7 +849,7 @@ static bool point_mod_player(void)
 		p_ptr->csp = p_ptr->msp;
 		p_ptr->cchi = p_ptr->mchi;
 
-		/* Find the initial social class and money */
+		/* Find the initial money. */
 		get_money(FALSE);
 
 		/* Display the player */
@@ -981,6 +983,8 @@ static bool point_mod_player(void)
 			if (i != 7) get_ahw_average();
 			/* Set the experience factor (not affected by template) */
 			if (i != 7) p_ptr->expfact = rp_ptr->r_exp;
+			/* Get the average social class (not affected by template). */
+			if (i != 7) p_ptr->sc = get_social_average();
 			/* Get a default weapon (not affected by race) */
 			if (i != 6) wield_weapons(TRUE);
 
@@ -1665,6 +1669,45 @@ static void get_extra(void)
 
 
 /*
+ * Get an average social class for the given race using the "history charts".
+ */
+static int get_social_average(void)
+{
+	int chart = race_info[p_ptr->prace].chart;
+
+	/* social_class is actually 100 times the expected value,
+	so this is the average of randint(4) */
+	s16b social_class = 250;
+
+	/* Go through the charts */
+	while (chart)
+	{
+		int i, next = 0, roll = 0;
+		for (i=0; bg[i].chart; i++)
+		{
+			/* Restrict it to relevant charts. */
+			if (chart != bg[i].chart) continue;
+			/* Add the bonus * the chance of getting that chart. */
+			social_class += (bg[i].bonus - 50) * (bg[i].roll - roll);
+			/* Ignore non-linear progressions as they don't
+			affect the player's social class at the moment. */
+			if (next && next != bg[i].next);
+			/* Set next and the cumulative probability. */
+			next = bg[i].next;
+			roll = bg[i].roll;
+		}
+		/* Go to the next chart */
+		chart = next;
+	}
+	/* Restrict to the range 1-100 */
+	if (social_class > 10000) social_class = 10000;
+	else if (social_class < 100) social_class = 100;
+
+	/* Return something of the expected order of magnitude. */
+	return social_class/100;
+}
+
+/*
  * Get the racial history, and social class, using the "history charts".
  */
 static void get_history(void)
@@ -1688,166 +1731,7 @@ static void get_history(void)
 	social_class = randint(4);
 
 	/* Starting place */
-	switch (p_ptr->prace)
-	{
-        case RACE_GREAT:
-
-        {
-            chart = 67;
-            break;
-        }
-		case RACE_HUMAN:
-        case RACE_BARBARIAN:
-		{
-			chart = 1;
-			break;
-		}
-
-		case RACE_HALF_ELF:
-		{
-			chart = 4;
-			break;
-		}
-
-		case RACE_ELF:
-		case RACE_HIGH_ELF:
-		{
-			chart = 7;
-			break;
-		}
-
-		case RACE_HOBBIT:
-		{
-			chart = 10;
-			break;
-		}
-
-		case RACE_GNOME:
-		{
-			chart = 13;
-			break;
-		}
-
-		case RACE_DWARF:
-		{
-			chart = 16;
-			break;
-		}
-
-		case RACE_HALF_ORC:
-		{
-			chart = 19;
-			break;
-		}
-
-		case RACE_HALF_TROLL:
-		{
-			chart = 22;
-			break;
-		}
-
-        case RACE_DARK_ELF:
-        {
-            chart = 69;
-            break;
-        }
-        case RACE_HALF_OGRE:
-        {
-            chart = 74;
-            break;
-        }
-        case RACE_HALF_GIANT:
-        {
-            chart = 75;
-            break;
-        }
-        case RACE_HALF_TITAN:
-        {
-            chart = 76;
-            break;
-        }
-        case RACE_CYCLOPS:
-        {
-            chart = 77;
-            break;
-        }
-        case RACE_YEEK:
-        {
-            chart = 78;
-            break;
-        }
-        case RACE_KOBOLD:
-        {
-            chart = 82;
-            break;
-        }
-        case RACE_KLACKON:
-        {
-            chart = 84;
-            break;
-        }
-        case RACE_NIBELUNG:
-        {
-            chart = 87;
-            break;
-        }
-        case RACE_DRACONIAN:
-        {
-            chart = 89;
-            break;
-        }
-        case RACE_MIND_FLAYER:
-        {
-            chart = 92;
-            break;
-        }
-        case RACE_IMP:
-        {
-            chart = 94;
-            break;
-        }
-        case RACE_GOLEM:
-        {
-            chart = 98;
-            break;
-        }
-        case RACE_SKELETON:
-        {
-            chart = 102;
-            break;
-        }
-        case RACE_ZOMBIE:
-        {
-            chart = 107;
-            break;
-        }
-        case RACE_VAMPIRE:
-        {
-            chart = 113;
-            break;
-        }
-        case RACE_SPECTRE:
-        {
-            chart = 118;
-            break;
-        }
-        case RACE_SPRITE:
-        {
-            chart = 124;
-            break;
-        }
-        case RACE_BROO:
-        {
-            chart = 129;
-            break;
-        }
-		default:
-		{
-			chart = 0;
-			break;
-		}
-	}
-
+	chart = race_info[p_ptr->prace].chart;
 
 	/* Process the history */
 	while (chart)

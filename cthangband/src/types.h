@@ -860,6 +860,7 @@ struct player_race
 	byte infra;			/* Infra-vision	range */
 
     u16b choice;        /* Legal template choices */
+	byte chart;		/* Initial chart for get_history() */
 /*    byte choice_xtra;   */
 };
 
