@@ -187,7 +187,7 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 			{
 				make_item_type *i_ptr = &(d_ptr->par.item);
 				object_type o, *o_ptr = &o;
-				char o_name[80];
+				char o_name[ONAME_MAX];
 				object_prep(o_ptr, i_ptr->k_idx);
 				if (i_ptr->flags & EI_ART)
 					o_ptr->name1 = i_ptr->x_idx;
@@ -205,7 +205,7 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 			{
 				make_monster_type *i_ptr = &d_ptr->par.monster;
 				monster_race *r_ptr = &r_info[i_ptr->num];
-				char m_name[80];
+				char m_name[MNAME_MAX];
 				strcpy(m_name, r_name+r_ptr->name);
 				full_name(m_name, (i_ptr->max == 1), TRUE, ((r_ptr->flags4 & RF4_ODD_ART) != 0));
 				(*out)(format("%s%s %s be created", (i_ptr->max > 1) ? "some " : "", m_name, DDE_MAY));

@@ -2377,7 +2377,7 @@ void do_cmd_fire(void)
 	byte missile_attr;
 	char missile_char;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
@@ -2636,7 +2636,7 @@ void do_cmd_fire(void)
 				/* Handle visible monster */
 				else
 				{
-					char m_name[80];
+					char m_name[MNAME_MAX];
 
 					/* Get "the monster" or "it" */
 					monster_desc(m_name, m_ptr, 0);
@@ -2652,7 +2652,7 @@ void do_cmd_fire(void)
 
                   /* Anger friends */
                    if (m_ptr->smart & SM_ALLY) {
-                   char m_name[80];
+                   char m_name[MNAME_MAX];
                    monster_desc(m_name, m_ptr, 0);
                    msg_format("%s gets angry!", m_name);
                    m_ptr->smart &= ~SM_ALLY;
@@ -2688,7 +2688,7 @@ void do_cmd_fire(void)
 					/* Take note */
 					if (fear && m_ptr->ml)
 					{
-						char m_name[80];
+						char m_name[MNAME_MAX];
 
 						/* Sound */
 						sound(SOUND_FLEE);
@@ -2744,7 +2744,7 @@ void do_cmd_throw(void)
 	byte missile_attr;
 	char missile_char;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
@@ -2941,7 +2941,7 @@ void do_cmd_throw(void)
 				/* Handle visible monster */
 				else
 				{
-					char m_name[80];
+					char m_name[MNAME_MAX];
 
 					/* Get "the monster" or "it" */
 					monster_desc(m_name, m_ptr, 0);
@@ -2986,7 +2986,7 @@ void do_cmd_throw(void)
                    if ((m_ptr->smart & SM_ALLY)
                     && (!(k_info[q_ptr->k_idx].tval == TV_POTION)))
                     {
-                   char m_name[80];
+                   char m_name[MNAME_MAX];
                    monster_desc(m_name, m_ptr, 0);
                       msg_format("%s gets angry!", m_name);
                       m_ptr->smart &= ~SM_ALLY;
@@ -2995,7 +2995,7 @@ void do_cmd_throw(void)
 					/* Take note */
                     if (fear && m_ptr->ml)
 					{
-						char m_name[80];
+						char m_name[MNAME_MAX];
 
 						/* Sound */
 						sound(SOUND_FLEE);
@@ -3026,7 +3026,7 @@ void do_cmd_throw(void)
        {
               if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
                     {
-                   char m_name[80];
+                   char m_name[MNAME_MAX];
                    monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);
                    msg_format("%s gets angry!", m_name);
                    m_list[cave[y][x].m_idx].smart &= ~SM_ALLY;

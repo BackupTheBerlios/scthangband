@@ -367,7 +367,7 @@ void replace_friend(int m_idx)
 
     if (attempts < 1) 
 	{
-		char m_name[80];
+		char m_name[MNAME_MAX];
 		monster_desc(m_name,m_ptr,0x80);
 		msg_format("You get seperated from %s.",m_name);
 		return;

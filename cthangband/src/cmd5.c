@@ -1142,7 +1142,7 @@ void rustproof(void)
 
 	object_type	*o_ptr;
 
-	char		o_name[80];
+	char		o_name[ONAME_MAX];
 
 	/* Select a piece of armour */
 	item_tester_hook = item_tester_hook_armour;
@@ -1591,7 +1591,7 @@ static void brand_weapon(int brand_type)
 	{
 		cptr act = NULL;
 
-		char o_name[80];
+		char o_name[ONAME_MAX];
         object_desc(o_name, o_ptr, FALSE, 0); /* Let's get the name before
                                                 it is changed... */
 

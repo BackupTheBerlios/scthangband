@@ -156,7 +156,7 @@ void do_cmd_wield(void)
 
 	cptr act;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 
 	/* Restrict the choices */
@@ -467,7 +467,7 @@ void do_cmd_destroy(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[ONAME_MAX];
 
 	char		out_val[160];
 
@@ -618,7 +618,7 @@ void do_cmd_observe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[ONAME_MAX];
 
 
 	/* Get an item (from equip or inven or floor) */
@@ -714,7 +714,7 @@ void do_cmd_inscribe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[ONAME_MAX];
 
 	char		out_val[80];
 

@@ -3009,8 +3009,10 @@ extern int PlayerUID;
 #define SOUND_MAX 29
 
 
-/*** Hack ***/
-
+/* Size of the buffer needed for object_desc() */
+#define ONAME_MAX 120
+/* And for monster_desc() */
+#define MNAME_MAX 80
 
 /*
  * Hack -- attempt to reduce various values

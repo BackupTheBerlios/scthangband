@@ -2827,7 +2827,7 @@ errr file_character(cptr name, bool full)
 
 	FILE		*fff = NULL;
 
-	char		o_name[80];
+	char		o_name[ONAME_MAX];
 
 	char		buf[1024];
 

@@ -1092,7 +1092,7 @@ static int inven_damage(inven_func typ, int perc)
 
 	object_type     *o_ptr;
 
-	char    o_name[80];
+	char    o_name[ONAME_MAX];
 
 
 	/* Count the casualties */
@@ -1168,7 +1168,7 @@ static int minus_ac(void)
 
 	u32b            f1, f2, f3;
 
-	char            o_name[80];
+	char            o_name[ONAME_MAX];
 
 
 	/* Pick a (possibly empty) inventory slot */
@@ -1581,7 +1581,7 @@ bool apply_disenchant(int mode)
 
 	object_type             *o_ptr;
 
-	char            o_name[80];
+	char            o_name[ONAME_MAX];
 
 
 	/* Unused */
@@ -2169,7 +2169,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
 	u32b f1, f2, f3;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
     int o_sval = 0;
     bool is_potion = FALSE;
@@ -2496,7 +2496,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-    char killer [80];
+    char killer[MNAME_MAX];
 
 	cptr name = (r_name + r_ptr->name);
 
@@ -2530,7 +2530,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 
 	/* Hold the monster name */
-	char m_name[80];
+	char m_name[MNAME_MAX];
 
 	/* Assume no note */
 	cptr note = NULL;
@@ -4549,10 +4549,10 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 	monster_type *m_ptr;
 
 	/* Monster name (for attacks) */
-	char m_name[80];
+	char m_name[MNAME_MAX];
 
 	/* Monster name (for damage) */
-	char killer[80];
+	char killer[MNAME_MAX];
 
 	/* Hack -- messages */
 	cptr act = NULL;

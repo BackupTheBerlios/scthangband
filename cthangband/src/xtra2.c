@@ -2419,7 +2419,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	/* It is dead now */
 	if (m_ptr->hp < 0)
 	{
-		char m_name[80];
+		char m_name[MNAME_MAX];
 
 		/* Extract monster name */
 		monster_desc(m_name, m_ptr, 0);
@@ -3291,7 +3291,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			{
 				bool recall = FALSE;
 
-				char m_name[80];
+				char m_name[MNAME_MAX];
 
 				/* Not boring */
 				boring = FALSE;
@@ -3374,7 +3374,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				/* Scan all objects being carried */
 				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 				{
-					char o_name[80];
+					char o_name[ONAME_MAX];
 
 					object_type *o_ptr;
 				
@@ -3426,7 +3426,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Describe it */
 			if (o_ptr->marked)
 			{
-				char o_name[80];
+				char o_name[ONAME_MAX];
 
 				/* Not boring */
 				boring = FALSE;

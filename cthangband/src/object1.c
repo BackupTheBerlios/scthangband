@@ -1412,7 +1412,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	char            c1 = '{', c2 = '}';
 
 	char            tmp_val[160];
-	char            tmp_val2[90];
+	char            tmp_val2[ONAME_MAX];
 
 	u32b            f1, f2, f3;
 
@@ -2154,25 +2154,16 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		/* Append the inscriptions from bottom to top. */
 		while (i--)
 		{ 
-			strcat(tmp_val2, k[i]);
-			if (i) strcat(tmp_val2, ", ");
+			/* This leaves enough space for formatting. */
+			s16b len = ONAME_MAX-strlen(tmp_val)-strlen(tmp_val2)-4;
+			if (len < 1) break;
+			snprintf(tmp_val2+strlen(tmp_val2), len, "%s%s", k[i], (i) ? ", " : "");
 		}
 	}
 
 	/* Append the inscription, if any */
 	if (tmp_val2[0])
 	{
-		int n;
-
-		/* Hack -- How much so far */
-		n = (t - tmp_val);
-
-		/* Paranoia -- do not be stupid */
-		if (n > 75) n = 75;
-
-		/* Hack -- shrink the inscription */
-		tmp_val2[75 - n] = '\0';
-
 		/* Append the inscription */
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, c1);
@@ -2181,7 +2172,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	}
 copyback:
 	/* Here's where we dump the built string into buf. */
-	tmp_val[79] = '\0';
+	tmp_val[ONAME_MAX-1] = '\0';
 	t = tmp_val;
 	while((*(buf++) = *(t++))) ; /* copy the string over */
 }
@@ -3911,7 +3902,7 @@ void display_inven(void)
 
 	char    tmp_val[80];
 
-	char    o_name[80];
+	char    o_name[ONAME_MAX];
 
 
 	/* Find the "final" slot */
@@ -3996,7 +3987,7 @@ void display_equip(void)
 
 	char    tmp_val[80];
 
-	char    o_name[80];
+	char    o_name[ONAME_MAX];
 
 
 	/* Display the equipment */
@@ -4081,7 +4072,7 @@ void show_inven(void)
 
 	object_type     *o_ptr;
 
-	char    o_name[80];
+	char    o_name[ONAME_MAX];
 
 	char    tmp_val[80];
 
@@ -4219,7 +4210,7 @@ void show_equip(void)
 
 	char            tmp_val[80];
 
-	char            o_name[80];
+	char            o_name[ONAME_MAX];
 
 	int                     out_index[23];
 	byte            out_color[23];
@@ -4394,7 +4385,7 @@ void toggle_inven_equip(void)
  */
 static bool verify(cptr prompt, int item)
 {
-	char    o_name[80];
+	char    o_name[ONAME_MAX];
 
 	char    out_val[160];
 

@@ -171,7 +171,7 @@ static void sense_inventory(void)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 
 	/*** Check for "sensing" ***/
@@ -649,7 +649,7 @@ bool psychometry(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[80];
+	char            o_name[ONAME_MAX];
         cptr            feel, oldfeel;
 
 	/* Get an item (from equip or inven or floor) */
@@ -1543,7 +1543,7 @@ static void process_world(void)
 	 */
 	if (f3 & TR3_AUTO_CURSE && ~(o_ptr->ident) & IDENT_CURSED && turn > curse_turn)
 	{
-		char o_name[80];
+		char o_name[ONAME_MAX];
 		curse(o_ptr);
 		object_desc(o_name, o_ptr, FALSE, 0);
 		msg_format("The %s suddenly feels deathly cold!", o_name);
@@ -3066,7 +3066,7 @@ static void process_player(void)
 		{
 			int item = INVEN_PACK;
 
-			char o_name[80];
+			char o_name[ONAME_MAX];
 
 			object_type *o_ptr;
 

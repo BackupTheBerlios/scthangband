@@ -3314,7 +3314,7 @@ static void do_cmd_knowledge_objects(void)
 
 	FILE *fff;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 	char file_name[1024];
 

@@ -1716,7 +1716,7 @@ static s16b m_bonus(int max, int level)
  */
 static void object_mention(object_type *o_ptr)
 {
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 	/* Describe */
 	object_desc_store(o_name, o_ptr, FALSE, 0);
@@ -4229,7 +4229,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 	cave_type *c_ptr;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 	bool flag = FALSE;
 	bool done = FALSE;
@@ -4631,7 +4631,7 @@ void inven_item_describe(int item)
 {
 	object_type     *o_ptr = &inventory[item];
 
-	char    o_name[80];
+	char    o_name[ONAME_MAX];
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3);
@@ -4781,7 +4781,7 @@ void floor_item_describe(int item)
 {
 	object_type     *o_ptr = &o_list[item];
 
-	char    o_name[80];
+	char    o_name[ONAME_MAX];
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3);
@@ -5059,7 +5059,7 @@ s16b inven_takeoff(int item, int amt)
 
 	cptr act;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 
 	/* Get the item to take off */
@@ -5136,7 +5136,7 @@ void inven_drop(int item, int amt)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 
 	/* Access original object */
@@ -5875,7 +5875,7 @@ void display_koff(int k_idx)
 	object_type forge;
 	object_type *q_ptr;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 
 	/* Erase the window */

@@ -1057,7 +1057,7 @@ bool curse_armor(void)
 {
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 
 	/* Curse the body armor */
@@ -1127,7 +1127,7 @@ bool curse_weapon(void)
 {
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[ONAME_MAX];
 
 
 	/* Curse the weapon */
