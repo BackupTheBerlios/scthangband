@@ -484,7 +484,7 @@ extern cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern cptr process_pref_file_aux(char *buf, u16b *sf_flags);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(OBJECT1_C) || defined(POWERS_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(OBJECT1_C))
 extern errr process_pref_file(cptr name);
 #endif
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_C))
@@ -2447,7 +2447,7 @@ extern int keymap_mode(void);
 #if (defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C))
 extern void request_command(bool shopping);
 #endif
-#if (defined(OBJECT1_C) || defined(UTIL_C))
+#if (defined(OBJECT1_C) || defined(POWERS_C) || defined(UTIL_C))
 extern bool is_a_vowel(int ch);
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(UTIL_C) || defined(XTRA2_C))
@@ -2633,7 +2633,7 @@ extern bool cheat_wzrd;
 #if (defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool use_sound;
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(Z_TERM_C))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(Z_TERM_C))
 extern bool use_graphics;
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -3437,7 +3437,7 @@ extern owner_type *owners;
 #if (defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern cptr s_name;
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(VARIABLE_C))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_SYS;
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(VARIABLE_C))
@@ -4030,5 +4030,11 @@ extern void dump_history(FILE *fff);
 
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C) || defined(XTRA1_C))
 extern bool PURE player_is_undead(void);
+#endif
+
+/* dungeon.c */
+
+#if (defined(DUNGEON_C) || defined(POWERS_C))
+extern void process_some_user_pref_files(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

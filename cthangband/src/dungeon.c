@@ -3862,7 +3862,7 @@ static void dungeon(void)
  * Load all relevant pref files to avoid problems with preferences being set to
  * to defaults.
  */
-static void process_some_user_pref_files(void)
+void process_some_user_pref_files(void)
 {
 	char buf[NAME_LEN+4];
 

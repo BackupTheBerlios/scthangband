@@ -845,93 +845,98 @@ void do_poly_wounds(int cause)
         }
 }
 
+static void do_poly_race(void)
+{
+	/* Pick a random race other than the current one. */
+	int new_race = rand_int(MAX_RACES-1);
+	if (new_race == p_ptr->prace) new_race = MAX_RACES-1;
+
+	/* Set the globals for the new race. */
+	p_ptr->prace = new_race;
+	rp_ptr = &race_info[p_ptr->prace];
+
+	msg_format("You turn into %s %s!",
+		is_a_vowel(rp_ptr->title[0]) ? "an" : "a", rp_ptr->title);
+
+	/* Experience factor */
+	p_ptr->expfact = rp_ptr->r_exp;
+
+	/* Calculate the height/weight for males */
+	if (p_ptr->psex == SEX_MALE)
+	{
+		p_ptr->ht = randnor(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
+		p_ptr->wt = randnor(rp_ptr->m_b_wt, rp_ptr->m_m_wt);
+	}
+
+	/* Calculate the height/weight for females */
+	else if (p_ptr->psex == SEX_FEMALE)
+	{
+		p_ptr->ht = randnor(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
+		p_ptr->wt = randnor(rp_ptr->f_b_wt, rp_ptr->f_m_wt);
+	}
+
+	/* Load race-specific pref file information if allowed. */
+	if (get_check("Re-load preference files for new race (y/n)?"))
+	{
+		process_some_user_pref_files();
+	}
+
+	p_ptr->update |= (PU_BONUS);
+
+	handle_stuff();
+
+	lite_spot(py, px);
+}
+
 void do_poly_self(void)
 {
-int effects = randint(2);
-int tmp = 0;
-int new_race;
-int more_effects = TRUE;
-char buf[1024];
+	int effects, tmp;
 
-msg_print("You feel a change coming over you...");
+	msg_print("You feel a change coming over you...");
 
-while (effects-- && more_effects)
-    {
-        switch (randint(12))
-        {
-        case 1: case 2:
-            do_poly_wounds(MON_FATAL_POLYMORPH);
-            break;
-        case 3: case 4:
-            (void) gain_chaos_feature(0);
-            break;
-		case 5: case 6: case 7: /* Racial polymorph! Uh oh... */
-          {
-            do { new_race = randint(MAX_RACES) -1; } while (new_race == p_ptr->prace);
+	for (effects = randint(2), tmp = 0; effects; effects--)
+	{
+		switch (rand_int(12))
+		{
+			case 1: case 2:
+			{
+				do_poly_wounds(MON_FATAL_POLYMORPH);
+				break;
+			}
+			case 3: case 4:
+			{
+				(void) gain_chaos_feature(0);
+				break;
+			}
+			case 5: case 6: case 7: /* Racial polymorph! Uh oh... */
+			{
+				do_poly_race();
 
-            msg_format("You turn into a%s %s!",
-                ((new_race == RACE_ELF
-                  || new_race == RACE_IMP)?"n":""),
-                race_info[new_race].title);
-
-                p_ptr->prace = new_race;
-                rp_ptr = &race_info[p_ptr->prace];
-
-				/* Access the "race" pref file */
-				sprintf(buf, "%s.prf", rp_ptr->title);
-
-				/* Process that file */
-				process_pref_file(buf);
-
-				/* Access the "font" or "graf" pref file, based on "use_graphics" */
-				sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-
-				/* Process that file */
-				process_pref_file(buf);
-
-                /* Experience factor */
-                p_ptr->expfact = rp_ptr->r_exp;
-
-            /* Calculate the height/weight for males */
-            if (p_ptr->psex == SEX_MALE)
-            {
-                p_ptr->ht = randnor(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
-                p_ptr->wt = randnor(rp_ptr->m_b_wt, rp_ptr->m_m_wt);
-            }
-
-            /* Calculate the height/weight for females */
-                else if (p_ptr->psex == SEX_FEMALE)
-            {
-                p_ptr->ht = randnor(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
-                p_ptr->wt = randnor(rp_ptr->f_b_wt, rp_ptr->f_m_wt);
-            }
-
-
-            p_ptr->update |= (PU_BONUS);
-
-            handle_stuff();
-          }
-          lite_spot(py, px);
-          more_effects = FALSE; /* Stop here! */
-          break;
-        case 8: /* Purposedly "leaks" into default */
-            msg_print("You polymorph into an abomination!");
-            while (tmp < 6)
-            {
-                (void)dec_stat(tmp, randint(6)+6, (randint(3)==1));
-                tmp++;
-            }
-            if (randint(6)==1)
-            {
-                msg_print("You find living difficult in your present form!");
-                take_hit(damroll(randint(skill_set[SKILL_TOUGH].value/2),skill_set[SKILL_TOUGH].value/2), "a lethal chaos feature", MON_FATAL_POLYMORPH);
-            }
-            /* No break; here! */
-        default:
-            chaos_feature_shuffle();
-    }
-    }
-
+				/* Do nothing more. */
+				return;
+			}
+			case 8:
+			{
+				msg_print("You polymorph into an abomination!");
+				while (tmp < 6)
+				{
+					dec_stat(tmp, rand_range(7,12), one_in(3));
+					tmp++;
+				}
+				if (one_in(6))
+				{
+					msg_print("You find living difficult in your present form!");
+					take_hit(damroll(randint(skill_set[SKILL_TOUGH].value/2),skill_set[SKILL_TOUGH].value/2), "a lethal chaos feature", MON_FATAL_POLYMORPH);
+				}
+				chaos_feature_shuffle();
+				break;
+			}
+			default:
+			{
+				chaos_feature_shuffle();
+			}
+		}
+	}
 }
 
 
