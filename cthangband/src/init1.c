@@ -712,6 +712,7 @@ static errr compress_string(char *buf)
 			case CM_ACT:
 				if (~require & flag) return PARSE_ERROR_GENERIC;
 				break;
+			default: /* ? */
 		}
 	}
 
@@ -823,7 +824,7 @@ bool find_string_x(char *buf, cptr string)
  * max_size contains the maximum offset allowed.
  * offset contains the offset for this event (should be 0 initially).
  */
-errr do_get_string(char *buf, char this, cptr all, char *output, u32b *this_size, u32b max_size, u16b *offset)
+errr do_get_string(char *buf, char this, char *all, char *output, u32b *this_size, u32b max_size, u16b *offset)
 {
 	char *q, *r, *s = buf, *t = strchr(buf, '\0'), *last;
 	bool escaped = FALSE;
@@ -2188,7 +2189,7 @@ static errr u_finish_off(s16b scroll_base, s16b *scrolls, unident_type *u_ptr) \
 
 		/* Hack -- Verify space */
 		if (error_idx >= UB_U_IDX) return ERR_MEMORY;
-		if ((u32b)u_head->name_size + MAX_SCROLL_LEN + 8 > fake_name_size) return ERR_MEMORY;
+		if (u_head->name_size + MAX_SCROLL_LEN + 8 > fake_name_size) return ERR_MEMORY;
 
 		/* Select the new entry. */
 		u_ptr = &u_info[error_idx];

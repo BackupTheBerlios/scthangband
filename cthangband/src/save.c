@@ -626,7 +626,8 @@ static void wr_lore(int r_idx)
 static void wr_death(void)
 {
 	uint i;
-	u16b tmp16u = UNREAD_VALUE;
+	u16b tmp16u;
+	{
 		for (i = 0; i < MAX_DEATH_EVENTS; i++)
 		{
 			death_event_type *d_ptr = &death_event[i];
@@ -644,6 +645,7 @@ static void wr_death(void)
 		/* Terminate by setting the 16th bit. */
 		tmp16u |= 1<<15;
 		wr_u16b(tmp16u);
+	}
 }
 
 #endif

@@ -104,14 +104,8 @@ CC = gcc
 ## Note: Get the 16x16.bmp file, and put in game_directory/lib/xtra/graf
 ##       to get 256 colours.
 ##
-CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" \
-	-D"USE_TRANSPARENCY" \
-	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
-	-Wno-long-long -Wwrite-strings -Wpointer-arith \
-	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
-	-Waggregate-return -Wno-format-y2k \
-	#-Wstrict-prototypes \
-
+CFLAGS = -W -Wall -O3 -fno-strength-reduce -pipe -g \
+         -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib $(PYLIB)
 
 

@@ -2403,7 +2403,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	s32b               last_offer, offer;
 	s32b               x1, x2, x3;
 	s32b               min_per, max_per;
-	int                flag, loop_flag;
+	int                flag, loop_flag, noneed;
 	int                annoyed = 0, final = FALSE;
 
 	bool		cancel = FALSE;
@@ -2426,7 +2426,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	cur_ask *= o_ptr->number;
 	final_ask *= o_ptr->number;
 
-	if ((auto_haggle || final) && !verbose_haggle)
+	if ((auto_haggle || noneed) && !verbose_haggle)
 	{
 		if(cur_store_type == STORE_PAWN)
 			object_desc(o_name, o_ptr, TRUE, 3);

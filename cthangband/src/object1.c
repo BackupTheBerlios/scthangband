@@ -456,10 +456,10 @@ void reset_visuals(void)
 	char buf[1024];
 
 	/* Reset various attr/char maps. */
-	process_pref_file_aux((char*)"F:---reset---");
-	process_pref_file_aux((char*)"K:---reset---");
-	process_pref_file_aux((char*)"U:---reset---");
-	process_pref_file_aux((char*)"R:---reset---");
+	process_pref_file_aux("F:---reset---");
+	process_pref_file_aux("K:---reset---");
+	process_pref_file_aux("U:---reset---");
+	process_pref_file_aux("R:---reset---");
 
 	/* Extract some info about monster memory colours. */
 	for (i = 0; i < MAX_MONCOL; i++)
@@ -3294,7 +3294,7 @@ static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
 		if (info[i])
 		{
 			info_a[i] = TRUE;
-			info[i++] = string_make(format("It gives you %d,%d %s per turn", weap_blow/60, weap_blow%60));
+			info[i++] = string_make(format("It gives you %d,%d %s per turn", weap_blow/60, weap_blow%60, info[i]));
 		}
 	}
 	/* Without spoil_dam, simply list the slays. */

@@ -624,7 +624,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_open_aux(int y, int x, int UNUSED dir)
+static bool do_cmd_open_aux(int y, int x, int dir)
 {
 	int i, j;
 
@@ -833,7 +833,7 @@ void do_cmd_open(void)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_close_aux(int y, int x, int UNUSED dir)
+static bool do_cmd_close_aux(int y, int x, int dir)
 {
 	cave_type	*c_ptr;
 
@@ -999,7 +999,7 @@ static void twall(int y, int x)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
+static bool do_cmd_tunnel_aux(int y, int x, int dir)
 {
 	cave_type *c_ptr;
 
@@ -3865,13 +3865,13 @@ static s16b count_powers(void)
  */
 byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, char *), byte num, cptr string1, cptr string2, cptr substring)
 				{
-	bool ask, started = FALSE;
+	bool ask, started = FALSE, finished = FALSE;
 	char choice;
-	byte select = 0, first = 0, last = 0;
+	byte select, first = 0, last = 0;
 	byte page = (substring) ? 22 : 23;
 	char string[80];
 
-	while (!select)
+	while (!finished)
 	{
 		/* Display the available choices */
 		strnfmt(string, 78, "(%s %c-%c, *=List %s, ESC=exit) %s ",
@@ -3893,6 +3893,7 @@ byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, c
 			/* Don't choose anything. */
 			case ESCAPE:
 			select = 255;
+			finished = TRUE;
 			break;
 			/* Request redraw */
 			case ' ': case '*': case '?':
@@ -3950,7 +3951,11 @@ byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, c
 				{
 					char tmp_val[160];
 					(*confirm)(select, tmp_val);
-					if (!get_check(tmp_val)) select = 0;
+					if (get_check(tmp_val)) finished = TRUE;
+						}
+				else /* Need no confirmation. */
+						{
+					finished = TRUE;
 						}
 				break;
 					}
@@ -4107,7 +4112,7 @@ static bool racial_aux(powertype *pw_ptr)
 /*
  * Use a racial/mutated power.
  */
-void do_cmd_racial_power(void)
+void do_cmd_racial_power()
 				{
 	char out_val[160];
 					

@@ -788,7 +788,7 @@ static void health_redraw(void)
 	else
 	{
 		int pct, len;
-		const char *smb;
+		char *smb;
 
 		monster_type *m_ptr = &m_list[health_who];
 
@@ -1279,7 +1279,7 @@ static bool ang_mon_sort_comp_hook(vptr u, vptr v, int a, int b)
  * We use "u" to point to array of monster indexes,
  * and "v" to select the type of sorting to perform.
  */
-static void ang_mon_sort_swap_hook(vptr u, vptr UNUSED v, int a, int b)
+static void ang_mon_sort_swap_hook(vptr u, vptr v, int a, int b)
 {
 	monster_list_entry *who = (monster_list_entry*)(u);
 
@@ -1779,6 +1779,7 @@ static void calc_mana(bool quiet)
 {
 	int	msp, levels, cur_wgt, max_wgt;
 	int     mchi;
+	u32b f1, f2, f3;
 
 	object_type	*o_ptr;
 
@@ -4070,12 +4071,12 @@ void handle_stuff(void)
 }
 
 
-bool ma_empty_hands(void)
+bool ma_empty_hands()
 {
     return !(inventory[INVEN_WIELD].k_idx);
 }
 
-bool ma_heavy_armor(void)
+bool ma_heavy_armor()
 {
 
     u16b arm_wgt = 0;
@@ -4092,7 +4093,7 @@ bool ma_heavy_armor(void)
 /*
  * Update the maxima for each skill, and possibly give chaos patron rewards
  */
-void update_skill_maxima(void)
+void update_skill_maxima()
 {
 	int i,chance;
 

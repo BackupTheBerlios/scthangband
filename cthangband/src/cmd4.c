@@ -2191,14 +2191,14 @@ static void visual_dump_moncol(FILE *fff)
 	fprintf(fff, "\n\n\n\n");
 }
 
-static void visual_load_moncol(uint n, uint *da, uint UNUSED *dc, uint *ca, uint UNUSED *cc)
+static void visual_load_moncol(uint n, uint *da, uint *dc, uint *ca, uint *cc)
 {
 	moncol_type *mc_ptr = &moncol[n];
 	(*da) = TERM_WHITE;
 	(*ca) = mc_ptr->attr;
 }
 
-static void visual_save_moncol(uint n, uint ca, uint UNUSED cc)
+static void visual_save_moncol(uint n, uint ca, uint cc)
 {
 	moncol_type *mc_ptr = &moncol[n];
 	mc_ptr->attr = ca;
@@ -2379,7 +2379,6 @@ void do_cmd_visuals(void)
 				int da, dc, ca, cc;
 				char *text;
 				cptr prompt;
-dcv_retry:
 
 				/* Grab the information for the current entry.*/
 				(*(vs_ptr->load))(r, &da, &dc, &ca, &cc);
@@ -2405,7 +2404,7 @@ dcv_retry:
 				else if (vs_ptr->chars)
 					text = format("Default char = %3u", dc);
 				else
-					text = (char*)"A white #";
+					text = "A white #";
 				Term_putstr(10, CMDLINE+4, -1, TERM_WHITE, text);
 
 				if (vs_ptr->attr && vs_ptr->chars)
@@ -2415,7 +2414,7 @@ dcv_retry:
 				else if (vs_ptr->chars)
 					text = format("Current char = %3u", cc);
 				else
-					text = (char*)"A white #";
+					text = "A white #";
 				Term_putstr(10, CMDLINE+5, -1, TERM_WHITE, text);
 
 				/* Prompt */
@@ -2459,10 +2458,12 @@ dcv_retry:
 						out = &cc;
 						max = 256;
 						break;
-					/* Not a valid response. */
 					default:
-						goto dcv_retry;
+						max = 0;
 				}
+
+				/* No valid selection. */
+				if (!max) continue;
 
 				/* Analyze */
 				if (inc == 0)
@@ -3541,7 +3542,7 @@ static void do_cmd_knowledge_kill_count(void)
  *
  * Sort from high number of kills to low, and then from low monster level to high.
  */
-static bool ang_sort_comp_deaths(vptr u, vptr UNUSED v, int a, int b)
+static bool ang_sort_comp_deaths(vptr u, vptr v, int a, int b)
 {
 	s16b *races = (s16b*)u;
 	bool dif = r_info[races[a]].r_deaths-r_info[races[b]].r_deaths;
@@ -3552,7 +3553,7 @@ static bool ang_sort_comp_deaths(vptr u, vptr UNUSED v, int a, int b)
 /*
  * Swapping hook for do_cmd_knowledge_deaths()
  */
-static void ang_sort_swap_deaths(vptr u, vptr UNUSED v, int a, int b)
+static void ang_sort_swap_deaths(vptr u, vptr v, int a, int b)
 {
 	s16b *races = (s16b*)u;
 	s16b c = races[a];

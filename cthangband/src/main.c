@@ -26,7 +26,7 @@
  *
  * Close down, then fall back into "quit()".
  */
-static void quit_hook(cptr UNUSED s)
+static void quit_hook(cptr s)
 {
 	int j;
 
