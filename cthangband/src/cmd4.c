@@ -579,6 +579,10 @@ static bool showfile(cptr name, byte col)
 	return TRUE;
 }
 
+/*
+ * If option_info[i] has no effect because of other option settings,
+ * treat it in a special way to make this clear.
+ */
 static bool opt_is_forced(int i)
 {
 	typedef struct force_type force_type;
@@ -596,6 +600,7 @@ static bool opt_is_forced(int i)
 		{&centre_view, FALSE, &no_centre_run},
 		{&stack_force_notes, FALSE, &stack_force_notes_all},
 		{&wear_confirm, FALSE, &confirm_wear_all},
+		{&flow_by_sound, FALSE, &flow_by_smell},
 		{0, 0, 0}
 	};
 
