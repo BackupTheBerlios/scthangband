@@ -17,6 +17,7 @@ sCthangband _CVS_
 * Correct/alter some documentation.
 * Fix the following bugs:
   * Objects were described as "powerful" incorrectly.
+  * The 'z' key could select items with curses the player knew nothing about.
   * Compiling with BCC still led to frequent crashes.
   * Characters could get a chaos power on creation if patrons were disabled.
   * Some indirect help commands did not restore the screen after they finished.

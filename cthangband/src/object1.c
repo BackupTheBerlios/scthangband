@@ -4701,7 +4701,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 					if (strstr(quark_str(o_ptr->note), "!K")) continue;
 
 					/* Found a cursed item. */
-					if (cursed_p(o_ptr)) cursed = o_ptr;
+					if (cursed_p(j_ptr)) cursed = o_ptr;
 
 					/* Found an uncursed worthless item. */
 					else if (!object_value(o_ptr, FALSE)) broken = o_ptr;
