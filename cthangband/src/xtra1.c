@@ -1514,7 +1514,11 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3)
 {
 	int f,s;
 	s16b flags[4][32];
-	u32b *fn[3] = { f1, f2, f3 };
+	u32b *fn[3];
+
+	fn[0] = f1;
+	fn[1] = f2;
+	fn[2] = f3;
 
 	/* Clear */
 	(*f1) = (*f2) = (*f3) = 0L;
