@@ -521,63 +521,57 @@ static bool pattern_effect_p(void)
  */
 static void pattern_effect(void)
 {
+	const bool special = player_has_flag(TR0, TR0_PATTERN);
+
 	if (!pattern_effect_p()) return;
 
+	if (special && p_ptr->cut>0 && one_in(10))
+	{
+		wreck_the_pattern();
+	}
 
-    if ((p_ptr->prace == RACE_GREAT) && (p_ptr->cut>0) &&
-        (randint(10)==1))
-        {
-            wreck_the_pattern();
-        }
+	if (cave[py][px].feat == FEAT_PATTERN_END)
+	{
+		(void)set_flag(TIMED_POISONED, 0);
+		(void)set_flag(TIMED_IMAGE, 0);
+		(void)set_flag(TIMED_STUN, 0);
+		(void)set_flag(TIMED_CUT, 0);
+		(void)set_flag(TIMED_BLIND, 0);
+		(void)set_flag(TIMED_AFRAID, 0);
+		(void)do_res_stat(A_STR);
+		(void)do_res_stat(A_INT);
+		(void)do_res_stat(A_WIS);
+		(void)do_res_stat(A_DEX);
+		(void)do_res_stat(A_CON);
+		(void)do_res_stat(A_CHR);
+		(void)restore_level();
+		(void)hp_player(1000);
+		cave_set_feat(py, px, FEAT_PATTERN_OLD);
+		msg_print("This section of the Pattern looks less powerful.");
+	}
 
-    if (cave[py][px].feat == FEAT_PATTERN_END)
-    {
+	/* We could make the healing effect of the
+	Pattern center one-time only to avoid various kinds
+	of abuse, like luring the win monster into fighting you
+	in the middle of the pattern... */
 
-                    (void)set_flag(TIMED_POISONED, 0);
-                    (void)set_flag(TIMED_IMAGE, 0);
-                    (void)set_flag(TIMED_STUN, 0);
-                    (void)set_flag(TIMED_CUT, 0);
-                    (void)set_flag(TIMED_BLIND, 0);
-                    (void)set_flag(TIMED_AFRAID, 0);
-                    (void)do_res_stat(A_STR);
-                    (void)do_res_stat(A_INT);
-                    (void)do_res_stat(A_WIS);
-                    (void)do_res_stat(A_DEX);
-                    (void)do_res_stat(A_CON);
-                    (void)do_res_stat(A_CHR);
-                    (void)restore_level();
-                    (void)hp_player(1000);
-                    cave_set_feat(py, px, FEAT_PATTERN_OLD);
-                    msg_print("This section of the Pattern looks less powerful.");
-     }
-
-
-    /* We could make the healing effect of the
-    Pattern center one-time only to avoid various kinds
-    of abuse, like luring the win monster into fighting you
-    in the middle of the pattern... */
-
-     else if (cave[py][px].feat == FEAT_PATTERN_OLD)
-     {
-        /* No effect */
-     }
-     else if (cave[py][px].feat == FEAT_PATTERN_XTRA1)
-     {
-                            pattern_teleport();
-     }
-     else if (cave[py][px].feat == FEAT_PATTERN_XTRA2)
-     {
-        if (!(p_ptr->invuln))
-            take_hit(200, "walking the corrupted Pattern", MON_CORRUPT_PATTERN);
-     }
-
-     else
-     {
-        if ((!p_ptr->invuln) && ((p_ptr->prace != RACE_GREAT) || (rand_int(2))))
-		{
-			take_hit(damroll(1,3), "walking the Pattern", MON_PATTERN);
-		}
-     }
+	else if (cave[py][px].feat == FEAT_PATTERN_OLD)
+	{
+		/* No effect */
+	}
+	else if (cave[py][px].feat == FEAT_PATTERN_XTRA1)
+	{
+		pattern_teleport();
+	}
+	else if (cave[py][px].feat == FEAT_PATTERN_XTRA2)
+	{
+		if (!(p_ptr->invuln))
+			take_hit(200, "walking the corrupted Pattern", MON_CORRUPT_PATTERN);
+	}
+	else if (!p_ptr->invuln && (!special || one_in(2)))
+	{
+		take_hit(damroll(1,3), "walking the Pattern", MON_PATTERN);
+	}
 }
 
 
@@ -2863,7 +2857,7 @@ void process_command(void)
         /* Specific reward */
         case CMD_DEBUG+'r':
 		{
-    	    (void) gain_level_reward(command_arg);
+    	    (void) gain_level_reward(command_arg, 0);
 	        break;
 		}
 

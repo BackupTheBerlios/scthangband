@@ -3484,7 +3484,7 @@ void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	strnfmt(buf, max, "%v", monster_desc_aux_f3, name, num, flags);
 }
 
-void gain_level_reward(int chosen_reward)
+void gain_level_reward(int chosen_reward, int skill_used)
 {
     int type, effect;
     char wrath_reason[32] = "";
@@ -3492,14 +3492,6 @@ void gain_level_reward(int chosen_reward)
     object_type *q_ptr;
     object_type forge;
     int nasty_chance = 6;
-	int skill_used;
-
-
-	skill_used = skill_set[SKILL_THAUMATURGY].value/2;
-
-	/* Broo might have got here through their racial ability */
-	if (p_ptr->prace == RACE_BROO)
-		skill_used = MAX(skill_used, skill_set[SKILL_RACIAL].value);
 
     if (!chosen_reward)
     {

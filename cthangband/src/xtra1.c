@@ -1400,10 +1400,12 @@ static bool calc_bonuses_weird(s16b (*flags)[32], int flag, int val)
 		case iilog(TR0_RES_ELDRITCH):
 		{
 			/* Hack - use a negative value to represent skill-based value. */
-			if (val < 0) return skill_set[SKILL_SAVE].value/2 + 24;
+			if (val < 0) val = skill_set[SKILL_SAVE].value/2 + 24;
 
 			/* Save the resistance. */
 			flags[TR0][flag] = val;
+
+			return TRUE;
 		}
 		/* Not a "weird" bonus. */
 		default:
@@ -1494,6 +1496,18 @@ static void get_bonus_flags(s16b (*flags)[32])
 }
 
 /*
+ * Check a single flag. Doesn't currently check objects.
+ */
+bool PURE player_has_flag(int set, u32b flag)
+{
+	s16b flags[4][32];
+
+	get_bonus_flags(flags);
+
+	return flags[set][iilog(flag)] != 0;
+}
+
+/*
  * Obtain the "flags" for the player as if he was an item
  */
 void player_flags(u32b *f1, u32b *f2, u32b *f3)
@@ -1568,8 +1582,8 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	if (flags[3][iilog(TR3_XTRA_SHOTS)]) p_ptr->num_fire+=60;
 
 	/* Various flags */
-	if (flags[0][iilog(TR0_NO_CUT)]) p_ptr->no_cut = TRUE;
-	if (flags[0][iilog(TR0_NO_STUN)]) p_ptr->no_stun = TRUE;
+	p_ptr->no_cut = (!!flags[0][iilog(TR0_NO_CUT)]);
+	p_ptr->no_stun = (!!flags[0][iilog(TR0_NO_STUN)]);
 	if (flags[3][iilog(TR3_AGGRAVATE)]) p_ptr->aggravate = TRUE;
 	if (flags[3][iilog(TR3_TELEPORT)]) p_ptr->teleport = TRUE;
 	if (flags[3][iilog(TR3_DRAIN_EXP)]) p_ptr->exp_drain = TRUE;
@@ -3597,23 +3611,25 @@ bool ma_empty_hands(void)
 static void update_skill_maxima(void)
 {
 	player_skill *ptr;
+	const bool want_gifts = p_has_mutation(MUT_CHAOS_GIFT);
 
 	/* Assume no chaos effect for now. */
-	bool chaos = !chaos_patrons;
+	int chaos = 0;
 
 	/* Broo might get a gift as they get better */
 	ptr = &skill_set[SKILL_RACIAL];
-	if (!chaos && (p_ptr->prace == RACE_BROO) && (ptr->value > ptr->max_value))
+	if (!chaos && player_has_flag(TR0, TR0_CHAOS) &&
+		(ptr->value > ptr->max_value))
 	{
 		int chance = MIN(90, MAX(10, ptr->value));
-		if (rand_int(100) < chance) chaos = TRUE;
+		if (!chaos && percent(chance)) chaos = SKILL_RACIAL;
 	}
 	/* Anyone with a thaumaturgy skill has been calling out to chaos */
 	ptr = &skill_set[SKILL_THAUMATURGY];
 	if (!chaos && ptr->value > ptr->max_value)
 	{
 		int chance = MIN(90, MAX(10, ptr->value));
-		if (rand_int(100) < chance) chaos = TRUE;
+		if (!chaos && rand_int(100) < chance) chaos = SKILL_THAUMATURGY;
 	}
 
 	/* Now update all the maxima */
@@ -3627,14 +3643,15 @@ static void update_skill_maxima(void)
 		/* Accept the increase. */
 		ptr->max_value = ptr->value;
 
-		/* No extra chaos effect. */
-		if (chaos || !p_has_mutation(MUT_CHAOS_GIFT)) continue;
-
-		if (rand_int(500) < chance) chaos = TRUE;
+		/* Sometimes get an extra reward. */
+		if (!chaos && want_gifts && rand_int(500) < chance)
+		{
+			chaos = ptr-skill_set;
+		}
 	}
 
 	/* Give a chaos reward, if allowed. */
-	if (chaos && chaos_patrons) gain_level_reward(0);
+	if (chaos && chaos_patrons) gain_level_reward(0, skill_set[chaos].value);
 }
 
 

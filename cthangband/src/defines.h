@@ -1088,7 +1088,7 @@ logaux(x, 1) logaux(x, 0) 255)
  * Player race constants (hard-coded by save-files, arrays, etc)
  */
 /* #define RACE_BARBARIAN 0 */ 
-#define RACE_BROO 1
+/* #define RACE_BROO 1 */
 /* #define RACE_CYCLOPS 2 */
 /* #define RACE_DARK_ELF 3 */
 /* #define RACE_DRACONIAN 4 */
@@ -1096,7 +1096,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /* #define RACE_ELF 6 */
 /* #define RACE_GNOME 7 */
 /* #define RACE_GOLEM 8 */
-#define RACE_GREAT 9
+/* #define RACE_GREAT 9 */
 /* #define RACE_HALF_ELF 10 */
 /* #define RACE_HALF_GIANT 11 */
 /* #define RACE_HALF_OGRE 12 */
@@ -2745,6 +2745,13 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TR0_AC_SK (1L<<17) /* A skill-based AC bonus. */
 #define TR0_SPEED_SK (1L<<18) /* A skill-based speed bonus. */
 #define TR0_ILL_NORM (1L<<19) /* Cancel out race/template/mut chr mods. */
+
+/* Get possible rewards for improving racial skill, and consider it when
+ * choosing rewards. */
+#define TR0_CHAOS (1L<<20)
+
+/* Resist normal pattern damage, but wreck the pattern if you bleed on it. */
+#define TR0_PATTERN (1L<<21)
 
 #define TR0_PVAL_MASK \
 	(TR0_TO_H | TR0_DIS_TO_H | TR0_TO_D | TR0_DIS_TO_D | TR0_AC | TR0_DIS_AC | \

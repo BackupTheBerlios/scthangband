@@ -1485,7 +1485,7 @@ player_race race_info[MAX_RACES] =
         65,  6, 150, 20,
         61,  6, 120, 15,
 		{RP_BROO, 0},
-		{0, 0, TR2_RES_SOUND | TR2_RES_CONF, 0},
+		{TR0_CHAOS, 0, TR2_RES_SOUND | TR2_RES_CONF, 0},
 		NULL, 0, MUT_POLYMORPH, 10,
         0, 129, RACE_BLANK, EAT_NORMAL, orc_syllables,
 		{
@@ -1630,7 +1630,7 @@ player_race race_info[MAX_RACES] =
 		82, 5, 190, 20,
 		78,  6, 180, 15,
 		{RP_GREAT, RP_GREAT_2},
-		{0, 0, TR2_SUST_CON, TR3_REGEN},
+		{TR0_PATTERN, 0, TR2_SUST_CON, TR3_REGEN},
 		NULL, 0, 0, 0,
 		0, 67, RACE_BLANK, EAT_NORMAL, human_syllables,
 		{

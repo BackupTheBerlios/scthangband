@@ -3618,7 +3618,7 @@ extern void convert_articles(char *str);
 extern void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern void gain_level_reward(int chosen_reward);
+extern void gain_level_reward(int chosen_reward, int skill_used);
 #endif
 #if (defined(INIT2_C) || defined(XTRA2_C))
 extern void init_chaos(void);
@@ -3883,5 +3883,11 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* xtra1.c */
+
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(XTRA1_C))
+extern bool PURE player_has_flag(int set, u32b flag);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
