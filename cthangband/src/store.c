@@ -3146,7 +3146,6 @@ static void store_purchase(void)
  */
 static void store_sell(void)
 {
-	cptr o_name;
 	errr err;
 	int choice;
 	int item_pos;
@@ -3196,9 +3195,6 @@ static void store_sell(void)
 	/* Get a copy of the object */
 	object_copy(q_ptr, o_ptr);
 
-	/* Get a full description */
-	o_name = format("%v", object_desc_f3, q_ptr, TRUE, 3);
-
 	/* Remove any inscription for stores */
 	if (cur_store_type != 7) q_ptr->note = 0;
 
@@ -3234,7 +3230,8 @@ static void store_sell(void)
 		/* Describe the transaction */
 		if (!auto_haggle || verbose_haggle)
 		{
-			msg_format("Selling %s (%c).", o_name, index_to_label(o_ptr));
+			msg_format("Selling %v (%c).", object_desc_f3, q_ptr, TRUE, 3,
+				index_to_label(o_ptr));
 			msg_print(NULL);
 		}
 
@@ -3298,22 +3295,15 @@ static void store_sell(void)
 		else
 		{
 			value = object_value(q_ptr) * q_ptr->number;
-			/* Get the description all over again */
-			o_name = format("%v", object_desc_f3, q_ptr, TRUE, 3);
 		}
 
 
 		if (!auto_haggle || verbose_haggle)
 		{
-			if (cur_store_type != STORE_PAWN)
-			{
-				/* Describe the result (in message buffer) */
-				msg_format("You sold %s for %ld gold.", o_name, (long)price);
-			}
-			else
-			{
-				msg_format("You pawn %s for %ld gold.",o_name,(long)price);
-			}
+			cptr verb = (cur_store_type == STORE_PAWN) ? "pawn" : "sell";
+
+			msg_format("You %s %v for %ld gold.",
+				verb, object_desc_f3, q_ptr, TRUE, 3, (long)price);
 		}
 
 		/* Analyze the prices (and comment verbally) */
@@ -3324,7 +3314,8 @@ static void store_sell(void)
 	else
 	{
 		/* Describe */
-		msg_format("You drop %s (%c).", o_name, index_to_label(o_ptr));
+		msg_format("You drop %v (%c).", object_desc_f3, q_ptr, FALSE, 0,
+			index_to_label(o_ptr));
 	}
 
 	/* Take it from the players inventory */
