@@ -585,7 +585,7 @@ static void init_info(header *head)
 	fp = my_fopen_path(ANGBAND_DIR_EDIT, textname, "r");
 
 	/* Parse it */
-	if (!fp) quit(format("Cannot open '%s' file.", textname));
+	if (!fp) quit_fmt("Cannot open '%s' file.", textname);
 
 	/* Parse the file */
 	err = init_info_txt(fp, buf, head);
@@ -612,7 +612,7 @@ static void init_info(header *head)
 	fd = fd_open(buf, O_RDONLY);
 
 	/* Process existing "raw" file */
-	if (fd < 0) quit(format("Cannot load '%s.raw' file.", filename));
+	if (fd < 0) quit_fmt("Cannot load '%s.raw' file.", filename);
 
 	/* Attempt to parse the "raw" file */
 	err = init_info_raw(fd, head);
@@ -621,7 +621,7 @@ static void init_info(header *head)
 	fd_close(fd);
 
 	/* Error */
-	if (err) quit(format("Cannot parse '%s.raw' file.", filename));
+	if (err) quit_fmt("Cannot parse '%s.raw' file.", filename);
 }
 
 static void init_u_info_final(void)
