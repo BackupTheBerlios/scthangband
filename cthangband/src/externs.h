@@ -3552,4 +3552,10 @@ extern void Term_load_aux(int win);
 #if (defined(CMD4_C) || defined(XTRA1_C))
 extern void win_help_display(void);
 #endif
+
+/* z-term.c */
+
+#if (defined(INIT2_C) || defined(Z_TERM_C))
+extern void init_term_wins(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

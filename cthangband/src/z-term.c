@@ -2118,7 +2118,12 @@ struct term_win2
 	bool mem; /* Does this window need to be remembered? */
 };
 
-static term_win2 term_wins[NUM_TERM_WINS];
+static term_win2 *term_wins;
+
+void init_term_wins(void)
+{
+	C_MAKE(term_wins, NUM_TERM_WINS, term_win2);
+}
 
 /*
  * Save the "requested" screen into the "memorized" screen
@@ -2232,6 +2237,9 @@ void Term_load_aux(int win)
 	/* Assume change */
 	Term->y1 = 0;
 	Term->y2 = w_ptr->hgt - 1;
+
+	/* Assume the term is no longer needed. */
+	w_ptr->mem = FALSE;
 }
 
 /*

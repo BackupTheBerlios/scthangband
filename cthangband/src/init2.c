@@ -3218,6 +3218,9 @@ static errr init_other(void)
 	C_MAKE(stat_default, MAX_STAT_DEFAULT, stat_default_type);
 	(void)add_stats(0,0,0,DEFAULT_STATS,8,8,8,8,8,8,"Default");
 
+	/* Initialise the term_wins array. */
+	init_term_wins();
+
 	/* Success */
 	return (0);
 }
