@@ -3419,7 +3419,7 @@ static void do_cmd_knowledge_deaths(void)
 			}
 			else
 			{
-				flags = MDF_NUMBER;
+				flags = 0;
 			}
 
 			strcpy(sym, get_symbol(r_ptr));

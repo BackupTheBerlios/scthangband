@@ -1076,7 +1076,7 @@ S:1_IN_3 |
 S:ARROW_1
 D:A nasty little fellow with a bow and arrow.
 
-N:96:& %+I%i pile~ of %=ICreeping silver coins
+N:96:%+I%i pile~ of %=ICreeping silver coins
 G:$:s
 I:-10:1:12d8:4:30:10
 W:6:2:0:18
@@ -1743,7 +1743,7 @@ S:BLINK | TELE_TO | TELE_AWAY | TPORT
 D:It is a fast-moving demon that blinks quickly in and out of existence; no 
 D:other demon matches its teleporting mastery.
 
-N:151:& %+I%i pile~ of %=ICreeping gold coins
+N:151:%+I%i pile~ of %=ICreeping gold coins
 G:$:y
 I:-10:1:18d8:5:36:10
 W:10:3:0:32
@@ -2146,7 +2146,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | GIANT
 D:A hideous, smallish giant that is often found near or with orcs.
 
-N:185:& %+I%i pile~ of %=ICreeping mithril coins
+N:185:%+I%i pile~ of %=ICreeping mithril coins
 G:$:B
 I:+0:1:20d8:5:50:10
 W:13:4:0:45
@@ -3663,7 +3663,7 @@ F:WEIRD_MIND | BASH_DOOR |
 F:ANIMAL | IM_FIRE
 D:It is a giant beetle wreathed in flames.
 
-N:303:& %+I%i pile~ of %=ICreeping adamantite coins
+N:303:%+I%i pile~ of %=ICreeping adamantite coins
 G:$:v
 I:+10:3:20d25:5:50:10
 W:27:4:0:45

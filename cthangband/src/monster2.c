@@ -1240,16 +1240,20 @@ s16b get_mon_num(int level)
  * Describe a name for a monster of a given race, pluralising where appropriate.
  * This is based on object_desc(), but is far simpler.
  *
- * number indef string   The table on the left gives the format of its output.
- *   1    FALSE "Newt"
- *   1    TRUE  "a Newt"
- * not 1  FALSE "Newts"
- * not 1  TRUE  "some Newts"
+ * number def   indef string       The table on the left gives the format of its
+ *   1    FALSE FALSE "Newt"       output.
+ *   1    FALSE TRUE  "a Newt"
+ *   1    TRUE  -     "the Newt"
+ * not 1  FALSE FALSE "Newts"
+ * not 1  FALSE TRUE  "some Newts"
+ * not 1  TRUE  -     "the Newts"
+
  */
-static cptr monster_desc_aux_2(char *out, monster_race *r_ptr, int num, byte flags)
+static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 {
-	bool indef = (flags & MDF_INDEF) != 0;
-	bool def = (flags & MDF_DEF) != 0;
+	cptr artstr = ""; /* Needed, as no sanity checking is done in init1.c. */
+	const char artstr_art[2] = {CM_ACT | MCI_ARTICLE, '\0'};
+		
 	bool number = (flags & MDF_NUMBER) != 0;
 	bool capital = (flags & MDF_CAPITAL) != 0;
 	cptr s;
@@ -1258,10 +1262,16 @@ static cptr monster_desc_aux_2(char *out, monster_race *r_ptr, int num, byte fla
 	C_TNEW(buf, MNAME_MAX, char);
 
 	if (num == 1) reject |= 1<<MCI_PLURAL;
-	if (!indef && !def) reject |= 1<<MCI_ARTICLE;
+	if (!(flags & (MDF_INDEF | MDF_DEF)))
+		reject |= 1<<MCI_ARTICLE;
+	else if (flags & MDF_DEF)
+		artstr = "the";
+	else if (num != 1)
+		artstr = "some";
+	else
+		artstr = artstr_art;
 
-	
-	for (s = r_name+r_ptr->name, t = buf; *s && t < buf+MNAME_MAX-1; s++)
+	for (s = name, t = buf; *s && t < buf+MNAME_MAX-1; s++)
 	{
 		if (*s & 0xE0)
 		{
@@ -1274,21 +1284,7 @@ static cptr monster_desc_aux_2(char *out, monster_race *r_ptr, int num, byte fla
 		}
 		else if (find_ci(*s) == MCI_ARTICLE)
 		{
-			if (indef)
-			{
-				if (num == 1)
-				{
-					*t++ = *s;
-				}
-				else
-				{
-					MDA_ADD("some")
-				}
-			}
-			else if (def)
-			{
-				MDA_ADD("the")
-			}
+			MDA_ADD(artstr);
 		}
 	}
 
@@ -1343,12 +1339,13 @@ cptr monster_desc_aux(char *buf, monster_race *r_ptr, int num, byte flags)
 {
 	if (buf)
 	{
-		return monster_desc_aux_2(buf, r_ptr, num, flags);
+		return monster_desc_aux_2(buf, r_name+r_ptr->name, num, flags);
 	}
 	else
 	{
 		C_TNEW(tmp, MNAME_MAX, char);
-		buf = format("%s", monster_desc_aux_2(tmp, r_ptr, num, flags));
+		buf = format("%s", monster_desc_aux_2(tmp, r_name+r_ptr->name, num,
+			flags));
 		TFREE(tmp);
 		return buf;
 	}
