@@ -3075,9 +3075,10 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	}
 
 	j = get_device_chance_dec(o_ptr);
-	if (j) alloc_ifa(info+i++, "It has a %d.%d%% chance of being used %s.",
+	if (j) alloc_ifa(info+i++,
+		"You have a %d.%d%% chance of successfully using it %s.",
 		j/10, j%10, ((o_ptr->flags3 & TR3_ACTIVATE) && !is_worn_p(o_ptr))
-		? "as soon as you wear it" : "in your current condition");
+		? "if you wear it" : "in your current condition");
 
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE && k_info[o_ptr->k_idx].extra)
