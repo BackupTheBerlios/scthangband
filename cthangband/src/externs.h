@@ -2413,10 +2413,10 @@ extern byte gamma_table[256];
 #if (defined(SUPPORT_GAMMA)) && (defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
 extern void build_gamma_table(int gamma);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
 extern errr add_resize_hook(void (*resize_hook)(void));
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
 extern errr delete_resize_hook(void (*resize_hook)(void));
 #endif
 #if (defined(DUNGEON_C) || defined(UTIL_C))
@@ -3640,7 +3640,7 @@ extern void verify_panel(void);
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
 extern void resize_map(void);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA2_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA2_C))
 extern void resize_inkey(void);
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3814,7 +3814,7 @@ extern void Term_flush(void);
 #if (defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_keypress(int k);
 #endif
-#if (defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(CMD5_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_key_push(int k);
 #endif
 #if (defined(UTIL_C) || defined(Z_TERM_C))
@@ -3826,16 +3826,16 @@ extern errr Term_inkey(char *ch, bool wait, bool take);
 #if (defined(INIT2_C) || defined(Z_TERM_C))
 extern void init_term_wins(void);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern void Term_release(int win);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern int Term_save_aux(void);
 #endif
 #if (defined(ANGBAND_H) || defined(Z_TERM_C))
 extern void Term_save(void);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern void Term_load_aux(int win);
 #endif
 #if (defined(ANGBAND_H) || defined(Z_TERM_C))

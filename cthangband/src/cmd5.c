@@ -665,7 +665,7 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 {
 	int		i, num, ask, spell = -1;
 	int x = 15, y = 1;
-	int UNREAD(maxy); /* Set and read if redraw is true. */
+	int UNREAD(maxy), t_clear, t_list;
 
 	byte		spells[64];
 
@@ -713,18 +713,17 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 	/* Nothing chosen yet */
 	flag = FALSE;
 
+	/* No redraw yet */
+	redraw = FALSE;
+
 	if (show_choices_main)
 	{
-		/* Show list */
-		redraw = TRUE;
-		Term_save();
-		maxy = print_spell_list(spells, b_ptr, num, y, x, get);
-	}		
-	else
-	{
-		/* No redraw yet */
-		redraw = FALSE;
+		/* Force the list to be shown immediately. */
+		Term_key_push(' ');
 	}
+
+	/* Always start by saving the screen. */
+	Term_key_push(RESIZE_INKEY_KEY);
 
 	/* Show choices */
 	if (show_choices)
@@ -733,39 +732,45 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 		p_ptr->window |= (PW_SPELL);
 	}
 
-
 	/* Build a prompt (accept all spells) */
 	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) %^s which %s? ",
 		I2A(0), I2A(num - 1), verb, noun);
 
+	/* Add a resize hook. */
+	add_resize_hook(resize_inkey);
+
 	/* Get a spell from the user */
-	while (!flag && get_com(out_val, &choice))
+	for (t_clear = t_list = 0; !flag && get_com(out_val, &choice); )
 	{
-		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		/* Ensure t_clear and t_list point to the saved screens of this size. */
+		if (choice == RESIZE_INKEY_KEY)
 		{
-			/* Show the list */
-			if (!redraw)
+			Term_release(t_clear);
+			Term_release(t_list);
+
+			/* Save the screen without the list. */
+			t_clear = Term_save_aux();
+
+			if (redraw)
 			{
-				/* Show list */
-				redraw = TRUE;
-
-				/* Save the screen */
-				Term_save();
-
 				/* Display a list of spells */
 				maxy = print_spell_list(spells, b_ptr, num, y, x, get);
+
+				/* Save the screen with the list. */
+				t_list = Term_save_aux();
 			}
 
-			/* Hide the list */
-			else
-			{
-				/* Hide list */
-				redraw = FALSE;
+			continue;
+		}
+		/* Request redraw */
+		else if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		{
+			/* Load the other screen. */
+			int t_new = (redraw) ? t_clear : t_list;
+			Term_load_aux(t_new);
 
-				/* Restore the screen */
-				Term_load();
-			}
+			/* Remember the change. */
+			redraw = !redraw;
 
 			/* Redo asking */
 			continue;
@@ -826,10 +831,15 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 		flag = TRUE;
 	}
 
+	/* Reset the resize hook. */
+	delete_resize_hook(resize_inkey);
 
 	/* Restore the screen */
-	if (redraw) Term_load();
+	if (redraw) Term_load_aux(t_clear);
 
+	/* Forget the saved screens. */
+	Term_release(t_clear);
+	Term_release(t_list);
 
 	/* Show choices */
 	if (show_choices)
