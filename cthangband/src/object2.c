@@ -3890,7 +3890,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
  */
 static bool kind_is_good(int k_idx)
 {
-	return ((k_info[k_idx].flags3 & TR1_GOOD) != 0);
+	return ((k_info[k_idx].flags1 & TR1_GOOD) != 0);
 }
 
 
