@@ -104,6 +104,13 @@
 #undef SGN
 #define SGN(a)		(((a) < 0)   ? (-1) : ((a) != 0))
 
+/* Try to mark unused variables as such in a way the compiler understands. */
+#ifdef __GNUC__
+#define UNUSED __attribute__((unused))
+#else
+#define UNUSED
+#endif
+
 
 /*
  * Hack -- allow use of "ASCII" and "EBCDIC" for "indexes", "digits",

@@ -2849,13 +2849,6 @@ logaux(x, 1) logaux(x, 0) 255
  */
 #define term_screen     (windows[0].term)
 
-/* Try to mark unused variables as such in a way the compiler understands. */
-#ifdef __GNUC__
-#define UNUSED __attribute__((unused))
-#else
-#define UNUSED
-#endif
-
 /* A default value for things which don't really need one. */
 #define UNREAD_VALUE	0
 

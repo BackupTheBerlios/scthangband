@@ -283,7 +283,7 @@ term *Term = NULL;
 /*
  * Nuke a term_win (see below)
  */
-static errr term_win_nuke(term_win *s, int w, int h)
+static errr term_win_nuke(term_win *s, int UNUSED w, int UNUSED h)
 {
 	/* Free the window access arrays */
 	C_KILL(s->a, h, byte*);
@@ -2126,6 +2126,18 @@ void init_term_wins(void)
 }
 
 /*
+ * Forget a saved term window.
+ */
+static void Term_forget(int win)
+{
+	/* Paranoia */
+	if (win < 1 || win > NUM_TERM_WINS) return;
+
+	/* The term is no longer needed. */
+	term_wins[win-1].mem = FALSE;
+}
+
+/*
  * Save the "requested" screen into the "memorized" screen
  *
  * Every "Term_save()" should match exactly one "Term_load()"
@@ -2196,7 +2208,7 @@ int Term_save_aux(void)
 errr Term_save(void)
 {
 	/* Paranoia - forget any term_win currently saved. */
-	if (cur_saved_term) (void)Term_load();
+	if (cur_saved_term) Term_forget(cur_saved_term);
 
 	/* Save the window, remember the index. */
 	cur_saved_term = Term_save_aux();
@@ -2255,9 +2267,13 @@ errr Term_load(void)
 	/* Restore the window from the remembered index. */
 	Term_load_aux(cur_saved_term);
 
+	/* Forget the saved term_win. */
+	cur_saved_term = 0;
+
 	/* Success */
 	return (0);
 }
+
 
 
 /*
