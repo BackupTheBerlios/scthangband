@@ -2733,6 +2733,7 @@ static int get_rnd_q_monster(int q_idx)
 static void player_wipe(void)
 {
 	int i;
+	option_type *op_ptr;
 
 
 	/* Hack -- zero the struct */
@@ -2814,14 +2815,13 @@ static void player_wipe(void)
 	}
 
 	/* Clear "cheat" options */
-	cheat_peek = FALSE;
-	cheat_hear = FALSE;
-	cheat_room = FALSE;
-	cheat_xtra = FALSE;
-	cheat_item = FALSE;
-	cheat_live = FALSE;
-	cheat_skll = FALSE;
-	cheat_wzrd = FALSE;
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+	{
+		if (op_ptr->o_page == OPTS_CHEAT)
+		{
+			*(op_ptr->o_var) = FALSE;
+		}
+	}
 
 	/* Assume no winning game */
 	total_winner = FALSE;
