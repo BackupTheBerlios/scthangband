@@ -3037,7 +3037,7 @@ static bc_type ask_quick_start(void)
 	} \
 \
 	/* Show the options. */ \
-	display_entry_list_bounded(list, MAX, TRUE, 0, 17, 80, 21); \
+	display_entry_list_bounded(list, MAX, TRUE, 0, 17, 80, 22); \
 \
 	/* Choose. */ \
 	if (birth_choice(15, MAX, "Choose a " NAME, &k, FALSE) == BC_RESTART) \
