@@ -2221,6 +2221,9 @@ void do_cmd_visuals(void)
 
 			bool started = FALSE;
 
+			/* Make a note of log(vs_ptr->max-1)/log(10) */
+			const uint numlen = strlen(format("%d", r));
+
 			prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
 
 			/* Hack -- query until done */
@@ -2238,8 +2241,8 @@ dcv_retry:
 
 				/* Label the object */
 				Term_putstr(5, CMDLINE+2, -1, TERM_WHITE,
-				            format("Number = %d, Name = %-40.40s",
-				                   r, buf));
+				            format("Number = %*d, Name = %-40.40s",
+				                   numlen, r, buf));
 
 				/* Display the default/current attr/char. */
 				Term_putstr(40, CMDLINE+4, -1, TERM_WHITE, "<< ? >>");
