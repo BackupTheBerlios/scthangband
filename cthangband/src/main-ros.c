@@ -82,7 +82,7 @@
  *   [eg. (p_ptr->is_dead) for Angband or (!alive || dead) for some Zangbands]
  */
 
-#define PDEADCHK	(p_ptr->is_dead)
+#define PDEADCHK	(!alive || death)
 
 /*
  * The following symbols control the (optional) file-cache:

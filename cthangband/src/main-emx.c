@@ -1274,8 +1274,6 @@ void angbandThread(void *arg)
 
 	int show_score = 0;
 
-	char player_name[32];
-
 	/* Save the "program name" */
 	argv0 = (char*)arg;
 
@@ -1294,9 +1292,6 @@ void angbandThread(void *arg)
 	                 &arg_fiddle,
 	                 &arg_wizard,
 	                 player_name)) quit(NULL);
-
-	/* XXX XXX XXX (?) */
-	strcpy(op_ptr->full_name, player_name);
 
 	/* Process the player name */
 	process_player_name(TRUE);

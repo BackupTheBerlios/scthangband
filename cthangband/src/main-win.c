@@ -2984,10 +2984,7 @@ static void start_screensaver(void)
 #endif /* ALLOW_BORG */
 
 	/* Set the name for process_player_name() */
-	strncpy(op_ptr->full_name, saverfilename, 32);
-
-	/* Terminate after 15 characters */
-	op_ptr->full_name[15] = '\0';
+	sprintf(player_name, "%.*s", NAME_LEN-1, saverfilename);
 
 	/* Set 'savefile' to a valid name */
 	process_player_name(TRUE);
@@ -4146,9 +4143,11 @@ static LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 				/* Redraw later */
 				InvalidateRect(td->w, NULL, TRUE);
 
+#if 0 /* I think Term_resize() already does this. */
 				/* HACK - Redraw all windows */
 				p_ptr->window = 0xFFFFFFFF;
 				window_stuff();
+#endif
 			}
 
 			td->size_hack = FALSE;

@@ -558,6 +558,7 @@ static void Term_xtra_dos_react(void)
 
 #endif /* USE_SOUND */
 
+/* The following is wrong, but I don't know what it's trying to do. */
 #ifdef USE_SPECIAL_BACKGROUND
 
 	/*

@@ -2956,7 +2956,7 @@ int amiga_tomb( void )
 		scalbm = convbm;
 
 	/* King or Queen */
-	if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+	if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
 		p = "Magnificent";
 	}
@@ -2969,7 +2969,7 @@ int amiga_tomb( void )
 
 	tomb_str( 3, " R.I.P." );
 
-	tomb_str( 5, op_ptr->full_name );
+	tomb_str( 5, full_name );
 
 	tomb_str( 6, "the" );
 
