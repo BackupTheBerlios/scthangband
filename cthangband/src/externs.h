@@ -243,7 +243,7 @@ extern void do_cmd_takeoff(void);
 extern void do_cmd_drop(void);
 #endif
 #if (defined(CMD3_C) || defined(SPELLS2_C))
-extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
+extern errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_destroy(void);
@@ -1528,7 +1528,7 @@ extern void object_tried(object_type *o_ptr);
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern s32b PURE flag_cost(object_ctype *o_ptr, bool all);
 #endif
-#if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
+#if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern s32b PURE object_value(object_ctype *o1_ptr, bool full);
 #endif
 #if (defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
@@ -2423,7 +2423,7 @@ extern bool get_check(cptr prompt);
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool get_com(cptr prompt, char *command);
 #endif
-#if (defined(CMD3_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD3_C) || defined(STORE_C) || defined(UTIL_C))
 extern s16b get_quantity(cptr prompt, int max,bool allbydefault);
 #endif
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
@@ -2525,7 +2525,7 @@ extern u32b seed_wild;
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_cmd;
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
 extern s16b command_arg;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
@@ -2840,7 +2840,7 @@ extern bool plain_descriptions;
 #if (defined(FILES_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool stupid_monsters;
 #endif
-#if (defined(CMD3_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD3_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool auto_destroy;
 #endif
 #if (defined(CMD2_C) || defined(TABLES_C) || defined(VARIABLE_C))

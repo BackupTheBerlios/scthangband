@@ -383,7 +383,7 @@ void do_cmd_drop(void)
 /*
  * Hook to determine if an item can be destroyed (or turned to gold).
  */
-bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
+static bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
 {
 	object_type j_ptr[1];
 
@@ -406,16 +406,19 @@ bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
 
 /*
  * Destroy an item
+ * Return a POWER_ERROR if no transformation occurred, set *name and *value
+ * and return SUCCESS otherwise.
+ * verb and dative are used to construct various sentences below.
+ * dative0 replaces dative in the final statement if the object was worthless.
+ * *value is used to store the value of the object(s) destroyed.
  */
-void do_cmd_destroy(void)
+errr do_cmd_destroy_aux(cptr verb, cptr dative, cptr *name, s32b *value)
 {
 	errr err;
-	int			 amt = 1;
-	int			old_number;
 
 	bool		force = FALSE;
 
-	object_type		*o_ptr;
+	object_type		*o_ptr, q_ptr[1];
 
 
 	/* Hack -- force destruction */
@@ -425,28 +428,26 @@ void do_cmd_destroy(void)
 	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&err, "Destroy which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, format("%^s which item%s? ", verb, dative),
+		TRUE, TRUE, TRUE))))
 	{
-		if (err == -2) msg_print("You have nothing to destroy.");
-		return;
+		if (err == -2) msg_format("You have nothing to %s%s.", verb, dative);
+		return POWER_ERROR_ABORT;
 	}
 
+	/* Get an object with the number to destroy. */
+	object_copy(q_ptr, o_ptr);
 
 	/* See how many items */
 	if (o_ptr->number > 1)
 	{
 		/* Get a quantity */
-		amt = get_quantity(NULL, o_ptr->number,TRUE);
+		q_ptr->number = get_quantity(NULL, o_ptr->number,TRUE);
 
 		/* Allow user abort */
-		if (amt <= 0) return;
+		if (q_ptr->number <= 0) return POWER_ERROR_ABORT;
 	}
 
-
-	/* Describe the object */
-	old_number = o_ptr->number;
-	o_ptr->number = amt;
-	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
 	if (!force)
@@ -454,14 +455,11 @@ void do_cmd_destroy(void)
 		if (!((auto_destroy) && (object_value(o_ptr, FALSE)<1)))
 		{
 			/* Make a verification */
-			if (!get_check(format("Really destroy %v? ",
-				object_desc_f3, o_ptr, TRUE, 3))) return;
-			
+			if (!get_check(format("Really %s %v%s? ", verb,
+				object_desc_f3, q_ptr, TRUE, 3, dative)))
+				return POWER_ERROR_ABORT;
 		}
 	}
-
-	/* Take a turn */
-	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Artifacts cannot be destroyed */
 	if (allart_p(o_ptr))
@@ -470,7 +468,8 @@ void do_cmd_destroy(void)
         energy_use = 0;
 
 		/* Message */
-		msg_format("You cannot destroy %v.", object_desc_f3, o_ptr, TRUE, 3);
+		msg_format("You cannot %s %v%s.",
+			verb, object_desc_f3, q_ptr, TRUE, 3, dative);
 
 		/* We know how valuable it might be. */
 		o_ptr->ident |= (IDENT_SENSE_VALUE);
@@ -482,17 +481,37 @@ void do_cmd_destroy(void)
 		update_object(o_ptr, 0);
 
 		/* Done */
-		return;
+		return POWER_ERROR_FAIL;
 	}
 
-	/* Message */
-	msg_format("You destroy %v.", object_desc_f3, o_ptr, TRUE, 3);
+	/* Find the value for alchemy. */
+	(*value) = object_value(q_ptr, TRUE) * q_ptr->number;
+
+	/* Save the name for a "success" message from the caller. */
+	(*name) = format("%v", object_desc_f3, q_ptr, TRUE, 3);
 
 	/* Eliminate the item */
-	item_increase(o_ptr, -amt);
+	item_increase(o_ptr, -q_ptr->number);
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
+
+	return SUCCESS;
 }
+
+/*
+ * Destroy an item
+ */
+void do_cmd_destroy(void)
+{
+	cptr name;
+	s32b u;
+	if (do_cmd_destroy_aux("destroy", "", &name, &u) != POWER_ERROR_ABORT)
+	{
+		msg_format("You destroy %s.", name);
+		energy_use = extract_energy[p_ptr->pspeed];
+	}
+}
+
 
 static bool item_tester_unhidden(object_ctype *o_ptr)
 {

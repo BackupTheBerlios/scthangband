@@ -439,113 +439,36 @@ bool restore_level(void)
 
 /*
  * Turns an object into gold, gain some of its value in a shop
+ * Return TRUE if an item is destroyed.
  */
 bool alchemy(void)
 {
-	errr err;
-	int                     amt = 1;
-	int                     old_number;
-    long        price;
+	s32b price;
+	cptr name;
+	if (do_cmd_destroy_aux("turn", " to gold", &name, &price)) return FALSE;
 
-	bool            force = FALSE;
-
-	object_type             *o_ptr;
-
-	char            out_val[160];
-
-
-	/* Hack -- force destruction */
-	if (command_arg > 0) force = TRUE;
-
-	/* Restrict the choices */
-	item_tester_hook = item_tester_hook_destroy;
-
-	/* Get an item (from equip or inven or floor) */
-    if (!((o_ptr = get_item(&err, "Turn which item to gold? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to turn to gold.");
-		return FALSE;
-	}
-
-
-	/* See how many items */
-	if (o_ptr->number > 1)
-	{
-		/* Get a quantity */
-		amt = get_quantity(NULL, o_ptr->number,TRUE);
-
-		/* Allow user abort */
-		if (amt <= 0) return FALSE;
-	}
-
-
-	/* Describe the object */
-	old_number = o_ptr->number;
-	o_ptr->number = amt;
-	o_ptr->number = old_number;
-
-	/* Verify unless quantity given */
-	if (!force)
-	{
-        if (!((auto_destroy) && (object_value(o_ptr, FALSE)<1)))
-        {
-            /* Make a verification */
-            strnfmt(out_val, sizeof(out_val), "Really turn %v to gold? ",
-				object_desc_f3, o_ptr, TRUE, 3);
-            if (!get_check(out_val)) return FALSE;
-        }
-	}
-
-    /* Artifacts cannot be destroyed */
-    if (allart_p(o_ptr))
+	if (price <= 0)
 	{
 		/* Message */
-		msg_format("You fail to turn %v to gold!",
-			object_desc_f3, o_ptr, TRUE, 3);
-
-		/* We have "felt" it (again) */
-		o_ptr->ident |= (IDENT_SENSE_VALUE);
-
-		/* Recalculate/redraw stuff (later) */
-		update_object(o_ptr, 0);
-
-		/* Done */
-		return FALSE;
+		msg_format("You turn %s to fool's gold.", name);
 	}
-
-    price = object_value(o_ptr, TRUE);
-
-    if (price <= 0)
+	else
 	{
-		/* Message */
-		msg_format("You turn %v to fool's gold.",
-			object_desc_f3, o_ptr, TRUE, 3);
-	}
-    else
-	{
-	    price /= 3;
-
-		if (amt > 1) price *= amt;
+		price /= 3;
 
 		if (price > 30000) price = 30000;
-		msg_format("You turn %v to %ld coins worth of gold.",
-			object_desc_f3, o_ptr, TRUE, 3, price);
+		msg_format("You turn %s to %ld coins worth of gold.",
+			name, price);
 		p_ptr->au += price;
 
 		/* Redraw gold */
 		p_ptr->redraw |= (PR_GOLD);
 
 		/* Window stuff */
-	    p_ptr->window |= (PW_PLAYER);
-
+		p_ptr->window |= (PW_PLAYER);
 	}
 
-	/* Eliminate the item */
-	item_increase(o_ptr, -amt);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
-
-    return TRUE;
+	return TRUE;
 }
 
 
