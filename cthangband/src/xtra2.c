@@ -4122,7 +4122,8 @@ bool target_set(int mode)
 
 	/* Cancel target */
 	target_who = 0;
-
+	target_row = py;
+	target_col = px;
 
 	/* Cancel tracking */
 	/* health_track(0); */
