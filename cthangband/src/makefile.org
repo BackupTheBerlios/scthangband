@@ -230,22 +230,33 @@ LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
 
 
 
-
+GAME = Cthangband
 
 #
 # Hack -- "install" as the base target
 #
+default: sCthangband
 
-install: Cthangband
-	mv Cthangband ..
+#
+# Install the game.
+#
+install: default
+	mv $(GAME) ..
 
+
+#
+# Hack - build without optimisation for debugging.
+#
+
+debug: CFLAGS += -O0 -fno-inline-functions
+debug: default
 
 #
 # Build the "Angband" program
 #
 
-Cthangband: $(OBJS)
-	$(CC) $(CFLAGS) -o Cthangband $(OBJS) $(LDFLAGS) $(LIBS)
+sCthangband: $(OBJS)
+	$(CC) $(CFLAGS) -o $(GAME) $(OBJS) $(LDFLAGS) $(LIBS)
 
 
 #
