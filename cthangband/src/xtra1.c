@@ -2895,6 +2895,14 @@ static bool win_inven_good(void)
 }
 
 /*
+ * Display the inventory window.
+ */
+static void win_inven_display(void)
+{
+	display_inven(FALSE);
+}
+
+/*
  * Return whether PW_EQUIP is interesting
  */
 static bool win_equip_good(void)
@@ -2912,6 +2920,13 @@ static bool win_equip_good(void)
 	return FALSE;
 }
 
+/*
+ * Display the equipment window.
+ */
+static void win_equip_display(void)
+{
+	display_inven(TRUE);
+}
 
 /*
  * Return whether PW_SPELL is interesting
@@ -3480,8 +3495,8 @@ static void win_floor_display(void)
  */
 display_func_type display_func[NUM_DISPLAY_FUNCS+1] =
 {
-	{PW_INVEN, "inventory", win_inven_good, display_inven},
-	{PW_EQUIP, "equipment", win_equip_good, display_equip},
+	{PW_INVEN, "inventory", win_inven_good, win_inven_display},
+	{PW_EQUIP, "equipment", win_equip_good, win_equip_display},
 	{PW_SPELL, "spell list", win_spell_good, display_spell_list},
 	{PW_PLAYER, "character", func_true, win_player_display},
 	{PW_PLAYER_SKILLS, "skills", func_true, win_player_skills_display},

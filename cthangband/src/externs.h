@@ -204,11 +204,11 @@ extern void run_step(int dir);
 /* cmd3.c */
 
 #if (defined(CMD3_C) || defined(DUNGEON_C))
-extern void do_cmd_inven(void);
+extern void do_cmd_inven(bool equip);
 #endif
-#if (defined(CMD3_C) || defined(DUNGEON_C))
-extern void do_cmd_equip(void);
-#endif
+
+
+
 #if (defined(CMD3_C) || defined(OBJECT1_C))
 extern void do_cmd_wield(object_type *o_ptr);
 #endif
@@ -1457,11 +1457,11 @@ extern cptr PURE describe_use(object_ctype *o_ptr);
 extern bool item_tester_okay(object_ctype *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
-extern void display_inven(void);
+extern void display_inven(bool equip);
 #endif
-#if (defined(OBJECT1_C) || defined(XTRA1_C))
-extern void display_equip(void);
-#endif
+
+
+
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern void show_inven(bool equip, bool all);
 #endif
@@ -2177,7 +2177,7 @@ extern byte chest_traps[64];
 #if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(TABLES_C))
 extern cptr color_names[16];
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern cptr atchar;
 #endif
 #if (defined(CMD1_C) || defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))

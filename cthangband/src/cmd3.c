@@ -19,26 +19,27 @@
 
 
 /*
- * Display inventory
+ * Display inventory/equipment and wait for a command.
  */
-void do_cmd_inven(void)
+void do_cmd_inven(bool equip)
 {
 	char out_val[160];
+	cptr title = (equip) ? "Equipment" : "Inventory";
 
 
-	/* Note that we are in "inventory" mode */
-	command_wrk = FALSE;
+	/* Store the mode. */
+	command_wrk = equip;
 
 
 	/* Save the screen */
 	Term_save();
 
 	/* Display the inventory */
-	show_inven(FALSE, TRUE);
+	show_inven(equip, TRUE);
 
 	/* Build a prompt */
-   sprintf(out_val, "Inventory: carrying %d.%d pounds (%d%% of capacity). Command: ",
-           total_weight / 10, total_weight % 10,
+   sprintf(out_val, "%s: carrying %d.%d pounds (%d%% of capacity). Command: ",
+		title, total_weight / 10, total_weight % 10,
        (total_weight * 100) / ((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
 
 	/* Get a command */
@@ -66,57 +67,6 @@ void do_cmd_inven(void)
 		command_see = TRUE;
 	}
 }
-
-
-/*
- * Display equipment
- */
-void do_cmd_equip(void)
-{
-	char out_val[160];
-
-
-	/* Note that we are in "equipment" mode */
-	command_wrk = TRUE;
-
-
-	/* Save the screen */
-	Term_save();
-
-	/* Display the equipment */
-	show_inven(TRUE, TRUE);
-
-	/* Build a prompt */
-   sprintf(out_val, "Equipment: carrying %d.%d pounds (%d%% of capacity). Command: ",
-           total_weight / 10, total_weight % 10,
-       (total_weight * 100) / ((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
-
-	/* Get a command */
-	prt(out_val, 0, 0);
-
-	/* Get a new command */
-	command_new = inkey();
-
-	/* Restore the screen */
-	Term_load();
-
-
-	/* Process "Escape" */
-	if (command_new == ESCAPE)
-	{
-		/* Reset stuff */
-		command_new = 0;
-		command_gap = 50;
-	}
-
-	/* Process normal keys */
-	else
-	{
-		/* Enter "display" mode */
-		command_see = TRUE;
-	}
-}
-
 
 /*
  * The "wearable" tester

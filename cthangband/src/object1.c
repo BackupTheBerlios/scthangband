@@ -3571,120 +3571,80 @@ bool item_tester_okay(object_ctype *o_ptr)
 
 /*
  * Choice window "shadow" of the "show_inven()" function
+ * This uses the full width of the screen rather than using a smaller area
+ * if the information can fit into the space.
  */
-void display_inven(void)
-{
-	int i, wid, z = 0;
-
-	object_type *o_ptr;
-
-	byte    attr = TERM_WHITE;
-
-
-	Term_get_size(&wid, &i);
-
-	/* Find the "final" slot */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		o_ptr = &inventory[i];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Track */
-		z = i + 1;
-	}
-
-	/* Display the pack */
-	for (i = 0; i < z; i++)
-	{
-		/* Examine the item */
-		o_ptr = &inventory[i];
-
-		/* Display the index if this item is "acceptable" */
-		if (item_tester_okay(o_ptr))
-			put_str(format("%c) ", index_to_label(o_ptr)), i, 0);
-
-		/* Get a color */
-		attr = tval_to_attr[o_ptr->tval % 128];
-
-		/* Display the entry itself */
-		c_put_str(attr, format("%.*v", (show_weights) ? wid-12 : wid-3,
-			object_desc_f3, o_ptr, TRUE, 3), i, 3);
-
-		/* Display the weight if needed */
-		if (show_weights && o_ptr->weight)
-		{
-			int wgt = o_ptr->weight * o_ptr->number;
-			put_str(format("%3d.%1d lb", wgt / 10, wgt % 10), i, wid-9);
-		}
-	}
-}
-
-
-
-/*
- * Choice window "shadow" of the "show_inven(equip)" function
- */
-void display_equip(void)
+void display_inven(bool equip)
 {
 	int i, wid;
-	object_type *o_ptr;
-	byte    attr = TERM_WHITE;
+
+	int min = (equip) ? INVEN_WIELD : 0;
+	int max = (equip) ? INVEN_TOTAL : INVEN_PACK;
 
 	Term_get_size(&wid, &i);
 
-	/* Display the equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	/* Find the "final" slot if desired */
+	if (!equip) while (max && !inventory[max-1].k_idx) max--;
+
+	/* Turn wid into the width of each entry. */
+	wid -= 3;
+	if (show_weights) wid -= 9;
+	if (equip && show_labels) wid -= 19;
+
+	/* Display the pack */
+	for (i = min; i < max; i++)
 	{
 		/* Examine the item */
-		o_ptr = &inventory[i];
+		object_type *o_ptr = &inventory[i];
+
+		/* Get a color */
+		char attr = atchar[tval_to_attr[o_ptr->tval % 128]];
+
+		cptr slot1, slot2;
+
+		char wgt[16] = "", label[4] = "   ";
+
+		/* Display the slot description (if needed) */
+		if (equip && show_labels)
+		{
+			slot1 = "<--- ";
+			slot2 = mention_use(i);
+		}
+		/* Display nothing. */
+		else
+		{
+			slot1 = slot2 = "";
+		}
+
+		if (show_weights)
+		{
+			int w = o_ptr->weight * o_ptr->number;
+			sprintf(wgt, "%3d.%1d lb", w/10, w%10);
+		}
 
 		/* Display the index if this item is "acceptable" */
 		if (item_tester_okay(o_ptr))
-			put_str(format("%c) ", index_to_label(o_ptr)), i, 0);
+			sprintf(label, "%c) ", index_to_label(o_ptr));
 
-		/* Get the color */
-		attr = tval_to_attr[o_ptr->tval % 128];
-
-		/* Display the entry itself */
-		c_put_str(attr, format("%.*v",
-			wid-3 - (show_weights) ? 9 : 0 - (show_labels) ? 19 : 0,
-			object_desc_f3, o_ptr, TRUE, 3), i-INVEN_WIELD, 3);
-
-		/* Display the slot description (if needed) */
-		if (show_labels)
-		{
-			put_str(format("<--- %s", mention_use(i)), i-INVEN_WIELD, wid-19);
-		}
-
-		/* Display the weight (if needed) */
-		if (show_weights)
-		{
-			int wgt = o_ptr->weight * o_ptr->number;
-			put_str(format("%3d.%1d lb", wgt / 10, wgt % 10), i-INVEN_WIELD,
-				(show_labels) ? wid-9 : wid-28);
-		}
+		/* Display the entry itself (including the slot description). */
+		mc_put_fmt(i - min, 3, "%c) $%c%.*v%s%s%s", label, attr, wid,
+			object_desc_f3, o_ptr, TRUE, 3, wgt, slot1, slot2);
 	}
 }
-
-
-
-
 
 
 /*
  * Display the inventory or equipment.
  *
- * Hack -- do not display "trailing" empty slots
+ * Hack -- do not display "trailing" empty slots for the inventory.
  */
 void show_inven(bool equip, bool all)
 {
-	int             i, j, k, l, z;
+	int             i, j, k, l;
 	int             col, len, lim, wid;
 
-	const int min = (equip) ? INVEN_WIELD : 0;
-	const int max = (equip) ? INVEN_TOTAL : INVEN_PACK;
+	int min = (equip) ? INVEN_WIELD : 0;
+	int max = (equip) ? INVEN_TOTAL : INVEN_PACK;
 
 	object_type     *o_ptr;
 
@@ -3722,20 +3682,10 @@ void show_inven(bool equip, bool all)
 	if (lim > ONAME_MAX) lim = ONAME_MAX;
 
 	/* Find the "final" slot if desired */
-	for (i = min, z = 0; !equip && i < max; i++)
-	{
-		/* Skip non-objects */
-		if (!inventory[i].k_idx) continue;
-
-		/* Track */
-		z = i + 1;
-	}
-
-	/* Equipment lists always include all slots. */
-	if (equip) z = max;
+	if (!equip) while (max && !inventory[max-1].k_idx) max--;
 
 	/* Display the inventory */
-	for (k = 0, i = min; i < z; i++)
+	for (k = 0, i = min; i < max; i++)
 	{
 		o_ptr = &inventory[i];
 

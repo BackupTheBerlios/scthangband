@@ -2342,14 +2342,14 @@ void process_command(void)
 			/* Equipment list */
 		case 'e':
 		{
-			do_cmd_equip();
+			do_cmd_inven(TRUE);
 			break;
 		}
 
 			/* Inventory list */
 		case 'i':
 		{
-			do_cmd_inven();
+			do_cmd_inven(FALSE);
 			break;
 		}
 
