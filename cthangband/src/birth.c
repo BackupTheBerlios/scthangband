@@ -1026,9 +1026,9 @@ static void display_player_birth(int points, bool details)
 	{
 		Term_addstr(-1, TERM_WHITE, "'ESC' to finish, ");
 	}
-	Term_addstr(-1, TERM_WHITE, "'Q' to quit, 'f' to save,");
+	Term_addstr(-1, TERM_WHITE, "'Q' to quit, 'X' to restart,");
 		Term_addch(TERM_WHITE, b2);
-	Term_putstr(2, 23, -1, TERM_WHITE, "[or '/' to change display.]");
+	Term_putstr(2, 23, -1, TERM_WHITE, "['f' to save, '/' to change display, '=' for options or '?' for help.]");
 }
 
 /* Just in case */
@@ -1092,6 +1092,8 @@ static void display_player_birth_details(void)
 #define IDX_DETAILS	0x0400
 #define IDX_NAME	0x0800
 #define IDX_SEX	0x1000
+#define IDX_OPTION	0x2000
+#define IDX_HELP	0x4000
 #define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
 
 /* Allow player to modify the character by spending points */
@@ -1167,6 +1169,14 @@ static bool point_mod_player(void)
 			case '/':
 				i = IDX_DETAILS;
 				break;
+			case '=':
+				i = IDX_OPTION;
+				break;
+			case '?':
+				i = IDX_HELP;
+				break;
+			case 'X': /* Restart */
+				return FALSE;
 			case 'Q':
 				quit(NULL);
 				break;
@@ -1181,6 +1191,39 @@ static bool point_mod_player(void)
 		/* Don't finish on negative points */
 		if (i == IDX_FINISH && points < 0) i = 0;
 		
+		/* Option code taken from birth_choice() */
+		if (i == IDX_OPTION)
+		{
+			bool old_allow_quickstart = allow_quickstart;
+			bool old_spend_points = spend_points & !use_autoroller;
+			bool old_maximise_mode = maximise_mode;
+			Term_save();
+			do_cmd_options_aux(7, "Startup Options");
+			Term_load();
+			/* Start again if the set of questions being asked changes.
+			 * This does not include show_credits because this takes
+			 * effect before we reach this point. */
+			if (allow_quickstart && !old_allow_quickstart) return FALSE;
+			if (old_spend_points != (!spend_points || use_autoroller)) return FALSE;
+
+			/* We need not restart for maximise mode, but we should try to keep the stats the same. */
+			if (old_maximise_mode != maximise_mode)
+			{
+				byte x;
+				for (x = 0; x < A_MAX; x++)
+				{
+					s16b mod = rp_ptr->r_adj[x]+cp_ptr->c_adj[x];
+					if (maximise_mode) mod *= -1;
+					mod = modify_stat_value(p_ptr->stat_cur[x], mod);
+					p_ptr->stat_cur[x] = p_ptr->stat_max[x] = mod;
+					i = IDX_START;
+				}
+			}
+		}
+		if (i == IDX_HELP)
+		{
+			do_cmd_help(syshelpfile);
+		}
 		/* Toggle details if required. */
 		if (i == IDX_DETAILS)
 		{
