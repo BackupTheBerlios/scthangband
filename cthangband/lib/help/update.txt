@@ -7,6 +7,7 @@ read from the bottom up.
 
 sCthangband _CVS_
 * Fix the following bugs:
+  * The game hung if it was started without an existing save file.
   * The keys for increasing stats during character creation were displayed
     wrongly.
 

@@ -3912,7 +3912,8 @@ void play_game(bool new_game)
 {
 	int i;
 
-	hack_chaos_feature = FALSE;
+	/* Hack - store "RNG not initialised" in Rand_quick. */
+	Rand_quick = TRUE;
 
 	/* Hack -- Character is "icky" */
 	character_icky = TRUE;
