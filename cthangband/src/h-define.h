@@ -137,15 +137,4 @@
 #endif
 
 
-/* 
- * Variable length arrays are allowed by C99 and GCC, but not by C89. As
- * using these where appropriate allows various optimisations, this macro
- * attempts to define where they are available.
- */
-#if defined(__GNUC__) || \
-	(defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
-#define VARIABLE_ARRAYS
 #endif
-
-#endif
-

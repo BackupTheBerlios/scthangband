@@ -3169,6 +3169,16 @@ extern int PlayerUID;
 /* And for monster_desc() */
 #define MNAME_MAX (z_info->mname)
 
+/* 
+ * Variable length arrays are allowed by C99 and GCC, but not by C89. As
+ * using these where appropriate allows various optimisations, this macro
+ * attempts to define where they are available.
+ */
+#if defined(__GNUC__) || \
+	(defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
+#define VARIABLE_ARRAYS
+#endif
+
 #ifdef VARIABLE_ARRAYS
 #define ONAME_LEN ONAME_MAX
 #define MNAME_LEN MNAME_MAX
