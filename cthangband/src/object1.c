@@ -3024,7 +3024,7 @@ nextbit:
 		info[i++].txt = "It fires missiles excessively fast.";
 	}
 
-	if (cumber_glove(o_ptr))
+	if (!(o_ptr->flags3 & TR3_NO_MAGIC) && cumber_glove(o_ptr))
 	{
 		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
@@ -3039,7 +3039,7 @@ nextbit:
 		}
 	}
 
-	if (cumber_helm(o_ptr))
+	if (!(o_ptr->flags3 & TR3_NO_MAGIC) && cumber_helm(o_ptr))
 	{
 		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
@@ -3075,24 +3075,30 @@ nextbit:
 	/* Describe random possibilities if not *identified*. 
 	 * Note that this only has a precise meaning for artefacts. 
 	 * Bug - LITE can be mentioned both here and in its own right. Unfortunately it's not easy to fix. */
-	if (~o_ptr->ident & IDENT_MENTAL && !cheat_item)
+
+	j = 0;
+	if (o_ptr->flags2 & (TR2_RAND_RESIST))
 	{
-		if (o_ptr->flags2 & (TR2_RAND_RESIST))
-		{
-			if (o_ptr->name1) info[i++].txt = "It gives you a random resistance.";
-			else info[i++].txt = "It may give you a random resistance.";
-		}
-		if (o_ptr->flags2 & (TR2_RAND_POWER))
-		{
-			if (o_ptr->name1) info[i++].txt = "It gives you a random power.";
-			else info[i++].txt = "It may give you a random power.";
-		}
-		if (o_ptr->flags2 & (TR2_RAND_EXTRA))
-		{
-			if (o_ptr->name1) info[i++].txt = "It gives you a random power or resistance.";
-			else info[i++].txt = "It may give you a random power or resistance.";
-		}
+		board[j++] = "a random resistance";
 	}
+	if (o_ptr->flags2 & (TR2_RAND_POWER))
+	{
+		board[j++] = "a random power";
+	}
+	if (o_ptr->flags2 & (TR2_RAND_EXTRA))
+	{
+		if (j)
+			board[j++] = "a further random power or resistance";
+		else
+			board[j++] = "a random power or resistance";
+	}
+
+	if (j)
+	{
+		cptr pref = (o_ptr->name1) ? "It gives you" : "It may give you";
+		do_list_flags(pref, "and", board, j);
+	}
+	
 
 		if (o_ptr->flags3 & (TR3_PERMA_CURSE))
 		{

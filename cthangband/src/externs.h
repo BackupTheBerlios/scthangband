@@ -2095,7 +2095,7 @@ extern byte adj_chr_gold[];
 #if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_int_dev[];
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_wis_sav[];
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
