@@ -18,7 +18,7 @@ byte sf_minor;			/* Savefile's "version_minor" */
 byte sf_patch;			/* Savefile's "version_patch" */
 byte sf_extra;			/* Savefile's "version_extra" */
 
-u16b sf_flags;			/* Savefile's "version flags" */
+u16b sf_flags_sf;			/* Savefile's "version flags" */
 
 /*
  * Savefile information

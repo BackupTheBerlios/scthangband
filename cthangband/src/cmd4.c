@@ -837,13 +837,18 @@ static void do_cmd_options_win(void)
 
 			/* Display the windows */
 			for (j = 0; j < 8; j++)
-{
-				byte a = TERM_WHITE;
-
+			{
 				char c1 = '.', c2 = ' ';
 
 				/* Use color */
-				if ((i == y) && (j == x)) a = TERM_L_BLUE;
+				if ((i == y) && (j == x))
+				{
+					a = TERM_L_BLUE;
+				}
+				else
+				{
+					a = TERM_WHITE;
+				}
 
 				/* Active flags */
 				if (REP(j,i)) c1 = min+REP(j,i);

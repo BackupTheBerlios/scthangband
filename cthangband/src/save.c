@@ -93,7 +93,7 @@ static void wr_string(cptr str)
  */
 static void wr_item(object_type *o_ptr)
 {
-	u16b k_idx = convert_k_idx(o_ptr->k_idx, sf_flags_now, sf_flags);
+	u16b k_idx = convert_k_idx(o_ptr->k_idx, sf_flags_now, sf_flags_sf);
 	wr_s16b(k_idx);
 
 	/* Location */
@@ -159,7 +159,7 @@ static void wr_item(object_type *o_ptr)
  */
 static void wr_monster(monster_type *m_ptr)
 {
-	wr_s16b(convert_r_idx(m_ptr->r_idx, sf_flags_now, sf_flags));
+	wr_s16b(convert_r_idx(m_ptr->r_idx, sf_flags_now, sf_flags_sf));
 	wr_byte(m_ptr->fy);
 	wr_byte(m_ptr->fx);
 	wr_byte(m_ptr->generation);
@@ -306,7 +306,7 @@ static void wr_store(store_type *st_ptr)
 	}
 	else
 	{
-		s16b owner = convert_owner(st_ptr->owner, sf_flags_now, sf_flags);
+		s16b owner = convert_owner(st_ptr->owner, sf_flags_now, sf_flags_sf);
 		if (owner < 0) quit("Unsupported shopkeeper.");
 		wr_byte(owner % MAX_OWNERS);
 	}
@@ -1028,9 +1028,9 @@ static bool wr_savefile_new(void)
 
 
 	/* Dump the monster lore */
-	tmp16u = convert_r_idx(MAX_R_IDX, sf_flags_now, sf_flags);
+	tmp16u = convert_r_idx(MAX_R_IDX, sf_flags_now, sf_flags_sf);
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++) wr_lore(MAX(0, convert_r_idx(i, sf_flags, sf_flags_now)));
+	for (i = 0; i < tmp16u; i++) wr_lore(MAX(0, convert_r_idx(i, sf_flags_sf, sf_flags_now)));
 
 #ifdef SF_DEATHEVENTTEXT
 	/* Dump the death event lore */
@@ -1038,9 +1038,9 @@ static bool wr_savefile_new(void)
 #endif
 
 	/* Dump the object memory */
-	tmp16u = convert_k_idx(MAX_K_IDX, sf_flags_now, sf_flags);
+	tmp16u = convert_k_idx(MAX_K_IDX, sf_flags_now, sf_flags_sf);
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++) wr_xtra(MAX(0, convert_k_idx(i, sf_flags, sf_flags_now)));
+	for (i = 0; i < tmp16u; i++) wr_xtra(MAX(0, convert_k_idx(i, sf_flags_sf, sf_flags_now)));
 
 
 	/* Hack -- Dump the quests */
@@ -1050,7 +1050,7 @@ static bool wr_savefile_new(void)
 	{
 		quest_type *q_ptr = q_list+i;
 		wr_byte(q_ptr->level);
-		wr_s16b(convert_r_idx(q_ptr->r_idx, sf_flags_now, sf_flags));
+		wr_s16b(convert_r_idx(q_ptr->r_idx, sf_flags_now, sf_flags_sf));
 		wr_byte(q_ptr->dungeon);
 		wr_byte(q_ptr->cur_num);
 		wr_byte(q_ptr->max_num);
@@ -1239,13 +1239,13 @@ bool save_player(bool as_4_1_0)
 	char    safe[1024];
 
 	/* Find the current version. */
-	current_version(&sf_flags, &sf_major, &sf_minor, &sf_patch);
+	current_version(&sf_flags_sf, &sf_major, &sf_minor, &sf_patch);
 
 #ifdef SF_SKILL_BASE
 	/* If a 4.1.0 savefile is required, provide one. */
 	if (as_4_1_0)
 	{
-		sf_flags = SF_SKILL_BASE;
+		sf_flags_sf = SF_SKILL_BASE;
 		sf_major = 4;
 		sf_minor = 1;
 		sf_patch = 0;

@@ -3638,59 +3638,71 @@ static void dismiss_pets(bool some)
  * The number of spaces will be adjusted as necessary.
  * Display the powers available in choose_power()
  */
-static void racial_string(byte num, byte *x, char * text)
-					{
-	powertype *pw_ptr = cur_powers[num];
+static void racial_string(byte idx, byte *x, char * text)
+{
+	powertype *pw_ptr = cur_powers[idx];
 						
 	/* Set the distance from the left margin. */
 	(*x) = RACIAL_MIN_X;
 
 	sprintf(text, ")  %s", pw_ptr->text);
 	switch (pw_ptr->type)
-				{
+	{
 		/* Racial and mutated powers have a fairly complex format. */
 		case POWER_RACIAL: case POWER_MUTA1: case POWER_MUTA2: case POWER_MUTA3:
 		{
-			char stat[A_MAX][4] = {"STR","INT","WIS","DEX","CON","CHR"};
-			char text2[80], cost[80];
+			cptr cost;
+			cptr racstr = (pw_ptr->type == POWER_RACIAL) ? "racial, " : "";
+			cptr t2str1 = (pw_ptr->text2) ? pw_ptr->text2 : "";
+			cptr t2str2 = (pw_ptr->text2) ? ", " : "";
 			s16b num, denom;
+			int perc;
 			if (pw_ptr->cost > 0)
 			{
-				sprintf(cost, "%d", pw_ptr->cost);
-				}
+				cost = format("%d", pw_ptr->cost);
+			}
 			else if (!pw_ptr->cost)
-				{
-				cost[0]='\0';
-				}
+			{
+				cost = "";
+			}
 			else
-				{
+			{
 				powercosttype *pc_ptr = &powercosts[-pw_ptr->cost];
 				if (!(pc_ptr->levc))
-					strcpy(cost, "odd");
+				{
+					cost = "odd";
+				}
+				else if (pc_ptr->minc)
+				{
+					cost = format("%d+lev", pc_ptr->minc);
+				}
 				else
 				{
-					if (pc_ptr->minc)
-						sprintf(cost, "%d+lev", pc_ptr->minc);
-					else
-						strcpy(cost, "lvl");
-					if (pc_ptr->levc>1)
-						strcat(cost, format("/%d", pc_ptr->levc));
+					cost = "lvl";
 				}
+				if (pc_ptr->levc>1)
+				{
+					cost = format("%s/%d", cost, pc_ptr->levc);
 				}
+			}
 			racial_success_chance(pw_ptr, &num, &denom);
-			sprintf(text2, "%-*s(%scost %s, %s%s %d %d%%)", MIN_STRING_LEN, text,
-			(pw_ptr->type == POWER_RACIAL) ? "racial, " : "", cost,
-			(pw_ptr->text2) ? format("%s, ", pw_ptr->text2) : "",
-			stat[pw_ptr->use_stat], pw_ptr->difficulty, 100-num*100/denom);
-			strcpy(text, text2);
+			perc = 100-num*100/denom;
+			sprintf(text, ")  %-*s(%scost %s, %s%s%.3s %d %d%%)",
+				MIN_STRING_LEN, pw_ptr->text, racstr, cost, t2str1, t2str2,
+				stat_names[pw_ptr->use_stat], pw_ptr->difficulty, perc);
 				break;
-				}
+		}
 		/* Dismissing uses a constant string, however. */
 		case POWER_DISMISS:
-				break;
+		{
+			sprintf(text, ")  %s", pw_ptr->text);
+			break;
+		}
 		/* As do unknown strings. */
 		default:
-		strcpy(text, "Unknown power");
+		{
+			strcpy(text, "Unknown power");
+		}
 	}
 }
 

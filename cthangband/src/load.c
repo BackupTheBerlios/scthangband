@@ -62,7 +62,7 @@ static u32b	x_check = 0L;
  */
 bool has_flag(u16b flag)
 {
-	return ((sf_flags & flag) != 0);
+	return ((sf_flags_sf & flag) != 0);
 }
 
 
@@ -264,7 +264,7 @@ static void rd_item(object_type *o_ptr)
 
 	/* Kind */
 	rd_s16b(&o_ptr->k_idx);
-	o_ptr->k_idx = convert_k_idx(o_ptr->k_idx, sf_flags, sf_flags_now);
+	o_ptr->k_idx = convert_k_idx(o_ptr->k_idx, sf_flags_sf, sf_flags_now);
 
 	/* Location */
 	rd_byte(&o_ptr->iy);
@@ -490,7 +490,7 @@ static void rd_monster(monster_type *m_ptr)
 	/* Read the monster race */
 	rd_s16b(&m_ptr->r_idx);
 
-	m_ptr->r_idx = convert_r_idx(m_ptr->r_idx, sf_flags, sf_flags_now);
+	m_ptr->r_idx = convert_r_idx(m_ptr->r_idx, sf_flags_sf, sf_flags_now);
 
 	/* Read the other information */
 	rd_byte(&m_ptr->fy);
@@ -639,7 +639,7 @@ static errr rd_store(int n)
 	{
 		byte z;
 		rd_byte(&z);
-		st_ptr->owner = convert_owner(n*MAX_OWNERS+z, sf_flags, sf_flags_now);
+		st_ptr->owner = convert_owner(n*MAX_OWNERS+z, sf_flags_sf, sf_flags_now);
 	}
 
 	/* Pick a new owner if the current one has been removed. */
@@ -1732,7 +1732,7 @@ static errr rd_savefile_new_aux(void)
 	 * in a simple way. */
 	if (sf_major & SFM_SPECIAL)
 	{
-		sf_flags = sf_minor*256+sf_patch;
+		sf_flags_sf = sf_minor*256+sf_patch;
 	}
 	else if(older_than(4,0,0))
 	{
@@ -1757,34 +1757,34 @@ static errr rd_savefile_new_aux(void)
 	/* For other save files, we must rely on the version number. */
 	else
 	{
-		sf_flags = 0;
+		sf_flags_sf = 0;
 #ifdef SF_SKILL_BASE
-		if (!older_than(4,1,0)) sf_flags |= SF_SKILL_BASE;
+		if (!older_than(4,1,0)) sf_flags_sf |= SF_SKILL_BASE;
 #endif
 
 #ifdef SF_16_IDENT
-		if (!older_than(4,1,1)) sf_flags |= SF_16_IDENT;
+		if (!older_than(4,1,1)) sf_flags_sf |= SF_16_IDENT;
 #endif
 #ifdef SF_CURSE
-		if (!older_than(4,1,1)) sf_flags |= SF_CURSE;
+		if (!older_than(4,1,1)) sf_flags_sf |= SF_CURSE;
 #endif
 #ifdef SF_Q_SAVE
-		if (!older_than(4,1,1)) sf_flags |= SF_Q_SAVE;
+		if (!older_than(4,1,1)) sf_flags_sf |= SF_Q_SAVE;
 #endif
 #ifdef SF_SENSE_FROM_DISCOUNT
-		if (!older_than(4,1,2)) sf_flags |= SF_SENSE_FROM_DISCOUNT;
+		if (!older_than(4,1,2)) sf_flags_sf |= SF_SENSE_FROM_DISCOUNT;
 #endif
 #ifdef SF_DEATHEVENTTEXT
-		if (!older_than(4,1,3)) sf_flags |= SF_DEATHEVENTTEXT;
+		if (!older_than(4,1,3)) sf_flags_sf |= SF_DEATHEVENTTEXT;
 #endif
 #ifdef SF_QUEST_UNKNOWN
-		if (!older_than(4,1,4)) sf_flags |= SF_QUEST_UNKNOWN;
+		if (!older_than(4,1,4)) sf_flags_sf |= SF_QUEST_UNKNOWN;
 #endif
 #ifdef SF_3D_WINPRI
-		if (!older_than(4,1,5)) sf_flags |= SF_3D_WINPRI;
+		if (!older_than(4,1,5)) sf_flags_sf |= SF_3D_WINPRI;
 #endif
 #ifdef SF_16_CAVE_FLAG
-		if (!older_than(4,1,6)) sf_flags |= SF_16_CAVE_FLAG;
+		if (!older_than(4,1,6)) sf_flags_sf |= SF_16_CAVE_FLAG;
 #endif
 	}
 
@@ -1851,7 +1851,7 @@ static errr rd_savefile_new_aux(void)
 	/* Read the available records */
 	for (i = 0; i < tmp16u; i++)
 	{
-		int j = convert_r_idx(i, sf_flags, sf_flags_now);
+		int j = convert_r_idx(i, sf_flags_sf, sf_flags_now);
 
 		/* No such monster. */
 		if (j < 0 || j >= MAX_R_IDX)
@@ -1884,7 +1884,7 @@ static errr rd_savefile_new_aux(void)
 
 	/* k_info has shrunk (user area only). */
 	if (tmp16u > MAX_K_IDX +
-		convert_k_idx(OBJ_MAX_DISTRO, sf_flags, sf_flags_now))
+		convert_k_idx(OBJ_MAX_DISTRO, sf_flags_sf, sf_flags_now))
 	{
 		msg_format("Too many (%u) object kinds. Killing a few.", tmp16u);
 	}
@@ -1892,7 +1892,7 @@ static errr rd_savefile_new_aux(void)
 	/* Read the object memory */
 	for (i = 0; i < tmp16u; i++)
 	{
-		int j = convert_k_idx(i, sf_flags, sf_flags_now);
+		int j = convert_k_idx(i, sf_flags_sf, sf_flags_now);
 		object_kind *k_ptr = (j >= 0 && j < MAX_K_IDX) ? &k_info[j] : 0;
 
 		rd_byte(&tmp8u);
@@ -1937,7 +1937,7 @@ static errr rd_savefile_new_aux(void)
 			rd_byte(&tmp8u);
 			q_ptr->level = tmp8u;
 			rd_s16b((short *)&tmp16u);
-			q_ptr->r_idx = convert_r_idx(tmp16u, sf_flags, sf_flags_now);
+			q_ptr->r_idx = convert_r_idx(tmp16u, sf_flags_sf, sf_flags_now);
 			rd_byte(&q_ptr->dungeon);
 			rd_byte(&tmp8u);
 			q_ptr->cur_num = tmp8u;

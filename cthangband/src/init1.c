@@ -1674,16 +1674,16 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 
 		case 'I':
 		{
-			int tval, pval, extra;
+			int tval, pval, kextra;
 
 			/* Scan for the values */
 			if (3 != sscanf(buf+2, "%d:%d:%d",
-			                &tval, &pval, &extra)) return (1);
+			                &tval, &pval, &kextra)) return (1);
 
 			/* Save the values */
 			k_ptr->tval = tval;
 			k_ptr->pval = pval;
-			k_ptr->extra = extra;
+			k_ptr->extra = kextra;
 
 			/* Next... */
 			return SUCCESS;
@@ -1709,8 +1709,6 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 		/* Process 'A' for "Allocation" (one line only) */
 		case 'A':
 		{
-			int i;
-
 			/* XXX XXX XXX Simply read each number following a colon */
 			for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i)
 			{
@@ -2307,15 +2305,15 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 		/* Process 'X' for "Xtra" (one line only) */
 		case 'X':
 		{
-			int slot, rating;
+			int slot, erating;
 
 			/* Scan for the values */
 			if (2 != sscanf(buf+2, "%d:%d",
-			                &slot, &rating)) return (1);
+			                &slot, &erating)) return (1);
 
 			/* Save the values */
 			e_ptr->slot = slot;
-			e_ptr->rating = rating;
+			e_ptr->rating = erating;
 
 			return SUCCESS;
 		}
@@ -3557,7 +3555,7 @@ static errr parse_info_line_aux(char *buf, header *head, vptr *extra)
  *
  * It enforces the macros in the opposite order to that in which they are given.
  */
-static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
+static errr parse_info_line(char *buf, header *head, int initmacro, vptr *extra)
 {
 	char buf2[1024];
 	char *buf2end = buf2+1023;
@@ -3565,7 +3563,7 @@ static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
 
 	*buf2end = '\0';
 
-	for (i = start-1; i >= 0; i--)
+	for (i = initmacro-1; i >= 0; i--)
 	{
 		init_macro_type *macro_ptr = macro_info+i;
 

@@ -647,8 +647,8 @@ extern byte sf_patch;
 #if (defined(LOAD_C) || defined(LOADSAVE_C))
 extern byte sf_extra;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(OBJECT1_C) || defined(SAVE_C))
-extern u16b sf_flags;
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern u16b sf_flags_sf;
 #endif
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern u32b sf_xtra;
@@ -2056,7 +2056,7 @@ extern void store_init(int which);
 
 /* tables.c */
 
-#if (defined(CMD1_C) || defined(CMD6_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(XTRA2_C))
+#if (defined(CMD6_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(XTRA2_C))
 extern s16b ddd[9];
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA2_C))
@@ -2188,7 +2188,7 @@ extern cptr color_names[16];
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C))
 extern cptr atchar;
 #endif
-#if (defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(CMD2_C) || defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern cptr stat_names[6];
 #endif
 #if (defined(FILES_C) || defined(TABLES_C) || defined(XTRA1_C))
@@ -3058,7 +3058,7 @@ extern s16b autosave_freq;
 #if (defined(CMD4_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern s16b feeling;
 #endif
-#if (defined(GENERATE_C) || defined(INIT1_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(VARIABLE_C))
+#if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern s16b rating;
 #endif
 #if (defined(GENERATE_C) || defined(OBJECT2_C) || defined(VARIABLE_C))

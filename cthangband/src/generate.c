@@ -286,7 +286,7 @@ void generate_spirit_names(void)
 /*
  * Array of room types (assumes 11x11 blocks)
  */
-static room_data room[ROOM_MAX] =
+static room_data room_info[ROOM_MAX] =
 {
 	{  0, 0,  0, 0,  0 },		/* 0 = Nothing */
 	{  0, 0, -1, 1,  1 },		/* 1 = Simple (33x11) */
@@ -3560,9 +3560,9 @@ static void build_type6(int yval, int xval)
 			/* Bubble */
 			if (p1 > p2)
 			{
-				int tmp = what[i1];
+				int swaptmp = what[i1];
 				what[i1] = what[i2];
-				what[i2] = tmp;
+				what[i2] = swaptmp;
 			}
 		}
 	}
@@ -4331,16 +4331,16 @@ static bool room_build(int y0, int x0, int typ)
 
 
 	/* Restrict level */
-	if ((dun_depth) < room[typ].level) return (FALSE);
+	if ((dun_depth) < room_info[typ].level) return (FALSE);
 
 	/* Restrict "crowded" rooms */
 	if (dun->crowded && ((typ == 5) || (typ == 6))) return (FALSE);
 
 	/* Extract blocks */
-	y1 = y0 + room[typ].dy1;
-	y2 = y0 + room[typ].dy2;
-	x1 = x0 + room[typ].dx1;
-	x2 = x0 + room[typ].dx2;
+	y1 = y0 + room_info[typ].dy1;
+	y2 = y0 + room_info[typ].dy2;
+	x1 = x0 + room_info[typ].dx1;
+	x2 = x0 + room_info[typ].dx2;
 
 	/* Never run off the screen */
 	if ((y1 < 0) || (y2 >= dun->row_rooms)) return (FALSE);
@@ -5091,7 +5091,6 @@ static void town_gen_hack(void)
 static void town_gen(void)
 {
 	int i, y, x;
-	cave_type *c_ptr;
 	
 	/* Hack -- Start with basic floors */
 	for (y = 0; y < cur_hgt; y++)
@@ -5110,7 +5109,7 @@ static void town_gen(void)
 	for (x = 0; x < cur_wid; x++)
 	{
 		/* Outer North wall */
-		c_ptr = &cave[0][x];
+		cave_type *c_ptr = &cave[0][x];
 
 		/* Clear previous contents, add "solid" perma-wall */
 		c_ptr->feat = FEAT_PERM_SOLID;
@@ -5133,7 +5132,7 @@ static void town_gen(void)
 	for (y = 0; y < cur_hgt; y++)
 	{
 		/* Outer West wall */
-		c_ptr = &cave[y][0];
+		cave_type *c_ptr = &cave[y][0];
 
 		/* Clear previous contents, add "solid" perma-wall */
 		c_ptr->feat = FEAT_PERM_SOLID;
@@ -5163,7 +5162,7 @@ static void town_gen(void)
 		{
 			for (x = 0; x < cur_wid; x++)
 			{
-				c_ptr = &cave[y][x];
+				cave_type *c_ptr = &cave[y][x];
 
 				/* Perma-Lite */
 				c_ptr->info |= (CAVE_GLOW);

@@ -1178,7 +1178,7 @@ static void process_world(void)
        if ((allart_p(&inventory[INVEN_LITE]))
             && !(p_ptr->resist_lite))
         {
-            object_type * o_ptr = &inventory[INVEN_LITE];
+            o_ptr = &inventory[INVEN_LITE];
             char o_name [80];
             char ouch [80];
 
@@ -1879,8 +1879,6 @@ static void process_world(void)
 		}
 		if ((p_ptr->muta2 & MUT2_EAT_LIGHT) && (randint(3000) == 1))
 		{
-			object_type *o_ptr;
-
 			msg_print("A shadow passes over you.");
 			msg_print(NULL);
 
@@ -2151,8 +2149,6 @@ static void process_world(void)
 		if ((p_ptr->muta2 & MUT2_DISARM) &&
 			(randint(10000)==1))
 		{
-			object_type *o_ptr;
-			
 			disturb(0,0);
 			msg_print("You trip over your own feet!");
 			take_hit(randint(p_ptr->wt/6), "tripping", MON_DANGEROUS_MUTATION);

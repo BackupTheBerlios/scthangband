@@ -41,7 +41,7 @@ struct birther
 /*
  * The last character displayed
  */
-static birther prev;
+static birther prev_stat;
 
 
 
@@ -2042,22 +2042,22 @@ static void save_prev_data(void)
 	/*** Save the current data ***/
 
 	/* Save the data */
-	prev.age = p_ptr->age;
-	prev.wt = p_ptr->wt;
-	prev.ht = p_ptr->ht;
-	prev.sc = p_ptr->sc;
-	prev.au = p_ptr->au;
+	prev_stat.age = p_ptr->age;
+	prev_stat.wt = p_ptr->wt;
+	prev_stat.ht = p_ptr->ht;
+	prev_stat.sc = p_ptr->sc;
+	prev_stat.au = p_ptr->au;
 
 	/* Save the stats */
 	for (i = 0; i < A_MAX; i++)
 	{
-		prev.stat[i] = p_ptr->stat_max[i];
+		prev_stat.stat[i] = p_ptr->stat_max[i];
 	}
 
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(prev.history[i], history[i]);
+		strcpy(prev_stat.history[i], history[i]);
 	}
 }
 
@@ -2098,45 +2098,45 @@ static void load_prev_data(void)
 	/*** Load the previous data ***/
 
 	/* Load the data */
-	p_ptr->age = prev.age;
-	p_ptr->wt = prev.wt;
-	p_ptr->ht = prev.ht;
-	p_ptr->sc = prev.sc;
-	p_ptr->au = prev.au;
+	p_ptr->age = prev_stat.age;
+	p_ptr->wt = prev_stat.wt;
+	p_ptr->ht = prev_stat.ht;
+	p_ptr->sc = prev_stat.sc;
+	p_ptr->au = prev_stat.au;
 
 	/* Load the stats */
 	for (i = 0; i < A_MAX; i++)
 	{
-		p_ptr->stat_max[i] = prev.stat[i];
-		p_ptr->stat_cur[i] = prev.stat[i];
+		p_ptr->stat_max[i] = prev_stat.stat[i];
+		p_ptr->stat_cur[i] = prev_stat.stat[i];
 	}
 
 	/* Load the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(history[i], prev.history[i]);
+		strcpy(history[i], prev_stat.history[i]);
 	}
 
 
 	/*** Save the current data ***/
 
 	/* Save the data */
-	prev.age = temp.age;
-	prev.wt = temp.wt;
-	prev.ht = temp.ht;
-	prev.sc = temp.sc;
-	prev.au = temp.au;
+	prev_stat.age = temp.age;
+	prev_stat.wt = temp.wt;
+	prev_stat.ht = temp.ht;
+	prev_stat.sc = temp.sc;
+	prev_stat.au = temp.au;
 
 	/* Save the stats */
 	for (i = 0; i < A_MAX; i++)
 	{
-		prev.stat[i] = temp.stat[i];
+		prev_stat.stat[i] = temp.stat[i];
 	}
 
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(prev.history[i], temp.history[i]);
+		strcpy(prev_stat.history[i], temp.history[i]);
 	}
 }
 

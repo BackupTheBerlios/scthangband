@@ -983,7 +983,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
     monster_type    *m_ptr = &m_list[m_idx];
     monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
-    int dss, ddd;
+    int dss, ddice;
 
 	const char * atk_desc;
 	
@@ -994,36 +994,36 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
     {
 	case MUT2_SCOR_TAIL:
 		dss = 3;
-		ddd = 7;
+		ddice = 7;
 		n_weight = 5;
 		atk_desc = "tail";
 		break;
 	case MUT2_HORNS:
 		dss = 2;
-		ddd = 6;
+		ddice = 6;
 		n_weight = 15;
 		atk_desc = "horns";
 		break;
 	case MUT2_BEAK:
 		dss = 2;
-		ddd = 4;
+		ddice = 4;
 		n_weight = 5;
 		atk_desc = "beak";
 		break;
 	case MUT2_TRUNK:
 		dss = 1;
-		ddd = 4;
+		ddice = 4;
 		n_weight = 35;
 		atk_desc = "trunk";
 		break;
 	case MUT2_TENTACLES:
 		dss = 2;
-		ddd = 5;
+		ddice = 5;
 		n_weight = 5;
 		atk_desc = "tentacles";
 		break;
         default:
-            dss = ddd = n_weight = 1;
+            dss = ddice = n_weight = 1;
             atk_desc = "undefined body part";
     }
 
@@ -1047,7 +1047,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 				skill_exp(SKILL_CLOSE);
 			}
 
-            k = damroll(ddd, dss);
+            k = damroll(ddice, dss);
             k = critical_norm(n_weight, p_ptr->to_h, k);
 
 			/* Apply the player damage bonuses */
@@ -1532,7 +1532,6 @@ void py_attack(int y, int x)
         /* Handle polymorph */
 		if (tmp != m_ptr->r_idx)
 		{
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			monster_race *r2_ptr = &r_info[tmp];
 			byte i = 0;
 			/* Hack - SHAPECHANGERs change regularly anyway. */

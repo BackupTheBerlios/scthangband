@@ -1751,9 +1751,6 @@ static void call_the_(void)
 static void wild_magic(int spell)
 {
     int counter = 0;
-    int type = SUMMON_MOULD + (rand_int(6));
-    if (type < SUMMON_MOULD) type = SUMMON_MOULD;
-    else if (type > SUMMON_MIMIC) type = SUMMON_MIMIC;
 
     switch(randint(spell) + randint(8) + 1)
 
