@@ -2300,12 +2300,12 @@ extern void path_build_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER2_C) || defined(UTIL_C) || defined(WIZARD1_C))
 extern FILE *my_fopen_path(cptr path, cptr file, cptr mode);
 #endif
-#if (defined(HAVE_MKSTEMP)) && (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
-extern FILE *my_fopen_temp(char *buf, uint max);
-#endif
-#if (!(defined(HAVE_MKSTEMP))) && (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern FILE *my_fopen_temp(char *buf, int max);
 #endif
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern errr my_fgets(FILE *fff, char *buf, size_t n);
 #endif

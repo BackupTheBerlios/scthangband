@@ -400,24 +400,14 @@ FILE *my_fopen_path(cptr path, cptr file, cptr mode)
 	return my_fopen(buf, mode);
 }
 
-/*
- * Create a temporary file, store its name in buf, open it, and return a
- * pointer to it. Return NULL on failure.
- */
 
 #ifdef HAVE_MKSTEMP
 
-FILE *my_fopen_temp(char *buf, uint max)
+static FILE *my_fopen_temp_aux(char *buf, uint max)
 {
 	int fd;
 
-	/* Paranoia */
-	if (strlen("/tmp/anXXXXXX") >= max)
-	{
-		if (alert_failure)
-			msg_print("Buffer too short for temporary file name!");
-		return (NULL);
-	}
+	assert(max > strlen("/tmp/anXXXXXX")); /* Caller */
 
 	/* Prepare the buffer for mkstemp */
 	strcpy(buf, "/tmp/anXXXXXX");
@@ -434,7 +424,7 @@ FILE *my_fopen_temp(char *buf, uint max)
 
 #else /* HAVE_MKSTEMP */
 
-FILE *my_fopen_temp(char *buf, int max)
+static FILE *my_fopen_temp_aux(char *buf, int max)
 {
 	/* Generate a temporary filename */
 	if (path_temp(buf, max)) return (NULL);
@@ -445,6 +435,20 @@ FILE *my_fopen_temp(char *buf, int max)
 
 #endif /* HAVE_MKSTEMP */
 
+/*
+ * Create a temporary file, store its name in buf, open it, and return a
+ * pointer to it. Beep and return NULL on failure.
+ */
+FILE *my_fopen_temp(char *buf, int max)
+{
+	/* Run the system-specific file opening function. */
+	FILE *fff = my_fopen_temp_aux(buf, max);
+
+	/* Give a warning in the event of errors. */
+	if (!fff) bell("Failed to open temporary file.");
+
+	return fff;
+}
 
 
 /*
