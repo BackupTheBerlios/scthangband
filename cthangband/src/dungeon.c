@@ -2259,54 +2259,6 @@ void process_command(void)
 
 
 
-
-			/*** Wizard Commands ***/
-
-#ifdef ALLOW_WIZARD
-
-			/* Special "debug" commands */
-		case KTRL('A'):
-		{
-			/* Enter debug mode */
-			if (cheat_wzrd)
-			{
-				do_cmd_debug();
-			}
-			else
-			{
-				if (randint(2)==1)
-				{
-					msg_format("%v", get_rnd_line_f1, "error.txt");
-				}
-				else
-				{
-					prt("Type '?' for help.", 0, 0);
-				}
-			}
-			break;
-		}
-
-#endif
-
-
-#ifdef ALLOW_BORG
-
-			/* Special "borg" commands */
-		case KTRL('Z'):
-		{
-			/* Enter borg mode */
-			if (enter_borg_mode())
-			{
-				do_cmd_borg();
-			}
-
-			break;
-		}
-
-#endif
-
-
-
 			/*** Inventory Commands ***/
 
 		/* Reveal all hidden objects. */
@@ -2723,6 +2675,15 @@ void process_command(void)
 			break;
 		}
 
+		/* Hack - process a temporary function. */
+		case '$':
+		{
+			do_cmd_script();
+			break;
+		}
+
+		/*** Wizard Commands ***/
+
 #ifdef ALLOW_WIZARD
 # ifdef ALLOW_SPOILERS
 		/* Hack -- Generate Spoilers */
@@ -2940,21 +2901,44 @@ void process_command(void)
 		}
 #endif /* ALLOW_WIZARD */
 
-		/* Hack - process a temporary function. */
-		case '$':
+#ifdef ALLOW_BORG
+
+			/* Special "borg" commands */
+		case KTRL('Z'):
 		{
-			do_cmd_script();
+			/* Enter borg mode */
+			if (enter_borg_mode())
+			{
+				do_cmd_borg();
+			}
 			break;
 		}
+
+#endif
+
+#ifdef ALLOW_WIZARD
+
+			/* Special "debug" commands */
+		case KTRL('A'):
+		{
+			/* Enter debug mode */
+			if (cheat_wzrd)
+			{
+				do_cmd_debug();
+				break;
+			}
+			/* Else fall through to default. */
+		}
+
+#endif /* ALLOW_WIZARD */
+
 			/* Hack -- Unknown command */
 		default:
 		{
-			if (randint(2)==1)
-			{
-				msg_format("%v", get_rnd_line_f1, "error.txt");
-			}
+			if (one_in(2))
+				mc_put_fmt(0, 0, "%v", get_rnd_line_f1, "error.txt");
 			else
-				prt("Type '?' for help.", 0, 0);
+				mc_put_fmt(0, 0, "Type '?' for help.");
 			break;
 		}
 	}
