@@ -144,7 +144,7 @@ Q:7:1:Robin Hood, the Outlaw
 F:NO_UNIQUES
 
 N:y:Yeek Lair
-D:the Yeek Kings Lair
+D:the Yeek King's Lair
 I:3-10:y
 Q:9:1:Orfax, Son of Boldor
 Q:10:1:Boldor, King of the Yeeks
