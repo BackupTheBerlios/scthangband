@@ -793,7 +793,6 @@ void quit_fmt(cptr fmt, ...)
 
 
 
-#if 0
 /*
  * Vararg interface to core()
  */
@@ -814,5 +813,4 @@ void core_fmt(cptr fmt, ...)
 	/* Call core() */
 	core(res);
 }
-#endif /* 0 */
 

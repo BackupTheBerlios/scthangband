@@ -105,6 +105,28 @@
 #define SGN(a)		(((a) < 0)   ? (-1) : ((a) != 0))
 
 /*
+ * An assertion macro
+ */
+#undef assert
+
+#ifdef NDEBUG
+# define assert(ignore)	((void) 0)
+#else /* NDEBUG */
+
+/* Dump the core on an assert() failure rather than simply quitting. */
+/* #define DEBUG_ASSERT_CORE */
+
+/* Pick whether to save the game before aborting */
+#define DEBUG_ASSERT_SAVE
+
+/* Possibly save the game, and then abort. */
+# define assert(expr)\
+		if (!(expr)) assert_fail(#expr, __FILE__, __LINE__)
+#endif /* NDEBUG */
+
+
+
+/*
  * Given an array, determine how many elements are in the array.
  */
 #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))

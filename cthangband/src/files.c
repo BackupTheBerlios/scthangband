@@ -6457,3 +6457,29 @@ void signals_init(void)
 #endif
 #endif /* HANDLE_SIGNALS */
 }
+
+/*
+ * Quit the game in an orderly fashion if an assert() call fails.
+ */
+void assert_fail(cptr error, cptr file, int line)
+{
+	void (*assert_fmt)(cptr fmt, ...);
+
+	/* Forbid suspending. */
+	signals_ignore_tstp();
+
+	/* Save the game if allowed. */
+#ifdef DEBUG_ASSERT_SAVE
+	save_player(TRUE);
+#endif /* DEBUG_ASSERT_SAVE */
+
+	/* Quit via the specified mechanism. */
+#ifdef DEBUG_ASSERT_CORE
+	assert_fmt = core_fmt;
+#else /* DEBUG_ASSERT_CORE */
+	assert_fmt = quit_fmt;
+#endif /* DEBUG_ASSERT_CORE */
+
+	(*assert_fmt)("\nAssertion failed: %s\nin file %s\non line %d\n\n",
+		error, file, line);
+}

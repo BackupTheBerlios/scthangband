@@ -4001,4 +4001,16 @@ extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 #if (defined(CHECK_ARRAYS)) && (defined(CMD6_C) || defined(INIT2_C))
 extern void check_timeouts(void);
 #endif
+
+/* files.c */
+
+#if (defined(ANGBAND_H) || defined(H_DEFINE_H))
+extern void assert_fail(cptr error, cptr file, int line);
+#endif
+
+/* z-form.c */
+
+#if (defined(FILES_C) || defined(Z_FORM_C))
+extern void core_fmt(cptr fmt, ...);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
