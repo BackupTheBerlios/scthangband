@@ -1214,7 +1214,7 @@ bool detect_traps(void)
 				(c_ptr->feat <= FEAT_TRAP_TAIL))
 			{
 				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -1276,7 +1276,7 @@ bool detect_doors(void)
 				(c_ptr->feat == FEAT_BROKEN)))
 			{
 				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -1322,7 +1322,7 @@ bool detect_stairs(void)
 				(c_ptr->feat == FEAT_MORE))
 			{
 				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -1376,7 +1376,7 @@ bool detect_treasure(void)
 				(c_ptr->feat == FEAT_QUARTZ_K))
 			{
 				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 
 				/* Redraw */
 				lite_spot(y, x);

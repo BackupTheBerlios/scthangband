@@ -8,6 +8,8 @@ read from the bottom up.
 sCthangband _CVS_
 * Create the player on a random staircase on entering a level.
 * Change existing stairs around when a quest is finished.
+* Give each dungeon square a remembered feature, and use it to avoid displaying
+  anything when a monster bores through a wall.
 * Add the ability to record a keymap with the game giving feedback.
 * Display messages from previous turns in a darker colour.
 * Only update the "object recall" when manipulating spellbooks.
@@ -30,6 +32,7 @@ sCthangband _CVS_
   * The wild map didn't all fit on the screen.
   * The player and monsters could be hit twice by a spell effect.
   * Allies were duplicated on the surface.
+  * Monsters created during the player's turn could act immediately.
 
 sCthangband 1.0.16
 * Fix the following bugs:

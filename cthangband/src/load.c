@@ -1447,6 +1447,16 @@ static void set_cave_feat(cave_type *c_ptr, u32b v)
 	c_ptr->feat = (byte)v;
 }
 
+static void set_cave_r_feat(cave_type *c_ptr, u32b v)
+{
+	if (v == 255)
+		c_ptr->r_feat = c_ptr->feat;
+	else if (v == c_ptr->feat)
+		c_ptr->r_feat = 255;
+	else
+		c_ptr->r_feat = (byte)v;
+}
+
 /*
  * Read the dungeon
  *
@@ -1455,7 +1465,7 @@ static void set_cave_feat(cave_type *c_ptr, u32b v)
  */
 static errr rd_dungeon(void)
 {
-	int i;
+	int i, x, y;
 	u16b limit;
 	cave_type *c_ptr;
 
@@ -1491,6 +1501,16 @@ static errr rd_dungeon(void)
 
 	/* Encode cave_type.feat. */
 	rd_rle_cave(1, set_cave_feat);
+
+	/* Encode cave_type.r_feat. */
+	if (has_flag(SF_OBSERVED_FEAT))
+		rd_rle_cave(1, set_cave_r_feat);
+	else
+	{
+		for (y = 0; y < cur_hgt; y++)
+			for (x = 0; x < cur_wid; x++)
+				cave[y][x].r_feat = cave[y][x].feat;
+	}
 
 
 	/*** Objects ***/

@@ -713,13 +713,17 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 
 
 	/* Feature code */
-	feat = c_ptr->feat;
+	feat = c_ptr->r_feat;
 
 	/* Floors (etc) */
 	if ((feat <= FEAT_INVIS) || (feat == FEAT_PATH))
 	{
 		/* Memorized (or visible) floor */
-		if ((c_ptr->info & (CAVE_MARK)) || player_can_see_bold(y, x))
+		if ((c_ptr->info & (CAVE_MARK)) ||
+			(((c_ptr->info & (CAVE_LITE)) ||
+				((c_ptr->info & (CAVE_GLOW)) &&
+				(c_ptr->info & (CAVE_VIEW)))) &&
+			!p_ptr->blind))
 		{
 			/* Access floor */
 			f_ptr = &f_info[FEAT_FLOOR];
@@ -975,7 +979,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	}
 
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
-	if (p_ptr->image && (!rand_int(256)) && (c_ptr->feat < FEAT_PERM_SOLID))
+	if (p_ptr->image && (!rand_int(256)) && (c_ptr->r_feat < FEAT_PERM_SOLID))
 	{
 		/* Hallucinate */
 		image_random(ap, cp);
@@ -1304,6 +1308,19 @@ void highlight_square(int win, int y, int x)
 
 
 /*
+ * Permanently learn the identity of the feature in a square.
+ */
+void mark_spot(int y, int x)
+{
+	/* Remember the feature in this square. */
+	cave[y][x].r_feat = cave[y][x].feat;
+
+	/* Remember that the feature should be displayed. */
+	cave[y][x].info |= CAVE_MARK;
+}
+
+
+/*
  * Memorize interesting viewable object/features in the given grid
  *
  * This function should only be called on "legal" grids.
@@ -1375,6 +1392,9 @@ void note_spot(int y, int x)
 		if (!hidden_p(o_ptr)) o_ptr->marked = TRUE;
 	}
 
+
+	/* Hack -- memorise features */
+	c_ptr->r_feat = c_ptr->feat;
 
 	/* Hack -- memorize grids */
 	if (!(c_ptr->info & (CAVE_MARK)))
@@ -3437,6 +3457,7 @@ void wiz_dark(void)
 
 			/* Process the grid */
 			c_ptr->info &= ~(CAVE_MARK | CAVE_TRAP);
+			c_ptr->r_feat = FEAT_NONE;
 		}
 	}
 
@@ -3478,13 +3499,6 @@ void wiz_dark(void)
 void cave_set_feat(int y, int x, int feat)
 {
 	cave_type *c_ptr = &cave[y][x];
-
-	/* Forget this grid if it has visibly changed. note_spot() will add the
-	 * MARK flag back where appropriate. */
-	if (f_info[c_ptr->feat].mimic != f_info[feat].mimic)
-	{
-		c_ptr->info &= ~CAVE_MARK;
-	}
 
 	/* Change the feature */
 	c_ptr->feat = feat;

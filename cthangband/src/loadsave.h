@@ -118,3 +118,8 @@
  * Remove the redundant monster_race.freq_inate field.
  */
 #define SF_NO_INATE 22
+
+/*
+ * Create an "observed feature" field for cave_type.
+ */
+#define SF_OBSERVED_FEAT 23

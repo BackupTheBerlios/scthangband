@@ -810,6 +810,16 @@ static u32b get_cave_feat(cave_type *c_ptr)
 	return c_ptr->feat;
 }
 
+static u32b get_cave_r_feat(cave_type *c_ptr)
+{
+	if (c_ptr->r_feat == c_ptr->feat)
+		return 255;
+	else if (c_ptr->r_feat == 255)
+		return c_ptr->feat;
+	else
+		return c_ptr->r_feat;
+}
+
 /*
  * Write the current dungeon
  */
@@ -849,6 +859,9 @@ static void wr_dungeon(void)
 
 	/* Encode cave_type.feat. */
 	wr_rle_cave(1, get_cave_feat);
+
+	/* Encode cave_type.r_feat. */
+	if (has_flag(SF_OBSERVED_FEAT)) wr_rle_cave(1, get_cave_r_feat);
 
 	/* Compact the objects */
 	compact_objects(0);

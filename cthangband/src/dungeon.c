@@ -976,7 +976,7 @@ static void process_sun(void)
 				c_ptr->info |= (CAVE_GLOW);
 
 				/* Hack -- Memorize lit grids if allowed */
-				if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+				if (view_perma_grids) mark_spot(y, x);
 
 			}
 			else
@@ -3115,6 +3115,19 @@ static void process_player(void)
 		/* Hack -- cancel "lurking browse mode" */
 		if (!command_new) command_see = FALSE;
 
+		/* Handle MFLAG_NICE. */
+		if (repair_mflag_nice)
+		{
+			/* Reset the flag */
+			repair_mflag_nice = FALSE;
+
+			/* Existing monsters can hurt the player now. */
+			for (i = 1; i < m_max; i++)
+			{
+				m_list[i].mflag &= ~MFLAG_NICE;
+			}
+		}
+
 
 		/* Assume free turn */
 		energy_use = 0;
@@ -3231,13 +3244,6 @@ static void process_player(void)
 
 					/* Skip dead monsters */
 					if (!m_ptr->r_idx) continue;
-
-					/* Nice monsters get mean */
-					if (m_ptr->mflag & (MFLAG_NICE))
-					{
-						/* Nice monsters get mean */
-						m_ptr->mflag &= ~(MFLAG_NICE);
-					}
 
 					/* Handle memorized monsters */
 					if (m_ptr->mflag & (MFLAG_MARK))

@@ -2669,7 +2669,7 @@ extern bool inkey_flag;
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern bool shimmer_monsters;
 #endif
-#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
+#if (defined(DUNGEON_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern bool repair_monsters;
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD6_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
@@ -3913,5 +3913,17 @@ extern cptr safe_string_make(cptr str);
 
 #if (defined(CAVE_C) || defined(GENERATE_C))
 extern bool rand_location(int *yp, int *xp, bool (*accept)(int, int, vptr), vptr v);
+#endif
+
+/* variable.c */
+
+#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
+extern bool repair_mflag_nice;
+#endif
+
+/* cave.c */
+
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(SPELLS2_C))
+extern void mark_spot(int y, int x);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

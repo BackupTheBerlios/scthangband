@@ -678,7 +678,8 @@ static void surface_gen_final(int monsters)
 			if (day) c_ptr->info |= (CAVE_GLOW);
 
 			/* Memorize */
-			if (day && view_perma_grids) c_ptr->info |= (CAVE_MARK);
+			if ((day && view_perma_grids) || (c_ptr->info & CAVE_MARK))
+				mark_spot(y, x);
 		}
 	}
 

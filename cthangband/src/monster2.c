@@ -2197,7 +2197,7 @@ monster_type *place_monster_one(int y, int x, int r_idx, bool slp, bool charm, b
 		m_ptr->mflag |= (MFLAG_NICE);
 
 		/* Must repair monsters */
-		repair_monsters = TRUE;
+		repair_mflag_nice = TRUE;
 	}
 
 	/* Prevent the monster from moving on the game turn of creation. */

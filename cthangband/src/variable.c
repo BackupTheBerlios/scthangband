@@ -110,6 +110,7 @@ bool inkey_flag; /* See the "inkey()" function */
 bool shimmer_monsters; /* Hack -- optimize multi-hued monsters */
 
 bool repair_monsters; /* Hack -- optimize detect monsters */
+bool repair_mflag_nice; /* Hack -- optimise resetting MFLAG_NICE. */
 
 s16b total_weight; /* Total weight being carried */
 

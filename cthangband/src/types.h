@@ -524,6 +524,7 @@ struct cave_type
 	u16b info; /* Hack -- cave flags */
 
 	byte feat; /* Hack -- feature type */
+	byte r_feat; /* Observed feature type */
 
 	s16b o_idx; /* Object in this grid */
 

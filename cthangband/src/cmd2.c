@@ -971,6 +971,9 @@ void do_cmd_close(void)
  */
 static void twall(int y, int x)
 {
+	/* Forget the wall */
+	cave[y][x].info &= ~(CAVE_MARK);
+
 	/* Remove the feature */
 	cave_set_feat(y, x, FEAT_FLOOR);
 
@@ -1462,6 +1465,9 @@ static bool do_cmd_disarm_aux(int y, int x)
 		/* Reward */
 		gain_exp(power);
 		skill_exp(SKILL_DISARM);
+
+		/* Forget the trap */
+		c_ptr->info &= ~(CAVE_MARK);
 
 		/* Remove the trap */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -2469,6 +2475,7 @@ static void hit_trap(void)
 		case FEAT_TRAP_HEAD + 0x04:
 		{
 			msg_print("There is a flash of shimmering light!");
+			c_ptr->info &= ~(CAVE_MARK);
 			cave_set_feat(py, px, FEAT_FLOOR);
 			num = 2 + randint(3);
 			for (i = 0; i < num; i++)
@@ -2889,7 +2896,7 @@ static void move_player(int y, int x, int do_pickup)
 			if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				msg_print("You feel some rubble blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 				lite_spot(y, x);
 			}
 
@@ -2897,14 +2904,14 @@ static void move_player(int y, int x, int do_pickup)
 			else if (c_ptr->feat == FEAT_TREE)
 			{
 				msg_print("You feel a tree blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 				lite_spot(y,x);
 			}
 			/* Water */
 			else if (c_ptr->feat == FEAT_WATER)
 			{
 				msg_print("Your way seems to be blocked by water.");
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 				lite_spot(y,x);
 			}
 
@@ -2950,7 +2957,7 @@ static void move_player(int y, int x, int do_pickup)
 			else if (c_ptr->feat < FEAT_SECRET)
 			{
 				msg_print("You feel a closed door blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 				lite_spot(y, x);
 			}
 
@@ -2958,7 +2965,7 @@ static void move_player(int y, int x, int do_pickup)
 			else
 			{
 				msg_print("You feel a wall blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 				lite_spot(y, x);
 			}
 		}
@@ -2982,7 +2989,7 @@ static void move_player(int y, int x, int do_pickup)
 			else if (c_ptr->feat == FEAT_TREE)
 			{
 				msg_print("There is a tree blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 				lite_spot(y,x);
 			/* Assume that the player didn't really want to do that. */
 						if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
@@ -2993,7 +3000,7 @@ static void move_player(int y, int x, int do_pickup)
 			else if (c_ptr->feat == FEAT_WATER)
 			{
 				msg_print("You cannot swim.");
-				c_ptr->info |= (CAVE_MARK);
+				mark_spot(y, x);
 				lite_spot(y,x);
 			/* Assume that the player didn't really want to do that. */
 						if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
