@@ -1805,7 +1805,7 @@ static void display_entry(int pos)
 	o_ptr = &st_ptr->stock[pos];
 
 	/* Get the "offset" */
-	i = (pos % 12);
+	i = pos - store_top;
 
 	/* Label it, clear the line --(-- */
 	(void)sprintf(out_val, "%c) ", I2A(i));
@@ -1916,9 +1916,10 @@ static void display_entry(int pos)
 static void display_inventory(void)
 {
 	int i, k;
+	const int items = term_screen->hgt-12;
 
 	/* Display the next 12 items */
-	for (k = 0; k < 12; k++)
+	for (k = 0; k < items; k++)
 	{
 		/* Do not display "dead" items */
 		if (store_top + k >= st_ptr->stock_num) break;
@@ -1928,19 +1929,19 @@ static void display_inventory(void)
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i < 13; i++) prt("", i + 6, 0);
+	for (i = k; i < items+1; i++) prt("", i + 6, 0);
 
 	/* Assume "no current page" */
 	put_str("        ", 5, 20);
 
 	/* Visual reminder of "more items" */
-	if (st_ptr->stock_num > 12)
+	if (st_ptr->stock_num > items || store_top)
 	{
 		/* Show "more" reminder (after the last item) */
 		prt("-more-", k + 6, 3);
 
 		/* Indicate the "current page" */
-		put_str(format("(Page %d)", store_top/12 + 1), 5, 20);
+		put_str(format("(Page %d)", (store_top+items-1)/items + 1), 5, 20);
 	}
 }
 
@@ -1952,10 +1953,12 @@ static void store_prt_gold(void)
 {
 	char out_val[64];
 
-	prt("Gold Remaining: ", 19, 53);
+	const int y = Term->hgt-5;
+
+	prt("Gold Remaining: ", y, 53);
 
 	sprintf(out_val, "%9ld", (long)p_ptr->au);
-	prt(out_val, 19, 68);
+	prt(out_val, y, 68);
 }
 
 
@@ -3657,6 +3660,8 @@ static void store_process_command(void)
 	int i;
 	char buf[80];
 
+	const int items = term_screen->hgt-12;
+
  #ifdef ALLOW_REPEAT /* TNB */
  
      /* Handle repeating the last command */
@@ -3682,13 +3687,13 @@ static void store_process_command(void)
 			/* Browse */
         case ' ':
 		{
-			if (st_ptr->stock_num <= 12)
+			if (st_ptr->stock_num <= items && !store_top)
 			{
 				msg_print("Entire inventory is shown.");
 			}
 			else
 			{
-				store_top += 12;
+				store_top += items;
 				if (store_top >= st_ptr->stock_num) store_top = 0;
 			}
 			break;
@@ -4395,38 +4400,40 @@ static void display_store_extra(void)
 {
  	char			buf[80];
 
+	const int y = Term->hgt - 3;
+
 	/* Basic commands */
-	prt(" ESC) Exit from Building.", 22, 0);
+	prt(" ESC) Exit from Building.", y+1, 0);
 
 	/* Browse if necessary */
 	if (st_ptr->stock_num > 12)
 	{
-		prt(" SPACE) Next page of stock", 23, 0);
+		prt(" SPACE) Next page of stock", y+2, 0);
 	}
 
 	/* Home commands */
   	if (cur_store_type == STORE_HOME)
   	{
-		prt(" g) Get an item.", 22, 31);
-		prt(" d) Drop an item.", 23, 31);
+		prt(" g) Get an item.", y+1, 31);
+		prt(" d) Drop an item.", y+2, 31);
 	}
 
 	/* Shop commands XXX XXX XXX */
 	if ((cur_store_type != STORE_HOME) && (cur_store_type != STORE_HALL))
 	{
-		prt(" p) Purchase an item.", 22, 31);
-		prt(" s) Sell an item.", 23, 31);
+		prt(" p) Purchase an item.", y+1, 31);
+		prt(" s) Sell an item.", y+2, 31);
 	}
 
 	if (cur_store_type == STORE_HALL)
 	{
-		prt(" h) view racial Heroes.", 22, 31);
-		prt(" c) view Template heroes.", 23,31);
+		prt(" h) view racial Heroes.", y+1, 31);
+		prt(" c) view Template heroes.", y+1,31);
 	}
 	else
 	/* Add in the eXamine option */
 	{
-		prt(" x) eXamine an item.", 22, 56);
+		prt(" x) eXamine an item.", y+1, 56);
 	}
 
 	/* Special for each store */
@@ -4434,12 +4441,12 @@ static void display_store_extra(void)
 	if (service_name[cur_store_type][0][0])
 	{
 		sprintf(buf, " r) %s", service_name[cur_store_type][0]);
-		prt(buf, 23, 56);
+		prt(buf, y+2, 56);
 	}
 	if (service_name[cur_store_type][1][0])
 	{
 		sprintf(buf, " z) %s", service_name[cur_store_type][1]);
-		prt(buf, 21, 56);
+		prt(buf, y, 56);
 	}
 }
 
@@ -4582,7 +4589,7 @@ void do_cmd_store(void)
 		display_store_extra();
 
   		/* Prompt */
-  		put_str("You may: ", 21, 0);
+  		put_str("You may: ", Term->hgt-3, 0);
 
 		/* Get a command */
 		request_command(TRUE);
