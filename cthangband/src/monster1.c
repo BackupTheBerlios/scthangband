@@ -752,7 +752,7 @@ static void roff_aux(int r_idx)
 		}
 		
 		/* Also give as energy. */
-		c_roff(MONCOL_DEPTH, format(" (%d energy/move, %d energy/attack)", extract_energy[r_ptr->speed], 100/r_ptr->num_blows));
+		c_roff(MONCOL_DEPTH, format(" (%d energy/move, %d energy/attack)", extract_energy[r_ptr->speed], TURN_ENERGY/r_ptr->num_blows));
 	}
 
 	/* The code above includes "attack speed" */
