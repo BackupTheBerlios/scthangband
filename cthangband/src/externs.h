@@ -508,8 +508,8 @@ extern void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam,
 #if (defined(BIRTH_C) || defined(FILES_C))
 extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(FILES_C) || defined(XTRA1_C))
-extern void display_player_equippy(int y, int x);
+#if (defined(FILES_C) || defined(INIT2_C) || defined(XTRA1_C))
+extern void equippy_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern int equip_mod(int i);

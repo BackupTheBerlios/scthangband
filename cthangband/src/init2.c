@@ -1811,6 +1811,8 @@ static void check_arrays(void)
 	check_magic_info();
 	check_ma_blows();
 	check_feeling_str();
+
+	format("%v", equippy_f0);
 }
 #else /* CHECK_ARRAYS */
 /*

@@ -2311,35 +2311,33 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3)
 /*
  * Equippy chars
  */
-void display_player_equippy(int y, int x)
+void equippy_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp)
 {
-	int i;
+	const object_type *o_ptr;
 
-	byte a;
-	char c;
-
-	object_type *o_ptr;
-
+	/* Check that there's enough space for any possible equipment list. */
+	assert(max > (INVEN_FEET - INVEN_WIELD+1)*4);
 
 	/* Dump equippy chars */
-	for (i=INVEN_WIELD; i<INVEN_POUCH_1; i++)
+	for (o_ptr = inventory+INVEN_WIELD; o_ptr <= inventory+INVEN_FEET; o_ptr++)
 	{
-		/* Object */
-		o_ptr = &inventory[i];
+		if (equippy_chars && o_ptr->k_idx)
+		{
+			*buf++ = '$';
+			*buf++ = atchar[object_attr(o_ptr)];
+			*buf++ = object_char(o_ptr);
 
-        a = object_attr(o_ptr);
-        c = object_char(o_ptr);
-
-        if ((!equippy_chars) ||
-            (!o_ptr->k_idx)) /* Clear the part of the screen */
-            {
-              c = ' ';
-              a = TERM_DARK;
-            }
-
-		/* Dump */
-		Term_putch(x+i-INVEN_WIELD, y, a, c);
+			/* Handle characters with special meanings. */
+			if (buf[-1] == '$') *buf++ = '$';
+			else if (buf[-1] == '\0') buf[-1] = ' ';
+		}
+		else
+		{
+			*buf++ = ' ';
+		}
 	}
+	/* Terminate. */
+	*buf = '\0';
 }
 
 
@@ -2436,7 +2434,7 @@ static void display_player_flag_info(void)
 	row = 13;
 	col = 1;
 
-	display_player_equippy(row-2, col+7);
+	mc_put_fmt(row-2, col+7, "%v", equippy_f0);
 
 	c_put_str(TERM_WHITE, "abcdefghijkl@", row-1, col+7);
 
@@ -2456,7 +2454,7 @@ static void display_player_flag_info(void)
 	row = 13;
 	col = 24;
 
-	display_player_equippy(row-2, col+8);
+	mc_put_fmt(row-2, col+8, "%v", equippy_f0);
 
 	c_put_str(TERM_WHITE, "abcdefghijkl@", row-1, col+8);
 
@@ -2475,7 +2473,7 @@ static void display_player_flag_info(void)
 	row = 13;
 	col = 48;
 
-	display_player_equippy(row-2, col+15);
+	mc_put_fmt(row-2, col+15, "%v", equippy_f0);
 
     c_put_str(TERM_WHITE, "abcdefghijkl@", row-1, col+15);
 
@@ -3190,7 +3188,7 @@ static void display_player_ben_one(int mode)
 	for (x = 0; x < 3; x++)
 	{
 		/* Equippy */
-		display_player_equippy(2, x * 26 + 11);
+		mc_put_fmt(2, x * 26 + 11, "%v", equippy_f0);
 
 		/* Label */
 		Term_putstr(x * 26 + 11, 3, -1, TERM_WHITE, "abcdefghijkl@");

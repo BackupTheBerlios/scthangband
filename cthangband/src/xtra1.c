@@ -169,7 +169,7 @@ static int get_x(const co_ord *t)
 
 static void prt_equippy(void)
 {
-    display_player_equippy(GET_YX(XY_EQUIPPY));
+	mc_put_fmt(GET_YX(XY_EQUIPPY), "%v", equippy_f0);
 }
 
 /*
