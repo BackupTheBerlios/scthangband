@@ -19,6 +19,7 @@ sCthangband 1.0.14
 * The inscribe_depth option no longer exists.
 * Names can be used for races, templates and sexes in initial stat dumps.
 * Monster spoilers give as much information as monster memory.
+* Player templates are defined in an external text file.
 * Monsters can be set to drop ego items in r_info.txt.
 * Fix the following bugs:
   * The SUMMON_KIN flag created a lot of error messages but very little else.
