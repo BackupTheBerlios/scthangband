@@ -1713,6 +1713,59 @@ void py_attack(int y, int x)
 }
 
 
+/*
+ * Attack a monster.
+ */
+void do_cmd_attack(void)
+{
+	int			y, x, dir;
+
+	cave_type	*c_ptr;
+
+	bool		more = FALSE;
+
+
+	/* Allow repeated command */
+	if (command_arg)
+	{
+		/* Set repeat count */
+		command_rep = command_arg - 1;
+
+		/* Redraw the state */
+		p_ptr->redraw |= (PR_STATE);
+
+		/* Cancel the arg */
+		command_arg = 0;
+	}
+
+	/* Get a direction to attack, or Abort */
+	if (get_rep_dir(&dir))
+	{
+		/* Get location */
+		y = py + ddy[dir];
+		x = px + ddx[dir];
+
+		/* Get grid */
+		c_ptr = &cave[y][x];
+
+		/* Oops */
+		if (!c_ptr->m_idx)
+		{
+			/* Take a turn */
+			energy_use = extract_energy[p_ptr->pspeed];
+			msg_print("You attack the empty air.");
+		}
+		/* Try fighting. */
+		else
+		{
+			py_attack(y, x);
+			if (c_ptr->m_idx) more = TRUE;
+		}
+	}
+
+	/* Cancel repetition unless we can continue */
+	if (!more) disturb(0, 0);
+}
 
 static bool pattern_tile(byte y, byte x)
 {
@@ -2950,6 +3003,7 @@ static bool run_test(void)
 	/* Failure */
 	return (FALSE);
 }
+
 
 
 

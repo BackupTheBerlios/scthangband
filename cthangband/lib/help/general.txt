@@ -264,6 +264,12 @@ Disarm a trap or chest (D)
         Search command).  This command may take a count, is affected by the
         "always_repeat" option, requires a direction, and takes some energy.
 
+***** <cmd=H>
+Hit a monster (H) (Ctrl-G)
+This  command attempts to hit a nearby monster with your melee weapon. This
+is generally subsumed by other commands (particularly "walk"), but is included
+separately to avoid ambiguity.
+
 ***** <cmd=+>
 Alter (+)
         This special command allows the use of a single keypress to select

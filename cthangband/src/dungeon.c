@@ -2564,6 +2564,13 @@ static void process_command(void)
 			break;
 		}
 
+		/* Hurt a monster */
+		case 'H':
+		{
+			do_cmd_attack();
+			break;
+		}
+
 			/* Move (usually pick up things) */
 		case ';':
 		{

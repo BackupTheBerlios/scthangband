@@ -1843,7 +1843,7 @@ void do_cmd_alter(void)
 
 		/* Take a turn */
 		energy_use = extract_energy[p_ptr->pspeed];
-		
+
 		/* Attack monsters */
 		if (c_ptr->m_idx)
 		{

@@ -2051,10 +2051,10 @@ extern u32b seed_wild;
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_cmd;
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
 extern s16b command_arg;
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b command_rep;
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -3224,7 +3224,7 @@ extern bool target_set(int mode);
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool get_aim_dir(int *dp);
 #endif
-#if (defined(CMD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
 extern bool get_rep_dir(int *dp);
 #endif
 #if (defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3573,6 +3573,15 @@ extern bool auto_more;
 #if (defined(HAVE_MKSTEMP)) && (defined(CMD4_C) || defined(UTIL_C))
 extern FILE *my_fopen_temp(char *buf, int max);
 #endif
+
+/* cmd1.c */
+
+#if (defined(CMD1_C) || defined(DUNGEON_C))
+extern void do_cmd_attack(void);
+#endif
+
+/* util.c */
+
 #if (!(defined(HAVE_MKSTEMP))) && (defined(CMD4_C) || defined(UTIL_C))
 extern FILE *my_fopen_temp(char *buf, int max);
 #endif
