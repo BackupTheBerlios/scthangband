@@ -419,7 +419,7 @@ static void prt_speed(void)
 	else change = "$d";
 
 	/* Display the speed */
-	mc_put_lfmt(GET_YX(XY_SPEED), "%-14v", vstrnfmt_fn, "%s (%+d)", change, i);
+	mc_put_lfmt(GET_YX(XY_SPEED), "%-14v", format_fn, "%s (%+d)", change, i);
 }
 
 /*

@@ -3666,7 +3666,7 @@ extern void dump_chaos_features(FILE * OutFile);
 extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
 #endif
 #if (defined(STORE_C) || defined(XTRA1_C) || defined(Z_FORM_C))
-extern void vstrnfmt_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+extern void format_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(OBJECT1_C) || defined(UTIL_C) || defined(Z_FORM_C))
 extern char *vformat(cptr fmt, va_list vp);

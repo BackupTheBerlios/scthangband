@@ -1727,8 +1727,8 @@ static void object_k_name_squelch_f1(char *buf, uint max,
 	cptr UNUSED fmt, va_list *vp)
 {
 	int n = va_arg(*vp, int);
-	strnfmt(buf, max, "$%c%v",qual_str[k_info[n].squelch].str[1],
-		object_k_name_f1, n, quark_str(k_info[n].note));
+	strnfmt(buf, max, "$%c%v",
+		qual_str[k_info[n].squelch].str[1], object_k_name_f1, n);
 }
 /*
  * Modify object_kind.squelch according to the player's wishes.

@@ -2428,7 +2428,7 @@ static void store_title_aux_f0(char *buf, uint max, cptr UNUSED fmt,
 			p_ptr->stat_ind[A_CHR] = CHR_PRICE_COMPARE;
 
 			/* Show the max price in the store (above prices) */
-			strnfmt(buf, max, "%10s%-40v%v (%ld) [%ld]", "", vstrnfmt_fn,
+			strnfmt(buf, max, "%10s%-40v%v (%ld) [%ld]", "", format_fn,
 				"%s (%s)", owner_name, race_name, feature_desc_f2,
 				FEAT_SHOP_HEAD+st_ptr->type, 0, ot_ptr->max_cost,
 				price_item(&tmp, ot_ptr->min_inflate, TRUE));
