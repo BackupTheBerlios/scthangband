@@ -1082,16 +1082,6 @@ struct player_type
     s16b tim_esp;       /* Timed ESP */
     s16b wraith_form;   /* Timed wraithform */
 
-    s16b resist_magic;  /* Timed Resist Magic (later) */
-    s16b tim_xtra1;     /* Later */
-    s16b tim_xtra2;     /* Later */
-    s16b tim_xtra3;     /* Later */
-    s16b tim_xtra4;     /* Later */
-    s16b tim_xtra5;     /* Later */
-    s16b tim_xtra6;     /* Later */
-    s16b tim_xtra7;     /* Later */
-    s16b tim_xtra8;     /* Later */
-
     s16b chaos_patron;
     u32b muta1;
     u32b muta2;
@@ -1108,21 +1098,8 @@ struct player_type
 
 	s16b new_spells;	/* Number of spells available */
 
-	s16b old_spells;
 
-	bool old_cumber_armor;
-	bool old_cumber_glove;
-	bool old_cumber_helm;
-	bool old_heavy_wield;
-	bool old_heavy_shoot;
-	bool old_icky_wield;	/* Obsolete */
-
-	s16b old_lite;		/* Old radius of lite (if any) */
-	s16b old_view;		/* Old radius of view (if any) */
-
-	s16b old_food_aux;	/* Obsolete */
-
-
+	bool ma_cumber_armour; /* Martial arts limiting armour */
 	bool cumber_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool cumber_helm; /* Chi draining helm */

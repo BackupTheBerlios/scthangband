@@ -868,6 +868,8 @@ static void prt_frame_extra(void)
  */
 static void calc_spells(bool quiet)
 {
+	const s16b old_new_spells = p_ptr->new_spells;
+
 	int			i, j, k;
 	int			num_allowed, num_known;
 	int school;
@@ -1091,7 +1093,7 @@ static void calc_spells(bool quiet)
     
 
 	/* Spell count changed */
-	if (p_ptr->old_spells != p_ptr->new_spells)
+	if (old_new_spells != p_ptr->new_spells)
 	{
 
 		/* Message if needed and allowed. */
@@ -1102,9 +1104,6 @@ static void calc_spells(bool quiet)
 			           p_ptr->new_spells, p,
 			           (p_ptr->new_spells != 1) ? "s" : "");
 		}
-
-		/* Save the new_spells value */
-		p_ptr->old_spells = p_ptr->new_spells;
 
 		/* Redraw Study Status */
 		p_ptr->redraw |= (PR_STUDY);
@@ -1203,6 +1202,10 @@ static void calc_mana(bool quiet)
 {
 	int	msp, levels, cur_wgt, max_wgt;
 	int     mchi;
+
+	const bool old_cumber_armor = p_ptr->cumber_armor;
+	const bool old_cumber_glove = p_ptr->cumber_glove;
+	const bool old_cumber_helm = p_ptr->cumber_helm;
 
 	object_type	*o_ptr;
 
@@ -1354,7 +1357,7 @@ static void calc_mana(bool quiet)
 	if (character_xtra) return;
 
 	/* Take note when "glove state" changes */
-	if (p_ptr->old_cumber_glove != p_ptr->cumber_glove)
+	if (old_cumber_glove != p_ptr->cumber_glove)
 	{
 		/* No message */
 		if (quiet);
@@ -1367,13 +1370,10 @@ static void calc_mana(bool quiet)
 		{
 			msg_print("Your hands feel more suitable for spellcasting.");
 		}
-
-		/* Save it */
-		p_ptr->old_cumber_glove = p_ptr->cumber_glove;
 	}
 
 	/* Take note when "helm state" changes */
-	if (p_ptr->old_cumber_helm != p_ptr->cumber_helm)
+	if (old_cumber_helm != p_ptr->cumber_helm)
 	{
 		/* No message */
 		if (quiet);
@@ -1386,13 +1386,10 @@ static void calc_mana(bool quiet)
 		{
 			msg_print("Your head feels more suitable for mindcrafting.");
 		}
-
-		/* Save it */
-		p_ptr->old_cumber_helm = p_ptr->cumber_helm;
 	}
 
 	/* Take note when "armor state" changes */
-	if (p_ptr->old_cumber_armor != p_ptr->cumber_armor)
+	if (old_cumber_armor != p_ptr->cumber_armor)
 	{
 		/* No message */
 		if (quiet);
@@ -1405,11 +1402,7 @@ static void calc_mana(bool quiet)
 		{
 			msg_print("You feel able to move more freely.");
 		}
-
-		/* Save it */
-		p_ptr->old_cumber_armor = p_ptr->cumber_armor;
 	}
-
 }
 
 
@@ -1484,6 +1477,8 @@ static void calc_hitpoints(void)
  */
 static void calc_torch(void)
 {
+	const s16b old_cur_lite = p_ptr->cur_lite;
+
 	int i;
 	object_type *o_ptr;
 	u32b f1, f2, f3;
@@ -1531,16 +1526,13 @@ static void calc_torch(void)
 	}
 
 	/* Notice changes in the "lite radius" */
-	if (p_ptr->old_lite != p_ptr->cur_lite)
+	if (old_cur_lite != p_ptr->cur_lite)
 	{
 		/* Update the lite */
 		p_ptr->update |= (PU_LITE);
 
 		/* Update the monsters */
 		p_ptr->update |= (PU_MONSTERS);
-
-		/* Remember the old lite */
-		p_ptr->old_lite = p_ptr->cur_lite;
 	}
 }
 
@@ -1622,7 +1614,7 @@ static void calc_ma_armour(void)
 	{
 		if (inventory[i].k_idx);
 		
-		else if ((ma_empty_hands()) && !(ma_heavy_armor()))
+		else if ((ma_empty_hands()) && !(p_ptr->ma_cumber_armour))
 		{
 			inventory[i].to_a = mystic_armour(i);
 		}
@@ -1673,10 +1665,14 @@ static void calc_bonuses(bool quiet)
 	int			extra_blows;
 	int			extra_shots;
 
+	const bool old_heavy_wield = p_ptr->heavy_wield;
+	const bool old_heavy_shoot = p_ptr->heavy_shoot;
+
 	object_type		*o_ptr;
 
 	u32b		f1, f2, f3;
-	bool	mystic_armour_aux;
+
+	const bool old_ma_cumber_armour = p_ptr->ma_cumber_armour;
 
 
 	/* Save the old speed */
@@ -2202,9 +2198,7 @@ static void calc_bonuses(bool quiet)
 	}
 
 	/* Mystic get extra ac for armour _not worn_ */
-	mystic_armour_aux = ma_heavy_armor();
-
-	if (mystic_armour_aux || mystic_notify_aux) p_ptr->update |= PU_MA_ARMOUR;
+	p_ptr->ma_cumber_armour = ma_heavy_armor();
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -2505,7 +2499,7 @@ static void calc_bonuses(bool quiet)
     {
         p_ptr->pspeed += ((skill_set[SKILL_RACIAL].value/2)) / 10;
     }
-	else if(!mystic_armour_aux) /* So do other people with martial arts... */
+	else if(!p_ptr->ma_cumber_armour) /* So do other people with martial arts... */
 	{
 		p_ptr->pspeed += (skill_set[SKILL_MA].value / 20);
 	}
@@ -2758,12 +2752,12 @@ static void calc_bonuses(bool quiet)
 		else if (skill_set[SKILL_MA].value > 10)
 			p_ptr->num_blow = skill_set[SKILL_MA].value * 3 - 30;
 
-            if (mystic_armour_aux)
+            if (p_ptr->ma_cumber_armour)
                 p_ptr->num_blow /= 2;
 
             p_ptr->num_blow += 60 + extra_blows;
 
-            if (!mystic_armour_aux)
+            if (!p_ptr->ma_cumber_armour)
             {
                 p_ptr->to_h += (skill_set[SKILL_MA].value / 6);
                 p_ptr->to_d += (skill_set[SKILL_MA].value / 6);
@@ -2818,7 +2812,7 @@ static void calc_bonuses(bool quiet)
 	if (character_xtra) return;
 
 	/* Take note when "heavy bow" changes */
-	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot)
+	if (old_heavy_shoot != p_ptr->heavy_shoot)
 	{
 		/* No message */
 		if (quiet);
@@ -2835,14 +2829,11 @@ static void calc_bonuses(bool quiet)
 		{
 			msg_print("You feel relieved to put down your heavy bow.");
 		}
-
-		/* Save it */
-		p_ptr->old_heavy_shoot = p_ptr->heavy_shoot;
 	}
 
 
 	/* Take note when "heavy weapon" changes */
-	if (p_ptr->old_heavy_wield != p_ptr->heavy_wield)
+	if (old_heavy_wield != p_ptr->heavy_wield)
 	{
 		/* No message */
 		if (quiet);
@@ -2859,23 +2850,21 @@ static void calc_bonuses(bool quiet)
 		{
 			msg_print("You feel relieved to put down your heavy weapon.");
 		}
-
-		/* Save it */
-		p_ptr->old_heavy_wield = p_ptr->heavy_wield;
 	}
 
-    if (mystic_armour_aux != mystic_notify_aux)
-        {
+	if (old_ma_cumber_armour != p_ptr->ma_cumber_armour)
+	{
 		/* No message */
 		if (quiet);
 		/* Message */
-		else if (mystic_armour_aux)
-                msg_print("The weight of your armor disrupts your balance.");
-            else
-                msg_print("You regain your balance.");
-            mystic_notify_aux = mystic_armour_aux;
-        }
-    
+		else if (p_ptr->ma_cumber_armour)
+			msg_print("The weight of your armor disrupts your balance.");
+		else
+			msg_print("You regain your balance.");
+
+		/* Calculate the effect on AC. */
+		p_ptr->update |= PU_MA_ARMOUR;
+	}
 }
 
 

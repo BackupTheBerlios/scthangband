@@ -1405,20 +1405,9 @@ void do_cmd_study(void)
 	/* Sound */
 	sound(SOUND_STUDY);
 
-	/* One less spell available */
-	p_ptr->new_spells--;
-
-	/* Message if needed */
-	if (p_ptr->new_spells)
-	{
-		/* Message */
-		msg_format("You can learn %d more %s%s.",
-			   p_ptr->new_spells, p,
-			   (p_ptr->new_spells != 1) ? "s" : "");
-	}
-
-	/* Save the new_spells value */
-	p_ptr->old_spells = p_ptr->new_spells;
+	/* Update spells. */
+	p_ptr->update |= PU_SPELLS;
+	update_stuff();
 
 	/* Redraw Study Status */
 	p_ptr->redraw |= (PR_STUDY);

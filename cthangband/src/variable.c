@@ -927,9 +927,6 @@ bool (*get_obj_num_hook)(int k_idx);
 bool angband_keymap_flag = TRUE;
 
 
-/* Hack, mystic armour */
-bool mystic_notify_aux;
- 
 /* Hack, violet uniques */
 byte violet_uniques = 1;
 

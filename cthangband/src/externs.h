@@ -1282,6 +1282,9 @@ extern unsigned _ovrbuffer;
 
 /* melee1.c */
 
+#if (defined(CMD1_C) || defined(MELEE1_C))
+extern int check_hit(int power, int level);
+#endif
 #if (defined(MELEE1_C) || defined(MELEE2_C))
 extern bool make_attack_normal(int m_idx);
 #endif
@@ -1393,9 +1396,6 @@ extern void message_pain(int m_idx, int dam);
 #if (defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C))
 extern void update_smart_learn(int m_idx, int what);
 #endif
-
-
-
 
 /* object1.c */
 
@@ -1980,6 +1980,9 @@ extern void bless_weapon(void);
 #endif
 #if (defined(CMD5_C) || defined(SPELLS2_C))
 extern  bool detect_monsters_nonliving(void);
+#endif
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C))
+extern void set_recall(bool spell);
 #endif
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS2_C))
 extern  bool confuse_monsters(int dam);
@@ -3451,9 +3454,6 @@ extern bool (*get_obj_num_hook)(int k_idx);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(VARIABLE_C))
 extern bool angband_keymap_flag;
 #endif
-#if (defined(CMD4_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern bool mystic_notify_aux;
-#endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern byte violet_uniques;
 #endif
@@ -3571,7 +3571,7 @@ extern int wield_skill(object_type *o_ptr);
 #if (defined(DUNGEON_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void update_stuff(void);
 #endif
 #if (defined(DUNGEON_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3989,15 +3989,6 @@ extern cptr string_make(cptr str);
 extern errr string_free(cptr str);
 #endif
 
-/* melee1.c */
+/* (null) */
 
-#if (defined(CMD1_C) || defined(MELEE1_C))
-extern int check_hit(int power, int level);
-#endif
-
-/* spells2.c */
-
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C))
-extern void set_recall(bool spell);
-#endif
 #endif /* INCLUDED_EXTERNS_H */
