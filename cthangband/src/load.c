@@ -1937,11 +1937,11 @@ static errr rd_savefile_new_aux(void)
 			if (has_flag(SF_QUEST_UNKNOWN))
 			{
 				rd_byte(&tmp8u);
-				q_list[i].cur_num_known = tmp8u;
+				q_ptr->cur_num_known = tmp8u;
 			}
 			else
 			{
-				q_list[i].cur_num_known = 0;
+				q_ptr->cur_num_known = 0;
 			}
 #endif
 #ifdef SF_QUEST_KNOWN
