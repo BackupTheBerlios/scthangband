@@ -1270,41 +1270,17 @@ s16b get_mon_num(int level)
  */
 void monster_desc(char *buf, monster_type *m_ptr, int mode)
 {
-	cptr		res;
+	monster_race	*r_ptr = (m_ptr) ? &r_info[m_ptr->r_idx] : r_info;
 
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+	cptr name = r_name+r_ptr->name, prefix = "", suffix = "";
 
-	cptr		name = (r_name + r_ptr->name);
     char        silly_name[80];
-	char	desc[1024];
-
-	bool		seen, pron;
-
-    /* Are we hallucinating? (Idea from Nethack...) */
-    if (p_ptr->image)
-    {
-		if(randint(2)==1)
-		{
-			monster_race * hallu_race;
-			do {
-				hallu_race = &r_info[randint(MAX_R_IDX-2)];
-			}
-			while (hallu_race->flags1 & RF1_UNIQUE);
-			name = r_name + hallu_race->name;
-        }
-        else
-        {
-            get_rnd_line("silly.txt", silly_name);
-			name = silly_name;
-        }
-    }
 
 	/* Can we "see" it (exists + forced, or visible + not unforced) */
-	seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40) && m_ptr->ml)));
+	bool seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40) && m_ptr->ml)));
 
 	/* Sexed Pronouns (seen and allowed, or unseen and allowed) */
-	pron = (m_ptr && ((seen && (mode & 0x20)) || (!seen && (mode & 0x10))));
-
+	bool pron = (m_ptr && ((seen) ? (mode & 0x20) : (mode & 0x10)));
 
 	/* First, try using pronouns, or describing hidden monsters */
 	if (!seen || pron)
@@ -1320,45 +1296,40 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 		if (!m_ptr || !pron) kind = 0x00;
 
 
-		/* Assume simple result */
-		res = "it";
-
 		/* Brute force: split on the possibilities */
 		switch (kind + (mode & 0x07))
 		{
 			/* Neuter, or unknown */
-			case 0x00: res = "it"; break;
-			case 0x01: res = "it"; break;
-			case 0x02: res = "its"; break;
-			case 0x03: res = "itself"; break;
-			case 0x04: res = "something"; break;
-			case 0x05: res = "something"; break;
-			case 0x06: res = "something's"; break;
-			case 0x07: res = "itself"; break;
+			case 0x00: name = "it"; break;
+			case 0x01: name = "it"; break;
+			case 0x02: name = "its"; break;
+			case 0x03: name = "itself"; break;
+			case 0x04: name = "something"; break;
+			case 0x05: name = "something"; break;
+			case 0x06: name = "something's"; break;
+			case 0x07: name = "itself"; break;
 
 			/* Male (assume human if vague) */
-			case 0x10: res = "he"; break;
-			case 0x11: res = "him"; break;
-			case 0x12: res = "his"; break;
-			case 0x13: res = "himself"; break;
-			case 0x14: res = "someone"; break;
-			case 0x15: res = "someone"; break;
-			case 0x16: res = "someone's"; break;
-			case 0x17: res = "himself"; break;
+			case 0x10: name = "he"; break;
+			case 0x11: name = "him"; break;
+			case 0x12: name = "his"; break;
+			case 0x13: name = "himself"; break;
+			case 0x14: name = "someone"; break;
+			case 0x15: name = "someone"; break;
+			case 0x16: name = "someone's"; break;
+			case 0x17: name = "himself"; break;
 
 			/* Female (assume human if vague) */
-			case 0x20: res = "she"; break;
-			case 0x21: res = "her"; break;
-			case 0x22: res = "her"; break;
-			case 0x23: res = "herself"; break;
-			case 0x24: res = "someone"; break;
-			case 0x25: res = "someone"; break;
-			case 0x26: res = "someone's"; break;
-			case 0x27: res = "herself"; break;
+			case 0x20: name = "she"; break;
+			case 0x21: name = "her"; break;
+			case 0x22: name = "her"; break;
+			case 0x23: name = "herself"; break;
+			case 0x24: name = "someone"; break;
+			case 0x25: name = "someone"; break;
+			case 0x26: name = "someone's"; break;
+			case 0x27: name = "herself"; break;
+			default: name = "it";
 		}
-
-		/* Copy the result */
-		(void)strcpy(desc, res);
 	}
 
 
@@ -1366,20 +1337,39 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 	else if ((mode & 0x02) && (mode & 0x01))
 	{
 		/* The monster is visible, so use its gender */
-		if (r_ptr->flags1 & (RF1_FEMALE)) strcpy(desc, "herself");
-		else if (r_ptr->flags1 & (RF1_MALE)) strcpy(desc, "himself");
-		else strcpy(desc, "itself");
+		if (r_ptr->flags1 & (RF1_FEMALE)) name = "herself";
+		else if (r_ptr->flags1 & (RF1_MALE)) name = "himself";
+		else name = "itself";
 	}
 
 
 	/* Handle all other visible monster requests */
 	else
 	{
+
+    /* Are we hallucinating? (Idea from Nethack...) */
+	    if (p_ptr->image)
+	    {
+			if(randint(2)==1)
+			{
+				monster_race * hallu_race;
+				do {
+					hallu_race = &r_info[randint(MAX_R_IDX-2)];
+				}
+				while (hallu_race->flags1 & RF1_UNIQUE);
+				name = r_name + hallu_race->name;
+	        }
+	        else
+	        {
+	            get_rnd_line("silly.txt", silly_name);
+				name = silly_name;
+	        }
+	    }
+
 		/* It could be a Unique */
-        if ((r_ptr->flags1 & (RF1_UNIQUE)) && !(p_ptr->image))
+		if ((r_ptr->flags1 & (RF1_UNIQUE)) && !(p_ptr->image))
 		{
 			/* Start with the name (thus nominative and objective) */
-			(void)strcpy(desc, name);
 		}
 
 		/* It could be an indefinite monster */
@@ -1388,8 +1378,8 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 			/* XXX Check plurality for "some" */
 
 			/* Indefinite monsters need an indefinite article */
-			(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-			(void)strcat(desc, name);
+			prefix = (is_a_vowel(name[0]) == !(r_ptr->flags4 & RF4_ODD_ART))
+				? "an " : "a ";
 		}
 
 		/* It could be a normal, definite, monster */
@@ -1397,10 +1387,9 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 		{
 			/* Definite monsters need a definite article */
             if (m_ptr->smart & (SM_ALLY))
-                (void)strcpy(desc, "your ");
+				prefix = "your ";
             else
-                (void)strcpy(desc, "the ");
-			(void)strcat(desc, name);
+				prefix = "the ";
 		}
 
 		/* Handle the Possessive as a special afterthought */
@@ -1409,10 +1398,21 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 			/* XXX Check for trailing "s" */
 
 			/* Simply append "apostrophe" and "s" */
-			(void)strcat(desc, "'s");
+			suffix = "'s";
 		}
 	}
-	sprintf(buf, "%.*s", MNAME_MAX, desc);
+	/* Copy to buf, avoiding overflow. */
+	{
+		int p = strlen(prefix);
+		int n = strlen(name);
+		int s = strlen(suffix);
+
+		n = MIN(n, MAX(0, MNAME_MAX-p-s));
+		s = MIN(s, MAX(0, MNAME_MAX-n-p));
+		p = MIN(p, MAX(0, MNAME_MAX-n-s));
+		
+		sprintf(buf, "%.*s%.*s%.*s", p, prefix, n, name, s, suffix);
+	}
 }
 
 
