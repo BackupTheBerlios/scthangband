@@ -1970,301 +1970,153 @@ cptr item_activation(object_type *o_ptr)
         switch (o_ptr->xtra2)
         {
             case ACT_SUNLIGHT:
-            {
                 return "beam of sunlight every 10 turns";
-            }
             case ACT_BO_MISS_1:
-            {
                 return "magic missile (2d6) every 2 turns";
-            }
             case ACT_BA_POIS_1:
-            {
                 return "stinking cloud (12), rad. 3, every 4+d4 turns";
-            }
             case ACT_BO_ELEC_1:
-            {
                 return "lightning bolt (4d8) every 6+d6 turns";
-            }
             case ACT_BO_ACID_1:
-            {
                 return "acid bolt (5d8) every 5+d5 turns";
-            }
             case ACT_BO_COLD_1:
-            {
                 return "frost bolt (6d8) every 7+d7 turns";
-            }
             case ACT_BO_FIRE_1:
-            {
                 return "fire bolt (9d8) every 8+d8 turns";
-            }
             case ACT_BA_COLD_1:
-            {
                 return "ball of cold (48) every 400 turns";
-            }
             case ACT_BA_FIRE_1:
-            {
                 return "ball of fire (72) every 400 turns";
-            }
             case ACT_DRAIN_1:
-            {
                 return "drain life (100) every 100+d100 turns";
-            }
             case ACT_BA_COLD_2:
-            {
                 return "ball of cold (100) every 300 turns";
-            }
             case ACT_BA_ELEC_2:
-            {
                 return "ball of lightning (100) every 500 turns";
-            }
             case ACT_DRAIN_2:
-            {
                 return "drain life (120) every 400 turns";
-            }
             case ACT_VAMPIRE_1:
-            {
                 return "vampiric drain (3*50) every 400 turns";
-            }
             case ACT_BO_MISS_2:
-            {
                 return "arrows (150) every 90+d90 turns";
-            }
             case ACT_BA_FIRE_2:
-            {
                 return "fire ball (120) every 225+d225 turns";
-            }
             case ACT_BA_COLD_3:
-            {
                 return "ball of cold (200) every 325+d325 turns";
-            }
             case ACT_WHIRLWIND:
-            {
                 return "whirlwind attack every 250 turns";
-            }
             case ACT_VAMPIRE_2:
-            {
                 return "vampiric drain (3*100) every 400 turns";
-            }
             case ACT_CALL_CHAOS:
-            {
                 return "call chaos every 350 turns";
-            }
             case ACT_SHARD:
-            {
                 return "shard ball (120+level) every 400 turns";
-            }
             case ACT_DISP_EVIL:
-            {
                 return "dispel evil (level*5) every 300+d300 turns";
-            }
             case ACT_DISP_GOOD:
-            {
                 return "dispel good (level*5) every 300+d300 turns";
-            }
             case ACT_BA_MISS_3:
-            {
                 return "elemental breath (300) every 500 turns";
-            }
             case ACT_CONFUSE:
-            {
                 return "confuse monster every 15 turns";
-            }
             case ACT_SLEEP:
-            {
                 return "sleep nearby monsters every 55 turns";
-            }
             case ACT_QUAKE:
-            {
                 return "earthquake (rad 10) every 50 turns";
-            }
             case ACT_TERROR:
-            {
                 return "terror every 3 * (level+10) turns";
-            }
             case ACT_TELE_AWAY:
-            {
                 return "teleport away every 200 turns";
-            }
             case ACT_BANISH_EVIL:
-            {
                 return "banish evil every 250+d250 turns";
-            }
             case ACT_GENOCIDE:
-            {
                 return "genocide every 500 turns";
-            }
             case ACT_MASS_GENO:
-            {
                 return "mass genocide every 1000 turns";
-            }
             case ACT_CHARM_ANIMAL:
-            {
                 return "charm animal every 300 turns";
-            }
             case ACT_CHARM_UNDEAD:
-            {
                 return "enslave undead every 333 turns";
-            }
             case ACT_CHARM_OTHER:
-            {
                 return "charm monster every 400 turns";
-            }
             case ACT_CHARM_ANIMALS:
-            {
                 return "animal friendship every 500 turns";
-            }
             case ACT_CHARM_OTHERS:
-            {
                 return "mass charm every 750 turns";
-            }
             case ACT_SUMMON_ANIMAL:
-            {
                 return "summon animal every 200+d300 turns";
-            }
             case ACT_SUMMON_PHANTOM:
-            {
                 return "summon phantasmal servant every 200+d200 turns";
-            }
             case ACT_SUMMON_ELEMENTAL:
-            {
                 return "summon elemental every 750 turns";
-            }
             case ACT_SUMMON_DEMON:
-            {
                 return "summon demon every 666+d333 turns";
-            }
             case ACT_SUMMON_UNDEAD:
-            {
                 return "summon undead every 666+d333 turns";
-            }
             case ACT_CURE_LW:
-            {
                 return "remove fear & heal 30 hp every 10 turns";
-            }
             case ACT_CURE_MW:
-            {
                 return "heal 4d8 & wounds every 3+d3 turns";
-            }
             case ACT_CURE_POISON:
-            {
                 return "remove fear and cure poison every 5 turns";
-            }
             case ACT_REST_LIFE:
-            {
                 return "restore life levels every 450 turns";
-            }
             case ACT_REST_ALL:
-            {
                 return "restore stats and life levels every 750 turns";
-            }
             case ACT_CURE_700:
-            {
                 return "heal 700 hit points every 250 turns";
-            }
             case ACT_CURE_1000:
-            {
                 return "heal 1000 hit points every 888 turns";
-            }
             case ACT_ESP:
-            {
                 return "temporary ESP (dur 25+d30) every 200 turns";
-            }
             case ACT_BERSERK:
-            {
                 return "heroism and berserk (dur 50+d50) every 100+d100 turns";
-            }
             case ACT_PROT_EVIL:
-            {
                 return "protect evil (dur level*3 + d25) every 225+d225 turns";
-            }
             case ACT_RESIST_ALL:
-            {
                 return "resist elements (dur 40+d40) every 200 turns";
-            }
             case ACT_SPEED:
-            {
                 return "speed (dur 20+d20) every 250 turns";
-            }
             case ACT_XTRA_SPEED:
-            {
                 return "speed (dur 75+d75) every 200+d200 turns";
-            }
             case ACT_WRAITH:
-            {
                 return "wraith form (level/2 + d(level/2)) every 1000 turns";
-            }
             case ACT_INVULN:
-            {
                 return "invulnerability (dur 8+d8) every 1000 turns";
-            }
             case ACT_LIGHT:
-            {
                 return "light area (dam 2d15) every 10+d10 turns";
-            }
             case ACT_MAP_LIGHT:
-            {
                 return "light (dam 2d15) & map area every 50+d50 turns";
-            }
             case ACT_DETECT_ALL:
-            {
                 return "detection every 55+d55 turns";
-            }
             case ACT_DETECT_XTRA:
-            {
                 return "detection, probing and identify true every 1000 turns";
-            }
             case ACT_ID_FULL:
-            {
                 return "identify true every 750 turns";
-            }
             case ACT_ID_PLAIN:
-            {
                 return "identify spell every 10 turns";
-            }
             case ACT_RUNE_EXPLO:
-            {
                 return "explosive rune every 200 turns";
-            }
             case ACT_RUNE_PROT:
-            {
                 return "rune of protection every 400 turns";
-            }
             case ACT_SATIATE:
-            {
                 return "satisfy hunger every 200 turns";
-            }
             case ACT_DEST_DOOR:
-            {
                 return "destroy doors every 10 turns";
-            }
             case ACT_STONE_MUD:
-            {
                 return "stone to mud every 5 turns";
-            }
             case ACT_RECHARGE:
-            {
                 return "recharging every 70 turns";
-            }
             case ACT_ALCHEMY:
-            {
                 return "alchemy every 500 turns";
-            }
             case ACT_DIM_DOOR:
-            {
                 return "dimension door every 100 turns";
-            }
             case ACT_TELEPORT:
-            {
                 return "teleport (range 100) every 45 turns";
-            }
             case ACT_RECALL:
-            {
                 return "word of recall every 200 turns";
-            }
             default:
-            {
-                return "something undefined";
-            }
+                return "a bad randart activation";
         }
     }
 
@@ -2272,229 +2124,117 @@ cptr item_activation(object_type *o_ptr)
 	switch (o_ptr->name1)
 	{
 		case ART_FAITH:
-		{
 			return "fire bolt (9d8) every 8+d8 turns";
-		}
 		case ART_HOPE:
-		{
 			return "frost bolt (6d8) every 7+d7 turns";
-		}
 		case ART_CHARITY:
-		{
 			return "lightning bolt (4d8) every 6+d6 turns";
-		}
 		case ART_THOTH:
-		{
 			return "stinking cloud (12) every 4+d4 turns";
-		}
 		case ART_ICICLE:
-		{
 			return "frost ball (48) every 5+d5 turns";
-		}
 		case ART_DANCING:
-		{
 			return "remove fear and cure poison every 5 turns";
-		}
 		case ART_STARLIGHT:
-		{
 			return "frost ball (100) every 300 turns";
-		}
         case ART_DAWN:
-        {
             return "summon a Black Reaver every 500+d500 turns";
-        }
 		case ART_EVERFLAME:
-		{
 			return "fire ball (72) every 400 turns";
-		}
 		case ART_FIRESTAR:
-		{
 			return "large fire ball (72) every 100 turns";
-		}
 		case ART_ITHAQUA:
-		{
 			return "haste self (20+d20 turns) every 200 turns";
-		}
 		case ART_THEODEN:
-		{
 			return "drain life (120) every 400 turns";
-		}
 		case ART_JUSTICE:
-		{
 			return "drain life (90) every 70 turns";
-		}
 		case ART_OGRELORDS:
-		{
 			return "door and trap destruction every 10 turns";
-		}
 		case ART_GHARNE:
-		{
 			return "word of recall every 200 turns";
-		}
 		case ART_THUNDER:
-		{
 			return "haste self (20+d20 turns) every 100+d100 turns";
-		}
 		case ART_ERIRIL:
-		{
 			return "identify every 10 turns";
-		}
 		case ART_ATAL:
-		{
             return "probing, detection and full id  every 1000 turns";
-		}
 		case ART_TROLLS:
-		{
 			return "mass genocide every 1000 turns";
-		}
 		case ART_SPLEENSLICER:
-		{
 			return "cure wounds (4d7) every 3+d3 turns";
-		}
 		case ART_DEATH:
-		{
 			return "fire branding of bolts every 999 turns";
-		}
         case ART_KARAKAL:
-		{
             return "a getaway every 35 turns";
-		}
 		case ART_ODIN:
-		{
             return "lightning ball (100) every 500 turns";
-		}
 		case ART_DESTINY:
-		{
 			return "stone to mud every 5 turns";
-		}
 		case ART_SOULKEEPER:
-		{
 			return "heal (1000) every 888 turns";
-		}
 		case ART_VAMPLORD:
-		{
             return ("heal (777), curing and heroism every 300 turns");
-		}
 		case ART_ORCS:
-		{
 			return "genocide every 500 turns";
-		}
 		case ART_NYOGTHA:
-		{
 			return "restore life levels every 450 turns";
-		}
 		case ART_GNORRI:
-		{
 			return "teleport away every 150 turns";
-		}
 		case ART_BARZAI:
-		{
 			return "resistance (20+d20 turns) every 111 turns";
-		}
 		case ART_DARKNESS:
-		{
 			return "Sleep II every 55 turns";
-		}
 		case ART_SWASHBUCKLER:
-		{
 			return "recharge item I every 70 turns";
-		}
 		case ART_SHIFTER:
-		{
 			return "teleport every 45 turns";
-		}
 		case ART_TOTILA:
-		{
 			return "confuse monster every 15 turns";
-		}
 		case ART_LIGHT:
-		{
 			return "magic missile (2d6) every 2 turns";
-		}
 		case ART_IRONFIST:
-		{
 			return "fire bolt (9d8) every 8+d8 turns";
-		}
 		case ART_GHOULS:
-		{
 			return "frost bolt (6d8) every 7+d7 turns";
-		}
 		case ART_WHITESPARK:
-		{
 			return "lightning bolt (4d8) every 6+d6 turns";
-		}
 		case ART_DEAD:
-		{
 			return "acid bolt (5d8) every 5+d5 turns";
-		}
 		case ART_COMBAT:
-		{
 			return "a magical arrow (150) every 90+d90 turns";
-		}
 		case ART_SKULLKEEPER:
-		{
 			return "detection every 55+d55 turns";
-		}
 		case ART_SUN:
-		{
             return "heal (700) every 250 turns";
-		}
 		case ART_RAZORBACK:
-		{
 			return "star ball (150) every 1000 turns";
-		}
 		case ART_BLADETURNER:
-		{
             return "breathe elements (300), berserk rage, bless, and resistance";
-		}
 		case ART_POLARIS:
-		{
 			return "illumination every 10+d10 turns";
-		}
 		case ART_XOTH:
-		{
             return "magic mapping and light every 50+d50 turns";
-		}
 		case ART_TRAPEZOHEDRON:
-		{
             return "clairvoyance and recall, draining you";
-		}
 		case ART_ALHAZRED:
-		{
 			return "dispel evil (x5) every 300+d300 turns";
-		}
 		case ART_LOBON:
-		{
 			return "protection from evil every 225+d225 turns";
-		}
         case ART_MAGIC:
-        {
             return "a strangling attack (100) every 100+d100 turns";
-        }
 		case ART_BAST:
-		{
 			return "haste self (75+d75 turns) every 150+d150 turns";
-		}
 		case ART_ELEMFIRE:
-		{
 			return "large fire ball (120) every 225+d225 turns";
-		}
 		case ART_ELEMICE:
-		{
 			return "large frost ball (200) every 325+d325 turns";
-		}
 		case ART_ELEMSTORM:
-		{
 			return "large lightning ball (250) every 425+d425 turns";
-		}
 		case ART_NYARLATHOTEP:
-		{
 			return "bizarre things every 450+d450 turns";
-		}
         case ART_POWER: case ART_MASK:
-        {
             return "rays of fear in every direction";
-        }
 	}
 
 
@@ -2503,85 +2243,53 @@ cptr item_activation(object_type *o_ptr)
        return "teleport every 50+d50 turns";
     }
 
-    if (o_ptr->tval == TV_RING)
-    {
-        switch(o_ptr->sval)
-        {
-            case SV_RING_FLAMES:
-                return "ball of fire and resist fire";
-            case SV_RING_ICE:
-                return "ball of cold and resist cold";
-            case SV_RING_ACID:
-                return "ball of acid and resist acid";
-            default:
-                return "a bad ring activation";
-        }
-    }
-
-	/* Branch on the sub-type */
-	if (o_ptr->tval == TV_DRAG_ARMOR) switch (o_ptr->sval)
+	/* Rings and DSM. */
+	switch (o_ptr->k_idx)
 	{
-		case SV_DRAGON_BLUE:
-		{
+		case OBJ_RING_FIRE:
+			return "ball of fire and resist fire";
+		case OBJ_RING_ICE:
+			return "ball of cold and resist cold";
+		case OBJ_RING_ACID:
+			return "ball of acid and resist acid";
+		case OBJ_DSM_BLUE:
 			return "breathe lightning (100) every 450+d450 turns";
-		}
-		case SV_DRAGON_WHITE:
-		{
+		case OBJ_DSM_WHITE:
 			return "breathe frost (110) every 450+d450 turns";
-		}
-		case SV_DRAGON_BLACK:
-		{
+		case OBJ_DSM_BLACK:
 			return "breathe acid (130) every 450+d450 turns";
-		}
-		case SV_DRAGON_GREEN:
-		{
+		case OBJ_DSM_GREEN:
 			return "breathe poison gas (150) every 450+d450 turns";
-		}
-		case SV_DRAGON_RED:
-		{
+		case OBJ_DSM_RED:
 			return "breathe fire (200) every 450+d450 turns";
-		}
-		case SV_DRAGON_MULTIHUED:
-		{
+		case OBJ_DSM_MULTI_HUED:
 			return "breathe multi-hued (250) every 225+d225 turns";
-		}
-		case SV_DRAGON_BRONZE:
-		{
+		case OBJ_DSM_BRONZE:
 			return "breathe confusion (120) every 450+d450 turns";
-		}
-		case SV_DRAGON_GOLD:
-		{
+		case OBJ_DSM_GOLD:
 			return "breathe sound (130) every 450+d450 turns";
-		}
-		case SV_DRAGON_CHAOS:
-		{
+		case OBJ_DSM_CHAOS:
 			return "breathe chaos/disenchant (220) every 300+d300 turns";
-		}
-		case SV_DRAGON_LAW:
-		{
+		case OBJ_DSM_LAW:
 			return "breathe sound/shards (230) every 300+d300 turns";
-		}
-		case SV_DRAGON_BALANCE:
-		{
+		case OBJ_DSM_BALANCE:
 			return "You breathe balance (250) every 300+d300 turns";
-		}
-		case SV_DRAGON_SHINING:
-		{
+		case OBJ_DSM_PSEUDO:
 			return "breathe light/darkness (200) every 300+d300 turns";
-		}
-		case SV_DRAGON_POWER:
-		{
+		case OBJ_DSM_POWER:
 			return "breathe the elements (300) every 300+d300 turns";
-		}
-		/* Oops */
-		default:
-		{
-			return "a bad dragon scale mail activation";
-		}
 	}
 
-	/* Oops */
-	if (o_ptr->tval != TV_DRAG_ARMOR) return "a bad miscellaneous activation";
+	/* Error types */
+	switch (o_ptr->tval)
+	{
+		case TV_RING:
+			return "a bad ring activation";
+		case TV_DRAG_ARMOR:
+			return "a bad dragon scale mail activation";
+		default:
+			return "a bad miscellaneous activation";
+	}
 }
 
 
@@ -2858,51 +2566,50 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 {
 	int j;
 	struct convtype {
-	byte tval;
-	byte sval;
+	s16b k_idx;
 	byte act;
 	byte stat;
 	} conv[] = {
 		/* Increase stat potions */
-		{TV_POTION, SV_POTION_INC_STR, A_INCRES, 1<<A_STR},
-		{TV_POTION, SV_POTION_INC_INT, A_INCRES, 1<<A_INT},
-		{TV_POTION, SV_POTION_INC_WIS, A_INCRES, 1<<A_WIS},
-		{TV_POTION, SV_POTION_INC_DEX, A_INCRES, 1<<A_DEX},
-		{TV_POTION, SV_POTION_INC_CON, A_INCRES, 1<<A_CON},
-		{TV_POTION, SV_POTION_INC_CHR, A_INCRES, 1<<A_CHR},
-		{TV_POTION, SV_POTION_STAR_ENLIGHTENMENT, A_INCRES, (1<<A_INT | 1<<A_WIS)},
-		{TV_POTION, SV_POTION_AUGMENTATION, A_INCRES, A_ALL},
+		{OBJ_POTION_INC_STR, A_INCRES, 1<<A_STR},
+		{OBJ_POTION_INC_INT, A_INCRES, 1<<A_INT},
+		{OBJ_POTION_INC_WIS, A_INCRES, 1<<A_WIS},
+		{OBJ_POTION_INC_DEX, A_INCRES, 1<<A_DEX},
+		{OBJ_POTION_INC_CON, A_INCRES, 1<<A_CON},
+		{OBJ_POTION_INC_CHR, A_INCRES, 1<<A_CHR},
+		{OBJ_POTION_STAR_ENLIGHTENMENT, A_INCRES, (1<<A_INT | 1<<A_WIS)},
+		{OBJ_POTION_AUGMENTATION, A_INCRES, A_ALL},
 		/* Restore stat potions */
-		{TV_POTION, SV_POTION_RES_STR, A_RESTORE, 1<<A_STR},
-		{TV_POTION, SV_POTION_RES_INT, A_RESTORE, 1<<A_INT},
-		{TV_POTION, SV_POTION_RES_WIS, A_RESTORE, 1<<A_WIS},
-		{TV_POTION, SV_POTION_RES_DEX, A_RESTORE, 1<<A_DEX},
-		{TV_POTION, SV_POTION_RES_CON, A_RESTORE, 1<<A_CON},
-		{TV_POTION, SV_POTION_RES_CHR, A_RESTORE, 1<<A_CHR},
-		{TV_POTION, SV_POTION_LIFE, A_RESTORE, A_ALL},
+		{OBJ_POTION_RES_STR, A_RESTORE, 1<<A_STR},
+		{OBJ_POTION_RES_INT, A_RESTORE, 1<<A_INT},
+		{OBJ_POTION_RES_WIS, A_RESTORE, 1<<A_WIS},
+		{OBJ_POTION_RES_DEX, A_RESTORE, 1<<A_DEX},
+		{OBJ_POTION_RES_CON, A_RESTORE, 1<<A_CON},
+		{OBJ_POTION_RES_CHR, A_RESTORE, 1<<A_CHR},
+		{OBJ_POTION_LIFE, A_RESTORE, A_ALL},
 		/* Restore stat mushrooms */
-		{TV_FOOD, SV_FOOD_RESTORE_STR, A_RESTORE, 1<<A_STR},
-		{TV_FOOD, SV_FOOD_RESTORE_CON, A_RESTORE, 1<<A_CON},
-		{TV_FOOD, SV_FOOD_RESTORING, A_RESTORE, A_ALL},
+		{OBJ_FOOD_RES_STR, A_RESTORE, 1<<A_STR},
+		{OBJ_FOOD_RES_CON, A_RESTORE, 1<<A_CON},
+		{OBJ_FOOD_RESTORING, A_RESTORE, A_ALL},
 		/* Other restore stat items */
-		{TV_STAFF, SV_STAFF_THE_MAGI, A_RESTORE, 1<<A_INT},
-		{TV_ROD, SV_ROD_RESTORATION, A_RESTORE, A_ALL},
+		{OBJ_STAFF_THE_MAGI, A_RESTORE, 1<<A_INT},
+		{OBJ_ROD_RESTORATION, A_RESTORE, A_ALL},
 		/* Decrease stat potions */
-		{TV_POTION, SV_POTION_DEC_STR, A_DEC10, 1<<A_STR},
-		{TV_POTION, SV_POTION_DEC_INT, A_DEC10, 1<<A_INT},
-		{TV_POTION, SV_POTION_DEC_WIS, A_DEC10, 1<<A_WIS},
-		{TV_POTION, SV_POTION_DEC_DEX, A_DEC10, 1<<A_DEX},
-		{TV_POTION, SV_POTION_DEC_CON, A_DEC10, 1<<A_CON},
-		{TV_POTION, SV_POTION_DEC_CHR, A_DEC10, 1<<A_CHR},
-		{TV_POTION, SV_POTION_RUINATION, A_DEC25, A_ALL},
+		{OBJ_POTION_DEC_STR, A_DEC10, 1<<A_STR},
+		{OBJ_POTION_DEC_INT, A_DEC10, 1<<A_INT},
+		{OBJ_POTION_DEC_WIS, A_DEC10, 1<<A_WIS},
+		{OBJ_POTION_DEC_DEX, A_DEC10, 1<<A_DEX},
+		{OBJ_POTION_DEC_CON, A_DEC10, 1<<A_CON},
+		{OBJ_POTION_DEC_CHR, A_DEC10, 1<<A_CHR},
+		{OBJ_POTION_RUINATION, A_DEC25, A_ALL},
 		/* Decrease stat food */
-		{TV_FOOD, SV_FOOD_WEAKNESS, A_DEC10, A_STR},
-		{TV_FOOD, SV_FOOD_SICKNESS, A_DEC10, A_CON},
-		{TV_FOOD, SV_FOOD_STUPIDITY, A_DEC10, A_INT},
-		{TV_FOOD, SV_FOOD_NAIVETY, A_DEC10, A_WIS},
-		{TV_FOOD, SV_FOOD_UNHEALTH, A_DEC10, A_CON},
-		{TV_FOOD, SV_FOOD_DISEASE, A_DEC10, A_STR},
-		{0,0,0,0},
+		{OBJ_FOOD_DEC_STR, A_DEC10, A_STR},
+		{OBJ_FOOD_SICKNESS, A_DEC10, A_CON},
+		{OBJ_FOOD_DEC_INT, A_DEC10, A_INT},
+		{OBJ_FOOD_DEC_WIS, A_DEC10, A_WIS},
+		{OBJ_FOOD_UNHEALTH, A_DEC10, A_CON},
+		{OBJ_FOOD_DISEASE, A_DEC10, A_STR},
+		{0,0,0},
 	};
 
 	*stat = 0;
@@ -2920,9 +2627,9 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 	else *pval = 0;
 
 	/* Look for stat-affecting potions, food, etc..*/
-	for (j = 0, *act = 0; conv[j].tval; j++)
+	for (j = 0, *act = 0; conv[j].k_idx; j++)
 	{
-		if (conv[j].tval == o_ptr->tval && conv[j].sval == o_ptr->sval)
+		if (conv[j].k_idx == o_ptr->k_idx)
 		{
 			*stat |= conv[j].stat;
 			*act |= conv[j].act;
@@ -3280,7 +2987,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		{
 			info[i++].txt = "It provides light (radius 3) forever.";
 		}
-		else if (o_ptr->sval == SV_LITE_LANTERN)
+		else if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
 		{
 			info[i++].txt = "It provides light (radius 2) when fueled.";
 		}
