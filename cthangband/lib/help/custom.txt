@@ -796,18 +796,17 @@ Wizard (Debug) Mode active    [cheat_wzrd]
 *****
 === Birth options ===
 
-***** <birth_point_based>
-Allow purchase of stats using points    [birth_point_based]
-     This allows the player to set, point by point, his own preferred stats 
-     the character, rather than rolling at random, when creating a character.
+***** <spend_points>
+Allow stats to be chosen by spending points    [spend_points]
+     This allows the player to create a specific character without rolling it
+     as long as the stats are not too high.
 
-***** <birth_auto_roller>
-Allow specification of minimum stats    [birth_auto_roller]
-     This allows the player to set minimum stats (within reason) and ask 
-     the game to keep on rolling until a character with the desired stats
-     is generated. It is generally believed that a single stat can be got 
-     higher with point-based generation, but the overall total of all the 
-     will be higher when rolling randomly (including with the auto-roller.)
+***** <use_autoroller>
+Allow stats to be rolled repeatedly with minima    [use_autoroller]
+     This causes the "roll" command in the birth screen to generate characters
+     with the specified race, class and sex until one of them has stats at least
+     equal to the entered ones instead of simply generating a single random
+     stat set.
 
 ***** <birth_maximize>
 Maximize effect of race/class bonuses    [birth_maximize]
