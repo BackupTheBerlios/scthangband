@@ -2071,7 +2071,7 @@ void check_magic_info(void)
 			get_magic_info(buf, 1023, b_ptr->info+i);
 
 			/* Bounds test a few parameters. */
-			if (s_ptr->skill1 >= MAX_SKILLS || s_ptr->skill2 >= MAX_SKILLS)
+			if (s_ptr->skill1 > MAX_SKILLS || s_ptr->skill2 > MAX_SKILLS)
 			{
 				error = "uses a bad skill";
 			}
