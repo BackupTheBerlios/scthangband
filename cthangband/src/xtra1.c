@@ -1941,6 +1941,12 @@ static void calc_bonuses(void)
 				p_ptr->update |= (PU_MANA | PU_SPELLS);
 			}
 
+			/* Change in WIS may affect Chi */
+			else if (i == A_WIS)
+			{
+				p_ptr->update |= (PU_MANA);
+			}
+
 			/* Window stuff */
 			p_ptr->window |= (PW_PLAYER);
 		}
