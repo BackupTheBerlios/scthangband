@@ -1134,9 +1134,9 @@ void do_cmd_handle(object_type *o_ptr)
 	/* If one of the above is suitable for this object, carry it out. */
 	FOR_ALL_IN(funcs, ptr)
 	{
-		if (item_tester_okay_cmd(*funcs, o_ptr))
+		if (item_tester_okay_cmd(*ptr, o_ptr))
 		{
-			(**funcs)(o_ptr);
+			(**ptr)(o_ptr);
 			return;
 		}
 	}
