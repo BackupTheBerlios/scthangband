@@ -254,12 +254,20 @@ static bool needtohaggle(s32b purse)
 /*
  * Rest for a night in the Inn or House
  * If the night flag is set, then rest until nightfalll instead of daybreak
-  */
-static void room_rest(bool night)
+ *
+ * Hack - this does not consider whether any of its effects would take place
+ * if the player rested for that period outside the building.
+ */
+static void room_rest(void)
 {
 	int n;
 	int temp_store_num;
 	byte temp_store_type;
+
+	bool night =
+		((p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_ZOMBIE) ||
+		(p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_VAMPIRE));
+
 	if(night)
 	{
 		if (turn < 50000)
@@ -275,10 +283,6 @@ static void room_rest(bool night)
 	{
 		turn = ((turn/100000)+1)*100000;
 	}
-	p_ptr->chp = p_ptr->mhp;
-	set_flag(TIMED_BLIND, 0);
-	set_flag(TIMED_CONFUSED, 0);
-	p_ptr->stun = 0;
 	if(night)
 	{
 		msg_print("You awake, ready for the night.");
@@ -302,31 +306,23 @@ static void room_rest(bool night)
 	st_ptr = &store[cur_store_num];
 	ot_ptr = &owners[st_ptr->owner];
 
-	p_ptr->fast = 0;			/* Timed -- Fast */
-	p_ptr->slow = 0;			/* Timed -- Slow */
-	p_ptr->blind = 0;			/* Timed -- Blindness */
-	p_ptr->paralyzed = 0;		/* Timed -- Paralysis */
-	p_ptr->confused = 0;		/* Timed -- Confusion */
-	p_ptr->afraid = 0;		/* Timed -- Fear */
-	p_ptr->image = 0;			/* Timed -- Hallucination */
-	p_ptr->poisoned = 0;		/* Timed -- Poisoned */
-	p_ptr->cut = 0;			/* Timed -- Cut */
-	p_ptr->stun = 0;			/* Timed -- Stun */
-	p_ptr->protevil = 0;		/* Timed -- Protection */
-	p_ptr->invuln = 0;		/* Timed -- Invulnerable */
-	p_ptr->hero = 0;			/* Timed -- Heroism */
-	p_ptr->shero = 0;			/* Timed -- Super Heroism */
-	p_ptr->shield = 0;		/* Timed -- Shield Spell */
-	p_ptr->blessed = 0;		/* Timed -- Blessed */
-	p_ptr->see_inv = 0;		/* Timed -- See Invisible */
-	p_ptr->tim_invis = 0;		/* Timed -- Invisibility -KMW- */
-	p_ptr->wraith_form = 0;		/* Timed -- walk through walls -KMW- */
-	p_ptr->tim_infra = 0;		/* Timed -- Infra Vision */
-	p_ptr->oppose_acid = 0;	/* Timed -- oppose acid */
-	p_ptr->oppose_elec = 0;	/* Timed -- oppose lightning */
-	p_ptr->oppose_fire = 0;	/* Timed -- oppose heat */
-	p_ptr->oppose_cold = 0;	/* Timed -- oppose cold */
-	p_ptr->oppose_pois = 0;	/* Timed -- oppose poison */
+	/* Let timers time out. */
+	for (n = 0; n < TIMED_MAX; n++)
+	{
+		if (n == TIMED_FOOD)
+		{
+			if (p_ptr->food >= PY_FOOD_ALERT) set_flag(n, PY_FOOD_ALERT-1);
+		}
+		else
+		{
+			set_flag(n, 0);
+		}
+	}
+
+	/* And let other things recover. */
+	p_ptr->chp = p_ptr->mhp;
+	p_ptr->csp = p_ptr->msp;
+	p_ptr->cchi = p_ptr->mchi;
 
 	new_level_flag = TRUE;
 	came_from = START_WALK; /* We don't want the player to be moved */
@@ -3680,19 +3676,13 @@ static void store_process_command(void)
 						{
 							msg_print("Your wounds prevent you from sleeping.");
 						}
+						else if (p_ptr->food < PY_FOOD_ALERT)
+						{
+							msg_print("Your rumbling stomach prevents you from sleeping.");
+						}
 						else
 						{
-							if ((p_ptr->prace == RACE_SPECTRE) ||
-								 (p_ptr->prace == RACE_ZOMBIE) ||
-								 (p_ptr->prace == RACE_SKELETON) ||
-								 (p_ptr->prace == RACE_VAMPIRE))
-							{
-								room_rest(TRUE);
-							}
-							else
-							{
-								room_rest(FALSE);
-							}
+							room_rest();
 						}
 					break;
 				   }
@@ -3708,37 +3698,24 @@ static void store_process_command(void)
 							msg_print("You need a healer, not a room!");
 							msg_print("I'm sorry, but  I don't want anyone dying in here.");
 						}
+						else if (service_haggle(10,&price, service_name[cur_store_type][0], STORE_INN))
+						{
+						}
+						else if (price > p_ptr->au)
+						{
+							msg_print("You do not have the gold!");
+						}
 						else
 						{
-							if (!service_haggle(10,&price, service_name[cur_store_type][0], STORE_INN))
-							{
-								if (price > p_ptr->au)
-								{
-									msg_print("You do not have the gold!");
-								}
-								else
-								{
-									p_ptr->au -= price;
-									/* Say "okay" */
-									say_comment_1();
-									/* Make a sound */
-									sound(SOUND_BUY);
-									/* Be happy */
-									decrease_insults();
-									store_prt_gold();
-									if ((p_ptr->prace == RACE_SPECTRE) ||
-										 (p_ptr->prace == RACE_ZOMBIE) ||
-										 (p_ptr->prace == RACE_SKELETON) ||
-										 (p_ptr->prace == RACE_VAMPIRE))
-									{
-										room_rest(TRUE);
-									}
-									else
-									{
-										room_rest(FALSE);
-									}
-								}
-							}
+							p_ptr->au -= price;
+							/* Say "okay" */
+							say_comment_1();
+							/* Make a sound */
+							sound(SOUND_BUY);
+							/* Be happy */
+							decrease_insults();
+							store_prt_gold();
+							room_rest();
 						}
 					break;
 				   }
