@@ -4534,13 +4534,11 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 			}
 
 			/*
-			 * Select a worthless item if possible.
-			 * Otherwise select a cursed item or nothing.
+			 * Select a squelched object, or nothing.
 			 */
 			case 'z': case 'Z':
 			{
-				object_type *start, *end, j_ptr[1];
-				object_type *cursed = NULL, *broken = NULL, *hidden = NULL;
+				object_type *start, *end;
 				/* Find the range. */
 				if (command_wrk)
 				{
@@ -4555,32 +4553,25 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				/* Search the items for something cursed or worthless. */
 				for (o_ptr = start ; o_ptr < end; o_ptr++)
 				{
-					object_info_known(j_ptr, o_ptr);
+					cptr inscription = get_inscription(o_ptr);
 
 					/* Skip invalid objects */
 					if (!get_item_okay(o_ptr)) continue;
 
 					/* Skip specified objects */
-					if (strstr(get_inscription(o_ptr), "!k")) continue;
-					if (strstr(get_inscription(o_ptr), "!K")) continue;
-
-					/* Found a cursed item. */
-					if (cursed_p(j_ptr)) cursed = o_ptr;
-
-					/* Found an uncursed worthless item. */
-					else if (!object_value(o_ptr, FALSE)) broken = o_ptr;
+					if (strstr(inscription, "!k")) continue;
+					if (strstr(inscription, "!K")) continue;
 
 					/* Found a hidden item. */
-					if (hidden_p(j_ptr)) hidden = o_ptr;
+					if (hidden_p(o_ptr))
+					{
+						/* Check that the item is suitable in various ways. */
+						get_item_valid(&o_ptr, &done, err, ISUPPER(which));
+
+						/* Finished. */
+						break;
+					}
 				}
-
-				/* Select from each category in order. */
-				if (hidden) o_ptr = hidden;
-				else if (broken) o_ptr = broken;
-				else if (cursed) o_ptr = cursed;
-
-				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, err, ISUPPER(which));
 
 				break;
 			}

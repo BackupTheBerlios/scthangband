@@ -11,6 +11,7 @@ sCthangband _CVS_
 * Dimension door only allows the player to teleport to squares in line of sight.
 * An inscription of (e.g.) ~vf on an object causes the "throw" command to 
   attempt to "fire" it instead.
+* Selecting "z" at an object prompt only selects squelched objects.
 * Rearrange the feature priorities for the small scale map.
 * Objects can have default inscriptions which are given to identified items of
   that type, or to all similar unidentified items.
