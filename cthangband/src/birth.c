@@ -1205,21 +1205,31 @@ static void display_player_birth_details(void)
 #define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
 
 
-/* Allow player to modify the character by spending points */
+/*
+ * Allow player to modify the character by spending points
+ *
+ * own_name keeps track of whether the player has changed the name explicitly.
+ * This is because the game tries to generate names appropriate to the race,
+ * and so generates a new one whenever the race is changed.
+ * As the player is assumed to want any name he has set himself, setting a
+ * name disables the process.
+ *
+ * rolled is set whenever the stat set was generated directly by rolling. This
+ * is because such characters are accepted regardless of their stats.
+ */
 static bool point_mod_player(void)
 {
-	bool details = FALSE;
+	bool details, own_name, rolled;
 	char stat = UNREAD_VALUE; /* Never used when i = IDX_ALL, and initialised below otherwise. */
 	s16b points = UNREAD_VALUE; /* Initialised when i = IDX_ALL */
-	u16b i = IDX_START;
+	u16b i;
 	
 	/* The game inserts a name at the beginning, but the player can
 	 * change it. We will change the name whenever a new character is
 	 * generated, but not if the user has selected a name himself.
 	 */
-	bool own_name = FALSE, rolled = FALSE;
 	
-	while(i != IDX_FINISH)
+	for (i = IDX_START, details = own_name = rolled = FALSE; i != IDX_FINISH;)
 	{ 
 		/* Hack - use IDX_START to initialise various things.
 		 * i should not be set to IDX_ALL anywhere else.
@@ -1515,21 +1525,21 @@ static bool point_mod_player(void)
 		if (i == IDX_FINISH)
 		{
 			bc_type b;
-	get_starting_skills();
+			get_starting_skills();
 			if (((b = get_hermetic_skills())) == BC_ABORT) i = IDX_START;
 			else if (b == BC_RESTART) return FALSE;
 			else if (((b = get_init_spirit(TRUE))) == BC_ABORT) i = IDX_START;
 			else if (b == BC_RESTART) return FALSE;
-			else
-			{
- 	wield_weapons(FALSE);
-				get_random_skills(TRUE);
-				get_final();
-			}
+			/* else break; */ /* Redundant */
 		}
 	}
 
-	/* Process the player name if necessary. */
+	/* Prepare the player for the dungeon. */
+	wield_weapons(FALSE);
+	get_random_skills(TRUE);
+	get_final();
+
+	/* Ensure that the player has  */
 	if (!own_name) process_player_name();
 
 	return TRUE;
