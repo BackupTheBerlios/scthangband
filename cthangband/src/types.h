@@ -1107,12 +1107,12 @@ struct player_type
 	bool old_cumber_helm;
 	bool old_heavy_wield;
 	bool old_heavy_shoot;
-	bool old_icky_wield;
+	bool old_icky_wield;	/* Obsolete */
 
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_view;		/* Old radius of view (if any) */
 
-	s16b old_food_aux;	/* Old value of food */
+	s16b old_food_aux;	/* Obsolete */
 
 
 	bool cumber_armor;	/* Mana draining armor */
