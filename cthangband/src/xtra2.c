@@ -4289,7 +4289,7 @@ static int get_rand_mutation(void)
 		i -= ch_ptr->chance;
 		if (i < 0) break;
 	}
-	return ch_ptr - chaos_info;
+	return ch_ptr - chaos_info+1;
 }
 	
 /*
@@ -4350,7 +4350,7 @@ bool gain_chaos_feature(int choose_mut)
 	}
 
 	msg_print("You change!");
-	msg_print(chaos_info[mut].gain);
+	msg_print(chaos_info[mut-1].gain);
 	p_set_mutation(mut);
 
 	/* Some mutations are mutually exclusive. */
@@ -4387,7 +4387,7 @@ bool lose_chaos_feature(int choose_mut)
 		return FALSE;
 	}
 
-	msg_print(chaos_info[mut].lose);
+	msg_print(chaos_info[mut-1].lose);
 	p_clear_mutation(mut);
 
 	p_ptr->update |= PU_BONUS;
@@ -4411,7 +4411,7 @@ int add_chaos_features(cptr *info, bool (*reject)(int))
 	{
 		if (p_has_mutation(i) && reject && !(*reject)(i))
 		{
-			info[j++] = chaos_info[i].desc;
+			info[j++] = chaos_info[i-1].desc;
 		}
 	}
 	return j;
