@@ -2324,12 +2324,63 @@ static byte skill_colour(int skill_index)
 }
 
 /*
+ * Display the information for a given skill at a given position.
+ */
+static void display_player_skills_aux(int skill, int x, int y)
+{
+	player_skill *sk_ptr = skill_set+skill;
+	cptr name;
+	char *s, buf[30];
+
+	/* Hack - use a special name for some skills. */
+	switch (skill)
+	{
+		case SKILL_SLASH: case SKILL_STAB: case SKILL_CRUSH:
+		{
+			name = format("%.*ss", strlen(sk_ptr->name)-3, sk_ptr->name);
+			break;
+		}
+		case SKILL_CORPORIS: case SKILL_VIS:
+		case SKILL_NATURAE: case SKILL_ANIMAE:
+		{
+			name = format("Magice %s", sk_ptr->name);
+			break;
+		}
+		case SKILL_DEVICE:
+		{
+			name = "Devices"; break;
+		}
+		case SKILL_CHI:
+		{
+			name = "Chi Balance"; break;
+		}
+		default:
+		{
+			name = sk_ptr->name;
+		}
+	}
+
+	sprintf(buf, "%-17s%d%%", name, sk_ptr->value);
+
+	/* This should always be true. */
+	if (strchr(buf, ' '))
+	{
+		/* Find the start of the last set of spaces, and make it a colon. */
+		for (s = strrchr(buf, ' '); *s == ' '; s--);
+		*++s = ':';
+	}
+
+	/* Print at the desired position. */
+	c_put_str(skill_colour(skill),buf,y,x);
+}
+
+/*
  * Display all the player's base skill levels
  */
 
 static void display_player_skills(void)
 {
-	char buf[80];
+	int x,y;
 
 	put_str("Everyman Skills",1,7);
 	put_str("===============",2,7);
@@ -2339,64 +2390,50 @@ static void display_player_skills(void)
 	put_str("===============",2,56);
 
 	/* Everyman Skills */
-	sprintf(buf,"Close Combat:    %d%%",skill_set[SKILL_CLOSE].value);
-	c_put_str(skill_colour(SKILL_CLOSE),buf,4,5);
-	sprintf(buf,"Slashing Weaps:  %d%%",skill_set[SKILL_SLASH].value);
-	c_put_str(skill_colour(SKILL_SLASH),buf,5,5);
-	sprintf(buf,"Stabbing Weaps:  %d%%",skill_set[SKILL_STAB].value);
-	c_put_str(skill_colour(SKILL_STAB),buf,6,5);
-	sprintf(buf,"Crushing Weaps:  %d%%",skill_set[SKILL_CRUSH].value);
-	c_put_str(skill_colour(SKILL_CRUSH),buf,7,5);
-	sprintf(buf,"Missile:         %d%%",skill_set[SKILL_MISSILE].value);
-	c_put_str(skill_colour(SKILL_MISSILE),buf,8,5);
-	sprintf(buf,"Toughness:       %d%%",skill_set[SKILL_TOUGH].value);
-	c_put_str(skill_colour(SKILL_TOUGH),buf,10,5);
-	sprintf(buf,"Devices:         %d%%",skill_set[SKILL_DEVICE].value);
-	c_put_str(skill_colour(SKILL_DEVICE),buf,12,5);
-	sprintf(buf,"Resistance:      %d%%",skill_set[SKILL_SAVE].value);
-	c_put_str(skill_colour(SKILL_SAVE),buf,13,5);
-	sprintf(buf,"Perception:      %d%%",skill_set[SKILL_PERCEPTION].value);
-	c_put_str(skill_colour(SKILL_PERCEPTION),buf,15,5);
-	sprintf(buf,"Searching:       %d%%",skill_set[SKILL_SEARCH].value);
-	c_put_str(skill_colour(SKILL_SEARCH),buf,16,5);
-	sprintf(buf,"Disarming:       %d%%",skill_set[SKILL_DISARM].value);
-	c_put_str(skill_colour(SKILL_DISARM),buf,18,5);
-	sprintf(buf,"Stealth:         %d%%",skill_set[SKILL_STEALTH].value);
-	c_put_str(skill_colour(SKILL_STEALTH),buf,19,5);
+	x = 5; y = 4;
+	display_player_skills_aux(SKILL_CLOSE, x, y++);
+	display_player_skills_aux(SKILL_SLASH, x, y++);
+	display_player_skills_aux(SKILL_STAB, x, y++);
+	display_player_skills_aux(SKILL_CRUSH, x, y++);
+	display_player_skills_aux(SKILL_MISSILE, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_TOUGH, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_DEVICE, x, y++);
+	display_player_skills_aux(SKILL_SAVE, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_PERCEPTION, x, y++);
+	display_player_skills_aux(SKILL_SEARCH, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_DISARM, x, y++);
+	display_player_skills_aux(SKILL_STEALTH, x, y++);
 
 	/* Specialist Skills */
-	sprintf(buf,"Martial Arts:    %d%%",skill_set[SKILL_MA].value);
-	c_put_str(skill_colour(SKILL_MA),buf,4,30);
-	sprintf(buf,"Mindcrafting:    %d%%",skill_set[SKILL_MINDCRAFTING].value);
-	c_put_str(skill_colour(SKILL_MINDCRAFTING),buf,6,30);
-	sprintf(buf,"Chi Balance:     %d%%",skill_set[SKILL_CHI].value);
-	c_put_str(skill_colour(SKILL_CHI),buf,7,30);
-	sprintf(buf,"Spirit Lore:     %d%%",skill_set[SKILL_SHAMAN].value);
-	c_put_str(skill_colour(SKILL_SHAMAN),buf,9,30);
-	sprintf(buf,"Hedge Magic:     %d%%",skill_set[SKILL_HEDGE].value);
-	c_put_str(skill_colour(SKILL_HEDGE),buf,11,30);
-	sprintf(buf,"Innate Racial:   %d%%",skill_set[SKILL_RACIAL].value);
-	c_put_str(skill_colour(SKILL_RACIAL),buf,13,30);
+	x = 30; y = 4;
+	display_player_skills_aux(SKILL_MA, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_MINDCRAFTING, x, y++);
+	display_player_skills_aux(SKILL_CHI, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_SHAMAN, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_HEDGE, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_RACIAL, x, y++);
 
 	/* Hermetic Skills */
-	sprintf(buf,"Thaumaturgy:     %d%%",skill_set[SKILL_THAUMATURGY].value);
-	c_put_str(skill_colour(SKILL_THAUMATURGY),buf,4,54);
-	sprintf(buf,"Necromancy:      %d%%",skill_set[SKILL_NECROMANCY].value);
-	c_put_str(skill_colour(SKILL_NECROMANCY),buf,5,54);
-	sprintf(buf,"Conjuration:     %d%%",skill_set[SKILL_CONJURATION].value);
-	c_put_str(skill_colour(SKILL_CONJURATION),buf,6,54);
-	sprintf(buf,"Sorcery:         %d%%",skill_set[SKILL_SORCERY].value);
-	c_put_str(skill_colour(SKILL_SORCERY),buf,7,54);
-	sprintf(buf,"Magice Corporis: %d%%",skill_set[SKILL_CORPORIS].value);
-	c_put_str(skill_colour(SKILL_CORPORIS),buf,9,54);
-	sprintf(buf,"Magice Vis:      %d%%",skill_set[SKILL_VIS].value);
-	c_put_str(skill_colour(SKILL_VIS),buf,10,54);
-	sprintf(buf,"Magice Naturae:  %d%%",skill_set[SKILL_NATURAE].value);
-	c_put_str(skill_colour(SKILL_NATURAE),buf,11,54);
-	sprintf(buf,"Magice Animae:   %d%%",skill_set[SKILL_ANIMAE].value);
-	c_put_str(skill_colour(SKILL_ANIMAE),buf,12,54);
-	sprintf(buf,"Mana Channeling: %d%%",skill_set[SKILL_MANA].value);
-	c_put_str(skill_colour(SKILL_MANA),buf,14,54);
+	x = 54; y = 4;
+	display_player_skills_aux(SKILL_THAUMATURGY, x, y++);
+	display_player_skills_aux(SKILL_NECROMANCY, x, y++);
+	display_player_skills_aux(SKILL_CONJURATION, x, y++);
+	display_player_skills_aux(SKILL_SORCERY, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_CORPORIS, x, y++);
+	display_player_skills_aux(SKILL_VIS, x, y++);
+	display_player_skills_aux(SKILL_NATURAE, x, y++);
+	display_player_skills_aux(SKILL_ANIMAE, x, y++);
+	y++;
+	display_player_skills_aux(SKILL_MANA, x, y++);
 }
 
 /*
