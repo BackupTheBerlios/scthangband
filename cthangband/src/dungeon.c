@@ -4138,7 +4138,7 @@ static void place_towns(void)
 	/* Place towns and dungeons */
 	for(i=0;i<MAX_CAVES;i++)
 	{
-		bool town = i < MAX_TOWNS && town_defs[i].name;
+		const bool town = i < MAX_TOWNS && town_defs[i].name;
 
 		/* Towns can't be generated next to other towns. */
 		for (t = 0, x = 2; x < 10; x++)
@@ -4158,29 +4158,33 @@ static void place_towns(void)
 				}
 
 				/* This is a suitable location for this dungeon. */
-					good_squares[t][0] = x;
-					good_squares[t++][1] = y;
+				good_squares[t][0] = x;
+				good_squares[t++][1] = y;
 			}
 		}
 
 		/* Locations were found, so pick one. */
 		if (t)
 		{
-			i = rand_int(t);
-			x = good_squares[i][0];
-			y = good_squares[i][1];
+			t = rand_int(t);
+			x = good_squares[t][0];
+			y = good_squares[t][1];
 
 			/* There are no dungeons next to this */
 			wild_grid[y][x].dungeon = i;
 
 			/* now let the town & dungeon know where they are */
-			if (is_town_p(y,x))
+			if (town)
 			{
 				town_defs[i].x=x;
 				town_defs[i].y=y;
 			}
 			dun_defs[i].x=x;
 			dun_defs[i].y=y;
+		}
+		else
+		{
+			msg_format("Can't place dungeon %d", i);
 		}
 	}
 
