@@ -2138,9 +2138,9 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	if (!(r_ptr->flags1 & (RF1_UNIQUE)))
 	{
 		/* Allow some small variation per monster */
-		i = TURN_ENERGY/extract_energy[r_ptr->speed];
-		if (i) i = m_ptr->mspeed + rand_spread(0, i);
-		m_ptr->mspeed = MIN(MAX(i, 0), N_ELEMENTS(extract_energy)-1);
+		int j = TURN_ENERGY/extract_energy[r_ptr->speed];
+		j = r_ptr->speed + rand_spread(0, i);
+		m_ptr->mspeed = MIN(MAX(j, 0), N_ELEMENTS(extract_energy)-1);
 	}
 
 
