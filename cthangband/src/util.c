@@ -508,6 +508,7 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 }
 
 
+#if 0
 /*
  * Hack -- replacement for "fputs()"
  *
@@ -522,6 +523,32 @@ errr my_fputs(FILE *fff, cptr buf, huge UNUSED n)
 
 	/* Success */
 	return (0);
+}
+#endif
+
+/*
+ * A macro to turn a format string with arguments into a normal string in the
+ * format buffer.
+ */
+#define get_va_arg_string(fmt) \
+	va_list vp; \
+	va_start(vp, (fmt)); \
+	vformat((fmt), vp); \
+	va_end(vp);
+
+
+/*
+ * A version of "fprintf()" which uses strnfmt to process its arguments.
+ *
+ * It uses the format buffer as there is no limit on how long a string
+ * could be sensible, although it could loop over the string a piece at a
+ * time.
+ */
+int my_fprintf(FILE *fff, cptr fmt, ...)
+{
+	get_va_arg_string(fmt)
+
+	return fprintf(fff, "%s", format(0));
 }
 
 

@@ -1187,10 +1187,10 @@ static errr macro_dump(cptr fname)
 		fprintf(fff, "# Macro '%d'\n\n", i);
 
 		/* Dump the action. */
-		my_fputs(fff, format("A:%v\n", ascii_to_text_f1, macro__act[i]), 0);
+		my_fprintf(fff, "A:%v\n", ascii_to_text_f1, macro__act[i]);
 
 		/* Dump the trigger. */
-		my_fputs(fff, format("P:%v\n\n", ascii_to_text_f1, macro__pat[i]), 0);
+		my_fprintf(fff, "P:%v\n\n", ascii_to_text_f1, macro__pat[i]);
 	}
 
 	/* Start dumping */
@@ -1337,8 +1337,8 @@ static errr keymap_dump(cptr fname)
 		buf[0] = i;
 
 		/* Dump the macro */
-		my_fputs(fff, format("A:%v\nC:%d:%v\n", ascii_to_text_f1, buf, mode,
-			ascii_to_text_f1, act), 0);
+		my_fprintf(fff, "A:%v\nC:%d:%v\n", ascii_to_text_f1, buf,
+			mode, ascii_to_text_f1, act);
 	}
 
 	/* Start dumping */
@@ -3049,8 +3049,8 @@ static void do_cmd_knowledge_artifacts(void)
 		if (!make_fake_artifact(q_ptr, k)) continue;
 
 		/* Hack -- Build the artifact name */
-		my_fputs(fff, format(" %v   %v\n", get_symbol(&k_info[a_ptr->k_idx]),
-			object_desc_store_f3, q_ptr, TRUE, 0), 0);
+		my_fprintf(fff, " %v   %v\n", get_symbol(&k_info[a_ptr->k_idx]),
+			object_desc_store_f3, q_ptr, TRUE, 0);
 	}
 
 	/* Free the "okay" array */
@@ -3098,11 +3098,11 @@ static void do_cmd_knowledge_uniques(void)
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
-				my_fputs(fff, format(" %v %c %s%c%v is %s", get_symbol(r_ptr),
-					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', CC_PREFIX, 
+				my_fprintf(fff, " %v %c %s%c%v is %s", get_symbol(r_ptr),
+					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', CC_PREFIX,
 					(dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE],
 					monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
-					(dead) ? "dead" : "alive"), 0);
+					(dead) ? "dead" : "alive");
 			}
 		}
 	}
@@ -3156,7 +3156,8 @@ static void do_cmd_knowledge_pets(void)
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			t_friends++;
 			t_levels += r_ptr->level;
-			my_fputs(fff, format("%v %v\n", get_symbol(r_ptr), monster_desc_f2, m_ptr, 0x88), 0);
+			my_fprintf(fff, "%v %v\n",	get_symbol(r_ptr),
+				monster_desc_f2, m_ptr, 0x88);
 		}
 	}
 
@@ -3211,8 +3212,8 @@ static int count_kills(FILE *fff, bool noisy)
 			else if (r_ptr->flags1 & RF1_UNIQUE) flags |= MDF_DEF;
 			else flags |= MDF_INDEF;
 			
-			my_fputs(fff, format(" %v   %v", get_symbol(r_ptr),
-				monster_desc_aux_f3, r_ptr, This, flags), 0);
+			my_fprintf(fff, " %v   %v", get_symbol(r_ptr),
+				monster_desc_aux_f3, r_ptr, This, flags);
 		}
 	}
 	return Total;
@@ -3344,9 +3345,9 @@ static void do_cmd_knowledge_deaths(void)
 			}
 
 			/* Format the string, including the monster's ASCII representation. */
-			my_fputs(fff, format(" %v   %d w%s killed by %v.",
+			my_fprintf(fff, " %v   %d w%s killed by %v.",
 				get_symbol(r_ptr), r_ptr->r_deaths, (r_ptr->r_deaths == 1) ?
-				"as" : "ere", monster_desc_aux_f3, r_ptr, num, flags), 0);
+				"as" : "ere", monster_desc_aux_f3, r_ptr, num, flags);
 
 			/* Count the total. */
 			Deaths+=r_ptr->r_deaths;
@@ -3408,10 +3409,10 @@ static void do_cmd_knowledge_objects(void)
 			object_prep(i_ptr, k);
 
 			/* Print a message */
-			my_fputs(fff, format(" %v   %v", get_symbol_f2,
+			my_fprintf(fff, " %v   %v\n", get_symbol_f2,
 				object_attr(i_ptr), isprint(object_char(i_ptr)) ?
 				object_char(i_ptr) : '#',
-				object_desc_store_f3, i_ptr, FALSE, 0), 0);
+				object_desc_store_f3, i_ptr, FALSE, 0);
 		}
 	}
 
