@@ -1240,7 +1240,7 @@ void self_knowledge(void)
 	}
 	if (p_ptr->new_spells)
 	{
-		info[i++] = "You can learn some spells/prayers.";
+		info[i++] = "You can learn some spells.";
 	}
 	if (p_ptr->word_recall)
 	{
