@@ -178,7 +178,7 @@ static void prt_stat(int stat)
 	}
 
 	/* Display number */
-	strnfmt(tmp, sizeof(tmp), "%v", cnv_stat_f1, tmp);
+	strnfmt(tmp, sizeof(tmp), "%v", cnv_stat_f1, p_ptr->stat_use[stat]);
 	c_put_str(attr, tmp, ROW_STAT + stat, COL_STAT + 6);
 }
 
