@@ -36,9 +36,11 @@ M:R:100
 # initialisation, but increasing them above 65535 may prevent the game
 # from running on some 16 bit computers.
 
+# This is, in fact, already necessary for the r_info array.
+
 # Maximum size of the array in which most of the information for monsters,
 # objects, features, etc., is stored.
-M:I:65535
+M:I:131071
 
 # Size of the "fake" array for reading in names of monsters, objects,
 # artifacts, store-owners, player-races, ...
@@ -46,5 +48,5 @@ M:N:20480
 
 # Size of the "fake" array for reading in the descriptions of monsters,
 # vaults, and the player-histories
-M:T:61440
+M:T:131071
 

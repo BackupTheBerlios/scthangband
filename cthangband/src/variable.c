@@ -721,7 +721,6 @@ maxima *z_info;
 /*
  * The vault generation arrays
  */
-header *v_head;
 vault_type *v_info;
 char *v_name;
 char *v_text;
@@ -750,7 +749,6 @@ s16b *pid_base;
 /*
  * The artifact arrays
  */
-header *a_head;
 artifact_type *a_info;
 char *a_name;
 char *a_text;
@@ -758,7 +756,6 @@ char *a_text;
 /*
  * The ego-item arrays
  */
-header *e_head;
 ego_item_type *e_info;
 char *e_name;
 char *e_text;
@@ -767,7 +764,6 @@ char *e_text;
 /*
  * The monster race arrays
  */
-header *r_head;
 monster_race *r_info;
 char *r_name;
 char *r_text;
@@ -775,7 +771,6 @@ char *r_text;
 /*
  * The death event arrays
  */
-header *event_head;
 death_event_type *death_event;
 char *event_name;
 char *event_text;

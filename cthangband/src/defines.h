@@ -3264,3 +3264,4 @@ extern int PlayerUID;
 /* Header identities. */
 #define U_HEAD	21 
 #define Z_HEAD	26
+#define EVENT_HEAD	27

@@ -8130,3 +8130,15 @@ D:Azathoth, whose name no lips dare speak aloud, and who gnaws hungrily
 D:in inconceivable, unlighted chambers beyond time amidst the muffled, 
 D:maddening beating of vile drums and the thin monotonous whine of 
 D:accursed flutes" - H.P.Lovecraft, "The Dream Quest of Unknown Kadath"
+
+# Hack - the last monster in the file should always be reserved for ghosts.
+
+# The monster will be redefined on creation, the template is provided solely
+# to avoid some potential bugs.
+
+N:576:Nobody, the Unnamed Ghost---------------------------------------
+D:--------------------------------------------------------------64
+G:G:w
+I:0:0:1d1:0:0:0
+W:0:0:0:1
+F:UNIQUE | NEVER_MOVE | NEVER_BLOW

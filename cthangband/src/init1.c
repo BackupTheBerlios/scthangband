@@ -38,19 +38,14 @@
 
 #ifdef ALLOW_TEMPLATES
 
+/* A macro for how large the current info array can grow before it overflows. */
+#define MAX_I	(int)(z_info->fake_info_size/head->info_len)
 
 /*
  * Hack -- error tracking
  */
 extern s16b error_idx;
 extern s16b error_line;
-
-
-/*
- * Hack -- size of the "fake" arrays
- */
-extern u32b fake_name_size;
-extern u32b fake_text_size;
 
 
 
@@ -927,416 +922,372 @@ static void clear_escapes(char *buf)
 /*
  * Initialize the "death_event" array, by parsing part of the "r_info.txt" file
  */
-errr init_r_event_txt(FILE *fp, char *buf)
+errr parse_r_event(char *buf, header *head)
 {
-	s16b r_idx = 0;
-
-	/* Not ready yet */
-	bool okay = FALSE;
+	static int r_idx = 0;
 
 	/* Current entry */
-	death_event_type *d_ptr = NULL;
+	death_event_type *d_ptr;
 
-
-	/* Just before the first record */
-	error_idx = -1;
-
-	/* Just before the first line */
-	error_line = -1;
-
-
-	/* Start the "fake" stuff */
-	event_head->name_size = 0;
-	event_head->text_size = 0;
-
-	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	switch (*buf)
 	{
- 		/* Advance the line number */
-		error_line++;
-
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Verify correct "colon" format */
-		if (buf[1] != ':') return ERR_PARSE;
-
-
-		/* Process based on the initial character. */
-		switch (*buf)
+		case 'N': /* New/Number/Name (extracting number) */
 		{
-			case 'V': /* Version */
-		{
-				if (check_version(buf, event_head))
-					return ERR_VERSION;
-				else
-			okay = TRUE;
- 				break;
-		}
-
-			case 'N': /* New/Number/Name (extracting number) */
-		{
-				/* Get the number */
+			/* Get the number */
 			r_idx = atoi(buf+2);
-				break;
+			return SUCCESS;
 		}
 
-			case 'E': /* (Death) Events */
+		case 'E': /* (Death) Events */
+		{
+			int i;
+			u16b temp_name_offset = 0;
+
+
+			/* Nothing can be done without a valid monster */
+			if (!r_idx)
 			{
-				int i;
-				u16b temp_offset = 0;
+				msg_print("No r_idx specified!");
+				return ERR_MISSING;
+			}
 
-				/* Nothing can be done without a valid monster */
-				if (!r_idx)
-				{
-					msg_print("No r_idx specified!");
-					return ERR_MISSING;
-				}
-
-				/* Find an unused event slot */
-				if ((unsigned)(++error_idx) >= MAX_DEATH_EVENTS)
-					{
-					msg_print("Too many events!");
-						return ERR_MEMORY;
-					}
-				d_ptr = &death_event[error_idx];
+			/* Find an unused event slot */
+			if ((++error_idx) >= MAX_I)
+			{
+				msg_print("Too many events!");
+				return ERR_MEMORY;
+			}
+			d_ptr = (death_event_type*)head->info_ptr+error_idx;
 
 
-				/* Look for a text string to avoid problems with keywords within it. 
-				 * To avoid conflicts with other arbitrary text, a \\ before a character
-				 * means that it can't terminate a string.
-				 * This is the string which is printed when an event occurs.
-				 */
-				i = do_get_string(buf, '\"', "^\"", event_text, &(event_head->text_size), fake_text_size, &(d_ptr->text));
+			/* Look for a text string to avoid matching keywords within it later.
+			 * To avoid conflicts with other arbitrary text, a \\ before a character
+			 * means that it can't terminate a string.
+			 * This is the string which is printed when an event occurs.
+			 */
+			i = do_get_string(buf, '"', "^\"", head->text_ptr, &(head->text_size), z_info->fake_text_size, &(d_ptr->text));
+			if (i) return i;
+			/* This is a second text string, the use of which depends on the type of event.
+			 * It currently only supplies a name for a randart. We haven't yet found out
+			 * what type of event it is, so we save the offset to a temporary variable to
+			 * deal with later.
+			 */
+			{
+				u32b temp_name_size = head->name_size;
+				i = do_get_string(buf, '^', "^\"", head->name_ptr, &(temp_name_size), z_info->fake_name_size, &temp_name_offset);
 				if (i) return i;
-				/* This is a second text string, the use of which depends on the type of event.
-				 * It currently only supplies a name for a randart. We haven't yet found out
-				 * what type of event it is, so we save the offset to a temporary variable to
-				 * deal with later.
-				 */
-				{
-					u32b temp_name_size = event_head->name_size;
-					i = do_get_string(buf, '^', "^\"", event_name, &temp_name_size, fake_name_size, &temp_offset);
-					if (i) return i;
-					event_head->name_size = (u16b)temp_name_size;
-				}
-				/* Now the text strings have been removed, we remove the \\s from the file. Note that, if a name
-				 * contains a \\ character, this must be listed as \\. Similarly, a " must be listed as \" and
-				 * a ^ as \^. There should hopefully not be many of these.
-				 */
-				clear_escapes(buf);
+				head->name_size = (u16b)temp_name_size;
+			}
+			/* Now the text strings have been removed, we remove the \\s from the file. Note that, if a name
+			 * contains a \\ character, this must be listed as \\. Similarly, a " must be listed as \" and
+			 * a ^ as \^. There should hopefully not be many of these.
+			 */
+			clear_escapes(buf);
 
-				/* Also convert the %x sequences used in sequences for objects. */
-				do_compress_string(buf);
+			/* Also convert the %x sequences used in sequences for objects. */
+			do_compress_string(buf);
 
-				/* Save the monster index */
-				d_ptr->r_idx = r_idx;
+			/* Save the monster index */
+			d_ptr->r_idx = r_idx;
 
-				/* Now find the name of an event type. */
-				d_ptr->type = find_string(buf, death_flags);
+			/* Now find the name of an event type. */
+			d_ptr->type = find_string(buf, death_flags);
 
-				/* Check for the ONLY_ONE flag. */
-				if (find_string_x(buf, "ONLY_ONE")) d_ptr->flags |= EF_ONLY_ONE;
+			/* Check for the ONLY_ONE flag. */
+			if (find_string_x(buf, "ONLY_ONE")) d_ptr->flags |= EF_ONLY_ONE;
 
-				if (find_string_x(buf, "IF_PREV")) d_ptr->flags |= EF_IF_PREV;
+			if (find_string_x(buf, "IF_PREV")) d_ptr->flags |= EF_IF_PREV;
 
-				/* A single ONLY_ONE flag causes no problems, but having
-				 * an IF_PREV flag without a previous entry with the same
-				 * r_idx would be bad. */
+			/* A single ONLY_ONE flag causes no problems, but having
+			 * an IF_PREV flag without a previous entry with the same
+			 * r_idx would be bad. */
 
-				if (d_ptr->flags & EF_IF_PREV && (error_idx == 0 ||
-				d_ptr->r_idx != (d_ptr-1)->r_idx))
-				{
-					msg_print("IF_PREV without previous entry.");
-					return ERR_FLAG;
-				}
-
-				/* Look for flags compatible with the event type
-				 * First parse arbitrary text strings to avoid having to
-				 * deal with keywords within them.
-				 *
-				 * Then look for source-based strings (which should be
-				 * capitalised). These will not generally have numerical
-				 * alternatives.
-				 *
-				 * Then look for info-based strings. These will always
-				 * have numerical alternatives to prevent confusion between
-				 * them, and between them and source-based strings.
-				 *
-				 * Finally, look for other keyword-based parameters. These
-				 * will use a single character to indicate them, so they
-				 * must be dealt with after all text strings that might
-				 * include such characters.
-				 */
-
-				switch (d_ptr->type)
+			if (d_ptr->flags & EF_IF_PREV && (error_idx == 0 ||
+			d_ptr->r_idx != (d_ptr-1)->r_idx))
 			{
-					case DEATH_OBJECT:
+				msg_print("IF_PREV without previous entry.");
+				return ERR_FLAG;
+			}
+
+			/* Look for flags compatible with the event type
+			 * First parse arbitrary text strings to avoid having to
+			 * deal with keywords within them.
+			 *
+			 * Then look for source-based strings (which should be
+			 * capitalised). These will not generally have numerical
+			 * alternatives.
+			 *
+			 * Then look for info-based strings. These will always
+			 * have numerical alternatives to prevent confusion between
+			 * them, and between them and source-based strings.
+			 *
+			 * Finally, look for other keyword-based parameters. These
+			 * will use a single character to indicate them, so they
+			 * must be dealt with after all text strings that might
+			 * include such characters.
+			 */
+
+			switch (d_ptr->type)
+			{
+				case DEATH_OBJECT:
+				{
+					make_item_type *i_ptr = &d_ptr->par.item;
+					if (find_string_x(buf, "ARTEFACT")) i_ptr->flags |= EI_ART;
+					if (find_string_x(buf, "EGO")) i_ptr->flags |= EI_EGO;
+					
+					if (find_string_x(buf, "RANDOM"))
 					{
-						make_item_type *i_ptr = &d_ptr->par.item;
-						if (find_string_x(buf, "ARTEFACT")) i_ptr->flags |= EI_ART;
-						if (find_string_x(buf, "EGO")) i_ptr->flags |= EI_EGO;
-						
-						if (find_string_x(buf, "RANDOM"))
-						{
-							i_ptr->flags |= EI_RAND;
-						}
-						else if (i_ptr->flags & EI_ART)
-						{
-							find_string_info(a_name, a_info, MAX_A_IDX, i_ptr->x_idx);
-						}
+						i_ptr->flags |= EI_RAND;
+					}
+					else if (i_ptr->flags & EI_ART)
+					{
+						find_string_info(a_name, a_info, MAX_A_IDX, i_ptr->x_idx);
+					}
 #ifdef ALLOW_EGO_DROP
-						else if (i_ptr->flags & EI_EGO)
-						{
-							find_string_info(e_name, e_info, MAX_E_IDX, i_ptr->x_idx);
-						}
+					else if (i_ptr->flags & EI_EGO)
+					{
+						find_string_info(e_name, e_info, MAX_E_IDX, i_ptr->x_idx);
+					}
 #endif
-						find_string_info(k_name, k_info, MAX_K_IDX, i_ptr->k_idx);
-						if (lookup_kind(readnum('t'), readnum('s')))
-						{
-							byte t = 0,s = 0;
-							readclearnum(t, 't');
-							readclearnum(s, 's');
-							i_ptr->k_idx = lookup_kind(t,s);
-						}
-						if (i_ptr->flags & EI_ART)
-						{
-							readclearnum(i_ptr->x_idx, 'a');
-						}
+					find_string_info(k_name, k_info, MAX_K_IDX, i_ptr->k_idx);
+					if (lookup_kind(readnum('t'), readnum('s')))
+					{
+						byte t = 0,s = 0;
+						readclearnum(t, 't');
+						readclearnum(s, 's');
+						i_ptr->k_idx = lookup_kind(t,s);
+					}
+					if (i_ptr->flags & EI_ART)
+					{
+						readclearnum(i_ptr->x_idx, 'a');
+					}
 #ifdef ALLOW_EGO_DROP
-						else if (i_ptr->flags & EI_EGO)
-						{
-							readclearnum(i_ptr->x_idx, 'e');
-						}
+					else if (i_ptr->flags & EI_EGO)
+					{
+						readclearnum(i_ptr->x_idx, 'e');
+					}
 #endif
-						readclearnum(i_ptr->min, '(');
-						readclearnum(i_ptr->max, '-');
+					readclearnum(i_ptr->min, '(');
+					readclearnum(i_ptr->max, '-');
 
-						/* Add the name of a randart, if provided. */
-						if (i_ptr->flags & EI_RAND && i_ptr->flags & EI_ART)
+					/* Add the name of a randart, if provided. */
+					if (i_ptr->flags & EI_RAND && i_ptr->flags & EI_ART)
+					{
+						if (temp_name_offset)
 						{
-							if (temp_offset)
-							{
-								i_ptr->name = temp_offset;
-								temp_offset = 0;
-							}
+							i_ptr->name = temp_name_offset;
+							temp_name_offset = 0;
 						}
-						/* Interpret no number parameter as being 1. */
-						if (i_ptr->min == 0 && i_ptr->max == 0)
-						{
-							i_ptr->max=i_ptr->min=1;
-						}
+					}
+					/* Interpret no number parameter as being 1. */
+					if (i_ptr->min == 0 && i_ptr->max == 0)
+					{
+						i_ptr->max=i_ptr->min=1;
+					}
 
-						/* Ensure that a possible x_idx field has been created for
-						 * any non-random artefact or ego item */
-						if (i_ptr->flags & EI_ART && ~i_ptr->flags & EI_RAND)
+					/* Ensure that a possible x_idx field has been created for
+					 * any non-random artefact or ego item */
+					if (i_ptr->flags & EI_ART && ~i_ptr->flags & EI_RAND)
+					{
+						artifact_type *a_ptr = &a_info[i_ptr->x_idx];
+						/* Ensure this is a real artefact. */
+						if (!a_ptr->name)
 						{
-							artifact_type *a_ptr = &a_info[i_ptr->x_idx];
-							/* Ensure this is a real artefact. */
-							if (!a_ptr->name)
-							{
-								msg_print("No valid artefact specified.");
-								return ERR_PARSE;
-							}
-							/* Take an unstated k_idx to be that of the artefact. */
-							else if (!i_ptr->k_idx)
-							{
-								i_ptr->k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
-							}
-							/* Ensure that any stated k_idx is the right one. */
-							else if (k_info[i_ptr->k_idx].tval != a_ptr->tval ||
-								k_info[i_ptr->k_idx].sval != a_ptr->sval)
-							{
-msg_format("(%d,%d) != (%d,%d) ", k_info[i_ptr->k_idx].tval,
- k_info[i_ptr->k_idx].sval, a_ptr->tval, a_ptr->sval);
-								msg_print("Incompatible object and artefact.");
-								return ERR_PARSE;
-							}
-						}
-#ifdef ALLOW_EGO_DROP
-						else if (i_ptr->flags & EI_EGO && ~i_ptr->flags & EI_RAND)
-						{
-							ego_item_type *e_ptr = &e_info[i_ptr->x_idx];
-							/* Ensure this is a real ego item. */
-							if (!e_ptr->name)
-							{
-								msg_print("No valid ego type specified.");
-								return ERR_PARSE;
-							}
-							/* Ensure that the ego type is possible for this k_idx. */
-						}
-#endif
-
-						/* Ensure that a possible k_idx field has been created. */
-						if (k_info[i_ptr->k_idx].name == 0)
-						{
-							msg_print("No valid object specified.");
+							msg_print("No valid artefact specified.");
 							return ERR_PARSE;
 						}
-
-						/* Ensure that RAND has not been used without a sensible thing
-						 * to randomise. */
-						if (i_ptr->flags & EI_RAND && ~i_ptr->flags & (EI_ART
-#ifdef ALLOW_EGO_DROP
-						| EI_EGO
-#endif
-						))
+						/* Take an unstated k_idx to be that of the artefact. */
+						else if (!i_ptr->k_idx)
 						{
-							msg_print("Nothing valid to randomise.");
+							i_ptr->k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+						}
+						/* Ensure that any stated k_idx is the right one. */
+						else if (k_info[i_ptr->k_idx].tval != a_ptr->tval ||
+							k_info[i_ptr->k_idx].sval != a_ptr->sval)
+						{
+							msg_print("Incompatible object and artefact.");
 							return ERR_PARSE;
 						}
-						
-
-						/* Prevent badly formatted ranges. */
-						if (i_ptr->min > i_ptr->max || !i_ptr->min)
-						{
-							msg_print("Bad number parameter.");
-							return ERR_FLAG;
-						}
-					break;
 					}
-					case DEATH_MONSTER:  
+#ifdef ALLOW_EGO_DROP
+					else if (i_ptr->flags & EI_EGO && ~i_ptr->flags & EI_RAND)
 					{
-						make_monster_type *i_ptr = &d_ptr->par.monster;
-						i_ptr->strict = find_string_x(buf, "STRICT");
-						find_string_info(r_name, r_info, MAX_R_IDX, i_ptr->num);
-						readclearnum(i_ptr->num, 'n');
-						readclearnum(i_ptr->radius, 'r');
-						readclearnum(i_ptr->min, '(');
-						readclearnum(i_ptr->max, '-');
-
-						/* Interpret no number parameter as being 1. */
-						if (i_ptr->min == 0 && i_ptr->max == 0)
+						ego_item_type *e_ptr = &e_info[i_ptr->x_idx];
+						/* Ensure this is a real ego item. */
+						if (!e_ptr->name)
 						{
-							i_ptr->max=i_ptr->min=1;
+							msg_print("No valid ego type specified.");
+							return ERR_PARSE;
 						}
-
-						/* As the original square still has the original monster
-						 * on it, parse a missing or 0 parameter as 1.
-						 * Should there be a way of using the original
-						 * square if requested? */
-						if (!i_ptr->radius)
-						{
-							i_ptr->radius = 1;
-						}
-
-						/* Prevent badly formatted ranges. */
-						if (i_ptr->min > i_ptr->max || !i_ptr->min)
-						{
-							msg_print("Bad number parameter.");
-							return ERR_FLAG;
-						}
-
-						/* Prevent non-existant monster references. */
-						if (!i_ptr->num || i_ptr->num >= MAX_R_IDX)
-						{
-							msg_print("No monster specified!");
-							return ERR_FLAG;
-						}
-					break;
+						/* Ensure that the ego type is possible for this k_idx. */
 					}
-					case DEATH_EXPLODE:
+#endif
+
+					/* Ensure that a possible k_idx field has been created. */
+					if (k_info[i_ptr->k_idx].name == 0)
 					{
-						make_explosion_type *i_ptr = &d_ptr->par.explosion;
-						i_ptr->method = find_string(buf, explode_flags);
-						readclearnum(i_ptr->radius,'r');
-						readclearnum(i_ptr->dice,'(');
-						readclearnum(i_ptr->sides,'d');
-						
-						/* Require an explosion type */
-						if (!i_ptr->method)
-						{
-							msg_print("No method indicated.");
-							return ERR_FLAG;
-						}
-						/* Allow (d30) or (100) damage formats,
-						 * but not no damage indicator at all. */
-						if (!i_ptr->dice && !i_ptr->sides)
-						{
-							msg_print("No damage indicator.");
-							return ERR_FLAG;
-						}
-						else if (!i_ptr->dice)
-						{
-							i_ptr->dice = 1;
-						}
-						else if (!i_ptr->sides)
-						{
-							i_ptr->sides = 1;
-						}
+						msg_print("No valid object specified.");
+						return ERR_PARSE;
 					}
-					break;
-					case DEATH_COIN:
+
+					/* Ensure that RAND has not been used without a sensible thing
+					 * to randomise. */
+					if (i_ptr->flags & EI_RAND && ~i_ptr->flags & (EI_ART
+#ifdef ALLOW_EGO_DROP
+					| EI_EGO
+#endif
+					))
 					{
-						make_coin_type *i_ptr = &d_ptr->par.coin;
-						i_ptr->metal = find_string(buf, coin_types)-1;
-						if (i_ptr->metal == -1)
-						{
-							msg_print("No coin type!");
-							return ERR_FLAG;
-						}
-					break;
+						msg_print("Nothing valid to randomise.");
+						return ERR_PARSE;
 					}
-					case DEATH_NOTHING: /* No special parameters */
+
+					/* Prevent badly formatted ranges. */
+					if (i_ptr->min > i_ptr->max || !i_ptr->min)
+					{
+						msg_print("Bad number parameter.");
+						return ERR_FLAG;
+					}
 					break;
-					default: /* i.e. no valid type specification */
+				}
+				case DEATH_MONSTER:  
+				{
+					make_monster_type *i_ptr = &d_ptr->par.monster;
+					i_ptr->strict = find_string_x(buf, "STRICT");
+					find_string_info(r_name, r_info, MAX_R_IDX, i_ptr->num);
+					readclearnum(i_ptr->num, 'n');
+					readclearnum(i_ptr->radius, 'r');
+					readclearnum(i_ptr->min, '(');
+					readclearnum(i_ptr->max, '-');
+
+					/* Interpret no number parameter as being 1. */
+					if (i_ptr->min == 0 && i_ptr->max == 0)
+					{
+						i_ptr->max=i_ptr->min=1;
+					}
+
+					/* As the original square still has the original monster
+					 * on it, parse a missing or 0 parameter as 1.
+					 * Should there be a way of using the original
+					 * square if requested? */
+					if (!i_ptr->radius)
+					{
+						i_ptr->radius = 1;
+					}
+
+					/* Prevent badly formatted ranges. */
+					if (i_ptr->min > i_ptr->max || !i_ptr->min)
+					{
+						msg_print("Bad number parameter.");
+						return ERR_FLAG;
+					}
+
+					/* Prevent non-existant monster references. */
+					if (!i_ptr->num || i_ptr->num >= MAX_R_IDX)
+					{
+						msg_print("No monster specified!");
+						return ERR_FLAG;
+					}
+					break;
+				}
+				case DEATH_EXPLODE:
+				{
+					make_explosion_type *i_ptr = &d_ptr->par.explosion;
+					i_ptr->method = find_string(buf, explode_flags);
+					readclearnum(i_ptr->radius,'r');
+					readclearnum(i_ptr->dice,'(');
+					readclearnum(i_ptr->sides,'d');
+					
+					/* Require an explosion type */
+					if (!i_ptr->method)
+					{
+						msg_print("No method indicated.");
+						return ERR_FLAG;
+					}
+					/* Allow (d30) or (100) damage formats,
+					 * but not no damage indicator at all. */
+					if (!i_ptr->dice && !i_ptr->sides)
+					{
+						msg_print("No damage indicator.");
+						return ERR_FLAG;
+					}
+					else if (!i_ptr->dice)
+					{
+						i_ptr->dice = 1;
+					}
+					else if (!i_ptr->sides)
+					{
+						i_ptr->sides = 1;
+					}
+					break;
+				}
+				case DEATH_COIN:
+				{
+					make_coin_type *i_ptr = &d_ptr->par.coin;
+					i_ptr->metal = find_string(buf, coin_types)-1;
+					if (i_ptr->metal == -1)
+					{
+						msg_print("No coin type!");
+						return ERR_FLAG;
+					}
+					break;
+				}
+				case DEATH_NOTHING: /* No special parameters */
+				break;
+				default: /* i.e. no valid type specification */
+				{
 					msg_print("No event type specified!");
 					return ERR_MISSING;
+				}
 			}
-				/* Fill in the other general flags now the text
-				 * strings have all been parsed. */
-				readclearnum(d_ptr->num, 'p');
-				readclearnum(d_ptr->denom,'/');
+			/* Fill in the other general flags now the text
+			 * strings have all been parsed. */
+			readclearnum(d_ptr->num, 'p');
+			readclearnum(d_ptr->denom,'/');
 
-				/* Parse a missing probability entry as 1/1. */
-				if (!d_ptr->num && !d_ptr->denom)
-				{
-					d_ptr->num=d_ptr->denom=1;
-				}
+			/* Parse a missing probability entry as 1/1. */
+			if (!d_ptr->num && !d_ptr->denom)
+			{
+				d_ptr->num=d_ptr->denom=1;
+			}
 
-				/* Complain about p0/x formats or probabilities over 1. */
-				if (!d_ptr->num || d_ptr->num > d_ptr->denom)
-				{
-					msg_print("Bad probability specification.");
-					return ERR_PARSE;
-				}
-				/* The type-specific text field should have either been reset, or not
-				 * set in the first place. */
-				if (temp_offset)
-				{
-					msg_print("Meaningless text field found.");
-					return ERR_PARSE;
-				}
+			/* Complain about p0/x formats or probabilities over 1. */
+			if (!d_ptr->num || d_ptr->num > d_ptr->denom)
+			{
+				msg_print("Bad probability specification.");
+				return ERR_PARSE;
+			}
+			/* The type-specific text field should have either been reset, or not
+			 * set in the first place. */
+			if (temp_name_offset)
+			{
+				msg_print("Meaningless text field found.");
+				return ERR_PARSE;
+			}
 
-				/* Finally check that everything has been read. */
+			/* Finally check that everything has been read. */
+			{
+				cptr s;
+				for (s = buf+2; *s != '\0'; s++)
 				{
-					cptr s;
-					for (s = buf+2; *s != '\0'; s++)
-						if (!strchr(": )\"", *s))
-						{
-							msg_print("Uninterpreted characters!");
-							return ERR_PARSE;
-						}
+					if (!strchr(": )\"", *s))
+					{
+						msg_print("Uninterpreted characters!");
+						return ERR_PARSE;
+					}
 				}
-				break;
-		}		
-			/* Ignore irrelevant lines */
-			case 'D': case 'G': case 'I': case 'W': case 'B': case 'F': case 'S':
-			break;
-			default: /* Oops */
-			return ERR_DIRECTIVE;
+			}
+			return SUCCESS;
+		}
+
+		/* Do not check for inappropriate lines, as r_info should not have
+		 * been initialised correctly if there were any. This also limits
+		 * the scope for synchronisation problems. */
+		default:
+		{
+			return SUCCESS;
+		}
 	}
-	}
-
-	/* Complete the "name" and "text" sizes */
-	++event_head->name_size;
-	++event_head->text_size;
-
-	/* No version yet */
-	if (!okay) return ERR_VERSION;
-
-	/* Success */
-	return SUCCESS;
 }
 
 
@@ -1431,7 +1382,6 @@ errr parse_z_info(char *buf, header *head)
 	return SUCCESS;
 }
 
-#define MAX_I	(int)(z_info->fake_info_size/head->info_len)
 
 /*
  * Initialize the "f_info" array, by parsing an ascii "template" file
@@ -1501,6 +1451,7 @@ errr parse_f_info(char *buf, header *head)
 
 			return SUCCESS;
 		}
+		/* Process 'G' for "Graphics" (one line only) */
 		case 'G':
 		{
 			int tmp;
@@ -1532,70 +1483,21 @@ errr parse_f_info(char *buf, header *head)
 /*
  * Initialize the "v_info" array, by parsing an ascii "template" file
  */
-errr init_v_info_txt(FILE *fp, char *buf)
+errr parse_v_info(char *buf, header *head)
 {
 	int i;
 
 	char *s;
 
-	/* Not ready yet */
-	bool okay = FALSE;
-
 	/* Current entry */
-	vault_type *v_ptr = NULL;
+	static vault_type *v_ptr = NULL;
 
-
-	/* Just before the first record */
-	error_idx = -1;
-
-	/* Just before the first line */
-	error_line = -1;
-
-
-	/* Prepare the "fake" stuff */
-	v_head->name_size = 0;
-	v_head->text_size = 0;
-
-	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	if (*buf != 'N' && !v_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	
+	switch (*buf)
 	{
-		/* Advance the line number */
-		error_line++;
+		case 'N':
 
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
-
-
-		/* Hack -- Process 'V' for "Version" */
-		if (buf[0] == 'V')
-		{
-			int v1, v2, v3;
-
-			/* Scan for the values */
-			if ((3 != sscanf(buf, "V:%d.%d.%d", &v1, &v2, &v3)) ||
-			    (v1 != v_head->v_major) ||
-			    (v2 != v_head->v_minor) ||
-			    (v3 != v_head->v_patch))
-			{
-				return (2);
-			}
-
-			/* Okay to proceed */
-			okay = TRUE;
-
-			/* Continue */
-			continue;
-		}
-
-		/* No version yet */
-		if (!okay) return (2);
-
-
-		/* Process 'N' for "New/Number/Name" */
-		if (buf[0] == 'N')
 		{
 			/* Find the colon before the name */
 			s = strchr(buf+2, ':');
@@ -1616,65 +1518,38 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= v_head->info_num) return (2);
+			if (i >= MAX_I) return (2);
 
 			/* Save the index */
 			error_idx = i;
 
 			/* Point at the "info" */
-			v_ptr = &v_info[i];
+			v_ptr = (vault_type*)head->info_ptr + i;
 
-			/* Hack -- Verify space */
-			if (v_head->name_size + strlen(s) + 8 > fake_name_size) 
-			{
-				return (7);
-			}
+			/* Store the name */
+			if (!(v_ptr->name = add_name(head, s)))
+			return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Advance and Save the name index */
-			if (!v_ptr->name) v_ptr->name = ++v_head->name_size;
-
-			/* Append chars to the name */
-			strcpy(v_name + v_head->name_size, s);
-
-			/* Advance the index */
-			v_head->name_size += strlen(s);
-
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
-
-		/* There better be a current v_ptr */
-		if (!v_ptr) return (3);
 
 
 		/* Process 'D' for "Description" */
-		if (buf[0] == 'D')
+		case 'D':
 		{
 			/* Acquire the text */
 			s = buf+2;
 
-			/* Hack -- Verify space */
-			if (v_head->text_size + strlen(s) + 8 > fake_text_size) 
-			{
-				return (7);
-			}
+			/* Store the text */
+			if (!add_text(&(v_ptr->text), head, s))
+				return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Advance and Save the text index */
-			if (!v_ptr->text) v_ptr->text = ++v_head->text_size;
-
-			/* Append chars to the name */
-			strcpy(v_text + v_head->text_size, s);
-
-			/* Advance the index */
-			v_head->text_size += strlen(s);
-
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 
 		/* Process 'X' for "Extra info" (one line only) */
-		if (buf[0] == 'X')
+		case 'X':
 		{
 			int typ, rat, hgt, wid;
 
@@ -1689,26 +1564,14 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			v_ptr->wid = wid;
 
 			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
-
-		/* Oops */
-		return (6);
+		default:
+		{
+			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+		}
 	}
-
-
-	/* Complete the "name" and "text" sizes */
-	++v_head->name_size;
-	++v_head->text_size;
-
-
-	/* No version yet */
-	if (!okay) return (2);
-
-
-	/* Success */
-	return (0);
 }
 
 
@@ -2392,66 +2255,20 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 /*
  * Initialize the "a_info" array, by parsing an ascii "template" file
  */
-errr init_a_info_txt(FILE *fp, char *buf)
+errr parse_a_info(char *buf, header *head)
 {
+	static artifact_type *a_ptr = NULL;
+
 	int i;
 
 	char *s, *t;
 
-	/* Not ready yet */
-	bool okay = FALSE;
+	/* Need an a_ptr before anything is written. */
+	if (*buf != 'N' && !a_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
 
-	/* Current entry */
-	artifact_type *a_ptr = NULL;
-
-
-	/* Just before the first record */
-	error_idx = -1;
-
-	/* Just before the first line */
-	error_line = -1;
-
-
-	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	switch (*buf)
 	{
-		/* Advance the line number */
-		error_line++;
-
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
-
-
-		/* Hack -- Process 'V' for "Version" */
-		if (buf[0] == 'V')
-		{
-			int v1, v2, v3;
-
-			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
-			    (v1 != a_head->v_major) ||
-			    (v2 != a_head->v_minor) ||
-			    (v3 != a_head->v_patch))
-			{
-				return (2);
-			}
-
-			/* Okay to proceed */
-			okay = TRUE;
-
-			/* Continue */
-			continue;
-		}
-
-		/* No version yet */
-		if (!okay) return (2);
-
-
-		/* Process 'N' for "New/Number/Name" */
-		if (buf[0] == 'N')
+		case 'N':
 		{
 			/* Find the colon before the name */
 			s = strchr(buf+2, ':');
@@ -2472,40 +2289,25 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= a_head->info_num) return (2);
+			if (i >= MAX_I) return (2);
 
 			/* Save the index */
 			error_idx = i;
 
 			/* Point at the "info" */
-			a_ptr = &a_info[i];
+			a_ptr = (artifact_type*)head->info_ptr + i;
 
-			/* Hack -- Verify space */
-			if (a_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			/* Store the name */
+			if (!(a_ptr->name = add_name(head, s)))
+			return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Advance and Save the name index */
-			if (!a_ptr->name) a_ptr->name = ++a_head->name_size;
-
-			/* Append chars to the name */
-			strcpy(a_name + a_head->name_size, s);
-
-			/* Advance the index */
-			a_head->name_size += strlen(s);
-
-			/* Ignore everything */
+			/* Hack - Ignore all elemental attacks. */
 			a_ptr->flags3 |= (TR3_IGNORE_ALL);
 
 			/* Next... */
-			continue;
+			return SUCCESS;
 		}
-
-		/* There better be a current a_ptr */
-		if (!a_ptr) return (3);
-
-
-
-		/* Process 'I' for "Info" (one line only) */
-		if (buf[0] == 'I')
+		case 'I':
 		{
 			int tval, sval, pval;
 
@@ -2519,11 +2321,9 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			a_ptr->pval = pval;
 
 			/* Next... */
-			continue;
+			return SUCCESS;
 		}
-
-		/* Process 'W' for "More Info" (one line only) */
-		if (buf[0] == 'W')
+		case 'W':
 		{
 			int level, rarity, wgt;
 			long cost;
@@ -2539,11 +2339,9 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			a_ptr->cost = cost;
 
 			/* Next... */
-			continue;
+			return SUCCESS;
 		}
-
-		/* Hack -- Process 'P' for "power" and such */
-		if (buf[0] == 'P')
+		case 'P':
 		{
 			int ac, hd1, hd2, th, td, ta;
 
@@ -2559,11 +2357,9 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			a_ptr->to_a =  ta;
 
 			/* Next... */
-			continue;
+			return SUCCESS;
 		}
-
-		/* Hack -- Process 'F' for flags */
-		if (buf[0] == 'F')
+		case 'F':
 		{
 			/* Parse every entry textually */
 			for (s = buf + 2; *s; )
@@ -2586,26 +2382,13 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			}
 
 			/* Next... */
-			continue;
+			return SUCCESS;
 		}
-
-
-		/* Oops */
-		return (6);
+		default:
+		{
+			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+		}
 	}
-
-
-	/* Complete the "name" and "text" sizes */
-	++a_head->name_size;
-	++a_head->text_size;
-
-
-	/* No version yet */
-	if (!okay) return (2);
-
-
-	/* Success */
-	return (0);
 }
 
 
@@ -2659,66 +2442,20 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what)
 /*
  * Initialize the "e_info" array, by parsing an ascii "template" file
  */
-errr init_e_info_txt(FILE *fp, char *buf)
+errr parse_e_info(char *buf, header *head)
 {
 	int i;
 
 	char *s, *t;
 
-	/* Not ready yet */
-	bool okay = FALSE;
+	static ego_item_type *e_ptr = NULL;
 
-	/* Current entry */
-	ego_item_type *e_ptr = NULL;
+	/* If this isn't the start of a record, there should already be one. */
+	if (*buf != 'N' && !e_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
 
-
-	/* Just before the first record */
-	error_idx = -1;
-
-	/* Just before the first line */
-	error_line = -1;
-
-
-	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	switch (*buf)
 	{
-		/* Advance the line number */
-		error_line++;
-
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
-
-
-		/* Hack -- Process 'V' for "Version" */
-		if (buf[0] == 'V')
-		{
-			int v1, v2, v3;
-
-			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
-			    (v1 != e_head->v_major) ||
-			    (v2 != e_head->v_minor) ||
-			    (v3 != e_head->v_patch))
-			{
-				return (2);
-			}
-
-			/* Okay to proceed */
-			okay = TRUE;
-
-			/* Continue */
-			continue;
-		}
-
-		/* No version yet */
-		if (!okay) return (2);
-
-
-		/* Process 'N' for "New/Number/Name" */
-		if (buf[0] == 'N')
+		case 'N':
 		{
 			/* Find the colon before the name */
 			s = strchr(buf+2, ':');
@@ -2736,39 +2473,26 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= e_head->info_num) return (2);
+			if (i >= MAX_I) return (2);
 
 			/* Save the index */
 			error_idx = i;
 
 			/* Point at the "info" */
-			e_ptr = &e_info[i];
+			e_ptr = (ego_item_type*)head->info_ptr + i;
 
-			/* Hack -- Verify space */
-			if (e_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			/* Store the name */
+			if (!(e_ptr->name = add_name(head, s)))
+				return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Advance and Save the name index */
-			if (!e_ptr->name) e_ptr->name = ++e_head->name_size;
-
-			/* Append chars to the name */
-			strcpy(e_name + e_head->name_size, s);
-
-			/* Advance the index */
-			e_head->name_size += strlen(s);
-
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
-		/* There better be a current e_ptr */
-		if (!e_ptr) return (3);
-
-
 		/* Process 'X' for "Xtra" (one line only) */
-		if (buf[0] == 'X')
+		case 'X':
 		{
 			int slot, rating;
 
@@ -2780,12 +2504,11 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			e_ptr->slot = slot;
 			e_ptr->rating = rating;
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Process 'W' for "More Info" (one line only) */
-		if (buf[0] == 'W')
+		case 'W':
 		{
 			int level, rarity, pad2;
 			long cost;
@@ -2800,12 +2523,11 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			/* e_ptr->weight = wgt; */
 			e_ptr->cost = cost;
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Hack -- Process 'C' for "creation" */
-		if (buf[0] == 'C')
+		case 'C':
 		{
 			int th, td, ta, pv;
 
@@ -2818,12 +2540,11 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			e_ptr->max_to_a = ta;
 			e_ptr->max_pval = pv;
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Hack -- Process 'F' for flags */
-		if (buf[0] == 'F')
+		case 'F':
 		{
 			/* Parse every entry textually */
 			for (s = buf + 2; *s; )
@@ -2845,26 +2566,14 @@ errr init_e_info_txt(FILE *fp, char *buf)
 				s = t;
 			}
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
-		/* Oops */
-		return (6);
+		default:
+		{
+			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+		}
 	}
-
-
-	/* Complete the "name" and "text" sizes */
-	++e_head->name_size;
-	++e_head->text_size;
-
-
-	/* No version yet */
-	if (!okay) return (2);
-
-
-	/* Success */
-	return (0);
 }
 
 
@@ -2963,70 +2672,20 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 /*
  * Initialize the "r_info" array, by parsing an ascii "template" file
  */
-errr init_r_info_txt(FILE *fp, char *buf)
+errr parse_r_info(char *buf, header *head)
 {
 	int i;
 
 	char *s, *t;
 
-	/* Not ready yet */
-	bool okay = FALSE;
-
-	/* Current entry */
-	monster_race *r_ptr = NULL;
-
-
-	/* Just before the first record */
-	error_idx = -1;
-
-	/* Just before the first line */
-	error_line = -1;
-
-
-	/* Start the "fake" stuff */
-	r_head->name_size = 0;
-	r_head->text_size = 0;
-
-	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	static monster_race *r_ptr = NULL;
+	
+	if (*buf != 'N' && !r_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	
+	switch (*buf)
 	{
-		/* Advance the line number */
-		error_line++;
-
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
-
-
-		/* Hack -- Process 'V' for "Version" */
-		if (buf[0] == 'V')
-		{
-			int v1, v2, v3;
-
-			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
-			    (v1 != r_head->v_major) ||
-			    (v2 != r_head->v_minor) ||
-			    (v3 != r_head->v_patch))
-			{
-				return (2);
-			}
-
-			/* Okay to proceed */
-			okay = TRUE;
-
-			/* Continue */
-			continue;
-		}
-
-		/* No version yet */
-		if (!okay) return (2);
-
-
 		/* Process 'N' for "New/Number/Name" */
-		if (buf[0] == 'N')
+		case 'N':
 		{
 			/* Find the colon before the name */
 			s = strchr(buf+2, ':');
@@ -3044,63 +2703,40 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= r_head->info_num) return (2);
+			if (i >= MAX_I) return (2);
 
 			/* Save the index */
 			error_idx = i;
 
 			/* Point at the "info" */
-			r_ptr = &r_info[i];
+			r_ptr = (monster_race*)head->info_ptr + i;
 
-			/* Hack -- Verify space */
-			if (r_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			/* Store the name */
+			if (!(r_ptr->name = add_name(head, s)))
+			return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Advance and Save the name index */
-			if (!r_ptr->name) r_ptr->name = ++r_head->name_size;
-
-			/* Append chars to the name */
-			strcpy(r_name + r_head->name_size, s);
-
-			/* Advance the index */
-			r_head->name_size += strlen(s);
-
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
-		/* There better be a current r_ptr */
-		if (!r_ptr) return (3);
-
-
 		/* Process 'D' for "Description" */
-		if (buf[0] == 'D')
+		case 'D':
 		{
 			/* Acquire the text */
 			s = buf+2;
 
-			/* Hack -- Verify space */
-			if (r_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			/* Store the text */
+			if (!add_text(&(r_ptr->text), head, s))
+				return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Advance and Save the text index */
-			if (!r_ptr->text) r_ptr->text = ++r_head->text_size;
-
-			/* Append chars to the name */
-			strcpy(r_text + r_head->text_size, s);
-
-			/* Advance the index */
-			r_head->text_size += strlen(s);
-
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Process 'G' for "Graphics" (one line only) */
-		if (buf[0] == 'G')
+		case 'G':
 		{
-			char sym;
 			int tmp;
 
 			/* Paranoia */
@@ -3108,25 +2744,19 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			if (!buf[3]) return (1);
 			if (!buf[4]) return (1);
 
-			/* Extract the char */
-			sym = buf[2];
-
-			/* Extract the attr */
+			/* Extract the color */
 			tmp = color_char_to_attr(buf[4]);
-
-			/* Paranoia */
 			if (tmp < 0) return (1);
 
 			/* Save the values */
-			r_ptr->d_char = sym;
+			r_ptr->d_char = buf[2];
 			r_ptr->d_attr = tmp;
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Process 'I' for "Info" (one line only) */
-		if (buf[0] == 'I')
+		case 'I':
 		{
 			int spd, atspd, hp1, hp2, aaf, ac, slp;
 
@@ -3143,12 +2773,11 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			r_ptr->ac = ac;
 			r_ptr->sleep = slp;
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Process 'W' for "More Info" (one line only) */
-		if (buf[0] == 'W')
+		case 'W':
 		{
 			int lev, rar, pad;
 			long exp;
@@ -3163,12 +2792,11 @@ errr init_r_info_txt(FILE *fp, char *buf)
 /*			r_ptr->extra = pad;*/
 			r_ptr->mexp = exp;
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Process 'B' for "Blows" (up to four lines) */
-		if (buf[0] == 'B')
+		case 'B':
 		{
 			int n1, n2;
 
@@ -3224,12 +2852,11 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			r_ptr->blow[i].d_dice = atoi(s);
 			r_ptr->blow[i].d_side = atoi(t);
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Process 'F' for "Basic Flags" (multiple lines) */
-		if (buf[0] == 'F')
+		case 'F':
 		{
 			/* Parse every entry */
 			for (s = buf + 2; *s; )
@@ -3251,12 +2878,11 @@ errr init_r_info_txt(FILE *fp, char *buf)
 				s = t;
 			}
 
-			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
 		/* Process 'S' for "Spell Flags" (multiple lines) */
-		if (buf[0] == 'S')
+		case 'S':
 		{
 			/* Parse every entry */
 			for (s = buf + 2; *s; )
@@ -3292,62 +2918,20 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			}
 
 			/* Next... */
-			continue;
+			return SUCCESS;
 		}
 
-		/* Ignore 'E' (death event) lines */
-		if (buf[0] == 'E') continue;
+		/* Ignore 'E' (death event) lines for now. */
+		case 'E':
+		{
+			return SUCCESS;
+		}
 
-		/* Oops */
-		return (6);
+		default:
+		{
+			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+		}
 	}
-
-
-	/* Complete the "name" and "text" sizes */
-	++r_head->name_size;
-	++r_head->text_size;
-
-
-	/* XXX XXX XXX The ghost is unused */
-
-	/* Mega-Hack -- acquire "ghost" */
-	r_ptr = &r_info[MAX_R_IDX-1];
-
-	/* Acquire the next index */
-	r_ptr->name = r_head->name_size;
-	r_ptr->text = r_head->text_size;
-
-	/* Save some space for the ghost info */
-	r_head->name_size += 64;
-	r_head->text_size += 64;
-
-	/* Hack -- Default name/text for the ghost */
-	strcpy(r_name + r_ptr->name, "Nobody, the Undefined Ghost");
-	strcpy(r_text + r_ptr->text, "It seems strangely familiar...");
-
-	/* Hack -- set the char/attr info */
-	r_ptr->d_attr = r_ptr->x_attr = TERM_WHITE;
-	r_ptr->d_char = r_ptr->x_char = 'G';
-
-	/* Hack -- Try to prevent a few "potential" bugs */
-	r_ptr->flags1 |= (RF1_UNIQUE);
-
-	/* Hack -- Try to prevent a few "potential" bugs */
-	r_ptr->flags1 |= (RF1_NEVER_MOVE | RF1_NEVER_BLOW);
-
-	/* Hack -- Try to prevent a few "potential" bugs */
-	r_ptr->hdice = r_ptr->hside = 1;
-
-	/* Hack -- Try to prevent a few "potential" bugs */
-	r_ptr->mexp = 1L;
-
-
-	/* No version yet */
-	if (!okay) return (2);
-
-
-	/* Success */
-	return (0);
 }
 
 #define ITFE(W,X) if (!(((maxima *)(head->info_ptr))->W)) {msg_format("Missing M:%c:* header.", X); error = TRUE;}
