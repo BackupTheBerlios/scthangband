@@ -14,9 +14,9 @@
 #if (defined(BIRTH_C) || defined(FILES_C))
 extern int maxstat(int race, int temp, int stat);
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(GENERATE_C))
-extern void create_random_name(int race, char *name);
-#endif
+
+
+
 #if (defined(BIRTH_C) || defined(DUNGEON_C))
 extern void player_birth(void);
 #endif
@@ -484,7 +484,7 @@ extern errr file_character(cptr name, bool UNUSED full);
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C))
 extern void do_cmd_help(cptr name);
 #endif
-#if (defined(FILES_C) || defined(INIT1_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(INIT1_C) || defined(UTIL_C))
 extern int color_char_to_attr(char c);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
@@ -2367,7 +2367,7 @@ extern void c_prt(byte attr, cptr str, int row, int col);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void prt(cptr str, int row, int col);
 #endif
-#if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(MONSTER1_C) || defined(UTIL_C))
 extern bool c_roff(byte a, cptr str);
 #endif
 #if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -3809,7 +3809,7 @@ extern errr Term_addch(byte a, char c);
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_addstr(int n, byte a, cptr s);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_putch(int x, int y, byte a, char c);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
@@ -3946,5 +3946,23 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
+#endif
+
+/* files.c */
+
+#if (defined(FILES_C) || defined(MAIN_WIN_C))
+extern int highscore_fd ;
+#endif
+
+/* util.c */
+
+#if (defined(BIRTH_C) || defined(UTIL_C) || defined(XTRA1_C))
+extern void mc_roff(cptr s);
+#endif
+
+/* birth.c */
+
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(GENERATE_C))
+extern void create_random_name(int race, char *name);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

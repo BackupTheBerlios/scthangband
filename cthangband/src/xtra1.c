@@ -1185,27 +1185,6 @@ static bool init_help_files(char *buf)
 	return TRUE;
 }
 
-#define CC_PREFIX	"#####"
-
-/*
- * Print a multi-coloured string where colour-changes are denoted by #####.
- * Unlike show_file_tome, this uses c_roff() to ensure that its lines are
- * wrapped, and so works best with files without unnecessary formatting.
- */
-static void mc_roff(cptr s)
-{
-	cptr t;
-	byte attr;
-	
-	for (attr = TERM_WHITE; (t = strstr(s, CC_PREFIX));)
-	{
-		if (!c_roff(attr, format("%.*s", t-s, s))) return;
-		s = t + strlen(CC_PREFIX)+1;
-		attr = color_char_to_attr(s[-1]);
-	}
-	c_roff(attr, s);
-}
-
 void win_help_display(void)
 {
 	char buf[1024];
