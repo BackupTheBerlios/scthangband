@@ -1915,16 +1915,6 @@ book_type book_info[MAX_BK] =
 	{IDX(BK_MIND) mindcraft_powers, 0x0000fff},
 };
 
-/* Bitwise mask for spells to split them into books */
-
-u32b spell_flags[4]=
-{
-    0x000000ff,
-    0x0000ff00,
-    0x00ff0000,
-    0xff000000
-};
-
 /*
  * Player's Skills
  *

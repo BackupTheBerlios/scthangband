@@ -91,11 +91,6 @@ static bool use_object(object_type *o_ptr, int dir)
 	bool ident, use;
 	int power = get_power(o_ptr);
 
-	/* plev is only used for random artefacts here, for which this is the
-	 * correct formula.
-	 */
-	const int plev = MAX(1, skill_set[SKILL_DEVICE].value/2);
-
 	/* "detect traps" marks the area it has been used in if the effect is
 	 * known. This is always true if the object was previously known to have
 	 * that effect, so check this.
@@ -233,10 +228,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
 }
-
-
-
-
+    
 /*
  * Quaff a potion (from the pack or the floor)
  */
