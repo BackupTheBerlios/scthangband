@@ -19,7 +19,9 @@
 	WWW			: http://www.angband.pwp.blueyonder.co.uk
 */
 
-/* Variant name and version */
+#ifdef USE_AMI
+
+/* Variant name and version (incorrect, can this be grabbed from defines.h?) */
 #define VARIANT "Angband 3.0.1"
 
 /* Main 'assign' needed. Kick2.0+ systems usually don't need it anyway */
@@ -99,7 +101,7 @@
 #  define __near
 #endif /* __GNUC__ */
 
-#endif
+#endif /* __CEXTRACT__ */
 
 #include "externs.h"
 #define MAX_TERM_DATA 8
@@ -5480,3 +5482,6 @@ static void quick_BltMaskBitMapRastPort( struct BitMap *src, int x, int y, struc
 }
 
 #endif
+
+#endif /* USE_AMI */
+
