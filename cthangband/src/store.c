@@ -2631,49 +2631,29 @@ static void service_help(byte type)
  */
 static bool get_check_service(cptr prompt, byte type)
 {
-	char i[2] = " ";
-
-	/* Create a single-line prompt. */
-	cptr tmp = format("%.*s[y/n/?] ", Term->wid-strlen("[y/n/?] "), prompt);
-
-	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
-
-	/* Prompt for it */
-	prt(tmp, 0, 0);
+	char rc;
 
 	/* Help */
 	help_track("yn?_prompt");
 
-	/* Get an acceptable answer */
-	while (TRUE)
+	while (1)
 	{
-		*i = inkey();
-		if (*i == ESCAPE) break;
-		else if (*i == '\r') break;
-		else if (strchr("YyNn", *i)) break;
-		else if (*i == '?') 
-		{
-			service_help(type);
-			prt(tmp, 0, 0);
-		}
-		else if (quick_prompt)
-			break;
-		else
-			bell();
+		rc = get_check_aux(
+			prompt, "%.*s[y/n/?]%s%v", "nN\eyY\n?", "\0\0\0\1\1\1?");
+
+		/* Accept boolean responses. */
+		if (rc != '?') break;
+
+		service_help(type);
 	}
+
+	/* Leave a message. */
+	message_add(format(0));
 
 	/* Done with help */
 	help_track(NULL);
 
-	/* Leave a record */
-	message_add(format("%s%v", tmp, ascii_to_text_f1, i));
-	
-	/* Erase the prompt */
-	prt("", 0, 0);
-
-	/* Tell the calling routine */
-	return (strchr("Yy\r", *i)) ? TRUE : FALSE;
+	return (rc != '\0');
 }
 
 /* Haggle for a fixed price service from a store owner */

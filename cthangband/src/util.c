@@ -3056,50 +3056,86 @@ bool get_string(cptr prompt, char *buf, int len)
 }
 
 
+
 /*
  * Verify something with the user
  *
- * The "prompt" should take the form "Query? "
+ * This function returns a character (controlled by conv_to), and places a
+ * message which represents the prompt in the format buffer for further use.
  *
- * Note that "[y/n]" is appended to the prompt.
+ * Prompt should be the question to be asked of the user.
+ *
+ * text should be a prompt of the form "...%.*s...%s%v", where the prompt given
+ * will be ...<prompt>..., and the message returned will be
+ * ...<prompt>... <keypress>
+ *
+ * conv_from contains the list of valid keypresses.
+ *
+ * conv_to contains the list of what should be returned when each key in
+ * conv_from is pressed.
+ *
+ * Hack - if quick_prompt is set, and an otherwise invalid key is pressed, the
+ * first element of conv_to is returned.
  */
-bool get_check(cptr prompt)
+char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to)
 {
 	char i[2]=" ";
-
-	cptr tmp = format("%.*s[y/n] ", Term->wid-strlen("[y/n] "), prompt);
+	cptr c;
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
 	/* Prompt for it (should "? " be added to long prompts?). */
-	prt(tmp, 0, 0);
-
-	/* Help */
-	help_track("yn_prompt");
+	prt(format(text, Term->wid-strlen(text)+5, prompt, "", func_nothing_f0),
+		0, 0);
 
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
 		*i = inkey();
-		if (quick_prompt) break;
-		if (*i == ESCAPE) break;
-		if (*i == '\r') break;
-		if (strchr("YyNn", *i)) break;
+		if ((c = strchr(conv_from, *i))) break;
+		else if (quick_prompt)
+		{
+			c = conv_from;
+			break;
+		}
 		bell();
 	}
+
+	/* Erase the prompt */
+	prt("", 0, 0);
+
+	/* Leave a record somewhere convenient. */
+	format(text, Term->wid-strlen(text)+5, prompt, " ", ascii_to_text_f1, i);
+
+	/* Tell the calling routine */
+	return conv_to[c - conv_from];
+}
+
+/*
+ * Verify something with the user as above.
+ *
+ * The "prompt" should take the form "Query? "
+ *
+ * Note that "[y/n]" is appended to the prompt.
+ *
+ */
+bool get_check(cptr prompt)
+{
+	char rc;
+
+	/* Help */
+	help_track("yn_prompt");
+
+	rc = get_check_aux(prompt, "%.*s[y/n]%s%v", "nN\eyY\n", "\0\0\0\1\1\1");
+
+	/* Leave a message. */
+	message_add(format(0));
 
 	/* Done with help */
 	help_track(NULL);
 
-	/* Leave a record */
-	message_add(format("%s%v", tmp, ascii_to_text_f1, i));
-	
-	/* Erase the prompt */
-	prt("", 0, 0);
-
-	/* Tell the calling routine */
-	return (strchr("Yy\r", *i)) ? TRUE : FALSE;
+	return (rc != '\0');
 }
 
 

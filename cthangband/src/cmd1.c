@@ -511,46 +511,20 @@ void search(void)
  */
 static char get_check_ynq(cptr prompt)
 {
-	char i[2]=" ";
-
-	/* Create a single-line prompt. */
-	cptr tmp = format("%.*s[y/n/q] ", Term->wid-strlen("[y/n/q] "), prompt);
-
-	/* Paranoia XXX XXX XXX */
-	msg_print(NULL);
-
-	/* Hack -- display a "useful" prompt */
-	prt(tmp, 0, 0);
+	char rc;
 
 	/* Help */
 	help_track("ynq_prompt");
 
-	/* Get an acceptable answer */
-	while (TRUE)
-	{
-		*i = inkey();
-		if (quick_prompt) break;
-		if (*i == ESCAPE) break;
-		if (strchr("YyNnQq", *i)) break;
-		bell();
-	}
+	rc = get_check_aux(prompt, "%.*s[y/n]%s%v", "nN\eyY\nQq", "nnnyyyqq");
+
+	/* Leave a message. */
+	message_add(format(0));
 
 	/* Done with help */
 	help_track(NULL);
 
-	/* Leave a record */
-	message_add(format("%s%v", tmp, ascii_to_text_f1, i));
-	
-	/* Erase the prompt */
-	prt("", 0, 0);
-
-	/* Return output (default to no). */
-	switch (*i)
-	{
-		case 'y': case 'Y': return 'y';
-		case 'q': case 'Q': return 'q';
-		case 'n': case 'N': default: return 'n';
-	}
+	return rc;
 }
 
 
@@ -639,8 +613,7 @@ void carry(int pickup)
 				/* Hack -- query every item */
 				if (carry_query_flag && !strstr(quark_str(o_ptr->note), "=g"))
 				{
-					char c;
-					c = get_check_ynq(format("Pick up %s? ", o_name));
+					char c = get_check_ynq(format("Pick up %s? ", o_name));
 
 					/* Pick up this object. */
 					okay = (c == 'y');

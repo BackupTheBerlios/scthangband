@@ -145,6 +145,15 @@
 typedef void (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
 
 /*
+ * Hack - do nothing.
+ */
+uint func_nothing_f0(char UNUSED *buf, uint UNUSED max, cptr UNUSED fmt, vptr UNUSED arg)
+{
+	return 0;
+}
+
+
+/*
  * Basic "vararg" format function.
  *
  * This function takes a buffer, a max byte count, a format string, and

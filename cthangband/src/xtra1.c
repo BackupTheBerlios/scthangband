@@ -3675,10 +3675,10 @@ void win_help_display(void)
 		while (!my_fgets(fff, buf, 1024))
 		{
 			/* Not an option heading. */
-			if (strncmp(buf, CC_LINK_PREFIX, strlen(CC_LINK_PREFIX))) continue;
+			if (!prefix(buf, CC_LINK_PREFIX)) continue;
 
 			/* Not this option heading. */
-			if (!strstr(buf, format("<%s>", CUR_HELP_STR))) continue;
+			if (!strstr(buf+strlen(CC_LINK_PREFIX), CUR_HELP_STR)) continue;
 
 			while (!my_fgets(fff, buf, 1024) &&
 				!prefix(buf, CC_LINK_PREFIX))
