@@ -16,7 +16,7 @@
 /*
  * Converts a number (0 to 365) into a date
  */
-void day_to_date(s16b day,char *date)
+static void day_to_date(int day,char *date)
 {
 	cptr mon[13]={"","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 	s16b days[13]={0,31,60,91, 121,152,182, 213,244,274,305,335,366};
@@ -38,6 +38,22 @@ void day_to_date(s16b day,char *date)
 		return;
 	}
 
+/*
+ * A vstrnfmt_aux wrapper around day_to_date().
+ */
+void day_to_date_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int day = va_arg(*vp, int);
+	if (max > strlen("10 Jan "))
+	{
+		day_to_date(day, buf);
+	}
+	else if (alert_failure)
+	{
+		msg_format("Only given %d characters for day_to_date(), %d needed!",
+			max, strlen("10 Jan ")+1);
+	}
+}
 
 /*
  * Converts stat num into a six-char (right justified) string
@@ -177,7 +193,6 @@ static void prt_time(void)
 	int minute = ((turn % ((10L * TOWN_DAWN)) * 1440) / ((10L * TOWN_DAWN)));
 	int hour = ((minute/60)-6)%24; /* 0 to 23 */
 	s16b day = 0;
-	char date[20];
 
 	/* Only keep loose minutes */
 	minute = minute % 60;
@@ -194,8 +209,8 @@ static void prt_time(void)
 
 	hour = (hour+12) % 24;
 
-	day_to_date((s16b)(day+p_ptr->startdate),date);
-	put_str(format("%2d:%02d %s", hour, minute, date), ROW_TIME, COL_TIME);
+	put_str(format("%2d:%02d %v", hour, minute,
+		day_to_date_f1, day+p_ptr->startdate), ROW_TIME, COL_TIME);
 }
 
 
