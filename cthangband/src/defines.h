@@ -3207,19 +3207,20 @@ extern int PlayerUID;
 /*
  * Return the "attr" for a given item.
  */
-#define object_attr(T) \
-    ((((!object_aware_p(T)) || (k_info[(T)->k_idx].x_attr == TERM_DARK))) ? \
-    (u_info[k_info[(T)->k_idx].u_idx].x_attr) : \
-    (k_info[(T)->k_idx].x_attr))
+#define object_kind_attr(T) \
+    ((((!object_aware_kp(T)) || ((T)->x_attr == TERM_DARK))) ? \
+    (u_info[(T)->u_idx].x_attr) : ((T)->x_attr))
+
+#define object_attr(T) object_kind_attr(k_info+(T)->k_idx)
 
 /*
  * Return the "char" for a given item.
  */
-#define object_char(T) \
-    ((((!object_aware_p(T)) || (k_info[(T)->k_idx].x_char == ' '))) ? \
-    (u_info[k_info[(T)->k_idx].u_idx].x_char) : \
-    (k_info[(T)->k_idx].x_char))
+#define object_kind_char(T) \
+    ((((!object_aware_kp(T)) || ((T)->x_char == TERM_DARK))) ? \
+    (u_info[(T)->u_idx].x_char) : ((T)->x_char))
 
+#define object_char(T) object_kind_char(k_info+(T)->k_idx)
 
 /*
  * Return the appropriate colour for display_player_flags_aux, et al.

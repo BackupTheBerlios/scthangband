@@ -484,27 +484,24 @@ static void image_object(byte *ap, char *cp)
 {
 	int n = strlen(image_object_hack);
 
-	if (!use_graphics)
+	if (use_graphics)
 	{
-        	if (!(streq(ANGBAND_SYS, "ibm")))
-        {
-            (*cp) = k_info[randint(MAX_K_IDX-1)].x_char;
-            (*ap) = k_info[randint(MAX_K_IDX-1)].x_attr;
-        }
-        else
-        {
-            n = strlen(image_object_hack_ibm);
-            (*cp) = (image_object_hack_ibm[rand_int(n)]);
-            /* Random color */
-            (*ap) = randint(15);
-        }
-    }
-    else
-    {
-        (*cp) = (image_object_hack[rand_int(n)]);
-        /* Random color */
-        (*ap) = randint(15);
-    }
+		(*cp) = (image_object_hack[rand_int(n)]);
+		/* Random color */
+		(*ap) = randint(15);
+	}
+	else if (streq(ANGBAND_SYS, "ibm"))
+	{
+		n = strlen(image_object_hack_ibm);
+		(*cp) = (image_object_hack_ibm[rand_int(n)]);
+		/* Random color */
+		(*ap) = randint(15);
+	}
+	else
+	{
+		(*cp) = object_kind_char(&k_info[randint(MAX_K_IDX-1)]);
+		(*ap) = object_kind_attr(&k_info[randint(MAX_K_IDX-1)]);
+	}
 }
 
 
