@@ -3174,7 +3174,7 @@ static void do_cmd_knowledge_uniques(void)
 
 
 static void plural_aux(char * Name)
-	{
+{
 	cptr initstrings[] = {" of ", " to ", 0};
 	cptr plurals[][2] = {
 		{"young", "young"}, /* Dark young of Shub-Niggurath */
@@ -3223,7 +3223,7 @@ static void plural_aux(char * Name)
  * Gives the long form of a name for do_cmd_knowledge_kill_count, etc..
  */
 void full_name(char * Name, bool plural, bool article, bool strangearticle)
-	{
+{
 	/* Hack - give "long" version of creeping X coins */
 	if (strstr(Name, "coins"))
 	{
@@ -3235,11 +3235,11 @@ void full_name(char * Name, bool plural, bool article, bool strangearticle)
 	{
 		plural_aux(Name);
 		if (article)
-	{
+		{
 			char string[strlen(Name)+6];
 			sprintf(string, "some %s", Name);
 			strcpy(Name, string);
-	}
+		}
 	}
 	/* Give an indefinite article as required. Plurals never take indefinite articles. */
 	else if (article)

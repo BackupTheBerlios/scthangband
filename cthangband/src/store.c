@@ -2067,7 +2067,7 @@ cptr store_title(int store_num)
 static void display_store(void)
 {
 	/* Clear screen */
-	Term_clear();
+	clear_from(1);
 
 	/* Display the title. */
 	put_str(store_title_aux(), 3, 0);
