@@ -176,8 +176,6 @@ static cptr desc_stat_neg[] =
  */
 bool do_dec_stat(int stat)
 {
-	bool sust = FALSE;
-
 	/* Sustain */
 	if (p_ptr->sustain[stat])
 	{

@@ -1287,9 +1287,9 @@ static bool process_damage_walls(void)
  */
 static bool process_damage(void)
 {
-	return process_damage_cuts() || process_damage_poison() ||
-		process_damage_sunlight() || process_damage_artlight() ||
-		process_damage_walls() || pattern_effect_p();
+	return process_damage_cuts() | process_damage_poison() |
+		process_damage_sunlight() | process_damage_artlight() |
+		process_damage_walls() | pattern_effect_p();
 }
 
 
