@@ -145,7 +145,7 @@ static bool item_tester_hook_wear(object_type *o_ptr)
 /*
  * Wield or wear a single item from the pack or floor
  */
-static void do_cmd_wield_aux(char *o_name)
+void do_cmd_wield(void)
 {
 	int item, slot;
 
@@ -186,12 +186,9 @@ static void do_cmd_wield_aux(char *o_name)
 	/* Prevent wielding into a cursed slot */
 	if (cursed_p(&inventory[slot]))
 	{
-		/* Describe it */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[slot], FALSE, 0);
-
 		/* Message */
-		msg_format("The %s you are %s appears to be cursed.",
-		           o_name, describe_use(slot));
+		msg_format("The %v you are %s appears to be cursed.", object_desc_f3,
+			&inventory[slot], FALSE, 0, describe_use(slot));
 
 		/* Cancel the command */
 		return;
@@ -202,13 +199,8 @@ static void do_cmd_wield_aux(char *o_name)
     if ((cursed_p(o_ptr)) && (wear_confirm)
         && (object_known_p(o_ptr) || (o_ptr->ident & (IDENT_SENSE_CURSED))))
     {
-        char dummy[512];
-
-		/* Describe it */
-        strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
-        sprintf(dummy, "Really use the %s {cursed}? ", o_name);
-        if (!(get_check(dummy)))
+        if (!(get_check(format("Really use the %s {cursed}? ", 
+			object_desc_f3, o_ptr, FALSE, 0))))
             return;
     }
 	/* confirm_wear_all is triggered whenever something may be cursed.
@@ -216,13 +208,9 @@ static void do_cmd_wield_aux(char *o_name)
 	 * created uncursed. */
 	else if (confirm_wear_all && ~o_ptr->ident & IDENT_SENSE_CURSED && wield_slot(o_ptr) >= INVEN_WIELD && wield_slot(o_ptr) <= INVEN_FEET)
 	{
-		char dummy[512];
-
-		/* Describe it */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
-		
-		sprintf(dummy, "Really use the %s? ", o_name);
-		if (!(get_check(dummy))) return;
+        if (!(get_check(format("Really use the %s? ", 
+			object_desc_f3, o_ptr, FALSE, 3))))
+            return;
 	}
 
 	/* Take a turn */
@@ -292,11 +280,9 @@ static void do_cmd_wield_aux(char *o_name)
 		act = "You are wearing";
 	}
 
-	/* Describe the result */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
 	/* Message */
-	msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
+	msg_format("%s %v (%c).", act,
+		object_desc_f3, o_ptr, TRUE, 3, index_to_label(slot));
 
 	/* Auto-curse */
 	{
@@ -340,16 +326,6 @@ static void do_cmd_wield_aux(char *o_name)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-}
-
-/*
- * A wrapper to give o_name function scope above.
- */
-void do_cmd_wield(void)
-{
-	C_TNEW(o_name, ONAME_MAX, char);
-	do_cmd_wield_aux(o_name);
-	TFREE(o_name);
 }
 
 
@@ -468,7 +444,7 @@ void do_cmd_drop(void)
 /*
  * Destroy an item
  */
-static void do_cmd_destroy_aux(char *o_name)
+void do_cmd_destroy(void)
 {
 	int			item, amt = 1;
 	int			old_number;
@@ -520,7 +496,6 @@ static void do_cmd_destroy_aux(char *o_name)
 	/* Describe the object */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
@@ -529,8 +504,9 @@ static void do_cmd_destroy_aux(char *o_name)
 		if (!((auto_destroy) && (object_value(o_ptr)<1)))
 		{
 			/* Make a verification */
-			sprintf(out_val, "Really destroy %s? ", o_name);
-			if (!get_check(out_val)) return;
+			if (!get_check(format(out_val, "Really destroy %v? ",
+				object_desc_f3, o_ptr, TRUE, 3))) return;
+			
 		}
 	}
 
@@ -544,7 +520,7 @@ static void do_cmd_destroy_aux(char *o_name)
         energy_use = 0;
 
 		/* Message */
-		msg_format("You cannot destroy %s.", o_name);
+		msg_format("You cannot destroy %v.", object_desc_f3, o_ptr, TRUE, 3);
 
 		/* We know how valuable it might be. */
 		o_ptr->ident |= (IDENT_SENSE_VALUE);
@@ -565,7 +541,7 @@ static void do_cmd_destroy_aux(char *o_name)
 	}
 
 	/* Message */
-	msg_format("You destroy %s.", o_name);
+	msg_format("You destroy %v.", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Eliminate the item (from the pack) */
 	if (item >= 0)
@@ -584,16 +560,6 @@ static void do_cmd_destroy_aux(char *o_name)
 	}
 }
 
-
-/*
- * A wrapper to give o_name function scope above.
- */
-void do_cmd_destroy(void)
-{
-	C_TNEW(o_name, ONAME_MAX, char);
-	do_cmd_destroy_aux(o_name);
-	TFREE(o_name);
-}
 
 /*
  * Destroy whole pack (and equip)
@@ -658,19 +624,8 @@ void do_cmd_observe(void)
 		o_ptr = &o_list[0 - item];
 	}
 
-
-	{
-		C_TNEW(o_name, ONAME_MAX, char);
-	
-		/* Description */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-
-		/* Describe */
-		msg_format("Examining %s...", o_name);
-
-		TFREE(o_name);
-	}
+	/* Describe */
+	msg_format("Examining %v...", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Describe it fully */
 	if (!identify_fully_aux(o_ptr, FALSE)) msg_print("You see nothing special.");
@@ -738,8 +693,6 @@ void do_cmd_inscribe(void)
 
 	object_type		*o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	char		out_val[80];
 
 
@@ -747,7 +700,6 @@ void do_cmd_inscribe(void)
 	if (!get_item(&item, "Inscribe which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to inscribe.");
-		TFREE(o_name);
 		return;
 	}
 
@@ -763,11 +715,8 @@ void do_cmd_inscribe(void)
 		o_ptr = &o_list[0 - item];
 	}
 
-	/* Describe the activity */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
 	/* Message */
-	msg_format("Inscribing %s.", o_name);
+	msg_format("Inscribing %v.", object_desc_f3, o_ptr, TRUE, 3);
 	msg_print(NULL);
 
 		/* Start with the old inscription */
@@ -787,9 +736,8 @@ void do_cmd_inscribe(void)
 	}
 
 		/* Make a note of the change. */
-	message_add(format("Inscribed %s as %s.", o_name, quark_str(o_ptr->note)));
-
-	TFREE(o_name);
+	message_add(format("Inscribed %v as %s.", object_desc_f3, o_ptr, TRUE, 3,
+		quark_str(o_ptr->note)));
 }
 
 

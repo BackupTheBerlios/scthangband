@@ -2881,7 +2881,7 @@ void do_cmd_throw(void)
 				else
 				{
 					/* Message */
-					msg_format("The %s hits %v.",
+					msg_format("The %v hits %v.",
 						object_desc_f3, q_ptr, FALSE, 3, 
 						monster_desc_f2, m_ptr, 0);
 
