@@ -2236,7 +2236,7 @@ extern spirit_type spirits[MAX_SPIRITS];
 #if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
 extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #endif
-#if (defined(DEFINES_H) || defined(INIT2_C) || defined(TABLES_C))
+#if (defined(DEFINES_H) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C))
 extern co_ord screen_coords[NUM_SCREEN_COORDS];
 #endif
 

@@ -1466,6 +1466,7 @@ struct co_ord
 #ifdef CHECK_ARRAYS
 	co_ord *idx;
 #endif /* CHECK_ARRAYS */
+	cptr name;
 	int x;
 	int y;
 };

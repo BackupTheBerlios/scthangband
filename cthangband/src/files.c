@@ -371,6 +371,9 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
  *
  * Specify a default set of initial statistics for spend_points
  *   D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name>
+ *
+ * Specify the screen location of a redraw_stuff() display.
+ *   L:<name>:<x>:<y>
  */
 errr process_pref_file_aux(char *buf, u16b *sf_flags)
 {
@@ -722,6 +725,39 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				return PARSE_ERROR_OUT_OF_BOUNDS;
 			}
 			return err;
+		}
+		case 'L':
+		{
+			if (tokenize(buf+2, 3, zz) == 3)
+			{
+				int x,y;
+				co_ord *co_ptr;
+				for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords);
+					co_ptr++)
+				{
+					if (!strcmp(co_ptr->name, zz[0])) goto L_okay;
+				}
+				return PARSE_ERROR_INVALID_FLAG;
+L_okay:
+
+				if (!isdigit(zz[1][0]) || !isdigit(zz[2][0]))
+					return PARSE_ERROR_GENERIC;
+
+				x = atoi(zz[1]);
+				y = atoi(zz[2]);
+
+				if (x < -255 || x > 255 || y < -255 || y > 255)
+					return PARSE_ERROR_OUT_OF_BOUNDS;
+
+				co_ptr->x = x;
+				co_ptr->y = y;
+
+				return SUCCESS;
+			}
+			else
+			{
+				return PREF_ERROR_INCORRECT_SYNTAX;
+			}
 		}
 		default:
 		{
