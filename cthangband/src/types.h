@@ -855,6 +855,7 @@ struct magic_type
 	byte skill1;	/* School of spell */
 	byte skill2;	/* Type of spell (or NONE) */
 	s16b power; /* The index of the spell effect. */
+	byte flags; /* (Variable) MAGIC_* flags. */
 };
 
 typedef struct book_type book_type;

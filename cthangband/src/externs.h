@@ -1557,11 +1557,11 @@ extern void display_spell_list(void);
 
 
 
-/* cmd5.c */
 
-#if (defined(CMD5_C))
-extern void print_spells(byte *spells, int num, int y, int x, int school);
-#endif
+
+
+
+
 #if (defined(OBJECT2_C) || defined(XTRA1_C))
 extern void display_koff(int k_idx);
 #endif
@@ -2099,7 +2099,7 @@ extern player_race race_info[MAX_RACES];
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(TABLES_C))
 extern player_template template_info[MAX_TEMPLATE];
 #endif
-#if (defined(CMD5_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern magic_type magic_info[MAX_SCHOOL][32];
 #endif
 
@@ -2108,7 +2108,7 @@ extern magic_type magic_info[MAX_SCHOOL][32];
 
 
 
-#if (defined(CMD5_C) || defined(TABLES_C))
+#if (defined(TABLES_C))
 extern u32b spell_flags[4];
 #endif
 
