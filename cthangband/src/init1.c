@@ -666,7 +666,7 @@ static s16b find_string(char *buf, cptr *array)
 	C_TNEW(array, max, cptr); \
 	for (i = 1; i < max; i++) \
 		if (x_info[i].name) \
-			array[i-1] = x_name+x_info[i].name; \
+			array[i-1] = (cptr)(x_name+x_info[i].name); \
 		else \
 			array[i-1] = ""; \
 	array[max-1] = 0; \

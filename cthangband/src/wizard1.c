@@ -2300,11 +2300,6 @@ static void spoil_mon_info(cptr fname)
 
 
 /*
- * Forward declare
- */
-extern void do_cmd_spoilers(void);
-
-/*
  * Create Spoiler files         -BEN-
  */
 void do_cmd_spoilers(void)

@@ -3284,7 +3284,7 @@ extern byte spell_order[128];
 extern s16b player_hp[100];
 #endif
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern maxima *z_info;
+extern maxima *z_info ;
 #endif
 #if (defined(GENERATE_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern vault_type *v_info;

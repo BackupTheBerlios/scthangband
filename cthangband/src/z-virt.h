@@ -119,7 +119,7 @@
 
 /* Free something at P, return NULL */
 #define FREE(P) \
-		(rnfree(P))
+		(rnfree((vptr)P))
 
 
 
@@ -152,14 +152,14 @@
 
 /* Free a local array at P. */
 #define TFREE(P) \
-	FREE2(P)
+	FREE(P)
 
 #endif /* VARIABLE_ARRAYS */
 
 /* Mega-Hack -- Cleanly "grow" 'P' from N1 T's to N2 T's */
 #define GROW(P,N1,N2,T) \
         (C_MAKE(vptr_tmp,N2,T), C_COPY(vptr_tmp,P,MIN(N1,N2),T), \
-         C_FREE(P,N1,T), (P)=vptr_tmp)
+         FREE(P), (P)=vptr_tmp)
 
 
 

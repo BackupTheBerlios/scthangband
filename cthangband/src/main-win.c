@@ -1558,9 +1558,7 @@ static errr term_force_font(term_data *td, cptr path)
 	if (!check_file(buf)) return (1);
 
 	/* Load the new font */
-#if 0 /* Check this. */
 	if (!AddFontResource(buf)) return (1);
-#endif
 
 	/* Save new font name */
 	td->font_file = string_make(base);
