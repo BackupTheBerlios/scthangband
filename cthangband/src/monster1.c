@@ -342,8 +342,8 @@ static cptr convert_spell_text(cptr string, monster_race *r_ptr)
 			}
 		}
 stop:
-		/* Hack - turn (123) into 123. */
-		if (t[-1] == '(' && s[0] == ')')
+		/* Hack - turn (123) into 123 where part of a longer formula. */
+		if (t[-1] == '(' && s[0] == ')' && (t[-2] == 'd' || s[1] == 'd'))
 		{
 			t--;
 			s++;

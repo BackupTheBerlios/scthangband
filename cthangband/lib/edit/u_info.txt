@@ -1246,7 +1246,7 @@ G:-:W:11:47
 
 # Just an example...
 
-N:%+F%f%-F%+K%k%K%F
+N:%+F%-K%f%-F%+K%k%K%F
 G:.:d:13:0
 
 N:%+A%a%ASamurai Sword%+P%p%P
