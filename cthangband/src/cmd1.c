@@ -1390,44 +1390,44 @@ struct powertype
  * The table of powers, as defined above. Note that the effects of powers must be described in use_innate_power().
  */
 static powertype powers[] = {
-{POWER_RACIAL, RACE_DWARF, 5, 5, A_WIS, 12,
+{POWER_RACIAL, RP_DWARF, 5, 5, A_WIS, 12,
 	"detect doors+traps", 0, "You examine your surroundings."},
-{POWER_RACIAL, RACE_NIBELUNG, 10, 5, A_WIS, 10,
+{POWER_RACIAL, RP_NIBELUNG, 10, 5, A_WIS, 10,
 	"detect doors+traps",0, "You examine your surroundings."},
-{POWER_RACIAL, RACE_HOBBIT, 15, 10, A_INT, 10, "create food",0, 0},
-{POWER_RACIAL, RACE_GNOME, 5, -5, A_INT, 12, "teleport", 0, "Blink!"},
-{POWER_RACIAL, RACE_HALF_ORC, 3, 5, A_WIS, 10,
+{POWER_RACIAL, RP_HOBBIT, 15, 10, A_INT, 10, "create food",0, 0},
+{POWER_RACIAL, RP_GNOME, 5, -5, A_INT, 12, "teleport", 0, "Blink!"},
+{POWER_RACIAL, RP_HALF_ORC, 3, 5, A_WIS, 10,
 	"remove fear", 0, "You play tough."},
-{POWER_RACIAL, RACE_HALF_TROLL, 10, 12, A_WIS, 12, "berserk",0, "RAAAGH!"},
-{POWER_RACIAL, RACE_BARBARIAN, 8, 10, A_WIS, 12, "berserk",0, "Raaagh!"},
-{POWER_RACIAL, RACE_GREAT, 40, 75, A_WIS, 50,
+{POWER_RACIAL, RP_HALF_TROLL, 10, 12, A_WIS, 12, "berserk",0, "RAAAGH!"},
+{POWER_RACIAL, RP_BARBARIAN, 8, 10, A_WIS, 12, "berserk",0, "Raaagh!"},
+{POWER_RACIAL, RP_GREAT, 40, 75, A_WIS, 50,
 	"dreaming", 0, "You dream of a time of health and peace..."},
-{POWER_RACIAL, (RACE_GREAT+MAX_RACES), 30, 50, A_INT, 50,
+{POWER_RACIAL, RP_GREAT_2, 30, 50, A_INT, 50,
 	"dream travel", 0, "You start walking around. Your surroundings change."},
-{POWER_RACIAL, RACE_HALF_OGRE, 25, 35, A_INT, 15,
+{POWER_RACIAL, RP_HALF_OGRE, 25, 35, A_INT, 15,
 	"explosive rune", 0, "You carefully set an explosive rune..."},
-{POWER_RACIAL, RACE_HALF_GIANT, 20, 10, A_STR, 12, "stone to mud",0, 0},
-{POWER_RACIAL, RACE_HALF_TITAN, 35, 20, A_INT, 12,
+{POWER_RACIAL, RP_HALF_GIANT, 20, 10, A_STR, 12, "stone to mud",0, 0},
+{POWER_RACIAL, RP_HALF_TITAN, 35, 20, A_INT, 12,
 	"probing", 0, "You examine your foes..."},
-{POWER_RACIAL, RACE_CYCLOPS, 20, 15, A_STR, 12, "throw boulder","dam 3*lvl", 0},
-{POWER_RACIAL, RACE_YEEK, 15, 15, A_WIS, 10, "scare monster",0, 0},
-{POWER_RACIAL, RACE_SPECTRE, 4, 6, A_INT, 3,
+{POWER_RACIAL, RP_CYCLOPS, 20, 15, A_STR, 12, "throw boulder","dam 3*lvl", 0},
+{POWER_RACIAL, RP_YEEK, 15, 15, A_WIS, 10, "scare monster",0, 0},
+{POWER_RACIAL, RP_SPECTRE, 4, 6, A_INT, 3,
 	"scare monster", 0, "You emit an eldritch howl!"},
-{POWER_RACIAL, RACE_BROO, 4, 6, A_INT, 3,
+{POWER_RACIAL, RP_BROO, 4, 6, A_INT, 3,
 	"scare monster", 0, "You emit a fearsome growl!"},
-{POWER_RACIAL, RACE_KLACKON, 9, 9, A_DEX, 14, "spit acid","dam lvl", 0},
-{POWER_RACIAL, RACE_KOBOLD, 12, 8, A_DEX, 18, "poison dart","dam lvl", 0},
-{POWER_RACIAL, RACE_DARK_ELF, 2, 2, A_INT, 9, "magic missile",0, 0},
-{POWER_RACIAL, RACE_DRACONIAN, 1, -1, A_CON, 12, "breath weapon","dam 2*lvl", 0},
-{POWER_RACIAL, RACE_MIND_FLAYER, 15, 12, A_INT, 14, "mind blast","dam lvl", 0},
-{POWER_RACIAL, RACE_IMP, 9, 15, A_WIS, 15, "fire bolt/ball(30)","dam lvl", 0},
-{POWER_RACIAL, RACE_GOLEM, 20, 15, A_CON, 8, "stone skin","dur 30+d20", 0},
-{POWER_RACIAL, RACE_SKELETON, 30, 30, A_WIS, 18,
+{POWER_RACIAL, RP_KLACKON, 9, 9, A_DEX, 14, "spit acid","dam lvl", 0},
+{POWER_RACIAL, RP_KOBOLD, 12, 8, A_DEX, 18, "poison dart","dam lvl", 0},
+{POWER_RACIAL, RP_DARK_ELF, 2, 2, A_INT, 9, "magic missile",0, 0},
+{POWER_RACIAL, RP_DRACONIAN, 1, -1, A_CON, 12, "breath weapon","dam 2*lvl", 0},
+{POWER_RACIAL, RP_MIND_FLAYER, 15, 12, A_INT, 14, "mind blast","dam lvl", 0},
+{POWER_RACIAL, RP_IMP, 9, 15, A_WIS, 15, "fire bolt/ball(30)","dam lvl", 0},
+{POWER_RACIAL, RP_GOLEM, 20, 15, A_CON, 8, "stone skin","dur 30+d20", 0},
+{POWER_RACIAL, RP_SKELETON, 30, 30, A_WIS, 18,
 	"restore life", 0, "You attempt to restore your lost energies."},
-{POWER_RACIAL, RACE_ZOMBIE, 30, 30, A_WIS, 18,
+{POWER_RACIAL, RP_ZOMBIE, 30, 30, A_WIS, 18,
 	"restore life", 0, "You attempt to restore your lost energies."},
-{POWER_RACIAL, RACE_VAMPIRE, 2, -3, A_CON, 9, "drain life",0, 0},
-{POWER_RACIAL, RACE_SPRITE, 12, 12, A_INT, 15,
+{POWER_RACIAL, RP_VAMPIRE, 2, -3, A_CON, 9, "drain life",0, 0},
+{POWER_RACIAL, RP_SPRITE, 12, 12, A_INT, 15,
 	"sleeping dust", 0, "You throw some magic dust..."},
 {POWER_MUTA, MUT_SPIT_ACID, 9, 9, A_DEX, 15,
 	"spit acid", "dam lvl", "You spit acid..."},
@@ -1651,6 +1651,7 @@ static void racial_confirm_string(byte choice, char * out)
 static int count_powers(void)
 {
 	int i, pets, total;
+	bool available;
 
 	for (pets = 0, i = 1; (i < m_max) && (pets < 2); i++)
 	{
@@ -1660,31 +1661,40 @@ static int count_powers(void)
 
 	for (total = 0, i = 0; powers[i].type && (total < MAX_POWERS); i++)
 	{
-		bool available = FALSE;
 		powertype *pw_ptr = &powers[i];
 		switch (pw_ptr->type)
 		{
 			case POWER_RACIAL:
-				if (pw_ptr->power%MAX_RACES == p_ptr->prace) available = TRUE;
-				break;
-			case POWER_MUTA:
-				if (p_has_mutation(pw_ptr->power)) available = TRUE;
-				break;
-			case POWER_DISMISS:
-			switch (pets)
 			{
-				case 0:
-					break;
-				case 1:
-					available = (pw_ptr->power == PET_DISMISS_ONE);
-					break;
-				default:
-					available = (pw_ptr->power == PET_DISMISS_MANY);
+				/* Good if the power is in the indicated range. */
+				available = (pw_ptr->power == rp_ptr->power[0] ||
+					pw_ptr->power == rp_ptr->power[1]);
+				break;
+			}
+			case POWER_MUTA:
+			{
+				available = (p_has_mutation(pw_ptr->power));
+				break;
+			}
+			case POWER_DISMISS:
+			{
+				switch (pets)
+				{
+					case 0:
+						available = FALSE;
+						break;
+					case 1:
+						available = (pw_ptr->power == PET_DISMISS_ONE);
+						break;
+					default:
+						available = (pw_ptr->power == PET_DISMISS_MANY);
+				}
 			}
 			break;
 			default: /* How did we get here? */
 				msg_format("Strange power %d,%d", pw_ptr->type, pw_ptr->power);
 				msg_print(NULL);
+				available = FALSE;
 		}
 		if (available) cur_powers[total++] = pw_ptr;
 	}

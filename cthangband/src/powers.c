@@ -89,7 +89,7 @@ static add_timed_type power_add_timed_table[] =
 	{SP_RESIST_ACID+PO_SPELL, TIMED_OPPOSE_ACID, 21, 40, FALSE},
 	{SP_RESIST_LIGHTNING+PO_SPELL, TIMED_OPPOSE_ELEC, 21, 40, FALSE},
 	{SP_SEE_INVISIBLE+PO_SPELL, TIMED_INVIS, 25, 48, FALSE},
-	{RACE_GOLEM+PO_RACIAL, TIMED_SHIELD, 31, 50, FALSE},
+	{RP_GOLEM+PO_RACIAL, TIMED_SHIELD, 31, 50, FALSE},
 };
 
 static cptr timer_verbs[TIMED_MAX] =
@@ -1250,7 +1250,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_RESIST_ACID+PO_SPELL:
 		case SP_RESIST_LIGHTNING+PO_SPELL:
 		case SP_SEE_INVISIBLE+PO_SPELL:
-		case RACE_GOLEM+PO_RACIAL:
+		case RP_GOLEM+PO_RACIAL:
 		{
 			return power_add_timed(power, ident);
 		}
@@ -5899,15 +5899,15 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case RACE_DWARF+PO_RACIAL:
-		case RACE_NIBELUNG+PO_RACIAL:
+		case RP_DWARF+PO_RACIAL:
+		case RP_NIBELUNG+PO_RACIAL:
 		{
 			(void)detect_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
 			return SUCCESS;
 		}
-		case RACE_HOBBIT+PO_RACIAL:
+		case RP_HOBBIT+PO_RACIAL:
 		{
 			/* Get local object */
 			object_type q;
@@ -5921,25 +5921,25 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 
 		}
-		case RACE_GNOME+PO_RACIAL:
+		case RP_GNOME+PO_RACIAL:
 		{
 			teleport_player(10 + (plev));
 			return SUCCESS;
 		}
-		case RACE_HALF_ORC+PO_RACIAL:
+		case RP_HALF_ORC+PO_RACIAL:
 		{
 			(void)set_flag(TIMED_AFRAID, 0);
 			return SUCCESS;
 		}
-		case RACE_HALF_TROLL+PO_RACIAL:
-		case RACE_BARBARIAN+PO_RACIAL:
+		case RP_HALF_TROLL+PO_RACIAL:
+		case RP_BARBARIAN+PO_RACIAL:
 		{
 			(void)set_flag(TIMED_AFRAID, 0);
 			(void)add_flag(TIMED_SHERO, 10 + randint(plev));
 			(void)hp_player(30);
 			return SUCCESS;
 		}
-		case RACE_GREAT+PO_RACIAL:
+		case RP_GREAT+PO_RACIAL:
 		{ /* Dreaming */
 			(void)set_flag(TIMED_POISONED, 0);
 			(void)set_flag(TIMED_IMAGE, 0);
@@ -5956,43 +5956,43 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)restore_level();
 			return SUCCESS;
 		}
-		case RACE_GREAT+MAX_RACES+PO_RACIAL:
+		case RP_GREAT+MAX_RACES+PO_RACIAL:
 		{ /* dream travel */
 			change_level(dun_level, START_RANDOM);
 			return SUCCESS;
 		}
-		case RACE_HALF_OGRE+PO_RACIAL:
+		case RP_HALF_OGRE+PO_RACIAL:
 		{
 			explosive_rune();
 			return SUCCESS;
 		}
-		case RACE_HALF_GIANT+PO_RACIAL:
+		case RP_HALF_GIANT+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You bash at a stone wall.");
 			(void)wall_to_mud(dir);
 			return SUCCESS;
 		}
-		case RACE_HALF_TITAN+PO_RACIAL:
+		case RP_HALF_TITAN+PO_RACIAL:
 		{
 			probing();
 			return SUCCESS;
 		}
-		case RACE_CYCLOPS+PO_RACIAL:
+		case RP_CYCLOPS+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You throw a huge boulder.");
 			fire_bolt(GF_MISSILE, dir, (3 * plev) / 2);
 			return SUCCESS;
 		}
-		case RACE_YEEK+PO_RACIAL:
+		case RP_YEEK+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You make a horrible scream!");
 			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
-		case RACE_KLACKON+PO_RACIAL:
+		case RP_KLACKON+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You spit acid.");
@@ -6002,14 +6002,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				fire_ball(GF_ACID, dir, plev, 2);
 			return SUCCESS;
 		}
-		case RACE_KOBOLD+PO_RACIAL:
+		case RP_KOBOLD+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You throw a dart of poison.");
 			fire_bolt(GF_POIS, dir, plev);
 			return SUCCESS;
 		}
-		case RACE_DARK_ELF+PO_RACIAL:
+		case RP_DARK_ELF+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You cast a magic missile.");
@@ -6017,21 +6017,21 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			damroll(3 + ((plev - 1) / 5), 4));
 			return SUCCESS;
 		}
-		case RACE_DRACONIAN+PO_RACIAL:
+		case RP_DRACONIAN+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You breathe poison.");
 			fire_ball(GF_POIS, dir, (plev)*2, -((plev)/15) + 1);
 			return SUCCESS;
 		}
-		case RACE_MIND_FLAYER+PO_RACIAL:
+		case RP_MIND_FLAYER+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You concentrate and your eyes glow red...");
 			fire_bolt(GF_PSI, dir, plev);
 			return SUCCESS;
 		}
-		case RACE_IMP+PO_RACIAL:
+		case RP_IMP+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			if (plev >= 30)
@@ -6046,13 +6046,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case RACE_SKELETON+PO_RACIAL:
-		case RACE_ZOMBIE+PO_RACIAL:
+		case RP_SKELETON+PO_RACIAL:
+		case RP_ZOMBIE+PO_RACIAL:
 		{
 			(void)restore_level();
 			return SUCCESS;
 		}
-		case RACE_VAMPIRE+PO_RACIAL:
+		case RP_VAMPIRE+PO_RACIAL:
 		{
 	       /* Only works on adjacent monsters */
 			cave_type *c_ptr;
@@ -6088,19 +6088,19 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 			return SUCCESS;
 		}
-		case RACE_SPECTRE+PO_RACIAL:
+		case RP_SPECTRE+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
-		case RACE_BROO+PO_RACIAL:
+		case RP_BROO+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
-		case RACE_SPRITE+PO_RACIAL:
+		case RP_SPRITE+PO_RACIAL:
 		{
 			if (plev < 25)
 				sleep_monsters_touch(plev);

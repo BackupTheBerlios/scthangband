@@ -590,35 +590,35 @@ struct race_power
 
 static const race_power race_powers[] =
 {
-	{RACE_NIBELUNG, 1, 50, "You can find traps, doors and stairs (cost 5)."},
-	{RACE_DWARF, 1, 50, "You can find traps, doors and stairs (cost 5)."},
-	{RACE_HOBBIT, 1, 50, "You can produce food (cost 10)."},
-	{RACE_GNOME, 1, 50, "You can teleport, range LEV+1; (cost LEV/5+5;)."},
-	{RACE_HALF_ORC, 1, 50, "You can remove fear (cost 5)."},
-	{RACE_HALF_TROLL, 1, 50, "You can enter berserk fury (cost 12)."},
-	{RACE_GREAT, 1, 50, "You can dream travel (cost 50)."},
-	{RACE_GREAT, 1, 50, "You can dream a better self (cost 75)."},
-	{RACE_BARBARIAN, 1, 50, "You can enter berserk fury (cost 10)."},
-	{RACE_HALF_OGRE, 1, 50, "You can set an explosive rune (cost 35)."},
-	{RACE_HALF_GIANT, 1, 50, "You can break stone walls (cost 10)."},
-	{RACE_HALF_TITAN, 1, 50, "You can probe monsters (cost 20)."},
-	{RACE_CYCLOPS, 1, 50, "You can throw a boulder, dam LEV*3; (cost 15)."},
-	{RACE_YEEK, 1, 50, "You can make a terrifying scream (cost 15)."},
-	{RACE_KLACKON, 1, 50, "You can spit acid, dam. LEV; (cost 9)."},
-	{RACE_KOBOLD, 1, 50, "You can throw a dart of poison, dam. LEV; (cost 8)."},
-	{RACE_DARK_ELF, 1, 50, "You can cast a Magic Missile, dam LEV+4/5+2; (cost 2)."},
-	{RACE_DRACONIAN, 1, 50, "You can breathe, dam. LEV*2; (cost LEV;)."},
-	{RACE_MIND_FLAYER, 1, 50, "You can mind blast your enemies, dam LEV; (cost 12)."},
-	{RACE_IMP, 30, 50, "You can cast a Fire Ball, dam. LEV; (cost 15)."},
-	{RACE_IMP, 9, 29, "You can cast a Fire Bolt, dam. LEV; (cost 15)."},
-	{RACE_GOLEM, 1, 50, "You can turn your skin to stone, dur d20+30 (cost 15)."},
-	{RACE_ZOMBIE, 1, 50, "You can restore lost life forces (cost 30)."},
-	{RACE_SKELETON, 1, 50, "You can restore lost life forces (cost 30)."},
-    {RACE_VAMPIRE, 1, 50,
+	{RP_NIBELUNG, 1, 50, "You can find traps, doors and stairs (cost 5)."},
+	{RP_DWARF, 1, 50, "You can find traps, doors and stairs (cost 5)."},
+	{RP_HOBBIT, 1, 50, "You can produce food (cost 10)."},
+	{RP_GNOME, 1, 50, "You can teleport, range LEV+1; (cost LEV/5+5;)."},
+	{RP_HALF_ORC, 1, 50, "You can remove fear (cost 5)."},
+	{RP_HALF_TROLL, 1, 50, "You can enter berserk fury (cost 12)."},
+	{RP_GREAT, 1, 50, "You can dream travel (cost 50)."},
+	{RP_GREAT_2, 1, 50, "You can dream a better self (cost 75)."},
+	{RP_BARBARIAN, 1, 50, "You can enter berserk fury (cost 10)."},
+	{RP_HALF_OGRE, 1, 50, "You can set an explosive rune (cost 35)."},
+	{RP_HALF_GIANT, 1, 50, "You can break stone walls (cost 10)."},
+	{RP_HALF_TITAN, 1, 50, "You can probe monsters (cost 20)."},
+	{RP_CYCLOPS, 1, 50, "You can throw a boulder, dam LEV*3; (cost 15)."},
+	{RP_YEEK, 1, 50, "You can make a terrifying scream (cost 15)."},
+	{RP_KLACKON, 1, 50, "You can spit acid, dam. LEV; (cost 9)."},
+	{RP_KOBOLD, 1, 50, "You can throw a dart of poison, dam. LEV; (cost 8)."},
+	{RP_DARK_ELF, 1, 50, "You can cast a Magic Missile, dam LEV+4/5+2; (cost 2)."},
+	{RP_DRACONIAN, 1, 50, "You can breathe, dam. LEV*2; (cost LEV;)."},
+	{RP_MIND_FLAYER, 1, 50, "You can mind blast your enemies, dam LEV; (cost 12)."},
+	{RP_IMP, 30, 50, "You can cast a Fire Ball, dam. LEV; (cost 15)."},
+	{RP_IMP, 9, 29, "You can cast a Fire Bolt, dam. LEV; (cost 15)."},
+	{RP_GOLEM, 1, 50, "You can turn your skin to stone, dur d20+30 (cost 15)."},
+	{RP_ZOMBIE, 1, 50, "You can restore lost life forces (cost 30)."},
+	{RP_SKELETON, 1, 50, "You can restore lost life forces (cost 30)."},
+    {RP_VAMPIRE, 1, 50,
 		"You can steal life from a foe, dam. LEV*11/10>11;-LEV/10+1>2*LEV (cost LEV/3+1;)."},
-    {RACE_SPECTRE, 1, 50, "You can wail to terrify your enemies (cost 3)."},
-    {RACE_BROO, 1, 50, "You can growl to terrify your enemies (cost 3)."},
-    {RACE_SPRITE, 1, 50, "You can throw magic dust which induces sleep (cost 12)."},
+    {RP_SPECTRE, 1, 50, "You can wail to terrify your enemies (cost 3)."},
+    {RP_BROO, 1, 50, "You can growl to terrify your enemies (cost 3)."},
+    {RP_SPRITE, 1, 50, "You can throw magic dust which induces sleep (cost 12)."},
 };
 
 static int add_race_powers(cptr *info)
@@ -630,7 +630,8 @@ static int add_race_powers(cptr *info)
 	FOR_ALL_IN(race_powers, pr_ptr)
 	{
 		/* Bad race. */
-		if (pr_ptr->race != p_ptr->prace) continue;
+		if (pr_ptr->race != rp_ptr->power[0] &&
+			pr_ptr->race != rp_ptr->power[1]) continue;
 
 		/* Bad level. */
 		if (pr_ptr->min > plev || pr_ptr->max < plev) continue;

@@ -331,7 +331,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PO_NAME1 (PO_ACTIVATION-256)
 #define PO_TVAL (PO_NAME1-256)
 #define PO_SPELL (PO_TVAL-256)
-#define PO_RACIAL (PO_SPELL-MAX_RACES*2) /* Up to two powers per race. */
+#define PO_RACIAL (PO_SPELL-256)
 #define PO_PETS (PO_RACIAL-2) /* Only two powers are defined. */
 #define PO_MUTA (PO_PETS-96)
 
@@ -1087,37 +1087,65 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Player race constants (hard-coded by save-files, arrays, etc)
  */
-#define RACE_BARBARIAN   0 
-#define RACE_BROO       1
-#define RACE_CYCLOPS     2
-#define RACE_DARK_ELF    3
-#define RACE_DRACONIAN     4
-#define RACE_DWARF       5
-/* #define RACE_ELF      6 */
-#define RACE_GNOME       7
-#define RACE_GOLEM       8
-#define RACE_GREAT       9
-/* #define RACE_HALF_ELF   10 */
-#define RACE_HALF_GIANT      11
-#define RACE_HALF_OGRE  12
-#define RACE_HALF_ORC    13
-#define RACE_HALF_TITAN      14
-#define RACE_HALF_TROLL     15
-#define RACE_HIGH_ELF           16
-#define RACE_HOBBIT                17
-/* #define RACE_HUMAN                 18 */
-#define RACE_IMP                        19
-#define RACE_KLACKON            20
-#define RACE_KOBOLD              21
-#define RACE_MIND_FLAYER    22
-#define RACE_NIBELUNG           23
-#define RACE_SKELETON          24
-#define RACE_SPECTRE            25
-#define RACE_SPRITE                26
-#define RACE_VAMPIRE             27
-#define RACE_YEEK                    28
-#define RACE_ZOMBIE               29
+/* #define RACE_BARBARIAN 0 */ 
+#define RACE_BROO 1
+/* #define RACE_CYCLOPS 2 */
+/* #define RACE_DARK_ELF 3 */
+/* #define RACE_DRACONIAN 4 */
+/* #define RACE_DWARF 5 */
+/* #define RACE_ELF 6 */
+/* #define RACE_GNOME 7 */
+#define RACE_GOLEM 8
+#define RACE_GREAT 9
+/* #define RACE_HALF_ELF 10 */
+/* #define RACE_HALF_GIANT 11 */
+/* #define RACE_HALF_OGRE 12 */
+#define RACE_HALF_ORC 13
+/* #define RACE_HALF_TITAN 14 */
+#define RACE_HALF_TROLL 15
+/* #define RACE_HIGH_ELF 16 */
+/* #define RACE_HOBBIT 17 */
+/* #define RACE_HUMAN 18 */
+#define RACE_IMP 19
+/* #define RACE_KLACKON 20 */
+/* #define RACE_KOBOLD 21 */
+/* #define RACE_MIND_FLAYER 22 */
+/* #define RACE_NIBELUNG 23 */
+#define RACE_SKELETON 24
+#define RACE_SPECTRE 25
+/* #define RACE_SPRITE 26 */
+#define RACE_VAMPIRE 27
+/* #define RACE_YEEK 28 */
+#define RACE_ZOMBIE 29
 #define RACE_NONE 255
+
+#define RP_BARBARIAN 1
+#define RP_BROO 2
+#define RP_CYCLOPS 3
+#define RP_DARK_ELF 4
+#define RP_DRACONIAN 5
+#define RP_DWARF 6
+#define RP_GNOME 7
+#define RP_GOLEM 8
+#define RP_GREAT 9
+#define RP_GREAT_2 10
+#define RP_HALF_GIANT 11
+#define RP_HALF_OGRE 12
+#define RP_HALF_ORC 13
+#define RP_HALF_TITAN 14
+#define RP_HALF_TROLL 15
+#define RP_HOBBIT 16
+#define RP_IMP 17
+#define RP_KLACKON 18
+#define RP_KOBOLD 19
+#define RP_MIND_FLAYER 20
+#define RP_NIBELUNG 21
+#define RP_SKELETON 22
+#define RP_SPECTRE 23
+#define RP_SPRITE 24
+#define RP_VAMPIRE 25
+#define RP_YEEK 26
+#define RP_ZOMBIE 27
 
 /*** Screen Locations ***/
 
