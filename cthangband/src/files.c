@@ -4936,11 +4936,12 @@ static void make_bones(void)
 	/* Ignore wizards and borgs */
 	if (!(noscore & 0x00FF))
 	{
-		/* Ignore people who die in town */
-		if (dun_level)
+		/* Ignore people who die in town (and on impossible levels). */
+		if (dun_level > 0 && dun_level < 1000)
 		{
 			/* XXX XXX XXX "Bones" name */
-			cptr tmp = format(tmp, "bone.%03d", dun_level);
+			char tmp[8];
+			sprintf(tmp, "bone.%03d", dun_level);
 
 			/* Attempt to open the bones file */
 			fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "r");
