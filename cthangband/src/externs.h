@@ -1508,7 +1508,7 @@ extern bool grow_o_list(void);
 extern void compact_objects(int size);
 #endif
 #if (defined(GENERATE_C) || defined(OBJECT2_C))
-extern void wipe_o_list(void);
+extern void wipe_o_list(bool preserve);
 #endif
 #if (defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT2_C))
 extern object_type *o_pop(void);
@@ -2504,7 +2504,7 @@ extern bool arg_force_original;
 #if (defined(DUNGEON_C) || defined(MAIN_EMX_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern bool arg_force_roguelike;
 #endif
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool character_generated;
 #endif
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -2888,7 +2888,7 @@ extern bool auto_more;
 #if (defined(TABLES_C) || defined(VARIABLE_C))
 extern bool preserve_mode_w;
 #endif
-#if (defined(CMD3_C) || defined(FILES_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD3_C) || defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool preserve_mode;
 #endif
 #if (defined(TABLES_C) || defined(VARIABLE_C))
