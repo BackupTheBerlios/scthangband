@@ -309,9 +309,11 @@ cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
 /*
  * A table of options which are no longer used.
  */
-static cptr old_options[] =
+static name_entry old_options[] =
 {
-	"inscribe_depth",
+	{FALSE, "inscribe_depth"},
+	{FALSE, "player_symbols"},
+	{FALSE, "flush_command"},
 };
 
 /*
@@ -741,14 +743,19 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case 'Y': case 'X':
 		{
 			const option_type *op_ptr;
-			cptr *old_ptr;
-			FOR_ALL_IN(old_options, old_ptr)
+			name_entry *old;
+			FOR_ALL_IN(old_options, old)
 			{
-				if (!strcmp(*old_ptr, buf+2))
+				if (strcmp(old->str, buf+2)) continue;
+
+				/* Only mention each option once per game. */
+				if (!old->idx)
 				{
-					msg_format("Ignoring obsolete option \"%s\".", *old_ptr);
-					return SUCCESS;
+					old->idx = 1;
+					msg_format("Ignoring obsolete option \"%s\".", old->str);
 				}
+
+				return SUCCESS;
 			}
 
 			for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
