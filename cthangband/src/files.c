@@ -1895,7 +1895,32 @@ static void display_player_flag_aux(int row, int col,
 	c_put_str(TERM_SLATE, ".", row, col);
 
 	/* Check flags */
-	if (f[n-1] & flag) c_put_str(TERM_WHITE, "+", row, col);
+	if (f[n-1] & flag)
+		i = 1;
+	else
+		i = 0;
+
+	/*
+	 * Hack - include temporary resistances individually.
+	 * It's important to note that OPPOSE_COL(0)=TERM_DARK=0.
+	 */
+	if (n == 2 && flag & TR2_RES_ACID) i |= OPPOSE_COL(p_ptr->oppose_acid)*2;
+	if (n == 2 && flag & TR2_RES_ELEC) i |= OPPOSE_COL(p_ptr->oppose_elec)*2;
+	if (n == 2 && flag & TR2_RES_FIRE) i |= OPPOSE_COL(p_ptr->oppose_fire)*2;
+	if (n == 2 && flag & TR2_RES_COLD) i |= OPPOSE_COL(p_ptr->oppose_cold)*2;
+	if (n == 2 && flag & TR2_RES_POIS) i |= OPPOSE_COL(p_ptr->oppose_pois)*2;
+
+	if (i == 1)
+		n = TERM_WHITE;
+	else if (i == 0)
+		n = TERM_SLATE;
+	else
+		n = i/2;
+
+	if (i & 1) c_put_str(n, "+", row, col);
+	else if (i) c_put_str(n, "*", row, col);
+	else c_put_str(n, ".", row, col);
+
 }
 
 

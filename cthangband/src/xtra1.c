@@ -670,10 +670,23 @@ static void prt_speed(void)
 	c_put_str(attr, format("%-14s", buf), ROW_SPEED, COL_SPEED);
 }
 
+/*
+ * Displays temporary resistance in preference to studying ability as there's not
+ * much call for libraries in the dungeon.
+ */
 
 static void prt_study(void)
 {
-	if (p_ptr->new_spells)
+	if (p_ptr->oppose_acid || p_ptr->oppose_elec || p_ptr->oppose_fire || p_ptr->oppose_cold || p_ptr->oppose_pois) 
+	{
+		put_str("     ", ROW_STUDY, COL_STUDY);
+		Term_putch(COL_STUDY, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_acid), 'A');
+		Term_putch(COL_STUDY+1, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_elec), 'E');
+		Term_putch(COL_STUDY+2, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_fire), 'F');
+		Term_putch(COL_STUDY+3, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_cold), 'C');
+		Term_putch(COL_STUDY+4, ROW_STUDY, OPPOSE_COL(p_ptr->oppose_pois), 'P');
+	}
+	else if (p_ptr->new_spells)
 	{
 		put_str("Study", ROW_STUDY, COL_STUDY);
 	}

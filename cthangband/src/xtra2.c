@@ -1277,6 +1277,10 @@ bool set_oppose_acid(int v)
 		}
 	}
 
+	/* Opposition to elements uses the PR_STUDY block. */
+	if (OPPOSE_COL(v) != OPPOSE_COL(p_ptr->oppose_acid))
+		p_ptr->redraw |= PR_STUDY;
+
 	/* Use the value */
 	p_ptr->oppose_acid = v;
 
@@ -1323,6 +1327,10 @@ bool set_oppose_elec(int v)
 			notice = TRUE;
 		}
 	}
+
+	/* Opposition to elements uses the PR_STUDY block. */
+	if (OPPOSE_COL(v) != OPPOSE_COL(p_ptr->oppose_elec))
+		p_ptr->redraw |= PR_STUDY;
 
 	/* Use the value */
 	p_ptr->oppose_elec = v;
@@ -1371,6 +1379,10 @@ bool set_oppose_fire(int v)
 		}
 	}
 
+	/* Opposition to elements uses the PR_STUDY block. */
+	if (OPPOSE_COL(v) != OPPOSE_COL(p_ptr->oppose_fire))
+		p_ptr->redraw |= PR_STUDY;
+
 	/* Use the value */
 	p_ptr->oppose_fire = v;
 
@@ -1418,6 +1430,10 @@ bool set_oppose_cold(int v)
 		}
 	}
 
+	/* Opposition to elements uses the PR_STUDY block. */
+	if (OPPOSE_COL(v) != OPPOSE_COL(p_ptr->oppose_cold))
+		p_ptr->redraw |= PR_STUDY;
+
 	/* Use the value */
 	p_ptr->oppose_cold = v;
 
@@ -1464,6 +1480,10 @@ bool set_oppose_pois(int v)
 			notice = TRUE;
 		}
 	}
+
+	/* Opposition to elements uses the PR_STUDY block. */
+	if (OPPOSE_COL(v) != OPPOSE_COL(p_ptr->oppose_pois))
+		p_ptr->redraw |= PR_STUDY;
 
 	/* Use the value */
 	p_ptr->oppose_pois = v;

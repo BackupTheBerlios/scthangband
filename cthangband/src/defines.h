@@ -3152,6 +3152,15 @@ extern int PlayerUID;
 
 
 /*
+ * Return the appropriate colour for display_player_flags_aux, et al.
+ */
+#define OPPOSE_COL(val) \
+	((val > 10) ? TERM_L_GREEN : \
+	(val > 5) ? TERM_YELLOW : \
+	(val) ? TERM_RED : \
+	TERM_DARK)
+
+/*
  * Player Skill Indices
  */
 
