@@ -2116,7 +2116,7 @@ static void display_store(void)
 /*
  * Get the ID of a store item and return its value	-RAK-
  */
-static int get_stock(int *com_val, cptr pmt, int i, int j)
+static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
 {
 	char	command;
 
@@ -2187,6 +2187,14 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	return (TRUE);
 }
 
+/*
+ * A wrapper to provide the (known) limits for the prompt above.
+ */
+static int get_stock(int *com_val, cptr pmt)
+{
+	int i = MIN(st_ptr->stock_num - store_top, term_screen->hgt-12);
+	return get_stock_aux(com_val, pmt, 0, i-1);
+}
 
 /*
  * Increase the insult counter and get angry if too many -RAK-
@@ -3009,12 +3017,6 @@ static void store_purchase_aux(char *o_name)
 	}
 
 
-	/* Find the number of objects on this and following pages */
-	i = (st_ptr->stock_num - store_top);
-
-	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
-
 	/* Prompt */
 	if (cur_store_type == STORE_HOME)
 	{
@@ -3026,7 +3028,7 @@ static void store_purchase_aux(char *o_name)
 	}
 
 	/* Get the item number to be bought */
-	if (!get_stock(&item, out_val, 0, i-1)) return;
+	if (!get_stock(&item, out_val)) return;
 
 	/* Get the actual index */
 	item = item + store_top;
@@ -3559,7 +3561,6 @@ static void store_sell(void)
   */
  static void store_examine(void)
  {
-   int i;
    int item;
 
    object_type *o_ptr;
@@ -3577,17 +3578,11 @@ static void store_sell(void)
    }
 
 
-   /* Find the number of objects on this and following pages */
-   i = (st_ptr->stock_num - store_top);
-
-   /* And then restrict it to the current page */
-   if (i > 12) i = 12;
-
    /* Prompt */
    sprintf(out_val, "Which item do you want to examine? ");
 
    /* Get the item number to be examined */
-   if (!get_stock(&item, out_val, 0, i-1)) return;
+   if (!get_stock(&item, out_val)) return;
 
    /* Get the actual index */
    item = item + store_top;
