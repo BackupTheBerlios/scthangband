@@ -100,16 +100,16 @@ vptr ralloc(huge len)
 
 
 /*
- * Allocate a constant string, containing the same thing as 'str'
+ * Allocate a string containing the same thing as 'str'
  */
-cptr string_make(cptr str)
+char *string_make(cptr str)
 {
 	huge len = 0;
 	cptr t = str;
 	char *s, *res;
 
 	/* Simple sillyness */
-	if (!str) return (str);
+	if (!str) return NULL;
 
 	/* Get the number of chars in the string, including terminator */
 	while (str[len++]) /* loop */;
