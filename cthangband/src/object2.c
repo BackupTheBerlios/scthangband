@@ -1605,15 +1605,7 @@ static void merge_found(object_found *to, const object_found *from)
 {
 	if (to->dungeon != from->dungeon) to->dungeon = FOUND_DUN_UNKNOWN;
 	if (to->level != from->level) to->level = FOUND_LEV_UNKNOWN;
-	if (to->how >= FOUND_MONSTER && from->how >= FOUND_MONSTER)
-	{
-		if (to->how != from->how || to->idx != from->idx)
-		{
-			to->how = FOUND_MONSTER;
-			to->idx = 0;
-		}
-	}
-	else if (to->how != from->how)
+	if (to->how != from->how)
 	{
 		to->how = FOUND_MIXED;
 	}
@@ -3143,28 +3135,20 @@ void set_object_found(object_type *o_ptr, int how, int idx)
 {
 	object_found *ptr = &o_ptr->found;
 
-	/* Hack - r_idx is 15 bit. */
-	if (how == FOUND_MONSTER)
-	{
-		assert(idx >= 0 && idx < z_info->r_max);
-		ptr->how = how + idx / 256;
-		ptr->idx = idx % 256;
-	}
+	/* The caller should deal with bounds checking. */
+	assert(how >= 0 && how <= 255);
+	assert(idx >= -MAX_SHORT && idx <= MAX_SHORT);
+
+	/* Set the indicated information (although idx may be ignored. */
+	ptr->how = how;
+	ptr->idx = idx;
+
 	/* Hack - starting items don't have an initial location. */
-	else if (how == FOUND_BIRTH)
+	if (how != FOUND_BIRTH)
 	{
-		ptr->how = how;
-		ptr->idx = idx;
-		return;
+		ptr->level = dun_level;
+		ptr->dungeon = wild_grid[wildy][wildx].dungeon;
 	}
-	else
-	{
-		assert(idx >= 0 && idx < 256);
-		ptr->how = how;
-		ptr->idx = idx;
-	}
-	ptr->level = dun_level;
-	ptr->dungeon = wild_grid[wildy][wildx].dungeon;
 }
 
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, int how, int idx)

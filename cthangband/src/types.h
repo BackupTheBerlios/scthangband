@@ -581,7 +581,7 @@ typedef struct object_found object_found;
 struct object_found
 {
 	byte how; /* Found under this set of circumstances. */
-	byte idx; /* Shop, vault, etc., index for this situation. */
+	s16b idx; /* Shop, vault, etc., index for this situation. */
 	byte dungeon; /* Found in/near this dungeon (255 for wilderness). */
 	byte level; /* Found on this level within the dungeon. */
 };

@@ -390,15 +390,7 @@ static void rd_item(object_type *o_ptr)
 	if (has_flag(SF_OBJECT_HISTORY))
 	{
 		rd_byte(&o_ptr->found.how);
-		rd_byte(&o_ptr->found.idx);
-		if (o_ptr->found.how >= FOUND_MONSTER)
-		{
-			int r = (o_ptr->found.how - FOUND_MONSTER) * 256 + o_ptr->found.idx;
-
-			r = MAX(0, convert_r_idx(r, sf_flags_sf, sf_flags_now));
-			o_ptr->found.idx = r % 256;
-			o_ptr->found.how = FOUND_MONSTER + (r / 256);
-		}
+		rd_s16b(&o_ptr->found.idx);
 		rd_byte(&o_ptr->found.dungeon);
 		rd_byte(&o_ptr->found.level);
 	}

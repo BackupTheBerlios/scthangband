@@ -2658,82 +2658,94 @@ static void identify_fully_found_f1(char *buf, uint max, cptr UNUSED fmt,
 	switch (found->how)
 	{
 		case FOUND_UNKNOWN: case FOUND_MIXED:
+		{
 			p += strnfmt(p, end-p, " found");
 			break;
+		}
 		case FOUND_FLOOR:
+		{
 			p += strnfmt(p, end-p, " found on the floor");
 			break;
+		}
 		case FOUND_VAULT:
+		{
 			/* Don't name the vault, as the names are a bit odd. */
 			p += strnfmt(p, end-p, " found in %svault%s", a, s);
 			break;
+		}
 		case FOUND_QUEST:
+		{
 			p += strnfmt(p, end-p, " %squest reward%s", a, s);
 			break;
+		}
 		case FOUND_DIG:
+		{
 			if (unknown)
 				p += strnfmt(p, end-p, " found buried in the ground");
 			else
 				p += strnfmt(p, end-p, " found in %v",
 					feature_desc_f2, found->idx, FDF_INDEF);
 			break;
+		}
 		case FOUND_CHEST:
+		{
 			if (unknown)
 				p += strnfmt(p, end-p, " found in %schest%s", a, s);
 			else
 				p += strnfmt(p, end-p, " found in %v",
 					object_k_name_f1, found->idx);
 			break;
+		}
 		case FOUND_SHOP:
+		{
 			if (unknown)
 				p += strnfmt(p, end-p, "bought from %sshop%s", a, s);
 			else
 				p += strnfmt(p, end-p, " bought from %v",
 					feature_desc_f2, found->idx, FDF_INDEF);
 			break;
+		}
 		case FOUND_BIRTH:
+		{
 			p += strnfmt(p, end-p, " yours from the beginning");
 			break;
+		}
 		case FOUND_SPELL:
+		{
 			p += strnfmt(p, end-p, " conjured out of thin air");
 			break;
+		}
 		case FOUND_CHAOS:
+		{
 			p += strnfmt(p, end-p, " given to you by %s",
 				(unknown) ? "your patron" : chaos_patron_shorts[found->idx-1]);
 			break;
+		}
 		case FOUND_CHEAT:
+		{
 			p += strnfmt(p, end-p, " created to aid debugging");
 			break;
+		}
+		case FOUND_MONSTER:
+		{
+			if (unknown)
+				p += strnfmt(p, end-p, "dropped by %smonster%s", a, s);
+
+			/* Hack - ghosts have unpredictable names. */
+			else if (found->idx == MON_PLAYER_GHOST)
+				p += strnfmt(p, end-p, "dropped by %splayer ghost%s", a, s);
+
+			/* Hack - assume only one monster dropped it. */
+			else
+				p += strnfmt(p, end-p, " dropped by %v",
+					monster_desc_aux_f3, r_info+found->idx, plural ? 2 : 1,
+					MDF_INDEF);
+			break;
+		}
 		default:
 		{
-			/* Hack - monster drops use a 15 bit index. */
-			if (found->how >= FOUND_MONSTER)
-			{
-				int r_idx = (found->how - FOUND_MONSTER) * 256 + found->idx;
-
-				if (!r_idx)
-				{
-					/* Hack - 0 represents an unknown monster. */
-					p += strnfmt(p, end-p, "dropped by %smonster%s", a, s);
-				}
-				else if (r_idx == MON_PLAYER_GHOST)
-				{
-					/* Hack - ghosts have unpredictable names. */
-					p += strnfmt(p, end-p, "dropped by %splayer ghost%s", a, s);
-				}
-				else
-				{
-					/* Hack - assume only one monster dropped it. */
-					p += strnfmt(p, end-p, " dropped by %v",
-						monster_desc_aux_f3, r_info+r_idx, plural ? 2 : 1,
-						MDF_INDEF);
-				}
-			}
-			/* Paranoia */
-			else
-			{
-				p += strnfmt(p, end-p, " obtained mysteriously");
-			}
+			/* Paranoia. */
+			p += strnfmt(p, end-p, " obtained mysteriously");
 		}
 	}
 	if (found->dungeon == FOUND_DUN_WILD)
