@@ -5429,7 +5429,7 @@ static void show_info(void)
 /*
  * The "highscore" file descriptor, if available.
  */
-static int highscore_fd = -1;
+int highscore_fd = -1;
 
 
 /*

@@ -545,7 +545,7 @@ static cptr ini_file = NULL;
 /*
  * Name of application
  */
-static cptr AppName = VERSION_NAME;
+static cptr AppName = GAME_NAME;
 
 /*
  * Name of sub-window type
@@ -1560,7 +1560,9 @@ static errr term_force_font(term_data *td, cptr path)
 	if (!check_file(buf)) return (1);
 
 	/* Load the new font */
+#if 0 /* Check this. */
 	if (!AddFontResource(buf)) return (1);
+#endif
 
 	/* Save new font name */
 	td->font_file = string_make(base);
@@ -1837,11 +1839,7 @@ static errr Term_xtra_win_react(void)
 		use_graphics = arg_graphics;
 
 		/* Reset visuals */
-#ifdef ANGBAND_2_8_1
 		reset_visuals();
-#else /* ANGBAND_2_8_1 */
-		reset_visuals(TRUE);
-#endif /* ANGBAND_2_8_1 */
 	}
 
 #endif /* USE_GRAPHICS */

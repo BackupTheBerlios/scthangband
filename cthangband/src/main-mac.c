@@ -1401,11 +1401,7 @@ static errr Term_xtra_mac_react(void)
 		term_data_resize(td);
 
 		/* Reset visuals */
-#ifdef ZANGBAND
 		reset_visuals();
-#else /* ZANGBAND */
-		reset_visuals(TRUE);
-#endif /* ZANGBAND */
 	}
 
 	/* Handle graphics */
@@ -1428,7 +1424,7 @@ static errr Term_xtra_mac_react(void)
 		term_data_resize(td);
 
 		/* Reset visuals */
-		reset_visuals(TRUE);
+		reset_visuals();
 	}
 
 #endif /* ANGBAND_LITE_MAC */

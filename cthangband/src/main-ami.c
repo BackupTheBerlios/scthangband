@@ -5206,7 +5206,7 @@ static void amiga_gfx(int type)
 	if (!type)
 	{
 		use_graphics = screen_enhanced = 0;
-		reset_visuals(0);
+		reset_visuals();
 		free_gfx();
 		do_cmd_redraw();
 	}
@@ -5248,7 +5248,7 @@ static void amiga_gfx(int type)
 		else
 /*			ANGBAND_GRAF = "old";*/
 
-		reset_visuals(0);
+		reset_visuals();
 		do_cmd_redraw();
 	}
 }
