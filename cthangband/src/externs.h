@@ -287,7 +287,7 @@ extern void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #if (defined(CMD4_C) || defined(TABLES_C))
 extern void print_s16b_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
-#if (defined(CMD4_C) || defined(TABLES_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(TABLES_C))
 extern bool parse_bool(void *out, cptr in);
 #endif
 #if (defined(CMD4_C) || defined(TABLES_C))

@@ -368,6 +368,57 @@ static cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 
 
 /*
+ * Process a "set option to value" request.
+ */
+static cptr set_option(cptr option, cptr value)
+{
+	option_type *op_ptr;
+	option_special *os_ptr;
+	name_entry *old_ptr;
+
+	FOR_ALL_IN(old_options, old_ptr)
+	{
+		if (strcmp(old_ptr->str, option)) continue;
+
+		/* Only mention each option once per game. */
+		if (!old_ptr->idx)
+		{
+			old_ptr->idx = 1;
+			msg_format("Ignoring obsolete option \"%s\".", old_ptr->str);
+		}
+
+		return SUCCESS;
+	}
+
+	FOR_ALL_IN(autosave_info, os_ptr)
+	{
+		if (strcmp(os_ptr->text, option)) continue;
+
+		/* Set the option, or fail. */
+		if (!(*os_ptr->parse)(os_ptr->var, value))
+			return "invalid value for option";
+
+		return SUCCESS;
+	}
+
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+	{
+		if (strcmp(op_ptr->o_text, option)) continue;
+
+		/* Set the option, or fail. */
+		if (!parse_bool(op_ptr->o_var, value))
+			return "invalid value for option";
+			
+		/* Carry out any side-effects this option has. */
+		opt_special_effect(op_ptr);
+
+		return SUCCESS;
+	}
+
+	return "no such option";
+}
+
+/*
  * A strange macro which obtains a race, template or sex index from an index
  * letter or a name in a zz[] parameter.
  */
@@ -446,6 +497,9 @@ static cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
  *
  * Turn an option on, given its name
  *   Y:<str>
+ *
+ * Set an option to a value
+ *   Z:<option>:<value>
  *
  * Set the priority for a particular display and a given window
  *   W:<term name>:<display name>:<triggered>:<untriggered>
@@ -808,63 +862,27 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		}
 
 		/* Process "Y:<str>"/"X:<str>" -- turn option on/off */
-		case 'Y': case 'X':
+		case 'Y':
 		{
-			const option_type *op_ptr;
-			name_entry *old;
-			FOR_ALL_IN(old_options, old)
-			{
-				if (strcmp(old->str, buf+2)) continue;
-
-				/* Only mention each option once per game. */
-				if (!old->idx)
-				{
-					old->idx = 1;
-					msg_format("Ignoring obsolete option \"%s\".", old->str);
-				}
-
-				return SUCCESS;
-			}
-
-			for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
-			{
-				if (op_ptr->o_var && op_ptr->o_text &&
-					!strcmp(op_ptr->o_text, buf + 2))
-				{
-					/* Set the option. */
-					(*op_ptr->o_var) = (buf[0] == 'Y');
-
-					/* Do whatever should be done for it. */
-					opt_special_effect(op_ptr);
-
-					return SUCCESS;
-				}
-			}
-			/* Not a real option. */
-			return "no such option";
+			return set_option(buf+2, "yes");
+		}
+		case 'X':
+		{
+			return set_option(buf+2, "no");
 		}
 		/* Process Z:<option>:<setting> for miscellaneous options. */
 		case 'Z':
 		{
-			option_special *op_ptr;
-
 			/* All options take one parameter, although this can be changed. */
 			if (2 != tokenize(buf+2, 16, zz))
 			{
 				return "format not Z:<option>:<setting>";
 			}
-
-			FOR_ALL_IN(autosave_info, op_ptr)
+			else
 			{
-				if (strcmp(zz[0], op_ptr->text)) continue;
-
-				if (!(*op_ptr->parse)(op_ptr->var, zz[1]))
-					return "invalid value for option";
-
-				return SUCCESS;
+				/* Try to set the option. Return any errors. */
+				return set_option(zz[0], zz[1]);
 			}
-
-			return "no such option";
 		}
 		/* Process W:<term name>:<display name>:<triggered>:<untriggered>
 		 * to a window flag.
