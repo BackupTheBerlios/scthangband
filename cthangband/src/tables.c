@@ -2343,7 +2343,7 @@ static magic_type necromancy_spells[32] =
 		0, SKILL_NECROMANCY, SKILL_CORPORIS, SP_WRAITHFORM},
 };
 
-static magic_type life_spells[32] =
+static magic_type minor_life_spells[8] =
 {
 	{"Detect Evil", "", 1, 1, 10, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_DETECT_EVIL},
@@ -2361,6 +2361,10 @@ static magic_type life_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_CURE_MEDIUM_WOUNDS_2},
 	{"Satisfy Hunger", "", 7, 5, 38, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_SATISFY_HUNGER},
+};
+
+static magic_type lesser_life_spells[8] =
+{
 	{"Remove Curse", "", 7, 6, 38, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_REMOVE_CURSE},
 	{"Cure Poison", "", 9, 6, 38, 
@@ -2377,6 +2381,10 @@ static magic_type life_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_HEALING},
 	{"Glyph of Warding", "", 33, 55, 90, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_GLYPH_OF_WARDING},
+};
+
+static magic_type greater_life_spells[8] =
+{
 	{"Exorcism", "dam LEV;+LEV", 15, 14, 50, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_EXORCISM},
 	{"Dispel Curse", "", 16, 14, 80, 
@@ -2393,6 +2401,10 @@ static magic_type life_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_HOLY_WORD},
 	{"Warding True", "", 44, 44, 80, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_WARDING_TRUE},
+};
+
+static magic_type major_life_spells[8] =
+{
 	{"Heroism", "dur 25+d25", 5, 5, 50, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_HEROISM},
 	{"Prayer", "dur 48+d48", 15, 14, 50, 
@@ -2411,7 +2423,7 @@ static magic_type life_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_HOLY_INVULNERABILITY},
 };
 
-static magic_type wild_spells[32] =
+static magic_type minor_wild_spells[8] =
 {
 	{"Detect Creatures", "", 1, 1, 23, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_DETECT_MONSTERS},
@@ -2429,6 +2441,10 @@ static magic_type wild_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_RESIST_ENVIRONMENT},
 	{"Cure Wounds & Poison", "", 5, 5, 35, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_CURE_WOUNDS_AND_POISON},
+};
+
+static magic_type lesser_wild_spells[8] =
+{
 	{"Stone to Mud", "", 5, 5, 40, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_STONE_TO_MUD},
 	{"Lightning Bolt", "dam LEV-5/4+3;d8", 5, 5, 30, 
@@ -2445,6 +2461,10 @@ static magic_type wild_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_SUMMON_ANIMAL_2},
 	{"Herbal Healing", "heal 1000", 40, 100, 95, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_HERBAL_HEALING},
+};
+
+static magic_type greater_wild_spells[8] =
+{
 	{"Door Building", "", 7, 7, 20, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_DOOR_BUILDING},
 	{"Stair Building", "", 9, 12, 40, 
@@ -2461,6 +2481,10 @@ static magic_type wild_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_WALL_OF_STONE},
 	{"Protect from Corrosion", "", 40, 90, 90, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_PROTECT_FROM_CORROSION},
+};
+
+static magic_type major_wild_spells[8] =
+{
 	{"Earthquake", "rad 10", 20, 18, 60, 
 		0, SKILL_SHAMAN, SKILL_NONE, SP_EARTHQUAKE},
 	{"Whirlwind Attack", "", 23, 23, 80, 
@@ -2479,36 +2503,76 @@ static magic_type wild_spells[32] =
 		0, SKILL_SHAMAN, SKILL_NONE, SP_NATURES_WRATH},
 };
 
-static magic_type cantrip_info[32] =
+static magic_type sulphur_spells[6] =
 {
 	{"Zap", "dam LEV-1/5+3;d3", 1, 1, 20, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_ZAP},
-	{"Wizard Lock", "", 1, 1, 33, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_WIZARD_LOCK},
-	{"Detect Invisibility", "", 2, 1, 33, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_INVISIBILITY},
-	{"Detect Monsters", "", 2, 2, 33, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_MONSTERS},
-	{"Blink", "range 10", 3, 3, 33, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_PHASE_DOOR},
 	{"Light Area", "dam 2dLEV/2", 5, 5, 40, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_LIGHT_AREA},
-	{"Trap & Door Destruction", "", 6, 6, 33, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_TRAP_DOOR_DESTRUCTION_2},
-	{"Cure Light Wounds", "heal 2d8", 7, 7, 44, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_CURE_LIGHT_WOUNDS},
-	{"Detect Doors & Traps", "", 8, 8, 40, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_DOORS_AND_TRAPS},
 	{"Phlogiston", "", 9, 9, 60, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_PHLOGISTON},
-	{"Detect Treasure", "", 10, 10, 50, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_TREASURE},
-	{"Detect Enchantment", "", 11, 11, 50, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_ENCHANTMENT},
-	{"Detect Objects", "", 13, 11, 50, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_OBJECTS},
+	{"Stone to Mud", "", 23, 22, 60, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_STONE_TO_MUD},
+	{"Ray of Light", "dam 6d8", 25, 24, 60, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_RAY_OF_LIGHT},
+	{"Elemental Ball", "dam LEV+75", 46, 40, 66, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_ELEMENTAL_BALL},
+};
+
+static magic_type hemlock_spells[5] =
+{
+	{"Blink", "range 10", 3, 3, 33, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_PHASE_DOOR},
+	{"Teleport", "range LEV*5", 20, 20, 50, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_TELEPORT},
+	{"Teleport Level", "", 39, 36, 80, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_TELEPORT_LEVEL},
+	{"Teleport Away", "", 44, 38, 70, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_TELEPORT_OTHER},
+	{"Word of Recall", "delay 15+d21", 48, 60, 70, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_WORD_OF_RECALL},
+};
+
+static magic_type unicorn_spells[4] =
+{
+	{"Cure Light Wounds", "heal 2d8", 7, 7, 44, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_CURE_LIGHT_WOUNDS},
 	{"Cure Poison", "", 14, 12, 50, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_CURE_POISON},
+	{"Cure Medium Wounds", "heal 4d8", 19, 17, 33, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_CURE_MEDIUM_WOUNDS},
+	{"Satisfy Hunger", "", 28, 25, 70, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_SATISFY_HUNGER},
+};
+
+static magic_type crystal_spells[5] =
+{
+	{"Detect Monsters", "", 2, 2, 33, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_MONSTERS},
+	{"Detect Doors & Traps", "", 8, 8, 40, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_DOORS_AND_TRAPS},
+	{"Detect Treasure", "", 10, 10, 50, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_TREASURE},
+	{"Detect Objects", "", 13, 11, 50, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_OBJECTS},
+	{"Detection", "", 47, 42, 80, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_DETECTION},
+};
+
+static magic_type agaric_spells[4] =
+{
+	{"Detect Invisibility", "", 2, 1, 33, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_INVISIBILITY},
+	{"Detect Enchantment", "", 11, 11, 50, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_DETECT_ENCHANTMENT},
+	{"See Invisible", "dur 24+d24", 30, 28, 60, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_SEE_INVISIBLE},
+	{"Clairvoyance", "dur 25+30", 50, 125, 80, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_CLAIRVOYANCE},
+};
+
+static magic_type garlic_spells[4] =
+{
 	{"Resist Cold", "dur 20+d20", 15, 13, 50, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_RESIST_COLD},
 	{"Resist Fire", "dur 20+d20", 16, 14, 50, 
@@ -2517,34 +2581,18 @@ static magic_type cantrip_info[32] =
 		0, SKILL_HEDGE, SKILL_NONE, SP_RESIST_LIGHTNING},
 	{"Resist Acid", "dur 20+d20", 18, 16, 50, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_RESIST_ACID},
-	{"Cure Medium Wounds", "heal 4d8", 19, 17, 33, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_CURE_MEDIUM_WOUNDS},
-	{"Teleport", "range LEV*5", 20, 20, 50, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_TELEPORT},
-	{"Stone to Mud", "", 23, 22, 60, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_STONE_TO_MUD},
-	{"Ray of Light", "dam 6d8", 25, 24, 60, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_RAY_OF_LIGHT},
-	{"Satisfy Hunger", "", 28, 25, 70, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_SATISFY_HUNGER},
-	{"See Invisible", "dur 24+d24", 30, 28, 60, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_SEE_INVISIBLE},
+};
+
+static magic_type geode_spells[4] =
+{
+	{"Wizard Lock", "", 1, 1, 33, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_WIZARD_LOCK},
+	{"Trap & Door Destruction", "", 6, 6, 33, 
+		0, SKILL_HEDGE, SKILL_NONE, SP_TRAP_DOOR_DESTRUCTION_2},
 	{"Recharging", "", 35, 30, 80, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_RECHARGING},
-	{"Teleport Level", "", 39, 36, 80, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_TELEPORT_LEVEL},
 	{"Identify", "", 42, 37, 60, 
 		0, SKILL_HEDGE, SKILL_NONE, SP_IDENTIFY},
-	{"Teleport Away", "", 44, 38, 70, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_TELEPORT_OTHER},
-	{"Elemental Ball", "dam LEV+75", 46, 40, 66, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_ELEMENTAL_BALL},
-	{"Detection", "", 47, 42, 80, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_DETECTION},
-	{"Word of Recall", "delay 15+d21", 48, 60, 70, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_WORD_OF_RECALL},
-	{"Clairvoyance", "dur 25+30", 50, 125, 80, 
-		0, SKILL_HEDGE, SKILL_NONE, SP_CLAIRVOYANCE},
 };
 
 static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
@@ -2603,21 +2651,21 @@ book_type book_info[MAX_BK] =
 	{IDX(BK_CONJ_1) conjuration_spells, 0x0000ff00},
 	{IDX(BK_CONJ_2) conjuration_spells, 0x00ff0000},
 	{IDX(BK_CONJ_3) conjuration_spells, 0xff000000},
-	{IDX(BK_CHARM_SULPHUR) cantrip_info, 0x10300221},
-	{IDX(BK_CHARM_HEMLOCK) cantrip_info, 0x4a080010},
-	{IDX(BK_CHARM_UNICORN) cantrip_info, 0x00442080},
-	{IDX(BK_CHARM_CRYSTAL) cantrip_info, 0x20001508},
-	{IDX(BK_CHARM_AGARIC) cantrip_info, 0x80800804},
-	{IDX(BK_CHARM_GARLIC) cantrip_info, 0x0003c000},
-	{IDX(BK_CHARM_GEODE) cantrip_info, 0x05000042},
-	{IDX(BK_LIFE_0) life_spells, 0x000000ff},
-	{IDX(BK_LIFE_1) life_spells, 0x0000ff00},
-	{IDX(BK_LIFE_2) life_spells, 0x00ff0000},
-	{IDX(BK_LIFE_3) life_spells, 0xff000000},
-	{IDX(BK_WILD_0) wild_spells, 0x000000ff},
-	{IDX(BK_WILD_1) wild_spells, 0x0000ff00},
-	{IDX(BK_WILD_2) wild_spells, 0x00ff0000},
-	{IDX(BK_WILD_3) wild_spells, 0xff000000},
+	{IDX(BK_CHARM_SULPHUR) sulphur_spells, 0x0000003F},
+	{IDX(BK_CHARM_HEMLOCK) hemlock_spells, 0x0000001F},
+	{IDX(BK_CHARM_UNICORN) unicorn_spells, 0x0000000F},
+	{IDX(BK_CHARM_CRYSTAL) crystal_spells, 0x0000001F},
+	{IDX(BK_CHARM_AGARIC) agaric_spells, 0x0000000F},
+	{IDX(BK_CHARM_GARLIC) garlic_spells, 0x0000000F},
+	{IDX(BK_CHARM_GEODE) geode_spells, 0x000000000F},
+	{IDX(BK_LIFE_0) minor_life_spells, 0x000000ff},
+	{IDX(BK_LIFE_1) lesser_life_spells, 0x000000ff},
+	{IDX(BK_LIFE_2) greater_life_spells, 0x000000ff},
+	{IDX(BK_LIFE_3) major_life_spells, 0x000000ff},
+	{IDX(BK_WILD_0) minor_wild_spells, 0x000000ff},
+	{IDX(BK_WILD_1) lesser_wild_spells, 0x000000ff},
+	{IDX(BK_WILD_2) greater_wild_spells, 0x000000ff},
+	{IDX(BK_WILD_3) major_wild_spells, 0x000000ff},
 	{IDX(BK_MIND) mindcraft_powers, 0x0000fff},
 };
 
