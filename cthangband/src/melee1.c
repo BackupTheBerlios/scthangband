@@ -376,7 +376,11 @@ bool make_attack_normal(int m_idx)
 					for (k = 0; k < 10; k++)
 					{
 						/* Pick an item */
-						i = rand_int(INVEN_PACK);
+						do
+						{
+							i = rand_int(INVEN_TOTAL);
+						}
+						while (i >= INVEN_WIELD && i <= INVEN_FEET);
 
 						/* Obtain the item */
 						o_ptr = &inventory[i];
