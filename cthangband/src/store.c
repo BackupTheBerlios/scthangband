@@ -1245,8 +1245,8 @@ static bool store_will_buy(object_type *o_ptr)
 	/* XXX XXX XXX Ignore "worthless" items */
 	if (object_value(o_ptr) <= 0) return (FALSE);
 
-	/* Assume okay */
-	return (TRUE);
+	/* Okay if there's room */
+	return (store_check_num(o_ptr));
 }
 
 
