@@ -58,7 +58,7 @@ void day_to_date_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 /*
  * Converts stat num into a six-char (right justified) string
  */
-void cnv_stat(int val, char *out_val)
+static void cnv_stat(char *out_val, int val)
 {
 	if (val < 19)
 	{
@@ -74,6 +74,15 @@ void cnv_stat(int val, char *out_val)
 	}
 }
 
+void cnv_stat_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int val = va_arg(*vp, int);
+
+	/* Paranoia. */
+	if (max < 7) return;
+
+	cnv_stat(buf, val);
+}
 
 
 /*
@@ -169,7 +178,7 @@ static void prt_stat(int stat)
 	}
 
 	/* Display number */
-	cnv_stat(p_ptr->stat_use[stat], tmp);
+	strnfmt(tmp, sizeof(tmp), "%v", cnv_stat_f1, tmp);
 	c_put_str(attr, tmp, ROW_STAT + stat, COL_STAT + 6);
 }
 

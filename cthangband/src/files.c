@@ -2619,7 +2619,7 @@ static void display_player_stat_info(void)
       
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out     */
-		cnv_stat(p_ptr->stat_max[i], buf);
+		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_max[i]);
 		c_put_str(TERM_BLUE, buf, row+i, stat_col+5);
       
 		/* Race, template, and equipment modifiers */
@@ -2631,13 +2631,13 @@ static void display_player_stat_info(void)
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+20);
       
 		/* Actual maximal modified value */
-		cnv_stat(p_ptr->stat_top[i], buf);
+		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_top[i]);
 		c_put_str(TERM_L_GREEN, buf, row+i, stat_col+24);
       
 		/* Only display stat_use if not maximal */
 		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
 		{
-			cnv_stat(p_ptr->stat_use[i], buf);
+			strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
 			c_put_str(TERM_YELLOW, buf, row+i, stat_col+31);
 		}
 	}
@@ -2846,7 +2846,7 @@ static void display_player_stat_info_birth(void)
       
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out     */
-		cnv_stat(p_ptr->stat_max[i], buf);
+		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_max[i]);
 		c_put_str(TERM_BLUE, buf, row+i, stat_col+5);
       
 		/* Race, template, and equipment modifiers */
@@ -2858,13 +2858,13 @@ static void display_player_stat_info_birth(void)
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+20);
       
 		/* Actual maximal modified value */
-		cnv_stat(p_ptr->stat_top[i], buf);
+		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_top[i]);
 		c_put_str(TERM_L_GREEN, buf, row+i, stat_col+24);
       
 		/* Only display stat_use if not maximal */
 		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
 		{
-			cnv_stat(p_ptr->stat_use[i], buf);
+			strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
 			c_put_str(TERM_YELLOW, buf, row+i, stat_col+31);
 		}
 	}
@@ -3199,7 +3199,7 @@ static void display_player_name_stats(void)
 				value = p_ptr->stat_use[i];
 
 				/* Obtain the current stat (modified) */
-				cnv_stat(value, buf);
+				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_max[i]);
 
 				/* Display the current stat (modified) */
 				c_put_str(TERM_YELLOW, buf, 2 + i, 66);
@@ -3208,7 +3208,7 @@ static void display_player_name_stats(void)
 				value = p_ptr->stat_top[i];
 
 				/* Obtain the maximum stat (modified) */
-				cnv_stat(value, buf);
+				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, value);
 
 				/* Display the maximum stat (modified) */
 				c_put_str(TERM_L_GREEN, buf, 2 + i, 73);
@@ -3221,7 +3221,7 @@ static void display_player_name_stats(void)
 				put_str(stat_names[i], 2 + i, 61);
 
 				/* Obtain the current stat (modified) */
-				cnv_stat(p_ptr->stat_use[i], buf);
+				strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
 
 				/* Display the current stat (modified) */
 				c_put_str(TERM_L_GREEN, buf, 2 + i, 66);

@@ -1674,7 +1674,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 				{
 					w=modify_stat_value(w, race_info[sd_ptr->race].r_adj[z]+template_info[sd_ptr->template].c_adj[z]);
 				}
-				cnv_stat(w, stat);
+				strnfmt(stat, sizeof(stat), "%v", cnv_stat_f1, w);
 				w = 0;
 				while (stat[w] == ' ') w++;
 				sprintf(buf+strlen(buf), "%s%s%s", (z) ? "," : "", stat+w, (z+1 < A_MAX) ? "" : ")");
@@ -2644,7 +2644,7 @@ static void birth_put_stats(void)
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Put the stat */
-		cnv_stat(p_ptr->stat_use[i], buf);
+		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
 		c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
 
 		/* Put the percent */
