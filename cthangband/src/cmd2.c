@@ -2239,7 +2239,13 @@ void do_cmd_stay(int pickup)
 void do_cmd_rest(void)
 {
 	/* Don't actually do anything if already resting. */
-	if (command_rep) return;
+	if (command_rep)
+	{
+		/* Take a turn XXX XXX XXX (?) */
+		energy_use = extract_energy[p_ptr->pspeed];
+
+		return;
+	}
 
 	/* Prompt for time if needed */
 	if (command_arg <= 0)
