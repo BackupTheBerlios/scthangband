@@ -3873,6 +3873,6 @@ void update_object(object_type *o_ptr)
 	 * There may be a better place to put this. */
 	if (!o_ptr->stack) set_stack_number(o_ptr);
 
-	return update_objects(find_object(o_ptr));
+	update_objects(find_object(o_ptr));
 }
 
