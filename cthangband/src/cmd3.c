@@ -453,8 +453,6 @@ void do_cmd_destroy(void)
 
 	object_type		*o_ptr;
 
-	char		out_val[160];
-
 
 	/* Hack -- force destruction */
 	if (command_arg > 0) force = TRUE;
@@ -504,7 +502,7 @@ void do_cmd_destroy(void)
 		if (!((auto_destroy) && (object_value(o_ptr)<1)))
 		{
 			/* Make a verification */
-			if (!get_check(format(out_val, "Really destroy %v? ",
+			if (!get_check(format("Really destroy %v? ",
 				object_desc_f3, o_ptr, TRUE, 3))) return;
 			
 		}
