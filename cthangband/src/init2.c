@@ -250,8 +250,6 @@ static errr check_modification_date(int fd, cptr template_file)
 static void init_header_aux(header *head, int len, int num,
 	parse_info_txt_func parse, cptr name)
 {
-	WIPE(head, header);
-
 	/* Save the "version" */
 	head->v_major = VERSION_MAJOR;
 	head->v_minor = VERSION_MINOR;
@@ -268,6 +266,22 @@ static void init_header_aux(header *head, int len, int num,
 #ifdef ALLOW_TEMPLATES
 	head->parse_info_txt = parse;
 #endif /* ALLOW_TEMPLATES */
+
+	/* Set other fields to default values. */
+	head->info_num = 0;
+	head->info_size = 0;
+	head->name_size = 0;
+	head->text_size = 0;
+
+	head->info_ptr = NULL;
+	head->name_ptr = NULL;
+	head->text_ptr = NULL;
+
+	/* For z_info, the working array is the real array. */
+	if (num == Z_HEAD)
+	{
+		C_MAKE(head->info_ptr, 1, maxima);
+	}
 }
 
 /* Just because... */
@@ -300,8 +314,12 @@ static errr init_info_raw(int fd, header *head)
 	head->text_size = test.text_size;
 
 
-	/* Allocate the "*_info" array */
-	C_MAKE(head->info_ptr, head->info_size, char);
+	/* z_head->info_ptr already points to the real array. */
+	if (head->header_num != Z_HEAD)
+	{
+		/* Allocate the "*_info" array */
+		C_MAKE(head->info_ptr, head->info_size, char);
+	}
 
 	/* Read the "*_info" array */
 	fd_read(fd, head->info_ptr, head->info_size);
@@ -408,15 +426,15 @@ static void init_info(header *head)
 	{
 		/*** Make the fake arrays ***/
 
-		if (head->header_num == Z_HEAD)
+		if (head->header_num != Z_HEAD)
 		{
-			C_MAKE(head->info_ptr, sizeof(maxima), char);
+			head->info_ptr = C_WIPE(head->fake_info_ptr, z_info->fake_info_size, char);
+			head->name_ptr = C_WIPE(head->fake_name_ptr, z_info->fake_name_size, char);
+			head->text_ptr = C_WIPE(head->fake_text_ptr, z_info->fake_text_size, char);
 		}
 		else
 		{
-			C_MAKE(head->info_ptr, z_info->fake_info_size, char);
-			C_MAKE(head->name_ptr, z_info->fake_name_size, char);
-			C_MAKE(head->text_ptr, z_info->fake_text_size, char);
+			head->info_ptr = C_WIPE(head->info_ptr, sizeof(maxima), char);
 		}
 
 		/*** Load the ascii template file ***/
@@ -519,16 +537,6 @@ static void init_info(header *head)
 			/* Close */
 			fd_close(fd);
 		}
-
-
-		/*** Kill the fake arrays ***/
-
-		/* Free the "*_info" array */
-		KILL2(head->info_ptr);
-
-		/* MegaHack -- Free the "fake" arrays */
-		KILL2(head->name_ptr);
-		KILL2(head->text_ptr);
 
 #endif /* ALLOW_TEMPLATES */
 
@@ -1879,11 +1887,16 @@ void init_angband(void)
 	init_x_info("maxima", maxima, parse_z_info, "z_info", z_info,
 		dummy, dummy, u_max, Z_HEAD);
 
+	/* Initialise the fake arrays now their sizes are known. */
+	C_MAKE(head->fake_info_ptr, z_info->fake_info_size, char);
+	C_MAKE(head->fake_name_ptr, z_info->fake_name_size, char);
+	C_MAKE(head->fake_text_ptr, z_info->fake_text_size, char);
+
 	init_x_info("features", feature_type, parse_f_info, "f_info", f_info,
 		f_name, f_text, f_max, 0)
 
 	init_x_info("objects", object_kind, parse_k_info, "k_info", k_info,
-		k_name, k_text, k_max, 0)
+		k_name, k_text, k_max, K_HEAD)
 
 	/* Initialize unidentified object info
 	 * This leaves space for scrolls, and checks that it is large
@@ -1915,6 +1928,11 @@ void init_angband(void)
 	note("[Initializing arrays... (vaults)]");
 	init_x_info("vaults", vault_type, parse_v_info, "v_info", v_info,
 		v_name, v_text, v_max, 0)
+
+	/* Delete the fake arrays, we're done with them. */
+	KILL2(head->fake_info_ptr);
+	KILL2(head->fake_name_ptr);
+	KILL2(head->fake_text_ptr);
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (other)]");

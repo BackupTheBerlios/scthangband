@@ -78,7 +78,7 @@
  * arguments to the relevent functions.
  */
 
-#if (defined(INIT1_C) || defined(INIT2_C) || defined(VARIABLE_C))
+#if (defined(INIT1_C) || defined(INIT2_C))
 
 typedef struct header header;
 
@@ -91,11 +91,9 @@ struct header
 	byte v_patch;		/* Version -- patch */
 	byte v_extra;		/* Version -- extra */
 
-
 	u16b info_num;		/* Number of "info" records */
 
 	u16b info_len;		/* Size of each "info" record */
-
 
 	u32b info_size;		/* Size of the "info" array in bytes */
 
@@ -105,14 +103,16 @@ struct header
 
 	cptr file_name;		/* Base name of the file to be parsed. */
 
-	void *info_ptr;
-	char *name_ptr;
-	char *text_ptr;
+	void *info_ptr; 
+	char *name_ptr; 
+	char *text_ptr; 
+	void *fake_info_ptr;
+	char *fake_name_ptr;
+	char *fake_text_ptr;
 
 	parse_info_txt_func parse_info_txt;
 
 	u16b header_num;
-	u32b head_size; /* KILLME */
 };
 
 #endif

@@ -1623,6 +1623,8 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 
 
 
+static object_kind *kt_info = NULL;
+
 /*
  * Initialize the "k_info" array, by parsing an ascii "template" file
  */
@@ -1633,7 +1635,7 @@ errr parse_k_info(char *buf, header *head)
 	char *s, *t;
 
 	/* Current entry */
-	static object_kind *k_ptr = NULL, *kt_info = NULL;
+	static object_kind *k_ptr = NULL;
 	
 	if (!kt_info) C_MAKE(kt_info, 256, object_kind);
 
@@ -1996,14 +1998,7 @@ if (scrolls) \
  */
 errr parse_u_info(char *buf, header *head)
 {
-	static byte *u_ptr_p_id = NULL, *u_ptr_s_id = NULL;
-
 	char *s;
-
-	/* Hack - store p_id and s_id until they are abandoned. */
-	if (!u_ptr_p_id) C_MAKE(u_ptr_p_id, MAX_I, byte);
-	if (!u_ptr_s_id) C_MAKE(u_ptr_p_id, MAX_I, byte);
-
 
 	/* If this isn't the start of a record, there should already be one. */
 	if (!strchr("MN", *buf) && !u_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -2959,6 +2954,11 @@ static errr init_info_txt_final(header *head)
 		case U_HEAD:
 		{
 			do_u_finish_off
+			break;
+		}
+		case K_HEAD:
+		{
+			KILL2(kt_info);
 			break;
 		}
 	}
