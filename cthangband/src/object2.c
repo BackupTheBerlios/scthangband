@@ -3173,7 +3173,7 @@ void set_object_found(object_type *o_ptr, int how, int idx)
 		ptr->idx = idx;
 	}
 	ptr->level = dun_level;
-	ptr->dungeon = cur_dungeon;
+	ptr->dungeon = wild_grid[wildy][wildx].dungeon;
 }
 
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, int how, int idx)
