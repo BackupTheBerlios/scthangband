@@ -2731,12 +2731,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define HOOK_ERROR_NO_SUCH_HOOK	201
 #define HOOK_ERROR_OUT_OF_MEMORY 202
 
-/* Errors from process_pref_file_aux(). */
-#define PREF_ERROR_GENERIC	301
-#define PREF_ERROR_UNKNOWN_PARAMETER 302
-#define PREF_ERROR_OUT_OF_BOUNDS	303
-#define PREF_ERROR_INCORRECT_SYNTAX	304
-
 /* Errors from genocide(), etc.. */
 #define POWER_ERROR_ABORT 401
 #define POWER_ERROR_FAIL 402

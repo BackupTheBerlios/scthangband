@@ -1499,6 +1499,7 @@ good:	/* Success */
 void do_cmd_pref(void)
 {
 	char buf[80];
+	cptr err;
 	u16b sf_flags = sf_flags_now;
 
 	/* Default */
@@ -1511,9 +1512,9 @@ void do_cmd_pref(void)
 	message_add(buf);
 
 	/* Process that pref command */
-	if (process_pref_file_aux(buf, &sf_flags))
+	if ((err = process_pref_file_aux(buf, &sf_flags)))
 	{
-		msg_print("Failed!");
+		bell(err);
 	}
 }
 

@@ -188,8 +188,9 @@ static s16b tokenize(char *buf, s16b num, char **tokens)
 
 /*
  * Insert a set of stats into the stat_default array.
+ * Returns NULL on success, and an error string on failure.
  */
-errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
+cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
 {
 	stat_default_type *sd_ptr;
 	byte i;
@@ -208,27 +209,30 @@ errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
 	/* Ignore nonsense values */
 	if (maximise != DEFAULT_STATS)
 	{
-		if (sex < 0 || sex >= MAX_SEXES) return PARSE_ERROR_OUT_OF_BOUNDS;
-		if (race < 0 || race >= MAX_RACES) return PARSE_ERROR_OUT_OF_BOUNDS;
-		if (template < 0 || template >= MAX_TEMPLATE) return PARSE_ERROR_OUT_OF_BOUNDS;
-		if (maximise != TRUE && maximise != FALSE) return PARSE_ERROR_OUT_OF_BOUNDS;
+		if (sex < 0 || sex >= MAX_SEXES) return "no such sex";
+		if (race < 0 || race >= MAX_RACES) return "no such race";
+		if (template < 0 || template >= MAX_TEMPLATE) return "no such template";
+		if (maximise != TRUE && maximise != FALSE) return "bad maximuse value";
 		for (i = 0; i < A_MAX; i++)
 		{
 			if (maximise)
 			{
 				/* Stats above 17 are not allowed. */
-				if (stat[i] > 17) return PARSE_ERROR_OUT_OF_BOUNDS;
+				if (stat[i] > 17) return "bad stat value";
 
 				/* Stats below 8 with external values below 3 are not allowed. */
-				if (stat[i] < 8 && stat[i]+race_info[race].r_adj[i]+template_info[template].c_adj[i] < 3) return PARSE_ERROR_OUT_OF_BOUNDS;
+				if (stat[i] < 8 && stat[i]+race_info[race].r_adj[i] +
+					template_info[template].c_adj[i] < 3)
+					return "bad stat value";
 			}
 			else
 			{
 				/* Stats above their maxima are not allowed. */
-				if (stat[i] > maxstat(race, template, i)) return PARSE_ERROR_OUT_OF_BOUNDS;
+				if (stat[i] > maxstat(race, template, i))
+					return "bad stat value";
 
 				/* Stats below 3 are not allowed. */
-				if (stat[i] < 3) return PARSE_ERROR_OUT_OF_BOUNDS;
+				if (stat[i] < 3) return "bad stat value";
 			}
 		}
 	}
@@ -240,7 +244,7 @@ errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
 	if (stat_default_total == MAX_STAT_DEFAULT)
 	{
 		/* Too many defaults, so give an error in the absence of a better idea. */
-		return PARSE_ERROR_OUT_OF_MEMORY;
+		return "too many stat values";
 	}
 
 	sd_ptr = &stat_default[stat_default_total];
@@ -257,7 +261,7 @@ errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
 	sd_ptr->name = quark_add(name);
 
 	/* Require space for the name. */
-	if (!sd_ptr->name) return PARSE_ERROR_OUT_OF_MEMORY;
+	if (!sd_ptr->name) return "too many strings";
 
 	/* Look for duplicates.
 	 * These are common as saving creates a new copy of everything.
@@ -284,7 +288,7 @@ errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
 
 	/* No duplicates, so advance the index */
 	if (i == stat_default_total) stat_default_total++;
-	return SUCCESS;
+	return NULL;
 }
 
 /*
@@ -374,8 +378,10 @@ errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
  *
  * Specify the screen location of a redraw_stuff() display.
  *   L:<name>:<x>:<y>
+ *
+ * Returns NULL on success, an error message on failure.
  */
-errr process_pref_file_aux(char *buf, u16b *sf_flags)
+cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 {
 	int i, j, n1, n2;
 
@@ -391,7 +397,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 	if (buf[0] == '#') return (0);
 
 	/* Require "?:*" format */
-	if (buf[1] != ':') return (1);
+	if (buf[1] != ':') return "missing colon";
 
 
 	/* Process "%:<fname>" */
@@ -401,7 +407,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case '%': 
 		{
 			/* Attempt to Process the given file */
-			return (process_pref_file(buf + 2));
+			process_pref_file(buf + 2);
 		}
 		/* Process O:<version> -- save file version for this file. */
 		case 'O': 
@@ -417,17 +423,17 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			{
 				monster_race *r_ptr;
 				i = (huge)strtol(zz[0], NULL, 0);
-				if (i < 0 || i > MAX_SHORT) return (1);
+				if (i < 0 || i > MAX_SHORT) return "no such monster";
 				i = convert_r_idx(i, sf_flags[0], sf_flags_now);
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
-				if (i >= MAX_R_IDX) return (1);
+				if (i >= MAX_R_IDX) return "no such monster";
 				r_ptr = &r_info[i];
 				if (n1) r_ptr->x_attr = n1;
 				if (n2) r_ptr->x_char = n2;
 				return (0);
 			}
-			else return (1);
+			else return "format not R:<num>:<a>/<c>";
 		}
 		/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
 		case 'K':
@@ -437,17 +443,17 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			{
 				object_kind *k_ptr;
 				i = (huge)strtol(zz[0], NULL, 0);
-				if (i < 0 || i > MAX_SHORT) return (1);
+				if (i < 0 || i > MAX_SHORT) return "no such object";
 				i = convert_k_idx(i, sf_flags[0], sf_flags_now);
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
-				if (i >= MAX_K_IDX) return (1);
+				if (i >= MAX_K_IDX) return "no such object";
 				k_ptr = &k_info[i];
 				if (n1) k_ptr->x_attr = n1;
 				if (n2) k_ptr->x_char = n2;
 				return (0);
 			}
-			else return (1);
+			else return "format not K:<num>:<a>/<c>";
 		}
 		/* Process "U:<p_id>:<s_id>:<a>/<c>"  -- attr/char for unidentified objects */
 		case 'U':
@@ -460,17 +466,18 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				j = (huge)strtol(zz[1], NULL, 0);
 				n1 = strtol(zz[2], NULL, 0);
 				n2 = strtol(zz[3], NULL, 0);
-				if (i < 0 || i > 255 || j < 0 || j > 255) return (1);
+				if (i < 0 || i > 255 || j < 0 || j > 255)
+					return "no such unidentified object";
 
 				i = lookup_unident(i,j);
-				if (i >= MAX_U_IDX) return (1);
-				if (i < 0) return (1);
+				if (i < 0 || i >= MAX_U_IDX)
+					return "no such unidentified object";
 				u_ptr = &u_info[i];
 				if (n1) u_ptr->x_attr = n1;
 				if (n2) u_ptr->x_char = n2;
 				return (0);
 			}
-			else return (1);
+			else return "format not U:<p_id>:<s_id>:<a>/<c>";
 		}
 
 		/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
@@ -483,13 +490,13 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				i = (huge)strtol(zz[0], NULL, 0);
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
-				if (i >= MAX_F_IDX) return (1);
+				if (i >= MAX_F_IDX) return "no such feature";
 				f_ptr = &f_info[i];
 				if (n1) f_ptr->x_attr = n1;
 				if (n2) f_ptr->x_char = n2;
 				return (0);
 			}
-			else return (1);
+			else return "format not F:<num>:<a>/<c>";
 		}
 
 
@@ -505,7 +512,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				if (n2) tval_to_char[j] = n2;
 				return (0);
 			}
-			else return (1);
+			else return "format not E:<tv>:<a>/<c>";
 		}
 
 
@@ -543,13 +550,14 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				return SUCCESS;
 			}
 	
-			if (tokenize(buf+2, 2, zz) != 2) return (1);
+			if (tokenize(buf+2, 2, zz) != 2) return "format not C:<mode>:<key>";
 	
 			mode = strtol(zz[0], NULL, 0);
-			if ((mode < 0) || (mode >= KEYMAP_MODES)) return (1);
+			if ((mode < 0) || (mode >= KEYMAP_MODES))
+				return "no such keymap mode";
 	
 			if (strlen(format("%v", text_to_ascii_f1, zz[1])) != 1)
-				return (1);
+				return "no such key";
 			i = (byte)(format(0)[0]);
 	
 			FREE(keymap_act[mode][i]);
@@ -572,14 +580,15 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				angband_color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
 				return (0);
 			}
-			else return (1);
+			else return "format not V:<num>:<kv>:<rv>:<gv>:<bv>";
 		}
 
 		/* Process M:<attr>:<attr>... -- set monster memory colours */
 		case 'M':
 		{
 			/* Expect M:xx:xx:xx:xx (MAX_MONCOL times) format. */
-			if (strlen(buf) < MAX_MONCOL*3+1) return 1;
+			if (strlen(buf) < MAX_MONCOL*3+1)
+				return "format not M:<attr>:<attr>:...";
 			for (i = 0; i < MAX_MONCOL; i++)
 			{
 				moncol_type *mc_ptr = &moncol[i];
@@ -589,12 +598,12 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				if (strchr(atchar, c2))
 					mc_ptr->attr = strchr(atchar, c2)-atchar;
 				else
-					return 1;
+					return "unidentified colour";
 				/* Then read the first character, if present. */
 				if (strchr(atchar, c1))
 					mc_ptr->attr += 16*(strchr(atchar, c1)-atchar);
 				else if (c1 != ' ')
-					return 1;
+					return "unidentified colour";
 			}
 			return 0;
 		}
@@ -618,14 +627,14 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				}
 			}
 			/* Not a real option. */
-			return (1);
+			return "no such option";
 		}
 		/* Process W:<term name>:<display name>:<triggered>:<untriggered>
 		 * to a window flag.
 		 */
 		case 'W':
 		{
-			cptr goodpri = ".abcdefghij";
+			cptr goodpri = ".abcdefghij.0123456789";
 			uint display, pri, rep;
 			window_type *w_ptr;
 
@@ -644,29 +653,28 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 
 
 			if (tokenize(buf+2, 4, zz) != 4)
-				return PREF_ERROR_INCORRECT_SYNTAX;
+				return "format not W:<window>:<display>:<triggered>:<untriggered>";
 
 			/* Identify the term and display strings. */
 			for (w_ptr = windows;; w_ptr++)
 			{
 				if (w_ptr == END_PTR(windows))
-					return PREF_ERROR_UNKNOWN_PARAMETER;
+					return "no such window";
 				if (!strcmp(w_ptr->name, zz[0])) break;
 			}
 			for (display = 0;; display++)
 			{
 				if (display == NUM_DISPLAY_FUNCS)
-					return PREF_ERROR_UNKNOWN_PARAMETER;
+					return "no such display";
 				if (!strcmp(display_func[display].name, zz[1])) break;
 			}
 
 			/* Identify the triggered and untriggered numbers. */
-			if (!strchr(goodpri, zz[2][0]) || zz[2][1])
-				return PREF_ERROR_OUT_OF_BOUNDS;
-			if (!strchr(goodpri, zz[3][0]) || zz[3][1])
-				return PREF_ERROR_OUT_OF_BOUNDS;
-			rep = strchr(goodpri, zz[2][0])-goodpri;
-			pri = strchr(goodpri, zz[3][0])-goodpri;
+			if ((!strchr(goodpri, zz[2][0]) || zz[2][1]) ||
+				!strchr(goodpri, zz[3][0]) || zz[3][1])
+				return "no such priority";
+			rep = (strchr(goodpri, zz[2][0])-goodpri)%11;
+			pri = (strchr(goodpri, zz[3][0])-goodpri)%11;
 
 			/* Enact the requests and return. */
 			w_ptr->rep[display] = rep;
@@ -679,7 +687,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case 'D':
 		{
 			byte total = tokenize(buf+2, 11, zz);
-			errr err;
+			cptr err;
 			/* We can accept D with or without a name, but everything else must be there. */
 			switch (total)
 			{
@@ -705,7 +713,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 					break;
 				}
 				default:
-				return PARSE_ERROR_OUT_OF_BOUNDS;
+				return "format not D:<sex>:<race>:<class>:<maximise>:<str>:<int>:<wis>:<dex>:<con>:<chr>:<name>";
 			}
 			return err;
 		}
@@ -720,17 +728,17 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				{
 					if (!strcmp(co_ptr->name, zz[0])) goto L_okay;
 				}
-				return PARSE_ERROR_INVALID_FLAG;
+				return "no such display";
 L_okay:
 
 				if (!isdigit(zz[1][0]) || !isdigit(zz[2][0]))
-					return PARSE_ERROR_GENERIC;
+					return "non-numerical co-ordinate";
 
 				x = atoi(zz[1]);
 				y = atoi(zz[2]);
 
 				if (x < -255 || x > 255 || y < -255 || y > 255)
-					return PARSE_ERROR_OUT_OF_BOUNDS;
+					return "co-ordinates must be between -255 and 255";
 
 				co_ptr->x = x;
 				co_ptr->y = y;
@@ -739,13 +747,13 @@ L_okay:
 			}
 			else
 			{
-				return PREF_ERROR_INCORRECT_SYNTAX;
+				return "format not L:<display>:<x>:<y>";
 			}
 		}
 		default:
 		{
 			/* Failure */
-			return (1);
+			return "no such preference category";
 		}
 	}
 }
@@ -983,7 +991,7 @@ errr process_pref_file(cptr name)
 
 	int num;
 
-	errr err = 0;
+	cptr err = 0;
 
 	bool bypass = FALSE;
 
@@ -996,7 +1004,7 @@ errr process_pref_file(cptr name)
 		!((fp = my_fopen_path(ANGBAND_DIR_USER, name, "r"))))
 
 	/* No such file */
-		return (-1);
+		return FILE_ERROR_CANNOT_OPEN_FILE;
 
 
 	/* Process the file */
@@ -1032,7 +1040,7 @@ errr process_pref_file(cptr name)
 		if (buf[0] == '%')
 		{
 			/* Process that file if allowed */
-			(void)process_pref_file(buf + 2);
+			process_pref_file(buf + 2);
 
 			/* Continue */
 			continue;
@@ -1053,7 +1061,7 @@ errr process_pref_file(cptr name)
 	if (err)
 	{
 		/* Useful error message */
-		msg_format("Error %d in line %d of file '%s'.", err, num, name);
+		msg_format("Error \"%s\" in line %d of file '%s'.", err, num, name);
 		msg_format("Parsing '%s'", buf);
 	}
 
@@ -1061,7 +1069,7 @@ errr process_pref_file(cptr name)
 	my_fclose(fp);
 
 	/* Result */
-	return (err);
+	return (err) ? PARSE_ERROR_GENERIC : SUCCESS;
 }
 
 

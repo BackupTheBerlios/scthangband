@@ -441,10 +441,10 @@ extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C))
-extern errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name);
+extern cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C))
-extern errr process_pref_file_aux(char *buf, u16b *sf_flags);
+extern cptr process_pref_file_aux(char *buf, u16b *sf_flags);
 #endif
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(OBJECT1_C))
 extern errr process_pref_file(cptr name);
