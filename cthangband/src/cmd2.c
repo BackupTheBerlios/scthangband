@@ -3516,14 +3516,14 @@ static void use_power(powertype *pw_ptr)
 
 				if (o_ptr->tval == TV_ROD)
         {
-					if (o_ptr->pval > 0)
+					if (o_ptr->timeout > 0)
 		{
 						msg_print("You can't absorb energy from a discharged rod.");
 		}
 					else
 		{
 						p_ptr->csp += 2*lev;
-						o_ptr->pval = 500;
+						o_ptr->timeout = 500;
 	}
     }
         else

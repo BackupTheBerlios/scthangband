@@ -1515,3 +1515,16 @@ X:lous~
 Y:l%-Pous%+Pi%=P
 F:r_info:N:3
 
+# Variable default timeouts for rods
+
+X:11-20
+Y:-1
+F:k_info:I:3
+
+X:11-21
+Y:-2
+F:k_info:I:3
+
+X:16-30
+Y:-3
+F:k_info:I:3

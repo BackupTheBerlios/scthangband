@@ -1317,8 +1317,8 @@ static int home_carry(object_type *o_ptr)
        /* Hack:  otherwise identical rods sort by
           increasing recharge time --dsb */
        if (o_ptr->tval == TV_ROD) {
-           if (o_ptr->pval < j_ptr->pval) break;
-           if (o_ptr->pval > j_ptr->pval) continue;
+           if (o_ptr->timeout < j_ptr->timeout) break;
+           if (o_ptr->timeout > j_ptr->timeout) continue;
        }
 
 		/* Objects sort by decreasing value */
@@ -1414,8 +1414,8 @@ static int store_carry(object_type *o_ptr)
        /* Hack:  otherwise identical rods sort by
           increasing recharge time --dsb */
        if (o_ptr->tval == TV_ROD) {
-           if (o_ptr->pval < j_ptr->pval) break;
-           if (o_ptr->pval > j_ptr->pval) continue;
+           if (o_ptr->timeout < j_ptr->timeout) break;
+           if (o_ptr->timeout > j_ptr->timeout) continue;
        }
   
         /* Evaluate that slot */

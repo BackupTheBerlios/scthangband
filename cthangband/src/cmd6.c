@@ -1728,29 +1728,21 @@ void get_device_chance(object_type *o_ptr, int *num, int *denom)
 	int lev;
 	if (is_wand_p(k_info+o_ptr->k_idx))
 	{
-		lev = MIN(wand_power(k_info+o_ptr->k_idx), 50);
+		lev = wand_power(k_info+o_ptr->k_idx);
 	}
-	switch (o_ptr->tval)
+	else if (artifact_p(o_ptr))
 	{
-		case TV_ROD: case TV_WAND: case TV_STAFF:
-		{
-		}
-		default:
-		{
-			if (artifact_p(o_ptr))
-			{
-				/* Use the artefact level for normal artefacts. */
-				lev = a_info[o_ptr->name1].level;
-			}
-			else
-			{
-				/* Extract the base item level otherwise. */
-				lev = object_k_level(k_info+o_ptr->k_idx);
-			}
-			/* Limit the difficulty. */
-			lev = MIN(lev, 50);
-		}
+		/* Use the artefact level for normal artefacts. */
+		lev = a_info[o_ptr->name1].level;
 	}
+	else
+	{
+		/* Extract the base item level otherwise. */
+		lev = object_k_level(k_info+o_ptr->k_idx);
+	}
+
+	/* Hack - Limit the difficulty. */
+	lev = MIN(lev, 50);
 
 	/* Base chance of success */
 	*num = USE_DEVICE;
@@ -2779,7 +2771,7 @@ void do_cmd_zap_rod(int item)
 	ident = FALSE;
 
 	/* Still charging */
-	if (o_ptr->pval)
+	if (o_ptr->timeout)
 	{
 		if (flush_failure) flush();
 		msg_print("The rod is still charging.");
@@ -2802,6 +2794,8 @@ void do_cmd_zap_rod(int item)
 	skill_exp(SKILL_DEVICE);
 
 
+
+
 	/* Analyze the rod */
 	switch (o_ptr->k_idx)
 	{
@@ -2809,7 +2803,6 @@ void do_cmd_zap_rod(int item)
 		{
 			if (detect_traps()) ident = TRUE;
 			if (object_aware_p(o_ptr) || ident) mark_traps();
-            o_ptr->pval = (10 + (randint(10)));
 			break;
 		}
 
@@ -2817,7 +2810,6 @@ void do_cmd_zap_rod(int item)
 		{
 			if (detect_doors()) ident = TRUE;
 			if (detect_stairs()) ident = TRUE;
-			o_ptr->pval = 70;
 			break;
 		}
 
@@ -2825,7 +2817,6 @@ void do_cmd_zap_rod(int item)
 		{
 			ident = TRUE;
 			if (!ident_spell()) use_charge = FALSE;
-			o_ptr->pval = 10;
 			break;
 		}
 
@@ -2857,22 +2848,19 @@ void do_cmd_zap_rod(int item)
 				p_ptr->word_recall = 0;
 			}
 			ident = TRUE;
-			o_ptr->pval = 60;
 			break;
 		}
 
 		case OBJ_ROD_ILLUMINATION:
 		{
 			if (lite_area(damroll(2, 8), 2)) ident = TRUE;
-            o_ptr->pval = 10 + (randint(11));
-			break;
+ 			break;
 		}
 
 		case OBJ_ROD_ENLIGHTENMENT:
 		{
 			map_area();
 			ident = TRUE;
-			o_ptr->pval = 99;
 			break;
 		}
 
@@ -2880,7 +2868,6 @@ void do_cmd_zap_rod(int item)
 		{
 			detect_all();
 			ident = TRUE;
-			o_ptr->pval = 99;
 			break;
 		}
 
@@ -2888,7 +2875,6 @@ void do_cmd_zap_rod(int item)
 		{
 			probing();
 			ident = TRUE;
-			o_ptr->pval = 50;
 			break;
 		}
 
@@ -2900,7 +2886,6 @@ void do_cmd_zap_rod(int item)
 			if (set_stun(0)) ident = TRUE;
 			if (set_cut(0)) ident = TRUE;
             if (set_image(0)) ident = TRUE;
-			o_ptr->pval = 999;
 			break;
 		}
 
@@ -2909,7 +2894,6 @@ void do_cmd_zap_rod(int item)
 			if (hp_player(500)) ident = TRUE;
 			if (set_stun(0)) ident = TRUE;
 			if (set_cut(0)) ident = TRUE;
-			o_ptr->pval = 999;
 			break;
 		}
 
@@ -2922,7 +2906,6 @@ void do_cmd_zap_rod(int item)
 			if (do_res_stat(A_DEX)) ident = TRUE;
 			if (do_res_stat(A_CON)) ident = TRUE;
 			if (do_res_stat(A_CHR)) ident = TRUE;
-			o_ptr->pval = 999;
 			break;
 		}
 
@@ -2936,21 +2919,18 @@ void do_cmd_zap_rod(int item)
 			{
 				(void)set_fast(p_ptr->fast + 5);
 			}
-			o_ptr->pval = 99;
 			break;
 		}
 
 		case OBJ_ROD_TELEPORT_OTHER:
 		{
 			if (teleport_monster(dir)) ident = TRUE;
-			o_ptr->pval = 25;
 			break;
 		}
 
 		case OBJ_ROD_DISARMING:
 		{
 			if (disarm_trap(dir)) ident = TRUE;
-            o_ptr->pval = 15 + (randint(15));
 			break;
 		}
 
@@ -2959,35 +2939,30 @@ void do_cmd_zap_rod(int item)
 			msg_print("A line of blue shimmering light appears.");
 			lite_line(dir);
 			ident = TRUE;
-			o_ptr->pval = 9;
 			break;
 		}
 
 		case OBJ_ROD_SLEEP_MONSTER:
 		{
 			if (sleep_monster(dir,(skill_set[SKILL_DEVICE].value/2))) ident = TRUE;
-			o_ptr->pval = 18;
 			break;
 		}
 
 		case OBJ_ROD_SLOW_MONSTER:
 		{
 			if (slow_monster(dir,(skill_set[SKILL_DEVICE].value/2))) ident = TRUE;
-			o_ptr->pval = 20;
 			break;
 		}
 
 		case OBJ_ROD_DRAIN_LIFE:
 		{
 			if (drain_life(dir, 75)) ident = TRUE;
-			o_ptr->pval = 23;
 			break;
 		}
 
 		case OBJ_ROD_POLYMORPH:
 		{
 			if (poly_monster(dir,(skill_set[SKILL_DEVICE].value/2))) ident = TRUE;
-			o_ptr->pval = 25;
 			break;
 		}
 
@@ -2995,7 +2970,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_bolt_or_beam(10, GF_ACID, dir, damroll(6, 8));
 			ident = TRUE;
-			o_ptr->pval = 12;
 			break;
 		}
 
@@ -3003,7 +2977,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_bolt_or_beam(10, GF_ELEC, dir, damroll(3, 8));
 			ident = TRUE;
-			o_ptr->pval = 11;
 			break;
 		}
 
@@ -3011,7 +2984,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_bolt_or_beam(10, GF_FIRE, dir, damroll(8, 8));
 			ident = TRUE;
-			o_ptr->pval = 15;
 			break;
 		}
 
@@ -3019,7 +2991,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_bolt_or_beam(10, GF_COLD, dir, damroll(5, 8));
 			ident = TRUE;
-			o_ptr->pval = 13;
 			break;
 		}
 
@@ -3027,7 +2998,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_ball(GF_ACID, dir, 60, 2);
 			ident = TRUE;
-			o_ptr->pval = 27;
 			break;
 		}
 
@@ -3035,7 +3005,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_ball(GF_ELEC, dir, 32, 2);
 			ident = TRUE;
-			o_ptr->pval = 23;
 			break;
 		}
 
@@ -3043,7 +3012,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_ball(GF_FIRE, dir, 72, 2);
 			ident = TRUE;
-			o_ptr->pval = 30;
 			break;
 		}
 
@@ -3051,7 +3019,6 @@ void do_cmd_zap_rod(int item)
 		{
 			fire_ball(GF_COLD, dir, 48, 2);
 			ident = TRUE;
-			o_ptr->pval = 25;
 			break;
 		}
 
@@ -3059,7 +3026,6 @@ void do_cmd_zap_rod(int item)
 		{
             call_chaos(skill_set[SKILL_DEVICE].value/2);
 			ident = TRUE;
-            o_ptr->pval = 250;
 			break;
 		}
 	}
@@ -3080,13 +3046,24 @@ void do_cmd_zap_rod(int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-	/* Hack -- deal with cancelled zap */
-	if (!use_charge)
-	{
-		o_ptr->pval = 0;
-		return;
-	}
+	/* Do nothing more if cancelled. */
+	if (!use_charge) return;
 
+	/* Most rods simply use the pval to decide their recharging rate. */
+	if (o_ptr->pval >= 0) o_ptr->timeout = o_ptr->pval;
+	else
+	{
+		/* A few rods use negative pvals to indicate a variable timeout. */
+		int timeout_table[][2] =
+		{
+			{	11,20	}, /* Trap Location */
+			{	11,21	}, /* Illumination */
+			{	16,30	}, /* Disarming */
+		};
+
+		int *t = timeout_table[-1-o_ptr->pval];
+		o_ptr->timeout = rand_range(t[0], t[1]);
+	}
 
 	/* XXX Hack -- unstack if necessary */
 	if ((item >= 0) && (o_ptr->number > 1))

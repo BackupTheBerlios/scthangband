@@ -1690,13 +1690,6 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		t = object_desc_chr(t, p2);
 	}
 
-	/* Hack -- Rods have a "charging" indicator */
-	else if (o_ptr->tval == TV_ROD)
-	{
-		/* Hack -- Dump " (charging)" if relevant */
-		if (o_ptr->pval) t = object_desc_str(t, " (charging)");
-	}
-
 	/* Hack -- Process Lanterns/Torches */
 	else if ((o_ptr->tval == TV_LITE) && (!allart_p(o1_ptr)))
 	{
@@ -1778,11 +1771,11 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	}
 	}
 
-	/* Indicate "charging" artifacts XXX XXX XXX */
-	if (known && o1_ptr->timeout)
+	/* Indicate "charging" things */
+	if (o1_ptr->timeout)
 	{
 		/* Hack -- Dump " (charging)" if relevant */
-		t = object_desc_str(t, " (g)");
+		t = object_desc_str(t, " (charging)");
 	}
 
 

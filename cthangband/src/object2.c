@@ -1397,7 +1397,7 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 			if (!stack_allow_wands) return (0);
 
 			/* Require identical charges */
-			if (o_ptr->pval != j_ptr->pval) return (0);
+			if (o_ptr->timeout != j_ptr->timeout) return (0);
 
 			/* Probably okay */
 			break;
@@ -4980,8 +4980,8 @@ s16b inven_carry(object_type *o_ptr, bool final)
            /* Hack:  otherwise identical rods sort by
               increasing recharge time --dsb */
            if (o_ptr->tval == TV_ROD) {
-               if (o_ptr->pval < j_ptr->pval) break;
-               if (o_ptr->pval > j_ptr->pval) continue;
+    	       if (o_ptr->timeout < j_ptr->timeout) break;
+	           if (o_ptr->timeout > j_ptr->timeout) continue;
            }
 
 			/* Determine the "value" of the pack item */
@@ -5342,8 +5342,8 @@ void reorder_pack(void)
            /* Hack:  otherwise identical rods sort by
               increasing recharge time --dsb */
            if (o_ptr->tval == TV_ROD) {
-               if (o_ptr->pval < j_ptr->pval) break;
-               if (o_ptr->pval > j_ptr->pval) continue;
+    	       if (o_ptr->timeout < j_ptr->timeout) break;
+	           if (o_ptr->timeout > j_ptr->timeout) continue;
            }
 
 			/* Determine the "value" of the pack item */

@@ -2243,14 +2243,12 @@ static void process_world(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Examine all charging rods */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval))
+		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
 		{
 			/* Charge it */
-			o_ptr->pval--;
-
-			/* Notice changes */
-			if (!(o_ptr->pval))
+			if (--o_ptr->timeout == 0)
 			{
+				/* Notice changes */
 				j++;
 				recharged_notice(o_ptr);
 			}
@@ -2296,7 +2294,7 @@ static void process_world(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Recharge rods on the ground */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) o_ptr->pval--;
+		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout)) o_ptr->timeout--;
 	}
 
 	/* Delayed Word-of-Recall */

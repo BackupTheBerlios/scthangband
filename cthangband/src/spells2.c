@@ -4597,7 +4597,8 @@ bool recharge(int num)
 			msg_print("The recharge backfires, draining the rod further!");
 
 			/* Hack -- decharge the rod */
-			if (o_ptr->pval < 10000) o_ptr->pval = (o_ptr->pval + 100) * 2;
+			if (o_ptr->timeout < 10000)
+				o_ptr->timeout = (o_ptr->timeout + 100) * 2;
 		}
 
 		/* Recharge */
@@ -4607,15 +4608,15 @@ bool recharge(int num)
 			t = (num * damroll(2, 4));
 
 			/* Recharge by that amount */
-			if (o_ptr->pval > t)
+			if (o_ptr->timeout > t)
 			{
-				o_ptr->pval -= t;
+				o_ptr->timeout -= t;
 			}
 
 			/* Fully recharged */
 			else
 			{
-				o_ptr->pval = 0;
+				o_ptr->timeout = 0;
 			}
 		}
 	}
