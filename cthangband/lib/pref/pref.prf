@@ -233,6 +233,10 @@ C:1:O
 A:^t
 C:1:'
 
+##### "Escape" macro #####
+A:\e
+P:`
+
 ##### System Specific Subfiles #####
 
 ?:[IOR [EQU $SYS xaw] [EQU $SYS x11]]

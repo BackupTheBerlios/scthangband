@@ -2040,10 +2040,6 @@ char inkey(void)
 		}
 
 
-		/* Treat back-quote as escape */
-		if (ch == '`') ch = ESCAPE;
-
-
 		/* End "macro trigger" */
 		if (parse_under && (ch <= 32))
 		{
