@@ -122,7 +122,7 @@ extern void cave_track(const int y, const int x);
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void disturb(int stop_stealth, int unused_flag);
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool is_quest(int level);
 #endif
 
@@ -149,7 +149,7 @@ extern void py_attack(int y, int x);
 #if (defined(CMD1_C) || defined(DUNGEON_C))
 extern void do_cmd_attack(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
+#if (defined(CMD1_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void move_to(s16b y, s16b x);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C))
@@ -218,8 +218,8 @@ extern void do_cmd_fire(void);
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern bool item_tester_hook_destroy(object_type *o_ptr);
 #endif
-#if (defined(CMD2_C) || defined(DUNGEON_C))
-extern void do_cmd_throw(void);
+#if (defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C))
+extern void do_cmd_throw(int throw_mult);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_racial_power(void);
@@ -1259,7 +1259,7 @@ extern void display_roff(int r_idx);
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
 extern bool place_ghost(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void delete_monster_idx(int i,bool visibly);
 #endif
 #if (defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS2_C))
@@ -1283,7 +1283,7 @@ extern s16b get_mon_num(int level);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(MONSTER2_C) || defined(SPELLS2_C))
@@ -1328,7 +1328,7 @@ extern bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool summon_specific(int y1, int x1, int lev, int type);
 #endif
-#if (defined(CMD2_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(XTRA2_C))
+#if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok);
 #endif
 #if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
@@ -1475,7 +1475,7 @@ extern void object_wipe(object_type *o_ptr);
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_prep(object_type *o_ptr, int k_idx);
 #endif
 #if (defined(OBJECT2_C) || defined(WIZARD2_C))
@@ -1502,7 +1502,7 @@ extern bool make_gold(object_type *j_ptr);
 #if (defined(CMD2_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS1_C))
 extern void place_gold(int y, int x);
 #endif
-#if (defined(CMD2_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD2_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern object_type *drop_near(object_type *j_ptr, int chance, int y, int x);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(XTRA2_C))
@@ -1607,7 +1607,7 @@ extern s16b poly_r_idx(int r_idx);
 #if (defined(CMD1_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(SPELLS1_C))
 extern void teleport_away(int m_idx, int dis);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
+#if (defined(CMD1_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void teleport_player(int dis);
 #endif
 #if (defined(MELEE2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
@@ -1658,19 +1658,19 @@ extern bool potion_smash_effect(int who, int y, int x, int o_kidx);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool dimension_door(int plev, int fail_dis);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool hp_player(int num);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern void warding_glyph(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern void explosive_rune(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool do_dec_stat(int stat);
 #endif
-#if (defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
+#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
 extern bool do_res_stat(int stat);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
@@ -1685,10 +1685,10 @@ extern bool remove_curse(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern bool remove_all_curse(void);
 #endif
-#if (defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool restore_level(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool alchemy(void);
 #endif
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C))
@@ -1700,16 +1700,16 @@ extern bool lose_all_info(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern PURE bool detect_traps_p(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool detect_traps(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool detect_doors(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool detect_stairs(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool detect_treasure(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1721,7 +1721,7 @@ extern bool detect_objects_normal(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool detect_objects_magic(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool detect_monsters_normal(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1760,7 +1760,7 @@ extern bool ident_spell(void);
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C))
 extern bool identify_fully(void);
 #endif
-#if (defined(CMD2_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool item_tester_hook_recharge(object_type *o_ptr);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1772,7 +1772,7 @@ extern bool speed_monsters(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool slow_monsters(int dam);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool sleep_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1796,7 +1796,7 @@ extern bool dispel_living(int dam);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool dispel_demons(int dam);
 #endif
-#if (defined(CMD2_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C))
 extern void aggravate_monsters(int who);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
@@ -1805,43 +1805,43 @@ extern errr genocide(bool player_cast);
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern errr mass_genocide(bool player_cast);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool probing(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern void destroy_area(int y1, int x1, int r, bool full);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(CMD1_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C))
 extern void earthquake(int cy, int cx, int r);
 #endif
 #if (defined(MELEE2_C) || defined(SPELLS2_C))
 extern void unlite_room(int y1, int x1);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool lite_area(int dam, int rad);
 #endif
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C))
 extern bool unlite_area(int dam, int rad);
 #endif
-#if (defined(CMD2_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool fire_ball(int typ, int dir, int dam, int rad);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool fire_bolt(int typ, int dir, int dam);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool fire_beam(int typ, int dir, int dam);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool fire_bolt_or_beam(int prob, int typ, int dir, int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool lite_line(int dir);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(CMD1_C) || defined(POWERS_C) || defined(SPELLS2_C))
 extern bool drain_life(int dir, int dam);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool wall_to_mud(int dir);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1880,7 +1880,7 @@ extern bool poly_monster(int dir,int dam);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool clone_monster(int dir);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool fear_monster(int dir, int plev);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1904,7 +1904,7 @@ extern bool wall_stone(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool destroy_doors_touch(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool sleep_monsters_touch(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
@@ -1928,10 +1928,10 @@ extern void bless_weapon(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool detect_monsters_nonliving(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern void set_recall(bool spell);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool confuse_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1940,7 +1940,7 @@ extern  bool charm_monsters(int dam);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool charm_animals(int dam);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool stun_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1955,10 +1955,10 @@ extern  bool banish_monsters(int dist);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool turn_evil(int dam);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool turn_monsters(int dam);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool charm_monster(int dir, int plev);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -1967,10 +1967,10 @@ extern  bool control_one_undead(int dir, int plev);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern  bool charm_animal(int dir, int plev);
 #endif
-#if (defined(CMD2_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern void report_magics(void);
 #endif
-#if (defined(CMD2_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern void teleport_swap(int dir);
 #endif
 #if (defined(DUNGEON_C) || defined(SPELLS2_C))
@@ -2531,7 +2531,7 @@ extern byte recall_dungeon;
 #if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern byte came_from;
 #endif
-#if (defined(CMD2_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern s16b num_repro;
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -3596,7 +3596,7 @@ extern int spell_skill(const magic_type *s_ptr);
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern int find_object(object_type *o_ptr);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void update_object(object_type *o_ptr, int where);
 #endif
 
@@ -3608,7 +3608,7 @@ extern void check_temp_effects(void);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool add_flag(int flag, int v);
 #endif
-#if (defined(CMD2_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool set_flag(int flag, int v);
 #endif
 
@@ -3731,7 +3731,7 @@ extern bool target_set(int mode);
 #if (defined(CMD2_C) || defined(CMD6_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool get_aim_dir(int *dp);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern bool get_rep_dir(int *dp);
 #endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
@@ -3773,7 +3773,7 @@ extern char *vformat(cptr fmt, va_list vp);
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern uint strnfmt(char *buf, uint max, cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_CRB_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_CRB_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern char *format(cptr fmt, ...);
 #endif
 #if (defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_FORM_C))
@@ -4040,7 +4040,7 @@ extern void check_magic_info(void);
 #if (defined(CMD6_C) || defined(POWERS_C))
 extern bool use_object_power(const int power, int dir, bool *ident, bool *use);
 #endif
-#if (defined(CMD5_C) || defined(POWERS_C))
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(POWERS_C))
 extern bool use_known_power(int power, int plev);
 #endif
 #if (defined(POWERS_C))
@@ -4049,12 +4049,12 @@ extern void rustproof(void);
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern void do_poly_wounds(int cause);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(XTRA2_C))
+#if (defined(POWERS_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void do_poly_self(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C))
-extern  void fetch(int dir, int wgt, bool require_los);
-#endif
+
+
+
 #if (defined(CMD5_C) || defined(POWERS_C))
 extern void wild_magic(int spell);
 #endif

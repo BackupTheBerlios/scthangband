@@ -328,6 +328,21 @@ logaux(x, 1) logaux(x, 0) 255)
 # define MA_KNEE 2
 # define MA_SLOW 3
 
+/* Power offsets for various indices. */
+#define PO_K_IDX 0 /* Can take any positive value. */
+#define PO_ACTIVATION (PO_K_IDX-256)
+#define PO_NAME1 (PO_ACTIVATION-256)
+#define PO_TVAL (PO_NAME1-256)
+#define PO_SPELL (PO_TVAL-256)
+#define PO_RACIAL (PO_SPELL-MAX_RACES*2) /* Up to two powers per race. */
+#define PO_PETS (PO_RACIAL-2) /* Only two powers are defined. */
+#define PO_MUTA1 (PO_PETS-32)
+#define PO_MUTA2 (PO_MUTA1-32)
+#define PO_MUTA3 (PO_MUTA2-32)
+
+#define PET_DISMISS_ONE 0 /* Dismiss one pet */
+#define PET_DISMISS_MANY 1 /* Dismiss more than one pet */
+
 /* Spell effect indices. */
 #define SP_DETECT_MONSTERS 1
 #define SP_PHASE_DOOR 2
@@ -3026,7 +3041,8 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /* And from do_power(). */
 #define POWER_ERROR_NO_SUCH_POWER 403
-#define POWER_ERROR_NO_SUCH_DIR 404
+#define POWER_ERROR_NO_SUCH_DIR 404 /* Wants get_aim_dir(). */
+#define POWER_ERROR_NO_SUCH_REP_DIR 405 /* Wants get_rep_dir(). */
 
 /* For errors (+/-)500-599, see z-term.h */
 

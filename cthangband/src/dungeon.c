@@ -2673,7 +2673,7 @@ void process_command(void)
 			/* Throw an item */
 		case 'v':
 		{
-            do_cmd_throw();
+            do_cmd_throw(1);
 			break;
 		}
 
