@@ -3914,7 +3914,7 @@ extern errr string_free(cptr str);
 extern cptr atchar;
 #endif
 
-/* (null) */
+
 
 
 /* cmd6.c */

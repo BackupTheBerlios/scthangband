@@ -2512,7 +2512,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			                &spd, &atspd, &hp1, &hp2, &aaf, &ac, &slp)) return (1);
 
 			/* Save the values */
-			r_ptr->speed = spd;
+			r_ptr->speed = spd+110;
 			r_ptr->num_blows = atspd;
 			r_ptr->hdice = hp1;
 			r_ptr->hside = hp2;
