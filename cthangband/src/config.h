@@ -543,4 +543,4 @@
 
 
 /* OPTION: Check that the indices used for various arrays are correct. */
-#define CHECK_ARRAYS
+/* #define CHECK_ARRAYS */
