@@ -1088,9 +1088,6 @@ static char *object_desc_str(char *t, cptr s)
  * Note that the inscription will be clipped to keep the total description
  * under 79 chars (plus a terminator).
  *
- * Note the use of "object_desc_num()" and "object_desc_int()" as hyper-efficient,
- * portable, versions of some common "sprintf()" commands.
- *
  * Note that all ego-items (when known) append an "Ego-Item Name", unless
  * the item is also an artifact, which should NEVER happen.
  *
@@ -1642,7 +1639,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	 			value = object_value(j_ptr);
 			}
 
-			/* Let the player known when a known cursed item is not broken. */
+			/* Let the player know when a known cursed item is not broken. */
 			if (worthless && value)
 			{
 	 			sprintf(tmp2[0], "(%ld)", value);
