@@ -2726,8 +2726,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
  */
 static void panel_bounds_prt(void)
 {
-	s16b panel_row_centre = ((panel_row_min + panel_row_max+1) / 2);
-	s16b panel_col_centre = ((panel_col_min + panel_col_max+1) / 2);
+	int panel_row_centre = ((panel_row_min + panel_row_max+1) / 2);
+	int panel_col_centre = ((panel_col_min + panel_col_max+1) / 2);
+	bool top, bottom, left, right;
 
 	panel_row_prt = (panel_row_centre - (Term->hgt-PRT_MINY)/2);
 	panel_col_prt = (panel_col_centre - (Term->wid-PRT_MINX)/2);
@@ -2735,29 +2736,30 @@ static void panel_bounds_prt(void)
 	/* Blank space is always fine with scroll_edge. */
 	if (scroll_edge) return;
 
-	/* Blank space is fine if the dungeon doesn't fill the screen. */
-	if (PRT_MAXY-PRT_MINY > cur_hgt);
+	/* Look for space around the map edge. */
+	top = (panel_row_prt < 0);
+	bottom = (panel_row_prt > cur_hgt - (PRT_MAXY-PRT_MINY));
+	left = (panel_col_prt < 0);
+	right = (panel_col_prt > cur_wid - (PRT_MAXX-PRT_MINX));
 
 	/* Kill space above the map. */
-	else if (panel_row_prt < 0)
+	if (top && !bottom)
 	{
 		panel_row_prt = 0;
 	}
 	/* Kill space below the map. */
-	else if (panel_row_prt > cur_hgt - (PRT_MAXY-PRT_MINY))
+	else if (bottom && !top)
 	{
 		panel_row_prt = cur_hgt - (PRT_MAXY-PRT_MINY);
 	}
 
-	if (PRT_MAXX-PRT_MINX > cur_wid);
-
 	/* Kill space to the left of the map. */
-	else if (panel_col_prt < 0)
+	if (left && !right)
 	{
 		panel_col_prt = 0;
 	}
 	/* Kill space to the right of the map. */
-	else if (panel_col_prt > cur_wid - (PRT_MAXX-PRT_MINX))
+	else if (right && !left)
 	{
 		panel_col_prt = cur_wid - (PRT_MAXX-PRT_MINX);
 	}
