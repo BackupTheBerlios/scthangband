@@ -2321,7 +2321,7 @@ extern void move_cursor(int row, int col);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(UTIL_C))
 extern void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(CMD4_C) || defined(MAIN_GTK_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
@@ -4039,5 +4039,8 @@ extern void do_identify_fully(object_type *o_ptr);
 
 #if (defined(INIT2_C) || defined(UTIL_C))
 extern void init_ascii_text_conv(void);
+#endif
+#if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(UTIL_C))
+extern void s16b_to_string_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

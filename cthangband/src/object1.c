@@ -3975,19 +3975,14 @@ void next_object(object_type **o_ptr)
  */
 static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 {
-	char cmd_str[3] = "", buf[2*MAX_ASCII_LEN+1];
+	char buf[2*MAX_ASCII_LEN+1];
 	int len;
 	cptr s;
 
 	object_type *j_ptr;
 
 	/* Turn the command into an ASCII representation. */
-	if (cmd & 0xFF00)
-		sprintf(cmd_str, "%c%c", ((cmd & 0xFF00) >> 8), (cmd & 0x00FF));
-	else
-		sprintf(cmd_str, "%c", cmd);
-
-	strnfmt(buf, sizeof(buf), "%v", ascii_to_text_f1, cmd_str);
+	strnfmt(buf, sizeof(buf), "%v", s16b_to_string_f1, cmd);
 	len = strlen(buf);
 
 	/* Check every object */

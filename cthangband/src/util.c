@@ -1167,6 +1167,25 @@ void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	}
 }
 
+void s16b_to_string_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	char str[4];
+
+	int cmd = va_arg(*vp, int);
+
+	/* Paranoia - ignore very high bits. */
+	cmd &= 0xFFFF;
+
+	if (cmd & 0xFF00)
+	{
+		sprintf(str, "&%c%c", ((cmd & 0xFF00) >> 8), (cmd & 0x00FF));
+	}
+	else
+	{
+		sprintf(str, "%c", cmd);
+	}
+	strnfmt(buf, max, "%v", ascii_to_text_f1, str);
+}
 
 
 /*

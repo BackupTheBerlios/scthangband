@@ -2238,7 +2238,6 @@ static void do_cmd_script(void)
 void process_command(void)
 {
 	char help_str[20];
-	cptr cmd_str;
 
  #ifdef ALLOW_REPEAT
  
@@ -2248,17 +2247,9 @@ void process_command(void)
  #endif /* ALLOW_REPEAT -- TNB */
  
 	/* Track this command (if not instantaneous). */
-	if (command_cmd & 0xFF00)
-	{
-		cmd_str = format("%c%c", (command_cmd & 0xFF00)/0x0100,
-			command_cmd & 0x00FF);
-	}
-	else
-	{
-		cmd_str = format("%c", command_cmd);
-	}
+	strnfmt(help_str, sizeof(help_str),
+		"cmd=%v", s16b_to_string_f1, command_cmd);
 
-	strnfmt(help_str, sizeof(help_str), "cmd=%v", ascii_to_text_f1, cmd_str);
 	help_track(help_str);
 
 	/* Look up various object commands from a table. */
