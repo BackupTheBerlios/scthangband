@@ -193,11 +193,10 @@ void user_name(char *buf, int id)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-static errr path_parse(char *buf, int UNUSED max, cptr file)
+static errr path_parse(char *buf, uint max, cptr file)
 {
 	cptr		u, s;
 	struct passwd	*pw;
-	char		user[128];
 
 
 	/* Assume no result */
@@ -209,6 +208,8 @@ static errr path_parse(char *buf, int UNUSED max, cptr file)
 	/* File needs no parsing */
 	if (file[0] != '~')
 	{
+		/* Check length. */
+		if (strlen(file) >= max) return (1);
 		strcpy(buf, file);
 		return (0);
 	}
@@ -219,20 +220,11 @@ static errr path_parse(char *buf, int UNUSED max, cptr file)
 	/* Look for non-user portion of the file */
 	s = strstr(u, PATH_SEP);
 
-	/* Hack -- no long user names */
-	if (s && (s >= u + sizeof(user))) return (1);
+	/* Look up the "current" user */
+	if (u == s) u = getlogin();
 
 	/* Extract a user name */
-	if (s)
-	{
-		int i;
-		for (i = 0; u < s; ++i) user[i] = *u++;
-		user[i] = '\0';
-		u = user;
-	}
-
-	/* Look up the "current" user */
-	if (u[0] == '\0') u = getlogin();
+	else if (s) u = format("%.*", s-u, u);
 
 	/* Look up a user (or "current" user) */
 	if (u) pw = getpwnam(u);
@@ -241,11 +233,11 @@ static errr path_parse(char *buf, int UNUSED max, cptr file)
 	/* Nothing found? */
 	if (!pw) return (1);
 
-	/* Make use of the info */
-	(void)strcpy(buf, pw->pw_dir);
+	/* Check length. */
+	if (strlen(pw->pw_dir)+strlen(s) >= max) return (1);
 
-	/* Append the rest of the filename, if any */
-	if (s) (void)strcat(buf, s);
+	/* Make use of the info */
+	sprintf(buf, "%s%s", pw->pw_dir, s);
 
 	/* Success */
 	return (0);
@@ -650,7 +642,7 @@ errr my_mkdir(cptr path, uint mode)
 	char buf[1024];
 	int rc;
 
-	path_parse(buf, 1024, path);
+	if (path_parse(buf, 1024, path)) return FILE_ERROR_FATAL;
 
 	rc = mkdir(buf, mode);
 
