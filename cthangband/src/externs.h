@@ -1230,11 +1230,11 @@ extern cptr help_xxx;
 extern errr init_xxx(int argc, char **argv);
 #endif
 
-/* main.c */
 
-#if (((!defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN))) && defined(AMIGA)) && (defined(MAIN_C))
-extern __near long __stack;
-#endif
+
+
+
+
 
 
 

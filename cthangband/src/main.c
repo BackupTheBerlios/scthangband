@@ -120,7 +120,7 @@ static void quit_hook(cptr UNUSED s)
  */
 #ifdef AMIGA
 # include <dos.h>
-__near long __stack = 32768L;
+/* __near long */ __stack = 32768L;
 #endif /* AMIGA */
 
 
