@@ -3120,301 +3120,301 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options
+ * Available Options (full to 3,1)
  */
 option_type option_info[] =
 {
 	/*** User-Interface ***/
 
-	{ &rogue_like_commands, FALSE,  1,      0, 0,
+	{ &rogue_like_commands, FALSE, OPTS_UI,      0, 0,
 	"rogue_like_commands",  "Rogue-like commands" },
 
-	{ &quick_messages,              TRUE,  1,      0, 1,
+	{ &quick_messages,              TRUE, OPTS_UI,      0, 1,
 	"quick_messages",               "Quick -more- prompts" },
 
 	{ &quick_prompt,		TRUE,	1,	2, 27,
 	"quick_prompt",			"Quick [y/n] prompts" },
 
-	{ &other_query_flag,    FALSE,  1,      0, 2,
+	{ &other_query_flag,    FALSE, OPTS_UI,      0, 2,
 	"other_query_flag",             "Prompt for various information" },
 
-	{ &carry_query_flag,    FALSE,  4,      0, 3,
+	{ &carry_query_flag,    FALSE, OPTS_OBJ,      0, 3,
 	"carry_query_flag",             "Prompt before picking things up" },
 
-	{ &use_old_target,              TRUE,  3,      0, 4,
+	{ &use_old_target,              TRUE, OPTS_MON,      0, 4,
 	"use_old_target",               "Use old target by default" },
 
-	{ &always_pickup,               TRUE,   4,      0, 5,
+	{ &always_pickup,               TRUE, OPTS_OBJ,      0, 5,
 	"always_pickup",                "Pick things up by default" },
 
-	{ &always_repeat,               TRUE,   1,      0, 6,
+	{ &always_repeat,               TRUE, OPTS_UI,      0, 6,
 	"always_repeat",                "Repeat obvious commands" },
 
-	{ &depth_in_feet,               TRUE,  1,      0, 7,
+	{ &depth_in_feet,               TRUE, OPTS_UI,      0, 7,
 	"depth_in_feet",                "Show dungeon level in feet" },
 
-	{ &stack_force_notes,   TRUE,  4,      0, 8,
+	{ &stack_force_notes,   TRUE, OPTS_OBJ,      0, 8,
 	"stack_force_notes",    "Merge inscriptions when stacking" },
 
-	{ &stack_force_notes_all,	FALSE,	4,	3,	1,
+	{ &stack_force_notes_all,	FALSE, OPTS_OBJ,	3,	1,
 	"stack_force_notes_all",	"Merge all inscriptions when stacking" },
 
-	{ &stack_force_costs,   FALSE,  4,      0, 9,
+	{ &stack_force_costs,   FALSE, OPTS_OBJ,      0, 9,
 	"stack_force_costs",    "Merge discounts when stacking" },
 
-	{ &show_labels,                 TRUE,   4,      0, 10,
+	{ &show_labels,                 TRUE, OPTS_OBJ,      0, 10,
 	"show_labels",                  "Show labels in object listings" },
 
-	{ &show_weights,                TRUE,  4,      0, 11,
+	{ &show_weights,                TRUE, OPTS_OBJ,      0, 11,
 	"show_weights",                 "Show weights in object listings" },
 
 	{ &inscribe_depth,	TRUE,	4,	3,	2,
 	"inscribe_depth",	"Inscribe depth on items at creation" },
 
-	{ &show_choices,                TRUE,  1,      0, 12,
+	{ &show_choices,                TRUE, OPTS_UI,      0, 12,
 	"show_choices",                 "Show choices in certain sub-windows" },
 
-    { &show_details,                TRUE,  1,      0, 13,
+    { &show_details,                TRUE, OPTS_UI,      0, 13,
 	"show_details",                 "Show details in certain sub-windows" },
 
 	{ &show_choices_main,		TRUE,	1,	2,26,
 	"show_choices_main",		"Show certain choices in the main window"},
 	
-    { &ring_bell,                   FALSE,   1,      0, 14,
+    { &ring_bell,                   FALSE, OPTS_UI,      0, 14,
 	"ring_bell",                    "Audible bell (on errors, etc)" },
     /* Changed to default to FALSE -- it's so extremely annoying!!! -TY */
 
-	{ &use_color,                   TRUE,   1,      0, 15,
+	{ &use_color,                   TRUE, OPTS_UI,      0, 15,
 	"use_color",                    "Use color if possible (slow)" },
 
 
 	/*** Disturbance ***/
 
-	{ &find_ignore_stairs,  FALSE,   2,      0, 16,
+	{ &find_ignore_stairs,  FALSE, OPTS_DISTURB,      0, 16,
 	"find_ignore_stairs",   "Run past stairs" },
 
-	{ &find_ignore_doors,   FALSE,   2,      0, 17,
+	{ &find_ignore_doors,   FALSE, OPTS_DISTURB,      0, 17,
 	"find_ignore_doors",    "Run through open doors" },
 
-	{ &find_cut,                    TRUE,   2,      0, 18,
+	{ &find_cut,                    TRUE, OPTS_DISTURB,      0, 18,
 	"find_cut",                             "Run past known corners" },
 
-	{ &find_examine,                TRUE,   2,      0, 19,
+	{ &find_examine,                TRUE, OPTS_DISTURB,      0, 19,
 	"find_examine",                 "Run into potential corners" },
 
-	{ &stop_corner,	FALSE,	2,	3, 0,
+	{ &stop_corner,	FALSE, OPTS_DISTURB,	3, 0,
 	"stop_corner",	"Stop at corners"},
 
-	{ &disturb_move,                FALSE,   2,      0, 20,
+	{ &disturb_move,                FALSE, OPTS_DISTURB,      0, 20,
 	"disturb_move",                 "Disturb whenever any monster moves" },
 
-	{ &disturb_near,                TRUE,   2,      0, 21,
+	{ &disturb_near,                TRUE, OPTS_DISTURB,      0, 21,
 	"disturb_near",                 "Disturb whenever viewable monster moves" },
 
-	{ &disturb_panel,               TRUE,   2,      0, 22,
+	{ &disturb_panel,               TRUE, OPTS_DISTURB,      0, 22,
 	"disturb_panel",                "Disturb whenever map panel changes" },
 
-	{ &disturb_state,               TRUE,   2,      0, 23,
+	{ &disturb_state,               TRUE, OPTS_DISTURB,      0, 23,
 	"disturb_state",                "Disturb whenever player state changes" },
 
-	{ &disturb_dawn,	FALSE,	2,	3, 9,
+	{ &disturb_dawn,	FALSE, OPTS_DISTURB,	3, 9,
 	"disturb_dawn",	"Disturb when the sun rises or sets" },
 
-	{ &disturb_minor,               FALSE,   2,      0, 24,
+	{ &disturb_minor,               FALSE, OPTS_DISTURB,      0, 24,
 	"disturb_minor",                "Disturb whenever boring things happen" },
 
-    { &disturb_other,               TRUE,   2,      0, 25,
+    { &disturb_other,               TRUE, OPTS_DISTURB,      0, 25,
     "disturb_other",                "Disturb whenever random things happen" },
 
-	{ &alert_hitpoint,              TRUE,  2,      0, 26,
+	{ &alert_hitpoint,              TRUE, OPTS_DISTURB,      0, 26,
 	"alert_hitpoint",               "Alert user to critical hitpoints" },
 
-	{ &alert_failure,               FALSE,  2,      0, 27,
+	{ &alert_failure,               FALSE, OPTS_DISTURB,      0, 27,
 	"alert_failure",                "Alert user to various failures" },
 
-    { &last_words,                  FALSE,   6,      0, 28,
+    { &last_words,                  FALSE, OPTS_MISC,      0, 28,
       "last_words",                 "Get last words when the character dies" },
 
-    { &speak_unique,                FALSE,   6,      0, 29,
+    { &speak_unique,                FALSE, OPTS_MISC,      0, 29,
        "speak_unique",              "Allow shopkeepers and uniques to speak" },
 
-    { &small_levels,                TRUE,   6,      0, 30,
+    { &small_levels,                TRUE, OPTS_MISC,      0, 30,
        "small_levels",              "Allow unusually small dungeon levels" },
 
-    { &empty_levels,                TRUE,   6,      0, 31,
+    { &empty_levels,                TRUE, OPTS_MISC,      0, 31,
         "empty_levels",             "Allow empty 'arena' levels" },
 
 	/*** Game-Play ***/
 
-	{ &auto_haggle,                 TRUE,  6,      1, 0,
+	{ &auto_haggle,                 TRUE, OPTS_MISC,      1, 0,
 	"auto_haggle",                  "Auto-haggle in stores" },
 
-	{ &verbose_haggle,	FALSE,	6, 2, 25,
+	{ &verbose_haggle,	FALSE, OPTS_MISC, 2, 25,
 	"verbose_haggle", "Verbose auto_haggle messages" },
 
-	{ &auto_scum,                   TRUE,  6,      1, 1,
+	{ &auto_scum,                   TRUE, OPTS_MISC,      1, 1,
 	"auto_scum",                    "Auto-scum for good levels" },
 
-	{ &stack_allow_items,   TRUE,   4,      1, 2,
+	{ &stack_allow_items,   TRUE, OPTS_OBJ,      1, 2,
 	"stack_allow_items",    "Allow weapons and armor to stack" },
 
-	{ &stack_allow_wands,   TRUE,   4,      1, 3,
+	{ &stack_allow_wands,   TRUE, OPTS_OBJ,      1, 3,
 	"stack_allow_wands",    "Allow wands/staffs/rods to stack" },
 
-	{ &expand_look,                 FALSE,  6,      1, 4,
+	{ &expand_look,                 FALSE, OPTS_MISC,      1, 4,
 	"expand_look",                  "Expand the power of the look command" },
 
-	{ &expand_list,                 FALSE,  6,      1, 5,
+	{ &expand_list,                 FALSE, OPTS_MISC,      1, 5,
 	"expand_list",                  "Expand the power of the list commands" },
 
-	{ &view_perma_grids,    TRUE,   6,      1, 6,
+	{ &view_perma_grids,    TRUE, OPTS_MISC,      1, 6,
 	"view_perma_grids",             "Map remembers all perma-lit grids" },
 
-	{ &view_torch_grids,    FALSE,  6,      1, 7,
+	{ &view_torch_grids,    FALSE, OPTS_MISC,      1, 7,
 	"view_torch_grids",             "Map remembers all torch-lit grids" },
 
-	{ &dungeon_align,               TRUE,   6,      1, 8,
+	{ &dungeon_align,               TRUE, OPTS_MISC,      1, 8,
 	"dungeon_align",                "Generate dungeons with aligned rooms" },
 
-	{ &dungeon_stair,               TRUE,   6,      1, 9,
+	{ &dungeon_stair,               TRUE, OPTS_MISC,      1, 9,
 	"dungeon_stair",                "Generate dungeons with connected stairs" },
 
-	{ &dungeon_small,               FALSE,   6,      1, 10,
+	{ &dungeon_small,               FALSE, OPTS_MISC,      1, 10,
 	"dungeon_small",                "Usually generate small dungeons" },
 
-	{ &flow_by_sound,               FALSE,  3,      1, 11,
+	{ &flow_by_sound,               FALSE, OPTS_MON,      1, 11,
 	"flow_by_sound",                "Monsters chase current location (v.slow)" },
 
-	{ &flow_by_smell,               TRUE,  3,      1, 12,
+	{ &flow_by_smell,               TRUE, OPTS_MON,      1, 12,
 	"flow_by_smell",                "Monsters chase recent locations (v.slow)" },
 
 
 
-    { &player_symbols,              TRUE,   1,      1, 13,
+    { &player_symbols,              TRUE, OPTS_UI,      1, 13,
       "player_symbols",             "Use special symbols for the player char"},
 
-    { &equippy_chars,               TRUE,  4,      1, 14,
+    { &equippy_chars,               TRUE, OPTS_OBJ,      1, 14,
         "equippy_chars",           "Display 'equippy' chars" },
 
-	{ &smart_learn,                 TRUE,  3,      1, 15,
+	{ &smart_learn,                 TRUE, OPTS_MON,      1, 15,
 	"smart_learn",                  "Monsters learn from their mistakes" },
 
-	{ &smart_cheat,                 FALSE,  3,      1, 16,
+	{ &smart_cheat,                 FALSE, OPTS_MON,      1, 16,
 	"smart_cheat",                  "Monsters exploit players weaknesses" },
 
  #ifdef ALLOW_EASY_OPEN /* TNB */
- 	{ &easy_open,                   TRUE,  6,      1, 17,
+ 	{ &easy_open,                   TRUE, OPTS_MISC,      1, 17,
  	"easy_open",                    "Open and close automatically" },
  #endif /* ALLOW_EASY_OPEN -- TNB */
  
  #ifdef ALLOW_EASY_DISARM /* TNB */
-	{ &easy_disarm,                 TRUE,  6,      1, 18,
+	{ &easy_disarm,                 TRUE, OPTS_MISC,      1, 18,
  	"easy_disarm",                  "Disarm traps automatically" },
  #endif /* ALLOW_EASY_DISARM -- TNB */
 
 
 	/*** Efficiency ***/
 
-	{ &view_reduce_lite,    FALSE,  5,      1, 19,
+	{ &view_reduce_lite,    FALSE, OPTS_PERF,      1, 19,
 	"view_reduce_lite",             "Reduce lite-radius when running" },
 
-	{ &view_reduce_view,    FALSE,  5,      1, 20,
+	{ &view_reduce_view,    FALSE, OPTS_PERF,      1, 20,
 	"view_reduce_view",             "Reduce view-radius in town" },
 
-	{ &avoid_abort,                 FALSE,  5,      1, 21,
+	{ &avoid_abort,                 FALSE, OPTS_PERF,      1, 21,
 	"avoid_abort",                  "Avoid checking for user abort" },
 
-	{ &avoid_other,                 FALSE,  5,      1, 22,
+	{ &avoid_other,                 FALSE, OPTS_PERF,      1, 22,
 	"avoid_other",                  "Avoid processing special colors" },
 
-	{ &flush_failure,               TRUE,   5,      1, 23,
+	{ &flush_failure,               TRUE, OPTS_PERF,      1, 23,
 	"flush_failure",                "Flush input on various failures" },
 
-	{ &flush_disturb,               FALSE,  5,      1, 24,
+	{ &flush_disturb,               FALSE, OPTS_PERF,      1, 24,
 	"flush_disturb",                "Flush input whenever disturbed" },
 
-	{ &flush_command,               FALSE,  5,      1, 25,
+	{ &flush_command,               FALSE, OPTS_PERF,      1, 25,
 	"flush_command",                "Flush input before every command" },
 
-	{ &fresh_before,                TRUE,   5,      1, 26,
+	{ &fresh_before,                TRUE, OPTS_PERF,      1, 26,
 	"fresh_before",                 "Flush output before every command" },
 
-	{ &fresh_after,                 FALSE,  5,      1, 27,
+	{ &fresh_after,                 FALSE, OPTS_PERF,      1, 27,
 	"fresh_after",                  "Flush output after every command" },
 
-	{ &fresh_message,               FALSE,  5,      1, 28,
+	{ &fresh_message,               FALSE, OPTS_PERF,      1, 28,
 	"fresh_message",                "Flush output after every message" },
 
-	{ &compress_savefile,   FALSE,   5,      1, 29,
+	{ &compress_savefile,   FALSE, OPTS_PERF,      1, 29,
 	"compress_savefile",    "Compress messages in savefiles" },
 
-    { &hilite_player,               FALSE,  1,      1, 30,
+    { &hilite_player,               FALSE, OPTS_UI,      1, 30,
 	"hilite_player",                "Hilite the player with the cursor" },
 
-	{ &view_yellow_lite,    TRUE,  5,      1, 31,
+	{ &view_yellow_lite,    TRUE, OPTS_PERF,      1, 31,
 	"view_yellow_lite",             "Use special colors for torch-lit grids" },
 
-	{ &view_bright_lite,    TRUE,  5,      2, 1,
+	{ &view_bright_lite,    TRUE, OPTS_PERF,      2, 1,
 	"view_bright_lite",             "Use special colors for 'viewable' grids" },
 
-	{ &view_granite_lite,   TRUE,  5,      2, 2,
+	{ &view_granite_lite,   TRUE, OPTS_PERF,      2, 2,
 	"view_granite_lite",    "Use special colors for wall grids (slow)" },
 
-	{ &view_special_lite,   TRUE,  5,      2, 3,
+	{ &view_special_lite,   TRUE, OPTS_PERF,      2, 3,
 	"view_special_lite",    "Use special colors for floor grids (slow)" },
 
-    { &skip_chaos_features,        FALSE, 6, 2, 4,
+    { &skip_chaos_features,        FALSE, OPTS_MISC, 2, 4,
        "skip_chaos_features",      "Skip chaos features in 'C'haracter Display" },
 
-    { &plain_descriptions,    FALSE, 4, 2, 5,
+    { &plain_descriptions,    FALSE, OPTS_OBJ, 2, 5,
         "plain_descriptions", "Plain object descriptions" },
 
-    { &stupid_monsters,      FALSE, 3, 2, 6,
+    { &stupid_monsters,      FALSE, OPTS_MON, 2, 6,
         "stupid_monsters",  "Monsters behave stupidly" },
 
-    { &auto_destroy,        TRUE, 4, 2, 7,
+    { &auto_destroy,        TRUE, OPTS_OBJ, 2, 7,
         "auto_destroy",     "No query to destroy known worthless items" },
 
-    { &wear_confirm,        TRUE, 4,2, 8,
+    { &wear_confirm,        TRUE, OPTS_OBJ,2, 8,
         "confirm_wear",     "Confirm to wear/wield known cursed items" },
 
-    { &confirm_wear_all,        TRUE, 4,3, 7,
+    { &confirm_wear_all,        TRUE, OPTS_OBJ,3, 7,
         "confirm_wear_all",     "Confirm to wear/wield potentially cursed items" },
 
-    { &confirm_stairs,      FALSE, 1, 2, 9,
+    { &confirm_stairs,      FALSE, OPTS_UI, 2, 9,
         "confirm_stairs",   "Prompt before exiting a dungeon level" },
 
-    { &disturb_allies,        FALSE, 2, 2, 10,
+    { &disturb_allies,        FALSE, OPTS_DISTURB, 2, 10,
         "disturb_allies",     "Disturb when visible allies move" },
 
-    { &multi_stair,        TRUE, 6, 2, 11,
+    { &multi_stair,        TRUE, OPTS_MISC, 2, 11,
         "multi_stair",     "Stairs can be longer than one level" },
 	
-	{ &rand_unbiased,    FALSE,5,2,12,
+	{ &rand_unbiased,    FALSE, OPTS_PERF,2,12,
 	"rand_unbiased","Random numbers have bias removed (slow)"},
 
-	{ &unify_commands,  FALSE,4,2,13,
+	{ &unify_commands,  FALSE, OPTS_OBJ,2,13,
 	"unify_commands","Use a single 'u'se command for all objects"},
 
-	{ &testing_stack,               TRUE,  4, 2, 14,
+	{ &testing_stack,               TRUE, OPTS_OBJ, 2, 14,
     "testing_stack",                "Allow objects to stack on floor" },
 
-	{ &testing_carry,               TRUE,  3, 2, 15,
+	{ &testing_carry,               TRUE, OPTS_MON, 2, 15,
     "testing_carry",                "Allow monsters to carry objects" },
 
-	{ &centre_view,               TRUE,  1, 2, 16,
+	{ &centre_view,               TRUE, OPTS_UI, 2, 16,
     "centre_view",                "Centre view around player (v.slow)" },
 
-	{ &no_centre_run,               FALSE,  5, 2, 17,
+	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
     "no_centre_run",                "Do not centre view whilst running" },
 
-	{ &score_quitters,		FALSE,   7, 2, 29,
+	{ &score_quitters,		FALSE, OPTS_BIRTH, 2, 29,
 	"score_quitter",			"Remember scores of those who quit the game" },
 
-	{ &maximise_mode,               TRUE,  7, 2, 18,
+	{ &maximise_mode,               TRUE, OPTS_BIRTH, 2, 18,
     "maximise_mode",                "Include race/template bonuses in stat calcs" },
 
-	{ &preserve_mode,               TRUE,  7, 2, 19,
+	{ &preserve_mode,               TRUE, OPTS_BIRTH, 2, 19,
     "preserve_mode",                "Artifacts are not lost if you never saw them" },
 
 	{ &allow_quickstart,		TRUE,	7, 3, 4,
@@ -3428,43 +3428,43 @@ option_type option_info[] =
 	"display_credits",	"Require a keypress to clear the initial screen"},
 #endif
 
-	{ &use_autoroller,               TRUE,  7, 2, 20,
+	{ &use_autoroller,               TRUE, OPTS_BIRTH, 2, 20,
     "use_autoroller",                "Stats are rolled repeatedly with minima" },
 
-	{ &spend_points,               FALSE,  7, 2, 21,
+	{ &spend_points,               FALSE, OPTS_BIRTH, 2, 21,
     "spend_points",                "Stats are not rolled, points are spent on them" },
 
-	{ &ironman_shop,               FALSE,  7, 2, 22,
+	{ &ironman_shop,               FALSE, OPTS_BIRTH, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },
 
-	{ &ironman_feeling,	FALSE, 7, 3, 1,
+	{ &ironman_feeling,	FALSE, OPTS_BIRTH, 3, 1,
 	"ironman_feeling",	"Level feelings are only given after 2500 turns" },
 
-	{ &spoil_base,			FALSE, 8,	2, 31,
+	{ &spoil_base,			FALSE, OPTS_SPOIL,	2, 31,
 	"spoil_base",			"Gain knowledge of normal items" },
 
-	{ &spoil_ego,			FALSE, 8,	2, 30,
+	{ &spoil_ego,			FALSE, OPTS_SPOIL,	2, 30,
 	"spoil_ego",			"Gain knowledge of ego items" },
     
-	{ &spoil_art,                  FALSE,   8,     2, 28,
+	{ &spoil_art,                  FALSE, OPTS_SPOIL,     2, 28,
 	"spoil_art",			"Gain knowledge of standard artifacts" },
 
-	{ &spoil_value,	FALSE,	8,	2, 23,
+	{ &spoil_value,	FALSE, OPTS_SPOIL,	2, 23,
 	"spoil_value",	"Gain knowledge of the apparent prices of items" },
 
-	{ &spoil_mon,			FALSE, 8,	2, 0,
+	{ &spoil_mon,			FALSE, OPTS_SPOIL,	2, 0,
 	"spoil_mon",			"Gain knowledge of monsters" },
 
-	{ &spoil_stat,			FALSE,	8,	2,	29,
+	{ &spoil_stat,			FALSE, OPTS_SPOIL,	2,	29,
 	"spoil_stat",			"Gain knowledge of the effects of stat changes"},
 
-	{ &spoil_flag,	FALSE,	8, 3, 10,
+	{ &spoil_flag,	FALSE, OPTS_SPOIL, 3, 10,
 	"spoil_flag",	"Gain knowledge of the effects of various flags."},
 
-	{ &spoil_dam,	FALSE,	8,	3,	8,
+	{ &spoil_dam,	FALSE, OPTS_SPOIL,	3,	8,
 	"spoil_dam",	"Gain knowledge of melee weapon damage."},
 
-	{ &bypass_prompt,		FALSE,	1,	2, 24,
+	{ &bypass_prompt,		FALSE, OPTS_UI,	2, 24,
 	"bypass_prompt",	"Bypass spirit selection prompt where appropriate" },
 
 	/*** End of Table ***/

@@ -544,6 +544,21 @@ logaux(x, 1) logaux(x, 0) 255
 
 
 /*
+ * Option sets
+ */
+#define OPTS_CHEAT	0	/* Cheating Options */
+#define OPTS_UI	1	/* User Interface Options */
+#define OPTS_DISTURB	2	/* Disturbance Options */
+#define OPTS_MON	3	/* Creature Options */
+#define OPTS_OBJ	4	/* Object Options */
+#define OPTS_PERF	5	/* Performance Options */
+#define OPTS_MISC	6	/* Miscellaneous Options */
+#define OPTS_BIRTH	7	/* Birth Options */
+#define OPTS_SPOIL	8	/* Spoiler Options */
+
+#define OPTS_MAX	9
+
+/*
  * Refueling constants
  */
 #define FUEL_TORCH      5000    /* Maximum amount of fuel in a torch */
