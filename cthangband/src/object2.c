@@ -1581,6 +1581,20 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 }
 
 /*
+ * Find an appropriate discount when two similar piles of items (which
+ * are assumed to have the same per-item value) are merged.
+ *
+ * This can never decrease the total value of the merged stacks.
+ */
+byte merge_discounts(object_type *o_ptr, object_type *j_ptr)
+{
+	int d1 = o_ptr->discount, d2 = j_ptr->discount;
+	int n1 = o_ptr->number, n2 = j_ptr->number;
+
+	return 100 - ((100-d1)*n1 + (100-d2)*n2) / (n1+n2);
+}
+
+/*
  * Allow one item to "absorb" another, assuming they are similar
  * Return true if every object was ab
  */
@@ -1605,8 +1619,8 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
-	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;
-
+	o_ptr->discount = merge_discounts(o_ptr, j_ptr);
+	
 	/* Add together the stacks, and return TRUE if the second is empty. */
 	return store_object_absorb(o_ptr, j_ptr);
 }
