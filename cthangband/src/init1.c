@@ -327,7 +327,7 @@ static flag_name info_flags[] =
 	{"ANIMAL", RF3, RF3_ANIMAL},
     {"GREAT_OLD_ONE", RF3, RF3_GREAT_OLD_ONE},
     {"GOOD", RF3, RF3_GOOD},
-/*	{"PLAYER_GHOST", RF3, RF3_PLAYER_GHOST}, */
+	{"PLAYER_GHOST", RF3, RF3_PLAYER_GHOST},
     {"NONLIVING", RF3, RF3_NONLIVING},
 	{"HURT_LITE", RF3, RF3_HURT_LITE},
 	{"HURT_ROCK", RF3, RF3_HURT_ROCK},
@@ -3502,6 +3502,15 @@ static errr init_info_txt_final(header *head)
 			/* Find the monster name array. */
 			find_monster_race(0);
 			break;
+		}
+		/* *Hack* - deduce the length of the ghost's name and hide it in its
+		 * (unused) level field. */
+		case R_HEAD:
+		{
+			monster_race *r_ptr = ((monster_race*)(head->info_ptr)) + 
+				MON_PLAYER_GHOST;
+			cptr rname = head->name_ptr+r_ptr->name;
+			r_ptr->level = MIN(255, strlen(rname));
 		}
 	}
 	return SUCCESS;

@@ -109,16 +109,19 @@ static void ghost_blow(int i, int m, int e, int d, int s)
 }
 
 /*
- * Prepare the ghost -- method 2
+ * Prepare the ghost.
  */
-static void set_ghost_aux_2(void)
+static void set_ghost_aux(void)
 {
-	monster_race *r_ptr = &r_info[MON_PLAYER_GHOST];
+	monster_race *r_ptr;
 
-	int lev = r_ptr->level;
+	monster_race *rt_ptr;
+	
+	int i, lev = r_info[MON_PLAYER_GHOST].level;
 
 	int grace = ghost_race;
 
+	cptr g_name;
 	cptr gr_name = "";
 
 	if (grace < MAX_RACES)
@@ -126,303 +129,89 @@ static void set_ghost_aux_2(void)
 		gr_name=race_info[grace].title;
 	}
 
-	/* The ghost is cold blooded */
-	r_ptr->flags2 |= (RF2_COLD_BLOOD);
+	/* Pick a level to obtain the ghost for. */
+	lev = (lev/4)*4 + rand_int(12);
 
-	/* The ghost is undead */
-	r_ptr->flags3 |= (RF3_UNDEAD);
+	/* Find a ghost for this level. */
+	for (r_ptr = r_info, rt_ptr = NULL; r_ptr < r_info+MAX_R_IDX; r_ptr++)
+	{
+		/* Not a ghost. */
+		if (!(r_ptr->flags3 & RF3_PLAYER_GHOST)) continue;
 
-	/* The ghost is immune to poison */
-	r_ptr->flags3 |= (RF3_IM_POIS);
-    
+		/* Too deep. */
+		if (r_ptr->level > lev) continue;
 
-	/* Make a ghost. First we make 'normal' ghosts, then dragon ghosts. */
-		switch ((lev / 4) + randint(3))
-		{
-			case 1: case 2: case 3:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Skeleton %s", gb_name, gr_name);
-				r_ptr->d_char = 's';
-				r_ptr->d_attr = TERM_WHITE;
-				r_ptr->x_attr = r_info[174].x_attr; /* Mega-Hack use the current 'Skeleton Human' graphic */
-				r_ptr->x_char = r_info[174].x_char;
-				r_ptr->flags2 |= (RF2_OPEN_DOOR | RF2_BASH_DOOR);
-				r_ptr->flags3 |= (RF3_IM_COLD);
-				if (grace == RACE_HALF_ORC) r_ptr->flags3 |= (RF3_ORC);
-				if (grace == RACE_HALF_TROLL) r_ptr->flags3 |= (RF3_TROLL);
-				r_ptr->ac = 26;
-				r_ptr->speed = 110;
-				r_ptr->num_blows=2;
-				ghost_blow(0, RBM_HIT, RBE_HURT, 2, 6);
+		/* Remember the new deepest ghost. */
+		if (!rt_ptr || r_ptr->level > rt_ptr->level) rt_ptr = r_ptr;
+	}
 
-				break;
-			}
+	/* None were found, so complain and use a default race. */
+	if (!rt_ptr)
+	{
+		rt_ptr = r_info+MON_NEWT;
+		if (alert_failure)
+			msg_format("Failed to allocate a ghost for level %d!", lev);
+	}
 
-			case 4: case 5:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Zombified %s", gb_name, gr_name);
-				r_ptr->d_char = 'z';
-				r_ptr->d_attr = TERM_L_DARK;
-				r_ptr->x_attr = r_info[175].x_attr; /* Mega-Hack use the current 'Zombified Human' graphic */
-				r_ptr->x_char = r_info[175].x_char;
-				r_ptr->flags1 |= (RF1_DROP_60 | RF1_DROP_90);
-				r_ptr->flags2 |= (RF2_OPEN_DOOR | RF2_BASH_DOOR);
-				if (grace == RACE_HALF_ORC) r_ptr->flags3 |= (RF3_ORC);
-				if (grace == RACE_HALF_TROLL) r_ptr->flags3 |= (RF3_TROLL);
-				r_ptr->ac = 30;
-				r_ptr->speed = 110;
-				r_ptr->hside *= 2;
-				r_ptr->num_blows=1;
-				ghost_blow(0, RBM_HIT, RBE_HURT, 2, 9);
+	/* Now write the ghost. */
+ 	r_ptr = &r_info[MON_PLAYER_GHOST];
+ 
+	/* Combine the file defaults in r_ptr with the prototype defaults in rt_ptr. */
 
-				break;
-				}
+	/* First, the name. */
+	if (strstr(r_name+rt_ptr->name, "RACE"))
+	{
+		/* Replace RACE with the actual race. */
+		cptr r = r_name+rt_ptr->name;
+		cptr s = strstr(r, "RACE");
+		g_name = format("%s, %.*s%s%s", gb_name, s-r, r, gr_name, s+4);
+	}
+	else
+	{
+		/* Simply copy the strings. */
+		g_name = format("%s, %s", gb_name, r_name+rt_ptr->name);
+	}
+	
+	/* Copy to r_name (r_ptr->level stores its maximum length). */
+	sprintf(r_name+r_ptr->name, "%.*s", r_ptr->level, g_name);
 
-			case 6: case 7:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Mummified %s", gb_name, gr_name);
-				r_ptr->d_char = 'z';
-				r_ptr->d_attr = TERM_L_DARK;
-				r_ptr->x_attr = r_info[281].x_attr; /* Mega-Hack use the current 'Mummified Human' graphic */
-				r_ptr->x_char = r_info[281].x_char;
-				r_ptr->flags1 |= (RF1_DROP_1D2);
-				r_ptr->flags2 |= (RF2_OPEN_DOOR | RF2_BASH_DOOR);
-				if (grace == RACE_HALF_ORC) r_ptr->flags3 |= (RF3_ORC);
-				if (grace == RACE_HALF_TROLL) r_ptr->flags3 |= (RF3_TROLL);
-				r_ptr->ac = 35;
-				r_ptr->speed = 110;
-				r_ptr->hside *= 2;
-				r_ptr->mexp = (r_ptr->mexp * 3) / 2;
-				r_ptr->num_blows=3;
-				ghost_blow(0, RBM_HIT, RBE_HURT, 3, 8);
-	
-				break;
-			}
-	
-			case 8:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Poltergeist", gb_name);
-				r_ptr->d_char = 'G';
-				r_ptr->d_attr = TERM_WHITE;
-				r_ptr->x_attr = r_info[56].x_attr; /* Mega-Hack use the current 'Poltergeist' graphic */
-				r_ptr->x_char = r_info[56].x_char;
-				r_ptr->flags1 |= (RF1_RAND_50 | RF1_RAND_25 | RF1_DROP_1D2);
-				r_ptr->flags2 |= (RF2_INVISIBLE | RF2_PASS_WALL);
-				r_ptr->flags3 |= (RF3_IM_COLD);
-				r_ptr->ac = 20;
-				r_ptr->speed = 130;
-				r_ptr->mexp = (r_ptr->mexp * 3) / 2;
-				r_ptr->num_blows=3;
-				ghost_blow(0, RBM_HIT, RBE_HURT, 2, 6);
-				ghost_blow(1, RBM_TOUCH, RBE_TERRIFY, 0, 0);
-	
-				break;
-			}
-	
-			case 9: case 10:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Spirit", gb_name);
-				r_ptr->d_char = 'G';
-				r_ptr->d_attr = TERM_WHITE;
-				r_ptr->x_attr = r_info[177].x_attr; /* Mega-Hack use the current 'Moaning Spirit' graphic */
-				r_ptr->x_char = r_info[177].x_char;
-				r_ptr->flags1 |= (RF1_DROP_1D2);
-				r_ptr->flags2 |= (RF2_INVISIBLE | RF2_PASS_WALL);
-				r_ptr->flags3 |= (RF3_IM_COLD);
-				r_ptr->ac = 20;
-				r_ptr->speed = 110;
-				r_ptr->hside *= 2;
-				r_ptr->mexp = r_ptr->mexp * 3;
-				r_ptr->num_blows=4;
-				ghost_blow(0, RBM_TOUCH, RBE_LOSE_WIS, 2, 6);
-				ghost_blow(1, RBM_TOUCH, RBE_LOSE_DEX, 2, 6);
-				ghost_blow(2, RBM_HIT, RBE_HURT, 4, 6);
-				ghost_blow(3, RBM_WAIL, RBE_TERRIFY, 0, 0);
-	
-				break;
-			}
-	
-			case 11:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Ghost", gb_name);
-				r_ptr->d_char = 'G';
-				r_ptr->d_attr = TERM_WHITE;
-				r_ptr->x_attr = r_info[338].x_attr; /* Mega-Hack use the current 'Ghost' graphic */
-				r_ptr->x_char = r_info[338].x_char;
-				r_ptr->flags1 |= (RF1_DROP_1D2);
-				r_ptr->flags2 |= (RF2_INVISIBLE | RF2_PASS_WALL);
-				r_ptr->flags3 |= (RF3_IM_COLD);
-				r_ptr->flags5 |= (RF5_BLIND | RF5_HOLD | RF5_DRAIN_MANA);
-				r_ptr->freq_inate = r_ptr->freq_spell = 100 / 15;
-				r_ptr->ac = 40;
-				r_ptr->speed = 120;
-				r_ptr->hside *= 2;
-				r_ptr->mexp = (r_ptr->mexp * 7) / 2;
-				r_ptr->num_blows=5;
-				ghost_blow(0, RBM_WAIL, RBE_TERRIFY, 0, 0);
-				ghost_blow(1, RBM_TOUCH, RBE_EXP_20, 0, 0);
-				ghost_blow(2, RBM_CLAW, RBE_LOSE_INT, 2, 6);
-				ghost_blow(3, RBM_CLAW, RBE_LOSE_WIS, 2, 6);
-	
-				break;
-			}
-	
-			case 12:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Vampire", gb_name);
-				r_ptr->d_char = 'V';
-				r_ptr->d_attr = TERM_VIOLET;
-				r_ptr->x_attr = r_info[370].x_attr; /* Mega-Hack use the current 'Master Vampire' graphic */
-				r_ptr->x_char = r_info[370].x_char;
-				r_ptr->flags1 |= (RF1_DROP_2D2);
-				r_ptr->flags2 |= (RF2_OPEN_DOOR | RF2_BASH_DOOR);
-				r_ptr->flags3 |= (RF3_HURT_LITE);
-				r_ptr->flags5 |= (RF5_SCARE | RF5_HOLD | RF5_CAUSE_2);
-				r_ptr->flags6 |= (RF6_TELE_TO);
-				r_ptr->freq_inate = r_ptr->freq_spell = 100 / 8;
-				r_ptr->ac = 40;
-				r_ptr->speed = 110;
-				r_ptr->hside *= 3;
-				r_ptr->mexp = r_ptr->mexp * 3;
-				r_ptr->num_blows=5;
-				ghost_blow(0, RBM_HIT, RBE_HURT, 5, 8);
-				ghost_blow(2, RBM_BITE, RBE_EXP_40, 0, 0);
-	
-				break;
-			}
-	
-			case 13:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Wraith", gb_name);
-				r_ptr->d_char = 'W';
-				r_ptr->d_attr = TERM_WHITE;
-				r_ptr->x_attr = r_info[429].x_attr; /* Mega-Hack use the current 'Black Wraith' graphic */
-				r_ptr->x_char = r_info[429].x_char;
-				r_ptr->flags1 |= (RF1_DROP_2D2 | RF1_DROP_4D2);
-				r_ptr->flags2 |= (RF2_OPEN_DOOR | RF2_BASH_DOOR);
-				r_ptr->flags3 |= (RF3_IM_COLD | RF3_HURT_LITE);
-				r_ptr->flags5 |= (RF5_BLIND | RF5_SCARE | RF5_HOLD);
-				r_ptr->flags5 |= (RF5_CAUSE_3 | RF5_BO_NETH);
-				r_ptr->freq_inate = r_ptr->freq_spell = 100 / 7;
-				r_ptr->ac = 60;
-				r_ptr->speed = 120;
-				r_ptr->hside *= 3;
-				r_ptr->mexp = r_ptr->mexp * 5;
-				r_ptr->num_blows=6;
-				ghost_blow(0, RBM_HIT, RBE_HURT, 6, 8);
-				ghost_blow(2, RBM_TOUCH, RBE_EXP_20, 0, 0);
-	
-				break;
-			}
-	
-			case 14:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Vampire Lord", gb_name);
-				r_ptr->d_char = 'V';
-				r_ptr->d_attr = TERM_BLUE;
-				r_ptr->x_attr = r_info[439].x_attr; /* Mega-Hack use the current 'Vampire Lord' graphic */
-				r_ptr->x_char = r_info[439].x_char;
-				r_ptr->flags1 |= (RF1_DROP_1D2 | RF1_DROP_GREAT);
-				r_ptr->flags2 |= (RF2_OPEN_DOOR | RF2_BASH_DOOR);
-				r_ptr->flags3 |= (RF3_HURT_LITE);
-				r_ptr->flags5 |= (RF5_SCARE | RF5_HOLD | RF5_CAUSE_3 | RF5_BO_NETH);
-				r_ptr->flags6 |= (RF6_TELE_TO);
-				r_ptr->freq_inate = r_ptr->freq_spell = 100 / 8;
-				r_ptr->ac = 80;
-				r_ptr->speed = 110;
-				r_ptr->hside *= 2;
-				r_ptr->hdice *= 2;
-				r_ptr->mexp = r_ptr->mexp * 20;
-				r_ptr->num_blows=6;
-				ghost_blow(0, RBM_HIT, RBE_HURT, 6, 8);
-				ghost_blow(3, RBM_BITE, RBE_EXP_80, 0, 0);
-	
-				break;
-			}
-	
-			case 15:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Ghost", gb_name);
-				r_ptr->d_char = 'G';
-				r_ptr->d_attr = TERM_WHITE;
-				r_ptr->x_attr = r_info[388].x_attr; /* Mega-Hack use the current 'Law Ghost' graphic */
-				r_ptr->x_char = r_info[388].x_char;
-				r_ptr->flags1 |= (RF1_DROP_2D2 | RF1_DROP_GREAT);
-				r_ptr->flags2 |= (RF2_INVISIBLE | RF2_PASS_WALL);
-				r_ptr->flags3 |= (RF3_IM_COLD);
-				r_ptr->flags5 |= (RF5_BLIND | RF5_CONF | RF5_HOLD | RF5_DRAIN_MANA);
-				r_ptr->freq_inate = r_ptr->freq_spell = 100 / 5;
-				r_ptr->ac = 90;
-				r_ptr->speed = 130;
-				r_ptr->hside *= 3;
-				r_ptr->mexp = r_ptr->mexp * 20;
-				r_ptr->num_blows=7;
-				ghost_blow(0, RBM_WAIL, RBE_TERRIFY, 0, 0);
-				ghost_blow(1, RBM_TOUCH, RBE_EXP_20, 0, 0);
-				ghost_blow(2, RBM_CLAW, RBE_LOSE_INT, 2, 6);
-				ghost_blow(3, RBM_CLAW, RBE_LOSE_WIS, 2, 6);
-	
-				break;
-			}
-	
-			case 17:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Lich", gb_name);
-				r_ptr->d_char = 'L';
-				r_ptr->d_attr = TERM_ORANGE;
-				r_ptr->x_attr = r_info[461].x_attr; /* Mega-Hack use the current 'Master Lich' graphic */
-				r_ptr->x_char = r_info[461].x_char;
-				r_ptr->flags1 |= (RF1_DROP_2D2 | RF1_DROP_1D2 | RF1_DROP_GREAT);
-				r_ptr->flags2 |= (RF2_SMART | RF2_OPEN_DOOR | RF2_BASH_DOOR);
-				r_ptr->flags3 |= (RF3_IM_COLD);
-				r_ptr->flags5 |= (RF5_BLIND | RF5_SCARE | RF5_CONF | RF5_HOLD);
-				r_ptr->flags5 |= (RF5_DRAIN_MANA | RF5_BA_FIRE | RF5_BA_COLD);
-				r_ptr->flags5 |= (RF5_CAUSE_3 | RF5_CAUSE_4 | RF5_BRAIN_SMASH);
-				r_ptr->flags6 |= (RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_S_UNDEAD);
-				r_ptr->freq_inate = r_ptr->freq_spell = 100 / 3;
-				r_ptr->ac = 120;
-				r_ptr->speed = 120;
-				r_ptr->hside *= 3;
-				r_ptr->hdice *= 2;
-				r_ptr->mexp = r_ptr->mexp * 50;
-				r_ptr->num_blows=6;
-				ghost_blow(0, RBM_TOUCH, RBE_LOSE_DEX, 4, 12);
-				ghost_blow(2, RBM_TOUCH, RBE_UN_POWER, 0, 0);
-				ghost_blow(3, RBM_TOUCH, RBE_EXP_40, 0, 0);
-	
-				break;
-			}
-	
-			default:
-			{
-				sprintf(r_name + r_ptr->name, "%s, the Ghost", gb_name);
-				r_ptr->d_char = 'G';
-				r_ptr->d_attr = TERM_WHITE;
-				r_ptr->x_attr = r_info[358].x_attr; /* Mega-Hack use the current 'Chaos Ghost' graphic */
-				r_ptr->x_char = r_info[358].x_char;
-				r_ptr->flags1 |= (RF1_DROP_1D2 | RF1_DROP_2D2 | RF1_DROP_GREAT);
-				r_ptr->flags2 |= (RF2_SMART | RF2_INVISIBLE | RF2_PASS_WALL);
-				r_ptr->flags3 |= (RF3_IM_COLD);
-				r_ptr->flags5 |= (RF5_BLIND | RF5_CONF | RF5_HOLD | RF5_BRAIN_SMASH);
-				r_ptr->flags5 |= (RF5_DRAIN_MANA | RF5_BA_NETH | RF5_BO_NETH);
-				r_ptr->flags6 |= (RF6_TELE_TO | RF6_TELE_LEVEL);
-				r_ptr->freq_inate = r_ptr->freq_spell = 100 / 2;
-				r_ptr->ac = 130;
-				r_ptr->speed = 130;
-				r_ptr->hside *= 2;
-				r_ptr->hdice *= 2;
-				r_ptr->mexp = r_ptr->mexp * 30;
-				r_ptr->num_blows=7;
-				ghost_blow(0, RBM_WAIL, RBE_TERRIFY, 0, 0);
-				ghost_blow(1, RBM_TOUCH, RBE_EXP_20, 0, 0);
-				ghost_blow(2, RBM_CLAW, RBE_LOSE_INT, 2, 6);
-				ghost_blow(3, RBM_CLAW, RBE_LOSE_WIS, 2, 6);
-	
-				break;
-			}
-		}
-	}	
+	/* The hit dice in rt_ptr are a multiple of the base values. */
+	i = (int)(r_ptr->hdice) * rt_ptr->hdice;
+	if (i < 256) r_ptr->hdice *= rt_ptr->hdice;
+	i = (int)(r_ptr->hside) * rt_ptr->hside;
+	if (i < 256) r_ptr->hside *= rt_ptr->hside;
 
+	/* The experience is similar, but is boosted by 100 for finer control. */
+	r_ptr->mexp = MAX(r_ptr->mexp * rt_ptr->mexp / 100, 0);
+
+	/* Most other fields are simply copied. */
+	r_ptr->ac = rt_ptr->ac;
+	r_ptr->sleep = rt_ptr->sleep;
+	r_ptr->aaf = rt_ptr->aaf;
+	r_ptr->speed = rt_ptr->speed;
+	r_ptr->freq_inate = rt_ptr->freq_inate;
+	r_ptr->freq_spell = rt_ptr->freq_spell;
+	r_ptr->flags1 = rt_ptr->flags1;
+	r_ptr->flags2 = rt_ptr->flags2;
+	r_ptr->flags3 = rt_ptr->flags3;
+	r_ptr->flags4 = rt_ptr->flags4;
+	r_ptr->flags5 = rt_ptr->flags5;
+	r_ptr->flags6 = rt_ptr->flags6;
+	r_ptr->d_attr = rt_ptr->d_attr;
+	r_ptr->d_char = rt_ptr->d_char;
+	r_ptr->x_attr = rt_ptr->x_attr;
+	r_ptr->x_char = rt_ptr->x_char;
+	r_ptr->num_blows = rt_ptr->num_blows;
+	C_COPY(r_ptr->blow, rt_ptr->blow, 4, monster_blow);
+
+	/* Remove the RF3_ORC and RF3_TROLL flags if necessary. */
+	switch (grace)
+	{
+		case RACE_HALF_ORC: r_ptr->flags3 &= ~(RF3_TROLL); break;
+		case RACE_HALF_TROLL: r_ptr->flags3 &= ~(RF3_ORC); break;
+		default: r_ptr->flags3 &= ~(RF3_TROLL | RF3_ORC);
+	}
+}
 
 /*
  * Hack -- Prepare the "ghost" race
@@ -478,34 +267,11 @@ static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
 	/* Capitalize the name */
 	if (islower(gb_name[0])) gb_name[0] = toupper(gb_name[0]);
 
-
-	/* Clear the normal flags */
-	r_ptr->flags1 = r_ptr->flags2 = r_ptr->flags3 = 0L;
-
-	/* Clear the spell flags */
-	r_ptr->flags4 = r_ptr->flags5 = r_ptr->flags6 = 0L;
-
-    
-	/* Clear the attacks */
-	ghost_blow(0, 0, 0, 0, 0);
-	ghost_blow(1, 0, 0, 0, 0);
-	ghost_blow(2, 0, 0, 0, 0);
-	ghost_blow(3, 0, 0, 0, 0);
-
-
-	/* The ghost never sleeps */
-	r_ptr->sleep = 0;
-
-	/* The ghost is very attentive */
-	r_ptr->aaf = 100;
-
-
 	/* Save the level */
 	r_ptr->level = lev;
 
 	/* Extract the default experience */
 	r_ptr->mexp = lev * 5 + 5;
-
 
 	/* Hack -- Break up the hitpoints */
 	for (i = 1; i * i < hp; i++) ;
@@ -513,25 +279,11 @@ static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
 	/* Extract the basic hit dice and sides */
 	r_ptr->hdice = r_ptr->hside = i;
 
-
-	/* Unique monster */
-	r_ptr->flags1 |= (RF1_UNIQUE);
-
-	/* Only carry good items */
-	r_ptr->flags1 |= (RF1_ONLY_ITEM | RF1_DROP_GOOD);
-
-	/* The ghost is always evil */
-	r_ptr->flags3 |= (RF3_EVIL);
-
-	/* Cannot be slept or confused */
-	r_ptr->flags3 |= (RF3_NO_SLEEP | RF3_NO_CONF);
-
 	/* Save the race and class */
 	ghost_race = grace;
 
-
-	/* Prepare the ghost (method 2) */
-	set_ghost_aux_2();
+	/* Prepare the ghost */
+	set_ghost_aux();
 }
 
 
@@ -539,7 +291,7 @@ static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
 /*
  * Places a ghost somewhere.
  */
-s16b place_ghost(void)
+bool place_ghost(void)
 {
 	int y, x, hp, level, grace, gclass;
 
