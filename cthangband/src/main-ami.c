@@ -2852,6 +2852,7 @@ static errr amiga_react( int v )
 	return ( 0 );
 }
 
+#if 0 /* Broken (see print_tomb for a model), and apparently unused. */
 /* Display graphical tombstone. Note this changes the palette so a load_palette
    after termination is a *must*! */
 int amiga_tomb( void )
@@ -2997,6 +2998,7 @@ int amiga_tomb( void )
 
 	return( TRUE );
 }
+#endif /* 0 */
 
 void tomb_str( int y, char *str )
 {

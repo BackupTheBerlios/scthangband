@@ -727,9 +727,9 @@ extern int read_prefs( void );
 #if (defined(USE_AMI)) && (defined(MAIN_AMI_C))
 extern errr amiga_event( int v );
 #endif
-#if (defined(USE_AMI)) && (defined(MAIN_AMI_C))
-extern int amiga_tomb( void );
-#endif
+
+
+
 #if (defined(USE_AMI)) && (defined(MAIN_AMI_C))
 extern void tomb_str( int y, char *str );
 #endif
