@@ -1146,9 +1146,10 @@ static void wr_dungeon(void)
 	int i, y, x;
 
 	byte tmp8u;
+	u16b tmp16u;
 
 	byte count;
-	byte prev_char;
+	u16b prev_char;
 
 	cave_type *c_ptr;
 
@@ -1188,15 +1189,23 @@ static void wr_dungeon(void)
 			/* Get the cave */
 			c_ptr = &cave[y][x];
 
-			/* Extract a byte */
-			tmp8u = c_ptr->info;
+			/* Extract the cave flags */
+			tmp16u = c_ptr->info;
+			if (vpatch < 6) tmp16u &= 0x00FF;
 			
 			/* If the run is broken, or too full, flush it */
-			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+			if ((tmp16u != prev_char) || (count == MAX_UCHAR))
 			{
 				wr_byte((byte)count);
+				if (vpatch < 6)
+				{
 				wr_byte((byte)prev_char);
-				prev_char = tmp8u;
+				}
+				else
+				{
+					wr_u16b(prev_char);
+				}
+				prev_char = tmp16u;
 				count = 1;
 			}
 
@@ -1212,7 +1221,10 @@ static void wr_dungeon(void)
 	if (count)
 	{
 		wr_byte((byte)count);
+		if (vpatch < 6)
 		wr_byte((byte)prev_char);
+		else
+			wr_u16b(prev_char);
 	}
 
 

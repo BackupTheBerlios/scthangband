@@ -3133,6 +3133,7 @@ static void use_power(powertype *pw_ptr)
         case RACE_DWARF:
                     msg_print("You examine your surroundings.");
                     (void)detect_traps();
+					mark_traps();
                     (void)detect_doors();
                     (void)detect_stairs();
                 break;
@@ -3228,6 +3229,7 @@ static void use_power(powertype *pw_ptr)
         case RACE_NIBELUNG:
                     msg_print("You examine your surroundings.");
                     (void)detect_traps();
+					mark_traps();
                     (void)detect_doors();
                     (void)detect_stairs();
                 break;

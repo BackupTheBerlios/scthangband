@@ -1257,6 +1257,7 @@ static errr rd_dungeon(void)
 
 	byte count;
 	byte tmp8u;
+	u16b tmp16u;
 
 	u16b limit;
 
@@ -1296,7 +1297,15 @@ static errr rd_dungeon(void)
 	{
 		/* Grab RLE info */
 		rd_byte(&count);
+		if (older_than(4,1,6))
+		{
 		rd_byte(&tmp8u);
+			tmp16u = tmp8u;
+		}
+		else
+		{
+			rd_u16b(&tmp16u);
+		}
 
 		/* Apply the RLE info */
 		for (i = count; i > 0; i--)
@@ -1305,7 +1314,7 @@ static errr rd_dungeon(void)
 			c_ptr = &cave[y][x];
 
 			/* Extract "info" */
-			c_ptr->info = tmp8u;
+			c_ptr->info = tmp16u;
 
 			/* Advance/Wrap */
 			if (++x >= xmax)

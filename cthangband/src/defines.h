@@ -39,7 +39,7 @@
 /* <<VERSION STAMP>> */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   1
-#define VERSION_PATCH   5
+#define VERSION_PATCH   6
 
 
 /*
@@ -842,6 +842,7 @@ logaux(x, 1) logaux(x, 0) 255
 #define FEAT_LESS               0x06
 #define FEAT_MORE               0x07
 #define FEAT_PATH                0x08
+#define FEAT_NONE_TD	0x09
 
 /* Traps */
 #define FEAT_TRAP_HEAD  0x10
@@ -1862,6 +1863,7 @@ logaux(x, 1) logaux(x, 0) 255
 #define CAVE_VIEW       0x20    /* view flag */
 #define CAVE_TEMP       0x40    /* temp flag */
 #define CAVE_XTRA       0x80    /* misc flag */
+#define CAVE_TRAP		0x0100	/* checked for traps */
 
 /*
  * Start Points for surface levels

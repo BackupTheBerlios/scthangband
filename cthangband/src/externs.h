@@ -806,6 +806,7 @@ extern bool remove_all_curse(void);
 extern bool restore_level(void);
 extern void self_knowledge(void);
 extern bool lose_all_info(void);
+extern void mark_traps(void);
 extern bool detect_traps(void);
 extern bool detect_doors(void);
 extern bool detect_stairs(void);

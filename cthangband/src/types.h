@@ -461,7 +461,7 @@ typedef struct cave_type cave_type;
 
 struct cave_type
 {
-	byte info;		/* Hack -- cave flags */
+	u16b info;		/* Hack -- cave flags */
 
 	byte feat;		/* Hack -- feature type */
 

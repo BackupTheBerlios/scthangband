@@ -928,6 +928,7 @@ void do_cmd_quaff_potion(int item)
 			(void)do_inc_stat(A_INT);
 			(void)do_inc_stat(A_WIS);
 			(void)detect_traps();
+			mark_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
 			(void)detect_treasure();
@@ -1492,6 +1493,7 @@ void do_cmd_read_scroll(int item)
 		case SV_SCROLL_DETECT_TRAP:
 		{
 			if (detect_traps()) ident = TRUE;
+			if (object_aware_p(o_ptr) || ident) mark_traps();
 			break;
 		}
 
@@ -1925,6 +1927,7 @@ void do_cmd_use_staff(int item)
 		case SV_STAFF_DETECT_TRAP:
 		{
 			if (detect_traps()) ident = TRUE;
+			if (object_aware_p(o_ptr) || ident) mark_traps();
 			break;
 		}
 
@@ -2699,6 +2702,7 @@ void do_cmd_zap_rod(int item)
 		case SV_ROD_DETECT_TRAP:
 		{
 			if (detect_traps()) ident = TRUE;
+			if (object_aware_p(o_ptr) || ident) mark_traps();
             o_ptr->pval = (10 + (randint(10)));
 			break;
 		}
@@ -3287,6 +3291,7 @@ void do_cmd_activate(int item)
                 msg_print("The gemstone drains your vitality...");
                 take_hit(damroll(3,8), "the Gemstone 'Trapezohedron'");
 				(void)detect_traps();
+				mark_traps();
 				(void)detect_doors();
 				(void)detect_stairs();
                 if (get_check("Activate recall? "))

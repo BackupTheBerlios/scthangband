@@ -796,8 +796,15 @@ void map_info(int y, int x, byte *ap, char *cp)
 		/* Unknown */
 		else
 		{
+			if (c_ptr->info & CAVE_TRAP)
+			{
+				f_ptr = &f_info[FEAT_NONE_TD];
+			}
+			else
+			{
 			/* Access darkness */
 			f_ptr = &f_info[FEAT_NONE];
+			}
 
 			/* Normal attr */
 			a = f_ptr->x_attr;
@@ -935,8 +942,16 @@ void map_info(int y, int x, byte *ap, char *cp)
 		/* Unknown */
 		else
 		{
+			if (c_ptr->info & CAVE_TRAP)
+			{
+				f_ptr = &f_info[FEAT_NONE_TD];
+			}
+			else
+			{
 			/* Access darkness */
 			f_ptr = &f_info[FEAT_NONE];
+			}
+
 
 			/* Normal attr */
 			a = f_ptr->x_attr;
@@ -3388,7 +3403,7 @@ void wiz_dark(void)
 			cave_type *c_ptr = &cave[y][x];
 
 			/* Process the grid */
-			c_ptr->info &= ~(CAVE_MARK);
+			c_ptr->info &= ~(CAVE_MARK | CAVE_TRAP);
 		}
 	}
 

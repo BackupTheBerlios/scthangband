@@ -1670,6 +1670,27 @@ bool lose_all_info(void)
 
 
 
+/*
+ * Set CAVE_TRAP for every square covered by detect_traps().
+ * This is a separate function as trap detection could caused by an
+ * unidentified object. It must cover the same area, of course.
+ */
+void mark_traps(void)
+{
+	int x,y;
+
+	for (y = panel_row_min; y <= panel_row_max; y++)
+	{
+		for (x = panel_col_min; x <= panel_col_max; x++)
+		{
+			cave[y][x].info |= (CAVE_TRAP);
+		}
+	}
+
+	p_ptr->redraw |= PR_MAP;
+	redraw_stuff();
+}
+	
 
 /*
  * Detect all traps on current panel
@@ -2443,6 +2464,7 @@ bool detect_all(void)
 	if (detect_objects_normal()) detect = TRUE;
 	if (detect_monsters_invis()) detect = TRUE;
 	if (detect_monsters_normal()) detect = TRUE;
+	if (detect) mark_traps();
 	
 	/* Result */
 	return (detect);
@@ -5012,7 +5034,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 			/* Lose light and knowledge */
-			c_ptr->info &= ~(CAVE_MARK | CAVE_GLOW);
+			c_ptr->info &= ~(CAVE_MARK | CAVE_GLOW | CAVE_TRAP);
 
 			/* Hack -- Notice player affect */
 			if ((x == px) && (y == py))
@@ -5170,7 +5192,7 @@ void earthquake(int cy, int cx, int r)
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 			/* Lose light and knowledge */
-			c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
+			c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK | CAVE_TRAP);
 
 			/* Skip the epicenter */
 			if (!dx && !dy) continue;
