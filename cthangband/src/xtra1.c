@@ -223,13 +223,23 @@ static void prt_energy(void)
  }
 
 /*
+ * Determine the colour of a display based on the proportion of maximum.
+ */
+static byte percent_to_colour(s16b cur, s16b max)
+{
+	if (cur == max) return TERM_L_GREEN;
+  	if (cur > (max * hitpoint_warn) / 10) return TERM_YELLOW;
+	return TERM_RED;
+}
+
+/*
  * Prints Cur/Max hit points
  */
 static void prt_hp(void)
 {
 	char tmp[32];
-	char tmp2[5];
-	char blank_line[] = "            ";
+	cptr tmp2;
+	cptr blank_line = "            ";
 
 	byte color;
 	
@@ -237,18 +247,13 @@ static void prt_hp(void)
  	sprintf(tmp, "%d/%d", p_ptr->chp, p_ptr->mhp);
  	
  	if (strlen(tmp)==9)
- 		sprintf(tmp2, "HP ");
+		tmp2 = "HP ";
  	else if (strlen(tmp)<9)
- 		sprintf(tmp2, "HP: ");
+ 		tmp2 = "HP: ";
  	else
- 		sprintf(tmp2, "");
+		tmp2 = "";
  	put_str(tmp2, ROW_HP, COL_START);
-  	if (p_ptr->chp >= p_ptr->mhp)
- 		color = TERM_L_GREEN;
-  	else if (p_ptr->chp > (p_ptr->mhp * hitpoint_warn) / 10)
- 		color = TERM_YELLOW;
-  	else
- 		color = TERM_RED;
+	color = percent_to_colour(p_ptr->chp, p_ptr->mhp);
  	c_put_str(color, tmp, ROW_HP, COL_END-strlen(tmp));
 }
 
@@ -259,27 +264,22 @@ static void prt_hp(void)
 static void prt_sp(void)
 {
 	char tmp[32];
-	char tmp2[5];
+	cptr tmp2;
 	byte color;
-	char blank_line[] = "            ";
+	cptr blank_line = "            ";
 
 	put_str(blank_line, ROW_SP, COL_START);
 	put_str(blank_line, ROW_CHI, COL_START);
  	sprintf(tmp, "%d/%d", p_ptr->csp, p_ptr->msp);
  	
  	if (strlen(tmp)==9)
- 		sprintf(tmp2, "SP ");
+		tmp2 = "SP ";
  	else if (strlen(tmp)<9)
- 		sprintf(tmp2, "SP: ");
+		tmp2 = "SP: ";
  	else
- 		sprintf(tmp2, "");
+		tmp2 = "";
  	put_str(tmp2, ROW_SP, COL_START);
-  	if (p_ptr->csp >= p_ptr->msp)
- 		color = TERM_L_GREEN;
-  	else if (p_ptr->csp > (p_ptr->msp * hitpoint_warn) / 10)
- 		color = TERM_YELLOW;
-  	else
- 		color = TERM_RED;
+	color = percent_to_colour(p_ptr->csp, p_ptr->msp);
  	c_put_str(color, tmp, ROW_SP, COL_END-strlen(tmp));
 
 	/* Now repeat for chi */
@@ -287,18 +287,13 @@ static void prt_sp(void)
 	sprintf(tmp, "%d/%d", p_ptr->cchi, p_ptr->mchi);
   
  	if (strlen(tmp)==9)
- 		sprintf(tmp2, "CH ");
+		tmp2 = "CH ";
  	else if (strlen(tmp)<9)
- 		sprintf(tmp2, "CH: ");
+		tmp2 = "CH: ";
  	else
- 		sprintf(tmp2, "");
+		tmp2 = "";
  	put_str(tmp2, ROW_CHI, COL_START);
-  	if (p_ptr->cchi >= p_ptr->mchi)
- 		color = TERM_L_GREEN;
-  	else if (p_ptr->cchi > (p_ptr->mchi * hitpoint_warn) / 10)
- 		color = TERM_YELLOW;
-  	else
- 		color = TERM_RED;
+	color = percent_to_colour(p_ptr->cchi, p_ptr->mchi);
  	c_put_str(color, tmp, ROW_CHI, COL_END-strlen(tmp));
 
 	
