@@ -3033,8 +3033,8 @@ static void process_player(void)
 			/* Do not wait */
 			inkey_scan = TRUE;
 
-			/* Check for a key */
-			if (inkey())
+			/* Check for a key other than space */
+			if (((i = inkey())) && i != ' ')
 			{
 				/* Flush input */
 				flush();
