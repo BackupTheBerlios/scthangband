@@ -3140,8 +3140,7 @@ static void player_outfit(void)
  */
 static void player_birth_quests(void)
 {
-	int i,j;
-	bool same_level;
+	int i,j,k;
 	int q_max = z_info->quests;
 	quest_type *q_list_tmp;
 
@@ -3155,10 +3154,9 @@ static void player_birth_quests(void)
 	/* Generate to MAX_Q_IDX with random quests */
 	for (i = z_info->quests; i<q_max; i++)
 	{
-		do
+		/* Paranoia - quests should not be hard to find. */
+		for (k = 0; k < 10000; k++)
 		{
-			same_level = FALSE;
-
 			/* Get a random monster */
 			do
 			{
@@ -3175,14 +3173,11 @@ static void player_birth_quests(void)
 			/* No 2 quests on the same level (?) */
 			for (j = 0; j<i; j++)
 			{
-				if (q_list[i].level == q_list[j].level)
-				{
-					same_level = TRUE;
-					break;
-				}
+				if (q_list[i].level == q_list[j].level) break;
 			}
+			/* Unique quest level. */
+			if (j == i) break;
 		}
-		while (same_level);
 		
 		/* Make sure uniques aren't created outside their level */
 		if (r_info[q_list[i].r_idx].flags1 & RF1_UNIQUE) r_info[q_list[i].r_idx].flags1 |= RF1_GUARDIAN;
@@ -3379,9 +3374,6 @@ static bool quick_start_character(void)
 	create_random_name(p_ptr->prace,player_name);
 	/* Display */
 	c_put_str(TERM_L_BLUE, player_name, 2, 13);
-
-	/* Generate quests */
-	player_birth_quests();
 
 #ifdef ALLOW_AUTOROLLER
 	/* Initialize */
@@ -4033,13 +4025,6 @@ static bool player_birth_aux(void)
 		/* Clean up */
 		clear_from(15);
 
-		/* Generate quests */
-		player_birth_quests();
-
-		/* Clean up */
-		clear_from(10);
-
-
 		/* Start without chaos features. */
 		p_clear_mutations();
 
@@ -4091,6 +4076,9 @@ void player_birth(void)
 
 	/* Hack -- outfit the player */
 	player_outfit();
+
+	/* Generate quests */
+	player_birth_quests();
 
     /* Shops */
 	for (n = 0; n < MAX_STORES_TOTAL; n++)
