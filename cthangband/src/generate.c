@@ -369,10 +369,7 @@ static void replace_friend(int m_idx)
 
     if (attempts < 1) 
 	{
-		C_TNEW(m_name, MNAME_MAX, char);
-		strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x80);
-		msg_format("You get seperated from %s.",m_name);
-		TFREE(m_name);
+		msg_format("You get separated from %v.", monster_desc_f2, m_ptr, 0x80);
 		return;
 	}
 	/* Update the new location */
