@@ -208,7 +208,6 @@ bool disturb_dawn;	/* Disturb at sunrise or sunset on the surface. */
 bool disturb_minor;			/* Disturb whenever boring things happen */
 
 
-bool alert_hitpoint;		/* Alert user to critical hitpoints */
 bool alert_failure;		/* Alert user to various failures */
 bool last_words;		/* Get last words upon dying */
 bool speak_unique;		/* Speaking uniques + shopkeepers */

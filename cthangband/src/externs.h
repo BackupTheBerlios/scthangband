@@ -2345,9 +2345,9 @@ extern bool disturb_minor;
 
 
 
-#if (defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool alert_hitpoint;
-#endif
+
+
+
 #if (defined(CMD2_C) || defined(CMD4_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool alert_failure;
 #endif

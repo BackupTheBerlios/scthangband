@@ -182,11 +182,6 @@ Automatically clear -more- prompts    [auto_more]
     The game does not wait for a keypress when it comes to a -more-
     prompt, but carries on going.
 
-***** <alert_hitpoint>
-Alert user to critical hitpoints    [alert_hitpoint]
-    Produce a "bell" noise, and flushes all pending input, when your hitpoints
-    reach the "critical point" chosen elsewhere, preventing stupid deaths.
-
 ***** <alert_failure>
 Alert user to various failures    [alert_failure]
     Prints a warning message for various failures in the game logic. This

@@ -3223,9 +3223,6 @@ option_type option_info[] =
 	{ &disturb_minor,               FALSE, OPTS_DISTURB,      0, 24,
 	"disturb_minor",                "Disturb whenever boring things happen" },
 
-	{ &alert_hitpoint,              TRUE, OPTS_DISTURB,      0, 26,
-	"alert_hitpoint",               "Alert user to critical hitpoints" },
-
 	{ &alert_failure,               FALSE, OPTS_DISTURB,      0, 27,
 	"alert_failure",                "Alert user to various failures" },
 
