@@ -1651,6 +1651,22 @@ static void check_screen_coords(void)
 }
 
 /*
+ * Check that skill_set is ordered correctly.
+ */
+static void check_skill_set(void)
+{
+	const player_skill *ptr;
+	for (ptr = skill_set; ptr < END_PTR(skill_set); ptr++)
+	{
+		if (ptr->idx != skill_set+idx)
+		{
+			quit_fmt("The %s skill has index %d rather than %d.", ptr->name,
+				ptr - skill_set, ptr->idx);
+		}
+	}
+}
+
+/*
  * Check that option_info[] avoids putting too many options into a category,
  * or use the same bit in the save file to denote two options.
  */
@@ -1728,6 +1744,7 @@ static void check_arrays(void)
 	check_screen_coords();
 	check_temp_effects();
 	check_options();
+	check_skill_set();
 }
 #endif /* CHECK_ARRAYS */
 

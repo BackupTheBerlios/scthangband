@@ -962,15 +962,21 @@ struct player_race
  */
 
 typedef struct player_skill player_skill;
-struct player_skill {
-		cptr name; /* Skill name */
-		cptr increase; /* Message printed on an increase */
-		u16b experience; /* Amount of times the skill has been used */
-		byte value; /* The current skill level */
-		byte max_value; /* Maximum value the skill has had */
-		byte base; /* The skill level that may be raised to at dungeon level zero */
-		byte ceiling; /* The absolute maximum the skill may be raised to */
-		u16b exp_to_raise; /* The number of times the skill needs to be used for each raise */
+struct player_skill
+{
+#ifdef CHECK_ARRAYS
+	player_skill *idx;
+#endif /* CHECK_ARRAYS */
+	cptr name; /* Skill name */
+	cptr increase; /* Message printed on an increase */
+	u16b experience; /* Amount of times the skill has been used */
+	byte value; /* The current skill level */
+	byte max_value; /* Maximum value the skill has had */
+	byte base; /* The skill level that may be raised to at dungeon level zero */
+	byte ceiling; /* The absolute maximum the skill may be raised to */
+	u16b exp_to_raise; /* The number of times the skill needs to be used for each raise */
+	byte x; /* The x co-ordinate used in player_skills(). */
+	byte y; /* The y co-ordinate used in player_skills(). */
 };
 
 /*

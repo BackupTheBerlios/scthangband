@@ -2424,9 +2424,9 @@ static byte skill_colour(int skill_index)
 /*
  * Display the information for a given skill at a given position.
  */
-static void display_player_skills_aux(int skill, int x, int y)
+static void display_player_skills_aux(int skill)
 {
-	player_skill *sk_ptr = skill_set+skill;
+	const player_skill *sk_ptr = skill_set+skill;
 	cptr name;
 	char *s, buf[30];
 
@@ -2469,7 +2469,7 @@ static void display_player_skills_aux(int skill, int x, int y)
 	}
 
 	/* Print at the desired position. */
-	c_put_str(skill_colour(skill),buf,y,x);
+	c_put_str(skill_colour(skill), buf, sk_ptr->y, sk_ptr->x);
 }
 
 /*
@@ -2478,8 +2478,9 @@ static void display_player_skills_aux(int skill, int x, int y)
 
 static void display_player_skills(void)
 {
-	int x,y;
+	int skill;
 
+	/* Headers. */
 	put_str("Everyman Skills",1,7);
 	put_str("===============",2,7);
 	put_str("Specialist Skills",1,31);
@@ -2487,52 +2488,11 @@ static void display_player_skills(void)
 	put_str("Hermetic Skills",1,56);
 	put_str("===============",2,56);
 
-	/* Everyman Skills */
-	x = 5; y = 4;
-	display_player_skills_aux(SKILL_CLOSE, x, y++);
-	display_player_skills_aux(SKILL_SLASH, x, y++);
-	display_player_skills_aux(SKILL_STAB, x, y++);
-	display_player_skills_aux(SKILL_CRUSH, x, y++);
-	display_player_skills_aux(SKILL_MISSILE, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_TOUGH, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_DEVICE, x, y++);
-	display_player_skills_aux(SKILL_SAVE, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_PERCEPTION, x, y++);
-	display_player_skills_aux(SKILL_SEARCH, x, y++);
-	display_player_skills_aux(SKILL_PSEUDOID, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_DISARM, x, y++);
-	display_player_skills_aux(SKILL_STEALTH, x, y++);
-
-	/* Specialist Skills */
-	x = 30; y = 4;
-	display_player_skills_aux(SKILL_MA, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_MINDCRAFTING, x, y++);
-	display_player_skills_aux(SKILL_CHI, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_SHAMAN, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_HEDGE, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_RACIAL, x, y++);
-
-	/* Hermetic Skills */
-	x = 54; y = 4;
-	display_player_skills_aux(SKILL_THAUMATURGY, x, y++);
-	display_player_skills_aux(SKILL_NECROMANCY, x, y++);
-	display_player_skills_aux(SKILL_CONJURATION, x, y++);
-	display_player_skills_aux(SKILL_SORCERY, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_CORPORIS, x, y++);
-	display_player_skills_aux(SKILL_VIS, x, y++);
-	display_player_skills_aux(SKILL_NATURAE, x, y++);
-	display_player_skills_aux(SKILL_ANIMAE, x, y++);
-	y++;
-	display_player_skills_aux(SKILL_MANA, x, y++);
+	/* Skills */
+	for (skill = 0; skill < (int)N_ELEMENTS(skill_set); skill++)
+	{
+		display_player_skills_aux(skill);
+	}
 }
 
 /*

@@ -183,14 +183,35 @@ void do_cmd_wiz_bamf(void)
 	teleport_player_to(target_row, target_col);
 }
 
+/*
+ * Sorting (comparison) hook for skill furthest to the right, and then the
+ * bottom.
+ */
+static bool ang_sort_comp_skills(vptr u, vptr UNUSED v, int a, int b)
+{
+	player_skill **s = (player_skill**)u;
 
+	if (s[a]->x != s[b]->x) return (s[a]->x < s[b]->x);
+	else return (s[a]->y <= s[b]->y);
+}
+
+/*
+ * Swap two pointers to player_skills around.
+ */
+static void ang_sort_swap_skills(vptr u, vptr UNUSED v, int a, int b)
+{
+	player_skill **s = (player_skill**)u, *st;
+	st = s[a];
+	s[a] = s[b];
+	s[b] = st;
+}
 
 /*
  * Aux function for "do_cmd_wiz_change()".	-RAK-
  */
 static void do_cmd_wiz_change_aux(void)
 {
-	int			i;
+	int			i,win;
 
 	int			tmp_int;
 
@@ -200,6 +221,7 @@ static void do_cmd_wiz_change_aux(void)
 
 	char		ppp[80];
 
+	player_skill *skills[MAX_SKILLS];
 
 	/* Query the stats */
 	for (i = 0; i < 6; i++)
@@ -241,28 +263,63 @@ static void do_cmd_wiz_change_aux(void)
 	p_ptr->au = tmp_long;
 
 
+	/* Initialise. */
+	for (i = 0; i < MAX_SKILLS; i++)
+	{
+		skills[i] = skill_set+i;
+	}
+
+	/* Sort. */
+	ang_sort_swap = ang_sort_swap_skills;
+	ang_sort_comp = ang_sort_comp_skills;
+	ang_sort(skills, 0, MAX_SKILLS);
+
+	win = Term_save_aux();
+
 	for(i=0;i<MAX_SKILLS;i++)
 	{
+		player_skill *sk_ptr = skills[i];
+
+		/* Hack - pretend we're on the surface to avoid skills which are
+		 * normally yellow. See skill_colour() for details.
+		 */
+		const s16b real_dun_level = dun_level;
+		dun_level = 0;
+
+		/* Display the current skill table. */
+		display_player(2);
+
+		dun_level = real_dun_level;
+
+		/* Place the cursor by the skill in question.
+		 * Hack - the 17 is from display_player_skills_aux().
+		 */
+		move_cursor(sk_ptr->y, sk_ptr->x+17);
+
 		/* Default */
-		sprintf(tmp_val, "%ld", (long)(skill_set[i].max_value));
+		sprintf(tmp_val, "%d%%", (int)(skills[i]->max_value));
 
 		/* Query */
-		sprintf(ppp,"%s: ",skill_set[i].name);
-		if (!get_string(ppp, tmp_val, 3)) return;
+		if (!askfor_aux(tmp_val, 3)) return;
 
 		/* Extract */
-		tmp_long = atol(tmp_val);
+		tmp_int = atoi(tmp_val);
 
 		/* Verify */
-		if (tmp_long < 0) tmp_long = 0L;
-		if (tmp_long > 100) tmp_long = 100L;
+		if (tmp_int < 0) tmp_int = 0L;
+		if (tmp_int > 100) tmp_int = 100L;
 
 		/* Save */
-		skill_set[i].max_value = (byte)tmp_long;
-		skill_set[i].value = (byte)tmp_long;
-	}
-}
+		skills[i]->max_value = (byte)tmp_int;
+		skills[i]->value = (byte)tmp_int;
 
+		/* Window stuff. */
+		p_ptr->window |= PW_PLAYER_SKILLS;
+	}
+
+	Term_load_aux(win);
+	Term_release(win);
+}
 
 /*
  * Change various "permanent" player variables.
