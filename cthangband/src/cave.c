@@ -1212,7 +1212,7 @@ static bool panel_contains_prt(int y, int x)
 	y -= Y_SCREEN_ADJ;
 	x -= X_SCREEN_ADJ;
 	if (y < PRT_MINY || y >= PRT_MAXY) return FALSE;
-	if (x < PRT_MINX || y >= PRT_MAXX) return FALSE;
+	if (x < PRT_MINX || x >= PRT_MAXX) return FALSE;
 	return TRUE;
 }
 

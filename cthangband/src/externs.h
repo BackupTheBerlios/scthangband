@@ -338,7 +338,7 @@ extern void do_cmd_knowledge(void);
 #if (defined(CMD5_C) || defined(OBJECT2_C))
 extern void print_cantrips(byte *spells, int num, int y, int x);
 #endif
-#if (defined(CMD5_C) || defined(STORE_C))
+#if (defined(CMD3_C) || defined(CMD5_C) || defined(STORE_C))
 extern int get_cantrip(int *sn, int sval);
 #endif
 #if (defined(CMD5_C) || defined(STORE_C))

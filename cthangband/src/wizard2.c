@@ -521,8 +521,10 @@ static int wiz_create_itemtype(void)
 
 	int			 choice[60];
 
-	char		buf[60][ONAME_LEN];
+	C_TNEW(bufx, 60*ONAME_MAX, char);
+	char		*buf[60];
 
+	for (i = 0; i < 60; i++) buf[i] = bufx+i*ONAME_MAX;
 
 	/* Clear screen */
 	Term_clear();
@@ -540,7 +542,11 @@ static int wiz_create_itemtype(void)
 	max_num = num;
 
 	/* Choose! */
-	if (!get_com("Get what type of object? ", &ch)) return (0);
+	if (!get_com("Get what type of object? ", &ch))
+	{
+		TFREE(bufx);
+		return (0);
+	}
 
 	/* Analyze choice */
 	num = -1;
@@ -549,7 +555,11 @@ static int wiz_create_itemtype(void)
 	if ((ch >= head[2]) && (ch < head[2] + 10)) num = ch - head[2] + 40;
 
 	/* Bail out if choice is illegal */
-	if ((num < 0) || (num >= max_num)) return (0);
+	if ((num < 0) || (num >= max_num))
+	{
+		TFREE(bufx);
+		return (0);
+	}
 
 	/* Base object type chosen, fill in tval */
 	tval = tvals[num].tval;
@@ -716,6 +726,9 @@ static int wiz_create_itemtype(void)
 		/* Print it */
 		prt(format("[%c] %s", ch, buf[i]), row, col);
 	}
+
+	/* Finished with the buf[] array. */
+	TFREE(bufx);
 
 	/* Me need to know the maximal possible remembered object_index */
 	max_num = num;
