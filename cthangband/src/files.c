@@ -4829,7 +4829,6 @@ void init_help_files(void)
 {
 	int i;
 	FILE *fff;
-	cptr s,t;
 	char buf[1024];
 
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -4845,7 +4844,7 @@ void init_help_files(void)
 	/* Count the file references. */
 	for (i = 1; !my_fgets(fff, buf, 1024);)
 	{
-		for (s = buf; (s = strstr(s, "*****")); s += strlen("*****/a")) i++;
+		if (prefix(buf, "%%%%F ")) i++;
 	}
 
 	/* Create the help_files array. */
@@ -4860,16 +4859,10 @@ void init_help_files(void)
 	/* Fill the help_files array. */
 	while (!my_fgets(fff, buf, 1024))
 	{
-		for (s = buf; (s = strstr(s, "*****")); )
+		if (prefix(buf, "%%%%F "))
 		{
-			s += strlen("*****/a");
-			t = strchr(s, '*');
-
-			/* Paranoia. */
-			if (!t) continue;
-
 			/* Fill in the help_files array (backwards). */
-			help_files[--i] = string_make(format("%.*s", t-s, s));
+			help_files[--i] = string_make(buf+6);
 		}
 	}
 
