@@ -1899,7 +1899,6 @@ logaux(x, 1) logaux(x, 0) 255
 #define CAVE_TEMP	0x0040	/* temp flag */
 #define CAVE_XTRA	0x0080	/* misc flag (temporary?) */
 #define CAVE_TRAP	0x0100	/* checked for traps */
-#define CAVE_TMP2	0x0200	/* temp flag 2 (or is it 3?) */
 
 /*
  * Start Points for surface levels
