@@ -17,6 +17,9 @@
 
 #define MAX_COMMENT_1	6
 
+/* A toggle to prevent store_maint() from allowing multiple similar stacks. */
+/* #define MAINT_99_MAX */
+
 /*
  * We store the current "store number" here so everyone can access it
  */
@@ -1028,7 +1031,7 @@ static int store_check_num(object_type *o_ptr)
 			j_ptr = &st_ptr->stock[i];
 
 			/* Can the new object be combined with the old one? */
-			if (object_similar(j_ptr, o_ptr)) return (TRUE);
+			if (object_similar(j_ptr, o_ptr)) return (MAX_STACK_SIZE-1-j_ptr->number);
 		}
 	}
 
@@ -1465,6 +1468,53 @@ static void store_item_increase(int item, int num)
 }
 
 
+static void store_item_optimize(int item);
+
+/*
+ * Try to fill a stack from later stacks.
+ */
+static void store_item_combine(int item)
+{
+	int         j;
+
+	/* Get the item */
+	object_type *o_ptr = &st_ptr->stock[item];
+
+	/* Must exist */
+	if (!o_ptr->k_idx) return;
+
+	/* Find the next dissimilar stack. */
+	for (j = item+1; j < st_ptr->stock_num; j++)
+	{
+		object_type *j_ptr = &st_ptr->stock[j];
+		if (!store_object_similar(j_ptr, o_ptr)) break;
+
+		/* A non-full stack only ever precedes a dissimilar one. */
+		if (j_ptr->number != MAX_STACK_SIZE-1)
+		{
+			j++;
+			break;
+		}
+	}
+
+	/* Decrement j to find the last similar one. */
+	j--;
+
+	/* No similar items. */
+	if (j == item) return;
+	
+	/* More than MAX_STACK_SIZE-1 in these two stacks. */
+	if (!store_object_absorb(o_ptr, &st_ptr->stock[j])) return;
+
+	/* Move the part-filled stack to the end. */
+	st_ptr->stock[j].number = o_ptr->number;
+	o_ptr->number = 0;
+
+	/* Remove this (now empty) stack. */
+	store_item_optimize(item);
+}
+	
+
 /*
  * Remove a slot if it is empty
  */
@@ -1476,11 +1526,11 @@ static void store_item_optimize(int item)
 	/* Get the item */
 	o_ptr = &st_ptr->stock[item];
 
-	/* Must exist */
-	if (!o_ptr->k_idx) return;
-
-	/* Must have no items */
-	if (o_ptr->number) return;
+	if (o_ptr->number)
+	{
+		store_item_combine(item);
+		return;
+	}
 
 	/* One less item */
 	st_ptr->stock_num--;
@@ -1658,7 +1708,16 @@ static void store_create(void)
 		mass_produce(q_ptr);
 
 		/* Attempt to carry the (known) item */
-		(void)store_carry(q_ptr);
+		i = store_carry(q_ptr);
+
+#ifdef MAINT_99_MAX
+		/* Prune to 99 if necessary. */
+		if (i > 0 && store_object_similar(st_ptr->stock+i, st_ptr->stock+i-1))
+		{
+			store_item_increase(i, -st_ptr->stock[i].number);
+			store_item_optimize(i);
+		}
+#endif /* MAINT_99_MAX */
 
 		/* Definitely done */
 		break;
@@ -4692,20 +4751,22 @@ void store_maint(int which)
 		}
 	}
 
+#ifdef MAINT_99_MAX
+	/* Never keep more than 99 of something. */
 	if (st_ptr->stock_num > 1)
 	{
-		/* Never keep more than 99 of something. */
 		for (j = 1; j < st_ptr->stock_num; j++)
 		{
 			/* Find slots which have the same contents as their predecessors. */
 			if (store_object_similar(st_ptr->stock+j, st_ptr->stock+j-1))
 			{
 				/* Destroy the item */
-				store_item_increase(j, st_ptr->stock[j].number);
+				store_item_increase(j, -(st_ptr->stock[j].number));
 				store_item_optimize(j);
 			}
 		}
 	}
+#endif /* MAINT_99_MAX */
 
 	/* Choose the number of slots to keep */
 	j = st_ptr->stock_num;
