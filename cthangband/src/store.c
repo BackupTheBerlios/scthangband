@@ -4787,14 +4787,6 @@ void store_init(int which)
 }
 
 
-void move_to_black_market(object_type * o_ptr)
-{
-        st_ptr = &store[6];
-        o_ptr->ident |= IDENT_STOREB;
-        (void)store_carry(o_ptr);
-        object_wipe(o_ptr); /* Don't leave a bogus object behind... */
-}
-
 static int get_which_store(void)
 {
 	int i;

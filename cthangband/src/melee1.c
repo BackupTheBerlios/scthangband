@@ -552,39 +552,6 @@ bool make_attack_normal(int m_idx)
 								m_ptr->hold_o_idx = j_ptr - o_list;
 							}
                         }
-
-
-                        else
-                        {
-                            if (strstr(format("%v", monster_desc_aux_f3, r_ptr,
-								1, 0), "black market") && randint(2)!=1)
-                                {
-                                   object_type *j_ptr;
-
-                                /* Make an object */
-                                j_ptr = o_pop();
-
-                                /* Success */
-                                if (j_ptr)
-                                 {
-                                    if (cheat_xtra || cheat_peek)
-                                          msg_print("Moving object to black market...");
-
-
-                                    /* Copy object */
-                                    object_copy(j_ptr, o_ptr);
-
-                                    /* Modify number */
-                                    j_ptr->number = 1;
-
-                                    /* Forget mark */
-                                    j_ptr->marked = FALSE;
-
-                                    move_to_black_market(j_ptr);
-                                  }
-                                }
-
-                        }
 						
 						/* Steal the items */
 						item_increase(o_ptr, -1);
