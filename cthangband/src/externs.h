@@ -3926,4 +3926,10 @@ extern cptr tp_name;
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
 extern bool do_res_stats(void);
 #endif
+
+/* cmd1.c */
+
+#if (defined(CMD1_C) || defined(SPELLS2_C))
+extern int power_cost(const power_type *pw_ptr, int lev);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

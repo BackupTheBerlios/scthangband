@@ -593,67 +593,69 @@ static bool chaos_reject_dup(int i)
 	}
 }
 
-typedef struct race_power race_power;
-struct race_power
+/*
+ * Give a simple description of a racial power, using LEV for expressions
+ * involving the player's level.
+ * This isn't quite in describe_power() form, as those are of the form
+ * [The power] fires ...", whereas this is "You can fire ...".
+ */
+static cptr describe_racial_power(int power)
 {
-	s16b race;
-	byte min;
-	byte max;
-	cptr str;
+	switch (power)
+	{
+		case RP_DWARF: return "find traps, doors and stairs";
+		case RP_HOBBIT: return "produce food";
+		case RP_GNOME: return "teleport, range LEV+1;";
+		case RP_HALF_ORC: return "remove fear";
+		case RP_HALF_TROLL: return "enter berserk fury";
+		case RP_GREAT: return "dream travel";
+		case RP_GREAT_2: return "dream a better self";
+		case RP_HALF_OGRE: return "set an explosive rune";
+		case RP_HALF_GIANT: return "break stone walls";
+		case RP_HALF_TITAN: return "probe monsters";
+		case RP_CYCLOPS: return "throw a boulder, dam LEV*3;";
+		case RP_YEEK: return "make a terrifying scream";
+		case RP_KLACKON: return "spit acid, dam. LEV;";
+		case RP_KOBOLD: return "throw a dart of poison, dam. LEV;";
+		case RP_DARK_ELF: return "cast a Magic Missile, dam LEV+4/5+2;";
+		case RP_DRACONIAN: return "breathe, dam. LEV*2;";
+		case RP_MIND_FLAYER: return "mind blast your enemies, dam LEV;";
+		case RP_IMP:
+			if (skill_set[SKILL_RACIAL].value > 59)
+				return "cast a Fire Ball, dam. LEV;";
+			else
+				return "cast a Fire Bolt, dam. LEV;";
+		case RP_GOLEM: return "turn your skin to stone, dur d20+30";
+		case RP_SKELETON: return "restore lost life forces";
+		case RP_VAMPIRE:
+			return "steal life from a foe, dam. LEV*11/10>11;-LEV/10+1>2*LEV";
+		case RP_BROO: return "terrify your enemies";
+		case RP_SPRITE: return "throw magic dust which induces sleep";
+
+		/* Paranoia. */
+		default: return "do nothing special";
+	}
 };
 
-static const race_power race_powers[] =
-{
-	{RP_NIBELUNG, 1, 50, "You can find traps, doors and stairs (cost 5)."},
-	{RP_DWARF, 1, 50, "You can find traps, doors and stairs (cost 5)."},
-	{RP_HOBBIT, 1, 50, "You can produce food (cost 10)."},
-	{RP_GNOME, 1, 50, "You can teleport, range LEV+1; (cost LEV/5+5;)."},
-	{RP_HALF_ORC, 1, 50, "You can remove fear (cost 5)."},
-	{RP_HALF_TROLL, 1, 50, "You can enter berserk fury (cost 12)."},
-	{RP_GREAT, 1, 50, "You can dream travel (cost 50)."},
-	{RP_GREAT_2, 1, 50, "You can dream a better self (cost 75)."},
-	{RP_BARBARIAN, 1, 50, "You can enter berserk fury (cost 10)."},
-	{RP_HALF_OGRE, 1, 50, "You can set an explosive rune (cost 35)."},
-	{RP_HALF_GIANT, 1, 50, "You can break stone walls (cost 10)."},
-	{RP_HALF_TITAN, 1, 50, "You can probe monsters (cost 20)."},
-	{RP_CYCLOPS, 1, 50, "You can throw a boulder, dam LEV*3; (cost 15)."},
-	{RP_YEEK, 1, 50, "You can make a terrifying scream (cost 15)."},
-	{RP_KLACKON, 1, 50, "You can spit acid, dam. LEV; (cost 9)."},
-	{RP_KOBOLD, 1, 50, "You can throw a dart of poison, dam. LEV; (cost 8)."},
-	{RP_DARK_ELF, 1, 50, "You can cast a Magic Missile, dam LEV+4/5+2; (cost 2)."},
-	{RP_DRACONIAN, 1, 50, "You can breathe, dam. LEV*2; (cost LEV;)."},
-	{RP_MIND_FLAYER, 1, 50, "You can mind blast your enemies, dam LEV; (cost 12)."},
-	{RP_IMP, 30, 50, "You can cast a Fire Ball, dam. LEV; (cost 15)."},
-	{RP_IMP, 9, 29, "You can cast a Fire Bolt, dam. LEV; (cost 15)."},
-	{RP_GOLEM, 1, 50, "You can turn your skin to stone, dur d20+30 (cost 15)."},
-	{RP_ZOMBIE, 1, 50, "You can restore lost life forces (cost 30)."},
-	{RP_SKELETON, 1, 50, "You can restore lost life forces (cost 30)."},
-	{RP_VAMPIRE, 1, 50,
-		"You can steal life from a foe, dam. LEV*11/10>11;-LEV/10+1>2*LEV (cost LEV/3+1;)."},
-	{RP_SPECTRE, 1, 50, "You can wail to terrify your enemies (cost 3)."},
-	{RP_BROO, 1, 50, "You can growl to terrify your enemies (cost 3)."},
-	{RP_SPRITE, 1, 50, "You can throw magic dust which induces sleep (cost 12)."},
-};
-
+/*
+ * Add a list of the player's racial powers to info.
+ */
 static int add_race_powers(cptr *info)
 {
-	int i = 0;
-	const race_power *pr_ptr;
+	int i;
 	const int plev = MAX(1, skill_set[SKILL_RACIAL].value/2);
 
-	FOR_ALL_IN(race_powers, pr_ptr)
+	for (i = 0; i < rp_ptr->powers; i++)
 	{
-		/* Bad race. */
-		if (pr_ptr->race != rp_ptr->power[0] &&
-			pr_ptr->race != rp_ptr->power[1]) continue;
+		cptr str = describe_racial_power(rp_ptr->power[i].idx);
 
-		/* Bad level. */
-		if (pr_ptr->min > plev || pr_ptr->max < plev) continue;
+		int cost = power_cost(&rp_ptr->power[i], plev);
 
-		info[i++] = safe_string_make(format("%v",
-			evaluate_text_f3, pr_ptr->str, "LEV", plev));
+		/* Describe the power. */
+		info[i] = safe_string_make(format("You can %v (cost %d).",
+			evaluate_text_f3, str, "LEV", plev, cost));
 	}
-	return i;
+	return rp_ptr->powers;
 }
 
 /*

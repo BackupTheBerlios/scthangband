@@ -1058,33 +1058,29 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RACE_ORC 2 /* Can leave an orc bones file. */
 #define RACE_TROLL 3 /* Can leave a troll bones file. */
 
-#define RP_BARBARIAN 1
-#define RP_BROO 2
-#define RP_CYCLOPS 3
-#define RP_DARK_ELF 4
-#define RP_DRACONIAN 5
-#define RP_DWARF 6
-#define RP_GNOME 7
-#define RP_GOLEM 8
-#define RP_GREAT 9
-#define RP_GREAT_2 10
-#define RP_HALF_GIANT 11
-#define RP_HALF_OGRE 12
-#define RP_HALF_ORC 13
-#define RP_HALF_TITAN 14
-#define RP_HALF_TROLL 15
-#define RP_HOBBIT 16
-#define RP_IMP 17
-#define RP_KLACKON 18
-#define RP_KOBOLD 19
-#define RP_MIND_FLAYER 20
-#define RP_NIBELUNG 21
-#define RP_SKELETON 22
-#define RP_SPECTRE 23
-#define RP_SPRITE 24
-#define RP_VAMPIRE 25
-#define RP_YEEK 26
-#define RP_ZOMBIE 27
+#define RP_BROO PO_RACIAL+1
+#define RP_CYCLOPS PO_RACIAL+2
+#define RP_DARK_ELF PO_RACIAL+3
+#define RP_DRACONIAN PO_RACIAL+4
+#define RP_DWARF PO_RACIAL+5
+#define RP_GNOME PO_RACIAL+6
+#define RP_GOLEM PO_RACIAL+7
+#define RP_GREAT PO_RACIAL+8
+#define RP_GREAT_2 PO_RACIAL+9
+#define RP_HALF_GIANT PO_RACIAL+10
+#define RP_HALF_OGRE PO_RACIAL+11
+#define RP_HALF_ORC PO_RACIAL+12
+#define RP_HALF_TITAN PO_RACIAL+13
+#define RP_HALF_TROLL PO_RACIAL+14
+#define RP_HOBBIT PO_RACIAL+15
+#define RP_IMP PO_RACIAL+16
+#define RP_KLACKON PO_RACIAL+17
+#define RP_KOBOLD PO_RACIAL+18
+#define RP_MIND_FLAYER PO_RACIAL+19
+#define RP_SKELETON PO_RACIAL+20
+#define RP_SPRITE PO_RACIAL+21
+#define RP_VAMPIRE PO_RACIAL+22
+#define RP_YEEK PO_RACIAL+23
 
 /*** Screen Locations ***/
 

@@ -944,6 +944,19 @@ struct race_bonus_type
 	s16b value; /* A description of how the bonus affects the flag. */
 };
 
+typedef struct power_type power_type;
+struct power_type
+{
+	s16b idx; /* The index used to identify this power in do_power(). */
+	s16b min_level; /* A penalty for racial_success_chance() which depends partly on level. */
+	s16b cost; /* Cost of power. Negative values refer to skill-based values */
+	byte use_stat;  /* The stat considered by racial_success_chance() */
+	byte difficulty; /* Another penalty for racial_success_chance(). */
+	cptr text; /* The description of the power given to the player. */
+	cptr text2; /* An additional phrase to be inserted after the cost is given. */
+	cptr atext; /* Text to print as the power is used. */
+};
+
 /*
  * Player racial info
  */
@@ -981,11 +994,12 @@ struct player_race
 	byte f_b_wt; /* base weight (females) */
 	byte f_m_wt; /* mod weight (females) */
 
-	s16b power[2]; /* Race-based power indices. */
 	u32b flags[4]; /* Various flags to give the race unconditionally. */
 
 	race_bonus_type *bonus; /* A pointer to the extra things this race gets. */
+	power_type *power; /* A pointer to the powers the race can use. */
 	byte bonuses; /* The number of elements in bonus. */
+	byte powers; /* The number of elements in power. */
 
 	byte chaos; /* A chaos feature this race is likely to get. */
 	byte chaos_chance; /* THe chance of gaining the above chaos feature. */

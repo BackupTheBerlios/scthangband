@@ -1366,19 +1366,6 @@ static powercosttype powercosts[] = {
 #define POWER_MUTA 2 /* Relevant if (p_has_mutation(power). */
 #define POWER_DISMISS 3 /* Relevant if you have pets. */
 
-typedef struct powertype powertype;
-struct powertype
-{
-	byte type; /* Determine which style of index to use. */
-	byte power; /* An index to the race or mutation responsible. */
-	s16b min_level; /* A penalty for racial_success_chance() which depends partly on level. */
-	s16b cost; /* Cost of power. Negative values refer to skill-based values */
-	byte use_stat;  /* The stat considered by racial_success_chance() */
-	int difficulty; /* Another penalty for racial_success_chance(). */
-	cptr text; /* The description of the power given to the player. */
-	cptr text2; /* An additional phrase to be inserted after the cost is given. */
-	cptr atext; /* Text to print as the power is used. */
-};
 /* The string will be turned into a longer form later.
  * In general, this is text+"     "+"(racial, cost power->cost, power->use_stat power->difficulty)".
  * If power->cost is negative, the cost is taken from powercosts[-power->cost].
@@ -1389,107 +1376,61 @@ struct powertype
 /*
  * The table of powers, as defined above. Note that the effects of powers must be described in use_innate_power().
  */
-static powertype powers[] = {
-{POWER_RACIAL, RP_DWARF, 5, 5, A_WIS, 12,
-	"detect doors+traps", 0, "You examine your surroundings."},
-{POWER_RACIAL, RP_NIBELUNG, 10, 5, A_WIS, 10,
-	"detect doors+traps",0, "You examine your surroundings."},
-{POWER_RACIAL, RP_HOBBIT, 15, 10, A_INT, 10, "create food",0, 0},
-{POWER_RACIAL, RP_GNOME, 5, -5, A_INT, 12, "teleport", 0, "Blink!"},
-{POWER_RACIAL, RP_HALF_ORC, 3, 5, A_WIS, 10,
-	"remove fear", 0, "You play tough."},
-{POWER_RACIAL, RP_HALF_TROLL, 10, 12, A_WIS, 12, "berserk",0, "RAAAGH!"},
-{POWER_RACIAL, RP_BARBARIAN, 8, 10, A_WIS, 12, "berserk",0, "Raaagh!"},
-{POWER_RACIAL, RP_GREAT, 40, 75, A_WIS, 50,
-	"dreaming", 0, "You dream of a time of health and peace..."},
-{POWER_RACIAL, RP_GREAT_2, 30, 50, A_INT, 50,
-	"dream travel", 0, "You start walking around. Your surroundings change."},
-{POWER_RACIAL, RP_HALF_OGRE, 25, 35, A_INT, 15,
-	"explosive rune", 0, "You carefully set an explosive rune..."},
-{POWER_RACIAL, RP_HALF_GIANT, 20, 10, A_STR, 12, "stone to mud",0, 0},
-{POWER_RACIAL, RP_HALF_TITAN, 35, 20, A_INT, 12,
-	"probing", 0, "You examine your foes..."},
-{POWER_RACIAL, RP_CYCLOPS, 20, 15, A_STR, 12, "throw boulder","dam 3*lvl", 0},
-{POWER_RACIAL, RP_YEEK, 15, 15, A_WIS, 10, "scare monster",0, 0},
-{POWER_RACIAL, RP_SPECTRE, 4, 6, A_INT, 3,
-	"scare monster", 0, "You emit an eldritch howl!"},
-{POWER_RACIAL, RP_BROO, 4, 6, A_INT, 3,
-	"scare monster", 0, "You emit a fearsome growl!"},
-{POWER_RACIAL, RP_KLACKON, 9, 9, A_DEX, 14, "spit acid","dam lvl", 0},
-{POWER_RACIAL, RP_KOBOLD, 12, 8, A_DEX, 18, "poison dart","dam lvl", 0},
-{POWER_RACIAL, RP_DARK_ELF, 2, 2, A_INT, 9, "magic missile",0, 0},
-{POWER_RACIAL, RP_DRACONIAN, 1, -1, A_CON, 12, "breath weapon","dam 2*lvl", 0},
-{POWER_RACIAL, RP_MIND_FLAYER, 15, 12, A_INT, 14, "mind blast","dam lvl", 0},
-{POWER_RACIAL, RP_IMP, 9, 15, A_WIS, 15, "fire bolt/ball(30)","dam lvl", 0},
-{POWER_RACIAL, RP_GOLEM, 20, 15, A_CON, 8, "stone skin","dur 30+d20", 0},
-{POWER_RACIAL, RP_SKELETON, 30, 30, A_WIS, 18,
-	"restore life", 0, "You attempt to restore your lost energies."},
-{POWER_RACIAL, RP_ZOMBIE, 30, 30, A_WIS, 18,
-	"restore life", 0, "You attempt to restore your lost energies."},
-{POWER_RACIAL, RP_VAMPIRE, 2, -3, A_CON, 9, "drain life",0, 0},
-{POWER_RACIAL, RP_SPRITE, 12, 12, A_INT, 15,
-	"sleeping dust", 0, "You throw some magic dust..."},
-{POWER_MUTA, MUT_SPIT_ACID, 9, 9, A_DEX, 15,
-	"spit acid", "dam lvl", "You spit acid..."},
-{POWER_MUTA, MUT_BR_FIRE, 20, -1, A_CON, 18,
-	"fire breath", "dam lvl*2", "You breathe fire..."},
-{POWER_MUTA, MUT_HYPN_GAZE, 12, 12, A_CHR, 18,
-	"hypnotic gaze", 0, "Your eyes look mesmerizing..."},
-{POWER_MUTA, MUT_TELEKINES, 9, 9, A_WIS, 14,
-	"telekinesis", 0, "You concentrate..."},
-{POWER_MUTA, MUT_VTELEPORT, 7, 7, A_WIS, 15,
-	"teleport", 0, "You concentrate..."},
-{POWER_MUTA, MUT_MIND_BLST, 5, 3, A_WIS, 15,
-	"mind blast", 0, "You concentrate..."},
-{POWER_MUTA, MUT_RADIATION, 15, 15, A_CON, 14,
-	"emit radiation", 0, "Radiation flows from your body!"},
-{POWER_MUTA, MUT_VAMPIRISM, 13, -1, A_CON, 14, "vampiric drain",0, 0},
-{POWER_MUTA, MUT_SMELL_MET, 3, 2, A_INT, 12, "smell metal",0, 0},
-{POWER_MUTA, MUT_SMELL_MON, 5, 4, A_INT, 15, "smell monsters",0, 0},
-{POWER_MUTA, MUT_BLINK, 3, 3, A_WIS, 12, "blink",0, 0},
-{POWER_MUTA, MUT_EAT_ROCK, 8, 12, A_CON, 18, "eat rock",0, 0},
-{POWER_MUTA, MUT_SWAP_POS, 15, 12, A_DEX, 16, "swap position",0, 0},
-{POWER_MUTA, MUT_SHRIEK, 4, 4, A_CON, 6, "shriek",0, 0},
-{POWER_MUTA, MUT_ILLUMINE, 3, 2, A_INT, 10, "illuminate",0, 0},
-{POWER_MUTA, MUT_DET_CURSE, 7, 14, A_WIS, 14, "detect curses",0, 0},
-{POWER_MUTA, MUT_BERSERK, 8, 8, A_STR, 14, "berserk",0, 0},
-{POWER_MUTA, MUT_POLYMORPH, 18, 20, A_CON, 18, "polymorph",0, 0},
-{POWER_MUTA, MUT_MIDAS_TCH, 10, 5, A_INT, 12, "midas touch",0, 0},
-{POWER_MUTA, MUT_GROW_MOULD, 1, 6, A_CON, 14, "grow mould",0, 0},
-{POWER_MUTA, MUT_RESIST, 10, 12, A_CON, 12, "resist elements",0, 0},
-{POWER_MUTA, MUT_EARTHQUAKE, 12, 12, A_STR, 16, "earthquake",0, 0},
-{POWER_MUTA, MUT_EAT_MAGIC, 17, 1, A_WIS, 15, "eat magic",0, 0},
-{POWER_MUTA, MUT_WEIGH_MAG, 6, 6, A_INT, 10, "weigh magic",0, 0},
-{POWER_MUTA, MUT_STERILITY, 20, 40, A_CHR, 18,
-	"sterilize", 0, "You suddenly have a headache!"},
-{POWER_MUTA, MUT_PANIC_HIT, 10, 12, A_DEX, 14, "panic hit",0, 0},
-{POWER_MUTA, MUT_DAZZLE, 7, 15, A_CHR, 8, "dazzle",0, 0},
-{POWER_MUTA, MUT_EYE_BEAM, 7, 10, A_WIS, 9, "eye beams",0, 0},
-{POWER_MUTA, MUT_RECALL, 17, 50, A_INT, 16, "recall",0, 0},
-{POWER_MUTA, MUT_BANISH, 25, 25, A_WIS, 18, "banish evil",0, 0},
-{POWER_MUTA, MUT_COLD_TOUCH, 2, 2, A_CON, 11, "cold touch",0, 0},
-{POWER_MUTA, MUT_LAUNCHER, 1, -1, A_STR, 6, "throw object",0, 0},
-{POWER_DISMISS, PET_DISMISS_ONE, 0, 0, 0, 0, "dismiss ally",0, 0},
-{POWER_DISMISS, PET_DISMISS_MANY, 0, 0, 0, 0, "dismiss allies",0, 0},
-{0,0,0,0,0,0,0,0,0}};
+static power_type pet_powers[2] =
+{
+	{PO_PETS+PET_DISMISS_ONE, 0, 0, 0, 0, "dismiss ally",0, 0},
+	{PO_PETS+PET_DISMISS_MANY, 0, 0, 0, 0, "dismiss allies",0, 0},
+};
+
+static power_type mut_powers[] =
+{
+	{PO_MUTA+MUT_SPIT_ACID, 9, 9, A_DEX, 15,
+		"spit acid", "dam lvl", "You spit acid..."},
+	{PO_MUTA+MUT_BR_FIRE, 20, -1, A_CON, 18,
+		"fire breath", "dam lvl*2", "You breathe fire..."},
+	{PO_MUTA+MUT_HYPN_GAZE, 12, 12, A_CHR, 18,
+		"hypnotic gaze", 0, "Your eyes look mesmerizing..."},
+	{PO_MUTA+MUT_TELEKINES, 9, 9, A_WIS, 14,
+		"telekinesis", 0, "You concentrate..."},
+	{PO_MUTA+MUT_VTELEPORT, 7, 7, A_WIS, 15,
+		"teleport", 0, "You concentrate..."},
+	{PO_MUTA+MUT_MIND_BLST, 5, 3, A_WIS, 15,
+		"mind blast", 0, "You concentrate..."},
+	{PO_MUTA+MUT_RADIATION, 15, 15, A_CON, 14,
+		"emit radiation", 0, "Radiation flows from your body!"},
+	{PO_MUTA+MUT_VAMPIRISM, 13, -1, A_CON, 14, "vampiric drain",0, 0},
+	{PO_MUTA+MUT_SMELL_MET, 3, 2, A_INT, 12, "smell metal",0, 0},
+	{PO_MUTA+MUT_SMELL_MON, 5, 4, A_INT, 15, "smell monsters",0, 0},
+	{PO_MUTA+MUT_BLINK, 3, 3, A_WIS, 12, "blink",0, 0},
+	{PO_MUTA+MUT_EAT_ROCK, 8, 12, A_CON, 18, "eat rock",0, 0},
+	{PO_MUTA+MUT_SWAP_POS, 15, 12, A_DEX, 16, "swap position",0, 0},
+	{PO_MUTA+MUT_SHRIEK, 4, 4, A_CON, 6, "shriek",0, 0},
+	{PO_MUTA+MUT_ILLUMINE, 3, 2, A_INT, 10, "illuminate",0, 0},
+	{PO_MUTA+MUT_DET_CURSE, 7, 14, A_WIS, 14, "detect curses",0, 0},
+	{PO_MUTA+MUT_BERSERK, 8, 8, A_STR, 14, "berserk",0, 0},
+	{PO_MUTA+MUT_POLYMORPH, 18, 20, A_CON, 18, "polymorph",0, 0},
+	{PO_MUTA+MUT_MIDAS_TCH, 10, 5, A_INT, 12, "midas touch",0, 0},
+	{PO_MUTA+MUT_GROW_MOULD, 1, 6, A_CON, 14, "grow mould",0, 0},
+	{PO_MUTA+MUT_RESIST, 10, 12, A_CON, 12, "resist elements",0, 0},
+	{PO_MUTA+MUT_EARTHQUAKE, 12, 12, A_STR, 16, "earthquake",0, 0},
+	{PO_MUTA+MUT_EAT_MAGIC, 17, 1, A_WIS, 15, "eat magic",0, 0},
+		{PO_MUTA+MUT_WEIGH_MAG, 6, 6, A_INT, 10, "weigh magic",0, 0},
+	{PO_MUTA+MUT_STERILITY, 20, 40, A_CHR, 18,
+		"sterilize", 0, "You suddenly have a headache!"},
+	{PO_MUTA+MUT_PANIC_HIT, 10, 12, A_DEX, 14, "panic hit",0, 0},
+	{PO_MUTA+MUT_DAZZLE, 7, 15, A_CHR, 8, "dazzle",0, 0},
+	{PO_MUTA+MUT_EYE_BEAM, 7, 10, A_WIS, 9, "eye beams",0, 0},
+	{PO_MUTA+MUT_RECALL, 17, 50, A_INT, 16, "recall",0, 0},
+	{PO_MUTA+MUT_BANISH, 25, 25, A_WIS, 18, "banish evil",0, 0},
+	{PO_MUTA+MUT_COLD_TOUCH, 2, 2, A_CON, 11, "cold touch",0, 0},
+	{PO_MUTA+MUT_LAUNCHER, 1, -1, A_STR, 6, "throw object",0, 0}
+};
 #define MAX_POWERS 36 /* There shouldn't be more powers than this at a time. */
-static powertype *cur_powers[MAX_POWERS];
+static power_type *cur_powers[MAX_POWERS];
 
 
 #define RACIAL_MIN_X 13 /* The distance across the screen at which the display starts. */
 #define MIN_STRING_LEN 22 /* The space allowed for all description strings. Longer strings are still longer. */
-
-#ifdef CHECK_ARRAYS
-static int offsets[][2] =
-#else /* CHECK_ARRAYS */
-static int offsets[][1] =
-#endif /* CHECK_ARRAYS */
-{
-	{0,IDX(0)},
-	{PO_RACIAL, IDX(POWER_RACIAL)},
-	{PO_MUTA, IDX(POWER_MUTA)},
-	{PO_PETS, IDX(POWER_DISMISS)},
-};
 
 /*
  * Actually put a racial or mutation-based activation into effect.
@@ -1497,24 +1438,22 @@ static int offsets[][1] =
  *
  * Note that there is no special treatment for aborted powers.
  */
-static void use_innate_power(powertype *pw_ptr)
+static void use_innate_power(power_type *pw_ptr)
 {
 	int plev = MAX(skill_set[SKILL_RACIAL].value/2,1);
-	int power = pw_ptr->power;
-	power += offsets[pw_ptr->type][0];
 
 	/* Print a message, if desired. */
 	if (pw_ptr->atext) msg_print(pw_ptr->atext);
 
 	/* Use the power. */
-	use_known_power(power, plev);
+	use_known_power(pw_ptr->idx, plev);
 }
 
 /*
  * Determine the chance of using a given power based on features of the power and the player.
  * The power should succeed if rand_int((*denom))<(*num).
  */
-static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
+static void racial_success_chance(power_type *pw_ptr, s16b *num, s16b *denom)
 {
 	int difficulty = pw_ptr->difficulty;
 
@@ -1560,6 +1499,53 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
 }
 
 /*
+ * Work out the style of a power for various purposes.
+ */
+static int power_method(power_type *pw_ptr)
+{
+	/* Pet powers are in an array. */
+	if (pw_ptr >= pet_powers && pw_ptr < END_PTR(pet_powers))
+	{
+		return POWER_DISMISS;
+	}
+
+	/* Mutation powers are in an array. */
+	if (pw_ptr >= mut_powers && pw_ptr < END_PTR(mut_powers))
+	{
+		return POWER_MUTA;
+	}
+
+	/* Racial powers are more awkward to find, but they're the only choices. */
+	return POWER_RACIAL;
+}
+
+/*
+ * Determine the cost of a racial power.
+ */
+int power_cost(const power_type *pw_ptr, int lev)
+{
+	if (pw_ptr->cost > 0)
+	{
+		return pw_ptr->cost;
+	}
+	else
+	{
+		powercosttype *pc_ptr = &powercosts[-pw_ptr->cost];
+
+		/* Paranoia - division by 0? */
+		if (!(pc_ptr->levc))
+		{
+			return 999;
+		}
+		else
+		{
+			/* Return the numerical cost. */
+			return lev / pc_ptr->levc + pc_ptr->minc;
+		}
+	}
+}
+
+/*
  * Describe a power for do_cmd_racial_power.
  * In general, this becomes text+"     "+"(racial, cost power->cost, power->use_stat power->difficulty)".
  * If power->cost is negative, the cost is taken from powercosts[-power->cost].
@@ -1570,69 +1556,35 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
  */
 static void racial_string(byte idx, byte *x, char * text)
 {
-	powertype *pw_ptr = cur_powers[idx];
+	power_type *pw_ptr = cur_powers[idx];
+	int type = power_method(pw_ptr);
 
 	/* Set the distance from the left margin. */
 	(*x) = RACIAL_MIN_X;
 
 	sprintf(text, ")  %s", pw_ptr->text);
-	switch (pw_ptr->type)
+	if (type == POWER_DISMISS)
 	{
-		/* Racial and mutated powers have a fairly complex format. */
-		case POWER_RACIAL: case POWER_MUTA:
-		{
-			cptr cost;
-			cptr racstr = (pw_ptr->type == POWER_RACIAL) ? "racial, " : "";
-			cptr t2str1 = (pw_ptr->text2) ? pw_ptr->text2 : "";
-			cptr t2str2 = (pw_ptr->text2) ? ", " : "";
-			s16b num, denom;
-			int perc;
-			if (pw_ptr->cost > 0)
-			{
-				cost = format("%d", pw_ptr->cost);
-			}
-			else if (!pw_ptr->cost)
-			{
-				cost = "";
-			}
-			else
-			{
-				powercosttype *pc_ptr = &powercosts[-pw_ptr->cost];
-				if (!(pc_ptr->levc))
-				{
-					cost = "odd";
-				}
-				else if (pc_ptr->minc)
-				{
-					cost = format("%d+lev", pc_ptr->minc);
-				}
-				else
-				{
-					cost = "lvl";
-				}
-				if (pc_ptr->levc>1)
-				{
-					cost = format("%s/%d", cost, pc_ptr->levc);
-				}
-			}
-			racial_success_chance(pw_ptr, &num, &denom);
-			perc = 100-num*100/denom;
-			sprintf(text, ")  %-*s(%scost %s, %s%s%.3s %d %d%%)",
-				MIN_STRING_LEN, pw_ptr->text, racstr, cost, t2str1, t2str2,
-				stat_names[pw_ptr->use_stat], pw_ptr->difficulty, perc);
-				break;
-		}
-		/* Dismissing uses a constant string, however. */
-		case POWER_DISMISS:
-		{
-			sprintf(text, ")  %s", pw_ptr->text);
-			break;
-		}
-		/* As do unknown strings. */
-		default:
-		{
-			strcpy(text, "Unknown power");
-		}
+		sprintf(text, ")  %s", pw_ptr->text);
+	}
+	/* Racial and mutated powers have a more complex format. */
+	else
+	{
+		cptr racstr = (type == POWER_RACIAL) ? "racial, " : "";
+		cptr t2str1 = (pw_ptr->text2) ? pw_ptr->text2 : "";
+		cptr t2str2 = (pw_ptr->text2) ? ", " : "";
+		s16b num, denom;
+		int perc;
+		const int plev = MAX(1,skill_set[SKILL_RACIAL].value/2);
+		const int cost = power_cost(pw_ptr, plev);
+
+		racial_success_chance(pw_ptr, &num, &denom);
+
+		perc = 100-num*100/denom;
+
+		sprintf(text, ")  %-*s(%scost %d, %s%s%.3s %d %d%%)",
+			MIN_STRING_LEN, pw_ptr->text, racstr, cost, t2str1, t2str2,
+			stat_names[pw_ptr->use_stat], pw_ptr->difficulty, perc);
 	}
 }
 
@@ -1651,7 +1603,6 @@ static void racial_confirm_string(byte choice, char * out)
 static int count_powers(void)
 {
 	int i, pets, total;
-	bool available;
 
 	for (pets = 0, i = 1; (i < m_max) && (pets < 2); i++)
 	{
@@ -1659,45 +1610,30 @@ static int count_powers(void)
 		if (m_ptr->smart & SM_ALLY) pets++;
 	}
 
-	for (total = 0, i = 0; powers[i].type && (total < MAX_POWERS); i++)
+	/* Add in the racial powers. */
+	for (total = 0; total < rp_ptr->powers; total++)
 	{
-		powertype *pw_ptr = &powers[i];
-		switch (pw_ptr->type)
-		{
-			case POWER_RACIAL:
-			{
-				/* Good if the power is in the indicated range. */
-				available = (pw_ptr->power == rp_ptr->power[0] ||
-					pw_ptr->power == rp_ptr->power[1]);
-				break;
-			}
-			case POWER_MUTA:
-			{
-				available = (p_has_mutation(pw_ptr->power));
-				break;
-			}
-			case POWER_DISMISS:
-			{
-				switch (pets)
-				{
-					case 0:
-						available = FALSE;
-						break;
-					case 1:
-						available = (pw_ptr->power == PET_DISMISS_ONE);
-						break;
-					default:
-						available = (pw_ptr->power == PET_DISMISS_MANY);
-				}
-			}
-			break;
-			default: /* How did we get here? */
-				msg_format("Strange power %d,%d", pw_ptr->type, pw_ptr->power);
-				msg_print(NULL);
-				available = FALSE;
-		}
-		if (available) cur_powers[total++] = pw_ptr;
+		cur_powers[total] = rp_ptr->power+total;
 	}
+
+	/* Add in the mutation-based powers. */
+	for (i = 0; i < (int)N_ELEMENTS(mut_powers) && (total < MAX_POWERS); i++)
+	{
+		power_type *ptr = &mut_powers[i];
+		if (p_has_mutation(ptr->idx - PO_MUTA))
+			cur_powers[total++] = mut_powers+i;
+	}
+
+	/* Add in the pet power for the current number of pets, if any. */
+	if (pets == 1)
+	{
+		cur_powers[total++] = pet_powers+0;
+	}
+	else if (pets)
+	{
+		cur_powers[total++] = pet_powers+1;
+	}
+
 	return total;
 }
 
@@ -1823,21 +1759,14 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 /*
  * Decide whether a power has been used successfully.
  */
-static bool racial_aux(powertype *pw_ptr)
+static bool racial_aux(power_type *pw_ptr)
 {
 	const int plev = MAX(1,skill_set[SKILL_RACIAL].value/2);
 	bool use_hp = FALSE;
 	bool use_chi = FALSE;
 	bool use_mana = TRUE;
 	s16b num, denom;
-	int cost = pw_ptr->cost;
-
-	/* Determine the cost if level-based. */
-	if (cost < 0)
-	{
-		powercosttype *pc_ptr = powercosts-cost;
-		cost = pc_ptr->minc + plev / pc_ptr->levc;
-	}
+	int cost = power_cost(pw_ptr, plev);
 
 	if (p_ptr->cchi >= p_ptr->csp)
 	{
@@ -1938,9 +1867,9 @@ void do_cmd_racial_power(void)
 	/* Something has been selected */
 	if (total != 255)
 	{
-		powertype *pw_ptr = cur_powers[total];
+		power_type *pw_ptr = cur_powers[total];
 
-		switch (pw_ptr->type)
+		switch (power_method(pw_ptr))
 		{
 			case POWER_RACIAL: case POWER_MUTA:
 			/* Try to use the power. */

@@ -1443,6 +1443,85 @@ static race_bonus_type zombie_bonuses[] =
 	{0, SKILL_RACIAL, 24, TR0, iilog(TR0_NO_CUT), TRUE},
 };
 
+static power_type barbarian_power = {RP_HALF_TROLL, 8, 10, A_WIS, 12,
+	"berserk",0, "Raaagh!"};
+
+static power_type broo_power = {RP_BROO, 4, 6, A_INT, 3,
+	"scare monster", 0, "You emit a fearsome growl!"};
+
+static power_type cyclops_power = {RP_CYCLOPS, 20, 15, A_STR, 12,
+	"throw boulder","dam 3*lvl", 0};
+
+static power_type dark_elf_power = {RP_DARK_ELF, 2, 2, A_INT, 9,
+	"magic missile",0, 0};
+
+static power_type draconian_power = {RP_DRACONIAN, 1, -1, A_CON, 12,
+	"breath weapon","dam 2*lvl", 0};
+
+static power_type dwarf_power = {RP_DWARF, 5, 5, A_WIS, 12,
+	"detect doors+traps", 0, "You examine your surroundings."};
+
+static power_type gnome_power = {RP_GNOME, 5, -5, A_INT, 12,
+	"teleport", 0, "Blink!"};
+
+static power_type golem_power = {RP_GOLEM, 20, 15, A_CON, 8,
+	"stone skin","dur 30+d20", 0};
+
+static power_type great_powers[2] =
+{
+	{RP_GREAT, 40, 75, A_WIS, 50,
+		"dreaming", 0, "You dream of a time of health and peace..."},
+	{RP_GREAT+MAX_RACES, 30, 50, A_INT, 50, "dream travel",
+		0, "You start walking around. Your surroundings change."},
+};
+
+static power_type half_giant_power = {RP_HALF_GIANT, 20, 10, A_STR, 12,
+	"stone to mud", 0, 0};
+
+static power_type half_ogre_power = {RP_HALF_OGRE, 25, 35, A_INT, 15,
+	"explosive rune", 0, "You carefully set an explosive rune..."};
+
+static power_type half_orc_power = {RP_HALF_ORC, 3, 5, A_WIS, 10,
+	"remove fear", 0, "You play tough."};
+
+static power_type half_titan_power = {RP_HALF_TITAN, 35, 20, A_INT, 12,
+	"probing", 0, "You examine your foes..."};
+
+static power_type half_troll_power = {RP_HALF_TROLL, 10, 12, A_WIS, 12,
+	"berserk", 0, "RAAAGH!"};
+
+static power_type hobbit_power = {RP_HOBBIT, 15, 10, A_INT, 10,
+	"create food", 0, 0};
+
+static power_type imp_power = {RP_IMP, 9, 15, A_WIS, 15,
+	"fire bolt/ball","dam lvl", 0};
+
+static power_type klackon_power = {RP_KLACKON, 9, 9, A_DEX, 14,
+	"spit acid", "dam lvl", 0};
+
+static power_type kobold_power = {RP_KOBOLD, 12, 8, A_DEX, 18,
+	"poison dart","dam lvl", 0};
+
+static power_type mind_flayer_power = {RP_MIND_FLAYER, 15, 12, A_INT, 14,
+	"mind blast","dam lvl", 0};
+
+static power_type nibelung_power = {RP_DWARF, 10, 5, A_WIS, 10,
+	"detect doors+traps",0, "You examine your surroundings."};
+
+static power_type skeleton_power = {RP_SKELETON, 30, 30, A_WIS, 18,
+	"restore life", 0, "You attempt to restore your lost energies."};
+
+static power_type spectre_power = {RP_BROO, 4, 6, A_INT, 3,
+	"scare monster", 0, "You emit an eldritch howl!"};
+
+static power_type sprite_power = {RP_SPRITE, 12, 12, A_INT, 15,
+	"sleeping dust", 0, "You throw some magic dust..."};
+
+static power_type vampire_power = {RP_VAMPIRE, 2, -3, A_CON, 9,
+	"drain life",0, 0};
+
+static power_type yeek_power = {RP_YEEK, 15, 15, A_WIS, 10, "scare monster",0, 0};
+
 /*
  * Player Races
  *
@@ -1466,9 +1545,8 @@ player_race race_info[MAX_RACES] =
 		14, 8,
 		82, 5, 200, 20,
 		78,  6, 190, 15,
-		{RP_BARBARIAN, 0},
 		{0, 0, TR2_RES_FEAR, 0},
-		NULL, 0, 0, 0,
+		NULL, &barbarian_power,  0, 1, 0, 0,
 		0, 1, RACE_BLANK, EAT_NORMAL, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1484,9 +1562,8 @@ player_race race_info[MAX_RACES] =
 		14, 6,
 		65,  6, 150, 20,
 		61,  6, 120, 15,
-		{RP_BROO, 0},
 		{TR0_CHAOS, 0, TR2_RES_SOUND | TR2_RES_CONF, 0},
-		NULL, 0, MUT_POLYMORPH, 10,
+		NULL, &broo_power,  0, 1, MUT_POLYMORPH, 10,
 		0, 129, RACE_BLANK, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1502,9 +1579,8 @@ player_race race_info[MAX_RACES] =
 		50, 24,
 		92, 10, 255, 60,
 		80,  8, 235, 60,
-		{RP_CYCLOPS, 0},
 		{0, 0, TR2_RES_SOUND, 0},
-		NULL, 0, 0, 0,
+		NULL, &cyclops_power,  0, 1, 0, 0,
 		1, 77, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1520,9 +1596,8 @@ player_race race_info[MAX_RACES] =
 		75, 75,
 		60,  4, 100,  6,
 		54,  4, 80,  6,
-		{RP_DARK_ELF, 0},
 		{0, 0, TR2_RES_DARK, 0},
-		dark_elf_bonuses, N_ELEMENTS(dark_elf_bonuses), 0, 0,
+		dark_elf_bonuses, &dark_elf_power,  N_ELEMENTS(dark_elf_bonuses), 1, 0, 0,
 		5, 69, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1538,9 +1613,8 @@ player_race race_info[MAX_RACES] =
 		75, 33,
 		76,  1, 160,  5,
 		72,  1, 130,  5,
-		{RP_DRACONIAN, 0},
 		{0, 0, 0, TR3_FEATHER},
-		draconian_bonuses, N_ELEMENTS(draconian_bonuses), 0, 0,
+		draconian_bonuses, &draconian_power,  N_ELEMENTS(draconian_bonuses), 1, 0, 0,
 		2, 89, RACE_BLANK, EAT_NORMAL, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1556,9 +1630,8 @@ player_race race_info[MAX_RACES] =
 		35, 15,
 		48,  3, 150, 10,
 		46,  3, 120, 10,
-		{RP_DWARF, 0},
 		{0, 0, TR2_RES_BLIND, 0},
-		NULL, 0, 0, 0,
+		NULL, &dwarf_power,  0, 1, 0, 0,
 		5, 16, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1574,9 +1647,8 @@ player_race race_info[MAX_RACES] =
 		75, 75,
 		60,  4, 100,  6,
 		54,  4, 80,  6,
-		{0, 0},
 		{0, 0, TR2_RES_LITE, 0},
-		NULL, 0, 0, 0,
+		NULL, 0, 0, 0, 0, 0,
 		3, 7, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1592,9 +1664,8 @@ player_race race_info[MAX_RACES] =
 		50, 40,
 		42,  3, 90,  6,
 		39,  3, 75,  3,
-		{RP_GNOME, 0},
 		{0, 0, TR2_FREE_ACT, 0},
-		NULL, 0, 0, 0,
+		NULL, &gnome_power,  0, 1, 0, 0,
 		4, 13, RACE_BLANK, EAT_NORMAL, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1610,10 +1681,8 @@ player_race race_info[MAX_RACES] =
 		1, 100,
 		66,  1, 200,  6,
 		62,  1, 180,  6,
-		{RP_GOLEM, 0},
-		{TR0_AC_SK | TR0_NO_CUT | TR0_NO_STUN, 0, TR2_RES_POIS | TR2_FREE_ACT,
-			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
-		golem_bonuses, N_ELEMENTS(golem_bonuses), 0, 0,
+		{TR0_AC_SK | TR0_NO_CUT | TR0_NO_STUN, 0, TR2_RES_POIS | TR2_FREE_ACT, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		golem_bonuses, &golem_power,  N_ELEMENTS(golem_bonuses), 1, 0, 0,
 		4, 98, RACE_BLANK, EAT_UNDEAD, dwarf_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -1629,9 +1698,8 @@ player_race race_info[MAX_RACES] =
 		50, 50,
 		82, 5, 190, 20,
 		78,  6, 180, 15,
-		{RP_GREAT, RP_GREAT_2},
 		{TR0_PATTERN, 0, TR2_SUST_CON, TR3_REGEN},
-		NULL, 0, 0, 0,
+		NULL, great_powers, 0, N_ELEMENTS(great_powers), 0, 0,
 		0, 67, RACE_BLANK, EAT_NORMAL, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1647,9 +1715,8 @@ player_race race_info[MAX_RACES] =
 		24, 16,
 		66,  6, 130, 15,
 		62,  6, 100, 10,
-		{0, 0},
 		{0, 0, 0, 0},
-		NULL, 0, 0, 0,
+		NULL, 0, 0, 0, 0, 0,
 		2, 4, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1665,9 +1732,8 @@ player_race race_info[MAX_RACES] =
 		40, 10,
 		100,10, 255, 65,
 		80, 10, 240, 64,
-		{RP_HALF_GIANT, 0},
 		{0, 0, TR2_SUST_STR | TR2_RES_SHARDS, 0},
-		NULL, 0, 0, 0,
+		NULL, &half_giant_power,  0, 1, 0, 0,
 		3, 75, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1683,9 +1749,8 @@ player_race race_info[MAX_RACES] =
 		40, 10,
 		92, 10, 255, 60,
 		80,  8, 235, 60,
-		{RP_HALF_OGRE, 0},
 		{0, 0, TR2_RES_DARK | TR2_SUST_STR, 0},
-		NULL, 0, 0, 0,
+		NULL, &half_ogre_power,  0, 1, 0, 0,
 		3, 74, RACE_BLANK, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1701,9 +1766,8 @@ player_race race_info[MAX_RACES] =
 		11,  4,
 		66,  1, 150,  5,
 		62,  1, 120,  5,
-		{RP_HALF_ORC, 0},
 		{0, 0, TR2_RES_DARK, 0},
-		NULL, 0, 0, 0,
+		NULL, &half_orc_power,  0, 1, 0, 0,
 		3, 19, RACE_ORC, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1719,9 +1783,8 @@ player_race race_info[MAX_RACES] =
 		100,30,
 		111, 11, 255, 86,
 		99, 11, 250, 86,
-		{RP_HALF_TITAN, 0},
 		{0, 0, TR2_RES_CHAOS | TR2_RES_CONF | TR2_SUST_STR, 0},
-		NULL, 0, 0, 0,
+		NULL, &half_titan_power,  0, 1, 0, 0,
 		0, 76, RACE_BLANK, EAT_NORMAL, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1737,9 +1800,8 @@ player_race race_info[MAX_RACES] =
 		20, 10,
 		96, 10, 250, 50,
 		84,  8, 225, 40,
-		{RP_HALF_TROLL, 0},
 		{0, 0, TR2_SUST_STR, 0},
-		half_troll_bonuses, N_ELEMENTS(half_troll_bonuses), 0, 0,
+		half_troll_bonuses, &half_troll_power,  N_ELEMENTS(half_troll_bonuses), 1, 0, 0,
 		3, 22, RACE_TROLL, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1755,9 +1817,8 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 		90, 10, 190, 20,
 		82, 10, 180, 15,
-		{0, 0},
 		{0, 0, TR2_RES_LITE, TR3_SEE_INVIS},
-		NULL, 0, 0, 0,
+		NULL, 0, 0, 0, 0, 0,
 		4, 7, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1773,9 +1834,8 @@ player_race race_info[MAX_RACES] =
 		21, 12,
 		36,  3, 60,  3,
 		33,  3, 50,  3,
-		{RP_HOBBIT, 0},
 		{0, 0, TR2_SUST_DEX, 0},
-		NULL, 0, 0, 0,
+		NULL, &hobbit_power,  0, 1, 0, 0,
 		4, 10, RACE_BLANK, EAT_NORMAL, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1791,9 +1851,8 @@ player_race race_info[MAX_RACES] =
 		14,  6,
 		72,  6, 180, 25,
 		66,  4, 150, 20,
-		{0, 0},
 		{0, 0, 0, 0},
-		NULL, 0, 0, 0,
+		NULL, 0, 0, 0, 0, 0,
 		0, 1, RACE_BLANK, EAT_NORMAL, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1809,9 +1868,8 @@ player_race race_info[MAX_RACES] =
 		13,  4,
 		68,  1, 150,  5,
 		64,  1, 120,  5,
-		{RP_IMP, 0},
 		{0, 0, TR2_RES_FIRE, 0},
-		imp_bonuses, N_ELEMENTS(imp_bonuses), MUT_HORNS, 60,
+		imp_bonuses, &imp_power,  N_ELEMENTS(imp_bonuses), 1, MUT_HORNS, 60,
 		3, 94, RACE_BLANK, EAT_NORMAL, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1827,9 +1885,8 @@ player_race race_info[MAX_RACES] =
 		20, 3,
 		60,  3, 80,  4,
 		54,  3, 70,  4,
-		{RP_KLACKON, 0},
 		{TR0_SPEED_SK, 0, TR2_RES_ACID | TR2_RES_CONF, 0},
-		NULL, 0, 0, 0,
+		NULL, &klackon_power,  0, 1, 0, 0,
 		2, 84, RACE_BLANK, EAT_NORMAL, klackon_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1845,9 +1902,8 @@ player_race race_info[MAX_RACES] =
 		11,  3,
 		60,  1, 130,  5,
 		55,  1, 100,  5,
-		{RP_KOBOLD, 0},
 		{0, 0, TR2_RES_POIS, 0},
-		NULL, 0, 0, 0,
+		NULL, &kobold_power,  0, 1, 0, 0,
 		3, 82, RACE_BLANK, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1863,9 +1919,8 @@ player_race race_info[MAX_RACES] =
 		100, 25,
 		68,  6, 142, 15,
 		63,  6, 112, 10,
-		{RP_MIND_FLAYER, 0},
 		{0, 0, TR2_SUST_INT | TR2_SUST_WIS, 0},
-		mind_flayer_bonuses, N_ELEMENTS(mind_flayer_bonuses),
+		mind_flayer_bonuses, &mind_flayer_power,  N_ELEMENTS(mind_flayer_bonuses), 1,
 		MUT_TENTACLES, 60,
 		4, 92, RACE_BLANK, EAT_NORMAL, cthuloid_syllables,
 		{
@@ -1882,9 +1937,8 @@ player_race race_info[MAX_RACES] =
 		40, 12,
 		43,  3, 92,  6,
 		40,  3, 78,  3,
-		{RP_NIBELUNG, 0},
 		{0, 0, TR2_RES_DARK | TR2_RES_DISEN, 0},
-		NULL, 0, 0, 0,
+		NULL, &nibelung_power,  0, 1, 0, 0,
 		5, 87, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1900,10 +1954,8 @@ player_race race_info[MAX_RACES] =
 		100, 35,
 		72,  6, 50, 5,
 		66,  4, 50, 5,
-		{RP_SKELETON, 0},
-		{TR0_NO_CUT, 0,
-			TR2_HOLD_LIFE | TR2_RES_POIS | TR2_RES_SHARDS, TR3_SEE_INVIS},
-		skeleton_bonuses, N_ELEMENTS(skeleton_bonuses), 0, 0,
+		{TR0_NO_CUT, 0, TR2_HOLD_LIFE | TR2_RES_POIS | TR2_RES_SHARDS, TR3_SEE_INVIS},
+		skeleton_bonuses, &skeleton_power,  N_ELEMENTS(skeleton_bonuses), 1, 0, 0,
 		2, 102, RACE_UNDEAD, EAT_SKELETON, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -1919,11 +1971,8 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 		72, 6, 100, 25,
 		66, 4, 100, 20,
-		{RP_SPECTRE, 0},
-		{TR0_NO_CUT | TR0_HEAL_NETHER | TR0_WEAK_WRAITH, 0,
-			TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_POIS | TR2_RES_NETHER,
-			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
-		spectre_bonuses, N_ELEMENTS(spectre_bonuses), 0, 0,
+		{TR0_NO_CUT | TR0_HEAL_NETHER | TR0_WEAK_WRAITH, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_POIS | TR2_RES_NETHER, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		spectre_bonuses, &spectre_power,  N_ELEMENTS(spectre_bonuses), 1, 0, 0,
 		5, 110, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -1939,9 +1988,8 @@ player_race race_info[MAX_RACES] =
 		50, 25,
 		32,  2, 75,  2,
 		29,  2, 65,  2,
-		{RP_SPRITE, 0},
 		{TR0_SPEED_SK, 0, TR2_RES_LITE, TR3_FEATHER},
-		NULL, 0, 0, 0,
+		NULL, &sprite_power,  0, 1, 0, 0,
 		4, 124, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1957,10 +2005,8 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 			72,  6, 180, 25,
 			66,  4, 150, 20,
-		{RP_VAMPIRE, 0},
-		{TR0_IM_DARK | TR0_HURT_LIGHT, 0, TR2_HOLD_LIFE | TR2_RES_COLD |
-			TR2_RES_DARK | TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
-		vampire_bonuses, N_ELEMENTS(vampire_bonuses), MUT_HYPN_GAZE, 60,
+		{TR0_IM_DARK | TR0_HURT_LIGHT, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_DARK | TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
+		vampire_bonuses, &vampire_power,  N_ELEMENTS(vampire_bonuses), 1, MUT_HYPN_GAZE, 60,
 		5, 113, RACE_UNDEAD, EAT_VAMPIRE, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -1976,9 +2022,8 @@ player_race race_info[MAX_RACES] =
 		14, 3,
 		50,  3, 90,  6,
 		50,  3, 75,  3,
-		{RP_YEEK, 0},
 		{0, 0, TR2_RES_ACID, 0},
-		yeek_bonuses, N_ELEMENTS(yeek_bonuses), MUT_SHRIEK, 60,
+		yeek_bonuses, &yeek_power,  N_ELEMENTS(yeek_bonuses), 1, MUT_SHRIEK, 60,
 		2, 78, RACE_BLANK, EAT_NORMAL, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1994,10 +2039,8 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 		72, 6, 100, 25,
 		66, 4, 100, 20,
-		{RP_ZOMBIE, 0},
-		{0, 0, TR2_HOLD_LIFE | TR2_RES_NETHER | TR2_RES_POIS,
-			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
-		zombie_bonuses, N_ELEMENTS(zombie_bonuses), 0, 0,
+		{0, 0, TR2_HOLD_LIFE | TR2_RES_NETHER | TR2_RES_POIS, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		zombie_bonuses, &skeleton_power,  N_ELEMENTS(zombie_bonuses), 1, 0, 0,
 		2, 107, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
