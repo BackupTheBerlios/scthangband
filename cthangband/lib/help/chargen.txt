@@ -116,7 +116,7 @@ Smaller than dwarves, but otherwise similar.  Gnomes cannot be slowed or paralyz
 
 Golem (EXP Factor 200%, HD 12)
 {STR:+4 INT:-5 WIS:-5 DEX:+0 CON:+4 CHR:-4}
-Golems are not born, but made by arcane rituals that give them words instead of brains.  They are resistant to poison, magical slowing and paralyzation, and can see the invisible.  They need but little sustenance, but normal food helps little.  Sufficently powerful golems gain a tenacious hold on their artificial life force.  Their skins are hard to the point of armor, and tough golems can make them even harder with concentration.
+Golems are not born, but made by arcane rituals that give them words instead of brains.  They are resistant to poison, magical slowing and paralysis, and can see the invisible.  They need but little sustenance, but normal food helps little.  Sufficently powerful golems gain a tenacious hold on their artificial life force.  Their skins are hard to the point of armor, and tough golems can make them even harder with concentration.
 
 Great One (EXP Factor 225%, HD 10)
 {STR:+1 INT:+2 WIS:+2 DEX:+2 CON:+3 CHR:+2}
