@@ -1951,11 +1951,11 @@ void check_magic_info(void)
 	const magic_type *s_ptr;
 	char buf[1024];
 	int i, j;
-	for (j = 0; j < N_ELEMENTS(book_info); j++)
+	for (j = 0; j < (int)N_ELEMENTS(book_info); j++)
 	{
 		book_type *b_ptr = book_info+j;
 
-		if (b_ptr->idx != j) quit_fmt("Book %d has index %d", i, b_ptr->idx);
+		if (b_ptr->idx != j) quit_fmt("Book %d has index %d", j, b_ptr->idx);
 
 		if (!b_ptr->flags) quit_fmt("Book %d is empty.", j);
 
