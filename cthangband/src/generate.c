@@ -3884,8 +3884,8 @@ static void build_type7_or_8(int yval, int xval, int typ)
 	}
 
 	/* Hack - the game should have already checked this... */
-	while (!in_bounds2(xval - v_ptr->wid/2, yval - v_ptr->hgt/2) ||
-		!in_bounds2(xval + (v_ptr->wid+1)/2, yval + (v_ptr->hgt+1)/2) ||
+	while (!in_bounds2(yval - v_ptr->hgt/2, xval - v_ptr->wid/2) ||
+		!in_bounds2(yval + (v_ptr->hgt+1)/2, xval + (v_ptr->wid+1)/2) ||
 		(int)strlen(v_text + v_ptr->text) < v_ptr->wid * v_ptr->hgt);
 	{
 		v_ptr = pick_vault(typ);
