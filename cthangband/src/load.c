@@ -772,11 +772,11 @@ static void rd_options(void)
 
 		rd_byte(&autosave_l);
 		rd_byte(&b);
-		autosave_t = b & 0x01 != 0;
+		autosave_t = (b & 0x01) != 0;
 #ifdef SF_Q_SAVE
 		if (has_flag(SF_Q_SAVE))
 		{
-			autosave_q = b & 0x02 != 0;
+			autosave_q = (b & 0x02) != 0;
 		}
 #endif
 		rd_s16b(&autosave_freq);
