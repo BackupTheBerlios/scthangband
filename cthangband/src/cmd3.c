@@ -1161,10 +1161,7 @@ void do_cmd_handle(object_type *o_ptr)
 			do_cmd_eat_food(o_ptr);
 			break;
 		}
-	case TV_SORCERY_BOOK:
-	case TV_THAUMATURGY_BOOK:
-	case TV_CONJURATION_BOOK:
-	case TV_NECROMANCY_BOOK:
+	case TV_BOOK:
 	case TV_CHARM:
 		{
 			do_cmd_browse(o_ptr);

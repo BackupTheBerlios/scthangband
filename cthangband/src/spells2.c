@@ -1580,10 +1580,7 @@ bool detect_objects_magic(void)
 	if (allart_p(o_ptr) || ego_item_p(o_ptr) ||
 			(tv == TV_AMULET) || (tv == TV_RING) ||
 			(tv == TV_STAFF) || (tv == TV_WAND) || (tv == TV_ROD) ||
-			(tv == TV_SCROLL) || (tv == TV_POTION) ||
-		(tv == TV_SORCERY_BOOK) ||
-		(tv == TV_THAUMATURGY_BOOK) ||
-		(tv == TV_CONJURATION_BOOK) || (tv == TV_NECROMANCY_BOOK) ||
+			(tv == TV_SCROLL) || (tv == TV_POTION) || (tv == TV_BOOK) ||
 			((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
 		{
 			/* Memorize the item */

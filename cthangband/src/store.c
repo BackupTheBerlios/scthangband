@@ -1396,10 +1396,7 @@ static void mass_produce(object_type *o_ptr)
 			break;
 		}
 
-		case TV_SORCERY_BOOK:
-		case TV_THAUMATURGY_BOOK:
-		case TV_CONJURATION_BOOK:
-		case TV_NECROMANCY_BOOK:
+		case TV_BOOK:
 		{
 			if (cost <= 50L) size += mass_roll(2, 3);
 			if (cost <= 500L) size += mass_roll(1, 3);
@@ -1621,8 +1618,7 @@ static bool store_will_buy(object_ctype *o_ptr)
 	/* Switch on the store */
 	switch (cur_store_type)
 	{
-		/* General Store */
-		case 0:
+		case STORE_GENERAL:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -1644,8 +1640,7 @@ static bool store_will_buy(object_ctype *o_ptr)
 			break;
 		}
 
-		/* Armoury */
-		case 1:
+		case STORE_ARMOURY:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -1666,8 +1661,7 @@ static bool store_will_buy(object_ctype *o_ptr)
 			break;
 		}
 
-		/* Weapon Shop */
-		case 2:
+		case STORE_WEAPON:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -1687,8 +1681,7 @@ static bool store_will_buy(object_ctype *o_ptr)
 			break;
 		}
 
-		/* Temple */
-		case 3:
+		case STORE_TEMPLE:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -1707,8 +1700,7 @@ static bool store_will_buy(object_ctype *o_ptr)
 			break;
 		}
 
-		/* Alchemist */
-		case 4:
+		case STORE_ALCHEMIST:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -1722,17 +1714,13 @@ static bool store_will_buy(object_ctype *o_ptr)
 			break;
 		}
 
-		/* Magic Shop */
-		case 5:
+		case STORE_MAGIC:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
 				case TV_CHARM:
-				case TV_SORCERY_BOOK:
-				case TV_THAUMATURGY_BOOK:
-				case TV_CONJURATION_BOOK:
-				case TV_NECROMANCY_BOOK:
+				case TV_BOOK:
 				case TV_AMULET:
 				case TV_RING:
 				case TV_STAFF:
@@ -1746,36 +1734,25 @@ static bool store_will_buy(object_ctype *o_ptr)
 			}
 			break;
 		}
-		/* Bookstore */
-		case 8:
+		case STORE_LIBRARY:
 		{
 			/* Analyze the type */
-			switch (o_ptr->tval)
-			{
-						case TV_SORCERY_BOOK:
-						case TV_THAUMATURGY_BOOK:
-						case TV_CONJURATION_BOOK:
-						case TV_NECROMANCY_BOOK:
-					break;
-				default:
-					return (FALSE);
-			}
+			if (o_ptr->tval != TV_BOOK) return FALSE;
 			break;
 		}
-		/* Inn */
-		case 9:
+		case STORE_INN:
 		/* The Inn will not buy anything */
 		{
 			return (FALSE);
 		}
 		/* Hall of Records */
-		case 10:
+		case STORE_HALL:
 		{
 			/* Hall does not buy */
 			return (FALSE);
 		}
 		/* Pawnbrokers */
-		case 11:
+		case STORE_PAWN:
 		{
 			/* Will buy anything */
 			return (TRUE);

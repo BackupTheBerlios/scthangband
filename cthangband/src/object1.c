@@ -4764,23 +4764,6 @@ static bool PURE item_tester_unhidden(object_ctype *o_ptr)
 }
 
 /*
- * Is it a book?
- */
-static bool PURE item_tester_book(object_ctype *o_ptr)
-{
-	switch (o_ptr->tval)
-	{
-		case TV_SORCERY_BOOK:
-		case TV_THAUMATURGY_BOOK:
-		case TV_CONJURATION_BOOK:
-		case TV_NECROMANCY_BOOK:
-			return TRUE;
-		default:
-			return FALSE;
-	}
-}
-
-/*
  * Can it be dropped?
  */
 static bool PURE item_tester_hook_drop(object_ctype *o_ptr)
@@ -5003,9 +4986,9 @@ static object_function object_functions[] =
 	{'b', do_cmd_browse, "browse", "book",
 		NULL, item_tester_spells, 0, FALSE, TRUE, TRUE},
 	{'G'+CMD_SHOP, do_cmd_study, "study", "book",
-		forbid_study, item_tester_book, 0, FALSE, TRUE, TRUE},
+		forbid_study, NULL, TV_BOOK, FALSE, TRUE, TRUE},
 	{'m', do_cmd_cast, "use", "book",
-		forbid_cast, item_tester_book, 0, FALSE, TRUE, TRUE},
+		forbid_cast, NULL, TV_BOOK, FALSE, TRUE, TRUE},
 	{'h', do_cmd_cantrip, "use", "charm",
 		forbid_cast, NULL, TV_CHARM, TRUE, TRUE, TRUE},
 	{'w', do_cmd_wield, "wear or wield", "item",

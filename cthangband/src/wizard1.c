@@ -72,10 +72,7 @@ static name_centry group_item[] =
 	{ TV_WAND,              "Wands" },
 	{ TV_STAFF,             "Staffs" },
 
-	{ TV_SORCERY_BOOK,    "Books (Sorcery)" },
-	{ TV_THAUMATURGY_BOOK,      "Books (Thaumaturgy)" },
-	{ TV_CONJURATION_BOOK,      "Books (Conjuration)" },
-	{ TV_NECROMANCY_BOOK,     "Books (Necromancy)" },
+	{ TV_BOOK,    "Books" },
 
 	{ TV_CHARM, "Charm" },
 

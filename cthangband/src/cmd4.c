@@ -1320,7 +1320,7 @@ static name_centry tval_names_inscribe[] =
 	{TV_WAND, "Wand"},
 	{TV_STAFF, "Staff"},
 	{TV_ROD, "Rod"},
-	{TV_SORCERY_BOOK, "Spellbook"},
+	{TV_BOOK, "Spellbook"},
 	{TV_CHARM, "Charm"},
 	{TV_SKELETON, "Other thing"},
 	{0, NULL}
@@ -1353,9 +1353,6 @@ static int get_category_tval(int tval)
 	{
 		case TV_ARROW: case TV_BOLT: case TV_SHOT:
 			return TV_ARROW;
-		case TV_SORCERY_BOOK: case TV_THAUMATURGY_BOOK:
-		case TV_CONJURATION_BOOK: case TV_NECROMANCY_BOOK:
-			return TV_SORCERY_BOOK;
 	}
 
 	/* Single categories in the above table. */

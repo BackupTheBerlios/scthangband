@@ -1668,8 +1668,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 
 			switch(tval)
 			{
-				case TV_SORCERY_BOOK: case TV_THAUMATURGY_BOOK: case TV_CHARM:
-				case TV_CONJURATION_BOOK: case TV_NECROMANCY_BOOK:
+				case TV_BOOK: case TV_CHARM:
 				{
 					if (kextra > MAX_BK) return PARSE_ERROR_OUT_OF_BOUNDS;
 					break;

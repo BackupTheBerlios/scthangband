@@ -1510,10 +1510,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TV_POTION       75
 #define TV_FLASK        77
 #define TV_FOOD         80
-#define TV_SORCERY_BOOK 90
-#define TV_THAUMATURGY_BOOK   91
-#define TV_CONJURATION_BOOK   92
-#define TV_NECROMANCY_BOOK  93
+#define TV_BOOK 90 /* Spellbooks */
 #define TV_CHARM 94
 #define TV_GOLD         100     /* Gold can only be picked up by players */
 #define TV_UNKNOWN 255 /* Needed for o_base_type.tval. */

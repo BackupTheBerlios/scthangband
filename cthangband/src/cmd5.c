@@ -29,8 +29,7 @@ static book_type *k_idx_to_book(int i)
 	switch (k_ptr->tval)
 	{
 		/* Only some objects can be spellbooks. */
-		case TV_SORCERY_BOOK: case TV_THAUMATURGY_BOOK: case TV_CHARM:
-		case TV_CONJURATION_BOOK: case TV_NECROMANCY_BOOK:
+		case TV_BOOK: case TV_CHARM:
 		{
 			if (k_ptr->extra) return book_info+(k_info[i].extra-1);
 			else return 0;
@@ -1417,7 +1416,7 @@ void do_cmd_cast(object_type *o_ptr)
 
 		msg_print("You failed to get the spell off!");
 
-		if (o_ptr->tval == TV_THAUMATURGY_BOOK && (randint(100)<spell))
+		if (s_ptr->skill1 == SKILL_THAUMATURGY && percent(spell-1))
 		{
 			msg_print("You produce a chaotic effect!");
 			wild_magic(spell);

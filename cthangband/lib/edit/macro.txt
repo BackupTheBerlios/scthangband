@@ -482,23 +482,8 @@ Y:80
 F:k_info:I:2
 F:k_info:I:4
 
-X:Sorcery
+X:Book
 Y:90
-F:k_info:I:2
-F:k_info:I:4
-
-X:Thaumaturgy
-Y:91
-F:k_info:I:2
-F:k_info:I:4
-
-X:Conjuration
-Y:92
-F:k_info:I:2
-F:k_info:I:4
-
-X:Necromancy
-Y:93
 F:k_info:I:2
 F:k_info:I:4
 
@@ -647,19 +632,7 @@ X:I:Food
 A:F:EASY_KNOW|IGNORE_FIRE|IGNORE_COLD|IGNORE_ACID|IGNORE_ELEC
 F:k_info:I:1
 
-X:I:Sorcery
-A:F:EASY_KNOW|IGNORE_COLD|IGNORE_ACID|IGNORE_ELEC
-F:k_info:I:1
-
-X:I:Thaumaturgy
-A:F:EASY_KNOW|IGNORE_COLD|IGNORE_ACID|IGNORE_ELEC
-F:k_info:I:1
-
-X:I:Conjuration
-A:F:EASY_KNOW|IGNORE_COLD|IGNORE_ACID|IGNORE_ELEC
-F:k_info:I:1
-
-X:I:Necromancy
+X:I:Book
 A:F:EASY_KNOW|IGNORE_COLD|IGNORE_ACID|IGNORE_ELEC
 F:k_info:I:1
 
@@ -809,19 +782,7 @@ Y:Food
 F:k_info:I:2
 
 X:90
-Y:Sorcery
-F:k_info:I:2
-
-X:91
-Y:Thaumaturgy
-F:k_info:I:2
-
-X:92
-Y:Conjuration
-F:k_info:I:2
-
-X:93
-Y:Necromancy
+Y:Book
 F:k_info:I:2
 
 X:94
