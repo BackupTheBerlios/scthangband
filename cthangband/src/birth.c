@@ -705,9 +705,9 @@ static char *cthuloid_syllable3[] =
 	"l","a","u","oa","oggua","oth","ath","aggua","lu","lo","loth","lotha","agn","axl",
 };
 
-void get_starting_skills(void);
-void get_hermetic_skills_randomly(void);
-void get_hermetic_skills(void);
+static void get_starting_skills(void);
+static void get_hermetic_skills_randomly(void);
+static void get_hermetic_skills(void);
 static void get_ahw_average(void);
 static void get_money(bool randomly);
 static int get_social_average(void);
@@ -716,7 +716,7 @@ static int get_social_average(void);
  * For characters starting with shaman skill, start them with a spirit
  */
 
-void get_init_spirit(bool choice)
+static void get_init_spirit(bool choice)
 {
 	char c;
 	char buf[240];
@@ -752,7 +752,7 @@ void get_init_spirit(bool choice)
  * appropriate. This must be run after the other skill increases.
  */
 
-void get_random_skills(bool random)
+static void get_random_skills(bool random)
 {
 	int i;
 	for (i=0;i<MAX_SKILLS;i++)
@@ -798,7 +798,7 @@ void get_random_skills(bool random)
 /*
  * Imagine you were wielding a whip...
  */
-void wield_weapons(bool wield)
+static void wield_weapons(bool wield)
 {
 	int sv;
 	if (wield)
@@ -966,30 +966,32 @@ static void display_player_birth(int points)
 }
 
 /* Indexes for point_mod_player (0-6 hard-coded as stats and nothing) */
-#define IDX_RACE 8
-#define IDX_TEMPLATE 16
-#define IDX_FILE 32
-#define IDX_FINISH 64
-#define IDX_RAND_ONE 128
-#define IDX_LOAD 256
+#define IDX_STATS	((A_STR+1) | (A_INT+1) | (A_WIS+1) | (A_DEX+1) | (A_CON+1) | (A_CHR+1))
+#define IDX_RACE	0x0008
+#define IDX_TEMPLATE	0x0010
+#define IDX_FILE	0x0020
+#define IDX_FINISH	0x0040
+#define IDX_RAND_ONE	0x0080
+#define IDX_LOAD	0x0100
+#define IDX_START	0x0200
 #define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
 
 /* Allow player to modify the character by spending points */
 static bool point_mod_player(void)
 {
 	char stat; /* Never used when i = IDX_ALL, and initialised below otherwise. */
-	int x = 0;
-	int i = IDX_ALL;
-	int points = 64;
-
+	s16b points; /* Initialised when i = IDX_ALL */
+	u16b i = IDX_START;
 	
 	while(i != IDX_FINISH)
 	{ 
-		/* Hack - use IDX_ALL to initialise various things. */
-		if (i == IDX_ALL)
+		/* Hack - use IDX_START to initialise various things.
+		 * i should not be set to IDX_ALL anywhere else.
+		 * i == IDX_START should not be checked anywhere else.
+		 */
+		if (i == IDX_START)
 		{
-			/* Only do this once */
-			i |= 1;
+			i = IDX_ALL;
 		}
 		else
 		{
@@ -1002,22 +1004,22 @@ static bool point_mod_player(void)
 
 			/* The index to a specific stat is retrieved */
 			case 's': case 'S':
-				i = 1;
+				i = A_STR+1;
 				break;
 			case 'i': case 'I':
-				i = 2;
+				i = A_INT+1;
 				break;
 			case 'w': case 'W':
-				i = 3;
+				i = A_WIS+1;
 				break;
 			case 'd': case 'D':
-				i = 4;
+				i = A_DEX+1;
 				break;
 			case 'c': case 'C':
-				i = 5;
+				i = A_CON+1;
 				break;
 			case 'h': case 'H':
-				i = 6;
+				i = A_CHR+1;
 				break;
 			case 'r': case 'R':
 				i = IDX_RACE;
@@ -1041,8 +1043,6 @@ static bool point_mod_player(void)
 				i = 0;
 			}  
 		}
-		/* Test for invalid key */
-		if(!i) continue;
 
 		/* Don't finish on negative points */
 		if (i == IDX_FINISH && points < 0) i = 0;
@@ -1050,6 +1050,7 @@ static bool point_mod_player(void)
 		/* Save current stats to a pref file */
 		if (i == IDX_FILE)
 		{
+			byte x;
 			/* Set the current stats as default */
 			for (x = 0; x < A_MAX; x++)
 		{
@@ -1062,6 +1063,7 @@ static bool point_mod_player(void)
 		/* Load saved stats at startup and on demand */
 		if (i & IDX_LOAD)
 		{
+			byte x;
 			for (x = 0; x < A_MAX; x++)
 		{
 				s16b tmp = stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x];
@@ -1098,28 +1100,13 @@ static bool point_mod_player(void)
 			i = rand_int(A_MAX);
 		}		
 
-		if (i & IDX_ALL)
+		if (i & (IDX_ALL | IDX_LOAD))
 		{
 			/* Correct the skill set. These will be finalised later. */
 			get_starting_skills();
 			get_hermetic_skills_randomly();
 			get_init_spirit(FALSE);
 			get_random_skills(FALSE);
-
-			/* Avoid stats which are too low. */
-			if (maximise_mode)
-			{
-				int j;
-				for (j = 0; j< A_MAX; j++)
-				{
-					int adj = rp_ptr->r_adj[j] + cp_ptr->c_adj[j];
-					if (p_ptr->stat_cur[j] + adj < 3)
-					{
-						points += change_points_by_stat(p_ptr->stat_cur[j], 3-adj);
-						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = 3-adj;
-					}
-				}
-			}
 		}
 
 		if (i & IDX_RACE)
@@ -1139,69 +1126,63 @@ static bool point_mod_player(void)
 
 		/* Test for lower case (add to stat) or 
 		upper case (subtract stat) */
-		if (i && i < 7)
-		{
-			/* Remember what the stat has been changed from */
-			int old_stat = p_ptr->stat_cur[--i];
-			if (islower(stat)) /* ('a' < stat) */
-		{
-			/* different conditions for maximize on */
-			if(maximise_mode) 
-			{
-				/* Max stat increase */
-				if(p_ptr->stat_max[i] < 17)
+		if (i & IDX_STATS)
 				{
-					p_ptr->stat_cur[i] = ++p_ptr->stat_max[i];
+			s16b dif = (islower(stat)) ? 1 : -1;
+			s16b newstat = modify_stat_value(p_ptr->stat_cur[i-1], dif);
+			p_ptr->stat_cur[i-1]=p_ptr->stat_max[i-1]=newstat;
 				}
-			}
-			else
+
+		/* Avoid inappropriate stats.
+		 * In maximise mode, p_ptr->stat_cur[j] can always be as low as 8 and
+		 * modify_stat_value(p_ptr->stat_cur[j],rp_ptr->r_adj[j]+cp_ptr->c_adj[j])
+		 * can always be as low as 3. p_ptr->stat_cur[j] can be as high as 17.
+		 *
+		 * In non-maximise mode, p_ptr->stat_cur[j] can be as low as 3 and as
+		 * high as maxstat(p_ptr->prace, p_ptr->ptemplate, j).
+		 *
+		 * This also sets the points total (setting them from scratch every
+		 * time is simpler than adjusting them as necessary).
+		 */
+		if (i & (IDX_ALL | IDX_LOAD | IDX_STATS))
 			{
-				/* Max stat increase, maximize off */
-				if(p_ptr->stat_max[i] < maxstat(p_ptr->prace, p_ptr->ptemplate, i))
+			byte j;
+			/* A character with stats of 0 has 64 points. */
+			points = 64;
+
+			for (j = 0; j < A_MAX; j++)
 				{
-					if(p_ptr->stat_max[i]> 17)
+				if (maximise_mode)
 					{
-						p_ptr->stat_max[i] += 10;
-						p_ptr->stat_cur[i] += 10;
-					}
-					else
+					byte min = MIN(8, modify_stat_value(3, -rp_ptr->r_adj[j]-cp_ptr->c_adj[j]));
+					if (p_ptr->stat_cur[j] < min)
 					{
-						p_ptr->stat_cur[i] = ++p_ptr->stat_max[i];
-					}
+						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = min;
 				}
+					else if (p_ptr->stat_cur[j] > 17)
+					{
+						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = 17;
 			}
 		}
-		else    /* Reduce stat case */
-		{ 
-			if(p_ptr->stat_use[i] > 3)
-			{
-				if(p_ptr->stat_max[i] > 27)
-				{ 
-					p_ptr->stat_max[i] -= 10;
-					p_ptr->stat_cur[i] -= 10;
-				}
 				else
-				{
-					p_ptr->stat_cur[i] = --p_ptr->stat_max[i];
+			{
+					byte max = maxstat(p_ptr->prace, p_ptr->ptemplate, j);
+					if (p_ptr->stat_cur[j] < 3)
+				{ 
+						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = 3;
 				}
+					else if (p_ptr->stat_cur[j] > max)
+				{
+						p_ptr->stat_cur[j] = p_ptr->stat_max[j] = max;
 			}
 			}
-			if (old_stat != p_ptr->stat_cur[i])
-			{
-				/* Adjust the points appropriately */
-				points += change_points_by_stat(old_stat, p_ptr->stat_cur[i]);
-				/* Don't leave i at 0 */
-				i++;
+				points += change_points_by_stat(0, p_ptr->stat_cur[j]);
 			}
-			else
-			{
-				/* Nothing happened. */
-				i = 0;
-			}
+			
 		}
 
 		/* Update various things and display everything if something has changed. */
-		if (i & (IDX_ALL | 7)) 
+		if (i & (IDX_ALL | IDX_STATS)) 
 		{
 			/* Calculate the bonuses and hitpoints */
 			p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
@@ -1318,7 +1299,7 @@ void create_random_name(int race, char *name)
 /*
  * Initialise the skills for a new character
  */
-void get_starting_skills(void)
+static void get_starting_skills(void)
 {
 	int i;
 	/* Wipe skills */
@@ -1381,7 +1362,7 @@ void get_starting_skills(void)
 /*
  * Get hermetic skills randomly
  */
-void get_hermetic_skills_randomly()
+static void get_hermetic_skills_randomly()
 {
 	int i,choices;
 	int choice,old_choice;
@@ -1429,7 +1410,7 @@ void get_hermetic_skills_randomly()
 /*
  * Get hermetic skills
  */
-void get_hermetic_skills()
+static void get_hermetic_skills()
 {
 	int k,i,choices;
 	char c;
