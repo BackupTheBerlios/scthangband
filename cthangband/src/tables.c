@@ -3092,7 +3092,7 @@ cptr window_flag_desc[32] =
 	"Display object recall",
 	"Display object details",
 	"Display snap-shot",
-	NULL,
+	"Display shop names",
 	NULL,
 	"Display borg messages",
 	"Display borg status",

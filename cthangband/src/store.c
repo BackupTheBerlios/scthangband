@@ -1896,22 +1896,117 @@ static void store_prt_gold(void)
 
 
 /*
+ * Work out the title of the current shop.
+ */
+static cptr store_title_aux(void)
+{
+	cptr out;
+
+	switch (cur_store_type)
+	{
+	/* The "Home" is special */
+		case STORE_HOME:
+	{
+			if (p_ptr->house[cur_town])
+		{
+				out = format("%28s%s", "", "Your Home");
+		}
+			/* Not yours (yet). */
+			else
+			{
+				out = format("%28s%s", "", "House for Sale");
+			}
+			break;
+	}
+	/* So is the Hall */
+		case STORE_HALL:		
+	{
+			out = format("%28s%s", "", "Hall of Records");
+			break;
+	}
+	/* Normal stores */
+		default:
+	{
+			cptr tmp_str;
+			cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + st_ptr->type].name);
+		cptr owner_name = (ot_ptr->owner_name);
+		cptr race_name = race_info[ot_ptr->owner_race].title;
+		object_type tmp;
+			s16b old_charisma;
+
+		/* Put the owner name and race */
+			tmp_str = string_make(format("%s (%s)", owner_name, race_name));
+
+		/* Hack - Create a 10000gp item for price_item() */
+		object_prep(&tmp, lookup_kind(TV_PRICE_COMPARE, SV_PRICE_COMPARE));
+		object_aware(&tmp);
+
+			/* Hack - standardise the player's charisma. */
+			old_charisma = p_ptr->stat_use[A_CHR];
+			p_ptr->stat_use[A_CHR] = CHR_PRICE_COMPARE;
+
+		/* Show the max price in the store (above prices) */
+			out = format("%10s%-40s%s (%ld) [%ld]", "", tmp_str, store_name, (long)(ot_ptr->max_cost),
+			price_item(&tmp, ot_ptr->min_inflate, TRUE));
+
+			/* Hack - return real charisma. */
+			p_ptr->stat_use[A_CHR] = old_charisma;
+
+			string_free(tmp_str);
+		}
+	}
+
+	/* Done. */	
+	return out;
+}
+
+/*
+ * A wrapper around store_title_aux to remove the assumption that the static
+ * variables are correct.
+ */
+cptr store_title(int store_num)
+{
+	cptr out;
+
+	/* Hack - price_item() requires correct cur_store_type and ot_ptr as well
+	 * as correct parameters. */
+	int real_cur_store_num = cur_store_num;
+	store_type *real_st_ptr = st_ptr;
+	owner_type *real_ot_ptr = ot_ptr;
+	byte real_cur_store_type = cur_store_type;
+	
+	cur_store_num = store_num;
+	st_ptr = &store[cur_store_num];
+	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	cur_store_type = st_ptr->type;
+
+	/* Determine the title. */
+	out = store_title_aux();
+
+	/* Hack - return static variables to original values. */
+	store_num = real_cur_store_num;
+	st_ptr = real_st_ptr;
+	ot_ptr = real_ot_ptr;
+	cur_store_type = real_cur_store_type;
+
+	return out;
+}
+
+
+/*
  * Displays store (after clearing screen)		-RAK-
  */
 static void display_store(void)
 {
-	char buf[80];
-
-
 	/* Clear screen */
 	Term_clear();
+
+	/* Display the title. */
+	put_str(store_title_aux(), 3, 0);
 
 	/* The "Home" is special */
 	if (cur_store_type == STORE_HOME)
 	{
-		/* Put the owner name */
-		put_str("Your Home", 3, 30);
-
 		/* Label the item descriptions */
 		put_str("Item Description", 5, 3);
 
@@ -1922,36 +2017,11 @@ static void display_store(void)
 		}
 	}
 	
-	/* So is the Hall */
-	if (cur_store_type == STORE_HALL)
-	{
-		put_str("Hall Of Records",3,30);
-	}
-
 	/* Normal stores */
 	if ((cur_store_type != STORE_HOME) && (cur_store_type != STORE_HALL))
 	{
-		cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + cur_store_type].name);
-		cptr owner_name = (ot_ptr->owner_name);
-		cptr race_name = race_info[ot_ptr->owner_race].title;
-		object_type tmp;
-
-		/* Put the owner name and race */
-		sprintf(buf, "%s (%s)", owner_name, race_name);
-		put_str(buf, 3, 10);
-
-		/* Hack - Create a 10000gp item for price_item() */
-		object_prep(&tmp, lookup_kind(TV_PRICE_COMPARE, SV_PRICE_COMPARE));
-		object_aware(&tmp);
-
-		/* Show the max price in the store (above prices) */
-		sprintf(buf, "%s (%ld) [%ld]", store_name, (long)(ot_ptr->max_cost),
-			price_item(&tmp, ot_ptr->min_inflate, TRUE));
-		prt(buf, 3, 50);
-
 		/* Label the item descriptions */
 		put_str("Item Description", 5, 3);
-
 		/* If showing weights, show label */
 		if (show_weights)
 		{

@@ -1838,6 +1838,7 @@ logaux(x, 1) logaux(x, 0) 255
  */
 #define TV_PRICE_COMPARE 90
 #define SV_PRICE_COMPARE 90
+#define CHR_PRICE_COMPARE 18 /* Gives an adj_chr_gold[] of 100%. */
 
 /*
  * Handedness Values for Weapons
@@ -2034,6 +2035,7 @@ logaux(x, 1) logaux(x, 0) 255
 #define PW_OBJECT       0x00000200L     /* Display object recall */
 #define PW_OBJECT_DETAILS	0x00000400L	/* Display object details */
 #define PW_SNAPSHOT     0x00000800L     /* Display snap-shot */
+#define PW_SHOPS	0x00001000L	/* Display shop information */
 /* xxx */
 /* xxx */
 #define PW_BORG_1       0x00004000L     /* Display borg messages */
@@ -2057,7 +2059,7 @@ logaux(x, 1) logaux(x, 0) 255
 /* The set of windows affected by window_stuff(). */
 #define WINDOW_STUFF_MASK (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | \
 	PW_VISIBLE | PW_PLAYER_SKILLS | PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
-	PW_OBJECT | PW_OBJECT_DETAILS | PW_RETURN)
+	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_RETURN)
 
 /*** General index values ***/
 

@@ -3435,7 +3435,7 @@ static void dungeon(void)
 	character_xtra = TRUE;
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | PW_SHOPS);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_MONSTER);

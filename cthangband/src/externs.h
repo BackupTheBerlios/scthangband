@@ -904,6 +904,7 @@ extern void alter_reality(void);
 
 
 /* store.c */
+extern cptr store_title(int store_num);
 extern void do_cmd_store(void);
 extern void store_shuffle(int which);
 extern void store_maint(int which);
