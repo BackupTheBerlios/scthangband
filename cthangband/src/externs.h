@@ -3412,10 +3412,10 @@ extern byte item_tester_tval;
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool (*item_tester_hook)(object_type*);
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool (*ang_sort_comp)(vptr u, vptr v, int a, int b);
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
@@ -3544,7 +3544,7 @@ extern bool cumber_helm(object_type *o_ptr);
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern int wield_skill(object_type *o_ptr);
 #endif
-#if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3700,7 +3700,7 @@ extern void resize_map(void);
 #if (defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA2_C))
 extern void resize_inkey(void);
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void ang_sort(vptr u, vptr v, int n);
 #endif
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))

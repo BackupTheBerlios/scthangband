@@ -1645,15 +1645,10 @@ static bool object_absorb_aux(object_type *o_ptr, object_type *j_ptr, bool rod)
 	if (object_known_p(j_ptr)) object_known(o_ptr);
 
     /* Hack -- clear "storebought" if only one has it */
-    if ( ((o_ptr->ident & IDENT_STOREB) || (j_ptr->ident & IDENT_STOREB)) &&
-          (!((o_ptr->ident & IDENT_STOREB) && (j_ptr->ident & IDENT_STOREB))))
-            {
-                if(j_ptr->ident & IDENT_STOREB) j_ptr->ident &= 0xEF;
-                if(o_ptr->ident & IDENT_STOREB) o_ptr->ident &= 0xEF;
-            }
+	o_ptr->ident &= ~(~j_ptr->ident & IDENT_STOREB);
 
-	/* Hack -- blend "mental" status */
-	if (j_ptr->ident & (IDENT_MENTAL)) o_ptr->ident |= (IDENT_MENTAL);
+	/* Hack - blend other IDENT_* flags */
+	o_ptr->ident |= j_ptr->ident;
 
 	/* Hack -- blend "inscriptions" */
 	if (j_ptr->note && o_ptr->note && j_ptr->note != o_ptr->note)
@@ -5154,8 +5149,23 @@ s16b inven_carry(object_type *o_ptr)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
+	/* Hack - track this object. */
+	o_ptr->ident |= IDENT_TEMP;
+
 	/* Combine and Reorder pack */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	notice_stuff();
+
+	/* Find the object again. */
+	for (o_ptr = inventory; o_ptr < inventory+INVEN_PACK; o_ptr++)
+	{
+		if (o_ptr->ident & IDENT_TEMP)
+		{
+			o_ptr->ident &= ~IDENT_TEMP;
+			j = o_ptr-inventory;
+			break;
+		}
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_SPELL);
@@ -5444,114 +5454,68 @@ void combine_pack(void)
 
 
 /*
+ * Return TRUE if the desired position for u[a] in the pack >=  that of u[b].
+ */
+static bool ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
+{
+	object_type *inv = u, *a_ptr = inv+a, *b_ptr = inv+b;
+
+	/* Skip empty slots */
+	if (!b_ptr->k_idx) return TRUE;
+	if (!a_ptr->k_idx) return FALSE;
+
+	/* Objects sort by decreasing type */
+	if (a_ptr->tval > b_ptr->tval) return TRUE;
+	if (a_ptr->tval < b_ptr->tval) return FALSE;
+
+	/* Non-aware (flavored) items always come last */
+	if (!object_aware_p(a_ptr)) return TRUE;
+	if (!object_aware_p(b_ptr)) return FALSE;
+
+	/* Objects sort by increasing k_idx */
+	if (a_ptr->k_idx < b_ptr->k_idx) return TRUE;
+	if (a_ptr->k_idx > b_ptr->k_idx) return FALSE;
+
+	/* Unidentified objects always come last */
+	if (!object_known_p(a_ptr)) return TRUE;
+	if (!object_known_p(b_ptr)) return FALSE;
+
+	/* Hack:  otherwise identical rods sort by
+		increasing recharge time --dsb */
+	if (a_ptr->tval == TV_ROD)
+	{
+		if (a_ptr->timeout < b_ptr->timeout) return TRUE;
+		if (a_ptr->timeout > b_ptr->timeout) return FALSE;
+	}
+
+	/* Objects sort by decreasing value */
+	return (object_value(a_ptr) <= object_value(b_ptr));
+}
+
+/*
+ * Swap two inventory items.
+ */
+static void ang_sort_swap_pack(vptr u, vptr UNUSED v, int a, int b)
+{
+	object_type *inv = u, tmp[1];
+	object_copy(tmp, inv+a);
+	object_copy(inv+a, inventory+b);
+	object_copy(inv+b, tmp);
+}
+
+/*
  * Reorder items in the pack
- *
- * Note special handling of the "overflow" slot
  */
 void reorder_pack(void)
 {
-	int i, j, k;
+	/* Sort the pack using the above functions. */
+	ang_sort_comp = ang_sort_comp_pack;
+	ang_sort_swap = ang_sort_swap_pack;
+	ang_sort(inventory, 0, INVEN_PACK);
 
-	s32b o_value;
-	s32b j_value;
-
-	object_type     forge;
-	object_type *q_ptr;
-
-	object_type *j_ptr;
-	object_type *o_ptr;
-
-	bool flag = FALSE;
-
-
-	/* Re-order the pack (forwards) */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		/* Mega-Hack -- allow "proper" over-flow */
-		if ((i == INVEN_PACK) && (inven_cnt == INVEN_PACK)) break;
-
-		/* Get the item */
-		o_ptr = &inventory[i];
-
-		/* Skip empty slots */
-		if (!o_ptr->k_idx) continue;
-
-		/* Get the "value" of the item */
-		o_value = object_value(o_ptr);
-
-		/* Scan every occupied slot */
-		for (j = 0; j < INVEN_PACK; j++)
-		{
-			/* Get the item already there */
-			j_ptr = &inventory[j];
-
-			/* Use empty slots */
-			if (!j_ptr->k_idx) break;
-
-			/* Objects sort by decreasing type */
-			if (o_ptr->tval > j_ptr->tval) break;
-			if (o_ptr->tval < j_ptr->tval) continue;
-
-			/* Non-aware (flavored) items always come last */
-			if (!object_aware_p(o_ptr)) continue;
-			if (!object_aware_p(j_ptr)) break;
-
-			/* Objects sort by increasing k_idx */
-			if (o_ptr->k_idx < j_ptr->k_idx) break;
-			if (o_ptr->k_idx > j_ptr->k_idx) continue;
-
-			/* Unidentified objects always come last */
-			if (!object_known_p(o_ptr)) continue;
-			if (!object_known_p(j_ptr)) break;
-
-  
-           /* Hack:  otherwise identical rods sort by
-              increasing recharge time --dsb */
-           if (o_ptr->tval == TV_ROD) {
-    	       if (o_ptr->timeout < j_ptr->timeout) break;
-	           if (o_ptr->timeout > j_ptr->timeout) continue;
-           }
-
-			/* Determine the "value" of the pack item */
-			j_value = object_value(j_ptr);
-
-
-
-			/* Objects sort by decreasing value */
-			if (o_value > j_value) break;
-			if (o_value < j_value) continue;
-		}
-
-		/* Never move down */
-		if (j >= i) continue;
-
-		/* Take note */
-		flag = TRUE;
-
-		/* Get local object */
-		q_ptr = &forge;
-
-		/* Save a copy of the moving item */
-		object_copy(q_ptr, &inventory[i]);
-
-		/* Slide the objects */
-		for (k = i; k > j; k--)
-		{
-			/* Slide the item */
-			object_copy(&inventory[k], &inventory[k-1]);
-		}
-
-		/* Insert the moving item */
-		object_copy(&inventory[j], q_ptr);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN);
-	}
-
-	/* Message */
-	if (flag) msg_print("You reorder some items in your pack.");
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN);
 }
-
 
 
 

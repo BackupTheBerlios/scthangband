@@ -2261,7 +2261,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Special Object Flags
  */
-
+#define IDENT_TEMP	0x0001	/* A flag for short-term use. */
 #define IDENT_FIXED             0x0002    /* Item has been "haggled" */
 #define IDENT_EMPTY             0x0004    /* Item charges are known */
 #define IDENT_KNOWN             0x0008    /* Item abilities are known */
