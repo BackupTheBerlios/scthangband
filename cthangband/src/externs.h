@@ -238,6 +238,7 @@ extern bool track_target;
 extern bool stack_allow_items;
 extern bool stack_allow_wands;
 extern bool stack_force_notes;
+extern bool stack_force_notes_all;
 extern bool stack_force_costs;
 extern bool view_reduce_lite;
 extern bool view_reduce_view;

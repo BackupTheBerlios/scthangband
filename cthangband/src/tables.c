@@ -3151,6 +3151,9 @@ option_type option_info[] =
 	{ &stack_force_notes,   TRUE,  4,      0, 8,
 	"stack_force_notes",    "Merge inscriptions when stacking" },
 
+	{ &stack_force_notes_all,	FALSE,	4,	3,	1,
+	"stack_force_notes_all",	"Merge all inscriptions when stacking" },
+
 	{ &stack_force_costs,   FALSE,  4,      0, 9,
 	"stack_force_costs",    "Merge discounts when stacking" },
 

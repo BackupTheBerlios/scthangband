@@ -1488,7 +1488,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 
 
 	/* Hack -- require semi-matching "inscriptions" */
-	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)) return (0);
+	if (!stack_force_notes_all && o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)) return (0);
 
 	/* Hack -- normally require matching "inscriptions" */
 	if (!stack_force_notes && (o_ptr->note != j_ptr->note)) return (0);

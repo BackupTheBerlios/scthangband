@@ -191,6 +191,7 @@ bool always_repeat;			/* Repeat obvious commands */
 bool depth_in_feet;			/* Show dungeon level in feet */
 
 bool stack_force_notes;		/* Merge inscriptions when stacking */
+bool stack_force_notes_all;		/* Merge all inscriptions when stacking (inc. dissimilar ones) */
 bool stack_force_costs;		/* Merge discounts when stacking */
 
 bool show_labels;			/* Show labels in object listings */
