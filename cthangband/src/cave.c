@@ -1435,6 +1435,8 @@ void note_spot(int y, int x)
 	}
 }
 
+static byte priority_map[MAX_HGT][MAX_WID];
+
 /*
  * Redraw (on the screen) a given MAP location
  *
@@ -1461,9 +1463,11 @@ void lite_spot(int y, int x)
 		Term_queue_char(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c, ta, tc);
 	}
 
+	/* Recalculate the priority later if needed. */
+	priority_map[y][x] = 0;
+
 	/* Display map on extra windows (later). */
 	p_ptr->window |= PW_OVERHEAD;
-
 }
 
 
@@ -1518,6 +1522,9 @@ void prt_map(void)
 	/* Display player */
 	lite_spot(py, px);
 
+	/* Recalculate the priority later if needed. */
+	WIPE(priority_map, priority_map);
+
 	/* Display map on extra windows (later). */
 	p_ptr->window |= PW_OVERHEAD;
 
@@ -1536,10 +1543,15 @@ void prt_map(void)
  * mimics, as these can be capable of being shown if f_info.txt is written in
  * an obfuscated way.
  */
-static byte priority(byte f, byte a, char c)
+static int get_priority(int y, int x)
 {
-	feature_type *f_ptr = f_info+f_info[f].mimic;
+	char c, dc;
+	byte a, da;
 	int i;
+	feature_type *f_ptr = f_info+f_info[cave[y][x].feat].mimic;
+
+	/* Extract the image of the square. */
+	map_info(y, x, &a, &c, &da, &dc);
 
 	/* Use the priority of this terrain type if the terrain is visible. */
 	if (f_ptr->x_char == c && f_ptr->x_attr == a) return f_ptr->priority;
@@ -1556,34 +1568,34 @@ static byte priority(byte f, byte a, char c)
 }
 
 /*
- * Deduce the feature with the highest priority (as determined above) in the
+ * Deduce the grid with the highest priority (as determined above) in the
  * specified square area of the level.
  */
-static void get_best_priority(char *ta, byte *tc,
+static void get_best_priority(char *a, byte *c,
 	int minx, int miny, int maxx, int maxy)
 {
-	int x, y, pri, mpri;
-	char a, da, UNREAD(ma);
-	byte c, dc, UNREAD(mc);
+	int x, y, mx, my, mpri;
+	char da;
+	byte dc;
 
-	for (mpri = 0, x = minx; x <= maxx; x++)
+	for (mpri = my = mx = 0, x = minx; x <= maxx; x++)
 	{
 		for (y = miny; y <= maxy; y++)
 		{
-			map_info(y, x, &a, &c, &da, &dc);
-			pri = priority(cave[y][x].feat, a, c);
+			int pri = priority_map[y][x];
+			if (!pri) priority_map[y][x] = pri = get_priority(y, x);
+
 			if (pri > mpri)
 			{
 				mpri = pri;
-				mc = c;
-				ma = a;
+				mx = x;
+				my = y;
 			}
 		}
 	}
 
-	/* Save the results. */
-	*ta = ma;
-	*tc = mc;
+	/* Extract the image of the "best" grid in the area. */
+	map_info(my, mx, a, c, &da, &dc);
 }
 
 /*
