@@ -536,6 +536,9 @@ extern void signals_init(void);
 
 /* generate.c */
 
+#if (defined(CMD5_C) || defined(GENERATE_C))
+extern void generate_spirit_name(spirit_type *s_ptr);
+#endif
 #if (defined(BIRTH_C) || defined(GENERATE_C))
 extern void generate_spirit_names(void);
 #endif
@@ -2233,6 +2236,9 @@ extern spirit_type spirits[MAX_SPIRITS];
 #if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
 extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #endif
+#if (defined(DEFINES_H) || defined(INIT2_C) || defined(TABLES_C))
+extern co_ord screen_coords[NUM_SCREEN_COORDS];
+#endif
 
 /* util.c */
 
@@ -2371,14 +2377,20 @@ extern void c_prt(byte attr, cptr str, int row, int col);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void prt(cptr str, int row, int col);
 #endif
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
+extern void mc_roff(cptr s);
+#endif
 #if (defined(MONSTER1_C) || defined(UTIL_C))
 extern bool c_roff(byte a, cptr str);
 #endif
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C))
 extern void roff(cptr str);
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
-extern void mc_roff(cptr s);
+#if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
+extern void mc_put_str(cptr str, const int y, const int x);
+#endif
+#if (defined(UTIL_C) || defined(XTRA1_C))
+extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void clear_from(int row);
@@ -2748,6 +2760,9 @@ extern bool verbose_haggle;
 #endif
 #if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool scroll_edge;
+#endif
+#if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool show_piles;
 #endif
 #if (defined(CMD1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool find_ignore_stairs;
@@ -3751,6 +3766,12 @@ extern bool get_aim_dir(int *dp);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
 extern bool get_rep_dir(int *dp);
 #endif
+#if (defined(MONSTER2_C) || defined(XTRA2_C))
+extern void convert_articles(char *str);
+#endif
+#if (defined(CMD2_C) || defined(CMD4_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C))
+extern void feature_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
+#endif
 #if (defined(DUNGEON_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void gain_level_reward(int chosen_reward);
 #endif
@@ -3996,47 +4017,5 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
-#endif
-
-
-
-
-/* util.c */
-
-#if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
-extern void mc_put_str(cptr str, const int y, const int x);
-#endif
-
-/* xtra2.c */
-
-#if (defined(CMD2_C) || defined(CMD4_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern void feature_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
-#endif
-#if (defined(MONSTER2_C) || defined(XTRA2_C))
-extern void convert_articles(char *str);
-#endif
-
-/* generate.c */
-
-#if (defined(CMD5_C) || defined(GENERATE_C))
-extern void generate_spirit_name(spirit_type *s_ptr);
-#endif
-
-/* variable.c */
-
-#if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool show_piles;
-#endif
-
-/* util.c */
-
-#if (defined(UTIL_C) || defined(XTRA1_C))
-extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
-#endif
-
-/* xtra1.c */
-
-#if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(XTRA1_C))
-extern bool check_screen_coords(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -3212,3 +3212,38 @@ blow_method_type blow_methods[NUM_BLOW_METHODS] =
 	{RBF_WAKE, "moan", "%^s moans at %s.", desc_moan, NULL, "MOAN"},
 	{RBF_WAKE, "sing", "%^s sings to %s.", desc_sing, NULL, "SHOW"},
 };
+
+/*
+ * The initial co-ordinates of the things displayed by do_cmd_redraw().
+ */
+co_ord screen_coords[NUM_SCREEN_COORDS] =
+{
+	{IDX(XY_TIME) 0, 1},
+	{IDX(XY_GOLD) 0, 3},
+	{IDX(XY_EQUIPPY) 0, 4},
+	{IDX(XY_STAT+A_STR) 0, 5},
+	{IDX(XY_STAT+A_INT) 0, 6},
+	{IDX(XY_STAT+A_WIS) 0, 7},
+	{IDX(XY_STAT+A_DEX) 0, 8},
+	{IDX(XY_STAT+A_CON) 0, 9},
+	{IDX(XY_STAT+A_CHR) 0, 10},
+	{IDX(XY_AC) 0, 12},
+	{IDX(XY_HP) 0, 13},
+	{IDX(XY_SP) 0, 14},
+	{IDX(XY_CHI) 0, 15},
+	{IDX(XY_LIFE_SPIRIT) 0, 17},
+	{IDX(XY_WILD_SPIRIT) 0, 18},
+	{IDX(XY_INFO) 0, 19},
+	{IDX(XY_ENERGY) 0, 20},
+	{IDX(XY_CUT) 0, 21},
+	{IDX(XY_STUN) 0, 22},
+	{IDX(XY_HUNGRY) 0, 23},
+	{IDX(XY_BLIND) 7, -1},
+	{IDX(XY_CONFUSED) 13, -1},
+	{IDX(XY_AFRAID) 22, -1},
+	{IDX(XY_POISONED) 29, -1},
+	{IDX(XY_STATE) 38, -1},
+	{IDX(XY_SPEED) 49, -1},
+	{IDX(XY_STUDY) 63, -1},
+	{IDX(XY_DEPTH) 69, -1},
+};

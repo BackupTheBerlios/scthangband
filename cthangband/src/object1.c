@@ -477,13 +477,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 
-struct object_extra {
-	s16b k_idx;
-	s16b tval;
-	s16b u_idx;
-	byte p_id;
-};
-
 /*
  * Create an object containing the known information about an object.
  *

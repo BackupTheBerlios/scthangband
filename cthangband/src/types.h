@@ -1380,11 +1380,13 @@ struct tval_ammo_type {
 /* Hack - provide a structure for things about an object which may be unknown,
  * but are needed by various functions. */
 typedef struct object_extra object_extra;
-
-#if 0 /* Only currently used in object1.c, so defined there for now. */
-struct object_extra {
+struct object_extra
+{
+	s16b k_idx;
+	s16b tval;
+	s16b u_idx;
+	byte p_id;
 };
-#endif
 
 /*
  * Semi-Portable High Score List Entry (128 bytes) -- BEN
@@ -1455,5 +1457,16 @@ struct display_func_type
 	cptr name; /* Name (used in preferences) for this display. */
 	bool (*good)(void); /* Check if this display is interesting. */
 	void (*display)(void); /* Display this display. */
+};
+
+/* Describe a set of co-ordinates. */
+typedef struct co_ord co_ord;
+struct co_ord
+{
+#ifdef CHECK_ARRAYS
+	co_ord *idx;
+#endif /* CHECK_ARRAYS */
+	int x;
+	int y;
 };
 

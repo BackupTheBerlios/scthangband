@@ -148,104 +148,17 @@ static void prt_field(cptr info, int row, int col)
 }
 #endif
 
-typedef struct co_ord co_ord;
-struct co_ord
-{
-#ifdef CHECK_ARRAYS
-	co_ord *idx;
-#endif /* CHECK_ARRAYS */
-	int x;
-	int y;
-};
-
-#ifdef CHECK_ARRAYS
-#define IDX(idx) idx,
-#else /* CHECK_ARRAYS */
-#define IDX(idx)
-#endif /* CHECK_ARRAYS */
-
-#define XY_TIME (screen_coords+0) /* 12:34 10 Jan */
-#define XY_GOLD (screen_coords+1) /* "AU xxxxxxxxx" */
-#define XY_EQUIPPY (screen_coords+2) /* equippy chars */
-#define XY_STAT (screen_coords+3) /* "xxx:  xxxxxx" */
-#define XY_AC (screen_coords+9) /* "AC:    xxxxx" */
-#define XY_HP (screen_coords+10) /* "HP: xxx/yyy, etc." */
-#define XY_SP (screen_coords+11) /* "SP: xxx/yyy, etc." */
-#define XY_CHI (screen_coords+12) /* "CH: xxx/yyy, etc." */
-#define XY_LIFE_SPIRIT (screen_coords+13) /* "Life: a c e g"*/
-#define XY_WILD_SPIRIT (screen_coords+14) /* "Wild: b d f h"*/
-#define XY_INFO (screen_coords+15) /* "xxxxxxxxxxxx" (monster info) */
-#define XY_ENERGY (screen_coords+16) /* LE: xxx */
-#define XY_CUT (screen_coords+17) /* <cut> */
-#define XY_STUN (screen_coords+18) /* <stun> */
-#define XY_HUNGRY (screen_coords+19) /* "Weak" / "Hungry" / "Full" / "Gorged" */
-#define XY_BLIND (screen_coords+20) /* "Blind" */
-#define XY_CONFUSED (screen_coords+21) /* "Confused" */
-#define XY_AFRAID (screen_coords+22) /* "Afraid" */
-#define XY_POISONED (screen_coords+23) /* "Poisoned" */
-#define XY_STATE (screen_coords+24) /* <state> */
-#define XY_SPEED (screen_coords+25) /* "Slow (-NN)" or "Fast (+NN)" */
-#define XY_STUDY (screen_coords+26) /* "Study" */
-#define XY_DEPTH (screen_coords+27) /* "Lev NNN" / "NNNN ft" */
-
-static co_ord screen_coords[] =
-{
-	{IDX(XY_TIME) 0, 1},
-	{IDX(XY_GOLD) 0, 3},
-	{IDX(XY_EQUIPPY) 0, 4},
-	{IDX(XY_STAT+A_STR) 0, 5},
-	{IDX(XY_STAT+A_INT) 0, 6},
-	{IDX(XY_STAT+A_WIS) 0, 7},
-	{IDX(XY_STAT+A_DEX) 0, 8},
-	{IDX(XY_STAT+A_CON) 0, 9},
-	{IDX(XY_STAT+A_CHR) 0, 10},
-	{IDX(XY_AC) 0, 12},
-	{IDX(XY_HP) 0, 13},
-	{IDX(XY_SP) 0, 14},
-	{IDX(XY_CHI) 0, 15},
-	{IDX(XY_LIFE_SPIRIT) 0, 17},
-	{IDX(XY_WILD_SPIRIT) 0, 18},
-	{IDX(XY_INFO) 0, 19},
-	{IDX(XY_ENERGY) 0, 20},
-	{IDX(XY_CUT) 0, 21},
-	{IDX(XY_STUN) 0, 22},
-	{IDX(XY_HUNGRY) 0, 23},
-	{IDX(XY_BLIND) 7, -1},
-	{IDX(XY_CONFUSED) 13, -1},
-	{IDX(XY_AFRAID) 22, -1},
-	{IDX(XY_POISONED) 29, -1},
-	{IDX(XY_STATE) 38, -1},
-	{IDX(XY_SPEED) 49, -1},
-	{IDX(XY_STUDY) 63, -1},
-	{IDX(XY_DEPTH) 69, -1},
-};
-
-#ifdef CHECK_ARRAYS
-/*
- * Check that each array index is the one expected according to the IDX() macro.
- */
-bool check_screen_coords(void)
-{
-	const co_ord *co_ptr;
-	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
-	{
-		if (co_ptr->idx != co_ptr) return FALSE;
-	}
-	return TRUE;
-}
-#endif /* CHECK_ARRAYS */
-
 /*
  * Translate a negative co-ordinate into one relative to the far edge of the
  * screen.
  */
-static int get_y(co_ord *t)
+static int get_y(const co_ord *t)
 {
 	if (t->y >= 0) return t->y;
 	else return Term->hgt + t->y;
 }
 
-static int get_x(co_ord *t)
+static int get_x(const co_ord *t)
 {
 	if (t->x >= 0) return t->x;
 	else return Term->wid - t->x;

@@ -1623,6 +1623,20 @@ static errr init_alloc(void)
 
 
 #ifdef CHECK_ARRAYS
+
+/*
+ * Check screen_coords.
+ */
+static bool check_screen_coords(void)
+{
+	const co_ord *co_ptr;
+	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
+	{
+		if (co_ptr->idx != co_ptr) return FALSE;
+	}
+	return TRUE;
+}
+
 /*
  * Check that the members of various arrays are in the correct order.
  */
