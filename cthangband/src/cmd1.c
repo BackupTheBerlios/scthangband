@@ -600,6 +600,7 @@ void carry(int pickup)
 			{
 				msg_format("You have no room for %v.",
 					object_desc_f3, o_ptr, TRUE, 3);
+				continue;
 			}
 			else if (strstr(quark_str(o_ptr->note), "=g"))
 			{
