@@ -1504,6 +1504,7 @@ static void get_bonus_flags(s16b (*flags)[32])
 bool PURE player_has_flag(int set, u32b flag)
 {
 	s16b flags[4][32];
+	WIPE(flags, flags);
 
 	get_bonus_flags(flags);
 
