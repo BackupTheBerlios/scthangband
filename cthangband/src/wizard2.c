@@ -1265,14 +1265,18 @@ static void do_cmd_wiz_play(void)
  * Hack -- this routine always makes a "dungeon object", and applies
  * magic to it, and attempts to decline cursed items.
  */
-static void wiz_create_item(void)
+static void wiz_create_item(int k_idx)
 {
 	object_type	forge;
 	object_type *q_ptr;
 
-	int k_idx;
+	/* Ensure reasonable input */
+	if (k_idx < 0 || k_idx >= MAX_K_IDX) k_idx = 0;
+	else if (!k_info[k_idx].name) k_idx = 0;
 
-
+	/* No meaningful input. */
+	if (!k_idx)
+	{
 	/* Icky */
 	character_icky = TRUE;
 
@@ -1287,7 +1291,7 @@ static void wiz_create_item(void)
 
 	/* Not Icky */
 	character_icky = FALSE;
-
+	}
 
 	/* Return if failed */
 	if (!k_idx) return;
@@ -1623,7 +1627,7 @@ void do_cmd_debug(void)
 
 		/* Create any object */
 		case 'c':
-		wiz_create_item();
+		wiz_create_item(command_arg);
 		break;
 
 
