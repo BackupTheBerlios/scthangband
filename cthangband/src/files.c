@@ -1565,12 +1565,12 @@ static void weapon_stats_calc(object_type *wp_ptr, object_type *am_ptr,
 		/* Hack - Vorpal Blade is more powerful. */
 		else if (wp_ptr->name1 == ART_VORPAL_BLADE)
 		{
-			(*damage) += dicedam * slays * 4 / 3;
+			(*damage) += dicedam * slay * 4 / 3;
 		}
 		/* Other VORPAL weapons. */
 		else
 		{
-			(*damage) = dicedam * slays * 19 / 18;
+			(*damage) = dicedam * slay * 19 / 18;
 		}			
 	}
 
