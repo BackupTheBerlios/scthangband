@@ -5,6 +5,74 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband 1.0.11
+* Regain SP and CHI, and become hungry, while resting in a house or inn.
+* Always benefit from stealth when attacking a sleeping monster.
+* Take time when climbing the stairs.
+* Allow staffs the player has recharged as a stack to stack given equal charges
+  whether identified or not.
+* Prevent two separate unidentified stacks of similar arrows from stacking.
+* Create "hide" and "reveal" commands to prevent objects the player is not
+  interested in from cluttering up the screen.
+* Create an auto-squelch display based on Iain McFall's implementation, which
+  hides unwanted objects.
+* Ensure that starting rings do not duplicate intrinsic abilities.
+* Remove the pointless "Learn folk magic" option from the magic shop.
+* Give a special message if the player is both teleporting randomly and unable
+  to teleport.
+* Allow the player to browse cantrips.
+* Mention the S key in the general on-screen birth help.
+* Remove the general options from the "quick-start" prompt.
+* Prevent the destroy command object list from including known artefacts.
+* Set up the help file list at start-up rather than searching at each request.
+* The (e.g.) v command will select an object inscribed @v1 in preference to @1.
+* Objects on the floor can be selected by number.
+* Consider critical hits in calculating average weapon damage.
+* Calculate average martial arts damage fairly accurately.
+* The last object to be highlighted can be selected with !.
+* Avoid using energy whenever a magic device is used.
+* The game will attempt to increase the size of o_list and m_list as necessary
+  with an appropriate compile-time option.
+* Give specific help for some spells if the player selects them with a capital
+  letter (as well as requesting confirmation).
+* Track whether an object has been named in this save file and avoid mentioning
+  them in user interface functions if not.
+* Make | a keymap rather than a second key for the ~ command.
+* Understand TARGETS and TIMESTAMP requests from other clients in X11.
+* Correct the comment in k_info.txt.
+* Work through the skill display when using the debug "edit character" command.
+* Use menus to create a specific monster or artefact as with objects.
+* Turn debug command help into a text file.
+* Add some more docs.
+* Indicate with version numbers in custom.txt which options I've added/changed.
+* Create a general "set this counter to this" function.
+* Rearrange some code, especially that concerning spells and magical devices.
+* Fix the following bugs:
+  * Bows got "too many" shots at 100% skill.
+  * Vampiric weapons gave the player "too many" extra HP.
+  * Most distance attacks which affect the floor type (e.g. destroy doors) did
+    not do so.
+  * Recalling into a dungeon and leaving via the stairs could leave you in the
+    wrong town.
+  * Stormbringer and the Hammer of Worlds had the wrong weapon skills.
+  * The game could crash if the screen was redrawn with (e.g.) Ctrl-R and the
+    player did something which affected the surrounding area.
+  * The =g inscription was ignored unless auto_pickup was set.
+  * A quest level could sometimes be generated with too few quest monsters.
+  * The "reset recall depth" question could sometimes be asked twice.
+  * Keys to decrease things on the birth screen did not wrap around correctly.
+  * The numbers in the "nearby monsters" window were wrong.
+  * Setting "spend_points" prevented quick-start from using the auto-roller.
+  * The game could generate "old" save files with too many shops.
+  * Pref file errors at the start were cleared immediately.
+  * Pack reordering moved objects which could be in any order around.
+  * Undefining ALLOW_TEMPLATES prevented the game from compiling.
+  * Objects in shops loaded from old versions were not shown correctly.
+  * The message given after saving all preferences was inappropriate.
+  * The game falsely claimed that un*identified* objects had bad activations.
+  * Vorpal weapons were displayed as causing more damage than they do.
+  * There was no way to create a charm in wizard mode.
+
 sCthangband 1.0.10
 * Allow the charges of objects in slots to be drained.
 * Allow inscriptions such as @^A1 to be interpreted correctly.
