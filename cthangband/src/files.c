@@ -556,9 +556,6 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 	
 			keymap_act[mode][i] = string_make(macro__buf);
 	
-			/* XXX Hack -- See main-win.c */
-			angband_keymap_flag = TRUE;
-	
 			return (0);
 		}
 	

@@ -3440,9 +3440,9 @@ extern void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
 
 
 
-#if (defined(CMD4_C) || defined(FILES_C) || defined(VARIABLE_C))
-extern bool angband_keymap_flag;
-#endif
+
+
+
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool violet_uniques;
 #endif

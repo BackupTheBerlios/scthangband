@@ -2033,9 +2033,6 @@ static void do_cmd_macros(void)
 
 				/* Prompt */
 				msg_print("Added a keymap.");
-
-				/* XXX Hack -- See main-win.c */
-				angband_keymap_flag = TRUE;
 			}
 		}
 
@@ -2059,9 +2056,6 @@ static void do_cmd_macros(void)
 
 			/* Prompt */
 			msg_print("Removed a keymap.");
-
-			/* XXX Hack -- See main-win.c */
-			angband_keymap_flag = TRUE;
 		}
 
 		/* Enter a new action */

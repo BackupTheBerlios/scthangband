@@ -918,10 +918,6 @@ void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
 
 
 
-/* XXX Mega-Hack - See main-win.c */
-bool angband_keymap_flag = TRUE;
-
-
 /* Hack, violet uniques */
 bool violet_uniques = FALSE;
 
