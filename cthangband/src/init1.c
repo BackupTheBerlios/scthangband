@@ -3467,9 +3467,17 @@ static errr init_info_txt_final(header *head)
 }
 
 /* Define how many macros are available for this file. */
-#define NUM_MACROS ((head->header_num == Z_HEAD) ? 0 :  \
-	(head->header_num == MACRO_HEAD) ? error_idx : z_info->macros)
+static int PURE num_macros(const header *head)
+{
+	switch (head->header_num)
+	{
+		case Z_HEAD: return 0;
+		case MACRO_HEAD: return error_idx;
+		default: return z_info->macros;
+	}
+}
 
+#define NUM_MACROS num_macros(head)
 
 
 #define NO_VERSION	-2
@@ -3713,11 +3721,7 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	vptr extra = NULL;
 
 	/* Before the version string. */
-	error_idx = -2;
-
-	/* Just before the first line */
-	error_line = 0;
-
+	error_idx = NO_VERSION;
 
 	/* Prepare the "fake" stuff */
 	head->name_size = 0;
@@ -3727,18 +3731,9 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	try(init_info_txt_pre(head));
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	for (error_line = 1; !my_fgets(fp, buf, 1024); error_line++)
 	{
-		error_line++;
-
-		if (head->header_num == Z_HEAD)
-		{
-			try(parse_info_line_aux(buf, head, &extra));
-		}
-		else
-		{
-			try(parse_info_line(buf, head, NUM_MACROS, &extra));
-		}
+		try(parse_info_line(buf, head, NUM_MACROS, &extra));
 	}
 
 	/* Carry out any post-initialisation checks. */
