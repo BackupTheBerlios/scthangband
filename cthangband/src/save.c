@@ -1241,7 +1241,7 @@ bool save_player(bool as_4_1_0)
 	if (as_4_1_0)
 	{
 		WIPE(sf_flags_sf, sf_flags_sf);
-		sf_flags_sf[0] = SF_SKILL_BASE;
+		sf_flags_sf[0] = 1L << SF_SKILL_BASE;
 		sf_major = 4;
 		sf_minor = 1;
 		sf_patch = 0;
