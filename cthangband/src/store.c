@@ -1806,13 +1806,7 @@ static void display_entry(int pos)
 		{
 			/* Extract the "minimum" price */
 			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
-
-			/* Actually draw the price (not fixed) */
-			(void)sprintf(out_val, "%9ld F", (long)x);
-			put_str(out_val, i+6, 68);
 		}
-
-		/* Display a "taxed" cost */
 		else if (auto_haggle)
 		{
 			/* Extract the "minimum" price */
@@ -1820,22 +1814,30 @@ static void display_entry(int pos)
 
 			/* Hack -- Apply Sales Tax if needed */
 			if (!noneedtobargain(x)) x += x / 10;
-
-			/* Actually draw the price (with tax) */
-			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, i+6, 68);
 		}
-
 		/* Display a "haggle" cost */
 		else
 		{
 			/* Extrect the "maximum" price */
 			x = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
-
-			/* Actually draw the price (not fixed) */
-			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, i+6, 68);
 		}
+
+		/* Make a string from the price. */
+			(void)sprintf(out_val, "%9ld  ", (long)x);
+
+		/* IDENT_FIXED items have a 'F' at the end of their names
+		 * instead of a space. */
+		if (o_ptr->ident & (IDENT_FIXED))
+		{
+			strchr(out_val, '\0')[-1] = 'F';
+		}
+
+		/* Choose a colour to make unaffordable items distinctive. */
+		if (x > p_ptr->au) x = TERM_SLATE;
+		else x = TERM_WHITE;
+
+		/* Actually draw the price */
+		c_put_str(x, out_val, i+6, 68);
 	}
 }
 
