@@ -3762,6 +3762,74 @@ static FILE *show_fopen(hyperlink_type *h_ptr, cptr path, cptr name)
 }
 
 /*
+ * Copy a reflowed version of a file to a temporary file, return a pointer to
+ * the latter and store its name in h_ptr->path.
+ *
+ * It doesn't use any of the display code to find out how much it will fit on
+ * a line, but it probably should...
+ */
+static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
+{
+	cptr s;
+	uint w,h,space;
+	int x;
+	FILE *ftmp = my_fopen_temp(h_ptr->path, sizeof(h_ptr->path));
+	Term_get_size(&w, &h);
+
+	/* Don't use my_fgets as that needs short lines and it will process the
+	 * output file anyway. */
+	for (x = 0; fgets(h_ptr->rbuf, 1024, fff); )
+	{
+		for (s = h_ptr->rbuf; *s;)
+		{
+			if (strlen(s) <= w-x-1) break;
+
+			for (h = 0, space = 0; h < w-x; h++)
+			{
+				/* Allow extra space for hyperlinks. */
+				if (prefix(s+h, "*****"))
+				{
+					cptr t = strchr(s+h, '[');
+					if (t) x += s+h-t;
+					h = t-s;
+				}
+				if (s[h] == ' ') space = h;
+			}
+
+			/* If there are no spaces, print the line. */
+			if (!space) space = w-x-1;
+
+			fprintf(ftmp, "%.*s\n", space, s);
+			s += space+1;
+			x = 0;
+		}
+
+		/* Print the end of the line. */
+		fprintf(ftmp, "%s", s);
+
+		/* If the buffer was shorter than the line, only take a short
+		 * line as the first part of the next line. */
+		x = (strchr(s, '\n')) ? 0 : strlen(s);
+	}
+	my_fclose(fff);
+	my_fclose(ftmp);
+
+	/* Deal with the temporary file from now on. */
+	fff = ftmp;
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Open the temporary file for reading. */
+	fff = my_fopen(h_ptr->path, "r");
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	return fff;
+}
+
+/*
  * ToME's show_file() function (modified)
  */
 static bool show_file_tome(cptr name, cptr what, int line)
@@ -3880,51 +3948,7 @@ static bool show_file_tome(cptr name, cptr what, int line)
 	 * This allows the program to move up or down a line easily whatever
 	 * the formatting is.
 	 */
-	if (is_temp_file)
-	{
-		char buf[1024], *s;
-		uint w,h,x;
-		FILE *ftmp = my_fopen_temp(buf, sizeof(buf));
-		Term_get_size(&w, &h);
-
-		/* Don't use my_fgets as that needs short lines and it will process the
-		 * output file anyway. */
-		for (x = 0; fgets(h_ptr->rbuf, 1024, fff); )
-		{
-			for (s = h_ptr->rbuf; *s;)
-			{
-				if (strlen(s) <= w-x-1) break;
-
-				for (h = w-x-1; h && s[h] != ' '; h--);
-				if (!h) h = w-x-1;
-				fprintf(ftmp, "%.*s\n", h, s);
-				s += h+1;
-				x = 0;
-			}
-
-			/* Print the end of the line. */
-			fprintf(ftmp, "%s", s);
-
-			/* If the buffer was shorter than the line, only take a short
-			 * line as the first part of the next line. */
-			x = (strchr(s, '\n')) ? 0 : strlen(s);
-		}
-		my_fclose(fff);
-		my_fclose(ftmp);
-
-		/* Deal with the temporary file from now on. */
-		fff = ftmp;
-		strcpy(h_ptr->path, buf);
-
-		/* Grab permission */
-		safe_setuid_grab();
-
-		/* Open the temporary file for reading. */
-		fff = my_fopen(h_ptr->path, "r");
-
-		/* Drop permission */
-		safe_setuid_drop();
-	}
+	if (is_temp_file) fff = reflow_file(fff, h_ptr);
 
 	/* Pre-Parse the file */
 	while (TRUE)
