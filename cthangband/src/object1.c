@@ -2793,7 +2793,6 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 			if (CMP(dis_to_h)) descr(format("  It %s your chance to hit opponents by %d.", DIF_INC, DIF));
 			/* Fix me - this also covers stunning, but is affected by saving throw. */
 			if (CMPS(adj_dex_safe)) descr(format("  It makes you %d%% %s resistant to theft.", DIF, DIF_MOR));
-			if ((CMP(num_blow))) 
 			break;
 			case A_STR:
 			if (CMP(dis_to_d)) descr(format("  It %s your ability to damage opponents by %d.", DIF_INC, DIF));
