@@ -1778,6 +1778,11 @@ void ang_sort(vptr u, vptr v, int n)
 
 /*** Targetting Code ***/
 
+/*
+ * Current target co-ordinates.
+ */
+static s16b target_col;
+static s16b target_row;
 
 /*
  * Determine is a monster makes a reasonable target

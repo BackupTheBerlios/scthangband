@@ -166,7 +166,7 @@ void do_cmd_wiz_bamf(void)
 	}
 
 	/* Teleport to the target */
-	teleport_player_to(target_row, target_col);
+	teleport_player_to(y, x);
 }
 
 /*
