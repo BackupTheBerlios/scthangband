@@ -4117,11 +4117,21 @@ static int find_text(FILE *fff, hyperlink_type *h_ptr, int minline)
 }
 
 /*
+ * Return TRUE if s is a non-printed line which is preserved by reflow_file().
+ */
+static bool fake_line(cptr s)
+{
+	if (prefix(s, CC_LINK_PREFIX)) return TRUE;
+	if (prefix(s, "|||||")) return TRUE;
+	return FALSE;
+}
+
+/*
  * Show a section of a help file between stated limits.
  */
 static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int minline)
 {
-	byte link_color = TERM_ORANGE, link_color_sel = TERM_YELLOW;
+	char link_colour = 'o', link_colour_sel = 'y';
 
 	int y, l;
 	char sbuf[1024];
@@ -4143,9 +4153,12 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		/* Get the link colors */
 		if (prefix(buf, "|||||"))
 		{
-			link_color = color_char_to_attr(buf[5]);
-			link_color_sel = color_char_to_attr(buf[6]);
+			link_colour = buf[5];
+			link_colour_sel = buf[6];
 		}
+
+		/* Ignore unprinted lines. */
+		if (fake_line(buf)) y--;
 	}
 
 	Term_gotoxy(0,miny);
@@ -4179,11 +4192,12 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		}
 		else buf = sbuf;
 
-		/* Skip link colors */
-		if (prefix(buf, "|||||")) continue;
-
-		/* Skip game links (done in reflow_file(). */
-		if (prefix(buf, CC_LINK_PREFIX)) continue;
+		/* Ignore unprinted lines. */
+		if (fake_line(buf))
+		{
+			l--;
+			continue;
+		}
 
 		/* Dump the line */
 		x = 0;
@@ -4212,11 +4226,11 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 
 				if ((h_ptr->link[h_ptr->cur_link].x == x) &&
 					(h_ptr->link[h_ptr->cur_link].y == l))
-					thiscol = link_color_sel;
+					thiscol = link_colour_sel;
 				else
-					thiscol = link_color;
+					thiscol = link_colour;
 
-				out_ptr += sprintf(out_ptr, "$<$%c", atchar[thiscol]);
+				out_ptr += sprintf(out_ptr, "$<$%c", thiscol);
 
 				/* Ok print the link name */
 				while (buf[xx] && buf[xx] != ']')
@@ -4349,8 +4363,6 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 {
 	int i, k, x;
 
-	byte link_color = TERM_ORANGE, link_color_sel = TERM_YELLOW;
-
 	/* Number of "real" lines passed by */
 	int next = 0;
 
@@ -4461,19 +4473,12 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 		}
 		else buf = h_ptr->rbuf;
 
-		/* Get the link colors */
-		if (prefix(buf, "|||||"))
-		{
-			link_color = color_char_to_attr(buf[5]);
-			link_color_sel = color_char_to_attr(buf[6]);
-		}
-
 		/* Tag ? */
 		if (prefix(buf, CC_LINK_PREFIX))
 		{
 			if (link && strstr(buf+CC_LINK_LEN, link))
 			{
-				line = next + 1;
+				line = next;
 			}
 		}
 
@@ -4526,7 +4531,7 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 		}
 
 		/* Count the "real" lines */
-		next++;
+		if (!fake_line(buf)) next++;
 	}
 
 	/* Save the number of "real" lines */
