@@ -3182,7 +3182,7 @@ extern cptr *macro__pat;
 #if (defined(CMD4_C) || defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr *macro__act;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern char *macro__buf;
 #endif
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
@@ -3928,11 +3928,5 @@ extern char *keymap_buf_ptr;
 #endif
 #if (defined(ALLOW_MACROS)) && (defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern char *keymap_cmd_ptr;
-#endif
-
-/* cmd4.c */
-
-#if (defined(ALLOW_MACROS)) && (defined(CMD4_C) || defined(DUNGEON_C))
-extern void start_keymap_recorder(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -2587,7 +2587,17 @@ void process_command(void)
 			}
 			else
 			{
-				start_keymap_recorder();
+				/* Set the keymap buffer to the start. */
+				keymap_buf_ptr = macro__buf;
+
+				/* Remove the existing keymap. */
+				strcpy(keymap_buf_ptr, "");
+
+				/* Window stuff. */
+				p_ptr->window |= PW_KEYMAP;
+
+				/* Instructions. */
+				mc_put_fmt(0, 0, "Type in commands. Press $ to finish.");
 			}
 			break;
 		}

@@ -2327,23 +2327,6 @@ static void keymap_dump(FILE *fff)
 			mode, ascii_to_text_f1, buf);
 	}
 }
-
-
-
-/*
- * Start the keymap recorder.
- */
-void start_keymap_recorder(void)
-{
-	/* Set the keymap buffer to the start. */
-	keymap_buf_ptr = macro__buf;
-
-	/* Remove the existing keymap. */
-	strcpy(keymap_buf_ptr, "");
-
-	/* Window stuff. */
-	p_ptr->window |= PW_KEYMAP;
-}
 #endif /* ALLOW_MACROS */
 
 
@@ -2725,11 +2708,8 @@ static void do_cmd_macros(void)
 		/* Record a new action */
 		else if (i == 'r')
 		{
-			/* Start the recorder. */
-			start_keymap_recorder();
-
 			/* Leave the macro option menu immediately. */
-			set_gnext("\e\e");
+			set_gnext("\e\e$");
 		}
 
 #endif /* ALLOW_MACROS */
