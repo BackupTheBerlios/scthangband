@@ -876,6 +876,16 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Maximum number of options in a do_cmd_options_aux() option set. */
 #define MAX_OPTS_PER_PAGE 24
 
+/* Squelch settings. */
+#define HIDE_NONE    0
+#define HIDE_V_BAD	1
+#define HIDE_CURSED	2
+#define HIDE_AVERAGE 3
+#define HIDE_GOOD	4
+#define HIDE_V_GOOD	5
+#define HIDE_ALL		6
+#define HIDE_CATS	7
+
 /*
  * Refueling constants
  */

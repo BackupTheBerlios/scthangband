@@ -504,9 +504,6 @@ static bool good_cat_object(int a, name_centry *cat)
  */
 static int wiz_create_itemtype(void)
 {
-	bool (*item_good)(int, name_centry *) = good_cat_object;
-	void (*print_f1)(char *, uint, cptr, va_list *) = object_k_name_f1;
-
 	int i, num;
 	int col, row;
 	uint len;
@@ -517,25 +514,34 @@ static int wiz_create_itemtype(void)
 
 	int	choice[60];
 
-	/* A list of the valid options for this prompt. */
-	cptr body =	option_chars;
-	char sym[61];
-
 	C_TNEW(bufx, 61*ONAME_MAX, char);
 	char *obuf[61];
-	bool abort;
-
-	WIPE(sym, sym);
 
 	/* Choose a category until a valid response is given. */
-	do
+	while (1)
 	{
-		cat = choose_item_category(item_good, &abort, tval_names,
-			"Select a category:", FALSE);
-	}
-	while (!cat && !abort);
+		name_centry *choice[60];
+		int max;
+		char ch, *s;
 
-	if (abort) return 0;
+		/* Display a list of the valid options for this prompt. */
+		display_item_category(&max, good_cat_object, tval_names, choice);
+
+		/* Choose (or not). */
+		if (!get_com(&ch, "Select a category:")) return 0;
+
+		/* Find the choice. */
+		s = strchr(option_chars, ch);
+		if (s && s < option_chars+max)
+		{
+			cat = choice[s - option_chars];
+			break;
+		}
+		else
+		{
+			bell("No such category");
+		}
+	}
 
 	/*** And now we go for k_idx ***/
 
@@ -548,7 +554,7 @@ static int wiz_create_itemtype(void)
 	/* We have to search the whole itemlist. */
 	for (num = 0, i = 1; (num < 60) && (i < MAX_K_IDX); i++)
 	{
-		if (item_good(i, cat)) choice[num++] = i;
+		if (good_cat_object(i, cat)) choice[num++] = i;
 	}
 
 	len = 80/((num+19)/20);
@@ -557,14 +563,14 @@ static int wiz_create_itemtype(void)
 	for (i = 0; i <= 60; i++) obuf[i] = bufx+i*ONAME_MAX;
 
 	/* Get names for each valid object which can all fit on screen at once. */
-	get_names(obuf, obuf[60], num, choice, len, print_f1);
+	get_names(obuf, obuf[60], num, choice, len, object_k_name_f1);
 
 	/* Print everything */
 	for (i = 0; i < num; i++)
 	{
 		row = 2 + (i % 20);
 		col = len * (i / 20);
-		ch = body[i];
+		ch = option_chars[i];
 		
 		/* Print it */
 		mc_put_fmt(row, col, "$![%c] %.*^s", ch, len-4, obuf[i]);
@@ -577,13 +583,13 @@ static int wiz_create_itemtype(void)
 	if (!get_com(&ch, "What kind of %.60s? ", cat->str)) return (0);
 
 	/* Analyze choice */
-	s = strchr(body, ch);
+	s = strchr(option_chars, ch);
 
 	/* Bail out if choice is not recognised. */
-	if (!s || s >= body+num) return 0;
+	if (!s || s >= option_chars+num) return 0;
 
 	/* And return successful */
-	return (choice[s - body]);
+	return (choice[s - option_chars]);
 }
 
 /*

@@ -315,6 +315,64 @@ static cptr old_options[] =
 };
 
 /*
+ * Process "Q:<k_idx>:<type>" -- squelch settings for object kinds.
+ */
+static cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
+{
+	long l;
+	int i;
+
+	/* Process a reset request. */
+	if (n == 1 && !strcmp(zz[0], "---reset---"))
+	{
+		for (i = 0; i < MAX_K_IDX; i++)
+		{
+			k_info[i].squelch = HIDE_NONE;
+			k_info[i].note = 0;
+		}
+	}
+	else if (n == 2 && !strcmp(zz[0], "allow_squelch"))
+	{
+		if (!strcmp(zz[1], "Y")) allow_squelch = TRUE;
+		else if (!strcmp(zz[1], "N")) allow_squelch = FALSE;
+		else return "allow_squelch must be Y or N";
+	}
+	else if (n != 2)
+	{
+		return "format not Q:<k_idx>:<type>";
+	}
+	else
+	{
+		/* Both parameters must be given as numbers. */
+		if (!ISDIGIT(zz[0][0]) || !ISDIGIT(zz[1][0]))
+			return "non-numerical input";
+
+		/* Read the k_idx into l and check that it's plausible. */
+		l = strtol(zz[0], NULL, 0);
+		if (l < 0 || l > MAX_SHORT) return "no such object";
+
+		/* Check that it corresponds to a real object. */
+		i = convert_k_idx(l, sf_flags, sf_flags_now);
+		if (i >= MAX_K_IDX) return "no such object";
+
+		/* Read the squelch setting into i and check that it's valid. */
+		l = strtol(zz[1], NULL, 0);
+		if (l < HIDE_NONE || l > HIDE_ALL)
+			return "no such squelch setting";
+
+		/* Set the squelch setting appropriately. */
+		k_info[i].squelch = l;
+	}
+
+	/* Give effect to the squelch settings (later) */
+	p_ptr->notice |= PN_ISQUELCH | PN_FSQUELCH;
+
+	/* If it gets this far, it worked. */
+	return SUCCESS;
+}
+
+
+/*
  * Parse a sub-file of the "extra info" (format shown below)
  *
  * Each "action" line has an "action symbol" in the first column,

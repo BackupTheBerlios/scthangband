@@ -284,9 +284,9 @@ extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
 #endif
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern void save_preferences(void (*func)(FILE *fff));
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_options(void);
 #endif
@@ -424,13 +424,13 @@ extern void do_cmd_activate(object_type *o_ptr);
 #if (defined(DUNGEON_C) || defined(MELEE2_C))
 extern u16b ident_power(object_ctype *o_ptr);
 #endif
-#if (defined(DUNGEON_C) || defined(SQUELCH_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern bool PURE k_can_curse(int k_idx);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C))
 extern int PURE find_feeling(object_ctype *o_ptr);
 #endif
-#if (defined(DUNGEON_C) || defined(SQUELCH_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern bool k_can_sense(int k_idx);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
@@ -514,7 +514,7 @@ extern int color_char_to_attr(char c);
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern cptr cur_help_str(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
 extern void help_track(cptr str);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
@@ -706,10 +706,10 @@ extern u16b sf_lives;
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern u16b sf_saves;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C) || defined(SQUELCH_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern const u16b sf_flags_now[MAX_SF_VAR];
 #endif
-#if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C) || defined(SQUELCH_C))
+#if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern s16b convert_k_idx(s16b idx, const u16b *from_v, const u16b *to_v);
 #endif
 #if (defined(FILES_C) || defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
@@ -1411,7 +1411,7 @@ extern cptr find_next_good_flag(cptr s, byte reject, byte require);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(WIZARD2_C))
 extern void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
@@ -2015,27 +2015,27 @@ extern void alter_reality(void);
 
 
 
+
+
+
 /* squelch.c */
 
-#if (defined(FILES_C) || defined(SQUELCH_C))
-extern cptr process_pref_squelch(char **zz, int n, u16b *sf_flags);
-#endif
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern void squelch_dump(FILE *fff);
+#if (defined(CMD4_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
+extern int display_item_category(int *max, bool (*item_good)(int, name_centry *),
+	name_centry *start, name_centry **choice)
+;
 #endif
 #if (defined(CMD4_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
 extern void get_names(char **obuf, char *this, int num, int *choice, uint len,
 	void (*print_f1)(char *, uint, cptr, va_list *))
 ;
 #endif
-#if (defined(SQUELCH_C) || defined(WIZARD2_C))
-extern name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
-	bool *abort, name_centry *start, cptr prompt, bool squelch)
-;
-#endif
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern void do_cmd_options_squelch(void);
-#endif
+
+
+
+
+
+
 #if (defined(SQUELCH_C) || defined(XTRA1_C))
 extern void squelch_grid(void);
 #endif
@@ -2279,7 +2279,7 @@ extern errr my_fgets(FILE *fff, char *buf, size_t n);
 #if (defined(FILES_C) || defined(UTIL_C))
 extern errr my_fgets_long(char *buf, size_t n, FILE *fff);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern int my_fprintf(FILE *fff, cptr fmt, ...);
 #endif
 #if (!(defined(ACORN))) && (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C))
@@ -2333,7 +2333,7 @@ extern errr macro_add(cptr pat, cptr act);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void flush(void);
 #endif
-#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(MAIN_X11_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(MAIN_X11_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void bell(cptr fmt, ...);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA2_C))
@@ -2393,7 +2393,7 @@ extern void prt(cptr str, int row, int col);
 #if (defined(CMD5_C) || defined(UTIL_C))
 extern void mc_roff_xy(int x, int y, cptr s);
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
 extern void mc_roff(cptr s);
 #endif
 #if (defined(MONSTER1_C) || defined(UTIL_C))
@@ -2426,7 +2426,7 @@ extern char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C))
 extern bool get_check(cptr prompt);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool get_com(char *command, cptr fmt, ...);
 #endif
 #if (defined(CMD3_C) || defined(STORE_C) || defined(UTIL_C))
@@ -3044,7 +3044,7 @@ extern bool spoil_ego;
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_value;
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_base;
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3848,7 +3848,7 @@ extern void Term_fresh(void);
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_set_cursor(bool v);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_gotoxy(int x, int y);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
@@ -3869,7 +3869,7 @@ extern void Term_putstr(int x, int y, int n, byte a, cptr s);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(SQUELCH_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern errr Term_clear(void);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_XAW_C) || defined(Z_TERM_C))
@@ -3881,7 +3881,7 @@ extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
 #if (defined(CAVE_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_get_cursor(bool *v);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern void Term_get_size(int *w, int *h);
 #endif
 #if (defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
@@ -4056,12 +4056,9 @@ extern void set_object_found(object_type *o_ptr, int how, int idx);
 extern cptr PURE get_inscription(object_ctype *o_ptr);
 #endif
 
-/* squelch.c */
+/* variable.c */
 
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern int get_category_tval(int tval);
-#endif
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern int display_item_category(bool (*item_good)(int, name_centry *), name_centry *start, name_centry **choice);
+#if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(VARIABLE_C))
+extern bool allow_squelch;
 #endif
 #endif /* INCLUDED_EXTERNS_H */
