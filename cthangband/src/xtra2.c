@@ -3484,49 +3484,65 @@ void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	strnfmt(buf, max, "%v", monster_desc_aux_f3, name, num, flags);
 }
 
-void gain_level_reward(int chosen_reward, int skill_used)
+static const int chaos_weapon[][2] =
 {
-	int type, effect;
-	char wrath_reason[32] = "";
-	int dummy = 0, dummy2 = 0;
-	object_type *q_ptr[1];
-	int nasty_chance = 6;
+	{OBJ_DAGGER, 4},
+	{OBJ_MAIN_GAUCHE, 8},
+	{OBJ_RAPIER, 12},
+	{OBJ_SMALL_SWORD, 16},
+	{OBJ_SHORT_SWORD, 20},
+	{OBJ_SABRE, 26},
+	{OBJ_CUTLASS, 32},
+	{OBJ_TULWAR, 34},
+	{OBJ_BROAD_SWORD, 40},
+	{OBJ_LONG_SWORD, 46},
+	{OBJ_SCIMITAR, 52},
+	{OBJ_KATANA, 54},
+	{OBJ_BASTARD_SWORD, 58},
+	{OBJ_TWO_HANDED_SWORD, 62},
+	{OBJ_EXECUTIONERS_SWORD, 64},
+	{OBJ_BLADE_OF_CHAOS, 100},
+};
 
-	if (!chosen_reward)
+void gain_level_reward(int effect, int skill)
+{
+	char wrath_reason[32] = "";
+	int i;
+
+	if (!effect)
 	{
+		int type, nasty_chance;
+
 		if (multi_rew) return;
 		else multi_rew = TRUE;
+
+		if (one_in(6))
+		{
+			msg_format("%^s rewards you with a chaos feature!",
+				chaos_patron_shorts[p_ptr->chaos_patron]);
+			(void)gain_chaos_feature(0);
+			return;
+		}
+		else
+		{
+			if (skill/2 == 13) nasty_chance = 2;
+			else if (!(skill/2 % 13)) nasty_chance = 3;
+			else if (!(skill/2 % 14)) nasty_chance = 12;
+			else nasty_chance = 6;
+
+			if (one_in(nasty_chance))
+				type = rand_int(20); /* Allow the 'nasty' effects */
+			else
+				type = rand_int(15) + 5; /* Or disallow them */
+
+			effect = chaos_rewards[p_ptr->chaos_patron][type];
+		}
 	}
-
-
-	if (skill_used == 13) nasty_chance = 2;
-	else if (!(skill_used % 13)) nasty_chance = 3;
-	else if (!(skill_used % 14)) nasty_chance = 12;
-
-	if (randint(nasty_chance)==1)
-		type = randint(20); /* Allow the 'nasty' effects */
-	else
-		type = randint(15) + 5; /* Or disallow them */
-
-	if (type < 1) type = 1;
-	if (type > 20) type = 20;
-	type--;
-
 
 	sprintf(wrath_reason, "the Wrath of %s",
 		chaos_patron_shorts[p_ptr->chaos_patron]);
 
-	effect = chaos_rewards[p_ptr->chaos_patron][type];
-
-	if ((randint(6)==1) && !(chosen_reward))
-	{
-		msg_format("%^s rewards you with a chaos feature!",
-			chaos_patron_shorts[p_ptr->chaos_patron]);
-		(void)gain_chaos_feature(0);
-		return;
-	}
-
-	switch (chosen_reward?chosen_reward:effect)
+	switch (effect)
 	{
 		case REW_POLY_SLF:
 			msg_format("The voice of %s booms out:",
@@ -3560,73 +3576,34 @@ void gain_level_reward(int chosen_reward, int skill_used)
 			acquirement(py, px, 1, TRUE);
 			break;
 		case REW_CHAOS_WP:
+		{
+			object_type q_ptr[1];
+
+			/* Pick a random weapon. */
+			int i, wp = rand_int(skill);
+
+			/* Find it on the list. */
+			for (i = 0; wp >= chaos_weapon[i][1]; i++);
+
+			/* Message. */
 			msg_format("The voice of %s booms out:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
 			msg_print("'Thy deed hath earned thee a worthy blade.'");
-			/* Get local object */
-			switch(randint(skill_used))
-			{
-				case 1: case 2: case 0:
-					dummy2 = OBJ_DAGGER;
-					break;
-				case 3: case 4:
-					dummy2 = OBJ_MAIN_GAUCHE;
-					break;
-				case 5: case 6:
-					dummy2 = OBJ_RAPIER;
-					break;
-				case 7: case 8:
-					dummy2 = OBJ_SMALL_SWORD;
-					break;
-				case 9: case 10:
-					dummy2 = OBJ_SHORT_SWORD;
-					break;
-				case 11: case 12: case 13:
-					dummy2 = OBJ_SABRE;
-					break;
-				case 14: case 15: case 16:
-					dummy2 = OBJ_CUTLASS;
-					break;
-				case 17:
-					dummy2 = OBJ_TULWAR;
-					break;
-				case 18: case 19: case 20:
-					dummy2 = OBJ_BROAD_SWORD;
-					break;
-				case 21: case 22: case 23:
-					dummy2 = OBJ_LONG_SWORD;
-					break;
-				case 24: case 25: case 26:
-					dummy2 = OBJ_SCIMITAR;
-					break;
-				case 27:
-					dummy2 = OBJ_KATANA;
-					break;
-				case 28: case 29:
-					dummy2 = OBJ_BASTARD_SWORD;
-					break;
-				case 30: case 31:
-					dummy2 = OBJ_TWO_HANDED_SWORD;
-					break;
-				case 32:
-					dummy2 = OBJ_EXECUTIONERS_SWORD;
-					break;
-				default:
-					dummy2 = OBJ_BLADE_OF_CHAOS;
-			}
 
-			object_prep(q_ptr, dummy2);
+			/* Create the weapon. */
+			object_prep(q_ptr, chaos_weapon[i][0]);
 			q_ptr->name2 = EGO_CHAOTIC;
 			apply_magic_2(q_ptr, dun_depth);
+			q_ptr->to_h = 3 + (randint((dun_depth)))%10;
+			q_ptr->to_d = 3 + (randint((dun_depth)))%10;
 
 			/* Set the "how it was found" information. */
 			set_object_found(q_ptr, FOUND_CHAOS, p_ptr->chaos_patron+1);
 
-			q_ptr->to_h = 3 + (randint((dun_depth)))%10;
-			q_ptr->to_d = 3 + (randint((dun_depth)))%10;
 			/* Drop it in the dungeon */
 			drop_near(q_ptr, -1, py, px);
 			break;
+		}
 		case REW_GOOD_OBS:
 			msg_format("The voice of %s booms out:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
@@ -3649,7 +3626,7 @@ void gain_level_reward(int chosen_reward, int skill_used)
 			msg_format("The voice of %s booms out:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
 			msg_print("'My pets, destroy the arrogant mortal!'");
-			for (dummy = 0; dummy < randint(5) + 1; dummy++)
+			for (i = 0; i < rand_range(2, 6); i++)
 			{
 				(void) summon_specific(py, px, (dun_depth), 0);
 			}
@@ -3664,7 +3641,7 @@ void gain_level_reward(int chosen_reward, int skill_used)
 			msg_format("The voice of %s booms out:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
 			msg_print("'Death and destruction! This pleaseth me!'");
-			call_chaos(skill_used);
+			call_chaos(skill/2);
 			break;
 		case REW_GAIN_ABL:
 			msg_format("The voice of %s rings out:",
@@ -3689,9 +3666,9 @@ void gain_level_reward(int chosen_reward, int skill_used)
 				chaos_patron_shorts[p_ptr->chaos_patron]);
 			msg_print("'Thou needst a lesson in humility, mortal!'");
 			msg_print("You feel less powerful!");
-			for (dummy = 0; dummy < 6; dummy++)
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void) dec_stat(dummy, 10 + randint(15), TRUE);
+				(void) dec_stat(i, 10 + randint(15), TRUE);
 			}
 			break;
 		case REW_POLY_WND:
@@ -3703,17 +3680,17 @@ void gain_level_reward(int chosen_reward, int skill_used)
 			msg_format("The voice of %s booms out:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
 			msg_print("'Receive this modest gift from me!'");
-			for (dummy = 0; dummy < 6; dummy++)
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void) do_inc_stat(dummy);
+				(void) do_inc_stat(i);
 			}
 			break;
 		case REW_HURT_LOT:
 			msg_format("The voice of %s booms out:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
 			msg_print("'Suffer, pathetic fool!'");
-			fire_ball(GF_DISINTEGRATE, 0, (skill_used * 4), 4);
-			take_hit(skill_used * 4, wrath_reason, MON_CHAOS_PATRON);
+			fire_ball(GF_DISINTEGRATE, 0, (skill/2 * 4), 4);
+			take_hit(skill/2 * 4, wrath_reason, MON_CHAOS_PATRON);
 			break;
 		case REW_HEAL_FUL:
 			msg_format("The voice of %s booms out:",
@@ -3727,9 +3704,9 @@ void gain_level_reward(int chosen_reward, int skill_used)
 			(void)set_flag(TIMED_STUN, 0);
 			(void)set_flag(TIMED_CUT, 0);
 			hp_player(5000);
-			for (dummy = 0; dummy < 6; dummy++)
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void) do_res_stat(dummy);
+				(void) do_res_stat(i);
 			}
 			break;
 		case REW_CURSE_WP:
@@ -3761,9 +3738,9 @@ void gain_level_reward(int chosen_reward, int skill_used)
 						else (void)curse_armor();
 						break;
 					default:
-					for (dummy = 0; dummy < 6; dummy++)
+					for (i = 0; i < A_MAX; i++)
 					{
-						(void) dec_stat(dummy, 10 + randint(15), TRUE);
+						(void) dec_stat(i, 10 + randint(15), TRUE);
 					}
 			}
 			break;
@@ -3771,10 +3748,10 @@ void gain_level_reward(int chosen_reward, int skill_used)
 			msg_format("The voice of %s thunders:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
 			msg_print("'Die, mortal!'");
-			take_hit(skill_used * 4, wrath_reason, MON_CHAOS_PATRON);
-			for (dummy = 0; dummy < 6; dummy++)
+			take_hit(skill/2 * 4, wrath_reason, MON_CHAOS_PATRON);
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void) dec_stat(dummy, 10 + randint(15), FALSE);
+				(void) dec_stat(i, 10 + randint(15), FALSE);
 			}
 			activate_hi_summon();
 			activate_ty_curse();
@@ -3802,7 +3779,7 @@ void gain_level_reward(int chosen_reward, int skill_used)
 		case REW_DISPEL_C:
 			msg_format("You can feel the power of %s assault your enemies!",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
-			(void) dispel_monsters(skill_used * 4);
+			(void) dispel_monsters(skill/2 * 4);
 			break;
 		case REW_IGNORE:
 			msg_format("%s ignores you.",
@@ -3826,8 +3803,8 @@ void gain_level_reward(int chosen_reward, int skill_used)
 		default:
 			msg_format("The voice of %s stammers:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
-			msg_format("'Uh... uh... the answer's %d/%d, what's the question?'", type,
-				effect );
+			msg_format("'Uh... uh... the answer's %d, what's the question?'",
+				effect);
 		}
 
 

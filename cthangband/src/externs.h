@@ -1962,46 +1962,46 @@ extern void wall_breaker(int plev);
 extern void bless_weapon(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool detect_monsters_nonliving(void);
+extern bool detect_monsters_nonliving(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern void set_recall(bool spell);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool confuse_monsters(int dam);
+extern bool confuse_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool charm_monsters(int dam);
+extern bool charm_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool charm_animals(int dam);
+extern bool charm_animals(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool stun_monsters(int dam);
+extern bool stun_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool stasis_monsters(int dam);
+extern bool stasis_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool mindblast_monsters(int dam);
+extern bool mindblast_monsters(int dam);
 #endif
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool banish_monsters(int dist);
+extern bool banish_monsters(int dist);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool turn_evil(int dam);
+extern bool turn_evil(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool turn_monsters(int dam);
+extern bool turn_monsters(int dam);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool charm_monster(int dir, int plev);
+extern bool charm_monster(int dir, int plev);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool control_one_undead(int dir, int plev);
+extern bool control_one_undead(int dir, int plev);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern  bool charm_animal(int dir, int plev);
+extern bool charm_animal(int dir, int plev);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern void report_magics(void);
@@ -2154,7 +2154,7 @@ extern player_template template_info[MAX_TEMPLATE];
 extern book_type book_info[MAX_BK];
 #endif
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern  player_skill skill_set[MAX_SKILLS];
+extern player_skill skill_set[MAX_SKILLS];
 #endif
 #if (defined(CMD2_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern byte chest_traps[64];
@@ -2454,13 +2454,13 @@ extern bool is_a_vowel(int ch);
 extern int get_keymap_dir(char ch);
 #endif
 #if (defined(ALLOW_REPEAT)) && (defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA2_C))
-extern  void repeat_push(int what);
+extern void repeat_push(int what);
 #endif
 #if (defined(ALLOW_REPEAT)) && (defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA2_C))
-extern  bool repeat_pull(int *what);
+extern bool repeat_pull(int *what);
 #endif
 #if (defined(ALLOW_REPEAT)) && (defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C))
-extern  void repeat_check(void);
+extern void repeat_check(void);
 #endif
 #if (defined(SUPPORT_GAMMA)) && (defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
 extern byte gamma_table[256];
@@ -3390,10 +3390,10 @@ extern bool (*item_tester_hook)(object_ctype*);
 extern bool violet_uniques;
 #endif
 #if (defined(ALLOW_EASY_OPEN)) && (defined(CMD2_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern  bool easy_open;
+extern bool easy_open;
 #endif
 #if (defined(ALLOW_EASY_DISARM)) && (defined(CMD2_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern  bool easy_disarm;
+extern bool easy_disarm;
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern stat_default_type *stat_default;
@@ -3621,7 +3621,7 @@ extern void convert_articles(char *str);
 extern void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern void gain_level_reward(int chosen_reward, int skill_used);
+extern void gain_level_reward(int effect, int skill);
 #endif
 #if (defined(INIT2_C) || defined(XTRA2_C))
 extern void init_chaos(void);
