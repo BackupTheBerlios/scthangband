@@ -694,7 +694,6 @@ static void hit_trap(void)
                 msg_print("You fell through a trap door!");
 				dam = damroll(2, 8);
                 name = "a trap door";
-				take_hit(dam, name);
                 if ((autosave_l) && (p_ptr->chp >= 0))
                 {
 					do_cmd_save_game(TRUE);
@@ -792,6 +791,7 @@ static void hit_trap(void)
 						dam = dam * 2;
 						(void)set_poisoned(p_ptr->poisoned + randint(dam));
 					}
+				take_hit(dam, name);
 				}
 
 				/* Take the damage */
