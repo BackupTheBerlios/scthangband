@@ -289,3 +289,7 @@ struct term
 #define TERM_L_GREEN    13      /* 'G' */       /* 0,4,0 */
 #define TERM_L_BLUE             14      /* 'B' */       /* 0,4,4 */
 #define TERM_L_UMBER    15      /* 'U' */       /* 3,2,1 */
+
+/* Errors from Term_keypress(), etc.. */
+#define TERM_ERROR_BAD_INPUT 501
+#define TERM_ERROR_OUT_OF_MEMORY 502

@@ -2734,6 +2734,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define POWER_ERROR_ABORT 401
 #define POWER_ERROR_FAIL 402
 
+/* For errors (+/-)500-599, see z-term.h */
+
+
 /* Energy constants */
 #define TURN_ENERGY	1000 /* Energy used in one player turn. */
 #define TICK_ENERGY 100	/* Energy given in one game turn. */

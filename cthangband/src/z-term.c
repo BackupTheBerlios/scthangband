@@ -1853,33 +1853,40 @@ errr Term_flush(void)
 
 /*
  * Add a keypress to the "queue"
+ * Do nothing if there is insufficient space.
  */
 errr Term_keypress(int k)
 {
+	uint next_char;
+
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k) return TERM_ERROR_BAD_INPUT;
+
+	/* Find where the following character should be copied. */
+	next_char = Term->key_head+1;
+	if (next_char == Term->key_size) next_char = 0;
+
+	/* Prevent overflow. */
+	if (next_char == Term->key_tail) return TERM_ERROR_OUT_OF_MEMORY;
 
 	/* Store the char, advance the queue */
-	Term->key_queue[Term->key_head++] = k;
+	Term->key_queue[Term->key_head] = k;
 
-	/* Circular queue, handle wrap */
-	if (Term->key_head == Term->key_size) Term->key_head = 0;
+	Term->key_head = next_char;
 
-	/* Success (unless overflow) */
-	if (Term->key_head != Term->key_tail) return (0);
-
-	/* Problem */
-	return (1);
+	/* Success. */
+	return (0);
 }
 
 
 /*
  * Add a keypress to the FRONT of the "queue"
+ * Forget the last existing character if there is insufficient space.
  */
 errr Term_key_push(int k)
 {
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k) return TERM_ERROR_BAD_INPUT;
 
 	/* Hack -- Overflow may induce circular queue */
 	if (Term->key_tail == 0) Term->key_tail = Term->key_size;
@@ -1890,8 +1897,12 @@ errr Term_key_push(int k)
 	/* Success (unless overflow) */
 	if (Term->key_head != Term->key_tail) return (0);
 
+	/* Forget the last character on the queue. */
+	if (Term->key_head) Term->key_head--;
+	else Term->key_head = Term->key_size-1;
+
 	/* Problem */
-	return (1);
+	return TERM_ERROR_OUT_OF_MEMORY;
 }
 
 
