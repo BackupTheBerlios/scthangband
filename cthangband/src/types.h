@@ -933,8 +933,8 @@ struct make_item_type {
 /*
  * Race-specific bonuses (resistances, etc.).
  */
-typedef struct race_bonus_type race_bonus_type;
-struct race_bonus_type
+typedef struct race_bonus race_bonus;
+struct race_bonus
 {
 	byte type; /* Mutation needed for this bonus (unused for races). */
 	byte skill; /* The skill needed to access it, if any. */
@@ -944,8 +944,8 @@ struct race_bonus_type
 	s16b value; /* A description of how the bonus affects the flag. */
 };
 
-typedef struct power_type power_type;
-struct power_type
+typedef struct race_power race_power;
+struct race_power
 {
 	s16b idx; /* The index used to identify this power in do_power(). */
 	s16b min_level; /* A penalty for racial_success_chance() which depends partly on level. */
@@ -996,8 +996,8 @@ struct player_race
 
 	u32b flags[4]; /* Various flags to give the race unconditionally. */
 
-	race_bonus_type *bonus; /* A pointer to the extra things this race gets. */
-	power_type *power; /* A pointer to the powers the race can use. */
+	race_bonus *bonus; /* A pointer to the extra things this race gets. */
+	race_power *power; /* A pointer to the powers the race can use. */
 	byte bonuses; /* The number of elements in bonus. */
 	byte powers; /* The number of elements in power. */
 

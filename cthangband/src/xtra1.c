@@ -1310,7 +1310,7 @@ static void calc_bonuses_object(s16b (*flags)[32], object_ctype *o_ptr)
 	if (!is_weapon && known) flags[TR0][iilog(TR0_DIS_TO_D)] += o_ptr->to_d;
 }
 
-static race_bonus_type muta_bonuses[] =
+static race_bonus muta_bonuses[] =
 {
 	{MUT_HYPER_STR, 0, 0, TR1, iilog(TR1_STR), 4},
 	{MUT_PUNY, 0, 0, TR1, iilog(TR1_STR), -4},
@@ -1417,7 +1417,7 @@ static bool calc_bonuses_weird(s16b (*flags)[32], int flag, int val)
 /*
  * Give a sufficiently skilled player the permanent effects of a race/mutation.
  */
-static void calc_bonuses_muta_aux(s16b (*flags)[32], race_bonus_type *ptr)
+static void calc_bonuses_muta_aux(s16b (*flags)[32], race_bonus *ptr)
 {
 	s16b *this = &flags[ptr->set][ptr->flag];
 
@@ -1446,7 +1446,7 @@ static void calc_bonuses_muta_aux(s16b (*flags)[32], race_bonus_type *ptr)
  */
 static void calc_bonuses_muta(s16b (*flags)[32])
 {
-	race_bonus_type *ptr;
+	race_bonus *ptr;
 	FOR_ALL_IN(muta_bonuses, ptr)
 	{
 		/* Check for mutation. */
@@ -1463,7 +1463,7 @@ static void calc_bonuses_muta(s16b (*flags)[32])
  */
 static void calc_bonuses_race(s16b (*flags)[32])
 {
-	race_bonus_type *ptr;
+	race_bonus *ptr;
 	int i, j;
 
 	/* Binary flags which are always present are simple. */

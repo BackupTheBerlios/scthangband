@@ -1378,12 +1378,12 @@ static cptr *cthuloid_syllables[] =
 
 /* Various bonuses different races get at various levels of skill. */
 
-static race_bonus_type dark_elf_bonuses[] =
+static race_bonus dark_elf_bonuses[] =
 {
 	{0, SKILL_RACIAL, 40, TR3, iilog(TR3_SEE_INVIS), TRUE},
 };
 
-static race_bonus_type draconian_bonuses[] =
+static race_bonus draconian_bonuses[] =
 {
 	{0, SKILL_RACIAL, 10, TR2, iilog(TR2_RES_FIRE), TRUE},
 	{0, SKILL_RACIAL, 20, TR2, iilog(TR2_RES_COLD), TRUE},
@@ -1392,82 +1392,82 @@ static race_bonus_type draconian_bonuses[] =
 	{0, SKILL_RACIAL, 70, TR2, iilog(TR2_RES_POIS), TRUE},
 };
 
-static race_bonus_type golem_bonuses[] =
+static race_bonus golem_bonuses[] =
 {
 	{0, SKILL_RACIAL, 70, TR2, iilog(TR2_HOLD_LIFE), TRUE},
 };
 
-static race_bonus_type half_troll_bonuses[] =
+static race_bonus half_troll_bonuses[] =
 {
 	{0, SKILL_RACIAL, 30, TR3, iilog(TR3_REGEN), TRUE},
 };
 
-static race_bonus_type imp_bonuses[] =
+static race_bonus imp_bonuses[] =
 {
 	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), 100},
 	{0, SKILL_RACIAL, 20, TR3, iilog(TR3_SEE_INVIS), TRUE},
 };
 
-static race_bonus_type mind_flayer_bonuses[] =
+static race_bonus mind_flayer_bonuses[] =
 {
 	{0, SKILL_RACIAL, 30, TR3, iilog(TR3_SEE_INVIS), TRUE},
 	{0, SKILL_RACIAL, 60, TR3, iilog(TR3_TELEPATHY), TRUE},
 };
 
-static race_bonus_type skeleton_bonuses[] =
+static race_bonus skeleton_bonuses[] =
 {
 	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 	{0, SKILL_RACIAL, 20, TR2, iilog(TR2_RES_COLD), TRUE},
 };
 
-static race_bonus_type spectre_bonuses[] =
+static race_bonus spectre_bonuses[] =
 {
 	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 	{0, SKILL_RACIAL, 70, TR3, iilog(TR3_TELEPATHY), TRUE},
 };
 
-static race_bonus_type vampire_bonuses[] =
+static race_bonus vampire_bonuses[] =
 {
 	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 };
 
-static race_bonus_type yeek_bonuses[] =
+static race_bonus yeek_bonuses[] =
 {
 	{0, SKILL_RACIAL, 40, TR2, iilog(TR2_IM_ACID), TRUE},
 };
 
-static race_bonus_type zombie_bonuses[] =
+static race_bonus zombie_bonuses[] =
 {
 	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 	{0, SKILL_RACIAL, 10, TR2, iilog(TR2_RES_COLD), TRUE},
 	{0, SKILL_RACIAL, 24, TR0, iilog(TR0_NO_CUT), TRUE},
 };
 
-static power_type barbarian_power = {RP_HALF_TROLL, 8, 10, A_WIS, 12,
+static race_power barbarian_power = {RP_HALF_TROLL, 8, 10, A_WIS, 12,
 	"berserk",0, "Raaagh!"};
 
-static power_type broo_power = {RP_BROO, 4, 6, A_INT, 3,
+static race_power broo_power = {RP_BROO, 4, 6, A_INT, 3,
 	"scare monster", 0, "You emit a fearsome growl!"};
 
-static power_type cyclops_power = {RP_CYCLOPS, 20, 15, A_STR, 12,
+static race_power cyclops_power = {RP_CYCLOPS, 20, 15, A_STR, 12,
 	"throw boulder","dam 3*lvl", 0};
 
-static power_type dark_elf_power = {RP_DARK_ELF, 2, 2, A_INT, 9,
+static race_power dark_elf_power = {RP_DARK_ELF, 2, 2, A_INT, 9,
 	"magic missile",0, 0};
 
-static power_type draconian_power = {RP_DRACONIAN, 1, -1, A_CON, 12,
+static race_power draconian_power = {RP_DRACONIAN, 1, -1, A_CON, 12,
 	"breath weapon","dam 2*lvl", 0};
 
-static power_type dwarf_power = {RP_DWARF, 5, 5, A_WIS, 12,
+static race_power dwarf_power = {RP_DWARF, 5, 5, A_WIS, 12,
 	"detect doors+traps", 0, "You examine your surroundings."};
 
-static power_type gnome_power = {RP_GNOME, 5, -5, A_INT, 12,
+static race_power gnome_power = {RP_GNOME, 5, -5, A_INT, 12,
 	"teleport", 0, "Blink!"};
 
-static power_type golem_power = {RP_GOLEM, 20, 15, A_CON, 8,
+static race_power golem_power = {RP_GOLEM, 20, 15, A_CON, 8,
 	"stone skin","dur 30+d20", 0};
 
-static power_type great_powers[2] =
+static race_power great_powers[2] =
 {
 	{RP_GREAT, 40, 75, A_WIS, 50,
 		"dreaming", 0, "You dream of a time of health and peace..."},
@@ -1475,52 +1475,52 @@ static power_type great_powers[2] =
 		0, "You start walking around. Your surroundings change."},
 };
 
-static power_type half_giant_power = {RP_HALF_GIANT, 20, 10, A_STR, 12,
+static race_power half_giant_power = {RP_HALF_GIANT, 20, 10, A_STR, 12,
 	"stone to mud", 0, 0};
 
-static power_type half_ogre_power = {RP_HALF_OGRE, 25, 35, A_INT, 15,
+static race_power half_ogre_power = {RP_HALF_OGRE, 25, 35, A_INT, 15,
 	"explosive rune", 0, "You carefully set an explosive rune..."};
 
-static power_type half_orc_power = {RP_HALF_ORC, 3, 5, A_WIS, 10,
+static race_power half_orc_power = {RP_HALF_ORC, 3, 5, A_WIS, 10,
 	"remove fear", 0, "You play tough."};
 
-static power_type half_titan_power = {RP_HALF_TITAN, 35, 20, A_INT, 12,
+static race_power half_titan_power = {RP_HALF_TITAN, 35, 20, A_INT, 12,
 	"probing", 0, "You examine your foes..."};
 
-static power_type half_troll_power = {RP_HALF_TROLL, 10, 12, A_WIS, 12,
+static race_power half_troll_power = {RP_HALF_TROLL, 10, 12, A_WIS, 12,
 	"berserk", 0, "RAAAGH!"};
 
-static power_type hobbit_power = {RP_HOBBIT, 15, 10, A_INT, 10,
+static race_power hobbit_power = {RP_HOBBIT, 15, 10, A_INT, 10,
 	"create food", 0, 0};
 
-static power_type imp_power = {RP_IMP, 9, 15, A_WIS, 15,
+static race_power imp_power = {RP_IMP, 9, 15, A_WIS, 15,
 	"fire bolt/ball","dam lvl", 0};
 
-static power_type klackon_power = {RP_KLACKON, 9, 9, A_DEX, 14,
+static race_power klackon_power = {RP_KLACKON, 9, 9, A_DEX, 14,
 	"spit acid", "dam lvl", 0};
 
-static power_type kobold_power = {RP_KOBOLD, 12, 8, A_DEX, 18,
+static race_power kobold_power = {RP_KOBOLD, 12, 8, A_DEX, 18,
 	"poison dart","dam lvl", 0};
 
-static power_type mind_flayer_power = {RP_MIND_FLAYER, 15, 12, A_INT, 14,
+static race_power mind_flayer_power = {RP_MIND_FLAYER, 15, 12, A_INT, 14,
 	"mind blast","dam lvl", 0};
 
-static power_type nibelung_power = {RP_DWARF, 10, 5, A_WIS, 10,
+static race_power nibelung_power = {RP_DWARF, 10, 5, A_WIS, 10,
 	"detect doors+traps",0, "You examine your surroundings."};
 
-static power_type skeleton_power = {RP_SKELETON, 30, 30, A_WIS, 18,
+static race_power skeleton_power = {RP_SKELETON, 30, 30, A_WIS, 18,
 	"restore life", 0, "You attempt to restore your lost energies."};
 
-static power_type spectre_power = {RP_BROO, 4, 6, A_INT, 3,
+static race_power spectre_power = {RP_BROO, 4, 6, A_INT, 3,
 	"scare monster", 0, "You emit an eldritch howl!"};
 
-static power_type sprite_power = {RP_SPRITE, 12, 12, A_INT, 15,
+static race_power sprite_power = {RP_SPRITE, 12, 12, A_INT, 15,
 	"sleeping dust", 0, "You throw some magic dust..."};
 
-static power_type vampire_power = {RP_VAMPIRE, 2, -3, A_CON, 9,
+static race_power vampire_power = {RP_VAMPIRE, 2, -3, A_CON, 9,
 	"drain life",0, 0};
 
-static power_type yeek_power = {RP_YEEK, 15, 15, A_WIS, 10, "scare monster",0, 0};
+static race_power yeek_power = {RP_YEEK, 15, 15, A_WIS, 10, "scare monster",0, 0};
 
 /*
  * Player Races

@@ -146,6 +146,9 @@ extern void do_cmd_throw(object_type *o_ptr);
 #if (defined(CMD1_C) || defined(POWERS_C))
 extern void do_cmd_throw_hard(int mult);
 #endif
+#if (defined(CMD1_C) || defined(SPELLS2_C))
+extern int power_cost(const race_power *pw_ptr, int lev);
+#endif
 #if (defined(CMD1_C) || defined(DUNGEON_C))
 extern void do_cmd_racial_power(void);
 #endif
@@ -642,6 +645,9 @@ extern errr parse_q_list(char *buf, header *head, vptr *extra);
 extern errr parse_s_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
+extern errr parse_template(char *buf, header *head, vptr *extra);
+#endif
+#if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
 extern errr parse_macro_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
@@ -662,9 +668,6 @@ extern s16b error_line;
 #if (defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C))
 extern errr (*check_modification_date_hook)(int fd, cptr template_file);
 #endif
-
-
-
 #if (defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C))
 extern void init_angband(void);
 #endif
@@ -1499,6 +1502,9 @@ extern void object_aware(object_type *o_ptr);
 #if (defined(CMD6_C) || defined(OBJECT2_C))
 extern void object_tried(object_type *o_ptr);
 #endif
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(OBJECT2_C) || defined(STORE_C))
+extern void object_touch(object_type *o_ptr);
+#endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern s32b PURE flag_cost(object_ctype *o_ptr, bool all);
 #endif
@@ -1744,6 +1750,9 @@ extern void do_dec_stat_time(int stat, bool msg);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool do_res_stat(int stat);
+#endif
+#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
+extern bool do_res_stats(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool do_inc_stat(int stat);
@@ -2146,9 +2155,6 @@ extern cptr *hobbit_syllables[];
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT1_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(STORE_C) || defined(TABLES_C))
 extern player_race race_info[MAX_RACES];
-#endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(VARIABLE_C))
-extern player_template *template_info;
 #endif
 #if (defined(CMD5_C) || defined(INIT2_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern book_type book_info[MAX_BK];
@@ -2840,6 +2846,9 @@ extern bool track_mouse;
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool auto_more;
 #endif
+#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern bool object_skill;
+#endif
 #if (defined(TABLES_C) || defined(VARIABLE_C))
 extern bool preserve_mode_w;
 #endif
@@ -3344,6 +3353,12 @@ extern owner_type *owners;
 #if (defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern cptr s_name;
 #endif
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(VARIABLE_C))
+extern player_template *template_info;
+#endif
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
+extern cptr tp_name;
+#endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_SYS;
 #endif
@@ -3412,6 +3427,9 @@ extern char *macro_text;
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern u16b rebuild_raw;
+#endif
+#if (defined(CMD2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern byte object_skill_count;
 #endif
 
 /* wizard1.c */
@@ -3701,6 +3719,9 @@ extern s16b randnor(int mean, int stand);
 #if (defined(ANGBAND_H) || defined(Z_RAND_H) || defined(Z_RAND_C))
 extern s32b rand_int(u32b m);
 #endif
+#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
+extern bool percent(int m);
+#endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C) || defined(Z_RAND_C))
 extern s16b damroll(int num, int sides);
 #endif
@@ -3886,50 +3907,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* object2.c */
-
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(OBJECT2_C) || defined(STORE_C))
-extern void object_touch(object_type *o_ptr);
-#endif
-
-/* variable.c */
-
-#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern bool object_skill;
-#endif
-#if (defined(CMD2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern byte object_skill_count;
-#endif
-
-/* z-rand.c */
-
-#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
-extern bool percent(int m);
-#endif
-
-/* init1.c */
-
-#if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_template(char *buf, header *head, vptr *extra);
-#endif
-
-/* variable.c */
-
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
-extern cptr tp_name;
-#endif
-
-/* spells2.c */
-
-#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
-extern bool do_res_stats(void);
-#endif
-
-/* cmd1.c */
-
-#if (defined(CMD1_C) || defined(SPELLS2_C))
-extern int power_cost(const power_type *pw_ptr, int lev);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

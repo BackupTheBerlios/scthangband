@@ -1376,13 +1376,13 @@ static powercosttype powercosts[] = {
 /*
  * The table of powers, as defined above. Note that the effects of powers must be described in use_innate_power().
  */
-static power_type pet_powers[2] =
+static race_power pet_powers[2] =
 {
 	{PO_PETS+PET_DISMISS_ONE, 0, 0, 0, 0, "dismiss ally",0, 0},
 	{PO_PETS+PET_DISMISS_MANY, 0, 0, 0, 0, "dismiss allies",0, 0},
 };
 
-static power_type mut_powers[] =
+static race_power mut_powers[] =
 {
 	{PO_MUTA+MUT_SPIT_ACID, 9, 9, A_DEX, 15,
 		"spit acid", "dam lvl", "You spit acid..."},
@@ -1426,7 +1426,7 @@ static power_type mut_powers[] =
 	{PO_MUTA+MUT_LAUNCHER, 1, -1, A_STR, 6, "throw object",0, 0}
 };
 #define MAX_POWERS 36 /* There shouldn't be more powers than this at a time. */
-static power_type *cur_powers[MAX_POWERS];
+static race_power *cur_powers[MAX_POWERS];
 
 
 #define RACIAL_MIN_X 13 /* The distance across the screen at which the display starts. */
@@ -1438,7 +1438,7 @@ static power_type *cur_powers[MAX_POWERS];
  *
  * Note that there is no special treatment for aborted powers.
  */
-static void use_innate_power(power_type *pw_ptr)
+static void use_innate_power(race_power *pw_ptr)
 {
 	int plev = MAX(skill_set[SKILL_RACIAL].value/2,1);
 
@@ -1453,7 +1453,7 @@ static void use_innate_power(power_type *pw_ptr)
  * Determine the chance of using a given power based on features of the power and the player.
  * The power should succeed if rand_int((*denom))<(*num).
  */
-static void racial_success_chance(power_type *pw_ptr, s16b *num, s16b *denom)
+static void racial_success_chance(race_power *pw_ptr, s16b *num, s16b *denom)
 {
 	int difficulty = pw_ptr->difficulty;
 
@@ -1501,7 +1501,7 @@ static void racial_success_chance(power_type *pw_ptr, s16b *num, s16b *denom)
 /*
  * Work out the style of a power for various purposes.
  */
-static int power_method(power_type *pw_ptr)
+static int power_method(race_power *pw_ptr)
 {
 	/* Pet powers are in an array. */
 	if (pw_ptr >= pet_powers && pw_ptr < END_PTR(pet_powers))
@@ -1522,7 +1522,7 @@ static int power_method(power_type *pw_ptr)
 /*
  * Determine the cost of a racial power.
  */
-int power_cost(const power_type *pw_ptr, int lev)
+int power_cost(const race_power *pw_ptr, int lev)
 {
 	if (pw_ptr->cost > 0)
 	{
@@ -1556,7 +1556,7 @@ int power_cost(const power_type *pw_ptr, int lev)
  */
 static void racial_string(byte idx, byte *x, char * text)
 {
-	power_type *pw_ptr = cur_powers[idx];
+	race_power *pw_ptr = cur_powers[idx];
 	int type = power_method(pw_ptr);
 
 	/* Set the distance from the left margin. */
@@ -1619,7 +1619,7 @@ static int count_powers(void)
 	/* Add in the mutation-based powers. */
 	for (i = 0; i < (int)N_ELEMENTS(mut_powers) && (total < MAX_POWERS); i++)
 	{
-		power_type *ptr = &mut_powers[i];
+		race_power *ptr = &mut_powers[i];
 		if (p_has_mutation(ptr->idx - PO_MUTA))
 			cur_powers[total++] = mut_powers+i;
 	}
@@ -1759,7 +1759,7 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 /*
  * Decide whether a power has been used successfully.
  */
-static bool racial_aux(power_type *pw_ptr)
+static bool racial_aux(race_power *pw_ptr)
 {
 	const int plev = MAX(1,skill_set[SKILL_RACIAL].value/2);
 	bool use_hp = FALSE;
@@ -1867,7 +1867,7 @@ void do_cmd_racial_power(void)
 	/* Something has been selected */
 	if (total != 255)
 	{
-		power_type *pw_ptr = cur_powers[total];
+		race_power *pw_ptr = cur_powers[total];
 
 		switch (power_method(pw_ptr))
 		{
