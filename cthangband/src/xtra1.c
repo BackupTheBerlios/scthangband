@@ -877,7 +877,7 @@ static void calc_spells(bool quiet)
 		s_ptr = &magic_info[school][j];
 
 		/* Skip spells we are allowed to know */
-		if (s_ptr->minskill <= spell_skill(s_ptr)) continue;
+		if (s_ptr->min <= spell_skill(s_ptr)) continue;
 
 		/* Is it known? */
 		if (spell_learned[school] & (1L << j))
@@ -890,7 +890,7 @@ static void calc_spells(bool quiet)
 
 			/* Message */
 			if (!quiet) msg_format("You have forgotten the %s of %s.", p,
-                       spell_names[school][j%32]);
+                       magic_info[school][j%32].name);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -934,7 +934,7 @@ static void calc_spells(bool quiet)
 
 			/* Message */
 			if (!quiet) msg_format("You have forgotten the %s of %s.", p,
-                       spell_names[school][j%32]);
+                       magic_info[school][j%32].name);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -970,7 +970,7 @@ static void calc_spells(bool quiet)
            s_ptr = &magic_info[school][j];
 
 		/* Skip spells we cannot remember */
-		if (s_ptr->minskill > spell_skill(s_ptr)) continue;
+		if (s_ptr->min > spell_skill(s_ptr)) continue;
 
 		/* First set of spells */
 		if (spell_forgotten[school] & (1L << j))
@@ -983,7 +983,7 @@ static void calc_spells(bool quiet)
 
 			/* Message */
 			if (!quiet) msg_format("You have remembered the %s of %s.",
-                       p, spell_names[school][j%32]);
+                       p, magic_info[school][j%32].name);
 
 			/* One less can be learned */
 			p_ptr->new_spells--;
@@ -1012,7 +1012,7 @@ static void calc_spells(bool quiet)
         s_ptr = &magic_info[school][j%32];
 
 		/* Skip spells we cannot remember */
-		if (s_ptr->minskill > spell_skill(s_ptr)) continue;
+		if (s_ptr->min > spell_skill(s_ptr)) continue;
 
 		/* Skip spells we already know */
 		if (spell_learned[school] & (1L << (j % 32)))

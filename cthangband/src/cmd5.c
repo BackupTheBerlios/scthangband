@@ -72,10 +72,10 @@ int spell_skill(const magic_type *s_ptr)
 {
 	int total, skill;
 
-	skill = sschool_to_skill(s_ptr->sschool);
+	skill = sschool_to_skill(s_ptr->skill1);
 	total = skill_set[skill].value;
 
-	skill = stype_to_skill(s_ptr->stype);
+	skill = stype_to_skill(s_ptr->skill2);
 	if (skill < 0)
 		total *= 2;
 	else
@@ -88,7 +88,7 @@ int spell_skill(const magic_type *s_ptr)
 
 static int spell_stat(const magic_type *s_ptr)
 {
-	switch (s_ptr->sschool)
+	switch (s_ptr->skill1)
 	{
 		case SCH_THAUMATURGY:
 		case SCH_SORCERY:
@@ -111,16 +111,16 @@ static int spell_stat(const magic_type *s_ptr)
  */
 static void low_mana_check(int *chance, const magic_type *s_ptr)
 {
-	switch (s_ptr->sschool)
+	switch (s_ptr->skill1)
 	{
 		case SCH_SORCERY:
 		case SCH_NECROMANCY:
 		case SCH_THAUMATURGY:
 		case SCH_CONJURATION:
 		{
-			if (s_ptr->smana > p_ptr->csp)
+			if (s_ptr->mana > p_ptr->csp)
 			{
-				(*chance) += 5 * (s_ptr->smana - p_ptr->csp);
+				(*chance) += 5 * (s_ptr->mana - p_ptr->csp);
 			}
 			return;
 		}
@@ -133,12 +133,12 @@ static void low_mana_check(int *chance, const magic_type *s_ptr)
 static int spell_chance(const magic_type *s_ptr)
 {
 	/* Extract the base spell failure rate */
-	int chance = s_ptr->sfail;
+	int chance = s_ptr->fail;
 	const int stat = spell_stat(s_ptr);
 	const int minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
 	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 3 * (spell_skill(s_ptr) - s_ptr->minskill);
+	chance -= 3 * (spell_skill(s_ptr) - s_ptr->min);
 
 	/* Reduce failure rate by INT/WIS adjustment */
 	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
@@ -164,16 +164,16 @@ static int spell_chance(const magic_type *s_ptr)
 static void gain_spell_exp(magic_type *spell)
 {
 	bool check_mana = FALSE;
-	int min_skill = spell->minskill * 2;
+	int min_skill = spell->min * 2;
 
-	int skill = sschool_to_skill(spell->sschool);
+	int skill = sschool_to_skill(spell->skill1);
 	if (skill_set[skill].value < min_skill + 50)
 	{
 		skill_exp(skill);
 		check_mana = TRUE;
 	}
 
-	skill = stype_to_skill(spell->stype);
+	skill = stype_to_skill(spell->skill2);
 	if (skill >= 0 && skill_set[skill].value < min_skill + 50)
 	{
 		skill_exp(skill);
@@ -330,7 +330,7 @@ static u16b spellcast_energy(int spell_school, int spell)
 	magic_type	*s_ptr = &magic_info[spell_school][spell];
 	const int plev = spell_skill(s_ptr);
 
-	return spell_energy((u16b)plev,(u16b)(s_ptr->minskill));
+	return spell_energy((u16b)plev,(u16b)(s_ptr->min));
 }
 
 /*
@@ -388,7 +388,7 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 		}
 	else if (!(spell_learned[school] & (1L << (spell))))
 		{
-			if (spell_skill(s_ptr)<s_ptr->minskill)
+			if (spell_skill(s_ptr)<s_ptr->min)
 			{
 				 comment = " too hard";
 			}
@@ -402,7 +402,7 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 			comment = " untried";
 		}
 
-	switch(s_ptr->stype)
+	switch(s_ptr->skill2)
 	{
 	case SP_CORPORIS:
 		type = "Co";
@@ -422,8 +422,8 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
-		I2A(i), spell_names[school][spell], /* school, spell */
-		type,s_ptr->minskill*2, s_ptr->smana, spellcast_energy(school, spell), spell_chance(s_ptr), comment);
+		I2A(i), magic_info[school][spell].name, /* school, spell */
+		type,s_ptr->min*2, s_ptr->mana, spellcast_energy(school, spell), spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -445,7 +445,7 @@ static bool spell_okay(int spell, bool known, int school)
     s_ptr = &magic_info[school][spell];
 
 	/* Spell is illegal */
-	if (s_ptr->minskill > spell_skill(s_ptr)) return (FALSE);
+	if (s_ptr->min > spell_skill(s_ptr)) return (FALSE);
 
     /* Spell is forgotten */
     if (spell_forgotten[school] & (1L << spell))
@@ -752,8 +752,8 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 
 			/* Prompt */
 			strnfmt(tmp_val, 78, "%^s %s (%d mana, %d%% fail)? ",
-				prompt, spell_names[school_no][spell%32],
-				s_ptr->smana, spell_chance(s_ptr));
+				prompt, magic_info[school_no][spell%32].name,
+				s_ptr->mana, spell_chance(s_ptr));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -804,7 +804,7 @@ static bool cantrip_okay(int fav)
     s_ptr = &(cantrip_info[fav]);
 
 	/* Cantrip is illegal */
-	if (s_ptr->minskill > plev) return (FALSE);
+	if (s_ptr->min > plev) return (FALSE);
 	return (TRUE);
 }
 
@@ -842,15 +842,15 @@ void print_cantrips(byte *spells, int num, int y, int x)
 
 		comment = info;
 
-		if (s_ptr->minskill > plev)
+		if (s_ptr->min > plev)
 		{
 			comment = " too hard";
 		}
 			
 		/* Dump the favour --(-- */
 		sprintf(out_val, "  %c) %-35s%2d %3d%%%s",
-		I2A(i), cantrip_names[spell], /* spell */
-		s_ptr->minskill*2, spell_chance(s_ptr), comment);
+		I2A(i), cantrip_info[spell].name, /* spell */
+		s_ptr->min*2, spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -1027,7 +1027,7 @@ int get_cantrip(int *sn, int sval)
 
 			/* Prompt */
 			strnfmt(tmp_val, 78, "cast %s (%d%% fail)? ",
-				cantrip_names[spell],
+				cantrip_info[spell].name,
 				spell_chance(s_ptr));
 
 			/* Belay that order */
@@ -1079,7 +1079,7 @@ static bool favour_okay(int fav,  int sphere)
     s_ptr = &(favour_info[sphere][fav]);
 
 	/* Favour is too hard is illegal */
-	if (s_ptr->minskill > plev) return (FALSE);
+	if (s_ptr->min > plev) return (FALSE);
 	return (TRUE);
 }
 
@@ -1268,8 +1268,8 @@ static int get_favour(int *sn, int spirit,int sphere)
 
 			/* Prompt */
 			strnfmt(tmp_val, 78, "%s (%d mana, %d%% fail)? ",
-				favour_names[sphere][spell],
-				s_ptr->smana, spell_chance(s_ptr));
+				favour_info[sphere][spell].name,
+				s_ptr->mana, spell_chance(s_ptr));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -1317,7 +1317,7 @@ static int spirit_energy(int favour_sphere, int spell)
 {
 	int plev = MAX((skill_set[SKILL_SHAMAN].value/2), 1);
 	magic_type *f_ptr = &(favour_info[favour_sphere][spell]);
-	return spell_energy(plev,(u16b)(f_ptr->minskill));
+	return spell_energy(plev,(u16b)(f_ptr->min));
 }
 
 /*
@@ -1360,15 +1360,15 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 
 		comment = info;
 
-		if (s_ptr->minskill > plev)
+		if (s_ptr->min > plev)
 		{
 			comment = " too hard";
 		}
 			
 		/* Dump the favour --(-- */
 		sprintf(out_val, "  %c) %-35s%2d %4d %3d%%%s",
-		I2A(i), favour_names[sphere][spell], /* sphere, spell */
-		s_ptr->minskill*2, spirit_energy(sphere, spell), spell_chance(s_ptr), comment);
+		I2A(i), favour_info[sphere][spell].name, /* sphere, spell */
+		s_ptr->min*2, spirit_energy(sphere, spell), spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -1883,8 +1883,7 @@ void do_cmd_study(void)
 
 	/* Mention the result */
 	msg_format("You have learned the %s of %s.",
-		p, spell_names
-		[spell_school][spell%32]);
+		p, magic_info[spell_school][spell%32].name);
 
 	/* Sound */
 	sound(SOUND_STUDY);
@@ -2386,7 +2385,7 @@ void do_cmd_cast(void)
 	plev = spell_skill(s_ptr);
 
 	/* Verify "dangerous" spells */
-	if (s_ptr->smana > p_ptr->csp)
+	if (s_ptr->mana > p_ptr->csp)
 	{
 		/* Warning */
 		msg_format("You do not have enough mana to %s this %s.",
@@ -3660,19 +3659,19 @@ void do_cmd_cast(void)
 	}
 
 	/* Take some time - a spell of your level takes 100, lower level spells take less */
-	energy_use = spell_energy((u16b)plev,(u16b)(s_ptr->minskill));
+	energy_use = spell_energy((u16b)plev,(u16b)(s_ptr->min));
 
 	/* Sufficient mana */
-	if (s_ptr->smana <= p_ptr->csp)
+	if (s_ptr->mana <= p_ptr->csp)
 	{
 		/* Use some mana */
-		p_ptr->csp -= s_ptr->smana;
+		p_ptr->csp -= s_ptr->mana;
 	}
 
 	/* Over-exert the player */
 	else
 	{
-		int oops = s_ptr->smana - p_ptr->csp;
+		int oops = s_ptr->mana - p_ptr->csp;
 
 		/* No mana left */
 		p_ptr->csp = 0;
@@ -3921,7 +3920,7 @@ void do_cmd_cantrip(void)
     }
 		/* A cantrip was cast */
 		/* Gain experience with hedge skill */
-		if (skill_set[SKILL_HEDGE].value < s_ptr->minskill + 50) {
+		if (skill_set[SKILL_HEDGE].value < s_ptr->min + 50) {
 			skill_exp(SKILL_HEDGE);
 		}
 	}
@@ -3942,7 +3941,7 @@ void do_cmd_cantrip(void)
 			item_break = FALSE;
 		}
 	} else {
-		if (rand_int(1000) < s_ptr->smana) item_break=TRUE;
+		if (rand_int(1000) < s_ptr->mana) item_break=TRUE;
 	}
 
 	if (item_break)
@@ -3972,7 +3971,7 @@ static s32b favour_annoyance(magic_type *f_ptr)
 	s32b annoy;
 
 	/* Base annoyance is taken from the spell */
-	annoy = f_ptr->smana + rand_int(10)+5;
+	annoy = f_ptr->mana + rand_int(10)+5;
 
 	/* decrease based on charisma bonus for studying and skill*/
 	annoy -= (adj_mag_study[p_ptr->stat_ind[A_CHR]] * (skill_set[SKILL_SHAMAN].value/20));
@@ -4036,11 +4035,11 @@ static int spirit_punish(spirit_type *s_ptr, magic_type *f_ptr)
 	if (cheat_peek)
 	{
 		msg_format("Roll: %ld. Need %d for summon, %d for abandonment.",
-			i, f_ptr->minskill * 1000, f_ptr->minskill * f_ptr->minskill);
+			i, f_ptr->min * 1000, f_ptr->min * f_ptr->min);
 	}
 
  	/* Abandonment. up to 2% chance for a level 45 favour. */
-	if (i < f_ptr->minskill * f_ptr->minskill)
+	if (i < f_ptr->min * f_ptr->min)
 	{
 		msg_format("%s disowns you!", s_ptr->name);
 
@@ -4054,7 +4053,7 @@ static int spirit_punish(spirit_type *s_ptr, magic_type *f_ptr)
 	}
 
 	/* Summoning, up to 43% chance for a level 45 favour. */
-	if (i < f_ptr->minskill * 1000)
+	if (i < f_ptr->min * 1000)
 	{
 		/* Choose an appropriate summon type most of the time. */
 		int j, type = (!rand_int(3)) ? 0 : (s_ptr->sphere == SPIRIT_NATURE) ?
@@ -4490,7 +4489,7 @@ void do_cmd_invoke(void)
 		  msg_print(NULL);
 	    }
 		/* Gain experience with spirit lore skill */
-		if (skill_set[SKILL_SHAMAN].value < f_ptr->minskill * 2 + 50) {
+		if (skill_set[SKILL_SHAMAN].value < f_ptr->min * 2 + 50) {
 			skill_exp(SKILL_SHAMAN);
 		}
 	}

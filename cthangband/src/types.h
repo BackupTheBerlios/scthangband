@@ -846,28 +846,15 @@ typedef struct magic_type magic_type;
 
 struct magic_type
 {
-	byte minskill;		/* Required skill (to learn) */
-	byte smana;			/* Required mana (to cast) */
-	byte sfail;			/* Minimum chance of failure */
-	byte sexp;			/* Encoded experience bonus */
-	byte sschool;        /* School of spell */
-	byte stype;         /* Type of spell */
-};
-
-typedef struct favour_type favour_type;
-struct favour_type
-{
-	byte minskill; /* Required skill to persuade */
-	byte annoy_inc; /* Annoyance increase for spirit */
-	byte sfail; /* Base chance of refusal */
-};
-
-typedef struct cantrip_type cantrip_type;
-struct cantrip_type
-{
-	byte minskill; /* Required skill to cast */
-	byte mana; /* Mana cost */
-	byte sfail; /* Base chance of failure */
+	cptr name;	/* Name listed in spell book, etc. */
+	cptr desc;	/* Information about the spell. */
+	byte min;	/* Required skill (to learn) */
+	byte mana;	/* Required mana (to cast) */
+	byte fail;	/* Minimum chance of failure */
+	byte exp;	/* Encoded experience bonus */
+	byte skill1;	/* School of spell */
+	byte skill2;	/* Type of spell (or NONE) */
+	s16b power; /* The index of the spell effect. */
 };
 
 
@@ -884,20 +871,6 @@ struct window_type
 	byte current; /* Current display for this window */
 	u32b mask;
 };
-
-/*
- * Information about the player's "magic"
- */
-
-typedef struct player_magic player_magic;
-
-struct player_magic
-{
-	s16b spell_weight;		/* Weight that hurts spells */
-    magic_type info[MAX_SCHOOL][32];    /* The available spells */
-};
-
-
 
 /*
  * Player sex info

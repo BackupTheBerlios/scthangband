@@ -2114,15 +2114,15 @@ extern u32b spell_flags[4];
 #if (defined(CMD5_C) || defined(OBJECT2_C) || defined(TABLES_C))
 extern u32b cantrip_flags[7];
 #endif
-#if (defined(CMD5_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern cptr spell_names[MAX_SCHOOL][32];
-#endif
-#if (defined(CMD5_C) || defined(TABLES_C))
-extern cptr cantrip_names[32];
-#endif
-#if (defined(CMD5_C) || defined(TABLES_C))
-extern cptr favour_names[MAX_SPHERE][32];
-#endif
+
+
+
+
+
+
+
+
+
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern  player_skill skill_set[MAX_SKILLS];
 #endif
