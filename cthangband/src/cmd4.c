@@ -103,7 +103,7 @@ void do_cmd_change_name(void)
 
 	int		mode = 0;
 
-	char	tmp[160];
+	char tmp[80];
 
 
 	/* Enter "icky" mode */
@@ -115,18 +115,15 @@ void do_cmd_change_name(void)
 	/* Forever */
 	while (1)
 	{
+		cptr name = (mode < 2) ? "'c' to change name, " : "";
+		cptr help = (mode == 2) ? "'?' for help, " : "";
+
 		/* Display the player */
 		display_player(mode);
 
-		if (mode == 7)
-	{
-			mode = 0;
-			display_player(mode);
-		}
-
 		/* Prompt */
-		Term_putstr(2, 23, -1, TERM_WHITE,
-			"['c' to change name, 'f' to file, 'h' to change mode, or ESC]");
+		mc_put_fmt(23, 2, "[%s'f' to file, 'h' to change mode, %sor ESC]",
+			name, help);
 
 		/* Query */
 		c = inkey();
@@ -135,19 +132,19 @@ void do_cmd_change_name(void)
 		if (c == ESCAPE) break;
 
 		/* Change name */
-		if (c == 'c')
+		else if (c == 'c' && *name)
 		{
 			get_name();
-	}
+		}
 
 		/* File dump */
 		else if (c == 'f')
 		{
-			sprintf(tmp, "%s.txt", player_base);
+			sprintf(tmp, "%.75s.txt", player_base);
 			if (get_string("File name: ", tmp, 80))
-	{
+			{
 				if (tmp[0] && (tmp[0] != ' '))
-		{
+				{
 					file_character(tmp);
 				}
 			}
@@ -157,12 +154,19 @@ void do_cmd_change_name(void)
 		else if (c == 'h')
 		{
 			mode++;
+			mode %= 7;
+		}
+
+		else if (c == '?' && *help)
+		{
+			sprintf(tmp, "cmd=C%d", mode);
+			show_link(tmp);
 		}
 
 		/* Oops */
 		else
-			{
-			bell(0);
+		{
+			bell("Invalid keypress");
 		}
 
 		/* Flush messages */
