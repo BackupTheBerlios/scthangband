@@ -511,14 +511,20 @@ void search(void)
  */
 static char get_check_ynq(cptr prompt)
 {
-	/* Enforce a single-line prompt. */
-	int i = Term->wid-strlen("[y/n/q] ");
+	/* There can be Term->wid characters in the prompt, and 4 in the
+	 * ascii_to_text() output. */
+	C_TNEW(tmp, Term->wid+5, char);
+
+	char i;
+
+	/* Create a single-line prompt. */
+	sprintf(tmp, "%.*s[y/n/q] ", Term->wid-(int)strlen("[y/n/q] "), prompt);
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
 	/* Hack -- display a "useful" prompt */
-	prt(format("%.*s[y/n/q] ", i, prompt), 0, 0);
+	prt(tmp, 0, 0);
 
 	/* Help */
 	help_track("ynq_prompt");
@@ -539,9 +545,14 @@ static char get_check_ynq(cptr prompt)
 	/* Erase the prompt */
 	prt("", 0, 0);
 
+	/* Find a printable version of the answer. */
+	ascii_to_text(strchr(tmp, '\0'), format("%c", i));
+
 	/* Leave a record */
-	message_add(format("%.70s[y/n] %c", prompt, i));
+	message_add(tmp);
 	
+	TFREE(tmp);
+
 	/* Return output (default to no). */
 	switch (i)
 	{
@@ -549,9 +560,6 @@ static char get_check_ynq(cptr prompt)
 		case 'q': case 'Q': return 'q';
 		case 'n': case 'N': default: return 'n';
 	}
-		
-	/* Tell the calling routine */
-	return (char)i;
 }
 
 
@@ -640,9 +648,8 @@ void carry(int pickup)
 				/* Hack -- query every item */
 				if (carry_query_flag && !strstr(quark_str(o_ptr->note), "=g"))
 				{
-					char out_val[160], c;
-					sprintf(out_val, "Pick up %s? ", o_name);
-					c = get_check_ynq(out_val);
+					char c;
+					c = get_check_ynq(format("Pick up %s? ", o_name));
 
 					/* Pick up this object. */
 					okay = (c == 'y');

@@ -1281,160 +1281,128 @@ void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max)
 	c_put_str(attr, temp, y, maxx-strlen(temp));
 }
 
-/*
- * Calculate the number of blows and the damage done by a given weapon using
- * a specified slay multiplier, together with the to-hit and to-damage bonuses
- * of the weapon.
- */
-void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s32b *damage)
+static void choose_ammunition(object_type *wp_ptr, object_type **am_ptr)
 {
-	s16b i, power, damsides, damdice, dicedam;
+	object_type *o_ptr;
+	int i;
+	byte tval = ammunition_type(wp_ptr);
+
+	/* Use missiles from inventory if appropriate. */
+	for (o_ptr = inventory; o_ptr <= inventory+INVEN_PACK; o_ptr++)
+	{
+		if (tval && (o_ptr->tval != tval)) continue;
+		if (!strstr(quark_str(o_ptr->note), "@ff")) continue;
+		(*am_ptr) = o_ptr;
+		return;
+	}
+
+	/* Use a (+0,+0) missile with the appropriate tval. */
+	for (i = 0; i < MAX_K_IDX; i++)
+	{
+		if (k_info[i].tval != tval) continue;
+		object_prep(*am_ptr, i);
+		return;
+	}
+	/* Use nothing if no suitable missiles are available. */
+	object_wipe(*am_ptr);
+	return;
+}
+
+static void choose_bow(object_type *am_ptr, object_type **wp_ptr)
+{
+	object_type *o_ptr;
+	byte sval;
+
+	/* Use a launcher from inventory if appropriate and marked. */
+	for (o_ptr = inventory; o_ptr <= inventory+INVEN_PACK; o_ptr++)
+	{
+		if (!strstr(quark_str(o_ptr->note), "@ff")) continue;
+		if (ammunition_type(o_ptr) != am_ptr->tval) continue;
+		*wp_ptr = o_ptr;
+		return;
+	}
+
+	/* Hack - use an unmarked equipped launcher if appropriate. */
+	if (ammunition_type(inventory+INVEN_BOW) == am_ptr->tval)
+	{
+		*wp_ptr = inventory+INVEN_BOW;
+		return;
+	}
+
+	/* Find an appropriate bow. */
+	sval = launcher_type(am_ptr);
+
+	/* No launcher. */
+	if (sval == SV_UNKNOWN)
+	{
+		object_wipe(*wp_ptr);
+		return;
+	}
+	else
+	{
+		object_prep(*wp_ptr, lookup_kind(TV_BOW, sval));
+		return;
+	}
+}
+
+/*
+ * Given an object to be scrutinised, find a weapon and some ammunition (if
+ * appropriate) to use it.
+ * 
+ * *wp_ptr and *am_ptr will eventually refer to the weapon and ammunition
+ * to be used, but should initially point to blank object_types.
+ */
+static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
+	object_type **am_ptr)
+{
 	s16b slot = wield_slot(o_ptr);
 
-	/* wp_ptr and am_ptr point to the weapon and (where appropriate) ammunition
-	 * being considered. wp and am are temporary representations of these, which
-	 * differ in one crucial respect: am is discarded at the end, but the contents
-	 * of wp is copied to wp_ptr. */
-	object_type wp, am, *wp_ptr, *am_ptr;
+	/* Is o_ptr equipped? */
+	if (o_ptr == inventory+INVEN_WIELD || o_ptr == inventory+INVEN_BOW)
+	{
+		slot = o_ptr-inventory;
+	}
 
-	/* A backup copy of p_ptr for if the original is changed. This is because
-	 * there is no way to find out what would happen if a change was made
-	 * without of actually making that change.
-	 * It assumes that p_ptr contains everything update_stuff affects. */
-	player_type p2_body, *p2_ptr = &p2_body;
-	p2_ptr->psex = MAX_SEXES;
-
-	/* Initialise everything. */
-	(*tohit) = (*todam) = (*weap_blow) = (*mut_blow) = (*damage) = 0;
-
-	/* Find out which weapon and ammunition we should use. */
+	/* Set the weapon and ammunition pointers. */
 	switch (slot)
 	{
-		case INVEN_WIELD: /* Melee weapons */
-		wp_ptr = &inventory[INVEN_WIELD];
-		am_ptr = 0;
-		break;
-		case INVEN_BOW: /* Missile weapons */
-		wp_ptr = &inventory[INVEN_BOW];
-		am_ptr = 0;
-		break;
-		case INVEN_NONE: /* Either a missile or an empty slot. */
-		if (o_ptr == &inventory[INVEN_WIELD]) /* Calculate martial arts (inaccurately) */
+		case INVEN_WIELD:
 		{
-			wp_ptr = &inventory[INVEN_WIELD];
-			am_ptr = 0;
-			slot = INVEN_WIELD;
+			(*wp_ptr) = o_ptr;
+			object_wipe(*am_ptr);
 			break;
 		}
-		/* A missing bow */
-		else if (o_ptr == &inventory[INVEN_BOW])
-		{
-			wp_ptr = o_ptr;
-			am_ptr = 0;
-			slot = INVEN_BOW;
-			break;
-		}
-		/* else fall through */
-		default: /* Missiles */
-		wp_ptr = 0;
-		am_ptr = o_ptr;
-		break;
-	}
-	/* Wield the weapon, if known. */
-	if (wp_ptr)
-	{
-		object_copy(&wp, wp_ptr);
-		object_copy(wp_ptr, o_ptr);
-		if (p2_ptr->psex == MAX_SEXES) COPY(p2_ptr, p_ptr, player_type);
-		p_ptr->update |= PU_BONUS | PU_QUIET;
-		update_stuff();
-	}
-	/* Find an appropriate bow for ammunition, and vice versa. */
-	switch (slot)
-	{
 		case INVEN_BOW:
-		/* Use missiles from inventory if appropriate. */
-		for (i = 0; i <= INVEN_PACK; i++)
 		{
-			object_type *j_ptr = &inventory[i];
-			if (p_ptr->tval_ammo && (j_ptr->tval != p_ptr->tval_ammo)) continue;
-			if (!strstr(quark_str(j_ptr->note), "@ff")) continue;
-			am_ptr = j_ptr;
+			(*wp_ptr) = o_ptr;
+			choose_ammunition(o_ptr, am_ptr);
 			break;
 		}
-		if (am_ptr) break;
-
-		/* Use a (+0,+0) missile with the appropriate tval. */
-		for (i = 0; i < MAX_K_IDX; i++)
-		{
-			if (k_info[i].tval != p_ptr->tval_ammo) continue;
-			object_prep(&am, i);
-			am_ptr = &am;
-			break;
-		}
-		if (am_ptr) break;
-		/* Use a null object if this is a missile weapon in name only. */
-		object_wipe(&am);
-		am_ptr = &am;
-		break;
-		case INVEN_WIELD: /* Melee weapons work alone, but give an empty missile type for convenience. */
-		object_wipe(&am);
-		am_ptr = &am;
+		/* This is a missile, so wp_ptr is expected to be a bow. */
 		default:
-		/* First put the existing bow (if any) in a safe place. */
-
-		/* Use an inscribed bow from inventory by preference. */
-		if (!wp_ptr)
 		{
-			for (i = 0; i <= INVEN_PACK; i++)
-			{
-				if (!strstr(quark_str(inventory[i].note), "@ff")) continue;
-				if (ammunition_type(&inventory[i]) != o_ptr->tval) continue;
-				wp_ptr = &inventory[INVEN_BOW];
-				object_copy(&wp, wp_ptr);
-				object_copy(wp_ptr, &inventory[i]);
-				break;
-			}
-		}		
-
-		/* If not, use the wielded bow if of an appropriate type. */
-		if (!wp_ptr && p_ptr->tval_ammo == o_ptr->tval)
-		{
-			wp_ptr = &inventory[INVEN_BOW];
-			object_copy(&wp, wp_ptr);
+			(*am_ptr) = o_ptr;
+			choose_bow(o_ptr, wp_ptr);
+			return INVEN_BOW;
 		}
-
-
-		/* Find the first type of bow which matches. We assume that this is a normal type of bow. */
-		if (!wp_ptr)
-		{
-			object_type *j_ptr = &inventory[INVEN_BOW];
-			object_copy(&wp, j_ptr);
-			object_wipe(j_ptr);
-			for (i = 0; i < 256; i++)
-			{
-				if (!lookup_kind(TV_BOW, i)) continue;
-				object_prep(j_ptr, lookup_kind(TV_BOW, i));
-				if (ammunition_type(j_ptr) != o_ptr->tval) continue;
-				wp_ptr = &inventory[INVEN_BOW];
-				break;
-			}
-		}
-		/* We're not dealing with a normal missile. */
-		if (!wp_ptr)
-		{
-			wp_ptr = &inventory[INVEN_BOW];
-			object_wipe(wp_ptr);
-		}
-		if (p2_ptr->psex == MAX_SEXES) COPY(p2_ptr, p_ptr, player_type);
-		p_ptr->update |= PU_BONUS | PU_QUIET;
-		update_stuff();
-		break;
 	}
+	return slot;
+}
 
 	/* Now that's done, we do some statistical stuff.
 	 * We want to know the to-hit bonus, the damage bonus, the number of blows
 	 * per turn and the average damage per turn. */
+static void weapon_stats_calc(object_type *wp_ptr, object_type *am_ptr,
+	int slot, int slay, s16b *tohit, s16b *todam, s16b *weap_blow,
+	s16b *mut_blow, s32b *damage)
+{
+	int power, damsides, damdice, dicedam;
+
+	/* Start at 0. */
+	(*tohit) = (*todam) = (*weap_blow) = (*mut_blow) = (*damage) = 0;
+
+	/* Hack - bows without arrows can neither hit nor damage */
+	if (slot == INVEN_BOW && !am_ptr->k_idx) return;
 
 	/* Weapons use the intrinsic damage bonus */
 	if (slot == INVEN_WIELD) (*todam) = p_ptr->dis_to_d;
@@ -1444,17 +1412,19 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	(*tohit) = p_ptr->dis_to_h;
 
 	/* Add in the weapons' bonuses */
-	if (object_known_p(wp_ptr)) (*tohit) += wp_ptr->to_h;
-	if (object_known_p(wp_ptr)) (*todam) += wp_ptr->to_d;
+	(*tohit) += wp_ptr->to_h;
+	(*todam) += wp_ptr->to_d;
 
-	if (object_known_p(am_ptr)) (*tohit) += am_ptr->to_h;
-	if (object_known_p(am_ptr)) (*todam) += am_ptr->to_d;
+	(*tohit) += am_ptr->to_h;
+	(*todam) += am_ptr->to_d;
 
-	/* Calculate the power and number of blows */
+	/* Calculate the power, number of blows, sides and dice. */
 	if (slot == INVEN_WIELD)
 	{
 		power = 1;
 		(*weap_blow) = p_ptr->num_blow;
+		damsides = wp_ptr->ds;
+		damdice = wp_ptr->dd;
 	}
 	else
 	{
@@ -1471,33 +1441,12 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 		if (f3 & (TR3_XTRA_MIGHT)) power++;
 
 		(*weap_blow) = p_ptr->num_fire;
-	}
 
-	/* Then add the weapon's dice damage, if known. */
-	if (!object_aware_p(o_ptr))
-	{
-		damsides = damdice = 0;
-	}
-	else if (slot == INVEN_WIELD)
-	{
-		damsides = wp_ptr->ds;
-		damdice = wp_ptr->dd;
-	}
-	else
-	{
 		damsides = am_ptr->ds;
 		damdice = am_ptr->dd;
 	}
 	
-	/* Calculate damage from dice, if any. */
-	if (damsides && damdice)
-	{
-		dicedam = 60*damdice*(1+damsides)/2;
-	}
-	else
-	{
-		dicedam = 0;
-	}
+	dicedam = 60*damdice*(1+damsides)/2;
 
 	/* Calculate the damage bonus. */
 	(*damage) += 60*(*todam);
@@ -1521,7 +1470,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 
 		/* Not VORPAL, so do nothing. */
 		if (~f1 & TR1_VORPAL);
-		/* Hack - Vorpal Blade has a different formula. */
+		/* Hack - Vorpal Blade is more powerful. */
 		else if (wp_ptr->name1 == ART_VORPAL_BLADE)
 		{
 			(*damage) = (*damage) * 4 / 3;
@@ -1535,16 +1484,13 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 
 	/* BUG - this considers negative rolls. */
 	(*damage) = MAX((*damage), 0);
-	
+
 	/* Round blows/turn up according to the energy used. 
 	 * Hack - do not round mutated blows here, although they are rounded. */
 	(*weap_blow) = TURN_ENERGY*60/(TURN_ENERGY*60/(*weap_blow));
 
 	/* Consider the number of blows and bow multiplier. */
 	(*damage) = (*damage)*power*(*weap_blow)/60;
-
-	/* Hack - bows without arrows can neither hit nor damage */
-	if (slot == INVEN_BOW && !am_ptr->k_idx) (*tohit) = (*todam) = (*weap_blow) = (*damage) = 0;
 
 	/* Finally, add the mutated attacks. The numbers are based on those in
 	 * natural_attack(), which appear to differ from the ones in dump_chaos_feature(). */
@@ -1576,20 +1522,54 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 			(*damage) += 60*5*(1+2)/2;
 		}
 	}
+}
+
+/*
+ * Calculate the number of blows and the damage done by a given weapon using
+ * a specified slay multiplier, together with the to-hit and to-damage bonuses
+ * of the weapon.
+ */
+void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s32b *damage)
+{
+	/* wp_ptr and am_ptr point to the weapon and (where appropriate) ammunition
+	 * being considered. wp and am are temporary representations of these, which
+	 * differ in one crucial respect: am is discarded at the end, but the contents
+	 * of wp is copied to wp_ptr. */
+	object_type wp, am, old, *wp_ptr = &wp, *am_ptr = &am;
+
+	/* A backup copy of p_ptr for if the original is changed. This is because
+	 * there is no way to find out what would happen if a change was made
+	 * without of actually making that change.
+	 * It assumes that p_ptr contains everything update_stuff affects. */
+	player_type p2_body, *p2_ptr = &p2_body;
+
+	/* Find a weapon and missile to use o_ptr, and set slot to
+	 * wield_slot(wp_ptr), treating non-weapons specially. */
+	int slot = choose_weapon(o_ptr, &wp_ptr, &am_ptr);
+
+	/* Wield the weapon, make a copy of the real stats and use the stats for
+	 * the weapon. */
+	object_copy(&old, inventory+slot);
+	if (wp_ptr != inventory+slot) object_copy(inventory+slot, wp_ptr);
+
+	COPY(p2_ptr, p_ptr, player_type);
+	p_ptr->update |= PU_BONUS | PU_QUIET;
+	update_stuff();
+
+	/* Actually calculate everything. */
+	weapon_stats_calc(wp_ptr, am_ptr, slot, slay, tohit, todam, weap_blow,
+		mut_blow, damage);
 
 	/* Now that's done, we need only replace the standard weapon. */
-	object_copy(wp_ptr, &wp);
+	object_copy(inventory+slot, &old);
 
-	if (p2_ptr->psex != MAX_SEXES)
-	{
-		/* Re-run calc_bonuses() to ensure that everything not in p2_ptr is
-		 * correct. */
-		p_ptr->update |= PU_BONUS | PU_QUIET;
-		update_stuff();
+	/* Re-run calc_bonuses() to ensure that everything not in p2_ptr is
+	 * correct. */
+	p_ptr->update |= PU_BONUS | PU_QUIET;
+	update_stuff();
 
-		/* Return p_ptr to its original state if needed. */
-		COPY(p_ptr, p2_ptr, player_type);
-	}
+	/* Return p_ptr to its original state if needed. */
+	COPY(p_ptr, p2_ptr, player_type);
 }
 
 /*
@@ -1610,9 +1590,11 @@ static void display_player_sides(bool missile)
 	/* The last column of the numbers. See prt_num() */
 	const int col = 1+strlen("+ To Damage ")+3+6;
 
-	object_type *o_ptr = &inventory[(missile) ? INVEN_BOW : INVEN_WIELD];
+	object_type j_ptr[1], *o_ptr = &inventory[(missile) ? INVEN_BOW : INVEN_WIELD];
 
-	weapon_stats(o_ptr, 1, &show_tohit, &show_todam, &weap_blow, &mut_blow, &damage);
+	object_info_known(j_ptr, o_ptr, 0);
+
+	weapon_stats(j_ptr, 1, &show_tohit, &show_todam, &weap_blow, &mut_blow, &damage);
 
 	put_str((missile) ? "Missile" : "Melee", 9, 3);
 

@@ -462,7 +462,7 @@ extern errr check_load_init(void);
 extern void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
-extern void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s32b *damage);
+extern void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s32b *damage);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern void print_equippy(void);
@@ -1384,7 +1384,7 @@ extern void reset_visuals(void);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
+#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
 extern void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
@@ -2302,7 +2302,7 @@ extern void move_cursor(int row, int col);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern void text_to_ascii(char *buf, cptr str);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C))
+#if (defined(CMD1_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C))
 extern void ascii_to_text(char *buf, cptr str);
 #endif
 #if (defined(CMD4_C) || defined(MAIN_GTK_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
@@ -3951,5 +3951,11 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
+#endif
+
+/* object1.c */
+
+#if (defined(FILES_C) || defined(OBJECT1_C))
+extern byte launcher_type(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

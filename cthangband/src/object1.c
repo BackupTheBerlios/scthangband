@@ -3204,7 +3204,7 @@ static bool brief = FALSE;
 /*
  * Find the sval of a launcher which can fire a given missile.
  */
-static int launcher_type(object_type *o_ptr)
+byte launcher_type(object_type *o_ptr)
 {
 	tval_ammo_type *tv_ptr;
 
@@ -3215,7 +3215,7 @@ static int launcher_type(object_type *o_ptr)
 	}
 
 	/* Nothing */
-	return (-1);
+	return SV_UNKNOWN;
 }
 
 /* A wrapper around list_flags() for identify_fully_get(), provided for
@@ -3436,7 +3436,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 
 		/* Give the damage a weapon does, excluding throwing weapons in brief mode. */
 		if (!brief || (wield_slot(o_ptr) == INVEN_WIELD) ||
-			(wield_slot(o_ptr) == INVEN_BOW) || (launcher_type(o_ptr) != -1))
+			(wield_slot(o_ptr) == INVEN_BOW) || (launcher_type(o_ptr) != SV_UNKNOWN))
 		{
 			weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			j = 0;
