@@ -3652,7 +3652,7 @@ static bool is_room_func_p(int y, int x)
 	/* Hack - assume that ineligible non-floor squares are excluded elsewhere. */
 	if (!cave_floor_bold(y,x)) return TRUE;
 
-	for (i = adj = 0; i < sizeof(xs); i++)
+	for (i = adj = 0; i < N_ELEMENTS(xs); i++)
 	{
 		if (i == 5 || !cave_floor_bold(y+ys[i], x+xs[i]))
 		{
@@ -3677,7 +3677,7 @@ static bool is_isolated_room_p(int y, int x)
 	int ys[] = { 0, 1, 1, 1, 0,-1,-1, 0};
 	uint i;
 
-	for (i = 0; i < sizeof(xs); i++)
+	for (i = 0; i < N_ELEMENTS(xs); i++)
 	{
 		if (is_room_p(y+ys[i], x+xs[i])) return FALSE;
 	}
