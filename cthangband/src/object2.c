@@ -1343,6 +1343,9 @@ static s32b PURE object_value_aux(object_ctype *o_ptr)
  * If full is set, the object should be valued as if it was fully known.
  * It also represents the difference between the value of an object as it is
  * and its value as the player sees it.
+ *
+ * o1_ptr should be the real object, as the game can only find the u_idx from
+ * the k_idx.
  */
 s32b PURE object_value(object_ctype *o1_ptr, bool full)
 {

@@ -1461,12 +1461,12 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 			s32b value;
 			bool worthless;
 
-			value = object_value(o_ptr, FALSE);
+			value = object_value(o1_ptr, FALSE);
 			worthless = !value;
-			if (worthless && cursed_p(o_ptr))
+			if (worthless && cursed_p(o1_ptr))
 			{
 				object_type j_ptr[1];
-				object_copy(j_ptr, o_ptr);
+				object_copy(j_ptr, o1_ptr);
 
 				j_ptr->ident &= ~(IDENT_CURSED);
 				j_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
