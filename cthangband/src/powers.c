@@ -6389,7 +6389,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			int x,y;
 
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			y = py + ddy[dir];
 			x = px + ddx[dir];
 			if (cave[y][x].m_idx)
@@ -6429,7 +6429,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			monster_type *m_ptr;
 			monster_race *r_ptr;
 
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			y = py + ddy[dir];
 			x = px + ddx[dir];
 			c_ptr = &cave[y][x];
@@ -6458,7 +6458,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			int x,y;
 			cave_type *c_ptr;
 
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			y = py + ddy[dir];
 			x = px + ddx[dir];
 			c_ptr = &cave[y][x];

@@ -15,6 +15,7 @@ sCthangband _CVS_
   * Gaining a chaos power opposed to another not possessed gave an odd message.
   * Tried unaware objects never gained an inscription.
   * spoil_value always gave a value of 1 for unaware objects.
+  * A few chaos powers allowed a target, but only understood directions.
 
 sCthangband 1.0.13
 * Monsters do not recover from fear if they have too few HP to survive one of
