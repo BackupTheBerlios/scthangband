@@ -73,7 +73,10 @@ OBJS = \
 # This is my compiler of choice, it seems to work most everywhere
 #
 CC = gcc
-STD_CFLAGS = $(GCC_CFLAGS)
+
+# One possible set of CFLAGS/LIBS. Modify as desired.
+CFLAGS = $(GCC_CFLAGS) $(X11_CFLAGS) $(GCU_CFLAGS) $(GTK_CFLAGS)
+LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
 
 #
 # Standard version (see main-x11.c, main-gtk.c and main-gcu.c)
@@ -146,10 +149,6 @@ CAP_LIBS = -ltermcap
 # (Untested) OSX/gcc port.
 OSX_CFLAGS = -D"MACH_O_CARBON"
 OSX_LIBS = -framework CoreFoundation -framework QuickTime -framework Carbon
-
-# One possible set of CFLAGS/LIBS. Add/remove matching pairs as desired.
-CFLAGS = $(STD_CFLAGS) $(X11_CFLAGS) $(GCU_CFLAGS) $(GTK_CFLAGS)
-LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
 
 
 
