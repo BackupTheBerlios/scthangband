@@ -853,7 +853,7 @@ void take_hit(int damage, cptr hit_from, int monster)
 		sound(SOUND_WARN);
 
 		/* Message */
-		msg_print("*** LOW HITPOINT WARNING! ***");
+		msg_print("$r*** LOW HITPOINT WARNING! ***");
 		msg_print(NULL);
 	}
 	if (damage > (old_chp/20))

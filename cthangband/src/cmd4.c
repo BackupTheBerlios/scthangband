@@ -191,7 +191,7 @@ void do_cmd_change_name(void)
 void do_cmd_message_one(void)
 {
 	/* Recall one message XXX XXX XXX */
-	prt(format("> %s", message_str(0)), 0, 0);
+	mc_put_fmt(0, 0, "> %s", message_str(0));
 }
 
 

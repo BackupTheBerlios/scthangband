@@ -2498,7 +2498,7 @@ void msg_print(cptr msg)
 		t[split] = '\0';
 
 		/* Display part of the message */
-		mc_put_fmt(0, 0, "$!%.*s", split, t);
+		mc_put_fmt(0, 0, "%.*s", split, t);
 
 		/* Flush it */
 		msg_flush(split + 1);
@@ -2518,7 +2518,7 @@ void msg_print(cptr msg)
 
 
 	/* Display the tail of the message */
-	mc_put_fmt(0, p, "$!%s", t);
+	mc_put_fmt(0, p, "%s", t);
 
 	/* Memorize the tail */
 	/* if (character_generated) message_add(t); */
