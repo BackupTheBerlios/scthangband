@@ -152,6 +152,7 @@ static void use_stairs(bool deeper, byte stairs)
 			recall_dungeon = cur_dungeon;
 			wildx=dun_defs[cur_dungeon].x;
 			wildy=dun_defs[cur_dungeon].y;
+			cur_town = cur_dungeon;
 		}
 	}
 }

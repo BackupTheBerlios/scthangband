@@ -3113,12 +3113,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case ACT_RECALL+PO_ACTIVATION:
 		{
-			if (dun_level && (p_ptr->max_dlv > dun_level) && (recall_dungeon == cur_dungeon))
-			{
-				if (get_check("Reset recall depth? "))
-				p_ptr->max_dlv = dun_level;
-			}
-
 			msg_print("It glows soft white...");
 			set_recall(FALSE);
 			return SUCCESS;
@@ -3697,7 +3691,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_GNORRI+PO_NAME1:
 			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				msg_print("Your trident glows deep red...");
 				teleport_monster(dir);
 				return SUCCESS;
@@ -3705,13 +3699,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_GHARNE+PO_NAME1:
 			{
-                if (dun_level && (p_ptr->max_dlv > dun_level) && (recall_dungeon == cur_dungeon))
-                {
-                    if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv = dun_level;
-
-                }
-                
 				msg_print("Your scythe glows soft white...");
 				set_recall(FALSE);
 				return SUCCESS;
@@ -3727,7 +3714,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_FIRESTAR+PO_NAME1:
 			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				msg_print("Your morning star rages in fire...");
 				fire_ball(GF_FIRE, dir, 72, 3);
 				return SUCCESS;
