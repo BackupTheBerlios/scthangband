@@ -136,7 +136,7 @@ To cast a spell, you must have previously learned the spell and must have in you
 $GCall on a spirit (p)
 To call on a spirit, you must have previously made a ritual pact with one in a temple. Each favour has a chance of failure which decreases as you gain levels. Calling on spirits is not possible if they are still irritated after a previous attempt. Since calling on a spirit requires concentration, you must not be confused while doing so. See shaman.txt for more details. This command takes some energy.
 
-%%%%% <cmd=P>
+%%%%%
 $GUse a mindcrafting power (P)
 There are no special prerequisites for mindcraft. Each power has a chance of failure which decreases as you gain levels. If you don't have enough chi to use a power, you will be prompted for confirmation. If you decide to go ahead, the chance of failure is greatly increased. Since mindcraft requires concentration, you must not be confused while doing so. See mindcrft.txt for more details. This command takes some energy.
 
