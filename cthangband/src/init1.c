@@ -3022,7 +3022,7 @@ errr parse_q_list(char *buf, header *head, vptr *extra)
 
 			/* Set everything. */
 			q_ptr->r_idx = mon;
-			q_ptr->level = lev;
+			q_ptr->level = lev - ptr->offset;
 			q_ptr->dungeon = n;
 			q_ptr->max_num = num;
 			q_ptr->known = TRUE; /* Fixed quests are known from the start. */
