@@ -1052,27 +1052,55 @@ static void win_overhead_display(void)
 }
 
 
+#define STORE_NONE 99
+
 /*
  * PW_SHOPS is interesting if the player is in a town with shops.
  */
 static bool win_shops_good(void)
 {
-	if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS && !dun_level)
-		{
-		return shops_good(cur_town);
-	}
-	else
+	/* In a town with space allocated for shops. */
+	if ((wild_grid[wildy][wildx].dungeon < MAX_TOWNS) &&
+	!dun_level && town_defs[cur_town].numstores)
 	{
+	 	town_type *t_ptr = &town_defs[cur_town];
+		int i;
+ 		for (i = 0; i < t_ptr->numstores; i++)
+		{
+			/* Found a real store */
+			if (t_ptr->store[i] != STORE_NONE) return TRUE;
+		}
+	}
 	return FALSE;
-}
 }
 
 /*
  * Give a list of shops in the current town.
  */
-void win_shops_display(void)
+static void win_shops_display(void)
+{
+	const int offset = MAX_STORES_PER_TOWN*cur_town;
+	int i,j;
+	town_type *t_ptr = &town_defs[cur_town];
+	Term_putstr(0,0, Term->wid, TERM_WHITE,
+		format("List of shops in %s",
+			dun_defs[wild_grid[wildy][wildx].dungeon].shortname));
+
+	for (i = 0, j = 1; i < t_ptr->numstores; i++)
 	{
-	shops_display(cur_town);
+		feature_type *f_ptr;
+
+		/* Only count real stores */
+		if (t_ptr->store[i] == STORE_NONE) continue;
+ 
+ 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
+ 
+		/* Display the name of the store. */
+		Term_putstr(0, ++j, Term->wid, TERM_WHITE, store_title(i+offset));
+
+		/* Put the character used at the top. */
+		Term_putch(0, j, f_ptr->x_attr, f_ptr->x_char);
+	}
 }
 
 

@@ -3755,117 +3755,6 @@ void do_cmd_knowledge_chaos_features(void)
 }
 
 
-#define STORE_NONE 99
-
-/*
- * Notice if a given town has any real shops.
- */
-bool shops_good(int town)
-{
-	/* The current town has space allocated for shops. */
-	if (town_defs[town].numstores)
-	{
-	 	town_type *t_ptr = &town_defs[town];
-		int i;
- 		for (i = 0; i < t_ptr->numstores; i++)
-		{
-			/* Found a real store */
-			if (t_ptr->store[i] != STORE_NONE) return TRUE;
-		}
-	}
-	return FALSE;
-}
-
-/*
- * Displays a list of the shops in a given town.
- */
-void shops_display(int town)
-{
-	const int offset = MAX_STORES_PER_TOWN*town;
-	int i,j;
-	town_type *t_ptr = &town_defs[town];
-
-	/* Paranoia (?) - no town */
-	if (town >= MAX_TOWNS)
-	{
-		if (alert_failure) message_add("ERROR: No current town.");
-		bell();
-		return;
-	}
-	clear_from(0);
-	Term_putstr(0,0, Term->wid, TERM_WHITE,
-		format("List of shops in %s",
-			dun_defs[town].shortname));
-
-	for (i = 0, j = 1; i < t_ptr->numstores; i++)
-	{
-		feature_type *f_ptr;
-
-		/* Only count real stores */
-		if (t_ptr->store[i] == STORE_NONE) continue;
- 
- 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
- 
-		/* Display the name of the store. */
-		Term_putstr(0, ++j, Term->wid, TERM_WHITE, store_title(i+offset));
-
-		/* Put the character used at the top. */
-		Term_putch(0, j, f_ptr->x_attr, f_ptr->x_char);
-	}
-}	
-
-
-/*
- * Allow the player to see which shops are in each town, what the maximum
- * price of each is and how greedy the shopkeepers are.
- *
- * Maybe it should work on the basis of the last thing the player knew, but
- * it seems like too much effort for little gain.
- */
-static void do_cmd_knowledge_shops(void)
-{
-	/* I hope this isn't too silly... */
-	int town = cur_town;
-	
-	/* Paranoia (?) - no town */
-	if (town >= MAX_TOWNS) town = 0;
-	for (;;)
-	{
-		char c;
-		shops_display(town);
-		prt("Press +,- or 0-7 to change displayed town, or ESC to exit.", 22, 0);
-		Term_fresh();
-		c = inkey();
-		Term_putch(0,0,TERM_YELLOW,c);
-		if (c == ESCAPE)
-		{
-			break;
-		}
-		else if (c == '+')
-		{
-			do
-			{
-				town=(town+1)%MAX_TOWNS;
-				
-			} while (!shops_good(town));
-		}
-		else if (c == '-')
-		{
-			do
-			{
-				town=(town+MAX_TOWNS-1)%MAX_TOWNS;
-				
-			} while (!shops_good(town));
-		}
-		else if (c >= '0' && c < '0'+MAX_TOWNS)
-		{
-			if (shops_good(c-'0'))
-			{
-				town = c-'0';
-			}
-		}
-	}
-}
 
 /*
  * Interact with "knowledge"
@@ -3902,7 +3791,6 @@ void do_cmd_knowledge(void)
 		{"ancestral causes of death", do_cmd_knowledge_deaths},
 		{"chaos features", do_cmd_knowledge_chaos_features},
 		{"current allies", do_cmd_knowledge_pets},
-		{"shop prices", do_cmd_knowledge_shops},
 		};
 		byte max_knowledge = sizeof(knowledge)/sizeof(knowledge_type);
 		/* Clear screen */

@@ -540,8 +540,6 @@ extern void do_cmd_macros(void);
 extern void do_cmd_visuals(void);
 extern void do_cmd_colors(void);
 extern void do_cmd_note(void);
-extern bool shops_good(int town);
-extern void shops_display(int town);
 extern void do_cmd_version(void);
 extern void do_cmd_feeling(bool);
 extern void do_cmd_load_screen(void);

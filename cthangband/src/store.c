@@ -1964,27 +1964,14 @@ static cptr store_title_aux(void)
 	/* The "Home" is special */
 		case STORE_HOME:
 	{
-			/* Already yours. */
-			if (st_ptr->bought)
+			if (p_ptr->house[cur_town])
 		{
 				out = format("%28s%s", "", "Your Home");
 		}
-			/* Without a set price or spoilers the price is a mysetery. */
-			else if (!auto_haggle && !spoil_value)
-			{
-					out = format("%28s%s", "", "House for Sale");
-			}
-			/* Name and price. */
+			/* Not yours (yet). */
 			else
 			{
-				/* The price of a house is an aspect of the town, not the house itself. */
-				int town = cur_store_num/MAX_STORES_PER_TOWN;
-				u32b price = town_defs[town].house_price;
-
-				/* Hack - Must be the same as needtohaggle(). */
-				if (auto_haggle) price = price*11/10;
-
-				out = format("%28s%s (%ld)", "", "House for Sale", price);
+					out = format("%28s%s", "", "House for Sale");
 			}
 			break;
 	}
