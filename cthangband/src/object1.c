@@ -488,6 +488,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
  */
 void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr)
 {
+	bool cheat = cheat_item;
 	int i;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -505,21 +506,19 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		x_ptr->p_id = ob_ptr-o_base;
 	}
 
-	if (cheat_item && (
-#ifdef SPOIL_ARTIFACTS
-	/* Full knowledge for some artifacts */
-	allart_p(o_ptr) ||
+	/* Restrict cheating with a couple of compile-time options. */
+#ifndef SPOIL_ARTIFACTS
+	if (allart_p(o_ptr)) cheat = FALSE;
 #endif
-#ifdef SPOIL_EGO_ITEMS
-	/* Full knowledge for some ego-items */
-	ego_item_p(o_ptr) ||
+#ifndef SPOIL_EGO_ITEMS
+	if (ego_item_p(o_ptr)) cheat = FALSE;
 #endif
-	(!allart_p(o_ptr) && !ego_item_p(o_ptr))))
+	
+	if (cheat)
 	{
 		/* Given full knowledge, everything is easy. */
 		object_copy(j_ptr, o_ptr);
 		object_flags(o_ptr, &j_ptr->flags1, &j_ptr->flags2, &j_ptr->flags3);
-		return;
 	}
 
 	/* Some flags are always assumed to be known. */
@@ -541,7 +540,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	j_ptr->k_idx = o_ptr->k_idx;
 
 	/* Some flags are known for aware objects. */
-	if (object_aware_p(o_ptr))
+	if (cheat || object_aware_p(o_ptr))
 	{
 		j_ptr->tval = o_ptr->tval;
 	}
@@ -551,7 +550,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	}
 
 	/* Some flags are known for identified objects. */
-	if (object_known_p(j_ptr))
+	if (cheat || object_known_p(j_ptr))
 	{
 		j_ptr->name1 = o_ptr->name1;
 		j_ptr->name2 = o_ptr->name2;
@@ -632,7 +631,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 			
 
 		/* If a pval-based flag is known from experience, set the pval. */
-		if (j_ptr->flags1 & TR1_PVAL_MASK)
+		if (cheat || (j_ptr->flags1 & TR1_PVAL_MASK))
 		{
 			j_ptr->pval = o_ptr->pval;
 		}
@@ -707,6 +706,11 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		j_ptr->flags3 |= TR3_IGNORE_ALL & o_ptr->flags3;
 	}
 
+	if (cheat)
+	{
+		object_flags(o_ptr, &j_ptr->flags1, &j_ptr->flags2, &j_ptr->flags3);
+	}
+
 	/* Copy the activation if it's known to have one. */
 	if (j_ptr->flags3 & TR3_ACTIVATE)
 	{
@@ -731,8 +735,10 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	/* Hack - resist_chaos by any means gives resist_conf. */
 	if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
 
+	if (object_aware_p(o_ptr) || cheat) ;
+
 	/* The flavour of a shop item may not be known. */
-	if (o_ptr->ident & IDENT_STORE && !object_aware_p(o_ptr))
+	else if (o_ptr->ident & IDENT_STORE)
 	{
 		/* This index is known to have a flavour name of "". */
 		if (x_ptr) x_ptr->u_idx = z_info->u_max-1;
@@ -740,7 +746,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 
 	/* Hack - unset j_ptr->k_idx if it isn't known (the k_idx of items in
 	 * shops is always known). */
-	if (~o_ptr->ident & IDENT_STORE && !object_aware_p(j_ptr))
+	else
 	{
 		j_ptr->k_idx = OBJ_UNKNOWN;
 	}
