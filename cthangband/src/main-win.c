@@ -4720,9 +4720,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	HDC hdc;
 	MSG msg;
 
-	/* Unused parameter */
-	(void)nCmdShow;
-
 #ifdef USE_SAVER
 	if (lpCmdLine && ((*lpCmdLine == '-') || (*lpCmdLine == '/')))
 	{
