@@ -225,13 +225,13 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 /*
  * Open a given text file in the user directory for writing.
  */
-static FILE *my_fopen_wiz(cptr fname)
+static void my_fopen_wiz(cptr fname)
 {
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
-	/* Build and open the filename */
-	return my_fopen_path(ANGBAND_DIR_USER, fname, "w");
+	/* Build and open the filename with the standard name. */
+	fff = my_fopen_path(ANGBAND_DIR_USER, fname, "w");
 }
 
 /*
