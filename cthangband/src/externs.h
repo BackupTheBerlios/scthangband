@@ -3048,16 +3048,16 @@ extern s16b panel_row;
 #if (defined(CMD3_C) || defined(GENERATE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_col;
 #endif
-#if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MAIN_WIN_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_row_min;
 #endif
-#if (defined(DEFINES_H) || defined(CAVE_C) || defined(GENERATE_C) || defined(MAIN_WIN_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(DEFINES_H) || defined(CAVE_C) || defined(GENERATE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_row_max;
 #endif
-#if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MAIN_WIN_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(DEFINES_H) || defined(CAVE_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_col_min;
 #endif
-#if (defined(DEFINES_H) || defined(CAVE_C) || defined(GENERATE_C) || defined(MAIN_WIN_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(DEFINES_H) || defined(CAVE_C) || defined(GENERATE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b panel_col_max;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))

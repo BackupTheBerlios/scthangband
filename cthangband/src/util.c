@@ -1809,7 +1809,9 @@ char inkey(void)
 	if (inkey_base || !inkey_scan)
 	{
 		window_stuff();
+		character_icky |= 2;
 		update_stuff();
+		character_icky &= ~2;
 	}
 
 
