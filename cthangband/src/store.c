@@ -2406,9 +2406,127 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	return (FALSE);
 }
 
+/*
+ * Gets help for a service based on the index given in store_process_command()
+ */
+static void service_help(byte type)
+{
+	/* Erase the prompt */
+	prt("", 0, 0);
+	/* Give some relevant help */
+	switch (type)
+	{
+		case STORE_ARMOURY: /* Enchant armour */
+			msg_print("Almost as if you were to use four scrolls of enchant armour on an item.");
+			break;
+		case STORE_WEAPON: /* Enchant weapon */
+			msg_print("Almost as if you were to use four scrolls of enchant weapon to-dam, and four of enchant weapon to-hit, on an item.");
+			break;
+		case STORE_TEMPLE: /* Restoration */
+		{
+			object_type forge;
+			object_prep(&forge, lookup_kind(TV_FOOD, SV_FOOD_RESTORING));
+			/* This gives an unwelcome "Item attributes" description. */
+			if (!identify_fully_aux(&forge))
+				msg_print("This won't help you at present.");
+			break;
+ 		}
+		case STORE_ALCHEMIST: /* Identify all */
+		{
+			int i, j = 0;
+			for (i = 0; i < INVEN_TOTAL; i++)
+			{
+				object_type *o_ptr = &inventory[i];
+				if (o_ptr->k_idx && !object_known_p(o_ptr)) j++;
+			}
+			if (j)
+				msg_format("Identifies your %d unidentified items", j);
+			else
+				msg_print("This won't help you at present.");
+			break;
+		}
+		case STORE_MAGIC: /* Ritual of Recall */
+			msg_print("Revives you here at the point of death.");
+			break;
+		case STORE_INN: /* Rest */
+			switch (p_ptr->prace)
+			{
+				case RACE_SPECTRE: case RACE_ZOMBIE:
+				case RACE_SKELETON: case RACE_VAMPIRE:
+					msg_print("Lets you rest here for the day");
+				default:
+					msg_print("Lets you rest here for the night");
+			}			
+			break;
+		case STORE_HALL: /* Buy a house */
+			msg_format("Gives you a house in %s to store your belongings.", town_defs[cur_town].name);
+			break;
+		case 128: case 129: case 130: case 131:
+		case 132: case 133: case 134: case 135: /* Associate with spirit */
+		default: /* Just in case */
+		msg_print("Sorry, no help available");
+	}
+	/* Display the prompt */
+	msg_print(NULL);
+}
+
+/*
+ * Modified version of get_check() to give a [y/n/?] prompt with some extra
+ * information available.
+ */
+static bool get_check_service(cptr prompt, byte type)
+{
+	int i;
+
+	char buf[80];
+
+	/* Paranoia XXX XXX XXX */
+	msg_print(NULL);
+
+	/* Hack -- Build a "useful" prompt */
+	strnfmt(buf, 78, "%.70s[y/n/?] ", prompt);
+
+	/* Prompt for it */
+	prt(buf, 0, 0);
+
+	/* Get an acceptable answer */
+	while (TRUE)
+	{
+		i = inkey();
+		if (i == ESCAPE) break;
+		if (i == '\r') break;
+		if (strchr("YyNn", i)) break;
+		if (i == '?') 
+		{
+			service_help(type);
+			prt(buf, 0, 0);
+		}
+		else if (quick_prompt)
+			break;
+		else
+			bell();
+	}
+
+	/* Erase the prompt */
+	prt("", 0, 0);
+
+	/* Normal negation */
+	if ((i != 'Y') && (i != 'y') && (i != '\r'))
+		i = 'n';
+	/* Success */
+	else
+		i = 'y';
+		
+	/* Leave a (mildly inaccurate) record */
+	message_add(format("%.70s[y/n] %c", prompt, i));
+	
+	/* Tell the calling routine */
+	return (i == 'y') ? TRUE : FALSE;
+}
+
 /* Haggle for a fixed price service from a store owner */
 /* Altered form of purchase_haggle by DA */
-static bool service_haggle(s32b service_cost, s32b *price, cptr service)
+static bool service_haggle(s32b service_cost, s32b *price, cptr service, byte type)
 {
 	s32b               last_offer, offer;
 	s32b               x1, x2, x3;
@@ -2435,7 +2553,7 @@ static bool service_haggle(s32b service_cost, s32b *price, cptr service)
 		{
 		sprintf(out_val, "%s %ld to %s? ", pmt, cur_ask, service);
 		*price = final_ask;
-		return !get_check(out_val);
+		return !get_check_service(out_val, type);
 		}
 
 	/* Haggle parameters */
@@ -3284,6 +3402,7 @@ static void store_sell(void)
    if (st_ptr->stock_num <= 0)
    {
        if (cur_store_type == STORE_HOME) msg_print("Your home is empty.");
+       else if (cur_store_type == STORE_PAWN) msg_print("I have nothing of yours.");
        else msg_print("I am currently out of stock.");
        return;
    }
@@ -3317,7 +3436,10 @@ static void store_sell(void)
 	}
 
    /* Description */
+   if (cur_store_type == STORE_HOME || cur_store_type == STORE_PAWN)
    object_desc(o_name, o_ptr, TRUE, 3);
+   else
+	object_desc_store(o_name, o_ptr, TRUE, 3);
 
    /* Describe */
    msg_format("Examining %s...", o_name);
@@ -3467,7 +3589,7 @@ static void store_process_command(void)
 				   }
 			   case STORE_ARMOURY:
 				   {
-						if (!service_haggle(400,&price, service_name[cur_store_type][0]))
+						if (!service_haggle(400,&price, service_name[cur_store_type][0], STORE_ARMOURY))
 						{
 							if (price > p_ptr->au)
 							{
@@ -3494,7 +3616,7 @@ static void store_process_command(void)
 				   }
 			   case STORE_WEAPON:
 				   {
-						if (!service_haggle(800,&price, service_name[cur_store_type][0]))
+						if (!service_haggle(800,&price, service_name[cur_store_type][0], STORE_WEAPON))
 						{
 							if (price > p_ptr->au)
 							{
@@ -3521,7 +3643,7 @@ static void store_process_command(void)
 				   }
 			   case STORE_TEMPLE:
 					{
-						if (!service_haggle(750,&price, service_name[cur_store_type][0]))
+						if (!service_haggle(750,&price, service_name[cur_store_type][0], STORE_TEMPLE))
 						{
 							if (price > p_ptr->au)
 							{
@@ -3552,7 +3674,7 @@ static void store_process_command(void)
 					}
 				case STORE_ALCHEMIST:
 					{
-						if (!service_haggle(500,&price, service_name[cur_store_type][0]))
+						if (!service_haggle(500,&price, service_name[cur_store_type][0], STORE_ALCHEMIST))
 						{
 							if (price > p_ptr->au)
 							{
@@ -3589,7 +3711,7 @@ static void store_process_command(void)
 							cost = cost * cost;
 							/* minimum of 100 gold */
 							if(cost < 100) cost = 100;
-							if (!service_haggle(cost,&price, service_name[cur_store_type][0]))
+							if (!service_haggle(cost,&price, service_name[cur_store_type][0], STORE_MAGIC))
 							{
 								if (price > p_ptr->au)
 								{
@@ -3655,7 +3777,7 @@ static void store_process_command(void)
 						}
 						else
 						{
-							if (!service_haggle(10,&price, service_name[cur_store_type][0]))
+							if (!service_haggle(10,&price, service_name[cur_store_type][0], STORE_INN))
 							{
 								if (price > p_ptr->au)
 								{
@@ -3699,7 +3821,7 @@ static void store_process_command(void)
 					   }
 					   else
 					   {
-							if (!service_haggle(town_defs[cur_town].house_price,&price, service_name[cur_store_type][0]))
+							if (!service_haggle(town_defs[cur_town].house_price,&price, service_name[cur_store_type][0], STORE_HALL))
 							{
 								if (price > p_ptr->au)
 								{
@@ -3755,7 +3877,7 @@ static void store_process_command(void)
 						switch(spirits[i].favour_flags)
 						{
 						case 0x000000ff:
-							if (!service_haggle(100,&price, buf))
+							if (!service_haggle(100,&price, buf, i + 128))
 							{
 								if (price > p_ptr->au)
 								{
@@ -3778,7 +3900,7 @@ static void store_process_command(void)
 							}
 							break;
 						case 0x0000ff00:
-							if (!service_haggle(1000,&price, buf))
+							if (!service_haggle(1000,&price, buf, i + 128))
 							{
 								if (price > p_ptr->au)
 								{
@@ -3803,7 +3925,7 @@ static void store_process_command(void)
 							}
 							break;
 						   case 0x00ff0000:
-								if (!service_haggle(5000,&price, buf))
+								if (!service_haggle(5000,&price, buf, i + 128))
 							{
 								if (price > p_ptr->au)
 								{
@@ -3830,7 +3952,7 @@ static void store_process_command(void)
 							}
 							break;
 					   case 0xff000000:
-								if (!service_haggle(25000,&price, buf))
+								if (!service_haggle(25000,&price, buf, i + 128))
 							{
 								if (price > p_ptr->au)
 								{
