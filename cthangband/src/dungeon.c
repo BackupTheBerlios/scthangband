@@ -195,8 +195,6 @@ int PURE find_feeling(object_ctype *o_ptr)
 		/* ... but this should only be mentioned if the player doesn't know better. */
 			if (!(o_ptr->ident & IDENT_SENSE_CURSED))
 				return SENSE_PCURSE;
-			default:
-				return SENSE_NONE;
 		}
 	}
 
