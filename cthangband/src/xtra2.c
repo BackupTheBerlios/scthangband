@@ -3546,6 +3546,341 @@ static void do_violet_uniques(bool swap)
 }
 
 
+/*
+ * Convert a "location" (Y,X) into a "grid" (G)
+ */
+#define GRID(Y,X) \
+    (256 * (Y) + (X))
+
+/*
+ * Convert a "grid" (G) into a "location" (Y)
+ */
+#define GRID_Y(G) \
+    ((int)((G) / 256U))
+
+/*
+ * Convert a "grid" (G) into a "location" (X)
+ */
+#define GRID_X(G) \
+    ((int)((G) % 256U))
+
+/*
+ * A simplified version of "project_path()" which places the co-ordinates
+ * of a path in gp[]. The only restriction used in this version is that of
+ * the range of the beam.
+ */
+static sint project_path(u16b *gp, int range, int y1, int x1, int y2, int x2)
+{
+    int y, x;
+
+    int n = 0;
+    int k = 0;
+
+    /* Absolute */
+    int ay, ax;
+
+    /* Offsets */
+    int sy, sx;
+
+    /* Fractions */
+    int frac;
+
+    /* Scale factors */
+    int full, half;
+
+    /* Slope */
+    int m;
+
+
+    /* No path necessary (or allowed) */
+    if ((x1 == x2) && (y1 == y2)) return (0);
+
+
+    /* Analyze "dy" */
+    if (y2 < y1)
+    {
+        ay = (y1 - y2);
+        sy = -1;
+    }
+    else
+    {
+        ay = (y2 - y1);
+        sy = 1;
+    }
+
+    /* Analyze "dx" */
+    if (x2 < x1)
+    {
+        ax = (x1 - x2);
+        sx = -1;
+    }
+    else
+    {
+        ax = (x2 - x1);
+        sx = 1;
+    }
+
+
+    /* Number of "units" in one "half" grid */
+    half = (ay * ax);
+
+    /* Number of "units" in one "full" grid */
+    full = half << 1;
+
+
+    /* Vertical */
+    if (ay > ax)
+    {
+        /* Start at tile edge */
+        frac = ax * ax;
+
+        /* Let m = ((dx/dy) * full) = (dx * dx * 2) = (frac * 2) */
+        m = frac << 1;
+
+        /* Start */
+        y = y1 + sy;
+        x = x1;
+
+        /* Create the projection path */
+        while (1)
+        {
+            /* Save grid */
+            gp[n++] = GRID(y,x);
+
+            /* Hack -- Check maximum range */
+            if ((n + (k >> 1)) >= range) break;
+
+            /* Slant */
+            if (m)
+            {
+                /* Advance (X) part 1 */
+                frac += m;
+
+                /* Horizontal change */
+                if (frac >= half)
+                {
+                    /* Advance (X) part 2 */
+                    x += sx;
+
+                    /* Advance (X) part 3 */
+                    frac -= full;
+
+                    /* Track distance */
+                    k++;
+                }
+            }
+
+            /* Advance (Y) */
+            y += sy;
+        }
+    }
+
+    /* Horizontal */
+    else if (ax > ay)
+    {
+        /* Start at tile edge */
+        frac = ay * ay;
+
+        /* Let m = ((dy/dx) * full) = (dy * dy * 2) = (frac * 2) */
+        m = frac << 1;
+
+        /* Start */
+        y = y1;
+        x = x1 + sx;
+
+        /* Create the projection path */
+        while (1)
+        {
+            /* Save grid */
+            gp[n++] = GRID(y,x);
+
+            /* Hack -- Check maximum range */
+            if ((n + (k >> 1)) >= range) break;
+
+            /* Slant */
+            if (m)
+            {
+                /* Advance (Y) part 1 */
+                frac += m;
+
+                /* Vertical change */
+                if (frac >= half)
+                {
+                    /* Advance (Y) part 2 */
+                    y += sy;
+
+                    /* Advance (Y) part 3 */
+                    frac -= full;
+
+                    /* Track distance */
+                    k++;
+                }
+            }
+
+            /* Advance (X) */
+            x += sx;
+        }
+    }
+
+    /* Diagonal */
+    else
+    {
+        /* Start */
+        y = y1 + sy;
+        x = x1 + sx;
+
+        /* Create the projection path */
+        while (1)
+        {
+            /* Save grid */
+            gp[n++] = GRID(y,x);
+
+            /* Hack -- Check maximum range */
+            if ((n + (n >> 1)) >= range) break;
+
+            /* Advance (Y) */
+            y += sy;
+
+            /* Advance (X) */
+            x += sx;
+        }
+    }
+
+
+    /* Length */
+    return (n);
+}
+
+/*
+ * Draw a visible path over the squares between (x1,y1) and (x2,y2).
+ * The path consists of "*", which are white except where there is a
+ * monster, object or feature in the grid.
+ *
+ * This routine has (at least) three weaknesses:
+ * - remembered objects/walls which are no longer present are not shown,
+ * - squares which (e.g.) the player has walked through in the dark are
+ *   treated as unknown space.
+ * - walls which appear strange due to hallucination aren't treated correctly.
+ *
+ * The first two result from information being lost from the dungeon arrays,
+ * which requires changes elsewhere 
+ */
+static sint draw_path(u16b *path, char *c, byte *a, int y1, int x1, int y2, int x2)
+{
+	int i;
+	sint max;
+	bool on_screen;
+
+	/* Find the path. */
+	max = project_path(path, MAX_RANGE, y1, x1, y2, x2);
+
+	/* No path, so do nothing. */
+	if (!max) return max;
+
+	/* The starting square is never drawn, but notice if it is being
+	 * displayed. In theory, it could be the last such square. */
+	on_screen = panel_contains(y1, x1);
+
+	/* Draw the path. */
+	for (i = 0; i < max; i++)
+	{
+		byte colour;
+
+		/* Find the co-ordinates on the level. */
+		int y = GRID_Y(path[i]);
+		int x = GRID_X(path[i]);
+		
+		cave_type *c_ptr = &cave[y][x];
+
+		/*
+		 * As path[] is a straight line and the screen is oblong,
+		 * there is only section of path[] on-screen.
+		 * If the square being drawn is visible, this is part of it.
+		 * If none of it has been drawn, continue until some of it
+		 * is found or the last square is reached.
+		 * If some of it has been drawn, finish now as there are no
+		 * more visible squares to draw.
+		 *
+		 * 
+		 */
+		if (panel_contains(y,x))
+			on_screen = TRUE;
+		else if (on_screen)
+			break;
+		else
+			continue;
+
+		/* Find the position on-screen */
+		move_cursor_relative(y,x);
+
+		/* This square is being overwritten, so save the original. */
+		Term_what(Term->scr->cx, Term->scr->cy, a+i, c+i);
+
+		/* Choose a colour. */
+
+		/* Visible monsters are red. */
+		if (c_ptr->m_idx && m_list[c_ptr->m_idx].ml)
+		{
+			colour = TERM_L_RED;
+		}
+		/* Known objects are yellow. */
+		else if (c_ptr->o_idx && o_list[c_ptr->o_idx].marked)
+		{
+			colour = TERM_YELLOW;
+		}
+		/* Known walls are blue. */
+		else if (!cave_floor_bold(y,x) && (c_ptr->info & CAVE_MARK || player_can_see_bold(y,x)))
+		{
+			/* Hallucination sometimes alters the player's
+			 * perception. */
+			if (a[i] != f_info[f_info[c_ptr->feat].mimic].x_attr ||
+				c[i] != f_info[f_info[c_ptr->feat].mimic].x_char)
+			{
+				switch (GRID(a[i], c[i]) % 3)
+				{
+					case 0: colour = TERM_L_RED; break;
+					case 1: colour = TERM_YELLOW; break;
+					default: colour = TERM_BLUE; break;
+				}
+			}
+			else
+			{
+				colour = TERM_BLUE;
+			}
+		}
+		/* Unknown squares are grey. */
+		else if (!(c_ptr->info & (CAVE_MARK)) && !player_can_see_bold(y,x))
+		{
+			colour = TERM_L_DARK;
+		}
+		/* Unoccupied squares are white. */
+		else
+		{
+			colour = TERM_WHITE;
+		}
+
+		/* Draw the path segment */
+		(void)Term_addch(colour, '*');
+	}
+	return i;
+}
+
+/*
+ * Load the attr/char at each point along "path" which is on screen from
+ * "a" and "c". This was saved in draw_path().
+ */
+static void load_path(sint max, u16b *path, char *c, byte *a)
+{
+	int i;
+	for (i = 0; i < max; i++)
+	{
+		if (!panel_contains(GRID_Y(path[i]), GRID_X(path[i]))) continue;
+		move_cursor_relative(GRID_Y(path[i]), GRID_X(path[i]));
+		(void)Term_addch(a[i], c[i]);
+	}
+	Term_fresh();
+}
+
 
 /*
  * Handle "target" and "look".
@@ -3623,6 +3958,10 @@ bool target_set(int mode)
 	/* Interact */
 	while (!done)
 	{
+		u16b path[MAX_RANGE];
+		char path_char[MAX_RANGE];
+		byte path_attr[MAX_RANGE];
+		sint max = 0;
 
 		/* Hack - uniques flash violet in target mode */
 		do_violet_uniques(TRUE);
@@ -3648,8 +3987,15 @@ bool target_set(int mode)
 				strcpy(info, "q,p,o,+,-,<dir>");
 			}
 
+			/* Draw the path in "target" mode, if there is one. */
+			if (mode & TARGET_KILL)
+				max = draw_path(path, path_char, path_attr, py, px, y, x);
+
 			/* Describe and Prompt */
 			query = target_set_aux(y, x, mode, info);
+
+			/* Remove the path. */
+			if (max) load_path(max, path, path_char, path_attr);
 
 			/* Cancel tracking */
 			/* health_track(0); */
@@ -3754,8 +4100,15 @@ bool target_set(int mode)
 			/* Default prompt */
 			strcpy(info, "q,t,p,m,+,-,<dir>");
 
+			/* Draw the path, if there is one. */
+			if (mode & TARGET_KILL)
+				max = draw_path(path, path_char, path_attr, py, px, y, x);
+
 			/* Describe and Prompt (enable "TARGET_LOOK") */
 			query = target_set_aux(y, x, mode | TARGET_LOOK, info);
+
+			/* Remove the path. */
+			if (max) load_path(max, path, path_char, path_attr);
 
 			/* Cancel tracking */
 			/* health_track(0); */
