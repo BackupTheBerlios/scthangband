@@ -1562,8 +1562,6 @@ static errr grab_one_kind_flag(object_kind *ptr, cptr what)
 }
 
 
-static object_kind *kt_info = NULL;
-
 /*
  * Initialize the "k_info" array, by parsing an ascii "template" file
  */
@@ -1617,54 +1615,6 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			return SUCCESS;
 		}
 
-		case 'T':
-		{
-			object_kind *kt_ptr;
-			
-			/* Get the tval */
-			i = atoi(buf+2);
-			
-			/* Verify information */
-			try(byte_ok(i));
-			
-			/* Point at the "info" */
-			kt_ptr = &kt_info[i];
-
-			/* Advance to the first flag. */
-			s = strchr(buf, '|');
-			
-			if (!s) return PARSE_ERROR_TOO_FEW_ARGUMENTS;
-			
-			s += strspn(s, "| ");
-
-			/* Parse every other entry textually */
-			while (*s)
-			{
-				/* Find the end of this entry */
-				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
-
-				/* Nuke and skip any dividers */
-				if (*t)
-				{
-					*t++ = '\0';
-					while (*t == ' ' || *t == '|') t++;
-				}
-
-				/* Parse this entry */
-				if (SUCCESS != grab_one_kind_flag(kt_ptr, s)) return PARSE_ERROR_INVALID_FLAG;
-
-				/* Start the next entry */
-				s = t;
-			}
-
-			/* This should not be used within an entry,
-			 * so remove k_ptr to make sure. */
-			k_ptr = 0;
-
-
-			/* Next... */
-			return SUCCESS;
-		}
 		case 'G':
 		{
 			char sym, col;
@@ -1697,28 +1647,15 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 		case 'I':
 		{
 			int tval, sval, pval;
-			object_kind *kt_ptr;
 
 			/* Scan for the values */
 			if (3 != sscanf(buf+2, "%d:%d:%d",
 			                &tval, &sval, &pval)) return (1);
 
-			/* Include the tval-dependent flags. */
-			kt_ptr = &kt_info[tval];
-
-			k_ptr->flags1 |= kt_ptr->flags1;
-			k_ptr->flags2 |= kt_ptr->flags2;
-			k_ptr->flags3 |= kt_ptr->flags3;
-
 			/* Save the values */
 			k_ptr->tval = tval;
 			k_ptr->sval = sval;
 			k_ptr->pval = pval;
-
-			/* Include the tval-dependent flags, if any. */
-			k_ptr->flags1 |= kt_info[k_ptr->tval].flags1;
-			k_ptr->flags2 |= kt_info[k_ptr->tval].flags2;
-			k_ptr->flags3 |= kt_info[k_ptr->tval].flags3;
 
 			/* Next... */
 			return SUCCESS;
@@ -3031,13 +2968,6 @@ static errr init_info_txt_pre(header *head)
 			if (MAX_I < 256) return PARSE_ERROR_OUT_OF_MEMORY;
 			break;
 		}
-		case K_HEAD:
-		{
-			/* kt_info contains some flags which are always set for a given
-			 * tval. */
-			C_MAKE(kt_info, 256, object_kind);
-			break;
-		}
 	}
 	return SUCCESS;
 }
@@ -3078,7 +3008,6 @@ static errr init_info_txt_final(header *head)
 		{
 			/* o_base bases its defaults on k_info. */
 			rebuild_raw |= 1<<OB_HEAD;
-			KILL2(kt_info);
 			break;
 		}
 		case MACRO_HEAD:

@@ -21,14 +21,6 @@
 
 # Note that object zero is used for the "stack" picture (unused).
 
-# The T info provides for flags which apply to all items with a given tval.
-# It takes the following form:
-
-# T:<number> | <flag> | <flag> | <flag> ...
-
-# where the number is the desired tval and <flag> is a flag which all subsequent
-# objects with the same tval should possess.
-
 # Version stamp (required)
 
 V:1.0.3
@@ -45,8 +37,6 @@ G:&:w:0
 
 # You can't cook it, you can't freeze it, and it's unaffected by
 # your stomach acids. Suddenly I don't feel so hungry.
-
-T:80 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
 
 N:1:Blindness
 G: :d:1
@@ -251,15 +241,12 @@ I:255:255:0
 
 ##### Edged Weapons #####
 
-T:23 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-
 N:30:& Broken Dagger~
 G:|:D:0
 I:23:1:0
 W:0:0:5:1
 A:0/1
 P:0:1d1:-2:-4:0
-F:SHOW_MODS
 
 N:31:& Bastard Sword~
 G:|:W:0
@@ -267,7 +254,6 @@ I:23:21:0
 W:15:0:140:350
 A:15/1
 P:0:3d4:0:0:0
-F:SHOW_MODS
 
 N:32:& Scimitar~
 G:|:W:0
@@ -275,7 +261,6 @@ I:23:18:0
 W:10:0:130:250
 A:10/1
 P:0:2d5:0:0:0
-F:SHOW_MODS
 
 N:33:& Tulwar~
 G:|:W:0
@@ -283,7 +268,6 @@ I:23:15:0
 W:5:0:100:200
 A:5/1
 P:0:2d4:0:0:0
-F:SHOW_MODS
 
 N:34:& Broad Sword~
 G:|:W:0
@@ -291,7 +275,6 @@ I:23:16:0
 W:10:0:150:255
 A:10/1:15/1
 P:0:2d5:0:0:0
-F:SHOW_MODS
 
 N:35:& Short Sword~
 G:|:W:0
@@ -299,7 +282,6 @@ I:23:10:0
 W:5:0:80:90
 A:5/1
 P:0:1d7:0:0:0
-F:SHOW_MODS
 
 N:36:& Blade~ of Chaos
 G:|:v:0
@@ -307,7 +289,7 @@ I:23:30:0
 W:70:0:180:4000
 A:70/8
 P:0:6d5:0:0:0
-F:RES_CHAOS | SHOW_MODS
+F:RES_CHAOS
 
 N:37:& Two-Handed Sword~
 G:|:W:0
@@ -315,7 +297,6 @@ I:23:25:0
 W:30:0:200:775
 A:30/1:40/1
 P:0:3d6:0:0:0
-F:SHOW_MODS
 
 N:38:& Main Gauche~
 G:|:W:0
@@ -323,7 +304,6 @@ I:23:5:0
 W:3:0:30:25
 A:3/1
 P:0:1d5:0:0:0
-F:SHOW_MODS
 
 N:39:& Cutlass~
 G:|:W:0
@@ -331,7 +311,6 @@ I:23:12:0
 W:5:0:110:85
 A:5/1
 P:0:1d7:0:0:0
-F:SHOW_MODS
 
 N:40:& Executioner's Sword~
 G:|:r:0
@@ -339,7 +318,6 @@ I:23:28:0
 W:40:0:260:850
 A:40/1
 P:0:4d5:0:0:0
-F:SHOW_MODS
 
 N:41:& Katana~
 G:|:W:13
@@ -347,7 +325,6 @@ I:23:20:0
 W:20:0:120:400
 A:20/1
 P:0:3d4:0:0:0
-F:SHOW_MODS
 
 N:42:& Long Sword~
 G:|:W:0
@@ -355,7 +332,6 @@ I:23:17:0
 W:10:0:130:300
 A:10/1:20/1
 P:0:2d5:0:0:0
-F:SHOW_MODS
 
 N:43:& Dagger~
 G:|:W:0
@@ -363,7 +339,6 @@ I:23:4:0
 W:0:0:12:10
 A:0/1:5/1:10/1:20/1
 P:0:1d4:0:0:0
-F:SHOW_MODS
 
 N:44:& Rapier~
 G:|:W:0
@@ -371,7 +346,6 @@ I:23:7:0
 W:5:0:40:42
 A:5/1
 P:0:1d6:0:0:0
-F:SHOW_MODS
 
 N:45:& Sabre~
 G:|:W:0
@@ -379,7 +353,6 @@ I:23:11:0
 W:5:0:50:50
 A:5/1
 P:0:1d7:0:0:0
-F:SHOW_MODS
 
 N:46:& Small Sword~
 G:|:W:0
@@ -387,7 +360,6 @@ I:23:8:0
 W:5:0:75:48
 A:5/1
 P:0:1d6:0:0:0
-F:SHOW_MODS
 
 N:47:& Broken Sword~
 G:|:D:0
@@ -395,11 +367,8 @@ I:23:2:0
 W:0:0:30:2
 A:0/1
 P:0:1d2:-2:-4:0
-F:SHOW_MODS
 
 ##### Hafted Weapons #####
-
-T:21 | IGNORE_ELEC | IGNORE_COLD
 
 N:48:& Ball-and-Chain~
 G:\:D:0
@@ -407,7 +376,6 @@ I:21:6:0
 W:20:0:150:200
 A:20/1
 P:0:2d4:0:0:0
-F:SHOW_MODS
 
 N:49:& Whip~
 G:\:D:0
@@ -415,7 +383,6 @@ I:21:2:0
 W:3:0:30:30
 A:3/1
 P:0:1d6:0:0:0
-F:SHOW_MODS
 
 N:50:& Flail~
 G:\:D:0
@@ -423,7 +390,6 @@ I:21:13:0
 W:10:0:150:353
 A:10/1
 P:0:2d6:0:0:0
-F:SHOW_MODS
 
 N:51:& Two-Handed Flail~
 G:\:y:0
@@ -431,7 +397,6 @@ I:21:18:0
 W:45:0:280:590
 A:45/1
 P:0:3d6:0:0:0
-F:SHOW_MODS
 
 N:52:& Morning Star~
 G:\:D:0
@@ -439,7 +404,6 @@ I:21:12:0
 W:10:0:150:396
 A:10/1
 P:0:2d6:0:0:0
-F:SHOW_MODS
 
 N:53:& Mace~
 G:\:D:0
@@ -447,7 +411,6 @@ I:21:5:0
 W:5:0:120:130
 A:5/1
 P:0:2d4:0:0:0
-F:SHOW_MODS
 
 N:54:& Quarterstaff~
 G:\:U:0
@@ -455,7 +418,6 @@ I:21:3:0
 W:10:0:150:200
 A:10/1
 P:0:1d9:0:0:0
-F:SHOW_MODS
 
 N:55:& War Hammer~
 G:\:D:0
@@ -463,7 +425,6 @@ I:21:8:0
 W:5:0:120:225
 A:5/1
 P:0:3d3:0:0:0
-F:SHOW_MODS
 
 N:56:& Lead-Filled Mace~
 G:\:D:0
@@ -471,7 +432,6 @@ I:21:15:0
 W:15:0:180:502
 A:15/1
 P:0:3d4:0:0:0
-F:SHOW_MODS
 
 N:57:& Mace~ of Disruption
 G:\:v:0
@@ -479,7 +439,7 @@ I:21:20:0
 W:80:0:400:4300
 A:80/8
 P:0:5d8:0:0:0
-F:SLAY_UNDEAD | SHOW_MODS
+F:SLAY_UNDEAD
 
 N:58:& Lucerne Hammer~
 G:\:B:0
@@ -487,11 +447,8 @@ I:21:10:0
 W:10:0:120:376
 A:10/1
 P:0:2d5:0:0:0
-F:SHOW_MODS
 
 ##### Polearms #####
-
-T:22 | IGNORE_ELEC | IGNORE_COLD
 
 N:59:& Beaked Axe~
 G:/:s:0
@@ -499,7 +456,6 @@ I:22:10:0
 W:15:0:180:408
 A:15/1
 P:0:2d6:0:0:0
-F:SHOW_MODS
 
 N:60:& Glaive~
 G:/:s:0
@@ -507,7 +463,6 @@ I:22:13:0
 W:20:0:190:363
 A:20/1
 P:0:2d6:0:0:0
-F:SHOW_MODS
 
 N:61:& Halberd~
 G:/:s:0
@@ -515,7 +470,6 @@ I:22:15:0
 W:25:0:190:430
 A:25/1
 P:0:3d5:0:0:0
-F:SHOW_MODS
 
 N:62:& Awl-Pike~
 G:/:s:0
@@ -523,7 +477,6 @@ I:22:4:0
 W:10:0:160:340
 A:10/1
 P:0:1d8:0:0:0
-F:SHOW_MODS
 
 N:63:& Pike~
 G:/:s:0
@@ -531,7 +484,6 @@ I:22:8:0
 W:15:0:160:358
 A:15/1
 P:0:2d5:0:0:0
-F:SHOW_MODS
 
 N:64:& Spear~
 G:/:s:0
@@ -539,7 +491,6 @@ I:22:2:0
 W:5:0:50:36
 A:5/1
 P:0:1d6:0:0:0
-F:SHOW_MODS
 
 N:65:& Trident~
 G:/:y:0
@@ -547,7 +498,6 @@ I:22:5:0
 W:5:0:70:120
 A:5/1
 P:0:1d8:0:0:0
-F:SHOW_MODS
 
 N:66:& Lance~
 G:/:s:0
@@ -555,7 +505,6 @@ I:22:20:0
 W:10:0:300:230
 A:10/1
 P:0:2d8:0:0:0
-F:SHOW_MODS
 
 N:67:& Great Axe~
 G:/:s:0
@@ -563,7 +512,6 @@ I:22:25:0
 W:40:0:230:500
 A:40/1
 P:0:4d4:0:0:0
-F:SHOW_MODS
 
 N:68:& Battle Axe~
 G:/:s:0
@@ -571,7 +519,6 @@ I:22:22:0
 W:15:0:170:334
 A:15/1
 P:0:2d8:0:0:0
-F:SHOW_MODS
 
 N:69:& Lochaber Axe~
 G:/:D:0
@@ -579,7 +526,6 @@ I:22:28:0
 W:45:0:250:750
 A:45/1
 P:0:3d8:0:0:0
-F:SHOW_MODS
 
 N:70:& Broad Axe~
 G:/:s:0
@@ -587,7 +533,6 @@ I:22:11:0
 W:15:0:160:304
 A:15/1
 P:0:2d6:0:0:0
-F:SHOW_MODS
 
 N:71:& Scythe~
 G:/:s:0
@@ -595,7 +540,6 @@ I:22:17:0
 W:45:0:250:800
 A:45/1
 P:0:5d3:0:0:0
-F:SHOW_MODS
 
 N:72:& Scythe~ of Slicing
 G:/:r:0
@@ -603,52 +547,40 @@ I:22:30:0
 W:60:0:250:3500
 A:60/4
 P:0:8d4:0:0:0
-F:SHOW_MODS
-
 
 ##### Bows, Crossbows, Slings #####
-
-T:19 | IGNORE_ELEC | IGNORE_COLD
 
 N:73:& Short Bow~
 G:}:U:0
 I:19:12:0
 W:3:0:30:50
 A:3/1
-F:SHOW_MODS
 
 N:74:& Long Bow~
 G:}:U:0
 I:19:13:0
 W:10:0:40:120
 A:10/1
-F:SHOW_MODS
 
 N:75:& Light Crossbow~
 G:}:s:0
 I:19:23:0
 W:15:0:110:140
 A:15/1
-F:SHOW_MODS
 
 N:76:& Heavy Crossbow~
 G:}:s:0
 I:19:24:0
 W:30:0:200:300
 A:30/1
-F:SHOW_MODS
 
 N:77:& Sling~
 G:}:u:0
 I:19:2:0
 W:1:0:5:5
 A:1/1
-F:SHOW_MODS
-
 
 ##### Missiles #####
-
-T:17 | IGNORE_ELEC | IGNORE_COLD
 
 N:78:& Arrow~
 G:{:U:0
@@ -656,7 +588,6 @@ I:17:1:0
 W:3:0:2:1
 A:3/1:15/1
 P:0:1d4:0:0:0
-F:SHOW_MODS
 
 N:79:& Seeker Arrow~
 G:{:G:0
@@ -664,9 +595,6 @@ I:17:2:0
 W:55:0:2:20
 A:55/2
 P:0:4d4:0:0:0
-F:SHOW_MODS
-
-T:18 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:80:& Bolt~
 G:{:s:0
@@ -674,7 +602,6 @@ I:18:1:0
 W:3:0:3:2
 A:3/1:25/1
 P:0:1d5:0:0:0
-F:SHOW_MODS
 
 N:81:& Seeker Bolt~
 G:{:B:0
@@ -682,9 +609,6 @@ I:18:2:0
 W:65:0:3:25
 A:65/4
 P:0:4d5:0:0:0
-F:SHOW_MODS
-
-T:16 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:82:& Rounded Pebble~
 G:{:s:0
@@ -692,7 +616,6 @@ I:16:0:0
 W:0:0:4:1
 A:0/1
 P:0:1d2:0:0:0
-F:SHOW_MODS
 
 N:83:& Iron Shot~
 G:{:s:0
@@ -700,12 +623,8 @@ I:16:1:0
 W:3:0:5:2
 A:3/1
 P:0:1d3:0:0:0
-F:SHOW_MODS
-
 
 ##### Shovels and Picks #####
-
-T:20 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:84:& Shovel~
 G:\:s:0
@@ -713,7 +632,6 @@ I:20:1:1
 W:1:0:60:10
 A:5/16
 P:0:1d2:0:0:0
-F:SHOW_MODS | TUNNEL
 
 N:85:& Gnomish Shovel~
 G:\:G:0
@@ -721,7 +639,6 @@ I:20:2:2
 W:20:0:60:100
 A:20/4
 P:0:1d2:0:0:0
-F:SHOW_MODS | TUNNEL
 
 N:86:& Dwarven Shovel~
 G:\:B:0
@@ -729,7 +646,6 @@ I:20:3:3
 W:40:0:120:200
 A:40/1
 P:0:1d3:0:0:0
-F:SHOW_MODS | TUNNEL
 
 N:87:& Pick~
 G:\:s:0
@@ -737,7 +653,6 @@ I:20:4:1
 W:5:0:150:50
 A:10/16
 P:0:1d3:0:0:0
-F:SHOW_MODS | TUNNEL
 
 N:88:& Orcish Pick~
 G:\:g:0
@@ -745,7 +660,6 @@ I:20:5:2
 W:30:0:150:300
 A:30/4
 P:0:1d3:0:0:0
-F:SHOW_MODS | TUNNEL
 
 N:89:& Dwarven Pick~
 G:\:b:0
@@ -753,11 +667,8 @@ I:20:6:3
 W:50:0:200:600
 A:50/1
 P:0:1d4:0:0:0
-F:SHOW_MODS | TUNNEL
 
 ##### Armor #####
-
-T:35 | IGNORE_ELEC | IGNORE_COLD
 
 N:90:& Elven Cloak~
 G:(:G:0
@@ -767,8 +678,6 @@ A:30/4
 P:4:0d0:0:0:4
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 F:STEALTH | SEARCH
-
-T:30 | IGNORE_ELEC | IGNORE_COLD
 
 N:91:& Pair~ of Soft Leather Boots
 G:]:U:0
@@ -790,8 +699,6 @@ I:30:6:0
 W:20:0:80:50
 A:20/1
 P:6:1d1:0:0:0
-
-T:32 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:94:& Hard Leather Cap~
 G:]:u:0
@@ -821,8 +728,6 @@ W:40:0:60:200
 A:40/1
 P:6:1d3:0:0:0
 
-T:33 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-
 N:98:& Iron Crown~
 G:]:s:0
 I:33:10:0
@@ -845,8 +750,6 @@ W:50:0:40:2000
 A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID
-
-T:36 | IGNORE_ELEC | IGNORE_COLD
 
 N:101:& Robe~
 G:(:b:0
@@ -896,8 +799,6 @@ I:36:11:0
 W:15:0:140:450
 A:15/1
 P:11:1d1:-1:0:0
-
-T:37 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:108:Metal Scale Mail~
 G:[:s:0
@@ -1003,15 +904,13 @@ P:16:1d4:-2:0:0
 
 # This shield does not belong here
 
-T:34 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-
 N:122:& Shield~ of Deflection
 G:[:B:0
 I:34:10:0
 W:70:0:100:10000
 A:70/8
 P:10:1d1:0:0:10
-F:IGNORE_ACID
+F:IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC | IGNORE_ACID
 
 
 ### The Cloaks ###
@@ -1033,8 +932,6 @@ F:RES_DARK | RES_LITE
 
 
 ### The Gloves ###
-
-T:31 | IGNORE_ELEC | IGNORE_COLD
 
 N:125:& Set~ of Leather Gloves
 G:]:U:0
@@ -1090,8 +987,6 @@ P:5:1d3:0:0:0
 
 
 ##### Rings #####
-
-T:45 | IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD
 
 N:132:Strength
 G: :d:2
@@ -1312,8 +1207,6 @@ F:SHOW_MODS
 
 ##### Amulets #####
 
-T:40 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-
 N:163:Brilliance
 G: :d:3
 I:40:6:0
@@ -1383,8 +1276,6 @@ F:CURSED | STR | INT | WIS | DEX | CON | CHR
 
 
 ##### Scrolls #####
-
-T:70 | IGNORE_ELEC | IGNORE_COLD | EASY_KNOW
 
 N:173:Enchant Weapon To-Hit
 G: :d:200
@@ -1736,8 +1627,6 @@ D:It destroys everything except for artefacts in a 15 square radius when you
 D:read it.
 
 ##### Potions #####
-
-T:75 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | EASY_KNOW
 
 N:222:Slime Mold Juice
 G: :d:6
@@ -2137,8 +2026,6 @@ D:for 21-40 turns after you drink it.
 # Note : some of the old wands have been taken higher (low level characters
 # really need them and they used to be higher in earlier versions...)
 
-T:65 | IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD
-
 N:269:Light
 G: :d:9
 I:65:7:0
@@ -2402,8 +2289,6 @@ D:you use it.
 
 ##### Staffs #####
 
-T:55 | IGNORE_ELEC | IGNORE_COLD
-
 N:300:Trap Location
 G: :d:10
 I:55:12:0
@@ -2654,9 +2539,7 @@ P:0:1d2:0:0:0
 D:It heals you 300 and cures cuts and stunning when you use it.
 
 
-##### Basic Books #####
-
-T:90 | IGNORE_ACID | IGNORE_ELEC | IGNORE_COLD | EASY_KNOW
+##### Sorcery Books #####
 
 N:334:[Beginner's Handbook]
 G:?:B:201
@@ -2689,8 +2572,6 @@ P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ##### Chests #####
-
-T:7 | IGNORE_ELEC | IGNORE_COLD
 
 N:338:& Small wooden chest~
 G:~:s:0
@@ -2743,16 +2624,12 @@ A:75/1
 
 ##### Various Stuff #####
 
-T:5 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
-
 N:345:& Iron Spike~
 G:~:W:0
 I:5:0:0
 W:1:0:10:1
 A:1/1
 P:0:1d1:0:0:0
-
-T:39 | IGNORE_ACID | IGNORE_ELEC | IGNORE_COLD
 
 N:346:& Wooden Torch~
 G:~:u:0
@@ -2770,16 +2647,12 @@ A:3/1
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE
 
-T:77 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | EASY_KNOW
-
 N:348:& Flask~ of oil
 G:!:y:0
 I:77:0:7500
 W:1:0:10:3
 A:1/1
 P:0:2d6:0:0:0
-
-T:2 | IGNORE_ELEC | IGNORE_FIRE | EASY_KNOW
 
 N:349:& Empty Bottle~
 G:!:w:0
@@ -2792,8 +2665,6 @@ P:0:1d1:0:0:0
 
 
 ##### Here are the Rods #####
-
-T:66 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
 
 N:350:Havoc
 G: :d:11
@@ -3027,8 +2898,6 @@ D:you zap it.
 
 ##### Charms #####
 
-T:94 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
-
 N:378:& Lump~ of Sulphur
 G:*:y:0
 I:94:0:0
@@ -3080,8 +2949,6 @@ P:0:1d1:0:0:0
 
 ##### Thaumaturgy Spellbooks #####
 
-T:91 | IGNORE_ACID | IGNORE_ELEC | IGNORE_COLD | EASY_KNOW
-
 N:385:[Sign of Chaos]
 G:?:R:202
 I:91:0:0
@@ -3114,8 +2981,6 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ##### Junk #####
 
-T:3 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
-
 N:389:& Shard~ of Pottery
 G:~:r:0
 I:3:3:0
@@ -3132,8 +2997,6 @@ P:0:1d1:0:0:0
 
 
 ##### Skeletons #####
-
-T:1 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
 
 N:391:& Broken Skull~
 G:~:w:0
@@ -3195,8 +3058,6 @@ P:0:1d2:0:0:0
 
 
 ##### Dragon Scale Mail #####
-
-T:38 | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:400:Black Dragon Scale Mail~
 G:[:s:0
@@ -3519,8 +3380,6 @@ D:It decreases your constitution (if possible) when you drink it.
 
 ##### And here starts the gold/gems #####
 
-T:100 | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
-
 N:480:copper
 G:$:u:0
 I:100:1:0
@@ -3760,8 +3619,6 @@ F:INSTA_ART
 
 # Conjuration Spellbooks
 
-T:92 | IGNORE_ACID | IGNORE_ELEC | IGNORE_COLD | EASY_KNOW
-
 N:512:[Minor Conjurings]
 G:?:U:203
 I:92:0:0
@@ -3793,8 +3650,6 @@ P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 # Necromancy Spellbooks
-
-T:93 | IGNORE_ACID | IGNORE_ELEC | IGNORE_COLD | EASY_KNOW
 
 N:516:[Black Prayers]
 G:?:D:204
