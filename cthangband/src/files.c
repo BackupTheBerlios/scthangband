@@ -587,8 +587,6 @@ errr process_pref_file_aux(char *buf)
 	/* Process M:<attr>:<attr>... -- set monster memory colours */
 	else if (buf[0] == 'M')
 	{
-		cptr atchar="dwsorgbuDWvyRGBU";
-
 		/* Expect M:xx:xx:xx:xx (MAX_MONCOL times) format. */
 		if (strlen(buf) < MAX_MONCOL*3+1) return 1;
 		for (i = 0; i < MAX_MONCOL; i++)
@@ -4157,7 +4155,7 @@ void do_cmd_help(cptr name)
 int color_char_to_attr(char c)
 {
 	uint i;
-	for (i = 0; i < N_ELEMENTS(atchar); i++)
+	for (i = 0; atchar[i]; i++)
 	{
 		if (c == atchar[i]) return i;
 	}
