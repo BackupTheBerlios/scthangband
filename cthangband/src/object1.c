@@ -4300,6 +4300,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 
 		/* Hack -- Nothing to choose */
 		*err = GET_ITEM_ERROR_NO_ITEMS;
+		o_ptr = NULL;
 
 		/* Done */
 		done = TRUE;
