@@ -4077,7 +4077,7 @@ extern bool set_flag(int flag, int v);
 /* util.c */
 
 #if (defined(MAIN_X11_C) || defined(UTIL_C))
-extern errr type_string(char *str);
+extern errr type_string(char *str, uint len);
 #endif
 
 /* z-term.c */

@@ -4001,19 +4001,26 @@ void repeat_string_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  *
  * NB: The keys added here will be interpreted by any macros or keymaps.
  */
-errr type_string(char *str)
+errr type_string(char *str, uint len)
 {
+	char *s;
+
 	/* Paranoia - no string. */
-	if (!str) return -2;
+	if (!str) return TERM_ERROR_BAD_INPUT;
+
+	/* Hack - calculate the string length here if none given. */
+	if (!len) len = strlen(str);
 
 	/* Not enough space for the string. */
-	if (Term_queue_space() <= (int)strlen(str))
+	if (Term_queue_space() <= (int)len)
 		return PARSE_ERROR_OUT_OF_MEMORY;
 
-	while (*str)
+	for (s = str; s < str+len; s++)
 	{
-		errr err = Term_keypress(*str++);
-		if (err) return err;
+		errr err = Term_keypress(*s);
+
+		/* Catch errors other than "str[i] == 0", which is ignored. */
+		if (err && err != TERM_ERROR_BAD_INPUT) return err;
 	}
 
 	return SUCCESS;

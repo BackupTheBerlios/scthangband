@@ -1662,14 +1662,14 @@ static void paste_x11_accept(const XSelectionEvent *ptr)
 
 		Atom type;
 		int fmt;
-		long nitems;
-		
+		unsigned long nitems;
+
 		/* Set data to the string, and catch errors. */
 		if (XGetWindowProperty(Metadpy->dpy, Infowin->win, XA_STRING, offset,
 			32767, TRUE, XA_STRING, &type, &fmt, &nitems, &left, &data)) break;
 
 		/* Paste the text. */
-		err = type_string(data);
+		err = type_string(data, nitems);
 
 		/* No room. */
 		if (err == PARSE_ERROR_OUT_OF_MEMORY)
