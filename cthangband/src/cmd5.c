@@ -3571,11 +3571,20 @@ static int spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 {
 	s32b i = rand_int(100000);
 
+	/* Redraw stuff (always). */
+	p_ptr->redraw |= (PR_SPIRIT);
+
 	/* Do nothing from 40-85% of the time. */
 	if (rand_int(100) > s_ptr->punish_chance) return 0;
 
 	/* Warn of a punishment. */
 	msg_format("%s is enraged!", s_ptr->name);
+
+	if (cheat_peek)
+	{
+		msg_format("Roll: %ld. Need %d for summon, %d for abandonment.",
+			i, f_ptr->minskill * 1000, f_ptr->minskill * f_ptr->minskill);
+	}
 
  	/* Abandonment. up to 2% chance for a level 45 favour. */
 	if (i < f_ptr->minskill * f_ptr->minskill)
@@ -3583,6 +3592,9 @@ static int spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 		msg_format("%s disowns you!", s_ptr->name);
 
 		s_ptr->pact = FALSE;
+
+		/* You won't see this one again... */
+		generate_spirit_name(s_ptr);
 
 		/* No other effect makes sense now. */
 		return 0;
@@ -3690,7 +3702,8 @@ void do_cmd_invoke(void)
 		/* Chance for retribution based on level of favour */
 		anger = spirit_punish(s_ptr, f_ptr);
 		/* The spirit gets somewhat pissed off if it hasn't left. */
-		if (s_ptr->pact) annoy_spirit(s_ptr,anger+rand_int(favour_annoyance(f_ptr)));
+		if (s_ptr->pact)
+			annoy_spirit(s_ptr,anger + rand_int(favour_annoyance(f_ptr)));
 	}
 	/* Process spell */
 	else

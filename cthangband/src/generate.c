@@ -260,6 +260,20 @@ struct dun_data
  */
 static dun_data *dun;
 
+void generate_spirit_name(spirit_type *s_ptr)
+{
+	if (s_ptr->pact) return;
+
+	if (s_ptr->sphere == SPIRIT_NATURE)
+	{
+		create_random_name(RACE_ELF,s_ptr->name);
+	}
+	else
+	{
+		create_random_name(RACE_HOBBIT,s_ptr->name);
+	}
+}	
+
 /* Re-randomise spirit names after town creation */
 void generate_spirit_names(void)
 {
@@ -267,19 +281,7 @@ void generate_spirit_names(void)
 	spirit_type *s_ptr;
 	for (i=0;i<MAX_SPIRITS;i++)
 	{
-		s_ptr = &(spirits[i]);
-		/* Only randomise non-pact spirits */
-		if (!(s_ptr->pact))
-		{
-			if (s_ptr->sphere == SPIRIT_NATURE)
-			{
-				create_random_name(RACE_ELF,s_ptr->name);
-			}
-			else
-			{
-				create_random_name(RACE_HOBBIT,s_ptr->name);
-			}
-		}
+		generate_spirit_name(spirits+i);
 	}
 }
 

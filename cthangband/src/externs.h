@@ -3010,7 +3010,7 @@ extern bool spoil_dam;
 #if (defined(MONSTER1_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_flag;
 #endif
-#if (defined(BIRTH_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_peek;
 #endif
 #if (defined(BIRTH_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3352,7 +3352,7 @@ extern artifact_type *a_info;
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern cptr a_name;
 #endif
-#if (defined(CMD6_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
+#if (defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern ego_item_type *e_info;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
@@ -4014,5 +4014,11 @@ extern void feature_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
 extern void convert_articles(char *str);
+#endif
+
+/* generate.c */
+
+#if (defined(CMD5_C) || defined(GENERATE_C))
+extern void generate_spirit_name(spirit_type *s_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
