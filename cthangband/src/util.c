@@ -3040,6 +3040,31 @@ void pause_line(int row)
  */
 static char request_command_buffer[256];
 
+/*
+ * Find the keymap mode.
+ */
+int keymap_mode(void)
+{
+	/* Roguelike */
+	if (rogue_like_commands)
+	{
+		return KEYMAP_MODE_ROGUE;
+	}
+
+	/* Original */
+	else
+	{
+		return KEYMAP_MODE_ORIG;
+	}
+}
+
+/*
+ * Find a keymap from its trigger.
+ */
+cptr get_keymap(byte trigger)
+{
+	return keymap_act[keymap_mode()][trigger];
+}
 
 
 /*
@@ -3067,22 +3092,8 @@ void request_command(bool shopping)
 
 	char cmd;
 
-	int mode;
-
 	cptr act;
 
-
-	/* Roguelike */
-	if (rogue_like_commands)
-	{
-		mode = KEYMAP_MODE_ROGUE;
-	}
-
-	/* Original */
-	else
-	{
-		mode = KEYMAP_MODE_ORIG;
-	}
 
 
 	/* No command yet */
@@ -3242,7 +3253,7 @@ void request_command(bool shopping)
 
 
 		/* Look up applicable keymap */
-		act = keymap_act[mode][(byte)(cmd)];
+		act = get_keymap((byte)(cmd));
 
 		/* Apply keymap if not inside a keymap already */
 		if (act && !inkey_next)

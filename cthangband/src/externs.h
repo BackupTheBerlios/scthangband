@@ -1880,7 +1880,7 @@ extern errr fd_close(int fd);
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern void move_cursor(int row, int col);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(UTIL_C))
 extern void text_to_ascii(char *buf, cptr str);
 #endif
 #if (defined(CMD4_C) || defined(UTIL_C))
@@ -3497,5 +3497,14 @@ extern const char help_x11[] ;
 
 #if (defined(MAIN_X11_C) || defined(Z_TERM_C))
 extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
+#endif
+
+/* util.c */
+
+#if (defined(CMD4_C) || defined(UTIL_C))
+extern int keymap_mode(void);
+#endif
+#if (defined(OBJECT1_C) || defined(UTIL_C))
+extern cptr get_keymap(byte trigger);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

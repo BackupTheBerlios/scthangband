@@ -1455,20 +1455,7 @@ static errr keymap_dump(cptr fname)
 	char key[1024];
 	char buf[1024];
 
-	int mode;
-
-
-	/* Roguelike */
-	if (rogue_like_commands)
-	{
-		mode = KEYMAP_MODE_ROGUE;
-	}
-
-	/* Original */
-	else
-	{
-		mode = KEYMAP_MODE_ORIG;
-	}
+	int mode = keymap_mode();
 
 
 	/* Build the filename */
@@ -1542,20 +1529,8 @@ void do_cmd_macros(void)
 
 	char buf[1024];
 
-	int mode;
+	int mode = keymap_mode();
 
-
-	/* Roguelike */
-	if (rogue_like_commands)
-	{
-		mode = KEYMAP_MODE_ROGUE;
-	}
-
-	/* Original */
-	else
-	{
-		mode = KEYMAP_MODE_ORIG;
-	}
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
