@@ -4898,7 +4898,7 @@ static bool get_moves(int m_idx, int *mm)
            for (i = 0; i < 8; i++)
            {
                /* Check grid */
-               if (cave[py + ddy_ddd[i]][px + ddx_ddd[i]].info & (CAVE_ROOM))
+               if (is_room_p(py + ddy_ddd[i], px + ddx_ddd[i]))
                {
                    /* One more room grid */
                    room++;

@@ -5733,7 +5733,13 @@ static void cave_temp_room_unlite(void)
 
 
 /*
- * Aux function -- see below
+ * Mark area to be lit by lite_room() with CAVE_TEMP.
+ *
+ * This works by lighting the central 9 squares unconditionally, and then
+ * lighting others if:
+ * 1. Two adjacent non-wall squares are lit.
+ * 2. Three adjacent squares which touch one another are lit, the middle one
+ * of which is not a wall. This is provided solely to light walls.
  */
 static void cave_temp_room_aux(int y, int x)
 {
@@ -5742,11 +5748,11 @@ static void cave_temp_room_aux(int y, int x)
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
-	/* Do not "leave" the current room */
-	if (!(c_ptr->info & (CAVE_ROOM))) return;
-
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
+
+	/* Not a room or a wall. */
+	if (!is_room_p(y,x) && cave_floor_bold(y,x)) return;
 
 	/* Mark the grid as "seen" */
 	c_ptr->info |= (CAVE_TEMP);
@@ -5755,6 +5761,10 @@ static void cave_temp_room_aux(int y, int x)
 	temp_y[temp_n] = y;
 	temp_x[temp_n] = x;
 	temp_n++;
+#ifdef TESTING_cave_temp_room_aux
+	move_cursor_relative(y,x);
+	inkey();
+#endif
 }
 
 
@@ -5850,8 +5860,12 @@ bool lite_area(int dam, int rad)
 	/* Hook into the "project()" function */
 	(void)project(0, rad, py, px, dam, GF_LITE_WEAK, flg);
 
-	/* Lite up the room */
-	lite_room(py, px);
+	/* Hack - don't light up the town. */
+	if (dun_level || wild_grid[wildy][wildx].dungeon >= MAX_TOWNS)
+	{
+		/* Lite up the room */
+		lite_room(py, px);
+	}
 
 	/* Assume seen */
 	return (TRUE);
@@ -5875,8 +5889,12 @@ bool unlite_area(int dam, int rad)
 	/* Hook into the "project()" function */
     (void)project(0, rad, py, px, dam, GF_DARK_WEAK, flg);
 
-	/* Lite up the room */
-	unlite_room(py, px);
+	/* Hack - don't darken the town. */
+	if (dun_level || wild_grid[wildy][wildx].dungeon >= MAX_TOWNS)
+	{
+		/* Darken the room */
+		unlite_room(py, px);
+	}
 
 	/* Assume seen */
 	return (TRUE);

@@ -1883,15 +1883,15 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Special cave grid flags
  */
-#define CAVE_MARK       0x01    /* memorized feature */
-#define CAVE_GLOW       0x02    /* self-illuminating */
-#define CAVE_ICKY       0x04    /* part of a vault */
-#define CAVE_ROOM       0x08    /* part of a room */
-#define CAVE_LITE       0x10    /* lite flag  */
-#define CAVE_VIEW       0x20    /* view flag */
-#define CAVE_TEMP       0x40    /* temp flag */
-#define CAVE_XTRA       0x80    /* misc flag */
-#define CAVE_TRAP		0x0100	/* checked for traps */
+#define CAVE_MARK	0x0001	/* memorized feature */
+#define CAVE_GLOW	0x0002	/* self-illuminating */
+#define CAVE_ICKY	0x0004	/* part of a vault */
+#define CAVE_ROOM	0x0008	/* part of a room */
+#define CAVE_LITE	0x0010	/* lite flag  */
+#define CAVE_VIEW	0x0020	/* view flag */
+#define CAVE_TEMP	0x0040	/* temp flag */
+#define CAVE_XTRA	0x0080	/* misc flag (temporary?) */
+#define CAVE_TRAP	0x0100	/* checked for traps */
 
 /*
  * Start Points for surface levels
