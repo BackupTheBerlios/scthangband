@@ -884,9 +884,11 @@ P:(+50,+50) [+0] (+0)
 N:126:%Base Shattered ^
 W:0:0
 P:(+11,+11) [+0] (+0)
+F:CURSED
 
 # Destroyed Body Armor
 
 N:127:%Base Blasted ^
 W:0:0
 P:(+0,+0) [+11] (+0)
+F:CURSED
