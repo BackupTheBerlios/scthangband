@@ -1796,19 +1796,24 @@ static int spirit_punish(spirit_type *s_ptr, const magic_type *f_ptr)
 	/* Summoning, up to 43% chance for a level 45 favour. */
 	if (i < f_ptr->min * 1000)
 	{
+		bool any;
 		/* Choose an appropriate summon type most of the time. */
-		int j, type = (!rand_int(3)) ? 0 : (s_ptr->sphere == SPIRIT_NATURE) ?
-			SUMMON_ANIMAL : SUMMON_LIVING;
+		int j, type = (one_in(3) ? 0 : (s_ptr->sphere == SPIRIT_NATURE) ?
+			SUMMON_ANIMAL : SUMMON_LIVING);
 
 		msg_format("%s sends some monsters to teach you a lesson!", s_ptr->name);
 
-		for (j = 0; j < 1000; j++)
+		for (j = 0, any = FALSE; j < 1000; j++)
 		{
-			if (summon_specific(py, px, dun_depth, type) && !rand_int(3)) break;
+			if (summon_specific(py, px, dun_depth, type))
+			{
+				any = TRUE;
+				if (one_in(3)) break;
+			}
 		}
 
 		/* Nothing happened. */
-		if (j == 1000) msg_print("They get lost on the way...");
+		if (!any) msg_print("They get lost on the way...");
 	}
 
 	/* Annoy the spirit even more. */
