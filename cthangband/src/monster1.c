@@ -38,10 +38,8 @@ static cptr wd_his[3] =
  * Determine if the "armor" is known
  * The higher the level, the fewer kills needed.
  */
-static bool know_armour(int r_idx)
+static bool know_armour(monster_race *r_ptr)
 {
-	monster_race *r_ptr = &r_info[r_idx];
-
 	s32b level = r_ptr->level;
 
 	s32b kills = r_ptr->r_tkills;
@@ -303,30 +301,34 @@ static cptr roff_monster(u32b flags2, u32b flags3)
  */
 static cptr convert_spell_text(cptr string, monster_race *r_ptr)
 {
+	cptr start = strchr(string, '(');
 
-	cptr t=0;
+	assert(start != format(NULL)); /* Caller */
 
-	/* Dump */
+	/* Numerical strings are always preceded by ( to simplify spoil_flag. */
+	if (!start) return string;
+
+	/* !spoil_flag hides the numerical information. */
+	if (!spoil_flag)
+	{
+		/* Assume that there is nothing to display after the numerical term. */
+		return format("%.*s", start-string-1, string);
+	}
 
 	/* Is there a LEV term to evaluate? */
-	if (r_ptr->r_tkills || spoil_mon) t = strchr(string, '(');
-	if (t && spoil_flag) t = strstr(t, "LEV");
-	/* Unknown/missing level term, so give the formula. */
-	if (!t)
+	if ((r_ptr->r_tkills || spoil_mon) && strstr(start, "LEV"))
 	{
-		return string;
+		string = format("%v", evaluate_text_f3, string, "LEV", r_ptr->level);
 	}
-	/* Use spoil_flag to hide all of this information. */
-	else if (!spoil_flag)
+	
+	/* Is there a MHP term to evaluate? */
+	if ((know_armour(r_ptr) || spoil_mon) && strstr(start, "MHP"))
 	{
-		return (cptr)format("%.*s", t-string-1, string);
-	}
-	else
-	{
-		t = format("%v", evaluate_text_f3, string, "LEV", r_ptr->level);
-		return format("%v", evaluate_text_f3, t, "MHP",
+		string = format("%v", evaluate_text_f3, string, "MHP",
 			r_ptr->hdice * r_ptr->hside);
 	}
+
+	return string;
 }
 
 
@@ -975,7 +977,7 @@ static void roff_aux(int r_idx)
 
 
 	/* Describe monster "toughness" */
-	if (know_armour(r_idx) || spoil_mon)
+	if (know_armour(r_ptr) || spoil_mon)
 	{
 		/* Armor */
 		c_roff(MONCOL_ACHP, format("%^s has an armor rating of %d",
