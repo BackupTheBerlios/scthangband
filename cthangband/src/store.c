@@ -3839,7 +3839,7 @@ static void store_process_command(void)
 				   }
 			   case STORE_MAGIC:
 				   {
-					   	if (p_ptr->ritual < MAX_TOWNS + 1)
+					   	if (p_ptr->ritual != TOWN_NONE)
 					   {
 						   msg_format("You have already done the ritual!");
 					   }

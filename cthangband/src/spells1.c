@@ -783,7 +783,7 @@ void take_hit(int damage, cptr hit_from, int monster)
 		/* Sound */
 		sound(SOUND_DEATH);
 		/* Don't give confusing death message if player has ritual */
-		if(p_ptr->ritual == MAX_TOWNS + 1)
+		if(p_ptr->ritual == TOWN_NONE)
 		{
 			/* Hack -- Note death */
 			if (!last_words)
@@ -804,7 +804,7 @@ void take_hit(int damage, cptr hit_from, int monster)
 		death = TRUE;
 		
 		/* Again, don't print message if player has ritual */
-        if((p_ptr->ritual == MAX_TOWNS + 1) && !cheat_live)
+        if((p_ptr->ritual == TOWN_NONE) && !cheat_live)
 		{
 			/* Recognise the killer's efforts, if possible. */
 			monster_race *r_ptr = r_info+monster;

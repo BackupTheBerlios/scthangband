@@ -3658,7 +3658,7 @@ static bool quick_start_character(void)
 		p_ptr->muta3 = 0;
 
 		/* Player has no recal ritual yet */
-		p_ptr->ritual = MAX_TOWNS + 1;
+		p_ptr->ritual = TOWN_NONE;
 
 		/* Player has no house yet */
 		for(i=0;i<MAX_STORES_TOTAL;i++)
@@ -4007,7 +4007,7 @@ static bool player_birth_aux(void)
 		p_ptr->energy=1050; /* Should this be based on TURN_ENERGY? */
 
 		/* Player has no recal ritual yet */
-		p_ptr->ritual = MAX_TOWNS + 1;
+		p_ptr->ritual = TOWN_NONE;
 
 		/* Player has no house yet */
 		for(i=0;i<MAX_STORES_TOTAL;i++)

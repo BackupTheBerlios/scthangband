@@ -695,6 +695,10 @@ static void wr_extra(void)
     wr_u32b(p_ptr->muta3);
 
 	wr_byte(p_ptr->confusing);
+
+	/* Store p_ptr->ritual temporarily as it may need to be changed. */
+	j = p_ptr->ritual;
+
 #ifdef SF_QUEST_DIRECT
 	/* This is duplicated information, but it was used. */
 	if (!has_flag(SF_QUEST_DIRECT))
@@ -705,11 +709,12 @@ static void wr_extra(void)
 			if (st_ptr) wr_byte(st_ptr->bought);
 			else wr_byte(0);
 		}
+		if (p_ptr->ritual == TOWN_NONE) j = 9;
 	}
 #else /* SF_QUEST_DIRECT */
 	for (i=0;i<8;i++) wr_byte(p_ptr->house[i]);
 #endif /* SF_QUEST_DIRECT */
-	wr_byte(p_ptr->ritual);
+	wr_byte(j); /* p_ptr->ritual */
 	wr_byte(p_ptr->sneaking);
 	wr_byte(0);
 

@@ -1225,6 +1225,13 @@ static void rd_extra(void)
 #endif /* SF_QUEST_DIRECT */
 
 	rd_byte(&p_ptr->ritual);
+
+#ifdef SF_QUEST_DIRECT
+	/* Use a constant "no ritual" value. */
+	if (!has_flag(SF_QUEST_DIRECT) && p_ptr->ritual == 9)
+		p_ptr->ritual = TOWN_NONE;
+#endif /* SF_QUEST_DIRECT */
+
 	rd_byte(&p_ptr->sneaking);
 	rd_byte(&tmp8u);
 

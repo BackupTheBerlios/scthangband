@@ -4095,7 +4095,7 @@ static void resurrect(bool wizard)
 		wildy=town_defs[cur_town].y;
 
 		/* Ritual is used */
-		p_ptr->ritual = MAX_TOWNS + 1;
+		p_ptr->ritual = TOWN_NONE;
 
 		/* Lose most money and all items */
 		/* You only keep the change in your pocket */
@@ -4597,7 +4597,7 @@ void play_game(bool new_game)
 			}
 			
 			/* Almost identical code -- Allow player to recall at point of death */
-            else if (p_ptr->ritual < MAX_TOWNS + 1)
+            else if (p_ptr->ritual != TOWN_NONE)
 			{
 				resurrect(FALSE);
 			}
