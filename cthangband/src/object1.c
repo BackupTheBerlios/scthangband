@@ -4030,6 +4030,7 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 	char buf[2*MAX_ASCII_LEN+2];
 	int len;
 	cptr s;
+	bool xn;
 
 	object_type *j_ptr;
 
@@ -4038,7 +4039,7 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 	len = strlen(buf);
 
 	/* Check every object */
-	for (j_ptr = first; j_ptr; next_object(&j_ptr))
+	for (j_ptr = first, xn = FALSE; j_ptr; next_object(&j_ptr))
 	{
 		/* Never check the overflow slot. */
 		if (j_ptr == inventory+INVEN_PACK) break;
@@ -4053,7 +4054,7 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 		while ((s = strchr(s, '@')))
 		{
 			/* Advance and check for short tags. */
-			if (*++s == tag)
+			if (*++s == tag && !xn)
 			{
 				/* Success */
 				if (!*o_ptr) *o_ptr = j_ptr;
@@ -4064,13 +4065,13 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 			{
 				/* Success */
 				*o_ptr = j_ptr;
-				return TRUE;
+				xn = TRUE;
 			}
 		}
 	}
 
 	/* No @xn tag. */
-	return FALSE;
+	return xn;
 }
 
 
