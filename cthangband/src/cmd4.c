@@ -755,6 +755,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 				clear_from(0);
 				win_help_display();
 				(void)inkey();
+				help_track(NULL);
 				Term_load_aux(t);
 				Term_release(t);
 				break;

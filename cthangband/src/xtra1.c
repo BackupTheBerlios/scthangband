@@ -3570,13 +3570,17 @@ void help_track(cptr str)
 	else
 	{
 		/* Too many strings memorised. */
-		if (help_strs++ == MAX_HELP_STRS-1)
+		if (help_strs == MAX_HELP_STRS-1)
 		{
 			int i;
 			for (i = 1; i < MAX_HELP_STRS; i++)
 			{
 				help_str[i-1] = help_str[i];
 			}
+		}
+		else
+		{
+			help_strs++;
 		}
 	
 		/* Set the current string */
