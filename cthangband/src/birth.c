@@ -810,7 +810,7 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 		else if (c == 'S') return BC_RESTART;
-		else if (c == '?') do_cmd_help(syshelpfile);
+		else if (c == '?') do_cmd_help(NULL);
 		else if (c == ESCAPE && allow_abort) return BC_ABORT;
 		else if (c == '=')
 		{
@@ -1382,7 +1382,7 @@ static bool point_mod_player(void)
 		}
 		if (i == IDX_HELP)
 		{
-			do_cmd_help(syshelpfile);
+			do_cmd_help(NULL);
 		}
 		/* Toggle details if required. */
 		if (i == IDX_DETAILS)
@@ -3738,7 +3738,7 @@ static bool quick_start_character(void)
 			/* Help */
 			if (c == '?')
 			{
-				do_cmd_help(syshelpfile);
+				do_cmd_help(NULL);
 				continue;
 			}
 
@@ -3849,7 +3849,7 @@ static bool player_birth_aux(void)
 		if (c == 'Q') quit(NULL);
 		if (c == 'S') return (FALSE);
 		if ((c == 'y') || (c == 'n') || (c == 'Y') || (c == 'N')) break;
-		if (c == '?') do_cmd_help(syshelpfile);
+		if (c == '?') do_cmd_help(NULL);
 		if (c == '=')
 		{
 			Term_save();

@@ -2921,7 +2921,7 @@ static void process_command(void)
 			/* Help */
 		case '?':
 		{
-			do_cmd_help(syshelpfile);
+			do_cmd_help(NULL);
 			break;
 		}
 

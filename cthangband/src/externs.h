@@ -2446,7 +2446,7 @@ extern void resize_main_term(void);
 #if (defined(VARIABLE_C))
 extern cptr copyright[5];
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern cptr syshelpfile;
 #endif
 #if (defined(LOAD_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
