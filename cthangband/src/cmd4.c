@@ -1777,40 +1777,139 @@ void do_cmd_macros(void)
 
 #ifdef ALLOW_VISUALS
 
+/*
+ * Define a structure to store everything which distinguishes the way the
+ * do_cmd_visuals() function deals with one type of thing with the way it
+ * deals with another.
+ */
+
 typedef struct visual_type visual_type;
 
-struct visual_type {
-	cptr text;	/* A text string describing the option */
-	void (*dump)(FILE *fff); /* A function that dumps the preferences to an open file. */
-	/* A function that retrieves the attrs and chars for the current entry. */
-	void (*load)(uint n, uint *da, uint *dc, uint *ca, uint *cc);
-	/* A function that retrieves the name for the current entry. */
-	char* (*name)(char *buf, uint n);
-	/* A function that saves the attrs and chars for the current entry. */
-	void (*save)(uint n, uint ca, uint cc);
+struct visual_type
+{
+	/* A text string which describes the type of preference. */
+	cptr text;
+
+	/*
+	 * Get function.
+	 * Obtain the name, the default character and colour, and pointers to the
+	 * user-defined character and colour for R/W access.
+	 */
+	void (*get)(int, cptr *, byte *, char *, byte **, char **);
+
+	/* 
+	 * Dump functions.
+	 * If pref_str is set, this determines the string dump_visual_stuff() uses
+	 * for each pref string.
+	 * If not, it runs dump once.
+	 */
+	void (*dump)(FILE *fff);
+	void (*pref_str)(FILE *, int, char, byte, char);
+
+	/*
+	 * Reject function.
+	 * If this is set, entries which this returns true for cannot be selected.
+	 * If not, every legal entry can be selected.
+	 */
 	bool (*reject)(uint n);
-	s16b max; /* The number of entries available. */
-	bool attr; /* Has a colour. */
-	bool chars; /* Has a character. */
+
+	/* The text string printed before an option dump. */
+	cptr initstring;
+
+	/* The character which starts every preference line to indicate the type. */
+	char startchar; 
+
+	/* The number of entries available (usually set during initialisation). */
+	u16b max;
+
+	/* Indicate that colour has meaning for these visual prefs. */
+	bool attr;
+
+	/* Indicate that character has meaning for these visual prefs. */
+	bool chars;
 };
 
-static visual_type visual[5];
+/*
+ * Extract pointers to the following elements of something:
+ * (cptr)(x_name+x_info[i].name)
+ * (byte)(x_info[i].d_attr)
+ * (char)(x_info[i].d_char)
+ * (byte*)(&x_info[i].x_attr)
+ * (char*)(&x_info[i].x_char)
+ */
+#define get_visuals(x_info, x_name) \
+{ \
+	(*name) = x_name+x_info[i].name; \
+	(*da) = x_info[i].d_attr; \
+	(*dc) = x_info[i].d_char; \
+	(*xa) = &(x_info[i].x_attr); \
+	(*xc) = &(x_info[i].x_char); \
+}
 
-/* Just in case a specific reference needs to be made. */
-#define VISUAL_MONSTER	(&visual[0])
-#define VISUAL_OBJECT	(&visual[1])
-#define VISUAL_FEATURE	(&visual[2])
-#define VISUAL_MONCOL	(&visual[3])
-#define VISUAL_UNIDENT	(&visual[4])
+/* Wrapers for the above for each type used here. */
+
+static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+get_visuals(r_info, r_name)
+
+static void get_visuals_feat(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+get_visuals(f_info, f_name)
+
+/* Non-standard get_visuals_* functions. */
 
 /*
- * Find the name of an unidentified object.
+ * The strings in k_name are processed before they are printed.
  */
-static char *visual_name_unident(char *buf, uint n)
-		{
+static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+{
+	C_TNEW(o_name, ONAME_MAX, char);
+
+	/* Get most of the visuals. */
+	get_visuals(k_info, k_name);
+
+	/* Create the object */
+	object_type forge;
+	object_prep(&forge, i);
+
+	/* Describe the object without flavour. */
+	object_desc_store(o_name, &forge, FALSE, 0);
+
+	/* Place in a temporary buffer. */
+	(*name) = format("%s", o_name);
+
+	/* And release the string if necessary. */
+	TFREE(o_name);
+}
+
+/*
+ * Monster colours are special. They have no notion of character, and
+ * the things they do have are stored in a different way to reflect the
+ * fact that the defaults are set at compile-time rather than run-time.
+ */
+static void get_visuals_moncol(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+{
+	(*name) = moncol[i].name;
+	(*da) = TERM_WHITE;
+	(*xa) = &(moncol[i].attr);
+
+	/* Characters aren't defined. */
+	(*dc) = (char)NULL;
+	(*xc) = NULL;
+}
+
+/*
+ * The strings in u_name are processed before they are printed (using a fake
+ * object kind to allow object_desc() to be used).
+ */
+static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+{
+	C_TNEW(o_name, ONAME_MAX, char);
+
+	/* Get most of the visuals. */
+	get_visuals(u_info, u_name);
+
 	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
 	object_kind hack_k, *k_ptr = &k_info[1];
-	object_type hack_o, *o_ptr = &hack_o;
+	object_type o_ptr[1];
 
 	/* Put *k_ptr somewhere safe and clear it. */
 	COPY(&hack_k, k_ptr, object_kind);
@@ -1819,200 +1918,45 @@ static char *visual_name_unident(char *buf, uint n)
 	/* Set up *k_ptr and *o_ptr. The tval is arbitrary. */
 	k_ptr->tval = TV_FOOD;
 	k_ptr->cost = 1;
-	k_ptr->u_idx = n;
+	k_ptr->u_idx = i;
 	object_prep(o_ptr, k_ptr-k_info);
 
 	/* Get the name. */
-	object_desc(buf, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0);
 
 	/* Replace the real *k_ptr */
 	COPY(k_ptr, &hack_k, object_kind);
 
-	return buf;
-}
+	/* Place the name in a temporary buffer. */
+	(*name) = format("%s", o_name);
 
-static char *visual_name_mon(char *buf, uint n)
-{
-	strcpy(buf, r_name+r_info[n].name);
-	return buf;
-		}
-
-static char *visual_name_feat(char *buf, uint n)
-{
-	strcpy(buf, f_name+f_info[n].name);
-	return buf;
-}
-
-static char *visual_name_moncol(char *buf, uint n)
-		{
-	strcpy(buf, moncol[n].name);
-	return buf;
-}
-
-static char *visual_name_obj(char *buf, uint n)
-{
-	/* Create the object */
-	object_type forge;
-	object_prep(&forge, n);
-
-	/* Describe the object */
-	object_desc_store(buf, &forge, FALSE, 0);
-
-	/* Return the description */
-	return buf;
-}
-
-
-/*
- * Dump an arbitrary set of attr/char definitions to an open file.
- *
- * x_info is the array from which this is derived. It must have a
- * 'name' entry, an x_attr entry giving the current attr and an
- * x_char entry giving the current char.
- *
- * x_name is the name array such that x_name+x_info[i].name gives the
- * name of item i.
- *
- * max is the total number of entries in array.
- *
- * startchar is a character which indicates the type of string. This must
- * be the same as in process_pref_file_aux().
- *
- * initstring is a comment string which is displayed before the dump. It is
- * formatted as a comment as it is printed.
- */
-
-#define dump_visual(vs_ptr, x_info, startchar, initstring) \
-{\
-	s16b i; \
-	char buf[1024]; \
-\
-	/* Start dumping */ \
-	fprintf(fff, "\n\n"); \
-	fprintf(fff, "# %s\n", initstring); \
-	fprintf(fff, "%c:---reset---\n\n", startchar); \
-\
-	/* Dump entries */ \
-	for (i = 0; i < vs_ptr->max; i++) \
-	{ \
-\
-		/* Skip non-entries */ \
-		if (vs_ptr->reject && (*vs_ptr->reject)(i)) continue; \
-\
-		/* Skip default entries */ \
-		if ((x_info[i].x_attr == x_info[i].d_attr) && \
-			(x_info[i].x_char == x_info[i].d_char)) continue; \
-\
-		/* Dump a comment */ \
-		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i)); \
-\
-		/* Dump the attr/char info */ \
-		fprintf(fff, "%c:%d:0x%02X:0x%02X\n\n", startchar, \
-		i, (byte)(x_info[i].x_attr), (byte)(x_info[i].x_char)); \
-	} \
-\
-	/* All done */ \
-	fprintf(fff, "\n\n\n\n"); \
-}
-
-static void visual_dump_mon(FILE *fff)
-dump_visual(VISUAL_MONSTER, r_info, 'R', "Monster attr/char definitions")
-
-static void visual_dump_obj(FILE *fff)
-dump_visual(VISUAL_OBJECT, k_info, 'K', "Object attr/char definitions")
-
-static void visual_dump_feat(FILE *fff)
-dump_visual(VISUAL_FEATURE, f_info, 'F', "Feature attr/char definitions")
-
-static void visual_dump_unident(FILE *fff)
-{
-	s16b i;
-	C_TNEW(buf, ONAME_MAX, char);
-
-	visual_type *vs_ptr = VISUAL_UNIDENT;
-
-	/* Start dumping */
-	fprintf(fff, "\n\n");
-	fprintf(fff, "# %s\n\n", "Unidentified object attr/char definitions");
-	fprintf(fff, "%c:---reset---\n\n", 'U');
-
-	/* Dump entries */
-	for (i = 0; i < MAX_U_IDX; i++)
-	{
-		unident_type *u_ptr = &u_info[i];
-
-		/* Skip non-entries */
-		if ((*vs_ptr->reject)(i)) continue;
-
-		/* Skip default entries */ \
-		if ((u_info[i].x_attr == u_info[i].d_attr) &&
-			(u_info[i].x_char == u_info[i].d_char)) continue;
-
-		/* Dump a comment */
-		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i));
-
-		/* Dump the attr/char info */
-		fprintf(fff, "%c:%d:%d:0x%02X:0x%02X\n\n", 'U',
-		u_ptr->p_id, u_ptr->s_id, (byte)(u_ptr->x_attr), (byte)(u_ptr->x_char));
-	}
-
-	/* All done */
-	fprintf(fff, "\n\n\n\n");
-
-	TFREE(buf);
+	/* And release the string if necessary. */
+	TFREE(o_name);
 }
 
 /*
- * Load a name and a set of visual preferences.
- *
- * x_info is the array from which this is derived. It must have a 'name' entry,
- * an 'x_attr' entry, an 'x_char' entry, a 'd_attr' entry and a 'd_char' entry.
- * x_attr and x_char are the user-defined attr and char, and d_attr and d_char
- * the default ones.
- *
- * x_name is the name array such that x_name+x_info[n].name gives the name for entry n.
+ * Dump a normal visual pref string.
  */
-#define load_visual(x_info, x_name) \
-{ \
-	(*da) = (byte)(x_info[n].d_attr); \
-	(*dc) = (byte)(x_info[n].d_char); \
-	(*ca) = (byte)(x_info[n].x_attr); \
-	(*cc) = (byte)(x_info[n].x_char); \
+static void pref_str_std(FILE *fff, int i, char startchar, byte a, char c)
+{
+	fprintf(fff, "%c:%d:0x%02X:0x%02X\n\n", startchar, i, a, (byte)c);
 }
 
-static void visual_load_mon(uint n, uint *da, uint *dc, uint *ca, uint *cc)
-load_visual(r_info, r_name)
+/*
+ * Dump the visual pref string for an unidentified item.
+ */
+static void pref_str_unident(FILE *fff, int i, char startchar, byte a, char c)
+{
+	unident_type *u_ptr = u_info+i;
 
-static void visual_load_feat(uint n, uint *da, uint *dc, uint *ca, uint *cc)
-load_visual(f_info, f_name)
-
-static void visual_load_unident(uint n, uint *da, uint *dc, uint *ca, uint *cc)
-load_visual(u_info, u_name)
-
-static void visual_load_obj(uint n, uint *da, uint *dc, uint *ca, uint *cc)
-	load_visual(k_info, k_name)
+	fprintf(fff, "%c:%d:%d:0x%02X:0x%02X\n\n", startchar,
+	u_ptr->p_id, u_ptr->s_id, a, (byte)c);
+}
 
 /*
- * Save an arbitrary set of attr/char definitions to x_info[n].
+ * Monster description colours are dumped in a special format because
+ * of the low amount of information they use.
  */
-#define save_visual(x_info) \
-{\
-	x_info[n].x_attr = ca; \
-	x_info[n].x_char = cc; \
-		}
-
-static void visual_save_mon(uint n, uint ca, uint cc)
-save_visual(r_info)
-
-static void visual_save_obj(uint n, uint ca, uint cc)
-save_visual(k_info)
-
-static void visual_save_feat(uint n, uint ca, uint cc)
-save_visual(f_info)
-
-static void visual_save_unident(uint n, uint ca, uint cc)
-save_visual(u_info)
-
 static void visual_dump_moncol(FILE *fff)
 {
 	s16b n;
@@ -2020,7 +1964,7 @@ static void visual_dump_moncol(FILE *fff)
 	char out[80] = "M";
 
 	for (n = 0; n < MAX_MONCOL; n++)
-		{
+	{
 		moncol_type *mc_ptr = &moncol[n];
 		char c1 = atchar[mc_ptr->attr/16];
 		char c2 = atchar[mc_ptr->attr%16];
@@ -2036,18 +1980,6 @@ static void visual_dump_moncol(FILE *fff)
 	fprintf(fff, "\n\n\n\n");
 }
 
-static void visual_load_moncol(uint n, uint *da, uint UNUSED *dc, uint *ca, uint UNUSED *cc)
-{
-	moncol_type *mc_ptr = &moncol[n];
-	(*da) = TERM_WHITE;
-	(*ca) = mc_ptr->attr;
-}
-
-static void visual_save_moncol(uint n, uint ca, uint UNUSED cc)
-			{
-	moncol_type *mc_ptr = &moncol[n];
-	mc_ptr->attr = ca;
-}
 
 static bool visual_reject_feat(uint n)
 {
@@ -2055,22 +1987,14 @@ static bool visual_reject_feat(uint n)
 }
 
 static bool visual_reject_unident(uint n)
-				{
+{
 	return (u_info[n].s_id == SID_BASE);
 }
 
 static bool visual_reject_obj(uint n)
 {
 	return (k_info[n].name == 0);
-				}
-
-static visual_type visual[5] = {
-	{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_name_mon, visual_save_mon, 0, 0, TRUE, TRUE},
-	{"object attr/chars", visual_dump_obj, visual_load_obj, visual_name_obj, visual_save_obj, visual_reject_obj, 0, TRUE, TRUE},
-	{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_name_feat, visual_save_feat, visual_reject_feat, 0, TRUE, TRUE},
-	{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_name_moncol, visual_save_moncol, 0, 0, TRUE, FALSE},
-	{"unidentified object attr/chars", visual_dump_unident, visual_load_unident, visual_name_unident, visual_save_unident, visual_reject_unident, 0, TRUE, TRUE},
-};
+}
 
 #endif /* ALLOW_VISUALS */
 
@@ -2094,7 +2018,7 @@ void do_cmd_visuals(void)
 /* The line on which the command prompt appears. */
 #define CMDLINE (7+2*VISUALS)
 
-	byte i;
+	uint i;
 
 	FILE *fff;
 
@@ -2102,15 +2026,24 @@ void do_cmd_visuals(void)
 
 	char buf[1024];
 
-	/* Hack - fill in the visual[x].max. */
-	if (!VISUAL_MONSTER->max)
-		{
-		VISUAL_MONSTER->max = MAX_R_IDX;
-		VISUAL_OBJECT->max = MAX_K_IDX;
-		VISUAL_FEATURE->max = MAX_F_IDX;
-		VISUAL_MONCOL->max = MAX_MONCOL;
-		VISUAL_UNIDENT->max = MAX_U_IDX;
-		}
+	/* Enter in the data for the various types of thing being altered. */
+	visual_type visual[5] =
+	{
+		{"monster attr/chars", get_visuals_mon, 0, pref_str_std,
+			0, "Monster attr/char definitions", 'R', MAX_R_IDX, TRUE, TRUE},
+		{"object attr/chars", get_visuals_obj, 0, pref_str_std,
+			visual_reject_obj, "Object attr/char definitions", 'K', MAX_K_IDX,
+			TRUE, TRUE},
+		{"feature attr/chars", get_visuals_feat, 0, pref_str_std,
+			visual_reject_feat, "Feature attr/char definitions", 'F',
+			MAX_F_IDX, TRUE, TRUE},
+		{"monster memory attrs", get_visuals_moncol, visual_dump_moncol, 0,
+			0, "Monster memory attr definitions", 'M', MAX_MONCOL, TRUE, FALSE},
+		{"unidentified object attr/chars", get_visuals_unident, 0,
+			pref_str_unident, visual_reject_unident,
+			"Unidentified object attr/char definitions", 'U', MAX_U_IDX, TRUE,
+			TRUE},
+	};
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -2136,7 +2069,7 @@ void do_cmd_visuals(void)
 #ifdef ALLOW_VISUALS
 		/* Give some choices */
 		for (i = 0; i < VISUALS; i++)
-{
+		{
 			visual_type *vs_ptr = &visual[i];
 			prt(format("(%c) Dump %s", 'b'+i, vs_ptr->text), 5+i, 5);
 			prt(format("(%c) Change %s", 'b'+i+VISUALS, vs_ptr->text), 5+i+VISUALS, 5);
@@ -2206,7 +2139,43 @@ void do_cmd_visuals(void)
 			/* Failure */
 			if (!fff) continue;
 
-			(*(vs_ptr->dump))(fff);
+			/* This requires a normal pref file output. */
+			if (vs_ptr->pref_str)
+			{
+				/* Start dumping */
+				fprintf(fff, "\n\n");
+				fprintf(fff, "# %s\n", vs_ptr->initstring);
+				fprintf(fff, "%c:---reset---\n\n", vs_ptr->startchar);
+
+				/* Dump entries */
+				for (i = 0; i < vs_ptr->max; i++)
+				{
+					cptr name;
+					byte da, *xa;
+					char dc, *xc;
+					(*vs_ptr->get)(i, &name, &da, &dc, &xa, &xc);
+
+					/* Skip non-entries */
+					if (vs_ptr->reject && (*vs_ptr->reject)(i)) continue;
+
+					/* Skip default entries */
+					if ((*xa == da) && (*xc == dc)) continue;
+
+					/* Dump a comment */
+					fprintf(fff, "# %s\n", name);
+
+					/* Dump the attr/char info */
+					(*vs_ptr->pref_str)(fff, i, vs_ptr->startchar, *xa, *xc);
+				}
+
+				/* All done */
+				fprintf(fff, "\n\n\n\n");
+			}
+			/* An arbitrary dump function. */
+			else
+			{
+				(*(vs_ptr->dump))(fff);
+			}
 
 			/* Close */
 			my_fclose(fff);
@@ -2233,20 +2202,29 @@ void do_cmd_visuals(void)
 			/* Hack -- query until done */
 			while (1)
 			{
-				uint da, dc, ca, cc;
-				char *text;
+				char dcl, *ccl;
+				byte dal, *cal;
+
+				uint da, dc, ca, cc = 50;
+				cptr text;
 				cptr prompt;
 dcv_retry:
+				(*vs_ptr->get)(r, &text, &dal, &dcl, &cal, &ccl);
 
-				/* Grab the information for the current entry.*/
-				(*(vs_ptr->load))(r, &da, &dc, &ca, &cc);
-				
-				(*(vs_ptr->name))(buf, r);
+				da = dal;
+				dc = (byte)dcl;
+				if (cal) ca = *cal;
+				if (ccl) cc = (byte)*ccl;
+
+				/* Clear the line first. */
+				Term_erase(0, CMDLINE+2, Term->wid);
+
+				/* Write name first as it may be in the format buffer. */
+				put_str(text, CMDLINE+2, 5+numlen+strlen("Number = , Name = "));
 
 				/* Label the object */
-				Term_putstr(5, CMDLINE+2, -1, TERM_WHITE,
-				            format("Number = %*d, Name = %-40.40s",
-				                   numlen, r, buf));
+				put_str(format("Number = %*d, Name = ", numlen, r),
+					CMDLINE+2, 5);
 
 				/* Display the default/current attr/char. */
 				Term_putstr(40, CMDLINE+4, -1, TERM_WHITE, "<< ? >>");
@@ -2262,7 +2240,7 @@ dcv_retry:
 				else if (vs_ptr->chars)
 					text = format("Default char = %3u", dc);
 				else
-					text = (char*)"A white #";
+					text = "A white #";
 				Term_putstr(10, CMDLINE+4, -1, TERM_WHITE, text);
 
 				if (vs_ptr->attr && vs_ptr->chars)
@@ -2272,7 +2250,7 @@ dcv_retry:
 				else if (vs_ptr->chars)
 					text = format("Current char = %3u", cc);
 				else
-					text = (char*)"A white #";
+					text = "A white #";
 				Term_putstr(10, CMDLINE+5, -1, TERM_WHITE, text);
 
 				/* Prompt */
@@ -2345,15 +2323,16 @@ dcv_retry:
 				}
 				else
 				{
-					(*out) = ((*out) + max + inc) % max;
-
-				/* Handle rejection criteria if necessary. */
-				if (i == 'n' && vs_ptr->reject)
-					while ((*vs_ptr->reject)(r))
-						r = (r+inc+vs_ptr->max) % vs_ptr->max;
+					/* Handle rejection criteria if necessary. */
+					do
+					{
+						(*out) = ((*out) + max + inc) % max;
+					}
+					while (i == 'n' && vs_ptr->reject && (*vs_ptr->reject)(r));
 				}
 				/* Save the information if it has changed.*/
-				if (strchr("ac", i)) (*(vs_ptr->save))(r, (byte)ca, (byte)cc);
+				if (i == 'a' && cal) (*cal) = ca;
+				if (i == 'c' && ccl) (*ccl) = cc;
 			}
 		}
 
