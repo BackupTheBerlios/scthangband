@@ -387,9 +387,31 @@ See *****/ahlponhlp.txt*0[hponhlp.txt]$w for further details.
 $GIdentify Symbol (/)
 Use this command to find out what a character stands for. For instance, by pressing "/.", you can find out that the "." symbol stands for a floor spot. When used with a symbol that represents creatures, the this command will tell you only what class of creature the symbol stands for, not give you specific information about a creature you can see. To get that, use the Look command.
 
-There are three special symbols you can use with the Identify Symbol command to access specific parts of your monster memory. Typing Ctrl-A when asked for a symbol will recall details about all monsters, typing Ctrl-U will recall details about all unique monsters, and typing Ctrl-N will recall details about all non-unique monsters.
+A few keypresses are interpreted in a special way as follows:
+Ctrl-A: All monsters encountered.
+Ctrl-U: Unique monsters encountered.
+Ctrl-N: Non-unique monsters encountered.
+Ctrl-S: Monsters whose names contain a string you will be prompted for. This comparison is case insensitive.
 
-If the character stands for a creature, you are asked if you want to recall details. If you answer yes, information about the creatures you have encountered with that symbol is shown in the Recall window if available, or on the screen if not. You can also answer "k" to see the list sorted by number of kills, or "p" to see the list sorted by dungeon level the monster is normally found on. Pressing ESCAPE at any point will exit this command.
+%%%%% <query 2>
+If the character stands for a creature, you are asked if you want to recall details. There are a number of keys which you can press to control how it is sorted:
+
+     p: Shows monsters in order of depth from the deepest to the shallowest.
+     y: Show monsters from the last in r_info.txt to the first. This is usually the same as with "p".
+     k: Sort by number of kills from the most killed to the least.
+Escape: Exit the command.
+
+Any other key is treated as if it was "Escape".
+
+%%%%% <query 3>
+Once you select a sort method, the game will display them one at a time. This is controlled by the following keys:
+
+     +: Go to the next monster according to the chosen sort method.
+     -: Go to the previous monster.
+     r: Shows/hides details about the selected monster on the main screen.
+Escape: Stop viewing monsters.
+
+Any other key is treated as if it was "+", and the command loops when it reaches the end,
 
 %%%%% <cmd=V>
 $GGame Version (V)

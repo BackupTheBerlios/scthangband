@@ -1189,9 +1189,10 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	char	sym, query;
 	char	buf[128];
 
-	bool	all = FALSE;
+	bool	symbol = FALSE;
 	bool	uniq = FALSE;
 	bool	norm = FALSE;
+	bool	string = FALSE;
 
 	bool	recall = FALSE;
 
@@ -1210,30 +1211,45 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	/* Describe */
 	if (sym == KTRL('A'))
 	{
-		all = TRUE;
 		strcpy(buf, "Full monster list.");
 	}
 	else if (sym == KTRL('U'))
 	{
-		all = uniq = TRUE;
+		uniq = TRUE;
 		strcpy(buf, "Unique monster list.");
 	}
 	else if (sym == KTRL('N'))
 	{
-		all = norm = TRUE;
+		norm = TRUE;
 		strcpy(buf, "Non-unique monster list.");
+	}
+	else if (sym == KTRL('S'))
+	{
+		/* No name. */
+		strcpy(buf, "Name: ");
+		if (!get_string("Enter the name: ", buf+6, sizeof(buf)-6)) return;
+		string = TRUE;
 	}
 	else if (ident_info[i])
 	{
 		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
+		symbol = TRUE;
 	}
 	else
 	{
 		sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
+		symbol = TRUE;
 	}
 
 	/* Display the result */
 	prt(buf, 0, 0);
+
+	/* String searching is case insensitive, so make the case predictable. */
+	if (string)
+	{
+		char *s;
+		for (s = buf+6; *s; s++) if (isupper(*s)) *s = tolower(*s);
+	}
 
 
 	/* Collect matching monsters */
@@ -1253,13 +1269,34 @@ static void do_cmd_query_symbol_aux(u16b *who)
 		/* Require unique monsters if needed */
 		if (uniq && !(r_ptr->flags1 & (RF1_UNIQUE))) continue;
 
-		/* Collect "appropriate" monsters */
-		if (all || (r_ptr->d_char == sym)) who[n++] = i;
+		/* Require a substring if needed */
+		if (string)
+		{
+			char *s;
+			C_TNEW(name, MNAME_MAX, char);
+
+			/* Obtain a lower case string. */
+			strnfmt(name, MNAME_MAX, "%v", monster_desc_aux_f3, r_ptr, 1, 0);
+			for (s = name; *s; s++) if (isupper(*s)) *s = tolower(*s);
+
+			/* None found. */
+			if (!strstr(name, buf+6)) continue;
+
+			TFREE(name);
+		}
+
+		/* Require a base symbol if needed. */
+		if (symbol && (r_ptr->d_char != sym)) continue;
+
+		/* Collect this monster. */
+		who[n++] = i;
 	}
 
 	/* Nothing to recall */
 	if (!n) return;
 
+	/* Show help. */
+	help_track("<query 2>");
 
 	/* Prompt XXX XXX XXX */
 	put_str("Recall details? (k/p/y/n): ", 0, 40);
@@ -1300,6 +1337,10 @@ static void do_cmd_query_symbol_aux(u16b *who)
 		ang_sort(who, &why, n);
 	}
 
+
+	/* Show help (removing the old one first). */
+	help_track(NULL);
+	help_track("<query 3>");
 
 	/* Start at the end */
 	i = n - 1;
@@ -1379,6 +1420,8 @@ static void do_cmd_query_symbol_aux(u16b *who)
 		}
 	}
 
+	/* Done with help. */
+	help_track(NULL);
 
 	/* Re-display the identity */
 	prt(buf, 0, 0);
