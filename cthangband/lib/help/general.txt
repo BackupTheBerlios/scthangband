@@ -655,10 +655,11 @@ Save (Ctrl-S)
         custom.txt).
 
 ***** <cmd=Q>
-Quit (commit suicide) (Q)
-        Kills your character and exits Angband.  You will be prompted to
+Quit (wake up) (Q)
+        Ends your quest and exits Angband.  You will be prompted to
         make sure you really want to do this, and then asked to verify
-        that choice.  Note that dead characters are dead forever.
+        that choice.  Your character will forget all that he has learnt and you
+        will have to start again from the very beginning.
 
 *****
 --- User pref file commands ---

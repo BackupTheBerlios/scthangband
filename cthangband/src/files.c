@@ -4943,6 +4943,8 @@ bool get_name(void)
 }
 
 
+/* The string used to indicate that the player quit. */
+#define SUICIDE_STRING "Woke up"
 
 /*
  * Hack -- commit suicide
@@ -4965,16 +4967,16 @@ void do_cmd_suicide(void)
 	else
 	{
 		/* Verify */
-		if (!get_check("Do you really want to end it all? ")) return;
+		if (!get_check("Do you really want to abandon your quest? ")) return;
         if (!noscore)
         {
-		/* Special Verification for suicide */
-		prt("Please verify SUICIDE by typing the '@' sign: ", 0, 0);
-		flush();
-		i = inkey();
-		prt("", 0, 0);
-		if (i != '@') return;
-          }
+			/* Special Verification for suicide */
+			prt("Please verify QUIT by typing the '@' sign: ", 0, 0);
+			flush();
+			i = inkey();
+			prt("", 0, 0);
+			if (i != '@') return;
+		}
 	}
 
 	/* Stop playing */
@@ -4984,7 +4986,7 @@ void do_cmd_suicide(void)
 	death = TRUE;
 
 	/* Cause of death */
-	(void)strcpy(died_from, "Suicide");
+	(void)strcpy(died_from, SUICIDE_STRING);
 }
 
 
@@ -5668,7 +5670,8 @@ static void display_scores_aux(int from, int to, int note, high_score *score)
 			c_put_str((byte)attr, out_val, n*4 + 2, 0);
 
 			/* Another line of info */
-			sprintf(out_val, "               Killed by %s on %s %d",
+			sprintf(out_val, "               %s %s on %s %d",
+				(strcmp(the_score.how, "Woke up")) ? "Killed by" : "",
 			        the_score.how, "Dungeon Level", cdun);
 
 			/* Hack -- some people die in the town */
@@ -5987,7 +5990,7 @@ static errr top_twenty(void)
 #ifndef SCORE_QUITTERS
 	|| TRUE
 #endif
-	) && !total_winner && streq(died_from, "Suicide"))
+	) && !total_winner && streq(died_from, SUICIDE_STRING))
 	{
 		msg_print("Score not registered due to quitting.");
 		msg_print(NULL);
