@@ -1,3 +1,4 @@
+#define MAIN_MAC_C
 /* File: main-mac.c */
 
 /* Purpose: Simple support for MACINTOSH Angband */

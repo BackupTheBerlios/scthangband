@@ -1,3 +1,4 @@
+#define XTRA1_C
 /* File: misc.c */
 
 /* Purpose: misc code */

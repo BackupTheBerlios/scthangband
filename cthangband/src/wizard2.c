@@ -1,3 +1,4 @@
+#define WIZARD2_C
 /* File: wizard2.c */
 
 /* Purpose: Wizard commands */

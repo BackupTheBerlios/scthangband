@@ -1,3 +1,4 @@
+#define READDIB_H
 /* File: readdib.h */
 
 /*

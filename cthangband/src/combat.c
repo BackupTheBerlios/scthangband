@@ -1,3 +1,4 @@
+#define COMBAT_C
 /* File: combat.c */
 
 /* Purpose: alternate combat routines */
@@ -854,8 +855,7 @@ crit crit_table[12][5]=
  * crit_level = returned critical level (0-6, 0 = no critical)
  * return value = true if hit, false if missed
  */
-bool make_attack(s16b skill,s16b arm_type,s16b at_type, s16b at_size,
-						s16b* dam,s16b* crit_type,s16b* crit_level)
+bool make_attack(s16b skill,s16b arm_type,s16b at_type, s16b at_size, s16b* dam,s16b* crit_type,s16b* crit_level)
 {
 	s16b roll;
 	double base_dam;
@@ -956,8 +956,7 @@ bool make_attack(s16b skill,s16b arm_type,s16b at_type, s16b at_size,
 }
 
 
-void crit_damage(s16b table,s16b severity,s16b *stun,s16b *bleed,
-				 s16b *bone,s16b *organ,s16b *xtra)
+void crit_damage(s16b table,s16b severity,s16b *stun,s16b *bleed, s16b *bone,s16b *organ,s16b *xtra)
 {
 	crit result;
 	

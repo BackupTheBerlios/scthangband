@@ -1,3 +1,4 @@
+#define MAIN_WIN_C
 /* File: main-win.c */
 
 /*
@@ -3216,13 +3217,10 @@ static void process_menus(WORD wCmd)
 
 
 #ifdef __MWERKS__
-LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
-                                  WPARAM wParam, LPARAM lParam);
-LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
-                                  WPARAM wParam, LPARAM lParam)
+LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #else /* __MWERKS__ */
-LRESULT FAR PASCAL  AngbandWndProc(HWND hWnd, UINT uMsg,
-                                          WPARAM wParam, LPARAM lParam)
+LRESULT FAR PASCAL  AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif /* __MWERKS__ */
 {
 	PAINTSTRUCT ps;
@@ -3487,13 +3485,10 @@ LRESULT FAR PASCAL  AngbandWndProc(HWND hWnd, UINT uMsg,
 
 
 #ifdef __MWERKS__
-LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
-                                           WPARAM wParam, LPARAM lParam);
-LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
-                                           WPARAM wParam, LPARAM lParam)
+LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #else /* __MWERKS__ */
-LRESULT FAR PASCAL  AngbandListProc(HWND hWnd, UINT uMsg,
-                                           WPARAM wParam, LPARAM lParam)
+LRESULT FAR PASCAL  AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif /* __MWERKS__ */
 {
 	term_data *td;
@@ -3920,8 +3915,7 @@ static void init_stuff(void)
 }
 
 
-int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
-                       LPSTR lpCmdLine, int nCmdShow)
+int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
 	int i;
 

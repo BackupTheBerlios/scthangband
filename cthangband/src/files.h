@@ -1,3 +1,4 @@
+#define FILES_H
 /* File: files.h */
 
 /*

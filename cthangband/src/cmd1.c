@@ -1,3 +1,4 @@
+#define CMD1_C
 /* File: cmd1.c */
 
 /* Purpose: Movement commands (part 1) */

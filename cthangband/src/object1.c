@@ -1,3 +1,4 @@
+#define OBJECT1_C
 /* File: object1.c */
 
 /* Purpose: Object code, part 1 */
@@ -5141,7 +5142,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 			if (strchr("XxYy", which) && spoil_value)
 			{
 				int i, start, end, best;
-				bool high = strchr("Xx", which);
+				bool high = strchr("Xx", which) != NULL;
 				bool upper = isupper(which);
 				s32b best_price = UNREAD_VALUE;
 				if (command_wrk)

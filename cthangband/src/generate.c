@@ -1,3 +1,4 @@
+#define GENERATE_C
 /* File: generate.c */
 
 /* Purpose: Dungeon generation */

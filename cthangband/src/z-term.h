@@ -1,3 +1,4 @@
+#define Z_TERM_H
 /* File: z-term.h */
 
 /*

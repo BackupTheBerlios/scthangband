@@ -1,3 +1,4 @@
+#define LOADSAVE_H
 #define SFM_SPECIAL	0x80
 
 /*

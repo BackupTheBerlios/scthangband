@@ -1,3 +1,4 @@
+#define Z_UTIL_C
 /* File: z-util.c */
 
 /* Purpose: Low level utilities -BEN- */

@@ -1,3 +1,4 @@
+#define FILES_C
 /* File: files.c */
 
 /* Purpose: code dealing with files (and death) */
@@ -193,8 +194,7 @@ s16b tokenize(char *buf, s16b num, char **tokens)
 /*
  * Insert a set of stats into the stat_default array.
  */
-errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st,
-	s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
+errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
 {
 	stat_default_type *sd_ptr;
 	byte i;
@@ -5818,7 +5818,7 @@ static void handle_signal_abort(int sig)
 /*
  * Ignore SIGTSTP signals (keyboard suspend)
  */
-void signals_ignore_tstp(void)
+void signals_ignore_tstp_1(void)
 {
 
 #ifdef SIGTSTP
@@ -5830,7 +5830,7 @@ void signals_ignore_tstp(void)
 /*
  * Handle SIGTSTP signals (keyboard suspend)
  */
-void signals_handle_tstp(void)
+void signals_handle_tstp_1(void)
 {
 
 #ifdef SIGTSTP
@@ -5843,7 +5843,7 @@ void signals_handle_tstp(void)
 /*
  * Prepare to handle the relevant signals
  */
-void signals_init(void)
+void signals_init_1(void)
 {
 
 #ifdef SIGHUP
@@ -5930,27 +5930,28 @@ void signals_init(void)
 /*
  * Do nothing
  */
-void signals_ignore_tstp(void)
+void signals_ignore_tstp_2(void)
 {
 }
 
 /*
  * Do nothing
  */
-void signals_handle_tstp(void)
+void signals_handle_tstp_2(void)
 {
 }
 
 /*
  * Do nothing
  */
-void signals_init(void)
+void signals_init_2(void)
 {
 }
 
 
 
 
-#endif	/* HANDLE_SIGNALS */
 
 
+
+#endif /* HANDLE_SIGNALS */

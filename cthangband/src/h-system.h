@@ -1,3 +1,4 @@
+#define H_SYSTEM_H
 /* File: h-system.h */
 
 #ifndef INCLUDED_H_SYSTEM_H

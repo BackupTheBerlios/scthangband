@@ -1,3 +1,4 @@
+#define SPELLS2_C
 /* File: spells2.c */
 
 /* Purpose: Spell code (part 2) */
@@ -424,7 +425,10 @@ bool restore_level(void)
 }
 
 
-bool alchemy(void) /* Turns an object into gold, gain some of its value in a shop */
+/*
+ * Turns an object into gold, gain some of its value in a shop
+ */
+bool alchemy(void)
 {
 	int                     item, amt = 1;
 	int                     old_number;

@@ -1,3 +1,4 @@
+#define CMD6_C
 /* File: cmd6.c */
 
 /* Purpose: Object commands */

@@ -1,3 +1,4 @@
+#define TABLES_C
 /* File: tables.c */
 
 /* Purpose: Angband Tables */

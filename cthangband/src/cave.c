@@ -1,3 +1,4 @@
+#define CAVE_C
 /* File: cave.c */
 
 /* Purpose: low level dungeon routines -BEN- */

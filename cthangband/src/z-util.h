@@ -1,3 +1,4 @@
+#define Z_UTIL_H
 /* File z-util.h */
 
 #ifndef INCLUDED_Z_UTIL_H

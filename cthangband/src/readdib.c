@@ -1,3 +1,4 @@
+#define READDIB_C
 /* File: readbits.c */
 
 /*

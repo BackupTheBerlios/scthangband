@@ -1,3 +1,4 @@
+#define Z_VIRT_C
 /* File: z-virt.c */
 
 /* Purpose: Memory management routines -BEN- */

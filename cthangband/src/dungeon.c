@@ -1,3 +1,4 @@
+#define DUNGEON_C
 /* File: dungeon.c */
 
 /* Purpose: Angband game engine */

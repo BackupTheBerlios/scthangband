@@ -1,3 +1,4 @@
+#define Z_FORM_C
 /* File: z-form.c */
 
 /* Purpose: Low level text formatting -BEN- */

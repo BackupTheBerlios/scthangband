@@ -1,3 +1,4 @@
+#define LOAD_C
 /* File: load2.c */
 
 /* Purpose: support for loading savefiles -BEN- */

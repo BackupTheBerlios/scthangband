@@ -1,3 +1,4 @@
+#define CMD3_C
 /* File: cmd3.c */
 
 /* Purpose: Inventory commands */

@@ -1,3 +1,4 @@
+#define MONSTER2_C
 /* File: monster.c */
 
 /* Purpose: misc code for monsters */

@@ -1,3 +1,4 @@
+#define TYPES_H
 /* File: types.h */
 
 /* Purpose: global type declarations */

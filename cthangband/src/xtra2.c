@@ -1,3 +1,4 @@
+#define XTRA2_C
 /* File: effects.c */
 
 /* Purpose: effects of various "objects" */

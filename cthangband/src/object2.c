@@ -1,3 +1,4 @@
+#define OBJECT2_C
 /* File: object2.c */
 
 /* Purpose: Object code, part 2 */

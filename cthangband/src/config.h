@@ -1,3 +1,4 @@
+#define CONFIG_H
 /* File: config.h */
 
 /* Purpose: Angband specific configuration stuff */

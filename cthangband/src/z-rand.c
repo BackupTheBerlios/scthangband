@@ -1,3 +1,4 @@
+#define Z_RAND_C
 /* File: z-rand.c */
 
 /* Purpose: a simple random number generator -BEN- */

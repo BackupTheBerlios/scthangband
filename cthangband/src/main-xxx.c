@@ -1,3 +1,4 @@
+#define MAIN_XXX_C
 /* File: main-xxx.c */
 
 /* Purpose: Sample visual module for Angband 2.8.1 */

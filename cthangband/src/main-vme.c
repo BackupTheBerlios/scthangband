@@ -1,3 +1,4 @@
+#define MAIN_VME_C
 /* File: main-vme.c */
 
 /* Purpose: Support for "Vax Angband" */
@@ -1134,8 +1135,7 @@ void LoadProfile(void)
 
 static FILE *file_descriptors[40];
 
-int
-open(char *name, int flags, int mode)
+int open_vme(char *name, int flags, int mode)
 {
 	char fmode[16];
 	FILE *fp;
@@ -1155,32 +1155,27 @@ open(char *name, int flags, int mode)
 	return (-1);
 }
 
-void
-close(int fd)
+void close_vme(int fd)
 {
 	fclose(file_descriptors[fd]);
 }
 
-int
-read(int fd, char *buff, int bytes)
+int read_vme(int fd, char *buff, int bytes)
 {
 	return (fread(buff, 1, bytes, file_descriptors[fd]));
 }
 
-int
-write(int fd, char *buff, int bytes)
+int write_vme(int fd, char *buff, int bytes)
 {
 	return (fwrite(buff, 1, bytes, file_descriptors[fd]));
 }
 
-long
-lseek(int fd, long pos, int set)
+long lseek_vme(int fd, long pos, int set)
 {
 	return (fseek(file_descriptors[fd], pos, set));
 }
 
-void
-unlink(char *filename)
+void unlink_vme(char *filename)
 {
 	remove(filename);
 }

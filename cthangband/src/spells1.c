@@ -1,3 +1,4 @@
+#define SPELLS1_C
 /* File: spells1.c */
 
 /* Purpose: Spell code (part 1) */

@@ -1,3 +1,4 @@
+#define H_TYPE_H
 /* File: h-type.h */
 
 #ifndef INCLUDED_H_TYPE_H

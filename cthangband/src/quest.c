@@ -1,3 +1,4 @@
+#define QUEST_C
 /* File: quest.c */
 
 /* Purpose: functions used by the random quest source

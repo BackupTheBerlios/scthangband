@@ -1,3 +1,4 @@
+#define MELEE1_C
 /* File: melee1.c */
 
 /* Purpose: Monster attacks */

@@ -1,3 +1,4 @@
+#define SAVE_C
 /* File: save.c */
 
 /* Purpose: interact with savefiles */

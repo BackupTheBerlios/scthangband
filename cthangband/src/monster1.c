@@ -1,3 +1,4 @@
+#define MONSTER1_C
 /* File: mon-desc.c */
 
 /* Purpose: describe monsters (using monster memory) */

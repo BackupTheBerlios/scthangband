@@ -1,3 +1,4 @@
+#define WIZARD1_C
 /* File: wizard1.c */
 
 /* Purpose: Spoiler generation -BEN- */

@@ -1,3 +1,4 @@
+#define MELEE2_C
 /* File: melee2.c */
 
 /* Purpose: Monster spells and movement */

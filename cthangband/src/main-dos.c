@@ -1,3 +1,4 @@
+#define MAIN_DOS_C
 /* File: main-dos.c */
 
 /*

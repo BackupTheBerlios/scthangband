@@ -1,3 +1,4 @@
+#define CMD4_H
 /* File: cmd4.h */
 
 /*

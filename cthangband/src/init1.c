@@ -1,3 +1,4 @@
+#define INIT1_C
 /* File: init1.c */
 
 /* Purpose: Initialization (part 1) -BEN- */

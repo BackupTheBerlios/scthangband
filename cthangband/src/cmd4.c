@@ -1,3 +1,4 @@
+#define CMD4_C
 /* File: cmd4.c */
 
 /* Purpose: Interface commands */

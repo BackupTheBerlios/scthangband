@@ -1,3 +1,4 @@
+#define H_DEFINE_H
 /* File: h-define.h */
 
 #ifndef INCLUDED_H_DEFINE_H

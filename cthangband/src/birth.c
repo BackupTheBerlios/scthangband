@@ -1,3 +1,4 @@
+#define BIRTH_C
 /* File: birth.c */
 
 /* Purpose: create a player character */

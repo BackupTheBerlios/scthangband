@@ -1,3 +1,4 @@
+#define MAIN_ACN_C
 /* File: main-acn.c */
 
 /* Purpose: Support for Acorn RISC OS Angband */
@@ -2006,7 +2007,7 @@ static const char *translate_name(const char *path)
 
 
 
-FILE *my_fopen(const char *filename, const char *mode)
+FILE *my_fopen_acn(const char *filename, const char *mode)
 {
 	FILE *f;
 	const char *name=translate_name(filename);
@@ -2019,7 +2020,7 @@ FILE *my_fopen(const char *filename, const char *mode)
 	return f;
 }
 
-errr my_fclose(FILE *fff)
+errr my_fclose_acn(FILE *fff)
 {
 	/* Close, check for error */
 	if (fclose(fff)) return (1);
@@ -2028,7 +2029,7 @@ errr my_fclose(FILE *fff)
 	return (0);
 }
 
-int fd_make(cptr file, int mode)
+int fd_make_acn(cptr file, int mode)
 {
 	os_f f;
 	os_error *e;
@@ -2049,12 +2050,12 @@ int fd_make(cptr file, int mode)
 	return (int)f;
 }
 
-errr fd_kill(cptr file)
+errr fd_kill_acn(cptr file)
 {
 	return remove(translate_name(file)) ? 1 : 0;
 }
 
-errr fd_move(cptr file, cptr what)
+errr fd_move_acn(cptr file, cptr what)
 {
 	char buffer[256];
 
@@ -2065,7 +2066,7 @@ errr fd_move(cptr file, cptr what)
 	return rename(buffer, translate_name(what)) ? 1 : 0;
 }
 
-int fd_open(cptr path, int flags)
+int fd_open_acn(cptr path, int flags)
 {
 	os_f f;
 	os_error *e;
@@ -2095,7 +2096,7 @@ int fd_open(cptr path, int flags)
 	return (int) f;
 }
 
-errr fd_close(int d)
+errr fd_close_acn(int d)
 {
 	os_error *e;
 	os_f f=(os_f) d;
@@ -2141,7 +2142,7 @@ int access(const char *path, int mode)
 	return 0;
 }
 
-errr fd_read(int d, char *buf, huge nbytes)
+errr fd_read_ros(int d, char *buf, huge nbytes)
 {
 	os_error *e;
 	int unread;
@@ -2156,7 +2157,7 @@ errr fd_read(int d, char *buf, huge nbytes)
 	return 0;
 }
 
-errr fd_write(int d, const char *buf, huge nbytes)
+errr fd_write_ros(int d, const char *buf, huge nbytes)
 {
 	os_error *e;
 	int unwritten;
@@ -2171,7 +2172,7 @@ errr fd_write(int d, const char *buf, huge nbytes)
 	return 0;
 }
 
-errr fd_seek(int fd, huge offset)
+errr fd_seek_acn(int fd, huge offset)
 {
 	os_error *e;
 
@@ -2184,7 +2185,7 @@ errr fd_seek(int fd, huge offset)
 	return 0;
 }
 
-errr fd_lock(int fd, int what)
+errr fd_lock_acn(int fd, int what)
 {
 	return 0;
 }
@@ -2192,7 +2193,7 @@ errr fd_lock(int fd, int what)
 /*
  * Hack -- acquire a "temporary" file name if possible
  */
-errr path_temp(char *buf, int max)
+errr path_temp_ros(char *buf, int max)
 {
 	strncpy(buf, translate_name(tmpnam(NULL)), max);
 

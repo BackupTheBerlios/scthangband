@@ -1,3 +1,4 @@
+#define Z_VIRT_H
 /* File: z-virt.h */
 
 #ifndef INCLUDED_Z_VIRT_H

@@ -1,3 +1,4 @@
+#define CMD5_C
 /* File: cmd5.c */
 
 /* Purpose: Spell/Prayer commands */

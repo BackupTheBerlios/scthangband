@@ -1,3 +1,4 @@
+#define ANGBAND_H
 /* File: angband.h */
 
 /* Main "Angband" header file */
@@ -43,6 +44,7 @@
  */
 #include "defines.h"
 #include "types.h"
+#include "variable.h"
 #include "externs.h"
 
 

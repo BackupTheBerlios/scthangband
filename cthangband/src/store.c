@@ -1,3 +1,4 @@
+#define STORE_C
 /* File: store.c */
 
 /* Purpose: Store commands */

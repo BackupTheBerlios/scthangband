@@ -1,3 +1,4 @@
+#define MAIN_GCU_C
 /* File: main-gcu.c */
 
 /* Purpose: Allow use of Unix "curses" with Angband -BEN- */
@@ -772,7 +773,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
  *
  * Someone should really check the semantics of "initscr()"
  */
-errr init_gcu(void)
+errr init_gcu(int argc, char **argv)
 {
 	int i;
 
