@@ -1443,8 +1443,9 @@ static void win_visible_display(void)
 	/* Are monsters visible? */
 	if (items)
 	{
-		int w, h, num = 0;
+		int w, h, num;
 		u16b why = 1;
+		cptr name;
 
 		/* First, sort the monsters by expereince*/
 		ang_sort_comp = ang_mon_sort_comp_hook;
@@ -1459,7 +1460,7 @@ static void win_visible_display(void)
 		c_prt(TERM_WHITE,format("You can see %d monster%s", c, (c > 1 ? "s:" : ":")), 0, 0);
 
 		/* Print the monsters in reverse order */
-		for (i = items - 1; i >= 0; i--)
+		for (i = items - 1, num = 0; i >= 0; i--, num++)
 		{
 			monster_lore *l_ptr = get_lore_idx(who[i].r_idx, who[i].u_idx);
 			monster_race *r_ptr = get_monster_fake(who[i].r_idx, who[i].u_idx);
@@ -1498,16 +1499,15 @@ static void win_visible_display(void)
 			/* Dump the monster name */
 			if (who[i].amount == 1)
 			{
-				c_prt(attr, monster_name_idx(who[i].r_idx, who[i].u_idx), (num % (h - 1)) + 1, 
-					(num / (h - 1) * 26)+2);
+				name = format("%.23s", r_name+r_info[who[i].r_idx].name);
 			}
 			else
 			{
-				c_prt(attr, format("%s (x%d)", monster_name_idx(who[i].r_idx, who[i].u_idx),
-					who[i].amount), (num % (h - 1)) + 1, (num / (h - 1)) * 26+2);
+				int len = 23-strlen(format(" (x%d)", who[i].amount));
+				name = format("%.*s (x%d)", len,
+					r_name+r_info[who[i].r_idx].name, who[i].amount);
 			}
-
-			num++;
+			c_prt(attr, name, (num % (h - 1)) + 1, (num / (h - 1)) * 26+2);
 		}
 	}
 
