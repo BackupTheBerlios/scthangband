@@ -3161,9 +3161,6 @@ option_type option_info[] =
 	{ &auto_more, FALSE, OPTS_DISTURB, 3, 12,
 	"auto_more", "Automatically clear '-more-' prompts" },
 
-	{ &object_skill, TRUE, OPTS_OBJ, 3, 25,
-	"object_skill", "Testing: make skill checks depend on touching objects" },
-
 #ifdef SCORE_QUITTERS
 	{ &score_quitters_w, FALSE, OPTS_BIRTH, 0, 26,
 	"score_quitter", "Remember scores of those who quit the game" },

@@ -197,7 +197,6 @@ bool macro_edit; /* Use macros as edit keys in string prompts */
 bool no_centre_run; /* Stop centring when running */
 bool track_mouse; /* Track the cursor in extra windows */
 bool auto_more; /* Automatically clear '-more-' prompts */
-bool object_skill; /* Make skills checks depend on touching objecs. */
 
 /* Option Set B -- Birth Options */
 

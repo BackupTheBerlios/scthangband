@@ -261,12 +261,6 @@ Allows a cave grid to hold more than one object (or one kind of object).
 $GShow stacks with a special colour/character [show_piles] (1.0.9)
 Display stacks of items on the floor with a special character (& by default).
 
-%%%%% <object_skill>
-$GTesting: Make skill checks depend on touching objects [object_skill] (_CVS_)
-With this option set, skill checks are less likely to be made if the player has has not recently come across a new object, a chance which decreases and vanishes as the player does more things which are capable of improving skills.
-
-This option is only present for testing purposes, and should be left on usless if it makes the latter stages of the game unbearably slow. Do let me know how it has affected your game.
-
 %%%%%
 === Performance options ===
 

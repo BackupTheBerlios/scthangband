@@ -2843,9 +2843,9 @@ extern bool track_mouse;
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool auto_more;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern bool object_skill;
-#endif
+
+
+
 #if (defined(TABLES_C) || defined(VARIABLE_C))
 extern bool preserve_mode_w;
 #endif
