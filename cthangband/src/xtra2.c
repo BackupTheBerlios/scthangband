@@ -4314,12 +4314,12 @@ bool target_set(int mode)
 				y += ddy[d];
 
 				/* Hack -- Verify x */
-				if ((x>=cur_wid-1) || (x>panel_col_max)) x--;
-				else if ((x<=0) || (x<panel_col_min)) x++;
+				if ((x>=cur_wid) || (x>panel_col_max)) x--;
+				else if ((x<0) || (x<panel_col_min)) x++;
 
 				/* Hack -- Verify y */
-				if ((y>=cur_hgt-1) || (y>panel_row_max)) y--;
-				else if ((y<=0) || (y<panel_row_min)) y++;
+				if ((y>=cur_hgt) || (y>panel_row_max)) y--;
+				else if ((y<0) || (y<panel_row_min)) y++;
 			}
 		}
 	}
