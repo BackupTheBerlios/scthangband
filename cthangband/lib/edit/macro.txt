@@ -1507,6 +1507,10 @@ X:kelman~
 Y:kelm%-Pa%+Pe%=Pn
 F:r_info:N:3
 
+X:Townsman~
+Y:Townsm%-Pa%+Pe%=Pn
+F:r_info:N:3
+
 X:child~
 Y:child%+Pren%=P
 F:r_info:N:3
