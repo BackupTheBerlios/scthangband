@@ -1586,6 +1586,10 @@ X:lous~
 Y:l%-Pous%+Pi%=P
 #:plural names
 
+X:ung~
+Y:ung%+Pen%=P
+#:plural names
+
 # Variable default timeouts for rods
 
 X:11-20
