@@ -3696,7 +3696,8 @@ next_cave:
 		{
 			if (q_list[i].cur_num == q_list[i].max_num) y++;
 		}
-		if (y) fprintf(fff, " You have completed %d quests.", y);
+		if (y) fprintf(fff, " You have completed %d quest%s.",
+			y, y == 1 ? "" : "s");
 
         if (Total < 1)
             fprintf(fff," You have defeated no enemies yet.\n");
