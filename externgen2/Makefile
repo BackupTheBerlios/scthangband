@@ -1,44 +1,30 @@
 # Project:   externgen
 
 # Toolflags:
-CC = cc
-link = link
+CC = gcc
+link = gcc
 THROWBACK = -Throwback
-CCflags = -c -depend !Depend -IC: $(THROWBACK)
-C++flags = -c -depend !Depend -IC: $(THROWBACK)
-linkflags = -aif -c++ -o $@
-ObjAsmflags = $(THROWBACK) -NoCache -depend !Depend
-CMHGflags = 
-LibFileflags = -c -o $@
-Squeezeflags = -o $@
+CCflags = -c -W -Wall
 
-OBJS = o.externfunc o.externvar \
-       o.interface
+OBJS = externfunc.o externvar.o \
+       interface.o
 
-LIBS = C:o.stubs
+INCS = stdio.h stdlib.h string.h externfunc.h
+LIBS = -lc
+
+# LIBS = C:o.stubs
 
 externgen:	$(OBJS) $(LIBS)
-		$(link) $(linkflags) $(OBJS) $(LIBS)
+		$(link) $(linkflags) -o externgen.out $(OBJS) $(LIBS)
 
 # Static dependencies:   
 .SUFFIXES: .c .o
 .c.o:
-        $(CC) $(CCflags) -o $@ $<
+	$(CC) $(CCflags) -o $@ $<
 
 
 # Dynamic dependencies:
-o.externfunc:	c.externfunc
-o.externfunc:	C:h.stdio
-o.externfunc:	C:h.stdlib
-o.externfunc:	C:h.string
-o.externfunc:	h.externfunc
-o.externvar:	c.externvar
-o.externvar:	C:h.stdio
-o.externvar:	C:h.stdlib
-o.externvar:	C:h.string
-o.externvar:	h.externfunc
-o.interface:	c.interface
-o.interface:	C:h.stdio
-o.interface:	C:h.stdlib
-o.interface:	C:h.string
-o.interface:	h.externfunc
+o.externfunc:	externfunc.c	$(INCS)
+o.externvar:	externvar.c	$(INCS)
+o.interface:	interface.c	$(INCS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o angband $(OBJS) $(LIBS)
