@@ -2251,7 +2251,7 @@ cptr favour_names[MAX_SPHERE][32]=
 	 { "Thaumaturgy","Your thaumaturgy is improving.",0,0,0,0,0,3},
 	 { "Mindcrafting","Your mind is getting stronger.",0,0,0,0,0,5},
 	 { "Chi","Your Chi flow is improving.",0,0,0,0,0,6},
-	 { "Innate Racial","Your innate skills are improving.",0,0,0,0,0,1},
+	 { "Innate Powers","Your innate powers are improving.",0,0,0,0,0,1},
 	 { "Stabbing Weapons","Your skill with stabbing weapons is improving.",0,0,0,0,0,10},
 	 { "Slashing Weapons","Your skill with slashing weapons is improving.",0,0,0,0,0,10},
 	 { "Crushing Weapons","Your skill with crushing weapons is improving.",0,0,0,0,0,10},
