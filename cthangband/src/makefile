@@ -109,8 +109,8 @@ CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" \
 	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
 	-Wno-long-long -Wwrite-strings -Wpointer-arith \
 	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
-	-Waggregate-return -Wno-format-y2k \
-	#-Wstrict-prototypes \
+	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes \
+	#-Wredundant-decls \
 
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib $(PYLIB)
 
@@ -160,7 +160,7 @@ HDRS = \
 INCS = \
   angband.h \
   config.h defines.h types.h externs.h \
-  z-term.h z-rand.h z-util.h z-virt.h z-form.h $(HDRS)
+  z-term.h z-rand.h z-virt.h $(HDRS)
 
 
 birth.o: birth.c $(INCS)
@@ -198,9 +198,9 @@ wizard1.o: wizard1.c $(INCS)
 wizard2.o: wizard2.c $(INCS)
 xtra1.o: xtra1.c $(INCS)
 xtra2.o: xtra2.c $(INCS)
-z-form.o: z-form.c $(HDRS) z-form.h z-util.h z-virt.h
+z-form.o: z-form.c $(HDRS) z-virt.h
 z-rand.o: z-rand.c $(HDRS) z-rand.h
 z-term.o: z-term.c $(HDRS) z-term.h z-virt.h
-z-util.o: z-util.c $(HDRS) z-util.h
-z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
+z-util.o: z-util.c $(HDRS) 
+z-virt.o: z-virt.c $(HDRS) z-virt.h
 

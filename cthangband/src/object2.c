@@ -13,8 +13,6 @@
 
 #include "angband.h"
 
-extern void random_resistance (object_type * o_ptr, bool is_scroll, int specific);
-
 
 
 /*
@@ -5460,11 +5458,6 @@ void reorder_pack(void)
 
 
 
-
-/*
- * XXX XXX XXX XXX
- */
-extern void mindcraft_info(char *p, int power);
 
 /*
  * Hack -- Display all known spells in a window

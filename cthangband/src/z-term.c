@@ -11,12 +11,11 @@
 
 /* Purpose: a generic, efficient, terminal window package -BEN- */
 
-#include "angband.h"
-
 #include "z-term.h"
 
 #include "z-virt.h"
 
+#include "externs.h"
 
 /*
  * This file provides a generic, efficient, terminal window package,
@@ -507,11 +506,11 @@ static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp)
  *
  * Assumes given location and values are valid.
  */
+void Term_queue_char(int x, int y, byte a, char c
 #ifdef USE_TRANSPARENCY
-void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc)
-#else /* USE_TRANSPARENCY */
-void Term_queue_char(int x, int y, byte a, char c)
-#endif /* USE_TRANSPARENCY */
+	,byte ta, char tc
+#endif
+	)
 {
 	byte *scr_aa = Term->scr->a[y];
 	char *scr_cc = Term->scr->c[y];
@@ -570,7 +569,7 @@ void Term_queue_char(int x, int y, byte a, char c)
  * a valid location, so the first "n" characters of "s" can all be added
  * starting at (x,y) without causing any illegal operations.
  */
-void Term_queue_chars(int x, int y, int n, byte a, cptr s)
+static void Term_queue_chars(int x, int y, int n, byte a, cptr s)
 {
 	int x1 = -1, x2 = -1;
 
@@ -2136,7 +2135,7 @@ errr Term_load(void)
 /*
  * Exchange the "requested" screen with the "tmp" screen
  */
-errr Term_exchange(void)
+static errr Term_exchange(void)
 {
 	int y;
 

@@ -13,7 +13,6 @@
 
 #include "angband.h"
 
-extern void do_cmd_rerate(void);
 static bool activate_random_artifact(object_type * o_ptr);
 
 

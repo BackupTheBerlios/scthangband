@@ -4,9 +4,7 @@
 /* Purpose: Memory management routines -BEN- */
 
 #include "z-virt.h"
-
-#include "z-util.h"
-
+#include "externs.h"
 
 /*
  * Allow debugging messages to track memory usage.
@@ -69,7 +67,7 @@ vptr (*rpanic_aux)(huge) = NULL;
  * or if not, it can be used to save things, clean up, and exit.
  * By default, this function simply crashes the computer.
  */
-vptr rpanic(huge len)
+static vptr rpanic(huge len)
 {
 	/* Hopefully, we have a real "panic" function */
 	if (rpanic_aux) return ((*rpanic_aux)(len));

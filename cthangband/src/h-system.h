@@ -104,16 +104,12 @@
 #  include <string.h>
 # else
 #  include <strings.h>
-#ifndef strstr
+#  ifndef __STDC__
 extern char *strstr();
-#endif
-#ifndef strchr
 extern char *strchr();
-#endif
-#ifndef strrchr
 extern char *strrchr();
+#  endif
 #endif
-# endif
 
 #else
 

@@ -48,15 +48,3 @@
  * replacement) of skills.
  */
 #define SF_SAVE_MAX_SKILLS 0x0200
-
-/* A few variables only used in load.c and save.c. */
-extern byte sf_major;
-extern byte sf_minor;
-extern byte sf_patch;
-extern byte sf_extra;
-extern u32b sf_xtra;
-extern u32b sf_when;
-extern u16b sf_lives;
-extern u16b sf_saves;
-extern u16b sf_flags;
-extern bool has_flag(u16b flag);

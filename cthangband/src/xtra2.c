@@ -16,12 +16,6 @@
 #define REWARD_CHANCE 10
 
 
-extern void do_poly_self();
-extern void do_poly_wounds();
-extern bool curse_weapon();
-extern bool curse_armor();
-extern void random_resistance(object_type * q_ptr, bool is_scroll, int specific);
-
 #define MAX_NUM 2147483647
 
  /*

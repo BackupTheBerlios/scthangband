@@ -4523,7 +4523,7 @@ static void make_bones(void)
 /*
  * Redefinable "print_tombstone" action
  */
-bool (*tombstone_aux)(void) = NULL;
+static bool (*tombstone_aux)(void) = NULL;
 
 
 /*

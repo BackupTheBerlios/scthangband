@@ -3148,7 +3148,7 @@ static void get_final(void)
  * from continuously rolling up characters, which can be VERY
  * expensive CPU wise.  And it cuts down on player stupidity.
  */
-static bool player_birth_aux()
+static bool player_birth_aux(void)
 {
 	int i, j, k, m, n, v;
 

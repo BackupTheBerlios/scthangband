@@ -3,11 +3,8 @@
 
 /* Purpose: Low level text formatting -BEN- */
 
-#include "z-form.h"
-
-#include "z-util.h"
 #include "z-virt.h"
-
+#include "externs.h"
 
 /*
  * Here is some information about the routines in this file.
@@ -642,7 +639,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
  * Do a vstrnfmt (see above) into a (growable) static buffer.
  * This buffer is usable for very short term formatting of results.
  */
-char *vformat(cptr fmt, va_list vp)
+static char *vformat(cptr fmt, va_list vp)
 {
 	static char *format_buf = NULL;
 	static huge format_len = 0;
@@ -802,6 +799,7 @@ void quit_fmt(cptr fmt, ...)
 
 
 
+#if 0
 /*
  * Vararg interface to core()
  */
@@ -822,5 +820,5 @@ void core_fmt(cptr fmt, ...)
 	/* Call core() */
 	core(res);
 }
-
+#endif /* 0 */
 

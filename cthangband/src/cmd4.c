@@ -2229,6 +2229,7 @@ static visual_type visual[5] = {
 
 #endif /* ALLOW_VISUALS */
 
+
 /*
  * Interact with "visuals"
  */
@@ -2955,7 +2956,7 @@ void do_cmd_load_screen(void)
 /*
  * Redefinable "save_screen" action
  */
-void (*screendump_aux)(void) = NULL;
+static void (*screendump_aux)(void) = NULL;
 
 
 
@@ -3866,7 +3867,7 @@ void do_cmd_knowledge(void)
 		typedef struct knowledge_type knowledge_type;
 		struct knowledge_type {
 		cptr text;
-		void (*func)();
+		void (*func)(void);
 		};
 		knowledge_type knowledge[] = {
 		{"known artifacts", do_cmd_knowledge_artifacts},

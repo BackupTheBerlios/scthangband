@@ -311,9 +311,6 @@ extern void do_cmd_feeling(bool FeelingOnly);
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
 extern void do_cmd_load_screen(void);
 #endif
-#if (defined(CMD4_C) || defined(CMD4_H))
-extern void (*screendump_aux)(void) ;
-#endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(SPELLS1_C) || defined(STORE_C))
 extern void do_cmd_save_screen(void);
 #endif
@@ -485,9 +482,6 @@ extern void do_cmd_suicide(void);
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C))
 extern void do_cmd_save_game(bool is_autosave);
 #endif
-#if (defined(FILES_C) || defined(FILES_H))
-extern bool (*tombstone_aux)(void) ;
-#endif
 #if (defined(FILES_C) || defined(MAIN_C))
 extern void display_scores(int from, int to);
 #endif
@@ -578,7 +572,7 @@ extern void init_angband(void);
 
 /* load.c */
 
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern bool has_flag(u16b flag);
 #endif
 #if (defined(LOAD_C) || defined(SAVE_C))
@@ -1205,31 +1199,31 @@ extern BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo);
 
 /* save.c */
 
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern byte sf_major;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern byte sf_minor;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern byte sf_patch;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern byte sf_extra;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern u16b sf_flags;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern u32b sf_xtra;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern u32b sf_when;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern u16b sf_lives;
 #endif
-#if (defined(LOAD_C) || defined(LOADSAVE_H) || defined(SAVE_C))
+#if (defined(LOAD_C) || defined(SAVE_C))
 extern u16b sf_saves;
 #endif
 #if (defined(FILES_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(SAVE_C))
@@ -3251,283 +3245,220 @@ extern void dump_chaos_features(FILE * OutFile);
 
 /* z-form.c */
 
-#if (defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_FORM_H))
+#if (defined(UTIL_C) || defined(Z_FORM_C))
 extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
 #endif
-#if (defined(Z_FORM_C) || defined(Z_FORM_H))
-extern char *vformat(cptr fmt, va_list vp);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_FORM_H))
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_FORM_C))
 extern uint strnfmt(char *buf, uint max, cptr fmt, ...);
 #endif
-#if (defined(MELEE2_C) || defined(Z_FORM_C) || defined(Z_FORM_H))
+#if (defined(MELEE2_C) || defined(Z_FORM_C))
 extern uint strfmt(char *buf, cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MAIN_X11_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C) || defined(Z_FORM_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MAIN_X11_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern char *format(cptr fmt, ...);
 #endif
-#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_FORM_C) || defined(Z_FORM_H))
+#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_FORM_C))
 extern void plog_fmt(cptr fmt, ...);
 #endif
-#if (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_FORM_C) || defined(Z_FORM_H))
+#if (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_FORM_C))
 extern void quit_fmt(cptr fmt, ...);
-#endif
-#if (defined(Z_FORM_C) || defined(Z_FORM_H))
-extern void core_fmt(cptr fmt, ...);
 #endif
 
 /* z-rand.c */
 
-#if (defined(TABLES_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(TABLES_C) || defined(Z_RAND_C))
 extern bool rand_unbiased;
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(OBJECT1_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(OBJECT1_C) || defined(Z_RAND_C))
 extern bool Rand_quick ;
 #endif
-#if (defined(GENERATE_C) || defined(OBJECT1_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(GENERATE_C) || defined(OBJECT1_C) || defined(Z_RAND_C))
 extern u32b Rand_value;
 #endif
-#if (defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C))
 extern u16b Rand_place;
 #endif
-#if (defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C))
 extern u32b Rand_state[RAND_DEG];
 #endif
-#if (defined(Z_RAND_C) || defined(Z_RAND_H))
-extern  int Rand_bit(void);
-#endif
-#if (defined(Z_RAND_C) || defined(Z_RAND_H))
-extern  u32b Rand_u32b(void);
-#endif
-#if (defined(Z_RAND_C) || defined(Z_RAND_H))
-extern  u32b Rand_num(u32b m);
-#endif
-#if (defined(DUNGEON_C) || defined(MAIN_DOS_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(DUNGEON_C) || defined(MAIN_DOS_C) || defined(Z_RAND_C))
 extern void Rand_state_init(u32b seed);
 #endif
-#if (defined(Z_RAND_C) || defined(Z_RAND_H))
-extern s32b Rand_mod(s32b m);
-#endif
-#if (defined(Z_RAND_C) || defined(Z_RAND_H))
-extern s32b Rand_div(s32b m);
-#endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
 extern s16b randnor(int mean, int stand);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(MAIN_DOS_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+extern s32b rand_int(u32b m);
+#endif
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C) || defined(Z_RAND_C))
 extern s16b damroll(int num, int sides);
 #endif
-#if (defined(MONSTER2_C) || defined(Z_RAND_C) || defined(Z_RAND_H))
+#if (defined(MONSTER2_C) || defined(Z_RAND_C))
 extern s16b maxroll(int num, int sides);
 #endif
 
 /* z-term.c */
 
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern term *Term ;
 #endif
-#if (defined(DUNGEON_C) || defined(STORE_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(DUNGEON_C) || defined(STORE_C) || defined(Z_TERM_C))
 extern errr Term_user(int n);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_GCU_C) || defined(MAIN_MAC_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_xtra(int n, int v);
 #endif
-#if (defined(USE_TRANSPARENCY)) && (defined(CAVE_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
-extern void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc);
+#if (defined(CAVE_C) || defined(Z_TERM_C))
+extern void Term_queue_char(int x, int y, byte a, char c
+#ifdef USE_TRANSPARENCY
+
+	,byte ta, char tc
+
 #endif
-#if (defined(Z_TERM_C) || defined(Z_TERM_H))
-extern void Term_queue_chars(int x, int y, int n, byte a, cptr s);
+
+	)
+
+;
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_fresh(void);
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_set_cursor(int v);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_gotoxy(int x, int y);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
 extern errr Term_draw(int x, int y, byte a, char c);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_addch(byte a, char c);
 #endif
-#if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_addstr(int n, byte a, cptr s);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_putch(int x, int y, byte a, char c);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
-#if (defined(BIRTH_C) || defined(CMD3_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CMD3_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(SAVE_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(SAVE_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_clear(void);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_TERM_C))
 extern errr Term_redraw(void);
 #endif
-#if (defined(CAVE_C) || defined(UTIL_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CAVE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_get_cursor(int *v);
 #endif
-#if (defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_get_size(int *w, int *h);
 #endif
-#if (defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_locate(int *x, int *y);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_what(int x, int y, byte *a, char *c);
 #endif
-#if (defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_flush(void);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(Z_TERM_C))
 extern errr Term_keypress(int k);
 #endif
-#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_key_push(int k);
 #endif
-#if (defined(UTIL_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_inkey(char *ch, bool wait, bool take);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_save(void);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_load(void);
 #endif
-#if (defined(Z_TERM_C) || defined(Z_TERM_H))
-extern errr Term_exchange(void);
-#endif
-#if (defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_TERM_C))
 extern errr Term_resize(int w, int h);
 #endif
-#if (defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(CMD4_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_activate(term *t);
 #endif
-#if (defined(MAIN_DOS_C) || defined(MAIN_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(MAIN_DOS_C) || defined(MAIN_C) || defined(Z_TERM_C))
 extern errr term_nuke(term *t);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(Z_TERM_C) || defined(Z_TERM_H))
+#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XXX_C) || defined(Z_TERM_C))
 extern errr term_init(term *t, int w, int h, int k);
 #endif
 
 /* z-util.c */
 
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern char char_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern byte byte_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern sint sint_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern uint uint_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern long long_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern huge huge_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern errr errr_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern cptr cptr_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H) || defined(Z_VIRT_H))
-extern vptr vptr_tmp ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern cptr cptr_null ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern vptr vptr_null ;
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern vptr vptr_self ;
-#endif
-#if (defined(MAIN_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(MAIN_C) || defined(Z_UTIL_C))
 extern cptr argv0 ;
 #endif
-#if (defined(XTRA1_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(XTRA1_C) || defined(Z_UTIL_C))
 extern void func_nothing(void);
 #endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern errr func_success(void);
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern errr func_problem(void);
-#endif
-#if (defined(Z_UTIL_C) || defined(Z_UTIL_H))
-extern errr func_failure(void);
-#endif
-#if (defined(XTRA1_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(XTRA1_C) || defined(Z_UTIL_C))
 extern bool func_true(void);
 #endif
-#if (defined(LOAD_C) || defined(SAVE_C) || defined(XTRA1_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(LOAD_C) || defined(SAVE_C) || defined(XTRA1_C) || defined(Z_UTIL_C))
 extern bool func_false(void);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(Z_UTIL_C))
 extern bool streq(cptr a, cptr b);
 #endif
-#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern bool suffix(cptr s, cptr t);
 #endif
-#if (defined(FILES_C) || defined(MAIN_X11_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(FILES_C) || defined(MAIN_X11_C) || defined(SPELLS1_C) || defined(UTIL_C) || defined(Z_UTIL_C))
 extern bool prefix(cptr s, cptr t);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
 extern void (*plog_aux)(cptr) ;
 #endif
-#if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H) || defined(Z_VIRT_C))
+#if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_VIRT_C))
 extern void plog(cptr str);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(MAIN_ACN_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern void (*quit_aux)(cptr) ;
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_GCU_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_UTIL_C))
 extern void quit(cptr str);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H))
+#if (defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
 extern void (*core_aux)(cptr) ;
 #endif
-#if (defined(MAIN_ACN_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_UTIL_H) || defined(Z_VIRT_C))
+#if (defined(MAIN_ACN_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_VIRT_C))
 extern void core(cptr str);
 #endif
 
 /* z-virt.c */
 
-#if (defined(MAIN_MAC_C) || defined(Z_VIRT_C) || defined(Z_VIRT_H))
+#if (defined(MAIN_MAC_C) || defined(Z_VIRT_C))
 extern errr (*rnfree_aux)(vptr, huge) ;
 #endif
 #if (defined(MAIN_WIN_C) || defined(Z_VIRT_C) || defined(Z_VIRT_H))
 extern errr rnfree(vptr p, huge len);
 #endif
-#if (defined(MAIN_MAC_C) || defined(Z_VIRT_C) || defined(Z_VIRT_H))
+#if (defined(MAIN_MAC_C) || defined(Z_VIRT_C))
 extern vptr (*rpanic_aux)(huge) ;
 #endif
-#if (defined(Z_VIRT_C) || defined(Z_VIRT_H))
-extern vptr rpanic(huge len);
-#endif
-#if (defined(MAIN_MAC_C) || defined(Z_VIRT_C) || defined(Z_VIRT_H))
+#if (defined(MAIN_MAC_C) || defined(Z_VIRT_C))
 extern vptr (*ralloc_aux)(huge) ;
 #endif
 #if (defined(MAIN_WIN_C) || defined(XTRA2_C) || defined(Z_VIRT_C) || defined(Z_VIRT_H))
 extern vptr ralloc(huge len);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C) || defined(Z_VIRT_H))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C) || defined(Z_VIRT_H))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

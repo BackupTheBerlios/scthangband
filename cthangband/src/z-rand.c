@@ -4,6 +4,7 @@
 /* Purpose: a simple random number generator -BEN- */
 
 #include "z-rand.h"
+#include "externs.h"
 
 
 
@@ -72,6 +73,8 @@ u16b Rand_place;
 u32b Rand_state[RAND_DEG];
 
  
+static s32b Rand_div(s32b m);
+
  /* Random number generator selector */
  
  
@@ -105,7 +108,7 @@ u32b Rand_state[RAND_DEG];
   *
   * Eric Bock (kobe@micron.net)
   */
- int Rand_bit(void)
+static int Rand_bit(void)
  {
  	int a, b;
  
@@ -124,7 +127,7 @@ u32b Rand_state[RAND_DEG];
   * Generate a random 32-bit integer.
   * Note that this can be extended to any number of bits.
   */
- u32b Rand_u32b(void)
+static u32b Rand_u32b(void)
  {
  	u32b r = 0;
  	byte i = 0;
@@ -149,7 +152,7 @@ u32b Rand_state[RAND_DEG];
  }
  
  /* Generate a random integer with 0 <= X < M */
- u32b Rand_num(u32b m)
+static u32b Rand_num(u32b m)
  {
  	u32b r = m;
  
@@ -221,7 +224,7 @@ void Rand_state_init(u32b seed)
  * Note that "m" should probably be less than 500000, or the
  * results may be rather biased towards low values.
  */
-s32b Rand_mod(s32b m)
+static s32b Rand_mod(s32b m)
 {
 	int j;
 	u32b r;
@@ -272,7 +275,7 @@ s32b Rand_mod(s32b m)
  * This method has no bias, and is much less affected by patterns
  * in the "low" bits of the underlying RNG's.
  */
-s32b Rand_div(s32b m)
+static s32b Rand_div(s32b m)
 {
 	u32b r, n;
 
@@ -328,8 +331,6 @@ s32b Rand_div(s32b m)
 	/* Use the value */
 	return (r);
 }
-
-
 
 
 /*
@@ -445,6 +446,25 @@ s16b randnor(int mean, int stand)
 
 	/* One half should be positive */
 	return (mean + offset);
+}
+
+
+
+/*
+ * Generates a random long integer X where O<=X<M.
+ * The integer X falls along a uniform distribution.
+ * For example, if M is 100, you get "percentile dice"
+ */
+s32b rand_int(u32b m)
+{
+	if (rand_unbiased && !Rand_quick)
+	{
+		return Rand_num((s32b)(m));
+	}
+	else
+	{
+		return (s32b)Rand_div(m);
+	}
 }
 
 

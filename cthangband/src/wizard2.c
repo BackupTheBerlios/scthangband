@@ -135,7 +135,7 @@ static void do_cmd_wiz_hack_ben(void)
 
 #ifdef MONSTER_HORDES
 /* Summon a horde of monsters */
-static void do_cmd_summon_horde()
+static void do_cmd_summon_horde(void)
 {
             int wy = py, wx = px;
             int attempts = 1000;
@@ -1534,7 +1534,7 @@ static void do_cmd_wiz_zap(void)
 /*
  * Fire a magebolt at a creature that does 'enough' damage
  */
-static void do_cmd_magebolt()
+static void do_cmd_magebolt(void)
 {
 	int dir;
 	int tx, ty;

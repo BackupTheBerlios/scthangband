@@ -24,11 +24,6 @@ several times... */
 /* Time between an item becoming uncursed, and cursing itself again. */
 #define CURSE_TIMEOUT	30
 
-extern int artifact_bias;
-
-extern void get_table_name(char * out_string);
-extern s32b flag_cost(object_type * o_ptr, int plusses);
-
 static bool detect_monsters_string(cptr Match);
 
 /*

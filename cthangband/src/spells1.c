@@ -20,9 +20,6 @@
 #define PENETRATE_INVULNERABILITY 13
 
 
-extern void do_poly_self();
-
-
 
 /*
  * Helper function -- return a "nearby" race for polymorphing

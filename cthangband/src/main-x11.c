@@ -21,12 +21,6 @@
 
 #ifdef USE_X11
 
-
-#include "z-util.h"
-#include "z-virt.h"
-#include "z-form.h"
-
-
 #ifndef __MAKEDEPEND__
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

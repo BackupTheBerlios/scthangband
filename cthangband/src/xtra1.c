@@ -941,11 +941,6 @@ static bool win_equip_good(void)
 
 
 /*
- * XXX XXX XXX XXX
- */
-extern void display_spell_list(void);
-
-/*
  * Return whether PW_SPELL is interesting
  */
 static bool win_spell_good(void)
@@ -1013,8 +1008,6 @@ static void win_message_display(void)
 		}
 }
 
-
-extern void display_wild_map(uint xmin);
 
 
 /*

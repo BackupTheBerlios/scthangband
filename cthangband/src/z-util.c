@@ -3,13 +3,15 @@
 
 /* Purpose: Low level utilities -BEN- */
 
-#include "z-util.h"
+#include "h-basic.h"
+#include "externs.h"
 
 
 
 /*
- * Global variables for temporary use
+ * Global variables for temporary use (unused)
  */
+#if 0
 char char_tmp = 0;
 byte byte_tmp = 0;
 sint sint_tmp = 0;
@@ -46,6 +48,7 @@ vptr vptr_null = NULL;
  */
 vptr vptr_self = (vptr)(&vptr_self);
 
+#endif /* 0 */
 
 
 /*
@@ -64,6 +67,7 @@ void func_nothing(void)
 }
 
 
+#if 0
 /*
  * A routine that always returns "success"
  */
@@ -89,6 +93,7 @@ errr func_failure(void)
 {
 	return (-1);
 }
+#endif /* 0 */
 
 
 

@@ -36,39 +36,6 @@
  */
 
 
-
-/**** Available variables ****/
-
-/* Replacement hook for "rnfree()" */
-extern errr (*rnfree_aux)(vptr, huge);
-
-/* Replacement hook for "rpanic()" */
-extern vptr (*rpanic_aux)(huge);
-
-/* Replacement hook for "ralloc()" */
-extern vptr (*ralloc_aux)(huge);
-
-
-/**** Available Routines ****/
-
-/* De-allocate a given amount of memory */
-extern errr rnfree(vptr p, huge len);
-
-/* Panic, attempt to Allocate 'len' bytes */
-extern vptr rpanic(huge len);
-
-/* Allocate (and return) 'len', or dump core */
-extern vptr ralloc(huge len);
-
-/* Create a "dynamic string" */
-extern cptr string_make(cptr str);
-
-/* Free a string allocated with "string_make()" */
-extern errr string_free(cptr str);
-
-
-
-
 /**** Memory Macros ****/
 
 

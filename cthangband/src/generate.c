@@ -5176,7 +5176,7 @@ static void town_gen(void)
  */
 void generate_cave(void)
 {
-	int i, num, tester_1, tester_2;
+	int i, num;
 
 
 	/* The dungeon is not ready */

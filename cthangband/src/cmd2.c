@@ -13,7 +13,6 @@
 
 #include "angband.h"
 
-extern void fetch(int dir, int wgt, bool require_los);
 static int chest_check(int y, int x);
 
  #if defined(ALLOW_EASY_OPEN) || defined(ALLOW_EASY_DISARM) /* TNB */
