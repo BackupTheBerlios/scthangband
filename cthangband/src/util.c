@@ -2000,16 +2000,16 @@ char inkey(void)
  */
 
 /* The number of quarks */
-static s16b quark__num;
+static u16b quark__num;
 
 
 
 /*
  * Add a new "quark" to the set of quarks.
  */
-s16b quark_add(cptr str)
+u16b quark_add(cptr str)
 {
-	int i;
+	uint i;
 
 	/* Look for an existing quark */
 	for (i = 1; i < quark__num; i++)

@@ -241,7 +241,7 @@ struct object_kind
 	bool tried;			/* The player has "tried" one of the items */
 	bool seen;	/* The player has encountered at least one of these. */
 
-	s16b note;	/* Default inscription for this object_kind. */
+	u16b note;	/* Default inscription for this object_kind. */
 	byte squelch;	/* Default squelch setting. */
 };
 

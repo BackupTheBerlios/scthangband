@@ -1278,9 +1278,6 @@ extern void roff_top(int r_idx);
 extern void screen_roff(int r_idx);
 #endif
 
-
-
-
 /* monster2.c */
 
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
@@ -1403,9 +1400,6 @@ extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #if (defined(CMD4_C) || defined(OBJECT1_C) || defined(WIZARD2_C))
 extern void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
-
-
-
 #if (defined(OBJECT1_C) || defined(POWERS_C))
 extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 #endif
@@ -1534,6 +1528,12 @@ extern void object_copy(object_type *o_ptr, object_ctype *j_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_prep(object_type *o_ptr, int k_idx);
+#endif
+#if (defined(OBJECT2_C) || defined(WIZARD1_C))
+extern bool make_fake_artifact(object_type *o_ptr, int name1);
+#endif
+#if (defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD2_C))
+extern void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(OBJECT2_C))
 extern void check_bonus_table(void);
@@ -2343,7 +2343,7 @@ extern bool is_keymap_or_macro(void);
 extern char inkey(void);
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(UTIL_C))
-extern s16b quark_add(cptr str);
+extern u16b quark_add(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(SAVE_C) || defined(UTIL_C))
 extern cptr quark_str(u16b i);
@@ -2471,9 +2471,6 @@ extern errr type_string(cptr str, uint len);
 #if (defined(VARIABLE_C))
 extern cptr copyright[5];
 #endif
-
-
-
 #if (defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern bool arg_fiddle;
 #endif
@@ -2546,12 +2543,6 @@ extern s16b energy_use;
 #if (defined(DUNGEON_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b old_energy_use;
 #endif
-
-
-
-
-
-
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool msg_flag;
 #endif
@@ -2621,9 +2612,6 @@ extern bool use_graphics;
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern u16b total_winner;
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern u16b noscore;
 #endif
@@ -2642,21 +2630,9 @@ extern bool inkey_scan;
 #if (defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool inkey_flag;
 #endif
-
-
-
-
-
-
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern bool shimmer_monsters;
 #endif
-
-
-
-
-
-
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern bool repair_monsters;
 #endif
@@ -2684,21 +2660,9 @@ extern s16b m_max;
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern s16b m_cnt;
 #endif
-
-
-
-
-
-
 #if (defined(DUNGEON_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool multi_rew;
 #endif
-
-
-
-
-
-
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool rogue_like_commands;
 #endif
@@ -2816,9 +2780,6 @@ extern bool small_levels;
 #if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool empty_levels;
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool equippy_chars;
 #endif
@@ -2981,9 +2942,6 @@ extern bool flush_failure;
 #if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool flush_disturb;
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(SQUELCH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool fresh_before;
 #endif
@@ -3194,24 +3152,6 @@ extern char history[4][60];
 #if (defined(FILES_C) || defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern char savefile[1024];
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if (defined(CAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b temp_n;
 #endif
@@ -3230,30 +3170,12 @@ extern cptr *macro__pat;
 #if (defined(CMD4_C) || defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr *macro__act;
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern char *macro__buf;
 #endif
-
-
-
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr *quark__str;
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern u16b *message__ptr;
 #endif
@@ -3296,9 +3218,6 @@ extern alloc_entry *alloc_race_table;
 #if (defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern byte tval_to_attr[128];
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr keymap_act[KEYMAP_MODES][256];
 #endif
@@ -3419,9 +3338,6 @@ extern cptr ANGBAND_SYS;
 #if (defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_GRAF;
 #endif
-
-
-
 #if (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_DIR_APEX;
 #endif
@@ -3458,12 +3374,6 @@ extern cptr ANGBAND_DIR_XTRA;
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool (*item_tester_hook)(object_ctype*);
 #endif
-
-
-
-
-
-
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool violet_uniques;
 #endif
@@ -3492,11 +3402,8 @@ extern char *macro_text;
 extern u16b rebuild_raw;
 #endif
 
-/* object2.c */
+/* wizard1.c */
 
-#if (defined(OBJECT2_C) || defined(WIZARD1_C))
-extern bool make_fake_artifact(object_type *o_ptr, int name1);
-#endif
 #if (defined(ALLOW_SPOILERS)) && (defined(DUNGEON_C) || defined(WIZARD1_C))
 extern void do_cmd_spoilers(void);
 #endif
@@ -3976,11 +3883,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* object2.c */
-
-#if (defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD2_C))
-extern void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
