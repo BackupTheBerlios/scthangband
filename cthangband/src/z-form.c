@@ -708,6 +708,7 @@ uint strnfmt(char *buf, uint max, cptr fmt, ...)
 }
 
 
+#if 0
 /*
  * Do a vstrnfmt (see above) into a buffer of unknown size.
  * Since the buffer size is unknown, the user better verify the args.
@@ -730,6 +731,7 @@ uint strfmt(char *buf, cptr fmt, ...)
 	/* Return the number of bytes written */
 	return (len);
 }
+#endif
 
 
 
