@@ -865,153 +865,6 @@ void take_hit(int damage, cptr hit_from)
 
 
 
-/*
- * Note that amulets, rods, and high-level spell books are immune
- * to "inventory damage" of any kind.  Also sling ammo and shovels.
- */
-
-
-/*
- * Does a given class of objects (usually) hate acid?
- * Note that acid can either melt or corrode something.
- */
-static bool hates_acid(object_type *o_ptr)
-{
-	/* Analyze the type */
-	switch (o_ptr->tval)
-	{
-		/* Wearable items */
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_SWORD:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		{
-			return (TRUE);
-		}
-
-		/* Staffs/Scrolls are wood/paper */
-		case TV_STAFF:
-		case TV_SCROLL:
-		{
-			return (TRUE);
-		}
-
-		/* Ouch */
-		case TV_CHEST:
-		{
-			return (TRUE);
-		}
-
-		/* Junk is useless */
-		case TV_SKELETON:
-		case TV_BOTTLE:
-		case TV_JUNK:
-		{
-			return (TRUE);
-		}
-	}
-
-	return (FALSE);
-}
-
-
-/*
- * Does a given object (usually) hate electricity?
- */
-static bool hates_elec(object_type *o_ptr)
-{
-	switch (o_ptr->tval)
-	{
-		case TV_RING:
-		case TV_WAND:
-		{
-			return (TRUE);
-		}
-	}
-
-	return (FALSE);
-}
-
-
-/*
- * Does a given object (usually) hate fire?
- * Hafted/Polearm weapons have wooden shafts.
- * Arrows/Bows are mostly wooden.
- */
-static bool hates_fire(object_type *o_ptr)
-{
-	/* Analyze the type */
-	switch (o_ptr->tval)
-	{
-		/* Wearable */
-		case TV_LITE:
-		case TV_ARROW:
-		case TV_BOW:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		{
-			return (TRUE);
-		}
-
-		/* Books */
-	case TV_SORCERY_BOOK:
-	case TV_THAUMATURGY_BOOK:
-    case TV_CONJURATION_BOOK:
-    case TV_NECROMANCY_BOOK:
-		{
-			return (TRUE);
-		}
-
-		/* Chests */
-		case TV_CHEST:
-		{
-			return (TRUE);
-		}
-
-		/* Staffs/Scrolls burn */
-		case TV_STAFF:
-		case TV_SCROLL:
-		{
-			return (TRUE);
-		}
-	}
-
-	return (FALSE);
-}
-
-
-/*
- * Does a given object (usually) hate cold?
- */
-static bool hates_cold(object_type *o_ptr)
-{
-	switch (o_ptr->tval)
-	{
-		case TV_POTION:
-		case TV_FLASK:
-		case TV_BOTTLE:
-		{
-			return (TRUE);
-		}
-	}
-
-	return (FALSE);
-}
 
 
 
@@ -1027,7 +880,6 @@ static bool hates_cold(object_type *o_ptr)
 static int set_acid_destroy(object_type *o_ptr)
 {
 	u32b f1, f2, f3;
-	if (!hates_acid(o_ptr)) return (FALSE);
 	object_flags(o_ptr, &f1, &f2, &f3);
 	if (f3 & (TR3_IGNORE_ACID)) return (FALSE);
 	return (TRUE);
@@ -1040,7 +892,6 @@ static int set_acid_destroy(object_type *o_ptr)
 static int set_elec_destroy(object_type *o_ptr)
 {
 	u32b f1, f2, f3;
-	if (!hates_elec(o_ptr)) return (FALSE);
 	object_flags(o_ptr, &f1, &f2, &f3);
 	if (f3 & (TR3_IGNORE_ELEC)) return (FALSE);
 	return (TRUE);
@@ -1053,7 +904,6 @@ static int set_elec_destroy(object_type *o_ptr)
 static int set_fire_destroy(object_type *o_ptr)
 {
 	u32b f1, f2, f3;
-	if (!hates_fire(o_ptr)) return (FALSE);
 	object_flags(o_ptr, &f1, &f2, &f3);
 	if (f3 & (TR3_IGNORE_FIRE)) return (FALSE);
 	return (TRUE);
@@ -1066,7 +916,6 @@ static int set_fire_destroy(object_type *o_ptr)
 static int set_cold_destroy(object_type *o_ptr)
 {
 	u32b f1, f2, f3;
-	if (!hates_cold(o_ptr)) return (FALSE);
 	object_flags(o_ptr, &f1, &f2, &f3);
 	if (f3 & (TR3_IGNORE_COLD)) return (FALSE);
 	return (TRUE);
@@ -2215,7 +2064,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Acid -- Lots of things */
 			case GF_ACID:
 			{
-				if (hates_acid(o_ptr))
+				if (set_acid_destroy(o_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " melt!" : " melts!");
@@ -2227,7 +2076,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Elec -- Rings and Wands */
 			case GF_ELEC:
 			{
-				if (hates_elec(o_ptr))
+				if (set_elec_destroy(o_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " are destroyed!" : " is destroyed!");
@@ -2239,7 +2088,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Fire -- Flammable objects */
 			case GF_FIRE:
 			{
-				if (hates_fire(o_ptr))
+				if (set_fire_destroy(o_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
@@ -2251,7 +2100,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Cold -- potions and flasks */
 			case GF_COLD:
 			{
-				if (hates_cold(o_ptr))
+				if (set_cold_destroy(o_ptr))
 				{
 					note_kill = (plural ? " shatter!" : " shatters!");
 					do_kill = TRUE;
@@ -2263,13 +2112,13 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Fire + Elec */
 			case GF_PLASMA:
 			{
-				if (hates_fire(o_ptr))
+				if (set_fire_destroy(o_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
 					if (f3 & (TR3_IGNORE_FIRE)) ignore = TRUE;
 				}
-				if (hates_elec(o_ptr))
+				if (set_elec_destroy(o_ptr))
 				{
 					ignore = FALSE;
 					do_kill = TRUE;
@@ -2282,13 +2131,13 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Fire + Cold */
 			case GF_METEOR:
 			{
-				if (hates_fire(o_ptr))
+				if (set_fire_destroy(o_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
 					if (f3 & (TR3_IGNORE_FIRE)) ignore = TRUE;
 				}
-				if (hates_cold(o_ptr))
+				if (set_cold_destroy(o_ptr))
 				{
 					ignore = FALSE;
 					do_kill = TRUE;
@@ -2304,7 +2153,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			case GF_FORCE:
 			case GF_SOUND:
 			{
-				if (hates_cold(o_ptr))
+				if (set_cold_destroy(o_ptr))
 				{
 					note_kill = (plural ? " shatter!" : " shatters!");
 					do_kill = TRUE;

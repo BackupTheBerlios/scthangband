@@ -1678,6 +1678,10 @@ errr init_k_info_txt(FILE *fp, char *buf)
 	/* Current entry */
 	object_kind *k_ptr = NULL;
 
+	/* Initialise the temporary tval-dependant flag list */
+	object_kind kt_info[256];
+	
+	C_WIPE(kt_info, 256, object_kind);
 
 	/* Just before the first record */
 	error_idx = -1;
@@ -1774,6 +1778,57 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			continue;
 		}
 
+		/* Process 'T' for tval-dependant flags. */
+		if (buf[0] == 'T')
+		{
+			object_kind *kt_ptr;
+			
+			/* Get the tval */
+			i = atoi(buf+2);
+			
+			/* Verify information */
+			if (i < 0 || i > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+			
+			/* Point at the "info" */
+			kt_ptr = &kt_info[i];
+
+			/* Advance to the first flag. */
+			s = strchr(buf, '|');
+			
+			if (!s) return PARSE_ERROR_TOO_FEW_ARGUMENTS;
+			
+			s += strspn(s, "| ");
+
+			/* Parse every other entry textually */
+			while (*s)
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+				if (SUCCESS != grab_one_kind_flag(kt_ptr, s)) return PARSE_ERROR_INVALID_FLAG;
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* This should not be used within an entry,
+			 * so remove k_ptr to make sure. */
+			k_ptr = 0;
+
+
+			/* Next... */
+			continue;
+		}
+			
+
 		/* There better be a current k_ptr */
 		if (!k_ptr) return (3);
 
@@ -1812,10 +1867,18 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'I')
 		{
 			int tval, sval, pval;
+			object_kind *kt_ptr;
 
 			/* Scan for the values */
 			if (3 != sscanf(buf+2, "%d:%d:%d",
 			                &tval, &sval, &pval)) return (1);
+
+			/* Include the tval-dependent flags. */
+			kt_ptr = &kt_info[tval];
+
+			k_ptr->flags1 |= kt_ptr->flags1;
+			k_ptr->flags2 |= kt_ptr->flags2;
+			k_ptr->flags3 |= kt_ptr->flags3;
 
 			/* Save the values */
 			k_ptr->tval = tval;

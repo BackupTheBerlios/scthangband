@@ -183,8 +183,7 @@ struct object_kind
 
 	bool has_flavor;	/* This object has a flavor */
 
-	bool easy_know;		/* This object is always known (if aware) */
-
+	bool easy_know;		/* Unused */
 
 	bool aware;			/* The player is "aware" of the item's effects */
 

@@ -227,7 +227,7 @@ u32b fake_text_size;
 /*
  * Standard error message text
  */
-static cptr err_str[8] =
+static cptr err_str[PARSE_ERROR_MAX] =
 {
 	NULL,
 	"parse error",
@@ -236,7 +236,12 @@ static cptr err_str[8] =
 	"non-sequential records",
 	"invalid flag specification",
 	"undefined directive",
-	"out of memory"
+	"out of memory",
+	"value out of bounds",
+	"too few arguments",
+	"too many arguments",
+	"too many allocation entries",
+	"invalid spell frequency",
 };
 
 
@@ -453,7 +458,7 @@ static errr init_f_info(void)
 		cptr oops;
 
 		/* Error string */
-		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+		oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
 		/* Oops */
 		msg_format("Error %d at line %d of 'f_info.txt'.", err, error_line);

@@ -2700,6 +2700,25 @@
 #define ERR_DIRECTIVE 6	/* undefined directive */
 #define ERR_MEMORY 7	/* out of memory */
 
+#define PARSE_ERROR_GENERIC                  1
+#define PARSE_ERROR_OBSOLETE_FILE            2
+#define PARSE_ERROR_MISSING_RECORD_HEADER    3
+#define PARSE_ERROR_NON_SEQUENTIAL_RECORDS   4
+#define PARSE_ERROR_INVALID_FLAG             5
+#define PARSE_ERROR_UNDEFINED_DIRECTIVE      6
+#define PARSE_ERROR_OUT_OF_MEMORY            7
+#define PARSE_ERROR_OUT_OF_BOUNDS            8
+#define PARSE_ERROR_TOO_FEW_ARGUMENTS        9
+#define PARSE_ERROR_TOO_MANY_ARGUMENTS      10
+#define PARSE_ERROR_TOO_MANY_ALLOCATIONS    11
+#define PARSE_ERROR_INVALID_SPELL_FREQ      12
+
+#define PARSE_ERROR_MAX                     13
+
+#ifndef SUCCESS
+#define SUCCESS	0
+#endif
+
 /*** Macro Definitions ***/
 
 
@@ -2730,8 +2749,8 @@
  */
 #define object_known_p(T) \
     (((T)->ident & (IDENT_KNOWN)) || \
-     (k_info[(T)->k_idx].easy_know && k_info[(T)->k_idx].aware) || \
-     (k_info[(T)->k_idx].aware && (T)->ident & IDENT_EMPTY))
+     (k_info[(T)->k_idx].flags3 & TR3_EASY_KNOW && object_aware_p(T)) || \
+     (object_aware_p(T) && (T)->ident & IDENT_EMPTY))
 
 /*
  * Artifacts use the "name1" field
