@@ -3901,4 +3901,10 @@ extern cptr string_make(cptr str);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
 #endif
+
+/* init2.c */
+
+#if (defined(INIT2_C) || defined(STORE_C))
+extern s16b store_table[MAX_STORE_TYPES][STORE_CHOICES];
+#endif
 #endif /* INCLUDED_EXTERNS_H */

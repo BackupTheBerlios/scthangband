@@ -1311,7 +1311,7 @@ void do_cmd_read_scroll(int item)
 			break;
 		}
 
-		case OBJ_SCROLL_CURSE_ARMOR:
+		case OBJ_SCROLL_CURSE_ARMOUR:
 		{
 			if (curse_armor()) ident = TRUE;
 			break;
@@ -1450,7 +1450,7 @@ void do_cmd_read_scroll(int item)
 			break;
 		}
 
-		case OBJ_SCROLL_ENCHANT_ARMOR:
+		case OBJ_SCROLL_ENCHANT_ARMOUR:
 		{
 			ident = TRUE;
 			if (!enchant_spell(0, 0, 1)) used_up = FALSE;
@@ -1471,7 +1471,7 @@ void do_cmd_read_scroll(int item)
 			break;
 		}
 
-		case OBJ_SCROLL_STAR_ENCHANT_ARMOR:
+		case OBJ_SCROLL_STAR_ENCHANT_ARMOUR:
 		{
 			if (!enchant_spell(0, 0, randint(3) + 2)) used_up = FALSE;
 			ident = TRUE;

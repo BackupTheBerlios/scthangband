@@ -1651,7 +1651,7 @@ static void store_create(void)
 		else
 		{
 			/* Hack -- Pick an item to sell */
-			i = st_ptr->table[rand_int(st_ptr->table_num)];
+			i = store_table[st_ptr->type][rand_int(STORE_CHOICES)];
 
 			/* Hack -- fake level for apply_magic() */
 			level = rand_range(1, STORE_OBJ_LEVEL);
