@@ -2075,32 +2075,27 @@ int Term_save_aux(void)
 /*
  * Save the "requested" screen into cur_saved_term.
  */
-errr Term_save(void)
+void Term_save(void)
 {
 	/* Paranoia - forget any term_win currently saved. */
 	if (cur_saved_term) Term_release(cur_saved_term);
 
 	/* Save the window, remember the index. */
 	cur_saved_term = Term_save_aux();
-
-	/* Success */
-	return (0);
 }
 
 /*
- * Restore the "requested" contents (see above).
+ * Restore the "requested" contents from a specified saved term.
  *
- * Every "Term_save()" should match exactly one "Term_load()"
- *
- * Return TRUE if successful, FALSE otherwise.
+ * Does not alter the term_wins array.
  */
-bool Term_load_aux(int win)
+void Term_load_aux(int win)
 {
 	term_win2 *w_ptr;
 	int y;
 
 	/* Paranoia - ignore invalid calls. */
-	if (win <= 0 || win > NUM_TERM_WINS) return FALSE;
+	if (win <= 0 || win > NUM_TERM_WINS) return;
 
 	w_ptr = term_wins+win-1;
 
@@ -2126,33 +2121,25 @@ bool Term_load_aux(int win)
 	{
 		/* Try the resize hook if possible. */
 		if (Term->resize_hook != 0) (*Term->resize_hook)();
-
-		/* Warn the calling function that things didn't work correctly. */
-		return FALSE;
 	}
-
-	return TRUE;
 }
 
 /*
  * Restore the "requested" screen from cur_saved_term.
  */
-errr Term_load(void)
+void Term_load(void)
 {
 	/* Paranoia - no saved term_win. */
-	if (!cur_saved_term) return (-1);
+	if (!cur_saved_term) return;
 
 	/* Restore the window from the remembered index. */
-	if (!Term_load_aux(cur_saved_term)) return (-1);
+	Term_load_aux(cur_saved_term);
 
 	/* Don't use this image again. */
 	Term_release(cur_saved_term);
 
 	/* Forget the saved term_win. */
 	cur_saved_term = 0;
-
-	/* Success */
-	return (0);
 }
 
 
