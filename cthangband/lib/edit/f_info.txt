@@ -18,7 +18,6 @@
 
 # N:serial number:terrain name
 # G:priority:symbol:color
-# F: flag | flag | etc
 
 # N' indicates the beginning of an entry. The serial number must
 # increase for each new item.
@@ -32,10 +31,6 @@
 # r - Red          g - Green          b - Blue          u - Brown
 # d - Black        W - Light Gray     v - Violet        y - Yellow
 # R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
-
-# 'F' is for flags. These are fairly self-explanatory. As many F:
-# lines may be used as are needed to specify all the flags and flags
-# are separated by the '|' symbol
 
 
 # Version stamp (required)
