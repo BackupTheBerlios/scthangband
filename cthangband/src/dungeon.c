@@ -82,11 +82,18 @@ static bool PURE is_powerful(object_ctype *o_ptr)
 	u_ptr->ident &= ~IDENT_TRIED;
 	object_info_known(t_ptr, u_ptr);
 	object_info_known(u_ptr, o_ptr);
-	u_ptr->ident &= ~IDENT_TRIED;
-	u_ptr->ix = 0;
 
-	/* Only extra knowledge should create a difference. */
-	return DIFF(t_ptr, u_ptr, object_type);
+	/* 
+	 * Hack - check for the extra information the TRIED flag may give in
+	 * object_knowledge, as it's easier than checking stuff which may have
+	 * changed.
+	 */
+	if (t_ptr->flags1 != u_ptr->flags1) return TRUE;
+	if (t_ptr->flags2 != u_ptr->flags2) return TRUE;
+	if (t_ptr->flags3 != u_ptr->flags3) return TRUE;
+
+	/* Nothing obviously different. */
+	return FALSE;
 }
 
 
