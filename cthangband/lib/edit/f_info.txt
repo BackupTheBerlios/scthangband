@@ -443,13 +443,13 @@ N:82:Bookstore
 G:9:o
 
 N:83:Inn
-G:+:w
+G:I:w
 
 N:84:Hall of Records
-G:+:y
+G:H:y
 
 N:85:Pawnbrokers
-G:+:g
+G:P:g
 
 N:86:nothing
 G:x:w
