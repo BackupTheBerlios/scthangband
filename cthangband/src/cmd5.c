@@ -3761,8 +3761,16 @@ void do_cmd_invoke(void)
 	/* Spell failure chance */
 	chance = favour_chance(spell,favour_sphere);
 
+	/* Don't punish those silly enough to pray to an angry spirit too harshly. */
+	if (s_ptr->annoyance)
+	{
+		if (flush_failure) flush();
+		msg_format("You feel that %s isn't listening...", s_ptr->name);
+		/* And sit still for a little while to avoid this being a short wait command. */
+		do_cmd_stay(FALSE);
+	}
 	/* Failed spell */
-	if ((rand_int(100) < chance) || (s_ptr->annoyance))
+	else if (rand_int(100) < chance)
 	{
 		if (flush_failure) flush();
 		msg_format("%s refuses your call!",s_ptr->name);
@@ -4118,10 +4126,10 @@ void do_cmd_invoke(void)
 		if (skill_set[SKILL_SHAMAN].value < f_ptr->minskill * 2 + 50) {
 			skill_exp(SKILL_SHAMAN);
 		}
-	}
 
 	/* Take some time - a spell of your level takes 100, lower level spells take less */
 	energy_use = spell_energy((u16b)plev,(u16b)(f_ptr->minskill));
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
