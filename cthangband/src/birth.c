@@ -1903,9 +1903,10 @@ static bc_type get_hermetic_skills()
 			case 7:
 				skill_set[SKILL_NATURAE].value+=5;
 				break;
-			}
 		}
 	}
+	return BC_OKAY;
+}
 
 /*
  * Save the current data for later
@@ -2151,7 +2152,6 @@ static void get_stats(void)
 			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = p_ptr->stat_use[i];
 		}
 	}
-	return BC_OKAY;
 }
 
 
