@@ -611,25 +611,27 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 /*
  * Do a vstrnfmt (see above) into a (growable) static buffer.
  * This buffer is usable for very short term formatting of results.
+ *
+ * It uses a second buffer to ensure that output_buf retains its contents
+ * until the new format string is written (enabling, for instance, nested
+ * format calls).
  */
 char *vformat(cptr fmt, va_list vp)
 {
-	static char *format_buf = NULL;
+	static char *format_buf = NULL, *output_buf;
 	static huge format_len = 0;
-	uint buf_len;
+	bool grown = FALSE;
 
 	/* Initial allocation */
 	if (!format_buf)
 	{
 		format_len = 1024;
 		C_MAKE(format_buf, format_len, char);
+		grown = TRUE;
 	}
 
 	/* Null format yields last result */
-	if (!fmt) return (format_buf);
-
-	/* Note the end of the string. */
-	buf_len = strlen(format_buf);
+	if (!fmt) return (output_buf);
 
 	/* Keep going until successful */
 	while (1)
@@ -644,20 +646,25 @@ char *vformat(cptr fmt, va_list vp)
 
 		else
 		{
-			/* 
-			 * Grow the buffer, keeping the older string so that
-			 * format("%s...", format(0), ...) gives the expected results.
-			 */
-			char *old_buf = format_buf;
+			/* Grow the buffer. */
 			format_len = format_len * 2;
+			KILL(format_buf);
 			C_MAKE(format_buf, format_len, char);
-			strncpy(format_buf, old_buf, buf_len);
-			KILL(old_buf);
+
+			/* Grow output_buf (later) */
+			grown = TRUE;
 		}
 	}
 
+	if (grown)
+	{
+		FREE(output_buf);
+		C_MAKE(output_buf, format_len, char);
+	}
+	strcpy(output_buf, format_buf);
+
 	/* Return the new buffer */
-	return (format_buf);
+	return (output_buf);
 }
 
 
