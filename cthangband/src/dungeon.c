@@ -2114,7 +2114,7 @@ static void process_recall(void)
 	sound(SOUND_TPLEVEL);
 
 	/* Determine the level */
-	if (dun_level)
+	if (!dun_level)
 	{
 		msg_print("You feel yourself yanked downwards!");
 
