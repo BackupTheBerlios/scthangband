@@ -721,7 +721,7 @@ static bool opt_is_forced(option_type *op_ptr)
  */
 void opt_special_effect(const option_type * const op_ptr)
 {
-	if (op_ptr->o_page == OPTS_CHEAT)
+	if (op_ptr->o_page == OPTS_CHEAT && *(op_ptr->o_var))
 	{
 		u16b old_noscore = noscore;
 
@@ -1942,18 +1942,28 @@ static void dump_normal_options(FILE *fff)
 {
 	option_type *op_ptr;
 	char y;
+	bool cheat = FALSE, old_cheat = FALSE;
 
 	/* Start dumping */
 	fprintf(fff, "\n\n# Automatic option dump\n\n");
 
 	/* Dump each of the normal options in turn. */
-	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++, old_cheat = cheat)
 	{
 		/* Paranoia - require a real option */
 		if (!op_ptr->o_text) continue;
 
-		/* Require a non-cheat option. */
-		if (op_ptr->o_page == OPTS_CHEAT) continue;
+		/* Treat cheat options in a special way. */
+		cheat = (op_ptr->o_page == OPTS_CHEAT);
+
+		if (cheat && !old_cheat)
+		{
+			fprintf(fff, "?:$CHEAT\n\n");
+		}
+		else if (!cheat && old_cheat)
+		{
+			fprintf(fff, "?:1\n\n");
+		}
 
 		/* Comment */
 		fprintf(fff, "# Option '%s'\n", op_ptr->o_desc);
@@ -1963,6 +1973,11 @@ static void dump_normal_options(FILE *fff)
 
 		/* Dump the option */
 		fprintf(fff, "%c:%s\n\n", y, op_ptr->o_text);
+	}
+
+	if (cheat)
+	{
+		fprintf(fff, "?:1\n\n");
 	}
 
 	/* Mention miscellaneous options. */

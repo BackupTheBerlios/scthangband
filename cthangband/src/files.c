@@ -1225,6 +1225,10 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			{
 				v = player_base;
 			}
+			else if (streq(b+1, "CHEAT"))
+			{
+				v = (noscore) ? "1" : "0";
+			}
 			else
 			{
 				v = "0";
