@@ -1557,7 +1557,7 @@ func_false();
 		}
 		
 		/* Dungeon */
-		else
+		else if (o_ptr->iy)
 		{
 			/* Access the item location */
 			c_ptr = &cave[o_ptr->iy][o_ptr->ix];
