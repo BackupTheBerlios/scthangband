@@ -5905,8 +5905,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 
 		case RACE_DWARF+PO_RACIAL:
+		case RACE_NIBELUNG+PO_RACIAL:
 		{
-			msg_print("You examine your surroundings.");
 			(void)detect_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
@@ -5928,19 +5928,17 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case RACE_GNOME+PO_RACIAL:
 		{
-			msg_print("Blink!");
 			teleport_player(10 + (plev));
 			return SUCCESS;
 		}
 		case RACE_HALF_ORC+PO_RACIAL:
 		{
-			msg_print("You play tough.");
 			(void)set_flag(TIMED_AFRAID, 0);
 			return SUCCESS;
 		}
 		case RACE_HALF_TROLL+PO_RACIAL:
+		case RACE_BARBARIAN+PO_RACIAL:
 		{
-			msg_print("RAAAGH!");
 			(void)set_flag(TIMED_AFRAID, 0);
 			(void)add_flag(TIMED_SHERO, 10 + randint(plev));
 			(void)hp_player(30);
@@ -5948,7 +5946,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case RACE_GREAT+PO_RACIAL:
 		{ /* Dreaming */
-			msg_print("You dream of a time of health and peace...");
 			(void)set_flag(TIMED_POISONED, 0);
 			(void)set_flag(TIMED_IMAGE, 0);
 			(void)set_flag(TIMED_STUN, 0);
@@ -5966,21 +5963,11 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case RACE_GREAT+MAX_RACES+PO_RACIAL:
 		{ /* dream travel */
-			msg_print("You start walking around. Your surroundings change.");
 			change_level(dun_level, START_RANDOM);
-			return SUCCESS;
-		}
-		case RACE_BARBARIAN+PO_RACIAL:
-		{
-			msg_print("Raaagh!");
-			(void)set_flag(TIMED_AFRAID, 0);
-			(void)add_flag(TIMED_SHERO, 10 + randint(plev));
-			(void)hp_player(30);
 			return SUCCESS;
 		}
 		case RACE_HALF_OGRE+PO_RACIAL:
 		{
-			msg_print("You carefully set an explosive rune...");
 			explosive_rune();
 			return SUCCESS;
 		}
@@ -5993,7 +5980,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case RACE_HALF_TITAN+PO_RACIAL:
 		{
-			msg_print("You examine your foes...");
 			probing();
 			return SUCCESS;
 		}
@@ -6026,14 +6012,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You throw a dart of poison.");
 			fire_bolt(GF_POIS, dir, plev);
-			return SUCCESS;
-		}
-		case RACE_NIBELUNG+PO_RACIAL:
-		{
-			msg_print("You examine your surroundings.");
-			(void)detect_traps();
-			(void)detect_doors();
-			(void)detect_stairs();
 			return SUCCESS;
 		}
 		case RACE_DARK_ELF+PO_RACIAL:
@@ -6076,7 +6054,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case RACE_SKELETON+PO_RACIAL:
 		case RACE_ZOMBIE+PO_RACIAL:
 		{
-			msg_print("You attempt to restore your lost energies.");
 			(void)restore_level();
 			return SUCCESS;
 		}
@@ -6118,21 +6095,18 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case RACE_SPECTRE+PO_RACIAL:
 		{
-			msg_print("You emit an eldritch howl!");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
 		case RACE_BROO+PO_RACIAL:
 		{
-			msg_print("You emit a fearsome growl!");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void)fire_bolt(GF_TURN_ALL, dir, plev);
 			return SUCCESS;
 		}
 		case RACE_SPRITE+PO_RACIAL:
 		{
-			msg_print("You throw some magic dust...");
 			if (plev < 25)
 				sleep_monsters_touch(plev);
 			else
@@ -6141,48 +6115,41 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case MUT_SPIT_ACID+PO_MUTA:
 		{
-			msg_print("You spit acid...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			fire_ball(GF_ACID, dir, plev, 1 + (plev/30));
 			return SUCCESS;
 		}
 		case MUT_BR_FIRE+PO_MUTA:
 		{
-			msg_print("You breathe fire...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			fire_ball(GF_FIRE, dir, plev * 2, -(1 + (plev/20)));
 			return SUCCESS;
 		}
 		case MUT_HYPN_GAZE+PO_MUTA:
 		{
-			msg_print("Your eyes look mesmerizing...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void) charm_monster(dir, plev);
 			return SUCCESS;
 		}
 		case MUT_TELEKINES+PO_MUTA:
 		{
-			msg_print("You concentrate...");
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			fetch(dir, plev * 10, TRUE);
 			return SUCCESS;
 		}
 		case MUT_VTELEPORT+PO_MUTA:
 		{
-			msg_print("You concentrate...");
 			teleport_player(10 + 4*(plev));
 			return SUCCESS;
 		}
 		case MUT_MIND_BLST+PO_MUTA:
 		{
-			msg_print("You concentrate...");
 			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;
 			fire_bolt(GF_PSI, dir, damroll(3 + ((plev - 1) / 5), 3));
 			return SUCCESS;
 		}
 		case MUT_RADIATION+PO_MUTA:
 		{
-			msg_print("Radiation flows from your body!");
 			fire_ball(GF_NUKE, 0, (plev * 2), 3 + (plev / 20));
 			return SUCCESS;
 		}
@@ -6409,7 +6376,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case MUT_STERILITY+PO_MUTA:
 		{
 			/* Fake a population explosion. */
-			msg_print("You suddenly have a headache!");
 			take_hit(randint(30) + 30, "the strain of forcing abstinence", MON_DANGEROUS_MUTATION);
 			num_repro += MAX_REPRO;
 			return SUCCESS;
