@@ -2673,7 +2673,7 @@ static bool alloc_monster_aux(int dis, int level, bool slp, int bias)
  */
 void alloc_monster(int dis, int level, bool slp)
 {
-	if (dun_bias && magik(100))
+	if (dun_bias && magik(40))
 	{
 		if (alloc_monster_aux(dis, level+5, slp, dun_bias)) return;
 	}
