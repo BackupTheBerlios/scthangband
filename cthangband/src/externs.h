@@ -4025,4 +4025,10 @@ extern long PURE num_kills(void);
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void dump_history(FILE *fff);
 #endif
+
+/* xtra1.c */
+
+#if (defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C) || defined(XTRA1_C))
+extern bool PURE player_is_undead(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -4792,13 +4792,8 @@ static void make_bones(void)
 {
 	FILE                *fp;
 
-
-	if ((p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_ZOMBIE) ||
-		(p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_VAMPIRE))
-	{
-		return;
-	}
-
+	/* Undead can't be raised as undead. */
+	if (player_is_undead) return;
 
 	/* Ignore wizards and borgs */
 	if (!(noscore & 0x00FF))

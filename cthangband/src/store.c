@@ -280,9 +280,7 @@ static void room_rest(void)
 	int temp_store_num;
 	byte temp_store_type;
 
-	bool night =
-		((p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_ZOMBIE) ||
-		(p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_VAMPIRE));
+	bool night = player_is_undead();
 
 	if(night)
 	{
@@ -2503,15 +2501,17 @@ static void service_help(byte type)
 			msg_print("Revives you here at the point of death.");
 			break;
 		case STORE_INN: /* Rest */
-			switch (p_ptr->prace)
+		{
+			if (player_is_undead())
 			{
-				case RACE_SPECTRE: case RACE_ZOMBIE:
-				case RACE_SKELETON: case RACE_VAMPIRE:
-					msg_print("Lets you rest here for the day");
-				default:
-					msg_print("Lets you rest here for the night");
-			}			
+				msg_print("Lets you rest here for the day");
+			}
+			else
+			{
+				msg_print("Lets you rest here for the night");
+			}
 			break;
+		}
 		case STORE_HALL: /* Buy a house */
 			msg_format("Gives you a house in %s to store your belongings.", town_name+town_defs[cur_town].name);
 			break;

@@ -4194,10 +4194,7 @@ static void create_character(void)
 	player_birth();
 
 	/* Hack -- enter the world at dawn unless undead*/
-	if ((p_ptr->prace == RACE_SPECTRE) ||
-		 (p_ptr->prace == RACE_ZOMBIE) ||
-		 (p_ptr->prace == RACE_SKELETON) ||
-		 (p_ptr->prace == RACE_VAMPIRE))
+	if (player_is_undead())
 	{
 		turn=5*TOWN_DAWN+1;
 	}

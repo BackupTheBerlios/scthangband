@@ -1302,6 +1302,25 @@ bool player_no_stun(void)
 	return FALSE;
 }
 
+/*
+ * Hack - determine if the character is undead.
+ * Undead characters start at dusk, rest until then in the Inn, and never leave
+ * bones files.
+ */
+bool PURE player_is_undead(void)
+{
+	switch (p_ptr->prace)
+	{
+		case RACE_SKELETON:
+		case RACE_ZOMBIE:
+		case RACE_SPECTRE:
+		case RACE_VAMPIRE:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
 /* Flag sets. */
 #define TR0 0
 #define TR1	1
