@@ -390,6 +390,7 @@ static cptr balls_to_strings(project_ball_type **table, int total)
 	int i;
 	cptr str[10], pre;
 	assert(total >= 0 && total <= 10);
+	if (!total) return 0;
 
 	for (i = 0; i < total; i++)
 	{
