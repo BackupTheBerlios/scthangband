@@ -44,31 +44,24 @@ static void get_scroll_name(char * out_string, uint length)
 	/* Collect words until done */
 	while (1)
 	{
-		int q, s;
-
-		char tmp[80];
-
-		/* Start a new word */
-		tmp[0] = '\0';
-
-		/* Choose one or two syllables */
-		s = ((rand_int(100) < 30) ? 1 : 2);
+		cptr str = "", file = "scroll.txt";
+		int num = ((rand_int(100) < 30) ? 1 : 2);
 
 		/* Add a one or two syllable word */
-		for (q = 0; q < s; q++)
+		while (num--)
 		{
 			/* Add the syllable */
-			strnfmt(tmp, 80, "%v", get_rnd_line_f1, "scroll.txt");
+			str = format("%s%v", str, get_rnd_line_f1, file);
 		}
 
 		/* Stop before getting too long */
-		if (strlen(out_string) + 1 + strlen(tmp) > length) return;
+		if (strlen(out_string) + 1 + strlen(str) > length) return;
 
 		/* Add a space */
 		if (strlen(out_string)) strcat(out_string, " ");
 
 		/* Add the word */
-		strcat(out_string, tmp);
+		strcat(out_string, str);
 	}
 }
 
