@@ -4838,13 +4838,13 @@ object_type *inven_carry(object_type *o_ptr)
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	notice_stuff();
 
-	/* Find the object again. */
+	/* Find (part of) the object again. */
 	for (o_ptr = inventory; o_ptr < inventory+INVEN_PACK; o_ptr++)
 	{
 		if (o_ptr->ident & IDENT_TEMP)
 		{
 			o_ptr->ident &= ~IDENT_TEMP;
-			break;
+			j_ptr = o_ptr;
 		}
 	}
 
@@ -4852,7 +4852,7 @@ object_type *inven_carry(object_type *o_ptr)
 	p_ptr->window |= (PW_INVEN | PW_SPELL);
 
 	/* Return the slot */
-	return o_ptr;
+	return j_ptr;
 }
 
 
