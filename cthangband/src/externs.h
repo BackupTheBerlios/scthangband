@@ -4070,4 +4070,12 @@ extern magic_type *num_to_spell(int i);
 #if (defined(CMD4_C) || defined(CMD5_C))
 extern void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
 #endif
+
+/* cmd5.c */
+
+#if (defined(CMD5_C) || defined(MONSTER1_C))
+extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,
+	va_list *vp)
+;
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -305,6 +305,8 @@ static int convert_magic_number(int i, char op, int d)
 		case '*': return i*d;
 		case '/': return i/d;
 		case '%': return i%d;
+		case '<': return MIN(i, d);
+		case '>': return MAX(i, d);
 
 		/* Paranoia - bad symbol. */
 		default: return -255;
@@ -318,7 +320,7 @@ static int convert_magic_number(int i, char op, int d)
  * Hack - this can only interpret fairly simple formulae, and may need to be
  * replaced if this becomes insufficient.
  */
-static void convert_magic_text(char *buf, uint max, cptr str,
+static void evaluate_text(char *buf, uint max, cptr str,
 	cptr vstr, int v)
 {
 	const int vl = strlen(vstr);
@@ -358,7 +360,7 @@ static void convert_magic_text(char *buf, uint max, cptr str,
 		else
 		{
 			op = *s++;
- 			assert(strchr(";+-*/%", op));
+ 			assert(convert_magic_number(1, op, 1) != -255);
 		}
 	}
 
@@ -370,14 +372,14 @@ static void convert_magic_text(char *buf, uint max, cptr str,
 		*t = '\0';
 }
 
-static void convert_magic_text_f3(char *buf, uint max, cptr UNUSED fmt,
+void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,
 	va_list *vp)
 {
 	cptr str = va_arg(*vp, cptr);
 	cptr vstr = va_arg(*vp, cptr);
 	int v = va_arg(*vp, int);
 
-	convert_magic_text(buf, max, str, vstr, v); 
+	evaluate_text(buf, max, str, vstr, v); 
 }
 
 /*
@@ -417,8 +419,8 @@ static void get_magic_info(char *p, uint max, const magic_type *s_ptr)
 	assert(str);
 
 	/* Convert the symbols in str, if any. */
-	str = format("%v", convert_magic_text_f3, str, "LEV", spell_skill(s_ptr));
-	str = format("%v", convert_magic_text_f3, str, "CHP", p_ptr->chp);
+	str = format("%v", evaluate_text_f3, str, "LEV", spell_skill(s_ptr));
+	str = format("%v", evaluate_text_f3, str, "CHP", p_ptr->chp);
 
 	sprintf(p, "%.*s", max-1, str);
 }
