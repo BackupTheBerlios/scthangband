@@ -116,11 +116,13 @@ G:^:s
 
 N:18:pit
 G:^:s
+M:17
 
 # 0x13 --> visible trap -- poison pit
 
 N:19:pit
 G:^:s
+M:17
 
 # 0x14 --> visible trap -- rune -- summon
 
@@ -131,6 +133,7 @@ G:^:o
 
 N:21:strange rune
 G:^:o
+M:20
 
 # 0x16 --> visible trap -- spot -- fire
 
@@ -141,6 +144,7 @@ G:^:u
 
 N:23:discolored spot
 G:^:u
+M:22
 
 # 0x18 --> visible trap -- dart -- slow
 
@@ -151,16 +155,19 @@ G:^:r
 
 N:25:dart trap
 G:^:r
+M:24
 
 # 0x1A --> visible trap -- dart -- lose dex
 
 N:26:dart trap
 G:^:r
+M:24
 
 # 0x1B --> visible trap -- dart -- lose con
 
 N:27:dart trap
 G:^:r
+M:24
 
 # 0x1C --> visible trap -- gas -- blind
 
@@ -171,16 +178,19 @@ G:^:g
 
 N:29:gas trap
 G:^:g
+M:28
 
 # 0x1E --> visible trap -- gas -- poison
 
 N:30:gas trap
 G:^:g
+M:28
 
 # 0x1F --> visible trap -- gas -- sleep
 
 N:31:gas trap
 G:^:g
+M:28
 
 # 0x2x --> locked door (power 0)
 
