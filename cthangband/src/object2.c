@@ -4049,7 +4049,7 @@ object_type *inven_carry(object_type *o_ptr)
 	{
 		object_absorb(j_ptr, o_ptr);
 	}
-	else if (j_ptr)
+	else if (j_ptr && !inventory[INVEN_PACK-1].k_idx)
 	{
 		/* Find the last real slot. */
 		for (q_ptr = inventory+INVEN_PACK; q_ptr > j_ptr; q_ptr--)
@@ -4061,8 +4061,15 @@ object_type *inven_carry(object_type *o_ptr)
 		}
 		object_copy(j_ptr, o_ptr);
 	}
+	else if (j_ptr)
+	{
+		/* No free slots, so leave it in the overflow slot. */
+		j_ptr = &inventory[INVEN_PACK];
+		object_copy(j_ptr, o_ptr);
+	}
 	else
 	{
+		/* Paranoia - the INVEN_PACK slot should be free. */
 		return NULL;
 	}
 
@@ -4137,12 +4144,16 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 		act = "You were wearing";
 	}
 
-	/* Modify, Optimize */
-	item_increase(o_ptr, -amt);
-	item_optimize(o_ptr);
-
 	/* Carry the object */
 	q_ptr = inven_carry(q_ptr);
+
+	/* Successfully moved. */
+	if (q_ptr)
+	{
+		/* Modify, Optimize */
+		item_increase(o_ptr, -amt);
+		item_optimize(o_ptr);
+	}
 
 	/* Message */
 	msg_format("%s %v (%c).", act, object_desc_f3, q_ptr, TRUE, 3,
