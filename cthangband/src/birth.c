@@ -712,6 +712,7 @@ static char *cthuloid_syllable3[] =
 void get_starting_skills(int race);
 void get_hermetic_skills_randomly(void);
 void get_hermetic_skills(void);
+static void get_ahw_average(void);
 
 /*
  * For characters starting with shaman skill, start them with a spirit
@@ -976,7 +977,12 @@ static bool point_mod_player(void)
 			get_hermetic_skills_randomly();
 			get_init_spirit(FALSE);
 			get_random_skills(FALSE);
-			wield_weapons(TRUE);
+
+			/* Get the average age, height and weight (not affected by template) */
+			if (i != 7) get_ahw_average();
+			/* Get a default weapon (not affected by race) */
+			if (i != 6) wield_weapons(TRUE);
+
 			/* Avoid stats which are too low. */
 			/* This relies on no single change from race to race or template to
 			template involving a stat change of more than 15 points. */
@@ -1921,6 +1927,29 @@ static void get_history(void)
 	}
 }
 
+/*
+ * Computes the average age, height and weight of the current race
+ * Must set everything needed on the point buying screen.
+ */
+static void get_ahw_average(void)
+{
+	p_ptr->age = rp_ptr->b_age + (rp_ptr->m_age + 1) / 2;
+	/* As this value is increased by 1 in day_to_date(), this is how
+	get_ahw() expresses 1st January */
+	p_ptr->birthday = 365;
+	p_ptr->startdate = 365;
+	/* Mean figures for weight and height. */
+	if (p_ptr->psex == SEX_MALE)
+	{	
+		p_ptr->ht = rp_ptr->m_b_ht;
+		p_ptr->wt = rp_ptr->m_b_wt;
+	}
+	else if (p_ptr->psex == SEX_FEMALE)
+	{	
+		p_ptr->ht = rp_ptr->f_b_ht;
+		p_ptr->wt = rp_ptr->f_b_wt;
+	}
+}
 
 /*
  * Computes character's age, height, and weight
