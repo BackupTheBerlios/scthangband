@@ -447,6 +447,39 @@ static void worsen_cuts(int v)
 #endif /* CHECK_ARRAYS */
 
 
+static cptr const temp_effects_show[] =
+{
+	NEXT "$oBlind", "    ",
+	NEXT "$oConfused", "        ",
+	NEXT "$oPoisoned", "        ",
+	NEXT "$oAfraid", "      ",
+	NEXT "$rParalysed!", 0,
+	NEXT "Hallu", "     ",
+	NEXT 0, 0, /* Fast */
+	NEXT 0, 0, /* Slow */
+	NEXT "Stone", "     ",
+	NEXT "Bless", "     ",
+	NEXT "Hero", "    ",
+	NEXT "Berserk", "       ",
+	NEXT "ProtEvil", "        ",
+	NEXT "Wraith", "      ",
+	NEXT "Invuln", "      ",
+	NEXT "ESP", "   ",
+	NEXT "SeeInv", "      ",
+	NEXT "Infra", "     ",
+	NEXT 0, 0, 0, /* op. acid */
+	NEXT 0, 0, 0, /* op. electricity */
+	NEXT 0, 0, 0, /* op. fire */
+	NEXT 0, 0, 0, /* op. cold */
+	NEXT 0, 0, 0, /* op. poison */
+	NEXT 0, "            ", "$oStun        ", "$oHeavy stun  ", "$rKnocked out ",
+	NEXT 0, "            ", "$yGraze       ", "$yLight cut   ", "$oBad cut     ",
+		"$oNasty cut   ", "$rSevere cut  ", "$rDeep gash   ", "$RMortal wound",
+	NEXT "$oWeak  ", "$yHungry", "      ", "$GFull  ", "$gGorged", "$rWeak  ",
+		0, 0, 0, 0,
+	NEXT
+};
+
 /*
  * The messages to print when a status changes.
  * 0 means "no message", and the order is set by temp_effects[].text, which
@@ -591,6 +624,13 @@ void check_temp_effects(void)
 		if (!str) str = "null";
 		if (*str) quit_fmt("Text marker for temp_effects index %d is %s, "
 			"when it should be \"\".", ptr->idx, str);
+
+		/* Try to determine when a basic "change to current state" fails
+		 * accidentally. */
+		if ((*ptr->notice)(0, 1) < 0 && (*ptr->notice)(20000, 0) < 0 &&
+			(ptr->notice != notice_nothing))
+			quit_fmt("Notice function not expressive enough for temp_effects index %d.",
+				ptr->idx);
 	}
 }
 #endif /* CHECK_ARRAYS */
@@ -639,7 +679,7 @@ static bool set_flag_aux(int flag, int v, bool add)
 	if (notice < 0) return (FALSE);
 
 	/* Find the text string. */
-	msg = temp_effects_text[t_ptr->text + notice + OFFSET(v)];
+	msg = temp_effects_text[t_ptr->text + notice + OFFSET(flag)];
 
 	/* Print it if it's real. */
 	if (msg) msg_print(msg);
@@ -673,6 +713,28 @@ bool add_flag(int flag, int v)
 bool set_flag(int flag, int v)
 {
 	return set_flag_aux(flag, v, FALSE);
+}
+
+/*
+ * Return an on-screen message to indicates a flag's current state.
+ */
+cptr PURE prt_flag(int flag)
+{
+	int notice;
+	s16b *var = get_flag(flag);
+	const temp_effect_type *t_ptr = temp_effects+flag;
+
+	/* Compare all counters with 0, so that any change is an increase. */
+	notice = (*t_ptr->notice)(0, *var);
+
+	/* Hack - try a positive starting value if that didn't work. */
+	if (notice < 0) notice = (*t_ptr->notice)(20000, *var);
+
+	/* Paranoia - still didn't work, so give up. */
+	if (notice < 0) return "$rERROR";
+
+	/* Return the text string as is. */
+	return temp_effects_show[t_ptr->text + notice + OFFSET(flag)];
 }
 
 /*

@@ -4010,4 +4010,10 @@ extern cptr safe_string_make(cptr str);
 #if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_save;
 #endif
+
+/* xtra2.c */
+
+#if (defined(XTRA1_C) || defined(XTRA2_C))
+extern cptr PURE prt_flag(int flag);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

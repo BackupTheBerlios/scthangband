@@ -365,26 +365,8 @@ static void prt_depth(void)
  */
 static void prt_hunger(void)
 {
-	cptr str;
-	/* Fainting / Starving */
-	if (p_ptr->food < PY_FOOD_FAINT) str = "$rWeak";
-
-	/* Weak */
-	else if (p_ptr->food < PY_FOOD_WEAK) str = "$oWeak";
-
-	/* Hungry */
-	else if (p_ptr->food < PY_FOOD_ALERT) str = "$yHungry";
-
-	/* Normal */
-	else if (p_ptr->food < PY_FOOD_FULL) str = "";
-
-	/* Full */
-	else if (p_ptr->food < PY_FOOD_MAX) str = "$GFull";
-
-	/* Gorged */
-	else str = "$gGorged";
-
-	mc_put_fmt(GET_YX(XY_HUNGRY), "%-8s", str);
+	cptr s = prt_flag(TIMED_FOOD);
+	mc_put_str(GET_YX(XY_HUNGRY), s);
 }
 
 
@@ -393,14 +375,8 @@ static void prt_hunger(void)
  */
 static void prt_blind(void)
 {
-	if (p_ptr->blind)
-	{
-		c_put_str(TERM_ORANGE, "Blind", GET_YX(XY_BLIND));
-	}
-	else
-	{
-		put_str("     ", GET_YX(XY_BLIND));
-	}
+	cptr s = prt_flag(TIMED_BLIND);
+	mc_put_str(GET_YX(XY_BLIND), s);
 }
 
 
@@ -409,14 +385,8 @@ static void prt_blind(void)
  */
 static void prt_confused(void)
 {
-	if (p_ptr->confused)
-	{
-		c_put_str(TERM_ORANGE, "Confused", GET_YX(XY_CONFUSED));
-	}
-	else
-	{
-		put_str("        ", GET_YX(XY_CONFUSED));
-	}
+	cptr s = prt_flag(TIMED_CONFUSED);
+	mc_put_str(GET_YX(XY_CONFUSED), s);
 }
 
 
@@ -425,14 +395,8 @@ static void prt_confused(void)
  */
 static void prt_afraid(void)
 {
-	if (p_ptr->afraid)
-	{
-		c_put_str(TERM_ORANGE, "Afraid", GET_YX(XY_AFRAID));
-	}
-	else
-	{
-		put_str("      ", GET_YX(XY_AFRAID));
-	}
+	cptr s = prt_flag(TIMED_AFRAID);
+	mc_put_str(GET_YX(XY_AFRAID), s);
 }
 
 
@@ -441,14 +405,8 @@ static void prt_afraid(void)
  */
 static void prt_poisoned(void)
 {
-	if (p_ptr->poisoned)
-	{
-		c_put_str(TERM_ORANGE, "Poisoned", GET_YX(XY_POISONED));
-	}
-	else
-	{
-		put_str("        ", GET_YX(XY_POISONED));
-	}
+	cptr s = prt_flag(TIMED_POISONED);
+	mc_put_str(GET_YX(XY_POISONED), s);
 }
 
 
@@ -461,110 +419,54 @@ static void prt_poisoned(void)
  */
 static void prt_state(void)
 {
-	byte attr = TERM_WHITE;
-
 	char text[16];
+	cptr s;
 
+	/* Paralysed */
+	if ((s = prt_flag(TIMED_PARALYZED))) ;
 
-	/* Paralysis */
-	if (p_ptr->paralyzed)
+	/* Timed resting */
+	else if (resting > 0)
 	{
-		attr = TERM_RED;
-
-		strcpy(text, "Paralyzed!");
+		int i = (resting >= 1000) ? resting/100*100 : resting;
+		sprintf(text, "Rest %5d", i);
+		s = text;
 	}
-
-	/* Resting */
-	else if (resting)
+	/* Resting until recovered HP/SP. */
+	else if (resting == -1)
 	{
-		int i;
-
-		/* Start with "Rest" */
-		strcpy(text, "Rest      ");
-
-		/* Extensive (timed) rest */
-		if (resting >= 1000)
-		{
-			i = resting / 100;
-			text[9] = '0';
-			text[8] = '0';
-			text[7] = '0' + (i % 10);
-			if (i >= 10)
-			{
-				i = i / 10;
-				text[6] = '0' + (i % 10);
-				if (i >= 10)
-				{
-					text[5] = '0' + (i / 10);
-				}
-			}
-		}
-
-		/* Long (timed) rest */
-		else if (resting >= 100)
-		{
-			i = resting;
-			text[9] = '0' + (i % 10);
-			i = i / 10;
-			text[8] = '0' + (i % 10);
-			text[7] = '0' + (i / 10);
-		}
-
-		/* Medium (timed) rest */
-		else if (resting >= 10)
-		{
-			i = resting;
-			text[9] = '0' + (i % 10);
-			text[8] = '0' + (i / 10);
-		}
-
-		/* Short (timed) rest */
-		else if (resting > 0)
-		{
-			i = resting;
-			text[9] = '0' + (i);
-		}
-
-		/* Rest until healed */
-		else if (resting == -1)
-		{
-			text[5] = text[6] = text[7] = text[8] = text[9] = '*';
-		}
-
-		/* Rest until done */
-		else if (resting == -2)
-		{
-			text[5] = text[6] = text[7] = text[8] = text[9] = '&';
-		}
+		s = "Rest *****";
 	}
-
-	/* Repeating */
+	/* Resting until completely healed. */
+	else if (resting == -2)
+	{
+		s = "Rest &&&&&";
+	}
+	else if (command_rep >= 1000)
+	{
+		sprintf(text, "Rep. %3d00", command_rep / 100);
+		s = text;
+	}
 	else if (command_rep)
 	{
-		if (command_rep > 999)
-		{
-			(void)sprintf(text, "Rep. %3d00", command_rep / 100);
-		}
-		else
-		{
-			(void)sprintf(text, "Repeat %3d", command_rep);
-		}
+		sprintf(text, "Repeat %3d", command_rep);
+		s = text;
 	}
 
 	/* Sneaking */
 	else if (p_ptr->sneaking)
 	{
-		strcpy(text, "Sneaking  ");
+		s = "Sneaking  ";
 	}
 
 	/* Nothing interesting */
 	else
 	{
-		strcpy(text, "          ");
+		s = "          ";
 	}
 
 	/* Display the info (or blanks) */
-	c_put_str(attr, text, GET_YX(XY_STATE));
+	mc_put_str(GET_YX(XY_STATE), s);
 }
 
 
@@ -618,68 +520,16 @@ static void prt_study(void)
 
 static void prt_cut(void)
 {
-	cptr str;
-	int c = p_ptr->cut;
-
-	if (c > 1000)
-	{
-		str = "$RMortal wound";
-	}
-	else if (c > 200)
-	{
-		str = "$rDeep gash   ";
-	}
-	else if (c > 100)
-	{
-		str = "$rSevere cut  ";
-	}
-	else if (c > 50)
-	{
-		str = "$oNasty cut   ";
-	}
-	else if (c > 25)
-	{
-		str = "$oBad cut     ";
-	}
-	else if (c > 10)
-	{
-		str = "$yLight cut   ";
-	}
-	else if (c)
-	{
-		str = "$yGraze       ";
-	}
-	else
-	{
-		str = "            ";
-	}
-	mc_put_str(GET_YX(XY_CUT), str);
+	cptr s = prt_flag(TIMED_CUT);
+	mc_put_str(GET_YX(XY_CUT), s);
 }
 
 
 
 static void prt_stun(void)
 {
-	cptr str;
-	int s = p_ptr->stun;
-
-	if (s > 100)
-	{
-		str = "$rKnocked out ";
-	}
-	else if (s > 50)
-	{
-		str = "$oHeavy stun  ";
-	}
-	else if (s)
-	{
-		str = "$oStun        ";
-	}
-	else
-	{
-		str = "            ";
-	}
-	mc_put_str(GET_YX(XY_STUN), str);
+	cptr s = prt_flag(TIMED_POISONED);
+	mc_put_str(GET_YX(XY_POISONED), s);
 }
 
 
