@@ -1884,7 +1884,6 @@ good:
 			monster_race dummy;
 			rd_lore(&dummy);
 			if (i > MON_MAX_DISTRO) warn = TRUE;
-			printf("%d=%d ", i,j);
 		}
 		/* Read the lore */
 		else
