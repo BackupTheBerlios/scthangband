@@ -3141,8 +3141,7 @@ static void player_birth_quests(void)
 			/* No 2 quests on the same level (?) */
 			for (j = 0; j<i; j++)
 			{
-				if (q_list[i].level ==
-					q_list[j].level + dun_defs[q_list[j].dungeon].offset)
+				if (q_list[i].level == q_list[j].level)
 				{
 					same_level = TRUE;
 					break;
@@ -3165,13 +3164,18 @@ static void player_birth_quests(void)
 		while((q_list[i].level <= dun_defs[j].offset) ||
 			(q_list[i].level >= dun_defs[j].max_level + dun_defs[j].offset));
 
-		/* j now holds a valid dungeon, so set the quest and
-		 * modify its level
-		 */
 		q_list[i].dungeon = j;
 		q_list[i].level -= dun_defs[j].offset;
 
 		q_list[i].max_num = get_number_monster(i);
+	}
+
+	/* Set the new quest depths correctly now, as some of the above relies
+	 * on q_list[i].level including the offset.
+	 */
+	for (i = z_info->quests; i < q_max; i++)
+	{
+		q_list[i].level -= dun_defs[q_list[i].dungeon].offset;
 	}
 
 	/* Remember the new number of quests. */
