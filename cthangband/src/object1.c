@@ -1449,32 +1449,32 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	/* Hack -- Append "Artifact" or "Special" names */
 	if (known)
-	{
+    {
 
 	/* Is it a new random artifact ? */
 	if (o_ptr->art_name)
     {
-			t = object_desc_chr(t, ' ');
+		t = object_desc_chr(t, ' ');
         t = object_desc_str(t, quark_str(o_ptr->art_name));
 	}
 
 	/* Grab any artifact name */
 	else if (o_ptr->name1)
-		{
-			artifact_type *a_ptr = &a_info[o_ptr->name1];
+	{
+		artifact_type *a_ptr = &a_info[o_ptr->name1];
 
-			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, (a_name + a_ptr->name));
-		}
+		t = object_desc_chr(t, ' ');
+		t = object_desc_str(t, (a_name + a_ptr->name));
+	}
 
-		/* Grab any ego-item name */
+	/* Grab any ego-item name */
 		else if (o_ptr->name2)
-		{
-			ego_item_type *e_ptr = &e_info[o_ptr->name2];
+	{
+		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
-			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, (e_name + e_ptr->name));
-		}
+		t = object_desc_chr(t, ' ');
+		t = object_desc_str(t, (e_name + e_ptr->name));
+	}
 	}
 
 
@@ -1491,11 +1491,11 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			/* Nothing */
 		}
 
-		/* May be "empty" */
+			/* May be "empty" */
 		else if (!o_ptr->pval)
-		{
-			t = object_desc_str(t, " (empty)");
-		}
+			{
+				t = object_desc_str(t, " (empty)");
+			}
 
 		/* May be "disarmed" */
 		else if (o_ptr->pval < 0)
@@ -1755,10 +1755,10 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		if (g1 & (TR1_PVAL_MASK))
-		{
-			/* Start the display */
-			t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, p1);
+	{
+		/* Start the display */
+		t = object_desc_chr(t, ' ');
+		t = object_desc_chr(t, p1);
 
 			/* Dump the "pval" itself */
 			t = object_desc_int(t, o_ptr->pval);
@@ -1766,40 +1766,40 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			/* Differentiate known pvals from deduced ones. */
 			if (!known) t = object_desc_chr(t, '?');
 
-			/* Do not display the "pval" flags */
-			if (f3 & (TR3_HIDE_TYPE))
-			{
-				/* Nothing */
-			}
-			else
-			{
+		/* Do not display the "pval" flags */
+		if (f3 & (TR3_HIDE_TYPE))
+		{
+			/* Nothing */
+		}
+		else
+		{
 
 /* What actually needs to be done with the strings below. */
 #define ADD_PV(X) \
 	t = object_desc_chr(t, ' '); \
 	t = object_desc_str(t, (X))
 
-				/* Give details about a single bonus. */
-				switch (g1 & TR1_PVAL_MASK)
-				{
-					case TR1_STR: ADD_PV("str"); break;
-					case TR1_INT: ADD_PV("int"); break;
-					case TR1_WIS: ADD_PV("wis"); break;
-					case TR1_DEX: ADD_PV("dex"); break;
-					case TR1_CON: ADD_PV("con"); break;
-					case TR1_CHR: ADD_PV("chr"); break;
-					case TR1_STEALTH: ADD_PV("stealth"); break;
-					case TR1_SEARCH: ADD_PV("search"); break;
-					case TR1_INFRA: ADD_PV("infra"); break;
-					case TR1_TUNNEL: ADD_PV("dig"); break;
-					case TR1_SPEED: ADD_PV("movement speed"); break;
-					case TR1_BLOWS: ADD_PV("attack speed"); break;
-				}
+			/* Give details about a single bonus. */
+			switch (g1 & TR1_PVAL_MASK)
+			{
+				case TR1_STR: ADD_PV("str"); break;
+				case TR1_INT: ADD_PV("int"); break;
+				case TR1_WIS: ADD_PV("wis"); break;
+				case TR1_DEX: ADD_PV("dex"); break;
+				case TR1_CON: ADD_PV("con"); break;
+				case TR1_CHR: ADD_PV("chr"); break;
+				case TR1_STEALTH: ADD_PV("stealth"); break;
+				case TR1_SEARCH: ADD_PV("search"); break;
+				case TR1_INFRA: ADD_PV("infra"); break;
+				case TR1_TUNNEL: ADD_PV("dig"); break;
+				case TR1_SPEED: ADD_PV("movement speed"); break;
+				case TR1_BLOWS: ADD_PV("attack speed"); break;
 			}
-
-			/* Finish the display */
-			t = object_desc_chr(t, p2);
 		}
+
+		/* Finish the display */
+		t = object_desc_chr(t, p2);
+	}
 	}
 
 	/* Indicate "charging" artifacts XXX XXX XXX */
@@ -1833,7 +1833,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 			/* Without the appropriate spoiler flags, ignore the fact that
 			 * it is an ego item or artefact. */
-			if ((!spoil_ego && j_ptr->name2) || (!spoil_art && j_ptr->name2))
+			if ((!spoil_ego && j_ptr->name2) || (!spoil_art && j_ptr->name1))
 			{
 				object_type j2_ptr[1];
 				j_ptr->name2 = j_ptr->name1 = 0;
