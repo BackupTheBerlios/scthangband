@@ -1872,10 +1872,6 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Bit flags for the "p_ptr->redraw" variable
  */
-#define PR_MISC         0x00000001L     /* Display Race/Template */
-#define PR_TITLE        0x00000002L     /* Display Title */
-#define PR_LEV          0x00000004L     /* Display Level */
-#define PR_EXP          0x00000008L     /* Display Experience */
 #define PR_STATS        0x00000010L     /* Display Stats */
 #define PR_ARMOR        0x00000020L     /* Display Armor */
 #define PR_HP           0x00000040L     /* Display Hitpoints */
@@ -1909,8 +1905,8 @@ logaux(x, 1) logaux(x, 0) 255)
 	PR_POISONED | PR_STATE | PR_SPEED | PR_STUDY)
 
 #define PR_BASIC \
-	(PR_MISC | PR_TITLE | PR_STATS | PR_LEV | PR_EXP | PR_GOLD | PR_ARMOR | \
-	PR_HP | PR_MANA | PR_DEPTH | PR_HEALTH | PR_TIME)
+	(PR_STATS | PR_GOLD | PR_ARMOR | PR_HP | PR_MANA | PR_DEPTH | PR_HEALTH | \
+	PR_TIME)
 
 #define PR_ALL \
 	(PR_WIPE | PR_EXTRA | PR_BASIC | PR_EQUIPPY | PR_SPIRIT | PR_ENERGY | \

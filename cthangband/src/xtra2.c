@@ -2399,9 +2399,6 @@ void monster_death(int m_idx)
 		/* Total winner */
 		total_winner = TRUE;
 
-		/* Redraw the "title" */
-		p_ptr->redraw |= (PR_TITLE);
-
 		/* Congratulations */
 		msg_print("*** CONGRATULATIONS ***");
 		msg_print("You have won the game!");

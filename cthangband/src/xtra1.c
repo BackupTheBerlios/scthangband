@@ -3089,11 +3089,6 @@ void redraw_stuff(void)
         prt_equippy(); /* To draw / delete equippy chars */
     }
 
-	if (p_ptr->redraw & (PR_MISC))
-	{
-		p_ptr->redraw &= ~(PR_MISC);
-	}
-
 	if (p_ptr->redraw & (PR_TIME))
 	{
 		prt_time();
