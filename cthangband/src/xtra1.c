@@ -3695,10 +3695,8 @@ static bool PURE object_skill_fail(void)
 }
 
 /* Test whether a skill can be tested on the current level */
-bool PURE skill_check_possible(int index)
+bool PURE skill_check_possible(player_skill *sk_ptr)
 {
-	player_skill *sk_ptr = &skill_set[index];
-
 	/* Never on the surface or too shallow a level. */
 	return (dun_level && dun_depth >= (sk_ptr->value - sk_ptr->base) * 2 / 3);
 }
@@ -3718,7 +3716,7 @@ void skill_exp(int index)
 			sk_ptr->experience, sk_ptr->exp_to_raise);
 	}
 
-	if (!skill_check_possible(index))
+	if (!skill_check_possible(sk_ptr))
 	{
 		if (cheat_skll)
 		{
@@ -3759,6 +3757,7 @@ void skill_exp(int index)
 		sk_ptr->experience-=sk_ptr->exp_to_raise * rp_ptr->r_exp;
 		if(((byte)rand_int(100)>=(sk_ptr->value)) && (sk_ptr->value < 100))
 		{
+			bool more;
 			sk_ptr->value++;
 
 			/* Update other skill-related variables. */
@@ -3771,9 +3770,11 @@ void skill_exp(int index)
 			}
 			update_stuff();
 
+			more = skill_check_possible(sk_ptr);
+
 			msg_format("%s %c%d%%->%d%%%c",sk_ptr->increase,
-			(skill_check_possible(index) ? '(' : '['),sk_ptr->value-1,
-			sk_ptr->value, (skill_check_possible(index) ? ')' : ']'));
+				more ? '(' : '[',sk_ptr->value-1, sk_ptr->value,
+				more ? ')' : ']');
 
 			p_ptr->window |= PW_PLAYER_SKILLS; /* Window stuff */
 

@@ -2328,7 +2328,7 @@ static byte skill_colour(int skill_index)
 	/* The skill either cannot be increased at this level, or is at 0%
 	 * and has never been successfully used. */
 	bool max = ((!sk_ptr->max_value && !sk_ptr->experience)
-		|| (sk_ptr->value == 100) || !skill_check_possible(skill_index));
+		|| (sk_ptr->value == 100) || !skill_check_possible(sk_ptr));
 
 	/* The skill is below its maximum value */
 	bool drained = (sk_ptr->max_value > sk_ptr->value);

@@ -3543,7 +3543,7 @@ extern void handle_stuff(void);
 extern bool ma_empty_hands(void);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))
-extern bool PURE skill_check_possible(int index);
+extern bool PURE skill_check_possible(player_skill *sk_ptr);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void skill_exp(int index);
