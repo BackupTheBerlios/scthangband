@@ -1740,8 +1740,6 @@ static void object_mention(object_type *o_ptr)
 	/* Only describe for cheaters. */
 	if (!cheat_peek) return;
 
-	o_ptr->ident |= IDENT_STORE;
-
 	/* Artifact */
 	if (artifact_p(o_ptr))
 	{
@@ -1767,8 +1765,6 @@ static void object_mention(object_type *o_ptr)
 		/* Silly message */
 		msg_format("Object (%v)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
-
-	o_ptr->ident &= ~IDENT_STORE;
 }
 
 

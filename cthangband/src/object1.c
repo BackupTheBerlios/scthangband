@@ -962,8 +962,24 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, byte flags,
 	object_type o_ptr[1];
 	object_extra x_ptr[1];
 
-	/* Extract the known information. */
-	object_info_known(o_ptr, o1_ptr, x_ptr);
+	/* Hack - place the in_shop flag inside o_ptr. */
+	if (in_shop)
+	{
+		/* Give the object the IDENT_STORE flag for a moment. */
+		u16b ident = o1_ptr->ident;
+		o1_ptr->ident |= IDENT_STORE;
+
+		/* Extract the known information. */
+		object_info_known(o_ptr, o1_ptr, x_ptr);
+
+		o1_ptr->ident = ident;
+	}
+	else
+	{
+		/* Simply extract the known information. */
+		object_info_known(o_ptr, o1_ptr, x_ptr);
+	}
+	
 
 	k_ptr = &k_info[o_ptr->k_idx];
 
