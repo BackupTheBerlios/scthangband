@@ -1894,7 +1894,7 @@ void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	if ((s = strchr(fmt, '.')))
 	{
 		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m);
+		len = MAX(0, m+1);
 	}
 	else
 	{

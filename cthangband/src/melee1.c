@@ -809,7 +809,7 @@ bool make_attack_normal(int m_idx)
 						if (o_ptr->tval != TV_FOOD) continue;
 
 						/* Get a description */
-						strnfmt(o_name, o_ptr, FALSE, 0);
+						strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 						/* Message */
 						msg_format("%sour %s (%c) was eaten!",
