@@ -1925,12 +1925,20 @@ static void display_player_flag_info(void)
  */
 byte skill_colour(int skill_index)
 {
-	/* The skill has been drained */
-	if (skill_set[skill_index].value < skill_set[skill_index].max_value)
-	{
-		return TERM_L_WHITE;
-	}
-	return TERM_WHITE;
+	player_skill *sk_ptr = &skill_set[skill_index];
+
+	/* The skill is either at the highest possible for this level, or is at 0%
+	 * and has never been successfully used. */
+	bool max = ((!sk_ptr->max_value && !sk_ptr->experience)
+		|| (sk_ptr->max_value == 100) || !skill_check_possible(skill_index));
+
+	/* The skill is below its maximum value */
+	bool drained = (sk_ptr->max_value > sk_ptr->value);
+
+	if (drained && max) return TERM_L_WHITE;
+	else if (drained) return TERM_ORANGE;
+	else if (max) return TERM_WHITE;
+	else return TERM_YELLOW;
 }
 
 /*

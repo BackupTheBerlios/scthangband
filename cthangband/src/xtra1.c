@@ -3661,6 +3661,12 @@ void update_skill_maxima()
 }
 
 
+/* Test whether a skill can be tested on the current level */
+bool skill_check_possible(int index)
+{
+	return (dun_level && ((dun_level + dun_offset) >= (((skill_set[index].value - skill_set[index].base) * 2) / 3)));
+}
+
 /* Give experience to a skill after usage */
 void skill_exp(int index)
 {
@@ -3674,7 +3680,7 @@ void skill_exp(int index)
 			skill_set[index].exp_to_raise);
 	}
 
-	if ((dun_level + dun_offset) < (((skill_set[index].value - skill_set[index].base) * 2) / 3))
+	if (!skill_check_possible(index))
 	{
 		if ((cheat_wzrd) || (cheat_skll))
 		{
@@ -3706,7 +3712,9 @@ void skill_exp(int index)
 			calc_hitpoints(); /* The hit-points might have changed */
 			calc_mana(); /* As might mana */
 			calc_spells(); /* And spells */
-			msg_format("%s (%d%%->%d%%)",skill_set[index].increase,skill_set[index].value-1,skill_set[index].value);
+			msg_format("%s %c%d%%->%d%%%c",skill_set[index].increase,
+			(skill_check_possible(index) ? '(' : '['),skill_set[index].value-1,
+			skill_set[index].value, (skill_check_possible(index) ? ')' : ']'));
 			update_skill_maxima(); /* Update the maxima and possibly give rewards */
 		}
 	}
