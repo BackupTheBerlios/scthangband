@@ -1233,9 +1233,6 @@ static errr option_dump(void)
 	char ftmp[256];
 
 	/* Prompt */
-	prt("Command: Append options to a file", 21, 0);
-
-	/* Prompt */
 	prt("File: ", 21, 0);
 
 	/* Default filename */
@@ -1250,12 +1247,12 @@ static errr option_dump(void)
 }
 
 
+/*
+ * Load the contents of a preference file.
+ */
 static errr option_load(void)
 {
 	char ftmp[256];
-
-	/* Prompt */
-	prt("Command: Append options to a file", 21, 0);
 
 	prt("File: ", 21, 0);
 
