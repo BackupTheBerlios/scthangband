@@ -715,6 +715,16 @@ static byte base_bolt_char(int type)
 
 
 /*
+ * Give the player a specific number of hit points.
+ * Take care of p_ptr->chp_frac.
+ */
+static void set_p_hp(int new_hp)
+{
+	p_ptr->chp = new_hp;
+	p_ptr->chp_frac = 0;
+}
+
+/*
  * Decreases players hit points and sets death flag if necessary
  *
  * XXX XXX XXX Invulnerability needs to be changed into a "shield"
@@ -776,6 +786,9 @@ void take_hit(int damage, cptr hit_from, int monster)
 
     if (pen_invuln)
             msg_print("The attack penetrates your shield of invulnerability!");
+
+	/* Don't allow HP to fall below the minimum, if any. */
+	if (p_ptr->chp < p_ptr->min_hp) set_p_hp(p_ptr->min_hp);
 
 	/* Dead player */
 	if (p_ptr->chp < 0)

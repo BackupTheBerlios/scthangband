@@ -3285,6 +3285,10 @@ static void process_player(void)
 		}
 	}
 
+	/* Hack - allow the character to die messily after it gets a chance to 
+	 * move. */
+	p_ptr->min_hp = -MAX_SHORT;
+
 	/* Handle "abort" */
 	if (!avoid_abort)
 	{
@@ -3755,6 +3759,9 @@ static void dungeon(void)
 	object_level = (dun_depth);
 
     hack_mind = TRUE;
+
+	/* Hack - the character can be immortal until its first move. */
+	p_ptr->min_hp = (p_ptr->chp - (p_ptr->mhp+1)*2/3 - 1);
 
 	/* Main loop */
 	while (TRUE)

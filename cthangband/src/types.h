@@ -1029,6 +1029,7 @@ struct player_type
 
 	s16b mhp;			/* Max hit pts */
 	s16b chp;			/* Cur hit pts */
+	s16b min_hp;	/* Minimum hp (used at level start) */
 	u16b chp_frac;		/* Cur hit frac (times 2^16) */
 
 	s16b msp;			/* Max mana pts */

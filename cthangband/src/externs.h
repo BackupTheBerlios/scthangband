@@ -2369,6 +2369,9 @@ extern cptr message_str(s16b age);
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(LOAD_C) || defined(STORE_C) || defined(UTIL_C))
 extern void message_add(cptr str);
 #endif
+#if (defined(DUNGEON_C) || defined(UTIL_C) || defined(XTRA1_C))
+extern bool no_msg_print;
+#endif
 #if (defined(ANGBAND_H))
 extern void msg_print(cptr msg);
 #endif
@@ -3668,6 +3671,9 @@ extern cptr PURE prt_flag(int flag);
 #if (defined(CMD4_C) || defined(XTRA2_C))
 extern cptr PURE prt_flag_long(int flag);
 #endif
+#if (defined(XTRA1_C) || defined(XTRA2_C))
+extern void prt_timers(void);
+#endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
 extern void gain_exp(s32b amount);
 #endif
@@ -3994,17 +4000,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* xtra2.c */
-
-#if (defined(XTRA1_C) || defined(XTRA2_C))
-extern void prt_timers(void);
-#endif
-
-/* util.c */
-
-#if (defined(DUNGEON_C) || defined(UTIL_C) || defined(XTRA1_C))
-extern bool no_msg_print;
 #endif
 #endif /* INCLUDED_EXTERNS_H */
