@@ -3475,7 +3475,7 @@ static void store_process_command(void)
 				   {
 						if (!service_haggle(400,&price, service_name[cur_store_type][0]))
 						{
-							if (price >= p_ptr->au)
+							if (price > p_ptr->au)
 							{
 								msg_format("You do not have the gold!");
 							}
@@ -3502,7 +3502,7 @@ static void store_process_command(void)
 				   {
 						if (!service_haggle(800,&price, service_name[cur_store_type][0]))
 						{
-							if (price >= p_ptr->au)
+							if (price > p_ptr->au)
 							{
 								msg_format("You do not have the gold!");
 							}
@@ -3529,7 +3529,7 @@ static void store_process_command(void)
 					{
 						if (!service_haggle(750,&price, service_name[cur_store_type][0]))
 						{
-							if (price >= p_ptr->au)
+							if (price > p_ptr->au)
 							{
 								msg_format("You do not have the gold!");
 							}
@@ -3560,7 +3560,7 @@ static void store_process_command(void)
 					{
 						if (!service_haggle(500,&price, service_name[cur_store_type][0]))
 						{
-							if (price >= p_ptr->au)
+							if (price > p_ptr->au)
 							{
 								msg_format("You do not have the gold!");
 							}
@@ -3597,7 +3597,7 @@ static void store_process_command(void)
 							if(cost < 100) cost = 100;
 							if (!service_haggle(cost,&price, service_name[cur_store_type][0]))
 							{
-								if (price >= p_ptr->au)
+								if (price > p_ptr->au)
 								{
 									msg_format("You do not have the gold!");
 								}
@@ -3663,7 +3663,7 @@ static void store_process_command(void)
 						{
 							if (!service_haggle(10,&price, service_name[cur_store_type][0]))
 							{
-								if (price >= p_ptr->au)
+								if (price > p_ptr->au)
 								{
 									msg_format("You do not have the gold!");
 								}
@@ -3707,7 +3707,7 @@ static void store_process_command(void)
 					   {
 							if (!service_haggle(town_defs[cur_town].house_price,&price, service_name[cur_store_type][0]))
 							{
-								if (price >= p_ptr->au)
+								if (price > p_ptr->au)
 								{
 									msg_format("You do not have the gold!");
 								}
@@ -3763,7 +3763,7 @@ static void store_process_command(void)
 						case 0x000000ff:
 							if (!service_haggle(100,&price, buf))
 							{
-								if (price >= p_ptr->au)
+								if (price > p_ptr->au)
 								{
 									msg_format("You do not have the gold!");
 								}
@@ -3786,7 +3786,7 @@ static void store_process_command(void)
 						case 0x0000ff00:
 							if (!service_haggle(1000,&price, buf), service_name[cur_store_type][1])
 							{
-								if (price >= p_ptr->au)
+								if (price > p_ptr->au)
 								{
 									msg_format("You do not have the gold!");
 								}
@@ -3811,7 +3811,7 @@ static void store_process_command(void)
 						   case 0x00ff0000:
 								if (!service_haggle(5000,&price, buf), service_name[cur_store_type][1])
 							{
-								if (price >= p_ptr->au)
+								if (price > p_ptr->au)
 								{
 									msg_format("You do not have the gold!");
 								}
@@ -3838,7 +3838,7 @@ static void store_process_command(void)
 					   case 0xff000000:
 								if (!service_haggle(25000,&price, buf))
 							{
-								if (price >= p_ptr->au)
+								if (price > p_ptr->au)
 								{
 									msg_format("You do not have the gold!");
 								}
