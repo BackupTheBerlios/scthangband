@@ -4087,8 +4087,8 @@ bool target_set(int mode)
 {
 	int		i, d, m;
 
-	int		old_target_row = target_row;
-	int		old_target_col = target_col;
+	int		y = py;
+	int		x = px;
 
 	bool	done = FALSE;
 
@@ -4102,8 +4102,7 @@ bool target_set(int mode)
 
 	/* Cancel target */
 	target_who = 0;
-	target_row = py;
-	target_col = px;
+
 
 	/* Cancel tracking */
 	/* health_track(0); */
@@ -4129,11 +4128,11 @@ bool target_set(int mode)
 		/* Interesting grids */
 		if (flag && temp_n)
 		{
-			target_row = temp_y[m];
-			target_col = temp_x[m];
+			y = temp_y[m];
+			x = temp_x[m];
 
 			/* Access */
-			c_ptr = &cave[target_row][target_col];
+			c_ptr = &cave[y][x];
 
 			/* Allow target */
 			if (target_able(c_ptr->m_idx))
@@ -4149,11 +4148,10 @@ bool target_set(int mode)
 
 			/* Draw the path in "target" mode, if there is one. */
 			if (mode & TARGET_KILL)
-				max = draw_path(path, path_char, path_attr, py, px,
-					target_row, target_col);
+				max = draw_path(path, path_char, path_attr, py, px, y, x);
 
 			/* Describe and Prompt */
-			query = target_set_aux(target_row, target_col, mode, info);
+			query = target_set_aux(y, x, mode, info);
 
 			/* Remove the path. */
 			if (max) load_path(max, path, path_char, path_attr);
@@ -4170,12 +4168,7 @@ bool target_set(int mode)
 				case ESCAPE:
 				case 'q':
 				{
-					target_col = old_target_col;
-					target_row = old_target_row;
 					done = TRUE;
-
-					/* Window stuff */
-					cave_track(target_row, target_col);
 					break;
 				}
 
@@ -4188,6 +4181,8 @@ bool target_set(int mode)
 					{
 						health_track(c_ptr->m_idx);
 						target_who = c_ptr->m_idx;
+						target_row = y;
+						target_col = x;
 						done = TRUE;
 					}
 					else
@@ -4227,8 +4222,8 @@ bool target_set(int mode)
 
 				case 'p':
 				{
-					target_row = py;
-					target_col = px;
+					y = py;
+					x = px;
 
 					/* Window stuff */
 					cave_track(target_row, target_col);
@@ -4268,19 +4263,17 @@ bool target_set(int mode)
 		else
 		{
 			/* Access */
-			c_ptr = &cave[target_row][target_col];
+			c_ptr = &cave[y][x];
 
 			/* Default prompt */
 			strcpy(info, "q,t,p,m,+,-,<dir>");
 
 			/* Draw the path, if there is one. */
 			if (mode & TARGET_KILL)
-				max = draw_path(path, path_char, path_attr, py, px,
-					target_row, target_col);
+				max = draw_path(path, path_char, path_attr, py, px, y, x);
 
 			/* Describe and Prompt (enable "TARGET_LOOK") */
-			query = target_set_aux(target_row, target_col,
-				mode | TARGET_LOOK, info);
+			query = target_set_aux(y, x, mode | TARGET_LOOK, info);
 
 			/* Remove the path. */
 			if (max) load_path(max, path, path_char, path_attr);
@@ -4297,12 +4290,7 @@ bool target_set(int mode)
 				case ESCAPE:
 				case 'q':
 				{
-					target_col = old_target_col;
-					target_row = old_target_row;
 					done = TRUE;
-
-					/* Window stuff */
-					cave_track(target_row, target_col);
 					break;
 				}
 
@@ -4312,6 +4300,8 @@ bool target_set(int mode)
 				case '0':
 				{
 					target_who = -1;
+					target_row = y;
+					target_col = x;
 					done = TRUE;
 					break;
 				}
@@ -4326,8 +4316,8 @@ bool target_set(int mode)
 
 				case 'p':
 				{
-					target_row = py;
-					target_col = px;
+					y = py;
+					x = px;
 
 					/* Window stuff */
 					cave_track(target_row, target_col);
@@ -4355,23 +4345,19 @@ bool target_set(int mode)
 			/* Handle "direction" */
 			if (d)
 			{
-				target_col += ddx[d];
-				target_row += ddy[d];
+				x += ddx[d];
+				y += ddy[d];
 
 				/* Hack -- Verify target_col */
-				if ((target_col>=cur_wid) || (target_col>panel_col_max))
-					target_col--;
-				else if ((target_col<0) || (target_col<panel_col_min))
-					target_col++;
+				if ((x>=cur_wid) || (x>panel_col_max)) x--;
+				else if ((x<0) || (x<panel_col_min)) x++;
 
 				/* Hack -- Verify target_row */
-				if ((target_row>=cur_hgt) || (target_row>panel_row_max))
-					target_row--;
-				else if ((target_row<0) || (target_row<panel_row_min))
-					target_row++;
+				if ((y>=cur_hgt) || (y>panel_row_max)) y--;
+				else if ((y<0) || (y<panel_row_min)) y++;
 
 				/* Window stuff */
-				cave_track(target_row, target_col);
+				cave_track(y, x);
 			}
 		}
 	}
