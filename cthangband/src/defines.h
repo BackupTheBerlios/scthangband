@@ -2811,6 +2811,13 @@ logaux(x, 1) logaux(x, 0) 255
  */
 #define term_screen     (windows[0].term)
 
+/* Try to mark unused variables as such in a way the compiler understands. */
+#ifdef __GNUC__
+#define UNUSED __attribute__((unused)) unused
+#else
+#define UNUSED unused
+#endif
+
 
 /*
  * Determine if a given inventory item is "aware"
