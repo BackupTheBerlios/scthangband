@@ -249,7 +249,7 @@ bool maximise_mode; /* Unify stat bonuses */
 bool use_autoroller; /* Autoroll characters */
 bool spend_points; /* Spend points on stats */
 bool ironman_shop; /* Not allowed in shops */
-
+bool score_quitters; /* Quitting can give a high score */
 
 /* Option Set 3 -- Game-Play */
 

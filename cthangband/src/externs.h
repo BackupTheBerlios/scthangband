@@ -230,6 +230,7 @@ extern bool use_autoroller;
 extern bool spend_points;
 extern bool ironman_shop;
 extern bool unify_commands;
+extern bool score_quitters;
 extern bool centre_view;
 extern bool no_centre_run;
 extern bool view_perma_grids;

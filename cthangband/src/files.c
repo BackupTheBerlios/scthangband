@@ -4772,6 +4772,19 @@ static errr top_twenty(void)
 	}
 #endif
 
+	/* Quitters are not scored */
+	if (!score_quitters
+#ifndef SCORE_QUITTERS
+	|| TRUE
+#endif
+	&& !total_winner && streq(died_from, "Suicide"))
+	{
+		msg_print("Score not registered due to quitting.");
+		msg_print(NULL);
+		display_scores_aux(0, 10, -1, NULL);
+		return (0);
+	}
+
 	/* Interupted */
 	if (!total_winner && streq(died_from, "Interrupting"))
 	{

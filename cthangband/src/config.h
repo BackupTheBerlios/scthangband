@@ -286,6 +286,11 @@
 /* #define SCORE_CHEATERS */
 
 
+/*
+ * Register score if the player quits.
+ */
+/*#define SCORE_QUITTERS*/
+
 
 /*
  * OPTION: Allow use of the "flow_by_smell" and "flow_by_sound"
