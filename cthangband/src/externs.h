@@ -3605,7 +3605,7 @@ extern void resize_map(void);
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA2_C))
 extern void resize_inkey(void);
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT2_C) || defined(UI_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT2_C) || defined(UI_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void ang_sort(vptr u, vptr v, int n, bool (*comp)(vptr, vptr, int, int), void (*swap)(vptr, vptr, int, int));
 #endif
 #if (defined(CMD3_C) || defined(XTRA2_C))
