@@ -6774,6 +6774,9 @@ static void process_monster(int m_idx, bool is_friend)
 			m_ptr->fy = ny;
 			m_ptr->fx = nx;
 
+			/* Maybe a monster can be created in the old grid. */
+			full_grid = MAX(full_grid, distance(py,px,m_ptr->fy,m_ptr->fx));
+
 			/* Update the monster */
 			update_mon(m_idx, TRUE);
 

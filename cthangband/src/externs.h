@@ -11,7 +11,7 @@
 /*
  * Automatically generated "variable" declarations
  */
-
+extern int full_grid;
 /* tables.c */
 extern s16b ddd[9];
 extern s16b ddx[10];
@@ -465,6 +465,7 @@ extern bool test_hit_norm(int chance, int ac, int vis);
 extern s16b critical_shot(int weight, int plus, int dam);
 extern s16b critical_norm(int weight, int plus, int dam);
 extern s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr);
+extern void move_to(s16b x, s16b y);
 extern void search(void);
 extern void carry(int pickup);
 extern void py_attack(int y, int x);

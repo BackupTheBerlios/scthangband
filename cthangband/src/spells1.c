@@ -342,16 +342,12 @@ void teleport_player(int dis)
 	/* Sound */
 	sound(SOUND_TELEPORT);
 
-	/* Save the old location */
+	/* Save old location. */
 	oy = py;
 	ox = px;
 
 	/* Move the player */
-	py = y;
-	px = x;
-
-	/* Redraw the old spot */
-	lite_spot(oy, ox);
+	move_to(y,x);
 
     while (xx < 2)
     {
@@ -384,21 +380,6 @@ void teleport_player(int dis)
         xx++;
     }
 
-	/* Redraw the new spot */
-	lite_spot(py, px);
-
-	/* Check for new panel (redraw map) */
-	verify_panel();
-
-	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-	/* Update the monsters */
-	p_ptr->update |= (PU_DISTANCE);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
-
 	/* Handle stuff XXX XXX XXX */
 	handle_stuff();
 }
@@ -413,7 +394,7 @@ void teleport_player(int dis)
  */
 void teleport_player_to(int ny, int nx)
 {
-	int y, x, oy, ox, dis = 0, ctr = 0;
+	int y, x, dis = 0, ctr = 0;
 
     if (p_ptr->anti_tele)
     {
@@ -446,31 +427,8 @@ void teleport_player_to(int ny, int nx)
 	/* Sound */
 	sound(SOUND_TELEPORT);
 
-	/* Save the old location */
-	oy = py;
-	ox = px;
-
 	/* Move the player */
-	py = y;
-	px = x;
-
-	/* Redraw the old spot */
-	lite_spot(oy, ox);
-
-	/* Redraw the new spot */
-	lite_spot(py, px);
-
-	/* Check for new panel (redraw map) */
-	verify_panel();
-
-	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-	/* Update the monsters */
-	p_ptr->update |= (PU_DISTANCE);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
+	move_to(y,x);
 
 	/* Handle stuff XXX XXX XXX */
 	handle_stuff();
@@ -2066,6 +2024,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				/* Destroy the feature */
 				cave_set_feat(y, x, FEAT_FLOOR);
 			}
+
+			full_grid = MAX(full_grid, distance(y,x,py,px));
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);

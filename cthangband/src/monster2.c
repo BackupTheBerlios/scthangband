@@ -682,6 +682,9 @@ void delete_monster_idx(int i,bool visibly)
 	cave[y][x].m_idx = 0;
 
 
+	/* A monster may now be able to be generated here. */
+	full_grid = MAX(full_grid, distance(y,x,py,px));
+
 	/* Delete objects */
 	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
@@ -2567,6 +2570,94 @@ bool alloc_horde(int y, int x)
 }
 #endif
 
+/* Check that a grid is available for monster placement. */
+#define space_okay(y,x,dis) (cave_naked_bold(y,x) && distance(y,x,py,px) > dis)
+
+/* How many "many" is */
+#define MANY_SPACES 128
+
+/*
+ * Find a random space. First we find out whether there are a large number of
+ * empty spaces, a small number, or none at all. If there are a large number,
+ * we pick spaces completely at random until we find one of them. If there are
+ * a small number, we pick a random space from amongst them. If there are none
+ * at all, we do nothing. 
+ */
+static bool find_space(int *y, int *x, int dis)
+{
+	int i;
+	s16b empty_space[MANY_SPACES][2];
+	u16b max_tries = (full_grid == MAX_FULL_GRID) ? 1000 : 1000000;
+	/* Hack - we use the special value of full_grid = MAX_FULL_GRID-1 to
+	 * start the thorough search. We don't try otherwise.
+	 */
+	 
+	if (full_grid < MAX_FULL_GRID)
+	{
+		for ((*x) = 0, i = 0; (*x) < cur_wid && i < MANY_SPACES; (*x)++)
+		{
+			for ((*y) = 0; (*y) < cur_hgt && i < MANY_SPACES; (*y)++)
+			{
+				if (space_okay((*y),(*x), dis))
+				{
+					empty_space[i][0] = (*y);
+					empty_space[i++][1] = (*x);
+				}
+			}
+		}
+	}
+	else
+	{
+		i = MANY_SPACES;
+	}
+	switch (i)
+	{
+		case 0: /* No empty spaces at all */
+		/* Remember that we've given up */
+		full_grid = dis;
+
+		if (cheat_xtra || cheat_hear)
+		{
+			msg_print("Warning! Could not allocate a new monster. Small level?");
+		}
+		return FALSE;
+		case MANY_SPACES: /* Lots of empty spaces, so the RNG should find one soon enough. */
+		for (i = 0; i < max_tries; i++)
+		{
+			/* Pick a location */
+			(*y) = rand_int(cur_hgt);
+			(*x) = rand_int(cur_wid);
+
+			/* Return it if good */
+			if (space_okay((*y), (*x), dis)) return TRUE;
+		}
+		/* The RNG just ignored them! */
+		if (full_grid < MAX_FULL_GRID)
+		{
+			if (alert_failure || cheat_hear)
+				msg_print("Warning! RNG not detecting empty spaces!");
+		}
+		/* We're having trouble placing monsters, so start searching for them instead. */
+		else
+		{
+			if (cheat_hear)
+				msg_print("Failed to find a space, so trying again.");
+			full_grid--;
+			return find_space(y, x, dis);
+		}
+		/* Fall through anyway in order to get a space. */
+		default: /* Between 1 and MANY_SPACE-1 spaces, so pick one at random */
+		if (cheat_hear)
+		{
+			msg_format("Looking for one of %d spaces", i);
+		}
+		i = rand_int(i);
+		(*y)=empty_space[i][0];
+		(*x)=empty_space[i][1];
+		return TRUE;
+	}
+}
+
 /*
  * Attempt to allocate a random monster in the dungeon.
  *
@@ -2579,33 +2670,12 @@ bool alloc_horde(int y, int x)
 bool alloc_monster(int dis, int slp)
 {
 	int			y, x;
-    int         attempts_left = 10000;
+
+	/* If we already know the grid is full, don't try anything */
+	if (full_grid <= dis) return FALSE;
 
 	/* Find a legal, distant, unoccupied, space */
-    while (attempts_left)
-	{
-		/* Pick a location */
-		y = rand_int(cur_hgt);
-		x = rand_int(cur_wid);
-
-		/* Require "naked" floor grid */
-		if (!cave_naked_bold(y, x)) continue;
-
-		/* Accept far away grids */
-		if (distance(y, x, py, px) > dis) break;
-
-        attempts_left--;
-	}
-
-    if (!(attempts_left))
-    {
-        if (cheat_xtra || cheat_hear)
-        {
-            msg_print("Warning! Could not allocate a new monster. Small level?");
-        }
-        return (FALSE);
-    }
-
+	if (!find_space(&y, &x, dis)) return FALSE;
 
 #ifdef MONSTER_HORDES
     if (randint(5000)<=(dun_level+dun_offset))

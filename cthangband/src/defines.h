@@ -2640,6 +2640,8 @@
 #define RF6_BOLT_MASK \
    0L
 
+/* The default value for full_grid. */
+#define MAX_FULL_GRID (MAX_HGT+MAX_WID+1)
 
 /* Hack -- summon spells */
 

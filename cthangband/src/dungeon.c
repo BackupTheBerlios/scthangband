@@ -925,7 +925,7 @@ static void process_world(void)
 	/*** Process the monsters ***/
 
 	/* Check for creature generation */
-	if (rand_int(MAX_M_ALLOC_CHANCE) == 0)
+	if ((full_grid > MAX_SIGHT + 5) && (rand_int(MAX_M_ALLOC_CHANCE) == 0))
 	{
 		/* Make a new monster */
 		(void)alloc_monster(MAX_SIGHT + 5, FALSE);
@@ -3242,7 +3242,7 @@ static void dungeon(void)
 	/* Reset various flags */
 	new_level_flag = FALSE;
     hack_mind = FALSE;
-
+	full_grid = MAX_FULL_GRID;
 
 
 	/* Reset the "command" vars */

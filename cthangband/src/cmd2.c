@@ -4086,7 +4086,7 @@ void do_cmd_racial_power(void)
 			case MUT1_EAT_ROCK:
 				if (racial_aux(8, 12, A_CON, 18))
 				{
-					int x,y, ox,oy;
+				int x,y;
 					cave_type *c_ptr;
 					
 					if (!get_rep_dir(&dir)) break;
@@ -4133,21 +4133,7 @@ void do_cmd_racial_power(void)
 						}
 					}
 					(void)wall_to_mud(dir);
-					
-					oy = py;
-					ox = px;
-					
-					py = y;
-					px = x;
-
-					lite_spot(py, px);
-					lite_spot(oy, ox);
-
-					verify_panel();
-
-					p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-					p_ptr->update |= (PU_DISTANCE);
-					p_ptr->window |= (PW_OVERHEAD);
+					move_to(y,x);
 				}
 				break;
 

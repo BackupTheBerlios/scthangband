@@ -1782,6 +1782,42 @@ static bool pattern_seq(byte c_y, byte c_x, byte n_y,byte  n_x)
 }
 
 
+/*
+ * Actually move the player to a given location. 
+ */
+void move_to(s16b y, s16b x)
+{
+		int oy, ox;
+
+		/* Save old location */
+		oy = py;
+		ox = px;
+
+		/* Move the player */
+		py = y;
+		px = x;
+
+		/* Redraw new spot */
+		lite_spot(py, px);
+
+		/* Redraw old spot */
+		lite_spot(oy, ox);
+
+		/* Check for new panel (redraw map) */
+		verify_panel();
+
+		/* Update stuff */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+
+		/* A different area of the grid is eligible for monster creation. */
+		full_grid = MAX_FULL_GRID;
+
+		/* Update the monsters */
+		p_ptr->update |= (PU_DISTANCE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD);
+}
 
 /*
  * Move player in the given direction, with the given "pickup" flag.
@@ -2112,38 +2148,10 @@ void move_player(int dir, int do_pickup)
                 return;
     }
 /*    else */
-	{
-		int oy, ox;
-
-		/* Save old location */
-		oy = py;
-		ox = px;
-
-		/* Move the player */
-		py = y;
-		px = x;
-
-		/* Redraw new spot */
-		lite_spot(py, px);
-
-		/* Redraw old spot */
-		lite_spot(oy, ox);
+	move_to(y,x);
 
 		/* Sound */
 		/* sound(SOUND_WALK); */
-
-		/* Check for new panel (redraw map) */
-		verify_panel();
-
-		/* Update stuff */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-		/* Update the monsters */
-		p_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
-
 
 		/* Spontaneous Searching */
 		if ((p_ptr->skill_fos >= 50) ||
@@ -2208,7 +2216,6 @@ void move_player(int dir, int do_pickup)
 			hit_trap();
 		}
 	}
-}
 
 
 /*

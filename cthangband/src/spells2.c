@@ -5115,7 +5115,7 @@ void destroy_area(int y1, int x1, int r, bool full)
  */
 void earthquake(int cy, int cx, int r)
 {
-	int             i, t, y, x, yy, xx, dy, dx, oy, ox;
+	int             i, t, y, x, yy, xx, dy, dx;
 
 	int             damage = 0;
 
@@ -5260,22 +5260,8 @@ void earthquake(int cy, int cx, int r)
 				}
 			}
 
-			/* Save the old location */
-			oy = py;
-			ox = px;
-
 			/* Move the player to the safe location */
-			py = sy;
-			px = sx;
-
-			/* Redraw the old spot */
-			lite_spot(oy, ox);
-
-			/* Redraw the new spot */
-			lite_spot(py, px);
-
-			/* Check for new panel */
-			verify_panel();
+			move_to(sy, sx);
 		}
 
 		/* Important -- no wall on player */
@@ -5476,6 +5462,9 @@ void earthquake(int cy, int cx, int r)
 
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+
+	/* Monster may be able to be created in the floor squares created. */
+	full_grid = MAX(full_grid, 2*r);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);
@@ -6807,32 +6796,10 @@ void teleport_swap(int dir)
 			m_ptr->fx = (byte)px;
 			
 			/* Move the player */
-			px = tx;
-			py = ty;
-			
-			tx = m_ptr->fx;
-			ty = m_ptr->fy;
+			move_to(ty, tx);
 			
 			/* Update the monster (new location) */
 			update_mon(cave[ty][tx].m_idx, TRUE);
-			
-			/* Redraw the old grid */
-			lite_spot(ty, tx);
-			
-			/* Redraw the new grid */
-			lite_spot(py, px);
-			
-			/* Check for new panel (redraw map) */
-			verify_panel();
-			
-			/* Update stuff */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-			
-			/* Update the monsters */
-			p_ptr->update |= (PU_DISTANCE);
-			
-			/* Window stuff */
-			p_ptr->window |= (PW_OVERHEAD);
 			
 			/* Handle stuff XXX XXX XXX */
 			handle_stuff();
