@@ -4456,7 +4456,7 @@ void show_equip(void)
 		(void)strcpy(out_desc[k], o_name);
 
 		/* Indicate AC from a lack of armour where appropriate */
-		if (ma_empty_hands() && !ma_heavy_armor() && (j = mystic_armour(i)) > 0)
+		if (ma_empty_hands() && !mystic_notify_aux && (j = mystic_armour(i)) > 0)
 			sprintf(out_desc[k], "nothing [%d]", j);
 
 		/* Extract the maximal length (see below) */

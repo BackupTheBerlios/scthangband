@@ -905,7 +905,6 @@ bool angband_keymap_flag = TRUE;
 
 
 /* Hack, mystic armour */
-bool mystic_armour_aux;
 bool mystic_notify_aux;
  
 /* Hack, violet uniques */

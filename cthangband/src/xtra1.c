@@ -2400,6 +2400,23 @@ byte ammunition_type(object_type *o_ptr)
 }
 
 /*
+ * Test whether the worn armour weighs too much for effective martial arts.
+ */
+static bool ma_heavy_armor(void)
+{
+
+    u16b arm_wgt = 0;
+    arm_wgt += inventory[INVEN_BODY].weight;
+    arm_wgt += inventory[INVEN_HEAD].weight;
+    arm_wgt += inventory[INVEN_ARM].weight;
+    arm_wgt += inventory[INVEN_OUTER].weight;
+    arm_wgt += inventory[INVEN_HANDS].weight;
+    arm_wgt += inventory[INVEN_FEET].weight;
+
+    return (arm_wgt > (u16b)((u16b)100 + (u16b)(skill_set[SKILL_MA].value * 2))) ;
+}
+
+/*
  * Calculate the players current "state", taking into account
  * not only race intrinsics, but also objects being worn
  * and temporary spell effects.
@@ -2441,6 +2458,7 @@ static void calc_bonuses(bool quiet)
 	object_type		*o_ptr;
 
 	u32b		f1, f2, f3;
+	bool	mystic_armour_aux;
 
 
 	/* Save the old speed */
@@ -3094,8 +3112,10 @@ static void calc_bonuses(bool quiet)
 		if (object_known_p(o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
 	}
 
+	mystic_armour_aux = ma_heavy_armor();
+
 	/* Mystic get extra ac for armour _not worn_ */
-	if ((ma_empty_hands()) && !(ma_heavy_armor()))
+	if ((ma_empty_hands()) && !(mystic_armour_aux))
 	{
 		for (i=INVEN_BODY; i<=INVEN_FEET; i++){
 			j = mystic_armour(i);
@@ -3276,7 +3296,7 @@ static void calc_bonuses(bool quiet)
     {
         p_ptr->pspeed += ((skill_set[SKILL_RACIAL].value/2)) / 10;
     }
-	else if(!ma_heavy_armor()) /* So do other people with martial arts... */
+	else if(!mystic_armour_aux) /* So do other people with martial arts... */
 	{
 		p_ptr->pspeed += (skill_set[SKILL_MA].value / 20);
 	}
@@ -3529,12 +3549,12 @@ static void calc_bonuses(bool quiet)
 		else if (skill_set[SKILL_MA].value > 10)
 			p_ptr->num_blow = skill_set[SKILL_MA].value * 3 - 30;
 
-            if (ma_heavy_armor())
+            if (mystic_armour_aux)
                 p_ptr->num_blow /= 2;
 
             p_ptr->num_blow += 60 + extra_blows;
 
-            if (!ma_heavy_armor())
+            if (!mystic_armour_aux)
             {
                 p_ptr->to_h += (skill_set[SKILL_MA].value / 6);
                 p_ptr->to_d += (skill_set[SKILL_MA].value / 6);
@@ -3544,19 +3564,11 @@ static void calc_bonuses(bool quiet)
             }
     }
  
-	/* Assume okay */
-    mystic_armour_aux = FALSE;
-
     p_ptr->to_h += (skill_set[p_ptr->wield_skill].value/10);
     p_ptr->to_d += (skill_set[p_ptr->wield_skill].value/10);
 
     p_ptr->dis_to_h += (skill_set[p_ptr->wield_skill].value/10);
     p_ptr->dis_to_d += (skill_set[p_ptr->wield_skill].value/10);
-
-    if (ma_heavy_armor())
-    {
-        mystic_armour_aux = TRUE;
-    }
 
 
 	/* Affect Skill -- stealth (bonus one) */
@@ -3648,7 +3660,7 @@ static void calc_bonuses(bool quiet)
 		/* No message */
 		if (quiet);
 		/* Message */
-		else if (ma_heavy_armor())
+		else if (mystic_armour_aux)
                 msg_print("The weight of your armor disrupts your balance.");
             else
                 msg_print("You regain your balance.");
@@ -4238,20 +4250,6 @@ void handle_stuff(void)
 bool ma_empty_hands(void)
 {
     return !(inventory[INVEN_WIELD].k_idx);
-}
-
-bool ma_heavy_armor(void)
-{
-
-    u16b arm_wgt = 0;
-    arm_wgt += inventory[INVEN_BODY].weight;
-    arm_wgt += inventory[INVEN_HEAD].weight;
-    arm_wgt += inventory[INVEN_ARM].weight;
-    arm_wgt += inventory[INVEN_OUTER].weight;
-    arm_wgt += inventory[INVEN_HANDS].weight;
-    arm_wgt += inventory[INVEN_FEET].weight;
-
-    return (arm_wgt > (u16b)((u16b)100 + (u16b)(skill_set[SKILL_MA].value * 2))) ;
 }
 
 /*
