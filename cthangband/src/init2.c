@@ -1731,6 +1731,7 @@ static void check_options(void)
 		quit("Failed to parse option_info.");
 	}	
 }
+#endif /* CHECK_ARRAYS */
 
 /*
  * Check that the members of various arrays are in the correct order,
@@ -1740,13 +1741,15 @@ static void check_options(void)
  */
 static void check_arrays(void)
 {
+#ifdef CHECK_ARRAYS
 	check_bonus_table();
 	check_screen_coords();
 	check_temp_effects();
 	check_options();
 	check_skill_set();
-}
+	check_timeouts();
 #endif /* CHECK_ARRAYS */
+}
 
 /*
  * Hack -- take notes on line 23
@@ -2079,10 +2082,8 @@ void init_angband(void)
 	/* Flush any messages the pref files created. */
 	msg_print(NULL);
 
-#ifdef CHECK_ARRAYS
-	/* Check that various arrays are in the correct order. */
+	/* Check that various arrays are in the correct order if required. */
 	check_arrays();
-#endif /* CHECK_ARRAYS */
 
 	/* Done */
 	note("[Initialization complete]");

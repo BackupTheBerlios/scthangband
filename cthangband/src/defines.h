@@ -2742,6 +2742,10 @@ logaux(x, 1) logaux(x, 0) 255)
 #define POWER_ERROR_ABORT 401
 #define POWER_ERROR_FAIL 402
 
+/* And from do_power(). */
+#define POWER_ERROR_NO_SUCH_POWER 403
+#define POWER_ERROR_NO_SUCH_DIR 404
+
 /* For errors (+/-)500-599, see z-term.h */
 
 
