@@ -3185,7 +3185,7 @@ extern int PlayerUID;
 
 /* Size of the buffer needed for object_desc() */
 #define ONAME_MAX (z_info->oname)
-/* And for monster_desc() */
+/* And for the normal monster_desc() buffer. */
 #define MNAME_MAX (z_info->mname)
 
 #ifdef VARIABLE_ARRAYS

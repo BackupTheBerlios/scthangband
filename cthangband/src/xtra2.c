@@ -2509,7 +2509,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		C_TNEW(m_name, MNAME_MAX, char);
 
 		/* Extract monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, m_ptr, 0, MNAME_MAX);
 
        if ((r_ptr->flags3 & (RF3_GREAT_OLD_ONE)) && (randint(2)==1))
        {
@@ -3460,7 +3460,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				boring = FALSE;
 
 				/* Get the monster name ("a kobold") */
-				monster_desc(m_name, m_ptr, 0x08);
+				monster_desc(m_name, m_ptr, 0x08, MNAME_MAX);
 
 				/* Hack -- track this monster race */
 				monster_race_track(m_ptr->r_idx);

@@ -1319,7 +1319,7 @@ extern errr get_mon_num_prep(void);
 extern s16b get_mon_num(int level);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
-extern void monster_desc(char *buf, monster_type *m_ptr, int mode);
+extern void monster_desc(char *buf, monster_type *m_ptr, int mode, int size);
 #endif
 #if (defined(MONSTER2_C) || defined(SPELLS2_C))
 extern void lore_do_probe(int m_idx);

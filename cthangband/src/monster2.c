@@ -1270,7 +1270,7 @@ s16b get_mon_num(int level)
  *   0x22 --> Possessive, genderized if visable ("his") or "its"
  *   0x23 --> Reflexive, genderized if visable ("himself") or "itself"
  */
-void monster_desc(char *buf, monster_type *m_ptr, int mode)
+void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 {
 	monster_race	*r_ptr = (m_ptr) ? &r_info[m_ptr->r_idx] : r_info;
 
@@ -1409,9 +1409,9 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode)
 		int n = strlen(name);
 		int s = strlen(suffix_);
 
-		n = MIN(n, MAX(0, MNAME_MAX-p-s));
-		s = MIN(s, MAX(0, MNAME_MAX-n-p));
-		p = MIN(p, MAX(0, MNAME_MAX-n-s));
+		n = MIN(n, MAX(0, size-p-s));
+		s = MIN(s, MAX(0, size-n-p));
+		p = MIN(p, MAX(0, size-n-s));
 		
 		sprintf(buf, "%.*s%.*s%.*s", p, prefix_, n, name, s, suffix_);
 	}
@@ -1520,7 +1520,7 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 		{
 			C_TNEW(m_name, MNAME_MAX, char);
 
-			monster_desc(m_name, m_ptr, 0);
+			monster_desc(m_name, m_ptr, 0, MNAME_MAX);
 
 			if (p_ptr->image)
 			{
@@ -3220,7 +3220,7 @@ void message_pain(int m_idx, int dam)
 
 
 	/* Get the monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, MNAME_MAX);
 
 	/* Notice non-damage */
 	if (dam == 0)
