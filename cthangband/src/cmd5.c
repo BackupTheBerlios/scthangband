@@ -15,9 +15,7 @@
 #include "angband.h"
 
 
-static s16b cantrip_chance(int ctp);
 static void print_favours(byte *spells, int num, int y, int x, int sphere);
-static s16b favour_chance(int fav,int sphere);
 static bool spirit_okay(int spirit, bool call);
 static void print_spirits(int *valid_spirits,int num,int y, int x);
 static void rustproof(void);
@@ -132,7 +130,7 @@ static void low_mana_check(int *chance, const magic_type *s_ptr)
 /*
  * Returns spell chance of failure for an arbitrary spell
  */
-static int spell_chance_aux(const magic_type *s_ptr)
+static int spell_chance(const magic_type *s_ptr)
 {
 	/* Extract the base spell failure rate */
 	int chance = s_ptr->sfail;
@@ -160,30 +158,6 @@ static int spell_chance_aux(const magic_type *s_ptr)
 
 	/* Return the chance */
 	return (chance);
-}
-
-/*
- * Returns spell chance of failure for spell
- */
-static int spell_chance(int spell,int school)
-{
-    return spell_chance_aux(&mp_ptr->info[school][spell]);
-}
-
-/*
- * Returns cantrip chance of failure
- */
-static s16b cantrip_chance(int ctp)
-{
-	return spell_chance_aux(&cantrip_info[ctp]);
-}
-
-/*
- * Returns favour chance of failure
- */
-static s16b favour_chance(int fav,int sphere)
-{
-	return spell_chance_aux(&favour_info[sphere][fav]);
 }
 
 /* Give experience to spell skills for a spell */
@@ -449,7 +423,7 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-26s%s(%2d) %4d %4d %3d%%%s",
 		I2A(i), spell_names[school][spell], /* school, spell */
-		type,s_ptr->minskill*2, s_ptr->smana, spellcast_energy(school, spell), spell_chance(spell,school), comment);
+		type,s_ptr->minskill*2, s_ptr->smana, spellcast_energy(school, spell), spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -779,7 +753,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 			/* Prompt */
 			strnfmt(tmp_val, 78, "%^s %s (%d mana, %d%% fail)? ",
 				prompt, spell_names[school_no][spell%32],
-				s_ptr->smana, spell_chance(spell,school_no));
+				s_ptr->smana, spell_chance(s_ptr));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -876,7 +850,7 @@ void print_cantrips(byte *spells, int num, int y, int x)
 		/* Dump the favour --(-- */
 		sprintf(out_val, "  %c) %-35s%2d %3d%%%s",
 		I2A(i), cantrip_names[spell], /* spell */
-		s_ptr->minskill*2, cantrip_chance(spell), comment);
+		s_ptr->minskill*2, spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -1054,7 +1028,7 @@ int get_cantrip(int *sn, int sval)
 			/* Prompt */
 			strnfmt(tmp_val, 78, "cast %s (%d%% fail)? ",
 				cantrip_names[spell],
-				cantrip_chance(spell));
+				spell_chance(s_ptr));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -1295,7 +1269,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 			/* Prompt */
 			strnfmt(tmp_val, 78, "%s (%d mana, %d%% fail)? ",
 				favour_names[sphere][spell],
-				s_ptr->smana, favour_chance(spell,sphere));
+				s_ptr->smana, spell_chance(s_ptr));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -1394,7 +1368,7 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 		/* Dump the favour --(-- */
 		sprintf(out_val, "  %c) %-35s%2d %4d %3d%%%s",
 		I2A(i), favour_names[sphere][spell], /* sphere, spell */
-		s_ptr->minskill*2, spirit_energy(sphere, spell), favour_chance(spell,sphere), comment);
+		s_ptr->minskill*2, spirit_energy(sphere, spell), spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -2412,7 +2386,7 @@ void do_cmd_cast(void)
 
 
 	/* Spell failure chance */
-	chance = spell_chance(spell,spell_school);
+	chance = spell_chance(s_ptr);
 
 	/* Failed spell */
 	if (rand_int(100) < chance)
@@ -3782,7 +3756,7 @@ void do_cmd_cantrip(void)
 	s_ptr = &(cantrip_info[spell]);
 
 	/* Spell failure chance */
-	chance = cantrip_chance(spell);
+	chance = spell_chance(s_ptr);
 
 	/* Failed spell */
 	if (rand_int(100) < chance)
@@ -4144,7 +4118,7 @@ void do_cmd_invoke(void)
 	f_ptr = &(favour_info[favour_sphere][spell]);
 
 	/* Spell failure chance */
-	chance = favour_chance(spell,favour_sphere);
+	chance = spell_chance(s_ptr);
 
 	/* Normal energy use. */
 	energy_use = spirit_energy(favour_sphere, spell);
