@@ -321,6 +321,7 @@ bool cheat_xtra;		/* Peek into something else */
 bool cheat_item;		/* Know complete item info */
 bool cheat_live;		/* Allow player to avoid death */
 bool cheat_skll;        /* Peek into skill rolls */
+bool cheat_save;	/* Prevent automatic saving on game events. */
 
 /* Special options */
 

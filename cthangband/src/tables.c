@@ -2126,7 +2126,7 @@ cptr stat_names_reduced[6] =
 
 /*
  * Available Options (full to 3,24).
- * In addition, 7,2 7,8-11 and 7,13-15 are used for cheat options, and the
+ * In addition, 7,2 and 7,8-15 are used for cheat options, and the
  * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.
  *
  * Note that options which are only set at character creation but are active
@@ -2542,6 +2542,10 @@ option_type option_info[] =
 	{ &cheat_wzrd,		FALSE,	OPTS_CHEAT,	7, 1,
 	"cheat_wzrd",		"Wizard (Debug) Mode active" },
 #endif /* ALLOW_WIZARD */
+
+	{ &cheat_save,	FALSE,	OPTS_CHEAT, 7, 12,
+	"cheat_save", "Don't auto-save on in-game events"},
+	
 
 	/*** End of Table ***/
 

@@ -6390,8 +6390,9 @@ void close_game(void)
 		/* Handle retirement */
 		if (total_winner) kingly();
 
-		/* Save memories */
-		if (!save_player(FALSE)) msg_print("death save failed!");
+		/* Save memories, if allowed. */
+		if (cheat_save) msg_print("Game not saved as cheat_save active.");
+		else if (!save_player(FALSE)) msg_print("death save failed!");
 
 		/* Dump bones file */
 		make_bones();
@@ -6409,8 +6410,9 @@ void close_game(void)
 	/* Still alive */
 	else
 	{
-		/* Save the game */
-		do_cmd_save_game(FALSE);
+		/* Save the game, if allowed. */
+		if (cheat_save) msg_print("Game not saved as cheat_save active.");
+		else do_cmd_save_game(FALSE);
 
 		/* Prompt for scores XXX XXX XXX */
 		prt("Press Return (or Escape).", 0, 40);

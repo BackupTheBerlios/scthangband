@@ -4004,4 +4004,10 @@ extern void safe_free(vptr p);
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
 #endif
+
+/* variable.c */
+
+#if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool cheat_save;
+#endif
 #endif /* INCLUDED_EXTERNS_H */
