@@ -3322,11 +3322,6 @@ void pause_line(void)
 }
 
 /*
- * Hack -- special buffer to hold the action of the current keymap
- */
-static char request_command_buffer[256];
-
-/*
  * Find the keymap mode.
  */
 int keymap_mode(void)
@@ -3356,7 +3351,7 @@ static cptr get_keymap(char trigger)
 /*
  * Request a command from the user.
  *
- * Sets p_ptr->command_cmd, p_ptr->command_dir, p_ptr->command_rep,
+ * Sets p_ptr->command_cmd, p_ptr->command_dir,
  * p_ptr->command_arg.  May modify p_ptr->command_new.
  *
  * Note that "caret" ("^") is treated specially, and is used to
@@ -3374,17 +3369,11 @@ static cptr get_keymap(char trigger)
  */
 void request_command(bool shopping)
 {
-	int i;
-
-	s16b cmd;
-	char cmd_char;
+	int i, cmd;
 
 	cptr act;
 
 
-
-	/* No command yet */
-	command_cmd = 0;
 
 	/* No "argument" yet (exclude special modes). */
 	if (!(command_new & 0xFF00)) command_arg = 0;
@@ -3396,6 +3385,8 @@ void request_command(bool shopping)
 	/* Get command */
 	while (1)
 	{
+		char cmd_char;
+
 		/* Hack -- auto-commands */
 		if (command_new)
 		{
@@ -3425,14 +3416,16 @@ void request_command(bool shopping)
 		/* Clear top line */
 		prt("", 0, 0);
 
-
-		/* Command Count */
-		if (cmd == '0')
+		/* There can be only one argument. */
+		if (cmd == '0' && command_arg)
 		{
-			int old_arg = command_arg;
-
+			bell("Command count already present.");
+		}
+		/* Command Count */
+		else if (cmd == '0')
+		{
 			/* Reset */
-			command_arg = 0;
+			int arg = 0;
 
 			/* Begin the input */
 			prt("Count: ", 0, 0);
@@ -3447,34 +3440,34 @@ void request_command(bool shopping)
 				if ((cmd == 0x7F) || (cmd == KTRL('H')))
 				{
 					/* Delete a digit */
-					command_arg = command_arg / 10;
+					arg /= 10;
 
 					/* Show current count */
-					prt(format("Count: %d", command_arg), 0, 0);
+					prt(format("Count: %d", arg), 0, 0);
 				}
 
 				/* Actual numeric data */
 				else if (cmd >= '0' && cmd <= '9')
 				{
 					/* Stop count at 9999 */
-					if (command_arg >= 1000)
+					if (arg >= 1000)
 					{
 						/* Warn */
 						bell(0);
 
 						/* Limit */
-						command_arg = 9999;
+						arg = 9999;
 					}
 
 					/* Increase count */
 					else
 					{
 						/* Incorporate that digit */
-						command_arg = command_arg * 10 + D2I(cmd);
+						arg = arg * 10 + D2I(cmd);
 					}
 
 					/* Show current count */
-					prt(format("Count: %d", command_arg), 0, 0);
+					mc_put_fmt(0, 0, "Count: %d%v", arg, clear_f0);
 				}
 
 				/* Exit on "unusable" input */
@@ -3485,40 +3478,25 @@ void request_command(bool shopping)
 			}
 
 			/* Hack -- Handle "zero" */
-			if (command_arg == 0)
+			if (!arg)
 			{
 				/* Default to 99 */
-				command_arg = 99;
-
-				/* Show current count */
-				prt(format("Count: %d", command_arg), 0, 0);
+				arg = 99;
 			}
 
-			/* Hack -- Handle "old_arg" */
-			if (old_arg != 0)
-			{
-				/* Restore old_arg */
-				command_arg = old_arg;
-
-				/* Show current count */
-				prt(format("Count: %d", command_arg), 0, 0);
-			}
+			/* Show current count */
+			mc_put_fmt(0, 0, "Count: %d%v", arg, clear_f0);
 
 			/* Hack -- white-space means "enter command now" */
 			if ((cmd == ' ') || (cmd == '\n') || (cmd == '\r'))
 			{
-				/* Get a real command */
-				bool tmp = get_com(&cmd_char, "Command: ");
+				/* Get a real command, or forget this. */
+				if (!get_com(&cmd_char, "Command: ")) continue;
 				cmd = cmd_char;
-				if (!tmp)
-				{
-					/* Clear count */
-					command_arg = 0;
-
-					/* Continue */
-					continue;
-				}
 			}
+
+			/* Accept the argument. */
+			command_arg = arg;
 		}
 
 
@@ -3543,35 +3521,31 @@ void request_command(bool shopping)
 
 
 		/* Look up applicable keymap if allowed. */
-		if (!(cmd & 0xFF00))
+		if (!(cmd & 0xFF00) && !inkey_next)
 		{
-		act = get_keymap(cmd);
+			act = get_keymap(cmd);
 
-		/* Apply keymap if not inside a keymap already */
-		if (act && !inkey_next)
+			/* Apply keymap if not inside a keymap already */
+			if (act)
+			{
+				/* Hack - store the current keymap here. */
+				static char request_command_buffer[256];
+
+				/* Install the keymap (limited buffer size) */
+				strnfmt(request_command_buffer, 256, "%s", act);
+
+				/* Start using the buffer */
+				inkey_next = request_command_buffer;
+			}
+		}
+		else if (cmd)
 		{
-			/* Install the keymap (limited buffer size) */
-			strnfmt(request_command_buffer, 256, "%s", act);
-
-			/* Start using the buffer */
-			inkey_next = request_command_buffer;
-
-			/* Continue */
-			continue;
+			break;
 		}
-		}
-
-
-		/* Paranoia */
-		if (!cmd) continue;
-
-
-		/* Use command */
-		command_cmd = cmd;
-
-		/* Done */
-		break;
 	}
+
+	/* Use the command */
+	command_cmd = cmd;
 
 	/* Hack -- Auto-repeat certain commands */
 	if (always_repeat && (command_arg <= 0))
