@@ -4102,7 +4102,7 @@ static void resurrect(bool wizard)
 	}
 
 	/* Note cause of death XXX XXX XXX */
-	if (wizard) (void)strcpy(died_from, "Cheating death");
+	if (wizard) died_from = "Cheating death";
 
 	/* Teleport to town */
 	new_level_flag = TRUE;

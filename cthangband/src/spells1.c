@@ -769,6 +769,14 @@ void take_hit(int damage, cptr hit_from)
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
+	/* hit_from may be a format string, so copy it across now. */
+	if (p_ptr->chp < 0)
+	{
+		/* This allocation isn't tracked as it is freed on termination. */
+		died_from = string_make(format(
+			"%s%s", hit_from, (p_ptr->image) ? "(?)" : ""));
+	}
+
     if (pen_invuln)
             msg_print("The attack penetrates your shield of invulnerability!");
 
@@ -791,10 +799,6 @@ void take_hit(int damage, cptr hit_from)
 				msg_format("%v", get_rnd_line_f1, "death.txt");
 			}
 		}
-		/* Note cause of death */
-		(void)strcpy(died_from, hit_from);
-
-        if (p_ptr->image) strcat(died_from,"(?)");
 
 		/* No longer a winner */
 		total_winner = FALSE;

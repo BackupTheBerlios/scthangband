@@ -4675,7 +4675,7 @@ void do_cmd_suicide(void)
 	death = TRUE;
 
 	/* Cause of death */
-	(void)strcpy(died_from, SUICIDE_STRING);
+	died_from = SUICIDE_STRING;
 }
 
 
@@ -4717,7 +4717,7 @@ void do_cmd_save_game(bool is_autosave)
 	Term_fresh();
 
 	/* The player is not dead */
-	(void)strcpy(died_from, "(saved)");
+	died_from = "(saved)";
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
@@ -4741,7 +4741,7 @@ void do_cmd_save_game(bool is_autosave)
 	Term_fresh();
 
 	/* Note that the player is not dead */
-	(void)strcpy(died_from, "nobody (yet!)");
+	died_from = "nobody (yet!)";
 }
 
 
@@ -4869,7 +4869,6 @@ static void print_tomb(void)
 	char	tmp[160];
 
 	char	buf[1024];
-    char    dummy[80];
 
 	FILE        *fp;
 
@@ -4955,14 +4954,7 @@ static void print_tomb(void)
 	center_string(buf, tmp);
 	put_str(buf, 15, 11);
 
-    if (strlen(died_from) > 24)
-    {
-        strncpy(dummy, died_from, 24);
-        dummy[24] = '\0';
-        (void)sprintf(tmp, "by %s.", dummy);
-    }
-    else
-        (void)sprintf(tmp, "by %s.", died_from);
+	(void)sprintf(tmp, "by %.*s.", 24, died_from);
 	center_string(buf, tmp);
 	put_str(buf, 16, 11);
 
@@ -5819,7 +5811,7 @@ static void kingly(void)
 	dun_level = 0;
 
 	/* Fake death */
-	(void)strcpy(died_from, "Ripe Old Age");
+	died_from = "Ripe Old Age";
 
 	/* Hack -- Instant Gold */
 	p_ptr->au += 10000000L;
@@ -5970,7 +5962,7 @@ void exit_game_panic(void)
 	signals_ignore_tstp();
 
 	/* Indicate panic save */
-	(void)strcpy(died_from, "(panic save)");
+	died_from = "(panic save)";
 
 	/* Panic save, or get worried */
 	if (!save_player(FALSE)) quit("panic save failed!");
@@ -6132,7 +6124,7 @@ static void handle_signal_simple(int sig)
 	if (death)
 	{
 		/* Mark the savefile */
-		(void)strcpy(died_from, "Abortion");
+		died_from = "Abortion";
 
 		/* Close stuff */
 		close_game();
@@ -6145,7 +6137,7 @@ static void handle_signal_simple(int sig)
 	else if (signal_count >= 5)
 	{
 		/* Cause of "death" */
-		(void)strcpy(died_from, "Interrupting");
+		died_from = "Interrupting";
 
 		/* Stop playing */
 		alive = FALSE;
@@ -6218,7 +6210,7 @@ static void handle_signal_abort(int sig)
 	panic_save = 1;
 
 	/* Panic save */
-	(void)strcpy(died_from, "(panic save)");
+	died_from = "(panic save)";
 
 	/* Forbid suspend */
 	signals_ignore_tstp();

@@ -1410,7 +1410,7 @@ static void wr_extra(void)
 
 	wr_string(player_name);
 
-	wr_string(died_from);
+	wr_string(format("%.1023s", died_from));
 
 	for (i = 0; i < 4; i++)
 	{
@@ -2496,8 +2496,11 @@ bool load_player(void)
 		/* Still alive */
 		if (p_ptr->chp >= 0)
 		{
+			/* Froget the cause of death from the save file. */
+			FREE(died_from);
+
 			/* Reset cause of death */
-			(void)strcpy(died_from, "(alive and well)");
+			died_from = "(alive and well)";
 		}
 
 		/* Success */

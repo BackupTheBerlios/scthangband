@@ -999,7 +999,11 @@ static void rd_extra(void)
 	u32b tmp32u;
 	rd_string(player_name, 32);
 
-	rd_string(died_from, 80);
+	{
+		char buf[1024];
+		rd_string(buf, 1024);
+		died_from = string_make(buf);
+	}
 
 	for (i = 0; i < 4; i++)
 	{
