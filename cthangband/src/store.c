@@ -2639,7 +2639,7 @@ static bool get_check_service(cptr prompt, byte type)
 	while (1)
 	{
 		rc = get_check_aux(
-			prompt, "%.*s[y/n/?]%s%v", "nN\eyY\n?", "\0\0\0\1\1\1?");
+			prompt, "%.*s[y/n/?]%s%v", "nN\eyY\r?", "\0\0\0\1\1\1?");
 
 		/* Accept boolean responses. */
 		if (rc != '?') break;
