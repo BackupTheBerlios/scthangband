@@ -5452,6 +5452,8 @@ void combine_pack(void)
 	if (flag) msg_print("You combine some items in your pack.");
 }
 
+#define compare(A,B) \
+	if ((A) != (B)) return ((A) > (B))
 
 /*
  * Return TRUE if the desired position for u[a] in the pack >=  that of u[b].
@@ -5465,16 +5467,14 @@ static bool ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 	if (!a_ptr->k_idx) return FALSE;
 
 	/* Objects sort by decreasing type */
-	if (a_ptr->tval > b_ptr->tval) return TRUE;
-	if (a_ptr->tval < b_ptr->tval) return FALSE;
+	compare(a_ptr->tval, b_ptr->tval);
 
 	/* Non-aware (flavored) items always come last */
 	if (!object_aware_p(a_ptr)) return TRUE;
 	if (!object_aware_p(b_ptr)) return FALSE;
 
 	/* Objects sort by increasing k_idx */
-	if (a_ptr->k_idx < b_ptr->k_idx) return TRUE;
-	if (a_ptr->k_idx > b_ptr->k_idx) return FALSE;
+	compare(b_ptr->k_idx, a_ptr->k_idx);
 
 	/* Unidentified objects always come last */
 	if (!object_known_p(a_ptr)) return TRUE;
@@ -5484,12 +5484,15 @@ static bool ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 		increasing recharge time --dsb */
 	if (a_ptr->tval == TV_ROD)
 	{
-		if (a_ptr->timeout < b_ptr->timeout) return TRUE;
-		if (a_ptr->timeout > b_ptr->timeout) return FALSE;
+		compare(a_ptr->timeout, b_ptr->timeout);
 	}
 
 	/* Objects sort by decreasing value */
-	return (object_value(a_ptr) <= object_value(b_ptr));
+	compare(object_value(a_ptr), object_value(b_ptr));
+	compare(object_number(a_ptr), object_number(b_ptr));
+
+	/* No relevant differences. */
+	return TRUE;
 }
 
 /*
