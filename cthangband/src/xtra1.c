@@ -3637,6 +3637,59 @@ void notice_stuff(void)
 
 
 /*
+ * Is cave[y][x] in a room?
+ *
+ * Do this by looking for two squares adjacent to the current square which
+ * are both floor squares.
+ */
+static bool is_room_func_p(int y, int x)
+{
+	int i,t;
+
+	/* An array which rotates around 0,0 anticlockwise. */
+	int xs[9] = { 1, 1, 0,-1,-1,-1, 0, 1, 1};
+	int ys[9] = { 0,-1,-1,-1, 0, 1, 1, 1, 0};
+
+	/* Assume that non-floor squares are dealt with elsewhere. */
+	if (!cave_floor_bold(y,x)) return TRUE;
+
+	for (i = t = 0; i < 9; i++)
+	{
+		if (!cave_floor_bold(y+ys[i], x+xs[i]))
+		{
+			t = 0;
+		}
+		else if (t++ == 2)
+		{
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+/*
+ * Set CAVE_ROOM as appropriate using the above routine.
+ */
+static void calc_rooms(void)
+{
+	int y,x;
+	for (y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			if (is_room_func_p(y,x))
+			{
+				cave[y][x].info |= (CAVE_ROOM);
+			}
+			else
+			{
+				cave[y][x].info &= ~(CAVE_ROOM);
+			}
+		}
+	}
+}
+
+/*
  * Handle "p_ptr->update"
  */
 void update_stuff(void)
@@ -3735,6 +3788,11 @@ void update_stuff(void)
 		update_lite();
 	}
 
+	if (p_ptr->update & (PU_ROOM))
+	{
+		p_ptr->update &= ~(PU_ROOM);
+		calc_rooms();
+	}
 
 	if (p_ptr->update & (PU_FLOW))
 	{

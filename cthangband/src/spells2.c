@@ -5104,7 +5104,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 			c_ptr = &cave[y][x];
 
 			/* Lose room and vault */
-			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
+			c_ptr->info &= ~(CAVE_ICKY);
 
 			/* Lose light and knowledge */
 			c_ptr->info &= ~(CAVE_MARK | CAVE_GLOW | CAVE_TRAP);
@@ -5185,7 +5185,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_ROOM);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
@@ -5262,7 +5262,7 @@ void earthquake(int cy, int cx, int r)
 			c_ptr = &cave[yy][xx];
 
 			/* Lose room and vault */
-			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
+			c_ptr->info &= ~(CAVE_ICKY);
 
 			/* Lose light and knowledge */
 			c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK | CAVE_TRAP);
@@ -5566,7 +5566,7 @@ void earthquake(int cy, int cx, int r)
 	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_ROOM);
 
 	/* Monster may be able to be created in the floor squares created. */
 	full_grid = MAX(full_grid, 2*r);

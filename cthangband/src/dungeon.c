@@ -3867,7 +3867,7 @@ static void dungeon(void)
 	redraw_stuff();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE | PU_ROOM);
 
 	/* Update stuff */
 	update_stuff();
