@@ -805,8 +805,6 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option,
 	bool allow_abort)
 {
 	char c, pmt[256];
-	int i;
-	cptr s[2];
 	cptr s = (allow_abort) ? ", * for random or ESCAPE to abort" :
 		" or * for random";
 	strnfmt(pmt, sizeof(pmt), "%s (%c-%c%s): ", prompt, I2A(0), rtoa(max-1), s);
