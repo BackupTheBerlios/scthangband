@@ -1226,6 +1226,9 @@ static errr option_dump_aux(cptr fname)
 	/* Save the squelch settings. */
 	squelch_dump(fff);
 
+	/* Save the default inscriptions. */
+	inscription_dump(fff);
+
 	/* Mention options which can't be read. */
 	fprintf(fff, "\n\n# Unparsable options\n\n");
 	fprintf(fff, "# Base delay factor %d\n",

@@ -9,6 +9,8 @@ sCthangband _CVS_
 * Dimension door only allows the player to teleport to squares in line of sight.
 * An inscription of (e.g.) ~vf on an object causes the "throw" command to 
   attempt to "fire" it instead.
+* Objects can have default inscriptions which are given to all such items as
+  they are created.
 * Monsters can be set to drop ego items in r_info.txt.
 * Fix the following bugs:
   * Starting the game with -n gave too many quests.

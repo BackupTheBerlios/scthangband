@@ -2586,20 +2586,42 @@ static bool PURE aux3_can_curse(int k_idx)
 /*
  * Set a quark to the depth of the item in question, return it.
  */
-static u16b depth_string(void)
+static cptr depth_string(void)
 {
 	/* Not wanted. */
-	if (!inscribe_depth) return 0;
+	if (!inscribe_depth) return "";
 
 	/* Suppress on the surface (I think I prefer it this way...). */
-	else if (!dun_level) return 0;
+	else if (!dun_level) return "";
 
 	/* Use the normal depth format from prt_depth() */
-	else if (depth_in_feet) return quark_add(format("%d'", dun_depth*50));
+	else if (depth_in_feet) return format("%d'", dun_depth*50);
 
-	else return quark_add(format("L%d", dun_depth));
+	else return format("L%d", dun_depth);
 }
 
+/*
+ * Combine the kind-based and depth-based inscriptions for a new object and
+ * return the combination.
+ */
+static u16b default_quark(object_ctype *o_ptr)
+{
+	cptr note = quark_str(k_info[o_ptr->k_idx].note);
+	cptr depth = depth_string();
+
+	if (*note && *depth)
+	{
+		return quark_add(format("%s %s", depth, note));
+	}
+	else if (*note || *depth)
+	{
+		return quark_add(format("%s%s", depth, note));
+	}
+	else
+	{
+		return 0;
+	}
+}
 
 /*
  * Add a special ego effect to an object (which may have negative pval, etc.).
@@ -3118,7 +3140,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	apply_magic_1(o_ptr, lev, okay, good, great);
 
 	/* Hack - inscribe with creation depth if desired. */
-	o_ptr->note = depth_string();
+	o_ptr->note = default_quark(o_ptr);
 
 	/* Give it any bonuses its ego- or artefact type requires, and add random
 	 * bonuses to rings and armour. */

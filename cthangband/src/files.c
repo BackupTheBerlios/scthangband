@@ -379,6 +379,9 @@ cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
  * Specify the screen location of a redraw_stuff() display.
  *   L:<name>:<x>:<y>
  *
+ * Specify a default inscription for an object kind.
+ *  {:<k_idx>:<str>
+ *
  * Returns NULL on success, an error message on failure.
  */
 cptr process_pref_file_aux(char *buf, u16b *sf_flags)
@@ -457,7 +460,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				i = convert_k_idx(i, sf_flags, sf_flags_now);
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
-				if (i >= MAX_K_IDX) return "no such object";
+				if (i >= MAX_K_IDX || !k_info[i].name) return "no such object";
 				k_ptr = &k_info[i];
 				if (n1) k_ptr->x_attr = n1;
 				if (n2) k_ptr->x_char = n2;
@@ -469,6 +472,27 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		 * Simply extract the tokens and pass to squelch.c, as no action is
 		 * appropriate without detailed knowledge.
 		 */
+		case '{':
+		{
+			int i = tokenize(buf+2, 3, zz);
+			if (i == 1 && !strcmp(zz[0], "---reset---"))
+			{
+				for (i = 0; i < MAX_K_IDX; i++) k_info[i].note = 0;
+			}
+			else if (i == 2)
+			{
+				long l = strtol(zz[0], NULL, 0);
+				if (l < 0 || l > MAX_SHORT) return "no such object";
+				i = convert_k_idx(l, sf_flags, sf_flags_now);
+				if (i >= MAX_K_IDX || !k_info[i].name) return "no such object";
+				k_info[i].note = quark_add(zz[1]);
+			}
+			else
+			{
+				return "format not {:<k_idx>:<inscription>";
+			}
+			return NULL;
+		}
 		case 'Q':
 		{
 			int i = tokenize(buf+2, 16, zz);

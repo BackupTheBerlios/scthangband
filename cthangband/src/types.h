@@ -240,6 +240,9 @@ struct object_kind
 	bool aware;			/* The player is "aware" of the item's effects */
 	bool tried;			/* The player has "tried" one of the items */
 	bool seen;	/* The player has encountered at least one of these. */
+
+	s16b note;	/* Default inscription for this object_kind. */
+	byte squelch;	/* Default squelch setting. */
 };
 
 

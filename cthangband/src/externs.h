@@ -514,7 +514,7 @@ extern int color_char_to_attr(char c);
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern cptr cur_help_str(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C))
 extern void help_track(cptr str);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
@@ -2014,8 +2014,8 @@ extern void alter_reality(void);
 
 /* squelch.c */
 
-#if (defined(INIT2_C) || defined(SQUELCH_C))
-extern void init_squelch(void);
+#if (defined(CMD4_C) || defined(SQUELCH_C))
+extern void inscription_dump(FILE *fff);
 #endif
 #if (defined(FILES_C) || defined(SQUELCH_C))
 extern cptr process_pref_squelch(char **zz, int n, u16b *sf_flags);
@@ -2354,7 +2354,7 @@ extern bool is_keymap_or_macro(void);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern char inkey(void);
 #endif
-#if (defined(CMD3_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(UTIL_C))
+#if (defined(CMD3_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C))
 extern s16b quark_add(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SQUELCH_C) || defined(UTIL_C))
@@ -2417,7 +2417,7 @@ extern void clear_from(int row);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern bool askfor_aux(char *buf, int len);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern bool get_string(cptr prompt, char *buf, int len);
 #endif
 #if (defined(CMD2_C) || defined(STORE_C) || defined(UTIL_C))

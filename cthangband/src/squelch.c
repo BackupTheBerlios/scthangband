@@ -17,22 +17,8 @@
 #define HIDE_ALL		6
 #define HIDE_CATS	7
 
-static byte *squelch_kind;
-
 /* Allow squelching to be disabled with an option. */
 static bool allow_squelch = TRUE;
-
-/*
- * Initialise the various squelch arrays.
- */
-void init_squelch(void)
-{
-	int i;
-
-	/* Create (and wipe) the kind array. */
-	squelch_kind = C_NEW(MAX_K_IDX, byte);
-	for (i = 0; i < MAX_K_IDX; i++) squelch_kind[i] = HIDE_NONE;
-}
 
 /*
  * Process "Q:<k_idx>:<type>" -- squelch settings for object kinds.
@@ -47,7 +33,8 @@ cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 	{
 		for (i = 0; i < MAX_K_IDX; i++)
 		{
-			squelch_kind[i] = HIDE_NONE;
+			k_info[i].squelch = HIDE_NONE;
+			k_info[i].note = 0;
 		}
 	}
 	else if (n == 2 && !strcmp(zz[0], "allow_squelch"))
@@ -80,7 +67,7 @@ cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 			return "no such squelch setting";
 
 		/* Set the squelch setting appropriately. */
-		squelch_kind[i] = l;
+		k_info[i].squelch = l;
 	}
 
 	/* Give effect to the squelch settings (later) */
@@ -88,6 +75,28 @@ cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 
 	/* If it gets this far, it worked. */
 	return SUCCESS;
+}
+
+
+void inscription_dump(FILE *fff)
+{
+	int i;
+
+	/* Title. */
+	fprintf(fff, "\n\n# Automatic default inscription dump\n\n");
+
+	/* Reset. */
+	fprintf(fff, "# Reset inscriptions\n{:---reset---\n\n");
+
+	for (i = 0; i < z_info->k_max; i++)
+	{
+		/* Nothing more to say. */
+		if (!k_info[i].note) continue;
+
+		/* Save the setting. */
+		my_fprintf(fff, "# %v\n", object_k_name_f1, i);
+		fprintf(fff, "{:%d:%s\n\n", i, quark_str(k_info[i].note));
+	}
 }
 
 /*
@@ -113,11 +122,11 @@ void squelch_dump(FILE *fff)
 	for (i = 0; i < MAX_K_IDX; i++)
 	{
 		/* Nothing more to say. */
-		if (!squelch_kind[i]) continue;
+		if (!k_info[i].squelch) continue;
 
 		/* Save the setting. */
 		my_fprintf(fff, "# %v\n", object_k_name_f1, i);
-		fprintf(fff, "Q:%d:%d\n\n", i, squelch_kind[i]);
+		fprintf(fff, "Q:%d:%d\n\n", i, k_info[i].squelch);
 	}
 }
 
@@ -149,6 +158,9 @@ static void save_squelch_prefs(int miny)
 
 	/* Save the options. */
 	squelch_dump(fff);
+
+	/* Save the inscription options. */
+	inscription_dump(fff);
 
 	/* Finished. */
 	my_fclose(fff);
@@ -442,7 +454,7 @@ name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
 	{
 		cptr dis = (allow_squelch) ? "dis" : "en";	
 		mc_put_fmt(ymax+3, 0, "[Ctrl-A] %sable auto-squelching", dis);
-		mc_put_fmt(ymax+4, 0, "[Ctrl-S] Save squelch settings");
+		mc_put_fmt(ymax+4, 0, "[Ctrl-S] Save squelch/inscription settings");
 	}
 
 	/* Choose! */
@@ -494,7 +506,7 @@ static bool good_squelch_object(int a, name_centry *cat)
 }
 
 /*
- * Set qual[x] if setting squelch_kind[k_idx] to x makes sense.
+ * Set qual[x] if setting k_info[k_idx].squelch to x makes sense.
  * Do nothing if not, as qual[] should have been initialised by the game.
  */
 static void set_good_squelch_settings(bool *qual, int k_idx)
@@ -527,7 +539,7 @@ static cptr_ch qual_str[HIDE_CATS] =
 };
 
 /*
- * Modify the squelch_kind according to the player's wishes.
+ * Modify object_kind.squelch according to the player's wishes.
  */
 void do_cmd_options_squelch(void)
 {
@@ -544,7 +556,7 @@ void do_cmd_options_squelch(void)
 	name_centry *cat;
 
 	cptr s;
-	char at, ch;
+	char at, ch, mode = '!';
 
 	int	choice[60];
 
@@ -569,6 +581,9 @@ void do_cmd_options_squelch(void)
 
 		/* Not a category. */
 		if (!cat) continue;
+
+		/* Show second help screen. */
+		help_track("option=Qa");
 
 		WIPE(qual, qual);
 
@@ -598,6 +613,18 @@ void do_cmd_options_squelch(void)
 		/* Now loop through until the player has finished. */
 		while (1)
 		{
+			cptr destroy, options;
+			if (mode == '!')
+			{
+				destroy = "Destroy";
+				options = "^a (all) , ^n (none), ^s (step), { (change mode)";
+			}
+			else
+			{
+				destroy = "Inscribe";
+				options = "^a (all), ! (change mode)";
+			}
+
 			/* Move the cursor */
 			Term_gotoxy(0, 1);
 
@@ -612,68 +639,101 @@ void do_cmd_options_squelch(void)
 				row = 3 + (i % yent);
 				col = len * (i / yent);
 				ch = body[i];
-				at = qual_str[squelch_kind[choice[i]]].str[1];
+				at = qual_str[k_info[choice[i]].squelch].str[1];
 
 				/* Print it. */
 				mc_put_fmt(row, col, "[%c] $%c%.*^s", ch, at, len-4, obuf[i]);
 			}
 			
 			/* Choose! */
-			if (!get_com(&ch, "What kind of %.27s? [%c-%c, ^a (all), ^n (none),"
-				" ^s (step)]", cat->str, body[0], body[num-1])) break;
+			if (!get_com(&ch, "%s what kind of %.27s? [%c-%c, %s]",
+				destroy, cat->str, body[0], body[num-1], options)) break;
 			s = strchr(body, ch);
 
-			if (s && s < body+num)
+			if (ch && strchr("{!", ch))
 			{
-				i = choice[s-body];
-				WIPE(qual2, qual2);
-				set_good_squelch_settings(qual2, i);
-				do
-				{
-					if (squelch_kind[i]++ == HIDE_ALL)
-						squelch_kind[i] = HIDE_NONE;
-				}
-				while (!qual2[squelch_kind[i]]);
+				mode = ch;
 			}
-			/* Destroy All! */
-			else if (ch == KTRL('A'))
+			else if (mode == '!')
 			{
-				for (i = 0; i < num; i++)
+				if (s && s < body+num)
 				{
-					squelch_kind[choice[i]] = HIDE_ALL;
-				}
+					int k = choice[s-body];
+					object_kind *k_ptr = &k_info[k];
 
-				continue;
-			}
-
-			/* Destroy None */
-			if (ch == KTRL('N'))
-			{
-				for (i = 0; i < num; i++)
-				{
-					squelch_kind[choice[i]] = HIDE_NONE;
-				}
-
-				continue;
-			}
-
-			/* Step All */
-			if (ch == KTRL('S'))
-			{
-				for (i = 0; i < num; i++)
-				{
-					byte *b = &squelch_kind[choice[i]];
+					WIPE(qual2, qual2);
+					set_good_squelch_settings(qual2, k);
 					do
 					{
-						if ((*b)++ == HIDE_ALL)
-							*b = HIDE_NONE;
+						k_ptr->squelch++;
+						k_ptr->squelch %= HIDE_CATS;
 					}
-					while (!qual[*b]);
+					while (!qual2[k_ptr->squelch]);
+				}
+				/* Destroy All! */
+				else if (ch == KTRL('A'))
+				{
+					for (i = 0; i < num; i++)
+					{
+						k_info[choice[i]].squelch = HIDE_ALL;
+					}
 				}
 
-				continue;
+				/* Destroy None */
+				else if (ch == KTRL('N'))
+				{
+					for (i = 0; i < num; i++)
+					{
+						k_info[choice[i]].squelch = HIDE_NONE;
+					}
+				}
+
+				/* Step All */
+				else if (ch == KTRL('S'))
+				{
+					for (i = 0; i < num; i++)
+					{
+						object_kind *k_ptr = &k_info[choice[i]];
+						do
+						{
+							k_ptr->squelch++;
+							k_ptr->squelch %= HIDE_CATS;
+						}
+						while (!qual[k_ptr->squelch]);
+					}
+				}
+			}
+			else /* if (mode == '{') */
+			{
+				/* Change one object's default inscription. */
+				if (s && s < body+num)
+				{
+					int k = choice[s-body];
+					char buf[80];
+					sprintf(buf, quark_str(k_info[k].note));
+					if (get_string("Inscription: ", buf, sizeof(buf)) && *buf)
+					{
+						k_info[k].note = quark_add(buf);
+					}
+				}
+
+				/* Change the default inscriptions of the displayed objects. */
+				else if (ch == KTRL('A'))
+				{
+					char buf[80] = "";
+					if (get_string("Inscription: ", buf, sizeof(buf)))
+					{
+						for (i = 0; i < num; i++)
+						{
+							k_info[choice[i]].note = quark_add(buf);
+						}
+					}
+				}
 			}
 		} /*squelch Selection */
+
+		/* Remove second help screen. */
+		help_track(NULL);
 
 	}/* category Selection */
 
@@ -750,7 +810,7 @@ static PURE bool destroy_it(object_ctype *o1_ptr)
 	 * Other things are destroyed if the "destroy" setting is at least as good
 	 * as that justified by the feeling.
 	 */
-	return (squelch_kind[o_ptr->k_idx] >= object_quality(o1_ptr));
+	return (k_info[o_ptr->k_idx].squelch >= object_quality(o1_ptr));
 }
 
 
