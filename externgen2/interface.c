@@ -104,6 +104,7 @@ int main (int argc, char *argv[])
     {
         if (bool == 0)
         {
+			if (strchr(buffer, '\n')) *strchr(buffer, '\n') = '\0';
             if (scan_vars)
                 analyse_variables(buffer, outf_ptr);
             else
