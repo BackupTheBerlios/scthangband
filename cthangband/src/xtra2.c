@@ -934,38 +934,6 @@ void lose_skills(s32b amount)
 
 
 /*
- * Spread the contents of a now ineligible square to the surrounding squares.
- */
-static void scatter_objects(int y, int x)
-{
-	cave_type *c_ptr;
-	s16b o_idx;
-
-	/* Refuse "illegal" locations */
-	if (!in_bounds(y, x)) return;
-
-	/* Grid */
-	c_ptr = &cave[y][x];
-
-	/* Scan all objects in the grid */
-	for (o_idx = c_ptr->o_idx; o_idx;)
-	{
-		/* Acquire object */
-		object_type *o_ptr = &o_list[o_idx];
-
-		/* Hopefully find somewhere appropriate for object */
-		(void)drop_near(o_ptr, -1, y, x);
-
-		/* Acquire next object */
-		o_idx = o_ptr->next_o_idx;
-	}
-
-	/* Remove objects from original square. */
-	c_ptr->o_idx = 0;
-}
-
-
-/*
  * Alters the number of a type of monster which have been killed.
  */
 static void note_monster_death(monster_race *r_ptr, s16b deaths)
@@ -983,6 +951,59 @@ static void note_monster_death(monster_race *r_ptr, s16b deaths)
 
 
 /*
+ * Turn some of the stairs around when the player finishes a quest.
+ */
+static void handle_quest_stairs(void)
+{
+	int force_leave, force_change, t, x, y, seen;
+
+	const int stairs[2] = {FEAT_LESS, FEAT_MORE};
+
+	/* Notice whether the level is full of down stairs or up ones. */
+	const int in = (dun_defs[cur_dungeon].flags & DF_TOWER) ? 0 : 1;
+
+	/* Don't create stairs out of the bottom of a dungeon. */
+	if (dun_level == dun_defs[cur_dungeon].max_level) return;
+
+	/* Count the stairs. */
+	for (y = t = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			if (cave[y][x].feat == stairs[!in]) t++;
+		}
+	}
+
+	/* Level generation should always create at least two sets of stairs. */
+	assert(t >= 2);
+
+	/* Ensure that one is left in each direction by this process. */
+	force_leave = rand_int(t);
+	force_change = rand_int(t-1);
+	if (force_leave == force_change) force_change = t-1;
+
+	/* Randomise the rest. */
+	for (y = t = seen = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			if (cave[y][x].feat == stairs[!in])
+			{
+				if (force_change == t || (force_leave != t && one_in(2)))
+				{
+					if (cave[y][x].info & CAVE_VIEW) seen = TRUE;
+					cave_set_feat(y, x, stairs[in]);
+				}
+				t++;
+			}
+		}
+	}
+
+	/* Explain the stairways. */
+	msg_format("You hear a rumbling sound%s.", (seen) ? "" : " in the distance");
+}
+
+/*
  * Handle the "death" of a monster.
  *
  * Disperse treasures centered at the monster location based on the
@@ -998,7 +1019,7 @@ static void note_monster_death(monster_race *r_ptr, s16b deaths)
  */
 void monster_death(int m_idx)
 {
-	int i, j, y, x, ny, nx;
+	int i, j, y, x;
 
 	int dump_item = 0;
 	int dump_gold = 0;
@@ -1161,11 +1182,13 @@ void monster_death(int m_idx)
 	/* Only process completed monster quests. */
 	if (!quest) return;
 
-	/* Count incomplete quests (Heino Vander Sanden) */
+	handle_quest_stairs();
+
+	/* Check for an unfinished quest. */
 	for (i = 0; i < MAX_Q_IDX; i++)
 	{
 		quest_type *q_ptr = &q_list[i];
-		if (q_ptr->level || (q_ptr->cur_num != q_ptr->max_num)) goto nowin;
+		if (q_ptr->level || (q_ptr->cur_num != q_ptr->max_num)) return;
 	}
 
 	/* Total winner */
@@ -1175,42 +1198,6 @@ void monster_death(int m_idx)
 	msg_print("*** CONGRATULATIONS ***");
 	msg_print("You have won the game!");
 	msg_print("You may retire (commit suicide) when you are ready.");
-
-nowin: /* An unfinished quest was found. */
-
-	/* Need some stairs if not at the max level */
-	if (dun_level < dun_defs[cur_dungeon].max_level)
-	{
-		/* Stagger around */
-		while (!cave_valid_bold(y, x))
-		{
-			/* Pick a location */
-			if (!scatter(&ny, &nx, y, x, 1, 0)) break;
-
-			/* Stagger */
-			y = ny; x = nx;
-		}
-
-		/* Explain the stairway */
-		msg_print("A magical stairway appears...");
-
-		if (dun_defs[cur_dungeon].flags & DF_TOWER)
-		{
-			/* Create stairs up */
-			cave_set_feat(y, x, FEAT_LESS);
-		}
-		else
-		{
-			/* Create stairs down */
-			cave_set_feat(y, x, FEAT_MORE);
-		}
-
-		/* Clear the stairs */
-		scatter_objects(y, x);
-
-		/* Remember to update everything */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
-	}
 }
 
 

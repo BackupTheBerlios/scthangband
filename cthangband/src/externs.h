@@ -35,7 +35,7 @@ extern bool player_can_see_bold(int y, int x);
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(OBJECT1_C))
 extern bool no_lite(void);
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern bool cave_valid_bold(int y, int x);
 #endif
 #if (defined(CAVE_C) || defined(MAIN_AMI_C))
