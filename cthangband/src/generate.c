@@ -283,6 +283,14 @@ void generate_spirit_names(void)
 }
 
 /*
+ * Express cave_empty_bold() as a function to allow pointers to it.
+ */
+bool PURE cave_empty_bold_p(int y, int  x)
+{
+	return cave_empty_bold(y, x);
+}
+
+/*
  * Array of room types (assumes 11x11 blocks)
  */
 static room_data room_info[ROOM_MAX] =
@@ -1893,25 +1901,13 @@ static void vault_traps(int y, int x, int yd, int xd, int num)
  */
 static void vault_monsters(int y1, int x1, int num)
 {
-	int k, i, y, x;
+	int y, x;
 
 	/* Try to summon "num" monsters "near" the given location */
-	for (k = 0; k < num; k++)
+	while (num-- && scatter(&y, &x, y1, x1, 1, cave_empty_bold_p))
 	{
-		/* Try nine locations */
-		for (i = 0; i < 9; i++)
-		{
-			int d = 1;
-
-			/* Pick a nearby location */
-			scatter(&y, &x, y1, x1, d, 0);
-
-			/* Require "empty" floor grids */
-			if (!cave_empty_bold(y, x)) continue;
-
-			/* Place the monster (allow groups) */
-			(void)place_monster(y, x, dun_depth+2, TRUE, TRUE);
-		}
+		/* Place the monster at the chosen location (allow groups) */
+		place_monster(y, x, dun_depth+2, TRUE, TRUE);
 	}
 }
 
@@ -3656,7 +3652,6 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 
 	cave_type *c_ptr;
 
-
 	/* Place dungeon features and objects */
 	for (t = data, dy = 0; dy < ymax; dy++)
 	{
@@ -3834,42 +3829,43 @@ static cptr vault_name(vault_type *v_ptr)
 	return v_name+v_ptr->name;
 }
 
-/*
- * Type 7 -- simple vaults (see "v_info.txt")
- */
-static void build_type7(int yval, int xval)
+static vault_type *pick_vault(int typ)
 {
-	vault_type	*v_ptr;
-	int dummy = 0;
-
-	/* Pick a lesser vault */
-	while (dummy < SAFE_MAX_ATTEMPTS)
+	int i, n;
+	for (i = n = 0; i < z_info->v_max; i++)
 	{
-		dummy++;
-
-		/* Access a random vault record */
-		v_ptr = &v_info[rand_int(MAX_V_IDX)];
-
-		/* Accept the first lesser vault */
-		if (v_ptr->typ == 7) break;
+		if (v_info[i].typ == typ) n++;
 	}
 
-	if (dummy >= SAFE_MAX_ATTEMPTS)
-	{
-		if (cheat_room)
-		{
-			msg_print("Warning! Could not place lesser vault!");
-		}
-		return;
-	}
-    
+	n = rand_int(n);
 
+	for (i = 0; i < z_info->v_max; i++)
+	{
+		if (v_info[i].typ == typ && !n--) return v_info+i;
+	}
+
+	/* No suitable vaults... */
+	if (cheat_room)
+	{
+		msg_format("Warning! Could not place '%d' vault!", typ);
+	}
+	return 0;
+}
+
+static void build_type7_or_8(int yval, int xval, int typ)
+{
 #ifdef FORCE_V_IDX
-	v_ptr = &v_info[2];
+	vault_type *v_ptr = ((typ == 7) ? &v_info[2] : &v_info[rand_range(77,79)]);
+#else
+	vault_type *v_ptr = pick_vault(typ);
 #endif
+	cptr type = (typ == 7) ? "Lesser" : "Greater";
+
+	/* No vault chosen. */
+	if (!v_ptr) return;
 
 	/* Message */
-	if (cheat_room) msg_format("Lesser Vault %s", vault_name(v_ptr));
+	if (cheat_room) msg_format("%s Vault %s", type, vault_name(v_ptr));
 
 	/* Boost the rating */
 	rating += v_ptr->rat;
@@ -3885,58 +3881,6 @@ static void build_type7(int yval, int xval)
 	build_vault(yval, xval, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
 }
 
-
-
-/*
- * Type 8 -- greater vaults (see "v_info.txt")
- */
-static void build_type8(int yval, int xval)
-{
-	vault_type	*v_ptr;
-	int dummy = 0;
-
-	/* Pick a lesser vault */
-	while (dummy < SAFE_MAX_ATTEMPTS)
-	{
-		dummy++;
-
-		/* Access a random vault record */
-		v_ptr = &v_info[rand_int(MAX_V_IDX)];
-
-		/* Accept the first greater vault */
-		if (v_ptr->typ == 8) break;
-	}
-
-	if (dummy >= SAFE_MAX_ATTEMPTS)
-	{
-		if (cheat_room)
-		{
-			msg_print("Warning! Could not place greater vault!");
-		}
-		return;
-	}
-
-
-#ifdef FORCE_V_IDX
-	v_ptr = &v_info[76 + randint(3)];
-#endif
-
-	/* Message */
-	if (cheat_room) msg_format("Greater Vault %s", vault_name(v_ptr));
-
-	/* Boost the rating */
-	rating += v_ptr->rat;
-
-	/* (Sometimes) Cause a special feeling */
-	if (((dun_depth) <= 50) ||
-        (randint(((dun_depth)-40) * ((dun_depth)-40) + 50) < 400))
-	{
-		good_item_flag = TRUE;
-	}
-
-	/* Hack -- Build the vault */
-	build_vault(yval, xval, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
-}
 
 /*
  * Constructs a tunnel between two points
@@ -4346,8 +4290,7 @@ static bool room_build(int y0, int x0, int typ)
 	switch (typ)
 	{
 		/* Build an appropriate room */
-		case 8: build_type8(y, x); break;
-		case 7: build_type7(y, x); break;
+		case 8: case 7: build_type7_or_8(y, x, typ); break;
 		case 6: build_type6(y, x); break;
 		case 5: build_type5(y, x); break;
 		case 4: build_type4(y, x); break;

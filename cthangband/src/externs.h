@@ -102,7 +102,7 @@ extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 extern bool projectable(int y1, int x1, int y2, int x2);
 #endif
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern void scatter(int *yp, int *xp, int y, int x, int d, int m);
+extern bool scatter(int *yp, int *xp, int y, int x, int d, bool (*accept)(int, int));
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void health_track(int m_idx);
@@ -4000,5 +4000,11 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* generate.c */
+
+#if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(WIZARD2_C))
+extern bool PURE cave_empty_bold_p(int y, int  x);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

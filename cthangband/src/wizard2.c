@@ -103,17 +103,17 @@ void do_cmd_wiz_hack_ben(void)
 
 
 #ifdef MONSTER_HORDES
+static bool PURE cave_naked_bold_p(int y, int x)
+{
+	return cave_naked_bold(y, x);
+}
+
 /* Summon a horde of monsters */
 void do_cmd_summon_horde(void)
 {
-            int wy = py, wx = px;
-            int attempts = 1000;
-            while (--attempts)
-            {
-                scatter(&wy, &wx, py, px, 3, 0);
-                if (cave_naked_bold(wy, wx)) break;
-            }
-            (void)alloc_horde(wy, wx, dun_depth);
+	int wy, wx;
+	if (scatter(&wy, &wx, py, px, 3, cave_naked_bold_p))
+		alloc_horde(wy, wx, dun_depth);
 }
 #endif
 
@@ -1462,7 +1462,7 @@ void do_cmd_wiz_summon(int num)
  */
 static void do_cmd_wiz_named_aux(int r_idx, int slp, bool friend)
 {
-	int i, x, y;
+	int x, y;
 
 	/* Request a choice if none supplied. */
 	if (!r_idx) r_idx = choose_on_screen(choose_monster_type);
@@ -1471,20 +1471,11 @@ static void do_cmd_wiz_named_aux(int r_idx, int slp, bool friend)
 	if (r_idx >= MAX_R_IDX || r_idx <= 0 || is_fake_monster(r_info+r_idx))
 		return;
 
-	/* Try 10 times */
-	for (i = 0; i < 10; i++)
-	{
-		int d = 1;
+	/* Pick a location, if possible. */
+	if (!scatter(&y, &x, py, px, 1, cave_empty_bold_p)) return;
 
-		/* Pick a location */
-		scatter(&y, &x, py, px, d, 0);
-
-		/* Require empty grids */
-		if (!cave_empty_bold(y, x)) continue;
-
-		/* Place it (allow groups) */
-        if (place_monster_aux(y, x, r_idx, slp != 0, TRUE, friend, TRUE)) break;
-	}
+	/* Place it (allow groups) */
+	place_monster_aux(y, x, r_idx, slp, TRUE, friend, TRUE);
 }
 
 /*

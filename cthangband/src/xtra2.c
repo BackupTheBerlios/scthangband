@@ -98,6 +98,13 @@ static bool death_event_roll(death_event_type *d_ptr, bool *one_dropped, s32b *t
 	}
 }
 
+/*
+ * Run cave_floor_bold() as a function. Used below to allow a pointer to it.
+ */
+static bool PURE cave_floor_bold_p(int y, int x)
+{
+	return cave_floor_bold(y, x);
+}
 
 /*
  * Create something at the point of death.
@@ -171,20 +178,22 @@ static void drop_special(monster_type *m_ptr)
 				bool seen = FALSE;
 				for (i = 0; i < num; i++)
 				{
-					int wy,wx;
-					byte j;
+					int wy, wx, j;
+					int max = (i_ptr->strict) ? 1 : 10;
+
 					/* Try to place within the given distance, but do accept greater distances if allowed. */
-					for (j = 0; j < 100; j++)
+					for (j = 0; j < max; j++)
 					{
 						int d = i_ptr->radius;
-						if (!i_ptr->strict) d+= j/10;
-						scatter(&wy, &wx, m_ptr->fy, m_ptr->fx, d, 0);
-						if (in_bounds(wy,wx) && cave_floor_bold(wy,wx)) break;
+						if (!i_ptr->strict) d += j;
+						if (scatter(&wy, &wx, m_ptr->fy, m_ptr->fx, d,
+							cave_floor_bold_p)) goto good_DM;
 					}
 
 					/* Give up if there's nowhere appropriate */
-					if (j == 100) break;
+					break;
 
+good_DM:
 					/* As creating the monster can give a message, give this message first. */
 					if (player_can_see_bold(wy, wx) && !seen)
 					{
@@ -1170,10 +1179,8 @@ void monster_death(int m_idx)
 		/* Stagger around */
 		while (!cave_valid_bold(y, x))
 		{
-			int d = 1;
-
 			/* Pick a location */
-			scatter(&ny, &nx, y, x, d, 0);
+			if (!scatter(&ny, &nx, y, x, 1, 0)) break;
 
 			/* Stagger */
 			y = ny; x = nx;

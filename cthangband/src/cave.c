@@ -1913,6 +1913,9 @@ void do_cmd_view_map(void)
 	if (dun_level == 0)
 	{
 		display_wild_map(1);
+		Term_get_size(&mx, &my);
+		my--;
+		cy = -1;
 	}
 	else
 	{
@@ -1921,10 +1924,10 @@ void do_cmd_view_map(void)
 
 	/* Wait for it */
 	str = "Hit any key to continue";
-	put_str(str, my+1, (mx-strlen(str))/2);
+	put_str(str, my, (mx-strlen(str))/2);
 
 	/* Hilite the player */
-	move_cursor(cy, cx);
+	if (cy >= 0) move_cursor(cy, cx);
 
 	/* Get any key */
 	inkey();
@@ -3684,6 +3687,27 @@ bool projectable(int y1, int x1, int y2, int x2)
 }
 
 /*
+ * Return TRUE if the new location is suitable for scatter() below.
+ */
+static bool PURE scatter_good(int ny, int nx, int y, int x, int d,
+	bool (*accept)(int, int))
+{
+	/* Ignore illegal locations and outer walls */
+	if (!in_bounds(ny, nx)) return FALSE;
+
+	/* Ignore "excessively distant" locations */
+	if ((d > 1) && (distance(y, x, ny, nx) > d)) return FALSE;
+
+	/* Require "line of sight" */
+	if (!los(y, x, ny, nx)) return FALSE;
+
+	/* Require extra restriction, if any. */
+	if (accept && !(*accept)(y, x)) return FALSE;
+
+	return TRUE;
+}
+
+/*
  * Standard "find me a location" function
  *
  * Obtains a legal location within the given distance of the initial
@@ -3692,40 +3716,42 @@ bool projectable(int y1, int x1, int y2, int x2)
  * This function is often called from inside a loop which searches for
  * locations while increasing the "d" distance.
  *
- * Currently the "m" parameter is unused.
+ * accept is an extra restriction which must be satisfied by the location,
+ * if any.
  */
-void scatter(int *yp, int *xp, int y, int x, int d, int m)
+bool scatter(int *yp, int *xp, int y, int x, int d, bool (*accept)(int, int))
 {
-	int nx, ny;
-    int attempts_left = 5000;
+	int nx, ny, t;
 
-	/* Unused */
-	m = m;
-
-
-	/* Pick a location */
-    while (--attempts_left)
+	for (ny = y-d, t = 0; ny <= y+d; ny++)
 	{
-		/* Pick a new location */
-		ny = rand_spread(y, d);
-		nx = rand_spread(x, d);
-
-		/* Ignore illegal locations and outer walls */
-		if (!in_bounds(y, x)) continue;
-
-		/* Ignore "excessively distant" locations */
-		if ((d > 1) && (distance(y, x, ny, nx) > d)) continue;
-
-		/* Require "line of sight" */
-		if (los(y, x, ny, nx)) break;
+		for (nx = x-d; nx <= x+d; nx++)
+		{
+			if (scatter_good(ny, nx, y, x, d, accept)) t++;
+		}
 	}
 
-    if (attempts_left>0)
-    {
-        /* Save the location */
-        (*yp) = ny;
-        (*xp) = nx;
-    }
+	/* No valid locations found. */
+	if (!t) return FALSE;
+
+	/* Pick a location. */
+	t = rand_int(t);
+
+	for (ny = -d; ny <= d; ny++)
+	{
+		for (nx = -d; nx <= d; nx++)
+		{
+			/* Not the chosen location. */
+			if (!scatter_good(ny, nx, y, x, d, accept) || t--) continue;
+
+			(*yp) = ny;
+			(*xp) = nx;
+			return TRUE;
+		}
+	}
+
+	/* Paranoia - scatter_good() should be TRUE as many times in each loop. */
+	return FALSE;
 }
 
 

@@ -2447,10 +2447,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 		 	int nx, ny, z, d = 3;
 
 			/* Pick a location */
-			scatter(&ny, &nx, y, x, d, 0);
-
-		 	/* Require empty grids */
-			if (!cave_empty_bold(ny, nx)) continue;
+			if (!scatter(&ny, &nx, y, x, d, cave_empty_bold_p)) break;
 
 
 			/* Prepare allocation table for the escort. */
@@ -2783,6 +2780,22 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
     }
 }
 
+/*
+ * Return TRUE if a square is suitable for monster generation.
+ */
+static bool PURE cave_summon_bold_p(int y, int x)
+{
+	int feat = cave[y][x].feat;
+
+	if (!cave_empty_bold(y, x)) return FALSE;
+
+	if (feat == FEAT_GLYPH || feat == FEAT_MINOR_GLYPH) return FALSE;
+
+	if (feat >= FEAT_PATTERN_START && feat <= FEAT_PATTERN_XTRA2) return FALSE;
+
+	return TRUE;
+}
+
 
 /*
  * Place a monster (of the specified "type") near the given
@@ -2810,39 +2823,16 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
  */
 bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm)
 {
-	int i, x, y, r_idx;
+	int x, y, r_idx;
 
 	/* Hack - disallow friendly uniques. */
 	if (charm) type |= SUMMON_NO_UNIQUES;
 
-	/* Look for a location */
-	for (i = 0; i < 20; ++i)
+	if (!scatter(&y, &x, y1, x1, 1, cave_summon_bold_p) &&
+		!scatter(&y, &x, y1, x1, 2, cave_summon_bold_p))
 	{
-		/* Pick a distance */
-		int d = (i / 15) + 1;
-
-		/* Pick a location */
-		scatter(&y, &x, y1, x1, d, 0);
-
-		/* Require "empty" floor grid */
-		if (!cave_empty_bold(y, x)) continue;
-
-		/* Hack -- no summon on glyph of warding */
-        if (cave[y][x].feat == FEAT_GLYPH) continue;
-        if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
-
-        /* ... nor on the Pattern */
-        if ((cave[y][x].feat >= FEAT_PATTERN_START)
-            && (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
-                continue;
-
-		/* Okay */
-		break;
+		return FALSE;
 	}
-
-	/* Failure */
-	if (i == 20) return (FALSE);
-
 
 	if (type)
 	{
@@ -2895,34 +2885,20 @@ bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok)
  */
 bool multiply_monster(int m_idx, bool charm, bool clone)
 {
-	monster_type	*m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = &m_list[m_idx];
 
-	int			i, y, x;
+	int y, x;
 
 	bool result = FALSE;
 
-    /* Try up to 18 times */
-	for (i = 0; i < 18; i++)
-	{
-		int d = 1;
+	if (!scatter(&y, &x, m_ptr->fy, m_ptr->fx, 1, cave_empty_bold_p))
+		return FALSE;
 
+	/* Create a new monster (awake, no groups) */
+	result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, charm, FALSE);
 
-		/* Pick a location */
-		scatter(&y, &x, m_ptr->fy, m_ptr->fx, d, 0);
+	if (clone && result) m_list[hack_m_idx_ii].smart |= SM_CLONED;
 
-		/* Require an "empty" floor grid */
-		if (!cave_empty_bold(y, x)) continue;
-
-        /* Create a new monster (awake, no groups) */
-        result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, charm, FALSE);
-
-
-		/* Done */
-		break;
-	}
-
-    if (clone && result) m_list[hack_m_idx_ii].smart |= SM_CLONED;
-	
 	/* Both resulting monsters are next generation */
 	m_ptr->generation++;
 	m_list[hack_m_idx_ii].generation = m_ptr->generation;

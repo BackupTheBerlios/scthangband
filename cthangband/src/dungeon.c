@@ -478,7 +478,7 @@ static void pattern_teleport(void)
 
 static void wreck_the_pattern(void)
 {
-    int to_ruin = 0, r_y, r_x;
+    int i, r_y, r_x;
 
     if (cave[py][px].feat == FEAT_PATTERN_XTRA2)
     {
@@ -492,10 +492,9 @@ static void wreck_the_pattern(void)
     if (!(p_ptr->invuln))
         take_hit(damroll(10,8), "corrupting the Pattern", MON_CORRUPT_PATTERN);
 
-    to_ruin = randint(45) + 35;
-    while (to_ruin--)
+	for (i = rand_range(36, 80); i; i--)
     {
-        scatter(&r_y, &r_x, py, px, 4, 0);
+		if (!scatter(&r_y, &r_x, py, px, 4, 0)) break;
         if ((cave[r_y][r_x].feat >= FEAT_PATTERN_START)
             && (cave[r_y][r_x].feat < FEAT_PATTERN_XTRA2))
         {
