@@ -4,6 +4,49 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband 1.0.4
+* Allow 'a' to be used to roll for stats in spend_points display, taking the
+  current stats for minima if use_autoroller is set. Separate rolling out into
+  a separate function. Only use the old autoroller function for quick_start.
+* Give a scroll_edge option which causes the screen to scroll until the
+  detection radius reaches the corner of the map whatever the screen size.
+* Determine the area of a room to light/darken based on the dungeon layout
+  rather than a special flag.
+* Calculate the maximum damage an uninjured monster can do via an unresisted
+  breath in monster recall.
+* Display the symbol used for a keymap trigger even if it has a separate text
+  representation.
+* Set the length of the pet descriptions to the screen width, disregarding
+  MNAME_MAX.
+* Add the inscription from both objects to the combined one if two objects with
+  different inscriptions are merged and stack_force_notes_all is set.
+* Allow some simple scripting when pre-parsing text files. Use this to remove
+  some magic numbers from v_info.txt and make it easy to search based on
+  dimensions.
+* Also use the scripting to set tval-based flags.
+* Add an o_base.txt file to contain the framework from which the names of
+  objects created (e.g. "A ? potion of ?").
+* Allow the format of ego items and artefacts to be set in their respective text
+  files.
+* Add object descriptions (based on those in Hengband) for various objects which
+  wouldn't otherwise be described in k_info.txt to that file.
+* Calculate whether an unaware object can be expected to have a flag in init1.c.
+* Give resize hooks to do_cmd_store() and get_item(). Resizing in subsidiary
+  prompts from the latter are not handled correctly at present, however.
+* Create a logfile.txt file to list a summary for every game which is played in
+  chronological order.
+* Create a TR1_X15_DRAGON flag to replace the hard-coded flag on Lightning.
+  This means that each object should only have one dragon slaying flag.
+* Tell the player that objects with R_CHAOS have R_CONF.
+* Add a somewhat accurate readme.txt, and make lib/file/readme! less ugly.
+* Make graf-xxx.prf handle unidentified objects in a more normal way.
+* Modify the code so that it compiles in MS VC++ (thanks to Iain Maclean for
+  lots of help with this) and hopefully also other compilers.
+* Put main-ami.c in an #ifdef USE_AMI directive to prevent it from contaminating
+  other systems.
+* Clean up some code.
+* Fix some bugs.
+
 sCthangband 1.0.3
 * Allow the map to be nearly as large as the main window, and the top line
   as long as space allows in many cases. Update the display as the screen is

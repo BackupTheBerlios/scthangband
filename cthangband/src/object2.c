@@ -1555,7 +1555,7 @@ static byte merge_discounts(object_type *o_ptr, object_type *j_ptr)
 
 /*
  * Allow one item to "absorb" another, assuming they are similar
- * Return true if every object was ab
+ * Return true if every object was completely absorbed.
  */
 bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 {
@@ -1576,8 +1576,11 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- blend "inscriptions" */
 	if (j_ptr->note && o_ptr->note && j_ptr->note != o_ptr->note)
 	{
-		o_ptr->note = quark_add(format("%s %s", quark_str(o_ptr->note),
-			quark_str(j_ptr->note)));
+		cptr jq = quark_str(j_ptr->note);
+		cptr oq = quark_str(o_ptr->note);
+		if (strstr(oq, jq)) /* o_ptr->note = o_ptr->note */ ;
+		else if (strstr(jq, oq)) o_ptr->note = j_ptr->note;
+		else o_ptr->note = quark_add(format("%s %s", oq, jq));
 	}
 	else if (j_ptr->note)
 	{
