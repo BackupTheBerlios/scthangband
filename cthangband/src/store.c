@@ -3875,6 +3875,9 @@ static void store_process_command(void)
 							}
 							break;
 					   }
+
+						/* Redraw stuff (later). */
+					   p_ptr->redraw |= PR_SPIRIT;
 				   }
 				   break;
 			   default:

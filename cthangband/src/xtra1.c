@@ -281,23 +281,23 @@ static void prt_spirit(void)
 
 		if(!(s_ptr->pact))
 		{
-			*s += sprintf(*s, "$d#");
+			*s += sprintf(*s, " $d#");
 		}
 		else if (s_ptr->minskill > plev)
 		{
-			*s += sprintf(*s, "$D#");
+			*s += sprintf(*s, " $D#");
 		}
 		else if(s_ptr->annoyance > 8)
 		{
-			*s += sprintf(*s, "$r%c", I2A(j++));
+			*s += sprintf(*s, " $r%c", I2A(j++));
 		}
 		else if(s_ptr->annoyance > 0)
 		{
-			*s += sprintf(*s, "$y%c", I2A(j++));
+			*s += sprintf(*s, " $y%c", I2A(j++));
 		}
 		else
 		{
-			*s += sprintf(*s, "$G%c", I2A(j++));
+			*s += sprintf(*s, " $G%c", I2A(j++));
 		}
 	}
 	mc_put_lfmt(GET_YX(XY_LIFE_SPIRIT), "%s", life);
