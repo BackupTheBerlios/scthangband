@@ -388,6 +388,9 @@ static void rd_item(object_type *o_ptr)
 	rd_string(buf, 128);
 	if (buf[0]) o_ptr->art_name = quark_add(buf);
 
+	/* Set the stack number. */
+	if (has_flag(SF_STACK_IDX)) rd_byte(&o_ptr->stack);
+
 	if (o_ptr->k_idx < 0 || o_ptr->k_idx >= MAX_K_IDX)
 	{
 		note("Destroying object with a bad k_idx.");
@@ -523,9 +526,6 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->dd = old_dd;
 		o_ptr->ds = old_ds;
 	}
-
-	/* Hack - forget existing stacking. */
-	set_stack_number(o_ptr);
 }
 
 
@@ -1806,7 +1806,7 @@ static errr rd_savefile_new_aux(void)
 		for (i = 1; i < MAX_SF_VAR; i++)
 		{
 			rd_u16b(sf_flags_sf+i);
-			if (~sf_flags_sf[i] & SF_CONTINUE) goto good;
+			if (~sf_flags_sf[i] & 1<<SF_CONTINUE) goto good;
 			if (sf_flags_sf[i] & ~sf_flags_now[i]) break;
 		}
 

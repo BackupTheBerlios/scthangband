@@ -85,3 +85,8 @@
  * Rearranges k_info to make this easier and removes object_type.xtra*.
  */
 #define SF_EGO_DISTRO 15
+
+/*
+ * Add object_type.stack to track which stack an item belongs to.
+ */
+#define SF_STACK_IDX 17

@@ -1486,7 +1486,7 @@ extern s32b object_value_real(object_type *o_ptr);
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern s32b object_value(object_type *o_ptr);
 #endif
-#if (defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
+#if (defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern void set_stack_number(object_type *o_ptr);
 #endif
 #if (defined(OBJECT2_C))

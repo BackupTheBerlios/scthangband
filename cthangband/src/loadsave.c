@@ -1829,8 +1829,8 @@ const u16b sf_flags_now[MAX_SF_VAR] =
 		B(SF_DEATHEVENTTEXT) | B(SF_QUEST_UNKNOWN) | B(SF_3D_WINPRI) | 
 		B(SF_16_CAVE_FLAG) | B(SF_SAVE_MAX_SKILLS) | B(SF_K_INFO_1) |
 		B(SF_QUEST_KNOWN) | B(SF_R_INFO_1) | B(SF_QUEST_DIRECT) |
-		B(SF_EGO_DISTRO),
-	0
+		B(SF_EGO_DISTRO) | B(SF_CONTINUE),
+	B(SF_STACK_IDX)
 };
 
 /*
@@ -2005,5 +2005,5 @@ bool has_flag(int flag)
 	int set = flag/16;
 	u16b bit = 1<<(flag%16);
 
-	return ((sf_flags_sf[set] & bit) != 0);
+	return (set < MAX_SF_VAR && (sf_flags_sf[set] & bit) != 0);
 }

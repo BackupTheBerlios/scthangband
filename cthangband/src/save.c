@@ -158,6 +158,9 @@ static void wr_item(object_type *o_ptr)
 	
 	/* Save the randart name, if any. */
 	wr_string(quark_str(o_ptr->art_name));
+
+	/* Set the stack number. */
+	if (has_flag(SF_STACK_IDX)) wr_byte(o_ptr->stack);
 }
 
 
