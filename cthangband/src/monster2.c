@@ -1589,7 +1589,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 		n = MIN(n, MAX(0, size-s));
 		s = MIN(s, MAX(0, size));
 
-		sprintf(buf, "%.*s%.*s", n, name, s, suffix_);
+		strnfmt(buf, size, "%.*s%.*s", n, name, s, suffix_);
 	}
 }
 
