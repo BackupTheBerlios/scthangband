@@ -319,6 +319,8 @@ This displays various things about your character which are not listed elsewhere
 $GInteract with the system (!)
 This allows some of the system-specific commands for altering the user interface.
 
+It is currently only used by the MS-DOS and RISC OS ports.
+
 %%%%%
 --- Saving and Exiting Commands ---
 

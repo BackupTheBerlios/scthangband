@@ -3889,6 +3889,7 @@ static FILE *show_fopen(hyperlink_type *h_ptr, cptr path, cptr name)
  */
 static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 {
+	bool skip;
 	cptr s;
 	int w,h,space;
 	int x;
@@ -3897,10 +3898,20 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 
 	/* Don't use my_fgets as that needs short lines and it will process the
 	 * output file anyway. */
-	for (x = 0; fgets(h_ptr->rbuf, 1024, fff); )
+	for (x = 0, skip = FALSE; fgets(h_ptr->rbuf, 1024, fff); )
 	{
 		/* Skip game links. */
 		if (prefix(h_ptr->rbuf, CC_LINK_PREFIX)) continue;
+
+		/* Interpret conditions. */
+		if (prefix(h_ptr->rbuf, CC_IF_PREFIX))
+		{
+			skip = !process_pref_file_expr_p(h_ptr->rbuf+strlen(CC_IF_PREFIX));
+			continue;
+		}
+
+		/* Skip excluded lines. */
+		if (skip) continue;
 
 		for (s = h_ptr->rbuf; *s;)
 		{

@@ -3247,8 +3247,11 @@ extern int PlayerUID;
 #define screen_save() Term_save()
 #define screen_load() Term_load()
 
-/* String used in show_file_tome() to indicate a non-ToME link target. */
+/* String used in show_file_aux() to indicate a non-ToME link target. */
 #define CC_LINK_PREFIX	"%%%%%"
+
+/* String used in show_file_aux() to indicate a conditional paragraph. */
+#define CC_IF_PREFIX "%%%%? "
 
 #define is_inventory_p(O_PTR) \
 	(O_PTR >= inventory && O_PTR < inventory+INVEN_TOTAL)
