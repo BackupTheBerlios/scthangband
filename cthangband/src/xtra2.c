@@ -1390,13 +1390,13 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		if (m_ptr->r_idx == MON_PLAYER_GHOST)
 		{
 			char file[1024], level[8];
-			sprintf(level, "bone.%03d", dun_level);
+			sprintf(level, "bone.%03d", dun_depth);
 
 			r_ptr->max_num = 1;
 
 			/* Delete the bones file */
 			strnfmt(file, sizeof(file), "%v",
-				path_build_f2, ANGBAND_DIR_BONE, dun_depth);
+				path_build_f2, ANGBAND_DIR_BONE, level);
 
 			fd_kill(file);
 		}

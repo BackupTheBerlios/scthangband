@@ -355,7 +355,7 @@ static void set_ghost(cptr pname, int hp, int grace, int lev)
  */
 bool place_ghost(void)
 {
-	int y, x, hp, level, grace, dummy[1];
+	int y, x, hp, grace, dummy[1];
 
 	monster_race *r_ptr = &r_info[MON_PLAYER_GHOST];
 
@@ -372,26 +372,22 @@ bool place_ghost(void)
 	if (r_ptr->cur_num >= r_ptr->max_num)
 	{
 		if (cheat_wzrd) msg_print("Player-Ghost already present!");
-		if (cheat_wzrd) msg_format("cur_num = %d, max_num - %d",r_ptr->cur_num,r_ptr->max_num);
+		if (cheat_wzrd) msg_format("cur_num = %d, max_num = %d",
+			r_ptr->cur_num, r_ptr->max_num);
 		return (FALSE);
 	}
 
 	/* Dungeon -- Use Dungeon Level */
-	else
-	{
-		/* And even then, it only happens sometimes */
-		if (14 > randint(((dun_depth) / 2) + 11)) return (FALSE);
 
-		/* Only a 33% chance */
-		if (rand_int(3) != 0) return (FALSE);
+	/* And even then, it only happens sometimes */
+	if (14 > randint(((dun_depth) / 2) + 11)) return (FALSE);
 
-		/* Level is dungeon level */
-		level = (dun_depth);
-	}
+	/* Only a 33% chance */
+	if (!one_in(3)) return (FALSE);
 
 
 	/* Choose and open the bones file */
-	fp = my_fopen_path(ANGBAND_DIR_BONE, format("bone.%03d", level), "r");
+	fp = my_fopen_path(ANGBAND_DIR_BONE, format("bone.%03d", dun_depth), "r");
 
 	/* No bones file to use */
 	if (!fp) return (FALSE);
@@ -411,7 +407,7 @@ bool place_ghost(void)
 	}
 
 	/* Set up the ghost */
-	set_ghost(name, hp, grace, level);
+	set_ghost(name, hp, grace, dun_depth);
 
 
 	/* Hack -- pick a nice (far away) location */

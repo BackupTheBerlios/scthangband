@@ -4971,7 +4971,7 @@ static void make_bones(void)
 		{
 			/* XXX XXX XXX "Bones" name */
 			char tmp[8];
-			sprintf(tmp, "bone.%03d", dun_level);
+			sprintf(tmp, "bone.%03d", dun_depth);
 
 			/* Attempt to open the bones file */
 			fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "r");
