@@ -2330,7 +2330,7 @@ void message_add(cptr str)
 	message__head += n + 1;
 }
 
-
+#define MORE_STR "-more-"
 
 /*
  * Hack -- flush
@@ -2343,7 +2343,7 @@ static void msg_flush(int x)
 	if (!use_color) a = TERM_WHITE;
 
 	/* Pause for response */
-	Term_putstr(x, 0, -1, a, "-more-");
+	Term_putstr(x, 0, -1, a, MORE_STR);
 
 	/* Get an acceptable keypress */
 	while (!auto_more)
@@ -2363,7 +2363,7 @@ static void msg_flush(int x)
 /*
  * Output a message to the top line of the screen.
  *
- * Break long messages into multiple pieces (40-72 chars).
+ * Break long messages into multiple pieces (40-lim chars).
  *
  * Allow multiple short messages to "share" the top line.
  *
@@ -2391,6 +2391,8 @@ void msg_print(cptr msg)
 
 	int n;
 
+	const int lim = Term->wid-strlen(MORE_STR)-2;
+
 	char *t;
 
 	char buf[1024];
@@ -2403,7 +2405,7 @@ void msg_print(cptr msg)
 	n = (msg ? strlen(msg) : 0);
 
 	/* Hack -- flush when requested or needed */
-	if (p && (!msg || ((p + n) > 72)))
+	if (p && (!msg || ((p + n) > lim)))
 	{
 		/* Flush */
 		msg_flush(p);
@@ -2433,17 +2435,17 @@ void msg_print(cptr msg)
 	t = buf;
 
 	/* Split message */
-	while (n > 72)
+	while (n > lim)
 	{
 		char oops;
 
 		int check, split;
 
 		/* Default split */
-		split = 72;
+		split = lim;
 
 		/* Find the "best" split point */
-		for (check = 40; check < 72; check++)
+		for (check = 40; check < lim; check++)
 		{
 			/* Found a valid split point */
 			if (t[check] == ' ') split = check;
