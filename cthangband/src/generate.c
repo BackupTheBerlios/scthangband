@@ -3016,6 +3016,7 @@ static void build_type5(int yval, int xval)
 
 	bool		empty = FALSE;
 
+	bool (*get_mon_num_hook)(int);
 
 	/* Large room */
 	y1 = yval - 4;
@@ -3168,8 +3169,8 @@ static void build_type5(int yval, int xval)
 /* test hack - force nest type to test */
 #endif
 
-	/* Prepare allocation table */
-	get_mon_num_prep();
+	/* Prepare special allocation table */
+	get_mon_num_prep(get_mon_num_hook);
 
 
 	/* Pick some monster types */
@@ -3183,11 +3184,8 @@ static void build_type5(int yval, int xval)
 	}
 
 
-	/* Remove restriction */
-	get_mon_num_hook = NULL;
-
-	/* Prepare allocation table */
-	get_mon_num_prep();
+	/* Prepare normal allocation table */
+	get_mon_num_prep(NULL);
 
 
 	/* Oops */
@@ -3282,6 +3280,7 @@ static void build_type6(int yval, int xval)
 
 	cptr		name;
 
+	bool (*get_mon_num_hook)(int);
 
 	/* Large room */
 	y1 = yval - 4;
@@ -3519,8 +3518,8 @@ static void build_type6(int yval, int xval)
 		get_mon_num_hook = vault_aux_demon;
 	}
 
-	/* Prepare allocation table */
-	get_mon_num_prep();
+	/* Prepare special allocation table */
+	get_mon_num_prep(get_mon_num_hook);
 
 
 	/* Pick some monster types */
@@ -3534,11 +3533,8 @@ static void build_type6(int yval, int xval)
 	}
 
 
-	/* Remove restriction */
-	get_mon_num_hook = NULL;
-
-	/* Prepare allocation table */
-	get_mon_num_prep();
+	/* Prepare normal allocation table */
+	get_mon_num_prep(NULL);
 
 
 	/* Oops */

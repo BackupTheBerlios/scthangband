@@ -742,7 +742,7 @@ s16b m_pop(void)
 /*
  * Apply a "monster restriction function" to the "monster allocation table"
  */
-errr get_mon_num_prep(void)
+errr get_mon_num_prep(bool (*hook)(int))
 {
 	int i;
 
@@ -753,7 +753,7 @@ errr get_mon_num_prep(void)
 		alloc_entry *entry = &alloc_race_table[i];
 
 		/* Accept monsters which pass the restriction, if any */
-		if (!get_mon_num_hook || (*get_mon_num_hook)(entry->index))
+		if (!hook || (*hook)(entry->index))
 		{
 			/* Accept this monster */
 			entry->prob2 = entry->prob1;
@@ -2358,22 +2358,16 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 			place_monster_idx = r_idx;
 
 
-			/* Set the escort hook */
-			get_mon_num_hook = place_monster_okay;
-
-			/* Prepare allocation table */
-			get_mon_num_prep();
+			/* Prepare allocation table for the escort. */
+			get_mon_num_prep(place_monster_okay);
 
 
 			/* Pick a random race */
 			z = get_mon_num(r_ptr->level);
 
 
-			/* Remove restriction */
-			get_mon_num_hook = NULL;
-
-			/* Prepare allocation table */
-			get_mon_num_prep();
+			/* Prepare normal allocation table */
+			get_mon_num_prep(NULL);
 
 
 			/* Handle failure */
@@ -2861,21 +2855,15 @@ bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool 
 	summon_specific_type = type;
 
 
-	/* Require "okay" monsters */
-	get_mon_num_hook = summon_specific_okay;
-
-	/* Prepare allocation table */
-	get_mon_num_prep();
+	/* Prepare allocation table ("okay" monster) */
+	get_mon_num_prep(summon_specific_okay);
 
 
 	/* Pick a monster, using the level calculation */
 	r_idx = get_mon_num(((dun_depth) + lev) / 2 + 5);
 
-	/* Remove restriction */
-	get_mon_num_hook = NULL;
-
-	/* Prepare allocation table */
-	get_mon_num_prep();
+	/* Prepare normal allocation table */
+	get_mon_num_prep(NULL);
 
 
 	/* Handle failure */

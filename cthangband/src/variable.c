@@ -917,17 +917,6 @@ void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
 
 
 
-/*
- * Hack -- function hook to restrict "get_mon_num_prep()" function
- */
-bool (*get_mon_num_hook)(int r_idx);
-
-
-
-/*
- * Hack -- function hook to restrict "get_obj_num_prep()" function
- */
-bool (*get_obj_num_hook)(int k_idx);
 
 /* XXX Mega-Hack - See main-win.c */
 bool angband_keymap_flag = TRUE;

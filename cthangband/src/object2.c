@@ -591,7 +591,7 @@ object_type *o_pop(void)
 /*
  * Apply a "object restriction function" to the "object allocation table"
  */
-static errr get_obj_num_prep(void)
+static errr get_obj_num_prep(bool (*hook)(int))
 {
 	int i;
 
@@ -602,7 +602,7 @@ static errr get_obj_num_prep(void)
 	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* Accept objects which pass the restriction, if any */
-		if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index))
+		if (!hook || (*hook)(table[i].index))
 		{
 			/* Accept this object */
 			table[i].prob2 = table[i].prob1;
@@ -2973,11 +2973,8 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		/* Good objects */
 		if (good)
 		{
-			/* Activate restriction */
-			get_obj_num_hook = kind_is_good;
-
-			/* Prepare allocation table */
-			get_obj_num_prep();
+			/* Prepare "good" allocation table */
+			get_obj_num_prep(kind_is_good);
 		}
 
 		/* Pick a random object */
@@ -2986,11 +2983,8 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		/* Good objects */
 		if (good)
 		{
-			/* Clear restriction */
-			get_obj_num_hook = NULL;
-
-			/* Prepare allocation table */
-			get_obj_num_prep();
+			/* Prepare normal allocation table */
+			get_obj_num_prep(NULL);
 		}
 
 		/* Handle failure */

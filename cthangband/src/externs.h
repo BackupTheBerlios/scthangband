@@ -1302,7 +1302,7 @@ extern void remove_non_pets(void);
 extern s16b m_pop(void);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
-extern errr get_mon_num_prep(void);
+extern errr get_mon_num_prep(bool (*hook)(int));
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
 extern s16b get_mon_num(int level);
@@ -3434,12 +3434,12 @@ extern bool (*ang_sort_comp)(vptr u, vptr v, int a, int b);
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
 #endif
-#if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
-extern bool (*get_mon_num_hook)(int r_idx);
-#endif
-#if (defined(OBJECT2_C) || defined(VARIABLE_C))
-extern bool (*get_obj_num_hook)(int k_idx);
-#endif
+
+
+
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(VARIABLE_C))
 extern bool angband_keymap_flag;
 #endif
