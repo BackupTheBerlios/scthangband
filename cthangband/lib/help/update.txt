@@ -288,9 +288,6 @@ sCthangband 1.0.0
 * Inform the player if an attempt to dig is doomed to failure.
 * Indicate the path a beam would follow towards a target in a similar way to
   ADOM.
-* Fix some bugs.
-
-?????
 * Replace the * symbol for a dungeon/tower with a more specific one.
 * Inform the player if an item inscribed with !! has finished recharging.
 * Display all stats above 18 as (e.g.) 23/45, using XX/XX for stats above
@@ -298,6 +295,8 @@ sCthangband 1.0.0
 * Use an UNUSED macro to indicate unused parameters and suppress warnings given
   by GCC.
 * Use environment variables for fonts under X11.
+* Fix some bugs.
+
 
 18/7/2001
 * Allow non-primary windows to display several different displays based on the
