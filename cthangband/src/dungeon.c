@@ -4231,31 +4231,6 @@ void play_game(bool new_game)
 	}
 #endif /* WINDOWS */
 
-#ifdef USE_MAIN_C
-	/* Display news.txt again, as in init_angband(). This
-	 * is done because news.txt was removed when the save game
-	 * was loaded, and we didn't know whether to wait below without
-	 * it. We don't do this without display_credits because the rest
-	 * of the initialisation process should be very quick. */
-	if (display_credits)
-	{
-		char buf[1024];
-		FILE *fp;
-		Term_clear();
-		fp = my_fopen_path(ANGBAND_DIR_FILE, "news.txt", "r");
-		if (fp)
-		{
-			int i = 0;
-			while (0 == my_fgets(fp, buf, 1024))
-			{
-				Term_putstr(0, i++, -1, TERM_WHITE, buf);
-			}
-			my_fclose(fp);
-		}
-		Term_fresh();
-	}
-#endif
-
 	/* Nothing loaded */
 	if (!character_loaded)
 	{
@@ -4321,8 +4296,29 @@ void play_game(bool new_game)
 	}
 
 #ifdef USE_MAIN_C
-	/* Wait for response if required */
-	if (display_credits) pause_line();
+	/* Display news.txt again, as in init_angband(). This
+	 * is done because news.txt was removed when the save game
+	 * was loaded, and we didn't know whether to wait below beforehand.
+	 */
+	if (display_credits)
+	{
+		char buf[1024];
+		FILE *fp;
+		Term_clear();
+		fp = my_fopen_path(ANGBAND_DIR_FILE, "news.txt", "r");
+		if (fp)
+		{
+			int i = 0;
+			while (0 == my_fgets(fp, buf, 1024))
+			{
+				Term_putstr(0, i++, -1, TERM_WHITE, buf);
+			}
+			my_fclose(fp);
+		}
+		Term_fresh();
+
+		pause_line();
+	}
 #endif
 
 
