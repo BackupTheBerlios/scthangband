@@ -1773,23 +1773,17 @@ void Term_get_cursor(bool *v)
 {
 	/* Extract visibility */
 	(*v) = Term->scr->cv;
-
-	/* Success (?) */
-	return;
 }
 
 
 /*
  * Extract the current window size
  */
-errr Term_get_size(int *w, int *h)
+void Term_get_size(int *w, int *h)
 {
 	/* Access the cursor */
 	(*w) = Term->wid;
 	(*h) = Term->hgt;
-
-	/* Success */
-	return (0);
 }
 
 

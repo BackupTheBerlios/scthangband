@@ -3837,7 +3837,7 @@ extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
 extern void Term_get_cursor(bool *v);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
-extern errr Term_get_size(int *w, int *h);
+extern void Term_get_size(int *w, int *h);
 #endif
 #if (defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_locate(int *x, int *y);
