@@ -3750,6 +3750,9 @@ static void dungeon(void)
 
 	/*** Process this dungeon level ***/
 
+	/* Reset the suitable monster list. */
+	get_mon_num_prep(NULL, 0);
+
 	/* Reset the object generation level */
 	object_level = (dun_depth);
 

@@ -912,6 +912,27 @@ static bool PURE get_mon_dead(int UNUSED p, int r_idx)
 }
 
 /*
+ * Prevent HURT_LITE monsters from being generated on the surface during the
+ * day.
+ */
+static bool PURE get_mon_toobright(int UNUSED p, int r_idx)
+{
+	monster_race *r_ptr = r_info+r_idx;
+
+	/* Not on the surface. */
+	if (dun_level) return TRUE;
+
+	/* Not light. */
+	if (!daytime_p()) return TRUE;
+
+	/* Doesn't hate light. */
+	if (~r_ptr->flags3 & RF3_HURT_LITE) return TRUE;
+
+	/* Not available. */
+	return FALSE;
+}
+
+/*
  * alloc_race_table[] functions.
  *
  * The following tables should be the only ones which modify the prob2 field
@@ -945,6 +966,9 @@ static void get_mon_num_init(void)
 
 		/* Bad depth. */
 		if (!get_mon_depth(dun_depth, i)) entry->prob2 = 0;
+
+		/* Not allowed during the day. */
+		else if (!get_mon_toobright(0, i)) entry->prob2 = 0;
 
 		/* Accept the monster. */
 		else entry->prob2 = entry->prob1;
