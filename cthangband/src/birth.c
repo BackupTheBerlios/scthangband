@@ -3946,11 +3946,6 @@ static bool player_birth_aux(void)
 			/* Display */
 			c_put_str(TERM_L_BLUE, str, 4, 15);
 			
-			/* Get a random name now we have a race*/
-			create_random_name(p_ptr->prace,player_name);
-			/* Display */
-			c_put_str(TERM_L_BLUE, player_name, 2, 15);
-	
 			/* Clean up */
 			clear_from(15);
 	
