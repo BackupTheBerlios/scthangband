@@ -4079,15 +4079,6 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
 	if (r_ptr->flags1 & (RF1_GUARDIAN)) do_poly = FALSE;
 
 
-#if 0 /* Is it redundant, or is it a bug? */
-	/* "Unique" monsters can only be "killed" by the player */
-	if (r_ptr->flags1 & RF1_GUARDIAN)
-	{
-		/* Uniques may only be killed by the player */
-		if (mw_ptr && (dam > m_ptr->hp)) dam = m_ptr->hp;
-	}
-#endif
-
 	/*
 	 * "Quest" monsters can only be "killed" by the player
 	 * Heino Vander Sanden

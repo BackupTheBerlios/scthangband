@@ -384,6 +384,9 @@ static void sense_inventory(void)
 	}
 }
 
+static bool create_up_stair;	/* Auto-create "up stairs" */
+static bool create_down_stair;	/* Auto-create "down stairs" */
+
 /*
  * Change level, setting various relevant things.
  */
@@ -3695,11 +3698,6 @@ static void resurrect(bool wizard)
 		/* Hack -- Prevent recall */
 		p_ptr->word_recall = 0;
 	}
-
-#if 0 /* Is this ever used? */
-	/* Note cause of death XXX XXX XXX */
-	if (wizard) died_from = "Cheating death";
-#endif
 
 	/* Teleport to town */
 	change_level(0, START_RANDOM);

@@ -2366,7 +2366,7 @@ extern void msg_print(cptr msg);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void msg_format(cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C))
 extern void c_put_str(byte attr, cptr str, int row, int col);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
@@ -2546,12 +2546,12 @@ extern s16b energy_use;
 #if (defined(DUNGEON_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b old_energy_use;
 #endif
-#if (defined(DUNGEON_C) || defined(VARIABLE_C))
-extern bool create_up_stair;
-#endif
-#if (defined(DUNGEON_C) || defined(VARIABLE_C))
-extern bool create_down_stair;
-#endif
+
+
+
+
+
+
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool msg_flag;
 #endif
@@ -2816,9 +2816,9 @@ extern bool small_levels;
 #if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool empty_levels;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool player_symbols;
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool equippy_chars;
 #endif
@@ -2981,9 +2981,9 @@ extern bool flush_failure;
 #if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool flush_disturb;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool flush_command;
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(SQUELCH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool fresh_before;
 #endif
@@ -3194,24 +3194,24 @@ extern char history[4][60];
 #if (defined(FILES_C) || defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern char savefile[1024];
 #endif
-#if (defined(CAVE_C) || defined(VARIABLE_C))
-extern s16b lite_n;
-#endif
-#if (defined(CAVE_C) || defined(VARIABLE_C))
-extern byte lite_y[LITE_MAX];
-#endif
-#if (defined(CAVE_C) || defined(VARIABLE_C))
-extern byte lite_x[LITE_MAX];
-#endif
-#if (defined(CAVE_C) || defined(VARIABLE_C))
-extern s16b view_n;
-#endif
-#if (defined(CAVE_C) || defined(VARIABLE_C))
-extern byte view_y[VIEW_MAX];
-#endif
-#if (defined(CAVE_C) || defined(VARIABLE_C))
-extern byte view_x[VIEW_MAX];
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #if (defined(CAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern s16b temp_n;
 #endif
@@ -3230,30 +3230,30 @@ extern cptr *macro__pat;
 #if (defined(CMD4_C) || defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr *macro__act;
 #endif
-#if (defined(INIT2_C) || defined(VARIABLE_C))
-extern bool *macro__cmd;
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern char *macro__buf;
 #endif
-#if (defined(UTIL_C) || defined(VARIABLE_C))
-extern s16b quark__num;
-#endif
+
+
+
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr *quark__str;
 #endif
-#if (defined(UTIL_C) || defined(VARIABLE_C))
-extern u16b message__next;
-#endif
-#if (defined(UTIL_C) || defined(VARIABLE_C))
-extern u16b message__last;
-#endif
-#if (defined(UTIL_C) || defined(VARIABLE_C))
-extern u16b message__head;
-#endif
-#if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
-extern u16b message__tail;
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern u16b *message__ptr;
 #endif
@@ -3419,9 +3419,9 @@ extern cptr ANGBAND_SYS;
 #if (defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_GRAF;
 #endif
-#if (defined(INIT2_C) || defined(VARIABLE_C))
-extern cptr ANGBAND_DIR;
-#endif
+
+
+
 #if (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_DIR_APEX;
 #endif

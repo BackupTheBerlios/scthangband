@@ -123,9 +123,6 @@ void init_file_paths(cptr path)
 {
 	/*** Free everything ***/
 
-	/* Free the main path */
-	FREE(ANGBAND_DIR);
-
 	/* Free the sub-paths */
 	FREE(ANGBAND_DIR_APEX);
 	FREE(ANGBAND_DIR_BONE);
@@ -141,9 +138,6 @@ void init_file_paths(cptr path)
 
 
 	/*** Prepare the "path" ***/
-
-	/* Hack -- save the main directory */
-	ANGBAND_DIR = string_make(path);
 
 #ifdef VM
 
@@ -1338,7 +1332,6 @@ static errr init_other(void)
 	/* Macro variables */
 	C_MAKE(macro__pat, MACRO_MAX, cptr);
 	C_MAKE(macro__act, MACRO_MAX, cptr);
-	C_MAKE(macro__cmd, MACRO_MAX, bool);
 
 	/* Macro action buffer */
 	C_MAKE(macro__buf, 1024, char);
@@ -1352,9 +1345,6 @@ static errr init_other(void)
 	/* Message variables */
 	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
 	C_MAKE(message__buf, MESSAGE_BUF, char);
-
-	/* Hack -- No messages yet */
-	message__tail = MESSAGE_BUF;
 
 
 	/*** Prepare the Stores ***/

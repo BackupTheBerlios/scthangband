@@ -889,29 +889,6 @@ errr fd_seek(int fd, huge n)
 }
 
 
-#if 0
-/*
- * Hack -- attempt to truncate a file descriptor
- */
-static errr fd_chop(int fd, huge n)
-{
-	/* XXX XXX */
-	n = n ? n : 0;
-
-	/* Verify the fd */
-	if (fd < 0) return (-1);
-
-#if defined(SUNOS) || defined(ULTRIX) || defined(NeXT)
-	/* Truncate */
-	ftruncate(fd, n);
-#endif
-
-	/* Success */
-	return (0);
-}
-#endif
-
-
 /*
  * Hack -- attempt to read data from a file descriptor
  */
@@ -1383,24 +1360,6 @@ errr macro_add(cptr pat, cptr act)
 	return (0);
 }
 
-
-
-#if 0
-/*
- * Initialize the "macro" package
- */
-static errr macro_init(void)
-{
-	/* Macro patterns */
-	C_MAKE(macro__pat, MACRO_MAX, cptr);
-
-	/* Macro actions */
-	C_MAKE(macro__act, MACRO_MAX, cptr);
-
-	/* Success */
-	return (0);
-}
-#endif
 
 
 /*
@@ -2040,6 +1999,11 @@ char inkey(void)
  * Note that "quark zero" is NULL and should not be "dereferenced".
  */
 
+/* The number of quarks */
+static s16b quark__num;
+
+
+
 /*
  * Add a new "quark" to the set of quarks.
  */
@@ -2110,6 +2074,10 @@ cptr quark_str(u16b i)
  * extremely efficient, both in space and time, for use with the Borg.
  */
 
+static u16b message__next; /* The next "free" index to use */
+static u16b message__last; /* The index of the oldest message. */
+static u16b message__head; /* The next "free" offset */
+static u16b message__tail = MESSAGE_BUF; /* The oldest used char offset */
 
 
 /*

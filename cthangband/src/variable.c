@@ -71,9 +71,6 @@ s16b command_new;		/* Command chaining from inven/equip view */
 s16b energy_use;		/* Energy use this turn */
 s16b old_energy_use;		/* Energy use last turn */
 
-bool create_up_stair;	/* Auto-create "up stairs" */
-bool create_down_stair;	/* Auto-create "down stairs" */
-
 bool msg_flag;			/* Used in msg_print() for "buffering" */
 
 bool alive;				/* True if game is running */
@@ -192,7 +189,6 @@ bool alert_failure;		/* Alert user to various failures */
 bool last_words;		/* Get last words upon dying */
 bool small_levels;		/* Allow unusually small dungeon levels */
 bool empty_levels;		/* Allow empty 'arena' levels */
-bool player_symbols;		/* Use varying symbols for the player char */
 bool equippy_chars;		/* Back by popular demand... */
 bool skip_chaos_features;		/* Skip chaos feature screen even if we have it */
 bool plain_descriptions;	/* Plain object descriptions */
@@ -268,7 +264,6 @@ bool avoid_other;			/* Avoid processing special colors */
 bool flush_error;			/* Flush input on incorrect keypresses. */
 bool flush_failure;			/* Flush input on any failure */
 bool flush_disturb;			/* Flush input on disturbance */
-bool flush_command;			/* Flush input before every command */
 
 bool fresh_before;			/* Flush output before normal commands */
 bool fresh_after;			/* Flush output after normal commands */
@@ -435,19 +430,6 @@ char history[4][60];
 char savefile[1024]="";
 
 
-/*
- * Array of grids lit by player lite (see "cave.c")
- */
-s16b lite_n;
-byte lite_y[LITE_MAX];
-byte lite_x[LITE_MAX];
-
-/*
- * Array of grids viewable to the player (see "cave.c")
- */
-s16b view_n;
-byte view_y[VIEW_MAX];
-byte view_x[VIEW_MAX];
 
 /*
  * Array of grids for use by various functions (see "cave.c")
@@ -473,46 +455,16 @@ cptr *macro__pat;
 cptr *macro__act;
 
 /*
- * Array of macro types [MACRO_MAX]
- */
-bool *macro__cmd;
-
-/*
  * Current macro action [1024]
  */
 char *macro__buf;
 
 
 /*
- * The number of quarks
- */
-s16b quark__num;
-
-/*
  * The pointers to the quarks [QUARK_MAX]
  */
 cptr *quark__str;
 
-
-/*
- * The next "free" index to use
- */
-u16b message__next;
-
-/*
- * The index of the oldest message (none yet)
- */
-u16b message__last;
-
-/*
- * The next "free" offset
- */
-u16b message__head;
-
-/*
- * The offset to the oldest used char (none yet)
- */
-u16b message__tail;
 
 /*
  * The array of offsets, by index [MESSAGE_MAX]
@@ -795,12 +747,6 @@ cptr ANGBAND_SYS = "xxx";
  * This variable is used to choose an appropriate "graf-xxx" file
  */
 cptr ANGBAND_GRAF = "old";
-
-/*
- * Path name: The main "lib" directory
- * This variable is not actually used anywhere in the code
- */
-cptr ANGBAND_DIR;
 
 /*
  * High score files (binary)

@@ -608,13 +608,7 @@ static void rd_lore(monster_race *r_ptr)
 		rd_byte(&r_ptr->r_wake);
 		rd_byte(&r_ptr->r_ignore);
 
-		/* Extra stuff */
-#if 0
-		rd_byte(&r_ptr->r_xtra1);
-		rd_byte(&r_ptr->r_xtra2);
-#else
 		strip_bytes(2);
-#endif
 
 		/* Count drops */
 		rd_byte(&r_ptr->r_drop_gold);
@@ -1008,12 +1002,7 @@ static void rd_ghost(void)
 	/* Experience */
 	rd_s32b(&r_ptr->mexp);
 
-	/* Extra */
-#if 0
-	rd_s16b(&r_ptr->extra);
-#else
 	strip_bytes(2);
-#endif
 
 	/* Frequency */
 	rd_byte(&r_ptr->freq_inate);

@@ -134,20 +134,6 @@ s16b modify_stat_value(int value, int amount)
 }
 
 
-#if 0
-/*
- * Print character info at given row, column in a 13 char field
- */
-static void prt_field(cptr info, int row, int col)
-{
-	/* Dump 13 spaces to clear */
-	c_put_str(TERM_WHITE, "             ", row, col);
-
-	/* Dump the info itself */
-	c_put_str(TERM_L_BLUE, info, row, col);
-}
-#endif
-
 /*
  * Translate a negative co-ordinate into one relative to the far edge of the
  * screen.
@@ -1069,9 +1055,6 @@ static void calc_hitpoints(void)
 	/* New maximum hitpoints */
 	if (p_ptr->mhp != mhp)
 	{
-
-#if 1
-
 		/* XXX XXX XXX New hitpoint maintenance */
 
 		/* Enforce maximum */
@@ -1080,19 +1063,6 @@ static void calc_hitpoints(void)
 			p_ptr->chp = mhp;
 			p_ptr->chp_frac = 0;
 		}
-
-#else
-
-		s32b value;
-
-		/* change current hit points proportionately to change of mhp */
-		/* divide first to avoid overflow, little loss of accuracy */
-		value = (((long)p_ptr->chp << 16) + p_ptr->chp_frac) / p_ptr->mhp;
-		value = value * mhp;
-		p_ptr->chp = (value >> 16);
-		p_ptr->chp_frac = (value & 0xFFFF);
-
-#endif
 
 		/* Save the new max-hitpoints */
 		p_ptr->mhp = mhp;

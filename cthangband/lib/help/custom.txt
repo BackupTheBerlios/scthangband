@@ -37,10 +37,6 @@ Attempt to make a "bell" noise when various "errors" occur.
 $GUse colour if possible (slow) [use_color]
 This option enables the software support for "colour". This makes the game slower, so you may choose to disable it on slow computers.
 
-%%%%% <player_symbols>
-$GUse special symbols for the player char [player_symbols]
-If this option has been compiled in, it allows you to display your character using race / class / sex dependent colours and graphical symbols. Note that the support for this option may not have been compiled in on all platforms.
-
 %%%%% <hilite_player>
 $GHilite the player with the cursor [hilite_player]
 Place the visible cursor on the player. This looks fine on some Unix machines, but horrible on most graphics machines. Note that only some machines are able to *not* show the cursor, but on those machines, hiding the cursor often speeds up the game and looks better.
@@ -295,10 +291,6 @@ This option forces the game to flush all pending input whenever various "failure
 %%%%% <flush_disturb>
 $GFlush input whenever disturbed [flush_disturb]
 This option forces the game to flush all pending input whenever the character is "disturbed". This is useful if you use macros which take time, since it will prevent you from continuing your macro while being attacked by a monster.
-
-%%%%% <flush_command>
-$GFlush input before every command [flush_command]
-This option forces the game to flush all pending input before every command. This option is silly, unless you are very paranoid.
 
 %%%%% <fresh_before>
 $GFlush output before every command [fresh_before]

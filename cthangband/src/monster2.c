@@ -781,57 +781,6 @@ void remove_non_pets(void)
 	}
 }
 
-#if 0
-/*
- * Delete/Remove all the monsters when the player leaves the level
- *
- * This code has now been replaced by "remove_non_pets()"
- * 
- * This is an efficient method of simulating multiple calls to the
- * "delete_monster()" function, with no visual effects.
- */
-static void wipe_m_list(void)
-{
-	int i;
-
-	/* Delete all the monsters */
-	for (i = m_max - 1; i >= 1; i--)
-	{
-		monster_type *m_ptr = &m_list[i];
-
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Hack -- Reduce the racial counter */
-		r_ptr->cur_num--;
-
-		/* Monster is gone */
-		cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-
-		/* Wipe the Monster */
-		WIPE(m_ptr, monster_type);
-	}
-
-	/* Reset "m_max" */
-	m_max = 1;
-
-	/* Reset "m_cnt" */
-	m_cnt = 0;
-
-	/* Hack -- reset "reproducer" count */
-	num_repro = 0;
-
-	/* Hack -- no more target */
-	target_who = 0;
-
-	/* Hack -- no more tracking */
-	health_track(0);
-}
-#endif
-
-
 /*
  * Acquires and returns the index of a "free" monster.
  *

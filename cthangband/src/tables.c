@@ -2784,9 +2784,6 @@ option_type option_info[] =
 
 
 
-    { &player_symbols,              TRUE, OPTS_DISPLAY,      1, 13,
-      "player_symbols",             "Use special symbols for the player char"},
-
     { &equippy_chars,               TRUE, OPTS_OBJ,      1, 14,
         "equippy_chars",           "Display 'equippy' chars" },
 
@@ -2829,9 +2826,6 @@ option_type option_info[] =
 
 	{ &flush_disturb,               FALSE, OPTS_PERF,      1, 24,
 	"flush_disturb",                "Flush input whenever disturbed" },
-
-	{ &flush_command,               FALSE, OPTS_PERF,      1, 25,
-	"flush_command",                "Flush input before every command" },
 
 	{ &fresh_before,                TRUE, OPTS_PERF,      1, 26,
 	"fresh_before",                 "Flush output before every command" },

@@ -1920,89 +1920,6 @@ static bool detect_monsters_string(cptr Match)
 
 
 /*
- * A "generic" detect monsters routine, tagged to flags3
- */
-#if 0
-bool detect_monsters_xxx(u32b match_flag)
-{
-	int             i, y, x;
-
-	bool    flag = FALSE;
-    cptr desc_monsters = "weird monsters";
-
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		/* Only detect nearby monsters */
-		if (!panel_contains(y, x)) continue;
-		
-		/* Detect evil monsters */
-		if (r_ptr->flags3 & (match_flag))
-		{
-			/* Take note that they are something */
-			r_ptr->r_flags3 |= (match_flag);
-
-			/* Update monster recall window */
-			if (monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Hack -- See monster */
-			m_ptr->ml = TRUE;
-			
-			/* Redraw */
-			lite_spot(y, x);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-	switch (match_flag)
-		{ case RF3_DEMON:
-	    desc_monsters = "demons";
-			break;
-		  case RF3_UNDEAD:
-	    desc_monsters = "the undead";
-			break;
-		}
-		/* Describe result */
-		msg_format("You sense the presence of %s!", desc_monsters);
-		msg_print(NULL);
-
-		/* Update window */
-		p_ptr->window |= PW_VISIBLE;
-	}
-
-	/* Result */
-	return (flag);
-}
-#endif
-
-
-/*
  * Detect everything.
  * This function assumes that it is expected to check for traps, and so
  * should not be called for items which may remain unidentified.
@@ -4157,17 +4074,6 @@ bool banish_evil(int dist)
 
 
 /*
- * Turn undead
- */
-#if 0
-static bool turn_undead(int dam)
-{
-	return (project_hack(GF_TURN_UNDEAD, dam));
-}
-#endif
-
-
-/*
  * Dispel undead monsters
  */
 bool dispel_undead(int dam)
@@ -5966,20 +5872,6 @@ void set_recall(bool spell)
  {
    return (project_hack(GF_TURN_ALL, dam));
  }
-
-
- /*
-
-  * Death-ray all monsters (note: OBSCENELY powerful)
-  */
-#if 0
-static bool deathray_monsters(int dam)
-{
-     return (project_hack(GF_DEATH_RAY, dam));
-}
-#endif
-
-
 
 
  bool charm_monster(int dir, int plev)

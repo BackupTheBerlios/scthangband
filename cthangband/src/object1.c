@@ -2176,12 +2176,9 @@ static void change_stat_min(int stat, int act)
 			int loss, cur = p_ptr->stat_cur[i];
 			if (cur < 19) loss = 1;
 
-			else loss =
-#if 0 /* It's always 5, so don't waste time calculating it. */
-			MAX((((cur-18)/2+1)/2+2)*10/100, 10/2);
-#else
-			5;
-#endif
+			/* (((cur-18)/2+1)/2+2)*10/100 <= 5. */
+			else loss = 5;
+
 			if (cur > 18 && cur-loss <= 18)
 				p_ptr->stat_cur[i] = 18;
 			else
@@ -2192,12 +2189,10 @@ static void change_stat_min(int stat, int act)
 		{
 			int loss, cur = p_ptr->stat_max[i];
 			if (cur < 19) loss = 1;
-			else loss =
-#if 0 /* It's always 10, so don't waste time calculating it. */
-			MAX((((cur-18)/2+1)/2+2)*25/100, 25/2);
-#else
-			12;
-#endif
+
+			/* (((cur-18)/2+1)/2+2)*25/100 <= 12 */
+			else loss = 12;
+
 			if (p_ptr->stat_cur[i] > 18 && p_ptr->stat_cur[i]-loss <= 18)
 				p_ptr->stat_cur[i] = 18;
 			else

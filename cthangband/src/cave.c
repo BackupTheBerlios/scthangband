@@ -2149,12 +2149,12 @@ void do_cmd_view_map(void)
  * Oh, and outside of the "torch radius", only "lite" grids need to be scanned.
  */
 
-
-
-
-
-
-
+/*
+ * Array of grids lit by player lite.
+ */
+static s16b lite_n;
+static byte lite_y[LITE_MAX];
+static byte lite_x[LITE_MAX];
 
 /*
  * Actually erase the entire "lite" array, redrawing every grid
@@ -2450,6 +2450,13 @@ void update_lite(void)
 
 
 
+
+/*
+ * Array of grids viewable to the player
+ */
+static s16b view_n;
+static byte view_y[VIEW_MAX];
+static byte view_x[VIEW_MAX];
 
 
 /*
@@ -3190,41 +3197,8 @@ void update_view(void)
  * able to track down either the player or a position recently
  * occupied by the player.
  */
-static int flow_n = 0;
 
 
-/*
- * Hack -- forget the "flow" information
- */
-#if 0
-static void forget_flow(void)
-{
-
-#ifdef MONSTER_FLOW
-
-	int x, y;
-
-	/* Nothing to forget */
-	if (!flow_n) return;
-
-	/* Check the entire dungeon */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
-		{
-			/* Forget the old data */
-			cave[y][x].cost = 0;
-			cave[y][x].when = 0;
-		}
-	}
-
-	/* Start over */
-	flow_n = 0;
-
-#endif
-
-}
-#endif
 
 
 #ifdef MONSTER_FLOW
@@ -3239,7 +3213,7 @@ static int flow_tail = 0;
 /*
  * Take note of a reachable grid.  Assume grid is legal.
  */
-static void update_flow_aux(int y, int x, int n)
+static void update_flow_aux(int y, int x, int n, int f)
 {
 	cave_type *c_ptr;
 
@@ -3250,13 +3224,13 @@ static void update_flow_aux(int y, int x, int n)
 	c_ptr = &cave[y][x];
 
 	/* Ignore "pre-stamped" entries */
-	if (c_ptr->when == flow_n) return;
+	if (c_ptr->when == f) return;
 
 	/* Ignore "walls" and "rubble" */
 	if (c_ptr->feat >= FEAT_RUBBLE) return;
 
 	/* Save the time-stamp */
-	c_ptr->when = flow_n;
+	c_ptr->when = f;
 
 	/* Save the flow cost */
 	c_ptr->cost = n;
@@ -3298,6 +3272,8 @@ void update_flow(void)
 
 	int x, y, d;
 
+	static int flow_n = 0;
+
 	/* Hack -- disabled */
 	if (!flow_by_sound) return;
 
@@ -3329,7 +3305,7 @@ void update_flow(void)
 	flow_head = flow_tail = 0;
 
 	/* Add the player's grid to the queue */
-	update_flow_aux(py, px, 0);
+	update_flow_aux(py, px, 0, flow_n);
 
 	/* Now process the queue */
 	while (flow_head != flow_tail)
@@ -3345,7 +3321,8 @@ void update_flow(void)
 		for (d = 0; d < 8; d++)
 		{
 			/* Add that child if "legal" */
-			update_flow_aux(y+ddy_ddd[d], x+ddx_ddd[d], cave[y][x].cost+1);
+			update_flow_aux(y+ddy_ddd[d], x+ddx_ddd[d], cave[y][x].cost+1,
+				flow_n);
 		}
 	}
 

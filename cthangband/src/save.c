@@ -227,13 +227,7 @@ static void wr_lore(int r_idx)
 	wr_byte(r_ptr->r_wake);
 	wr_byte(r_ptr->r_ignore);
 
-	/* Extra stuff */
-#if 0
-	wr_byte(r_ptr->r_xtra1);
-	wr_byte(r_ptr->r_xtra2);
-#else
 	wr_u16b(0);
-#endif
 
 	/* Count drops */
 	wr_byte(r_ptr->r_drop_gold);
@@ -531,12 +525,7 @@ static void wr_ghost(void)
 	/* Experience */
 	wr_s32b(r_ptr->mexp);
 
-	/* Extra */
-#if 0
-	wr_s16b(r_ptr->extra);
-#else
 	wr_s16b(0);
-#endif
 
 	/* Frequency */
 	wr_byte(r_ptr->freq_inate);
