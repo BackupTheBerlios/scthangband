@@ -3720,3 +3720,12 @@ cptr_ch feeling_str[SENSE_MAX] =
 
 cptr option_chars =
 	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789;:'@#~<>/?";
+
+natural_attack natural_attacks[5] =
+{
+	{MUT_SCOR_TAIL, 7, 3, 5, GF_POIS, "tail"},
+	{MUT_HORNS, 6, 2, 15, GF_HIT, "horns"},
+	{MUT_BEAK, 4, 2, 5, GF_HIT, "beak"},
+	{MUT_TRUNK, 4, 1, 35, GF_HIT, "trunk"},
+	{MUT_TENTACLES, 5, 2, 5, GF_HELL_FIRE, "tentacles"},
+};

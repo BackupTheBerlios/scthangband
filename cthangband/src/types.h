@@ -1507,3 +1507,15 @@ struct name_entry
 	int idx;
 	cptr str;
 };
+
+typedef struct natural_attack natural_attack;
+struct natural_attack
+{
+	int mut;	/* The chaos feature required for this attack. */
+	byte dd;	/* The dice for the attack. */
+	byte ds;	/* The sides of each die in the attack. */
+	byte wgt;	/* The weight used in the attack (for criticals). */
+	byte typ;	/* The type of attack for project(), or GF_HIT for physical. */
+	cptr desc;	/* The name of the body part used. */
+};
+

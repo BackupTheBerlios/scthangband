@@ -281,72 +281,28 @@ static void touch_zap_player(monster_type *m_ptr)
         }
 }
 
-
-static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
+static void do_natural_attack(s16b m_idx, natural_attack *n_ptr)
 {
-
+	bool fear[1];
     int             k, bonus, chance;
-    int             n_weight = 0;
     monster_type    *m_ptr = &m_list[m_idx];
     monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
-    int dss, ddice;
-
-	const char * atk_desc;
-	
 	/* Slow down the attack */
 	energy_use += TURN_ENERGY/10;
-
-    switch (attack)
-    {
-	case MUT_SCOR_TAIL:
-		dss = 3;
-		ddice = 7;
-		n_weight = 5;
-		atk_desc = "tail";
-		break;
-	case MUT_HORNS:
-		dss = 2;
-		ddice = 6;
-		n_weight = 15;
-		atk_desc = "horns";
-		break;
-	case MUT_BEAK:
-		dss = 2;
-		ddice = 4;
-		n_weight = 5;
-		atk_desc = "beak";
-		break;
-	case MUT_TRUNK:
-		dss = 1;
-		ddice = 4;
-		n_weight = 35;
-		atk_desc = "trunk";
-		break;
-	case MUT_TENTACLES:
-		dss = 2;
-		ddice = 5;
-		n_weight = 5;
-		atk_desc = "tentacles";
-		break;
-        default:
-            dss = ddice = n_weight = 1;
-            atk_desc = "undefined body part";
-    }
-
 
 	/* Calculate the "attack quality" */
     bonus = p_ptr->to_h;
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
-		/* Test for hit */
-		if (test_hit(chance, r_ptr->ac, m_ptr->ml))
-		{
+	/* Test for hit */
+	if (test_hit(chance, r_ptr->ac, m_ptr->ml))
+	{
 			/* Sound */
 			sound(SOUND_HIT);
 
             msg_format("You hit %v with your %s.",
-				monster_desc_f2, m_ptr, 0, atk_desc);
+				monster_desc_f2, m_ptr, 0, n_ptr->desc);
 			
 			/* Give experience if it wasn't too easy */
 			if (chance < (r_ptr->ac * 3))
@@ -354,8 +310,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 				skill_exp(SKILL_CLOSE);
 			}
 
-            k = damroll(ddice, dss);
-            k = critical_norm(n_weight, p_ptr->to_h, k);
+            k = damroll(n_ptr->dd, n_ptr->ds);
+            k = critical_norm(n_ptr->wgt, p_ptr->to_h, k);
 
 			/* Apply the player damage bonuses */
             k += p_ptr->to_d;   
@@ -376,30 +332,28 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
                 m_ptr->smart &= ~SM_ALLY;
             }
 
-		/* Damage, check for fear and mdeath */
-		switch (attack)
+		if (n_ptr->typ == GF_HIT)
 		{
-		case MUT_SCOR_TAIL:
-			project(0, 0, m_ptr->fy, m_ptr->fx, k, GF_POIS, PROJECT_KILL);
-			break;
-		case MUT_TENTACLES:
-			project(0, 0, m_ptr->fy, m_ptr->fx, k, GF_HELL_FIRE, PROJECT_KILL);
-			break;
-		default:
-			*mdeath = mon_take_hit(m_idx, k, fear, NULL);
+			/* Melee attack. */
+			mon_take_hit(m_idx, k, fear, NULL);
 		}
-		touch_zap_player(m_ptr);
-    }
-
-		/* Player misses */
 		else
 		{
-			/* Sound */
-			sound(SOUND_MISS);
-
-            /* Message */
-			msg_format("You miss %v.", monster_desc_f2, m_ptr, 0);
+			/* Magic attack. */
+			project(0, 0, m_ptr->fy, m_ptr->fx, k, n_ptr->typ, PROJECT_KILL);
 		}
+		touch_zap_player(m_ptr);
+	}
+
+	/* Player misses */
+	else
+	{
+		/* Sound */
+		sound(SOUND_MISS);
+
+		/* Message */
+		msg_format("You miss %v.", monster_desc_f2, m_ptr, 0);
+	}
 }
 
 /*
@@ -564,8 +518,7 @@ void py_attack(int y, int x)
 	C_TNEW(m_name, MNAME_MAX, char);
 
 
-	bool            fear = FALSE;
-    bool            mdeath = FALSE;
+	bool fear = FALSE, old_fear = (m_ptr->monfear != 0);
 
     bool        backstab = FALSE, vorpal_cut = FALSE, chaos_effect = FALSE;
     bool        stab_fleeing = FALSE;
@@ -581,7 +534,7 @@ void py_attack(int y, int x)
 		/* Can't backstab creatures that we can't see, right? */
 		backstab = TRUE;
 	}
-    if ((m_ptr->monfear) && (m_ptr->ml) && (rand_int(50) < p_ptr->skill_stl))
+    if ((old_fear) && (m_ptr->ml) && (rand_int(50) < p_ptr->skill_stl))
     {
 		stab_fleeing = TRUE;
     }
@@ -803,12 +756,9 @@ void py_attack(int y, int x)
 
 
 			/* Damage, check for fear and death */
-            if (mon_take_hit(c_ptr->m_idx, k, &fear, NULL))
-            {
-                mdeath = TRUE;
-            }
+			mon_take_hit(c_ptr->m_idx, k, &fear, NULL);
 
-            if (m_ptr->smart & SM_ALLY)
+            if (m_ptr->r_idx && m_ptr->smart & SM_ALLY)
             {
                 msg_format("%^s gets angry!", m_name);
                 m_ptr->smart &= ~SM_ALLY;
@@ -933,22 +883,20 @@ void py_attack(int y, int x)
 	 * only give attacks occasionally - depending on number
 	 * on speed of player with weapon
 	 */
-    if ((!no_extra) && (randint((p_ptr->num_blow+30)/60)==1))
+    if ((!no_extra) && one_in((p_ptr->num_blow+30)/60))
     {
-		if (p_has_mutation(MUT_HORNS) && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT_HORNS, &fear, &mdeath);
-		if (p_has_mutation(MUT_BEAK) && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT_BEAK, &fear, &mdeath);
-		if (p_has_mutation(MUT_SCOR_TAIL) && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT_SCOR_TAIL, &fear, &mdeath);
-		if (p_has_mutation(MUT_TRUNK) && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT_TRUNK, &fear, &mdeath);
-		if (p_has_mutation(MUT_TENTACLES) && !mdeath)
-			natural_attack(c_ptr->m_idx, MUT_TENTACLES, &fear, &mdeath);
+		natural_attack *n_ptr;
+		FOR_ALL_IN(natural_attacks, n_ptr)
+		{
+			if (p_has_mutation(n_ptr->mut) && m_ptr->r_idx)
+			{
+				do_natural_attack(c_ptr->m_idx, n_ptr);
+			}
         }
+	}
 
 	/* Hack -- delay fear messages */
-    if (fear && m_ptr->ml)
+    if (m_ptr->r_idx && m_ptr->ml && !old_fear && m_ptr->monfear)
 	{
 		/* Sound */
 		sound(SOUND_FLEE);
