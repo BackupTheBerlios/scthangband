@@ -648,6 +648,7 @@ struct object_extra {
  */
 void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr)
 {
+	bool spoil = FALSE;
 	int i;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -670,23 +671,8 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	/* j_ptr->handed = o_ptr->handed; */ /* Unused */
 	j_ptr->note = o_ptr->note;
 	
-
-	if (cheat_item && (
-#ifdef SPOIL_ARTIFACTS
-	/* Full knowledge for some artifacts */
-	allart_p(o_ptr) ||
-#endif
-#ifdef SPOIL_EGO_ITEMS
-	/* Full knowledge for some ego-items */
-	ego_item_p(o_ptr) ||
-#endif
-	(!allart_p(o_ptr) && !ego_item_p(o_ptr))))
-	{
-		j_ptr->ident |= IDENT_MENTAL | IDENT_KNOWN;
-	}
-
 	/* Some flags are known for aware objects. */
-	if (object_aware_p(j_ptr))
+	if (object_aware_p(o_ptr))
 	{
 		j_ptr->k_idx = o_ptr->k_idx;
 		j_ptr->tval = o_ptr->tval;
@@ -703,7 +689,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	}
 
 	/* Some flags are known for identified objects. */
-	if (object_known_p(j_ptr))
+	if (object_known_p(o_ptr))
 	{
 		j_ptr->name1 = o_ptr->name1;
 		j_ptr->name2 = o_ptr->name2;
@@ -740,7 +726,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	 * an item is worn, which works as none of the flags below have an
 	 * effect otherwise, and the flag is only checked here.
 	 */
-	if (spoil_flag && j_ptr->ident & IDENT_TRIED)
+	if (spoil_flag && o_ptr->ident & IDENT_TRIED)
 	{
 		/* Get all flags */
 		object_flags(o_ptr, &(j_ptr->flags1), &(j_ptr->flags2), &(j_ptr->flags3));
@@ -796,7 +782,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	 * Hack - ignore other things the player is certain to know, as the
 	 * player wants clear potions and the like.
 	 */
-	if (spoil_base && !object_aware_p(j_ptr))
+	if (spoil_base && !object_aware_p(o_ptr))
 	{
 		o_base_type *ob_ptr = o_base+u_info[k_ptr->u_idx].p_id;
 
@@ -807,22 +793,50 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		
 
 	/* Check for cursing even if unidentified */
-	if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
+	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
 		j_ptr->flags3 |= TR3_CURSED;
 
+	if (cheat_item && (
+#ifdef SPOIL_ARTIFACTS
+	/* Full knowledge for some artifacts */
+	allart_p(o_ptr) ||
+#endif
+#ifdef SPOIL_EGO_ITEMS
+	/* Full knowledge for some ego-items */
+	ego_item_p(o_ptr) ||
+#endif
+	(!allart_p(o_ptr) && !ego_item_p(o_ptr)))) spoil = TRUE;
+
 	/* Base objects */
-	if ((spoil_base || j_ptr->ident & IDENT_MENTAL) &&
-	(object_known_p(j_ptr) || object_aware_p(j_ptr)))
+	if ((spoil_base || spoil || o_ptr->ident & IDENT_MENTAL) &&
+	(object_known_p(o_ptr) || object_aware_p(o_ptr)))
 	{
-		j_ptr->flags1 |= k_ptr->flags1;
-		j_ptr->flags2 |= k_ptr->flags2;
-		j_ptr->flags3 |= k_ptr->flags3;
+	j_ptr->flags1 |= k_ptr->flags1;
+	j_ptr->flags2 |= k_ptr->flags2;
+	j_ptr->flags3 |= k_ptr->flags3;
 	}
 
-    /* Ego-item (known basic flags) */
-	if (j_ptr->name2 && (spoil_ego || j_ptr->ident & IDENT_MENTAL))
+	/*
+	 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC.
+	 * Aware objects also do so.
+	 */
+	if (object_aware_p(o_ptr) || (j_ptr->flags3 & TR3_SHOW_MODS))
 	{
-		ego_item_type *e_ptr = &e_info[j_ptr->name2];
+		j_ptr->dd = o_ptr->dd;
+		j_ptr->ds = o_ptr->ds;
+	}
+	if (object_aware_p(o_ptr) || j_ptr->flags3 & TR3_SHOW_ARMOUR)
+	{
+		j_ptr->ac = o_ptr->ac;
+	}
+
+	/* Must be identified for further details. */
+	if (!object_known_p(o_ptr)) return;
+
+    /* Ego-item (known basic flags) */
+	if (o_ptr->name2 && (spoil_ego || spoil || o_ptr->ident & IDENT_MENTAL))
+	{
+		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
 		j_ptr->flags1 |= e_ptr->flags1;
 		j_ptr->flags2 |= e_ptr->flags2;
@@ -830,33 +844,44 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	}
 
 	/* Pre-defined artifacts (known basic flags) */
-	if (j_ptr->name1 && (spoil_art || j_ptr->ident & IDENT_MENTAL))
+	if (o_ptr->name1 && (spoil_art || spoil || o_ptr->ident & IDENT_MENTAL))
 	{
-		artifact_type *a_ptr = &a_info[j_ptr->name1];
+		artifact_type *a_ptr = &a_info[o_ptr->name1];
 
 		j_ptr->flags1 |= a_ptr->flags1;
 		j_ptr->flags2 |= a_ptr->flags2;
 		j_ptr->flags3 |= a_ptr->flags3;
 	}
 
+	/* The random powers of *IDENTIFIED* items are known. */
+	if (spoil || o_ptr->ident & IDENT_MENTAL)
+	{
+		j_ptr->flags2 &= ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
+	}
+
 	/* Check for both types of cursing */
-	if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
+	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
 		j_ptr->flags3 |= TR3_CURSED;
-	else if (j_ptr->ident & IDENT_SENSE_CURSED)
+	else if (o_ptr->ident & IDENT_SENSE_CURSED)
 		j_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
 
-    /* Random artifact ! */
-	if (j_ptr->ident & IDENT_MENTAL)
-    {
-		j_ptr->flags1 |= o_ptr->flags1;
-		j_ptr->flags2 |= o_ptr->flags2;
-		j_ptr->flags3 |= o_ptr->flags3;
+	/* Need full knowledge or spoilers */
+	if (!spoil && !(o_ptr->ident & IDENT_MENTAL)) return;
 
-		/* Hack - the random powers of *IDENTIFIED* items are known. */
-		j_ptr->flags2 &= ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
+    /* Random artifact ! */
+    if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
+    {
+	j_ptr->flags1 |= o_ptr->flags1;
+	j_ptr->flags2 |= o_ptr->flags2;
+	j_ptr->flags3 |= o_ptr->flags3;
+
     }
 
-    if (j_ptr->ident & IDENT_MENTAL && !(o_ptr->art_name))
+	/* Full knowledge for *identified* objects */
+	if (!(o_ptr->ident & IDENT_MENTAL)) return;
+
+
+    if (!(o_ptr->art_name))
     {
         /* Extra powers */
         switch (o_ptr->xtra1)
@@ -917,24 +942,6 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
             }
         }
     }
-
-
-	/*
-	 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC,
-	 * as does awareness.
-	 */
-	if (object_aware_p(j_ptr) || (j_ptr->flags3 & TR3_SHOW_MODS))
-	{
-		j_ptr->dd = o_ptr->dd;
-		j_ptr->ds = o_ptr->ds;
-	}
-	if (object_aware_p(j_ptr) || j_ptr->flags3 & TR3_SHOW_ARMOUR)
-	{
-		j_ptr->ac = o_ptr->ac;
-	}
-
-	/* Hack - resist_chaos by any means gives resist_conf. */
-	if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
 }
 
 
