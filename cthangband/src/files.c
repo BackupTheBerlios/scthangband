@@ -3209,8 +3209,8 @@ void display_player(int mode)
 			/* Name, sex, race, template and stats (compressed) */
 			display_player_stat_info_birth();
 
-			/* Extra info (melee) */
-			display_player_sides(FALSE);
+			/* Extra info (missile) */
+			display_player_sides(TRUE);
 
 			/* Experience */
 			display_player_xp();
