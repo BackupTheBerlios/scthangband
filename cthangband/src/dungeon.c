@@ -734,7 +734,7 @@ void curse(object_type *o_ptr)
 	o_ptr->ident |= IDENT_CURSED;
 	o_ptr->art_flags3 |= TR3_CURSED;
 	o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
-	if (streq(quark_str(o_ptr->note), "uncursed"))
+	if (streq(quarkstr(o_ptr->note), "uncursed"))
 	{
 		o_ptr->note = 0;
 	}
@@ -1588,7 +1588,7 @@ static void process_world(void)
             else
                 {
                 if ((!disturb_other) ||
-                    (o_ptr->note && (strchr(quark_str(o_ptr->note),'.'))))
+                    (strchr(quarkstr(o_ptr->note),'.')))
                     {
                         /* Do nothing */
                         /* msg_print("Teleport aborted.") */ ;

@@ -788,15 +788,8 @@ void do_cmd_inscribe(void)
 	msg_format("Inscribing %s.", o_name);
 	msg_print(NULL);
 
-	/* Start with nothing */
-	strcpy(out_val, "");
-
-	/* Use old inscription */
-	if (o_ptr->note)
-	{
 		/* Start with the old inscription */
-		strcpy(out_val, quark_str(o_ptr->note));
-	}
+	strcpy(out_val, quarkstr(o_ptr->note));
 
 	/* Get a new inscription (possibly empty) */
 	if (get_string("Inscription: ", out_val, 80))
@@ -809,10 +802,10 @@ void do_cmd_inscribe(void)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	}
 
 		/* Make a note of the change. */
-		message_add(format("Inscribed %s as %s.", o_name, quark_str(o_ptr->note)));
-	}
+	message_add(format("Inscribed %s as %s.", o_name, quarkstr(o_ptr->note)));
 }
 
 

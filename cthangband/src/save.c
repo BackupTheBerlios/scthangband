@@ -590,14 +590,7 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->xtra2);
 
 	/* Save the inscription (if any) */
-	if (o_ptr->note)
-	{
-		wr_string(quark_str(o_ptr->note));
-	}
-	else
-	{
-		wr_string("");
-	}
+	wr_string(quarkstr(o_ptr->note));
 	
 	/* If it is a "new" named artifact, save the name */        
 	if (o_ptr->art_name)

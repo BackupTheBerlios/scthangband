@@ -1933,7 +1933,12 @@ cptr quark_str(s16b i)
 	cptr q;
 
 	/* Verify */
-	if ((i < 0) || (i >= quark__num)) i = 0;
+	if ((i < 0) || (i >= quark__num)) 
+		quit("Out of bounds quark string error.");
+	
+	/* Trap the (usually more obvious) 0 quark separately. */
+	if (i == 0)
+		quit("Quark 0 request error.");
 
 	/* Access the quark */
 	q = quark__str[i];
@@ -3289,11 +3294,8 @@ void request_command(bool shopping)
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
-		/* No inscription */
-		if (!o_ptr->note) continue;
-
-		/* Obtain the inscription */
-		s = quark_str(o_ptr->note);
+		/* Obtain the inscription, if any. */
+		s = quarkstr(o_ptr->note);
 
 		/* Find a '^' */
 		s = strchr(s, '^');

@@ -592,7 +592,7 @@ void carry(int pickup)
 				int okay = TRUE;
 
 				/* Hack -- query every item */
-				if (carry_query_flag && !strstr(quark_str(o_ptr->note), "=g"))
+				if (carry_query_flag && !strstr(quarkstr(o_ptr->note), "=g"))
 				{
 					char out_val[160];
 					sprintf(out_val, "Pick up %s? ", o_name);

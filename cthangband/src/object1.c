@@ -4167,11 +4167,8 @@ static bool get_item_allow(int item)
 		o_ptr = &o_list[0 - item];
 	}
 	
-	/* No inscription */
-	if (!o_ptr->note) return (TRUE);
-
 	/* Find a '!' */
-	s = strchr(quark_str(o_ptr->note), '!');
+	s = strchr(quarkstr(o_ptr->note), '!');
 
 	/* Process preventions */
 	while (s)
@@ -4233,11 +4230,8 @@ static int get_tag(int *cp, char tag)
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
-		/* Skip empty inscriptions */
-		if (!o_ptr->note) continue;
-
 		/* Find a '@' */
-		s = strchr(quark_str(o_ptr->note), '@');
+		s = strchr(quarkstr(o_ptr->note), '@');
 
 		/* Process all tags */
 		while (s)
@@ -4790,7 +4784,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 					/* Skip invalid objects */
 					if (!get_item_okay(i)) continue;
 					/* Skip specified objects */
-					if (strstr(quark_str(o_ptr->note), "!k")) continue;
+					if (strstr(quarkstr(o_ptr->note), "!k")) continue;
 					/* Skip objects which are not worthless */
 					if (object_value(o_ptr) > 0) continue;
 					/* Notice the first cursed item */
