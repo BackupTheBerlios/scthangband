@@ -254,6 +254,10 @@ This causes b, A, E, F, a, z, q, r and u to carry out whichever of the associate
 $GAllow objects to stack on the floor [testing_stack]
 Allows a cave grid to hold more than one object (or one kind of object).
 
+%%%%% <show_piles>
+$GShow stacks with a special colour/character [show_piles]
+Display stacks of items on the floor with a special character (& by default).
+
 %%%%%
 === Performance options ===
 
