@@ -84,7 +84,7 @@ typedef errr (*parse_info_txt_func)(char *buf, header *head, vptr *extra);
 
 struct header
 {
-	char version[6];	/* Version */
+	char version[MAX_VERSION_LEN];	/* Version */
 
 	u16b info_num;		/* Number of "info" records */
 
@@ -1403,7 +1403,7 @@ typedef struct high_score high_score;
 
 struct high_score
 {
-	char what[8];		/* Version info (string) */
+	char what[MAX_VERSION_LEN];		/* Version info (string) */
 
 	char pts[10];		/* Total Score (number) */
 

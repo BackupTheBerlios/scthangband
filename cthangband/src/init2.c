@@ -1763,6 +1763,10 @@ void init_angband(void)
 	/* Hack - a pointer intended not to match anything. */
 	cptr dummy = buf;
 
+	/* Paranoia - check the version. */
+	if (strlen(GAME_VERSION) >= MAX_VERSION_LEN)
+		quit("Version string too long.");
+
 	WIPE(head, header);
 
 	/* Hack - never call this twice. */

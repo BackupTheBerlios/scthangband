@@ -38,11 +38,15 @@
  */
 
 /* <<VERSION STAMP>>
- * Hack - GAME_VERSION must be <= 5 characters long for the header and >= 5
- * characters long for main-mac.c. GAME_NAME is less strict.
+ * Hack - GAME_VERSION should be less than MAX_VERSION_LEN characters long
+ * to fit in high_score.what, something which cannot easily be altered.
+ * GAME_NAME is less strict.
  */
 #define GAME_NAME	"sCthangband"
 #define GAME_VERSION   "_CVS_"
+
+/* Maximum length of GAME_VERSION above, needed for high_score.what, etc.. */
+#define MAX_VERSION_LEN 8
 
 /*
  * Number of grids used to display the dungeon (vertically).
