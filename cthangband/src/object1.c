@@ -867,7 +867,13 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	}
 
 
-    if (j_ptr->ident & IDENT_MENTAL && !(o_ptr->art_name))
+    if (~j_ptr->ident & IDENT_MENTAL);
+	else if (o_ptr->art_name)
+	{
+		j_ptr->xtra1 = o_ptr->xtra1;
+		j_ptr->xtra2 = o_ptr->xtra2;
+	}
+	else
     {
         /* Extra powers */
         switch (o_ptr->xtra1)
@@ -2512,11 +2518,8 @@ cptr item_activation(object_type *o_ptr)
         }
     }
 
-	/* Require dragon scale mail */
-	if (o_ptr->tval != TV_DRAG_ARMOR) return "a bad miscellaneous activation";
-
 	/* Branch on the sub-type */
-	switch (o_ptr->sval)
+	if (o_ptr->tval == TV_DRAG_ARMOR) switch (o_ptr->sval)
 	{
 		case SV_DRAGON_BLUE:
 		{
@@ -2570,11 +2573,15 @@ cptr item_activation(object_type *o_ptr)
 		{
 			return "breathe the elements (300) every 300+d300 turns";
 		}
+		/* Oops */
+		default:
+		{
+			return "a bad dragon scale mail activation";
+		}
 	}
 
-
 	/* Oops */
-	return "a bad dragon scale mail activation";
+	if (o_ptr->tval != TV_DRAG_ARMOR) return "a bad miscellaneous activation";
 }
 
 

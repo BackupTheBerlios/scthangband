@@ -2977,11 +2977,12 @@ static bool is_room_func_p(int y, int x)
 
 	for (i = adj = 0; i < N_ELEMENTS(xs); i++)
 	{
-		if (i == 5 || !cave_floor_bold(y+ys[i], x+xs[i]))
+		if (!cave_floor_bold(y+ys[i], x+xs[i]))
 		{
 			adj = 0;
 		}
-		else if (adj++)
+		/* (1,1) and (1,0) being floor squares does not make a room. */
+		else if (adj++ && i != 5)
 		{
 			return TRUE;
 		}

@@ -1056,6 +1056,37 @@ s32b flag_cost(object_type * o_ptr, bool all)
 
 }
 
+/*
+ * Determine how various unusual numerical bonuses for an item are and return
+ * the bonus to value this gives to most things.
+ *
+ * Maybe it should exclude the expected bonus from being an artefact.
+ * Maybe it should differentiate between differences which can be modified by
+ * scrolls and those which can't. Each enchantment point costs at least 125 AU
+ * with scrolls (doubled for artefacts), so each point below +0 costs that much
+ * to produce, and above it the following cumulative values (see enchant()):
+ *
+ *  +1  +2  +3  +4  +5  +6   +7   +8   +9  +10  +11   +12   +13   +14    +15
+ * 125 251 382 522 678 857 1065 1315 1672 2297 4797 14412 32270 57270 119770
+ *
+ * Enchantments above +15, and enchantments which are not armour to_a or
+ * weapon to_d or to_h cannot be obtained by scrolls.
+ */
+static u32b mod_cost(object_type *o_ptr)
+{
+	object_kind *k_ptr = k_info+o_ptr->k_idx;
+	return 100 * (
+
+		/* Bonuses to hit, damage and AC. */
+		o_ptr->to_h - k_ptr->to_h +
+		o_ptr->to_d - k_ptr->to_d +
+		o_ptr->to_a - k_ptr->to_a +
+
+		/* Hack -- Factor in extra damage dice */
+		(((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) ?
+		(o_ptr->dd - k_ptr->dd) * o_ptr->ds : 0)
+	);
+}
 
 
 /*
@@ -1151,8 +1182,9 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_AMULET:
 		case TV_RING:
 		{
-			/* Hack -- Negative "pval" is always bad */
-			if (o_ptr->pval < 0) return (0L);
+			/* Don't treat negative pvals in a special way, as worthless items
+			 * should be broken. */
+			/* if (o_ptr->pval < 0) return (0L); */
 
 			/* No pval */
 			if (!o_ptr->pval) break;
@@ -1198,23 +1230,9 @@ s32b object_value_real(object_type *o_ptr)
 			break;
 		}
 
-		/* Rings/Amulets */
+		/* Rings/Amulets/Armour/Bows/Weapons */
 		case TV_RING:
 		case TV_AMULET:
-		{
-			/* Hack -- negative bonuses are bad */
-			if (o_ptr->to_a < 0) return (0L);
-			if (o_ptr->to_h < 0) return (0L);
-			if (o_ptr->to_d < 0) return (0L);
-
-			/* Give credit for bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-
-			/* Done */
-			break;
-		}
-
-		/* Armor */
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CLOAK:
@@ -1224,35 +1242,14 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
-		{
-			/* Hack -- negative armor bonus */
-			if (o_ptr->to_a < 0) return (0L);
-
-			/* Give credit for bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-
-			/* Done */
-			break;
-		}
-
-		/* Bows/Weapons */
 		case TV_BOW:
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_SWORD:
 		case TV_POLEARM:
 		{
-			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
-
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-
-			/* Hack -- Factor in extra damage dice */
-			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
-			{
-				value += (o_ptr->dd - k_ptr->dd) * o_ptr->ds * 100L;
-			}
+			value += mod_cost(o_ptr);
 
 			/* Done */
 			break;
@@ -1263,17 +1260,8 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
-
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
-
-			/* Hack -- Factor in extra damage dice */
-			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
-			{
-				value += (o_ptr->dd - k_ptr->dd) * o_ptr->ds * 5L;
-			}
+			value += mod_cost(o_ptr)/20;
 
 			/* Done */
 			break;
@@ -1282,7 +1270,7 @@ s32b object_value_real(object_type *o_ptr)
 
 
 	/* Return the value */
-	return (value);
+	return MAX(value, 0L);
 }
 
 
@@ -1302,7 +1290,7 @@ s32b object_value(object_type *o_ptr)
 	s32b value;
 
 
-	/* Unknown items -- acquire a base value */
+	/* Known items -- acquire the actual value */
 	if (object_known_p(o_ptr))
 	{
 		/* Broken items -- worthless */
@@ -1315,7 +1303,7 @@ s32b object_value(object_type *o_ptr)
 		value = object_value_real(o_ptr);
 	}
 
-	/* Known items -- acquire the actual value */
+	/* Unknown items -- acquire a base value */
 	else
 	{
 		/* Hack -- Felt broken items */
