@@ -3750,9 +3750,6 @@ static void dungeon(void)
 
 	/*** Process this dungeon level ***/
 
-	/* Reset the suitable monster list. */
-	get_mon_num_prep(NULL, 0);
-
 	/* Reset the object generation level */
 	object_level = (dun_depth);
 
@@ -4386,6 +4383,9 @@ void play_game(bool new_game)
 	/* Set quest monsters. */
 	set_guardians();
 
+	/* Reset the suitable monster list. */
+	get_mon_num_prep(NULL, 0);
+
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
 
@@ -4475,6 +4475,9 @@ void play_game(bool new_game)
 
 		/* Set quest monsters for the new level. */
 		set_guardians();
+
+		/* Reset the suitable monster list. */
+		get_mon_num_prep(NULL, 0);
 
 		/* Make a new level */
  		generate_cave();
