@@ -258,6 +258,7 @@ extern bool show_labels;
 extern bool show_weights;
 extern bool show_choices;
 extern bool show_details;
+extern bool show_choices_main;
 extern bool testing_stack;
 extern bool testing_carry;
 extern bool cheat_peek;

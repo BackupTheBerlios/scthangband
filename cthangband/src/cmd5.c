@@ -96,8 +96,18 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 	/* Nothing chosen yet */
 	flag = FALSE;
 
+	if (show_choices_main)
+	{
+		/* Show list */
+		redraw = TRUE;
+		Term_save();
+		print_spells(spells, num, 1, 20, school_no);
+	}		
+	else
+	{
 	/* No redraw yet */
 	redraw = FALSE;
+	}
 
 	/* Show choices */
 	if (show_choices)
@@ -203,9 +213,6 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -369,17 +376,24 @@ int get_cantrip(int *sn, int sval)
 	/* Nothing chosen yet */
 	flag = FALSE;
 
+	if (show_choices_main)
+	{
+		/* Show list */
+		redraw = TRUE;
+		Term_save();
+		print_cantrips(spells, num, 1, 20);
+	}		
+	else
+	{
 	/* No redraw yet */
 	redraw = FALSE;
+	}
 
 	/* Show choices */
 	if (show_choices)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -479,9 +493,6 @@ int get_cantrip(int *sn, int sval)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -634,17 +645,24 @@ static int get_favour(int *sn, int spirit,int sphere)
 	/* Nothing chosen yet */
 	flag = FALSE;
 
+	if (show_choices_main)
+	{
+		/* Show list */
+		redraw = TRUE;
+		Term_save();
+		print_favours(spells, num, 1, 20, sphere);
+	}		
+	else
+	{
 	/* No redraw yet */
 	redraw = FALSE;
+	}
 
 	/* Show choices */
 	if (show_choices)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -744,9 +762,6 @@ static int get_favour(int *sn, int spirit,int sphere)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -873,7 +888,6 @@ s16b favour_chance(int fav,int sphere)
 int get_spirit(int *sn, cptr prompt, bool call)
 {
 	int		i;
-	int		spirit = -1;
 	int		ask;
 	bool		flag, redraw, okay;
 	char		choice;
@@ -923,17 +937,11 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	/* Nothing chosen yet */
 	flag = FALSE;
 
-	/* No redraw yet */
-	redraw = FALSE;
-
 	/* Show choices */
 	if (show_choices)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -943,9 +951,22 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	{
 		i = 0;
 		flag = TRUE;
+		redraw = FALSE;
 	}
 	else
 	{
+		if (show_choices_main)
+		{
+			/* Show list */
+			redraw = TRUE;
+			Term_save();
+			print_spirits(valid_spirits,total,1, 20);
+	}
+	else
+	{
+			/* No redraw yet */
+			redraw = FALSE;
+		}
 	/* Build a prompt (accept all spirits) */
 	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) %^s which spirit? ",
 		I2A(0), I2A(total - 1), prompt);
@@ -1022,9 +1043,6 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -3262,8 +3280,6 @@ void do_cmd_cast(void)
 			/* A spell was cast */
 		if (!(spell_worked[spell_school] & (1L << (spell))))
 		{
-			int e = s_ptr->sexp;
-
 			/* The spell worked */
 	   		spell_worked[spell_school] |= (1L << spell);
 		}
@@ -3326,9 +3342,7 @@ void do_cmd_cantrip(void)
 	int	chance, beam;
 	int	plev = 0;
 	int	dummy = 0;
-	int	ii = 0, ij = 0;
 
-	bool	none_came = FALSE;
 	const cptr prayer = "cantrip";
 	bool from_pouch = FALSE;
 	bool item_break = FALSE;
@@ -3695,8 +3709,7 @@ void do_cmd_invoke(void)
 	int	spell, dir;
 	int	chance, beam;
 	u16b	plev = 0;
-	int	favour_sphere = 0, dummy = 0;
-	int	ii = 0, ij = 0;
+	int	favour_sphere = 0;
 	int spirit;
 	bool	none_came = FALSE;
 
@@ -4139,6 +4152,67 @@ void mindcraft_info(char *p, int power)
     }
 }
 
+/*
+ * Display mindcrafting powers
+ */
+static void print_mindcraft(int x, int y)
+{
+	int i, chance, minfail, psi = skill_set[SKILL_MINDCRAFTING].value/2;
+	mindcraft_power spell;
+	char		comment[80];
+	/* Display a list of spells */
+	prt("", y, x);
+	put_str("Name", y, x + 5);
+	put_str("Sk  Chi Fail Info", y, x + 35);
+
+	/* Dump the spells */
+	for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
+	{
+		char psi_desc[80];
+
+		/* Access the spell */
+		spell = mindcraft_powers[i];
+		if (spell.min_lev > psi)   break;
+
+		chance = spell.fail;
+		/* Reduce failure rate by "effective" level adjustment */
+		chance -= 3 * ((skill_set[SKILL_MINDCRAFTING].value/2) - spell.min_lev);
+
+		/* Reduce failure rate by INT/WIS adjustment */
+		chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_WIS]] - 1);
+
+		/* Not enough mana to cast */
+		if (spell.mana_cost > p_ptr->cchi)
+		{
+			chance += 5 * (spell.mana_cost - p_ptr->cchi);
+		}
+		
+		/* Extract the minimum failure rate */
+		minfail = adj_mag_fail[p_ptr->stat_ind[A_WIS]];
+				    
+		/* Minimum failure rate */
+		if (chance < minfail) chance = minfail;
+
+		/* Stunning makes spells harder */
+		if (p_ptr->stun > 50) chance += 25;
+		else if (p_ptr->stun) chance += 15;
+
+		/* Always a 5 percent chance of working */
+		if (chance > 95) chance = 95;
+				    
+		/* Get info */
+		mindcraft_info(comment, i);
+				    
+		/* Dump the spell --(-- */
+		sprintf(psi_desc, "  %c) %-30s%2d %4d %3d%%%s",
+		I2A(i), spell.name,
+		spell.min_lev*2, spell.mana_cost, chance, comment);
+		prt(psi_desc, y + i + 1, x);
+	}
+
+	/* Clear the bottom line */
+	prt("", y + i + 1, x);
+}
 
 /*
  * Allow user to choose a mindcrafter power.
@@ -4161,19 +4235,12 @@ static int get_mindcraft_power(int *sn)
 	int                     num = 0;
     int y = 1;
     int x = 20;
-    int minfail = 0;
-    
         int  psi = skill_set[SKILL_MINDCRAFTING].value/2;
-    int chance = 0;
-    
     bool            flag, redraw;
     int             ask;
 	char            choice;
-
-        mindcraft_power spell;
-    
 	char            out_val[160];
-        char            comment[80];
+	mindcraft_power spell;
     
     cptr p = "power";
 
@@ -4198,9 +4265,18 @@ static int get_mindcraft_power(int *sn)
 
 	/* Nothing chosen yet */
 	flag = FALSE;
-
+	if (show_choices_main)
+	{
+		/* Show list */
+		redraw = TRUE;
+		Term_save();
+		print_mindcraft(x,y);
+	}		
+	else
+	{
 	/* No redraw yet */
 	redraw = FALSE;
+	}
 
        for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
 	      if (mindcraft_powers[i].min_lev <= psi)
@@ -4219,8 +4295,6 @@ static int get_mindcraft_power(int *sn)
             /* Show the list */
 			if (!redraw)
 			{
-                char psi_desc[80];
-
 				/* Show list */
 				redraw = TRUE;
 
@@ -4228,55 +4302,7 @@ static int get_mindcraft_power(int *sn)
 				Term_save();
 
 			    /* Display a list of spells */
-			    prt("", y, x);
-			    put_str("Name", y, x + 5);
-			    put_str("Sk  Chi Fail Info", y, x + 35);
-
-			    /* Dump the spells */
-			    for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
-				{
-				    /* Access the spell */
-				    spell = mindcraft_powers[i];
-				    if (spell.min_lev > psi)   break;
-
-				    chance = spell.fail;
-                    /* Reduce failure rate by "effective" level adjustment */
-                    chance -= 3 * ((skill_set[SKILL_MINDCRAFTING].value/2) - spell.min_lev);
-
-                    /* Reduce failure rate by INT/WIS adjustment */
-                    chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[A_WIS]] - 1);
-
-				    /* Not enough mana to cast */
-				    if (spell.mana_cost > p_ptr->cchi)
-					{
-                        chance += 5 * (spell.mana_cost - p_ptr->cchi);
-					}
-
-                    /* Extract the minimum failure rate */
-                    minfail = adj_mag_fail[p_ptr->stat_ind[A_WIS]];
-				    
-				    /* Minimum failure rate */
-                    if (chance < minfail) chance = minfail;
-
-				    /* Stunning makes spells harder */
-                    if (p_ptr->stun > 50) chance += 25;
-                    else if (p_ptr->stun) chance += 15;
-
-                    /* Always a 5 percent chance of working */
-				    if (chance > 95) chance = 95;
-				    
-				    /* Get info */
-				    mindcraft_info(comment, i);
-				    
-				    /* Dump the spell --(-- */
-                    sprintf(psi_desc, "  %c) %-30s%2d %4d %3d%%%s",
-                        I2A(i), spell.name,
-                        spell.min_lev*2, spell.mana_cost, chance, comment);
-                    prt(psi_desc, y + i + 1, x);
-				}
-
-			    /* Clear the bottom line */
-			    prt("", y + i + 1, x);
+				print_mindcraft(x,y);
 			}
 
 			/* Hide the list */
@@ -4342,9 +4368,6 @@ static int get_mindcraft_power(int *sn)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 

@@ -3169,6 +3169,9 @@ option_type option_info[] =
     { &show_details,                TRUE,  1,      0, 13,
 	"show_details",                 "Show details in certain sub-windows" },
 
+	{ &show_choices_main,		TRUE,	1,	2,26,
+	"show_choices_main",		"Show certain choices in the main window"},
+	
     { &ring_bell,                   FALSE,   1,      0, 14,
 	"ring_bell",                    "Audible bell (on errors, etc)" },
     /* Changed to default to FALSE -- it's so extremely annoying!!! -TY */

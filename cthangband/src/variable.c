@@ -200,6 +200,7 @@ bool show_labels;			/* Show labels in object listings */
 bool show_weights;			/* Show weights in object listings */
 bool show_choices;			/* Show choices in certain sub-windows */
 bool show_details;			/* Show details in certain sub-windows */
+bool show_choices_main;			/* Show choices in main window */
 
 bool bypass_prompt;			/* Bypass spirit selection prompt where appropriate */
 bool ring_bell;				/* Ring the bell (on errors, etc) */

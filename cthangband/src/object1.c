@@ -4455,6 +4455,9 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	}
 
 
+	/* Allow the user to choose to see everything. */
+	command_see |= show_choices_main;
+ 
 	/* Hack -- start out in "display" mode */
 	if (command_see) Term_save();
 
