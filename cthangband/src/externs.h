@@ -3451,7 +3451,7 @@ extern vptr (*rpanic_aux)(huge) ;
 #if (defined(MAIN_MAC_C) || defined(Z_VIRT_C))
 extern vptr (*ralloc_aux)(huge) ;
 #endif
-#if (defined(Z_VIRT_H) || defined(MAIN_WIN_C) || defined(XTRA2_C) || defined(Z_VIRT_C))
+#if (defined(Z_VIRT_H) || defined(MAIN_WIN_C) || defined(Z_VIRT_C))
 extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
@@ -3564,4 +3564,7 @@ extern void init_term_wins(void);
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max);
 #endif
+
+/* (null) */
+
 #endif /* INCLUDED_EXTERNS_H */

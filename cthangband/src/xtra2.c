@@ -135,7 +135,7 @@ static void drop_special(monster_type *m_ptr)
 			case DEATH_OBJECT:
 			{
 				make_item_type *i_ptr = &d_ptr->par.item;
-				object_type *o_ptr = ralloc(sizeof(object_type));
+				object_type o_ptr[1];
 				object_prep(o_ptr, i_ptr->k_idx);
 #ifdef ALLOW_EGO_DROP
 /* I can neither check that the ego item is plausible nor prevent apply_magic
@@ -154,7 +154,7 @@ static void drop_special(monster_type *m_ptr)
 					if (i_ptr->name) 
  					{
 						o_ptr->art_name = quark_add(event_name+i_ptr->name);
-				}
+					}
 				}
 				o_ptr->number = rand_range(i_ptr->min, i_ptr->max);
 				apply_magic(o_ptr, object_level, FALSE, FALSE, FALSE);
@@ -162,42 +162,42 @@ static void drop_special(monster_type *m_ptr)
 				drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);
 				d_ptr->flags |= EF_KNOWN;
 				break;
-				}
+			}
 			/* Create a monster nearby. */
-		case DEATH_MONSTER:
-		{
+			case DEATH_MONSTER:
+			{
 				make_monster_type *i_ptr = &d_ptr->par.monster;
 				byte i,num = rand_range(i_ptr->min, i_ptr->max);
 				bool seen = FALSE;
-			for (i = 0; i < num; i++)
-			{
+				for (i = 0; i < num; i++)
+				{
 					int wy,wx;
 					byte j;
 					/* Try to place within the given distance, but do accept greater distances if allowed. */
-				for (j = 0; j < 100; j++)
-				{
+					for (j = 0; j < 100; j++)
+					{
 						int d = i_ptr->radius;
 						if (!i_ptr->strict) d+= j/10;
 						scatter(&wy, &wx, m_ptr->fy, m_ptr->fx, d, 0);
-					if (in_bounds(wy,wx) && cave_floor_bold(wy,wx)) break;
-			}
+						if (in_bounds(wy,wx) && cave_floor_bold(wy,wx)) break;
+					}
 
-				/* Give up if there's nowhere appropriate */
+					/* Give up if there's nowhere appropriate */
 					if (j == 100) break;
 
 					/* As creating the monster can give a message, give this message first. */
 					if (player_can_see_bold(wy, wx) && !seen)
-				{
-					if (d_ptr->text) msg_format(event_text+d_ptr->text);
+					{
+						if (d_ptr->text) msg_format(event_text+d_ptr->text);
 						seen = TRUE;
 						d_ptr->flags |= EF_KNOWN;
-	}
+					}
 					/* Actually place the monster (which should not fail) */
 					(void)place_monster_one(wy, wx, i_ptr->num, FALSE, !!(m_ptr->smart & SM_ALLY), FALSE);
 				}
 				/* Only let the player know anything happened if it happened in LOS. */
 				break;
-}
+			}
 			/* Cause an explosion centred on the monster */
 			case DEATH_EXPLODE:
 			{

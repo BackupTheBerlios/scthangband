@@ -3584,6 +3584,24 @@ static void a_m_aux_4(object_type *o_ptr, int UNUSED level, int UNUSED power)
 }
 
 
+/*
+ * Set a quark to the depth of the item in question, return it.
+ */
+static u16b depth_string(void)
+{
+	/* Not wanted. */
+	if (!inscribe_depth) return 0;
+
+	/* Suppress on the surface (I think I prefer it this way...). */
+	else if (!dun_level) return 0;
+
+	/* Use the normal depth format from prt_depth() */
+	else if (depth_in_feet) return quark_add(format("%d'", dun_depth*50));
+
+	else return quark_add(format("L%d", dun_depth));
+}
+
+
 
 /*
  * Complete the "creation" of an object by applying "magic" to the item
@@ -3906,6 +3924,9 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		/* Hack -- acquire "cursed" flag */
 		if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 	}
+
+	/* Hack - inscribe with creation depth if desired. */
+	o_ptr->note = depth_string();
 }
 
 
@@ -3983,6 +4004,7 @@ static bool kind_is_good(int k_idx)
 	/* Assume not good */
 	return (FALSE);
 }
+
 
 
 
@@ -4068,19 +4090,6 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		if (cheat_peek) object_mention(j_ptr);
 	}
 	
-	/* Make a note of the level if desired if in the dungeon. */
-	if (inscribe_depth && dun_level)
-	{
-		if (!depth_in_feet)
-		{
-			j_ptr->note = quark_add(format("L%d", dun_depth));
-		}
-		else
-		{
-			j_ptr->note = quark_add(format("%d'", dun_depth*50));
-		}
-	}
-
 	/* Success */
 	return (TRUE);
 }
