@@ -46,13 +46,15 @@ u16b ident_power(object_type *o_ptr)
  */
 static bool is_powerful(object_type *o_ptr)
 {
-	object_type t,u, *t_ptr=&t, *u_ptr=&u;
+	object_type t_ptr[1],u_ptr[1];
+
+	/* The player knows everything about *identified* items. */
+	if (o_ptr->ident & IDENT_MENTAL) return FALSE;
 
 	/* Items which a monster has failed to pick up are flagged as powerful.
 	 * If the current flag is the same as the flag it would have if a monster
-	 * did so now, the item is powerful. *identifed* items are never powerful. */
-	if (!(o_ptr->ident & IDENT_MENTAL) &&
-		ident_power(o_ptr) == o_ptr->ident) return TRUE;
+	 * did so now, the item is powerful. */
+	if (ident_power(o_ptr) == o_ptr->ident) return TRUE;
 
 	/* If the player hasn't tried it, there's no other way to know its
 	 * powers. */
