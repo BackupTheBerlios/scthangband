@@ -1653,8 +1653,11 @@ bool lose_all_info(void)
 		/* Items still not forgotten (i.e. have easy_know) keep feelings */
 		if (object_known_p(o_ptr)) continue;
  
-		/* Hack -- Clear the "felt" flag */
-		o_ptr->ident &= ~(IDENT_SENSE);
+		/* Hack -- Clear the "felt" flags */
+		o_ptr->ident &= ~(IDENT_SENSE_VALUE);
+
+		/* Hack -- Clear the "felt curses" flag for unworn items */
+		if (i < INVEN_WIELD) o_ptr->ident &= ~(IDENT_SENSE_CURSED);
 
 		/* Hack -- Clear the "heavily felt" flag */
 		o_ptr->ident &= ~(IDENT_SENSE_HEAVY);
