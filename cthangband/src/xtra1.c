@@ -3727,6 +3727,7 @@ void skill_exp(int index)
 			msg_format("You are not inquisitive enough to improve your %s skill.",
 				skill_set[index].name);
 		}
+		return;
 	}
 
 	/* Debugging message */
