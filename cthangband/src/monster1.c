@@ -320,40 +320,8 @@ static cptr convert_spell_text(cptr string, monster_race *r_ptr)
 	}
 	else
 	{
-		return format("%v", evaluate_text_f3, string, "LEV", r_ptr->level);
-	}
-}
-
-/*
- * *Hack* - extract and interpret any damage string in a monster breath
- * description for a given monster.
- * This does not currently attempt to group together similar breaths, and
- * does not consider what the actual spell does, only what it says it does
- * below.
- */
-static cptr convert_breath_text(cptr string, monster_race *r_ptr)
-{
-
-	cptr t=0;
-
-	/* Dump */
-
-	/* Is there a MHP term to evaluate? */
-	if (r_ptr->r_tkills || spoil_mon) t = strchr(string, '(');
-	if (t && spoil_flag) t = strstr(t, "MHP");
-	/* Unknown/missing level term, so give the formula. */
-	if (!t)
-	{
-		return string;
-	}
-	/* Use spoil_flag to hide all of this information. */
-	else if (!spoil_flag)
-	{
-		return (cptr)format("%.*s", t-string-1, string);
-	}
-	else
-	{
-		return format("%v", evaluate_text_f3, string, "MHP", 
+		t = format("%v", evaluate_text_f3, string, "LEV", r_ptr->level);
+		return format("%v", evaluate_text_f3, t, "MHP",
 			r_ptr->hdice * r_ptr->hside);
 	}
 }
@@ -866,7 +834,7 @@ static void roff_aux(int r_idx)
 			else c_roff(MONCOL_BREATH, " or ");
 
 			/* Dump */
-			c_roff(MONCOL_BREATH, convert_breath_text(vp[n], r_ptr));
+			c_roff(MONCOL_BREATH, convert_spell_text(vp[n], r_ptr));
 		}
 	}
 
