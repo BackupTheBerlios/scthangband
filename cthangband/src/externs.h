@@ -2205,7 +2205,7 @@ extern int chaos_rewards[MAX_PATRON][20];
 extern martial_arts ma_blows[MAX_MA+1];
 #endif
 #if (defined(ANGBAND_H))
-extern window_type windows[8];
+extern window_type windows[ANGBAND_TERM_MAX];
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern moncol_type moncol[MAX_MONCOL];

@@ -3274,7 +3274,8 @@ martial_arts ma_blows[MAX_MA+1] =
 };
 
 /*
- * Window definitions. Defined here to ensure that the names are available ASAP.
+ * Window definitions. Defined here to ensure that the names are available 
+ * before any code which isn't system specific is run.
  * Everything else is blank, to be filled in later.
  */
 
@@ -3284,7 +3285,7 @@ martial_arts ma_blows[MAX_MA+1] =
 #define BLANK_WINDOW(name) \
 {0, name, BLANK_32, BLANK_32, iilog(PW_NONE), 0},
 
-window_type windows[8] = {
+window_type windows[ANGBAND_TERM_MAX] = {
 BLANK_WINDOW(GAME_NAME)
 BLANK_WINDOW("Mirror")
 BLANK_WINDOW("Recall")

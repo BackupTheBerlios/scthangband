@@ -3591,6 +3591,22 @@ static int window_best(const window_type *w_ptr, const u32b rep_mask)
 }
 
 /*
+ * Display the indicated display in the indicated window.
+ */
+static void show_display_func(window_type *w_ptr, int display)
+{
+	assert(w_ptr && w_ptr->term); /* Caller. */
+
+	/* Access the term. */
+	Term_activate(w_ptr->term);
+
+	/* Draw the display. */
+	clear_from(0);
+	(*display_func[display].display)();
+	Term_fresh();
+}
+
+/*
  * Handle "p_ptr->window"
  *
  * This makes the assumption that the main display will always be displayed
@@ -3615,7 +3631,7 @@ void window_stuff(void)
 	p_ptr->window &= ~(old_window);
 
 	/* Scan windows */
-	for (m = 0; m < 8; m++)
+	for (m = 0; m < ANGBAND_TERM_MAX; m++)
 	{
 		window_type *w_ptr = &windows[m];
 
@@ -3623,7 +3639,7 @@ void window_stuff(void)
 		if (!w_ptr->term) continue;
 
 		/* Hack - skip window containing main display */
-		if (w_ptr->term == old) continue;
+		if (w_ptr->term == term_screen) continue;
 
 		if (rotate)
 		{
@@ -3645,13 +3661,8 @@ void window_stuff(void)
 			/* Return to this routine next time. */
 			if (d_ptr->flag != PW_NONE) p_ptr->window |= PW_RETURN;
 
-			/* Clear it. */
-			Term_activate(w_ptr->term);
-			clear_from(0);
-
-			/* And draw it. */
-			(*(d_ptr->display))();
-			Term_fresh();
+			/* Show the current display. */
+			show_display_func(w_ptr, n);
 		}
 	}
 
@@ -3688,7 +3699,7 @@ void event_stuff(void)
  */
 void resize_window(void)
 {
-	int i;
+	window_type *w_ptr;
 
 	/* Hack - don't call during birth or level creation. */
 	if (!character_dungeon) return;
@@ -3701,22 +3712,13 @@ void resize_window(void)
 	Term_xtra(TERM_XTRA_REACT, 0);
 
 	/* Hack - find the window. */
-	for (i = 0; i < ANGBAND_TERM_MAX; i++)
-	{
-		if (windows[i].term == Term)
-		{
-			/* Clear the window. */
-			clear_from(0);
+	FOR_ALL_IN(windows, w_ptr) if (w_ptr->term == Term) break;
 
-			/* Draw the window. */
-			(*(display_func[windows[i].current].display))();
+	/* Paranoia - resizing an abnormal term. */
+	if (w_ptr == END_PTR(windows)) return;
 
-			/* Refresh */
-			Term_fresh();
-
-			return;
-		}
-	}
+	/* Show the current display. */
+	show_display_func(w_ptr, w_ptr->current);
 }
 
 
