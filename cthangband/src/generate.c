@@ -278,7 +278,6 @@ void generate_spirit_name(spirit_type *s_ptr)
 void generate_spirit_names(void)
 {
 	int i;
-	spirit_type *s_ptr;
 	for (i=0;i<MAX_SPIRITS;i++)
 	{
 		generate_spirit_name(spirits+i);
