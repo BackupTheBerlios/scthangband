@@ -594,13 +594,6 @@ alloc_entry *alloc_race_table;
 
 
 /*
- * Specify attrs for inventory items (by tval)
- * Be sure to use "index & 0x7F" to avoid illegal access
- */
-byte tval_to_attr[128];
-
-
-/*
  * Keymaps for each "mode" associated with each keypress.
  */
 cptr keymap_act[KEYMAP_MODES][256];

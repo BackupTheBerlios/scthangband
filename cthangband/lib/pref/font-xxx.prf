@@ -12,61 +12,61 @@ E:---reset---
 # Set various inventory colours
 
 # Spikes
-E:5:s
+E:t:5:s
 
 # Chests
-E:7:s
+E:t:7:s
 
 # Missiles
-E:16:U
-E:17:U
-E:18:U
+E:t:16:U
+E:t:17:U
+E:t:18:U
 
 # Missile launchers
-E:19:u
+E:t:19:u
 
 # Diggers
-E:20:s
+E:t:20:s
 
 # Melee weapons
-E:21:W
-E:22:W
-E:23:W
+E:t:21:W
+E:t:22:W
+E:t:23:W
 
 # Non-body armour
-E:30:U
-E:31:U
-E:32:U
-E:33:U
-E:34:U
-E:35:U
+E:t:30:U
+E:t:31:U
+E:t:32:U
+E:t:33:U
+E:t:34:U
+E:t:35:U
 
 # Body armour
-E:36:s
-E:37:s
-E:38:s
+E:t:36:s
+E:t:37:s
+E:t:38:s
 
 # Lights and fuel
-E:39:y
-E:77:y
+E:t:39:y
+E:t:77:y
 
 # Amulets and rings
-E:40:o
-E:45:o
+E:t:40:o
+E:t:45:o
 
 # Rods, wands and staves
-E:55:v
-E:65:v
-E:66:v
+E:t:55:v
+E:t:65:v
+E:t:66:v
 
 # Potions
-E:75:b
+E:t:75:b
 
 # Food
-E:80:g
+E:t:80:g
 
 # Magic books
-E:90:B
-E:91:R
-E:92:o
-E:93:s
+E:t:90:B
+E:t:91:R
+E:t:92:o
+E:t:93:s

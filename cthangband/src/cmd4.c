@@ -1809,7 +1809,7 @@ static void do_cmd_options_squelch(void)
 }
 
 /*
- * Save the tval_to_attr settings to an open stream.
+ * Save the inventory list colour settings to an open stream.
  */
 static void tval_attr_dump(FILE *fff)
 {
@@ -1825,14 +1825,14 @@ static void tval_attr_dump(FILE *fff)
 	fprintf(fff, "# Setting various inventory colours\n\n");
 
 	/* Save each non-default setting in turn. */
-	for (i = 0; i < 128; i++)
+	for (i = 0; i < z_info->k_max; i++)
 	{
-		int a = tval_to_attr[i];
+		char a = atchar[k_info[i].i_attr];
 
 		/* Nothing new to say. */
 		if (a == TERM_WHITE) continue;
 
-		fprintf(fff, "E:%d:%c\n", i, atchar[a]);
+		my_fprintf(fff, "# %v\nE:k:%d:%c\n", object_k_name_f1, i, i, a);
 	}
 }
 

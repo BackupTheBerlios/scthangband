@@ -3233,9 +3233,9 @@ extern s16b alloc_race_size;
 #if (defined(INIT2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern alloc_entry *alloc_race_table;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(VARIABLE_C))
-extern byte tval_to_attr[128];
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr keymap_act[KEYMAP_MODES][256];
 #endif

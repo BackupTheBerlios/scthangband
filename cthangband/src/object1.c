@@ -3632,7 +3632,7 @@ void display_inven(bool equip)
 		object_type *o_ptr = &inventory[i];
 
 		/* Get a color */
-		char attr = atchar[tval_to_attr[o_ptr->tval % 128]];
+		char attr = atchar[k_info[o_ptr->k_idx].i_attr];
 
 		cptr slot1, slot2;
 
@@ -3731,7 +3731,7 @@ void show_inven(bool equip, bool all)
 
 		/* Save the object index, color, and description */
 		out_index[k] = i;
-		out_color[k] = tval_to_attr[o_ptr->tval % 128];
+		out_color[k] = k_info[o_ptr->k_idx].i_attr;
 		out_desc[k] = string_make(o_name);
 
 		/* Find the predicted "line length" */

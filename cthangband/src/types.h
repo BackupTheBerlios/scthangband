@@ -232,18 +232,19 @@ struct object_kind
 	s16b weight; /* Weight */
 	u16b u_idx; /* The u_info[] entry which represents this item. */
 
-	byte d_attr; /* Default object attribute */
+	byte d_attr; /* Default object colour */
 	char d_char; /* Default object character */
-	byte x_attr; /* Desired object attribute */
+	byte x_attr; /* Desired object colour */
 	char x_char; /* Desired object character */
+	byte i_attr; /* Desired equipment list colour */
 
-	byte rating; /* Bonus to level rating. */
 	bool aware; /* The player is "aware" of the item's effects */
 	bool tried; /* The player has "tried" one of the items */
 	bool seen; /* The player has encountered at least one of these. */
 
-	u16b note; /* Default inscription for this object_kind. */
+	byte rating; /* Bonus to level rating. */
 	byte squelch; /* Default squelch setting. */
+	u16b note; /* Default inscription for this object_kind. */
 };
 
 

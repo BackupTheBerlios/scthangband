@@ -644,35 +644,57 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		}
 
 
-		/* Process "E:<tv>:<a>" -- attr/char for equippy chars */
+		/* Process "E:t:<tv>:<a>" or "E:k:<k_idx>:<a>" -- equipment list attr */
 		case 'E':
 		{
+			cptr formerr = "format neither E:k:<k_idx>:<a> nor E:t:<tval>:<a>";
+
 			/* The default colour is a uniform white. */
 			if (!strcmp(buf+2, "---reset---"))
 			{
-				byte *p;
-				for (p = tval_to_attr; p < END_PTR(tval_to_attr); p++)
-				{
-					*p = TERM_WHITE;
-				}
+				for (i = 0; i < z_info->k_max; i++)
+					k_info[i].i_attr = TERM_WHITE;
+
 				return SUCCESS;
 			}
-			else if (tokenize(buf+2, 16, zz) == 2)
+			else if (tokenize(buf+2, 16, zz) == 3)
 			{
-				long t = strtol(zz[0], NULL, 0);
-				int a = color_char_to_attr(zz[1][0]);
-
-				if (t < 0 || t >= (long)N_ELEMENTS(tval_to_attr))
-					return "no such tval";
+				long l = strtol(zz[1], NULL, 0);
+				int a = color_char_to_attr(zz[2][0]);
+				char c = zz[0][0];
 
 				if (a < 0) return "no such colour";
 
-				tval_to_attr[t] = a;
+				if (strlen(zz[0]) != 1)
+				{
+					return formerr;
+				}
+				/* Set each object_kind with this tval. Don't complain if none
+				 * are found. */
+				else if (c == 't')
+				{
+					if (l < 0 || l > 255) return "no such tval";
+					for (i = 0; i < z_info->k_max; i++)
+					{
+						if (k_info[i].tval == l) k_info[i].i_attr = a;
+					}
+				}
+				/* Set the object_kind with this k_idx. */
+				else if (c == 'k')
+				{
+					if (l < 0 || l >= z_info->k_max) return "no such k_idx";
+					k_info[l].i_attr = a;
+				}
+				else
+				{
+					return formerr;
+				}
+
 				return SUCCESS;
 			}
 			else
 			{
-				return "format not E:<tv>:<a>";
+				return formerr;
 			}
 		}
 

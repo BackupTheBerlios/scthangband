@@ -2270,7 +2270,7 @@ static void display_entry(int pos)
 	object_type *o_ptr  = &st_ptr->stock[pos];
 
 	char labelc = (object_aware_p(o_ptr)) ? 'w' : 's';
-	char namec = atchar[tval_to_attr[o_ptr->tval]];
+	char namec = atchar[k_info[o_ptr->k_idx].i_attr];
 
 	/* Get the "offset" */
 	y = pos - store_top;
