@@ -21,6 +21,7 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/keysymdef.h>
+#include <X11/Xatom.h>
 #endif /* __MAKEDEPEND__ */
 
 #ifndef IsModifierKey

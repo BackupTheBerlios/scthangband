@@ -3875,7 +3875,7 @@ extern errr Term_get_size(int *w, int *h);
 #if (defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_locate(int *x, int *y);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_X11_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern void Term_what(int x, int y, byte *a, char *c);
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
