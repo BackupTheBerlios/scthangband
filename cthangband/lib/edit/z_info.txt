@@ -14,23 +14,33 @@
 V:1.0.0
 
 
-# Maximum number of objects on the level
+# maximum number of objects on the level
 # Increasing this can prevent or delay object loss associated with the
 # "Compacting objects..." message.
 M:O:1024
 
-# Maximum number of monsters on the level
+# maximum number of monsters on the level
 # Increasing this can prevent or delay monster loss associated with the
 # "Compacting monster..." message.
 M:M:1024
 
-# Delay between auto-roller iterations.
+# maximum length of object description
+# Increasing this can prevent incomplete object description strings from being
+# generated (e.g. "A Weapon with a very long name (2d4) (+13,+").
+M:B:120
+
+# maximum length of monster description
+# Increasing this can prevent incomplete monster description strings from being
+# generated (e.g. "The Monster with a very long n").
+M:D:80
+
+# delay between auto-roller iterations
 # Increasing this makes generating a character via "use_autoroller" slower
 # by a delay measured in milliseconds. It also decreases the load the game
 # puts on the processor during that period.
 M:R:100
 
-# Array sizes (in bytes) for some initialization stuff
+# array sizes (in bytes) for some initialization stuff
 
 # These can be increased if an "out of memory" error is given during
 # initialisation, but increasing them above 65535 may prevent the game
@@ -38,15 +48,15 @@ M:R:100
 
 # This is, in fact, already necessary for the r_info array.
 
-# Maximum size of the array in which most of the information for monsters,
-# objects, features, etc., is stored.
+# maximum size of the array in which most of the information for monsters,
+# objects, features, etc., is stored
 M:I:131071
 
-# Size of the "fake" array for reading in names of monsters, objects,
+# size of the "fake" array for reading in names of monsters, objects,
 # artifacts, store-owners, player-races, ...
 M:N:20480
 
-# Size of the "fake" array for reading in the descriptions of monsters,
+# size of the "fake" array for reading in the descriptions of monsters,
 # vaults, and the player-histories
 M:T:131071
 

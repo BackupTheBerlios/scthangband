@@ -134,6 +134,8 @@ struct maxima
 
 	u16b o_max;		/* Max size for "o_list[]" */
 	u16b m_max;		/* Max size for "m_list[]" */
+	u16b oname;		/* Maximum length of object_desc() strings. */
+	u16b mname;		/* Maximum length of monster_desc() strings. */
 	u16b ar_delay;	/* Delay between rolls of the auto-roller. */
 
 	u16b v_max;		/* Total size for "v_info[]" */

@@ -1372,6 +1372,8 @@ errr parse_z_info(char *buf, header *head, vptr UNUSED *extra)
 	{
 		case 'O': z_info->o_max = max; break;
 		case 'M': z_info->m_max = max; break;
+		case 'B': z_info->oname = max; break;
+		case 'D': z_info->mname = max; break;
 		case 'N': z_info->fake_name_size = max; break;
 		case 'T': z_info->fake_text_size = max; break;
 		case 'I': z_info->fake_info_size = max; break;
@@ -2947,6 +2949,8 @@ static errr init_info_txt_final(header *head)
 			ITFE(fake_name_size, 'N')
 			ITFE(o_max, 'O')
 			ITFE(m_max, 'M')
+			ITFE(oname, 'N')
+			ITFE(mname, 'D')
 			if (error) return PARSE_ERROR_MISSING_RECORD_HEADER;
 			break;
 		}
