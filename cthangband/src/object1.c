@@ -2567,6 +2567,44 @@ cptr item_activation(object_type *o_ptr)
 }
 
 
+/*
+ * Allocate and return a string listing a set of flags in a specified format.
+ * This should never be called with parameters longer than 1024 characters.
+ */
+static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
+{
+	int i;
+	char *s, *t;
+
+	/* Paranoia. */
+	if (!init || !conj) return "";
+
+	s = format("%s ", init);
+	t = strchr(s, '\0');
+	if (total > 2)
+	{
+		for (i = 0; i < total-2; i++)
+		{
+			sprintf(t, "%s, ", flags[i]);
+			t += strlen(t);
+		}
+	}
+	if (total > 1)
+	{
+		sprintf(t, "%s %s ", flags[total-2], conj);
+		t += strlen(t);
+	}
+	if (total)
+	{
+		sprintf(t, "%s.", flags[total-1]);
+	}
+	else
+	{
+		strcpy(t, "nothing.");
+	}
+	return string_make(s);
+}
+		
 /* Shorthand notation for res_stat_details() */
 
 /* A basic test */
@@ -2575,8 +2613,8 @@ cptr item_activation(object_type *o_ptr)
 /* The special test required to calculate blows. */
 #define blows(x) (blows_table[MIN(adj_str_blow[x[A_STR]]*mul/div,11)][MIN(adj_dex_blow[x[A_DEX]], 11)])
 
-/* Save the string to the info array. Note that all strings in res_stat_details are allocated by this. */
-#define descr(str) info[(*i)++] = string_make(str);
+/* Save the string to the info array, and note that it needs to be freed. */
+#define descr(str) {info_a[(*i)] = TRUE; info[(*i)++] = string_make(str);}
 
 /* A format which does a basic test, and saves the output in a string as above. */
 #define dotest(x,y,str) if ((dif = test(x,y))) descr(str)
@@ -2605,7 +2643,7 @@ cptr item_activation(object_type *o_ptr)
  * calls to update_stuff() rather than calculating them from the stats here.
  * Maybe later...
  */
-static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, cptr *info)
+static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, cptr *info, bool *info_a)
 {
 	s16b stat_res[6], dif, j;
 	cptr stats[6] = {"strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"};
@@ -2617,8 +2655,18 @@ static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, c
 		if (~stat & 1<<j) continue;
 		if (p_ptr->stat_max[j] > p_ptr->stat_cur[j] && stat & 0x80)
 			descr(format("It restores your %s.", stats[j]));
-		if ((p_ptr->stat_max[j] < 18+100 && stat & 0x40) || pval)
+		if (pval > 0)
+		{
+			descr(format("It adds %d to your %s.", pval, stats[j]));
+		}
+		else if (pval < 0)
+		{
+			descr(format("It removes %d from your %s.", -pval, stats[j]));
+		}
+		else if (p_ptr->stat_max[j] < 18+100 && stat & 0x40)
+		{
 			descr(format("It affects your %s.", stats[j]));
+		}
 
 		/* Nothing more to say without spoilers. */
 		if (!spoil_stat) continue;
@@ -2717,36 +2765,219 @@ static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, c
 	
 }
 
-/*
- * Describe a "fully identified" item
- * If full is set, the game describes the item as if it was fully identified.
- */
-bool identify_fully_aux(object_type *o_ptr, byte flags)
-{
-	bool full = (flags & 0x01) != 0;
-	bool paged = (flags & 0x02) == 0;
-	
-	
-	int                     i = 0, j, k, rsd_start, rsd_end;
+/* Offset for a continued string, -1 as these start with a space anyway. */
+#define IFD_OFFSET	3
 
-	byte minx, maxy;
+/*
+ * Find the number of characters in in before the last space before the
+ * maxth character.
+ */
+static int wrap_str(cptr in, int max)
+{
+	int len = strlen(in);
+	cptr t;
+	
+	/* Short enough anyway. */
+	if (len < max) return len;
+	
+	/* Find the last space before (or including) the max character. */
+	for (t = in+max-1; *t != ' '; t--);
+
+	/* Return the offset. */
+	return (int)(t-in);
+}
+
+/*
+ * Show the flags an object has in an interactive way.
+ */
+static void identify_fully_show(cptr *info, int i)
+{
+	int j,k, len, minx = 15, xlen = Term->wid - minx+1, maxy = Term->hgt;
+	cptr s = "";
+
+	/* Save the screen */
+	Term_save();
+
+	/* Erase the screen */
+	for (k = 1; k < maxy; k++) prt("", k, (minx > 2) ? minx-2 : 0);
+
+	/* Label the information */
+	prt("     Item Attributes:", 1, minx);
+
+	/* We will print on top of the map. */
+	for (k = 2, j = 0;;)
+	{
+		/* Grab the next string. */
+		if (*s == '\0')
+		{
+			if (j == i) break;
+			s = info[j++];
+		}
+
+		/* Show the info */
+
+		/* A space means that this is a continuation, so give an offset. */
+		if (*s == ' ')
+		{
+			len = wrap_str(s, xlen-IFD_OFFSET);
+			prt(format("%.*s", len, s), k++, minx+IFD_OFFSET);
+		}
+		/* If not, don't. */
+		else
+		{
+			len = wrap_str(s, xlen);
+			prt(format("%.*s", len, s), k++, minx);
+	}
+
+		/* Find the next segment. */
+		s += len;
+
+		/* Every 20 entries (lines 2 to 21), start over */
+		if ((k == maxy) && (j+1 < i))
+		{
+			prt("-- more --", k, minx);
+			inkey();
+			for (; k > 2; k--) prt("", k, minx);
+		}
+	}
+
+	/* Wait for it */
+	prt("[Press any key to continue]", k, minx);
+	inkey();
+
+	/* Restore the screen */
+	Term_load();
+}
+
+
+/*
+ * Show the first maxy-1 lines of the information stored in info.
+ */
+static void identify_fully_dump(cptr *info, int i)
+{
+	int j,k, len, minx = 0, xlen = Term->wid - minx+1, maxy = Term->hgt;
+	cptr s = "";
+
+	/* Label the information */
+	prt("     Item Attributes:", 1, minx);
+
+	for (k = 2, j = 0;;)
+	{
+		/* Grab the next string. */
+		if (*s == '\0')
+		{
+			if (j == i) break;
+			s = info[j++];
+		}
+
+		/* Show the info */
+
+		/* A space means that this is a continuation, so give an offset. */
+		if (*s == ' ')
+		{
+			len = wrap_str(s, xlen-IFD_OFFSET);
+			prt(format("%.*s", len, s), k++, minx+IFD_OFFSET);
+	}
+		/* If not, don't. */
+		else
+		{
+			len = wrap_str(s, xlen);
+			prt(format("%.*s", len, s), k++, minx);
+		}
+		
+		/* Find the next segment. */
+		s += len;
+
+		/* Every 20 entries (lines 2 to 21), start over */
+		if ((k == maxy) && (j+1 < i)) break;
+	}
+}
+
+#define IFDF_OFFSET 5
+
+/*
+ * Dump the information stored in info to a specified file.
+ */
+static void identify_fully_dump_file(FILE *fff, cptr *info, int i)
+{
+	int j,k, len, x, xlen = 80;
+	cptr s = "";
+
+	for (k = 2, j = 0;;)
+	{
+		/* Grab the next string. */
+		if (*s == '\0')
+		{
+			if (j == i) break;
+			s = info[j++];
+		}
+
+		/* Show the info */
+
+		/* Standard description offset. */
+		x = IFDF_OFFSET;
+
+		/* Give an extra offset for a continuation. */
+		if (*s == ' ') x += IFD_OFFSET;
+
+		len = wrap_str(s, xlen-x);
+		fprintf(fff, "%*s%.*s\n", x, "", len, s);
+		
+		/* Find the next segment. */
+		s += len;
+	}
+}
+
+
+/*
+ * Clear any allocated strings in info[].
+ */
+static void identify_fully_clear(cptr *info, bool *info_a, int limit)
+{
+	int i;
+	for (i = 0; i < limit; i++)
+	{
+		if (info_a[i]) string_free(info[i]);
+	}
+}
+
+/* Set brief to suppress various strings in identify_fully_get(). */
+static bool brief = FALSE;
+
+/*
+ * Find the sval of a launcher which can fire a given missile.
+ */
+int launcher_type(object_type *o_ptr)
+{
+	tval_ammo_type *tv_ptr;
+
+	for (tv_ptr = tval_ammo; tv_ptr->bow_sval; tv_ptr++)
+	{
+		/* Found something */
+		if (tv_ptr->ammo_tval == o_ptr->tval) return tv_ptr->bow_sval;
+	}
+
+	/* Nothing */
+	return (-1);
+}
+
+/*
+ * Find the strings which describe the flags of o_ptr, place them in info
+ * and set info_a for each string allocated.
+ *
+ * Return the total number of strings.
+ */
+static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
+{
+	int                     i = 0, j;
 
 	u32b f1, f2, f3;
 	object_type forge, *j_ptr=&forge;
 
-	cptr            info[128];
+	cptr board[16];
 
-	int dam_start = 0, dam_end = 0;
-
-	/* Remember whether we should treat the item as identified */
-	bool hack_known, hack_aware;
-	if (full)
-	{
-		hack_known = (object_known_p(o_ptr) != FALSE);
-		hack_aware = (object_aware_p(o_ptr) != FALSE);
-		object_known(o_ptr);
-		object_aware(o_ptr);
-	}
+	/* Paranoia - no object. */
+	if (!o_ptr || !o_ptr->k_idx) return 0;
 
 	/* Extract the known info */
 	object_info_known(j_ptr, o_ptr);
@@ -2805,11 +3036,8 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	
 #define A_ALL ((1<<A_STR)+(1<<A_INT)+(1<<A_WIS)+(1<<A_DEX)+(1<<A_CON)+(1<<A_CHR))
 
-	/* Notice what i is now. */
-	rsd_start = i;
-
 	/* Recognise items which affect stats */
-	if (object_aware_p(o_ptr) || (o_ptr->ident & IDENT_TRIED))
+	if (!brief && (object_aware_p(o_ptr) || (o_ptr->ident & IDENT_TRIED)))
 	{
 		byte stat = 0;
 		s16b pval = 0;
@@ -2901,7 +3129,7 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		}
 
 		/* Output the results. */
-		if (stat) res_stat_details(stat, pval, &forge, &i, info);
+		if (stat) res_stat_details(stat, pval, &forge, &i, info, info_a);
 
 		/* Replace object if needed */
 		if (p2_ptr)
@@ -2913,34 +3141,41 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		}
 	}
 
-	/* Notice what effect res_stat_details has on i. */
-	rsd_end = i;
-
 	/* And then describe it fully */
 
-	if (f1 & (TR1_STEALTH))
+	j = 0;
+	/* Brief mode puts stats here, too. */
+	if (brief)
 	{
-		info[i++] = "It affects your stealth.";
+		if (f1 & (TR1_STR)) board[j++] = "strength";
+		if (f1 & (TR1_INT)) board[j++] = "intelligence";
+		if (f1 & (TR1_WIS)) board[j++] = "wisdom";
+		if (f1 & (TR1_DEX)) board[j++] = "dexterity";
+		if (f1 & (TR1_CON)) board[j++] = "constitution";
+		if (f1 & (TR1_CHR)) board[j++] = "charisma";
 	}
-	if (f1 & (TR1_SEARCH))
+	if (f1 & (TR1_STEALTH)) board[j++] = "stealth";
+	if (f1 & (TR1_SEARCH)) board[j++] = "searching";
+	if (f1 & (TR1_INFRA)) board[j++] = "infravision";
+	if (f1 & (TR1_TUNNEL)) board[j++] = "ability to tunnel";
+	if (f1 & (TR1_SPEED)) board[j++] = "movement speed";
+	if (f1 & (TR1_BLOWS)) board[j++] = "attack speed";
+	if (j)
 	{
-		info[i++] = "It affects your searching.";
+		if (j_ptr->pval > 0)
+	{
+			board[j] = format("It adds %d to your", j_ptr->pval);
 	}
-	if (f1 & (TR1_INFRA))
+		else if (j_ptr->pval < 0)
 	{
-		info[i++] = "It affects your infravision.";
+			board[j] = format("It removes %d from your", -j_ptr->pval);
 	}
-	if (f1 & (TR1_TUNNEL))
+		else
 	{
-		info[i++] = "It affects your ability to tunnel.";
+			board[j] = "It affects your";
 	}
-	if (f1 & (TR1_SPEED))
-	{
-		info[i++] = "It affects your movement speed.";
-	}
-	if (f1 & (TR1_BLOWS))
-	{
-		info[i++] = "It affects your attack speed.";
+		info_a[i] = TRUE;
+		info[i++] = list_flags(board[j], "and", board, j);
 	}
 
 
@@ -2972,7 +3207,6 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		s32b dam;
 		bool slay = FALSE;
 		byte count;
-		cptr board[6];
 		/* Calculate execute dragon */
 		if (f1 & TR1_KILL_DRAGON)
 		{
@@ -2986,19 +3220,10 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 				weapon_stats(o_ptr, 5, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			}
 			slay = TRUE;
+			info_a[i] = TRUE;
 			info[i++] = string_make(format("It causes %d,%d damage to dragons.", dam/60, dam%60));
 			f1 &= ~(TR1_SLAY_DRAGON);
 		}
-		dam_start = i;
-
-/* A simple recursive format string, used to describe slaying weapons. */
-#define describe_slay(string) if (count) info[i++] = string_make(format("It causes %d,%d damage %s %s%s%s%s%s%s%s%s%s%s%s.", dam/60, dam%60, string, \
-			(count > 5) ? board[5] : "", (count > 5) ? ", " : "", \
-			(count > 4) ? board[4] : "", (count > 4) ? ", " : "", \
-			(count > 3) ? board[3] : "", (count > 3) ? ", " : "", \
-			(count > 2) ? board[2] : "", (count > 2) ? ", " : "", \
-			(count > 1) ? board[1] : "", (count > 1) ? " and " : "", \
-			board[0]))
 
 		/* Calculate x3 slays */
 		count = 0;
@@ -3012,7 +3237,8 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			describe_slay("to");
+			info_a[i] = TRUE;
+			info[i++] = list_flags(format("It causes %d,%d damage to", dam/60, dam%60), "and", board, count);
 		}
 		/* Calculate brands */
 		count = 0;
@@ -3025,7 +3251,8 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			describe_slay("via");
+			info_a[i] = TRUE;
+			info[i++] = list_flags(format("It causes %d,%d damage via", dam/60, dam%60), "and", board, count);
 		}
 		/* Calculate x2 slays */
 		count = 0;
@@ -3035,15 +3262,26 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		{
 			weapon_stats(o_ptr, 2, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			describe_slay("to");
+			info_a[i] = TRUE;
+			info[i++] = list_flags(format("It causes %d,%d damage to", dam/60, dam%60), "and", board, count);
 		}
+
+		/* Give the damage a weapon does, excluding throwing weapons in brief mode. */
+		if (!brief || (wield_slot(j_ptr) == INVEN_WIELD) ||
+			(wield_slot(j_ptr) == INVEN_BOW) || (launcher_type(j_ptr) != -1))
+		{
 		weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 		count = 0;
 		if (slay)
 			board[count++] = "all other monsters";
 		else if (dam)
 			board[count++] = "all monsters";
-		describe_slay("to");
+			if (count)
+			{
+				info_a[i] = TRUE;
+				info[i++] = list_flags(format("It causes %d,%d damage to", dam/60, dam%60), "and", board, count);
+			}
+		}
 
 		/* Describe blows per turn. */
 		switch (wield_slot(o_ptr))
@@ -3054,10 +3292,9 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		}
 		if (info[i])
 		{
-			info[i] = string_make(format("It gives you %d,%d %s per turn", weap_blow/60, weap_blow%60, info[i]));
-			i++;
+			info_a[i] = TRUE;
+			info[i++] = string_make(format("It gives you %d,%d %s per turn", weap_blow/60, weap_blow%60, info[i]));
 		}
-		dam_end = i;
 	}
 	/* Without spoil_dam, simply list the slays. */
 	else
@@ -3121,122 +3358,57 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	}
 	}
 
-	if (f2 & (TR2_SUST_STR))
+	j = 0;
+	if (f2 & (TR2_SUST_STR)) board[j++] = "strength";
+	if (f2 & (TR2_SUST_INT)) board[j++] = "intelligence";
+	if (f2 & (TR2_SUST_WIS)) board[j++] = "wisdom";
+	if (f2 & (TR2_SUST_DEX)) board[j++] = "dexterity";
+	if (f2 & (TR2_SUST_CON)) board[j++] = "constitution";
+	if (f2 & (TR2_SUST_CHR)) board[j++] = "charisma";
+	if (j == 6)
 	{
-		info[i++] = "It sustains your strength.";
+		info[i++] = "It sustains all of your stats.";
 	}
-	if (f2 & (TR2_SUST_INT))
+	else if (j)
 	{
-		info[i++] = "It sustains your intelligence.";
-	}
-	if (f2 & (TR2_SUST_WIS))
-	{
-		info[i++] = "It sustains your wisdom.";
-	}
-	if (f2 & (TR2_SUST_DEX))
-	{
-		info[i++] = "It sustains your dexterity.";
-	}
-	if (f2 & (TR2_SUST_CON))
-	{
-		info[i++] = "It sustains your constitution.";
-	}
-	if (f2 & (TR2_SUST_CHR))
-	{
-		info[i++] = "It sustains your charisma.";
+		info_a[i] = TRUE;
+		info[i++] = list_flags("It sustains your", "and", board, j);
 	}
 
-	if (f2 & (TR2_IM_ACID))
+	j = 0;
+	if (f2 & (TR2_IM_ACID)) board[j++] = "acid";
+	if (f2 & (TR2_IM_ELEC)) board[j++] = "electricity";
+	if (f2 & (TR2_IM_FIRE)) board[j++] = "fire";
+	if (f2 & (TR2_IM_COLD)) board[j++] = "cold";
+	if (f2 & (TR2_FREE_ACT)) board[j++] = "paralysis";
+	if (f2 & (TR2_RES_FEAR)) board[j++] = "fear";
+	if (j)
 	{
-		info[i++] = "It provides immunity to acid.";
-	}
-	if (f2 & (TR2_IM_ELEC))
-	{
-		info[i++] = "It provides immunity to electricity.";
-	}
-	if (f2 & (TR2_IM_FIRE))
-	{
-		info[i++] = "It provides immunity to fire.";
-	}
-	if (f2 & (TR2_IM_COLD))
-	{
-		info[i++] = "It provides immunity to cold.";
+		info_a[i] = TRUE;
+		info[i++] = list_flags("It provides immunity to", "and", board, j);
 	}
 
-	if (f2 & (TR2_FREE_ACT))
+	j = 0;
+	if (f2 & (TR2_RES_ACID)) board[j++] = "acid";
+	if (f2 & (TR2_RES_ELEC)) board[j++] = "electricity";
+	if (f2 & (TR2_RES_FIRE)) board[j++] = "fire";
+	if (f2 & (TR2_RES_COLD)) board[j++] = "cold";
+	if (f2 & (TR2_RES_POIS)) board[j++] = "poison";
+	if (f2 & (TR2_RES_LITE)) board[j++] = "light";
+	if (f2 & (TR2_RES_DARK)) board[j++] = "dark";
+	if (f2 & (TR2_HOLD_LIFE)) board[j++] = "life draining";
+	if (f2 & (TR2_RES_BLIND)) board[j++] = "blindness";
+	if (f2 & (TR2_RES_CONF)) board[j++] = "confusion";
+	if (f2 & (TR2_RES_SOUND)) board[j++] = "sound";
+	if (f2 & (TR2_RES_SHARDS)) board[j++] = "shards";
+	if (f2 & (TR2_RES_NETHER)) board[j++] = "nether";
+	if (f2 & (TR2_RES_NEXUS)) board[j++] = "nexus";
+	if (f2 & (TR2_RES_CHAOS)) board[j++] = "chaos";
+	if (f2 & (TR2_RES_DISEN)) board[j++] = "disenchantment";
+	if (j)
 	{
-		info[i++] = "It provides immunity to paralysis.";
-	}
-	if (f2 & (TR2_HOLD_LIFE))
-	{
-		info[i++] = "It provides resistance to life draining.";
-	}
-    if (f2 & (TR2_RES_FEAR))
-    {
-        info[i++] = "It makes you completely fearless.";
-    }
-	if (f2 & (TR2_RES_ACID))
-	{
-		info[i++] = "It provides resistance to acid.";
-	}
-	if (f2 & (TR2_RES_ELEC))
-	{
-		info[i++] = "It provides resistance to electricity.";
-	}
-	if (f2 & (TR2_RES_FIRE))
-	{
-		info[i++] = "It provides resistance to fire.";
-	}
-	if (f2 & (TR2_RES_COLD))
-	{
-		info[i++] = "It provides resistance to cold.";
-	}
-	if (f2 & (TR2_RES_POIS))
-	{
-		info[i++] = "It provides resistance to poison.";
-	}
-
-	if (f2 & (TR2_RES_LITE))
-	{
-		info[i++] = "It provides resistance to light.";
-	}
-	if (f2 & (TR2_RES_DARK))
-	{
-		info[i++] = "It provides resistance to dark.";
-	}
-
-	if (f2 & (TR2_RES_BLIND))
-	{
-		info[i++] = "It provides resistance to blindness.";
-	}
-	if (f2 & (TR2_RES_CONF))
-	{
-		info[i++] = "It provides resistance to confusion.";
-	}
-	if (f2 & (TR2_RES_SOUND))
-	{
-		info[i++] = "It provides resistance to sound.";
-	}
-	if (f2 & (TR2_RES_SHARDS))
-	{
-		info[i++] = "It provides resistance to shards.";
-	}
-
-	if (f2 & (TR2_RES_NETHER))
-	{
-		info[i++] = "It provides resistance to nether.";
-	}
-	if (f2 & (TR2_RES_NEXUS))
-	{
-		info[i++] = "It provides resistance to nexus.";
-	}
-	if (f2 & (TR2_RES_CHAOS))
-	{
-		info[i++] = "It provides resistance to chaos.";
-	}
-	if (f2 & (TR2_RES_DISEN))
-	{
-		info[i++] = "It provides resistance to disenchantment.";
+		info_a[i] = TRUE;
+		info[i++] = list_flags("It provides resistance to", "and", board, j);
 	}
 
     if (f3 & (TR3_WRAITH))
@@ -3391,121 +3563,85 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	{
 		/* Say nothing. */
 	}
-	/* Full knowledge brings certainty. */
-	else if (o_ptr->ident & IDENT_MENTAL || cheat_item)
-	{
-	if (~f3 & (TR3_IGNORE_ACID))
-	{
-		info[i++] = "It can be harmed by acid.";
-	}
-	if (~f3 & (TR3_IGNORE_ELEC))
-	{
-		info[i++] = "It can be harmed by electricity.";
-	}
-	if (~f3 & (TR3_IGNORE_FIRE))
-	{
-		info[i++] = "It can be harmed by fire.";
-	}
-	if (~f3 & (TR3_IGNORE_COLD))
-	{
-		info[i++] = "It can be harmed by cold.";
-	}
-	}
-	/* Incomplete knowledge brings doubt. */
+	/* State the missing flags. */
 	else
 	{
-		if (~f3 & (TR3_IGNORE_ACID))
+		j = 0;
+		if (~f3 & (TR3_IGNORE_ACID)) board[j++] = "acid";
+		if (~f3 & (TR3_IGNORE_ELEC)) board[j++] = "electricity";
+		if (~f3 & (TR3_IGNORE_FIRE)) board[j++] = "fire";
+		if (~f3 & (TR3_IGNORE_COLD)) board[j++] = "cold";
+
+		if (o_ptr->ident & IDENT_MENTAL || cheat_item)
 		{
-			info[i++] = "It may be able to be harmed by acid.";
+			board[j] = "can";
 		}
-		if (~f3 & (TR3_IGNORE_ELEC))
+		else
 		{
-			info[i++] = "It may be able to be harmed by electricity.";
+			board[j] = "may be able to be";
 		}
-		if (~f3 & (TR3_IGNORE_FIRE))
+		if (j)
 		{
-			info[i++] = "It may be able to be harmed by fire.";
-		}
-		if (~f3 & (TR3_IGNORE_COLD))
-		{
-			info[i++] = "It may be able to be harmed by cold.";
+			info_a[i] = TRUE;
+			info[i++] = list_flags(format("It %s be harmed by", board[j]), "and", board, j);
 		}
 	}
 
-	/* Return item to its normal stat if needed */
+	/* Return the number of strings found. */
+	return i;
+	}
+
+
+
+
+/*
+ * Describe a "fully identified" item
+ * If full is set, the game describes the item as if it was fully identified.
+ */
+bool identify_fully_aux(object_type *o_ptr, byte flags)
+{
+	bool full = (flags & 0x01) != 0;
+	bool paged = (flags & 0x02) == 0;
+
+	int i = 0;
+	cptr info[128];
+	bool info_a[128];
+
+	C_WIPE(info_a, 128, bool);
+
 	if (full)
 	{
+		bool hack_known, hack_aware;
+		hack_known = (object_known_p(o_ptr) != FALSE);
+		hack_aware = (object_aware_p(o_ptr) != FALSE);
+		object_known(o_ptr);
+		object_aware(o_ptr);
+
+		i = identify_fully_get(o_ptr, info, info_a);
+	
 		if (!hack_aware) k_info[o_ptr->k_idx].aware = FALSE;
 		if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
 	}
-
-	/* No special effects */
-	if (!i) return (FALSE);
-
-	minx = (paged) ? 15 : 0;
-	maxy = Term->hgt;
-
-	if (paged)
+	else
 	{
-	/* Save the screen */
-	Term_save();
-
-	/* Erase the screen */
-		for (k = 1; k < maxy; k++) prt("", k, (minx > 2) ? minx-2 : 0);
-	}
-
-	/* Label the information */
-	prt("     Item Attributes:", 1, minx);
-
-	/* We will print on top of the map (column 13 in paged mode ) */
-	for (k = 2, j = 0; j < i; j++)
-	{
-		/* Show the info */
-		prt(info[j], k++, minx);
-
-		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == maxy) && (j+1 < i))
-		{
-			if (paged)
-		{
-				prt("-- more --", k, minx);
-			inkey();
-				for (; k > 2; k--) prt("", k, minx);
-			}
-			/* Starting over is not an option, so finish instead. */
-			else
-			{
-				break;
-			}
-		}
+		i = identify_fully_get(o_ptr, info, info_a);
 	}
 
 	if (paged)
 	{
-	/* Wait for it */
-		prt("[Press any key to continue]", k, minx);
-	inkey();
-
-	/* Restore the screen */
-	Term_load();
+		identify_fully_show(info, i);
 	}
-
-	/* Clean up stat-modifier information, if necessary. */
-	i = rsd_start;
-	while (i < rsd_end)
+	else
 	{
-		string_free(info[i++]);
+		identify_fully_dump(info, i);
 	}
-	i = dam_start;
-	while (i < dam_end)
-	{
-		string_free(info[i++]);
-	}
+
+	/* Clear any allocated strings. */
+	identify_fully_clear(info, info_a, i);
 
 	/* Gave knowledge */
 	return (TRUE);
 }
-
 
 
 /*
