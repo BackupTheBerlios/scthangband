@@ -1384,10 +1384,17 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 		case TV_STAFF:
 		case TV_WAND:
 		{
+			/* Require permission */
+			if (!stack_allow_wands) return (0);
+
 			/* Require knowledge */
 			if (!object_known_p(o_ptr) || !object_known_p(j_ptr)) return (0);
 
-			/* Fall through */
+			/* Require identical charges */
+			if (o_ptr->pval != j_ptr->pval) return (0);
+
+			/* Probably okay */
+			break;
 		}
 
 		/* Staffs and Wands and Rods */
