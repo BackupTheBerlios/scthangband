@@ -889,7 +889,12 @@ struct player_template
 {
 	cptr title;			/* Type of template */
 
+	int choices;		/* Number of choices for hermetic skills */
+
 	s16b c_adj[6];		/* Template stat modifier */
+
+	s16b skill[18];		/* Skill improvements */
+
 };
 
 

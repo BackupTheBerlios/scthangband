@@ -709,6 +709,115 @@ static char *cthuloid_syllable3[] =
 	"l","a","u","oa","oggua","oth","ath","aggua","lu","lo","loth","lotha","agn","axl",
 };
 
+void get_starting_skills(int race);
+void get_hermetic_skills_randomly(void);
+void get_hermetic_skills(void);
+
+/*
+ * For characters starting with shaman skill, start them with a spirit
+ */
+
+void get_init_spirit(bool choice)
+{
+	char c;
+	char buf[240];
+
+	/* The player will only ever need one initial spirit. */
+	spirits[0].pact = FALSE;
+	spirits[1].pact = FALSE;
+
+	clear_from(15);
+	if (skill_set[SKILL_SHAMAN].value > 0)
+	{
+		if (choice)
+		{
+			c = '\0';
+			while (1) {
+				sprintf(buf, "Choose a life spirit(a) or wild spirit(b): ");
+				put_str(buf, 17, 2);
+				c = inkey();
+				c = tolower(c);
+				if (c == 'a') break;
+				if (c == 'b') break;
+			}
+			if (c == 'a') spirits[0].pact = TRUE;
+			if (c == 'b') spirits[1].pact = TRUE;
+		}
+		else
+			spirits[rand_int(2)].pact = TRUE;
+
+	}
+}
+/*
+ * Add the random element to each skill, set the maximum and reset the base where
+ * appropriate. This must be run after the other skill increases.
+ */
+
+void get_random_skills(bool random)
+{
+	int i;
+	for (i=0;i<MAX_SKILLS;i++)
+	{
+		if(skill_set[i].value>10)
+		{
+			skill_set[i].value+= (random ? (byte)rand_int(10) : 4);
+			}
+		else if(skill_set[i].value>5)
+			{
+		skill_set[i].value+= (random ? (byte)rand_int(5) : 2);
+			}
+		else if(skill_set[i].value>0)
+		{
+			skill_set[i].value+= (random ? (byte)rand_int(3) : 1);
+		}
+		skill_set[i].max_value=skill_set[i].value;
+	}
+	/* Set bases for arcane skills to be the same as the current values since
+	 * they start low - may want to do this for all skills later, but lowering
+	 * the values first (and do this for martial arts skill also).
+	 */
+	skill_set[SKILL_MANA].base = skill_set[SKILL_MANA].value;
+	skill_set[SKILL_MA].base = skill_set[SKILL_MA].value;
+	skill_set[SKILL_CORPORIS].base = skill_set[SKILL_CORPORIS].value;
+	skill_set[SKILL_ANIMAE].base = skill_set[SKILL_ANIMAE].value;
+	skill_set[SKILL_VIS].base = skill_set[SKILL_VIS].value;
+	skill_set[SKILL_NATURAE].base = skill_set[SKILL_NATURAE].value;
+	skill_set[SKILL_NECROMANCY].base = skill_set[SKILL_NECROMANCY].value;
+	skill_set[SKILL_SORCERY].base = skill_set[SKILL_SORCERY].value;
+	skill_set[SKILL_CONJURATION].base = skill_set[SKILL_CONJURATION].value;
+	skill_set[SKILL_THAUMATURGY].base = skill_set[SKILL_THAUMATURGY].value;
+	skill_set[SKILL_MINDCRAFTING].base = skill_set[SKILL_MINDCRAFTING].value;
+	skill_set[SKILL_CHI].base = skill_set[SKILL_CHI].value;
+	skill_set[SKILL_SHAMAN].base = skill_set[SKILL_SHAMAN].value;
+	skill_set[SKILL_HEDGE].base = skill_set[SKILL_HEDGE].value;
+
+	/* Set hack_chaos_feature now all relevant information is known. */
+	hack_chaos_feature = ((skill_set[SKILL_THAUMATURGY].value > 0) || (p_ptr->prace==RACE_BROO));
+
+}
+
+/*
+ * Imagine you were wielding a whip...
+ */
+void wield_weapons(bool wield)
+{
+	int sv;
+	if (wield)
+	{
+		if (p_ptr->ptemplate == TPL_SWASHBUCKLER)
+			sv = SV_RAPIER;
+		else	
+			sv = SV_WHIP;
+		object_prep(&inventory[INVEN_WIELD], lookup_kind(TV_SWORD, sv));
+		object_prep(&inventory[INVEN_BOW], lookup_kind(TV_BOW, SV_SHORT_BOW));
+	}
+	else
+	{
+		object_wipe(&inventory[INVEN_WIELD]);
+		object_wipe(&inventory[INVEN_BOW]);
+	}
+}
+
 /* Allow player to modify the character by spending points */
 static bool point_mod_player(void)
 {
@@ -721,17 +830,13 @@ static bool point_mod_player(void)
 	int hp = 0;
 	int addhp = 0; 
 	int x = 0;
-	int i, points;
- 
- 
-	points = 34;
+	int i = 32767;
+	int points = 34;
+
 	sprintf(modpts,"%d",points);
 	clear_from(23);
 	while(1)
 	{ 
-		/* reset variable */
-		i = 0; 
-
 		/* Calculate the bonuses and hitpoints */
 		p_ptr->update |= (PU_BONUS | PU_HP);
 
@@ -773,66 +878,127 @@ static bool point_mod_player(void)
 		{
 			Term_addstr(-1, TERM_RED, modpts);
 		}
-		Term_addstr(-1, TERM_WHITE, " points left. Press 'ESC' whilst on 0 points to finish.");
+		Term_addstr(-1, TERM_WHITE, " points left. Press 'ESC' whilst on 0 points to finish or 'Q' to quit.");
 		Term_addch(TERM_WHITE, b2);
-		/* Get an entry */
-		stat = inkey();
-
-		/* ESC goes back to previous menu */
-		if((stat == ESCAPE) && (points == 0)) break;
-
-		/* Assign values to entries, stats 0 to 5 */
-		switch(stat)
+		/* Hack - use (i==32767) to initialise various things. */
+		if (i<32767)
 		{
+			/* Get an entry */
+			stat = inkey();
+
+			/* ESC goes back to previous menu */
+			if((stat == ESCAPE) && (points == 0)) break;
+
+			/* Assign values to entries, stats 0 to 5 */
+			switch(stat)
+			{
 
 			/* The index to a specific stat is retrieved */
-		case 's':
-			i = 1;
-			break;
-		case 'S':
-			i = 1;
-			break;
-		case 'i':
-			i = 2;
-			break;
-		case 'I':
-			i = 2;
-			break;
-		case 'w':
-			i = 3;
-			break;
-		case 'W':
-			i = 3;
-			break;
-		case 'd':
-			i = 4;
-			break;
-		case 'D':
-			i = 4;
-			break;
-		case 'c':
-			i = 5;
-			break;
-		case 'C':
-			i = 5;
-			break;
-		case 'h':
-			i = 6;
-			break;
-		case 'H':
-			i = 6;
-			break;
-		default:
-			i = 0;
-		}  
-
+			case 's':
+				i = 1;
+				break;
+			case 'S':
+				i = 1;
+				break;
+			case 'i':
+				i = 2;
+				break;
+			case 'I':
+				i = 2;
+				break;
+			case 'w':
+				i = 3;
+				break;
+			case 'W':
+				i = 3;
+				break;
+			case 'd':
+				i = 4;
+				break;
+			case 'D':
+				i = 4;
+				break;
+			case 'c':
+				i = 5;
+				break;
+			case 'C':
+				i = 5;
+				break;
+			case 'h':
+				i = 6;
+				break;
+			case 'H':
+				i = 6;
+				break;
+			case 'r':
+				i = 7;
+				break;
+			case 'R':
+				i = 7;
+				break;
+			case 't':
+				i = 8;
+				break;
+			case 'T':
+				i = 8;
+				break;
+			case 'Q':
+				quit(NULL);
+				break;
+			default:
+				i = 0;
+			}  
+		}
 		/* Test for invalid key */
 		if(!i) continue;
 		i--;
 
+		/* Test for race/template changes first. Also catch initialisation. */
+		if (i > 5)
+		{
+			/* Race */
+			if (i == 6)
+			{
+				p_ptr->prace += (islower(stat) ? 1 : -1);
+				p_ptr->prace %= MAX_RACES;
+				rp_ptr = &race_info[p_ptr->prace];
+				create_random_name(p_ptr->prace,player_name);
+			}
+			/* Template */
+			else if (i == 7)
+			{
+				p_ptr->ptemplate += (islower(stat) ? 1 : -1);
+				p_ptr->ptemplate %= MAX_TEMPLATE;
+				cp_ptr = &template_info[p_ptr->ptemplate];
+			}
+			/* Correct the skill set. These will be finalised later. */
+			get_starting_skills(p_ptr->prace);
+			get_hermetic_skills_randomly();
+			get_init_spirit(FALSE);
+			get_random_skills(FALSE);
+			wield_weapons(TRUE);
+			/* Avoid stats which are too low. */
+			/* This relies on no single change from race to race or template to
+			template involving a stat change of more than 15 points. */
+			if (maximise_mode)
+			{
+				for (i = A_STR; i<= A_CHR; i++)
+				{
+					while ((p_ptr->stat_cur[i] + rp_ptr->r_adj[i] + cp_ptr->c_adj[i]) < 3)
+					{
+						p_ptr->stat_cur[i] = ++p_ptr->stat_max[i];
+						if(p_ptr->stat_max[i] > 97) points--; 
+						if(p_ptr->stat_max[i] > 67) points--;
+						if(p_ptr->stat_max[i] > 18) points--;
+						if(p_ptr->stat_max[i] > 14) points--;
+						if(p_ptr->stat_max[i] > 3) points--;
+					}
+				}
+			}
+		}
 		/* Test for lower case (add to stat) or 
 		upper case (subtract stat) */
-		if(islower(stat)) /* ('a' < stat) */
+		else if (islower(stat)) /* ('a' < stat) */
 		{
 			/* different conditions for maximize on */
 			if(maximise_mode) 
@@ -906,6 +1072,12 @@ static bool point_mod_player(void)
 			continue;
 		}
 	}
+	/* Finally randomise the skill bonuses and set magic up as the player wants. */
+	get_starting_skills(p_ptr->prace);
+	get_hermetic_skills();
+	get_init_spirit(TRUE);
+	get_random_skills(TRUE);
+ 	wield_weapons(FALSE);
 	return TRUE;
 }
 
@@ -998,7 +1170,6 @@ void create_random_name(int race, char *name)
 void get_starting_skills(int race)
 {
 	int i;
-	player_race *r_ptr = &(race_info[race]);
 	/* Wipe skills */
 	for(i=0;i<MAX_SKILLS;i++)
 	{
@@ -1009,229 +1180,25 @@ void get_starting_skills(int race)
 	}
 
 	/* Now add some from template */
-	switch (p_ptr->ptemplate)
-	{
-	case TPL_ADVENTURER:
-		/* Add to the everyman skills */
-		skill_set[SKILL_TOUGH].value+=1;
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=20;
-		skill_set[SKILL_STAB].value+=20;
-		skill_set[SKILL_SLASH].value+=20;
-		skill_set[SKILL_CRUSH].value+=20;
-		skill_set[SKILL_MISSILE].value+=20;
-		skill_set[SKILL_PERCEPTION].value+=10;
-		skill_set[SKILL_SAVE].value+=20;
-		skill_set[SKILL_SEARCH].value+=5;
-		skill_set[SKILL_STEALTH].value+=5;
-		skill_set[SKILL_HEDGE].value+=5;
-		break;
-	case TPL_SWASHBUCKLER:
-		/* Add to the everyman skills */
-		skill_set[SKILL_TOUGH].value+=1;
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=15;
-		skill_set[SKILL_STAB].value+=35;
-		skill_set[SKILL_SLASH].value+=15;
-		skill_set[SKILL_CRUSH].value+=15;
-		skill_set[SKILL_MISSILE].value+=15;
-		skill_set[SKILL_PERCEPTION].value+=15;
-		skill_set[SKILL_SAVE].value+=15;
-		skill_set[SKILL_SEARCH].value+=5;
-		skill_set[SKILL_STEALTH].value+=5;
-		break;
-	case TPL_GLADIATOR:
-		/* Add to the everyman skills */
-		skill_set[SKILL_TOUGH].value+=2;
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=30;
-		skill_set[SKILL_STAB].value+=30;
-		skill_set[SKILL_SLASH].value+=30;
-		skill_set[SKILL_CRUSH].value+=30;
-		skill_set[SKILL_MISSILE].value+=10;
-		skill_set[SKILL_PERCEPTION].value+=10;
-		skill_set[SKILL_SAVE].value+=10;
-		skill_set[SKILL_SEARCH].value+=5;
-		skill_set[SKILL_STEALTH].value+=5;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_MA].value+=1;
-		break;
-	case TPL_WARRIOR_MONK:
-		/* Add to the everyman skills */
-		skill_set[SKILL_TOUGH].value+=1;
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=35;
-		skill_set[SKILL_STAB].value+=10;
-		skill_set[SKILL_SLASH].value+=10;
-		skill_set[SKILL_CRUSH].value+=10;
-		skill_set[SKILL_MISSILE].value+=10;
-		skill_set[SKILL_PERCEPTION].value+=15;
-		skill_set[SKILL_SAVE].value+=10;
-		skill_set[SKILL_SEARCH].value+=5;
-		skill_set[SKILL_STEALTH].value+=15;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_MA].value+=4;
-		break;
-	case TPL_ZEN_MONK:
-		/* Add to the everyman skills */
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=25;
-		skill_set[SKILL_STAB].value+=10;
-		skill_set[SKILL_SLASH].value+=10;
-		skill_set[SKILL_CRUSH].value+=10;
-		skill_set[SKILL_MISSILE].value+=10;
-		skill_set[SKILL_PERCEPTION].value+=15;
-		skill_set[SKILL_SAVE].value+=10;
-		skill_set[SKILL_SEARCH].value+=10;
-		skill_set[SKILL_STEALTH].value+=10;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_MA].value+=2;
-		skill_set[SKILL_MINDCRAFTING].value+=1;
-		skill_set[SKILL_CHI].value+=1;
-		break;
-	case TPL_ASSASSIN:
-		/* Add to the everyman skills */
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=20;
-		skill_set[SKILL_CLOSE].value+=30;
-		skill_set[SKILL_STAB].value+=20;
-		skill_set[SKILL_SLASH].value+=20;
-		skill_set[SKILL_CRUSH].value+=20;
-		skill_set[SKILL_MISSILE].value+=10;
-		skill_set[SKILL_PERCEPTION].value+=20;
-		skill_set[SKILL_SAVE].value+=10;
-		skill_set[SKILL_SEARCH].value+=20;
-		skill_set[SKILL_STEALTH].value+=30;
-		break;
-	case TPL_RANGER:
-		/* Add to the everyman skills */
-		skill_set[SKILL_TOUGH].value+=1;
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=10;
-		skill_set[SKILL_CLOSE].value+=15;
-		skill_set[SKILL_STAB].value+=15;
-		skill_set[SKILL_SLASH].value+=15;
-		skill_set[SKILL_CRUSH].value+=15;
-		skill_set[SKILL_MISSILE].value+=35;
-		skill_set[SKILL_PERCEPTION].value+=30;
-		skill_set[SKILL_SAVE].value+=10;
-		skill_set[SKILL_SEARCH].value+=20;
-		skill_set[SKILL_STEALTH].value+=20;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_SHAMAN].value+=2;
-		break;
-	case TPL_SHAMAN:
-		/* Add to the everyman skills */
-		skill_set[SKILL_DEVICE].value+=10;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=15;
-		skill_set[SKILL_STAB].value+=15;
-		skill_set[SKILL_SLASH].value+=15;
-		skill_set[SKILL_CRUSH].value+=15;
-		skill_set[SKILL_MISSILE].value+=15;
-		skill_set[SKILL_PERCEPTION].value+=15;
-		skill_set[SKILL_SAVE].value+=20;
-		skill_set[SKILL_SEARCH].value+=10;
-		skill_set[SKILL_STEALTH].value+=5;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_SHAMAN].value+=5;
-		break;
-	case TPL_MINDCRAFTER:
-		/* Add to the everyman skills */
-		skill_set[SKILL_DEVICE].value+=10;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=15;
-		skill_set[SKILL_STAB].value+=15;
-		skill_set[SKILL_SLASH].value+=15;
-		skill_set[SKILL_CRUSH].value+=15;
-		skill_set[SKILL_MISSILE].value+=15;
-		skill_set[SKILL_PERCEPTION].value+=15;
-		skill_set[SKILL_SAVE].value+=15;
-		skill_set[SKILL_SEARCH].value+=10;
-		skill_set[SKILL_STEALTH].value+=5;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_MINDCRAFTING].value+=4;
-		skill_set[SKILL_CHI].value+=2;
-		break;
-	case TPL_MAGE:
-		/* Add to the everyman skills */
-		skill_set[SKILL_DEVICE].value+=25;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=10;
-		skill_set[SKILL_STAB].value+=10;
-		skill_set[SKILL_SLASH].value+=10;
-		skill_set[SKILL_CRUSH].value+=10;
-		skill_set[SKILL_MISSILE].value+=10;
-		skill_set[SKILL_PERCEPTION].value+=15;
-		skill_set[SKILL_SAVE].value+=20;
-		skill_set[SKILL_SEARCH].value+=10;
-		skill_set[SKILL_STEALTH].value+=5;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_MANA].value+=4;
-		/* hermetic skill(s) are added later */
-		break;
-	case TPL_WARLOCK:
-		/* Add to the everyman skills */
-		skill_set[SKILL_TOUGH].value+=1;
-		skill_set[SKILL_DEVICE].value+=10;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=15;
-		skill_set[SKILL_STAB].value+=15;
-		skill_set[SKILL_SLASH].value+=15;
-		skill_set[SKILL_CRUSH].value+=20;
-		skill_set[SKILL_MISSILE].value+=10;
-		skill_set[SKILL_PERCEPTION].value+=10;
-		skill_set[SKILL_SAVE].value+=15;
-		skill_set[SKILL_SEARCH].value+=10;
-		skill_set[SKILL_STEALTH].value+=5;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_MANA].value+=2;
-		/* hermetic skill(s) are added later */
-		break;
-	case TPL_POWERWEAVER:
-		/* Add to the everyman skills */
-		skill_set[SKILL_DEVICE].value+=15;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=5;
-		skill_set[SKILL_STAB].value+=5;
-		skill_set[SKILL_SLASH].value+=5;
-		skill_set[SKILL_CRUSH].value+=5;
-		skill_set[SKILL_MISSILE].value+=5;
-		skill_set[SKILL_PERCEPTION].value+=10;
-		skill_set[SKILL_SAVE].value+=15;
-		skill_set[SKILL_SEARCH].value+=10;
-		skill_set[SKILL_STEALTH].value+=5;
-		/* Give some specialist skill(s) */
-		skill_set[SKILL_MANA].value+=2;
-		skill_set[SKILL_CHI].value+=2;
-		skill_set[SKILL_MINDCRAFTING].value+=3;
-		skill_set[SKILL_SHAMAN].value+=3;
-		/* hermetic skill(s) are added later */
-		break;
-	case TPL_TOURIST:
-		/* Add to the everyman skills */
-		skill_set[SKILL_DEVICE].value+=5;
-		skill_set[SKILL_DISARM].value+=5;
-		skill_set[SKILL_CLOSE].value+=10;
-		skill_set[SKILL_STAB].value+=10;
-		skill_set[SKILL_SLASH].value+=10;
-		skill_set[SKILL_CRUSH].value+=10;
-		skill_set[SKILL_MISSILE].value+=10;
-		skill_set[SKILL_PERCEPTION].value+=5;
-		skill_set[SKILL_SAVE].value+=5;
-		skill_set[SKILL_SEARCH].value+=5;
-		skill_set[SKILL_STEALTH].value+=5;
-		/* Tourist gets no specialist skills */
-		break;
-	default:
-		break;
-	}
-	
+	skill_set[SKILL_CLOSE].value+=cp_ptr->skill[0];
+	skill_set[SKILL_STAB].value+=cp_ptr->skill[1];
+	skill_set[SKILL_SLASH].value+=cp_ptr->skill[2];
+	skill_set[SKILL_CRUSH].value+=cp_ptr->skill[3];
+	skill_set[SKILL_MISSILE].value+=cp_ptr->skill[4];
+	skill_set[SKILL_TOUGH].value+=cp_ptr->skill[5];
+	skill_set[SKILL_DEVICE].value+=cp_ptr->skill[6];
+	skill_set[SKILL_DISARM].value+=cp_ptr->skill[7];
+	skill_set[SKILL_PERCEPTION].value+=cp_ptr->skill[8];
+	skill_set[SKILL_SAVE].value+=cp_ptr->skill[9];
+	skill_set[SKILL_SEARCH].value+=cp_ptr->skill[10];
+	skill_set[SKILL_STEALTH].value+=cp_ptr->skill[11];
+	skill_set[SKILL_MA].value+=cp_ptr->skill[12];
+	skill_set[SKILL_MINDCRAFTING].value+=cp_ptr->skill[13];
+	skill_set[SKILL_CHI].value+=cp_ptr->skill[14];
+	skill_set[SKILL_SHAMAN].value+=cp_ptr->skill[15];
+	skill_set[SKILL_HEDGE].value+=cp_ptr->skill[16];
+	skill_set[SKILL_MANA].value+=cp_ptr->skill[17];
+
 	/* Template skills will become base skills - you can start advancing 
 	 * them immediately */
 
@@ -1268,54 +1235,44 @@ void get_hermetic_skills_randomly()
 	int i,choices;
 	int choice,old_choice;
 
-	switch (p_ptr->ptemplate)
-	{
-	case TPL_MAGE:
-		choices = 3;
-		break;
-	case TPL_WARLOCK:
-		choices = 1;
-		break;
-	case TPL_POWERWEAVER:
-		choices = 2;
-		break;
-	default:
-		return; /* No skills */
-	}
+	choices = cp_ptr->choices;
 
-	old_choice = rand_range(1,8);
-	for(i=0;i<choices;i++)
+	if (choices)
 	{
-		choice = rand_range(1,8);
-		if(rand_range(1,3) != 1) choice = old_choice;
-		switch(choice)
+		old_choice = rand_range(1,8);
+		for(i=0;i<choices;i++)
 		{
-		case 1:
-			skill_set[SKILL_THAUMATURGY].value+=5;
-			break;
-		case 2:
-			skill_set[SKILL_NECROMANCY].value+=5;
-			break;
-		case 3:
-			skill_set[SKILL_SORCERY].value+=5;
-			break;
-		case 4:
-			skill_set[SKILL_CONJURATION].value+=5;
-			break;
-		case 5:
-			skill_set[SKILL_ANIMAE].value+=5;
-			break;
-		case 6:
-			skill_set[SKILL_CORPORIS].value+=5;
-			break;
-		case 7:
-			skill_set[SKILL_VIS].value+=5;
-			break;
-		case 8:
-			skill_set[SKILL_NATURAE].value+=5;
-			break;
+			choice = rand_range(1,8);
+			if(rand_range(1,3) != 1) choice = old_choice;
+			switch(choice)
+			{
+			case 1:
+				skill_set[SKILL_THAUMATURGY].value+=5;
+				break;
+			case 2:
+				skill_set[SKILL_NECROMANCY].value+=5;
+				break;
+			case 3:
+				skill_set[SKILL_SORCERY].value+=5;
+				break;
+			case 4:
+				skill_set[SKILL_CONJURATION].value+=5;
+				break;
+			case 5:
+				skill_set[SKILL_ANIMAE].value+=5;
+				break;
+			case 6:
+				skill_set[SKILL_CORPORIS].value+=5;
+				break;
+			case 7:
+				skill_set[SKILL_VIS].value+=5;
+				break;
+			case 8:
+				skill_set[SKILL_NATURAE].value+=5;
+				break;
+			}
+			old_choice = choice;
 		}
-		old_choice = choice;
 	}
 }
 
@@ -1325,89 +1282,79 @@ void get_hermetic_skills_randomly()
 void get_hermetic_skills()
 {
 	int k,i,choices;
-    char c;
-    char buf[80];
+	char c;
+	char buf[80];
 
-	switch (p_ptr->ptemplate)
-	{
-	case TPL_MAGE:
-		choices = 3;
-		break;
-	case TPL_WARLOCK:
-		choices = 1;
-		break;
-	case TPL_POWERWEAVER:
-		choices = 2;
-		break;
-	default:
-		return; /* No skills */
-	}
+	choices = cp_ptr->choices;
 
     /* Extra info */
-	clear_from(15);
-	Term_putstr(5, 15, -1, TERM_WHITE,
-    "Please select a school or type of hermetic magic to specialise");
-    Term_putstr(5, 16, -1, TERM_WHITE,
-    "in. Thaumaturgy school is the most offensive, Sorcery school is");
-	Term_putstr(5,17,-1,TERM_WHITE,
-	"the least offensive. Naturae spells deal with matter, Corporis");
-    Term_putstr(5,18,-1,TERM_WHITE,
-	"with flesh, Animae with spirits and Vis with energy. Each school");
-    Term_putstr(5,19,-1,TERM_WHITE,
-	"has spells of all four types.");
-	
-	put_str("a) Thaumaturgy",22,2);
-	put_str("b) Necromancy",22,17);
-	put_str("c) Sorcery",22,32);
-	put_str("d) Conjuration",22,47);
-	put_str("e) Animae",23,2);
-	put_str("f) Corporis",23,17);
-	put_str("g) Vis",23,32);
-	put_str("h) Naturae",23,47);
-
-	for(i=choices;i>0;i--)
+	if (choices)
 	{
+		clear_from(15);
+		Term_putstr(5, 15, -1, TERM_WHITE,
+		"Please select a school or type of hermetic magic to specialise");
+		Term_putstr(5, 16, -1, TERM_WHITE,
+		"in. Thaumaturgy school is the most offensive, Sorcery school is");
+		Term_putstr(5,17,-1,TERM_WHITE,
+		"the least offensive. Naturae spells deal with matter, Corporis");
+		Term_putstr(5,18,-1,TERM_WHITE,
+		"with flesh, Animae with spirits and Vis with energy. Each school");
+		Term_putstr(5,19,-1,TERM_WHITE,
+		"has spells of all four types.");
+	
+		put_str("a) Thaumaturgy",22,2);
+		put_str("b) Necromancy",22,17);
+		put_str("c) Sorcery",22,32);
+		put_str("d) Conjuration",22,47);
+		put_str("e) Animae",23,2);
+		put_str("f) Corporis",23,17);
+		put_str("g) Vis",23,32);
+		put_str("h) Naturae",23,47);
 
-		/* Get a choice */
-		while (1)
+		for(i=choices;i>0;i--)
 		{
-			sprintf(buf, "%d choic%s left. Choose a school or type (a-h): ",i,(i>1 ? "es":"e"));
-			put_str(buf, 21, 2);
-			c = inkey();
-			if (c == 'Q') quit(NULL);
-			k = (islower(c) ? A2I(c) : -1);
-			if ((k >= 0) && (k <= 7)) break;
-			if (c == '?') do_cmd_help(syshelpfile);
 
-			else bell();
-		}
+			/* Get a choice */
+			while (1)
+			{
+				sprintf(buf, "%d choic%s left. Choose a school or type (a-h): ",i,(i>1 ? "es":"e"));
+				put_str(buf, 21, 2);
+				c = inkey();
+				if (c == 'Q') quit(NULL);
+				k = (islower(c) ? A2I(c) : -1);
+				if ((k >= 0) && (k <= 7)) break;
+				if (c == '?') do_cmd_help(syshelpfile);
 
-		switch(k)
-		{
-		case 0:
-			skill_set[SKILL_THAUMATURGY].value+=5;
-			break;
-		case 1:
-			skill_set[SKILL_NECROMANCY].value+=5;
-			break;
-		case 2:
-			skill_set[SKILL_SORCERY].value+=5;
-			break;
-		case 3:
-			skill_set[SKILL_CONJURATION].value+=5;
-			break;
-		case 4:
-			skill_set[SKILL_ANIMAE].value+=5;
-			break;
-		case 5:
-			skill_set[SKILL_CORPORIS].value+=5;
-			break;
-		case 6:
-			skill_set[SKILL_VIS].value+=5;
-			break;
-		case 7:
-			skill_set[SKILL_NATURAE].value+=5;
-			break;
+				else bell();
+			}
+
+			switch(k)
+			{
+			case 0:
+				skill_set[SKILL_THAUMATURGY].value+=5;
+				break;
+			case 1:
+				skill_set[SKILL_NECROMANCY].value+=5;
+				break;
+			case 2:
+				skill_set[SKILL_SORCERY].value+=5;
+				break;
+			case 3:
+				skill_set[SKILL_CONJURATION].value+=5;
+				break;
+			case 4:
+				skill_set[SKILL_ANIMAE].value+=5;
+				break;
+			case 5:
+				skill_set[SKILL_CORPORIS].value+=5;
+				break;
+			case 6:
+				skill_set[SKILL_VIS].value+=5;
+				break;
+			case 7:
+				skill_set[SKILL_NATURAE].value+=5;
+				break;
+			}
 		}
 	}
 }
@@ -2740,8 +2687,6 @@ static bool player_birth_aux()
 		/*** Player race ***/
 		/* Set race */
 		k=rand_range(0,MAX_RACES-1);
-		hack_chaos_feature = FALSE;
-		if (k==RACE_BROO) hack_chaos_feature = TRUE;
 		p_ptr->prace = k;
 		rp_ptr = &race_info[p_ptr->prace];
 		str = rp_ptr->title;
@@ -2764,28 +2709,9 @@ static bool player_birth_aux()
 		/* Get skill values */
 		get_starting_skills(p_ptr->prace);
 		get_hermetic_skills_randomly();
+		get_init_spirit(FALSE);
+		get_random_skills(TRUE);
 
-		/* Set maxima */
-		for (i=0;i<MAX_SKILLS;i++)
-		{
-			if(skill_set[i].value>10)
-			{
-				skill_set[i].value+= (byte)rand_int(10);
-			}
-			else if(skill_set[i].value>5)
-			{
-				skill_set[i].value+= (byte)rand_int(5);
-			}
-			else if(skill_set[i].value>0)
-			{
-				skill_set[i].value+= (byte)rand_int(3);
-			}
-
-			skill_set[i].max_value=skill_set[i].value;
-		}
-		
-		if (skill_set[SKILL_THAUMATURGY].value > 0) hack_chaos_feature = TRUE;
-	
 		/* Get a random name */
 		create_random_name(p_ptr->prace,player_name);
 		/* Display */
@@ -3345,8 +3271,6 @@ static bool player_birth_aux()
 		}
 
 		/* Set race */
-		hack_chaos_feature = FALSE;
-		if (k==RACE_BROO) hack_chaos_feature= TRUE;
 		p_ptr->prace = k;
 		rp_ptr = &race_info[p_ptr->prace];
 		str = rp_ptr->title;
@@ -3418,65 +3342,15 @@ static bool player_birth_aux()
 		c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
 
 		/* Get initial skill values */
-		get_starting_skills(p_ptr->prace);
-		get_hermetic_skills();
-
-		/* Nudge skills up and set maxima */
-		for (i=0;i<MAX_SKILLS;i++)
+		/* With point_mod, this will be done later. */
+		if (!point_mod)
 		{
-			if(skill_set[i].value>10)
-			{
-				skill_set[i].value+= (byte)rand_int(10);
-			}
-			else if(skill_set[i].value>5)
-			{
-				skill_set[i].value+= (byte)rand_int(5);
-			}
-			else if(skill_set[i].value>0)
-			{
-				skill_set[i].value+= (byte)rand_int(3);
-			}
-
-			skill_set[i].max_value=skill_set[i].value;
+			get_starting_skills(p_ptr->prace);
+			get_hermetic_skills();
+			get_init_spirit(TRUE);
+			get_random_skills(TRUE);
 		}
-
-		if (skill_set[SKILL_THAUMATURGY].value > 0) hack_chaos_feature = TRUE;
 		
-		/* Set bases for arcane skills to be the same as the current values since
-		 * they start low - may want to do this for all skills later, but lowering
-		 * the values first (and do this for martial arts skill also).
-		 */
-		
-		skill_set[SKILL_MANA].base = skill_set[SKILL_MANA].value;
-		skill_set[SKILL_MA].base = skill_set[SKILL_MA].value;
-		skill_set[SKILL_CORPORIS].base = skill_set[SKILL_CORPORIS].value;
-		skill_set[SKILL_ANIMAE].base = skill_set[SKILL_ANIMAE].value;
-		skill_set[SKILL_VIS].base = skill_set[SKILL_VIS].value;
-		skill_set[SKILL_NATURAE].base = skill_set[SKILL_NATURAE].value;
-		skill_set[SKILL_NECROMANCY].base = skill_set[SKILL_NECROMANCY].value;
-		skill_set[SKILL_SORCERY].base = skill_set[SKILL_SORCERY].value;
-		skill_set[SKILL_CONJURATION].base = skill_set[SKILL_CONJURATION].value;
-		skill_set[SKILL_THAUMATURGY].base = skill_set[SKILL_THAUMATURGY].value;
-		skill_set[SKILL_MINDCRAFTING].base = skill_set[SKILL_MINDCRAFTING].value;
-		skill_set[SKILL_CHI].base = skill_set[SKILL_CHI].value;
-		skill_set[SKILL_SHAMAN].base = skill_set[SKILL_SHAMAN].value;
-		skill_set[SKILL_HEDGE].base = skill_set[SKILL_HEDGE].value;
-		
-		/* For characters starting with shaman skill, start them with a spirit */
-		if (skill_set[SKILL_SHAMAN].value > 0) {
-		    c = '\0';
-		    while (1) {
-		        sprintf(buf, "Choose a life spirit(a) or wild spirit(b): ");
-		        put_str(buf, 17, 2);
-		        c = inkey();
-		        c = tolower(c);
-		    	if (c == 'a') break;
-		    	if (c == 'b') break;
-		    }
-		    if (c == 'a') spirits[0].pact = TRUE;
-		    if (c == 'b') spirits[1].pact = TRUE;
-		}
-
 		/* Clean up */
 		clear_from(15);
 
