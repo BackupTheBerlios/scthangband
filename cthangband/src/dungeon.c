@@ -3795,15 +3795,9 @@ static void dungeon(void)
  * Load all relevant pref files to avoid problems with preferences being set to
  * to defaults.
  */
-static void load_all_pref_files(void)
+static void process_some_user_pref_files(void)
 {
 	char buf[1024];
-
-	/* Access the default pref file */
-	strcpy(buf, "pref.prf");
-	
-	/* Process that file */
-	process_pref_file(buf);
 
 	/* Access the "font" or "graf" pref file, based on "use_graphics" */
 	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
@@ -3811,42 +3805,14 @@ static void load_all_pref_files(void)
 	/* Process that file */
 	process_pref_file(buf);
 
-	/* Access the "user" pref file */
-	sprintf(buf, "user.prf");
-
-	/* Process that file */
-	process_pref_file(buf);
-
-	/* Access the "basic" system pref file */
-	sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
-
-	/* Process that file */
-	process_pref_file(buf);
-
-	/* Access the "user" system pref file */
-	sprintf(buf, "user-%s.prf", ANGBAND_SYS);
-
-	/* Process that file */
-	process_pref_file(buf);
-
-	/* Access the "race" pref file */
-	sprintf(buf, "%s.prf", rp_ptr->title);
-
-	/* Process that file */
-	process_pref_file(buf);
-
-	/* Access the "template" pref file */
-	sprintf(buf, "%s.prf", cp_ptr->title);
-
-	/* Process that file */
-	process_pref_file(buf);
+	/* Process the "user.prf" file */
+	(void)process_pref_file("user.prf");
 
 	/* Access the "character" pref file */
 	sprintf(buf, "%s.prf", player_base);
 
 	/* Process that file */
 	process_pref_file(buf);
-	
 }
 
 /*
@@ -4216,7 +4182,7 @@ void play_game(bool new_game)
 
 
 	/* Load the "pref" files */
-	load_all_pref_files();
+	process_some_user_pref_files();
 
 	/* Set or clear "rogue_like_commands" if requested */
 	if (arg_force_original) rogue_like_commands = FALSE;
