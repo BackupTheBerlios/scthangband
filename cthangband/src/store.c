@@ -973,6 +973,9 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Require matching discounts */
 	if (o_ptr->discount != j_ptr->discount) return (0);
 
+	/* Require matching identification states */
+	if (object_known_p(o_ptr) != object_known_p(j_ptr)) return (0);
+	
 	/* They match, so they must be similar */
 	return (TRUE);
 }
