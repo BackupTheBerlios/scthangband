@@ -1366,7 +1366,7 @@ static bool wr_savefile_new(void)
 	{
 		quest_type *q_ptr = q_list+i;
 		wr_byte((byte)(q_ptr->level));
-		wr_s16b((short)(q_ptr->r_idx));
+		wr_s16b((short)(convert_r_idx(tmp16u, sf_flags, sf_flags_now)));
 		wr_byte((byte)(q_ptr->dungeon));
 		wr_byte((byte)(q_ptr->cur_num));
 		wr_byte((byte)(q_ptr->max_num));

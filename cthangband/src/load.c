@@ -1864,7 +1864,7 @@ static errr rd_savefile_new_aux(void)
 			rd_byte(&tmp8u);
 			q_ptr->level = tmp8u;
 			rd_s16b((short *)&tmp16u);
-			q_ptr->r_idx = tmp16u;
+			q_ptr->r_idx = convert_r_idx(tmp16u, sf_flags, sf_flags_now);
 			rd_byte(&q_ptr->dungeon);
 			rd_byte(&tmp8u);
 			q_ptr->cur_num = tmp8u;
@@ -1889,16 +1889,24 @@ static errr rd_savefile_new_aux(void)
 			else
 			{
 				/* The default set of known quests is the set of fixed quests. */
-				dun_type *d_ptr;
+				int j;
 				q_ptr->known = FALSE;
-				for (d_ptr = dun_defs; d_ptr < dun_defs+MAX_CAVES; d_ptr++)
+				for (j = 0; j < MAX_CAVES; j++)
 				{
-					if (d_ptr->first_guardian == q_ptr->r_idx ||
-						d_ptr->second_guardian == q_ptr->r_idx)
-					{
-						q_ptr->known = TRUE;
-						break;
-					}
+					dun_type *d_ptr = dun_defs+j;
+
+					/* Wrong dungeon. */
+					if (q_ptr->dungeon != j) continue;
+
+					/* Right level. */
+					if (d_ptr->first_level != q_ptr->level &&
+						d_ptr->second_level != q_ptr->level) continue;
+
+					/* Everyone knows this quest. */
+					q_ptr->known = TRUE;
+
+					/* Found it. */
+					break;
 				}
 			}
 #endif
