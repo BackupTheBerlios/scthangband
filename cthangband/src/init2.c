@@ -249,9 +249,7 @@ static cptr err_str[PARSE_ERROR_MAX] =
 	"undefined directive",
 	"out of memory",
 	"value out of bounds",
-	"too few arguments",
 	"too many arguments",
-	"too many allocation entries",
 	"invalid spell frequency",
 	"incorrect syntax",
 };

@@ -862,12 +862,6 @@ static int change_points_by_stat(s16b from, s16b to)
 	return points;
 }
 
-/* Just in case */
-#ifndef SUCCESS
-#define SUCCESS 0
-#define ERR_PARSE 1
-#endif
-
 /* Save the current stats */
 static errr save_stats(void)
 {

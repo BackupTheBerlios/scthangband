@@ -1397,31 +1397,6 @@ static void rd_messages(void)
 
 
 /*
- * Old "cave grid" flags -- saved in savefile
- */
-#define OLD_GRID_W_01   0x0001  /* Wall type (bit 1) */
-#define OLD_GRID_W_02   0x0002  /* Wall type (bit 2) */
-#define OLD_GRID_PERM   0x0004  /* Wall type is permanent */
-#define OLD_GRID_QQQQ   0x0008  /* Unused */
-#define OLD_GRID_MARK   0x0010  /* Grid is memorized */
-#define OLD_GRID_GLOW   0x0020  /* Grid is illuminated */
-#define OLD_GRID_ROOM   0x0040  /* Grid is part of a room */
-#define OLD_GRID_ICKY   0x0080  /* Grid is anti-teleport */
-
-/*
- * Masks for the new grid types
- */
-#define OLD_GRID_WALL_MASK      0x0003  /* Wall type */
-
-/*
- * Legal results of OLD_GRID_WALL_MASK
- */
-#define OLD_GRID_WALL_NONE              0x0000  /* No wall */
-#define OLD_GRID_WALL_MAGMA             0x0001  /* Magma vein */
-#define OLD_GRID_WALL_QUARTZ    0x0002  /* Quartz vein */
-#define OLD_GRID_WALL_GRANITE   0x0003  /* Granite wall */
-
-/*
  * Read the dungeon
  *
  * The monsters/objects must be loaded in the same order

@@ -2117,10 +2117,10 @@ extern const byte adj_str_hold[NUM_STAT_INDICES];
 #if (defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_str_dig[NUM_STAT_INDICES];
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_str_blow[NUM_STAT_INDICES];
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_dex_blow[NUM_STAT_INDICES];
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(TABLES_C))
@@ -2132,7 +2132,7 @@ extern const byte adj_con_fix[NUM_STAT_INDICES];
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_con_mhp[NUM_STAT_INDICES];
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte blows_table[12][12];
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(TABLES_C))

@@ -48,22 +48,6 @@
         ((huge)(sizeof(T)))
 
 
-/* Bool: True when P1 and P2 both point to N T's, which have same contents */
-#define C_SAME(P1,P2,N,T) \
-        (!memcmp((const char*)(P1),(const char*)(P2),C_SIZE(N,T)))
-
-/* Bool: True when P1 and P2 both point to T's, and they have same contents */
-#define SAME(P1,P2,T) \
-		(C_SAME(P1,P2,1,T))
-
-/* Compare two arrays of type T[N], at locations P1 and P2 */
-#define C_DIFF(P1,P2,N,T) \
-	(!C_SAME(P1,P2,N,T))
-
-/* Compare two things of type T, at locations P1 and P2 */
-#define DIFF(P1,P2,T) \
-	(!SAME(P1,P2,T))
-
 /* Set every byte in an array of type T[N], at location P, to V, and return P */
 #define C_BSET(P,V,N,T) \
 	(T*)(memset((char*)(P),(V),C_SIZE(N,T)))

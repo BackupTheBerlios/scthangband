@@ -1526,17 +1526,6 @@ void prt_map(void)
 
 
 /*
- * Display highest priority object in the RATIO by RATIO area
- */
-#define RATIO 3
-
-/*
- * Display the entire map
- */
-#define MAP_HGT (MAX_HGT / RATIO)
-#define MAP_WID (MAX_WID / RATIO)
-
-/*
  * Hack -- a priority function (see below)
  *
  * This uses the priorities of terrians which are never shown because they are

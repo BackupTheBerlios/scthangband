@@ -579,7 +579,7 @@ static bool find_string_x(char *buf, cptr string)
 	cptr array[2];
 	array[0] = string;
 	array[1] = NULL;
-	return (0 != find_string(buf, array));
+	return 0 != find_string(buf, array);
 }
 
 /* Find a string beginning and ending with a given character. Complain if it contains one of a set of other
@@ -1208,7 +1208,7 @@ static u32b add_name(header *head, cptr buf)
 
 	/* Hack -- Verify space */
 	if (head->name_size + strlen(buf) + 8 > z_info->fake_name_size)
-		return (0);
+		return 0;
 
 	/* Check object names for incorrect flags. */
 	switch (head->header_num)
@@ -1228,7 +1228,7 @@ static u32b add_name(header *head, cptr buf)
 	head->name_size += strlen(buf);
 	
 	/* Return the name index */
-	return (index);
+	return index;
 }
 
 
@@ -1290,7 +1290,7 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			s = strchr(buf+2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return PARSE_ERROR_GENERIC;
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
@@ -1299,10 +1299,10 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return PARSE_ERROR_NON_SEQUENTIAL_RECORDS;
 
 			/* Verify information */
-			if (i >= MAX_I) return (2);
+			if (i >= MAX_I) return PARSE_ERROR_OBSOLETE_FILE;
 
 			/* Save the index */
 			error_idx = i;
@@ -1312,7 +1312,7 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 
 			/* Store the name */
 			if (!(f_ptr->name = add_name(head, s)))
-			return (PARSE_ERROR_OUT_OF_MEMORY);
+			return PARSE_ERROR_OUT_OF_MEMORY;
 
 			/* Default "mimic" */
 			f_ptr->mimic = i;
@@ -1359,7 +1359,7 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 		}
 		default:
 		{
-			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		}
 	}
 }
@@ -1389,7 +1389,7 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 			s = strchr(buf+2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return PARSE_ERROR_GENERIC;
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
@@ -1398,10 +1398,10 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return PARSE_ERROR_NON_SEQUENTIAL_RECORDS;
 
 			/* Verify information */
-			if (i >= MAX_I) return (2);
+			if (i >= MAX_I) return PARSE_ERROR_OBSOLETE_FILE;
 
 			/* Save the index */
 			error_idx = i;
@@ -1411,7 +1411,7 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 
 			/* Store the name */
 			if (!(v_ptr->name = add_name(head, s)))
-			return (PARSE_ERROR_OUT_OF_MEMORY);
+			return PARSE_ERROR_OUT_OF_MEMORY;
 
 			return SUCCESS;
 		}
@@ -1455,7 +1455,7 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 
 		default:
 		{
-			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		}
 	}
 }
@@ -1488,7 +1488,7 @@ static errr grab_one_flag(u32b **flag, cptr errstr, cptr what)
 	msg_format("Unknown %s flag '%s'.", errstr, what);
 
 	/* Error */
-	return (1);
+	return PARSE_ERROR_GENERIC;
 }
 
 static errr grab_one_kind_flag(object_kind *ptr, cptr what)
@@ -1526,7 +1526,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			s = strchr(buf+2, ':');
 
 			/* Verify that colon and advance */
-			if (!s++) return (1);
+			if (!s++) return PARSE_ERROR_GENERIC;
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -1535,11 +1535,11 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			if (i < 0) i = OBJ_MAX_DISTRO-i;
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return PARSE_ERROR_NON_SEQUENTIAL_RECORDS;
 
 
 			/* Verify information */
-			if (i >= MAX_I) return (2);
+			if (i >= MAX_I) return PARSE_ERROR_OBSOLETE_FILE;
 
 			/* Save the index */
 			error_idx = i;
@@ -1549,7 +1549,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 
 			/* Store the name */
 			if (!(k_ptr->name = add_name(head, s)))
-				return (PARSE_ERROR_OUT_OF_MEMORY);
+				return PARSE_ERROR_OUT_OF_MEMORY;
 
 			/* Next... */
 			return SUCCESS;
@@ -1570,8 +1570,8 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			tmp = color_char_to_attr(col);
 
 			/* Paranoia */
-			if (tmp < 0) return (1);
-			if (p_id < 0 || p_id > 255) return (1);
+			if (tmp < 0) return PARSE_ERROR_GENERIC;
+			if (p_id < 0 || p_id > 255) return PARSE_ERROR_GENERIC;
 
 			/* Save the values */
 			k_ptr->d_char = sym;
@@ -1701,7 +1701,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_kind_flag(k_ptr, s)) return (5);
+				if (0 != grab_one_kind_flag(k_ptr, s)) return PARSE_ERROR_INVALID_FLAG;
 
 				/* Start the next entry */
 				s = t;
@@ -1722,7 +1722,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 		default:
 		{
 			/* Oops */
-			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		}
 	}
 }
@@ -1746,7 +1746,7 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 		case 'C': /* C needs an existing record. */
 		if (!ob_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER; break;
 		default: /* Nothing else makes sense. */
-		return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 	}
 
 	/* Process 'N' for "New/Number/Name" */
@@ -1761,7 +1761,7 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 			char *s = strchr(buf+2, ':');
 
 			/* Verify that colon */
-			if (!s) return (PARSE_ERROR_GENERIC);
+			if (!s) return PARSE_ERROR_GENERIC;
 
 			/* Advance to the name */
 			s++;
@@ -1773,14 +1773,14 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 			error_idx = i;
 
 			/* Paranoia - there should always be space for 256 entries. */
-			if (error_idx >= MAX_I) return (PARSE_ERROR_OUT_OF_MEMORY);
+			if (error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
 
 			/* Point at the "info" */
 			*extra = ob_ptr = (o_base_type*)head->info_ptr + error_idx;
 
 			/* Store the name */
 			if (!(ob_ptr->name = add_name(head, s)))
-				return (PARSE_ERROR_OUT_OF_MEMORY);
+				return PARSE_ERROR_OUT_OF_MEMORY;
 
 			return SUCCESS;
 		}
@@ -1829,7 +1829,7 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 			long cost = 0;
 
 			/* There better be a current k_ptr */
-			if (!ob_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
+			if (!ob_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
 
 			/* Work out the lowest cost this item might have. */
 			if (!strncmp(buf+2, "default", strlen("default")))
@@ -1969,12 +1969,12 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 			if (color_char_to_attr(col) < 0)
 			{
 				msg_print("Illegal colour.");
-				return (PARSE_ERROR_GENERIC);
+				return PARSE_ERROR_GENERIC;
 			}
 			if (!ISGRAPH(sym))
 			{
 				msg_print("Illegal symbol.");
-				return (PARSE_ERROR_GENERIC);
+				return PARSE_ERROR_GENERIC;
 			}
 			/* Extract the char */
 			u_ptr->d_char = sym;
@@ -1999,7 +1999,7 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 				if (u2_ptr->p_id != u_ptr->p_id) continue;
 				if (u2_ptr->s_id != u_ptr->s_id) continue;
 				msg_format("Duplicated indices (%d,%d).", u_ptr->p_id, u_ptr->s_id);
-				return (PARSE_ERROR_GENERIC);
+				return PARSE_ERROR_GENERIC;
 			}
 
 			return SUCCESS;
@@ -2051,7 +2051,7 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 			s = strchr(buf+2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return PARSE_ERROR_GENERIC;
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
@@ -2060,10 +2060,10 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return PARSE_ERROR_NON_SEQUENTIAL_RECORDS;
 
 			/* Verify information */
-			if (i >= MAX_I) return (2);
+			if (i >= MAX_I) return PARSE_ERROR_OBSOLETE_FILE;
 
 			/* Save the index */
 			error_idx = i;
@@ -2073,7 +2073,7 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 
 			/* Store the name */
 			if (!(a_ptr->name = add_name(head, s)))
-			return (PARSE_ERROR_OUT_OF_MEMORY);
+			return PARSE_ERROR_OUT_OF_MEMORY;
 
 			/* Next... */
 			return SUCCESS;
@@ -2155,7 +2155,7 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_artifact_flag(a_ptr, s)) return (5);
+				if (0 != grab_one_artifact_flag(a_ptr, s)) return PARSE_ERROR_INVALID_FLAG;
 
 				/* Start the next entry */
 				s = t;
@@ -2166,7 +2166,7 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 		}
 		default:
 		{
-			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		}
 	}
 }
@@ -2212,7 +2212,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 			s = strchr(buf+2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return PARSE_ERROR_GENERIC;
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
@@ -2221,10 +2221,10 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return PARSE_ERROR_NON_SEQUENTIAL_RECORDS;
 
 			/* Verify information */
-			if (i >= MAX_I) return (2);
+			if (i >= MAX_I) return PARSE_ERROR_OBSOLETE_FILE;
 
 			/* Save the index */
 			error_idx = i;
@@ -2234,7 +2234,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 
 			/* Store the name */
 			if (!(e_ptr->name = add_name(head, s)))
-				return (PARSE_ERROR_OUT_OF_MEMORY);
+				return PARSE_ERROR_OUT_OF_MEMORY;
 
 			return SUCCESS;
 		}
@@ -2335,7 +2335,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_ego_item_flag(e_ptr, s)) return (5);
+				if (0 != grab_one_ego_item_flag(e_ptr, s)) return PARSE_ERROR_INVALID_FLAG;
 
 				/* Start the next entry */
 				s = t;
@@ -2346,7 +2346,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 
 		default:
 		{
-			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		}
 	}
 }
@@ -2397,7 +2397,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			s = strchr(buf+2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return PARSE_ERROR_GENERIC;
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
@@ -2406,10 +2406,10 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return PARSE_ERROR_NON_SEQUENTIAL_RECORDS;
 
 			/* Verify information */
-			if (i >= MAX_I) return (2);
+			if (i >= MAX_I) return PARSE_ERROR_OBSOLETE_FILE;
 
 			/* Save the index */
 			error_idx = i;
@@ -2419,7 +2419,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 
 			/* Store the name */
 			if (!(r_ptr->name = add_name(head, s)))
-			return (PARSE_ERROR_OUT_OF_MEMORY);
+			return PARSE_ERROR_OUT_OF_MEMORY;
 
 			return SUCCESS;
 		}
@@ -2440,13 +2440,13 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			int tmp;
 
 			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
+			if (!buf[2]) return PARSE_ERROR_GENERIC;
+			if (!buf[3]) return PARSE_ERROR_GENERIC;
+			if (!buf[4]) return PARSE_ERROR_GENERIC;
 
 			/* Extract the color */
 			tmp = color_char_to_attr(buf[4]);
-			if (tmp < 0) return (1);
+			if (tmp < 0) return PARSE_ERROR_GENERIC;
 
 			/* Save the values */
 			r_ptr->d_char = buf[2];
@@ -2506,7 +2506,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			for (i = 0; i < 4; i++) if (!r_ptr->blow[i].method) break;
 
 			/* Oops, no more slots */
-			if (i == 4) return (1);
+			if (i == 4) return PARSE_ERROR_GENERIC;
 
 			/* Analyze the first field */
 			for (s = t = buf+2; *t && (*t != ':'); t++) /* loop */;
@@ -2521,7 +2521,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			}
 
 			/* Invalid method */
-			if (!blow_methods[n1].flagname) return (1);
+			if (!blow_methods[n1].flagname) return PARSE_ERROR_GENERIC;
 
 			/* "No blow" is denoted by 0, so increase the index of the first
 			 * method to 1. */
@@ -2540,7 +2540,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			}
 
 			/* Invalid effect */
-			if (!r_info_blow_effect[n2]) return (1);
+			if (!r_info_blow_effect[n2]) return PARSE_ERROR_GENERIC;
 
 			/* Analyze the third field */
 			for (s = t; *t && (*t != 'd'); t++) /* loop */;
@@ -2578,7 +2578,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_basic_flag(r_ptr, s)) return (5);
+				if (0 != grab_one_basic_flag(r_ptr, s)) return PARSE_ERROR_INVALID_FLAG;
 
 				/* Start the next entry */
 				s = t;
@@ -2606,6 +2606,10 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 				/* XXX XXX XXX Hack -- Read spell frequency */
 				if (1 == sscanf(s, "1_IN_%d", &i))
 				{
+					/* Sanity check */
+					if ((i < 1) || (i > 100))
+						return PARSE_ERROR_INVALID_SPELL_FREQ;
+
 					/* Extract a "frequency" */
 					r_ptr->freq_spell = r_ptr->freq_inate = 100 / i;
 
@@ -2617,7 +2621,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_spell_flag(r_ptr, s)) return (5);
+				if (0 != grab_one_spell_flag(r_ptr, s)) return PARSE_ERROR_INVALID_FLAG;
 
 				/* Start the next entry */
 				s = t;
@@ -2635,7 +2639,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 
 		default:
 		{
-			return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 		}
 	}
 }
@@ -3137,7 +3141,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 		case 'X':
 		break;
 		default: /* What is this thing? */
-		return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 	}
 
 	/* Process 'X' for "From" */
@@ -3153,7 +3157,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 
 			/* Store the name */
 			if (!(ptr->name = add_name(head, s)))
-				return (PARSE_ERROR_OUT_OF_MEMORY);
+				return PARSE_ERROR_OUT_OF_MEMORY;
 
 			return SUCCESS;
 		}
@@ -3497,7 +3501,7 @@ static errr parse_info_line_aux(char *buf, header *head, vptr *extra)
 	if (!buf[0] || (buf[0] == '#')) return SUCCESS;
 
 	/* Verify correct "colon" format */
-	if (buf[1] != ':') return (PARSE_ERROR_GENERIC);
+	if (buf[1] != ':') return PARSE_ERROR_GENERIC;
 
 
 	/* Hack -- Process 'V' for "Version" */
@@ -3507,7 +3511,7 @@ static errr parse_info_line_aux(char *buf, header *head, vptr *extra)
 		if (!streq(buf+2, GAME_VERSION))
 
 		{
-			return (PARSE_ERROR_OBSOLETE_FILE);
+			return PARSE_ERROR_OBSOLETE_FILE;
 		}
 
 		/* Okay to proceed */
@@ -3518,7 +3522,7 @@ static errr parse_info_line_aux(char *buf, header *head, vptr *extra)
 	}
 
 	/* No version yet */
-	if (error_idx == NO_VERSION) return (PARSE_ERROR_OBSOLETE_FILE);
+	if (error_idx == NO_VERSION) return PARSE_ERROR_OBSOLETE_FILE;
 
 	/* Parse the line */
 	return (*(head->parse_info_txt))(buf, head, extra);
@@ -3758,7 +3762,7 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	rebuild_raw &= ~(head->header_num);
 
 	/* No version yet */
-	if (error_idx == NO_VERSION) return (PARSE_ERROR_OBSOLETE_FILE);
+	if (error_idx == NO_VERSION) return PARSE_ERROR_OBSOLETE_FILE;
 
 	/* All done. */
 	return SUCCESS;;

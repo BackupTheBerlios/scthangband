@@ -256,11 +256,6 @@
 
 
 /*
- * OPTION: Allow use of extended spell info	-DRS-
- */
-#define DRS_SHOW_SPELL_INFO
-
-/*
  * OPTION: Allow use of the monster health bar	-DRS-
  */
 #define DRS_SHOW_HEALTH_BAR
@@ -394,22 +389,6 @@
 
 
 /*
- * OPTION: For some brain-dead computers with no command line interface,
- * namely Macintosh, there has to be some way of "naming" your savefiles.
- * The current "Macintosh" hack is to make it so whenever the character
- * name changes, the savefile is renamed accordingly.  But on normal
- * machines, once you manage to "load" a savefile, it stays that way.
- * Macintosh is particularly weird because you can load savefiles that
- * are not contained in the "lib:save:" folder, and if you change the
- * player's name, it will then save the savefile elsewhere.  Note that
- * this also gives a method of "bypassing" the "VERIFY_TIMESTAMP" code.
- */
-#if defined(MACINTOSH) || defined(WINDOWS) || defined(AMIGA)
-# define SAVEFILE_MUTABLE
-#endif
-
-
-/*
  * OPTION: Capitalize the "user_name" (for "default" player name)
  * This option is only relevant on SET_UID machines.
  */
@@ -484,7 +463,7 @@
 #ifdef VERIFY_HONOR
 # define VERIFY_SAVEFILE
 # define VERIFY_CHECKSUMS
-# define VERIFY_TIMESTAMPS
+# define VERIFY_TIMESTAMP
 #endif
 
 /* Zangband options: */

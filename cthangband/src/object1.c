@@ -1976,9 +1976,6 @@ static void alloc_ifa(cptr *i_ptr, cptr str, ...)
 /* A basic test */
 #define test(x,y) (x[stat_res[y]] - x[p_ptr->stat_ind[y]])
 
-/* The special test required to calculate blows. */
-#define blows(x) (blows_table[MIN(adj_str_blow[x[A_STR]]*mul/div,11)][MIN(adj_dex_blow[x[A_DEX]], 11)])
-
 #define DIF ABS(dif)
 #define DIF_INC ((dif > 0) ? "increases" : "decreases")
 #define DIF_DEC ((dif < 0) ? "increases" : "decreases")
@@ -1993,11 +1990,6 @@ static void alloc_ifa(cptr *i_ptr, cptr str, ...)
 #define A_DEC10	0x04	/* A small temporary decrease, as do_dec_stat(). */
 #define A_DEC25	0x08	/* A large permanent decrease, as a potion of ruination. */
 #define A_WIELD	0x10	/* Hack - indicates a melee weapon. */
-
-/* Just in case birthrand.diff isn't applied. */
-#ifndef A_MAX
-#define A_MAX 6
-#endif
 
 #define CMPU(X) (pn_ptr->X - po_ptr->X)
 #define CMPUU(X) (ABS(CMPU(X)))
