@@ -5206,8 +5206,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_PLANAR_BEING+PO_SPELL:
 		{
-	        if (one_in(8)) i = MUT_WRAITH+1;
-	        else i = MUT_BLINK+1;
+	        if (one_in(8)) i = MUT_WRAITH;
+	        else i = MUT_BLINK;
 	        if (gain_chaos_feature(i))
     	        msg_print("You have turned into a Planar Being.");
 			return SUCCESS;

@@ -4162,7 +4162,7 @@ void init_chaos(void)
 		chaos_denom += ptr->chance;
 #ifdef CHECK_ARRAYS
 		/* Check the order. */
-		if (ptr->idx != ptr - chaos_info) quit("chaos_info disordered.");
+		if (ptr->idx-1 != ptr - chaos_info) quit("chaos_info disordered.");
 #endif /* CHECK_ARRAYS */
 	}
 }
@@ -4172,7 +4172,7 @@ void init_chaos(void)
  */
 bool PURE p_mutated(void)
 {
-	return (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3);
+	return (p_ptr->muta[0] || p_ptr->muta[1] || p_ptr->muta[2]);
 }
 
 /*
@@ -4180,7 +4180,7 @@ bool PURE p_mutated(void)
  */
 void p_clear_mutations(void)
 {
-	p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
+	C_WIPE(p_ptr->muta, 3, u32b);
 }
 
 /*
@@ -4188,40 +4188,28 @@ void p_clear_mutations(void)
  */
 bool PURE p_has_mutation(int idx)
 {
-	u32b flag;
-	switch (idx/32)
-	{
-		case 0: flag = p_ptr->muta1; break;
-		case 1: flag = p_ptr->muta2; break;
-		case 2: flag = p_ptr->muta3; break;
-		default: return FALSE; /* Paranoia */
-	}
+	u32b flag = p_ptr->muta[--idx/32];
+	assert(idx >= 0 && idx < MUT_MAX); /* Caller uses MUT_* */
 	return (flag & (1L << (idx%32))) != 0;
 }
 
-void p_set_mutation(int idx)
+/*
+ * Give the player a specific mutation.
+ */
+static void p_set_mutation(int idx)
 {
-	u32b *flag;
-	switch (idx/32)
-	{
-		case 0: flag = &p_ptr->muta1; break;
-		case 1: flag = &p_ptr->muta2; break;
-		case 2: flag = &p_ptr->muta3; break;
-		default: return; /* Paranoia */
-	}
+	u32b *flag = &p_ptr->muta[--idx/32];
+	assert(idx >= 0 && idx < MUT_MAX); /* Caller uses MUT_* */
 	*flag |= (1L << (idx%32));
 }
 
-void p_clear_mutation(int idx)
+/*
+ * Remove a specific mutation from the player.
+ */
+static void p_clear_mutation(int idx)
 {
-	u32b *flag;
-	switch (idx/32)
-	{
-		case 0: flag = &p_ptr->muta1; break;
-		case 1: flag = &p_ptr->muta2; break;
-		case 2: flag = &p_ptr->muta3; break;
-		default: return; /* Paranoia */
-	}
+	u32b *flag = &p_ptr->muta[--idx/32];
+	assert(idx >= 0 && idx < MUT_MAX); /* Caller uses MUT_* */
 	*flag &= ~(1L << (idx%32));
 }
 
@@ -4243,41 +4231,60 @@ static int get_rand_mutation(void)
 }
 	
 /*
- * Gain a chaos feature.
+ * Choose a chaos feature.
+ * If mut is 0 (or out of bounds), pick several times at random.
+ * Otherwise, try the requested feature.
  */
-bool gain_chaos_feature(int choose_mut)
+static int pick_chaos_feature(int mut, bool want)
 {
-	int mut;
-	racial_chaos_type *rc_ptr;
-	int i, (*co_ptr)[2];
-	
-	if (choose_mut > 0 && choose_mut <= MUT_MAX)
+	if (mut > 0 && mut <= MUT_MAX)
 	{
-		mut = choose_mut-1;
-		if (!p_has_mutation(mut)) goto good;
+		if (p_has_mutation(mut) == want) return mut;
 	}
 	else
 	{
+		int i;
 		for (i = 0; i < 20; i++)
 		{
 			mut = get_rand_mutation();
+			if (p_has_mutation(mut) == want) return mut;
+		}
+	}
+	return 0;
+}
 
-			if (!p_has_mutation(mut)) goto good;
+/*
+ * Gain a chaos feature (choose_mut if suitable, random if not).
+ * Return FALSE if nothing happened.
+ */
+bool gain_chaos_feature(int choose_mut)
+{
+	racial_chaos_type *rc_ptr;
+	int i, (*co_ptr)[2];
+	
+	/* Choose a feature. */
+	int mut = pick_chaos_feature(choose_mut, FALSE);
+
+	/* 
+	 * Race-specific mutations are only considered if a random one has been
+	 * chosen. They can, however, cause the program not to give a mutation.
+	 */
+	if (mut)
+	{
+		FOR_ALL_IN(racial_chaos_info, rc_ptr)
+		{
+			if (rc_ptr->race == p_ptr->prace && magik(rc_ptr->chance))
+			{
+				mut = (p_has_mutation(rc_ptr->mutation)) ? 0 : rc_ptr->mutation;
+			}
 		}
 	}
 
-	/* No feature chosen. */
-	msg_print("You feel normal.");
-	return FALSE;
-
-good:
-
-	FOR_ALL_IN(racial_chaos_info, rc_ptr)
+	if (!mut)
 	{
-		if (rc_ptr->race == p_ptr->prace && magik(rc_ptr->chance))
-		{
-			mut = rc_ptr->mutation;
-		}
+		/* No feature chosen. */
+		msg_print("You feel normal.");
+		return FALSE;
 	}
 
 	msg_print("You change!");
@@ -4292,7 +4299,7 @@ good:
 			if (co_ptr[0][i] == mut)
 			{
 				/* This is fine as lose_chaos_feature only prints one string. */
-				lose_chaos_feature(co_ptr[0][!i]+1);
+				lose_chaos_feature(co_ptr[0][!i]);
 			}
 		}
 	}
@@ -4302,31 +4309,21 @@ good:
 	return TRUE;
 }
 
+/*
+ * Lose a chaos feature (choose_mut if suitable, random if not).
+ * Return FALSE if nothing happened.
+ */
 bool lose_chaos_feature(int choose_mut)
 {
-	int mut;
+	/* Choose a feature. */
+	int mut = pick_chaos_feature(choose_mut, TRUE);
 	
-	if (choose_mut > 0 && choose_mut <= MUT_MAX)
+	if (!mut)
 	{
-		mut = choose_mut-1;
-		if (p_has_mutation(mut)) goto good;
+		/* No feature chosen. */
+		msg_print("You feel oddly normal.");
+		return FALSE;
 	}
-	else
-	{
-		int i;
-		for (i = 0; i < 20; i++)
-		{
-			mut = get_rand_mutation();
-
-			if (p_has_mutation(mut)) goto good;
-		}
-	}
-
-	/* No feature chosen. */
-	msg_print("You feel oddly normal.");
-	return FALSE;
-
-good:
 
 	msg_print(chaos_info[mut].lose);
 	p_clear_mutation(mut);

@@ -3707,7 +3707,7 @@ extern void gain_level_reward(int chosen_reward);
 #if (defined(SPELLS2_C) || defined(XTRA2_C))
 extern  bool tgt_pt(int *x,int *y);
 #endif
-#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(XTRA2_C))
+#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern bool gain_chaos_feature(int choose_mut);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
@@ -3971,12 +3971,12 @@ extern bool chaos_patrons;
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool PURE p_has_mutation(int idx);
 #endif
-#if (defined(MONSTER2_C) || defined(XTRA2_C))
-extern void p_set_mutation(int idx);
-#endif
-#if (defined(MONSTER2_C) || defined(XTRA2_C))
-extern void p_clear_mutation(int idx);
-#endif
+
+
+
+
+
+
 #if (defined(INIT2_C) || defined(XTRA2_C))
 extern void init_chaos(void);
 #endif

@@ -1187,9 +1187,7 @@ static void rd_extra(void)
 	}
 	strip_bytes(18);
 	rd_s16b(&p_ptr->chaos_patron);
-	rd_u32b(&p_ptr->muta1);
-	rd_u32b(&p_ptr->muta2);
-	rd_u32b(&p_ptr->muta3);
+	for (i = 0; i < 3; i++) rd_u32b(&p_ptr->muta[i]);
 
 	rd_byte(&p_ptr->confusing);
 	if (!has_flag(SF_QUEST_DIRECT)) strip_bytes(8);

@@ -1076,9 +1076,7 @@ struct player_type
 	s16b vamp_drain;	/* Vampiric drain during last round. */
 
     s16b chaos_patron;
-    u32b muta1;
-    u32b muta2;
-    u32b muta3;
+    u32b muta[3];
 
 	s16b word_recall;	/* Word of recall counter */
 

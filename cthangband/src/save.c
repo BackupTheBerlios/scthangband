@@ -676,9 +676,7 @@ static void wr_extra(void)
 	strip_bytes(18);
 
     wr_s16b(p_ptr->chaos_patron);
-    wr_u32b(p_ptr->muta1);
-    wr_u32b(p_ptr->muta2);
-    wr_u32b(p_ptr->muta3);
+	for (i = 0; i < 3; i++) wr_u32b(p_ptr->muta[i]);
 
 	wr_byte(p_ptr->confusing);
 
