@@ -1854,7 +1854,7 @@ struct visual_type
  */
 #define get_visuals(x_info, x_name) \
 { \
-	(*name) = x_name+x_info[i].name; \
+	if (name) (*name) = x_name+x_info[i].name; \
 	(*da) = x_info[i].d_attr; \
 	(*dc) = x_info[i].d_char; \
 	(*xa) = &(x_info[i].x_attr); \
@@ -1880,7 +1880,7 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, ch
 	object_type forge;
 
 	/* Get most of the visuals. */
-	get_visuals(k_info, k_name);
+	get_visuals(k_info, (char*)NULL);
 
 	/* Create the object */
 	object_prep(&forge, i);
@@ -1923,7 +1923,7 @@ static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa
 	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get most of the visuals (including a mangled name). */
-	get_visuals(u_info, u_name);
+	get_visuals(u_info, (char*)NULL);
 
 	/* Put *k_ptr somewhere safe and clear it. */
 	COPY(&hack_k, k_ptr, object_kind);

@@ -3265,7 +3265,7 @@ extern char *f_text;
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern object_kind *k_info;
 #endif
-#if (defined(CMD4_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *k_name;
 #endif
 #if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
@@ -3274,7 +3274,7 @@ extern char *k_text;
 #if (defined(DEFINES_H) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern unident_type *u_info;
 #endif
-#if (defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *u_name;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
