@@ -697,9 +697,6 @@ player_template *cp_ptr;
 /*
  * More spell info
  */
-u32b spell_learned[MAX_SCHOOL];	/* bit mask of spells learned */
-u32b spell_worked[MAX_SCHOOL];	/* bit mask of spells tried and worked */
-u32b spell_forgotten[MAX_SCHOOL];	/* bit mask of spells learned but forgotten */
 byte spell_order[128];	/* order spells learned/remembered/forgotten */
 
 

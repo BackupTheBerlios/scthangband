@@ -46,15 +46,8 @@ static book_type *k_idx_to_book(int i)
 /* Find an arbitrary spell in a book. */
 #define a_spell_from(B) ((B)->info+iilog((B)->flags))
 
-static int k_idx_to_school(int i)
+static int book_to_school(book_type *b_ptr)
 {
-	book_type *b_ptr = k_idx_to_book(i);
-
-	/* Not a book. */
-	if (!b_ptr) return -2;
-
-	assert(b_ptr->flags); /* check_spell_info() */
-
 	switch (a_spell_from(b_ptr)->skill1)
 	{
 		case SKILL_SORCERY: return SCH_SORCERY;
@@ -65,6 +58,11 @@ static int k_idx_to_school(int i)
 		/* Not one of these books. */
 		default: return -1;
 	}
+}
+
+static int k_idx_to_school(int i)
+{
+	return book_to_school(k_idx_to_book(i));
 }
 
 static book_type *spirit_to_book(int i)
@@ -83,6 +81,47 @@ static book_type *spirit_to_book(int i)
 	}
 }
 
+/*
+ * Find the number a hermetic spell is associated with.
+ */
+static int spell_to_num(magic_type *s_ptr)
+{
+	book_type *b_ptr;
+	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
+	{
+		int s = book_to_school(b_ptr);
+		assert(s < MAX_SCHOOL);
+		if (s < 0) continue;
+
+		if (s_ptr >= b_ptr->info && s_ptr < b_ptr->info+MAX_SPELLS_PER_BOOK)
+		{
+			return s_ptr - b_ptr->info;
+		}
+	}
+	return -1;
+}
+
+/*
+ * And vice versa.
+ */
+magic_type *num_to_spell(int i)
+{
+	book_type *b_ptr;
+	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
+	{
+		int s = book_to_school(b_ptr);
+		assert(s < MAX_SCHOOL);
+		if (s < 0) continue;
+
+		if (i/32 == s)
+		{
+			return b_ptr->info + i%32;
+		}
+	}
+	return NULL;
+}
+
+/* There is only one mindcraft "book". */
 #define MINDCRAFT_BOOK (book_info+BK_MIND)
 
 
@@ -424,63 +463,6 @@ static u16b magic_energy(magic_type *s_ptr)
 	return spell_energy(spell_skill(s_ptr), s_ptr->min);
 }
 
-#define MAGIC_LEARNED 0x01
-#define MAGIC_WORKED 0x02
-#define MAGIC_FORGOT 0x04
-
-/*
- * *Hack* - set the spell flags for an object based on the spell_*[] arrays.
- */
-static void get_spell_flags(int k_idx)
-{
-	book_type *b_ptr = k_idx_to_book(k_idx);
-	int i, sk = k_idx_to_school(k_idx);
-
-	assert(b_ptr);
-
-	/* No flags associated with this item. */
-	if (sk < 0) return;
-
-	for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
-	{
-		if (b_ptr->flags & (1L << i))
-		{
-			magic_type *s_ptr = &b_ptr->info[i];
-			s_ptr->flags = 0;
-			if (spell_learned[sk] & (1L << i)) s_ptr->flags |= MAGIC_LEARNED;
-			if (spell_worked[sk] & (1L << i)) s_ptr->flags |= MAGIC_WORKED;
-			if (spell_forgotten[sk] & (1L << i)) s_ptr->flags |= MAGIC_FORGOT;
-		}
-	}
-}
-
-static void set_spell_flags(int k_idx)
-{
-	book_type *b_ptr = k_idx_to_book(k_idx);
-	int i, sk = k_idx_to_school(k_idx);
-
-	assert(b_ptr);
-
-	/* No flags associated with this item. */
-	if (sk < 0) return;
-
-	spell_learned[sk] = 0;
-	spell_worked[sk] = 0;
-	spell_forgotten[sk] = 0;
-
-	for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
-	{
-		if (b_ptr->flags & (1L << i))
-		{
-			magic_type *s_ptr = &b_ptr->info[i];
-			s_ptr->flags = 0;
-			if (s_ptr->flags & MAGIC_LEARNED) spell_learned[sk] |= (1L << i);
-			if (s_ptr->flags & MAGIC_WORKED) spell_worked[sk] |= (1L << i);
-			if (s_ptr->flags & MAGIC_FORGOT) spell_forgotten[sk] |= (1L << i);
-		}
-	}
-}
-
 /*
  * Print a list of spells (for browsing or casting or viewing)
  */
@@ -544,7 +526,7 @@ static void print_spells(byte *spells, int num, int y, int x, book_type *b_ptr)
 				comment = " unknown";
 			}
 		}
-		else if (s_ptr->flags & MAGIC_WORKED)
+		else if (~s_ptr->flags & MAGIC_WORKED)
 		{
 			comment = " untried";
 		}
@@ -1728,6 +1710,7 @@ void do_cmd_study(void)
 
 	object_type             *o_ptr;
 	book_type *b_ptr;
+	magic_type *s_ptr;
 
 	if (p_ptr->blind)
 	{
@@ -1788,13 +1771,15 @@ void do_cmd_study(void)
 		return;
 	}
 
+	/* Find the spell. */
+	s_ptr = b_ptr->info+spell;
 
 	/* Take a turn */
 	energy_use = extract_energy[p_ptr->pspeed];
 
 
 	/* Learn the spell */
-	b_ptr->info[spell].flags |= MAGIC_LEARNED;
+	s_ptr->flags |= MAGIC_LEARNED;
 
 	/* Find the next open entry in "spell_order[]" */
 	for (i = 0; i < 128; i++)
@@ -1803,12 +1788,13 @@ void do_cmd_study(void)
 		if (spell_order[i] == 255) break;
 	}
 
+	assert(i < 128);
+
 	/* Add the spell to the known list */
-	spell_order[i++] = spell;
+	spell_order[i++] = spell_to_num(s_ptr);
 
 	/* Mention the result */
-	msg_format("You have learned the %s of %s.",
-		p, b_ptr->info[spell].name);
+	msg_format("You have learned the %s of %s.", p, s_ptr->name);
 
 	/* Sound */
 	sound(SOUND_STUDY);
@@ -1862,9 +1848,6 @@ void do_cmd_cast(void)
         if (err == -2) msg_format("You have no %s books!", prayer);
 		return;
 	}
-
-	/* Hack - copy the flags for this book to the spells. */
-	get_spell_flags(o_ptr->k_idx);
 
 	/* Access the item's spell list. */
 	b_ptr = k_idx_to_book(o_ptr->k_idx);
@@ -1927,12 +1910,9 @@ void do_cmd_cast(void)
 	{
 		if (!use_spell(s_ptr)) return;
 
-			/* A spell was cast */
-		if (~s_ptr->flags & MAGIC_LEARNED)
-		{
-			/* The spell worked */
-			s_ptr->flags |= MAGIC_LEARNED;
-		}
+		/* A spell was cast */
+		s_ptr->flags |= MAGIC_WORKED;
+
 		/* Gain experience with spell skills and mana */
 		gain_spell_exp(s_ptr);
 	}
@@ -1974,9 +1954,6 @@ void do_cmd_cast(void)
 			(void)dec_stat(A_CON, 15 + randint(10), perm);
 		}
 	}
-
-	/* Hack - copy the flags for this book to the arrays. */
-	set_spell_flags(o_ptr->k_idx);
 
 	/* Redraw mana */
 	p_ptr->redraw |= (PR_MANA);

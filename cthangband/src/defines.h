@@ -581,6 +581,11 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SP_PSYCHIC_DRAIN 235
 #define SP_TELEKINETIC_WAVE 236
 
+/* Spell flags. */
+#define MAGIC_LEARNED 0x01
+#define MAGIC_WORKED 0x02
+#define MAGIC_FORGOT 0x04
+
 /* Mindcraft */
 #define MAX_MINDCRAFT_POWERS  12
 

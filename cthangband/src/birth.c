@@ -2802,11 +2802,10 @@ static void player_wipe(void)
 
 
 	/* Wipe the spells */
-	for (i=0;i<MAX_SCHOOL;i++)
+	for (i=0;i<MAX_SCHOOL*MAX_SPELLS_PER_BOOK;i++)
 	{
-		spell_learned[i] = 0L;
-		spell_worked[i] = 0L;
-		spell_forgotten[i] = 0L;
+		magic_type *s_ptr = num_to_spell(i);
+		if (s_ptr) s_ptr->flags = 0;
 	}
 	for (i = 0; i < 128; i++)
 	{

@@ -965,6 +965,38 @@ func_false();
 
 
 
+static void wr_spell_flags(void)
+{
+	int i, j;
+	/* Read spell info */
+	for (i=0;i<MAX_SCHOOL;i++)
+	{
+		u32b learned = 0, worked = 0, forgot = 0;
+
+		for (j = 0; j < MAX_SPELLS_PER_BOOK; j++)
+		{
+			u32b f = 1L << j;
+			magic_type *s_ptr = num_to_spell(i*MAX_SPELLS_PER_BOOK+j);
+
+			/* Not a real spell. */
+			if (!s_ptr) continue;
+
+			if (s_ptr->flags & MAGIC_LEARNED) learned |= f;
+			if (s_ptr->flags & MAGIC_WORKED) worked |= f;
+			if (s_ptr->flags & MAGIC_FORGOT) forgot |= f;
+		}
+
+		wr_u32b(learned);
+		wr_u32b(worked);
+		wr_u32b(forgot);
+	}
+
+	for (i = 0; i < 128; i++)
+	{
+		wr_byte(spell_order[i]);
+	}
+}
+
 /*
  * Actually write a save-file
  */
@@ -1112,20 +1144,7 @@ static bool wr_savefile_new(void)
 		wr_s16b(player_hp[i]);
 	}
 
-
-	/* Write spell data */
-	for (i=0;i<MAX_SCHOOL;i++)
-	{
-		wr_u32b(spell_learned[i]);
-		wr_u32b(spell_worked[i]);
-		wr_u32b(spell_forgotten[i]);
-	}
-
-	/* Dump the ordered spells */
-	for (i = 0; i < 128; i++)
-	{
-		wr_byte(spell_order[i]);
-	}
+	wr_spell_flags();
 
 		/* Dump spirit info */
 	for (i=0;i<MAX_SPIRITS;i++)

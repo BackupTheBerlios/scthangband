@@ -2099,9 +2099,9 @@ extern player_race race_info[MAX_RACES];
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(TABLES_C))
 extern player_template template_info[MAX_TEMPLATE];
 #endif
-#if (defined(TABLES_C) || defined(XTRA1_C))
-extern magic_type magic_info[MAX_SCHOOL][32];
-#endif
+
+
+
 
 
 
@@ -3257,15 +3257,15 @@ extern player_template *cp_ptr;
 
 
 
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern u32b spell_learned[MAX_SCHOOL];
-#endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern u32b spell_worked[MAX_SCHOOL];
-#endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern u32b spell_forgotten[MAX_SCHOOL];
-#endif
+
+
+
+
+
+
+
+
+
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern byte spell_order[128];
 #endif
@@ -4057,5 +4057,11 @@ extern void do_poly_self(void);
 
 #if (defined(CMD5_C) || defined(POWERS_C))
 extern void wild_magic(int spell);
+#endif
+
+/* cmd5.c */
+
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(XTRA1_C))
+extern magic_type *num_to_spell(int i);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

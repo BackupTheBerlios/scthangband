@@ -1622,7 +1622,7 @@ player_template template_info[MAX_TEMPLATE] =
  *
  *   Array of { Lev, Mana, Fail, Exp/Lev, school, type }
  */
-magic_type magic_info[MAX_SCHOOL][32] =
+static magic_type magic_info[MAX_SCHOOL][32] =
 {
 	/* Sorcery */
 	{

@@ -1774,6 +1774,49 @@ func_false();
 
 
 
+static void rd_spell_flags(void)
+{
+	int i, j;
+	/* Read spell info */
+	for (i=0;i<MAX_SCHOOL;i++)
+	{
+		u32b learned, worked, forgot;
+
+		rd_u32b(&learned);
+		rd_u32b(&worked);
+		rd_u32b(&forgot);
+
+		/* Dead characters know no spells. */
+		if (death) continue;
+
+		for (j = 0; j < MAX_SPELLS_PER_BOOK; j++)
+		{
+			u32b f = 1L << j;
+			magic_type *s_ptr = num_to_spell(i*MAX_SPELLS_PER_BOOK+j);
+
+			/* Not a real spell. */
+			if (!s_ptr) continue;
+
+			if (learned & f) s_ptr->flags |= MAGIC_LEARNED;
+			if (worked & f) s_ptr->flags |= MAGIC_WORKED;
+			if (forgot & f) s_ptr->flags |= MAGIC_FORGOT;
+		}
+	}
+
+	if (death)
+	{
+		strip_bytes(128);
+	}
+	else
+	{
+		for (i = 0; i < 128; i++)
+		{
+			rd_byte(&spell_order[i]);
+		}
+	}
+}
+
+
 /*
  * Actually read the savefile
  */
@@ -2129,19 +2172,7 @@ static errr rd_savefile_new_aux(void)
 	rp_ptr = &race_info[p_ptr->prace];
 	cp_ptr = &template_info[p_ptr->ptemplate];
 
-
-	/* Read spell info */
-	for (i=0;i<MAX_SCHOOL;i++)
-	{
-		rd_u32b(&spell_learned[i]);
-		rd_u32b(&spell_worked[i]);
-		rd_u32b(&spell_forgotten[i]);
-	}
-
-	for (i = 0; i < 128; i++)
-	{
-		rd_byte(&spell_order[i]);
-	}
+	rd_spell_flags();
 
 	/* Read spirit info */
 	for (i=0;i<MAX_SPIRITS;i++)

@@ -810,7 +810,6 @@ static void calc_spells(bool quiet)
 
 	int			i, j, k;
 	int			num_allowed, num_known;
-	int school;
 	magic_type		*s_ptr;
 
 
@@ -836,16 +835,16 @@ static void calc_spells(bool quiet)
 	num_known = 0;
 
 	/* Count the number of spells we know */
-	for (i=0;i<MAX_SCHOOL;i++)
+	for (i=0; i<MAX_SCHOOL*MAX_SPELLS_PER_BOOK; i++)
 	{
-		for (j = 0; j < 32; j++)
-		{
-			/* Count known spells */
-			if (spell_learned[i] & (1L << j))
-			{
-				num_known++;
-			}
-		}
+		/* Get the spell. */
+		s_ptr = num_to_spell(i);
+
+		/* Not a spell. */
+		if (!s_ptr) continue;
+
+		/* Count known spells */
+		if (s_ptr->flags & MAGIC_LEARNED) num_known++;
 	}
 
 	/* See how many spells we must forget or may learn */
@@ -860,37 +859,24 @@ static void calc_spells(bool quiet)
 		/* Skip non-spells */
 		if (j >= 255) continue;
 
-
-
-        /* Get the spell */
-        if (j < 32)
-			school = 0;
-        else if (j < 64)
-            school = 1;
-		else if (j < 128)
-			school = 2;
-		else
-			school = 3;
-
-		j=(j%32);
-
-		s_ptr = &magic_info[school][j];
+		/* Get the spell. */
+		s_ptr = num_to_spell(j);
 
 		/* Skip spells we are allowed to know */
 		if (s_ptr->min <= spell_skill(s_ptr)) continue;
 
-		/* Is it known? */
-		if (spell_learned[school] & (1L << j))
+		/* Forget it (if learned) */
+		if (s_ptr->flags & MAGIC_LEARNED)
 		{
 			/* Mark as forgotten */
-			spell_forgotten[school] |= (1L << j);
+			s_ptr->flags |= MAGIC_FORGOT;
 
 			/* No longer known */
-			spell_learned[school] &= ~(1L << j);
+			s_ptr->flags &= ~MAGIC_LEARNED;
 
 			/* Message */
-			if (!quiet) msg_format("You have forgotten the %s of %s.", p,
-                       magic_info[school][j%32].name);
+			if (!quiet)
+				msg_format("You have forgotten the %s of %s.", p, s_ptr->name);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -907,34 +893,26 @@ static void calc_spells(bool quiet)
 
 		/* Get the (i+1)th spell learned */
 		j = spell_order[i];
+		s_ptr = num_to_spell(j);
 
 		/* Skip unknown spells */
 		if (j >= 255) continue;
 
-        /* Get the spell */
-        if (j < 32)
-			school = 0;
-        else if (j < 64)
-            school = 1;
-		else if (j < 128)
-			school = 2;
-		else
-			school = 3;
-
-		j=(j%32);
+		/* Get the spell. */
+		s_ptr = num_to_spell(j);
 
 		/* Forget it (if learned) */
-		if (spell_learned[school] & (1L << j))
+		if (s_ptr->flags & MAGIC_LEARNED)
 		{
 			/* Mark as forgotten */
-			spell_forgotten[school] |= (1L << j);
+			s_ptr->flags |= MAGIC_FORGOT;
 
 			/* No longer known */
-				spell_learned[school] &= ~(1L << j);
+			s_ptr->flags &= ~MAGIC_LEARNED;
 
 			/* Message */
-			if (!quiet) msg_format("You have forgotten the %s of %s.", p,
-                       magic_info[school][j%32].name);
+			if (!quiet)
+				msg_format("You have forgotten the %s of %s.", p, s_ptr->name);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -954,36 +932,24 @@ static void calc_spells(bool quiet)
 		/* Skip unknown spells */
 		if (j >= 255) break;
 
-        /* Get the spell */
-        if (j < 32)
-			school = 0;
-        else if (j < 64)
-            school = 1;
-		else if (j < 128)
-			school = 2;
-		else
-			school = 3;
-
-		j=(j%32);
-
-		/* Access the spell */
-           s_ptr = &magic_info[school][j];
+		/* Get the spell. */
+		s_ptr = num_to_spell(j);
 
 		/* Skip spells we cannot remember */
 		if (s_ptr->min > spell_skill(s_ptr)) continue;
 
 		/* First set of spells */
-		if (spell_forgotten[school] & (1L << j))
+		if (s_ptr->flags & MAGIC_FORGOT)
 		{
 			/* No longer forgotten */
-			spell_forgotten[school] &= ~(1L << j);
+			s_ptr->flags &= ~MAGIC_FORGOT;
 
 			/* Known once more */
-			spell_learned[school] |= (1L << j);
+			s_ptr->flags |= MAGIC_LEARNED;
 
 			/* Message */
-			if (!quiet) msg_format("You have remembered the %s of %s.",
-                       p, magic_info[school][j%32].name);
+			if (!quiet)
+				msg_format("You have remembered the %s of %s.", p, s_ptr->name);
 
 			/* One less can be learned */
 			p_ptr->new_spells--;
@@ -991,34 +957,17 @@ static void calc_spells(bool quiet)
 	}
 
 
-	/* Assume no spells available */
-	k = 0;
-
 	/* Count spells that can be learned */
-	for (j = 0; j < 128; j++)
+	for (j = k = 0; j < 128; j++)
 	{
-
-		/* Get the spell */
-        if (j < 32)
-			school = 0;
-        else if (j < 64)
-            school = 1;
-		else if (j < 128)
-			school = 2;
-		else
-			school = 3;
-
 		/* Access the spell */
-        s_ptr = &magic_info[school][j%32];
+        s_ptr = num_to_spell(j);
 
 		/* Skip spells we cannot remember */
 		if (s_ptr->min > spell_skill(s_ptr)) continue;
 
 		/* Skip spells we already know */
-		if (spell_learned[school] & (1L << (j % 32)))
-		{
-			continue;
-		}
+		if (s_ptr->flags & MAGIC_LEARNED) continue;
 
 		/* Count it */
 		k++;
