@@ -333,13 +333,13 @@ extern void shops_display(int town);
 extern void do_cmd_knowledge(void);
 #endif
 
+
+
+
+
+
+
 /* cmd5.c */
-
-#if (defined(CMD5_C))
-extern void print_cantrips(byte *spells, int num, int y, int x);
-#endif
-
-
 
 #if (defined(CMD5_C) || defined(STORE_C))
 extern int get_spirit(int *sn, cptr prompt, bool call);
@@ -4020,17 +4020,15 @@ extern void core_fmt(cptr fmt, ...);
 extern book_type book_info[31];
 #endif
 
+
+
+
 /* cmd5.c */
 
-#if (defined(CMD5_C))
-extern void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_ptr,
-	int school)
-;
-#endif
 #if (defined(CMD5_C) || defined(OBJECT2_C))
 extern bool PURE display_spells_p(object_type *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(OBJECT2_C))
-extern void display_spells(object_type *o_ptr);
+extern void display_spells(int y, int x, object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

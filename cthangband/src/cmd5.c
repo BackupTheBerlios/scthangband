@@ -383,8 +383,7 @@ static u16b spellcast_energy_b(magic_type *s_ptr)
  * TODO: Access spell_forgotten[], etc., via b_ptr.
  * Write spell_info_b().
  */
-void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_ptr,
-	int school)
+static void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_ptr, int school)
 {
 	int                     i, spell;
 
@@ -877,7 +876,7 @@ static bool cantrip_okay(int fav)
 /*
  * Print a list of cantrips (for casting or learning)
  */
-void print_cantrips(byte *spells, int num, int y, int x)
+static void print_cantrips(byte *spells, int num, int y, int x)
 {
 	int                     i, spell;
 
@@ -1779,7 +1778,7 @@ bool PURE display_spells_p(object_type *o_ptr)
 	return item_tester_okay(o_ptr);
 }
 
-void display_spells(object_type *o_ptr)
+void display_spells(int y, int x, object_type *o_ptr)
 {
 	book_type *b_ptr;
 	int		num;
@@ -1795,7 +1794,7 @@ void display_spells(object_type *o_ptr)
 	num = build_spell_list(spells, b_ptr);
 
 	/* Display the spells */
-	print_spells_b(spells, num, 1, -1, b_ptr);
+	print_spells_b(spells, num, y, x, b_ptr);
 }
 
 /*
@@ -1840,7 +1839,7 @@ void do_cmd_browse(object_type *o_ptr)
 	Term_save();
 
 	/* Display the spells */
-	display_spells(o_ptr);
+	display_spells(1, -1, o_ptr);
 
 	/* Clear the top line */
 	prt("", 0, 0);
