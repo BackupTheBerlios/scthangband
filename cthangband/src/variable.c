@@ -725,7 +725,7 @@ cptr v_text;
  */
 feature_type *f_info;
 cptr f_name;
-cptr f_text;
+/* cptr f_text; */
 
 /*
  * The object kind arrays

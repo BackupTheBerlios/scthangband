@@ -3849,6 +3849,11 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 }
 
 
+static cptr vault_name(vault_type *v_ptr)
+{
+	return v_name+v_ptr->name;
+}
+
 /*
  * Type 7 -- simple vaults (see "v_info.txt")
  */
@@ -3884,7 +3889,7 @@ static void build_type7(int yval, int xval)
 #endif
 
 	/* Message */
-	if (cheat_room) msg_print("Lesser Vault");
+	if (cheat_room) msg_format("Lesser Vault %s", vault_name(v_ptr));
 
 	/* Boost the rating */
 	rating += v_ptr->rat;
@@ -3937,7 +3942,7 @@ static void build_type8(int yval, int xval)
 #endif
 
 	/* Message */
-	if (cheat_room) msg_print("Greater Vault");
+	if (cheat_room) msg_format("Greater Vault %s", vault_name(v_ptr));
 
 	/* Boost the rating */
 	rating += v_ptr->rat;

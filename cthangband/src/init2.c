@@ -1836,7 +1836,7 @@ void init_angband(void)
 #endif /* ALLOW_TEMPLATES */
 
 	init_x_info("features", feature_type, parse_f_info, "f_info", f_info,
-		f_name, f_text, f_max, F_HEAD)
+		f_name, dummy, f_max, F_HEAD)
 
 	init_x_info("objects", object_kind, parse_k_info, "k_info", k_info,
 		k_name, k_text, k_max, K_HEAD)
