@@ -3181,9 +3181,6 @@ option_type option_info[] =
 	{ &multi_stair, TRUE, OPTS_MISC, 2, 11,
 		"multi_stair", "Stairs can be longer than one level" },
 
-	{ &rand_unbiased, FALSE, OPTS_PERF,2,12,
-	"rand_unbiased","Random numbers have bias removed (slow)"},
-
 	{ &unify_commands, FALSE, OPTS_OBJ,2,13,
 	"unify_commands","Use a single 'u'se command for all objects"},
 

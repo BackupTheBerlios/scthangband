@@ -307,6 +307,7 @@ static name_entry old_options[] =
 	{FALSE, "inscribe_depth"},
 	{FALSE, "player_symbols"},
 	{FALSE, "flush_command"},
+	{FALSE, "rand_unbiased"},
 };
 
 /*

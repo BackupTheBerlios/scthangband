@@ -3693,11 +3693,11 @@ extern void quit_fmt(cptr fmt, ...);
 extern void core_fmt(cptr fmt, ...);
 #endif
 
+
+
+
 /* z-rand.c */
 
-#if (defined(TABLES_C) || defined(Z_RAND_C))
-extern bool rand_unbiased;
-#endif
 #if (defined(GENERATE_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
 extern bool Rand_quick;
 #endif
@@ -3717,7 +3717,7 @@ extern void Rand_state_init(u32b seed);
 extern s16b randnor(int mean, int stand);
 #endif
 #if (defined(ANGBAND_H) || defined(Z_RAND_H) || defined(Z_RAND_C))
-extern s32b rand_int(u32b m);
+extern s32b rand_int(s32b m);
 #endif
 #if (defined(CMD5_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
 extern bool percent(int m);
