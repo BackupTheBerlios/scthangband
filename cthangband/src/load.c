@@ -1804,26 +1804,27 @@ static errr rd_savefile_new_aux(void)
 	/* Object Memory */
 	rd_u16b(&tmp16u);
 
-	/* k_info has shrunk. */
-	if (tmp16u > MAX_K_IDX)
+	/* k_info has shrunk (user area only). */
+	if (tmp16u > MAX_K_IDX +
+		convert_k_idx(OBJ_MAX_DISTRO, sf_flags, sf_flags_now))
 	{
 		msg_format("Too many (%u) object kinds. Killing a few.", tmp16u);
 	}
 
 	/* Read the object memory */
-	for (i = 0; i < MIN(tmp16u, MAX_K_IDX); i++)
+	for (i = 0; i < tmp16u; i++)
 	{
-		int j = convert_k_idx(i, sf_flags_now, sf_flags);
-		object_kind *k_ptr = &k_info[j];
+		int j = convert_k_idx(i, sf_flags, sf_flags_now);
+		object_kind *k_ptr = (j >= 0 && j < MAX_K_IDX) ? &k_info[j] : 0;
 
 		rd_byte(&tmp8u);
 
-		k_ptr->aware = (tmp8u & 0x01) ? TRUE: FALSE;
-		k_ptr->tried = (tmp8u & 0x02) ? TRUE: FALSE;
+		if (k_ptr)
+		{
+			k_ptr->aware = (tmp8u & 0x01) ? TRUE: FALSE;
+			k_ptr->tried = (tmp8u & 0x02) ? TRUE: FALSE;
+		}
 	}
-
-	/* Forget the last few unused memories. */
-	while (tmp16u-- > MAX_K_IDX) strip_bytes(1);
 
 	if (arg_fiddle) note("Loaded Object Memory");
 

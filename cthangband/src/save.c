@@ -1140,8 +1140,7 @@ static void wr_xtra(s16b k_idx)
 	byte tmp8u = 0;
 	object_kind *k_ptr;
 
-	/* Find the k_idxth flag expected by the save file format. */
-	k_idx = convert_k_idx(k_idx, sf_flags, sf_flags_now);
+	k_idx = convert_k_idx(k_idx, sf_flags_now, sf_flags);
 	k_ptr = &k_info[k_idx];
 
 	if (k_ptr->aware) tmp8u |= 0x01;
