@@ -493,8 +493,15 @@ errr my_fgets(FILE *fff, char *buf, size_t n)
 		}
 
 		/* End of line */
-		if (strchr("\r\n", c))
+		else if (strchr("\r\n", c))
 		{
+			/* Handle "\r\n" line endings. */
+			if (c == '\r')
+			{
+				c = fgetc(fff);
+				if (c != '\n') ungetc(c, fff);
+			}
+
 			/* Null terminate */
 			buf[i] = '\0';
 
@@ -502,7 +509,7 @@ errr my_fgets(FILE *fff, char *buf, size_t n)
 		}
 
 		/* Expand a tab into spaces */
-		if (c == '\t')
+		else if (c == '\t')
 		{
 			uint tabstop;
 
