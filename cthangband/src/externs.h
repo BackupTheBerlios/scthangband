@@ -1915,7 +1915,7 @@ extern errr fd_close(int fd);
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern void move_cursor(int row, int col);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
 extern void text_to_ascii(char *buf, cptr str);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C))
@@ -2008,9 +2008,9 @@ extern void pause_line(int row);
 #if (defined(CMD4_C) || defined(UTIL_C))
 extern int keymap_mode(void);
 #endif
-#if (defined(OBJECT1_C) || defined(UTIL_C))
-extern cptr get_keymap(byte trigger);
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C))
 extern void request_command(bool shopping);
 #endif

@@ -3144,7 +3144,7 @@ int keymap_mode(void)
 /*
  * Find a keymap from its trigger.
  */
-cptr get_keymap(byte trigger)
+static cptr get_keymap(byte trigger)
 {
 	return keymap_act[keymap_mode()][trigger];
 }
@@ -3336,20 +3336,20 @@ void request_command(bool shopping)
 
 
 		/* Look up applicable keymap */
-		act = get_keymap((byte)(cmd));
+			act = get_keymap((byte)(cmd));
 
-		/* Apply keymap if not inside a keymap already */
-		if (act && !inkey_next)
-		{
-			/* Install the keymap (limited buffer size) */
-			strnfmt(request_command_buffer, 256, "%s", act);
+			/* Apply keymap if not inside a keymap already */
+			if (act && !inkey_next)
+			{
+				/* Install the keymap (limited buffer size) */
+				strnfmt(request_command_buffer, 256, "%s", act);
 
-			/* Start using the buffer */
-			inkey_next = request_command_buffer;
+				/* Start using the buffer */
+				inkey_next = request_command_buffer;
 
-			/* Continue */
-			continue;
-		}
+				/* Continue */
+				continue;
+			}
 
 
 		/* Paranoia */
