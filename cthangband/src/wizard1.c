@@ -1410,7 +1410,7 @@ static void spoil_mon_desc(cptr fname)
 		}
 
 
-		/* Experience */
+		/* Power */
 		sprintf(exp, "%ld", (long)(r_ptr->mexp));
 
 		/* Hack -- use visual instead */
@@ -1652,8 +1652,8 @@ static void spoil_mon_info(cptr fname)
 		sprintf(buf, "Ac:%d  ", r_ptr->ac);
 		spoil_out(buf);
 
-		/* Experience */
-		sprintf(buf, "Exp:%ld\n", (long)(r_ptr->mexp));
+		/* Power */
+		sprintf(buf, "Power:%ld\n", (long)(r_ptr->mexp));
 		spoil_out(buf);
 
 

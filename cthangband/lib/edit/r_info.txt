@@ -11,7 +11,7 @@
 # N:<monster index>:<monster name>
 # G:<monster symbol>:<monster colour>
 # I:<movement speed>:<attack speed>:<hit points>:<perception>:<armour class>:<sleep>
-# W:<level found at>:<rarity>:<kill score>
+# W:<level found at>:<rarity>:<power>
 # B:<attack type>[:<attack effect>][:<attack damage>]
 # F:<flag1> | <flag2>...
 # E:<information about special things which happen when the monster dies>
@@ -38,9 +38,12 @@
 # armor class, and alertness. Alertness ranges from 0 (ever vigilant for
 # intruders) to 255 (prefers to ignore intruders).
 
-# 'W' is for more information - level, rarity, and experience for
-# killing. A low positive rarity make the monster more common, but a rarity of
-# 0 prevents generation altogether.
+# 'W' is for more information - level, rarity, and relative power. A low
+# positive rarity make the monster more common, but a rarity of 0 prevents
+# generation altogether.
+# Power controls whether a monster with either the KILL_BODY or MOVE_BODY flag
+# can displace or destroy another given monster, affects the score bonus for
+# killing one and has a few other minor effects.
 
 # 'B' is for blows - method of attack, effect of attack, and damage
 # from attack. There may be up to four of these lines; effect and
