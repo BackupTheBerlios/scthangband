@@ -702,7 +702,7 @@ Enter a user pref command (")
 %%%%%
 --- Help ---
 
-%%%%% <cmd=?>
+%%%%% <cmd!=?> Not used as hlponhlp.txt is more thorough.
 Help (?)
         Brings up the Angband on-line help system.  Note that the help
         files are just text files in a particular format, and that other
