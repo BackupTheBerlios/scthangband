@@ -50,7 +50,8 @@ char hexsym[16] =
 
 
 /*
- * Stat Table (INT/WIS) -- Number of half-spells per level
+ * Stat Table: (INT) -- Number of half-spells per level
+ * (CHR) -- Decrease in the annoyance of a favour
  */
 byte adj_mag_study[] =
 {
@@ -96,7 +97,7 @@ byte adj_mag_study[] =
 
 
 /*
- * Stat Table (INT/WIS) -- extra quarter-mana-points per skill percent
+ * Stat Table (INT/WIS) -- extra quarter-mana/chi-points per skill percent
  */
 byte adj_mag_mana[] =
 {
@@ -142,7 +143,7 @@ byte adj_mag_mana[] =
 
 
 /*
- * Stat Table (INT/WIS) -- Minimum failure rate (percentage)
+ * Stat Table (INT/WIS/CHR) -- Minimum failure rate (percentage)
  */
 byte adj_mag_fail[] =
 {
@@ -188,7 +189,7 @@ byte adj_mag_fail[] =
 
 
 /*
- * Stat Table (INT/WIS) -- Various things
+ * Stat Table: (INT/WIS/CHR) -- Decreases failure rate (*3-3)
  */
 byte adj_mag_stat[] =
 {
