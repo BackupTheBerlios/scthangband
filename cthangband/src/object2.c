@@ -3160,11 +3160,19 @@ void set_object_found(object_type *o_ptr, int how, int idx)
 {
 	object_found *ptr = &o_ptr->found;
 
+	/* Hack - r_idx is 15 bit. */
 	if (how == FOUND_MONSTER)
 	{
 		assert(idx >= 0 && idx < z_info->r_max);
 		ptr->how = how + idx / 256;
 		ptr->idx = idx % 256;
+	}
+	/* Hack - starting items don't have an initial location. */
+	else if (how == FOUND_BIRTH)
+	{
+		ptr->how = how;
+		ptr->idx = idx;
+		return;
 	}
 	else
 	{

@@ -2727,7 +2727,7 @@ static void identify_fully_found_f1(char *buf, uint max, cptr UNUSED fmt,
 					feature_desc_f2, found->idx, FDF_INDEF);
 			break;
 		case FOUND_BIRTH:
-			p += strnfmt(p, end-p, " yours before you first arrived");
+			p += strnfmt(p, end-p, " yours from the beginning");
 			break;
 		case FOUND_SPELL:
 			p += strnfmt(p, end-p, " conjured out of thin air");
