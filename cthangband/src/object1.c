@@ -1850,7 +1850,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			if (worthless && cursed_p(j_ptr))
 			{
 				j_ptr->ident &= ~(IDENT_CURSED);
-				j_ptr->art_flags3 &= (TR3_CURSED | TR3_HEAVY_CURSE);
+				j_ptr->art_flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
 	 			value = object_value(j_ptr);
 			}
 			/* Hack - assume cursed items are worthless. */
