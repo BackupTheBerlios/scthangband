@@ -4119,34 +4119,662 @@ void do_cmd_help(cptr name)
 
 
 
+
+
+
 /*
- * Hack -- display the contents of a file on the screen
+ * Recursive file perusal.
  *
- * XXX XXX XXX Use this function for commands such as the
- * "examine object" command.
+ * Return FALSE on "ESCAPE", otherwise TRUE.
+ *
+ * Process various special text in the input file, including
+ * the "menu" structures used by the "help file" system.
+ *
+ * XXX XXX XXX Consider using a temporary file.
+ *
+ * XXX XXX XXX Allow the user to "save" the current file.
  */
-errr show_file(cptr name, cptr what)
+
+/*
+ * Convert a "color letter" into an "actual" color
+ * The colors are: dwsorgbuDWvyRGBU, as shown below
+ */
+static int color_char_to_attr(char c)
 {
-	/* Enter "icky" mode */
-	character_icky = TRUE;
+	switch (c)
+	{
+		case 'd': return (TERM_DARK);
+		case 'w': return (TERM_WHITE);
+		case 's': return (TERM_SLATE);
+		case 'o': return (TERM_ORANGE);
+		case 'r': return (TERM_RED);
+		case 'g': return (TERM_GREEN);
+		case 'b': return (TERM_BLUE);
+		case 'u': return (TERM_UMBER);
 
-	/* Save the screen */
-	Term_save();
+		case 'D': return (TERM_L_DARK);
+		case 'W': return (TERM_L_WHITE);
+		case 'v': return (TERM_VIOLET);
+		case 'y': return (TERM_YELLOW);
+		case 'R': return (TERM_L_RED);
+		case 'G': return (TERM_L_GREEN);
+		case 'B': return (TERM_L_BLUE);
+		case 'U': return (TERM_L_UMBER);
+	}
 
-	/* Peruse the requested file */
-	(void)do_cmd_help_aux(name, what, 0);
-
-	/* Restore the screen */
-	Term_load();
-
-	/* Leave "icky" mode */
-	character_icky = FALSE;
-
-	/* Success */
-	return (0);
+	return (-1);
 }
 
 
+/*
+ * A structure to hold (some of == XXX) the hyperlink information.
+ * This prevents excessive use of stack.
+ */
+struct hyperlink
+{
+	/* Path buffer */
+	char path[1024];
+
+	/* General buffer */
+	char rbuf[1024];
+
+	/* Hold a string to find */
+	char finder[81];
+
+	/* Hold a string to show */
+	char shower[81];
+
+	/* Describe this thing */
+	char caption[128];
+
+	/* Hypertext info */
+	char link[400][32], link_key[400];
+	int  link_x[400], link_y[400], link_line[400];
+};
+
+typedef struct hyperlink hyperlink_type;
+
+/*
+ * ToME's show_file() function 
+ */
+static bool show_file_tome(cptr name, cptr what, int line, int mode)
+{
+	int i, k, x;
+
+	byte link_color = TERM_ORANGE, link_color_sel = TERM_YELLOW;
+
+	/* Number of "real" lines passed by */
+	int next = 0;
+
+	/* Number of "real" lines in the file */
+	int size = 0;
+
+	/* Backup value for "line" */
+	int back = 0;
+
+	/* Color of the next line */
+	byte color = TERM_WHITE;
+
+	/* This screen has sub-screens */
+	bool menu = FALSE;
+
+	/* Current help file */
+	FILE *fff = NULL;
+
+	/* Find this string (if any) */
+	cptr find = NULL;
+
+	/* Char array type of hyperlink info */
+	hyperlink_type *h_ptr;
+
+	/* Pointer to general buffer in the above */
+	char *buf;
+
+	int  cur_link = 0, max_link = 0;
+
+
+	/* Allocate hyperlink data */
+	MAKE(h_ptr, hyperlink_type);
+
+	/* Setup buffer pointer */
+	buf = h_ptr->rbuf;
+
+	/* Wipe the links */
+	for (i = 0; i < 400; i++)
+	{
+		h_ptr->link_x[i] = -1;
+	}
+
+	/* Hack XXX XXX XXX */
+	if (what)
+	{
+		/* h_ptr->caption */
+		strcpy(h_ptr->caption, what);
+
+		/* Access the "file" */
+		strcpy(h_ptr->path, name);
+
+		/* Open */
+		safe_setuid_grab();
+		fff = my_fopen(h_ptr->path, "r");
+		safe_setuid_drop();
+	}
+
+	/* Look in "help" */
+	if (!fff)
+	{
+		/* h_ptr->caption */
+		sprintf(h_ptr->caption, "Help file '%s'", name);
+
+		/* Build the filename */
+		path_build(h_ptr->path, 1024, ANGBAND_DIR_HELP, name);
+
+		/* Open the file */
+		safe_setuid_grab();
+		fff = my_fopen(h_ptr->path, "r");
+		safe_setuid_drop();
+	}
+
+	/* Look in "info" */
+	if (!fff)
+	{
+		/* h_ptr->caption */
+		sprintf(h_ptr->caption, "Info file '%s'", name);
+
+		/* Build the filename */
+		path_build(h_ptr->path, 1024, ANGBAND_DIR_INFO, name);
+
+		/* Open the file */
+		safe_setuid_grab();
+		fff = my_fopen(h_ptr->path, "r");
+		safe_setuid_drop();
+	}
+
+	/* Look in "file" */
+	if (!fff)
+	{
+		/* h_ptr->caption */
+		sprintf(h_ptr->caption, "File '%s'", name);
+
+		/* Build the filename */
+		path_build(h_ptr->path, 1024, ANGBAND_DIR_FILE, name);
+
+		/* Open the file */
+		safe_setuid_grab();
+		fff = my_fopen(h_ptr->path, "r");
+		safe_setuid_drop();
+	}
+
+	/* Oops */
+	if (!fff)
+	{
+		/* Message */
+		msg_format("Cannot open '%s'.", name);
+		msg_print(NULL);
+
+		/* Free hyperlink info */
+		KILL(h_ptr, hyperlink_type);
+
+		/* Oops */
+		return (TRUE);
+	}
+
+
+	/* Pre-Parse the file */
+	while (TRUE)
+	{
+		/* Read a line or stop */
+		if (my_fgets(fff, h_ptr->rbuf, 1024)) break;
+
+		/* Get a color */
+		if (prefix(h_ptr->rbuf, "#####"))
+		{
+			buf = &h_ptr->rbuf[6];
+		}
+		else buf = h_ptr->rbuf;
+
+		/* Get the link colors */
+		if (prefix(buf, "|||||"))
+		{
+			link_color = color_char_to_attr(buf[5]);
+			link_color_sel = color_char_to_attr(buf[6]);
+		}
+
+		/* Tag ? */                if (prefix(buf, "~~~~~"))
+		{
+			if (line < 0)
+			{
+				if (atoi(buf + 5) == -line)
+				{
+					line = next + 1;
+				}
+			}
+		}
+
+		x = 0;
+		while (buf[x])
+		{
+			/* Hyperlink ? */
+			if (prefix(buf + x, "*****"))
+			{
+				int xx = x + 5, stmp, xdeb = x + 5, z;
+				char tmp[20];
+
+				for (z = 0; z < 20; z++) tmp[z] = '\0';
+
+				h_ptr->link_x[max_link] = x;
+				h_ptr->link_y[max_link] = next;
+
+				if (buf[xx] == '/')
+				{
+					xx++;
+					h_ptr->link_key[max_link] = buf[xx];
+					xx++;
+					xdeb += 2;
+				}
+				else
+				{
+					h_ptr->link_key[max_link] = 0;
+				}
+
+				/* Zap the link info */
+				while (buf[xx] != '*')
+				{
+					h_ptr->link[max_link][xx - xdeb] = buf[xx];
+					xx++;
+				}
+				h_ptr->link[max_link][xx - xdeb] = '\0';
+				xx++;
+				stmp = xx;
+				while (buf[xx] != '[')
+				{
+					tmp[xx - stmp] = buf[xx];
+					xx++;
+				}
+				xx++;
+				tmp[xx - stmp] = '\0';
+				h_ptr->link_line[max_link] = -atoi(tmp);
+				max_link++;
+			}
+			x++;
+		}
+
+		/* Count the "real" lines */
+		next++;
+	}
+
+	/* Save the number of "real" lines */
+	size = next;
+
+
+
+	/* Display the file */
+	while (TRUE)
+	{
+		/* Clear screen */
+		Term_clear();
+
+
+		/* Restart when necessary */
+		if (line >= size) line = 0;
+
+
+		/* Re-open the file if needed */
+		if (next > line)
+		{
+			/* Close it */
+			my_fclose(fff);
+
+			/* Hack -- Re-Open the file */
+			safe_setuid_grab();
+			fff = my_fopen(h_ptr->path, "r");
+			safe_setuid_drop();
+
+
+			/* Oops */
+			if (!fff)
+			{
+				/* Free hyperlink info */
+				KILL(h_ptr, hyperlink_type);
+
+				return (FALSE);
+			}
+
+			/* File has been restarted */
+			next = 0;
+		}
+
+		/* Skip lines if needed */
+		for (; next < line; next++)
+		{
+			/* Skip a line */
+			if (my_fgets(fff, buf, 1024)) break;
+		}
+
+
+		/* Dump the next 20 lines of the file */
+		for (i = 0; i < 20; )
+		{
+			int print_x;
+
+			/* Hack -- track the "first" line */
+			if (!i) line = next;
+
+			/* Get a line of the file or stop */
+			if (my_fgets(fff, h_ptr->rbuf, 1024)) break;
+
+			/* Get a color */
+			if (prefix(h_ptr->rbuf, "#####"))
+			{
+				color = color_char_to_attr(h_ptr->rbuf[5]);
+				buf = &h_ptr->rbuf[6];
+			}
+			else buf = h_ptr->rbuf;
+
+			/* Count the "real" lines */
+			next++;
+
+			/* Skip link colors */
+			if (prefix(buf, "|||||")) continue;
+
+			/* Skip tags */
+			if (prefix(buf, "~~~~~"))
+			{
+				i++;
+				continue;
+			}
+
+			/* Hack -- keep searching */
+			if (find && !i && !strstr(buf, find)) continue;
+
+			/* Hack -- stop searching */
+			find = NULL;
+
+			/* Be sure to get a correct cur_link */
+			if (h_ptr->link_y[cur_link] >= line + 20)
+			{
+				while ((cur_link > 0) && (h_ptr->link_y[cur_link] >= line + 20))
+				{
+					cur_link--;
+				}
+			}
+			if (h_ptr->link_y[cur_link] < line)
+			{
+				while ((cur_link < max_link) && (h_ptr->link_y[cur_link] < line))
+				{
+					cur_link++;
+				}
+			}
+
+			/* Dump the line */
+			x = 0;
+			print_x = 0;
+			while (buf[x])
+			{
+				/* Hyperlink ? */
+				if (prefix(buf + x, "*****"))
+				{
+					int xx = x + 5;
+
+					/* Zap the link info */
+					while (buf[xx] != '[')
+					{
+						xx++;
+					}
+					xx++;
+					/* Ok print the link name */
+					while (buf[xx] != ']')
+					{
+						if ((h_ptr->link_x[cur_link] == x) && (h_ptr->link_y[cur_link] == line + i))
+							Term_putch(print_x, i + 2, link_color_sel, buf[xx]);
+						else
+							Term_putch(print_x, i + 2, link_color, buf[xx]);
+						xx++;
+						print_x++;
+					}
+					x = xx;
+				}
+				/* Color ? */
+				else if (prefix(buf + x, "[[[[["))
+				{
+					int xx = x + 6;
+
+					/* Ok print the link name */
+					while (buf[xx] != ']')
+					{
+						Term_putch(print_x, i + 2, color_char_to_attr(buf[x + 5]), buf[xx]);
+						xx++;
+						print_x++;
+					}
+					x = xx;
+				}
+				/* Remove HTML ? */
+				else if (prefix(buf + x, "{{{{{"))
+				{
+					int xx = x + 6;
+
+					/* Ok remove this section */
+					while (buf[xx] != '}')
+					{
+						xx++;
+					}
+					x = xx;
+				}
+				else
+				{
+					Term_putch(print_x, i + 2, color, buf[x]);
+					print_x++;
+				}
+
+				x++;
+			}
+			color = TERM_WHITE;
+
+			/* Hilite "h_ptr->shower" */
+			if (h_ptr->shower[0])
+			{
+				cptr str = buf;
+
+				/* Display matches */
+				while ((str = strstr(str, h_ptr->shower)) != NULL)
+				{
+					int len = strlen(h_ptr->shower);
+
+					/* Display the match */
+					Term_putstr(str-buf, i+2, len, TERM_YELLOW, h_ptr->shower);
+
+					/* Advance */
+					str += len;
+				}
+			}
+
+			/* Count the printed lines */
+			i++;
+		}
+
+		/* Hack -- failed search */
+		if (find)
+		{
+			bell();
+			line = back;
+			find = NULL;
+			continue;
+		}
+
+
+		/* Show a general "title" */
+		prt(format("[%s %d.%d.%d, %s, Line %d/%d]", GAME_NAME,
+			   VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
+			   h_ptr->caption, line, size), 0, 0);
+
+		/* Prompt -- menu screen */
+		if (menu)
+		{
+			/* Wait for it */
+			prt("[Press a Number, or ESC to exit.]", 23, 0);
+		}
+
+		/* Prompt -- small files */
+		else if (size <= 20)
+		{
+			/* Wait for it */
+			prt("[Press ESC to exit.]", 23, 0);
+		}
+
+		/* Prompt -- large files */
+		else
+		{
+			/* Wait for it */
+			prt("[Press 2, 8, 4, 6, /, =, backspace, or ESC to exit.]", 23, 0);
+		}
+
+		/* Get a keypress */
+		k = inkey();
+
+		/* Hack -- return to last screen */
+		if ((k == '?') || (k == 0x7F) || (k == '\010')) break;
+
+		/* Hack -- try showing */
+		if (k == '=')
+		{
+			/* Get "h_ptr->shower" */
+			prt("Show: ", 23, 0);
+			(void)askfor_aux(h_ptr->shower, 80);
+}
+
+		/* Hack -- try finding */
+		if (k == '/')
+		{
+			/* Get "h_ptr->finder" */
+			prt("Find: ", 23, 0);
+			if (askfor_aux(h_ptr->finder, 80))
+			{
+				/* Find it */
+				find = h_ptr->finder;
+				back = line;
+				line = line + 1;
+
+				/* Show it */
+				strcpy(h_ptr->shower, h_ptr->finder);
+			}
+		}
+
+		/* Hack -- go to a specific line */
+		if (k == '#')
+		{
+			char tmp[81];
+			prt("Goto Line: ", 23, 0);
+			strcpy(tmp, "0");
+			if (askfor_aux(tmp, 80))
+			{
+				line = atoi(tmp);
+			}
+		}
+
+		/* Hack -- go to a specific file */
+		if (k == '%')
+		{
+			char tmp[81];
+			prt("Goto File: ", 23, 0);
+			strcpy(tmp, "help.hlp");
+			if (askfor_aux(tmp, 80))
+			{
+				if (!show_file_tome(tmp, NULL, 0, mode)) k = ESCAPE;
+			}
+		}
+
+		/* Hack -- Allow backing up */
+		if (k == '-')
+		{
+			line = line - 20;
+			if (line < 0) line = 0;
+		}
+
+		if (k == '8')
+		{
+			line--;
+			if (line < 0) line = 0;
+		}
+
+		/* Hack -- Advance a single line */
+		if (k == '2')
+		{
+			line = line + 1;
+		}
+
+		/* Advance one page */
+		if (k == ' ')
+		{
+			line = line + 20;
+		}
+
+		/* Advance one link */
+		if ((k == '6') || (k == '\t'))
+		{
+			cur_link++;
+			if (cur_link >= max_link) cur_link = max_link - 1;
+
+			if (h_ptr->link_y[cur_link] < line) line = h_ptr->link_y[cur_link];
+			if (h_ptr->link_y[cur_link] >= line + 20) line = h_ptr->link_y[cur_link] - 20;
+		}
+		/* Return one link */
+		if (k == '4')
+		{
+			cur_link--;
+			if (cur_link < 0) cur_link = 0;
+
+			if (h_ptr->link_y[cur_link] < line) line = h_ptr->link_y[cur_link];
+			if (h_ptr->link_y[cur_link] >= line + 20) line = h_ptr->link_y[cur_link] - 20;
+		}
+
+		/* Recurse on numbers */
+		if (k == '\r')
+		{
+			if (h_ptr->link_x[cur_link] != -1)
+			{
+				/* Recurse on that file */
+				if (!show_file_tome(h_ptr->link[cur_link], NULL, h_ptr->link_line[cur_link], mode)) k = ESCAPE;
+			}
+		}
+
+		/* Exit on escape */
+		if (k == ESCAPE) break;
+
+		/* No other key ? lets look for a shortcut */
+		for (i = 0; i < max_link; i++)
+		{
+			if (h_ptr->link_key[i] == k)
+			{
+				/* Recurse on that file */
+				if (!show_file_tome(h_ptr->link[i], NULL, h_ptr->link_line[i], mode)) k = ESCAPE;
+				break;
+			}
+		}
+	}
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Free hyperlink buffers */
+	KILL(h_ptr, hyperlink_type);
+
+	/* Escape */
+	if (k == ESCAPE) return (FALSE);
+
+	/* Normal return */
+	return (TRUE);
+}
+
+
+/*
+ * Hack -- display the contents of a file on the screen
+ * Only a wrapper around show_file_tome() now.
+ */
+errr show_file(cptr name, cptr what)
+{
+	show_file_tome(name, what, 0, 0);
+	return 0;
+}
 
 
 /*
