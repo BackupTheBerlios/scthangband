@@ -1543,6 +1543,7 @@ static errr grab_one_flag(u32b **flag, cptr errstr, cptr what)
 static errr grab_one_kind_flag(object_kind *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
+	WIPE(f, sizeof(f));
 	f[TR1] = &(ptr->flags1);
 	f[TR2] = &(ptr->flags2);
 	f[TR3] = &(ptr->flags3);
@@ -2031,6 +2032,7 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 static errr grab_one_artifact_flag(artifact_type *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
+	WIPE(f, sizeof(f));
 	f[TR1] = &(ptr->flags1);
 	f[TR2] = &(ptr->flags2);
 	f[TR3] = &(ptr->flags3);
@@ -2186,6 +2188,7 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 static errr grab_one_ego_item_flag(ego_item_type *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
+	WIPE(f, sizeof(f));
 	f[TR1] = &(ptr->flags1);
 	f[TR2] = &(ptr->flags2);
 	f[TR3] = &(ptr->flags3);
@@ -2334,6 +2337,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 static errr grab_one_basic_flag(monster_race *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
+	WIPE(f, sizeof(f));
 	f[RF1] = &(ptr->flags1);
 	f[RF2] = &(ptr->flags2);
 	f[RF3] = &(ptr->flags3);
@@ -2343,6 +2347,7 @@ static errr grab_one_basic_flag(monster_race *ptr, cptr what)
 static errr grab_one_spell_flag(monster_race *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
+	WIPE(f, sizeof(f));
 	f[RF4] = &(ptr->flags4);
 	f[RF5] = &(ptr->flags5);
 	f[RF6] = &(ptr->flags6);
