@@ -1553,9 +1553,6 @@ void bell(cptr reason)
 	if (character_generated && reason)
 	{
 		message_add(format("ERROR: %s", reason));
-
-		/* Window stuff */
-		p_ptr->window |= (PW_MESSAGE);
 	}
 
 	/* Make a bell noise (if allowed) */
@@ -2252,6 +2249,9 @@ void message_add(cptr str)
 	/* Important Hack -- Ignore "long" messages */
 	if (n >= MESSAGE_BUF / 4) return;
 
+	/* Window stuff, now we know the message will be printed. */
+	p_ptr->window |= PW_MESSAGE;
+
 
 	/*** Step 2 -- Attempt to optimize ***/
 
@@ -2610,9 +2610,6 @@ void msg_print(cptr msg)
 
 	/* Memorize the tail */
 	/* if (character_generated) message_add(t); */
-
-	/* Window stuff */
-	p_ptr->window |= (PW_MESSAGE);
 
 	/* Remember the message */
 	msg_flag = TRUE;
