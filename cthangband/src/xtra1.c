@@ -1608,6 +1608,33 @@ static void calc_bonuses_race(s16b (*flags)[32])
 }
 
 /*
+ * Obtain the "flags" for the player as if he was an item
+ */
+void player_flags(u32b *f1, u32b *f2, u32b *f3)
+{
+	int f,s;
+	s16b flags[4][32];
+	u32b *fn[3] = { f1, f2, f3 };
+
+	/* Clear */
+	(*f1) = (*f2) = (*f3) = 0L;
+	WIPE(flags, flags);
+
+	/* Acquire the flags. */
+	calc_bonuses_race(flags);
+	calc_bonuses_muta(flags);
+
+	/* Copy them to the variables. */
+	for (s = 1; s < 4; s++)
+	{
+		for (f = 0; f < 32; f++)
+		{
+			if (flags[s][f]) *fn[s] |= 1L << f;
+		}
+	}
+}
+
+/*
  * Give the player a bonus for various abilities in the flags table.
  */
 static void calc_bonuses_add(s16b (*flags)[32])
