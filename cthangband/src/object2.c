@@ -1744,23 +1744,23 @@ static void object_mention(object_type *o_ptr)
 		msg_format("Artifact (%v)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
 
-    else if (o_ptr->art_name)
-    {
-	msg_print("Random artifact");
-    }
+	else if (o_ptr->art_name)
+	{
+		msg_print("Random artifact");
+	}
 
 	/* Ego-item */
 	else if (ego_item_p(o_ptr))
 	{
 		/* Silly message */
-		msg_format("Ego-item (%s)", object_desc_f3, o_ptr, OD_SHOP, 0);
+		msg_format("Ego-item (%v)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
 
 	/* Normal item */
 	else
 	{
 		/* Silly message */
-		msg_format("Object (%s)", object_desc_f3, o_ptr, OD_SHOP, 0);
+		msg_format("Object (%v)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
 }
 
@@ -2029,7 +2029,10 @@ static byte get_ego_item(const object_type *o_ptr, int level, bool cursed)
 				return e_idx;
 			}
 		}
-		num += e_ptr->chance;
+		else
+		{
+			num += e_ptr->chance;
+		}
 	}
 
 	/* No appropriate ego types. */
@@ -2043,7 +2046,7 @@ static byte get_ego_item(const object_type *o_ptr, int level, bool cursed)
 
 		if (!get_ego_test(o_ptr, e_ptr, cursed)) continue;
 
-		num -= e_ptr->chance;
+		if (e_ptr->chance != 255) num -= e_ptr->chance;
 
 		if (num < 0)
 		{
@@ -2510,10 +2513,11 @@ static u16b depth_string(void)
 
 
 /*
- * Add a special ego effect to an object.
+ * Add a special ego effect to an object (which may have negative pval, etc.).
  * Returns FALSE if the effect was unidentified.
  */
-static bool add_ego_special(object_type *o_ptr, byte special, int level)
+static bool add_ego_special(object_type *o_ptr, const byte special,
+	const int level)
 {
 	/* Hack - handle special ego types. */
 	switch (special)
@@ -2865,11 +2869,6 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
  
-		rating += e_ptr->rating;
- 
-		/* Add special effects from the ego type. */
-		add_ego_special(o_ptr, e_ptr->special, lev);
-		
 		/* Hack -- acquire "broken" flag */
 		if (!e_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
@@ -2899,6 +2898,9 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 			/* Hack -- obtain pval */
 			if (e_ptr->max_pval) o_ptr->pval += randint(e_ptr->max_pval);
 		}
+
+		/* Add special effects from the ego type. */
+		add_ego_special(o_ptr, e_ptr->special, lev);
 
 		/* Hack -- apply rating bonus */
 		rating += e_ptr->rating;
