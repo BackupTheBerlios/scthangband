@@ -2110,7 +2110,7 @@ extern s16b command_wrk;
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern s16b command_gap ;
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b command_new;
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(VARIABLE_C))
@@ -2596,7 +2596,7 @@ extern bool cheat_room;
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_xtra;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_item;
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
