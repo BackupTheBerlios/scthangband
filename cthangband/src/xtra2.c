@@ -545,13 +545,13 @@ static cptr const temp_effects_text[] =
 static const temp_effect_type temp_effects[TIMED_MAX] =
 {
 	{IDX(TIMED_BLIND) 0, notice_bool, 0, XY_BLIND+1, PR_MAP,
-		PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_MONSTERS, PW_OVERHEAD},
+		PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_MONSTERS, 0},
 	{IDX(TIMED_CONFUSED) 2, notice_bool, 0, XY_CONFUSED+1, 0, 0, 0},
 	{IDX(TIMED_POISONED) 4, notice_bool, 0, XY_POISONED+1, 0, 0, 0},
 	{IDX(TIMED_AFRAID) 6, notice_bool, 0, XY_AFRAID+1, 0, 0, 0},
 	{IDX(TIMED_PARALYZED) 8, notice_bool, 0, XY_PARALYSED+1, PR_STATE, 0, 0},
 	{IDX(TIMED_IMAGE) 10, notice_bool, 0, XY_IMAGE+1,
-		PR_MAP, PU_MONSTERS, PW_OVERHEAD | PW_VISIBLE},
+		PR_MAP, PU_MONSTERS, 0 | PW_VISIBLE},
 	{IDX(TIMED_FAST) 12, notice_bool, 0, XY_FAST+1, 0, PU_BONUS, 0},
 	{IDX(TIMED_SLOW) 14, notice_bool, 0, XY_SLOW+1, 0, PU_BONUS, 0},
 	{IDX(TIMED_SHIELD) 16, notice_bool, 0, XY_SHIELD+1, 0, PU_BONUS, 0},
@@ -560,9 +560,9 @@ static const temp_effect_type temp_effects[TIMED_MAX] =
 	{IDX(TIMED_SHERO) 22, notice_bool, 0, XY_BERSERK+1, 0, PU_BONUS | PU_HP, 0},
 	{IDX(TIMED_PROTEVIL) 24, notice_bool, 0, XY_PROTEVIL+1, 0, 0, 0},
 	{IDX(TIMED_WRAITH) 26, notice_bool, 0, XY_WRAITH+1,
-		PR_MAP, PU_MONSTERS | PU_BONUS, PW_OVERHEAD},
+		PR_MAP, PU_MONSTERS | PU_BONUS, 0},
 	{IDX(TIMED_INVULN) 28, notice_bool, 0, XY_INVULN+1,
-		PR_MAP, PU_MONSTERS | PU_BONUS, PW_OVERHEAD},
+		PR_MAP, PU_MONSTERS | PU_BONUS, 0},
 	{IDX(TIMED_ESP) 30, notice_bool, 0, XY_ESP+1, 0, PU_MONSTERS | PU_BONUS, 0},
 	{IDX(TIMED_INVIS) 32, notice_bool, 0,
 		XY_INVIS+1, 0, PU_BONUS | PU_MONSTERS, 0},
@@ -1628,9 +1628,6 @@ void verify_panel(bool force)
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 }
 
 /*

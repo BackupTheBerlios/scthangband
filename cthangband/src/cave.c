@@ -1460,6 +1460,10 @@ void lite_spot(int y, int x)
 		/* Hack -- Queue it */
 		Term_queue_char(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c, ta, tc);
 	}
+
+	/* Display map on extra windows (later). */
+	p_ptr->window |= PW_OVERHEAD;
+
 }
 
 
@@ -1513,6 +1517,9 @@ void prt_map(void)
 
 	/* Display player */
 	lite_spot(py, px);
+
+	/* Display map on extra windows (later). */
+	p_ptr->window |= PW_OVERHEAD;
 
 	/* Restore the cursor */
 	(void)Term_set_cursor(v);
@@ -3313,9 +3320,6 @@ void map_area(void)
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 }
 
 
@@ -3402,9 +3406,6 @@ void wiz_lite(void)
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 }
 
 
@@ -3454,9 +3455,6 @@ void wiz_dark(void)
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 }
 
 

@@ -2753,9 +2753,6 @@ void move_to(s16b y, s16b x)
 
 		/* Update the monsters */
 		p_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
 }
 
 /*

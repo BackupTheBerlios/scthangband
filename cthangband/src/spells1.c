@@ -4759,8 +4759,6 @@ static void project_p_aux(monster_type *m_ptr, int dam, int typ)
 				p_ptr->redraw |= PR_MAP;
 				/* Update monsters */
 				p_ptr->update |= (PU_MONSTERS);
-				/* Window stuff */
-				p_ptr->window |= (PW_OVERHEAD);
 
 			}
 

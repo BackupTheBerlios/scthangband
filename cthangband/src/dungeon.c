@@ -1012,9 +1012,6 @@ static void process_sun(void)
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 }
 
 
@@ -3411,9 +3408,6 @@ static void dungeon(void)
 
 	/* Redraw dungeon */
 	p_ptr->redraw |= (PR_ALL);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 
 	/* Update stuff */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);

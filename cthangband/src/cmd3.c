@@ -746,9 +746,6 @@ void do_cmd_locate(void)
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
-
 	/* Handle stuff */
 	handle_stuff();
 }
