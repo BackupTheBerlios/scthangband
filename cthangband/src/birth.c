@@ -3036,54 +3036,34 @@ static void player_outfit(void)
     }
     /* For characters starting with magical skill, give them a spellbook */
     if (skill_set[SKILL_MANA].value > 0) {
-        int spellbook = 0;
-        int spellcount = 0;
-        if (skill_set[SKILL_SORCERY].value == 0 && 
-            skill_set[SKILL_NECROMANCY].value == 0 &&
-            skill_set[SKILL_THAUMATURGY].value == 0 && 
-            skill_set[SKILL_CONJURATION].value == 0) {
-            /* All spell skills are in corporis/animae/vis/naturae */
-                spellbook = rand_int(4); /* Give player a random spellbook */
-        } else {
-            /* HACK - select spellbook randomly */
-            spellcount = rand_int(20) + 1;
-            while (spellcount) {
-                if (skill_set[SKILL_SORCERY].value > 0) {
-        	    spellcount--;
-        	    if (spellcount == 0) {
-        	        spellbook = 0;
-        	        break;
-        	    }
-        	}
-        	if (skill_set[SKILL_THAUMATURGY].value > 0) {
-        	    spellcount--;
-                     if (spellcount == 0) {
-                         spellbook = 1;
-                         break;
-                     }
-                 }
-                 if (skill_set[SKILL_CONJURATION].value > 0) {
-                     spellcount--;
-                     if (spellcount == 0) {
-                         spellbook = 2;
-                         break;
-                     }
-                 }
-                 if (skill_set[SKILL_NECROMANCY].value > 0) {
-                     spellcount--;
-                     if (spellcount == 0) {
-                         spellbook = 3;
-                         break;
-                     }
-                 }
-             }
-         } /* spellbook is now 0-3 */
-             q_ptr = &forge;
-             object_prep(q_ptr, lookup_kind(90 + spellbook, 0));
-             q_ptr->number = 1;
-             object_aware(q_ptr);
-             object_known(q_ptr);
-             (void)inven_carry(q_ptr, FALSE);
+		int gbook[4], book[4] =
+		{
+			OBJ_SORCERY_BEGINNERS_HANDBOOK,
+			OBJ_THAUMATURGY_SIGN_OF_CHAOS,
+			OBJ_CONJURATION_MINOR_CONJURINGS,
+			OBJ_NECROMANCY_BLACK_PRAYERS
+		};
+
+		q_ptr = &forge;
+		i = 0;
+		/* Allow books the player has some skill with. */
+		if (skill_set[SKILL_SORCERY].value > 0) gbook[i++] = book[0];
+		if (skill_set[SKILL_THAUMATURGY].value > 0) gbook[i++] = book[1];
+		if (skill_set[SKILL_CONJURATION].value > 0) gbook[i++] = book[2];
+		if (skill_set[SKILL_NECROMANCY].value > 0) gbook[i++] = book[3];
+
+		/* No good magic schools?! Allow all books. */
+		if (!i)
+		{
+			for (i = 0; i < 4; i++) gbook[i] = book[i];
+		}
+
+		/* Create a random allowed book and give it to the player. */
+		object_prep(q_ptr, gbook[rand_int(i)]);
+		q_ptr->number = 1;
+		object_aware(q_ptr);
+		object_known(q_ptr);
+		(void)inven_carry(q_ptr, FALSE);
     }
         	 		
 
