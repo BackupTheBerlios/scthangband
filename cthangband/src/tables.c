@@ -3605,7 +3605,9 @@ moncol_type moncol[MAX_MONCOL] = {
 
 
 /* A macro to make modifications to make the initial settings more obvious. */
-#define WG(X) {X,0,0,0,0,0}
+#define WG(X) {X,0,0,0,0,0},
+#define WGT(A,B,C,D,E,F,G,H,I,J,K,L) \
+	WG(A) WG(B) WG(C) WG(D) WG(E) WG(F) WG(G) WG(H) WG(I) WG(J) WG(K) WG(L)
 
 wild_type wild_grid[12][12] =
 {
@@ -3618,18 +3620,18 @@ wild_type wild_grid[12][12] =
 	 * terrains 2 - 5 are depths of forest
 	 *
 	 */
-	{ WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),},
-	{ WG(0),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(2),WG(2),WG(2),WG(4),WG(2),WG(3),WG(2),WG(2),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(2),WG(3),WG(4),WG(5),WG(4),WG(4),WG(3),WG(2),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(2),WG(4),WG(5),WG(5),WG(5),WG(4),WG(3),WG(2),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(2),WG(3),WG(4),WG(5),WG(4),WG(4),WG(3),WG(2),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(3),WG(4),WG(4),WG(4),WG(4),WG(5),WG(4),WG(3),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(3),WG(4),WG(5),WG(4),WG(3),WG(4),WG(3),WG(2),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(2),WG(3),WG(4),WG(3),WG(2),WG(3),WG(3),WG(2),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(2),WG(3),WG(3),WG(2),WG(2),WG(2),WG(2),WG(2),WG(1),WG(0),},
-	{ WG(0),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(0),},
-	{ WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),},
+	{WGT(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)},
+	{WGT(0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)},
+	{WGT(0, 1, 2, 2, 2, 4, 2, 3, 2, 2, 1, 0)},
+	{WGT(0, 1, 2, 3, 4, 5, 4, 4, 3, 2, 1, 0)},
+	{WGT(0, 1, 2, 4, 5, 5, 5, 4, 3, 2, 1, 0)},
+	{WGT(0, 1, 2, 3, 4, 5, 4, 4, 3, 2, 1, 0)},
+	{WGT(0, 1, 3, 4, 4, 4, 4, 5, 4, 3, 1, 0)},
+	{WGT(0, 1, 3, 4, 5, 4, 3, 4, 3, 2, 1, 0)},
+	{WGT(0, 1, 2, 3, 4, 3, 2, 3, 3, 2, 1, 0)},
+	{WGT(0, 1, 2, 3, 3, 2, 2, 2, 2, 2, 1, 0)},
+	{WGT(0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)},
+	{WGT(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)},
 };
 
 /* Shamanic spirits */
