@@ -699,6 +699,9 @@ void do_cmd_inscribe(void)
  */
 static bool item_tester_refill_lantern(object_ctype *o_ptr)
 {
+	/* Only refuel with other lanterns. */
+	if (o_ptr == &inventory[INVEN_LITE]) return FALSE;
+
 	/* Flasks of oil are okay */
 	if (o_ptr->tval == TV_FLASK) return (TRUE);
 
@@ -780,6 +783,9 @@ static void do_cmd_refill_lamp(object_type *o_ptr)
  */
 static bool item_tester_refill_torch(object_ctype *o_ptr)
 {
+	/* Only refuel with other lanterns. */
+	if (o_ptr == &inventory[INVEN_LITE]) return FALSE;
+
 	/* Torches are okay */
 	if (o_ptr->k_idx == OBJ_WOODEN_TORCH) return (TRUE);
 
@@ -804,7 +810,7 @@ static void do_cmd_refill_torch(object_type *o_ptr)
 	{
 		errr err;
 		/* Get an (from inven or floor) */
-		if (!((o_ptr = get_item(&err, "Refuel with which torch? ", FALSE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Refuel with which torch? ", TRUE, TRUE, TRUE))))
 		{
 			if (err == -2) msg_print("You have no extra torches.");
 			return;
