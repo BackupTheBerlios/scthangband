@@ -344,8 +344,6 @@ static void wiz_display_item(object_type *o_ptr)
 
 	u32b	f1, f2, f3;
 
-	C_TNEW(buf, ONAME_MAX, char);
-
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
@@ -353,26 +351,22 @@ static void wiz_display_item(object_type *o_ptr)
 	/* Clear the screen */
 	for (i = 1; i <= 23; i++) prt("", i, j - 2);
 
-	/* Describe fully */
-	strnfmt(buf, ONAME_MAX, "%v", object_desc_f3, o_ptr, OD_ART | OD_SHOP, 3);
+	mc_put_fmt(2, j, "%v", object_desc_f3, o_ptr, OD_ART | OD_SHOP, 3);
 
-	prt(buf, 2, j);
+	mc_put_fmt(4, j, "kind = %-5d  tval = %-5d  extra = %-5d",
+	           o_ptr->k_idx, o_ptr->tval, k_info[o_ptr->k_idx].extra);
 
-	prt(format("kind = %-5d  tval = %-5d  extra = %-5d",
-	           o_ptr->k_idx, o_ptr->tval, k_info[o_ptr->k_idx].extra), 4, j);
+	mc_put_fmt(5, j, "number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
+	           o_ptr->number, o_ptr->weight, o_ptr->ac, o_ptr->dd, o_ptr->ds);
 
-	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
-	           o_ptr->number, o_ptr->weight,
-	           o_ptr->ac, o_ptr->dd, o_ptr->ds), 5, j);
+	mc_put_fmt(6, j, "pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
+	           o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d);
 
-	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
-	           o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d), 6, j);
+	mc_put_fmt(7, j, "name1 = %-4d  name2 = %-4d  cost = %ld",
+	           o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr));
 
-	prt(format("name1 = %-4d  name2 = %-4d  cost = %ld",
-	           o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr)), 7, j);
-
-	prt(format("ident = %04x  timeout = %-d",
-	           o_ptr->ident, o_ptr->timeout), 8, j);
+	mc_put_fmt(8, j, "ident = %04x  timeout = %-d",
+		o_ptr->ident, o_ptr->timeout);
 
 	prt("+------------FLAGS1------------+", 10, j);
     prt("AFFECT........SLAY........BRAND.", 11, j);

@@ -172,7 +172,6 @@ cptr describe_death_events(int r_idx, cptr he, bool omniscient)
 			{
 				make_item_type *i_ptr = &(d_ptr->par.item);
 				object_type o, *o_ptr = &o;
-				C_TNEW(o_name, ONAME_MAX, char);
 				object_prep(o_ptr, i_ptr->k_idx);
 				if (i_ptr->max > 1) o_ptr->number = UNKNOWN_OBJECT_NUMBER;
 				if (i_ptr->flags & EI_ART)
@@ -181,10 +180,8 @@ cptr describe_death_events(int r_idx, cptr he, bool omniscient)
 				if (i_ptr->flags & EI_EGO)
 				o_ptr->name2 = EP_EGO;
 #endif
-				strnfmt(o_name, ONAME_MAX, "%v",
+				s = format("%s%s %s drop %v", s, he, DDE_MAY,
 					object_desc_f3, o_ptr, OD_ART | OD_SHOP, 0);
-				s = format("%s%s %s drop %s", s, he, DDE_MAY, o_name);
-				TFREE(o_name);
 				break;
 			}
 			case DEATH_MONSTER:

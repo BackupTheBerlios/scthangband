@@ -3433,8 +3433,6 @@ errr file_character(cptr name, bool UNUSED full)
 
 	FILE		*fff = NULL;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	char		buf[1024];
 
 
@@ -3478,8 +3476,6 @@ errr file_character(cptr name, bool UNUSED full)
 		/* Message */
 		msg_format("Character dump failed!");
 		msg_print(NULL);
-
-		TFREE(o_name);
 
 		/* Error */
 		return (-1);
@@ -3709,9 +3705,8 @@ next_cave:
 		fprintf(fff, "  [Character Equipment]\n\n");
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 		{
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[i], TRUE, 3);
-			fprintf(fff, "%c%s %s\n",
-			        index_to_label(&inventory[i]), paren, o_name);
+			my_fprintf(fff, "%c%s %v\n", index_to_label(&inventory[i]), paren,
+				object_desc_f3, &inventory[i], TRUE, 3);
 
 			/* Describe random object attributes */
 			identify_fully_file(inventory+i, fff);
@@ -3723,9 +3718,8 @@ next_cave:
 	fprintf(fff, "  [Character Inventory]\n\n");
 	for (i = 0; i < INVEN_PACK && inventory[i].k_idx; i++)
 	{
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[i], TRUE, 3);
-		fprintf(fff, "%c%s %s\n",
-		        index_to_label(&inventory[i]), paren, o_name);
+		my_fprintf(fff, "%c%s %v\n", index_to_label(&inventory[i]), paren,
+			object_desc_f3, &inventory[i], TRUE, 3);
 
 		/* Describe random object attributes */
 		identify_fully_file(inventory+i, fff);
@@ -3751,8 +3745,8 @@ next_cave:
 		fprintf(fff, "[Home Inventory (%s)]\n\n", dun_name+dun_defs[town].shortname);
 		for (i = 0; i < st_ptr->stock_num; i++)
 		{
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &st_ptr->stock[i], TRUE, 3);
-			fprintf(fff, "%c%s %s\n", I2A(i%12), paren, o_name);
+			my_fprintf(fff, "%c%s %v\n", I2A(i%12), paren,
+				"%v", object_desc_f3, &st_ptr->stock[i], TRUE, 3);
 
 			/* Describe random object attributes */
 			identify_fully_file(&st_ptr->stock[i], fff);
@@ -3770,8 +3764,6 @@ next_cave:
 	/* Message */
 	msg_print("Character dump successful.");
 	msg_print(NULL);
-
-	TFREE(o_name);
 
 	/* Success */
 	return (0);

@@ -255,18 +255,13 @@ static void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
         }
     else
 	{
-		C_TNEW(m_name, MNAME_MAX, char);
-
-		/* Extract monster name */
-        strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 		/* Make a sound */
 		sound(SOUND_KILL);
 
 		/* Death by Missile/Spell attack */
 		if (note)
 		{
-			msg_format("%^s%s", m_name, note);
+			msg_format("%^v%s", monster_desc_f2, m_ptr, 0, note);
 		}
 		/* Death by Physical attack -- living monster */
         else if (!(m_ptr->ml))
@@ -277,13 +272,13 @@ static void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 		else if (!live_monster_p(r_ptr) ||
 		         (r_ptr->flags2 & (RF2_STUPID)))
 		{
-            msg_format("%^s is destroyed.", m_name);
+            msg_format("%^v is destroyed.", monster_desc_f2, m_ptr, 0);
 		}
 
         
 		else
 		{
-            msg_format("%^s is killed.", m_name);
+            msg_format("%^v is killed.", monster_desc_f2, m_ptr, 0);
 		}
 
 		/* Generate treasure */
@@ -295,8 +290,6 @@ static void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 		/* Not afraid */
 		(*fear) = FALSE;
 
-		TFREE(m_name);
-		
 		/* Monster is dead */
         return;
     }
@@ -2648,9 +2641,7 @@ void curse_equipment(int chance, int heavy_chance)
     /* Extra, biased saving throw for blessed items */
     if ((o3 & (TR3_BLESSED)) && (randint(888) > chance))
     {   
-        char o_name[256];
-        strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-        msg_format("Your %s resist%s cursing!", o_name,
+        msg_format("Your %v resist%s cursing!", object_desc_f3, o_ptr, FALSE, 0,
        ((o_ptr->number > 1) ? "" : "s"));
        /* Hmmm -- can we wear multiple items? If not, this is unnecessary */
         return;
@@ -6408,17 +6399,8 @@ static void process_monster(int m_idx, bool is_friend)
 
 					u32b f1_want = 0L;
 
-					C_TNEW(m_name, MNAME_MAX, char);
-					C_TNEW(o_name, ONAME_MAX, char);
-
 					/* Extract some flags */
 					object_flags(o_ptr, &f1, &f2, &f3);
-
-					/* Acquire the object name */
-					strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-					/* Acquire the monster name */
-					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x04);
 
 					/* React to objects that hurt the monster */
 					if (r_ptr->flags3 & (RF3_DRAGON)) f1_want |=
@@ -6454,8 +6436,9 @@ static void process_monster(int m_idx, bool is_friend)
 								object_info_known(j_ptr, o_ptr, 0);
 
 								/* Dump a message */
-								msg_format("%^s tries to pick up %s, but fails.",
-									   m_name, o_name);
+								msg_format("%^v tries to pick up %v, but fails.",
+									   monster_desc_f2, m_ptr, 0x04,
+									   object_desc_f3, o_ptr, TRUE, 3);
 
 								/* Remember this event if unexpected. */
 								if (!(j_ptr->flags1 & f1_want) &&
@@ -6475,7 +6458,9 @@ static void process_monster(int m_idx, bool is_friend)
 						if (player_has_los_bold(ny, nx))
 						{
 							/* Dump a message */
-							msg_format("%^s picks up %s.", m_name, o_name);
+							msg_format("%^s picks up %v.", 
+								monster_desc_f2, m_ptr, 0x04,
+								object_desc_f3, o_ptr, TRUE, 3);
 						}
 
 						/* Option */
@@ -6518,14 +6503,14 @@ static void process_monster(int m_idx, bool is_friend)
 						if (player_has_los_bold(ny, nx))
 						{
 							/* Dump a message */
-							msg_format("%^s crushes %s.", m_name, o_name);
+							msg_format("%^v crushes %v.", 
+								monster_desc_f2, m_ptr, 0x04,
+								object_desc_f3, o_ptr, TRUE, 3);
 						}
 
 						/* Delete the object */
 						delete_dun_object(o_ptr);
 					}
-					TFREE(o_name);
-					TFREE(m_name);
 				}
 			}
 		}
@@ -6590,15 +6575,8 @@ static void process_monster(int m_idx, bool is_friend)
 		/* Message if seen */
 		if (m_ptr->ml)
 		{
-			C_TNEW(m_name, MNAME_MAX, char);
-
-			/* Acquire the monster name */
-			strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 			/* Dump a message */
-			msg_format("%^s turns to fight!", m_name);
-			
-			TFREE(m_name);
+			msg_format("%^v turns to fight!", monster_desc_f2, m_ptr, 0);
 		}
 
 		/* XXX XXX XXX Actually do something now (?) */

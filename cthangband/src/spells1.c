@@ -917,8 +917,6 @@ static int inven_damage(inven_func typ, int perc)
 
 	object_type     *o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 
 	/* Count the casualties */
 	k = 0;
@@ -949,16 +947,13 @@ static int inven_damage(inven_func typ, int perc)
 			/* Some casualities */
 			if (amt)
 			{
-				/* Get a description */
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
-
 				/* Message */
-				msg_format("%sour %s (%c) %s destroyed!",
-					   ((o_ptr->number > 1) ?
-					    ((amt == o_ptr->number) ? "All of y" :
-					     (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-					   o_name, index_to_label(o_ptr),
-					   ((amt > 1) ? "were" : "was"));
+				msg_format("%sour %v (%c) %s destroyed!",
+					((o_ptr->number > 1) ?
+					((amt == o_ptr->number) ? "All of y" :
+					(amt > 1 ? "Some of y" : "One of y")) : "Y"),
+					object_desc_f3, o_ptr, FALSE, 3, index_to_label(o_ptr),
+					((amt > 1) ? "were" : "was"));
 
                    /* Potions smash open */
                    if (k_info[o_ptr->k_idx].tval == TV_POTION) {
@@ -975,8 +970,6 @@ static int inven_damage(inven_func typ, int perc)
 			}
 		}
 	}
-
-	TFREE(o_name);
 
 	/* Return the casualty count */
 	return (k);
@@ -998,8 +991,6 @@ static bool minus_ac(void)
 
 	u32b            f1, f2, f3;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint(6))
 	{
@@ -1012,18 +1003,11 @@ static bool minus_ac(void)
 	}
 
 	/* Nothing to damage */
-	if (!o_ptr->k_idx ||
+	if (!o_ptr->k_idx) return FALSE;
 
 	/* No damage left to be done */
-		(o_ptr->ac + o_ptr->to_a <= 0))
-	{
-		TFREE(o_name);
-		return (FALSE);
-	}
+	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
 
-
-	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
@@ -1031,13 +1015,12 @@ static bool minus_ac(void)
 	/* Object resists */
 	if (f3 & (TR3_IGNORE_ACID))
 	{
-		msg_format("Your %s is unaffected!", o_name);
-		TFREE(o_name);
+		msg_format("Your %v is unaffected!", object_desc_f3, o_ptr, FALSE, 0);
 		return (TRUE);
 	}
 
 	/* Message */
-	msg_format("Your %s is damaged!", o_name);
+	msg_format("Your %v is damaged!", object_desc_f3, o_ptr, FALSE, 0);
 
 	/* Hack - the player doesn't know whether a good item just became an average one. */
 	if (find_feeling(o_ptr) == "good")
@@ -1051,8 +1034,6 @@ static bool minus_ac(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
-
-	TFREE(o_name);
 
 	/* Item was damaged */
 	return (TRUE);
@@ -1415,8 +1396,6 @@ bool apply_disenchant(int mode)
 
 	object_type             *o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	/* Unused */
 	mode = mode;
 
@@ -1438,31 +1417,24 @@ bool apply_disenchant(int mode)
 	o_ptr = &inventory[t];
 
 	/* No item, nothing happens */
-	if (!o_ptr->k_idx ||
+	if (!o_ptr->k_idx) return (FALSE);
 
 
 	/* Nothing to disenchant */
-		((o_ptr->to_h <= 0) && (o_ptr->to_d <= 0) && (o_ptr->to_a <= 0)))
+	if ((o_ptr->to_h <= 0) && (o_ptr->to_d <= 0) && (o_ptr->to_a <= 0))
 	{
-		TFREE(o_name);
 		/* Nothing to notice */
 		return (FALSE);
 	}
-
-
-	/* Describe the object */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
 
     /* Artifacts have 71% chance to resist */
     if (allart_p(o_ptr) && (rand_int(100) < 71))
 	{
 		/* Message */
-		msg_format("Your %s (%c) resist%s disenchantment!",
-			   o_name, index_to_label(o_ptr),
+		msg_format("Your %v (%c) resist%s disenchantment!",
+			   object_desc_f3, o_ptr, FALSE, 0, index_to_label(o_ptr),
 			   ((o_ptr->number != 1) ? "" : "s"));
 
-		TFREE(o_name);
 		/* Notice */
 		return (TRUE);
 	}
@@ -1484,8 +1456,8 @@ bool apply_disenchant(int mode)
 	if ((o_ptr->to_a > 5) && (rand_int(100) < 20)) o_ptr->to_a--;
 
 	/* Message */
-	msg_format("Your %s (%c) %s disenchanted!",
-		   o_name, index_to_label(o_ptr),
+	msg_format("Your %v (%c) %s disenchanted!",
+		   object_desc_f3, o_ptr, FALSE, 0, index_to_label(o_ptr),
 		   ((o_ptr->number != 1) ? "were" : "was"));
 
 	/* Recalculate bonuses */
@@ -1494,7 +1466,6 @@ bool apply_disenchant(int mode)
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 
-	TFREE(o_name);
 	/* Notice */
 	return (TRUE);
 }
@@ -2005,8 +1976,6 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
 	u32b f1, f2, f3;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
     bool is_potion = FALSE;
 
 
@@ -2222,11 +2191,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 		if (do_kill)
 		{
 			/* Effect "observed" */
-			if (o_ptr->marked)
-			{
-				obvious = TRUE;
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-			}
+			if (o_ptr->marked) obvious = TRUE;
 
 			/* Artifacts, and other objects, get to resist */
 			if (is_art || ignore)
@@ -2235,7 +2200,8 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 				if (o_ptr->marked)
 				{
 					msg_format("The %s %s unaffected!",
-						   o_name, (plural ? "are" : "is"));
+						object_desc_f3, o_ptr, FALSE, 0,
+						(plural ? "are" : "is"));
 				}
 			}
 
@@ -2247,7 +2213,8 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 				/* Describe if needed */
 				if (o_ptr->marked && note_kill)
 				{
-					msg_format("The %s%s", o_name, note_kill);
+					msg_format("The %v%s",
+						object_desc_f3, o_ptr, FALSE, 0, note_kill);
 				}
 
                 is_potion = (k_info[o_kidx].tval == TV_POTION);
@@ -2267,8 +2234,6 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			}
 		}
 	}
-
-	TFREE(o_name);
 
 	/* Return "Anything seen?" */
 	return (obvious);

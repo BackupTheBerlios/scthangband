@@ -3542,8 +3542,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				/* Scan all objects being carried */
 				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 				{
-					C_TNEW(o_name, ONAME_MAX, char);
-
 					object_type *o_ptr;
 				
 					/* Acquire object */
@@ -3552,19 +3550,14 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					/* Acquire next object */
 					next_o_idx = o_ptr->next_o_idx;
 
-					/* Obtain an object description */
-					strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
 					/* Describe the object */
-					sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
-					prt(out_val, 0, 0);
+					mc_put_fmt(0, 0, "%s%s%s%v [%s]%255s", s1, s2, s3,
+						object_desc_f3, o_ptr, TRUE, 3, info, "");
 					move_cursor_relative(y, x);
 					query = inkey();
 
-					TFREE(o_name);
-
 					/* Always stop at "normal" keys */
-					if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+					if (!strchr("\r\n ", query)) break;
 
 					/* Sometimes stop at "space" key */
 					if ((query == ' ') && !(mode & (TARGET_LOOK))) break;
@@ -3597,39 +3590,32 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			next_o_idx = o_ptr->next_o_idx;
 
 			/* Describe it */
-			if (o_ptr->marked)
-			{
-				C_TNEW(o_name, ONAME_MAX, char);
+			if (!o_ptr->marked) continue;
 
-				/* Not boring */
-				boring = FALSE;
+			/* Not boring */
+			boring = FALSE;
 
-				/* Obtain an object description */
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
+			/* Describe the object */
+			mc_put_fmt(0, 0, "%s%s%s%v [%s]%255s", s1, s2, s3,
+				object_desc_f3, o_ptr, TRUE, 3, info, "");
 
-				/* Describe the object */
-				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
-				prt(out_val, 0, 0);
-				move_cursor_relative(y, x);
-				query = inkey();
+			move_cursor_relative(y, x);
+			query = inkey();
 
-				TFREE(o_name);
+			/* Always stop at "normal" keys */
+			if (!strchr("\r\n ", query)) break;
 
-				/* Always stop at "normal" keys */
-				if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+			/* Sometimes stop at "space" key */
+			if ((query == ' ') && !(mode & (TARGET_LOOK))) break;
 
-				/* Sometimes stop at "space" key */
-				if ((query == ' ') && !(mode & (TARGET_LOOK))) break;
+			/* Change the intro */
+			s1 = "It is ";
 
-				/* Change the intro */
-				s1 = "It is ";
+			/* Plurals */
+			if (o_ptr->number != 1) s1 = "They are ";
 
-				/* Plurals */
-				if (o_ptr->number != 1) s1 = "They are ";
-
-				/* Preposition */
-				s2 = "on ";
-			}
+			/* Preposition */
+			s2 = "on ";
 		}
 
 		/* Double break */

@@ -544,7 +544,6 @@ bool alchemy(void)
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
 
-	TFREE(o_name);
     return TRUE;
 }
 
@@ -4345,7 +4344,6 @@ bool ident_spell(void)
 	if (!((o_ptr = get_item(&err, "Identify which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (err == -2) msg_print("You have nothing to identify.");
-		TFREE(o_name);
 		return (FALSE);
 	}
 

@@ -114,8 +114,6 @@ bool make_attack_normal(int m_idx)
 
 	object_type		*o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	C_TNEW(m_name, MNAME_MAX, char);
 
 	char		ddesc[80];
@@ -143,7 +141,6 @@ bool make_attack_normal(int m_idx)
 	m_ptr->smart & SM_ALLY)
 	{
 		TFREE(m_name);
-		TFREE(o_name);
 		return FALSE;
 	}
 
@@ -515,13 +512,11 @@ bool make_attack_normal(int m_idx)
 						/* Skip artifacts */
                         if (allart_p(o_ptr)) continue;
 
-						/* Get a description */
-						strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
-
 						/* Message */
-						msg_format("%sour %s (%c) was stolen!",
+						msg_format("%sour %v (%c) was stolen!",
 						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           o_name, index_to_label(o_ptr));
+						           "%v", object_desc_f3, o_ptr, FALSE, 3,
+								   index_to_label(o_ptr));
 
 						/* Option */
 						if (testing_carry)
@@ -591,13 +586,11 @@ bool make_attack_normal(int m_idx)
 						/* Skip non-food objects */
 						if (o_ptr->tval != TV_FOOD) continue;
 
-						/* Get a description */
-						strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
 						/* Message */
-						msg_format("%sour %s (%c) was eaten!",
+						msg_format("%sour %v (%c) was eaten!",
 						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           o_name, index_to_label(o_ptr));
+						           object_desc_f3, o_ptr, FALSE, 0,
+								   index_to_label(o_ptr));
 
 						/* Steal the items */
 						item_increase(o_ptr, -1);
@@ -1194,7 +1187,6 @@ bool make_attack_normal(int m_idx)
     }
 
 	TFREE(m_name);
-	TFREE(o_name);
 
 	/* Assume we attacked */
 	return (TRUE);

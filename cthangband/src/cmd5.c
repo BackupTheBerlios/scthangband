@@ -1201,8 +1201,6 @@ static void rustproof(void)
 
 	object_type	*o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	/* Select a piece of armour */
 	item_tester_hook = item_tester_hook_armour;
 
@@ -1210,29 +1208,24 @@ static void rustproof(void)
 	if (!((o_ptr = get_item(&err, "Rustproof which piece of armour? ", TRUE, TRUE, TRUE))))
 	{
 		if (err == -2) msg_print("You have nothing to rustproof.");
-		TFREE(o_name);
 		return;
 	}
 
-
-	/* Description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
 
 	o_ptr->flags3 |= TR3_IGNORE_ACID;
 
 	if ((o_ptr->to_a < 0) && !(o_ptr->ident & IDENT_CURSED))
 	{
-		msg_format("%s %s look%s as good as new!",
-			((is_inventory_p(o_ptr)) ? "Your" : "The"), o_name,
-			((o_ptr->number > 1) ? "" : "s"));
+		msg_format("%s %v look%s as good as new!",
+			((is_inventory_p(o_ptr)) ? "Your" : "The"),
+			object_desc_f3, o_ptr, FALSE, 0, ((o_ptr->number > 1) ? "" : "s"));
 			o_ptr->to_a = 0;
 	}
 
-	msg_format("%s %s %s now protected against corrosion.",
-		((is_inventory_p(o_ptr)) ? "Your" : "The"), o_name,
-		((o_ptr->number > 1) ? "are" : "is"));
+	msg_format("%s %v %s now protected against corrosion.",
+		((is_inventory_p(o_ptr)) ? "Your" : "The"),
+		object_desc_f3, o_ptr, FALSE, 0, ((o_ptr->number > 1) ? "are" : "is"));
 
-	TFREE(o_name);
 	return;
 }
 
@@ -1594,61 +1587,54 @@ static void phlogiston (void)
 
 static void brand_weapon(int brand_type)
 {
-	object_type *o_ptr;
-
-	o_ptr = &inventory[INVEN_WIELD];
+	object_type *o_ptr = &inventory[INVEN_WIELD];
 
 	/* you can never modify artifacts / ego-items */
     /* you can never modify cursed items */
     /* TY: You _can_ modify broken items (if you're silly enough) */
-	if ((o_ptr->k_idx) && (!allart_p(o_ptr)) &&
-	(!ego_item_p(o_ptr)) &&	(!cursed_p(o_ptr)))
+	if (o_ptr->k_idx && !allart_p(o_ptr) && !ego_item_p(o_ptr) && !cursed_p(o_ptr))
 	{
 		cptr act = NULL;
+		byte name2;
 
-		C_TNEW(o_name, ONAME_MAX, char);
-        strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0); /* Let's get the name before
-                                                it is changed... */
+	    switch (brand_type)
+	    {
+	        case 4:
+	            act = "seems very unstable now.";
+				name2 = EGO_PLANAR;
+	            break;
+	        case 3:
+	            act = "thirsts for blood!";
+				name2 = EGO_VAMPIRIC;
+	            break;
+	        case 2:
+	            act = "is coated with poison.";
+	            name2 = EGO_BRAND_POIS;
+	            break;
+	        case 1:
+	            act = "is engulfed in raw chaos!";
+	            name2 = EGO_CHAOTIC;
+	            break;
+	        default:
+			if (rand_int(100) < 25)
+			{
+				act = "is covered in a fiery shield!";
+				name2 = EGO_BRAND_FIRE;
+			}
+			else
+			{
+				act = "glows deep, icy blue!";
+				name2 = EGO_BRAND_COLD;
+			}
+	    }
 
-    switch (brand_type)
-    {
-        case 4:
-            act = "seems very unstable now.";
-            o_ptr->name2 = EGO_PLANAR;
-            break;
-        case 3:
-            act = "thirsts for blood!";
-            o_ptr->name2 = EGO_VAMPIRIC;
-            break;
-        case 2:
-            act = "is coated with poison.";
-            o_ptr->name2 = EGO_BRAND_POIS;
-            break;
-        case 1:
-            act = "is engulfed in raw chaos!";
-            o_ptr->name2 = EGO_CHAOTIC;
-            break;
-        default:
-		if (rand_int(100) < 25)
-		{
-			act = "is covered in a fiery shield!";
-			o_ptr->name2 = EGO_BRAND_FIRE;
-		}
+		/* Display a message. */
+		msg_format("Your %v %s", object_desc_f3, o_ptr, FALSE, 0, act);
 
-		else
-		{
-			act = "glows deep, icy blue!";
-			o_ptr->name2 = EGO_BRAND_COLD;
-		}
-    }
-
-	apply_magic_2(o_ptr, dun_depth);
-
-		msg_format("Your %s %s", o_name, act);
-
+		/* Apply the enchantment. */
+		o_ptr->name2 = name2;
+		apply_magic_2(o_ptr, dun_depth);
 		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
-
-		TFREE(o_name);
 	}
 
 	else

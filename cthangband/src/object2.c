@@ -3286,8 +3286,6 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
 	cave_type *c_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	bool flag = FALSE;
 
 	bool plural = FALSE;
@@ -3296,22 +3294,18 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 	/* Extract plural */
 	if (j_ptr->number != 1) plural = TRUE;
 
-	/* Describe object */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, FALSE, 0);
-
 
 	/* Handle normal "breakage" */
     if (!(allart_p(j_ptr)) && (rand_int(100) < chance))
 	{
 		/* Message */
-		msg_format("The %s disappear%s.",
-			   o_name, (plural ? "" : "s"));
+		msg_format("The %v disappear%s.",
+			object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
 
 		/* Debug */
 		if (cheat_wzrd) msg_print("(breakage)");
 
         /* Failure */
-		TFREE(o_name);
 		return NULL;
 	}
 
@@ -3415,14 +3409,12 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
     if (!flag && !(allart_p(j_ptr)))
 	{
 		/* Message */
-		msg_format("The %s disappear%s.",
-			   o_name, (plural ? "" : "s"));
+		msg_format("The %v disappear%s.",
+			   object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
 
 		/* Debug */
 		if (cheat_wzrd) msg_print("(no floor space)");
 
-		/* Failure */
-		TFREE(o_name);
 		return NULL;
 	}
 
@@ -3485,8 +3477,6 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 			/* Clean up. */
 			drop_near_finish(chance, by, bx);
 
-			TFREE(o_name);
-
 			/* Result */
 			return o_ptr;
 		}
@@ -3499,8 +3489,8 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 	if (!ou_ptr)
 	{
 		/* Message */
-		msg_format("The %s disappear%s.",
-			   o_name, (plural ? "" : "s"));
+		msg_format("The %v disappear%s.",
+			   object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
 
 		/* Debug */
 		if (cheat_wzrd) msg_print("(too many objects)");
@@ -3512,7 +3502,6 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
         }
 
 		/* Failure */
-		TFREE(o_name);
 		return NULL;
 	}
 
@@ -3537,8 +3526,6 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
 	/* Clean up. */
 	drop_near_finish(chance, by, bx);
-
-	TFREE(o_name);
 
 	/* Result */
 	return ou_ptr;
@@ -3934,7 +3921,6 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	object_type *q_ptr;
 
 	cptr act;
-	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get the item to take off */
 	int item = o_ptr - inventory;
@@ -3981,9 +3967,6 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 		act = "You were wearing";
 	}
 
-	/* Determine the name before anything happens. */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
-
 	/* Modify, Optimize */
 	item_increase(o_ptr, -amt);
 	item_optimize(o_ptr);
@@ -3992,9 +3975,8 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	q_ptr = inven_carry(q_ptr);
 
 	/* Message */
-	msg_format("%s %s (%c).", act, o_name, index_to_label(q_ptr));
-
-	TFREE(o_name);
+	msg_format("%s %v (%c).", act, object_desc_f3, q_ptr, TRUE, 3,
+		index_to_label(q_ptr));
 
 	/* Return slot */
 	return q_ptr;
@@ -4706,8 +4688,6 @@ void display_koff(int k_idx)
 	object_type forge;
 	object_type *q_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 
 	/* Erase the window */
 	for (y = 0; y < Term->hgt; y++)
@@ -4719,7 +4699,6 @@ void display_koff(int k_idx)
 	/* No info */
 	if (!k_idx)
 	{
-		TFREE(o_name);
 		return;
 	}
 
@@ -4734,11 +4713,8 @@ void display_koff(int k_idx)
 	object_prep(q_ptr, k_idx);
 
 
-	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
-
 	/* Mention the object name */
-	Term_putstr(0, 0, -1, TERM_WHITE, o_name);
+	mc_put_fmt(0, 0, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
 
 
 	/* Display spells in books */
