@@ -1639,27 +1639,27 @@ void display_map(int *cy, int *cx)
 
 
 	/* Corners */
-	x = MAP_WID + 1;
-	y = MAP_HGT + 1;
+	i = (cur_wid+RATIO-1)/RATIO + 1;
+	j = (cur_hgt+RATIO-1)/RATIO + 1;
 
 	/* Draw the corners */
-	mc[0][0] = mc[0][x] = mc[y][0] = mc[y][x] = '+';
+	mc[0][0] = mc[0][i] = mc[j][0] = mc[j][i] = '+';
 
 	/* Draw the horizontal edges */
-	for (x = 1; x <= MAP_WID; x++) mc[0][x] = mc[y][x] = '-';
+	for (x = 1; x < i; x++) mc[0][x] = mc[j][x] = '-';
 
 	/* Draw the vertical edges */
-	for (y = 1; y <= MAP_HGT; y++) mc[y][0] = mc[y][x] = '|';
+	for (y = 1; y < j; y++) mc[y][0] = mc[y][i] = '|';
 
 
 	/* Display each map line in order */
-	for (y = 0; y < MAP_HGT+2; ++y)
+	for (y = 0; y <= j; ++y)
 	{
 		/* Start a new line */
 		Term_gotoxy(0, y);
 
 		/* Display the line */
-		for (x = 0; x < MAP_WID+2; ++x)
+		for (x = 0; x <= i; ++x)
 		{
 			ta = ma[y][x];
 			tc = mc[y][x];
