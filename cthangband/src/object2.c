@@ -908,7 +908,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
     if (f2 & TR2_RES_NEXUS) total += 2000;
     if (f2 & TR2_RES_CHAOS) total += 2000;
     if (f2 & TR2_RES_DISEN) total += 10000;
-    if (f3 & TR3_SH_FIRE) total += 5000;
+    if (f3 & TR3_SH_FIRE) total += 3750;
     if (f3 & TR3_SH_ELEC) total += 5000;
     if (f3 & TR3_XXX3) total += 0;
     if (f3 & TR3_NO_TELE) total += 2500;
