@@ -2632,6 +2632,27 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 }
 
 /*
+ * Inform the player if an object is currently being worn.
+ */
+static bool is_worn_p(object_type *o_ptr)
+{
+	/* Real inventory object. */
+	if (o_ptr >= inventory+INVEN_WIELD && o_ptr < inventory+INVEN_TOTAL)
+	{
+		return TRUE;
+	}
+	/* Fake "is worn" code from object_info_known(). */
+	else if (!o_ptr->iy && o_ptr->ix > INVEN_WIELD && o_ptr->ix <= INVEN_TOTAL)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+/*
  * Find out what, if any, stat changes the given item causes.
  */
 static void res_stat_details(object_type *o_ptr, object_extra *x_ptr, int *i, ifa_type *info)
@@ -2670,7 +2691,7 @@ static void res_stat_details(object_type *o_ptr, object_extra *x_ptr, int *i, if
 		res_stat_details_comp(p2_ptr, &p_body, i, info, act);
 	}
 	/* A worn item. */
-	else if (!o_ptr->iy && o_ptr->ix > INVEN_WIELD && o_ptr->ix <= INVEN_TOTAL)
+	else if (is_worn_p(o_ptr))
 	{
 		/* Hack - use the original o_ptr. */
 		o_ptr = inventory+o_ptr->ix-1;
