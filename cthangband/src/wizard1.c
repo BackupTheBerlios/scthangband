@@ -1729,7 +1729,7 @@ static void spoil_mon_info(cptr fname)
 		vn = 0;
 		if (flags4 & (RF4_SHRIEK)) vp[vn++] = "shriek for help";
 		if (flags4 & (RF4_XXX3)) vp[vn++] = "do something";
-	if (flags4 & (RF4_SHARD)) vp[vn++] = "produce shard balls";
+	if (flags4 & (RF4_BA_SHARD)) vp[vn++] = "produce shard balls";
 		if (flags4 & (RF4_ARROW_1)) vp[vn++] = "fire arrows";
 		if (flags4 & (RF4_ARROW_2)) vp[vn++] = "fire arrows";
 		if (flags4 & (RF4_ARROW_3)) vp[vn++] = "fire missiles";

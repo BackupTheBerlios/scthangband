@@ -42,15 +42,6 @@
 #define MAX_I	(int)(z_info->fake_info_size/head->info_len)
 
 
-typedef struct flag_name flag_name;
-
-struct flag_name
-{
-	cptr name; /* The name of the flag in the text file. */
-	int set; /* The set into which the flag is to be sent. */
-	u32b flag; /* The flag being set. */
-};
-
 /*** Helper arrays for parsing ascii template files ***/
 
 /*
@@ -125,343 +116,336 @@ static cptr r_info_blow_effect[] =
 };
 
 
-/*
- * Monster race flags
- */
-static cptr r_info_flags1[] =
+
+
+typedef struct flag_name flag_name;
+
+struct flag_name
 {
-	"UNIQUE",
-	"GUARDIAN",
-	"MALE",
-	"FEMALE",
-	"CHAR_CLEAR",
-	"CHAR_MULTI",
-	"ATTR_CLEAR",
-	"ATTR_MULTI",
-	"ALWAYS_GUARD",
-	"FORCE_MAXHP",
-	"FORCE_SLEEP",
-	"FORCE_EXTRA",
-	"FRIEND",
-	"FRIENDS",
-	"ESCORT",
-	"ESCORTS",
-	"NEVER_BLOW",
-	"NEVER_MOVE",
-	"RAND_25",
-	"RAND_50",
-	"ONLY_GOLD",
-	"ONLY_ITEM",
-	"DROP_60",
-	"DROP_90",
-	"DROP_1D2",
-	"DROP_2D2",
-	"DROP_3D2",
-	"DROP_4D2",
-	"DROP_GOOD",
-	"DROP_GREAT",
-	"DROP_USEFUL",
-	"DROP_CHOSEN"
+	cptr name; /* The name of the flag in the text file. */
+	int set; /* The set into which the flag is to be sent. */
+	u32b flag; /* The flag being set. */
 };
 
-/*
- * Monster race flags
- */
-static cptr r_info_flags2[] =
-{
-	"STUPID",
-	"SMART",
-    "CAN_SPEAK", /* WAS: XXX1X2 */
-    "REFLECTING",
-	"INVISIBLE",
-	"COLD_BLOOD",
-	"EMPTY_MIND",
-	"WEIRD_MIND",
-	"MULTIPLY",
-	"REGENERATE",
-    "SHAPECHANGER", /*  WAS: XXX3X2 */
-    "ATTR_ANY",     /*  WAS: XXX4X2 */
-	"POWERFUL",
-    "ELDRITCH_HORROR",
-    "AURA_FIRE",
-    "AURA_ELEC",
-	"OPEN_DOOR",
-	"BASH_DOOR",
-	"PASS_WALL",
-	"KILL_WALL",
-	"MOVE_BODY",
-	"KILL_BODY",
-	"TAKE_ITEM",
-	"KILL_ITEM",
-      "RUN_AWAY",
-	"BRAIN_1",
-	"BRAIN_2",
-	"BRAIN_3",
-	"BRAIN_4",
-	"BRAIN_5",
-	"BRAIN_6",
-	"BRAIN_7",
-};
-
-/*
- * Monster race flags
- */
-static cptr r_info_flags3[] =
-{
-	"ORC",
-	"TROLL",
-	"GIANT",
-	"DRAGON",
-	"DEMON",
-	"UNDEAD",
-	"EVIL",
-	"ANIMAL",
-    "GREAT_OLD_ONE", /*WAS: XXX1X3 */
-    "GOOD",
-	"XXX3X3",
-    "NONLIVING", /*WAS: XXX4X3 */
-	"HURT_LITE",
-	"HURT_ROCK",
-	"HURT_FIRE",
-	"HURT_COLD",
-	"IM_ACID",
-	"IM_ELEC",
-	"IM_FIRE",
-	"IM_COLD",
-	"IM_POIS",
-    "RES_TELE",
-	"RES_NETH",
-	"RES_WATE",
-	"RES_PLAS",
-	"RES_NEXU",
-	"RES_DISE",
-	"CTHULOID",
-	"NO_FEAR",
-	"NO_STUN",
-	"NO_CONF",
-	"NO_SLEEP"
-};
-
-/*
- * Monster race flags
- */
-static cptr r_info_flags4[] =
-{
-	"SHRIEK",
-	"XXX3X3",
-	"XXX3X4",
-    "BA_SHARD",  /* WAS: XXX4X4 */
-	"ARROW_1",
-	"ARROW_2",
-	"ARROW_3",
-	"ARROW_4",
-	"BR_ACID",
-	"BR_ELEC",
-	"BR_FIRE",
-	"BR_COLD",
-	"BR_POIS",
-	"BR_NETH",
-	"BR_LITE",
-	"BR_DARK",
-	"BR_CONF",
-	"BR_SOUN",
-	"BR_CHAO",
-	"BR_DISE",
-	"BR_NEXU",
-	"BR_TIME",
-	"BR_INER",
-	"BR_GRAV",
-	"BR_SHAR",
-	"BR_PLAS",
-	"BR_WALL",
-	"BR_MANA",
-    "BA_NUKE", /* WAS: XXX5X4 */
-    "BR_NUKE", /* WAS: XXX6X4 */
-    "BA_CHAO", /* WAS: XXX7X4 */
-    "BR_DISI",
-};
-
-/*
- * Monster race flags
- */
-static cptr r_info_flags5[] =
-{
-	"BA_ACID",
-	"BA_ELEC",
-	"BA_FIRE",
-	"BA_COLD",
-	"BA_POIS",
-	"BA_NETH",
-	"BA_WATE",
-	"BA_MANA",
-	"BA_DARK",
-	"DRAIN_MANA",
-	"MIND_BLAST",
-	"BRAIN_SMASH",
-	"CAUSE_1",
-	"CAUSE_2",
-	"CAUSE_3",
-	"CAUSE_4",
-	"BO_ACID",
-	"BO_ELEC",
-	"BO_FIRE",
-	"BO_COLD",
-	"BO_POIS",
-	"BO_NETH",
-	"BO_WATE",
-	"BO_MANA",
-	"BO_PLAS",
-	"BO_ICEE",
-	"MISSILE",
-	"SCARE",
-	"BLIND",
-	"CONF",
-	"SLOW",
-	"HOLD"
-};
-
-/*
- * Monster race flags
- */
-static cptr r_info_flags6[] =
-{
-	"HASTE",
-    "DREAD_CURSE",
-	"HEAL",
-	"XXX2X6",
-	"BLINK",
-	"TPORT",
-	"XXX3X6",
-	"XXX4X6",
-	"TELE_TO",
-	"TELE_AWAY",
-	"TELE_LEVEL",
-	"XXX5",
-	"DARKNESS",
-	"TRAPS",
-	"FORGET",
-	"XXX6X6",
-    "S_KIN",
-    "S_REAVER",
-	"S_MONSTER",
-	"S_MONSTERS",
-	"S_ANT",
-	"S_SPIDER",
-	"S_HOUND",
-	"S_HYDRA",
-	"S_CTHULOID",
-	"S_DEMON",
-	"S_UNDEAD",
-	"S_DRAGON",
-	"S_HI_UNDEAD",
-	"S_HI_DRAGON",
-	"S_GOO",
-	"S_UNIQUE"
-};
-
+#define TR1 0
+#define TR2 1
+#define TR3 2
+#define RF1 3
+#define RF2 4
+#define RF3 5
+#define RF4 6
+#define RF5 7
+#define RF6 8
+#define MAX_FLAG_SETS	9
 
 /*
  * Object flags
+ *
+ * Flags which are unused in the source code are simply commented out.
+ * Flags which are used, but are not intended to be set via text files are
+ * commented out with an explanatory comment afterwards.
+ * Flags which are used in the source code, but are assigned to no monsters
+ * at present are followed by an UNUSED comment.
  */
 static flag_name info_flags[] =
 {
-	{"STR", 0, TR1_STR},
-	{"INT", 0, TR1_INT},
-	{"WIS", 0, TR1_WIS},
-	{"DEX", 0, TR1_DEX},
-	{"CON", 0, TR1_CON},
-	{"CHR", 0, TR1_CHR},
-/*	{"XXX1", 0, TR1_XXX1}, */
-/*	{"XXX2", 0, TR1_XXX2}, */
-	{"STEALTH", 0, TR1_STEALTH},
-	{"SEARCH", 0, TR1_SEARCH},
-	{"INFRA", 0, TR1_INFRA},
-	{"TUNNEL", 0, TR1_TUNNEL},
-	{"SPEED", 0, TR1_SPEED},
-	{"BLOWS", 0, TR1_BLOWS},
-    {"CHAOTIC", 0, TR1_CHAOTIC},
-    {"VAMPIRIC", 0, TR1_VAMPIRIC},
-	{"SLAY_ANIMAL", 0, TR1_SLAY_ANIMAL},
-	{"SLAY_EVIL", 0, TR1_SLAY_EVIL},
-	{"SLAY_UNDEAD", 0, TR1_SLAY_UNDEAD},
-	{"SLAY_DEMON", 0, TR1_SLAY_DEMON},
-	{"SLAY_ORC", 0, TR1_SLAY_ORC},
-	{"SLAY_TROLL", 0, TR1_SLAY_TROLL},
-	{"SLAY_GIANT", 0, TR1_SLAY_GIANT},
-	{"SLAY_DRAGON", 0, TR1_SLAY_DRAGON},
-	{"KILL_DRAGON", 0, TR1_KILL_DRAGON},
-	{"X15_DRAGON", 0, TR1_X15_DRAGON},
-    {"VORPAL", 0, TR1_VORPAL},
-	{"IMPACT", 0, TR1_IMPACT},
-    {"BRAND_POIS", 0, TR1_BRAND_POIS},
-	{"BRAND_ACID", 0, TR1_BRAND_ACID},
-	{"BRAND_ELEC", 0, TR1_BRAND_ELEC},
-	{"BRAND_FIRE", 0, TR1_BRAND_FIRE},
-	{"BRAND_COLD", 0, TR1_BRAND_COLD},
-	{"SUST_STR", 1, TR2_SUST_STR},
-	{"SUST_INT", 1, TR2_SUST_INT},
-	{"SUST_WIS", 1, TR2_SUST_WIS},
-	{"SUST_DEX", 1, TR2_SUST_DEX},
-	{"SUST_CON", 1, TR2_SUST_CON},
-	{"SUST_CHR", 1, TR2_SUST_CHR},
-	{"RAND_RESIST", 1, TR2_RAND_RESIST},
-	{"RAND_POWER", 1, TR2_RAND_POWER},
-	{"IM_ACID", 1, TR2_IM_ACID},
-	{"IM_ELEC", 1, TR2_IM_ELEC},
-	{"IM_FIRE", 1, TR2_IM_FIRE},
-	{"IM_COLD", 1, TR2_IM_COLD},
-	{"RAND_EXTRA", 1, TR2_RAND_EXTRA},
-    {"REFLECT", 1, TR2_REFLECT},
-	{"FREE_ACT", 1, TR2_FREE_ACT},
-	{"HOLD_LIFE", 1, TR2_HOLD_LIFE},
-	{"RES_ACID", 1, TR2_RES_ACID},
-	{"RES_ELEC", 1, TR2_RES_ELEC},
-	{"RES_FIRE", 1, TR2_RES_FIRE},
-	{"RES_COLD", 1, TR2_RES_COLD},
-	{"RES_POIS", 1, TR2_RES_POIS},
-    {"RES_FEAR", 1, TR2_RES_FEAR},
-	{"RES_LITE", 1, TR2_RES_LITE},
-	{"RES_DARK", 1, TR2_RES_DARK},
-	{"RES_BLIND", 1, TR2_RES_BLIND},
-	{"RES_CONF", 1, TR2_RES_CONF},
-	{"RES_SOUND", 1, TR2_RES_SOUND},
-	{"RES_SHARDS", 1, TR2_RES_SHARDS},
-	{"RES_NETHER", 1, TR2_RES_NETHER},
-	{"RES_NEXUS", 1, TR2_RES_NEXUS},
-	{"RES_CHAOS", 1, TR2_RES_CHAOS},
-	{"RES_DISEN", 1, TR2_RES_DISEN},
-    {"SH_FIRE", 2, TR3_SH_FIRE},
-    {"SH_ELEC", 2, TR3_SH_ELEC},
-	{"SHOW_ARMOUR", 2, TR3_SHOW_ARMOUR},
-	{"AUTO_CURSE", 2, TR3_AUTO_CURSE},
-    {"NO_TELE", 2, TR3_NO_TELE},
-    {"NO_MAGIC", 2, TR3_NO_MAGIC},
-    {"WRAITH", 2, TR3_WRAITH},
-    {"TY_CURSE", 2, TR3_TY_CURSE},
-	{"EASY_KNOW", 2, TR3_EASY_KNOW},
-	{"HIDE_TYPE", 2, TR3_HIDE_TYPE},
-	{"SHOW_MODS", 2, TR3_SHOW_MODS},
-	{"GOOD", 2, TR3_GOOD},
-	{"FEATHER", 2, TR3_FEATHER},
-	{"LITE", 2, TR3_LITE},
-	{"SEE_INVIS", 2, TR3_SEE_INVIS},
-	{"TELEPATHY", 2, TR3_TELEPATHY},
-	{"SLOW_DIGEST", 2, TR3_SLOW_DIGEST},
-	{"REGEN", 2, TR3_REGEN},
-	{"XTRA_MIGHT", 2, TR3_XTRA_MIGHT},
-	{"XTRA_SHOTS", 2, TR3_XTRA_SHOTS},
-	{"IGNORE_ACID", 2, TR3_IGNORE_ACID},
-	{"IGNORE_ELEC", 2, TR3_IGNORE_ELEC},
-	{"IGNORE_FIRE", 2, TR3_IGNORE_FIRE},
-	{"IGNORE_COLD", 2, TR3_IGNORE_COLD},
-	{"ACTIVATE", 2, TR3_ACTIVATE},
-	{"DRAIN_EXP", 2, TR3_DRAIN_EXP},
-	{"TELEPORT", 2, TR3_TELEPORT},
-	{"AGGRAVATE", 2, TR3_AGGRAVATE},
-	{"BLESSED", 2, TR3_BLESSED},
-	{"CURSED", 2, TR3_CURSED},
-	{"HEAVY_CURSE", 2, TR3_HEAVY_CURSE},
-	{"PERMA_CURSE", 2, TR3_PERMA_CURSE},
+	/* Object flags */
+
+	{"STR", TR1, TR1_STR},
+	{"INT", TR1, TR1_INT},
+	{"WIS", TR1, TR1_WIS},
+	{"DEX", TR1, TR1_DEX},
+	{"CON", TR1, TR1_CON},
+	{"CHR", TR1, TR1_CHR},
+/*	{"XXX1", TR1, TR1_XXX1}, */
+/*	{"XXX2", TR1, TR1_XXX2}, */
+	{"STEALTH", TR1, TR1_STEALTH},
+	{"SEARCH", TR1, TR1_SEARCH},
+	{"INFRA", TR1, TR1_INFRA},
+	{"TUNNEL", TR1, TR1_TUNNEL},
+	{"SPEED", TR1, TR1_SPEED},
+	{"BLOWS", TR1, TR1_BLOWS},
+    {"CHAOTIC", TR1, TR1_CHAOTIC},
+    {"VAMPIRIC", TR1, TR1_VAMPIRIC},
+	{"SLAY_ANIMAL", TR1, TR1_SLAY_ANIMAL},
+	{"SLAY_EVIL", TR1, TR1_SLAY_EVIL},
+	{"SLAY_UNDEAD", TR1, TR1_SLAY_UNDEAD},
+	{"SLAY_DEMON", TR1, TR1_SLAY_DEMON},
+	{"SLAY_ORC", TR1, TR1_SLAY_ORC},
+	{"SLAY_TROLL", TR1, TR1_SLAY_TROLL},
+	{"SLAY_GIANT", TR1, TR1_SLAY_GIANT},
+	{"SLAY_DRAGON", TR1, TR1_SLAY_DRAGON},
+	{"KILL_DRAGON", TR1, TR1_KILL_DRAGON},
+	{"X15_DRAGON", TR1, TR1_X15_DRAGON},
+    {"VORPAL", TR1, TR1_VORPAL},
+	{"IMPACT", TR1, TR1_IMPACT},
+    {"BRAND_POIS", TR1, TR1_BRAND_POIS},
+	{"BRAND_ACID", TR1, TR1_BRAND_ACID},
+	{"BRAND_ELEC", TR1, TR1_BRAND_ELEC},
+	{"BRAND_FIRE", TR1, TR1_BRAND_FIRE},
+	{"BRAND_COLD", TR1, TR1_BRAND_COLD},
+	{"SUST_STR", TR2, TR2_SUST_STR},
+	{"SUST_INT", TR2, TR2_SUST_INT},
+	{"SUST_WIS", TR2, TR2_SUST_WIS},
+	{"SUST_DEX", TR2, TR2_SUST_DEX},
+	{"SUST_CON", TR2, TR2_SUST_CON},
+	{"SUST_CHR", TR2, TR2_SUST_CHR},
+	{"RAND_RESIST", TR2, TR2_RAND_RESIST},
+	{"RAND_POWER", TR2, TR2_RAND_POWER},
+	{"IM_ACID", TR2, TR2_IM_ACID},
+	{"IM_ELEC", TR2, TR2_IM_ELEC},
+	{"IM_FIRE", TR2, TR2_IM_FIRE},
+	{"IM_COLD", TR2, TR2_IM_COLD},
+	{"RAND_EXTRA", TR2, TR2_RAND_EXTRA},
+    {"REFLECT", TR2, TR2_REFLECT},
+	{"FREE_ACT", TR2, TR2_FREE_ACT},
+	{"HOLD_LIFE", TR2, TR2_HOLD_LIFE},
+	{"RES_ACID", TR2, TR2_RES_ACID},
+	{"RES_ELEC", TR2, TR2_RES_ELEC},
+	{"RES_FIRE", TR2, TR2_RES_FIRE},
+	{"RES_COLD", TR2, TR2_RES_COLD},
+	{"RES_POIS", TR2, TR2_RES_POIS},
+    {"RES_FEAR", TR2, TR2_RES_FEAR},
+	{"RES_LITE", TR2, TR2_RES_LITE},
+	{"RES_DARK", TR2, TR2_RES_DARK},
+	{"RES_BLIND", TR2, TR2_RES_BLIND},
+	{"RES_CONF", TR2, TR2_RES_CONF},
+	{"RES_SOUND", TR2, TR2_RES_SOUND},
+	{"RES_SHARDS", TR2, TR2_RES_SHARDS},
+	{"RES_NETHER", TR2, TR2_RES_NETHER},
+	{"RES_NEXUS", TR2, TR2_RES_NEXUS},
+	{"RES_CHAOS", TR2, TR2_RES_CHAOS},
+	{"RES_DISEN", TR2, TR2_RES_DISEN},
+    {"SH_FIRE", TR3, TR3_SH_FIRE},
+    {"SH_ELEC", TR3, TR3_SH_ELEC},
+	{"SHOW_ARMOUR", TR3, TR3_SHOW_ARMOUR},
+	{"AUTO_CURSE", TR3, TR3_AUTO_CURSE},
+    {"NO_TELE", TR3, TR3_NO_TELE},
+    {"NO_MAGIC", TR3, TR3_NO_MAGIC},
+    {"WRAITH", TR3, TR3_WRAITH}, /* UNUSED */
+    {"TY_CURSE", TR3, TR3_TY_CURSE},
+	{"EASY_KNOW", TR3, TR3_EASY_KNOW},
+	{"HIDE_TYPE", TR3, TR3_HIDE_TYPE},
+	{"SHOW_MODS", TR3, TR3_SHOW_MODS},
+	{"GOOD", TR3, TR3_GOOD},
+	{"FEATHER", TR3, TR3_FEATHER},
+	{"LITE", TR3, TR3_LITE},
+	{"SEE_INVIS", TR3, TR3_SEE_INVIS},
+	{"TELEPATHY", TR3, TR3_TELEPATHY},
+	{"SLOW_DIGEST", TR3, TR3_SLOW_DIGEST},
+	{"REGEN", TR3, TR3_REGEN},
+	{"XTRA_MIGHT", TR3, TR3_XTRA_MIGHT},
+	{"XTRA_SHOTS", TR3, TR3_XTRA_SHOTS},
+	{"IGNORE_ACID", TR3, TR3_IGNORE_ACID},
+	{"IGNORE_ELEC", TR3, TR3_IGNORE_ELEC},
+	{"IGNORE_FIRE", TR3, TR3_IGNORE_FIRE},
+	{"IGNORE_COLD", TR3, TR3_IGNORE_COLD},
+	{"ACTIVATE", TR3, TR3_ACTIVATE},
+	{"DRAIN_EXP", TR3, TR3_DRAIN_EXP},
+	{"TELEPORT", TR3, TR3_TELEPORT},
+	{"AGGRAVATE", TR3, TR3_AGGRAVATE},
+	{"BLESSED", TR3, TR3_BLESSED},
+	{"CURSED", TR3, TR3_CURSED},
+	{"HEAVY_CURSE", TR3, TR3_HEAVY_CURSE},
+	{"PERMA_CURSE", TR3, TR3_PERMA_CURSE},
+
+	/* General monster flags */
+
+	{"UNIQUE", RF1, RF1_UNIQUE},
+	{"GUARDIAN", RF1, RF1_GUARDIAN},
+	{"MALE", RF1, RF1_MALE},
+	{"FEMALE", RF1, RF1_FEMALE},
+	{"CHAR_CLEAR", RF1, RF1_CHAR_CLEAR},
+	{"CHAR_MULTI", RF1, RF1_CHAR_MULTI},
+	{"ATTR_CLEAR", RF1, RF1_ATTR_CLEAR},
+	{"ATTR_MULTI", RF1, RF1_ATTR_MULTI},
+/*	{"ALWAYS_GUARD", RF1, RF1_ALWAYS_GUARD}, */ /* Set from quests. */
+	{"FORCE_MAXHP", RF1, RF1_FORCE_MAXHP},
+	{"FORCE_SLEEP", RF1, RF1_FORCE_SLEEP},
+/*	{"FORCE_EXTRA", RF1, RF1_FORCE_EXTRA}, */
+	{"FRIEND", RF1, RF1_FRIEND},
+	{"FRIENDS", RF1, RF1_FRIENDS},
+	{"ESCORT", RF1, RF1_ESCORT},
+	{"ESCORTS", RF1, RF1_ESCORTS},
+	{"NEVER_BLOW", RF1, RF1_NEVER_BLOW},
+	{"NEVER_MOVE", RF1, RF1_NEVER_MOVE},
+	{"RAND_25", RF1, RF1_RAND_25},
+	{"RAND_50", RF1, RF1_RAND_50},
+	{"ONLY_GOLD", RF1, RF1_ONLY_GOLD},
+	{"ONLY_ITEM", RF1, RF1_ONLY_ITEM},
+	{"DROP_60", RF1, RF1_DROP_60},
+	{"DROP_90", RF1, RF1_DROP_90},
+	{"DROP_1D2", RF1, RF1_DROP_1D2},
+	{"DROP_2D2", RF1, RF1_DROP_2D2},
+	{"DROP_3D2", RF1, RF1_DROP_3D2},
+	{"DROP_4D2", RF1, RF1_DROP_4D2},
+	{"DROP_GOOD", RF1, RF1_DROP_GOOD},
+	{"DROP_GREAT", RF1, RF1_DROP_GREAT},
+	{"DROP_USEFUL", RF1, RF1_DROP_USEFUL}, /* UNUSED */
+	{"DROP_CHOSEN", RF1, RF1_DROP_CHOSEN},
+	{"STUPID", RF2, RF2_STUPID},
+	{"SMART", RF2, RF2_SMART},
+    {"CAN_SPEAK", RF2, RF2_CAN_SPEAK},
+    {"REFLECTING", RF2, RF2_REFLECTING},
+	{"INVISIBLE", RF2, RF2_INVISIBLE},
+	{"COLD_BLOOD", RF2, RF2_COLD_BLOOD},
+	{"EMPTY_MIND", RF2, RF2_EMPTY_MIND},
+	{"WEIRD_MIND", RF2, RF2_WEIRD_MIND},
+	{"MULTIPLY", RF2, RF2_MULTIPLY},
+	{"REGENERATE", RF2, RF2_REGENERATE},
+    {"SHAPECHANGER", RF2, RF2_SHAPECHANGER},
+    {"ATTR_ANY", RF2, RF2_ATTR_ANY},
+	{"POWERFUL", RF2, RF2_POWERFUL},
+    {"ELDRITCH_HORROR", RF2, RF2_ELDRITCH_HORROR},
+    {"AURA_FIRE", RF2, RF2_AURA_FIRE},
+    {"AURA_ELEC", RF2, RF2_AURA_ELEC},
+	{"OPEN_DOOR", RF2, RF2_OPEN_DOOR},
+	{"BASH_DOOR", RF2, RF2_BASH_DOOR},
+	{"PASS_WALL", RF2, RF2_PASS_WALL},
+	{"KILL_WALL", RF2, RF2_KILL_WALL},
+	{"MOVE_BODY", RF2, RF2_MOVE_BODY},
+	{"KILL_BODY", RF2, RF2_KILL_BODY},
+	{"TAKE_ITEM", RF2, RF2_TAKE_ITEM},
+	{"KILL_ITEM", RF2, RF2_KILL_ITEM},
+      {"RUN_AWAY", RF2, RF2_RUN_AWAY},
+/*	{"BRAIN_1", RF2, RF2_BRAIN_1}, */
+/*	{"BRAIN_2", RF2, RF2_BRAIN_2}, */
+/*	{"BRAIN_3", RF2, RF2_BRAIN_3}, */
+/*	{"BRAIN_4", RF2, RF2_BRAIN_4}, */
+/*	{"BRAIN_5", RF2, RF2_BRAIN_5}, */
+/*	{"BRAIN_6", RF2, RF2_BRAIN_6}, */
+/*	{"BRAIN_7", RF2, RF2_BRAIN_7}, */
+	{"ORC", RF3, RF3_ORC},
+	{"TROLL", RF3, RF3_TROLL},
+	{"GIANT", RF3, RF3_GIANT},
+	{"DRAGON", RF3, RF3_DRAGON},
+	{"DEMON", RF3, RF3_DEMON},
+	{"UNDEAD", RF3, RF3_UNDEAD},
+	{"EVIL", RF3, RF3_EVIL},
+	{"ANIMAL", RF3, RF3_ANIMAL},
+    {"GREAT_OLD_ONE", RF3, RF3_GREAT_OLD_ONE},
+    {"GOOD", RF3, RF3_GOOD},
+/*	{"PLAYER_GHOST", RF3, RF3_PLAYER_GHOST}, */
+    {"NONLIVING", RF3, RF3_NONLIVING},
+	{"HURT_LITE", RF3, RF3_HURT_LITE},
+	{"HURT_ROCK", RF3, RF3_HURT_ROCK},
+	{"HURT_FIRE", RF3, RF3_HURT_FIRE},
+	{"HURT_COLD", RF3, RF3_HURT_COLD}, /* UNUSED */
+	{"IM_ACID", RF3, RF3_IM_ACID},
+	{"IM_ELEC", RF3, RF3_IM_ELEC},
+	{"IM_FIRE", RF3, RF3_IM_FIRE},
+	{"IM_COLD", RF3, RF3_IM_COLD},
+	{"IM_POIS", RF3, RF3_IM_POIS},
+    {"RES_TELE", RF3, RF3_RES_TELE},
+	{"RES_NETH", RF3, RF3_RES_NETH},
+	{"RES_WATE", RF3, RF3_RES_WATE}, /* UNUSED */
+	{"RES_PLAS", RF3, RF3_RES_PLAS},
+	{"RES_NEXU", RF3, RF3_RES_NEXU},
+	{"RES_DISE", RF3, RF3_RES_DISE},
+	{"CTHULOID", RF3, RF3_CTHULOID},
+	{"NO_FEAR", RF3, RF3_NO_FEAR},
+	{"NO_STUN", RF3, RF3_NO_STUN},
+	{"NO_CONF", RF3, RF3_NO_CONF},
+	{"NO_SLEEP", RF3, RF3_NO_SLEEP},
+
+	/* Monster magic flags */
+
+	{"SHRIEK", RF4, RF4_SHRIEK},
+/*	{"XXX3X3", RF4, RF4_XXX2}, */
+/*	{"XXX3X4", RF4, RF4_XXX3}, */
+    {"BA_SHARD", RF4, RF4_BA_SHARD}, /* UNUSED */
+	{"ARROW_1", RF4, RF4_ARROW_1},
+	{"ARROW_2", RF4, RF4_ARROW_2},
+	{"ARROW_3", RF4, RF4_ARROW_3},
+	{"ARROW_4", RF4, RF4_ARROW_4},
+	{"BR_ACID", RF4, RF4_BR_ACID},
+	{"BR_ELEC", RF4, RF4_BR_ELEC},
+	{"BR_FIRE", RF4, RF4_BR_FIRE},
+	{"BR_COLD", RF4, RF4_BR_COLD},
+	{"BR_POIS", RF4, RF4_BR_POIS},
+	{"BR_NETH", RF4, RF4_BR_NETH},
+	{"BR_LITE", RF4, RF4_BR_LITE},
+	{"BR_DARK", RF4, RF4_BR_DARK},
+	{"BR_CONF", RF4, RF4_BR_CONF},
+	{"BR_SOUN", RF4, RF4_BR_SOUN},
+	{"BR_CHAO", RF4, RF4_BR_CHAO},
+	{"BR_DISE", RF4, RF4_BR_DISE},
+	{"BR_NEXU", RF4, RF4_BR_NEXU},
+	{"BR_TIME", RF4, RF4_BR_TIME},
+	{"BR_INER", RF4, RF4_BR_INER},
+	{"BR_GRAV", RF4, RF4_BR_GRAV},
+	{"BR_SHAR", RF4, RF4_BR_SHAR},
+	{"BR_PLAS", RF4, RF4_BR_PLAS},
+	{"BR_WALL", RF4, RF4_BR_WALL},
+	{"BR_MANA", RF4, RF4_BR_MANA},
+    {"BA_NUKE", RF4, RF4_BA_NUKE},
+    {"BR_NUKE", RF4, RF4_BR_NUKE},
+    {"BA_CHAO", RF4, RF4_BA_CHAO},
+    {"BR_DISI", RF4, RF4_BR_DISI},
+	{"BA_ACID", RF5, RF5_BA_ACID},
+	{"BA_ELEC", RF5, RF5_BA_ELEC},
+	{"BA_FIRE", RF5, RF5_BA_FIRE},
+	{"BA_COLD", RF5, RF5_BA_COLD},
+	{"BA_POIS", RF5, RF5_BA_POIS},
+	{"BA_NETH", RF5, RF5_BA_NETH},
+	{"BA_WATE", RF5, RF5_BA_WATE},
+	{"BA_MANA", RF5, RF5_BA_MANA},
+	{"BA_DARK", RF5, RF5_BA_DARK},
+	{"DRAIN_MANA", RF5, RF5_DRAIN_MANA},
+	{"MIND_BLAST", RF5, RF5_MIND_BLAST},
+	{"BRAIN_SMASH", RF5, RF5_BRAIN_SMASH},
+	{"CAUSE_1", RF5, RF5_CAUSE_1},
+	{"CAUSE_2", RF5, RF5_CAUSE_2},
+	{"CAUSE_3", RF5, RF5_CAUSE_3},
+	{"CAUSE_4", RF5, RF5_CAUSE_4},
+	{"BO_ACID", RF5, RF5_BO_ACID},
+	{"BO_ELEC", RF5, RF5_BO_ELEC},
+	{"BO_FIRE", RF5, RF5_BO_FIRE},
+	{"BO_COLD", RF5, RF5_BO_COLD},
+	{"BO_POIS", RF5, RF5_BO_POIS}, /* UNUSED */
+	{"BO_NETH", RF5, RF5_BO_NETH},
+	{"BO_WATE", RF5, RF5_BO_WATE},
+	{"BO_MANA", RF5, RF5_BO_MANA},
+	{"BO_PLAS", RF5, RF5_BO_PLAS},
+	{"BO_ICEE", RF5, RF5_BO_ICEE},
+	{"MISSILE", RF5, RF5_MISSILE},
+	{"SCARE", RF5, RF5_SCARE},
+	{"BLIND", RF5, RF5_BLIND},
+	{"CONF", RF5, RF5_CONF},
+	{"SLOW", RF5, RF5_SLOW},
+	{"HOLD", RF5, RF5_HOLD},
+	{"HASTE", RF6, RF6_HASTE},
+    {"DREAD_CURSE", RF6, RF6_DREAD_CURSE},
+	{"HEAL", RF6, RF6_HEAL},
+/*	{"XXX2X6", RF6, RF6_XXX2}, */
+	{"BLINK", RF6, RF6_BLINK},
+	{"TPORT", RF6, RF6_TPORT},
+/*	{"XXX3X6", RF6, RF6_XXX3}, */
+/*	{"XXX4X6", RF6, RF6_XXX4}, */
+	{"TELE_TO", RF6, RF6_TELE_TO},
+	{"TELE_AWAY", RF6, RF6_TELE_AWAY},
+	{"TELE_LEVEL", RF6, RF6_TELE_LEVEL},
+/*	{"XXX5X6", RF6, RF6_XXX5}, */
+	{"DARKNESS", RF6, RF6_DARKNESS},
+	{"TRAPS", RF6, RF6_TRAPS},
+	{"FORGET", RF6, RF6_FORGET},
+/*	{"XXX6X6", RF6, RF6_XXX6}, */
+    {"S_KIN", RF6, RF6_S_KIN},
+    {"S_REAVER", RF6, RF6_S_REAVER},
+	{"S_MONSTER", RF6, RF6_S_MONSTER},
+	{"S_MONSTERS", RF6, RF6_S_MONSTERS},
+	{"S_ANT", RF6, RF6_S_ANT},
+	{"S_SPIDER", RF6, RF6_S_SPIDER},
+	{"S_HOUND", RF6, RF6_S_HOUND},
+	{"S_HYDRA", RF6, RF6_S_HYDRA},
+	{"S_CTHULOID", RF6, RF6_S_CTHULOID},
+	{"S_DEMON", RF6, RF6_S_DEMON},
+	{"S_UNDEAD", RF6, RF6_S_UNDEAD},
+	{"S_DRAGON", RF6, RF6_S_DRAGON},
+	{"S_HI_UNDEAD", RF6, RF6_S_HI_UNDEAD},
+	{"S_HI_DRAGON", RF6, RF6_S_HI_DRAGON},
+	{"S_GOO", RF6, RF6_S_GOO},
+	{"S_UNIQUE", RF6, RF6_S_UNIQUE},
 };
 
 /* A list of the flags for explosion types understood by project(). */
@@ -1531,7 +1515,7 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 /*
  * Grab one flag in an object_kind from a textual string
  */
-static errr grab_one_object_flag(u32b **flag, cptr what)
+static errr grab_one_flag(u32b **flag, cptr errstr, cptr what)
 {
 	uint i;
 
@@ -1550,7 +1534,7 @@ static errr grab_one_object_flag(u32b **flag, cptr what)
 	}
 
 	/* Oops */
-	msg_format("Unknown object flag '%s'.", what);
+	msg_format("Unknown %s flag '%s'.", errstr, what);
 
 	/* Error */
 	return (1);
@@ -1558,11 +1542,11 @@ static errr grab_one_object_flag(u32b **flag, cptr what)
 
 static errr grab_one_kind_flag(object_kind *ptr, cptr what)
 {
-	u32b *f[3];
-	f[0] = &(ptr->flags1);
-	f[1] = &(ptr->flags2);
-	f[2] = &(ptr->flags3);
-	return grab_one_object_flag(f, what);
+	u32b *f[MAX_FLAG_SETS];
+	f[TR1] = &(ptr->flags1);
+	f[TR2] = &(ptr->flags2);
+	f[TR3] = &(ptr->flags3);
+	return grab_one_flag(f, "object", what);
 }
 
 
@@ -2046,11 +2030,11 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
  */
 static errr grab_one_artifact_flag(artifact_type *ptr, cptr what)
 {
-	u32b *f[3];
-	f[0] = &(ptr->flags1);
-	f[1] = &(ptr->flags2);
-	f[2] = &(ptr->flags3);
-	return grab_one_object_flag(f, what);
+	u32b *f[MAX_FLAG_SETS];
+	f[TR1] = &(ptr->flags1);
+	f[TR2] = &(ptr->flags2);
+	f[TR3] = &(ptr->flags3);
+	return grab_one_flag(f, "object", what);
 }
 
 
@@ -2201,11 +2185,11 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
  */
 static errr grab_one_ego_item_flag(ego_item_type *ptr, cptr what)
 {
-	u32b *f[3];
-	f[0] = &(ptr->flags1);
-	f[1] = &(ptr->flags2);
-	f[2] = &(ptr->flags3);
-	return grab_one_object_flag(f, what);
+	u32b *f[MAX_FLAG_SETS];
+	f[TR1] = &(ptr->flags1);
+	f[TR2] = &(ptr->flags2);
+	f[TR3] = &(ptr->flags3);
+	return grab_one_flag(f, "object", what);
 }
 
 
@@ -2347,93 +2331,22 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 }
 
 
-/*
- * Grab one (basic) flag in a monster_race from a textual string
- */
-static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
+static errr grab_one_basic_flag(monster_race *ptr, cptr what)
 {
-	int i;
-
-	/* Scan flags1 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags1[i]))
-		{
-			r_ptr->flags1 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Scan flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags2[i]))
-		{
-			r_ptr->flags2 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Scan flags1 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags3[i]))
-		{
-			r_ptr->flags3 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Oops */
-	msg_format("Unknown monster flag '%s'.", what);
-
-	/* Failure */
-	return (1);
+	u32b *f[MAX_FLAG_SETS];
+	f[RF1] = &(ptr->flags1);
+	f[RF2] = &(ptr->flags2);
+	f[RF3] = &(ptr->flags3);
+	return grab_one_flag(f, "monster", what);
 }
 
-
-/*
- * Grab one (spell) flag in a monster_race from a textual string
- */
-static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
+static errr grab_one_spell_flag(monster_race *ptr, cptr what)
 {
-	int i;
-
-	/* Scan flags4 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags4[i]))
-		{
-			r_ptr->flags4 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Scan flags5 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags5[i]))
-		{
-			r_ptr->flags5 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Scan flags6 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, r_info_flags6[i]))
-		{
-			r_ptr->flags6 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Oops */
-	msg_format("Unknown monster flag '%s'.", what);
-
-	/* Failure */
-	return (1);
+	u32b *f[MAX_FLAG_SETS];
+	f[RF4] = &(ptr->flags4);
+	f[RF5] = &(ptr->flags5);
+	f[RF6] = &(ptr->flags6);
+	return grab_one_flag(f, "monster", what);
 }
 
 

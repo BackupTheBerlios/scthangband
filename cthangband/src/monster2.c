@@ -526,9 +526,6 @@ static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
 	/* Cannot be slept or confused */
 	r_ptr->flags3 |= (RF3_NO_SLEEP | RF3_NO_CONF);
 
-	/* Currently this flag is unused */
-	r_ptr->flags3 |= RF3_PLAYER_GHOST;
-
 	/* Save the race and class */
 	ghost_race = grace;
 

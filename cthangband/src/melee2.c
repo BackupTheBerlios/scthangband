@@ -655,7 +655,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	if (smart & (SM_RES_SHARD))
 	{
 		if (int_outof(r_ptr, 50)) f4 &= ~(RF4_BR_SHAR);
-        if (int_outof(r_ptr, 20)) f4 &= ~(RF4_SHARD);
+        if (int_outof(r_ptr, 20)) f4 &= ~(RF4_BA_SHARD);
 	}
 
     if (smart & (SM_IMM_REFLECT))
@@ -1269,7 +1269,7 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
            break;
        }
 
-       case (96+iilog(RF4_SHARD)):
+       case (96+iilog(RF4_BA_SHARD)):
        {
            disturb(0, 0);
            if (!see_either) msg_print ("You hear someone mumble.");
@@ -2723,7 +2723,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			break;
 		}
 
-		case (96+iilog(RF4_SHARD)):
+		case (96+iilog(RF4_BA_SHARD)):
 		{
 			disturb(1, 0);
 	    if (blind) msg_format("%^s mumbles something.", m_name);
