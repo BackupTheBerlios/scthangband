@@ -1243,8 +1243,8 @@ static errr rd_inventory(void)
 {
 	int slot = 0;
 
-	object_type forge;
-	object_type *q_ptr;
+	object_type q_ptr[1];
+	object_type *o_ptr = UNREAD_VALUE; /* Only read for an initial 0xFFFE. */
 
 	/* No weight */
 	total_weight = 0;
@@ -1264,9 +1264,6 @@ static errr rd_inventory(void)
 		/* Nope, we reached the end */
 		if (n == 0xFFFF) break;
 
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Wipe the object */
 		object_wipe(q_ptr);
 
@@ -1276,14 +1273,18 @@ static errr rd_inventory(void)
 		/* Hack -- verify item */
 		if (!q_ptr->k_idx) return (53);
 
+#ifdef SF_ROD_STACKING
+		if (n == 0xFFFE)
+		{
+			o_ptr->next_o_idx = o_pop();
+			o_ptr = o_list+o_ptr->next_o_idx;
+		}
+		else
+#endif /* SF_ROD_STACKING */
 		/* Wield equipment */
 		if (n >= INVEN_WIELD)
 		{
-			/* Copy object */
-			object_copy(&inventory[n], q_ptr);
-
-			/* Add the weight */
-			total_weight += (q_ptr->number * q_ptr->weight);
+			o_ptr = inventory+n;
 
 			/* One more item */
 			equip_cnt++;
@@ -1303,17 +1304,17 @@ static errr rd_inventory(void)
 		else
 		{
 			/* Get a slot */
-			n = slot++;
-
-			/* Copy object */
-			object_copy(&inventory[n], q_ptr);
-
-			/* Add the weight */
-			total_weight += (q_ptr->number * q_ptr->weight);
+			o_ptr = inventory + slot++;
 
 			/* One more item */
 			inven_cnt++;
 		}
+
+		/* Copy object */
+		object_copy(o_ptr, q_ptr);
+
+		/* Add the weight */
+		total_weight += (q_ptr->number * q_ptr->weight);
 	}
 
 	/* Success */

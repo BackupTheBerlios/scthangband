@@ -3544,7 +3544,7 @@ extern bool cumber_helm(object_type *o_ptr);
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern int wield_skill(object_type *o_ptr);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3982,7 +3982,7 @@ extern bool stack_allow_rods;
 
 /* object1.c */
 
-#if (defined(OBJECT1_C) || defined(OBJECT2_C))
+#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C))
 extern int object_number(object_type *o_ptr);
 #endif
 

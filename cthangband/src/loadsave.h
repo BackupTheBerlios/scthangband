@@ -64,3 +64,8 @@
  * Add Bokrug and various causes of death to it.
  */
 #define SF_R_INFO_1	0x1000
+
+/*
+ * Use stacks of rods with different timeouts.
+ */
+#define SF_ROD_STACKING	0x2000

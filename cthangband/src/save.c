@@ -1077,8 +1077,30 @@ static bool wr_savefile_new(void)
 		/* Dump index */
 		wr_u16b((short)i);
 
+#ifdef SF_ROD_STACKING
+		if (has_flag(SF_ROD_STACKING))
+		{
+			/* Save every element in the stack. */
+			for (; o_ptr != o_list; o_ptr = o_list+o_ptr->next_o_idx)
+			{
+				/* Dump a "continue" index after the first. */
+				if (o_ptr != inventory+i) wr_u16b(0xFFFE);
+
+				/* Dump the item. */
+				wr_item(o_ptr);
+			}
+		}
+		else
+		{
+			/* Add everything to the first object. */
+			o_ptr->number = object_number(o_ptr);
+			wr_item(o_ptr);
+		}
+#else /* SF_ROD_STACKING */
 		/* Dump object */
 		wr_item(o_ptr);
+#endif /* SF_ROD_STACKING */
+
 	}
 
 	/* Add a sentinel */
