@@ -341,7 +341,7 @@ static void replace_friend(int m_idx)
 			if (!in_bounds(ny, nx)) continue;
 
 			/* Require "empty" floor space */
-			if (!cave_empty_bold(ny, nx) || (cave[ny][nx].feat == FEAT_WATER)) continue;
+			if (!cave_empty_bold(ny, nx)) continue;
 
 			/* Hack -- no teleport onto glyph of warding */
 			if (cave[ny][nx].feat == FEAT_GLYPH) continue;
@@ -1907,7 +1907,7 @@ static void vault_monsters(int y1, int x1, int num)
 			scatter(&y, &x, y1, x1, d, 0);
 
 			/* Require "empty" floor grids */
-			if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
+			if (!cave_empty_bold(y, x)) continue;
 
 			/* Place the monster (allow groups) */
 			(void)place_monster(y, x, dun_depth+2, TRUE, TRUE);

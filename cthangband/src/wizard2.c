@@ -1480,7 +1480,7 @@ static void do_cmd_wiz_named_aux(int r_idx, int slp, bool friend)
 		scatter(&y, &x, py, px, d, 0);
 
 		/* Require empty grids */
-		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
+		if (!cave_empty_bold(y, x)) continue;
 
 		/* Place it (allow groups) */
         if (place_monster_aux(y, x, r_idx, slp != 0, TRUE, friend, TRUE)) break;

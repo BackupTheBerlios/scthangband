@@ -2073,7 +2073,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	if (!in_bounds(y, x)) return (FALSE);
 
 	/* Require empty space */
-	if ((!cave_empty_bold(y, x)) || cave[y][x].feat == FEAT_WATER) return (FALSE);
+	if (!cave_empty_bold(y, x)) return (FALSE);
 
 	/* Hack -- no creation on glyph of warding */
 	if (cave[y][x].feat == FEAT_GLYPH) return (FALSE);
@@ -2363,7 +2363,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool charm)
 			int my = hy + ddy_ddd[i];
 
 			/* Walls and Monsters block flow */
-			if (!cave_empty_bold(my, mx) || (cave[my][mx].feat == FEAT_WATER)) continue;
+			if (!cave_empty_bold(my, mx)) continue;
 
 			/* Attempt to place another monster */
             if (place_monster_one(my, mx, r_idx, slp, charm, FALSE))
@@ -2450,7 +2450,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 			scatter(&ny, &nx, y, x, d, 0);
 
 		 	/* Require empty grids */
-			if (!cave_empty_bold(ny, nx) || (cave[ny][nx].feat == FEAT_WATER)) continue;
+			if (!cave_empty_bold(ny, nx)) continue;
 
 
 			/* Prepare allocation table for the escort. */
@@ -2825,7 +2825,7 @@ bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool 
 		scatter(&y, &x, y1, x1, d, 0);
 
 		/* Require "empty" floor grid */
-		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
+		if (!cave_empty_bold(y, x)) continue;
 
 		/* Hack -- no summon on glyph of warding */
         if (cave[y][x].feat == FEAT_GLYPH) continue;
@@ -2911,7 +2911,7 @@ bool multiply_monster(int m_idx, bool charm, bool clone)
 		scatter(&y, &x, m_ptr->fy, m_ptr->fx, d, 0);
 
 		/* Require an "empty" floor grid */
-		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
+		if (!cave_empty_bold(y, x)) continue;
 
         /* Create a new monster (awake, no groups) */
         result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, charm, FALSE);

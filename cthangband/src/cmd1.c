@@ -2014,8 +2014,7 @@ void move_player(int dir, int do_pickup)
 
     /* Player can not walk through "walls" unless in wraith form...*/
    if (((!cave_floor_bold(y, x)) && (c_ptr->feat != FEAT_BUSH) && ((!p_can_pass_walls) || 
-	   (c_ptr->feat == FEAT_WILD_BORDER) || (c_ptr->feat == FEAT_PATH_BORDER))) ||
-	   (c_ptr->feat == FEAT_WATER))
+	   (c_ptr->feat == FEAT_WILD_BORDER) || (c_ptr->feat == FEAT_PATH_BORDER))))
 	{
 		/* Disturb the player */
 		disturb(0);

@@ -40,7 +40,6 @@ bool dimension_door(int plev, int fail_dis)
 
 	/* Bad target or bad luck. */
 	if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) ||
-		(cave[ij][ii].feat == FEAT_WATER) ||
 		(distance(ij,ii,py,px) > plev + 2) || (!rand_int(plev * plev / 2)))
 	{
 		msg_print("You fail to exit the astral plane correctly!");
@@ -4863,7 +4862,7 @@ void earthquake(int cy, int cx, int r)
 							x = xx + ddx[i];
 
 							/* Skip non-empty grids */
-							if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
+							if (!cave_empty_bold(y, x)) continue;
 
 							/* Hack -- no safety on glyph of warding */
 							if (cave[y][x].feat == FEAT_GLYPH) continue;

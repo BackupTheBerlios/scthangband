@@ -2833,7 +2833,7 @@ void do_cmd_throw(int throw_mult)
 
          /* Potions smash open */
      if (k_info[q_ptr->k_idx].tval == TV_POTION) {
-       if ((hit_body) || (!cave_floor_bold(ny, nx)) || (cave[ny][nx].feat == FEAT_WATER) || (randint(100) < j)) {
+       if ((hit_body) || (!cave_floor_bold(ny, nx)) || (randint(100) < j)) {
        /* Message */
        msg_format("The %v shatters!", object_desc_f3, q_ptr, FALSE, 3);
        if (potion_smash_effect(1, y, x, q_ptr->k_idx))

@@ -721,7 +721,7 @@ static bool summon_possible(int y1, int x1)
                 && (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
 
             /* Require empty floor grid in line of sight */
-            if (cave_empty_bold(y,x) && los(y1,x1,y,x) && (cave[y][x].feat != FEAT_WATER)) return (TRUE);
+            if (cave_empty_bold(y,x) && los(y1,x1,y,x)) return (TRUE);
         }
     }
     return FALSE;
@@ -4675,7 +4675,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
                if (!in_bounds(y, x)) continue;
 
                /* Skip locations in a wall */
-               if (!cave_floor_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
+               if (!cave_floor_bold(y, x)) continue;
 
                /* Check distance */
                if (distance(y, x, fy, fx) != d) continue;
@@ -4757,7 +4757,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
                if (!in_bounds(y, x)) continue;
 
                /* Skip locations in a wall */
-               if (!cave_floor_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
+               if (!cave_floor_bold(y, x)) continue;
 
                /* Check distance */
                if (distance(y, x, fy, fx) != d) continue;
@@ -4883,7 +4883,7 @@ static bool get_moves(int m_idx, int *mm)
                }
 
                /* Ignore filled grids */
-               if (!cave_empty_bold(y2, x2) || (cave[y2][x2].feat == FEAT_WATER))
+               if (!cave_empty_bold(y2, x2))
                    continue;
 
                /* Try to fill this hole */
@@ -6004,7 +6004,7 @@ static void process_monster(int m_idx, bool is_friend)
 
 
 		/* Floor is open? */
-		if (cave_floor_bold(ny, nx) && (cave[ny][nx].feat != FEAT_WATER))
+		if (cave_floor_bold(ny, nx))
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
