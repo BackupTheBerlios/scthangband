@@ -4482,7 +4482,12 @@ void do_cmd_mindcraft(void)
 				msg_print("Your mind unleashes its power in an uncontrollable storm!");
 				project(1, 2+psi/10, py, px,
                 psi * 2, GF_MANA,PROJECT_JUMP|PROJECT_KILL|PROJECT_GRID|PROJECT_ITEM);
+				if (p_ptr->cchi < spell.mana_cost)
+				{
 				p_ptr->cchi = MAX(0, p_ptr->cchi - psi * MAX(1, psi/10));
+				} else {
+					p_ptr->cchi = MAX(spell.mana_cost, p_ptr->cchi - psi * MAX(1, psi/10));
+				}
 			}
 	    }
 	}
