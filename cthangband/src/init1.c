@@ -574,27 +574,6 @@ cptr coin_types[] =
 };
 
 /*
- * Check that the given string includes the current version number.
- */
-static errr check_version(char *buf, header *head)
-{
-	int v1, v2, v3;
-
-	/* Scan for the values */
-	if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
-	    (v1 != head->v_major) ||
-	    (v2 != head->v_minor) ||
-	    (v3 != head->v_patch))
-	{
-		return ERR_VERSION;
-	}
-	else
-	{
-		return SUCCESS;
-	}
-}
-
-/*
  * A macro to run a given function which returns errr, and return any error
  * it gives.
  */

@@ -2305,6 +2305,7 @@ errr Term_load(void)
 
 
 
+#if 0
 /*
  * Exchange the "requested" screen with the "tmp" screen
  */
@@ -2348,6 +2349,7 @@ static errr Term_exchange(void)
 	/* Success */
 	return (0);
 }
+#endif
 
 
 

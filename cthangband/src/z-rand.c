@@ -108,6 +108,7 @@ static s32b Rand_div(s32b m);
   *
   * Eric Bock (kobe@micron.net)
   */
+#if 0
 static int Rand_bit(void)
  {
  	int a, b;
@@ -122,11 +123,13 @@ static int Rand_bit(void)
  
  	return a;
  }
+#endif
  
  /*
   * Generate a random 32-bit integer.
   * Note that this can be extended to any number of bits.
   */
+#if 0
 static u32b Rand_u32b(void)
  {
  	u32b r = 0;
@@ -150,7 +153,9 @@ static u32b Rand_u32b(void)
  
  	return r;
  }
+#endif
  
+#if 0
  /* Generate a random integer with 0 <= X < M */
 static u32b Rand_num(u32b m)
  {
@@ -187,6 +192,7 @@ static u32b Rand_num(u32b m)
  	/* Success */
  	return r;
  }
+#endif
 
 
 /*
@@ -459,7 +465,7 @@ s32b rand_int(u32b m)
 {
 	if (rand_unbiased && !Rand_quick)
 	{
-		return Rand_num((s32b)(m));
+		return Rand_mod((s32b)(m));
 	}
 	else
 	{

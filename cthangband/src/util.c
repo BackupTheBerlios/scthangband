@@ -596,6 +596,7 @@ errr fd_move(cptr file, cptr what)
 }
 
 
+#if 0
 /*
  * Hack -- attempt to copy a file
  */
@@ -616,6 +617,7 @@ static errr fd_copy(cptr file, cptr what)
 	/* XXX XXX XXX */
 	return (1);
 }
+#endif
 
 
 /*
@@ -764,6 +766,7 @@ errr fd_seek(int fd, huge n)
 }
 
 
+#if 0
 /*
  * Hack -- attempt to truncate a file descriptor
  */
@@ -783,6 +786,7 @@ static errr fd_chop(int fd, huge n)
 	/* Success */
 	return (0);
 }
+#endif
 
 
 /*

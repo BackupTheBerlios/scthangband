@@ -931,23 +931,6 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 
 
 /*
- * Give the base name for an object kind.
- * This is taken as the unidentified object with the same p_id,
- * and a s_id of SID_BASE, which is never re-mapped.
- */
-static cptr descr_base(byte p_id)
-{
-	s16b u_idx = pid_base[p_id];
-	switch (u_idx)
-	{
-		case -2:
-		return "Unaware item";
-		default:
-		return (u_name+u_info[u_idx].name);
-	}
-}
-
-/*
  * Obtain the "flags" for an item which are known to the player
  */
 void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)

@@ -4757,10 +4757,12 @@ bool banish_evil(int dist)
 /*
  * Turn undead
  */
+#if 0
 static bool turn_undead(int dam)
 {
 	return (project_hack(GF_TURN_UNDEAD, dam));
 }
+#endif
 
 
 /*
@@ -6648,10 +6650,12 @@ Ego weapons and normal weapons can be blessed automatically. */
 
   * Death-ray all monsters (note: OBSCENELY powerful)
   */
+#if 0
 static bool deathray_monsters(int dam)
 {
      return (project_hack(GF_DEATH_RAY, dam));
 }
+#endif
 
 
 

@@ -29,6 +29,7 @@ cptr copyright[5] =
 /* The name of the help index file */
 cptr syshelpfile;
 
+#if 0 /* unused */
 /*
  * Executable version
  */
@@ -36,6 +37,7 @@ byte version_major = VERSION_MAJOR;
 byte version_minor = VERSION_MINOR;
 byte version_patch = VERSION_PATCH;
 /* byte version_extra = VERSION_EXTRA; */
+#endif /* 0 */
 
 /*
  * Run-time arguments
@@ -746,7 +748,6 @@ char *k_text;
  */
 unident_type *u_info;
 char *u_name;
-s16b *pid_base;
 
 /*
  * The base object arrays

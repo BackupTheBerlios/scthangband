@@ -4593,10 +4593,12 @@ bool get_rep_dir(int *dp)
 }
 
 
+#if 0
 static int get_chaos_patron(void)
 {
     return (((p_ptr->age)+(p_ptr->sc)+(p_ptr->birthday))%MAX_PATRON);
 }
+#endif
 
 void gain_level_reward(int chosen_reward)
 {

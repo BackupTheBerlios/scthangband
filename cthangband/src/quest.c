@@ -36,6 +36,7 @@ int get_quest_monster(void)
 	return 0;
 }
 
+#if 0
 /*
  * Search quests for number of monsters
  */
@@ -49,6 +50,7 @@ static int get_max_monster(void)
 	}
 	return 0;
 }
+#endif
 
 /*
  * Get quest number
@@ -123,7 +125,7 @@ void quest_discovery(void)
 /*
  * Search the next quest level
  */
-
+#if 0
 static int next_quest_level(void)
 {
 	int i;
@@ -135,3 +137,4 @@ static int next_quest_level(void)
 	}
 	return 127;
 }
+#endif

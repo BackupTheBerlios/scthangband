@@ -2410,15 +2410,15 @@ extern cptr copyright[5] ;
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern cptr syshelpfile;
 #endif
-#if (defined(VARIABLE_C))
-extern byte version_major ;
-#endif
-#if (defined(VARIABLE_C))
-extern byte version_minor ;
-#endif
-#if (defined(VARIABLE_C))
-extern byte version_patch ;
-#endif
+
+
+
+
+
+
+
+
+
 #if (defined(LOAD_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern bool arg_fiddle;
 #endif
@@ -3307,9 +3307,9 @@ extern unident_type *u_info;
 #if (defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *u_name;
 #endif
-#if (defined(OBJECT1_C) || defined(VARIABLE_C))
-extern s16b *pid_base;
-#endif
+
+
+
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern o_base_type *o_base;
 #endif

@@ -3097,6 +3097,7 @@ void run_step(int dir)
 /*
  * Get town at given coordinates
  */
+#if 0
 static byte get_cur_town(int y, int x)
 {
 	int i;
@@ -3109,3 +3110,4 @@ static byte get_cur_town(int y, int x)
 	}
 	return 0;
 }
+#endif

@@ -3194,6 +3194,7 @@ static int flow_n = 0;
 /*
  * Hack -- forget the "flow" information
  */
+#if 0
 static void forget_flow(void)
 {
 
@@ -3221,6 +3222,7 @@ static void forget_flow(void)
 #endif
 
 }
+#endif
 
 
 #ifdef MONSTER_FLOW
