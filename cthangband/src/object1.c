@@ -1193,7 +1193,11 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			 * Store-bought items never do.
 			 * Other items do iff "plain_descriptions" is turned off.
 			 */
-			if (!aware || (!artifact_p(o_ptr) && !plain_descriptions && ~o_ptr->ident & IDENT_STOREB))
+			if (aware && artifact_p(o_ptr))
+			{
+				basenm = k_name+k_ptr->name;
+			}
+			else if (!aware || (!artifact_p(o_ptr) && !plain_descriptions && (~o_ptr->ident & IDENT_STOREB)))
 			{
 				/* If desired, this can be the base name */
 				if (u_ptr->flags & UNID_NO_BASE)
