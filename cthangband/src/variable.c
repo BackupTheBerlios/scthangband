@@ -227,6 +227,7 @@ bool multi_stair;         /* Multiple level staircases */
 bool centre_view; /* Centre view on player */
 bool macro_edit; /* Use macros as edit keys in string prompts */
 bool no_centre_run; /* Stop centring when running */
+bool auto_more;
 bool preserve_mode; /* Don't lose missed artifacts */
 bool maximise_mode; /* Unify stat bonuses */
 bool use_autoroller; /* Autoroll characters */

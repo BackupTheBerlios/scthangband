@@ -3564,4 +3564,10 @@ extern void init_term_wins(void);
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max);
 #endif
+
+/* variable.c */
+
+#if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
+extern bool auto_more;
+#endif
 #endif /* INCLUDED_EXTERNS_H */

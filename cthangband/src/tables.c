@@ -3120,7 +3120,7 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options (full to 3,11), 7 reserved for cheat options
+ * Available Options (full to 3,12), 7 reserved for cheat options
  */
 option_type option_info[] =
 {
@@ -3401,6 +3401,9 @@ option_type option_info[] =
 
 	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
     "no_centre_run",                "Do not centre view whilst running" },
+
+	{ &auto_more,                   FALSE,  OPTS_DISTURB,      3, 12,
+	"auto_more",                    "Automatically clear '-more-' prompts" },
 
 	{ &score_quitters,		FALSE, OPTS_BIRTH, 2, 29,
 	"score_quitter",			"Remember scores of those who quit the game" },

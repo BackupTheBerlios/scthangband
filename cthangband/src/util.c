@@ -2378,6 +2378,15 @@ void msg_print(cptr msg)
 	/* Memorize the message */
 	if (character_generated) message_add(msg);
 
+	/* Handle "auto_more" */
+	if (auto_more)
+	{	
+		/* Window stuff */
+		p_ptr->window |= (PW_MESSAGE);
+
+		/* Done */
+		return;
+	}
 
 	/* Copy it */
 	strcpy(buf, msg);
