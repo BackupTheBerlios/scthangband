@@ -1140,6 +1140,9 @@ void ascii_to_text(char *buf, cptr str)
 static bool macro__use[256];
 
 
+/* Store whether the last input was a macro or not. */
+static bool is_macro;
+
 /*
  * Find the macro (if any) which exactly matches the given pattern
  */
@@ -1454,6 +1457,9 @@ static char inkey_aux(void)
 	/* No macro pending */
 	if (k < 0) return (ch);
 
+	/* Remember the macro */
+	is_macro = TRUE;
+	
 
 	/* Wait for a macro, or a timeout */
 	while (TRUE)
@@ -1667,6 +1673,8 @@ char inkey(void)
 	/* Forget pointer */
 	inkey_next = NULL;
 
+	/* No macro in progress */
+	is_macro = FALSE;
 
 #ifdef ALLOW_BORG
 
@@ -2629,20 +2637,27 @@ void clear_from(int row)
  * Get some input at the cursor location.
  * Assume the buffer is initialized to a default string.
  * Note that this string is often "empty" (see below).
- * The default buffer is displayed in yellow until cleared.
+ * The default buffer is displayed in yellow until cleared or made the current string.
  * Pressing RETURN right away accepts the default entry.
  * Normal chars clear the default and append the char.
- * Backspace clears the default or deletes the final char.
+ * Backspace clears the default or deletes the char before the cursor.
  * ESCAPE clears the buffer and the window and returns FALSE.
  * RETURN accepts the current buffer contents and returns TRUE.
+ * Tab makes the default the current string.
+ * If entered via a macro:
+ * 4 moves the cursor one place to the left.
+ * 6 moves the cursor one place to the right.
+ * 7 moves the cursor to the beginning of the string.
+ * 1 moves the cursor to the end of the string.
+ * . deletes the char under the cursor.
  */
 bool askfor_aux(char *buf, int len)
 {
 	int y, x;
 
-	int i = 0;
+	int i = 0, j;
 
-	int k = 0;
+	int k = 0, l = 0;
 
 	bool done = FALSE;
 
@@ -2674,7 +2689,7 @@ bool askfor_aux(char *buf, int len)
 	while (!done)
 	{
 		/* Place cursor */
-		Term_gotoxy(x + k, y);
+		Term_gotoxy(x + l, y);
 
 		/* Get a key */
 		i = inkey();
@@ -2695,13 +2710,70 @@ bool askfor_aux(char *buf, int len)
 
 			case 0x7F:
 			case '\010':
-			if (k > 0) k--;
+			if (l > 0)
+			{
+ 				k--;
+				l--;
+				for (j = l; j < k; j++)
+					buf[j] = buf[j+1];
+ 			}
 			break;
+
+			case '\t':
+			if (!k) k = strlen(buf);
+			l = k;
+			break;
+
+			/*
+			 * Hack - parse 1, 4, 6, 7 and . as editing keys if
+			 * inside a macro. These must be before default: as
+			 * they pass through to it otherwise.
+			 */
+			case '1':
+			if (is_macro)
+			{
+				l = k;
+				break;
+			}
+			case '4':
+			if (is_macro)
+			{
+				if (l > 0) l--;
+			break;
+			}
+			case '6':
+			if (is_macro)
+			{
+				if (l < k) l++;
+				break;
+			}			
+			case '7':
+			if (is_macro)
+			{
+				l = 0;
+				break;
+			}
+			case '.':
+			if (is_macro)
+			{
+				if (l < k)
+				{
+ 					k--;
+					for (j = l; j < k; j++)
+						buf[j] = buf[j+1];
+				}
+				break;
+ 			}
+				
+			/* Parse normall if the above are not macros. */
 
 			default:
 			if ((k < len) && (isprint(i)))
 			{
-				buf[k++] = i;
+				for (j = k; j >= l; j--)
+					buf[j+1] = buf[j];
+				buf[l++] = i;
+				k++;
 			}
 			else
 			{
