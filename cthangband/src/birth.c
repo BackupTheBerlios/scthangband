@@ -723,23 +723,9 @@ static bool load_stat_set(bool);
 #define BC_RESTART	2
 
 /*
- * Ask for a range of options. Accept a few other specific responses.
- * The list of options should already have been displayed.
- *
- * allow_abort should be set if aborting is distinct from starting afresh.
+ * Display the birth option menu, notice when certain options change.
  */
-static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool allow_abort)
-{
-	char c;
-	while (1)
-		{
-		put_str(format("%s (%c-%c%s): ", prompt, I2A(0), rtoa(max-1), (allow_abort) ? " or ESCAPE to abort" : ""), row, 2);
-				c = inkey();
-		if (c == 'Q') quit(NULL);
-		else if (c == 'S') return BC_RESTART;
-		else if (c == '?') do_cmd_help(syshelpfile);
-		else if (c == ESCAPE && allow_abort) return BC_ABORT;
-		else if (c == '=')
+static bc_type birth_option(void)
 		{
 			bool old_allow_quickstart = allow_quickstart;
 			bool old_spend_points = spend_points & !use_autoroller;
@@ -752,13 +738,14 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 			 * This does not include show_credits because this takes
 			 * effect before we reach this point. */
 			if (allow_quickstart && !old_allow_quickstart) return BC_RESTART;
-			if (old_spend_points != (!spend_points || use_autoroller)) return BC_RESTART;
+	else if (old_spend_points != (!spend_points || use_autoroller)) return BC_RESTART;
 			if (allow_pickstats && !old_allow_pickstats) return BC_RESTART;
 			/* We need not restart for maximise mode, but we should
-			 * try to keep the stats the same. We do abort if possible
-			 * because we may have passed point_mod_player().
-			 *  */
-			if (old_maximise_mode != maximise_mode)
+	 * try to keep the stats the same. We always abort because
+	 * we may have passed point_mod_player(). This will be ignored
+	 * if we haven't. This must be the last check.
+	 */
+	else if (old_maximise_mode != maximise_mode)
 			{
 				byte x;
 				for (x = 0; x < A_MAX; x++)
@@ -767,9 +754,34 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 					if (maximise_mode) mod *= -1;
 					mod = modify_stat_value(p_ptr->stat_cur[x], mod);
 					p_ptr->stat_cur[x] = p_ptr->stat_max[x] = mod;
-					if (allow_abort) return BC_ABORT;
 				}
+		return BC_ABORT;
 			}
+	else return BC_OKAY;
+}
+
+/*
+ * Ask for a range of options. Accept a few other specific responses.
+ * The list of options should already have been displayed.
+ *
+ * allow_abort should be set if aborting is distinct from starting afresh.
+ */
+static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool allow_abort)
+{
+	char c;
+	while (1)
+	{
+		put_str(format("%s (%c-%c%s): ", prompt, I2A(0), rtoa(max-1), (allow_abort) ? " or ESCAPE to abort" : ""), row, 2);
+		c = inkey();
+		if (c == 'Q') quit(NULL);
+		else if (c == 'S') return BC_RESTART;
+		else if (c == '?') do_cmd_help(syshelpfile);
+		else if (c == ESCAPE && allow_abort) return BC_ABORT;
+		else if (c == '=')
+		{
+			bc_type b = birth_option();
+			if (allow_abort && b == BC_ABORT) return b;
+			if (b == BC_RESTART) return b;
 		}
 		else
 		{
@@ -1259,36 +1271,11 @@ static bool point_mod_player(void)
 		/* Don't finish on negative points */
 		if (i == IDX_FINISH && points < 0) i = 0;
 		
-		/* Option code taken from birth_choice() */
 		if (i == IDX_OPTION)
 		{
-			bool old_allow_quickstart = allow_quickstart;
-			bool old_spend_points = spend_points & !use_autoroller;
-			bool old_allow_pickstats = allow_pickstats;
-			bool old_maximise_mode = maximise_mode;
-			Term_save();
-			do_cmd_options_aux(7, "Startup Options");
-			Term_load();
-			/* Start again if the set of questions being asked changes.
-			 * This does not include show_credits because this takes
-			 * effect before we reach this point. */
-			if (allow_pickstats && !old_allow_pickstats) return FALSE;
-			if (allow_quickstart && !old_allow_quickstart) return FALSE;
-			if (old_spend_points != (!spend_points || use_autoroller)) return FALSE;
-
-			/* We need not restart for maximise mode, but we should try to keep the stats the same. */
-			if (old_maximise_mode != maximise_mode)
-			{
-				byte x;
-				for (x = 0; x < A_MAX; x++)
-				{
-					s16b mod = rp_ptr->r_adj[x]+cp_ptr->c_adj[x];
-					if (maximise_mode) mod *= -1;
-					mod = modify_stat_value(p_ptr->stat_cur[x], mod);
-					p_ptr->stat_cur[x] = p_ptr->stat_max[x] = mod;
-					i = IDX_START;
-				}
-			}
+			bc_type b = birth_option();
+			if (b == BC_ABORT) i = IDX_START;
+			else if (b == BC_RESTART) return FALSE;
 		}
 		if (i == IDX_HELP)
 		{
