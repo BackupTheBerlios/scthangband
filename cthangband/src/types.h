@@ -1247,7 +1247,6 @@ struct player_type
 	bool hold_life; /* Resist life draining */
 	bool telepathy; /* Telepathy */
 	bool slow_digest; /* Slower digestion */
-	bool bless_blade; /* Blessed blade */
 	bool xtra_might; /* Extra might bow */
 	bool impact; /* Earthquake blows */
 	bool no_cut; /* Immune to cuts. */
@@ -1279,8 +1278,6 @@ struct player_type
 
 	s16b num_blow; /* Number of blows */
 	s16b num_fire; /* Number of shots */
-
-	byte tval_xtra; /* Correct xtra tval (unused) */
 
 	byte tval_ammo; /* Correct ammo tval */
 

@@ -299,6 +299,9 @@ extern void do_cmd_options(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_pref(void);
 #endif
+#if (defined(ALLOW_VISUALS)) && (defined(CMD4_C) || defined(INIT2_C))
+extern void init_visuals(void);
+#endif
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_note(void);
 #endif
@@ -1444,6 +1447,9 @@ extern cptr PURE describe_use(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT1_C))
 extern bool item_tester_okay(object_ctype *o_ptr);
+#endif
+#if (defined(OBJECT1_C) || defined(STORE_C))
+extern byte get_i_attr(object_type *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern void display_inven(bool equip);
@@ -2843,18 +2849,9 @@ extern bool track_mouse;
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool auto_more;
 #endif
-
-
-
-
-
-
 #if (defined(CMD3_C) || defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool preserve_mode;
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool maximise_mode;
 #endif
@@ -2864,33 +2861,18 @@ extern bool use_autoroller;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spend_points;
 #endif
-
-
-
 #if (defined(FILES_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_shop;
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_feeling;
 #endif
-
-
-
 #if (defined(MELEE2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool speak_unique;
 #endif
-
-
-
 #if (defined(SCORE_QUITTERS)) && (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool score_quitters;
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool chaos_patrons;
 #endif
@@ -3077,9 +3059,6 @@ extern s16b feeling;
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern s16b rating;
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool new_level_flag;
 #endif
@@ -3233,9 +3212,6 @@ extern s16b alloc_race_size;
 #if (defined(INIT2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern alloc_entry *alloc_race_table;
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr keymap_act[KEYMAP_MODES][256];
 #endif
@@ -3277,6 +3253,12 @@ extern feature_type *f_info;
 #endif
 #if (defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern cptr f_name;
+#endif
+#if (defined(CAVE_C) || defined(INIT2_C) || defined(VARIABLE_C))
+extern feature_type **priority_table;
+#endif
+#if (defined(CAVE_C) || defined(INIT2_C) || defined(VARIABLE_C))
+extern int feature_priorities;
 #endif
 #if (defined(ANGBAND_H))
 extern object_kind *k_info;
@@ -3904,26 +3886,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* variable.c */
-
-#if (defined(CAVE_C) || defined(INIT2_C) || defined(VARIABLE_C))
-extern feature_type **priority_table;
-#endif
-#if (defined(CAVE_C) || defined(INIT2_C) || defined(VARIABLE_C))
-extern int feature_priorities;
-#endif
-
-/* cmd4.c */
-
-#if (defined(ALLOW_VISUALS)) && (defined(CMD4_C) || defined(INIT2_C))
-extern void init_visuals(void);
-#endif
-
-/* object1.c */
-
-#if (defined(OBJECT1_C) || defined(STORE_C))
-extern byte get_i_attr(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

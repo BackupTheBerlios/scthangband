@@ -1598,7 +1598,6 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	if (flags[3][iilog(TR3_AGGRAVATE)]) p_ptr->aggravate = TRUE;
 	if (flags[3][iilog(TR3_TELEPORT)]) p_ptr->teleport = TRUE;
 	if (flags[3][iilog(TR3_DRAIN_EXP)]) p_ptr->exp_drain = TRUE;
-	if (flags[3][iilog(TR3_BLESSED)]) p_ptr->bless_blade = TRUE;
 	if (flags[3][iilog(TR3_XTRA_MIGHT)]) p_ptr->xtra_might = TRUE;
 	if (flags[3][iilog(TR3_SLOW_DIGEST)]) p_ptr->slow_digest = TRUE;
 	if (flags[3][iilog(TR3_REGEN)]) p_ptr->regenerate = TRUE;
@@ -1752,7 +1751,6 @@ static void calc_bonuses(void)
 	p_ptr->aggravate = FALSE;
 	p_ptr->teleport = FALSE;
 	p_ptr->exp_drain = FALSE;
-	p_ptr->bless_blade = FALSE;
 	p_ptr->xtra_might = FALSE;
 	p_ptr->impact = FALSE;
 	p_ptr->see_inv = FALSE;
