@@ -1268,7 +1268,7 @@ s16b get_mon_num(int level)
  *   0x22 --> Possessive, genderized if visable ("his") or "its"
  *   0x23 --> Reflexive, genderized if visable ("himself") or "itself"
  */
-void monster_desc(char *desc, monster_type *m_ptr, int mode)
+void monster_desc(char *buf, monster_type *m_ptr, int mode)
 {
 	cptr		res;
 
@@ -1276,28 +1276,27 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 
 	cptr		name = (r_name + r_ptr->name);
     char        silly_name[80];
+	char	desc[1024];
 
 	bool		seen, pron;
 
     /* Are we hallucinating? (Idea from Nethack...) */
     if (p_ptr->image)
     {
-
-        if(randint(2)==1)
-        {
-            monster_race * hallu_race;
-            do {
-                hallu_race = &r_info[randint(MAX_R_IDX-2)];
-                }
-                while (hallu_race->flags1 & RF1_UNIQUE);
-            strcpy(silly_name, (r_name + hallu_race->name));
+		if(randint(2)==1)
+		{
+			monster_race * hallu_race;
+			do {
+				hallu_race = &r_info[randint(MAX_R_IDX-2)];
+			}
+			while (hallu_race->flags1 & RF1_UNIQUE);
+			name = r_name + hallu_race->name;
         }
         else
         {
             get_rnd_line("silly.txt", silly_name);
+			name = silly_name;
         }
-        name = silly_name; /* Better not strcpy it, or we could corrupt
-                              r_info... */
     }
 
 	/* Can we "see" it (exists + forced, or visible + not unforced) */
@@ -1413,6 +1412,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 			(void)strcat(desc, "'s");
 		}
 	}
+	sprintf(buf, "%.*s", MNAME_MAX, desc);
 }
 
 
