@@ -3395,16 +3395,6 @@ static cptr desc_moan[] =
 	0
 };
 
-/*
- * Hack - possible "sing" messages
- */
-static cptr desc_sing[] =
-{
-	"%^s sings 'I love you, you love me.'",
-	"%^s sings 'I love you, you love me.'",
-	"%^s sings 'We are a happy family.'",
-	0
-};
 blow_method_type blow_methods[NUM_BLOW_METHODS] =
 {
 	{RBF_TOUCH | RBF_CUT | RBF_STUN, "hit", "%^s hits %s.", NULL, "%^s misses %s.", "HIT"},
@@ -3417,7 +3407,6 @@ blow_method_type blow_methods[NUM_BLOW_METHODS] =
 	{RBF_TOUCH | RBF_STUN, "butt", "%^s butts %s.", NULL, "%^s misses %s.", "BUTT"},
 	{RBF_TOUCH | RBF_STUN, "crush", "%^s crushes %s.", NULL, "%^s misses %s.", "CRUSH"},
 	{RBF_TOUCH, "engulf", "%^s engulfs %s.", NULL, "%^s misses %s.", "ENGULF"},
-	{RBF_TOUCH, "charge", "%^s charges at %s.", NULL, "%^s misses %s.", "CHARGE"},
 	{RBF_TOUCH, "crawl on you", "%^s crawl on %s.", NULL, NULL, "CRAWL"},
 	{0, "drool on you", "%^s drool on %s.", NULL, NULL, "DROOL"},
 	{0, "spit", "%^s spits on %s.", NULL, NULL, "SPIT"},
@@ -3428,7 +3417,6 @@ blow_method_type blow_methods[NUM_BLOW_METHODS] =
 	{RBF_WAKE, "beg", "%^s begs %s for money.", NULL, NULL, "BEG"},
 	{RBF_WAKE, "insult", "%^s insults %s.", desc_insult, NULL, "INSULT"},
 	{RBF_WAKE, "moan", "%^s moans at %s.", desc_moan, NULL, "MOAN"},
-	{RBF_WAKE, "sing", "%^s sings to %s.", desc_sing, NULL, "SHOW"},
 };
 
 /*
