@@ -2009,12 +2009,12 @@ s16b quark_add(cptr str)
 /*
  * This function looks up a quark
  */
-cptr quark_str(s16b i)
+cptr quark_str(u16b i)
 {
 	cptr q;
 
 	/* Verify */
-	if ((i < 0) || (i >= quark__num)) 
+	if (i >= quark__num)
 		quit("Out of bounds quark string error.");
 	
 	/* Access the quark */

@@ -1949,7 +1949,7 @@ extern char inkey(void);
 extern s16b quark_add(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(UTIL_C))
-extern cptr quark_str(s16b i);
+extern cptr quark_str(u16b i);
 #endif
 #if (defined(CMD4_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern s16b message_num(void);
