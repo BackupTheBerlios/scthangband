@@ -3818,14 +3818,7 @@ static bool player_birth_aux(void)
 		
 			/* Display */
 
-			if (n<26)
-			{
-				sprintf(buf, "%c%c %s", I2A(n), p2, str);
-			}
-			else
-			{
-				sprintf(buf, "%d%c %s", (n - 26), p2, str); /* HACK */
-			}
+			sprintf(buf, "%c%c %s", rtoa(n), p2, str);
 			put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
 		}
 
