@@ -3831,16 +3831,16 @@ extern void Term_xtra(int n, int v);
 extern void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
-extern errr Term_fresh(void);
+extern void Term_fresh(void);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
-extern errr Term_set_cursor(bool v);
+extern void Term_set_cursor(bool v);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_gotoxy(int x, int y);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
-extern errr Term_draw(int x, int y, byte a, char c);
+extern void Term_draw(int x, int y, byte a, char c);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_addch(byte a, char c);
@@ -3849,10 +3849,10 @@ extern errr Term_addch(byte a, char c);
 extern errr Term_addstr(int n, byte a, cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
-extern errr Term_putch(int x, int y, byte a, char c);
+extern void Term_putch(int x, int y, byte a, char c);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(Z_TERM_C))
-extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
+extern void Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
@@ -3876,10 +3876,10 @@ extern errr Term_get_size(int *w, int *h);
 extern errr Term_locate(int *x, int *y);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
-extern errr Term_what(int x, int y, byte *a, char *c);
+extern void Term_what(int x, int y, byte *a, char *c);
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
-extern errr Term_flush(void);
+extern void Term_flush(void);
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_keypress(int k);
@@ -3909,16 +3909,16 @@ extern void Term_load_aux(int win);
 extern void Term_load(void);
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_TERM_C))
-extern errr Term_resize(int w, int h);
+extern void Term_resize(int w, int h);
 #endif
 #if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_XXX_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
-extern errr Term_activate(term *t);
+extern void Term_activate(term *t);
 #endif
 #if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_TERM_C))
-extern errr term_nuke(term *t);
+extern void term_nuke(term *t);
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_XXX_C) || defined(Z_TERM_C))
-extern errr term_init(term *t, int w, int h, int k);
+extern void term_init(term *t, int w, int h, int k);
 #endif
 
 /* z-util.c */
