@@ -6243,6 +6243,9 @@ static void process_monster(int m_idx, bool is_friend)
 				/* Acquire the monster name/poss */
                 if (m_ptr->ml)
                     monster_desc(m_name, m_ptr, 0);
+				/* Some of smeagol.txt requires that he be male. */
+                else if (is_smeagol)
+                    strcpy(m_name, "He");
                 else
                     strcpy(m_name, "It");
 
