@@ -122,8 +122,7 @@ void user_name(char *buf, int id)
 	/* Look up the user name */
 	if ((pw = getpwuid(id)))
 	{
-		(void)strcpy(buf, pw->pw_name);
-		buf[16] = '\0';
+		sprintf(buf, "%.16s", pw->pw_name);
 
 #ifdef CAPITALIZE_USER_NAME
 		/* Hack -- capitalize the user name */

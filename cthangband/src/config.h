@@ -382,7 +382,7 @@
 
 
 /*
- * OPTION: Check the "time" against "lib/file/hours.txt"
+ * OPTION: Check the "time" against "lib/file/time.txt"
  */
 /* #define CHECK_TIME */
 

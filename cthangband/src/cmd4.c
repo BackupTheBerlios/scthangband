@@ -1588,7 +1588,7 @@ static errr macro_dump(cptr fname)
  *
  * Note that both "flush()" calls are extremely important.
  */
-static void do_cmd_macro_aux(char *buf)
+static void do_cmd_macro_aux(char *buf, int len)
 {
 	int i, n = 0;
 
@@ -1602,7 +1602,7 @@ static void do_cmd_macro_aux(char *buf)
 	i = inkey();
 
 	/* Read the pattern */
-	while (i)
+	while (i && n < len-1)
 	{
 		/* Save the key */
 		buf[n++] = i;
@@ -1865,7 +1865,7 @@ static void do_cmd_macros(void)
 			prt("Trigger: ", 18, 0);
 
 			/* Get a macro trigger */
-			do_cmd_macro_aux(buf);
+			do_cmd_macro_aux(buf, sizeof(buf));
 
 			/* Acquire action */
 			k = macro_find_exact(buf);
@@ -1904,7 +1904,7 @@ static void do_cmd_macros(void)
 			prt("Trigger: ", 18, 0);
 
 			/* Get a macro trigger */
-			do_cmd_macro_aux(buf);
+			do_cmd_macro_aux(buf, sizeof(buf));
 
 			/* Clear */
 			clear_from(20);
@@ -1939,7 +1939,7 @@ static void do_cmd_macros(void)
 			prt("Trigger: ", 18, 0);
 
 			/* Get a macro trigger */
-			do_cmd_macro_aux(buf);
+			do_cmd_macro_aux(buf, sizeof(buf));
 
 			/* Link the macro */
 			macro_add(buf, buf);
@@ -2085,9 +2085,6 @@ static void do_cmd_macros(void)
 
 			/* Go to the correct location */
 			Term_gotoxy(0, 22);
-
-			/* Hack -- limit the value */
-			tmp[80] = '\0';
 
 			/* Get an encoded action */
 			if (!askfor_aux(buf, 80)) continue;

@@ -210,25 +210,24 @@ static void rd_s32b(s32b *ip)
  */
 static void rd_string(char *str, int max)
 {
+	char c;
 	int i;
 
 	/* Read the string */
-	for (i = 0; TRUE; i++)
+	for (i = 0, c = 1; c && i < max-1; i++)
 	{
-		byte tmp8u;
-
-		/* Read a byte */
-		rd_byte(&tmp8u);
-
-		/* Collect string while legal */
-		if (i < max) str[i] = tmp8u;
-
-		/* End of string */
-		if (!tmp8u) break;
+		/* Read a char */
+		rd_char(str+i);
+		
+		/* Put it somewhere convenient. */
+		c = str[i];
 	}
 
-	/* Terminate */
-	str[max-1] = '\0';
+	/* Terminate if a termination character wasn't read above. */
+	if (c) str[max-1] = '\0';
+
+	/* Read any extra characters at the end. */
+	while (c) rd_char(&c);
 }
 
 
