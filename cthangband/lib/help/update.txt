@@ -5,20 +5,20 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
-sCthangband _CVS_
+sCthangband 1.0.14
 * Skill improvements become rarer, and then impossible, if the player does
   enough things without coming across a new object in the process.
 * An inscription of (e.g.) ~vf on an object causes the "throw" command to 
   attempt to "fire" it instead.
 * Selecting "z" at an object prompt only selects squelched objects.
-* Rearrange the feature priorities for the small scale map.
+* No feature can hide the player on the small scale map.
+* No two features have the same priority for the small scale map.
 * Objects can have default inscriptions which are given to identified items of
   that type, or to all similar unidentified items.
 * Objects get a line in their "examine" text describing where they were found.
-* Remove the (redundant) inscribe_depth option.
-* Allow names rather than indices to be used for races, templates and sexes in
-  initial stat dumps.
-* Spoilers now use the same information functions as the rest of the code.
+* The inscribe_depth option no longer exists.
+* Names can be used for races, templates and sexes in initial stat dumps.
+* Monster spoilers give as much information as monster memory.
 * Monsters can be set to drop ego items in r_info.txt.
 * Fix the following bugs:
   * The SUMMON_KIN flag created a lot of error messages but very little else.
@@ -38,7 +38,8 @@ sCthangband _CVS_
     memory access.
   * The spirit display on the map screen was squashed and inverted, and wasn't
     redrawn when a new spirit was contacted.
-  * Aggravate monster scrolls, and most other sources, did not affect monster 1.
+  * Aggravate monster scrolls, and most other sources of aggravation, did not
+    affect monster 1.
 
 sCthangband 1.0.13
 * Monsters do not recover from fear if they have too few HP to survive one of
