@@ -412,6 +412,7 @@ extern bool spoil_art;
 extern bool spoil_mon;
 extern bool spoil_ego;
 extern bool spoil_base;
+extern bool spoil_value;
 extern bool verbose_haggle;
 
 

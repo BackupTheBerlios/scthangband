@@ -2176,8 +2176,8 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 	/* Force "aware" for description */
 	k_info[o_ptr->k_idx].aware = TRUE;
 
-	/* Unset "spoil_value" */
-	spoil_value = FALSE;
+	/* Unset "spoil_value" unless "auto_haggle" is not set. */
+	spoil_value &= !(auto_haggle);
 
 
 	/* Describe the object */

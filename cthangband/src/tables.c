@@ -3423,6 +3423,9 @@ option_type option_info[] =
 	{ &spoil_art,                  FALSE,   8,     2, 28,
 	"spoil_art",			"Gain knowledge of standard artifacts" },
 
+	{ &spoil_value,	FALSE,	8,	2, 23,
+	"spoil_value",	"Gain knowledge of the apparent prices of items" },
+
 	{ &spoil_mon,			FALSE, 8,	2, 0,
 	"spoil_mon",			"Gain knowledge of monsters" },
 

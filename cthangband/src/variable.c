@@ -311,6 +311,7 @@ bool testing_carry;			/* Test the carrying code */
 bool spoil_art;				/* Benefit from artefact spoilers */
 bool spoil_mon;		/* Know complete monster info */
 bool spoil_ego;		/* Know complete ego item info */
+bool spoil_value;	/* Know the apparent prices of items */
 bool spoil_base;	/* Know complete info about base items */
 
 /* Cheating options */
