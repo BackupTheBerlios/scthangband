@@ -4873,7 +4873,7 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	object_type *q_ptr;
 
 	cptr act;
-
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get the item to take off */
 	int item = o_ptr - inventory;
@@ -4920,6 +4920,9 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 		act = "You were wearing";
 	}
 
+	/* Determine the name before anything happens. */
+	strnfmt(name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
+
 	/* Modify, Optimize */
 	item_increase(o_ptr, -amt);
 	item_optimize(o_ptr);
@@ -4928,8 +4931,9 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	q_ptr = inven_carry(q_ptr);
 
 	/* Message */
-	msg_format("%s %v (%c).", act, object_desc_f3, q_ptr, TRUE, 3,
-		index_to_label(q_ptr));
+	msg_format("%s %s (%c).", act, o_name, index_to_label(q_ptr));
+
+	TFREE(o_name);
 
 	/* Return slot */
 	return q_ptr;
