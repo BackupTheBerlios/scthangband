@@ -3923,7 +3923,7 @@ extern bool func_true(void);
 #if (defined(XTRA1_C) || defined(Z_UTIL_C))
 extern bool func_false(void);
 #endif
-#if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
+#if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(Z_UTIL_C))
 extern bool suffix(cptr s, cptr t);
 #endif
 #if (defined(CAVE_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT1_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(Z_UTIL_C))

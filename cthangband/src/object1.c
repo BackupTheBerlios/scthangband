@@ -2685,10 +2685,15 @@ static void identify_fully_found_f1(char *buf, uint max, cptr UNUSED fmt,
 	cptr a = (plural) ? "" : "a ";
 	cptr s = (plural) ? "s" : "";
 
-	if (plural)
-		p += strnfmt(p, end-p, "It was");
-	else
+	if (o_ptr->ident & IDENT_STORE)
+	{
+		p += strnfmt(p, end-p, "They are for sale in this shop.");
+		return;
+	}
+	else if (plural)
 		p += strnfmt(p, end-p, "They were");
+	else
+		p += strnfmt(p, end-p, "It was");
 
 	switch (found->how)
 	{
@@ -2774,7 +2779,10 @@ static void identify_fully_found_f1(char *buf, uint max, cptr UNUSED fmt,
 	if (found->dungeon == FOUND_DUN_WILD)
 		strnfmt(p, end-p, " in the wilderness.");
 	else if (found->dungeon == FOUND_DUN_UNKNOWN)
-		strnfmt(p, end-p, " somewhere.");
+	{
+		if (suffix(buf, "found")) strnfmt(p, end-p, " somewhere.");
+		else strnfmt(p, end-p, ".");
+	}
 	else if (found->level == FOUND_LEV_UNKNOWN)
 		strnfmt(p, end-p, " somewhere in %s.",
 			dun_name+dun_defs[found->dungeon].name);
