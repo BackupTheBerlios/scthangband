@@ -372,43 +372,32 @@ Read a scroll (r)
  
 ***** <cmd={>
 Inscribe an object ({) 
-        This command inscribes a string on an object.  The inscription is
-        displayed inside curly braces after the object description.  The
-        inscription is limited to the particular object (or pile) and is
-        not automatically transferred to all similar objects.  Under certain
-        circumstances, Angband will display "fake" inscriptions on certain
-        objects ("cursed", "broken", "tried", "empty", "NN% off") when
-        appropriate.  These "fake" inscriptions remain all the time, even if 
-        the player chooses to add a "real" inscription on top of it later.
+Use this command to place an inscription on an object. This inscription (which
+appears in curly brackets together with some other information which the game
+may provide) is mainly intended to allow the player to add things as an aid to
+memory, but there are certain inscriptions which affect the way the game
+behaves. These include:
 
-        In addition, Angband will occasionally place a "real" inscription on
-        an object for you, normally as the result of your character getting
-        a "feeling" about the item.  All characters will get "feelings" about
-        weapons and armor after carrying them for a while.  Warriors (who 
-        understand weapons and armor best) get the most detailed feelings, 
-        and get them faster than other classes. Rogues (used to handling all 
-        sorts of stolen goods) are also very good, as are paladins (basically
-        warriors who are religious.) Rangers are not so well-versed in 
-        melee weapons, being normally people of the outdoors and the 
-        wilderness who prefer archery and camouflage to heavy metal armor and
-        weaponry, while priests and mages simply are not experienced enough 
-        in matters concerning melee to be able to tell much about an item - 
-        though a priest will realise the extent of his knowledge fairly 
-        quickly, as they are often called upon to fight for their faith and 
-        have learned a little from these experiences and divine insight.
-        Mages, frankly, haven't a clue. But then, they don't need it when 
-        they can learn the spell of Identify very early on in the game.
+@zn causes typing "zn" to carry out the command z on this item.
+^x  causes the game to ask for confirmation before carrying out the command x
+    if this item is equipped.
+!z  causes the game to ask for confirmation before carrying out the command z
+    on this particular item.
+^* !* and @n act as above except that every command triggers it rather than
+    only x or z doing so.
+!!  causes a message to be generated when this item has recharged, if it is an
+    item which recharges over time.
+%   allows this item to merge with another item which is similar except for
+    discount, giving both the higher discount.
+=g  automatically answers 'y' to any "Pick up? [y/n]" prompt for this item.
+.   automatically answers 'n' to any "Teleport? [y/n]" prompt for this item.
 
-        An item labeled as "{empty}" was found to be out of charges, and an
-        item labeled as "{tried}" is a "flavored" item which the character
-        has used, but whose effects are unknown.  Certain inscriptions have
-        a meaning to the game, see "@#", "@x#", "!*", and "!x", in the section
-        on inventory object selection.
+In the above, x is any command in the game, z is any command which requires an
+object and n is a number in the range 0-9.
 
 ***** <cmd=}>
 Uninscribe an object (})
-        This command removes the inscription on an object.  This command will
-        have no effect on "fake" inscriptions added by the game itself.
+        This command removes the inscription on an object.
 
 ***** <cmd=^W>
 Rotate object stack (Ctrl-W)
