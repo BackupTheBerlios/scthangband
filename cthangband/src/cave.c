@@ -1682,7 +1682,6 @@ void display_wild_map(uint xmin)
 	uint l;
 	char wild_map_symbol;
 	byte wild_map_attr;
-	char buffer[60];
 	cptr tmp;
 
 	/* First work out which dungeons have guardians left */
@@ -1704,7 +1703,12 @@ void display_wild_map(uint xmin)
 		{
 			wild_type *w_ptr = &wild_grid[y][x];
 
-			if (w_ptr->dungeon < MAX_CAVES)
+			if((wildx == x) && (wildy == y))
+			{
+				wild_map_symbol = '@';
+				wild_map_attr = TERM_YELLOW;
+			}
+			else if (w_ptr->dungeon < MAX_CAVES)
 			{
 				wild_map_symbol = dun_defs[w_ptr->dungeon].sym;
 				if(dungeon_has_guardians[w_ptr->dungeon])
@@ -1719,11 +1723,6 @@ void display_wild_map(uint xmin)
 				{
 					wild_map_attr = TERM_UMBER;
 				}
-			}
-			else if((wildx == x) && (wildy == y))
-			{
-				wild_map_symbol = '@';
-				wild_map_attr = TERM_YELLOW;
 			}
 			else if((x == 0) || (y == 0) || (x == 11) || (y == 11))
 			{
@@ -1760,7 +1759,7 @@ void display_wild_map(uint xmin)
 			tmp = format("%d = %s",y,dun_defs[y].shortname);
 		else
 			tmp = format("%d = %s",y,town_defs[y].name);
-		c_put_str(TERM_WHITE,buffer,y+1,xmin+19);
+		c_put_str(TERM_WHITE,tmp,y+1,xmin+19);
 	}
 
 	/* Print dungeon legend */
