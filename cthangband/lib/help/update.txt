@@ -18,7 +18,7 @@ sCthangband _CVS_
     could cause undefined behaviour.
   * The labels in the extra inventory window were corrupted.
   * The damage from monster breaths was described incorrectly.
-  * Ego boots and weapons of Law were never created.
+  * Ego boots, ego elven cloaks and weapons of Law were never created.
 
 sCthangband 1.0.14
 * Skill improvements become rarer, and then impossible, if the player does
