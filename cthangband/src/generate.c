@@ -261,7 +261,7 @@ struct dun_data
 static dun_data *dun;
 
 /* Re-randomise spirit names after town creation */
-void generate_spirit_names()
+void generate_spirit_names(void)
 {
 	int i;
 	spirit_type *s_ptr;

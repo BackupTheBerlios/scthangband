@@ -3519,7 +3519,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr, int UNUSED level, int UNUSEDpower)
+static void a_m_aux_4(object_type *o_ptr, int UNUSED level, int UNUSED power)
 {
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)

@@ -180,10 +180,8 @@ void teleport_to_player(int m_idx)
 	int                     ny, nx, oy, ox, d, i, min;
     int dis = 2;
 
-	bool            look = TRUE;
-
 	monster_type    *m_ptr = &m_list[m_idx];
-    int attempts = 500;
+    int attempts;
 
 
 	/* Paranoia */
@@ -200,7 +198,7 @@ void teleport_to_player(int m_idx)
 	min = dis / 2;
 
 	/* Look until done */
-    while ((look) && --attempts)
+	for (attempts = 500; attempts; attempts--)
 	{
 		/* Verify max distance */
 		if (dis > 200) dis = 200;
@@ -235,10 +233,7 @@ void teleport_to_player(int m_idx)
 			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
 
 			/* This grid looks good */
-			look = FALSE;
-
-			/* Stop looking */
-			break;
+			goto ttp_done;
 		}
 
 		/* Increase the maximum distance */
@@ -247,6 +242,7 @@ void teleport_to_player(int m_idx)
 		/* Decrease the minimum distance */
 		min = min / 2;
 	}
+ttp_done:
 
     if (attempts < 1) return;
 
@@ -615,7 +611,7 @@ static byte bolt_graf_attr(int type)
 /*
  * Return an attr to use for the ball spells in graphics mode
  */
-static byte ball_graf_attr(int type)
+static byte ball_graf_attr(int UNUSED type)
 {
 	return(145);
 }
@@ -4346,6 +4342,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 
 
+/* in_bounds2() rewritten to avoid "always true" errors for unsigned variables. */
+#define in_bounds2_unsigned(Y,X) \
+	((Y) < cur_hgt && (X) < cur_wid)
 
 /*
  * Helper function for "project()" below.
@@ -4418,7 +4417,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
             max_attempts--;
         }
 
-        while ((max_attempts > 0) && in_bounds2(t_y, t_x) &&
+        while ((max_attempts > 0) && in_bounds2_unsigned(t_y, t_x) &&
                       !(player_has_los_bold(t_y, t_x)));
 
         if (max_attempts < 1)
@@ -5753,7 +5752,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
                         max_attempts--;
                     }
 
-                    while ((max_attempts > 0) && in_bounds2(t_y, t_x) &&
+                    while ((max_attempts > 0) && in_bounds2_unsigned(t_y, t_x) &&
                             !(los(y, x, t_y, t_x)));
 
                     if (max_attempts < 1)

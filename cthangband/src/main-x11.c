@@ -907,6 +907,7 @@ static Pixell Infoclr_Pixell(cptr name)
 }
 
 
+#if 0
 /*
  * Initialize a new 'infoclr' with a real GC.
  */
@@ -923,6 +924,7 @@ static errr Infoclr_init_1(GC gc)
 	/* Success */
 	return (0);
 }
+#endif
 
 
 /*
@@ -1086,6 +1088,7 @@ static errr Infofnt_prepare(XFontStruct *info)
 }
 
 
+#if 0
 /*
  * Initialize a new 'infofnt'.
  */
@@ -1100,6 +1103,7 @@ static errr Infofnt_init_real(XFontStruct *info)
 	/* Attempt to prepare it */
 	return (Infofnt_prepare (info));
 }
+#endif
 
 
 /*
@@ -1788,7 +1792,7 @@ static errr Term_xtra_x11_level(int v)
  */
 static errr Term_xtra_x11_react(void)
 {
-	term_data *td = (term_data*)(Term->data);
+/*	term_data *td = (term_data*)(Term->data);*/
 
 	/* XXX XXX XXX */
 

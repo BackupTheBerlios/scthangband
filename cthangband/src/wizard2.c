@@ -495,7 +495,7 @@ static bool ang_sort_comp_wci(vptr u, vptr v, int a, int b)
 /*
  * Swapping hook for wiz_create_item()
  */
-static void ang_sort_swap_wci(vptr unused, vptr v, int a, int b)
+static void ang_sort_swap_wci(vptr UNUSED u, vptr v, int a, int b)
 {
 	int *order = (int*)v;
 	int temp;
@@ -515,7 +515,8 @@ static void ang_sort_swap_wci(vptr unused, vptr v, int a, int b)
 static int wiz_create_itemtype(void)
 {
 	int                  i, num, max_num;
-	int                  col, row, max_len;
+	int                  col, row;
+	uint max_len;
 	int			 tval;
 
 	cptr                 tval_desc;
@@ -700,7 +701,7 @@ static int wiz_create_itemtype(void)
 				if (!((a = strstr(buf[l], sub[k])))) continue;
 
 				/* Actually remove the substring. */
-				for (b = a--+strlen(sub[k]); *a = *b; a++, b++);
+				for (b = a--+strlen(sub[k]);(*a = *b); a++, b++);
 			}
 			
 			/* Mext. */
@@ -937,7 +938,7 @@ static void wiz_statistics(object_type *o_ptr)
 	long i, matches, better, worse, other;
 
 	char ch;
-	char *quality;
+	cptr quality;
 
 	bool good, great;
 
