@@ -991,161 +991,80 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 
 
 /*
+ * Try to curse an object. Return TRUE if an effect was observed.
+ */
+static bool curse_object(int o_idx, int e_idx, cptr where)
+{
+	object_type *o_ptr = inventory+o_idx;
+	ego_item_type *e_ptr = e_info+e_idx;
+
+	if (!o_ptr->k_idx) return FALSE;
+
+	if (allart_p(o_ptr) && one_in(2))
+	{
+		/* Cool */
+		msg_format("A terrible black aura tries to surround your %s, "
+			"but your %v resists the effects!",
+			where, object_desc_f3, o_ptr, FALSE, 3);
+		return TRUE;
+	}
+
+	/* Oops */
+	msg_format("A terrible black aura blasts your %v!",
+		object_desc_f3, o_ptr, FALSE, 3);
+
+	/* Shatter the object. */
+	o_ptr->name1 = 0;
+	o_ptr->name2 = e_idx;
+	o_ptr->to_h = - randint(e_ptr->max_to_h) - randint(e_ptr->max_to_h);
+	o_ptr->to_d = - randint(e_ptr->max_to_d) - randint(e_ptr->max_to_d);
+	o_ptr->to_a = - randint(e_ptr->max_to_a) - randint(e_ptr->max_to_a);
+	o_ptr->ac = 0;
+	o_ptr->dd = 0;
+	o_ptr->ds = 0;
+	o_ptr->flags1 = 0;
+	o_ptr->flags2 = 0;
+	o_ptr->flags3 = 0;
+	o_ptr->art_name = 0;
+	o_ptr->activation = 0;
+
+	/* Curse it */
+	o_ptr->ident |= (IDENT_CURSED);
+
+	/* Break it */
+	o_ptr->ident |= (IDENT_BROKEN);
+
+	/* Tell the player the bad news */
+	o_ptr->ident |= (IDENT_SENSE);
+		
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Recalculate mana */
+	p_ptr->update |= (PU_MANA);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	return TRUE;
+}
+
+/*
  * Curse the players armor
  */
 bool curse_armor(void)
 {
-	object_type *o_ptr;
-
-	C_TNEW(o_name, ONAME_MAX, char);
-
-
-	/* Curse the body armor */
-	o_ptr = &inventory[INVEN_BODY];
-
-	/* Nothing to curse */
-	if (!o_ptr->k_idx)
-	{
-		TFREE(o_name);
-		return (FALSE);
-	}
-
-
-	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
-
-	/* Attempt a saving throw for artifacts */
-    if (allart_p(o_ptr) && (rand_int(100) < 50))
-	{
-		/* Cool */
-		msg_format("A %s tries to %s, but your %s resists the effects!",
-		           "terrible black aura", "surround your armor", o_name);
-	}
-
-	/* not artifact or failed save... */
-	else
-	{
-		/* Oops */
-		msg_format("A terrible black aura blasts your %s!", o_name);
-
-		/* Blast the armor */
-		o_ptr->name1 = 0;
-		o_ptr->name2 = EGO_BLASTED;
-		o_ptr->to_a = 0 - randint(5) - randint(5);
-		o_ptr->to_h = 0;
-		o_ptr->to_d = 0;
-		o_ptr->ac = 0;
-		o_ptr->dd = 0;
-		o_ptr->ds = 0;
-        o_ptr->flags1 = 0;
-        o_ptr->flags2 = 0;
-        o_ptr->flags3 = 0;
-		o_ptr->art_name = 0;
-		o_ptr->activation = 0;
-
-		/* Curse it */
-		o_ptr->ident |= (IDENT_CURSED);
-
-		/* Break it */
-		o_ptr->ident |= (IDENT_BROKEN);
-
-		/* Tell the player the bad news */
-		o_ptr->ident |= (IDENT_SENSE);
-
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Recalculate mana */
-		p_ptr->update |= (PU_MANA);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-	}
-
-	TFREE(o_name);
-
-	return (TRUE);
+	return curse_object(INVEN_BODY, EGO_BLASTED, "armour");
 }
-
 
 /*
  * Curse the players weapon
  */
 bool curse_weapon(void)
 {
-	object_type *o_ptr;
-
-	C_TNEW(o_name, ONAME_MAX, char);
-
-
-	/* Curse the weapon */
-	o_ptr = &inventory[INVEN_WIELD];
-
-	/* Nothing to curse */
-	if (!o_ptr->k_idx)
-	{
-		TFREE(o_name);
-		return (FALSE);
-	}
-
-
-	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 3);
-
-	/* Attempt a saving throw */
-    if (allart_p(o_ptr) && (rand_int(100) < 50))
-	{
-		/* Cool */
-		msg_format("A %s tries to %s, but your %s resists the effects!",
-		           "terrible black aura", "surround your weapon", o_name);
-	}
-
-	/* not artifact or failed save... */
-	else
-	{
-		/* Oops */
-		msg_format("A terrible black aura blasts your %s!", o_name);
-
-		/* Shatter the weapon */
-		o_ptr->name1 = 0;
-		o_ptr->name2 = EGO_SHATTERED;
-		o_ptr->to_h = 0 - randint(5) - randint(5);
-		o_ptr->to_d = 0 - randint(5) - randint(5);
-		o_ptr->to_a = 0;
-		o_ptr->ac = 0;
-		o_ptr->dd = 0;
-		o_ptr->ds = 0;
-        o_ptr->flags1 = 0;
-        o_ptr->flags2 = 0;
-        o_ptr->flags3 = 0;
-		o_ptr->art_name = 0;
-		o_ptr->activation = 0;
-
-
-		/* Curse it */
-		o_ptr->ident |= (IDENT_CURSED);
-
-		/* Break it */
-		o_ptr->ident |= (IDENT_BROKEN);
-
-		/* Tell the player the bad news */
-		o_ptr->ident |= (IDENT_SENSE);
-		
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Recalculate mana */
-		p_ptr->update |= (PU_MANA);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-	}
-
-	TFREE(o_name);
-
-	/* Notice */
-	return (TRUE);
+	return curse_object(INVEN_WIELD, EGO_SHATTERED, "weapon");
 }
+
 
 
 /*

@@ -869,13 +869,16 @@ P:(+50,+50) [+0] (+0)
 
 ### Special Broken Items (never generated normally) ###
 
-# Note that the parameters here are not currently used.
+# The values actually given to the items are -(2dX), where X is the value listed
+# here.
 
 # Destroyed Weapon
 N:126:%Base Shattered ^
+W:0:0
 P:(+5,+5) [+0] (+0)
 
 # Destroyed Body Armor
 
 N:127:%Base Blasted ^
+W:0:0
 P:(+0,+0) [+5] (+0)
