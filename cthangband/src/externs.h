@@ -281,7 +281,7 @@ extern void do_cmd_message_one(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_messages(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(INIT2_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C))
 extern bool showfile(cptr name, int y);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))

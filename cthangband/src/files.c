@@ -5001,28 +5001,8 @@ static void print_tomb(void)
 	/* Clear screen */
 	Term_clear();
 
-	/* Build the filename */
-	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_FILE, "dead.txt");
-
-	/* Open the News file */
-	fp = my_fopen_path(ANGBAND_DIR_FILE, "dead.txt", "r");
-
-	/* Dump */
-	if (fp)
-	{
-		int i = 0;
-
-		/* Dump the file to the screen */
-		while (0 == my_fgets(fp, buf, 1024))
-		{
-			/* Display and advance */
-			put_str(buf, i++, 0);
-		}
-
-		/* Close */
-		my_fclose(fp);
-	}
-
+	/* Display the death screen. */
+	showfile("dead.txt", 0);
 
 	center_string(buf, player_name);
 
@@ -5938,23 +5918,7 @@ static void kingly(void)
 	Term_clear();
 
 	/* Display a crown */
-	put_str("#", 1, 34);
-	put_str("#####", 2, 32);
-	put_str("#", 3, 34);
-	put_str(",,,  $$$  ,,,", 4, 28);
-	put_str(",,=$   \"$$$$$\"   $=,,", 5, 24);
-	put_str(",$$        $$$        $$,", 6, 22);
-	put_str("*>         <*>         <*", 7, 22);
-	put_str("$$         $$$         $$", 8, 22);
-	put_str("\"$$        $$$        $$\"", 9, 22);
-	put_str("\"$$       $$$       $$\"", 10, 23);
-	put_str("*#########*#########*", 11, 24);
-	put_str("*#########*#########*", 12, 24);
-
-	/* Display a message */
-	put_str("Veni, Vidi, Vici!", 15, 26);
-	put_str("I came, I saw, I conquered!", 16, 21);
-	put_str(format("All Hail the Mighty %s!", sp_ptr->winner), 17, 22);
+	showfile("winner.txt", 0);
 
 	/* Flush input */
 	flush();
