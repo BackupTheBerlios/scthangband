@@ -95,7 +95,7 @@ static int spell_to_num(magic_type *s_ptr)
 
 		if (s_ptr >= b_ptr->info && s_ptr < b_ptr->info+MAX_SPELLS_PER_BOOK)
 		{
-			return s_ptr - b_ptr->info;
+			return s_ptr - b_ptr->info + MAX_SPELLS_PER_BOOK * s;
 		}
 	}
 	return -1;
@@ -107,21 +107,22 @@ static int spell_to_num(magic_type *s_ptr)
 magic_type *num_to_spell(int i)
 {
 	book_type *b_ptr;
+	assert (i >= 0);
+
 	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
 	{
 		int s = book_to_school(b_ptr);
 		assert(s < MAX_SCHOOL);
 		if (s < 0) continue;
 
-		if (i/32 == s)
+		if (i/MAX_SPELLS_PER_BOOK == s)
 		{
-			return b_ptr->info + i%32;
+			return b_ptr->info + i%MAX_SPELLS_PER_BOOK;
 		}
 	}
 	return NULL;
 }
 
-/* There is only one mindcraft "book". */
 #define MINDCRAFT_BOOK (book_info+BK_MIND)
 
 
