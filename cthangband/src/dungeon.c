@@ -4153,15 +4153,15 @@ static void create_character(void)
 				x=rand_range(2,9);
 				y=rand_range(2,9);
 				j=1;
-				if((wild_grid[y][x].dungeon != MAX_CAVES) ||
-					(wild_grid[y-1][x].dungeon != MAX_CAVES) ||
-					(wild_grid[y+1][x].dungeon != MAX_CAVES) ||
-					(wild_grid[y][x-1].dungeon != MAX_CAVES) ||
-					(wild_grid[y][x+1].dungeon != MAX_CAVES) ||
-					(wild_grid[y-1][x+1].dungeon != MAX_CAVES) ||
-					(wild_grid[y+1][x+1].dungeon != MAX_CAVES) ||
-					(wild_grid[y-1][x-1].dungeon != MAX_CAVES) ||
-					(wild_grid[y+1][x-1].dungeon != MAX_CAVES))
+				if((wild_grid[y][x].dungeon < MAX_CAVES) ||
+					(wild_grid[y-1][x].dungeon < MAX_CAVES) ||
+					(wild_grid[y+1][x].dungeon < MAX_CAVES) ||
+					(wild_grid[y][x-1].dungeon < MAX_CAVES) ||
+					(wild_grid[y][x+1].dungeon < MAX_CAVES) ||
+					(wild_grid[y-1][x+1].dungeon < MAX_CAVES) ||
+					(wild_grid[y+1][x+1].dungeon < MAX_CAVES) ||
+					(wild_grid[y-1][x-1].dungeon < MAX_CAVES) ||
+					(wild_grid[y+1][x-1].dungeon < MAX_CAVES))
 				{
 					j=0;
 				}
@@ -4175,7 +4175,7 @@ static void create_character(void)
 				x=rand_range(2,9);
 				y=rand_range(2,9);
 				j=1;
-				if(wild_grid[y][x].dungeon != MAX_CAVES)
+				if(wild_grid[y][x].dungeon < MAX_CAVES)
 				{
 					j=0;
 				}
