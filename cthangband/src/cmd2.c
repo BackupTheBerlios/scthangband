@@ -3451,7 +3451,7 @@ static void use_power(powertype *pw_ptr)
 			case iilog(MUT1_GROW_MOLD):
 				for (i=0; i < 8; i++)
 		{
-					summon_specific_friendly(py, px, plev, SUMMON_BIZARRE1, FALSE);
+					summon_specific_friendly(py, px, plev, SUMMON_MOULD, FALSE);
 		}
 				break;
 			case iilog(MUT1_RESIST):

@@ -1851,17 +1851,8 @@ static void process_world(void)
 		if ((p_ptr->muta2 & MUT2_ATT_DEMON) &&
 		    (!(p_ptr->anti_magic)) && (randint(6666)==666))
 		{
-			bool d_summon = FALSE;
-			if (randint(6)==1)
-			{
-				d_summon = summon_specific_friendly(py, px,
-				    dun_level, SUMMON_DEMON, TRUE);
-			}
-			else
-			{
-				d_summon = summon_specific(py, px,
-				    dun_level, SUMMON_DEMON);
-			}
+			bool d_summon = summon_specific_aux(py, px,
+				dun_level, SUMMON_DEMON, TRUE, !rand_int(6));
 
 			if (d_summon)
 			{
@@ -1983,13 +1974,8 @@ static void process_world(void)
 			(randint(7000)==1))
 		{
 			
-			bool a_summon = FALSE;
-			if (randint(3)==1)
-				a_summon = summon_specific_friendly(py,
-				px, dun_level, SUMMON_ANIMAL, TRUE);
-			else
-				a_summon = summon_specific(py,
-				px, dun_level, SUMMON_ANIMAL);
+			bool a_summon = summon_specific_aux(py,
+				px, dun_level, SUMMON_ANIMAL, TRUE, !rand_int(3));
 			if (a_summon)
 			{
 				msg_print("You have attracted an animal!");
@@ -2067,13 +2053,9 @@ static void process_world(void)
 			(randint(3000)==13))
 		{
 			
-			bool d_summon = FALSE;
-			if (randint(5)==1)
-				d_summon = summon_specific_friendly(py,
-				px, dun_level, SUMMON_DRAGON, TRUE);
-			else
-				d_summon = summon_specific(py,
-				px, dun_level, SUMMON_DRAGON);
+			bool d_summon = summon_specific_aux(py,
+				px, dun_level, SUMMON_DRAGON, TRUE, !rand_int(5));
+
 			if (d_summon)
 			{
 				msg_print("You have attracted a dragon!");

@@ -2080,39 +2080,35 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Legal restrictions for "summon_specific()"
  */
-#define SUMMON_ANT              11
-#define SUMMON_SPIDER           12
-#define SUMMON_HOUND            13
-#define SUMMON_HYDRA            14
-#define SUMMON_CTHULOID         15
-#define SUMMON_DEMON            16
-#define SUMMON_UNDEAD           17
-#define SUMMON_DRAGON           18
-#define SUMMON_HI_UNDEAD        21
-#define SUMMON_HI_DRAGON        22
-#define SUMMON_GOO              31
-#define SUMMON_UNIQUE           32
-#define SUMMON_BIZARRE1         33
-#define SUMMON_BIZARRE2         34
-#define SUMMON_BIZARRE3         35
-#define SUMMON_BIZARRE4         36
-#define SUMMON_BIZARRE5         37
-#define SUMMON_BIZARRE6         38
-#define SUMMON_REAVER           39
-#define SUMMON_KIN              40
-#define SUMMON_AVATAR           41
-#define SUMMON_ANIMAL           42
-#define SUMMON_ANIMAL_RANGER    43
-#define SUMMON_HI_UNDEAD_NO_UNIQUES            44
-#define SUMMON_HI_DRAGON_NO_UNIQUES            45
-#define SUMMON_NO_UNIQUES                      46
-#define SUMMON_PHANTOM          47
-#define SUMMON_ELEMENTAL        48
-#define SUMMON_ORC				49
-#define SUMMON_YEEK				50
-#define SUMMON_HUMAN			51
-#define SUMMON_KOBOLD			52
-
+#define SUMMON_NO_UNIQUES	0x0100 /* Prevent unique summoning. */
+#define SUMMON_ANT              ('a' | SUMMON_NO_UNIQUES)
+#define SUMMON_SPIDER           ('S' | SUMMON_NO_UNIQUES)
+#define SUMMON_HOUND            (0x81 | SUMMON_NO_UNIQUES)
+#define SUMMON_HYDRA            ('M' | SUMMON_NO_UNIQUES)
+#define SUMMON_CTHULOID         (0x82 | SUMMON_NO_UNIQUES)
+#define SUMMON_DEMON            (0x83 | SUMMON_NO_UNIQUES)
+#define SUMMON_UNDEAD           (0x84 | SUMMON_NO_UNIQUES)
+#define SUMMON_DRAGON           (0x85 | SUMMON_NO_UNIQUES)
+#define SUMMON_HI_UNDEAD        (0x86)
+#define SUMMON_HI_DRAGON        ('D')
+#define SUMMON_GOO              (0x87)
+#define SUMMON_UNIQUE           (0x88)
+#define SUMMON_MOULD         ('m' | SUMMON_NO_UNIQUES)
+#define SUMMON_BAT         ('b' | SUMMON_NO_UNIQUES)
+#define SUMMON_QUYLTHULG         ('Q' | SUMMON_NO_UNIQUES)
+#define SUMMON_VORTEX         ('v' | SUMMON_NO_UNIQUES)
+#define SUMMON_TREASURE         ('$' | SUMMON_NO_UNIQUES)
+#define SUMMON_MIMIC         (0x89 | SUMMON_NO_UNIQUES)
+#define SUMMON_REAVER           (0x90 | SUMMON_NO_UNIQUES)
+#define SUMMON_KIN              (0x91 | SUMMON_NO_UNIQUES)
+#define SUMMON_ANIMAL           (0x92 | SUMMON_NO_UNIQUES)
+#define SUMMON_ANIMAL_RANGER    (0x93 | SUMMON_NO_UNIQUES)
+#define SUMMON_PHANTOM          (0x94 | SUMMON_NO_UNIQUES)
+#define SUMMON_ELEMENTAL        (0x95 | SUMMON_NO_UNIQUES)
+#define SUMMON_ORC				(0x96 | SUMMON_NO_UNIQUES)
+#define SUMMON_YEEK				('y' | SUMMON_NO_UNIQUES)
+#define SUMMON_HUMAN			('p' | SUMMON_NO_UNIQUES)
+#define SUMMON_KOBOLD			('k' | SUMMON_NO_UNIQUES)
 
 
 

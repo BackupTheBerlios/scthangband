@@ -4604,7 +4604,7 @@ static bool activate_random_artifact(object_type * o_ptr)
                    }
                } else {
                    if (summon_specific_friendly((int)py,(int)px, (int)(plev * 1.5),
-                       (plev > 47 ? SUMMON_HI_UNDEAD_NO_UNIQUES : SUMMON_UNDEAD),
+                       (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
                            (bool)(((plev > 24) && (randint(3) == 1)) ? TRUE : FALSE))) {
                    msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
                    msg_print("Ancient, long-dead forms arise from the ground to serve you!");

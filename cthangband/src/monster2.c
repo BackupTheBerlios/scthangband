@@ -2944,245 +2944,175 @@ static bool summon_specific_okay(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	bool okay = FALSE;
-
-
-	/* Hack -- no specific type specified */
-	if (!summon_specific_type) return (TRUE);
-
+	/* Explicitly forbid uniques. */
+	if ((summon_specific_type & SUMMON_NO_UNIQUES) &&
+		(r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);
 
 	/* Check our requirements */
-	switch (summon_specific_type)
+	switch (summon_specific_type & ~(SUMMON_NO_UNIQUES))
 	{
 		case SUMMON_ANT:
 		{
-			okay = ((r_ptr->d_char == 'a') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'a');
 		}
 
 		case SUMMON_SPIDER:
 		{
-			okay = ((r_ptr->d_char == 'S') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'S');
 		}
 
 		case SUMMON_HOUND:
 		{
-			okay = (((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z')) &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return ((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z'));
 		}
 
 		case SUMMON_HYDRA:
 		{
-			okay = ((r_ptr->d_char == 'M') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'M');
 		}
 
 		case SUMMON_CTHULOID:
 		{
-			okay = ((r_ptr->flags3 & (RF3_CTHULOID)) &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return !!(r_ptr->flags3 & (RF3_CTHULOID));
 		}
 
 		case SUMMON_DEMON:
 		{
-			okay = ((r_ptr->flags3 & (RF3_DEMON)) &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return !!(r_ptr->flags3 & (RF3_DEMON));
 		}
 
 		case SUMMON_UNDEAD:
 		{
-			okay = ((r_ptr->flags3 & (RF3_UNDEAD)) &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return !!(r_ptr->flags3 & (RF3_UNDEAD));
 		}
 
 		case SUMMON_DRAGON:
 		{
-			okay = ((r_ptr->flags3 & (RF3_DRAGON)) &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return !!(r_ptr->flags3 & (RF3_DRAGON));
 		}
 
 		case SUMMON_HI_UNDEAD:
 		{
-			okay = ((r_ptr->d_char == 'L') ||
+			return ((r_ptr->d_char == 'L') ||
 			        (r_ptr->d_char == 'V') ||
 			        (r_ptr->d_char == 'W'));
-			break;
 		}
 
 		case SUMMON_HI_DRAGON:
 		{
-			okay = (r_ptr->d_char == 'D');
-			break;
+			return (r_ptr->d_char == 'D');
 		}
 
 		case SUMMON_GOO:
 		{
-            okay = (bool)(r_ptr->flags3 & (RF3_GREAT_OLD_ONE)); 
-			break;
+            return !!(r_ptr->flags3 & (RF3_GREAT_OLD_ONE)); 
 		}
 
 		case SUMMON_UNIQUE:
 		{
-			okay = (bool)(r_ptr->flags1 & (RF1_UNIQUE));
-			break;
+			return !!(r_ptr->flags1 & (RF1_UNIQUE));
 		}
 
         case SUMMON_ORC:
 		{
-            okay = ((r_ptr->d_char == 'o') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			/* Should this use RF1_ORC? */
+			return !!(r_ptr->flags3 & (RF3_ORC));
 		}
         case SUMMON_KOBOLD:
 		{
-            okay = ((r_ptr->d_char == 'k') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'k');
 		}
         case SUMMON_YEEK:
 		{
-            okay = ((r_ptr->d_char == 'y') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+            return (r_ptr->d_char == 'y');
 		}
         case SUMMON_HUMAN:
 		{
-            okay = ((r_ptr->d_char == 'p') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+            return (r_ptr->d_char == 'p');
 		}
-        case SUMMON_BIZARRE1:
+        case SUMMON_MOULD:
 		{
-            okay = ((r_ptr->d_char == 'm') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'm');
 		}
-        case SUMMON_BIZARRE2:
+        case SUMMON_BAT:
 		{
-            okay = ((r_ptr->d_char == 'b') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'b');
 		}
-        case SUMMON_BIZARRE3:
+        case SUMMON_QUYLTHULG:
 		{
-            okay = ((r_ptr->d_char == 'Q') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'Q');
 		}
-
-        case SUMMON_BIZARRE4:
+        case SUMMON_VORTEX:
 		{
-            okay = ((r_ptr->d_char == 'v') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == 'v');
 		}
-        case SUMMON_BIZARRE5:
+        case SUMMON_TREASURE:
 		{
-            okay = ((r_ptr->d_char == '$') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+			return (r_ptr->d_char == '$');
 		}
 
-        case SUMMON_BIZARRE6:
+        case SUMMON_MIMIC:
 		{
-            okay = (((r_ptr->d_char == '!') ||
+			return ((r_ptr->d_char == '!') ||
                      (r_ptr->d_char == '?') ||
                      (r_ptr->d_char == '=') ||
                      (r_ptr->d_char == '$') ||
-                     (r_ptr->d_char == '|'))
-                    &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+                     (r_ptr->d_char == '|'));
 		}
         case SUMMON_REAVER:
         {
-            okay = ((strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"Black reaver")) && !(r_ptr->flags1 & (RF1_UNIQUE)));
-            break;
+            return !!(strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
+				"Black reaver"));
         }
 
 
         case SUMMON_KIN:
         {
-
-            okay = ((r_ptr->d_char == summon_kin_type) &&
-                !(r_ptr->flags1 & (RF1_UNIQUE)));
-            break;
+			return (r_ptr->d_char == summon_kin_type);
         }
 
-        case SUMMON_AVATAR:
-        {
-            okay = (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"Avatar of Nyarlathotep") && !(r_ptr->flags1 & (RF1_UNIQUE)));
-            break;
-        }
         case SUMMON_ANIMAL:
-           {
-               okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-                   !(r_ptr->flags1 & (RF1_UNIQUE)));
-               break;
-           }
+		{
+			return !!(r_ptr->flags3 & (RF3_ANIMAL));
+		}
 
         case SUMMON_ANIMAL_RANGER:
-           {
-               okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
+		{
+			return ((r_ptr->flags3 & (RF3_ANIMAL)) &&
                    (strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
                    !(r_ptr->flags3 & (RF3_DRAGON))&&
                    !(r_ptr->flags3 & (RF3_EVIL)) &&
                    !(r_ptr->flags3 & (RF3_UNDEAD))&&
                    !(r_ptr->flags3 & (RF3_DEMON)) &&
                    !(r_ptr->flags3 & (RF3_CTHULOID)) &&
-                   !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6) &&
-                   !(r_ptr->flags1 & (RF1_UNIQUE)));
-               break;
+                   !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6));
            }
-        case SUMMON_HI_UNDEAD_NO_UNIQUES:
-		{
-            okay = (((r_ptr->d_char == 'L') ||
-			        (r_ptr->d_char == 'V') ||
-                    (r_ptr->d_char == 'W')) &&
-                    !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		}
-
-        case SUMMON_HI_DRAGON_NO_UNIQUES:
-		{
-            okay = ((r_ptr->d_char == 'D') &&
-                    !(r_ptr->flags1 &(RF1_UNIQUE)));
-			break;
-		}
-        case SUMMON_NO_UNIQUES:
+		case SUMMON_PHANTOM:
         {
-            okay = (!(r_ptr->flags1 & (RF1_UNIQUE)));
-            break;
-        }
-
-        case SUMMON_PHANTOM:
-        {
-            okay = (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"Phantom") && !(r_ptr->flags1 & (RF1_UNIQUE)));
+			return !!strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
+				"Phantom");
             break;
         }
         case SUMMON_ELEMENTAL:
         {
-            okay = (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"lemental") && !(r_ptr->flags1 & (RF1_UNIQUE)));
+            return !!strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
+				"lemental");
             break;
         }
-
-
+		case 0: /* No restrictions. */
+		{
+			return TRUE;
+		}
+		default: /* An unknown restriction. */
+		{
+			if (alert_failure)
+			{
+				msg_format("Odd summon type %d requested!",
+					summon_specific_type);
+			}
+			return FALSE;
+		}
     }
-	/* Result */
-	return (okay);
 }
 
 
@@ -3210,12 +3140,12 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-bool summon_specific(int y1, int x1, int lev, int type)
+bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm)
 {
 	int i, x, y, r_idx;
 
-    bool Group_ok = TRUE;
-
+	/* Hack - disallow friendly uniques. */
+	if (charm) type |= SUMMON_NO_UNIQUES;
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i)
@@ -3260,10 +3190,6 @@ bool summon_specific(int y1, int x1, int lev, int type)
 	/* Pick a monster, using the level calculation */
 	r_idx = get_mon_num(((dun_depth) + lev) / 2 + 5);
 
-#ifdef R_IDX_TESTING_HACK
-    r_idx = 356;
-#endif
-
 	/* Remove restriction */
 	get_mon_num_hook = NULL;
 
@@ -3275,86 +3201,27 @@ bool summon_specific(int y1, int x1, int lev, int type)
 	if (!r_idx) return (FALSE);
 
 
-    if (type == SUMMON_AVATAR)
-    {
-        Group_ok = FALSE;
-    }
-
 	/* Attempt to place the monster (awake, allow groups) */
-    if (!place_monster_aux(y, x, r_idx, FALSE, Group_ok, FALSE, FALSE)) return (FALSE);
-
-
-   /* Success */
-   return (TRUE);
+    return place_monster_aux(y, x, r_idx, FALSE, Group_ok, charm, FALSE);
  }
 
+/*
+ * Two wrappers around the above.
+ * The first is used for hostile summoning, and always allows groups to be
+ * created.
+ */
+bool summon_specific(int y1, int x1, int lev, int type)
+{
+	return summon_specific_aux(y1, x1, lev, type, TRUE, FALSE);
+}
 
-
- bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok)
- {
-   int i, x, y, r_idx;
-
-   /* Look for a location */
-   for (i = 0; i < 20; ++i)
-   {
-       /* Pick a distance */
-       int d = (i / 15) + 1;
-
-       /* Pick a location */
-       scatter(&y, &x, y1, x1, d, 0);
-
-       /* Require "empty" floor grid */
-       if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
-
-       /* Hack -- no summon on glyph of warding */
-         if (cave[y][x].feat == FEAT_GLYPH) continue;
-         if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
-
-         /* ... nor on the Pattern */
-         if ((cave[y][x].feat >= FEAT_PATTERN_START)
-             && (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
-                 continue;
-
-       /* Okay */
-       break;
-   }
-
-   /* Failure */
-   if (i == 20) return (FALSE);
-
-
-   /* Save the "summon" type */
-   summon_specific_type = type;
-
-
-   /* Require "okay" monsters */
-   get_mon_num_hook = summon_specific_okay;
-
-   /* Prepare allocation table */
-   get_mon_num_prep();
-
-
-   /* Pick a monster, using the level calculation */
-   r_idx = get_mon_num(((dun_depth) + lev) / 2 + 5);
-
- #ifdef R_IDX_TESTING_HACK
-     r_idx = 356;
- #endif
-
-   /* Remove restriction */
-   get_mon_num_hook = NULL;
-
-   /* Prepare allocation table */
-   get_mon_num_prep();
-
-   /* Handle failure */
-   if (!r_idx) return (FALSE);
-
-   /* Attempt to place the monster (awake, allow groups) */
-     if (!place_monster_aux(y, x, r_idx, FALSE, Group_ok, TRUE, FALSE)) return (FALSE);
-
-    /* Success */
-	return (TRUE);
+/*
+ * The second is used for non-hostile summoning. It takes a Group_ok option,
+ * and never allows uniques to be summoned.
+ */
+bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok)
+{
+	return summon_specific_aux(y1, x1, lev, type, Group_ok, TRUE);
 }
 
 

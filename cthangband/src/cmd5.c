@@ -1798,9 +1798,9 @@ static void call_the_(void)
 static void wild_magic(int spell)
 {
     int counter = 0;
-    int type = SUMMON_BIZARRE1 - 1 + (randint(6));
-    if (type < SUMMON_BIZARRE1) type = SUMMON_BIZARRE1;
-    else if (type > SUMMON_BIZARRE6) type = SUMMON_BIZARRE6;
+    int type = SUMMON_MOULD + (rand_int(6));
+    if (type < SUMMON_MOULD) type = SUMMON_MOULD;
+    else if (type > SUMMON_MIMIC) type = SUMMON_MIMIC;
 
     switch(randint(spell) + randint(8) + 1)
 
@@ -1856,11 +1856,23 @@ static void wild_magic(int spell)
             wall_stone();
             break;
         case 34: case 35:
+		{
+			int wild_monsters[] =
+			{
+				SUMMON_MOULD,
+				SUMMON_BAT,
+				SUMMON_QUYLTHULG,
+				SUMMON_VORTEX,
+				SUMMON_TREASURE,
+				SUMMON_MIMIC,
+			};
+			int type = wild_monsters[rand_int(N_ELEMENTS(wild_monsters))];
             while (counter++ < 8)
             {
             (void) summon_specific(py, px, ((dun_depth) * 3) / 2, type);
                     }
             break;
+		}
         case 36: case 37:
             activate_hi_summon();
             break;
@@ -2487,25 +2499,25 @@ void do_cmd_cast(void)
             else if (die<82)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE1, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_MOULD, FALSE)))
                     none_came = TRUE;
             }
             else if (die<84)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE2, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BAT, FALSE)))
                     none_came = TRUE;
             }
             else if (die<86)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE4, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_VORTEX, FALSE)))
                     none_came = TRUE;
             }
             else if (die<88)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE5, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_TREASURE, FALSE)))
                     none_came = TRUE;
             }
             else if (die<96)
@@ -2625,7 +2637,7 @@ void do_cmd_cast(void)
             msg_print ("You reach out your mind...");
             if (randint(5)>2)
             {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_NO_UNIQUES, FALSE)))
+             if (!(summon_specific_friendly(py, px, plev, 0, FALSE)))
                 none_came = TRUE;
             }
             else
@@ -2700,10 +2712,10 @@ void do_cmd_cast(void)
             msg_print("You concentrate on a joker card...");
             switch(randint(4))
             {
-                case 1: dummy = SUMMON_BIZARRE1; break;
-                case 2: dummy = SUMMON_BIZARRE2; break;
-                case 3: dummy = SUMMON_BIZARRE4; break;
-                case 4: dummy = SUMMON_BIZARRE5; break;
+                case 1: dummy = SUMMON_MOULD; break;
+                case 2: dummy = SUMMON_BAT; break;
+                case 3: dummy = SUMMON_VORTEX; break;
+                case 4: dummy = SUMMON_TREASURE; break;
 
             }
             if (randint(2)==1)
@@ -2873,7 +2885,7 @@ void do_cmd_cast(void)
             {
                 if (randint(10)>3)
                 {
-                 if (summon_specific_friendly(py, px, plev, SUMMON_NO_UNIQUES, FALSE))
+                 if (summon_specific_friendly(py, px, plev, 0, FALSE))
                     none_came = FALSE;
                 }
                 else
@@ -2913,7 +2925,7 @@ void do_cmd_cast(void)
             msg_print ("You reach out your mind to the ancient caves...");
             if (randint(10)>3)
             {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_DRAGON_NO_UNIQUES, FALSE)))
+             if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_DRAGON, FALSE)))
                 none_came = TRUE;
             }
             else
@@ -2935,7 +2947,7 @@ void do_cmd_cast(void)
             msg_print ("You reach out your mind to the darkest tombs...");
             if (randint(10)>3)
             {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_UNDEAD_NO_UNIQUES, FALSE)))
+             if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_UNDEAD, FALSE)))
                 none_came = TRUE;
             }
             else
@@ -3179,7 +3191,7 @@ void do_cmd_cast(void)
                }
            } else {
                if (summon_specific_friendly((int)py,(int)px, (plev*3)/2,
-                       (plev > 47 ? SUMMON_HI_UNDEAD_NO_UNIQUES : SUMMON_UNDEAD),
+                       (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
                        (bool)(((plev > 24) && (randint(3) == 1)) ? TRUE : FALSE))) {
                msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
                msg_print("Ancient, long-dead forms arise from the ground to serve you!");
