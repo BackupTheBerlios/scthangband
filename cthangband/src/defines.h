@@ -2413,7 +2413,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define GF_JAM_DOOR     88
 #define GF_DOMINATION   89
 #define GF_DISP_GOOD    90
-#define GF_HIT 255 /* Fake attack type used in natural_attacks[]. */
 
 /*
  * Distance at which pets follow the player
