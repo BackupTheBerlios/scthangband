@@ -832,13 +832,13 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			}
 
 			/* Race */
-			else if (streq(b+1, "RACE"))
+			else if (streq(b+1, "RACE") && rp_ptr)
 			{
 				v = rp_ptr->title;
 			}
 
 			/* Template */
-			else if (streq(b+1, "TEMPLATE"))
+			else if (streq(b+1, "TEMPLATE") && cp_ptr)
 			{
 				v = cp_ptr->title;
 			}
@@ -847,6 +847,10 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			else if (streq(b+1, "PLAYER"))
 			{
 				v = player_base;
+			}
+			else
+			{
+				v = "0";
 			}
 		}
 

@@ -961,8 +961,8 @@ static errr save_stats(void)
 	/* Drop priv's */
 	safe_setuid_drop();
 
-	/* Find user.prf. */
-	path_build(buf, 1024, ANGBAND_DIR_USER, "user.prf");
+	/* Find user-loc.prf. */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "user-loc.prf");
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);

@@ -938,7 +938,7 @@ extern errr get_mon_num_prep(void);
 extern s16b get_mon_num(int level);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
-extern void monster_desc(char *desc, monster_type *m_ptr, int mode);
+extern void monster_desc(char *buf, monster_type *m_ptr, int mode);
 #endif
 #if (defined(MONSTER2_C) || defined(SPELLS2_C))
 extern void lore_do_probe(int m_idx);
@@ -2869,10 +2869,10 @@ extern player_type *p_ptr ;
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C))
 extern player_sex *sp_ptr;
 #endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern player_race *rp_ptr;
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern player_template *cp_ptr;
 #endif
 #if (defined(CMD5_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
