@@ -82,7 +82,7 @@
 
 typedef struct header header;
 
-typedef errr (*parse_info_txt_func)(char *buf, header *head);
+typedef errr (*parse_info_txt_func)(char *buf, header *head, vptr *extra);
 
 struct header
 {

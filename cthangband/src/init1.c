@@ -922,24 +922,24 @@ static void clear_escapes(char *buf)
 /*
  * Initialize the "death_event" array, by parsing part of the "r_info.txt" file
  */
-errr parse_r_event(char *buf, header *head)
+errr parse_r_event(char *buf, header *head, vptr *extra)
 {
-	static int r_idx = 0;
-
-	/* Current entry */
-	death_event_type *d_ptr;
+	int r_idx = (monster_race *)(*extra)-r_info;
 
 	switch (*buf)
 	{
 		case 'N': /* New/Number/Name (extracting number) */
 		{
 			/* Get the number */
-			r_idx = atoi(buf+2);
+			(*extra) = r_info+atoi(buf+2);
 			return SUCCESS;
 		}
 
 		case 'E': /* (Death) Events */
 		{
+			/* Current entry */
+			death_event_type *d_ptr;
+
 			int i;
 			u16b temp_name_offset = 0;
 
@@ -1356,7 +1356,7 @@ static u32b add_name(header *head, cptr buf)
 /*
  * Initialize the "z_info" structure, by parsing an ascii "template" file
  */
-errr parse_z_info(char *buf, header *head)
+errr parse_z_info(char *buf, header *head, vptr UNUSED *extra)
 {
 	z_info = head->info_ptr;
 	char c;
@@ -1386,14 +1386,14 @@ errr parse_z_info(char *buf, header *head)
 /*
  * Initialize the "f_info" array, by parsing an ascii "template" file
  */
-errr parse_f_info(char *buf, header *head)
+errr parse_f_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
 	char *s;
 
 	/* Current entry */
-	static feature_type *f_ptr = NULL;
+	feature_type *f_ptr = *extra;
 
 	/* If this isn't the start of a record, there should already be one. */
 	if (*buf != 'N' && !f_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -1428,7 +1428,7 @@ errr parse_f_info(char *buf, header *head)
 			error_idx = i;
 
 			/* Point at the "info" */
-			f_ptr = (feature_type*)head->info_ptr + i;
+			*extra = f_ptr = (feature_type*)head->info_ptr + i;
 
 			/* Store the name */
 			if (!(f_ptr->name = add_name(head, s)))
@@ -1483,14 +1483,14 @@ errr parse_f_info(char *buf, header *head)
 /*
  * Initialize the "v_info" array, by parsing an ascii "template" file
  */
-errr parse_v_info(char *buf, header *head)
+errr parse_v_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
 	char *s;
 
 	/* Current entry */
-	static vault_type *v_ptr = NULL;
+	vault_type *v_ptr = *extra;
 
 	if (*buf != 'N' && !v_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
 	
@@ -1524,7 +1524,7 @@ errr parse_v_info(char *buf, header *head)
 			error_idx = i;
 
 			/* Point at the "info" */
-			v_ptr = (vault_type*)head->info_ptr + i;
+			*extra = v_ptr = (vault_type*)head->info_ptr + i;
 
 			/* Store the name */
 			if (!(v_ptr->name = add_name(head, s)))
@@ -1628,14 +1628,14 @@ static object_kind *kt_info = NULL;
 /*
  * Initialize the "k_info" array, by parsing an ascii "template" file
  */
-errr parse_k_info(char *buf, header *head)
+errr parse_k_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
 	char *s, *t;
 
 	/* Current entry */
-	static object_kind *k_ptr = NULL;
+	object_kind *k_ptr = *extra;
 	
 	if (!kt_info) C_MAKE(kt_info, 256, object_kind);
 
@@ -1673,7 +1673,7 @@ errr parse_k_info(char *buf, header *head)
 			error_idx = i;
 
 			/* Point at the "info" */
-			k_ptr = (object_kind*)head->info_ptr + i;
+			*extra = k_ptr = (object_kind*)head->info_ptr + i;
 
 			/* Compress the string */
 			do_compress_string(s);
@@ -1996,7 +1996,7 @@ if (scrolls) \
 /*
  * Initialize the "u_info" array, by parsing an ascii "template" file
  */
-errr parse_u_info(char *buf, header *head)
+errr parse_u_info(char *buf, header *head, vptr UNUSED *extra)
 {
 	char *s;
 
@@ -2250,9 +2250,9 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 /*
  * Initialize the "a_info" array, by parsing an ascii "template" file
  */
-errr parse_a_info(char *buf, header *head)
+errr parse_a_info(char *buf, header *head, vptr *extra)
 {
-	static artifact_type *a_ptr = NULL;
+	artifact_type *a_ptr = *extra;
 
 	int i;
 
@@ -2290,7 +2290,7 @@ errr parse_a_info(char *buf, header *head)
 			error_idx = i;
 
 			/* Point at the "info" */
-			a_ptr = (artifact_type*)head->info_ptr + i;
+			*extra = a_ptr = (artifact_type*)head->info_ptr + i;
 
 			/* Store the name */
 			if (!(a_ptr->name = add_name(head, s)))
@@ -2437,13 +2437,13 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what)
 /*
  * Initialize the "e_info" array, by parsing an ascii "template" file
  */
-errr parse_e_info(char *buf, header *head)
+errr parse_e_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
 	char *s, *t;
 
-	static ego_item_type *e_ptr = NULL;
+	ego_item_type *e_ptr = *extra;
 
 	/* If this isn't the start of a record, there should already be one. */
 	if (*buf != 'N' && !e_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -2477,7 +2477,7 @@ errr parse_e_info(char *buf, header *head)
 			error_idx = i;
 
 			/* Point at the "info" */
-			e_ptr = (ego_item_type*)head->info_ptr + i;
+			*extra = e_ptr = (ego_item_type*)head->info_ptr + i;
 
 			/* Store the name */
 			if (!(e_ptr->name = add_name(head, s)))
@@ -2667,14 +2667,14 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 /*
  * Initialize the "r_info" array, by parsing an ascii "template" file
  */
-errr parse_r_info(char *buf, header *head)
+errr parse_r_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
 	char *s, *t;
 
-	static monster_race *r_ptr = NULL;
-	
+	monster_race *r_ptr = (monster_race *)(*extra);
+
 	if (*buf != 'N' && !r_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
 	
 	switch (*buf)
@@ -2707,7 +2707,7 @@ errr parse_r_info(char *buf, header *head)
 			error_idx = i;
 
 			/* Point at the "info" */
-			r_ptr = (monster_race*)head->info_ptr + i;
+			*extra = r_ptr = (monster_race*)head->info_ptr + i;
 
 			/* Store the name */
 			if (!(r_ptr->name = add_name(head, s)))
@@ -2971,6 +2971,7 @@ static errr init_info_txt_final(header *head)
 errr init_info_txt(FILE *fp, char *buf, header *head)
 {
 	errr err;
+	vptr extra = NULL;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -3024,7 +3025,7 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 		if (!okay) return (PARSE_ERROR_OBSOLETE_FILE);
 
 		/* Parse the line */
-		if ((err = (*(head->parse_info_txt))(buf, head)) != 0)
+		if ((err = (*(head->parse_info_txt))(buf, head, &extra)) != 0)
 			return (err);
 	}
 

@@ -3589,7 +3589,7 @@ extern FILE *my_fopen_temp(char *buf, int max);
 /* init1.c */
 
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_z_info(char *buf, header *head);
+extern errr parse_z_info(char *buf, header *head, vptr *extra);
 #endif
 
 
@@ -3613,7 +3613,7 @@ extern maxima *z_info;
 /* init1.c */
 
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_f_info(char *buf, header *head);
+extern errr parse_f_info(char *buf, header *head, vptr *extra);
 #endif
 
 
@@ -3655,24 +3655,24 @@ extern errr init_info_txt(FILE *fp, char *buf, header *head);
 
 
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_k_info(char *buf, header *head);
+extern errr parse_k_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_u_info(char *buf, header *head);
+extern errr parse_u_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_a_info(char *buf, header *head);
+extern errr parse_a_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_e_info(char *buf, header *head);
+extern errr parse_e_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_r_info(char *buf, header *head);
+extern errr parse_r_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_v_info(char *buf, header *head);
+extern errr parse_v_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_r_event(char *buf, header *head);
+extern errr parse_r_event(char *buf, header *head, vptr *r_idx);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
