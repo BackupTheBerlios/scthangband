@@ -247,6 +247,7 @@ cptr roff_monster(u32b flags2, u32b flags3)
 		{3, RF3_EVIL, "evil", "evil monster"},
 		{3, RF3_GOOD, "good", "good creature"},
 		{3, RF3_UNDEAD, "undead", "undead thing"},
+		{2, RF2_PHANTOM, "phantasmal", "phantom"},
 		{3, RF3_DRAGON, "draconic", "dragon"},
 		{3, RF3_DEMON, "demoniac", "demon"},
 		{3, RF3_CTHULOID, "Cthuloid", "Cthuloid entity"},

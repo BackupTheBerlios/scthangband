@@ -2028,6 +2028,7 @@ void update_monsters(bool full)
 bool live_monster_p(monster_race *r_ptr)
 {
 	if (r_ptr->flags3 & (RF3_UNDEAD)) return FALSE;
+	if (r_ptr->flags2 & (RF2_PHANTOM)) return FALSE;
 	if (r_ptr->flags3 & (RF3_DEMON)) return FALSE;
 	if (r_ptr->flags3 & (RF3_CTHULOID)) return FALSE;
     if (r_ptr->flags3 & (RF3_NONLIVING)) return FALSE;
@@ -2042,6 +2043,7 @@ bool live_monster_p(monster_race *r_ptr)
 bool live_monster_wide_p(monster_race *r_ptr)
 {
 	if (r_ptr->flags3 & (RF3_UNDEAD)) return FALSE;
+	if (r_ptr->flags2 & (RF2_PHANTOM)) return FALSE;
     if (r_ptr->flags3 & (RF3_NONLIVING)) return FALSE;
 	return TRUE;
 }
@@ -2756,16 +2758,6 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 				"Black reaver"));
 		}
 
-		case UNFLAG(SUMMON_PHANTOM):
-        {
-			return !!strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"Phantom");
-        }
-        case UNFLAG(SUMMON_ELEMENTAL):
-        {
-            return !!strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
-				"lemental");
-        }
 		case UNFLAG(SUMMON_LIVING):
 		{
 			return live_monster_p(r_ptr);

@@ -2322,13 +2322,13 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SUMMON_ANIMAL     (SUMMON_FLAG(3, RF3_ANIMAL) | SUMMON_NO_UNIQUES)
 #define SUMMON_ELEMENTAL  (SUMMON_FLAG(2, RF2_ELEMENTAL) | SUMMON_NO_UNIQUES)
 #define SUMMON_MIMIC      (SUMMON_FLAG(2, RF2_MIMIC) | SUMMON_NO_UNIQUES)
+#define SUMMON_PHANTOM    (SUMMON_FLAG(2, RF2_PHANTOM) | SUMMON_NO_UNIQUES)
 
 /* Unusual summon types - see summon_specific_okay(). */
 #define SUMMON_HOUND	(0x0100 | SUMMON_NO_UNIQUES) /* CZ */
 #define SUMMON_HI_UNDEAD	(0x0101) /* LVW */
 #define SUMMON_REAVER	(0x0103 | SUMMON_NO_UNIQUES) /* "Black reaver" */
 #define SUMMON_ANIMAL_RANGER	(0x0105 | SUMMON_NO_UNIQUES)
-#define SUMMON_PHANTOM	(0x0106 | SUMMON_NO_UNIQUES) /* "Phantom" */
 #define SUMMON_LIVING	(0x0108 | SUMMON_NO_UNIQUES)
 
 
@@ -2821,7 +2821,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RF2_RUN_AWAY                    0x01000000      /* Hit once, then run */
 #define RF2_ELEMENTAL	0x02000000	/* Monster in an elemental spirit */
 #define RF2_MIMIC	0x04000000	/* Monster is a mimic */
-#define RF2_BRAIN_3                     0x08000000
+#define RF2_PHANTOM	0x08000000	/* Monster is a phantom */
 #define RF2_BRAIN_4                     0x10000000
 #define RF2_BRAIN_5                     0x20000000
 #define RF2_BRAIN_6                     0x40000000
