@@ -3830,59 +3830,6 @@ void gain_level_reward(int chosen_reward)
 }
 
 
- /*
-  * old -- from PsiAngband.
-  */
- bool tgt_pt(int *x,int *y)
- {
-    char ch = 0;
-    int d,cu,cv;
-    bool success = FALSE;
-
-    *x = px;
-    *y = py;
-
-    cu = Term->scr->cu;
-    cv = Term->scr->cv;
-    Term->scr->cu = 0;
-    Term->scr->cv = 1;
-    msg_print("Select a point and press space.");
-
-    while ((ch != 27) && (ch != ' '))
-    {
-       move_cursor_relative(*y,*x);
-       ch = inkey();
-       switch (ch)
-       {
-    case 27: break;
-    case ' ': success = TRUE; break;
-   default:
-   {
-      d = get_keymap_dir(ch);
-      if (!d) break;
-               *x += ddx[d];
-               *y += ddy[d];
-
-               /* Hack -- Verify x */
-               if ((*x>=cur_wid-1) || (*x>=panel_col_min + SCREEN_WID)) (*x)--;
-                 else if ((*x<=0) || (*x<=panel_col_min)) (*x)++;
-
-               /* Hack -- Verify y */
-               if ((*y>=cur_hgt-1) || (*y>=panel_row_min + SCREEN_HGT)) (*y)--;
-                 else if ((*y<=0) || (*y<=panel_row_min)) (*y)++;
-
-    break;
-   }
-       }
-    }
-
-    Term->scr->cu = cu;
-    Term->scr->cv = cv;
-    Term_fresh();
-    return success;
-
- }
-
 typedef struct chaos_type chaos_type;
 struct chaos_type
 {

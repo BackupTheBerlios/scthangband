@@ -27,28 +27,100 @@ several times... */
 static bool detect_monsters_string(cptr Match);
 
 /*
+ * Extract the target from a get_aim_dir() call.
+ * Return TRUE if a location was chosen, FALSE for a direction.
+ */
+static bool get_dir_target(int *x, int *y, int dir)
+{
+	if (dir == 5 && target_okay())
+	{
+		*x = target_col;
+		*y = target_row;
+		return TRUE;
+	}
+	else
+	{
+		*x = px + 99 * ddx[dir];
+		*y = py + 99 * ddy[dir];
+		return FALSE;
+	}
+}
+
+/*
+ * Return TRUE if the player can teleport to (x,y) with dimension door.
+ */
+static bool dimension_door_success(int y, int x, int plev)
+{
+	cave_type *c_ptr = &cave[y][x];
+
+	/* Monster or LOS-blocking feature present. */
+	if (!cave_empty_grid(c_ptr)) return FALSE;
+
+	/* No teleporting into vaults. */
+	if (c_ptr->info & CAVE_ICKY) return FALSE;
+
+	/* Too far. */
+	if (distance(py, px, y, x) > plev+2) return FALSE;
+
+	/* No direct path. */
+	if (!los(py, px, y, x)) return FALSE;
+
+	/* Random failure. */
+	if (one_in(plev*plev/2)) return FALSE;
+
+	/* Success. */
+	return TRUE;
+}
+
+/*
  * Teleport the player to a nearby square of the player's choice.
  * Returns FALSE if aborted, TRUE otherwise.
+ *
+ * I have no idea why this effect is so expensive.
  */
 bool dimension_door(int plev, int fail_dis)
 {
-	int ii,ij;
+	int dir, x,y;
 
 	msg_print("You open a dimensional gate. Choose a destination.");
-	if (!tgt_pt(&ii,&ij)) return FALSE;
-	p_ptr->energy -= 6*TURN_ENERGY/10 - plev*TURN_ENERGY/100;
+	msg_print(NULL);
+
+	/* Hack - start with the "pick a location" display, but allow directions. */
+	set_gnext("*op");
+
+	/* Find the location. */
+	if (!get_aim_dir(&dir)) return FALSE;
+
+	/* Extract the location. */
+	if (!get_dir_target(&x, &y, dir))
+	{
+		/* Handle directions in a sensible way. */
+		int x2 = px, y2 = py;
+
+		/* Return the square before the first for which dimension door fails. */
+		do
+		{
+			x = x2;
+			y = y2;
+
+			x2 += ddx[dir];
+			y2 += ddy[dir];
+		}
+		while (dimension_door_success(y2, x2, plev));
+	}
+
+	energy_use += 6*TURN_ENERGY/10 - plev*TURN_ENERGY/100;
 
 	/* Bad target or bad luck. */
-	if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) ||
-		(distance(ij,ii,py,px) > plev + 2) || (!rand_int(plev * plev / 2)))
+	if (!dimension_door_success(y, x, plev))
 	{
 		msg_print("You fail to exit the astral plane correctly!");
-		p_ptr->energy -= TURN_ENERGY;
+		energy_use += TURN_ENERGY;
 		teleport_player(fail_dis);
 	}
 	else /* Success */
 	{
-		teleport_player_to(ij,ii);
+		teleport_player_to(y,x);
 	}
 	return TRUE;
 }

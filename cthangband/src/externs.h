@@ -26,7 +26,7 @@ extern void player_birth(void);
 #if (defined(CAVE_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern int distance(int y1, int x1, int y2, int x2);
 #endif
-#if (defined(CAVE_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern bool los(int y1, int x1, int y2, int x2);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -2558,7 +2558,7 @@ extern s16b command_gap;
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
 extern s16b command_new;
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern s16b energy_use;
 #endif
 #if (defined(DUNGEON_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(XTRA1_C))
@@ -3731,9 +3731,9 @@ extern void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #if (defined(DUNGEON_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void gain_level_reward(int chosen_reward);
 #endif
-#if (defined(SPELLS2_C) || defined(XTRA2_C))
-extern  bool tgt_pt(int *x,int *y);
-#endif
+
+
+
 #if (defined(INIT2_C) || defined(XTRA2_C))
 extern void init_chaos(void);
 #endif
@@ -4040,7 +4040,7 @@ extern void process_some_user_pref_files(void);
 
 /* util.c */
 
-#if (defined(SQUELCH_C) || defined(UTIL_C))
+#if (defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C))
 extern void set_gnext(cptr next);
 #endif
 #if (defined(SQUELCH_C) || defined(UTIL_C))

@@ -1795,7 +1795,7 @@ void set_gnext(cptr next)
 {
 	assert(next); /* Caller */
 
-	if (!gnext_clear() && alert_failure) bell("inkey_gnext overlap error.");
+	if (*inkey_gnext && alert_failure) bell("inkey_gnext overlap error.");
 
 	inkey_gnext = next;
 }
