@@ -3854,7 +3854,7 @@ extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
 #if (defined(CAVE_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_get_cursor(bool *v);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern void Term_get_size(int *w, int *h);
 #endif
 #if (defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
@@ -3968,7 +3968,7 @@ extern vptr (*ralloc_aux)(huge);
 #if (defined(ANGBAND_H) || defined(Z_VIRT_H) || defined(Z_VIRT_C))
 extern vptr ralloc(huge len);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
 #endif
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))

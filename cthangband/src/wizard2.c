@@ -590,120 +590,118 @@ static int wiz_create_itemtype(void)
 	return (choice[s - option_chars]);
 }
 
+/* A "no choice" selection for choose_something(). */
+#define CHOOSE_NOTHING -1
+
+/*
+ * Display a list of options, allow the player to choose one on screen by symbol
+ * and return the index of the chosen option, or CHOOSE_NOTHING if aborted.
+ */
+static int choose_something_str(cptr what, name_centry *list, int num)
+{
+	int mx, my, cx, cy, i;
+	char ch;
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Calculate the column width and number of rows needed to fit list in. */
+	Term_get_size(&mx, &my);
+	cx = (num + my - 3) / (my - 2);
+	cy = (num + cx - 1) / cx;
+	cx = mx / cx;
+
+	for (i = 0; i < num; i++)
+	{
+		int ty = 2 + (i % cy);
+		int tx = cx * (i / cy);
+
+		mc_put_fmt(ty, tx, "$![%c] %.*s", option_chars[i], cx - 5, list[i].str);
+	}
+	/* Wait for valid input or escape. */
+	while (get_com(&ch, "Get what type of %s? [%c-%c]",
+		what, option_chars[0], option_chars[num-1]))
+	{
+		/* Return a valid response if found. */
+		for (i = 0; i < num; i++) if (option_chars[i] == ch) return i;
+
+		/* Complain otherwise. */
+		bell("Invalid choice '%c'", ch);
+	}
+
+	/* Failure. */
+	return CHOOSE_NOTHING;
+}
+
 /*
  * Display a two-part prompt to select an item.
  * It uses a name_entry to describe the entries in the first part, which
  * should start at start.
  * type is the description used in the first prompt (e.g. "object").
  * max is the number of valid items.
- * If sym_from_cat is set, the int in each name_entry is used for the symbol
- * at the first prompt (the second never does so).
- * Otherwise, the ones in the body array are used.
  * item_good returns whether an item is something which can be generated and
  * belongs to the specified category.
  * print_f1 is a vstrnfmt_aux style function which copies the name of the item
  * specified by number into buf.
  */
 static int choose_something(name_centry *start, cptr type, int max,
-	bool sym_from_cat, bool (*item_good)(int, name_centry *),
+	bool (*item_good)(int, int),
 	void (*print_f1)(char *, uint, cptr, va_list *))
 {
-	int i, num;
-	int col, row;
-	uint len;
+	int i, num, idx;
 	name_centry *cat;
+	name_entry choice[60];
 
-	cptr s;
-	char ch;
-
-	int	choice[60];
-
-	/* A list of the valid options for this prompt. */
-	cptr body =	option_chars;
-	char sym[61];
-	WIPE(sym, sym);
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Print all tval's and their descriptions */
+	/* Save all tvals and their descriptions */
 	for (num = 0, cat = start; (num < 60) && cat->str; cat++)
 	{
 		for (i = 0; i < max; i++)
 		{
-			if ((*item_good)(i, cat)) break;
+			if ((*item_good)(i, cat->idx))
+			{
+				name_entry *this = &choice[num++];
+				this->idx = cat->idx;
+				this->str = cat->str;
+				break;
+			}
 		}
-
-		/* No good options exist in this category. */
-		if (i == max) continue;
-
-		row = 2 + (num % 20);
-		col = 30 * (num / 20);
-		if (sym_from_cat) sym[num] = cat->idx;
-		else sym[num] = body[num];
-
-		choice[num] = cat-start;
-		mc_put_fmt(row, col, "$![%c] %.25s", sym[num++], cat->str);
 	}
 
-	/* Choose! */
-	if (!get_com(&ch, "Get what type of %.60s? ", type)) return (0);
+	/* Request a choice. */
+	i = choose_something_str(type, choice, num);
+	if (i == CHOOSE_NOTHING) return i;
 
-	/* Analyze choice */
-	s = strchr(sym, ch);
+	/* Store the choice. */
+	idx = choice[i].idx;
+	type = choice[i].str;
 
-	/* Bail out if choice is not recognised. */
-	if (!s) return (0);
-
-	/* Base object type chosen, fill in tval */
-	cat = &start[choice[s - sym]];
-
-
-	/*** And now we go for a_idx ***/
-
-	/* Clear screen */
-	Term_clear();
-
-	/* We have to search the whole itemlist. */
-	for (num = 0, i = 1; (num < 60) && (i < max); i++)
+	/* Obtain the second list with print_f1. */
+	for (num = i = 0; (num < 60) && (i < max); i++)
 	{
-		/* Remember the object index */
-		if (item_good(i, cat)) choice[num++] = i;
+		if ((*item_good)(i, idx))
+		{
+			name_entry *this = &choice[num++];
+			this->idx = i;
+			this->str = string_make(format("%v", print_f1, i));
+		}
 	}
 
-	/* Paranoia - empty categories shouldn't have reached the list. */
-	if (!num) return 0;
+	/* Request a choice. */
+	i = choose_something_str(type, choice, num);
 
-	len = 80/((num+19)/20);
+	/* Remove the allocated strings. */
+	while (num--) FREE(choice[num].str);
 
-	/* Print everything */
-	for (i = 0; i < num; i++)
-	{
-		row = 2 + (i % 20);
-		col = len * (i / 20);
-		ch = body[i];
-		
-		/* Print it */
-		mc_put_fmt(row, col, "$![%c] %.*^v", ch, len-4, print_f1, choice[i]);
-	}
+	if (i == CHOOSE_NOTHING) return i;
 
-	if (!get_com(&ch, "What kind of %.60s? ", cat->str)) return (0);
-
-	/* Analyze choice */
-	s = strchr(body, ch);
-
-	/* Bail out if choice is not recognised. */
-	if (!s || s >= body+num) return 0;
-
-	/* And return successful */
-	return (choice[s - body]);
+	return choice[i].idx;
 }
 
 /*
  * Return whether a_info[i] can be generated and is part of the specified
  * category.
  */
-static bool good_cat_artefact(int a, name_centry *cat)
+static bool good_cat_artefact(int a, int idx)
 {
 	const artifact_type *a_ptr = a_info+a;
 
@@ -711,7 +709,7 @@ static bool good_cat_artefact(int a, name_centry *cat)
 	if (!a_ptr->name) return FALSE;
 
 	/* Wrong symbol. */
-	if (k_info[a_ptr->k_idx].tval != cat->idx) return FALSE;
+	if (k_info[a_ptr->k_idx].tval != idx) return FALSE;
 
 	return TRUE;
 }
@@ -722,14 +720,14 @@ static bool good_cat_artefact(int a, name_centry *cat)
 static int choose_artefact(void)
 {
 	return choose_something(tval_names, "artifact", MAX_A_IDX,
-		FALSE, good_cat_artefact, artefact_name_f1);
+		good_cat_artefact, artefact_name_f1);
 }
 
 /*
  * Return whether r_info[i] can be generated and is part of the specified
  * category.
  */
-static bool good_cat_monster(int r, name_centry *cat)
+static bool good_cat_monster(int r, int idx)
 {
 	const monster_race *r_ptr = &r_info[r];
 
@@ -737,7 +735,7 @@ static bool good_cat_monster(int r, name_centry *cat)
 	if (is_fake_monster(r_ptr)) return FALSE;
 
 	/* Not of this category. */
-	if (r_ptr->d_char != cat->idx) return FALSE;
+	if (r_ptr->d_char != idx) return FALSE;
 
 	return TRUE;
 }
@@ -761,7 +759,7 @@ static void monster_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 static int choose_monster_type(void)
 {
 	return choose_something(ident_info, "monster", MAX_R_IDX,
-		FALSE, good_cat_monster, monster_name_f1);
+		good_cat_monster, monster_name_f1);
 }
 
 /*
@@ -1293,7 +1291,7 @@ void wiz_create_item(int k_idx)
 	if (!k_idx) k_idx = choose_on_screen(wiz_create_itemtype);
 
 	/* Return if failed */
-	if (!k_idx) return;
+	if (k_idx < 0 || k_idx >= MAX_K_IDX) return;
 
 	/* Create the item */
 	object_prep(q_ptr, k_idx);
