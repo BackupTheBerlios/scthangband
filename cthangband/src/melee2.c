@@ -5213,6 +5213,8 @@ static bool get_moves(int m_idx, int *mm)
        int d_dice = r_ptr->blow[ap_cnt].d_dice;
        int d_side = r_ptr->blow[ap_cnt].d_side;
 
+		blow_method_type *b_ptr = get_blow_method(method);
+
         if (t_ptr == m_ptr) /* Paranoia */
         {
             if (cheat_wzrd)
@@ -5223,7 +5225,7 @@ static bool get_moves(int m_idx, int *mm)
        if (t_ptr->fx != x_saver || t_ptr->fy != y_saver)
                 break; /* Stop attacking if the target dies! */
        /* Hack -- no more attacks */
-       if (!method) break;
+       if (!b_ptr) break;
 
         if (blinked) /* Stop! */
         {
@@ -5274,179 +5276,11 @@ static bool get_moves(int m_idx, int *mm)
            disturb(1, 0);
 
            /* Describe the attack method */
-           switch (method)
-           {
-               case RBM_HIT:
-               {
-                   act = "%^s hits %s.";
-                   touched = TRUE;
-                   break;
-               }
+			act = b_ptr->hitmsg;
+			touched = !!(b_ptr->flags & RBF_TOUCH);
 
-               case RBM_TOUCH:
-               {
-                   act = "%^s touches %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_PUNCH:
-               {
-                   act = "%^s punches %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_KICK:
-               {
-                   act = "%^s kicks %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_CLAW:
-               {
-                   act = "%^s claws %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_BITE:
-               {
-                   act = "%^s bites %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_STING:
-               {
-                   act = "%^s stings %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_XXX1:
-               {
-                   act = "%^s XXX1's %s.";
-                   break;
-               }
-
-               case RBM_BUTT:
-               {
-                   act = "%^s butts %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_CRUSH:
-               {
-                   act = "%^s crushes %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_ENGULF:
-               {
-                   act = "%^s engulfs %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_CHARGE:
-               {
-                   act = "%^s charges %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_CRAWL:
-               {
-                   act = "%^s crawls on %s.";
-                   touched = TRUE;
-                   break;
-               }
-
-               case RBM_DROOL:
-               {
-                   act = "%^s drools on %s.";
-                   touched = FALSE;
-                   break;
-               }
-
-               case RBM_SPIT:
-               {
-                   act = "%^s spits on %s.";
-                   touched = FALSE;
-                   break;
-               }
-
-               case RBM_XXX3:
-               {
-                   act = "%^s XXX3's on %s.";
-                   touched = FALSE;
-                   break;
-               }
-
-               case RBM_GAZE:
-               {
-                   act = "%^s gazes at %s.";
-                   touched = FALSE;
-                   break;
-               }
-
-               case RBM_WAIL:
-               {
-                   act = "%^s wails at %s.";
-                   touched = FALSE;
-                   break;
-               }
-
-               case RBM_SPORE:
-               {
-                   act = "%^s releases spores at %s.";
-                   touched = FALSE;
-                   break;
-               }
-
-               case RBM_WORSHIP:
-               {
-                   act = "%^s hero worships %s.";
-                   touched = FALSE;
-                   break;
-               }
-
-               case RBM_BEG:
-               {
-                   act = "%^s begs %s for money.";
-                   touched = FALSE;
-                   t_ptr->csleep = 0;
-                   break;
-               }
-
-               case RBM_INSULT:
-               {
-                   act = "%^s insults %s.";
-                   touched = FALSE;
-                   t_ptr->csleep = 0;
-                   break;
-               }
-
-               case RBM_MOAN:
-               {
-                   act = "%^s moans at %s.";
-                   touched = FALSE;
-                   t_ptr->csleep = 0;
-                   break;
-               }
-
-               case RBM_SHOW:
-               {
-                   act = "%^s sings to %s.";
-                   touched = FALSE;
-                   t_ptr->csleep = 0;
-                   break;
-               }
-           }
+			/* Automatically wake monsters if required. */
+			if (b_ptr->flags & RBF_WAKE) t_ptr->csleep = 0;
 
            /* Message */
            if (act && (m_ptr->ml || t_ptr->ml))
@@ -5627,22 +5461,8 @@ static bool get_moves(int m_idx, int *mm)
        /* Monster missed player */
        else
        {
-           /* Analyze failed attacks */
-           switch (method)
-           {
-               case RBM_HIT:
-               case RBM_TOUCH:
-               case RBM_PUNCH:
-               case RBM_KICK:
-               case RBM_CLAW:
-               case RBM_BITE:
-               case RBM_STING:
-               case RBM_XXX1:
-               case RBM_BUTT:
-               case RBM_CRUSH:
-               case RBM_ENGULF:
-               case RBM_CHARGE:
-
+			if (b_ptr->missmsg)
+			{
                /* Visible monsters */
                if (m_ptr->ml)
                {
@@ -5650,7 +5470,7 @@ static bool get_moves(int m_idx, int *mm)
                    disturb(1, 0);
 
                    /* Message */
-                   msg_format("%^s misses %s.", m_name,t_name);
+                   msg_format(b_ptr->missmsg, m_name,t_name);
                }
 
                break;

@@ -1495,9 +1495,11 @@ static void roff_aux(int r_idx)
 	{
 		int method, effect, d1, d2;
 
-		/* Skip non-attacks */
-		if (!r_ptr->blow[m].method) continue;
+		blow_method_type *b_ptr = get_blow_method(r_ptr->blow[m].method);
 
+		/* Skip non-attacks. */
+		if (!b_ptr) continue;
+ 
 		/* Skip unknown attacks */
 		if (!r_ptr->r_blows[m]) continue;
 
@@ -1509,37 +1511,8 @@ static void roff_aux(int r_idx)
 		d2 = r_ptr->blow[m].d_side;
 
 
-		/* No method yet */
-		p = NULL;
-
-		/* Acquire the method */
-		switch (method)
-		{
-			case RBM_HIT:	p = "hit"; break;
-			case RBM_TOUCH:	p = "touch"; break;
-			case RBM_PUNCH:	p = "punch"; break;
-			case RBM_KICK:	p = "kick"; break;
-			case RBM_CLAW:	p = "claw"; break;
-			case RBM_BITE:	p = "bite"; break;
-			case RBM_STING:	p = "sting"; break;
-			case RBM_XXX1:	break;
-			case RBM_BUTT:	p = "butt"; break;
-			case RBM_CRUSH:	p = "crush"; break;
-			case RBM_ENGULF:	p = "engulf"; break;
-            case RBM_CHARGE: p = "charge";   break;
-			case RBM_CRAWL:	p = "crawl on you"; break;
-			case RBM_DROOL:	p = "drool on you"; break;
-			case RBM_SPIT:	p = "spit"; break;
-			case RBM_XXX3:	break;
-			case RBM_GAZE:	p = "gaze"; break;
-			case RBM_WAIL:	p = "wail"; break;
-			case RBM_SPORE:	p = "release spores"; break;
-			case RBM_WORSHIP:p = "hero worship";	break;
-			case RBM_BEG:	p = "beg"; break;
-			case RBM_INSULT:	p = "insult"; break;
-			case RBM_MOAN:	p = "moan"; break;
-            case RBM_SHOW:  p = "sing"; break;
-		}
+		/* Method string. */
+		p = b_ptr->name;
 
 
 		/* Default effect */

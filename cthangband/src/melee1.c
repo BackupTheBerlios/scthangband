@@ -78,59 +78,31 @@ int check_hit(int power, int level)
 	return (FALSE);
 }
 
-
-
 /*
- * Hack -- possible "insult" messages
+ * Locate a RBM_* index in the blow_methods[] table.
  */
-static cptr desc_insult[] =
+blow_method_type *get_blow_method(byte idx)
 {
-	"insults you!",
-	"insults your mother!",
-	"gives you the finger!",
-	"humiliates you!",
-	"defiles you!",
-	"dances around you!",
-	"makes obscene gestures!",
-	"moons you!"
-};
-
-/*
- * Hack -- possible "hero worship" messages
- */
-static cptr desc_worship[] =
-{
-	"looks up at you!",
-	"asks how many dragons you've killed!",
-	"asks for your autograph!",
-	"tries to shake your hand!",
-	"pretends to be you!",
-	"dances around you!",
-	"tugs at your clothing!",
-	"asks if you will adopt him!"
-};
-
-
-/*
- * Hack -- possible "moan" messages
- */
-static cptr desc_moan[] =
-{
-	"seems sad about something.",
-	"asks if you have seen his dogs.",
-	"tells you to get off his land.",
-	"mumbles something about mushrooms."
-};
-
+	blow_method_type *b_ptr;
+	for (b_ptr = blow_methods; b_ptr->name; b_ptr++)
+	{
+		if (b_ptr->idx == idx) return b_ptr;
+	}
+	return NULL;
+}
 
 /*
  * Attack the player via physical attacks.
  */
 bool make_attack_normal(int m_idx)
 {
+	blow_method_type *b_ptr;
+
 	monster_type	*m_ptr = &m_list[m_idx];
 
 	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+
+	
 
 	int			ap_cnt,blow_types;
 
@@ -224,9 +196,14 @@ bool make_attack_normal(int m_idx)
 		 d_dice = r_ptr->blow[ap_cnt].d_dice;
 		 d_side = r_ptr->blow[ap_cnt].d_side;
 
+		/* Extract the attack details. */
+		b_ptr = get_blow_method(method);
+
+		/* Paranoia. */
+		if (!b_ptr) return FALSE;
+
 		/* Extract visibility (before blink) */
 		if (m_ptr->ml) visible = TRUE;
-
 
 
 		/* Extract the attack "power" */
@@ -292,178 +269,30 @@ bool make_attack_normal(int m_idx)
 			do_cut = do_stun = 0;
 
 			/* Describe the attack method */
-			switch (method)
+			touched = !!(b_ptr->flags & RBF_TOUCH);
+			do_cut = !!(b_ptr->flags & RBF_CUT);
+			do_stun = !!(b_ptr->flags & RBF_STUN);
+
+			/* Select a hit message (e.g. "%^s hits %s"). */
+
+			if (b_ptr->hitplayer)
 			{
-				case RBM_HIT:
-				{
-					act = "hits you.";
-					do_cut = do_stun = 1;
-                    touched = TRUE;
-					break;
-				}
+				int z;
 
-				case RBM_TOUCH:
-				{
-					act = "touches you.";
-                    touched = TRUE;
-					break;
-				}
+				/* Count the valid entries. */
+				for (z = 0; b_ptr->hitplayer[z]; z++);
 
-				case RBM_PUNCH:
-				{
-					act = "punches you.";
-                    touched = TRUE;
-					do_stun = 1;
-					break;
-				}
-
-				case RBM_KICK:
-				{
-					act = "kicks you.";
-                    touched = TRUE;
-					do_stun = 1;
-					break;
-				}
-
-				case RBM_CLAW:
-				{
-					act = "claws you.";
-                    touched = TRUE;
-					do_cut = 1;
-					break;
-				}
-
-				case RBM_BITE:
-				{
-					act = "bites you.";
-					do_cut = 1;
-                    touched = TRUE;
-					break;
-				}
-
-				case RBM_STING:
-				{
-					act = "stings you.";
-                    touched = TRUE;
-					break;
-				}
-
-				case RBM_XXX1:
-				{
-					act = "XXX1's you.";
-					break;
-				}
-
-				case RBM_BUTT:
-				{
-					act = "butts you.";
-					do_stun = 1;
-                    touched = TRUE;
-					break;
-				}
-
-				case RBM_CRUSH:
-				{
-					act = "crushes you.";
-					do_stun = 1;
-                    touched = TRUE;
-					break;
-				}
-
-				case RBM_ENGULF:
-				{
-					act = "engulfs you.";
-                    touched = TRUE;
-					break;
-				}
-
-                case RBM_CHARGE:
-				{
-                    act = "charges you.";
-                    touched = TRUE;
-					break;
-				}
-
-				case RBM_CRAWL:
-				{
-					act = "crawls on you.";
-                    touched = TRUE;
-					break;
-				}
-
-				case RBM_DROOL:
-				{
-					act = "drools on you.";
-					break;
-				}
-
-				case RBM_SPIT:
-				{
-					act = "spits on you.";
-					break;
-				}
-
-				case RBM_XXX3:
-				{
-					act = "XXX3's on you.";
-					break;
-				}
-
-				case RBM_GAZE:
-				{
-					act = "gazes at you.";
-					break;
-				}
-
-				case RBM_WAIL:
-				{
-					act = "wails at you.";
-					break;
-				}
-
-				case RBM_SPORE:
-				{
-					act = "releases spores at you.";
-					break;
-				}
-
-				case RBM_WORSHIP:
-				{
-					act = desc_worship[rand_int(8)];
-					break;
-				}
-
-				case RBM_BEG:
-				{
-					act = "begs you for money.";
-					break;
-				}
-
-				case RBM_INSULT:
-				{
-					act = desc_insult[rand_int(8)];
-					break;
-				}
-
-				case RBM_MOAN:
-				{
-					act = desc_moan[rand_int(4)];
-					break;
-				}
-
-                case RBM_SHOW:
-				{
-                    if (randint(3)==1)
-                        act = "sings 'We are a happy family.'";
-                    else
-                        act = "sings 'I love you, you love me.'";
-					break;
-				}
+				/* Choose one. */
+				act = b_ptr->hitplayer[rand_int(z)];
+			}
+			else
+			{
+				/* act is (e.g.) "%^s hits %s". */
+				act = b_ptr->hitmsg;
 			}
 
 			/* Message */
-			if (act) msg_format("%^s %s", m_name, act);
-
+			if (act) msg_format(act, m_name, "you");
 
 			/* Hack -- assume all attacks are obvious */
 			obvious = TRUE;
@@ -1350,22 +1179,9 @@ bool make_attack_normal(int m_idx)
 		/* Monster missed player */
 		else
 		{
-			/* Analyze failed attacks */
-			switch (method)
+			/* The player will notice a miss. */
+			if (b_ptr->missmsg)
 			{
-				case RBM_HIT:
-				case RBM_TOUCH:
-				case RBM_PUNCH:
-				case RBM_KICK:
-				case RBM_CLAW:
-				case RBM_BITE:
-				case RBM_STING:
-				case RBM_XXX1:
-				case RBM_BUTT:
-				case RBM_CRUSH:
-				case RBM_ENGULF:
-                case RBM_CHARGE:
-
 				/* Visible monsters */
 				if (m_ptr->ml)
 				{
@@ -1373,10 +1189,8 @@ bool make_attack_normal(int m_idx)
 					disturb(1, 0);
 
 					/* Message */
-					msg_format("%^s misses you.", m_name);
+					msg_format(b_ptr->missmsg, m_name, "you");
 				}
-
-				break;
 			}
 		}
 

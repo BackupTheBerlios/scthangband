@@ -3171,3 +3171,86 @@ spirit_type spirits[MAX_SPIRITS] =
 	{"","a major life spirit",0,0,0xff000000,SPIRIT_LIFE,5},
 	{"","a major wild spirit",0,0,0xff000000,SPIRIT_NATURE,20},
 };
+
+/*
+ * Hack -- possible "insult" messages
+ */
+static cptr desc_insult[] =
+{
+	"%^s insults you!",
+	"%^s insults your mother!",
+	"%^s gives you the finger!",
+	"%^s humiliates you!",
+	"%^s defiles you!",
+	"%^s dances around you!",
+	"%^s makes obscene gestures!",
+	"%^s moons you!",
+	0
+};
+
+/*
+ * Hack -- possible "hero worship" messages
+ */
+static cptr desc_worship[] =
+{
+	"%^s looks up at you!",
+	"%^s asks how many dragons you've killed!",
+	"%^s asks for your autograph!",
+	"%^s tries to shake your hand!",
+	"%^s pretends to be you!",
+	"%^s dances around you!",
+	"%^s tugs at your clothing!",
+	"%^s asks if you will adopt him!",
+	0
+};
+
+
+/*
+ * Hack -- possible "moan" messages
+ */
+static cptr desc_moan[] =
+{
+	"%^s seems sad about something.",
+	"%^s asks if you have seen his dogs.",
+	"%^s tells you to get off his land.",
+	"%^s mumbles something about mushrooms.",
+	0
+};
+
+/*
+ * Hack - possible "sing" messages
+ */
+static cptr desc_sing[] =
+{
+	"%^s sings 'I love you, you love me.'",
+	"%^s sings 'I love you, you love me.'",
+	"%^s sings 'We are a happy family.'",
+	0
+};
+
+blow_method_type blow_methods[] =
+{
+	{RBM_HIT, RBF_TOUCH | RBF_CUT | RBF_STUN, "hit", "%^s hits %s.", NULL, "%^s misses %s."},
+	{RBM_TOUCH, RBF_TOUCH, "touch", "%^s touches %s.", NULL, "%^s misses %s."},
+	{RBM_PUNCH, RBF_TOUCH | RBF_STUN, "punch", "%^s punches %s.", NULL, "%^s misses %s."},
+	{RBM_KICK, RBF_TOUCH | RBF_STUN, "kick", "%^s kicks %s.", NULL, "%^s misses %s."},
+	{RBM_CLAW, RBF_TOUCH | RBF_CUT, "claw", "%^s claws %s.", NULL, "%^s misses %s."},
+	{RBM_BITE, RBF_TOUCH | RBF_CUT, "bite", "%^s bites %s.", NULL, "%^s misses %s."},
+	{RBM_STING, RBF_TOUCH, "sting", "%^s stings %s.", NULL, "%^s misses %s."},
+	{RBM_BUTT, RBF_TOUCH | RBF_STUN, "butt", "%^s butts %s.", NULL, "%^s misses %s."},
+	{RBM_CRUSH, RBF_TOUCH | RBF_STUN, "crush", "%^s crushes %s.", NULL, "%^s misses %s."},
+	{RBM_ENGULF, RBF_TOUCH, "engulf", "%^s engulfs %s.", NULL, "%^s misses %s."},
+	{RBM_CHARGE, RBF_TOUCH, "charge", "%^s charges at %s.", NULL, "%^s misses %s."},
+	{RBM_CRAWL, RBF_TOUCH, "crawl on you", "%^s crawl on %s.", NULL, NULL},
+	{RBM_DROOL, 0, "drool on you", "%^s drool on %s.", NULL, NULL},
+	{RBM_SPIT, 0, "spit", "%^s spits on %s.", NULL, NULL},
+	{RBM_GAZE, 0, "gaze", "%^s gazes at %s.", NULL, NULL},
+	{RBM_WAIL, 0, "wail", "%^s wails at %s.", NULL, NULL},
+	{RBM_SPORE, 0, "release spores", "%^s release spores at %s.", NULL, NULL},
+	{RBM_WORSHIP, 0, "hero worship", "%^s hero worships %s.", desc_worship, NULL},
+	{RBM_BEG, RBF_WAKE, "beg", "%^s begs %s for money.", NULL, NULL},
+	{RBM_INSULT, RBF_WAKE, "insult", "%^s insults %s.", desc_insult, NULL},
+	{RBM_MOAN, RBF_WAKE, "moan", "%^s moans at %s.", desc_moan, NULL},
+	{RBM_SHOW, RBF_WAKE, "sing", "%^s sings to %s.", desc_sing, NULL},
+	{0, 0, 0, 0, 0, 0}
+};

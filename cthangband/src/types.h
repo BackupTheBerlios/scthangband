@@ -1423,3 +1423,20 @@ struct high_score
 
 	char how[32];		/* Method of death (string) */
 };
+
+/*
+ * List the variable elements of a monster blow method.
+ */
+typedef const struct blow_method_type blow_method_type;
+
+struct blow_method_type
+{
+	byte idx; /* The index by which the attack type is known. */
+	byte flags; /* RBF_* flags. */
+	cptr name; /* Descriptive name. */
+	cptr hitmsg; /* Message on hitting the target. */
+	cptr *hitplayer; /* Null-terminated list of random messages for hitting the
+		* player. Overrides hitmsg. */
+	cptr missmsg; /* Message on missing the target, if any. */
+};
+

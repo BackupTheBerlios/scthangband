@@ -2473,6 +2473,12 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RBM_MOAN        23
 #define RBM_SHOW        24 /* TY */
 
+/* Blow method flags. */
+#define RBF_TOUCH 0x01 /* Is affected by target's aura. */
+#define RBF_WAKE 0x02 /* Always wakes monster target. */
+#define RBF_CUT 0x04 /* Cuts player target. */
+#define RBF_STUN 0x08 /* Stuns player target. */
+
 
 /*
  * New monster blow effects
