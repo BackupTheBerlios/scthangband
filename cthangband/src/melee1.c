@@ -60,7 +60,7 @@ static int monster_critical(int dice, int sides, int dam)
  */
 int check_hit(int power, int level)
 {
-	int i, k, ac;
+	int i, k;
 
 	/* Percentile dice */
 	k = rand_int(100);
@@ -71,11 +71,8 @@ int check_hit(int power, int level)
 	/* Calculate the "attack quality" */
 	i = (power + (level * 3));
 
-	/* Total armor */
-	ac = p_ptr->ac + p_ptr->to_a;
-
 	/* Power and Level compete against Armor */
-	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
+	if ((i > 0) && (randint(i) > ((p_ptr->ac * 3) / 4))) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -137,7 +134,7 @@ bool make_attack_normal(int m_idx)
 
 	int			ap_cnt,blow_types;
 
-	int			i, j, k, tmp, ac, rlev;
+	int			i, j, k, tmp, rlev;
 	int			do_cut, do_stun;
 
 	s32b		gold;
@@ -177,9 +174,6 @@ bool make_attack_normal(int m_idx)
 		return FALSE;
 	}
 
-
-	/* Total armor */
-	ac = p_ptr->ac + p_ptr->to_a;
 
 	/* Extract the effective monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
@@ -497,7 +491,7 @@ bool make_attack_normal(int m_idx)
 					obvious = TRUE;
 
 					/* Hack -- Player armor reduces total damage */
-					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
+					damage -= (damage * MIN(p_ptr->ac, 150) / 250);
 
 					/* Take damage */
 					take_hit(damage, ddesc, m_ptr->r_idx);
@@ -1112,7 +1106,7 @@ bool make_attack_normal(int m_idx)
 					obvious = TRUE;
 
 					/* Hack -- Reduce damage based on the player armor class */
-					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
+					damage -= (damage * MIN(p_ptr->ac, 150) / 250);
 
 					/* Take damage */
 					take_hit(damage, ddesc, m_ptr->r_idx);

@@ -110,12 +110,6 @@ extern void monster_race_track(int r_idx);
 #if (defined(CAVE_C) || defined(CMD5_C))
 extern void object_kind_track(int k_idx);
 #endif
-
-
-
-
-
-
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(XTRA2_C))
 extern void object_track(object_type *o_ptr);
 #endif
@@ -2653,12 +2647,6 @@ extern bool hack_chaos_feature;
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern int artifact_bias;
 #endif
-
-
-
-
-
-
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern s16b o_max;
 #endif
@@ -2851,8 +2839,14 @@ extern bool no_centre_run;
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool auto_more;
 #endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool preserve_mode_w;
+#endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool preserve_mode;
+#endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool maximise_mode_w;
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool maximise_mode;
@@ -2863,8 +2857,20 @@ extern bool use_autoroller;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spend_points;
 #endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool ironman_shop_w;
+#endif
 #if (defined(FILES_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_shop;
+#endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool ironman_feeling_w;
+#endif
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool ironman_feeling;
+#endif
+#if (defined(SCORE_QUITTERS)) && (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool score_quitters_w;
 #endif
 #if (defined(SCORE_QUITTERS)) && (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool score_quitters;
@@ -3021,9 +3027,6 @@ extern bool display_credits;
 #endif
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool allow_pickstats;
-#endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool ironman_feeling;
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
 extern s16b hitpoint_warn;
@@ -3987,23 +3990,5 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
-#endif
-
-/* variable.c */
-
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool preserve_mode_w;
-#endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool maximise_mode_w;
-#endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool ironman_shop_w;
-#endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool ironman_feeling_w;
-#endif
-#if (defined(SCORE_QUITTERS)) && (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool score_quitters_w;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

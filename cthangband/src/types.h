@@ -1183,9 +1183,8 @@ struct player_type
 
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to dam */
-	s16b to_a;			/* Bonus to ac */
 
-	s16b ac;			/* Base ac */
+	s16b ac;			/* Armour class (base + bonus) */
 
 	s16b see_infra;		/* Infravision range */
 

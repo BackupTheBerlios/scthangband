@@ -1711,7 +1711,7 @@ static void calc_bonuses(bool quiet)
 	/* Clear the Displayed/Real Bonuses */
 	p_ptr->dis_to_h = p_ptr->to_h = 0;
 	p_ptr->dis_to_d = p_ptr->to_d = 0;
-	p_ptr->dis_to_a = p_ptr->to_a = 0;
+	p_ptr->dis_to_a = 0;
 
 
 	/* Clear all the flags */
@@ -2122,21 +2122,21 @@ static void calc_bonuses(bool quiet)
 		if (p_ptr->muta3 & MUT3_WART_SKIN)
 		{
 			p_ptr->stat_add[A_CHR] -= 2;
-			p_ptr->to_a += 5;
+			p_ptr->ac += 5;
 			p_ptr->dis_to_a += 5;
 		}
 		
 		if (p_ptr->muta3 & MUT3_SCALES)
 		{
 			p_ptr->stat_add[A_CHR] -= 1;
-			p_ptr->to_a += 10;
+			p_ptr->ac += 10;
 			p_ptr->dis_to_a += 10;
 		}
 		
 		if (p_ptr->muta3 & MUT3_IRON_SKIN)
 		{
 			p_ptr->stat_add[A_DEX] -= 1;
-			p_ptr->to_a += 25;
+			p_ptr->ac += 25;
 			p_ptr->dis_to_a += 25;
 		}
 		
@@ -2307,7 +2307,7 @@ static void calc_bonuses(bool quiet)
 		p_ptr->dis_ac += o_ptr->ac;
 
 		/* Apply the bonuses to armor class */
-		p_ptr->to_a += o_ptr->to_a;
+		p_ptr->ac += o_ptr->to_a;
 
 		/* Apply the mental bonuses to armor class, if known */
         if (object_known_p(o_ptr)) p_ptr->dis_to_a += o_ptr->to_a;
@@ -2332,7 +2332,7 @@ static void calc_bonuses(bool quiet)
 
     if (p_ptr->prace == RACE_GOLEM) /* Golems also get an intrinsic AC bonus */
     {
-        p_ptr->to_a += 20 + ((skill_set[SKILL_RACIAL].value/2) / 5);
+        p_ptr->ac += 20 + ((skill_set[SKILL_RACIAL].value/2) / 5);
         p_ptr->dis_to_a += 20 + ((skill_set[SKILL_RACIAL].value/2) / 5);
     }
 
@@ -2438,14 +2438,14 @@ static void calc_bonuses(bool quiet)
 	/* Invulnerability */
 	if (p_ptr->invuln)
 	{
-		p_ptr->to_a += 100;
+		p_ptr->ac += 100;
 		p_ptr->dis_to_a += 100;
 	}
 
     /* wraith_form */
     if (p_ptr->wraith_form)
 	{
-		p_ptr->to_a += 100;
+		p_ptr->ac += 100;
 		p_ptr->dis_to_a += 100;
         p_ptr->reflect = TRUE;
 	}
@@ -2453,7 +2453,7 @@ static void calc_bonuses(bool quiet)
 	/* Temporary blessing */
 	if (p_ptr->blessed)
 	{
-		p_ptr->to_a += 5;
+		p_ptr->ac += 5;
 		p_ptr->dis_to_a += 5;
 		p_ptr->to_h += 10;
 		p_ptr->dis_to_h += 10;
@@ -2462,7 +2462,7 @@ static void calc_bonuses(bool quiet)
 	/* Temprory shield */
 	if (p_ptr->shield)
 	{
-		p_ptr->to_a += 50;
+		p_ptr->ac += 50;
 		p_ptr->dis_to_a += 50;
 	}
 
@@ -2478,7 +2478,7 @@ static void calc_bonuses(bool quiet)
 	{
 		p_ptr->to_h += 24;
 		p_ptr->dis_to_h += 24;
-		p_ptr->to_a -= 10;
+		p_ptr->ac -= 10;
 		p_ptr->dis_to_a -= 10;
 	}
 
@@ -2575,7 +2575,7 @@ static void calc_bonuses(bool quiet)
 
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->ac += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
 	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
