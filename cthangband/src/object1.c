@@ -1911,7 +1911,7 @@ void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
  * Hack -- describe an item currently in a store's inventory
  * This allows an item to *look* like the player is "aware" of it
  */
-void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
+static void object_desc_store(char *buf, uint len, object_type *o_ptr, int pref, int mode)
 {
 	/* Save the "aware" flag */
 	bool hack_aware = k_info[o_ptr->k_idx].aware;
@@ -1938,7 +1938,7 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 	plain_descriptions = TRUE;
 
 	/* Describe the object */
-	strnfmt(buf, ONAME_MAX, "%v", object_desc_f3, o_ptr, pref, mode);
+	strnfmt(buf, len, "%v", object_desc_f3, o_ptr, pref, mode);
 
 
 	/* Restore "aware" flag */
@@ -1953,6 +1953,39 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 	/* Restore the "plain_descriptions" flag */
 	plain_descriptions = old_plain_descriptions;
 
+}
+
+/*
+ * Process the above as a vstrnfmt_aux function.
+ *
+ * Format: 
+ * "%v", object_desc_store_f3, (object_type*)o_ptr, (int)pref, (int)mode
+ * or:
+ * "%.*v", (int)len, object_desc_store_f3, o_ptr, pref, mode
+ */
+void object_desc_store_f3(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	object_type *o_ptr = va_arg(*vp, object_type *);
+	int pref = va_arg(*vp, int);
+	int mode = va_arg(*vp, int);
+	cptr s;
+	uint len;
+
+	/* Use %.123v to specify a maximum length of 123. */
+	if ((s = strchr(fmt, '.')))
+	{
+		long m = strtol(s+1, 0, 0);
+		len = MAX(0, m+1);
+	}
+	else
+	{
+		len = ONAME_MAX;
+	}
+
+	/* Ensure that the buffer fits within buf. */
+	if (max < len) len = max;
+
+	object_desc_store(buf, len, o_ptr, pref, mode);
 }
 
 

@@ -1893,7 +1893,7 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, ch
 	object_prep(&forge, i);
 
 	/* Describe the object without flavour. */
-	object_desc_store(o_name, &forge, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, &forge, FALSE, 0);
 
 	/* Place in a temporary buffer. */
 	(*name) = format("%s", o_name);
@@ -3135,7 +3135,7 @@ static void do_cmd_knowledge_artifacts(void)
 			q_ptr->name1 = k;
 
 			/* Describe the artifact */
-			object_desc_store(base_name, q_ptr, FALSE, 0);
+			strnfmt(base_name, ONAME_MAX, "%v", object_desc_store_f3, q_ptr, FALSE, 0);
 		}
 
 		/* Hack -- Build the artifact name */
@@ -3511,7 +3511,7 @@ static void do_cmd_knowledge_objects(void)
 			object_prep(i_ptr, k);
 
 			/* Describe the object */
-			object_desc_store(o_name, i_ptr, FALSE, 0);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, i_ptr, FALSE, 0);
 
 			/* Print a message */
 			my_fputs(fff, format(" %v   %s", get_symbol_f2,

@@ -1851,7 +1851,7 @@ static void display_entry(int pos)
 		}
 		else
 		{
-			object_desc_store(o_name, o_ptr, TRUE, 3);
+			strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 3);
 		}
 
 
@@ -2448,7 +2448,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 		if(cur_store_type == STORE_PAWN)
 			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 		else
-		object_desc_store(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 3);
 		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
 		*price = final_ask;
 		return !get_check(out_val);
@@ -3113,7 +3113,7 @@ static void store_purchase_aux(char *o_name)
 			}
 			else
 			{
-				object_desc_store(o_name, j_ptr, TRUE, 3);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, j_ptr, TRUE, 3);
 			}
 			/* Message */
 			if (!auto_haggle || verbose_haggle)
@@ -3611,7 +3611,7 @@ static void store_sell(void)
 	else /* Make it look as though we are aware of the item. */
 	{
 		C_TNEW(o_name, ONAME_MAX, char);
-		object_desc_store(o_name, o_ptr, TRUE, 3);
+		strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 3);
 		msg_format("Examining %s...", o_name);
 		if (!identify_fully_aux(o_ptr, TRUE)) msg_print("You see nothing special.");
 		TFREE(o_name);

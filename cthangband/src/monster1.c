@@ -197,7 +197,7 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 				if (i_ptr->flags & EI_EGO)
 				o_ptr->name2 = EP_EGO;
 #endif
-				object_desc_store(o_name, o_ptr, TRUE, 0);
+				strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 0);
 				(*out)(format("%s %s drop %s", he, DDE_MAY, o_name));
 				TFREE(o_name);
 				break;

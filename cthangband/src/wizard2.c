@@ -354,7 +354,7 @@ static void wiz_display_item(object_type *o_ptr)
 	for (i = 1; i <= 23; i++) prt("", i, j - 2);
 
 	/* Describe fully */
-	object_desc_store(buf, o_ptr, TRUE, 3);
+	strnfmt(buf, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 3);
 
 	prt(buf, 2, j);
 
@@ -465,7 +465,7 @@ static void strip_name(char *buf, int k_idx)
 
 	object_prep(&forge, k_idx);
 
-	object_desc_store(buf, &forge, FALSE, 0);
+	strnfmt(buf, ONAME_MAX, "%v", object_desc_store_f3, &forge, FALSE, 0);
 }
 
 
