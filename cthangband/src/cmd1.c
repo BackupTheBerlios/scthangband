@@ -516,6 +516,49 @@ void search(void)
 
 
 
+/*
+ * Modified version of get_check() to give a [y/n/q] prompt, returning
+ * information available. Returns 'y', 'n' or 'q' as appropriate.
+ */
+static char get_check_ynq(cptr prompt)
+{
+	/* Enforce a single-line prompt. */
+	int i = Term->wid-strlen("[y/n/q] ");
+
+	/* Paranoia XXX XXX XXX */
+	msg_print(NULL);
+
+	/* Hack -- display a "useful" prompt */
+	prt(format("%.*s[y/n/q] ", i, prompt), 0, 0);
+
+	/* Get an acceptable answer */
+	while (TRUE)
+	{
+		i = inkey();
+		if (quick_prompt) break;
+		if (i == ESCAPE) break;
+		if (strchr("YyNnQq", i)) break;
+		bell();
+	}
+
+	/* Erase the prompt */
+	prt("", 0, 0);
+
+	/* Leave a record */
+	message_add(format("%.70s[y/n] %c", prompt, i));
+	
+	/* Return output (default to no). */
+	switch (i)
+	{
+		case 'y': case 'Y': return 'y';
+		case 'q': case 'Q': return 'q';
+		case 'n': case 'N': default: return 'n';
+	}
+		
+	/* Tell the calling routine */
+	return (char)i;
+}
+
 
 /*
  * Player "wants" to pick up an object or gold.
@@ -530,6 +573,7 @@ void carry(int pickup)
 
 	char o_name[ONAME_MAX];
 
+	bool gold_only = FALSE;
 
 	/* Scan the pile of objects */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -568,6 +612,10 @@ void carry(int pickup)
 			delete_object_idx(this_o_idx);
 		}
 
+		/* gold_only cancels the collection of objects, but gold is picked up
+		 * automatically. */
+		else if (gold_only);
+
 		/* Pick up objects */
 		else
 		{
@@ -594,9 +642,15 @@ void carry(int pickup)
 				/* Hack -- query every item */
 				if (carry_query_flag && !strstr(quarkstr(o_ptr->note), "=g"))
 				{
-					char out_val[160];
+					char out_val[160], c;
 					sprintf(out_val, "Pick up %s? ", o_name);
-					okay = get_check(out_val);
+					c = get_check_ynq(out_val);
+
+					/* Pick up this object. */
+					okay = (c == 'y');
+
+					/* Pick up no more objects. */
+					gold_only = (c == 'q');
 				}
 
 				/* Attempt to pick up an object. */
