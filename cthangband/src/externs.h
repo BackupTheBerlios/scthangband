@@ -2099,13 +2099,13 @@ extern s16b ddy_ddd[9];
 #if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_IBM_C) || defined(MAIN_VCS_C) || defined(MAIN_WIN_C) || defined(TABLES_C) || defined(UTIL_C))
 extern char hexsym[16];
 #endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_mag_study[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_mag_mana[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C))
+#if (defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern const byte adj_mag_fail[NUM_STAT_INDICES];
 #endif
 #if (defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C))
@@ -2117,13 +2117,13 @@ extern const byte adj_chr_gold[NUM_STAT_INDICES];
 #if (defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_int_dev[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_wis_sav[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_dex_dis[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_int_dis[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
@@ -2138,10 +2138,10 @@ extern const byte adj_dex_th[NUM_STAT_INDICES];
 #if (defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_str_th[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_str_wgt[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_str_hold[NUM_STAT_INDICES];
 #endif
 #if (defined(TABLES_C) || defined(XTRA1_C))
@@ -2153,10 +2153,10 @@ extern const byte adj_str_blow[NUM_STAT_INDICES];
 #if (defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_dex_blow[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(TABLES_C))
+#if (defined(CMD2_C) || defined(CMD4_C) || defined(FILES_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern const byte adj_dex_safe[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(TABLES_C))
+#if (defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(TABLES_C))
 extern const byte adj_con_fix[NUM_STAT_INDICES];
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
@@ -3674,7 +3674,7 @@ extern char *vformat(cptr fmt, va_list vp);
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern uint strnfmt(char *buf, uint max, cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(Z_FORM_C))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(Z_FORM_C))
 extern char *format(cptr fmt, ...);
 #endif
 #if (defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_FORM_C))
@@ -3764,7 +3764,7 @@ extern void Term_putch(int x, int y, byte a, char c);
 #if (defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(WIZARD1_C) || defined(Z_TERM_C))

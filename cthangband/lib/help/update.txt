@@ -10,6 +10,7 @@ sCthangband _CVS_
   * The game hung if it was started without an existing save file.
   * The keys for increasing stats during character creation were displayed
     wrongly.
+  * Loading the "previous" set of stats in quick-start didn't work.
 
 sCthangband 1.0.14
 * Cause ball attacked aimed in a direction to only be stopped by a wall or a
