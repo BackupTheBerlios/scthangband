@@ -3774,7 +3774,7 @@ static void do_cmd_knowledge_shops(void)
 	{
 		char c;
 		shops_display(town);
-		prt("Press +,- or 0-7 to change displayed town, or ESC to exit.", 22, 0);
+		prt("[Press +,- or a town symbol to change displayed town, or press ESC to exit.]", 22, 0);
 		Term_fresh();
 		c = inkey();
 		Term_putch(0,0,TERM_YELLOW,c);
@@ -3798,11 +3798,24 @@ static void do_cmd_knowledge_shops(void)
 				
 			} while (!shops_good(town));
 		}
-		else if (c >= '0' && c < '0'+MAX_TOWNS)
+		else
 		{
-			if (shops_good(c-'0'))
+			int i;
+			for (i = 0;; i++)
 			{
-				town = c-'0';
+				/* None found. */
+				if (i == MAX_TOWNS)
+				{
+					bell();
+					break;
+				}
+
+				if ((dun_defs[i].sym == c) &&
+					(shops_good(i)))
+				{
+					town = i;
+					break;
+				}
 			}
 		}
 	}
