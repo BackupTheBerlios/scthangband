@@ -686,8 +686,9 @@ char *vformat(cptr fmt, va_list vp)
 			char *old_buf = format_buf;
 			format_len = format_len * 2;
 			C_MAKE(format_buf, format_len, char);
-			strcpy(format_buf, old_buf, buf_len);
+			strncpy(format_buf, old_buf, buf_len);
 			KILL(old_buf);
+		}
 	}
 
 	/* Return the new buffer */
