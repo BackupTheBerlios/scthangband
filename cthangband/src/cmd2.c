@@ -219,6 +219,7 @@ void do_cmd_go_up(void)
 				/* Check for leaving dungeon */
 				if(dun_level == 0)
 				{
+					recall_dungeon = cur_dungeon;
 					wildx=dun_defs[cur_dungeon].x;
 					wildy=dun_defs[cur_dungeon].y;
 					came_from=START_STAIRS;
@@ -321,6 +322,7 @@ void do_cmd_go_down(void)
 				{
 					wildx=dun_defs[cur_dungeon].x;
 					wildy=dun_defs[cur_dungeon].y;
+					recall_dungeon = cur_dungeon;
 					came_from=START_STAIRS;
 				}
 			}
