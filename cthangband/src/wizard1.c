@@ -1655,22 +1655,7 @@ static void spoil_mon_info(cptr fname)
 		spoil_out("  ");
 
 
-		spoil_out("This");
-
-        if (flags2 & (RF2_ELDRITCH_HORROR)) spoil_out (" sanity-blasting");
-		if (flags3 & (RF3_ANIMAL)) spoil_out(" natural");
-		if (flags3 & (RF3_EVIL)) spoil_out(" evil");
-        if (flags3 & (RF3_GOOD)) spoil_out(" good");
-		if (flags3 & (RF3_UNDEAD)) spoil_out(" undead");
-
-		if (flags3 & (RF3_DRAGON)) spoil_out(" dragon");
-		else if (flags3 & (RF3_DEMON)) spoil_out(" demon");
-		else if (flags3 & (RF3_CTHULOID)) spoil_out(" Cthuloid entity");
-		else if (flags3 & (RF3_GIANT)) spoil_out(" giant");
-		else if (flags3 & (RF3_TROLL)) spoil_out(" troll");
-		else if (flags3 & (RF3_ORC)) spoil_out(" orc");
-        else if (flags3 & (RF3_GREAT_OLD_ONE)) spoil_out (" Great Old One");
-		else spoil_out(" creature");
+		spoil_out(roff_monster(flags2, flags3));
 
 		spoil_out(" moves");
 

@@ -237,41 +237,72 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 	}
 }
 
-/* A macro to regularise the function below. */
-#define ROFF_MONSTER(var, flag, string) \
-	if ((var) & (flag)) out = format("%s %s", out, string)
+typedef struct roff_monster_type roff_monster_type;
+
+struct roff_monster_type
+{
+	int set;
+	u32b value;
+	cptr adjective;
+	cptr noun;
+};
 
 /*
  * Return the type of monster something is (e.g. an undead dragon) on demand.
  * This doesn't allow conditional colour codes, but could if c_roff() had
  * escape sequences for them. It doesn't print anything directly as it doesn't
  * know what colour everything should be by default.
- *
- * Hack - It should be identical to the version in spoil_mon_info().
- * Its output needs to be handled carefully if used in format strings as it's
- * stored in the format buffer.
  */
-static cptr roff_monster(u32b flags2, u32b flags3)
+cptr roff_monster(u32b flags2, u32b flags3)
 {
-	cptr out = "this";
+	roff_monster_type cats[] =
+	{
+		{2, RF2_ELDRITCH_HORROR, "sanity-blasting", "eldritch horror"},
+		{3, RF3_ANIMAL, "natural", "animal"},
+		{3, RF3_EVIL, "evil", "evil monster"},
+		{3, RF3_GOOD, "good", "good creature"},
+		{3, RF3_UNDEAD, "undead", "undead thing"},
+		{3, RF3_DRAGON, "draconic", "dragon"},
+		{3, RF3_DEMON, "demoniac", "demon"},
+		{3, RF3_CTHULOID, "Cthuloid", "Cthuloid entity"},
+		{3, RF3_GIANT, "gigantic", "giant"},
+		{3, RF3_TROLL, "trollish", "troll"},
+		{3, RF3_ORC, "orcish", "orc"},
+		{3, RF3_GREAT_OLD_ONE, "Great Old One", "Great Old One"},
+	};
 
-	/* Describe the "quality" */
-	ROFF_MONSTER(flags2, RF2_ELDRITCH_HORROR, "sanity-blasting");
-	ROFF_MONSTER(flags3, RF3_ANIMAL, "natural");
-	ROFF_MONSTER(flags3, RF3_EVIL, "evil");
-	ROFF_MONSTER(flags3, RF3_GOOD, "good");
-	ROFF_MONSTER(flags3, RF3_UNDEAD, "undead");
+	u32b flags[4];
 
-	ROFF_MONSTER(flags3, RF3_DRAGON, "dragon");
-	else ROFF_MONSTER(flags3, RF3_DEMON, "demon");
-	else ROFF_MONSTER(flags3, RF3_CTHULOID, "Cthuloid entity");
-	else ROFF_MONSTER(flags3, RF3_GIANT, "giant");
-	else ROFF_MONSTER(flags3, RF3_TROLL, "troll");
-	else ROFF_MONSTER(flags3, RF3_ORC, "orc");
-	else ROFF_MONSTER(flags3, RF3_GREAT_OLD_ONE, "Great Old One");
-	else out = format("%s %s", out, "creature");
+	uint i, j;
 
-	return out;
+	/* Put the input in the flags array for convenience. */
+	flags[2] = flags2;
+	flags[3] = flags3;
+
+	/* Count the number of applicable flags. */
+	for (i = j = 0; i < N_ELEMENTS(cats); i++)
+	{
+		if (flags[cats[i].set] & cats[i].value) j++;
+	}
+
+	if (!j)
+	{
+		/* No applicable categories, so use something simple. */
+		return "This creature";
+	}
+	else
+	{
+		cptr out = "This";
+
+		/* Write out the strings, putting the last as a noun. */
+		for (i = 0; j; i++)
+		{
+			if (flags[cats[i].set] & cats[i].value)
+				out = format("%s %s", out,
+					(--j) ? cats[i].adjective : cats[i].noun);
+		}
+		return out;
+	}
 }
 	
 

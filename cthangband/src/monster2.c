@@ -3000,7 +3000,6 @@ static bool summon_specific_okay(int r_idx)
 
         case SUMMON_ORC:
 		{
-			/* Should this use RF1_ORC? */
 			return !!(r_ptr->flags3 & (RF3_ORC));
 		}
 

@@ -3958,4 +3958,10 @@ extern errr string_free(cptr str);
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C))
 extern bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm);
 #endif
+
+/* monster1.c */
+
+#if (defined(MONSTER1_C) || defined(WIZARD1_C))
+extern cptr roff_monster(u32b flags2, u32b flags3);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
