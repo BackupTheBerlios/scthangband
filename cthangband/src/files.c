@@ -476,16 +476,13 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			}
 			else return "format not K:<num>:<a>/<c>";
 		}
-		/* 
-		 * Simply extract the tokens and pass to squelch.c, as no action is
-		 * appropriate without detailed knowledge.
-		 */
+		/* Process "{:<k_idx>:<str>" - default inscription for an object_kind. */
 		case '{':
 		{
 			int i = tokenize(buf+2, 3, zz);
 			if (i == 1 && !strcmp(zz[0], "---reset---"))
 			{
-				for (i = 0; i < MAX_K_IDX; i++) k_info[i].note = 0;
+				for (i = 0; i < z_info->k_max; i++) k_info[i].note = 0;
 			}
 			else if (i == 2)
 			{
@@ -501,6 +498,30 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			}
 			return NULL;
 		}
+		/* Process "}:<k_idx>:<str>" - default inscription for an o_base_type. */
+		case '}':
+		{
+			int i = tokenize(buf+2, 3, zz);
+			if (i == 1 && !strcmp(zz[0], "---reset---"))
+			{
+				for (i = 0; i < z_info->ob_max; i++) o_base[i].note = 0;
+			}
+			else if (i == 2)
+			{
+				long l = strtol(zz[0], NULL, 0);
+				if (l < 0 || l > MAX_UCHAR) return "no such base object";
+				o_base[i].note = quark_add(zz[1]);
+			}
+			else
+			{
+				return "format not }:<k_idx>:<inscription>";
+			}
+			return NULL;
+		}
+		/* 
+		 * Simply extract the tokens and pass to squelch.c, as no action is
+		 * appropriate without detailed knowledge.
+		 */
 		case 'Q':
 		{
 			int i = tokenize(buf+2, 16, zz);
@@ -1433,7 +1454,7 @@ static void choose_ammunition(object_ctype *wp_ptr, object_type **am_ptr)
 	for (o_ptr = inventory; o_ptr <= inventory+INVEN_PACK; o_ptr++)
 	{
 		if (tval && (o_ptr->tval != tval)) continue;
-		if (!strstr(quark_str(o_ptr->note), "@ff")) continue;
+		if (!strstr(get_inscription(o_ptr), "@ff")) continue;
 		(*am_ptr) = o_ptr;
 		return;
 	}
@@ -1458,7 +1479,7 @@ static void choose_bow(object_ctype *am_ptr, object_type **wp_ptr)
 	/* Use a launcher from inventory if appropriate and marked. */
 	for (o_ptr = inventory; o_ptr <= inventory+INVEN_PACK; o_ptr++)
 	{
-		if (!strstr(quark_str(o_ptr->note), "@ff")) continue;
+		if (!strstr(get_inscription(o_ptr), "@ff")) continue;
 		if (ammunition_type(o_ptr) != am_ptr->tval) continue;
 		*wp_ptr = o_ptr;
 		return;

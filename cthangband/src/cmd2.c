@@ -2159,7 +2159,7 @@ static void carry(int pickup)
 					continue;
 				}
 			}
-			else if (strstr(quark_str(o_ptr->note), "=g"))
+			else if (strstr(get_inscription(o_ptr), "=g"))
 			{
 				pickup_this = TRUE;
 			}

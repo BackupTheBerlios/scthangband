@@ -1604,7 +1604,9 @@ int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr)
 	if (!stack_force_notes && (o_ptr->note != j_ptr->note)) return (0);
 
 	/* Hack -- normally require matching "discounts" */
-	if (!stack_force_costs && !strchr(quark_str(o_ptr->note), '%') && !strchr(quark_str(j_ptr->note), '%') && (o_ptr->discount != j_ptr->discount)) return (0);
+	if (!stack_force_costs && !strchr(get_inscription(o_ptr), '%') &&
+		!strchr(get_inscription(j_ptr), '%') &&
+		(o_ptr->discount != j_ptr->discount)) return (0);
 
 
 	/* They can't all stack, so return how many do. */
@@ -1719,8 +1721,8 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- blend "inscriptions" */
 	if (j_ptr->note != o_ptr->note)
 	{
-		cptr jq = quark_str(j_ptr->note);
-		cptr oq = quark_str(o_ptr->note);
+		cptr jq = get_inscription(j_ptr);
+		cptr oq = get_inscription(o_ptr);
 		o_ptr->note = merge_quarks(oq, jq);
 	}
 

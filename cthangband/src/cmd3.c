@@ -483,8 +483,8 @@ void do_cmd_inscribe(object_type *o_ptr)
 	msg_format("Inscribing %v.", object_desc_f3, o_ptr, TRUE, 3);
 	msg_print(NULL);
 
-		/* Start with the old inscription */
-	strcpy(out_val, quark_str(o_ptr->note));
+	/* Start with the old inscription */
+	sprintf(out_val, "%.79s", get_inscription(o_ptr));
 
 	/* Get a new inscription (possibly empty) */
 	if (get_string("Inscription: ", out_val, 80))
@@ -494,11 +494,11 @@ void do_cmd_inscribe(object_type *o_ptr)
 
 		/* Recalculate/redraw stuff (later) */
 		update_object(o_ptr);
-	}
 
 		/* Make a note of the change. */
-	message_add(format("Inscribed %v as %s.", object_desc_f3, o_ptr, TRUE, 3,
-		quark_str(o_ptr->note)));
+		message_add(format("Inscribed %v as %s.",
+			object_desc_f3, o_ptr, TRUE, 3, quark_str(o_ptr->note)));
+	}
 }
 
 

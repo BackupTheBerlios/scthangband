@@ -661,22 +661,40 @@ via various degrees of power and cursedness, to "all". Not all settings are
 available for every object. You can also set a default inscription for each object.
 
 This uses the following commands:
-    !     - enter "modify squelch setting" mode.
-    {     - enter "modify default inscription" mode.
-
-In "modify squelch setting" mode, the following keys apply:
 a-z, etc. - change the squelch setting for one object.
   Ctrl-A  - squelch all displayed objects.
   Ctrl-N  - unsquelch all displayed objects.
   Ctrl-S  - move the squelch setting for all displayed objects by one place.
 
-In "modify default inscription" mode, the following keys apply:
-a-z, etc. - change the inscription for one object.
-  Ctrl-A  - change the inscription for all displayed objects to something.
-
 %%%%%
 Things to note about these options include:
 1. No squelch settings are stored in the save file, so they must be saved if the player wishes to retain them from session to session.
 2. As squelched objects are *****cmd=K*[hidden] rather than *****cmd=k*[destroyed] them, squelching will not identify cursed artefacts immediately. However, squelched objects in inventory (although not on the floor) can be destroyed by destroying object z.
-3. Default inscriptions only affect new objects. Existing objects will only
-change their inscriptions with player intervention.
+
+%%%%% <option=I>
+=== Inscription options ===
+
+This menu controls what inscription an object which doesn't have an inscription
+of its own will have active. This is useful as there are a number of special commands which can be included within inscriptions (see the *****cmd={*[inscribe command] for details).
+
+In the first menu, you simply need to select a character for the type of object you want. There are a number of (hopefully self-explanatory) object categories and one labelled "Unidentified items" which allows you to set the inscription for (e.g.) all unidentified potions.
+
+This uses the following commands:
+a-z, etc. - choose a category of item (including unidentified items) within
+            which to set the default inscription.
+  Ctrl-S  - Save the inscriptions to a file.
+  Escape  - Leave the menu, accepting any changes made.
+
+%%%%% <option=I2>
+The items in the chosen which are available are displayed on the second menu. If there is enough space, each will list the inscription which is currently assigned to it in curly brackets.
+
+Pressing the character in square brackets before an entry will allow you to change the default inscription for the item type or unidentified item category. 
+
+The "object" inscription will then be used for all similar objects, provided that you know what such objects look like. The "unidentified" inscription will be used for every object which uses the same set of unidentified descriptions as the listed one.
+
+This means that a "Gold Ring" will use the inscription assigned to "Zircon Ring", but a "Plain Gold Ring" will not do so as no object can be represented as a "Zircon Ring" in one game but a "Plain Gold Ring" in the next. 
+
+This uses the following commands:
+a-z, etc. - change the default inscription for the selected item or unidentified
+            item class.
+  Escape  - Leave the menu, accepting any changes made.

@@ -78,27 +78,6 @@ cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 }
 
 
-void inscription_dump(FILE *fff)
-{
-	int i;
-
-	/* Title. */
-	fprintf(fff, "\n\n# Automatic default inscription dump\n\n");
-
-	/* Reset. */
-	fprintf(fff, "# Reset inscriptions\n{:---reset---\n\n");
-
-	for (i = 0; i < z_info->k_max; i++)
-	{
-		/* Nothing more to say. */
-		if (!k_info[i].note) continue;
-
-		/* Save the setting. */
-		my_fprintf(fff, "# %v\n", object_k_name_f1, i);
-		fprintf(fff, "{:%d:%s\n\n", i, quark_str(k_info[i].note));
-	}
-}
-
 /*
  * Dump the squelch settings to an open stream.
  */
@@ -128,44 +107,6 @@ void squelch_dump(FILE *fff)
 		my_fprintf(fff, "# %v\n", object_k_name_f1, i);
 		fprintf(fff, "Q:%d:%d\n\n", i, k_info[i].squelch);
 	}
-}
-
-/*
- * Save squelch prefs to a file of the player's choosing.
- */
-static void save_squelch_prefs(int miny)
-{
-	FILE *fff;
-	char buf[256];
-
-	put_str("File: ", miny, 0);
-
-	sprintf(buf, "%.251s.prf", player_base);
-
-	/* Request choice, accept abort. */
-	if (!askfor_aux(buf, 256)) return;
-
-	/* Open the file. */
-	fff = my_fopen_path(ANGBAND_DIR_USER, buf, "a");
-	if (!fff)
-	{
-		msg_print("Failed!");
-		return;
-	}
-
-	/* Make a note of the version. */
-	dump_version(fff);
-
-	/* Save the options. */
-	squelch_dump(fff);
-
-	/* Save the inscription options. */
-	inscription_dump(fff);
-
-	/* Finished. */
-	my_fclose(fff);
-
-	msg_print("Done.");
 }
 
 /*
@@ -358,7 +299,7 @@ static name_centry tval_names_squelch[] =
 /*
  * Turn every tval in use into one present in tval_names_squelch.
  */
-static int get_category_tval(int tval)
+int get_category_tval(int tval)
 {
 	name_centry *ptr;
 
@@ -382,6 +323,56 @@ static int get_category_tval(int tval)
 	return TV_SKELETON;
 }
 
+int display_item_category(bool (*item_good)(int, name_centry *), name_centry *start, name_centry **choice)
+{
+	int i, num, ymax;
+	name_centry *cat;
+
+	/* A list of the valid options for this prompt. */
+	cptr body =	option_chars;
+	char sym[61];
+
+	assert(choice+60); /* Caller. */
+
+	/* Clear screen */
+	clear_from(1);
+
+	/* Clear the Array */
+	WIPE(sym, sym);
+
+	/* Print all tval's and their descriptions */
+	for (num = 0, cat = start; (num < 60) && cat->str; cat++)
+	{
+		for (i = 0; i < z_info->k_max; i++)
+		{
+			if ((*item_good)(i, cat)) break;
+		}
+
+		/* No good options exist in this category. */
+		if (i == z_info->k_max) continue;
+
+		/* Save the symbol used to select the category. */
+		sym[num] = body[num];
+
+		/* Save the category. */
+		choice[num++] = cat;
+	}
+
+	/* Allow for three columns of names. */
+	ymax = (num+2)/3;
+
+	/* Print everything out. */
+	for (i = 0; i < num; i++)
+	{
+		int row = 2 + (i % ymax);
+		int col = 30 * (i / ymax);
+
+		mc_put_fmt(row, col, "$![%c] %.25s", sym[i], choice[i]->str);
+	}
+
+	return ymax;
+}
+
 /*
  * Choose an item category to squelch (or, indeed, for any other purpose).
  * Returns the category if one was chosen, NULL otherwise.
@@ -389,9 +380,6 @@ static int get_category_tval(int tval)
 name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
 	bool *abort, name_centry *start, cptr prompt, bool squelch)
 {
-	const int max = MAX_K_IDX;
-	const bool sym_from_cat = FALSE;
-
 	int i, num, ymax;
 	name_centry *cat;
 
@@ -413,17 +401,16 @@ name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
 	/* Print all tval's and their descriptions */
 	for (num = 0, cat = start; (num < 60) && cat->str; cat++)
 	{
-		for (i = 0; i < max; i++)
+		for (i = 0; i < z_info->k_max; i++)
 		{
 			if ((*item_good)(i, cat)) break;
 		}
 
 		/* No good options exist in this category. */
-		if (i == max) continue;
+		if (i == z_info->k_max) continue;
 
 		/* Save the symbol used to select the category. */
-		if (sym_from_cat) sym[num] = cat->idx;
-		else sym[num] = body[num];
+		sym[num] = body[num];
 
 		/* Save the category. */
 		choice[num++] = cat;
@@ -473,7 +460,7 @@ name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
 		}
 		else if (squelch && ch == KTRL('S'))
 		{
-			save_squelch_prefs(ymax+6);
+			save_preferences(squelch_dump);
 		}
 		else if (s && s < sym+num)
 		{
@@ -493,7 +480,7 @@ name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
  * Return whether k_info[i] can be generated and is part of the specified
  * category.
  */
-static bool good_squelch_object(int a, name_centry *cat)
+static bool PURE good_squelch_object(int a, name_centry *cat)
 {
 	/* Hack -- skip items which only have special generation methods. */
 	if (!kind_created_p(k_info+a)) return FALSE;
@@ -545,10 +532,6 @@ void do_cmd_options_squelch(void)
 {
 	bool qual[HIDE_CATS], qual2[HIDE_CATS], abort;
 
-	const int max = MAX_K_IDX;
-	bool (*item_good)(int, name_centry *) = good_squelch_object;
-	void (*print_f1)(char *, uint, cptr, va_list *) = object_k_name_f1;
-
 	int i, num;
 	int col, row;
 	int mx, my;
@@ -556,7 +539,7 @@ void do_cmd_options_squelch(void)
 	name_centry *cat;
 
 	cptr s;
-	char at, ch, mode = '!';
+	char at, ch;
 
 	int	choice[60];
 
@@ -573,7 +556,7 @@ void do_cmd_options_squelch(void)
 
 	while (1)
 	{
-		cat = choose_item_category(item_good, &abort, tval_names_squelch,
+		cat = choose_item_category(good_squelch_object, &abort, tval_names_squelch,
 			"Select a category/option:", TRUE);
 
 		/* Escape. */
@@ -593,9 +576,9 @@ void do_cmd_options_squelch(void)
 		/* Initialise various things for this object list. */
 
 		/* We have to search the whole itemlist. */
-		for (num = 0, i = 1; (num < 60) && (i < max); i++)
+		for (num = 0, i = 1; (num < 60) && (i < z_info->k_max); i++)
 		{
-			if ((*item_good)(i, cat)) choice[num++] = i;
+			if ((*good_squelch_object)(i, cat)) choice[num++] = i;
 		}
 
 		/* Find the quality settings any object can have. */
@@ -608,22 +591,13 @@ void do_cmd_options_squelch(void)
 		len = mx/((num+yent-1)/(yent));
 
 		/* Get names for each valid object which can all fit on screen at once. */
-		get_names(obuf, obuf[60], num, choice, len, print_f1);
+		get_names(obuf, obuf[60], num, choice, len, object_k_name_f1);
 
 		/* Now loop through until the player has finished. */
 		while (1)
 		{
-			cptr destroy, options;
-			if (mode == '!')
-			{
-				destroy = "Destroy";
-				options = "^a (all) , ^n (none), ^s (step), { (change mode)";
-			}
-			else
-			{
-				destroy = "Inscribe";
-				options = "^a (all), ! (change mode)";
-			}
+			cptr destroy = "Destroy";
+			cptr options = "^a (all) , ^n (none), ^s (step)";
 
 			/* Move the cursor */
 			Term_gotoxy(0, 1);
@@ -650,84 +624,50 @@ void do_cmd_options_squelch(void)
 				destroy, cat->str, body[0], body[num-1], options)) break;
 			s = strchr(body, ch);
 
-			if (ch && strchr("{!", ch))
+			if (s && s < body+num)
 			{
-				mode = ch;
-			}
-			else if (mode == '!')
-			{
-				if (s && s < body+num)
-				{
-					int k = choice[s-body];
-					object_kind *k_ptr = &k_info[k];
+				int k = choice[s-body];
+				object_kind *k_ptr = &k_info[k];
 
-					WIPE(qual2, qual2);
-					set_good_squelch_settings(qual2, k);
+				WIPE(qual2, qual2);
+				set_good_squelch_settings(qual2, k);
+				do
+				{
+					k_ptr->squelch++;
+					k_ptr->squelch %= HIDE_CATS;
+				}
+				while (!qual2[k_ptr->squelch]);
+			}
+			/* Destroy All! */
+			else if (ch == KTRL('A'))
+			{
+				for (i = 0; i < num; i++)
+				{
+					k_info[choice[i]].squelch = HIDE_ALL;
+				}
+			}
+
+			/* Destroy None */
+			else if (ch == KTRL('N'))
+			{
+				for (i = 0; i < num; i++)
+				{
+					k_info[choice[i]].squelch = HIDE_NONE;
+				}
+			}
+
+			/* Step All */
+			else if (ch == KTRL('S'))
+			{
+				for (i = 0; i < num; i++)
+				{
+					object_kind *k_ptr = &k_info[choice[i]];
 					do
 					{
 						k_ptr->squelch++;
 						k_ptr->squelch %= HIDE_CATS;
 					}
-					while (!qual2[k_ptr->squelch]);
-				}
-				/* Destroy All! */
-				else if (ch == KTRL('A'))
-				{
-					for (i = 0; i < num; i++)
-					{
-						k_info[choice[i]].squelch = HIDE_ALL;
-					}
-				}
-
-				/* Destroy None */
-				else if (ch == KTRL('N'))
-				{
-					for (i = 0; i < num; i++)
-					{
-						k_info[choice[i]].squelch = HIDE_NONE;
-					}
-				}
-
-				/* Step All */
-				else if (ch == KTRL('S'))
-				{
-					for (i = 0; i < num; i++)
-					{
-						object_kind *k_ptr = &k_info[choice[i]];
-						do
-						{
-							k_ptr->squelch++;
-							k_ptr->squelch %= HIDE_CATS;
-						}
-						while (!qual[k_ptr->squelch]);
-					}
-				}
-			}
-			else /* if (mode == '{') */
-			{
-				/* Change one object's default inscription. */
-				if (s && s < body+num)
-				{
-					int k = choice[s-body];
-					char buf[80];
-					sprintf(buf, "%.79s", quark_str(k_info[k].note));
-					if (get_string("Inscription: ", buf, sizeof(buf)) && *buf)
-					{
-						k_info[k].note = quark_add(buf);
-					}
-				}
-
-				/* Change the default inscriptions of the displayed objects. */
-				else if (ch == KTRL('A'))
-				{
-					char buf[80] = "";
-					if (get_string("Inscription: ", buf, sizeof(buf)))
-					{
-						for (i = 0; i < num; i++)
-						{
-							k_info[choice[i]].note = quark_add(buf);
-						}
-					}
+					while (!qual[k_ptr->squelch]);
 				}
 			}
 		} /*squelch Selection */
@@ -803,7 +743,7 @@ static PURE bool destroy_it(object_ctype *o1_ptr)
 	if (hidden_p(o_ptr)) return FALSE;
 
 	/* Things inscribed with !k or !K won't be destroyed! */
-	s = quark_str(o_ptr->note);
+	s = get_inscription(o_ptr);
 	if (strstr(s, "!k") || strstr(s, "!K")) return FALSE;
 
 	/*

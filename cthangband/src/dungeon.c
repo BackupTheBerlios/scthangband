@@ -837,10 +837,6 @@ void curse(object_type *o_ptr)
 	o_ptr->ident |= IDENT_CURSED;
 	o_ptr->flags3 |= TR3_CURSED;
 	o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
-	if (streq(quark_str(o_ptr->note), "uncursed"))
-	{
-		o_ptr->note = 0;
-	}
 }
 
 /*
@@ -850,7 +846,7 @@ void curse(object_type *o_ptr)
 static void recharged_notice(object_type *o_ptr)
 {
 	/* Process notification request. */
-	if (strstr(quark_str(o_ptr->note), "!!"))
+	if (strstr(get_inscription(o_ptr), "!!"))
 	{
 		cptr verb = (o_ptr->number == 1) ? "is" : "are";
 		cptr gen = (allart_p(o_ptr)) ? "The" : "Your";
@@ -2017,7 +2013,7 @@ static void process_equip(object_type *o_ptr)
 		}
 		else
 		{
-			if (strchr(quark_str(o_ptr->note),'.'))
+			if (strchr(get_inscription(o_ptr),'.'))
 			{
 				/* Do nothing */
 				/* msg_print("Teleport aborted.") */ ;

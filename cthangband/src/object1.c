@@ -848,6 +848,32 @@ void object_flags_known(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f3) = j.flags3;
 }
 
+/*
+ * Return the inscription to use for an object.
+ */
+cptr PURE get_inscription(object_ctype *o_ptr)
+{
+	/* Inscribed objects are simple. */
+	u16b i = o_ptr->note;
+
+	/* Use the k_idx inscription without anything better, if known. */
+	if (!i)
+	{
+		obj_know_type ok_ptr[1];
+
+		/* Otherwise, look for a default. */
+		object_knowledge(ok_ptr, o_ptr);
+		if (ok_ptr->obj->k_idx)
+		{
+			i = k_info[o_ptr->k_idx].note;
+		}
+	}
+
+	/* Use the p_id inscription without anything better. */
+	if (!i) i = o_base[u_info[k_info[o_ptr->k_idx].u_idx].p_id].note;
+
+	return quark_str(i);
+}
 
 
 
@@ -1458,10 +1484,11 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	if (mode >= 3)
 	{
 		cptr k[4];
-		int i = 0;
 
 		/* This is long enough for "(2147483647)" and for "100% off".*/
 		char tmp2[2][13];
+
+		i = 0;
 
 		/* Find the sections of inscription. */
 
@@ -1513,7 +1540,9 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 			if (feel != SENSE_NONE) k[i++] = feeling_str[feel].str;
 		}
 
-		if (o_ptr->note) k[i++] = quark_str(o_ptr->note);
+		/* Find the inscription, if any. */
+		s = get_inscription(o1_ptr);
+		if (*s) k[i++] = s;
 
 		if (i && t < tmp_val+len-4)
 		{
@@ -4028,7 +4057,7 @@ static bool get_item_allow(object_ctype *o_ptr)
 	cptr s;
 
 	/* Find a '!' */
-	s = strchr(quark_str(o_ptr->note), '!');
+	s = strchr(get_inscription(o_ptr), '!');
 
 	/* Process preventions */
 	while (s)
@@ -4157,7 +4186,7 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 		if (!j_ptr->k_idx) continue;
 
 		/* Get the inscription. */
-		s = quark_str(j_ptr->note);
+		s = get_inscription(j_ptr);
 
 		/* Process all tags */
 		while ((s = strchr(s, '@')))
@@ -4689,8 +4718,8 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 					if (!get_item_okay(o_ptr)) continue;
 
 					/* Skip specified objects */
-					if (strstr(quark_str(o_ptr->note), "!k")) continue;
-					if (strstr(quark_str(o_ptr->note), "!K")) continue;
+					if (strstr(get_inscription(o_ptr), "!k")) continue;
+					if (strstr(get_inscription(o_ptr), "!K")) continue;
 
 					/* Found a cursed item. */
 					if (cursed_p(j_ptr)) cursed = o_ptr;
@@ -5237,7 +5266,7 @@ static object_function PURE *get_function_for_object(s16b cmd,
 	/* Look for the command alias request. */
 	if (o_ptr)
 	{
-		s = strstr(quark_str(o_ptr->note), cmds);
+		s = strstr(get_inscription(o_ptr), cmds);
 
 		if (s)
 		{

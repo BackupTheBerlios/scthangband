@@ -444,6 +444,34 @@ static s16b toggle_frequency(s16b current)
 
 
 /*
+ * Give a description of an unidentified object.
+ */
+static void unident_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int u_idx = va_arg(*vp, int);
+
+	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
+	object_kind hack_k[1], *k_ptr = &k_info[1];
+	object_type o_ptr[1];
+
+	/* Put *k_ptr somewhere safe and clear it. */
+	COPY(hack_k, k_ptr, object_kind);
+	WIPE(k_ptr, object_kind);
+
+	/* Set up *k_ptr and *o_ptr. The tval is arbitrary. */
+	k_ptr->tval = TV_FOOD;
+	k_ptr->cost = 1;
+	k_ptr->u_idx = u_idx;
+	object_prep(o_ptr, k_ptr-k_info);
+
+	/* Copy the name to buf. */
+	strnfmt(buf, max, "%v", object_desc_f3, o_ptr, FALSE, 0);
+
+	/* Leave k_info as we found it. */
+	COPY(k_ptr, hack_k, object_kind);
+}
+
+/*
  * Interact with some options for cheating
  */
 static void do_cmd_options_autosave(cptr info)
@@ -1124,7 +1152,7 @@ static void do_cmd_options_hp(void)
 /*
  * Dump a version string to an open file.
  */
-void dump_version(FILE *fff)
+static void dump_version(FILE *fff)
 {
 	int i;
 
@@ -1141,6 +1169,316 @@ void dump_version(FILE *fff)
 
 	/* Finish the line. */
 	fprintf(fff, "\n");
+}
+
+/*
+ * Save some preferences to a file which shall be chosen by the player at the
+ * given line on the screen and saved with the given function.
+ */
+void save_preferences(void (*func)(FILE *fff))
+{
+	FILE *fff;
+
+	char ftmp[256];
+
+	/* Default filename */
+	sprintf(ftmp, "%.251s.prf", player_base);
+
+	/* Request the desired filename, handle abort. */
+	if (!get_string("File: ", ftmp, sizeof(ftmp))) return;
+
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Append to the file */
+	fff = my_fopen_path(ANGBAND_DIR_USER, ftmp, "a");
+
+	/* Failure */
+	if (!fff)
+	{
+		msg_print("Failed!");
+		return;
+	}
+
+	/* Save the version. */
+	dump_version(fff);
+
+	/* Call the dump function. */
+	(*func)(fff);
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Success */
+	msg_print("Done");
+}
+
+/*
+ * Dump default inscriptions to an open file.
+ */
+static void inscription_dump(FILE *fff)
+{
+	int i,j;
+
+	/* Title. */
+	fprintf(fff, "\n\n# Automatic default inscription dump\n\n");
+
+	/* Reset object_kind. */
+	fprintf(fff, "# Reset object inscriptions\n{:---reset---\n\n");
+
+	for (i = 0; i < z_info->k_max; i++)
+	{
+		/* Nothing more to say. */
+		if (!k_info[i].note) continue;
+
+		/* Save the setting. */
+		my_fprintf(fff, "# %v\n", object_k_name_f1, i);
+		fprintf(fff, "{:%d:%s\n\n", i, quark_str(k_info[i].note));
+	}
+
+	/* Reset o_base_type. */
+	fprintf(fff, "# Reset base object inscriptions\n}:---reset---\n\n");
+
+	for (i = 0; i < z_info->ob_max; i++)
+	{
+		/* Nothing more to say. */
+		if (!o_base[i].note) continue;
+
+		/* Add a comment if this o_base is used. */
+		for (j = 0; i < z_info->u_max; i++)
+		{
+			if (u_info[j].p_id == i)
+			{
+				my_fprintf(fff, "# %v\n", unident_name_f1, j);
+				break;
+			}
+		}
+
+		/* Save the setting. */
+		fprintf(fff, "{:%d:%s\n\n", i, quark_str(k_info[i].note));
+	}
+}
+
+#define FAKE_TV_BASE -1
+
+static name_centry tval_names_inscribe[] =
+{
+	{FAKE_TV_BASE, "Unidentified item"},
+	{TV_SWORD,	"Sword"},
+	{TV_POLEARM,	"Polearm"},
+	{TV_HAFTED,	"Hafted Weapon"},
+	{TV_DIGGING,	"Digger"},
+	{TV_BOW,	"Bow"},
+	{TV_ARROW,	"Missile"},
+	{TV_CHEST,	"Chest"},
+	{TV_DRAG_ARMOR,	"Dragon Scale Mail"},
+	{TV_HARD_ARMOR,	"Hard Armor"},
+	{TV_SOFT_ARMOR,	"Soft Armor"},
+	{TV_SHIELD,	"Shield"},
+	{TV_CROWN,	"Crown"},
+	{TV_HELM,	"Helm"},
+	{TV_GLOVES,	"Gloves"},
+	{TV_BOOTS,	"Boots"},
+	{TV_CLOAK,	"Cloak"},
+	{TV_RING,	"Ring"},
+	{TV_AMULET,	"Amulet"},
+	{TV_FOOD, "Food"},
+	{TV_POTION,	"Potion"},
+	{TV_SCROLL,	"Scroll"},
+	{TV_WAND,	"Wand"},
+	{TV_STAFF,	"Staff"},
+	{TV_ROD,	"Rod"},
+	{TV_SORCERY_BOOK,	"Spellbook"},
+	{TV_CHARM,	"Charm"},
+	{TV_SKELETON, "Other thing"},
+	{0, NULL}
+};
+
+/*
+ * Return TRUE if k_info[a] is a real object with a tval compatible with the
+ * chosen category.
+ */
+static bool PURE good_inscribe_object(int a, name_centry *cat)
+{
+	/* The base object category is special. */
+	if (cat->idx == FAKE_TV_BASE) return TRUE;
+
+	/* Hack -- skip items which only have special generation methods. */
+	if (!kind_created_p(k_info+a)) return FALSE;
+
+	/* Unknown object. */
+	if (!spoil_base && !k_info[a].seen) return FALSE;
+
+	/* Simply check the tval. */
+	return (get_category_tval(k_info[a].tval) == cat->idx);
+}
+
+/*
+ * Allow the player to set the default inscriptions for various categories of
+ * unaware item.
+ */
+static void do_cmd_options_inscribe_base(void)
+{
+	char ch, *s, buf[257];
+	int i, t, mx, my;
+	int o[256];
+
+	C_TNEW(bufx, 61*ONAME_MAX, char);
+	char *obuf[61];
+
+	/* Turn obuf[] into a 2 dimensional array. */
+	for (i = 0; i < 61; i++) obuf[i] = bufx+i*ONAME_MAX;
+
+	/* Notice which o_base settings are actually used. */
+	WIPE(o, o);
+	for (i = 0; i < z_info->u_max; i++)
+	{
+		o[u_info[i].p_id] = i+1;
+	}
+
+	/* Count and store the objects. */
+	for (i = t = 0; i < 256 && t < 60; i++) if (o[i]) o[t++] = o[i]-1;
+
+	Term_get_size(&mx, &my);
+
+	my -= 4;
+	mx /= (t+my-1)/my;
+		
+	/* Get names for each valid object which can all fit on screen at once. */
+	get_names(obuf, obuf[60], t, o, mx-4, unident_name_f1);
+
+	do
+	{
+		Term_clear();
+
+		for (i = 0; i < t; i++)
+		{
+			mc_put_lfmt((i%my)+2, i/my*mx, mx-1, "[%c] %s {%s}",
+				option_chars[i], obuf[i],
+					quark_str(o_base[u_info[o[i]].p_id].note));
+		}
+
+		get_com(&ch, "Inscribe which base object? [%c-%c, Escape to finish]",
+			option_chars[0], option_chars[t-1]);
+
+		s = strchr(option_chars, ch);
+
+		if (s && s < option_chars+t)
+		{
+			i = u_info[o[s - option_chars]].p_id;
+
+			sprintf(buf, "%.*s", sizeof(buf)-1, quark_str(o_base[i].note));
+			if (get_string("Inscription: ", buf, sizeof(buf)))
+			{
+				o_base[i].note = quark_add(buf);
+			}
+		}
+	}
+	while (ch != ESCAPE);
+}
+
+/*
+ * Allow the player to set the default inscriptions for various object.
+ */
+static void do_cmd_options_inscribe_aux(name_centry *cat)
+{
+	char ch, *s, buf[257];
+	int i, t, mx, my, o[60];
+
+	C_TNEW(bufx, 61*ONAME_MAX, char);
+	char *obuf[61];
+
+	/* Turn obuf[] into a 2 dimensional array. */
+	for (i = 0; i < 61; i++) obuf[i] = bufx+i*ONAME_MAX;
+
+	/* Count and store the objects. */
+	for (i = t = 0; i < z_info->k_max && t < 60; i++)
+	{
+		if (!kind_created_p(k_info+i)) continue;
+
+		if (get_category_tval(k_info[i].tval) == cat->idx) o[t++] = i;
+	}
+
+	Term_get_size(&mx, &my);
+
+	my -= 4;
+	mx /= (t+my-1)/my;
+
+	/* Get names for each valid object which can all fit on screen at once. */
+	get_names(obuf, obuf[60], t, o, mx-4, object_k_name_f1);
+
+	do
+	{
+		Term_clear();
+
+		for (i = 0; i < t; i++)
+		{
+			mc_put_lfmt((i%my)+2, i/my*mx, mx-1, "[%c] %s {%s}",
+				option_chars[i], obuf[i], quark_str(k_info[o[i]].note));
+		}
+
+		get_com(&ch, "Inscribe which object? [%c-%c, Escape to finish]",
+			option_chars[0], option_chars[t-1]);
+
+		s = strchr(option_chars, ch);
+
+		if (s && s < option_chars+t)
+		{
+			i = s - option_chars;
+
+			sprintf(buf, "%.*s", sizeof(buf)-1, quark_str(k_info[o[i]].note));
+			if (get_string("Inscription: ", buf, sizeof(buf)))
+			{
+				k_info[o[i]].note = quark_add(buf);
+			}
+		}
+	}
+	while (ch != ESCAPE);
+}
+
+/*
+ * Display a list of categories of object to give a default inscription,
+ * including a special category for unaware things.
+ *
+ * Call out to the functions which actually let the player set them.
+ */
+static void do_cmd_options_inscribe(void)
+{
+	while (1)
+	{
+		char ch, *s;
+		name_centry *choice[60];
+
+		int ymax = display_item_category(good_inscribe_object,
+			tval_names_inscribe, choice);
+
+		mc_put_fmt(ymax+3, 0, "[Ctrl-S] Save default inscriptions");
+
+		if (!get_com(&ch, "Select a category:")) break;
+
+		s = strchr(option_chars, ch);
+		if (ch == KTRL('S'))
+		{
+			save_preferences(inscription_dump);
+		}
+		else if (s)
+		{
+			name_centry *cat = choice[s - option_chars];
+
+			help_track("option=I2");
+
+			if (cat->idx == FAKE_TV_BASE)
+			{
+				do_cmd_options_inscribe_base();
+			}
+			else
+			{
+				do_cmd_options_inscribe_aux(cat);
+			}
+
+			help_track(NULL);
+		}
+	}
 }
 
 /*
@@ -1344,9 +1682,10 @@ static option_list opt_lists[] =
 	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', RIGHT, 10},
 	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', RIGHT, 11},
 	{"Squelch Settings", NULL, OPTS_SQUELCH, 'Q', RIGHT, 12},
-	{"Save options", NULL, OPTS_TO_FILE, 'U', RIGHT, 14},
-	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', RIGHT, 15},
-	{"Load preferences", NULL, OPTS_FROM_FILE, 'O', RIGHT, 16},
+	{"Inscription settings", NULL, OPTS_INSCRIBE, 'I', RIGHT, 13},
+	{"Save options", NULL, OPTS_TO_FILE, 'U', RIGHT, 15},
+	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', RIGHT, 16},
+	{"Load preferences", NULL, OPTS_FROM_FILE, 'O', RIGHT, 17},
 };
 
 
@@ -1487,6 +1826,11 @@ good:	/* Success */
 			case OPTS_SQUELCH:
 			{
 				do_cmd_options_squelch();
+				break;
+			}
+			case OPTS_INSCRIBE:
+			{
+				do_cmd_options_inscribe();
 				break;
 			}
 			case OPTS_HELP:
@@ -2247,28 +2591,11 @@ static void get_visuals_moncol(int i, cptr *name, byte *da, char UNUSED *dc,
 static void get_visuals_unident(int i, cptr *name, byte *da, char *dc,
 	byte **xa, char **xc)
 {
-	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
-	object_kind hack_k, *k_ptr = &k_info[1];
-	object_type o_ptr[1];
-
 	/* Get most of the visuals (including a mangled name). */
 	get_visuals(u_info);
 
-	/* Put *k_ptr somewhere safe and clear it. */
-	COPY(&hack_k, k_ptr, object_kind);
-	WIPE(k_ptr, object_kind);
-
-	/* Set up *k_ptr and *o_ptr. The tval is arbitrary. */
-	k_ptr->tval = TV_FOOD;
-	k_ptr->cost = 1;
-	k_ptr->u_idx = i;
-	object_prep(o_ptr, k_ptr-k_info);
-
-	/* Place the name in a temporary buffer. */
-	(*name) = format("%v", object_desc_f3, o_ptr, FALSE, 0);
-
-	/* Replace the real *k_ptr */
-	COPY(k_ptr, &hack_k, object_kind);
+	/* Get the name. */
+	(*name) = format("%v", unident_name_f1, i);
 }
 
 /*

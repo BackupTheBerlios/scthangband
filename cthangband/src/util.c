@@ -3646,7 +3646,7 @@ void request_command(bool shopping)
 		if (!o_ptr->k_idx) continue;
 
 		/* Obtain the inscription, if any. */
-		s = quark_str(o_ptr->note);
+		s = get_inscription(o_ptr);
 
 		/* Find a '^' */
 		s = strchr(s, '^');

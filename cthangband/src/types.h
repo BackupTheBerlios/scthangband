@@ -270,7 +270,8 @@ typedef struct o_base_type o_base_type;
 
 struct o_base_type
 {
-	u32b name;	/* Name (offset) */
+	u16b name;	/* Name (offset) */
+	u16b note;	/* Default inscription. */
 	s32b cost;	/* Unaware cost */
 	u32b flags1;	/* Expected flags, set 1 */
 	u32b flags2;	/* Expected flags, set 2 */
