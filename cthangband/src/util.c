@@ -2797,6 +2797,7 @@ static bool wrap_text(void)
  *                      $< : Save a "default" colour.
  *                      $> : Restore the "default" colour.
  *                      $$ : Print a literal $.
+ *                      $! : Ignore codes for the remainder of the call.
  *
  * Anything else is printed directly.
  *
@@ -2806,13 +2807,13 @@ static bool wrap_text(void)
  * 2. The end of the string is reached (returns the \0).
  * 3. A \n is found (returns the \n).
  */ 
-static cptr mc_add(cptr s, int *dattr, int *attr)
+static cptr mc_add(cptr s, int *dattr, int *attr, bool *ignore)
 {
 	int nattr;
 
 	for (; *s && *s != '\n' && !useless_cursor(); s++)
 	{
-		if (*s != '$')
+		if (*ignore || *s != '$')
 		{
 			/* Add the character, finish if the cursor has gone too far. */
 			Term_addch(*attr, *s);
@@ -2831,6 +2832,11 @@ static cptr mc_add(cptr s, int *dattr, int *attr)
 		else if (*s == '>')
 		{
 			*attr = *dattr;
+		}
+		/* $! forces further $ combinations to be ignored. */
+		else if (*s == '!')
+		{
+			*ignore = TRUE;
 		}
 		/* A specific colour request. */
 		else if (((nattr = color_char_to_attr(*s))) != -1)
@@ -2855,7 +2861,8 @@ static cptr mc_add(cptr s, int *dattr, int *attr)
 void mc_roff(cptr s)
 {
 	int dattr = TERM_WHITE, attr = TERM_WHITE;
-	while (*((s = mc_add(s, &dattr, &attr))))
+	bool ignore = FALSE;
+	while (*((s = mc_add(s, &dattr, &attr, &ignore))))
 	{
 		if (strchr(" \n", *s))
 		{
@@ -2895,8 +2902,9 @@ void roff(cptr str)
 void mc_put_str(const int y, const int x, cptr str)
 {
 	int attr, dattr = attr = TERM_WHITE;
+	bool ignore = FALSE;
 	if (Term_gotoxy(x, y)) return;
-	mc_add(str, &dattr, &attr);
+	mc_add(str, &dattr, &attr, &ignore);
 }
 
 /*
