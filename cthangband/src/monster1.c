@@ -360,7 +360,7 @@ static void roff_aux(int r_idx)
 	if (r_ptr->flags1 & (RF1_ESCORTS)) flags1 |= (RF1_ESCORTS);
 
 	/* Killing a monster reveals some properties */
-	if (r_ptr->r_tkills)
+	if (r_ptr->r_tkills || spoil_mon)
 	{
 		/* Know "race" flags */
 		if (r_ptr->flags3 & (RF3_ORC)) flags3 |= (RF3_ORC);
@@ -535,7 +535,7 @@ static void roff_aux(int r_idx)
 		c_roff(MONCOL_DEPTH, format("%^s lives in the town", wd_he[msex]));
 		old = TRUE;
 	}
-	else if (r_ptr->r_tkills)
+	else if (r_ptr->r_tkills || spoil_mon)
 	{
 		if (depth_in_feet)
 		{
@@ -885,7 +885,7 @@ static void roff_aux(int r_idx)
 
 
 	/* Describe monster "toughness" */
-	if (know_armour(r_idx))
+	if (know_armour(r_idx) || spoil_mon)
 	{
 		/* Armor */
 		c_roff(MONCOL_ACHP, format("%^s has an armor rating of %d",
