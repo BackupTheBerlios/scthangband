@@ -2689,6 +2689,21 @@ logaux(x, 1) logaux(x, 0) 255)
 
 
 
+/* "Fake" object flags for calc_bonuses_object. */
+#define TR0_TO_H	(1L<<0)	/* Bonus to hit chance. */
+#define TR0_DIS_TO_H	(1L<<1)	/* Known bonus to hit chance. */
+#define TR0_TO_D	(1L<<2)	/* Bonus to damage. */
+#define TR0_DIS_TO_D	(1L<<3)	/* Known bonus to damage. */
+#define TR0_AC	(1L<<4)	/* Modifier to AC. */
+#define TR0_DIS_AC	(1L<<5)	/* Known base AC. */
+#define TR0_DIS_TO_A	(1L<<6)	/* Known bonus to AC. */
+#define TR0_SAVE	(1L<<7)	/* A direct saving throw bonus. */
+
+#define TR0_SAVE_SK (1L<<16) /* A skill-based saving throw bonus. */
+#define TR0_AC_SK (1L<<17) /* A skill-based AC bonus. */
+#define TR0_SPEED_SK (1L<<18) /* A skill-based speed bonus. */
+#define TR0_ILL_NORM (1L<<19) /* Cancel out race/template/mut chr mods. */
+
 /*** Monster blow constants ***/
 
 /*

@@ -930,6 +930,20 @@ struct make_item_type {
 };
 
 /*
+ * Race-specific bonuses (resistances, etc.).
+ */
+typedef struct race_bonus_type race_bonus_type;
+struct race_bonus_type
+{
+	byte type; /* Mutation needed for this bonus (unused for races). */
+	byte skill; /* The skill needed to access it, if any. */
+	byte min; /* The level of skill needed to access it. */
+	byte set; /* The flag set involved in the skill. */
+	byte flag; /* The flag involved (log 2). */
+	s16b value; /* A description of how the bonus affects the flag. */
+};
+
+/*
  * Player racial info
  */
 
@@ -966,8 +980,10 @@ struct player_race
 	byte f_b_wt;		/* base weight (females) */
 	byte f_m_wt;		/* mod weight (females) */
 
-	byte infra;			/* Infra-vision	range */
+	race_bonus_type *bonus; /* A pointer to the extra things this race gets. */
+	byte bonuses; /* The number of elements in bonus. */
 
+	byte infra;			/* Infra-vision	range */
 	byte chart;		/* Initial chart for get_history() */
 
 	cptr **name_syls;	/* Syllable list for random name generation. */
