@@ -3414,6 +3414,8 @@ option_type option_info[] =
 	{ &ironman_shop,               FALSE,  7, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },
 
+	{ &spoil_item,                  FALSE,   1,     2, 23,
+	"spoil_item",			"Gain knowledge of standard artifacts" },
 
 	/*** End of Table ***/
 

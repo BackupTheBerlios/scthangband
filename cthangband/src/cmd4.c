@@ -407,7 +407,7 @@ void do_cmd_messages(void)
 /*
  * Number of cheating options
  */
-#define CHEAT_MAX 8
+#define CHEAT_MAX 9
 
 /*
  * Cheating options
@@ -428,6 +428,9 @@ static option_type cheat_info[CHEAT_MAX] =
 
 	{ &cheat_know,		FALSE,	255,	0x10, 0x00,
 	"cheat_know",		"Know complete monster info" },
+
+	{ &cheat_item,		FALSE,	255,	0x80, 0x00,
+	"cheat_item",		"Know complete item info" },
 
 	{ &cheat_live,		FALSE,	255,	0x20, 0x00,
 	"cheat_live",		"Allow player to avoid death" },

@@ -200,6 +200,7 @@ bool show_details;			/* Show details in certain sub-windows */
 
 bool ring_bell;				/* Ring the bell (on errors, etc) */
 bool use_color;				/* Use color if possible (slow) */
+bool spoil_item;				/* Benefit from artefact spoilers */
 bool verbose_haggle;		/* Verbose messages if auto_haggle is set */
 
 
@@ -314,6 +315,7 @@ bool cheat_hear;		/* Peek into monster creation */
 bool cheat_room;		/* Peek into dungeon creation */
 bool cheat_xtra;		/* Peek into something else */
 bool cheat_know;		/* Know complete monster info */
+bool cheat_item;		/* Know complete item info */
 bool cheat_live;		/* Allow player to avoid death */
 bool cheat_skll;        /* Peek into skill rolls */
 

@@ -408,6 +408,8 @@ extern bool angband_keymap_flag; /* Hack for main-win.c */
 extern bool mystic_armour_aux;
 extern bool mystic_notify_aux;
 extern spirit_type spirits[MAX_SPIRITS];
+extern bool cheat_item;
+extern bool spoil_item;
 extern bool verbose_haggle;
 
 

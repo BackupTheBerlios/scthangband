@@ -1068,15 +1068,25 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f3) |= e_ptr->flags3;
 	}
 
+	/* Pre-defined artifacts (all flags known) */
+	if (o_ptr->name1 && spoil_item)
+	{
+		artifact_type *a_ptr = &a_info[o_ptr->name1];
+
+		(*f1) = a_ptr->flags1;
+		(*f2) = a_ptr->flags2;
+		(*f3) = a_ptr->flags3;
+	}
+
 
 #ifdef SPOIL_ARTIFACTS
 	/* Full knowledge for some artifacts */
-    if (artifact_p(o_ptr) || o_ptr->art_name) spoil = TRUE;
+    if (cheat_item && (artifact_p(o_ptr) || o_ptr->art_name)) spoil = TRUE;
 #endif
 
 #ifdef SPOIL_EGO_ITEMS
 	/* Full knowledge for some ego-items */
-	if (ego_item_p(o_ptr)) spoil = TRUE;
+	if (cheat_item && ego_item_p(o_ptr)) spoil = TRUE;
 #endif
 
 	/* Need full knowledge or spoilers */

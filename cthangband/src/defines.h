@@ -3026,3 +3026,7 @@ extern int PlayerUID;
 #define SKILL_CRUSH 24
 #define SKILL_SHAMAN 25
 #define SKILL_HEDGE 26
+
+/* Spoiler flags */
+#define SPOIL_EGO_ITEMS	0
+#define SPOIL_ARTIFACTS	0
