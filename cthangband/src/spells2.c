@@ -5753,11 +5753,11 @@ static void cave_temp_room_aux(int y, int x)
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
+	/* Do not "leave" the current room */
+	if (!(c_ptr->info & (CAVE_ROOM))) return;
+
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
-
-	/* Not a room or a wall. */
-	if (!is_room_p(y,x)) return;
 
 	/* Mark the grid as "seen" */
 	c_ptr->info |= (CAVE_TEMP);
@@ -5766,10 +5766,6 @@ static void cave_temp_room_aux(int y, int x)
 	temp_y[temp_n] = y;
 	temp_x[temp_n] = x;
 	temp_n++;
-#ifdef TESTING_cave_temp_room_aux
-	move_cursor_relative(y,x);
-	inkey();
-#endif
 }
 
 

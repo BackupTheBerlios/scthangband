@@ -3095,12 +3095,6 @@ logaux(x, 1) logaux(x, 0) 255)
     ((cave[Y][X].info & (CAVE_VIEW)) != 0)
 
 
-/*
- * Determine if a "legal" grid has been flagged as being part of a room.
- */
-#define is_room_p(Y,X) \
-	((cave[Y][X].info & (CAVE_ROOM)) != FALSE)
-
 
 /* Find the specified day within the year. */
 #define YEARDAY(X) (((X/365)%4 == 3) ? X%1461-1095 : X%1461%365 + (X%1461%365 > 58))
