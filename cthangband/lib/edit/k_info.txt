@@ -259,7 +259,7 @@ N:23:& Hard Biscuit~
 G:,:U:0
 I:Food:500:0
 W:0.2lb:1
-D:Twice-cooked for good keeping qualities,this lump of bread is as hard as a 
+D:Twice-cooked for good keeping qualities, this lump of bread is as hard as a 
 D:rock and about as tasty.
 
 N:24:& Pint~ of Fine Ale
@@ -292,7 +292,7 @@ G:,:U:0
 I:Food:5000:0
 W:1.0lb:3
 A:0/1:5/1:10/1
-D:Also known as Cram or Waybread,this nutritious but fairly bland food is 
+D:Also known as Cram or Waybread, this nutritious but fairly bland food is 
 D:familiar to anyone contemplating long journeys.
 
 N:29:& Piece~ of Elvish Waybread
@@ -300,7 +300,7 @@ G:,:B:0
 I:Food:7500:0
 W:0.3lb:10
 A:5/1:10/1:20/1
-D:A very filling meal,which cures 4d8 and any lingering poisons.
+D:A very filling meal, which cures 4d8 and any lingering poisons.
 
 ##### Edged Weapons #####
 
@@ -1697,7 +1697,7 @@ G: :d:200
 I:Scroll:0:0
 W:0.5lb:0
 A:5/1
-D:It angers friendly monsters,wakes up nearby monsters and speeds up monsters 
+D:It angers friendly monsters, wakes up nearby monsters and speeds up monsters 
 D:you can see as you read it.
 
 N:205:Curse Weapon
@@ -1833,14 +1833,14 @@ G: :d:200
 I:Scroll:0:0
 W:0.5lb:200
 A:40/1
-D:It tries to recharge wands,staffs or rods when you read it.
+D:It tries to recharge wands, staffs or rods when you read it.
 
 N:224:Light
 G: :d:200
 I:Scroll:0:0
 W:0.5lb:15
 A:0/1:3/1:10/1
-D:It lights up nearby area or current room permanently when you use it,
+D:It lights up nearby area or current room permanently when you use it, 
 D:causing 2d8 damage to vulnerable monsters within a radius of 2.
 
 N:225:Magic Mapping
@@ -1890,7 +1890,7 @@ G: :d:200
 I:Scroll:0:0
 W:0.5lb:10
 A:5/1:20/1:50/1:75/1
-D:It makes you as full as possible without problem,but no more than that,
+D:It makes you as full as possible without problem, but no more than that, 
 D:when you read it.
 
 N:232:Blessing
@@ -1995,7 +1995,7 @@ W:0.5lb:1,000
 A:50/4
 F:IGNORE_FIRE
 D:It produces a ball of fire with a radius of 4 and damage at centre of 
-D:150,and causes 50+d50 damage if you have no fire resistance.
+D:150, and causes 50+d50 damage if you have no fire resistance.
 
 N:246:Ice
 G: :d:200
@@ -2004,7 +2004,7 @@ W:0.5lb:5,000
 A:75/6
 F:IGNORE_COLD
 D:It produces a ball of ice with a radius of 4 and damage at centre of 
-D:175,and causes 100+d100 damage if you have no cold resistance.
+D:175, and causes 100+d100 damage if you have no cold resistance.
 
 N:247:Chaos
 G: :d:200
@@ -2013,14 +2013,14 @@ W:0.5lb:10,000
 A:100/8
 F:IGNORE_FIRE | IGNORE_ACID | IGNORE_COLD | IGNORE_ELEC
 D:It produces a ball of chaos with a radius of 4 and damage at centre of 
-D:222,and causes 111+d111 damage if you have no chaos resistance.
+D:222, and causes 111+d111 damage if you have no chaos resistance.
 
 N:248:Rumour
 G: :d:200
 I:Scroll:0:0
 W:0.5lb:10
 A:1/1
-D:It gives you a hint,which may even be true.
+D:It gives you a hint, which may even be true.
 
 N:249:Artifact Creation
 G: :d:200
@@ -2070,7 +2070,7 @@ I:Potion:0:0
 W:0.4lb:0
 A:0/1
 P:(1d1) (+0,+0) [0,+0]
-D:It makes you starve and paralyses you,but removes any poisons from your 
+D:It makes you starve and paralyses you, but removes any poisons from your 
 D:system when you drink it.
 
 N:255:Poison
@@ -2096,7 +2096,7 @@ W:0.4lb:0
 A:0/1
 P:(1d1) (+0,+0) [0,+0]
 D:It tries to confuse you and sometimes also to make you hallucinate or forget 
-D:things,and teleport you.
+D:things, and teleport you.
 
 N:258:Sleep
 G: :d:8
@@ -2258,7 +2258,7 @@ I:Potion:0:0
 W:0.4lb:35
 A:1/1
 P:(1d1) (+0,+0) [0,+0]
-D:It makes you immune to fear and better at hitting things by 12,and gives 
+D:It makes you immune to fear and better at hitting things by 12, and gives 
 D:you 10 extra hit points for 26-50 turns as you drink it.
 
 N:278:Berserk Strength
@@ -2277,7 +2277,7 @@ I:Potion:50:0
 W:0.4lb:15
 A:0/1:1/1:3/1
 P:(1d1) (+0,+0) [0,+0]
-D:It heals you 2d8,cures blindness and lessens the severity of cuts 
+D:It heals you 2d8, cures blindness and lessens the severity of cuts 
 D:when you drink it.
 
 N:280:Cure Serious Wounds
@@ -2286,7 +2286,7 @@ I:Potion:100:0
 W:0.4lb:40
 A:3/1
 P:(1d1) (+0,+0) [0,+0]
-D:It heals you by 4d8 points,cures blindness and confusion and lessens the 
+D:It heals you by 4d8 points, cures blindness and confusion and lessens the 
 D:severity of cuts when you drink it.
 
 N:281:Cure Critical Wounds
@@ -2295,7 +2295,7 @@ I:Potion:100:0
 W:0.4lb:100
 A:5/1
 P:(1d1) (+0,+0) [0,+0]
-D:It heals you by 6d8 points and cures blindness,confusion,poison,stunning 
+D:It heals you by 6d8 points and cures blindness, confusion, poison, stunning 
 D:and cuts when you drink it.
 
 N:282:Curing
@@ -2304,7 +2304,7 @@ I:Potion:100:0
 W:0.4lb:250
 A:18/1,40/1
 P:(1d1) (+0,+0) [0,+0]
-D:It heals you by 50 points and cures blindness,confusion,poison,stunning,
+D:It heals you by 50 points and cures blindness, confusion, poison, stunning, 
 D:cuts and hallucination when you drink it.
 
 N:283:Healing
@@ -2313,7 +2313,7 @@ I:Potion:200:0
 W:0.4lb:300
 A:15/1:30/1:60/1
 P:(1d1) (+0,+0) [0,+0]
-D:It heals you by 300 points and cures blindness,confusion,poison,stunning 
+D:It heals you by 300 points and cures blindness, confusion, poison, stunning 
 D:and cuts when you drink it.
 
 N:284:*Healing*
@@ -2322,7 +2322,7 @@ I:Potion:0:0
 W:0.4lb:1,500
 A:40/4:60/2:80/1
 P:(1d1) (+0,+0) [0,+0]
-D:It heals you by 1200 points and cures blindness,confusion,poison,stunning 
+D:It heals you by 1200 points and cures blindness, confusion, poison, stunning 
 D:and cuts when you drink it.
 
 N:285:Life
@@ -2331,8 +2331,8 @@ I:Potion:0:0
 W:0.4lb:5,000
 A:60/4:100/2
 P:(1d1) (+0,+0) [0,+0]
-D:It heals you by 5000 points,restores your skills and stats,and cures 
-D:poison,blindness,confusion,poison,stunning and hallucination 
+D:It heals you by 5000 points, restores your skills and stats, and cures 
+D:poison, blindness, confusion, poison, stunning and hallucination 
 D:when you drink it.
 
 N:286:Restore Mana
@@ -2461,7 +2461,7 @@ I:Potion:0:0
 W:0.4lb:800
 A:25/1:50/1:100/1
 P:(1d1) (+0,+0) [0,+0]
-D:It maps,lights permanently and detects all items on the entire level when 
+D:It maps, lights permanently and detects all items on the entire level when 
 D:you drink it.
 
 N:302:*Enlightenment*
@@ -2470,9 +2470,9 @@ I:Potion:0:0
 W:0.4lb:80,000
 A:70/4
 P:(1d1) (+0,+0) [0,+0]
-D:It maps,lights permanently and detects all items on the entire level,
-D:increases your intelligence and wisdom,detects all nearby traps,doors,
-D:stairs,treasure and items,identifies all items in your pack and gives 
+D:It maps, lights permanently and detects all items on the entire level, 
+D:increases your intelligence and wisdom, detects all nearby traps, doors, 
+D:stairs, treasure and items, identifies all items in your pack and gives 
 D:information about yourself when you drink it.
 
 N:303:Self Knowledge
@@ -2498,7 +2498,7 @@ W:0.4lb:250
 A:20/1:45/1:80/1:100/1
 P:(1d1) (+0,+0) [0,+0]
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-D:It gives you extra resistance to acid,electricity,fire,cold and poison 
+D:It gives you extra resistance to acid, electricity, fire, cold and poison 
 D:for 21-40 turns after you drink it.
 
 N:306:Invulnerability
@@ -2543,7 +2543,7 @@ I:Wand:0:15
 W:1.0lb:0
 A:15/1:50/1
 P:(1d1) (+0,+0) [0,+0]
-D:It heals and hastes a monster,and tries to clone it when you use it. Unique 
+D:It heals and hastes a monster, and tries to clone it when you use it. Unique 
 D:monsters cannot be cloned.
 
 N:311:Teleport Other
@@ -2576,7 +2576,7 @@ I:Wand:0:10
 W:1.0lb:300
 A:10/1:40/1:80/1
 P:(1d1) (+0,+0) [0,+0]
-D:It turns a door,rock or wall square to mud when you use it.
+D:It turns a door, rock or wall square to mud when you use it.
 
 N:315:Light
 G: :d:9
@@ -2764,7 +2764,7 @@ W:1.0lb:2,400
 A:60/4
 P:(1d1) (+0,+0) [0,+0]
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-D:It fires a breath of either fire or acid (100 damage),cold or electricity 
+D:It fires a breath of either fire or acid (100 damage), cold or electricity 
 D:(80 damage) or poison (60 damage) with width 3 when used.
 
 N:337:Shard Balls
@@ -2842,7 +2842,7 @@ I:Staff:0:5
 W:5.0lb:250
 A:5/1
 P:(1d2) (+0,+0) [0,+0]
-D:It lights up nearby area or current room permanently when you use it,
+D:It lights up nearby area or current room permanently when you use it, 
 D:causing 2d8 damage to vulnerable monsters within a radius of 2.
 
 N:346:Enlightenment
@@ -2915,7 +2915,7 @@ I:Staff:0:25
 W:5.0lb:1,000
 A:25/1
 P:(1d2) (+0,+0) [0,+0]
-D:It cures blindness,poison,confusion,stunning,cuts and hallucination when 
+D:It cures blindness, poison, confusion, stunning, cuts and hallucination when 
 D:you use it.
 
 N:355:Earthquakes
@@ -2982,7 +2982,7 @@ I:Staff:0:30
 W:5.0lb:2,000
 A:30/1
 P:(1d2) (+0,+0) [0,+0]
-D:It probes every monster's HP,AC,speed,resistances,drop,etc.,when you 
+D:It probes every monster's HP, AC, speed, resistances, drop, etc., when you 
 D:use it.
 
 N:363:Genocide
@@ -3008,7 +3008,7 @@ I:Staff:0:70
 W:5.0lb:4,500
 A:70/2
 P:(1d2) (+0,+0) [0,+0]
-D:It restores your intelligence,spell points and chi when you use it.
+D:It restores your intelligence, spell points and chi when you use it.
 
 N:366:Holiness
 G: :d:10
@@ -3016,9 +3016,9 @@ I:Staff:0:70
 W:5.0lb:4,500
 A:70/2
 P:(1d2) (+0,+0) [0,+0]
-D:It causes 120 points of damage to all evil monsters in sight,gives temporary 
-D:protection from evil creature less powerful than your saving throw,and cures 
-D:poison,stunning,cuts and fear and heals you by 50 points when you use it.
+D:It causes 120 points of damage to all evil monsters in sight, gives temporary 
+D:protection from evil creature less powerful than your saving throw, and cures 
+D:poison, stunning, cuts and fear and heals you by 50 points when you use it.
 
 N:367:Healing
 G: :d:10
@@ -3165,7 +3165,7 @@ I:Rod:11-21:20
 W:1.5lb:1,000
 A:20/1
 P:(1d1) (+0,+0) [0,+0]
-D:It lights up nearby area or current room permanently when you zap it,
+D:It lights up nearby area or current room permanently when you zap it, 
 D:causing 2d8 damage to vulnerable monsters within a radius of 2.
 
 N:385:Enlightenment
@@ -3182,7 +3182,7 @@ I:Rod:99:30
 W:1.5lb:5,000
 A:30/8
 P:(1d1) (+0,+0) [0,+0]
-D:It detects all nearby traps,doors,stairs,treasures,items and monsters 
+D:It detects all nearby traps, doors, stairs, treasures, items and monsters 
 D:when you zap it.
 
 N:387:Probing
@@ -3191,7 +3191,7 @@ I:Rod:50:40
 W:1.5lb:4,000
 A:40/4
 P:(1d1) (+0,+0) [0,+0]
-D:It probes a monster's HP,AC,speed,resistances,drop,etc.,when you zap 
+D:It probes a monster's HP, AC, speed, resistances, drop, etc., when you zap 
 D:it.
 
 N:388:Curing
@@ -3200,7 +3200,7 @@ I:Rod:999:65
 W:1.5lb:15,000
 A:65/8
 P:(1d1) (+0,+0) [0,+0]
-D:It cures blindness,poison,confusion,stunning,cuts and hallucination when 
+D:It cures blindness, poison, confusion, stunning, cuts and hallucination when 
 D:you zap it.
 
 N:389:Healing
