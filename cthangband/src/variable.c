@@ -183,6 +183,7 @@ s32b total_friend_levels = 0;
 
 bool rogue_like_commands;	/* Rogue-like commands */
 bool quick_messages;		/* Activate quick messages */
+bool quick_prompt;		/* Activate quick [y/n] prompts */
 bool other_query_flag;		/* Prompt for various information */
 bool carry_query_flag;		/* Prompt before picking things up */
 bool use_old_target;		/* Use old target by default */

@@ -3128,7 +3128,10 @@ option_type option_info[] =
 	"rogue_like_commands",  "Rogue-like commands" },
 
 	{ &quick_messages,              TRUE,  1,      0, 1,
-	"quick_messages",               "Activate quick messages" },
+	"quick_messages",               "Quick -more- prompts" },
+
+	{ &quick_prompt,		TRUE,	1,	2, 27,
+	"quick_prompt",			"Quick [y/n] prompts" },
 
 	{ &other_query_flag,    FALSE,  1,      0, 2,
 	"other_query_flag",             "Prompt for various information" },

@@ -2779,7 +2779,7 @@ bool get_check(cptr prompt)
 	while (TRUE)
 	{
 		i = inkey();
-		if (quick_messages) break;
+		if (quick_prompt) break;
 		if (i == ESCAPE) break;
 		if (i == '\r') break;
 		if (strchr("YyNn", i)) break;

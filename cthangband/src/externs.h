@@ -173,6 +173,7 @@ extern bool hack_chaos_feature;
 extern int artifact_bias;
 extern bool rogue_like_commands;
 extern bool quick_messages;
+extern bool quick_prompt;
 extern bool other_query_flag;
 extern bool carry_query_flag;
 extern bool always_pickup;
