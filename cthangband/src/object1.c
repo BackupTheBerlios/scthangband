@@ -5198,7 +5198,8 @@ static object_function PURE *get_object_function(s16b cmd)
 	object_function *ptr;
 
 	/* Hack - handle unify_commands here (without changing command_cmd). */
-	if (unify_commands && strchr("AEFabqruz", cmd)) cmd = KTRL('u');
+	if (unify_commands && !(cmd & 0xFF00) && strchr("AEFabqruz", cmd))
+		cmd = KTRL('u');
 
 	FOR_ALL_IN(object_functions, ptr)
 	{
