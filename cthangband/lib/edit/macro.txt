@@ -1559,9 +1559,12 @@ Y:s%+Pes%=P
 X:ch~
 Y:ch%+Pes%=P
 #:monster_desc() names
+#:object_desc() names
 
 X:ich~
 Y:ich%+Ps%=P
+#:monster_desc() names
+#:object_desc() names
 
 X:y~
 Y:%-Py%+Pies%=P
