@@ -695,67 +695,46 @@
 
 /*
  * Some screen locations for various display routines
- * Currently, row 8 and 15 are the only "blank" rows.
- * That leaves a "border" around the "stat" values.
+ * Defined relatively to make rearrangement easier
  */
 
 #define COL_START	0	/* First character in left border */
 #define COL_END	    12	/* Last character in left border */	
+
 #define ROW_TIME                1
-#define COL_TIME               0       /* 6:00AM */
+#define COL_TIME               0       /* 12:34 10 Jan */
 
-#define ROW_DATE               2
-#define COL_DATE               0       /* <template name> */
-
-#define ROW_GOLD                4
+#define ROW_GOLD	ROW_TIME+2
 #define COL_GOLD                0       /* "AU xxxxxxxxx" */
 
-#define ROW_EQUIPPY             5
+#define ROW_EQUIPPY	ROW_GOLD+1
 #define COL_EQUIPPY             0       /* equippy chars */
 
-#define ROW_STAT                6
+#define ROW_STAT	ROW_EQUIPPY+1
 #define COL_STAT                0       /* "xxx   xxxxxx" */
 
-#define ROW_AC                  13
+#define ROW_AC	ROW_STAT+7	/* Stats take 6 rows, leaving one blank. */
 #define COL_AC                  0       /* "Cur AC xxxxx" */
 
-#define ROW_HP	    14	/* "HP: xxx/yyy, etc." */
-#define ROW_SP	    15	/* "SP: xxx/yyy, etc." */
-#define ROW_CHI	    16	/* "CH: xxx/yyy, etc." */
-  
-#define ROW_LIFE	18	/* "Life: a c e g"*/
-#define ROW_WILD	19	/* "Wild: b d f h"*/
+#define ROW_HP	ROW_AC+1	/* "HP: xxx/yyy, etc." */
+#define ROW_SP	ROW_HP+1	/* "SP: xxx/yyy, etc." */
+#define ROW_CHI	ROW_SP+1	/* "CH: xxx/yyy, etc." */
 
-#if 0
-#define ROW_MAXHP               14
-#define COL_MAXHP               0       /* "Max HP xxxxx" */
+#define ROW_LIFE	ROW_CHI+2	/* "Life: a c e g"*/
+#define ROW_WILD	ROW_LIFE+1	/* "Wild: b d f h"*/
 
-#define ROW_CURHP               15
-#define COL_CURHP               0       /* "Cur HP xxxxx" */
-
-#define ROW_MAXSP               16
-#define COL_MAXSP               0       /* "Max SP xxxxx" */
-
-#define ROW_CURSP               17
-#define COL_CURSP               0       /* "Cur SP xxxxx" */
-
-#define ROW_MAXCHI            18
-#define COL_MAXCHI              0     /* "Max CH xxxxx" */
-
-#define ROW_CURCHI             19
-#define COL_CURCHI               0     /* "Cur CH xxxxx" */
-#endif
-
-#define ROW_INFO                20
+#define ROW_INFO	ROW_WILD+1
 #define COL_INFO                0       /* "xxxxxxxxxxxx" */
 
-#define ROW_CUT                 21
+#define ROW_ENERGY	ROW_INFO+1	/* LE: xxx */
+
+#define ROW_CUT	ROW_ENERGY+1
 #define COL_CUT                 0       /* <cut> */
 
-#define ROW_STUN                22
+#define ROW_STUN	ROW_CUT+1
 #define COL_STUN                0       /* <stun> */
 
-#define ROW_HUNGRY              23
+#define ROW_HUNGRY	ROW_STUN+1	/* 23 */
 #define COL_HUNGRY              0       /* "Weak" / "Hungry" / "Full" / "Gorged" */
 
 #define ROW_BLIND               23
@@ -1960,7 +1939,7 @@
 #define PR_BASIC        0x02000000L     /* Display Basic Info */
 #define PR_MAP          0x04000000L     /* Display Map */
 #define PR_WIPE         0x08000000L     /* Hack -- Total Redraw */
-/* xxx */
+#define PR_ENERGY	0x10000000L	/* Display last turn's energy use */
 /* xxx */
 /* xxx */
 /* xxx */

@@ -3083,6 +3083,9 @@ static void process_player(void)
 			/* Use some energy */
 			p_ptr->energy -= energy_use;
 
+			/* Remember this use of energy */
+			old_energy_use = energy_use;
+			p_ptr->redraw |= PR_ENERGY;
 
 			/* Hack -- constant hallucination */
 			if (p_ptr->image) p_ptr->redraw |= (PR_MAP);

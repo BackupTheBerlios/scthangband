@@ -57,100 +57,33 @@ void day_to_date_aux(s16b day,char *suffix)
  */
 void day_to_date(s16b day,char *date)
 {
-	char suffix[6];
+	bool leapyear = FALSE;
+	char *mon[]={"", "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 
-	/* Paranoia */
-	day = (day % 365);
+	s16b days[]={1, 32,60,91, 121,152,182, 213,244,274, 305,335,366};
+
+	byte i;
 
 	/* We start on the 1st, not the 0th */
 	day++;
 	
-	/* Ugly code, but it works... */
-	if(day <= 31)
+	/* It /could/ happen... */
+	if (!((day/365+1)%4)) leapyear = TRUE;
+	
+	day = (day % 1461) % 365;
+
+	for (i = 1; i < 13; i++)
 	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Jan %s",suffix);
+		if ((day < days[i]) || (day == days[i] && i && leapyear))
+	{
+			sprintf(date, "%2d %s ", day-days[i-1]+(!leapyear || i < 2), mon[i]);
 		return;
 	}
-	day-=31;
-	if(day <= 28)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Feb %s",suffix);
+	}
+	/* Something's gone horribly wrong */
+	sprintf(date, "??????");
 		return;
 	}
-	day-=28;
-	if(day <= 31)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Mar %s",suffix);
-		return;
-	}
-	day-=31;
-	if(day <= 30)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Apr %s",suffix);
-		return;
-	}
-	day-=30;
-	if(day <= 31)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"May %s",suffix);
-		return;
-	}
-	day-=31;
-	if(day <= 30)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Jun %s",suffix);
-		return;
-	}
-	day-=30;
-	if(day <= 31)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Jul %s",suffix);
-		return;
-	}
-	day-=31;
-	if(day <= 31)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Aug %s",suffix);
-		return;
-	}
-	day-=31;
-	if(day <= 30)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Sep %s",suffix);
-		return;
-	}
-	day-=30;
-	if(day <= 31)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Oct %s",suffix);
-		return;
-	}
-	day-=31;
-	if(day <= 30)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Nov %s",suffix);
-		return;
-	}
-	day-=30;
-	if(day <= 31)
-	{
-		day_to_date_aux(day,suffix);
-		sprintf(date,"Dec %s",suffix);
-		return;
-	}
-	sprintf(date,"Invalid day...");
-}
 
 
 /*
@@ -302,10 +235,8 @@ static void prt_gold(void)
  */
 void prt_time(void)
 {
-	int minute = ((turn % ((10L * TOWN_DAWN)/2) * 720) / ((10L * TOWN_DAWN)/2));
-	int hour = (minute/60)-6; /* -6 to +5 */
-	int hour12 = 0;
-	bool morning = FALSE;
+	int minute = ((turn % ((10L * TOWN_DAWN)) * 1440) / ((10L * TOWN_DAWN)));
+	int hour = ((minute/60)-6)%24; /* 0 to 23 */
 	s16b day = 0;
 	char date[20];
 
@@ -322,48 +253,10 @@ void prt_time(void)
 		day = (turn - 3*(10L * TOWN_DAWN / 4)) / (10L * TOWN_DAWN) + 2;
 	}
 
-	if ((turn / ((10L * TOWN_DAWN)/2)) % 2)
-	{   /* night: 6pm -- 6am */
-		if (hour <= 0)
-		{
-			hour12 = 12 - (hour * -1);
-		}
-		else
-		{
-			hour12 = hour;
-		}
-		if (hour >= 0)
-		{
-			morning = TRUE;
-		}
-		else
-		{
-			morning = FALSE;
-		}
-		put_str(format("%d:%02d %s  ", hour12, minute, (morning? "AM" : "PM")), ROW_TIME, COL_TIME);
-	}
-	else
-	{  /* day */
-		if (hour <= 0)
-		{
-			hour12 = 12 - (hour * -1);
-		} 
-		else
-		{
-			hour12 = hour;
-		}
-		if (hour >= 0)  
-		{
-			morning = FALSE;  
-		}
-		else 
-		{
-			morning = TRUE;
-		}
-		put_str(format("%d:%02d %s  ", hour12, minute, (morning? "AM" : "PM")), ROW_TIME, COL_TIME);
-	}
+	hour = (hour+12) % 24;
+
 	day_to_date((s16b)(day+p_ptr->startdate),date);
-	put_str(date,ROW_DATE,COL_DATE);
+	put_str(format("%2d:%02d %s", hour, minute, date), ROW_TIME, COL_TIME);
 }
 
 
@@ -379,6 +272,16 @@ static void prt_ac(void)
 	c_put_str(TERM_L_GREEN, tmp, ROW_AC, COL_AC + 7);
 }
 
+/*
+ * Prints energy cost of last turn
+ */
+static void prt_energy(void)
+{
+	char tmp[32];
+	put_str("LE:", ROW_ENERGY, COL_START);
+	sprintf(tmp, "%4d", old_energy_use);
+	c_put_str(TERM_L_GREEN, tmp, ROW_ENERGY, COL_END-4);
+ }
 
 /*
  * Prints Cur/Max hit points
@@ -1014,6 +917,9 @@ static void prt_frame_basic(void)
 	/* Armor */
 	prt_ac();
 
+	/* Energy */
+	prt_energy();
+ 
 	/* Hitpoints */
 	prt_hp();
 
@@ -3523,6 +3429,12 @@ void redraw_stuff(void)
 		prt_ac();
 	}
 
+	if (p_ptr->redraw & (PR_ENERGY))
+	{
+		p_ptr->redraw &= ~(PR_ENERGY);
+		prt_energy();
+	}
+	
 	if (p_ptr->redraw & (PR_HP))
 	{
 		p_ptr->redraw &= ~(PR_HP);

@@ -113,6 +113,7 @@ extern s16b command_gap;
 extern s16b command_wrk;
 extern s16b command_new;
 extern s16b energy_use;
+extern s16b old_energy_use;
 extern s16b choose_default;
 extern bool create_up_stair;
 extern bool create_down_stair;
