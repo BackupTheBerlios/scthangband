@@ -5178,8 +5178,7 @@ static void town_gen(void)
 void generate_cave(void)
 {
 	int i, num;
-	cptr why = NULL;
-	bool okay = FALSE;
+	cptr why = "";
 
 
 	/* The dungeon is not ready */
@@ -5194,14 +5193,6 @@ void generate_cave(void)
 		/* Small town */
 		cur_hgt = (2*SCREEN_HGT);
 		cur_wid = (SCREEN_WID);
-
-		/* Determine number of panels */
-		max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
-		max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
-
-		/* Assume illegal panel */
-		panel_row = max_panel_rows;
-		panel_col = max_panel_cols;
 	}
 	/* Towers are 1x1 */
 	else if (dun_defs[cur_dungeon].tower)
@@ -5236,23 +5227,64 @@ void generate_cave(void)
 	panel_row = max_panel_rows;
 	panel_col = max_panel_cols;
 
+	/* Mega-Hack -- no panel yet */
+	panel_row_min = 0;
+	panel_row_max = 0;
+	panel_col_min = 0;
+	panel_col_max = 0;
+
+
+	/* Get the correct dungeon offset */
+	if(dun_level != 0)
+	{
+		dun_offset = dun_defs[cur_dungeon].offset;
+		dun_bias = dun_defs[cur_dungeon].bias;
+	}
+	/* Very nasty at Kadath */
+	else if (wild_grid[wildy][wildx].dungeon == TOWN_KADATH)
+	{
+		dun_offset = 35;
+		dun_bias = SUMMON_CTHULOID;
+	}
+	/* Zero in towns */
+	else if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+	{
+		dun_offset = 0;
+		dun_bias = 0;
+	}
+	/* Nastier near dungeons */
+	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
+	{
+		dun_offset = dun_defs[wild_grid[wildy][wildx].dungeon].offset/2;
+		if (dun_offset < 4) dun_offset = 4;
+		dun_bias = dun_defs[wild_grid[wildy][wildx].dungeon].bias;
+	}
+	/* Not too nasty in the wilderness */
+	else
+	{
+		dun_offset = 2;
+		/* We get mainly animals in the wilderness */
+		dun_bias = SUMMON_ANIMAL;
+	}
+
+	/* Nothing special here yet (if setting this to TRUE doesn't stop the
+	 * loop instantly, it never will do, so don't reset it later). */
+	if (!preserve_mode) good_item_flag = FALSE;
+
 	/* Generate */
-	for (num = 0; !okay; num++)
+	for (num = 0, why = ""; why && num < 100; num++)
 	{
 		/* Message if "good" test fails noisily. */
-		if (why) msg_format("Generation restarted (%s)", why);
+		if (why && *why) msg_format("Generation restarted (%s)", why);
 
 		/* Assume good */
-		okay = TRUE;
+		why = NULL;
 
 		/* Wipe the objects */
 		wipe_o_list();
 
 		/* Wipe the monsters */
 		remove_non_pets();
-
-		/* XXX XXX XXX XXX */
-		o_max = 1;
 
 
 		/* Start with a blank cave */
@@ -5262,58 +5294,11 @@ void generate_cave(void)
 			C_WIPE(cave[i], MAX_WID, cave_type);
 		}
 
-		/* Mega-Hack -- no panel yet */
-		panel_row_min = 0;
-		panel_row_max = 0;
-		panel_col_min = 0;
-		panel_col_max = 0;
-
-		/* Get the correct dungeon offset */
-		if(dun_level == 0)
-		{
-			/* Zero in towns */
-			if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
-			{
-				dun_offset = 0;
-				dun_bias = 0;
-			}
-			/* Nastier near dungeons */
-			else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
-			{
-				dun_offset = dun_defs[wild_grid[wildy][wildx].dungeon].offset/2;
-				if (dun_offset < 4) dun_offset = 4;
-				dun_bias = dun_defs[wild_grid[wildy][wildx].dungeon].bias;
-			}
-			else
-			{
-				dun_offset = 2;
-				/* We get mainly animals in the wilderness */
-				dun_bias = SUMMON_ANIMAL;
-			}
-
-
-			/* Hack - Very nasty at Kadath */
-			if (wild_grid[wildy][wildx].dungeon == TOWN_KADATH)
-			{
-				dun_offset = 35;
-				dun_bias = SUMMON_CTHULOID;
-			}
-
-		}
-		else
-		{
-			dun_offset = dun_defs[cur_dungeon].offset;
-			dun_bias = dun_defs[cur_dungeon].bias;
-		}
-
 		/* Reset the monster generation level */
 		monster_level = (dun_depth);
 
 		/* Reset the object generation level */
 		object_level = (dun_depth);
-
-		/* Nothing special here yet */
-		good_item_flag = FALSE;
 
 		/* Nothing good here yet */
 		rating = 0;
@@ -5339,11 +5324,7 @@ void generate_cave(void)
 		else
 		{
 			/* Make a dungeon */
-			if (!cave_gen())
-			{
-				why = "could not place player";
-				okay = FALSE;
-			}
+			if (!cave_gen()) why = "could not place player";
 		}
 
 
@@ -5359,7 +5340,7 @@ void generate_cave(void)
 		else feeling = 10;
 
 		/* Hack -- Have a special feeling sometimes */
-		if (good_item_flag && !preserve_mode) feeling = 1;
+		if (!preserve_mode && good_item_flag) feeling = 1;
 
 		
 		/* Hack -- no feeling in the town */
@@ -5368,27 +5349,13 @@ void generate_cave(void)
 		replace_all_friends();
 
 		/* Prevent object over-flow */
-		if (o_max >= MAX_O_IDX)
-		{
-			/* Message */
-			why = "too many objects";
-
-			/* Message */
-			okay = FALSE;
-		}
+		if (o_max >= MAX_O_IDX) why = "too many objects";
 
 		/* Prevent monster over-flow */
-		if (m_max >= MAX_M_IDX)
-		{
-			/* Message */
-			why = "too many monsters";
-
-			/* Message */
-			okay = FALSE;
-		}
+		if (m_max >= MAX_M_IDX) why = "too many monsters";
 
 		/* Mega-Hack -- "auto-scum" */
-		if (auto_scum && (num < 100))
+		if (auto_scum)
 		{
 			/* Require "goodness" */
 			if ((feeling > 9) ||
@@ -5406,11 +5373,8 @@ void generate_cave(void)
 				}
 				else
 				{
-					why = NULL;
+					why = "";
 				}
-
-				/* Try again */
-				okay = FALSE;
 			}
 		}
 	}
