@@ -3995,6 +3995,30 @@ static void give_activation_power (object_type * o_ptr)
     o_ptr->timeout = 0;
 }
 
+/*
+ * Create a name from syllables in one of two files.
+ */
+static void get_table_name(char * out_string)
+{
+	/* Set up the parameters for the name set to use. */
+	bool set2 = !rand_int(3);
+	cptr str = "", file = (set2) ? "scroll.txt" : "elvish.txt";
+	int num = (set2) ? rand_range(2,4) : rand_range(2,3);
+
+	/* Build up the name. */
+	while (num--)
+	{
+		str = format("%s%v", str, get_rnd_line_f1, file);
+	}
+
+	/* Copy the name across, obeying the length limit set in defines.h
+	 * and the size of new_name.
+	 */
+	strnfmt(out_string, 80, "'%.*^s'", MAX_TABLE_LEN-2, str);
+
+    return;
+}
+
 static void get_random_name(char * return_name, bool armour, int power)
 {
     if (randint(100)<=TABLE_NAME)

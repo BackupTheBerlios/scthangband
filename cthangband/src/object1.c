@@ -13,93 +13,6 @@
 
 #include "angband.h"
 
-
-/*
- * XXX XXX Hack -- note that "TERM_MULTI" is now just "TERM_VIOLET"
- * We will have to find a cleaner method for "MULTI_HUED" later.
- * There were only two multi-hued "flavors" (one potion, one food).
- * Plus five multi-hued "base-objects" (3 dragon scales, one blade
- * of chaos, and one something else).  See the SHIMMER_OBJECTS code
- * in "dungeon.c" and the object color extractor in "cave.c".
- */
-#define TERM_MULTI      TERM_VIOLET
-
-
-/*
- * Max sizes of the following arrays
- */
-#define MAX_SYLLABLES 164       /* Used with scrolls (see below) */
-
-
-
-/*
- * Syllables for scrolls (must be 1-4 letters each)
- */
-
-static cptr syllables[MAX_SYLLABLES] =
-{
-	"a", "ab", "ag", "aks", "ala", "an", "ankh", "app",
-	"arg", "arze", "ash", "aus", "ban", "bar", "bat", "bek",
-	"bie", "bin", "bit", "bjor", "blu", "bot", "bu",
-	"byt", "comp", "con", "cos", "cre", "dalf", "dan",
-	"den", "der", "doe", "dok", "eep", "el", "eng", "er", "ere", "erk",
-	"esh", "evs", "fa", "fid", "flit", "for", "fri", "fu", "gan",
-	"gar", "glen", "gop", "gre", "ha", "he", "hyd", "i",
-	"ing", "ion", "ip", "ish", "it", "ite", "iv", "jo",
-	"kho", "kli", "klis", "la", "lech", "man", "mar",
-	"me", "mi", "mic", "mik", "mon", "mung", "mur", "nag", "nej",
-	"nelg", "nep", "ner", "nes", "nis", "nih", "nin", "o",
-	"od", "ood", "org", "orn", "ox", "oxy", "pay", "pet",
-	"ple", "plu", "po", "pot", "prok", "re", "rea", "rhov",
-	"ri", "ro", "rog", "rok", "rol", "sa", "san", "sat",
-	"see", "sef", "seh", "shu", "ski", "sna", "sne", "snik",
-	"sno", "so", "sol", "sri", "sta", "sun", "ta", "tab",
-	"tem", "ther", "ti", "tox", "trol", "tue", "turs", "u",
-	"ulk", "um", "un", "uni", "ur", "val", "viv", "vly",
-	"vom", "wah", "wed", "werg", "wex", "whon", "wun", "x",
-    "yerg", "yp", "zun", "tri", "blaa", "jah", "bul", "on",
-    "foo", "ju", "xuxu"
-};
-
-
-
-
-/*
- * Give a name to a random artefact.
- */
-void get_table_name(char * out_string)
-{
-    int testcounter = (randint(3)) + 1;
-
-    strcpy(out_string, "'");
-
-    if (randint(3)==2)
-    {
-        while (testcounter--)
-            strcat(out_string, syllables[(randint(MAX_SYLLABLES))-1]);
-        }
-
-    else
-    {
-        testcounter = (randint(2)) + 1;
-        while (testcounter--)
-        {
-			/* out_string is new_name in create_artifact. */
-			int len = strlen(out_string);
-            strnfmt(out_string+len, 80-len, "%v",
-				get_rnd_line_f1, "elvish.txt");
-        }
-    }
-
-    out_string[1] = toupper(out_string[1]);
-
-    strcat(out_string, "'");
-
-    out_string[MAX_TABLE_LEN] = '\0';
-
-    return;
-}
-
 /*
  * Determine the u_idx of an item with a given k_idx.
  *
@@ -145,7 +58,7 @@ static void get_scroll_name(char * out_string, uint length)
 		for (q = 0; q < s; q++)
 		{
 			/* Add the syllable */
-			strcat(tmp, syllables[rand_int(MAX_SYLLABLES)]);
+			strnfmt(tmp, 80, "%v", get_rnd_line_f1, "scroll.txt");
 		}
 
 		/* Stop before getting too long */
