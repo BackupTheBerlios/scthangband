@@ -2451,140 +2451,107 @@ static bool random_plus(object_type *o_ptr)
 	return TRUE;
 }
 
+/*
+ * Return TRUE if a magical sheath can be added to a new randart.
+ */
+static bool PURE sheath_possible(object_ctype *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
 
 /*
- * Give a random bonus to an object. Return FALSE if the object chosen is
- * ineligible for this bonus.
+ * Various flags to add to an object using an appropriate function.
  */
-bool random_resistance(object_type *o_ptr, int specific)
+typedef struct biased_flag_type biased_flag_type;
+struct biased_flag_type
 {
+	byte bias;
+	byte chance;
+	byte set;
+	u32b flag;
+	bool (*test)(object_ctype *);
+};
 
-	if (!specific) /* To avoid a number of possible bugs */
+static biased_flag_type biased_resistance_list[] =
+{
+	{BIAS_ACID, 1, TR2, TR2_RES_ACID, NULL},
+	{BIAS_ACID, BIAS_LUCK, TR2, TR2_IM_ACID, NULL},
+	{BIAS_ELEC, 1, TR2, TR2_RES_ELEC, NULL},
+	{BIAS_ELEC, 1, TR3, TR3_SH_ELEC, sheath_possible},
+	{BIAS_ELEC, BIAS_LUCK, TR2, TR2_IM_ELEC, NULL},
+	{BIAS_FIRE, 1, TR2, TR2_RES_FIRE, NULL},
+	{BIAS_FIRE, 1, TR3, TR3_SH_FIRE, sheath_possible},
+	{BIAS_FIRE, BIAS_LUCK, TR2, TR2_IM_FIRE, NULL},
+	{BIAS_COLD, 1, TR2, TR2_RES_COLD, NULL},
+	{BIAS_COLD, BIAS_LUCK, TR2, TR2_IM_COLD, NULL},
+	{BIAS_POIS, 1, TR2, TR2_RES_POIS, NULL},
+	{BIAS_WARRIOR, 3, TR2, TR2_RES_FEAR, NULL},
+	{BIAS_WARRIOR, 3, TR3, TR3_NO_MAGIC, NULL},
+	{BIAS_NECROMANTIC, 1, TR2, TR2_RES_NETHER, NULL},
+	{BIAS_NECROMANTIC, 1, TR2, TR2_RES_POIS, NULL},
+	{BIAS_NECROMANTIC, 1, TR2, TR2_RES_DARK, NULL},
+	{BIAS_CHAOS, 1, TR2, TR2_RES_CHAOS, NULL},
+	{BIAS_CHAOS, 1, TR2, TR2_RES_CONF, NULL},
+	{BIAS_CHAOS, 1, TR2, TR2_RES_DISEN, NULL},
+};
+
+/*
+ * Add one or more resistances to an artefact based on the given bias.
+ * Return TRUE if no more resistances should be added in this step (see below).
+ */
+static bool biased_resistance(object_type *o_ptr, int bias)
+{
+	biased_flag_type *ptr;
+	u32b *flag;
+
+	FOR_ALL_IN(biased_resistance_list, ptr)
 	{
-	if (artifact_bias == BIAS_ACID)
-	{
-	if (!(o_ptr->flags2 & TR2_RES_ACID))
-	{
-		o_ptr->flags2 |= TR2_RES_ACID;
-		if (randint(2)==1) return TRUE;
-	}
-	if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_ACID))
-	{
-		o_ptr->flags2 |= TR2_IM_ACID;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_ELEC)
-	{
-	if (!(o_ptr->flags2 & TR2_RES_ELEC))
-	{
-		o_ptr->flags2 |= TR2_RES_ELEC;
-		if (randint(2)==1) return TRUE;
-	}
-	if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR &&
-		! (o_ptr->flags3 & TR3_SH_ELEC))
+		/* Wrong bias. */
+		if (ptr->bias != bias) continue;
+
+		switch (ptr->set)
 		{
-			o_ptr->flags2 |= TR3_SH_ELEC;
-			if (randint(2)==1) return TRUE;
+			case TR1: flag = &o_ptr->flags1; break;
+			case TR2: flag = &o_ptr->flags2; break;
+			case TR3: flag = &o_ptr->flags3; break;
+			default: assert(!"Unknown flag set"); continue;
 		}
-	if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_ELEC))
-	{
-		o_ptr->flags2 |= TR2_IM_ELEC;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_FIRE)
-	{
-	if (!(o_ptr->flags2 & TR2_RES_FIRE))
-	{
-		o_ptr->flags2 |= TR2_RES_FIRE;
-		if (randint(2)==1) return TRUE;
-	}
-	if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR &&
-		! (o_ptr->flags3 & TR3_SH_FIRE))
-		{
-			o_ptr->flags3 |= TR3_SH_FIRE | TR3_LITE;
-			if (randint(2)==1) return TRUE;
-		}
-	if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_FIRE))
-	{
-		o_ptr->flags2 |= TR2_IM_FIRE;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_COLD)
-	{
-	if (!(o_ptr->flags2 & TR2_RES_COLD))
-	{
-		o_ptr->flags2 |= TR2_RES_COLD;
-		if (randint(2)==1) return TRUE;
-	}
-	if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_COLD))
-	{
-		o_ptr->flags2 |= TR2_IM_COLD;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_POIS)
-	{
-	if (!(o_ptr->flags2 & TR2_RES_POIS))
-	{
-		o_ptr->flags2 |= TR2_RES_POIS;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_WARRIOR)
-	{
-	if (randint(3)!=1 && (!(o_ptr->flags2 & TR2_RES_FEAR)))
-	{
-		o_ptr->flags2 |= TR2_RES_FEAR;
-		if (randint(2)==1) return TRUE;
-	}
-	if ((randint(3)==1) && (!(o_ptr->flags3 & TR3_NO_MAGIC)))
-	{
-		o_ptr->flags3 |= TR3_NO_MAGIC;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_NECROMANTIC)
-	{
-	if (!(o_ptr->flags2 & TR2_RES_NETHER))
-	{
-		o_ptr->flags2 |= TR2_RES_NETHER;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags2 & TR2_RES_POIS))
-	{
-		o_ptr->flags2 |= TR2_RES_POIS;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags2 & TR2_RES_DARK))
-	{
-		o_ptr->flags2 |= TR2_RES_DARK;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_CHAOS)
-	{
-	if (!(o_ptr->flags2 & TR2_RES_CHAOS))
-	{
-		o_ptr->flags2 |= TR2_RES_CHAOS;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags2 & TR2_RES_CONF))
-	{
-		o_ptr->flags2 |= TR2_RES_CONF;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags2 & TR2_RES_DISEN))
-	{
-		o_ptr->flags2 |= TR2_RES_DISEN;
-		if (randint(2)==1) return TRUE;
-	}
-	}
+
+		if (ptr->test && !(ptr->test)(o_ptr))
+
+		/* Flag already fully set. */
+		if ((*flag & ptr->flag) == ptr->flag) continue;
+
+		/* Random failure. */
+		if (!one_in(ptr->chance)) continue;
+
+		/* Set it. */
+		*flag |= ptr->flag;
+
+		/* Give a 50% chance of finishing at each such flag addition. */
+		if (one_in(2)) return TRUE;
 	}
 
-	switch (specific?specific:randint(41))
+	/* Continue to the next step. */
+	return FALSE;
+}
+
+/*
+ * Add the specified resistance to an object.
+ * Return FALSE if this fails either due to a random error or an incompatible
+ * item.
+ */
+static bool random_resistance_aux(object_type *o_ptr, int which)
+{
+	switch (which)
 	{
 	case 1:
 	if (randint(WEIRD_LUCK)!=1)
@@ -2721,6 +2688,29 @@ bool random_resistance(object_type *o_ptr, int specific)
 	break;
 	}
 	return TRUE;
+}
+
+/*
+ * Add the specified resistance, expressed as an element of the
+ * random_resistance_aux() switch.
+ */
+void add_resistance(object_type *o_ptr, int min, int max)
+{
+	assert(min > 0 && max <= 41 && min <= max); /* Caller */
+
+	random_resistance_aux(o_ptr, rand_range(min, max));
+}
+
+/*
+ * Give a random bonus to an object. Return FALSE if the object chosen is
+ * ineligible for this bonus.
+ */
+static bool random_resistance(object_type *o_ptr)
+{
+	/* Forbid for specific requests to avoid a number of possible bugs */
+	if (biased_resistance(o_ptr, artifact_bias)) return TRUE;
+
+	return random_resistance_aux(o_ptr, randint(41));
 }
 
 /*
@@ -3453,7 +3443,7 @@ while(powers--)
 		has_pval = TRUE;
 		break;
 	case 3: case 4:
-		while (!random_resistance(o_ptr, 0)) ;
+		while (!random_resistance(o_ptr)) ;
 		break;
 	case 5:
 		while (!random_misc(o_ptr)) ;

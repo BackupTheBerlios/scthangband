@@ -1836,7 +1836,7 @@ extern bool enchant(object_type *o_ptr, int n, int eflag);
 extern bool enchant_spell(int num_hit, int num_dam, int num_ac);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
-extern bool random_resistance (object_type * o_ptr, int specific);
+extern void add_resistance(object_type *o_ptr, int min, int max);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern bool create_artifact(object_type *o_ptr, bool a_scroll);
