@@ -3441,7 +3441,7 @@ static void do_cmd_knowledge_deaths(void)
 			}
 
 			/* Format the string, including the monster's ASCII representation. */
-			my_fputs(fff, format(" %v   %d w%s killed by %v.\n",
+			my_fputs(fff, format(" %v   %d w%s killed by %v.",
 				get_symbol(r_ptr), r_ptr->r_deaths, (r_ptr->r_deaths == 1) ?
 				"as" : "ere", monster_desc_aux_f3, r_ptr, num, flags), 0);
 

@@ -1676,10 +1676,6 @@ void roff_top(int r_idx)
 	if (!use_color) a1 = TERM_WHITE;
 	if (!use_color) a2 = TERM_WHITE;
 
-	/* Convert to characters. */
-	a1 = atchar[a1];
-	a2 = atchar[a2];
-
 	/* Clear the top line */
 	Term_erase(0, 0, 255);
 
