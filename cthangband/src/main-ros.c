@@ -4827,7 +4827,7 @@ int main(int argc, char *argv[])
 	init_angband();
 	initialised = 1;
 	game_in_progress = 1;
-	pause_line(23);
+	pause_line();
 	flush();
 	/* Stop_Hourglass; */
 	play_game(FALSE);

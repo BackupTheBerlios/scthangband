@@ -80,6 +80,7 @@ sCthangband 1.0.13
   * Pref lines such as "L:blindness:7:-1" weren't parsed correctly.
   * "quest" was always pluralised in dumps.
   * project_m() leaked memory if its buffers were allocated.
+  * pause_line() was called with an argument in some main* files.
 
 sCthangband 1.0.12
 * Dodging blows because of martial arts gives experience in the skill.
