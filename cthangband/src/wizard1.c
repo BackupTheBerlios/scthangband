@@ -1198,7 +1198,12 @@ bool make_fake_artifact(object_type *o_ptr, int name1)
 {
 	int i;
 
-	artifact_type *a_ptr = &a_info[name1];
+	artifact_type *a_ptr;
+
+	/* Ignore illegal artefacts. */
+	if (name1 < 0 || name1 >= MAX_A_IDX) return FALSE;
+
+	a_ptr = &a_info[name1];
 
 
 	/* Ignore "empty" artifacts */
