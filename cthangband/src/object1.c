@@ -483,7 +483,7 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 			j_ptr->flags3 |= ptr->flags3;
 		}
 		/* Hack - flags known for random artefacts. */
-		if (o_ptr->art_name && spoil_art)
+		if (o_ptr->art_name && spoil_art && known)
 		{
 			/* All that is known about randarts is that they ignore elements. */
 			j_ptr->flags3 |= TR3_IGNORE_ALL;
@@ -549,7 +549,7 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 		}
 
 		/* If an activation is known to exist, magically know what it is. */
-		j_ptr->activation = !!(f3 & TR3_ACTIVATE);
+		j_ptr->activation = !!(j_ptr->flags3 & f3 & TR3_ACTIVATE);
 
 		/* Special "always show these" flags. */
 		if (j_ptr->flags3 & f3 & TR3_SHOW_ARMOUR) j_ptr->ac = 1;
