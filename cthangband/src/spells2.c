@@ -4918,24 +4918,18 @@ bool probing(void)
 		/* Probe visible monsters */
 		if (m_ptr->ml)
 		{
-			C_TNEW(m_name, MNAME_MAX, char);
-
 			/* Start the message */
 			if (!probe) msg_print("Probing...");
 
-			/* Get "the monster" or "something" */
-			strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x04);
-
 			/* Describe the monster */
-			msg_format("%^s has %d hit points.", m_name, m_ptr->hp);
+			msg_format("%^v has %d hit points.", monster_desc_f2, m_ptr, 0x04,
+				m_ptr->hp);
 
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);
 
 			/* Probe worked */
 			probe = TRUE;
-
-			TFREE(m_name);
 		}
 	}
 
@@ -5285,8 +5279,6 @@ void earthquake(int cy, int cx, int r)
 				if (!(r_ptr->flags2 & (RF2_KILL_WALL)) &&
 				    !(r_ptr->flags2 & (RF2_PASS_WALL)))
 				{
-					C_TNEW(m_name, MNAME_MAX, char);
-
 					/* Assume not safe */
 					sn = 0;
 
@@ -5326,11 +5318,8 @@ void earthquake(int cy, int cx, int r)
 						}
 					}
 
-					/* Describe the monster */
-					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 					/* Scream in pain */
-					msg_format("%^s wails out in pain!", m_name);
+					msg_format("%^v wails out in pain!", monster_desc_f2, m_ptr, 0);
 
 					/* Take damage from the quake */
 					damage = (sn ? damroll(4, 8) : 200);
@@ -5345,7 +5334,7 @@ void earthquake(int cy, int cx, int r)
 					if (m_ptr->hp < 0)
 					{
 						/* Message */
-						msg_format("%^s is embedded in the rock!", m_name);
+						msg_format("%^v is embedded in the rock!", monster_desc_f2, m_ptr, 0);
 
 						/* Delete the monster */
 						delete_monster(yy, xx);
@@ -5353,8 +5342,6 @@ void earthquake(int cy, int cx, int r)
 						/* No longer safe */
 						sn = 0;
 					}
-
-					TFREE(m_name);
 
 					/* Hack -- Escape from the rock */
 					if (sn)
@@ -5534,15 +5521,8 @@ static void cave_temp_room_lite(void)
 				/* Notice the "waking up" */
 				if (m_ptr->ml)
 				{
-					C_TNEW(m_name, MNAME_MAX, char);
-
-					/* Acquire the monster name */
-					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 					/* Dump a message */
-					msg_format("%^s wakes up.", m_name);
-
-					TFREE(m_name);
+					msg_format("%^v wakes up.", monster_desc_f2, m_ptr, 0);
 				}
 			}
 		}
