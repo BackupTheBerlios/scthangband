@@ -2097,9 +2097,6 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 			if (!(a_ptr->name = add_name(head, s)))
 			return (PARSE_ERROR_OUT_OF_MEMORY);
 
-			/* Hack - Ignore all elemental attacks. */
-			a_ptr->flags3 |= (TR3_IGNORE_ALL);
-
 			/* Next... */
 			return SUCCESS;
 		}
