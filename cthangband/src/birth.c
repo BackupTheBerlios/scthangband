@@ -990,7 +990,7 @@ static int change_points_by_stat(s16b from, s16b to)
 static errr save_stats(void)
 {
 	FILE *fff;
-	byte i,l;
+	int i,l;
 
 	/* Paranoia - check that there's something to save (the default entry does not count). */
 	if (stat_default_total <= 1) return SUCCESS;
@@ -1011,13 +1011,13 @@ static errr save_stats(void)
 	fprintf(fff, "\n\n# Initial stat dump\n\n");
 
 	for (i = 1; i < stat_default_total; i++)
-				{
+	{
 		stat_default_type *sd_ptr = &stat_default[i];
-		fprintf(fff, "D:%c:%c:%c:%d", rtoa(sd_ptr->sex), rtoa(sd_ptr->race), rtoa(sd_ptr->template), maximise_mode);
-					for (l = 0; l< A_MAX; l++)
-			fprintf(fff, ":%d", sd_ptr->stat[l]);
+		fprintf(fff, "D:%c:%c:%c:%d", rtoa(sd_ptr->sex), rtoa(sd_ptr->race),
+			rtoa(sd_ptr->template), sd_ptr->maximise);
+		for (l = 0; l< A_MAX; l++) fprintf(fff, ":%d", sd_ptr->stat[l]);
 		fprintf(fff, ":%s\n", quark_str(sd_ptr->name));
-				}
+	}
 
 	/* Close */
 	my_fclose(fff);

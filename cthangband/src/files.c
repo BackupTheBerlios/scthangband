@@ -193,7 +193,7 @@ static s16b tokenize(char *buf, s16b num, char **tokens)
 cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
 {
 	stat_default_type *sd_ptr;
-	byte i;
+	int i;
 	s16b stat[A_MAX];
 
 	/* Don't even try after character generation. */
@@ -212,7 +212,7 @@ cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b 
 		if (sex < 0 || sex >= MAX_SEXES) return "no such sex";
 		if (race < 0 || race >= MAX_RACES) return "no such race";
 		if (template < 0 || template >= MAX_TEMPLATE) return "no such template";
-		if (maximise != TRUE && maximise != FALSE) return "bad maximuse value";
+		if (maximise != TRUE && maximise != FALSE) return "bad maximise value";
 		for (i = 0; i < A_MAX; i++)
 		{
 			if (maximise)
