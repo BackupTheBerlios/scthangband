@@ -209,10 +209,293 @@ sCthangband 1.0.1
   rebuilding it made it inaccurate.
 * Stop window_stuff() from being called in the middle of a macro.
 
-...
-Changes between Cthangband 4.1.0 and sCthangband 1.0.1 will be added in due
-course.
-...
+sCthangband 1.0.0
+* Use an external program to generate externs.h in such a way as to minimise
+  the number of files which need to be recompiled as externs.h changes (using
+  ccache as much as possible).
+* Cause the level size to be independent of auto_scum. Now dungeons too can
+  experience the wonder of 5 minute level generation.
+* Add a few warning options to the makefile.
+* Fix some bugs.
+
+30/4/2002 (largely original)
+* Indicate in 'I' which helmets/gloves may/do inhibit magic.
+* Give the damage range for many of the spells in monster recall.
+* Gather together similar terms (e.g. resistances) on one line in 'I'.
+* Give home info, detailed object descriptions and a list of dungeons finished
+  in the character dump.
+* Cause text screen dumps to be loaded/saved correctly regardless of the
+  characters used.
+* Allow partial identical stacks to be rearranged to give the larger 99 objects.
+* Incorporate the show_file() function from ToME, and use colour in various
+  '~' screens.
+* Indicate the effective slays and the real movement and attack speeds in
+  monster recall.
+* Show the failure chance for a spell, favour or mindcraft power.
+* Display the shops in a town with "~8", and provide a window display to show
+  the current one if appropriate.
+* Display obvious flags for objects which have been tried.
+* Prevent the player from attempting to sell an object the shop has no room for.
+* Cause flavoured objects to use the flavour's colour if the colour of the
+  object is black, and its symbol if a space.
+* Only give vampiric messages if the object is unidentified or the player gains
+  HP.
+* Display the shopkeeper's relative greed in a Chr-independent way.
+* Cause '^W' to rotate the pile of objects the player is standing on.
+* Cause 'x' to select the cheapest object at a prompt.
+* Cause 'q' to assume 'n' for all further prompts at "Pick up [y/n]" prompt.
+* Cause (e.g.) "F:---reset---" to reset the features
+* Holy orb, malediction and hellfire now mark unaffected items as uncursed.
+* Fix some bugs.
+
+30/4/2002 (copied from the Cthangband 4.1.1 beta by David Thornley)
+* Prevent the "uncontrollable storm" mindcraft failure from using more chi than
+  the player originally possessed.
+* Change golems to A, ghouls to G, icky things into people of Ib and quiver
+  slots to archer mushrooms.
+* Detect doors/stairs via precognition at level 15, and invisible monsters at
+  20.
+* Make small children vanish after their worship attack.
+
+2/3/2002
+* Display the small-scale map in a square which is as large as will fit in the
+  window, and add a world map beside it on the surface.
+* Use the equipped bow by preference to a plain one when calculating the damage
+  caused by a missile.
+* Indicate a square which has been checked for traps but not seen with an umber
+  dot.
+* Add a window display for the list of shops in the current town.
+* Give RES_CONF to objects which have RES_CHAOS.
+* Use a set of flags to indicate the save file version to make more precise
+  manipulation possible.
+* Display the value a cursed object would have if it was uncursed instead of
+  listing the value as 0 (where appropriate).
+* Display skills which have been drained, and can be increased by training in
+  orange.
+* Indicate options which have no meaning because of the settings of other
+  options with "N/A", and prevent them from being selected.
+* Allow visual option fields to be set to a number rather than only increased
+  or decreased one number at a time.
+* Print the full store inventory regularly to simplify store manipulation.
+* Prevent an aborted enchantment attempt in a shop from costing money.
+* Prevent shops from destroying items sold to them.
+* Track which objects are known to have features not obvious from their
+  identification status (e.g. stat mods for unidentified objects).
+* Use grey price tags for objects the player cannot afford at the given price.
+* Fix some bugs.
+
+28/11/2002
+* Inform the player if an attempt to dig is doomed to failure.
+* Indicate the path a beam would follow towards a target in a similar way to
+  ADOM.
+* Fix some bugs.
+
+?????
+* Replace the * symbol for a dungeon/tower with a more specific one.
+* Inform the player if an item inscribed with !! has finished recharging.
+* Display all stats above 18 as (e.g.) 23/45, using XX/XX for stats above
+  18/8199 (!).
+* Use an UNUSED macro to indicate unused parameters and suppress warnings given
+  by GCC.
+* Use environment variables for fonts under X11.
+
+18/7/2001
+* Allow non-primary windows to display several different displays based on the
+  players preferences and the in-game situation.
+* Add a display for the visible monsters list (adapted from Eyangband's).
+* Add a display for the player's current skills.
+* Add a display for individual objects, showing as much of the 'I' screen as
+  will fit.
+* Allow 'y' to select the most valuable object at a prompt if values are
+  assumed to be known.
+* Increase the price of charisma potions to 8000.
+* Give a special message at the last level of a dungeon in the absence of a
+  quest.
+* Allow the wizard object creation command to take a k_idx parameter.
+* Allow the player to specify flags in k_info.txt which each subsequent object
+  with a tval will have.
+* Remove the hates_*() functions, relying on the object to have immunities
+  instead.
+* Tell the player which flags an unaware object must have if spoil_base is set.
+* Use object_desc() for all object name strings instead of using k_name
+  fragments for some.
+* Use the lowest possible value for an object in object_value_base() in the
+  absence of a specific listing.
+* Fix some bugs.
+
+6/6/2001
+* Show the stat breakdown on the second character screen during point-based
+  generation.
+* Don't tell the player that a quest monster has died unless he saw it die or
+  all of the quest monsters in that quest are now dead.
+* Create a u_info.txt file to store how the game refers to unidentified objects,
+  and categories of identified objects.
+* Replace "It cannot be harmed by acid", etc., with "It can be harmed by acid.",
+  and include the immunity derived from tval in this.
+* Fix some bugs.
+
+1/6/2001
+* Display the average damage of melee/missile weapons ont the charaacter
+  information screen.
+* Show the average damage caused by weapons with various slays on the 'I'
+  screen if allowed.
+* Provide an option to give a confirmation prompt whenever the player tries
+  to wear an object which isn't known to be uncursed.
+* Provide an option to disturb the player at sunrise on the surface.
+* Change the maximum length for an object description to 120.
+* Fix some bugs.
+
+21/5/2001
+* Allow the character to be born on 29th February.
+* Show a few potentially useful stat effects on the point buying screen.
+* Let the player access the options menu and help from the point buying screen.
+* Allow the player to modify monster memory colours in the visual preferences.
+* Remove the preferences question from the stat prompts and make the quick
+  start and initialisation completed prompts optional.
+* Allow equipped objects to be drained and recharged, and uncursed equipped
+  objects to be thrown, destroyed and turned into gold.
+* Inscribe unaware objects as "poss. cursed" if an object of the same type has
+  previously been found to be cursed.
+* Allow objects to be automatically inscribed with the current dungeon level
+  on creation.
+* Create an option to allow objects with different inscriptions to stack.
+* Allow spirits to be selected by number where (e.g.) spirit 2 is always the
+  second life spirit.
+* Make unique monsters change colour as the 'l' command is used.
+* Describe an artefact as "The Foo" rather than "Your Foo" in enchantment
+  attempts.
+* Allow saving to take place without printing a message.
+* Display the object symbol of unidentified shop items in TERM_SLATE.
+* Make a list of the monsters which have killed characters in this save file.
+* Allow unidentified objects with 0 charges to stack with othewise similar
+  identified ones.
+* Display the amount of money the shopkeeper will give you for an object with
+  a standard base price.
+* Display known information about items which have not been *identified* on the
+  'I' display.
+* Include the symbol of each monster in the relevant '~' sections.
+* Make traps which have the same symbol indistinguishable.
+* Include the failure chance in the "use power" menu.
+* Give more appropriate messages when level teleporting in a tower.
+* Give a more appropriate message when polymorphing a shapechanger.
+* Display missile damage modifiers on the second character information screen.
+* Make a note of inscription in the message history.
+* Make amulets of adornment remove the food requirement in wizard mode.
+* Give items with fiery auras the permanent light flag.
+* Create a macro for dun_level+dun_offset.
+* Fix some bugs.
+
+9/3/2001
+* Allow an attempt to (e.g.) inscribe a previously inscribed object to modify
+  the existing inscription rather than replacing it entirely.
+* Describe the things which happen when a monster dies in a new "E:..." field
+  in r_info.txt, allowing ordinary objects, artefacts, monsters, explosions
+  and messages to be given some or all of the time a monster of a given race
+  dies, and mention it in the monster memory.
+* Give an option to disturb running whenever the character would otherwise
+  change direction.
+* Don't list features which mimic other features in '%'.
+* Give the full name of an object in 'I' so that long names are not such a
+  problem.
+* Include the dungeon offset in the level number on the high score table.
+* Save and load sets of stats in point-based character generation with 'f'
+  and 'l'.
+* Change the Star Essence of Polaris from a '!' to a '*'.
+* Allow the player to add/remove a point from a random stat in point-based
+  character generation with 'z'.
+* Improve the handling of plural monsters.
+* Leave a record when the player answers a [y/n] prompt.
+* Mention in the artefact spoilers when an artefact has a random power or
+  resistance.
+* Allow the player to make the game display obvious modifiers an item has.
+* Allow the player to make the game display the effects of restore stat potions.
+* Give some appropriate help for shop services.
+* Prevent stairs from destroying objects at the end of a quest.
+* Display blessing, stone skin, etc., on the first character screen.
+* Make death by trap door occur on the lower level rather than the upper one.
+* Allow the player to edit the tval, sval and name2 in the debug object editor.
+* Allow the player to create any monster at all in debug mode.
+* Randomise the order in which artefacts are chosen in make_artifact() and
+  make_artifact_special() so that equiprobably artefacts are more feasible.
+* Use letters for non-numerical shop doorways for easier recognition.
+* Create an A_MAX macro to make it clear when 6 refers to the number of stats.
+* Add a new message for cheated shopkeepers.
+* Fix some bugs.
+
+17/1/2001
+* Create a "Spoiler Options" menu which allows the player to control whether
+  he is assumed to know the guaranteed features of base objects, ego items,
+  artefacts, the value of objects and monsters.
+* List the amount of energy used in the last turn on the main screen.
+* Choose a worthless/cursed item from the object prompt with 'z'.
+* Separate the quick_messages option into one which applies at [y/n] prompts
+  and one which applies at -more- prompts.
+* Prevent the player from selling unidentified items to a shop with no empty
+  space.
+* Only ask how many of something the player wishes to sell to a shop if the
+  character can sell at least one of them there.
+* Calculate the average social class for a race when using point-based
+  generation.
+* Display each race's experience penalty during point-based generation.
+* Give a single "It cannot be harmed by the elements." in 'I' where appropriate.
+* Call Smeagol "he" rather than "it" when he can't be seen.
+* Fix some bugs.
+
+15/12/2000
+* Make the monster recall display more colourful.
+* Remove the immunity from destruction objects in pouches had. Now they are
+  treated as single inventory items.
+* Give a minor disturbance when a spirit ceases to be annoyed.
+* Put the "is it an artefact?" test in a single macro.
+* Rename the "broken" inscription as "useless".
+* Rename the "on sale" inscription as "50% off".
+* Only fail to wear a ring if both fingers contain a cursed ring.
+* Fix some bugs.
+
+12/12/2000
+* Indicate when an object is known to be uncursed or unbreakable.
+* Provide an option to automatically select the first spirit at the "select a
+  spirit" prompt if only one is available.
+* Create an option to allow various list prompts to be opened automatically.
+* Display temporary resistances in the "Study" field if applicable.
+* Cause items inscribed with "=g" to be picked up regardless of
+  carry_query_flag.
+* Make attempts to call upon an annoyed spirit waste time but do nothing else.
+* Fix some bugs.
+
+4/12/2000
+* Create an AUTO_CURSE flag to make an item become cursed immediately on
+  wearing, and a few turns after it is uncursed. Apply this flag to
+  Stormbringer, but nothing else.
+* Cause 'x' to toggle a selected binary option in option menus.
+* Fix some bugs.
+
+17/11/2000
+* Create Stormbringer as a normal artefact rather than a fake randart.
+
+8/11/2000
+* Implement fractional numbers of blows per turn.
+* Simplify the buying process for players using autohaggle.
+* Allow the race and template to be changed during point modification, and
+  give weapon damage as if an appropriate weapon was wielded.
+* Indicate the final dungeon on the tombstone.
+* Cause an inscription of '%' to set "stack_force_costs" for that item alone.
+* Show the AC from not wearing an item in each armour slot for martial artists.
+* Provide an option to show the known information for artefacts on the 'I'
+  screen.
+* Prevent quitters from being shown on the high score table with a compile-time
+  option.
+* Cause trying to walk into a tree or water to take no time.
+* Inscribe a permanently worthless uncursed item as "worthless".
+* Fix some bugs.
+
+25/10/2000 (first version maintained by Kieron Dunbar)
+* Display skills above 0% which can still be improved in yellow, and use
+  square brackets to indicate when the player reaches the current maximum for
+  a skill.
+* Use a dark green number rather than a 's' to indicate sustained and increased
+  stats.
+* Fix a bug which prevented a shop service from using your last AU.
 
 Cthangband 4.1.0 (the first under the maintainership of David Thornley)
 * Any character starting with Shaman skill gets one free spirit bound.
