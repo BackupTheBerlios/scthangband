@@ -969,6 +969,7 @@ extern void window_stuff(void);
 extern void handle_stuff(void);
 extern bool ma_empty_hands();
 extern bool ma_heavy_armor();
+extern int mystic_armour(int);
 extern bool skill_check_possible(int);
 extern void skill_exp(int);
 extern void gain_spell_exp(magic_type*);

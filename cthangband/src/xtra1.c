@@ -1649,6 +1649,40 @@ void calc_spells(void)
 	}
 }
 
+/* Calculated the AC bonus from a given empty armour slot. It does not check that
+the player is eligible for such bonuses in the first place. */
+int mystic_armour(int slot)
+{
+	int i = 0;
+	if (!inventory[slot].k_idx) {
+		switch (slot) {
+			case INVEN_BODY:
+				i = (skill_set[SKILL_MA].value * 3) / 4;
+				break;
+			case INVEN_OUTER:
+				i = ((skill_set[SKILL_MA].value - 26) / 6);
+				break;
+			case INVEN_ARM:
+				i = ((skill_set[SKILL_MA].value - 16) / 6);
+				break;
+			case INVEN_HEAD:
+				i = (skill_set[SKILL_MA].value - 4) / 6;
+				break;
+			case INVEN_HANDS:
+				i = (skill_set[SKILL_MA].value / 4);
+				break;
+			case INVEN_FEET:
+				i = (skill_set[SKILL_MA].value / 6);
+				break;
+			default:
+				break;
+		}
+	}
+	if (i > 0)
+		return i;
+	else
+		return 0;
+}
 
 /*
  * Calculate maximum mana.  You do not need to know any spells.
@@ -2799,40 +2833,15 @@ static void calc_bonuses(bool quiet)
 		if (object_known_p(o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
 	}
 
-    /* Mystic get extra ac for armour _not worn_ */
-    if ((ma_empty_hands()) && !(ma_heavy_armor()))
-    {
-        if (!(inventory[INVEN_BODY].k_idx))
-        {
-            p_ptr->to_a += (skill_set[SKILL_MA].value * 3) / 4;
-            p_ptr->dis_to_a += (skill_set[SKILL_MA].value * 3) / 4;
-        }
-        if (!(inventory[INVEN_OUTER].k_idx) && (skill_set[SKILL_MA].value > 30))
-        {
-            p_ptr->to_a += ((skill_set[SKILL_MA].value - 26) / 6);
-            p_ptr->dis_to_a += ((skill_set[SKILL_MA].value - 26) / 6);
-        }
-        if (!(inventory[INVEN_ARM].k_idx) && (skill_set[SKILL_MA].value > 20))
-        {
-            p_ptr->to_a += ((skill_set[SKILL_MA].value - 16) / 6);
-            p_ptr->dis_to_a += ((skill_set[SKILL_MA].value - 16) / 6);
-        }
-        if (!(inventory[INVEN_HEAD].k_idx)&& (skill_set[SKILL_MA].value > 8))
-        {
-            p_ptr->to_a += (skill_set[SKILL_MA].value - 4) / 6;
-            p_ptr->dis_to_a += (skill_set[SKILL_MA].value -4) / 6;
-        }
-        if (!(inventory[INVEN_HANDS].k_idx))
-        {
-            p_ptr->to_a += (skill_set[SKILL_MA].value / 4);
-            p_ptr->dis_to_a += (skill_set[SKILL_MA].value / 4);
-        }
-        if (!(inventory[INVEN_FEET].k_idx))
-        {
-            p_ptr->to_a += (skill_set[SKILL_MA].value / 6);
-            p_ptr->dis_to_a += (skill_set[SKILL_MA].value / 6);
-        }
-    }
+	/* Mystic get extra ac for armour _not worn_ */
+	if ((ma_empty_hands()) && !(ma_heavy_armor()))
+	{
+		for (i=INVEN_BODY; i<=INVEN_FEET; i++){
+			j = mystic_armour(i);
+			p_ptr->to_a += j;
+			p_ptr->dis_to_a += j;
+		}
+	}
 
     /* Hack -- aura of fire also provides light */
     if (p_ptr->sh_fire) p_ptr->lite = TRUE;
