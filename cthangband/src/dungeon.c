@@ -2182,6 +2182,20 @@ static void process_world(void)
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
+
+		/* Recharge activatable objects */
+		if (o_ptr->timeout > 0)
+		{
+			/* Recharge */
+			o_ptr->timeout--;
+
+			/* Notice changes */
+			if (!(o_ptr->timeout))
+			{
+				j++;
+				recharged_notice(o_ptr);
+			}
+		}
 	}
 
 	/* Notice changes */
@@ -2189,6 +2203,27 @@ static void process_world(void)
 	{
 		/* Window stuff */
 		p_ptr->window |= (PW_EQUIP);
+	}
+
+	/* Recharge rods */
+	for (j = 0, i = 0; i < INVEN_PACK; i++)
+	{
+		o_ptr = &inventory[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Examine all charging rods */
+		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
+		{
+			/* Charge it */
+			if (--o_ptr->timeout == 0)
+			{
+				/* Notice changes */
+				j++;
+				recharged_notice(o_ptr);
+			}
+		}
 	}
 
 	/* Notice changes */
@@ -2221,36 +2256,16 @@ static void process_world(void)
 	/*** Process Objects ***/
 
 	/* Process objects */
-	for (i = 1; i < INVEN_TOTAL+o_max; i++)
+	for (i = 1; i < o_max; i++)
 	{
 		/* Access object */
-		o_ptr = &obj_list[i];
+		o_ptr = &o_list[i];
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
 
-		/* Skip recharged items. */
-		if (!o_ptr->timeout) continue;
-
 		/* Recharge rods on the ground */
-		if (o_ptr->tval == TV_ROD || is_inventory_hack_p(o_ptr))
-		{
-			o_ptr->timeout--;
-
-			/* Notice changes */
-			if (!(o_ptr->timeout))
-			{
-				j++;
-
-				if (is_inventory_hack_p(o_ptr))
-				{
-					recharged_notice(o_ptr);
-
-					/* Combine / Reorder the pack (later) */
-					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-				}
-			}
-		}
+		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout)) o_ptr->timeout--;
 	}
 
 	/* Delayed Word-of-Recall */

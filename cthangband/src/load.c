@@ -1288,8 +1288,8 @@ static errr rd_inventory(void)
 {
 	int slot = 0;
 
-	object_type q_ptr[1];
-	object_type *o_ptr = UNREAD_VALUE; /* Only read for an initial 0xFFFE. */
+	object_type forge;
+	object_type *q_ptr;
 
 	/* No weight */
 	total_weight = 0;
@@ -1303,20 +1303,14 @@ static errr rd_inventory(void)
 	{
 		u16b n;
 
-#ifdef SF_ROD_STACKING
-		s16b next_o_idx;
-#endif /* SF_ROD_STACKING */
-
 		/* Get the next item index */
 		rd_u16b(&n);
 
 		/* Nope, we reached the end */
 		if (n == 0xFFFF) break;
 
-#ifdef SF_ROD_STACKING
-		/* Get the next object. */
-		if (has_flag(SF_ROD_STACKING)) rd_s16b(&next_o_idx);
-#endif /* SF_ROD_STACKING */
+		/* Get local object */
+		q_ptr = &forge;
 
 		/* Wipe the object */
 		object_wipe(q_ptr);
@@ -1324,18 +1318,17 @@ static errr rd_inventory(void)
 		/* Read the item */
 		rd_item(q_ptr);
 
-#ifdef SF_ROD_STACKING
-		/* Get the next object. */
-		if (has_flag(SF_ROD_STACKING)) q_ptr->next_o_idx = next_o_idx;
-#endif /* SF_ROD_STACKING */
-
 		/* Hack -- verify item */
 		if (!q_ptr->k_idx) return (53);
 
 		/* Wield equipment */
 		if (n >= INVEN_WIELD)
 		{
-			o_ptr = inventory+n;
+			/* Copy object */
+			object_copy(&inventory[n], q_ptr);
+
+			/* Add the weight */
+			total_weight += (q_ptr->number * q_ptr->weight);
 
 			/* One more item */
 			equip_cnt++;
@@ -1355,17 +1348,17 @@ static errr rd_inventory(void)
 		else
 		{
 			/* Get a slot */
-			o_ptr = inventory + slot++;
+			n = slot++;
+
+			/* Copy object */
+			object_copy(&inventory[n], q_ptr);
+
+			/* Add the weight */
+			total_weight += (q_ptr->number * q_ptr->weight);
 
 			/* One more item */
 			inven_cnt++;
 		}
-
-		/* Copy object */
-		object_copy(o_ptr, q_ptr);
-
-		/* Add the weight */
-		total_weight += (q_ptr->number * q_ptr->weight);
 	}
 
 	/* Success */
@@ -1602,7 +1595,7 @@ func_false();
 		}
 		
 		/* Dungeon */
-		else if (o_ptr->iy)
+		else
 		{
 			/* Access the item location */
 			c_ptr = &cave[o_ptr->iy][o_ptr->ix];

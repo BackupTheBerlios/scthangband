@@ -2701,7 +2701,7 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options (full to 3,13), 7 reserved for cheat options
+ * Available Options (full to 3,12), 7 reserved for cheat options
  */
 option_type option_info[] =
 {
@@ -2835,9 +2835,6 @@ option_type option_info[] =
 
 	{ &stack_allow_wands,   TRUE, OPTS_OBJ,      1, 3,
 	"stack_allow_wands",    "Allow wands/staffs/rods to stack" },
-
-	{ &stack_allow_rods, TRUE, OPTS_OBJ, 3, 13,
-	"stack_allow_rods", "Allow recharging rods to stock" },
 
 	{ &expand_look,                 FALSE, OPTS_MISC,      1, 4,
 	"expand_look",                  "Expand the power of the look command" },
@@ -3092,7 +3089,6 @@ force_type option_force[] =
 	{&wear_confirm, FALSE, &confirm_wear_all},
 	{&flow_by_sound, FALSE, &flow_by_smell},
 	{&use_graphics, TRUE, &use_color},
-	{&stack_allow_wands, FALSE, &stack_allow_rods},
 	{0, 0, 0}
 };
 

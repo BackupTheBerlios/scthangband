@@ -2954,16 +2954,8 @@ void do_cmd_zap_rod(object_type *o_ptr)
 		total_weight -= q_ptr->weight;
 		inven_carry(q_ptr);
 
-		if (!stack_allow_rods)
-		{
-			/* Message */
-			msg_print("You unstack your rod.");
-		}
-	}
-	else if (is_inventory_p(o_ptr))
-	{
-		/* Check that this rod still has the lowest timeout. */
-		reorder_rod(o_ptr);
+		/* Message */
+		msg_print("You unstack your rod.");
 	}
 }
 

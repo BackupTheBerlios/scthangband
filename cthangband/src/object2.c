@@ -475,7 +475,7 @@ void compact_objects(int size)
  */
 void wipe_o_list(void)
 {
-	int i, new_o_cnt = 0, new_o_max = 1;
+	int i;
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -484,14 +484,6 @@ void wipe_o_list(void)
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
-
-		/* Keep objects which are not on te ground or held by monsters. */
-		if (!o_ptr->held_m_idx && !o_ptr->iy)
-		{
-			new_o_cnt++;
-			new_o_max = i+1;
-			continue;
-		}
 
 		/* Mega-Hack -- preserve artifacts */
 		if (!character_dungeon || preserve_mode)
@@ -537,10 +529,10 @@ void wipe_o_list(void)
 	}
 
 	/* Reset "o_max" */
-	o_max = new_o_max;
+	o_max = 1;
 
 	/* Reset "o_cnt" */
-	o_cnt = new_o_cnt;
+	o_cnt = 0;
 }
 
 
@@ -1358,7 +1350,7 @@ s32b object_value(object_type *o_ptr)
  *
  * Chests, and activatable items, never stack (for various reasons).
  */
-static int object_similar_2_aux(object_type *o_ptr, object_type *j_ptr, bool rod)
+int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 {
 
 	int total = o_ptr->number + j_ptr->number;
@@ -1411,11 +1403,8 @@ static int object_similar_2_aux(object_type *o_ptr, object_type *j_ptr, bool rod
 			/* Require permission */
 			if (!stack_allow_wands) return (0);
 
-			if (!rod || !is_inventory_hack_p(o_ptr) || !stack_allow_rods)
-			{
-				/* Require identical charges */
-				if (o_ptr->timeout != j_ptr->timeout) return (0);
-			}
+			/* Require identical charges */
+			if (o_ptr->timeout != j_ptr->timeout) return (0);
 
 			/* Probably okay */
 			break;
@@ -1539,18 +1528,6 @@ static int object_similar_2_aux(object_type *o_ptr, object_type *j_ptr, bool rod
 }
 
 
-
-
-int object_similar_2(object_type *o_ptr, object_type *j_ptr)
-{
-	return object_similar_2_aux(o_ptr, j_ptr, FALSE);
-}
-
-static int object_similar_2_tmp(object_type *o_ptr, object_type *j_ptr)
-{
-	return object_similar_2_aux(o_ptr, j_ptr, TRUE);
-}
-
 bool object_similar(object_type *o_ptr, object_type *j_ptr)
 {
 	return (object_similar_2(o_ptr, j_ptr) == j_ptr->number);
@@ -1571,75 +1548,10 @@ static byte merge_discounts(object_type *o_ptr, object_type *j_ptr)
 }
 
 /*
- * Allow a rod to absorb another rod
- * Returns true if the entire stack was absorbed.
- *
- * NB: This function relies on the assumption that the stack is sorted in
- * order of increasing timeout.
- */
-static bool object_absorb_rod(object_type *o_ptr, object_type *j_ptr)
-{
-	object_type *q_ptr;
-	int i, excess =
-		MAX(object_number(o_ptr) + object_number(j_ptr) - (MAX_STACK_SIZE-1), 0);
-
-	/* Combine with one of the stack if possible. */
-	for (q_ptr = o_ptr; q_ptr != o_list; q_ptr = o_list+q_ptr->next_o_idx)
-	{
-		if (object_similar(q_ptr, j_ptr))
-		{
-			o_ptr->number += j_ptr->number-excess;
-			goto done;
-		}
-		/* The timeout gets larger from here. */
-		else if ((q_ptr->timeout < o_ptr->timeout && 
-			o_list[q_ptr->next_o_idx].timeout > o_ptr->timeout) ||
-			/* End of te pile. */
-			!(q_ptr->next_o_idx))
-		{
-			break;
-		}
-	}
-
-	/* Add to the sorted list after q_ptr. */
-	if ((i = o_pop()))
-	{
-		int next_o_idx = q_ptr->next_o_idx;
-
-		/* Add the link to the new object. */
-		q_ptr->next_o_idx = i;
-
-		/* Find the new object. */
-		q_ptr = o_list+q_ptr->next_o_idx;
-
-		/* Create the new object. */
-		object_copy(q_ptr, j_ptr);
-
-		/* Add the link from the new object. */
-		q_ptr->next_o_idx = next_o_idx;
-
-		q_ptr->number -= excess;
-	}
-	/* No more objects available. */
-	else
-	{
-		return FALSE;
-	}
-
-done:
-
-	/* Leave the uncombined items on j_ptr. */
-	j_ptr->number = excess;
-
-	/* Indicate whether the stack has been absorbed. */
-	return !excess;
-}
-
-/*
  * Allow one item to "absorb" another, assuming they are similar
  * Return true if every object was completely absorbed.
  */
-static bool object_absorb_aux(object_type *o_ptr, object_type *j_ptr, bool rod)
+bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 {
 	/* Hack -- blend "known" status */
 	if (object_known_p(j_ptr)) object_known(o_ptr);
@@ -1669,25 +1581,10 @@ static bool object_absorb_aux(object_type *o_ptr, object_type *j_ptr, bool rod)
 	o_ptr->discount = merge_discounts(o_ptr, j_ptr);
 	
 	/* Add together the stacks, and return TRUE if the second is empty. */
-	if (rod && o_ptr->tval == TV_ROD)
-	{
-		return object_absorb_rod(o_ptr, j_ptr);
-	}
-	else
-	{
-		return store_object_absorb(o_ptr, j_ptr);
-	}
+	return store_object_absorb(o_ptr, j_ptr);
 }
 
-bool object_absorb(object_type *o_ptr, object_type *j_ptr)
-{
-	return object_absorb_aux(o_ptr, j_ptr, FALSE);
-}
 
-static bool object_absorb_tmp(object_type *o_ptr, object_type *j_ptr)
-{
-	return object_absorb_aux(o_ptr, j_ptr, TRUE);
-}
 
 /*
  * Wipe an object clean.
@@ -4302,7 +4199,7 @@ void place_gold(int y, int x)
  * the object can combine, stack, or be placed.  Artifacts will try very
  * hard to be placed, including "teleporting" to a useful grid if needed.
  */
-object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
+s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 {
 	int i, k, d, s;
 
@@ -4344,7 +4241,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
         /* Failure */
 		TFREE(o_name);
-		return NULL;
+		return (0);
 	}
 
 
@@ -4455,7 +4352,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
 		/* Failure */
 		TFREE(o_name);
-		return NULL;
+		return (0);
 	}
 
 
@@ -4546,7 +4443,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
 		/* Failure */
 		TFREE(o_name);
-		return NULL;
+		return (0);
 	}
 
 	/* Stack */
@@ -4596,7 +4493,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 	TFREE(o_name);
 
 	/* Result */
-	return o_list+o_idx;
+	return (o_idx);
 }
 
 
@@ -4721,89 +4618,43 @@ static void inven_item_charges(int item)
 
 
 /*
- * Remove a number of objects from a particular stack at random.
- */
-static void remove_stack_objects(object_type *o_ptr, int num)
-{
-	int i,j;
-	object_type *list[255], *j_ptr, *q_ptr;
-
-	/* Create a pointer to each item in the stack. */
-	for (j_ptr = o_ptr, i = 0; j_ptr != o_list;
-		j_ptr = o_list+j_ptr->next_o_idx)
-	{
-		for (j = 0; j < j_ptr->number; j++) list[i++] = j_ptr;
-	}
-	/* Subtract random rods. */
-	while (num--)
-	{
-		j = rand_int(i--);
-		list[j]->number--;
-		if (i != j) list[j] = list[i];
-	}
-	/* Remove empty indices. */
-	for (j_ptr = o_ptr; j_ptr->next_o_idx; j_ptr = q_ptr)
-	{
-		q_ptr = o_list + j_ptr->next_o_idx;
-		if (!q_ptr->number)
-		{
-			j_ptr->next_o_idx = q_ptr->next_o_idx;
-			object_wipe(q_ptr);
-			q_ptr = j_ptr;
-		}
-	}
-	/* o_ptr is treated specially, as its location is significant. */
-	if (!o_ptr->number)
-	{
-		object_copy(o_ptr, o_list+o_ptr->next_o_idx);
-		object_wipe(o_list+o_ptr->next_o_idx);
-	}
-}
-
-/*
  * Increase the "number" of an item in the inventory
  */
-static void inven_item_increase(object_type *o_ptr, int num)
+static void inven_item_increase(int item, int num)
 {
+	object_type *o_ptr = &inventory[item];
+
 	/* Apply */
-	num += object_number(o_ptr);
+	num += o_ptr->number;
 
 	/* Bounds check */
 	if (num > 255) num = 255;
 	else if (num < 0) num = 0;
 
 	/* Un-apply */
-	num -= object_number(o_ptr);
+	num -= o_ptr->number;
 
-	/* Nothing to do. */
-	if (!num) return;
-
-	/* Stacks of items are removed from randomly. This only considers object
-	 * removal, as I don't know how duplicating such items would work. */
-	if (o_ptr->next_o_idx && num < 0)
+	/* Change the number and weight */
+	if (num)
 	{
-		remove_stack_objects(o_ptr, -num);
-	}
-	/* Simply add the number */
-	else
-	{
+		/* Add the number */
 		o_ptr->number += num;
+
+		/* Add the weight */
+		total_weight += (num * o_ptr->weight);
+
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+
+		/* Recalculate mana XXX */
+		p_ptr->update |= (PU_MANA);
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
-
-	/* Add the weight */
-	total_weight += (num * o_ptr->weight);
-
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Recalculate mana XXX */
-	p_ptr->update |= (PU_MANA);
-
-	/* Combine the pack */
-	p_ptr->notice |= (PN_COMBINE);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 
@@ -4908,8 +4759,10 @@ static void floor_item_charges(int item)
 /*
  * Increase the "number" of an item on the floor
  */
-static void floor_item_increase(object_type *o_ptr, int num)
+static void floor_item_increase(int item, int num)
 {
+	object_type *o_ptr = &o_list[item];
+
 	/* Apply */
 	num += o_ptr->number;
 
@@ -4971,13 +4824,15 @@ void item_charges(object_type *o_ptr)
  */
 void item_increase(object_type *o_ptr, int num)
 {
+	int item = cnv_obj_to_idx(o_ptr);
+
 	if (is_inventory_p(o_ptr))
 	{
-		inven_item_increase(o_ptr, num);
+		inven_item_increase(item, num);
 	}
 	else if (is_floor_item_p(o_ptr))
 	{
-		floor_item_increase(o_ptr, num);
+		floor_item_increase(0 - item, num);
 	}
 	else if (alert_failure)
 	{
@@ -5280,6 +5135,8 @@ void inven_drop(int item, int amt)
 
 	object_type *o_ptr;
 
+	C_TNEW(o_name, ONAME_MAX, char);
+
 
 	/* Access original object */
 	o_ptr = &inventory[item];
@@ -5287,6 +5144,7 @@ void inven_drop(int item, int amt)
 	/* Error check */
 	if (amt <= 0)
 	{
+		TFREE(o_name);
 		return;
 	}
 
@@ -5314,73 +5172,29 @@ void inven_drop(int item, int amt)
 	/* Modify quantity */
 	q_ptr->number = amt;
 
-	/* Message */
-	msg_format("You drop %v (%c).", object_desc_f3, q_ptr, TRUE, 3,
-		index_to_label(item));
+	/* Describe local object */
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 
-	/* Drop it near the player and remember the object. */
-	object_track(drop_near(q_ptr, 0, py, px));
+	/* Message */
+	msg_format("You drop %s (%c).", o_name, index_to_label(item));
+
+	{
+	/* Drop it near the player */
+		s16b o_idx = drop_near(q_ptr, 0, py, px);
+
+		/* Remember the object */
+		object_track(&o_list[o_idx]);
+	}
 
 	/* Modify, Describe, Optimize */
 	item_increase(o_ptr, -amt);
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
+
+	TFREE(o_name);
 }
 
-/*
- * Arrange the rods in a stack correctly.
- * This assumes that rods recharge at the same rate wherever they are, and
- * that the slot is a sorted list.
- *
- * It should, therefore, be called whenever a rod is used or finishes
- * recharging.
- *
- * Check that the rod stack which starts from o_ptr is in order of increasing
- * timeout. It should only be called on objects in inventory[] as it makes
- * various assumptions on this basis.
- */
-void reorder_rod(object_type *o_ptr)
-{
-	object_type *j_ptr;
 
-	if (!o_ptr->next_o_idx) return;
-
-	j_ptr = o_list+o_ptr->next_o_idx;
-
-	if (o_ptr->timeout == j_ptr->timeout)
-	{
-		o_ptr->next_o_idx = j_ptr->next_o_idx;
-		object_absorb(o_ptr, j_ptr);
-		object_wipe(j_ptr);
-	}
-	else if (o_ptr->timeout > j_ptr->timeout)
-	{
-		/* Find o_ptr's correct position, and move j_ptr into it.
-		 * This uses a temporary object to ensure that object_absorb()
-		 * can't run out of space.
-		 */
-		object_type q_ptr[1];
-		object_copy(q_ptr, o_ptr);
-		object_copy(o_ptr, j_ptr);
-		object_wipe(j_ptr);
-		object_absorb_rod(o_ptr, q_ptr);
-	}
-}
-
-/*
- * Reorder every rod stack in the player's inventory. This is used when the
- * slot in which a rod belongs is unclear.
- */
-void reorder_rods(void)
-{
-	object_type *o_ptr;
-
-	/* Check that the first object in each rod stack has the shortest timeout. */
-	for (o_ptr = inventory; o_ptr <= inventory+INVEN_PACK; o_ptr++)
-	{
-		if (o_ptr->next_o_idx) reorder_rod(o_ptr);
-	}
-}
 
 /*
  * Combine items in the pack
@@ -5396,7 +5210,6 @@ void combine_pack(void)
 
 	bool    flag = FALSE;
 
-	reorder_rods();
 
 	/* Combine the pack (backwards) */
 	for (i = INVEN_PACK; i > 0; i--)
@@ -5417,11 +5230,11 @@ void combine_pack(void)
 			if (!j_ptr->k_idx) continue;
 
 			/* Can we drop any of "o_ptr" onto "j_ptr"? */
-			if (object_similar_2_tmp(j_ptr, o_ptr))
+			if (object_similar_2(j_ptr, o_ptr))
 			{
 				/* Add together the item counts, continue looking if o_ptr
 				 * isn't empty. */
-				if (!object_absorb_tmp(j_ptr, o_ptr)) continue;
+				if (!object_absorb(j_ptr, o_ptr)) continue;
 
 				/* Take note */
 				flag = TRUE;
@@ -5452,8 +5265,6 @@ void combine_pack(void)
 	if (flag) msg_print("You combine some items in your pack.");
 }
 
-#define compare(A,B) \
-	if ((A) != (B)) return ((A) > (B))
 
 /*
  * Return TRUE if the desired position for u[a] in the pack >=  that of u[b].
@@ -5467,14 +5278,16 @@ static bool ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 	if (!a_ptr->k_idx) return FALSE;
 
 	/* Objects sort by decreasing type */
-	compare(a_ptr->tval, b_ptr->tval);
+	if (a_ptr->tval > b_ptr->tval) return TRUE;
+	if (a_ptr->tval < b_ptr->tval) return FALSE;
 
 	/* Non-aware (flavored) items always come last */
 	if (!object_aware_p(a_ptr)) return TRUE;
 	if (!object_aware_p(b_ptr)) return FALSE;
 
 	/* Objects sort by increasing k_idx */
-	compare(b_ptr->k_idx, a_ptr->k_idx);
+	if (a_ptr->k_idx < b_ptr->k_idx) return TRUE;
+	if (a_ptr->k_idx > b_ptr->k_idx) return FALSE;
 
 	/* Unidentified objects always come last */
 	if (!object_known_p(a_ptr)) return TRUE;
@@ -5484,15 +5297,12 @@ static bool ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 		increasing recharge time --dsb */
 	if (a_ptr->tval == TV_ROD)
 	{
-		compare(a_ptr->timeout, b_ptr->timeout);
+		if (a_ptr->timeout < b_ptr->timeout) return TRUE;
+		if (a_ptr->timeout > b_ptr->timeout) return FALSE;
 	}
 
 	/* Objects sort by decreasing value */
-	compare(object_value(a_ptr), object_value(b_ptr));
-	compare(object_number(a_ptr), object_number(b_ptr));
-
-	/* No relevant differences. */
-	return TRUE;
+	return (object_value(a_ptr) <= object_value(b_ptr));
 }
 
 /*

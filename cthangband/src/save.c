@@ -1119,21 +1119,8 @@ static bool wr_savefile_new(void)
 		/* Dump index */
 		wr_u16b((short)i);
 
-#ifdef SF_ROD_STACKING
-		if (has_flag(SF_ROD_STACKING))
-		{
-			wr_s16b(o_ptr->next_o_idx);
-		}
-		else
-		{
-			/* Add everything to the first object. */
-			o_ptr->number = object_number(o_ptr);
-		}
-#endif /* SF_ROD_STACKING */
-
 		/* Dump object */
 		wr_item(o_ptr);
-
 	}
 
 	/* Add a sentinel */

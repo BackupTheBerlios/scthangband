@@ -3347,12 +3347,6 @@ extern int PlayerUID;
 #define is_inventory_p(O_PTR) \
 	(O_PTR >= inventory && O_PTR < inventory+INVEN_TOTAL)
 
-/* As above, but this also finds objects which are part of stacks.
- * The definition is by elimination, so it may not eliminate everything.
- */
-#define is_inventory_hack_p(O_PTR) \
-	(!(O_PTR)->held_m_idx && !(O_PTR)->iy)
-
 #define is_floor_item_p(O_PTR) \
 	(o_ptr >= o_list && o_ptr < o_list+MAX_O_IDX)
 
