@@ -874,7 +874,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			/* No name given, so make one up. */
 			if (total == A_MAX+4)
 			{
-				create_random_name(race, dname);
+				create_random_name(race_info[race].name_syls, dname);
 				name = buf;
 			}
 			/* Use the provided name. */

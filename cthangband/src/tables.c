@@ -1205,7 +1205,7 @@ static cptr elf_syllable3[] =
 	"rion", "s", "thien", "viel", "wen", "wyn", 0
 };
 
-static cptr *elf_syllables[] =
+cptr *elf_syllables[] =
 {
 	elf_syllable1,
 	elf_syllable2,
@@ -1259,7 +1259,7 @@ static cptr hobbit_syllable3[] =
 	"ppin", "pper", "tho", "to", 0
 };
 
-static cptr *hobbit_syllables[] =
+cptr *hobbit_syllables[] =
 {
 	hobbit_syllable1,
 	hobbit_syllable2,

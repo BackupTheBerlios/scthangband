@@ -1304,7 +1304,7 @@ static bool point_mod_player(void)
 			/* Get an average social class. */
 			p_ptr->sc = get_social_average(p_ptr->prace);
 			/* Get a name if computer-generated. */
-			if (!own_name) create_random_name(p_ptr->prace,player_name);
+			if (!own_name) create_random_name(rp_ptr->name_syls, player_name);
 		}
 		if (i & IDX_TEMPLATE)
 		{
@@ -1603,16 +1603,12 @@ static bc_type load_stat_set(bool menu)
  * based on a Javascript by Michael Hensley
  * "http://geocities.com/timessquare/castle/6274/"
  */
-void create_random_name(int race, char *name)
+void create_random_name(cptr **syl, char *name)
 {
 	int i,j;
-	cptr **syl;
 
 	/* Paranoia */
 	if (!name) return;
-
-	/* Select the monster type */
-	syl = race_info[race].name_syls;
 
 	/* Start with no name. */
 	*name = '\0';
@@ -2867,7 +2863,7 @@ static bool quick_start_character(void)
 	if (load_stat_set(TRUE)) return FALSE;
 
 	/* Get a random name */
-	create_random_name(p_ptr->prace,player_name);
+	create_random_name(rp_ptr->name_syls, player_name);
 	
 	/* Get skill values */
 	get_starting_skills();

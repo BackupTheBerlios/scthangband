@@ -264,11 +264,11 @@ void generate_spirit_name(spirit_type *s_ptr)
 
 	if (s_ptr->sphere == SPIRIT_NATURE)
 	{
-		create_random_name(RACE_ELF,s_ptr->name);
+		create_random_name(elf_syllables, s_ptr->name);
 	}
 	else
 	{
-		create_random_name(RACE_HOBBIT,s_ptr->name);
+		create_random_name(hobbit_syllables, s_ptr->name);
 	}
 }	
 

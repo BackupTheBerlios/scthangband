@@ -15,7 +15,7 @@
 extern int maxstat(int race, int temp, int stat);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(GENERATE_C))
-extern void create_random_name(int race, char *name);
+extern void create_random_name(cptr **syl, char *name);
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C))
 extern void player_birth(void);
@@ -3886,5 +3886,14 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* tables.c */
+
+#if (defined(GENERATE_C) || defined(TABLES_C))
+extern cptr *elf_syllables[];
+#endif
+#if (defined(GENERATE_C) || defined(TABLES_C))
+extern cptr *hobbit_syllables[];
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -1093,7 +1093,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RACE_DARK_ELF    3
 #define RACE_DRACONIAN     4
 #define RACE_DWARF       5
-#define RACE_ELF      6
+/* #define RACE_ELF      6 */
 #define RACE_GNOME       7
 #define RACE_GOLEM       8
 #define RACE_GREAT       9
