@@ -923,6 +923,7 @@ static char *object_desc_str(char *t, cptr s)
 static bool PURE pval_is_normal_p(object_type *o_ptr)
 {
 	int i = wield_slot(o_ptr);
+	if (i == INVEN_LITE && !allart_p(o_ptr)) return FALSE;
 	return (i >= INVEN_WIELD && i <= INVEN_FEET);
 }
 
