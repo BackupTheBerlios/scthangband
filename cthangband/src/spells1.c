@@ -5532,8 +5532,6 @@ done_reflect: /* Success */
 					notice = TRUE;
 			}
 		}
-
-		TFREE(m_hurt);
 	}
 
 	/* Player affected one monster (without "jumping") */
