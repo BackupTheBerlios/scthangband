@@ -125,8 +125,8 @@ extern void cave_track(const int y, const int x);
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void disturb(int stop_stealth);
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
-extern bool is_quest(int level);
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+extern bool is_quest(void);
 #endif
 
 /* cmd1.c */
@@ -3338,7 +3338,7 @@ extern town_type *town_defs;
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern cptr town_name;
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(QUEST_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(QUEST_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern quest_type *q_list;
 #endif
 #if (defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C))

@@ -3919,7 +3919,7 @@ void pick_trap(int y, int x)
 		feat = FEAT_TRAP_HEAD + rand_int(16);
 
 		/* Hack -- no trap doors on quest levels */
-		if ((feat == FEAT_TRAP_HEAD + 0x00) && is_quest(dun_level)) continue;
+		if ((feat == FEAT_TRAP_HEAD + 0x00) && is_quest()) continue;
 
 		/* Hack -- no trap doors on the deepest level */
 		if ((feat == FEAT_TRAP_HEAD + 0x00) && (dun_level >= dun_defs[cur_dungeon].max_level)) continue;

@@ -3341,7 +3341,7 @@ static void dungeon(void)
 
 
 	/* Paranoia -- No stairs down from Quest */
-	if (is_quest(dun_level))
+	if (is_quest())
 	{
 		if (dun_defs[cur_dungeon].flags & DF_TOWER)
 		{
@@ -3459,7 +3459,7 @@ static void dungeon(void)
 	if (!alive || death || new_level_flag) return;
 
 	/* Notice a Quest Level */
-	if (is_quest(dun_level)) quest_discovery(old_new_level_flag);
+	if (is_quest()) quest_discovery(old_new_level_flag);
 
 	/* Notice the final level of a dungeon/tower */
 	else if (dun_level && dun_level == dun_defs[cur_dungeon].max_level)

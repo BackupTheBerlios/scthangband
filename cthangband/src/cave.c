@@ -3831,18 +3831,19 @@ void disturb(int stop_stealth)
 /*
  * Hack -- Check if a level is a "quest" level
  */
-bool is_quest(int level)
+bool is_quest(void)
 {
 	int i;
 
 	/* Town is never a quest */
-	if (!level) return (FALSE);
+	if (!dun_level) return (FALSE);
 
 	/* Check quests */
 	for (i = 0; i < MAX_Q_IDX; i++)
 	{
 		/* Check for quest */
-		if ((q_list[i].level == level) && (q_list[i].dungeon == cur_dungeon)) return (TRUE);
+		if ((q_list[i].level == dun_level) &&
+			(q_list[i].dungeon == cur_dungeon)) return (TRUE);
 	}
 
 	/* Nope */

@@ -445,7 +445,7 @@ void teleport_player_level(void)
 	/* Always go into the dungeon if outside. */
 	if (dun_level <= 0) into = TRUE;
 	/* Don't go any further if you can't. */
-	else if (is_quest(dun_level) || (dun_level >= dun_defs[cur_dungeon].max_level)) into = FALSE;
+	else if (is_quest() || (dun_level >= dun_defs[cur_dungeon].max_level)) into = FALSE;
 	/* Else choose randomly. */
 	else into = (percent(50));
 

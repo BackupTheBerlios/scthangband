@@ -3684,7 +3684,7 @@ void do_cmd_feeling(bool FeelingOnly)
 		msg_format("You are in %s.",dun_name+dun_defs[cur_dungeon].name);
 
 		/* Show quest status */
-		if (is_quest(dun_level))
+		if (is_quest())
 		{
 			print_quest_message();
 		}

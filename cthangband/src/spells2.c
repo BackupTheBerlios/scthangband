@@ -1905,8 +1905,7 @@ void stair_creation(void)
 	{
 		return;
 	}
-	else if (is_quest(dun_level) ||
-		(dun_level >= dun_defs[cur_dungeon].max_level))
+	else if (is_quest() || (dun_level >= dun_defs[cur_dungeon].max_level))
 	{
 		if(dun_defs[cur_dungeon].flags & DF_TOWER)
 		{

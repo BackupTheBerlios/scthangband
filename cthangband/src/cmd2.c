@@ -125,7 +125,7 @@ static int coords_to_dir(int y, int x)
  */
 static void use_stairs(cptr dir, bool deeper, bool trapdoor)
 {
-	int i, j = (multi_stair) ? randint(5) : 1;
+	int i, levels = (multi_stair) ? randint(5) : 1;
 	int start = (trapdoor) ? START_RANDOM : START_STAIRS;
 
 	if (dun_level && confirm_stairs)
@@ -151,26 +151,34 @@ static void use_stairs(cptr dir, bool deeper, bool trapdoor)
 		msg_format("You enter a maze of %s staircases.", dir);
 	}
 
-	if (j > dun_level) j = 1;
+	/* Never go very far at shallow levels. */
+	if (levels > dun_level) levels = 1;
 
-	/* Don't allow the player to pass a quest level.
-	 * This is very inefficient, but it's a very simple process.
-	 */
+	/* The above already forces the action to be legal. */
 	if (!deeper)
 	{
-		j *= -1;
+		/* So just make it go shallower. */
+		levels *= -1;
 	}
 	else
 	{
-		for (i = 1; i < j; i++)
+		/* Prevent the player from passing the end of the dungeon. */
+		int k = dun_defs[cur_dungeon].max_level - dun_level;
+		if (k > 0 && k < levels) levels = k;
+
+		/* Prevent the player from passing a quest. */
+		for (i = 0; i < MAX_Q_IDX; i++)
 		{
-			if (is_quest(dun_level+i)) break;
-			if (dun_level+i == dun_defs[cur_dungeon].max_level) break;
+			if (q_list[i].dungeon == cur_dungeon)
+			{
+				int k = q_list[i].level - dun_level;
+
+				if (k > 0 && k < levels) levels = k;
+			}
 		}
-		j = i;
 	}
 
-	change_level(dun_level+j, start);
+	change_level(dun_level+levels, start);
 
 	/* Check for leaving dungeon */
 	if(!dun_level)

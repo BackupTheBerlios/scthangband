@@ -1351,7 +1351,7 @@ static void place_random_stairs(int y, int x)
 		/* No stairs outside */
 		return;
 	}
-	else if (is_quest(dun_level) || (dun_level == dun_defs[cur_dungeon].max_level))
+	else if (is_quest() || (dun_level == dun_defs[cur_dungeon].max_level))
 	{
 		if(dun_defs[cur_dungeon].flags & DF_TOWER)
 		{
@@ -1525,7 +1525,8 @@ static void alloc_stairs(int feat, int num, int walls)
 				}
 
 				/* Quest -- must go up */
-				else if (is_quest(dun_level) || (dun_level == dun_defs[cur_dungeon].max_level))
+				else if (is_quest() ||
+					(dun_level == dun_defs[cur_dungeon].max_level))
 				{
 					if (dun_defs[cur_dungeon].flags & DF_TOWER)
 					{
@@ -4405,12 +4406,14 @@ static cptr cave_gen(void)
 	if (((dun_depth) > 10) && (rand_int(DUN_DEST) == 0) && (small_levels))
 		destroyed = TRUE;
 
-	/* Hack -- No destroyed "quest" levels */
-	if (is_quest(dun_level)) destroyed = FALSE;
+	if (is_quest())
+	{
+		/* Hack -- No destroyed "quest" levels */
+		destroyed = FALSE;
 
-	/* Quest Level => make quest monster (Heino Vander Sanden) */
-	if (is_quest(dun_level))
+		/* Quest Level => make quest monster (Heino Vander Sanden) */
 		r_info[get_quest_monster()].flags1 |= (RF1_GUARDIAN);
+	}
 
 	/* Actual maximum number of rooms on this level */
 	dun->row_rooms = cur_hgt / BLOCK_HGT;
@@ -4644,7 +4647,7 @@ static cptr cave_gen(void)
 	 * Put the quest monster(s) in the dungeon
 	 * Heino Vander Sanden
 	 */
-	if (is_quest(dun_level))
+	if (is_quest())
 	{
 		quest_type *q_ptr;
 		int r_idx;

@@ -1078,7 +1078,7 @@ void monster_death(int m_idx)
 	if (r_ptr->flags1 & (RF1_DROP_4D2)) number += damroll(4, 2);
 
 	if (cloned) number = 0; /* Clones drop no stuff */
-	if ((is_quest(dun_level)) && (r_ptr->flags1 & RF1_GUARDIAN))
+	if ((is_quest()) && (r_ptr->flags1 & RF1_GUARDIAN))
 	{
 		quest_type *q_ptr = get_quest();
 		q_ptr->cur_num++;
