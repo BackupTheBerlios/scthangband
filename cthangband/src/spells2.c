@@ -2763,6 +2763,14 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 		/* Message */
 		msg_print("The enchantment failed.");
 	}
+	else
+	{
+		object_desc(o_name, o_ptr, FALSE, 1);
+		full_name(o_name, (o_ptr->number > 1), TRUE, FALSE);
+	
+		/* Describe again */
+		msg_format("You now %s %s", (item >= 0) ? "have" : "see", o_name);
+	}	
 
 	/* Something happened */
 	return (TRUE);
