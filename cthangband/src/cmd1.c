@@ -647,35 +647,6 @@ void carry(int pickup)
 
 
 
-/*
- * Determine if a trap affects the player.
- * Always miss 5% of the time, Always hit 5% of the time.
- * Otherwise, match trap power against player armor.
- */
-static int check_hit(int power)
-{
-	int k, ac;
-
-	/* Percentile dice */
-	k = rand_int(100);
-
-	/* Hack -- 5% hit, 5% miss */
-	if (k < 10) return (k < 5);
-
-	/* Paranoia -- No power */
-	if (power <= 0) return (FALSE);
-
-	/* Total armor */
-	ac = p_ptr->ac + p_ptr->to_a;
-
-	/* Power competes against Armor */
-	if (randint(power) > ((ac * 3) / 4)) return (TRUE);
-
-	/* Assume miss */
-	return (FALSE);
-}
-
-
 
 /*
  * Handle player hitting a real trap
@@ -859,7 +830,7 @@ static void hit_trap(void)
 
 		case FEAT_TRAP_HEAD + 0x08:
 		{
-			if (check_hit(125))
+			if (check_hit(125, 0))
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
@@ -875,7 +846,7 @@ static void hit_trap(void)
 
 		case FEAT_TRAP_HEAD + 0x09:
 		{
-			if (check_hit(125))
+			if (check_hit(125, 0))
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
@@ -891,7 +862,7 @@ static void hit_trap(void)
 
 		case FEAT_TRAP_HEAD + 0x0A:
 		{
-			if (check_hit(125))
+			if (check_hit(125, 0))
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
@@ -907,7 +878,7 @@ static void hit_trap(void)
 
 		case FEAT_TRAP_HEAD + 0x0B:
 		{
-			if (check_hit(125))
+			if (check_hit(125, 0))
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);

@@ -3610,8 +3610,93 @@ void do_cmd_knowledge_chaos_features(void)
 	fd_kill(file_name);
 }
 
+/*
+ * Return the apparent chance (in percent) of failure of a hit against the
+ * player by a monster with a given level using an attack with a given power.
+ *
+ * The same calculation is also used for traps.
+ */
+static int check_hit_percent(int power, int level)
+{
+	/* Calculate the player's apparent total AC. */
+	int ac = p_ptr->dis_ac + p_ptr->dis_to_a;
 
-#define STORE_NONE 99
+	int num = MAX(1, ac * 3 / 4);
+
+	int denom = MAX(num, power + level * 3);
+
+	return 5 + 90 * num / denom;
+}
+
+/*
+ * Output the effects derived from having your apparent AC to a file.
+ */
+static void do_cmd_knowledge_player_ac(FILE *fff)
+{
+	/* Calculate your current level, your recall level if in town. */
+	int ac = p_ptr->dis_ac + p_ptr->dis_to_a;
+	int lev;
+
+	/* In the dungeon. */
+	if (dun_level)
+	{
+		lev = dun_depth;
+	}
+	/* Previously in the dungeon. */
+	else if (p_ptr->max_dlv)
+	{
+		lev = p_ptr->max_dlv + dun_defs[recall_dungeon].offset;
+	}
+	/* Still on the surface. */
+	else
+	{
+		lev = 0;
+	}
+
+	/* See make_attack_normal(). */
+	fprintf(fff,
+		"You will take %d%% of the damage of attacks to hurt or to shatter.\n",
+		ac < 150 ? 100-100*ac/250 : 40);
+
+	/* See check_hit() in cmd1.c. */
+	fprintf(fff, "A dart trap has a %d%% chance of missing you.\n",
+		check_hit_percent(125, 0));
+
+	/* See check_hit() in melee1.c and make_attack_normal(). */
+	fprintf(fff, "A monster native to level %d which:\n", lev);
+	fprintf(fff, "   attacks to hurt has a %d%% chance of missing you.\n",
+		check_hit_percent(60, lev));
+	fprintf(fff, "   attacks to shoot acid has a %d%% chance of missing you.\n",
+		check_hit_percent(0, lev));
+}
+
+/*
+ * List various pieces of information about the player.
+ */
+static void do_cmd_knowledge_player(void)
+{
+	/* Open a new file. */
+	char file_name[1024];
+	FILE *fff = my_fopen_temp(file_name, 1024);
+	if (!fff) return;
+
+	/* Introduction - this is (of course) all based on known information. */
+	fprintf(fff, "If your equipment has no unknown qualities:\n\n");
+
+	/* Find out various things. */
+	do_cmd_knowledge_player_ac(fff);
+	fprintf(fff, "\n");
+	fprintf(fff, "You have a %d%% saving throw.\n", MIN(101, p_ptr->skill_sav));
+
+	/* Close the file. */
+	my_fclose(fff);
+
+	/* Display the file contents. */
+	show_file(file_name, "Character features");
+
+	/* Remove the file */
+	fd_kill(file_name);
+}
 
 /*
  * Notice if a given town has any real shops.
@@ -3759,6 +3844,7 @@ void do_cmd_knowledge(void)
 		{"chaos features", do_cmd_knowledge_chaos_features},
 		{"current allies", do_cmd_knowledge_pets},
 		{"shop prices", do_cmd_knowledge_shops},
+		{"extra character information", do_cmd_knowledge_player},
 		};
 		byte max_knowledge = sizeof(knowledge)/sizeof(knowledge_type);
 		/* Clear screen */
