@@ -1376,7 +1376,7 @@ extern bool put_quest_monster(int r_idx);
 extern bool alloc_horde(int y, int x, int level);
 #endif
 #if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
-extern bool alloc_monster(int dis, int level, bool slp);
+extern void alloc_monster(int dis, int level, bool slp);
 #endif
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C))
 extern bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm);

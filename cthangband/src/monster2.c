@@ -2603,10 +2603,10 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx);
  *
  * Use "level" for the monster level
  */
-bool alloc_monster(int dis, int level, bool slp)
+static bool alloc_monster_aux(int dis, int level, bool slp, int bias)
 {
 	bool rc;
-	int	x, y, bias;
+	int	x, y;
 
 	/* If we already know the grid is full, don't try anything */
 	if (full_grid <= dis) return FALSE;
@@ -2614,8 +2614,11 @@ bool alloc_monster(int dis, int level, bool slp)
 	/* Find a legal, distant, unoccupied, space */
 	if (!find_space(&y, &x, dis)) return FALSE;
 
+	/* Prepare allocation table ("okay" monster) */
+	if (bias) get_mon_num_prep(summon_specific_okay, bias);
+
 #ifdef MONSTER_HORDES
-	if (rand_int(5000) < dun_depth)
+	if (rand_int(5000) < level)
 	{
 		/* Hordes never sleep. (?) */
 		rc = alloc_horde(y, x, level);
@@ -2624,26 +2627,33 @@ bool alloc_monster(int dis, int level, bool slp)
 		if (rc && cheat_hear) msg_print("Monster horde.");
 	}
 	else
-#endif
+#endif /* MONSTER_HORDES */
 	{
-		/* Attempt to place the monster, allow groups */
-		bias = (dun_bias && magik(40)) ? dun_bias : 0;
-
-		/* Prepare allocation table ("okay" monster) */
-		if (bias) get_mon_num_prep(summon_specific_okay, bias);
-
 		/* Place an appropriate monster (or group). */
 		rc = place_monster(y, x, level, slp, TRUE);
-
-		/* Restore the normal monster table. */
-		if (bias) get_mon_num_prep(NULL, 0);
-
 	}
+
+	/* Restore the normal monster table. */
+	if (bias) get_mon_num_prep(NULL, 0);
 
 	/* Nope */
 	return rc;
 }
 
+/*
+ * Attempt to allocate a random monster in the dungeon.
+ * Try to use the current dungeon bias 40% of the time. Otherwise, or if that
+ * attempt fails, use the full monster list.
+ */
+void alloc_monster(int dis, int level, bool slp)
+{
+	if (dun_bias && dun_bias && magik(100))
+	{
+		if (alloc_monster_aux(dis, level+5, slp, dun_bias)) return;
+	}
+
+	alloc_monster_aux(dis, level, slp, 0);
+}
 
 
 
