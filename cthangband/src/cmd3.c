@@ -1130,7 +1130,7 @@ void do_cmd_locate(void)
 		else if (x2 < 0) x2 = 0;
 
 		/* Handle "changes" */
-		if ((y2 != panel_row) || (x2 != panel_col))
+		if ((y2 != panel_row) || (x2 != panel_col) || centre_view)
 		{
 			/* Save the new panel info */
 			panel_row = y2;
