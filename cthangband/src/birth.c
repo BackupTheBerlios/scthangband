@@ -3152,6 +3152,24 @@ static bool player_birth_aux()
 		else bell();
 	}
 
+	/* Now set point_mod and autoroll correctly. */
+	point_mod = spend_points;
+
+#ifdef ALLOW_AUTOROLLER
+	
+	if (use_autoroller)
+	{
+		autoroll = TRUE;
+		point_mod = FALSE;
+	}
+	else
+	{
+#endif
+	autoroll = FALSE;
+#ifdef ALLOW_AUTOROLLER
+	}
+#endif
+
 	/* Clean up */
 	clear_from(15);
 	
@@ -3801,10 +3819,6 @@ static bool player_birth_aux()
 
 		/*** Autoroll ***/
 
-
-		/* Set "autoroll" and "point_mod" */
-		autoroll = use_autoroller;
-		point_mod = (spend_points & !(use_autoroller));
 
 		/* Initialize Autoroller if necessary */
 		if (autoroll)
