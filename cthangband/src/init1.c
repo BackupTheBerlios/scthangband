@@ -1334,7 +1334,7 @@ static u32b add_name(header *head, cptr buf)
  */
 errr parse_z_info(char *buf, header *head, vptr UNUSED *extra)
 {
-	char c;
+	char c, end[1];
 	long max;
 	maxima *z = head->info_ptr;
 
@@ -1342,7 +1342,8 @@ errr parse_z_info(char *buf, header *head, vptr UNUSED *extra)
 	error_idx = 0;
 
 	/* Verify M:x:num format. */
-	if (2 != sscanf(buf, "M:%c:%ld", &c, &max)) return PARSE_ERROR_GENERIC;
+	if (2 != sscanf(buf, "M:%c:%ld%c", &c, &max, end))
+		return PARSE_ERROR_INCORRECT_SYNTAX;
 
 	switch (c)
 	{
@@ -1368,7 +1369,7 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
-	char *s;
+	char *s, end[1];
 
 	/* Current entry */
 	feature_type *f_ptr = *extra;
@@ -1419,7 +1420,8 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			int mimic;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf+2, "%d", &mimic)) return (1);
+			if (1 != sscanf(buf+2, "%d%c", &mimic, end))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
 			f_ptr->mimic = mimic;
@@ -1433,9 +1435,9 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			char sym, col;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%c:%c", &pri, &sym, &col))
+			if (3 != sscanf(buf+2, "%d:%c:%c%c", &pri, &sym, &col, end))
 			{
-				return PARSE_ERROR_MISSING_RECORD_HEADER;
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 			}
 
 			/* Extract and check the color */
@@ -1467,7 +1469,7 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
-	char *s;
+	char *s, end[1];
 
 	/* Current entry */
 	vault_type *v_ptr = *extra;
@@ -1528,8 +1530,9 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 			int typ, rat, hgt, wid;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%d",
-			                &typ, &rat, &hgt, &wid)) return (1);
+			if (4 != 
+				sscanf(buf+2, "%d:%d:%d:%d%c", &typ, &rat, &hgt, &wid, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
 			v_ptr->typ = typ;
@@ -1597,7 +1600,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
-	char *s, *t;
+	char *s, *t, end[1];
 
 	/* Current entry */
 	object_kind *k_ptr = *extra;
@@ -1649,9 +1652,9 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			int tmp, p_id;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%c:%c:%d", &sym, &col, &p_id))
+			if (3 != sscanf(buf+2, "%c:%c:%d%c", &sym, &col, &p_id, end))
 			{
-				return (2);
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 			}
 
 			/* Extract the attr */
@@ -1677,8 +1680,8 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			int tval, pval, kextra;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
-			                &tval, &pval, &kextra)) return (1);
+			if (3 != sscanf(buf+2, "%d:%d:%d%c", &tval, &pval, &kextra, end))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
 			k_ptr->tval = tval;
@@ -1696,7 +1699,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			long cost;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%ld", &krating, &wgt, &cost))
+			if (3 != sscanf(buf+2, "%d:%d:%ld%c", &krating, &wgt, &cost, end))
 				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
@@ -1744,8 +1747,9 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			int ac, hd1, hd2, th, td, ta;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
-			                &hd1, &hd2, &th, &td, &ac, &ta)) return (1);
+			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d%c",
+				&hd1, &hd2, &th, &td, &ac, &ta, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			k_ptr->ac = ac;
 			k_ptr->dd = hd1;
@@ -1808,6 +1812,8 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
  */
 errr parse_o_base(char *buf, header *head, vptr *extra)
 {
+	char end[1];
+
 	/* Current entry */
 	o_base_type *ob_ptr = *extra;
 
@@ -1869,8 +1875,8 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 			int oldp_id, newp_id;
 			o_base_type *ob2_ptr;
 
-			if (2 != sscanf(buf+2, "%d:%d",
-				&oldp_id, &newp_id)) return PARSE_ERROR_INCORRECT_SYNTAX;
+			if (2 != sscanf(buf+2, "%d:%d%c", &oldp_id, &newp_id, end))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Check for valid indices */
 			try(byte_ok(oldp_id));
@@ -1924,7 +1930,8 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 			else
 			{
 				/* Scan for the values */
-				if (1 != sscanf(buf+2, "%ld", &cost)) return (PARSE_ERROR_GENERIC);
+				if (1 != sscanf(buf+2, "%ld%c", &cost, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 			}
 
 			/* Save the value */
@@ -1996,7 +2003,7 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 {
 	/* Current entry */
 	unident_type *u_ptr = *extra;
-	char *s;
+	char *s, end[1];
 
 	/* 
 	 * Only 'N' entries can set u_ptr.
@@ -2032,7 +2039,9 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 			s16b i;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%c:%c:%d:%d", &sym, &col, &p_id, &s_id)) return PARSE_ERROR_GENERIC;
+			if (4 != sscanf(buf+2, "%c:%c:%d:%d%c",
+				&sym, &col, &p_id, &s_id, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Paranoia */
 			if (color_char_to_attr(col) < 0)
@@ -2107,7 +2116,7 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 
 	int i;
 
-	char *s, *t;
+	char *s, *t, end[1];
 
 	/* Need an a_ptr before anything is written. */
 	if (*buf != 'N' && !a_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -2152,7 +2161,8 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 			int k_idx, pval;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%d", &k_idx, &pval)) return 1;
+			if (2 != sscanf(buf+2, "%d:%d%c", &k_idx, &pval, end))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Test the values */
 			if (k_idx < 0 || k_idx >= MAX_K_IDX || !k_info[k_idx].name ||
@@ -2174,8 +2184,9 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 			long cost;
 
 			/* Scan for the values */
-			if (5 != sscanf(buf+2, "%d:%d:%d:%d:%ld",
-			                &level, &level2, &rarity, &wgt, &cost)) return (1);
+			if (5 != sscanf(buf+2, "%d:%d:%d:%d:%ld%c",
+				&level, &level2, &rarity, &wgt, &cost, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
 			a_ptr->level = level;
@@ -2192,8 +2203,9 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 			int ac, hd1, hd2, th, td, ta;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
-			                &hd1, &hd2, &th, &td, &ac, &ta)) return (1);
+			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d%c",
+				&hd1, &hd2, &th, &td, &ac, &ta, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			a_ptr->ac = ac;
 			a_ptr->dd = hd1;
@@ -2260,6 +2272,7 @@ static errr grab_one_ego_item_flag(ego_item_type *ptr, cptr what)
  */
 errr parse_e_info(char *buf, header *head, vptr *extra)
 {
+	char end[1];
 	int i;
 
 	char *s, *t;
@@ -2310,7 +2323,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 			int r,s;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%d", &r, &s))
+			if (2 != sscanf(buf+2, "%d:%d%c", &r, &s, end))
 				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
@@ -2327,7 +2340,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 			long cost;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%ld", &chance, &cost))
+			if (2 != sscanf(buf+2, "%d:%ld%c", &chance, &cost, end))
 				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
@@ -2343,8 +2356,8 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 			int th, td, ta, pv;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%d",
-			                &th, &td, &ta, &pv)) return (1);
+			if (4 != sscanf(buf+2, "%d:%d:%d:%d%c", &th, &td, &ta, &pv, end))
+				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			e_ptr->max_to_h = th;
 			e_ptr->max_to_d = td;
@@ -2358,7 +2371,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 		case 'O':
 		{
 			int min, max;
-			switch (sscanf(buf+2, "%d:%d", &min, &max))
+			switch (sscanf(buf+2, "%d:%d%c", &min, &max, end))
 			{
 				case 1:
 				{
@@ -2447,7 +2460,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 {
 	int i;
 
-	char *s, *t;
+	char *s, *t, end[1];
 
 	monster_race *r_ptr = (monster_race *)(*extra);
 
@@ -2526,8 +2539,9 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			int spd, atspd, hp1, hp2, aaf, ac, slp;
 
 			/* Scan for the other values */
-			if (7 != sscanf(buf+2, "%d:%d:%dd%d:%d:%d:%d",
-			                &spd, &atspd, &hp1, &hp2, &aaf, &ac, &slp)) return (1);
+			if (7 != sscanf(buf+2, "%d:%d:%dd%d:%d:%d:%d%c",
+				&spd, &atspd, &hp1, &hp2, &aaf, &ac, &slp, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
 			r_ptr->speed = spd+110;
@@ -2548,8 +2562,9 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			long exp;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			                &lev, &rar, &pad, &exp)) return (1);
+			if (4 !=
+				sscanf(buf+2, "%d:%d:%d:%ld%c", &lev, &rar, &pad, &exp, end))
+					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
 			r_ptr->level = lev;
@@ -3061,6 +3076,7 @@ errr parse_q_list(char *buf, header *head, vptr *extra)
  */
 errr parse_s_info(char *buf, header *head, vptr *extra)
 {
+	char end[1];
 	owner_type *ptr = *extra;
 
 	/* Only N can start a record. */
@@ -3087,8 +3103,8 @@ errr parse_s_info(char *buf, header *head, vptr *extra)
 			long cost, linf, uinf, haggle, insult;
 
 			/* Scan for values. */
-			if (sscanf(buf+2, "%ld:%ld:%ld:%ld:%ld", &cost, &uinf, &linf,
-				&haggle, &insult) != 5)
+			if (sscanf(buf+2, "%ld:%ld:%ld:%ld:%ld%c", &cost, &uinf, &linf,
+				&haggle, &insult, end) != 5)
 				return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Check the numbers are reasonable. */

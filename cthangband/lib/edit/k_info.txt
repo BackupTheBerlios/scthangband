@@ -379,7 +379,7 @@ P:(1d7) (+0,+0) [0,+0]
 F:GOOD
 
 N:39:& Tulwar~
-G:|:W:0:23
+G:|:W:0
 I:Sword:0:SLASH
 W:0:10.0lb:200
 A:5/1
@@ -1490,7 +1490,7 @@ F:CON | HIDE_TYPE
 N:175:Fear Resistance
 G: :d:2
 I:Ring:0:0
-W:0:0.2lb:3,00 
+W:0:0.2lb:3,00
 A:10/2
 F:RES_FEAR | EASY_KNOW
 
