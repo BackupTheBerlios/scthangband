@@ -1201,6 +1201,11 @@ struct player_type
 	bool resist_neth;	/* Resist nether */
 	bool resist_fear;	/* Resist fear */
 
+	bool heal_nether; /* Be healed by nether attacks. */
+	bool immune_dark; /* Immunity to dark. */
+	bool hurt_light; /* Take extra damage from light. */
+	bool weak_wraith; /* Move through walls, taking no damage if low on HP. */
+
     bool reflect;       /* Reflect 'bolt' attacks */
     bool sh_fire;       /* Fiery 'immolation' effect */
     bool sh_elec;       /* Electric 'immolation' effect */

@@ -2777,7 +2777,7 @@ static void move_player(int y, int x, int do_pickup)
 
 	/* Player can not walk through "permanent walls"... */
 	/* unless in Shadow Form */
-	if ((p_ptr->wraith_form) || (p_ptr->prace == RACE_SPECTRE))
+	if (p_ptr->wraith_form || p_ptr->weak_wraith)
 	{
 		p_can_pass_walls = TRUE;
         if ((cave[y][x].feat >= FEAT_PERM_BUILDING) && (cave[y][x].feat <= FEAT_PERM_SOLID))

@@ -1084,41 +1084,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SEX_FEMALE              0
 #define SEX_MALE                1
 
-/*
- * Player race constants (hard-coded by save-files, arrays, etc)
- */
-/* #define RACE_BARBARIAN 0 */ 
-/* #define RACE_BROO 1 */
-/* #define RACE_CYCLOPS 2 */
-/* #define RACE_DARK_ELF 3 */
-/* #define RACE_DRACONIAN 4 */
-/* #define RACE_DWARF 5 */
-/* #define RACE_ELF 6 */
-/* #define RACE_GNOME 7 */
-/* #define RACE_GOLEM 8 */
-/* #define RACE_GREAT 9 */
-/* #define RACE_HALF_ELF 10 */
-/* #define RACE_HALF_GIANT 11 */
-/* #define RACE_HALF_OGRE 12 */
-/* #define RACE_HALF_ORC 13 */
-/* #define RACE_HALF_TITAN 14 */
-/* #define RACE_HALF_TROLL 15 */
-/* #define RACE_HIGH_ELF 16 */
-/* #define RACE_HOBBIT 17 */
-/* #define RACE_HUMAN 18 */
-/* #define RACE_IMP 19 */
-/* #define RACE_KLACKON 20 */
-/* #define RACE_KOBOLD 21 */
-/* #define RACE_MIND_FLAYER 22 */
-/* #define RACE_NIBELUNG 23 */
-/* #define RACE_SKELETON 24 */
-#define RACE_SPECTRE 25
-/* #define RACE_SPRITE 26 */
-#define RACE_VAMPIRE 27
-/* #define RACE_YEEK 28 */
-/* #define RACE_ZOMBIE 29 */
-#define RACE_NONE 255
-
 /* Flags for player_race.eat. */
 #define EAT_NORMAL 1 /* Full nutrition from eating. */
 #define EAT_VAMPIRE 10 /* 1/10 nutrition. */
@@ -2740,6 +2705,12 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TR0_NO_CUT (1L<<8) /* Immunity to cuts. */
 #define TR0_NO_STUN (1L<<9) /* Immunity to stunning. */
 #define TR0_RES_ELDRITCH (1L<<10) /* Resistance/immunity to sanity blasting. */
+#define TR0_HURT_LIGHT (1L<<11) /* Take extra damage from light. */
+#define TR0_IM_DARK (1L<<12) /* Immunity to dark attacks. */
+#define TR0_HEAL_NETHER (1L<<13) /* Be healed by nether attacks. */
+
+/* Move through walls, taking no damage if low on HP. */
+#define TR0_WEAK_WRAITH (1L<<14) 
 
 #define TR0_SAVE_SK (1L<<16) /* A skill-based saving throw bonus. */
 #define TR0_AC_SK (1L<<17) /* A skill-based AC bonus. */

@@ -1920,8 +1920,9 @@ player_race race_info[MAX_RACES] =
         72, 6, 100, 25,
         66, 4, 100, 20,
 		{RP_SPECTRE, 0},
-		{TR0_NO_CUT, 0, TR2_HOLD_LIFE | TR2_RES_COLD | 
-			TR2_RES_POIS | TR2_RES_NETHER, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		{TR0_NO_CUT | TR0_HEAL_NETHER | TR0_WEAK_WRAITH, 0,
+			TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_POIS | TR2_RES_NETHER,
+			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		spectre_bonuses, N_ELEMENTS(spectre_bonuses), 0, 0,
          5, 110, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
 		{
@@ -1957,8 +1958,8 @@ player_race race_info[MAX_RACES] =
            72,  6, 180, 25,
            66,  4, 150, 20,
 		{RP_VAMPIRE, 0},
-		{0, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_DARK | 
-			TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
+		{TR0_IM_DARK | TR0_HURT_LIGHT, 0, TR2_HOLD_LIFE | TR2_RES_COLD |
+			TR2_RES_DARK | TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
 		vampire_bonuses, N_ELEMENTS(vampire_bonuses), MUT_HYPN_GAZE, 60,
          5, 113, RACE_UNDEAD, EAT_VAMPIRE, human_syllables,
 		{

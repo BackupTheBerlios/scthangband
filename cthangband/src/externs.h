@@ -3491,6 +3491,9 @@ extern bool PURE cumber_helm(object_ctype *o_ptr);
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern int PURE wield_skill(object_ctype *o_ptr);
 #endif
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(XTRA1_C))
+extern bool PURE player_has_flag(int set, u32b flag);
+#endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(XTRA1_C))
 extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
 #endif
@@ -3883,11 +3886,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* xtra1.c */
-
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(XTRA1_C))
-extern bool PURE player_has_flag(int set, u32b flag);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

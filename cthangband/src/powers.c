@@ -4167,7 +4167,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	case SP_DAYLIGHT+PO_SPELL:
 	{
                (void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
-            if ((p_ptr->prace == RACE_VAMPIRE) && !(p_ptr->resist_lite))
+            if (p_ptr->hurt_light && !(p_ptr->resist_lite))
             {
                 msg_print("The daylight scorches your flesh!");
                 take_hit(damroll(2,2), "daylight", MON_LIGHT);
@@ -4324,7 +4324,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
-            if ((p_ptr->prace == RACE_VAMPIRE) && !(p_ptr->resist_lite))
+            if (p_ptr->hurt_light && !(p_ptr->resist_lite))
             {
                 msg_print("The sunlight scorches your flesh!");
                 take_hit(50, "sunlight", MON_LIGHT);

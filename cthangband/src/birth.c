@@ -1431,6 +1431,9 @@ static bool point_mod_player(void)
 	return TRUE;
 }
 
+/* Hack - special race for default stat set. */
+#define RACE_NONE 255
+
 /*
  * Load a set of stats.
  *

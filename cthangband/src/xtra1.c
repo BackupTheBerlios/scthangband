@@ -1584,6 +1584,10 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	/* Various flags */
 	p_ptr->no_cut = (!!flags[0][iilog(TR0_NO_CUT)]);
 	p_ptr->no_stun = (!!flags[0][iilog(TR0_NO_STUN)]);
+	p_ptr->heal_nether = (!!flags[0][iilog(TR0_HEAL_NETHER)]);
+	p_ptr->immune_dark = (!!flags[0][iilog(TR0_IMM_DARK)]);
+	p_ptr->hurt_light = (!!flags[0][iilog(TR0_HURT_LIGHT)]);
+	p_ptr->weak_wraith = (!!flags[0][iilog(TR0_WEAK_WRAITH)]);
 	if (flags[3][iilog(TR3_AGGRAVATE)]) p_ptr->aggravate = TRUE;
 	if (flags[3][iilog(TR3_TELEPORT)]) p_ptr->teleport = TRUE;
 	if (flags[3][iilog(TR3_DRAIN_EXP)]) p_ptr->exp_drain = TRUE;

@@ -1178,7 +1178,7 @@ static bool process_damage_cuts(void)
 static bool process_damage_sunlight(void)
 {
 	/* Only vampires have this weakness. */
-	if (p_ptr->prace != RACE_VAMPIRE) return FALSE;
+	if (!p_ptr->hurt_light) return FALSE;
 
 	/* Only happens on the surface during the day. */
 	if (dun_level || !daytime_p()) return FALSE;
@@ -1205,7 +1205,7 @@ static bool process_damage_artlight(void)
 	object_type *o_ptr = inventory+INVEN_LITE;
 
 	/* Only vampires have this weakness. */
-	if (p_ptr->prace != RACE_VAMPIRE) return FALSE;
+	if (!p_ptr->hurt_light) return FALSE;
 
 	/* Only wielded artefact light sources are dangerous. */
 	if (!o_ptr->k_idx || allart_p(o_ptr)) return FALSE;
@@ -1238,10 +1238,10 @@ static bool process_damage_walls(void)
 
 	if (p_ptr->invuln || p_ptr->wraith_form) return TRUE;
 	
-	if ((p_ptr->prace == RACE_SPECTRE) &&
+	if (p_ptr->weak_wraith &&
 		(p_ptr->chp <= skill_set[SKILL_TOUGH].value/10)) return TRUE;
 
-	if (p_ptr->prace == RACE_SPECTRE)
+	if (p_ptr->weak_wraith)
 	{
 		msg_print("Your body feels disrupted!");
 		dam_desc = "density";

@@ -4494,8 +4494,9 @@ static void project_p_aux(monster_type *m_ptr, int dam, int typ)
             if (blind) msg_print("You are hit by nether forces!");
             if (p_ptr->resist_neth)
 			{
-                if (!(p_ptr->prace == RACE_SPECTRE))
-				dam *= 6; dam /= (randint(6) + 6);
+				/* Hmm... */
+                if (!p_ptr->heal_nether) dam *= 6;
+				dam /= (randint(6) + 6);
 			}
 			else
 			{
@@ -4514,13 +4515,16 @@ static void project_p_aux(monster_type *m_ptr, int dam, int typ)
 					lose_skills(10);
 				}
 			}
-       if (p_ptr->prace == RACE_SPECTRE) {
-                   msg_print("You feel invigorated!");
-                   hp_player(dam / 4);
-           } else {
-                   take_hit(dam, killer, m_ptr->r_idx);
-           }
-       break;
+			if (p_ptr->heal_nether)
+			{
+				msg_print("You feel invigorated!");
+				hp_player(dam / 4);
+			}
+			else
+			{
+				take_hit(dam, killer, m_ptr->r_idx);
+			}
+			break;
        }
 
 		/* Water -- stun/confuse */
@@ -4743,7 +4747,7 @@ static void project_p_aux(monster_type *m_ptr, int dam, int typ)
 			{
 				(void)add_flag(TIMED_BLIND, randint(5) + 2);
 			}
-           if (p_ptr->prace == RACE_VAMPIRE) {
+           if (p_ptr->hurt_light) {
            msg_print("The light scorches your flesh!");
            dam *= 2;
            }
@@ -4767,11 +4771,13 @@ static void project_p_aux(monster_type *m_ptr, int dam, int typ)
 		case GF_DARK:
 		{
 			if (blind) msg_print("You are hit by something!");
-			if (p_ptr->resist_dark)
+			if (p_ptr->immune_dark)
+			{
+				dam = 0;
+			}
+			else if (p_ptr->resist_dark)
 			{
                dam *= 4; dam /= (randint(6) + 6);
-               if (p_ptr->prace == RACE_VAMPIRE)
-                 dam = 0;
             }
 			else if (!blind && !p_ptr->resist_blind)
 			{
