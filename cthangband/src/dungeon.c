@@ -4060,8 +4060,10 @@ static void resurrect(bool wizard)
 		p_ptr->word_recall = 0;
 	}
 
+#if 0 /* Is this ever used? */
 	/* Note cause of death XXX XXX XXX */
 	if (wizard) died_from = "Cheating death";
+#endif
 
 	/* Teleport to town */
 	new_level_flag = TRUE;
