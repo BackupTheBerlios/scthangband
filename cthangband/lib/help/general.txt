@@ -422,6 +422,8 @@ Toggles the display in any sub-windows (if available) which have more than one n
 $GRedraw Screen (Ctrl-R)
 This command adapts to various changes in global options, and redraws all of the windows. It is normally only necessary in abnormal situations, such as after changing the visual attr/char mappings, or enabling "graphics" mode.
 
+It also forces the help file index to be re-loaded, which may be useful if the help files have been modified since the game was loaded.
+
 %%%%% <cmd=(>
 $GLoad screen dump (left-paren)
 This command loads a "snap-shot" of the current screen from the file "dump.txt", and displays it on the screen.

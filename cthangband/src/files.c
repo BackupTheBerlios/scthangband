@@ -4756,9 +4756,6 @@ static void init_links(void)
 	int max;
 	link_type ilinks[MAX_LINKS];
 
-	/* Paranoia. */
-	if (links || !help_files) quit("init_links called unexpectedly");
-
 	FILE_TYPE(FILE_TYPE_TEXT);
 
 	for (file = help_files, max = 0; *file; file++)
@@ -4786,6 +4783,9 @@ static void init_links(void)
 
 		fclose(fff);
 	}
+
+	/* Allow links to be re-initialised. */
+	if (links) FREE(links);
 
 	/* Copy everything to a permanent location. */
 	C_MAKE(links, max, link_type);
@@ -4833,6 +4833,8 @@ void init_help_files(void)
 	char buf[1024];
 
 	FILE_TYPE(FILE_TYPE_TEXT);
+
+	if (help_files) FREE(help_files);
 
 	if (!((fff = my_fopen_path(ANGBAND_DIR_HELP, syshelpfile, "r"))))
 	{

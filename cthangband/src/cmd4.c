@@ -70,6 +70,8 @@ void do_cmd_redraw(void)
 	/* Hack -- update */
 	handle_stuff();
 
+	/* Hack - reinitialise the help files. */
+	init_help_files();
 
 	/* Redraw every window */
 	for (j = 0; j < 8; j++)

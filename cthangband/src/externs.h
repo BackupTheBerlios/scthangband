@@ -3562,7 +3562,7 @@ extern void redraw_stuff(void);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void help_track(cptr str);
 #endif
-#if (defined(FILES_C) || defined(INIT2_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C))
 extern void init_help_files(void);
 #endif
 #if (defined(CMD4_C) || defined(XTRA1_C))

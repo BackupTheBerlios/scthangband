@@ -5,9 +5,6 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
-sCthangband 1.0.11
-* Use formatted strings for bell().
-
 sCthangband 1.0.10
 * Allow the charges of objects in slots to be drained.
 * Allow inscriptions such as @^A1 to be interpreted correctly.
