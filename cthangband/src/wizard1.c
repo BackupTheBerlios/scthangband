@@ -2115,11 +2115,6 @@ static void spoil_mon_info(cptr fname)
 			}
 			if (i > 1) spoil_out("s");
 
-			if (flags1 & (RF1_DROP_CHOSEN))
-			{
-				spoil_out(", in addition to chosen objects");
-			}
-
 			spoil_out(".  ");
 		}
 

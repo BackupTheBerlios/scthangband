@@ -5253,7 +5253,7 @@ void generate_cave(void)
 		why = NULL;
 
 		/* Wipe the objects */
-		wipe_o_list();
+		wipe_o_list(num || preserve_mode);
 
 		/* Wipe the monsters */
 		remove_non_pets();

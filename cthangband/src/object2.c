@@ -540,8 +540,12 @@ void compact_objects(int size)
  * we know we are clearing every object.  Technically, we only
  * clear those fields for grids/monsters containing objects,
  * and we clear it once for every such object.
+ *
+ * If preserve is set, wiped artefacts have their cur_num set to 0.
+ *
+ * This deletes objects which are held by pets, which may be a bug.
  */
-void wipe_o_list(void)
+void wipe_o_list(bool preserve)
 {
 	int i;
 
@@ -554,7 +558,7 @@ void wipe_o_list(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Mega-Hack -- preserve artifacts */
-		if (!character_dungeon || preserve_mode)
+		if (preserve)
 		{
 			/* Hack -- Preserve unknown artifacts */
 			if (artifact_p(o_ptr))
@@ -4100,8 +4104,7 @@ object_type *inven_carry(object_type *o_ptr)
  */
 object_type *inven_takeoff(object_type *o_ptr, int amt)
 {
-	object_type forge;
-	object_type *q_ptr;
+	object_type forge[1], *q_ptr;
 
 	cptr act;
 
@@ -4118,7 +4121,7 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	if (amt > o_ptr->number) amt = o_ptr->number;
 
 	/* Get local object */
-	q_ptr = &forge;
+	q_ptr = forge;
 
 	/* Obtain a local object */
 	object_copy(q_ptr, o_ptr);
@@ -4162,7 +4165,7 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	}
 
 	/* Message */
-	msg_format("%s %v (%c).", act, object_desc_f3, q_ptr, TRUE, 3,
+	msg_format("%s %v (%c).", act, object_desc_f3, forge, TRUE, 3,
 		index_to_label(q_ptr));
 
 	/* Return slot */

@@ -897,7 +897,7 @@ static bool PURE get_mon_depth(int depth, int r_idx)
 /*
  * Prevent dead uniques from being generated.
  */
-static bool PURE get_mon_dead(int UNUSED p, int r_idx)
+static bool PURE get_mon_dead(int r_idx)
 {
 	monster_race *r_ptr = r_info+r_idx;
 
@@ -1068,7 +1068,7 @@ s16b get_mon_num(int level)
 		/* Hack - remove dead/existing uniques here as get_mon_num() can
 		 * change get_mon_dead() itself. This only really needs to be updated as
 		 * monsters are created and destroyed. */
-		entry->prob3 = (get_mon_dead(0, entry->index)) ? entry->prob2 : 0;
+		entry->prob3 = (get_mon_dead(entry->index)) ? entry->prob2 : 0;
 
 		/* Total */
 		total += entry->prob3;
