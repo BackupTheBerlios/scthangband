@@ -3089,6 +3089,7 @@ static void player_outfit(void)
 		if (k == OBJ_DAGGER && p_ptr->ptemplate == TPL_ASSASSIN)
         {
             q_ptr->name2 = EGO_BRAND_POIS;
+			apply_magic_2(q_ptr, 0);
         }
 
         /* These objects are "storebought" */

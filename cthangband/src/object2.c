@@ -2804,7 +2804,7 @@ static void apply_magic_1(object_type *o_ptr, int lev, bool okay, bool good,
  * Put the finishing touches on ego items and artefacts, give charges to wands
  * and staffs, fuel to lights and traps to chests.
  */
-static void apply_magic_2(object_type *o_ptr, int lev)
+void apply_magic_2(object_type *o_ptr, int lev)
 {
 	object_kind *k_ptr = k_info+o_ptr->k_idx;
 	artifact_type *a_ptr = a_info+o_ptr->name1;

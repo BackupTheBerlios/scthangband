@@ -4762,10 +4762,10 @@ void gain_level_reward(int chosen_reward)
                         }
 
                 object_prep(q_ptr, dummy2);
+                q_ptr->name2 = EGO_CHAOTIC;
+				apply_magic_2(q_ptr, dun_depth);
                 q_ptr->to_h = 3 + (randint((dun_depth)))%10;
                 q_ptr->to_d = 3 + (randint((dun_depth)))%10;
-                random_resistance(q_ptr, FALSE, ((randint(34))+4));
-                q_ptr->name2 = EGO_CHAOTIC;
                 /* Drop it in the dungeon */
                 drop_near(q_ptr, -1, py, px);
             break;

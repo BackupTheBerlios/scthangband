@@ -1016,6 +1016,9 @@ static bool curse_object(int o_idx, int e_idx, cptr where)
 	/* Shatter the object. */
 	o_ptr->name1 = 0;
 	o_ptr->name2 = e_idx;
+
+	apply_magic_2(o_ptr, dun_depth);
+
 	o_ptr->to_h = - randint(e_ptr->max_to_h) - randint(e_ptr->max_to_h);
 	o_ptr->to_d = - randint(e_ptr->max_to_d) - randint(e_ptr->max_to_d);
 	o_ptr->to_a = - randint(e_ptr->max_to_a) - randint(e_ptr->max_to_a);
@@ -2951,6 +2954,7 @@ static bool brand_bolts(void)
 
 		/* Ego-item */
 		o_ptr->name2 = EGO_FLAME;
+		apply_magic_2(o_ptr, dun_depth);
 
 		/* Enchant */
 		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);

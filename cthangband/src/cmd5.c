@@ -1600,7 +1600,6 @@ static void brand_weapon(int brand_type)
         case 4:
             act = "seems very unstable now.";
             o_ptr->name2 = EGO_PLANAR;
-            o_ptr->pval = randint(2);
             break;
         case 3:
             act = "thirsts for blood!";
@@ -1628,7 +1627,7 @@ static void brand_weapon(int brand_type)
 		}
     }
 
-
+	apply_magic_2(o_ptr, dun_depth);
 
 		msg_format("Your %s %s", o_name, act);
 
