@@ -441,7 +441,7 @@ extern void safe_setuid_grab(void);
 extern errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C))
-extern errr process_pref_file_aux(char *buf);
+extern errr process_pref_file_aux(char *buf, u16b *sf_flags);
 #endif
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(OBJECT1_C))
 extern errr process_pref_file(cptr name);
@@ -1582,7 +1582,7 @@ extern byte sf_patch;
 #if (defined(LOAD_C) || defined(SAVE_C))
 extern byte sf_extra;
 #endif
-#if (defined(LOAD_C) || defined(SAVE_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SAVE_C))
 extern u16b sf_flags;
 #endif
 #if (defined(LOAD_C) || defined(SAVE_C))
@@ -1597,10 +1597,10 @@ extern u16b sf_lives;
 #if (defined(LOAD_C) || defined(SAVE_C))
 extern u16b sf_saves;
 #endif
-#if (defined(LOAD_C) || defined(SAVE_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SAVE_C))
 extern const u16b sf_flags_now;
 #endif
-#if (defined(LOAD_C) || defined(SAVE_C))
+#if (defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C))
 extern s16b convert_k_idx(s16b k_idx, u32b from_v, u32b to_v);
 #endif
 #if (defined(FILES_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(SAVE_C))

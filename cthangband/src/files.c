@@ -294,6 +294,21 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
 }
 
 /*
+ * A macro to cause this particular set of maps to be reset to default
+ * if required.
+ */
+#define reset_check(x_info, max) \
+	if (!strcmp(buf+2, "---reset---")) \
+	{ \
+		for (i = 0; i < max; i++) \
+		{ \
+			x_info[i].x_attr = x_info[i].d_attr; \
+			x_info[i].x_char = x_info[i].d_char; \
+		} \
+		return 0; \
+	} \
+
+/*
  * Parse a sub-file of the "extra info" (format shown below)
  *
  * Each "action" line has an "action symbol" in the first column,
@@ -319,6 +334,7 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
  *
  * Specify the save file version against which the pref file was created.
  *   O:<num>
+ * (This is only currently used for object attr/chars.)
  *
  * Specify the attr/char values for "monsters" by race index
  *   R:<num>:<a>:<c>
@@ -359,12 +375,11 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
  * Specify a default set of initial statistics for spend_points
  *   D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name>
  */
-errr process_pref_file_aux(char *buf)
+errr process_pref_file_aux(char *buf, u16b *sf_flags)
 {
 	int i, j, n1, n2;
 
 	char *zz[16];
-
 
 	/* Skip "empty" lines */
 	if (!buf[0]) return (0);
@@ -380,288 +395,284 @@ errr process_pref_file_aux(char *buf)
 
 
 	/* Process "%:<fname>" */
-	if (buf[0] == '%')
+	switch (buf[0])
 	{
-		/* Attempt to Process the given file */
-		return (process_pref_file(buf + 2));
-	}
-
-
-/*
- * A macro to cause this particular set of maps to be reset to default
- * if required.
- */
-#define reset_check(x_info, max) \
-	if (!strcmp(buf+2, "---reset---")) \
-	{ \
-		for (i = 0; i < max; i++) \
-		{ \
-			x_info[i].x_attr = x_info[i].d_attr; \
-			x_info[i].x_char = x_info[i].d_char; \
-		} \
-		return 0; \
-	} \
-
-	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
-	if (buf[0] == 'R')
-	{
-		reset_check(r_info, MAX_R_IDX)
-		if (tokenize(buf+2, 3, zz) == 3)
+		/* Process %:<filename> -- process a given file. */
+		case '%': 
 		{
-			monster_race *r_ptr;
-			i = (huge)strtol(zz[0], NULL, 0);
-			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
-			if (i >= MAX_R_IDX) return (1);
-			r_ptr = &r_info[i];
-			if (n1) r_ptr->x_attr = n1;
-			if (n2) r_ptr->x_char = n2;
-			return (0);
+			/* Attempt to Process the given file */
+			return (process_pref_file(buf + 2));
 		}
-	}
-
-
-	/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
-	else if (buf[0] == 'K')
-	{
-		reset_check(k_info, MAX_K_IDX)
-		if (tokenize(buf+2, 3, zz) == 3)
+		/* Process O:<version> -- save file version for this file. */
+		case 'O': 
 		{
-			object_kind *k_ptr;
-			i = (huge)strtol(zz[0], NULL, 0);
-			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
-			if (i >= MAX_K_IDX) return (1);
-			k_ptr = &k_info[i];
-			if (n1) k_ptr->x_attr = n1;
-			if (n2) k_ptr->x_char = n2;
-			return (0);
+			*sf_flags = strtol(buf+2, NULL, 0);
+			return 0;
 		}
-	}
-
-	/* Process "U:<p_id>:<s_id>:<a>/<c>"  -- attr/char for unidentified objects */
-	else if (buf[0] == 'U')
-	{
-		reset_check(u_info, MAX_U_IDX)
-		if (tokenize(buf+2, 4, zz) == 4)
+		/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
+		case 'R':
 		{
-			unident_type *u_ptr;
-			i = (huge)strtol(zz[0], NULL, 0);
-			j = (huge)strtol(zz[1], NULL, 0);
-			n1 = strtol(zz[2], NULL, 0);
-			n2 = strtol(zz[3], NULL, 0);
-			if (i < 0 || i > 255 || j < 0 || j > 255) return (1);
-
-			i = lookup_unident(i,j);
-			if (i >= MAX_U_IDX) return (1);
-			if (i < 0) return (1);
-			u_ptr = &u_info[i];
-			if (n1) u_ptr->x_attr = n1;
-			if (n2) u_ptr->x_char = n2;
-			return (0);
-		}
-	}
-
-	/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
-	else if (buf[0] == 'F')
-	{
-		reset_check(f_info, MAX_F_IDX)
-		if (tokenize(buf+2, 3, zz) == 3)
-		{
-			feature_type *f_ptr;
-			i = (huge)strtol(zz[0], NULL, 0);
-			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
-			if (i >= MAX_F_IDX) return (1);
-			f_ptr = &f_info[i];
-			if (n1) f_ptr->x_attr = n1;
-			if (n2) f_ptr->x_char = n2;
-			return (0);
-		}
-	}
-
-
-	/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
-	else if (buf[0] == 'E')
-	{
-		if (tokenize(buf+2, 3, zz) == 3)
-		{
-			j = (byte)strtol(zz[0], NULL, 0) % 128;
-			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
-			if (n1) tval_to_attr[j] = n1;
-			if (n2) tval_to_char[j] = n2;
-			return (0);
-		}
-	}
-
-
-	/* Process "A:<str>" -- save an "action" for later */
-	else if (buf[0] == 'A')
-	{
-		text_to_ascii(macro__buf, buf+2);
-		return (0);
-	}
-
-	/* Process "P:<str>" -- normal macro */
-	else if (buf[0] == 'P')
-	{
-		char tmp[1024];
-		text_to_ascii(tmp, buf+2);
-		macro_add(tmp, macro__buf);
-		return (0);
-	}
-
-
-	/* Process "C:<str>" -- create keymap */
-	else if (buf[0] == 'C')
-	{
-		int mode;
-
-		char tmp[1024];
-
-		/* Hack - handle ---reset--- as a special case */
-		if (!strcmp(buf+2, "---reset---"))
-		{
-			for (i = 0; i < MAX_UCHAR; i++)
+			reset_check(r_info, MAX_R_IDX)
+			if (tokenize(buf+2, 3, zz) == 3)
 			{
-				for (mode = 0; mode < KEYMAP_MODES; mode++)
+				monster_race *r_ptr;
+				i = (huge)strtol(zz[0], NULL, 0);
+				n1 = strtol(zz[1], NULL, 0);
+				n2 = strtol(zz[2], NULL, 0);
+				if (i >= MAX_R_IDX) return (1);
+				r_ptr = &r_info[i];
+				if (n1) r_ptr->x_attr = n1;
+				if (n2) r_ptr->x_char = n2;
+				return (0);
+			}
+			else return (1);
+		}
+		/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
+		case 'K':
+		{
+			reset_check(k_info, MAX_K_IDX)
+			if (tokenize(buf+2, 3, zz) == 3)
+			{
+				object_kind *k_ptr;
+				i = (huge)strtol(zz[0], NULL, 0);
+				if (i < 0 || i > MAX_SHORT) return (1);
+				i = convert_k_idx(i, sf_flags[0], sf_flags_now);
+				n1 = strtol(zz[1], NULL, 0);
+				n2 = strtol(zz[2], NULL, 0);
+				if (i >= MAX_K_IDX) return (1);
+				k_ptr = &k_info[i];
+				if (n1) k_ptr->x_attr = n1;
+				if (n2) k_ptr->x_char = n2;
+				return (0);
+			}
+			else return (1);
+		}
+		/* Process "U:<p_id>:<s_id>:<a>/<c>"  -- attr/char for unidentified objects */
+		case 'U':
+		{
+			reset_check(u_info, MAX_U_IDX)
+			if (tokenize(buf+2, 4, zz) == 4)
+			{
+				unident_type *u_ptr;
+				i = (huge)strtol(zz[0], NULL, 0);
+				j = (huge)strtol(zz[1], NULL, 0);
+				n1 = strtol(zz[2], NULL, 0);
+				n2 = strtol(zz[3], NULL, 0);
+				if (i < 0 || i > 255 || j < 0 || j > 255) return (1);
+
+				i = lookup_unident(i,j);
+				if (i >= MAX_U_IDX) return (1);
+				if (i < 0) return (1);
+				u_ptr = &u_info[i];
+				if (n1) u_ptr->x_attr = n1;
+				if (n2) u_ptr->x_char = n2;
+				return (0);
+			}
+	}
+
+		/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
+		case 'F':
+		{
+			reset_check(f_info, MAX_F_IDX)
+			if (tokenize(buf+2, 3, zz) == 3)
+			{
+				feature_type *f_ptr;
+				i = (huge)strtol(zz[0], NULL, 0);
+				n1 = strtol(zz[1], NULL, 0);
+				n2 = strtol(zz[2], NULL, 0);
+				if (i >= MAX_F_IDX) return (1);
+				f_ptr = &f_info[i];
+				if (n1) f_ptr->x_attr = n1;
+				if (n2) f_ptr->x_char = n2;
+				return (0);
+			}
+		}
+
+
+		/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
+		case 'E':
+		{
+			if (tokenize(buf+2, 3, zz) == 3)
+			{
+				j = (byte)strtol(zz[0], NULL, 0) % 128;
+				n1 = strtol(zz[1], NULL, 0);
+				n2 = strtol(zz[2], NULL, 0);
+				if (n1) tval_to_attr[j] = n1;
+				if (n2) tval_to_char[j] = n2;
+				return (0);
+			}
+		}
+
+
+		/* Process "A:<str>" -- save an "action" for later */
+		case 'A':
+		{
+			text_to_ascii(macro__buf, buf+2);
+			return (0);
+		}
+
+		/* Process "P:<str>" -- normal macro */
+		case 'P':
+		{
+			char tmp[1024];
+			text_to_ascii(tmp, buf+2);
+			macro_add(tmp, macro__buf);
+			return (0);
+		}
+
+
+		/* Process "C:<str>" -- create keymap */
+		case 'C':
+		{
+			int mode;
+	
+			char tmp[1024];
+	
+			/* Hack - handle ---reset--- as a special case */
+			if (!strcmp(buf+2, "---reset---"))
+			{
+				for (i = 0; i < MAX_UCHAR; i++)
 				{
-					string_free(keymap_act[mode][i]);
+					for (mode = 0; mode < KEYMAP_MODES; mode++)
+					{
+						string_free(keymap_act[mode][i]);
+					}
+				}
+				C_WIPE(keymap_act, (MAX_UCHAR+1)*KEYMAP_MODES, cptr);
+				return SUCCESS;
+			}
+	
+			if (tokenize(buf+2, 2, zz) != 2) return (1);
+	
+			mode = strtol(zz[0], NULL, 0);
+			if ((mode < 0) || (mode >= KEYMAP_MODES)) return (1);
+	
+			text_to_ascii(tmp, zz[1]);
+			if (!tmp[0] || tmp[1]) return (1);
+			i = (byte)(tmp[0]);
+	
+			string_free(keymap_act[mode][i]);
+	
+			keymap_act[mode][i] = string_make(macro__buf);
+	
+			/* XXX Hack -- See main-win.c */
+			angband_keymap_flag = TRUE;
+	
+			return (0);
+		}
+	
+	
+		/* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info */
+		case 'V':
+		{
+			if (tokenize(buf+2, 5, zz) == 5)
+			{
+				i = (byte)strtol(zz[0], NULL, 0);
+				angband_color_table[i][0] = (byte)strtol(zz[1], NULL, 0);
+				angband_color_table[i][1] = (byte)strtol(zz[2], NULL, 0);
+				angband_color_table[i][2] = (byte)strtol(zz[3], NULL, 0);
+				angband_color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
+				return (0);
+			}
+		}
+	
+	
+		/* Process "X:<str>" -- turn option off */
+		case 'X':
+		{
+			for (i = 0; option_info[i].o_desc; i++)
+			{
+				if (option_info[i].o_var &&
+				    option_info[i].o_text &&
+				    streq(option_info[i].o_text, buf + 2))
+				{
+					(*option_info[i].o_var) = FALSE;
+					return (0);
 				}
 			}
-			C_WIPE(keymap_act, (MAX_UCHAR+1)*KEYMAP_MODES, cptr);
-			return SUCCESS;
 		}
-
-		if (tokenize(buf+2, 2, zz) != 2) return (1);
-
-		mode = strtol(zz[0], NULL, 0);
-		if ((mode < 0) || (mode >= KEYMAP_MODES)) return (1);
-
-		text_to_ascii(tmp, zz[1]);
-		if (!tmp[0] || tmp[1]) return (1);
-		i = (byte)(tmp[0]);
-
-		string_free(keymap_act[mode][i]);
-
-		keymap_act[mode][i] = string_make(macro__buf);
-
-		/* XXX Hack -- See main-win.c */
-		angband_keymap_flag = TRUE;
-
-		return (0);
-	}
-
-
-	/* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info */
-	else if (buf[0] == 'V')
-	{
-		if (tokenize(buf+2, 5, zz) == 5)
-		{
-			i = (byte)strtol(zz[0], NULL, 0);
-			angband_color_table[i][0] = (byte)strtol(zz[1], NULL, 0);
-			angband_color_table[i][1] = (byte)strtol(zz[2], NULL, 0);
-			angband_color_table[i][2] = (byte)strtol(zz[3], NULL, 0);
-			angband_color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
-			return (0);
-		}
-	}
-
-
-	/* Process "X:<str>" -- turn option off */
-	else if (buf[0] == 'X')
-	{
-		for (i = 0; option_info[i].o_desc; i++)
-		{
-			if (option_info[i].o_var &&
-			    option_info[i].o_text &&
-			    streq(option_info[i].o_text, buf + 2))
-			{
-				(*option_info[i].o_var) = FALSE;
-				return (0);
-			}
-		}
-	}
-
-	/* Process M:<attr>:<attr>... -- set monster memory colours */
-	else if (buf[0] == 'M')
-	{
-		/* Expect M:xx:xx:xx:xx (MAX_MONCOL times) format. */
-		if (strlen(buf) < MAX_MONCOL*3+1) return 1;
-		for (i = 0; i < MAX_MONCOL; i++)
-		{
-			moncol_type *mc_ptr = &moncol[i];
-			char c1 = buf[2+i*3];
-			char c2 = buf[3+i*3];
-			/* Read the second character first. */
-			if (strchr(atchar, c2))
-				mc_ptr->attr = strchr(atchar, c2)-atchar;
-			else
-				return 1;
-			/* Then read the first character, if present. */
-			if (strchr(atchar, c1))
-				mc_ptr->attr += 16*(strchr(atchar, c1)-atchar);
-			else if (c1 != ' ')
-				return 1;
-		}
-		return 0;
-	}
 	
-	/* Process "Y:<str>" -- turn option on */
-	else if (buf[0] == 'Y')
-	{
-		for (i = 0; option_info[i].o_desc; i++)
+		/* Process M:<attr>:<attr>... -- set monster memory colours */
+		case 'M':
 		{
-			if (option_info[i].o_var &&
-			    option_info[i].o_text &&
-			    streq(option_info[i].o_text, buf + 2))
+			/* Expect M:xx:xx:xx:xx (MAX_MONCOL times) format. */
+			if (strlen(buf) < MAX_MONCOL*3+1) return 1;
+			for (i = 0; i < MAX_MONCOL; i++)
 			{
-				(*option_info[i].o_var) = TRUE;
-				return (0);
+				moncol_type *mc_ptr = &moncol[i];
+				char c1 = buf[2+i*3];
+				char c2 = buf[3+i*3];
+				/* Read the second character first. */
+				if (strchr(atchar, c2))
+					mc_ptr->attr = strchr(atchar, c2)-atchar;
+				else
+					return 1;
+				/* Then read the first character, if present. */
+				if (strchr(atchar, c1))
+					mc_ptr->attr += 16*(strchr(atchar, c1)-atchar);
+				else if (c1 != ' ')
+					return 1;
+			}
+			return 0;
+		}
+		
+		/* Process "Y:<str>" -- turn option on */
+		case 'Y':
+		{
+			for (i = 0; option_info[i].o_desc; i++)
+			{
+				if (option_info[i].o_var &&
+				    option_info[i].o_text &&
+				    streq(option_info[i].o_text, buf + 2))
+				{
+					(*option_info[i].o_var) = TRUE;
+					return (0);
+				}
 			}
 		}
-	}
-
-	/*
-	 * Process D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name> for initial stats 
-	 */
-	else if (buf[0] == 'D')
-	{
-		byte total = tokenize(buf+2, 11, zz);
-		errr err;
-		/* We can accept D with or without a name, but everything else must be there. */
-		switch (total)
-			{
-			/* No name given, so make one up. */
-			case 10:
-					{
-				char name[32];
-				create_random_name(ator(*zz[1]), name);
-				err = add_stats(ator(*zz[0]), ator(*zz[1]),
-				 ator(*zz[2]), strtol(zz[3], NULL, 0),
-				 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
-				 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
-				 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), name);
-				break;
-					}
-			case 11:
-					{
-				err = add_stats(ator(*zz[0]), ator(*zz[1]),
-				 ator(*zz[2]), strtol(zz[3], NULL, 0),
-				 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
-				 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
-				 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), zz[10]);
-				break;
+	
+		/*
+		 * Process D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name> for initial stats 
+		 */
+		case 'D':
+		{
+			byte total = tokenize(buf+2, 11, zz);
+			errr err;
+			/* We can accept D with or without a name, but everything else must be there. */
+			switch (total)
+				{
+				/* No name given, so make one up. */
+				case 10:
+						{
+					char name[32];
+					create_random_name(ator(*zz[1]), name);
+					err = add_stats(ator(*zz[0]), ator(*zz[1]),
+					 ator(*zz[2]), strtol(zz[3], NULL, 0),
+					 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
+					 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
+					 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), name);
+					break;
+						}
+				case 11:
+						{
+					err = add_stats(ator(*zz[0]), ator(*zz[1]),
+					 ator(*zz[2]), strtol(zz[3], NULL, 0),
+					 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
+					 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
+					 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), zz[10]);
+					break;
+				}
+				default:
+				return ERR_PARSE;
 			}
-			default:
-			return ERR_PARSE;
+			return err;
 		}
-		return err;
+		default:
+		{
+			/* Failure */
+			return (1);
+		}
 	}
-
-	/* Failure */
-	return (1);
 }
 
 
@@ -893,6 +904,7 @@ errr process_pref_file(cptr name)
 
 	bool bypass = FALSE;
 
+	u16b sf_flags[1] = { 0 };
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
@@ -953,7 +965,7 @@ errr process_pref_file(cptr name)
 
 
 		/* Process the line */
-		err = process_pref_file_aux(buf);
+		err = process_pref_file_aux(buf, sf_flags);
 
 		/* Oops */
 		if (err) break;

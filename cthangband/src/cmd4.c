@@ -1142,6 +1142,7 @@ void do_cmd_options(void)
 void do_cmd_pref(void)
 {
 	char buf[80];
+	u16b sf_flags[1] = { sf_flags_now };
 
 	/* Default */
 	strcpy(buf, "");
@@ -1150,7 +1151,7 @@ void do_cmd_pref(void)
 	if (!get_string("Pref: ", buf, 80)) return;
 
 	/* Process that pref command */
-	(void)process_pref_file_aux(buf);
+	(void)process_pref_file_aux(buf, sf_flags);
 }
 
 
@@ -2164,7 +2165,10 @@ void do_cmd_visuals(void)
 			{
 				/* Start dumping */
 				fprintf(fff, "\n\n");
-				fprintf(fff, "# %s\n", vs_ptr->initstring);
+				fprintf(fff, "# %s\n\n", vs_ptr->initstring);
+
+				/* This could convert to any version, but... */
+				fprintf(fff, "O:%u\n", sf_flags_now);
 				fprintf(fff, "%c:---reset---\n\n", vs_ptr->startchar);
 
 				/* Dump entries */
