@@ -3519,6 +3519,7 @@ force_type option_force[] =
 	{&wear_confirm, FALSE, &confirm_wear_all},
 	{&flow_by_sound, FALSE, &flow_by_smell},
 	{&use_graphics, TRUE, &use_color},
+	{&stack_allow_wands, FALSE, &stack_allow_rods},
 	{0, 0, 0}
 };
 
