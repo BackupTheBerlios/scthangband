@@ -2694,7 +2694,11 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	return (TRUE);
 }
 
-
+/* Just in case */
+#ifndef allart_p
+#define allart_p(T) \
+	((artifact_p(T) || (T)->art_name) ? TRUE : FALSE)
+#endif
 
 /*
  * Enchant an item (in the inventory or on the floor)
@@ -2742,7 +2746,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
 	/* Describe */
 	msg_format("%s %s glow%s brightly!",
-		   ((item >= 0) ? "Your" : "The"), o_name,
+		   ((item >= 0 && !allart_p(o_ptr)) ? "Your" : "The"), o_name,
 		   ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Enchant */
