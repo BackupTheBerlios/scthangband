@@ -4167,7 +4167,7 @@ void gain_level_reward(int chosen_reward)
                             dummy2 = SV_LONG_SWORD;
                             break;
                             case 24: case 25: case 26:
-                            dummy2 = dummy2 = SV_SCIMITAR;
+                            dummy2 = SV_SCIMITAR;
                             break;
                             case 27:
                             dummy2 = SV_KATANA;
