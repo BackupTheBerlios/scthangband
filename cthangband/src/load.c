@@ -1775,6 +1775,14 @@ static errr rd_savefile_new_aux(void)
 	/* Monster Memory */
 	rd_u16b(&tmp16u);
 
+	/* Hack - set default max_num fields for new monsters. */
+	for (i = 0; i < MAX_R_IDX; i++)
+	{
+		monster_race *r_ptr = r_info+i;
+		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 1;
+		else r_ptr->max_num = 100;
+	}
+
 	/* Read the available records */
 	for (i = 0; i < tmp16u; i++)
 	{
