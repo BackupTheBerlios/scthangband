@@ -712,6 +712,36 @@ static bool showfile(cptr name, byte col)
 
 #define OPTPAGE_SPOILER	8
 
+static bool opt_is_forced(int i)
+{
+	typedef struct force_type force_type;
+
+	struct force_type
+	{
+		bool *forcing_opt;
+		bool forcing_value;
+		bool *forced_opt;
+	};
+
+	force_type *fs_ptr, force[] =
+	{
+		{&small_levels, FALSE, &dungeon_small},
+		{&centre_view, FALSE, &no_centre_run},
+		{&stack_force_notes, FALSE, &stack_force_notes_all},
+		{&wear_confirm, FALSE, &confirm_wear_all},
+		{0, 0, 0}
+	};
+
+	bool *o_var = option_info[i].o_var;
+
+	for (fs_ptr = force; fs_ptr->forcing_opt; fs_ptr++)
+	{
+		if (o_var == fs_ptr->forced_opt &&
+			*(fs_ptr->forcing_opt) == fs_ptr->forcing_value) return TRUE;
+	}
+	return FALSE;
+}
+
 /*
  * Interact with some options
  */
@@ -762,6 +792,7 @@ void do_cmd_options_aux(int page, cptr info)
 			/* Display the option text */
 			sprintf(buf, "%-48s: %s  (%s)",
 			        option_info[opt[i]].o_desc,
+			        (opt_is_forced(opt[i])) ? "N/A" :
 			        (*option_info[opt[i]].o_var ? "yes" : "no "),
 			        option_info[opt[i]].o_text);
 			c_prt(a, buf, i + 2, 0);
@@ -784,7 +815,9 @@ void do_cmd_options_aux(int page, cptr info)
 			case '-':
 			case '8':
 			{
+				do {
 				k = (n + k - 1) % n;
+				} while(opt_is_forced(opt[k]));
 				break;
 			}
 
@@ -793,7 +826,9 @@ void do_cmd_options_aux(int page, cptr info)
 			case '\r':
 			case '2':
 			{
+				do {
 				k = (k + 1) % n;
+				} while(opt_is_forced(opt[k]));
 				break;
 			}
 
@@ -802,7 +837,9 @@ void do_cmd_options_aux(int page, cptr info)
 			case '6':
 			{
 				(*option_info[opt[k]].o_var) = TRUE;
+				do {
 				k = (k + 1) % n;
+				} while(opt_is_forced(opt[k]));
 				break;
 			}
 
@@ -811,7 +848,9 @@ void do_cmd_options_aux(int page, cptr info)
 			case '4':
 			{
 				(*option_info[opt[k]].o_var) = FALSE;
+				do {
 				k = (k + 1) % n;
+				} while(opt_is_forced(opt[k]));
 				break;
 			}
 
@@ -819,7 +858,9 @@ void do_cmd_options_aux(int page, cptr info)
 			case 'X':
 			{
 				(*option_info[opt[k]].o_var) ^= 1;
+				do {
 				k = (k + 1) % n;
+				} while(opt_is_forced(opt[k]));
 				break;
 			}
 			default:
