@@ -116,49 +116,77 @@ F:UNIQUE | NEVER_MOVE | NEVER_BLOW
 
 ##### Various causes of death #####
 
+# The colour code for the @ fake monsters is as follows:
+# w - probably your own fault.
+# g - a slow death which probably indicates a lack of healing power. 
+# y - a random event which you weren't healthy enough to survive.
+# s - suicide.
+
 N:2:poison
+G:@:g
 
 N:3:light
+G:@:g
 
 N:4:& trap~
+G:^:w
 
 N:5:& chaos patron~
+G:@:v
 
 N:6:casting genocide
+G:@:w
 
 N:7:casting mass genocide
+G:@:w
 
 N:8:calling the void
+G:@:w
 
 N:9:casting hellfire
+G:@:w
 
 N:10:& earthquake~
+G:@:y
 
 N:11:& corrupt Pattern~
+G:@:g
 
 N:12:& Pattern~
+G:@:w
 
 N:13:solid rock
+G:@:w
 
 N:14:bleeding
+G:@:g
 
 N:15:starvation
+G:@:g
 
 N:16:dangerous equipment
+G:@:w
 
 N:17:& dangerous mutation~
+G:@:y
 
 N:18:poisonous food
+G:@:w
 
 N:19:& harmful potion~
+G:@:w
 
 N:20:& harmful scroll~
+G:@:w
 
 N:21:concentrating too hard
+G:@:w
 
 N:22:& fatal polymorph~
+G:@:y
 
 N:23:suicide
+G:@:s
 
 ##### Town monsters #####
 
