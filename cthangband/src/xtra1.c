@@ -3687,7 +3687,7 @@ void win_help_display(void)
 
 		Term_gotoxy(0,0);
 
-		while (!my_fgets(fff, buf, 1024))
+		while (fgets(buf, 1024, fff))
 		{
 			/* Not an option heading. */
 			if (!prefix(buf, CC_LINK_PREFIX)) continue;

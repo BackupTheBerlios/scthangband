@@ -3776,6 +3776,9 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 	 * output file anyway. */
 	for (x = 0; fgets(h_ptr->rbuf, 1024, fff); )
 	{
+		/* Skip game links. */
+		if (prefix(h_ptr->rbuf, CC_LINK_PREFIX)) continue;
+
 		for (s = h_ptr->rbuf; *s;)
 		{
 			if (strlen(s) < w-x) break;
@@ -3925,8 +3928,8 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		/* Skip link colors */
 		if (prefix(buf, "|||||")) continue;
 
-		/* Skip game links. */
-		if (prefix(buf, CC_LINK_PREFIX)) continue;
+		/* Skip game links (done in reflow_file(). */
+		/* if (prefix(buf, CC_LINK_PREFIX)) continue; */
 
 		/* Skip tags */
 		if (prefix(buf, "~~~~~"))
