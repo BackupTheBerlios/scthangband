@@ -152,7 +152,7 @@ bool make_attack_normal(int m_idx)
 
 	bool		blinked;
 
-    bool        touched = FALSE, fear = FALSE, alive = TRUE;
+	bool touched = FALSE, fear = FALSE, living = TRUE;
 	bool visible = FALSE;
 	bool obvious = FALSE;
 
@@ -1313,7 +1313,7 @@ bool make_attack_normal(int m_idx)
 			}
             if (touched)
             {
-                if (p_ptr->sh_fire && alive)
+                if (p_ptr->sh_fire && living)
                 {   if (!(r_ptr->flags3 & RF3_IM_FIRE))
                     {
                         msg_format("%^s is suddenly very hot!", m_name);
@@ -1321,7 +1321,7 @@ bool make_attack_normal(int m_idx)
                             " turns into a pile of ash."))
                         {
                             blinked = FALSE;
-                            alive = FALSE;
+                            living = FALSE;
                         }
                     }
                     else
@@ -1332,7 +1332,7 @@ bool make_attack_normal(int m_idx)
                     }
 
                 }
-                if (p_ptr->sh_elec && alive)
+                if (p_ptr->sh_elec && living)
                 {   if (!(r_ptr->flags3 & RF3_IM_ELEC))
                     {
                         msg_format("%^s gets zapped!", m_name);
@@ -1340,7 +1340,7 @@ bool make_attack_normal(int m_idx)
                             " turns into a pile of cinder."))
                             {
                                 blinked = FALSE;
-                                alive = FALSE;
+                                living = FALSE;
                             }
                     }
                     else
