@@ -2060,7 +2060,7 @@ static errr rd_savefile_new_aux(void)
 /*
  * Actually read the savefile
  */
-errr rd_savefile_new(void)
+static errr rd_savefile_new(void)
 {
 	errr err;
 
@@ -2082,3 +2082,274 @@ errr rd_savefile_new(void)
 	/* Result */
 	return (err);
 }
+
+
+
+/*
+ * Attempt to Load a "savefile"
+ *
+ * Version 2.7.0 introduced a slightly different "savefile" format from
+ * older versions, requiring a completely different parsing method.
+ *
+ * Note that savefiles from 2.7.0 - 2.7.2 are completely obsolete.
+ *
+ * Pre-2.8.0 savefiles lose some data, see "load2.c" for info.
+ *
+ * Pre-2.7.0 savefiles lose a lot of things, see "load1.c" for info.
+ *
+ * On multi-user systems, you may only "read" a savefile if you will be
+ * allowed to "write" it later, this prevents painful situations in which
+ * the player loads a savefile belonging to someone else, and then is not
+ * allowed to save his game when he quits.
+ *
+ * We return "TRUE" if the savefile was usable, and we set the global
+ * flag "character_loaded" if a real, living, character was loaded.
+ *
+ * Note that we always try to load the "current" savefile, even if
+ * there is no such file, so we must check for "empty" savefile names.
+ */
+bool load_player(void)
+{
+	int             fd = -1;
+
+	errr    err = 0;
+
+	byte    vvv[4];
+
+#ifdef VERIFY_TIMESTAMP
+	struct stat     statbuf;
+#endif
+
+	cptr    what = "generic";
+
+
+	/* Paranoia */
+	turn = 0;
+
+	/* Paranoia */
+	death = FALSE;
+
+
+	/* Allow empty savefile name */
+	if (!savefile[0]) return (TRUE);
+
+
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(VM)
+
+	/* XXX XXX XXX Fix this */
+
+	/* Verify the existance of the savefile */
+	if (access(savefile, 0) < 0)
+	{
+		/* Give a message */
+		msg_print("Savefile does not exist.");
+		msg_print(NULL);
+
+		/* Allow this */
+		return (TRUE);
+	}
+
+#endif
+
+
+#ifdef VERIFY_SAVEFILE
+
+	/* Verify savefile usage */
+	if (!err)
+	{
+		FILE *fkk;
+
+		char temp[1024];
+
+		/* Extract name of lock file */
+		strcpy(temp, savefile);
+		strcat(temp, ".lok");
+
+		/* Check for lock */
+		fkk = my_fopen(temp, "r");
+
+		/* Oops, lock exists */
+		if (fkk)
+		{
+			/* Close the file */
+			my_fclose(fkk);
+
+			/* Message */
+			msg_print("Savefile is currently in use.");
+			msg_print(NULL);
+
+			/* Oops */
+			return (FALSE);
+		}
+
+		/* Create a lock file */
+		fkk = my_fopen(temp, "w");
+
+		/* Dump a line of info */
+		fprintf(fkk, "Lock file for savefile '%s'\n", savefile);
+
+		/* Close the lock file */
+		my_fclose(fkk);
+	}
+
+#endif
+
+
+	/* Okay */
+	if (!err)
+	{
+		/* Open the savefile */
+		fd = fd_open(savefile, O_RDONLY);
+
+		/* No file */
+		if (fd < 0) err = -1;
+
+		/* Message (below) */
+		if (err) what = "Cannot open savefile";
+	}
+
+	/* Process file */
+	if (!err)
+	{
+
+#ifdef VERIFY_TIMESTAMP
+		/* Get the timestamp */
+		(void)fstat(fd, &statbuf);
+#endif
+
+		/* Read the first four bytes */
+		if (fd_read(fd, (char*)(vvv), 4)) err = -1;
+
+		/* What */
+		if (err) what = "Cannot read savefile";
+
+		/* Close the file */
+		(void)fd_close(fd);
+	}
+
+	/* Process file */
+	if (!err)
+	{
+
+		/* Extract version */
+        sf_major = vvv[0];
+        sf_minor = vvv[1];
+        sf_patch = vvv[2];
+		sf_extra = vvv[3];
+
+		/* Clear screen */
+		Term_clear();
+
+		/* Attempt to load */
+		err = rd_savefile_new();
+		/* Message (below) */
+		if (err) what = "Cannot parse savefile";
+	}
+
+	/* Paranoia */
+	if (!err)
+	{
+		/* Invalid turn */
+		if (!turn) err = -1;
+
+		/* Message (below) */
+		if (err) what = "Broken savefile";
+	}
+
+#ifdef VERIFY_TIMESTAMP
+	/* Verify timestamp */
+	if (!err)
+	{
+		/* Hack -- Verify the timestamp */
+		if (sf_when > (statbuf.st_ctime + 100) ||
+		    sf_when < (statbuf.st_ctime - 100))
+		{
+			/* Message */
+			what = "Invalid timestamp";
+
+			/* Oops */
+			err = -1;
+		}
+	}
+#endif
+
+
+	/* Okay */
+	if (!err)
+	{
+		u16b cur_flags;
+		byte cur[3];
+		current_version(&cur_flags, cur, cur+1, cur+2);
+		/* Give a conversion warning */
+        if ((cur[0] != sf_major) ||
+            (cur[1] != sf_minor) ||
+            (cur[2] != sf_patch))
+		{
+			/* Message */
+            msg_format("Converted a %d.%d.%d savefile.",
+                       sf_major, sf_minor, sf_patch);
+			msg_print(NULL);
+		}
+
+		/* Player is dead */
+		if (death)
+		{
+			/* Player is no longer "dead" */
+			death = FALSE;
+
+			/* Count lives */
+			sf_lives++;
+
+			/* Forget turns */
+			turn = old_turn = 0;
+
+			/* Done */
+			return (TRUE);
+		}
+
+		/* A character was loaded */
+		character_loaded = TRUE;
+
+		/* Still alive */
+		if (p_ptr->chp >= 0)
+		{
+			/* Froget the cause of death from the save file. */
+			FREE(died_from);
+
+			/* Reset cause of death */
+			died_from = "(alive and well)";
+		}
+
+		/* Success */
+		return (TRUE);
+	}
+
+
+#ifdef VERIFY_SAVEFILE
+
+	/* Verify savefile usage */
+	if (TRUE)
+	{
+		char temp[1024];
+
+		/* Extract name of lock file */
+		strcpy(temp, savefile);
+		strcat(temp, ".lok");
+
+		/* Remove lock */
+		fd_kill(temp);
+	}
+
+#endif
+
+
+	/* Message */
+	msg_format("Error (%s) reading %d.%d.%d savefile.",
+		   what, sf_major, sf_minor, sf_patch);
+	msg_print(NULL);
+
+	/* Oops */
+	return (FALSE);
+}
+
+
