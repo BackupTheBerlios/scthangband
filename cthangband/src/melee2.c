@@ -2357,7 +2357,7 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
                               "minions" : "kin"));
              for (k = 0; k < 6; k++)
              {
-				count += summon_specific_aux(y, x, rlev, SUMMON_NO_UNIQUES | SUMMON_CHAR | r_ptr->d_char, TRUE, friendly);
+				count += summon_specific_aux(y, x, rlev, SUMMON_NO_UNIQUES | SUMMON_BY_CHAR | r_ptr->d_char, TRUE, friendly);
              }
              if (blind && count) msg_print("You hear many things appear nearby.");
 

@@ -2700,11 +2700,11 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 		(r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);
 
 	/* Hack - summon by symbol. */
-	if (summon_specific_type & SUMMON_CHAR)
+	if (summon_specific_type & SUMMON_BY_CHAR)
 	{
 		return (r_ptr->d_char == (summon_specific_type & 0x00FF));
 	}
-	else if (summon_specific_type & SUMMON_FLAG)
+	else if (summon_specific_type & SUMMON_BY_FLAG)
 	{
 		u32b *rflag, flag = 1L << (summon_specific_type % 32);
 		int set = (summon_specific_type / 32) % 8;

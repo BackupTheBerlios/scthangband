@@ -2291,33 +2291,36 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define SUMMON_ALL 0
 #define SUMMON_NO_UNIQUES	0x8000 /* Prevent unique summoning. */
-#define SUMMON_FLAG 0x4000 /* Check for a specific flag. */
-#define SUMMON_CHAR 0x2000 /* Check for the low byte as a symbol. */
+#define SUMMON_BY_FLAG 0x4000 /* Check for a specific flag. */
+#define SUMMON_BY_CHAR 0x2000 /* Check for the low byte as a symbol. */
 
 /* Summon by d_char. */
-#define SUMMON_ANT              ('a' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_SPIDER           ('S' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_HYDRA            ('M' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_HI_DRAGON        ('D' | SUMMON_CHAR)
-#define SUMMON_YEEK				('y' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_HUMAN			('p' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_KOBOLD			('k' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_IB	('i' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_MOULD         ('m' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_BAT         ('b' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_QUYLTHULG         ('Q' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_VORTEX         ('v' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
-#define SUMMON_TREASURE         ('$' | SUMMON_CHAR | SUMMON_NO_UNIQUES)
+#define SUMMON_CHAR(C) ((C) | SUMMON_BY_CHAR)
+#define SUMMON_ANT        (SUMMON_CHAR('a') | SUMMON_NO_UNIQUES)
+#define SUMMON_SPIDER     (SUMMON_CHAR('S') | SUMMON_NO_UNIQUES)
+#define SUMMON_HYDRA      (SUMMON_CHAR('M') | SUMMON_NO_UNIQUES)
+#define SUMMON_HI_DRAGON  SUMMON_CHAR('D')
+#define SUMMON_YEEK       (SUMMON_CHAR('y') | SUMMON_NO_UNIQUES)
+#define SUMMON_HUMAN      (SUMMON_CHAR('p') | SUMMON_NO_UNIQUES)
+#define SUMMON_KOBOLD     (SUMMON_CHAR('k') | SUMMON_NO_UNIQUES)
+#define SUMMON_IB         (SUMMON_CHAR('i') | SUMMON_NO_UNIQUES)
+#define SUMMON_MOULD      (SUMMON_CHAR('m') | SUMMON_NO_UNIQUES)
+#define SUMMON_BAT        (SUMMON_CHAR('b') | SUMMON_NO_UNIQUES)
+#define SUMMON_QUYLTHULG  (SUMMON_CHAR('Q') | SUMMON_NO_UNIQUES)
+#define SUMMON_VORTEX     (SUMMON_CHAR('v') | SUMMON_NO_UNIQUES)
+#define SUMMON_TREASURE   (SUMMON_CHAR('$') | SUMMON_NO_UNIQUES)
 
 /* Summon by a flag. */
-#define SUMMON_CTHULOID         (3*32 | iilog(RF3_CTHULOID) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
-#define SUMMON_DEMON            (3*32 | iilog(RF3_DEMON) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
-#define SUMMON_UNDEAD           (3*32 | iilog(RF3_UNDEAD) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
-#define SUMMON_DRAGON           (3*32 | iilog(RF3_DRAGON) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
-#define SUMMON_GOO              (3*32 | iilog(RF3_GREAT_OLD_ONE) | SUMMON_FLAG)
-#define SUMMON_UNIQUE           (1*32 | iilog(RF1_UNIQUE) | SUMMON_FLAG)
-#define SUMMON_ORC				(3*32 | iilog(RF3_ORC) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
-#define SUMMON_ANIMAL           (3*32 | iilog(RF3_ANIMAL) | SUMMON_FLAG | SUMMON_NO_UNIQUES)
+#define SUMMON_FLAG(S,F) ((S)*32 | iilog(F) | SUMMON_BY_FLAG)
+#define SUMMON_CTHULOID   (SUMMON_FLAG(3, RF3_CTHULOID) | SUMMON_NO_UNIQUES)
+#define SUMMON_DEMON      (SUMMON_FLAG(3, RF3_DEMON) | SUMMON_NO_UNIQUES)
+#define SUMMON_UNDEAD     (SUMMON_FLAG(3, RF3_UNDEAD) | SUMMON_NO_UNIQUES)
+#define SUMMON_DRAGON     (SUMMON_FLAG(3, RF3_DRAGON) | SUMMON_NO_UNIQUES)
+#define SUMMON_GOO        SUMMON_FLAG(3, RF3_GREAT_OLD_ONE)
+#define SUMMON_UNIQUE     SUMMON_FLAG(1, RF1_UNIQUE)
+#define SUMMON_ORC        (SUMMON_FLAG(3, RF3_ORC) | SUMMON_NO_UNIQUES)
+#define SUMMON_ANIMAL     (SUMMON_FLAG(3, RF3_ANIMAL) | SUMMON_NO_UNIQUES)
+#define SUMMON_ELEMENTAL  (SUMMON_FLAG(2, RF2_ELEMENTAL) | SUMMON_NO_UNIQUES)
 
 /* Unusual summon types - see summon_specific_okay(). */
 #define SUMMON_HOUND	(0x0100 | SUMMON_NO_UNIQUES) /* CZ */
@@ -2326,7 +2329,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SUMMON_REAVER	(0x0103 | SUMMON_NO_UNIQUES) /* "Black reaver" */
 #define SUMMON_ANIMAL_RANGER	(0x0105 | SUMMON_NO_UNIQUES)
 #define SUMMON_PHANTOM	(0x0106 | SUMMON_NO_UNIQUES) /* "Phantom" */
-#define SUMMON_ELEMENTAL	(0x0107 | SUMMON_NO_UNIQUES) /* "lemental" */
 #define SUMMON_LIVING	(0x0108 | SUMMON_NO_UNIQUES)
 
 
@@ -2817,7 +2819,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RF2_TAKE_ITEM           0x00400000      /* Monster can pick up items */
 #define RF2_KILL_ITEM           0x00800000      /* Monster can crush items */
 #define RF2_RUN_AWAY                    0x01000000      /* Hit once, then run */
-#define RF2_BRAIN_1                     0x02000000
+#define RF2_ELEMENTAL	0x02000000	/* Monster in an elemental spirit */
 #define RF2_BRAIN_2                     0x04000000
 #define RF2_BRAIN_3                     0x08000000
 #define RF2_BRAIN_4                     0x10000000
