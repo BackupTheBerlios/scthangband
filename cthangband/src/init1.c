@@ -1352,9 +1352,6 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
-			/* Paranoia -- require a name */
-			if (!*s) return (1);
-
 			/* Get the index */
 			i = atoi(buf+2);
 
@@ -1447,9 +1444,6 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
-
-			/* Paranoia -- require a name */
-			if (!*s) return (1);
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -1575,11 +1569,8 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			/* Find the colon before the name */
 			s = strchr(buf+2, ':');
 
-			/* Verify that colon */
-			if (!s) return (1);
-
-			/* Paranoia -- require a name */
-			if (!*++s) return (1);
+			/* Verify that colon and advance */
+			if (!s++) return (1);
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -1803,9 +1794,6 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 			/* Advance to the name */
 			s++;
 
-			/* Paranoia -- require a name */
-			if (!*s) return (PARSE_ERROR_GENERIC);
-
 			/* Verify index. */
 			try(byte_ok(i));
 
@@ -1963,9 +1951,6 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 			/* Advance to the name */
 			s = buf+2;
 
-			/* Paranoia -- require a name */
-			if (!*s) return (PARSE_ERROR_INCORRECT_SYNTAX);
-
 			/* Check that u_info is large enough. */
 			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
 
@@ -2077,9 +2062,6 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
-
-			/* Paranoia -- require a name */
-			if (!*s) return (1);
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -2238,9 +2220,6 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
-
-			/* Paranoia -- require a name */
-			if (!*s) return (1);
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -2468,9 +2447,6 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
-
-			/* Paranoia -- require a name */
-			if (!*s) return (1);
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -2755,9 +2731,6 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 	{
 		case 'X':
 		{
-			/* Paranoia -- require a name */
-			if (!*s) return (PARSE_ERROR_GENERIC);
-
 			/* Advance the index and check for overflow. */
 			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
 
