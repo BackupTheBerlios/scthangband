@@ -215,8 +215,8 @@ extern void do_cmd_rest(void);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_fire(void);
 #endif
-#if (defined(CMD3_C) || defined(SPELLS2_C))
-extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(STORE_C))
+extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C))
 extern void do_cmd_throw(int throw_mult);
@@ -242,8 +242,17 @@ extern void do_cmd_takeoff(void);
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_drop(void);
 #endif
+#if (defined(CMD3_C) || defined(SPELLS2_C))
+extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
+#endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void do_cmd_destroy(void);
+#endif
+#if (defined(CMD3_C) || defined(DUNGEON_C))
+extern void do_cmd_hide_object(void);
+#endif
+#if (defined(CMD3_C) || defined(DUNGEON_C))
+extern void do_cmd_unhide_objects(void);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C))
 extern void destroy_pack(void);
@@ -290,9 +299,6 @@ extern void do_cmd_message_one(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_messages(void);
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void opt_special_effect(const option_type * const op_ptr);
 #endif
@@ -301,6 +307,9 @@ extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #endif
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
+#endif
+#if (defined(CMD4_C) || defined(SQUELCH_C))
+extern void dump_version(FILE *fff);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_options(void);
@@ -436,8 +445,14 @@ extern void do_cmd_activate(object_type *o_ptr);
 #if (defined(DUNGEON_C) || defined(MELEE2_C))
 extern u16b ident_power(object_ctype *o_ptr);
 #endif
+#if (defined(DUNGEON_C) || defined(SQUELCH_C))
+extern bool PURE k_can_curse(int k_idx);
+#endif
 #if (defined(CMD3_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C))
 extern int PURE find_feeling(object_ctype *o_ptr);
+#endif
+#if (defined(DUNGEON_C) || defined(SQUELCH_C))
+extern bool k_can_sense(int k_idx);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern void change_level(s16b new_level, byte come_from);
@@ -515,10 +530,22 @@ extern void do_cmd_help(cptr name);
 extern int color_char_to_attr(char c);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))
-extern void display_help_page(cptr str);
+extern cptr cur_help_str(void);
+#endif
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
+extern void help_track(cptr str);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void show_file(cptr name, cptr what);
+#endif
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
+extern char show_link(cptr link);
+#endif
+#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C))
+extern void init_help_files(void);
+#endif
+#if (defined(FILES_C) || defined(XTRA1_C))
+extern void display_help_page(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_EMX_C) || defined(MAIN_WIN_C) || defined(MAIN_C))
 extern void process_player_name(void);
@@ -1291,6 +1318,9 @@ extern void delete_monster_idx(int i,bool visibly);
 #if (defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS2_C))
 extern void delete_monster(int y, int x);
 #endif
+#if (defined(LOAD_C) || defined(MONSTER2_C))
+extern bool grow_m_list(void);
+#endif
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SAVE_C))
 extern void compact_monsters(int size);
 #endif
@@ -1393,6 +1423,9 @@ extern cptr find_next_good_flag(cptr s, byte reject, byte require);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
+extern void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
 extern cptr PURE item_activation(object_ctype *o_ptr);
 #endif
@@ -1404,6 +1437,9 @@ extern object_ctype PURE *get_real_obj(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(OBJECT1_C))
 extern bool PURE is_worn_p(object_ctype *o_ptr);
+#endif
+#if (defined(CMD6_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+extern bool PURE is_inventory_p(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern int PURE get_bow_mult(object_ctype *o_ptr);
@@ -1444,6 +1480,9 @@ extern void show_inven(void);
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern void show_equip(void);
 #endif
+#if (defined(OBJECT1_C) || defined(SQUELCH_C))
+extern void next_object(object_type **o_ptr);
+#endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C))
 extern object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor);
 #endif
@@ -1461,6 +1500,9 @@ extern void delete_object(int y, int x);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C))
 extern void do_cmd_rotate_stack(void);
+#endif
+#if (defined(LOAD_C) || defined(OBJECT2_C))
+extern bool grow_o_list(void);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C) || defined(SAVE_C))
 extern void compact_objects(int size);
@@ -1486,18 +1528,12 @@ extern void object_tried(object_type *o_ptr);
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern s32b PURE flag_cost(object_ctype *o_ptr, bool all);
 #endif
-
-
-
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern s32b PURE object_value(object_ctype *o1_ptr, bool full);
 #endif
 #if (defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern void set_stack_number(object_type *o_ptr);
 #endif
-
-
-
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr);
 #endif
@@ -1524,6 +1560,9 @@ extern void apply_magic_2(object_type *o_ptr, const int lev);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
+#endif
+#if (defined(DUNGEON_C) || defined(OBJECT2_C))
+extern bool PURE magic_can_curse(int k_idx);
 #endif
 #if (defined(CMD2_C) || defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool make_object(object_type *j_ptr, bool good, bool great);
@@ -1582,15 +1621,15 @@ extern void reorder_pack(void);
 #if (defined(OBJECT2_C) || defined(XTRA1_C))
 extern void display_koff(int k_idx);
 #endif
+#if (defined(CMD3_C) || defined(OBJECT2_C))
+extern void object_hide(object_type *o_ptr);
+#endif
 
 /* powers.c */
 
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(POWERS_C))
 extern cptr describe_power(int power, int lev);
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern void do_poly_wounds(int cause);
 #endif
@@ -1879,9 +1918,6 @@ extern bool fire_bolt_or_beam(int prob, int typ, int dir, int dam);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool lite_line(int dir);
 #endif
-
-
-
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool wall_to_mud(int dir);
 #endif
@@ -1894,42 +1930,6 @@ extern bool destroy_door(int dir);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool disarm_trap(int dir);
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool door_creation(void);
 #endif
@@ -2016,6 +2016,37 @@ extern void teleport_swap(int dir);
 #endif
 #if (defined(DUNGEON_C) || defined(SPELLS2_C))
 extern void alter_reality(void);
+#endif
+
+/* squelch.c */
+
+#if (defined(INIT2_C) || defined(SQUELCH_C))
+extern void init_squelch(void);
+#endif
+#if (defined(FILES_C) || defined(SQUELCH_C))
+extern cptr process_pref_squelch(char **zz, int n, u16b *sf_flags);
+#endif
+#if (defined(CMD4_C) || defined(SQUELCH_C))
+extern void squelch_dump(FILE *fff);
+#endif
+#if (defined(SQUELCH_C) || defined(WIZARD2_C))
+extern void get_names(char **obuf, char *this, int num, int *choice, uint len,
+	void (*print_f1)(char *, uint, cptr, va_list *))
+;
+#endif
+#if (defined(SQUELCH_C) || defined(WIZARD2_C))
+extern name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
+	bool *abort, name_centry *start, cptr prompt, bool squelch)
+;
+#endif
+#if (defined(CMD4_C) || defined(SQUELCH_C))
+extern void do_cmd_options_squelch(void);
+#endif
+#if (defined(SQUELCH_C) || defined(XTRA1_C))
+extern void squelch_grid(void);
+#endif
+#if (defined(SQUELCH_C) || defined(XTRA1_C))
+extern void squelch_inventory(void);
 #endif
 
 /* store.c */
@@ -2206,6 +2237,12 @@ extern cptr coin_types[];
 #if (defined(CMD3_C) || defined(TABLES_C) || defined(WIZARD2_C))
 extern name_centry ident_info[];
 #endif
+#if (defined(DUNGEON_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(TABLES_C))
+extern cptr_ch feeling_str[SENSE_MAX];
+#endif
+#if (defined(SQUELCH_C) || defined(TABLES_C) || defined(WIZARD2_C))
+extern cptr option_chars;
+#endif
 
 /* util.c */
 
@@ -2308,6 +2345,9 @@ extern void sound(int val);
 #if (defined(MAIN_CRB_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool screen_is_icky(void);
 #endif
+#if (defined(SQUELCH_C) || defined(UTIL_C))
+extern cptr inkey_gnext;
+#endif
 #if (defined(FILES_C) || defined(UTIL_C))
 extern bool is_keymap_or_macro(void);
 #endif
@@ -2346,6 +2386,9 @@ extern void c_prt(byte attr, cptr str, int row, int col);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void prt(cptr str, int row, int col);
+#endif
+#if (defined(CMD5_C) || defined(UTIL_C))
+extern void mc_roff_xy(int x, int y, cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C))
 extern void mc_roff(cptr s);
@@ -2733,6 +2776,9 @@ extern bool scroll_edge;
 #endif
 #if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool show_piles;
+#endif
+#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool beginner_help;
 #endif
 #if (defined(CMD1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool find_ignore_stairs;
@@ -3559,15 +3605,6 @@ extern void update_stuff(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void redraw_stuff(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
-extern void help_track(cptr str);
-#endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C))
-extern void init_help_files(void);
-#endif
-#if (defined(FILES_C) || defined(XTRA1_C))
-extern cptr cur_help_str(void);
-#endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(XTRA1_C))
 extern display_func_type display_func[NUM_DISPLAY_FUNCS+1];
 #endif
@@ -3683,13 +3720,13 @@ extern bool get_hack_dir(int *dp);
 extern void dump_chaos_features(FILE * OutFile);
 #endif
 
-
-
-
 /* z-form.c */
 
 #if (defined(UTIL_C) || defined(Z_FORM_C))
 extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
+#endif
+#if (defined(XTRA1_C) || defined(Z_FORM_C))
+extern void vstrnfmt_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(OBJECT1_C) || defined(UTIL_C) || defined(Z_FORM_C))
 extern char *vformat(cptr fmt, va_list vp);
@@ -3904,6 +3941,9 @@ extern vptr (*rnfree_aux)(vptr);
 #if (defined(Z_VIRT_H) || defined(Z_VIRT_C))
 extern vptr rnfree(vptr p);
 #endif
+#if (defined(MONSTER2_C) || defined(OBJECT2_C) || defined(Z_VIRT_C))
+extern vptr rpanic_none(huge UNUSED len);
+#endif
 #if (defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(Z_VIRT_C))
 extern vptr (*rpanic_aux)(huge);
 #endif
@@ -3915,168 +3955,5 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
-#endif
-#if (defined(MONSTER2_C) || defined(OBJECT2_C) || defined(Z_VIRT_C))
-extern vptr rpanic_none(huge UNUSED len);
-#endif
-
-/* monster2.c */
-
-#if (defined(LOAD_C) || defined(MONSTER2_C))
-extern bool grow_m_list(void);
-#endif
-
-/* object2.c */
-
-#if (defined(LOAD_C) || defined(OBJECT2_C))
-extern bool grow_o_list(void);
-#endif
-
-/* util.c */
-
-#if (defined(CMD5_C) || defined(UTIL_C))
-extern void mc_roff_xy(int x, int y, cptr s);
-#endif
-
-/* cmd2.c */
-
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(STORE_C))
-extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
-#endif
-
-/* tables.c */
-
-#if (defined(DUNGEON_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(TABLES_C))
-extern cptr_ch feeling_str[SENSE_MAX];
-#endif
-
-/* cmd3.c */
-
-#if (defined(CMD3_C) || defined(DUNGEON_C))
-extern void do_cmd_hide_object(void);
-#endif
-#if (defined(CMD3_C) || defined(DUNGEON_C))
-extern void do_cmd_unhide_objects(void);
-#endif
-
-/* object2.c */
-
-#if (defined(CMD3_C) || defined(OBJECT2_C))
-extern void object_hide(object_type *o_ptr);
-#endif
-
-/* squelch.c */
-
-#if (defined(INIT2_C) || defined(SQUELCH_C))
-extern void init_squelch(void);
-#endif
-#if (defined(FILES_C) || defined(SQUELCH_C))
-extern cptr process_pref_squelch(char **zz, int n, u16b *sf_flags);
-#endif
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern void squelch_dump(FILE *fff);
-#endif
-#if (defined(SQUELCH_C) || defined(WIZARD2_C))
-extern void get_names(char **obuf, char *this, int num, int *choice, uint len,
-	void (*print_f1)(char *, uint, cptr, va_list *))
-;
-#endif
-#if (defined(SQUELCH_C) || defined(WIZARD2_C))
-extern name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
-	bool *abort, name_centry *start, cptr prompt, bool squelch)
-;
-#endif
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern void do_cmd_options_squelch(void);
-#endif
-#if (defined(SQUELCH_C) || defined(XTRA1_C))
-extern void squelch_grid(void);
-#endif
-#if (defined(SQUELCH_C) || defined(XTRA1_C))
-extern void squelch_inventory(void);
-#endif
-
-
-
-
-
-
-
-/* cmd4.c */
-
-#if (defined(CMD4_C) || defined(SQUELCH_C))
-extern void dump_version(FILE *fff);
-#endif
-
-/* dungeon.c */
-
-#if (defined(DUNGEON_C) || defined(SQUELCH_C))
-extern bool PURE k_can_curse(int k_idx);
-#endif
-#if (defined(DUNGEON_C) || defined(SQUELCH_C))
-extern bool k_can_sense(int k_idx);
-#endif
-
-/* object1.c */
-
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(WIZARD2_C))
-extern void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
-#endif
-
-
-
-
-/* object2.c */
-
-#if (defined(DUNGEON_C) || defined(OBJECT2_C))
-extern bool PURE magic_can_curse(int k_idx);
-#endif
-
-/* tables.c */
-
-#if (defined(SQUELCH_C) || defined(TABLES_C) || defined(WIZARD2_C))
-extern cptr option_chars;
-#endif
-
-
-
-
-
-
-
-/* object1.c */
-
-#if (defined(OBJECT1_C) || defined(SQUELCH_C))
-extern void next_object(object_type **o_ptr);
-#endif
-
-/* util.c */
-
-#if (defined(SQUELCH_C) || defined(UTIL_C))
-extern cptr inkey_gnext;
-#endif
-
-/* z-form.c */
-
-#if (defined(XTRA1_C) || defined(Z_FORM_C))
-extern void vstrnfmt_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
-#endif
-
-/* variable.c */
-
-#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool beginner_help;
-#endif
-
-/* object1.c */
-
-#if (defined(CMD6_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C))
-extern bool PURE is_inventory_p(object_ctype *o_ptr);
-#endif
-
-/* files.c */
-
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
-extern char show_link(cptr link);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

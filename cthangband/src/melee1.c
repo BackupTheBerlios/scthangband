@@ -72,9 +72,18 @@ int check_hit(int power, int level)
 	i = (power + (level * 3));
 
 	/* Power and Level compete against Armor */
-	if ((i > 0) && (randint(i) > ((p_ptr->ac * 3) / 4))) return (TRUE);
+	if (i > 0) i = randint(i);
 
-	/* Assume miss */
+	/* Hit. */
+	if (i > p_ptr->ac * 3 / 4) return TRUE;
+
+	/* Hit averted thanks to martial arts. */
+	if (i > (p_ptr->ac - p_ptr->ma_armour) * 3 / 4)
+	{
+		skill_exp(SKILL_MA);
+	}
+
+	/* Miss. */
 	return (FALSE);
 }
 

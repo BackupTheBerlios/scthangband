@@ -1091,6 +1091,7 @@ struct player_type
 
 	s16b new_spells;	/* Number of spells available */
 
+	byte ma_armour;	/* Armour bonus gained through martial arts. */
 
 	bool ma_cumber_armour; /* Martial arts limiting armour */
 	bool cumber_armor;	/* Mana draining armor */
@@ -1098,8 +1099,8 @@ struct player_type
 	bool cumber_helm; /* Chi draining helm */
 	bool heavy_wield;	/* Heavy weapon */
 	bool heavy_shoot;	/* Heavy shooter */
-	int wield_skill;	/* Weapon skill used for current weapon*/
 
+	byte wield_skill;	/* Weapon skill used for current weapon*/
 	s16b cur_lite;		/* Radius of lite (if any) */
 
 

@@ -991,39 +991,28 @@ static void calc_spells(bool quiet)
 	}
 }
 
-/* Calculated the AC bonus from a given empty armour slot. It does not check that
-the player is eligible for such bonuses in the first place. */
+/*
+ * Calculated the AC bonus from a given empty armour slot.
+ * This does not check that the player is eligible for such bonuses
+ * in the first place.
+ */
 static int mystic_armour(int slot)
 {
-	int i = 0;
-	if (!inventory[slot].k_idx) {
-		switch (slot) {
-			case INVEN_BODY:
-				i = (skill_set[SKILL_MA].value * 3) / 4;
-				break;
-			case INVEN_OUTER:
-				i = ((skill_set[SKILL_MA].value - 26) / 6);
-				break;
-			case INVEN_ARM:
-				i = ((skill_set[SKILL_MA].value - 16) / 6);
-				break;
-			case INVEN_HEAD:
-				i = (skill_set[SKILL_MA].value - 4) / 6;
-				break;
-			case INVEN_HANDS:
-				i = (skill_set[SKILL_MA].value / 4);
-				break;
-			case INVEN_FEET:
-				i = (skill_set[SKILL_MA].value / 6);
-				break;
-			default:
-				break;
-		}
+	/* Not empty. */
+	if (inventory[slot].k_idx) return 0;
+
+	switch (slot)
+	{
+		/* Run the formula for the slot. */
+		case INVEN_WIELD: return 5;
+		case INVEN_BODY: return (skill_set[SKILL_MA].value * 3) / 4;
+		case INVEN_OUTER: return MAX(0, ((skill_set[SKILL_MA].value - 26) / 6));
+		case INVEN_ARM: return MAX(0, ((skill_set[SKILL_MA].value - 16) / 6));
+		case INVEN_HEAD: return MAX(0, (skill_set[SKILL_MA].value - 4) / 6);
+		case INVEN_HANDS: return (skill_set[SKILL_MA].value / 4);
+		case INVEN_FEET: return (skill_set[SKILL_MA].value / 6);
+		default: return 0;
 	}
-	if (i > 0)
-		return i;
-	else
-		return 0;
 }
 
 /*
@@ -1487,20 +1476,32 @@ static bool ma_heavy_armor(void)
 
 
 /*
- * Calculate the martial arts AC bonus from empty slots, and set the AC for
- * each appropriately.
+ * Calculate the martial arts AC bonus from empty slots, set the AC for
+ * each appropriately and set p_ptr->ma_armour to the total.
  */
 static void calc_ma_armour(void)
 {
 	int i;
-	for (i=INVEN_BODY; i<=INVEN_FEET; i++)
+	bool ma_good = ma_empty_hands() && !p_ptr->ma_cumber_armour;
+
+	/* Give a small AC bonus to hands which are free to deflect blows. */
+	if (ma_good)
 	{
+	}
+
+	for (i=INVEN_WIELD, p_ptr->ma_armour = 0; i<=INVEN_FEET; i++)
+	{
+		/* Armour there, so do nothing. */
 		if (inventory[i].k_idx);
-		
-		else if ((ma_empty_hands()) && !(p_ptr->ma_cumber_armour))
+
+		/* Add in the bonus AC. */
+		else if (ma_good)
 		{
 			inventory[i].to_a = mystic_armour(i);
+			p_ptr->ma_armour += inventory[i].to_a;
 		}
+
+		/* No bonus AC. */
 		else
 		{
 			inventory[i].to_a = 0;
