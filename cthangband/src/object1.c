@@ -2613,6 +2613,11 @@ byte ammunition_type(object_type *o_ptr)
 #define do_list_flags(init, conj, flags, total) \
 	alloc_ifa(info+i++, list_flags(init, conj, flags, total))
 
+/* A special version of the above for weapon slays. */
+#define do_list_flags_weap(DAM, BOARD, J) \
+	do_list_flags(format("It causes %ld %ld/60 damage to", dam/60, dam%60), \
+	"and", board, j)
+
 /*
  * Find the strings which describe the flags of o_ptr, place them in info
  * and note whether each was allocated.
@@ -2778,8 +2783,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 		{
 			weapon_stats(o_ptr, 15, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
-				"and", board, j);
+			do_list_flags_weap(dam, board, j);
 		}
 
 		/* Calculate x5 slays. */
@@ -2791,8 +2795,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 		{
 			weapon_stats(o_ptr, 5, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
-				"and", board, j);
+			do_list_flags_weap(dam, board, j);
 		}
 
 		/* Calculate x3 slays */
@@ -2808,8 +2811,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
-				"and", board, j);
+			do_list_flags_weap(dam, board, j);
 		}
 		/* Calculate brands */
 		j = 0;
@@ -2822,8 +2824,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %ld,%ld damage via", dam/60, dam%60),
-				"and", board, j);
+			do_list_flags_weap(dam, board, j);
 		}
 		/* Calculate x2 slays */
 		j = 0;
@@ -2833,8 +2834,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 		{
 			weapon_stats(o_ptr, 2, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
-				"and", board, j);
+			do_list_flags_weap(dam, board, j);
 		}
 
 		/* Give the damage a weapon does. Exclude throwing weapons in brief
@@ -2855,7 +2855,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 			if (!weapon) sfx = " when thrown";
 			else sfx = "";
 
-			alloc_ifa(info+i++, format("It causes %ld,%ld damage to %s%s.",
+			alloc_ifa(info+i++, format("It causes %ld %ld/60 damage to %s%s.",
 				dam/60, dam%60, desc, sfx));
 		}
 nextbit:

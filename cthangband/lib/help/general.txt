@@ -271,7 +271,15 @@ This command allows you to take notes, which will then appear in your message li
 
 %%%%% <cmd=C>
 $GCharacter Description (C)
-Brings up a full description of your character, including your skill levels, your current and potential stats, and various other information. From this screen, you can change your name or use the file character description command to save your character status to a file. That command saves additional information, including your background, your inventory, and the contents of your house.
+Brings up a full description of your character, including your skill levels, your current and potential stats, the power of your weapons and various other information.
+
+The blows/round and damage/round indicate how much damage the indicated weapon
+can cause for 1000 energy if all blows hit. They are laid out as X,YY, where the player can cause X Y/60 damage over that period.
+
+The following keys are used when this display is active:
+c - Change your name.
+h - Change the page of information being displayed.
+f - Save various information about your character to a text file.
 
 %%%%% <cmd=~>
 $GCheck knowledge (~) (|)
