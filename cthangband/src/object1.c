@@ -4288,9 +4288,9 @@ static bool get_item_okay(object_type *o_ptr)
  * inscription of an object.
  *
  * Also, the tag "@xn" will work as well, where "n" is a tag-char,
- * and "x" is the "current" command_cmd code.
+ * and "x" is a particular command code.
  */
-static object_type *get_tag(char tag)
+static object_type *get_tag(char tag, char cmd)
 {
 	int i;
 	cptr s;
@@ -4318,7 +4318,7 @@ static object_type *get_tag(char tag)
 			}
 
 			/* Check the special tags */
-			else if (s[2] == tag && s[1] == command_cmd)
+			else if (s[2] == tag && s[1] == cmd)
 			{
 				/* Success */
 				return o_ptr;
@@ -4758,14 +4758,14 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			case '7': case '8': case '9':
 			{
 				/* XXX XXX Look up that tag */
-				if (!((o_ptr = get_tag(which))))
+				if (!((o_ptr = get_tag(which, command_cmd))))
 				{
 					bell();
 					break;
 				}
 
 				/* Hack -- Verify item */
-				if (is_worn_p(o_ptr) ? !inven : !equip)
+				if (is_worn_p(o_ptr) ? !equip : !inven)
 				{
 					bell();
 					break;
