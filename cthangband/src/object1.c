@@ -1113,7 +1113,6 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	char            tmp_val_base[160];
 	char		*tmp_val = tmp_val_base;
-	char            tmp_val2[ONAME_MAX];
 
 	u32b            f1, f2, f3;
 
@@ -1810,14 +1809,11 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	}
 
 
-	/* No more details wanted */
-	if (mode < 3) goto copyback;
-
-	/* Combine the user-defined and automatic inscriptions. */
+	/* Combine the user-defined and automatic inscriptions if required. */
+	if (mode >= 3)
 	{
-		char k[4][75];
+		cptr k[4];
 		int i = 0;
-		tmp_val2[0] = '\0';
 
 		/* Find the sections of inscription. */
 
@@ -1849,39 +1845,45 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 				j_ptr->art_flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
 	 			value = object_value(j_ptr);
 			}
-			/* Hack - assume cursed items are worthless. */
+
+			/* Let the player known when a known cursed item is not broken. */
 			if (worthless && value)
 			{
-	 			sprintf(k[i++], "(%ld)", value);
+				/* Hack - use an offset to the format buffer to allow a second
+				 * temporary string. */
+	 			k[i++] = format("          (%ld)", value)+10;
 			}
 			else
 			{
-				sprintf(k[i++], "%ld", value);
+				k[i++] = format("          %ld", value)+10;
 			}
 		}
-		if (o1_ptr->discount) sprintf(k[i++], "%d%% off", o1_ptr->discount);
-		if (strlen(strcpy(k[i], find_feeling(o1_ptr)))) i++;
-		if (o1_ptr->note) strlen(strcpy(k[i++], quark_str(o1_ptr->note)));
 
-		/* Append the inscriptions from bottom to top. */
-		while (i--)
-		{ 
-			/* This leaves enough space for formatting. */
-			s16b len = ONAME_MAX-strlen(tmp_val)-strlen(tmp_val2)-4;
-			if (len < 1) break;
-			snprintf(tmp_val2+strlen(tmp_val2), len, "%s%s", k[i], (i) ? ", " : "");
+		/* Hack - this must be <9 character long. See above. */
+		if (o1_ptr->discount) k[i++] = format("%d%% off", o1_ptr->discount);
+
+		if (*((k[i] = find_feeling(o1_ptr))) != '\0') i++;
+		if (o1_ptr->note) k[i++] = quark_str(o1_ptr->note);
+
+		if (i && t < tmp_val+ONAME_MAX-4)
+		{
+			t = object_desc_chr(t, ' ');
+			t = object_desc_chr(t, c1);
+
+			/* Append the inscriptions from bottom to top. */
+			while (i-- && t < tmp_val+ONAME_MAX-2)
+			{ 
+				/* This leaves enough space for formatting. */
+				sprintf(t, "%.*s", MAX(0, ONAME_MAX-(t-tmp_val)-2), k[i]);
+				t = strchr(t, '\0');
+
+				/* Put a comma if there is room for at least one character after it. */
+				if (i && t < tmp_val+ONAME_MAX-4) t = object_desc_str(t, ", ");
+			}
+			t = object_desc_chr(t, c2);
 		}
 	}
 
-	/* Append the inscription, if any */
-	if (tmp_val2[0])
-	{
-		/* Append the inscription */
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, c1);
-		t = object_desc_str(t, tmp_val2);
-		t = object_desc_chr(t, c2);
-	}
 copyback:
 	/* Here's where we dump the built string into buf. */
 	tmp_val[ONAME_MAX-1] = '\0';
