@@ -2109,11 +2109,12 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	/* Combine the user-defined and automatic inscriptions. */
 	{
-		char k[2][75];
+		char k[3][75];
 		int i = 0;
 		tmp_val2[0] = '\0';
 
 		/* Find the sections of inscription. */
+		if (spoil_value) sprintf(k[i++], "%ld", object_value(o_ptr));
 		if (strlen(strcpy(k[i], find_feeling(o_ptr)))) i++;
 		if (o_ptr->note) strlen(strcpy(k[i++], quark_str(o_ptr->note)));
 
@@ -2165,12 +2166,18 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 	/* Save the "known" flag */
 	bool hack_known = (o_ptr->ident & (IDENT_KNOWN)) ? TRUE : FALSE;
 
+	/* Save "spoil_value" */
+	bool hack_value = spoil_value;
+
 
 	/* Set the "known" flag */
 	o_ptr->ident |= (IDENT_KNOWN);
 
 	/* Force "aware" for description */
 	k_info[o_ptr->k_idx].aware = TRUE;
+
+	/* Unset "spoil_value" */
+	spoil_value = FALSE;
 
 
 	/* Describe the object */
@@ -2182,6 +2189,9 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 
 	/* Clear the known flag */
 	if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
+
+	/* Restore "spoil_value" */
+	spoil_value = hack_value;
 }
 
 
