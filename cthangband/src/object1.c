@@ -919,11 +919,9 @@ static char *object_desc_str(char *t, cptr s)
  * or not the "number" of items should be described, and how much detail
  * should be used when describing the item.
  *
- * The given "buf" must be ONAME_MAX chars long to hold the longest possible
- * description, which can get pretty long, including incriptions, such as:
- * "no more Maces of Disruption (Defender) (+10,+10) [+5] (+3 to stealth)".
- * Note that the inscription will be clipped to keep the total description
- * under ONAME_MAX-1 chars (plus a terminator).
+ * If the name is longer than len-1 characters long, an effort is made to
+ * reduce it in a nice way, e.g. bg removing the characters at the end of the
+ * inscription before the terminating }.
  *
  * If "pref" then a "numeric" prefix will be pre-pended.
  *
@@ -932,6 +930,11 @@ static char *object_desc_str(char *t, cptr s)
  *   1 -- The Cloak of Death [1,+3]
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
+ *
+ * Flags:
+ * Setting OD_ART gives "a Cloak" rather than "Cloak" as a description.
+ * Setting OD_SHOP sets various things to reflect shop items. Object kind names
+ * are always shown, and flavours and inscriptions are omitted.
  */
 
 /* The number of strings which can be in the process of being printed at once. */
