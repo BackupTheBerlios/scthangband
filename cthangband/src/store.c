@@ -4388,6 +4388,75 @@ static void store_process_command(void)
 	}
 }
 
+/*
+ * Display store commands.
+ */
+static void display_store_extra(void)
+{
+ 	char			buf[80];
+
+	/* Basic commands */
+	prt(" ESC) Exit from Building.", 22, 0);
+
+	/* Browse if necessary */
+	if (st_ptr->stock_num > 12)
+	{
+		prt(" SPACE) Next page of stock", 23, 0);
+	}
+
+	/* Home commands */
+  	if (cur_store_type == STORE_HOME)
+  	{
+		prt(" g) Get an item.", 22, 31);
+		prt(" d) Drop an item.", 23, 31);
+	}
+
+	/* Shop commands XXX XXX XXX */
+	if ((cur_store_type != STORE_HOME) && (cur_store_type != STORE_HALL))
+	{
+		prt(" p) Purchase an item.", 22, 31);
+		prt(" s) Sell an item.", 23, 31);
+	}
+
+	if (cur_store_type == STORE_HALL)
+	{
+		prt(" h) view racial Heroes.", 22, 31);
+		prt(" c) view Template heroes.", 23,31);
+	}
+	else
+	/* Add in the eXamine option */
+	{
+		prt(" x) eXamine an item.", 22, 56);
+	}
+
+	/* Special for each store */
+
+	if (service_name[cur_store_type][0][0])
+	{
+		sprintf(buf, " r) %s", service_name[cur_store_type][0]);
+		prt(buf, 23, 56);
+	}
+	if (service_name[cur_store_type][1][0])
+	{
+		sprintf(buf, " z) %s", service_name[cur_store_type][1]);
+		prt(buf, 21, 56);
+	}
+}
+
+/*
+ * Handle the resizing of the window with a shop display.
+ */
+void resize_store(void)
+{
+	/* Display the store frame. */
+	display_store();
+
+	/* Display store inventory. */
+	display_inventory();
+
+	/* Display store commands. */
+	display_store_extra();
+}
 
 /*
  * Enter a store, and interact with it.
@@ -4407,7 +4476,7 @@ void do_cmd_store(void)
 
 	cave_type		*c_ptr;
 
- 	char			buf[80];
+	void (*old_resize_hook)(void);
 
 	/* Access the player grid */
 	c_ptr = &cave[py][px];
@@ -4462,6 +4531,9 @@ void do_cmd_store(void)
 	/* Forget the view */
 	forget_view();
 	
+	/* Set the redraw hook. */
+	old_resize_hook = term_screen->resize_hook;
+	term_screen->resize_hook = resize_store;
 
 	/* Hack -- Character is in "icky" mode */
 	character_icky = TRUE;
@@ -4506,52 +4578,8 @@ void do_cmd_store(void)
 		/* Display store inventory. */
 		display_inventory();
 
-		/* Basic commands */
-		prt(" ESC) Exit from Building.", 22, 0);
-
-		/* Browse if necessary */
-		if (st_ptr->stock_num > 12)
-		{
-			prt(" SPACE) Next page of stock", 23, 0);
-		}
-
-  		/* Home commands */
-  		if (cur_store_type == STORE_HOME)
-  		{
-           prt(" g) Get an item.", 22, 31);
-           prt(" d) Drop an item.", 23, 31);
-  		}
-  
-  		/* Shop commands XXX XXX XXX */
-  		if ((cur_store_type != STORE_HOME) && (cur_store_type != STORE_HALL))
-  		{
-           prt(" p) Purchase an item.", 22, 31);
-           prt(" s) Sell an item.", 23, 31);
-  		}
-
-		if (cur_store_type == STORE_HALL)
-		{
-			prt(" h) view racial Heroes.", 22, 31);
-			prt(" c) view Template heroes.", 23,31);
-		}
-		else
-       /* Add in the eXamine option */
-		{
-			prt(" x) eXamine an item.", 22, 56);
-		}
-
-		/* Special for each store */
-
-		if (service_name[cur_store_type][0][0])
-			{
-			sprintf(buf, " r) %s", service_name[cur_store_type][0]);
-			prt(buf, 23, 56);
-			}
-		if (service_name[cur_store_type][1][0])
-			{
-			sprintf(buf, " z) %s", service_name[cur_store_type][1]);
-			prt(buf, 21, 56);
-		}
+		/* Display store commands. */
+		display_store_extra();
 
   		/* Prompt */
   		put_str("You may: ", 21, 0);
@@ -4671,6 +4699,8 @@ void do_cmd_store(void)
 	/* Clear the screen */
 	Term_clear();
 
+	/* Reset the resize_hook. */
+	term_screen->resize_hook = old_resize_hook;
 
 	/* Update everything */
 	p_ptr->update |= (PU_VIEW | PU_LITE);
