@@ -2684,7 +2684,7 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, bool brief)
 	{
 		alloc_ifa(info+i++, "It provides light (radius %d) %s.",
 			k_info[o_ptr->k_idx].extra,
-			((allart_p(o_ptr))) ? "forever" : "when fueled.");
+			((allart_p(o_ptr))) ? "forever" : "when fueled");
 	}
 
 	/* Hack - describe the wield skill of weaponry. */
@@ -2891,7 +2891,7 @@ nextbit:
 		}
 		if (*board)
 		{
-			alloc_ifa(info+i++, "It gives you %d,%d %s per turn",
+			alloc_ifa(info+i++, "It gives you %d %d/60 %s per turn",
 				weap_blow/60, weap_blow%60, *board);
 		}
 	}
