@@ -3346,7 +3346,7 @@ static bool quick_start_character(void)
 
 #ifdef ALLOW_AUTOROLLER
 	/* Initialize */
-	if (USE_AUTOROLLER && !spend_points)
+	if (USE_AUTOROLLER)
 	{
 		int mval[A_MAX];
 		/* Clear fields */
@@ -3538,7 +3538,7 @@ static bool quick_start_character(void)
 	while (TRUE)
 	{
 		/* Feedback */
-		if (USE_AUTOROLLER && !spend_points)
+		if (USE_AUTOROLLER)
 		{
 			Term_clear();
 
@@ -3578,7 +3578,7 @@ static bool quick_start_character(void)
 		}
 
 		/* Auto-roll */
-		while (USE_AUTOROLLER && !spend_points)
+		while (USE_AUTOROLLER)
 		{
 			bool accept = TRUE;
 
@@ -3674,7 +3674,6 @@ static bool quick_start_character(void)
 		}
 		
 		/* Input loop */
-		if (!spend_points)
 		while (TRUE)
 		{
 			/* Calculate the bonuses and hitpoints */
