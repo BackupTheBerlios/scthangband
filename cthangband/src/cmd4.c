@@ -65,7 +65,7 @@ void do_cmd_redraw(void)
 	p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | PW_OBJECT | PW_OBJECT_DETAILS);
 
 	/* Hack - recalculate the panel. */
-	panel_row_min = panel_col_min = -1;
+	panel_row_min = -1;
 	verify_panel();
 
 	/* Hack -- update */
@@ -74,7 +74,7 @@ void do_cmd_redraw(void)
 
 	/* Redraw every window */
 	for (j = 0; j < 8; j++)
-{
+	{
 		/* Dead window */
 		if (!windows[j].term) continue;
 
@@ -86,10 +86,10 @@ void do_cmd_redraw(void)
 
 		/* Refresh */
 		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
 	}
+
+	/* Restore */
+	Term_activate(old);
 }
 
 
