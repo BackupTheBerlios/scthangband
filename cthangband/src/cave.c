@@ -524,6 +524,35 @@ static void image_random(byte *ap, char *cp)
 }
 
 
+/*
+ * Change the colour of a monster if the player uses the look function.
+ */
+static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
+{
+	s16b a = -1;
+
+	/* Multi-hued monsters are not processed. */
+	if (r_ptr->flags1 & RF1_ATTR_MULTI) return FALSE;
+
+	/* Uniques usually become violet. */
+	if (r_ptr->flags1 & RF1_UNIQUE) a = TERM_VIOLET;
+
+	/* Monsters which would otherwise be invisible become red. */
+	if ((*ap) == r_ptr->x_attr && (*cp) == r_ptr->x_char) a = TERM_RED;
+	
+	/* Monsters which are the colour in question anyway become yellow. */
+	if (a && a == r_ptr->x_attr) a = TERM_YELLOW;
+
+	/* Store the result, if any. */
+	if (a >= 0)
+	{
+		(*ap) = a;
+		(*cp) = r_ptr->x_char;
+	}
+
+	/* Let the game know if something has happened. */
+	return (a >= 0);
+}
 
 /*
  * Extract the attr/char to display at the given (legal) map location
@@ -1000,6 +1029,9 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 
 
+			/* Hack - allow non-clear uniques to be set uniformly violet, 
+			or yellow if violet normally. */
+			else if (violet_uniques == 2 && do_violet_unique(r_ptr, ap, cp));
 	    /* Multi-hued monster */
         else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
 			{

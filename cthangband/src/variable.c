@@ -943,6 +943,9 @@ bool angband_keymap_flag = TRUE;
 bool mystic_armour_aux;
 bool mystic_notify_aux;
  
+/* Hack, violet uniques */
+byte violet_uniques = 1;
+
  #ifdef ALLOW_EASY_OPEN /* TNB */
  bool easy_open = TRUE;
  #endif /* ALLOW_EASY_OPEN -- TNB */

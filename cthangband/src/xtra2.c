@@ -3513,6 +3513,39 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
 
 
+/*
+ * Hack - uniques flash violet in target mode.
+ * The violet_uniques variable gives uniques a special colour when
+ * violet_uniques == 2 Setting it to 0 disables the effect, making it act like
+ * a boolean when not within target_set().
+ */
+static void do_violet_uniques(bool swap)
+{
+	int i;
+	switch (violet_uniques)
+	{
+		case 1: if (swap) violet_uniques = 2; break;
+		case 2: violet_uniques = 1; break;
+		default:
+	}
+
+	/* Redraw all visible monsters. */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+		/* Ignore unseen monsters */
+		if (!m_ptr->ml) continue;
+
+		/* Ignore colour-changing uniques half of the time unless hallucinating. */
+		if (r_ptr->flags1 & RF1_UNIQUE && r_ptr->flags1 & RF1_ATTR_MULTI && !p_ptr->image && violet_uniques == 2) continue;
+
+		/* Redraw everything else. */		
+		lite_spot(m_ptr->fy, m_ptr->fx);
+	}
+}
+
+
 
 /*
  * Handle "target" and "look".
@@ -3590,6 +3623,10 @@ bool target_set(int mode)
 	/* Interact */
 	while (!done)
 	{
+
+		/* Hack - uniques flash violet in target mode */
+		do_violet_uniques(TRUE);
+
 		/* Interesting grids */
 		if (flag && temp_n)
 		{
@@ -3803,6 +3840,9 @@ bool target_set(int mode)
 
 	/* Clear the top line */
 	prt("", 0, 0);
+
+	/* Don't show violet uniques in normal play */
+	do_violet_uniques(FALSE);
 
 	/* Failure to set target */
 	if (!target_who) return (FALSE);

@@ -1013,6 +1013,7 @@ extern void ang_sort(vptr u, vptr v, int n);
 extern bool target_able(int m_idx);
 extern bool target_okay(void);
 extern bool target_set(int mode);
+extern byte violet_uniques;
 extern bool get_aim_dir(int *dp);
 extern bool get_hack_dir(int *dp);
 extern bool get_rep_dir(int *dp);
