@@ -4,6 +4,23 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband 1.0.9
+* Allow the layout of the main window to be controlled from the options menu.
+* Add an option to use a special character for piles of stuff.
+* Describe blindness resistance on an item as an immunity (as it is).
+* Ensure that wands, rings, etc., always get the intended pval, etc..
+* Allow monsters to summon other monsters at random again.
+* Allow recall scrolls, etc., to work properly again.
+* Make the Fire Phantom a quest monster again.
+* Allow the lists of shops to be browsed when the player is in the wilderness.
+* Prevent incorrect object names from being given when selling things.
+* Prevent a changing window from being shown in preference to a higher priority
+  unchanging one.
+* Allow main-ibm.c to be compiled again (thanks to Luc French).
+* Use a signal_aux() wrapper to signal() to allow main-sla.c to be compiled.
+* Correct various makefiles.
+* Clean up some code.
+
 sCthangband 1.0.8
 * Reduce the danger of failing to use a spirit favour.
 * Make more of the game use the full size of the main window.
