@@ -213,6 +213,18 @@
 #define MUT1_LAUNCHER                   0x80000000L
 
 
+/* An integer logarithm function. */
+#define logaux(x,y) (x & 1<<y) ? y :
+
+#define iilog(x) \
+logaux(x,31) logaux(x,30) logaux(x,29) logaux(x,28) logaux(x,27) logaux(x,26) \
+logaux(x,25) logaux(x,24) logaux(x,23) logaux(x,22) logaux(x,21) logaux(x,20) \
+logaux(x,19) logaux(x,18) logaux(x,17) logaux(x,16) logaux(x,15) logaux(x,14) \
+logaux(x,13) logaux(x,12) logaux(x,11) logaux(x,10) logaux(x, 9) logaux(x, 8) \
+logaux(x, 7) logaux(x, 6) logaux(x, 5) logaux(x, 4) logaux(x, 3) logaux(x, 2) \
+logaux(x, 1) logaux(x, 0) 255
+
+
 /* Randomly activating chaos features must be MUT2_* */
 #define MUT2_BERS_RAGE                  0x00000001L
 #define MUT2_COWARDICE                  0x00000002L
