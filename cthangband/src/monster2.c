@@ -2170,8 +2170,6 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 
 	monster_race	*r_ptr = &r_info[r_idx];
 
-	cptr name = (cheat_hear) ? monster_desc_aux(0, r_ptr, 1, 0) : "";
-
 
 	/* Verify location */
 	if (!in_bounds(y, x)) return (FALSE);
@@ -2236,7 +2234,8 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 		if (r_ptr->flags1 & (RF1_UNIQUE))
 		{
 			/* Message for cheaters */
-			if (cheat_hear) msg_format("Deep Unique (%s).", name);
+			if (cheat_hear) msg_format("Deep Unique (%s).",
+				monster_desc_aux(0, r_ptr, 1, 0));
 
 			/* Boost rating by twice delta-depth */
 			rating += (r_ptr->level - (dun_depth)) * 2;
@@ -2246,7 +2245,8 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 		else
 		{
 			/* Message for cheaters */
-			if (cheat_hear) msg_format("Deep Monster (%s).", name);
+			if (cheat_hear) msg_format("Deep Monster (%s).",
+				monster_desc_aux(0, r_ptr, 1, 0));
 
 			/* Boost rating by delta-depth */
 			rating += (r_ptr->level - (dun_depth));
@@ -2257,7 +2257,8 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	else if (r_ptr->flags1 & (RF1_UNIQUE))
 	{
 		/* Unique monsters induce message */
-		if (cheat_hear) msg_format("Unique (%s).", name);
+		if (cheat_hear) msg_format("Unique (%s).",
+			monster_desc_aux(0, r_ptr, 1, 0));
 	}
 
 
