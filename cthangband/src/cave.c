@@ -1479,8 +1479,12 @@ void lite_spot(int y, int x)
  * Note that, for efficiency, we contain an "optimized" version
  * of both "lite_spot()" and "print_rel()", and that we use the
  * "lite_spot()" function to display the player grid, if needed.
+ *
+ * reset controls whether the game should reset the priority map. This is
+ * usually the case, as this function redraws the map for arbitrary changes,
+ * but panel changes do not require this.
  */
-void prt_map(void)
+void prt_map(bool reset)
 {
 	int cx, cy;
 
@@ -1523,7 +1527,7 @@ void prt_map(void)
 	lite_spot(py, px);
 
 	/* Recalculate the priority later if needed. */
-	WIPE(priority_map, priority_map);
+	if (reset) WIPE(priority_map, priority_map);
 
 	/* Display map on extra windows (later). */
 	p_ptr->window |= PW_OVERHEAD;

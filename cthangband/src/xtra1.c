@@ -2644,8 +2644,14 @@ void redraw_stuff(void)
 
 	if (p_ptr->redraw & (PR_MAP))
 	{
-		p_ptr->redraw &= ~(PR_MAP);
-		prt_map();
+		prt_map(TRUE);
+		p_ptr->redraw &= ~(PR_MAP | PR_PANEL);
+	}
+
+	if (p_ptr->redraw & (PR_PANEL))
+	{
+		prt_map(FALSE);
+		p_ptr->redraw &= ~(PR_PANEL);
 	}
 
 	if (p_ptr->redraw & (PR_TIMERS))

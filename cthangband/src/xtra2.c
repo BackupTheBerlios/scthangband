@@ -1577,7 +1577,8 @@ void verify_panel(bool force)
 		else if (pcol_min < 0) pcol_min = 0;
 
 		/* Check for "no change" */
-		if (!force && (prow_min == panel_row_min) && (pcol_min == panel_col_min)) return;
+		if (!force && (prow_min == panel_row_min) && 
+			(pcol_min == panel_col_min)) return;
 
 		/* Save the new panel info */
 		panel_row_min = prow_min;
@@ -1588,7 +1589,7 @@ void verify_panel(bool force)
 	}
 
 	else
-		{
+	{
 
 		int prow = panel_row;
 		int pcol = panel_col;
@@ -1627,7 +1628,7 @@ void verify_panel(bool force)
 	p_ptr->update |= (PU_MONSTERS);
 
 	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+	p_ptr->redraw |= (PR_PANEL);
 }
 
 /*

@@ -2179,6 +2179,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PR_WIPE_1       0x02000000L     /* Wipe from row 1 */
 #define PR_MAP          0x04000000L     /* Display Map */
 #define PR_WIPE_0       0x08000000L     /* Wipe row 0. */
+#define PR_PANEL        0x10000000L  /* Redraw the panel. */
 /* xxx */
 /* xxx */
 
