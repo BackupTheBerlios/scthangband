@@ -979,6 +979,55 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 
 
 
+/*
+ * Clear the remembered version of a term_win on the current term and
+ * move the cursor to the top-left.
+ */
+static void Term_win_clear(term_win *win)
+{
+	int x, y;
+
+	int w = Term->wid;
+	int h = Term->hgt;
+
+	byte na = Term->attr_blank;
+	char nc = Term->char_blank;
+
+	/* Cursor usable */
+	win->cu = 0;
+
+	/* Cursor to the top left */
+	win->cx = win->cy = 0;
+
+	/* Wipe each row */
+	for (y = 0; y < h; y++)
+	{
+		byte *aa = win->a[y];
+		char *cc = win->c[y];
+
+		byte *taa = win->ta[y];
+		char *tcc = win->tc[y];
+
+		/* Wipe each column */
+		for (x = 0; x < w; x++)
+		{
+			*aa++ = na;
+			*cc++ = nc;
+
+			*taa++ = 0;
+			*tcc++ = 0;
+		}
+
+		/* This row has changed */
+		Term->x1[y] = 0;
+		Term->x2[y] = w - 1;
+	}
+
+	/* Every row has changed */
+	Term->y1 = 0;
+	Term->y2 = h - 1;
+}
+
 
 /*
  * Actually perform all requested changes to the window
@@ -1133,49 +1182,21 @@ void Term_fresh(void)
 	/* Handle "total erase" */
 	if (Term->total_erase)
 	{
-		byte na = Term->attr_blank;
-		char nc = Term->char_blank;
-
 		/* Physically erase the entire window */
 		Term_xtra(TERM_XTRA_CLEAR, 0);
 
-		/* Hack -- clear all "cursor" data */
-		old->cv = old->cu = old->cx = old->cy = 0;
+		/* Hide the cursor. */
+		old->cv = 0;
 
-		/* Wipe each row */
-		for (y = 0; y < h; y++)
-		{
-			byte *aa = old->a[y];
-			char *cc = old->c[y];
-
-			byte *taa = old->ta[y];
-			char *tcc = old->tc[y];
-
-			/* Wipe each column */
-			for (x = 0; x < w; x++)
-			{
-				/* Wipe each grid */
-				*aa++ = na;
-				*cc++ = nc;
-
-				*taa++ = 0;
-				*tcc++ = 0;
-			}
-		}
-
-		/* Redraw every row */
-		Term->y1 = y1 = 0;
-		Term->y2 = y2 = h - 1;
-
-		/* Redraw every column */
-		for (y = 0; y < h; y++)
-		{
-			Term->x1[y] = 0;
-			Term->x2[y] = w - 1;
-		}
-
+		/* Clear the displayed screen image. */
+		Term_win_clear(old);
+		
 		/* Forget "total erase" */
 		Term->total_erase = FALSE;
+
+		/* Update local stuff. */
+		y1 = Term->y1;
+		y2 = Term->y2;
 	}
 
 
@@ -1637,47 +1658,8 @@ errr Term_erase(int x, int y, int n)
  */
 void Term_clear(void)
 {
-	int x, y;
-
-	int w = Term->wid;
-	int h = Term->hgt;
-
-	byte na = Term->attr_blank;
-	char nc = Term->char_blank;
-
-	/* Cursor usable */
-	Term->scr->cu = 0;
-
-	/* Cursor to the top left */
-	Term->scr->cx = Term->scr->cy = 0;
-
-	/* Wipe each row */
-	for (y = 0; y < h; y++)
-	{
-		byte *scr_aa = Term->scr->a[y];
-		char *scr_cc = Term->scr->c[y];
-
-		byte *scr_taa = Term->scr->ta[y];
-		char *scr_tcc = Term->scr->tc[y];
-
-		/* Wipe each column */
-		for (x = 0; x < w; x++)
-		{
-			scr_aa[x] = na;
-			scr_cc[x] = nc;
-
-			scr_taa[x] = 0;
-			scr_tcc[x] = 0;
-		}
-
-		/* This row has changed */
-		Term->x1[y] = 0;
-		Term->x2[y] = w - 1;
-	}
-
-	/* Every row has changed */
-	Term->y1 = 0;
-	Term->y2 = h - 1;
+	/* Clear the requested screen image. */
+	Term_win_clear(Term->scr);
 
 	/* Force "total erase" */
 	Term->total_erase = TRUE;
