@@ -621,12 +621,6 @@ static errr rd_store(int n)
 	store_type *st_ptr = &store[n];
 
 	int j;
-
-#ifdef SF_QUEST_DIRECT
-	s16b own;
-#else /* SF_QUEST_DIRECT */
-	byte own;
-#endif /* SF_QUEST_DIRECT */
 	byte num;
 
 	/* Read the basic info */
@@ -639,24 +633,29 @@ static errr rd_store(int n)
 #ifdef SF_QUEST_DIRECT
 	if (has_flag(SF_QUEST_DIRECT))
 	{
-		rd_s16b(&own);
+		rd_s16b(&st_ptr->owner);
 	}
 	else
 	{
-		rd_byte(&num);
-		own = convert_owner(n*MAX_OWNERS+num, sf_flags, sf_flags_now);
-		if (own < 0 || own > NUM_OWNERS) quit("Odd owner found.");
+		byte z;
+		rd_byte(&z);
+		st_ptr->owner = convert_owner(n*MAX_OWNERS+z, sf_flags, sf_flags_now);
 	}
+
+	/* Pick a new owner if the current one has been removed. */
+	if (st_ptr->owner < 0 || st_ptr->owner > NUM_OWNERS)
+	{
+		msg_format("Strange shopkeeper in shop %d - finding a new one.", n);
+		store_shuffle(n);
+	}
+
 #else /* SF_QUEST_DIRECT */
-	rd_byte(&own);
+	rd_byte(&st_ptr->owner);
 #endif /* SF_QUEST_DIRECT */
 
 	rd_byte(&num);
 	rd_s16b(&st_ptr->good_buy);
 	rd_s16b(&st_ptr->bad_buy);
-
-	/* Extract the owner (see above) */
-	st_ptr->owner = own;
 
 	/* Read the items */
 	for (j = 0; j < num; j++)

@@ -4698,10 +4698,12 @@ void store_shuffle(int which)
 {
 	int i;
 
-
-	/* Ignore home, hall and pawnbroker */
-	if (store[which].type == 7 || store[which].type > 9) return;
-
+	/* Hack - set the owner everywhere it is unset. */
+	if (store[which].owner != -1)
+	{
+		/* Ignore home, hall and pawnbroker */
+		if (store[which].type == 7 || store[which].type > 9) return;
+	}
 
 	/* Save the store index */
 	cur_store_num = which;
