@@ -1420,3 +1420,8 @@ X:LEAD_CROWN_OF_THE_UNIVERSE
 Y:473
 F:a_info:I:2
 
+X:,
+Y:
+F:a_info:W:6
+F:e_info:W:5
+F:k_info:W:3
