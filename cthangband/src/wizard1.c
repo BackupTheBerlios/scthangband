@@ -1192,51 +1192,6 @@ static void spoiler_print_art(obj_desc_list *art_ptr)
 
 
 /*
- * Hack -- Create a "forged" artifact
- */
-bool make_fake_artifact(object_type *o_ptr, int name1)
-{
-	int i;
-
-	artifact_type *a_ptr;
-
-	/* Ignore illegal artefacts. */
-	if (name1 < 0 || name1 >= MAX_A_IDX) return FALSE;
-
-	a_ptr = &a_info[name1];
-
-
-	/* Ignore "empty" artifacts */
-	if (!a_ptr->name) return FALSE;
-
-	/* Acquire the "kind" index */
-	i = a_ptr->k_idx;
-
-	/* Oops */
-	if (!i) return (FALSE);
-
-	/* Create the artifact */
-	object_prep(o_ptr, i);
-
-	/* Save the name */
-	o_ptr->name1 = name1;
-
-	/* Extract the fields */
-	o_ptr->pval = a_ptr->pval;
-	o_ptr->ac = a_ptr->ac;
-	o_ptr->dd = a_ptr->dd;
-	o_ptr->ds = a_ptr->ds;
-	o_ptr->to_a = a_ptr->to_a;
-	o_ptr->to_h = a_ptr->to_h;
-	o_ptr->to_d = a_ptr->to_d;
-	o_ptr->weight = a_ptr->weight;
-
-	/* Success */
-	return (TRUE);
-}
-
-
-/*
  * Create a spoiler file for artifacts
  */
 static void spoil_artifact(cptr fname)

@@ -4117,18 +4117,12 @@ static void do_cmd_knowledge_artifacts(void)
 	/* Scan the artifacts */
 	for (k = 0; k < MAX_A_IDX; k++)
 	{
-		artifact_type *a_ptr = &a_info[k];
-		object_type q_ptr[1];
-
 		/* List "dead" ones */
 		if (!okay[k]) continue;
 
-		/* Skip "empty" ones */
-		if (!make_fake_artifact(q_ptr, k)) continue;
-
 		/* Hack -- Build the artifact name */
-		my_fprintf(fff, " %v   %v\n", get_symbol(&k_info[a_ptr->k_idx]),
-			object_desc_f3, q_ptr, OD_ART | OD_SHOP, 0);
+		my_fprintf(fff, " %v   %v\n", get_symbol(&k_info[a_info[k].k_idx]),
+			artefact_name_f1, k);
 	}
 
 	/* Free the "okay" array */

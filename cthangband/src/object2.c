@@ -1988,14 +1988,62 @@ static bool rarity_roll(byte level, byte rarity)
 }
 
 /*
- * Copy the normal name of an artefact into a buffer, return it.
+ * Hack -- Create a "forged" artefact.
+ * Return FALSE if no such artefact exists.
  */
-static cptr get_art_name(const artifact_type *a_ptr, char *buf)
+bool make_fake_artifact(object_type *o_ptr, int name1)
 {
-	object_type forge;
-	make_fake_artifact(&forge, a_ptr-a_info);
-	strnfmt(buf, ONAME_MAX, "%v", object_desc_f3, &forge, OD_SHOP, 0);
-	return buf;
+	int i;
+
+	artifact_type *a_ptr;
+
+	/* Ignore illegal artefacts. */
+	if (name1 < 0 || name1 >= MAX_A_IDX) return FALSE;
+
+	a_ptr = &a_info[name1];
+
+
+	/* Ignore "empty" artifacts */
+	if (!a_ptr->name) return FALSE;
+
+	/* Acquire the "kind" index */
+	i = a_ptr->k_idx;
+
+	/* Oops */
+	if (!i) return (FALSE);
+
+	/* Create the artifact */
+	object_prep(o_ptr, i);
+
+	/* Save the name */
+	o_ptr->name1 = name1;
+
+	/* Extract the fields */
+	o_ptr->pval = a_ptr->pval;
+	o_ptr->ac = a_ptr->ac;
+	o_ptr->dd = a_ptr->dd;
+	o_ptr->ds = a_ptr->ds;
+	o_ptr->to_a = a_ptr->to_a;
+	o_ptr->to_h = a_ptr->to_h;
+	o_ptr->to_d = a_ptr->to_d;
+	o_ptr->weight = a_ptr->weight;
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Return the name of an artefact specified by a_idx in buf.
+ */
+void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int n = va_arg(*vp, int);
+	object_type q_ptr[1];
+
+	if (!make_fake_artifact(q_ptr, n)) return;
+
+	strnfmt(buf, max, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
 }
 
 /*
@@ -2071,18 +2119,14 @@ static errr make_artifact(object_type *o_ptr, bool special)
 	while (arts)
 	{
 		/* Pick an artefact from the list. */
-		artifact_type *a_ptr = &a_info[order[i = rand_int(arts--)]];
+		int i = rand_int(arts--), a_idx = order[i];
+		artifact_type *a_ptr = &a_info[a_idx];
 
 		/* Remove it from further consideration. */
 		order[i] = order[arts];
 
 		/* Give a basic description */
-		if (cheat_peek)
-		{
-			C_TNEW(buf, ONAME_MAX, char);
-			msg_format("Rolling for %s.", get_art_name(a_ptr, buf));
-			TFREE(buf);
-		}
+		if (cheat_peek) msg_format("Rolling for %v.", artefact_name_f1, a_idx);
 
 		/* Roll for the artefact. */
 		if (!rarity_roll(a_ptr->level, a_ptr->rarity)) continue;
@@ -2094,7 +2138,7 @@ static errr make_artifact(object_type *o_ptr, bool special)
 		object_prep(o_ptr, a_ptr->k_idx);
 
 		/* Mega-Hack -- mark the item as an artifact */
-		o_ptr->name1 = a_ptr-a_info;
+		o_ptr->name1 = a_idx;
 
 		/* Success */
 		TFREE(order);

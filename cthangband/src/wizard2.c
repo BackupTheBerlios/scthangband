@@ -717,19 +717,6 @@ static bool good_cat_artefact(int a, name_centry *cat)
 }
 
 /*
- * Return the name of an artefact specified by a_idx in buf.
- */
-static void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
-{
-	int n = va_arg(*vp, int);
-	object_type q_ptr[1];
-
-	if (!make_fake_artifact(q_ptr, n)) return;
-
-	strnfmt(buf, max, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
-}
-
-/*
  * Select an artefact from a list.
  */
 static int choose_artefact(void)

@@ -3492,9 +3492,9 @@ extern char *macro_text;
 extern u16b rebuild_raw;
 #endif
 
-/* wizard1.c */
+/* object2.c */
 
-#if (defined(ALLOW_SPOILERS)) && (defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
+#if (defined(OBJECT2_C) || defined(WIZARD1_C))
 extern bool make_fake_artifact(object_type *o_ptr, int name1);
 #endif
 #if (defined(ALLOW_SPOILERS)) && (defined(DUNGEON_C) || defined(WIZARD1_C))
@@ -3976,5 +3976,11 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* object2.c */
+
+#if (defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD2_C))
+extern void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
