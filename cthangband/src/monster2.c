@@ -1359,7 +1359,7 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	if ((s = strchr(fmt, '.')))
 	{
 		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m);
+		len = MAX(0, m)+1;
 	}
 	else
 	{
@@ -1586,8 +1586,8 @@ static void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 		int n = strlen(name);
 		int s = strlen(suffix_);
 
-		n = MIN(n, MAX(0, size-s));
-		s = MIN(s, MAX(0, size));
+		n = MIN(n, MAX(0, size-s-1));
+		s = MIN(s, MAX(0, size-1));
 
 		strnfmt(buf, size, "%.*s%.*s", n, name, s, suffix_);
 	}
@@ -1613,7 +1613,7 @@ void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp)
 	if ((s = strchr(fmt, '.')))
 	{
 		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m);
+		len = MAX(0, m)+1;
 	}
 	else
 	{
