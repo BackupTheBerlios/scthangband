@@ -2001,7 +2001,7 @@ static cptr store_title_aux(void)
 	{
 			cptr tmp_str;
 			cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + st_ptr->type].name);
-		cptr owner_name = (ot_ptr->owner_name);
+		cptr owner_name = (s_name+ot_ptr->name);
 		cptr race_name = race_info[ot_ptr->owner_race].title;
 		object_type tmp;
 			s16b old_charisma;
@@ -4696,7 +4696,7 @@ void do_cmd_store(void)
  */
 void store_shuffle(int which)
 {
-	int i, j;
+	int i;
 
 
 	/* Ignore home, hall and pawnbroker */
@@ -4712,17 +4712,23 @@ void store_shuffle(int which)
 	/* Pick a new owner */
 	while (1)
 	{
-		j = rand_int(NUM_OWNERS);
+		i = rand_int(NUM_OWNERS);
+		owner_type *ow_ptr = owners+i;
 
 		/* Same shopkeeper. */
-		if (j == st_ptr->owner) continue;
+		if (i == st_ptr->owner) continue;
 
 		/* Wrong type of shopkeeper. */
-		if (owners[j].shop_type != store[which].type) continue;
+		if (ow_ptr->shop_type != store[which].type) continue;
 
-		/* Accept the owner. */
-		st_ptr->owner = j;
-		break;
+		/* Right town. */
+		if (ow_ptr->town == which/MAX_STORES_PER_TOWN ||
+			ow_ptr->town == TOWN_NONE)
+		{
+			/* Accept the owner. */
+			st_ptr->owner = i;
+			break;
+		}
 	}
 
 	/* Activate the new owner */
@@ -4899,11 +4905,9 @@ void store_init(int which)
 	if (cur_store_type == STORE_NONE) return;
 
 	/* Pick an owner */
-	do
-	{
-		st_ptr->owner = (byte)(rand_int(NUM_OWNERS));
-	}
-	while (owners[st_ptr->owner].shop_type != st_ptr->type);
+	st_ptr->owner = -1;
+	store_shuffle(which);
+
 	st_ptr->bought = 0;
 
 	/* Activate the new owner */

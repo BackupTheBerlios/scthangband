@@ -86,6 +86,7 @@
 #define MAX_STORES_TOTAL	(MAX_STORES_PER_TOWN*MAX_TOWNS)
 #define MAX_STORE_TYPES				12
 #define MAX_CAVES					(z_info->dungeons)
+#define TOWN_NONE	255
 
 /* Is there a town at (X,Y) on the world map? */
 #define is_town_p(Y,X) \
@@ -128,7 +129,7 @@
  * Total number of owners per store (see "store.c", etc)
  */
 #define MAX_OWNERS      4
-#define NUM_OWNERS	258
+#define NUM_OWNERS	(z_info->owners)
 
 /*
  * Maximum number of player "sex" types (see "table.c", etc)
@@ -3282,6 +3283,7 @@ extern int PlayerUID;
 #define D_HEAD 12
 #define T_HEAD 13
 #define Q_HEAD 14
+#define S_HEAD 15
 
 
 /*

@@ -169,6 +169,7 @@ struct maxima
 	u16b quests; /* Total size of "q_list[]" */
 	u16b dungeons; /* Total size of "dun_defs[]" */
 	u16b towns; /* Total size of "town_defs[]" */
+	u16b owners; /* Total size of "owners[]" */
 };
 
 
@@ -788,7 +789,7 @@ typedef struct owner_type owner_type;
 
 struct owner_type
 {
-	cptr owner_name;	/* Name */
+	s16b name;	/* Name */
 
 	s16b max_cost;		/* Purse limit */
 
@@ -802,6 +803,7 @@ struct owner_type
 	byte owner_race;	/* Owner race */
 
 	byte shop_type;	/* The category of shop this shopkeeper owns. */
+	byte town;	/* The town restriction, if any. */
 };
 
 

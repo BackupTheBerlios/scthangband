@@ -3031,6 +3031,106 @@ errr parse_q_list(char *buf, header *head, vptr *extra)
 }
 
 /*
+ * Initialize the "owners" array, by parsing an ascii "template" file
+ */
+errr parse_s_info(char *buf, header *head, vptr *extra)
+{
+	owner_type *ptr = *extra;
+
+	/* Only N can start a record. */
+	if (!ptr && *buf != 'N') return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	switch (*buf)
+	{
+		case 'N':
+		{
+			/* Check that there is enough space. */
+			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			/* Set ptr */
+			*extra = ptr = (owner_type*)head->info_ptr + error_idx;
+
+			/* Store the name. */
+			if (!(ptr->name = add_name(head, buf+2)))
+				return PARSE_ERROR_OUT_OF_MEMORY;
+
+			return SUCCESS;
+		}
+		case 'C':
+		{
+			long cost, linf, uinf, haggle, insult;
+
+			/* Scan for values. */
+			if (sscanf(buf+2, "%ld:%ld:%ld:%ld:%ld", &cost, &uinf, &linf,
+				&haggle, &insult) != 5)
+				return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			/* Check the numbers are reasonable. */
+			if (cost < 0 || cost > 32767 ||
+				linf < 0 || linf > 255 ||
+				uinf < 0 || uinf > 255 ||
+				haggle < 0 || haggle > 255 ||
+				insult < 0 || insult > 255)
+			{
+				return PARSE_ERROR_OUT_OF_BOUNDS;
+			}
+
+			/* Copy the numbers across. */
+			ptr->max_cost = cost;
+			ptr->max_inflate = uinf;
+			ptr->min_inflate = linf;
+			ptr->haggle_per = haggle;
+			ptr->insult_max = insult;
+
+			return SUCCESS;
+		}
+		case 'I':
+		{
+			char races[1024], towns[1024];
+			int shop, race, town, p;
+
+			/* Scan for values. */
+			p = sscanf(buf+2, "%d:%1023[^:]:%1023[^\n]", &shop, races, towns);
+
+			/* The town is optional. */
+			if (p < 2) return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			/* Interpret the strings. */
+			for (race = 0; race < MAX_RACES; race++)
+				if (!strcmp(races, race_info[race].title)) break;
+
+			if (p < 3)
+			{
+				town = TOWN_NONE;
+			}
+			else
+			{
+				for (town = 0; town < MAX_TOWNS; town++)
+					if (!strcmp(towns, dun_name+dun_defs[town].shortname)) break;
+			}
+
+			/* Check the numbers are reasonable. */
+			if (town == MAX_TOWNS || race == MAX_RACES ||
+				shop < 0 || shop >= MAX_STORE_TYPES)
+			{
+				return PARSE_ERROR_OUT_OF_BOUNDS;
+			}
+
+			/* Copy the numbers across. */
+			ptr->shop_type = shop;
+			ptr->owner_race = race;
+			ptr->town = town;
+
+			return SUCCESS;
+		}
+		default:
+		{
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+		}
+	}
+}
+
+/*
  * Find out if the input string starts with any of a set
  * of target strings. If it does, return the number of
  * the match. If not, return -1.
@@ -3144,6 +3244,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 					"d_dun",
 					"d_town",
 					"d_quest",
+					"s_info",
 				};
 				uint i;
 

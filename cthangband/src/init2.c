@@ -661,6 +661,39 @@ static errr init_u_info_final(void)
 }
 
 /*
+ * Check that there is at least one shopkeeper available for each shop in the
+ * game.
+ */
+static void init_s_info_final(void)
+{
+	byte *i;
+	owner_type *s_ptr;
+	town_type *t_ptr;
+	for (t_ptr = town_defs; t_ptr < town_defs+MAX_TOWNS; t_ptr++)
+	{
+		for (i = t_ptr->store; i < t_ptr->store+MAX_STORES_PER_TOWN; i++)
+		{
+			/* Not a real shop. */
+			if (*i == STORE_NONE) continue;
+
+			for (s_ptr = owners; s_ptr < owners+z_info->owners; s_ptr++)
+			{
+				if (s_ptr->shop_type != *i) continue; /* Wrong type. */
+				if (s_ptr->town != TOWN_NONE && s_ptr->town != t_ptr-town_defs)
+					continue; /* Wrong town. */
+
+				/* Acceptable. */
+				goto next_store;
+			}
+			quit_fmt("Failed to find a shopkeeper for shop %d in %s.",
+				*i, town_name+t_ptr->name);
+next_store:
+			continue;
+		}
+	}
+}
+
+/*
  * Put any function which needs to be called after an array is parsed here.
  */
 static void init_x_final(int num)
@@ -669,6 +702,9 @@ static void init_x_final(int num)
 	{
 		case U_HEAD:
 		init_u_info_final();
+		return;
+		case S_HEAD:
+		init_s_info_final();
 		return;
 	}
 	return;
@@ -1840,9 +1876,12 @@ void init_angband(void)
 		dummy, dummy, quests, Q_HEAD)
  
 	/* Initialize feature info */
-	note("[Initializing arrays... (vaults)]");
 	init_x_info("vaults", vault_type, parse_v_info, "v_info", v_info,
 		v_name, v_text, v_max, V_HEAD)
+
+	/* Initialize feature info */
+	init_x_info("shopkeepers", owner_type, parse_s_info, "s_info", owners,
+		s_name, dummy, owners, S_HEAD)
 
 	/* Delete the fake arrays, we're done with them. */
 	KILL(head->fake_info_ptr);

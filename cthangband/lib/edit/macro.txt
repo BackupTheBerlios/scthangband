@@ -1541,3 +1541,60 @@ F:k_info:I:3
 X:16-30
 Y:-3
 F:k_info:I:3
+
+# Convert shop names into the indices for the STORE_* macros.
+
+X:General
+Y:0
+F:s_info:I:2
+
+X:Armoury
+Y:1
+F:s_info:I:2
+
+X:Weaponsmith's
+Y:2
+F:s_info:I:2
+
+X:Temple
+Y:3
+F:s_info:I:2
+
+X:Alchemist's
+Y:4
+F:s_info:I:2
+
+X:Magic Shop
+Y:5
+F:s_info:I:2
+
+X:Black Market
+Y:6
+F:s_info:I:2
+
+X:House
+Y:7
+F:s_info:I:2
+
+X:Bookshop
+Y:8
+F:s_info:I:2
+
+X:Inn
+Y:9
+F:s_info:I:2
+
+X:Hall
+Y:10
+F:s_info:I:2
+
+X:Pawn Shop
+Y:11
+F:s_info:I:2
+
+# Allow a fake "None" race.
+# There's no easy way to check this against the shop type, so use a random race.
+
+X:None
+Y:Barbarian
+F:s_info:I:3

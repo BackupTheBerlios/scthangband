@@ -786,6 +786,12 @@ char *town_name;
 quest_type *q_list;
 
 /*
+ * The shopkeeper array.
+ */
+owner_type *owners;
+char *s_name;
+
+/*
  * Hack -- The special Angband "System Suffix"
  * This variable is used to choose an appropriate "pref-xxx" file
  */
