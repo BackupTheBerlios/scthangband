@@ -213,10 +213,10 @@ static void init_stuff(void)
 	/* Hack -- Add a path separator (only if needed) */
 	if (!suffix(path, PATH_SEP))
 	{
-		char *path_buf = C_NEW(strlen(path)+strlen(PATH_SEP)+1, char);
+		C_TNEW(path_buf, strlen(path)+strlen(PATH_SEP)+1, char);
 		sprintf(path_buf, "%s%s", path, PATH_SEP);
 		init_file_paths(path_buf);
-		FREE2(path_buf);
+		TFREE(path_buf);
 		return;
 	}
 

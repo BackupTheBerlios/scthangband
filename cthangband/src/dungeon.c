@@ -253,16 +253,20 @@ static void sense_inventory(void)
 
 	object_type *o_ptr;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/*** Check for "sensing" ***/
 
 	/* No sensing when confused */
-	if (p_ptr->confused) return;
+	if (p_ptr->confused ||
 
 	/* Okay sensing for everyone*/
-	if (0 != rand_int(80000L / (plev * plev + 160))) return;
+		0 != rand_int(80000L / (plev * plev + 160)))
+	{
+		TFREE(o_name);
+		return;
+	}
 
 	/*** Sense everything ***/
 
@@ -373,6 +377,7 @@ static void sense_inventory(void)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
+	TFREE(o_name);
 }
 
 /*
@@ -760,13 +765,14 @@ bool psychometry(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
         cptr            feel, oldfeel;
 
 	/* Get an item (from equip or inven or floor) */
     if (!get_item(&item, "Meditate on which item? ", TRUE, TRUE, TRUE))
 	{
         if (item == -2) msg_print("You have nothing appropriate.");
+		TFREE(o_name);
 		return (FALSE);
 	}
 
@@ -783,10 +789,12 @@ bool psychometry(void)
 	}
 
 	/* It is fully known, no information needed. */
-	if ((object_known_p(o_ptr)) || (o_ptr->ident & IDENT_SENSE_HEAVY))  {
-	msg_print("You cannot find out anything more about that.");
-	return TRUE;
-    }
+	if ((object_known_p(o_ptr)) || (o_ptr->ident & IDENT_SENSE_HEAVY))
+	{
+		msg_print("You cannot find out anything more about that.");
+		TFREE(o_name);
+		return TRUE;
+	}
 
 	/* Remember the previous feeling */
 	oldfeel = find_feeling(o_ptr);
@@ -805,9 +813,10 @@ bool psychometry(void)
     
     /* Skip non-feelings */
     if (feel == "") {
-    msg_format("You do not perceive anything unusual about the %s.",
-		   o_name);
-	return TRUE;
+    	msg_format("You do not perceive anything unusual about the %s.",
+			o_name);
+		TFREE(o_name);
+		return TRUE;
     }
 
 	msg_format("You feel that the %s %s%s %s...",
@@ -818,6 +827,8 @@ bool psychometry(void)
 
     /* Window stuff */
     p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	TFREE(o_name);
 
     /* Something happened */
     return (TRUE);
@@ -1698,10 +1709,11 @@ static void process_world(void)
 	 */
 	if (f3 & TR3_AUTO_CURSE && ~(o_ptr->ident) & IDENT_CURSED && turn > curse_turn)
 	{
-		char o_name[ONAME_LEN];
+		C_TNEW(o_name, ONAME_MAX, char);
 		curse(o_ptr);
 		object_desc(o_name, o_ptr, FALSE, 0);
 		msg_format("The %s suddenly feels deathly cold!", o_name);
+		TFREE(o_name);
 	}
         if ((f3 & TR3_TY_CURSE) && (randint(TY_CURSE_CHANCE)==1))
             activate_ty_curse();
@@ -3491,7 +3503,7 @@ static void process_player(void)
 		{
 			int item = INVEN_PACK;
 
-			char o_name[ONAME_LEN];
+			C_TNEW(o_name, ONAME_MAX, char);
 
 			object_type *o_ptr;
 
@@ -3526,6 +3538,8 @@ static void process_player(void)
 
 			/* Redraw stuff (if needed) */
 			if (p_ptr->redraw) redraw_stuff();
+
+			TFREE(o_name);
 		}
 
 		/* Hack -- cancel "lurking browse mode" */

@@ -1485,12 +1485,8 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 
     if (!necro)
     {
-
-        char            m_name[MNAME_LEN];
         monster_race * r_ptr = &r_info[m_ptr->r_idx];
         power = (r_ptr->level)+10;
-
-        monster_desc(m_name, m_ptr, 0);
 
        if (!(r_ptr->flags1 & RF1_UNIQUE))
        {
@@ -1518,53 +1514,61 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 			skill_exp(SKILL_SAVE);
             return; /* Save, no adverse effects */
         }
+		else
+		{
+			C_TNEW(m_name, MNAME_MAX, char);
 
+			monster_desc(m_name, m_ptr, 0);
 
-        if (p_ptr->image)
-        {
-        /* Something silly happens... */
-            msg_format("You behold the %s visage of %s!",
-                funny_desc[(randint(MAX_FUNNY))-1], m_name);
-            if (randint(3)==1)
-            {
-                msg_print(funny_comments[randint(MAX_COMMENT)-1]);
-                p_ptr->image = (p_ptr->image + randint(r_ptr->level));
-            }
-            return; /* Never mind; we can't see it clearly enough */
-        }
-
-        /* Something frightening happens... */
-        msg_format("You behold the %s visage of %s!",
-            horror_desc[(randint(MAX_HORROR))-1], m_name);
-
-        r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
-
-        /* Demon characters are unaffected */
-        if (p_ptr->prace == RACE_IMP) return;
-
-        /* Undead characters are 50% likely to be unaffected */
-        if ((p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_ZOMBIE)
-            || (p_ptr->prace == RACE_VAMPIRE) || (p_ptr->prace == RACE_SPECTRE))
-        {
-            if (randint(100) < (25 + (skill_set[SKILL_SAVE].value/2))) return;
-        }
-    }
-    else
-    {
-        msg_print("Your sanity is shaken by reading the Necronomicon!");
-    }
-    if (randint(power)<p_ptr->skill_sav) /* Mind blast */
-    {
-                if (!p_ptr->resist_conf)
+			if (p_ptr->image)
+			{
+			/* Something silly happens... */
+				msg_format("You behold the %s visage of %s!",
+					funny_desc[(randint(MAX_FUNNY))-1], m_name);
+				if (randint(3)==1)
 				{
-					(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+					msg_print(funny_comments[randint(MAX_COMMENT)-1]);
+					p_ptr->image = (p_ptr->image + randint(r_ptr->level));
 				}
-                if ((!p_ptr->resist_chaos) && (randint(3)==1))
-                {
-                    (void) set_image(p_ptr->image + rand_int(250) + 150);
-                }
-        return;
-    }
+				TFREE(m_name);
+				return; /* Never mind; we can't see it clearly enough */
+			}
+
+			/* Something frightening happens... */
+			msg_format("You behold the %s visage of %s!",
+				horror_desc[(randint(MAX_HORROR))-1], m_name);
+
+			TFREE(m_name);
+
+			r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
+
+			/* Demon characters are unaffected */
+			if (p_ptr->prace == RACE_IMP) return;
+
+			/* Undead characters are 50% likely to be unaffected */
+			if ((p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_ZOMBIE)
+				|| (p_ptr->prace == RACE_VAMPIRE) || (p_ptr->prace == RACE_SPECTRE))
+			{
+				if (randint(100) < (25 + (skill_set[SKILL_SAVE].value/2))) return;
+			}
+		}
+	}
+	else
+	{
+		msg_print("Your sanity is shaken by reading the Necronomicon!");
+	}
+	if (randint(power)<p_ptr->skill_sav) /* Mind blast */
+	{
+		if (!p_ptr->resist_conf)
+		{
+			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+		}
+		if ((!p_ptr->resist_chaos) && (randint(3)==1))
+		{
+			(void) set_image(p_ptr->image + rand_int(250) + 150);
+		}
+		return;
+	}
 
 
     if (randint(power)<p_ptr->skill_sav) /* Lose int & wis */
@@ -3210,7 +3214,7 @@ void message_pain(int m_idx, int dam)
 	monster_type		*m_ptr = &m_list[m_idx];
 	monster_race		*r_ptr = &r_info[m_ptr->r_idx];
 
-	char			m_name[MNAME_LEN];
+	C_TNEW(m_name, MNAME_MAX, char);
 
 
 	/* Get the monster name */
@@ -3220,6 +3224,7 @@ void message_pain(int m_idx, int dam)
 	if (dam == 0)
 	{
 		msg_format("%^s is unharmed.", m_name);
+		TFREE(m_name);
 		return;
 	}
 
@@ -3305,6 +3310,7 @@ void message_pain(int m_idx, int dam)
 		else
 			msg_format("%^s cries out feebly.", m_name);
 	}
+	TFREE(m_name);
 }
 
 

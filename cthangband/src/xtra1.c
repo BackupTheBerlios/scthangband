@@ -1067,7 +1067,7 @@ static bool win_object_details_good(void)
 static void win_object_details_display(void)
 {
 	object_type *o_ptr = cnv_idx_to_obj(object_idx);
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 	
 	/* Never display non-objects. */
 	if (!o_ptr || !(o_ptr->k_idx)) return;
@@ -1084,6 +1084,8 @@ static void win_object_details_display(void)
 
 	/* Put the character used at the top. */
 	Term_putch(0, 0, object_attr(o_ptr), object_char(o_ptr));
+
+	TFREE(o_name);
 }
 
 /* The option currently selected */

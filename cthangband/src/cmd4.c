@@ -1927,37 +1927,39 @@ dump_visual(VISUAL_FEATURE, f_info, 'F', "Feature attr/char definitions")
 static void visual_dump_unident(FILE *fff)
 {
 	s16b i;
-	char buf[ONAME_LEN];
+	C_TNEW(buf, ONAME_MAX, char);
 
 	visual_type *vs_ptr = VISUAL_UNIDENT;
 
-			/* Start dumping */
-			fprintf(fff, "\n\n");
+	/* Start dumping */
+	fprintf(fff, "\n\n");
 	fprintf(fff, "# %s\n\n", "Unidentified object attr/char definitions");
 	fprintf(fff, "%c:---reset---\n\n", 'U');
 
 	/* Dump entries */
 	for (i = 0; i < MAX_U_IDX; i++)
-			{
+	{
 		unident_type *u_ptr = &u_info[i];
 
-				/* Skip non-entries */
+		/* Skip non-entries */
 		if ((*vs_ptr->reject)(i)) continue;
 
 		/* Skip default entries */ \
 		if ((u_info[i].x_attr == u_info[i].d_attr) &&
 			(u_info[i].x_char == u_info[i].d_char)) continue;
 
-				/* Dump a comment */
+		/* Dump a comment */
 		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i));
 
 		/* Dump the attr/char info */
 		fprintf(fff, "%c:%d:%d:0x%02X:0x%02X\n\n", 'U',
 		u_ptr->p_id, u_ptr->s_id, (byte)(u_ptr->x_attr), (byte)(u_ptr->x_char));
-			}
+	}
 
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	TFREE(buf);
 }
 
 /*
@@ -3001,22 +3003,19 @@ static cptr get_symbol_aux(byte a, char c)
  */
 static void do_cmd_knowledge_artifacts(void)
 {
-	int i, k, z, x, y;
-
-	FILE *fff;
-
 	char file_name[1024];
+
+	/* Open a new file */
+	FILE *fff = my_fopen_temp(file_name, 1024);
+	
+	if (fff)
+	{
+	int i, k, z, x, y;
 
 	char base_name[80];
 
-	bool *okay;
-
-
-	/* Open a new file */
-	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
-
 	/* Allocate the "okay" array */
-	C_MAKE(okay, MAX_A_IDX, bool);
+	C_TNEW(okay, MAX_A_IDX, bool);
 
 	/* Scan the artifacts */
 	for (k = 0; k < MAX_A_IDX; k++)
@@ -3125,7 +3124,7 @@ static void do_cmd_knowledge_artifacts(void)
 	}
 
 	/* Free the "okay" array */
-	FREE2(okay);
+	TFREE(okay);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3135,6 +3134,7 @@ static void do_cmd_knowledge_artifacts(void)
 
 	/* Remove the file */
 	fd_kill(file_name);
+	}
 }
 
 
@@ -3447,20 +3447,19 @@ static void ang_sort_swap_deaths(vptr u, vptr UNUSED v, int a, int b)
  */
 static void do_cmd_knowledge_deaths(void)
 {
-	FILE *fff;
-
 	char file_name[1024];
+
+	/* Open a new file */
+	FILE *fff = my_fopen_temp(file_name, 1024);
+	
+	if (fff)
+	{
 
 	typedef struct death_type death_type;
 	
-	s16b *races;
+	C_TNEW(races, MAX_R_IDX, s16b);
 
 	s32b i, Uniques = 0, Races = 0, Deaths = 0;
-
-	/* Open a new file */
-	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
-
-	C_MAKE(races, MAX_R_IDX, s16b);
 
 	/* Count the monsters who have killed some ancestors. */
 	for (i = 0; i < MAX_R_IDX; i++)
@@ -3511,7 +3510,7 @@ static void do_cmd_knowledge_deaths(void)
 		fprintf(fff,"Total: Killed %lu times by %lu types of creature (%lu times by uniques).\n", Deaths, Races, Uniques);
 	}
 
-	KILL2(races);
+	TFREE(races);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3521,6 +3520,8 @@ static void do_cmd_knowledge_deaths(void)
 
 	/* Remove the file */
 	fd_kill(file_name);
+
+	}
 }
 
 /*
@@ -3532,13 +3533,17 @@ static void do_cmd_knowledge_objects(void)
 
 	FILE *fff;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	char file_name[1024];
 
 
 	/* Open a new file */
-	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
+	if (!((fff = my_fopen_temp(file_name, 1024))))
+	{
+		TFREE(o_name);
+		return;
+	}
 
 	/* Scan the object kinds */
 	for (k = 1; k < MAX_K_IDX; k++)
@@ -3576,6 +3581,8 @@ static void do_cmd_knowledge_objects(void)
 
 	/* Remove the file */
 	fd_kill(file_name);
+
+	TFREE(o_name);
 }
 
 /*

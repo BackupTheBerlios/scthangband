@@ -126,6 +126,7 @@
 #define MAKE(P,T) \
        ((P)=ZNEW(T))
 
+
 /* Free something at P, return NULL */
 #define FREE2(P) \
 		(rnfree(P))
@@ -144,6 +145,35 @@
 #define KILL2(P) \
 		((P)=FREE2(P))
 
+/*
+ * C_TNEW() and TKILL() declare an array which is only used in the local
+ * scope. If the compiler is known to support it, this is represented as an
+ * array with a variable size for efficiency.
+ *
+ * (insert constraints on P here...)
+ */
+
+#ifdef VARIABLE_ARRAYS
+
+/* Allocate and declare a local array of N things of type T at P. */
+#define C_TNEW(P,N,T) \
+	T P[N]
+
+/* Free a local array at P (automatic). */
+#define TFREE(P)
+
+#else /* VARIABLE_ARRAYS */
+
+/* Allocate and declare a local array of N things of type T at P. */
+#define C_TNEW(P, N, T) \
+	T *P = C_NEW(N, T)
+
+/* Free a local array at P. */
+#define TFREE(P) \
+	FREE2(P)
+
+#endif /* VARIABLE_ARRAYS */
+
 /* Mega-Hack -- Cleanly "grow" 'P' from N1 T's to N2 T's */
 #define GROW(P,N1,N2,T) \
         (C_MAKE(vptr_tmp,N2,T), C_COPY(vptr_tmp,P,MIN(N1,N2),T), \
@@ -152,6 +182,4 @@
 
 
 #endif
-
-
 

@@ -1055,14 +1055,18 @@ bool curse_armor(void)
 {
 	object_type *o_ptr;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Curse the body armor */
 	o_ptr = &inventory[INVEN_BODY];
 
 	/* Nothing to curse */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx)
+	{
+		TFREE(o_name);
+		return (FALSE);
+	}
 
 
 	/* Describe */
@@ -1114,6 +1118,8 @@ bool curse_armor(void)
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
 
+	TFREE(o_name);
+
 	return (TRUE);
 }
 
@@ -1125,14 +1131,18 @@ bool curse_weapon(void)
 {
 	object_type *o_ptr;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Curse the weapon */
 	o_ptr = &inventory[INVEN_WIELD];
 
 	/* Nothing to curse */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx)
+	{
+		TFREE(o_name);
+		return (FALSE);
+	}
 
 
 	/* Describe */
@@ -1184,6 +1194,8 @@ bool curse_weapon(void)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
+
+	TFREE(o_name);
 
 	/* Notice */
 	return (TRUE);

@@ -3342,7 +3342,7 @@ errr file_character(cptr name, bool UNUSED full)
 
 	FILE		*fff = NULL;
 
-	char		o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	char		buf[1024];
 
@@ -3387,6 +3387,8 @@ errr file_character(cptr name, bool UNUSED full)
 		/* Message */
 		msg_format("Character dump failed!");
 		msg_print(NULL);
+
+		TFREE(o_name);
 
 		/* Error */
 		return (-1);
@@ -3657,6 +3659,8 @@ errr file_character(cptr name, bool UNUSED full)
 	/* Message */
 	msg_print("Character dump successful.");
 	msg_print(NULL);
+
+	TFREE(o_name);
 
 	/* Success */
 	return (0);

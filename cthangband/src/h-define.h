@@ -111,6 +111,13 @@
 #define UNUSED
 #endif
 
+/* Avoid variable-length arrays unless supported. */
+#if defined(__GNUC__) || \
+	(defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
+#define VARIABLE_ARRAYS
+#endif
+
+
 
 /*
  * Hack -- allow use of "ASCII" and "EBCDIC" for "indexes", "digits",

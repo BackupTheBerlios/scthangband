@@ -144,9 +144,9 @@ bool make_attack_normal(int m_idx)
 
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
-	char		m_name[MNAME_LEN];
+	C_TNEW(m_name, MNAME_MAX, char);
 
 	char		ddesc[80];
 
@@ -167,10 +167,15 @@ bool make_attack_normal(int m_idx)
 		int d_side;
 
 	/* Not allowed to attack */
-	if (r_ptr->flags1 & (RF1_NEVER_BLOW)) return (FALSE);
+	if (r_ptr->flags1 & (RF1_NEVER_BLOW) ||
 
-         /* ...nor if friendly */
-         if (m_ptr->smart & SM_ALLY)  return FALSE;
+	/* ...nor if friendly */
+	m_ptr->smart & SM_ALLY)
+	{
+		TFREE(m_name);
+		TFREE(o_name);
+		return FALSE;
+	}
 
 
 	/* Total armor */
@@ -1426,6 +1431,8 @@ bool make_attack_normal(int m_idx)
         msg_format("%^s flees in terror!", m_name);
     }
 
+	TFREE(m_name);
+	TFREE(o_name);
 
 	/* Assume we attacked */
 	return (TRUE);

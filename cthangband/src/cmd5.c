@@ -1184,7 +1184,7 @@ static void rustproof(void)
 
 	object_type	*o_ptr;
 
-	char		o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Select a piece of armour */
 	item_tester_hook = item_tester_hook_armour;
@@ -1193,6 +1193,7 @@ static void rustproof(void)
 	if (!get_item(&item, "Rustproof which piece of armour? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to rustproof.");
+		TFREE(o_name);
 		return;
 	}
 
@@ -1226,6 +1227,8 @@ static void rustproof(void)
 		((item >= 0) ? "Your" : "The"), o_name,
 		((o_ptr->number > 1) ? "are" : "is"));
 
+	TFREE(o_name);
+	return;
 }
 
 
@@ -1278,6 +1281,8 @@ void do_cmd_browse(int item)
 	if(!item_tester_okay(o_ptr))
 	{
 		msg_print("You can't read that.");
+	
+
 		item_tester_tval = 0;
 		return;
 	}
@@ -1633,7 +1638,7 @@ static void brand_weapon(int brand_type)
 	{
 		cptr act = NULL;
 
-		char o_name[ONAME_LEN];
+		C_TNEW(o_name, ONAME_MAX, char);
         object_desc(o_name, o_ptr, FALSE, 0); /* Let's get the name before
                                                 it is changed... */
 
@@ -1675,6 +1680,8 @@ static void brand_weapon(int brand_type)
 		msg_format("Your %s %s", o_name, act);
 
 		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
+
+		TFREE(o_name);
 	}
 
 	else

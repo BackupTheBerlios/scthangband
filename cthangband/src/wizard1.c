@@ -1309,11 +1309,22 @@ static void spoil_artifact(cptr fname)
  */
 static void spoil_mon_desc(cptr fname)
 {
+	char buf[1024];
+
+	/* Open the file */
+	fff = my_fopen(buf, "w");
+
+	/* Oops */
+	if (!fff)
+	{
+		msg_print("Cannot create spoiler file.");
+	}
+	else
+	{
+
 	int i, n = 0;
 
-	s16b *who;
-
-	char buf[1024];
+	C_TNEW(who, MAX_R_IDX, s16b);
 
 	char nam[80];
 	char lev[80];
@@ -1330,16 +1341,6 @@ static void spoil_mon_desc(cptr fname)
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
-	/* Open the file */
-	fff = my_fopen(buf, "w");
-
-	/* Oops */
-	if (!fff)
-	{
-		msg_print("Cannot create spoiler file.");
-		return;
-	}
-
 	/* Dump the header */
 
 	fprintf(fff, "Monster Spoilers for %s Version %d.%d.%d\n", GAME_NAME,
@@ -1351,9 +1352,6 @@ static void spoil_mon_desc(cptr fname)
 		"Name", "Lev", "Rar", "Spd", "Hp", "Ac", "Visual Info");
 	fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
 		"----", "---", "---", "---", "--", "--", "-----------");
-
-	/* Allocate the "who" array */
-	C_MAKE(who, MAX_R_IDX, s16b);
 
 	/* Scan the monsters (except the ghost) */
 	for (i = 1; i < MAX_R_IDX - 1; i++)
@@ -1432,17 +1430,20 @@ static void spoil_mon_desc(cptr fname)
 	fprintf(fff, "\n");
 
 	/* Free the "who" array */
-	FREE2(who);
+	TFREE(who);
 
 	/* Check for errors */
 	if (ferror(fff) || my_fclose(fff))
 	{
 		msg_print("Cannot close spoiler file.");
-		return;
 	}
-
-	/* Worked */
-	msg_print("Successfully created a spoiler file.");
+	else
+	{
+		/* Worked */
+		msg_print("Successfully created a spoiler file.");
+	}
+	}
+	return;
 }
 
 

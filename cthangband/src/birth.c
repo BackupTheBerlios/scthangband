@@ -1640,9 +1640,9 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
  */
 static bool load_stat_set(bool menu)
 {
-	s16b *temp_stat_default = C_ZNEW(stat_default_total+1, s16b);
+	C_TNEW(temp_stat_default, stat_default_total+1, s16b);
 	bool returncode = load_stat_set_aux(menu, temp_stat_default);
-	FREE2(temp_stat_default);
+	TFREE(temp_stat_default);
 	return returncode;
 }
 
@@ -2225,11 +2225,6 @@ static void get_extra(void)
  */
 static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 {
-	s16b i;
-	byte *seen;
-	s16b social_class = 0;
-	byte roll = 0, droll = 0, dnext = 0;
-
 	/* We stop at nothing. */
 	if (chart == 0) return 0;
 
@@ -2238,56 +2233,61 @@ static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 	 * of the loop and sum it to infinity, but the first 10 iterations
 	 * should give a very good approximation.
 	 */
-	if (oldseen[chart] > 10) return 0;
-
-	seen = C_ZNEW(total, byte);
-
-	/* Copy the chart across. */
-	for (i = 0; i < total; i++)
+	else if (oldseen[chart] > 10) return 0;
+	else
 	{
-		seen[i]=oldseen[i];
-	}
+		s16b i;
+		C_TNEW(seen, total, byte);
+		s16b social_class = 0;
+		byte roll = 0, droll = 0, dnext = 0;
 
-	/* We have now seen this chart. */
-	seen[chart] = TRUE;
+		/* Copy the chart across. */
+		for (i = 0; i < total; i++)
+		{
+			seen[i]=oldseen[i];
+		}
 
-	/* Get the next charts. */
+		/* We have now seen this chart. */
+		seen[chart] = TRUE;
+
+		/* Get the next charts. */
 		for (i=0; bg[i].chart; i++)
 		{
-		/* Only relevant charts count. */
+			/* Only relevant charts count. */
 			if (chart != bg[i].chart) continue;
 		
-		/* Only increasing charts count. */
-		if (bg[i].roll < roll) continue;
+			/* Only increasing charts count. */
+			if (bg[i].roll < roll) continue;
 
-		/* Notice the bonus from this chart. */
+			/* Notice the bonus from this chart. */
 			social_class += (bg[i].bonus - 50) * (bg[i].roll - roll);
 		
-		/* If this is the first appropriate chart, notice it. */
-		if (!dnext)
-		{
-			dnext = bg[i].next;
-		}
-		/* If we're changing to a different chart, get the next one. */
-		else if (dnext != bg[i].next)
-		{
-			/* Get the next chart. */
-			social_class += get_social_average_aux(seen, dnext, total)*(roll-droll)/100;
-			droll = roll;
-		}
+			/* If this is the first appropriate chart, notice it. */
+			if (!dnext)
+			{
+				dnext = bg[i].next;
+			}
+			/* If we're changing to a different chart, get the next one. */
+			else if (dnext != bg[i].next)
+			{
+				/* Get the next chart. */
+				social_class += get_social_average_aux(seen, dnext, total)*(roll-droll)/100;
+				droll = roll;
+			}
 
-		/* Move the roll counter along. */
+			/* Move the roll counter along. */
 			roll = bg[i].roll;
 		}
 
-	/* Add the last set of charts. */
-	social_class += get_social_average_aux(seen, dnext, total)*(roll-droll)/100;
+		/* Add the last set of charts. */
+		social_class += get_social_average_aux(seen, dnext, total)*(roll-droll)/100;
 
-	KILL2(seen);
+		TFREE(seen);
 
-	/* And return the result (multiplied by 100 to minimise rounding errors). */
-	return social_class;
+		/* And return the result (multiplied by 100 to minimise rounding errors). */
+		return social_class;
 	}
+}
 
 /*
  * Finds the average social class for a given race.
@@ -2314,13 +2314,13 @@ static s16b get_social_average(byte race)
 		 * current branch. This is needed in order to recognise when
 		 * a recursion has occurred.
 		 */
-		byte *seen = C_ZNEW(total, byte);
+		C_TNEW(seen, total, byte);
 
 		for (i = 0; i < total; i++) seen[i] = 0;
 
 		social_class += get_social_average_aux(seen, chart, total);
 
-		FREE2(seen);
+		TFREE(seen);
 	}
 
 	/* Get a social class of the expected order of magnitude. */

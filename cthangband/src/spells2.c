@@ -462,7 +462,7 @@ bool alchemy(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	char            out_val[160];
 
@@ -476,8 +476,9 @@ bool alchemy(void)
 	/* Get an item (from equip or inven or floor) */
     if (!get_item(&item, "Turn which item to gold? ", TRUE, TRUE, TRUE))
 	{
-	if (item == -2) msg_print("You have nothing to turn to gold.");
-	return FALSE;
+		if (item == -2) msg_print("You have nothing to turn to gold.");
+		TFREE(o_name);
+		return FALSE;
 	}
 
 	/* Get the item (in the pack) */
@@ -500,7 +501,11 @@ bool alchemy(void)
 		amt = get_quantity(NULL, o_ptr->number,TRUE);
 
 		/* Allow user abort */
-	if (amt <= 0) return FALSE;
+		if (amt <= 0)
+		{
+			TFREE(o_name);
+			return FALSE;
+		}
 	}
 
 
@@ -517,7 +522,11 @@ bool alchemy(void)
         {
             /* Make a verification */
             sprintf(out_val, "Really turn %s to gold? ", o_name);
-            if (!get_check(out_val)) return FALSE;
+            if (!get_check(out_val))
+			{
+				TFREE(o_name);
+				return FALSE;
+			}
         }
 	}
 
@@ -525,7 +534,7 @@ bool alchemy(void)
     if (allart_p(o_ptr))
 	{
 		/* Message */
-	msg_format("You fail to turn %s to gold!", o_name);
+		msg_format("You fail to turn %s to gold!", o_name);
 
 		/* We have "felt" it (again) */
 		o_ptr->ident |= (IDENT_SENSE_VALUE);
@@ -536,8 +545,10 @@ bool alchemy(void)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+		TFREE(o_name);
+
 		/* Done */
-	return FALSE;
+		return FALSE;
 	}
 
     price = object_value_real(o_ptr);
@@ -579,6 +590,7 @@ bool alchemy(void)
 		floor_item_optimize(0 - item);
 	}
 
+	TFREE(o_name);
     return TRUE;
 }
 
@@ -2780,7 +2792,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Assume enchant weapon */
@@ -2793,6 +2805,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	if (!get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to enchant.");
+		TFREE(o_name);
 		return (FALSE);
 	}
 
@@ -2841,6 +2854,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	}	
 
 	/* Something happened */
+	TFREE(o_name);
 	return (TRUE);
 }
 
@@ -4249,7 +4263,7 @@ bool artifact_scroll(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Assume enchant weapon */
@@ -4259,6 +4273,7 @@ bool artifact_scroll(void)
 	if (!get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to enchant.");
+		TFREE(o_name);
 		return (FALSE);
 	}
 
@@ -4320,6 +4335,7 @@ bool artifact_scroll(void)
 		msg_print("The enchantment failed.");
 	}
 
+	TFREE(o_name);
 	/* Something happened */
 	return (TRUE);
 }
@@ -4336,13 +4352,14 @@ bool ident_spell(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Get an item (from equip or inven or floor) */
 	if (!get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to identify.");
+		TFREE(o_name);
 		return (FALSE);
 	}
 
@@ -4392,6 +4409,8 @@ bool ident_spell(void)
 			   o_name);
 	}
 
+	TFREE(o_name);
+
 	/* Something happened */
 	return (TRUE);
 }
@@ -4408,13 +4427,14 @@ bool identify_fully(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Get an item (from equip or inven or floor) */
 	if (!get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to identify.");
+		TFREE(o_name);
 		return (FALSE);
 	}
 
@@ -4472,6 +4492,8 @@ bool identify_fully(void)
 
 	/* Describe it fully */
 	identify_fully_aux(o_ptr, FALSE);
+
+	TFREE(o_name);
 
 	/* Success */
 	return (TRUE);
@@ -5007,7 +5029,7 @@ bool probing(void)
 		/* Probe visible monsters */
 		if (m_ptr->ml)
 		{
-			char m_name[MNAME_LEN];
+			C_TNEW(m_name, MNAME_MAX, char);
 
 			/* Start the message */
 			if (!probe) msg_print("Probing...");
@@ -5023,6 +5045,8 @@ bool probing(void)
 
 			/* Probe worked */
 			probe = TRUE;
+
+			TFREE(m_name);
 		}
 	}
 
@@ -5372,7 +5396,7 @@ void earthquake(int cy, int cx, int r)
 				if (!(r_ptr->flags2 & (RF2_KILL_WALL)) &&
 				    !(r_ptr->flags2 & (RF2_PASS_WALL)))
 				{
-					char m_name[MNAME_LEN];
+					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Assume not safe */
 					sn = 0;
@@ -5440,6 +5464,8 @@ void earthquake(int cy, int cx, int r)
 						/* No longer safe */
 						sn = 0;
 					}
+
+					TFREE(m_name);
 
 					/* Hack -- Escape from the rock */
 					if (sn)
@@ -5619,13 +5645,15 @@ static void cave_temp_room_lite(void)
 				/* Notice the "waking up" */
 				if (m_ptr->ml)
 				{
-					char m_name[MNAME_LEN];
+					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Acquire the monster name */
 					monster_desc(m_name, m_ptr, 0);
 
 					/* Dump a message */
 					msg_format("%^s wakes up.", m_name);
+
+					TFREE(m_name);
 				}
 			}
 		}
@@ -6328,7 +6356,7 @@ void bless_weapon(void)
     object_type             *o_ptr;
     u32b f1, f2, f3;
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Assume enchant weapon */
@@ -6338,8 +6366,9 @@ void bless_weapon(void)
 	/* Get an item (from equip or inven or floor) */
     if (!get_item(&item, "Bless which weapon? ", TRUE, TRUE, TRUE))
 	{
-	if (item == -2) msg_print("You have weapon to bless.");
-	return;
+		if (item == -2) msg_print("You have weapon to bless.");
+		TFREE(o_name);
+		return;
 	}
 
 	/* Get the item (in the pack) */
@@ -6370,6 +6399,7 @@ void bless_weapon(void)
 
             msg_format("The black aura on %s %s disrupts the blessing!",
                    ((item >= 0) ? "your" : "the"), o_name);
+			TFREE(o_name);
             return;
         }
 
@@ -6400,6 +6430,7 @@ Ego weapons and normal weapons can be blessed automatically. */
             msg_format("%s %s %s blessed already.",
                    ((item >= 0) ? "Your" : "The"), o_name,
                    ((o_ptr->number > 1) ? "were" : "was"));
+			TFREE(o_name);
             return;
     }
 
@@ -6457,6 +6488,8 @@ Ego weapons and normal weapons can be blessed automatically. */
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
+
+	TFREE(o_name);
 }
 
  /*

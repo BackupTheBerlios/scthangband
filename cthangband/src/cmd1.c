@@ -578,7 +578,7 @@ void carry(int pickup)
 
 	s16b this_o_idx, next_o_idx = 0;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	bool gold_only = FALSE;
 
@@ -689,6 +689,7 @@ void carry(int pickup)
 			}
 		}
 	}
+	TFREE(o_name);
 }
 
 
@@ -1073,7 +1074,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
     int             n_weight = 0;
     monster_type    *m_ptr = &m_list[m_idx];
     monster_race    *r_ptr = &r_info[m_ptr->r_idx];
-	char            m_name[MNAME_LEN];
+	C_TNEW(m_name, MNAME_MAX, char);
 
     int dss, ddd;
 
@@ -1196,6 +1197,8 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
             /* Message */
 			msg_format("You miss %s.", m_name);
 		}
+
+	TFREE(m_name);
 }
 
 
@@ -1216,7 +1219,7 @@ void py_attack(int y, int x)
 
 	object_type             *o_ptr;
 
-	char            m_name[MNAME_LEN];
+	C_TNEW(m_name, MNAME_MAX, char);
 
 
 	bool            fear = FALSE;
@@ -1272,6 +1275,8 @@ void py_attack(int y, int x)
 		if (inventory[INVEN_WIELD].name1 != ART_STORMBRINGER)
      {
        msg_format("You stop to avoid hitting %s.", m_name);
+
+		TFREE(m_name);
        return;
      }
 
@@ -1290,6 +1295,8 @@ void py_attack(int y, int x)
 
         else
         msg_format ("There is something scary in your way!");
+
+		TFREE(m_name);
 
 		/* Done */
 		return;
@@ -1710,6 +1717,8 @@ void py_attack(int y, int x)
 
 	/* Mega-Hack -- apply earthquake brand only once*/
 	if (do_quake) earthquake(py, px, 10);
+
+	TFREE(m_name);
 }
 
 
@@ -1936,13 +1945,11 @@ void move_player(int dir, int do_pickup)
 	cave_type               *c_ptr;
 	monster_type    *m_ptr;
 
+	C_TNEW(m_name, MNAME_MAX, char);
 
-
-         char m_name[MNAME_LEN];
-
-         bool p_can_pass_walls = FALSE;
-         bool wall_is_perma = FALSE;
-         bool stormbringer = FALSE;
+	bool p_can_pass_walls = FALSE;
+	bool wall_is_perma = FALSE;
+	bool stormbringer = FALSE;
 
     /* Find the result of moving */
 	y = py + ddy[dir];
@@ -1956,9 +1963,9 @@ void move_player(int dir, int do_pickup)
 
 
 	if (inventory[INVEN_WIELD].name1 == ART_STORMBRINGER)
-        {
-			stormbringer = TRUE;
-		}
+	{
+		stormbringer = TRUE;
+	}
 
 	/* Player can not walk through "permanent walls"... */
 	/* unless in Shadow Form */
@@ -2008,6 +2015,7 @@ void move_player(int dir, int do_pickup)
             {
 				msg_format("%^s is in your way!", m_name);
                 energy_use = 0;
+				TFREE(m_name);
                 return;
             }
            /* now continue on to 'movement' */
@@ -2015,6 +2023,7 @@ void move_player(int dir, int do_pickup)
 		else
 		{
 			py_attack(y, x);
+			TFREE(m_name);
 			return;
 		}
 	}
@@ -2026,6 +2035,7 @@ void move_player(int dir, int do_pickup)
  		(c_ptr->feat <= FEAT_TRAP_TAIL))
  	{
  		(void) do_cmd_disarm_aux(y, x, dir);
+		TFREE(m_name);
  		return;
  	}
  
@@ -2202,7 +2212,11 @@ void move_player(int dir, int do_pickup)
 			{
  #ifdef ALLOW_EASY_OPEN /* TNB */
  
- 				if (easy_open_door(y, x)) return;
+ 				if (easy_open_door(y, x))
+				{
+					TFREE(m_name);
+					return;
+				}
  
  #else /* ALLOW_EASY_OPEN -- TNB */
  
@@ -2225,6 +2239,7 @@ void move_player(int dir, int do_pickup)
 
 		/* Sound */
 		sound(SOUND_HITWALL);
+		TFREE(m_name);
         return;
 	}
 
@@ -2236,6 +2251,7 @@ void move_player(int dir, int do_pickup)
                     energy_use = 0;
                 }
                 disturb(0,0); /* To avoid a loop with running */
+				TFREE(m_name);
                 return;
     }
 /*    else */
@@ -2306,6 +2322,7 @@ void move_player(int dir, int do_pickup)
 			/* Hit the trap */
 			hit_trap();
 		}
+	TFREE(m_name);
 	}
 
 

@@ -1795,7 +1795,7 @@ static void display_entry(int pos)
 	object_type		*o_ptr;
 	s32b		x;
 
-	char		o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 	char		out_val[160];
 
 
@@ -1857,6 +1857,7 @@ static void display_entry(int pos)
 
 		o_name[maxwid] = '\0';
 		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
+		TFREE(o_name);
 
 		/* Show weights */
 		if (show_weights)
@@ -2413,7 +2414,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	bool		cancel = FALSE;
 	char		out_val[160];
-	char		o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	pmt = "Asking";
 	*price = 0;
@@ -2539,6 +2540,8 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 			}
 		}
 	}
+
+	TFREE(o_name);
 
 	/* Cancel */
 	if (cancel) return (TRUE);
@@ -2831,7 +2834,6 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 	bool		cancel = FALSE;
 	char		out_val[160];
-	char		o_name[ONAME_LEN];
 
 	pmt = "Offer";
 	*price = 0;
@@ -2850,8 +2852,10 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 	if (auto_haggle && !verbose_haggle)
 	{
+		C_TNEW(o_name, ONAME_MAX, char);
 		object_desc(o_name, o_ptr, TRUE, 3);
 		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
+		TFREE(o_name);
 		*price = final_ask;
 		return !get_check(out_val);
 	}
@@ -2978,7 +2982,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 /*
  * Buy an item from a store				-RAK-
  */
-static void store_purchase(void)
+static void store_purchase_aux(char *o_name)
 {
 	int i, amt, choice;
 	int item, item_new;
@@ -2989,8 +2993,6 @@ static void store_purchase(void)
 	object_type *j_ptr;
 
 	object_type *o_ptr;
-
-	char o_name[ONAME_LEN];
 
 	char out_val[160];
 
@@ -3289,11 +3291,20 @@ static void store_purchase(void)
 	return;
 }
 
+/*
+ * A wrapper around the above for memory allocation.
+ */
+static void store_purchase(void)
+{
+	C_TNEW(o_name, ONAME_MAX, char);
+	store_purchase_aux(o_name);
+	TFREE(o_name);
+}
 
 /*
  * Sell an item to the store (or home)
  */
-static void store_sell(void)
+static void store_sell_aux(char *o_name)
 {
 	int choice;
 	int item, item_pos;
@@ -3307,8 +3318,6 @@ static void store_sell(void)
 	object_type *o_ptr;
 
 	cptr pmt = "Sell which item? ";
-
-	char o_name[ONAME_LEN];
 
 
 	/* Prepare a prompt */
@@ -3531,6 +3540,15 @@ static void store_sell(void)
 	}
 }
 
+/*
+ * A wrapper around the above for memory allocation.
+ */
+static void store_sell(void)
+{
+	C_TNEW(o_name, ONAME_MAX, char);
+	store_sell_aux(o_name);
+	TFREE(o_name);
+}
 
 
  /*
@@ -3542,8 +3560,6 @@ static void store_sell(void)
    int item;
 
    object_type *o_ptr;
-
-   char o_name[ONAME_LEN];
 
    char out_val[160];
 
@@ -3588,15 +3604,19 @@ static void store_sell(void)
    /* Description */
    if (cur_store_type == STORE_HOME || cur_store_type == STORE_PAWN)
 	{
-   object_desc(o_name, o_ptr, TRUE, 3);
+		C_TNEW(o_name, ONAME_MAX, char);
+		object_desc(o_name, o_ptr, TRUE, 3);
 		msg_format("Examining %s...", o_name);
 		if (!identify_fully_aux(o_ptr, FALSE)) msg_print("You see nothing special.");
+		TFREE(o_name);
 	}
 	else /* Make it look as though we are aware of the item. */
 	{
-	object_desc_store(o_name, o_ptr, TRUE, 3);
-   msg_format("Examining %s...", o_name);
+		C_TNEW(o_name, ONAME_MAX, char);
+		object_desc_store(o_name, o_ptr, TRUE, 3);
+		msg_format("Examining %s...", o_name);
 		if (!identify_fully_aux(o_ptr, TRUE)) msg_print("You see nothing special.");
+		TFREE(o_name);
 	}
 
    return;
@@ -4586,7 +4606,7 @@ void do_cmd_store(void)
 				object_type forge;
 				object_type *q_ptr;
 
-				char o_name[ONAME_LEN];
+				C_TNEW(o_name, ONAME_MAX, char);
 
 
 				/* Give a message */
@@ -4620,6 +4640,7 @@ void do_cmd_store(void)
 				{
 					store_top = (item_pos / 12) * 12;
 				}
+				TFREE(o_name);
 			}
 		}
 

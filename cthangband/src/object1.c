@@ -163,9 +163,12 @@ s16b lookup_unident(byte p_id, byte s_id)
  */
 void flavor_init(void)
 {
-	s16b i,j, *k_idx, *u_idx;
-	byte *k_ptr_p_id = C_ZNEW(MAX_K_IDX, byte);
-	byte *k_ptr_s_id = C_ZNEW(MAX_K_IDX, byte);
+	int i,j;
+	C_TNEW(k_ptr_p_id, MAX_K_IDX, byte);
+	C_TNEW(k_ptr_s_id, MAX_K_IDX, byte);
+	C_TNEW(k_idx, MAX_K_IDX, int);
+	C_TNEW(u_idx, MAX_U_IDX, int);
+
 
 	/* Hack - setting cheat_wzrd and cheat_extra generates a lot of messages */
 	bool old_cheat_wzrd = cheat_wzrd;
@@ -222,9 +225,6 @@ void flavor_init(void)
 		if (u_info[pid_base[k_ptr_p_id[i]]].flags & UNID_BASE_ONLY) k_ptr_s_id[i] = SID_BASE;
 	}
 
-	k_idx = C_ZNEW(MAX_K_IDX, s16b);
-	u_idx = C_ZNEW(MAX_U_IDX, s16b);
-
 	/*
 	 * Finally, give each k_idx with a variable description a valid s_id.
 	 * We've already checked that there are enough to go around.
@@ -276,10 +276,10 @@ void flavor_init(void)
 	/* Hack - reset cheat_wzrd if desired */
 	cheat_wzrd = old_cheat_wzrd;
 
-	FREE2(k_ptr_p_id);
-	FREE2(k_ptr_s_id);
-	FREE2(k_idx);
-	FREE2(u_idx);
+	TFREE(k_ptr_p_id);
+	TFREE(k_ptr_s_id);
+	TFREE(k_idx);
+	TFREE(u_idx);
 }
 
 
@@ -4124,7 +4124,7 @@ void display_inven(void)
 
 	char    tmp_val[80];
 
-	char    o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Find the "final" slot */
@@ -4194,6 +4194,7 @@ void display_inven(void)
 		/* Erase the line */
 		Term_erase(0, i, 255);
 	}
+	TFREE(o_name);
 }
 
 
@@ -4209,7 +4210,7 @@ void display_equip(void)
 
 	char    tmp_val[80];
 
-	char    o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Display the equipment */
@@ -4275,6 +4276,7 @@ void display_equip(void)
 		/* Clear that line */
 		Term_erase(0, i, 255);
 	}
+	TFREE(o_name);
 }
 
 
@@ -4294,7 +4296,7 @@ void show_inven(void)
 
 	object_type     *o_ptr;
 
-	char    o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	char    tmp_val[80];
 
@@ -4416,6 +4418,8 @@ void show_inven(void)
 
 	/* Save the new column */
 	command_gap = col;
+
+	TFREE(o_name);
 }
 
 
@@ -4432,7 +4436,7 @@ void show_equip(void)
 
 	char            tmp_val[80];
 
-	char            o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	int                     out_index[23];
 	byte            out_color[23];
@@ -4560,6 +4564,8 @@ void show_equip(void)
 
 	/* Save the new column */
 	command_gap = col;
+
+	TFREE(o_name);
 }
 
 
@@ -4574,7 +4580,7 @@ void show_equip(void)
  */
 static bool verify(cptr prompt, int item)
 {
-	char    o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	char    out_val[160];
 
@@ -4597,6 +4603,8 @@ static bool verify(cptr prompt, int item)
 
 	/* Prompt */
 	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
+
+	TFREE(o_name);
 
 	/* Query */
 	return (get_check(out_val));

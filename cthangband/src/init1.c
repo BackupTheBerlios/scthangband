@@ -788,7 +788,7 @@ static s16b find_string(char *buf, cptr *array)
  */
 #define find_string_info(x_name, x_info, max, w) \
 { \
-	cptr *array = C_ZNEW(max, cptr); \
+	C_TNEW(array, max, cptr); \
 	for (i = 1; i < max; i++) \
 		if (x_info[i].name) \
 			array[i-1] = x_name+x_info[i].name; \
@@ -796,7 +796,7 @@ static s16b find_string(char *buf, cptr *array)
 			array[i-1] = ""; \
 	array[max-1] = 0; \
 	w = find_string(buf, array); \
-	KILL2(array); \
+	TFREE(array); \
 }
 
 /*

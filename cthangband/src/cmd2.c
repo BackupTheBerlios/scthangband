@@ -2354,7 +2354,7 @@ void do_cmd_fire(void)
 	byte missile_attr;
 	char missile_char;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
@@ -2366,6 +2366,7 @@ void do_cmd_fire(void)
 	if (!j_ptr->tval)
 	{
 		msg_print("You have nothing to fire with.");
+		TFREE(o_name);
 		return;
 	}
 
@@ -2377,6 +2378,7 @@ void do_cmd_fire(void)
 	if (!get_item(&item, "Fire which item? ", FALSE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to fire.");
+		TFREE(o_name);
 		return;
 	}
 
@@ -2392,7 +2394,11 @@ void do_cmd_fire(void)
 
 
 	/* Get a direction (or cancel) */
-	if (!get_aim_dir(&dir)) return;
+	if (!get_aim_dir(&dir))
+	{
+		TFREE(o_name);
+		return;
+	}
 
 
 	/* Get local object */
@@ -2613,7 +2619,7 @@ void do_cmd_fire(void)
 				/* Handle visible monster */
 				else
 				{
-					char m_name[MNAME_LEN];
+					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Get "the monster" or "it" */
 					monster_desc(m_name, m_ptr, 0);
@@ -2627,13 +2633,12 @@ void do_cmd_fire(void)
 					/* Hack -- Track this monster */
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
 
-                  /* Anger friends */
-                   if (m_ptr->smart & SM_ALLY) {
-                   char m_name[MNAME_LEN];
-                   monster_desc(m_name, m_ptr, 0);
-                   msg_format("%s gets angry!", m_name);
-                   m_ptr->smart &= ~SM_ALLY;
-               }
+					/* Anger friends */
+					if (m_ptr->smart & SM_ALLY) {
+						msg_format("%s gets angry!", m_name);
+						m_ptr->smart &= ~SM_ALLY;
+					}
+					TFREE(m_name);
               }
 
 				/* Apply special damage XXX XXX XXX */
@@ -2665,7 +2670,7 @@ void do_cmd_fire(void)
 					/* Take note */
 					if (fear && m_ptr->ml)
 					{
-						char m_name[MNAME_LEN];
+						C_TNEW(m_name, MNAME_MAX, char);
 
 						/* Sound */
 						sound(SOUND_FLEE);
@@ -2675,6 +2680,8 @@ void do_cmd_fire(void)
 
 						/* Message */
 						msg_format("%^s flees in terror!", m_name);
+
+						TFREE(m_name);
 					}
 				}
 			}
@@ -2689,6 +2696,8 @@ void do_cmd_fire(void)
 
 	/* Drop (or break) near that location */
 	drop_near(q_ptr, j, y, x);
+
+	TFREE(o_name);
 }
 
 static int throw_mult = 1;
@@ -2736,7 +2745,7 @@ void do_cmd_throw(void)
 	byte missile_attr;
 	char missile_char;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
@@ -2747,6 +2756,7 @@ void do_cmd_throw(void)
 	if (!get_item(&item, "Throw which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to throw.");
+		TFREE(o_name);
 		return;
 	}
 
@@ -2762,7 +2772,11 @@ void do_cmd_throw(void)
 
 
 	/* Get a direction (or cancel) */
-	if (!get_aim_dir(&dir)) return;
+	if (!get_aim_dir(&dir))
+	{
+		TFREE(o_name);
+		return;
+	}
 
 
 	/* Get local object */
@@ -2935,7 +2949,7 @@ void do_cmd_throw(void)
 				/* Handle visible monster */
 				else
 				{
-					char m_name[MNAME_LEN];
+					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Get "the monster" or "it" */
 					monster_desc(m_name, m_ptr, 0);
@@ -2948,6 +2962,8 @@ void do_cmd_throw(void)
 
 					/* Hack -- Track this monster */
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
+
+					TFREE(m_name);
 				}
 
 				/* Apply special damage XXX XXX XXX */
@@ -2980,16 +2996,17 @@ void do_cmd_throw(void)
                    if ((m_ptr->smart & SM_ALLY)
                     && (!(k_info[q_ptr->k_idx].tval == TV_POTION)))
                     {
-                   char m_name[MNAME_LEN];
+					C_TNEW(m_name, MNAME_MAX, char);
                    monster_desc(m_name, m_ptr, 0);
                       msg_format("%s gets angry!", m_name);
                       m_ptr->smart &= ~SM_ALLY;
+					TFREE(m_name);
                    }
 
 					/* Take note */
                     if (fear && m_ptr->ml)
 					{
-						char m_name[MNAME_LEN];
+						C_TNEW(m_name, MNAME_MAX, char);
 
 						/* Sound */
 						sound(SOUND_FLEE);
@@ -2999,6 +3016,8 @@ void do_cmd_throw(void)
 
 						/* Message */
 						msg_format("%^s flees in terror!", m_name);
+
+						TFREE(m_name);
 					}
 				}
 			}
@@ -3020,13 +3039,15 @@ void do_cmd_throw(void)
        {
               if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
                     {
-                   char m_name[MNAME_LEN];
+					C_TNEW(m_name, MNAME_MAX, char);
                    monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);
                    msg_format("%s gets angry!", m_name);
                    m_list[cave[y][x].m_idx].smart &= ~SM_ALLY;
+					TFREE(m_name);
                }
             }
 
+		TFREE(o_name);
        return;
        } else {
        j = 0;
@@ -3036,6 +3057,9 @@ void do_cmd_throw(void)
 
 	/* Drop (or break) near that location */
 	drop_near(q_ptr, j, y, x);
+
+	TFREE(o_name);
+	return;
 }
 
 

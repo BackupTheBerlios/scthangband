@@ -2506,7 +2506,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	/* It is dead now */
 	if (m_ptr->hp < 0)
 	{
-		char m_name[MNAME_LEN];
+		C_TNEW(m_name, MNAME_MAX, char);
 
 		/* Extract monster name */
 		monster_desc(m_name, m_ptr, 0);
@@ -2659,6 +2659,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Not afraid */
 		(*fear) = FALSE;
 
+		TFREE(m_name);
+
 		/* Monster is dead */
 		return (TRUE);
 	}
@@ -2715,7 +2717,6 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	}
 
 #endif
-
 
 	/* Not dead yet */
 	return (FALSE);
@@ -3374,7 +3375,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			{
 				bool recall = FALSE;
 
-				char m_name[MNAME_LEN];
+				C_TNEW(m_name, MNAME_MAX, char);
 
 				/* Not boring */
 				boring = FALSE;
@@ -3438,6 +3439,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					recall = !recall;
 				}
 
+				TFREE(m_name);
+
 				/* Always stop at "normal" keys */
 				if ((query != '\r') && (query != '\n') && (query != ' ')) break;
 
@@ -3457,7 +3460,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				/* Scan all objects being carried */
 				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 				{
-					char o_name[ONAME_LEN];
+					C_TNEW(o_name, ONAME_MAX, char);
 
 					object_type *o_ptr;
 				
@@ -3475,6 +3478,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					prt(out_val, 0, 0);
 					move_cursor_relative(y, x);
 					query = inkey();
+
+					TFREE(o_name);
 
 					/* Always stop at "normal" keys */
 					if ((query != '\r') && (query != '\n') && (query != ' ')) break;
@@ -3512,7 +3517,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Describe it */
 			if (o_ptr->marked)
 			{
-				char o_name[ONAME_LEN];
+				C_TNEW(o_name, ONAME_MAX, char);
 
 				/* Not boring */
 				boring = FALSE;
@@ -3525,6 +3530,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				prt(out_val, 0, 0);
 				move_cursor_relative(y, x);
 				query = inkey();
+
+				TFREE(o_name);
 
 				/* Always stop at "normal" keys */
 				if ((query != '\r') && (query != '\n') && (query != ' ')) break;

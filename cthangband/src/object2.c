@@ -1809,7 +1809,7 @@ static s16b m_bonus(int max, int level)
  */
 static void object_mention(object_type *o_ptr)
 {
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Describe */
 	object_desc_store(o_name, o_ptr, FALSE, 0);
@@ -1839,6 +1839,7 @@ static void object_mention(object_type *o_ptr)
 		/* Silly message */
 		msg_format("Object (%s)", o_name);
 	}
+	TFREE(o_name);
 }
 
 
@@ -1923,12 +1924,12 @@ static char make_artifact(object_type *o_ptr, bool special)
 	/* Special artefacts are blank objects initially, others never are. */
 	int min = (special) ? 0 : ART_MIN_NORMAL;
 	int max = (special) ? ART_MIN_NORMAL : MAX_A_IDX;
-	byte *order = C_NEW(max - min, byte);
+	C_TNEW(order, max-min, byte);
 
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number > 1)
 	{
-		FREE2(order);
+		TFREE(order);
 		return 0;
 	}
 
@@ -1956,7 +1957,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 
 	if (!arts)
 	{
-		FREE2(order);
+		TFREE(order);
 		return 2;
 	}
 
@@ -1972,11 +1973,12 @@ static char make_artifact(object_type *o_ptr, bool special)
 		/* Give a basic description */
 		if (cheat_peek)
 		{
-			char buf[ONAME_LEN];
+			C_TNEW(buf, ONAME_MAX, char);
 			object_type forge;
 			make_fake_artifact(&forge, a_ptr-a_info);
 			object_desc_store(buf, &forge, FALSE, 0);
 			msg_format("Rolling for %s", buf);
+			TFREE(buf);
 		}
 
 		/* Roll for the artefact. */
@@ -2000,13 +2002,13 @@ static char make_artifact(object_type *o_ptr, bool special)
 		o_ptr->name1 = a_ptr-a_info;
 
 		/* Success */
-		FREE2(order);
+		TFREE(order);
 		return 1;
 	}
 
 	
 	/* Failure */
-	FREE2(order);
+	TFREE(order);
 	return 0;
 }
 
@@ -4349,7 +4351,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 	cave_type *c_ptr;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	bool flag = FALSE;
 	bool done = FALSE;
@@ -4375,6 +4377,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		if (cheat_wzrd) msg_print("(breakage)");
 
         /* Failure */
+		TFREE(o_name);
 		return (0);
 	}
 
@@ -4485,6 +4488,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		if (cheat_wzrd) msg_print("(no floor space)");
 
 		/* Failure */
+		TFREE(o_name);
 		return (0);
 	}
 
@@ -4575,6 +4579,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
         }
 
 		/* Failure */
+		TFREE(o_name);
 		return (0);
 	}
 
@@ -4621,6 +4626,8 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	}
 	
 	/* XXX XXX XXX */
+
+	TFREE(o_name);
 
 	/* Result */
 	return (o_idx);
@@ -4754,13 +4761,15 @@ void inven_item_describe(int item)
 {
 	object_type     *o_ptr = &inventory[item];
 
-	char    o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3);
 
 	/* Print a message */
 	msg_format("You have %s.", o_name);
+
+	TFREE(o_name);
 }
 
 
@@ -4910,13 +4919,15 @@ void floor_item_describe(int item)
 {
 	object_type     *o_ptr = &o_list[item];
 
-	char    o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3);
 
 	/* Print a message */
 	msg_format("You see %s.", o_name);
+
+	TFREE(o_name);
 }
 
 
@@ -5191,14 +5202,15 @@ s16b inven_takeoff(int item, int amt)
 
 	cptr act;
 
-	char o_name[ONAME_LEN];
-
 
 	/* Get the item to take off */
 	o_ptr = &inventory[item];
 
 	/* Paranoia */
-	if (amt <= 0) return (-1);
+	if (amt <= 0)
+	{
+		return (-1);
+	}
 
 	/* Verify */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -5211,9 +5223,6 @@ s16b inven_takeoff(int item, int amt)
 
 	/* Modify quantity */
 	q_ptr->number = amt;
-
-	/* Describe the object */
-	object_desc(o_name, q_ptr, TRUE, 3);
 
 	/* Took off weapon */
 	if (item == INVEN_WIELD)
@@ -5246,8 +5255,16 @@ s16b inven_takeoff(int item, int amt)
 	/* Carry the object */
 	slot = inven_carry(q_ptr, FALSE);
 
-	/* Message */
-	msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
+	{
+		C_TNEW(o_name, ONAME_MAX, char);
+
+		/* Describe the object */
+		object_desc(o_name, q_ptr, TRUE, 3);
+
+		/* Message */
+		msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
+		TFREE(o_name);
+	}
 
 	/* Return slot */
 	return (slot);
@@ -5268,14 +5285,18 @@ void inven_drop(int item, int amt)
 
 	object_type *o_ptr;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Access original object */
 	o_ptr = &inventory[item];
 
 	/* Error check */
-	if (amt <= 0) return;
+	if (amt <= 0)
+	{
+		TFREE(o_name);
+		return;
+	}
 
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -5319,6 +5340,8 @@ void inven_drop(int item, int amt)
 	inven_item_increase(item, -amt);
 	inven_item_describe(item);
 	inven_item_optimize(item);
+
+	TFREE(o_name);
 }
 
 
@@ -6014,7 +6037,7 @@ void display_koff(int k_idx)
 	object_type forge;
 	object_type *q_ptr;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Erase the window */
@@ -6025,7 +6048,11 @@ void display_koff(int k_idx)
 	}
 
 	/* No info */
-	if (!k_idx) return;
+	if (!k_idx)
+	{
+		TFREE(o_name);
+		return;
+	}
 
 
 	/* Get local object */

@@ -915,7 +915,7 @@ static int inven_damage(inven_func typ, int perc)
 
 	object_type     *o_ptr;
 
-	char    o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Count the casualties */
@@ -974,6 +974,8 @@ static int inven_damage(inven_func typ, int perc)
 		}
 	}
 
+	TFREE(o_name);
+
 	/* Return the casualty count */
 	return (k);
 }
@@ -988,14 +990,13 @@ static int inven_damage(inven_func typ, int perc)
  *
  * If any armor is damaged (or resists), the player takes less damage.
  */
-static int minus_ac(void)
+static bool minus_ac(void)
 {
 	object_type             *o_ptr = NULL;
 
 	u32b            f1, f2, f3;
 
-	char            o_name[ONAME_LEN];
-
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint(6))
@@ -1009,10 +1010,14 @@ static int minus_ac(void)
 	}
 
 	/* Nothing to damage */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx ||
 
 	/* No damage left to be done */
-	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
+		(o_ptr->ac + o_ptr->to_a <= 0))
+	{
+		TFREE(o_name);
+		return (FALSE);
+	}
 
 
 	/* Describe */
@@ -1025,7 +1030,7 @@ static int minus_ac(void)
 	if (f3 & (TR3_IGNORE_ACID))
 	{
 		msg_format("Your %s is unaffected!", o_name);
-
+		TFREE(o_name);
 		return (TRUE);
 	}
 
@@ -1044,6 +1049,8 @@ static int minus_ac(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
+
+	TFREE(o_name);
 
 	/* Item was damaged */
 	return (TRUE);
@@ -1406,8 +1413,7 @@ bool apply_disenchant(int mode)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_LEN];
-
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Unused */
 	mode = mode;
@@ -1430,12 +1436,13 @@ bool apply_disenchant(int mode)
 	o_ptr = &inventory[t];
 
 	/* No item, nothing happens */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx ||
 
 
 	/* Nothing to disenchant */
-	if ((o_ptr->to_h <= 0) && (o_ptr->to_d <= 0) && (o_ptr->to_a <= 0))
+		((o_ptr->to_h <= 0) && (o_ptr->to_d <= 0) && (o_ptr->to_a <= 0)))
 	{
+		TFREE(o_name);
 		/* Nothing to notice */
 		return (FALSE);
 	}
@@ -1453,6 +1460,7 @@ bool apply_disenchant(int mode)
 			   o_name, index_to_label(t),
 			   ((o_ptr->number != 1) ? "" : "s"));
 
+		TFREE(o_name);
 		/* Notice */
 		return (TRUE);
 	}
@@ -1484,6 +1492,7 @@ bool apply_disenchant(int mode)
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 
+	TFREE(o_name);
 	/* Notice */
 	return (TRUE);
 }
@@ -1994,7 +2003,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
 	u32b f1, f2, f3;
 
-	char o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
     int o_sval = 0;
     bool is_potion = FALSE;
@@ -2254,6 +2263,8 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 		}
 	}
 
+	TFREE(o_name);
+
 	/* Return "Anything seen?" */
 	return (obvious);
 }
@@ -2323,7 +2334,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-    char killer[MNAME_LEN];
+    C_TNEW(m_name, MNAME_MAX, char);
 
 	cptr name = (r_name + r_ptr->name);
 
@@ -2357,7 +2368,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 
 	/* Hold the monster name */
-	char m_name[MNAME_LEN];
+	C_TNEW(killer, MNAME_MAX, char);
 
 	/* Assume no note */
 	cptr note = NULL;
@@ -2366,10 +2377,14 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	cptr note_dies = " dies.";
 
 	/* Nobody here */
-	if (!c_ptr->m_idx) return (FALSE);
+	if (!c_ptr->m_idx ||
 
 	/* Never affect projector */
-	if (who && (c_ptr->m_idx == who)) return (FALSE);
+		(who && (c_ptr->m_idx == who)))
+	{
+		TFREE(killer);
+		return (FALSE);
+	}
 
 
 	/* Reduce damage by distance */
@@ -4058,7 +4073,11 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 
 	/* Absolutely no effect */
-	if (skipped) return (FALSE);
+	if (skipped)
+	{
+		TFREE(killer);
+		return (FALSE);
+	}
 
 
 	/* "Unique" monsters cannot be polymorphed */
@@ -4330,6 +4349,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	project_m_x = x;
 	project_m_y = y;
 
+	TFREE(killer);
 
 	/* Return "Anything seen?" */
 	return (obvious);
@@ -4379,20 +4399,25 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 	monster_type *m_ptr;
 
 	/* Monster name (for attacks) */
-	char m_name[MNAME_LEN];
+	C_TNEW(m_name, MNAME_MAX, char);
 
 	/* Monster name (for damage) */
-	char killer[MNAME_LEN];
+	C_TNEW(killer, MNAME_MAX, char);
 
 	/* Hack -- messages */
 	cptr act = NULL;
 
 
 	/* Player is not here */
-	if ((x != px) || (y != py)) return (FALSE);
+	if ((x != px) || (y != py) ||
 
 	/* Player cannot hurt himself */
-	if (!who) return (FALSE);
+		!who)
+	{
+		TFREE(m_name);
+		TFREE(killer);
+		return (FALSE);
+	}
 
 
     if (p_ptr->reflect && !a_rad && !(randint(10)==1))
@@ -4427,6 +4452,8 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
         project(0, 0, t_y, t_x, dam, typ,
             (PROJECT_STOP|PROJECT_KILL));
         disturb(1, 0);
+		TFREE(m_name);
+		TFREE(killer);
         return TRUE;
     }
 
@@ -5060,6 +5087,9 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 	/* Disturb */
 	disturb(1, 0);
 
+
+	TFREE(killer);
+	TFREE(m_name);
 
 	/* Return "Anything seen?" */
 	return (obvious);

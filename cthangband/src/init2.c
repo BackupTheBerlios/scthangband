@@ -636,7 +636,6 @@ static void init_x_final(int num)
 		 * not excede it. */
 		case Z_HEAD:
 		if (ONAME_LEN < ONAME_MAX) ONAME_MAX = ONAME_LEN;
-		if (MNAME_LEN < MNAME_MAX) MNAME_MAX = MNAME_LEN;
 	}
 	return;
 }

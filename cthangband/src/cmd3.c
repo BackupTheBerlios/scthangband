@@ -142,11 +142,10 @@ static bool item_tester_hook_wear(object_type *o_ptr)
 	return (FALSE);
 }
 
-
 /*
  * Wield or wear a single item from the pack or floor
  */
-void do_cmd_wield(void)
+static void do_cmd_wield_aux(char *o_name)
 {
 	int item, slot;
 
@@ -156,8 +155,6 @@ void do_cmd_wield(void)
 	object_type *o_ptr;
 
 	cptr act;
-
-	char o_name[ONAME_LEN];
 
 
 	/* Restrict the choices */
@@ -345,6 +342,16 @@ void do_cmd_wield(void)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
+/*
+ * A wrapper to give o_name function scope above.
+ */
+void do_cmd_wield(void)
+{
+	C_TNEW(o_name, ONAME_MAX, char);
+	do_cmd_wield_aux(o_name);
+	TFREE(o_name);
+}
+
 
 
 /*
@@ -474,7 +481,7 @@ static bool high_level_book(object_type * o_ptr)
 /*
  * Destroy an item
  */
-void do_cmd_destroy(void)
+static void do_cmd_destroy_aux(char *o_name)
 {
 	int			item, amt = 1;
 	int			old_number;
@@ -482,8 +489,6 @@ void do_cmd_destroy(void)
 	bool		force = FALSE;
 
 	object_type		*o_ptr;
-
-	char		o_name[ONAME_LEN];
 
 	char		out_val[160];
 
@@ -594,6 +599,16 @@ void do_cmd_destroy(void)
 
 
 /*
+ * A wrapper to give o_name function scope above.
+ */
+void do_cmd_destroy(void)
+{
+	C_TNEW(o_name, ONAME_MAX, char);
+	do_cmd_destroy_aux(o_name);
+	TFREE(o_name);
+}
+
+/*
  * Destroy whole pack (and equip)
  * This routine will keep artifacts if 'preserve' is on.
  * Dean Anderson
@@ -636,8 +651,6 @@ void do_cmd_observe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_LEN];
-
 
 	/* Get an item (from equip or inven or floor) */
 	if (!get_item(&item, "Examine which item? ", TRUE, TRUE, TRUE))
@@ -659,12 +672,18 @@ void do_cmd_observe(void)
 	}
 
 
-	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	{
+		C_TNEW(o_name, ONAME_MAX, char);
+	
+		/* Description */
+		object_desc(o_name, o_ptr, TRUE, 3);
 
 
-	/* Describe */
-	msg_format("Examining %s...", o_name);
+		/* Describe */
+		msg_format("Examining %s...", o_name);
+
+		TFREE(o_name);
+	}
 
 	/* Describe it fully */
 	if (!identify_fully_aux(o_ptr, FALSE)) msg_print("You see nothing special.");
@@ -732,7 +751,7 @@ void do_cmd_inscribe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_LEN];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	char		out_val[80];
 
@@ -741,6 +760,7 @@ void do_cmd_inscribe(void)
 	if (!get_item(&item, "Inscribe which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to inscribe.");
+		TFREE(o_name);
 		return;
 	}
 
@@ -781,6 +801,8 @@ void do_cmd_inscribe(void)
 
 		/* Make a note of the change. */
 	message_add(format("Inscribed %s as %s.", o_name, quark_str(o_ptr->note)));
+
+	TFREE(o_name);
 }
 
 
@@ -1651,9 +1673,9 @@ static void do_cmd_query_symbol_aux(u16b *who)
  */
 void do_cmd_query_symbol(void)
 {
-	u16b *who = C_ZNEW(MAX_R_IDX, u16b);
+	C_TNEW(who, MAX_R_IDX, u16b);
 	do_cmd_query_symbol_aux(who);
-	FREE2(who);
+	TFREE(who);
 }
 
 
