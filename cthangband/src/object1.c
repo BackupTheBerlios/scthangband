@@ -4242,7 +4242,8 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
  *
  * Note that "Term_save()" / "Term_load()" blocks must not overlap.
  */
-object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
+static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
+	bool floor)
 {
 	cave_type *c_ptr = &cave[py][px];
 
@@ -4287,12 +4288,6 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
  				/* Validate the item */
  				if (!item_tester_okay(o_ptr)) continue;
  
- 				/* Forget the item_tester_tval restriction */
- 				item_tester_tval = 0;
- 		
- 				/* Forget the item_tester_hook restriction */
- 				item_tester_hook = NULL;
- 				
  				/* Success */
 				return o_ptr;
  	        }
@@ -4301,12 +4296,6 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
          /* Verify the item */
          else if (get_item_okay(o_ptr)) {
          
- 	        /* Forget the item_tester_tval restriction */
- 	        item_tester_tval = 0;
- 	
- 	        /* Forget the item_tester_hook restriction */
- 	        item_tester_hook = NULL;
- 	        
  	        /* Success */
 			return o_ptr;
          }
@@ -4375,9 +4364,6 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	/* Require at least one legal choice */
 	if (!allow_floor && (i1 > i2) && (e1 > e2))
 	{
-		/* Cancel command_see */
-		command_see = FALSE;
-
 		/* Hack -- Nothing to choose */
 		*err = GET_ITEM_ERROR_NO_ITEMS;
 		o_ptr = NULL;
@@ -4842,22 +4828,6 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	/* Forget the saved screen, if any. */
 	Term_release(nterm);
 
-	/* Hack -- Cancel "display" */
-	command_see = FALSE;
-
-
-	/* Forget the item_tester_tval restriction */
-	item_tester_tval = 0;
-
-	/* Forget the item_tester_hook restriction */
-	item_tester_hook = NULL;
-
-	/* Show item if possible. */
-	if (o_ptr)
-	{
-		object_track(o_ptr);
-	}
-
 	/* Clean up */
 	if (show_choices)
 	{
@@ -4876,6 +4846,31 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
  #endif /* ALLOW_REPEAT */
 
 	/* Return the object if something was picked. */
+	return o_ptr;
+}
+
+/*
+ * Select an item, and clean up afterwards.
+ */
+object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
+{
+	object_type *o_ptr = get_item_aux(err, pmt, equip, inven, floor);
+
+	/* Hack -- Cancel "display" */
+	command_see = FALSE;
+
+	/* Show item if possible. */
+	if (o_ptr)
+	{
+		object_track(o_ptr);
+	}
+
+	/* Forget the item_tester_tval restriction */
+	item_tester_tval = 0;
+
+	/* Forget the item_tester_hook restriction */
+	item_tester_hook = NULL;
+
 	return o_ptr;
 }
 
