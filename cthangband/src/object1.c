@@ -2642,7 +2642,7 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 #define A_MAX 6
 #endif
 
-#define CMPU(X) (pn_ptr->X - po_ptr->X)
+#define CMPU(X) (po_ptr->X - pn_ptr->X)
 #define CMP(X) ((dif = CMPU(X)))
 #define CMPUJ(X) CMPU(X[j])
 #define CMPJ(X) ((dif = CMPUJ(X)))
