@@ -572,7 +572,7 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 
 	j_ptr->ident = IDENT_FIXED | IDENT_EMPTY | IDENT_KNOWN | IDENT_STOREB |
 		IDENT_MENTAL | IDENT_TRIED | IDENT_STORE | IDENT_SENSE_CURSED |
-		IDENT_SENSE_VALUE | IDENT_SENSE_HEAVY | IDENT_TRIED;
+		IDENT_SENSE_VALUE | IDENT_SENSE_HEAVY | IDENT_TRIED | IDENT_HIDDEN;
 
 	/* Hack - curses are stored in ident, but are unconnected. */
 	if (o_ptr->ident & IDENT_SENSE_CURSED) j_ptr->ident |= IDENT_CURSED;

@@ -546,7 +546,7 @@ void do_cmd_unhide_objects(void)
 	update_object(0, OUP_ALL);
 
 	/* Show more distant changes. */
-	p_ptr->redraw |= PR_MAP;
+	p_ptr->redraw |= PU_UN_VIEW | PU_VIEW;
 
 	msg_format("You reveal %d hidden object%s.", t, (t == 1) ? "" : "s");
 }

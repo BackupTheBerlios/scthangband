@@ -3775,6 +3775,11 @@ void object_track(object_ctype *o_ptr)
 	{
 		tracked_o_ptr = o_ptr;
 	}
+	/* As does a request to track a hidden object. */
+	else if (hidden_p(o_ptr))
+	{
+		tracked_o_ptr = NULL;
+	}
 	/* Always remember real objects. */
 	else if (o_ptr->k_idx)
 	{
