@@ -5250,13 +5250,12 @@ void generate_cave(void)
 	get_mon_num_prep(NULL, 0);
 
 
-	/* Nothing special here yet (if setting this to TRUE doesn't stop the
-	 * loop instantly, it never will do, so don't reset it later). */
-	if (!preserve_mode) good_item_flag = FALSE;
-
 	/* Generate */
 	for (num = 0, why = ""; why && num < 100; num++)
 	{
+		/* Nothing special here yet. */
+		good_item_flag = FALSE;
+
 		/* Message if "good" test fails noisily. */
 		if (why && *why) msg_format("Generation restarted (%s)", why);
 
