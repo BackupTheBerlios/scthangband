@@ -2699,24 +2699,26 @@ static int get_number_monster(int i)
  */
 static int get_rnd_q_monster(int q_idx)
 {
-	int r_idx,j,tmp;
-
-	tmp = rand_range(1,10);
-	/* first level 6 monster (87), last monster (573) */
-	switch (tmp)
+	int r_idx,j;
+	s16b q_ranges[] =
 	{
-		case 1 : r_idx = rand_range(181,220); break;
-		case 2 : r_idx = rand_range(221,260); break;
-		case 3 : r_idx = rand_range(261,300); break;
-		case 4 : r_idx = rand_range(301,340); break;
-		case 5 : r_idx = rand_range(341,380); break;
-		case 6 : r_idx = rand_range(381,420); break;
-		case 7 : r_idx = rand_range(421,460); break;
-		case 8 : r_idx = rand_range(461,500); break;
-		case 9 : r_idx = rand_range(501,530); break;
-		case 10 : r_idx = rand_range(531,560); break;
-		default : r_idx = rand_range (87,573);
-	}
+		MON_HELLBAT,
+		MON_QUASIT,
+		MON_COLD_VORTEX,
+		MON_HELLBLADE,
+		MON_NEXUS_QUYLTHULG,
+		MON_ACIDIC_CYTOPLASM,
+		MON_TIME_VORTEX,
+		MON_MASTER_LICH,
+		MON_DEMONIC_QUYLTHULG,
+		MON_BAST_GODDESS_OF_CATS,
+		MON_MEPHISTOPHELES_LORD_OF_HELL /* Not eligible for quests. */
+	};
+
+	/* Pick a random monster in one of the above ranges. */
+	r_idx = rand_int(10);
+	r_idx = rand_range(q_ranges[r_idx], q_ranges[r_idx+1]-1);
+
 	/* Don't multipliers to be random guardians */
 	if (r_info[r_idx].flags2 & (RF2_MULTIPLY)) return (0);
 	/* Don't allow duplicate guardians */
@@ -2724,6 +2726,10 @@ static int get_rnd_q_monster(int q_idx)
 	{
 		if (q_list[j].r_idx == r_idx) return (0);
 	}
+
+	/* Paranoia? - Don't allow uncreatable guardians. */
+	if (!r_info[r_idx].rarity)
+
 	return (r_idx);
 }
 
