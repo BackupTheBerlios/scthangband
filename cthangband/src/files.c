@@ -1581,13 +1581,17 @@ static s32b average_ma_damage(void)
 static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
 	object_type **am_ptr)
 {
-	int slot = wield_slot(o_ptr);
+	int slot;
 	object_ctype *j_ptr = get_real_obj(o_ptr);
 
 	/* Is o_ptr equipped? */
 	if (j_ptr == inventory+INVEN_WIELD || j_ptr == inventory+INVEN_BOW)
 	{
 		slot = j_ptr-inventory;
+	}
+	else
+	{
+		slot = wield_slot(o_ptr);
 	}
 
 	/* Set the weapon and ammunition pointers. */
@@ -1713,7 +1717,7 @@ static void weapon_stats_calc(object_ctype *wp_ptr,
 		/* Other VORPAL weapons. */
 		else
 		{
-			(*damage) = dicedam * slay * 19 / 18;
+			(*damage) += dicedam * slay * 19 / 18;
 		}			
 	}
 
