@@ -3010,7 +3010,7 @@ static void do_cmd_knowledge_artifacts(void)
 	{
 	int i, k, z, x, y;
 
-	char base_name[80];
+	C_TNEW(base_name, ONAME_MAX, char);
 
 	/* Allocate the "okay" array */
 	C_TNEW(okay, MAX_A_IDX, bool);
@@ -3123,6 +3123,9 @@ static void do_cmd_knowledge_artifacts(void)
 
 	/* Free the "okay" array */
 	TFREE(okay);
+
+	/* Free the "base_name" string */
+	TFREE(base_name);
 
 	/* Close the file */
 	my_fclose(fff);
