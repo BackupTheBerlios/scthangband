@@ -3894,3 +3894,44 @@ void resize_main_term(void)
 		(*resize_hooks[i])();
 	}
 }
+
+/*
+ * Repeat a specified string (up to) num times into a buffer.
+ */
+static void repeat_string(char *buf, uint max, cptr str, int num)
+{
+	const uint strl = strlen(str);
+
+	/* Avoid silly requests. */
+	if (num <= 0 || !strl) return;
+
+	/* Handle excessive requests. */
+	if (strl*num >= max)
+	{
+		int excess = (max-1) % strl;
+		num = (max-1) / strl;
+
+		/* End with a partial string. */
+		sprintf(buf+num*strl, "%.*s", excess, str);
+	}
+	/* Normal requests are just terminated. */
+	else
+	{
+		/* Simply terminate the string. */
+		buf[num*strl] = '\0';
+	}
+
+	/* Add in the appropriate number of complete strings. */
+	for (; num; num--) strncpy(buf+(num-1)*strl, str, strl);
+}
+
+/*
+ * A vstrnfmt_aux wrapper around repeat_string().
+ */
+void repeat_string_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	cptr str = va_arg(*vp, cptr);
+	int num = va_arg(*vp, int);
+	repeat_string(buf, max, str, num);
+}
+

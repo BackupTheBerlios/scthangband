@@ -1717,74 +1717,28 @@ static void updatebargain(s32b price, s32b minprice)
  */
 static void display_entry(int pos)
 {
-	int			i;
-	object_type		*o_ptr;
-	s32b		x;
-
-	cptr o_name, out_val;
-
-
+	int			i, pricedot = 0;
+	char wt_str[12];
+	char price_str[14];
+	cptr fillstr = (pos % 2) ? " " : ".";
 	int maxwid = 75;
 
 	/* Get the item */
-	o_ptr = &st_ptr->stock[pos];
+	object_type		*o_ptr  = &st_ptr->stock[pos];
+
+	char labelc = (object_aware_p(o_ptr)) ? 'w' : 's';
+	char namec = atchar[tval_to_attr[o_ptr->tval]];
 
 	/* Get the "offset" */
 	i = pos - store_top;
 
-	/* Label it, clear the line --(-- */
-	c_prt((object_aware_p(o_ptr)) ? TERM_WHITE : TERM_SLATE,
-		format("%c) ", I2A(i)), i+6, 0);
-
-
-	/* Describe an item in the home */
-	if (cur_store_type == STORE_HOME)
-	{
-		maxwid = 75;
-
-		/* Leave room for weights, if necessary -DRS- */
-		if (show_weights) maxwid -= 10;
-
-		/* Respect ONAME_MAX. */
-		if (maxwid > ONAME_MAX) maxwid = ONAME_MAX;
-
-		/* Describe the object */
-		o_name = format("%.*v", maxwid, object_desc_f3, o_ptr, TRUE, 3);
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
-
-		/* Show weights */
-		if (show_weights)
-		{
-			/* Only show the weight of an individual item */
-			int wgt = o_ptr->weight;
-			put_str(format("%3d.%d lb", wgt / 10, wgt % 10), i+6, 68);
-		}
-	}
-
 	/* Describe an item (fully) in a store */
-	else
+	if (cur_store_type != STORE_HOME)
 	{
+		s32b x;
+
 		/* Must leave room for the "price" */
-		maxwid = 65;
-
-		/* Leave room for weights, if necessary -DRS- */
-		if (show_weights) maxwid -= 7;
-
-		/* Respect ONAME_MAX. */
-		if (maxwid > ONAME_MAX) maxwid = ONAME_MAX;
-
-		/* Describe the object (fully) */
-		o_name = format("%.*v", maxwid, object_desc_f3, o_ptr, TRUE, 3);
-
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
-
-		/* Show weights */
-		if (show_weights)
-		{
-			/* Only show the weight of an individual item */
-			int wgt = o_ptr->weight;
-			put_str(format("%3d.%d", wgt / 10, wgt % 10), i+6, 61);
-		}
+		maxwid -= 10;
 
 		/* Display a "fixed" cost */
 		if (o_ptr->ident & (IDENT_FIXED))
@@ -1808,17 +1762,51 @@ static void display_entry(int pos)
 		}
 
 		/* Make a string from the price. */
-		out_val = format("%9ld %c", (long)x,
+		sprintf(price_str, "$%c%ld %c", (x > p_ptr->au) ? 's' : 'w', (long)x,
 
 			/* Denote IDENT_FIXED items with a 'F'. */
 			(o_ptr->ident & (IDENT_FIXED)) ? 'F' : ' ');
 
-		/* Choose a colour to make unaffordable items distinctive. */
-		if (x > p_ptr->au) x = TERM_SLATE;
-		else x = TERM_WHITE;
+		pricedot = 13-strlen(price_str);
+	}
+	else
+	/* Describe an item in the home */
+	{
+		price_str[0] = '\0';
+	}
 
-		/* Actually draw the price */
-		c_put_str(x, out_val, i+6, 68);
+	if (show_weights)
+	{
+		int wgt = o_ptr->weight;
+
+		/* Paranoia - prevent overflow. */
+		if (wgt < -9999 || wgt > 9999) wgt = 0;
+
+		sprintf(wt_str, "$w%d.%d lb", wgt/10, wgt%10);
+		maxwid -= strlen(wt_str);
+	}
+	else
+	{
+		wt_str[0] = '\0';
+	}
+
+	Term_erase(0, i+6, 255);
+
+	/* Label it, clear the line --(-- */
+	mc_roff(format("$%c%c) $%c%.*v", labelc, I2A(i), namec, maxwid,
+		object_desc_f3, o_ptr, TRUE, 3));
+
+	if (*wt_str && *price_str) pricedot += 2;
+
+	if (*wt_str || *price_str)
+	{
+		int j[1];
+		Term_locate(&i, j);
+
+		i = maxwid - i + strlen("a) ");
+		
+		mc_roff(format("$D%v%s$D%v%s", repeat_string_f2, fillstr, i, wt_str,
+			repeat_string_f2, fillstr, pricedot, price_str));
 	}
 }
 
