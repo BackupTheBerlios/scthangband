@@ -5084,14 +5084,14 @@ void do_cmd_save_game(bool is_autosave)
  */
 static long total_points(void)
 {
-	u32b i,j,best;
-	best=0;
-	for(i=0;i<MAX_CAVES;i++)
+	int i, max_depth;
+	
+	for (i = max_depth = 0; i < MAX_CAVES; i++)
 	{
-		j=p_ptr->exp + (100 * (p_ptr->max_dlv[i]) + dun_defs[i].offset);
-		if(j > best) best = j;
+		max_depth = MAX(max_depth, p_ptr->max_dlv[i] + dun_defs[i].offset);
 	}
-	return (best);
+
+	return p_ptr->exp + 100*max_depth;
 }
 
 
@@ -5112,6 +5112,7 @@ static void center_string(char *buf, cptr str)
 	/* Mega-Hack */
 	(void)sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
 }
+
 
 
 /*
@@ -5922,13 +5923,13 @@ static void get_details(high_score *the_score)
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score->pts, "%9ld", (long)total_points());
+	sprintf(the_score->pts, "%9ld", MIN(999999999, total_points()));
 
 	/* Save the current gold */
-	sprintf(the_score->gold, "%9lu", (long)p_ptr->au);
+	sprintf(the_score->gold, "%9lu", MIN(999999999, p_ptr->au));
 
 	/* Save the current turn */
-	sprintf(the_score->turns, "%9lu", (long)turn);
+	sprintf(the_score->turns, "%9lu", MIN(999999999, turn));
 
 #ifdef HIGHSCORE_DATE_HACK
 	/* Save the date in a hacked up form (9 chars) */
@@ -5963,6 +5964,69 @@ static void get_details(high_score *the_score)
 }
 
 /*
+ * Dump a record file for a dead character into lib/apex/record.txt or similar.
+ *
+ * Format:
+ * V:version UI:uid Ti:date Sc:score Tu:turns Ki:killed by
+ * Dp:depth Du:dungeon Sx:sex Ra:race Tm:template Na:name
+ */
+static void make_record(high_score *score)
+{
+	time_t ct = time(NULL);
+	FILE *fp;
+	char str[1024];
+	path_build(str, 1024, ANGBAND_DIR_APEX, "record.txt");
+	cptr dun_str;
+	int dun;
+
+	fp = my_fopen(str, "a");
+
+	/* Silently give up for now. */
+	if (!fp)
+	{
+		return;
+	}
+
+	/*  */
+	if (ct == -1)
+	{
+		strcpy(str, "(time)");
+	}
+	else
+	{
+		strftime(str, 1024, "%-d %b %Y %H:%M:%S", localtime(&ct));
+	}
+
+	dun = wild_grid[wildy][wildx].dungeon;
+	if (dun < MAX_CAVES)
+	{
+		dun_str = dun_defs[dun].shortname;
+	}
+	else
+	{
+		dun_str = "Wilderness";
+	}
+
+	/* Dump everything, trimming any leading spaces first. */
+
+#define TRIM(X) (X+strspn(X, " "))
+
+	fprintf(fp, "V:%s ", TRIM(score->what));
+	fprintf(fp, "UI:%s ", TRIM(score->uid));
+	fprintf(fp, "Ti:%s ", str);
+	fprintf(fp, "Sc:%s ", TRIM(score->pts));
+	fprintf(fp, "Tu:%s ", TRIM(score->turns));
+	fprintf(fp, "Ki:%s ", TRIM(score->how));
+	fprintf(fp, "Dp:%s ", TRIM(score->cur_dun));
+	fprintf(fp, "Du:%s ", dun_str);
+	fprintf(fp, "Sx:%s ", sex_info[p_ptr->psex].title);
+	fprintf(fp, "Ra:%s ", race_info[p_ptr->prace].title);
+	fprintf(fp, "Tm:%s ", template_info[p_ptr->ptemplate].title);
+	fprintf(fp, "Na:%s\n", TRIM(score->who));
+	my_fclose(fp);
+}
+
+/*
  * Enters a players name on a hi-score table, if "legal", and in any
  * case, displays some relevant portion of the high score list.
  *
@@ -5976,6 +6040,15 @@ static errr top_twenty(void)
 
 	/* Clear screen */
 	Term_clear();
+
+	/* Clear the record */
+	WIPE(&the_score, high_score);
+
+	/* Create a new record */
+	get_details(&the_score);
+
+	/* Make a record entry. */
+	make_record(&the_score);
 
 	/* No score file */
 	if (highscore_fd < 0)
@@ -6029,17 +6102,6 @@ static errr top_twenty(void)
 		return (0);
 	}
 
-
-	/* Clear the record */
-	WIPE(&the_score, high_score);
-
-	/* Create a new record */
-	get_details(&the_score);
-
-	/* Ensure everything fits */
-	the_score.pts[9] = '\0';
-	the_score.gold[9] = '\0';
-	the_score.turns[9] = '\0';
 
 	/* Lock (for writing) the highscore file, or fail */
 	if (fd_lock(highscore_fd, F_WRLCK)) return (1);
@@ -6115,6 +6177,8 @@ static errr predict_score(void)
 	/* Success */
 	return (0);
 }
+
+
 
 
 

@@ -2140,7 +2140,7 @@ extern owner_type owners[MAX_STORES_TOTAL][MAX_OWNERS] ;
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(TABLES_C))
 extern u16b extract_energy[200] ;
 #endif
-#if (defined(BIRTH_C) || defined(LOAD_C) || defined(TABLES_C))
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(TABLES_C))
 extern player_sex sex_info[MAX_SEXES] ;
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(FILES_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(STORE_C) || defined(TABLES_C))
