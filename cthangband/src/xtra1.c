@@ -3680,7 +3680,7 @@ static bool PURE object_skill_fail(void)
 	if (object_skill_count > (int)N_ELEMENTS(object_skill_table)) return FALSE;
 
 	/* Use the table above. */
-	return percent(object_skill_table[object_skill_count++]);
+	return !percent(object_skill_table[object_skill_count++]);
 }
 
 /* Test whether a skill can be tested on the current level */
