@@ -16,6 +16,9 @@ One important point on which sCthangband differs from most similar games is the 
 
 You can read further instructions from the *****help.hlp*[main menu], which can normally be accessed by pressing ? when the game is waiting for a command. This file can be accessed by pressing ?, then a.
 
+You may like to do so even if you think you know what will be there. Some things
+have changed...
+
 If you do not wish to see this file again, you may prevent it from being shown at the start of the game by pressing =, then 1, then Return until the "beginner_help" is shown and then N.
 
 One final warning - there are some powerful monsters out there which are hazardous to look at, and some which can even call on others to avenge themselves from beyond the grave. So beware!

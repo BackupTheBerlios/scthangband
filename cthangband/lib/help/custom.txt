@@ -53,8 +53,8 @@ Keeps the player's character in the center of the screen, and moves the dungeon 
 $GScroll until detection reaches the edge [scroll_edge] (1.0.4)
 This only has an effect if the main window is larger than the default size, so that the visible area is larger than the detection area. If set, the map moves until the player's detection area includes the corner. If unset, the map stops moving when the visible area includes the corner.
 
-%%%%% <allow_fake_colour> (_CVS_)
-$GUse special monochrome display for emphasis [allow_fake_colour]
+%%%%% <allow_fake_colour>
+$GUse special monochrome display for emphasis [allow_fake_colour] (1.0.13)
 This causes the screen to turn monochrome if one of a small number of special things happen.
 
 %%%%%

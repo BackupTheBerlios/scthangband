@@ -5,7 +5,7 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
-sCthangband _CVS_
+sCthangband 1.0.13
 * Monsters do not recover from fear if they have too few HP to survive one of
   your past attacks on them.
 * Monsters will not paralyse a paralysed character, and damaging attacks may
