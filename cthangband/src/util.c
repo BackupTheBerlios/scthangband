@@ -1944,12 +1944,6 @@ char inkey(void)
 			break;
 		}
 
-		/* Update window if they have changed again. */
-		if (p_ptr->window & WINDOW_STUFF_MASK & ~PW_RETURN)
-		{
-			window_stuff();
-		}
-	
 
 		/* Hack -- Flush output once when no key ready */
 		if (!done && (0 != Term_inkey(&kk, FALSE, FALSE)))

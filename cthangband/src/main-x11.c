@@ -1593,6 +1593,67 @@ static void square_to_pixel(int * const x, int * const y,
 	(*y) = oy * Infofnt->hgt + Infowin->oy;
 }
 
+#include "X11/Xatom.h"
+
+/*
+ * Process the contents of the PRIMARY buffer as a macro.
+ */
+static void paste_x11(Time time)
+{
+	Atom target = XInternAtom(Metadpy->dpy, "ANG_PASTE", False);
+	Atom property = XInternAtom(Metadpy->dpy, "TEXT", False);
+	XEvent event[1];
+	XSelectionRequestEvent *ptr = &(event->xselectionrequest);
+
+	ptr->owner = XGetSelectionOwner(Metadpy->dpy, XA_PRIMARY);
+
+	if (ptr->owner == None)
+	{
+		/* No selection. */
+		bell("No selection found.");
+		return;
+	}
+
+	ptr->type = SelectionRequest;
+	/* ptr->serial, ptr->send_event */
+	ptr->display = Metadpy->dpy;
+	ptr->requestor = Metadpy->root;
+	ptr->selection = XA_PRIMARY;
+	ptr->target = target;
+	ptr->property = property;
+	ptr->time = time;
+
+	/* Send the SelectionRequest event. */
+
+	/* XSendEvent(Metadpy->dpy, owner, "propagate", "event_mask", &event); */
+	XSendEvent(Metadpy->dpy, ptr->owner, False, NoEventMask, event);
+	
+}
+
+#if 0 /* Do I want to own it, or request it? */
+static void paste_x11(Time time)
+{
+/*	XSetSelectionOwner(Display *display, Atom selection, Window owner, Time time) */
+	XSetSelectionOwner(Metadpy->dpy, XA_PRIMARY, Metadpy->root, time);
+
+	/* Didn't obtain the selection. */
+	if (XGetSelectionOwner(Metadpy->dpy, XA_PRIMARY) != Metadpy->root) return;
+
+	puts("Pasting");
+
+/*	XConvertSelection(Display *display, Atom selection, Atom target, Atom property, Window requestor, Time time); */
+/*	XConvertSelection(Metadpy->dpy, XA_PRIMARY, Atom target, Atom property, Window requestor, Time time); */
+	XConvertSelection(Metadpy->dpy, XA_PRIMARY, target, property, Metadpy->root, time);
+}
+#endif
+
+/*
+ * Handle various events conditional on presses of a mouse button.
+ */
+static void handle_button(Time time, int UNUSED x, int UNUSED y, int button, bool press)
+{
+	if (press && button == 2) paste_x11(time);
+}
 
 /*
  * Process events
@@ -1668,6 +1729,7 @@ static errr CheckEvent(bool wait)
 			else z = 0;
 
 			/* XXX Handle */
+			handle_button(xev->xbutton.time, x, y, z, xev->type == ButtonPress);
 
 			break;
 		}
@@ -1695,6 +1757,13 @@ static errr CheckEvent(bool wait)
 
 			highlight_square(window, y, x);
 
+			/* XXX Handle */
+
+			break;
+		}
+
+		case SelectionNotify:
+		{
 			/* XXX Handle */
 
 			break;
@@ -2177,7 +2246,7 @@ static errr term_data_init(term_data *td, int i)
 
 	/* Ask for certain events */
 	Infowin_set_mask(ExposureMask | StructureNotifyMask | KeyPressMask |
-		PointerMotionMask);
+		PointerMotionMask | ButtonPressMask | ButtonReleaseMask);
 
 	/* Set the window name */
 	Infowin_set_name(name);
