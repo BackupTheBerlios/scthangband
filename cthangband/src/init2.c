@@ -1267,8 +1267,7 @@ static void check_arrays(void)
  */
 static void note(cptr str)
 {
-	Term_erase(0, 23, 255);
-	Term_putstr(20, 23, -1, TERM_WHITE, str);
+	mc_put_fmt(23, 0, "%20s%s%v", "", str, clear_f0);
 	Term_fresh();
 }
 

@@ -271,7 +271,7 @@ void do_cmd_messages(void)
 					int len = strlen(shower);
 
 					/* Display the match */
-					Term_putstr(str-msg, max+1-j, len, TERM_YELLOW, shower);
+					mc_put_fmt(max+1-j, str-msg, "$y%.*s", len, shower);
 
 					/* Advance */
 					str += len;
@@ -3527,30 +3527,25 @@ static void do_cmd_colors(void)
 				for (i = 0; i < 16; i++)
 				{
 					/* Exhibit this color */
-					Term_putstr(i*4, 20, -1, (byte)a, "###");
+					mc_put_fmt(20, i*4, "$%c###", atchar[a]);
 
 					/* Exhibit all colors */
-					Term_putstr(i*4, 22, -1, (byte)i, format("%3d", i));
+					mc_put_fmt(22, i*4, "$%c%3d", atchar[i], i);
 				}
 
 				/* Describe the color */
 				name = ((a < 16) ? color_names[a] : "undefined");
 
 				/* Describe the color */
-				Term_putstr(5, 10, -1, TERM_WHITE,
-							format("Color = %d, Name = %s", a, name));
+				mc_put_fmt(10, 5, "Colour = %d, Name = %s", a, name);
 
 				/* Label the Current values */
-				Term_putstr(5, 12, -1, TERM_WHITE,
-							format("K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
-									angband_color_table[a][0],
-									angband_color_table[a][1],
-									angband_color_table[a][2],
-									angband_color_table[a][3]));
+				mc_put_fmt(12, 5, "K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
+					angband_color_table[a][0], angband_color_table[a][1],
+					angband_color_table[a][2], angband_color_table[a][3]);
 
 				/* Prompt */
-				Term_putstr(0, 14, -1, TERM_WHITE,
-							"Command (n/N/k/K/r/R/g/G/b/B): ");
+				mc_put_fmt(14, 0, "Command (n/N/k/K/r/R/g/G/b/B): ");
 
 				/* Get a command */
 				i = inkey();
@@ -4792,9 +4787,7 @@ void shops_display(int town)
 	town_type *t_ptr = &town_defs[town];
 
 	clear_from(0);
-	Term_putstr(0,0, Term->wid, TERM_WHITE,
-		format("List of shops in %s",
-			dun_name+dun_defs[town].shortname));
+	mc_put_fmt(0, 0, "List of shops in %s", dun_name+dun_defs[town].shortname);
 
 	for (i = 0, j = 1; i < t_ptr->numstores; i++)
 	{
@@ -4806,7 +4799,7 @@ void shops_display(int town)
 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
 
 		/* Display the name of the store. */
-		Term_putstr(0, ++j, Term->wid, TERM_WHITE, store_title(i+offset));
+		mc_put_fmt(j++, 0, "%s", store_title(i+offset));
 
 		/* Put the character used at the top. */
 		Term_putch(0, j, f_ptr->x_attr, f_ptr->x_char);

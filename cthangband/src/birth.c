@@ -879,7 +879,7 @@ static errr save_stats(void)
 	/* Grab priv's */
 	safe_setuid_grab();
 
-	Term_putstr(2,0,-1,TERM_GREEN,"Stats saved.");
+	mc_put_fmt(0, 2, "$gStats saved.");
 
 
 	/* Success */
@@ -924,19 +924,18 @@ static void display_player_birth(int points, bool details, bool rolled)
 	clear_from(23);
 	sprintf(modpts,"%d",points);
 
-	Term_putstr(73,2,-1,TERM_WHITE,"<-S/s->");
-	Term_putstr(73,3,-1,TERM_WHITE,"<-I/i->");
-	Term_putstr(73,4,-1,TERM_WHITE,"<-W/w->");
-	Term_putstr(73,5,-1,TERM_WHITE,"<-D/d->");
-	Term_putstr(73,6,-1,TERM_WHITE,"<-C/c->");
-	Term_putstr(73,7,-1,TERM_WHITE,"<-H/h->");
+	mc_put_fmt(2, 73, "<-S/s->");
+	mc_put_fmt(3, 73, "<-I/s->");
+	mc_put_fmt(4, 73, "<-W/s->");
+	mc_put_fmt(5, 73, "<-D/s->");
+	mc_put_fmt(6, 73, "<-C/s->");
+	mc_put_fmt(7, 73, "<-H/s->");
 
 	/* These should be the same as in display_player_misc_info() */
-	Term_putstr(1,2,-1,TERM_WHITE,"<N>Name");
-	Term_putstr(1,3,-1,TERM_WHITE,"<G>Sex"); /* Sigh... */
-	Term_putstr(1,4,-1,TERM_WHITE,"<R>Race");
-	Term_putstr(1,5,-1,TERM_WHITE,"<T>Template");
-
+	mc_put_fmt(2, 1, "<N>Name");
+	mc_put_fmt(3, 1, "<G>Sex"); /* Sigh... */
+	mc_put_fmt(4, 1, "<R>Race");
+	mc_put_fmt(5, 1, "<T>Template");
 
 	/* Start the first string. */
 	Term_putch(2, 21, TERM_WHITE, b1);

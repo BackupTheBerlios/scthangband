@@ -2372,10 +2372,8 @@ void message_add(cptr str)
  */
 static void msg_flush(int x)
 {
-	byte a = TERM_L_BLUE;
-
 	/* Pause for response */
-	Term_putstr(x, 0, -1, a, MORE_STR);
+	mc_put_fmt(0, x, "$B" MORE_STR);
 
 	/* Get an acceptable keypress */
 	while (!auto_more)
@@ -2498,7 +2496,7 @@ void msg_print(cptr msg)
 		t[split] = '\0';
 
 		/* Display part of the message */
-		Term_putstr(0, 0, split, TERM_WHITE, t);
+		mc_put_fmt(0, 0, "$!%.*s", split, t);
 
 		/* Flush it */
 		msg_flush(split + 1);
@@ -2518,7 +2516,7 @@ void msg_print(cptr msg)
 
 
 	/* Display the tail of the message */
-	Term_putstr(p, 0, n, TERM_WHITE, t);
+	mc_put_fmt(0, p, "$!%s", t);
 
 	/* Memorize the tail */
 	/* if (character_generated) message_add(t); */
@@ -2576,7 +2574,7 @@ void c_put_str(byte attr, cptr str, int row, int col)
 void put_str(cptr str, int row, int col)
 {
 	/* Spawn */
-	Term_putstr(col, row, -1, TERM_WHITE, str);
+	c_put_str(TERM_WHITE, str, row, col);
 }
 
 
@@ -2916,8 +2914,7 @@ bool askfor_aux(char *buf, int len)
 
 
 	/* Display the default answer */
-	Term_erase(x, y, len);
-	Term_putstr(x, y, -1, TERM_YELLOW, buf);
+	mc_put_fmt(y, x, "$y$!%*s", len, buf);
 
 	/* Reset edit_mode to ensure that each prompt is the same. */
 	if (!macro_edit) edit_mode = FALSE;
@@ -3033,8 +3030,7 @@ bool askfor_aux(char *buf, int len)
 		buf[k] = '\0';
 
 		/* Update the entry */
-		Term_erase(x, y, len);
-		Term_putstr(x, y, -1, TERM_WHITE, buf);
+		mc_put_fmt(y, x, "$!%*s", len, buf);
 	}
 
 	/* Remove help. */

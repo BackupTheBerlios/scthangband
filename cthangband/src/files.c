@@ -2895,8 +2895,7 @@ static void display_player_ben(void)
 		/* Scan rows */
 		for (y = 0; y < 16; y++)
 		{
-			byte a = TERM_SLATE;
-			char c = '.';
+			cptr str = "$s.";
 
 			cptr name = object_flag_names[16*x+y];
 
@@ -2904,20 +2903,16 @@ static void display_player_ben(void)
 			if (!name) continue;
 
 			/* Dump name */
-			Term_putstr(x * 13, y + 4, -1, TERM_WHITE, name);
-
-			/* Dump colon */
-			Term_putch(x * 13 + 10, y + 4, TERM_WHITE, ':');
+			mc_put_fmt(y + 4, x * 13, "%10s:", name);
 
 			/* Check flag */
 			if (b & (1<<y))
 			{
-				a = TERM_WHITE;
-				c = '+';
+				str = "+";
 			}
 
 			/* Dump flag */
-			Term_putch(x * 13 + 11, y + 4, a, c);
+			mc_put_fmt(y+4, x * 13 + 11, str);
 		}
 	}
 }
@@ -2981,7 +2976,7 @@ static void display_player_ben_one(int mode)
 		mc_put_fmt(2, x * 26 + 11, "%v", equippy_f0);
 
 		/* Label */
-		Term_putstr(x * 26 + 11, 3, -1, TERM_WHITE, "abcdefghijkl@");
+		mc_put_fmt(3, x * 26 + 11, "abcdefghijkl@");
 
 		/* Scan rows */
 		for (y = 0; y < 16; y++)
@@ -2992,26 +2987,21 @@ static void display_player_ben_one(int mode)
 			if (!name) continue;
 
 			/* Dump name */
-			Term_putstr(x * 26, y + 4, -1, TERM_WHITE, name);
-
-			/* Dump colon */
-			Term_putch(x * 26 + 10, y + 4, TERM_WHITE, ':');
+			mc_put_fmt(y+4, x * 26, "%10s:", name);
 
 			/* Check flags */
 			for (n = 0; n < 13; n++)
 			{
-				byte a = TERM_SLATE;
-				char c = '.';
+				cptr str = "$s.";
 
 				/* Check flag */
 				if (b[n][3*mode+x] & (1<<y))
 				{
-					a = TERM_WHITE;
-					c = '+';
+					str = "+";
 				}
 
 				/* Dump flag */
-				Term_putch(x * 26 + 11 + n, y + 4, a, c);
+				mc_put_fmt(y+4, x*26+11+n, str);
 			}
 		}
 	}
@@ -6375,7 +6365,7 @@ static void handle_signal_simple(int sig)
 		Term_erase(0, 0, 255);
 
 		/* Display the cause */
-		Term_putstr(0, 0, -1, TERM_WHITE, "Contemplating suicide!");
+		mc_put_fmt(0, 0, "Contemplating suicide!");
 
 		/* Flush */
 		Term_fresh();
@@ -6410,11 +6400,10 @@ static void handle_signal_abort(int sig)
 	Term_erase(0, 23, 255);
 
 	/* Give a warning */
-	Term_putstr(0, 23, -1, TERM_RED,
-				"A gruesome software bug LEAPS out at you!");
+	mc_put_fmt(23, 0, "$rA gruesome software bug LEAPS out at you!");
 
 	/* Message */
-	Term_putstr(45, 23, -1, TERM_RED, "Panic save...");
+	mc_put_fmt(23, 45, "$rPanic save...");
 
 	/* Flush output */
 	Term_fresh();
@@ -6428,13 +6417,13 @@ static void handle_signal_abort(int sig)
 	/* Attempt to save */
 	if (save_player(FALSE))
 	{
-		Term_putstr(45, 23, -1, TERM_RED, "Panic save succeeded!");
+		mc_put_fmt(23, 45, "$rPanic save succeeded!");
 	}
 
 	/* Save failed */
 	else
 	{
-		Term_putstr(45, 23, -1, TERM_RED, "Panic save failed!");
+		mc_put_fmt(23, 45, "$rPanic save failed!");
 	}
 
 	/* Flush output */
