@@ -4820,4 +4820,3 @@ extern cptr string_make(cptr str);
 extern errr string_free(cptr str);
 #endif
 #endif
- 

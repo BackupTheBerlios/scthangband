@@ -3287,14 +3287,16 @@ static int identify_fully_get(object_type *o_ptr, cptr *info, bool *info_a)
 		/* Describe blows per turn. */
 		switch (wield_slot(o_ptr))
 		{
-			case INVEN_WIELD: info[i] = "blows"; break;
-			case INVEN_BOW: info[i] = "shots"; break;
-			default: info[i] = 0;
+			case INVEN_WIELD: *board = "blows"; break;
+			case INVEN_BOW: *board = "shots"; break;
+			default: *board = 0;
 		}
-		if (info[i])
+		if (*board)
 		{
 			info_a[i] = TRUE;
-			info[i++] = string_make(format("It gives you %d,%d %s per turn", weap_blow/60, weap_blow%60));
+			info[i++] = string_make(format(
+				"It gives you %d,%d %s per turn", weap_blow/60,
+				weap_blow%60, *board));
 		}
 	}
 	/* Without spoil_dam, simply list the slays. */
