@@ -5423,46 +5423,6 @@ static void show_info(void)
 
 
 
-/*
- * Semi-Portable High Score List Entry (128 bytes) -- BEN
- *
- * All fields listed below are null terminated ascii strings.
- *
- * In addition, the "number" fields are right justified, and
- * space padded, to the full available length (minus the "null").
- *
- * Note that "string comparisons" are thus valid on "pts".
- */
-
-typedef struct high_score high_score;
-
-struct high_score
-{
-	char what[8];		/* Version info (string) */
-
-	char pts[10];		/* Total Score (number) */
-
-	char gold[10];		/* Total Gold (number) */
-
-	char turns[10];		/* Turns Taken (number) */
-
-	char day[10];		/* Time stamp (string) */
-
-	char who[16];		/* Player Name (string) */
-
-	char uid[8];		/* Player UID (number) */
-
-	char sex[2];		/* Player Sex (string) */
-	char p_r[3];		/* Player Race (number) */
-	char p_c[3];		/* Player Template (number) */
-
-	char cur_lev[4];		/* Current Player Level (number) */
-	char cur_dun[4];		/* Current Dungeon Level (number) */
-	char max_lev[4];		/* Max Player Level (number) */
-	char max_dun[4];		/* Max Dungeon Level (number) */
-
-	char how[32];		/* Method of death (string) */
-};
 
 
 
@@ -5584,7 +5544,7 @@ static int highscore_add(high_score *score)
  *
  * Mega-Hack -- allow "fake" entry at the given position.
  */
-static void display_scores_aux(int from, int to, int note, high_score *score)
+void display_scores_aux(int from, int to, int note, high_score *score)
 {
 	int		i, j, k, n, attr, place;
 	int psc;
@@ -6138,7 +6098,7 @@ static errr top_twenty(void)
 /*
  * Predict the players location, and display it.
  */
-static errr predict_score(void)
+errr predict_score(void)
 {
 	int		  j;
 

@@ -54,7 +54,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 
 	cptr p = "spell";
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      /* Get the spell, if available */
      if (repeat_pull(sn)) {
@@ -229,7 +229,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 	/* Save the choice */
 	(*sn) = spell;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
  	repeat_push(*sn);
  
@@ -334,7 +334,7 @@ int get_cantrip(int *sn, int sval)
 
 	char		out_val[160];
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      /* Get the spell, if available */
      if (repeat_pull(sn)) {
@@ -509,7 +509,7 @@ int get_cantrip(int *sn, int sval)
 	/* Save the choice */
 	(*sn) = spell;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
  	repeat_push(*sn);
  
@@ -603,7 +603,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 	char		out_val[160];
 
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      /* Get the spell, if available */
      if (repeat_pull(sn)) {
@@ -778,7 +778,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 	/* Save the choice */
 	(*sn) = spell;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
  	repeat_push(*sn);
  
@@ -914,7 +914,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	char		out_val[160];
 	int valid_spirits[MAX_SPIRITS],total;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      /* Get the spirit, if available */
      if (repeat_pull(sn)) {
@@ -1066,7 +1066,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	/* Save the choice */
 	(*sn) = i;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
  	repeat_push(*sn);
  
@@ -4261,7 +4261,7 @@ static int get_mindcraft_power(int *sn)
 	/* Assume cancelled */
 	*sn = (-1);
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      /* Get the spell, if available */
      if (repeat_pull(sn)) {
@@ -4391,7 +4391,7 @@ static int get_mindcraft_power(int *sn)
 	/* Save the choice */
 	(*sn) = i;
  
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      repeat_push(*sn);
  

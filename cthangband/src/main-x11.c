@@ -1,5 +1,5 @@
-#define MAIN_X11_C
 #define DELAY_EXTERNS_H
+#define MAIN_X11_C
 /* File: main-x11.c */
 
 /*

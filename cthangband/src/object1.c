@@ -4804,7 +4804,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	int term = 0;
 	void (*old_resize_hook)(void);
 
-#ifdef ALLOW_REPEAT /* TNB */
+#ifdef ALLOW_REPEAT
      
      /* Get the item index */
      if (repeat_pull(cp)) {
@@ -5431,7 +5431,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Clear the prompt line */
 	prt("", 0, 0);
  
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      if (item) repeat_push(*cp);
      

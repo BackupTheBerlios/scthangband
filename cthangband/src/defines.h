@@ -39,6 +39,7 @@
 
 /* <<VERSION STAMP>> */
 #define GAME_NAME	"sCthangband"
+#define VERSION_NAME	GAME_NAME
 #define VERSION_MAJOR   1
 #define VERSION_MINOR   0
 #define VERSION_PATCH   3
@@ -68,12 +69,14 @@
  * probably hard-coded to SCREEN_HGT * 3.
  */
 #define MAX_HGT         66
+#define DUNGEON_HGT		MAX_HGT
 
 /*
  * Maximum dungeon width in grids, must be a multiple of SCREEN_WID,
  * probably hard-coded to SCREEN_WID * 3.
  */
 #define MAX_WID         198
+#define DUNGEON_WID		MAX_WID
 
 
 /*
@@ -3348,3 +3351,8 @@ extern int PlayerUID;
  * it isn't parsed by the function which called it (or, hopefully by keymaps).
  */
 #define RESIZE_INKEY_KEY	28
+
+/* Clear the top line of the screen. */
+#define message_flush() msg_print(NULL)
+#define screen_save() Term_save()
+#define screen_load() Term_load()

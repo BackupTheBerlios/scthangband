@@ -1,3 +1,4 @@
+#define DELAY_EXTERNS_H
 #define MAIN_MAC_C
 /* File: main-mac.c */
 
@@ -202,6 +203,7 @@
 
 #endif
 
+#include "externs.h"
 
 #ifdef ANGBAND_LITE_MAC
 

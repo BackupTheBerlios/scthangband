@@ -15,7 +15,7 @@
 
 static int chest_check(int y, int x);
 
- #if defined(ALLOW_EASY_OPEN) || defined(ALLOW_EASY_DISARM) /* TNB */
+ #if defined(ALLOW_EASY_OPEN) || defined(ALLOW_EASY_DISARM)
  
  /*
   * Return the number of features around (or under) the character.
@@ -732,7 +732,7 @@ void do_cmd_open(void)
 
 	bool more = FALSE;
 
- #ifdef ALLOW_EASY_OPEN /* TNB */
+ #ifdef ALLOW_EASY_OPEN
  
  	/* Option: Pick a direction */
  	if (easy_open) {
@@ -881,7 +881,7 @@ void do_cmd_close(void)
 
 	bool		more = FALSE;
 
- #ifdef ALLOW_EASY_OPEN /* TNB */
+ #ifdef ALLOW_EASY_OPEN
  
  	/* Option: Pick a direction */
  	if (easy_open) {
@@ -1217,7 +1217,7 @@ void do_cmd_tunnel(void)
 	if (!more) disturb(0, 0);
 }
 
- #ifdef ALLOW_EASY_OPEN /* TNB */
+ #ifdef ALLOW_EASY_OPEN
  
  /*
   * easy_open_door --
@@ -1411,7 +1411,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
  *
  * Returns TRUE if repeated commands may continue
  */
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
 bool do_cmd_disarm_aux(int y, int x, int dir)
  
@@ -1472,7 +1472,7 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
 		/* Remove the trap */
 		cave_set_feat(y, x, FEAT_FLOOR);
 
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  		/* Move the player onto the trap */
  		move_player(dir, easy_disarm);
@@ -1504,7 +1504,7 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
 		/* Message */
 		msg_format("You set off the %s!", name);
 
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  		/* Move the player onto the trap */
  		move_player(dir, easy_disarm);
@@ -1535,7 +1535,7 @@ void do_cmd_disarm(void)
 
 	bool more = FALSE;
 
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  	/* Option: Pick a direction */
  	if (easy_disarm) {

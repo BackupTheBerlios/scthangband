@@ -915,11 +915,11 @@ bool mystic_notify_aux;
 /* Hack, violet uniques */
 byte violet_uniques = 1;
 
- #ifdef ALLOW_EASY_OPEN /* TNB */
+ #ifdef ALLOW_EASY_OPEN
  bool easy_open = TRUE;
  #endif /* ALLOW_EASY_OPEN -- TNB */
  
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  bool easy_disarm = TRUE;
  #endif /* ALLOW_EASY_DISARM -- TNB */
 

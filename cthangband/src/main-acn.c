@@ -1,3 +1,4 @@
+#define DELAY_EXTERNS_H
 #define MAIN_ACN_C
 /* File: main-acn.c */
 
@@ -56,6 +57,8 @@ typedef unsigned int bits;
 #include "quit.h"
 #include "proginfo.h"
 #include "actionbutton.h"
+
+#include "externs.h"
 
 /* Header for eventlib (using OSLib types) */
 typedef int event_wimp_handler(wimp_event_no event_code,

@@ -481,9 +481,6 @@ struct NewMenu window_menu[] =
 /* Menu array */
 static struct NewMenu newmenu[ MENUMAX ];
 
-extern void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp);
-extern void center_string( char *buf, cptr str );
-
 static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp );
 
 static int load_backpic ( term_data *t, char *name );

@@ -685,11 +685,11 @@ static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
  * "x_ptr->xxx", is quicker than "x_info[x].xxx", if this is incorrect
  * then a whole lot of code should be changed...  XXX XXX
  */
+void map_info(int y, int x, byte *ap, char *cp,
 #ifdef USE_TRANSPARENCY
-static void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
-#else /* USE_TRANSPARENCY */
-static void map_info(int y, int x, byte *ap, char *cp)
+	byte *tap, char *tcp
 #endif /* USE_TRANSPARENCY */
+	)
 {
 	cave_type *c_ptr;
 

@@ -3296,12 +3296,12 @@ option_type option_info[] =
 	{ &smart_cheat,                 FALSE, OPTS_MON,      1, 16,
 	"smart_cheat",                  "Monsters exploit players weaknesses" },
 
- #ifdef ALLOW_EASY_OPEN /* TNB */
+ #ifdef ALLOW_EASY_OPEN
  	{ &easy_open,                   TRUE, OPTS_MISC,      1, 17,
  	"easy_open",                    "Open and close automatically" },
  #endif /* ALLOW_EASY_OPEN -- TNB */
  
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
 	{ &easy_disarm,                 TRUE, OPTS_MISC,      1, 18,
  	"easy_disarm",                  "Disarm traps automatically" },
  #endif /* ALLOW_EASY_DISARM -- TNB */

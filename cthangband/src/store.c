@@ -2122,7 +2122,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 
 	char	out_val[160];
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
      
      /* Get the item index */
      if (repeat_pull(com_val)) {
@@ -2176,7 +2176,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 	/* Cancel */
 	if (command == ESCAPE) return (FALSE);
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
  	repeat_push(*com_val);
      
@@ -3662,7 +3662,7 @@ static void store_process_command(void)
 
 	const int items = term_screen->hgt-12;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      /* Handle repeating the last command */
      repeat_check();
@@ -4453,7 +4453,7 @@ static void display_store_extra(void)
 /*
  * Handle the resizing of the window with a shop display.
  */
-void resize_store(void)
+static void resize_store(void)
 {
 	/* Display the store frame. */
 	display_store();

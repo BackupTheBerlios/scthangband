@@ -3055,7 +3055,7 @@ s16b get_quantity(cptr prompt, int max,bool allbydefault)
 		return (amt);
 	}
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
      
  	/* Get the item index */
  	if ((max != 1) && repeat_pull(&amt)) {
@@ -3106,7 +3106,7 @@ s16b get_quantity(cptr prompt, int max,bool allbydefault)
 	/* Enforce the minimum */
 	if (amt < 0) amt = 0;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      if (amt) repeat_push(amt);
      
@@ -3521,7 +3521,7 @@ int get_keymap_dir(char ch)
 }
  
  
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
  #define REPEAT_MAX		20
  

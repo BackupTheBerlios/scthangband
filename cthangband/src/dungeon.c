@@ -2408,7 +2408,7 @@ static void process_command(void)
 	char track_str[20]="cmd=";
 	cptr t;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      /* Handle repeating the last command */
      repeat_check();
@@ -2572,7 +2572,7 @@ static void process_command(void)
 			/* Move (usually pick up things) */
 		case ';':
 		{
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  			do_cmd_walk(FALSE);
  
@@ -2587,7 +2587,7 @@ static void process_command(void)
 			/* Move (usually do not pick up) */
 		case '-':
 		{
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  			do_cmd_walk(TRUE);
  

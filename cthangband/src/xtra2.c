@@ -4401,7 +4401,7 @@ bool get_aim_dir(int *dp)
 
 	cptr	p;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
  	if (repeat_pull(dp)) {
  	
@@ -4499,7 +4499,7 @@ bool get_aim_dir(int *dp)
 	/* Save direction */
 	(*dp) = dir;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      repeat_push(dir);
  
@@ -4532,7 +4532,7 @@ bool get_rep_dir(int *dp)
 {
 	int dir;
 
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      if (repeat_pull(dp)) {
          return (TRUE);
@@ -4592,7 +4592,7 @@ bool get_rep_dir(int *dp)
 	(*dp) = dir;
 
  
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      repeat_push(dir);
  
@@ -6340,7 +6340,7 @@ bool get_hack_dir(int *dp)
 	/* Save direction */
 	(*dp) = dir;
  
- #ifdef ALLOW_REPEAT /* TNB */
+ #ifdef ALLOW_REPEAT
  
      repeat_push(dir);
  

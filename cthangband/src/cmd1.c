@@ -2015,7 +2015,7 @@ void move_player(int dir, int do_pickup)
 			return;
 		}
 	}
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  	/* Disarm a visible trap */
  	if ((do_pickup != easy_disarm) &&
@@ -2198,7 +2198,7 @@ void move_player(int dir, int do_pickup)
 			/* Closed doors */
 			else if (c_ptr->feat < FEAT_SECRET)
 			{
- #ifdef ALLOW_EASY_OPEN /* TNB */
+ #ifdef ALLOW_EASY_OPEN
  
  				if (easy_open_door(y, x))
 				{
@@ -2262,7 +2262,7 @@ void move_player(int dir, int do_pickup)
 		}
 
 		/* Handle "objects" */
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  		carry(do_pickup != always_pickup);
  
@@ -3083,7 +3083,7 @@ void run_step(int dir)
 	energy_use = extract_energy[p_ptr->pspeed]; 
 
 	/* Move the player, using the "pickup" flag */
- #ifdef ALLOW_EASY_DISARM /* TNB */
+ #ifdef ALLOW_EASY_DISARM
  
  	move_player(find_current, FALSE);
  

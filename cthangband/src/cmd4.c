@@ -1879,7 +1879,11 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, ch
 	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get most of the visuals. */
-	get_visuals(k_info, k_name);
+/*	get_visuals(k_info, k_name);*/
+	(*da) = k_info[i].d_attr;
+	(*dc) = k_info[i].d_char;
+	(*xa) = &(k_info[i].x_attr);
+	(*xc) = &(k_info[i].x_char);
 
 	/* Create the object */
 	object_type forge;
@@ -1920,7 +1924,11 @@ static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa
 	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Get most of the visuals. */
-	get_visuals(u_info, u_name);
+	/* get_visuals(u_info, u_name); */
+	(*da) = u_info[i].d_attr;
+	(*dc) = u_info[i].d_char;
+	(*xa) = &(u_info[i].x_attr);
+	(*xc) = &(u_info[i].x_char);
 
 	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
 	object_kind hack_k, *k_ptr = &k_info[1];

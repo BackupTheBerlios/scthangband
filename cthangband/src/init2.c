@@ -351,8 +351,6 @@ static errr init_info_raw(int fd, header *head)
 
 #ifdef ALLOW_TEMPLATES
 
-#define message_flush() msg_print(NULL)
-
 /*
  * Display a parser error message.
  */
