@@ -4704,6 +4704,7 @@ void display_help_page(cptr str)
 {
 	FILE *fff;
 	link_type *l_ptr;
+	str = format("<%s>", str);
 
 	for (l_ptr = links; l_ptr < links+num_links; l_ptr++)
 	{
