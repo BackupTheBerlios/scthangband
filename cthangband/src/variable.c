@@ -238,6 +238,8 @@ bool speak_unique;		/* Speaking uniques + shopkeepers */
 bool score_quitters_w;
 bool score_quitters; /* Quitting can give a high score */
 #endif /* SCORE_QUITTERS */
+bool chaos_patrons_w;
+bool chaos_patrons; /* Chaos patrons exist in the game. */
 
 /* Option Set 3 -- Game-Play */
 

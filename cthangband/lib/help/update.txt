@@ -6,11 +6,13 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband 1.0.12
-* Find the next instance of a string if a player searches for it twice in a help
-  file.
+* Dodging blows because of martial arts gives experience in the skill.
+* A player who is capable of martial arts gains a +5 AC bonus because of this.
+* Allow chaos patrons to be eliminated with a birth option.
+* Remove the "chaos patron" corruption, as it did nothing.
 * Add a special help file for new users.
-* Display the skills help if the player presses ? when the skills screen is
-  shown.
+* Find the next copy of a string if a player searches for it twice in a file.
+* Pressing ? displays the skills help on the skill display screen.
 * Improve race, template and speed help.
 * Fix the following bugs:
   * The game crashed during initialisation if compiled with BCC.
@@ -18,7 +20,6 @@ sCthangband 1.0.12
   * The martial arts damage calculation was never actually used.
   * The damage claimed for vorpal weapons was too low.
   * Too many messages were given if the player has no room to pick something up.
-  * New birth options weren't copied across correctly.
 
 sCthangband 1.0.11
 * Regain SP and CHI, and become hungry, while resting in a house or inn.

@@ -906,7 +906,8 @@ static void get_random_skills(bool random)
 	skill_set[SKILL_HEDGE].base = skill_set[SKILL_HEDGE].value;
 
 	/* Set hack_chaos_feature now all relevant information is known. */
-	hack_chaos_feature = ((skill_set[SKILL_THAUMATURGY].value > 0) || (p_ptr->prace==RACE_BROO));
+	hack_chaos_feature =
+		((skill_set[SKILL_THAUMATURGY].value > 0) || chaos_race());
 
 }
 

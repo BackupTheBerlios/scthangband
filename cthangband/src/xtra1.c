@@ -4049,28 +4049,27 @@ bool ma_empty_hands(void)
  */
 static void update_skill_maxima(void)
 {
-	int i,chance;
+	player_skill *ptr;
 
 	/* Broo might get a gift as they get better */
-	if ((skill_set[SKILL_RACIAL].value > skill_set[SKILL_RACIAL].max_value) &&
-		(p_ptr->prace == RACE_BROO))
+	ptr = &skill_set[SKILL_RACIAL];
+	if (chaos_race() && (ptr->value > ptr->max_value))
 	{
-		chance = MAX(skill_set[SKILL_RACIAL].value,10);
-		chance = MIN(chance,90);
-		if (rand_int(100) < chance) gain_level_reward(0);
+		int chance = MIN(90, MAX(10, ptr->value));
+		if (chaos_patrons && rand_int(100) < chance) gain_level_reward(0);
 	}
 	/* Anyone with a thaumaturgy skill has been calling out to chaos */
-	if (skill_set[SKILL_THAUMATURGY].value > skill_set[SKILL_THAUMATURGY].max_value)
+	ptr = &skill_set[SKILL_THAUMATURGY];
+	if (ptr->value > ptr->max_value)
 	{
-		chance = MAX(skill_set[SKILL_THAUMATURGY].value,10);
-		chance = MIN(chance,90);
-		if (rand_int(100) < chance) gain_level_reward(0);
+		int chance = MIN(90, MAX(10, ptr->value));
+		if (chaos_patrons && rand_int(100) < chance) gain_level_reward(0);
 	}
 
 	/* Now update all the maxima */
-	for (i=0;i<MAX_SKILLS;i++)
+	for (ptr = skill_set; ptr < skill_set+MAX_SKILLS; ptr++)
 	{
-		if (skill_set[i].value > skill_set[i].max_value) skill_set[i].max_value = skill_set[i].value;
+		if (ptr->value > ptr->max_value) ptr->max_value = ptr->value;
 	}
 }
 

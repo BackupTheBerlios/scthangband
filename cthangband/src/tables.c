@@ -2125,7 +2125,7 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Available Options (full to 3,22 except for 2,24).
+ * Available Options (full to 3,23).
  * In addition, 7,2 7,8-11 and 7,13-15 are used for cheat options, and the
  * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.
  *
@@ -2481,6 +2481,11 @@ option_type option_info[] =
 	"ironman_feeling",	"Level feelings are only given after 2500 turns" },
 
 	{ &ironman_feeling, 0, OPTS_BIRTHR, 3, 18, 0, ""},
+
+	{ &chaos_patrons_w,	TRUE,	OPTS_BIRTH, 3, 23,
+	"chaos_patrons",	"Chaos patrons give your character gifts"},
+
+	{ &chaos_patrons, TRUE, OPTS_BIRTHR, 2, 24, 0, ""},
 
 	{ &spoil_base,			FALSE, OPTS_SPOIL,	2, 31,
 	"spoil_base",			"Gain knowledge of normal items" },

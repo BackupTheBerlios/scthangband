@@ -3956,4 +3956,19 @@ extern vptr ralloc(huge len);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
 #endif
+
+/* variable.c */
+
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool chaos_patrons_w;
+#endif
+#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern bool chaos_patrons;
+#endif
+
+/* xtra2.c */
+
+#if (defined(BIRTH_C) || defined(XTRA1_C) || defined(XTRA2_C))
+extern bool PURE chaos_race(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

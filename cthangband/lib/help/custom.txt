@@ -633,6 +633,10 @@ This option closes all shops except for libraries (which are open as normal).
 $GLevel feelings are only given after 2500 turns [ironman_feeling] (1.0.1)
 This option causes level feelings to be given after 2500 turns on the level instead of giving the feeling immediately. 
 
+%%%%% <chaos_patrons>
+$GChaos patrons give your character gifts [chaos_patrons]
+This option causes chaos patrons to give the character gifts on improving its prowess at thaumaturgy or (for Broo) innate powers. These may not be entirely helpful, however...
+
 %%%%% <option=Q>
 === Squelch options ===
 
