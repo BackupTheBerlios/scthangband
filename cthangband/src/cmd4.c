@@ -3110,30 +3110,6 @@ void do_cmd_save_screen(void)
 
 
 /*
- * A simple function to include a coloured symbol in a text file for
- * show_file().
- */
-static cptr get_symbol_aux(byte a, char c)
-{
- 	cptr atchar="dwsorgbuDWvyRGBU";
-
-	/* Hack - show_file() does not display unprintable characters,
-	 * so replace them with something it will display. */
-	if (!isprint(c)) c = '#';
-
-	return format("[[[[[%c%c]", atchar[a], c);
-}
-
-/*
- * A wrapper to find an appropriate attr/char combination from the *_info
- * array. The isprint() check is necessary as show_file() reacts badly to
- * unprintable characters.
- */
-#define get_symbol(x_ptr) \
-	get_symbol_aux((x_ptr)->x_attr, \
-		isprint((x_ptr)->x_char) ? (x_ptr)->x_char : (x_ptr)->d_char)
-
-/*
  * Check the status of "artifacts"
  */
 void do_cmd_knowledge_artifacts(void)
@@ -3257,8 +3233,7 @@ void do_cmd_knowledge_artifacts(void)
 		}
 
 		/* Hack -- Build the artifact name */
-		fprintf(fff, " %s   The %s\n",
-			get_symbol((&k_info[lookup_kind(a_ptr->tval, a_ptr->sval)])), base_name);
+		fprintf(fff, "     The %s\n", base_name);
 	}
 
 	/* Close the file */
@@ -3285,7 +3260,6 @@ static void do_cmd_knowledge_uniques(void)
 
 	char file_name[1024];
 
-	cptr atchar="dwsorgbuDWvyRGBU";
 
 	/* Temporary file */
 	if (path_temp(file_name, 1024)) return;
@@ -3306,9 +3280,9 @@ static void do_cmd_knowledge_uniques(void)
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
-				fprintf(fff, " %s %c [[[[[%c%s is %s]\n",
-				 get_symbol(r_ptr), (r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ',
-				        (dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE], (r_name + r_ptr->name),
+				fprintf(fff, " %c %c %s is %s\n",
+				 r_ptr->d_char, (r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ',
+				        (r_name + r_ptr->name),
 				        (dead ? "dead" : "alive"));
 			}
 		}
@@ -3452,7 +3426,7 @@ static void do_cmd_knowledge_pets(void)
 			t_levels += r_ptr->level;
 			monster_desc(pet_name, m_ptr, 0x88);
 			strcat(pet_name, "\n");
-			fprintf(fff,"%s %s\n", get_symbol(r_ptr), pet_name);
+			fprintf(fff,"%c %s\n", r_ptr->d_char, pet_name);
 		}
 	}
 
@@ -3507,9 +3481,9 @@ static int count_kills(FILE *fff, bool noisy)
 			full_name(string, This > 1, FALSE, FALSE);
 
 			if (r_ptr->flags1 & (RF1_UNIQUE) && This == 1)
-				fprintf(fff, " %s   %s\n", get_symbol(r_ptr), (r_name + r_ptr->name));
+				fprintf(fff, " %c   %s\n", r_ptr->d_char, (r_name + r_ptr->name));
 			else
-				fprintf(fff, " %s   %d %s\n", get_symbol(r_ptr), This, string);
+				fprintf(fff, " %c   %d %s\n", r_ptr->d_char, This, string);
 		}
 	}
 	return Total;
@@ -3644,7 +3618,7 @@ static void do_cmd_knowledge_deaths(void)
 			full_name(string, plural, article, FALSE);
 
 			/* Format the string, including the monster's ASCII representation. */
-			fprintf(fff, " %s   %d w%s killed by %s\n", get_symbol(r_ptr), r_ptr->r_deaths, (r_ptr->r_deaths == 1) ? "as" : "ere", string);
+			fprintf(fff, " %c   %d w%s killed by %s\n", r_ptr->d_char, r_ptr->r_deaths, (r_ptr->r_deaths == 1) ? "as" : "ere", string);
 
 			/* Count the total. */
 			Deaths+=r_ptr->r_deaths;
@@ -3710,7 +3684,7 @@ static void do_cmd_knowledge_objects(void)
 			object_desc_store(o_name, i_ptr, FALSE, 0);
 
 			/* Print a message */
-			fprintf(fff, " %s   %s\n", get_symbol_aux(object_attr(i_ptr), object_char(i_ptr)), o_name);
+			fprintf(fff, "     %s\n", o_name);
 		}
 	}
 
