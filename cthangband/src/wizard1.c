@@ -221,20 +221,11 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 
 
 /*
- * Create a spoiler file for items
+ * Open a given text file in the user directory for writing.
  */
-static void spoil_obj_desc(cptr fname)
+static FILE *my_fopen_wiz(cptr fname)
 {
-	int i, k, s, t, n = 0;
-
-	u16b who[200];
-
 	char buf[1024];
-	C_TNEW(o_name, ONAME_MAX, char);
-
-	char wgt[80];
-	char dam[80];
-
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
@@ -244,6 +235,27 @@ static void spoil_obj_desc(cptr fname)
 
 	/* Open the file */
 	fff = my_fopen(buf, "w");
+
+	return fff;
+}
+
+/*
+ * Create a spoiler file for items
+ */
+static void spoil_obj_desc(cptr fname)
+{
+	int i, k, s, t, n = 0;
+
+	u16b who[200];
+
+	C_TNEW(o_name, ONAME_MAX, char);
+
+	char wgt[80];
+	char dam[80];
+
+
+	/* Open the file */
+	my_fopen_wiz(fname);
 
 	/* Oops */
 	if (!fff)
@@ -1233,22 +1245,14 @@ static void spoil_artifact(cptr fname)
 	object_type forge;
 	object_type *q_ptr;
 
-	char buf[1024];
-
 	C_TNEW(o_name, ONAME_MAX, char);
 
 	obj_desc_list artifact;
 
 	artifact.description = o_name;
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
 	/* Open the file */
-	fff = my_fopen(buf, "w");
+	my_fopen_wiz(fname);
 
 	/* Oops */
 	if (!fff)
@@ -1314,15 +1318,13 @@ static void spoil_artifact(cptr fname)
 
 
 
-/*
+ /*
  * Create a spoiler file for monsters   -BEN-
  */
 static void spoil_mon_desc(cptr fname)
 {
-	char buf[1024];
-
 	/* Open the file */
-	fff = my_fopen(buf, "w");
+	my_fopen_wiz(fname);
 
 	/* Oops */
 	if (!fff)
@@ -1344,12 +1346,6 @@ static void spoil_mon_desc(cptr fname)
 	char hp[80];
 	char exp[80];
 
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
 
 	/* Dump the header */
 
@@ -1383,15 +1379,15 @@ static void spoil_mon_desc(cptr fname)
 		/* Get the "name" */
 		if (r_ptr->flags1 & (RF1_ALWAYS_GUARD))
 		{
-			sprintf(nam, "[G] %s", name);
+			sprintf(nam, "[G] %.*s", N_ELEMENTS(nam)-strlen("[G] ")-1, name);
 		}
 		else if (r_ptr->flags1 & (RF1_UNIQUE))
 		{
-			sprintf(nam, "[U] %s", name);
+			sprintf(nam, "[U] %.*s", N_ELEMENTS(nam)-strlen("[U] ")-1, name);
 		}
 		else
 		{
-			sprintf(nam, "The %s", name);
+			sprintf(nam, "The %.*s", N_ELEMENTS(nam)-strlen("The ")-1, name);
 		}
 
 
@@ -1555,15 +1551,9 @@ static void spoil_mon_info(cptr fname)
 	cptr vp[64];
 	u32b flags1, flags2, flags3, flags4, flags5, flags6;
 
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
 	/* Open the file */
-	fff = my_fopen(buf, "w");
+	my_fopen_wiz(fname);
+
 
 	/* Oops */
 	if (!fff)
@@ -1618,7 +1608,8 @@ static void spoil_mon_info(cptr fname)
 		}
 
 		/* Name */
-		sprintf(buf, "%s  (", monster_desc_aux(0, r_ptr, 1, 0));;  /* ---)--- */
+		sprintf(buf, "%.*s  (", N_ELEMENTS(buf)-strlen("  (")-1,
+			monster_desc_aux(0, r_ptr, 1, 0));
 		spoil_out(buf);
 
 		/* Color */
