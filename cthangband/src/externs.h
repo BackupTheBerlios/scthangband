@@ -2207,7 +2207,7 @@ extern co_ord screen_coords[NUM_SCREEN_COORDS];
 
 /* util.c */
 
-#if (!(defined(HAS_MEMSET))) && (defined(Z_VIRT_H) || defined(MAIN_AMI_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
+#if (!(defined(HAS_MEMSET))) && (defined(Z_VIRT_H) || defined(CMD4_C) || defined(MAIN_AMI_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
 extern char *memset(char *s, int c, huge n);
 #endif
 #if (!(defined(HAS_STRICMP))) && (defined(H_CONFIG_H) || defined(MAIN_AMI_C) || defined(UTIL_C))

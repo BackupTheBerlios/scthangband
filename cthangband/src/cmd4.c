@@ -803,6 +803,17 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 	}
 }
 
+/*
+ * Add lots of space. This is useful when writing to a line of the screen
+ * which should be cleared.
+ */
+static void clear_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp)
+{
+	if (max > 256) max = 256;
+	memset(buf, ' ', max-1);
+	buf[max-1] = '\0';
+}
+
 #define PRI(window, display) (windows[window].pri[display])
 #define REP(window, display) (windows[window].rep[display])
 
@@ -811,26 +822,18 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
  */
 static void do_cmd_options_win(void)
 {
-	int i, j, d;
-
-	int y = 0;
-	int x = 0;
-
-	char ch;
-
-	bool go = TRUE, second = FALSE;
+	int x, y;
+	bool second;
 
 	/* Clear screen */
 	Term_clear();
 
 	/* Interact */
-	while (go)
+	for (x = y = 0, second = FALSE;;)
 	{
-		char min;
-		bool okay = FALSE;
-		s16b newpri = -1, newrep = -1; /* A bad value */
-
-		cptr text;
+		int i,j;
+		char ch, min;
+		char buf[80] = "Display ";
 
 		/* Choose a set of characters which has no other meaning in
 		 * the layout */
@@ -840,8 +843,8 @@ static void do_cmd_options_win(void)
 			min = '0'-1;
 
 		/* Prompt XXX XXX XXX */
-		text = format("Window Flags (<dir>, +, -, ., %c-%c, ESC) ", min+1, min+10);
-		prt(text, 0, 0);
+		mc_put_fmt(0, 0, "Window Flags (<dir>, +, -, ., %c-%c, ESC) %v",
+			min+1, min+10, clear_f0);
 
 		/* Display the windows */
 		for (j = 0; j < 8; j++)
@@ -860,147 +863,122 @@ static void do_cmd_options_win(void)
 		/* Display the options */
 		for (i = 0; i < NUM_DISPLAY_FUNCS; i++)
 		{
-			/* Find the name. */
-			cptr str = format("Display %s", display_func[i].name);
-			byte a = TERM_WHITE;
+			/* Use colour to indicate the current selection. */
+			char a = (i == y) ? 'B' : 'w';
 
-			/* Use color */
-			if (i == y) a = TERM_L_BLUE;
-
-			/* Flag name */
-			Term_putstr(0, i + 5, -1, a, str);
+			/* Write the flag name in. */
+			mc_put_fmt(i+5, 0, "%cDisplay %s", a, display_func[i].name);		
 
 			/* Display the windows */
 			for (j = 0; j < 8; j++)
 			{
 				char c1 = '.', c2 = ' ';
 
-				/* Use color */
-				if ((i == y) && (j == x))
-				{
-					a = TERM_L_BLUE;
-				}
-				else
-				{
-					a = TERM_WHITE;
-				}
+				/* Use colour to indicate the current selection. */
+				char a = (i == y && j == x) ? 'B' : 'w';
 
 				/* Active flags */
 				if (REP(j,i)) c1 = min+REP(j,i);
 				if (PRI(j,i)) c2 = min+PRI(j,i);
 
 				/* Flag values */
-				Term_putch(35 + j * 5, i + 5, a, c1);
-				Term_putch(36 + j * 5, i + 5, a, c2);
+				mc_put_fmt(i+5, 35+j*5, "%c%c%c", a, c1, c2);
 			}
 		}
 
 		/* Place Cursor */
 		Term_gotoxy(35 + x * 5+((second) ? 1 : 0), y + 5);
 
-		{
-			/* Put a more specific help string somewhere temporarily. */
-			char buf[80];
-			sprintf(buf, "Display %s", display_func[y].name);
+		/* Copy the display name locally. */
+		sprintf(buf, "%.71s", display_func[y].name);
 
-			/* Track this option. */
-			help_track(buf);
+		/* Track this option. */
+		help_track(buf);
 	
-			/* Get key */
-			ch = inkey();
+		/* Get key */
+		ch = inkey();
 
-			/* Assume the help needed has changed. */
-			help_track(NULL);
-		}
+		/* Assume the help needed has changed. */
+		help_track(NULL);
 
 		/* Analyze */
 		switch (ch)
 		{
+			/* Finish, accepting the current settings. */
 			case ESCAPE:
 			{
-				okay = TRUE;
-				go = FALSE;
+				/* Redraw windows. */
+				p_ptr->window |= PW_RETURN;
+				return;
+			}
+
+			/* Increase both priority settings by 1. */
+			case '+':
+			{
+				PRI(x,y)++;
+				REP(x,y)++;
+				second = FALSE;
 				break;
 			}
 
-			case '+':
-			{
-				newpri = PRI(x,y) + 1;
-				newrep = REP(x,y) + 1;
-				second = FALSE;
-				okay = TRUE;
-				break;
-			}
+			/* Decrease both priority settings by 1. */
 			case '-':
 			{
-				newpri = PRI(x,y) - 1;
-				newrep = REP(x,y) - 1;
+				PRI(x,y)--;
+				REP(x,y)--;
 				second = FALSE;
 				break;
 			}
+
+			/* Switch between PRI and REP. */
 			case '\t':
 			{
 				second = !second;
-				okay = TRUE;
 				break;
 			}
+
+			/* Set to 0. */
 			case '.':
 			{
 				/* A REP of 0 means that the display is never
 				 * shown, so treat in a special way. A PRI of
 				 * 0 is entirely normal. */
-				if (!second)
-				{
-					newrep = 0;
-				}
-				newpri = 0;
+				if (!second) REP(x,y) = 0;
+				PRI(x,y) = 0;
 				second = FALSE;
 				break;
 			}
+
 			default:
 			{
-				d = get_keymap_dir(ch);
-	
-				x = (x + ddx[d] + 8) % 8;
-				y = (y + ddy[d] + NUM_DISPLAY_FUNCS) % NUM_DISPLAY_FUNCS;
-
-				if (d)
+				/* Set to a number between 1 and 10. */
+				if (ch > min && ch <= min+10)
 				{
-					second = FALSE;
-					okay = TRUE;
+					if (second)
+					{
+						PRI(x,y) = ch-min;
+					}
+					else
+					{
+						REP(x,y) = ch-min;
+					}
+					second = !second;
+					break;
 				}
-				else if (second)
+				/* Move around the table. */
+				else if ((i = get_keymap_dir(ch)))
 				{
-					newpri = ch-min;
-					second = FALSE;
+					x = (x + ddx[i] + ANGBAND_TERM_MAX) % ANGBAND_TERM_MAX;
+					y = (y + ddy[i] + NUM_DISPLAY_FUNCS) % NUM_DISPLAY_FUNCS;
 				}
+				/* Invalid choice. */
 				else
 				{
-					newrep = ch-min;
-					second = TRUE;
+					bell();
 				}
 			}
 		}
-
-		if (newpri >= 0 && newpri <= 10)
-		{
-			PRI(x,y) = newpri;
-			okay = TRUE;
-		}
-		if (newrep >= 0 && newrep <= 10)
-		{
-			REP(x,y) = newrep;
-			okay = TRUE;
-		}
-		/* If it doesn't do anything sensible, complain. */
-		if (!okay)
-		{
-			bell();
-		}
 	}
-
-	/* Redraw windows. */
-	p_ptr->window |= PW_RETURN;
 }
 
 /*
