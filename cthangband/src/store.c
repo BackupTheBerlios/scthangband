@@ -3877,7 +3877,7 @@ static void store_process_command(void)
 					}
 					else /* We got a spirit back */
 					{
-						sprintf(buf, "Form a pact with %s", spirits[i].name);
+						sprintf(buf, "form a pact with %s", spirits[i].name);
 
 						switch(spirits[i].favour_flags)
 						{
