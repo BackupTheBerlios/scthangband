@@ -1052,7 +1052,7 @@ static void print_header(void)
 #define LIST_SEP ';'
 
 
-static void spoiler_outlist(cptr header, cptr *list, char separator)
+static void spoiler_outlist(cptr init, cptr *list, char separator)
 {
 	int line_len, buf_len;
 	char line[MAX_LINE_LEN+1], buf[80];
@@ -1064,9 +1064,9 @@ static void spoiler_outlist(cptr header, cptr *list, char separator)
 	strcpy(line, INDENT1);
 
 	/* Create header (if one was given) */
-	if (header && (header[0]))
+	if (init && (init[0]))
 	{
-		strcat(line, header);
+		strcat(line, init);
 		strcat(line, " ");
 	}
 

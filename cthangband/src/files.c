@@ -639,17 +639,17 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case 'W':
 		{
 			cptr goodpri = ".abcdefghij";
-			uint term, display, pri, rep;
-			display_func_type *d_ptr;
+			uint display, pri, rep;
+			window_type *w_ptr;
 
 			if (!strcmp(buf+2, "---reset---"))
 			{
 				for (display = 0; display < NUM_DISPLAY_FUNCS; display++)
 				{
-					for (term = 0; term < N_ELEMENTS(windows); term++)
+					for (w_ptr = windows; w_ptr < END_PTR(windows); w_ptr++)
 					{
-						windows[term].rep[display] = 0;
-						windows[term].pri[display] = 0;
+						w_ptr->rep[display] = 0;
+						w_ptr->pri[display] = 0;
 					}
 				}
 				return SUCCESS;
@@ -660,19 +660,18 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				return PREF_ERROR_INCORRECT_SYNTAX;
 
 			/* Identify the term and display strings. */
-			for (term = 0;; term++)
+			for (w_ptr = windows;; w_ptr++)
 			{
-				if (term == N_ELEMENTS(windows))
+				if (w_ptr == END_PTR(windows))
 					return PREF_ERROR_UNKNOWN_PARAMETER;
-				if (!strcmp(windows[term].name, zz[0])) break;
+				if (!strcmp(w_ptr->name, zz[0])) break;
 			}
-			for (d_ptr = display_func;; d_ptr++)
+			for (display = 0;; display++)
 			{
-				if (d_ptr == display_func+NUM_DISPLAY_FUNCS)
+				if (display == NUM_DISPLAY_FUNCS)
 					return PREF_ERROR_UNKNOWN_PARAMETER;
-				if (!strcmp(d_ptr->name, zz[1])) break;
+				if (!strcmp(display_func[display].name, zz[1])) break;
 			}
-			display = d_ptr - display_func;
 
 			/* Identify the triggered and untriggered numbers. */
 			if (!strchr(goodpri, zz[2][0]) || zz[2][1])
@@ -683,8 +682,8 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			pri = strchr(goodpri, zz[3][0])-goodpri;
 
 			/* Enact the requests and return. */
-			windows[term].rep[display] = rep;
-			windows[term].pri[display] = pri;
+			w_ptr->rep[display] = rep;
+			w_ptr->pri[display] = pri;
 			return SUCCESS;
 		}
 		/*
@@ -1321,11 +1320,11 @@ errr check_load_init(void)
  * Print long number with header at given row, column
  * Use the color for the number, not the header
  */
-static void prt_lnum(cptr header, s32b num, int row, int col, byte color)
+static void prt_lnum(cptr str, s32b num, int row, int col, byte color)
 {
-	int len = strlen(header);
+	int len = strlen(str);
 	char out_val[32];
-	put_str(header, row, col);
+	put_str(str, row, col);
 	(void)sprintf(out_val, "%9ld", (long)num);
 	c_put_str(color, out_val, row, col + len);
 }
@@ -1333,11 +1332,11 @@ static void prt_lnum(cptr header, s32b num, int row, int col, byte color)
 /*
  * Print number with header at given row, column
  */
-static void prt_num(cptr header, int num, int row, int col, byte color)
+static void prt_num(cptr str, int num, int row, int col, byte color)
 {
-	int len = strlen(header);
+	int len = strlen(str);
 	char out_val[32];
-	put_str(header, row, col);
+	put_str(str, row, col);
 	put_str("   ", row, col + len);
 	(void)sprintf(out_val, "%6ld", (long)num);
 	c_put_str(color, out_val, row, col + len + 3);
@@ -2263,7 +2262,7 @@ void display_player_equippy(int y, int x)
  * Helper function, see below
  */
 static void display_player_flag_aux(int row, int col,
-			const char *header, int n, u32b flag)
+			cptr str, int n, u32b flag)
 {
 	int i;
 
@@ -2271,10 +2270,10 @@ static void display_player_flag_aux(int row, int col,
 
 
 	/* Header */
-	c_put_str(TERM_WHITE, header, row, col);
+	c_put_str(TERM_WHITE, str, row, col);
 
 	/* Advance */
-	col += strlen(header) + 1;
+	col += strlen(str) + 1;
 
 
 	/* Check equipment */

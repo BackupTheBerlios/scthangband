@@ -509,7 +509,7 @@ static int wiz_create_itemtype(void)
 	uint max_len;
 	int			 tval;
 
-	cptr                 tval_desc;
+	cptr                 tval_str;
 	char                 ch;
 
 	int			 choice[60];
@@ -556,7 +556,7 @@ static int wiz_create_itemtype(void)
 
 	/* Base object type chosen, fill in tval */
 	tval = tvals[num].tval;
-	tval_desc = tvals[num].desc;
+	tval_str = tvals[num].desc;
 
 
 	/*** And now we go for k_idx ***/
@@ -727,7 +727,7 @@ static int wiz_create_itemtype(void)
 	max_num = num;
 
 	/* Choose! */
-	if (!get_com(format("What Kind of %s? ", tval_desc), &ch)) return (0);
+	if (!get_com(format("What Kind of %s? ", tval_str), &ch)) return (0);
 
 	/* Analyze choice */
 	num = -1;

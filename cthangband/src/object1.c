@@ -4184,7 +4184,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	char tmp_val[160];
 	char out_val[160];
 
-	int term = 0;
+	int nterm = 0;
 #ifdef ALLOW_REPEAT
      
      /* Get the item index */
@@ -4344,7 +4344,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	command_see |= show_choices_main;
  
 	/* Hack -- start out in "display" mode */
-	if (command_see) term = Term_save_aux();
+	if (command_see) nterm = Term_save_aux();
 
 
 	/* Repeat until done */
@@ -4441,8 +4441,8 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			case RESIZE_INKEY_KEY:
 			{
 				/* Put this screen in term */
-				Term_release(term);
-				term = Term_save_aux();
+				Term_release(nterm);
+				nterm = Term_save_aux();
 				break;
 			}
 			case ESCAPE:
@@ -4461,12 +4461,12 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Show/hide the list */
 				if (!command_see)
 				{
-					if (!term) term = Term_save_aux();
+					if (!nterm) nterm = Term_save_aux();
 					command_see = TRUE;
 				}
 				else
 				{
-					Term_load_aux(term);
+					Term_load_aux(nterm);
 					command_see = FALSE;
 				}
 				break;
@@ -4484,7 +4484,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Fix screen */
 				if (command_see)
 				{
-					Term_load_aux(term);
+					Term_load_aux(nterm);
 				}
 
 				/* Switch inven/equip */
@@ -4768,10 +4768,10 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	delete_resize_hook(resize_inkey);
 
 	/* Fix the screen if necessary */
-	if (command_see) Term_load_aux(term);
+	if (command_see) Term_load_aux(nterm);
 
 	/* Forget the saved screen, if any. */
-	Term_release(term);
+	Term_release(nterm);
 
 	/* Hack -- Cancel "display" */
 	command_see = FALSE;
