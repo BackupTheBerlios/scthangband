@@ -200,6 +200,18 @@ bool do_dec_stat(int stat)
 	return (FALSE);
 }
 
+/*
+ * Lose a "point" (time attack version)
+ */
+void do_dec_stat_time(int stat, bool msg)
+{
+	if (msg) msg_format("You're not as %s as you used to be...",
+		desc_stat_pos[stat]);
+
+	p_ptr->stat_cur[stat] = MAX(3, p_ptr->stat_cur[stat]*3/4);
+
+	p_ptr->update |= (PU_BONUS);
+}
 
 /*
  * Restore lost "points" in a stat

@@ -4001,4 +4001,10 @@ extern void safe_free(vptr p);
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
 #endif
+
+/* spells2.c */
+
+#if (defined(SPELLS1_C) || defined(SPELLS2_C))
+extern void do_dec_stat_time(int stat, bool msg);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
