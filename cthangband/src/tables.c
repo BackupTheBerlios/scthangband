@@ -3263,7 +3263,7 @@ option_type option_info[] =
 	"dungeon_stair",                "Generate dungeons with connected stairs" },
 
 	{ &dungeon_small,               FALSE,   6,      1, 10,
-	"dungeon_small",                "Always generate small dungeons" },
+	"dungeon_small",                "Usually generate small dungeons" },
 
 	{ &flow_by_sound,               FALSE,  3,      1, 11,
 	"flow_by_sound",                "Monsters chase current location (v.slow)" },
