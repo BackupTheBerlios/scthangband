@@ -2740,9 +2740,8 @@ void do_cmd_feeling(bool FeelingOnly)
  */
 void do_cmd_load_screen(void)
 {
-	int y, x;
-
-	bool okay = TRUE;
+	char buf[1024];
+	int y, x, w, h;
 
 	FILE *fff;
 
@@ -2763,19 +2762,15 @@ void do_cmd_load_screen(void)
 	/* Clear the screen */
 	Term_clear();
 
+	Term_get_size(&w, &h);
 
 	/* Load the screen */
-	for (y = 0; okay && (y < 24); y++)
+	for (y = 0; y < h && !my_fgets(fff, buf, 1024) && *buf; y++)
 	{
-		char buf[1024];
-
-		/* Get a line of data */
-		if (my_fgets(fff, buf, 1024)) okay = FALSE;
-
 		/* Show each row */
-		for (x = 0; x < 79; x++)
+		for (x = 0; x < w && buf[2*x]; x++)
 		{
-			byte a = (buf[2*x]-' ')%32;
+			byte a = (buf[2*x]-' ')%0x10;
 			unsigned char c = (buf[2*x+1]-' ')+(((buf[2*x]-' ')/0x10)*0x40);
 
 			/* Put the attr/char */
@@ -2827,8 +2822,9 @@ void do_cmd_save_screen(void)
 	{
 		int y, x;
 
-		byte a = 0;
-		unsigned char c = ' ';
+		byte a;
+		unsigned char c;
+		int w,h;
 
 		FILE *fff;
 
@@ -2850,19 +2846,13 @@ void do_cmd_save_screen(void)
 		/* Oops */
 		if (!fff) return;
 
-
-		/* Enter "icky" mode */
-		character_icky = TRUE;
-
-		/* Save the screen */
-		Term_save();
-
+		Term_get_size(&w, &h);
 
 		/* Dump the screen (reloadable version) */
-		for (y = 0; y < 24; y++)
+		for (y = 0; y < h; y++)
 		{
 			/* Dump each row */
-			for (x = 0; x < 79; x++)
+			for (x = 0; x < w; x++)
 			{
 				/* Get the attr/char */
 				(void)(Term_what(x, y, &a, (char*)&c));
@@ -2945,13 +2935,6 @@ void do_cmd_save_screen(void)
 		/* Message */
 		msg_print("Screen dump saved.");
 		msg_print(NULL);
-
-
-		/* Restore the screen */
-		Term_load();
-
-		/* Leave "icky" mode */
-		character_icky = FALSE;
 	}
 }
 
