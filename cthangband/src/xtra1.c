@@ -4320,7 +4320,7 @@ void skill_exp(int index)
 	/* No experience is gained on the surface */
 	if (!dun_level) return;
 	
-	if ((cheat_wzrd) || (cheat_skll))
+	if (cheat_skll)
 	{
 		msg_format("Check %s skill, values %d/%d, exp %d/%d.",skill_set[index].name,
 			skill_set[index].value, skill_set[index].base, skill_set[index].experience,
@@ -4329,7 +4329,7 @@ void skill_exp(int index)
 
 	if (!skill_check_possible(index))
 	{
-		if ((cheat_wzrd) || (cheat_skll))
+		if (cheat_skll)
 		{
 			msg_format("You are not tense enough to improve your %s skill.",skill_set[index].name);
 		}
@@ -4337,7 +4337,7 @@ void skill_exp(int index)
 	}
 	
 	/* Debugging message */
-	if ((cheat_wzrd) || (cheat_skll))
+	if (cheat_skll)
 	{
 		msg_format("Skill check for %s.",skill_set[index].name);
 	}
@@ -4347,7 +4347,7 @@ void skill_exp(int index)
 	{
 
 		/* Debugging message */
-		if ((cheat_wzrd) || (cheat_skll))
+		if (cheat_skll)
 		{
 			msg_format("%s tested.",skill_set[index].name);
 		}

@@ -4561,7 +4561,7 @@ void play_game(bool new_game)
 		if (alive && death)
 		{
 			/* Mega-Hack -- Allow player to cheat death */
-            if ((cheat_wzrd || cheat_live) && !get_check("Die? "))
+            if ((cheat_live) && !get_check("Die? "))
 			{
 				resurrect(TRUE);
 			}

@@ -122,8 +122,8 @@ static void drop_special(monster_type *m_ptr)
 		/* Decide whether to drop correct ones. */
 		if (!death_event_roll(d_ptr, &one_dropped, &total_num, &total_denom)) continue;
 
-		/* Give some feedback to wizards. */
-		if (cheat_wzrd) msg_format("Processing death event %d", i);
+		/* Give some feedback to cheaters. */
+		if (cheat_xtra) msg_format("Processing death event %d", i);
 
 		/* Actually carry out event
 		 * Note that illegal events and default values are dealt with
@@ -209,8 +209,8 @@ static void drop_special(monster_type *m_ptr)
 				/* Print any specified text. */
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 
-				/* Give the wizards a basic explanation. */
-				if (cheat_wzrd) msg_format("Explosion of radius %d, power %d and type %d triggered.", i_ptr->radius, damage, typ);
+				/* Give cheaters a basic explanation. */
+				if (cheat_xtra) msg_format("Explosion of radius %d, power %d and type %d triggered.", i_ptr->radius, damage, typ);
 
 				/* Then cause an explosion. */
 				(void)project((m_ptr - m_list), i_ptr->radius, m_ptr->fy, m_ptr->fx, damage, i_ptr->method, typ);
