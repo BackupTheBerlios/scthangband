@@ -521,7 +521,7 @@ bool alchemy(void)
 	{
 		/* Message */
 		msg_format("You have turned %v to fool's gold.",
-			object_desc_f3, q_ptr, 3);
+			object_desc_f3, q_ptr, TRUE, 3);
 	}
 	else
 	{
@@ -529,7 +529,7 @@ bool alchemy(void)
 
 		if (price > 30000) price = 30000;
 		msg_format("You have turned %v to %ld coins worth of gold.",
-			object_desc_f3, q_ptr, 3, price);
+			object_desc_f3, q_ptr, TRUE, 3, price);
 		p_ptr->au += price;
 
 		/* Redraw gold */
