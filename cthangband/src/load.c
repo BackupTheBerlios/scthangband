@@ -1563,7 +1563,7 @@ func_false();
 	rd_u16b(&limit);
 
 	/* Verify maximum */
-	if (limit >= MAX_O_IDX)
+	if (limit > MAX_O_IDX)
 	{
 		msg_format("Too many (%d) object entries! Killing a few.", limit);
 	}
@@ -1639,7 +1639,7 @@ func_false();
 	rd_u16b(&limit);
 
 	/* Too many monsters. */
-	if (limit >= MAX_M_IDX)
+	if (limit > MAX_M_IDX)
 	{
 		msg_format("Too many (%d) monster entries! Killing a few.", limit);
 	}
