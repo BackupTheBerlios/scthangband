@@ -35,6 +35,62 @@
 
 
 
+#ifdef PRIVATE_USER_PATH
+
+/*
+ * Create an ".angband/" directory in the users home directory.
+ *
+ * ToDo: Add error handling.
+ * ToDo: Only create the directories when actually writing files.
+ */
+static void create_user_dir(void)
+{
+	cptr ANGBAND_DIR_USER_LOC;
+
+	/* Create the ~/.angband/ directory */
+	my_mkdir(PRIVATE_USER_PATH, 0700);
+
+	/* Build the path to the variant-specific sub-directory */
+	ANGBAND_DIR_USER_LOC =
+		string_make(format("%v", path_build_f2, PRIVATE_USER_PATH, GAME_NAME));
+
+	/* Create the directory */
+	switch (my_mkdir(ANGBAND_DIR_USER_LOC, 0700))
+	{
+		case FILE_ERROR_FILE_EXISTS:
+		{
+			/* Do nothing to a pre-existing directory. */
+			break;
+		}
+		case FILE_ERROR_FATAL:
+		{
+			/* Something bad happened, so hope the old user dir is okay... */
+			return;
+		}
+		case SUCCESS:
+		{
+			char from[1024], to[1024];
+			/* New directory, so copy default user file to it. 
+			 * Maybe it should copy all pref files in ANGBAND_DIR_USER... */
+
+			/* Build the paths. */
+			strnfmt(from, 1024, "%v", path_build_f2, ANGBAND_DIR_USER,
+				"user-loc.prf");
+			strnfmt(to, 1024, "%v", path_build_f2, ANGBAND_DIR_USER_LOC,
+				"user-loc.prf");
+
+			/* Try to copy the file. */
+			fd_copy(to, from);
+		}
+	}
+
+	/* The system user directory will not be looked at again. */
+	string_free(ANGBAND_DIR_USER);
+	ANGBAND_DIR_USER = ANGBAND_DIR_USER_LOC;
+}
+
+#endif /* PRIVATE_USER_PATH */
+
 /*
  * Find the default paths to all of our important sub-directories.
  *
@@ -83,6 +139,7 @@ void init_file_paths(cptr path)
 	string_free(ANGBAND_DIR_FILE);
 	string_free(ANGBAND_DIR_HELP);
 	string_free(ANGBAND_DIR_INFO);
+	string_free(ANGBAND_DIR_PREF);
 	string_free(ANGBAND_DIR_SAVE);
 	string_free(ANGBAND_DIR_USER);
 	string_free(ANGBAND_DIR_XTRA);
@@ -123,11 +180,20 @@ void init_file_paths(cptr path)
 	ANGBAND_DIR_FILE = string_make(format("%s%s", path, "file"));
 	ANGBAND_DIR_HELP = string_make(format("%s%s", path, "help"));
 	ANGBAND_DIR_INFO = string_make(format("%s%s", path, "info"));
+	ANGBAND_DIR_PREF = string_make(format("%s%s", path, "pref"));
 	ANGBAND_DIR_SAVE = string_make(format("%s%s", path, "save"));
 	ANGBAND_DIR_USER = string_make(format("%s%s", path, "user"));
 	ANGBAND_DIR_XTRA = string_make(format("%s%s", path, "xtra"));
 
 #endif /* VM */
+#ifdef PRIVATE_USER_PATH
+
+	/* Change ANGBAND_DIR_USER to point to a local directory, copying files
+	 * from the existing ANGBAND_DIR_USER if new. */
+	create_user_dir();
+
+#endif /* PRIVATE_USER_PATH */
+
 
 
 #ifdef NeXT

@@ -618,29 +618,49 @@ errr fd_move(cptr file, cptr what)
 }
 
 
-#if 0
 /*
  * Hack -- attempt to copy a file
+ * The player should have read access to "in" and write access to "out".
  */
-static errr fd_copy(cptr file, cptr what)
+errr fd_copy(cptr out, cptr in)
 {
-	char                buf[1024];
-	char                aux[1024];
+	char buf[1024];
 
-	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
+	/* Open the files. */
+	FILE *fin = my_fopen(in, "r");
+	FILE *fout = my_fopen(out, "w");
 
-	/* Hack -- Try to parse the path */
-	if (path_parse(aux, 1024, what)) return (-1);
+	if (!fin || !fout) return FILE_ERROR_FATAL;
 
-	/* Copy XXX XXX XXX */
-	/* (void)rename(buf, aux); */
+	/* Copy across faithfully. */
+	while (fgets(buf, 1024, fin)) fprintf(fout, "%s", buf);
 
-	/* XXX XXX XXX */
-	return (1);
+	return SUCCESS;
 }
-#endif
 
+
+/*
+ * Create a directory.
+ * Return 0 if successful.
+ * Return 1 if the directory already exists.
+ * Return -1 on other errors.
+ */
+errr my_mkdir(cptr path, uint mode)
+{
+	char buf[1024];
+	int rc;
+
+	path_parse(buf, 1024, path);
+
+	rc = mkdir(buf, mode);
+
+	/* Success. */
+	if (!rc) return SUCCESS;
+
+	else if (errno == EEXIST) return FILE_ERROR_FILE_EXISTS;
+	
+	else return FILE_ERROR_FATAL;
+}
 
 /*
  * Hack -- attempt to open a file descriptor (create file)
@@ -891,6 +911,7 @@ errr fd_close(int fd)
 	/* XXX XXX XXX */
 	return (0);
 }
+
 
 
 #endif /* ACORN */

@@ -902,11 +902,14 @@ errr process_pref_file(cptr name)
 
 	u16b sf_flags = 0;
 
-	/* Open the file */
-	fp = my_fopen_path(ANGBAND_DIR_USER, name, "r");
+	/* Look in ANGBAND_DIR_PREF. */
+	if (!((fp = my_fopen_path(ANGBAND_DIR_PREF, name, "r"))) &&
+
+	/* Look in ANGBAND_DIR_USER. */
+		!((fp = my_fopen_path(ANGBAND_DIR_USER, name, "r"))))
 
 	/* No such file */
-	if (!fp) return (-1);
+		return (-1);
 
 
 	/* Process the file */

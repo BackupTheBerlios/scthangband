@@ -2814,6 +2814,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define ERR_DIRECTIVE 6	/* undefined directive */
 #define ERR_MEMORY 7	/* out of memory */
 
+#define FILE_ERROR_FILE_EXISTS	1
+#define FILE_ERROR_FATAL	-1
+
 #define PARSE_ERROR_GENERIC                  1
 #define PARSE_ERROR_OBSOLETE_FILE            2
 #define PARSE_ERROR_MISSING_RECORD_HEADER    3
