@@ -3685,7 +3685,8 @@ void win_help_display(void)
 				roff("\n");
 			}
 			/* Only expect one match. */
-			break;
+			my_fclose(fff);
+			return;
 		}
 		
 		my_fclose(fff);
