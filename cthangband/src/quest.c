@@ -101,6 +101,7 @@ void quest_discovery(void)
 	int 	q_idx = get_quest_number();
 	monster_race	*r_ptr = &r_info[q_list[q_idx].r_idx];
 	int q_num = q_list[q_idx].max_num;
+	C_TNEW(name, MNAME_MAX, char);
 
 	/* Get a properly formatted name. Note that no monster will actually
 	be given an article as only uniques are currently allowed to be
@@ -112,11 +113,12 @@ void quest_discovery(void)
 		flags = MDF_INDEF;
 	else
 		flags = 0;
-	cptr name = monster_desc_aux(0, r_ptr, q_num, flags);
+	monster_desc_aux(name, r_ptr, q_num, flags);
 
 	msg_print (find_quest[rand_range(0,4)]);
 	msg_print (NULL);
 	msg_format("Beware, this level is protected by %s!", name);
+	TFREE(name);
 }
 
 /*
