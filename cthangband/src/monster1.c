@@ -333,11 +333,6 @@ static cptr convert_spell_text(cptr string, monster_race *r_ptr)
 /*
  * Hack -- display monster information using "roff()"
  *
- * Note that there is now a compiler option to only read the monster
- * descriptions from the raw file when they are actually needed, which
- * saves about 60K of memory at the cost of disk access during monster
- * recall, which is optional to the user.
- *
  * This function should only be called with the cursor placed at the
  * left edge of the screen, on a cleared line, in which the recall is
  * to take place.  One extra blank line is left after the recall.
@@ -1533,9 +1528,6 @@ void roff_top(int r_idx)
  */
 void screen_roff(int r_idx)
 {
-	/* Flush messages */
-	msg_print(NULL);
-
 	/* Begin recall */
 	Term_erase(0, 1, 255);
 
@@ -1545,33 +1537,3 @@ void screen_roff(int r_idx)
 	/* Describe monster */
 	roff_top(r_idx);
 }
-
-
-
-
-/*
- * Hack -- describe the given monster race in the current "term" window
- */
-void display_roff(int r_idx)
-{
-	int y;
-
-	/* Erase the window */
-	for (y = 0; y < Term->hgt; y++)
-	{
-		/* Erase the line */
-		Term_erase(0, y, 255);
-	}
-
-	/* Begin recall */
-	Term_gotoxy(0, 1);
-
-	/* Recall monster */
-	roff_aux(r_idx);
-
-	/* Describe monster */
-	roff_top(r_idx);
-}
-
-
-

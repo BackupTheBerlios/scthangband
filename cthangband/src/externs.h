@@ -1274,12 +1274,12 @@ extern void process_monsters(void);
 #if (defined(CMD3_C) || defined(MONSTER1_C))
 extern void roff_top(int r_idx);
 #endif
-#if (defined(CMD3_C) || defined(MONSTER1_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(MONSTER1_C) || defined(WIZARD1_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void screen_roff(int r_idx);
 #endif
-#if (defined(MONSTER1_C) || defined(WIZARD1_C) || defined(XTRA1_C))
-extern void display_roff(int r_idx);
-#endif
+
+
+
 
 /* monster2.c */
 
@@ -3821,7 +3821,7 @@ extern void Term_fresh(void);
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_set_cursor(bool v);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_gotoxy(int x, int y);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))

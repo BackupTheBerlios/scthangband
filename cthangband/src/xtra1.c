@@ -3033,7 +3033,7 @@ static bool win_monster_good(void)
 static void win_monster_display(void)
 {
 	/* Display monster race info */
-	if (monster_race_idx) display_roff(monster_race_idx);
+	if (monster_race_idx) screen_roff(monster_race_idx);
 }
 
 /*

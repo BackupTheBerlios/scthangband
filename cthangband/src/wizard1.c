@@ -1664,8 +1664,11 @@ static void spoil_mon_info(cptr fname)
 		/* Power */
 		spoil_out("Power:%ld\n", (long)(r_ptr->mexp));
 
+		/* Clear the screen before every monster. */
+		Term_clear();
+
 		/* Display the monster on screen. */
-		display_roff(n);
+		screen_roff(n);
 
 		/* Dump the on-screen display (excluding the title). */
 		for (c2 = 0, y = 1; y < Term->hgt; y++)
