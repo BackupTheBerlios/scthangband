@@ -6405,50 +6405,109 @@ void exit_game_panic(void)
 	quit("panic save succeeded!");
 }
 
-
-static errr get_rnd_line(const char * file_name, uint len, char * output)
+typedef struct line_list line_list;
+struct line_list
 {
-	FILE        *fp;
+	cptr name;
+	int max;
+	cptr *list;
+};
 
-	char	buf[1024];
-    int lines=0, line, counter;
+/* This should be enough for every file get_rnd_line will be called with.
+ * It will, of course, need to become dynamic if an upper bound can no longer
+ * be set for this. */
+static line_list line_lists[16];
+static uint num_line_lists = 0;
+
+static errr init_rnd_line(cptr file_name)
+{
+	char buf[1024];
+	cptr *s;
 
 	/* Open the file */
-	fp = my_fopen_path(ANGBAND_DIR_FILE, file_name, "r");
+	FILE *fp = my_fopen_path(ANGBAND_DIR_FILE, file_name, "r");
 
-    /* Failed */
-    if (!fp) return (-1);
+	line_list *l_ptr;
 
+	if (!fp) return FILE_ERROR_CANNOT_OPEN_FILE;
 
-	/* Parse the file */
-	while (!my_fgets(fp, buf, sizeof(buf)))
+	/* Count the files used. */
+	assert(num_line_lists < N_ELEMENTS(line_lists));
+
+	/* Access the new list. */
+	l_ptr = &line_lists[num_line_lists++];
+
+	/* Save the file name. */
+	l_ptr->name = string_make(file_name);
+
+	/* Look for a non-comment. */
+	for (buf[0] = '\0'; !buf[0] || buf[0] == '#'; )
 	{
-		/* Stop at the first line which is neither empty nor a comment. */
-		if (buf[0] && buf[0] != '#')
-		{
-			lines = atoi(buf);
-			break;
-		}
+		/* Can't find a number. */
+		if (my_fgets(fp, buf, sizeof(buf))) return FILE_ERROR_EOF;
 	}
 
-	/* Some sort of file error occurred. */
-	if (!lines) return (1);
+	/* The first non-comment should be the number of lines present. */
+	l_ptr->max = atoi(buf);
 
-    line = randint(lines);
-    for (counter = 0; counter <= line; counter++)
-    {
-    if (!(0 == my_fgets(fp, buf, sizeof(buf))))
-        return (1);
-    else if (counter == line)
-        break;
-    }
+	/* It isn't? */
+	if (l_ptr->max <= 0) return PARSE_ERROR_MISSING_RECORD_HEADER;
 
-    sprintf(output, "%.*s", len-1, buf);
+	/* Provide space for the strings. */
+	l_ptr->list = C_NEW(l_ptr->max, cptr);
 
-	/* Close the file */
-    my_fclose(fp);
+	for (s = l_ptr->list; s < l_ptr->list+l_ptr->max; s++)
+	{
+		/* Premature EOF. */
+		if (my_fgets(fp, buf, sizeof(buf))) return FILE_ERROR_EOF;
 
-    return (0);
+		/* Save the string. */
+		*s = string_make(buf);
+	}
+
+	/* All went as expected. */
+	return SUCCESS;
+}
+
+/*
+ * Given a file name, obtain the line_list which contains it as an index.
+ * Return a line_list on sucess, NULL on errors.
+ */
+static line_list *get_rnd_line_file(cptr file_name)
+{
+	line_list *l_ptr;
+	for (l_ptr = line_lists; l_ptr < line_lists + num_line_lists; l_ptr++)
+	{
+		if (!strcmp(l_ptr->name, file_name)) return l_ptr;
+	}
+	if (!init_rnd_line(file_name))
+	{
+		return get_rnd_line_file(file_name);
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+/*
+ * Return a random line from a file, or NULL on errors. 
+ */
+static cptr get_rnd_line(cptr file_name)
+{
+	int i;
+
+	/* Obtain the list. */
+	line_list *l_ptr = get_rnd_line_file(file_name);
+
+	/* Failed. */
+	if (!l_ptr) return NULL;
+
+	/* Pick a line, any line. */
+	i = rand_int(l_ptr->max);
+
+	/* And return it. */
+	return l_ptr->list[i];
 }
 
 /*
@@ -6463,14 +6522,17 @@ void get_rnd_line_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	cptr file_name = va_arg(*vp, cptr);
 
+	cptr line = get_rnd_line(file_name);
+
 	/* Report errors. */
-	switch (get_rnd_line(file_name, max, buf))
+	if (!line)
 	{
-		case -1:
-			strnfmt(buf, max, "Error: '%s' not found.", file_name);
-			break;
-		case 1:
-			strnfmt(buf, max, "Error: '%s' failed to parse.", file_name);
+		strnfmt(buf, max, "Error in file '%s'", file_name);
+	}
+	/* Accept the line. */
+	else
+	{
+		sprintf(buf, "%.*s", max-1, line);
 	}
 }
 
