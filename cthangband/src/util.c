@@ -3036,6 +3036,16 @@ bool askfor_aux(char *buf, int len)
 			break;
 
 			case 0x7F:
+			{
+				if (l < k)
+				{
+					k--;
+					for (j = l; j < k; j++)
+						buf[j] = buf[j+1];
+				}
+				break;
+			}
+
 			case '\010':
 			if (l > 0)
 			{

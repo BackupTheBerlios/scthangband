@@ -12,6 +12,7 @@ sCthangband _CVS_
   anything when a monster bores through a wall.
 * Add the ability to record a keymap with the game giving feedback.
 * Display messages from previous turns in a darker colour.
+* Delete the character under the cursor when delete is pressed in text prompts.
 * Only update the "object recall" when manipulating spellbooks.
 * Describe what effects skill restoration will have on the I screen.
 * Remove the unused second spellcasting frequency from monsters.
