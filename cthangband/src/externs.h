@@ -1030,9 +1030,9 @@ extern errr fd_lock(int handle, int what);
 #if (defined(ACORN)) && (defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr path_temp(char *buf, int max);
 #endif
-#if (defined(ACORN)) && (defined(MAIN_ROS_C) || defined(UTIL_C))
-extern errr path_build(char *buf, int max, cptr path, cptr file);
-#endif
+
+
+
 #if ((defined(ACORN)) && defined(USE_FILECACHE)) && (defined(MAIN_ROS_C))
 extern FILE *cached_fopen(cptr name, cptr mode);
 #endif

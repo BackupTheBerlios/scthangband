@@ -290,6 +290,7 @@ static errr path_temp(char *buf, int max)
 }
 
 #endif /* HAVE_MKSTEMP */
+#endif /* ACORN */
 
 /*
  * Create a new path by appending a file (or directory) to a path
@@ -338,6 +339,7 @@ static void path_build(char *buf, uint max, cptr path, cptr file)
 	return;
 }
 
+#ifndef ACORN
 /*
  * Hack -- replacement for "fopen()"
  */
