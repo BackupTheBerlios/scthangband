@@ -4166,7 +4166,7 @@ if (has_pval)
 	    o_ptr->to_d += randint(o_ptr->to_d>19?1:20-o_ptr->to_d);
 	}
     o_ptr->art_flags3 |= (TR3_IGNORE_ALL); /* Just to be sure */
-    total_flags = flag_cost(o_ptr, o_ptr->pval);
+    total_flags = flag_cost(o_ptr, TRUE);
     if (cheat_peek) msg_format("%ld", total_flags);
 
 if (a_cursed) curse_artifact(o_ptr);

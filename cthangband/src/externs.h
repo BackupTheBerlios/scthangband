@@ -1056,7 +1056,7 @@ extern void object_aware(object_type *o_ptr);
 extern void object_tried(object_type *o_ptr);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
-extern s32b flag_cost(object_type * o_ptr, int plusses);
+extern s32b flag_cost(object_type * o_ptr, bool all);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern s32b object_value_real(object_type *o_ptr);

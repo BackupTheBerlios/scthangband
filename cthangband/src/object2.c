@@ -883,12 +883,30 @@ static s32b object_value_base(object_type *o_ptr)
 	return cost;
 }
 
-/* Return the value of the flags the object has... */
-s32b flag_cost(object_type * o_ptr, int plusses)
+/*
+ * Return the value of the flags the object has...
+ * Consider all flags if this is being done to find an appropriate randart.
+ * If this is being done to price an item, flags based on the k_idx, name1
+ * and name2 fields are counted elsewhere. 
+ */
+s32b flag_cost(object_type * o_ptr, bool all)
 {
     s32b total = 0;
     u32b f1, f2, f3;
+	int plusses = o_ptr->pval;
         object_flags(o_ptr, &f1, &f2, &f3);
+
+	/* Remove the standard flags. */
+	if (!all)
+	{
+		object_kind *k_ptr = k_info+o_ptr->k_idx;
+		ego_item_type *e_ptr = e_info+o_ptr->name2;
+		artifact_type *a_ptr = a_info+o_ptr->name1;
+
+		f1 &= ~(k_ptr->flags1 | e_ptr->flags1 | a_ptr->flags1);
+		f2 &= ~(k_ptr->flags2 | e_ptr->flags2 | a_ptr->flags2);
+		f3 &= ~(k_ptr->flags3 | e_ptr->flags3 | a_ptr->flags3);
+	}		
 
     if (f1 & TR1_STR) total += (1000 * plusses);
     if (f1 & TR1_INT) total += (1000 * plusses);
@@ -1121,11 +1139,12 @@ s32b object_value_real(object_type *o_ptr)
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
+	/* Add the modifiers for random flags. */
     if (o_ptr->art_flags1 || o_ptr->art_flags2 || o_ptr->art_flags3)
-             value += flag_cost (o_ptr, o_ptr->pval);
+             value += flag_cost (o_ptr, FALSE);
 
 	/* Artifact */
-    else if (o_ptr->name1)
+	if (o_ptr->name1)
 	{
 		artifact_type *a_ptr = &a_info[o_ptr->name1];
 

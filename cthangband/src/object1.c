@@ -1845,10 +1845,6 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 				j_ptr = j2_ptr;
 			}
 
-			/* *Hack* - object_info_known() gives flags for the hates_foo()
-			 * functions, whereas object_flags (which is used in shops) doesn't. */
-			j_ptr->art_flags3 &= f3;
-
 			value = object_value(j_ptr);
 			worthless = !value;
 			if (worthless && cursed_p(j_ptr))
