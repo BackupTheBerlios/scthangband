@@ -2113,6 +2113,20 @@ void lose_skills(s32b amount)
 	calc_hitpoints(); /* The hit-points might have changed */
 	calc_mana(); /* As might mana */
 	calc_spells(); /* And spells */
+
+	/* Redraw spirits, as a reduction may render some inaccessible. */
+	if (lost[SKILL_SHAMAN])
+	{
+		for (i = 0; i < MAX_SPIRITS; i++)
+		{
+			spirit_type *s_ptr = &spirits[i];
+			if (s_ptr->pact && s_ptr->minskill > skill_set[SKILL_SHAMAN].value)
+				p_ptr->redraw |= PR_SPIRIT;
+		}
+	}
+
+	/* Redraw if required. */
+	redraw_stuff();
 }
 
 
