@@ -1189,7 +1189,7 @@ G:=:d:2
 I:45:0:-5
 W:50:0:2:0
 A:50/1
-F:CURSED | TELEPORT | WIS | CHR | HIDE_TYPE
+F:CURSED | TELEPORT | WIS | CHR
 
 N:150:Stupidity
 G:=:d:2
@@ -1288,7 +1288,7 @@ G:":d:3
 I:40:6:0
 W:20:0:3:500
 A:20/1
-F:INT | WIS | HIDE_TYPE
+F:INT | WIS
 
 N:164:Charisma
 G:":d:3
@@ -1348,7 +1348,7 @@ G:":d:3
 I:40:0:-5
 W:50:0:3:0
 A:50/1
-F:CURSED | STR | INT | WIS | DEX | CON | CHR | HIDE_TYPE
+F:CURSED | STR | INT | WIS | DEX | CON | CHR
 
 
 ##### Scrolls #####
