@@ -963,8 +963,8 @@ static int inven_damage(inven_func typ, int perc)
                 
 
 				/* Destroy "amt" items */
-				inven_item_increase(i, -amt);
-				inven_item_optimize(i);
+				item_increase(o_ptr, -amt);
+				item_optimize(o_ptr);
 
 				/* Count the casualties */
 				k += amt;

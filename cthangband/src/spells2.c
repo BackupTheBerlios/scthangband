@@ -562,21 +562,10 @@ bool alchemy(void)
 
 	}
 
-	/* Eliminate the item (from the pack) */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -amt);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Eliminate the item (from the floor) */
-	else
-	{
-		floor_item_increase(0 - item, -amt);
-		floor_item_describe(0 - item);
-		floor_item_optimize(0 - item);
-	}
+	/* Eliminate the item */
+	item_increase(o_ptr, -amt);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 	TFREE(o_name);
     return TRUE;
@@ -4564,21 +4553,10 @@ bool recharge(int num)
 			/* Dangerous Hack -- Destroy the item */
 			msg_print("There is a bright flash of light.");
 
-			/* Reduce and describe inventory */
-			if (item >= 0)
-			{
-				inven_item_increase(item, -999);
-				inven_item_describe(item);
-				inven_item_optimize(item);
-			}
-
-			/* Reduce and describe floor item */
-			else
-			{
-				floor_item_increase(0 - item, -999);
-				floor_item_describe(0 - item);
-				floor_item_optimize(0 - item);
-			}
+			/* Reduce and describe item */
+			item_increase(o_ptr, -999);
+			item_describe(o_ptr);
+			item_optimize(o_ptr);
 		}
 
 		/* Recharge */

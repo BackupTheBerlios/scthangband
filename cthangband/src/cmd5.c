@@ -3572,21 +3572,10 @@ void do_cmd_cantrip(void)
 		/* Dangerous Hack -- Destroy the item */
 		msg_print("The charm crumbles, drained of magic.");
 
-		/* Reduce and describe inventory */
-		if (item >= 0)
-		{
-			inven_item_increase(item, -1);
-			inven_item_describe(item);
-			inven_item_optimize(item);
-		}
-
-		/* Reduce and describe floor item */
-		else
-		{
-			floor_item_increase(0 - item, -1);
-			floor_item_describe(0 - item);
-			floor_item_optimize(0 - item);
-		}
+		/* Reduce and describe item. */
+		item_increase(o_ptr, -1);
+		item_describe(o_ptr);
+		item_optimize(o_ptr);
 	}
 	/* Redraw mana */
 	p_ptr->redraw |= (PR_MANA);

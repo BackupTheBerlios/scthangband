@@ -3488,9 +3488,9 @@ static void process_player(void)
 			drop_near(o_ptr, 0, py, px);
 
 			/* Modify, Describe, Optimize */
-			inven_item_increase(item, -255);
-			inven_item_describe(item);
-			inven_item_optimize(item);
+			item_increase(o_ptr, -255);
+			item_describe(o_ptr);
+			item_optimize(o_ptr);
 				
 			/* Notice stuff (if needed) */
 			if (p_ptr->notice) notice_stuff();

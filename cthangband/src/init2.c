@@ -1259,7 +1259,7 @@ static errr init_other(void)
 	C_MAKE(o_list, MAX_O_IDX+INVEN_TOTAL, object_type);
 
 	/* Divide the object list into player and dungeon sections. */
-	inventory = inventory + MAX_O_IDX;
+	inventory = o_list + MAX_O_IDX;
 
 	/* Allocate and Wipe the monster list */
 	C_MAKE(m_list, MAX_M_IDX, monster_type);

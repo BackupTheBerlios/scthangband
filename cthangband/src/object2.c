@@ -4596,7 +4596,7 @@ void place_trap(int y, int x)
 /*
  * Describe the charges on an item in the inventory.
  */
-void inven_item_charges(int item)
+static void inven_item_charges(int item)
 {
 	object_type *o_ptr = &inventory[item];
 
@@ -4625,7 +4625,7 @@ void inven_item_charges(int item)
 /*
  * Describe an item in the inventory.
  */
-void inven_item_describe(int item)
+static void inven_item_describe(int item)
 {
 	object_type     *o_ptr = &inventory[item];
 
@@ -4644,7 +4644,7 @@ void inven_item_describe(int item)
 /*
  * Increase the "number" of an item in the inventory
  */
-void inven_item_increase(int item, int num)
+static void inven_item_increase(int item, int num)
 {
 	object_type *o_ptr = &inventory[item];
 
@@ -4685,7 +4685,7 @@ void inven_item_increase(int item, int num)
 /*
  * Erase an inventory slot if it has no more items
  */
-void inven_item_optimize(int item)
+static void inven_item_optimize(int item)
 {
 	object_type *o_ptr = &inventory[item];
 
@@ -4753,7 +4753,7 @@ void inven_item_optimize(int item)
 /*
  * Describe the charges on an item on the floor.
  */
-void floor_item_charges(int item)
+static void floor_item_charges(int item)
 {
 	object_type *o_ptr = &o_list[item];
 
@@ -4783,7 +4783,7 @@ void floor_item_charges(int item)
 /*
  * Describe an item in the inventory.
  */
-void floor_item_describe(int item)
+static void floor_item_describe(int item)
 {
 	object_type     *o_ptr = &o_list[item];
 
@@ -4802,7 +4802,7 @@ void floor_item_describe(int item)
 /*
  * Increase the "number" of an item on the floor
  */
-void floor_item_increase(int item, int num)
+static void floor_item_increase(int item, int num)
 {
 	object_type *o_ptr = &o_list[item];
 
@@ -4824,7 +4824,7 @@ void floor_item_increase(int item, int num)
 /*
  * Optimize an item on the floor (destroy "empty" items)
  */
-void floor_item_optimize(int item)
+static void floor_item_optimize(int item)
 {
 	object_type *o_ptr = &o_list[item];
 
@@ -4840,6 +4840,74 @@ void floor_item_optimize(int item)
 
 
 
+
+/*
+ * Describe the charges on an item.
+ */
+void item_charges(object_type *o_ptr)
+{
+	int item = cnv_obj_to_idx(o_ptr);
+
+	if (item >= 0)
+	{
+		inven_item_charges(item);
+	}
+	else
+	{
+		floor_item_charges(0 - item);
+	}
+}
+
+/*
+ * Increase the "number" of an item.
+ */
+void item_increase(object_type *o_ptr, int num)
+{
+	int item = cnv_obj_to_idx(o_ptr);
+
+	if (item >= 0)
+	{
+		inven_item_increase(item, num);
+	}
+	else
+	{
+		floor_item_increase(0 - item, num);
+	}
+}
+
+/*
+ * Describe an item.
+ */
+void item_describe(object_type *o_ptr)
+{
+	int item = cnv_obj_to_idx(o_ptr);
+
+	if (item >= 0)
+	{
+		inven_item_describe(item);
+	}
+	else
+	{
+		floor_item_describe(0 - item);
+	}
+}
+
+/*
+ * Optimize an item somewhere (destroy "empty" items)
+ */
+void item_optimize(object_type *o_ptr)
+{
+	int item = cnv_obj_to_idx(o_ptr);
+
+	if (item >= 0)
+	{
+		inven_item_optimize(item);
+	}
+	else
+	{
+		floor_item_optimize(0 - item);
+	}
+}
 
 
 /*
@@ -5117,8 +5185,8 @@ s16b inven_takeoff(int item, int amt)
 	}
 
 	/* Modify, Optimize */
-	inven_item_increase(item, -amt);
-	inven_item_optimize(item);
+	item_increase(o_ptr, -amt);
+	item_optimize(o_ptr);
 
 	/* Carry the object */
 	slot = inven_carry(q_ptr, FALSE);
@@ -5205,9 +5273,9 @@ void inven_drop(int item, int amt)
 	}
 
 	/* Modify, Describe, Optimize */
-	inven_item_increase(item, -amt);
-	inven_item_describe(item);
-	inven_item_optimize(item);
+	item_increase(q_ptr, -amt);
+	item_describe(q_ptr);
+	item_optimize(q_ptr);
 
 	TFREE(o_name);
 }

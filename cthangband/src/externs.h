@@ -1495,30 +1495,30 @@ extern void pick_trap(int y, int x);
 #if (defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS1_C))
 extern void place_trap(int y, int x);
 #endif
-#if (defined(CMD6_C) || defined(OBJECT2_C))
-extern void inven_item_charges(int item);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern void inven_item_describe(int item);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern void inven_item_increase(int item, int num);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern void inven_item_optimize(int item);
-#endif
-#if (defined(CMD6_C) || defined(OBJECT2_C))
-extern void floor_item_charges(int item);
-#endif
-#if (defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(SPELLS2_C))
-extern void floor_item_describe(int item);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(SPELLS2_C))
-extern void floor_item_increase(int item, int num);
-#endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(SPELLS2_C))
-extern void floor_item_optimize(int item);
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #if (defined(CMD1_C) || defined(OBJECT2_C) || defined(STORE_C))
 extern bool inven_carry_okay(object_type *o_ptr);
 #endif
@@ -3967,7 +3967,22 @@ extern cptr roff_monster(u32b flags2, u32b flags3);
 
 /* cave.c */
 
-#if (defined(CAVE_C) || defined(CMD3_C) || defined(CMD6_C))
+#if (defined(CAVE_C) || defined(CMD3_C) || defined(CMD6_C) || defined(OBJECT2_C))
 extern s16b cnv_obj_to_idx(object_type *o_ptr);
+#endif
+
+/* object2.c */
+
+#if (defined(CMD6_C) || defined(OBJECT2_C))
+extern void item_charges(object_type *o_ptr);
+#endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern void item_increase(object_type *o_ptr, int num);
+#endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern void item_describe(object_type *o_ptr);
+#endif
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
+extern void item_optimize(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

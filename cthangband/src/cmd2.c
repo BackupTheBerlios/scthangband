@@ -1956,31 +1956,26 @@ void do_cmd_alter(void)
  *
  * XXX XXX XXX Let user choose a pile of spikes, perhaps?
  */
-static bool get_spike(int *ip)
+static object_type *get_spike(void)
 {
-	int i;
+	object_type *o_ptr;
 
 	/* Check every item in the pack */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (o_ptr = inventory; o_ptr < inventory+INVEN_PACK; o_ptr++)
 	{
-		object_type *o_ptr = &inventory[i];
-
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
 		/* Check the "tval" code */
 		if (o_ptr->tval == TV_SPIKE)
 		{
-			/* Save the spike index */
-			(*ip) = i;
-
-			/* Success */
-			return (TRUE);
+			/* Return the spike index */
+			return o_ptr;
 		}
 	}
 
 	/* Oops */
-	return (FALSE);
+	return NULL;
 }
 
 
@@ -1992,7 +1987,8 @@ static bool get_spike(int *ip)
  */
 void do_cmd_spike(void)
 {
-	int                  y, x, dir, item;
+	int                  y, x, dir;
+	object_type *o_ptr;
 
 	cave_type		*c_ptr;
 
@@ -2016,7 +2012,7 @@ void do_cmd_spike(void)
 		}
 
 		/* Get a spike */
-		else if (!get_spike(&item))
+		else if (!(o_ptr = get_spike()))
 		{
 			/* Message */
 			msg_print("You have no spikes!");
@@ -2051,9 +2047,9 @@ void do_cmd_spike(void)
 			if (c_ptr->feat < FEAT_DOOR_TAIL) c_ptr->feat++;
 
 			/* Use up, and describe, a single spike, from the bottom */
-			inven_item_increase(item, -1);
-			inven_item_describe(item);
-			inven_item_optimize(item);
+			item_increase(o_ptr, -1);
+			item_describe(o_ptr);
+			item_optimize(o_ptr);
 		}
 	}
 }
@@ -2393,20 +2389,10 @@ void do_cmd_fire(void)
 	/* Single object */
 	q_ptr->number = 1;
 
-	/* Reduce and describe inventory */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Reduce and describe floor item */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_optimize(0 - item);
-	}
+	/* Reduce and describe object */
+	item_increase(o_ptr, -1);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 
 	/* Sound */
@@ -2701,20 +2687,10 @@ void do_cmd_throw(void)
 	/* Single object */
 	q_ptr->number = 1;
 
-	/* Reduce and describe inventory */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Reduce and describe floor item */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_optimize(0 - item);
-	}
+	/* Reduce and describe item */
+	item_increase(o_ptr, -1);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 
 	/* Find the color and symbol for the object for throwing */
