@@ -2352,8 +2352,6 @@ void do_cmd_fire(void)
 	byte missile_attr;
 	char missile_char;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	int msec = delay_factor * delay_factor * delay_factor;
 
 
@@ -2364,7 +2362,6 @@ void do_cmd_fire(void)
 	if (!j_ptr->tval)
 	{
 		msg_print("You have nothing to fire with.");
-		TFREE(o_name);
 		return;
 	}
 
@@ -2376,7 +2373,6 @@ void do_cmd_fire(void)
 	if (!get_item(&item, "Fire which item? ", FALSE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to fire.");
-		TFREE(o_name);
 		return;
 	}
 
@@ -2394,7 +2390,6 @@ void do_cmd_fire(void)
 	/* Get a direction (or cancel) */
 	if (!get_aim_dir(&dir))
 	{
-		TFREE(o_name);
 		return;
 	}
 
@@ -2427,9 +2422,6 @@ void do_cmd_fire(void)
 	/* Sound */
 	sound(SOUND_SHOOT);
 
-
-	/* Describe the object */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, FALSE, 3);
 
 	/* Find the color and symbol for the object for throwing */
 	missile_attr = object_attr(q_ptr);
@@ -2572,19 +2564,17 @@ void do_cmd_fire(void)
 				if (!visible)
 				{
 					/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
+					msg_format("The %v finds a mark.",
+						object_desc_f3, q_ptr, FALSE, 3);
 				}
 
 				/* Handle visible monster */
 				else
 				{
-					C_TNEW(m_name, MNAME_MAX, char);
-
-					/* Get "the monster" or "it" */
-					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 					/* Message */
-					msg_format("The %s hits %s.", o_name, m_name);
+					msg_format("The %v hits %v.",
+						object_desc_f3, q_ptr, FALSE, 3,
+						monster_desc_f2, m_ptr, 0);
 
 					/* Hack -- Track this monster race */
 					if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
@@ -2594,10 +2584,9 @@ void do_cmd_fire(void)
 
 					/* Anger friends */
 					if (m_ptr->smart & SM_ALLY) {
-						msg_format("%s gets angry!", m_name);
+						msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
 						m_ptr->smart &= ~SM_ALLY;
 					}
-					TFREE(m_name);
               }
 
 				/* Apply special damage XXX XXX XXX */
@@ -2629,18 +2618,12 @@ void do_cmd_fire(void)
 					/* Take note */
 					if (fear && m_ptr->ml)
 					{
-						C_TNEW(m_name, MNAME_MAX, char);
-
 						/* Sound */
 						sound(SOUND_FLEE);
 
-						/* Get the monster name (or "it") */
-						strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 						/* Message */
-						msg_format("%^s flees in terror!", m_name);
-
-						TFREE(m_name);
+						msg_format("%^v flees in terror!",
+							monster_desc_f2, m_ptr, 0);
 					}
 				}
 			}
@@ -2655,8 +2638,6 @@ void do_cmd_fire(void)
 
 	/* Drop (or break) near that location */
 	drop_near(q_ptr, j, y, x);
-
-	TFREE(o_name);
 }
 
 static int throw_mult = 1;
@@ -2704,8 +2685,6 @@ void do_cmd_throw(void)
 	byte missile_attr;
 	char missile_char;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	int msec = delay_factor * delay_factor * delay_factor;
 
 	/* Restrict the choices */
@@ -2715,7 +2694,6 @@ void do_cmd_throw(void)
 	if (!get_item(&item, "Throw which item? ", TRUE, TRUE, TRUE))
 	{
 		if (item == -2) msg_print("You have nothing to throw.");
-		TFREE(o_name);
 		return;
 	}
 
@@ -2731,11 +2709,7 @@ void do_cmd_throw(void)
 
 
 	/* Get a direction (or cancel) */
-	if (!get_aim_dir(&dir))
-	{
-		TFREE(o_name);
-		return;
-	}
+	if (!get_aim_dir(&dir)) return;
 
 
 	/* Get local object */
@@ -2762,9 +2736,6 @@ void do_cmd_throw(void)
 		floor_item_optimize(0 - item);
 	}
 
-
-	/* Description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, FALSE, 3);
 
 	/* Find the color and symbol for the object for throwing */
 	missile_attr = object_attr(q_ptr);
@@ -2902,27 +2873,23 @@ void do_cmd_throw(void)
 				if (!visible)
 				{
 					/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
+					msg_format("The %v finds a mark.",
+						object_desc_f3, q_ptr, FALSE, 3);
 				}
 
 				/* Handle visible monster */
 				else
 				{
-					C_TNEW(m_name, MNAME_MAX, char);
-
-					/* Get "the monster" or "it" */
-					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 					/* Message */
-					msg_format("The %s hits %s.", o_name, m_name);
+					msg_format("The %s hits %v.",
+						object_desc_f3, q_ptr, FALSE, 3, 
+						monster_desc_f2, m_ptr, 0);
 
 					/* Hack -- Track this monster race */
 					if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
 					/* Hack -- Track this monster */
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
-
-					TFREE(m_name);
 				}
 
 				/* Apply special damage XXX XXX XXX */
@@ -2955,28 +2922,19 @@ void do_cmd_throw(void)
                    if ((m_ptr->smart & SM_ALLY)
                     && (!(k_info[q_ptr->k_idx].tval == TV_POTION)))
                     {
-					C_TNEW(m_name, MNAME_MAX, char);
-                   strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-                      msg_format("%s gets angry!", m_name);
+                      msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
                       m_ptr->smart &= ~SM_ALLY;
-					TFREE(m_name);
                    }
 
 					/* Take note */
                     if (fear && m_ptr->ml)
 					{
-						C_TNEW(m_name, MNAME_MAX, char);
-
 						/* Sound */
 						sound(SOUND_FLEE);
 
-						/* Get the monster name (or "it") */
-						strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
-
 						/* Message */
-						msg_format("%^s flees in terror!", m_name);
-
-						TFREE(m_name);
+						msg_format("%^v flees in terror!",
+							monster_desc_f2, m_ptr, 0);
 					}
 				}
 			}
@@ -2993,20 +2951,16 @@ void do_cmd_throw(void)
      if (k_info[q_ptr->k_idx].tval == TV_POTION) {
        if ((hit_body) || (!cave_floor_bold(ny, nx)) || (cave[ny][nx].feat == FEAT_WATER) || (randint(100) < j)) {
        /* Message */
-       msg_format("The %s shatters!", o_name);
+       msg_format("The %v shatters!", object_desc_f3, q_ptr, FALSE, 3);
        if (potion_smash_effect(1, y, x, q_ptr->k_idx))
        {
               if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
                     {
-					C_TNEW(m_name, MNAME_MAX, char);
-                   strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, &m_list[cave[y][x].m_idx], 0);
-                   msg_format("%s gets angry!", m_name);
+                   msg_format("%v gets angry!", monster_desc_f2, &m_list[cave[y][x].m_idx], 0);
                    m_list[cave[y][x].m_idx].smart &= ~SM_ALLY;
-					TFREE(m_name);
                }
             }
 
-		TFREE(o_name);
        return;
        } else {
        j = 0;
@@ -3017,7 +2971,6 @@ void do_cmd_throw(void)
 	/* Drop (or break) near that location */
 	drop_near(q_ptr, j, y, x);
 
-	TFREE(o_name);
 	return;
 }
 
@@ -3728,35 +3681,26 @@ static void use_power(powertype *pw_ptr)
  * Dismiss your allies.
  */
 static void dismiss_pets(bool some)
-					{
+{
 	bool all_pets = FALSE;
 	s16b i,Dismissed = 0;
 	if (some && get_check("Dismiss all allies? ")) all_pets = TRUE;
 	for (i = m_max - 1; i >= 1; i--)
-						{
+	{
 		/* Access the monster */
 		monster_type *m_ptr = &m_list[i];
 		if (m_ptr->smart & (SM_ALLY)) /* Get rid of it! */
-						{
-			bool delete_this;
-			if (all_pets)
-				delete_this = TRUE;
-						else
-						{
-				char friend_name[80], check_friend[80];
-				strnfmt(friend_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x80);
-				sprintf(check_friend, "Dismiss %s? ", friend_name);
-				delete_this = get_check(check_friend);
-				}
+		{
+			bool delete_this = all_pets || get_check(
+					format("Dismiss %v? ", monster_desc_f2, m_ptr, 0x80));
 
 			if (delete_this)
-				{
+			{
 				delete_monster_idx(i,TRUE);
 				Dismissed++;
-				}
-
-				}
-				}
+			}
+		}
+	}
 	msg_format("You have dismissed %d all%s.", Dismissed,
 		(Dismissed==1?"y":"ies"));
 }
@@ -3830,10 +3774,10 @@ static void racial_string(byte num, byte *x, char * text)
  * The confirmation string for do_cmd_racial_power.
  */
 static void racial_confirm_string(byte choice, char * out)
-					{
+{
 	/* Prompt */
 	strnfmt(out, 78, "Use %s? ", cur_powers[choice]->text);
-				}
+}
 
 /*
  * Count the powers the player has.
@@ -4158,8 +4102,6 @@ static bool racial_aux(powertype *pw_ptr)
  */
 void do_cmd_racial_power(void)
 {
-	char out_val[160];
-					
 	/* Count the available powers. */
 	byte total = count_powers();
 
@@ -4171,9 +4113,6 @@ void do_cmd_racial_power(void)
 		msg_print("You have no abilities to use.");
 		return;
 	}
-
-	/* Build a prompt (accept all spells) */
-	strnfmt(out_val, 78, "(Powers %c-%c, *=List, ESC=exit) Use which ability? ", I2A(0), I2A(total - 1));
 
 	/* Display the available powers */
 	total = display_list(racial_string, racial_confirm_string, total, "Powers", "Use which ability?", 0);
