@@ -1545,14 +1545,8 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 
 			r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
 
-			/* Demon characters are unaffected */
-			if (p_ptr->prace == RACE_IMP) return;
-
-			/* Undead characters are 50% likely to be unaffected */
-			if (rp_ptr->grace == RACE_UNDEAD)
-			{
-				if (randint(100) < (25 + (skill_set[SKILL_SAVE].value/2))) return;
-			}
+			/* Some characters get a second chance to resist. */
+			if (percent(p_ptr->resist_eldritch)) return;
 		}
 	}
 	else

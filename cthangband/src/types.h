@@ -1074,6 +1074,7 @@ struct player_type
                             characters (such as Great One Paladins) */
 
 	byte ritual;			  /* Flag for recall ritual */
+	byte resist_eldritch; /* % resistance to sanity blasting. */
 
 	s16b age;			/* Characters age */
 	s16b ht;			/* Height */

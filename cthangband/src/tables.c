@@ -1404,6 +1404,7 @@ static race_bonus_type half_troll_bonuses[] =
 
 static race_bonus_type imp_bonuses[] =
 {
+	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), 100},
 	{0, SKILL_RACIAL, 20, TR3, iilog(TR3_SEE_INVIS), TRUE},
 };
 
@@ -1415,12 +1416,19 @@ static race_bonus_type mind_flayer_bonuses[] =
 
 static race_bonus_type skeleton_bonuses[] =
 {
+	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 	{0, SKILL_RACIAL, 20, TR2, iilog(TR2_RES_COLD), TRUE},
 };
 
 static race_bonus_type spectre_bonuses[] =
 {
+	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 	{0, SKILL_RACIAL, 70, TR3, iilog(TR3_TELEPATHY), TRUE},
+};
+
+static race_bonus_type vampire_bonuses[] =
+{
+	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 };
 
 static race_bonus_type yeek_bonuses[] =
@@ -1430,6 +1438,7 @@ static race_bonus_type yeek_bonuses[] =
 
 static race_bonus_type zombie_bonuses[] =
 {
+	{0, 0, 0, TR0, iilog(TR0_RES_ELDRITCH), -1},
 	{0, SKILL_RACIAL, 10, TR2, iilog(TR2_RES_COLD), TRUE},
 	{0, SKILL_RACIAL, 24, TR0, iilog(TR0_NO_CUT), TRUE},
 };
@@ -1950,7 +1959,7 @@ player_race race_info[MAX_RACES] =
 		{RP_VAMPIRE, 0},
 		{0, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_DARK | 
 			TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
-		NULL, 0, MUT_HYPN_GAZE, 60,
+		vampire_bonuses, N_ELEMENTS(vampire_bonuses), MUT_HYPN_GAZE, 60,
          5, 113, RACE_UNDEAD, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},

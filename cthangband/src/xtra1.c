@@ -1368,9 +1368,9 @@ static race_bonus_type muta_bonuses[] =
  * way.
  * Return TRUE if this is 
  */
-static bool calc_bonuses_weird(s16b (*flags)[32], int mut)
+static bool calc_bonuses_weird(s16b (*flags)[32], int flag, int val)
 {
-	switch (mut)
+	switch (flag)
 	{
 		case iilog(TR0_SAVE_SK):
 		{
@@ -1397,6 +1397,14 @@ static bool calc_bonuses_weird(s16b (*flags)[32], int mut)
 			flags[TR1][iilog(TR1_SPEED)] += skill_set[SKILL_RACIAL].value/20;
 			return TRUE;
 		}
+		case iilog(TR0_RES_ELDRITCH):
+		{
+			/* Hack - use a negative value to represent skill-based value. */
+			if (val < 0) return skill_set[SKILL_SAVE].value/2 + 24;
+
+			/* Save the resistance. */
+			flags[TR0][flag] = val;
+		}
 		/* Not a "weird" bonus. */
 		default:
 		{
@@ -1416,7 +1424,7 @@ static void calc_bonuses_muta_aux(s16b (*flags)[32], race_bonus_type *ptr)
 	if (ptr->min > skill_set[ptr->skill].value) return;
 
 	/* Weird stuff. */
-	if (ptr->set == TR0 && calc_bonuses_weird(flags, ptr->flag))
+	if (ptr->set == TR0 && calc_bonuses_weird(flags, ptr->flag, ptr->value))
 	{
 	}
 
@@ -1549,6 +1557,9 @@ static void calc_bonuses_add(s16b (*flags)[32])
 
 	/* Affect blows */
 	p_ptr->num_blow += flags[1][iilog(TR1_BLOWS)] * 60;
+
+	/* Affect sanity blast saving throw. */
+	p_ptr->resist_eldritch = flags[0][iilog(TR0_RES_ELDRITCH)];
 
 	/* Hack -- cause earthquakes */
 	if (flags[1][iilog(TR1_IMPACT)]) p_ptr->impact = TRUE;

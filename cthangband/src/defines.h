@@ -1106,7 +1106,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /* #define RACE_HIGH_ELF 16 */
 /* #define RACE_HOBBIT 17 */
 /* #define RACE_HUMAN 18 */
-#define RACE_IMP 19
+/* #define RACE_IMP 19 */
 /* #define RACE_KLACKON 20 */
 /* #define RACE_KOBOLD 21 */
 /* #define RACE_MIND_FLAYER 22 */
@@ -2733,6 +2733,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TR0_SAVE	(1L<<7)	/* A direct saving throw bonus. */
 #define TR0_NO_CUT (1L<<8) /* Immunity to cuts. */
 #define TR0_NO_STUN (1L<<9) /* Immunity to stunning. */
+#define TR0_RES_ELDRITCH (1L<<10) /* Resistance/immunity to sanity blasting. */
 
 #define TR0_SAVE_SK (1L<<16) /* A skill-based saving throw bonus. */
 #define TR0_AC_SK (1L<<17) /* A skill-based AC bonus. */
