@@ -3690,7 +3690,7 @@ void show_inven(bool equip, bool all)
 		o_ptr = &inventory[i];
 
 		/* Is this item acceptable? */
-		if (!all && item_tester_okay(o_ptr)) continue;
+		if (!all && !item_tester_okay(o_ptr)) continue;
 
 		/* Describe the object */
 		o_name = format("%.*v", lim, object_desc_f3, o_ptr, TRUE, 3);
