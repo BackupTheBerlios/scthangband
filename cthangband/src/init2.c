@@ -789,7 +789,7 @@ static void init_feature_priorities(void)
 /*
  * Initialize some other arrays
  */
-static errr init_other(void)
+static void init_other(void)
 {
 	int i, j, n;
 	option_type *op_ptr;
@@ -907,9 +907,6 @@ static errr init_other(void)
 	/* Copy across the sizes of the visual tables. */
 	init_visuals();
 #endif /* ALLOW_VISUALS */
-
-	/* Success */
-	return (0);
 }
 
 
@@ -917,7 +914,7 @@ static errr init_other(void)
 /*
  * Initialize some other arrays
  */
-static errr init_alloc(void)
+static void init_alloc(void)
 {
 	int i, j;
 
@@ -1098,10 +1095,6 @@ static errr init_alloc(void)
 		/* Another entry complete for this locale */
 		aux[x]++;
 	}
-
-
-	/* Success */
-	return (0);
 }
 
 
