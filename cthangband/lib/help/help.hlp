@@ -10,20 +10,20 @@
     *****/gshaman.txt*0[[g$]] Shamanism
     *****/houtdoors.txt*0[[h$]] The great outdoors
     *****/icustom.txt*0[[i$]] Customising sCthangband
-    *****/jwindowpri.txt*0[[j$]] Customising sCthangband windows
-    *****/khistory.txt*0[[k$]] History of Moria, Angband, Zangband & Cthangband
-    *****/lcredits.txt*0[[l$]] List of contributors.
+    *****/jhistory.txt*0[[j$]] History of Moria, Angband, Zangband & Cthangband
+    *****/kcredits.txt*0[[k$]] List of contributors.
 
  (The following files are for people already familiar with Angband)
 
-    *****/mupdate.txt*0[[m$]] Summary of updates
-    *****/nskills.txt*0[[n$]] The skill system
-    *****/ospeed.txt*0[[o$]] The speed system
+    *****/lupdate.txt*0[[l$]] Summary of updates
+    *****/mskills.txt*0[[m$]] The skill system
+    *****/nspeed.txt*0[[n$]] The speed system
 %%%%? [EQU $SYS x11]
-    *****/phelp-x11.txt*0[[p$]] Extra features for the X11 port
+    *****/ohelp-x11.txt*0[[o$]] Extra features for the X11 port
 %%%%? 0
 (The following files are not actually listed in the help text, but are included to make it easier to search for help files during initialisation.)
 
-    *****/qdebug.txt*0[[q$]] Debugging commands
-    *****/rdebug-b.txt*0[[r$]] Brief debugging command list
+    *****/qdebug.txt*0[[p$]] Debugging commands
+    *****/rdebug-b.txt*0[[q$]] Brief debugging command list
+    *****/jwindowpri.txt*0[[r$]] Customising sCthangband windows
 %%%%? 1
