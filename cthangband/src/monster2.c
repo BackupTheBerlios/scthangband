@@ -2875,7 +2875,7 @@ void message_pain(monster_type *m_ptr, int dam)
 	/* Notice non-damage */
 	if (dam == 0) 
 	{
-		str = "is_unharmed";
+		str = "is unharmed";
 	}
 	/* Obtain a string based on the percentage of HP just lost. */
 	else
