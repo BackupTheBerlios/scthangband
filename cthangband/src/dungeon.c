@@ -814,6 +814,9 @@ static void process_world(void)
 				/* Message */
 				msg_print("The sun has risen.");
 
+				/* Disturb */
+				if (disturb_dawn) disturb(0,0);
+
 				/* Hack -- Scan the town */
 				for (y = 0; y < cur_hgt; y++)
 				{
@@ -839,6 +842,9 @@ static void process_world(void)
 			{
 				/* Message */
 				msg_print("The sun has fallen.");
+
+				/* Disturb */
+				if (disturb_dawn) disturb(0,0);
 
 				/* Hack -- Scan the town */
 				for (y = 0; y < cur_hgt; y++)

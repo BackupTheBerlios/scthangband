@@ -3200,6 +3200,9 @@ option_type option_info[] =
 	{ &disturb_state,               TRUE,   2,      0, 23,
 	"disturb_state",                "Disturb whenever player state changes" },
 
+	{ &disturb_dawn,	FALSE,	2,	3, 9,
+	"disturb_dawn",	"Disturb when the sun rises or sets" },
+
 	{ &disturb_minor,               FALSE,   2,      0, 24,
 	"disturb_minor",                "Disturb whenever boring things happen" },
 
