@@ -3261,6 +3261,8 @@ extern int PlayerUID;
 #define SKILL_HEDGE 26
 #define SKILL_PSEUDOID 27
 
+#define SKILL_NONE MAX_SKILLS
+
 /* Spoiler flags */
 #define SPOIL_EGO_ITEMS	0
 #define SPOIL_ARTIFACTS	0

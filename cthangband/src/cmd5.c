@@ -73,36 +73,6 @@ static book_type *spirit_to_book(spirit_type *s_ptr)
 
 
 
-static int sschool_to_skill(const int i)
-{
-	switch (i)
-	{
-		case SCH_THAUMATURGY: return SKILL_THAUMATURGY;
-		case SCH_SORCERY: return SKILL_SORCERY;
-		case SCH_CONJURATION: return SKILL_CONJURATION;
-		case SCH_NECROMANCY: return SKILL_NECROMANCY;
-		case SCH_HEDGE: return SKILL_HEDGE;
-		case SCH_SPIRIT: return SKILL_SHAMAN;
-		default: return 0;
-	}
-}
-
-static int stype_to_skill(const int i)
-{
-	switch (i)
-	{
-		case SP_CORPORIS: return SKILL_CORPORIS;
-		case SP_NATURAE: return SKILL_NATURAE;
-		case SP_VIS: return SKILL_VIS;
-		case SP_ANIMAE: return SKILL_ANIMAE;
-
-		/* A spell which only uses one skill. */
-		case SP_NONE: return -1;
-
-		default: return 0;
-	}
-}
-
 /*
  *
  * Combine the relevant skills for a given spell, then
@@ -115,16 +85,12 @@ static int stype_to_skill(const int i)
  */
 int spell_skill(const magic_type *s_ptr)
 {
-	int total, skill;
+	int total = skill_set[s_ptr->skill1].value;
 
-	skill = sschool_to_skill(s_ptr->skill1);
-	total = skill_set[skill].value;
-
-	skill = stype_to_skill(s_ptr->skill2);
-	if (skill < 0)
+	if (s_ptr->skill2 == SKILL_NONE)
 		total *= 2;
 	else
-		total += skill_set[skill].value;
+		total += skill_set[s_ptr->skill2].value;
 
 	total /= 4; /* This gives a total of 0-50 */
 	if (total == 0) total++; /* So that we have a minimum of 1 */
@@ -135,15 +101,15 @@ static int spell_stat(const magic_type *s_ptr)
 {
 	switch (s_ptr->skill1)
 	{
-		case SCH_THAUMATURGY:
-		case SCH_SORCERY:
-		case SCH_CONJURATION:
-		case SCH_NECROMANCY:
-		case SCH_HEDGE:
+		case SKILL_THAUMATURGY:
+		case SKILL_SORCERY:
+		case SKILL_CONJURATION:
+		case SKILL_NECROMANCY:
+		case SKILL_HEDGE:
 			return A_INT;
-		case SCH_MIND:
+		case SKILL_MINDCRAFTING:
 			return A_WIS;
-		case SCH_SPIRIT:
+		case SKILL_SHAMAN:
 			return A_CHR;
 		default: /* Paranoia */
 			return A_STR;
@@ -158,10 +124,10 @@ static void low_mana_check(int *chance, const magic_type *s_ptr)
 {
 	switch (s_ptr->skill1)
 	{
-		case SCH_SORCERY:
-		case SCH_NECROMANCY:
-		case SCH_THAUMATURGY:
-		case SCH_CONJURATION:
+		case SKILL_SORCERY:
+		case SKILL_NECROMANCY:
+		case SKILL_THAUMATURGY:
+		case SKILL_CONJURATION:
 		{
 			if (s_ptr->mana > p_ptr->csp)
 			{
@@ -211,15 +177,15 @@ static void gain_spell_exp(magic_type *spell)
 	bool check_mana = FALSE;
 	int min_skill = spell->min * 2;
 
-	int skill = sschool_to_skill(spell->skill1);
+	int skill = spell->skill1;
 	if (skill_set[skill].value < min_skill + 50)
 	{
 		skill_exp(skill);
 		check_mana = TRUE;
 	}
 
-	skill = stype_to_skill(spell->skill2);
-	if (skill >= 0 && skill_set[skill].value < min_skill + 50)
+	skill = spell->skill2;
+	if (skill != SKILL_NONE && skill_set[skill].value < min_skill + 50)
 	{
 		skill_exp(skill);
 		check_mana = TRUE;
@@ -449,16 +415,16 @@ void print_spells(byte *spells, int num, int y, int x, int school)
 
 	switch(s_ptr->skill2)
 	{
-	case SP_CORPORIS:
+	case SKILL_CORPORIS:
 		type = "Co";
 		break;
-	case SP_NATURAE:
+	case SKILL_NATURAE:
 		type = "Na";
 		break;
-	case SP_VIS:
+	case SKILL_VIS:
 		type = "Vi";
 		break;
-	case SP_ANIMAE:
+	case SKILL_ANIMAE:
 		type = "An";
 		break;
 	default:
