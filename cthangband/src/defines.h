@@ -356,6 +356,12 @@ logaux(x, 1) logaux(x, 0) 255)
 #define MAX_MONCOL	19
 
 /*
+ * The maximum length of the representation of a character created by
+ * ascii_to_text()
+ */
+#define MAX_ASCII_LEN	4
+
+/*
  * Maximum dungeon level.  The player can never reach this level
  * in the dungeon, and this value is used for various calculations
  * involving object and monster creation.  It must be at least 100.

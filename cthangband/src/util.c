@@ -1184,7 +1184,7 @@ static void ascii_to_text(char *buf, uint max, cptr str)
 	char *s = buf;
 
 	/* Analyze the "ascii" string */
-	while (*str && s+4 < buf+max-1)
+	while (*str && s+MAX_ASCII_LEN < buf+max-1)
 	{
 		byte i = (byte)(*str++);
 

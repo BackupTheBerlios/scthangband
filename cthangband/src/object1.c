@@ -4065,11 +4065,20 @@ static bool get_item_okay(object_type *o_ptr)
  * Also, the tag "@xn" will work as well, where "n" is a tag-char,
  * and "x" is a particular command code.
  */
-static object_type *get_tag(char tag, char cmd)
+static object_type *get_tag(char tag, s16b cmd)
 {
-	int i;
+	char cmd_str[3] = "", buf[2*MAX_ASCII_LEN+1];
+	int i, len;
 	cptr s;
 
+	/* Turn the command into an ASCII representation. */
+	if (cmd & 0xFF00)
+		sprintf(cmd_str, "%c%c", ((cmd & 0xFF00) >> 8), (cmd & 0x00FF));
+	else
+		sprintf(cmd_str, "%c", cmd);
+
+	strnfmt(buf, sizeof(buf), "%v", ascii_to_text_f1, cmd_str);
+	len = strlen(buf);
 
 	/* Check every object */
 	for (i = 0; i < INVEN_TOTAL; ++i)
@@ -4093,7 +4102,7 @@ static object_type *get_tag(char tag, char cmd)
 			}
 
 			/* Check the special tags */
-			else if (s[2] == tag && s[1] == cmd)
+			else if (s[len+1] == tag && prefix(s+1, buf))
 			{
 				/* Success */
 				return o_ptr;
