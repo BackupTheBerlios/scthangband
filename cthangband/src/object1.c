@@ -1953,16 +1953,10 @@ cptr item_activation(object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Require activation ability */
-	if (!(f3 & (TR3_ACTIVATE))) return (NULL);
+	if (!(f3 & (TR3_ACTIVATE))) return "nothing";
 
-
-    /* We need to deduce somehow that it is a random artifact -- one
-       problem: It could be a random artifact which has NOT YET received
-       a name. Thus we eliminate other possibilities instead of checking
-       for art_name */
-
-    if (!(o_ptr->name1) && !(o_ptr->name2)
-        && !(o_ptr->xtra1) && (o_ptr->xtra2))
+	/* Randarts set xtra1 to denote the use of xtra2 for their activations. */
+    if (o_ptr->xtra1 == EGO_XTRA_ACTIVATE)
     {
         switch (o_ptr->xtra2)
         {
@@ -2511,12 +2505,12 @@ cptr item_activation(object_type *o_ptr)
             case SV_RING_ACID:
                 return "ball of acid and resist acid";
             default:
-                return NULL;
+                return "a bad ring activation";
         }
     }
 
 	/* Require dragon scale mail */
-	if (o_ptr->tval != TV_DRAG_ARMOR) return (NULL);
+	if (o_ptr->tval != TV_DRAG_ARMOR) return "a bad miscellaneous activation";
 
 	/* Branch on the sub-type */
 	switch (o_ptr->sval)
@@ -2577,7 +2571,7 @@ cptr item_activation(object_type *o_ptr)
 
 
 	/* Oops */
-	return NULL;
+	return "a bad dragon scale mail activation";
 }
 
 
@@ -2856,6 +2850,8 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 		{0,0,0,0},
 	};
 
+	*stat = 0;
+
 	/* Start with the permanent modifiers items in */
 	if (o_ptr->art_flags1 & TR1_STR) *stat |= 1<<A_STR;
 	if (o_ptr->art_flags1 & TR1_INT) *stat |= 1<<A_INT;
@@ -3026,7 +3022,7 @@ static void identify_fully_show(cptr *info, int i)
 		{
 			len = wrap_str(s, xlen);
 			prt(format("%.*s", len, s), k++, minx);
-	}
+		}
 
 		/* Find the next segment. */
 		s += len;

@@ -956,6 +956,20 @@ static void analyze_misc (object_type *o_ptr, char *misc_desc)
 		a_ptr->weight / 10, a_ptr->weight % 10, a_ptr->cost);
 }
 
+static cptr analyse_activation(object_type *o_ptr)
+{
+	u32b j[3];
+	object_flags(o_ptr, j, j+1, j+2);
+	if (j[2] & TR3_ACTIVATE)
+	{
+		return item_activation(o_ptr);
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
 /*
  * Fill in an object description structure for a given object
  */
@@ -980,7 +994,7 @@ static void object_analyze(object_type *o_ptr, obj_desc_list *desc_ptr)
 
 	analyze_misc(o_ptr, desc_ptr->misc_desc);
 
-	desc_ptr->activation = item_activation(o_ptr);
+	desc_ptr->activation = analyse_activation(o_ptr);
 }
 
 

@@ -2257,6 +2257,9 @@ logaux(x, 1) logaux(x, 0) 255
 /* Special ability */
 #define EGO_XTRA_ABILITY        3
 
+/* Special activation */
+#define EGO_XTRA_ACTIVATE	4
+
 /*** Object flag values ***/
 
 
