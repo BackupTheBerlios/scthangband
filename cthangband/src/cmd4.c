@@ -1300,13 +1300,22 @@ static void do_cmd_macro_aux_keymap(char *buf)
 	/* Convert to ascii */
 	ascii_to_text(tmp, buf);
 
+
 	/* Hack -- display the trigger */
 	Term_addstr(-1, TERM_WHITE, tmp);
 	
+	/* Notice if the key isn't its own text representation. */
+	if (strcmp(tmp, buf))
+	{
+		/* buf[0] could be anything, so output the character alone. */
+		Term_addstr(-1, TERM_WHITE, " (");
+		Term_addch(TERM_WHITE, buf[0]);
+		Term_addch(TERM_WHITE, ')');
+	}
 				
 	/* Flush */
 	flush();
-		}
+}
 				
 
 /*
