@@ -1651,9 +1651,6 @@ static errr rd_savefile_new_aux(void)
 	rp_ptr = &race_info[p_ptr->prace];
 	cp_ptr = &template_info[p_ptr->ptemplate];
 
-	/* Important -- Initialize the magic */
-	mp_ptr = &magic_info;
-
 
 	/* Read spell info */
 	for (i=0;i<MAX_SCHOOL;i++)

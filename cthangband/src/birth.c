@@ -3180,7 +3180,6 @@ static bool player_birth_aux()
 			p_ptr->ptemplate = (char)rand_range(0,MAX_TEMPLATE-1);
 			/* Analyze */
 			cp_ptr = &template_info[p_ptr->ptemplate];
-			mp_ptr = &magic_info;
 			str = cp_ptr->title;
 
 			if (rp_ptr->choice & (1L << p_ptr->ptemplate )) break;
@@ -3755,7 +3754,6 @@ static bool player_birth_aux()
 			/* Analyze */
 			p_ptr->ptemplate = n;
 			cp_ptr = &template_info[p_ptr->ptemplate];
-			mp_ptr = &magic_info;
 			str = cp_ptr->title;
 
 			if (!(rp_ptr->choice & (1L << n )))
@@ -3775,7 +3773,6 @@ static bool player_birth_aux()
 		/* Set template */
 		p_ptr->ptemplate = k;
 		cp_ptr = &template_info[p_ptr->ptemplate];
-		mp_ptr = &magic_info;
 		str = cp_ptr->title;
 
 		/* Display */
