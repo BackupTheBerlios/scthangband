@@ -1532,13 +1532,12 @@ void py_attack(int y, int x)
 				msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
 			}
 
-		/* Drain the life. */
-		if (drain_life && k > 0)
+		/* Drain the life (message if it has an effect). */
+		if (drain_life && (hp_player(k) || !object_known_p(o_ptr)))
 		{
 			s16b drain_heal = damroll(4,(k / 6));
 			if (drain_heal > MAX_VAMPIRIC_DRAIN) drain_heal = MAX_VAMPIRIC_DRAIN;
 			if (drain_msg) msg_format("Your weapon drains life from %s!", m_name);
-			hp_player(k);
 		}	
 
 
