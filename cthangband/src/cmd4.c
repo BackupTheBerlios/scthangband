@@ -4607,11 +4607,10 @@ static void do_cmd_knowledge_player_theft(FILE *fff)
 	int safe = adj_dex_safe[p_ptr->stat_ind[A_DEX]];
 	int tough = skill_set[SKILL_TOUGH].value/2;
 	int save = skill_set[SKILL_SAVE].value/2;
-	fprintf(fff, "You have a %d%% chance of avoiding theft attacks.\n",
-		safe + save);
-	fprintf(fff,
-		"You have a %d%% chance of bashing doors without being paralysed.\n",
-		safe+tough);
+	fprintf(fff, "Monsters have a %d%% chance of stealing from you"
+		" when their theft attacks hit.\n", 100-MAX(0, MIN(100, safe+save)));
+	fprintf(fff, "Failing to bash a door down has a %d%% chance of paralysing"
+		" you.\n", 100-MAX(0, MIN(100, safe+tough)));
 }
 
 /*
