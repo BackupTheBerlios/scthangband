@@ -4341,6 +4341,8 @@ static int get_tag(int *cp, char tag)
 }
 
 
+#define GET_ITEM_ERROR_ABORT	-1 /* User hit escape */
+#define GET_ITEM_ERROR_NO_ITEMS	-2 /* No legal items to choose */
 
 /*
  * Let the user select an item, return its "index"
@@ -4365,9 +4367,7 @@ static int get_tag(int *cp, char tag)
  * If this "legal" item is on the floor, we use a "cp" equal to zero
  * minus the dungeon index of the item on the floor.
  *
- * Otherwise, we return NULL, and set "cp" to:
- *   -1 for "User hit space/escape"
- *   -2 for "No legal items to choose"
+ * Otherwise, we return NULL, and set "cp" to an error code above.
  *
  * Global "command_new" is used when viewing the inventory or equipment
  * to allow the user to enter a command while viewing those screens, and
@@ -4389,17 +4389,18 @@ static int get_tag(int *cp, char tag)
  *
  * Note that "Term_save()" / "Term_load()" blocks must not overlap.
  */
-object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
+object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 {
 	cave_type *c_ptr = &cave[py][px];
 
 	s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr = UNREAD_VALUE;
 
 	char n1, n2, which = ' ';
 
 	int k, i1, i2, e1, e2;
 
-    bool done, item;
+    bool done;
     int ver;
 
     bool allow_floor = FALSE;
@@ -4411,9 +4412,9 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 #ifdef ALLOW_REPEAT
      
      /* Get the item index */
-     if (repeat_pull(cp)) {
+     if (repeat_pull(&k)) {
          
-		object_type *o_ptr = cnv_idx_to_obj(*cp);
+		o_ptr = cnv_idx_to_obj(k);
 
          /* Floor item? */
          if (o_ptr >= o_list && o_ptr < o_list + MAX_O_IDX) {
@@ -4430,9 +4431,6 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
  				/* Validate the item */
  				if (!item_tester_okay(o_ptr)) continue;
  
- 				/* Save the index */
- 				(*cp) = 0 - this_o_idx;
- 				
  				/* Forget the item_tester_tval restriction */
  				item_tester_tval = 0;
  		
@@ -4440,12 +4438,12 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
  				item_tester_hook = NULL;
  				
  				/* Success */
-				return cnv_idx_to_obj(*cp);
+				return o_ptr;
  	        }
          }
          
          /* Verify the item */
-         else if (get_item_okay(*cp)) {
+         else if (get_item_okay(cnv_obj_to_idx(o_ptr))) {
          
  	        /* Forget the item_tester_tval restriction */
  	        item_tester_tval = 0;
@@ -4454,7 +4452,7 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
  	        item_tester_hook = NULL;
  	        
  	        /* Success */
-			return cnv_idx_to_obj(*cp);
+			return o_ptr;
          }
      }
  
@@ -4467,11 +4465,8 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Not done */
 	done = FALSE;
 
-	/* No item selected */
-	item = FALSE;
-
-	/* Default to "no item" (see above) */
-	*cp = -1;
+	/* Default to "no error" */
+	*err = SUCCESS;
 
 
 	/* Full inventory */
@@ -4504,8 +4499,6 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 		{
-			object_type *o_ptr;
-			
 			/* Acquire object */
 			o_ptr = &o_list[this_o_idx];
 
@@ -4525,7 +4518,7 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 		command_see = FALSE;
 
 		/* Hack -- Nothing to choose */
-		*cp = -2;
+		*err = GET_ITEM_ERROR_NO_ITEMS;
 
 		/* Done */
 		done = TRUE;
@@ -4683,6 +4676,8 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 			{
 				command_gap = 50;
 				done = TRUE;
+				*err = GET_ITEM_ERROR_ABORT;
+				o_ptr = NULL;
 				break;
 			}
 
@@ -4734,8 +4729,6 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
                     /* Scan all objects in the grid */
 					for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 					{
-						object_type *o_ptr;
-						
 						/* Acquire object */
 						o_ptr = &o_list[this_o_idx];
 
@@ -4751,10 +4744,6 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 						/* Skip non-acceptable items */
 						if (other_query_flag && !get_item_allow(0 - this_o_idx)) continue;
 
-						/* Accept choice */
-						(*cp) = 0 - this_o_idx;
-
-						item = TRUE;
 						done = TRUE;
 						break;
 					}
@@ -4780,30 +4769,31 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 					break;
 				}
 
+				o_ptr = cnv_idx_to_obj(cnv_obj_to_idx(o_ptr));
+
 				/* Hack -- Verify item */
-				if ((k < INVEN_WIELD) ? !inven : !equip)
+				if (is_worn_p(o_ptr) ? !inven : !equip)
 				{
 					bell();
 					break;
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(k))
+				if (!get_item_okay(cnv_obj_to_idx(o_ptr)))
 				{
 					bell();
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
+				if (!get_item_allow(cnv_obj_to_idx(o_ptr)))
 				{
+					o_ptr = NULL;
 					done = TRUE;
 					break;
 				}
 
 				/* Use that item */
-				(*cp) = k;
-				item = TRUE;
 				done = TRUE;
 				break;
 			}
@@ -4812,34 +4802,39 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 			case '\r':
 			{
 				/* Choose "default" inventory item */
-				if (!command_wrk)
+				if (!command_wrk && i1 == i2)
 				{
-					k = ((i1 == i2) ? i1 : -1);
+					o_ptr = inventory+i1;
 				}
 
 				/* Choose "default" equipment item */
+				else if (command_wrk && e1 == e2)
+				{
+					o_ptr = inventory+e1;
+				}
+				/* No "default" item. */
 				else
 				{
-					k = ((e1 == e2) ? e1 : -1);
+					bell();
+					break;
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(k))
+				if (!get_item_okay(cnv_obj_to_idx(o_ptr)))
 				{
 					bell();
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
+				if (!get_item_allow(cnv_obj_to_idx(o_ptr)))
 				{
+					o_ptr = NULL;
 					done = TRUE;
 					break;
 				}
 
 				/* Accept that choice */
-				(*cp) = k;
-				item = TRUE;
 				done = TRUE;
 				break;
 			}
@@ -4850,24 +4845,23 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 			 */
 			case 'z': case 'Z':
 			{
-				int start, end, i, cursed = -1;
+				object_type *start, *end, *cursed = NULL;
 				/* Find the range. */
 				if (command_wrk)
 				{
-					start = INVEN_WIELD-1;
-					end = INVEN_TOTAL;
+					start = inventory+INVEN_WIELD-1;
+					end = inventory+INVEN_TOTAL;
 				}
 				else
 				{
-					start = 0;
-					end = INVEN_PACK;
+					start = inventory;
+					end = inventory+INVEN_PACK;
 				}
 				/* Search the items for something cursed or worthless. */
-				for (i = start ; i < end; i++)
+				for (o_ptr = start ; o_ptr < end; o_ptr++)
 				{
-					object_type *o_ptr = &inventory[i];
 					/* Skip invalid objects */
-					if (!get_item_okay(i)) continue;
+					if (!get_item_okay(cnv_obj_to_idx(o_ptr))) continue;
 					/* Skip specified objects */
 					if (strstr(quark_str(o_ptr->note), "!k")) continue;
 					/* Skip objects which are not worthless */
@@ -4875,7 +4869,7 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 					/* Notice the first cursed item */
 					if (cursed_p(o_ptr) && o_ptr->ident & IDENT_SENSE_CURSED)
 					{
-						if (cursed < 0) cursed = i;
+						if (!cursed) cursed = o_ptr;
 					}
 					/* Return the first non-cursed worthless item */
 					else
@@ -4884,13 +4878,15 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 					}
 				}
 				/* No broken items, so return any cursed ones found */
-				if (i == end) i = cursed;
+				if (o_ptr == end) o_ptr = cursed;
 
 				/* There was a broken or cursed item. */
-				if (i != -1)
+				if (o_ptr)
 				{
+					bool upper = isupper(which);
 					/* Continue, preserving case */
-				which += index_to_label(i) - 'z';
+					which = index_to_label(cnv_obj_to_idx(o_ptr));
+					if (upper) which += 'A'-'a';
 				}
 			}
 
@@ -4898,26 +4894,27 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 			case 'x': case 'X': case 'y': case 'Y':
 			if (strchr("XxYy", which) && spoil_value)
 			{
-				int i, start, end, best;
+				object_type *start, *end, *best = NULL;
 				bool high = strchr("Xx", which) != NULL;
-				bool upper = isupper(which);
 				s32b best_price = UNREAD_VALUE;
+
+				/* Find the range. */
 				if (command_wrk)
 				{
-					start = INVEN_WIELD-1;
-					end = INVEN_TOTAL;
+					start = inventory+INVEN_WIELD-1;
+					end = inventory+INVEN_TOTAL;
 				}
 				else
 				{
-					start = 0;
-					end = INVEN_PACK;
+					start = inventory;
+					end = inventory+INVEN_PACK;
 				}
+
 				/* Look through the items, finding the best value. */
-				for (i = start, best = -1; i < end; i++)
+				for (o_ptr = start, best = NULL; o_ptr < end; o_ptr++)
 				{
-					object_type *o_ptr = &inventory[i];
 					s32b this_price;
-					if (!get_item_okay(i)) continue;
+					if (!get_item_okay(cnv_obj_to_idx(o_ptr))) continue;
 					this_price = object_value(o_ptr) * o_ptr->number;
 					if (best >= start)
 					{
@@ -4930,19 +4927,20 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 							if (this_price > best_price) continue;
 						}	
 					}
-					best = i;
+					best = o_ptr;
 					best_price = this_price;
 				}
 				/* Paranoia */
-				if (best < 0)
+				if (!best)
 				{
 					bell();
 					break;
 				}
 				else
 				{
+					bool upper = isupper(which);
 					/* Continue, preserving case */
-					which = index_to_label(best);
+					which = index_to_label(cnv_obj_to_idx(best));
 					if (upper) which += 'A'-'a';
 				}
 			}
@@ -4955,39 +4953,39 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* Convert letter to inventory index */
 				if (!command_wrk)
 				{
-					k = label_to_inven(which);
+					o_ptr = cnv_idx_to_obj(label_to_inven(which));
 				}
 
 				/* Convert letter to equipment index */
 				else
 				{
-					k = label_to_equip(which);
+					o_ptr = cnv_idx_to_obj(label_to_equip(which));
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(k))
+				if (!get_item_okay(cnv_obj_to_idx(o_ptr)))
 				{
 					bell();
 					break;
 				}
 
 				/* Verify, abort if requested */
-				if (ver && !verify("Try", k))
+				if (ver && !verify("Try", cnv_obj_to_idx(o_ptr)))
 				{
+					o_ptr = NULL;
 					done = TRUE;
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
+				if (!get_item_allow(cnv_obj_to_idx(o_ptr)))
 				{
+					o_ptr = NULL;
 					done = TRUE;
 					break;
 				}
 
 				/* Accept that choice */
-				(*cp) = k;
-				item = TRUE;
 				done = TRUE;
 				break;
 			}
@@ -5015,9 +5013,9 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 	item_tester_hook = NULL;
 
 	/* Show item if possible. */
-	if (item)
+	if (o_ptr)
 	{
-		object_track(cnv_idx_to_obj(*cp));
+		object_track(o_ptr);
 	}
 
 	/* Clean up */
@@ -5033,12 +5031,12 @@ object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
  
  #ifdef ALLOW_REPEAT
  
-     if (item) repeat_push(*cp);
+     if (o_ptr) repeat_push(cnv_obj_to_idx(o_ptr));
      
  #endif /* ALLOW_REPEAT */
 
 	/* Return the object if something was picked. */
-	return (item) ? cnv_idx_to_obj(*cp) : NULL;
+	return o_ptr;
 }
 
 

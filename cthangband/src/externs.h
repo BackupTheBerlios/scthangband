@@ -1400,7 +1400,7 @@ extern void show_inven(void);
 extern void show_equip(void);
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C))
-extern object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor);
+extern object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor);
 #endif
 
 /* object2.c */
@@ -3967,7 +3967,7 @@ extern cptr roff_monster(u32b flags2, u32b flags3);
 
 /* cave.c */
 
-#if (defined(CAVE_C) || defined(CMD3_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
+#if (defined(CAVE_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern s16b cnv_obj_to_idx(object_type *o_ptr);
 #endif
 
