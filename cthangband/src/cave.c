@@ -1270,6 +1270,16 @@ static void highlight_map_square(const int y, const int x)
  */
 void highlight_square(int win, int y, int x)
 {
+	static int win2=-1, y2, x2;
+
+	/* Do nothing if the cursor remains within the same square. */
+	if (win == win2 && y == y2 && x == x2) return;
+	
+	/* Remember the square for next time. */
+	win2 = win;
+	y2 = y;
+	x2 = x;
+
 	/* If over a known section of map, display details.
 	 * Note that this does not check where the map is actually visible.
 	 */
