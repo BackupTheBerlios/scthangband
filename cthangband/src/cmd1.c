@@ -1187,7 +1187,7 @@ static bool do_cmd_fire_aux(object_type *o_ptr,
 					if ((m_ptr->smart & SM_ALLY)
 					&& (k_info[q_ptr->k_idx].tval != TV_POTION))
 					{
-						msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
+						msg_format("%^v gets angry!", monster_desc_f2, m_ptr, 0);
 						m_ptr->smart &= ~SM_ALLY;
 					}
 

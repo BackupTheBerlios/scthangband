@@ -2274,7 +2274,7 @@ static void anger_monster(monster_type *m_ptr)
 {
 	if (m_ptr->smart & SM_ALLY)
 	{
-		msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
+		msg_format("%^v gets angry!", monster_desc_f2, m_ptr, 0);
 		m_ptr->smart &= ~SM_ALLY;
 	}
 }

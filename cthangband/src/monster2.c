@@ -2899,7 +2899,7 @@ void message_pain(monster_type *m_ptr, int dam)
 	}
 
 	/* Print the message. */
-	msg_format("%v %s.", monster_desc_f2, m_ptr, 0, str);
+	msg_format("%^v %s.", monster_desc_f2, m_ptr, 0, str);
 
 }
 
