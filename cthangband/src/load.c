@@ -162,6 +162,19 @@ static byte sf_get(void)
 	return (v);
 }
 
+static void rd_number(u32b *ip, int size)
+{
+	int i;
+
+	/* Caller */
+	assert(size > 0 && size <= 4);
+
+	for (*ip = i = 0; i < size; i++)
+	{
+		(*ip) |= ((u32b)(sf_get()) << (i*8));
+	}
+}
+
 static void rd_byte(byte *ip)
 {
 	*ip = sf_get();
@@ -1401,6 +1414,39 @@ static void rd_messages(void)
 
 
 /*
+ * Simple "run length decoding" of a field in cave.
+ */
+static void rd_rle_cave(int size, void (*set)(cave_type *, u32b))
+{
+	int x, y;
+	byte c;
+	u32b UNREAD(n);
+
+	for (c = y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++, c--)
+		{
+			while (!c)
+			{
+				rd_byte(&c);
+				rd_number(&n, size);
+			}
+			(*set)(&cave[y][x], n);
+		}
+	}
+}
+
+static void set_cave_info(cave_type *c_ptr, u32b v)
+{
+	c_ptr->info = (u16b)v;
+}
+
+static void set_cave_feat(cave_type *c_ptr, u32b v)
+{
+	c_ptr->feat = (byte)v;
+}
+
+/*
  * Read the dungeon
  *
  * The monsters/objects must be loaded in the same order
@@ -1408,16 +1454,8 @@ static void rd_messages(void)
  */
 static errr rd_dungeon(void)
 {
-	int i, y, x;
-
-	int ymax, xmax;
-
-	byte count;
-	byte tmp8u;
-	u16b tmp16u;
-
+	int i;
 	u16b limit;
-
 	cave_type *c_ptr;
 
 
@@ -1442,79 +1480,16 @@ static errr rd_dungeon(void)
 	rd_s16b(&max_panel_cols);
 
 
-	/* Maximal size */
-	ymax = cur_hgt;
-	xmax = cur_wid;
-
-
 	/*** Run length decoding ***/
 
-	/* Load the dungeon data */
-	for (x = y = 0; y < ymax; )
-	{
-		/* Grab RLE info */
-		rd_byte(&count);
-		if (has_flag(SF_16_CAVE_FLAG))
-		{
-			rd_u16b(&tmp16u);
-		}
-		else
-		{
-			rd_byte(&tmp8u);
-			tmp16u = tmp8u;
-		}
+	/* Encode cave_type.info. */
+	if (has_flag(SF_16_CAVE_FLAG))
+		rd_rle_cave(2, set_cave_info);
+	else
+		rd_rle_cave(1, set_cave_info);
 
-		/* Apply the RLE info */
-		for (i = count; i > 0; i--)
-		{
-			/* Access the cave */
-			c_ptr = &cave[y][x];
-
-			/* Extract "info" */
-			c_ptr->info = tmp16u;
-
-			/* Advance/Wrap */
-			if (++x >= xmax)
-			{
-				/* Wrap */
-				x = 0;
-
-				/* Advance/Wrap */
-				if (++y >= ymax) break;
-			}
-		}
-	}
-
-
-	/*** Run length decoding ***/
-
-	/* Load the dungeon data */
-	for (x = y = 0; y < ymax; )
-	{
-		/* Grab RLE info */
-		rd_byte(&count);
-		rd_byte(&tmp8u);
-
-		/* Apply the RLE info */
-		for (i = count; i > 0; i--)
-		{
-			/* Access the cave */
-			c_ptr = &cave[y][x];
-
-			/* Extract "feat" */
-			c_ptr->feat = tmp8u;
-
-			/* Advance/Wrap */
-			if (++x >= xmax)
-			{
-				/* Wrap */
-				x = 0;
-
-				/* Advance/Wrap */
-				if (++y >= ymax) break;
-			}
-		}
-	}
+	/* Encode cave_type.feat. */
+	rd_rle_cave(1, set_cave_feat);
 
 
 	/*** Objects ***/

@@ -34,6 +34,18 @@ static void sf_put(byte v)
 	x_stamp += xor_byte;
 }
 
+static void wr_number(u32b v, int size)
+{
+	/* Caller */
+	assert(size > 0 && size <= 4);
+
+	while (size--)
+	{
+		sf_put(v & 0xFF);
+		v >>= 8;
+	}
+}
+
 static void wr_byte(byte v)
 {
 	sf_put(v);
@@ -751,21 +763,64 @@ static void wr_extra(void)
 }
 
 
+/*
+ * Simple "run length encoding" of a field in cave.
+ * This encodes the "size" smallest bytes from whatever "get" returns for the
+ * dungeon squares.
+ */
+static void wr_rle_cave(int size, u32b (*get)(cave_type *))
+{
+	int x, y;
+	u32b prev = 0;
+	byte count = 0;
+
+	for (count = y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			u32b this = (*get)(&cave[y][x]);
+
+			if (this == prev && count < MAX_UCHAR)
+			{
+				count++;
+			}
+			else
+			{
+				wr_byte(count);
+				wr_number(prev, size);
+				prev = this;
+				count = 1;
+			}
+		}
+	}
+	if (count)
+	{
+		wr_byte(count);
+		wr_number(prev, size);
+	}
+}
+
+static u32b get_cave_info_16(cave_type *c_ptr)
+{
+	return c_ptr->info;
+}
+
+static u32b get_cave_info_8(cave_type *c_ptr)
+{
+	return c_ptr->info & 0xFF;
+}
+
+static u32b get_cave_feat(cave_type *c_ptr)
+{
+	return c_ptr->feat;
+}
 
 /*
  * Write the current dungeon
  */
 static void wr_dungeon(void)
 {
-	int i, y, x;
-
-	byte tmp8u;
-	u16b tmp16u;
-
-	byte count;
-	u16b prev_char;
-
-	cave_type *c_ptr;
+	int i;
 
 
 	/*** Basic info ***/
@@ -789,104 +844,22 @@ static void wr_dungeon(void)
 	wr_u16b(max_panel_cols);
 
 
-	/*** Simple "Run-Length-Encoding" of cave ***/
+	/*** Simple "run length encoding" of cave ***/
 
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_char = 0;
+	/* Encode cave_type.info. */
+	if (has_flag(SF_16_CAVE_FLAG))
+		wr_rle_cave(2, get_cave_info_16);
+	else
+		wr_rle_cave(1, get_cave_info_8);
 
-	/* Dump the cave */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
-		{
-			/* Get the cave */
-			c_ptr = &cave[y][x];
-
-			/* Extract the cave flags */
-			tmp16u = c_ptr->info;
-			if (!has_flag(SF_16_CAVE_FLAG)) tmp16u &= 0x00FF;
-
-			/* If the run is broken, or too full, flush it */
-			if ((tmp16u != prev_char) || (count == MAX_UCHAR))
-			{
-				wr_byte((byte)count);
-				if (has_flag(SF_16_CAVE_FLAG))
-					wr_u16b(prev_char);
-				else
-					wr_byte((byte)prev_char);
-
-				prev_char = tmp16u;
-				count = 1;
-			}
-
-			/* Continue the run */
-			else
-			{
-				count++;
-			}
-		}
-	}
-
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		if (has_flag(SF_16_CAVE_FLAG))
-			wr_u16b(prev_char);
-		else
-			wr_byte((byte)prev_char);
-	}
-
-
-	/*** Simple "Run-Length-Encoding" of cave ***/
-
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_char = 0;
-
-	/* Dump the cave */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
-		{
-			/* Get the cave */
-			c_ptr = &cave[y][x];
-
-			/* Extract a byte */
-			tmp8u = c_ptr->feat;
-
-			/* If the run is broken, or too full, flush it */
-			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
-			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
-				prev_char = tmp8u;
-				count = 1;
-			}
-
-			/* Continue the run */
-			else
-			{
-				count++;
-			}
-		}
-	}
-
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
-	}
-
-
-
+	/* Encode cave_type.feat. */
+	wr_rle_cave(1, get_cave_feat);
 
 	/* Compact the objects */
 	compact_objects(0);
 	/* Compact the monsters */
 	compact_monsters(0);
+
 
 	/*** Dump objects ***/
 
