@@ -639,7 +639,6 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
 				if (n1) tval_to_attr[j] = n1;
-				if (n2) tval_to_char[j] = n2;
 				return (0);
 			}
 			else return "format not E:<tv>:<a>/<c>";
@@ -6061,9 +6060,6 @@ void exit_game_panic(void)
 	/* Mega-Hack -- Delay death */
 	if (p_ptr->chp < 0) death = FALSE;
 
-	/* Hardcode panic save */
-	panic_save = 1;
-
 	/* Forbid suspend */
 	signals_ignore_tstp();
 
@@ -6382,9 +6378,6 @@ static void handle_signal_abort(int sig)
 
 	/* Flush output */
 	Term_fresh();
-
-	/* Panic Save */
-	panic_save = 1;
 
 	/* Panic save */
 	died_from = "(panic save)";

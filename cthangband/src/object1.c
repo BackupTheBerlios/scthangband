@@ -353,30 +353,6 @@ static byte default_tval_to_attr(int tval)
 
 
 /*
- * Hack -- prepare the default object char codes by tval
- *
- * XXX XXX XXX Off-load to "pref.prf" file (?)
- */
-static byte default_tval_to_char(int tval)
-{
-	int i;
-
-	/* Hack -- Guess at "correct" values for tval_to_char[] */
-	for (i = 1; i < MAX_K_IDX; i++)
-	{
-		object_kind *k_ptr = &k_info[i];
-
-		/* Use the first value we find */
-		if (k_ptr->tval == tval) return (k_ptr->d_char);
-	}
-
-	/* Default to space */
-	return (' ');
-}
-
-
-
-/*
  * Reset the "visual" lists
  *
  * This involves resetting various things to their "default"
@@ -412,9 +388,6 @@ void reset_visuals(void)
 	{
 		/* Extract a default attr */
 		tval_to_attr[i] = default_tval_to_attr(i);
-
-		/* Extract a default char */
-		tval_to_char[i] = default_tval_to_char(i);
 	}
 
 	/* Access the "font" or "graf" pref file, based on "use_graphics" */

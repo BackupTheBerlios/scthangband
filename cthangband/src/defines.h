@@ -86,6 +86,10 @@
  */
 #define ANGBAND_TERM_DEFAULT 3
 
+/*
+ * Base help file.
+ */
+#define syshelpfile "help.hlp"
 
 /*
  * Total number of stores (see "store.c", etc)

@@ -26,9 +26,6 @@ cptr copyright[5] =
 	"are included in all such copies."
 };
 
-/* The name of the help index file */
-cptr syshelpfile;
-
 /*
  * Run-time arguments (arg_wizard only exists to keep system-specific files
  * happy).
@@ -103,7 +100,6 @@ bool use_graphics;		/* The "graphics" mode is enabled */
 
 u16b total_winner;		/* Semi-Hack -- Game has been won */
 
-u16b panic_save;		/* Track some special "conditions" */
 u16b noscore;			/* Track various "cheating" conditions */
 
 bool use_transparency = FALSE; /* Use transparent tiles */
@@ -120,9 +116,9 @@ bool repair_monsters;	/* Hack -- optimize detect monsters */
 
 s16b total_weight;		/* Total weight being carried */
 
-bool hack_mind;
-bool hack_chaos_feature;
-int artifact_bias;
+bool hack_mind; /* Prevent sanity_blast() on the first turn. */
+bool hack_chaos_feature; /* Give a new character a chaos feature. */
+int artifact_bias; /* Produce a particular sort of artefact. */
 
 s16b o_max = 1;			/* Number of allocated objects */
 s16b o_cnt = 0;			/* Number of live objects */
@@ -131,7 +127,7 @@ s16b m_max = 1;			/* Number of allocated monsters */
 s16b m_cnt = 0;			/* Number of live monsters */
 
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
-bool multi_rew = FALSE;
+bool multi_rew; /* Don't call gain_level_reward() more than once per turn. */
 
 /*
  * Software options (set via the '=' command).  See "tables.c"
@@ -597,11 +593,10 @@ alloc_entry *alloc_race_table;
 
 
 /*
- * Specify attr/char pairs for inventory items (by tval)
+ * Specify attrs for inventory items (by tval)
  * Be sure to use "index & 0x7F" to avoid illegal access
  */
 byte tval_to_attr[128];
-char tval_to_char[128];
 
 
 /*

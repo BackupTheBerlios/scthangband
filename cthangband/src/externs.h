@@ -2471,9 +2471,9 @@ extern errr type_string(cptr str, uint len);
 #if (defined(VARIABLE_C))
 extern cptr copyright[5];
 #endif
-#if (defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
-extern cptr syshelpfile;
-#endif
+
+
+
 #if (defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern bool arg_fiddle;
 #endif
@@ -2621,9 +2621,9 @@ extern bool use_graphics;
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern u16b total_winner;
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern u16b panic_save;
-#endif
+
+
+
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern u16b noscore;
 #endif
@@ -3296,9 +3296,9 @@ extern alloc_entry *alloc_race_table;
 #if (defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern byte tval_to_attr[128];
 #endif
-#if (defined(FILES_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern char tval_to_char[128];
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr keymap_act[KEYMAP_MODES][256];
 #endif

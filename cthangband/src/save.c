@@ -733,9 +733,9 @@ static void wr_extra(void)
 		}
 	}
 
+	strip_bytes(2);
 
 	/* Special stuff */
-	wr_u16b(panic_save);
 	wr_u16b(total_winner);
 	wr_u16b(noscore);
 

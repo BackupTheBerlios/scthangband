@@ -1257,8 +1257,9 @@ static void rd_extra(void)
 		}
 	}
 
+	strip_bytes(2);
+
 	/* Special stuff */
-	rd_u16b(&panic_save);
 	rd_u16b(&total_winner);
 	rd_u16b(&noscore);
 

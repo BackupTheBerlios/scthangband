@@ -2619,9 +2619,6 @@ static void player_wipe(void)
 	/* Assume no winning game */
 	total_winner = FALSE;
 
-	/* Assume no panic save */
-	panic_save = 0;
-
 	/* Assume no cheating */
 	noscore = 0;
 }

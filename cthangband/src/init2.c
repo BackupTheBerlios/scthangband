@@ -2111,9 +2111,6 @@ void init_angband(void)
 	/* Initialize feature info */
 	note("[Initializing user pref files...]");
 
-	/* build a name for the basic 'help' index */
-	syshelpfile = "help.hlp";
-
 	/* Initialise the help file links. */
 	init_help_files();
 
