@@ -4921,7 +4921,7 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	}
 
 	/* Determine the name before anything happens. */
-	strnfmt(name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
 
 	/* Modify, Optimize */
 	item_increase(o_ptr, -amt);
