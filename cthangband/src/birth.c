@@ -3265,7 +3265,7 @@ static bc_type ask_quick_start(void)
 	XP_PTR = &ARRAY[k]; \
 \
 	/* Display */ \
-	mc_put_fmt(15, Y, "$b%s", XP_PTR->title); \
+	mc_put_fmt(Y, 15, "$B%s", XP_PTR->title); \
 	return TRUE; \
 }
 
