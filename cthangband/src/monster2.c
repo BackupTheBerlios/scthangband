@@ -906,7 +906,7 @@ errr get_mon_num_prep(bool (*hook)(int, int), int p)
 		alloc_entry *entry = &alloc_race_table[i];
 
 		/* Accept monsters which pass the restriction, if any */
-		if (!hook || (*hook)(entry->index, p))
+		if (!hook || (*hook)(p, entry->index))
 		{
 			/* Accept this monster */
 			entry->prob2 = entry->prob1;
