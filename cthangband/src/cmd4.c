@@ -1608,7 +1608,12 @@ void do_cmd_macros(void)
 			if (0 != process_pref_file(tmp))
 			{
 				/* Prompt */
-				msg_print("Could not load file!");
+				msg_print(format("Could not load file '%s'!", tmp));
+			}
+			else
+			{
+				/* Prompt */
+				msg_print(format("Loaded '%s'.", tmp));
 			}
 		}
 
