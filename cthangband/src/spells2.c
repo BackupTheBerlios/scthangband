@@ -77,16 +77,19 @@ bool dimension_door(int plev, int fail_dis)
 		/* Handle directions in a sensible way. */
 		int x2 = px, y2 = py;
 
-		/* Return the square before the first for which dimension door fails. */
+		/* Find the first square on which dimension door would fail. */
 		do
 		{
-			x = x2;
-			y = y2;
-
-			x2 += ddx[dir];
-			y2 += ddy[dir];
+			mmove2(&y2, &x2, py, px, y, x);
 		}
 		while (dimension_door_success(y2, x2, plev));
+
+		/* Move back one square. */
+		mmove2(&y2, &x2, y, x, py, px);
+
+		/* Remember the new target. */
+		x = x2;
+		y = y2;
 	}
 
 	energy_use += 6*TURN_ENERGY/10 - plev*TURN_ENERGY/100;
