@@ -1771,29 +1771,16 @@ static void copy_x11_end(const Time time)
  */
 static void paste_x11_request(const Time time)
 {
-	XEvent event[1];
-	XSelectionRequestEvent *ptr = &(event->xselectionrequest);
-
-	/* Set various things. */
-	ptr->type = SelectionRequest;
-	ptr->display = Metadpy->dpy;
-	ptr->owner = XGetSelectionOwner(Metadpy->dpy, XA_PRIMARY);
-	ptr->requestor = Infowin->win;
-	ptr->selection = XA_PRIMARY;
-	ptr->target = XA_STRING;
-	ptr->property = XA_STRING; /* Unused */
-	ptr->time = time;
-
 	/* Check the owner. */
-	if (ptr->owner == None)
+	if (XGetSelectionOwner(Metadpy->dpy, XA_PRIMARY) == None)
 	{
 		/* No selection. */
 		bell("No selection found.");
 		return;
 	}
 
-	/* Send the SelectionRequest event. */
-	XSendEvent(Metadpy->dpy, ptr->owner, False, NoEventMask, event);
+	/* Request the event as a STRING. */
+	XConvertSelection(DPY, XA_PRIMARY, XA_STRING, XA_STRING, WIN, time);
 }
 
 /*
@@ -1809,6 +1796,68 @@ static int add_char_string(char *buf, byte UNUSED a, char c)
 	return 1;
 }
 
+static bool paste_x11_send_text(XSelectionRequestEvent *rq, int (*add)(char *, byte, char))
+{
+	char buf[1024];
+	co_ord max, min;
+	int x,y,l;
+	byte a;
+	char c;
+
+	/* Too old, or incorrect call. */
+	if (rq->time < s_ptr->time || !add) return FALSE;
+
+	/* Work out which way around to paste. */
+	sort_co_ord(&min, &max, &s_ptr->init, &s_ptr->cur);
+
+	/* Paranoia. */
+	if (XGetSelectionOwner(DPY, XA_PRIMARY) != WIN)
+	{
+		bell("Someone stole my selection!");
+		return FALSE;
+	}
+
+	/* Delete the old value of the property. */
+	XDeleteProperty(DPY, rq->requestor, rq->property);
+
+	for (y = 0; y < Term->hgt; y++)
+	{
+		if (y < min.y) continue;
+		if (y > max.y) break;
+
+		for (x = l = 0; x < Term->wid; x++)
+		{
+			if (x < min.x) continue;
+			if (x > max.x) break;
+
+			/* Find the character. */
+			Term_what(x, y, &a, &c);
+
+			/* Add it. */
+			l += (*add)(buf+l, a, c);
+		}
+
+		/* Terminate all but the last line in an appropriate way. */
+		if (y != max.y) l += (*add)(buf+l, TERM_WHITE, '\n');
+
+		/* Send the (non-empty) string. */
+		XChangeProperty(DPY, rq->requestor, rq->property, rq->target, 8,
+			PropModeAppend, buf, l);
+	}
+	return TRUE;
+}
+
+static Atom xa_targets, xa_timestamp;
+
+/*
+ * Set the required variable atoms at start-up to avoid errors later.
+ */
+static void set_atoms(void)
+{
+	xa_targets = XInternAtom(DPY, "TARGETS", False);
+	xa_timestamp = XInternAtom(DPY, "TIMESTAMP", False);
+}
+
 /*
  * Send some text requested by another X client.
  */
@@ -1816,7 +1865,6 @@ static void paste_x11_send(XSelectionRequestEvent *rq)
 {
 	XEvent event;
 	XSelectionEvent *ptr = &(event.xselection);
-	int (*add)(char *, byte, char) = 0;
 
 	/* Set the event parameters. */
 	ptr->type = SelectionNotify;
@@ -1827,68 +1875,33 @@ static void paste_x11_send(XSelectionRequestEvent *rq)
 	ptr->target = rq->target;
 	ptr->time = rq->time;
 
-	/* Determine the correct "add a character" function. 
-	 * As Term->wid is at most 255, these can add up to 4 characters of
-	 * output per character of input without problem.
-	 * The mechanism will need to change if much more than this is needed.
+	/* Paste the appropriate information for each target type.
+	 * Note that this currently rejects MULTIPLE targets.
 	 */
-	switch (rq->target)
+
+	if (rq->target == XA_STRING)
 	{
-		case XA_STRING: add = add_char_string; break;
-		default: goto error;
+		if (!paste_x11_send_text(rq, add_char_string))
+			ptr->property = None;
 	}
-
-	/* Reply to a known target received recently with data. */
-	if (rq->time >= s_ptr->time && add)
+	else if (rq->target == xa_targets)
 	{
-		char buf[1024];
-		co_ord max, min;
-		int x,y,l;
-		byte a;
-		char c;
-
-		/* Work out which way around to paste. */
-		sort_co_ord(&min, &max, &s_ptr->init, &s_ptr->cur);
-
-		/* Paranoia. */
-		if (XGetSelectionOwner(DPY, XA_PRIMARY) != WIN)
-		{
-			bell("Someone stole my selection!");
-			goto error;
-		}
-
-		/* Delete the old value of the property. */
-		XDeleteProperty(DPY, rq->requestor, rq->property);
-
-		for (y = 0; y < Term->hgt; y++)
-		{
-			if (y < min.y) continue;
-			if (y > max.y) break;
-
-			for (x = l = 0; x < Term->wid; x++)
-			{
-				if (x < min.x) continue;
-				if (x > max.x) break;
-
-				/* Find the character. */
-				Term_what(x, y, &a, &c);
-
-				/* Add it. */
-				l += (*add)(buf+l, a, c);
-			}
-
-			/* Terminate all but the last line in an appropriate way. */
-			if (y != max.y) l += (*add)(buf+l, TERM_WHITE, '\n');
-
-			/* Send the (non-empty) string. */
-			XChangeProperty(DPY, rq->requestor, rq->property, rq->target, 8,
-				PropModeAppend, buf, l);
-		}
+		Atom target_list[2];
+		target_list[0] = XA_STRING;
+		target_list[1] = xa_targets;
+		XChangeProperty(DPY, rq->requestor, rq->property, rq->target,
+			(8 * sizeof(target_list[0])), PropModeReplace,
+			(unsigned char *)target_list,
+			(sizeof(target_list) / sizeof(target_list[0])));
+	}
+	else if (rq->target == xa_timestamp)
+	{
+		XChangeProperty(DPY, rq->requestor, rq->property, rq->target,
+			(8 * sizeof(Time)), PropModeReplace,
+			(unsigned char *)s_ptr->time, 1);
 	}
 	else
 	{
-		/* Respond to all bad requests with property None. */
-error:
 		ptr->property = None;
 	}
 
@@ -1918,6 +1931,7 @@ static void paste_x11_accept(const XSelectionEvent *ptr)
 		bell("Paste failure (remote client did not send primary selection).");
 		return;
 	}
+
 	if (ptr->target != XA_STRING)
 	{
 		bell("Paste failure (selection in unknown format).");
@@ -2802,6 +2816,9 @@ errr init_x11(int argc, char **argv)
 		Infoclr_init_ppn(pixel, Metadpy->bg, "cpy", 0);
 	}
 
+
+	/* Prepare required atoms. */
+	set_atoms();
 
 	/* Initialize the windows */
 	for (i = 0; i < num_term; i++)
