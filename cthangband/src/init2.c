@@ -1636,23 +1636,31 @@ static errr init_alloc(void)
 /*
  * Check screen_coords.
  */
-static bool check_screen_coords(void)
+static void check_screen_coords(void)
 {
 	const co_ord *co_ptr;
 	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
 	{
-		if (co_ptr->idx != co_ptr) return FALSE;
+		if (co_ptr->idx != co_ptr)
+		{
+			quit_fmt("The %s screen co-ordinates have index %d rather than %d",
+				co_ptr->name, co_ptr - screen_coords,
+				co_ptr->idx - screen_coords);
+		}
 	}
-	return TRUE;
 }
 
 /*
- * Check that the members of various arrays are in the correct order.
+ * Check that the members of various arrays are in the correct order,
+ * by calling functions which quit if this is not the case.
+ * This should be called when any of the arrays listed below may have changed
+ * as the rest of code may assume that this is correct.
  */
 static void check_arrays(void)
 {
-	if (!check_screen_coords()) quit("screen_coords is arranged incorrectly.");
-	if (!check_temp_effects()) quit("temp_effects is arranged incorrectly.");
+	check_bonus_table();
+	check_screen_coords();
+	check_temp_effects();
 }
 #endif /* CHECK_ARRAYS */
 

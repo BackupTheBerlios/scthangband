@@ -551,16 +551,17 @@ static s16b *get_flag(int flag)
 /*
  * Check that temp_effects[] has the expected indices.
  */
-bool check_temp_effects(void)
+void check_temp_effects(void)
 {
 	temp_effect_type *ptr;
 
 	for (ptr = temp_effects; ptr < END_PTR(temp_effects); ptr++)
 	{
-		if (temp_effects+ptr->idx != ptr) return FALSE;
-		if (!get_flag(ptr->idx)) return FALSE;
+		if (temp_effects+ptr->idx != ptr)
+			quit_fmt("temp_effects index %d misplaced.", ptr->idx);
+		if (!get_flag(ptr->idx))
+			quit_fmt("No temp_effects flag available for index %d.", ptr->idx);
 	}
-	return TRUE;
 }
 #endif /* CHECK_ARRAYS */
 

@@ -2231,7 +2231,7 @@ struct bonus_type
 	s16b k_idx; /* Object. */
 	s16b min; /* Gets a bonus of rand_range(min, max)+m_bonus(bonus, level) */
 	s16b max; /* "" */
-	s16b bonus; /* "", should always be >0, but is signed anyway. */
+	s16b bonus; /* "", should always be >=0, but is signed anyway. */
 	s16b var; /* The variable, as in the definitions below. */
 	s16b power; /* Cursed status, see BT_* flags. */
 };
@@ -2345,27 +2345,61 @@ static bonus_type bonus_table[] =
 	{OBJ_STAFF_STAR_DESTRUCTION, 2, 4, 0, BV_PVAL, BT_UNCURSED},
 };
 
+/*
+ * Return a pointer to the specified variable within an object_type, or
+ * 0 if unknown.
+ */
+static s16b *get_bonus_idx(object_type *o_ptr, int var)
+{
+	switch (var)
+	{
+		case BV_PVAL: return &o_ptr->pval;
+		case BV_TO_H: return &o_ptr->to_h;
+		case BV_TO_D: return &o_ptr->to_d;
+		case BV_TO_A: return &o_ptr->to_a;
+		default: return 0;
+	}
+}
+
+/*
+ * Check that bonus_table[] contains no unidentified variables.
+ */
+#ifdef CHECK_ARRAYS
+void check_bonus_table(void)
+{
+	object_type o_ptr[1];
+	bonus_type *b_ptr;
+	for (b_ptr = bonus_table; b_ptr < END_PTR(bonus_table); b_ptr++)
+	{
+		if (!get_bonus_idx(o_ptr, b_ptr->var))
+		{
+			quit_fmt("Unidentified variable index %d found in bonus_table[%d]",
+				b_ptr->var, b_ptr-bonus_table);
+		}
+		if (b_ptr->bonus < 0)
+		{
+			quit_fmt("Negative m_bonus %d found in bonus_table[%d]",
+				b_ptr->bonus, b_ptr-bonus_table);
+		}
+	}
+}
+#endif /* CHECK_ARRAYS */
+
+/*
+ * Apply a modification from bonus_table[] to an object.
+ */
 static void set_var_aux(object_type *o_ptr, bonus_type *b_ptr, const int level,
 	int power)
 {
-	s16b *var;
+	s16b *var = get_bonus_idx(o_ptr, b_ptr->var);
+
+	/* Allow the table to specify whether the object is cursed or not. */
 	if (b_ptr->power != BT_VARY) power = b_ptr->power;
-	switch (b_ptr->var)
-	{
-		case BV_PVAL: var = &o_ptr->pval; break;
-		case BV_TO_H: var = &o_ptr->to_h; break;
-		case BV_TO_D: var = &o_ptr->to_d; break;
-		case BV_TO_A: var = &o_ptr->to_a; break;
-		default:
-		{
-			if (alert_failure)
-				msg_format("Strange var request in set_var_aux(): %d.\n",
-					b_ptr->var);
-			return;
-		}
-	}
+
+	/* Set the variable for an uncursed object. */
 	(*var) = rand_range(b_ptr->min, b_ptr->max) + m_bonus(b_ptr->bonus, level);
 
+	/* Apply a curse. */
 	if (power < 0)
 	{
 		/* Broken */

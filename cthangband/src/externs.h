@@ -3776,7 +3776,7 @@ extern char *format(cptr fmt, ...);
 #if (defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_FORM_C))
 extern void plog_fmt(cptr fmt, ...);
 #endif
-#if (defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAID_X11_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(STORE_C) || defined(Z_FORM_C))
+#if (defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAID_X11_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern void quit_fmt(cptr fmt, ...);
 #endif
 
@@ -4065,7 +4065,7 @@ extern bool player_no_stun(void);
 /* xtra2.c */
 
 #if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(XTRA2_C))
-extern bool check_temp_effects(void);
+extern void check_temp_effects(void);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
 extern bool add_flag(int flag, int v);
@@ -4084,5 +4084,11 @@ extern errr type_string(char *str);
 
 #if (defined(UTIL_C) || defined(Z_TERM_C))
 extern int Term_queue_space(void);
+#endif
+
+/* object2.c */
+
+#if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(OBJECT2_C))
+extern void check_bonus_table(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
