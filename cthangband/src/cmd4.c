@@ -1931,7 +1931,7 @@ static void dump_normal_options(FILE *fff)
 	fprintf(fff, "\n\n# Automatic option dump\n\n");
 
 	/* Dump each of the normal options in turn. */
-	for (op_ptr = option_info; op_ptr->o_var; op_ptr++)
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 	{
 		/* Paranoia - require a real option */
 		if (!op_ptr->o_text) continue;
