@@ -587,3 +587,10 @@
  * generating an extra [y/n] prompt to do so.
  */
 /* #define ALLOW_410_SAVES */
+
+/*
+ * Display the time at which the program was compiled in do_cmd_version().
+ * This should work everywhere, but it is disabled by default as it relies
+ * on cmd4.c being recompiled whenever the game is compiled.
+ */
+/* #define SHOW_COMPILE_TIME */
