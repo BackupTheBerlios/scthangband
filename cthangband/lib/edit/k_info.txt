@@ -3372,49 +3372,49 @@ D:It fires randomly in random directions when you zap it.
 
 N:408:& Lump~ of Sulphur
 G:*:y:0
-I:Charm:0:0
+I:Charm:0:17
 W:0:0.2lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:409:& Hemlock Twig~
 G:-:u:0
-I:Charm:0:1
+I:Charm:0:18
 W:0:0.2lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:410:& Silver Unicorn Horn~
 G:-:s:0
-I:Charm:0:2
+I:Charm:0:19
 W:0:0.2lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:411:& Crystal~
 G:*:w:0
-I:Charm:0:3
+I:Charm:0:20
 W:0:0.2lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:412:& Fly Agaric Toadstool~
 G:,:R:0
-I:Charm:0:4
+I:Charm:0:21
 W:0:0.2lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:413:& Clove~ of Garlic
 G:,:s:0
-I:Charm:0:5
+I:Charm:0:22
 W:0:0.2lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:414:& Geode~
 G:*:u:0
-I:Charm:0:6
+I:Charm:0:23
 W:0:0.2lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
@@ -3423,21 +3423,21 @@ P:(1d1) (+0,+0) [0,+0]
 
 N:415:[Beginner's Handbook]
 G:?:B:201
-I:Sorcery:0:0
+I:Sorcery:0:1
 W:0:3.0lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:416:[Master Sorcerer's Handbook]
 G:?:B:201
-I:Sorcery:0:1
+I:Sorcery:0:2
 W:0:3.0lb:1,000
 A:20/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:417:[R'Lyeh Text]
 G:?:b:201
-I:Sorcery:0:2
+I:Sorcery:0:3
 W:0:3.0lb:25,000
 A:40/1
 P:(1d1) (+0,+0) [0,+0]
@@ -3445,7 +3445,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:418:[Unausprechlichen Kulten]
 G:?:b:201
-I:Sorcery:0:3
+I:Sorcery:0:4
 W:0:3.0lb:100,000
 A:90/3
 P:(1d1) (+0,+0) [0,+0]
@@ -3455,21 +3455,21 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:419:[Minor Conjurings]
 G:?:U:203
-I:Conjuration:0:0
+I:Conjuration:0:13
 W:0:3.0lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:420:[Conjuring Mastery]
 G:?:U:203
-I:Conjuration:0:1
+I:Conjuration:0:14
 W:0:3.0lb:1,000
 A:20/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:421:[Book of Eibon]
 G:?:o:203
-I:Conjuration:0:2
+I:Conjuration:0:15
 W:0:3.0lb:25,000
 A:40/1
 P:(1d1) (+0,+0) [0,+0]
@@ -3477,7 +3477,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:422:[Liber Ivonis]
 G:?:o:203
-I:Conjuration:0:3
+I:Conjuration:0:16
 W:0:3.0lb:100,000
 A:90/3
 P:(1d1) (+0,+0) [0,+0]
@@ -3487,21 +3487,21 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:423:[Black Prayers]
 G:?:D:204
-I:Necromancy:0:0
+I:Necromancy:0:5
 W:0:3.0lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:424:[Black Mass]
 G:?:D:204
-I:Necromancy:0:1
+I:Necromancy:0:6
 W:0:3.0lb:1,000
 A:20/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:425:[Necronomicon]
 G:?:v:204
-I:Necromancy:0:2
+I:Necromancy:0:7
 W:0:3.0lb:25,000
 A:50/1
 P:(1d1) (+0,+0) [0,+0]
@@ -3509,7 +3509,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:426:[Kitab Al Azif]
 G:?:v:204
-I:Necromancy:0:3
+I:Necromancy:0:8
 W:0:3.0lb:100,000
 A:90/3
 P:(1d1) (+0,+0) [0,+0]
@@ -3519,21 +3519,21 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:427:[Sign of Chaos]
 G:?:R:202
-I:Thaumaturgy:0:0
+I:Thaumaturgy:0:9
 W:0:3.0lb:100
 A:10/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:428:[Chaos Mastery]
 G:?:R:202
-I:Thaumaturgy:0:1
+I:Thaumaturgy:0:10
 W:0:3.0lb:1,000
 A:20/1
 P:(1d1) (+0,+0) [0,+0]
 
 N:429:[The King in Yellow]
 G:?:r:202
-I:Thaumaturgy:0:2
+I:Thaumaturgy:0:11
 W:0:3.0lb:25,000
 A:50/1
 P:(1d1) (+0,+0) [0,+0]
@@ -3541,7 +3541,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:430:[Revelations of Glaaki]
 G:?:r:202
-I:Thaumaturgy:0:3
+I:Thaumaturgy:0:12
 W:0:3.0lb:100,000
 A:100/3
 P:(1d1) (+0,+0) [0,+0]

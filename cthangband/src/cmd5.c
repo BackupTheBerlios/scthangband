@@ -23,54 +23,36 @@ static s32b favour_annoyance(magic_type *f_ptr);
 static void annoy_spirit(spirit_type *s_ptr,u32b amount);
 
 /*
- * Hack - find out various things about an object via a strange table.
+ * Extract the book index from the object data.
  */
-static int obj_books[][3] =
-{
-	{OBJ_SORCERY_BEGINNERS_HANDBOOK, BK_SORC_0, SCH_SORCERY},
-	{OBJ_SORCERY_MASTER_SORCERERS_HANDBOOK, BK_SORC_1, SCH_SORCERY},
-	{OBJ_SORCERY_RLYEH_TEXT, BK_SORC_2, SCH_SORCERY},
-	{OBJ_SORCERY_UNAUSPRECHLICHEN_KULTEN, BK_SORC_3, SCH_SORCERY},
-	{OBJ_NECROMANCY_BLACK_PRAYERS, BK_NECRO_0, SCH_NECROMANCY},
-	{OBJ_NECROMANCY_BLACK_MASS, BK_NECRO_1, SCH_NECROMANCY},
-	{OBJ_NECROMANCY_NECRONOMICON, BK_NECRO_2, SCH_NECROMANCY},
-	{OBJ_NECROMANCY_KITAB_AL_AZIF, BK_NECRO_3, SCH_NECROMANCY},
-	{OBJ_THAUMATURGY_SIGN_OF_CHAOS, BK_THAUM_0, SCH_THAUMATURGY},
-	{OBJ_THAUMATURGY_CHAOS_MASTERY, BK_THAUM_1, SCH_THAUMATURGY},
-	{OBJ_THAUMATURGY_THE_KING_IN_YELLOW, BK_THAUM_2, SCH_THAUMATURGY},
-	{OBJ_THAUMATURGY_REVELATIONS_OF_GLAAKI, BK_THAUM_3, SCH_THAUMATURGY},
-	{OBJ_CONJURATION_MINOR_CONJURINGS, BK_CONJ_0, SCH_CONJURATION},
-	{OBJ_CONJURATION_CONJURING_MASTERY, BK_CONJ_1, SCH_CONJURATION},
-	{OBJ_CONJURATION_BOOK_OF_EIBON, BK_CONJ_2, SCH_CONJURATION},
-	{OBJ_CONJURATION_LIBER_IVONIS, BK_CONJ_3, SCH_CONJURATION},
-	{OBJ_LUMP_OF_SULPHUR, BK_CHARM_SULPHUR, -1},
-	{OBJ_HEMLOCK_TWIG, BK_CHARM_HEMLOCK, -1},
-	{OBJ_SILVER_UNICORN_HORN, BK_CHARM_UNICORN, -1},
-	{OBJ_CRYSTAL, BK_CHARM_CRYSTAL, -1},
-	{OBJ_FLY_AGARIC_TOADSTOOL, BK_CHARM_AGARIC, -1},
-	{OBJ_CLOVE_OF_GARLIC, BK_CHARM_GARLIC, -1},
-	{OBJ_GEODE, BK_CHARM_GEODE, -1},
-};
-
-
 static book_type *k_idx_to_book(int i)
 {
-	int (*ptr)[3];
-	for (ptr = obj_books; ptr < END_PTR(obj_books); ptr++)
+	object_kind *k_ptr = k_info+i;
+	switch (k_ptr->tval)
 	{
-		if (ptr[0][0] == i) return book_info+ptr[0][1];
+		/* Only some objects can be spellbooks. */
+		case TV_SORCERY_BOOK: case TV_THAUMATURGY_BOOK: case TV_CHARM:
+		case TV_CONJURATION_BOOK: case TV_NECROMANCY_BOOK:
+		{
+			if (k_ptr->extra) return book_info+(k_info[i].extra-1);
+			else return 0;
+		}
+		default:
+		{
+			return 0;
+		}
 	}
-	return NULL;
 }
 
 static int k_idx_to_school(int i)
 {
-	int (*ptr)[3];
-	for (ptr = obj_books; ptr < END_PTR(obj_books); ptr++)
+	book_type *b_ptr = k_idx_to_book(i);
+	if (!b_ptr) return -2;
+	for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
 	{
-		if (ptr[0][0] == i) return ptr[0][2];
+		if (b_ptr->flags & (1L << i))
+			return b_ptr->info[i].skill1;
 	}
-	return -2;
 }	
 
 static book_type *spirit_to_book(int i)

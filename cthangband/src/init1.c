@@ -1683,6 +1683,19 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			if (3 != sscanf(buf+2, "%d:%d:%d%c", &tval, &pval, &kextra, end))
 				return PARSE_ERROR_INCORRECT_SYNTAX;
 
+			if (tval < 0 || tval > 255 || kextra < 0 || kextra > 255)
+				return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			switch(tval)
+			{
+				case TV_SORCERY_BOOK: case TV_THAUMATURGY_BOOK: case TV_CHARM:
+				case TV_CONJURATION_BOOK: case TV_NECROMANCY_BOOK:
+				{
+					if (kextra > MAX_BK) return PARSE_ERROR_OUT_OF_BOUNDS;
+					break;
+				}
+			}
+
 			/* Save the values */
 			k_ptr->tval = tval;
 			k_ptr->pval = pval;
