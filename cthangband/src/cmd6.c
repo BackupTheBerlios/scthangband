@@ -2937,6 +2937,9 @@ static bool brand_bolts(void)
 		o_ptr->name2 = EGO_FLAME;
 		apply_magic_2(o_ptr, dun_depth);
 
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
 		/* Enchant */
 		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
 
