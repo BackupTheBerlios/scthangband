@@ -3723,6 +3723,30 @@ static void do_cmd_knowledge_player_save(FILE *fff)
 }
 
 /*
+ * Print out various things about the player and his equipment.
+ * This should include all of the messages printed by update_stuff() as
+ * it is intended as a simple way to access that information.
+ */
+static void do_cmd_knowledge_player_misc(FILE *fff)
+{
+	if (mystic_notify_aux)
+		fprintf(fff, "The weight of your armor disrupts your balance.\n");
+	if (p_ptr->heavy_wield)
+		fprintf(fff, "Your weapon is too heavy for you to wield properly.\n");
+	if (p_ptr->heavy_shoot)
+		fprintf(fff, "Your bow is too heavy for you to wield properly.\n");
+	if (p_ptr->cumber_glove)
+		fprintf(fff, "Your covered hands feel unsuitable for spellcasting.\n");
+	if (p_ptr->cumber_armor)
+		fprintf(fff, "The weight of your armor spellcasting difficult.\n");
+	if (p_ptr->cumber_helm)
+		fprintf(fff, "Your covered head feels unsuitable for mindcrafting.\n");
+	if (p_ptr->new_spells)
+		fprintf(fff, "You can learn %d more spell%s.\n", p_ptr->new_spells,
+				(p_ptr->new_spells != 1) ? "s" : "");
+}
+
+/*
  * List various pieces of information about the player.
  */
 static void do_cmd_knowledge_player(void)
@@ -3739,6 +3763,8 @@ static void do_cmd_knowledge_player(void)
 	do_cmd_knowledge_player_ac(fff);
 	fprintf(fff, "\n");
 	do_cmd_knowledge_player_save(fff);
+	fprintf(fff, "\n");
+	do_cmd_knowledge_player_misc(fff);
 
 	/* Close the file. */
 	my_fclose(fff);

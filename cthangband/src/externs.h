@@ -3451,7 +3451,7 @@ extern bool (*get_obj_num_hook)(int k_idx);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(VARIABLE_C))
 extern bool angband_keymap_flag;
 #endif
-#if (defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool mystic_notify_aux;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
