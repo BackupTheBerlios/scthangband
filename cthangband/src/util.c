@@ -1806,7 +1806,11 @@ char inkey(void)
 
 
 	/* Update windows if waiting. */
-	if (inkey_base || !inkey_scan) window_stuff();
+	if (inkey_base || !inkey_scan)
+	{
+		window_stuff();
+		update_stuff();
+	}
 
 
 	/* Get a key */

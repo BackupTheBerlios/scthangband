@@ -1591,7 +1591,6 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 
 		/* Check that everything not in player_type is as it should be. */
 		p_ptr->update |= PU_BONUS;
-		update_stuff();
 	}
 }
 
