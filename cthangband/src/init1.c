@@ -2825,7 +2825,7 @@ errr parse_dun_defs(char *buf, header *head, vptr *extra)
 			else if (i == 3)
 			{
 				/* Grab a character to summon. */
-				ptr->bias |= *t | SUMMON_BY_CHAR;
+				ptr->bias |= SUMMON_CHAR(*t);
 			}
 
 			return SUCCESS;

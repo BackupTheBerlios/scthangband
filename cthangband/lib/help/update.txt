@@ -21,6 +21,7 @@ sCthangband _CVS_
 * Spoilers now use the same information functions as the rest of the code.
 * Monsters can be set to drop ego items in r_info.txt.
 * Fix the following bugs:
+  * The SUMMON_KIN flag created a lot of error messages but very little else.
   * Starting the game with -n gave too many quests.
   * Town monsters could be created elsewhere at level generation, and nothing
     could be produced in the town.

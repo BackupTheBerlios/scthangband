@@ -2534,7 +2534,7 @@ static bool alloc_horde_aux(int y, int x, int level)
 		for (i = rand_range(6, 15); i; i--)
 		{
 			summon_specific(m_ptr->fy, m_ptr->fx, level,
-				r_info[r_idx].d_char | SUMMON_NO_UNIQUES);
+				SUMMON_CHAR(r_info[r_idx].d_char) | SUMMON_NO_UNIQUES);
 		}
 
 		return TRUE;

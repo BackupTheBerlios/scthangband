@@ -2348,7 +2348,7 @@ static bool monst_spell_monst(int m_idx)
 								"minions" : "kin"));
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific_aux(y, x, rlev, SUMMON_NO_UNIQUES | SUMMON_BY_CHAR | r_ptr->d_char, TRUE, friendly);
+				count += summon_specific_aux(y, x, rlev, SUMMON_CHAR(r_ptr->d_char) | SUMMON_NO_UNIQUES, TRUE, friendly);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 
@@ -3849,7 +3849,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 							"minions" : "kin"));
 			for (k = count = 0; k < 6; k++)
 			{
-					count += summon_specific(y, x, rlev, SUMMON_NO_UNIQUES | r_ptr->d_char);
+					count += summon_specific(y, x, rlev, SUMMON_CHAR(r_ptr->d_char) | SUMMON_NO_UNIQUES);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 
