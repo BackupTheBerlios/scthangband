@@ -574,6 +574,7 @@ $GWizard (Debug) Mode active [cheat_wzrd]
 This sets cheat_live and cheat_skll, forces special monster drops to always occur, allows friendly uniques to be generated, causes amulets of adornment to remove the requirement for food, allows the debug commands (Ctrl+a) to be used and gives a variety of extra messages.
 
 %%%%%
+~~~~~01
 === Birth options ===
 
 %%%%% <score_quitter>
