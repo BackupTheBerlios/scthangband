@@ -2333,12 +2333,6 @@ static void process_world(void)
 
 
 
-#ifdef ALLOW_WIZARD
-/*
- * Hack -- Declare the Debug Routines
- */
-extern void do_cmd_debug(void);
-#endif
 
 
 #ifdef ALLOW_BORG
@@ -2423,18 +2417,15 @@ static void process_command(void)
 	/* Parse the command */
 	switch (command_cmd)
 	{
-			/* Ignore */
-		case ESCAPE:
-		case ' ':
+		/* Ignore */
+		case ESCAPE: case CMD_DEBUG+ESCAPE: 
+		case ' ': case CMD_DEBUG+' ':
+		case '\r': case CMD_DEBUG+'\r':
+		case '\n': case CMD_DEBUG+'\n':
 		{
 			break;
 		}
 
-			/* Ignore return */
-		case '\r':
-		{
-			break;
-		}
 
 
 
@@ -3128,13 +3119,244 @@ static void process_command(void)
 			break;
 		}
 
+#ifdef ALLOW_WIZARD
+# ifdef ALLOW_SPOILERS 
+		/* Hack -- Generate Spoilers */
+		case CMD_DEBUG+'"':
+		{
+			do_cmd_spoilers();
+			break;
+		}
+# endif /* ALLOW_SPOILERS */
+
+		/* Debug help (should be in help?) */
+		case CMD_DEBUG+'?':
+		{
+			do_cmd_wiz_help();
+			break;
+		}
+		
+		/* Cure all maladies */
+		case CMD_DEBUG+'a':
+		{
+			do_cmd_wiz_cure_all();
+			break;
+		}
+
+		/* Teleport to target */
+		case CMD_DEBUG+'b':
+		{
+			do_cmd_wiz_bamf();
+			break;
+		}
+
+		/* Create any object */
+		case CMD_DEBUG+'c':
+		{
+			wiz_create_item(command_arg);
+			break;
+		}
+
+
+        /* Create a named artifact */
+        case CMD_DEBUG+'C':
+		{
+    	    wiz_create_named_art(command_arg);
+	        break;
+		}
+
+		/* Detect everything */
+		case CMD_DEBUG+'d':
+		{
+			detect_all();
+			break;
+		}
+
+		/* Edit character */
+		case CMD_DEBUG+'e':
+		{
+			do_cmd_wiz_change();
+			break;
+		}
+
+		/* View item info */
+		case CMD_DEBUG+'f':
+		{
+			(void)identify_fully();
+			break;
+		}
+
+		/* Good Objects */
+		case CMD_DEBUG+'g':
+		{
+			if (command_arg <= 0) command_arg = 1;
+			acquirement(py, px, command_arg, FALSE);
+			break;
+		}
+
+		/* Hitpoint rerating */
+		case CMD_DEBUG+'h':
+		{
+			do_cmd_rerate(); break;
+		}
+
+#ifdef MONSTER_HORDES
+        case CMD_DEBUG+'H':
+		{
+    	    do_cmd_summon_horde(); break;
+		}
+#endif
+
+		/* Identify */
+		case CMD_DEBUG+'i':
+		{
+			identify_pack();
+			break;
+		}
+
+		/* Go up or down in the dungeon */
+		case CMD_DEBUG+'j':
+		{
+			do_cmd_wiz_jump();
+			break;
+		}
+
+		/* Self-Knowledge */
+		case CMD_DEBUG+'k':
+		{
+			self_knowledge();
+			break;
+		}
+
+		/* Learn about objects */
+		case CMD_DEBUG+'l':
+		{
+			do_cmd_wiz_learn();
+			break;
+		}
+
+		/* Magic Mapping */
+		case CMD_DEBUG+'m':
+		{
+			map_area();
+			break;
+		}
+
+        /* Chaos Feature */
+        case CMD_DEBUG+'M':
+		{
+    	    (void) gain_chaos_feature(command_arg);
+	        break;
+		}
+
+        /* Specific reward */
+        case CMD_DEBUG+'r':
+		{
+    	    (void) gain_level_reward(command_arg);
+	        break;
+		}
+
+        /* Summon _friendly_ named monster */
+        case CMD_DEBUG+'N':
+		{
+    	    do_cmd_wiz_named_friendly(command_arg, TRUE);
+	        break;
+		}
+
+		/* Summon Named Monster */
+		case CMD_DEBUG+'n':
+		{
+			do_cmd_wiz_named(command_arg, TRUE);
+			break;
+		}
+
+
+		/* Object playing routines */
+		case CMD_DEBUG+'o':
+		{
+			do_cmd_wiz_play();
+			break;
+		}
+
+		/* Phase Door */
+		case CMD_DEBUG+'p':
+		{
+			teleport_player(10);
+			break;
+		}
+
+		/* Summon Random Monster(s) */
+		case CMD_DEBUG+'s':
+		{
+			if (command_arg <= 0) command_arg = 1;
+			do_cmd_wiz_summon(command_arg);
+			break;
+		}
+
+		/* Teleport */
+		case CMD_DEBUG+'t':
+		{
+			teleport_player(100);
+			break;
+		}
+
+		/* Very Good Objects */
+		case CMD_DEBUG+'v':
+		{
+			if (command_arg <= 0) command_arg = 1;
+			acquirement(py, px, command_arg, TRUE);
+			break;
+		}
+
+		/* Wizard Light the Level */
+		case CMD_DEBUG+'w':
+		{
+			wiz_lite();
+			break;
+		}
+
+		/* Increase Skills */
+		case CMD_DEBUG+'x':
+		{
+			if (command_arg)
+			{
+				gain_skills(command_arg);
+			}
+			else
+			{
+				gain_skills(100);
+			}
+			break;
+		}
+
+		/* Zap Monsters (Genocide) */
+		case CMD_DEBUG+'z':
+		{
+			do_cmd_wiz_zap();
+			break;
+		}
+
+		case CMD_DEBUG+'Z':
+		{
+			do_cmd_magebolt();
+			break;
+		}
+
+		/* Hack -- whatever I desire */
+		case CMD_DEBUG+'_':
+		{
+			do_cmd_wiz_hack_ben();
+			break;
+		}
+#endif /* ALLOW_WIZARD */
+
 		/* Hack - process a temporary function. */
 		case '$':
 		{
 			do_cmd_script();
 			break;
 		}
-			/* Hack -- Unknown command */
+		/* Hack -- Unknown command */
 		default:
 		{
             if (randint(2)==1)

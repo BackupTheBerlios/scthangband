@@ -3266,3 +3266,21 @@ extern int PlayerUID;
 #define U_HEAD	21 
 #define Z_HEAD	26
 #define EVENT_HEAD	27
+
+/*
+ * Command numbers for do_cmd_wizard(), etc..
+ *
+ * As the user is not intended to have a way to enter these codes directly
+ * (doing so isn't harmful, but these codes are not intended as mnemonics),
+ * only codes in the range 0xE000 - 0xF8FF (the private area of Unicode 3.0)
+ * should be used.
+ *
+ * In addition, values at the lower end of this range are preferred as the upper
+ * end may have a system-specific encoding
+ */
+
+/* Debug command set. The various debug commands are at an offset to this. */
+#define CMD_DEBUG	-7936
+
+/* Shopping command set. Ditto. (not yet implemented) */
+#define CMD_SHOP	-7680
