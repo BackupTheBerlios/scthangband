@@ -3452,9 +3452,9 @@ static void store_sell_aux(char *o_name)
 				purchase_analyze(price, value, dummy);
 
 			/* Take the item from the player, describe the result */
-			item_increase(q_ptr, -amt);
-			item_describe(q_ptr);
-			item_optimize(q_ptr);
+			item_increase(o_ptr, -amt);
+			item_describe(o_ptr);
+			item_optimize(o_ptr);
 
 			/* Handle stuff */
 			handle_stuff();
@@ -3484,9 +3484,9 @@ static void store_sell_aux(char *o_name)
 		msg_format("You drop %s (%c).", o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
 
 		/* Take it from the players inventory */
-		item_increase(q_ptr, -amt);
-		item_describe(q_ptr);
-		item_optimize(q_ptr);
+		item_increase(o_ptr, -amt);
+		item_describe(o_ptr);
+		item_optimize(o_ptr);
 
 		/* Handle stuff */
 		handle_stuff();
@@ -4609,9 +4609,9 @@ void do_cmd_store(void)
 				msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 				/* Remove it from the players inventory */
-				item_increase(q_ptr, -255);
-				item_describe(q_ptr);
-				item_optimize(q_ptr);
+				item_increase(o_ptr, -255);
+				item_describe(o_ptr);
+				item_optimize(o_ptr);
 
 				/* Handle stuff */
 				handle_stuff();

@@ -4623,25 +4623,6 @@ static void inven_item_charges(int item)
 
 
 /*
- * Describe an item in the inventory.
- */
-static void inven_item_describe(int item)
-{
-	object_type     *o_ptr = &inventory[item];
-
-	C_TNEW(o_name, ONAME_MAX, char);
-
-	/* Get a description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-	/* Print a message */
-	msg_format("You have %s.", o_name);
-
-	TFREE(o_name);
-}
-
-
-/*
  * Increase the "number" of an item in the inventory
  */
 static void inven_item_increase(int item, int num)
@@ -4781,25 +4762,6 @@ static void floor_item_charges(int item)
 
 
 /*
- * Describe an item in the inventory.
- */
-static void floor_item_describe(int item)
-{
-	object_type     *o_ptr = &o_list[item];
-
-	C_TNEW(o_name, ONAME_MAX, char);
-
-	/* Get a description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-	/* Print a message */
-	msg_format("You see %s.", o_name);
-
-	TFREE(o_name);
-}
-
-
-/*
  * Increase the "number" of an item on the floor
  */
 static void floor_item_increase(int item, int num)
@@ -4852,9 +4814,13 @@ void item_charges(object_type *o_ptr)
 	{
 		inven_item_charges(item);
 	}
-	else
+	else if (is_floor_item_p(o_ptr))
 	{
 		floor_item_charges(0 - item);
+	}
+	else if (alert_failure)
+	{
+		msg_print("Unusual item requesed.");
 	}
 }
 
@@ -4869,9 +4835,13 @@ void item_increase(object_type *o_ptr, int num)
 	{
 		inven_item_increase(item, num);
 	}
-	else
+	else if (is_floor_item_p(o_ptr))
 	{
 		floor_item_increase(0 - item, num);
+	}
+	else if (alert_failure)
+	{
+		msg_print("Unusual item requesed.");
 	}
 }
 
@@ -4880,16 +4850,23 @@ void item_increase(object_type *o_ptr, int num)
  */
 void item_describe(object_type *o_ptr)
 {
-	int item = cnv_obj_to_idx(o_ptr);
+	cptr verb;
 
 	if (is_inventory_p(o_ptr))
 	{
-		inven_item_describe(item);
+		verb = "have";
 	}
-	else
+	else if (is_floor_item_p(o_ptr))
 	{
-		floor_item_describe(0 - item);
+		verb = "see";
 	}
+	else 
+	{
+		if (alert_failure) msg_print("Unusual item requesed.");
+		verb = "imagine";
+	}
+
+	msg_format("You %s %v", verb, object_desc_f3, o_ptr, TRUE, 3);
 }
 
 /*
@@ -5200,9 +5177,9 @@ void inven_drop(int item, int amt)
 	}
 
 	/* Modify, Describe, Optimize */
-	item_increase(q_ptr, -amt);
-	item_describe(q_ptr);
-	item_optimize(q_ptr);
+	item_increase(o_ptr, -amt);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 	TFREE(o_name);
 }

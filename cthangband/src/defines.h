@@ -3347,6 +3347,10 @@ extern int PlayerUID;
 #define is_inventory_p(O_PTR) \
 	(o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
 
+#define is_floor_item_p(O_PTR) \
+	(o_ptr >= o_list && o_ptr < o_list+MAX_O_IDX)
+
+
 /* Identify a monster which is never generated normally. */
 #define is_fake_monster(R_PTR) \
 	((R_PTR)->rarity == 0)
