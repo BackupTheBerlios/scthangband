@@ -4131,7 +4131,7 @@ static bool fake_line(cptr s)
  */
 static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int minline)
 {
-	char link_colour = 'o', link_colour_sel = 'y';
+	char link_colour = 'W', link_colour_sel = 's';
 
 	int y, l;
 	char sbuf[1024];
@@ -4232,7 +4232,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 				out_ptr += sprintf(out_ptr, "$<$%c", thiscol);
 
 				/* Ok print the link name */
-				while (*u && *u != ']')
+				for (u++; *u && *u != ']'; )
 				{
 					if (prefix(u, "$")) u++;
 					*out_ptr++ = *u++;
