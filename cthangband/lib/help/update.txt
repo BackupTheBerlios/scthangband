@@ -6,6 +6,9 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Ball attacks aimed in a direction are only stopped by a wall or visible
+  monster.
+* Ball attacks aimed at a target are only stopped by a wall or the target.
 * List the actual name of a hidden object when it is examined.
 * Selecting an object to buy with a capital letter gives a "Try" prompt.
 * Allow an ego type to be selected when creating an object in wizard mode.

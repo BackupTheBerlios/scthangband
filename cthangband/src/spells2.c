@@ -4704,21 +4704,26 @@ bool unlite_area(int dam, int rad)
 
 /*
  * Cast a ball spell
- * Stop if we hit a monster, act as a "ball"
- * Allow "target" mode to pass over monsters
- * Affect grids, objects, and monsters
+ * Can be aimed at any projectable() monster.
+ * If aimed in a direction, it will hit the first wall or visible monster along
+ * its path.
+ * 
+ * Affect grids, objects, and monsters in its blast radius.
  */
 bool fire_ball(int typ, int dir, int dam, int rad)
 {
-	int tx, ty;
-
-	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int x, y, flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Extract the target. */
-	get_dir_target(&tx, &ty, dir);
+	if (!get_dir_target(&x, &y, dir))
+	{
+		/* Handle directions correctly. */
+		for (x = px, y = py; cave_floor_bold(y, x) && (!cave[y][x].m_idx ||
+			!m_list[cave[y][x].m_idx].ml); x += ddx[dir], y += ddy[dir]);
+	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	return (project(0, rad, ty, tx, dam, typ, flg));
+	return (project(0, rad, y, x, dam, typ, flg));
 }
 
 
