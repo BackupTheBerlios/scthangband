@@ -573,26 +573,20 @@ static void prt_state(void)
  */
 static void prt_speed(void)
 {
-	int i = p_ptr->pspeed;
-	char buf[32] = "$D";
-
-	/* Hack -- Visually "undo" the Sneak Mode Slowdown */
-	if (p_ptr->sneaking) i += 10;
+	int i = p_ptr->pspeed - 110;
+	cptr change;
 
 	/* Fast */
-	if (i > 110)
-	{
-		sprintf(buf, "$GFast (+%d)", (i - 110));
-	}
+	if (i > 0) change = "$GFast";
 
 	/* Slow */
-	else if (i < 110)
-	{
-		sprintf(buf, "$USlow (-%d)", (110 - i));
-	}
+	else if (i < 0) change = "$GSlow";
+
+	/* Normal" */
+	else change = "$d";
 
 	/* Display the speed */
-	mc_put_fmt(GET_YX(XY_SPEED), "%-14s", buf);
+	mc_put_fmt(GET_YX(XY_SPEED), "%-14s", format("%s (%+d)", change, i));
 }
 
 /*

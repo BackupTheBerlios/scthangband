@@ -4212,7 +4212,7 @@ static void do_cmd_knowledge_shops(void)
  */
 void do_cmd_knowledge(void)
 {
-	int i;
+	int i, t;
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -4222,7 +4222,7 @@ void do_cmd_knowledge(void)
 	character_icky = TRUE;
 
 	/* Save the screen */
-	Term_save();
+	t = Term_save_aux();
 
 
 	/* Interact until done */
@@ -4290,13 +4290,8 @@ void do_cmd_knowledge(void)
 
 
 	/* Restore the screen */
-	Term_load();
-
-	/*
-	 * For some reason (probably incompatability with 2.8.1) the above
-	 * does not seem to work here... hence the following line
-	 */
-	do_cmd_redraw();
+	Term_load_aux(t);
+	Term_release(t);
 
 	/* Leave "icky" mode */
 	character_icky = FALSE;

@@ -278,7 +278,7 @@ extern void do_cmd_handle(void);
 
 /* cmd4.c */
 
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(STORE_C) || defined(WIZARD2_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(WIZARD2_C))
 extern void do_cmd_redraw(void);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C))

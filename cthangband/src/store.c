@@ -4250,16 +4250,8 @@ void do_cmd_store(void)
 	delete_resize_hook(resize_store);
 
 	/* Restore the saved screen, if any. */
-	if (t)
-	{
-		Term_load_aux(t);
-		Term_release(t);
-	}
-	else
-	{
-		/* Update everything */
-		do_cmd_redraw();
-	}		
+	Term_load_aux(t);
+	Term_release(t);
 
 	/* Flush messages XXX XXX XXX */
 	msg_print(NULL);
