@@ -246,7 +246,9 @@ This will allow you to aim your spells and such at a specific monster or grid, s
 
 %%%%% <cmd=M>
 $GFull screen map (M)
-This command will show a map of the entire dungeon, reduced by a factor of nine, on the screen. Only the major dungeon features will be visible because of the scale, so even some important objects may not show up on the map. This is particularly useful in locating where the stairs are relative to your current position, or for identifying unexplored areas of the dungeon.
+If you are in a dungeon or tower, this command shows a map of the entire dungeon, possibly shrunk to fit, on the screen. Only the major dungeon features will be visible because of the scale, so even some important objects may not show up on the map. This is particularly useful in locating where the stairs are relative to your current position, or for identifying unexplored areas of the dungeon.
+
+If you are on the surface, this shows a map of the entire surface with each town, dungeon and tower labelled on it. Detailed information about the different locations listed is given in *****outdoors.txt*[outdoors.txt].
 
 %%%%% <cmd=L>
 $GLocate player on map (L) or Where is the player (W)
