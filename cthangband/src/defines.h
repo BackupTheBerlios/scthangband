@@ -3342,7 +3342,7 @@ extern int PlayerUID;
 #define CC_LINK_PREFIX	"%%%%%"
 
 #define is_inventory_p(O_PTR) \
-	(o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
+	(O_PTR >= inventory && O_PTR < inventory+INVEN_TOTAL)
 
 #define is_floor_item_p(O_PTR) \
 	(o_ptr >= o_list && o_ptr < o_list+MAX_O_IDX)

@@ -6309,13 +6309,13 @@ void bless_weapon(void)
         {
 
             msg_format("The black aura on %s %s disrupts the blessing!",
-                   ((cnv_obj_to_idx(o_ptr) >= 0) ? "your" : "the"), o_name);
+                   (is_inventory_p(o_ptr) ? "your" : "the"), o_name);
 			TFREE(o_name);
             return;
         }
 
         msg_format("A malignant aura leaves %s %s.",
-           (is_inventory_p(item) ? "your" : "the"), o_name);
+           (is_inventory_p(o_ptr) ? "your" : "the"), o_name);
 
 		/* Uncurse it */
 		o_ptr->ident &= ~(IDENT_CURSED);
