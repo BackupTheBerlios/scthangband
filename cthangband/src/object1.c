@@ -4067,13 +4067,19 @@ static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
 	if (!*o_ptr || !get_item_okay(*o_ptr))
 	{
 		bell(0);
-		return;
+		*done = FALSE;
 	}
 
 	/* Allow the player to refuse the item. */
 	else if ((ver && !verify("Try", *o_ptr)) || !get_item_allow(*o_ptr))
 	{
 		*o_ptr = NULL;
+		*done = TRUE;
+	}
+
+	/* Good, so accept the item and finish. */
+	else
+	{
 		*done = TRUE;
 	}
 }
