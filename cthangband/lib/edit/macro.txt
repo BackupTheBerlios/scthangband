@@ -904,6 +904,7 @@ F:a_info:P:3
 X:u
 Y:-
 F:k_info:N:2
+F:r_info:N:2
 
 # Macros to make it relatively easy to keep the k_idx field in a_info.txt up
 # to date, and also to make it clearer.

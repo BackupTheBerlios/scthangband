@@ -417,6 +417,8 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			{
 				monster_race *r_ptr;
 				i = (huge)strtol(zz[0], NULL, 0);
+				if (i < 0 || i > MAX_SHORT) return (1);
+				i = convert_r_idx(i, sf_flags[0], sf_flags_now);
 				n1 = strtol(zz[1], NULL, 0);
 				n2 = strtol(zz[2], NULL, 0);
 				if (i >= MAX_R_IDX) return (1);

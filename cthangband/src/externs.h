@@ -1619,7 +1619,7 @@ extern u16b sf_saves;
 extern const u16b sf_flags_now;
 #endif
 #if (defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C))
-extern s16b convert_k_idx(s16b k_idx, u32b from_v, u32b to_v);
+extern s16b convert_k_idx(s16b idx, u32b from_v, u32b to_v);
 #endif
 #if (defined(FILES_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(SAVE_C))
 extern bool save_player(bool as_4_1_0);
@@ -3960,5 +3960,11 @@ extern errr string_free(cptr str);
 
 #if (defined(CMD4_C) || defined(QUEST_C))
 extern quest_type *cnv_monster_to_quest(monster_race *r_ptr);
+#endif
+
+/* save.c */
+
+#if (defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C))
+extern s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

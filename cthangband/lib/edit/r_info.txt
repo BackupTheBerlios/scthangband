@@ -11,7 +11,7 @@
 # N:<monster index>:<monster name>
 # G:<monster symbol>:<monster colour>
 # I:<movement speed>:<attack speed>:<hit points>:<perception>:<armour class>:<sleep>
-# W:<level found at>:<rarity>:<unused>:<kill score>
+# W:<level found at>:<rarity>:<kill score>
 # B:<attack type>[:<attack effect>][:<attack damage>]
 # F:<flag1> | <flag2>...
 # E:<information about special things which happen when the monster dies>
@@ -8187,3 +8187,17 @@ G:G:w
 I:0:0:1d1:0:0:0
 W:0:0:0:1
 F:UNIQUE | NEVER_MOVE | NEVER_BLOW
+
+### User-defined monster space ###
+
+# Monsters which are placed after this point and given negative numbers are
+# likely to be supported by future versions if the section of r_info.txt after
+# this comment is copied without modification to r_info.txt for the new version.
+
+# e.g.
+# N:u1:& Boring monster~
+# G:p:s
+# I:+0:1:10:2:5:1
+# W:1:1:2
+# B:HIT:HURT:1d1
+# E:MONSTER:Star-spawn of Cthulhu:p1/10 r20

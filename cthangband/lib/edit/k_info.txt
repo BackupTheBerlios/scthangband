@@ -3829,7 +3829,7 @@ P:0:1d1:0:0:0
 # This is only an issue when changing versions during a game.
 
 # e.g.
-# N:474:& Invisible Dancing Bandyclef~
+# N:u1:& Invisible Dancing Bandyclef~
 # G:\:D:0
 # I:Hafted:0:CRUSH
 # W:30:100:1000

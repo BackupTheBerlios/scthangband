@@ -485,6 +485,8 @@ static void rd_monster(monster_type *m_ptr)
 	/* Read the monster race */
 	rd_s16b(&m_ptr->r_idx);
 
+	m_ptr->r_idx = convert_r_idx(m_ptr->r_idx, sf_flags, sf_flags_now);
+
 	/* Read the other information */
 	rd_byte(&m_ptr->fy);
 	rd_byte(&m_ptr->fx);
@@ -905,7 +907,9 @@ static void rd_ghost(void)
 {
 	int i;
     
-	monster_race *r_ptr = &r_info[MAX_R_IDX-1];
+	monster_race *r_ptr = r_info+
+		convert_r_idx(MON_PLAYER_GHOST, sf_flags, sf_flags_now);
+
 	/* Name */
 	rd_string(r_name + r_ptr->name, 64);
 
@@ -1642,6 +1646,7 @@ func_false();
 static errr rd_savefile_new_aux(void)
 {
 	int i;
+	bool warn;
 
 	byte tmp8u;
 	u16b tmp16u;
@@ -1765,27 +1770,34 @@ static errr rd_savefile_new_aux(void)
 	if (arg_fiddle) note("Loaded Messages");
 
 
+	warn = FALSE;
+
 	/* Monster Memory */
 	rd_u16b(&tmp16u);
 
+	/* Read the available records */
+	for (i = 0; i < tmp16u; i++)
+	{
+		int j = convert_r_idx(i, sf_flags, sf_flags_now);
+
+		/* No such monster. */
+		if (j < 0)
+		{
+			monster_race dummy;
+			rd_lore(&dummy);
+			if (i > OBJ_MAX_DISTRO) warn = TRUE;
+		}
+		/* Read the lore */
+		else
+		{
+			rd_lore(r_info+j);
+		}
+	}
+
 	/* r_info has shrunk. */
-	if (tmp16u > MAX_R_IDX)
+	if (warn)
 	{
 		msg_format("Too many (%u) monster memories. Killing a few.", tmp16u);
-	}
-
-	/* Read the available records */
-	for (i = 0; i < MIN(MAX_R_IDX, tmp16u); i++)
-	{
-		/* Read the lore */
-		rd_lore(r_info+i);
-	}
-
-	/* Forget the last few unused memories. */
-	while (tmp16u-- > MAX_R_IDX)
-	{
-		monster_race dummy;
-		rd_lore(&dummy);
 	}
 
 	if (arg_fiddle) note("Loaded Monster Memory");
