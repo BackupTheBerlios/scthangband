@@ -6874,7 +6874,7 @@ void assert_fail(cptr error, cptr file, int line)
 
 	/* Save the game if allowed. */
 #ifdef DEBUG_ASSERT_SAVE
-	save_player(TRUE);
+	save_player(FALSE);
 #endif /* DEBUG_ASSERT_SAVE */
 
 	/* Quit via the specified mechanism. */
