@@ -50,8 +50,9 @@ static bool is_powerful(object_type *o_ptr)
 
 	/* Items which a monster has failed to pick up are flagged as powerful.
 	 * If the current flag is the same as the flag it would have if a monster
-	 * did so now, the item is powerful. */
-	if (ident_power(o_ptr) == o_ptr->ident) return TRUE;
+	 * did so now, the item is powerful. *identifed* items are never powerful. */
+	if (!(o_ptr->ident & IDENT_MENTAL) &&
+		ident_power(o_ptr) == o_ptr->ident) return TRUE;
 
 	/* If the player hasn't tried it, there's no other way to know its
 	 * powers. */
