@@ -3639,57 +3639,53 @@ void notice_stuff(void)
 /*
  * Is cave[y][x] in a room?
  *
- * Do this by looking for three adjacent surrounding squares, or one of the
- * following patterns:
- *
- * #.# .#. @ = (x,y)
- * .@. #@# . = cave_floor_bold() square
- * #.# .#. # = any square.
+ * This actually looks for empty spaces connected to this square by right
+ * angles.
  */
 static bool is_room_func_p(int y, int x)
 {
-	int i,adj;
-	bool plus, eks;
+	uint i,adj;
 
-	/* An array which rotates around 0,0 anticlockwise. */
-	int xs[9] = { 1, 1, 0,-1,-1,-1, 0, 1, 1};
-	int ys[9] = { 0,-1,-1,-1, 0, 1, 1, 1, 0};
+	int xs[] = { 1, 1,-1,-1, 1,  1, 0,-1, 0, 1};
+	int ys[] = { 1,-1,-1, 1, 1,  0, 1, 0,-1, 0};
 
 	/* Hack - assume that ineligible non-floor squares are excluded elsewhere. */
 	if (!cave_floor_bold(y,x)) return TRUE;
 
-	for (i = adj = 0, plus = eks = TRUE; i < 9; i++)
+	for (i = adj = 0; i < sizeof(xs); i++)
 	{
-		if (!cave_floor_bold(y+ys[i], x+xs[i]))
+		if (i == 5 || !cave_floor_bold(y+ys[i], x+xs[i]))
 		{
 			adj = 0;
-			/* Hack - count checkerboard areas as room explicitly. I can't think
-			 * of an elegant way of doing this at present... */
-			if (i % 2)
-			{
-				plus = FALSE;
-			}
-			else
-			{
-				eks = FALSE;
-			}
 		}
-		else if (adj++ == 2)
+		else if (adj++)
 		{
 			return TRUE;
 		}
 	}
-
-	for (i = 1; i < 9; i += 2)
-	{
-		if (!cave_floor_bold(y+ys[i], x+xs[i])) return FALSE;
-	}
-
-	return (plus || eks);
+	return FALSE;
 }
 
 /*
- * Set CAVE_ROOM as appropriate using the above routine.
+ * Check that every room square is next to another room square, to prevent
+ * corners from making it easy to abuse the AI.
+ */
+static bool is_isolated_room_p(int y, int x)
+{
+	/* An array which rotates around 0,0 anticlockwise. */
+	int xs[] = { 1, 1, 0,-1,-1,-1, 0, 1};
+	int ys[] = { 0, 1, 1, 1, 0,-1,-1, 0};
+	uint i;
+
+	for (i = 0; i < sizeof(xs); i++)
+	{
+		if (is_room_p(y+ys[i], x+xs[i])) return FALSE;
+	}
+	return TRUE;
+}
+
+/*
+ * Set CAVE_ROOM as appropriate using the above routines.
  */
 static void calc_rooms(void)
 {
@@ -3703,6 +3699,16 @@ static void calc_rooms(void)
 				cave[y][x].info |= (CAVE_ROOM);
 			}
 			else
+			{
+				cave[y][x].info &= ~(CAVE_ROOM);
+			}
+		}
+	}
+	for (y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			if (is_isolated_room_p(y,x))
 			{
 				cave[y][x].info &= ~(CAVE_ROOM);
 			}
