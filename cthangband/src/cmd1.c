@@ -699,8 +699,14 @@ static void hit_trap(void)
 					do_cmd_save_game(TRUE);
                 }
                 new_level_flag = TRUE;
+		   		if (dun_defs[cur_dungeon].tower)
+				{
+					dun_level--;
+				}
+				else
+				{
                 dun_level++;
-
+				}
 			}
 			break;
 		}
