@@ -3555,6 +3555,7 @@ extern int PlayerUID;
 #define Q_HEAD 14
 #define S_HEAD 15
 #define TPL_HEAD 16
+#define EASY_HEAD 17
 
 
 /*

@@ -3420,7 +3420,7 @@ extern char *macro_name;
 extern char *macro_text;
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C) || defined(VARIABLE_C))
-extern u16b rebuild_raw;
+extern u32b rebuild_raw;
 #endif
 #if (defined(CMD2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern byte object_skill_count;
@@ -3905,8 +3905,8 @@ extern cptr safe_string_make(cptr str);
 
 /* object2.c */
 
-#if (defined(INIT2_C) || defined(OBJECT2_C))
-extern void init_easy_know(void);
+#if (defined(ALLOW_TEMPLATES)) && (defined(INIT2_C) || defined(OBJECT2_C))
+extern void init_easy_know_txt(bool *random);
 #endif
 
 /* variable.c */

@@ -424,8 +424,6 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
 	quit_fmt("Error in '%s' file.", filename);
 }
 
-#endif /* ALLOW_TEMPLATES */
-
 /*
  * Find the name of the text file from which a header is read.
  *
@@ -446,6 +444,69 @@ static cptr init_info_text_name(header *head)
 }
 
 /*
+ * Try to write the header and associated information to the appropriate file.
+ * Quit if the file can neither be read by the user or created by the game.
+ * Do nothing if the file cannot be written to by the game.
+ */
+static void write_raw_file(header *head)
+{
+	int fd;
+	char buf[1024], buf2[13];
+
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	sprintf(buf2, "%s.raw", head->file_name);
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_DATA, buf2);
+
+	fd = fd_open(buf, O_RDONLY);
+
+	if (fd < 0)
+	{
+		safe_setuid_grab();
+
+		fd = fd_make(buf, 0644);
+
+		safe_setuid_drop();
+	}
+
+	if (fd < 0)
+	{
+		quit_fmt("Cannot create the '%s' file!", buf);
+	}
+
+	fd_close(fd);
+
+	safe_setuid_grab();
+
+	fd = fd_open(buf, O_WRONLY);
+
+	safe_setuid_drop();
+
+	if (fd < 0) return;
+
+	/* Dump it */
+	fd_write(fd, (cptr)head, sizeof(header));
+
+	/* Dump the "*_info" array */
+	fd_write(fd, head->info_ptr, head->info_size);
+
+	/* Dump the "*_name" array */
+	fd_write(fd, head->name_ptr, head->name_size);
+
+	/* Dump the "*_text" array */
+	fd_write(fd, head->text_ptr, head->text_size);
+
+	/* Close */
+	fd_close(fd);
+}
+
+#endif /* ALLOW_TEMPLATES */
+
+/*
  * Initialize a "*_info" array
  *
  * Note that we let each entry have a unique "name" and "text" string,
@@ -455,26 +516,25 @@ static void init_info(header *head)
 {
 	cptr filename = head->file_name;
 
-	char textname[13];
-
 	int fd;
 
 	errr err = 1;
 
-	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
-
 #ifdef ALLOW_TEMPLATES
+
+	char textname[13];
+
+	FILE *fp;
 
 	/* Find the text file name (should be in 8.3 format). */
 	sprintf(textname, "%.12s", init_info_text_name(head));
 
 	/*** Load the binary image file ***/
 
-	if (~rebuild_raw & 1<<(head->header_num))
+	if (~rebuild_raw & 1L<<(head->header_num))
 	{
 		/* Build the filename */
 		strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_DATA, format("%s.raw", filename));
@@ -537,75 +597,8 @@ static void init_info(header *head)
 	if (err) display_parse_error(textname, err, buf);
 
 
-	/*** Dump the binary image file ***/
-
-	/* File type is "DATA" */
-	FILE_TYPE(FILE_TYPE_DATA);
-
-	/* Build the filename */
-	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_DATA, format("%s.raw", filename));
-
-
-	/* Attempt to open the file */
-	fd = fd_open(buf, O_RDONLY);
-
-	/* Failure */
-	if (fd < 0)
-	{
-		int mode = 0644;
-
-		/* Grab permissions */
-		safe_setuid_grab();
-
-		/* Create a new file */
-		fd = fd_make(buf, mode);
-
-		/* Drop permissions */
-		safe_setuid_drop();
-
-		/* Failure */
-		if (fd < 0)
-		{
-			char why[1024];
-
-			/* Message */
-			sprintf(why, "Cannot create the '%s' file!", buf);
-
-			/* Crash and burn */
-			quit(why);
-		}
-	}
-
-	/* Close it */
-	fd_close(fd);
-
-	/* Grab permissions */
-	safe_setuid_grab();
-
-	/* Attempt to create the raw file */
-	fd = fd_open(buf, O_WRONLY);
-
-	/* Drop permissions */
-	safe_setuid_drop();
-
-	/* Dump to the file */
-	if (fd >= 0)
-	{
-		/* Dump it */
-		fd_write(fd, (cptr)head, sizeof(header));
-
-		/* Dump the "*_info" array */
-		fd_write(fd, head->info_ptr, head->info_size);
-
-		/* Dump the "*_name" array */
-		fd_write(fd, head->name_ptr, head->name_size);
-
-		/* Dump the "*_text" array */
-		fd_write(fd, head->text_ptr, head->text_size);
-
-		/* Close */
-		fd_close(fd);
-	}
+	/* Dump the binary image file. */
+	write_raw_file(head);
 
 #endif /* ALLOW_TEMPLATES */
 
@@ -926,9 +919,6 @@ static void init_other(void)
 
 	/* Finish off the gf_info[] colour table. */
 	init_gf_info();
-
-	/* Set the EASY_KNOW flag for various appropriate objects. */
-	init_easy_know();
 }
 
 
@@ -1323,6 +1313,61 @@ static void note(cptr str)
 
 
 
+
+/*
+ * Read easyknow.raw and copy the values within it to k_info.
+ * Return FALSE if this is not possible for any reason.
+ */
+static bool read_easy_know(header *head)
+{
+	int i;
+	bool *random;
+
+	i = fd_open(format("%v", path_build_f2, ANGBAND_DIR_DATA,
+		format("%s.raw", head->file_name)), O_RDONLY);;
+
+	if (i < 0) return FALSE;
+
+	if (init_info_raw(i, head)) return FALSE;
+
+	random = (bool*)(head->info_ptr);
+
+	for (i = 0; i < z_info->k_max; i++)
+	{
+		if (!random[i]) k_info[i].flags3 |= TR3_EASY_KNOW;
+	}
+
+	FREE(head->info_ptr);
+
+	return TRUE;
+}
+
+/*
+ * Initialise the easy_know array.
+ */
+static void init_easy_know(header *head)
+{
+	note("[Initialising arrays... (easy know)]");
+	init_header(head, sizeof(bool), EASY_HEAD, NULL, "easyknow");
+
+#ifdef ALLOW_TEMPLATES
+
+	if ((~rebuild_raw & 1L<<head->header_num) && read_easy_know(head)) return;
+
+	head->info_ptr = C_WIPE(head->fake_info_ptr, z_info->fake_info_size, char);
+
+	init_easy_know_txt((bool*)head->info_ptr);
+	head->info_num = z_info->k_max;
+	head->info_size = head->info_num * head->info_len;
+
+	write_raw_file(head);
+
+#endif
+
+	if (!read_easy_know(head))
+		quit_fmt("Cannot load '%s.raw'", head->file_name);
+}
+
 /*
  * Hack -- Explain a broken "lib" folder and quit (see below).
  *
@@ -1531,6 +1576,9 @@ void init_angband(void)
 	/* Initialize ego-item info */
 	init_x_info("ego-items", ego_item_type, parse_e_info, "e_info", e_info,
 		e_name, dummy, e_max, E_HEAD)
+
+	/* Initialise the easy_know flag on objects. */
+	init_easy_know(head);
 
 	/* Initialize monster info */
 	init_x_info("monsters", monster_race, parse_r_info, "r_info", r_info,

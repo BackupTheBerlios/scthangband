@@ -3708,10 +3708,16 @@ static errr init_info_txt_final(header *head)
 			try(parse_unid_flavourless(head));
 			break;
 		}
+		case E_HEAD: case A_HEAD:
+		{
+			/* Several files can render an object unsuitable for easy_know. */
+			rebuild_raw |= 1<<EASY_HEAD;
+			break;
+		}
 		case K_HEAD:
 		{
 			/* o_base bases its defaults on k_info. */
-			rebuild_raw |= 1<<OB_HEAD;
+			rebuild_raw |= 1<<OB_HEAD | 1L<<EASY_HEAD;
 			break;
 		}
 		case MACRO_HEAD:

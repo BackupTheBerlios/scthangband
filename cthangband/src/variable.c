@@ -844,7 +844,7 @@ init_macro_type *macro_info = NULL;
 char *macro_name;
 char *macro_text;
 
-u16b rebuild_raw = 0;
+u32b rebuild_raw = 0;
 
 #endif /* ALLOW_TEMPLATES */
 
