@@ -4613,8 +4613,8 @@ static int get_tag(int *cp, char tag)
 			}
 
 			/* Check the special tags */
-			else if (s[2] == tag && find_tag_keymap(s[1], &c) &&
-				(c == command_cmd))
+			else if (s[2] == tag && (s[1] == command_cmd) ||
+				(find_tag_keymap(s[1], &c) && (c == command_cmd)))
 			{
 				/* Save the actual inventory ID */
 				*cp = i;
