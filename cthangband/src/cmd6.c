@@ -1157,7 +1157,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
 
 			for (; k; k--)
 			{
-				if (summon_specific(py, px, (dun_depth), 0))
+				if (summon_specific(py, px, (dun_depth), SUMMON_ALL))
 				{
 					ident = TRUE;
 				}
@@ -1702,7 +1702,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 			}
 			for (; k; k--)
 			{
-				if (summon_specific(py, px, (dun_depth), 0))
+				if (summon_specific(py, px, (dun_depth), SUMMON_ALL))
 				{
 					ident = TRUE;
 				}

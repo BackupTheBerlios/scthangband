@@ -2572,7 +2572,7 @@ void do_cmd_cast(void)
             }
             else
             {
-                if (summon_specific(py, px, plev, 0))
+                if (summon_specific(py, px, plev, SUMMON_ALL))
                 {
                     msg_print("The summoned creature gets angry!");
                 }
@@ -2797,7 +2797,7 @@ void do_cmd_cast(void)
                 }
                 else
                 {
-                    if (summon_specific(py, px, plev, 0))
+                    if (summon_specific(py, px, plev, SUMMON_ALL))
                     {
                         msg_print("A summoned creature gets angry!");
                         none_came = FALSE;

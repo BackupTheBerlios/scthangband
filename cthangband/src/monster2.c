@@ -2774,7 +2774,7 @@ static bool summon_specific_okay(int r_idx)
 		{
 			return live_monster_p(r_ptr);
 		}
-		case 0: /* No restrictions. */
+		case UNFLAG(SUMMON_ALL): /* No restrictions. */
 		{
 			return TRUE;
 		}
@@ -2851,12 +2851,14 @@ bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool 
 	if (i == 20) return (FALSE);
 
 
-	/* Save the "summon" type */
-	summon_specific_type = type;
+	if (type)
+	{
+		/* Save the "summon" type */
+		summon_specific_type = type;
 
-
-	/* Prepare allocation table ("okay" monster) */
-	get_mon_num_prep(summon_specific_okay);
+		/* Prepare allocation table ("okay" monster) */
+		get_mon_num_prep(summon_specific_okay);
+	}
 
 
 	/* Pick a monster, using the level calculation */

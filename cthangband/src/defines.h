@@ -1948,6 +1948,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Legal restrictions for "summon_specific()"
  */
+#define SUMMON_ALL 0x0200 /* 0 is a perfectly good "summon by char" type. */
 #define SUMMON_NO_UNIQUES	0xF000 /* Prevent unique summoning. */
 #define SUMMON_ANT              ('a' | SUMMON_NO_UNIQUES)
 #define SUMMON_SPIDER           ('S' | SUMMON_NO_UNIQUES)

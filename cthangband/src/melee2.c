@@ -3892,7 +3892,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			else msg_format("%^s magically summons help!", m_name);
 			for (k = count = 0; k < 1; k++)
 			{
-				count += summon_specific(y, x, rlev, 0);
+				count += summon_specific(y, x, rlev, SUMMON_ALL);
 			}
 			if (blind && count) msg_print("You hear something appear nearby.");
 			break;
@@ -3905,7 +3905,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			else msg_format("%^s magically summons monsters!", m_name);
 			for (k = count = 0; k < 8; k++)
 			{
-				count += summon_specific(y, x, rlev, 0);
+				count += summon_specific(y, x, rlev, SUMMON_ALL);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 			break;

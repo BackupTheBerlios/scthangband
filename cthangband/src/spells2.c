@@ -6145,7 +6145,7 @@ void activate_ty_curse(void)
 		activate_hi_summon();
 		if (randint(6)!=1) break;
 	    case 7: case 8: case 9: case 18:
-	    (void) summon_specific(py, px, (dun_depth), 0);
+	    (void) summon_specific(py, px, (dun_depth), SUMMON_ALL);
 		if (randint(6)!=1) break;
 	    case 10: case 11: case 12:
 		msg_print("You feel your life draining away...");
@@ -6235,7 +6235,7 @@ int i = 0;
 	(void) summon_specific(py, px, 100, SUMMON_REAVER);
 	    break;
 	default:
-	    (void) summon_specific(py, px,( ( ( (dun_depth) * 3) / 2 ) + 5 ), 0);
+		summon_specific(py, px,( ( ( (dun_depth) * 3) / 2 ) + 5 ), SUMMON_ALL);
 	}
     }
 }
