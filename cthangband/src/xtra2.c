@@ -2275,8 +2275,9 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					else
 					{
 						/* Describe, and prompt for recall */
-						sprintf(out_val, "%s%s%s%s (%s)%s%s [r,%s]",
-							s1, s2, s3, m_name, look_mon_desc(m_ptr),
+						sprintf(out_val, "%s%s%s%v (%s)%s%s [r,%s]",
+							s1, s2, s3, monster_desc_f2, m_ptr, 0x08,
+							look_mon_desc(m_ptr),
 							(m_ptr->smart & SM_CLONED ? " (clone)": ""),
 							(m_ptr->smart & SM_ALLY ? " (allied)" : ""), info);
 
@@ -2910,17 +2911,14 @@ bool target_set(int mode)
 			/* Access */
 			c_ptr = &cave[y][x];
 
-			/* Allow target */
-			if (target_able(c_ptr->m_idx))
-			{
-				strcpy(info, "q,t,p,o,+,-,<dir>");
-			}
+			strcpy(info, "q");
 
-			/* Dis-allow target */
-			else
-			{
-				strcpy(info, "q,p,o,+,-,<dir>");
-			}
+			/* Allow target */
+			if (target_able(c_ptr->m_idx)) strcat(info, ",t");
+
+			if (y != py || x != px) strcat(info, ",p");
+			strcat(info, ",o");
+			if (temp_n > 1) strcat(info, ",+,-,<dir>");
 
 			/* Draw the path in "target" mode, if there is one. */
 			if (mode & TARGET_KILL)
@@ -3007,7 +3005,7 @@ bool target_set(int mode)
 
 				case 'o':
 				{
-					flag = !flag;
+					flag = FALSE;
 					break;
 				}
 
@@ -3042,7 +3040,10 @@ bool target_set(int mode)
 			c_ptr = &cave[y][x];
 
 			/* Default prompt */
-			strcpy(info, "q,t,p,m,+,-,<dir>");
+			strcpy(info, "q,t");
+			if (y != py || x != px) strcat(info, ",p");
+			if (temp_n) strcat(info, ",m");
+			strcat(info, ",<dir>");
 
 			/* Draw the path, if there is one. */
 			if (mode & TARGET_KILL)
@@ -3106,7 +3107,7 @@ bool target_set(int mode)
 
 				case 'm':
 				{
-					flag = !flag;
+					flag = TRUE;
 					break;
 				}
 
