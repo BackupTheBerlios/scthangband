@@ -2249,6 +2249,81 @@ static void curse_artifact (object_type * o_ptr)
 }
 
 /*
+ * Various flags to add to an object using an appropriate function.
+ */
+typedef struct biased_flag_type biased_flag_type;
+struct biased_flag_type
+{
+	byte bias;
+	byte chance;
+	byte set;
+	u32b flag;
+	bool (*test)(object_ctype *);
+};
+
+/*
+ * Add one or more flags to an artefact based on the given bias.
+ * Return TRUE if no more resistances should be added in this step (see below).
+ */
+static bool biased_bonus(object_type *o_ptr, int bias,
+	biased_flag_type *array, int num)
+{
+	biased_flag_type *ptr;
+	u32b *flag;
+
+	for (ptr = array; ptr < array+num; ptr++)
+	{
+		/* Wrong bias. */
+		if (ptr->bias != bias) continue;
+
+		switch (ptr->set)
+		{
+			case TR1: flag = &o_ptr->flags1; break;
+			case TR2: flag = &o_ptr->flags2; break;
+			case TR3: flag = &o_ptr->flags3; break;
+			default: assert(!"Unknown flag set"); continue;
+		}
+
+		if (ptr->test && !(ptr->test)(o_ptr))
+
+		/* Flag already fully set. */
+		if ((*flag & ptr->flag) == ptr->flag) continue;
+
+		/* Random failure. */
+		if (!one_in(ptr->chance)) continue;
+
+		/* Set it. */
+		*flag |= ptr->flag;
+
+		/* Give a 50% chance of finishing at each such flag addition. */
+		if (one_in(2)) return TRUE;
+	}
+
+	/* Continue to the next step. */
+	return FALSE;
+}
+
+static biased_flag_type biased_pval_flags[] =
+{
+	{BIAS_WARRIOR, 1, TR1, TR1_STR, NULL},
+	{BIAS_WARRIOR, 1, TR1, TR1_CON, NULL},
+	{BIAS_WARRIOR, 1, TR1, TR1_DEX, NULL},
+	{BIAS_MAGE, 1, TR1, TR1_INT, NULL},
+	{BIAS_PRIESTLY, 1, TR1, TR1_WIS, NULL},
+	{BIAS_RANGER, 1, TR1, TR1_CON, NULL},
+	{BIAS_RANGER, 1, TR1, TR1_DEX, NULL},
+	{BIAS_RANGER, 1, TR1, TR1_STR, NULL},
+	{BIAS_ROGUE, 1, TR1, TR1_STEALTH, NULL},
+	{BIAS_ROGUE, 1, TR1, TR1_SEARCH, NULL},
+	{BIAS_STR, 1, TR1, TR1_STR, NULL},
+	{BIAS_INT, 1, TR1, TR1_INT, NULL},
+	{BIAS_WIS, 1, TR1, TR1_WIS, NULL},
+	{BIAS_DEX, 1, TR1, TR1_DEX, NULL},
+	{BIAS_CON, 1, TR1, TR1_CON, NULL},
+	{BIAS_CHR, 1, TR1, TR1_CHR, NULL},
+};
+
+/*
  * Give a random bonus to an object. Return FALSE if the object chosen is
  * ineligible for this bonus.
  */
@@ -2257,123 +2332,8 @@ static bool random_plus(object_type *o_ptr)
 
 	int this_type = (o_ptr->tval<TV_BOOTS?23:19);
 
-	if (artifact_bias == BIAS_WARRIOR)
-	{
-	if (!(o_ptr->flags1 & TR1_STR))
-	{
-		o_ptr->flags1 |= TR1_STR;
-		if (randint(2)==1) return TRUE; /* 50% chance of being a "free" power */
-	}
-	if (!(o_ptr->flags1 & TR1_CON))
-	{
-		o_ptr->flags1 |= TR1_CON;
-		if (randint(2)==1) return TRUE;
-	}
-
-	if (!(o_ptr->flags1 & TR1_DEX))
-	{
-		o_ptr->flags1 |= TR1_DEX;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_MAGE)
-	{
-	if (!(o_ptr->flags1 & TR1_INT))
-	{
-		o_ptr->flags1 |= TR1_INT;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_PRIESTLY)
-	{
-	if (!(o_ptr->flags1 & TR1_WIS))
-	{
-		o_ptr->flags1 |= TR1_WIS;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_RANGER)
-	{
-	if (!(o_ptr->flags1 & TR1_CON))
-	{
-		o_ptr->flags1 |= TR1_CON;
-		if (randint(2)==1) return TRUE; /* 50% chance of being a "free" power */
-	}
-	if (!(o_ptr->flags1 & TR1_DEX))
-	{
-		o_ptr->flags1 |= TR1_DEX;
-		if (randint(2)==1) return TRUE;
-	}
-
-	if (!(o_ptr->flags1 & TR1_STR))
-	{
-		o_ptr->flags1 |= TR1_STR;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_ROGUE)
-	{
-	if (!(o_ptr->flags1 & TR1_STEALTH))
-	{
-		o_ptr->flags1 |= TR1_STEALTH;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags1 & TR1_SEARCH))
-	{
-		o_ptr->flags1 |= TR1_SEARCH;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_STR)
-	{
-	if (!(o_ptr->flags1 & TR1_STR))
-	{
-		o_ptr->flags1 |= TR1_STR;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_WIS)
-	{
-	if (!(o_ptr->flags1 & TR1_WIS))
-	{
-		o_ptr->flags1 |= TR1_WIS;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_INT)
-	{
-	if (!(o_ptr->flags1 & TR1_INT))
-	{
-		o_ptr->flags1 |= TR1_INT;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_DEX)
-	{
-	if (!(o_ptr->flags1 & TR1_DEX))
-	{
-		o_ptr->flags1 |= TR1_DEX;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_CON)
-	{
-	if (!(o_ptr->flags1 & TR1_CON))
-	{
-		o_ptr->flags1 |= TR1_CON;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_CHR)
-	{
-	if (!(o_ptr->flags1 & TR1_CHR))
-	{
-		o_ptr->flags1 |= TR1_CHR;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-
-
+	if (biased_bonus(o_ptr, artifact_bias,
+		biased_pval_flags, N_ELEMENTS(biased_pval_flags))) return TRUE;
 
 	switch (randint(this_type))
 	{
@@ -2467,19 +2427,6 @@ static bool PURE sheath_possible(object_ctype *o_ptr)
 	}
 }
 
-/*
- * Various flags to add to an object using an appropriate function.
- */
-typedef struct biased_flag_type biased_flag_type;
-struct biased_flag_type
-{
-	byte bias;
-	byte chance;
-	byte set;
-	u32b flag;
-	bool (*test)(object_ctype *);
-};
-
 static biased_flag_type biased_resistance_list[] =
 {
 	{BIAS_ACID, 1, TR2, TR2_RES_ACID, NULL},
@@ -2502,47 +2449,6 @@ static biased_flag_type biased_resistance_list[] =
 	{BIAS_CHAOS, 1, TR2, TR2_RES_CONF, NULL},
 	{BIAS_CHAOS, 1, TR2, TR2_RES_DISEN, NULL},
 };
-
-/*
- * Add one or more resistances to an artefact based on the given bias.
- * Return TRUE if no more resistances should be added in this step (see below).
- */
-static bool biased_resistance(object_type *o_ptr, int bias)
-{
-	biased_flag_type *ptr;
-	u32b *flag;
-
-	FOR_ALL_IN(biased_resistance_list, ptr)
-	{
-		/* Wrong bias. */
-		if (ptr->bias != bias) continue;
-
-		switch (ptr->set)
-		{
-			case TR1: flag = &o_ptr->flags1; break;
-			case TR2: flag = &o_ptr->flags2; break;
-			case TR3: flag = &o_ptr->flags3; break;
-			default: assert(!"Unknown flag set"); continue;
-		}
-
-		if (ptr->test && !(ptr->test)(o_ptr))
-
-		/* Flag already fully set. */
-		if ((*flag & ptr->flag) == ptr->flag) continue;
-
-		/* Random failure. */
-		if (!one_in(ptr->chance)) continue;
-
-		/* Set it. */
-		*flag |= ptr->flag;
-
-		/* Give a 50% chance of finishing at each such flag addition. */
-		if (one_in(2)) return TRUE;
-	}
-
-	/* Continue to the next step. */
-	return FALSE;
-}
 
 /*
  * Add the specified resistance to an object.
@@ -2708,10 +2614,24 @@ void add_resistance(object_type *o_ptr, int min, int max)
 static bool random_resistance(object_type *o_ptr)
 {
 	/* Forbid for specific requests to avoid a number of possible bugs */
-	if (biased_resistance(o_ptr, artifact_bias)) return TRUE;
+	if (biased_bonus(o_ptr, artifact_bias, biased_resistance_list,
+		N_ELEMENTS(biased_resistance_list))) return TRUE;
 
 	return random_resistance_aux(o_ptr, randint(41));
 }
+
+static biased_flag_type biased_misc_flags[] =
+{
+	{BIAS_RANGER, 1, TR2, TR2_SUST_CON, NULL},
+	{BIAS_STR, 1, TR2, TR2_SUST_STR, NULL},
+	{BIAS_WIS, 1, TR2, TR2_SUST_WIS, NULL},
+	{BIAS_INT, 1, TR2, TR2_SUST_INT, NULL},
+	{BIAS_DEX, 1, TR2, TR2_SUST_DEX, NULL},
+	{BIAS_CON, 1, TR2, TR2_SUST_CON, NULL},
+	{BIAS_CHR, 1, TR2, TR2_SUST_CHR, NULL},
+	{BIAS_CHAOS, 1, TR3, TR3_TELEPORT, NULL},
+	{BIAS_FIRE, 3, TR3, TR3_LITE, NULL},
+};
 
 /*
  * Give a random bonus to an object. Return FALSE if the object chosen is
@@ -2719,79 +2639,8 @@ static bool random_resistance(object_type *o_ptr)
  */
 static bool random_misc (object_type * o_ptr)
 {
-
-	if (artifact_bias == BIAS_RANGER)
-	{
-	if (!(o_ptr->flags2 & TR2_SUST_CON))
-	{
-		o_ptr->flags2 |= TR2_SUST_CON;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_STR)
-	{
-	if (!(o_ptr->flags2 & TR2_SUST_STR))
-	{
-		o_ptr->flags2 |= TR2_SUST_STR;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_WIS)
-	{
-	if (!(o_ptr->flags2 & TR2_SUST_WIS))
-	{
-		o_ptr->flags2 |= TR2_SUST_WIS;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_INT)
-	{
-	if (!(o_ptr->flags2 & TR2_SUST_INT))
-	{
-		o_ptr->flags2 |= TR2_SUST_INT;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_DEX)
-	{
-	if (!(o_ptr->flags2 & TR2_SUST_DEX))
-	{
-		o_ptr->flags2 |= TR2_SUST_DEX;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_CON)
-	{
-	if (!(o_ptr->flags2 & TR2_SUST_CON))
-	{
-		o_ptr->flags2 |= TR2_SUST_CON;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_CHR)
-	{
-	if (!(o_ptr->flags2 & TR2_SUST_CHR))
-	{
-		o_ptr->flags2 |= TR2_SUST_CHR;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_CHAOS)
-	{
-	if (!(o_ptr->flags3 & TR3_TELEPORT))
-	{
-		o_ptr->flags3 |= TR3_TELEPORT;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_FIRE)
-	{
-	if (!(o_ptr->flags3 & TR3_LITE))
-	{
-		o_ptr->flags3 |= TR3_LITE; /* Freebie */
-	}
-	}
-
+	if (biased_bonus(o_ptr, artifact_bias,
+		biased_misc_flags, N_ELEMENTS(biased_misc_flags))) return TRUE;
 
 	switch (randint(31))
 	{
@@ -2872,233 +2721,165 @@ static bool random_misc (object_type * o_ptr)
 	return TRUE;
 }
 
+static bool PURE edged_weapon(object_ctype *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SWORD:
+		case TV_POLEARM:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+static biased_flag_type biased_slay_flags[] =
+{
+	{BIAS_CHAOS, 1, TR1, TR1_CHAOTIC, NULL},
+	{BIAS_PRIESTLY, 1, TR3, TR3_BLESSED, edged_weapon},
+	{BIAS_NECROMANTIC, 1, TR1, TR1_VAMPIRIC, NULL},
+	{BIAS_NECROMANTIC, 2, TR1, TR1_BRAND_POIS, NULL},
+	{BIAS_RANGER, 1, TR1, TR1_SLAY_ANIMAL, NULL},
+	{BIAS_ROGUE, 1, TR1, TR1_BRAND_POIS, NULL},
+	{BIAS_POIS, 1, TR1, TR1_BRAND_POIS, NULL},
+	{BIAS_FIRE, 1, TR1, TR1_BRAND_FIRE, NULL},
+	{BIAS_COLD, 1, TR1, TR1_BRAND_COLD, NULL},
+	{BIAS_ELEC, 1, TR1, TR1_BRAND_ELEC, NULL},
+	{BIAS_ACID, 1, TR1, TR1_BRAND_ACID, NULL},
+	{BIAS_LAW, 1, TR1, TR1_SLAY_EVIL, NULL},
+	{BIAS_LAW, 1, TR1, TR1_SLAY_UNDEAD, NULL},
+	{BIAS_LAW, 1, TR1, TR1_SLAY_DEMON, NULL},
+};
+
 /*
  * Give a random bonus to an object. Return FALSE if the object chosen is
  * ineligible for this bonus.
  */
-static bool random_slay (object_type * o_ptr)
+static bool random_weapon_bonus(object_type *o_ptr)
 {
+	if (biased_bonus(o_ptr, artifact_bias,
+		biased_slay_flags, N_ELEMENTS(biased_slay_flags))) return TRUE;
 
-	if (artifact_bias == BIAS_CHAOS && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_CHAOTIC))
-	{
-		o_ptr->flags1 |= TR1_CHAOTIC;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_PRIESTLY &&
-		(o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM) &&
-		!(o_ptr->flags3 & TR3_BLESSED))
-
-	{
-	o_ptr->flags3 |= TR3_BLESSED; /* A free power for "priestly"
-						random artifacts */
-	}
-
-
-	else if (artifact_bias == BIAS_NECROMANTIC && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_VAMPIRIC))
-	{
-		o_ptr->flags1 |= TR1_VAMPIRIC;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags1 & TR1_BRAND_POIS) && (randint(2)==1))
-	{
-		o_ptr->flags1 |= TR1_BRAND_POIS;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_RANGER && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_SLAY_ANIMAL))
-	{
-		o_ptr->flags1 |= TR1_SLAY_ANIMAL;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_ROGUE && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_BRAND_POIS))
-	{
-		o_ptr->flags1 |= TR1_BRAND_POIS;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_POIS && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_BRAND_POIS))
-	{
-		o_ptr->flags1 |= TR1_BRAND_POIS;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_FIRE && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_BRAND_FIRE))
-	{
-		o_ptr->flags1 |= TR1_BRAND_FIRE;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_COLD && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_BRAND_COLD))
-	{
-		o_ptr->flags1 |= TR1_BRAND_COLD;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_ELEC && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_BRAND_ELEC))
-	{
-		o_ptr->flags1 |= TR1_BRAND_ELEC;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_ACID && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_BRAND_ACID))
-	{
-		o_ptr->flags1 |= TR1_BRAND_ACID;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-	else if (artifact_bias == BIAS_LAW && !(o_ptr->tval == TV_BOW))
-	{
-	if (!(o_ptr->flags1 & TR1_SLAY_EVIL))
-	{
-		o_ptr->flags1 |= TR1_SLAY_EVIL;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags1 & TR1_SLAY_UNDEAD))
-	{
-		o_ptr->flags1 |= TR1_SLAY_UNDEAD;
-		if (randint(2)==1) return TRUE;
-	}
-	if (!(o_ptr->flags1 & TR1_SLAY_DEMON))
-	{
-		o_ptr->flags1 |= TR1_SLAY_DEMON;
-		if (randint(2)==1) return TRUE;
-	}
-	}
-
-	if (!(o_ptr->tval == TV_BOW))
-	{
 	switch (randint(34))
 	{
-	case 1: case 2:
-	o_ptr->flags1 |= TR1_SLAY_ANIMAL;
-	break;
-	case 3: case 4:
-	o_ptr->flags1 |= TR1_SLAY_EVIL;
-	if (!artifact_bias && (randint(2)==1))
-		artifact_bias = BIAS_LAW;
-	else if (!artifact_bias && (randint(9)==1))
-		artifact_bias = BIAS_PRIESTLY;
-	break;
-	case 5: case 6:
-	o_ptr->flags1 |= TR1_SLAY_UNDEAD;
-	if (!artifact_bias && (randint(9)==1))
-		artifact_bias = BIAS_PRIESTLY;
-	break;
-	case 7: case 8:
-	o_ptr->flags1 |= TR1_SLAY_DEMON;
-	if (!artifact_bias && (randint(9)==1))
-		artifact_bias = BIAS_PRIESTLY;
-	break;
-	case 9: case 10:
-	o_ptr->flags1 |= TR1_SLAY_ORC;
-	break;
-	case 11: case 12:
-	o_ptr->flags1 |= TR1_SLAY_TROLL;
-	break;
-	case 13: case 14:
-	o_ptr->flags1 |= TR1_SLAY_GIANT;
-	break;
-	case 15: case 16:
-	o_ptr->flags1 |= TR1_SLAY_DRAGON;
-	break;
-	case 17:
-	o_ptr->flags1 |= TR1_KILL_DRAGON;
-	break;
-	case 18:  case 19:
-	if (o_ptr->tval == TV_SWORD)
-		{   o_ptr->flags1 |= TR1_VORPAL;
-		if (!artifact_bias && (randint(9)==1))
-			artifact_bias = BIAS_WARRIOR;
-		}
-	else return FALSE;
-	break;
-	case 20:
-	o_ptr->flags1 |= TR1_IMPACT;
-	break;
-	case 21: case 22:
-	o_ptr->flags1 |= TR1_BRAND_FIRE;
-	if (!artifact_bias)
-		artifact_bias = BIAS_FIRE;
-	break;
-	case 23: case 24:
-	o_ptr->flags1 |= TR1_BRAND_COLD;
-	if (!artifact_bias)
-		artifact_bias = BIAS_COLD;
-	break;
-	case 25: case 26:
-	o_ptr->flags1 |= TR1_BRAND_ELEC;
-	if (!artifact_bias)
-		artifact_bias = BIAS_ELEC;
-	break;
-	case 27: case 28:
-	o_ptr->flags1 |= TR1_BRAND_ACID;
-	if (!artifact_bias)
-		artifact_bias = BIAS_ACID;
-	break;
-	case 29: case 30:
-	o_ptr->flags1 |= TR1_BRAND_POIS;
-	if (!artifact_bias && (randint(3)!=1))
-		artifact_bias = BIAS_POIS;
-	else if (!artifact_bias && randint(6)==1)
-		artifact_bias = BIAS_NECROMANTIC;
-	else if (!artifact_bias)
-		artifact_bias = BIAS_ROGUE;
-	break;
-	case 31: case 32:
-	o_ptr->flags1 |= TR1_VAMPIRIC;
-	if (!artifact_bias)
-		artifact_bias = BIAS_NECROMANTIC;
-	break;
-	default:
-	o_ptr->flags1 |= TR1_CHAOTIC;
-	if (!artifact_bias)
-		artifact_bias = BIAS_CHAOS;
-	break;
-		}
-	}
-	else
-	{
-	switch (randint(6))
-	{
-	case 1: case 2: case 3:
-	o_ptr->flags3 |= TR3_XTRA_MIGHT;
-	if (!artifact_bias && randint(9)==1)
-		artifact_bias = BIAS_RANGER;
-	break;
-	default:
-	o_ptr->flags3 |= TR3_XTRA_SHOTS;
-	if (!artifact_bias && randint(9)==1)
-		artifact_bias = BIAS_RANGER;
-	break;
-	}
-
+		case 1: case 2:
+			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
+			break;
+		case 3: case 4:
+			o_ptr->flags1 |= TR1_SLAY_EVIL;
+			if (!artifact_bias && one_in(2))
+				artifact_bias = BIAS_LAW;
+			else if (!artifact_bias && one_in(9))
+				artifact_bias = BIAS_PRIESTLY;
+			break;
+		case 5: case 6:
+			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
+			if (!artifact_bias && one_in(9))
+				artifact_bias = BIAS_PRIESTLY;
+			break;
+		case 7: case 8:
+			o_ptr->flags1 |= TR1_SLAY_DEMON;
+			if (!artifact_bias && one_in(9))
+				artifact_bias = BIAS_PRIESTLY;
+			break;
+		case 9: case 10:
+			o_ptr->flags1 |= TR1_SLAY_ORC;
+			break;
+		case 11: case 12:
+			o_ptr->flags1 |= TR1_SLAY_TROLL;
+			break;
+		case 13: case 14:
+			o_ptr->flags1 |= TR1_SLAY_GIANT;
+			break;
+		case 15: case 16:
+			o_ptr->flags1 |= TR1_SLAY_DRAGON;
+			break;
+		case 17:
+			o_ptr->flags1 |= TR1_KILL_DRAGON;
+			break;
+		case 18:  case 19:
+			if (o_ptr->tval == TV_SWORD)
+			{
+				o_ptr->flags1 |= TR1_VORPAL;
+				if (!artifact_bias && one_in(9))
+				artifact_bias = BIAS_WARRIOR;
+			}
+			else return FALSE;
+			break;
+		case 20:
+			o_ptr->flags1 |= TR1_IMPACT;
+			break;
+		case 21: case 22:
+			o_ptr->flags1 |= TR1_BRAND_FIRE;
+			if (!artifact_bias)
+				artifact_bias = BIAS_FIRE;
+			break;
+		case 23: case 24:
+			o_ptr->flags1 |= TR1_BRAND_COLD;
+			if (!artifact_bias)
+			artifact_bias = BIAS_COLD;
+			break;
+		case 25: case 26:
+			o_ptr->flags1 |= TR1_BRAND_ELEC;
+			if (!artifact_bias)
+				artifact_bias = BIAS_ELEC;
+			break;
+		case 27: case 28:
+			o_ptr->flags1 |= TR1_BRAND_ACID;
+			if (!artifact_bias)
+				artifact_bias = BIAS_ACID;
+			break;
+		case 29: case 30:
+			o_ptr->flags1 |= TR1_BRAND_POIS;
+			if (!artifact_bias && !one_in(3))
+				artifact_bias = BIAS_POIS;
+			else if (!artifact_bias && one_in(6))
+				artifact_bias = BIAS_NECROMANTIC;
+			else if (!artifact_bias)
+				artifact_bias = BIAS_ROGUE;
+			break;
+		case 31: case 32:
+			o_ptr->flags1 |= TR1_VAMPIRIC;
+			if (!artifact_bias)
+				artifact_bias = BIAS_NECROMANTIC;
+			break;
+		default:
+			o_ptr->flags1 |= TR1_CHAOTIC;
+			if (!artifact_bias)
+				artifact_bias = BIAS_CHAOS;
+			break;
 	}
 	return TRUE;
 }
 
-static void give_activation_power (object_type * o_ptr)
+/*
+ * Give a random bonus to an object. Return FALSE if the object chosen is
+ * ineligible for this bonus.
+ * This isn't actually possible at present, but the code looks at the return.
+ */
+static bool random_bow_bonus(object_type *o_ptr)
 {
+	if (one_in(2))
+	{
+		o_ptr->flags3 |= TR3_XTRA_MIGHT;
+	}
+	else
+	{
+		o_ptr->flags3 |= TR3_XTRA_SHOTS;
+	}
 
+	if (!artifact_bias && one_in(9)) artifact_bias = BIAS_RANGER;
+
+	return TRUE;
+}
+
+/*
+ * Give a random bonus to an object. Return FALSE if the object chosen is
+ * ineligible for this bonus.
+ * This isn't actually possible at present, but the code looks at the return.
+ */
+static void give_activation_power(object_type *o_ptr)
+{
 	int type = 0, chance = 0;
 
 	if (artifact_bias)
@@ -3449,7 +3230,10 @@ while(powers--)
 		while (!random_misc(o_ptr)) ;
 		break;
 	case 6: case 7:
-		while (!random_slay(o_ptr)) ;
+		if (o_ptr->tval == TV_BOW)
+			while (!random_bow_bonus(o_ptr)) ;
+		else
+			while (!random_weapon_bonus(o_ptr)) ;
 		break;
 	default:
 		if(cheat_wzrd) msg_print ("Switch error in create_artifact!");
