@@ -2378,7 +2378,7 @@ extern void sound(int val);
 #if (defined(MAIN_CRB_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool screen_is_icky(void);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void set_gnext(cptr next);
 #endif
 #if (defined(SQUELCH_C) || defined(UTIL_C))
@@ -3614,7 +3614,7 @@ extern void resize_inkey(void);
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT2_C) || defined(UI_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void ang_sort(vptr u, vptr v, int n, bool (*comp)(vptr, vptr, int, int), void (*swap)(vptr, vptr, int, int));
 #endif
-#if (defined(CMD3_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool target_set(int mode);
 #endif
 #if (defined(CMD1_C) || defined(CMD6_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))

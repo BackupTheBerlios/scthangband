@@ -2077,9 +2077,11 @@ logaux(x, 1) logaux(x, 0) 255)
  *
  *      KILL: Target monsters
  *      LOOK: Describe grid fully
+ *      NONE: Don't build an "interesting" target list.
  */
 #define TARGET_KILL             0x01
 #define TARGET_LOOK             0x02
+#define TARGET_NONE 0x04
 
 
 /*

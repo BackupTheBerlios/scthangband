@@ -2082,6 +2082,9 @@ static void target_set_prepare(int mode)
 	/* Reset "temp" array */
 	temp_n = 0;
 
+	/* Use "NONE" to disable monster targeting. */
+	if (mode & TARGET_NONE) return;
+
 	/* Scan the current panel */
 	for (y = panel_row_min; y <= panel_row_max; y++)
 	{
