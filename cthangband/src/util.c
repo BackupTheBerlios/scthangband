@@ -1596,7 +1596,6 @@ static char (*inkey_hack)(int flush_first) = NULL;
 #endif /* ALLOW_BORG */
 
 
-
 /*
  * Get a keypress from the user.
  *

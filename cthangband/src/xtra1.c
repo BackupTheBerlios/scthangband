@@ -1233,6 +1233,9 @@ static bool init_help_files(char *buf)
 		/* Fill in the help_files array (backwards). */
 		help_files[--i] = string_make(buf+strlen("***** [a] "));
 	}
+
+	my_fclose(fff);
+
 	return TRUE;
 }
 
@@ -1303,6 +1306,8 @@ static void win_help_display(void)
 			/* Only expect one match. */
 			return;
 		}
+		
+		my_fclose(fff);
 	}
 }
 
