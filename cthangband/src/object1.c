@@ -2289,38 +2289,35 @@ cptr item_activation(object_type *o_ptr)
 
 /*
  * Allocate and return a string listing a set of flags in a specified format.
- * This should never be called with parameters longer than 1024 characters.
+ * This may give incorrect output on strings >1024 characters long.
  */
 static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 {
-	int i;
-	char *s, *t;
+	char *s;
 
 	/* Paranoia. */
 	if (!init || !conj) return "";
 
 	s = format("%s ", init);
-	t = strchr(s, '\0');
 	if (total > 2)
 	{
+		int i;
 		for (i = 0; i < total-2; i++)
 		{
-			sprintf(t, "%s, ", flags[i]);
-			t += strlen(t);
+			s = format("%s%s, ", s, flags[i]);
 		}
 	}
 	if (total > 1)
 	{
-		sprintf(t, "%s %s ", flags[total-2], conj);
-		t += strlen(t);
+		s = format("%s%s %s ", s, flags[total-2], conj);
 	}
 	if (total)
 	{
-		sprintf(t, "%s.", flags[total-1]);
+		s = format("%s%s.", s, flags[total-1]);
 	}
 	else
 	{
-		strcpy(t, "nothing.");
+		s = format("%snothing.", s);
 	}
 	return s;
 }
@@ -2343,10 +2340,35 @@ struct ifa_type
 /*
  * Set i_ptr->txt as an allocated string, remember the fact.
  */
-static void alloc_ifa(ifa_type *i_ptr, cptr str)
+static void alloc_ifa(ifa_type *i_ptr, cptr str, ...)
 {
+	va_list vp;
+
+	/*
+	 * Hack - Convert an initial $x to a colour code. 
+	 * I'll change it once I've checked what happens to the string.
+	 */
+	if (str[0] == '$' && strchr(atchar, str[1]))
+	{
+		i_ptr->attr = color_char_to_attr(str[1]);
+		str += 2;
+	}
+	else
+	{
+		i_ptr->attr = TERM_WHITE;
+	}
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, str);
+
+	/* Format and allocate the input string. */
+	i_ptr->txt = string_make(vformat(str, vp));
+
+	/* Remember that it has been allocated. */
 	i_ptr->alloc = TRUE;
-	i_ptr->txt = string_make(str);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
 }
 
 /* Shorthand notation for res_stat_details() */
@@ -2359,12 +2381,6 @@ static void alloc_ifa(ifa_type *i_ptr, cptr str)
 
 /* The special test required to calculate blows. */
 #define blows(x) (blows_table[MIN(adj_str_blow[x[A_STR]]*mul/div,11)][MIN(adj_dex_blow[x[A_DEX]], 11)])
-
-/* Save the string to the info array, and note that it needs to be freed. */
-#define descr(str) {info[*i].attr = attr; alloc_ifa(info+((*i)++), str);}
-
-/* A format which does a basic test, and saves the output in a string as above. */
-#define dotest(x,y,str) if ((dif = test(x,y))) descr(str)
 
 #define DIF ABS(dif)
 #define DIF_INC ((dif > 0) ? "increases" : "decreases")
@@ -2411,23 +2427,23 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 
 		if (CMPJ(stat_max) > 0)
 		{
-			descr(format("It adds %s%d to your %s.", CERT, dif, stats[j]));
+			alloc_ifa(info+*i++, "It adds %s%d to your %s.", CERT, dif, stats[j]);
 		}
 		else if (dif)
 		{
-			descr(format("It removes %s%d from your %s.", CERT, -dif, stats[j]));
+			alloc_ifa(info+*i++, "It removes %s%d from your %s.", CERT, -dif, stats[j]);
 		}
 		else if (CMPJ(stat_cur))
 		{
-			descr(format("It restores your %s.", stats[j]));
+			alloc_ifa(info+*i++, "It restores your %s.", stats[j]);
 		}
 		else if (CMPJ(stat_add) > 0)
 		{
-			descr(format("It adds %d to your %s.", dif, stats[j]));
+			alloc_ifa(info+*i++, "It adds %d to your %s.", dif, stats[j]);
 		}
 		else if (dif)
 		{
-			descr(format("It removes %d from your %s.", -dif, stats[j]));
+			alloc_ifa(info+*i++, "It removes %d from your %s.", -dif, stats[j]);
 		}
 
 		/* No effect, so boring. */
@@ -2439,45 +2455,45 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 		switch (j)
 		{
 			case A_CHR:
-			if (CMPS(adj_mag_study)) descr(format("  It causes you to annoy spirits %s.", DIF_LES));
-			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF));
-			if (CMPS(adj_mag_stat)) descr(format("  It %s your spiritual success rates.", DIF_INC));
-			if (CMPS(adj_chr_gold)) descr(format("  It %s your bargaining power.", DIF_DEC));
+			if (CMPS(adj_mag_study)) alloc_ifa(info+*i++, "$W  It causes you to annoy spirits %s.", DIF_LES);
+			if (CMPS(adj_mag_fail)) alloc_ifa(info+*i++, "$W  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF);
+			if (CMPS(adj_mag_stat)) alloc_ifa(info+*i++, "$W  It %s your spiritual success rates.", DIF_INC);
+			if (CMPS(adj_chr_gold)) alloc_ifa(info+*i++, "$W  It %s your bargaining power.", DIF_DEC);
 			break;
 			case A_WIS:
-			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mchi)));
-			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF));
-			if (CMPS(adj_mag_stat)) descr(format("  It %s your mindcraft success rates.", DIF_INC));
-			if (CMPS(adj_wis_sav)) descr(format("  It %s your saving throw by %d%%.", DIF_INC, DIF));
+			if (CMPS(adj_mag_mana)) alloc_ifa(info+*i++, "$W  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mchi));
+			if (CMPS(adj_mag_fail)) alloc_ifa(info+*i++, "$W  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF);
+			if (CMPS(adj_mag_stat)) alloc_ifa(info+*i++, "$W  It %s your mindcraft success rates.", DIF_INC);
+			if (CMPS(adj_wis_sav)) alloc_ifa(info+*i++, "$W  It %s your saving throw by %d%%.", DIF_INC, DIF);
 			break;
 			case A_INT: /* Rubbish in the case of icky gloves or heavy armour. */
-			if (CMPS(adj_mag_study)) descr(format("  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR));
-			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(msp)));
-			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF));
-			if (CMPS(adj_mag_stat)) descr(format("  It %s your spellcasting success rates.", DIF_INC));
-			if (CMP(skill_dev)) descr(format("  It %s your success rate with magical devices.", DIF_INC));
+			if (CMPS(adj_mag_study)) alloc_ifa(info+*i++, "$W  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR);
+			if (CMPS(adj_mag_mana)) alloc_ifa(info+*i++, "$W  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(msp));
+			if (CMPS(adj_mag_fail)) alloc_ifa(info+*i++, "$W  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF);
+			if (CMPS(adj_mag_stat)) alloc_ifa(info+*i++, "$W  It %s your spellcasting success rates.", DIF_INC);
+			if (CMP(skill_dev)) alloc_ifa(info+*i++, "$W  It %s your success rate with magical devices.", DIF_INC);
 			break;
 			case A_CON:
-			if (CMPS(adj_con_fix)) descr(format("  It %s your regeneration rate.", DIF_INC));
-			if (CMPS(adj_con_mhp)) descr(format("  It gives you %d %s hit points at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mhp)));
+			if (CMPS(adj_con_fix)) alloc_ifa(info+*i++, "$W  It %s your regeneration rate.", DIF_INC);
+			if (CMPS(adj_con_mhp)) alloc_ifa(info+*i++, "$W  It gives you %d %s hit points at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mhp));
 			break;
 			case A_DEX:
-			if (CMP(dis_to_a)) descr(format("  It %s your AC by %d.", DIF_INC, DIF));
-			if (CMP(dis_to_h)) descr(format("  It %s your chance to hit opponents by %d.", DIF_INC, DIF));
+			if (CMP(dis_to_a)) alloc_ifa(info+*i++, "$W  It %s your AC by %d.", DIF_INC, DIF);
+			if (CMP(dis_to_h)) alloc_ifa(info+*i++, "$W  It %s your chance to hit opponents by %d.", DIF_INC, DIF);
 			/* Fix me - this also covers stunning, but is affected by saving throw. */
-			if (CMPS(adj_dex_safe)) descr(format("  It makes you %d%% %s resistant to theft.", DIF, DIF_MOR));
+			if (CMPS(adj_dex_safe)) alloc_ifa(info+*i++, "$W  It makes you %d%% %s resistant to theft.", DIF, DIF_MOR);
 			break;
 			case A_STR:
-			if (CMP(dis_to_d)) descr(format("  It %s your ability to damage opponents by %d.", DIF_INC, DIF));
-			if (CMPS(adj_str_wgt)) descr(format("  It %s your maximum carrying capacity by %d.", DIF_INC, DIF));
-			if (CMPS(adj_str_hold)) descr(format("  It makes you %s able to use heavy weapons.", DIF_MOR));
-			if (CMP(skill_dig)) descr(format("  It allows you to dig %s effectively.", DIF_MOR));
+			if (CMP(dis_to_d)) alloc_ifa(info+*i++, "$W  It %s your ability to damage opponents by %d.", DIF_INC, DIF);
+			if (CMPS(adj_str_wgt)) alloc_ifa(info+*i++, "$W  It %s your maximum carrying capacity by %d.", DIF_INC, DIF);
+			if (CMPS(adj_str_hold)) alloc_ifa(info+*i++, "$W  It makes you %s able to use heavy weapons.", DIF_MOR);
+			if (CMP(skill_dig)) alloc_ifa(info+*i++, "$W  It allows you to dig %s effectively.", DIF_MOR);
 		}
 
 		/* A couple of things which depend on two stats. */
 		if (j == A_DEX || (j == A_STR && !CMPU(stat_ind[A_DEX])))
 		{
-			if (CMP(num_blow)) descr(format("  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60));
+			if (CMP(num_blow)) alloc_ifa(info+*i++, "$W  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60);
 		}
 		if (j == A_DEX || (j == A_INT && !CMPU(stat_ind[A_DEX])))
 		{
@@ -2485,7 +2501,7 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 			if ((dif2 = CMPS(adj_dex_dis)+CMPT(adj_int_dis, A_INT)))
 			{
 				dif = dif2;
-				descr(format("  It %s your disarming skill.", DIF_INC));
+				alloc_ifa(info+*i++, "$W  It %s your disarming skill.", DIF_INC);
 			}
 		}
 	}
@@ -3059,17 +3075,16 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	}
 
 	j = get_device_chance_dec(o_ptr);
-	if (j) alloc_ifa(info+i++,
-		format("It has a %d.%d%% chance of being used %s.", j/10, j%10,
-		 ((o_ptr->flags3 & TR3_ACTIVATE) && !is_worn_p(o_ptr)) ?
-		 "as soon as you wear it" : "in your current condition"));
+	if (j) alloc_ifa(info+i++, "It has a %d.%d%% chance of being used %s.",
+		j/10, j%10, ((o_ptr->flags3 & TR3_ACTIVATE) && !is_worn_p(o_ptr))
+		? "as soon as you wear it" : "in your current condition");
 
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE && k_info[o_ptr->k_idx].extra)
 	{
-		alloc_ifa(info+i++, format("It provides light (radius %d) %s.",
+		alloc_ifa(info+i++, "It provides light (radius %d) %s.",
 			k_info[o_ptr->k_idx].extra,
-			((allart_p(o_ptr))) ? "forever" : "when fueled."));
+			((allart_p(o_ptr))) ? "forever" : "when fueled.");
 	}
 
 	/* Hack - describe the wield skill of weaponry. */
@@ -3255,8 +3270,8 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		}
 		if (*board)
 		{
-			alloc_ifa(info+i++, format("It gives you %d,%d %s per turn",
-				weap_blow/60, weap_blow%60, *board));
+			alloc_ifa(info+i++, "It gives you %d,%d %s per turn",
+				weap_blow/60, weap_blow%60, *board);
 		}
 	}
 	/* Without spoil_dam, simply list the slays. */

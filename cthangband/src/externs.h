@@ -479,7 +479,7 @@ extern errr file_character(cptr name, bool UNUSED full);
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C))
 extern void do_cmd_help(cptr name);
 #endif
-#if (defined(FILES_C) || defined(INIT1_C) || defined(UTIL_C))
+#if (defined(FILES_C) || defined(INIT1_C) || defined(OBJECT1_C) || defined(UTIL_C))
 extern int color_char_to_attr(char c);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
@@ -3910,7 +3910,7 @@ extern errr string_free(cptr str);
 
 /* tables.c */
 
-#if (defined(CMD4_C) || defined(FILES_C) || defined(TABLES_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern cptr atchar;
 #endif
 
@@ -3921,5 +3921,11 @@ extern cptr atchar;
 
 #if (defined(CMD6_C) || defined(OBJECT1_C))
 extern void get_device_chance(object_type *o_ptr, int *num, int *denom);
+#endif
+
+/* z-form.c */
+
+#if (defined(OBJECT1_C) || defined(Z_FORM_C))
+extern char *vformat(cptr fmt, va_list vp);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
