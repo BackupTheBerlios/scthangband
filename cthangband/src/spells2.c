@@ -291,6 +291,20 @@ bool do_res_stat(int stat)
 	return (FALSE);
 }
 
+/*
+ * Try to restore all stats. Return TRUE if any were restored.
+ */
+bool do_res_stats(void)
+{
+	bool b;
+	int i;
+	for (b = FALSE, i = 0; i < A_MAX; i++)
+	{
+		b |= do_res_stat(i);
+	}
+	return b;
+}
+
 
 /*
  * Gain a "point" in a stat

@@ -1237,20 +1237,6 @@ static bool summon_2(int type, int chance, bool group, int plev,
 }
 
 /*
- * Try to restore all stats. Return TRUE if any were restored.
- */
-static bool do_res_stats(void)
-{
-	/* Use bitwise or to force all arguments to be processed. */
-	return ((do_res_stat(A_STR) |
-		do_res_stat(A_INT) |
-		do_res_stat(A_WIS) |
-		do_res_stat(A_DEX) |
-		do_res_stat(A_CON) |
-		do_res_stat(A_CHR)) != FALSE);
-}
-
-/*
  * Use whatever power an object has, and set three variables to represent the
  * effect.
  *

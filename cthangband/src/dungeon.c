@@ -538,12 +538,7 @@ static void pattern_effect(void)
 		(void)set_flag(TIMED_CUT, 0);
 		(void)set_flag(TIMED_BLIND, 0);
 		(void)set_flag(TIMED_AFRAID, 0);
-		(void)do_res_stat(A_STR);
-		(void)do_res_stat(A_INT);
-		(void)do_res_stat(A_WIS);
-		(void)do_res_stat(A_DEX);
-		(void)do_res_stat(A_CON);
-		(void)do_res_stat(A_CHR);
+		do_res_stats();
 		(void)restore_level();
 		(void)hp_player(1000);
 		cave_set_feat(py, px, FEAT_PATTERN_OLD);

@@ -1742,7 +1742,7 @@ extern bool do_dec_stat(int stat);
 #if (defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void do_dec_stat_time(int stat, bool msg);
 #endif
-#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool do_res_stat(int stat);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
@@ -3919,5 +3919,11 @@ extern errr parse_template(char *buf, header *head, vptr *extra);
 
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern cptr tp_name;
+#endif
+
+/* spells2.c */
+
+#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
+extern bool do_res_stats(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -3575,12 +3575,7 @@ static void store_process_command(void)
 								/* Be happy */
 								decrease_insults();
 								store_prt_gold();
-								do_res_stat(A_STR);
-								do_res_stat(A_INT);
-								do_res_stat(A_WIS);
-								do_res_stat(A_DEX);
-								do_res_stat(A_CON);
-								do_res_stat(A_CHR);
+								do_res_stats();
 								restore_level();
 							}
 							p_ptr->window |= (PW_SPELL | PW_PLAYER);

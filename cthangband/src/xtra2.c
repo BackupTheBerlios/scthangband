@@ -3705,10 +3705,7 @@ void gain_level_reward(int effect, int skill)
 			(void)set_flag(TIMED_STUN, 0);
 			(void)set_flag(TIMED_CUT, 0);
 			hp_player(5000);
-			for (i = 0; i < A_MAX; i++)
-			{
-				(void) do_res_stat(i);
-			}
+			do_res_stats();
 			break;
 		case REW_CURSE_WP:
 			msg_format("The voice of %s booms out:",
