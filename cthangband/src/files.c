@@ -862,10 +862,9 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			else if (!strcmp(zz[0], "hitpoint warning"))
 			{
 				long l = strtol(zz[1], NULL, 0);
-				if (!isdigit(zz[1][0]) || l < 0 || l > 9)
+				if (!isdigit(zz[1][0]) || l < 0 || l > 99)
 					return "invalid hitpoint warning";
 
-				/* hitpoint_warn would probably make more sense in 100ths... */
 				hitpoint_warn = l;
 			}
 			else if (!strcmp(zz[0], "autosave frequency"))
@@ -874,7 +873,6 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				if (!isdigit(zz[1][0]) || l < 0 || l > MAX_SHORT)
 					return "invalid autosave frequency";
 
-				/* hitpoint_warn would probably make more sense in 100ths... */
 				autosave_freq = l;
 			}
 			else
@@ -1603,7 +1601,7 @@ errr check_load_init(void)
 static char percent_to_colour(s16b cur, s16b max)
 {
 	if (cur == max) return 'G';
-	if (cur > (max * hitpoint_warn) / 10) return 'y';
+	if (cur > ((long)max * hitpoint_warn) / 100) return 'y';
 	return 'r';
 }
 

@@ -1174,12 +1174,12 @@ static void do_cmd_options_hp(void)
 	while (1)
 	{
 		int k;
-		prt(format("Current hitpoint warning: %d0%%",
-			hitpoint_warn), 22, 0);
+		mc_put_fmt(22, 0, "Current hitpoint warning: %d%%%v",
+			hitpoint_warn, clear_f0);
 		prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
 		k = inkey();
 		if (k == ESCAPE) break;
-		if (ISDIGIT(k)) hitpoint_warn = D2I(k);
+		if (ISDIGIT(k)) hitpoint_warn = 10 * D2I(k);
 		else bell(0);
 	}
 }
@@ -1957,7 +1957,7 @@ static void dump_normal_options(FILE *fff)
 	fprintf(fff, "\n\n# Miscellaneous options\n\n");
 	fprintf(fff, "# Base delay factor (>= 0)\nZ:base delay factor:%d\n\n",
 		delay_factor);
-	fprintf(fff, "# Hitpoint warning (0-9)\nZ:hitpoint warning:%d\n\n",
+	fprintf(fff, "# Hitpoint warning (0-99)\nZ:hitpoint warning:%d\n\n",
 		hitpoint_warn);
 	fprintf(fff, "# Autosave frequency (>= 0)\nZ:autosave frequency:%d\n\n",
 		autosave_freq);

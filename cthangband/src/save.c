@@ -402,7 +402,7 @@ static void wr_options(void)
 	wr_byte((byte)i);
 
 	/* Write "hitpoint_warn" */
-	wr_byte((byte)(hitpoint_warn));
+	wr_byte((byte)(hitpoint_warn/10));
 
 
 	/*** Cheating options ***/

@@ -842,7 +842,7 @@ static void rd_options(void)
 
 	/* Read "hitpoint_warn" */
 	rd_byte(&b);
-	hitpoint_warn = b;
+	hitpoint_warn = b*10;
 
 
 	/*** Cheating options ***/

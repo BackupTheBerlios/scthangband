@@ -299,7 +299,7 @@ bool display_credits; /* Require a keypress to clear the initial screen. */
 #endif
 bool allow_pickstats; /* Allow the player to choose a stat template. */
 
-s16b hitpoint_warn = 2; /* Hitpoint warning (0 to 9) */
+s16b hitpoint_warn = 20; /* Hitpoint warning (0 to 9) */
 
 s16b delay_factor = 64; /* Delay factor (0 to 9) */
 

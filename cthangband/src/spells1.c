@@ -739,7 +739,7 @@ void take_hit(int damage, cptr hit_from, int monster)
 
 	bool pen_invuln = FALSE;
 
-	int warning = (p_ptr->mhp * hitpoint_warn / 10);
+	int warning = (p_ptr->mhp * hitpoint_warn / 100);
 
 
 	/* Paranoia */
