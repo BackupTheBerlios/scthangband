@@ -4428,7 +4428,7 @@ static void display_store_extra(void)
 	if (cur_store_type == STORE_HALL)
 	{
 		prt(" h) view racial Heroes.", y+1, 31);
-		prt(" c) view Template heroes.", y+1,31);
+		prt(" c) view Template heroes.", y+2,31);
 	}
 	else
 	/* Add in the eXamine option */
