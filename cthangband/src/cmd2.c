@@ -151,7 +151,7 @@ static void use_stairs(cptr dir, bool deeper, bool trapdoor)
 		msg_format("You enter a maze of %s staircases.", dir);
 	}
 
-	if (j > dun_level+1) j = 1;
+	if (j > dun_level) j = 1;
 
 	/* Don't allow the player to pass a quest level.
 	 * This is very inefficient, but it's a very simple process.
