@@ -3175,7 +3175,7 @@ option_type option_info[] =
 	"show_choices",                 "Show choices in certain sub-windows" },
 
     { &show_details,                TRUE, OPTS_UI,      0, 13,
-	"show_details",                 "Show details in certain sub-windows" },
+	"show_details",                 "Show more detailed monster descriptons" },
 
 	{ &show_choices_main,		TRUE,	1,	2,26,
 	"show_choices_main",		"Show certain choices in the main window"},

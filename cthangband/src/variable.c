@@ -184,7 +184,7 @@ bool stack_force_costs;		/* Merge discounts when stacking */
 bool show_labels;			/* Show labels in object listings */
 bool show_weights;			/* Show weights in object listings */
 bool show_choices;			/* Show choices in certain sub-windows */
-bool show_details;			/* Show details in certain sub-windows */
+bool show_details;			/* Show more detailed monster descriptons */
 bool show_choices_main;			/* Show choices in main window */
 
 bool bypass_prompt;			/* Bypass spirit selection prompt where appropriate */
