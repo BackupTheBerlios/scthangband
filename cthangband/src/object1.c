@@ -4042,7 +4042,25 @@ static bool get_item_okay(object_ctype *o_ptr)
 	return (TRUE);
 }
 
+/*
+ * Allow the game and the player to reject an item at a prompt.
+ */
+static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
+{
+	/* Validate the item */
+	if (!*o_ptr || !get_item_okay(*o_ptr))
+	{
+		bell(0);
+		return;
+	}
 
+	/* Allow the player to refuse the item. */
+	else if ((ver && !verify("Try", *o_ptr)) || !get_item_allow(*o_ptr))
+	{
+		*o_ptr = NULL;
+		*done = TRUE;
+	}
+}
 
 /*
  * Find the "first" inventory object with the given "tag".
@@ -4538,23 +4556,9 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 					break;
 				}
 
-				/* Validate the item */
-				if (!get_item_okay(o_ptr))
-				{
-					bell(0);
-					break;
-				}
+				/* Check that the item is suitable in various ways. */
+				get_item_valid(&o_ptr, &done, isupper(which));
 
-				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(o_ptr))
-				{
-					o_ptr = NULL;
-					done = TRUE;
-					break;
-				}
-
-				/* Use that item */
-				done = TRUE;
 				break;
 			}
 
@@ -4579,23 +4583,9 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 					break;
 				}
 
-				/* Validate the item */
-				if (!get_item_okay(o_ptr))
-				{
-					bell(0);
-					break;
-				}
+				/* Check that the item is suitable in various ways. */
+				get_item_valid(&o_ptr, &done, FALSE);
 
-				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(o_ptr))
-				{
-					o_ptr = NULL;
-					done = TRUE;
-					break;
-				}
-
-				/* Accept that choice */
-				done = TRUE;
 				break;
 			}
 
@@ -4640,23 +4630,21 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* No broken items, so return any cursed ones found */
 				if (o_ptr == end) o_ptr = cursed;
 
-				/* There was a broken or cursed item. */
-				if (o_ptr)
-				{
-					bool upper = isupper(which);
-					/* Continue, preserving case */
-					which = index_to_label(o_ptr);
-					if (upper) which += 'A'-'a';
-				}
+				/* Check that the item is suitable in various ways. */
+				get_item_valid(&o_ptr, &done, isupper(which));
+
+				break;
 			}
 
 			/* Select the most/least valuable object in the selection. */
 			case 'x': case 'X': case 'y': case 'Y':
-			if (strchr("XxYy", which) && spoil_value)
 			{
-				object_type *start, *end, *best = NULL;
+				object_type *start, *end, *j_ptr = NULL;
 				bool high = strchr("Xx", which) != NULL;
 				s32b UNREAD(best_price);
+
+				/* Can only judge value with spoil_value set. */
+				if (!spoil_value) break;
 
 				/* Find the range. */
 				if (command_wrk)
@@ -4671,12 +4659,12 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				}
 
 				/* Look through the items, finding the best value. */
-				for (o_ptr = start, best = NULL; o_ptr < end; o_ptr++)
+				for (j_ptr = start, o_ptr = NULL; j_ptr < end; j_ptr++)
 				{
 					s32b this_price;
-					if (!get_item_okay(o_ptr)) continue;
-					this_price = object_value(o_ptr) * o_ptr->number;
-					if (best >= start)
+					if (!get_item_okay(j_ptr)) continue;
+					this_price = object_value(j_ptr) * j_ptr->number;
+					if (o_ptr >= start)
 					{
 						if (high)
 						{
@@ -4687,11 +4675,11 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 							if (this_price > best_price) continue;
 						}	
 					}
-					best = o_ptr;
+					o_ptr = j_ptr;
 					best_price = this_price;
 				}
 				/* Paranoia */
-				if (!best)
+				if (!o_ptr)
 				{
 					bell(0);
 					break;
@@ -4700,9 +4688,14 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				{
 					bool upper = isupper(which);
 					/* Continue, preserving case */
-					which = index_to_label(best);
+					which = index_to_label(o_ptr);
 					if (upper) which += 'A'-'a';
 				}
+
+				/* Check that the item is suitable in various ways. */
+				get_item_valid(&o_ptr, &done, isupper(which));
+
+				break;
 			}
 			default:
 			{
@@ -4722,31 +4715,9 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 					o_ptr = label_to_equip(which);
 				}
 
-				/* Validate the item */
-				if (!get_item_okay(o_ptr))
-				{
-					bell(0);
-					break;
-				}
+				/* Check that the item is suitable in various ways. */
+				get_item_valid(&o_ptr, &done, ver);
 
-				/* Verify, abort if requested */
-				if (ver && !verify("Try", o_ptr))
-				{
-					o_ptr = NULL;
-					done = TRUE;
-					break;
-				}
-
-				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(o_ptr))
-				{
-					o_ptr = NULL;
-					done = TRUE;
-					break;
-				}
-
-				/* Accept that choice */
-				done = TRUE;
 				break;
 			}
 		}
