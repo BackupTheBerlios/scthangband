@@ -1570,12 +1570,12 @@ static int weight_limit(void)
 
 /* Calculate the skill used by a certain weapon. */
 
-int wield_skill(byte tval, byte sval)
+int wield_skill(object_type *o_ptr)
 {
-	switch (tval)
+	switch (o_ptr->tval)
 	{
 	case TV_HAFTED:
-		if (sval == SV_WHIP)
+		if (o_ptr->k_idx == OBJ_WHIP)
 		{
 			return SKILL_CLOSE;
 		}
@@ -1584,17 +1584,17 @@ int wield_skill(byte tval, byte sval)
 			return SKILL_CRUSH;
 		}
 	case TV_POLEARM:
-		switch(sval)
+		switch(o_ptr->k_idx)
 		{
-		case SV_SPEAR:
-		case SV_AWL_PIKE:
-		case SV_TRIDENT:
+		case OBJ_SPEAR:
+		case OBJ_AWL_PIKE:
+		case OBJ_TRIDENT:
 			return SKILL_STAB;
-		case SV_BEAKED_AXE:
-		case SV_BROAD_AXE:
-		case SV_SCYTHE:
-		case SV_GREAT_AXE:
-		case SV_SCYTHE_OF_SLICING:
+		case OBJ_BEAKED_AXE:
+		case OBJ_BROAD_AXE:
+		case OBJ_SCYTHE:
+		case OBJ_GREAT_AXE:
+		case OBJ_SCYTHE_OF_SLICING:
 			return SKILL_SLASH;
 		default:
 			return SKILL_CRUSH;
@@ -1602,15 +1602,15 @@ int wield_skill(byte tval, byte sval)
 	case TV_DIGGING:
 		return SKILL_CRUSH;
 	case TV_SWORD:
-		switch(sval)
+		switch(o_ptr->k_idx)
 		{
-		case SV_BROKEN_DAGGER:
-		case SV_BROKEN_SWORD:
-		case SV_DAGGER:
-		case SV_MAIN_GAUCHE:
+		case OBJ_BROKEN_DAGGER:
+		case OBJ_BROKEN_SWORD:
+		case OBJ_DAGGER:
+		case OBJ_MAIN_GAUCHE:
 			return SKILL_CLOSE;
-		case SV_RAPIER:
-		case SV_SHORT_SWORD:
+		case OBJ_RAPIER:
+		case OBJ_SHORT_SWORD:
 			return SKILL_STAB;
 		default:
 			return SKILL_SLASH;
@@ -1746,7 +1746,7 @@ static void calc_bonuses(bool quiet)
 	o_ptr = &inventory[INVEN_WIELD];
 
 	/* Can we assign a weapon skill? */
-	if (!(p_ptr->wield_skill=wield_skill(o_ptr->tval, o_ptr->sval)))
+	if (!(p_ptr->wield_skill=wield_skill(o_ptr)))
 			{
 			if (!quiet) msg_print("Unknown weapon tval wielded - defaulting to close combat skill.");
 			p_ptr->wield_skill = SKILL_CLOSE;

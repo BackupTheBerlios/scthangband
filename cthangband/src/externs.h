@@ -3482,7 +3482,7 @@ extern bool cumber_glove(object_type *o_ptr);
 extern bool cumber_helm(object_type *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
-extern int wield_skill(byte tval, byte sval);
+extern int wield_skill(object_type *o_ptr);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern byte ammunition_type(object_type *o_ptr);

@@ -3291,7 +3291,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	}
 
 	/* Hack - describe the wield skill of weaponry. */
-	switch (wield_skill(o_ptr->tval, o_ptr->sval))
+	switch (wield_skill(o_ptr))
 	{
  	case SKILL_CLOSE:
  		info[i++].txt="It trains your close combat skill.";
