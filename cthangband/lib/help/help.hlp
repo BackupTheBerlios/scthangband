@@ -22,3 +22,7 @@
 %%%%? [EQU $SYS x11]
     *****/phelp-x11.txt*0[[p$]] Extra features for the X11 port
 %%%%? 1
+(The following files are not actually listed in the help text, but are included to make it easier to search for help files during initialisation.)
+
+    *****/qdebug.txt*0[[q]] Debugging commands
+%%%%? 1
