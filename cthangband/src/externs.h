@@ -2143,7 +2143,7 @@ extern byte chest_traps[64];
 #if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(TABLES_C))
 extern cptr color_names[16];
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern cptr stat_names[6];
 #endif
 #if (defined(FILES_C) || defined(TABLES_C) || defined(XTRA1_C))
@@ -2332,7 +2332,7 @@ extern void mc_roff(cptr s);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void clear_from(int row);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern bool askfor_aux(char *buf, int len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C))
