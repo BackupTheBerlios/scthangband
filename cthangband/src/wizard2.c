@@ -394,8 +394,6 @@ static void wiz_display_item(object_type *o_ptr)
     prt("rr  litsopdretitsehtierltxrtesss", 17, j+32);
     prt("aa  echewestreshtntsdcedeptedeee", 18, j+32);
 	prt_binary(f3, 19, j+32);
-
-	TFREE(buf);
 }
 
 

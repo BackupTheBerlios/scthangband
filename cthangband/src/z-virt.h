@@ -142,7 +142,7 @@
 	T P[N]
 
 /* Free a local array at P (automatic). */
-#define TFREE(P)
+#define TFREE(P) (void)(P)
 
 #else /* VARIABLE_ARRAYS */
 
