@@ -1204,34 +1204,11 @@ static void print_spirits(int *valid_spirits,int num,int y, int x)
 
 
 /*
- * Is it a book?
- */
-static PURE bool item_tester_book(object_ctype *o_ptr)
-{
-	switch (o_ptr->tval)
-	{
-		case TV_SORCERY_BOOK:
-		case TV_THAUMATURGY_BOOK:
-		case TV_CONJURATION_BOOK:
-		case TV_NECROMANCY_BOOK:
-			return TRUE;
-		default:
-			return FALSE;
-	}
-}
-
-/*
  * Does it have a book_type associated with it?
  */
-static PURE bool item_tester_book_etc(object_ctype *o_ptr)
+bool PURE item_tester_spells(object_ctype *o_ptr)
 {
 	return (k_idx_to_book(o_ptr->k_idx) != 0);
-}
-
-bool PURE display_spells_p(object_ctype *o_ptr)
-{
-	item_tester_hook = item_tester_book_etc;
-	return item_tester_okay(o_ptr);
 }
 
 void display_spells(int y, int x, object_ctype *o_ptr)
@@ -1241,7 +1218,7 @@ void display_spells(int y, int x, object_ctype *o_ptr)
 
 	byte		spells[64];
 
-	assert(display_spells_p(o_ptr));
+	assert(item_tester_spells(o_ptr));
 
 	/* Access the item's spell list. */
 	b_ptr = k_idx_to_book(o_ptr->k_idx);
@@ -1261,25 +1238,9 @@ void display_spells(int y, int x, object_ctype *o_ptr)
  * Note that browsing is allowed while confused or blind,
  * and in the dark, primarily to allow browsing in stores.
  */
-void do_cmd_browse(object_ctype *o_ptr)
+void do_cmd_browse(object_type *o_ptr)
 {
-	/* Get an item if we do not already have one */
-	if(!o_ptr)
-	{
-		errr err;
-
-		/* Restrict choices to books */
-		item_tester_hook = item_tester_book_etc;
-
-		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&err, "Browse which book? ", FALSE, TRUE, TRUE))))
-		{
-			if (err == -2) msg_print("You have no books that you can read.");
-			return;
-		}
-	}
-
-	if(!display_spells_p(o_ptr))
+	if(!item_tester_spells(o_ptr))
 	{
 		msg_print("You can't read that.");
 		return;
@@ -1316,51 +1277,16 @@ void do_cmd_browse(object_ctype *o_ptr)
 /*
  * Study a book to gain a new spell/prayer
  */
-void do_cmd_study(void)
+void do_cmd_study(object_type *o_ptr)
 {
-	errr err;
 	int	i;
 	int	spell_school = 0;
 	int	spell = -1;
 
 	cptr p = "spell";
 
-	object_type             *o_ptr;
 	book_type *b_ptr;
 	magic_type *s_ptr;
-
-	if (p_ptr->blind)
-	{
-		msg_print("You cannot see!");
-		return;
-	}
-
-	if (p_ptr->confused)
-	{
-		msg_print("You are too confused!");
-		return;
-	}
-
-	if (!(p_ptr->new_spells))
-	{
-		msg_format("You cannot learn any new %ss!", p);
-		return;
-	}
-
-	msg_format("You can learn %d new %s%s.", p_ptr->new_spells, p,
-		(p_ptr->new_spells == 1?"":"s"));
-	msg_print(NULL);
-
-
-	/* Restrict choices to "useful" books */
-	item_tester_hook = item_tester_book;
-
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Study which book? ", FALSE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have no books that you can read.");
-		return;
-	}
 
 	/* Access the item's spell list. */
 	b_ptr = k_idx_to_book(o_ptr->k_idx);
@@ -1427,44 +1353,15 @@ void do_cmd_study(void)
 /*
  * Cast a spell
  */
-void do_cmd_cast(void)
+void do_cmd_cast(object_type *o_ptr)
 {
-	errr err;
 	int	spell, chance;
 	int	plev = 0;
 	int	spell_school = 0;
 
-	const cptr prayer = "spell";
-
-	object_type	*o_ptr;
 	book_type *b_ptr;
 
 	magic_type	*s_ptr;
-
-	/* Require lite */
-	if (p_ptr->blind || no_lite())
-	{
-		msg_print("You cannot see!");
-		return;
-	}
-
-	/* Not when confused */
-	if (p_ptr->confused)
-	{
-		msg_print("You are too confused!");
-		return;
-	}
-
-
-	/* Restrict choices to spell books */
-	item_tester_hook = item_tester_book;
-
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Use which book? ", FALSE, TRUE, TRUE))))
-	{
-        if (err == -2) msg_format("You have no %s books!", prayer);
-		return;
-	}
 
 	/* Access the item's spell list. */
 	b_ptr = k_idx_to_book(o_ptr->k_idx);
@@ -1482,7 +1379,7 @@ void do_cmd_cast(void)
 	if (!get_spell(&spell,"cast", TRUE, b_ptr))
 	{
 		if (spell == -2)
-		msg_format("You don't know any %ss in that book.", prayer);
+		msg_print("You don't know any spells in that book.");
 		return;
 	}
 
@@ -1496,9 +1393,7 @@ void do_cmd_cast(void)
 	if (s_ptr->mana > p_ptr->csp)
 	{
 		/* Warning */
-		msg_format("You do not have enough mana to %s this %s.",
-			"cast",
-			prayer);
+		msg_print("You do not have enough mana to cast this spell.");
 
 		/* Verify */
 		if (!get_check("Attempt it anyway? ")) return;
@@ -1513,7 +1408,7 @@ void do_cmd_cast(void)
 	{
 		if (flush_failure) flush();
 
-		msg_format("You failed to get the %s off!", prayer);
+		msg_print("You failed to get the spell off!");
 
 		if (o_ptr->tval == TV_THAUMATURGY_BOOK && (randint(100)<spell))
 		{
@@ -1583,43 +1478,14 @@ void do_cmd_cast(void)
 /*
  * Cast a cantrip
  */
-void do_cmd_cantrip(void)
+void do_cmd_cantrip(object_type *o_ptr)
 {
-	errr err;
 	int	spell, chance;
 
-	const cptr prayer = "cantrip";
 	bool item_break = FALSE;
-
-	object_type	*o_ptr;
 
 	const magic_type	*s_ptr;
 	book_type *b_ptr;
-
-	/* Require lite */
-	if (p_ptr->blind || no_lite())
-	{
-		msg_print("You cannot see!");
-		return;
-	}
-
-	/* Not when confused */
-	if (p_ptr->confused)
-	{
-		msg_print("You are too confused!");
-		return;
-	}
-
-
-	/* Restrict choices to charms */
-	item_tester_tval = TV_CHARM;
-
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Use which charm? ", TRUE, TRUE, TRUE))))
-	{
-        if (err == -2) msg_print("You have no charms!");
-		return;
-	}
 
 	/* Access the item's spell list. */
 	b_ptr = k_idx_to_book(o_ptr->k_idx);
@@ -1634,7 +1500,7 @@ void do_cmd_cantrip(void)
 	if (!get_cantrip(&spell, b_ptr))
 	{
 		if (spell == -2)
-		msg_format("You don't know any %ss for that charm.", prayer);
+		msg_print("You don't know any cantrips for that charm.");
 		return;
 	}
 
@@ -1648,7 +1514,7 @@ void do_cmd_cantrip(void)
 	{
 		if (flush_failure) flush();
 
-		msg_format("You failed to cast the %s!", prayer);
+		msg_print("You failed to cast the cantrip!");
 		/* Charm *always* breaks if the spell fails */
 		item_break = TRUE;
 	}

@@ -3103,6 +3103,9 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /* For errors (+/-)500-599, see z-term.h */
 
+/* From get_item(). */
+#define GET_ITEM_ERROR_ABORT	-1 /* User hit escape */
+#define GET_ITEM_ERROR_NO_ITEMS	-2 /* No legal items to choose */
 
 /* Energy constants */
 #define TURN_ENERGY	1000 /* Energy used in one player turn. */

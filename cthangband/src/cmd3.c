@@ -133,7 +133,7 @@ void do_cmd_equip(void)
 /*
  * The "wearable" tester
  */
-static bool item_tester_hook_wear(object_ctype *o_ptr)
+bool PURE item_tester_hook_wear(object_ctype *o_ptr)
 {
 	/* Check for a usable slot */
 	if (wield_slot(o_ptr) >= INVEN_WIELD) return (TRUE);
@@ -145,25 +145,12 @@ static bool item_tester_hook_wear(object_ctype *o_ptr)
 /*
  * Wield or wear a single item from the pack or floor
  */
-void do_cmd_wield(void)
+void do_cmd_wield(object_type *o_ptr)
 {
-	errr err;
 	object_type forge;
-	object_type *q_ptr, *o_ptr, *j_ptr;
+	object_type *q_ptr, *j_ptr;
 
 	cptr act;
-
-
-	/* Restrict the choices */
-	item_tester_hook = item_tester_hook_wear;
-
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Wear/Wield which item? ", FALSE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing you can wear or wield.");
-		return;
-	}
-
 
 	/* Check the slot */
 	j_ptr = inventory + wield_slot(o_ptr);
@@ -295,21 +282,8 @@ void do_cmd_wield(void)
 /*
  * Take off an item
  */
-void do_cmd_takeoff(void)
+void do_cmd_takeoff(object_type *o_ptr)
 {
-	errr err;
-
-	object_type *o_ptr;
-
-
-	/* Get an item (from equip) */
-	if (!((o_ptr = get_item(&err, "Take off which item? ", TRUE, FALSE, FALSE))))
-	{
-		if (err == -2) msg_print("You are not wearing anything to take off.");
-		return;
-	}
-
-
 	/* Item is cursed */
 	if (cursed_p(o_ptr))
 	{
@@ -334,31 +308,9 @@ void do_cmd_takeoff(void)
 /*
  * Drop an item
  */
-void do_cmd_drop(void)
+void do_cmd_drop(object_type *o_ptr)
 {
-	errr err;
 	int  amt = 1;
-
-	object_type *o_ptr;
-
-	/* Get an item (from equip or inven) */
-	if (!((o_ptr = get_item(&err, "Drop which item? ", TRUE, TRUE, FALSE))))
-	{
-		if (err == -2) msg_print("You have nothing to drop.");
-		return;
-	}
-
-
-	/* Hack -- Cannot remove cursed items */
-	if (!item_tester_hook_drop(o_ptr))
-	{
-		/* Oops */
-		msg_print("Hmmm, it seems to be cursed.");
-
-		/* Nope */
-		return;
-	}
-
 
 	/* See how many items */
 	if (o_ptr->number > 1)
@@ -505,29 +457,13 @@ void do_cmd_destroy(void)
 }
 
 
-static bool item_tester_unhidden(object_ctype *o_ptr)
-{
-	return !hidden_p(o_ptr);
-}
-
 /*
  * Hide an object stack on the floor, and ask if its tval should be hidden.
  *
  * Only floor items are considered, as the player is assumed not to 
  */
-void do_cmd_hide_object(void)
+void do_cmd_hide_object(object_type *o_ptr)
 {
-	errr err;
-	object_type *o_ptr;
-	
-	/* Get an item */
-	item_tester_hook = item_tester_unhidden;
-	if (!((o_ptr = get_item(&err, "Hide which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing you can hide.");
-		return;
-	}
-
 	msg_format("You hide %v.", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Hide the object. */
@@ -603,20 +539,8 @@ void destroy_pack(void)
 /*
  * Observe an item which has been *identify*-ed
  */
-void do_cmd_observe(void)
+void do_cmd_observe(object_type *o_ptr)
 {
-	errr err;
-
-	object_type		*o_ptr;
-
-
-	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&err, "Examine which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to examine.");
-		return;
-	}
-
 	/* Describe */
 	msg_format("Examining %v...", object_desc_f3, o_ptr, TRUE, 3);
 
@@ -630,20 +554,8 @@ void do_cmd_observe(void)
  * Remove the inscription from an object
  * XXX Mention item (when done)?
  */
-void do_cmd_uninscribe(void)
+void do_cmd_uninscribe(object_type *o_ptr)
 {
-	errr err;
-
-	object_type *o_ptr;
-
-
-	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&err, "Un-inscribe which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to un-inscribe.");
-		return;
-	}
-
 	/* Nothing to remove */
 	if (!o_ptr->note)
 	{
@@ -665,21 +577,9 @@ void do_cmd_uninscribe(void)
 /*
  * Inscribe an object with a comment
  */
-void do_cmd_inscribe(void)
+void do_cmd_inscribe(object_type *o_ptr)
 {
-	errr err;
-
-	object_type		*o_ptr;
-
 	char		out_val[80];
-
-
-	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&err, "Inscribe which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to inscribe.");
-		return;
-	}
 
 	/* Message */
 	msg_format("Inscribing %v.", object_desc_f3, o_ptr, TRUE, 3);
@@ -1426,19 +1326,8 @@ void do_cmd_query_symbol(void)
 
 
 /* 'Handle' an object, doing whatever seems the sensible thing to it... */
-void do_cmd_handle(void)
+void do_cmd_handle(object_type *o_ptr)
 {
-	errr err;
-
-	object_type *o_ptr;
-
-	/* Get an item (from equip or inven) */
-	if (!((o_ptr = get_item(&err, "Use which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to use.");
-		return;
-	}
-
 	/* First test Wielded items */
 	if (o_ptr >= inventory+INVEN_WIELD && o_ptr <= inventory+INVEN_FEET)
 	{

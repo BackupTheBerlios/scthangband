@@ -3368,7 +3368,7 @@ static void store_examine(void)
 	o_ptr = &st_ptr->stock[item];
 
 	/* If it is a spell book then browse it */
-	if (display_spells_p(o_ptr))
+	if (item_tester_spells(o_ptr))
 	{
 		do_cmd_browse(o_ptr);
 	}
@@ -3698,7 +3698,9 @@ static void store_process_command(void)
 				   }
 			   case STORE_LIBRARY:
 				   {
-					   do_cmd_study();
+						/* Run a special command. */
+						command_cmd = 'G'+CMD_SHOP;
+						process_command();
 						break;
 					}
 			   case STORE_INN:
@@ -3931,7 +3933,10 @@ static void store_process_command(void)
 		 */
 		case 'b':
 		{
-			do_cmd_browse(NULL);
+			bool old_unify_commands = unify_commands;
+			unify_commands = FALSE;
+			process_command();
+			unify_commands = old_unify_commands;
 			break;
 		}
 

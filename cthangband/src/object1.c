@@ -4193,9 +4193,6 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 }
 
 
-#define GET_ITEM_ERROR_ABORT	-1 /* User hit escape */
-#define GET_ITEM_ERROR_NO_ITEMS	-2 /* No legal items to choose */
-
 /*
  * Let the user select an item, return its "index"
  *
@@ -4875,4 +4872,268 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	return o_ptr;
 }
 
+/* Generic "select an object to use" function. */
 
+typedef struct object_function object_function;
+struct object_function
+{
+	s16b cmd; /* Which command key does this. */
+	void (*func)(object_type *); /* Which function carries it out. */
+	cptr verb; /* How the game describes it. */
+	cptr noun;
+	bool (*ban)(void);
+	bool (*hook)(object_ctype *);
+	byte tval;
+	bool equip;
+	bool inven;
+	bool floor;
+};
+
+/*
+ * Is it not yet hidden?
+ */
+static bool PURE item_tester_unhidden(object_ctype *o_ptr)
+{
+	return !hidden_p(o_ptr);
+}
+
+/*
+ * Is it a book?
+ */
+static bool PURE item_tester_book(object_ctype *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SORCERY_BOOK:
+		case TV_THAUMATURGY_BOOK:
+		case TV_CONJURATION_BOOK:
+		case TV_NECROMANCY_BOOK:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+/*
+ * Can it be activated?
+ */
+static bool PURE item_tester_hook_activate(object_ctype *o_ptr)
+{
+	u32b f1, f2, f3;
+
+	/* Not known */
+	if (!object_known_p(o_ptr)) return (FALSE);
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3);
+
+	/* Check activation flag */
+	if (f3 & (TR3_ACTIVATE)) return (TRUE);
+
+	/* Assume not */
+	return (FALSE);
+}
+
+/*
+ * Check some conditions which prevent scroll reading.
+ */
+static bool PURE forbid_read(void)
+{
+	if (p_ptr->blind)
+	{
+		msg_print("You can't see anything.");
+	}
+	else if (no_lite())
+	{
+		msg_print("You have no light to read by.");
+	}
+	else if (p_ptr->confused)
+	{
+		msg_print("You are too confused!");
+	}
+	else
+	{
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/*
+ * Check some conditions which prevent studying (possibly silly).
+ */
+static bool PURE forbid_study(void)
+{
+	if (p_ptr->blind)
+	{
+		msg_print("You cannot see!");
+	}
+	else if (p_ptr->confused)
+	{
+		msg_print("You are too confused!");
+	}
+	else if (!(p_ptr->new_spells))
+	{
+		msg_print("You cannot learn any new spells!");
+	}
+	else
+	{
+		msg_format("You can learn %d new spell%s.", p_ptr->new_spells,
+			(p_ptr->new_spells == 1 ? "" : "s"));
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/*
+ * Check some conditions which prevent spellcasting.
+ */
+static bool PURE forbid_cast(void)
+{
+	/* Forbid (and reveal) anti-magic shells. */
+	if (p_ptr->anti_magic)
+	{
+		msg_print("An anti-magic shell disrupts your spell!");
+		energy_use = TURN_ENERGY/20; /* Still use a bit */
+	}
+	/* Require lite */
+	if (p_ptr->blind || no_lite())
+	{
+		msg_print("You cannot see!");
+	}
+	/* Not when confused */
+	else if (p_ptr->confused)
+	{
+		msg_print("You are too confused!");
+	}
+	else
+	{
+		return FALSE;
+	}
+	return TRUE;
+}
+
+
+static object_function object_functions[] =
+{
+	{'E', do_cmd_eat_food, "eat", "item",
+		NULL, NULL, TV_FOOD, FALSE, TRUE, TRUE},
+	{'q', do_cmd_quaff_potion, "quaff", "potion",
+		NULL, NULL, TV_POTION, TRUE, TRUE, TRUE},
+	{'r', do_cmd_read_scroll, "read", "scroll",
+		forbid_read, NULL, TV_SCROLL, TRUE, TRUE, TRUE},
+	{'u', do_cmd_use_staff, "use", "staff",
+		NULL, NULL, TV_STAFF, FALSE, TRUE, TRUE},
+	{'a', do_cmd_aim_wand, "aim", "wand",
+		NULL, NULL, TV_WAND, TRUE, TRUE, TRUE},
+	{'z', do_cmd_zap_rod, "zap", "rod",
+		NULL, NULL, TV_ROD, FALSE, TRUE, TRUE},
+	{'A', do_cmd_activate, "activate", "item",
+		NULL, item_tester_hook_activate, 0, TRUE, FALSE, FALSE},
+	{'b', do_cmd_browse, "browse", "book",
+		NULL, item_tester_spells, 0, FALSE, TRUE, TRUE},
+	{'G'+CMD_SHOP, do_cmd_study, "study", "book",
+		forbid_study, item_tester_book, 0, FALSE, TRUE, TRUE},
+	{'m', do_cmd_cast, "use", "book",
+		forbid_cast, item_tester_book, 0, FALSE, TRUE, TRUE},
+	{'h', do_cmd_cantrip, "use", "charm",
+		forbid_cast, NULL, TV_CHARM, TRUE, TRUE, TRUE},
+	{'w', do_cmd_wield, "wear or wield", "item",
+		NULL, item_tester_hook_wear, 0, FALSE, TRUE, TRUE},
+	{'t', do_cmd_takeoff, "take off", "item",
+		NULL, NULL, 0, TRUE, FALSE, FALSE},
+	{'d', do_cmd_drop, "drop", "item",
+		NULL, item_tester_hook_drop, 0, TRUE, TRUE, FALSE},
+#if 0
+	{'k', do_cmd_destroy, "destroy", "item",
+		NULL, item_tester_hook_destroy, 0, TRUE, TRUE, TRUE},
+#endif
+	{'K', do_cmd_hide_object, "hide", "item",
+		NULL, item_tester_unhidden, 0, TRUE, TRUE, TRUE},
+	{'I', do_cmd_observe, "examine", "item",
+		NULL, NULL, 0, TRUE, TRUE, TRUE},
+	{'}', do_cmd_uninscribe, "un-inscribe", "item",
+		NULL, NULL, 0, TRUE, TRUE, TRUE},
+	{'{', do_cmd_inscribe, "inscribe", "item",
+		NULL, NULL, 0, TRUE, TRUE, TRUE},
+	{KTRL('u'), do_cmd_handle, "use", "item",
+		NULL, NULL, 0, TRUE, TRUE, TRUE},
+	/* Refuel */
+	/* Handle */
+	/* Fire */
+	/* Throw (throw_mult) */
+};
+
+static object_function *get_object_function(s16b cmd)
+{
+	object_function *ptr;
+
+	if (unify_commands && strchr("AEabqruz", cmd)) cmd = KTRL('u');
+		
+
+	FOR_ALL_IN(object_functions, ptr)
+	{
+		if (ptr->cmd == cmd) return ptr;
+	}
+	return NULL;
+}
+
+/*
+ * Choose an object appropriate for func.
+ */
+static object_type *get_object(object_function *func)
+{
+	errr err;
+	object_type *o_ptr;
+	char buf[120];
+	cptr a;
+
+	assert(func && (!func->ban || !(*func->ban)())); /* Caller. */
+
+	strnfmt(buf, sizeof(buf), "%^s which %s? ", func->verb, func->noun);
+
+	item_tester_tval = func->tval;
+	item_tester_hook = func->hook;
+
+	o_ptr = get_item(&err, buf, func->equip, func->inven, func->floor);
+
+	/* Found something. */
+	if (o_ptr) return o_ptr;
+
+	strcpy(buf, "You do not have a");
+
+	/* The player knows he aborted. */
+	if (err == GET_ITEM_ERROR_ABORT) return NULL;
+
+	/* Give an error message for NO_ITEMS. */
+	a = (is_a_vowel(func->noun[0])) ? "an" : "a";
+	msg_format("You do not have %s %s to %s.", a, func->noun, func->verb);
+
+	return NULL;
+}
+
+/*
+ * Look for a command in object_functions, and try to use it.
+ * Return TRUE if the key pressed corresponds to an object command.
+ */
+bool do_cmd_use_object(s16b cmd)
+{
+	object_type *o_ptr;
+	object_function *func;
+
+	/* Look for the key. */
+	func = get_object_function(cmd);
+
+	/* Not an object command. */
+	if (!func) return FALSE;
+
+	/* Some functions can be prevented for all objects. */
+	if (func->ban && (*func->ban)()) return TRUE;
+
+	/* Obtain an object appropriate for this command. */
+	o_ptr = get_object(func);
+
+	/* Run the command on the object, if one was selected. */
+	if (o_ptr) (*func->func)(o_ptr);
+
+	return TRUE;
+}

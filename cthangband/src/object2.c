@@ -4492,7 +4492,7 @@ void display_koff(int k_idx)
 
 
 	/* Display spells in books */
-    if (display_spells_p(q_ptr))
+    if (item_tester_spells(q_ptr))
 	{
 		display_spells(2, 0, q_ptr);
 	}

@@ -2261,6 +2261,13 @@ void process_command(void)
 	strnfmt(help_str, sizeof(help_str), "cmd=%v", ascii_to_text_f1, cmd_str);
 	help_track(help_str);
 
+	/* Look up various object commands from a table. */
+	if (do_cmd_use_object(command_cmd))
+	{
+		help_track(NULL);
+		return;
+	}
+
 	/* Parse the command */
 	switch (command_cmd)
 	{
@@ -2325,38 +2332,10 @@ void process_command(void)
 
 			/*** Inventory Commands ***/
 
-			/* Wear/wield equipment */
-		case 'w':
-		{
-			do_cmd_wield();
-			break;
-		}
-
-			/* Take off equipment */
-		case 't':
-		{
-			do_cmd_takeoff();
-			break;
-		}
-
-			/* Drop an item */
-		case 'd':
-		{
-			do_cmd_drop();
-			break;
-		}
-
 			/* Destroy an item */
 		case 'k':
 		{
 			do_cmd_destroy();
-			break;
-		}
-
-		/* Hide an item */
-		case 'K':
-		{
-			do_cmd_hide_object();
 			break;
 		}
 
@@ -2383,13 +2362,6 @@ void process_command(void)
 
 
 			/*** Various commands ***/
-
-			/* Identify an object */
-		case 'I':
-		{
-			do_cmd_observe();
-			break;
-		}
 
 			/* Hack -- toggle windows */
 		case KTRL('I'):
@@ -2567,33 +2539,6 @@ void process_command(void)
 			break;
 		}
 
-			/* Browse a book */
-		case 'b':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_browse(NULL);
-			} else {
-				do_cmd_handle();
-			}
-			break;
-		}
-
-			/* Cast a spell */
-		case 'm':
-		{
-            if (p_ptr->anti_magic)
-            {
-                msg_print("An anti-magic shell disrupts your spell!");
-                energy_use = TURN_ENERGY/20; /* Still use a bit */
-            }
-            else
-            {
-				do_cmd_cast();
-            }
-            break;
-		}
-
 		/* call upon a spirit for a favour */
 		case 'p':
             if (p_ptr->anti_magic)
@@ -2621,61 +2566,7 @@ void process_command(void)
             }
             break;
 		}
-			/* Cast a Cantrip */
-		case 'h':
-		{
-            if (p_ptr->anti_magic)
-            {
-                msg_print("An anti-magic shell disrupts your magic!");
-                energy_use = TURN_ENERGY/20; /* Still use a bit */
-            }
-            else
-            {
-				do_cmd_cantrip();
-            }
-            break;
-		}
-
-
 			/*** Use various objects ***/
-
-			/* Inscribe an object */
-		case '{':
-		{
-			do_cmd_inscribe();
-			break;
-		}
-
-			/* Uninscribe an object */
-		case '}':
-		{
-			do_cmd_uninscribe();
-			break;
-		}
-
-			/* Activate an artifact */
-		case 'A':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_activate(NULL);
-			} else {
-				do_cmd_handle();
-			}
-			break;
-		}
-
-			/* Eat some food */
-		case 'E':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_eat_food(NULL);
-			} else {
-				do_cmd_handle();
-			}
-			break;
-		}
 
 			/* Fuel your lantern/torch */
 		case 'F':
@@ -2684,7 +2575,7 @@ void process_command(void)
 			{
 			do_cmd_refill(NULL);
 			} else {
-				do_cmd_handle();
+				do_cmd_use_object(command_cmd);
 			}
 			break;
 		}
@@ -2702,74 +2593,6 @@ void process_command(void)
             do_cmd_throw(1);
 			break;
 		}
-
-			/* Aim a wand */
-		case 'a':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_aim_wand(NULL);
-			} else {
-				do_cmd_handle();
-			}
-			break;
-		}
-
-			/* Zap a rod */
-		case 'z':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_zap_rod(NULL);
-			} else {
-				do_cmd_handle();
-			}
-			break;
-		}
-
-			/* Quaff a potion */
-		case 'q':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_quaff_potion(NULL);
-			} else {
-				do_cmd_handle();
-			}
-			break;
-		}
-
-			/* Unified use function */
-			case KTRL('u'):
-			{
-				do_cmd_handle();
-				break;
-			}
-
-			/* Read a scroll */
-		case 'r':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_read_scroll(NULL);
-			} else {
-				do_cmd_handle();
-		}
-			break;
-		}
-
-			/* Use a staff */
-		case 'u':
-		{
-			if(!unify_commands)
-			{
-			do_cmd_use_staff(NULL);
-			} else {
-				do_cmd_handle();
-			}
-			break;
-		}
-
 
         case 'U':
         {
