@@ -310,16 +310,16 @@ static void core_hook(cptr str)
 			wimp_report_error_by_category(&e,
 			                              wimp_ERROR_BOX_CATEGORY_PROGRAM << wimp_ERROR_BOX_CATEGORY_SHIFT,
 			                              "Angband", "!angband", wimpspriteop_AREA, "Quit");
-		}
-	}
+}
+}
 	else
-	{
+{
 		e.errnum=1;
 		strcpy(e.errmess, str);
 		wimp_report_error(&e, wimp_ERROR_BOX_CANCEL_ICON, "Angband");
-	}
+}
 
-	if (game_in_progress && character_generated)
+	if ( game_in_progress && character_generated )
 		save_player();
 
 	/* Just quit */
@@ -442,17 +442,17 @@ static errr Term_xtra_acn_check(void)
 	os_t t;
 	wimp_poll_flags mask;
 
-	/*
+/*
 	 * We only do an event_poll when a character is in the keyboard
 	 * buffer, or every 0.1 seconds. This speeds up running.
-	 */
+ */
 
 	os_byte(osbyte_BUFFER_OP, 255 - buffer_KEYBOARD, 0, &buf, &bufhi);
 
 	buf=(buf & 0xFF) + (bufhi << 8);
 
 	if (buf > 0 && have_caret || (t=os_read_monotonic_time())-last_poll >= 10)
-	{
+{
 		/* If buf > 0, probably didn't set t in the line above */
 		if (buf > 0)
 			t=os_read_monotonic_time();
@@ -461,14 +461,14 @@ static errr Term_xtra_acn_check(void)
 		event_set_mask(mask &~ wimp_MASK_NULL);
 		event_poll(0, 0, 0);
 		event_set_mask(mask);
-	}
+}
 
 	/* This is necessary to let the user interrupt the borg */
 	if (key_pressed)
-	{
+{
 		key_pressed=0;
 		return 0;
-	}
+}
 
 	return 1;
 }
@@ -521,17 +521,17 @@ static errr Term_xtra_acn_react(void)
 					if (mirror.t.old->a[y][x] == i)
 						mirror.oldcol[y][x]=0;
 				}
-			}
+	}
 			else
-			{
+	{
 				memset(screen.olddisp, 0, sizeof screen.olddisp);
 				memset(recall.olddisp, 0, sizeof recall.olddisp);
 				memset(choice.olddisp, 0, sizeof choice.olddisp);
 				memset(mirror.olddisp, 0, sizeof mirror.olddisp);
-			}
+	}
 
 			palette.entries[i]=temp;
-		}
+}
 	}
 
 	palette_handler(0, 0);
@@ -557,7 +557,7 @@ static void cursor(term *t, int on)
 	term_data *td=(term_data *) t;
 
 	if (td->curs_vis != on && td->ocx == -1)
-	{
+{
 		td->ocx=td->curs_x;
 		td->ocy=td->curs_y;
 	}
@@ -615,7 +615,7 @@ errr Term_xtra_acn(int n, int v)
 
 		case TERM_XTRA_DELAY:
 		if (v > 0)
-		{
+	{
 			os_t t = os_read_monotonic_time();
 			while (os_read_monotonic_time() - t < v/10);
 		}
@@ -624,10 +624,10 @@ errr Term_xtra_acn(int n, int v)
 		default:
 		return 1;
 	}
-}
+	}
 
 static errr Term_curs_acn(int x, int y)
-{
+	{
 	term_data *t = (term_data *) Term;
 	int oldx = t->curs_x;
 	int oldy = t->curs_y;
@@ -711,7 +711,7 @@ static int dataload_handler(wimp_message *message, void *handle)
 	{
 		plog("You can't load a new game while you're still playing!");
 		return 1;
-	}
+}
 
 	strcpy(savefile, translate_name(message->data.data_xfer.file_name));
 
@@ -789,7 +789,7 @@ static int savecomplete_handler(bits event_code, toolbox_action *event,
 		strcpy(savefile, translate_name(save->file_name));
 
 	return 1;
-}
+	}
 
 static int defaultcols_handler(bits event_code, toolbox_action *event,
                                toolbox_block *id, void *handle)
@@ -898,7 +898,7 @@ static int coloursmenu_handler(bits event_code, toolbox_action *event,
 	int tick;
 
 	switch (id->this_cmp)
-	{
+{
 		case menu_Dithered:
 		tick=!menu_get_tick(NONE, id->this_obj, menu_Dithered);
 		menu_set_tick(NONE, id->this_obj, menu_Dithered, tick);
@@ -939,11 +939,11 @@ static int openwindow_handler(bits event_code, toolbox_action *event,
 
 static int suppwin_handler(bits event_code, toolbox_action *event,
                            toolbox_block *id, void *handle)
-{
+	{
 	term_data *t=(term_data *) handle;
 
 	switch (event_code)
-	{
+		{
 		case action_WINDOW_ABOUT_TO_BE_SHOWN:
 		if (t==&recall)
 			term_recall=&t->t;
@@ -993,11 +993,11 @@ static int quitbutton_handler(bits event_code, toolbox_action *event,
 	quit(NULL);
 
 	return 1;
-}
+	}
 
 static int delquit_handler(bits event_code, toolbox_action *event,
                            toolbox_block *id, void *handle)
-{
+	{
 	event_deregister_toolbox_handler(id->this_obj, action_QUIT_QUIT,
 	                                 quitbutton_handler, 0);
 	event_deregister_toolbox_handler(id->this_obj, action_QUIT_DIALOGUE_COMPLETED,
@@ -1008,10 +1008,10 @@ static int delquit_handler(bits event_code, toolbox_action *event,
 	grabcaret();
 
 	return 1;
-}
+	}
 
 static void popup_quitbox(void)
-{
+	{
 	toolbox_o q;
 
 	q=toolbox_create_object(NONE, (toolbox_id) "Quit");
@@ -1049,7 +1049,7 @@ static int quit_handler(wimp_message *message, void *handle)
 static int prequit_handler(wimp_message *message, void *handle)
 {
 	if (game_in_progress && character_generated)
-	{
+{
 		/* Allow user to cancel "dangerous" exit */
 		if (!(message->data.prequit.flags & wimp_PRE_QUIT_TASK_ONLY))
 			shutting_down=message->sender;
@@ -1070,8 +1070,8 @@ static int new_handler(bits event_code, toolbox_action *event,
 	if (game_in_progress)
 	{
 		plog("You can't start a new game while you're still playing!");
-		return 1;
-	}
+	return 1;
+}
 
 	osfscontrol_canonicalise_path("<Angband$Dir>.^.SavedGame", savefile, 0, 0,
 	                              sizeof savefile);
@@ -1090,16 +1090,16 @@ static int new_handler(bits event_code, toolbox_action *event,
 static int key_handler(wimp_event_no event_code, wimp_block *event,
                        toolbox_block *id, void *handle)
 {
-	/*
+/*
 	 * This ensures that typing 4 into a Save as dialogue box
 	 * doesn't move your character left, and pressing F12
 	 * always brings up the command line.
-	 */
+ */
 	if (id->this_obj != screen.window)
-	{
+{
 		wimp_process_key(event->key.c);
 		return 1;
-	}
+}
 
 	switch (event->key.c)
 	{
@@ -1111,19 +1111,19 @@ static int key_handler(wimp_event_no event_code, wimp_block *event,
 		wimp_process_key(event->key.c);
 		break;
 		default:
-		/*
+/*
 		 * Hack - allow Shift & Ctrl as modifiers to the keypad
-		 */
+ */
 		if (event->key.c <= '9' && event->key.c >= '0')
-		{
+{
 			if (osbyte1(osbyte_IN_KEY, 0xFF, 0xFF))     /* Is Shift held down? */
 				event->key.c |= 0x800;
 			if (osbyte1(osbyte_IN_KEY, 0xFE, 0xFF))     /* Is Ctrl held down? */
 				event->key.c |= 0x400;
-		}
+}
 		/* Special keys are sent encoded */
 		if (event->key.c >= 0x100 || event->key.c == 31)
-		{
+{
 			const static char hex[]="0123456789ABCDEF";
 
 			Term_keypress(31);
@@ -1132,7 +1132,7 @@ static int key_handler(wimp_event_no event_code, wimp_block *event,
 			Term_keypress(hex[event->key.c & 0xF]);
 			Term_keypress(13);
 		}
-		else
+	else
 			Term_keypress(event->key.c);
 		key_pressed=1;
 		if (event->key.c == 27)
@@ -1150,11 +1150,11 @@ static int mouse_handler(wimp_event_no event_code, wimp_block *event,
 		grabcaret();
 
 	return 1;
-}
+	}
 
 static int caret_handler(wimp_event_no event_code, wimp_block *event,
                          toolbox_block *id, void *handle)
-{
+	{
 	have_caret = event_code==wimp_GAIN_CARET;
 
 	if (event_code == wimp_GAIN_CARET && !have_caret_entity)
@@ -1170,10 +1170,10 @@ static int caret_handler(wimp_event_no event_code, wimp_block *event,
 	}
 
 	return 1;
-}
+	}
 
 static int entity_handler(wimp_message *message, void *handle)
-{
+	{
 	if (message->data.claim_entity.flags & 3)
 		have_caret_entity=0;
 
@@ -1194,14 +1194,14 @@ static int create_handler(bits event_code, toolbox_action *event,
 	const char *name=event->data.created.name;
 
 	if (strcmp(name, "File") == 0)
-	{
+{
 		event_register_toolbox_handler(id->this_obj, action_MENU_ABOUT_TO_BE_SHOWN,
 		                               showfilemenu_handler, 0);
 		return 1;
 	}
 
 	if (strcmp(name, "Colours") == 0)
-	{
+{
 		event_register_toolbox_handler(id->this_obj, action_MENU_ABOUT_TO_BE_SHOWN,
 		                               showcoloursmenu_handler, 0);
 		event_register_toolbox_handler(id->this_obj, action_MENU_SELECTION,
@@ -1265,12 +1265,12 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 
 		if (blank)
 		{
-			/*
+/*
 			 * We're updating the window because the contents have changed
 			 * This code is rather complex, but it's FAST, and doesn't
 			 * flicker (particularly important when "Draw Viewable Lite brightly"
 			 * is on)
-			 */
+ */
 
 			/* Set the background colour */
 			if (nodither)
@@ -1283,7 +1283,7 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 			c=-1;
 
 			for (y=y0; y<=y1; y++)
-			{
+{
 				if (!t->froshed[y])
 					continue;
 
@@ -1308,7 +1308,7 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 						x++;
 
 					if (x>ox)
-					{
+{
 						os_plot(os_MOVE_TO, ox*16+rx, 767-y*32+ry);
 						os_plot(os_PLOT_BG_BY | os_PLOT_RECTANGLE, 16*(x-ox)-1, -31);
 						continue;
@@ -1316,14 +1316,14 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 
 					/* Change the drawing colour if necessary */
 					if (a[y][x] != c)
-					{
+{
 						c=a[y][x];
 						if (nodither)
 							os_set_colour(NONE, coltable[c]);
 						else
 							colourtrans_set_gcol(palette.entries[c], colourtrans_USE_ECFS,
 						                     os_ACTION_OVERWRITE, 0);
-					}
+}
 
 					/* Find how many characters have only changed colour */
 					while (x<=x1 &&
@@ -1332,11 +1332,11 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 						x++;
 
 					if (x>ox)
-					{
+	{
 						os_plot(os_MOVE_TO, ox*16+rx, 767-y*32+ry);
 						os_writen(buf+ox, x-ox);
 						continue;
-					}
+		}
 
 					/* Now do characters that have actually changed symbol */
 					while (buf[x] != t->olddisp[y][x] &&
@@ -1365,7 +1365,7 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 			os_plot(os_PLOT_BG_TO|os_PLOT_RECTANGLE, redraw->clip.x1-1, redraw->clip.y1-1);
 
 			for (y=y0; y<=y1; y++)
-			{
+		{
 				os_plot(os_MOVE_TO, x0*16+rx, 767-y*32+ry);
 
 				for (x=x0; x<=x1; x++)
@@ -1386,13 +1386,13 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 
 					if (ox!=x)
 						os_writen(buf+ox, x-ox);
+					}
 				}
-			}
 		}
 
 		if (t->curs_vis && x0<=t->curs_x && t->curs_x<=x1 &&
 		    y0<=t->curs_y && t->curs_y<=y1 && t==&screen)
-		{
+	{
 			if (nodither)
 				os_set_colour(NONE, coltable[TERM_CURSOR]);
 			else
@@ -1403,7 +1403,7 @@ static void do_redraw(wimp_draw *redraw, int more, term_data *t, int blank)
 			os_plot(os_PLOT_BY, 0, -31);
 			os_plot(os_PLOT_BY, -15, 0);
 			os_plot(os_PLOT_BY, 0, 31);
-		}
+	}
 
 		more=wimp_get_rectangle(redraw);
 	}
@@ -1477,7 +1477,7 @@ static void refresh_window(term_data *t)
 }
 
 static void refresh_windows(void)
-{
+	{
 	refresh_window(&screen);
 	refresh_window(&recall);
 	refresh_window(&choice);
@@ -1535,7 +1535,7 @@ static void show_windows(void)
 		toolbox_show_object(NONE, screen.window, toolbox_POSITION_DEFAULT, 0,
 		                    toolbox_NULL_OBJECT, toolbox_NULL_COMPONENT);
 		return;
-	}
+}
 
 	fscanf(f, "%d %d", &pos.top_left.x, &pos.top_left.y);
 	toolbox_show_object(NONE, screen.window, toolbox_POSITION_TOP_LEFT,
@@ -1549,7 +1549,7 @@ static void show_windows(void)
 	fscanf(f, "%d", &solid_colours);
 
 	if (version>=3 && version<=4)
-	{
+{
 		for (i=0; i<16; i++)
 			fscanf(f, "%x", &palette.entries[i]);
 
@@ -1572,7 +1572,7 @@ static void save_window_pos(FILE *f, term_data *t, void *active)
 }
 
 static void savechoices(void)
-{
+	{
 	FILE *f;
 	wimp_window_state state;
 
@@ -1616,13 +1616,13 @@ static void final_acn(void)
 }
 
 static void init_stuff(void)
-{
+	{
 	char buf[1024];
 
 	strcpy(buf, "Angband:");
 
 	init_file_paths(buf);
-}
+	}
 
 /*
  * To speed up the game, turn off explicit stack-limit checking
@@ -1651,7 +1651,7 @@ int main(int argc, char *argv[])
 
 	/* Set up the colour table */
 	for (i=0; i<256; i++)
-	{
+{
 		colour_table[i][1] = (palette.entries[i] >> 8) & 0xFF;
 		colour_table[i][2] = (palette.entries[i] >> 16) & 0xFF;
 		colour_table[i][3] = palette.entries[i] >> 24;
@@ -1672,11 +1672,11 @@ int main(int argc, char *argv[])
 	initialised=1;
 
 	if (argc==1)
-	{
+		{
 		/* Prompt the user */
 		prt("[Double-click on a saved game, or choose 'New' from the 'File' menu]", 23, 5);
 		Term_fresh();
-	}
+		}
 
 	if (argc >= 2)
 	{
@@ -1929,7 +1929,7 @@ static errr init_acn(void)
 	for status messages */
 	event_set_mask(NONE);
 	do
-	{
+{
 		event_poll(&event, 0, 0);
 	} while (event != wimp_NULL_REASON_CODE);
 
@@ -1967,7 +1967,7 @@ static const char *translate_name(const char *path)
 	while (c=*path++)
 	{
 		switch (c)
-		{
+	{
 			case '/':
 			*p++='.';
 			break;
@@ -1977,20 +1977,20 @@ static const char *translate_name(const char *path)
 			default:
 			*p++=c;
 			break;
-		}
 	}
+}
 	*p='\0';
 
-	/*
+/*
 	 * Hackery - when saving a game, the old game is renamed as
 	 * "SavedGame.old", the new one is saved as "SavedGame.new",
 	 * "SavedGame.old" is deleted, "SavedGame.new" is renamed
 	 * as "SavedGame". This will go majorly wrong if on a
 	 * FileCore filing system (leafnames <= 10 chars), your
 	 * saved game file has a leafname > 8 chars.
-	 */
+ */
 	if ((p=strstr(buffer, "/old")) || (p=strstr(buffer, "/new")))
-	{
+{
 		char *q=strrchr(buffer, '.');
 
 		if (q)
@@ -2021,16 +2021,16 @@ FILE *my_fopen(const char *filename, const char *mode)
 }
 
 errr my_fclose(FILE *fff)
-{
+	{
 	/* Close, check for error */
 	if (fclose(fff)) return (1);
 
 	/* Success */
 	return (0);
-}
+	}
 
 int fd_make(cptr file, int mode)
-{
+	{
 	os_f f;
 	os_error *e;
 	const char *realpath=translate_name(file);
@@ -2048,12 +2048,12 @@ int fd_make(cptr file, int mode)
 		filehandle[openfiles++]=f;
 
 	return (int)f;
-}
+	}
 
 errr fd_kill(cptr file)
-{
+	{
 	return remove(translate_name(file)) ? 1 : 0;
-}
+	}
 
 errr fd_move(cptr file, cptr what)
 {
@@ -2084,7 +2084,7 @@ int fd_open(cptr path, int flags)
 		e=xosfind_openup(osfind_ERROR_IF_DIR | osfind_ERROR_IF_ABSENT | osfind_NO_PATH,
 		                 realpath, 0, &f);
 		break;
-	}
+}
 
 	if (e || f==0)
 		return -1;
@@ -2121,14 +2121,14 @@ errr fd_close(int d)
 }
 
 /*int unlink(const char *path)
-{
+		{
 xosfile_delete(translate_name(path), 0, 0, 0, 0, 0);
 
 return 0;
 }*/
 
 int access(const char *path, int mode)
-{
+	{
 	os_error *e;
 	os_f f;
 
@@ -2143,7 +2143,7 @@ int access(const char *path, int mode)
 }
 
 errr fd_read(int d, char *buf, huge nbytes)
-{
+	{
 	os_error *e;
 	int unread;
 
@@ -2183,7 +2183,7 @@ errr fd_seek(int fd, huge offset)
 		return 1;
 
 	return 0;
-}
+		}
 
 errr fd_lock(int fd, int what)
 {
@@ -2200,4 +2200,4 @@ errr path_temp(char *buf, int max)
 	return 0;
 }
 
-#endif /* __riscos */
+#endif			/* __riscos */
