@@ -1867,7 +1867,7 @@ void move_to(s16b y, s16b x)
 		lite_spot(oy, ox);
 
 		/* Check for new panel (redraw map) */
-		verify_panel();
+		verify_panel(FALSE);
 
 		/* Track the player's location. */
 		cave_track(py, px);

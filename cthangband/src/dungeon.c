@@ -3646,7 +3646,7 @@ static void dungeon(void)
 	}
 
 	/* Verify the panel */
-	verify_panel();
+	verify_panel(FALSE);
 
 	/* Validate the panel */
 	if (centre_view)

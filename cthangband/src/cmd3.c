@@ -1026,7 +1026,7 @@ void do_cmd_locate(void)
 
 
 	/* Recenter the map around the player */
-	verify_panel();
+	verify_panel(FALSE);
 
 	/* Update stuff */
 	p_ptr->update |= (PU_MONSTERS);

@@ -1407,17 +1407,14 @@ void panel_bounds_center(void)
  * Given an row (y) and col (x), this routine detects when a move
  * off the screen has occurred and figures new borders. -RAK-
  *
- * "Update" forces a "full update" to take place.
+ * The map is reprinted if necessary.
  *
- * The map is reprinted if necessary, and "TRUE" is returned.
- *
- * Setting panel_row_min below 0 forces everything to be recalculated.
+ * Setting force forces a "full update" to take place.
  */
-void verify_panel(void)
+void verify_panel(bool force)
 {
 	int y = py;
 	int x = px;
-	bool redraw = (panel_row_min < 0);
 
 	if ((centre_view) && !((no_centre_run && running)))
 	{
@@ -1438,7 +1435,7 @@ void verify_panel(void)
 		else if (pcol_min < 0) pcol_min = 0;
 
 		/* Check for "no change" */
-		if (!redraw && (prow_min == panel_row_min) && (pcol_min == panel_col_min)) return;
+		if (!force && (prow_min == panel_row_min) && (pcol_min == panel_col_min)) return;
 
 		/* Save the new panel info */
 		panel_row_min = prow_min;
@@ -1455,7 +1452,7 @@ void verify_panel(void)
 		int pcol = panel_col;
 
 		/* Scroll screen when 2 grids from top/bottom edge */
-		if (redraw || (y < panel_row_min + 2) || (y > panel_row_max - 2))
+		if (force || (y < panel_row_min + 2) || (y > panel_row_max - 2))
 		{
 			prow = ((y - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
 			if (prow > max_panel_rows) prow = max_panel_rows;
@@ -1463,7 +1460,7 @@ void verify_panel(void)
 		}
 
 		/* Scroll screen when 4 grids from left/right edge */
-		if (redraw || (x < panel_col_min + 4) || (x > panel_col_max - 4))
+		if (force || (x < panel_col_min + 4) || (x > panel_col_max - 4))
 		{
 			pcol = ((x - SCREEN_WID / 4) / (SCREEN_WID / 2));
 			if (pcol > max_panel_cols) pcol = max_panel_cols;
@@ -1471,7 +1468,7 @@ void verify_panel(void)
 		}
 
 		/* Check for "no change" */
-		if (!redraw && (prow == panel_row) && (pcol == panel_col)) return;
+		if (!force && (prow == panel_row) && (pcol == panel_col)) return;
 
 		/* Hack -- optional disturb on "panel change" */
 		if (disturb_panel) disturb(0);

@@ -3635,7 +3635,7 @@ extern void panel_bounds(void);
 extern void panel_bounds_center(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(XTRA2_C))
-extern void verify_panel(void);
+extern void verify_panel(bool force);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
 extern void resize_map(void);

@@ -65,8 +65,7 @@ void do_cmd_redraw(void)
 	p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | PW_OBJECT | PW_OBJECT_DETAILS);
 
 	/* Hack - recalculate the panel. */
-	panel_row_min = -1;
-	verify_panel();
+	verify_panel(TRUE);
 
 	/* Hack -- update */
 	handle_stuff();
