@@ -849,15 +849,13 @@ static void do_cmd_options_win(void)
 		/* Display the windows */
 		for (j = 0; j < 8; j++)
 		{
-			byte a = TERM_WHITE;
-
 			cptr s = windows[j].name;
 
-			/* Use color */
-			if (j == x) a = TERM_L_BLUE;
+			/* Use colour to indicate the current selection. */
+			char a = (j == x) ? 'B' : 'w';
 
 			/* Window name, staggered, centered */
-			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, s);
+			mc_put_fmt(2+j%2, 35 + j * 5 - strlen(s) / 2, "$%c%s", a, s);
 		}
 
 		/* Display the options */
@@ -867,7 +865,7 @@ static void do_cmd_options_win(void)
 			char a = (i == y) ? 'B' : 'w';
 
 			/* Write the flag name in. */
-			mc_put_fmt(i+5, 0, "%cDisplay %s", a, display_func[i].name);		
+			mc_put_fmt(i+5, 0, "$%cDisplay %s", a, display_func[i].name);		
 
 			/* Display the windows */
 			for (j = 0; j < 8; j++)
@@ -882,7 +880,7 @@ static void do_cmd_options_win(void)
 				if (PRI(j,i)) c2 = min+PRI(j,i);
 
 				/* Flag values */
-				mc_put_fmt(i+5, 35+j*5, "%c%c%c", a, c1, c2);
+				mc_put_fmt(i+5, 35+j*5, "$%c%c%c", a, c1, c2);
 			}
 		}
 
