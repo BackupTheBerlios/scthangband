@@ -1029,16 +1029,16 @@ extern errr fd_kill(cptr file);
 #if (defined(__riscos)) && (defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
 extern errr fd_move(cptr old, cptr new);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern int fd_open(cptr path, int flags);
 #endif
 #if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C))
 extern errr fd_close(int handle);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_read(int handle, char *buf, size_t nbytes);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_write(int handle, const char *buf, size_t nbytes);
 #endif
 #if (defined(__riscos)) && (defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
@@ -2275,7 +2275,7 @@ extern errr my_mkdir(cptr path, uint mode);
 #if (!(defined(ACORN))) && (defined(INIT2_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
 extern int fd_make(cptr file, int mode);
 #endif
-#if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern int fd_open(cptr file, int flags);
 #endif
 #if (!(defined(ACORN))) && (defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
@@ -2284,10 +2284,10 @@ extern errr fd_lock(int fd, int what);
 #if (!(defined(ACORN))) && (defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_seek(int fd, huge n);
 #endif
-#if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_read(int fd, char *buf, huge n);
 #endif
-#if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_write(int fd, cptr buf, huge n);
 #endif
 #if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C))
