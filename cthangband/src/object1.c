@@ -544,6 +544,7 @@ struct object_extra {
 	s16b k_idx;
 	s16b tval;
 	s16b u_idx;
+	byte p_id;
 };
 
 /*
@@ -560,15 +561,18 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	int i;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	unident_type *u_ptr = &u_info[k_ptr->u_idx];
+	o_base_type *ob_ptr = &o_base[u_ptr->p_id];
 
 	object_wipe(j_ptr);
 
 	/* If needed, place the k_idx in x_ptr. */
 	if (x_ptr)
 	{
-		x_ptr->k_idx = o_ptr->k_idx;
 		x_ptr->tval = o_ptr->tval;
-		x_ptr->u_idx = k_ptr->u_idx;
+		x_ptr->k_idx = k_ptr-k_info;
+		x_ptr->u_idx = u_ptr-u_info;
+		x_ptr->p_id = ob_ptr-o_base;
 	}
 
 	if (cheat_item && (
@@ -860,14 +864,18 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	/* Hack - resist_chaos by any means gives resist_conf. */
 	if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
 
-	/* Hack - unset j_ptr->k_idx if it isn't known. */
-	if (!object_aware_p(j_ptr)) j_ptr->k_idx = OBJ_UNKNOWN;
-
-	/* The player is always aware of items in normal stores, and flavours are
-	 * hidden. */
-	if (o_ptr->ident & IDENT_STORE)
+	/* The flavour of a shop item may not be known. */
+	if (o_ptr->ident & IDENT_STORE && !object_aware_p(o_ptr))
 	{
-		j_ptr->k_idx = o_ptr->k_idx;
+		/* This index is known to have a flavour name of "". */
+		x_ptr->u_idx = z_info->u_max-1;
+	}
+
+	/* Hack - unset j_ptr->k_idx if it isn't known (the k_idx of items in
+	 * shops is always known). */
+	if (~o_ptr->ident & IDENT_STORE && !object_aware_p(j_ptr))
+	{
+		j_ptr->k_idx = OBJ_UNKNOWN;
 	}
 }
 
@@ -1087,7 +1095,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	/* if (!k_ptr->name) k_ptr = k_info; */
 
 	u_ptr = u_info+x_ptr->u_idx;
-	ob_ptr = o_base+u_ptr->p_id;
+	ob_ptr = o_base+x_ptr->p_id;
 
 	known = (object_known_p(o_ptr) ? TRUE : FALSE);
 

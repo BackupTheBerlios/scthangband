@@ -1969,6 +1969,23 @@ static errr parse_unid_flavourless(header *head)
 		u_ptr->name = 0;
 		u_ptr->p_id = i;
 	}
+
+	/* Hack - there must always be at least one flavourless entry. */
+	if (((unident_type*)(head->info_ptr))[error_idx].name)
+	{
+		unident_type *u_ptr;
+
+		/* Check that u_info is large enough. */
+		if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+		/* Set u_ptr. */
+		u_ptr = (unident_type*)head->info_ptr + error_idx;
+
+		/* Set a dummy p_id. */
+		u_ptr->name = 0;
+		u_ptr->p_id = 0;
+	}
+
 	return SUCCESS;
 }
 
