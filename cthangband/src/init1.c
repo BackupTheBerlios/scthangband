@@ -1934,7 +1934,7 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 		}
 		default: /* Never reached. */
 		{
-			return UNREAD_VALUE;
+			return PARSE_ERROR_GENERIC;
 		}
 	}
 }
@@ -3354,7 +3354,9 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 			return add_text(&ptr->text, head, conv_string);
 		}
 		default: /* Never reached */
-		return UNREAD_VALUE;
+		{
+			return PARSE_ERROR_GENERIC;
+		}
 	}
 }
 

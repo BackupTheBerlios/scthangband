@@ -1246,8 +1246,8 @@ static void display_player_birth_details(void)
 static bool point_mod_player(void)
 {
 	bool details, own_name, rolled;
-	char stat = UNREAD_VALUE; /* Never used when i = IDX_ALL, and initialised below otherwise. */
-	s16b points = UNREAD_VALUE; /* Initialised when i = IDX_ALL */
+	char UNREAD(stat); /* Never used when i = IDX_ALL, and initialised below otherwise. */
+	s16b UNREAD(points); /* Initialised when i = IDX_ALL */
 	u16b i;
 
 	/* Synchronise the birth options initially. */
@@ -3297,7 +3297,7 @@ static bool quick_start_character(void)
 
 	cptr str;
 
-	char c = UNREAD_VALUE;
+	char UNREAD(c);
 
 	char b1 = '[';
 	char b2 = ']';

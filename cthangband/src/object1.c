@@ -4254,7 +4254,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	cave_type *c_ptr = &cave[py][px];
 
 	s16b this_o_idx, next_o_idx = 0;
-	object_type *o_ptr = UNREAD_VALUE;
+	object_type * UNREAD(o_ptr);
 
 	char which = ' ';
 
@@ -4753,7 +4753,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			{
 				object_type *start, *end, *best = NULL;
 				bool high = strchr("Xx", which) != NULL;
-				s32b best_price = UNREAD_VALUE;
+				s32b UNREAD(best_price);
 
 				/* Find the range. */
 				if (command_wrk)
