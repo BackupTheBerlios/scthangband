@@ -3468,7 +3468,7 @@ static void win_floor_display(void)
 		object_type *o_ptr = o_list+c_ptr->o_idx;
 
 		mc_put_fmt(y++, 0, "You %s %v.\n", verb, feature_desc_f2,
-			c_ptr->feat, FDF_MIMIC | FDF_INDEF);
+			c_ptr->feat, FDF_INDEF);
 
 		if (c_ptr->m_idx && m_ptr->ml)
 		{

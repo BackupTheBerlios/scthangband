@@ -1106,7 +1106,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	}
 	else
 	{
-		w_name = format("%v", feature_desc_f2, w_ptr->feature, FDF_MIMIC);
+		w_name = format("%v", feature_desc_f2, w_ptr->feature, 0);
 	}
 
 	/* Find the message set. */
@@ -1456,7 +1456,7 @@ static bool do_cmd_disarm_aux(int y, int x)
 	c_ptr = &cave[y][x];
 
 	/* Access trap name */
-	name = format("%v", feature_desc_f2, c_ptr->feat, FDF_MIMIC);
+	name = format("%v", feature_desc_f2, c_ptr->feat, 0);
 
 	/* Get the "disarm" factor */
 	i = p_ptr->skill_dis;

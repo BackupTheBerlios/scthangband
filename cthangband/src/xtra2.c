@@ -2394,11 +2394,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		/* Terrain feature if needed */
 		if (boring || (feat > FEAT_INVIS))
 		{
-			cptr name = format("%v", feature_desc_f2, feat, FDF_INDEF);
-
-			/* Hack -- handle unknown grids */
-			if (feat == FEAT_NONE) name = "unknown grid";
-
 			/* Pick a prefix */
             if (*s2 && ((feat >= FEAT_MINOR_GLYPH) &&
                         (feat <= FEAT_PATTERN_XTRA2))) s2 = "on ";
@@ -2413,14 +2408,15 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				s3 = "the entrance to ";
 			}
 
-			/* Display a message */
-			sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);
-			prt(out_val, 0, 0);
+			/* Display a message (mimic has already been applied). */
+			mc_put_fmt(0, 0, "$!%s%s%s%v [%s]",
+				s1, s2, s3, feature_desc_f2, feat, FDF_INDEF | FDF_REAL, info);
+
 			move_cursor_relative(y, x);
 			query = inkey();
 			
 			/* Always stop at "normal" keys */
-			if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+			if (!strchr("\r\n ", query)) break;
 		}
 			
 		/* Stop on everything but "return" */
@@ -3462,50 +3458,26 @@ void convert_articles(char *str)
 	if (t != str) for (s = t, t = str; ((*t++ = *s++)););
 }
 
-#define FCI_ARTICLE	0x05
-
 /*
  * Describe the name of a feature.
+ *
+ * Format = feature_desc_f2, (int)feat, (int)flags
  */
-static void feature_desc(char *buf, uint max, int feat, int flags)
-{
-	cptr s;
-	char *t;
-	byte reject = 0;
-	
-	if (flags & FDF_MIMIC) feat = f_info[feat].mimic;
-	if (~flags & FDF_INDEF) reject |= 1<<FCI_ARTICLE;
-
-	/* Copy the appropriate sections of string across. */
-	for (s = f_name+f_info[feat].name, t = buf; *s && t < buf+max-1; s++)
-	{
-		if (*s & 0xE0)
-		{
-			*t++ = *s;
-		}
-		else if (find_cm(*s) == CM_NORM);
-		else if (find_cm(*s) != CM_ACT)
-		{
-			s = find_next_good_flag(s, reject, ~reject)-1;
-		}
-		else if (find_ci(*s) == MCI_ARTICLE)
-		{
-			if (t >= buf+max-4) break;
-			t += sprintf(t, ".%c", CM_ACT | MCI_ARTICLE);
-		}
-	}
-	*t = '\0';
-
-	/* Turn any article strings into normal characters. */
-	convert_articles(buf);
-}
-
 void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	int feat = va_arg(*vp, int);
 	int flags = va_arg(*vp, int);
+	int num = (flags & FDF_MANY) ? 2 : 1;
+	cptr name;
 
-	feature_desc(buf, max, feat, flags);
+	if (~flags & FDF_REAL) feat = f_info[feat].mimic;
+
+	name = f_name+f_info[feat].name;
+
+	flags &= (FDF_INDEF | FDF_DEF | FDF_YOUR | FDF_MANY);
+
+	/* Use the same description method as for monsters. */
+	strnfmt(buf, max, "%v", monster_desc_aux_f3, name, num, flags);
 }
 
 #if 0

@@ -111,6 +111,14 @@ X:#:feature_desc() names
 A:F:f_info:N:3
 F:macros:#
 
+# Simplify pluralisation rules.
+
+X:#:plural names
+A:#:monster_desc() names
+A:#:object_desc() names
+A:#:feature_desc() names
+F:macros:#
+
 # % masking (part 2)
 
 X:%%*
@@ -159,16 +167,19 @@ X:%=P
 M:4
 #:object_desc() names
 #:monster_desc() names
+#:feature_desc() names
 
 X:%+P
 M:12
 #:object_desc() names
 #:monster_desc() names
+#:feature_desc() names
 
 X:%-P
 M:20
 #:object_desc() names
 #:monster_desc() names
+#:feature_desc() names
 
 X:%=E
 M:5
@@ -1548,67 +1559,63 @@ F:k_info:W:3
 
 X:~
 Y:%+Ps%=P
-#:monster_desc() names
-#:object_desc() names
+#:plural names
 
 X:s~
 Y:s%+Pes%=P
-#:monster_desc() names
-#:object_desc() names
+#:plural names
 
 X:ch~
 Y:ch%+Pes%=P
-#:monster_desc() names
-#:object_desc() names
+#:plural names
 
 X:ich~
 Y:ich%+Ps%=P
-#:monster_desc() names
-#:object_desc() names
+#:plural names
 
 X:y~
 Y:%-Py%+Pies%=P
-#:monster_desc() names
+#:plural names
 
 X:ouse~
 Y:%-Pous%+Pic%=Pe
-#:monster_desc() names
+#:plural names
 
 X:ay~
 Y:ay%+Ps%=P
-#:monster_desc() names
+#:plural names
 
 X:thief~
 Y:thie%-Pf%+Pves%=P
-#:monster_desc() names
+#:plural names
 
 X:olf~
 Y:ol%-Pf%+Pves%=P
-#:monster_desc() names
+#:plural names
 
 X:ex~
 Y:%-Pex%+Pices%=P
-#:monster_desc() names
+#:plural names
 
 X: Man~
 Y: M%-Pa%+Pe%=Pn
-#:monster_desc() names
+#:plural names
 
 X:kelman~
 Y:kelm%-Pa%+Pe%=Pn
-#:monster_desc() names
+#:plural names
 
 X:Townsman~
 Y:Townsm%-Pa%+Pe%=Pn
-#:monster_desc() names
+#:plural names
 
 X:child~
 Y:child%+Pren%=P
-#:monster_desc() names
+#:plural names
 
 X:lous~
 Y:l%-Pous%+Pi%=P
-#:monster_desc() names
+#:plural names
 
 # Variable default timeouts for rods
 

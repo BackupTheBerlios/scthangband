@@ -1920,7 +1920,7 @@ static cptr store_title_aux(void)
 
 		/* Show the max price in the store (above prices) */
 			out = format("%10s%-40s%v (%ld) [%ld]", "", tmp_str,
-				feature_desc_f2, FEAT_SHOP_HEAD+st_ptr->type, FDF_MIMIC,
+				feature_desc_f2, FEAT_SHOP_HEAD+st_ptr->type, 0,
 				(long)(ot_ptr->max_cost),
 				price_item(&tmp, ot_ptr->min_inflate, TRUE));
 

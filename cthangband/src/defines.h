@@ -766,8 +766,11 @@ logaux(x, 1) logaux(x, 0) 255)
 
 
 /* feature_desc_f2() flags. */
-#define FDF_MIMIC	0x01 /* Use the feature the specified one is mimicking. */
-#define FDF_INDEF	0x02 /* Give an indefinite article (a ...). */
+#define FDF_INDEF MDF_INDEF /* Give an indefinite article (a ...). */
+#define FDF_DEF MDF_DEF /* Give a definite article (the ...). */
+#define FDF_YOUR MDF_YOUR /* Give a possessive "article" (your ...). */
+#define FDF_REAL 0x40 /* Describe this feature rather than the one it mimics. */
+#define FDF_MANY MDF_MANY /* Not 1 feature. */
 
 /*
  * Store constants

@@ -2201,7 +2201,7 @@ struct visual_type
 static void get_visuals_feat(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
 {
 	get_visuals(f_info);
-	*name = format("%v", feature_desc_f2, i, 0);
+	*name = format("%v", feature_desc_f2, i, FDF_REAL);
 }
 
 /*

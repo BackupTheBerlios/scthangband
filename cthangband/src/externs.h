@@ -1324,7 +1324,7 @@ extern void get_mon_num_prep(bool (*hook)(int, int), int p);
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
 extern s16b get_mon_num(int level);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -1405,7 +1405,7 @@ extern void object_info_known(object_type *j_ptr, object_ctype *o_ptr);
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern void object_flags_known(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(MONSTER2_C) || defined(OBJECT1_C) || defined(XTRA2_C))
+#if (defined(MONSTER2_C) || defined(OBJECT1_C))
 extern cptr find_next_good_flag(cptr s, byte reject, byte require);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
