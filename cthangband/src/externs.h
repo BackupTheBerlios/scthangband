@@ -350,7 +350,7 @@ extern u16b spell_energy(u16b skill,u16b min);
 #if (defined(CMD5_C) || defined(STORE_C))
 extern int get_spirit(int *sn, cptr prompt, bool call);
 #endif
-#if (defined(CMD5_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C))
+#if (defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C))
 extern bool PURE item_tester_spells(object_ctype *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(OBJECT2_C))
