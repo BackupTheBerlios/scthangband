@@ -4629,7 +4629,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Get the object currently being tracked. */
 				o_ptr = tracked_o_ptr;
 
-				if (!o_ptr)
+				if (!o_ptr || !o_ptr->k_idx)
 				{
 					bell("No tracked object.");
 					break;
