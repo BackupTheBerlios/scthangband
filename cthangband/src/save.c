@@ -1003,13 +1003,13 @@ static bool wr_savefile_new(void)
 	for (i = 0; i < tmp16u; i++)
 	{
 		quest_type *q_ptr = q_list+i;
-		wr_byte((byte)(q_ptr->level));
-		wr_s16b((short)(convert_r_idx(tmp16u, sf_flags, sf_flags_now)));
-		wr_byte((byte)(q_ptr->dungeon));
-		wr_byte((byte)(q_ptr->cur_num));
-		wr_byte((byte)(q_ptr->max_num));
+		wr_byte(q_ptr->level);
+		wr_s16b(convert_r_idx(q_ptr->r_idx, sf_flags, sf_flags_now));
+		wr_byte(q_ptr->dungeon);
+		wr_byte(q_ptr->cur_num);
+		wr_byte(q_ptr->max_num);
 #ifdef SF_QUEST_UNKNOWN
-		if (has_flag(SF_QUEST_UNKNOWN)) wr_byte((byte)(q_ptr->cur_num_known));
+		if (has_flag(SF_QUEST_UNKNOWN)) wr_byte(q_ptr->cur_num_known);
 #endif
 #ifdef SF_QUEST_KNOWN
 		if (has_flag(SF_QUEST_KNOWN)) wr_byte(q_ptr->known);
