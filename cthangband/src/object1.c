@@ -3094,7 +3094,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	if (j) alloc_ifa(info+i++,
 		"You have a %d.%d%% chance of successfully using it %s.",
 		j/10, j%10, ((o_ptr->flags3 & TR3_ACTIVATE) && !is_worn_p(o_ptr))
-		? "if you wear it" : "in your current condition");
+		? "if you wear it" : "at present");
 
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE && k_info[o_ptr->k_idx].extra)
