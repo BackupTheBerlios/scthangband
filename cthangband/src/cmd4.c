@@ -536,10 +536,11 @@ static void do_cmd_options_autosave(cptr info)
 
 			case 'f':
 			case 'F':
-	{
+			{
 				autosave_freq = toggle_frequency(autosave_freq);
 				prt(format("Timed autosave frequency: every %d turns",
 				    autosave_freq), 5, 0);
+				break;
 			}
 
 			default:

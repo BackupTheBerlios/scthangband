@@ -3847,10 +3847,10 @@ static bool player_birth_aux(void)
 		put_str(buf, 20, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
-		if (c == 'S') return (FALSE);
-		if ((c == 'y') || (c == 'n') || (c == 'Y') || (c == 'N')) break;
-		if (c == '?') do_cmd_help(NULL);
-		if (c == '=')
+		else if (c == 'S') return (FALSE);
+		else if ((c == 'y') || (c == 'n') || (c == 'Y') || (c == 'N')) break;
+		else if (c == '?') do_cmd_help(NULL);
+		else if (c == '=')
 		{
 			Term_save();
 			do_cmd_options_aux(7,"Startup Options", NULL);

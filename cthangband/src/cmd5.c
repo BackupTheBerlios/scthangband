@@ -1775,6 +1775,7 @@ static void wild_magic(int spell)
             break;
         case 16: case 17:
             wall_breaker(50);
+			break;
         case 18:
             sleep_monsters_touch(50);
             break;
@@ -1828,6 +1829,7 @@ static void wild_magic(int spell)
             break;
         case 38:
             summon_reaver();
+			break;
         default:
             activate_ty_curse();
     }
@@ -2180,7 +2182,6 @@ void do_cmd_cast(void)
                }
                break;
            }
-			break;
 		case 9: /* Chaos Bolt */
 			if (!get_aim_dir(&dir)) return;
 			fire_bolt_or_beam(beam, GF_CHAOS, dir,
@@ -2227,7 +2228,6 @@ void do_cmd_cast(void)
            fire_ball(GF_DISINTEGRATE, dir,
                80 + (plev), 3 + (plev/40));
                break;
-            break;
         case 20: /* Alter Reality */
 			msg_print("The world changes!");
 			change_level(dun_level, START_RANDOM);
@@ -3423,9 +3423,9 @@ void do_cmd_cantrip(void)
 			if (!get_aim_dir(&dir)) return;
             switch (randint(4))
             {
-                case 1: dummy = GF_FIRE;
-                case 2: dummy = GF_ELEC;
-                case 3: dummy = GF_COLD;
+                case 1: dummy = GF_FIRE; break;
+                case 2: dummy = GF_ELEC; break;
+                case 3: dummy = GF_COLD; break;
                 default: dummy = GF_ACID;
             }
             fire_ball(dummy, dir,
