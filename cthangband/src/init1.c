@@ -2692,7 +2692,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 						return PARSE_ERROR_INVALID_SPELL_FREQ;
 
 					/* Extract a "frequency" */
-					r_ptr->freq_spell = r_ptr->freq_inate = 100 / i;
+					r_ptr->freq_spell = 100 / i;
 
 					/* Start at next entry */
 					s = t;

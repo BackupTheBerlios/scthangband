@@ -614,8 +614,12 @@ static void rd_lore(monster_race *r_ptr)
 		rd_byte(&r_ptr->r_drop_item);
 
 		/* Count spells */
-		rd_byte(&r_ptr->r_cast_inate);
+		if (!has_flag(SF_NO_INATE)) rd_byte(&tmp8u);
 		rd_byte(&r_ptr->r_cast_spell);
+		if (!has_flag(SF_NO_INATE))
+		{
+			r_ptr->r_cast_spell = ((int)r_ptr->r_cast_spell + tmp8u) / 2;
+		}
 
 		/* Count blows of each type */
 		rd_byte(&r_ptr->r_blows[0]);
@@ -1001,7 +1005,10 @@ static void rd_ghost(void)
 	strip_bytes(2);
 
 	/* Frequency */
-	rd_byte(&r_ptr->freq_inate);
+
+	/* No compatible save file uses freq_inate in an interesting way. */
+	if (!has_flag(SF_NO_INATE)) strip_bytes(1);
+
 	rd_byte(&r_ptr->freq_spell);
 	rd_byte(&r_ptr->num_blows);
 

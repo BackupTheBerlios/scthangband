@@ -225,7 +225,7 @@ static void wr_lore(int r_idx)
 	wr_byte(r_ptr->r_drop_item);
 
 	/* Count spells */
-	wr_byte(r_ptr->r_cast_inate);
+	if (!has_flag(SF_NO_INATE)) wr_byte(r_ptr->r_cast_spell);
 	wr_byte(r_ptr->r_cast_spell);
 
 	/* Count blows of each type */
@@ -520,7 +520,7 @@ static void wr_ghost(void)
 	wr_s16b(0);
 
 	/* Frequency */
-	wr_byte(r_ptr->freq_inate);
+	if (!has_flag(SF_NO_INATE)) wr_byte(r_ptr->freq_spell);
 	wr_byte(r_ptr->freq_spell);
 	wr_byte(r_ptr->num_blows);
 

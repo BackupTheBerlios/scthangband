@@ -362,6 +362,9 @@ extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #if (defined(CMD1_C) || defined(CMD5_C))
 extern u16b spell_energy(u16b skill,u16b min);
 #endif
+#if (defined(CMD5_C) || defined(OBJECT1_C))
+extern int desc_spell_list(cptr *info, object_ctype *o_ptr);
+#endif
 #if (defined(CMD5_C) || defined(STORE_C))
 extern int get_spirit(int *sn, cptr prompt, bool call);
 #endif
@@ -539,9 +542,6 @@ extern void help_track(cptr str);
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void show_file(cptr name, cptr what);
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C))
 extern void init_help_files(void);
 #endif
@@ -1457,9 +1457,6 @@ extern s16b PURE wield_slot(object_ctype *o_ptr);
 #if (defined(CMD3_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
 extern cptr PURE describe_use(object_ctype *o_ptr);
 #endif
-#if (defined(CMD3_C) || defined(OBJECT1_C))
-extern bool PURE item_tester_okay_cmd(void (*func)(object_type *), object_ctype *o_ptr);
-#endif
 #if (defined(OBJECT1_C) || defined(STORE_C))
 extern byte get_i_attr(object_type *o_ptr);
 #endif
@@ -1477,6 +1474,9 @@ extern object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool f
 #endif
 #if (defined(OBJECT1_C) || defined(SPELLS2_C))
 extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
+#endif
+#if (defined(CMD3_C) || defined(OBJECT1_C))
+extern bool PURE item_tester_okay_cmd(void (*func)(object_type *), object_ctype *o_ptr);
 #endif
 #if (defined(CMD1_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
 extern object_type *get_object_from_function(void (*func)(object_type *));
@@ -1634,11 +1634,11 @@ extern void combine_pack(void);
 #if (defined(OBJECT2_C) || defined(XTRA1_C))
 extern void reorder_pack(void);
 #endif
-
-
-
 #if (defined(CMD3_C) || defined(OBJECT2_C))
 extern void object_hide(object_type *o_ptr);
+#endif
+#if (defined(ALLOW_TEMPLATES)) && (defined(INIT2_C) || defined(OBJECT2_C))
+extern void init_easy_know_txt(bool *random);
 #endif
 
 /* powers.c */
@@ -2303,9 +2303,6 @@ extern FILE *my_fopen_path(cptr path, cptr file, cptr mode);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
 extern FILE *my_fopen_temp(char *buf, int max);
 #endif
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern errr my_fgets(FILE *fff, char *buf, size_t n);
 #endif
@@ -3185,6 +3182,12 @@ extern cptr *macro__act;
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern char *macro__buf;
 #endif
+#if (defined(ALLOW_MACROS)) && (defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern char *keymap_buf_ptr;
+#endif
+#if (defined(ALLOW_MACROS)) && (defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C))
+extern char *keymap_cmd_ptr;
+#endif
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern cptr *quark__str;
 #endif
@@ -3193,6 +3196,9 @@ extern u16b *message__ptr;
 #endif
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern char *message__buf;
+#endif
+#if (defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C))
+extern bool new_message_turn;
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_VCS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(VARIABLE_C))
 extern byte angband_color_table[256][4];
@@ -3901,32 +3907,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(CMD5_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* object2.c */
-
-#if (defined(ALLOW_TEMPLATES)) && (defined(INIT2_C) || defined(OBJECT2_C))
-extern void init_easy_know_txt(bool *random);
-#endif
-
-/* variable.c */
-
-#if (defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C))
-extern bool new_message_turn;
-#endif
-
-/* cmd5.c */
-
-#if (defined(CMD5_C) || defined(OBJECT1_C))
-extern int desc_spell_list(cptr *info, object_ctype *o_ptr);
-#endif
-
-/* variable.c */
-
-#if (defined(ALLOW_MACROS)) && (defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern char *keymap_buf_ptr;
-#endif
-#if (defined(ALLOW_MACROS)) && (defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C))
-extern char *keymap_cmd_ptr;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

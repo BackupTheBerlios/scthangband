@@ -113,3 +113,8 @@
  * Only allow a few skill checks after a new object has been touched.
  */
 #define SF_OBJECT_SKILL 21
+
+/*
+ * Remove the redundant monster_race.freq_inate field.
+ */
+#define SF_NO_INATE 22
