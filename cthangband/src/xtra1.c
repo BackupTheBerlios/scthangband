@@ -1790,7 +1790,7 @@ static void calc_torch(void)
 			}
 
 			/* Artifact Lites provide permanent, bright, lite */
-			if (artifact_p(o_ptr))
+			if (allart_p(o_ptr))
 			{
 				p_ptr->cur_lite += 3;
 				continue;

@@ -608,7 +608,7 @@ static void wiz_tweak_item(object_type *o_ptr)
 
 
 	/* Hack -- leave artifacts alone */
-    if (artifact_p(o_ptr) || o_ptr->art_name) return;
+    if (allart_p(o_ptr)) return;
 
 	p = "Enter new 'pval' setting: ";
 	sprintf(tmp_val, "%d", o_ptr->pval);
@@ -650,7 +650,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 
 	/* Hack -- leave artifacts alone */
-    if (artifact_p(o_ptr) || o_ptr->art_name) return;
+    if (allart_p(o_ptr)) return;
 
 
 	/* Get local object */
@@ -899,7 +899,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 
 
 	/* Never duplicate artifacts */
-    if (artifact_p(o_ptr) || o_ptr->art_name) return;
+    if (allart_p(o_ptr)) return;
 
 
 	/* Default */

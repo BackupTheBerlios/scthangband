@@ -891,7 +891,7 @@ static void analyze_misc_magic (object_type *o_ptr, cptr *misc_list)
 	/*
 	 * Artifact lights -- large radius light.
 	 */
-	if ((o_ptr->tval == TV_LITE) && artifact_p(o_ptr))
+	if ((o_ptr->tval == TV_LITE) && allart_p(o_ptr))
 	{
 		*misc_list++ = "Permanent Light(3)";
 	}

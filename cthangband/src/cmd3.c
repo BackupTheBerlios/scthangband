@@ -522,7 +522,7 @@ void do_cmd_destroy(void)
 	energy_use = 100;
 
 	/* Artifacts cannot be destroyed */
-	if (artifact_p(o_ptr) || o_ptr->art_name)
+	if (allart_p(o_ptr))
 	{
 
         energy_use = 0;

@@ -484,7 +484,7 @@ bool alchemy(void) /* Turns an object into gold, gain some of its value in a sho
 	}
 
     /* Artifacts cannot be destroyed */
-    if (artifact_p(o_ptr) || o_ptr->art_name)
+    if (allart_p(o_ptr))
 	{
 		/* Message */
 	msg_format("You fail to turn %s to gold!", o_name);
@@ -2036,7 +2036,7 @@ bool detect_objects_magic(void)
 		tv = o_ptr->tval;
 
 		/* Artifacts, misc magic items, or enchanted wearables */
-	if (artifact_p(o_ptr) || ego_item_p(o_ptr) || o_ptr->art_name ||
+	if (allart_p(o_ptr) || ego_item_p(o_ptr) ||
 		    (tv == TV_AMULET) || (tv == TV_RING) ||
 		    (tv == TV_STAFF) || (tv == TV_WAND) || (tv == TV_ROD) ||
 		    (tv == TV_SCROLL) || (tv == TV_POTION) ||
@@ -2548,7 +2548,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 
 	bool res = FALSE;
 
-    bool a = (artifact_p(o_ptr) || o_ptr->art_name);
+    bool a = (allart_p(o_ptr));
 
 	u32b f1, f2, f3;
 

@@ -1081,7 +1081,7 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 #ifdef SPOIL_ARTIFACTS
 	/* Full knowledge for some artifacts */
-    if (cheat_item && (artifact_p(o_ptr) || o_ptr->art_name)) spoil = TRUE;
+    if (cheat_item && (allart_p(o_ptr))) spoil = TRUE;
 #endif
 
 #ifdef SPOIL_EGO_ITEMS
@@ -1655,7 +1655,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* Hack -- The only one of its kind */
-	else if (known && (artifact_p(o_ptr) || o_ptr->art_name))
+	else if (known && allart_p(o_ptr))
 		{
 			t = object_desc_str(t, "The ");
 		}
@@ -1705,7 +1705,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* Hack -- The only one of its kind */
-	else if (known && (artifact_p(o_ptr) || o_ptr->art_name))
+	else if (known && allart_p(o_ptr))
 		{
 			t = object_desc_str(t, "The ");
 		}
@@ -2031,7 +2031,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && (!artifact_p(o_ptr)))
+	else if ((o_ptr->tval == TV_LITE) && (!allart_p(o_ptr)))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, " (with ");
@@ -2861,7 +2861,7 @@ bool identify_fully_aux(object_type *o_ptr)
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE)
 	{
-		if (artifact_p(o_ptr))
+		if (allart_p(o_ptr))
 		{
 			info[i++] = "It provides light (radius 3) forever.";
 		}

@@ -1586,9 +1586,8 @@ static void brand_weapon(int brand_type)
 	/* you can never modify artifacts / ego-items */
     /* you can never modify cursed items */
     /* TY: You _can_ modify broken items (if you're silly enough) */
-	if ((o_ptr->k_idx) &&
-	    (!artifact_p(o_ptr)) && (!ego_item_p(o_ptr)) &&
-        (!(o_ptr->art_name)) && (!cursed_p(o_ptr)))
+	if ((o_ptr->k_idx) && (!allart_p(o_ptr)) &&
+	(!ego_item_p(o_ptr)) &&	(!cursed_p(o_ptr)))
 	{
 		cptr act = NULL;
 

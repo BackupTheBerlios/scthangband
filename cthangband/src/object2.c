@@ -396,7 +396,7 @@ void compact_objects(int size)
 			chance = 90;
 
 			/* Hack -- only compact artifacts in emergencies */
-	    if ((artifact_p(o_ptr) || o_ptr->art_name)
+	    if (allart_p(o_ptr)
 		&& (cnt < 1000)) chance = 100;
 
 			/* Apply the saving throw */
@@ -4290,7 +4290,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 
 	/* Handle normal "breakage" */
-    if (!(j_ptr->art_name || artifact_p(j_ptr)) && (rand_int(100) < chance))
+    if (!(allart_p(j_ptr)) && (rand_int(100) < chance))
 	{
 		/* Message */
 		msg_format("The %s disappear%s.",
@@ -4400,7 +4400,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 
 	/* Handle lack of space */
-    if (!flag && !(artifact_p(j_ptr) || j_ptr->art_name))
+    if (!flag && !(allart_p(j_ptr)))
 	{
 		/* Message */
 		msg_format("The %s disappear%s.",

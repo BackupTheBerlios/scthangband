@@ -2699,6 +2699,12 @@
 	((T)->name1 ? TRUE : FALSE)
 
 /*
+ * Randarts use the "art_name" field, but are rarely checked for alone
+ */
+#define allart_p(T) \
+	((artifact_p(T) || (T)->art_name) ? TRUE : FALSE)
+
+/*
  * Ego-Items use the "name2" field
  */
 #define ego_item_p(T) \

@@ -23,7 +23,7 @@ static cptr value_check_aux1(object_type *o_ptr)
 {
 
 	/* Artifacts */
-    if (artifact_p(o_ptr) || o_ptr->art_name)
+    if (allart_p(o_ptr))
 	{
 		/* Cursed/Broken */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "terrible";
@@ -71,7 +71,7 @@ static cptr value_check_aux2(object_type *o_ptr)
 	if (broken_p(o_ptr)) return "useless";
 
 	/* Artifacts -- except cursed/broken ones */
-    if (artifact_p(o_ptr) || o_ptr->art_name) return "good";
+    if (allart_p(o_ptr)) return "good";
 
 	/* Ego-Items -- except cursed/broken ones */
 	if (ego_item_p(o_ptr)) return "good";
@@ -118,7 +118,7 @@ cptr find_feeling(object_type *o_ptr)
 			else
 				return "uncursed";
 		case IDENT_SENSE_VALUE:
-			if ((o_ptr->art_name) || artifact_p(o_ptr))
+			if (allart_p(o_ptr))
 				/* Artefacts */
 				return "unbreakable";
 			else if (o_ptr->ident & IDENT_BROKEN)
@@ -1443,7 +1443,7 @@ static void process_world(void)
 	if (o_ptr->tval == TV_LITE)
 	{
 		/* Hack -- Use some fuel (except on artifacts) */
-		if (!artifact_p(o_ptr) && (o_ptr->pval > 0))
+		if (!allart_p(o_ptr) && (o_ptr->pval > 0))
 		{
 			/* Decrease life-span */
 			o_ptr->pval--;
@@ -1741,7 +1741,7 @@ static void process_world(void)
 			if (o_ptr->tval == TV_LITE)
 			{
                 /* Use some fuel (except on artifacts) */
-                if (!artifact_p(o_ptr) && (o_ptr->pval > 0))
+                if (!allart_p(o_ptr) && (o_ptr->pval > 0))
                 {
                     /* Heal the player a bit */
                     hp_player(o_ptr->pval/20);
