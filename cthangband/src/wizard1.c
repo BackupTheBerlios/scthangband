@@ -230,6 +230,7 @@ static void spoil_obj_desc(cptr fname)
 	u16b who[200];
 
 	char buf[1024];
+	C_TNEW(o_name, ONAME_MAX, char);
 
 	char wgt[80];
 	char dam[80];
@@ -248,6 +249,7 @@ static void spoil_obj_desc(cptr fname)
 	if (!fff)
 	{
 		msg_print("Cannot create spoiler file.");
+		TFREE(o_name);
 		return;
 	}
 
@@ -301,11 +303,11 @@ static void spoil_obj_desc(cptr fname)
 				s32b v;
 
 				/* Describe the kind */
-				kind_info(buf, dam, wgt, &e, &v, who[s]);
+				kind_info(o_name, dam, wgt, &e, &v, who[s]);
 
 				/* Dump it */
 				fprintf(fff, "     %-45s%8s%7s%5d%9ld\n",
-					buf, dam, wgt, e, (long)(v));
+					o_name, dam, wgt, e, (long)(v));
 			}
 
 			/* Start a new set */
@@ -334,6 +336,7 @@ static void spoil_obj_desc(cptr fname)
 		}
 	}
 
+	TFREE(o_name);
 
 	/* Check for errors */
 	if (ferror(fff) || my_fclose(fff))
@@ -624,7 +627,7 @@ typedef struct
 typedef struct
 {
 	/* "The Longsword Dragonsmiter (6d4) (+20, +25)" */
-	char description[160];
+	char *description;
 
 	/* Description of what is affected by an object's pval */
 	pval_info_type pval_info;
@@ -1229,10 +1232,13 @@ static void spoil_artifact(cptr fname)
 	object_type forge;
 	object_type *q_ptr;
 
-	obj_desc_list artifact;
-
 	char buf[1024];
 
+	C_TNEW(o_name, ONAME_MAX, char);
+
+	obj_desc_list artifact;
+
+	artifact.description = o_name;
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
@@ -1246,6 +1252,7 @@ static void spoil_artifact(cptr fname)
 	/* Oops */
 	if (!fff)
 	{
+		TFREE(o_name);
 		msg_print("Cannot create spoiler file.");
 		return;
 	}
@@ -1288,6 +1295,8 @@ static void spoil_artifact(cptr fname)
 			spoiler_print_art(&artifact);
 		}
 	}
+
+	TFREE(o_name);
 
 	/* Check for errors */
 	if (ferror(fff) || my_fclose(fff))

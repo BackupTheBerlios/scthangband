@@ -631,11 +631,6 @@ static void init_x_final(int num)
 		case U_HEAD:
 		init_u_info_final();
 		return;
-
-		/* If the *_name array size is fixed, the maximum string length must
-		 * not excede it. */
-		case Z_HEAD:
-		if (ONAME_LEN < ONAME_MAX) ONAME_MAX = ONAME_LEN;
 	}
 	return;
 }
