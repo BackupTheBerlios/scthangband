@@ -279,6 +279,13 @@ static cptr roff_monster(u32b flags2, u32b flags3)
 }
 	
 
+
+/*
+ * Hack - extract and interpret any damage string in a monster spell
+ * description for a given monster.
+ * This does not consider what the actual spell does, only what it says it
+ * does below.
+ */
 static cptr convert_spell_text(cptr string, monster_race *r_ptr)
 {
 
@@ -354,6 +361,104 @@ stop:
 		return (cptr)format("%.*s%d%s", t-string, string, d, s);
 	}
 }
+
+/*
+ * *Hack* - extract and interpret any damage string in a monster breath
+ * description for a given monster.
+ * This does not currently attempt to group together similar breaths, and
+ * does not consider what the actual spell does, only what it says it does
+ * below.
+ */
+static cptr convert_breath_text(cptr string, monster_race *r_ptr)
+{
+
+	cptr t=0;
+
+	/* Dump */
+
+	/* Is there a MHP term to evaluate? */
+	if (r_ptr->r_tkills || spoil_mon) t = strchr(string, '(');
+	if (t && spoil_flag) t = strstr(t, "MHP");
+	/* Unknown/missing level term, so give the formula. */
+	if (!t)
+	{
+		return string;
+	}
+	/* Use spoil_flag to hide all of this information. */
+	else if (!spoil_flag)
+	{
+		return (cptr)format("%.*s", t-string-1, string);
+	}
+	else
+	{
+		char op = 0;
+		cptr end,s, good="0123456789+-/*";
+		int d;
+
+		/* Find the first bad character. */
+		for (s = end = t+3; strchr(good, *end); end++);
+
+		/* If LEV+AdE is found, end should be at the +. */
+		if (*end == 'd')
+		{
+			while (strchr("0123456789d", *end)) end--;
+		}
+		/* If LEV+foo is found, end should be at the +. */
+		else if (strchr("+-/*", end[-1]))
+		{
+			end--;
+		}
+
+		/* Evaluate the LEV term from left to right. */
+		for (d = r_ptr->hdice * r_ptr->hside; s < end; s++)
+		{
+			if (isdigit(*s))
+			{
+				long num = strtol(s,0,0);
+
+				/* Find the end of the number. */
+				while (s < end && isdigit(*s)) s++; s--;
+
+				switch (op)
+				{
+					case '+': d += num; break;
+					case '-': d -= num; break;
+					case '*': d *= num; break;
+					case '/': d /= num; break;
+					default: s--; goto stop; /* Paranoia */
+				}
+			}
+			else
+			{
+				op = *s;
+			}
+		}
+stop:
+		/* Extract the "max" constant.
+		 * *Hack*  - this is always the first bad character at present.
+		 */
+		if (*s == ',')
+		{
+			long num = strtol(++s,0,0);
+			
+			/* Find the end of the number. */
+			while (isdigit(*s)) s++;
+
+			/* Let num be an upper bound for d. */
+			d = MIN(d, num);
+		}
+
+		/* Hack - turn (123) into 123 where part of a longer formula. */
+		if (t[-1] == '(' && s[0] == ')' && (t[-2] == 'd' || s[1] == 'd'))
+		{
+			t--;
+			s++;
+		}
+
+		return (cptr)format("%.*sup to %d%s", t-string, string, d, s);
+	}
+}
+
 
 /*
  * Hack -- display monster information using "roff()"
@@ -821,28 +926,28 @@ static void roff_aux(int r_idx)
 
 	/* Collect breaths */
 	vn = 0;
-	if (flags4 & (RF4_BR_ACID))		vp[vn++] = "acid";
-	if (flags4 & (RF4_BR_ELEC))		vp[vn++] = "lightning";
-	if (flags4 & (RF4_BR_FIRE))		vp[vn++] = "fire";
-	if (flags4 & (RF4_BR_COLD))		vp[vn++] = "frost";
-	if (flags4 & (RF4_BR_POIS))		vp[vn++] = "poison";
-	if (flags4 & (RF4_BR_NETH))		vp[vn++] = "nether";
-	if (flags4 & (RF4_BR_LITE))		vp[vn++] = "light";
-	if (flags4 & (RF4_BR_DARK))		vp[vn++] = "darkness";
-	if (flags4 & (RF4_BR_CONF))		vp[vn++] = "confusion";
-	if (flags4 & (RF4_BR_SOUN))		vp[vn++] = "sound";
-	if (flags4 & (RF4_BR_CHAO))		vp[vn++] = "chaos";
-	if (flags4 & (RF4_BR_DISE))		vp[vn++] = "disenchantment";
-	if (flags4 & (RF4_BR_NEXU))		vp[vn++] = "nexus";
-	if (flags4 & (RF4_BR_TIME))		vp[vn++] = "time";
-	if (flags4 & (RF4_BR_INER))		vp[vn++] = "inertia";
-	if (flags4 & (RF4_BR_GRAV))		vp[vn++] = "gravity";
-	if (flags4 & (RF4_BR_SHAR))		vp[vn++] = "shards";
-	if (flags4 & (RF4_BR_PLAS))		vp[vn++] = "plasma";
-	if (flags4 & (RF4_BR_WALL))		vp[vn++] = "force";
-	if (flags4 & (RF4_BR_MANA))		vp[vn++] = "mana";
-    if (flags4 & (RF4_BR_NUKE))     vp[vn++] = "toxic waste";
-    if (flags4 & (RF4_BR_DISI))     vp[vn++] = "disintegration";
+	if (flags4 & (RF4_BR_ACID))		vp[vn++] = "acid (MHP/3,1600)";
+	if (flags4 & (RF4_BR_ELEC))		vp[vn++] = "lightning (MHP/3,1600)";
+	if (flags4 & (RF4_BR_FIRE))		vp[vn++] = "fire (MHP/3,1600)";
+	if (flags4 & (RF4_BR_COLD))		vp[vn++] = "frost (MHP/3,1600)";
+	if (flags4 & (RF4_BR_POIS))		vp[vn++] = "poison (MHP/3,800)";
+	if (flags4 & (RF4_BR_NETH))		vp[vn++] = "nether (MHP/6,550)";
+	if (flags4 & (RF4_BR_LITE))		vp[vn++] = "light (MHP/6,400)";
+	if (flags4 & (RF4_BR_DARK))		vp[vn++] = "darkness (MHP/6,400)";
+	if (flags4 & (RF4_BR_CONF))		vp[vn++] = "confusion (MHP/6,400)";
+	if (flags4 & (RF4_BR_SOUN))		vp[vn++] = "sound (MHP/6,400)";
+	if (flags4 & (RF4_BR_CHAO))		vp[vn++] = "chaos (MHP/6,600)";
+	if (flags4 & (RF4_BR_DISE))		vp[vn++] = "disenchantment (MHP/6,500)";
+	if (flags4 & (RF4_BR_NEXU))		vp[vn++] = "nexus (MHP/3,250)";
+	if (flags4 & (RF4_BR_TIME))		vp[vn++] = "time (MHP/3,150)";
+	if (flags4 & (RF4_BR_INER))		vp[vn++] = "inertia (MHP/6,200)";
+	if (flags4 & (RF4_BR_GRAV))		vp[vn++] = "gravity (MHP/3,200)";
+	if (flags4 & (RF4_BR_SHAR))		vp[vn++] = "shards (MHP/6,400)";
+	if (flags4 & (RF4_BR_PLAS))		vp[vn++] = "plasma (MHP/6,150)";
+	if (flags4 & (RF4_BR_WALL))		vp[vn++] = "force (MHP/6,200)";
+	if (flags4 & (RF4_BR_MANA))		vp[vn++] = "mana (MHP/3,250)";
+    if (flags4 & (RF4_BR_NUKE))     vp[vn++] = "toxic waste (MHP/3,800)";
+    if (flags4 & (RF4_BR_DISI))     vp[vn++] = "disintegration (MHP/3,300)";
 
 	/* Describe breaths */
 	if (vn)
@@ -862,7 +967,7 @@ static void roff_aux(int r_idx)
 			else c_roff(MONCOL_BREATH, " or ");
 
 			/* Dump */
-			c_roff(MONCOL_BREATH, vp[n]);
+			c_roff(MONCOL_BREATH, convert_breath_text(vp[n], r_ptr));
 		}
 	}
 
