@@ -3918,7 +3918,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		if (prefix(sbuf, "#####"))
 		{
 			buf = &sbuf[6];
-			out_ptr += sprintf(out_ptr, "%s%c", CC_PREFIX, buf[-1]);
+			out_ptr += sprintf(out_ptr, "$%c", buf[-1]);
 		}
 		else buf = sbuf;
 
@@ -3942,9 +3942,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 			/* Link */
 			if (h_ptr->shower[0] && prefix(buf+x, h_ptr->shower))
 			{
-				out_ptr += sprintf(out_ptr, "%s%c%s%s%c",
-					CC_PREFIX, atchar[TERM_YELLOW], h_ptr->shower,
-					CC_PREFIX, atchar[TERM_WHITE]);
+				out_ptr += sprintf(out_ptr, "$<$y%s$>", h_ptr->shower);
 
 				x += strlen(h_ptr->shower);
 				continue;
@@ -3952,6 +3950,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 			/* Hyperlink ? */
 			else if (prefix(buf + x, "*****"))
 			{
+				int thiscol;
 				int xx = x + 5;
 
 				/* Zap the link info */
@@ -3960,38 +3959,19 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 					xx++;
 				}
 				xx++;
-				out_ptr += sprintf(out_ptr, "%s", CC_PREFIX);
+
 				if ((h_ptr->link_x[h_ptr->cur_link] == x) &&
 					(h_ptr->link_y[h_ptr->cur_link] == l))
-					*out_ptr++ = atchar[link_color_sel];
+					thiscol = link_color_sel;
 				else
-					*out_ptr++ = atchar[link_color];
+					thiscol = link_color;
+
+				out_ptr += sprintf(out_ptr, "$%c", atchar[thiscol]);
 
 				/* Ok print the link name */
 				while (buf[xx] && buf[xx] != ']')
 				{
-					if (prefix(buf+xx, CC_PREFIX))
-					{
-						xx += strlen(CC_PREFIX);
-					}
-					*out_ptr++ = buf[xx++];
-				}
-				x = xx;
-			}
-			/* Color (ToME style) ? */
-			else if (prefix(buf + x, "[[[[["))
-			{
-				int xx = x + strlen("[[[[[");
-
-				out_ptr += sprintf(out_ptr, "%s", CC_PREFIX);
-
-				/* Ok print the coloured string */
-				while (buf[xx] != ']')
-				{
-					if (prefix(buf+xx, CC_PREFIX))
-					{
-						xx += strlen(CC_PREFIX);
-					}
+					if (prefix(buf+xx, "$")) xx++;
 					*out_ptr++ = buf[xx++];
 				}
 				x = xx;

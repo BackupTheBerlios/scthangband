@@ -2783,25 +2783,38 @@ void roff(cptr str)
 
 
 /*
- * Print a multi-coloured string where colour-changes are denoted by $x where
- * x is a colour character (see atchar[]). $$ is converted to $, and any other
- * combination is printed unchanged.
- * Unlike show_file_tome, this uses c_roff() to ensure that its lines are
- * wrapped, and so works best with files without unnecessary formatting.
+ * Print a multi-coloured string where colour-changes are denoted as follows:
+ *
+ * $d $w $s $o $r $g $b $u : Change to the specified colour.
+ * $D $W $v $y $R $G $B $U
+ *                      $< : Save a "default" colour (white initially).
+ *                      $> : Restore the "default" colour.
+ *                      $$ : Print a literal $.
+ *
+ * Any other combination is printed directly, although further keys may be
+ * redefined in the future.
  */
 void mc_roff(cptr s)
 {
 	cptr t;
-	int attr, nattr;
+	int attr, nattr, dattr;
 	
-	for (t = s, attr = TERM_WHITE; (t = strstr(t, CC_PREFIX)); t++)
+	for (t = s, attr = dattr = TERM_WHITE; (t = strchr(t, '$')); t++)
 	{
 		if (!c_roff(attr, format("%.*s", t-s, s))) return;
-		s = t + strlen(CC_PREFIX)+1;
-		if (prefix(s-1, CC_PREFIX))
+		s = t + 2;
+		if (s[-1] == '$')
 		{
 			s--;
-			t += strlen(CC_PREFIX);
+			t ++;
+		}
+		else if (s[-1] == '<')
+		{
+			dattr = attr;
+		}
+		else if (s[-1] == '>')
+		{
+			attr = dattr;
 		}
 		else if (((nattr = color_char_to_attr(s[-1]))) != -1)
 		{
@@ -2809,8 +2822,7 @@ void mc_roff(cptr s)
 		}
 		else
 		{
-			s = t;
-			t += strlen(CC_PREFIX);
+			s = t++;
 		}
 	}
 	c_roff(attr, s);

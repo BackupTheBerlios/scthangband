@@ -2908,22 +2908,22 @@ void get_symbol_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	int ch = va_arg(*vp, int);
 
 	/* Paranoia - max is not long enough. */
-	if (max <= strlen(CC_PREFIX "c" CC_PREFIX CC_PREFIX "w")+2) return;
+	if (max <= strlen("$c$$w")+2) return;
 
 	/* Check formatting. */
 	if (at != (byte)at || ch != (char)ch)
 	{
 		strcpy(buf, "(error)");
 	}
-	/* Double CC_PREFIX to print it if necessary. */
-	else if (strlen(CC_PREFIX) == 1 && ch == CC_PREFIX[0])
+	/* Double $ to print it if necessary. */
+	else if (ch == '$')
 	{
-		sprintf(buf, "%c%c%c%c%cw", ch, atchar[at], ch, ch, ch);
+		sprintf(buf, "$%c$$$w", atchar[at]);
 	}
 	/* Normal string. */
 	else
 	{
-		sprintf(buf, "%s%c%c%sw", CC_PREFIX, atchar[at], ch, CC_PREFIX);
+		sprintf(buf, "$%c%c$w", atchar[at], ch);
 	}
 }
 
@@ -3089,10 +3089,9 @@ static void do_cmd_knowledge_uniques(void)
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
-				my_fprintf(fff, " %v %c %s%c%v is %s\n", get_symbol(r_ptr),
-					quest, CC_PREFIX,	(dead) ? atchar[TERM_L_DARK] :
-					atchar[TERM_WHITE], monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
-					(dead) ? "dead" : "alive");
+				my_fprintf(fff, " %v %c $%c%v is %s\n", get_symbol(r_ptr),
+					quest,	(dead) ? 'D' : 'w', monster_desc_aux_f3,
+					r_ptr, 1, MDF_DEF, (dead) ? "dead" : "alive");
 			}
 		}
 	}

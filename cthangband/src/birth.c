@@ -1078,8 +1078,7 @@ static void display_player_birth(int points, bool details, bool rolled)
 	if (!USE_AUTOROLLER) arstr = "";
 
 	/* Write the point string, if any. */
-	if (attr) mc_roff(format(CC_PREFIX "%c%d" CC_PREFIX "w points left. ",
-		attr, points));
+	if (attr) mc_roff(format("$%c%d$w points left. ", attr, points));
 
 	/* Write the rest of the first string. */
 	mc_roff(format("Press %sX to restart,%c", finstr, b2));

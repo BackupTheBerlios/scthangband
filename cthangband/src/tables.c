@@ -3057,6 +3057,8 @@ cptr color_names[16] =
 
 /*
  * The character used to represent each colour.
+ *
+ * This is hardcoded.
  */
 cptr atchar = "dwsorgbuDWvyRGBU";
 

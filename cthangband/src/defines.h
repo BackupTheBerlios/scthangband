@@ -3338,9 +3338,6 @@ extern int PlayerUID;
 #define screen_save() Term_save()
 #define screen_load() Term_load()
 
-/* String used in mc_roff to indicate a colour change. */
-#define CC_PREFIX	"$"
-
 /* String used in show_file_tome() to indicate a non-ToME link target. */
 #define CC_LINK_PREFIX	"%%%%%"
 
