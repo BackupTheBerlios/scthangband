@@ -1663,7 +1663,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 
 			/* Save the values */
 			k_ptr->level = level;
-/*			k_ptr->extra = extra;*/
+			k_ptr->extra = extra;
 			k_ptr->weight = wgt;
 			k_ptr->cost = cost;
 

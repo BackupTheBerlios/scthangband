@@ -1574,57 +1574,30 @@ int wield_skill(object_type *o_ptr)
 {
 	switch (o_ptr->tval)
 	{
-	case TV_HAFTED:
-		if (o_ptr->k_idx == OBJ_WHIP)
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_DIGGING:
+		case TV_SWORD:
+		{
+			return k_info[o_ptr->k_idx].extra;
+		}
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		{
+			return SKILL_MISSILE;
+		}
+		/* An empty object will have a tval of 0. */
+		case 0:
 		{
 			return SKILL_CLOSE;
 		}
-		else
-		{
-			return SKILL_CRUSH;
-		}
-	case TV_POLEARM:
-		switch(o_ptr->k_idx)
-		{
-		case OBJ_SPEAR:
-		case OBJ_AWL_PIKE:
-		case OBJ_TRIDENT:
-			return SKILL_STAB;
-		case OBJ_BEAKED_AXE:
-		case OBJ_BROAD_AXE:
-		case OBJ_SCYTHE:
-		case OBJ_GREAT_AXE:
-		case OBJ_SCYTHE_OF_SLICING:
-			return SKILL_SLASH;
 		default:
-			return SKILL_CRUSH;
-		}
-	case TV_DIGGING:
-		return SKILL_CRUSH;
-	case TV_SWORD:
-		switch(o_ptr->k_idx)
 		{
-		case OBJ_BROKEN_DAGGER:
-		case OBJ_BROKEN_SWORD:
-		case OBJ_DAGGER:
-		case OBJ_MAIN_GAUCHE:
-			return SKILL_CLOSE;
-		case OBJ_RAPIER:
-		case OBJ_SHORT_SWORD:
-			return SKILL_STAB;
-		default:
-			return SKILL_SLASH;
+			return 0;
 		}
-	case TV_SHOT:
-	case TV_ARROW:
-	case TV_BOLT:
-	case TV_BOW:
-		return SKILL_MISSILE;
-	/* An empty object will have a tval of 0. */
-	case 0:
-		return SKILL_CLOSE;
 	}
-return FALSE;
 }
 
 /*

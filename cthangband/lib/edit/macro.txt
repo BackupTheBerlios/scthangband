@@ -792,3 +792,23 @@ F:r_event:F:1
 X:S
 Y:#S
 F:r_event:S:1
+
+# object_kind.extra fields
+
+# Weapons
+
+X:CLOSE
+Y:8
+F:k_info:W:3
+
+X:STAB
+Y:22
+F:k_info:W:3
+
+X:SLASH
+Y:23
+F:k_info:W:3
+
+X:CRUSH
+Y:24
+F:k_info:W:3
