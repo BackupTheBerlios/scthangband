@@ -4765,6 +4765,61 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				break;
 			}
 
+			/*
+			 * Select a broken item if possible.
+			 * Otherwise select a cursed item or nothing.
+			 */
+			case 'z': case 'Z':
+			{
+				int start, end, i, cursed = -1;
+				/* Find the range. */
+				if (command_wrk)
+				{
+					start = INVEN_WIELD-1;
+					end = INVEN_TOTAL;
+				}
+				else
+				{
+					start = 0;
+					end = INVEN_PACK;
+				}
+				/* Search the items for something cursed or worthless. */
+				for (i = start ; i < end; i++)
+				{
+					object_type *o_ptr = &inventory[i];
+					/* Skip invalid objects */
+					if (!get_item_okay(i)) continue;
+					/* Skip specified objects */
+					if (strstr(quark_str(o_ptr->note), "!k")) continue;
+					/* Skip objects which are not worthless */
+					if (object_value(o_ptr) > 0) continue;
+					/* Notice the first cursed item */
+					if (cursed_p(o_ptr) && o_ptr->ident & IDENT_SENSE_CURSED)
+					{
+						if (cursed < 0) cursed = i;
+				}
+					/* Return the first non-cursed worthless item */
+					else
+					{
+						break;
+				}
+				}
+				/* No broken items, so return any cursed ones found */
+				if (i == end) i = cursed;
+
+				/* No broken or cursed items */
+				if (i == -1)
+				{
+					bell();
+					break;
+				}
+				else
+				{
+					/* Continue, preserving case */
+				which += index_to_label(i) - 'z';
+				}
+			}
+
 			default:
 			{
 				/* Extract "query" setting */
