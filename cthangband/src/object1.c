@@ -686,10 +686,23 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr)
 	}
 
 	/* Some flags are only used internally */
-	/* j_ptr->iy = o_ptr->iy; */
-	/* j_ptr->ix = o_ptr->ix; */
 	/* j_ptr->next_o_idx = o_ptr->next_o_idx; */
 	/* j_ptr->held_m_idx = o_ptr->held_m_idx; */
+
+	/* Hack - as the inventory list is only differentiated by location,
+	 * and this cannot be transferred to j_ptr, use a null iy and non-null ix
+	 * to indicate the slot used.
+	 */
+	if (o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
+	{
+		j_ptr->iy = 0;
+		j_ptr->ix = o_ptr-inventory+1;
+	}
+	else
+	{
+		j_ptr->iy = o_ptr->iy;
+		j_ptr->ix = o_ptr->ix;
+	}
 
 	/* Assume that the player has noticed certain things when using an
 	 * unidentified item. The IDENT_TRIED flag is currently only set when
@@ -2869,7 +2882,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 /*
  * Find out what, if any, stat changes the given item causes.
  */
-static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_a, bool worn)
+static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_a)
 {
 	byte stat, act;
 	s16b pval;
@@ -2905,8 +2918,11 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 		res_stat_details_comp(p2_ptr, &p_body, i, info, info_a, act);
 	}
 	/* A worn item. */
-	else if (worn)
+	else if (!o_ptr->iy && o_ptr->ix > INVEN_WIELD && o_ptr->ix <= INVEN_TOTAL)
 	{
+		/* Hack - use the original o_ptr. */
+		o_ptr = inventory+o_ptr->ix-1;
+
 		/* Put o_ptr somewhere safe. */
 		object_copy(j_ptr, o_ptr);
 		object_wipe(o_ptr);
@@ -3160,13 +3176,8 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 
 	object_type o_ptr[1];
 
-	bool worn;
-
 	/* Paranoia - no object. */
 	if (!o1_ptr || !o1_ptr->k_idx) return 0;
-
-	/* Hack - notice worn objects. */
-	worn = (o1_ptr >= inventory+INVEN_WIELD && o1_ptr < inventory+INVEN_TOTAL);
 
 	/* Extract the known info */
 	object_info_known(o_ptr, o1_ptr);
@@ -3230,7 +3241,7 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	/* Recognise items which affect stats (detailed) */
 	if (!brief && spoil_stat)
 	{
-		res_stat_details(o_ptr, &i, info, info_a, worn);
+		res_stat_details(o_ptr, &i, info, info_a);
 	}
 	/* If brevity is required or spoilers are not, put stats with the other
 	 * pval effects. */
