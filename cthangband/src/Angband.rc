@@ -16,67 +16,67 @@ ANGBAND MENU
         {
                 POPUP "&Visibility"
                 {
-                        MENUITEM "sCthAngband", 200
-                        MENUITEM "Mirror", 201
-                        MENUITEM "Recall", 202
-                        MENUITEM "Choice", 203
-                        MENUITEM "Xtra-1", 204
-                        MENUITEM "Xtra-2", 205
-                        MENUITEM "Xtra-3", 206
-                        MENUITEM "Xtra-4", 207
+                        MENUITEM "&sCthAngband", 200
+                        MENUITEM "&Mirror", 201
+                        MENUITEM "&Recall", 202
+                        MENUITEM "&Choice", 203
+                        MENUITEM "Xtra-&1", 204
+                        MENUITEM "Xtra-&2", 205
+                        MENUITEM "Xtra-&3", 206
+                        MENUITEM "Xtra-&4", 207
                 }
 
                 POPUP "&Font"
                 {
-                        MENUITEM "sCthAngband", 210
-                        MENUITEM "Mirror", 211
-                        MENUITEM "Recall", 212
-                        MENUITEM "Choice", 213
-                        MENUITEM "Xtra-1", 214
-                        MENUITEM "Xtra-2", 215
-                        MENUITEM "Xtra-3", 216
-                        MENUITEM "Xtra-4", 217
+                        MENUITEM "&sCthAngband", 210
+                        MENUITEM "&Mirror", 211
+                        MENUITEM "&Recall", 212
+                        MENUITEM "&Choice", 213
+                        MENUITEM "Xtra-&1", 214
+                        MENUITEM "Xtra-&2", 215
+                        MENUITEM "Xtra-&3", 216
+                        MENUITEM "Xtra-&4", 217
                 }
 
                 MENUITEM SEPARATOR
 
-                POPUP "Bizarre Display"
+                POPUP "&Bizarre Display"
                 {
-                        MENUITEM "sCthAngband", 230
-                        MENUITEM "Mirror", 231
-                        MENUITEM "Recall", 232
-                        MENUITEM "Choice", 233
-                        MENUITEM "Xtra-1", 234
-                        MENUITEM "Xtra-2", 235
-                        MENUITEM "Xtra-3", 236
-                        MENUITEM "Xtra-4", 237
+                        MENUITEM "&sCthAngband", 230
+                        MENUITEM "&Mirror", 231
+                        MENUITEM "&Recall", 232
+                        MENUITEM "&Choice", 233
+                        MENUITEM "Xtra-&1", 234
+                        MENUITEM "Xtra-&2", 235
+                        MENUITEM "Xtra-&3", 236
+                        MENUITEM "Xtra-&4", 237
                 }
 
-                POPUP "Increase Tile Width"
+                POPUP "&Increase Tile Width"
                 {
-                        MENUITEM "sCthAngband", 240
-                        MENUITEM "Mirror", 241
-                        MENUITEM "Recall", 242
-                        MENUITEM "Choice", 243
-                        MENUITEM "Xtra-1", 244
-                        MENUITEM "Xtra-2", 245
-                        MENUITEM "Xtra-3", 246
-                        MENUITEM "Xtra-4", 247
+                        MENUITEM "&sCthAngband", 240
+                        MENUITEM "&Mirror", 241
+                        MENUITEM "&Recall", 242
+                        MENUITEM "&Choice", 243
+                        MENUITEM "Xtra-&1", 244
+                        MENUITEM "Xtra-&2", 245
+                        MENUITEM "Xtra-&3", 246
+                        MENUITEM "Xtra-&4", 247
                 }
 
-                POPUP "Decrease Tile Width"
+                POPUP "&Decrease Tile Width"
                 {
-                        MENUITEM "sCthAngband", 250
-                        MENUITEM "Mirror", 251
-                        MENUITEM "Recall", 252
-                        MENUITEM "Choice", 253
-                        MENUITEM "Xtra-1", 254
-                        MENUITEM "Xtra-2", 255
-                        MENUITEM "Xtra-3", 256
-                        MENUITEM "Xtra-4", 257
+                        MENUITEM "&sCthAngband", 250
+                        MENUITEM "&Mirror", 251
+                        MENUITEM "&Recall", 252
+                        MENUITEM "&Choice", 253
+                        MENUITEM "Xtra-&1", 254
+                        MENUITEM "Xtra-&2", 255
+                        MENUITEM "Xtra-&3", 256
+                        MENUITEM "Xtra-&4", 257
                 }
 
-                POPUP "Increase Tile Height"
+                POPUP "I&ncrease Tile Height"
                 {
                         MENUITEM "sCthAngband", 260
                         MENUITEM "Mirror", 261
@@ -88,7 +88,7 @@ ANGBAND MENU
                         MENUITEM "Xtra-4", 267
                 }
 
-                POPUP "Decrease Tile Height"
+                POPUP "D&ecrease Tile Height"
                 {
                         MENUITEM "sCthAngband", 270
                         MENUITEM "Mirror", 271
@@ -112,14 +112,14 @@ ANGBAND MENU
 
                 MENUITEM "&Sound", 410
                 MENUITEM SEPARATOR
-                MENUITEM "Low Priority", 420
-                MENUITEM "Activate Screensaver", 430
-                MENUITEM "&Map", 440
+                MENUITEM "&Low Priority", 420
+                MENUITEM "&Activate Screensaver", 430
         }
 
         POPUP "&Help"
         {
                 MENUITEM "&Contents", 901
+                MENUITEM "&Spoilers", 902
         }
 }
 

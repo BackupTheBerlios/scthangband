@@ -2518,7 +2518,7 @@ static void init_windows(void)
 	{
 		td = &data[i];
 		WIPE(td, term_data);
-		td->swindowse;
+		td->windows[i].name;
 		td->keys = 16;
 		td->rows = 24;
 		td->cols = 80;
