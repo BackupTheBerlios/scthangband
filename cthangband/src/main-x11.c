@@ -1971,15 +1971,13 @@ static errr Term_xtra_x11_react(void)
 		/* Check the colors */
 		for (i = 0; i < 256; i++)
 		{
-			if ((color_table[i][0] != angband_color_table[i][0]) ||
-			    (color_table[i][1] != angband_color_table[i][1]) ||
+			if ((color_table[i][1] != angband_color_table[i][1]) ||
 			    (color_table[i][2] != angband_color_table[i][2]) ||
 			    (color_table[i][3] != angband_color_table[i][3]))
 			{
 				Pixell pixel;
 
 				/* Save new values */
-				color_table[i][0] = angband_color_table[i][0];
 				color_table[i][1] = angband_color_table[i][1];
 				color_table[i][2] = angband_color_table[i][2];
 				color_table[i][3] = angband_color_table[i][3];
@@ -2470,7 +2468,6 @@ errr init_x11(int argc, char **argv)
 		Infoclr_set(clr[i]);
 
 		/* Acquire Angband colors */
-		color_table[i][0] = angband_color_table[i][0];
 		color_table[i][1] = angband_color_table[i][1];
 		color_table[i][2] = angband_color_table[i][2];
 		color_table[i][3] = angband_color_table[i][3];

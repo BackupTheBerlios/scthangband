@@ -567,7 +567,6 @@ static void Initialize(AngbandWidget request, AngbandWidget wnew)
 		unsigned long pixel;
 
 		/* Acquire Angband colors */
-		wnew->angband.color[i][0] = angband_color_table[i][0];
 		wnew->angband.color[i][1] = angband_color_table[i][1];
 		wnew->angband.color[i][2] = angband_color_table[i][2];
 		wnew->angband.color[i][3] = angband_color_table[i][3];
@@ -1255,15 +1254,13 @@ static void Term_xtra_xaw_react_aux(term_data *td)
 	{
 		if (depth > 1)
 		{
-			if ((wnew->angband.color[i][0] != angband_color_table[i][0]) ||
-			    (wnew->angband.color[i][1] != angband_color_table[i][1]) ||
+			if ((wnew->angband.color[i][1] != angband_color_table[i][1]) ||
 			    (wnew->angband.color[i][2] != angband_color_table[i][2]) ||
 			    (wnew->angband.color[i][3] != angband_color_table[i][3]))
 			{
 				unsigned long pixel;
 
 				/* Save new values */
-				wnew->angband.color[i][0] = angband_color_table[i][0];
 				wnew->angband.color[i][1] = angband_color_table[i][1];
 				wnew->angband.color[i][2] = angband_color_table[i][2];
 				wnew->angband.color[i][3] = angband_color_table[i][3];
