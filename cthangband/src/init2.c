@@ -1320,6 +1320,57 @@ static errr init_e_info(void)
 
 
 /*
+ * Initialize the "death_event" array, by parsing the r_event.raw file
+ */
+static errr init_r_event_raw(int fd)
+{
+	header test;
+
+
+	/* Read and Verify the header */
+	if (fd_read(fd, (char*)(&test), sizeof(header)) ||
+	    (test.v_major != event_head->v_major) ||
+	    (test.v_minor != event_head->v_minor) ||
+	    (test.v_patch != event_head->v_patch) ||
+	    (test.v_extra != event_head->v_extra) ||
+	    (test.info_num != event_head->info_num) ||
+	    (test.info_len != event_head->info_len) ||
+	    (test.head_size != event_head->head_size) ||
+	    (test.info_size != event_head->info_size))
+	{
+		/* Error */
+		return (-1);
+	}
+
+
+	/* Accept the header */
+	(*event_head) = test;
+
+
+	/* Allocate the "death_event" array */
+	C_MAKE(death_event, event_head->info_num, death_event_type);
+
+	/* Read the "death_event" array */
+	fd_read(fd, (char*)(death_event), event_head->info_size);
+
+
+	/* Allocate the "event_name" array */
+	C_MAKE(event_name, event_head->name_size, char);
+
+	/* Read the "event_name" array */
+	fd_read(fd, (char*)(event_name), event_head->name_size);
+
+	/* Allocate the "event_text" array */
+	C_MAKE(event_text, event_head->text_size, char);
+
+	/* Read the "event_text" array */
+	fd_read(fd, (char*)(event_text), event_head->text_size);
+
+	/* Success */
+	return (0);
+}
+
+/*
  * Initialize the "r_info" array, by parsing a binary "image" file
  */
 static errr init_r_info_raw(int fd)
@@ -1377,6 +1428,204 @@ static errr init_r_info_raw(int fd)
 }
 
 
+/*
+ * Initialise the "death_event" array
+ *
+ * This uses a subset of the r_info.txt file (just the N and E lines) to
+ * create a r_event.raw file where appropriate.
+ *
+ * As it uses the ?_info[] arrays, it must be initialised after them.
+ */
+
+static errr init_death_event(void)
+{
+	int fd;
+ 
+	int mode = 0644;
+	
+	errr err = 0;
+	
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+	/*** Make the header ***/
+
+	/* Allocate the "header" */
+	MAKE(event_head, header);
+
+	/* Save the "version" */
+	event_head->v_major = VERSION_MAJOR;
+	event_head->v_minor = VERSION_MINOR;
+	event_head->v_patch = VERSION_PATCH;
+	event_head->v_extra = 0;
+
+	/* Save the "record" information */
+	event_head->info_num = MAX_DEATH_EVENTS;
+	event_head->info_len = sizeof(death_event_type);
+
+	/* Save the size of "r_head" and "r_info" */
+	event_head->head_size = sizeof(header);
+	event_head->info_size = event_head->info_num * event_head->info_len;
+
+#ifdef ALLOW_TEMPLATES
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "r_event.raw");
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+		err = check_modification_date(fd, "r_info.txt");
+		if (err) msg_print("r_event.raw has old modification time.");
+
+#endif /* CHECK_MODIFICATION_TIME */
+		/* Attempt to parse the "raw" file */
+		if (!err)err = init_r_event_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return (0);
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 'r_event.raw' file.");
+		msg_print(NULL);
+	}
+
+
+	/*** Make the fake arrays ***/
+
+	/* Assume the size of "event_name" and "event_text" */
+	fake_name_size = 20 * 1024L;
+	fake_text_size = 60 * 1024L;
+
+	/* Allocate the "death_event" array */
+	C_MAKE(death_event, event_head->info_num, death_event_type);
+	
+	/* Hack -- make "fake" arrays */
+	C_MAKE(event_name, fake_name_size, char);
+	C_MAKE(event_text, fake_text_size, char);
+
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_EDIT, "r_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'r_info.txt' file.");
+
+	/* Parse the file */
+	err = init_r_event_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		msg_format("Error %d at line %d of 'r_info.txt'.", err, error_line);
+		msg_format("Record %d contains a '%s' error.", error_idx, oops);
+		msg_format("Parsing '%s'.", buf);
+		msg_print(NULL);
+
+		/* Quit */
+		quit("Error in 'r_info.txt' file.");
+	}
+
+
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "r_event.raw");
+
+	/* Kill the old file */
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(event_head), event_head->head_size);
+
+		/* Dump the "death_event" array */
+		fd_write(fd, (char*)(death_event), event_head->info_size);
+
+		/* Dump the "event_name" array */
+		fd_write(fd, (char*)(event_name), event_head->name_size);
+
+		/* Dump the "event_text" array */
+		fd_write(fd, (char*)(event_text), event_head->text_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "death_event" array */
+	C_KILL(death_event, event_head->info_num, death_event_type);
+
+	/* Hack -- Free the "fake" arrays */
+	C_KILL(event_name, fake_name_size, char);
+	C_KILL(event_text, fake_text_size, char);
+
+	/* Forget the array sizes */
+	fake_name_size = 0;
+	fake_text_size = 0;
+
+#endif	/* ALLOW_TEMPLATES */
+
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "r_event.raw");
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot load 'r_event.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_r_event_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 'r_event.raw' file.");
+
+	/* Success */
+	return (0);
+}
 
 /*
  * Initialize the "r_info" array
@@ -3076,6 +3325,11 @@ void init_angband(void)
 	note("[Initializing arrays... (monsters)]");
 	if (init_r_info()) quit("Cannot initialize monsters");
 
+	/* Initialize death events. *
+	 * Must come after init_(k|a|e|r)_info(). */
+	note("[Initializing arrays... (death events)]");
+	if (init_death_event()) quit("Cannot initialize death events");
+ 
 	/* Initialize feature info */
 	note("[Initializing arrays... (vaults)]");
 	if (init_v_info()) quit("Cannot initialize vaults");

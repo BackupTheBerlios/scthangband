@@ -1252,16 +1252,69 @@ struct wild_type {
 		s16b dun_max; /* Maximum depth to have caves */
 };
 
+/*
+ * The various types of event used by death_event_type events below.
+ */
+
+/* Items of all kinds. */
+typedef struct make_item_type make_item_type;
+struct make_item_type {
+	u16b	name;	/* Name (offset) */
+	byte	flags;	/* EI_* flags */
+	s16b	k_idx;	/* k_idx of item */
+	byte	x_idx;	/* Artefact or ego number where appropriate. */
+	byte	min;	/* Minimum number which can be created. */
+	byte	max;	/* Maximum number which can be created. */
+};
+
+/* Monsters */
+typedef struct make_monster_type make_monster_type;
+struct make_monster_type {
+	s16b	num;	/* r_idx of monster. */
+	byte	min;	/* Minimum number which can be created. */
+	byte	max;	/* Maximum number which can be created. */
+	byte	radius;	/* Distance between the dead monster and the resulting ones */
+	bool	strict;	/* Only place monsters within radius, rather than merely preferring to. */
+};
+
+/* Explosions centred on the deceased monster. */
+typedef struct make_explosion_type make_explosion_type;
+struct make_explosion_type {
+	byte	dice;	/* Number of die rolls to be summed for damage. */
+	byte	sides;	/* Number of sides the above "dice" should have. */
+	byte	method;	/* Type of explosion to be attempted. */
+	s16b	radius;	/* Radius of explosion*/
+};
+
+/* Coins (amounts handled by the normal flags as you can't get 1d3 from
+ * Bernoulli trials) */
+typedef struct make_coin_type make_coin_type;
+struct make_coin_type {
+	s16b	metal; /* Coin_type. */
+};
+
+/* Keep the parameters within death_event_type to simplify things. */
+typedef union de_par de_par;
+union de_par {
+	make_item_type item;
+	make_monster_type monster;
+	make_explosion_type explosion;
+	make_coin_type coin;
+};
+
+/* Control interraction between events and control the structure. */
 typedef struct death_event_type death_event_type;
 struct death_event_type {
-
-	u32b	name;	/* Name (offset) */
-	u32b	text;	/* Text (offset) */
-
-	s16b	r_idx;	/* The number of the monster involved. */
+	u16b	text;	/* Text (offset) */
+	s16b	r_idx;	/* The number of the monster responsible for the event. */
 	u16b	num;	/* The numerator in the probability of causing the event */
 	u16b	denom;	/* The denominator in the probability of causing the event */
-	bool	flags;	/* Only one event with this flag will occur when a single monster dies */
-	byte	type;	/* The type of event. */
-	s16b	par[4];	/* Extra information. For details, see xtra2.c */
+	byte	flags;	/* EF_* flags */
+	byte	type;	/* event type */
+	de_par	par;	/* The parameters for this event type (see above) */
 };
+
+
+
+
+

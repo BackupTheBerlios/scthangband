@@ -1172,7 +1172,7 @@ static void spoiler_print_art(obj_desc_list *art_ptr)
 /*
  * Hack -- Create a "forged" artifact
  */
-static bool make_fake_artifact(object_type *o_ptr, int name1)
+bool make_fake_artifact(object_type *o_ptr, int name1)
 {
 	int i;
 
@@ -2124,6 +2124,9 @@ static void spoil_mon_info(cptr fname)
 
 			spoil_out(".  ");
 		}
+
+			/* Include death events here. */
+			describe_death_events(n, wd_lhe[msex], spoil_out, TRUE);
 
 		/* Count the actual attacks */
 		for (i = 0, j = 0; j < 4; j++)

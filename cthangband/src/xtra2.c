@@ -23,13 +23,6 @@ extern void random_resistance(object_type * q_ptr, bool is_scroll, int specific)
 
 #define MAX_NUM 2147483647
 
-/* Simply gives the larger of two numbers */
-#define max(A,B) ((A > B) ? A : B)
-/* Ensure that something is always positive */
-#define min1(A) max(A, 1)
-/* A range function which gives a sensible value even with nonsense parameters */
-#define safe_range(A, B) ((A > 0 && B > A) ? rand_range(A, B) : (A > 0) ? A : (B > 0) ? randint(B) : 1)
-
  /*
  * Find the lowest common multiple of two s32bs
   */
@@ -54,18 +47,17 @@ static s32b find_lcm(s32b ua, s32b ub)
 /*
  * The rolling routine for drop_special().
  */
-static bool death_event_roll(int i, bool *one_dropped, s32b *total_num, s32b *total_denom)
+static bool death_event_roll(death_event_type *d_ptr, bool *one_dropped, s32b *total_num, s32b *total_denom)
 {
-	death_event_type *d_ptr = &death_event[i];
-	s32b num = min1(d_ptr->num);
-	s32b denom = max(d_ptr->denom, num);
+	s32b num = d_ptr->num;
+	s32b denom = d_ptr->denom;
 	s32b lcm;
 
 	/* Wizards always get everything */
 	if (cheat_wzrd) return TRUE;
 
 	/* It's easy without ONLY_ONE. */
-	if (!d_ptr->flags & EF_ONLY_ONE) return (num > rand_int(denom));
+	if (!(d_ptr->flags & EF_ONLY_ONE)) return (num > rand_int(denom));
 
 	/* No more drops possible */
 	if (*one_dropped) return FALSE;
@@ -120,7 +112,7 @@ static void drop_special(monster_type *m_ptr)
 {
 	s32b total_num = 1;
 	s32b total_denom = 1;
-	int i;
+	u16b i;
 	bool one_dropped = FALSE;
 	
 	for (i = 0; i < MAX_DEATH_EVENTS; ++i)
@@ -133,40 +125,44 @@ static void drop_special(monster_type *m_ptr)
 		if (d_ptr->r_idx < m_ptr->r_idx) continue;
 
 		/* Decide whether to drop correct ones. */
-		if (!death_event_roll(i, &one_dropped, &total_num, &total_denom)) continue;
+		if (!death_event_roll(d_ptr, &one_dropped, &total_num, &total_denom)) continue;
 
 		/* Give some feedback to wizards. */
 		if (cheat_wzrd) msg_format("Processing death event %d", i);
 
-		/* Actually carry out event */
+		/* Actually carry out event
+		 * Note that illegal events and default values are dealt with
+		 * in init1.c, not here.
+		 */
 		switch (d_ptr->type)
 		{
-		/* Drop an artefact normally */
-			case DEATH_ARTEFACT:
-			{
-				artifact_type *a_ptr = &a_info[EP_NUM];
-				msg_format("Making artefact %d", a_ptr-a_info);
-				/* Ensure the request is reasonable first */
-				if (a_ptr->name && a_ptr->cur_num == 0)
-				{
-					object_type *o_ptr=malloc(sizeof(object_type));
-					object_prep(o_ptr, lookup_kind(a_ptr->tval, a_ptr->sval));
-					o_ptr->name1 = EP_NUM;
-					apply_magic(o_ptr, -1, TRUE, TRUE, TRUE);
-					if (d_ptr->text) msg_print(event_text+d_ptr->text);
-					drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);
-					d_ptr->flags |= EF_KNOWN;
-				}
-				break;
-				}
-			/* Drop a pile of objects */
+			/* Drop some or fewer objects. */
 			case DEATH_OBJECT:
 			{
-				object_type *o_ptr=malloc(sizeof(object_type));
-				object_prep(o_ptr, EP_NUM);
-				o_ptr->name2 = EP_EGO;
-				apply_magic(o_ptr, dun_level, FALSE, FALSE, FALSE);
-				o_ptr->number = safe_range(EP_MIN, EP_MAX);
+				make_item_type *i_ptr = &d_ptr->par.item;
+				object_type *o_ptr = ralloc(sizeof(object_type));
+				object_prep(o_ptr, i_ptr->k_idx);
+#ifdef ALLOW_EGO_DROP
+/* I can neither check that the ego item is plausible nor prevent apply_magic
+ *  from over-writing it without effort, and nothing currently uses the flag. */
+				if (i_ptr->flags & EI_EGO)
+					o_ptr->name2 = i_ptr->x_idx;
+#endif
+				if (i_ptr->flags & EI_ART)
+					o_ptr->name1 = i_ptr->x_idx;
+				if ((i_ptr->flags & (EI_ART | EI_RAND)) == (EI_ART | EI_RAND))
+				{
+					/* Make a random artefact (which automatically names it). */
+					create_artifact(o_ptr, FALSE);
+
+					/* Use a name if specified */
+					if (i_ptr->name) 
+ 					{
+						o_ptr->art_name = quark_add(event_name+i_ptr->name);
+				}
+				}
+				o_ptr->number = rand_range(i_ptr->min, i_ptr->max);
+				apply_magic(o_ptr, object_level, FALSE, FALSE, FALSE);
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 				drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);
 				d_ptr->flags |= EF_KNOWN;
@@ -175,72 +171,79 @@ static void drop_special(monster_type *m_ptr)
 			/* Create a monster nearby. */
 		case DEATH_MONSTER:
 		{
-			int i, num = safe_range(EP_MIN, EP_MAX);
+				make_monster_type *i_ptr = &d_ptr->par.monster;
+				byte i,num = rand_range(i_ptr->min, i_ptr->max);
 				bool seen = FALSE;
 			for (i = 0; i < num; i++)
 			{
-				int wy, wx, j;
-				int distance = min1(EP_RADIUS);
-				
+					int wy,wx;
+					byte j;
+					/* Try to place within the given distance, but do accept greater distances if allowed. */
 				for (j = 0; j < 100; j++)
 				{
-					scatter(&wy, &wx, m_ptr->fy, m_ptr->fx, distance+j/10, 0);
+						int d = i_ptr->radius;
+						if (!i_ptr->strict) d+= j/10;
+						scatter(&wy, &wx, m_ptr->fy, m_ptr->fx, d, 0);
 					if (in_bounds(wy,wx) && cave_floor_bold(wy,wx)) break;
 			}
 
 				/* Give up if there's nowhere appropriate */
 					if (j == 100) break;
 
-				/* Actually place the monster (which should not fail) */
-				(void)place_monster_one(wy, wx, EP_NUM, FALSE, !!(m_ptr->smart & SM_ALLY));
-
-					/* Only let the player know if he can see what has happened */
-					if (player_can_see_bold(wy, wx)) seen = TRUE;
-		}
-				if (seen) 
+					/* As creating the monster can give a message, give this message first. */
+					if (player_can_see_bold(wy, wx) && !seen)
 				{
-					d_ptr->flags |= EF_KNOWN;
 					if (d_ptr->text) msg_format(event_text+d_ptr->text);
+						seen = TRUE;
+						d_ptr->flags |= EF_KNOWN;
 	}
+					/* Actually place the monster (which should not fail) */
+					(void)place_monster_one(wy, wx, i_ptr->num, FALSE, !!(m_ptr->smart & SM_ALLY), FALSE);
+				}
+				/* Only let the player know anything happened if it happened in LOS. */
 				break;
 }
 			/* Cause an explosion centred on the monster */
 			case DEATH_EXPLODE:
 			{
 				/* Set up the parameters. */
+				make_explosion_type *i_ptr = &d_ptr->par.explosion;
 				byte typ = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-				int damage = damroll(min1(EP_DICE), min1(EP_SIDES));
-				int distance = min1(EP_RADIUS);
-				int method = EP_METHOD;
-				/* Set the default action type */
-				if (method<1) method = GF_MISSILE;
+				int damage = damroll(i_ptr->dice, i_ptr->sides);
 
 				/* Print any specified text. */
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 
 				/* Give the wizards a basic explanation. */
-				if (cheat_wzrd) msg_format("Explosion of radius %d, power %d and type %d triggered.", distance, damage, typ);
+				if (cheat_wzrd) msg_format("Explosion of radius %d, power %d and type %d triggered.", i_ptr->radius, damage, typ);
 
-				(void)project((m_ptr - m_list), distance, m_ptr->fy, m_ptr->fx, damage, method, typ);
+				/* Then cause an explosion. */
+				(void)project((m_ptr - m_list), i_ptr->radius, m_ptr->fy, m_ptr->fx, damage, i_ptr->method, typ);
 				d_ptr->flags |= EF_KNOWN;
 				break;
 			}
-			/* Hack - make coin drop of a specific type. */
-			/* Do not set EF_KNOWN as we can't know what has happened until something is dropped. */
+			/* Hack - force the coin drop (later) to be of a specific type. 
+			 * This does not actually do anything itself, so a drop of (for instance) 20 pieces of
+			 * silver would be best achieved via a coin artefact with a pval of 20.
+			 */
 			case DEATH_COIN:
 			{
-				coin_type = EP_METAL;
+				make_coin_type *i_ptr = &d_ptr->par.coin;
+				coin_type = i_ptr->metal;
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
+				d_ptr->flags |= EF_KNOWN;
 				break;
 			}
-			/* A non-event for those personalised death messages. */
+
+			/* Do nothing, except tell the player what you've done. */
 			case DEATH_NOTHING:
 			{
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 				d_ptr->flags |= EF_KNOWN;
 				break;
 			}
-			default: /* How did we get here? */
+			/* Just in case... */
+			default:
 			{
 				msg_format("What strange action is %d?", d_ptr->type);
 			}

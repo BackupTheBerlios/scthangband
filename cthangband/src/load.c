@@ -557,6 +557,30 @@ static void rd_lore(int r_idx)
 
 
 /*
+ * Read the death events
+ */
+static void rd_death(void)
+{
+	int i,j;
+	u16b tmp16u;
+	for (i = 0;; i++)
+	{
+		rd_u16b(&tmp16u);
+		for (j = 0; j < 15; i++)
+		{
+			death_event_type *d_ptr = &death_event[15*i+j];
+			/* Don't leave the array */
+			if (15*i+j >= MAX_DEATH_EVENTS) return;
+			if (tmp16u & 1<<i) d_ptr->flags |= EF_KNOWN;
+		}
+		if (tmp16u & 1<<15) break;
+	}
+}
+
+
+
+
+/*
  * Read a store
  */
 static errr rd_store(int n)
@@ -1564,6 +1588,9 @@ static errr rd_savefile_new_aux(void)
 		r_ptr = &r_info[i];
 	}
 	if (arg_fiddle) note("Loaded Monster Memory");
+
+	/* Death Events */
+	if (!older_than(4,1,3)) rd_death();
 
 
 	/* Object Memory */

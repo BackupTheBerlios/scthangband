@@ -796,6 +796,13 @@ monster_race *r_info;
 char *r_name;
 char *r_text;
 
+/*
+ * The death event arrays
+ */
+header *event_head;
+death_event_type *death_event;
+char *event_name;
+char *event_text;
 
 /*
  * Hack -- The special Angband "System Suffix"

@@ -112,6 +112,132 @@ static bool know_damage(int r_idx, int i)
 #define MONCOL_ATTACK	(moncol[17].attr)	/* What melee attacks it has */
 #define MONCOL_QUEST	(moncol[18].attr)	/* If it is a quest monster */
 
+/* Colour for croff() */
+static byte colour;
+
+/*
+ * Hack - input routine for c_roff which does not require two parameters.
+ */
+static void croff(cptr str)
+{
+	c_roff(colour, str);
+}
+
+/* "will" if always true and omniscient, "may" otherwise. */
+#define DDE_MAY ((omniscient && d_ptr->num >= d_ptr->denom) ? "will" : "may")
+
+/*
+ * Display information about death events
+ */
+void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscient)
+{
+	u16b j;
+	s16b start = -1, end = -1;
+
+	/* First count the interesting events */
+	for (j = 0; j < MAX_DEATH_EVENTS; j++)
+	{
+		death_event_type *d_ptr = &death_event[j];
+
+		/* Ignore incorrect entries */
+		if (d_ptr->r_idx > r_idx) break;
+		if (!d_ptr->r_idx) break;
+		if (d_ptr->r_idx < r_idx) continue;
+
+		/* Ignore unknown entries */
+		if (!omniscient && ~d_ptr->flags & EF_KNOWN) continue;
+
+		/* Ignore DEATH_NOTHING entries */
+		if (d_ptr->type == DEATH_NOTHING) continue;
+
+		/* Locate the first interesting entry */
+		if (start == -1) start = j;
+
+		/* Keep looking for the last interesting entry */
+		end = j;
+	}
+	
+	/* Nothing to do. */
+	if (end == -1) return;
+
+	/* Make a note of the colour for croff(). */
+	colour = MONCOL_DROP;
+	
+	/* Then loop through them. There may be unknown ones in the range, but no incorrect ones. */
+	for (j = start; j <= end; j++)
+	{
+		death_event_type *d_ptr = &death_event[j];
+
+		/* Ignore unknown entries */
+		if (!omniscient && ~d_ptr->flags & EF_KNOWN) continue;
+
+		/* Ignore DEATH_NOTHING entries */
+		if (d_ptr->type == DEATH_NOTHING) continue;
+
+		/* Start the string. */
+		if (j == start)
+			(*out)(format("When %s dies, ", he));
+		/* Prepare to finish the string */
+		else if (j == end)
+			(*out)("and ");
+
+		switch (d_ptr->type)
+		{
+			case DEATH_OBJECT:
+			{
+				make_item_type *i_ptr = &(d_ptr->par.item);
+				object_type o, *o_ptr = &o;
+				char o_name[80];
+				object_prep(o_ptr, i_ptr->k_idx);
+				if (i_ptr->flags & EI_ART)
+					o_ptr->name1 = i_ptr->x_idx;
+#ifdef ALLOW_EGO_DROP
+				if (i_ptr->flags & EI_EGO)
+				o_ptr->name2 = EP_EGO;
+#endif
+				object_desc_store(o_name, o_ptr, FALSE, 0);
+				/* Note that no "unusual article" flag exists for objects. */
+				full_name(o_name, i_ptr->max > 1, TRUE, FALSE);
+				(*out)(format("%s %s drop %s", he, DDE_MAY, o_name));
+				break;
+			}
+			case DEATH_MONSTER:
+			{
+				make_monster_type *i_ptr = &d_ptr->par.monster;
+				monster_race *r_ptr = &r_info[i_ptr->num];
+				char m_name[80];
+				strcpy(m_name, r_name+r_ptr->name);
+				full_name(m_name, (i_ptr->max == 1), TRUE, ((r_ptr->flags4 & RF4_ODD_ART) != 0));
+				(*out)(format("%s%s %s be created", (i_ptr->max > 1) ? "some " : "", m_name, DDE_MAY));
+				break;
+			}
+			case DEATH_EXPLODE:
+			{
+				make_explosion_type *i_ptr = &d_ptr->par.explosion;
+				(*out)(format("%s %s explode in a ball of %s of radius %d", he, DDE_MAY, explode_flags[i_ptr->method-1], i_ptr->radius));
+				break;
+			}
+			case DEATH_COIN:
+			{
+				make_coin_type *i_ptr = &d_ptr->par.coin;
+				char coin[80];
+				int i;
+				for (i = 0; ((coin[i] = FORCELOWER(coin_types[i_ptr->metal][i]))) != '\0'; i++);
+				(*out)(format("%s %s only drop %s coins", he, DDE_MAY, coin));
+				break;
+			}
+			case DEATH_NOTHING: /* But nothing happens. */
+			break;
+			default: /* Shouldn't get here, but... */
+			(*out)("Something awful has happened.");
+		}
+		if (j == end)
+			(*out)(". ");
+		else
+			(*out)(", ");
+	}
+}
+
 /*
  * Hack -- display monster information using "roff()"
  *
@@ -1111,6 +1237,8 @@ static void roff_aux(int r_idx)
 		c_roff(MONCOL_DROP, ".  ");
 	}
 
+	/* Include death events here. */
+	describe_death_events(r_idx, wd_he[msex], croff, spoil_mon);
 
 	/* Count the number of "known" attacks */
 	for (n = 0, m = 0; m < 4; m++)

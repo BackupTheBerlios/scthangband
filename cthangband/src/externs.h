@@ -623,6 +623,8 @@ extern errr init_r_event_txt(FILE *fp, char *buf);
 /* init.c */
 extern void init_file_paths(char *path);
 extern void init_angband(void);
+extern cptr explode_flags[];
+extern cptr coin_types[];
 
 /* load1.c */
 extern errr rd_savefile_old(void);
@@ -640,6 +642,7 @@ extern void curse_equipment(int chance, int heavy_chance);
 /* monster1.c */
 extern void screen_roff(int r_idx);
 extern void display_roff(int r_idx);
+extern void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscient);
 
 /* monster2.c */
 extern s16b place_ghost(void);
@@ -938,6 +941,9 @@ extern void pause_line(int row);
 extern void request_command(bool shopping);
 extern bool is_a_vowel(int ch);
 extern int get_keymap_dir(char ch);
+
+/* wizard1.c */
+extern bool make_fake_artifact(object_type *o_ptr, int name1);
 
 /* xtra1.c */
 extern void day_to_date(s16b day,char *date);

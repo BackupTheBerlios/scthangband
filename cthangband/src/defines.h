@@ -33,13 +33,13 @@
 
 
 /*
- * Current version number of Cthangband: 4.1.0 (increased to 4.1.2 unofficially)
+ * Current version number of Cthangband: 4.1.0 (increased to 4.1.3 unofficially)
  */
 
 /* <<VERSION STAMP>> */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   1
-#define VERSION_PATCH   2
+#define VERSION_PATCH   3
 
 
 /*
@@ -307,7 +307,7 @@
 #define MAX_E_IDX       128     /* Max size for "e_info[]" */
 #define MAX_R_IDX   577 /* Max size for "r_info[]" */
 #define MAX_V_IDX   114  /* Max size for "v_info[]" Was 16*/
-#define MAX_DEATH_EVENTS	2048	/* Max size for death_events[] */
+#define MAX_DEATH_EVENTS	(65535/sizeof(death_event_type))	/* Max size for death_events[] */
 
 
 /*
@@ -2667,38 +2667,32 @@
 
 /* death_event types */
 
-#define DEATH_ARTEFACT 1 /* Format: artefact number */
+#define DEATH_NOTHING 1  /* No valid parameters */
 #define DEATH_MONSTER 2 /* Format: monster number, distance, min. no., max. no. */
-#define DEATH_OBJECT 3 /* Format: tval, sval, min. no., max. no., ego type */
+#define DEATH_OBJECT 3 /* Format: tval, sval, min. no., max. no., ego/artefact type, flags EGO ART */
 #define DEATH_EXPLODE 4  /* Format: radius, effect, damage dice, damage sides */
 #define DEATH_COIN 5 /* Format: type (handled as standard drop) */
-#define DEATH_NOTHING 6  /* No valid parameters */
 
 /* Death event flags */
-#define EF_ONLY_ONE	0x01
-#define EF_KNOWN	0x02
+#define EF_IF_PREV	0x20 /* Is only rolled for if the previous event happened. */
+#define EF_ONLY_ONE	0x40 /* Only one such item can be generated from a monster's death */
+#define EF_KNOWN	0x80 /* This event has been witnessed by the player */
 
-/* Parameters for the various types */
-#define EP_NUM	d_ptr->par[0]
-#define EP_EGO	d_ptr->par[1]
-#define EP_MIN	d_ptr->par[2]
-#define EP_MAX	d_ptr->par[3]
-#define EP_METHOD	d_ptr->par[0]
-#define EP_RADIUS	d_ptr->par[1]
-#define EP_DICE	d_ptr->par[2]
-#define EP_SIDES	d_ptr->par[3]
-#define EP_METAL	d_ptr->par[0]
+/* Object event flags */
+#define EI_EGO	0x04	/* DEATH_OBJECT only */
+#define EI_ART	0x08	/* DEATH_OBJECT only */
+#define EI_RAND 0x10	/* DEATH_OBJECT only */
 
 /* Error codes from err_str */
 
-#define SUCCESS 0
-#define ERR_PARSE 1
-#define ERR_VERSION 2
-#define ERR_MISSING 3
-#define ERR_ORDER 4
-#define ERR_FLAG 5
-#define ERR_DIRECTIVE 6
-#define ERR_MEMORY 7
+#define SUCCESS 0	/* No error */
+#define ERR_PARSE 1	/* parse error */
+#define ERR_VERSION 2	/* obsolete file */
+#define ERR_MISSING 3	/* missing record header */
+#define ERR_ORDER 4	/* non-sequential records */
+#define ERR_FLAG 5	/* invalid flag specification */
+#define ERR_DIRECTIVE 6	/* undefined directive */
+#define ERR_MEMORY 7	/* out of memory */
 
 /*** Macro Definitions ***/
 

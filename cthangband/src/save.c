@@ -689,6 +689,35 @@ static void wr_lore(int r_idx)
 
 
 /*
+ * Write a "death event" record
+ */
+static void wr_death(void)
+{
+	int i;
+	u16b tmp16u;
+	{
+		for (i = 0; i < MAX_DEATH_EVENTS; i++)
+		{
+			death_event_type *d_ptr = &death_event[i];
+			if (!d_ptr->r_idx) break;
+			if (i%15 == 0)
+			{
+				if (i) wr_u16b(tmp16u);
+				tmp16u = 0;
+			}
+			if (d_ptr->flags & EF_KNOWN)
+			{
+				tmp16u |= 1<<(i%15);
+			}
+		}
+		/* Terminate by setting the 16th bit. */
+		tmp16u |= 1<<15;
+		wr_u16b(tmp16u);
+	}
+}
+
+
+/*
  * Write an "xtra" record
  */
 static void wr_xtra(int k_idx)
@@ -1351,6 +1380,8 @@ static bool wr_savefile_new(void)
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) wr_lore(i);
 
+	/* Dump the death event lore */
+	if (vpatch >= 3) wr_death();
 
 	/* Dump the object memory */
 	tmp16u = MAX_K_IDX;

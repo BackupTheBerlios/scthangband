@@ -480,7 +480,7 @@ static cptr k_info_flags3[] =
 };
 
 /* A list of the flags for explosion types understood by project(). */
-static cptr explode_flags[] =
+cptr explode_flags[] =
 {
 	"ELEC",
 	"POIS",
@@ -568,31 +568,25 @@ static cptr explode_flags[] =
 /* A list of the types of death event in order */
 static cptr death_flags[] =
 {
-	"ARTEFACT",
+	"NOTHING",
 	"MONSTER",
 	"OBJECT",
 	"EXPLODE",
 	"COIN",
-	"NOTHING",
 	NULL
 };
 
-/* A list of the types of coins. */
-static cptr coin_types[] =
+/* A list of the types of coins. This can't be taken from k_info.txt because of
+ * the duplicate entries. */
+cptr coin_types[] =
 {
-	"","COPPER",
-	"","","SILVER",
-	"","","","","GOLD",
-	"","","","","","MITHRIL",
-	"ADAMANTIUM",
+	"","","COPPER", /* 482 */
+	"","","SILVER", /* 485 */
+	"","","","","GOLD", /* 490 */
+	"","","","","","MITHRIL", /* 496 */
+	"ADAMANTIUM", /* 497 */
 	NULL
 };
-
-/* If chr exists within buf, return the integer immediately after it. */
-#define readnum(chr, num) if (strchr(buf, chr)) num = atoi(strchr(buf, chr)+1); else num = 0
-
-/* Look though the x_info array (the maximum of which is at max) for a name (stored within the x_name array) contained within buf. Store in w. */
-#define readstr(x_name,x_info,max,w) for (i = max-1; i; i--) if (x_info[i].name && strstr(buf, x_name+x_info[i].name)) break; if (i) w = i
 
 /*
  * Check that the given string includes the current version number.
@@ -615,28 +609,206 @@ static errr check_version(char *buf, header *head)
 	}
 }
 
+/* A macro to indicate if a character is used to terminate a name. */
+#define okchar(char) (char == '\0' || char == ':')
+
 /*
  * Return the string within an array which also exists within a string, 
  * returning (for example) 1 for the first element.
  * Returns 0 if there isn't exactly one such string.
  */
-static s16b find_string(cptr buf, cptr *array)
+static s16b find_string(char *buf, cptr *array)
 {
-	s16b i, value = 0;
+	u16b i, value = 0;
+	cptr place = 0;
+
+	/* Find a string surrounded by ':'s. */
 	for (i = 0; array[i]; i++)
 	{
 		if (strlen(array[i]) && strstr(buf, array[i]))
 		{
-			if (value) return 0;
+			cptr tmp = strstr(buf, array[i]);
+			/* Check that this can't be merely a substring */
+			if (!okchar(*(tmp-1))) continue;
+			if (!okchar(*(tmp+strlen(array[i])))) continue;
+			/* Check that this is the only possibility. */
+			if (value)
+			{
+				msg_print("Too many suitable strings!");
+				return 0;
+			}
 			value = i + 1;
+			place = tmp;
 		}
+		}
+
+	/* None there. */
+	if (!value) return 0;
+	/* If exactly one has been found, remove it. Leave the ':'s, though. */
+	for (i = 0; i < strlen(array[value-1]); i++)
+	{
+		*(place+i)=' ';
 	}
 	return value;
 }
 
+/* A few macros for use in the 'E' case in init_r_event_txt() */
+
+/* If one copy of chr exists within buf, return the integer immediately after it. */
+#define readnum(chr) ((!strchr(buf, chr)) ? -1 : (strchr(strchr(buf, chr)+1, chr)) ? -2 : atoi(strchr(buf, chr)+1))
+
+/* A separate routine to remove used number strings */
+#define clearnum(chr) {char *s; for (s = strchr(buf, chr); *s == chr || (*s >= '0' && *s <= '9'); s++) *s=' ';}
+
+/* A routine to set x to be the number after a given letter, and then clear it from the text string. 
+ * If there are no such flags, it does nothing. If there are more than one, it returns an error.
+ * THIS ASSUMES THAT ALL VALID VALUES ARE NON-NEGATIVE
+ */
+#define readclearnum(x, chr) if (readnum(chr) == -2) \
+	{msg_format("Too many '%c's!", chr);msg_print(NULL);return ERR_PARSE;} \
+	else if (readnum(chr) > -1) {x=readnum(chr); clearnum(chr);}
+
+/*
+ * A wrapper around find_string for info files.
+ * As the text entries are stored as offsets in a single string rather than
+ * simply as an array of strings, this first turns the former into the latter.
+ * It assumes that the entries have numbers within (0,max)
+ */
+#define find_string_info(x_name, x_info, max, w) \
+{ \
+	cptr array[max]; \
+	for (i = 1; i < max; i++) \
+		if (x_info[i].name) \
+			array[i-1] = x_name+x_info[i].name; \
+		else \
+			array[i-1] = ""; \
+	array[max-1] = 0; \
+	w = find_string(buf, array); \
+}
+
+/*
+ * A wrapper around find_string for a single string.
+ */
+bool find_string_x(char *buf, cptr string)
+{
+	cptr array[2] = {string, 0};
+	return (bool)find_string(buf, array);
+}
+
+/* Find a string beginning and ending with a given character. Complain if it contains one of a set of other
+ * characters. Allow \\ to be used to force the following character to be treated as plain text.
+ *
+ * buf is the string these characters are copied from.
+ * this is the character which starts and ends this type of string.
+ * all contains the characters which start and end all types of string being searched for.
+ * output contains the text strings for the array in question. 
+ * this_size contains the current offset of the final character in output.
+ * max_size contains the maximum offset allowed.
+ * offset contains the offset for this event (should be 0 initially).
+ */
+errr do_get_string(char *buf, char this, char *all, char *output, u32b *this_size, u32b max_size, u16b *offset)
+{
+	char *q, *r, *s = buf, *t = strchr(buf, '\0'), *last;
+	bool escaped = FALSE;
+	do {
+		s = strchr(s+1, this);
+		
+	} while (s && *(s-1) == '\\');
+
+	/* No such string. */
+	if (!s) return SUCCESS;
+	
+	/* Go to the first character in the string itself. */
+	s++;
+
+	while (t > s && (*t != this || *(t-1) == '\\'))
+	{
+		t--;
+	}
+
+	/* No explicit end, so use end of buf. */
+	if (t == s) t = strchr(s, '\0');
+	
+	/* Now copy the string to temp, being careful of \\s and rogue termination characters. */
+	for (r = q = s, last = t; r < t; r++, q++)
+	{
+		/* Copy the character after the \\ and reset the flag. */
+		if (escaped)
+		{
+			*q = *r;
+			escaped = FALSE;
+		}
+		/* Accept anything from the character after a \\, but not the \\ itself. */
+		else if (*r == '\\')
+		{
+			q--;
+			escaped = TRUE;
+		}
+		/* Normal parsing of termination characters depends on which string is parsed first, 
+		 * so reject all of them. We accept this termination character because it's unambiguous. */
+		else if (strchr(all, *r) && *r != this)
+		{
+			printf("Unexpected termination character!");
+			return ERR_PARSE;
+		}
+		/* Everything else is fine. */
+		else
+		{
+			if (q != r) *q = *r;
+		}
+	}
+	/* Make s the string of interest for now. */
+	*q = '\0';
+	if (max_size-(*this_size) < strlen(s))
+	{
+		msg_print("Not enough space for string!");
+		return ERR_MEMORY;
+	}
+	/* Advance and save the index. */
+	if (!(*offset)) (*offset) = ++(*this_size);
+	/* Append characters to the text. */
+	strcpy(output + (*this_size), s);
+
+	/* Advance the index. */
+	(*this_size) += strlen(s);
+
+	/* Remove string from the buffer. */
+	for (r = s-1; r <= t; r++)
+	{
+		*r=' ';
+	}
+	return SUCCESS;
+}
+
+
+/* Clear the \\ characters from a string */
+void clear_escapes(char *buf)
+{
+	char *q, *r;
+	bool escaped = FALSE;
+	/* Remove \\ characters from the string. */
+	for (r = q = buf; *r != '\0'; q++, r++)
+	{
+		if (escaped)
+		{
+			*q = *r;
+			escaped = FALSE;
+		}
+		else if (*r == '\\')
+		{
+			q--;
+			escaped = TRUE;
+		}
+		else
+		{
+			if (q != r) *q = *r;
+		}
+	}
+	*q = '\0';
+}
+
 /*
  * Initialize the "death_event" array, by parsing part of the "r_info.txt" file
- * Note that unparsed characters are ignored, rather than producing an error. 
  */
 errr init_r_event_txt(FILE *fp, char *buf)
 {
@@ -694,90 +866,338 @@ errr init_r_event_txt(FILE *fp, char *buf)
 
 			case 'E': /* (Death) Events */
 			{
-				int i,j;
-				/* Find an unused event slot */
-				if (++error_idx >= MAX_DEATH_EVENTS) return ERR_MEMORY;
-				d_ptr = &death_event[error_idx];
+				int i;
+				u16b temp_offset = 0;
 
-				/* Look for a text string to avoid problems with keywords within it. */
-				if (strchr(buf, '"'))
+				/* Nothing can be done without a valid monster */
+				if (!r_idx)
 				{
-					cptr r, s = strchr(buf, '"') + 1;
-					/* Find end of string. */
-					cptr t = strrchr(s, '"');
-					/* Use the end of the line without an explicit ". */
-					if (!t) t = s + strlen(s);
-					/* There should be space. */
-					if (t - s + event_head->text_size > fake_text_size)
-					{
-						printf("%ld > %ld", t-s+event_head->text_size, fake_text_size);
-						return ERR_MEMORY;
-					}
-					/* Advance and save the text index. */
-					if (!d_ptr->text) d_ptr->text = ++event_head->text_size;
-					/* Append characters to the text. */
-					strncpy(event_text + event_head->text_size, s, t-s);
-					/* Remove string from the buffer. */
-					for (r = s; r <= t; r++)
-						*r=' ';
-					/* Advance the index. */
-					event_head->text_size += t - s;
+					msg_print("No r_idx specified!");
+					return ERR_MISSING;
 				}
 
+				/* Find an unused event slot */
+				if ((unsigned)(++error_idx) >= MAX_DEATH_EVENTS)
+					{
+					msg_print("Too many events!");
+						return ERR_MEMORY;
+					}
+				d_ptr = &death_event[error_idx];
+
+
+				/* Look for a text string to avoid problems with keywords within it. 
+				 * To avoid conflicts with other arbitrary text, a \\ before a character
+				 * means that it can't terminate a string.
+				 * This is the string which is printed when an event occurs.
+				 */
+				i = do_get_string(buf, '\"', "^\"", event_text, &(event_head->text_size), fake_text_size, &(d_ptr->text));
+				if (i) return i;
+				/* This is a second text string, the use of which depends on the type of event.
+				 * It currently only supplies a name for a randart. We haven't yet found out
+				 * what type of event it is, so we save the offset to a temporary variable to
+				 * deal with later.
+				 */
+				{
+					u32b temp_name_size = event_head->name_size;
+					i = do_get_string(buf, '^', "^\"", event_name, &temp_name_size, fake_name_size, &temp_offset);
+					if (i) return i;
+					event_head->name_size = (u16b)temp_name_size;
+				}
+				/* Now the text strings have been removed, we remove the \\s from the file. Note that, if a name
+				 * contains a \\ character, this must be listed as \\. Similarly, a " must be listed as \" and
+				 * a ^ as \^. There should hopefully not be many of these.
+				 */
+				clear_escapes(buf);
+
+				/* Save the monster index */
+				d_ptr->r_idx = r_idx;
 
 				/* Now find the name of an event type. */
 				d_ptr->type = find_string(buf, death_flags);
 
-				/* Nothing can be done without a valid monster */
-				if (!r_idx) return ERR_MISSING;
+				/* Check for the ONLY_ONE flag. */
+				if (find_string_x(buf, "ONLY_ONE")) d_ptr->flags |= EF_ONLY_ONE;
 
-				d_ptr->r_idx = r_idx;
+				if (find_string_x(buf, "IF_PREV")) d_ptr->flags |= EF_IF_PREV;
 
+				/* A single ONLY_ONE flag causes no problems, but having
+				 * an IF_PREV flag without a previous entry with the same
+				 * r_idx would be bad. */
 
-				/* Look for flags compatible with the event type */
-				if (strchr(buf, 'p')) d_ptr->num = atoi(strchr(buf, 'p')+1);
-				if (strchr(buf, '/')) d_ptr->denom = atoi(strchr(buf, '/')+1);
-			if (strstr(buf, "ONLY_ONE")) d_ptr->flags |= EF_ONLY_ONE;
+				if (d_ptr->flags & EF_IF_PREV && (error_idx == 0 ||
+				d_ptr->r_idx != (d_ptr-1)->r_idx))
+				{
+					msg_print("IF_PREV without previous entry.");
+					return ERR_FLAG;
+				}
+
+				/* Look for flags compatible with the event type
+				 * First parse arbitrary text strings to avoid having to
+				 * deal with keywords within them.
+				 *
+				 * Then look for source-based strings (which should be
+				 * capitalised). These will not generally have numerical
+				 * alternatives.
+				 *
+				 * Then look for info-based strings. These will always
+				 * have numerical alternatives to prevent confusion between
+				 * them, and between them and source-based strings.
+				 *
+				 * Finally, look for other keyword-based parameters. These
+				 * will use a single character to indicate them, so they
+				 * must be dealt with after all text strings that might
+				 * include such characters.
+				 */
+
 				switch (d_ptr->type)
 			{
-					case DEATH_ARTEFACT:
-					readnum('n', EP_NUM);
-					readstr(a_name, a_info, MAX_A_IDX, EP_NUM);
-					break;
-					case DEATH_MONSTER:  
-					readnum('n', EP_NUM);
-					readstr(r_name, r_info, MAX_R_IDX, EP_NUM);
-					readnum('r', EP_RADIUS);
-					readnum('(', EP_MIN);
-					readnum('-', EP_MAX);
-					if (!EP_NUM || EP_NUM >= MAX_R_IDX) return ERR_FLAG;
-					break;
 					case DEATH_OBJECT:
-					readnum('t', i);
-					readnum('s', j);
-					EP_NUM = lookup_kind(i, j);
-					readstr(k_name, k_info, MAX_K_IDX, EP_NUM);
-					readnum('e', EP_EGO);
-					readstr(e_name, e_info, MAX_E_IDX, EP_EGO);
-					readnum('(', EP_MIN);
-					readnum('-', EP_MAX);
-					if (!EP_NUM) return ERR_FLAG;
+					{
+						make_item_type *i_ptr = &d_ptr->par.item;
+						if (find_string_x(buf, "ARTEFACT")) i_ptr->flags |= EI_ART;
+						if (find_string_x(buf, "EGO")) i_ptr->flags |= EI_EGO;
+						
+						if (find_string_x(buf, "RANDOM"))
+						{
+							i_ptr->flags |= EI_RAND;
+						}
+						else if (i_ptr->flags & EI_ART)
+						{
+							find_string_info(a_name, a_info, MAX_A_IDX, i_ptr->x_idx);
+						}
+#ifdef ALLOW_EGO_DROP
+						else if (i_ptr->flags & EI_EGO)
+						{
+							find_string_info(e_name, e_info, MAX_E_IDX, i_ptr->x_idx);
+						}
+#endif
+						find_string_info(k_name, k_info, MAX_K_IDX, i_ptr->k_idx);
+						if (lookup_kind(readnum('t'), readnum('s')))
+						{
+							byte t = 0,s = 0;
+							readclearnum(t, 't');
+							readclearnum(s, 's');
+							i_ptr->k_idx = lookup_kind(t,s);
+						}
+						if (i_ptr->flags & EI_ART)
+						{
+							readclearnum(i_ptr->x_idx, 'a');
+						}
+#ifdef ALLOW_EGO_DROP
+						else if (i_ptr->flags & EI_EGO)
+						{
+							readclearnum(i_ptr->x_idx, 'e');
+						}
+#endif
+						readclearnum(i_ptr->min, '(');
+						readclearnum(i_ptr->max, '-');
+
+						/* Add the name of a randart, if provided. */
+						if (i_ptr->flags & EI_RAND && i_ptr->flags & EI_ART)
+						{
+							if (temp_offset)
+							{
+								i_ptr->name = temp_offset;
+								temp_offset = 0;
+							}
+						}
+						/* Interpret no number parameter as being 1. */
+						if (i_ptr->min == 0 && i_ptr->max == 0)
+						{
+							i_ptr->max=i_ptr->min=1;
+						}
+
+						/* Ensure that a possible x_idx field has been created for
+						 * any non-random artefact or ego item */
+						if (i_ptr->flags & EI_ART && ~i_ptr->flags & EI_RAND)
+						{
+							artifact_type *a_ptr = &a_info[i_ptr->x_idx];
+							/* Ensure this is a real artefact. */
+							if (!a_ptr->name)
+							{
+								msg_print("No valid artefact specified.");
+								return ERR_PARSE;
+							}
+							/* Take an unstated k_idx to be that of the artefact. */
+							else if (!i_ptr->k_idx)
+							{
+								i_ptr->k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+							}
+							/* Ensure that any stated k_idx is the right one. */
+							else if (k_info[i_ptr->k_idx].tval != a_ptr->tval ||
+								k_info[i_ptr->k_idx].sval != a_ptr->sval)
+							{
+msg_format("(%d,%d) != (%d,%d) ", k_info[i_ptr->k_idx].tval,
+ k_info[i_ptr->k_idx].sval, a_ptr->tval, a_ptr->sval);
+								msg_print("Incompatible object and artefact.");
+								return ERR_PARSE;
+							}
+						}
+#ifdef ALLOW_EGO_DROP
+						else if (i_ptr->flags & EI_EGO && ~i_ptr->flags & EI_RAND)
+						{
+							ego_item_type *e_ptr = &e_info[i_ptr->x_idx];
+							/* Ensure this is a real ego item. */
+							if (!e_ptr->name)
+							{
+								msg_print("No valid ego type specified.");
+								return ERR_PARSE;
+							}
+							/* Ensure that the ego type is possible for this k_idx. */
+						}
+#endif
+
+						/* Ensure that a possible k_idx field has been created. */
+						if (k_info[i_ptr->k_idx].name == 0)
+						{
+							msg_print("No valid object specified.");
+							return ERR_PARSE;
+						}
+
+						/* Ensure that RAND has not been used without a sensible thing
+						 * to randomise. */
+						if (i_ptr->flags & EI_RAND && ~i_ptr->flags & (EI_ART
+#ifdef ALLOW_EGO_DROP
+						| EI_EGO
+#endif
+						))
+						{
+							msg_print("Nothing valid to randomise.");
+							return ERR_PARSE;
+						}
+						
+
+						/* Prevent badly formatted ranges. */
+						if (i_ptr->min > i_ptr->max || !i_ptr->min)
+						{
+							msg_print("Bad number parameter.");
+							return ERR_FLAG;
+						}
 					break;
+					}
+					case DEATH_MONSTER:  
+					{
+						make_monster_type *i_ptr = &d_ptr->par.monster;
+						i_ptr->strict = find_string_x(buf, "STRICT");
+						find_string_info(r_name, r_info, MAX_R_IDX, i_ptr->num);
+						readclearnum(i_ptr->num, 'n');
+						readclearnum(i_ptr->radius, 'r');
+						readclearnum(i_ptr->min, '(');
+						readclearnum(i_ptr->max, '-');
+
+						/* Interpret no number parameter as being 1. */
+						if (i_ptr->min == 0 && i_ptr->max == 0)
+						{
+							i_ptr->max=i_ptr->min=1;
+						}
+
+						/* As the original square still has the original monster
+						 * on it, parse a missing or 0 parameter as 1.
+						 * Should there be a way of using the original
+						 * square if requested? */
+						if (!i_ptr->radius)
+						{
+							i_ptr->radius = 1;
+						}
+
+						/* Prevent badly formatted ranges. */
+						if (i_ptr->min > i_ptr->max || !i_ptr->min)
+						{
+							msg_print("Bad number parameter.");
+							return ERR_FLAG;
+						}
+
+						/* Prevent non-existant monster references. */
+						if (!i_ptr->num || i_ptr->num >= MAX_R_IDX)
+						{
+							msg_print("No monster specified!");
+							return ERR_FLAG;
+						}
+					break;
+					}
 					case DEATH_EXPLODE:
-					readnum('r', EP_RADIUS);
-					readnum('(', EP_DICE);
-					readnum('d', EP_SIDES);
-					EP_METHOD = find_string(buf, explode_flags);
+					{
+						make_explosion_type *i_ptr = &d_ptr->par.explosion;
+						i_ptr->method = find_string(buf, explode_flags);
+						readclearnum(i_ptr->radius,'r');
+						readclearnum(i_ptr->dice,'(');
+						readclearnum(i_ptr->sides,'d');
+						
+						/* Require an explosion type */
+						if (!i_ptr->method)
+						{
+							msg_print("No method indicated.");
+							return ERR_FLAG;
+						}
+						/* Allow (d30) or (100) damage formats,
+						 * but not no damage indicator at all. */
+						if (!i_ptr->dice && !i_ptr->sides)
+						{
+							msg_print("No damage indicator.");
+							return ERR_FLAG;
+						}
+						else if (!i_ptr->dice)
+						{
+							i_ptr->dice = 1;
+						}
+						else if (!i_ptr->sides)
+						{
+							i_ptr->sides = 1;
+						}
+					}
 					break;
 					case DEATH_COIN:
-					EP_METAL = find_string(buf, coin_types);
-					if (EP_METAL == -1) return ERR_FLAG;
+					{
+						make_coin_type *i_ptr = &d_ptr->par.coin;
+						i_ptr->metal = find_string(buf, coin_types)-1;
+						if (i_ptr->metal == -1)
+						{
+							msg_print("No coin type!");
+							return ERR_FLAG;
+						}
 					break;
-					case DEATH_NOTHING:
+					}
+					case DEATH_NOTHING: /* No special parameters */
 					break;
-					default: /* i.e. no valid flag */
+					default: /* i.e. no valid type specification */
+					msg_print("No event type specified!");
 					return ERR_MISSING;
 			}
+				/* Fill in the other general flags now the text
+				 * strings have all been parsed. */
+				readclearnum(d_ptr->num, 'p');
+				readclearnum(d_ptr->denom,'/');
+
+				/* Parse a missing probability entry as 1/1. */
+				if (!d_ptr->num && !d_ptr->denom)
+				{
+					d_ptr->num=d_ptr->denom=1;
+				}
+
+				/* Complain about p0/x formats or probabilities over 1. */
+				if (!d_ptr->num || d_ptr->num > d_ptr->denom)
+				{
+					msg_print("Bad probability specification.");
+					return ERR_PARSE;
+				}
+				/* The type-specific text field should have either been reset, or not
+				 * set in the first place. */
+				if (temp_offset)
+				{
+					msg_print("Meaningless text field found.");
+					return ERR_PARSE;
+				}
+
+				/* Finally check that everything has been read. */
+				{
+					cptr s;
+					for (s = buf+2; *s != '\0'; s++)
+						if (!strchr(": )\"", *s))
+						{
+							msg_print("Uninterpreted characters!");
+							return ERR_PARSE;
+						}
+				}
 				break;
 		}		
 			/* Ignore irrelevant lines */
