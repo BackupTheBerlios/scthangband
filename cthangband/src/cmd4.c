@@ -2982,7 +2982,7 @@ void do_cmd_save_screen(void)
  * A simple function to include a coloured symbol in a text file for
  * show_file().
  */
-static cptr get_symbol_aux(byte a, char c)
+cptr get_symbol_aux(byte a, char c)
 {
 	/* Hack - show_file() does not display unprintable characters,
 	 * so replace them with something it will display. */

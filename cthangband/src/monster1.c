@@ -1664,6 +1664,7 @@ void roff_top(int r_idx)
 
 	byte		a1, a2;
 	char		c1, c2;
+	cptr		s1, s2;
 
 
 	/* Access the chars */
@@ -1674,7 +1675,11 @@ void roff_top(int r_idx)
 	a1 = r_ptr->d_attr;
 	a2 = r_ptr->x_attr;
 
-	/* Hack -- fake monochrome */
+	/* Format the above into a string mc_roff() understands. */
+ 	s1 = string_make(get_symbol_aux(a1, c1));
+	s2 = string_make(get_symbol_aux(a2, c2));
+
+ 	/* Hack -- fake monochrome */
 	if (!use_color) a1 = TERM_WHITE;
 	if (!use_color) a2 = TERM_WHITE;
 
@@ -1689,9 +1694,11 @@ void roff_top(int r_idx)
 	Term_gotoxy(0, 0);
 
 	/* Dump the name */
-	mc_roff(format("%^s (" CC_PREFIX "%c%c" CC_PREFIX "w)/(" CC_PREFIX "%c%c"
-		CC_PREFIX "w):", monster_desc_aux(0, r_ptr, 1, MDF_DEF ),
-		a1, c1, a2, c2));
+	mc_roff(format("%^s (%s)/(%s):", monster_desc_aux(0, r_ptr, 1, MDF_DEF ),
+		s1, s2));
+
+	FREE(s1);
+	FREE(s2);
 }
 
 
