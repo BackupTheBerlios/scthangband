@@ -1618,7 +1618,7 @@ static void display_player_sides(bool missile)
 
 	/* Dump the damage per round */
 	put_str("Damage/Round", 13, 1);
-	temp = format("%d,%d", damage/60, damage%60);
+	temp = format("%ld,%ld", damage/60, damage%60);
 	c_put_str(TERM_L_BLUE, temp, 13, col-strlen(temp));
 
 	prt_nums("Hit Points:", 9, 52, 76, p_ptr->chp, p_ptr->mhp);
@@ -1837,10 +1837,10 @@ static void display_player_various(void)
 
 
 	put_str("+ To AC:", 16, 55);
-	put_str(format("%6ld", p_ptr->dis_to_a), 16, 69);
+	put_str(format("%6d", p_ptr->dis_to_a), 16, 69);
 
 	put_str("Base AC:", 17, 55);
-	put_str(format("%6ld", p_ptr->dis_ac), 17, 69);
+	put_str(format("%6d", p_ptr->dis_ac), 17, 69);
 
 	put_str("Infra-Vision:", 19, 55);
 	put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);

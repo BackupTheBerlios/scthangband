@@ -224,7 +224,7 @@ static errr path_parse(char *buf, uint max, cptr file)
 	if (u == s) u = getlogin();
 
 	/* Extract a user name */
-	else if (s) u = format("%.*", s-u, u);
+	else if (s) u = format("%.*s", s-u, u);
 
 	/* Look up a user (or "current" user) */
 	if (u) pw = getpwnam(u);

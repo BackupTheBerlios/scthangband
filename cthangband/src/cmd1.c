@@ -1808,7 +1808,7 @@ static bool pattern_seq(byte c_y, byte c_x, byte n_y,byte  n_x)
                     break;
                 default:
                     if (cheat_wzrd)
-                        msg_format("Funny Pattern walking, %d.", cave[c_y][c_x]);
+                        msg_format("Funny Pattern walking, %d.", cave[c_y][c_x].feat);
                     return TRUE; /* Goof-up */
             }
             if ((cave[n_y][n_x].feat == ok_move) ||

@@ -3094,7 +3094,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		{
 			weapon_stats(o_ptr, 15, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
 				"and", board, j);
 		}
 
@@ -3107,7 +3107,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		{
 			weapon_stats(o_ptr, 5, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
 				"and", board, j);
 		}
 
@@ -3124,7 +3124,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
 				"and", board, j);
 		}
 		/* Calculate brands */
@@ -3138,7 +3138,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %d,%d damage via", dam/60, dam%60),
+			do_list_flags(format("It causes %ld,%ld damage via", dam/60, dam%60),
 				"and", board, j);
 		}
 		/* Calculate x2 slays */
@@ -3149,7 +3149,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 		{
 			weapon_stats(o_ptr, 2, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+			do_list_flags(format("It causes %ld,%ld damage to", dam/60, dam%60),
 				"and", board, j);
 		}
 
@@ -3163,7 +3163,7 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 			else if (dam) board[j++] = "all monsters";
 			if (j)
 			{
-				do_list_flags(format("It causes %d,%d damage to", dam/60,
+				do_list_flags(format("It causes %ld,%ld damage to", dam/60,
 					dam%60), "and", board, j);
 			}
 		}
