@@ -560,11 +560,8 @@ static bool showfile(cptr name, byte col)
 	FILE *fp;
 	char buf[1024];
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, name);
-
 	/* Check that the filename refers to a real file */
-	if (!(fp = my_fopen(buf, "r"))) return FALSE;
+	if (!(fp = my_fopen_path(ANGBAND_DIR_FILE, name, "r"))) return FALSE;
 
 	/* Dump the file to the screen */
 	while (0 == my_fgets(fp, buf, 1024))
@@ -1169,14 +1166,11 @@ static errr macro_dump(cptr fname)
 	char buf[1024];
 
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
 	/* Append to the file */
-	fff = my_fopen(buf, "a");
+	fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
 
 	/* Failure */
 	if (!fff) return (-1);
@@ -1334,14 +1328,11 @@ static errr keymap_dump(cptr fname)
 	int mode = keymap_mode();
 
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
 	/* Append to the file */
-	fff = my_fopen(buf, "a");
+	fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
 
 	/* Failure */
 	if (!fff) return (-1);
@@ -2146,13 +2137,13 @@ void do_cmd_visuals(void)
 			if (!askfor_aux(tmp, 70)) continue;
 
 			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+			strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_USER, tmp);
 
 			/* Drop priv's */
 			safe_setuid_drop();
 
 			/* Append to the file */
-			fff = my_fopen(buf, "a");
+			fff = my_fopen_path(ANGBAND_DIR_USER, tmp, "a");
 
 			/* Grab priv's */
 			safe_setuid_grab();
@@ -2402,8 +2393,6 @@ void do_cmd_colors(void)
 
 	char tmp[160];
 
-	char buf[1024];
-
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -2483,14 +2472,11 @@ void do_cmd_colors(void)
 			/* Get a filename */
 			if (!askfor_aux(tmp, 70)) continue;
 
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
 			/* Drop priv's */
 			safe_setuid_drop();
 
 			/* Append to the file */
-			fff = my_fopen(buf, "a");
+			fff = my_fopen_path(ANGBAND_DIR_USER, tmp, "a");
 
 			/* Grab priv's */
 			safe_setuid_grab();
@@ -2760,14 +2746,9 @@ void do_cmd_load_screen(void)
 
 	FILE *fff;
 
-	char buf[1024];
-
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
 
 	/* Append to the file */
-	fff = my_fopen(buf, "r");
+	fff = my_fopen_path(ANGBAND_DIR_USER, "dump.txt", "r");
 
 	/* Oops */
 	if (!fff) return;
@@ -2786,6 +2767,8 @@ void do_cmd_load_screen(void)
 	/* Load the screen */
 	for (y = 0; okay && (y < 24); y++)
 	{
+		char buf[1024];
+
 		/* Get a line of data */
 		if (my_fgets(fff, buf, 1024)) okay = FALSE;
 
@@ -2852,9 +2835,6 @@ void do_cmd_save_screen(void)
 		char buf[1024];
 
 
-		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
-
 		/* File type is "TEXT" */
 		FILE_TYPE(FILE_TYPE_TEXT);
 
@@ -2862,7 +2842,7 @@ void do_cmd_save_screen(void)
 		safe_setuid_drop();
 
 		/* Append to the file */
-		fff = my_fopen(buf, "w");
+		fff = my_fopen_path(ANGBAND_DIR_USER, "dump.txt", "w");
 
 		/* Hack -- grab permissions */
 		safe_setuid_grab();

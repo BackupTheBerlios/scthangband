@@ -553,7 +553,6 @@ s16b place_ghost(void)
 	bool err = FALSE;
     
 	char                name[100];
-	char                tmp[1024];
 
 	/* Hack -- no ghosts in the town */
 	if (!dun_level) return (FALSE);
@@ -580,11 +579,8 @@ s16b place_ghost(void)
 	}
 
 
-	/* Choose a bones file */
-	sprintf(tmp, "%s%sbone.%03d", ANGBAND_DIR_BONE, PATH_SEP, level);
-
-	/* Open the bones file */
-	fp = my_fopen(tmp, "r");
+	/* Choose and open the bones file */
+	fp = my_fopen_path(ANGBAND_DIR_BONE, format("bone.%03d", level), "r");
 
 	/* No bones file to use */
 	if (!fp) return (FALSE);

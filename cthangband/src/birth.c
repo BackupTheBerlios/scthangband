@@ -961,7 +961,6 @@ static int change_points_by_stat(s16b from, s16b to)
 static errr save_stats(void)
 {
 	FILE *fff;
-	char buf[1024];
 	byte i,l;
 
 	/* Paranoia - check that there's something to save (the default entry does not count). */
@@ -970,14 +969,11 @@ static errr save_stats(void)
 	/* Drop priv's */
 	safe_setuid_drop();
 
-	/* Find user-loc.prf. */
-	path_build(buf, 1024, ANGBAND_DIR_USER, "user-loc.prf");
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
 	/* Append to the file */
-	fff = my_fopen(buf, "a");
+	fff = my_fopen_path(ANGBAND_DIR_USER, "user-loc.prf", "a");
 
 	/* Failure */
 	if (!fff) return ERR_PARSE;

@@ -225,18 +225,11 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
  */
 static FILE *my_fopen_wiz(cptr fname)
 {
-	char buf[1024];
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
-	/* Open the file */
-	fff = my_fopen(buf, "w");
-
-	return fff;
+	/* Build and open the filename */
+	return my_fopen_path(ANGBAND_DIR_USER, fname, "w");
 }
 
 /*

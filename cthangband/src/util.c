@@ -313,7 +313,7 @@ static errr path_temp(char *buf, int max)
  * Note that this function yields a path which must be "parsed"
  * using the "parse" function above.
  */
-errr path_build(char *buf, int max, cptr path, cptr file)
+static void path_build(char *buf, uint max, cptr path, cptr file)
 {
 	/* Special file */
 	if (file[0] == '~')
@@ -344,9 +344,8 @@ errr path_build(char *buf, int max, cptr path, cptr file)
 	}
 
 	/* Success */
-	return (0);
+	return;
 }
-
 
 /*
  * Hack -- replacement for "fopen()"
@@ -380,6 +379,32 @@ errr my_fclose(FILE *fff)
 
 
 #endif /* ACORN */
+
+/*
+ * Process a path_build() function as a vstrnfmt_aux function.
+ *
+ * Format: 
+ * "%v", path_build_f2, (cptr)path, (cptr)file
+ */
+void path_build_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	cptr path = va_arg(*vp, cptr);
+	cptr file = va_arg(*vp, cptr);
+
+	path_build(buf, max, path, file);
+}
+
+/*
+ * Open and return a file at a given path, which may be converted to suit
+ * the system.
+ * NB This does not convert the FILE_TYPE used in the Macintosh port.
+ */
+FILE *my_fopen_path(cptr path, cptr file, cptr mode)
+{
+	char buf[1024];
+	strnfmt(buf, 1024, "%v", path_build_f2, path, file);
+	return my_fopen(buf, mode);
+}
 
 /*
  * Create a temporary file, store its name in buf, open it, and return a

@@ -154,7 +154,7 @@ static void create_user_dir(void)
 	mkdir(dirpath, 0700);
 
 	/* Build the path to the variant-specific sub-directory */
-	path_build(subdirpath, 1024, dirpath, GAME_NAME);
+	strnfmt(subdirpath, 1024, "%v", path_build_f2, dirpath, GAME_NAME);
 
 	/* Create the directory */
 	mkdir(subdirpath, 0700);

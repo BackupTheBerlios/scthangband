@@ -902,11 +902,8 @@ errr process_pref_file(cptr name)
 
 	u16b sf_flags = 0;
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, name);
-
 	/* Open the file */
-	fp = my_fopen(buf, "r");
+	fp = my_fopen_path(ANGBAND_DIR_USER, name, "r");
 
 	/* No such file */
 	if (!fp) return (-1);
@@ -1055,11 +1052,8 @@ errr check_time_init(void)
 	char	buf[1024];
 
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "time.txt");
-
 	/* Open the file */
-	fp = my_fopen(buf, "r");
+	fp = my_fopen_path(ANGBAND_DIR_FILE, "time.txt", "r");
 
 	/* No file, no restrictions */
 	if (!fp) return (0);
@@ -1179,11 +1173,8 @@ errr check_load_init(void)
 	char	thishost[MAXHOSTNAMELEN+1];
 
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "load.txt");
-
 	/* Open the "load" file */
-	fp = my_fopen(buf, "r");
+	fp = my_fopen_path(ANGBAND_DIR_FILE, "load.txt", "r");
 
 	/* No file, no restrictions */
 	if (!fp) return (0);
@@ -3347,7 +3338,7 @@ errr file_character(cptr name, bool UNUSED full)
 	safe_setuid_drop();
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, name);
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_USER, name);
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -3831,7 +3822,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 		sprintf(h_ptr->caption, "Help file '%s'", name);
 
 		/* Build the filename */
-		path_build(h_ptr->path, 1024, ANGBAND_DIR_HELP, name);
+		strnfmt(h_ptr->path, 1024, "%v", path_build_f2, ANGBAND_DIR_HELP, name);
 
 		/* Grab permission */
 		safe_setuid_grab();
@@ -3850,7 +3841,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 		sprintf(h_ptr->caption, "Info file '%s'", name);
 
 		/* Build the filename */
-		path_build(h_ptr->path, 1024, ANGBAND_DIR_INFO, name);
+		strnfmt(h_ptr->path, 1024, "%v", path_build_f2, ANGBAND_DIR_INFO, name);
 
 		/* Grab permission */
 		safe_setuid_grab();
@@ -3869,7 +3860,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 		sprintf(h_ptr->caption, "File '%s'", name);
 
 		/* Build the filename */
-		path_build(h_ptr->path, 1024, ANGBAND_DIR_FILE, name);
+		strnfmt(h_ptr->path, 1024, "%v", path_build_f2, ANGBAND_DIR_FILE, name);
 
 		/* Grab permission */
 		safe_setuid_grab();
@@ -4494,7 +4485,7 @@ void process_player_name(void)
 #endif /* VM */
 
 		/* Build the filename */
-		path_build(savefile, 1024, ANGBAND_DIR_SAVE, temp);
+		strnfmt(savefile, 1024, "%v", path_build_f2, ANGBAND_DIR_SAVE, temp);
 	}
 }
 
@@ -4722,8 +4713,6 @@ static void make_bones(void)
 {
 	FILE                *fp;
 
-	char                str[1024];
-
 
 	if ((p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_ZOMBIE) ||
 		(p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_VAMPIRE))
@@ -4738,16 +4727,11 @@ static void make_bones(void)
 		/* Ignore people who die in town */
 		if (dun_level)
 		{
-			char tmp[128];
-
 			/* XXX XXX XXX "Bones" name */
-			sprintf(tmp, "bone.%03d", dun_level);
-
-			/* Build the filename */
-			path_build(str, 1024, ANGBAND_DIR_BONE, tmp);
+			cptr tmp = format(tmp, "bone.%03d", dun_level);
 
 			/* Attempt to open the bones file */
-			fp = my_fopen(str, "r");
+			fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "r");
 
 			/* Close it right away */
 			if (fp) my_fclose(fp);
@@ -4759,7 +4743,7 @@ static void make_bones(void)
 			FILE_TYPE(FILE_TYPE_TEXT);
 
 			/* Try to write a new "Bones File" */
-			fp = my_fopen(str, "w");
+			fp = my_fopen_path(ANGBAND_DIR_BONE, tmp, "w");
 
 			/* Not allowed to write it?  Weird. */
 			if (!fp) return;
@@ -4815,10 +4799,10 @@ static void print_tomb(void)
 	Term_clear();
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "dead.txt");
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_FILE, "dead.txt");
 
 	/* Open the News file */
-	fp = my_fopen(buf, "r");
+	fp = my_fopen_path(ANGBAND_DIR_FILE, "dead.txt", "r");
 
 	/* Dump */
 	if (fp)
@@ -5295,7 +5279,7 @@ void display_scores(int from, int to)
 	char buf[1024];
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_APEX, "scores.raw");
 
 	/* Open the binary high score file, for reading */
 	highscore_fd = fd_open(buf, O_RDONLY);
@@ -5334,7 +5318,7 @@ void template_score(int ptemplate)
 	sprintf(tmp_str,"The Masters of the %s Profession",template_info[ptemplate].title);
 	prt(tmp_str,5,0);
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_APEX, "scores.raw");
 
 	highscore_fd = fd_open(buf, O_RDONLY);
 
@@ -5406,7 +5390,7 @@ void race_score(int race_num)
 	prt(tmp_str, 5, 15);
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_APEX, "scores.raw");
 
 	highscore_fd = fd_open(buf, O_RDONLY);
 
@@ -5532,9 +5516,9 @@ static void make_record(high_score *score)
 	cptr dun_str;
 	int dun;
 
-	path_build(str, 1024, ANGBAND_DIR_APEX, "logfile.txt");
+	strnfmt(str, 1024, "%v", path_build_f2, ANGBAND_DIR_APEX, "logfile.txt");
 
-	fp = my_fopen(str, "a");
+	fp = my_fopen_path(ANGBAND_DIR_APEX, "logfile.txt", "a");
 
 	/* Silently give up for now. */
 	if (!fp)
@@ -5818,7 +5802,7 @@ void close_game(void)
 
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_APEX, "scores.raw");
 
 	/* Open the high score file, for reading/writing */
 	highscore_fd = fd_open(buf, O_RDWR);
@@ -5925,11 +5909,8 @@ static errr get_rnd_line(const char * file_name, uint len, char * output)
     /* test hack */
     if (cheat_wzrd && cheat_xtra) msg_print(file_name);
 
-	/* Build the filename */
-    path_build(buf, 1024, ANGBAND_DIR_FILE, file_name);
-
 	/* Open the file */
-	fp = my_fopen(buf, "r");
+	fp = my_fopen_path(ANGBAND_DIR_FILE, file_name, "r");
 
     /* Failed */
     if (!fp) return (-1);

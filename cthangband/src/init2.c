@@ -213,7 +213,7 @@ static errr check_modification_date(int fd, cptr template_file)
 	struct stat txt_stat, raw_stat;
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_EDIT, template_file);
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_EDIT, template_file);
 
 	/* Access stats on text file */
 	if (stat(buf, &txt_stat))
@@ -394,7 +394,7 @@ static void init_info(header *head)
 	if (~rebuild_raw & 1<<(head->header_num))
 	{
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+		strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_DATA, format("%s.raw", filename));
 
 		/* Attempt to open the "raw" file */
 		fd = fd_open(buf, O_RDONLY);
@@ -441,15 +441,14 @@ static void init_info(header *head)
 	 * r_event.txt. */
 	if (head->header_num == EVENT_HEAD)
 	{
-		path_build(buf, 1024, ANGBAND_DIR_EDIT, "r_info.txt");
+		fp = my_fopen_path(ANGBAND_DIR_EDIT, "r_info.txt", "r");
 	}
 	else
 	{
-		path_build(buf, 1024, ANGBAND_DIR_EDIT, format("%s.txt", filename));
+		fp = my_fopen_path(ANGBAND_DIR_EDIT, format("%s.txt", filename), "r");
 	}
 
 	/* Open the file */
-	fp = my_fopen(buf, "r");
 
 	/* Parse it */
 	if (!fp) quit(format("Cannot open '%s.txt' file.", filename));
@@ -470,7 +469,7 @@ static void init_info(header *head)
 	FILE_TYPE(FILE_TYPE_DATA);
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_DATA, format("%s.raw", filename));
 
 
 	/* Attempt to open the file */
@@ -540,7 +539,7 @@ static void init_info(header *head)
 	/*** Load the binary image file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_DATA, format("%s.raw", filename));
 
 	/* Attempt to open the "raw" file */
 	fd = fd_open(buf, O_RDONLY);
@@ -1625,7 +1624,7 @@ void init_angband(void)
 	/*** Verify the "news" file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_FILE, "news.txt");
 
 	/* Attempt to open the file */
 	fd = fd_open(buf, O_RDONLY);
@@ -1651,11 +1650,8 @@ void init_angband(void)
 	/* Clear screen */
 	Term_clear();
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
-
 	/* Open the News file */
-	fp = my_fopen(buf, "r");
+	fp = my_fopen_path(ANGBAND_DIR_FILE, "news.txt", "r");
 
 	/* Dump */
 	if (fp)
@@ -1680,7 +1676,7 @@ void init_angband(void)
 	/*** Verify (or create) the "high score" file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
+	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_APEX, "scores.raw");
 
 	/* Attempt to open the high score file */
 	fd = fd_open(buf, O_RDONLY);

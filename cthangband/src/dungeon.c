@@ -4418,8 +4418,7 @@ void play_game(bool new_game)
 		char buf[1024];
 		FILE *fp;
 		Term_clear();
-		path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
-		fp = my_fopen(buf, "r");
+		fp = my_fopen_path(ANGBAND_DIR_FILE, "news.txt", "r");
 		if (fp)
 		{
 			int i = 0;

@@ -3589,18 +3589,16 @@ static cptr *help_files = NULL;
  * Initialise the help_files[] array above.
  * Return false if the base help file was not found, true otherwise.
  */
-static bool init_help_files(char *buf)
+static bool init_help_files(void)
 {
 	int i;
 	FILE *fff;
 	cptr s,t;
+	char buf[1024];
 
-	/* Open an index file. */
-	path_build(buf, 1024, ANGBAND_DIR_HELP, syshelpfile);
-
-	if (!((fff = my_fopen(buf, "r"))))
+	if (!((fff = my_fopen_path(ANGBAND_DIR_HELP, syshelpfile, "r"))))
 	{
-		prt(format("Cannot open '%s'!", buf), Term->hgt/2, 0);
+		prt(format("Cannot open '%s'!", syshelpfile), Term->hgt/2, 0);
 		return FALSE;
 	}
 		
@@ -3643,7 +3641,6 @@ static bool init_help_files(char *buf)
 
 void win_help_display(void)
 {
-	char buf[1024];
 	FILE *fff;
 	cptr *str;
 
@@ -3651,15 +3648,15 @@ void win_help_display(void)
 	if (!help_str) return;
 
 	/* Try to read the list of files at first. */
-	if (!help_files && !init_help_files(buf)) return;
+	if (!help_files && !init_help_files()) return;
 
 	/* Search every potentially relevant file (should use an index, but...) */
 	for (str = help_files; *str; str++)
 	{
-		path_build(buf, 1024, ANGBAND_DIR_HELP, *str);
-		
+		char buf[1024];
+
 		/* No such file? */
-		if (!((fff = my_fopen(buf, "r"))))
+		if (!((fff = my_fopen_path(ANGBAND_DIR_HELP, *str, "r"))))
 		{
 			prt(format("Cannot open '%s'!", buf), Term->hgt/2, 0);
 			return;
