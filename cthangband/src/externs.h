@@ -437,7 +437,7 @@ extern void do_cmd_activate(object_type *o_ptr);
 extern u16b ident_power(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
-extern cptr PURE find_feeling(object_ctype *o_ptr);
+extern int PURE find_feeling(object_ctype *o_ptr);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern void change_level(s16b new_level, byte come_from);
@@ -3868,7 +3868,7 @@ extern bool func_true(void);
 #if (defined(XTRA1_C) || defined(Z_UTIL_C))
 extern bool func_false(void);
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(Z_UTIL_C))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(UTIL_C) || defined(Z_UTIL_C))
 extern bool streq(cptr a, cptr b);
 #endif
 #if (defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
@@ -3942,5 +3942,11 @@ extern void mc_roff_xy(int x, int y, cptr s);
 
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(STORE_C))
 extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
+#endif
+
+/* tables.c */
+
+#if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(TABLES_C))
+extern cptr_ch feeling_str[];
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -990,6 +990,7 @@ static bool minus_ac(void)
 	object_type             *o_ptr = NULL;
 
 	u32b            f1, f2, f3;
+	int feel;
 
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint(6))
@@ -1023,7 +1024,8 @@ static bool minus_ac(void)
 	msg_format("Your %v is damaged!", object_desc_f3, o_ptr, FALSE, 0);
 
 	/* Hack - the player doesn't know whether a good item just became an average one. */
-	if (find_feeling(o_ptr) == "good")
+	feel = find_feeling(o_ptr);
+	if (feel == SENSE_G_OBJ || feel == SENSE_GP_OBJ)
 		o_ptr->ident &= ~(IDENT_SENSE_VALUE);
 
 	/* Damage the item */
@@ -1392,7 +1394,7 @@ bool res_stat(int stat)
  */
 bool apply_disenchant(int mode)
 {
-	int                     t = 0;
+	int feel, t = 0;
 
 	object_type             *o_ptr;
 
@@ -1440,7 +1442,8 @@ bool apply_disenchant(int mode)
 	}
 
 	/* Hack - the player doesn't know whether a good item just became an average one. */
-	if (find_feeling(o_ptr) == "good")
+	feel = find_feeling(o_ptr);
+	if (feel == SENSE_G_OBJ || feel == SENSE_GP_OBJ)
 		o_ptr->ident &= ~(IDENT_SENSE_VALUE);
 
 	/* Disenchant tohit */

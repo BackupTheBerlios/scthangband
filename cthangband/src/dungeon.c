@@ -69,62 +69,63 @@ static bool PURE is_powerful(object_ctype *o_ptr)
 }
 
 
+
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
-static cptr PURE value_check_aux1(object_ctype *o_ptr)
+static int PURE value_check_aux1(object_ctype *o_ptr)
 {
 
 	/* Artifacts */
     if (allart_p(o_ptr))
 	{
 		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "terrible";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return SENSE_C_ART;
 
 		/* Normal */
-		return "special";
+		return SENSE_G_ART;
 	}
 
 	/* Ego-Items */
 	if (ego_item_p(o_ptr))
 	{
 		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "worthless";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return SENSE_C_EGO;
 
 		/* Normal */
-		return "excellent";
+		return SENSE_G_EGO;
 	}
 
 	/* Cursed items */
-	if (cursed_p(o_ptr)) return "cursed";
+	if (cursed_p(o_ptr)) return SENSE_C_OBJ;
 
 	/* Broken items */
-	if (broken_p(o_ptr)) return "useless";
+	if (broken_p(o_ptr)) return SENSE_BROKEN;
 
 	/* Good "armor" bonus */
-	if (o_ptr->to_a > 0) return "good";
+	if (o_ptr->to_a > 0) return SENSE_G_OBJ;
 
 	/* Good "weapon" bonus */
-	if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+	if (o_ptr->to_h + o_ptr->to_d > 0) return SENSE_G_OBJ;
 
 	/* Default to "average" */
-	return "average";
+	return SENSE_U_OBJ;
 }
 
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
  */
-static cptr PURE value_check_aux2(object_ctype *o_ptr)
+static int PURE value_check_aux2(object_ctype *o_ptr)
 {
 	bool powerful = is_powerful(o_ptr);
 
 	/* Cursed items (all of them) */
 	/* Should this be "very cursed", or would that just be confusing? */
-	if (cursed_p(o_ptr)) return (powerful) ? "very bad" : "cursed";
+	if (cursed_p(o_ptr)) return (powerful) ? SENSE_CP_OBJ : SENSE_C_OBJ;
 
 	/* Broken items (all of them) */
-	if (broken_p(o_ptr)) return "useless";
+	if (broken_p(o_ptr)) return SENSE_BROKEN;
 
 	/* Artifacts -- except cursed/broken ones */
 	/* Ego-Items -- except cursed/broken ones */
@@ -132,33 +133,30 @@ static cptr PURE value_check_aux2(object_ctype *o_ptr)
 	/* Good weapon bonuses */
     if (allart_p(o_ptr) || ego_item_p(o_ptr) || (o_ptr->to_a > 0) ||
 		(o_ptr->to_h + o_ptr->to_d > 0))
-		return (powerful) ? "very good" : "good";
+		return (powerful) ? SENSE_GP_OBJ : SENSE_G_OBJ;
 
 	/* No feeling */
-	return (powerful) ? "powerful" : "";
+	return (powerful) ? SENSE_UP_OBJ : SENSE_NONE;
 }
-
-
-
-
 
 /*
  *  Return an appropriate "feeling" for an object
  */
-cptr PURE find_feeling(object_ctype *o_ptr)
+int PURE find_feeling(object_ctype *o_ptr)
 {
 	/* Some feelings that don't depend on sensing, but on trying. */
 	if (!object_known_p(o_ptr) && (o_ptr->ident & (IDENT_EMPTY)))
-		return "empty";
+		return SENSE_EMPTY;
+
 	/* Hack - wearable items become "poss. cursed", usable ones "tried"*/
-	else if (!object_aware_p(o_ptr) && object_tried_p(o_ptr))
+	if (!object_aware_p(o_ptr) && object_tried_p(o_ptr))
 	{
 		switch (o_ptr->tval)
 		{
 		/* Food, potions, scrolls, staves, wands and rods can be tried. */
 			case TV_FOOD: case TV_POTION: case TV_SCROLL:
 			case TV_ROD: case TV_WAND: case TV_STAFF:
-		return "tried";
+		return SENSE_TRIED;
 		/* Amulets and rings can have k_idx-specific curses... */
 			case TV_RING: case TV_AMULET:
 		/* ... as might weapons and armour, at least in theory... */
@@ -168,12 +166,9 @@ cptr PURE find_feeling(object_ctype *o_ptr)
 			case TV_HAFTED: case TV_DIGGING: case TV_BOW:
 		/* ... but this should only be mentioned if the player doesn't know better. */
 			if (!(o_ptr->ident & IDENT_SENSE_CURSED))
-				return "poss. cursed";
-			else
-				break;
-		/* Nothing should get here, but... */
+				return SENSE_PCURSE;
 			default:
-				return "buggy";
+				return SENSE_NONE;
 		}
 	}
 
@@ -193,26 +188,25 @@ cptr PURE find_feeling(object_ctype *o_ptr)
 			bool powerful = is_powerful(o_ptr);
 
 			if (o_ptr->ident & IDENT_CURSED)
-				return (powerful) ? "very bad" : "cursed";
+				return (powerful) ? SENSE_CP_OBJ : SENSE_C_OBJ;
 			else
-				return (powerful) ? "powerful" : "uncursed";
+				return (powerful) ? SENSE_UP_OBJ : SENSE_U_OBJ;
 		}
 		/* IDENT_SENSE_VALUE is only set alone by an attempt to break an
 		 * artefact, so has few plausible values. */
 		case IDENT_SENSE_VALUE:
 			if (allart_p(o_ptr))
 				/* Artefacts */
-				return "unbreakable";
+				return SENSE_U_ART;
 			else if (o_ptr->ident & IDENT_BROKEN)
 				/* Artefacts which have been shattered */
-				return "useless";
+				return SENSE_BROKEN;
 			else
-				/* This should never happen, but... */
-				return "Strangely normal";
+				return SENSE_NONE;
 		default:
 		{
 			bool powerful = is_powerful(o_ptr);
-			return (powerful) ? "powerful" : "";
+			return (powerful) ? SENSE_UP_OBJ : SENSE_NONE;
 		}
 	}
 }
@@ -239,12 +233,6 @@ static void sense_inventory(void)
 
 	const int plev = MAX(1, skill_set[SKILL_PSEUDOID].value/2);
 
-	bool	heavy = FALSE;
-
-	cptr	feel;
-
-	object_type *o_ptr;
-
 
 	/*** Check for "sensing" ***/
 
@@ -259,14 +247,17 @@ static void sense_inventory(void)
 	/* Check everything */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
+		cptr you_are, using, really, is;
 		bool okay = FALSE, repeat;
 		u16b oldident;
 
+		int feel, oldfeel;
+
 		/* Pseudo-id heavily at 50+, lightly at 30- and sometimes do either
 		 * in between. */
-		heavy = rand_range_test(30, 49, skill_set[SKILL_PSEUDOID].value);
+		bool heavy = rand_range_test(30, 49, skill_set[SKILL_PSEUDOID].value);
 
-		o_ptr = &inventory[i];
+		object_type *o_ptr = &inventory[i];
 
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
@@ -313,7 +304,7 @@ static void sense_inventory(void)
 
 		/* Remember how things used to be */
 		oldident = o_ptr->ident;
-		feel = find_feeling(o_ptr);
+		oldfeel = find_feeling(o_ptr);
 
 		/* We have "felt" it */
 		o_ptr->ident |= (IDENT_SENSE);
@@ -321,38 +312,41 @@ static void sense_inventory(void)
 		/* Remember if we "feel" it completely. */
 		if (heavy) o_ptr->ident |= IDENT_SENSE_HEAVY;
 
-		/* Check if the feeling has been changed by this process */
-		repeat = (!strcmp(feel, find_feeling(o_ptr)));
-
-		/* And then insert the new version */
-		if (!repeat)
+		/* Remember how things are now. */
 		feel = find_feeling(o_ptr);
 
+		/* Check if the feeling has been changed by this process */
+		repeat = (feel == oldfeel);
+
 		/* Skip non-feelings */
-		if (feel == "")
+		if (feel == SENSE_NONE)
 		{
 			o_ptr->ident = oldident;
 			continue;
 		}
 
-		/* Skip repeated feelings */
-		if (streq(feel, quark_str(o_ptr->note))) continue;
-		
+		/* We have "felt" it */
+		o_ptr->ident |= (IDENT_SENSE);
+
+		/* Skip unchanged feelings */
+		if (o_ptr->ident == oldident) continue;
+
 		/* Stop everything */
 		if (disturb_minor) disturb(0);
 
+		really = (repeat) ? "really " : "";
+		is = (o_ptr->number == 1) ? "is" : "are";
+		you_are = (i >= INVEN_WIELD) ? "you are " : "";
+		using = (i >= INVEN_WIELD) ? describe_use(o_ptr) : "in your pack";
+
 		/* Message */
-		msg_format("You feel the %v (%c) %s %s%s %s...", object_desc_f3, o_ptr,
-			FALSE, 0, index_to_label(o_ptr), (i >= INVEN_WIELD) ?
-			format("you are %s", describe_use(o_ptr)) : "in your pack",
-		(repeat ? "really " : ""), ((o_ptr->number == 1) ? "is" : "are"), feel);
+		msg_format("You feel the %v (%c) %s%s %s%s %s...",
+			object_desc_f3, o_ptr, FALSE, 0, index_to_label(o_ptr),
+			you_are, using, really, is, feeling_str[feel].str);
 
 		/* Get a bit better (this does allow objects to boost skill twice
 		 * in the 21-59 range). */
-		if (strcmp(feel, "average")) skill_exp(SKILL_PSEUDOID);
-
-		/* We have "felt" it */
-		o_ptr->ident |= (IDENT_SENSE);
+		if (feel != SENSE_U_OBJ) skill_exp(SKILL_PSEUDOID);
 
 		/* Recalculate/redraw stuff (later) */
 		update_object(o_ptr, 0);
@@ -749,7 +743,7 @@ bool psychometry(void)
 
 	object_type             *o_ptr;
 
-	cptr            feel, oldfeel;
+	int feel, oldfeel;
 	cptr really, is;
 
 	/* Get an item (from equip or inven or floor) */
@@ -779,7 +773,7 @@ bool psychometry(void)
 	feel = find_feeling(o_ptr);
 
     /* Skip non-feelings */
-	if (feel[0] == '\0')
+	if (feel == SENSE_NONE)
 	{
     	msg_format("You do not perceive anything unusual about the %v.",
 			object_desc_f3, o_ptr, FALSE, 0);
@@ -787,15 +781,13 @@ bool psychometry(void)
     }
 
 	/* Say "really" if this merely repeats a previous light feeling. */
-	if (strcmp(feel, oldfeel)) really = "";
-	else really = "really ";
+	really = (feel == oldfeel) ? "really " : "";
 
 	/* Handle plurals correctly. */
-	if (o_ptr->number == 1) is = "is";
-	else is = "are";
+	is = (o_ptr->number == 1) ? "is" : "are";
 
 	msg_format("You feel that the %v %s%s %s...",
-		object_desc_f3, o_ptr, FALSE, 0, really , is, feel);
+		object_desc_f3, o_ptr, FALSE, 0, really , is, feeling_str[feel].str);
 
 	/* Recalculate/redraw stuff (later) */
 	update_object(o_ptr, 0);

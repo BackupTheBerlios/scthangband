@@ -310,7 +310,7 @@ static int enchant_table[16] =
  */
 static int remove_curse_aux(int all)
 {
-	int             i, cnt = 0;
+	int             i, feel, cnt = 0;
 
 	/* Attempt to uncurse items being worn */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -336,8 +336,9 @@ static int remove_curse_aux(int all)
 
 		/* Hack - as "cursed" items can become average, good or messageless
 		when they are uncursed, don't leave value information behind */
+		feel = find_feeling(o_ptr);
 
-		if (streq(find_feeling(o_ptr), "cursed"))
+		if (feel == SENSE_C_OBJ || feel == SENSE_CP_OBJ)
 			o_ptr->ident &= ~(IDENT_SENSE_VALUE | IDENT_SENSE_HEAVY);
 
 		/* Uncurse it */

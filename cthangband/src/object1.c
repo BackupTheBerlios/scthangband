@@ -1457,7 +1457,11 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 		}
 
 		/* find_feeling() gives hints about the real object. */
-		if (!in_shop && *((k[i] = find_feeling(o1_ptr))) != '\0') i++;
+		if (!in_shop)
+		{
+			int feel = find_feeling(o1_ptr);
+			if (feel != SENSE_NONE) k[i++] = feeling_str[feel].str;
+		}
 
 		if (o_ptr->note) k[i++] = quark_str(o_ptr->note);
 

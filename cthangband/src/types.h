@@ -1451,6 +1451,16 @@ struct co_ord
 	int y;
 };
 
+/* A set of strings in a particular order. */
+typedef struct cptr_ch cptr_ch;
+struct cptr_ch
+{
+#ifdef CHECK_ARRAYS
+	int idx;
+#endif /* CHECK_ARRAYS */
+	cptr str;
+};
+
 #ifdef HANDLE_SIGNALS
 
 /* Define a signal handler here where everything can see it. */

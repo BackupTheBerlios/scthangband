@@ -2528,6 +2528,26 @@ logaux(x, 1) logaux(x, 0) 255)
 #define IDENT_SENSE	(IDENT_SENSE_CURSED | IDENT_SENSE_VALUE) /* Item has been pseudo-identified */
 
 /*
+ * Object feelings.
+ */
+#define SENSE_NONE 0
+#define SENSE_C_ART 1
+#define SENSE_C_EGO 2
+#define SENSE_CP_OBJ 3
+#define SENSE_C_OBJ 4
+#define SENSE_BROKEN 5
+#define SENSE_U_OBJ 6
+#define SENSE_UP_OBJ 7
+#define SENSE_G_OBJ 8
+#define SENSE_GP_OBJ 9
+#define SENSE_G_EGO 10
+#define SENSE_G_ART 11
+#define SENSE_EMPTY 12
+#define SENSE_TRIED 13
+#define SENSE_PCURSE 14
+#define SENSE_U_ART 15
+
+/*
  * Special Monster Flags (all temporary)
  */
 #define MFLAG_VIEW      0x01    /* Monster is in line of sight */

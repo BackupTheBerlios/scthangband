@@ -3173,3 +3173,22 @@ name_centry ident_info[] =
 	{0, "Unknown Symbol"}
 };
 
+cptr_ch feeling_str[] =
+{
+	{IDX(SENSE_NONE) ""},
+	{IDX(SENSE_C_ART) "terrible"},
+	{IDX(SENSE_C_EGO) "worthless"},
+	{IDX(SENSE_CP_OBJ) "very bad"},
+	{IDX(SENSE_C_OBJ) "cursed"},
+	{IDX(SENSE_BROKEN) "useless"},
+	{IDX(SENSE_U_OBJ) "average"},
+	{IDX(SENSE_UP_OBJ) "powerful"},
+	{IDX(SENSE_G_OBJ) "good"},
+	{IDX(SENSE_GP_OBJ) "very good"},
+	{IDX(SENSE_G_EGO) "excellent"},
+	{IDX(SENSE_G_ART) "special"},
+	{IDX(SENSE_EMPTY) "empty"},
+	{IDX(SENSE_TRIED) "tried"},
+	{IDX(SENSE_PCURSE) "poss. cursed"},
+	{IDX(SENSE_U_ART) "unbreakable"},
+};

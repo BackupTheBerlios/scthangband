@@ -387,7 +387,7 @@ bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
 {
 	object_type j_ptr[1];
 
-	cptr feel = find_feeling(o_ptr);
+	int feel = find_feeling(o_ptr);
 	object_info_known(j_ptr, o_ptr);
 
 	/* Reject known artefacts. */
@@ -397,8 +397,8 @@ bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
 	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
 
 	/* Reject felt artefacts. */
-	if (!strcmp(feel, "special") || !strcmp(feel, "terrible") ||
-		!strcmp(feel, "unbreakable")) return FALSE;
+	if (feel == SENSE_C_ART || feel == SENSE_G_ART || feel == SENSE_U_ART)
+		return FALSE;
 
 	/* Accept everything else. */
 	return TRUE;
