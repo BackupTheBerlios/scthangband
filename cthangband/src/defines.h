@@ -3217,7 +3217,7 @@ extern int PlayerUID;
  * Return the "char" for a given item.
  */
 #define object_kind_char(T) \
-    ((((!object_aware_kp(T)) || ((T)->x_char == TERM_DARK))) ? \
+    ((((!object_aware_kp(T)) || ((T)->x_char == ' '))) ? \
     (u_info[(T)->u_idx].x_char) : ((T)->x_char))
 
 #define object_char(T) object_kind_char(k_info+(T)->k_idx)
