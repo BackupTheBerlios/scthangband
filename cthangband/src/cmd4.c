@@ -969,9 +969,21 @@ static void do_cmd_options_win(void)
 	p_ptr->window |= PW_RETURN;
 }
 
+/*
+ * Fill the screen with dots as a way of making PR_* displays show up
+ * without forcing them to draw anything themselves by some more complex
+ * mechanism.
+ */
+static void fill_screen(char attr)
+{
+	int y;
+	for (y = 0; y < Term->hgt; y++) mc_put_fmt(y, 0, "$%c%v", attr,
+		repeat_string_f2, ".", Term->wid);
+}
 
 static void do_cmd_options_redraw(void)
 {
+	bool clear;
 	int n;
 	char c;
 
@@ -981,7 +993,7 @@ static void do_cmd_options_redraw(void)
 	/* Add a special resize hook. */
 	add_resize_hook(resize_inkey);
 
-	for (c = KTRL('R'), n = 0; c != ESCAPE; c = inkey())
+	for (c = KTRL('R'), n = 0, clear = FALSE; c != ESCAPE; c = inkey())
 	{
 		int inc = isupper(c) ? -1 : 1;
 		co_ord *co_ptr = screen_coords+n;
@@ -1010,15 +1022,28 @@ static void do_cmd_options_redraw(void)
 				co_ptr->y += inc;
 				break;
 			}
+			case '\t':
+			{
+				clear = !clear;
+				break;
+			}
 			default:
 			{
 				bell();
-				break;
 			}
 		}
 
-		/* Clear screen */
-		clear_from(0);
+		if (clear)
+		{
+			/* Clear screen */
+			clear_from(0);
+		}
+		else
+		{
+			/* Fill the screen with dots. */
+			fill_screen('D');
+		}
+		
 
 		/* Redraw almost everything. */
 		p_ptr->redraw |= PR_ALL & ~(PR_MAP | PR_WIPE);
@@ -1031,7 +1056,7 @@ static void do_cmd_options_redraw(void)
 		mc_put_fmt(7, COL_END+2, "x co-ord: %d, y co-ord: %d",
 			co_ptr->x, co_ptr->y);
 
-		put_str("Command (n/N/x/X/y/Y):", 10, COL_END+2);
+		put_str("Command (n/N/x/X/y/Y/Tab):", 10, COL_END+2);
 	}
 
 	/* Remove the resize hook. */

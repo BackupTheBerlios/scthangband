@@ -2452,7 +2452,7 @@ extern errr delete_resize_hook(void (*resize_hook)(void));
 #if (defined(DUNGEON_C) || defined(UTIL_C))
 extern void resize_main_term(void);
 #endif
-#if (defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(STORE_C) || defined(UTIL_C))
 extern void repeat_string_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 
