@@ -1803,7 +1803,32 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		tmp_val2[0] = '\0';
 
 		/* Find the sections of inscription. */
-		if (spoil_value) sprintf(k[i++], "%ld", object_value(o_ptr));
+
+		/* Obtain the value this would have if uncursed if allowed. If this
+		 * differs from the present value, put parentheses around the number. */
+		if (spoil_value)
+		{
+			s32b value = object_value(o_ptr);
+			bool worthless = value == 0;
+			if (worthless && cursed_p(o_ptr))
+			{
+				u32b f3 = o_ptr->art_flags3 & (TR3_CURSED | TR3_HEAVY_CURSE);
+				o_ptr->ident &= ~(IDENT_CURSED);
+				o_ptr->art_flags3 &= ~f3;
+	 			value = object_value(o_ptr);
+				o_ptr->ident |= (IDENT_CURSED);
+				o_ptr->art_flags3 |= f3;
+			}
+			/* Hack - assume cursed items are worthless. */
+			if (worthless && value)
+			{
+	 			sprintf(k[i++], "(%ld)", value);
+			}
+			else
+			{
+				sprintf(k[i++], "%ld", value);
+			}
+		}
 		if (o_ptr->discount) sprintf(k[i++], "%d%% off", o_ptr->discount);
 		if (strlen(strcpy(k[i], find_feeling(o_ptr)))) i++;
 		if (o_ptr->note) strlen(strcpy(k[i++], quark_str(o_ptr->note)));

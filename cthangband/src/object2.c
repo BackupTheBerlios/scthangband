@@ -1293,7 +1293,11 @@ s32b object_value(object_type *o_ptr)
 	else
 	{
 		/* Hack -- Felt broken items */
-		if ((o_ptr->ident & (IDENT_SENSE_VALUE)) && broken_p(o_ptr)) return (0L);
+		if ((o_ptr->ident & (IDENT_SENSE_VALUE)) && broken_p(o_ptr)
+		/* *Hack* -- only consider tried ego-items or artefacts, as their
+		 * brokenness is probably due to things which aren't known. */
+		&& ((!o_ptr->name1 && !o_ptr->name2) || o_ptr->ident & (IDENT_TRIED)))
+			return (0L);
 
 		/* Hack -- Felt cursed items */
 		if ((o_ptr->ident & (IDENT_SENSE_CURSED)) && cursed_p(o_ptr)) return (0L);
