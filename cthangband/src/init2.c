@@ -422,7 +422,7 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
 	oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
 	/* Oops */
-	msg_format("Error at line %d of '%s.txt'.", error_line, filename);
+	msg_format("Error at line %d of '%s'.", error_line, filename);
 	msg_format("Record %d contains a '%s' error.", error_idx, oops);
 	msg_format("Parsing '%s'.", buf);
 	message_flush();
@@ -434,6 +434,25 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
 #endif /* ALLOW_TEMPLATES */
 
 /*
+ * Find the name of the text file from which a header is read.
+ *
+ * Most are simply derived from the name of the raw file, but there are a
+ * few exceptions.
+ */
+static cptr init_info_text_name(header *head)
+{
+	switch (head->header_num)
+	{
+		case EVENT_HEAD:
+			return "r_info.txt";
+		case D_HEAD: case T_HEAD: case Q_HEAD:
+			return "d_info.txt";
+		default:
+			return format("%s.txt", head->file_name);
+	}
+}
+
+/*
  * Initialize a "*_info" array
  *
  * Note that we let each entry have a unique "name" and "text" string,
@@ -442,6 +461,8 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
 static void init_info(header *head)
 {
 	cptr filename = head->file_name;
+
+	char textname[13];
 
 	int fd;
 
@@ -454,6 +475,9 @@ static void init_info(header *head)
 
 
 #ifdef ALLOW_TEMPLATES
+
+	/* Find the text file name (should be in 8.3 format). */
+	sprintf(textname, "%.12s", init_info_text_name(head));
 
 	/*** Load the binary image file ***/
 
@@ -470,7 +494,7 @@ static void init_info(header *head)
 		{
 #ifdef CHECK_MODIFICATION_TIME
 
-			err = check_modification_date(fd, format("%s.txt", filename));
+			err = check_modification_date(fd, textname);
 
 #endif /* CHECK_MODIFICATION_TIME */
 
@@ -501,28 +525,11 @@ static void init_info(header *head)
 
 	/*** Load the ascii template file ***/
 
-	/* Build the filename */
-
-	/* Hack - the death_event array is read from r_info.txt, not
-	 * r_event.txt. */
-	if (head->header_num == EVENT_HEAD)
-	{
-		fp = my_fopen_path(ANGBAND_DIR_EDIT, "r_info.txt", "r");
-	}
-	else if (head->header_num == D_HEAD || head->header_num == T_HEAD ||
-		head->header_num == Q_HEAD)
-	{
-		fp = my_fopen_path(ANGBAND_DIR_EDIT, "d_info.txt", "r");
-	}
-	else
-	{
-		fp = my_fopen_path(ANGBAND_DIR_EDIT, format("%s.txt", filename), "r");
-	}
-
-	/* Open the file */
+	/* Build the filename and open the file. */
+	fp = my_fopen_path(ANGBAND_DIR_EDIT, textname, "r");
 
 	/* Parse it */
-	if (!fp) quit(format("Cannot open '%s.txt' file.", filename));
+	if (!fp) quit(format("Cannot open '%s' file.", textname));
 
 	/* Parse the file */
 	err = init_info_txt(fp, buf, head);
@@ -531,7 +538,7 @@ static void init_info(header *head)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err) display_parse_error(filename, err, buf);
+	if (err) display_parse_error(textname, err, buf);
 
 
 	/*** Dump the binary image file ***/
@@ -628,7 +635,7 @@ static void init_info(header *head)
 	if (err) quit(format("Cannot parse '%s.raw' file.", filename));
 }
 
-static errr init_u_info_final(void)
+static void init_u_info_final(void)
 {
 	int i,p_id;
 
@@ -657,7 +664,6 @@ static errr init_u_info_final(void)
 			quit_fmt("Insufficient u_info entries with p_id %d: %d missing.", p_id, bal);
 		}
 	}
-	return SUCCESS;
 }
 
 /*
@@ -1718,6 +1724,8 @@ void init_angband(void)
 
 	/* Hack - a pointer intended not to match anything. */
 	vptr dummy = (vptr)&init_angband;
+
+	WIPE(head, header);
 
 	/* Hack - never call this twice. */
 	if (z_info) return;

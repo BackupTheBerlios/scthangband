@@ -32,12 +32,12 @@ cptr syshelpfile;
 /*
  * Run-time arguments
  */
-bool arg_fiddle;			/* Command arg -- Request fiddle mode */
-bool arg_wizard;			/* Command arg -- Request wizard mode (unused) */
-bool arg_sound;				/* Command arg -- Request special sounds */
-bool arg_graphics;			/* Command arg -- Request graphics mode */
-bool arg_force_original;	/* Command arg -- Request original keyset */
-bool arg_force_roguelike;	/* Command arg -- Request roguelike keyset */
+bool arg_fiddle = FALSE;			/* Command arg -- Request fiddle mode */
+bool arg_wizard = FALSE;			/* Command arg -- Request wizard mode (unused) */
+bool arg_sound = FALSE;				/* Command arg -- Request special sounds */
+bool arg_graphics = FALSE;			/* Command arg -- Request graphics mode */
+bool arg_force_original = FALSE;	/* Command arg -- Request original keyset */
+bool arg_force_roguelike = FALSE;	/* Command arg -- Request roguelike keyset */
 
 /*
  * Various things
