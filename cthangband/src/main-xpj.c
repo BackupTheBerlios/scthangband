@@ -1,4 +1,4 @@
-#define DELAY_EXTERNS_H
+#define DELAY_EXTERNS_H /* Display, XImage */
 #define MAIN_XPJ_C
 /* File: main-x11.c */
 
@@ -1732,7 +1732,7 @@ static errr Term_xtra_xpj_react(void)
 		/* Check the colors */
 		for (i = 0; i < 256; i++)
 		{
-			if (((color_table[i][1] != angband_color_table[i][1]) ||
+			if ((color_table[i][1] != angband_color_table[i][1]) ||
 			    (color_table[i][2] != angband_color_table[i][2]) ||
 			    (color_table[i][3] != angband_color_table[i][3]))
 			{

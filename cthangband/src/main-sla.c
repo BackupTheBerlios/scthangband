@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_SLA_C
 /* File: main-sla.c */
 
@@ -30,7 +29,6 @@
 
 
 #include <slang.h>
-#include "externs.h"
 
 
 /*

@@ -1,4 +1,4 @@
-#define DELAY_EXTERNS_H
+#define DELAY_EXTERNS_H /* Library, IntuitionBase, GfxBase, ... */
 #define MAIN_AMI_C
 /*
 	File			: main-ami.c

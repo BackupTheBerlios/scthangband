@@ -1,4 +1,4 @@
-#define DELAY_EXTERNS_H
+#define DELAY_EXTERNS_H /* Display, XImage */
 #define MAIN_X11_C
 /* File: main-x11.c */
 

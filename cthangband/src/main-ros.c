@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_ROS_C
 /*
  * File: main-ros.c

@@ -1,4 +1,4 @@
-#define DELAY_EXTERNS_H
+#define DELAY_EXTERNS_H /* Boolean, AEEventHandlerUPP */
 #define MAIN_MAC_C
 /* File: main-mac.c */
 

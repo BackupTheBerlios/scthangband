@@ -1,4 +1,4 @@
-#define DELAY_EXTERNS_H
+#define DELAY_EXTERNS_H /* Lots of capitalised stuff here and in readdib.c. */
 #define MAIN_WIN_C
 /* File: main-win.c */
 

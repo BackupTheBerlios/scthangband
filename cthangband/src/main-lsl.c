@@ -1,4 +1,3 @@
-#define DELAY_EXTERNS_H
 #define MAIN_LSL_C
 /*****************************************************************************
  * File: main-lsl.c
@@ -25,7 +24,6 @@
 #include <vgagl.h>
 #include <vgakeyboard.h>
 #include <zlib.h>
-#include "externs.h"
 
 static cptr ANGBAND_DIR_XTRA_GRAF;
 

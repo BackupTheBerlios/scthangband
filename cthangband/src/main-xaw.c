@@ -1,4 +1,4 @@
-#define DELAY_EXTERNS_H
+#define DELAY_EXTERNS_H /* Display, XImage */
 #define MAIN_XAW_C
 /* File: main-xaw.c */
 
