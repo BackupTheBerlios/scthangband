@@ -965,10 +965,10 @@ static void get_mon_num_init(void)
 		alloc_entry *entry = &alloc_race_table[i];
 
 		/* Bad depth. */
-		if (!get_mon_depth(dun_depth, i)) entry->prob2 = 0;
+		if (!get_mon_depth(dun_depth, entry->index)) entry->prob2 = 0;
 
 		/* Not allowed during the day. */
-		else if (!get_mon_toobright(0, i)) entry->prob2 = 0;
+		else if (!get_mon_toobright(0, entry->index)) entry->prob2 = 0;
 
 		/* Accept the monster. */
 		else entry->prob2 = entry->prob1;
