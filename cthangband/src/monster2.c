@@ -886,16 +886,54 @@ s16b m_pop(void)
 }
 
 
-
+/*
+ * Prevent town monsters and dungeon monsters from being in the same place.
+ */
+static bool PURE get_mon_depth(int depth, int r_idx)
+{
+	return (!depth == !r_info[r_idx].level);
+}
 
 /*
- * Apply a "monster restriction function" to the "monster allocation table".
- * A monster is accepted if:
- * (a) hook is NULL, or
- * (b) hook(p, r_idx) is TRUE.
- * p is used to allow a single function to handle a range of similar cases.
+ * Prevent dead uniques from being generated.
  */
-errr get_mon_num_prep(bool (*hook)(int, int), int p)
+static bool PURE get_mon_dead(int UNUSED p, int r_idx)
+{
+	monster_race *r_ptr = r_info+r_idx;
+
+	/* Non-unique. */
+	if (~r_ptr->flags1 & RF1_UNIQUE) return TRUE;
+
+	/* Alive and not yet generated. */
+	if (r_ptr->cur_num < r_ptr->max_num) return TRUE;
+
+	/* Not available. */
+	return FALSE;
+}
+
+/*
+ * alloc_race_table[] functions.
+ *
+ * The following tables should be the only ones which modify the prob2 field
+ * of alloc_race_table[].
+ *
+ * get_mon_num_init() sets it to a default state which it should have after
+ * the completion of any given "action".
+ * get_mon_num_filter() modifies the existing state by removing monsters
+ * from it which are no longer deemed suitable.
+ */
+
+/*
+ * Remove any special monster generation restrictions.
+ *
+ * This removes any existing restriction from the monster list, and adds
+ * three simple ones:
+ *
+ * 1. No town monsters are generated outside the towns or other monsters inside.
+ * 2. No dead uniques are generated.
+ * 3. No monsters with HURT_LITE are generated on the surface during the day.
+ */
+static void get_mon_num_init(void)
 {
 	int i;
 
@@ -905,26 +943,53 @@ errr get_mon_num_prep(bool (*hook)(int, int), int p)
 		/* Get the entry */
 		alloc_entry *entry = &alloc_race_table[i];
 
-		/* Accept monsters which pass the restriction, if any */
-		if (!hook || (*hook)(p, entry->index))
-		{
-			/* Accept this monster */
-			entry->prob2 = entry->prob1;
-		}
+		/* Bad depth. */
+		if (!get_mon_depth(dun_depth, i)) entry->prob2 = 0;
 
-		/* Do not use this monster */
-		else
+		/* Accept the monster. */
+		else entry->prob2 = entry->prob1;
+	}
+}
+
+
+
+/*
+ * Remove monsters from the "monster allocation table" if they fail an
+ * arbitrary filter, which may use the p parameter.
+ */
+static void get_mon_num_filter(bool (*hook)(int, int), int p)
+{
+	int i;
+
+	assert(hook); /* Caller. */
+
+	/* Scan the allocation table */
+	for (i = 0; i < alloc_race_size; i++)
+	{
+		/* Get the entry */
+		alloc_entry *entry = &alloc_race_table[i];
+
+		/* Reject monsters if they fail the restriction. */
+		if (!(*hook)(p, entry->index))
 		{
 			/* Decline this monster */
 			entry->prob2 = 0;
 		}
 	}
-
-	/* Success */
-	return (0);
 }
 
+/*
+ * Initialise the monster with 0 or 1 filter.
+ */
+void get_mon_num_prep(bool (*hook)(int, int), int p)
+{
+	get_mon_num_init();
 
+	if (hook)
+	{
+		get_mon_num_filter(hook, p);
+	}
+}
 
 /*
  * Choose a monster race that seems "appropriate" to the given level
@@ -950,147 +1015,67 @@ errr get_mon_num_prep(bool (*hook)(int, int), int p)
  */
 s16b get_mon_num(int level)
 {
-	int			i, j, p;
+	int i, p;
 
-	int			r_idx;
+	long value, total;
 
-	long		value, total;
-
-	monster_race	*r_ptr;
-
-	alloc_entry		*table = alloc_race_table;
+	alloc_entry *table = alloc_race_table;
 
 
 	/* Boost the level */
 	if (level > 0)
 	{
-		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0)
-		{
-			/* Pick a level bonus */
-			int d = level / 4 + 2;
-
-			/* Boost the level */
-			level += ((d < 5) ? d : 5);
-		}
+		/* Maximum boost ranges from 4 at dlvl 1 to 10 at dlvl 12 and above. */
+		int d = MIN(level / 4 + 2, 5);
 
 		/* Occasional "nasty" monster */
-		if (rand_int(NASTY_MON) == 0)
-		{
-			/* Pick a level bonus */
-			int d = level / 4 + 2;
-
-			/* Boost the level */
-			level += ((d < 5) ? d : 5);
-		}
+		if (one_in(NASTY_MON)) level += d;
+		if (one_in(NASTY_MON)) level += d;
 	}
 
-
-	/* Reset total */
-	total = 0L;
-
 	/* Process probabilities */
-	for (i = 0; i < alloc_race_size; i++)
+	for (total = i = 0; i < alloc_race_size; i++)
 	{
+		alloc_entry *entry = table+i;
+
 		/* Monsters are sorted by depth */
-		if (table[i].level > level) break;
+		if (entry->level > level) break;
 
-		/* Default */
-		table[i].prob3 = 0;
-
-		/* Hack -- No town monsters in dungeon */
-		if ((level > 0) && (table[i].level <= 0)) continue;
-
-		/* Access the "r_idx" of the chosen monster */
-		r_idx = table[i].index;
-
-		/* Access the actual race */
-		r_ptr = &r_info[r_idx];
-
-		/* Hack -- "unique" monsters must be "unique" */
-		if ((r_ptr->flags1 & (RF1_UNIQUE)) &&
-		    (r_ptr->cur_num >= r_ptr->max_num))
-		{
-			continue;
-		}
-
-		/* Accept */
-		table[i].prob3 = table[i].prob2;
+		/* Hack - remove dead/existing uniques here as get_mon_num() can
+		 * change get_mon_dead() itself. This only really needs to be updated as
+		 * monsters are created and destroyed. */
+		entry->prob3 = (get_mon_dead(0, entry->index)) ? entry->prob2 : 0;
 
 		/* Total */
-		total += table[i].prob3;
+		total += entry->prob3;
 	}
 
 	/* No legal monsters */
-	if (total <= 0) return (0);
+	if (!total) return (0);
 
+	/* Power boost */
+	p = rand_int(100);
+	i = (p < 40) ? 1 : (p < 90) ? 2 : 3;
 
-	/* Pick a monster */
-	value = rand_int(total);
+	/* Roll up to three times for a monster. */
+	for (value = 0; i; i--)
+	{
+		long v = rand_int(total);
+		if (v > value) value = v;
+	}
 
 	/* Find the monster */
 	for (i = 0; i < alloc_race_size; i++)
 	{
-		/* Found the entry */
-		if (value < table[i].prob3) break;
-
 		/* Decrement */
-		value = value - table[i].prob3;
+		value -= table[i].prob3;
+
+		/* Found the entry */
+		if (value < 0) return table[i].index;
 	}
 
-
-	/* Power boost */
-	p = rand_int(100);
-
-	/* Try for a "harder" monster once (50%) or twice (10%) */
-	if (p < 60)
-	{
-		/* Save old */
-		j = i;
-
-		/* Pick a monster */
-		value = rand_int(total);
-
-		/* Find the monster */
-		for (i = 0; i < alloc_race_size; i++)
-		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
-		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
-	}
-
-	/* Try for a "harder" monster twice (10%) */
-	if (p < 10)
-	{
-		/* Save old */
-		j = i;
-
-		/* Pick a monster */
-		value = rand_int(total);
-
-		/* Find the monster */
-		for (i = 0; i < alloc_race_size; i++)
-		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
-		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
-	}
-
-
-	/* Result */
-	return (table[i].index);
+	/* Paranoia - this should not be possible. */
+	return 0;
 }
 
 

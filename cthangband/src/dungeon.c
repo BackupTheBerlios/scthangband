@@ -1018,6 +1018,9 @@ static void process_sun(void)
 		}
 	}
 
+	/* Reset the suitable monster list. */
+	get_mon_num_prep(NULL, 0);
+
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
 

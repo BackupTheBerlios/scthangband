@@ -1579,7 +1579,7 @@ static errr init_alloc(void)
 	/* Access the table entry */
 	table = alloc_race_table;
 
-	/* Scan the monsters (not the ghost) */
+	/* Scan the monsters. */
 	for (i = 1; i < MAX_R_IDX; i++)
 	{
 		int p, x, y, z;
@@ -1606,8 +1606,6 @@ static errr init_alloc(void)
 		table[z].index = i;
 		table[z].level = x;
 		table[z].prob1 = p;
-		table[z].prob2 = p;
-		table[z].prob3 = p;
 
 		/* Another entry complete for this locale */
 		aux[x]++;
