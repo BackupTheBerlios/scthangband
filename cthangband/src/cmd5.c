@@ -236,6 +236,25 @@ static void gain_spell_exp(magic_type *spell)
 }
 
 /*
+ * Evaluate "i op d".
+ */
+static int convert_magic_number(int i, char op, int d)
+{
+	switch (op)
+	{
+		case ';': return d;
+		case '+': return i+d;
+		case '-': return i-d;
+		case '*': return i*d;
+		case '/': return i/d;
+		case '%': return i%d;
+
+		/* Paranoia - bad symbol. */
+		default: return -255;
+	}
+}
+
+/*
  * Replace vstr with v in str, and evaluate formulae it appears in from left
  * to right.
  *
@@ -249,53 +268,40 @@ static void convert_magic_text(char *buf, uint max, cptr str,
 	int i;
 	cptr s;
 	char *t, op;
-	for (s = str, t = buf, i = 0, op = ';'; *s && t < buf+max-1; )
+	bool b;
+	for (s = str, t = buf, i = 0, op = ';', b = FALSE; *s && t < buf+max-1; )
 	{
-		long d = 0;
+		int d = 0;
 		if (prefix(s, vstr))
 		{
 			/* Interpret the symbol. */
 			d = v;
 			s += vl;
-			op = '=';
+			b = TRUE;
+			i = convert_magic_number(i, op, d);
 		}
-		else if (op == ';')
+		else if (!b)
 		{
 			/* Formulae always start with vstr. */
 			*t++ = *s++;
-			continue;
 		}
 		else if (isdigit(*s))
 		{
-			d = strtol(s, 0, 0);
+			d = (int)strtol(s, 0, 0);
 			while (isdigit(*s)) s++;
+			i = convert_magic_number(i, op, d);
 		}
 		else if (*s == ';')
 		{
 			/* Add the number. */
 			t += strnfmt(t, buf+max-t, "%d", i);
-		}
-
-		if (d)
-		{
-			switch (op)
-			{
-				case '=': i = d; break;
-				case '+': i += d; break;
-				case '-': i -= d; break;
-				case '*': i *= d; break;
-				case '/': i /= d; break;
-				case '%': i %= d; break;
-
-				/* Paranoia - bad symbol. */
-				default: *t++ = *s++;
-			}
+			b = FALSE;
 		}
 		else
 		{
 			op = *s++;
  			assert(strchr(";+-*/%", op));
- 		}
+		}
 	}
 
 	if (op != ';')
@@ -340,7 +346,7 @@ static cptr magic_info_special(magic_type *s_ptr)
 		}
 		default:
 		{
-			return "";
+			return NULL;
 		}
 	}
 }
@@ -349,6 +355,8 @@ static void get_magic_info(char *p, uint max, magic_type *s_ptr)
 {
 	cptr str = s_ptr->desc;
 	if (!str) str = magic_info_special(s_ptr);
+
+	assert(str);
 
 	/* Convert the symbols in str, if any. */
 	str = format("%v", convert_magic_text_f3, str, "LEV", spell_skill(s_ptr));
