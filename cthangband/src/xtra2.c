@@ -2888,8 +2888,8 @@ void resize_map(void)
 	/* Recalculate the map size. */
 	panel_bounds_prt();
 
-	/* Redraw everything (even the left-hand bar, which is unchanged). */
-	p_ptr->redraw |= (PR_WIPE_1 | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+	/* Redraw everything except the top line. */
+	p_ptr->redraw |= PR_ALL & ~PR_WIPE_0;
 
 	/* Hack -- update */
 	redraw_stuff();

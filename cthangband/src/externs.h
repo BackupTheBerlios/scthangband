@@ -3892,7 +3892,7 @@ extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_erase(int x, int y, int n);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern errr Term_clear(void);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_XAW_C) || defined(Z_TERM_C))
@@ -3928,16 +3928,16 @@ extern errr Term_inkey(char *ch, bool wait, bool take);
 #if (defined(INIT2_C) || defined(Z_TERM_C))
 extern void init_term_wins(void);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(Z_TERM_C))
 extern void Term_release(int win);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(Z_TERM_C))
 extern int Term_save_aux(void);
 #endif
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_ROS_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern void Term_save(void);
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(Z_TERM_C))
 extern void Term_load_aux(int win);
 #endif
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_ROS_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_TERM_C))

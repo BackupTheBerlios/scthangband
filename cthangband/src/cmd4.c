@@ -56,7 +56,7 @@ extern void do_cmd_redraw(void)
 	p_ptr->update |= (PU_MONSTERS);
 
 	/* Redraw everything */
-	p_ptr->redraw |= (/*PR_WIPE | PR_BASIC |*/ PR_EXTRA | PR_MAP | PR_EQUIPPY);
+	p_ptr->redraw |= PR_ALL & ~PR_WIPE_0;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | PW_SHOPS);
@@ -176,10 +176,10 @@ void do_cmd_change_name(void)
 
 
 	/* Redraw everything */
-	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+	p_ptr->redraw |= (PR_ALL);
 
 	handle_stuff();
-			}
+}
 
 
 /*
@@ -1166,6 +1166,7 @@ static void do_cmd_options_hp(void)
  */
 static void option_dump_aux(FILE *fff)
 {
+	const co_ord *co_ptr;
 	uint i,j;
 
 	/* Skip some lines */
@@ -1218,6 +1219,14 @@ static void option_dump_aux(FILE *fff)
 				display_func[j].name, goodpri[windows[i].rep[j]],
 				goodpri[windows[i].pri[j]]);
 		}
+	}
+
+	/* Dump redraw flags */
+
+	fprintf(fff, "\n\n# Status description locations\n\n");
+	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
+	{
+		fprintf(fff, "L:%s:%d:%d\n", co_ptr->name, co_ptr->x, co_ptr->y);
 	}
 
 	/* Mention options which can't be read. */

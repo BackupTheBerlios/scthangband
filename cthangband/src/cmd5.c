@@ -1515,8 +1515,6 @@ while (effects-- && more_effects)
             }
 
 
-            p_ptr->redraw |= (PR_BASIC);
-
             p_ptr->update |= (PU_BONUS);
 
             handle_stuff();

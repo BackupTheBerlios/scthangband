@@ -1893,24 +1893,20 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PR_STUDY        0x00400000L     /* Display Extra (Study) */
 #define PR_SPIRIT		0x00800000L		/* Display Spirit Annoyance */
 #define PR_ENERGY       0x01000000L     /* Display last turn's energy use */
-#define PR_WIPE_1       0x02000000L     /* Hack -- row from line 1 */
+#define PR_WIPE_1       0x02000000L     /* Wipe from row 1 */
 #define PR_MAP          0x04000000L     /* Display Map */
-#define PR_WIPE         0x08000000L     /* Hack -- Total Redraw */
+#define PR_WIPE_0       0x08000000L     /* Wipe row 0. */
 /* xxx */
 /* xxx */
 
 /* A couple of more extensive redraw requests. */
-#define PR_EXTRA \
-	(PR_CUT | PR_STUN | PR_HUNGER | PR_BLIND | PR_CONFUSED | PR_AFRAID | \
-	PR_POISONED | PR_STATE | PR_SPEED | PR_STUDY)
-
-#define PR_BASIC \
-	(PR_STATS | PR_GOLD | PR_ARMOR | PR_HP | PR_MANA | PR_DEPTH | PR_HEALTH | \
-	PR_TIME)
+#define PR_WIPE (PR_WIPE_1 | PR_WIPE_0)
 
 #define PR_ALL \
-	(PR_WIPE | PR_EXTRA | PR_BASIC | PR_EQUIPPY | PR_SPIRIT | PR_ENERGY | \
-	PR_MAP)
+	(PR_CUT | PR_STUN | PR_HUNGER | PR_BLIND | PR_CONFUSED | PR_AFRAID | \
+	PR_POISONED | PR_STATE | PR_SPEED | PR_STUDY | PR_STATS | PR_GOLD | \
+	PR_ARMOR | PR_HP | PR_MANA | PR_DEPTH | PR_HEALTH | PR_TIME | PR_WIPE | \
+	PR_EQUIPPY | PR_SPIRIT | PR_ENERGY | PR_MAP)
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

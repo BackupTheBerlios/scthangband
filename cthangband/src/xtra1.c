@@ -3060,15 +3060,14 @@ void redraw_stuff(void)
 
 
 
-	/* Hack -- clear the screen */
-	if (p_ptr->redraw & (PR_WIPE))
+	/* Hack -- clear the top line. */
+	if (p_ptr->redraw & (PR_WIPE_0))
 	{
-		p_ptr->redraw &= ~(PR_WIPE);
+		p_ptr->redraw &= ~(PR_WIPE_0);
 		msg_print(NULL);
-		Term_clear();
 	}
 
-	/* Hack -- clear most of the screen */
+	/* Hack -- clear the rest of the screen */
 	if (p_ptr->redraw & (PR_WIPE_1))
 	{
 		p_ptr->redraw &= ~(PR_WIPE_1);

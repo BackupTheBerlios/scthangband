@@ -1598,7 +1598,6 @@ static void process_chaos(void)
 			if (!(p_ptr->resist_chaos || p_ptr->resist_conf))
 			{
 				disturb(0,0);
-				p_ptr->redraw |= PR_EXTRA;
 				msg_print("You feel a SSSCHtupor cOmINg over yOu... *HIC*!");
 
 				if (randint(20)==1)
@@ -1632,7 +1631,6 @@ static void process_chaos(void)
 			if (!(p_ptr->resist_chaos))
 			{
 				disturb(0,0);
-				p_ptr->redraw |= PR_EXTRA;
 				(void)set_image(p_ptr->image + rand_int(50) + 20);
 			}
 		}
@@ -3721,10 +3719,7 @@ static void dungeon(void)
 	p_ptr->window |= (PW_MONSTER | PW_VISIBLE);
 
 	/* Redraw dungeon */
-    p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_EQUIPPY);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+    p_ptr->redraw |= (PR_ALL);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);

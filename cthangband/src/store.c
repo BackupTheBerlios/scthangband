@@ -4259,7 +4259,7 @@ static void resize_store(void)
  */
 void do_cmd_store(void)
 {
-	int			which;
+	int			which, t;
 
 	int			tmp_chr = 0;
 
@@ -4317,6 +4317,9 @@ void do_cmd_store(void)
 		return;
 	}
 
+
+	/* Save the previous screen. */
+	t = Term_save_aux();
 
 	/* Forget the lite */
 	forget_lite();
@@ -4460,7 +4463,6 @@ void do_cmd_store(void)
 		if (st_ptr->store_open >= turn) leave_store = TRUE;
 	}
 
-
 	/* Free turn XXX XXX XXX */
 	energy_use = 0;
 
@@ -4475,29 +4477,23 @@ void do_cmd_store(void)
 	/* Hack -- Cancel "see" mode */
 	command_see = FALSE;
 	
+	/* Restore the saved screen, if any. */
+	if (t)
+	{
+		Term_load_aux(t);
+		Term_release(t);
+	}
+	else
+	{
+		/* Reset the resize hook. */
+		delete_resize_hook(resize_store);
+
+		/* Update everything */
+		do_cmd_redraw();
+	}		
 
 	/* Flush messages XXX XXX XXX */
 	msg_print(NULL);
-
-
-	/* Clear the screen */
-	Term_clear();
-
-	/* Reset the resize hook. */
-	delete_resize_hook(resize_store);
-
-	/* Update everything */
-	p_ptr->update |= (PU_VIEW | PU_LITE);
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw entire screen */
-    p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_EQUIPPY);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 }
 
 
