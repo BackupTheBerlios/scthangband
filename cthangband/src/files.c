@@ -1580,13 +1580,19 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	/* Now that's done, we need only replace the standard weapon. */
 	object_copy(wp_ptr, &wp);
 
-	/* And return p_ptr to its original state if needed. */
 	if (p2_ptr->psex != MAX_SEXES)
 	{
+		u32b old_update;
+
+		/* Return p_ptr to its original state if needed. */
 		COPY(p_ptr, p2_ptr, player_type);
 
-		/* Check that everything not in player_type is as it should be. */
-		p_ptr->update |= PU_BONUS;
+		/* Hack - correct mystic armour as this isn't stored in p_ptr. */
+		old_update = p_ptr->update;
+		p_ptr->update = PU_MA_ARMOUR;
+		update_stuff();
+
+		p_ptr->update = old_update & ~(PU_MA_ARMOUR);
 	}
 }
 

@@ -2001,6 +2001,7 @@ logaux(x, 1) logaux(x, 0) 255
  */
 #define PU_BONUS        0x00000001L     /* Calculate bonuses */
 #define PU_TORCH        0x00000002L     /* Calculate torch radius */
+#define PU_MA_ARMOUR	0x00000004L		/* Calculate martial arts armour bonus. */
 /* xxx (many) */
 #define PU_HP           0x00000010L     /* Calculate chp and mhp */
 #define PU_MANA         0x00000020L     /* Calculate csp and msp */

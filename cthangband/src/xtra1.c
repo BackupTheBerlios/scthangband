@@ -2338,6 +2338,30 @@ static bool ma_heavy_armor(void)
     return (arm_wgt > (u16b)((u16b)100 + (u16b)(skill_set[SKILL_MA].value * 2))) ;
 }
 
+
+/*
+ * Calculate the martial arts AC bonus from empty slots, and set the AC for
+ * each appropriately.
+ */
+static void calc_ma_armour(void)
+{
+	int i;
+	for (i=INVEN_BODY; i<=INVEN_FEET; i++)
+	{
+		if (inventory[i].k_idx);
+		
+		else if ((ma_empty_hands()) && !(ma_heavy_armor()))
+		{
+			inventory[i].to_a = mystic_armour(i);
+		}
+		else
+		{
+			inventory[i].to_a = 0;
+		}
+	}
+}
+
+
 /*
  * Calculate the players current "state", taking into account
  * not only race intrinsics, but also objects being worn
@@ -2911,19 +2935,7 @@ static void calc_bonuses(bool quiet)
 	/* Mystic get extra ac for armour _not worn_ */
 	mystic_armour_aux = ma_heavy_armor();
 
-	for (i=INVEN_BODY; i<=INVEN_FEET; i++)
-	{
-		if (inventory[i].k_idx);
-		
-		else if ((ma_empty_hands()) && !(ma_heavy_armor()))
-		{
-			inventory[i].to_a = mystic_armour(i);
-		}
-		else
-		{
-			inventory[i].to_a = 0;
-		}
-	}
+	if (mystic_armour_aux || mystic_notify_aux) p_ptr->update |= PU_MA_ARMOUR;
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -3653,6 +3665,12 @@ void update_stuff(void)
 	{
 		p_ptr->update &= ~(PU_BONUS);
 		calc_bonuses(quiet);
+	}
+
+	if (p_ptr->update & (PU_MA_ARMOUR))
+	{
+		p_ptr->update &= ~(PU_MA_ARMOUR);
+		calc_ma_armour();
 	}
 
 	if (p_ptr->update & (PU_TORCH))
