@@ -976,7 +976,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	put_str("Recall details? (k/p/y/n): ", 0, 40);
 
 	/* Show help. */
-	help_track("<query 2>");
+	help_track("query 2");
 
 	/* Query */
 	query = inkey();
@@ -1015,7 +1015,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 
 
 	/* Show help. */
-	help_track("<query 3>");
+	help_track("query 3");
 
 	/* Start at the end */
 	i = n - 1;
