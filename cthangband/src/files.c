@@ -507,16 +507,14 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 		/* Process "A:<str>" -- save an "action" for later */
 		case 'A':
 		{
-			text_to_ascii(macro__buf, buf+2);
+			strnfmt(macro__buf, 1024, "%v", text_to_ascii_f1, buf+2);
 			return (0);
 		}
 
 		/* Process "P:<str>" -- normal macro */
 		case 'P':
 		{
-			char tmp[1024];
-			text_to_ascii(tmp, buf+2);
-			macro_add(tmp, macro__buf);
+			macro_add(format("%v", text_to_ascii_f1, buf+2), macro__buf);
 			return (0);
 		}
 
@@ -525,8 +523,6 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case 'C':
 		{
 			int mode;
-	
-			char tmp[1024];
 	
 			/* Hack - handle ---reset--- as a special case */
 			if (!strcmp(buf+2, "---reset---"))
@@ -547,9 +543,9 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			mode = strtol(zz[0], NULL, 0);
 			if ((mode < 0) || (mode >= KEYMAP_MODES)) return (1);
 	
-			text_to_ascii(tmp, zz[1]);
-			if (!tmp[0] || tmp[1]) return (1);
-			i = (byte)(tmp[0]);
+			if (strlen(format("%v", text_to_ascii_f1, zz[1])) != 1)
+				return (1);
+			i = (byte)(format(0)[0]);
 	
 			string_free(keymap_act[mode][i]);
 	

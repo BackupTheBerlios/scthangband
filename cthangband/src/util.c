@@ -974,12 +974,12 @@ static int dehex(char c)
  * parsing "\xFF" into a (signed) char.  Whoever thought of making
  * the "sign" of a "char" undefined is a complete moron.  Oh well.
  */
-void text_to_ascii(char *buf, cptr str)
+static void text_to_ascii(char *buf, uint max, cptr str)
 {
 	char *s = buf;
 
 	/* Analyze the "ascii" string */
-	while (*str)
+	while (*str && s+1 < buf+max-1)
 	{
 		/* Backslash codes */
 		if (*str == '\\')
@@ -1092,16 +1092,27 @@ void text_to_ascii(char *buf, cptr str)
 	*s = '\0';
 }
 
+/*
+ * Call text_to_ascii() as a vstrnfmt_aux function.
+ *
+ * Format: 
+ * "%v", text_to_ascii_f1, (cptr)str
+ */
+void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	cptr str = va_arg(*vp, cptr);
+	text_to_ascii(buf, max, str);
+}
 
 /*
  * Hack -- convert a string into a printable form
  */
-void ascii_to_text(char *buf, cptr str)
+static void ascii_to_text(char *buf, uint max, cptr str)
 {
 	char *s = buf;
 
 	/* Analyze the "ascii" string */
-	while (*str)
+	while (*str && s+4 < buf+max-1)
 	{
 		byte i = (byte)(*str++);
 
@@ -1172,6 +1183,18 @@ void ascii_to_text(char *buf, cptr str)
 
 	/* Terminate */
 	*s = '\0';
+}
+
+/*
+ * Call ascii_to_text() as a vstrnfmt_aux function.
+ *
+ * Format: 
+ * "%v", ascii_to_text_f1, (cptr)str
+ */
+void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	cptr str = va_arg(*vp, cptr);
+	ascii_to_text(buf, max, str);
 }
 
 

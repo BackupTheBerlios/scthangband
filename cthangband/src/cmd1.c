@@ -545,11 +545,8 @@ static char get_check_ynq(cptr prompt)
 	/* Erase the prompt */
 	prt("", 0, 0);
 
-	/* Find a printable version of the answer. */
-	ascii_to_text(strchr(tmp, '\0'), format("%c", i));
-
 	/* Leave a record */
-	message_add(tmp);
+	msg_format("%s%v", tmp, ascii_to_text_f1, format("%c", i));
 	
 	TFREE(tmp);
 
