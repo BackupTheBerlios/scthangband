@@ -247,14 +247,14 @@ void do_cmd_messages(void)
 
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < max) && (i + j < n); j++)
-	{
+		{
 			cptr msg = message_str((short)(i+j));
 
 			/* Apply horizontal scroll */
 			msg = (strlen(msg) >= (size_t)q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, max+1-j, -1, TERM_WHITE, msg);
+			mc_put_str(max+1-j, 0, msg);
 
 			/* Hilite "shower" */
 			if (shower[0])
@@ -263,7 +263,7 @@ void do_cmd_messages(void)
 
 				/* Display matches */
 				while ((str = strstr(str, shower)) != NULL)
-		{
+				{
 					int len = strlen(shower);
 
 					/* Display the match */

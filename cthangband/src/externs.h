@@ -2399,7 +2399,7 @@ extern bool c_roff(byte a, cptr str);
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C))
 extern void roff(cptr str);
 #endif
-#if (defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_str(const int y, const int x, cptr str);
 #endif
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))

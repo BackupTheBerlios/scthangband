@@ -3286,7 +3286,7 @@ static void win_message_display(void)
 	for (i = 0; i < h; i++)
 	{
 		/* Dump the message on the appropriate line */
-		prt(message_str(i), (h-1)-i, 0);
+		mc_put_str((h-1)-i, 0, message_str(i));
 	}
 }
 
