@@ -1330,9 +1330,13 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 			slot = INVEN_WIELD;
 			break;
 		}
-		else if (o_ptr == &inventory[INVEN_BOW]) /* No bow, no damage */
+		/* A missing bow */
+		else if (o_ptr == &inventory[INVEN_BOW])
 		{
-			return;
+			wp_ptr = o_ptr;
+			am_ptr = 0;
+			slot = INVEN_BOW;
+			break;
 		}
 		/* else fall through */
 		default: /* Missiles */
@@ -1357,7 +1361,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 		for (i = 0; i <= INVEN_PACK; i++)
 		{
 			object_type *j_ptr = &inventory[i];
-			if (j_ptr->tval != p_ptr->tval_ammo) continue;
+			if (p_ptr->tval_ammo && (j_ptr->tval != p_ptr->tval_ammo)) continue;
 			if (!strstr(quark_str(j_ptr->note), "@ff")) continue;
 			am_ptr = j_ptr;
 			break;
