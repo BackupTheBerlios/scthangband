@@ -1304,8 +1304,8 @@ bool player_no_stun(void)
 
 /*
  * Hack - determine if the character is undead.
- * Undead characters start at dusk, rest until then in the Inn, and never leave
- * bones files.
+ * Undead characters start at dusk, rest until then in the Inn, never leave
+ * bones files and have a chance of resisting sanity blasts.
  */
 bool PURE player_is_undead(void)
 {
@@ -1431,6 +1431,7 @@ static race_bonus_type race_bonuses[] =
 	{RACE_YEEK, SKILL_RACIAL, 40, TR2, TR2_IM_ACID, TRUE},
 	{RACE_KLACKON, 0, 0, TR2, TR2_RES_ACID, TRUE},
 	{RACE_KLACKON, 0, 0, TR2, TR2_RES_CONF, TRUE},
+	{RACE_KLACKON, 0, 0, TR0, TR0_WEIRD, MUT_MAX+RACE_KLACKON},
 	{RACE_KOBOLD, 0, 0, TR2, TR2_RES_POIS, TRUE},
 	{RACE_NIBELUNG, 0, 0, TR2, TR2_RES_DISEN, TRUE},
 	{RACE_NIBELUNG, 0, 0, TR2, TR2_RES_DARK, TRUE},
@@ -1478,6 +1479,7 @@ static race_bonus_type race_bonuses[] =
 	{RACE_SPECTRE, SKILL_RACIAL, 70, TR3, TR3_TELEPATHY, TRUE},
 	{RACE_SPRITE, 0, 0, TR2, TR2_RES_LITE, TRUE},
 	{RACE_SPRITE, 0, 0, TR3, TR3_FEATHER, TRUE},
+	{RACE_SPRITE, 0, 0, TR0, TR0_WEIRD, MUT_MAX+RACE_KLACKON},
 	{RACE_BROO, 0, 0, TR2, TR2_RES_SOUND, TRUE},
 	{RACE_BROO, 0, 0, TR2, TR2_RES_CONF, TRUE},
 };
@@ -1559,6 +1561,11 @@ static void calc_bonuses_weird(s16b (*flags)[32], int mut)
 			flags[TR0][iilog(TR0_AC)] += 20 + skill_set[SKILL_RACIAL].value/10;
 			flags[TR0][iilog(TR0_DIS_TO_A)] +=
 				20 + skill_set[SKILL_RACIAL].value/10;
+			break;
+		}
+		case MUT_MAX+RACE_KLACKON:
+		{
+			flags[TR1][iilog(TR1_SPEED)] += skill_set[SKILL_RACIAL].value/20;
 			break;
 		}
 	}
@@ -2125,12 +2132,9 @@ static void calc_bonuses(void)
 		p_ptr->pspeed -= 10;
 	}
 
-    /* Klackons become faster... */
-    if ((p_ptr->prace == RACE_KLACKON) || (p_ptr->prace == RACE_SPRITE))
-    {
-        p_ptr->pspeed += ((skill_set[SKILL_RACIAL].value/2)) / 10;
-    }
-	else if(!p_ptr->ma_cumber_armour) /* So do other people with martial arts... */
+	/* Most martial artists gain speed with skill. */
+    if (p_ptr->prace != RACE_KLACKON && p_ptr->prace != RACE_SPRITE &&
+		!p_ptr->ma_cumber_armour)
 	{
 		p_ptr->pspeed += (skill_set[SKILL_MA].value / 20);
 	}

@@ -4028,7 +4028,7 @@ extern void dump_history(FILE *fff);
 
 /* xtra1.c */
 
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(STORE_C) || defined(XTRA1_C))
 extern bool PURE player_is_undead(void);
 #endif
 
