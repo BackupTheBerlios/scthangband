@@ -12,10 +12,10 @@
     *****/icustom.txt*0[[i$]] Customising sCthangband
     *****/jwindowpri.txt*0[[j$]] Customising sCthangband windows
     *****/khistory.txt*0[[k$]] History of Moria, Angband, Zangband & Cthangband
+    *****/lcredits.txt*0[[l$]] List of contributors.
 
  (The following files are for people already familiar with Angband)
 
-    *****/lupdate.txt*0[[l$]] Summary of updates
-    *****/mskills.txt*0[[m$]] The skill system
-    *****/nspeed.txt*0[[n$]] The speed system
-    *****/odebug.txt*0[[o$]] Debug mode commands (if available)
+    *****/mupdate.txt*0[[l$]] Summary of updates
+    *****/nskills.txt*0[[m$]] The skill system
+    *****/ospeed.txt*0[[n$]] The speed system

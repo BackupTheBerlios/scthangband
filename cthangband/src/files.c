@@ -4442,7 +4442,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 		if (line >= size) line = 0;
 
 		/* Display the text of the file. */
-		show_page(fff, h_ptr, 1, hgt - 4, line);
+		show_page(fff, h_ptr, 1, hgt - 3, line);
 
 		/* Show a general "title" */
 		prt(format("[%s %s, %s, Line %d/%d]", GAME_NAME, GAME_VERSION,
