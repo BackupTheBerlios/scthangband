@@ -10,30 +10,12 @@
 # or possibly for "Atari" or "Amiga" computers with "Curses" ports,
 # see below for more information.
 #
-# Note that "main-mac.c", the visual module for the Macintosh,
-# must be compiled in a special way, see elsewhere.
-#
-# Note that "main-win.c", the visual module for Windows,
-# must be compiled in a special way, see elsewhere.
-#
-# Note that "main-ibm.c", "main-emx.c", and "main-286.c",
-# the visual modules for various types of IBM-PC computers,
-# must be compiled with special Makefiles, see elsewhere.
-#
-# Note that "main-lsl.c", the visual module for ???,
-# must be compiled with "Makefile.lsl", see elsewhere.
-#
-# Note that "main-acn.c", the visual module for Risc Acorn,
-# must be compiled with "Makefile.acn", see elsewhere.
-#
-# Note that "Makefile.w31" and "Makefile.wat" are slight variations
-# on "Makefile.win" and "Makefile.ibm", respectively, which allow
-# the use of the "main-win.c" and "main-ibm.c" files, respectively,
-# with special compilers.
+# Note that various systems (including most non-UNIX ones) have separate
+# makefiles which will compile appropriate visual modules.
 #
 # If you are able to construct "main-xxx.c" and/or "Makefile.xxx"
-# files for a currently unsupported system, please send them to me
-# (benh@voicenet.com) for inclusion in future versions.
+# file for a currently unsupported system, please send them to me
+# (kieron@dimetrodon.demon.co.uk) for inclusion in future versions.
 #
 # This Makefile comes with "default" dependancies that may be obsolete.
 #
@@ -267,7 +249,7 @@ sCthangband: $(OBJS)
 #
 
 clean:
-	\rm -f *.bak *.o
+	\rm -f *.bak *.o $(GAME)
 
 
 #
