@@ -275,6 +275,9 @@ static void sense_inventory(void)
 			continue;
 		}
 
+		/* Skip repeated feelings */
+		if (streq(feel, quark_str(o_ptr->note))) continue;
+		
 		/* Stop everything */
 		if (disturb_minor) disturb(0, 0);
 
