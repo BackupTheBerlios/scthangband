@@ -29,21 +29,21 @@ static bool detect_monsters_string(cptr Match);
 /*
  * Return TRUE if the player can teleport to (x,y) with dimension door.
  */
-static bool dimension_door_success(int y, int x, int plev)
+static int mvd_dimension_door_success(int y, int x, int plev)
 {
 	cave_type *c_ptr = &cave[y][x];
 
 	/* Monster or LOS-blocking feature present. */
-	if (!cave_empty_grid(c_ptr)) return FALSE;
+	if (!cave_empty_grid(c_ptr)) return MVD_STOP_BEFORE_HERE;
 
 	/* No teleporting into vaults. */
-	if (c_ptr->info & CAVE_ICKY) return FALSE;
+	if (c_ptr->info & CAVE_ICKY) return MVD_STOP_BEFORE_HERE;
 
 	/* Too far. */
-	if (distance(py, px, y, x) > plev+2) return FALSE;
+	if (distance(py, px, y, x) > plev+2) return MVD_STOP_BEFORE_HERE;
 
 	/* Success. */
-	return TRUE;
+	return MVD_CONTINUE;
 }
 
 /*
@@ -64,34 +64,12 @@ bool dimension_door(int plev, int fail_dis)
 	if (!get_aim_dir(&dir)) return FALSE;
 
 	/* Extract the location. */
-	if (!get_dir_target(&x, &y, dir))
-	{
-		/* Handle directions in a sensible way. */
-		int x2 = px, y2 = py, x3, y3;
-
-		/* Find the first square on which dimension door would fail. */
-		do
-		{
-			x3 = x2;
-			y3 = y2;
-
-			mmove2(&y2, &x2, py, px, y, x);
-		}
-		while (dimension_door_success(y2, x2, plev));
-
-		/* Move back one square. */
-		x2 = x3;
-		y2 = y3;
-
-		/* Remember the new target. */
-		x = x2;
-		y = y2;
-	}
+	get_dir_target(&x, &y, dir, mvd_dimension_door_success);
 
 	energy_use += 6*TURN_ENERGY/10 - plev*TURN_ENERGY/100;
 
 	/* Bad target or bad luck. */
-	if (one_in(plev*plev/2) || !dimension_door_success(y, x, plev))
+	if (one_in(plev*plev/2) || !mvd_dimension_door_success(y, x, plev))
 	{
 		msg_print("You fail to exit the astral plane correctly!");
 		energy_use += TURN_ENERGY;
@@ -4700,6 +4678,20 @@ bool unlite_area(int dam, int rad)
 	return (TRUE);
 }
 
+/*
+ * MVD hook for ball spells.
+ */
+static int PURE mvd_no_visible_monster(int y, int x, int UNUSED d)
+{
+	/* Stop before the first wall. */
+	if (!cave_floor_bold(y, x)) return MVD_STOP_BEFORE_HERE;
+
+	/* Stop at the first monster. */
+	if (cave[y][x].m_idx && m_list[cave[y][x].m_idx].ml) return MVD_STOP_HERE;
+
+	/* Don't stop at all otherwise. */
+	return MVD_CONTINUE;
+}
 
 
 /*
@@ -4715,12 +4707,7 @@ bool fire_ball(int typ, int dir, int dam, int rad)
 	int x, y, flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Extract the target. */
-	if (!get_dir_target(&x, &y, dir))
-	{
-		/* Handle directions correctly. */
-		for (x = px, y = py; cave_floor_bold(y, x) && (!cave[y][x].m_idx ||
-			!m_list[cave[y][x].m_idx].ml); x += ddx[dir], y += ddy[dir]);
-	}
+	get_dir_target(&x, &y, dir, mvd_no_visible_monster);
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	return (project(0, rad, y, x, dam, typ, flg));
@@ -4738,7 +4725,7 @@ static bool project_hook(int typ, int dir, int dam, int flg)
 	flg |= (PROJECT_THRU);
 
 	/* Find the target co-ordinates. */
-	get_dir_target(&tx, &ty, dir);
+	get_dir_target(&tx, &ty, dir, NULL);
 
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return (project(0, 0, ty, tx, dam, typ, flg));
@@ -5595,6 +5582,19 @@ void report_magics(void)
 	Term_load();
 }
 
+/*
+ * move_in_direction hook for teleport_swap.
+ */
+static int PURE mvd_one_step(int UNUSED y, int UNUSED x, int d)
+{
+	switch (d)
+	{
+		case 0: return MVD_CONTINUE;
+		case 1: return MVD_STOP_HERE;
+		default: return MVD_STOP_BEFORE_HERE;
+	}
+}
+
 void teleport_swap(int dir)
 {
 	int tx, ty;
@@ -5602,11 +5602,8 @@ void teleport_swap(int dir)
 	monster_type * m_ptr;
 	monster_race * r_ptr;
 
-	if (!get_dir_target(&tx, &ty, dir))
-	{
-		/* A direction always refers to an adjacent square. */
-		mmove2(&ty, &tx, px, py, tx, ty);
-	}
+	/* A direction always refers to an adjacent square. */
+	get_dir_target(&tx, &ty, dir, mvd_one_step);
 
 	c_ptr = &cave[ty][tx];
 

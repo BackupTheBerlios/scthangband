@@ -3075,6 +3075,11 @@ logaux(x, 1) logaux(x, 0) 255)
 #define GET_ITEM_ERROR_ABORT -1 /* User hit escape */
 #define GET_ITEM_ERROR_NO_ITEMS -2 /* No legal items to choose */
 
+/* Return codes "okay" function can return to move_in_direction(). */
+#define MVD_CONTINUE 0
+#define MVD_STOP_HERE 1
+#define MVD_STOP_BEFORE_HERE 2
+
 /* Energy constants */
 #define TURN_ENERGY 1000 /* Energy used in one player turn. */
 #define TICK_ENERGY 100 /* Energy given in one game turn. */

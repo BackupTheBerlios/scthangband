@@ -3562,19 +3562,28 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
  *
  * Return TRUE if the entire path (excluding the starting position) is "okay".
  */
-bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*okay)(int, int, int))
+bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2,
+	int (*okay)(int, int, int))
 {
-	int x, y, d;
+	int x, y, d, r;
+	
+	assert(okay); /* Caller */
 
 	/* Set (*xx, *yy) to the square before the first on which okay() fail. */
 	for (d = 0, x = x1, y = y1; !d || (*okay)(y, x, d); d++)
 	{
+		r = (d) ? (*okay)(y, x, d) : MVD_CONTINUE;
+
+		if (r == MVD_STOP_BEFORE_HERE) break;
+
 		/* Save the new location if desired. */
 		if (xx) *xx = x;
 		if (yy) *yy = y;
 
 		/* Okay for the entire distance. */
 		if (x == x2 && y == y2) return TRUE;
+
+		if (r == MVD_STOP_HERE) break;
 
 		mmove2(&y, &x, y1, x1, y2, x2);
 	}
@@ -3587,20 +3596,20 @@ bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*
  * Return TRUE if (x,y) is a "floor" grid, part of the pattern or an explosive
  * rune.
  */
-static bool PURE projectable_p(int y, int x, int d)
+static int PURE mvd_projectable(int y, int x, int d)
 {
 	/* Too far. */
-	if (d > MAX_RANGE || !in_bounds2(y, x)) return FALSE;
+	if (d > MAX_RANGE || !in_bounds2(y, x)) return MVD_STOP_BEFORE_HERE;
 
 	/* Floor */
-	else if (cave_floor_bold(y, x)) return TRUE;
+	else if (cave_floor_bold(y, x)) return MVD_CONTINUE;
 
 	/* Pattern or explosive rune. */
 	else if ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
-		(cave[y][x].feat >= FEAT_MINOR_GLYPH)) return TRUE;
+		(cave[y][x].feat >= FEAT_MINOR_GLYPH)) return MVD_CONTINUE;
 
 	/* Bad terrain feature. */
-	else return FALSE;
+	else return MVD_STOP_BEFORE_HERE;
 }
 
 /*
@@ -3612,7 +3621,7 @@ static bool PURE projectable_p(int y, int x, int d)
 bool projectable(int y1, int x1, int y2, int x2)
 {
 	/* See "project()" */
-	return move_in_direction(NULL, NULL, x1, y1, x2, y2, projectable_p);
+	return move_in_direction(NULL, NULL, x1, y1, x2, y2, mvd_projectable);
 }
 
 /*

@@ -1046,7 +1046,7 @@ static bool do_cmd_fire_aux(object_type *o_ptr,
 	nx = x = px;
 
 	/* Predict the "target" location */
-	get_dir_target(&tx, &ty, dir);
+	get_dir_target(&tx, &ty, dir, NULL);
 
 	/* Hack -- Handle stuff */
 	handle_stuff();

@@ -3425,21 +3425,28 @@ bool get_rep_target(int *x, int *y)
 
 /*
  * Extract the target from a get_aim_dir() call.
- * Return TRUE if a location was chosen, FALSE for a direction.
+ * This does not check that the chosen target is suitable, as "okay" may fail
+ * on targets which can be selected with direction 5.
+ * If a test is needed, following this up with a suitable move_in_direction()
+ * call is one way of obtaining it.
  */
-bool get_dir_target(int *x, int *y, int dir)
+void get_dir_target(int *x, int *y, int dir, int (*okay)(int, int, int))
 {
+	assert(x && y); /* Caller */
+
 	if (dir == 5 && target_okay())
 	{
 		*x = target_col;
 		*y = target_row;
-		return TRUE;
+	}
+	else if (okay)
+	{
+		move_in_direction(x, y, px, py, px+99*ddx[dir], py+99*ddy[dir], okay);
 	}
 	else
 	{
-		*x = px + 99 * ddx[dir];
-		*y = py + 99 * ddy[dir];
-		return FALSE;
+		*x = px+99*ddx[dir];
+		*y = py+99*ddy[dir];
 	}
 }
 

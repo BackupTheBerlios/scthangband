@@ -189,9 +189,13 @@ static void prt_binary(u32b flags, int row, int col)
 }
 
 
-static bool cave_floor_bold_p(int y, int x, int UNUSED d)
+/*
+ * Return CONTINUE for floor, so that teleporting in a direction moves the
+ * player to the next wall.
+ */
+static int PURE mvd_cave_floor(int y, int x, int UNUSED d)
 {
-	return cave_floor_bold(y, x);
+	return cave_floor_bold(y, x) ? MVD_CONTINUE : MVD_STOP_BEFORE_HERE;
 }
 
 /*
@@ -204,12 +208,11 @@ void do_cmd_wiz_bamf(void)
 	/* Hack - start with the "pick a location" display, but allow directions. */
 	set_gnext("*op");
 
+	/* Request a direction/target. */
 	if (!get_aim_dir(&d)) return;
 
-	if (!get_dir_target(&x, &y, d))
-	{
-		move_in_direction(&x, &y, px, py, x, y, cave_floor_bold_p);
-	}
+	/* Extract the target. */
+	get_dir_target(&x, &y, d, mvd_cave_floor);
 
 	/* Teleport to the target */
 	teleport_player_to(y, x);
@@ -1414,20 +1417,13 @@ void do_cmd_wiz_zap(void)
 void do_cmd_magebolt(void)
 {
 	int dir;
-	int tx, ty;
-	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Get a direction */
-	if (!get_aim_dir(&dir)) return;
-
-	/* Use the given direction */
-	if (get_dir_target(&tx, &ty, dir))
+	if (get_aim_dir(&dir))
 	{
-		flg &= ~(PROJECT_STOP);
+		/* Attack everything in the selected square. */
+		fire_ball(GF_MANA, dir, 32767, 0);
 	}
-
-	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	project(0, 0, ty, tx, 1000000, GF_MANA, flg);
 }
 
 

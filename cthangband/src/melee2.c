@@ -730,20 +730,21 @@ static bool summon_possible(int y1, int x1)
 
 
 /*
- * Return TRUE if (x,y) is a clear square without a monster.
+ * Return MVD_CONTINUE if (x,y) is a clear square without a monster,
+ * MVD_STOP_BEFORE_HERE otherwise.
  */
-static bool PURE clean_shot_p(int y, int x, int UNUSED d)
+static int PURE mvd_clean_shot(int y, int x, int UNUSED d)
 {
 	int m_idx = cave[y][x].m_idx;
 
 	/* Never pass through walls */
-	if (!cave_floor_bold(y, x)) return FALSE;
+	if (!cave_floor_bold(y, x)) return MVD_STOP_BEFORE_HERE;
 
 	/* Never pass through hostile monsters */
-	if (m_idx && ~m_list[m_idx].smart & SM_ALLY) return FALSE;
+	if (m_idx && ~m_list[m_idx].smart & SM_ALLY) return MVD_STOP_HERE;
 
 	/* Pass through other things. */
-	return TRUE;
+	return MVD_CONTINUE;
 }
 
 /*
@@ -757,7 +758,7 @@ static bool clean_shot(int y1, int x1, int y2, int x2)
 	int y, x;
 
 	/* Does it get to the end before clean_shot_p() fails? */
-	return move_in_direction(&x, &y, x1, y1, x2, y2, clean_shot_p);
+	return move_in_direction(&x, &y, x1, y1, x2, y2, mvd_clean_shot);
 }
 
 
