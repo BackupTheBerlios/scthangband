@@ -57,7 +57,7 @@
 /*
  * Track which quests have been encountered.
  */
-/* #define SF_QUEST_KNOWN	0x0800 */
+#define SF_QUEST_KNOWN	0x0800
 
 /*
  * Rearrange r_info.txt so that all of the unusual monsters are at the beginning.

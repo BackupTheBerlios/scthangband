@@ -2509,7 +2509,7 @@ static bool wr_savefile_new(void)
 #ifdef SF_QUEST_UNKNOWN
 		if (has_flag(SF_QUEST_UNKNOWN)) wr_byte((byte)(q_ptr->cur_num_known));
 #endif
-#ifdef SF_QUESK_KNOWN
+#ifdef SF_QUEST_KNOWN
 		if (has_flag(SF_QUEST_KNOWN)) wr_byte(q_ptr->known);
 #endif
 	}
