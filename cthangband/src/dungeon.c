@@ -3231,7 +3231,11 @@ static void process_player(void)
 
 	/*** Apply energy ***/
 
-    if (hack_chaos_feature)
+	/* 
+	 * Don't give chaos features here without patrons, as they're the only
+	 * things which reward levels like that.
+	 */
+    if (hack_chaos_feature && chaos_patrons)
     {
         msg_print("You feel different!");
         (void)gain_chaos_feature(0);

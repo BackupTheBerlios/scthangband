@@ -3962,7 +3962,7 @@ extern cptr string_make(cptr str);
 #if (defined(TABLES_C) || defined(VARIABLE_C))
 extern bool chaos_patrons_w;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool chaos_patrons;
 #endif
 

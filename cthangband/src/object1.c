@@ -955,6 +955,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 {
 	bool pref = (flags & OD_ART) != 0;
 	bool in_shop = (flags & OD_SHOP) || (o1_ptr->ident & IDENT_STORE);
+	bool no_hide = (flags & OD_NOHIDE);
 
 	/* The strings from which buf is compiled. */
 	cptr strings[8] = {0,0,0,0,0,0,0,0};
@@ -1080,7 +1081,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	if (!r[this_level]) r[this_level] = "Mystery";
 
 	/* Hack - hidden objects have a special name. */
-	if (o_ptr->ident & IDENT_HIDDEN) r[this_level] = hidden_name;
+	if (!no_hide && o_ptr->ident & IDENT_HIDDEN) r[this_level] = hidden_name;
 
 	/*
 	 * Add an article if required. This is only possible at the start

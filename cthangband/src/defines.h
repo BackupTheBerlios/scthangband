@@ -786,6 +786,7 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define OD_ART	0x01	/* Display article/quantity if one is relevant. */
 #define OD_SHOP	0x02	/* Display as in shop, hiding various things. */
+#define OD_NOHIDE 0x04	/* Don't allow hidden objects. */
 
 /*
  * Misc constants

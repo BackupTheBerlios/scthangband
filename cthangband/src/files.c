@@ -3802,7 +3802,7 @@ next_cave:
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 		{
 			my_fprintf(fff, "%c%s %v\n", index_to_label(&inventory[i]), paren,
-				object_desc_f3, &inventory[i], TRUE, 3);
+				object_desc_f3, &inventory[i], OD_ART | OD_NOHIDE, 3);
 
 			/* Describe random object attributes */
 			identify_fully_file(inventory+i, fff);
@@ -3815,7 +3815,7 @@ next_cave:
 	for (i = 0; i < INVEN_PACK && inventory[i].k_idx; i++)
 	{
 		my_fprintf(fff, "%c%s %v\n", index_to_label(&inventory[i]), paren,
-			object_desc_f3, &inventory[i], TRUE, 3);
+			object_desc_f3, &inventory[i], OD_ART | OD_NOHIDE, 3);
 
 		/* Describe random object attributes */
 		identify_fully_file(inventory+i, fff);
@@ -3842,7 +3842,7 @@ next_cave:
 		for (i = 0; i < st_ptr->stock_num; i++)
 		{
 			my_fprintf(fff, "%c%s %v\n", I2A(i%12), paren,
-				object_desc_f3, &st_ptr->stock[i], TRUE, 3);
+				object_desc_f3, &st_ptr->stock[i], OD_ART | OD_NOHIDE, 3);
 
 			/* Describe random object attributes */
 			identify_fully_file(&st_ptr->stock[i], fff);
