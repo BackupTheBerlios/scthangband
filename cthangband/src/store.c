@@ -14,6 +14,8 @@
 #include "angband.h"
 
 
+#define STORE_ITEMS_PER_PAGE	(term_screen->hgt-12)
+
 #define RUMOR_CHANCE 8
 
 #define MAX_COMMENT_1	6
@@ -1792,7 +1794,7 @@ static void display_entry(int pos)
 	object_type		*o_ptr;
 	s32b		x;
 
-	C_TNEW(o_name, ONAME_MAX, char);
+	cptr o_name;
 	char		out_val[160];
 
 
@@ -1817,9 +1819,11 @@ static void display_entry(int pos)
 		/* Leave room for weights, if necessary -DRS- */
 		if (show_weights) maxwid -= 10;
 
+		/* Respect ONAME_MAX. */
+		if (maxwid > ONAME_MAX) maxwid = ONAME_MAX;
+
 		/* Describe the object */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-		o_name[maxwid] = '\0';
+		o_name = format("%.*v", maxwid, object_desc_f3, o_ptr, TRUE, 3);
 		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
 
 		/* Show weights */
@@ -1841,20 +1845,20 @@ static void display_entry(int pos)
 		/* Leave room for weights, if necessary -DRS- */
 		if (show_weights) maxwid -= 7;
 
+		/* Respect ONAME_MAX. */
+		if (maxwid > ONAME_MAX) maxwid = ONAME_MAX;
+
 		/* Describe the object (fully) */
 		if (cur_store_type == STORE_PAWN)
 		{
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
+			o_name = format("%.*v", maxwid, object_desc_f3, o_ptr, TRUE, 3);
 		}
 		else
 		{
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 3);
+			o_name = format("%.*v", maxwid, object_desc_store_f3, o_ptr, TRUE, 3);
 		}
 
-
-		o_name[maxwid] = '\0';
 		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
-		TFREE(o_name);
 
 		/* Show weights */
 		if (show_weights)
@@ -1913,9 +1917,9 @@ static void display_entry(int pos)
 static void display_inventory(void)
 {
 	int i, k;
-	const int items = term_screen->hgt-12;
+	const int items = STORE_ITEMS_PER_PAGE;
 
-	/* Display the next 12 items */
+	/* Display the next STORE_ITEMS_PER_PAGE items */
 	for (k = 0; k < items; k++)
 	{
 		/* Do not display "dead" items */
@@ -2189,7 +2193,7 @@ static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
  */
 static int get_stock(int *com_val, cptr pmt)
 {
-	int i = MIN(st_ptr->stock_num - store_top, term_screen->hgt-12);
+	int i = MIN(st_ptr->stock_num - store_top, STORE_ITEMS_PER_PAGE);
 	return get_stock_aux(com_val, pmt, 0, i-1);
 }
 
@@ -2422,7 +2426,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	bool		cancel = FALSE;
 	char		out_val[160];
-	C_TNEW(o_name, ONAME_MAX, char);
+	cptr o_name;
 
 	pmt = "Asking";
 	*price = 0;
@@ -2443,9 +2447,13 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	if ((auto_haggle || final) && !verbose_haggle)
 	{
 		if(cur_store_type == STORE_PAWN)
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
+		{
+			o_name = format("%v", object_desc_f3, o_ptr, TRUE, 3);
+		}
 		else
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 3);
+		{
+			o_name = format("%v", object_desc_store_f3, o_ptr, TRUE, 3);
+		}
 		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
 		*price = final_ask;
 		return !get_check(out_val);
@@ -2548,8 +2556,6 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 			}
 		}
 	}
-
-	TFREE(o_name);
 
 	/* Cancel */
 	if (cancel) return (TRUE);
@@ -2831,12 +2837,9 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 	if (auto_haggle && !verbose_haggle)
 	{
-		C_TNEW(o_name, ONAME_MAX, char);
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-		sprintf(out_val, "%s %ld for %s? ", pmt, cur_ask, o_name);
-		TFREE(o_name);
 		*price = final_ask;
-		return !get_check(out_val);
+		return !get_check(format("%s %ld for %v? ", pmt, cur_ask,
+			object_desc_f3, o_ptr, TRUE, 3));
 	}
 
 	/* XXX XXX XXX Display commands */
@@ -2961,7 +2964,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 /*
  * Buy an item from a store				-RAK-
  */
-static void store_purchase_aux(char *o_name)
+static void store_purchase(void)
 {
 	int i, amt, choice;
 	int item;
@@ -2973,6 +2976,7 @@ static void store_purchase_aux(char *o_name)
 
 	object_type *o_ptr;
 
+	cptr o_name;
 	char out_val[160];
 
 
@@ -3077,11 +3081,11 @@ static void store_purchase_aux(char *o_name)
 			/* Describe the object (fully) */
 			if(cur_store_type == STORE_PAWN)
 			{
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
+				o_name = format("%v", object_desc_f3, j_ptr, TRUE, 3);
 			}
 			else
 			{
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, j_ptr, TRUE, 3);
+				o_name = format("%v", object_desc_store_f3, j_ptr, TRUE, 3);
 			}
 			/* Message */
 			if (!auto_haggle || verbose_haggle)
@@ -3132,7 +3136,7 @@ static void store_purchase_aux(char *o_name)
 				j_ptr->ident &= ~(IDENT_STORE);
 
 				/* Describe the transaction */
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
+				o_name = format("%v", object_desc_f3, j_ptr, TRUE, 3);
 
 				/* Message */
 				if (!auto_haggle || verbose_haggle)
@@ -3154,11 +3158,8 @@ static void store_purchase_aux(char *o_name)
 				j_ptr = inven_carry(j_ptr);
 
 				/* Describe the final result */
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
-
-				/* Message */
-				msg_format("You have %s (%c).",
-				           o_name, index_to_label(j_ptr));
+				msg_format("You have %v (%c).", object_desc_f3, j_ptr, TRUE, 3,
+					index_to_label(j_ptr));
 
 				/* Handle stuff */
 				handle_stuff();
@@ -3214,7 +3215,8 @@ static void store_purchase_aux(char *o_name)
 				else if (st_ptr->stock_num != i)
 				{
 					/* Pick the correct screen */
-					if (store_top >= st_ptr->stock_num) store_top -= 12;
+					if (store_top >= st_ptr->stock_num) store_top -=
+						STORE_ITEMS_PER_PAGE;
 				}
 			}
 
@@ -3234,10 +3236,8 @@ static void store_purchase_aux(char *o_name)
 		j_ptr = inven_carry(j_ptr);
 
 		/* Describe just the result */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, j_ptr, TRUE, 3);
-
-		/* Message */
-		msg_format("You have %s (%c).", o_name, index_to_label(j_ptr));
+		msg_format("You have %v (%c).", object_desc_f3, j_ptr, TRUE, 3,
+			index_to_label(j_ptr));
 
 		/* Handle stuff */
 		handle_stuff();
@@ -3256,7 +3256,7 @@ static void store_purchase_aux(char *o_name)
 			if (st_ptr->stock_num == 0) store_top = 0;
 
 			/* Nothing left on that screen */
-			else if (store_top >= st_ptr->stock_num) store_top -= 12;
+			else if (store_top >= st_ptr->stock_num) store_top -= STORE_ITEMS_PER_PAGE;
 		}
 	}
 
@@ -3265,20 +3265,11 @@ static void store_purchase_aux(char *o_name)
 }
 
 /*
- * A wrapper around the above for memory allocation.
- */
-static void store_purchase(void)
-{
-	C_TNEW(o_name, ONAME_MAX, char);
-	store_purchase_aux(o_name);
-	TFREE(o_name);
-}
-
-/*
  * Sell an item to the store (or home)
  */
-static void store_sell_aux(char *o_name)
+static void store_sell(void)
 {
+	cptr o_name;
 	errr err;
 	int choice;
 	int item_pos;
@@ -3329,7 +3320,7 @@ static void store_sell_aux(char *o_name)
 	object_copy(q_ptr, o_ptr);
 
 	/* Get a full description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
+	o_name = format("%v", object_desc_f3, q_ptr, TRUE, 3);
 
 	/* Remove any inscription for stores */
 	if (cur_store_type != 7) q_ptr->note = 0;
@@ -3431,7 +3422,7 @@ static void store_sell_aux(char *o_name)
 			{
 				value = object_value(q_ptr) * q_ptr->number;
 				/* Get the description all over again */
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
+				o_name = format("%v", object_desc_f3, q_ptr, TRUE, 3);
 			}
 
 
@@ -3472,7 +3463,8 @@ static void store_sell_aux(char *o_name)
 			/* Re-display if item is now in store */
 			if (item_pos >= 0)
 			{
-				store_top = (item_pos / 12) * 12;
+				store_top = (item_pos / STORE_ITEMS_PER_PAGE) *
+					STORE_ITEMS_PER_PAGE;
 			}
 		}
 	}
@@ -3497,19 +3489,10 @@ static void store_sell_aux(char *o_name)
 		/* Update store display */
 		if (item_pos >= 0)
 		{
-			store_top = (item_pos / 12) * 12;
+			store_top = (item_pos / STORE_ITEMS_PER_PAGE)
+				* STORE_ITEMS_PER_PAGE;
 		}
 	}
-}
-
-/*
- * A wrapper around the above for memory allocation.
- */
-static void store_sell(void)
-{
-	C_TNEW(o_name, ONAME_MAX, char);
-	store_sell_aux(o_name);
-	TFREE(o_name);
 }
 
 
@@ -3559,19 +3542,13 @@ static void store_sell(void)
    /* Description */
    if (cur_store_type == STORE_HOME || cur_store_type == STORE_PAWN)
 	{
-		C_TNEW(o_name, ONAME_MAX, char);
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-		msg_format("Examining %s...", o_name);
+		msg_format("Examining %v...", object_desc_f3, o_ptr, TRUE, 3);
 		if (!identify_fully_aux(o_ptr, FALSE)) msg_print("You see nothing special.");
-		TFREE(o_name);
 	}
 	else /* Make it look as though we are aware of the item. */
 	{
-		C_TNEW(o_name, ONAME_MAX, char);
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 3);
-		msg_format("Examining %s...", o_name);
+		msg_format("Examining %v...", object_desc_store_f3, o_ptr, TRUE, 3);
 		if (!identify_fully_aux(o_ptr, TRUE)) msg_print("You see nothing special.");
-		TFREE(o_name);
 	}
 
    return;
@@ -3622,7 +3599,7 @@ static void store_process_command(void)
 	int i;
 	char buf[80];
 
-	const int items = term_screen->hgt-12;
+	const int items = STORE_ITEMS_PER_PAGE;
 
  #ifdef ALLOW_REPEAT
  
@@ -4369,7 +4346,7 @@ static void display_store_extra(void)
 	prt(" ESC) Exit from Building.", y+1, 0);
 
 	/* Browse if necessary */
-	if (st_ptr->stock_num > 12)
+	if (st_ptr->stock_num > STORE_ITEMS_PER_PAGE)
 	{
 		prt(" SPACE) Next page of stock", y+2, 0);
 	}
@@ -4540,10 +4517,6 @@ void do_cmd_store(void)
 	/* Interact with player */
 	while (!leave_store)
 	{
-		/* Clear */
-        clear_from(21);
-        
-
 		/* Hack -- Check the charisma */
 		if (tmp_chr != p_ptr->stat_use[A_CHR]) display_store();
 		tmp_chr = p_ptr->stat_use[A_CHR];
@@ -4607,8 +4580,6 @@ void do_cmd_store(void)
 				object_type forge;
 				object_type *q_ptr;
 
-				C_TNEW(o_name, ONAME_MAX, char);
-
 
 				/* Give a message */
 				msg_print("Your pack overflows!");
@@ -4620,10 +4591,8 @@ void do_cmd_store(void)
 				object_copy(q_ptr, o_ptr);
 
 				/* Describe it */
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, TRUE, 3);
-
-				/* Message */
-				msg_format("You drop %s (%c).", o_name, index_to_label(o_ptr));
+				msg_format("You drop %v (%c).", object_desc_f3, q_ptr, TRUE, 3,
+					index_to_label(o_ptr));
 
 				/* Remove it from the players inventory */
 				item_increase(o_ptr, -255);
@@ -4639,9 +4608,9 @@ void do_cmd_store(void)
 				/* Redraw the home */
 				if (item_pos >= 0)
 				{
-					store_top = (item_pos / 12) * 12;
+					store_top = (item_pos / STORE_ITEMS_PER_PAGE) *
+						STORE_ITEMS_PER_PAGE;
 				}
-				TFREE(o_name);
 			}
 		}
 
