@@ -3239,8 +3239,7 @@ extern int PlayerUID;
  * Return the "attr" for a given item.
  */
 #define object_attr(T) \
-    (((k_info[(T)->k_idx].u_idx) && ((!object_aware_p(T)) || \
-	(k_info[(T)->k_idx].x_attr == TERM_DARK))) ? \
+    ((((!object_aware_p(T)) || (k_info[(T)->k_idx].x_attr == TERM_DARK))) ? \
     (u_info[k_info[(T)->k_idx].u_idx].x_attr) : \
     (k_info[(T)->k_idx].x_attr))
 
@@ -3248,8 +3247,7 @@ extern int PlayerUID;
  * Return the "char" for a given item.
  */
 #define object_char(T) \
-    (((k_info[(T)->k_idx].u_idx) && ((!object_aware_p(T)) || \
-	(k_info[(T)->k_idx].x_char == ' '))) ? \
+    ((((!object_aware_p(T)) || (k_info[(T)->k_idx].x_char == ' '))) ? \
     (u_info[k_info[(T)->k_idx].u_idx].x_char) : \
     (k_info[(T)->k_idx].x_char))
 
