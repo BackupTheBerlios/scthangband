@@ -526,6 +526,13 @@ static void do_cmd_options_cheat(cptr info)
 				break;
 			}
 
+			case 'x':
+			case 'X':
+			{
+				(*cheat_info[k].o_var) ^= 1;
+				k = (k + 1) % n;
+				break;
+			}
 			default:
 			{
 				bell();
@@ -808,6 +815,13 @@ void do_cmd_options_aux(int page, cptr info)
 				break;
 			}
 
+			case 'x':
+			case 'X':
+			{
+				(*option_info[opt[k]].o_var) ^= 1;
+				k = (k + 1) % n;
+				break;
+			}
 			default:
 			{
 				bell();
