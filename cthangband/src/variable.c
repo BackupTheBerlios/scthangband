@@ -752,14 +752,14 @@ s16b *pid_base;
  */
 artifact_type *a_info;
 char *a_name;
-char *a_text;
+/* char *a_text; */
 
 /*
  * The ego-item arrays
  */
 ego_item_type *e_info;
 char *e_name;
-char *e_text;
+/* char *e_text; */
 
 
 /*

@@ -188,7 +188,7 @@ void do_cmd_wiz_bamf(void)
 /*
  * Aux function for "do_cmd_wiz_change()".	-RAK-
  */
-void do_cmd_wiz_change_aux(void)
+static void do_cmd_wiz_change_aux(void)
 {
 	int			i;
 
