@@ -636,6 +636,50 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 /*
+ * Obtain the flags a given unaware object kind must have.
+ * This only adds flags, so is safe to use on a set of flags which isn't clear.
+ */
+static void object_flags_pid(object_kind *k_ptr, u32b *f1, u32b *f2, u32b *f3)
+{
+	u32b g3,g2,g1=g2=g3=0xFFFFFFFFL;
+	s16b i;
+	bool started = FALSE;
+	byte p_id = u_info[k_ptr->u_idx].p_id;
+
+	/* Don't do anything without spoilers. */
+	if (!spoil_base) return;
+
+	/* Don't do anything with aware items here. */
+	if (object_aware_kp(k_ptr)) return;
+	
+	/* Find the flags common to all possible k_idxs */
+	for (i = 0; i < MAX_K_IDX; i++)
+	{
+		object_kind *k2_ptr = &k_info[i];
+
+		/* Can't look like this item. */
+		if (u_info[k2_ptr->u_idx].p_id != p_id) continue;
+
+		/* Already identified this item. */
+		if (object_aware_kp(k2_ptr)) continue;
+
+		g1 &= k2_ptr->flags1;
+		g2 &= k2_ptr->flags2;
+		g3 &= k2_ptr->flags3;
+		started = TRUE;
+	}
+	
+	/* No information if no objects found (should not happen anyway) */
+	if (!started) return;
+
+	/* Add in the newly discovered flags. */
+	(*f1) |= g1;
+	(*f2) |= g2;
+	(*f3) |= g3;
+}
+
+
+/*
  * Obtain the "flags" for an item which are known to the player
  */
 void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
@@ -679,6 +723,11 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		/* Clear all flags */
 	(*f1) = (*f2) = (*f3) = 0L;
 	}
+
+	/* The player can know certain things about unaware items. */
+	if (spoil_base && !object_aware_p(o_ptr))
+		object_flags_pid(k_ptr, f1, f2, f3);
+		
 
 	/* Check for cursing even if unidentified */
 	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))

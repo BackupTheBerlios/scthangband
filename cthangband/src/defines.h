@@ -2776,9 +2776,15 @@
  * Test 1: aware flag
  * Test 2: flavourless
  */
+
+/* Based on a given object_kind */
+#define object_aware_kp(T) \
+	(((T)->aware) || \
+	(u_info[(T)->u_idx].flags & UNID_BASE_ONLY))
+
+/* Based on a given object_type */
 #define object_aware_p(T) \
-	((k_info[(T)->k_idx].aware) || \
-	(u_info[k_info[(T)->k_idx].u_idx].flags & UNID_BASE_ONLY))
+	(object_aware_kp(&k_info[(T)->k_idx]))
 
 /*
  * Determine if a given inventory item is "tried"
