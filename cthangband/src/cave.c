@@ -1575,12 +1575,12 @@ static int get_priority(int y, int x)
  * Deduce the grid with the highest priority (as determined above) in the
  * specified square area of the level.
  */
-static void get_best_priority(char *a, byte *c,
+static void get_best_priority(byte *a, char *c,
 	int minx, int miny, int maxx, int maxy)
 {
 	int x, y, mx, my, mpri;
-	char da;
-	byte dc;
+	byte da[1];
+	char dc[1];
 
 	for (mpri = my = mx = 0, x = minx; x <= maxx; x++)
 	{
@@ -1599,7 +1599,7 @@ static void get_best_priority(char *a, byte *c,
 	}
 
 	/* Extract the image of the "best" grid in the area. */
-	map_info(my, mx, a, c, &da, &dc);
+	map_info(my, mx, a, c, da, dc);
 }
 
 /*
