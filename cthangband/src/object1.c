@@ -4029,43 +4029,6 @@ void show_equip(void)
 
 
 
-/*
- * Flip "inven" and "equip" in any sub-windows
- */
-void toggle_inven_equip(void)
-{
-	int j;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
-	{
-		/* Unused */
-		if (!angband_term[j]) continue;
-
-		/* Flip inven to equip */
-		if (window_flag[j] & (PW_INVEN))
-		{
-			/* Flip flags */
-			window_flag[j] &= ~(PW_INVEN);
-			window_flag[j] |= (PW_EQUIP);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_EQUIP);
-		}
-
-		/* Flip inven to equip */
-		else if (window_flag[j] & (PW_EQUIP))
-		{
-			/* Flip flags */
-			window_flag[j] &= ~(PW_EQUIP);
-			window_flag[j] |= (PW_INVEN);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN);
-		}
-	}
-}
-
 
 
 /*
@@ -4465,9 +4428,6 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 		{
 			/* Update */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-			/* Redraw windows */
-			window_stuff();
 		}
 
 		/* Inventory screen */
@@ -4793,9 +4753,6 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	{
 		/* Update */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 

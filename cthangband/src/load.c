@@ -686,6 +686,7 @@ static void rd_options(void)
 
 	u32b flag[8];
 	u32b mask[8];
+	byte flagw[8][32];
 
 
 	/*** Oops ***/
@@ -770,37 +771,57 @@ static void rd_options(void)
 	/*** Window Options ***/
 
 	/* Read the window flags */
-	for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
+	if (older_than(4,1,5))
+	{
+	for (n = 0; n < 8; n++)
+	{
+			u32b temp;
+			rd_u32b(&temp);
+		for (i = 0; i < 32; i++)
+		{
+				if (temp & 1<<i)
+				{
+					flagw[n][i] = 5;
+				}
+				else
+					{
+					flagw[n][i] = 0;
+				}
+			}
+		}
+					}
+					else
+					{
+		for (n = 0; n < 8; n++)
+		{
+			for (i = 0; i < 32; i++)
+			{
+				rd_byte(&flagw[n][i]);
+					}
+					}
+				}                           
+
 
 	/* Read the window masks */
-	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
+	for (n = 0; n < 8; n++)
+	{
+		rd_u32b(&mask[n]);
+
+		/* Was &=, but this seemed to just prohibit adding new options. */
+		mask[n] = windows[n].mask;
+	}
 
 	/* Analyze the options */
 	for (n = 0; n < 8; n++)
 	{
-		/* Analyze the options */
-		for (i = 0; i < 32; i++)
+		for (c = 0; c < 32; c++)
 		{
-			/* Process valid flags */
-			if (mask[n] & (1L << i))
+			/* Set */
+			if (flagw[n][c] && mask[n] & (1L << c))
 			{
-				/* Process valid flags */
-				if (window_mask[n] & (1L << i))
-				{
-					/* Set */
-					if (flag[n] & (1L << i))
-					{
-						/* Set */
-						window_flag[n] |= (1L << i);
-					}
-				
-					/* Clear */
-					else
-					{
-						/* Clear */
-						window_flag[n] &= ~(1L << i);
-					}
-				}                           
+				/* Set */
+				windows[n].pri[c] = flagw[n][c] % 16;
+				windows[n].rep[c] = flagw[n][c] / 16;
 			}
 		}
 	}

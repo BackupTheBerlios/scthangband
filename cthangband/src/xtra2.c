@@ -3967,6 +3967,8 @@ bool target_set(int mode)
 	
 	cave_type		*c_ptr;
 
+	/* Enter targetting mode */
+	current_function = FUNC_TARGET_SET;
 
 	/* Cancel target */
 	target_who = 0;
@@ -4223,6 +4225,9 @@ bool target_set(int mode)
 
 	/* Don't show violet uniques in normal play */
 	do_violet_uniques(FALSE);
+
+	/* Leave targetting mode */
+	current_function = 0;
 
 	/* Failure to set target */
 	if (!target_who) return (FALSE);

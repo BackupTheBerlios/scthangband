@@ -882,10 +882,26 @@ static void wr_options(void)
 	/*** Window options ***/
 
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(window_flag[i]);
+	for (i = 0; i < 8; i++)
+	{
+		if (vpatch < 5)
+		{
+			/* The current display should be as good as any. */
+			wr_byte(windows[i].current);
+		}
+		else
+		{
+			for (c = 0; c < 32; c++)
+			{
+				byte pri = (windows[i].pri[c])%16;
+				pri += 16*((windows[i].rep[c])%16);
+				wr_byte(pri);
+			}
+		}
+	}
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(window_mask[i]);
+	for (i = 0; i < 8; i++) wr_u32b(windows[i].mask);
 }
 
 

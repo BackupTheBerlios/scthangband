@@ -1598,7 +1598,7 @@ static void term_data_link(int i)
 	Term_activate(td->t);
 
 	/* Global pointer */
-	angband_term[i] = td->t;
+	windows[i].term = td->t;
 
 	/* Activate old */
 	Term_activate(old);
@@ -1862,7 +1862,7 @@ static void init_windows(void)
 		term_data_hack(td);
 
 		/* Obtain title */
-		s = angband_term_name[i];
+		s = windows[i].name;
 
 		/* Get length */
 		n = strlen(s);
@@ -2425,7 +2425,7 @@ static void init_menubar(void)
 		Str15 buf;
 		
 		/* Describe the item */
-		sprintf((char*)buf + 1, "%.15s", angband_term_name[i]);
+		sprintf((char*)buf + 1, "%.15s", windows[i].name);
 		buf[0] = strlen((char*)buf + 1);
 
 		/* Add the item */

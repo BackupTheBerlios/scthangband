@@ -173,6 +173,7 @@ char summon_kin_type;   /* Hack, by Julian Lighton: summon 'relatives' */
 int total_friends = 0;
 s32b total_friend_levels = 0;
 
+byte current_function = 0;	/* A variable to give subsidiary functions information about what's happening. */
 
 /*
  * Software options (set via the '=' command).  See "tables.c"
@@ -537,36 +538,6 @@ char *message__buf;
  */
 u32b option_flag[8];
 u32b option_mask[8];
-
-
-/*
- * The array of window options
- */
-u32b window_flag[8];
-u32b window_mask[8];
-
-
-/*
- * The array of window pointers
- */
-term *angband_term[8];
-
-
-/*
- * Standard window names
- */
-char angband_term_name[8][16] =
-{
-	"Cthangband",
-	"Mirror",
-	"Recall",
-	"Choice",
-	"Xtra-1",
-	"Xtra-2",
-	"Xtra-3",
-	"Xtra-4"
-};
-
 
 /*
  * Global table of color definitions

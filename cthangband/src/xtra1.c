@@ -922,69 +922,39 @@ static void prt_frame_extra(void)
 
 
 /*
- * Hack -- display inventory in sub-windows
+ * Return whether PW_INVEN is interesting
  */
-static void fix_inven(void)
+static bool win_inven_good(void)
 {
-	int j;
+	int i;
 
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	/* Boring without an inventory */
+	for (i = 0; i < INVEN_PACK; i++)
 	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_INVEN))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
-
-		/* Display inventory */
-		display_inven();
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
+		/* There is some inventory */
+		if (inventory[i].k_idx) return TRUE;
 	}
+
+	/* There is no inventory */
+	return FALSE;
 }
 
-
-
 /*
- * Hack -- display equipment in sub-windows
+ * Return whether PW_EQUIP is interesting
  */
-static void fix_equip(void)
+static bool win_equip_good(void)
 {
-	int j;
+	int i;
 
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	/* Boring without equipment */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_EQUIP))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
-
-		/* Display equipment */
-		display_equip();
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
+		/* There is some equipment */
+		if (inventory[i].k_idx) return TRUE;
 	}
+		
+	/* There is no equipment */
+	return FALSE;
 }
 
 
@@ -994,96 +964,46 @@ static void fix_equip(void)
 extern void display_spell_list(void);
 
 /*
- * Hack -- display equipment in sub-windows
+ * Return whether PW_SPELL is interesting
  */
-static void fix_spell(void)
-{
-	int j;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
+static bool win_spell_good(void)
 	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_SPELL))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
-
-		/* Display spell list */
-		display_spell_list();
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
-	}
+	/* Boring without any powers */
+	return (mindcraft_powers[0].min_lev >
+		skill_set[SKILL_MINDCRAFTING].value/2);
 }
 
 
+
+
 /*
- * Hack -- display character in sub-windows
+ * Display the first player screen in a window.
  */
-static void fix_player(void)
+static void win_player_display(void)
 {
-	int j;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
-	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_PLAYER))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
-
 		/* Display player */
 		display_player(0);
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
-	}
 }
 
 
 
 /*
- * Hack -- display recent messages in sub-windows
- *
- * XXX XXX XXX Adjust for width and split messages
+ * Return whether PW_MESSAGE is interesting
  */
-static void fix_message(void)
+static bool win_message_good(void)
 {
-	int j, i;
+	/* Boring without any messages */
+	return (message_num() != 0);
+}
+
+/*
+ * Display old messages in a window.
+ */
+static void win_message_display(void)
+	{
+	int i;
 	int w, h;
 	int x, y;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
-	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_MESSAGE))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
 
 		/* Get size */
 		Term_get_size(&w, &h);
@@ -1100,116 +1020,55 @@ static void fix_message(void)
 			/* Clear to end of line */
 			Term_erase(x, y, 255);
 		}
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
-	}
 }
 
 
 /*
- * Hack -- display overhead view in sub-windows
- *
- * Note that the "player" symbol does NOT appear on the map.
+ * Display the overhead map in a window.
  */
-static void fix_overhead(void)
-{
-	int j;
-
-	int cy, cx;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
+static void win_overhead_display(void)
 	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_OVERHEAD))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
+	int unused1, unused2;
 
 		/* Redraw map */
-		display_map(&cy, &cx);
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
-	}
+	display_map(&unused1, &unused2);
 }
 
 
 /*
- * Hack -- display monster recall in sub-windows
+ * Return whether PW_MONSTER is interesting
  */
-static void fix_monster(void)
+static bool win_monster_good(void)
 {
-	int j;
+	/* Boring without a selected monster */
+	return (monster_race_idx != 0);
+}
 
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
+/*
+ * Display monster recall in a window.
+ */
+static void win_monster_display(void)
 	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_MONSTER))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
-
 		/* Display monster race info */
 		if (monster_race_idx) display_roff(monster_race_idx);
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
-	}
 }
 
+/*
+ * Return whether PW_OBJECT is interesting
+ */
+static bool win_object_good(void)
+{
+	/* Boring with a remembered object */
+	return (object_kind_idx != 0);
+}
 
 /*
- * Hack -- display object recall in sub-windows
+ * Display object kind recall in a window.
  */
-static void fix_object(void)
-{
-	int j;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
+static void win_object_display(void)
 	{
-		term *old = Term;
-
-		/* No window */
-		if (!angband_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & (PW_OBJECT))) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
-
-		/* Display monster race info */
+	/* Display object kind info */
 		if (object_kind_idx) display_koff(object_kind_idx);
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
-	}
 }
 
 
@@ -3536,93 +3395,231 @@ void redraw_stuff(void)
 }
 
 
-/*
- * Handle "p_ptr->window"
- */
-void window_stuff(void)
-{
-	int j;
+/* Allow window_stuff to be forced to prefer different choices rather than
+ * stay the same. */
+bool window_stuff_rotate = FALSE;
+
+#define PRI(a,b) (windows[a].pri[b])
+#define REP(a,b) (windows[a].rep[b])
+
+#define PRIORITY(a,b) ((old_window & 1<<(b)) ? REP(a,b) : PRI(a,b))
+
+#define DISPLAY_NONE	(iilog(PW_NONE))
 	
-	u32b mask = 0L;
+	typedef struct display_func_type display_func_type;
 
-
-	/* Nothing to do */
-	if (!p_ptr->window) return;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
+	struct display_func_type
 	{
-		/* Save usable flags */
-		if (angband_term[j]) mask |= window_flag[j];
-	}
+		bool (*good)(void);
+		void (*display)(void);
+	};
+	
+static display_func_type *display_func = NULL;
 
-	/* Apply usable flags */
-	p_ptr->window &= mask;
+/*
+ * Initialise the display_func array.
+ */
+static void init_window_stuff(void)
+{
+	int m;
 
-	/* Nothing to do */
-	if (!p_ptr->window) return;
+	/* Paranoia - only run once */
+	if (display_func) return;
 
-
-	/* Display inventory */
-	if (p_ptr->window & (PW_INVEN))
+	display_func = C_NEW(32, display_func_type);
+	
+	/* Set the default values. */
+	for (m = 0; m < 32; m++)
 	{
-		p_ptr->window &= ~(PW_INVEN);
-		fix_inven();
+		display_func[m].good = func_false;
+		display_func[m].display = func_nothing;
 	}
-
-	/* Display equipment */
-	if (p_ptr->window & (PW_EQUIP))
-	{
-		p_ptr->window &= ~(PW_EQUIP);
-		fix_equip();
-	}
-
-	/* Display spell list */
-	if (p_ptr->window & (PW_SPELL))
-	{
-		p_ptr->window &= ~(PW_SPELL);
-		fix_spell();
-	}
-
-	/* Display player */
-	if (p_ptr->window & (PW_PLAYER))
-	{
-		p_ptr->window &= ~(PW_PLAYER);
-		fix_player();
-	}
-
-	/* Display overhead view */
-	if (p_ptr->window & (PW_MESSAGE))
-	{
-		p_ptr->window &= ~(PW_MESSAGE);
-		fix_message();
-	}
-
-	/* Display overhead view */
-	if (p_ptr->window & (PW_OVERHEAD))
-	{
-		p_ptr->window &= ~(PW_OVERHEAD);
-		fix_overhead();
-	}
-
-	/* Display monster recall */
-	if (p_ptr->window & (PW_MONSTER))
-	{
-		p_ptr->window &= ~(PW_MONSTER);
-		fix_monster();
-	}
-
-	/* Display object recall */
-	if (p_ptr->window & (PW_OBJECT))
-	{
-		p_ptr->window &= ~(PW_OBJECT);
-		fix_object();
-	}
+	
+	/*
+	 * An array of display functions.
+	 * "good" is true if there is something interesting to display.
+	 * "display" actually displays the function in a clear window.
+	 */
+	/* Set for known display functions. */
+	display_func[iilog(PW_INVEN)].good = win_inven_good;
+	display_func[iilog(PW_INVEN)].display = display_inven;
+	display_func[iilog(PW_EQUIP)].good = win_equip_good;
+	display_func[iilog(PW_EQUIP)].display = display_equip;
+	display_func[iilog(PW_SPELL)].good = win_spell_good;
+	display_func[iilog(PW_SPELL)].display = display_spell_list;
+	display_func[iilog(PW_PLAYER)].good = func_true;
+	display_func[iilog(PW_PLAYER)].display = win_player_display;
+	display_func[iilog(PW_MESSAGE)].good = win_message_good;
+	display_func[iilog(PW_MESSAGE)].display = win_message_display;
+	display_func[iilog(PW_OVERHEAD)].good = func_true;
+	display_func[iilog(PW_OVERHEAD)].display = win_overhead_display;
+	display_func[iilog(PW_MONSTER)].good = win_monster_good;
+	display_func[iilog(PW_MONSTER)].display = win_monster_display;
+	display_func[iilog(PW_OBJECT)].good = win_object_good;
+	display_func[iilog(PW_OBJECT)].display = win_object_display;
+#if 0
+	/* The following displays are defined but never used. */
+	display_func[iilog(PW_SNAPSHOT)].good = func_false;
+	display_func[iilog(PW_SNAPSHOT)].display = func_nothing;
+	display_func[iilog(PW_BORG_1)].good = func_false;
+	display_func[iilog(PW_BORG_1)].display = func_nothing;
+	display_func[iilog(PW_BORG_2)].good = func_false;
+	display_func[iilog(PW_BORG_2)].display = func_nothing;
+#endif
 }
 
 
 /*
- * Handle "p_ptr->update" and "p_ptr->redraw" and "p_ptr->window"
+ * Handle "p_ptr->window"
+ *
+ * This makes the assumption that the main display will always be displayed
+ * on term_screen. This is enforced elsewhere, but is not a necessary
+ * assumption as the main display is not always of su
+ */
+void window_stuff(void)
+{
+	int m;
+	
+	u32b old_window = p_ptr->window & WINDOW_STUFF_MASK;
+	
+	/* Remember the original term (i.e. term_screen) */
+	term *old = Term;
+
+	/* Nothing to do */
+	if (!old_window) return;
+
+	/* Not initialised yet. */
+	if (!display_func) init_window_stuff();
+
+	/* Prevent screen updates from being written to the wrong screen. */
+	character_icky++;
+
+	/* Only process this display once. */
+	p_ptr->window &= ~(old_window);
+
+	/* Scan windows */
+	for (m = 0; m < 8; m++)
+	{
+		window_type *w_ptr = &windows[m];
+
+		/* Do nothing by default. */
+		int n = DISPLAY_NONE;
+
+		/* Skip non-existant windows */
+		if (!w_ptr->term) continue;
+
+		/* Hack - skip window containing main display */
+		if (w_ptr->term == old) continue;
+
+		/*
+		 * If the "window_stuff_rotate" flag is set, find the first 
+		 * "interesting" display after the current one which has a priority+
+		 * greater than 0.
+		 *
+		 * Otherwise, find the "best" display according to several criteria,
+		 * and display it. The criteria are:
+		 *
+		 * 1. Never show displays with a priority+ of 0
+		 * 2. Prefer "interesting" displays to "boring" ones.
+		 * 3. Prefer high priority ones to low priority ones.
+		 * 4. Prefer changing windows to unchanging ones.
+		 * 5. Prefer the current display, and others following it in order.
+		 *
+		 * + If a display is being changes at this invocation, the "rep"
+		 * field is used to determine its priority. If not, the "pri" field
+		 * is used.
+		 */
+		if (window_stuff_rotate)
+	{
+			n = w_ptr->current;
+			for (n = (w_ptr->current+1)%32; n != w_ptr->current; n=(n+1)%32)
+	{
+				if (REP(m,n) == 0) continue; /* Don't stop at a priority of 0. */
+				if ((*display_func[n].good)()) break; /* Stop at an interesting display. */
+			}
+			/* If there are no displays assigned to this window, do nothing. */
+			if (REP(m,n) == 0) n = DISPLAY_NONE;
+	}
+		else
+		{
+			int i, n_good;
+			
+			/*
+			 * Find an appropriate display by turning the qualities above
+			 * which add to a display's goodness into numbers and comparing them.
+			 * As n_good is initially less than 2, it can only fail to be replaced
+			 * if the every display has a priority of 0.
+			 */
+			for (n_good = 0, i = w_ptr->current; i < w_ptr->current + 32; i++)
+	{
+				/* Decide whether display i is better than display n. */
+				int i_good;
+				
+				i_good = 2*PRIORITY(m, i%32); /* 3 */
+
+				if (!i_good) continue;	/* 1 (hack) */
+				if (old_window & 1<<((i%32))) i_good++; /* 4 */
+				if ((*display_func[i%32].good)()) i_good += 32; /* 2 */
+
+				/* If display i is better, set n to i. */
+				if (i_good > n_good)
+	{
+					n = i%32;
+					n_good = i_good;
+	}
+			}
+			/* If no positive priorities are found, do nothing. */
+			if (!n_good) n = DISPLAY_NONE;
+	}
+
+		/* If different display is to be shown, show it. */
+		if (n != w_ptr->current || old_window & 1<<n)
+		{
+		/* Set the current display. */
+			if (n != w_ptr->current) w_ptr->current = n;
+
+			/* Return to this routine next time. */
+			if (n != DISPLAY_NONE) p_ptr->window |= PW_RETURN;
+
+		/* Clear it. */
+		Term_activate(w_ptr->term);
+			clear_from(0);
+
+		/* And draw it. */
+		(*(display_func[w_ptr->current].display))();
+		Term_fresh();
+	}
+	}
+
+	/* Restore the original terminal. */
+	Term_activate(old);
+
+	/* Leave "icky" mode */
+	character_icky--;
+
+	/* Reset window_stuff_rotate. */
+	window_stuff_rotate = FALSE;
+	}
+
+
+/*
+ * An entirely mis-named function. This causes all window flags with the same
+ * window and non-boring quality to be rotated when window_stuff() is next
+ * called.
+ */
+void toggle_inven_equip(void)
+	{
+	/* Turn rotation on. */
+	window_stuff_rotate = TRUE;
+
+	/* Update everything. */
+	p_ptr->window |= WINDOW_STUFF_MASK;
+}
+
+
+
+/*
+ * Handle "p_ptr->update" and "p_ptr->redraw"
  */
 void handle_stuff(void)
 {
@@ -3631,9 +3628,6 @@ void handle_stuff(void)
 
 	/* Redraw stuff */
 	if (p_ptr->redraw) redraw_stuff();
-
-	/* Window stuff */
-	if (p_ptr->window) window_stuff();
 }
 
 

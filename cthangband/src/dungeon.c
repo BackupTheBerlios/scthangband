@@ -3058,9 +3058,6 @@ static void process_player(void)
 		/* Redraw stuff (if needed) */
 		if (p_ptr->redraw) redraw_stuff();
 
-		/* Redraw stuff (if needed) */
-		if (p_ptr->window) window_stuff();
-
 
 		/* Place the cursor on the player */
 		move_cursor_relative(py, px);
@@ -3109,9 +3106,6 @@ static void process_player(void)
 
 			/* Redraw stuff (if needed) */
 			if (p_ptr->redraw) redraw_stuff();
-
-			/* Redraw stuff (if needed) */
-			if (p_ptr->window) window_stuff();
 		}
 
 
@@ -3165,6 +3159,9 @@ static void process_player(void)
 
 			/* Redraw stuff */
 			redraw_stuff();
+
+			/* Redraw stuff (if needed) */
+			window_stuff();
 
 			/* Hack -- Assume messages were seen */
 			msg_flag = FALSE;
@@ -3441,9 +3438,6 @@ static void dungeon(void)
 	/* Redraw stuff */
 	redraw_stuff();
 
-	/* Redraw stuff */
-	window_stuff();
-
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
 
@@ -3470,9 +3464,6 @@ static void dungeon(void)
 
 	/* Redraw stuff */
 	redraw_stuff();
-
-	/* Window stuff */
-	window_stuff();
 
 	/* Refresh */
 	Term_fresh();
@@ -3523,9 +3514,6 @@ static void dungeon(void)
 		/* Redraw stuff */
 		if (p_ptr->redraw) redraw_stuff();
 
-		/* Redraw stuff */
-		if (p_ptr->window) window_stuff();
-
 		/* Hack -- Hilite the player */
 		move_cursor_relative(py, px);
 
@@ -3550,9 +3538,6 @@ static void dungeon(void)
 		/* Redraw stuff */
 		if (p_ptr->redraw) redraw_stuff();
 
-		/* Redraw stuff */
-		if (p_ptr->window) window_stuff();
-
 		/* Hack -- Hilite the player */
 		move_cursor_relative(py, px);
 
@@ -3574,9 +3559,6 @@ static void dungeon(void)
 
 		/* Redraw stuff */
 		if (p_ptr->redraw) redraw_stuff();
-
-		/* Window stuff */
-		if (p_ptr->window) window_stuff();
 
 		/* Hack -- Hilite the player */
 		move_cursor_relative(py, px);
@@ -4027,9 +4009,6 @@ void play_game(bool new_game)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_MONSTER);
-
-	/* Window stuff */
-	window_stuff();
 
 
 	/* Load the "pref" files */

@@ -1335,10 +1335,10 @@ static void dos_quit_hook(cptr str)
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--)
 	{
 		/* Unused */
-		if (!angband_term[i]) continue;
+		if (!windows[i].term) continue;
 
 		/* Nuke it */
-		term_nuke(angband_term[i]);
+		term_nuke(windows[i].term);
 	}
 
 
@@ -1729,7 +1729,7 @@ static bool init_windows(void)
 
 		/* Link the term */
 		term_data_link(td);
-		angband_term[i] = &td->t;
+		windows[i].term = &td->t;
 	}
 
 	/* Success */
@@ -2209,7 +2209,7 @@ errr init_dos(void)
 	     COLOR_OFFSET + TERM_YELLOW);
 
 	/* Activate the main term */
-	Term_activate(angband_term[0]);
+	Term_activate(term_screen);
 
 	/* Place the cursor */
 	Term_curs_dos(0, 0);

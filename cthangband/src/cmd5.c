@@ -104,9 +104,6 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 	{
 		/* Update */
 		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 

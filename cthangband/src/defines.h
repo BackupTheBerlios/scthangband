@@ -39,7 +39,7 @@
 /* <<VERSION STAMP>> */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   1
-#define VERSION_PATCH   4
+#define VERSION_PATCH   5
 
 
 /*
@@ -297,6 +297,9 @@
 #define BMP_FIRST_PC_TEMPLATE 164
 #define BMP_FIRST_PC_RACE 128
 
+
+/* Some flags for specific functions. */
+#define FUNC_TARGET_SET	1
 
 /*
  * Maximum array bounds for template based arrays
@@ -2021,8 +2024,26 @@
 /* xxx */
 #define PW_BORG_1       0x00004000L     /* Display borg messages */
 #define PW_BORG_2       0x00008000L     /* Display borg status */
+#define PW_NONE	0x40000000L	/* A blank screen. */
+#define PW_RETURN		0x80000000L		/* A "something happened" flag for window_stuff. */
 
+/* The default value of w_ptr->current. */
+#define LOG_PW_NONE	32
 
+#define logaux(x,y) (x & 1<<y) ? y : 
+
+#define iilog(x) \
+logaux(x,31) logaux(x,30) logaux(x,29) logaux(x,28) logaux(x,27) logaux(x,26) \
+logaux(x,25) logaux(x,24) logaux(x,23) logaux(x,22) logaux(x,21) logaux(x,20) \
+logaux(x,19) logaux(x,18) logaux(x,17) logaux(x,16) logaux(x,15) logaux(x,14) \
+logaux(x,13) logaux(x,12) logaux(x,11) logaux(x,10) logaux(x, 9) logaux(x, 8) \
+logaux(x, 7) logaux(x, 6) logaux(x, 5) logaux(x, 4) logaux(x, 3) logaux(x, 2) \
+logaux(x, 1) logaux(x, 0) 255
+
+/* The set of windows affected by window_stuff(). */
+#define WINDOW_STUFF_MASK (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | \
+	PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
+	PW_OBJECT | PW_RETURN)
 
 /*** General index values ***/
 
@@ -2769,7 +2790,7 @@
 /*
  * Hack -- The main "screen"
  */
-#define term_screen     (angband_term[0])
+#define term_screen     (windows[0].term)
 
 
 /*

@@ -3199,7 +3199,7 @@ static errr init_other(void)
 			if (window_flag_desc[i])
 			{
 				/* Accept */
-				window_mask[n] |= (1L << i);
+				windows[n].mask |= (1L << i);
 			}
 		}
 	}

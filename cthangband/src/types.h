@@ -820,6 +820,20 @@ struct cantrip_type
 
 
 /*
+ * Structure for the display windows.
+ */
+typedef struct window_type window_type;
+struct window_type
+{
+	term *term;	/* The window in question */
+	char name[16]; /* Name of the window */
+	byte pri[32]; /* Priority of the specified display type for this window. */
+	byte rep[32]; /* Maximum priority of display which this display type can replace. */
+	byte current; /* Current display for this window */
+	u32b mask;
+};
+
+/*
  * Information about the player's "magic"
  */
 

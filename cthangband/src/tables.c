@@ -3074,16 +3074,13 @@ cptr stat_names_reduced[6] =
  * main window, including File dump (help), File dump (artifacts, uniques),
  * Character screen, Small scale map, Previous Messages, Store screen, etc.
  *
- * The "ctrl-i" (tab) command flips the "Display inven/equip" and "Display
- * equip/inven" flags for all windows.
- *
  * The "ctrl-g" command (or pseudo-command) should perhaps grab a snapshot
  * of the main screen into any interested windows.
  */
 cptr window_flag_desc[32] =
 {
-	"Display inven/equip",
-	"Display equip/inven",
+	"Display inventory",
+	"Display equipment",
 	"Display spell list",
 	"Display character",
 	NULL,
@@ -3717,6 +3714,28 @@ mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS] = {
         { 29, 20,  45, "Telekinetic Wave" },   /* Ball -> LOS */
 };
 
+
+/*
+ * Window definitions. Defined here to ensure that the names are available ASAP.
+ * Everything else is blank, to be filled in later.
+ */
+
+#define BLANK_32 \
+{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+
+#define BLANK_WINDOW(name) \
+{0, name, BLANK_32, BLANK_32, iilog(PW_NONE), 0},
+
+window_type windows[8] = {
+BLANK_WINDOW("Cthangband")
+BLANK_WINDOW("Mirror")
+BLANK_WINDOW("Recall")
+BLANK_WINDOW("Choice")
+BLANK_WINDOW("Xtra-1")
+BLANK_WINDOW("Xtra-2")
+BLANK_WINDOW("Xtra-3")
+BLANK_WINDOW("Xtra-4")
+};
 
 town_type town_defs[MAX_TOWNS] = {
 	/* 

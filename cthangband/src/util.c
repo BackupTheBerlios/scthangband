@@ -1626,9 +1626,9 @@ char (*inkey_hack)(int flush_first) = NULL;
  * any time.  These sub-commands could include commands to take a picture of
  * the current screen, to start/stop recording a macro action, etc.
  *
- * If "angband_term[0]" is not active, we will make it active during this
+ * If "term_screen" is not active, we will make it active during this
  * function, so that the various "main-xxx.c" files can assume that input
- * is only requested (via "Term_inkey()") when "angband_term[0]" is active.
+ * is only requested (via "Term_inkey()") when "term_screen" is active.
  *
  * Mega-Hack -- This function is used as the entry point for clearing the
  * "signal_count" variable, and of the "character_saved" variable.
@@ -1709,7 +1709,11 @@ char inkey(void)
 
 
 	/* Hack -- Activate main screen */
-	Term_activate(angband_term[0]);
+	Term_activate(term_screen);
+
+
+	/* Update windows if waiting. */
+	if (inkey_base || !inkey_scan) window_stuff();
 
 
 	/* Get a key */
@@ -1733,7 +1737,7 @@ char inkey(void)
 			Term_fresh();
 
 			/* Hack -- activate main screen */
-			Term_activate(angband_term[0]);
+			Term_activate(term_screen);
 
 			/* Mega-Hack -- reset saved flag */
   			character_saved = FALSE;

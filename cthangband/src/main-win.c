@@ -2384,7 +2384,7 @@ static void init_windows(void)
 	/* Main window */
 	td = &data[0];
 	WIPE(td, term_data);
-	td->s = angband_term_name[0];
+	td->s = windows[0].name;
 	td->keys = 1024;
 	td->rows = 24;
 	td->cols = 80;
@@ -2406,7 +2406,7 @@ static void init_windows(void)
 	{
 		td = &data[i];
 		WIPE(td, term_data);
-		td->s = angband_term_name[i];
+		td->s = windows[i].name;
 		td->keys = 16;
 		td->rows = 24;
 		td->cols = 80;
@@ -2516,7 +2516,7 @@ static void init_windows(void)
 		}
 
 		term_data_link(td);
-		angband_term[i] = &td->t;
+		windows[i].term = &td->t;
 
 		if (td->visible)
 		{
@@ -2552,7 +2552,7 @@ static void init_windows(void)
 	SetBkColor(td->dc, RGB(0, 0, 0));
 
 	term_data_link(td);
-	angband_term[0] = &td->t;
+	term_screen = &td->t;
 
 	/* Activate the main window */
 	SetActiveWindow(td->w);

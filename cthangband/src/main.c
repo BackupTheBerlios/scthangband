@@ -33,10 +33,10 @@ static void quit_hook(cptr s)
 	for (j = 8 - 1; j >= 0; j--)
 	{
 		/* Unused */
-		if (!angband_term[j]) continue;
+		if (!windows[j].term) continue;
 
 		/* Nuke it */
-		term_nuke(angband_term[j]);
+		term_nuke(windows[j].term);
 	}
 }
 

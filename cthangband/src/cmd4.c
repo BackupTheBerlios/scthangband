@@ -71,10 +71,10 @@ void do_cmd_redraw(void)
 	for (j = 0; j < 8; j++)
 	{
 		/* Dead window */
-		if (!angband_term[j]) continue;
+		if (!windows[j].term) continue;
 
 		/* Activate */
-		Term_activate(angband_term[j]);
+		Term_activate(windows[j].term);
 
 		/* Redraw */
 		Term_redraw();
@@ -872,6 +872,8 @@ void do_cmd_options_aux(int page, cptr info)
 	}
 }
 
+#define PRI(window, display) (windows[window].pri[display])
+#define REP(window, display) (windows[window].rep[display])
 
 /*
  * Modify the "window" options
@@ -885,18 +887,7 @@ static void do_cmd_options_win(void)
 
 	char ch;
 
-	bool go = TRUE;
-
-	u32b old_flag[8];
-
-
-	/* Memorize old flags */
-	for (j = 0; j < 8; j++)
-	{
-		/* Acquire current flags */
-		old_flag[j] = window_flag[j];
-	}
-
+	bool go = TRUE, second = FALSE;
 
 	/* Clear screen */
 	Term_clear();
@@ -904,15 +895,29 @@ static void do_cmd_options_win(void)
 	/* Interact */
 	while (go)
 	{
+		char min;
+		bool okay = FALSE;
+		s16b newpri = -1, newrep = -1; /* A bad value */
+
+		cptr text;
+
+		/* Choose a set of characters which has no other meaning in
+		 * the layout */
+		if (!rogue_like_commands)
+			min = 'a'-1;
+		else
+			min = '0'-1;
+
 		/* Prompt XXX XXX XXX */
-		prt("Window Flags (<dir>, t, y, n, ESC) ", 0, 0);
+		text = format("Window Flags (<dir>, +, -, ., %c-%c, ESC) ", min+1, min+10);
+		prt(text, 0, 0);
 
 		/* Display the windows */
 		for (j = 0; j < 8; j++)
 		{
 			byte a = TERM_WHITE;
 
-			cptr s = angband_term_name[j];
+			cptr s = windows[j].name;
 
 			/* Use color */
 			if (use_color && (j == x)) a = TERM_L_BLUE;
@@ -942,21 +947,23 @@ static void do_cmd_options_win(void)
 			{
 				byte a = TERM_WHITE;
 
-				char c = '.';
+				char c1 = '.', c2 = ' ';
 
 				/* Use color */
 				if (use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
 
-				/* Active flag */
-				if (window_flag[j] & (1L << i)) c = 'X';
+				/* Active flags */
+				if (REP(j,i)) c1 = min+REP(j,i);
+				if (PRI(j,i)) c2 = min+PRI(j,i);
 
-				/* Flag value */
-				Term_putch(35 + j * 5, i + 5, a, c);
+				/* Flag values */
+				Term_putch(35 + j * 5, i + 5, a, c1);
+				Term_putch(36 + j * 5, i + 5, a, c2);
 			}
 		}
 
 		/* Place Cursor */
-		Term_gotoxy(35 + x * 5, y + 5);
+		Term_gotoxy(35 + x * 5+((second) ? 1 : 0), y + 5);
 
 		/* Get key */
 		ch = inkey();
@@ -966,47 +973,45 @@ static void do_cmd_options_win(void)
 		{
 			case ESCAPE:
 			{
+				okay = TRUE;
 				go = FALSE;
 				break;
 			}
 
-			case 'T':
-			case 't':
+			case '+':
 			{
-				/* Clear windows */
-				for (j = 0; j < 8; j++)
-				{
-					window_flag[j] &= ~(1L << y);
+				newpri = PRI(y,x) + 1;
+				newrep = REP(y,x) + 1;
+				second = FALSE;
+				okay = TRUE;
+				break;
 				}
-
-				/* Clear flags */
-				for (i = 0; i < 16; i++)
+			case '-':
 				{
-					window_flag[x] &= ~(1L << i);
-				}
-
-				/* Fall through */
-			}
-
-			case 'y':
-			case 'Y':
-			{
-				/* Ignore screen */
-				if (x == 0) break;
-
-				/* Set flag */
-				window_flag[x] |= (1L << y);
+				newpri = PRI(y,x) - 1;
+				newrep = REP(y,x) - 1;
+				second = FALSE;
 				break;
 			}
-
-			case 'n':
-			case 'N':
+			case '\t':
 			{
-				/* Clear flag */
-				window_flag[x] &= ~(1L << y);
+				second = !second;
+				okay = TRUE;
 				break;
 			}
-
+			case '.':
+			{
+				/* A REP of 0 means that the display is never
+				 * shown, so treat in a special way. A PRI of
+				 * 0 is entirely normal. */
+				if (!second)
+			{
+					newrep = 0;
+				}
+				newpri = 0;
+				second = FALSE;
+				break;
+			}
 			default:
 			{
 				d = get_keymap_dir(ch);
@@ -1014,34 +1019,43 @@ static void do_cmd_options_win(void)
 				x = (x + ddx[d] + 8) % 8;
 				y = (y + ddy[d] + 16) % 16;
 
-				if (!d) bell();
+				if (d)
+				{
+					second = FALSE;
+					okay = TRUE;
+			}
+				else if (second)
+				{
+					newpri = ch-min;
+					second = FALSE;
+		}
+				else
+		{
+					newrep = ch-min;
+					second = TRUE;
 			}
 		}
 	}
 
-	/* Notice changes */
-	for (j = 0; j < 8; j++)
+		if (newpri >= 0 && newpri <= 10)
 	{
-		term *old = Term;
-
-		/* Dead window */
-		if (!angband_term[j]) continue;
-
-		/* Ignore non-changes */
-		if (window_flag[j] == old_flag[j]) continue;
-
-		/* Activate */
-		Term_activate(angband_term[j]);
-
-		/* Erase */
-		Term_clear();
-
-		/* Refresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
+			PRI(x,y) = newpri;
+			okay = TRUE;
 	}
+		if (newrep >= 0 && newrep <= 10)
+			{
+			REP(x,y) = newrep;
+			okay = TRUE;
+			}
+		/* If it doesn't do anything sensible, complain. */
+		if (!okay)
+		{
+			bell();
+		}
+	}
+
+	/* Redraw windows. */
+	p_ptr->window |= PW_RETURN;
 }
 
 

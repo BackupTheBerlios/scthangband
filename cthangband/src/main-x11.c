@@ -2022,9 +2022,9 @@ errr init_x11(void)
 	/* Initialize the windows */
 	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
-		cptr name = angband_term_name[i];
+		cptr name = windows[i].name;
 		term_data_init(&data[i], TRUE, name, fnt_name);
-		angband_term[i] = Term;
+		windows[i].term = Term;
 	}
 
 	/* Activate the "Angband" window screen */
