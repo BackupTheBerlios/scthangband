@@ -1425,3 +1425,13 @@ Y:
 F:a_info:W:6
 F:e_info:W:5
 F:k_info:W:3
+
+X:lb
+Y:
+F:a_info:W:5
+F:k_info:W:2
+
+X:.
+Y:
+F:a_info:W:5
+F:k_info:W:2
