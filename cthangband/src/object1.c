@@ -2640,17 +2640,23 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 	}
 
 	/* Describe use of the base object, if any. */
-	if (spoil_base && !brief && k_info[o_ptr->k_idx].text)
+	if (spoil_base && !brief)
 	{
-		info[i++].txt = k_text+k_info[o_ptr->k_idx].text;
-
-		/* Give the likelihood if appropriate. */
-		switch (o_ptr->tval)
+		/* There's a description in k_info.txt. */
+		if (k_info[o_ptr->k_idx].text)
 		{
-			case TV_ROD: case TV_WAND: case TV_STAFF:
-			j = get_device_chance_dec(o_ptr);
-			
+			info[i++].txt = k_text+k_info[o_ptr->k_idx].text;
 		}
+		/* Give an effect-based description if there was none. */
+		else
+		{
+			cptr s = describe_object_power(o_ptr);
+			if (s && *s) alloc_ifa(info+i++, "When used: %s", s);
+		}
+	}
+
+	else if (spoil_base && !brief)
+	{
 	}
 
 	j = get_device_chance_dec(o_ptr);

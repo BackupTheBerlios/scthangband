@@ -60,6 +60,9 @@ static add_timed_type power_add_timed_table[] =
 	{OBJ_SCROLL_HOLY_CHANT+PO_K_IDX, TIMED_BLESSED, 13, 36, FALSE},
 	{OBJ_SCROLL_HOLY_PRAYER+PO_K_IDX, TIMED_BLESSED, 25, 72, FALSE},
 	{OBJ_STAFF_SLOWNESS+PO_K_IDX, TIMED_SLOW, 16, 45, FALSE},
+	{OBJ_RING_ACID+PO_K_IDX, TIMED_OPPOSE_ACID, 21, 40, FALSE},
+	{OBJ_RING_ICE+PO_K_IDX, TIMED_OPPOSE_COLD, 21, 40, FALSE},
+	{OBJ_RING_FIRE+PO_K_IDX, TIMED_OPPOSE_FIRE, 21, 40, FALSE},
 	{ACT_ESP+PO_ACTIVATION, TIMED_ESP, 26, 55, FALSE},
 	{ACT_BERSERK+PO_ACTIVATION, TIMED_SHERO, 51, 100, FALSE},
 	{ACT_BERSERK+PO_ACTIVATION, TIMED_BLESSED, 51, 100, FALSE},
@@ -88,52 +91,6 @@ static add_timed_type power_add_timed_table[] =
 	{SP_SEE_INVISIBLE+PO_SPELL, TIMED_INVIS, 25, 48, FALSE},
 	{RACE_GOLEM+PO_RACIAL, TIMED_SHIELD, 31, 50, FALSE},
 };
-
-typedef const struct project_ball_type project_ball_type;
-struct project_ball_type
-{
-	int power;
-	int type;
-	int dam;
-	int rad;
-};
-
-#if 0
-static project_ball_type power_project_ball_table[] =
-{
-	{OBJ_WAND_STINKING_CLOUD+PO_K_IDX, GF_POIS, 12, 2},
-	{OBJ_WAND_ACID_BALL+PO_K_IDX, GF_ACID, 60, 2},
-	{OBJ_WAND_ELEC_BALL+PO_K_IDX, GF_ELEC, 32, 2},
-	{OBJ_WAND_FIRE_BALL+PO_K_IDX,
-	{OBJ_WAND_COLD_BALL+PO_K_IDX,
-	{OBJ_WAND_DRAGON_FIRE+PO_K_IDX,
-	{OBJ_WAND_DRAGON_COLD+PO_K_IDX,
-	{OBJ_WAND_SHARD_BALL+PO_K_IDX,
-	{OBJ_ROD_ACID_BALL+PO_K_IDX,
-	{OBJ_ROD_ELEC_BALL+PO_K_IDX,
-	{OBJ_ROD_FIRE_BALL+PO_K_IDX,
-	{OBJ_ROD_COLD_BALL+PO_K_IDX,
-	{ACT_BA_POIS_1+PO_ACTIVATION,
-	{ACT_BA_COLD_1+PO_ACTIVATION,
-	{ACT_BA_FIRE_1+PO_ACTIVATION,
-	{ACT_BA_COLD_2+PO_ACTIVATION,
-	{ACT_BA_ELEC_2+PO_ACTIVATION,
-	{ACT_BA_FIRE_2+PO_ACTIVATION,
-	{ACT_BA_COLD_3+PO_ACTIVATION,
-	{ACT_BA_ELEC_3+PO_ACTIVATION,
-	{ACT_SHARD+PO_ACTIVATION,
-	{ACT_BA_MISS_3+PO_ACTIVATION,
-	{OBJ_DSM_BLUE+PO_K_IDX,
-	{OBJ_DSM_WHITE+PO_K_IDX,
-	{OBJ_DSM_BLACK+PO_K_IDX,
-	{OBJ_DSM_GREEN+PO_K_IDX,
-	{OBJ_DSM_RED+PO_K_IDX,
-	{OBJ_DSM_BRONZE+PO_K_IDX,
-	{OBJ_DSM_GOLD+PO_K_IDX,
-	{OBJ_DSM_POWER+PO_K_IDX,
-	{
-};
-#endif
 
 static cptr timer_verbs[TIMED_MAX] =
 {
@@ -164,6 +121,59 @@ static cptr timer_verbs[TIMED_MAX] =
 	"cuts you",
 	"feeds you",
 	"TIMED_VAMP"
+};
+
+
+typedef const struct project_ball_type project_ball_type;
+struct project_ball_type
+{
+	int power;
+	int type;
+	int dam;
+	int rad;
+	cptr str;
+};
+
+static project_ball_type power_project_ball_table[] =
+{
+	{OBJ_WAND_STINKING_CLOUD+PO_K_IDX, GF_POIS, 12, 2, NULL},
+	{OBJ_WAND_ACID_BALL+PO_K_IDX, GF_ACID, 60, 2, NULL},
+	{OBJ_WAND_ELEC_BALL+PO_K_IDX, GF_ELEC, 32, 2, NULL},
+	{OBJ_WAND_FIRE_BALL+PO_K_IDX, GF_FIRE, 72, 2, NULL},
+	{OBJ_WAND_COLD_BALL+PO_K_IDX, GF_COLD, 48, 2, NULL},
+	{OBJ_WAND_DRAGON_FIRE+PO_K_IDX, GF_FIRE, 100, 3, NULL},
+	{OBJ_WAND_DRAGON_COLD+PO_K_IDX, GF_COLD, 80, 3, NULL},
+	{OBJ_WAND_DRAGON_BREATH+PO_K_IDX, GF_ACID, 100, -3, NULL},
+	{OBJ_WAND_DRAGON_BREATH+PO_K_IDX, GF_ELEC, 80, -3, NULL},
+	{OBJ_WAND_DRAGON_BREATH+PO_K_IDX, GF_FIRE, 100, -3, NULL},
+	{OBJ_WAND_DRAGON_BREATH+PO_K_IDX, GF_COLD, 80, -3, NULL},
+	{OBJ_WAND_DRAGON_BREATH+PO_K_IDX, GF_POIS, 60, -3, NULL},
+	{OBJ_ROD_ACID_BALL+PO_K_IDX, GF_ACID, 60, 2, NULL},
+	{OBJ_ROD_ELEC_BALL+PO_K_IDX, GF_ELEC, 32, 2, NULL},
+	{OBJ_ROD_FIRE_BALL+PO_K_IDX, GF_FIRE, 72, 2, NULL},
+	{OBJ_ROD_COLD_BALL+PO_K_IDX, GF_COLD, 48, 2, NULL},
+	{ACT_BA_POIS_1+PO_ACTIVATION, GF_POIS, 12, 3, NULL},
+	{ACT_BA_COLD_1+PO_ACTIVATION, GF_COLD, 48, 2, NULL},
+	{ACT_BA_FIRE_1+PO_ACTIVATION, GF_FIRE, 72, 2, NULL},
+	{ACT_BA_COLD_2+PO_ACTIVATION, GF_COLD, 100, 2, NULL},
+	{ACT_BA_ELEC_2+PO_ACTIVATION, GF_ELEC, 100, 3, NULL},
+	{ACT_BA_FIRE_2+PO_ACTIVATION, GF_FIRE, 120, 3, NULL},
+	{ACT_BA_COLD_3+PO_ACTIVATION, GF_COLD, 200, 3, NULL},
+	{ACT_BA_ELEC_3+PO_ACTIVATION, GF_ELEC, 250, 3, NULL},
+	{ACT_BA_MISS_3+PO_ACTIVATION, GF_MISSILE, 300, -4, NULL},
+	{OBJ_RING_ACID+PO_K_IDX, GF_ACID, 50, 2, NULL},
+	{OBJ_RING_ICE+PO_K_IDX, GF_COLD, 50, 2, NULL},
+	{OBJ_RING_FIRE+PO_K_IDX, GF_FIRE, 50, 2, NULL},
+	{ART_ELEMFIRE+PO_NAME1, GF_FIRE, 120, 3, NULL},
+	{ART_ELEMICE+PO_NAME1, GF_COLD, 200, 3, NULL},
+	{ART_ELEMSTORM+PO_NAME1, GF_ELEC, 250, 3, NULL},
+	{ART_THOTH+PO_NAME1, GF_POIS, 12, 3, NULL},
+	{ART_ICICLE+PO_NAME1, GF_COLD, 48, 2, NULL},
+	{ART_STARLIGHT+PO_NAME1, GF_COLD, 100, 2, NULL},
+	{ART_EVERFLAME+PO_NAME1, GF_FIRE, 72, 2, NULL},
+	{ART_ODIN+PO_NAME1, GF_ELEC, 100, 3, NULL},
+	{ART_FIRESTAR+PO_NAME1, GF_FIRE, 72, 3, NULL},
+	{SP_DARKNESS_STORM+PO_SPELL, GF_DARK, 120, 4, NULL},
 };
 
 /*
@@ -211,12 +221,15 @@ static cptr list_timers(cptr init, cptr conj, cptr *str, int total)
 
 	assert(init && conj);
 
+	/* Nothing to do. */
+	if (!total) return 0;
+
 	l = sprintf(buf+0, "%.*s ", maxlen-0, init);
 
 	for (i = 0; i < total; i++)
 	{
 		if (i == total-1) end = ".";
-		else if (i == total-2) end = " and ";
+		else if (i == total-2) end = conj;
 		else end = ", ";
 
 		l += sprintf(buf+l, "%.*s", maxlen-l, str[i]);
@@ -324,7 +337,68 @@ static cptr timers_to_strings(add_timed_type **tim, int total)
 #endif
 		}
 	}
-	return list_timers("It", "and", str, total);
+	return list_timers("It", " and ", str, total);
+}
+
+
+/*
+ * Fire a ball with fixed damage and radius at something.
+ * The fixed restriction does mean that this is unsuitable for most spells.
+ */
+static errr power_project_ball(int power, int dir, bool *ident)
+{
+	int i = 0;
+	project_ball_type *ptr;
+
+	/* Require a direction. */
+	if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+
+	FOR_ALL_IN(power_project_ball_table, ptr)
+	{
+		if (ptr->power == power) i++;
+	}
+
+	/* Choose a random attack from the alternatives offered. */
+	i = rand_int(i);
+
+	FOR_ALL_IN(power_project_ball_table, ptr)
+	{
+		/* Not the right power. */
+		if (ptr->power != power) continue;
+
+		/* Not the chosen attack. */
+		if (i--) continue;
+
+		/* Print a message, if necessary. */
+		if (ptr->str) msg_print(ptr->str);
+
+		/* Fire it. */
+		fire_ball(ptr->type, dir, ptr->dam, ptr->rad);
+		*ident = TRUE;
+		return SUCCESS;
+	}
+
+	return POWER_ERROR_NO_SUCH_POWER;
+}
+
+/*
+ * Convert a list of possible ball spells into a descriptive list.
+ * This doesn't mention damage or radius.
+ */
+static cptr balls_to_strings(project_ball_type **table, int total)
+{
+	int i;
+	cptr str[10], pre;
+	assert(total >= 0 && total <= 10);
+
+	for (i = 0; i < total; i++)
+	{
+		str[i] = explode_flags[table[i]->type-1];
+	}
+	if (table[0]->rad < 0) pre = "It fires a breath of";
+	else pre = "It fires a ball of";
+
+	return list_timers(pre, " or ", str, total);
 }
 
 /*
@@ -350,6 +424,21 @@ static cptr power_describe_timer(int power)
 		}
 	}
 	return timers_to_strings(a, j);
+}
+
+static cptr power_describe_ball(int power)
+{
+	project_ball_type *ptr, *a[10];
+	int j = 0;
+	FOR_ALL_IN(power_project_ball_table, ptr)
+	{
+		if (ptr->power == power)
+		{
+			assert(j < 10);
+			a[j++] = ptr;
+		}
+	}
+	return balls_to_strings(a, j);
 }
 
 /*
@@ -453,10 +542,16 @@ static cptr power_describe_misc(int power, int lev)
 
 cptr describe_power(int power, int lev)
 {
+	char buf[1024] = "";
 	cptr s;
-	if ((s = power_describe_timer(power))) return s;
-	if ((s = power_describe_misc(power, lev))) return s;
-	return "";
+	int l = 0, max = sizeof(buf)-2;
+	if ((s = power_describe_timer(power)))
+		l += sprintf(buf+l, "%.*s ", max-l, s);
+	if ((s = power_describe_ball(power)))
+		l += sprintf(buf+l, "%.*s ", max-l, s);
+	if ((s = power_describe_misc(power, lev)))
+		l += sprintf(buf+l, "%.*s ", max-l, s);
+	return format("%s", buf);
 }
 
 static void phlogiston (void)
@@ -1146,6 +1241,47 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case RACE_GOLEM+PO_RACIAL:
 		{
 			return power_add_timed(power, ident);
+		}
+
+		case OBJ_WAND_STINKING_CLOUD+PO_K_IDX:
+		case OBJ_WAND_ACID_BALL+PO_K_IDX:
+		case OBJ_WAND_ELEC_BALL+PO_K_IDX:
+		case OBJ_WAND_FIRE_BALL+PO_K_IDX:
+		case OBJ_WAND_COLD_BALL+PO_K_IDX:
+		case OBJ_WAND_DRAGON_FIRE+PO_K_IDX:
+		case OBJ_WAND_DRAGON_COLD+PO_K_IDX:
+		case OBJ_WAND_DRAGON_BREATH+PO_K_IDX:
+		case OBJ_ROD_ACID_BALL+PO_K_IDX:
+		case OBJ_ROD_ELEC_BALL+PO_K_IDX:
+		case OBJ_ROD_FIRE_BALL+PO_K_IDX:
+		case OBJ_ROD_COLD_BALL+PO_K_IDX:
+		case ACT_BA_POIS_1+PO_ACTIVATION:
+		case ACT_BA_COLD_1+PO_ACTIVATION:
+		case ACT_BA_FIRE_1+PO_ACTIVATION:
+		case ACT_BA_COLD_2+PO_ACTIVATION:
+		case ACT_BA_ELEC_2+PO_ACTIVATION:
+		case ACT_BA_FIRE_2+PO_ACTIVATION:
+		case ACT_BA_COLD_3+PO_ACTIVATION:
+		case ACT_BA_ELEC_3+PO_ACTIVATION:
+		case ART_ELEMFIRE+PO_NAME1:
+		case ART_ELEMICE+PO_NAME1:
+		case ART_ELEMSTORM+PO_NAME1:
+		case ART_THOTH+PO_NAME1:
+		case ART_ICICLE+PO_NAME1:
+		case ART_STARLIGHT+PO_NAME1:
+		case ART_EVERFLAME+PO_NAME1:
+		case ART_ODIN+PO_NAME1:
+		case ART_FIRESTAR+PO_NAME1:
+		case SP_DARKNESS_STORM+PO_SPELL:
+		{
+			return power_project_ball(power, dir, ident);
+		}
+		case OBJ_RING_ACID+PO_K_IDX:
+		case OBJ_RING_ICE+PO_K_IDX:
+		case OBJ_RING_FIRE+PO_K_IDX:
+		{
+			return power_project_ball(power, dir, ident) ||
+				power_add_timed(power, ident);
 		}
 
 		case OBJ_FOOD_DEC_STR+PO_K_IDX:
@@ -2402,14 +2538,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case OBJ_WAND_STINKING_CLOUD+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_POIS, dir, 12, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
 		case OBJ_WAND_MAGIC_MISSILE+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -2446,94 +2574,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			fire_bolt_or_beam(20, GF_COLD, dir, damroll(3, 8));
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_WAND_ACID_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_ACID, dir, 60, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_WAND_ELEC_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            fire_ball(GF_ELEC, dir, 32, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_WAND_FIRE_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_FIRE, dir, 72, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_WAND_COLD_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_COLD, dir, 48, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_WAND_DRAGON_FIRE+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_FIRE, dir, 100, 3);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_WAND_DRAGON_COLD+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_COLD, dir, 80, 3);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_WAND_DRAGON_BREATH+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			switch (randint(5))
-			{
-				case 1:
-				{
-					fire_ball(GF_ACID, dir, 100, -3);
-					break;
-				}
-
-				case 2:
-				{
-					fire_ball(GF_ELEC, dir, 80, -3);
-					break;
-				}
-
-				case 3:
-				{
-					fire_ball(GF_FIRE, dir, 100, -3);
-					break;
-				}
-
-				case 4:
-				{
-					fire_ball(GF_COLD, dir, 80, -3);
-					break;
-				}
-
-				default:
-				{
-					fire_ball(GF_POIS, dir, 60, -3);
-					break;
-				}
-			}
-
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -2731,38 +2771,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case OBJ_ROD_ACID_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_ACID, dir, 60, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_ROD_ELEC_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_ELEC, dir, 32, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_ROD_FIRE_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_FIRE, dir, 72, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_ROD_COLD_BALL+PO_K_IDX:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_COLD, dir, 48, 2);
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
         case OBJ_ROD_HAVOC+PO_K_IDX:
 		{
             call_chaos(plev);
@@ -2782,13 +2790,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_MISSILE, dir, damroll(2, 6));
-				return SUCCESS;
-			}
-
-            case ACT_BA_POIS_1+PO_ACTIVATION:
-			{
-				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_POIS, dir, 12, 3);
 				return SUCCESS;
 			}
 
@@ -2820,39 +2821,11 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ACT_BA_COLD_1+PO_ACTIVATION:
-            {
-				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_COLD, dir, 48, 2);
-				return SUCCESS;
-			}
-
-            case ACT_BA_FIRE_1+PO_ACTIVATION:
-			{
-				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_FIRE, dir, 72, 2);
-				return SUCCESS;
-			}
-
             case ACT_DRAIN_1+PO_ACTIVATION:
             {
 
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
                 if (drain_life(dir, 100))
-				return SUCCESS;
-			}
-
-            case ACT_BA_COLD_2+PO_ACTIVATION:
-            {
-				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_COLD, dir, 100, 2);
-				return SUCCESS;
-			}
-
-            case ACT_BA_ELEC_2+PO_ACTIVATION:
-            {
-				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_ball(GF_ELEC, dir, 100, 3);
 				return SUCCESS;
 			}
 
@@ -2878,27 +2851,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             {
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_ARROW, dir, 150);
-				return SUCCESS;
-			}
-
-            case ACT_BA_FIRE_2+PO_ACTIVATION:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_FIRE, dir, 120, 3);
-				return SUCCESS;
-			}
-
-            case ACT_BA_COLD_3+PO_ACTIVATION:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_COLD, dir, 200, 3);
-				return SUCCESS;
-			}
-
-            case ACT_BA_ELEC_3+PO_ACTIVATION:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_ELEC, dir, 250, 3);
 				return SUCCESS;
 			}
 
@@ -3337,30 +3289,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			set_recall(FALSE);
 			return SUCCESS;
 		}
-	          case OBJ_RING_ACID+PO_K_IDX:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_ball(GF_ACID, dir, 50, 2);
-                (void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
-
-				return SUCCESS;
-			}
-
-            case OBJ_RING_ICE+PO_K_IDX:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_ball(GF_COLD, dir, 50, 2);
-                (void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
-				return SUCCESS;
-            }
-
-            case OBJ_RING_FIRE+PO_K_IDX:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_ball(GF_FIRE, dir, 50, 2);
-                (void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
-				return SUCCESS;
-            }
 			case OBJ_DSM_BLUE+PO_K_IDX:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -3547,27 +3475,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				{
 					(void)add_flag(TIMED_FAST, 5);
 				}
-				return SUCCESS;
-			}
-
-			case ART_ELEMFIRE+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_FIRE, dir, 120, 3);
-				return SUCCESS;
-			}
-
-			case ART_ELEMICE+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_COLD, dir, 200, 3);
-				return SUCCESS;
-			}
-
-			case ART_ELEMSTORM+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_ELEC, dir, 250, 3);
 				return SUCCESS;
 			}
 
@@ -3774,20 +3681,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-			case ART_THOTH+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_POIS, dir, 12, 3);
-				return SUCCESS;
-			}
-
-			case ART_ICICLE+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_COLD, dir, 48, 2);
-				return SUCCESS;
-			}
-
             case ART_KARAKAL+PO_NAME1:
 			{
                 switch(randint(13))
@@ -3810,37 +3703,16 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                 }
 			}
 
-			case ART_STARLIGHT+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_COLD, dir, 100, 2);
-				return SUCCESS;
-			}
-
             case ART_DAWN+PO_NAME1:
             {
                 (void)summon_specific_friendly(py, px, (dun_depth), SUMMON_REAVER, TRUE);
                 return SUCCESS;
             }
 
-			case ART_EVERFLAME+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_FIRE, dir, 72, 2);
-				return SUCCESS;
-			}
-
 			case ART_THEODEN+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				drain_life(dir, 120);
-				return SUCCESS;
-			}
-
-			case ART_ODIN+PO_NAME1:
-			{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_ball(GF_ELEC, dir, 100, 3);
 				return SUCCESS;
 			}
 
@@ -3881,13 +3753,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				confuse_monster(dir, 20);
-				return SUCCESS;
-			}
-
-			case ART_FIRESTAR+PO_NAME1:
-			{
-				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-				fire_ball(GF_FIRE, dir, 72, 3);
 				return SUCCESS;
 			}
 
@@ -5786,13 +5651,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_VAMPIRIC_BRANDING+PO_SPELL:
 		{
             brand_weapon(3);
-			return SUCCESS;
-		}
-		case SP_DARKNESS_STORM+PO_SPELL:
-		{
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			fire_ball(GF_DARK, dir,
-					120, 4);
 			return SUCCESS;
 		}
 		case SP_MASS_GENOCIDE+PO_SPELL:

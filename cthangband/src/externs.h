@@ -557,7 +557,7 @@ extern void generate_cave(void);
 
 /* tables.c */
 
-#if (defined(INIT1_C) || defined(MONSTER1_C) || defined(TABLES_C))
+#if (defined(INIT1_C) || defined(MONSTER1_C) || defined(POWERS_C) || defined(TABLES_C))
 extern cptr explode_flags[];
 #endif
 #if (defined(INIT1_C) || defined(MONSTER1_C) || defined(TABLES_C))
@@ -4090,7 +4090,7 @@ extern bool PURE player_has_flag_known(int set, u32b flag);
 
 /* powers.c */
 
-#if (defined(CMD5_C) || defined(POWERS_C))
+#if (defined(CMD5_C) || defined(CMD6_C) || defined(POWERS_C))
 extern cptr describe_power(int power, int lev);
 #endif
 
@@ -4098,5 +4098,11 @@ extern cptr describe_power(int power, int lev);
 
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern object_type PURE *get_real_obj(object_type *o_ptr);
+#endif
+
+/* cmd6.c */
+
+#if (defined(CMD6_C) || defined(OBJECT1_C))
+extern cptr describe_object_power(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

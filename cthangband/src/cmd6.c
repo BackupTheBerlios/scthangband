@@ -116,6 +116,13 @@ static bool use_object(object_type *o_ptr, int dir)
 	return use;
 }
 
+cptr describe_object_power(object_type *o_ptr)
+{
+	int power = get_power(o_ptr);
+	int plev = MAX(1, skill_set[SKILL_DEVICE].value/2);
+	return describe_power(power, plev);
+}
+
 /*
  * Calculate the energy needed to use a magical device.
  */
