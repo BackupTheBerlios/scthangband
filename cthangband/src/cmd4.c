@@ -1049,6 +1049,8 @@ void do_cmd_options(void)
 	/* Save the screen */
 	Term_save();
 
+	/* Display the general options help */
+	help_track("option_prompt");
 
 	/* Interact */
 	while (1)
@@ -1115,6 +1117,8 @@ void do_cmd_options(void)
 		msg_print(NULL);
 	}
 
+	/* Remove the help */
+	help_track(NULL);
 
 	/* Restore the screen */
 	Term_load();

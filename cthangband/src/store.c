@@ -2630,6 +2630,9 @@ static bool get_check_service(cptr prompt, byte type)
 	/* Prompt for it */
 	prt(buf, 0, 0);
 
+	/* Help */
+	help_track("yn?_prompt");
+
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
@@ -2647,6 +2650,9 @@ static bool get_check_service(cptr prompt, byte type)
 		else
 			bell();
 	}
+
+	/* Done with help */
+	help_track(NULL);
 
 	/* Erase the prompt */
 	prt("", 0, 0);

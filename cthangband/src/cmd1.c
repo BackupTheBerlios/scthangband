@@ -532,6 +532,9 @@ static char get_check_ynq(cptr prompt)
 	/* Hack -- display a "useful" prompt */
 	prt(format("%.*s[y/n/q] ", i, prompt), 0, 0);
 
+	/* Help */
+	help_track("ynq_prompt");
+
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
@@ -541,6 +544,9 @@ static char get_check_ynq(cptr prompt)
 		if (strchr("YyNnQq", i)) break;
 		bell();
 	}
+
+	/* Done with help */
+	help_track(NULL);
 
 	/* Erase the prompt */
 	prt("", 0, 0);

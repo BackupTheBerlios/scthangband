@@ -2725,6 +2725,9 @@ bool askfor_aux(char *buf, int len)
 	/* Reset is_macro to ensure that each prompt is the same. */
 	if (!macro_edit) is_macro = FALSE;
 
+	/* Give help, if requested. */
+	help_track("string_prompt_det");
+
 	/* Process input */
 	while (!done)
 	{
@@ -2834,6 +2837,9 @@ bool askfor_aux(char *buf, int len)
 		Term_putstr(x, y, -1, TERM_WHITE, buf);
 	}
 
+	/* Remove help. */
+	help_track(NULL);
+
 	/* Aborted */
 	if (i == ESCAPE) return (FALSE);
 
@@ -2895,6 +2901,9 @@ bool get_check(cptr prompt)
 	/* Prompt for it */
 	prt(buf, 0, 0);
 
+	/* Help */
+	help_track("yn_prompt");
+
 	/* Get an acceptable answer */
 	while (TRUE)
 	{
@@ -2905,6 +2914,9 @@ bool get_check(cptr prompt)
 		if (strchr("YyNn", i)) break;
 		bell();
 	}
+
+	/* Done with help */
+	help_track(NULL);
 
 	/* Erase the prompt */
 	prt("", 0, 0);

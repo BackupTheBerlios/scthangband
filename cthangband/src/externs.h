@@ -3510,7 +3510,7 @@ extern cptr get_keymap(byte trigger);
 
 /* xtra1.c */
 
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void help_track(cptr str);
 #endif
 
