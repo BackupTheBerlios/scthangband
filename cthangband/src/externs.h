@@ -170,7 +170,7 @@ extern void do_cmd_go_down(void);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_search(void);
 #endif
-#if (defined(CMD2_C) || defined(DUNGEON_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_toggle_sneak(void);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))
