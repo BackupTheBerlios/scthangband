@@ -876,13 +876,14 @@ static void recharged_notice(object_type *o_ptr)
 		/* Find another '!' */
 		if (s[1] == '!')
 		{
+			cptr verb = (o_ptr->number == 1) ? "is" : "are";
+			cptr gen = (allart_p(o_ptr)) ? "The" : "your";
+
 			/* Describe (briefly) */
 			object_desc(o_name, o_ptr, FALSE, 0);
 
 			/* Notify the player */
-			if (o_ptr->number > 1) 
-				msg_format("Your %s are recharged.", o_name);
-			else msg_format("Your %s is recharged.", o_name);
+			msg_format("%s %s %s recharged.", gen, o_name, verb);
 
 			/* Done. */
 			return;
