@@ -541,8 +541,8 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 
 	j_ptr->iy = 1;
 	j_ptr->ix = 1;
-	j_ptr->tval = (o_base[u_info[o_ptr->k_idx].p_id].tval == o_ptr->tval ||
- 		aware);
+	j_ptr->tval = (aware ||
+		o_base[u_info[k_info[o_ptr->k_idx].u_idx].p_id].tval == o_ptr->tval);
 	j_ptr->discount = 1;
 	j_ptr->number = 1;
 	j_ptr->marked = 1;
