@@ -14,6 +14,7 @@
 #include "angband.h"
 
 extern void fetch(int dir, int wgt, bool require_los);
+static int chest_check(int y, int x);
 
  #if defined(ALLOW_EASY_OPEN) || defined(ALLOW_EASY_DISARM) /* TNB */
  
@@ -350,7 +351,7 @@ void do_cmd_toggle_sneak(void)
 /*
  * Determine if a grid contains a chest
  */
-int chest_check(int y, int x)
+static int chest_check(int y, int x)
 {
 	cave_type *c_ptr = &cave[y][x];
 

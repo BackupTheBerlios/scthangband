@@ -191,7 +191,7 @@ void user_name(char *buf, int id)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-errr path_parse(char *buf, int UNUSED max, cptr file)
+static errr path_parse(char *buf, int UNUSED max, cptr file)
 {
 	cptr		u, s;
 	struct passwd	*pw;
@@ -259,7 +259,7 @@ errr path_parse(char *buf, int UNUSED max, cptr file)
  * This requires no special processing on simple machines,
  * except for verifying the size of the filename.
  */
-errr path_parse(char *buf, int max, cptr file)
+static errr path_parse(char *buf, int max, cptr file)
 {
 	/* Accept the filename */
 	strnfmt(buf, max, "%s", file);
@@ -1589,7 +1589,7 @@ static cptr inkey_next = NULL;
  * This special function hook allows the "Borg" (see elsewhere) to take
  * control of the "inkey()" function, and substitute in fake keypresses.
  */
-char (*inkey_hack)(int flush_first) = NULL;
+static char (*inkey_hack)(int flush_first) = NULL;
 
 #endif /* ALLOW_BORG */
 

@@ -2585,7 +2585,7 @@ static void initialise_quests(void)
  * Get number of quest monsters for quest i
  * Heino Vander Sanden
  */
-int get_number_monster(int i)
+static int get_number_monster(int i)
 {
 	int num;
 
@@ -2607,7 +2607,7 @@ int get_number_monster(int i)
  * Get random monster
  * Heino Vander Sanden
  */
-int get_rnd_q_monster(int q_idx)
+static int get_rnd_q_monster(int q_idx)
 {
 	int r_idx,j,tmp;
 

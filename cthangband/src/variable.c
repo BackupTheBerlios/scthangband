@@ -35,7 +35,7 @@ char syshelpfile[20];
 byte version_major = VERSION_MAJOR;
 byte version_minor = VERSION_MINOR;
 byte version_patch = VERSION_PATCH;
-byte version_extra = VERSION_EXTRA;
+/* byte version_extra = VERSION_EXTRA; */
 
 /*
  * Run-time arguments
@@ -136,7 +136,6 @@ bool repair_objects;	/* Hack -- optimize detect objects */
 
 s16b total_weight;		/* Total weight being carried */
 
-s16b inven_nxt;			/* Hack -- unused */
 bool hack_mind;
 bool hack_chaos_feature;
 int artifact_bias;
@@ -259,9 +258,6 @@ bool dungeon_small;         /* Generate dungeons with small levels always */
 
 bool flow_by_sound;			/* Monsters track new player location */
 bool flow_by_smell;			/* Monsters track old player location */
-
-bool track_follow;			/* Monsters follow the player */
-bool track_target;			/* Monsters target the player */
 
 bool smart_learn;			/* Monsters learn from their mistakes */
 bool smart_cheat;			/* Monsters exploit player weaknesses */
@@ -659,8 +655,8 @@ alloc_entry *alloc_race_table;
  * Specify attr/char pairs for visual special effects
  * Be sure to use "index & 0x7F" to avoid illegal access
  */
-byte misc_to_attr[128];
-char misc_to_char[128];
+/* byte misc_to_attr[128]; */
+/* char misc_to_char[128]; */
 
 
 /*

@@ -3491,29 +3491,6 @@ cptr chaos_patron_shorts[MAX_PATRON] =
     "Ompalam"
 };
 
-cptr chaos_patron_longs[MAX_PATRON] =
-{
-    "Thed, Mother of the Broo",
-    "Ragnaglar, God of Debauchery",
-    "Cacodemon, Spawn of the Devil",
-    "Malia, Mistress of Plague",
-    "Pochnargo the Mutator",
-
-    "Thanatar the Assassin",
-    "Gbaji the Deciever",
-    "Vivamort, Vampire Lord",
-    "Krarsht the Hungry",
-    "Wakboth the Devil",
-
-    "Bagog, Scorpion Queen",
-    "Gark the Calm",
-    "Ikadz, God of Torture",
-    "Kajabor",
-    "Krjalk, the Traitor",
-
-    "Ompalam, Lord of Slavery"
-};
-
 int chaos_stats[MAX_PATRON] =
 {
     A_CON,  /* Thed */

@@ -15,9 +15,15 @@
 #include "angband.h"
 
 
-extern void do_cmd_rerate(void);
-extern void chaos_feature_shuffle(void);
-extern bool item_tester_hook_armour(object_type *o_ptr);
+static s16b cantrip_chance(int ctp);
+static void print_favours(byte *spells, int num, int y, int x, int sphere);
+static s16b favour_chance(int fav,int sphere);
+static bool spirit_okay(int spirit, bool call);
+static void print_spirits(int *valid_spirits,int num,int y, int x);
+static void rustproof(void);
+static s32b favour_annoyance(favour_type *f_ptr);
+static void annoy_spirit(spirit_type *s_ptr,u32b amount);
+
 
 
 /*
@@ -535,7 +541,7 @@ static bool favour_okay(int fav,  int sphere)
 /*
  * Returns cantrip chance of failure (much simpler than 'spell_chance')
  */
-s16b cantrip_chance(int ctp)
+static s16b cantrip_chance(int ctp)
 {
 	int             chance, minfail;
 	byte plev = skill_set[SKILL_HEDGE].value/2;
@@ -795,7 +801,7 @@ static int spirit_energy(int favour_sphere, int spell)
 /*
  * Print a list of favours (for invoking)
  */
-void print_favours(byte *spells, int num, int y, int x, int sphere)
+static void print_favours(byte *spells, int num, int y, int x, int sphere)
 {
 	int                     i, spell;
 
@@ -852,7 +858,7 @@ void print_favours(byte *spells, int num, int y, int x, int sphere)
 /*
  * Returns favour chance of failure (much simpler than 'spell_chance')
  */
-s16b favour_chance(int fav,int sphere)
+static s16b favour_chance(int fav,int sphere)
 {
 	int             chance, minfail;
 	byte plev = skill_set[SKILL_SHAMAN].value/2;
@@ -1082,7 +1088,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
  * Set call to true to test if a spirit can be called upon
  * Set call to false to test if a spirit can form a pact
  */
-bool spirit_okay(int spirit, bool call)
+static bool spirit_okay(int spirit, bool call)
 {
 
 	byte plev = skill_set[SKILL_SHAMAN].value/2;
@@ -1111,7 +1117,7 @@ bool spirit_okay(int spirit, bool call)
 /*
  * Print a list of spirits (for initiating to or calling upon)
  */
-void print_spirits(int *valid_spirits,int num,int y, int x)
+static void print_spirits(int *valid_spirits,int num,int y, int x)
 {
 	int                     i;
 	byte plev = skill_set[SKILL_SHAMAN].value/2;
@@ -1178,7 +1184,7 @@ void print_spirits(int *valid_spirits,int num,int y, int x)
 }
 
 
-void rustproof(void)
+static void rustproof(void)
 {
 	int		item;
 
@@ -3669,7 +3675,7 @@ void do_cmd_cantrip(void)
 /*
  * calculate the annoyance factor of a favour
  */
-s32b favour_annoyance(favour_type *f_ptr)
+static s32b favour_annoyance(favour_type *f_ptr)
 {
 	s32b annoy;
 
@@ -3688,7 +3694,7 @@ s32b favour_annoyance(favour_type *f_ptr)
 /*
  * annoy a spirit
  */
-void annoy_spirit(spirit_type *s_ptr,u32b amount)
+static void annoy_spirit(spirit_type *s_ptr,u32b amount)
 {
 	u32b old_annoy;
 	p_ptr->redraw |= (PR_SPIRIT);

@@ -597,7 +597,7 @@ s16b o_pop(void)
 /*
  * Apply a "object restriction function" to the "object allocation table"
  */
-errr get_obj_num_prep(void)
+static errr get_obj_num_prep(void)
 {
 	int i;
 

@@ -170,6 +170,7 @@ static s32b cur_ask, final_ask;
 static cptr pmt;
 static bool noneedtobargain(s32b minprice);
 static int get_which_store(void);
+static void do_store_browse( object_type *o_ptr);
 
 /*
  * Determine if haggling is necessary.
@@ -4904,7 +4905,7 @@ static int get_which_store(void)
  * Note that *all* spells in the book are listed
  *
  */
-void do_store_browse( object_type *o_ptr)
+static void do_store_browse( object_type *o_ptr)
 {
 	int		sval;
 	int		spell = -1;

@@ -3829,7 +3829,7 @@ void redraw_stuff(void)
 
 /* Allow window_stuff to be forced to prefer different choices rather than
  * stay the same. */
-bool window_stuff_rotate = FALSE;
+static bool window_stuff_rotate = FALSE;
 
 #define PRI(a,b) (windows[a].pri[b])
 #define REP(a,b) (windows[a].rep[b])

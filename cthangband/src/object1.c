@@ -3693,7 +3693,7 @@ s16b index_to_label(int i)
  * Convert a label into the index of an item in the "inven"
  * Return "-1" if the label does not indicate a real item
  */
-s16b label_to_inven(int c)
+static s16b label_to_inven(int c)
 {
 	int i;
 
@@ -3715,7 +3715,7 @@ s16b label_to_inven(int c)
  * Convert a label into the index of a item in the "equip"
  * Return "-1" if the label does not indicate a real item
  */
-s16b label_to_equip(int c)
+static s16b label_to_equip(int c)
 {
 	int i;
 

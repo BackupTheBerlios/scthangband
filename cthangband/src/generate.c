@@ -14,7 +14,7 @@
 #include "angband.h"
 #define SAFE_MAX_ATTEMPTS 5000
 
-int template_race;
+static int template_race;
 
 /*
  * Note that Level generation is *not* an important bottleneck,
@@ -303,7 +303,7 @@ static room_data room[ROOM_MAX] =
  * place a friendly monster next to the player
  * Note: The monster is assumed to already exist.
  */
-void replace_friend(int m_idx)
+static void replace_friend(int m_idx)
 {
 	int ny, nx, d, i, min;
     int dis = 2;
@@ -387,7 +387,7 @@ void replace_friend(int m_idx)
 
 /* Replace all friends on new level */
 
-void replace_all_friends(void)
+static void replace_all_friends(void)
 {
 	int i;
 	for(i=0;i<m_max;i++)

@@ -806,7 +806,7 @@ static s16b find_string(char *buf, cptr *array)
 /*
  * A wrapper around find_string for a single string.
  */
-bool find_string_x(char *buf, cptr string)
+static bool find_string_x(char *buf, cptr string)
 {
 	cptr array[2] = {string, 0};
 	return (bool)find_string(buf, array);
@@ -823,7 +823,7 @@ bool find_string_x(char *buf, cptr string)
  * max_size contains the maximum offset allowed.
  * offset contains the offset for this event (should be 0 initially).
  */
-errr do_get_string(char *buf, char this, cptr all, char *output, u32b *this_size, u32b max_size, u16b *offset)
+static errr do_get_string(char *buf, char this, cptr all, char *output, u32b *this_size, u32b max_size, u16b *offset)
 {
 	char *q, *r, *s = buf, *t = strchr(buf, '\0'), *last;
 	bool escaped = FALSE;
@@ -899,7 +899,7 @@ errr do_get_string(char *buf, char this, cptr all, char *output, u32b *this_size
 
 
 /* Clear the \\ characters from a string */
-void clear_escapes(char *buf)
+static void clear_escapes(char *buf)
 {
 	char *q, *r;
 	bool escaped = FALSE;

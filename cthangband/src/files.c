@@ -13,7 +13,8 @@
 
 #include "angband.h"
 
-extern void do_cmd_knowledge_chaos_features();
+static void signals_ignore_tstp(void);
+static void signals_handle_tstp(void);
 
 
 /*
@@ -122,7 +123,7 @@ void safe_setuid_grab(void)
  */
 
 
-s16b tokenize(char *buf, s16b num, char **tokens)
+static s16b tokenize(char *buf, s16b num, char **tokens)
 {
 	int i = 0;
 
@@ -2304,7 +2305,7 @@ static void display_player_flag_info(void)
 /*
  * Return a colour based on the status of a skill
  */
-byte skill_colour(int skill_index)
+static byte skill_colour(int skill_index)
 {
 	player_skill *sk_ptr = &skill_set[skill_index];
 
@@ -3058,7 +3059,7 @@ static void display_player_ben_one(int mode)
 /*
  * Display the name, sex, race, template and stats.
  */
-void display_player_name_stats(void)
+static void display_player_name_stats(void)
 {
 	char	buf[80];
 	byte i;
@@ -3243,7 +3244,7 @@ void display_player(int mode)
 }
 }
 
-void dump_final_messages(FILE * OutFile)
+static void dump_final_messages(FILE * OutFile)
 {
 	short i;
 
@@ -4382,7 +4383,7 @@ void do_cmd_save_game(bool is_autosave)
 /*
  * Hack -- Calculates the total number of points earned		-JWT-
  */
-long total_points(void)
+static long total_points(void)
 {
 	u32b i,j,best;
 	best=0;
@@ -5826,7 +5827,7 @@ static void handle_signal_abort(int sig)
 /*
  * Ignore SIGTSTP signals (keyboard suspend)
  */
-void signals_ignore_tstp(void)
+static void signals_ignore_tstp(void)
 {
 
 #ifdef HANDLE_SIGNALS
@@ -5840,7 +5841,7 @@ void signals_ignore_tstp(void)
 /*
  * Handle SIGTSTP signals (keyboard suspend)
  */
-void signals_handle_tstp(void)
+static void signals_handle_tstp(void)
 {
 
 #ifdef HANDLE_SIGNALS

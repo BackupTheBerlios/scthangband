@@ -29,17 +29,6 @@ vptr vptr_tmp = NULL;
 
 
 /*
- * Constant bool meaning true
- */
-bool bool_true = 1;
-
-/*
- * Constant bool meaning false
- */
-bool bool_false = 0;
-
-
-/*
  * Global NULL cptr
  */
 cptr cptr_null = NULL;
