@@ -5182,6 +5182,57 @@ void generate_cave(void)
 	/* The dungeon is not ready */
 	character_dungeon = FALSE;
 
+	/* Roll for a few things here to prevent them from being affected by
+	 * auto_scum */
+
+	/* Surface levels are 2x1 */
+	if (dun_level == 0)
+	{
+		/* Small town */
+		cur_hgt = (2*SCREEN_HGT);
+		cur_wid = (SCREEN_WID);
+
+		/* Determine number of panels */
+		max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
+		max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
+
+		/* Assume illegal panel */
+		panel_row = max_panel_rows;
+		panel_col = max_panel_cols;
+	}
+	/* Towers are 1x1 */
+	else if (dun_defs[cur_dungeon].tower)
+	{
+			cur_hgt = SCREEN_HGT;
+			cur_wid = SCREEN_WID;
+
+	}
+	/* Sometimes build a small dungeon */
+	else if (((randint(SMALL_LEVEL)==1) && small_levels) || dungeon_small)
+	{
+		if (cheat_room)
+		{
+			msg_print ("A 'small' dungeon level.");
+			msg_format("X:%d, Y:%d.", max_panel_cols, max_panel_rows);
+		}
+		cur_hgt = randint(MAX_HGT/SCREEN_HGT) * SCREEN_HGT;
+		cur_wid = randint(MAX_WID/SCREEN_WID) * SCREEN_WID;
+	}
+	else
+	{
+		/* Big dungeon */
+		cur_hgt = MAX_HGT;
+		cur_wid = MAX_WID;
+	}
+
+	/* Determine number of panels */
+	max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
+	max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
+
+	/* Assume illegal panel */
+	panel_row = max_panel_rows;
+	panel_col = max_panel_cols;
+
 	/* Generate */
 	for (num = 0; TRUE; num++)
 	{
@@ -5261,18 +5312,6 @@ void generate_cave(void)
 		/* Build the town */
 		if (dun_level == 0)
 		{
-			/* Small town */
-			cur_hgt = (2*SCREEN_HGT);
-			cur_wid = (SCREEN_WID);
-
-			/* Determine number of panels */
-			max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
-			max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
-
-			/* Assume illegal panel */
-			panel_row = max_panel_rows;
-			panel_col = max_panel_cols;
-
 			/* If your grid is a town */
 			if(wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
 			{
@@ -5289,61 +5328,12 @@ void generate_cave(void)
 		/* Build a real level */
 		else
 		{
-			/* Towers are tiny */
-			if (dun_defs[cur_dungeon].tower)
-			{
-				cur_hgt = SCREEN_HGT;
-				cur_wid = SCREEN_WID;
-				max_panel_rows = 0;
-				max_panel_cols = 0;
-				panel_row = 0;
-				panel_col = 0;
-			}
-			else
-			{
-				/* Sometimes build a small dungeon */
-				if (((randint(SMALL_LEVEL)==1) && small_levels) || dungeon_small)
-				{
-					if (cheat_room)
-						msg_print ("A 'small' dungeon level.");
-					tester_1 = randint(MAX_HGT/SCREEN_HGT);
-					tester_2 = randint(MAX_WID/SCREEN_WID);
-
-					cur_hgt = tester_1 * SCREEN_HGT;
-					cur_wid = tester_2 * SCREEN_WID;
-
-					/* Determine number of panels */
-					max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
-					max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
-
-					/* Assume illegal panel */
-					panel_row = max_panel_rows;
-					panel_col = max_panel_cols;
-
-					if (cheat_room)
-						msg_format("X:%d, Y:%d.", max_panel_cols, max_panel_rows);
-				}
-				else
-				{
-					/* Big dungeon */
-					cur_hgt = MAX_HGT;
-					cur_wid = MAX_WID;
-
-					/* Determine number of panels */
-					max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
-					max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
-
-					/* Assume illegal panel */
-					panel_row = max_panel_rows;
-					panel_col = max_panel_cols;
-				}
-			}
 			/* Make a dungeon */
-            if (!cave_gen())
-                {
-                    why = "could not place player";
-                    okay = FALSE;
-                    }
+			if (!cave_gen())
+			{
+				why = "could not place player";
+				okay = FALSE;
+			}
 		}
 
 
