@@ -1402,14 +1402,10 @@ static errr init_other(void)
 	for (n = 0; n < 8; n++)
 	{
 		/* Analyze the options */
-		for (i = 0; i < 32; i++)
+		for (i = 0; i < NUM_DISPLAY_FUNCS; i++)
 		{
 			/* Accept */
-			if (window_flag_desc[i])
-			{
-				/* Accept */
-				windows[n].mask |= (1L << i);
-			}
+			windows[n].mask |= display_func[i].flag;
 		}
 	}
 

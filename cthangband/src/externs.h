@@ -1540,6 +1540,9 @@ extern void object_prep(object_type *o_ptr, int k_idx);
 #if (defined(OBJECT2_C) || defined(WIZARD2_C))
 extern void random_artifact_resistance(object_type * o_ptr);
 #endif
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(XTRA2_C))
+extern void apply_magic_2(object_type *o_ptr, int lev);
+#endif
 #if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
 #endif
@@ -2193,9 +2196,6 @@ extern cptr stat_names[6];
 #endif
 #if (defined(FILES_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern cptr stat_names_reduced[6];
-#endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C))
-extern cptr window_flag_desc[32];
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C))
 extern option_type option_info[];
@@ -3592,6 +3592,9 @@ extern void help_track(cptr str);
 #if (defined(CMD4_C) || defined(XTRA1_C))
 extern void win_help_display(void);
 #endif
+#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(XTRA1_C))
+extern display_func_type display_func[NUM_DISPLAY_FUNCS+1];
+#endif
 #if (defined(DUNGEON_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void window_stuff(void);
 #endif
@@ -3996,11 +3999,5 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
-#endif
-
-/* object2.c */
-
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(XTRA2_C))
-extern void apply_magic_2(object_type *o_ptr, int lev);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -3990,89 +3990,106 @@ static void win_visible_display(void)
 	FREE(who);
 }
 
-/* Allow window_stuff to be forced to prefer different choices rather than
- * stay the same. */
-static bool window_stuff_rotate = FALSE;
-
-#define PRI(a,b) (windows[a].pri[b])
-#define REP(a,b) (windows[a].rep[b])
-
-#define PRIORITY(a,b) ((old_window & 1<<(b)) ? REP(a,b) : PRI(a,b))
-
-#define DISPLAY_NONE	(iilog(PW_NONE))
-	
-	typedef struct display_func_type display_func_type;
-
-	struct display_func_type
-	{
-		bool (*good)(void);
-		void (*display)(void);
-	};
-	
-static display_func_type *display_func = NULL;
+/*
+ * The list of display functions.
+ * This has an extra element to store PW_NONE, although it should not be set
+ * by normal mechanisms.
+ */
+display_func_type display_func[NUM_DISPLAY_FUNCS+1] =
+{
+	{PW_INVEN, "inventory", win_inven_good, display_inven},
+	{PW_EQUIP, "equipment", win_equip_good, display_equip},
+	{PW_SPELL, "spell list", win_spell_good, display_spell_list},
+	{PW_PLAYER, "character", func_true, win_player_display},
+	{PW_PLAYER_SKILLS, "skills", func_true, win_player_skills_display},
+	{PW_VISIBLE, "nearby monsters", win_visible_good, win_visible_display},
+	{PW_MESSAGE, "messages", win_message_good, win_message_display},
+	{PW_OVERHEAD, "overhead view", win_overhead_good, win_overhead_display},
+	{PW_MONSTER, "monster recall", win_monster_good, win_monster_display},
+	{PW_SHOPS, "shop names", win_shops_good, win_shops_display},
+	{PW_OBJECT, "object recall", win_object_good, win_object_display},
+	{PW_OBJECT_DETAILS, "object details", win_object_details_good,
+		win_object_details_display},
+	{PW_HELP, "help", win_help_good, win_help_display},
+	{PW_NONE, "", func_false, func_nothing},
+};
 
 /*
- * Initialise the display_func array.
+ * Choose what to display in a window after a "rotate" request, i.e.
+ * the first "interesting" display after the current one which has a priority
+ * greater than 0.
+ *
+ * If there are no suitable displays, it returns a blank display.
  */
-static void init_window_stuff(void)
+static int window_rotate(const window_type *w_ptr)
 {
-	int m;
-
-	/* Paranoia - only run once */
-	if (display_func) return;
-
-	display_func = C_NEW(32, display_func_type);
-	
-	/* Set the default values. */
-	for (m = 0; m < 32; m++)
+	int c, n;
+	for (c = 1; c < NUM_DISPLAY_FUNCS; c++)
 	{
-		display_func[m].good = func_false;
-		display_func[m].display = func_nothing;
+		n = (w_ptr->current+c)%NUM_DISPLAY_FUNCS;
+
+		/* Don't stop at a priority of 0. */
+		if (w_ptr->rep[n] == 0) continue; 
+
+		/* Stop at any other interesting display. */
+		if ((*display_func[n].good)()) return n;
 	}
-	
-	/*
-	 * An array of display functions.
-	 * "good" is true if there is something interesting to display.
-	 * "display" actually displays the function in a clear window.
-	 */
-	/* Set for known display functions. */
-	display_func[iilog(PW_INVEN)].good = win_inven_good;
-	display_func[iilog(PW_INVEN)].display = display_inven;
-	display_func[iilog(PW_EQUIP)].good = win_equip_good;
-	display_func[iilog(PW_EQUIP)].display = display_equip;
-	display_func[iilog(PW_SPELL)].good = win_spell_good;
-	display_func[iilog(PW_SPELL)].display = display_spell_list;
-	display_func[iilog(PW_PLAYER)].good = func_true;
-	display_func[iilog(PW_PLAYER)].display = win_player_display;
-	display_func[iilog(PW_PLAYER_SKILLS)].good = func_true;
-	display_func[iilog(PW_PLAYER_SKILLS)].display = win_player_skills_display;
-	display_func[iilog(PW_VISIBLE)].good = win_visible_good;
-	display_func[iilog(PW_VISIBLE)].display = win_visible_display;
-	display_func[iilog(PW_MESSAGE)].good = win_message_good;
-	display_func[iilog(PW_MESSAGE)].display = win_message_display;
-	display_func[iilog(PW_OVERHEAD)].good = win_overhead_good;
-	display_func[iilog(PW_OVERHEAD)].display = win_overhead_display;
-	display_func[iilog(PW_MONSTER)].good = win_monster_good;
-	display_func[iilog(PW_MONSTER)].display = win_monster_display;
-	display_func[iilog(PW_SHOPS)].good = win_shops_good;
-	display_func[iilog(PW_SHOPS)].display = win_shops_display;
-	display_func[iilog(PW_OBJECT)].good = win_object_good;
-	display_func[iilog(PW_OBJECT)].display = win_object_display;
-	display_func[iilog(PW_OBJECT_DETAILS)].good = win_object_details_good;
-	display_func[iilog(PW_OBJECT_DETAILS)].display = win_object_details_display;
-	display_func[iilog(PW_HELP)].good = win_help_good;
-	display_func[iilog(PW_HELP)].display = win_help_display;
-#if 0
-	/* The following displays are defined but never used. */
-	display_func[iilog(PW_SNAPSHOT)].good = func_false;
-	display_func[iilog(PW_SNAPSHOT)].display = func_nothing;
-	display_func[iilog(PW_BORG_1)].good = func_false;
-	display_func[iilog(PW_BORG_1)].display = func_nothing;
-	display_func[iilog(PW_BORG_2)].good = func_false;
-	display_func[iilog(PW_BORG_2)].display = func_nothing;
-#endif
+	return DISPLAY_NONE;
 }
 
+/*
+ * Choose what to display in a window in a normal window_stuff() call according
+ * to the following criteria:
+ *
+ * 1. Never show displays with a priority+ of 0
+ * 2. Prefer "interesting" displays to "boring" ones.
+ * 3. Prefer high priority ones to low priority ones.
+ * 4. Prefer changing windows to unchanging ones.
+ * 5. Prefer the current display, and others following it in order.
+ *
+ * + If a display is being changes at this invocation, the "rep"
+ * field is used to determine its priority. If not, the "pri" field
+ * is used.
+ */
+static int window_best(const window_type *w_ptr, const u32b rep_mask)
+{
+	/* n is set if n_good != 0. */
+	int i, UNREAD(n), i_good, n_good;
+
+	/*
+	 * Find an appropriate display by turning the qualities above
+	 * which add to a display's goodness into numbers and comparing
+	 * them. As n_good is initially less than 4, it can only fail to be
+	 * replaced if the every display has a priority of 0.
+	 */
+	for (n_good = 0, i = 0; i < NUM_DISPLAY_FUNCS; i++)
+	{
+		display_func_type *d_ptr = display_func+i;
+
+		/* Decide whether display i is better than display n. */
+		if (rep_mask & d_ptr->flag)
+			i_good = w_ptr->rep[i];
+		else
+			i_good = w_ptr->pri[i]; /* 3 */
+
+		if (!i_good) continue;	/* 1 (hack) */
+		if (i >= w_ptr->current) i_good++; /* 5 */
+		if (rep_mask & d_ptr->flag) i_good += 2; /* 4 */
+		if ((*d_ptr->good)()) i_good += 64; /* 2 */
+
+		/* If display i is better, set n to i. */
+		if (i_good > n_good)
+		{
+			n = i;
+			n_good = i_good;
+		}
+	}
+
+	/* If no positive priorities are found, do nothing. */
+	if (!n_good) n = DISPLAY_NONE;
+
+	return n;
+}
 
 /*
  * Handle "p_ptr->window"
@@ -4083,18 +4100,17 @@ static void init_window_stuff(void)
  */
 void window_stuff(void)
 {
-	int m;
+	int m, n;
 	
 	u32b old_window = p_ptr->window & WINDOW_STUFF_MASK;
 	
 	/* Remember the original term (i.e. term_screen) */
 	term *old = Term;
 
+	bool rotate = (old_window & PW_ROTATE) != 0;
+
 	/* Nothing to do */
 	if (!old_window) return;
-
-	/* Not initialised yet. */
-	if (!display_func) init_window_stuff();
 
 	/* Only process this display once. */
 	p_ptr->window &= ~(old_window);
@@ -4104,100 +4120,44 @@ void window_stuff(void)
 	{
 		window_type *w_ptr = &windows[m];
 
-		/* Do nothing by default. */
-		int n = DISPLAY_NONE;
-
 		/* Skip non-existant windows */
 		if (!w_ptr->term) continue;
 
 		/* Hack - skip window containing main display */
 		if (w_ptr->term == old) continue;
 
-		/*
-		 * If the "window_stuff_rotate" flag is set, find the first 
-		 * "interesting" display after the current one which has a priority+
-		 * greater than 0.
-		 *
-		 * Otherwise, find the "best" display according to several criteria,
-		 * and display it. The criteria are:
-		 *
-		 * 1. Never show displays with a priority+ of 0
-		 * 2. Prefer "interesting" displays to "boring" ones.
-		 * 3. Prefer high priority ones to low priority ones.
-		 * 4. Prefer changing windows to unchanging ones.
-		 * 5. Prefer the current display, and others following it in order.
-		 *
-		 * + If a display is being changes at this invocation, the "rep"
-		 * field is used to determine its priority. If not, the "pri" field
-		 * is used.
-		 */
-		if (window_stuff_rotate)
+		if (rotate)
 		{
-			n = w_ptr->current;
-			for (n = (w_ptr->current+1)%32; n != w_ptr->current; n=(n+1)%32)
-			{
-				if (REP(m,n) == 0) continue; /* Don't stop at a priority of 0. */
-				if ((*display_func[n].good)()) break; /* Stop at an interesting display. */
-			}
-			/* If there are no displays assigned to this window, do nothing. */
-			if (REP(m,n) == 0) n = DISPLAY_NONE;
+			n = window_rotate(w_ptr);
 		}
 		else
 		{
-			int i, n_good;
-			
-			/*
-			 * Find an appropriate display by turning the qualities above
-			 * which add to a display's goodness into numbers and comparing them.
-			 * As n_good is initially less than 2, it can only fail to be replaced
-			 * if the every display has a priority of 0.
-			 */
-			for (n_good = 0, i = w_ptr->current; i < w_ptr->current + 32; i++)
-			{
-				/* Decide whether display i is better than display n. */
-				int i_good;
-				
-				i_good = 2*PRIORITY(m, i%32); /* 3 */
-
-				if (!i_good) continue;	/* 1 (hack) */
-				if (old_window & 1<<((i%32))) i_good++; /* 4 */
-				if ((*display_func[i%32].good)()) i_good += 32; /* 2 */
-
-				/* If display i is better, set n to i. */
-				if (i_good > n_good)
-				{
-					n = i%32;
-					n_good = i_good;
-				}
-			}
-			/* If no positive priorities are found, do nothing. */
-			if (!n_good) n = DISPLAY_NONE;
+			n = window_best(w_ptr, old_window);
 		}
 
 		/* If different display is to be shown, show it. */
-		if (n != w_ptr->current || old_window & 1<<n)
+		if (n != w_ptr->current || old_window & display_func[n].flag)
 		{
+			display_func_type *d_ptr = display_func+n;
+
 			/* Set the current display. */
-			if (n != w_ptr->current) w_ptr->current = n;
+			w_ptr->current = n;
 
 			/* Return to this routine next time. */
-			if (n != DISPLAY_NONE) p_ptr->window |= PW_RETURN;
+			if (d_ptr->flag != PW_NONE) p_ptr->window |= PW_RETURN;
 
 			/* Clear it. */
 			Term_activate(w_ptr->term);
 			clear_from(0);
 
 			/* And draw it. */
-			(*(display_func[w_ptr->current].display))();
+			(*(d_ptr->display))();
 			Term_fresh();
 		}
 	}
 
 	/* Restore the original terminal. */
 	Term_activate(old);
-
-	/* Reset window_stuff_rotate. */
-	window_stuff_rotate = FALSE;
 }
 
 
@@ -4208,11 +4168,8 @@ void window_stuff(void)
  */
 void toggle_inven_equip(void)
 {
-	/* Turn rotation on. */
-	window_stuff_rotate = TRUE;
-
-	/* Update everything. */
-	p_ptr->window |= WINDOW_STUFF_MASK;
+	/* Rotate the displays. */
+	p_ptr->window |= PW_ROTATE;
 }
 
 /*

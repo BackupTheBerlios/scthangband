@@ -824,17 +824,14 @@ static void do_cmd_options_win(void)
 }
 
 		/* Display the options */
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < NUM_DISPLAY_FUNCS; i++)
 		{
+			/* Find the name. */
+			cptr str = format("Display %s", display_func[i].name);
 			byte a = TERM_WHITE;
-
-			cptr str = window_flag_desc[i];
 
 			/* Use color */
 			if (i == y) a = TERM_L_BLUE;
-
-			/* Unused option */
-			if (!str) str = "(Unused option)";
 
 			/* Flag name */
 			Term_putstr(0, i + 5, -1, a, str);
@@ -861,20 +858,26 @@ static void do_cmd_options_win(void)
 				/* Flag values */
 				Term_putch(35 + j * 5, i + 5, a, c1);
 				Term_putch(36 + j * 5, i + 5, a, c2);
-}
-}
+			}
+		}
 
 		/* Place Cursor */
 		Term_gotoxy(35 + x * 5+((second) ? 1 : 0), y + 5);
 
-		/* Track this option. */
-		help_track(window_flag_desc[y]);
-	
-		/* Get key */
-		ch = inkey();
+		{
+			/* Put a more specific help string somewhere temporarily. */
+			char buf[80];
+			sprintf(buf, "Display %s", display_func[y].name);
 
-		/* Assume the help needed has changed. */
-		help_track(NULL);
+			/* Track this option. */
+			help_track(buf);
+	
+			/* Get key */
+			ch = inkey();
+
+			/* Assume the help needed has changed. */
+			help_track(NULL);
+		}
 
 		/* Analyze */
 		switch (ch)
@@ -925,7 +928,7 @@ static void do_cmd_options_win(void)
 				d = get_keymap_dir(ch);
 	
 				x = (x + ddx[d] + 8) % 8;
-				y = (y + ddy[d] + 16) % 16;
+				y = (y + ddy[d] + NUM_DISPLAY_FUNCS) % NUM_DISPLAY_FUNCS;
 
 				if (d)
 				{
@@ -1072,19 +1075,16 @@ static void option_dump_aux(FILE *fff)
 		/* Comment */
 		fprintf(fff, "\n#Window '%s'\n", windows[i].name);
 
-		for (j = 0; j < N_ELEMENTS(window_flag_desc); j++)
+		for (j = 0; j < NUM_DISPLAY_FUNCS; j++)
 		{
 			cptr goodpri = ".abcdefghij";
-
-			/* Not a real display. */
-			if (!window_flag_desc[j]) continue;
 
 			/* Not set. */
 			if (!windows[i].rep[j] && !windows[i].pri[j]) continue;
 
 			/* Dump the values. */
 			fprintf(fff, "W:%s:%s:%c:%c\n", windows[i].name,
-				window_flag_desc[j]+8, goodpri[windows[i].rep[j]],
+				display_func[j].name, goodpri[windows[i].rep[j]],
 				goodpri[windows[i].pri[j]]);
 		}
 	}

@@ -640,11 +640,11 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 		{
 			cptr goodpri = ".abcdefghij";
 			uint term, display, pri, rep;
+			display_func_type *d_ptr;
 
 			if (!strcmp(buf+2, "---reset---"))
 			{
-				for (display = 0; display < N_ELEMENTS(window_flag_desc);
-					display++)
+				for (display = 0; display < NUM_DISPLAY_FUNCS; display++)
 				{
 					for (term = 0; term < N_ELEMENTS(windows); term++)
 					{
@@ -666,13 +666,13 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 					return PREF_ERROR_UNKNOWN_PARAMETER;
 				if (!strcmp(windows[term].name, zz[0])) break;
 			}
-			for (display = 0;; display++)
+			for (d_ptr = display_func;; d_ptr++)
 			{
-				if (display == N_ELEMENTS(window_flag_desc))
+				if (d_ptr == display_func+NUM_DISPLAY_FUNCS)
 					return PREF_ERROR_UNKNOWN_PARAMETER;
-				if (!window_flag_desc[display]) continue;
-				if (!strcmp(window_flag_desc[display]+8, zz[1])) break;
+				if (!strcmp(d_ptr->name, zz[1])) break;
 			}
+			display = d_ptr - display_func;
 
 			/* Identify the triggered and untriggered numbers. */
 			if (!strchr(goodpri, zz[2][0]) || zz[2][1])

@@ -1917,34 +1917,35 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Bit flags for the "p_ptr->window" variable (etc)
  */
-#define PW_INVEN        0x00000001L     /* Display inven/equip */
-#define PW_EQUIP        0x00000002L     /* Display equip/inven */
-#define PW_SPELL        0x00000004L     /* Display spell list */
-#define PW_PLAYER       0x00000008L     /* Display character */
-#define PW_VISIBLE	0x00000010L	/* Display nearby monsters */
-#define PW_PLAYER_SKILLS	0x00000020	/* Display skill list */
-#define PW_MESSAGE      0x00000040L     /* Display messages */
-#define PW_OVERHEAD     0x00000080L     /* Display overhead view */
-#define PW_MONSTER      0x00000100L     /* Display monster recall */
-#define PW_OBJECT       0x00000200L     /* Display object recall */
-#define PW_OBJECT_DETAILS	0x00000400L	/* Display object details */
-#define PW_SNAPSHOT     0x00000800L     /* Display snap-shot (unused) */
-#define PW_SHOPS	0x00001000L	/* Display shop information */
+#define PW_INVEN	(1L<<0)	/* Display inven/equip */
+#define PW_EQUIP	(1L<<1)	/* Display equip/inven */
+#define PW_SPELL	(1L<<2)	/* Display spell list */
+#define PW_PLAYER	(1L<<3)	/* Display character */
+#define PW_VISIBLE	(1L<<4)	/* Display nearby monsters */
+#define PW_PLAYER_SKILLS	(1L<<5)	/* Display skill list */
+#define PW_MESSAGE	(1L<<6)	/* Display messages */
+#define PW_OVERHEAD	(1L<<7)	/* Display overhead view */
+#define PW_MONSTER	(1L<<8)	/* Display monster recall */
+#define PW_OBJECT	(1L<<9)	/* Display object recall */
+#define PW_OBJECT_DETAILS (1L<<10)	/* Display object details */
+/* xxx */
+#define PW_SHOPS	(1L<<12)	/* Display shop information */
 #define PW_HELP	(1L<<13)	/* Display context-sensitive help */
 /* xxx */
 /* xxx */
-#define PW_BORG_1       0x00004000L     /* Display borg messages (unused) */
-#define PW_BORG_2       0x00008000L     /* Display borg status (unused) */
-#define PW_NONE	0x40000000L	/* A blank screen. */
-#define PW_RETURN		0x80000000L		/* A "something happened" flag for window_stuff. */
+#define PW_ROTATE (1L<<29) /* A "rotate windows" request. */
+#define PW_NONE	(1L<<30)	/* A blank screen. */
+#define PW_RETURN	(1L<<31)	/* A "something happened" flag for window_stuff. */
 
-/* The default value of w_ptr->current. */
-#define LOG_PW_NONE	32
+/* Count how many of the above displays there are (excluding PW_ROTATE,
+ * PW_RETURN and PW_NONE). */
+#define NUM_DISPLAY_FUNCS	13
+#define DISPLAY_NONE NUM_DISPLAY_FUNCS /* "Hidden" index for PW_NONE. */
 
 /* The set of windows affected by window_stuff(). */
 #define WINDOW_STUFF_MASK (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | \
 	PW_VISIBLE | PW_PLAYER_SKILLS | PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
-	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_HELP | PW_RETURN)
+	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_HELP | PW_ROTATE | PW_RETURN)
 
 /*** General index values ***/
 

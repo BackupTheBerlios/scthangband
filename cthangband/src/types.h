@@ -1444,3 +1444,16 @@ struct blow_method_type
 		* Unused withose ALLOW_TEMPLATES. */
 };
 
+/*
+ * Describe a display function used for an external window.
+ */
+typedef struct display_func_type display_func_type;
+
+struct display_func_type
+{
+	u32b flag; /* PW_* flag for this display. */
+	cptr name; /* Name (used in preferences) for this display. */
+	bool (*good)(void); /* Check if this display is interesting. */
+	void (*display)(void); /* Display this display. */
+};
+

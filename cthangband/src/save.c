@@ -466,6 +466,12 @@ static void wr_options(void)
 	{
 		if (has_flag(SF_3D_WINPRI))
 		{
+#ifdef SF_DISPLAY_COMPRESS
+			if (!has_flag(SF_DISPLAY_COMPRESS))
+			{
+			}
+			else
+#endif /* SF_DISPLAY_COMPRESS */
 			for (c = 0; c < 32; c++)
 			{
 				byte pri = (windows[i].pri[c])%16;

@@ -2384,54 +2384,6 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Certain "screens" always use the main screen, including News, Birth,
- * Dungeon, Tomb-stone, High-scores, Macros, Colors, Visuals, Options.
- *
- * Later, special flags may allow sub-windows to "steal" stuff from the
- * main window, including File dump (help), File dump (artifacts, uniques),
- * Character screen, Small scale map, Previous Messages, Store screen, etc.
- *
- * The "ctrl-g" command (or pseudo-command) should perhaps grab a snapshot
- * of the main screen into any interested windows.
- */
-cptr window_flag_desc[32] =
-{
-	"Display inventory",
-	"Display equipment",
-	"Display spell list",
-	"Display character",
-	"Display nearby monsters",
-	"Display skills",
-	"Display messages",
-	"Display overhead view",
-	"Display monster recall",
-	"Display object recall",
-	"Display object details",
-	/*"Display snap-shot"*/ NULL,
-	"Display shop names",
-	"Display help",
-	/*"Display borg messages"*/ NULL,
-	/*"Display borg status"*/ NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-
-/*
  * Available Options (full to 3,20), 7 reserved for cheat options
  *
  * Note that birth options should always be followed by BIRTHR ones which
