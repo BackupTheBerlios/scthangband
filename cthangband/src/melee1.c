@@ -83,12 +83,13 @@ int check_hit(int power, int level)
  */
 blow_method_type *get_blow_method(byte idx)
 {
-	blow_method_type *b_ptr;
-	for (b_ptr = blow_methods; b_ptr->name; b_ptr++)
-	{
-		if (b_ptr->idx == idx) return b_ptr;
-	}
-	return NULL;
+	/* Subtract 1, as the index for blow_methods[0] is 1. */
+	if (idx > 0 && idx <= NUM_BLOW_METHODS)
+		return blow_methods+idx-1;
+
+	/* This is because 0 is reserved for "No blow". */
+	else
+		return NULL;
 }
 
 /*

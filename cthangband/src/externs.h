@@ -4000,7 +4000,7 @@ extern blow_method_type *get_blow_method(byte idx);
 
 /* tables.c */
 
-#if (defined(MELEE1_C) || defined(TABLES_C))
-extern blow_method_type blow_methods[];
+#if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
+extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #endif
 #endif /* INCLUDED_EXTERNS_H */

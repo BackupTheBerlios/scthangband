@@ -1431,12 +1431,13 @@ typedef const struct blow_method_type blow_method_type;
 
 struct blow_method_type
 {
-	byte idx; /* The index by which the attack type is known. */
 	byte flags; /* RBF_* flags. */
 	cptr name; /* Descriptive name. */
 	cptr hitmsg; /* Message on hitting the target. */
 	cptr *hitplayer; /* Null-terminated list of random messages for hitting the
 		* player. Overrides hitmsg. */
 	cptr missmsg; /* Message on missing the target, if any. */
+	cptr flagname; /* The name used to describe this flag in a text file.
+		* Unused withose ALLOW_TEMPLATES. */
 };
 

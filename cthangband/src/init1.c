@@ -44,39 +44,6 @@
 
 /*** Helper arrays for parsing ascii template files ***/
 
-/*
- * Monster Blow Methods
- */
-static cptr r_info_blow_method[] =
-{
-	"",
-	"HIT",
-	"TOUCH",
-	"PUNCH",
-	"KICK",
-	"CLAW",
-	"BITE",
-	"STING",
-	"XXX1",
-	"BUTT",
-	"CRUSH",
-	"ENGULF",
-    "CHARGE",  /* WAS: XXX2 */
-	"CRAWL",
-	"DROOL",
-	"SPIT",
-	"XXX3",
-	"GAZE",
-	"WAIL",
-	"SPORE",
-	"WORSHIP",
-	"BEG",
-	"INSULT",
-	"MOAN",
-    "SHOW",  /* WAS: XXX5 */
-	NULL
-};
-
 
 /*
  * Monster Blow Effects
@@ -2567,13 +2534,17 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			if (*t == ':') *t++ = '\0';
 
 			/* Analyze the method */
-			for (n1 = 0; r_info_blow_method[n1]; n1++)
+			for (n1 = 0; n1 < NUM_BLOW_METHODS; n1++)
 			{
-				if (streq(s, r_info_blow_method[n1])) break;
+				if (streq(s, blow_methods[n1].flagname) break;
 			}
 
 			/* Invalid method */
-			if (!r_info_blow_method[n1]) return (1);
+			if (!blow_methods[n1].flagname) return (1);
+
+			/* "No blow" is denoted by 0, so increase the index of the first
+			 * method to 1. */
+			n1++;
 
 			/* Analyze the second field */
 			for (s = t; *t && (*t != ':'); t++) /* loop */;
