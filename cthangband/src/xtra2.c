@@ -1646,7 +1646,7 @@ void resize_map(void)
  */
 void resize_inkey(void)
 {
-	(void)Term_keypress(RESIZE_INKEY_KEY);
+	(void)Term_key_push(RESIZE_INKEY_KEY);
 }
 
 
