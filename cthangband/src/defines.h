@@ -33,13 +33,13 @@
 
 
 /*
- * Current version number of Cthangband: 4.1.0 (increased to 4.1.1 unofficially)
+ * Current version number of Cthangband: 4.1.0 (increased to 4.1.2 unofficially)
  */
 
 /* <<VERSION STAMP>> */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   1
-#define VERSION_PATCH   1
+#define VERSION_PATCH   2
 
 
 /*
@@ -2172,6 +2172,7 @@
 #define IDENT_BROKEN    0x0080    /* Item is permanently worthless */
 #define IDENT_SENSE_CURSED	0x0100	/* Item has known (un)cursed status */
 #define IDENT_SENSE_VALUE	0x0200	/* Item is known to be an artefact */
+#define IDENT_SENSE_HEAVY	0x0400	/* Item has been pseudo-identified heavily */
 
 #define IDENT_SENSE	(IDENT_SENSE_CURSED | IDENT_SENSE_VALUE) /* Item has been pseudo-identified */
 

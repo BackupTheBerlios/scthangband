@@ -1103,6 +1103,9 @@ bool curse_armor(void)
 		/* Break it */
 		o_ptr->ident |= (IDENT_BROKEN);
 
+		/* Tell the player the bad news */
+		o_ptr->ident |= (IDENT_SENSE);
+
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
 
@@ -1171,6 +1174,9 @@ bool curse_weapon(void)
 		/* Break it */
 		o_ptr->ident |= (IDENT_BROKEN);
 
+		/* Tell the player the bad news */
+		o_ptr->ident |= (IDENT_SENSE);
+		
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
 

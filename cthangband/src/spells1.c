@@ -1206,6 +1206,10 @@ static int minus_ac(void)
 	/* Message */
 	msg_format("Your %s is damaged!", o_name);
 
+	/* Hack - the player doesn't know whether a good item just became an average one. */
+	if (find_feeling(o_ptr) == "good")
+		o_ptr->ident &= ~(IDENT_SENSE_VALUE);
+
 	/* Damage the item */
 	o_ptr->to_a--;
 
@@ -1628,6 +1632,9 @@ bool apply_disenchant(int mode)
 		return (TRUE);
 	}
 
+	/* Hack - the player doesn't know whether a good item just became an average one. */
+	if (find_feeling(o_ptr) == "good")
+		o_ptr->ident &= ~(IDENT_SENSE_VALUE);
 
 	/* Disenchant tohit */
 	if (o_ptr->to_h > 0) o_ptr->to_h--;

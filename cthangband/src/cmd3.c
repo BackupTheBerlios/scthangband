@@ -202,7 +202,7 @@ void do_cmd_wield(void)
 
 
     if ((cursed_p(o_ptr)) && (wear_confirm)
-        && (object_known_p(o_ptr) || (o_ptr->ident & (IDENT_SENSE))))
+        && (object_known_p(o_ptr) || (o_ptr->ident & (IDENT_SENSE_CURSED))))
     {
         char dummy[512];
 
@@ -303,10 +303,10 @@ void do_cmd_wield(void)
 	{
 		/* Warn the player */
 		msg_print("Oops! It feels deathly cold!");
-
-		/* Note the curse */
-		o_ptr->ident |= (IDENT_SENSE);
 	}
+
+	/* Note whether it is cursed or not. */
+	o_ptr->ident |= (IDENT_SENSE_CURSED);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -524,21 +524,17 @@ void do_cmd_destroy(void)
 	/* Artifacts cannot be destroyed */
 	if (artifact_p(o_ptr) || o_ptr->art_name)
 	{
-		cptr feel = "special";
 
         energy_use = 0;
 
 		/* Message */
 		msg_format("You cannot destroy %s.", o_name);
 
-		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
+		/* We know how valuable it might be. */
+		o_ptr->ident |= (IDENT_SENSE_VALUE);
 
-		/* Hack -- inscribe the artifact */
-		o_ptr->note = quark_add(feel);
-
-		/* We have "felt" it (again) */
-		o_ptr->ident |= (IDENT_SENSE);
+		/* We know that it's extraordinary. */
+		o_ptr->ident |= (IDENT_SENSE_HEAVY);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);

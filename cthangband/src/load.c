@@ -292,12 +292,17 @@ static void rd_item(object_type *o_ptr)
 		if (!older_than(4,1,1))
 		{
 			rd_u16b(&o_ptr->ident);
+			if (older_than(4,1,2) && o_ptr->discount)
+			{
+				o_ptr->ident |= IDENT_SENSE;
+			}
 		}
 		else
 		{
 			byte temp;
 			rd_byte(&temp);
-			o_ptr->ident = (u32b)(IDENT_SENSE * (temp & 0x01)) + (temp & ~0x01);
+			o_ptr->ident = (u32b)(temp & ~0x01);
+			if ((temp & 0x01) || (o_ptr->discount)) (o_ptr->ident)+=IDENT_SENSE;
 		}
 
 		rd_byte(&o_ptr->marked);

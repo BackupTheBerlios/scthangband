@@ -1368,10 +1368,7 @@ static int store_carry(object_type *o_ptr)
 	/* All store items are fully *identified* */
 	if(cur_store_type != STORE_PAWN)
 	{
-		o_ptr->ident |= IDENT_MENTAL;
-
-		/* Erase the inscription */
-		o_ptr->note = 0;
+		o_ptr->ident |= (IDENT_MENTAL | IDENT_SENSE);
 	}
 
 	/* Check each existing item (try to combine) */
@@ -1799,6 +1796,11 @@ static void display_entry(int pos)
 		{
 			object_desc_store(o_name, o_ptr, TRUE, 3);
 		}
+
+		/* Hack - don't show "uncursed" here, it gets in the way. */
+		if (strstr(o_name, "{uncursed}")) strstr(o_name, "{uncursed}")[0] = '\0';
+
+
 		o_name[maxwid] = '\0';
 		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, equippy_chars ? 5 : 3);
 
@@ -3784,7 +3786,7 @@ static void store_process_command(void)
 							}
 							break;
 						case 0x0000ff00:
-							if (!service_haggle(1000,&price, buf), service_name[cur_store_type][1])
+							if (!service_haggle(1000,&price, buf))
 							{
 								if (price > p_ptr->au)
 								{
@@ -3809,7 +3811,7 @@ static void store_process_command(void)
 							}
 							break;
 						   case 0x00ff0000:
-								if (!service_haggle(5000,&price, buf), service_name[cur_store_type][1])
+								if (!service_haggle(5000,&price, buf))
 							{
 								if (price > p_ptr->au)
 								{
@@ -4451,9 +4453,6 @@ void store_shuffle(int which)
 
 		/* Hack -- Items are no longer "fixed price" */
 		o_ptr->ident &= ~(IDENT_FIXED);
-
-		/* Mega-Hack -- Note that the item is "on sale" */
-		o_ptr->note = quark_add("on sale");
 	}
 }
 

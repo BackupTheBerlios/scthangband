@@ -2612,26 +2612,6 @@ static errr init_other(void)
 		}
 	}
 
-
-	/*** Pre-allocate the basic "auto-inscriptions" ***/
-
-	/* The "basic" feelings */
-	(void)quark_add("cursed");
-	(void)quark_add("broken");
-	(void)quark_add("average");
-	(void)quark_add("good");
-
-	/* The "extra" feelings */
-	(void)quark_add("excellent");
-	(void)quark_add("worthless");
-	(void)quark_add("special");
-	(void)quark_add("terrible");
-
-	/* Some extra strings */
-	(void)quark_add("uncursed");
-	(void)quark_add("on sale");
-
-
 	/*** Prepare the options ***/
 
 	/* Scan the options */

@@ -46,7 +46,7 @@ static cptr value_check_aux1(object_type *o_ptr)
 	if (cursed_p(o_ptr)) return "cursed";
 
 	/* Broken items */
-	if (broken_p(o_ptr)) return "broken";
+	if (broken_p(o_ptr)) return "useless";
 
 	/* Good "armor" bonus */
 	if (o_ptr->to_a > 0) return "good";
@@ -68,7 +68,7 @@ static cptr value_check_aux2(object_type *o_ptr)
 	if (cursed_p(o_ptr)) return "cursed";
 
 	/* Broken items (all of them) */
-	if (broken_p(o_ptr)) return "broken";
+	if (broken_p(o_ptr)) return "useless";
 
 	/* Artifacts -- except cursed/broken ones */
     if (artifact_p(o_ptr) || o_ptr->art_name) return "good";
@@ -83,12 +83,54 @@ static cptr value_check_aux2(object_type *o_ptr)
 	if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
 
 	/* No feeling */
-	return (NULL);
+	return "";
 }
 
 
 
 
+
+/*
+ *  Return an appropriate "feeling" for an object
+ */
+cptr find_feeling(object_type *o_ptr)
+{
+	/* Some feelings that don't depend on sensing, but on trying. */
+	if (!object_known_p(o_ptr) && (o_ptr->ident & (IDENT_EMPTY)))
+		return "empty";
+	else if (!object_aware_p(o_ptr) && object_tried_p(o_ptr))
+		return "tried";
+
+	switch (o_ptr->ident & IDENT_SENSE)
+	{
+		case IDENT_SENSE:
+			/* Fall through if you know what it is, but catch the BROKEN flag here. */
+			if (!object_known_p(o_ptr) || broken_p(o_ptr))
+			{
+				if (o_ptr->ident & IDENT_SENSE_HEAVY)
+					return value_check_aux1(o_ptr);
+				else
+					return value_check_aux2(o_ptr);
+			}
+		case IDENT_SENSE_CURSED:
+			if (o_ptr->ident & IDENT_CURSED)
+				return "cursed";
+			else
+				return "uncursed";
+		case IDENT_SENSE_VALUE:
+			if ((o_ptr->art_name) || artifact_p(o_ptr))
+				/* Artefacts */
+				return "unbreakable";
+			else if (o_ptr->ident & IDENT_BROKEN)
+				/* Artefacts which have been shattered */
+				return "useless";
+			else
+				/* This should never happen, but... */
+				return "Strangely normal";
+		default:
+			return "";
+	}
+}
 
 /*
  * Sense the inventory
@@ -125,7 +167,9 @@ static void sense_inventory(void)
 	/* Check everything */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
-		bool okay = FALSE;
+		bool okay = FALSE, repeat;
+		u16b oldident;
+ 
 
 		o_ptr = &inventory[i];
 
@@ -161,48 +205,55 @@ static void sense_inventory(void)
 		/* Skip non-sense machines */
 		if (!okay) continue;
 
-		/* We know about it already, do not tell us again */
-		if (o_ptr->ident & (IDENT_SENSE)) continue;
+		/* Occasional failure on inventory items */
+		if ((i < INVEN_WIELD) && (0 != rand_int(5))) continue;
 
 		/* It is fully known, no information needed */
 		if (object_known_p(o_ptr)) continue;
 
-		/* Occasional failure on inventory items */
-		if ((i < INVEN_WIELD) && (0 != rand_int(5))) continue;
-
-		/* Check for a feeling */
-		feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
-
-		/* Skip non-feelings */
-		if (!feel) continue;
-
-		/* Stop everything */
-		if (disturb_minor) disturb(0, 0);
+		/* If it has been identified, or pseudo-identified at least as
+		heavily as it is being now, don't bother. */
+		if ((o_ptr->ident & (IDENT_KNOWN)) || ((o_ptr->ident & IDENT_SENSE)
+		&& ((o_ptr->ident & IDENT_SENSE_HEAVY) || (!heavy)))) continue;
 
 		/* Get an object description */
 		object_desc(o_name, o_ptr, FALSE, 0);
 
-		/* Message (equipment) */
-		if (i >= INVEN_WIELD)
-		{
-			msg_format("You feel the %s (%c) you are %s %s %s...",
-			           o_name, index_to_label(i), describe_use(i),
-			           ((o_ptr->number == 1) ? "is" : "are"), feel);
-		}
-
-		/* Message (inventory) */
-		else
-		{
-			msg_format("You feel the %s (%c) in your pack %s %s...",
-			           o_name, index_to_label(i),
-			           ((o_ptr->number == 1) ? "is" : "are"), feel);
-		}
+		/* Remember how things used to be */
+		oldident = o_ptr->ident;
+		feel = find_feeling(o_ptr);
 
 		/* We have "felt" it */
 		o_ptr->ident |= (IDENT_SENSE);
 
-		/* Inscribe it textually */
-		if (!o_ptr->note) o_ptr->note = quark_add(feel);
+		/* Remember if we "feel" it completely. */
+		if (heavy) o_ptr->ident |= IDENT_SENSE_HEAVY;
+
+		/* Check if the feeling has been changed by this process */
+		repeat = (!strcmp(feel, find_feeling(o_ptr)));
+
+		/* And then insert the new version */
+		if (!repeat)
+		feel = find_feeling(o_ptr);
+
+		/* Skip non-feelings */
+		if (feel == "")
+		{
+			o_ptr->ident = oldident;
+			continue;
+		}
+
+		/* Stop everything */
+		if (disturb_minor) disturb(0, 0);
+
+		/* Message */
+		msg_format("You feel the %s (%c) %s %s%s %s...",
+			           o_name, index_to_label(i),
+		(i >= INVEN_WIELD) ? format("you are %s", describe_use(i)) : "in your pack",
+		(repeat ? "really " : ""), ((o_ptr->number == 1) ? "is" : "are"), feel);
+
+		/* We have "felt" it */
+		o_ptr->ident |= (IDENT_SENSE);
 
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -575,7 +626,7 @@ bool psychometry(void)
 	object_type             *o_ptr;
 
 	char            o_name[80];
-        cptr            feel;
+        cptr            feel, oldfeel;
 
 	/* Get an item (from equip or inven or floor) */
     if (!get_item(&item, "Meditate on which item? ", TRUE, TRUE, TRUE))
@@ -596,33 +647,36 @@ bool psychometry(void)
 		o_ptr = &o_list[0 - item];
 	}
 
-    /* It is fully known, no information needed */
-    if ((object_known_p(o_ptr)) || (o_ptr->ident & IDENT_SENSE))  {
+	/* It is fully known, no information needed. */
+	if ((object_known_p(o_ptr)) || (o_ptr->ident & IDENT_SENSE_HEAVY))  {
 	msg_print("You cannot find out anything more about that.");
 	return TRUE;
     }
 
+	/* Remember the previous feeling */
+	oldfeel = find_feeling(o_ptr);
+
+	/* We will have "felt" it */
+	o_ptr->ident |= (IDENT_SENSE);
+
+	/* We will have "felt" it heavily */
+	o_ptr->ident |= (IDENT_SENSE_HEAVY);
+
     /* Check for a feeling */
-    feel = value_check_aux1(o_ptr);
+	feel = find_feeling(o_ptr);
 
     /* Get an object description */
     object_desc(o_name, o_ptr, FALSE, 0);
     
     /* Skip non-feelings */
-    if (!feel) {
+    if (feel == "") {
     msg_format("You do not perceive anything unusual about the %s.",
 		   o_name);
 	return TRUE;
     }
 
-    msg_format("You feel that the %s %s %s...",
-	       o_name, ((o_ptr->number == 1) ? "is" : "are"), feel);
-
-    /* We have "felt" it */
-    o_ptr->ident |= (IDENT_SENSE);
-
-    /* Inscribe it textually */
-    if (!o_ptr->note) o_ptr->note = quark_add(feel);
+	msg_format("You feel that the %s %s%s %s...",
+	o_name, (strcmp(feel, oldfeel) ? "" : "really "),((o_ptr->number == 1) ? "is" : "are"), feel);
 
     /* Combine / Reorder the pack (later) */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);

@@ -2806,18 +2806,12 @@ void curse_equipment(int chance, int heavy_chance)
             changed = TRUE;
         o_ptr->art_flags3 |= TR3_CURSED;
         o_ptr->ident |= IDENT_CURSED;
+	o_ptr->ident |= IDENT_SENSE_CURSED;
     }
 
     if (changed)
     {
         msg_print("There is a malignant black aura surrounding you...");
-        if (o_ptr->note)
-        {
-            if (streq(quark_str(o_ptr->note), "uncursed"))
-            {
-                o_ptr->note = 0;
-            }
-        }
     }
 }
 

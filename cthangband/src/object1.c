@@ -2103,39 +2103,22 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	/* No more details wanted */
 	if (mode < 3) goto copyback;
 
-
-	/* No inscription yet */
-	tmp_val2[0] = '\0';
-	
-	/* Use the standard inscription if available */
-	if (o_ptr->note)
+	/* Combine the user-defined and automatic inscriptions. */
 	{
-		strcpy(tmp_val2, quark_str(o_ptr->note));
-	}
+		char k[2][75];
+		int i = 0;
+		tmp_val2[0] = '\0';
 
-	/* Note "cursed" if the item is known to be cursed */
-	else if (cursed_p(o_ptr) && (known || (o_ptr->ident & (IDENT_SENSE))))
-	{
-		strcpy(tmp_val2, "cursed");
-	}
+		/* Find the sections of inscription. */
+		if (strlen(strcpy(k[i], find_feeling(o_ptr)))) i++;
+		if (o_ptr->note) strlen(strcpy(k[i++], quark_str(o_ptr->note)));
 
-	/* Mega-Hack -- note empty wands/staffs */
-	else if (!known && (o_ptr->ident & (IDENT_EMPTY)))
-	{
-		strcpy(tmp_val2, "empty");
-	}
-
-	/* Note "tried" if the object has been tested unsuccessfully */
-	else if (!aware && object_tried_p(o_ptr))
-	{
-		strcpy(tmp_val2, "tried");
-	}
-
-	/* Note the discount, if any */
-	else if (o_ptr->discount)
-	{
-		object_desc_num(tmp_val2, o_ptr->discount);
-		strcat(tmp_val2, "% off");
+		/* Append the inscriptions from bottom to top. */
+		while (i--)
+		{ 
+			strcat(tmp_val2, k[i]);
+			if (i) strcat(tmp_val2, ", ");
+		}
 	}
 
 	/* Append the inscription, if any */

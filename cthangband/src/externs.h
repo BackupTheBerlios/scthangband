@@ -555,6 +555,8 @@ extern void do_cmd_zap_rod(int);
 extern void do_cmd_activate(int);
 
 /* dungeon.c */
+extern cptr find_feeling(object_type *o_ptr);
+extern bool clear_feeling(object_type *o_ptr);
 extern void play_game(bool new_game);
 extern bool psychometry(void);
 extern void curse(object_type *o_ptr);

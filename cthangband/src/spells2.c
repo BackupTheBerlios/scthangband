@@ -322,11 +322,17 @@ static int remove_curse_aux(int all)
 		/* Perma-Cursed Items can NEVER be uncursed */
 		if (f3 & (TR3_PERMA_CURSE)) continue;
 
+		/* Hack - as "cursed" items can become average, good or messageless
+		when they are uncursed, don't leave value information behind */
+
+		if (streq(find_feeling(o_ptr), "cursed"))
+			o_ptr->ident &= ~(IDENT_SENSE_VALUE | IDENT_SENSE_HEAVY);
+
 		/* Uncurse it */
 		o_ptr->ident &= ~(IDENT_CURSED);
 
 		/* Hack -- Assume felt */
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (IDENT_SENSE_CURSED);
 
         if (o_ptr->art_flags3 & (TR3_CURSED))
             o_ptr->art_flags3 &= ~(TR3_CURSED);
@@ -334,12 +340,9 @@ static int remove_curse_aux(int all)
         if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
             o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
 
-		/* Let the player know if an object is known to be worthless. */
+		/* You can't palm that ring of speed (-20) off quite so easily... */
 		if (broken_p(o_ptr))
-			o_ptr->note = quark_add("worthless");
-		/* Let the player know that the curse has gone otherwise. */
-		else
-			o_ptr->note = quark_add("uncursed");
+			o_ptr->ident |= (IDENT_SENSE);
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -483,19 +486,11 @@ bool alchemy(void) /* Turns an object into gold, gain some of its value in a sho
     /* Artifacts cannot be destroyed */
     if (artifact_p(o_ptr) || o_ptr->art_name)
 	{
-		cptr feel = "special";
-
 		/* Message */
 	msg_format("You fail to turn %s to gold!", o_name);
 
-		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
-
-		/* Hack -- inscribe the artifact */
-		o_ptr->note = quark_add(feel);
-
 		/* We have "felt" it (again) */
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (IDENT_SENSE_VALUE);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);
@@ -1639,35 +1634,20 @@ bool lose_all_info(void)
 		/* Allow "protection" by the MENTAL flag */
 		if (o_ptr->ident & (IDENT_MENTAL)) continue;
 
-		/* Remove "default inscriptions" */
-		if (o_ptr->note && (o_ptr->ident & (IDENT_SENSE)))
-		{
-			/* Access the inscription */
-			cptr q = quark_str(o_ptr->note);
-
-			/* Hack -- Remove auto-inscriptions */
-			if ((streq(q, "cursed")) ||
-			    (streq(q, "broken")) ||
-			    (streq(q, "good")) ||
-			    (streq(q, "average")) ||
-			    (streq(q, "excellent")) ||
-			    (streq(q, "worthless")) ||
-			    (streq(q, "special")) ||
-			    (streq(q, "terrible")))
-			{
-				/* Forget the inscription */
-				o_ptr->note = 0;
-			}
-		}
-
 		/* Hack -- Clear the "empty" flag */
 		o_ptr->ident &= ~(IDENT_EMPTY);
 
 		/* Hack -- Clear the "known" flag */
 		o_ptr->ident &= ~(IDENT_KNOWN);
 
+		/* Items still not forgotten (i.e. have easy_know) keep feelings */
+		if (object_known_p(o_ptr)) continue;
+ 
 		/* Hack -- Clear the "felt" flag */
 		o_ptr->ident &= ~(IDENT_SENSE);
+
+		/* Hack -- Clear the "heavily felt" flag */
+		o_ptr->ident &= ~(IDENT_SENSE_HEAVY);
 	}
 
 	/* Recalculate bonuses */
@@ -2612,14 +2592,13 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 				{
 					msg_print("The curse is broken!");
 					o_ptr->ident &= ~(IDENT_CURSED);
-					o_ptr->ident |= (IDENT_SENSE);
+					o_ptr->ident |= (IDENT_SENSE_CURSED);
 
                     if (o_ptr->art_flags3 & (TR3_CURSED))
                         o_ptr->art_flags3 &= ~(TR3_CURSED);
                     if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
                         o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
 
-					o_ptr->note = quark_add("uncursed");
 				}
 			}
 		}
@@ -2643,14 +2622,13 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 				{
 					msg_print("The curse is broken!");
 					o_ptr->ident &= ~(IDENT_CURSED);
-					o_ptr->ident |= (IDENT_SENSE);
+					o_ptr->ident |= (IDENT_SENSE_CURSED);
 
                     if (o_ptr->art_flags3 & (TR3_CURSED))
                         o_ptr->art_flags3 &= ~(TR3_CURSED);
                     if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
                         o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
 
-					o_ptr->note = quark_add("uncursed");
 				}
 			}
 		}
@@ -2674,14 +2652,12 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 				{
 					msg_print("The curse is broken!");
 					o_ptr->ident &= ~(IDENT_CURSED);
-					o_ptr->ident |= (IDENT_SENSE);
+					o_ptr->ident |= (IDENT_SENSE_CURSED);
 
                     if (o_ptr->art_flags3 & (TR3_CURSED))
                         o_ptr->art_flags3 &= ~(TR3_CURSED);
                     if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
                         o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
-
-					o_ptr->note = quark_add("uncursed");
 				}
 			}
 		}
@@ -6309,10 +6285,7 @@ void bless_weapon(void)
 		o_ptr->ident &= ~(IDENT_CURSED);
 
 		/* Hack -- Assume felt */
-		o_ptr->ident |= (IDENT_SENSE);
-
-		/* Take note */
-		o_ptr->note = quark_add("uncursed");
+		o_ptr->ident |= (IDENT_SENSE_CURSED);
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
