@@ -2012,6 +2012,9 @@ extern void teleport_swap(int dir);
 #if (defined(DUNGEON_C) || defined(SPELLS2_C))
 extern void alter_reality(void);
 #endif
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C))
+extern void do_cmd_rerate(void);
+#endif
 
 /* squelch.c */
 
@@ -3417,11 +3420,8 @@ extern u16b rebuild_raw;
 extern void do_cmd_spoilers(void);
 #endif
 
-/* spells2.c */
+/* wizard2.c */
 
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C))
-extern void do_cmd_rerate(void);
-#endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_wiz_hack_ben(void);
 #endif
@@ -3490,15 +3490,6 @@ extern bool PURE cumber_helm(object_ctype *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern int PURE wield_skill(object_ctype *o_ptr);
-#endif
-#if (defined(XTRA1_C) || defined(XTRA2_C))
-extern bool player_no_cut(void);
-#endif
-#if (defined(XTRA1_C) || defined(XTRA2_C))
-extern bool player_no_stun(void);
-#endif
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(STORE_C) || defined(XTRA1_C))
-extern bool PURE player_is_undead(void);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(XTRA1_C))
 extern void player_flags(u32b *f1, u32b *f2, u32b *f3);

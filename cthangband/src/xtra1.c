@@ -1253,54 +1253,15 @@ static void calc_ma_armour(void)
 
 
 /*
- * Hack - determine if the player is immune to cuts.
- */
-bool player_no_cut(void)
-{
-	if (p_ptr->prace == RACE_GOLEM) return TRUE;
-	if (p_ptr->prace == RACE_SKELETON) return TRUE;
-	if (p_ptr->prace == RACE_SPECTRE) return TRUE;
-	if (p_ptr->prace == RACE_ZOMBIE && (skill_set[SKILL_RACIAL].value > 23))
-		return TRUE;
-	return FALSE;
-}
-
-/*
- * Hack - determine if the player is immune to stunning.
- */
-bool player_no_stun(void)
-{
-	if (p_ptr->prace == RACE_GOLEM) return TRUE;
-	return FALSE;
-}
-
-/*
- * Hack - determine if the character is undead.
- * Undead characters start at dusk, rest until then in the Inn, never leave
- * bones files and have a chance of resisting sanity blasts.
- */
-bool PURE player_is_undead(void)
-{
-	switch (p_ptr->prace)
-	{
-		case RACE_SKELETON:
-		case RACE_ZOMBIE:
-		case RACE_SPECTRE:
-		case RACE_VAMPIRE:
-			return TRUE;
-		default:
-			return FALSE;
-	}
-}
-
-/*
  * Is this flag associated with an integer (rather than a boolean)?
  */
 static bool PURE is_pval_flag(int set, int flag)
 {
-	if (set == TR0) return TRUE;
-	else if (set == TR1) return ((1L<<flag) & TR1_PVAL_MASK) != 0;
-	else return FALSE;
+	/* Choose the appropriate mask for the set. */
+	u32b mask = (set == TR0) ? TR0_PVAL_MASK : (set == TR1) ? TR1_PVAL_MASK : 0;
+
+	/* Compare it with the flag. */
+	return ((1L<<flag) & mask) != 0;
 }
 
 /*
@@ -1516,6 +1477,15 @@ static void calc_bonuses_race(s16b (*flags)[32])
 }
 
 /*
+ * Add both above sets of flags to the flag table.
+ */
+static void get_bonus_flags(s16b (*flags)[32])
+{
+	calc_bonuses_race(flags);
+	calc_bonuses_muta(flags);
+}
+
+/*
  * Obtain the "flags" for the player as if he was an item
  */
 void player_flags(u32b *f1, u32b *f2, u32b *f3)
@@ -1529,8 +1499,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3)
 	WIPE(flags, flags);
 
 	/* Acquire the flags. */
-	calc_bonuses_race(flags);
-	calc_bonuses_muta(flags);
+	get_bonus_flags(flags);
 
 	/* Copy them to the variables. */
 	for (s = 1; s < 4; s++)
@@ -1588,6 +1557,9 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	if (flags[3][iilog(TR3_XTRA_SHOTS)]) p_ptr->num_fire+=60;
 
 	/* Various flags */
+	if (flags[0][iilog(TR0_NO_CUT)]) p_ptr->no_cut = TRUE;
+	if (flags[0][iilog(TR0_NO_STUN)]) p_ptr->no_stun = TRUE;
+	if (flags[0][iilog(TR0_UNDEAD)]) p_ptr->undead = TRUE;
 	if (flags[3][iilog(TR3_AGGRAVATE)]) p_ptr->aggravate = TRUE;
 	if (flags[3][iilog(TR3_TELEPORT)]) p_ptr->teleport = TRUE;
 	if (flags[3][iilog(TR3_DRAIN_EXP)]) p_ptr->exp_drain = TRUE;

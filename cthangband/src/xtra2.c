@@ -663,8 +663,8 @@ static bool allow_set_flag_p(int flag)
 {
 	switch (flag)
 	{
-		case TIMED_STUN: return !player_no_stun();
-		case TIMED_CUT: return !player_no_cut();
+		case TIMED_STUN: return !p_ptr->no_stun;
+		case TIMED_CUT: return !p_ptr->no_cut;
 		default: return TRUE;
 	}
 }

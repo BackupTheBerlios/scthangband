@@ -1206,12 +1206,6 @@ struct player_type
     bool anti_tele;     /* Prevent teleportation */
 
 	bool sustain[A_MAX];	/* Keep various stats. */
-	bool sustain_str;	/* Keep strength */
-	bool sustain_int;	/* Keep intelligence */
-	bool sustain_wis;	/* Keep wisdom */
-	bool sustain_dex;	/* Keep dexterity */
-	bool sustain_con;	/* Keep constitution */
-	bool sustain_chr;	/* Keep charisma */
 
 	bool aggravate;		/* Aggravate monsters */
 	bool teleport;		/* Random teleporting */
@@ -1229,6 +1223,9 @@ struct player_type
 	bool bless_blade;	/* Blessed blade */
 	bool xtra_might;	/* Extra might bow */
 	bool impact;		/* Earthquake blows */
+	bool no_cut;	/* Immune to cuts. */
+	bool no_stun;	/* Immune to stunning. */
+	bool undead;	/* Prefers night, doesn't turn into ghost. */
 
 	s16b dis_to_h;		/* Known bonus to hit */
 	s16b dis_to_d;		/* Known bonus to dam */

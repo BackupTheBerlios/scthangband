@@ -1549,7 +1549,7 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 			if (p_ptr->prace == RACE_IMP) return;
 
 			/* Undead characters are 50% likely to be unaffected */
-			if (player_is_undead())
+			if (p_ptr->undead)
 			{
 				if (randint(100) < (25 + (skill_set[SKILL_SAVE].value/2))) return;
 			}

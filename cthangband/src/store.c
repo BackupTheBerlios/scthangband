@@ -280,7 +280,7 @@ static void room_rest(void)
 	int temp_store_num;
 	byte temp_store_type;
 
-	bool night = player_is_undead();
+	bool night = p_ptr->undead;
 
 	if(night)
 	{
@@ -2477,7 +2477,7 @@ static void service_help(byte type)
 			break;
 		case STORE_INN: /* Rest */
 		{
-			if (player_is_undead())
+			if (p_ptr->undead)
 			{
 				msg_print("Lets you rest here for the day");
 			}

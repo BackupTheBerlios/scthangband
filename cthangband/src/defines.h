@@ -2726,11 +2726,18 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TR0_DIS_AC	(1L<<5)	/* Known base AC. */
 #define TR0_DIS_TO_A	(1L<<6)	/* Known bonus to AC. */
 #define TR0_SAVE	(1L<<7)	/* A direct saving throw bonus. */
+#define TR0_NO_CUT (1L<<8) /* Immunity to cuts. */
+#define TR0_NO_STUN (1L<<9) /* Immunity to stunning. */
+#define TR0_UNDEAD (1L<<10) /* Prefers night, can't become a ghost. */
 
 #define TR0_SAVE_SK (1L<<16) /* A skill-based saving throw bonus. */
 #define TR0_AC_SK (1L<<17) /* A skill-based AC bonus. */
 #define TR0_SPEED_SK (1L<<18) /* A skill-based speed bonus. */
 #define TR0_ILL_NORM (1L<<19) /* Cancel out race/template/mut chr mods. */
+
+#define TR0_PVAL_MASK \
+	(TR0_TO_H | TR0_DIS_TO_H | TR0_TO_D | TR0_DIS_TO_D | TR0_AC | TR0_DIS_AC | \
+	TR0_DIS_TO_A | TR0_SAVE)
 
 /*** Monster blow constants ***/
 

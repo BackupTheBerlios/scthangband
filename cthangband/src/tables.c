@@ -1431,6 +1431,7 @@ static race_bonus_type yeek_bonuses[] =
 static race_bonus_type zombie_bonuses[] =
 {
 	{0, SKILL_RACIAL, 10, TR2, iilog(TR2_RES_COLD), TRUE},
+	{0, SKILL_RACIAL, 24, TR0, iilog(TR0_NO_CUT), TRUE},
 };
 
 /*
@@ -1601,7 +1602,7 @@ player_race race_info[MAX_RACES] =
         66,  1, 200,  6,
         62,  1, 180,  6,
 		{RP_GOLEM, 0},
-		{TR0_AC_SK, 0, TR2_RES_POIS | TR2_FREE_ACT,
+		{TR0_AC_SK | TR0_NO_CUT | TR0_NO_STUN, 0, TR2_RES_POIS | TR2_FREE_ACT,
 			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		golem_bonuses, N_ELEMENTS(golem_bonuses), 0, 0,
         4, 98, dwarf_syllables,
@@ -1891,7 +1892,8 @@ player_race race_info[MAX_RACES] =
         72,  6, 50, 5,
         66,  4, 50, 5,
 		{RP_SKELETON, 0},
-		{0, 0, TR2_HOLD_LIFE | TR2_RES_POIS | TR2_RES_SHARDS, TR3_SEE_INVIS},
+		{TR0_NO_CUT | TR0_UNDEAD, 0,
+			TR2_HOLD_LIFE | TR2_RES_POIS | TR2_RES_SHARDS, TR3_SEE_INVIS},
 		skeleton_bonuses, N_ELEMENTS(skeleton_bonuses), 0, 0,
         2, 102, human_syllables,
 		{
@@ -1909,8 +1911,8 @@ player_race race_info[MAX_RACES] =
         72, 6, 100, 25,
         66, 4, 100, 20,
 		{RP_SPECTRE, 0},
-		{0, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_POIS | TR2_RES_NETHER,
-			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		{TR0_NO_CUT | TR0_UNDEAD, 0, TR2_HOLD_LIFE | TR2_RES_COLD | 
+			TR2_RES_POIS | TR2_RES_NETHER, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		spectre_bonuses, N_ELEMENTS(spectre_bonuses), 0, 0,
          5, 110, human_syllables,
 		{
@@ -1946,8 +1948,8 @@ player_race race_info[MAX_RACES] =
            72,  6, 180, 25,
            66,  4, 150, 20,
 		{RP_VAMPIRE, 0},
-		{0, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_DARK | TR2_RES_NETHER | 
-			TR2_RES_POIS, TR3_LITE},
+		{TR0_UNDEAD, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_DARK | 
+			TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
 		NULL, 0, MUT_HYPN_GAZE, 60,
          5, 113, human_syllables,
 		{
@@ -1983,7 +1985,7 @@ player_race race_info[MAX_RACES] =
         72, 6, 100, 25,
         66, 4, 100, 20,
 		{RP_ZOMBIE, 0},
-		{0, 0, TR2_HOLD_LIFE | TR2_RES_NETHER | TR2_RES_POIS,
+		{TR0_UNDEAD, 0, TR2_HOLD_LIFE | TR2_RES_NETHER | TR2_RES_POIS,
 			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		zombie_bonuses, N_ELEMENTS(zombie_bonuses), 0, 0,
         2, 107, human_syllables,
