@@ -1214,6 +1214,21 @@ static bool speed_up(int min, int max)
 /*
  * Carry out one type of dangerous summon spell.
  */
+static void summon_1(int type, bool group, int plev,
+	cptr s1, cptr s2_good, cptr s2_bad)
+{
+	bool friendly = !one_in(3);
+	if (!friendly) group = TRUE;
+
+	if (!summon_specific_aux(py, px, (plev*3)/2, type, group, friendly)) return;
+
+	msg_print(s1);
+	msg_print(friendly ? s2_good : s2_bad);
+}
+
+/*
+ * Carry out another, more structured, type of dangerous summon spell.
+ */
 static bool summon_2(int type, int chance, bool group, int plev,
 	cptr where, cptr what)
 {
@@ -3027,65 +3042,31 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case ACT_SUMMON_ELEMENTAL+PO_ACTIVATION:
 		{
-					if (randint(3) == 1) {
-				if (summon_specific((int)py,(int)px, (int)(plev * 1.5),
-						SUMMON_ELEMENTAL)) {
-				msg_print("An elemental materializes...");
-				msg_print("You fail to control it!");
-				}
-			} else {
-				if (summon_specific_friendly((int)py, (int)px,
-					(int)(plev * 1.5), SUMMON_ELEMENTAL, plev == 50))
-			{
-				msg_print("An elemental materializes...");
-				msg_print("It seems obedient to you.");
-				}
-			}
+			summon_1(SUMMON_ELEMENTAL, (plev == 50), plev,
+				"An elemental materializes...", "It seems obedient to you.",
+				"You fail to control it!");
 			return SUCCESS;
 		}
 
 		case ACT_SUMMON_UNDEAD+PO_ACTIVATION:
 		{
-			if (randint(3) == 1) {
-				if (summon_specific((int)py, (int)px, (int)(plev * 1.5),
-						(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD))) {
-				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-				msg_print("'The dead arise... to punish you for disturbing them!'");
-				}
-			} else {
-				if (summon_specific_friendly((int)py,(int)px, (int)(plev * 1.5),
-					(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
-						((plev > 24) && (randint(3) == 1)))) {
-				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-				msg_print("Ancient, long-dead forms arise from the ground to serve you!");
-				}
-			}
+			bool group = (plev > 24 && one_in(3));
+			int type = (plev > 47) ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD;
+
+			summon_1(type, group, plev, "Cold winds begin to blow around you, "
+				"carrying with them the stench of decay...",
+				"Ancient, long-dead forms arise from the ground to serve you!",
+				"'The dead arise... to punish you for disturbing them!'");
 			return SUCCESS;
 		}
 
 		case SP_SUMMON_DEMON+PO_SPELL:
 		case ACT_SUMMON_DEMON+PO_ACTIVATION:
 		{
-			cptr s2;
-			bool friendly, group;
-			cptr s1 = "The area fills with a stench of sulphur and brimstone.";
-			if (one_in(3))
-			{
-				s2 = "'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'";
-				friendly = group = FALSE;
-			}
-			else
-			{
-				s2 = "'What is thy bidding... Master?'";
-				friendly = TRUE;
-				group = (plev == 50);
-			}
-			if (summon_specific_aux(py, px, (plev*3)/2,
-				SUMMON_DEMON, group, friendly))
-			{
-				msg_print(s1);
-				msg_print(s2);
-			}
+			summon_1(SUMMON_DEMON, (plev == 50), plev,
+				"The area fills with a stench of sulphur and brimstone.",
+				"'What is thy bidding... Master?'",
+				"'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'");
 			return SUCCESS;
 		}
 
@@ -4818,24 +4799,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void)fire_bolt(GF_DEATH_RAY, dir, plev);
-			return SUCCESS;
-		}
-		case SP_RAISE_THE_DEAD+PO_SPELL:
-		{
-					if (randint(3) == 1) {
-				if (summon_specific(py, px, (plev*3)/2,
-						(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD))) {
-				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-				msg_print("'The dead arise... to punish you for disturbing them!'");
-				}
-			} else {
-				if (summon_specific_friendly((int)py,(int)px, (plev*3)/2,
-						(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
-						((plev > 24) && (randint(3) == 1)))) {
-				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-				msg_print("Ancient, long-dead forms arise from the ground to serve you!");
-				}
-			}
 			return SUCCESS;
 		}
 		case SP_ESOTERIA+PO_SPELL:
