@@ -3514,8 +3514,9 @@ static void do_cmd_knowledge_objects(void)
 			object_desc_store(o_name, i_ptr, FALSE, 0);
 
 			/* Print a message */
-			my_fputs(fff, format(" %v   %s\n", get_symbol_f2,
-				object_attr(i_ptr), object_char(i_ptr), o_name), 0);
+			my_fputs(fff, format(" %v   %s", get_symbol_f2,
+				object_attr(i_ptr), isprint(object_char(i_ptr)) ?
+				object_char(i_ptr) : '#', o_name), 0);
 		}
 	}
 

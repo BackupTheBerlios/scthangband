@@ -1252,7 +1252,7 @@ s16b get_mon_num(int level)
 static void monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
 	int num, byte flags)
 {
-	cptr artstr = ""; /* Needed, as no sanity checking is done in init1.c. */
+	cptr artstr = UNREAD_VALUE;
 	cptr s;
 	char *t;
 	byte reject = 0;
@@ -1578,6 +1578,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 
 		/* Create the name now the flags are known. */
 		strnfmt(buf, size, "%v", monster_desc_aux_f3, name, 1, flags);
+		name = buf;
 	}
 	/* Copy to buf, avoiding overflow. */
 	{
@@ -1585,7 +1586,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 		int s = strlen(suffix_);
 
 		n = MIN(n, MAX(0, size-s));
-		s = size;
+		s = MIN(s, MAX(0, size));
 
 		sprintf(buf, "%.*s%.*s", n, name, s, suffix_);
 	}
