@@ -583,9 +583,8 @@ static void do_cmd_options_autosave(cptr info)
 /*
  * Display a text file on screen. Returns success or failure.
  */
-static bool showfile(cptr name, byte col)
+bool showfile(cptr name, int y)
 {
-	int i = col;
 	FILE *fp;
 	char buf[1024];
 
@@ -593,10 +592,10 @@ static bool showfile(cptr name, byte col)
 	if (!(fp = my_fopen_path(ANGBAND_DIR_FILE, name, "r"))) return FALSE;
 
 	/* Dump the file to the screen */
-	while (0 == my_fgets(fp, buf, 1024))
+	for (; !my_fgets(fp, buf, 1024); y++)
 	{
 		/* Display and advance */
-		Term_putstr(0, i++, -1, TERM_WHITE, buf);
+		mc_put_str(y, 0, buf);
 	}
 
 	/* Close */

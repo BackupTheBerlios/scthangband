@@ -1353,8 +1353,6 @@ void init_angband(void)
 
 	int mode = 0644;
 
-	FILE *fp;
-
 	char buf[1024];
 	header head[1];
 
@@ -1400,27 +1398,8 @@ void init_angband(void)
 	/* Clear screen */
 	Term_clear();
 
-	/* Open the News file */
-	fp = my_fopen_path(ANGBAND_DIR_FILE, "news.txt", "r");
-
-	/* Dump */
-	if (fp)
-	{
-		int i = 0;
-
-		/* Dump the file to the screen */
-		while (0 == my_fgets(fp, buf, 1024))
-		{
-			/* Display and advance */
-			Term_putstr(0, i++, -1, TERM_WHITE, buf);
-		}
-
-		/* Close */
-		my_fclose(fp);
-	}
-
-	/* Flush it */
-	Term_fresh();
+	/* Display the News file */
+	showfile("news.txt", 1);
 
 
 	/*** Verify (or create) the "high score" file ***/

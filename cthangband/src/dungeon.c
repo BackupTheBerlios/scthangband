@@ -4032,21 +4032,8 @@ void play_game(bool new_game)
 	 */
 	if (display_credits)
 	{
-		char buf[1024];
-		FILE *fp;
 		clear_from(1);
-		fp = my_fopen_path(ANGBAND_DIR_FILE, "news.txt", "r");
-		if (fp)
-		{
-			for (i = 0; !my_fgets(fp, buf, 1024); i++)
-			{
-				/* Leave the top line alone. */
-				if (i) put_str(buf, i, 0);
-			}
-			my_fclose(fp);
-		}
-		Term_fresh();
-
+		showfile("news.txt", 1);
 		pause_line();
 	}
 #endif
