@@ -10,8 +10,6 @@ sCthangband 1.0.4
   a separate function. Only use the old autoroller function for quick_start.
 * Give a scroll_edge option which causes the screen to scroll until the
   detection radius reaches the corner of the map whatever the screen size.
-* Determine the area of a room to light/darken based on the dungeon layout
-  rather than a special flag.
 * Calculate the maximum damage an uninjured monster can do via an unresisted
   breath in monster recall.
 * Display the symbol used for a keymap trigger even if it has a separate text
