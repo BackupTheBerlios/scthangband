@@ -1007,51 +1007,22 @@ static int breakage_chance(object_type *o_ptr)
 	return (10);
 }
 
-
 /*
- * Fire an object from the pack or floor.
+ * Throw or fire an object from the pack or floor.
  *
- * You may only fire items that "match" your missile launcher.
- *
- * You must use slings + pebbles/shots, bows + arrows, xbows + bolts.
- *
- * See "calc_bonuses()" for more calculations and such.
- *
- * Note that "firing" a missile is MUCH better than "throwing" it.
- *
- * Note: "unseen" monsters are very hard to hit.
- *
- * Objects are more likely to break if they "attempt" to hit a monster.
- *
- * Rangers (with Bows) and Anyone (with "Extra Shots") get extra shots.
- *
- * The "extra shot" code works by decreasing the amount of energy
- * required to make each shot, spreading the shots out over time.
- *
- * Note that when firing missiles, the launcher multiplier is applied
- * after all the bonuses are added in, making multipliers very useful.
- *
- * Note that Bows of "Extra Might" get extra range and an extra bonus
- * for the damage multiplier.
- *
- * Note that Bows of "Extra Shots" give an extra shot.
+ * Note that most thrown things are completely safe from damage unless you
+ * throw them at monsters.
  */
-void do_cmd_fire(void)
+static void do_cmd_fire_aux(object_type *o_ptr,
+	int tdis, int tdam, int chance)
 {
-	errr err;
 	int dir;
-	int j, y, x, ny, nx, ty, tx;
-	int tdam, tdis, thits, tmul;
-	int bonus, chance;
+	int breakage, y, x, ty, tx, nx, ny;
 	int cur_dis, visible;
 
-	object_type forge;
-	object_type *q_ptr;
+	object_type q_ptr[1];
 
-	object_type *o_ptr;
-	object_type *j_ptr;
-
-	bool hit_body = FALSE;
+	bool do_break = FALSE;
 
 	byte missile_attr;
 	char missile_char;
@@ -1059,37 +1030,8 @@ void do_cmd_fire(void)
 	int msec = delay_factor * delay_factor * delay_factor;
 
 
-	/* Get the "bow" (if any) */
-	j_ptr = &inventory[INVEN_BOW];
-
-	/* Require a launcher */
-	if (!j_ptr->tval)
-	{
-		msg_print("You have nothing to fire with.");
-		return;
-	}
-
-
-	/* Require proper missile */
-	item_tester_tval = p_ptr->tval_ammo;
-
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Fire which item? ", FALSE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to fire.");
-		return;
-	}
-
-
 	/* Get a direction (or cancel) */
-	if (!get_aim_dir(&dir))
-	{
-		return;
-	}
-
-
-	/* Get local object */
-	q_ptr = &forge;
+	if (!get_aim_dir(&dir)) return;
 
 	/* Obtain a local object */
 	object_copy(q_ptr, o_ptr);
@@ -1102,49 +1044,16 @@ void do_cmd_fire(void)
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
 
-
 	/* Sound */
 	sound(SOUND_SHOOT);
-
 
 	/* Find the color and symbol for the object for throwing */
 	missile_attr = object_attr(q_ptr);
 	missile_char = object_char(q_ptr);
 
-
-	/* Use the proper number of shots */
-	thits = p_ptr->num_fire;
-
-	/* Use a base distance */
-	tdis = 10;
-
-	/* Base damage from thrown object plus launcher bonus */
-	tdam = damroll(q_ptr->dd, q_ptr->ds) + q_ptr->to_d + j_ptr->to_d;
-
-	/* Actually "fire" the object */
-	bonus = (p_ptr->to_h + q_ptr->to_h + j_ptr->to_h);
-	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
-
-	/* Find the base multiplier */
-	tmul = get_bow_mult(j_ptr);
-
-	/* Get extra "power" from "extra might" */
-	if (p_ptr->xtra_might) tmul++;
-
-	/* Boost the damage */
-	tdam *= tmul;
-
-	/* Base range */
-	tdis = 10 + 5 * tmul;
-
-
-	/* Take a (partial) turn */
-	energy_use = (60*TURN_ENERGY / thits);
-
-
 	/* Start at the player */
-	y = py;
-	x = px;
+	ny = y = py;
+	nx = x = px;
 
 	/* Predict the "target" location */
 	get_dir_target(&tx, &ty, dir);
@@ -1153,15 +1062,13 @@ void do_cmd_fire(void)
 	handle_stuff();
 
 
-	/* Travel until stopped */
+	/* Travel until out of range or stopped */
 	for (cur_dis = 0; cur_dis <= tdis; )
 	{
 		/* Hack -- Stop at the target */
 		if ((y == ty) && (x == tx)) break;
 
 		/* Calculate the new location (see "project()") */
-		ny = y;
-		nx = x;
 		mmove2(&ny, &nx, py, px, ty, tx);
 
 		/* Stopped by walls/doors */
@@ -1207,7 +1114,7 @@ void do_cmd_fire(void)
 			visible = m_ptr->ml;
 
 			/* Note the collision */
-			hit_body = TRUE;
+			do_break = TRUE;
 
 			/* Did we hit it (penalize range) */
 			if (test_hit(chance - cur_dis, r_ptr->ac, m_ptr->ml))
@@ -1256,286 +1163,7 @@ void do_cmd_fire(void)
 
 					/* Hack -- Track this monster */
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
-
-					/* Anger friends */
-					if (m_ptr->smart & SM_ALLY) {
-						msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
-						m_ptr->smart &= ~SM_ALLY;
-					}
               }
-
-				/* Apply special damage XXX XXX XXX */
-				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
-				tdam = critical_shot(q_ptr->weight, q_ptr->to_h, tdam);
-
-				/* No negative damage */
-				if (tdam < 0) tdam = 0;
-
-				/* Complex message */
-				if (cheat_wzrd)
-				{
-					msg_format("You do %d (out of %d) damage.",
-					           tdam, m_ptr->hp);
-				}
-
-				/* Hit the monster, check for death */
-				if (mon_take_hit(c_ptr->m_idx, tdam, &fear, note_dies))
-				{
-					/* Dead monster */
-				}
-
-				/* No death */
-				else
-				{
-					/* Message */
-					message_pain(c_ptr->m_idx, tdam);
-
-					/* Take note */
-					if (fear && m_ptr->ml)
-					{
-						/* Sound */
-						sound(SOUND_FLEE);
-
-						/* Message */
-						msg_format("%^v flees in terror!",
-							monster_desc_f2, m_ptr, 0);
-					}
-				}
-			}
-
-			/* Stop looking */
-			break;
-		}
-	}
-
-	/* Chance of breakage (during attacks) */
-	j = (hit_body ? breakage_chance(q_ptr) : 0);
-
-	/* Drop (or break) near that location */
-	drop_near(q_ptr, j, y, x);
-}
-
-
-/*
- * Hook to determine if an item can be dropped or thrown.
- */
-bool PURE item_tester_hook_drop(object_ctype *o_ptr)
-{
-	object_type j_ptr[1];
-	object_info_known(j_ptr, o_ptr);
-
-	/* Reject known cursed worn items. */
-	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
-
-	/* Accept everything else. */
-	return TRUE;
-}
-
-/*
- * Throw an object from the pack or floor.
- *
- * Note: "unseen" monsters are very hard to hit.
- *
- * Should throwing a weapon do full damage?  Should it allow the magic
- * to hit bonus of the weapon to have an effect?  Should it ever cause
- * the item to be destroyed?  Should it do any damage at all?
- */
-void do_cmd_throw(int throw_mult)
-{
-	errr err;
-	int dir;
-	int j, y, x, ny, nx, ty, tx;
-	int chance, tdam, tdis;
-	int mul, div;
-	int cur_dis, visible;
-
-	object_type forge;
-	object_type *q_ptr;
-
-	object_type *o_ptr;
-
-	bool hit_body = FALSE;
-
-	byte missile_attr;
-	char missile_char;
-
-	int msec = delay_factor * delay_factor * delay_factor;
-
-	/* Restrict the choices */
-	item_tester_hook = item_tester_hook_drop;
-
-	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&err, "Throw which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to throw.");
-		return;
-	}
-
-
-	/* Get a direction (or cancel) */
-	if (!get_aim_dir(&dir)) return;
-
-
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Obtain a local object */
-	object_copy(q_ptr, o_ptr);
-
-	/* Single object */
-	q_ptr->number = 1;
-
-	/* Reduce and describe item */
-	item_increase(o_ptr, -1);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
-
-
-	/* Find the color and symbol for the object for throwing */
-	missile_attr = object_attr(q_ptr);
-	missile_char = object_char(q_ptr);
-
-
-	/* Extract a "distance multiplier" */
-	/* Changed for 'launcher' chaos feature */
-	mul = 10 + 2 * (throw_mult - 1);
-
-	/* Enforce a minimum "weight" of one pound */
-	div = ((q_ptr->weight > 10) ? q_ptr->weight : 10);
-
-	/* Hack -- Distance -- Reward strength, penalize weight */
-	tdis = (adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * mul / div;
-
-	/* Max distance of 10 */
-	if (tdis > 10) tdis = 10;
-
-	/* Hack -- Base damage from thrown object */
-	tdam = damroll(q_ptr->dd, q_ptr->ds) + q_ptr->to_d;
-	tdam *= throw_mult;
-
-	/* Chance of hitting */
-	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
-
-
-	/* Take a turn */
-	energy_use = extract_energy[p_ptr->pspeed];
-
-
-	/* Start at the player */
-	y = py;
-	x = px;
-
-	/* Predict the "target" location */
-	get_dir_target(&tx, &ty, dir);
-
-	/* Hack -- Handle stuff */
-	handle_stuff();
-
-
-	/* Travel until stopped */
-	for (cur_dis = 0; cur_dis <= tdis; )
-	{
-		/* Hack -- Stop at the target */
-		if ((y == ty) && (x == tx)) break;
-
-		/* Calculate the new location (see "project()") */
-		ny = y;
-		nx = x;
-		mmove2(&ny, &nx, py, px, ty, tx);
-
-		/* Stopped by walls/doors */
-		if (!cave_floor_bold(ny, nx)) break;
-
-		/* Advance the distance */
-		cur_dis++;
-
-		/* Save the new location */
-		x = nx;
-		y = ny;
-
-
-		/* The player can see the (on screen) missile */
-		if (panel_contains(y, x) && player_can_see_bold(y, x))
-		{
-			/* Draw, Hilite, Fresh, Pause, Erase */
-			print_rel(missile_char, missile_attr, y, x);
-			move_cursor_relative(y, x);
-			Term_fresh();
-			Term_xtra(TERM_XTRA_DELAY, msec);
-			lite_spot(y, x);
-			Term_fresh();
-		}
-
-		/* The player cannot see the missile */
-		else
-		{
-			/* Pause anyway, for consistancy */
-			Term_xtra(TERM_XTRA_DELAY, msec);
-		}
-
-
-		/* Monster here, Try to hit it */
-        if (cave[y][x].m_idx)
-		{
-			cave_type *c_ptr = &cave[y][x];
-
-			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-			/* Check the visibility */
-			visible = m_ptr->ml;
-
-			/* Note the collision */
-			hit_body = TRUE;
-
-			/* Did we hit it (penalize range) */
-			if (test_hit(chance - cur_dis, r_ptr->ac, m_ptr->ml))
-			{
-				bool fear = FALSE;
-
-				/* Assume a default death */
-				cptr note_dies = " dies.";
-
-				/* Give experience (if it wasn't too easy) */
-				if ((chance - cur_dis) < (r_ptr->ac * 3))
-				{
-					skill_exp(SKILL_MISSILE);
-				}
-
-				/* Some monsters get "destroyed" */
-				if ((r_ptr->flags3 & (RF3_DEMON)) ||
-				    (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				    (r_ptr->flags3 & (RF3_CTHULOID)) ||
-				    (r_ptr->flags2 & (RF2_STUPID)) ||
-				    (strchr("Evg", r_ptr->d_char)))
-				{
-					/* Special note at death */
-					note_dies = " is destroyed.";
-				}
-
-
-				/* Handle unseen monster */
-				if (!visible)
-				{
-					/* Invisible monster */
-					msg_format("The %v finds a mark.",
-						object_desc_f3, q_ptr, FALSE, 3);
-				}
-
-				/* Handle visible monster */
-				else
-				{
-					/* Message */
-					msg_format("The %v hits %v.",
-						object_desc_f3, q_ptr, FALSE, 3, 
-						monster_desc_f2, m_ptr, 0);
-
-					/* Hack -- Track this monster race */
-					if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
-
-					/* Hack -- Track this monster */
-					if (m_ptr->ml) health_track(c_ptr->m_idx);
-				}
 
 				/* Apply special damage XXX XXX XXX */
 				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
@@ -1565,14 +1193,14 @@ void do_cmd_throw(int throw_mult)
 
                   /* Anger friends */
                    if ((m_ptr->smart & SM_ALLY)
-                    && (!(k_info[q_ptr->k_idx].tval == TV_POTION)))
+                    && (k_info[q_ptr->k_idx].tval != TV_POTION))
                     {
                       msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
                       m_ptr->smart &= ~SM_ALLY;
                    }
 
 					/* Take note */
-                    if (fear && m_ptr->ml)
+					if (fear && m_ptr->ml)
 					{
 						/* Sound */
 						sound(SOUND_FLEE);
@@ -1589,38 +1217,167 @@ void do_cmd_throw(int throw_mult)
 		}
 	}
 
-	/* Chance of breakage (during attacks) */
-	j = (hit_body ? breakage_chance(q_ptr) : 0);
-
-	/* Potions smash open */
+	/* Potions can break against the wall and the seashore. */
 	if (k_info[q_ptr->k_idx].tval == TV_POTION)
 	{
-		if ((hit_body) || (!cave_floor_bold(ny, nx)) || (randint(100) < j))
-		{
-			m_list->r_idx = MON_HARMFUL_POTION;
-			msg_format("The %v shatters!", object_desc_f3, q_ptr, FALSE, 3);
-			if (potion_smash_effect(m_list, y, x, q_ptr->k_idx))
-			{
-				if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
-				{
-					msg_format("%v gets angry!", monster_desc_f2, &m_list[cave[y][x].m_idx], 0);
-					m_list[cave[y][x].m_idx].smart &= ~SM_ALLY;
-				}
-			}
-
-			return;
-		}
-		else
-		{
-			j = 0;
-		}
+		if (!cave_floor_bold(ny, nx) || cave[ny][nx].feat == FEAT_WATER)
+			do_break = TRUE;
 	}
 
-
+	/* Chance of breakage (during attacks) */
+	if (do_break)
+	{
+		breakage = breakage_chance(q_ptr);
+	}
+	else
+	{
+		breakage = 0;
+	}
+	
 	/* Drop (or break) near that location */
-	drop_near(q_ptr, j, y, x);
+	drop_near(q_ptr, breakage, y, x);
+}
 
-	return;
+/*
+ * Fire an object from the pack or floor.
+ *
+ * You may only fire items that "match" your missile launcher.
+ *
+ * You must use slings + pebbles/shots, bows + arrows, xbows + bolts.
+ *
+ * See "calc_bonuses()" for more calculations and such.
+ *
+ * Note that "firing" a missile is MUCH better than "throwing" it.
+ *
+ * Note: "unseen" monsters are very hard to hit.
+ *
+ * Objects are more likely to break if they "attempt" to hit a monster.
+ *
+ * Rangers (with Bows) and Anyone (with "Extra Shots") get extra shots.
+ *
+ * The "extra shot" code works by decreasing the amount of energy
+ * required to make each shot, spreading the shots out over time.
+ *
+ * Note that when firing missiles, the launcher multiplier is applied
+ * after all the bonuses are added in, making multipliers very useful.
+ *
+ * Note that Bows of "Extra Might" get extra range and an extra bonus
+ * for the damage multiplier.
+ *
+ * Note that Bows of "Extra Shots" give an extra shot.
+ */ 
+void do_cmd_fire(void)
+{
+	errr err;
+
+	/* Get the "bow" (if any) */
+	object_type *o_ptr, *bow_ptr = &inventory[INVEN_BOW];
+
+	/* Require a launcher */
+	if (!bow_ptr->tval)
+	{
+		msg_print("You have nothing to fire with.");
+		return;
+	}
+
+	/* Require proper missile */
+	item_tester_tval = p_ptr->tval_ammo;
+
+	/* Get an item (from inven or floor) */
+	if (!((o_ptr = get_item(&err, "Fire which item? ", FALSE, TRUE, TRUE))))
+	{
+		if (err == -2) msg_print("You have nothing to fire.");
+	}
+	else
+	{
+		/* Use the proper number of shots */
+		int thits = p_ptr->num_fire;
+
+		/* Base damage from thrown object plus launcher bonus */
+		int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d + bow_ptr->to_d;
+
+		int mult = get_bow_mult(bow_ptr);
+
+		/* Base range */
+		int tdis = 10 + 5 * mult;
+
+		/* Chance of hitting */
+		int chance = (p_ptr->to_h + o_ptr->to_h + bow_ptr->to_h);
+		chance = (p_ptr->skill_thb + (chance * BTH_PLUS_ADJ));
+
+		/* Get extra "power" from "extra might" */
+		if (p_ptr->xtra_might) mult++;
+
+		/* Boost the damage */
+		tdam *= mult;
+
+		/* Take a (partial) turn */
+		energy_use = (60*TURN_ENERGY / thits);
+
+		do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
+	}
+}
+
+/*
+ * Hook to determine if an item can be dropped or thrown.
+ */
+bool PURE item_tester_hook_drop(object_ctype *o_ptr)
+{
+	object_type j_ptr[1];
+	object_info_known(j_ptr, o_ptr);
+
+	/* Reject known cursed worn items. */
+	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
+
+	/* Accept everything else. */
+	return TRUE;
+}
+
+/*
+ * Throw an object from the pack or floor.
+ *
+ * Note: "unseen" monsters are very hard to hit.
+ *
+ * Should throwing a weapon do full damage?  Should it allow the magic
+ * to hit bonus of the weapon to have an effect?  Should it ever cause
+ * the item to be destroyed?  Should it do any damage at all?
+ */
+void do_cmd_throw(int mult)
+{
+	errr err;
+	object_type *o_ptr;
+
+	/* Restrict the choices */
+	item_tester_hook = item_tester_hook_drop;
+
+	/* Get an item (from inven or floor) */
+	if (!((o_ptr = get_item(&err, "Throw which item? ", TRUE, TRUE, TRUE))))
+	{
+		if (err == -2) msg_print("You have nothing to throw.");
+	}
+	else
+	{
+		/* Extract a "distance multiplier" */
+		/* Changed for 'launcher' chaos feature */
+		int p = 10 + 2 * (mult - 1);
+
+		/* Enforce a minimum "weight" of one pound */
+		int q = ((o_ptr->weight > 10) ? o_ptr->weight : 10);
+
+		/* Hack -- Distance -- Reward strength, penalize weight */
+		int tdis = MIN((adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * p / q, 10);
+
+		/* Hack -- Base damage from thrown object */
+		int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d * mult;
+
+		/* Chance of hitting */
+		int chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
+
+		/* Take a turn */
+		energy_use = extract_energy[p_ptr->pspeed];
+
+		do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
+	}
 }
 
 

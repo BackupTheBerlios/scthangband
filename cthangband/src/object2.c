@@ -3487,6 +3487,9 @@ void place_gold(int y, int x)
  */
 static void drop_near_finish(int chance, int by, int bx)
 {
+	/* Hack - distinguish inven_drop() with a special chance. */
+	bool dropped = (chance == 0);
+
 	/* Note the spot */
 	note_spot(by, bx);
 
@@ -3498,7 +3501,7 @@ static void drop_near_finish(int chance, int by, int bx)
 
 	/* Mega-Hack -- no message if "dropped" by player */
 	/* Message when an object falls under the player */
-	if (chance && (by == py) && (bx == px))
+	if (!dropped && by == py && bx == px)
 	{
 		msg_print("You feel something roll beneath your feet.");
 	}
@@ -3548,11 +3551,20 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
 
 	/* Handle normal "breakage" */
-    if (!(allart_p(j_ptr)) && (rand_int(100) < chance))
+    if (!allart_p(j_ptr) && percent(chance))
 	{
-		/* Message */
-		msg_format("The %v disappear%s.",
-			object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
+		if (k_info[j_ptr->k_idx].tval == TV_POTION)
+		{
+			m_list->r_idx = MON_HARMFUL_POTION;
+			msg_format("The %v shatters!", object_desc_f3, j_ptr, FALSE, 3);
+			potion_smash_effect(m_list, y, x, j_ptr->k_idx);
+		}
+		else
+		{
+			/* Message */
+			msg_format("The %v disappear%s.",
+				object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
+		}
 
 		/* Debug */
 		if (cheat_wzrd) msg_print("(breakage)");

@@ -2264,6 +2264,18 @@ static bool project_o(monster_type *m_ptr, int r, int y, int x, int dam, int typ
 
 
 /*
+ * Make a formerly friendly monster angry.
+ */
+static void anger_monster(monster_type *m_ptr)
+{
+	if (m_ptr->smart & SM_ALLY)
+	{
+		msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
+		m_ptr->smart &= ~SM_ALLY;
+	}
+}
+
+/*
  * Helper function for "project()" below.
  *
  * Handle a beam/bolt/ball causing damage to a monster.
@@ -2395,7 +2407,7 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
 		note_dies = " is destroyed.";
 	}
 
-    if ((!mw_ptr) && (m_ptr->smart & SM_ALLY)) {
+    if ((!mw_ptr || mw_ptr == m_list) && (m_ptr->smart & SM_ALLY)) {
        bool get_angry = FALSE;
        /* Grrr? */
        switch (typ) {
@@ -2464,10 +2476,7 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
        }
 
        /* Now anger it if appropriate */
-       if (get_angry == TRUE && !mw_ptr) {
-       msg_format("%^s gets angry!", m_name);
-       m_ptr->smart &= ~SM_ALLY;
-       }
+       if (get_angry == TRUE && !mw_ptr) anger_monster(m_ptr);
    }
 
 
@@ -5775,7 +5784,7 @@ done_reflect: /* Success */
   * location. This should only happen if the player caused the effect, but this
   * isn't checked here.
   */
-bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
+void potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 {
 	int       radius = 2;
 	int       dt = 0;
@@ -5798,7 +5807,8 @@ bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 		case OBJ_POTION_WATER:   /* perhaps a 'water' attack? */
 		case OBJ_POTION_APPLE_JUICE:
 
-			return TRUE;
+			angry = TRUE;
+			break;
 
 		case OBJ_POTION_INFRA_VISION:
 		case OBJ_POTION_DETECT_INVIS:
@@ -5832,7 +5842,8 @@ bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 		case OBJ_POTION_NEW_LIFE:
 
 		/* All of the above potions have no effect when shattered */
-		return FALSE;
+			return;
+
 		case OBJ_POTION_SLOWNESS:
 			dt = GF_OLD_SLOW;
 			dam = 5;
@@ -5915,10 +5926,15 @@ bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 			/* Do nothing */  ;
 	}
 
-	(void) project(m_ptr, radius, y, x, dam, dt,
+	if (dt) project(m_ptr, radius, y, x, dam, dt,
 		(PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
 	/* XXX  those potions that explode need to become "known" */
-	return angry;
+
+	/* It's your fault, so they'll hate you for it. */
+	if (angry && (!m_ptr || m_ptr == m_list))
+	{
+		int m_idx = cave[y][x].m_idx;
+
+		if (m_idx) anger_monster(m_list+m_idx);
+	}
 }
-
-

@@ -141,7 +141,7 @@ extern void do_cmd_fire(void);
 extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
 #endif
 #if (defined(CMD1_C) || defined(DUNGEON_C) || defined(POWERS_C))
-extern void do_cmd_throw(int throw_mult);
+extern void do_cmd_throw(int mult);
 #endif
 #if (defined(CMD1_C) || defined(DUNGEON_C))
 extern void do_cmd_racial_power(void);
@@ -1720,8 +1720,8 @@ extern void chaos_feature_shuffle(void);
 #if (defined(CMD1_C) || defined(CMD5_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool project(monster_type *mw_ptr, int rad, int y, int x, int dam, int typ, int flg);
 #endif
-#if (defined(CMD1_C) || defined(CMD6_C) || defined(SPELLS1_C))
-extern bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx);
+#if (defined(CMD6_C) || defined(OBJECT2_C) || defined(SPELLS1_C))
+extern void potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx);
 #endif
 
 /* spells2.c */
