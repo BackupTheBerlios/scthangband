@@ -37,7 +37,7 @@ vptr rnfree(vptr p)
  * Hack - a fake rpanic_aux hook for when "out of memory" errors are handled
  * by the caller.
  */
-vptr rpanic_none(huge len)
+vptr rpanic_none(huge UNUSED len)
 {
 	return NULL;
 }
