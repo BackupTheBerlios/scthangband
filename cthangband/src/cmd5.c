@@ -353,6 +353,7 @@ static void convert_magic_text(char *buf, uint max, cptr str,
 			/* Add the number. */
 			t += strnfmt(t, buf+max-t, "%d", i);
 			b = FALSE;
+			s++;
 		}
 		else
 		{
