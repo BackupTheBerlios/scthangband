@@ -1613,6 +1613,24 @@ static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
 }
 
 /*
+ * Calculate the average damage from the player's mutations (*60).
+ */
+static void natural_attack_average(s16b *mut_blow, s32b *damage)
+{
+	natural_attack *n_ptr;
+
+	FOR_ALL_IN(natural_attacks, n_ptr)
+	{
+		if (p_has_mutation(n_ptr->mut))
+		{
+			int d = 60 * n_ptr->dd * (n_ptr->ds+1) / 2;
+			*damage += critical_average(n_ptr->wgt, p_ptr->to_h, d);
+			(*mut_blow)++;
+		}
+	}
+}
+
+/*
  * Now that's done, we do some statistical stuff.
  * We want to know the to-hit bonus, the damage bonus, the number of blows
  * per turn and the average damage per turn.
@@ -1727,31 +1745,7 @@ static void weapon_stats_calc(object_ctype *wp_ptr,
 	 * natural_attack(), which appear to differ from the ones in dump_chaos_feature(). */
 	if (slot == INVEN_WIELD)
 	{
-		if (p_has_mutation(MUT_HORNS))
-		{
-			(*mut_blow)++;
-			(*damage) += 60*6*(1+2)/2;
-		}
-		if (p_has_mutation(MUT_SCOR_TAIL))
-		{
-			(*mut_blow)++;
-			(*damage) += 60*7*(1+3)/2;
-		}
-		if (p_has_mutation(MUT_BEAK))
-		{
-			(*mut_blow)++;
-			(*damage) += 60*4*(1+2)/2;
-		}
-		if (p_has_mutation(MUT_TRUNK))
-		{
-			(*mut_blow)++;
-			(*damage) += 60*4*(1+1)/2;
-		}
-		if (p_has_mutation(MUT_TENTACLES))
-		{
-			(*mut_blow)++;
-			(*damage) += 60*5*(1+2)/2;
-		}
+		natural_attack_average(mut_blow, damage);
 	}
 }
 

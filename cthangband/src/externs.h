@@ -126,21 +126,6 @@ extern void disturb(int stop_stealth);
 extern bool is_quest(int level);
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* cmd1.c */
 
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(POWERS_C))
@@ -149,17 +134,20 @@ extern void py_attack(int y, int x);
 #if (defined(CMD1_C) || defined(DUNGEON_C))
 extern void do_cmd_attack(void);
 #endif
-#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
-extern void move_to(s16b y, s16b x);
+#if (defined(CMD1_C) || defined(DUNGEON_C))
+extern void do_cmd_fire(void);
+#endif
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(STORE_C))
+extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
+#endif
+#if (defined(CMD1_C) || defined(DUNGEON_C) || defined(POWERS_C))
+extern void do_cmd_throw(int throw_mult);
+#endif
+#if (defined(CMD1_C) || defined(DUNGEON_C))
+extern void do_cmd_racial_power(void);
 #endif
 
 /* cmd2.c */
-
-#if (defined(CMD2_C) || defined(DUNGEON_C))
-extern void run_step(int dir);
-#endif
-
-
 
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_go_up(void);
@@ -182,12 +170,6 @@ extern void do_cmd_close(void);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_tunnel(void);
 #endif
-
-
-
-
-
-
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_disarm(void);
 #endif
@@ -212,17 +194,11 @@ extern void do_cmd_stay(int pickup);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_rest(void);
 #endif
-#if (defined(CMD1_C) || defined(DUNGEON_C))
-extern void do_cmd_fire(void);
+#if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
+extern void move_to(s16b y, s16b x);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(STORE_C))
-extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
-#endif
-#if (defined(CMD1_C) || defined(DUNGEON_C) || defined(POWERS_C))
-extern void do_cmd_throw(int throw_mult);
-#endif
-#if (defined(CMD1_C) || defined(DUNGEON_C))
-extern void do_cmd_racial_power(void);
+#if (defined(CMD2_C) || defined(DUNGEON_C))
+extern void run_step(int dir);
 #endif
 
 /* cmd3.c */
@@ -334,6 +310,9 @@ extern void do_cmd_save_screen(void);
 #endif
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(XTRA1_C))
 extern void get_symbol_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
+#if (defined(CMD4_C) || defined(FILES_C))
+extern long PURE num_kills(void);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
 extern void do_cmd_knowledge_chaos_features(void);
@@ -466,6 +445,9 @@ extern void curse(object_type *o_ptr);
 #if (defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C))
 extern void process_command(void);
 #endif
+#if (defined(DUNGEON_C) || defined(POWERS_C))
+extern void process_some_user_pref_files(void);
+#endif
 #if (defined(DUNGEON_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_C))
 extern void play_game(bool new_game);
 #endif
@@ -505,9 +487,6 @@ extern void prt_nums(cptr txt, int y, int x, int l, int cur, int max);
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s32b *damage);
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(XTRA1_C))
-extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
-#endif
 #if (defined(FILES_C) || defined(INIT2_C) || defined(XTRA1_C))
 extern void equippy_f0(char *buf, uint max, cptr UNUSED fmt, va_list UNUSED *vp);
 #endif
@@ -516,6 +495,9 @@ extern int equip_mod(int i);
 #endif
 #if (defined(DUNGEON_C) || defined(FILES_C))
 extern bool PURE player_has_flag_known(int set, u32b flag);
+#endif
+#if (defined(CMD4_C) || defined(FILES_C))
+extern void dump_history(FILE *fff);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern bool display_player(int mode);
@@ -1567,6 +1549,9 @@ extern void apply_magic_2(object_type *o_ptr, const int lev);
 #if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C))
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
 #endif
+#if (defined(BIRTH_C) || defined(OBJECT2_C) || defined(XTRA2_C))
+extern void make_item(object_type *o_ptr, make_item_type *i_ptr);
+#endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C))
 extern bool PURE magic_can_curse(int k_idx);
 #endif
@@ -1755,6 +1740,9 @@ extern void explosive_rune(void);
 #endif
 #if (defined(CMD2_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool do_dec_stat(int stat);
+#endif
+#if (defined(SPELLS1_C) || defined(SPELLS2_C))
+extern void do_dec_stat_time(int stat, bool msg);
 #endif
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
 extern bool do_res_stat(int stat);
@@ -2249,6 +2237,9 @@ extern cptr_ch feeling_str[SENSE_MAX];
 #if (defined(SQUELCH_C) || defined(TABLES_C) || defined(WIZARD2_C))
 extern cptr option_chars;
 #endif
+#if (defined(CMD1_C) || defined(FILES_C) || defined(TABLES_C))
+extern natural_attack natural_attacks[5];
+#endif
 
 /* util.c */
 
@@ -2351,9 +2342,12 @@ extern void sound(int val);
 #if (defined(MAIN_CRB_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool screen_is_icky(void);
 #endif
-
-
-
+#if (defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C))
+extern void set_gnext(cptr next);
+#endif
+#if (defined(SQUELCH_C) || defined(UTIL_C))
+extern bool gnext_clear(void);
+#endif
 #if (defined(FILES_C) || defined(UTIL_C))
 extern bool is_keymap_or_macro(void);
 #endif
@@ -3611,6 +3605,12 @@ extern bool player_no_cut(void);
 #if (defined(XTRA1_C) || defined(XTRA2_C))
 extern bool player_no_stun(void);
 #endif
+#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(STORE_C) || defined(XTRA1_C))
+extern bool PURE player_is_undead(void);
+#endif
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(XTRA1_C))
+extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
+#endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
@@ -3719,8 +3719,17 @@ extern bool target_set(int mode);
 #if (defined(CMD1_C) || defined(CMD6_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool get_aim_dir(int *dp);
 #endif
+#if (defined(DUNGEON_C) || defined(XTRA2_C))
+extern bool get_hack_dir(int *dp);
+#endif
 #if (defined(CMD2_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern bool get_rep_dir(int *dp);
+#endif
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
+extern bool get_rep_target(int *x, int *y);
+#endif
+#if (defined(CMD1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+extern bool get_dir_target(int *x, int *y, int dir);
 #endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
 extern void convert_articles(char *str);
@@ -3731,9 +3740,6 @@ extern void feature_desc_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #if (defined(DUNGEON_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void gain_level_reward(int chosen_reward);
 #endif
-
-
-
 #if (defined(INIT2_C) || defined(XTRA2_C))
 extern void init_chaos(void);
 #endif
@@ -3757,9 +3763,6 @@ extern int add_chaos_features(cptr *info, bool (*reject)(int));
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(XTRA2_C))
 extern void dump_chaos_features(FILE * OutFile);
-#endif
-#if (defined(DUNGEON_C) || defined(XTRA2_C))
-extern bool get_hack_dir(int *dp);
 #endif
 
 /* z-form.c */
@@ -4000,59 +4003,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* spells2.c */
-
-#if (defined(SPELLS1_C) || defined(SPELLS2_C))
-extern void do_dec_stat_time(int stat, bool msg);
-#endif
-
-/* object2.c */
-
-#if (defined(BIRTH_C) || defined(OBJECT2_C) || defined(XTRA2_C))
-extern void make_item(object_type *o_ptr, make_item_type *i_ptr);
-#endif
-
-/* cmd4.c */
-
-#if (defined(CMD4_C) || defined(FILES_C))
-extern long PURE num_kills(void);
-#endif
-
-/* files.c */
-
-#if (defined(CMD4_C) || defined(FILES_C))
-extern void dump_history(FILE *fff);
-#endif
-
-/* xtra1.c */
-
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(STORE_C) || defined(XTRA1_C))
-extern bool PURE player_is_undead(void);
-#endif
-
-/* dungeon.c */
-
-#if (defined(DUNGEON_C) || defined(POWERS_C))
-extern void process_some_user_pref_files(void);
-#endif
-
-/* util.c */
-
-#if (defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C))
-extern void set_gnext(cptr next);
-#endif
-#if (defined(SQUELCH_C) || defined(UTIL_C))
-extern bool gnext_clear(void);
-#endif
-
-/* xtra2.c */
-
-#if (defined(CMD1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool get_dir_target(int *x, int *y, int dir);
-#endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
-extern bool get_rep_target(int *x, int *y);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
