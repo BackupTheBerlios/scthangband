@@ -170,15 +170,11 @@ static void strip_names(char **start, int num, uint len)
 	}
 }
 
-/*
- * Display a list of options on screen (leaving the top two lines clear).
- * name_centry is an array of max items to display (the string is used here).
- * maxy is the number of lines which must be left blank at the bottom.
- * Returns the line below the last one used.
- */
-static int display_item_list(char **list, int num, int maxy, bool truncate)
+static int display_item_list(char **list, int num, bool truncate,
+	int minx, int miny, int maxx, int maxy)
 {
-	int mx, my, cx, cy, i, len;
+	int cx, cy, i, len;
+	const int xr = maxx-minx+1, yr = maxy-miny+1;
 
 	/* See how long the strings we'd like to use are. */
 	for (i = len = 0; i < num; i++)
@@ -187,21 +183,18 @@ static int display_item_list(char **list, int num, int maxy, bool truncate)
 		if (l > len) len = l;
 	}
 
-	/* Calculate the column width and number of rows needed to fit list in. */
-	Term_get_size(&mx, &my);
-
 	/* Find out how many columns the display can be split into but still fit. */
-	for (i = 0; mx / (i+1) > len+5; i++);
+	for (i = 0; xr / (i+1) > len+5; i++);
 
 	/* Not enough, so allow truncation. */
-	if (i * (my - 2 - maxy) < num) i = (num + my - 3 - maxy) / (my - 2 - maxy);
+	if (i * yr < num) i = (num + yr-1) / yr;
 
 	/* Avoid menus which have more columns than rows. */
-	else while (i > (num + i - 1) / i) i--;
+	else while (((i-1)*yr >= num) && (i > (num + i - 1) / i)) i--;
 
 	/* Work out the column width and the number of rows. */
 	cy = (num + i - 1) / i;
-	cx = mx / i;
+	cx = xr / i;
 
 	/* Trim object lists in a more selective way than simple truncation. */
 	if (!truncate) strip_names(list, num, cx - 5);
@@ -209,35 +202,49 @@ static int display_item_list(char **list, int num, int maxy, bool truncate)
 	/* Print everything. */
 	for (i = 0; i < num; i++)
 	{
-		int ty = 2 + (i % cy);
-		int tx = cx * (i / cy);
+		int ty = miny + (i % cy);
+		int tx = minx + cx * (i / cy);
 
 		mc_put_lfmt(ty, tx, cx-1, "[%c] %s", option_chars[i], list[i]);
 	}
 
-	return 2 + cy;
+	return miny + cy;
 }
 
 /*
- * Use a name_centry to provide the names to show a list via display_item_list
- * above.
+ * Display an item list stored in a name_centry array.
  * This copies everything to a separate array as strip_names() may change the
- * strings, but should not change the name_centry.
+ * strings, but the strings within the name_centry are not changed.
  */
-int display_entry_list(name_centry *list, int num, int maxy, bool truncate)
+int display_entry_list_bounded(name_centry *list, int num, int truncate,
+	int minx, int miny, int maxx, int maxy)
 {
 	int i;
+	C_TNEW(tmp, num, char *);
 
 	/* Copy the strings to a new string array. */
-	C_TNEW(tmp, num, char *);
 	for (i = 0; i < num; i++) tmp[i] = string_make(list[i].str);
 
 	/* Display the list and store its length. */
-	i = display_item_list(tmp, num, maxy, truncate);
+	i = display_item_list(tmp, num, truncate, minx, miny, maxx, maxy);
 
 	/* Clean up and return. */
 	while (num--) FREE(tmp[num]);
 	TFREE(tmp);
+	return i;
+}
+
+/*
+ * Display a name list at a standard location on the screen.
+ */
+int display_entry_list(name_centry *list, int num, int maxy, bool truncate)
+{
+	int i, j;
+
+	Term_get_size(&i, &j);
+
+	/* Display the list and store its length. */
+	i = display_entry_list_bounded(list, num, truncate, 0, 2, i, j-maxy);
 
 	return i;
 }

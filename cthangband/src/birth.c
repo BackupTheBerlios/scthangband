@@ -588,7 +588,7 @@ static void get_money(bool randomly);
 static s16b get_social_average(byte);
 static void display_player_birth_details(void);
 static void get_final(void);
-static bool load_stat_set(bool);
+static bc_type load_stat_set(bool);
 static void roll_stats_auto(bool point_mod);
 static void get_stats(void);
 
@@ -1280,7 +1280,7 @@ static bool point_mod_player(void)
 		/* Load saved stats at startup and on demand */
 		if (i & IDX_LOAD)
 		{
-			if (!load_stat_set(i == IDX_LOAD)) return FALSE;
+			if (load_stat_set(i == IDX_LOAD) == BC_RESTART) return FALSE;
 		}
 
 		/* Modify the player's race. */
@@ -1460,13 +1460,16 @@ static bool point_mod_player(void)
  *
  * If menu is true, the player wants a choice.
  */
-static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
+static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 {
 	int x;
 	s16b y;
 
+	/* Not allowed to do this. */
+	if (!allow_pickstats) return BC_ABORT;
+
 	/* Paranoia - there should be a default entry */
-	if (!stat_default_total) return TRUE;
+	if (!stat_default_total) return BC_ABORT;
 
 	/* Find a set of stats which match the current race and template
 	 * Templates with maximise set to DEFAULT_STATS are acceptable for
@@ -1502,7 +1505,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 	}
 
 	/* Don't do anything without a choice. */
-	if (!y) return TRUE;
+	if (!y) return BC_ABORT;
 
 	/* Give the player the choices. */
 	if (menu)
@@ -1567,27 +1570,23 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 
 		/* Ask for a choice */
 		b = birth_choice(start+1, y, "Choose a stat template", &x, TRUE);
-		if (b == BC_ABORT)
-		{
-			x = -1;
-		}
-		else if (b == BC_RESTART)
-		{
-			return FALSE;
-		}
 
 		/* Finally clean up. */
 		clear_from(start);
+
+		/* Pass the return to the caller. */
+		return b;
 	}
 	/* We're starting for the first time, so give the player the last set saved. */
 	else if (!p_ptr->stat_cur[0])
 	{
 		x = y-1;
 	}
-	/* The player has already chosen stats, and hasn't asked to load new ones, so do nothing. */
+	/* The player has already chosen stats, and hasn't asked to load new ones,
+	 * so do nothing. */
 	else
 	{
-		x = -1;
+		return BC_ABORT;
 	}
 	/* Something has been chosen, so copy everything across. */
 	if (x != -1)
@@ -1611,18 +1610,17 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 			s16b tmp = sd_ptr->stat[y];
 			p_ptr->stat_cur[y] = p_ptr->stat_max[y] = tmp;
 		}
-					
 	}
-	return TRUE;
+	return BC_OKAY;
 }
 
 /*
  * A wrapper around the above to handle dynamic allocation.
  */
-static bool load_stat_set(bool menu)
+static bc_type load_stat_set(bool menu)
 {
 	C_TNEW(temp_stat_default, stat_default_total+1, s16b);
-	bool returncode = load_stat_set_aux(menu, temp_stat_default);
+	bc_type returncode = load_stat_set_aux(menu, temp_stat_default);
 	TFREE(temp_stat_default);
 	return returncode;
 }
@@ -1699,6 +1697,18 @@ static void get_starting_skills(void)
 
 }
 
+static name_entry magic_skills[] =
+{
+	{SKILL_THAUMATURGY, NULL},
+	{SKILL_NECROMANCY, NULL},
+	{SKILL_SORCERY, NULL},
+	{SKILL_CONJURATION, NULL},
+	{SKILL_ANIMAE, NULL},
+	{SKILL_CORPORIS, NULL},
+	{SKILL_VIS, NULL},
+	{SKILL_NATURAE, NULL},
+};
+
 /*
  * Get hermetic skills randomly
  */
@@ -1710,111 +1720,57 @@ static void get_hermetic_skills_randomly()
 	choices = cp_ptr->choices;
 
 	if (!choices) return;
-	
-		old_choice = rand_range(1,8);
-		for(i=0;i<choices;i++)
-		{
-			choice = rand_range(1,8);
-			if(rand_range(1,3) != 1) choice = old_choice;
-			switch(choice)
-			{
-			case 1:
-				skill_set[SKILL_THAUMATURGY].value+=5;
-				break;
-			case 2:
-				skill_set[SKILL_NECROMANCY].value+=5;
-				break;
-			case 3:
-				skill_set[SKILL_SORCERY].value+=5;
-				break;
-			case 4:
-				skill_set[SKILL_CONJURATION].value+=5;
-				break;
-			case 5:
-				skill_set[SKILL_ANIMAE].value+=5;
-				break;
-			case 6:
-				skill_set[SKILL_CORPORIS].value+=5;
-				break;
-			case 7:
-				skill_set[SKILL_VIS].value+=5;
-				break;
-			case 8:
-				skill_set[SKILL_NATURAE].value+=5;
-				break;
-			}
-			old_choice = choice;
-		}
+
+	for(old_choice = -1, i=0; i<choices; i++)
+	{
+		if(i && !one_in(3)) choice = old_choice;
+		else choice = rand_int(N_ELEMENTS(magic_skills));
+
+		skill_set[magic_skills[choice].idx].value += 5;
+		old_choice = choice;
 	}
+}
 
 /*
  * Get hermetic skills
  */
 static bc_type get_hermetic_skills()
 {
-	int k,i,choices;
+	char buf[40];
+	bc_type b;
+	int i, k;
+	name_entry *this;
 
-	choices = cp_ptr->choices;
-
-	if (!choices) return BC_OKAY;
+	if (!cp_ptr->choices) return BC_OKAY;
 	
     /* Extra info */
-		clear_from(15);
-		Term_putstr(5, 15, -1, TERM_WHITE,
-		"Please select a school or type of hermetic magic to specialise");
-		Term_putstr(5, 16, -1, TERM_WHITE,
-		"in. Thaumaturgy school is the most offensive, Sorcery school is");
-		Term_putstr(5,17,-1,TERM_WHITE,
-		"the least offensive. Naturae spells deal with matter, Corporis");
-		Term_putstr(5,18,-1,TERM_WHITE,
-		"with flesh, Animae with spirits and Vis with energy. Each school");
-		Term_putstr(5,19,-1,TERM_WHITE,
+	clear_from(15);
+	mc_roff_xy(5, 15,
+		"Please select a school or type of hermetic magic to specialise\n"
+		"in. Thaumaturgy school is the most offensive, Sorcery school is\n"
+		"the least offensive. Naturae spells deal with matter, Corporis\n"
+		"with flesh, Animae with spirits and Vis with energy. Each school\n"
 		"has spells of all four types.");
-	
-		put_str("a) Thaumaturgy",22,2);
-		put_str("b) Necromancy",22,17);
-		put_str("c) Sorcery",22,32);
-		put_str("d) Conjuration",22,47);
-		put_str("e) Animae",23,2);
-		put_str("f) Corporis",23,17);
-		put_str("g) Vis",23,32);
-		put_str("h) Naturae",23,47);
 
-		for(i=choices;i>0;i--)
-		{
-			/* Get a choice */
-		cptr buf = string_make(format("%d choic%s left. Choose a school or type", i,(i>1 ? "es":"e")));
-		bc_type b = birth_choice(21, MAX_SCHOOL*2, buf, &k, TRUE);
-		(void)FREE(buf);
+	FOR_ALL_IN(magic_skills, this)
+	{
+		if (!this->str) this->str = skill_set[this->idx].name;
+	}
+
+	/* Display the options. */
+	display_entry_list_bounded(magic_skills, N_ELEMENTS(magic_skills), TRUE,
+		0, 22, 80, 23);
+
+	for(i= cp_ptr->choices; i > 0; i--)
+	{
+		/* Get a choice */
+		sprintf(buf, "%d choice%s left. Choose a school or type",
+			i, (i > 1 ? "s" : ""));
+
+		b = birth_choice(21, MAX_SCHOOL*2, buf, &k, TRUE);
 		if (b) return b;
 
-			switch(k)
-			{
-			case 0:
-				skill_set[SKILL_THAUMATURGY].value+=5;
-				break;
-			case 1:
-				skill_set[SKILL_NECROMANCY].value+=5;
-				break;
-			case 2:
-				skill_set[SKILL_SORCERY].value+=5;
-				break;
-			case 3:
-				skill_set[SKILL_CONJURATION].value+=5;
-				break;
-			case 4:
-				skill_set[SKILL_ANIMAE].value+=5;
-				break;
-			case 5:
-				skill_set[SKILL_CORPORIS].value+=5;
-				break;
-			case 6:
-				skill_set[SKILL_VIS].value+=5;
-				break;
-			case 7:
-				skill_set[SKILL_NATURAE].value+=5;
-				break;
-		}
+		skill_set[magic_skills[k].idx].value += 5;
 	}
 	return BC_OKAY;
 }
@@ -2589,6 +2545,17 @@ static void player_wipe(void)
 	/* Hack -- Well fed player */
 	p_ptr->food = PY_FOOD_FULL - 1;
 
+	/* Hack - ready to move. */
+	p_ptr->energy = 1050;
+
+	/* Player has no recal ritual yet */
+	p_ptr->ritual = TOWN_NONE;
+
+	/* Player has no house yet */
+	for(i=0;i<MAX_STORES_TOTAL;i++)
+	{
+		store[i].bought = FALSE;
+	}
 
 	/* Wipe the spells */
 	for (i=0;i<MAX_SCHOOL*MAX_SPELLS_PER_BOOK;i++)
@@ -3124,15 +3091,7 @@ static bool quick_start_character(void)
 		/* Start without chaos features. */
 		p_clear_mutations();
 
-		/* Player has no recal ritual yet */
-		p_ptr->ritual = TOWN_NONE;
 
-		/* Player has no house yet */
-		for(i=0;i<MAX_STORES_TOTAL;i++)
-		{
-			store[i].bought = FALSE;
-		}
-		
 		/* Input loop */
 		while (TRUE)
 		{
@@ -3148,7 +3107,6 @@ static bool quick_start_character(void)
 			/* Fully rested */
 			p_ptr->csp = p_ptr->msp;
 			p_ptr->cchi = p_ptr->mchi;
-			p_ptr->energy = 1050; /* Should this be based on TURN_ENERGY? */
 
 			/* Display the player */
 			display_player(mode);
@@ -3241,6 +3199,104 @@ static bool quick_start_character(void)
 }
 
 /*
+ * Ask if the player wishes to use quick start, if allowed.
+ */
+static bc_type ask_quick_start(void)
+{
+	if (!allow_quickstart) return BC_ABORT;
+
+	mc_roff_xy(5, 12, 
+		"Quick-Start gives you a completely random character without\n"
+		"further prompting.");
+
+	while (1)
+	{
+		put_str("Quick-Start? (y/n): ", 15, 2);
+		switch (inkey())
+		{
+			case 'Q': quit(NULL);
+			case 'S': return BC_RESTART;
+			case 'y': case 'Y': return BC_OKAY;
+			case 'n': case 'N': return BC_ABORT;
+			case '?': do_cmd_help(NULL); break;
+			case '=':
+				Term_save();
+				do_cmd_options_aux(7, "Startup Options", NULL);
+				if (!allow_quickstart) return BC_ABORT;
+				Term_load();
+				break;
+			default:
+				bell(0);
+		}
+	}
+}
+
+/*
+ * A nasty macro to choose and print the choice for sex, race and template.
+ * It needs to be a macro because they use different types for ARRAY and 
+ * XP_PTR which only happen to be equivalent for these purposes.
+ */
+#define CHOOSE_SRT(ARRAY, MAX, NAME, P_VAR, XP_PTR, Y, MSG) \
+{ \
+	int k; \
+	name_entry list[MAX], *this; \
+\
+	/* Make some space. */ \
+	clear_from(12); \
+\
+	/* Extra info */ \
+	mc_roff_xy(5, 12, MSG); \
+\
+	FOR_ALL_IN(list, this) \
+	{ \
+		this->idx = this - list; \
+		this->str = ARRAY[this->idx].title; \
+	} \
+\
+	/* Show the options. */ \
+	display_entry_list_bounded(list, MAX, TRUE, 0, 17, 80, 21); \
+\
+	/* Choose. */ \
+	if (birth_choice(15, MAX, "Choose a " NAME, &k, FALSE) == BC_RESTART) \
+		return FALSE; \
+\
+	/* Set it. */ \
+	p_ptr->P_VAR = k; \
+	XP_PTR = &ARRAY[k]; \
+\
+	/* Display */ \
+	mc_put_fmt(15, Y, "$b%s", XP_PTR->title); \
+	return TRUE; \
+}
+
+/*
+ * Let the player choose a sex, and display it if chosen.
+ */
+static bool choose_sex(void)
+{
+	CHOOSE_SRT(sex_info, MAX_SEXES, "sex", psex, sp_ptr, 3,
+		"Your 'sex' does not have any significant gameplay effects.");
+}
+
+/*
+ * Let the player choose a race, and display it if chosen.
+ */
+static bool choose_race(void)
+{
+	CHOOSE_SRT(race_info, MAX_RACES, "race", prace, rp_ptr, 4,
+		"Your 'race' determines various intrinsic factors and bonuses.");
+}
+
+/*
+ * Let the player choose a template, and display it if chosen.
+ */
+static bool choose_template(void)
+{
+	CHOOSE_SRT(template_info, MAX_TEMPLATE, "template", ptemplate, cp_ptr, 5,
+		"Your 'template' determines various starting abilities and bonuses.");
+}
+
+/*
  * Helper function for 'player_birth()'
  *
  * The delay may be reduced, but is recommended to keep players
@@ -3249,15 +3305,7 @@ static bool quick_start_character(void)
  */
 static bool player_birth_aux(void)
 {
-	int i, k, n;
-
-	cptr str;
-
-	char c;
-
-	char p2 = ')';
-
-	char buf[80];
+	bc_type b;
 
 	/*** Intro ***/
 
@@ -3273,206 +3321,44 @@ static bool player_birth_aux(void)
 	/*** Instructions ***/
 
 	/* Display some helpful information */
-	Term_putstr(5, 7, -1, TERM_WHITE,
-		"Please answer the following questions.  Most of the questions display");
-	Term_putstr(5, 8, -1, TERM_WHITE,
-		"a set of standard answers, and many will also accept special responses,");
-	Term_putstr(5, 9, -1, TERM_WHITE,
-		"including 'Q' to quit, '=' to change options, 'S' to restart character");
-	Term_putstr(5, 10, -1, TERM_WHITE,
-		"creation and '?' for help.  Note that 'Q' and 'S' must be capitalized.");
+	mc_roff_xy(5, 7,
+	"Please answer the following questions.  Most of the questions display\n"
+	"a set of standard answers, and many will also accept special responses,\n"
+	"including 'Q' to quit, '=' to change options, 'S' to restart character\n"
+	"creation and '?' for help.  Note that 'Q' and 'S' must be capitalized.");
 
 
-	/*** Quick-Start ***/
+	/* Ask about quick_start, if allowed. */
+	b = ask_quick_start();
 
-	/* Extra info */
-	Term_putstr(5, 12, -1, TERM_WHITE,
-		"Quick-Start gives you a completely random character without");
-	Term_putstr(5, 13, -1, TERM_WHITE,
-		"further prompting.");
+	/* Remove the prompt. */
+	clear_from(12);
 
-	/* Choose */
-	while (1)
-	{
-		/* Unsetting allow_quickstart causes this prompt to be ignored. */
-		if (!allow_quickstart)
-		{
-			c = 'n';
-			break;
-		}
-		put_str("Quick-Start? (y/n): ", 15, 2);
-		c = inkey();
-		if (c == 'Q') quit(NULL);
-		else if (c == 'S') return (FALSE);
-		else if ((c == 'y') || (c == 'n') || (c == 'Y') || (c == 'N')) break;
-		else if (c == '?') do_cmd_help(NULL);
-		else if (c == '=')
-		{
-			Term_save();
-			do_cmd_options_aux(7,"Startup Options", NULL);
-			Term_load();
-		}
-		else bell(0);
-	}
-
-	/* Clean up */
-	clear_from(15);
-	
-	if ((c == 'Y') || (c == 'y'))
-	{
+	/* React to the prompt. */
+	if (b == BC_RESTART)
+		return FALSE;
+	else if (b == BC_OKAY)
 		return quick_start_character();
-	}
-	else /* Interactive character */
+
+	/* Interactive character */
+
+	/* Choose sex, race and template (and possibly some stats). */
+
+	b = load_stat_set(TRUE);
+	
+	if (b == BC_RESTART)
 	{
-
-		/*** Choose pre-set stat set. ***/
-		if (allow_pickstats)
-		{
-			if (!load_stat_set(TRUE)) return FALSE;
-		}
-
-
-		/* We may have picked a race and template, so we shouldn't
-		 * ask again. The stats selected do not currently carry forward
-		 * into autoroller selections, but this should be easy to change.
-		 */
-		if (p_ptr->prace == RACE_NONE)
-		{
-			clear_from(12);
-
-			/*** Player sex ***/
-	
-			/* Extra info */
-			Term_putstr(5, 12, -1, TERM_WHITE,
-			"Your 'sex' does not have any significant gameplay effects.");
-	
-			/* Prompt for "Sex" */
-			for (n = 0; n < MAX_SEXES; n++)
-			{
-				/* Analyze */
-				p_ptr->psex = n;
-				sp_ptr = &sex_info[p_ptr->psex];
-				str = sp_ptr->title;
-	
-				/* Display */
-				sprintf(buf, "%c%c %s", I2A(n), p2, str);
-				put_str(buf, 17 + (n/5), 2 + 15 * (n%5));
-			}
-	
-			/* Choose */
-			if (birth_choice(15, MAX_SEXES, "Choose a sex", &k, FALSE) == BC_RESTART) return FALSE;
-	
-			/* Set sex */
-			p_ptr->psex = k;
-			sp_ptr = &sex_info[p_ptr->psex];
-			str = sp_ptr->title;
-	
-			/* Display */
-			c_put_str(TERM_L_BLUE, str, 3, 15);
-	
-			/* Clean up */
-			clear_from(12);
-	
-	
-			/*** Player race ***/
-
-			/* Extra info */
-			Term_putstr(5, 12, -1, TERM_WHITE,
-			"Your 'race' determines various intrinsic factors and bonuses.");
-	
-			/* Dump races */
-			for (n = 0; n < MAX_RACES; n++)
-			{
-				/* Analyze */
-				p_ptr->prace = n;
-				rp_ptr = &race_info[p_ptr->prace];
-				str = rp_ptr->title;
-			
-				/* Display */
-	
-				sprintf(buf, "%c%c %s", rtoa(n), p2, str);
-				put_str(buf, 17 + (n/5), 2 + 15 * (n%5));
-			}
-	
-			/* Choose */
-			if (birth_choice(15, MAX_RACES, "Choose a race", &k, FALSE) == BC_RESTART) return FALSE;
-	
-			/* Set race */
-			p_ptr->prace = k;
-			rp_ptr = &race_info[p_ptr->prace];
-			str = rp_ptr->title;
-	
-			/* Display */
-			c_put_str(TERM_L_BLUE, str, 4, 15);
-			
-			/* Clean up */
-			clear_from(12);
-	
-	
-			/*** Player template ***/
-	
-			clear_from(12);
-
-			/* Extra info */
-			Term_putstr(5, 12, -1, TERM_WHITE,
-			"Your 'template' determines various starting abilities and bonuses.");
-			Term_putstr(5, 13, -1, TERM_WHITE,
-			"Any entries in parentheses should only be used by advanced players.");
-	
-			/* Dump templates */
-			for (n = 0; n < MAX_TEMPLATE; n++)
-			{
-				cptr mod = "";
-	
-				/* Analyze */
-				p_ptr->ptemplate = n;
-				cp_ptr = &template_info[p_ptr->ptemplate];
-				str = cp_ptr->title;
-	
-				if (!(rp_ptr->choice & (1L << n )))
-				{
-					sprintf(buf, "%c%c (%s)%s", I2A(n), p2, str, mod);
-				}
-				else
-				{
-					sprintf(buf, "%c%c %s%s", I2A(n), p2, str, mod);
-				}
-				/* Display */
-				put_str(buf, 17 + (n/3), 2 + 20 * (n%3));
-			}
-	
-			if (birth_choice(15, MAX_TEMPLATE, "Choose a template", &k, FALSE) == BC_RESTART) return FALSE;
-	
-			/* Set template */
-			p_ptr->ptemplate = k;
-			cp_ptr = &template_info[p_ptr->ptemplate];
-			str = cp_ptr->title;
-	
-			/* Display */
-			c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
-		}
-		
-		/* Clean up */
-		clear_from(15);
-
-		/* Start without chaos features. */
-		p_clear_mutations();
-
-		/* Player is ready to move... */
-		p_ptr->energy=1050; /* Should this be based on TURN_ENERGY? */
-
-		/* Player has no recal ritual yet */
-		p_ptr->ritual = TOWN_NONE;
-
-		/* Player has no house yet */
-		for(i=0;i<MAX_STORES_TOTAL;i++)
-		{
-			store[i].bought = FALSE;
-		}
-
-		/* Generate the character. */
-		return point_mod_player();
+		return FALSE;
 	}
+	else if (b == BC_ABORT)
+	{
+		if (!choose_sex()) return FALSE;
+		if (!choose_race()) return FALSE;
+		if (!choose_template()) return FALSE;
+	}
+
+	/* Generate the character. */
+	return point_mod_player();
 }
 
 

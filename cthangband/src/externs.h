@@ -2378,7 +2378,7 @@ extern void c_prt(byte attr, cptr str, int row, int col);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void prt(cptr str, int row, int col);
 #endif
-#if (defined(CMD5_C) || defined(UTIL_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(UTIL_C))
 extern void mc_roff_xy(int x, int y, cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
@@ -3875,7 +3875,7 @@ extern vptr (*ralloc_aux)(huge);
 #if (defined(ANGBAND_H) || defined(Z_VIRT_H) || defined(Z_VIRT_C))
 extern vptr ralloc(huge len);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UI_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(Z_VIRT_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UI_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(Z_VIRT_C))
 extern char *string_make(cptr str);
 #endif
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
@@ -3895,5 +3895,8 @@ extern int build_choice_list_1(name_entry *list, name_centry *start, int listm, 
 #endif
 #if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
 extern int build_choice_list_2(name_entry *list, int idx, int listm, int items, bool (*item_good)(int, int));
+#endif
+#if (defined(BIRTH_C) || defined(UI_C))
+extern int display_entry_list_bounded(name_centry *list, int num, int truncate, int minx, int miny, int maxx, int maxy);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
