@@ -3081,7 +3081,7 @@ void do_cmd_zap_rod(int item)
 		q_ptr->number = 1;
 
 		/* Restore "charge" */
-		o_ptr->pval = 0;
+		o_ptr->timeout = 0;
 
 		/* Unstack the used item */
 		o_ptr->number--;
