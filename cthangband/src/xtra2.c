@@ -3206,7 +3206,7 @@ static bool get_aim_dir_aux(int *dp, bool allow_repeat)
 		}
 
 		/* Get a command (or Cancel) */
-		if (!get_com(&command, "Direction (%s, Escape to cancel)? ")) break;
+		if (!get_com(&command, "Direction (%s, Escape to cancel)? ", p)) break;
 
 		/* Convert various keys to "standard" keys */
 		switch (command)
