@@ -3657,10 +3657,6 @@ extern int PlayerUID;
 /* String used in show_file_aux() to indicate a conditional paragraph. */
 #define CC_IF_PREFIX "%%%%? "
 
-#define is_inventory_p(O_PTR) \
-	(O_PTR >= inventory && O_PTR < inventory+INVEN_TOTAL)
-
-
 /* Identify a monster which is never generated normally. */
 #define is_fake_monster(R_PTR) \
 	((R_PTR)->rarity == 0)

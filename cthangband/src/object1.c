@@ -795,6 +795,12 @@ void object_info_known(object_type *j_ptr, object_ctype *o_ptr)
 	obj_know_type ok_ptr[1];
 	object_knowledge(ok_ptr, o_ptr);
 	set_known_fields(j_ptr, o_ptr, ok_ptr);
+
+	if (is_inventory_p(o_ptr))
+	{
+		j_ptr->iy = 0;
+		j_ptr->ix = o_ptr - inventory + 1;
+	}
 }
 
 
@@ -2256,6 +2262,15 @@ bool PURE is_worn_p(object_ctype *o_ptr)
 {
 	o_ptr = get_real_obj(o_ptr);
 	return (o_ptr >= inventory+INVEN_WIELD && o_ptr < inventory+INVEN_TOTAL);
+}
+
+/*
+ * Check if an object is in the player's inventory.
+ */
+bool PURE is_inventory_p(object_ctype *o_ptr)
+{
+	o_ptr = get_real_obj(o_ptr);
+	return (o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL);
 }
 
 /*

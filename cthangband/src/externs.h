@@ -3241,7 +3241,7 @@ extern monster_type *m_list;
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern store_type *store;
 #endif
-#if (defined(ANGBAND_H))
+#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern object_type *inventory;
 #endif
 #if (defined(INIT2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
@@ -4066,5 +4066,11 @@ extern void vstrnfmt_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 
 #if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool beginner_help;
+#endif
+
+/* object1.c */
+
+#if (defined(CMD6_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C))
+extern bool PURE is_inventory_p(object_ctype *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
