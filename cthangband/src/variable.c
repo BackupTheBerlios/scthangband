@@ -318,8 +318,6 @@ bool allow_squelch = TRUE; /* Allow squelching to take place. */
 s16b feeling; /* Most recent feeling */
 s16b rating; /* Level's current rating */
 
-bool good_item_flag; /* True if "Artifact" on this level */
-
 bool new_level_flag; /* Start a new level */
 
 /* 

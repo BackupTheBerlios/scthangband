@@ -258,6 +258,9 @@ struct dun_data
  */
 static dun_data *dun;
 
+/* Notice if the game is allowed to give a special feeling. */
+static bool good_item_flag;
+
 void generate_spirit_name(spirit_type *s_ptr)
 {
 	if (s_ptr->pact) return;
@@ -4354,11 +4357,11 @@ static bool room_build(int y0, int x0, int typ)
 
 
 /*
- * Generate a new dungeon level. Return FALSE if this attempt failed.
+ * Generate a new dungeon level. Return an error message if this attempt failed.
  *
  * Note that "dun_body" adds about 4000 bytes of memory to the stack.
  */
-static bool cave_gen(void)
+static cptr cave_gen(void)
 {
 	int i, k, y, x, y1, x1;
 	int max_vault_ok = 2;
@@ -4629,7 +4632,7 @@ static bool cave_gen(void)
 
 	/* Determine the character location */
 	if (!new_player_spot())
-		return FALSE;
+		return "could not place player";
 
 
 	/* Basic "amount" */
@@ -4651,7 +4654,8 @@ static bool cave_gen(void)
 		if (q_ptr->cur_num != 0) q_ptr->cur_num = q_ptr->cur_num_known = 0;
 		while (r_info[r_idx].cur_num < q_ptr->max_num)
 		{
-			if (!put_quest_monster(q_ptr->r_idx)) return FALSE;
+			if (!put_quest_monster(q_ptr->r_idx))
+				return "could not place quest monster";
 		}
 
 	}
@@ -4726,7 +4730,7 @@ static bool cave_gen(void)
 		good_item_flag = TRUE;
 	}
 
-	return TRUE;
+	return NULL;
 }
 
 
@@ -5299,8 +5303,8 @@ void generate_cave(void)
 		/* Build a real level */
 		else
 		{
-			/* Make a dungeon */
-			if (!cave_gen()) why = "could not place player";
+			/* Make a dungeon, and remember any errors. */
+			why = cave_gen();
 		}
 
 
@@ -5315,9 +5319,14 @@ void generate_cave(void)
 		else if (rating > 0) feeling = 9;
 		else feeling = 10;
 
+		for (i = 1; !preserve_mode && !good_item_flag && i < o_max; i++)
+		{
+			object_type *o_ptr = &o_list[i];
+			if (o_ptr->k_idx && artifact_p(o_ptr)) good_item_flag = TRUE;
+		}
+
 		/* Hack -- Have a special feeling sometimes */
 		if (!preserve_mode && good_item_flag) feeling = 1;
-
 
 		/* Hack -- no feeling in the town */
 		if (dun_level <= 0) feeling = 0;

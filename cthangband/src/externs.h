@@ -3077,9 +3077,9 @@ extern s16b feeling;
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern s16b rating;
 #endif
-#if (defined(GENERATE_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
-extern bool good_item_flag;
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool new_level_flag;
 #endif
@@ -3209,7 +3209,7 @@ extern char angband_sound_name[SOUND_MAX][16];
 #if (defined(ANGBAND_H))
 extern cave_type *cave[MAX_HGT];
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern object_type *o_list;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))

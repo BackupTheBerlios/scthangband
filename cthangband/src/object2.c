@@ -3053,9 +3053,6 @@ void apply_magic_2(object_type *o_ptr, const int lev)
 		/* Mega-Hack -- increase the rating again */
 		if (a_ptr->cost > 50000L) rating += 10;
 
-		/* Set the good item flag */
-		good_item_flag = TRUE;
-
 		/* Cheat -- describe the item */
 		object_mention(o_ptr);
 	}
