@@ -15,7 +15,7 @@
 #include "angband.h"
 
 
-static void print_favours(byte *spells, int num, int y, int x, int sphere);
+static void print_favours(byte *spells, book_type *b_ptr, int num, int y, int x);
 static bool spirit_okay(int spirit, bool call);
 static void print_spirits(int *valid_spirits,int num,int y, int x);
 static void rustproof(void);
@@ -53,9 +53,9 @@ static book_type *k_idx_to_book(int i)
 	}
 }
 
-static book_type *spirit_to_book(spirit_type *s_ptr)
+static book_type *spirit_to_book(int i)
 {
-	switch (s_ptr - spirits)
+	switch (i)
 	{
 		case 0: return book_info+BK_LIFE_0;
 		case 2: return book_info+BK_LIFE_1;
@@ -1008,7 +1008,7 @@ static int get_cantrip(int *sn, book_type *b_ptr)
  * If there are no legal choices, returns FALSE, and sets '*sn' to -2
  *
  */
-static int get_favour(int *sn, int spirit,int sphere)
+static int get_favour(int *sn, book_type *b_ptr)
 {
 	int		i;
 	int		spell = -1;
@@ -1024,15 +1024,13 @@ static int get_favour(int *sn, int spirit,int sphere)
 
 	char		out_val[160];
 
-	char help_name[] = "spirit=???";
-
  #ifdef ALLOW_REPEAT
  
      /* Get the spell, if available */
      if (repeat_pull(sn)) {
          
          /* Verify the spell */
-         if (magic_okay(&favour_info[sphere][*sn])) {
+         if (magic_okay(&b_ptr->info[*sn])) {
                     
              /* Success */
              return (TRUE);
@@ -1043,7 +1041,7 @@ static int get_favour(int *sn, int spirit,int sphere)
  
 
 	/* Count the spells out. */
-	num = build_spell_list(spells, spirit_to_book(spirits+spirit));
+	num = build_spell_list(spells, b_ptr);
 
 	/* Assume no usable spells */
 	okay = FALSE;
@@ -1055,7 +1053,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 	for (i = 0; i < num; i++)
 	{
 		/* Look for "okay" spells */
-		if (magic_okay(&favour_info[sphere][spells[i]])) okay = TRUE;
+		if (magic_okay(&b_ptr->info[spells[i]])) okay = TRUE;
 	}
 
 	/* No "okay" spells */
@@ -1072,7 +1070,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 		/* Show list */
 		redraw = TRUE;
 		Term_save();
-		print_favours(spells, num, 1, -1, sphere);
+		print_favours(spells, b_ptr, num, 1, -1);
 	}		
 	else
 	{
@@ -1092,20 +1090,6 @@ static int get_favour(int *sn, int spirit,int sphere)
 	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) invoke which favour? ",
 		I2A(0), I2A(num - 1));
 
-	/* Build a help prompt. */
-	i = MIN(MAX(spirit, 0), 99);
-
-	switch (sphere)
-	{
-		case SPIRIT_LIFE: choice = 'L'; break;
-		case SPIRIT_NATURE: choice = 'W'; break;
-		default: choice = '?';
-	}
-	sprintf(strchr(help_name, '?'), "%c%d", choice, i);
-
-	/* Look for that prompt. */
-	help_track(help_name);
-
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
 	{
@@ -1122,7 +1106,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 				Term_save();
 
 				/* Display a list of spells */
-				print_favours(spells, num, 1, -1, sphere);
+				print_favours(spells, b_ptr, num, 1, -1);
 			}
 
 			/* Hide the list */
@@ -1160,7 +1144,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 		spell = spells[i];
 
 		/* Require "okay" spells */
-		if (!magic_okay(&favour_info[sphere][spell]))
+		if (!magic_okay(&b_ptr->info[spell]))
 		{
 			bell(0);
 			msg_print("You may not invoke that favour.");
@@ -1173,12 +1157,11 @@ static int get_favour(int *sn, int spirit,int sphere)
 			char tmp_val[160];
 
 			/* Access the spell */
-			s_ptr = &(favour_info[sphere][spell]);
+			s_ptr = &b_ptr->info[spell];
 
 			/* Prompt */
 			strnfmt(tmp_val, 78, "%s (%d mana, %d%% fail)? ",
-				favour_info[sphere][spell].name,
-				s_ptr->mana, spell_chance(s_ptr));
+				s_ptr->name, s_ptr->mana, spell_chance(s_ptr));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -1187,9 +1170,6 @@ static int get_favour(int *sn, int spirit,int sphere)
 		/* Stop the loop */
 		flag = TRUE;
 	}
-
-	/* Remove the help stuff. */
-	help_track(NULL);
 
 	/* Restore the screen */
 	if (redraw) Term_load();
@@ -1222,7 +1202,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 /*
  * Print a list of favours (for invoking)
  */
-static void print_favours(byte *spells, int num, int y, int x, int sphere)
+static void print_favours(byte *spells, book_type *b_ptr, int num, int y, int x)
 {
 	int                     i, spell;
 
@@ -1238,9 +1218,6 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
 	if (x == -1) x = 15;
 
-    if ((sphere<0 || sphere>MAX_SPHERE - 1) && cheat_wzrd)
-	msg_print ("Warning! print_favours called with null sphere");
-
     /* Title the list */
     prt("", y, x);
 	put_str("Name", y, x + 5);
@@ -1253,7 +1230,7 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 		/* Access the favour */
 		spell = spells[i];
 
-		s_ptr = &(favour_info[sphere][spell]);
+		s_ptr = &b_ptr->info[spell];
 
 		get_magic_info(info, 80, s_ptr);
 
@@ -1266,8 +1243,8 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 			
 		/* Dump the favour --(-- */
 		sprintf(out_val, "  %c) %-35s%2d %4d %3d%%%s",
-		I2A(i), favour_info[sphere][spell].name, /* sphere, spell */
-		s_ptr->min*2, magic_energy(s_ptr), spell_chance(s_ptr), comment);
+		I2A(i), s_ptr->name, s_ptr->min*2, magic_energy(s_ptr),
+			spell_chance(s_ptr), comment);
 		prt(out_val, y + i + 1, x);
 	}
 
@@ -3996,7 +3973,7 @@ void do_cmd_invoke(void)
 	bool	none_came = FALSE;
 
 	spirit_type	*s_ptr;
-
+	book_type *b_ptr;
 	magic_type	*f_ptr;
 
 	/* Not when confused */
@@ -4019,11 +3996,14 @@ void do_cmd_invoke(void)
 	/* Get a pointer to the spirit */
 	s_ptr = &(spirits[spirit]);
 
+	/* Get a pointer to its spells. */
+	b_ptr = spirit_to_book(spirit);
+
 	/* Hack -- Handle stuff */
 	handle_stuff();
 
 	/* Ask for a favour */
-	if (!get_favour(&spell,spirit, s_ptr->sphere))
+	if (!get_favour(&spell, b_ptr))
 	{
 		if (spell == -2)
 		msg_print("Strange - spirits normally know spells!");
@@ -4034,7 +4014,7 @@ void do_cmd_invoke(void)
 	/* Access the spell */
 	favour_sphere = s_ptr->sphere;
 
-	f_ptr = &(favour_info[favour_sphere][spell]);
+	f_ptr = &b_ptr->info[spell];
 
 	/* Spell failure chance */
 	chance = spell_chance(f_ptr);

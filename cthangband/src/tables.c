@@ -1766,7 +1766,7 @@ magic_type magic_info[MAX_SCHOOL][32] =
 	},
 };
 
-magic_type favour_info[MAX_SPHERE][32] =
+static magic_type favour_info[MAX_SPHERE][32] =
 {
 	/* Life Favours */
 	{
