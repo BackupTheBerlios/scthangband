@@ -72,6 +72,7 @@ OBJ = \
   object1.obj \
   object2.obj \
   quest.obj \
+  powers.obj \
   save.obj \
   spells1.obj \
   spells2.obj \

@@ -29,7 +29,7 @@ OBJS=\
 	store.o birth.o load.o loadsave.o \
 	wizard1.o wizard2.o \
 	generate.o dungeon.o init1.o init2.o \
-	quest.o
+	quest.o powers.o powers.o
 
 #
 # Targets
@@ -353,6 +353,26 @@ QUEST_C=\
 
 quest.obj: $(QUEST_C) quest.c
 	$(CC) -c $(CFLAGS) quest.c
+
+# Build POWERS.C
+POWERS_C=\
+	angband.h\
+	config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	z-term.h\
+	z-rand.h\
+	z-virt.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	h-basic.h\
+
+powers.obj: $(QUEST_C) powers.c
+	$(CC) -c $(CFLAGS) powers.c
 
 # Build OBJECT2.C
 OBJECT2_C=\
