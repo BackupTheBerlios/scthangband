@@ -137,7 +137,7 @@ F:START
 N:7:Nir
 D:the Sewers under Nir
 T:0:the hamlet of Nir
-S:GENERAL:LIBRARY:PAWN
+S:GENERAL:INN:PAWN
 I:1-7:p
 Q:7:1:Robin Hood, the Outlaw
 

@@ -1692,6 +1692,8 @@ static errr rd_savefile_new_aux(void)
 {
 	int i;
 	bool warn;
+	quest_type *q_list_new;
+	int max_q_idx_new;
 
 	byte tmp8u;
 	u16b tmp16u;
@@ -1892,9 +1894,8 @@ static errr rd_savefile_new_aux(void)
 
 #ifdef SF_QUEST_DIRECT
 
-		/* Use the quest list from the save file. */
-		KILL(q_list);
-		C_MAKE(q_list, tmp16u, quest_type);
+		/* Store the quest list from the save file. */
+		C_MAKE(q_list_new, tmp16u, quest_type);
 
 #else /* SF_QUEST_DIRECT */
 
@@ -1908,12 +1909,12 @@ static errr rd_savefile_new_aux(void)
 #endif /* SF_QUEST_DIRECT */
 
 		/* Set the number of quests globally. */
-		MAX_Q_IDX = tmp16u;
+		max_q_idx_new = tmp16u;
 
 		/* Load the Quests */
-		for (i = 0; i < MAX_Q_IDX; i++)
+		for (i = 0; i < max_q_idx_new; i++)
 		{
-			quest_type *q_ptr = q_list+i;
+			quest_type *q_ptr = q_list_new+i;
 
 			rd_byte(&tmp8u);
 			q_ptr->level = tmp8u;
@@ -2103,6 +2104,19 @@ static errr rd_savefile_new_aux(void)
 
 		/* Read the ghost info */
 		rd_ghost();
+	}
+
+	/* New characters use the base quest list. */
+	if (death)
+	{
+		FREE(q_list_new);
+	}
+	/* Existing ones use the quest list from the save file. */
+	else
+	{
+		FREE(q_list);
+		q_list = q_list_new;
+		MAX_Q_IDX = max_q_idx_new;
 	}
 
 
@@ -2404,6 +2418,9 @@ bool load_player(void)
 
 			/* Reset cause of death */
 			died_from = "(alive and well)";
+
+			/* Accept the quest list. */
+			
 		}
 
 		/* Success */
