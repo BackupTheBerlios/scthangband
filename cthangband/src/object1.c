@@ -1451,27 +1451,20 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	if (o_ptr->flags3 & TR3_SHOW_ARMOUR) show_armour = TRUE;
 	if (o_ptr->ac) show_armour = TRUE;
 
-	/* Dump base weapon info if known. */
-	if (show_weapon) switch (o_ptr->tval)
+	/* Bows are displayed as (e.g.) (x2) */
+	if ((power = get_bow_mult(o_ptr)))
 	{
-		/* Bows get a special "damage string" */
-		case TV_BOW:
-
-		/* Mega-Hack -- Extract the "base power" */
-		power = get_bow_mult(o_ptr);
-
 		/* Apply the "Extra Might" flag */
 		if (o_ptr->flags3 & (TR3_XTRA_MIGHT)) power++;
 
 		/* Append a special "damage" string */
 		t += sprintf(t, " (x%d)", power);
-
-		/* All done */
-		break;
-
-		/* Everything else is displayed as a melee weapon. */
-		default:
-
+	}
+	/* Melee and throwing weapons are displayed as (e.g.) (1d2).
+	 * Hack - Throwing weapons which have no dice are omitted.
+	 */
+	else if ((o_ptr->dd && o_ptr->ds) || wield_slot(o_ptr) == INVEN_WIELD)
+	{
 		t += sprintf(t, " (%dd%d)", o_ptr->dd, o_ptr->ds);
 	}
 
@@ -2832,7 +2825,7 @@ int get_bow_mult(object_type *o_ptr)
 	}
 	else
 	{
-		return 1;
+		return 0;
 	}
 }
 
