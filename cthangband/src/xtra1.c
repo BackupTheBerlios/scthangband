@@ -161,7 +161,7 @@ static int get_y(const co_ord *t)
 static int get_x(const co_ord *t)
 {
 	if (t->x >= 0) return t->x;
-	else return Term->wid - t->x;
+	else return Term->wid + t->x;
 }
 
 /* Shorten "put it where the table says it should go" for y,x functions. */
