@@ -1444,7 +1444,7 @@ void do_cmd_wiz_named(int r_idx, int slp)
 	/* if (!r_idx) return; */
 
 	/* Prevent illegal monsters */
-	if (r_idx >= MAX_R_IDX-1) return;
+	if (r_idx >= MAX_R_IDX || is_fake_monster(r_info+r_idx)) return;
 
 	/* Try 10 times */
 	for (i = 0; i < 10; i++)
@@ -1476,7 +1476,7 @@ void do_cmd_wiz_named_friendly(int r_idx, int slp)
 	/* if (!r_idx) return; */
 
 	/* Prevent illegal monsters */
-	if (r_idx >= MAX_R_IDX-1) return;
+	if (r_idx >= MAX_R_IDX || is_fake_monster(r_info+r_idx)) return;
 
 	/* Try 10 times */
 	for (i = 0; i < 10; i++)

@@ -436,31 +436,33 @@ static cptr image_monster_hack_ibm = \
  */
 static void image_monster(byte *ap, char *cp)
 {
-	int n = strlen(image_monster_hack);
-
-	/* Random symbol from set above */
-	if (!use_graphics)
+	if (use_graphics)
 	{
-	if (!(streq(ANGBAND_SYS, "ibm")))
-        {
-            (*cp) = r_info[randint(MAX_R_IDX-2)].x_char;
-            (*ap) = r_info[randint(MAX_R_IDX-2)].x_attr;
-        }
-        else
-        {
-            n = strlen(image_monster_hack_ibm);
-            (*cp) = (image_monster_hack_ibm[rand_int(n)]);
-            /* Random color */
-            (*ap) = randint(15);
-        }
-    }
-    else
-    {
-        (*cp) = (image_monster_hack[rand_int(n)]);
+		int n = strlen(image_monster_hack_ibm);
+		(*cp) = (image_monster_hack[rand_int(n)]);
 
-        /* Random color */
-        (*ap) = randint(15);
-    }
+		/* Random color */
+		(*ap) = randint(15);
+	}
+	else if (streq(ANGBAND_SYS, "ibm"))
+	{
+		int n = strlen(image_monster_hack_ibm);
+		(*cp) = (image_monster_hack_ibm[rand_int(n)]);
+		/* Random color */
+		(*ap) = randint(15);
+	}
+	else
+	{
+		monster_race *r_ptr;
+		do
+		{
+			r_ptr = r_info+rand_int(MAX_R_IDX);
+		}
+		while (is_fake_monster(r_ptr));
+
+		(*cp) = r_ptr->x_char;
+		(*ap) = r_ptr->x_attr;
+	}
 }
 
 
@@ -1062,30 +1064,15 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		/* Is it a shapechanger? */
 		if (r_ptr->flags2 & (RF2_SHAPECHANGER))
 		{
-
-            if (use_graphics)
+			if (use_graphics)
+			{
+				image_monster(ap, cp);
+			}
+			else
             {
-                if (!(streq(ANGBAND_SYS, "ibm")))
-                {
-                    (*cp) = r_info[randint(MAX_R_IDX-2)].x_char;
-                    (*ap) = r_info[randint(MAX_R_IDX-2)].x_attr;
-                }
-                else
-                {
-                    int n =  strlen(image_monster_hack_ibm);
-                    (*cp) = (image_monster_hack_ibm[rand_int(n)]);
-                    /* Random color */
-                    (*ap) = randint(15);
-                }
-            }
-
-
-            else
-            {
-
-                (*cp) = (randint(25)==1?
-                image_object_hack[randint(strlen(image_object_hack))]:
-                image_monster_hack[randint(strlen(image_monster_hack))]);
+				(*cp) = (randint(25)==1?
+				image_object_hack[randint(strlen(image_object_hack))]:
+				image_monster_hack[randint(strlen(image_monster_hack))]);
             }
 		}
 		else

@@ -3088,9 +3088,10 @@ static void build_type5(int yval, int xval)
 
 	if ((tmp < 25) && (randint(2) != 1))
 	{
-            do  { template_race = randint(MAX_R_IDX - 2); }
-                while ((r_info[template_race].flags1 & RF1_UNIQUE)
-                        || (((r_info[template_race].level) + randint(5)) >
+            do  { template_race = rand_int(MAX_R_IDX); }
+                while ((r_info[template_race].flags1 & RF1_UNIQUE) ||
+				is_fake_monster(r_info+template_race) ||
+                     (((r_info[template_race].level) + randint(5)) >
                             ((dun_depth) + randint(5))));
         if ((randint(2)!=1) && ((dun_depth) >= (25 + randint(15))))
         {
@@ -3388,9 +3389,10 @@ static void build_type6(int yval, int xval)
             /* Message */
             name = "ordered clones";
 
-                do  { template_race = randint(MAX_R_IDX - 2); }
-                    while ((r_info[template_race].flags1 & RF1_UNIQUE)
-                            || (((r_info[template_race].level) + randint(5)) >
+                do  { template_race = rand_int(MAX_R_IDX); }
+                    while ((r_info[template_race].flags1 & RF1_UNIQUE) ||
+						is_fake_monster(r_info+template_race) ||
+                            (((r_info[template_race].level) + randint(5)) >
                                 ((dun_depth) + randint(5))));
 
             /* Restrict selection */

@@ -1353,9 +1353,12 @@ static void spoil_mon_desc(cptr fname)
 		"----", "---", "---", "---", "--", "--", "-----------");
 
 	/* Scan the monsters (except the ghost) */
-	for (i = 1; i < MAX_R_IDX - 1; i++)
+	for (i = 1; i < MAX_R_IDX; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
+
+		/* Hack - skip "fake" monsters. */
+		if (is_fake_monster(r_ptr)) continue;
 
 		/* Use that monster */
 		if (r_ptr->name) who[n++] = i;
@@ -1558,9 +1561,12 @@ static void spoil_mon_info(cptr fname)
 	/*
 	 * List all monsters in order (except the ghost).
 	 */
-	for (n = 1; n < MAX_R_IDX - 1; n++)
+	for (n = 1; n < MAX_R_IDX; n++)
 	{
 		monster_race *r_ptr = &r_info[n];
+
+		/* Skip "fake" monsters. */
+		if (is_fake_monster(r_ptr)) continue;
 
 		/* Extract the flags */
 		flags1 = r_ptr->flags1;

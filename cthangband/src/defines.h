@@ -3347,6 +3347,10 @@ extern int PlayerUID;
 #define is_inventory_p(O_PTR) \
 	(o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
 
+/* Identify a monster which is never generated normally. */
+#define is_fake_monster(R_PTR) \
+	((R_PTR)->rarity == 0)
+
 /* Current monster indices. */
 #define MON_PLAYER 0
 #define MON_FILTHY_STREET_URCHIN 1

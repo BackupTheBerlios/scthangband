@@ -3072,9 +3072,12 @@ static void do_cmd_knowledge_uniques(void)
 
 
 	/* Scan the monster races */
-	for (k = 1; k < MAX_R_IDX-1; k++)
+	for (k = 1; k < MAX_R_IDX; k++)
 	{
 		monster_race *r_ptr = &r_info[k];
+
+		/* Skip "fake" monsters. */
+		if (is_fake_monster(r_ptr)) continue;
 
 		/* Only print Uniques */
 		if (r_ptr->flags1 & (RF1_UNIQUE))
@@ -3185,11 +3188,14 @@ static int count_kills(FILE *fff, bool noisy)
 	/* Monsters slain */
 	int kk, Total = 0;
 
-	for (kk = 1; kk < MAX_R_IDX-1; kk++)
+	for (kk = 1; kk < MAX_R_IDX; kk++)
 	{
 		monster_race *r_ptr = &r_info[kk];
 
 		s16b This = r_ptr->r_pkills;
+
+		/* Skip "fake" monsters. */
+		if (is_fake_monster(r_ptr)) continue;
 
 		Total += This;
 		if (This && noisy)

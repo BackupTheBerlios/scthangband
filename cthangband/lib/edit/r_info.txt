@@ -11,14 +11,86 @@
 # N:<monster index>:<monster name>
 # G:<monster symbol>:<monster colour>
 # I:<movement speed>:<attack speed>:<hit points>:<perception>:<armour class>:<sleep>
-# W:<level found at>:<rarity>:<kill score>
+# W:<level found at>:<rarity>:0:<kill score>
 # B:<attack type>[:<attack effect>][:<attack damage>]
 # F:<flag1> | <flag2>...
 # E:<information about special things which happen when the monster dies>
 # [S:<spell frequency>]
 # [S:<spell1> | <spell2>...]
 
-# For information about the E flag, see lib/help/deathevent.txt
+# 'N' indicates the beginning of an entry. The serial number must
+# increase for each new item. Entry 0 is used for the player.
+
+# 'G' is for graphics - symbol and color. There are 16 colors, as
+# follows:
+
+# D - Dark Gray    w - White          s - Gray          o - Orange
+# r - Red          g - Green          b - Blue          u - Brown
+# d - Black        W - Light Gray     v - Violet        y - Yellow
+# R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
+
+# (note that "black" is the same color as the screen background, and
+# thus the monster will appear to be an empty black space if its
+# color is "d".)
+
+# 'I' is for information - movement speed (relative to normal speed, +10 is
+# double speed, etc.), attack speed (blows per turn), health, vision in squares,
+# armor class, and alertness. Alertness ranges from 0 (ever vigilant for
+# intruders) to 255 (prefers to ignore intruders).
+
+# 'W' is for more information - level, rarity, and experience for
+# killing. A low positive rarity make the monster more common, but a rarity of
+# 0 prevents generation altogether.
+
+# 'B' is for blows - method of attack, effect of attack, and damage
+# from attack. There may be up to four of these lines; effect and
+# damage are optional.
+
+# 'E' is for death events. For further information, see lib/help/deathevent.txt.
+
+# 'S' is for spells. The first S: line must be S:1_IN_X with X the
+# number of monster turns, on average, before the monster will cast
+# one of its spells. X must not be zero. If X is 1, the monster will
+# never move while the player is in sight, and will thus never attack
+# in melee, as it will cast spells every turn: if the monster is to use
+# a melee attack, then X must be 2 or greater.
+
+# 'F' is for flags. These are fairly self-explanatory. As many F:
+# lines may be used as are needed to specify all the flags and flags
+# are separated by the '|' symbol.
+
+# 'D' is for description. As many D: lines may be used as are needed
+# to describe the monster.
+
+# === Understanding monster.txt flags ===
+
+# UNIQUE monsters are just "special" monster races, with the requirement
+# that only one monster of that race can exist at a time, and when it is
+# killed, it can never again be generated.
+
+# ATTR_CLEAR monsters appear the same color as the floor, terrain feature or
+# object underneath them.
+
+# ATTR_MULTI monsters are "multi-hued" - they change color, every player turn.
+
+# CHAR_CLEAR monsters are totally invisible: the symbol shown on the screen
+# is the same as the floor (or other terrain feature) below it, or the item
+# that is lying on that floor. These monsters can currently be targetted as
+# normal monsters: perhaps this can be changed so that the player must KNOW
+# the monster is there (by bumping into it, or having the monster wake up
+# and attack the player?)
+
+# CHAR_MULTI monsters are those which look like objects, and use the symbols
+# of objects. They are in plain sight, but the character should not know that
+# a monster is there. At the moment, such monsters can be targetted normally
+# (which means that this flag currently has no effect), but this may change
+# in the future, as with CHAR_CLEAR monsters.
+
+# (Note that currently both CHAR_CLEAR and CHAR_MULTI monsters are treated
+# as normal monsters that are just a little hard to see... if you "l"ook
+# for them, you will find them unless they are invisible and you cannot
+# see invisible, and if you use the * command for targetting mode you
+# can pick them as a target.)
 
 # Version stamp (required)
 
@@ -29,7 +101,6 @@ V:_CVS_
 
 N:0:& Player
 G:@:w
-
 
 ##### Town monsters #####
 
@@ -8176,10 +8247,10 @@ D:maddening beating of vile drums and the thin monotonous whine of
 D:accursed flutes"
 # H.P.Lovecraft: The Dream Quest of Unknown Kadath
 
-# Hack - the last monster in the file should always be reserved for ghosts.
+# Hack - the player ghost.
 
-# The monster will be redefined on creation, the template is provided solely
-# to avoid some potential bugs.
+# The monster will be redefined based on a file in (e.g.) lib/bone on creation,
+# the template provided solely to avoid some potential bugs.
 
 N:576:Nobody, the Unnamed Ghost---------------------------------------
 D:--------------------------------------------------------------64

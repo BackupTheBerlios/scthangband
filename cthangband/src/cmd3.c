@@ -1254,9 +1254,12 @@ static void do_cmd_query_symbol_aux(u16b *who)
 
 
 	/* Collect matching monsters */
-	for (n = 0, i = 1; i < MAX_R_IDX-1; i++)
+	for (n = 0, i = 1; i < MAX_R_IDX; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
+
+		/* Skip "fake" monsters. */
+		if (is_fake_monster(r_ptr)) continue;
 
 		/* Nothing to recall */
 		if (!spoil_mon && !r_ptr->r_sights) continue;

@@ -99,7 +99,7 @@ static char gb_name[32];
  */
 static void ghost_blow(int i, int m, int e, int d, int s)
 {
-	monster_race *g = &r_info[MAX_R_IDX-1];
+	monster_race *g = &r_info[MON_PLAYER_GHOST];
 
 	/* Save the data */
 	g->blow[i].method = m;
@@ -113,7 +113,7 @@ static void ghost_blow(int i, int m, int e, int d, int s)
  */
 static void set_ghost_aux_2(void)
 {
-	monster_race *r_ptr = &r_info[MAX_R_IDX-1];
+	monster_race *r_ptr = &r_info[MON_PLAYER_GHOST];
 
 	int lev = r_ptr->level;
 
@@ -460,7 +460,7 @@ static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
 {
 	int i;
 
-	monster_race *r_ptr = &r_info[MAX_R_IDX-1];
+	monster_race *r_ptr = &r_info[MON_PLAYER_GHOST];
 
 
 	/* Extract the basic ghost name */
@@ -543,7 +543,7 @@ s16b place_ghost(void)
 {
 	int y, x, hp, level, grace, gclass;
 
-	monster_race *r_ptr = &r_info[MAX_R_IDX-1];
+	monster_race *r_ptr = &r_info[MON_PLAYER_GHOST];
 
 	FILE *fp;
 
@@ -621,7 +621,7 @@ s16b place_ghost(void)
 	r_ptr->cur_num = 0;
 	r_ptr->max_num = 1;
 
-	if (!place_monster_one(y, x, MAX_R_IDX-1, FALSE,FALSE, FALSE))
+	if (!place_monster_one(y, x, MON_PLAYER_GHOST, FALSE,FALSE, FALSE))
 	{
 		return FALSE;
 	}
@@ -1513,9 +1513,10 @@ static void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 			{
 				monster_race * hallu_race;
 				do {
-					hallu_race = &r_info[randint(MAX_R_IDX-2)];
+					hallu_race = &r_info[rand_int(MAX_R_IDX)];
 				}
-				while (hallu_race->flags1 & RF1_UNIQUE);
+				while (hallu_race->flags1 & RF1_UNIQUE ||
+					is_fake_monster(hallu_race));
 				name = r_name+hallu_race->name;
 	        }
 	        else

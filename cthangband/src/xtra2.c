@@ -2636,7 +2636,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		/* XXX XXX Mega-Hack -- allow another ghost later
 		 * Remove the slain bone file */
-		if (m_ptr->r_idx == MAX_R_IDX-1)
+		if (m_ptr->r_idx == MON_PLAYER_GHOST)
 		{
 			r_ptr->max_num = 1;
 

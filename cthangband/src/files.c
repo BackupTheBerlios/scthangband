@@ -3503,9 +3503,12 @@ errr file_character(cptr name, bool UNUSED full)
         int k;
         s32b Total = 0;
 
-        for (k = 1; k < MAX_R_IDX-1; k++)
+        for (k = 1; k < MAX_R_IDX; k++)
         {
             monster_race *r_ptr = &r_info[k];
+
+			/* Skip "fake" monsters. */
+			if (is_fake_monster(r_ptr)) continue;
 
             if (r_ptr->flags1 & (RF1_UNIQUE))
             {

@@ -1504,20 +1504,19 @@ static errr init_alloc(void)
 	alloc_race_size = 0;
 
 	/* Scan the monsters (not the ghost) */
-	for (i = 1; i < MAX_R_IDX - 1; i++)
+	for (i = 1; i < MAX_R_IDX; i++)
 	{
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
-		/* Legal monsters */
-		if (r_ptr->rarity)
-		{
-			/* Count the entries */
-			alloc_race_size++;
+		/* Don't count "fake" monsters. */
+		if (is_fake_monster(r_ptr)) continue;
 
-			/* Group by level */
-			num[r_ptr->level]++;
-		}
+		/* Count the entries */
+		alloc_race_size++;
+
+		/* Group by level */
+		num[r_ptr->level]++;
 	}
 
 	/* Collect the level indexes */
@@ -1540,38 +1539,37 @@ static errr init_alloc(void)
 	table = alloc_race_table;
 
 	/* Scan the monsters (not the ghost) */
-	for (i = 1; i < MAX_R_IDX - 1; i++)
+	for (i = 1; i < MAX_R_IDX; i++)
 	{
+		int p, x, y, z;
+
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
-		/* Count valid pairs */
-		if (r_ptr->rarity)
-		{
-			int p, x, y, z;
+		/* Don't count "fake" monsters. */
+		if (is_fake_monster(r_ptr)) continue;
 
-			/* Extract the base level */
-			x = r_ptr->level;
+		/* Extract the base level */
+		x = r_ptr->level;
 
-			/* Extract the base probability */
-			p = (100 / r_ptr->rarity);
+		/* Extract the base probability */
+		p = (100 / r_ptr->rarity);
 
-			/* Skip entries preceding our locale */
-			y = (x > 0) ? num[x-1] : 0;
+		/* Skip entries preceding our locale */
+		y = (x > 0) ? num[x-1] : 0;
 
-			/* Skip previous entries at this locale */
-			z = y + aux[x];
+		/* Skip previous entries at this locale */
+		z = y + aux[x];
 
-			/* Load the entry */
-			table[z].index = i;
-			table[z].level = x;
-			table[z].prob1 = p;
-			table[z].prob2 = p;
-			table[z].prob3 = p;
+		/* Load the entry */
+		table[z].index = i;
+		table[z].level = x;
+		table[z].prob1 = p;
+		table[z].prob2 = p;
+		table[z].prob3 = p;
 
-			/* Another entry complete for this locale */
-			aux[x]++;
-		}
+		/* Another entry complete for this locale */
+		aux[x]++;
 	}
 
 
