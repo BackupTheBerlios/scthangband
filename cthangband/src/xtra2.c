@@ -3362,6 +3362,21 @@ static void target_set_prepare(int mode)
 
 
 /*
+ * Track the first known object in the same stack as o_ptr, if any.
+ */
+static void try_object_track(object_type *o_ptr)
+{
+	for (; o_ptr != o_list; o_ptr = o_list+o_ptr->next_o_idx)
+	{
+		if (o_ptr->marked)
+		{
+			object_track(o_ptr);
+			return;
+		}
+	}
+}
+
+/*
  * Examine a grid, return a keypress.
  *
  * The "mode" argument contains the "TARGET_LOOK" bit flag, which
@@ -3580,7 +3595,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
 
 		/* Hack - track the first object in the square, if any. */
-		if (c_ptr->o_idx) object_track(&o_list[c_ptr->o_idx]);
+		if (c_ptr->o_idx) try_object_track(&o_list[c_ptr->o_idx]);
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
