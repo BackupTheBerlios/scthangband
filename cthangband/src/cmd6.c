@@ -202,8 +202,9 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 				msg_print("The food falls through your jaws!");
 
-				/* Create the item (should this be object_copy()?) */
+				/* Create an item. */
 				object_copy(q_ptr, o_ptr);
+				q_ptr->number = 1;
 
 				/* Drop the object from heaven */
 				drop_near(q_ptr, -1, py, px);
