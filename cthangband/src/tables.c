@@ -3084,7 +3084,7 @@ cptr window_flag_desc[32] =
 	"Display spell list",
 	"Display character",
 	"Display nearby monsters",
-	NULL,
+	"Display skills",
 	"Display messages",
 	"Display overhead view",
 	"Display monster recall",

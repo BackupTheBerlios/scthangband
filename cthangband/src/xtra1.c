@@ -986,6 +986,15 @@ static void win_player_display(void)
 }
 
 
+/*
+ * Display the third player screen in a window.
+ */
+static void win_player_skills_display(void)
+{
+		/* Display player */
+		display_player(2);
+}
+
 
 /*
  * Return whether PW_MESSAGE is interesting
@@ -3766,6 +3775,8 @@ static void init_window_stuff(void)
 	display_func[iilog(PW_SPELL)].display = display_spell_list;
 	display_func[iilog(PW_PLAYER)].good = func_true;
 	display_func[iilog(PW_PLAYER)].display = win_player_display;
+	display_func[iilog(PW_PLAYER_SKILLS)].good = func_true;
+	display_func[iilog(PW_PLAYER_SKILLS)].display = win_player_skills_display;
 	display_func[iilog(PW_VISIBLE)].good = win_visible_good;
 	display_func[iilog(PW_VISIBLE)].display = win_visible_display;
 	display_func[iilog(PW_MESSAGE)].good = win_message_good;
@@ -4056,6 +4067,7 @@ void skill_exp(int index)
 			msg_format("%s %c%d%%->%d%%%c",skill_set[index].increase,
 			(skill_check_possible(index) ? '(' : '['),skill_set[index].value-1,
 			skill_set[index].value, (skill_check_possible(index) ? ')' : ']'));
+			p_ptr->window |= PW_PLAYER_SKILLS; /* Window stuff */
 			update_skill_maxima(); /* Update the maxima and possibly give rewards */
 		}
 	}

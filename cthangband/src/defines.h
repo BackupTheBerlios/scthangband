@@ -2014,7 +2014,7 @@
 #define PW_SPELL        0x00000004L     /* Display spell list */
 #define PW_PLAYER       0x00000008L     /* Display character */
 #define PW_VISIBLE	0x00000010L	/* Display nearby monsters */
-/* xxx */
+#define PW_PLAYER_SKILLS	0x00000020	/* Display skill list */
 #define PW_MESSAGE      0x00000040L     /* Display messages */
 #define PW_OVERHEAD     0x00000080L     /* Display overhead view */
 #define PW_MONSTER      0x00000100L     /* Display monster recall */
@@ -2043,7 +2043,7 @@ logaux(x, 1) logaux(x, 0) 255
 
 /* The set of windows affected by window_stuff(). */
 #define WINDOW_STUFF_MASK (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | \
-	PW_VISIBLE | PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
+	PW_VISIBLE | PW_PLAYER_SKILLS | PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
 	PW_OBJECT | PW_OBJECT_DETAILS | PW_RETURN)
 
 /*** General index values ***/

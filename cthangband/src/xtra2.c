@@ -2107,6 +2107,9 @@ void lose_skills(s32b amount)
 		if (lost[i] > 0)
 		{
 			msg_format("Your %s skill has been lost (%d%%->%d%%)",skill_set[i].name,skill_set[i].value+lost[i],skill_set[i].value);
+
+			/* Window stuff */
+			p_ptr->window |= PW_PLAYER_SKILLS;
 		}
 	}
 	/* Re-calculate some things */
