@@ -1829,24 +1829,25 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		 * differs from the present value, put parentheses around the number. */
 		if (spoil_value && spoil_base)
 		{
-			object_type j_ptr[1];
+			object_type j_body, *j_ptr = &j_body;
 			s32b value;
 			bool worthless;
 
 			object_info_known(j_ptr, o_ptr);
 
-			/* *Hack* - object_flags() doesn't pick up the IGNORE_* flags
-			 * derived from the tval, so AND the known flags with the real
-			 * ones to get the known ones that object_value() checks. */
-
-			j_ptr->art_flags1 = f1;
-			j_ptr->art_flags2 = f2;
-			j_ptr->art_flags3 = o_ptr->art_flags3;
-
 			/* Without the appropriate spoiler flags, ignore the fact that
 			 * it is an ego item or artefact. */
-			if (!spoil_ego) j_ptr->name2 = 0;
-			if (!spoil_art) j_ptr->name1 = 0;
+			if ((!spoil_ego && j_ptr->name2) || (!spoil_art && j_ptr->name2))
+			{
+				object_type j2_ptr[1];
+				j_ptr->name2 = j_ptr->name1 = 0;
+				object_info_known(j2_ptr, j_ptr);
+				j_ptr = j2_ptr;
+			}
+
+			/* *Hack* - object_info_known() gives flags for the hates_foo()
+			 * functions, whereas object_flags (which is used in shops) doesn't. */
+			j_ptr->art_flags3 &= f3;
 
 			value = object_value(j_ptr);
 			worthless = !value;
