@@ -3025,7 +3025,7 @@ static void win_object_details_display(void)
 	}
 
 	/* Describe fully. */
-	identify_fully_aux(o_ptr, 2);
+	identify_fully_aux(o_ptr, TRUE);
 
 	/* Put the name at the top. */
 	mc_put_fmt(0, 0, "%v %v", get_symbol_f2, object_attr(o_ptr),

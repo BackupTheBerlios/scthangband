@@ -1995,6 +1995,9 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Hack - the "stack" attr/char share a character. */
 #define OBJ_STACK OBJ_NO_TEA
 
+/* Hack - use the stack "object" to give the store restoration help. */
+#define OBJ_FAKE_RESTORING OBJ_NO_TEA
+
 /* extra info for chests (decimal) */
 #define XT_CHEST_SMALL 10
 /* #define XT_CHEST_LARGE 20 */

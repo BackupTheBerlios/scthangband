@@ -2062,6 +2062,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 		{OBJ_FOOD_RES_STR, A_RESTORE, 1<<A_STR},
 		{OBJ_FOOD_RES_CON, A_RESTORE, 1<<A_CON},
 		{OBJ_FOOD_RESTORING, A_RESTORE, A_ALL},
+		{OBJ_FAKE_RESTORING, A_RESTORE, A_ALL},
 		/* Other restore stat items */
 		{OBJ_STAFF_THE_MAGI, A_RESTORE, 1<<A_INT},
 		{OBJ_ROD_RESTORATION, A_RESTORE, A_ALL},
@@ -3215,34 +3216,21 @@ nextbit:
  * Describe a "fully identified" item
  * If full is set, the game describes the item as if it was fully identified.
  */
-bool identify_fully_aux(object_ctype *o_ptr, byte flags)
+bool identify_fully_aux(object_ctype *o_ptr, bool dump)
 {
-	bool full = (flags & 0x01) != 0;
-	bool paged = (flags & 0x02) == 0;
-
 	cptr info[MAX_IFA];
 
 	WIPE(info, info);
 
-	if (full)
-	{
-		object_type q_ptr[1];
-
-		object_copy(q_ptr, o_ptr);
-		object_known(q_ptr);
-		object_aware(q_ptr);
-
-		identify_fully_get(o_ptr, info, 0);
-	}
-	else
-	{
-		identify_fully_get(o_ptr, info, 0);
-	}
+	identify_fully_get(o_ptr, info, 0);
 
 	/* Nothing was revealed, so show nothing. */
-	if (!*info) return FALSE;
-
-	if (paged)
+	if (!*info)
+	{
+		/* As nothing was written to info, there are no strings to free. */
+		return FALSE;
+	}
+	else if (!dump)
 	{
 		identify_fully_show(info);
 	}

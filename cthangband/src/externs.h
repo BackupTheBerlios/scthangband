@@ -1443,7 +1443,7 @@ extern s16b PURE launcher_type(object_ctype *o_ptr);
 extern byte PURE ammunition_type(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C))
-extern bool identify_fully_aux(object_ctype *o_ptr, byte flags);
+extern bool identify_fully_aux(object_ctype *o_ptr, bool dump);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C) || defined(WIZARD1_C))
 extern void identify_fully_file(object_ctype *o_ptr, FILE *fff, bool spoil);
@@ -1514,10 +1514,10 @@ extern object_type *o_pop(void);
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern s16b get_obj_num(int level);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C))
 extern void object_known(object_type *o_ptr);
 #endif
-#if (defined(BIRTH_C) || defined(CMD6_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C))
+#if (defined(BIRTH_C) || defined(CMD6_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C))
 extern void object_aware(object_type *o_ptr);
 #endif
 #if (defined(CMD6_C) || defined(OBJECT2_C))
