@@ -428,55 +428,70 @@ static void worsen_cuts(int v)
 	do_dec_stat(A_CHR);
 }
 
+/* Some strange macros to leave markers in temp_effects_text[] to verify
+ * that each listed index points to "" (a string which cannot sensibly be
+ * used by the array's standard use) to allow the spacing to be checked.
+ */
+#ifdef CHECK_ARRAYS
+#define NEXT "",
+#define OFFSET(V) ((V)+1)
+#else /* CHECK_ARRAYS */
+#define NEXT
+#define OFFSET(V) 0
+#endif /* CHECK_ARRAYS */
+
+
 /*
  * The messages to print when a status changes.
  * 0 means "no message", and the order is set by temp_effects[].text, which
  * is in turn set by the number of messages needed for each
  * temp_effects[].notice.
  */
-static cptr temp_effects_text[75] =
+static cptr const temp_effects_text[] =
 {
-	"You are blind!", "You can see again.",
-	"You are confused!", "You feel less confused now.",
-	"You are poisoned!", "You are no longer poisoned.",
-	"You are terrified!", "You feel bolder now.",
-	"You are paralyzed!", "You can move again.",
-	"Oh, wow! Everything looks so cosmic now!", "You can see clearly again.",
-	"You feel yourself moving faster!", "You feel yourself slow down.",
-	"You feel yourself moving slower!", "You feel yourself speed up.",
-	"Your skin turns to stone.", "Your skin returns to normal.",
-	"You feel righteous!", "The prayer has expired.",
-	"You feel like a hero!", "The heroism wears off.",
-	"You feel like a killing machine!", "You feel less Berserk.",
-	"You feel safe from evil!", "You no longer feel safe from evil.",
-	"You leave the physical world and turn into a wraith-being!",
+	NEXT "You are blind!", "You can see again.",
+	NEXT "You are confused!", "You feel less confused now.",
+	NEXT "You are poisoned!", "You are no longer poisoned.",
+	NEXT "You are terrified!", "You feel bolder now.",
+	NEXT "You are paralyzed!", "You can move again.",
+	NEXT "Oh, wow! Everything looks so cosmic now!",
+		"You can see clearly again.",
+	NEXT "You feel yourself moving faster!", "You feel yourself slow down.",
+	NEXT "You feel yourself moving slower!", "You feel yourself speed up.",
+	NEXT "Your skin turns to stone.", "Your skin returns to normal.",
+	NEXT "You feel righteous!", "The prayer has expired.",
+	NEXT "You feel like a hero!", "The heroism wears off.",
+	NEXT "You feel like a killing machine!", "You feel less Berserk.",
+	NEXT "You feel safe from evil!", "You no longer feel safe from evil.",
+	NEXT "You leave the physical world and turn into a wraith-being!",
 		"You feel opaque.",
-	"Invulnerability!", "The invulnerability wears off.",
-	"You feel your consciousness expand!",
+	NEXT "Invulnerability!", "The invulnerability wears off.",
+	NEXT "You feel your consciousness expand!",
 		"Your consciousness contracts again.", 
-	"Your eyes feel very sensitive!", "Your eyes feel less sensitive.", 
-	"Your eyes begin to tingle!", "Your eyes stop tingling.",
-	0, "You feel resistant to acid!", "You feel less resistant to acid.",
-	0, "You feel resistant to electricity!",
+	NEXT "Your eyes feel very sensitive!", "Your eyes feel less sensitive.", 
+	NEXT "Your eyes begin to tingle!", "Your eyes stop tingling.",
+	NEXT 0, "You feel resistant to acid!", "You feel less resistant to acid.",
+	NEXT 0, "You feel resistant to electricity!",
 		"You feel less resistant to electricity.",
-	0, "You feel resistant to fire!", "You feel less resistant to fire.",
-	0, "You feel resistant to cold!", "You feel less resistant to cold.",
-	0, "You feel resistant to poison!", "You feel less resistant to poison.",
-	0, "You are no longer stunned.", "You have been stunned.",
+	NEXT 0, "You feel resistant to fire!", "You feel less resistant to fire.",
+	NEXT 0, "You feel resistant to cold!", "You feel less resistant to cold.",
+	NEXT 0, "You feel resistant to poison!",
+		"You feel less resistant to poison.",
+	NEXT 0, "You are no longer stunned.", "You have been stunned.",
 		"You have been heavily stunned.", "You have been knocked out.",
-	0, "You are no longer bleeding.", "You have been given a graze.",
+	NEXT 0, "You are no longer bleeding.", "You have been given a graze.",
 		"You have been given a light cut.", "You have been given a bad cut.",
 		"You have been given a nasty cut.", "You have been given a severe cut.",
 		"You have been given a deep gash.",
 		"You have been given a mortal wound.",
-	"You are still weak.", "You are still hungry.", "You are no longer hungry.",
-		"You are full!", "You have gorged yourself!",
-			"You are getting faint from hunger!",
+	NEXT "You are still weak.", "You are still hungry.",
+		"You are no longer hungry.", "You are full!",
+		"You have gorged yourself!", "You are getting faint from hunger!",
 			"You are getting weak from hunger!", "You are getting hungry.",
-			"You are no longer full.", "You are no longer gorged."
+			"You are no longer full.", "You are no longer gorged.",
 };
 
-static temp_effect_type temp_effects[TIMED_MAX] =
+static const temp_effect_type temp_effects[TIMED_MAX] =
 {
 	{IDX(TIMED_BLIND) 0, notice_bool, 0, PR_MAP | PR_BLIND,
 		PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_MONSTERS, PW_OVERHEAD},
@@ -507,7 +522,7 @@ static temp_effect_type temp_effects[TIMED_MAX] =
 	{IDX(TIMED_OPPOSE_POIS) 48, notice_res, 0, PR_STUDY, 0, 0},
 	{IDX(TIMED_STUN) 51, notice_stun, worsen_stun, PR_STUN, PU_BONUS, 0},
 	{IDX(TIMED_CUT) 56, notice_cuts, worsen_cuts, PR_CUT, PU_BONUS, 0},
-	{IDX(TIMED_FOOD) 64, notice_food, 0, PR_HUNGER, PU_BONUS, 0},
+	{IDX(TIMED_FOOD) 65, notice_food, 0, PR_HUNGER, PU_BONUS, 0},
 };
 
 /*
@@ -553,7 +568,8 @@ static s16b *get_flag(int flag)
  */
 void check_temp_effects(void)
 {
-	temp_effect_type *ptr;
+	const temp_effect_type *ptr;
+	cptr str;
 
 	for (ptr = temp_effects; ptr < END_PTR(temp_effects); ptr++)
 	{
@@ -561,6 +577,11 @@ void check_temp_effects(void)
 			quit_fmt("temp_effects index %d misplaced.", ptr->idx);
 		if (!get_flag(ptr->idx))
 			quit_fmt("No temp_effects flag available for index %d.", ptr->idx);
+
+		str = temp_effects_text[ptr->text + ptr - temp_effects];
+		if (!str) str = "null";
+		if (*str) quit_fmt("Text marker for temp_effects index %d is %s, "
+			"when it should be \"\".", ptr->idx, str);
 	}
 }
 #endif /* CHECK_ARRAYS */
@@ -588,7 +609,7 @@ static bool set_flag_aux(int flag, int v, bool add)
 	int notice;
 	s16b *var = get_flag(flag);
 	cptr msg;
-	temp_effect_type *t_ptr = temp_effects+flag;
+	const temp_effect_type *t_ptr = temp_effects+flag;
 
 	/* Allow the call to be as a modifier. */
 	if (add) (v += *var);
@@ -609,7 +630,7 @@ static bool set_flag_aux(int flag, int v, bool add)
 	if (notice < 0) return (FALSE);
 
 	/* Find the text string. */
-	msg = temp_effects_text[t_ptr->text+notice];
+	msg = temp_effects_text[t_ptr->text + notice + OFFSET(v)];
 
 	/* Print it if it's real. */
 	if (msg) msg_print(msg);
