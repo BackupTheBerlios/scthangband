@@ -3222,7 +3222,7 @@ static void use_power(powertype *pw_ptr)
 				object_type q;
 
                    /* Create the item */
-				object_prep(&q, lookup_kind(80, 35));
+				object_prep(&q, OBJ_RATION_OF_FOOD);
 
                     /* Drop the object from heaven */
 				drop_near(&q, -1, py, px);
