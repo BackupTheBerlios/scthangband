@@ -405,150 +405,6 @@ void do_cmd_messages(void)
 
 
 
-/*
- * Number of cheating options
- */
-#define CHEAT_MAX 8
-
-/*
- * Cheating options
- */
-static option_type cheat_info[CHEAT_MAX] =
-{
-	{ &cheat_peek,		FALSE,	255,	0x01, 0x00,
-	"cheat_peek",		"Peek into object creation" },
-
-	{ &cheat_hear,		FALSE,	255,	0x02, 0x00,
-	"cheat_hear",		"Peek into monster creation" },
-
-	{ &cheat_room,		FALSE,	255,	0x04, 0x00,
-	"cheat_room",		"Peek into dungeon creation" },
-
-	{ &cheat_xtra,		FALSE,	255,	0x08, 0x00,
-	"cheat_xtra",		"Peek into something else" },
-
-	{ &cheat_item,		FALSE,	255,	0x80, 0x00,
-	"cheat_item",		"Know complete item info" },
-
-	{ &cheat_live,		FALSE,	255,	0x20, 0x00,
-	"cheat_live",		"Allow player to avoid death" },
-
-	{ &cheat_skll,		FALSE,	255,	0x40, 0x00,
-	"cheat_skll",		"Peek into skill rolls" },
-
-	{ &cheat_wzrd,		FALSE,	255,	0x00, 0x02,
-	"cheat_wzrd",		"Wizard (Debug) Mode active" }
-};
-
-/*
- * Interact with some options for cheating
- */
-static void do_cmd_options_cheat(cptr info)
-{
-	char	ch;
-
-	int		i, k = 0, n = CHEAT_MAX;
-
-	char	buf[80];
-
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Interact with the player */
-	while (TRUE)
-	{
-		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n/x to set, ESC to accept) ", info);
-		prt(buf, 0, 0);
-	
-		/* Display the options */
-		for (i = 0; i < n; i++)
-		{
-			byte a = TERM_WHITE;
-
-			/* Color current option */
-			if (i == k) a = TERM_L_BLUE;
-
-			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%s)",
-			    cheat_info[i].o_desc,
-			    (*cheat_info[i].o_var ? "yes" : "no "),
-			    cheat_info[i].o_text);
-			c_prt(a, buf, i + 2, 0);
-		}
-
-		/* Hilite current option */
-		move_cursor(k + 2, 50);
-
-		/* Track this option. */
-		help_track(cheat_info[k].o_text);
-
-		/* Get a key */
-		ch = inkey();
-
-		/* Assume the help needed has changed. */
-		help_track(NULL);
-
-		/* Analyze */
-		switch (ch)
-		{
-			case ESCAPE:
-			{
-				return;
-			}
-
-			case '-':
-			case '8':
-			{
-				k = (n + k - 1) % n;
-				break;
-			}
-
-			case ' ':
-			case '\n':
-			case '\r':
-			case '2':
-			{
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'y':
-			case 'Y':
-			case '6':
-			{
-				noscore |= (cheat_info[k].o_set * 256 + cheat_info[k].o_bit);
-				(*cheat_info[k].o_var) = TRUE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'n':
-			case 'N':
-			case '4':
-			{
-				(*cheat_info[k].o_var) = FALSE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'x':
-			case 'X':
-			{
-				(*cheat_info[k].o_var) ^= 1;
-				k = (k + 1) % n;
-				break;
-			}
-			default:
-			{
-				bell();
-				break;
-			}
-		}
-	}
-}
-
 
 static option_type autosave_info[3] =
 {
@@ -723,8 +579,6 @@ static bool showfile(cptr name, byte col)
 	return TRUE;
 }
 
-#define OPTPAGE_SPOILER	8
-
 static bool opt_is_forced(int i)
 {
 	typedef struct force_type force_type;
@@ -758,7 +612,7 @@ static bool opt_is_forced(int i)
 /*
  * Interact with some options
  */
-void do_cmd_options_aux(int page, cptr info)
+void do_cmd_options_aux(int page, cptr info, cptr file)
 {
 	char	ch;
 
@@ -783,9 +637,11 @@ void do_cmd_options_aux(int page, cptr info)
 	/* Clear screen */
 	Term_clear();
 
-	/* Hack - Give a short explanation at the bottom of the "Spoiler" menu */
-	if (page == OPTPAGE_SPOILER && !showfile("spoiler.txt", n+3))
-		c_prt(TERM_RED, "ANGBAND_DIR_FILE/spoiler.txt not found.", n+3, 0);
+	/* Give a short explanation at the bottom of the "Spoiler" menu */
+	if (file && !showfile(file, n+3))
+	{
+		c_prt(TERM_RED, format("ANGBAND_DIR_FILE/%s not found.", file), n+3, 0);
+	}
 
 	/* Interact with the player */
 	while (TRUE)
@@ -855,6 +711,7 @@ void do_cmd_options_aux(int page, cptr info)
 			case 'Y':
 			case '6':
 			{
+				if (page == OPTS_CHEAT) noscore |= (1L<<option_info[opt[k]].o_bit);
 				(*option_info[opt[k]].o_var) = TRUE;
 				do {
 				k = (k + 1) % n;
@@ -1084,6 +941,94 @@ static void do_cmd_options_win(void)
 }
 
 
+/*
+ * Set the base delay factor.
+ */
+static void do_cmd_options_delay(void)
+{
+	/* Track this option. */
+	help_track("base_delay");
+
+	/* Prompt */
+	prt("Command: Base Delay Factor", 18, 0);
+
+	/* Get a new value */
+	while (1)
+	{
+		int k, msec = delay_factor * delay_factor * delay_factor;
+		prt(format("Current base delay factor: %d (%d msec)",
+		           delay_factor, msec), 22, 0);
+		prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
+		k = inkey();
+		if (k == ESCAPE) break;
+		if (isdigit(k)) delay_factor = D2I(k);
+		else bell();
+	}
+
+	/* The help needed has changed. */
+	help_track(NULL);
+}
+
+/*
+ * Set the HP warning level.
+ */
+static void do_cmd_options_hp(void)
+{
+	/* Track this option. */
+	help_track("hitpoint_warning");
+
+	/* Prompt */
+	prt("Command: Hitpoint Warning", 18, 0);
+
+	/* Get a new value */
+	while (1)
+	{
+		int k;
+		prt(format("Current hitpoint warning: %d0%%",
+			hitpoint_warn), 22, 0);
+		prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
+		k = inkey();
+		if (k == ESCAPE) break;
+		if (isdigit(k)) hitpoint_warn = D2I(k);
+		else bell();
+	}
+
+	/* The help needed has changed. */
+	help_track(NULL);
+}
+
+typedef struct option_list option_list;
+struct option_list
+{
+	cptr title;
+	cptr text;
+	int num;
+	char ch;
+	byte y;
+};
+
+#define OPTS_DELAY	-1
+#define OPTS_HP	-2
+#define OPTS_SAVE	-3
+#define OPTS_WINDOW	-4
+
+static option_list opt_lists[] =
+{
+	{"User Interface Options", NULL, OPTS_UI, '1', 4},
+	{"Disturbance Options", NULL, OPTS_DISTURB, '2', 5},
+	{"Creature Options", NULL, OPTS_MON, '3', 6},
+	{"Object Options", NULL, OPTS_OBJ, '4', 7},
+	{"Performance Options", NULL, OPTS_PERF, '5', 8},
+	{"Miscellaneous Options", NULL, OPTS_MISC, '6', 9},
+	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 11},
+	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 12},
+	{"Autosave Options", NULL, OPTS_SAVE, 'A', 13},
+	{"Window Flags", NULL, OPTS_WINDOW, 'W', 14},
+	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 16},
+	{"Cheating Optins", "o_cheat.txt", OPTS_CHEAT, 'C', 17},
+	{0,0,0,0,0}
+};
+
 
 
 /*
@@ -1096,6 +1041,7 @@ void do_cmd_options(void)
 {
 	int k;
 
+	option_list *ol_ptr;
 
 	/* Enter "icky" mode */
 	character_icky = TRUE;
@@ -1114,27 +1060,10 @@ void do_cmd_options(void)
 		prt("Game Options", 2, 0);
 
 		/* Give some choices */
-		prt("(1) User Interface Options", 4, 5);
-		prt("(2) Disturbance Options", 5, 5);
-		prt("(3) Creature Options", 6, 5);
-		prt("(4) Object Options", 7, 5);
-		prt("(5) Performance Options", 8, 5);
-		prt("(6) Miscellaneous Options",9,5);
-
-		/* Special choices */
-		prt("(D) Base Delay Factor", 11, 5);
-		prt("(H) Hitpoint Warning", 12, 5);
-		prt("(A) Autosave Options", 13, 5);
-
-
-		/* Window flags */
-		prt("(W) Window Flags", 14, 5);
-
-		/* Spoilers */
-		prt("(S) Spoiler Options", 16, 5);
-		
-		/* Cheating */
-		prt("(C) Cheating Options", 17, 5);
+		for (ol_ptr = opt_lists; ol_ptr->title; ol_ptr++)
+		{
+			prt(format("(%c) %s", ol_ptr->ch, ol_ptr->title), ol_ptr->y, 5);
+		}
 
 		/* Prompt */
 		prt("Command: ", 18, 0);
@@ -1146,148 +1075,40 @@ void do_cmd_options(void)
 		if (k == ESCAPE) break;
 
 		/* Analyze */
-		switch (k)
+		for (ol_ptr = opt_lists;; ol_ptr++)
 		{
-			/* General Options */
-			case '1':
+			if (!ol_ptr->title)
 			{
-				/* Process the general options */
-				do_cmd_options_aux(1, "User Interface Options");
-				break;
-		}
-
-			/* Disturbance Options */
-			case '2':
-		{
-				/* Spawn */
-				do_cmd_options_aux(2, "Disturbance Options");
-				break;
-		}
-
-			/* Creature Options */
-			case '3':
-		{
-				/* Spawn */
-				do_cmd_options_aux(3, "Creature Options");
-				break;
-			}
-
-			/* Object Options */
-			case '4':
-			{
-				/* Spawn */
-				do_cmd_options_aux(4, "Object Options");
-				break;
-			}
-
-			/* Performance Options */
-			case '5':
-			{
-				do_cmd_options_aux(5, "Performance Options");
-				break;
-			}
-
-			/* Misc Options */
-			case '6':
-				{
-					do_cmd_options_aux(6,"Miscellaneous Options");
-					break;
-				}
-
-			/* Spoiler Options */
-			case 'S':
-				{
-					do_cmd_options_aux(OPTPAGE_SPOILER, "Spoiler Options");
-					break;
-				}
-			/* Cheating Options */
-			case 'C':
-			{
-				/* Spawn */
-				do_cmd_options_cheat("Cheaters never win");
-				break;
-			}
-
-			case 'a':
-			case 'A':
-			{
-				do_cmd_options_autosave("Autosave");
-				break;
-			}
-
-			/* Window flags */
-			case 'W':
-			case 'w':
-			{
-				/* Spawn */
-				do_cmd_options_win();
-				break;
-			}
-
-			/* Hack -- Delay Speed */
-			case 'D':
-			case 'd':
-			{
-				/* Prompt */
-				prt("Command: Base Delay Factor", 18, 0);
-
-				/* Track this option. */
-				help_track("base_delay");
-
-				/* Get a new value */
-				while (1)
-				{
-					int msec = delay_factor * delay_factor * delay_factor;
-					prt(format("Current base delay factor: %d (%d msec)",
-					           delay_factor, msec), 22, 0);
-					prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
-					k = inkey();
-					if (k == ESCAPE) break;
-					if (isdigit(k)) delay_factor = D2I(k);
-					else bell();
-				}
-
-				break;
-
-				/* The help needed has changed. */
-				help_track(NULL);
-			}
-
-			/* Hack -- hitpoint warning factor */
-			case 'H':
-			case 'h':
-			{
-				/* Track this option. */
-				help_track("hitpoint_warning");
-
-				/* Prompt */
-				prt("Command: Hitpoint Warning", 18, 0);
-
-				/* Get a new value */
-				while (1)
-				{
-					prt(format("Current hitpoint warning: %d0%%",
-					           hitpoint_warn), 22, 0);
-					prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
-					k = inkey();
-					if (k == ESCAPE) break;
-					if (isdigit(k)) hitpoint_warn = D2I(k);
-					else bell();
-				}
-
-				/* The help needed has changed. */
-				help_track(NULL);
-
-				break;
-			}
-
-			/* Unknown option */
-			default:
-			{
-				/* Oops */
 				bell();
 				break;
 			}
+			if (FORCEUPPER(k) != ol_ptr->ch) continue;
+			if (ol_ptr->num > -1)
+			{
+				do_cmd_options_aux(ol_ptr->num, ol_ptr->title, ol_ptr->text);
+			}
+			else switch (ol_ptr->num)
+			{
+				case OPTS_DELAY:
+				{
+					do_cmd_options_delay();
+					break;
+				}
+				case OPTS_HP:
+				{
+					do_cmd_options_hp();
+					break;
+				}
+				case OPTS_SAVE:
+				{
+					do_cmd_options_autosave("Autosave");
+				}
+				case OPTS_WINDOW:
+				{
+					do_cmd_options_win();
+				}
+			}
+			break;
 		}
 
 		/* Flush messages */

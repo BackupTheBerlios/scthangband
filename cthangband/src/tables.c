@@ -3120,7 +3120,7 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options (full to 3,10)
+ * Available Options (full to 3,10), 7 reserved for cheat options
  */
 option_type option_info[] =
 {
@@ -3457,6 +3457,32 @@ option_type option_info[] =
 
 	{ &spoil_dam,	FALSE, OPTS_SPOIL,	3,	8,
 	"spoil_dam",	"Gain knowledge of melee weapon damage."},
+
+	{ &cheat_peek,		FALSE,	OPTS_CHEAT,	7, 8,
+	"cheat_peek",		"Peek into object creation" },
+
+	{ &cheat_hear,		FALSE, OPTS_CHEAT,	7, 9,
+	"cheat_hear",		"Peek into monster creation" },
+
+	{ &cheat_room,		FALSE,	OPTS_CHEAT,	7, 10,
+	"cheat_room",		"Peek into dungeon creation" },
+
+	{ &cheat_xtra,		FALSE,	OPTS_CHEAT,	7, 11,
+	"cheat_xtra",		"Peek into something else" },
+
+	{ &cheat_item,		FALSE,	OPTS_CHEAT,	7, 15,
+	"cheat_item",		"Know complete item info" },
+
+	{ &cheat_live,		FALSE,	OPTS_CHEAT,	7, 13,
+	"cheat_live",		"Allow player to avoid death" },
+
+	{ &cheat_skll,		FALSE,	OPTS_CHEAT,	7, 14,
+	"cheat_skll",		"Peek into skill rolls" },
+
+#ifdef ALLOW_WIZARD
+	{ &cheat_wzrd,		FALSE,	OPTS_CHEAT,	7, 1,
+	"cheat_wzrd",		"Wizard (Debug) Mode active" },
+#endif /* ALLOW_WIZARD */
 
 	/*** End of Table ***/
 

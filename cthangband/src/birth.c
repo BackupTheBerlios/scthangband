@@ -733,7 +733,7 @@ static bc_type birth_option(void)
 			bool old_allow_pickstats = allow_pickstats;
 			bool old_maximise_mode = maximise_mode;
 			Term_save();
-			do_cmd_options_aux(7, "Startup Options");
+			do_cmd_options_aux(7, "Startup Options", NULL);
 			Term_load();
 			/* Start again if the set of questions being asked changes.
 			 * This does not include show_credits because this takes
@@ -3223,7 +3223,7 @@ static bool player_birth_aux(void)
 		if (c == '=')
 		{
 			Term_save();
-			do_cmd_options_aux(7,"Startup Options");
+			do_cmd_options_aux(7,"Startup Options", NULL);
 			Term_load();
 		}
 		else bell();

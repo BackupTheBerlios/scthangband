@@ -558,6 +558,12 @@ logaux(x, 1) logaux(x, 0) 255
 
 #define OPTS_MAX	9
 
+/* Special option sets which are not handled by do_cmd_options_aux(). */
+#define OPTS_DELAY	-1
+#define OPTS_HP	-2
+#define OPTS_SAVE	-3
+#define OPTS_WINDOW	-4
+
 /*
  * Refueling constants
  */

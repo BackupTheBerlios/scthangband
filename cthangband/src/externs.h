@@ -282,7 +282,7 @@ extern void do_cmd_message_one(void);
 extern void do_cmd_messages(void);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C))
-extern void do_cmd_options_aux(int page, cptr info);
+extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
 extern void do_cmd_options(void);
@@ -2141,7 +2141,7 @@ extern s32b old_turn;
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern s32b curse_turn;
 #endif
-#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool cheat_wzrd;
 #endif
 #if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
@@ -2546,25 +2546,25 @@ extern bool spoil_dam;
 #if (defined(MONSTER1_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_flag;
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_peek;
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_hear;
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_room;
 #endif
-#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(CMD1_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_xtra;
 #endif
-#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_item;
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_live;
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool cheat_skll;
 #endif
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
