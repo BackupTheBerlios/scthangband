@@ -2128,16 +2128,6 @@ static bool PURE item_tester_unknown(object_ctype *o_ptr)
 }
 
 
-static bool PURE item_tester_unknown_star(object_ctype *o_ptr)
-{
-	if (o_ptr->ident & IDENT_MENTAL)
-		return FALSE;
-	else
-		return TRUE;
-}
-
-
-
 /*
  * Enchants a plus onto an item.                        -RAK-
  *
@@ -3897,27 +3887,8 @@ bool ident_spell(void)
 
 
 
-/*
- * Fully "identify" an object in the inventory  -BEN-
- * This routine returns TRUE if an item was identified.
- */
-bool identify_fully(void)
+void do_identify_fully(object_type *o_ptr)
 {
-	errr                     err;
-
-	object_type             *o_ptr;
-
-	/* Only un-*id*'ed items */
-	item_tester_hook = item_tester_unknown_star;
-
-	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&err, "Identify which item? ", TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_print("You have nothing to identify.");
-		return (FALSE);
-	}
-
-
 	/* Identify it fully */
 	object_aware(o_ptr);
 	object_known(o_ptr);
@@ -3936,9 +3907,21 @@ bool identify_fully(void)
 
 	/* Describe it fully */
 	identify_fully_aux(o_ptr, FALSE);
+}
 
-	/* Success */
-	return (TRUE);
+/*
+ * Fully "identify" an object in the inventory  -BEN-
+ * This routine returns TRUE if an item was identified.
+ */
+bool identify_fully(void)
+{
+	object_type *o_ptr = get_object_from_function(do_identify_fully);
+
+	if (!o_ptr) return FALSE;
+
+	do_identify_fully(o_ptr);
+
+	return TRUE;
 }
 
 

@@ -2806,13 +2806,6 @@ void process_command(void)
 			break;
 		}
 
-		/* View item info */
-		case CMD_DEBUG+'f':
-		{
-			(void)identify_fully();
-			break;
-		}
-
 		/* Good Objects */
 		case CMD_DEBUG+'g':
 		{

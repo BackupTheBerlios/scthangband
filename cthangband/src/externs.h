@@ -1831,7 +1831,7 @@ extern bool artifact_scroll(void);
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool ident_spell(void);
 #endif
-#if (defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS2_C))
+#if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool identify_fully(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -4025,7 +4025,13 @@ extern bool do_cmd_use_object(s16b cmd);
 #if (defined(OBJECT1_C) || defined(SPELLS2_C))
 extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
 #endif
-#if (defined(CMD1_C) || defined(OBJECT1_C))
+#if (defined(CMD1_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
 extern object_type *get_object_from_function(void (*func)(object_type *));
+#endif
+
+/* spells2.c */
+
+#if (defined(OBJECT1_C) || defined(SPELLS2_C))
+extern void do_identify_fully(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -5008,6 +5008,14 @@ bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
 	return TRUE;
 }
 
+static bool PURE item_tester_unknown_star(object_ctype *o_ptr)
+{
+	if (o_ptr->ident & IDENT_MENTAL)
+		return FALSE;
+	else
+		return TRUE;
+}
+
 /*
  * Check that the player is wielding a light which can be refuelled.
  */
@@ -5185,7 +5193,8 @@ static object_function object_functions[] =
 		NULL, item_tester_hook_drop, 0, TRUE, TRUE, TRUE},
 	{'F', do_cmd_refill, "refuel", "item",
 		forbid_refuel, item_tester_refuel, 0, TRUE, TRUE, TRUE},
-	/* *identify* */
+	{CMD_DEBUG+'f', do_identify_fully, "identify", "item",
+		forbid_non_debug, item_tester_unknown_star, 0, TRUE, TRUE, TRUE},
 	{CMD_DEBUG+'o', do_cmd_wiz_play, "play with", "object",
 		forbid_non_debug, NULL, 0, TRUE, TRUE, TRUE},
 };
@@ -5212,8 +5221,6 @@ static object_type *get_object(object_function *func)
 	errr err;
 	object_type *o_ptr;
 	char buf[120];
-
-	assert(func && (!func->ban || !(*func->ban)())); /* Caller. */
 
 	strnfmt(buf, sizeof(buf), "%^s which %s? ", func->verb, func->noun);
 
