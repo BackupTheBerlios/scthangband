@@ -932,7 +932,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 		if (!get_string("Enter the name: ", buf+6, sizeof(buf)-6)) return;
 		string = TRUE;
 
-		for (s = buf+6; *s; s++) if (isupper(*s)) *s = tolower(*s);
+		for (s = buf+6; *s; s++) if (ISUPPER(*s)) *s = TOLOWER(*s);
 	}
 	else
 	{
@@ -969,7 +969,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 
 			/* Obtain a lower case string. */
 			strnfmt(name, MNAME_MAX, "%v", monster_desc_aux_f3, r_ptr, 1, 0);
-			for (s = name; *s; s++) if (isupper(*s)) *s = tolower(*s);
+			for (s = name; *s; s++) if (ISUPPER(*s)) *s = TOLOWER(*s);
 
 			/* None found. */
 			if (!strstr(name, buf+6)) continue;

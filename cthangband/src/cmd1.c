@@ -1796,7 +1796,7 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 			case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V':
 			case 'W': case 'X': case 'Y': case 'Z': 
 			{
-				ask = isupper(choice);
+				ask = ISUPPER(choice);
 				select = A2I(FORCELOWER(choice));
 				/* If there are more than 26 entries, adjust for the current position of 'a'.*/
 				if (num > 26) select += first;

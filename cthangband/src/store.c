@@ -2058,7 +2058,7 @@ static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
 		if (!get_com(prompt, &command)) break;
 
 		/* Convert */
-		k = (islower(command) ? A2I(command) : -1);
+		k = (ISLOWER(command) ? A2I(command) : -1);
 
 		/* Legal responses */
 		if ((k >= i) && (k <= j))

@@ -1966,7 +1966,7 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 				msg_print("Illegal colour.");
 				return (PARSE_ERROR_GENERIC);
 			}
-			if (!isgraph(sym))
+			if (!ISGRAPH(sym))
 			{
 				msg_print("Illegal symbol.");
 				return (PARSE_ERROR_GENERIC);
@@ -3179,7 +3179,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 			{
 				ptr->file = 0;
 			}
-			else if (isdigit(*s))
+			else if (ISDIGIT(*s))
 			{
 				int file = atoi(s);
 				if (file < 0 || file > 256) return PARSE_ERROR_OUT_OF_BOUNDS;

@@ -995,7 +995,7 @@ static void do_cmd_options_redraw(void)
 
 	for (c = KTRL('R'), n = 0, clear = FALSE; c != ESCAPE; c = inkey())
 	{
-		int inc = isupper(c) ? -1 : 1;
+		int inc = ISUPPER(c) ? -1 : 1;
 		redraw_type *co_ptr = screen_coords+n;
 
 		switch (c)
@@ -1094,7 +1094,7 @@ static void do_cmd_options_delay(void)
 		prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
 		k = inkey();
 		if (k == ESCAPE) break;
-		if (isdigit(k)) delay_factor = D2I(k);
+		if (ISDIGIT(k)) delay_factor = D2I(k);
 		else bell(0);
 		}
 	}
@@ -1116,7 +1116,7 @@ static void do_cmd_options_hp(void)
 		prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
 		k = inkey();
 		if (k == ESCAPE) break;
-		if (isdigit(k)) hitpoint_warn = D2I(k);
+		if (ISDIGIT(k)) hitpoint_warn = D2I(k);
 		else bell(0);
 	}
 }
@@ -2477,8 +2477,8 @@ static void modify_visuals(visual_type *vs_ptr)
 		}
 
 		/* Split i into base character and modifier. */
-		inc = (iscntrl(i)) ? 0 : (islower(i)) ? 1 : -1;
-		i = 'a'+i-(iscntrl(i) ? KTRL('A') : (islower(i)) ? 'a' : 'A');
+		inc = (ISCNTRL(i)) ? 0 : (ISLOWER(i)) ? 1 : -1;
+		i = 'a'+i-(ISCNTRL(i) ? KTRL('A') : (ISLOWER(i)) ? 'a' : 'A');
 
 		switch (i)
 		{
@@ -3345,13 +3345,13 @@ void get_symbol_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 
 /*
  * A wrapper to find an appropriate attr/char combination from the *_info
- * array. The isprint() checks are necessary as show_file() reacts badly to
+ * array. The ISPRINT() checks are necessary as show_file() reacts badly to
  * unprintable characters.
  */
 #define get_symbol(x_ptr) \
 	get_symbol_f2, (x_ptr)->x_attr, \
-		isprint((x_ptr)->x_char) ? (x_ptr)->x_char : \
-		isprint((x_ptr)->d_char) ? (x_ptr)->d_char : '#'
+		ISPRINT((x_ptr)->x_char) ? (x_ptr)->x_char : \
+		ISPRINT((x_ptr)->d_char) ? (x_ptr)->d_char : '#'
 
 /*
  * Check the status of "artifacts"
@@ -3823,7 +3823,7 @@ static void do_cmd_knowledge_objects(void)
 
 			/* Print a message */
 			my_fprintf(fff, " %v   %v\n", get_symbol_f2,
-				object_attr(i_ptr), isprint(object_char(i_ptr)) ?
+				object_attr(i_ptr), ISPRINT(object_char(i_ptr)) ?
 				object_char(i_ptr) : '#',
 				object_desc_f3, i_ptr, OD_SHOP, 0);
 		}

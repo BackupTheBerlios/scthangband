@@ -63,7 +63,7 @@ cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 	else
 	{
 		/* Both parameters must be given as numbers. */
-		if (!isdigit(zz[0][0]) || !isdigit(zz[1][0]))
+		if (!ISDIGIT(zz[0][0]) || !ISDIGIT(zz[1][0]))
 			return "non-numerical input";
 
 		/* Read the k_idx into l and check that it's plausible. */

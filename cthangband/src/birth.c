@@ -1292,21 +1292,21 @@ static bool point_mod_player(void)
 		/* Modify the player's race. */
 		if (i == IDX_RACE)
 		{
-			MOD_ADD(p_ptr->prace, (islower(stat) ? 1 : -1), MAX_RACES);
+			MOD_ADD(p_ptr->prace, (ISLOWER(stat) ? 1 : -1), MAX_RACES);
 			rp_ptr = &race_info[p_ptr->prace];
 		}
 
 		/* Modify the player's template. */
 		if (i == IDX_TEMPLATE)
 		{
-			MOD_ADD(p_ptr->ptemplate, (islower(stat) ? 1 : -1), MAX_TEMPLATE);
+			MOD_ADD(p_ptr->ptemplate, (ISLOWER(stat) ? 1 : -1), MAX_TEMPLATE);
 			cp_ptr = &template_info[p_ptr->ptemplate];
 		}
 
 		/* Modify the player's sex. */
 		if (i == IDX_SEX)
 		{
-			MOD_ADD(p_ptr->psex, (islower(stat) ? 1 : -1), MAX_SEXES);
+			MOD_ADD(p_ptr->psex, (ISLOWER(stat) ? 1 : -1), MAX_SEXES);
 			sp_ptr = &sex_info[p_ptr->psex];
 		}
 
@@ -1346,7 +1346,7 @@ static bool point_mod_player(void)
 		upper case (subtract stat) */
 		if (i & IDX_STATS)
 				{
-			s16b dif = (islower(stat)) ? 1 : -1;
+			s16b dif = (ISLOWER(stat)) ? 1 : -1;
 			s16b newstat = modify_stat_value(p_ptr->stat_cur[i-1], dif);
 			p_ptr->stat_cur[i-1]=p_ptr->stat_max[i-1]=newstat;
 				}

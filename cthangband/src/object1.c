@@ -1219,7 +1219,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	if (wants_article == ARTICLE_LETTER)
 	{
 		/* Find the first letter/number. */
-		for (s = tmp_val; !isalnum(*s) && *s; s++);
+		for (s = tmp_val; !ISALNUM(*s) && *s; s++);
 
 		/* And copy an article to it without termination if one is found. */
 		if (is_a_vowel(*s) || *s == '8')
@@ -1227,7 +1227,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 			tmp_val -= 3;
 			strncpy(tmp_val, "an ", 3);
 		}
-		else if (isalnum(*s))
+		else if (ISALNUM(*s))
 		{
 			tmp_val -= 2;
 			strncpy(tmp_val, "a ", 2);
@@ -3285,7 +3285,7 @@ static object_type PURE *label_to_inven(int c)
 	int i;
 
 	/* Convert */
-	i = (islower(c) ? A2I(c) : -1);
+	i = (ISLOWER(c) ? A2I(c) : -1);
 
 	/* Verify the index */
 	if ((i < 0) || (i > INVEN_PACK)) return NULL;
@@ -3311,7 +3311,7 @@ static object_type PURE *label_to_equip(int c)
 	int i;
 
 	/* Convert */
-	i = (islower(c) ? A2I(c) : -1) + INVEN_WIELD;
+	i = (ISLOWER(c) ? A2I(c) : -1) + INVEN_WIELD;
 
 	/* Verify the index */
 	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return NULL;
@@ -4435,7 +4435,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, isupper(which));
+				get_item_valid(&o_ptr, &done, ISUPPER(which));
 
 				break;
 			}
@@ -4557,7 +4557,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				else if (cursed) o_ptr = cursed;
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, isupper(which));
+				get_item_valid(&o_ptr, &done, ISUPPER(which));
 
 				break;
 			}
@@ -4567,7 +4567,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 			{
 				object_type *start, *end, *j_ptr;
 				bool high = strchr("Xx", which) != NULL;
-				bool upper = isupper(which);
+				bool upper = ISUPPER(which);
 				s32b UNREAD(best_price);
 
 				/* Can only judge value with spoil_value set. */
@@ -4620,8 +4620,8 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 			default:
 			{
 				/* Extract "query" setting */
-				bool upper = isupper(which);
-				if (upper) which = tolower(which);
+				bool upper = ISUPPER(which);
+				if (upper) which = TOLOWER(which);
 
 				/* Convert letter to inventory index */
 				if (!command_wrk)

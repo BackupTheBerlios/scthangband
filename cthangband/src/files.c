@@ -391,7 +391,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 	if (!buf[0]) return (0);
 
 	/* Skip "blank" lines */
-	if (isspace(buf[0])) return (0);
+	if (ISSPACE(buf[0])) return (0);
 
 	/* Skip comments */
 	if (buf[0] == '#') return (0);
@@ -813,7 +813,7 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 	s = (*sp);
 
 	/* Skip spaces */
-	while (isspace(*s)) s++;
+	while (ISSPACE(*s)) s++;
 
 	/* Save start */
 	b = s;
@@ -940,7 +940,7 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 	else
 	{
 		/* Accept all printables except spaces and brackets */
-		while (isprint(*s) && !strchr(" []", *s)) ++s;
+		while (ISPRINT(*s) && !strchr(" []", *s)) ++s;
 
 		/* Extract final and Terminate */
 		if ((f = *s) != '\0') *s++ = '\0';
@@ -1046,7 +1046,7 @@ errr process_pref_file(cptr name)
 		if (!buf[0]) continue;
 
 		/* Skip "blank" lines */
-		if (isspace(buf[0])) continue;
+		if (ISSPACE(buf[0])) continue;
 
 		/* Skip comments */
 		if (buf[0] == '#') continue;
@@ -3090,7 +3090,7 @@ static void dump_area_mono(FILE *fff, int miny, int maxy, int minx, int maxx)
 			Term_what(x, y, &a, s);
 
 			/* Avoid low ASCII. */
-			if (iscntrl(*s)) *s = '#';
+			if (ISCNTRL(*s)) *s = '#';
 		}
 
 		/* Ignore trailing spaces. */
@@ -4490,7 +4490,7 @@ void process_player_name(void)
 	for (i = 0; player_name[i]; i++)
 	{
 		/* No control characters */
-		if (iscntrl(player_name[i]))
+		if (ISCNTRL(player_name[i]))
 		{
 			/* Illegal characters */
 			quit_fmt("The name '%s' contains control chars!", player_name);
@@ -4520,7 +4520,7 @@ void process_player_name(void)
 		char c = player_name[i];
 
 		/* Accept some letters */
-		if (isalpha(c) || isdigit(c)) player_base[k++] = c;
+		if (ISALPHA(c) || ISDIGIT(c)) player_base[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
 		else if (strchr(". _", c)) player_base[k++] = '_';
@@ -5277,10 +5277,10 @@ void display_scores_aux(int from, int to, int note, high_score *score)
 			mdun = atoi(the_score.max_dun);
 
 			/* Hack -- extract the gold and such */
-			for (user = the_score.uid; isspace(*user); user++) /* loop */;
-			for (when = the_score.day; isspace(*when); when++) /* loop */;
-			for (gold = the_score.gold; isspace(*gold); gold++) /* loop */;
-			for (aged = the_score.turns; isspace(*aged); aged++) /* loop */;
+			for (user = the_score.uid; ISSPACE(*user); user++) /* loop */;
+			for (when = the_score.day; ISSPACE(*when); when++) /* loop */;
+			for (gold = the_score.gold; ISSPACE(*gold); gold++) /* loop */;
+			for (aged = the_score.turns; ISSPACE(*aged); aged++) /* loop */;
 
 			/* Dump some info */
 			sprintf(out_val, "%3d.%9s  %s the %s %s",

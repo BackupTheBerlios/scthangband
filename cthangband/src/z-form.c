@@ -332,7 +332,7 @@ static uint vstrnfmt_do(char *buf, uint max, cptr fmt, va_list *vp)
 			}
 
 			/* Handle "alphabetic" chars */
-			if (isalpha(*s))
+			if (ISALPHA(*s))
 			{
 				/* Hack -- handle "long" request */
 				if (*s == 'l')
@@ -591,10 +591,10 @@ static uint vstrnfmt_do(char *buf, uint max, cptr fmt, va_list *vp)
 			for (q = 0; tmp[q]; q++)
 			{
 				/* Notice first non-space */
-				if (!isspace(tmp[q]))
+				if (!ISSPACE(tmp[q]))
 				{
 					/* Capitalize if possible */
-					if (islower(tmp[q])) tmp[q] = toupper(tmp[q]);
+					if (ISLOWER(tmp[q])) tmp[q] = TOUPPER(tmp[q]);
 
 					/* Done */
 					break;

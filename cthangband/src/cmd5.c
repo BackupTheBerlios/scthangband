@@ -356,10 +356,10 @@ static void evaluate_text(char *buf, uint max, cptr str,
 			/* Formulae always start with vstr. */
 			*t++ = *s++;
 		}
-		else if (isdigit(*s))
+		else if (ISDIGIT(*s))
 		{
 			d = (int)strtol(s, 0, 0);
-			while (isdigit(*s)) s++;
+			while (ISDIGIT(*s)) s++;
 			i = convert_magic_number(i, op, d);
 		}
 		else if (*s == ';')
@@ -778,13 +778,13 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 
 
 		/* Note verify */
-		ask = (isupper(choice));
+		ask = (ISUPPER(choice));
 
 		/* Lowercase */
-		if (ask) choice = tolower(choice);
+		if (ask) choice = TOLOWER(choice);
 
 		/* Extract request */
-		i = (islower(choice) ? A2I(choice) : -1);
+		i = (ISLOWER(choice) ? A2I(choice) : -1);
 
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
@@ -1049,13 +1049,13 @@ int get_spirit(int *sn, cptr prompt, bool call)
 		}
 
 		/* Note verify */
-		ask = (isupper(choice));
+		ask = (ISUPPER(choice));
 
 		/* Lowercase */
-		if (ask) choice = tolower(choice);
+		if (ask) choice = TOLOWER(choice);
 
 		/* Extract request */
-		i = (islower(choice) ? valid_spirits[A2I(choice)] : isdigit(choice) ? choice-'0' : -1);
+		i = (ISLOWER(choice) ? valid_spirits[A2I(choice)] : ISDIGIT(choice) ? choice-'0' : -1);
 
 		/* Totally Illegal */
 		if ((i < 0) || (i >= MAX_SPIRITS))

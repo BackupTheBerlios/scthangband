@@ -126,7 +126,7 @@ void user_name(char *buf, int id)
 
 #ifdef CAPITALIZE_USER_NAME
 		/* Hack -- capitalize the user name */
-		if (islower(buf[0])) buf[0] = toupper(buf[0]);
+		if (ISLOWER(buf[0])) buf[0] = TOUPPER(buf[0]);
 #endif /* CAPITALIZE_USER_NAME */
 
 		return;
@@ -530,7 +530,7 @@ errr my_fgets(FILE *fff, char *buf, size_t n)
 		}
 
 		/* Ignore non-printables */
-		else if (isprint(c))
+		else if (ISPRINT(c))
 		{
 			/* Store character in the buffer */
 			buf[i++] = c;
@@ -3026,7 +3026,7 @@ bool askfor_aux(char *buf, int len)
 			/* Parse normall if the above are not macros. */
 
 			default:
-			if ((k < len) && (isprint(i)))
+			if ((k < len) && (ISPRINT(i)))
 			{
 				for (j = k; j >= l; j--)
 					buf[j+1] = buf[j];
@@ -3282,7 +3282,7 @@ s16b get_quantity(cptr prompt, int max,bool allbydefault)
 	amt = atoi(buf);
 
 	/* A letter means "all" */
-	if (isalpha(buf[0])) amt = max;
+	if (ISALPHA(buf[0])) amt = max;
 
 	/* Enforce the maximum */
 	if (amt > max) amt = max;
@@ -3697,7 +3697,7 @@ int get_keymap_dir(char ch)
 		for (s = act; *s; ++s)
 		{
  			/* Use any digits in keymap */
-			if (isdigit(*s)) d = D2I(*s);
+			if (ISDIGIT(*s)) d = D2I(*s);
 		}
 	}
 	return d;

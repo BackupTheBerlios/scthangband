@@ -330,7 +330,7 @@ static void set_ghost(cptr pname, int hp, int grace, int lev)
 	if (!gb_name[1]) strcpy(gb_name, "Nobody");
     
 	/* Capitalize the name */
-	if (islower(gb_name[0])) gb_name[0] = toupper(gb_name[0]);
+	if (ISLOWER(gb_name[0])) gb_name[0] = TOUPPER(gb_name[0]);
 
 	/* Save the level */
 	r_ptr->level = lev;

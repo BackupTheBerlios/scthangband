@@ -74,10 +74,29 @@
 /**** Simple "Macros" ****/
 
 /*
+ * Allow various ctype.h functions to be called as (bool)func(char c)
+ */
+#define ISALNUM(A) (isalnum((byte)(A)) != 0)
+#define ISALPHA(A) (isalpha((byte)(A)) != 0)
+#define ISBLANK(A) (isblank((byte)(A)) != 0)
+#define ISCNTRL(A) (iscntrl((byte)(A)) != 0)
+#define ISDIGIT(A) (isdigit((byte)(A)) != 0)
+#define ISGRAPH(A) (isgraph((byte)(A)) != 0)
+#define ISLOWER(A) (islower((byte)(A)) != 0)
+#define ISPRINT(A) (isprint((byte)(A)) != 0)
+#define ISPUNCT(A) (ispunct((byte)(A)) != 0)
+#define ISSPACE(A) (isspace((byte)(A)) != 0)
+#define ISUPPER(A) (isupper((byte)(A)) != 0)
+#define ISXDIGIT(A) (isxdigit((byte)(A)) != 0)
+
+#define TOLOWER(A) tolower((byte)(A))
+#define TOUPPER(A) toupper((byte)(A))
+
+/*
  * Force a character to lowercase/uppercase
  */
-#define FORCELOWER(A)  ((isupper((A))) ? tolower((A)) : (A))
-#define FORCEUPPER(A)  ((islower((A))) ? toupper((A)) : (A))
+#define FORCELOWER(A)  ((ISUPPER((A))) ? TOLOWER((A)) : (A))
+#define FORCEUPPER(A)  ((ISLOWER((A))) ? TOUPPER((A)) : (A))
 
 
 /*

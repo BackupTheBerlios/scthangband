@@ -3451,7 +3451,7 @@ void convert_articles(char *str)
 		{
 			*t = *s;
 		}
-		if (!isalnum(*t)) ;
+		if (!ISALNUM(*t)) ;
 		else if (strchr("aeiouAEIOU8", *t)) a = "an";
 		else a = "a";
 

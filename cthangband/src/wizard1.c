@@ -1505,7 +1505,7 @@ static void spoil_out(cptr str)
 		char ch = *str;
 		int wrap = (ch == '\n');
 
-		if (!isprint(ch)) ch = ' ';
+		if (!ISPRINT(ch)) ch = ' ';
 		if (roff_p >= roff_buf + 75) wrap = 1;
 		if ((ch == ' ') && (roff_p + 2 >= roff_buf + 75)) wrap = 1;
 
