@@ -3299,12 +3299,8 @@ bool display_player(int mode)
 			if (!skip_chaos_features && p_mutated())
 			{
 	        	do_cmd_knowledge_chaos_features();
-				return TRUE;
 			}
-			else
-			{
-				return FALSE;
-			}
+			return FALSE;
 	    }
 		case DPLAY_FLAG_1:
 		{
