@@ -1183,11 +1183,8 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
 
 /*
  * Prints the following information on the screen.
- *
- * For this to look right, the following should be spaced the
- * same as in the prt_lnum code... -CFT
  */
-static void display_player_middle(void)
+static void display_player_sides(void)
 {
 	int show_tohit = p_ptr->dis_to_h;
 	int show_todam = p_ptr->dis_to_d;
@@ -1207,12 +1204,6 @@ static void display_player_middle(void)
 
 	/* Dump the total armor class */
 	prt_num("  Base AC   ", p_ptr->dis_ac, 12, 1, TERM_L_BLUE);
-
-	prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_L_GREEN);
-
-	prt_lnum("Exp Factor ", p_ptr->expfact, 13, 28, TERM_L_GREEN);
-
-
 	prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
 
 	if (p_ptr->chp >= p_ptr->mhp)
@@ -1246,7 +1237,46 @@ static void display_player_middle(void)
 	prt_lnum("Gold           ", p_ptr->au, 13, 52, TERM_L_GREEN);
 }
 
+/*
+ * Prints the following information on the screen.
+ *
+ * For this to look right, the following should be spaced the
+ * same as in the prt_lnum code... -CFT
+ */
+static void display_player_xp(void)
+{
+	prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_L_GREEN);
 
+	prt_lnum("Exp Factor ", p_ptr->expfact, 13, 28, TERM_L_GREEN);
+}
+
+
+/* The next routine would look horrible without this. */
+#define remember(col, msg) {strcpy(text[i], msg); colour[i++] = col;}
+
+/*
+ * Displays a few temporary effects on the screen.
+ * Returns whether something was displayed.
+ */
+static bool display_player_bonus(void)
+{
+	byte i = 0, j;
+	cptr text[5] = {"Blessed","Stone Skin","Heroic","Safe from Evil","Berserk"};
+	byte colour[5] = {TERM_L_GREEN, TERM_SLATE, TERM_YELLOW, TERM_WHITE, TERM_L_RED};
+	const byte pos[5][5] = {{11}, {10, 12}, {9, 11, 13}, {9, 10, 12, 13}, {9, 10, 11, 12, 13}};
+	byte x[5];
+	if (p_ptr->blessed) x[i++] = 0;
+	if (p_ptr->shield) x[i++] = 1;
+	if (p_ptr->hero) x[i++] = 2;
+	if (p_ptr->protevil) x[i++] = 3;
+	if (p_ptr->shero) x[i++] = 4;
+	for (j = i; j;)
+	{
+		j--;
+		c_put_str(colour[x[j]], text[x[j]], pos[i-1][j], 34);
+	}
+	return (i > 0);
+}
 
 
 /*
@@ -2567,7 +2597,7 @@ static void display_player_ben_one(int mode)
  * The top two and bottom two lines are left blank.
  *
  * Mode 0 = standard display with skills
- * Mode 1 = standard display with history
+ * Mode 1 = standard display with history and bonus details
  * Mode 2 = skills display
  * Mode 3 = summary of various things
  * Mode 4 = current flags (combined)
@@ -2658,7 +2688,12 @@ void display_player(int mode)
 		}
 
 		/* Extra info */
-		display_player_middle();
+		display_player_sides();
+
+		if ((mode == 1) || !display_player_bonus())
+		{
+			display_player_xp();
+		}
 
 		/* Display "history" info */
 		if (mode == 1)
