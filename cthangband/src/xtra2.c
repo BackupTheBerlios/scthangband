@@ -533,7 +533,7 @@ static const temp_effect_type temp_effects[TIMED_MAX] =
 	{IDX(TIMED_STUN) 51, notice_stun, worsen_stun, PR_STUN, PU_BONUS, 0},
 	{IDX(TIMED_CUT) 56, notice_cuts, worsen_cuts, PR_CUT, PU_BONUS, 0},
 	{IDX(TIMED_FOOD) 65, notice_food, 0, PR_HUNGER, PU_BONUS, 0},
-	{IDX(TIMED_VAMP) 76, notice_nothing, 0, 0, 0, 0},
+	{IDX(TIMED_VAMP) 75, notice_nothing, 0, 0, 0, 0},
 };
 
 /*
