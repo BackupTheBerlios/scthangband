@@ -3431,65 +3431,26 @@ static void win_object_details_display(void)
 		object_char(o_ptr), object_desc_f3, o_ptr, TRUE, 3);
 }
 
-/* The option currently selected */
-#define MAX_HELP_STRS	5
-#define CUR_HELP_STR	help_str_list[help_strs]
-static cptr help_str_list[MAX_HELP_STRS];
-static int help_strs = 0;
-
-/*
- * Remember or forget a help request. Only the latest one is
- * currently processed.
- */
-void help_track(cptr str)
-{
-	/* Remove one. */
-	if (!str)
-	{
-		if (help_strs) help_strs--;
-	}
-	else
-	{
-		/* Too many strings memorised. */
-		if (help_strs == MAX_HELP_STRS-1)
-		{
-			int i;
-			for (i = 1; i < MAX_HELP_STRS; i++)
-			{
-				help_str_list[i-1] = help_str_list[i];
-			}
-		}
-		else
-		{
-			help_strs++;
-		}
-	
-		/* Set the current string */
-		CUR_HELP_STR = str;
-	}
-
-	/* Window stuff */
-	if (!is_keymap_or_macro()) p_ptr->window |= PW_HELP;
-}
-
 /*
  * Return whether PW_HELP is interesting.
  */
 static bool win_help_good(void)
 {
 	/* There's a help hook present (should check for actual help). */
-	return (help_strs != 0);
+	return (cur_help_str() != NULL);
 }
 
 /*
  * Display some help text. 
  */
-void win_help_display(void)
+static void win_help_display(void)
 {
-	/* Nothing to show. */
-	if (!help_strs) return;
+	cptr s = cur_help_str();
 
-	display_help_page(CUR_HELP_STR);
+	/* Nothing to show. */
+	if (!s) return;
+
+	display_help_page(s);
 }
 
 /*

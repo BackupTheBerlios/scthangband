@@ -550,36 +550,6 @@ static void do_cmd_options_autosave(cptr info)
 }
 
 /*
- * Display help in the main window. Remove it at the next keypress.
- */
-void display_help(cptr help)
-{
-	/* Save the screen somewhere. */
-	int t = Term_save_aux();
-	bool v;
-
-	/* Display the help, if any. */
-	if (help) help_track(help);
-
-	/* Show the help. */
-	clear_from(0);
-	win_help_display();
-
-	/* Ask for a keypress without a visible cursor. */
-	Term_get_cursor(&v);
-	Term_set_cursor(0);
-	inkey();
-	Term_set_cursor(v);
-
-	/* Restore the screen. */
-	Term_load_aux(t);
-	Term_release(t);
-
-	/* Forget the help, if any. */
-	if (help) help_track(NULL);
-}
-
-/*
  * Display a text file on screen. Returns success or failure.
  */
 static bool showfile(cptr name, byte col)
@@ -800,7 +770,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case '?':
 			{
 				/* Hack - show help on the main term. */
-				display_help(option_info[opt[k]].o_text);
+				show_link(option_info[opt[k]].o_text);
 				break;
 			}
 			default:
@@ -1049,7 +1019,7 @@ static void do_cmd_options_redraw(void)
 			case '?':
 			{
 				/* Hack - show help on the main term. */
-				display_help(NULL);
+				show_link(NULL);
 				break;
 			}
 			default:

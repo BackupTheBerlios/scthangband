@@ -3985,6 +3985,56 @@ static int num_links;
 
 #define MAX_LINKS 1024
 
+/* The option currently selected */
+#define MAX_HELP_STRS	5
+#define CUR_HELP_STR	help_str_list[help_strs-1]
+static cptr help_str_list[MAX_HELP_STRS];
+static int help_strs = 0;
+
+/*
+ * Return the currently selected help string.
+ */
+cptr cur_help_str(void)
+{
+	if (help_strs) return CUR_HELP_STR;
+	else return NULL;
+}
+
+/*
+ * Remember or forget a help request. Only the latest one is
+ * currently processed.
+ */
+void help_track(cptr str)
+{
+	/* Remove one. */
+	if (!str)
+	{
+		if (help_strs) help_strs--;
+	}
+	else
+	{
+		/* Too many strings memorised. */
+		if (help_strs == MAX_HELP_STRS)
+		{
+			int i;
+			for (i = 1; i < MAX_HELP_STRS; i++)
+			{
+				help_str_list[i-1] = help_str_list[i];
+			}
+		}
+		else
+		{
+			help_strs++;
+		}
+	
+		/* Set the current string */
+		CUR_HELP_STR = str;
+	}
+
+	/* Window stuff */
+	if (!is_keymap_or_macro()) p_ptr->window |= PW_HELP;
+}
+
 /*
  * Attempt to open a file in a standard Angband directory for show_file_aux().
  */
@@ -4684,14 +4734,7 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 		else if (k == '\r')
 		{
 			link_det *ld_ptr = &h_ptr->link[h_ptr->cur_link];
-			if (ld_ptr->x != -1)
-			{
-				cptr link = ld_ptr->tag;
-				cptr file = link_name_to_file(link);
-
-				/* Recurse on that file */
-				k = show_file_aux(file, NULL, link);
-			}
+			if (ld_ptr->x != -1) k = show_link(ld_ptr->tag);
 		}
 		else
 		{
@@ -4732,6 +4775,26 @@ void show_file(cptr name, cptr what)
 	add_resize_hook(resize_inkey);
 	show_file_aux(name, what, 0);
 	delete_resize_hook(resize_inkey);
+}
+
+/*
+ * Given the name of a link, show the file which contains it.
+ * If link is NULL, use the help last requested.
+ */
+char show_link(cptr link)
+{
+	if (!link) link = cur_help_str();
+	if (link)
+	{
+		cptr file = link_name_to_file(link);
+		return show_file_aux(file, NULL, link);
+	}
+	/* Paranoia - no links available. */
+	else
+	{
+		bell("No help string selected!");
+		return 0;
+	}
 }
 
 static void init_links(void)

@@ -2969,7 +2969,7 @@ void process_command(void)
 		/* Debug help. */
 		case CMD_DEBUG+'?':
 		{
-			display_help("brief debug");
+			show_link("brief debug");
 			break;
 		}
 		
