@@ -4717,18 +4717,19 @@ static void init_stuff(void)
  */
 static bool broken_ascii(void)
 {
-	OSVERSIONEX Dozeversion;
+	OSVERSIONINFO Dozeversion;
  	Dozeversion.dwOSVersionInfoSize = sizeof(Dozeversion);
+
 	if (GetVersionEx((OSVERSIONINFO*) &Dozeversion))
 	{
 		/* Win XP is b0rken */
-		if ((Dozeversion.dwPlatformId == VER_PLATFORM_WIN32_NT)
-			&& (Dozeversion.dwMajorVersion > 5))
+		if ((Dozeversion.dwPlatformId == VER_PLATFORM_WIN32_NT) &&
+			(Dozeversion.dwMajorVersion > 5))
 		{
 			return (TRUE);
 		}
 	}
-	
+
 	return (FALSE);
 }
 
