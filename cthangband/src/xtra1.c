@@ -3931,9 +3931,6 @@ static void win_visible_display(void)
 	FREE(who);
 }
 
-#define WFX ((current_function == FUNC_TARGET_SET) ? target_col : px)
-#define WFY ((current_function == FUNC_TARGET_SET) ? target_row : py)
-
 
 /*
  * Check whether the floor display is "interesting".

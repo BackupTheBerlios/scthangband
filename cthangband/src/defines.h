@@ -326,9 +326,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define BMP_FIRST_PC_RACE 128
 
 
-/* Some flags for specific functions. */
-#define FUNC_TARGET_SET	1
-
 /*
  * Maximum array bounds for template based arrays
  */
