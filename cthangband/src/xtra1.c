@@ -713,7 +713,14 @@ static void health_redraw(void)
 
 #ifdef DRS_SHOW_HEALTH_BAR
 
-	cptr str;
+	cptr str, smb;
+	int pct, len = 0;
+
+	monster_type *m_ptr = &m_list[health_who];
+
+	/* Default to almost dead */
+	char attr = 'r';
+	smb = "**********";
 
 	/* Not tracking */
 	if (!health_who)
@@ -746,14 +753,7 @@ static void health_redraw(void)
 	/* Tracking a visible monster */
 	else
 	{
-		int pct, len;
-		const char *smb;
-
-		monster_type *m_ptr = &m_list[health_who];
-
-		/* Default to almost dead */
-		char attr = 'r';
-		smb = "**********";
+		str = "[----------]";
 
 		/* Extract the "percent" of health */
 		pct = 100L * m_ptr->hp / m_ptr->maxhp;
@@ -786,13 +786,13 @@ static void health_redraw(void)
 		}
 		/* Convert percent into "health" */
 		len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
-
-		/* Default to "unknown" */
-		put_str("[----------]", GET_YX(XY_INFO));
-
-		/* Dump the current "health" (use '*' symbols) */
-		mc_put_fmt(GET_YX(XY_INFO), "$%c%.*s", attr, len, smb);
 	}
+
+	/* Default to "unknown" */
+	put_str(str, GET_YX(XY_INFO));
+
+	/* Dump the current "health" (use '*' symbols) */
+	mc_put_fmt(GET_YX(XY_INFO), "$%c%.*s", attr, len, smb);
 
 #endif
 
