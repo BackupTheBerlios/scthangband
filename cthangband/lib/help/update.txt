@@ -1,8 +1,216 @@
-Cthangband
-Based on Zangband 2.1.0e
+sCthangband
+Based on Cthangband 4.1.0b and Zangband 2.1.0e
 
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
+
+sCthangband 1.0.1 changes
+Remove the level feelings delay (although the original behaviour exists as an
+option), as it can make the difference between being given a level feeling
+before you clear a level and getting one afterwards.
+
+Separate the magic device skill from the pseudoid one. The latter is now
+trained by pseudo-identifying items as something other than average, and
+randomly gives strong and weak pseudo-id at skill levels between 20 and 60.
+In addition, pseudo-id frequency increases with every point of skill gained
+rather than every other one.
+
+Create a "hit" command which does nothing else.
+
+Make actions which took either 50 or 100 energy take either half as much or
+as much as walking a step so that rods can be somewhat useful later on.
+
+Increase the energy per turn from 100 to 1000, thereby decreasing the number of
+blows per turn a player with 8 blows per turn has from 8 1/3 to exactly 8.
+
+Rename mages as wizards, as I've read stories involving wizards...
+
+Make the quit command messages a bit more in-theme.
+
+Compare the stat effects of an item with those of the currently equipped
+item in the same slot when examined with 'I'.
+
+Use the a_info and e_info prices for objects even if they have some random
+abilities.
+
+Add documentation for commands, options and some prompts.
+
+Create a window flag to show help on a command, option or prompt.
+
+Create a z_info.txt file to set the maximum number of objects and monsters,
+the maximum lengths of their names, the maximum sizes of the other arrays
+derived from files in lib/edit and the length of the autoroller delay at
+runtime.
+
+Reset all keymaps with C:---reset---.
+
+Only give stat/ability bonuses in the names of objects if there is exactly one.
+
+Only use the randart valuation mechanism for calculating the value of the random
+features of an item which has random flags rather than all of them.
+
+Saved stats are now used as the defaults for the autoroller.
+
+Display maximum and current chi total in the character screen, make the other
+displays more compact.
+
+Use the average discount when piles are combined.
+
+Make the knowledge screens a bit more colourful, with a picture for each entry
+and a darker colour for dead uniques. As this uses the show_file function
+copied from ToME, it shares the bug whereby a monster represented by ] cannot
+have its true colour.
+
+Create an auto_more option to cause --more-- prompts to be cleared immediately.
+
+Create a macro_edit option to allow the use of number keys to edit strings to
+be turned on or off with a keypress. If this is on, TAB causes the prompt to
+switch between edit mode and insert mode. If it is off, numbers entered via
+macros are counted as edit commands, and ones entered directly as numbers to be
+inserted.
+
+Remove bypass_prompt (off), and allow "p\n" to select the default spirit.
+
+Remove disturb_other (off), as the inscription equivalent is easy to use.
+
+Remove hp_alert (on), as setting the level to 0% works as well.
+
+Update z-virt.c and mai*-x11.c to 3.0.0 version. I haven't changed the others as
+I haven't tried to get big screen to work with the main map yet.
+
+Unset cheat_item at birth.
+
+Make inscribe_depth apply to every object which is created if set.
+
+Create a "dimension door" function to handle every attempt to do this.
+
+Make identify_fully_aux() use a single array containing both the info[] and
+info_a[] fields. Use an empty element to indicate the end of the used array.
+Remove the redundant f? variables.
+
+Rearrange init?.c to be more like Angband 3.0.0, except that there is only one
+local header which is wiped after each file is parsed, the pointer used in most
+of the parsing functions is passed through init_info_txt() rather than being
+declared static, and the fake arrays (including a fake info array provided to
+allow the size of the info array to be determined as it is parsed) remain for
+most of initialisation.
+
+The game ignores the last few elements of m_list[], k_info[], etc., in a save
+file rather than refusing to load it. It prints a message as it does so so that
+the player can abort if removing an item was a mistake.
+
+Remove the redundant object_absorb_2() function.
+
+Use a function to determine the keymap in use, and one to determine which keymap
+to use rather than looking them up in the code.
+
+Turn makefile.org into the makefile I normally use.
+
+Make the overhead map use as much of the current term as is possible.
+
+Make mystic_armour_aux and ma_heavy_armor() local to calc_bonuses().
+
+Replace tmpnam() with mkstemp() where available.
+
+Tidy up the printing of inscriptions on an object a bit, only briefly using the
+format buffer for temporary storage rather than creating several large strings
+which are usually unused. Remove the call to snprintf() from it.
+
+Make monster_desc() respect MNAME_MAX.
+
+Rename o_ptr as o1_ptr in object_desc(), in preparation for moving most of the
+attempts to examine the object to an object generated from it by
+object_info_known(). I haven't started to do so yet, however.
+
+Unsetting flow_by_sound disables flow_by_smell.
+
+Place option_force[] in tables.c instead of cmd4.c.
+
+Make ? give help on a selected option (in a hackish way - I intend to make this
+sort of thing work by changing the current window display).
+
+Move cheat options into option_info to unify the handling functions.
+
+Remove a few potentially harmful user-initiated buffer overruns.
+
+Create a rand_range_test() function to decide where a constant was in relation
+to a random range.
+
+Give an informative message when a pref file loads/doesn't load.
+
+Put most of load_all_pref_files() in user.prf, and make this safe to do before
+rp_ptr and cp_ptr have been initialised.
+
+Objects now lose the IDENT_SENSE_POWER flag as they become better identified,
+and *identified* items cannot be called "powerful".
+
+Make quark_str(0) return "", as this is often a good thing.
+
+Make item_activation() return an error message rather than a null pointer if
+no activation is found, remove the attempts to use this function as a guide
+to whether an object has an activation as identify_fully_aux() attempts to
+read any null pointer it gets. I don't know how an object got a null activation
+at present.
+
+Prevent black reavers from disturbing the player simply by moving if
+disturb_move is unset. This was particularly odd as this disturbance doesn't
+occur once the reaver does come into view.
+
+Respect SF_SKILL_BASE on saving as well as loading.
+
+Provide a SF_SAVE_MAXSKILL flag to determine whether the total number of skills
+should be saved. Note that the last skill is forgotten if this decreases.
+
+Make the help for show_details accurate.
+
+Remove HIDE_TYPES from some objects and ego items, and all artefacts.
+
+Put the inner workings of display_player_skills() in a separate function for
+clarity.
+
+Create separate functions to calculate the energy taken by mindcraft and
+shamanism.
+
+Remove the do_cmd_stay() call from do_cmd_invoke().
+
+Separate the handling of spoil_stat from identify_fully_get(). Make it read a
+few more values from update_stuff() rather than trying to calculate them itself.
+
+Stop spoil_value from giving the real value of an object which has not been
+*identified* yet.
+
+Fix the "hidden message" problem from being introduced to a spirit.
+
+Fix a bug whereby the first object in a shop's inventory was not checked for
+stacking with an object the player was trying to sell.
+
+Change the description of classes of monster to account for the changes in what
+symbol is used for each monster.
+
+Change Term_save() so that several images can be saved from a term at once. This
+does mean that failing to load a term, or loading it twice, can cause problems.
+The return code from Term_load() is not handled, although the program should do
+something if the window has changed size since it was saved.
+
+Fix a bug whereby identified katanas were still called "Samurai Swords". I
+hadn't realised how simple it was...
+
+Provide a ^U (^Z with roguelike keyset) function which carries out the unified
+object action whether or not unify_commands is set.
+
+Change the "Enter shop" key to ^E so that it can have a macro assigned to it
+without disruption.
+
+Remove the time/date display from do_cmd_version(). As they were based on a
+macro, rebuilding this file every time was becoming annoying, and not
+rebuilding it made it inaccurate.
+
+Stop window_stuff() from being called in the middle of a macro.
+
+...
+Changes between Cthangband 4.1.0 and sCthangband 1.0.1 will be added in due
+course.
+...
 
 Cthangband 4.1.0 (the first under the maintainership of David Thornley)
 * Any character starting with Shaman skill gets one free spirit bound.
