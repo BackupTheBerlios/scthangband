@@ -2814,11 +2814,13 @@ logaux(x, 1) logaux(x, 0) 255
 
 /* Try to mark unused variables as such in a way the compiler understands. */
 #ifdef __GNUC__
-#define UNUSED __attribute__((unused)) unused
+#define UNUSED __attribute__((unused))
 #else
-#define UNUSED unused
+#define UNUSED
 #endif
 
+/* A default value for things which don't really need one. */
+#define UNREAD_VALUE	0
 
 /*
  * Determine if a given inventory item is "aware"

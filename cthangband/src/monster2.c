@@ -455,7 +455,7 @@ static void set_ghost_aux_2(void)
  * we do not really need a "full" random seed, we could just use a
  * random value from which random numbers can be extracted.  (?)
  */
-static void set_ghost(cptr pname, int hp, int grace, int gclass, int lev)
+static void set_ghost(cptr pname, int hp, int grace, int UNUSED gclass, int lev)
 {
 	int i;
 

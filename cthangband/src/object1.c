@@ -5143,7 +5143,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				int i, start, end, best;
 				bool high = strchr("Xx", which);
 				bool upper = isupper(which);
-				s32b best_price;
+				s32b best_price = UNREAD_VALUE;
 				if (command_wrk)
 				{
 					start = INVEN_WIELD-1;

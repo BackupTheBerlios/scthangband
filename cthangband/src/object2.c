@@ -3518,12 +3518,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr, int level, int power)
+static void a_m_aux_4(object_type *o_ptr, int UNUSED level, int UNUSEDpower)
 {
-	/* XXX XXX XXX */
-	level = (0, level);
-	power = (0, power);
-
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
 	{
@@ -4304,7 +4300,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	int dy, dx;
 	int ty, tx;
 
-	s16b o_idx;
+	s16b o_idx = UNREAD_VALUE;
 
 	s16b this_o_idx, next_o_idx = 0;
 

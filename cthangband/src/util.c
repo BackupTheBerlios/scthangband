@@ -190,7 +190,7 @@ void user_name(char *buf, int id)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-errr path_parse(char *buf, int max, cptr file)
+errr path_parse(char *buf, int UNUSED max, cptr file)
 {
 	cptr		u, s;
 	struct passwd	*pw;
@@ -2324,7 +2324,7 @@ static void msg_flush(int x)
  */
 void msg_print(cptr msg)
 {
-	static p = 0;
+	static int p = 0;
 
 	int n;
 

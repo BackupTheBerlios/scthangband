@@ -116,10 +116,6 @@ struct feature_type
 
 	byte mimic;			/* Feature to mimic */
 
-	byte extra;			/* Extra byte (unused) */
-
-	s16b unused;		/* Extra bytes (unused) */
-
 	byte d_attr;		/* Object "attribute" */
 	char d_char;		/* Object "symbol" */
 
@@ -177,8 +173,6 @@ struct object_kind
 	char x_char;		/* Desired object character */
 
 	u16b u_idx;	/* The u_info[] entry which represents this item. */
-
-	bool easy_know;		/* Unused */
 
 	bool aware;			/* The player is "aware" of the item's effects */
 
@@ -345,8 +339,6 @@ struct monster_race
 
 	s32b mexp;				/* Exp value for kill */
 
-	s16b extra;				/* Unused (for now) */
-
 	byte freq_inate;		/* Inate spell frequency */
 	byte freq_spell;		/* Other spell frequency */
 
@@ -385,9 +377,6 @@ struct monster_race
 
 	byte r_wake;			/* Number of times woken up (?) */
 	byte r_ignore;			/* Number of times ignored (?) */
-
-	byte r_xtra1;			/* Something (unused) */
-	byte r_xtra2;			/* Something (unused) */
 
 	byte r_drop_gold;		/* Max number of gold dropped at once */
 	byte r_drop_item;		/* Max number of item dropped at once */
@@ -647,8 +636,6 @@ struct alloc_entry
 	byte prob1;		/* Probability, pass 1 */
 	byte prob2;		/* Probability, pass 2 */
 	byte prob3;		/* Probability, pass 3 */
-
-	u16b total;		/* Unused for now */
 };
 
 
@@ -739,8 +726,6 @@ struct owner_type
 	byte insult_max;	/* Insult limit */
 
 	byte owner_race;	/* Owner race */
-
-	byte unused;		/* Unused */
 };
 
 
@@ -761,7 +746,6 @@ struct store_type
 	byte type;               /* Type of store */ 
 	byte bought;             /* Flag for player purchase (only used on houses) */
 	byte owner;			  /* Owner index */
-	byte extra;				/* Unused for now */
 
 	s16b insult_cur;		/* Insult counter */
 
@@ -769,8 +753,6 @@ struct store_type
 	s16b bad_buy;			/* Number of "bad" buys */
 
 	s32b store_open;		/* Closed until this turn */
-
-	s32b store_wrap;		/* Unused for now */
 
 	s16b table_num;			/* Table -- Number of entries */
 	s16b table_size;		/* Table -- Total Size of Array */
@@ -962,7 +944,6 @@ struct player_type
 	byte psex;			/* Sex index */
 	byte prace;			/* Race index */
 	byte ptemplate;		/* Template index */
-	byte oops;			/* Unused */
 
 	byte hitdie;		/* Hit dice (sides) */
     u16b expfact;       /* Experience factor

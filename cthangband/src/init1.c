@@ -2031,7 +2031,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 
 			/* Save the values */
 			k_ptr->level = level;
-			k_ptr->extra = extra;
+/*			k_ptr->extra = extra;*/
 			k_ptr->weight = wgt;
 			k_ptr->cost = cost;
 
@@ -3330,7 +3330,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			/* Save the values */
 			r_ptr->level = lev;
 			r_ptr->rarity = rar;
-			r_ptr->extra = pad;
+/*			r_ptr->extra = pad;*/
 			r_ptr->mexp = exp;
 
 			/* Next... */
