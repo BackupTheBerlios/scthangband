@@ -1957,13 +1957,6 @@ char inkey(void)
 	Term_activate(term_screen);
 
 
-	/* Update windows if waiting. */
-	if (inkey_base || !inkey_scan)
-	{
-		window_stuff();
-	}
-
-
 	/* Get a key */
 	while (!ch)
 	{
@@ -1978,6 +1971,9 @@ char inkey(void)
 		/* Hack -- Flush output once when no key ready */
 		if (!done && (0 != Term_inkey(&kk, FALSE, FALSE)))
 		{
+			/* Update windows if waiting. */
+			window_stuff();
+
 			/* Hack -- activate proper term */
 			Term_activate(old);
 
