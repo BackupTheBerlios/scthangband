@@ -632,12 +632,10 @@ This option causes level feelings to be given after 2500 turns on the level inst
 %%%%% <option=Q>
 === Squelch options ===
 
-This menu controls which objects the game will hide as the player walks over them. In the first menu, you may choose an object category from which to modify
-the squelch settings. You may also save the current settings or temporarily
-disable squelching altogether (useful for the *****general.txt*03[reveal object command], which usually uses a keymap to do this).
+This menu controls which objects the game will hide as the player walks over them. In the first menu, you may choose an object category from which to modify the squelch settings. You may also save the current settings or temporarily disable squelching altogether (useful for the *****general.txt*03[reveal object command], which usually uses a keymap to do this).
 
-In the second menu, you can change the squelch settings for any or all of the indicated objects to the settings which are suitable for them. These range from
-"none", via various degrees of power and cursedness, to "all". Not all settings are available for every object.
+In the second menu, you can change the squelch settings for any or all of the indicated objects to the settings which are suitable for them. These range from "none", via various degrees of power and cursedness, to "all". Not all settings are available for every object.
 
-N.B. No squelch settings are stored in the save file, so they must be stored
-elsewhere to be retained from session to session. Also note that this system *****general.txt*02[hides] objects rather than *****general.txt*01[destroying] them.
+Things to note about these options include:
+1. No squelch settings are stored in the save file, so they must be saved if the player wishes to retain them from session to session.
+2. As squelched objects are *****general.txt*02[hidden] rather than *****general.txt*01[destroyed] them, squelching will not identify cursed artefacts immediately. However, squelched objects in inventory (although not on the floor) can be destroyed by destroying object z.

@@ -2790,15 +2790,15 @@ void notice_stuff(void)
 	/* Squelch floor things. */
 	if (p_ptr->notice & PN_FSQUELCH)
 	{
-		squelch_grid();
 		p_ptr->notice &= ~(PN_FSQUELCH);
+		squelch_grid();
 	}
 
 	/* Squelch inventory things. */
 	if (p_ptr->notice & PN_ISQUELCH)
 	{
-		squelch_inventory();
 		p_ptr->notice &= ~(PN_ISQUELCH);
+		squelch_inventory();
 	}
 
 	/* Combine the pack */

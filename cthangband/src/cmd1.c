@@ -540,6 +540,12 @@ void carry(int pickup)
 
 	bool gold_only = FALSE;
 
+	/* First check the pile for squelching opportunities. */
+	p_ptr->notice |= PN_FSQUELCH;
+	notice_stuff();
+
+	/* Then pick everything up. */
+
 	/* Scan the pile of objects */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{

@@ -1781,6 +1781,12 @@ static char inkey_aux(void)
  */
 static cptr inkey_next = NULL;
 
+/*
+ * *Hack* - a second such sequence which can be added from the game code
+ * as necessary. This is checked before the above.
+ */
+cptr inkey_gnext = NULL;
+
 
 #ifdef ALLOW_BORG
 
@@ -1898,6 +1904,22 @@ char inkey(void)
 
 	term *old = Term;
 
+
+	/* *Hack* - use the "inkey_gnext" pointer. */
+	if (inkey_gnext && *inkey_gnext && !inkey_xtra)
+	{
+		/* Get next character, and advance */
+		ch = *inkey_gnext++;
+
+		/* Cancel the various "global parameters" */
+		inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
+
+		/* Accept result */
+		return (ch);
+	}
+
+	/* Forget pointer */
+	inkey_gnext = NULL;
 
 	/* Hack -- Use the "inkey_next" pointer */
 	if (inkey_next && *inkey_next && !inkey_xtra)
@@ -4056,9 +4078,9 @@ void repeat_string_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  *
  * NB: The keys added here will be interpreted by any macros or keymaps.
  */
-errr type_string(char *str, uint len)
+errr type_string(cptr str, uint len)
 {
-	char *s;
+	cptr s;
 
 	term *old = Term;
 

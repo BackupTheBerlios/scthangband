@@ -17,61 +17,6 @@
 #define HIDE_ALL		6
 #define HIDE_CATS	7
 
-
-#define ITEM_SWORD			1
-#define ITEM_HAFTED			2
-#define ITEM_BLUNT			3
-#define ITEM_AXE                        4
-#define ITEM_BOOK_DAEM                  5
-#define ITEM_BOW                        6
-#define ITEM_AMMO                       7
-#define ITEM_DIGGER                     8
-
-#define ITEM_BODY_ARMOUR        9
-#define ITEM_DRAG_ARMOUR        10
-#define ITEM_OTHER_ARMOUR       11
-
-#define ITEM_RING                       12
-#define ITEM_AMULET                     13
-
-#define ITEM_POTION1            14
-#define ITEM_POTION2            15
-#define ITEM_SCROLL                     16
-#define ITEM_ROD                        17
-#define ITEM_STAFF                      18
-#define ITEM_WAND                       19
-
-#define ITEM_FOOD                       20
-#define ITEM_CRAP                       21
-#define ITEM_FIRESTONE          22
-#define ITEM_ESSENCE            23
-#define ITEM_PARCHMENT          24
-#define ITEM_INSTRUMENT         25
-#define ITEM_RUNE                       26
-#define ITEM_STONE                      27
-#define ITEM_BOOK_SPIR          28
-#define ITEM_BOOK_SONG          29
-#define ITEM_BOOK_SYMB          30
-
-#define ITEM_BOOK_VALA          31
-#define ITEM_BOOK_MAGE          32
-#define ITEM_BOOK_SHAD          33
-#define ITEM_BOOK_CHAO          34
-#define ITEM_BOOK_NETH          35
-#define ITEM_BOOK_CRUS          36
-#define ITEM_BOOK_SIGA          37
-#define ITEM_BOOK_MAGI          38
-#define ITEM_BOOK_PRAY          39
-#define ITEM_BOOK_ILLU          40
-#define ITEM_BOOK_TRIB          41
-
-#define ITEM_CORPSE                     42
-
-#define ITEM_MAX                        256
-
-
-static int cat_type[256];
-
 static byte *squelch_kind;
 
 /* Allow squelching to be disabled with an option. */
@@ -87,12 +32,6 @@ void init_squelch(void)
 	/* Create (and wipe) the kind array. */
 	squelch_kind = C_NEW(MAX_K_IDX, byte);
 	for (i = 0; i < MAX_K_IDX; i++) squelch_kind[i] = HIDE_NONE;
-
-	/* Assume that everything has its own category to start with. */
-	for (i = 0; i < 256; i++) cat_type[i] = i;
-
-	/* Gold has no category. */
-	cat_type[TV_GOLD] = 0;
 }
 
 /*
@@ -143,6 +82,9 @@ cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 		/* Set the squelch setting appropriately. */
 		squelch_kind[i] = l;
 	}
+
+	/* Give effect to the squelch settings (later) */
+	p_ptr->notice |= PN_ISQUELCH | PN_FSQUELCH;
 
 	/* If it gets this far, it worked. */
 	return SUCCESS;
@@ -389,6 +331,7 @@ static name_centry tval_names_squelch[] =
 	{TV_CLOAK,	"Cloak"},
 	{TV_RING,	"Ring"},
 	{TV_AMULET,	"Amulet"},
+	{TV_FOOD, "Food"},
 	{TV_POTION,	"Potion"},
 	{TV_SCROLL,	"Scroll"},
 	{TV_WAND,	"Wand"},
@@ -405,19 +348,26 @@ static name_centry tval_names_squelch[] =
  */
 static int get_category_tval(int tval)
 {
+	name_centry *ptr;
+
+	/* Special combined categories. */
 	switch (tval)
 	{
 		case TV_ARROW: case TV_BOLT: case TV_SHOT:
 			return TV_ARROW;
-		case TV_SKELETON: case TV_BOTTLE: case TV_JUNK: case TV_SPIKE:
-		case TV_LITE: case TV_FLASK: 
-			return TV_SKELETON;
 		case TV_SORCERY_BOOK: case TV_THAUMATURGY_BOOK:
 		case TV_CONJURATION_BOOK: case TV_NECROMANCY_BOOK:
 			return TV_SORCERY_BOOK;
-		default:
-			return tval;
 	}
+
+	/* Single categories in the above table. */
+	FOR_ALL_IN(tval_names_squelch, ptr)
+	{
+		if (ptr->idx == tval) return tval;
+	}
+
+	/* Default category. */
+	return TV_SKELETON;
 }
 
 /*
@@ -731,12 +681,11 @@ void do_cmd_options_squelch(void)
 
 	}/* category Selection */
 
+	/* Give effect to the squelch settings (later) */
+	p_ptr->notice |= PN_ISQUELCH | PN_FSQUELCH;
+
 	/* Free the temporary name buffer. */
 	TFREE(bufx);
-
-	/* Squelch stuff as needed (later). */
-	p_ptr->notice |= PN_FSQUELCH | PN_ISQUELCH;
-
 	return;
 }
 
@@ -783,11 +732,10 @@ static int PURE object_quality(object_ctype *o_ptr)
  * of the program can be a bit strange.
  * Broken items get squelched with cursed. Is that right?	
  * Items sensed as 'uncursed' but not known are ignored.
- *
- * Hack - objects inscribed by inscribe_depth are never squelched.
- */   
+ */
 static PURE bool destroy_it(object_ctype *o1_ptr)
 {
+	cptr s;
 	object_type o_ptr[1];
 
 	/* Unsetting allow_squelch prevents all squelching. */
@@ -798,8 +746,9 @@ static PURE bool destroy_it(object_ctype *o1_ptr)
 	/* Don't hide hidden things. */
 	if (hidden_p(o_ptr)) return FALSE;
 
-	/* Inscribed things won't be destroyed! */
-	if (strstr(quark_str(o_ptr->note), "!k")) return FALSE;
+	/* Things inscribed with !k or !K won't be destroyed! */
+	s = quark_str(o_ptr->note);
+	while ((s = strchr(s, '!'))) if (strchr("Kk", s[1])) return FALSE;
 
 	/*
 	 * Other things are destroyed if the "destroy" setting is at least as good
@@ -809,49 +758,138 @@ static PURE bool destroy_it(object_ctype *o1_ptr)
 }
 
 
-/* Check the floor for "crap" */
-void squelch_grid(void)
+/*
+ * If o_ptr points to a stack of objects in which one or more is to be
+ * squelched, set *o_ptr to the object after it and return TRUE.
+ * Otherwise, set *o_ptr to NULL and return FALSE.
+ */
+static bool squelch_object(object_type **o_ptr)
 {
-	int o_idx;
-
-	/* Scan the pile of objects */
-	for (o_idx = cave[py][px].o_idx; o_idx; o_idx = o_list[o_idx].next_o_idx)
+	/* Find the next squelched object, if any. */
+	for (; *o_ptr; next_object(o_ptr))
 	{
-		/* Acquire object */
-		object_type *o_ptr = o_list+o_idx;
-
-		/* Do we want it? */
-		if (destroy_it(o_ptr))
+		if (destroy_it(*o_ptr))
 		{
-			/* Print a message */
-			msg_format("Hiding %v.", object_desc_f3, o_ptr, TRUE, 3);
+			/* Highlight this object. */
+			object_track(*o_ptr);
 
-			/* Destroy the item */
-			object_hide(o_ptr);
+			/* Return the next object, as this one may not exist later. */
+			next_object(o_ptr);
+
+			return TRUE;
 		}
 	}
+
+	/* Nothing left to squelch, so finish. */
+	return FALSE;
+}
+
+
+/*
+ * Process a sequence of commands to squelch a stack of objects.
+ * Finish once the player has examined (and possibly squelched) everything,
+ * if any of the commands take energy or if various "impossible" things happen.
+ *
+ * This should be similar to (but simpler than) process_player(), 
+ *
+ * This messes around with keymaps in order to allow keymap to be a sequence
+ * of keypresses to execute for every squelched object. It would not work if
+ * inkey() did anything more complex than advance inkey_next or set it to 0.
+ *
+ * These commands should take no energy, although the game will simply stop
+ * processing after the first command which does take energy if it does so.
+ *
+ * The object being squelched will always be accessible as ! at the first
+ * command,start as !, but any action which may involve other objects should
+ * inscribe the object appropriately beforehand.
+ *
+ * If there is a keymap in operation as squelching begins, the command sequence
+ * here is added to the beginning of it and it is used for any additional
+ * keypresses the game requires when processing each object. The keymap given
+ * here is reapplied whenever the game reaches the command prompt after it has
+ * finished one iteration.
+ */
+static void process_objects(object_type *o_ptr)
+{
+	cptr keymap = "K!";
+
+	/* Remember how much energy should really be used. */
+	int old_energy_use = energy_use;
+
+	/* Nothing to do if squelching is disabled. */
+	if (!allow_squelch) return;
+
+	/* Place the cursor on the player */
+	move_cursor_relative(py, px);
+
+	/* Repeat until some energy is used. */
+	for (energy_use = 0; !energy_use && o_ptr; )
+	{
+		/* Notice stuff (if needed) */
+		if (p_ptr->notice) notice_stuff();
+
+		/* Update stuff (if needed) */
+		if (p_ptr->update) update_stuff();
+
+		/* Redraw stuff (if needed) */
+		if (p_ptr->redraw) redraw_stuff();
+
+
+		/* Refresh (optional) */
+		if (fresh_before) Term_fresh();
+
+		/* Select a new squelched object if the old one is finished with. */
+		if (!inkey_gnext || !*inkey_gnext)
+		{
+			/* Find the next object. */
+			if (!squelch_object(&o_ptr))
+			{
+				/* None left. */
+				break;
+			}
+
+			/* Start the keymap again. */
+			inkey_gnext = keymap;
+		}
+
+		/* Weird conditions. */
+		if (p_ptr->paralyzed || p_ptr->stun >= 100 || resting || running ||
+			command_rep || !alive || death || new_level_flag || command_rep ||
+			inventory[INVEN_PACK].k_idx)
+		{
+			break;
+		}
+
+		/* Get a command (normal) */
+		request_command(FALSE);
+
+		/* Hack - let the player clear any pending keys. */
+		msg_print(NULL);
+
+		/* Process the command */
+		process_command();
+	}
+
+	/* Add back the energy which was used initially. */
+	energy_use += old_energy_use;
 }
 
 /*
- * Check the inventory for "crap"
- * This object does not disappear immediately, but it will appear in a special
- * way in the inventory and can be selected at any option prompt with !.
+ * Start searching the floor for "crap".
+ * Return FALSE if the game is already squelching something.
+ * Unset PN_FSQUELCH, as t
+ */
+void squelch_grid(void)
+{
+	int o = cave[py][px].o_idx;
+	if (o) process_objects(o_list+o);
+}
+
+/*
+ * Start searching the inventory for "crap".
+ * Return FALSE if the game is already squelching something.
  */
 void squelch_inventory(void)
 {
-	int i;
-
-	for (i=0; i<INVEN_PACK; i++)
-	{
-		object_type *o_ptr = &inventory[i];
-
-		/* Do we want it? */
-		if (!destroy_it(o_ptr)) continue;
-
-		/* Print a message */
-		msg_format("Hiding %v.", object_desc_f3, o_ptr, TRUE, 3);
-				
-		/* Hide the item. */
-		object_hide(o_ptr);
-	}
+	process_objects(inventory+INVEN_TOTAL-1);
 }

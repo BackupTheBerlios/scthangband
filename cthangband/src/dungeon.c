@@ -3705,7 +3705,7 @@ static void dungeon(void)
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_QUIET);
 
 	/* Combine / Reorder the pack */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_FSQUELCH);
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Notice stuff */
 	notice_stuff();
@@ -3731,6 +3731,10 @@ static void dungeon(void)
 	{
 		msg_print("You suddenly feel that you can't go on.");
 	}
+
+	/* Squelch stuff now the initial messages have been given. */
+	p_ptr->notice |= (PN_FSQUELCH);
+
 
 	/*** Process this dungeon level ***/
 

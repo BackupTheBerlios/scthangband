@@ -4095,7 +4095,7 @@ static void get_item_valid(object_type **o_ptr, bool *done, bool ver)
  * Set *o_ptr to the next object in a stack, if known.
  * Set *o_ptr to NULL if none known.
  */
-static void next_object(object_type **o_ptr)
+void next_object(object_type **o_ptr)
 {
 	/* Get the next object to squelch, if any. */
 	if (is_inventory_p(*o_ptr))
