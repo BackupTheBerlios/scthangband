@@ -2681,10 +2681,6 @@ static magic_type mindcraft_powers[12] =
 		0, SKILL_MINDCRAFTING, SKILL_NONE, SP_TELEKINETIC_WAVE},
 };
 
-/* Reduce the repetition in passing an array and its size. */
-#define ARRAY(A) \
-	A, N_ELEMENTS(A)
-
 book_type book_info[MAX_BK] =
 {
 	{IDX(BK_SORC_0) ARRAY(sorcery_spells_0), 0},

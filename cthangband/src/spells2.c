@@ -3068,16 +3068,12 @@ static bool combined_bonus(object_type *o_ptr, int *bias,
 		unbiased_bonus(o_ptr, bias, uarray, unum));
 }
 
-/* Reduce the repetition in passing an array and its size. */
-#define ARRAY(A) \
-	A, N_ELEMENTS(A)
-
 bool create_artifact(object_type *o_ptr, bool a_scroll)
 {
 	char new_name[80] = "";
 	int has_pval = 0;
 	int powers = randint(5) + 1;
-	int max_type = (o_ptr->tval<TV_BOOTS?7:5);
+	int max_type = is_weapon(o_ptr) ? 7 : 5;
 	int power_level;
 	s32b total_flags;
 	bool a_cursed = FALSE;
@@ -3151,7 +3147,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	}
 
 	/* give it some plusses... */
-	if (o_ptr->tval>=TV_BOOTS)
+	if (!is_weapon(o_ptr))
 		o_ptr->to_a += randint(o_ptr->to_a>19?1:20-o_ptr->to_a);
 	else
 	{
@@ -3164,16 +3160,15 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 	if (a_cursed) curse_artifact(o_ptr);
 
-	if ((!a_cursed)
-		&& (randint((o_ptr->tval>=TV_BOOTS)
-		?ACTIVATION_CHANCE * 2:ACTIVATION_CHANCE)==1))
+	if (!a_cursed && one_in(!is_weapon(o_ptr) ? ACTIVATION_CHANCE * 2
+		: ACTIVATION_CHANCE))
 	{
 		o_ptr->activation = 0;
 		give_activation_power(o_ptr);
 	}
 
 
-	if(o_ptr->tval>=TV_BOOTS)
+	if (!is_weapon(o_ptr))
 	{
 		if (a_cursed) power_level = 0;
 		else if (total_flags<10000) power_level = 1;
@@ -3214,7 +3209,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 	else
 
-		get_random_name(new_name, (o_ptr->tval >= TV_BOOTS), power_level);
+		get_random_name(new_name, !is_weapon(o_ptr), power_level);
 
 	if (cheat_xtra)
 	{
