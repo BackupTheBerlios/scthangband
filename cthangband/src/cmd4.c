@@ -621,7 +621,7 @@ static bool opt_is_forced(int i)
 /*
  * Modify various globals when an option is set/unset.
  */
-static void opt_special_effect(const option_type * const op_ptr)
+void opt_special_effect(const option_type * const op_ptr)
 {
 	if (op_ptr->o_page == OPTS_CHEAT)
 	{
@@ -633,28 +633,34 @@ static void opt_special_effect(const option_type * const op_ptr)
 	}
 }
 
+
 /*
  * Interact with some options
  */
 void do_cmd_options_aux(int page, cptr info, cptr file)
-	{
+{
 	char	ch;
 
-	int	i, k = 0, n = 0;
+	int	i, k = 0, n;
 
-	int	opt[24];
+	int	opt[MAX_OPTS_PER_PAGE];
+	bool old_val[MAX_OPTS_PER_PAGE];
 
 	char	buf[80];
 
 
 	/* Lookup the options */
-	for (i = 0; i < 24; i++) opt[i] = 0;
+	for (i = 0; i < MAX_OPTS_PER_PAGE; i++) opt[i] = 0;
 
 	/* Scan the options */
-	for (i = 0; option_info[i].o_desc; i++)
+	for (i = n = 0; option_info[i].o_desc; i++)
 	{
 		/* Notice options on this "page" */
-		if (option_info[i].o_page == page) opt[n++] = i;
+		if (option_info[i].o_page == page)
+		{
+			old_val[n] = *option_info[i].o_var;
+			opt[n++] = i;
+		}
 	}
 
 
@@ -706,7 +712,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			sprintf(buf, "%-48s: %s  %s(%s)", option_info[opt[i]].o_desc,
 				state, effective, option_info[opt[i]].o_text);
 			c_prt(a, buf, i + 2, 0);
-}
+		}
 
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
@@ -724,13 +730,18 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 		switch (ch)
 		{
 			case ESCAPE:
-{
+			{
+				for (i = 0; i < n; i++)
+				{
+					if (old_val[i] != *option_info[opt[i]].o_var)
+						opt_special_effect(option_info+opt[i]);
+				}
 				return;
 			}
 
 			case '-':
 			case '8':
-	{
+			{
 				do {
 				k = (n + k - 1) % n;
 				} while(opt_is_forced(opt[k]));
@@ -753,7 +764,6 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case '6':
 			{
 				(*option_info[opt[k]].o_var) = TRUE;
-				opt_special_effect(option_info+opt[k]);
 				do {
 				k = (k + 1) % n;
 				} while(opt_is_forced(opt[k]));
@@ -765,7 +775,6 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case '4':
 			{
 				(*option_info[opt[k]].o_var) = FALSE;
-				opt_special_effect(option_info+opt[k]);
 				do {
 				k = (k + 1) % n;
 				} while(opt_is_forced(opt[k]));
@@ -776,7 +785,6 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case 'X':
 			{
 				(*option_info[opt[k]].o_var) ^= 1;
-				opt_special_effect(option_info+opt[k]);
 				do {
 				k = (k + 1) % n;
 				} while(opt_is_forced(opt[k]));

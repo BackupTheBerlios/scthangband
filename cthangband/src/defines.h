@@ -605,6 +605,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define OPTS_ALL_TO_FILE -12
 #define OPTS_HELP -13
 
+/* Maximum number of options in a do_cmd_options_aux() option set. */
+#define MAX_OPTS_PER_PAGE 24
+
 /*
  * Refueling constants
  */

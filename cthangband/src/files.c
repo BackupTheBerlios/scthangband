@@ -574,25 +574,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			}
 			else return (1);
 		}
-	
-	
-		/* Process "X:<str>" -- turn option off */
-		case 'X':
-		{
-			for (i = 0; option_info[i].o_desc; i++)
-			{
-				if (option_info[i].o_var &&
-				    option_info[i].o_text &&
-				    streq(option_info[i].o_text, buf + 2))
-				{
-					(*option_info[i].o_var) = FALSE;
-					return (0);
-				}
-			}
-			/* Not a real option. */
-			return (1);
-		}
-	
+
 		/* Process M:<attr>:<attr>... -- set monster memory colours */
 		case 'M':
 		{
@@ -617,17 +599,22 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 			return 0;
 		}
 		
-		/* Process "Y:<str>" -- turn option on */
-		case 'Y':
+		/* Process "Y:<str>"/"X:<str>" -- turn option on/off */
+		case 'Y': case 'X':
 		{
-			for (i = 0; option_info[i].o_desc; i++)
+			const option_type *op_ptr;
+			for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 			{
-				if (option_info[i].o_var &&
-				    option_info[i].o_text &&
-				    streq(option_info[i].o_text, buf + 2))
+				if (op_ptr->o_var && op_ptr->o_text &&
+				    !strcmp(op_ptr->o_text, buf + 2))
 				{
-					(*option_info[i].o_var) = TRUE;
-					return (0);
+					/* Set the option. */
+					(*op_ptr->o_var) = (buf[0] == 'Y');
+
+					/* Do whatever should be done for it. */
+					opt_special_effect(op_ptr);
+
+					return SUCCESS;
 				}
 			}
 			/* Not a real option. */
