@@ -642,18 +642,35 @@ static s16b find_string(char *buf, cptr *array)
 /* A few macros for use in the 'E' case in init_r_event_txt() */
 
 /* If one copy of chr exists within buf, return the integer immediately after it. */
-#define readnum(chr) ((!strchr(buf, chr)) ? -1 : (strchr(strchr(buf, chr)+1, chr)) ? -2 : atoi(strchr(buf, chr)+1))
+#define readnum(chr) \
+((!strchr(buf, chr)) ? -1 : \
+	(strchr(strchr(buf, chr)+1, chr)) ? -2 : \
+	atoi(strchr(buf, chr)+1))
 
 /* A separate routine to remove used number strings */
-#define clearnum(chr) {char *s; for (s = strchr(buf, chr); *s == chr || (*s >= '0' && *s <= '9'); s++) *s=' ';}
+#define clearnum(chr) \
+{ \
+	char *s; \
+	for (s = strchr(buf, chr); *s == chr || (*s >= '0' && *s <= '9'); s++) \
+		*s=' '; \
+}
 
 /* A routine to set x to be the number after a given letter, and then clear it from the text string. 
  * If there are no such flags, it does nothing. If there are more than one, it returns an error.
  * THIS ASSUMES THAT ALL VALID VALUES ARE NON-NEGATIVE
  */
-#define readclearnum(x, chr) if (readnum(chr) == -2) \
-	{msg_format("Too many '%c's!", chr);msg_print(NULL);return ERR_PARSE;} \
-	else if (readnum(chr) > -1) {x=readnum(chr); clearnum(chr);}
+#define readclearnum(x, chr) \
+if (readnum(chr) == -2) \
+{ \
+	msg_format("Too many '%c's!", chr); \
+	msg_print(NULL); \
+	return ERR_PARSE; \
+} \
+else if (readnum(chr) > -1) \
+{ \
+	x=readnum(chr); \
+	clearnum(chr); \
+}
 
 /*
  * A wrapper around find_string for info files.
@@ -925,12 +942,9 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					}
 #endif
 					find_string_info(k_name, k_info, MAX_K_IDX, i_ptr->k_idx);
-					if (lookup_kind(readnum('t'), readnum('s')))
+					if (readnum('k'))
 					{
-						byte t = 0,s = 0;
-						readclearnum(t, 't');
-						readclearnum(s, 's');
-						i_ptr->k_idx = lookup_kind(t,s);
+						readclearnum(i_ptr->k_idx, 'k');
 					}
 					if (i_ptr->flags & EI_ART)
 					{
