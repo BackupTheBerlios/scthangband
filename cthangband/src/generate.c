@@ -1053,7 +1053,8 @@ static void terrain_gen(void)
 				cave[y-14][x+i].info |= (CAVE_MARK | CAVE_GLOW);
 			}
 
-			if (~d_ptr->flags & DF_NIGHTTIME || !daytime_p())
+			if (~d_ptr->flags & DF_NIGHTTIME || came_from == START_STAIRS ||
+				!daytime_p())
 			{
 				/* Access the stair grid */
 				cave[y][x].feat=FEAT_LESS;
