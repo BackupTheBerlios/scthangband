@@ -1911,9 +1911,9 @@ static void vault_monsters(int y1, int x1, int num)
 			if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
 
 			/* Place the monster (allow groups) */
-			monster_level = (dun_level+dun_offset) + 2;
+			monster_level = (dun_depth) + 2;
 			(void)place_monster(y, x, TRUE, TRUE);
-			monster_level = (dun_level+dun_offset);
+			monster_level = (dun_depth);
 		}
 	}
 }
@@ -1950,7 +1950,7 @@ static void build_type1(int yval, int xval)
 
 
 	/* Choose lite or dark */
-	light = ((dun_level+dun_offset) <= randint(25));
+	light = ((dun_depth) <= randint(25));
 
 
 	/* Pick a room size */
@@ -2039,7 +2039,7 @@ static void build_type2(int yval, int xval)
 
 
 	/* Choose lite or dark */
-	light = ((dun_level+dun_offset) <= randint(25));
+	light = ((dun_depth) <= randint(25));
 
 
 	/* Determine extents of the first room */
@@ -2162,7 +2162,7 @@ static void build_type3(int yval, int xval)
 
 
 	/* Choose lite or dark */
-	light = ((dun_level+dun_offset) <= randint(25));
+	light = ((dun_depth) <= randint(25));
 
 
 	/* For now, always 3x3 */
@@ -2409,7 +2409,7 @@ static void build_type4(int yval, int xval)
 	cave_type *c_ptr;
 
 	/* Choose lite or dark */
-	light = ((dun_level+dun_offset) <= randint(25));
+	light = ((dun_depth) <= randint(25));
 
 	/* Large room */
 	y1 = yval - 4;
@@ -3082,15 +3082,15 @@ static void build_type5(int yval, int xval)
 
 
 	/* Hack -- Choose a nest type */
-	tmp = randint((dun_level+dun_offset));
+	tmp = randint((dun_depth));
 
 	if ((tmp < 25) && (randint(2) != 1))
 	{
             do  { template_race = randint(MAX_R_IDX - 2); }
                 while ((r_info[template_race].flags1 & RF1_UNIQUE)
                         || (((r_info[template_race].level) + randint(5)) >
-                            ((dun_level+dun_offset) + randint(5))));
-        if ((randint(2)!=1) && ((dun_level+dun_offset) >= (25 + randint(15))))
+                            ((dun_depth) + randint(5))));
+        if ((randint(2)!=1) && ((dun_depth) >= (25 + randint(15))))
         {
             name = "symbol clone";
             get_mon_num_hook = vault_aux_symbol;
@@ -3171,7 +3171,7 @@ static void build_type5(int yval, int xval)
 	for (i = 0; i < 64; i++)
 	{
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num((dun_level+dun_offset) + 10);
+		what[i] = get_mon_num((dun_depth) + 10);
 
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
@@ -3201,7 +3201,7 @@ static void build_type5(int yval, int xval)
 	rating += 10;
 
 	/* (Sometimes) Cause a "special feeling" (for "Monster Nests") */
-    if (((dun_level+dun_offset) <= 40) && (randint((dun_level+dun_offset)*(dun_level+dun_offset) + 50) < 300))
+    if (((dun_depth) <= 40) && (randint((dun_depth)*(dun_depth) + 50) < 300))
 	{
 		good_item_flag = TRUE;
 	}
@@ -3347,7 +3347,7 @@ static void build_type6(int yval, int xval)
 
 
 	/* Choose a pit type */
-	tmp = randint((dun_level+dun_offset));
+	tmp = randint((dun_depth));
 
 	/* Orc pit */
 	if (tmp < 20)
@@ -3389,7 +3389,7 @@ static void build_type6(int yval, int xval)
                 do  { template_race = randint(MAX_R_IDX - 2); }
                     while ((r_info[template_race].flags1 & RF1_UNIQUE)
                             || (((r_info[template_race].level) + randint(5)) >
-                                ((dun_level+dun_offset) + randint(5))));
+                                ((dun_depth) + randint(5))));
 
             /* Restrict selection */
             get_mon_num_hook = vault_aux_symbol;
@@ -3521,7 +3521,7 @@ static void build_type6(int yval, int xval)
 	for (i = 0; i < 16; i++)
 	{
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num((dun_level+dun_offset) + 10);
+		what[i] = get_mon_num((dun_depth) + 10);
 
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
@@ -3592,7 +3592,7 @@ static void build_type6(int yval, int xval)
 	rating += 10;
 
 	/* (Sometimes) Cause a "special feeling" (for "Monster Pits") */
-	if (((dun_level+dun_offset) <= 40) && (randint((dun_level+dun_offset)*(dun_level+dun_offset) + 50) < 300))
+	if (((dun_depth) <= 40) && (randint((dun_depth)*(dun_depth) + 50) < 300))
 	{
 		good_item_flag = TRUE;
 	}
@@ -3745,42 +3745,42 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				/* Monster */
 				case '&':
 				{
-					monster_level = (dun_level+dun_offset) + 5;
+					monster_level = (dun_depth) + 5;
 					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_level+dun_offset);
+					monster_level = (dun_depth);
 					break;
 				}
 
 				/* Meaner monster */
 				case '@':
 				{
-					monster_level = (dun_level+dun_offset) + 11;
+					monster_level = (dun_depth) + 11;
 					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_level+dun_offset);
+					monster_level = (dun_depth);
 					break;
 				}
 
 				/* Meaner monster, plus treasure */
 				case '9':
 				{
-					monster_level = (dun_level+dun_offset) + 9;
+					monster_level = (dun_depth) + 9;
 					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_level+dun_offset);
-					object_level = (dun_level+dun_offset) + 7;
+					monster_level = (dun_depth);
+					object_level = (dun_depth) + 7;
 					place_object(y, x, TRUE, FALSE);
-					object_level = (dun_level+dun_offset);
+					object_level = (dun_depth);
 					break;
 				}
 
 				/* Nasty monster and treasure */
 				case '8':
 				{
-					monster_level = (dun_level+dun_offset) + 40;
+					monster_level = (dun_depth) + 40;
 					place_monster(y, x, TRUE, TRUE);
-					monster_level = (dun_level+dun_offset);
-					object_level = (dun_level+dun_offset) + 20;
+					monster_level = (dun_depth);
+					object_level = (dun_depth) + 20;
 					place_object(y, x, TRUE, TRUE);
-					object_level = (dun_level+dun_offset);
+					object_level = (dun_depth);
 					break;
 				}
 
@@ -3789,15 +3789,15 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 				{
 					if (rand_int(100) < 50)
 					{
-						monster_level = (dun_level+dun_offset) + 3;
+						monster_level = (dun_depth) + 3;
 						place_monster(y, x, TRUE, TRUE);
-						monster_level = (dun_level+dun_offset);
+						monster_level = (dun_depth);
 					}
 					if (rand_int(100) < 50)
 					{
-						object_level = (dun_level+dun_offset) + 7;
+						object_level = (dun_depth) + 7;
 						place_object(y, x, FALSE, FALSE);
-						object_level = (dun_level+dun_offset);
+						object_level = (dun_depth);
 					}
 					break;
 				}
@@ -3832,9 +3832,9 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data)
 
                 case 'A':
                 {
-                    object_level = (dun_level+dun_offset) + 12;
+                    object_level = (dun_depth) + 12;
 					place_object(y, x, TRUE, FALSE);
-					object_level = (dun_level+dun_offset);
+					object_level = (dun_depth);
                 }
                 break;
 
@@ -3885,8 +3885,8 @@ static void build_type7(int yval, int xval)
 	rating += v_ptr->rat;
 
 	/* (Sometimes) Cause a special feeling */
-	if (((dun_level+dun_offset) <= 50) ||
-		(randint(((dun_level+dun_offset)-40) * ((dun_level+dun_offset)-40) + 50) < 400))
+	if (((dun_depth) <= 50) ||
+		(randint(((dun_depth)-40) * ((dun_depth)-40) + 50) < 400))
 	{
 		good_item_flag = TRUE;
 	}
@@ -3938,8 +3938,8 @@ static void build_type8(int yval, int xval)
 	rating += v_ptr->rat;
 
 	/* (Sometimes) Cause a special feeling */
-	if (((dun_level+dun_offset) <= 50) ||
-        (randint(((dun_level+dun_offset)-40) * ((dun_level+dun_offset)-40) + 50) < 400))
+	if (((dun_depth) <= 50) ||
+        (randint(((dun_depth)-40) * ((dun_depth)-40) + 50) < 400))
 	{
 		good_item_flag = TRUE;
 	}
@@ -4321,7 +4321,7 @@ static bool room_build(int y0, int x0, int typ)
 
 
 	/* Restrict level */
-	if ((dun_level+dun_offset) < room[typ].level) return (FALSE);
+	if ((dun_depth) < room[typ].level) return (FALSE);
 
 	/* Restrict "crowded" rooms */
 	if (dun->crowded && ((typ == 5) || (typ == 6))) return (FALSE);
@@ -4440,7 +4440,7 @@ static bool cave_gen(void)
 
 
 	/* Possible "destroyed" level */
-	if (((dun_level+dun_offset) > 10) && (rand_int(DUN_DEST) == 0) && (small_levels))
+	if (((dun_depth) > 10) && (rand_int(DUN_DEST) == 0) && (small_levels))
 		destroyed = TRUE;
 
 	/* Hack -- No destroyed "quest" levels */
@@ -4499,13 +4499,13 @@ static bool cave_gen(void)
 		}
 
 		/* Attempt an "unusual" room */
-		if (rand_int(DUN_UNUSUAL) < (dun_level+dun_offset))
+		if (rand_int(DUN_UNUSUAL) < (dun_depth))
 		{
            /* Roll for room type */
             k = rand_int(100);
 
             /* Attempt a very unusual room */ /* test hack */
-            if (rand_int(DUN_UNUSUAL) < (dun_level+dun_offset) || 1)
+            if (rand_int(DUN_UNUSUAL) < (dun_depth) || 1)
 			{
 #ifdef FORCE_V_IDX
                 if (room_build(y,x,8)) continue;
@@ -4674,7 +4674,7 @@ static bool cave_gen(void)
 
 
 	/* Basic "amount" */
-	k = ((dun_level+dun_offset) / 3);
+	k = ((dun_depth) / 3);
 	if (k > 10) k = 10;
 	if (k < 2) k = 2;
 
@@ -4737,7 +4737,7 @@ static bool cave_gen(void)
 	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3));
 	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3));
 
-    if ((empty_level) && (randint(DARK_EMPTY)!=1 || (randint(100) > (dun_level+dun_offset))))
+    if ((empty_level) && (randint(DARK_EMPTY)!=1 || (randint(100) > (dun_depth))))
         wiz_lite();
 	
 	/* Ghosts love to inhabit destroyed levels, but will live elsewhere */
@@ -5245,10 +5245,10 @@ void generate_cave(void)
 		}
 
 		/* Reset the monster generation level */
-		monster_level = (dun_level+dun_offset);
+		monster_level = (dun_depth);
 
 		/* Reset the object generation level */
-		object_level = (dun_level+dun_offset);
+		object_level = (dun_depth);
 
 		/* Nothing special here yet */
 		good_item_flag = FALSE;
@@ -5391,10 +5391,10 @@ void generate_cave(void)
 		{
 			/* Require "goodness" */
 			if ((feeling > 9) ||
-			    (((dun_level+dun_offset) >= 5) && (feeling > 8)) ||
-			    (((dun_level+dun_offset) >= 10) && (feeling > 7)) ||
-			    (((dun_level+dun_offset) >= 20) && (feeling > 6)) ||
-			    (((dun_level+dun_offset) >= 40) && (feeling > 5)))
+			    (((dun_depth) >= 5) && (feeling > 8)) ||
+			    (((dun_depth) >= 10) && (feeling > 7)) ||
+			    (((dun_depth) >= 20) && (feeling > 6)) ||
+			    (((dun_depth) >= 40) && (feeling > 5)))
 			{
 				/* Give message to cheaters */
 				if (cheat_room || cheat_hear ||

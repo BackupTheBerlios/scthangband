@@ -824,21 +824,21 @@ static void wiz_reroll_item(object_type *o_ptr)
 		else if (ch == 'n' || ch == 'N')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, (dun_level+dun_offset), FALSE, FALSE, FALSE);
+			apply_magic(q_ptr, (dun_depth), FALSE, FALSE, FALSE);
 		}
 
 		/* Apply good magic, but first clear object */
 		else if (ch == 'g' || ch == 'g')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, (dun_level+dun_offset), FALSE, TRUE, FALSE);
+			apply_magic(q_ptr, (dun_depth), FALSE, TRUE, FALSE);
 		}
 
 		/* Apply great magic, but first clear object */
 		else if (ch == 'e' || ch == 'e')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, (dun_level+dun_offset), FALSE, TRUE, TRUE);
+			apply_magic(q_ptr, (dun_depth), FALSE, TRUE, TRUE);
 		}
 	}
 
@@ -934,7 +934,7 @@ static void wiz_statistics(object_type *o_ptr)
 
 		/* Let us know what we are doing */
 		msg_format("Creating a lot of %s items. Base level = %d.",
-		           quality, (dun_level+dun_offset));
+		           quality, (dun_depth));
 		msg_print(NULL);
 
 		/* Set counters to zero */
@@ -1239,7 +1239,7 @@ static void wiz_create_item(void)
 	object_prep(q_ptr, k_idx);
 
 	/* Apply magic (no messages, no artifacts) */
-	apply_magic(q_ptr, (dun_level+dun_offset), FALSE, FALSE, FALSE);
+	apply_magic(q_ptr, (dun_depth), FALSE, FALSE, FALSE);
 
 	/* Drop the object from heaven */
 	drop_near(q_ptr, -1, py, px);
@@ -1384,7 +1384,7 @@ static void do_cmd_wiz_summon(int num)
 
 	for (i = 0; i < num; i++)
 	{
-        (void)summon_specific(py, px, (dun_level+dun_offset), 0);
+        (void)summon_specific(py, px, (dun_depth), 0);
 	}
 }
 

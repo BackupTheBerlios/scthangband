@@ -397,7 +397,7 @@ static void prt_depth(void)
 		}
 		else
 		{
-			(void)sprintf(depths, "(%d ft)",(dun_level + dun_offset) * 50);
+			(void)sprintf(depths, "(%d ft)",(dun_depth) * 50);
 		}
 	}
 	else
@@ -408,7 +408,7 @@ static void prt_depth(void)
 		}
 		else
 		{
-			(void)sprintf(depths, "(Lev %d)", (dun_level + dun_offset));
+			(void)sprintf(depths, "(Lev %d)", (dun_depth));
 		}
 	}
 	/* Right-Adjust the "depth", and clear old values */
@@ -3967,7 +3967,7 @@ void update_skill_maxima()
 /* Test whether a skill can be tested on the current level */
 bool skill_check_possible(int index)
 {
-	return (dun_level && ((dun_level + dun_offset) >= (((skill_set[index].value - skill_set[index].base) * 2) / 3)));
+	return (dun_level && ((dun_depth) >= (((skill_set[index].value - skill_set[index].base) * 2) / 3)));
 }
 
 /* Give experience to a skill after usage */

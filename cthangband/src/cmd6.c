@@ -1315,7 +1315,7 @@ void do_cmd_read_scroll(int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				if (summon_specific(py, px, (dun_level+dun_offset), 0))
+				if (summon_specific(py, px, (dun_depth), 0))
 				{
 					ident = TRUE;
 				}
@@ -1327,7 +1327,7 @@ void do_cmd_read_scroll(int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				if (summon_specific(py, px, (dun_level+dun_offset), SUMMON_UNDEAD))
+				if (summon_specific(py, px, (dun_depth), SUMMON_UNDEAD))
 				{
 					ident = TRUE;
 				}
@@ -1853,7 +1853,7 @@ void do_cmd_use_staff(int item)
 		{
 			for (k = 0; k < randint(4); k++)
 			{
-				if (summon_specific(py, px, (dun_level+dun_offset), 0))
+				if (summon_specific(py, px, (dun_depth), 0))
 				{
 					ident = TRUE;
 				}
@@ -3720,7 +3720,7 @@ void do_cmd_activate(int item)
             case ART_DAWN:
             {
                 msg_print("Your sword flickers black for a moment...");
-                (void)summon_specific_friendly(py, px, (dun_level+dun_offset), SUMMON_REAVER, TRUE);
+                (void)summon_specific_friendly(py, px, (dun_depth), SUMMON_REAVER, TRUE);
                 o_ptr->timeout = 500 + randint(500);
                 break;
             }
@@ -4494,7 +4494,7 @@ static bool activate_random_artifact(object_type * o_ptr)
             case ACT_SUMMON_PHANTOM:
             {
                 msg_print("You summon a phantasmal servant.");
-                (void)summon_specific_friendly(py, px, (dun_level+dun_offset), SUMMON_PHANTOM, TRUE);
+                (void)summon_specific_friendly(py, px, (dun_depth), SUMMON_PHANTOM, TRUE);
                 o_ptr->timeout = 200 + randint(200);
                 break;
             }

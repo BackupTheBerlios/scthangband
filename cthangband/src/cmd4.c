@@ -2864,7 +2864,7 @@ void do_cmd_feeling(bool FeelingOnly)
 
 	if ((cheat_wzrd) || (cheat_skll))
 	{
-		msg_format("Maximum %d for skills on this level",(dun_level + dun_offset) * 3 / 2);
+		msg_format("Maximum %d for skills on this level",(dun_depth) * 3 / 2);
 	}
 }
 

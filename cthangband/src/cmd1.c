@@ -806,10 +806,10 @@ static void hit_trap(void)
 			num = 2 + randint(3);
 			for (i = 0; i < num; i++)
                 {
-                     (void)summon_specific(py, px, dun_level+dun_offset, 0);
+					 (void)summon_specific(py, px, dun_depth, 0);
 
                 }
-            if ((dun_level+dun_offset)>randint(100)) /* No nasty effect for low levels */
+			if ((dun_depth)>randint(100)) /* No nasty effect for low levels */
                         { do { activate_ty_curse(); } while (randint(6)==1); }
 			break;
 		}

@@ -347,6 +347,7 @@
  */
 #define MAX_DEPTH       128
 
+#define dun_depth	(dun_level+dun_offset)
 
 /*
  * Maximum size of the "lite" array (see "cave.c")

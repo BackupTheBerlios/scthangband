@@ -523,7 +523,7 @@ static void chest_death(int y, int x, s16b o_idx)
 	}
 
 	/* Reset the object level */
-	object_level = dun_level+dun_offset;
+	object_level = dun_depth;
 
 	/* No longer opening a chest */
 	opening_chest = FALSE;
@@ -598,10 +598,10 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg_print("You are enveloped in a cloud of smoke!");
 		for (i = 0; i < num; i++)
 		{
-            if (randint(100)<(dun_level+dun_offset))
+            if (randint(100)<(dun_depth))
                 activate_hi_summon();
             else
-                (void)summon_specific(y, x, dun_level+dun_offset, 0);
+                (void)summon_specific(y, x, dun_depth, 0);
 		}
 	}
 

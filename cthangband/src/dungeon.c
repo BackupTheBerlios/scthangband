@@ -864,7 +864,7 @@ static void process_world(void)
 		case 305: /* November 1st (Night of October 31st) */
 			{
 				msg_print("All Hallows Eve and the ghouls come out to play...");
-				summon_specific(py,px,dun_level+dun_offset,SUMMON_UNDEAD);
+				summon_specific(py,px,dun_depth,SUMMON_UNDEAD);
 				break;
 			}
 		default: /* Any other night */
@@ -3478,10 +3478,10 @@ static void dungeon(void)
 	/*** Process this dungeon level ***/
 
 	/* Reset the monster generation level */
-	monster_level = (dun_level+dun_offset);
+	monster_level = (dun_depth);
 
 	/* Reset the object generation level */
-	object_level = (dun_level+dun_offset);
+	object_level = (dun_depth);
 
     hack_mind = TRUE;
 

@@ -1799,10 +1799,10 @@ static bool rarity_roll(byte level, byte rarity)
 	if (rand_int(rarity)) return FALSE;
 
 	/* Only roll for depth when necessary */
-	if (level <= (dun_level+dun_offset)) return TRUE;
+	if (level <= (dun_depth)) return TRUE;
 
 			/* Roll for out-of-depth creation */
-	return (rand_int((level - (dun_level+dun_offset)) * 2) == 0);
+	return (rand_int((level - (dun_depth)) * 2) == 0);
 }
 
 /*
@@ -3988,10 +3988,10 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 
 	/* Notice "okay" out-of-depth objects */
 	if (!cursed_p(j_ptr) && !broken_p(j_ptr) &&
-	    (k_info[j_ptr->k_idx].level > (dun_level+dun_offset)))
+	    (k_info[j_ptr->k_idx].level > (dun_depth)))
 	{
 		/* Rating increase */
-		rating += (k_info[j_ptr->k_idx].level - (dun_level+dun_offset));
+		rating += (k_info[j_ptr->k_idx].level - (dun_depth));
 
 		/* Cheat -- peek at items */
 		if (cheat_peek) object_mention(j_ptr);

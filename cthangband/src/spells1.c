@@ -45,7 +45,7 @@ s16b poly_r_idx(int r_idx)
 	for (i = 0; i < 1000; i++)
 	{
 		/* Pick a new race, using a level calculation */
-		r = get_mon_num(((dun_level+dun_offset) + r_ptr->level) / 2 + 5);
+		r = get_mon_num(((dun_depth) + r_ptr->level) / 2 + 5);
 
 		/* Handle failure */
 		if (!r) break;

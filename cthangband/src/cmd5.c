@@ -1806,7 +1806,7 @@ void wild_magic(int spell)
         case 34: case 35:
             while (counter++ < 8)
             {
-            (void) summon_specific(py, px, ((dun_level+dun_offset) * 3) / 2, type);
+            (void) summon_specific(py, px, ((dun_depth) * 3) / 2, type);
                     }
             break;
         case 36: case 37:
@@ -2380,7 +2380,7 @@ void do_cmd_cast(void)
             else if (die < 14)
             {
                 msg_print("Oh no! It's the Devil!");
-                (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_DEMON);
+                (void) summon_specific(py, px, (dun_depth), SUMMON_DEMON);
             }
             else if (die < 18 )
             {
@@ -2401,7 +2401,7 @@ void do_cmd_cast(void)
             else if (die < 30)
             {
                 msg_print("It's a picture of a strange monster.");
-                if (!(summon_specific(py, px, ((dun_level+dun_offset) * 3) / 2, 32 + randint(6))))
+                if (!(summon_specific(py, px, ((dun_depth) * 3) / 2, 32 + randint(6))))
                     none_came = TRUE;
             }
             else if (die < 33)
@@ -2452,25 +2452,25 @@ void do_cmd_cast(void)
             else if (die<82)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_level+dun_offset) * 3) / 2, SUMMON_BIZARRE1, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE1, FALSE)))
                     none_came = TRUE;
             }
             else if (die<84)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_level+dun_offset) * 3) / 2, SUMMON_BIZARRE2, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE2, FALSE)))
                     none_came = TRUE;
             }
             else if (die<86)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_level+dun_offset) * 3) / 2, SUMMON_BIZARRE4, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE4, FALSE)))
                     none_came = TRUE;
             }
             else if (die<88)
             {
                 msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_level+dun_offset) * 3) / 2, SUMMON_BIZARRE5, FALSE)))
+                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BIZARRE5, FALSE)))
                     none_came = TRUE;
             }
             else if (die<96)
@@ -3046,7 +3046,7 @@ void do_cmd_cast(void)
 
                if (die < 8) {
                msg_print("Oh no! Mouldering forms rise from the earth around you!");
-               (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_UNDEAD);
+               (void) summon_specific(py, px, (dun_depth), SUMMON_UNDEAD);
                } else if (die < 14) {
                msg_print("An unnamable evil brushes against your mind...");
                set_afraid(p_ptr->afraid + randint(4) + 4);

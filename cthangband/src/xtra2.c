@@ -2267,7 +2267,7 @@ void monster_death(int m_idx)
 
 
 	/* Average dungeon and monster levels */
-	object_level = ((dun_level+dun_offset) + r_ptr->level) / 2;
+	object_level = ((dun_depth) + r_ptr->level) / 2;
 
 	/* Drop some objects */
 	for (j = 0; j < number; j++)
@@ -2311,7 +2311,7 @@ void monster_death(int m_idx)
 	}
 
 	/* Reset the object level */
-	object_level = (dun_level+dun_offset);
+	object_level = (dun_depth);
 
 	/* Reset "coin" type */
 	coin_type = 0;
@@ -2586,7 +2586,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			r_ptr->max_num = 1;
 
 			/* Delete the bones file */
-			sprintf(tmp, "%s%sbone.%03d", ANGBAND_DIR_BONE, PATH_SEP, dun_level + dun_offset);
+			sprintf(tmp, "%s%sbone.%03d", ANGBAND_DIR_BONE, PATH_SEP, dun_depth);
 			
 			fd_kill(tmp);
 		}
@@ -4614,8 +4614,8 @@ void gain_level_reward(int chosen_reward)
                         }
 
                 object_prep(q_ptr, lookup_kind(dummy, dummy2));
-                q_ptr->to_h = 3 + (randint((dun_level+dun_offset)))%10;
-                q_ptr->to_d = 3 + (randint((dun_level+dun_offset)))%10;
+                q_ptr->to_h = 3 + (randint((dun_depth)))%10;
+                q_ptr->to_d = 3 + (randint((dun_depth)))%10;
                 random_resistance(q_ptr, FALSE, ((randint(34))+4));
                 q_ptr->name2 = EGO_CHAOTIC;
                 /* Drop it in the dungeon */
@@ -4645,7 +4645,7 @@ void gain_level_reward(int chosen_reward)
             msg_print("'My pets, destroy the arrogant mortal!'");
             for (dummy = 0; dummy < randint(5) + 1; dummy++)
             {
-                (void) summon_specific(py, px, (dun_level+dun_offset), 0);
+                (void) summon_specific(py, px, (dun_depth), 0);
             }
             break;
         case REW_H_SUMMON:
@@ -4804,17 +4804,17 @@ void gain_level_reward(int chosen_reward)
             break;
         case REW_SER_DEMO:
             msg_format("%s rewards you with a demonic servant!",chaos_patron_shorts[p_ptr->chaos_patron]);
-            if (!(summon_specific_friendly(py, px, (dun_level+dun_offset), SUMMON_DEMON, FALSE)))
+            if (!(summon_specific_friendly(py, px, (dun_depth), SUMMON_DEMON, FALSE)))
             msg_print("Nobody ever turns up...");
             break;
         case REW_SER_MONS:
             msg_format("%s rewards you with a servant!",chaos_patron_shorts[p_ptr->chaos_patron]);
-            if (!(summon_specific_friendly(py, px, (dun_level+dun_offset), SUMMON_NO_UNIQUES, FALSE)))
+            if (!(summon_specific_friendly(py, px, (dun_depth), SUMMON_NO_UNIQUES, FALSE)))
             msg_print("Nobody ever turns up...");
             break;
         case REW_SER_UNDE:
             msg_format("%s rewards you with an undead servant!",chaos_patron_shorts[p_ptr->chaos_patron]);
-            if (!(summon_specific_friendly(py, px, (dun_level+dun_offset), SUMMON_UNDEAD, FALSE)))
+            if (!(summon_specific_friendly(py, px, (dun_depth), SUMMON_UNDEAD, FALSE)))
             msg_print("Nobody ever turns up...");
             break;
         default:

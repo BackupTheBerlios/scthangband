@@ -6104,7 +6104,7 @@ void activate_ty_curse()
 		activate_hi_summon();
 		if (randint(6)!=1) break;
 	    case 7: case 8: case 9: case 18:
-	    (void) summon_specific(py, px, (dun_level+dun_offset), 0);
+	    (void) summon_specific(py, px, (dun_depth), 0);
 		if (randint(6)!=1) break;
 	    case 10: case 11: case 12:
 		msg_print("You feel your life draining away...");
@@ -6150,51 +6150,51 @@ void activate_hi_summon(void)
 {
 int i = 0;
 
-    for (i = 0; i < (randint(9) + ((dun_level+dun_offset) / 40)); i++)
+    for (i = 0; i < (randint(9) + ((dun_depth) / 40)); i++)
     {
-	switch(randint(26) + ((dun_level+dun_offset) / 20) )
+	switch(randint(26) + ((dun_depth) / 20) )
 	{
 	case 1: case 2:
-	    (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_ANT);
+	    (void) summon_specific(py, px, (dun_depth), SUMMON_ANT);
 	    break;
 	case 3: case 4:
-	    (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_SPIDER);
+	    (void) summon_specific(py, px, (dun_depth), SUMMON_SPIDER);
 	    break;
 	case 5: case 6:
-	    (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_HOUND);
+	    (void) summon_specific(py, px, (dun_depth), SUMMON_HOUND);
 	    break;
 	case 7: case 8:
-	    (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_HYDRA);
+	    (void) summon_specific(py, px, (dun_depth), SUMMON_HYDRA);
 	    break;
 	case 9: case 10:
-	    (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_CTHULOID);
+	    (void) summon_specific(py, px, (dun_depth), SUMMON_CTHULOID);
 	    break;
 	case 11: case 12:
-	    (void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_UNDEAD);
+	    (void) summon_specific(py, px, (dun_depth), SUMMON_UNDEAD);
 	    break;
 	case 13: case 14:
-	(void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_DRAGON);
+	(void) summon_specific(py, px, (dun_depth), SUMMON_DRAGON);
 	    break;
 	case 15: case 16:
-	(void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_DEMON);
+	(void) summon_specific(py, px, (dun_depth), SUMMON_DEMON);
 	    break;
 	case 17:
-	(void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_GOO);
+	(void) summon_specific(py, px, (dun_depth), SUMMON_GOO);
 	    break;
 	case 18: case 19:
-	(void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_UNIQUE);
+	(void) summon_specific(py, px, (dun_depth), SUMMON_UNIQUE);
 	    break;
 	case 20: case 21:
-	(void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_HI_UNDEAD);
+	(void) summon_specific(py, px, (dun_depth), SUMMON_HI_UNDEAD);
 	    break;
 	case 22: case 23:
-	(void) summon_specific(py, px, (dun_level+dun_offset), SUMMON_HI_DRAGON);
+	(void) summon_specific(py, px, (dun_depth), SUMMON_HI_DRAGON);
 	    break;
 	case 24: case 25:
 	(void) summon_specific(py, px, 100, SUMMON_REAVER);
 	    break;
 	default:
-	    (void) summon_specific(py, px,( ( ( (dun_level+dun_offset) * 3) / 2 ) + 5 ), 0);
+	    (void) summon_specific(py, px,( ( ( (dun_depth) * 3) / 2 ) + 5 ), 0);
 	}
     }
 }
@@ -6202,7 +6202,7 @@ int i = 0;
 void summon_reaver(void)
 {
     int i = 0;
-    int max_reaver = ((dun_level+dun_offset) / 50) + randint(6);
+    int max_reaver = ((dun_depth) / 50) + randint(6);
 
 	    for (i = 0; i < max_reaver; i++)
 			{

@@ -569,13 +569,13 @@ s16b place_ghost(void)
 	else
 	{
 		/* And even then, it only happens sometimes */
-		if (14 > randint(((dun_level + dun_offset) / 2) + 11)) return (FALSE);
+		if (14 > randint(((dun_depth) / 2) + 11)) return (FALSE);
 
 		/* Only a 33% chance */
 		if (rand_int(3) != 0) return (FALSE);
 
 		/* Level is dungeon level */
-		level = (dun_level + dun_offset);
+		level = (dun_depth);
 	}
 
 
@@ -2090,7 +2090,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 
 
 	/* Powerful monster */
-	if (r_ptr->level > (dun_level+dun_offset))
+	if (r_ptr->level > (dun_depth))
 	{
 		/* Unique monsters */
 		if (r_ptr->flags1 & (RF1_UNIQUE))
@@ -2099,7 +2099,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 			if (cheat_hear) msg_format("Deep Unique (%s).", name);
 
 			/* Boost rating by twice delta-depth */
-			rating += (r_ptr->level - (dun_level+dun_offset)) * 2;
+			rating += (r_ptr->level - (dun_depth)) * 2;
 		}
 
 		/* Normal monsters */
@@ -2109,7 +2109,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 			if (cheat_hear) msg_format("Deep Monster (%s).", name);
 
 			/* Boost rating by delta-depth */
-			rating += (r_ptr->level - (dun_level+dun_offset));
+			rating += (r_ptr->level - (dun_depth));
 		}
 	}
 
@@ -2272,16 +2272,16 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool charm)
 	total = randint(13);
 
 	/* Hard monsters, small groups */
-	if (r_ptr->level > (dun_level+dun_offset))
+	if (r_ptr->level > (dun_depth))
 	{
-		extra = r_ptr->level - (dun_level+dun_offset);
+		extra = r_ptr->level - (dun_depth);
 		extra = 0 - randint(extra);
 	}
 
 	/* Easy monsters, large groups */
-	else if (r_ptr->level < (dun_level+dun_offset))
+	else if (r_ptr->level < (dun_depth))
 	{
-		extra = (dun_level+dun_offset) - r_ptr->level;
+		extra = (dun_depth) - r_ptr->level;
 		extra = randint(extra);
 	}
 
@@ -2573,7 +2573,7 @@ bool alloc_horde(int y, int x)
 
     for (attempts = randint(10) + 5; attempts; attempts--)
     {
-        (void) summon_specific(m_ptr->fy, m_ptr->fx, (dun_level+dun_offset), SUMMON_KIN);
+        (void) summon_specific(m_ptr->fy, m_ptr->fx, (dun_depth), SUMMON_KIN);
     }
 
     return TRUE;
@@ -2688,7 +2688,7 @@ bool alloc_monster(int dis, int slp)
 	if (!find_space(&y, &x, dis)) return FALSE;
 
 #ifdef MONSTER_HORDES
-    if (randint(5000)<=(dun_level+dun_offset))
+    if (randint(5000)<=(dun_depth))
     {
         if (alloc_horde(y, x))
         {
@@ -2702,7 +2702,7 @@ bool alloc_monster(int dis, int slp)
         /* Attempt to place the monster, allow groups */
 		if ((dun_bias > 0) && (rand_range(1,10) > 6))
 		{
-			if (summon_specific(y,x,(dun_level + dun_offset),dun_bias)) return (TRUE);
+			if (summon_specific(y,x,(dun_depth),dun_bias)) return (TRUE);
 		}
 		else
 		{
@@ -3047,7 +3047,7 @@ bool summon_specific(int y1, int x1, int lev, int type)
 
 
 	/* Pick a monster, using the level calculation */
-	r_idx = get_mon_num(((dun_level+dun_offset) + lev) / 2 + 5);
+	r_idx = get_mon_num(((dun_depth) + lev) / 2 + 5);
 
 #ifdef R_IDX_TESTING_HACK
     r_idx = 356;
@@ -3124,7 +3124,7 @@ bool summon_specific(int y1, int x1, int lev, int type)
 
 
    /* Pick a monster, using the level calculation */
-   r_idx = get_mon_num(((dun_level+dun_offset) + lev) / 2 + 5);
+   r_idx = get_mon_num(((dun_depth) + lev) / 2 + 5);
 
  #ifdef R_IDX_TESTING_HACK
      r_idx = 356;
