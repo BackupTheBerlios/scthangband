@@ -232,12 +232,12 @@ C:1:O
 # Any suggestions?
 
 # Hide object
-#A:K
-#C:1:
+A:K
+C:1:^Q
 
 # Reveal hidden object
-#A:^K
-#C:1:
+A:^K
+C:1:^V
 
 ##### "Escape" macro #####
 A:\e

@@ -25,7 +25,7 @@ M: w: w: w: y: y: y: y: y: w: w: w: o: b: b: b: w: g: y: R
 # A simple keymap to destroy the first item immediately under the character.
 
 A:"X:other_query_flag\n099k-\e\e\e"Y:other_query_flag\n^W
-C:0:^K
+C:0:^Q
 
 # The same, but this time for use if other_query_flag is normally turned off.
 

@@ -519,7 +519,11 @@ void do_cmd_hide_object(void)
 
 	msg_format("You hide %v.", object_desc_f3, o_ptr, TRUE, 3);
 
+	/* Hide the object. */
 	object_hide(o_ptr);
+
+	/* Stop tracking the object. */
+	object_track(NULL);
 }
 
 /*
@@ -546,7 +550,7 @@ void do_cmd_unhide_objects(void)
 	update_object(0, OUP_ALL);
 
 	/* Show more distant changes. */
-	p_ptr->redraw |= PU_UN_VIEW | PU_VIEW;
+	p_ptr->update |= PU_UN_VIEW | PU_VIEW;
 
 	msg_format("You reveal %d hidden object%s.", t, (t == 1) ? "" : "s");
 }
