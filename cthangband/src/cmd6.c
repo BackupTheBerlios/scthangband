@@ -1019,24 +1019,6 @@ static bool curse_object(int o_idx, int e_idx, cptr where)
 
 	apply_magic_2(o_ptr, dun_depth);
 
-	o_ptr->to_h = - randint(e_ptr->max_to_h) - randint(e_ptr->max_to_h);
-	o_ptr->to_d = - randint(e_ptr->max_to_d) - randint(e_ptr->max_to_d);
-	o_ptr->to_a = - randint(e_ptr->max_to_a) - randint(e_ptr->max_to_a);
-	o_ptr->ac = 0;
-	o_ptr->dd = 0;
-	o_ptr->ds = 0;
-	o_ptr->flags1 = 0;
-	o_ptr->flags2 = 0;
-	o_ptr->flags3 = 0;
-	o_ptr->art_name = 0;
-	o_ptr->activation = 0;
-
-	/* Curse it */
-	o_ptr->ident |= (IDENT_CURSED);
-
-	/* Break it */
-	o_ptr->ident |= (IDENT_BROKEN);
-
 	/* Tell the player the bad news */
 	o_ptr->ident |= (IDENT_SENSE);
 		

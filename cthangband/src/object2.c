@@ -2808,17 +2808,14 @@ static void apply_magic_1(object_type *o_ptr, int lev, bool okay, bool good,
 }
 
 /*
- * Put the finishing touches on ego items and artefacts, give charges to wands
- * and staffs, fuel to lights and traps to chests.
+ * Put the finishing touches on ego items and artefacts, and give random
+ * bonuses to a few rings, amulets and armour.
  */
 void apply_magic_2(object_type *o_ptr, int lev)
 {
 	object_kind *k_ptr = k_info+o_ptr->k_idx;
 	artifact_type *a_ptr = a_info+o_ptr->name1;
 	ego_item_type *e_ptr = e_info+o_ptr->name2;
-
-	/* Hack - inscribe with creation depth if desired. */
-	o_ptr->note = depth_string();
 
 	/* Hack -- analyze artifacts */
 	if (o_ptr->name1)
@@ -2931,7 +2928,14 @@ void apply_magic_2(object_type *o_ptr, int lev)
 
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 {
+	/* Turn the object into an ego-item or artefact (or not). */
 	apply_magic_1(o_ptr, lev, okay, good, great);
+
+	/* Hack - inscribe with creation depth if desired. */
+	o_ptr->note = depth_string();
+
+	/* Give it any bonuses its ego- or artefact type requires, and add random
+	 * bonuses to rings and armour. */
 	apply_magic_2(o_ptr, lev);
 }
 
