@@ -855,7 +855,7 @@ static void do_cmd_options_win(void)
 
 			/* Window name, staggered, centered */
 			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, s);
-}
+		}
 
 		/* Display the options */
 		for (i = 0; i < NUM_DISPLAY_FUNCS; i++)
@@ -925,16 +925,16 @@ static void do_cmd_options_win(void)
 
 			case '+':
 			{
-				newpri = PRI(y,x) + 1;
-				newrep = REP(y,x) + 1;
+				newpri = PRI(x,y) + 1;
+				newrep = REP(x,y) + 1;
 				second = FALSE;
 				okay = TRUE;
 				break;
-				}
+			}
 			case '-':
-				{
-				newpri = PRI(y,x) - 1;
-				newrep = REP(y,x) - 1;
+			{
+				newpri = PRI(x,y) - 1;
+				newrep = REP(x,y) - 1;
 				second = FALSE;
 				break;
 			}
@@ -950,13 +950,13 @@ static void do_cmd_options_win(void)
 				 * shown, so treat in a special way. A PRI of
 				 * 0 is entirely normal. */
 				if (!second)
-	{
+				{
 					newrep = 0;
 				}
 				newpri = 0;
 				second = FALSE;
 				break;
-	}
+			}
 			default:
 			{
 				d = get_keymap_dir(ch);
@@ -968,30 +968,30 @@ static void do_cmd_options_win(void)
 				{
 					second = FALSE;
 					okay = TRUE;
-			}
+				}
 				else if (second)
-	{
+				{
 					newpri = ch-min;
 					second = FALSE;
-	}
-	else
-	{
+				}
+				else
+				{
 					newrep = ch-min;
 					second = TRUE;
+				}
 			}
 		}
-	}
 
 		if (newpri >= 0 && newpri <= 10)
-	{
+		{
 			PRI(x,y) = newpri;
 			okay = TRUE;
-	}
+		}
 		if (newrep >= 0 && newrep <= 10)
-			{
+		{
 			REP(x,y) = newrep;
 			okay = TRUE;
-			}
+		}
 		/* If it doesn't do anything sensible, complain. */
 		if (!okay)
 		{
