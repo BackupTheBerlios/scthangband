@@ -192,6 +192,7 @@ Use this command to place an inscription on an object. This inscription (which a
 % allows this item to merge with another item which is similar except for discount, giving both the higher discount.
 =g automatically answers 'y' to any "Pick up? [y/n]" prompt for this item.
 . automatically answers 'n' to any "Teleport? [y/n]" prompt for this item.
+~xy causes a selection of this object when x is pressed to execute command y on it. It will still be treated as if it was using command x for the purposes of the above inscriptions.
 
 In the above, x is any command in the game, z is any command which requires an object and n is a number in the range 0-9.
 

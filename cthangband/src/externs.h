@@ -514,7 +514,7 @@ extern int color_char_to_attr(char c);
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern cptr cur_help_str(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
 extern void help_track(cptr str);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C))
@@ -2318,7 +2318,7 @@ extern errr fd_close(int fd);
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void move_cursor(int row, int col);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C))
 extern void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(CMD4_C) || defined(UTIL_C))

@@ -3540,6 +3540,35 @@ cptr PURE describe_use(object_ctype *o_ptr)
 static byte item_tester_tval;
 
 /*
+ * The key used for the command which generated this prompt. This is not
+ * command_cmd, as it is only set during do_cmd_use_object().
+ *
+ * This allows one command to be substituted for another within the object
+ * prompt.
+ */
+static s16b item_tester_cmd;
+
+/*
+ * Check that an existing non-gold object is suitable for the tval and hook
+ * specified (if not 0).
+ */
+static bool PURE item_tester_okay_aux(object_ctype *o_ptr,
+	bool (*hook)(object_ctype*), byte tval)
+{
+	/* Check the tval. */
+	if (tval && o_ptr->tval != tval) return FALSE;
+
+	/* Check the hook. */
+	if (hook && !(*hook)(o_ptr)) return FALSE;
+
+	/* Assume okay. */
+	return TRUE;
+}
+
+/* Forward declare. */
+static bool item_tester_try_cmd(s16b cmd, object_ctype *o_ptr);
+
+/*
  * Check an item against the item tester info
  */
 bool item_tester_okay(object_ctype *o_ptr)
@@ -3550,20 +3579,10 @@ bool item_tester_okay(object_ctype *o_ptr)
 	/* Hack -- ignore "gold" */
 	if (o_ptr->tval == TV_GOLD) return (FALSE);
 
-	/* Check the tval */
-	if (item_tester_tval)
-	{
-		if (item_tester_tval != o_ptr->tval) return (FALSE);
-	}
-
-	/* Check the hook */
-	if (item_tester_hook)
-	{
-		if (!(*item_tester_hook)(o_ptr)) return (FALSE);
-	}
-
-	/* Assume okay */
-	return (TRUE);
+	if (item_tester_cmd)
+		return item_tester_try_cmd(item_tester_cmd, o_ptr);
+	else
+		return item_tester_okay_aux(o_ptr, item_tester_hook, item_tester_tval);
 }
 
 
@@ -3975,7 +3994,7 @@ void next_object(object_type **o_ptr)
  */
 static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 {
-	char buf[2*MAX_ASCII_LEN+1];
+	char buf[2*MAX_ASCII_LEN+2];
 	int len;
 	cptr s;
 
@@ -4246,18 +4265,10 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 		}
 
-		/* Only show a prompt. */
-		if (!command_see);
-
-		/* Inventory screen */
-		else if (!command_wrk)
+		/* Inventory/equipment screen, if allowed. */
+		if (command_see)
 		{
-			show_inven(FALSE, FALSE);
-		}
-		/* Equipment screen */
-		else
-		{
-			show_inven(TRUE, FALSE);
+			show_inven(command_wrk, FALSE);
 		}
 
 		t = tmp_val;
@@ -4698,6 +4709,15 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 
 /* Generic "select an object to use" function. */
 
+/*
+ * Structure for "select object to use" function data.
+ *
+ * "hook" should not alter the game state in any obvious way.
+ * "ban" should do so if it returns FALSE (a TRUE return should normally display
+ * a reason for doing so).
+ * "func" is unrestricted.
+ */
+
 typedef struct object_function object_function;
 struct object_function
 {
@@ -5021,7 +5041,7 @@ static object_function object_functions[] =
 		forbid_non_debug, NULL, 0, TRUE, TRUE, TRUE},
 };
 
-static object_function *get_object_function(s16b cmd)
+static object_function PURE *get_object_function(s16b cmd)
 {
 	object_function *ptr;
 
@@ -5033,6 +5053,95 @@ static object_function *get_object_function(s16b cmd)
 		if (ptr->cmd == cmd) return ptr;
 	}
 	return NULL;
+}
+
+/*
+ * Return the s16b encoded in the string via s16b_to_string_f1().
+ */
+static s16b PURE string_to_s16b(cptr s)
+{
+	char buf[2*MAX_ASCII_LEN+3];
+
+	strnfmt(buf, sizeof(buf), "%v", text_to_ascii_f1, s);
+
+	/* Use a special mechanism for 2-character strings. */
+	if (*buf == '&' && buf[1])
+	{
+		return buf[1] << 8 | buf[2];
+	}
+	/* Simple single-character string. */
+	else
+	{
+		return buf[0];
+	}
+}
+
+/*
+ * Look through an object's inscription for a command alias for the given
+ * command.
+ * If one is found, return the object_function which is corresponds with.
+ * Otherwise, return the object_function which corresponds with 
+ */
+static object_function PURE *get_function_for_object(s16b cmd,
+	object_ctype *o_ptr)
+{
+	char cmds[2*MAX_ASCII_LEN+3];
+	cptr s;
+
+	/* Turn the command into an ASCII representation. */
+	strnfmt(cmds, sizeof(cmds), "~%v", s16b_to_string_f1, cmd);
+
+	/* Look for the command alias request. */
+	if (o_ptr)
+	{
+		s = strstr(quark_str(o_ptr->note), cmds);
+
+		if (s)
+		{
+			/* Extract the command key from the alias. */
+			s16b i = string_to_s16b(s + strlen(cmds));
+
+			/* Accept the aliased command. */
+			if (i) cmd = i;
+		}
+	}
+
+	/* Return the object_function for the command, if any. */
+	return get_object_function(cmd);
+
+}
+
+/*
+ * Look for a key sequence of the form ~ab where a is cmd.
+ */
+static bool item_tester_try_cmd(s16b cmd, object_ctype *o_ptr)
+{
+	object_function *func = get_function_for_object(cmd, o_ptr);
+
+	if (func)
+	{
+		/* Only allow functions which can be performed on this object. */
+		if (is_worn_p(o_ptr))
+		{
+			if (!func->equip) return FALSE;
+		}
+		else if (is_inventory_p(o_ptr))
+		{
+			if (!func->inven) return FALSE;
+		}
+		else
+		{
+			if (!func->floor) return FALSE;
+		}
+	}
+	else
+	{
+		/* Use the hook for the original function. */
+		func = get_object_function(cmd);
+	}
+
+	/* Use the hook from this function. */
+	return item_tester_okay_aux(o_ptr, func->hook, func->tval);
 }
 
 /*
@@ -5083,6 +5192,10 @@ object_type *get_object_from_function(void (*func)(object_type *))
 	return NULL;
 }
 
+/* Clean up after do_cmd_use_object() and return as requested. */
+#define end_do_cmd_use_object(RC) \
+	do { help_track(NULL); return (RC); } while (0)
+
 /*
  * Look for a command in object_functions, and try to use it.
  * Return TRUE if the key pressed corresponds to an object command.
@@ -5090,22 +5203,54 @@ object_type *get_object_from_function(void (*func)(object_type *))
 bool do_cmd_use_object(s16b cmd)
 {
 	object_type *o_ptr;
-	object_function *func;
+	object_function *func, *old_func;
+	char help_str[20];
 
 	/* Look for the key. */
-	func = get_object_function(cmd);
+	old_func = func = get_object_function(cmd);
 
 	/* Not an object command. */
 	if (!func) return FALSE;
 
+	/* Track the command. */
+	strnfmt(help_str, sizeof(help_str), "cmd=%v", s16b_to_string_f1, cmd);
+	help_track(help_str);
+
 	/* Some functions can be prevented for all objects. */
-	if (func->ban && (*func->ban)()) return TRUE;
+	if (func->ban && (*func->ban)()) end_do_cmd_use_object(TRUE);
+
+	/* Store the command key to allow conversion. */
+	item_tester_cmd = cmd;
 
 	/* Obtain an object appropriate for this command. */
 	o_ptr = get_object(func);
 
+	/* Reset item_tester_cmd. */
+	item_tester_cmd = 0;
+
+	/* Aborted, but the command was still processed. */
+	if (!o_ptr) end_do_cmd_use_object(TRUE);
+
+	/* Obtain the function for the command with this object. */
+	func = get_function_for_object(cmd, o_ptr);
+
+	assert(func); /* Checked in item_tester_okay(). */
+
+	/* Check some stuff again if func->ban has changed. */
+	if (func != old_func)
+	{
+		/* Track the new command. */
+		strnfmt(help_str, sizeof(help_str), "cmd=%v", s16b_to_string_f1,
+			func->cmd);
+		help_track(NULL);
+		help_track(help_str);
+
+		if (func->ban && (*func->ban)()) return TRUE;
+	}
+
 	/* Run the command on the object, if one was selected. */
 	if (o_ptr) (*func->func)(o_ptr);
 
-	return TRUE;
+	/* Finished. */
+	end_do_cmd_use_object(TRUE);
 }

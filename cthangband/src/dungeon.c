@@ -2246,18 +2246,14 @@ void process_command(void)
  
  #endif /* ALLOW_REPEAT -- TNB */
  
+	/* Look up various object commands from a table. */
+	if (do_cmd_use_object(command_cmd)) return;
+
 	/* Track this command (if not instantaneous). */
 	strnfmt(help_str, sizeof(help_str),
 		"cmd=%v", s16b_to_string_f1, command_cmd);
 
 	help_track(help_str);
-
-	/* Look up various object commands from a table. */
-	if (do_cmd_use_object(command_cmd))
-	{
-		help_track(NULL);
-		return;
-	}
 
 	/* Parse the command */
 	switch (command_cmd)
