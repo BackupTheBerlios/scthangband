@@ -1765,6 +1765,9 @@ void init_angband(void)
 	/* Hack - a pointer intended not to match anything. */
 	vptr dummy = (vptr)&init_angband;
 
+	/* Hack - never call this twice. */
+	if (z_info) return;
+
 
 	/*** Verify the "news" file ***/
 

@@ -578,6 +578,7 @@ int main(int argc, char *argv[])
 			case 'u':
 			{
 				sprintf(player_name, "%.*s", NAME_LEN-1, arg+1);
+				process_player_name();
 				break;
 			}
 			case 'm':
@@ -609,9 +610,6 @@ int main(int argc, char *argv[])
 	}
 
 
-	/* Process the player name */
-	process_player_name();
-
 
 	/* Install "quit" hook */
 	quit_aux = quit_hook;
@@ -633,6 +631,9 @@ int main(int argc, char *argv[])
 
 	/* Make sure we have a display! */
 	if (!done) quit("Unable to prepare any 'display module'!");
+
+	/* Process the player name, if necessary. */
+	process_player_name();
 
 	/* Catch nasty signals */
 	signals_init();

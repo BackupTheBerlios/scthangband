@@ -440,7 +440,7 @@ char history[4][60];
 /*
  * Buffer to hold the current savefile name
  */
-char savefile[1024];
+char savefile[1024]="";
 
 
 /*
@@ -722,7 +722,7 @@ s16b player_hp[100];
 
 
 /* Various maxima */
-maxima *z_info;
+maxima *z_info = NULL;
 
 /*
  * The vault generation arrays
