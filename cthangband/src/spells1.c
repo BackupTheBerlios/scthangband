@@ -2171,6 +2171,8 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
             case GF_HOLY_FIRE:
             case GF_HELL_FIRE:
 			{
+				/* The player is told about any remaining cursed items. */
+				o_ptr->ident |= IDENT_SENSE_CURSED;
 				if (cursed_p(o_ptr))
 				{
 					do_kill = TRUE;
