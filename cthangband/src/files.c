@@ -5123,7 +5123,7 @@ static void print_tomb(void)
 	put_str(buf, 14, 11);
 
 	if (dun_level > 0)
-		sprintf(tmp, "of %s", dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].name);
+		sprintf(tmp, "of %s", dun_name+dun_defs[cur_dungeon].name);
 	else if (is_town_p(wildy, wildx))
 		sprintf(tmp, "in %s", dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].shortname);
 	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
