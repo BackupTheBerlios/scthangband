@@ -547,7 +547,7 @@ static uint vstrnfmt_do(char *buf, uint max, cptr fmt, va_list *vp)
 			case 'v':
 			{
 				vstrnfmt_aux_func tmp_func;
-				char tmp2[1024];
+				char tmp2[1024]="";
 
 				/* Extract the requested precision now. */
 				long max = get_precision(aux);
