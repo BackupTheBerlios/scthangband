@@ -580,13 +580,13 @@ static void prt_speed(void)
 	if (i > 0) change = "$GFast";
 
 	/* Slow */
-	else if (i < 0) change = "$GSlow";
+	else if (i < 0) change = "$USlow";
 
 	/* Normal" */
 	else change = "$d";
 
 	/* Display the speed */
-	mc_put_fmt(GET_YX(XY_SPEED), "%-14s", format("%s (%+d)", change, i));
+	mc_put_fmt(GET_YX(XY_SPEED), "%-14v", vstrnfmt_fn, "%s (%+d)", change, i);
 }
 
 /*
@@ -3898,7 +3898,7 @@ static void win_visible_display(void)
 		/* Find the optimal width of one entry. */
 		w = MAX(26, w/((items+h-2)/(h-1)));
 
-		c_prt(TERM_WHITE,format("You can see %d monster%s", c, (c > 1 ? "s:" : ":")), 0, 0);
+		mc_put_fmt(0, 0, "You can see %d monster%s.", c, (c > 1 ? "s:" : ":"));
 
 		/* Print the monsters in reverse order */
 		for (i = items - 1, num = 0; i >= 0; i--, num++)

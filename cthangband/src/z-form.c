@@ -212,7 +212,7 @@ static long PURE get_precision(cptr s)
  * the given buffer to a length of zero, and return a "length" of zero.
  * The contents of "buf", except for "buf[0]", may then be undefined.
  */
-uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
+static uint vstrnfmt_do(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	cptr s;
 
@@ -292,7 +292,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			int *arg;
 
 			/* Access the next argument */
-			arg = va_arg(vp, int *);
+			arg = va_arg(*vp, int *);
 
 			/* Save the current length */
 			(*arg) = n;
@@ -382,7 +382,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					int arg;
 
 					/* Access the next argument */
-					arg = va_arg(vp, int);
+					arg = va_arg(*vp, int);
 
 					/* Hack -- append the "length" */
 					sprintf(aux + q, "%d", arg);
@@ -429,7 +429,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				int arg;
 
 				/* Access next argument */
-				arg = va_arg(vp, int);
+				arg = va_arg(*vp, int);
 
 				/* Format the argument */
 				sprintf(tmp, aux, arg);
@@ -446,7 +446,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					long arg;
 
 					/* Access next argument */
-					arg = va_arg(vp, long);
+					arg = va_arg(*vp, long);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -456,7 +456,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					int arg;
 
 					/* Access next argument */
-					arg = va_arg(vp, int);
+					arg = va_arg(*vp, int);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -474,7 +474,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					unsigned long arg;
 
 					/* Access next argument */
-					arg = va_arg(vp, unsigned long);
+					arg = va_arg(*vp, unsigned long);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -484,7 +484,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					unsigned int arg;
 
 					/* Access next argument */
-					arg = va_arg(vp, unsigned int);
+					arg = va_arg(*vp, unsigned int);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -502,7 +502,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				double arg;
 
 				/* Access next argument */
-				arg = va_arg(vp, double);
+				arg = va_arg(*vp, double);
 
 				/* Format the argument */
 				sprintf(tmp, aux, arg);
@@ -517,7 +517,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				vptr arg;
 
 				/* Access next argument */
-				arg = va_arg(vp, vptr);
+				arg = va_arg(*vp, vptr);
 
 				/* Format the argument */
 				sprintf(tmp, aux, arg);
@@ -532,7 +532,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				cptr arg;
 
 				/* Access next argument */
-				arg = va_arg(vp, cptr);
+				arg = va_arg(*vp, cptr);
 
 				/* Hack -- convert NULL to EMPTY */
 				if (!arg) arg = "";
@@ -555,6 +555,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			case 'v':
 			{
 				vstrnfmt_aux_func tmp_func;
+				char tmp2[1024];
 
 				/* Extract the requested precision now. */
 				long max = get_precision(aux);
@@ -563,10 +564,16 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				if (max < 0 || max > 1000) max = 1000;
 
 				/* Extract the function to call */
-				tmp_func = va_arg(vp, vstrnfmt_aux_func);
+				tmp_func = va_arg(*vp, vstrnfmt_aux_func);
 
 				/* Format the "user data" */
-				tmp_func(tmp, max+1, aux, &vp);
+				tmp_func(tmp2, max+1, aux, vp);
+
+				/* tmp_func always gives a string, so allow the normal string
+				 * modifiers.
+				 */
+				aux[q-1] = 's';
+				sprintf(tmp, aux, tmp2);
 
 				/* Done */
 				break;
@@ -622,6 +629,22 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 	return (n);
 }
 
+/*
+ * A pass-by-value wrapper for vstrnfmt_do().
+ */
+uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
+{
+	return vstrnfmt_do(buf, max, fmt, &vp);
+}
+
+/*
+ * A vstrnfmt_aux wrapper for vstrnfmt_do().
+ */
+void vstrnfmt_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	cptr nfmt = va_arg(*vp, cptr);
+	vstrnfmt_do(buf, max, nfmt, vp);
+}
 
 /*
  * Do a vstrnfmt (see above) into a (growable) static buffer.

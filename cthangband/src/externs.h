@@ -4055,4 +4055,10 @@ extern void next_object(object_type **o_ptr);
 #if (defined(SQUELCH_C) || defined(UTIL_C))
 extern cptr inkey_gnext;
 #endif
+
+/* z-form.c */
+
+#if (defined(XTRA1_C) || defined(Z_FORM_C))
+extern void vstrnfmt_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
