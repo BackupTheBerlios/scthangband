@@ -2877,6 +2877,12 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 		s16b tohit, todam, weap_blow, mut_blow;
 		s32b dam;
 		bool slay = FALSE;
+
+		/* Notice whether the item is of a category usually used as a weapon. */
+		bool weapon = ((wield_slot(o_ptr) == INVEN_WIELD) ||
+			(wield_slot(o_ptr) == INVEN_BOW) ||
+			(launcher_type(o_ptr) != OBJ_NOTHING));
+
 		/* Calculate x15 slays. */
 		j = 0;
 		if ((o_ptr->flags1 & TR1_ALL_SLAY_DRAGON) == TR1_X15_DRAGON)
@@ -2944,20 +2950,28 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
 				"and", board, j);
 		}
 
-		/* Give the damage a weapon does, excluding throwing weapons in brief mode. */
-		if (!brief || (wield_slot(o_ptr) == INVEN_WIELD) ||
-			(wield_slot(o_ptr) == INVEN_BOW) || (launcher_type(o_ptr) != OBJ_NOTHING))
+		/* Give the damage a weapon does. Exclude throwing weapons in brief
+		 * mode as they are usually less interesting.
+		 */
+		if (!brief || weapon)
 		{
+			cptr sfx, desc;
 			weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			j = 0;
-			if (slay) board[j++] = "all other monsters";
-			else if (dam) board[j++] = "all monsters";
-			if (j)
-			{
-				do_list_flags(format("It causes %ld,%ld damage to", dam/60,
-					dam%60), "and", board, j);
-			}
+			if (slay) desc = "all other monsters";
+			else if (dam) desc = "all monsters";
+			else goto nextbit;
+
+			/* Mention throwing for non-weapons as they may cause damage
+			 * under other circumstances.
+			 */
+			if (!weapon) sfx = " when thrown";
+			else sfx = "";
+
+			alloc_ifa(info+i++, format("It causes %ld,%ld damage to %s%s.",
+				dam/60, dam%60, desc, sfx));
 		}
+nextbit:
 
 		/* Describe blows per turn. */
 		switch (wield_slot(o_ptr))
