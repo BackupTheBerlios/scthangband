@@ -734,97 +734,109 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 	add_resize_hook(resize_inkey);
 
 	/* Get a spell from the user */
-	for (t_clear = t_list = 0; !flag &&
-		get_com(&choice, "(%c-%c, *=List, ESC=exit) %^s which %s? ", I2A(0),
-			I2A(num - 1), verb, noun); )
+	for (t_clear = t_list = 0; ; )
 	{
-		/* Ensure t_clear and t_list point to the saved screens of this size. */
+		/* Get a choice, or abort. */
+		if (!get_com(&choice, "(%c-%c, *=List, ESC=exit) %^s which %s? ",
+			I2A(0), I2A(num - 1), verb, noun)) break;
+
+		/* Resize the screen. */
 		if (choice == RESIZE_INKEY_KEY)
 		{
+			/* The existing saved windows are now invalid. */
 			Term_release(t_clear);
 			Term_release(t_list);
+			t_list = 0;
 
 			/* Save the screen without the list. */
 			t_clear = Term_save_aux();
 
+			/* Actually display the list in the next cycle if desired. */
 			if (redraw)
 			{
-				/* Display a list of spells */
-				maxy = print_spell_list(spells, b_ptr, num, y, x, get);
-
-				/* Save the screen with the list. */
-				t_list = Term_save_aux();
+				Term_key_push(' ');
+				redraw = FALSE;
 			}
-
-			continue;
 		}
 		/* Request redraw */
 		else if ((choice == ' ') || (choice == '*') || (choice == '?'))
 		{
+			if (redraw)
+			{
+				Term_load_aux(t_clear);
+			}
+			else if (t_list)
+			{
+				Term_load_aux(t_list);
+			}
+			else
+			{
+				maxy = print_spell_list(spells, b_ptr, num, y, x, get);
+				t_list = Term_save_aux();
+			}
 			/* Load the other screen. */
 			int t_new = (redraw) ? t_clear : t_list;
 			Term_load_aux(t_new);
 
 			/* Remember the change. */
 			redraw = !redraw;
-
-			/* Redo asking */
-			continue;
 		}
-
-
-		/* Note verify */
-		ask = (ISUPPER(choice));
-
-		/* Lowercase */
-		if (ask) choice = TOLOWER(choice);
-
-		/* Extract request */
-		i = (ISLOWER(choice) ? A2I(choice) : -1);
-
-		/* Totally Illegal */
-		if ((i < 0) || (i >= num))
+		else
 		{
-			bell(0);
-			continue;
-		}
+			/* Note verify */
+			ask = (ISUPPER(choice));
 
-		/* Save the spell index */
-		spell = spells[i];
+			/* Lowercase */
+			if (ask) choice = TOLOWER(choice);
 
-		/* Require "okay" spells */
-		if (!(*okay_p)(&b_ptr->info[spell]))
-		{
-			bell(0);
-			msg_format("You may not %s that %s.", verb, noun);
-			continue;
-		}
+			/* Extract request */
+			i = (ISLOWER(choice) ? A2I(choice) : -1);
 
-		/* Verify it */
-		if (ask)
-		{
-			char tmp_val[160];
-
-			/* Access the spell */
-			s_ptr = &b_ptr->info[spell%32];
-
-			/* Display help now. */
-			if (redraw) mc_roff_xy(x, maxy, spell_help(s_ptr));
-
-			/* Prompt */
-			(*confirm)(tmp_val, 78, s_ptr, verb);
-
-			/* Belay that order */
-			if (!get_check(tmp_val))
+			/* Totally Illegal */
+			if ((i < 0) || (i >= num))
 			{
-				/* Return the screen to its previous state. */
-				if (redraw) Term_load_aux(t_list);
+				bell("Illegal spell choice!");
 				continue;
 			}
-		}
 
-		/* Stop the loop */
-		flag = TRUE;
+			/* Save the spell index */
+			spell = spells[i];
+
+			/* Require "okay" spells */
+			if (!(*okay_p)(&b_ptr->info[spell]))
+			{
+				bell("Illegal spell choice!");
+				msg_format("You may not %s that %s.", verb, noun);
+				continue;
+			}
+
+			/* Verify it */
+			if (ask)
+			{
+				char tmp_val[160];
+
+				/* Access the spell */
+				s_ptr = &b_ptr->info[spell%32];
+
+				/* Display help now. */
+				if (redraw) mc_roff_xy(x, maxy, spell_help(s_ptr));
+
+				/* Prompt */
+				(*confirm)(tmp_val, 78, s_ptr, verb);
+
+				/* Belay that order */
+				if (!get_check(tmp_val))
+				{
+					/* Return the screen to its previous state. */
+					if (redraw) Term_load_aux(t_list);
+					continue;
+				}
+			}
+
+			/* Stop the loop */
+			flag = TRUE;
+			break;
+		}
 	}
 
 	/* Reset the resize hook. */
