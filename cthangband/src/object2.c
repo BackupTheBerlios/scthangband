@@ -5074,16 +5074,16 @@ static bool ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 	if (dif) return (dif > 0);
 
 	/* Non-aware (flavored) items always come last */
-	if (!object_aware_p(a_ptr)) return TRUE;
-	if (!object_aware_p(b_ptr)) return FALSE;
+	if (!object_aware_p(b_ptr)) return TRUE;
+	if (!object_aware_p(a_ptr)) return FALSE;
 
 	/* Objects sort by increasing k_idx */
 	dif = a_ptr->k_idx - b_ptr->k_idx;
 	if (dif) return (dif < 0);
 
 	/* Unidentified objects always come last */
-	if (!object_known_p(a_ptr)) return TRUE;
-	if (!object_known_p(b_ptr)) return FALSE;
+	if (!object_known_p(b_ptr)) return TRUE;
+	if (!object_known_p(a_ptr)) return FALSE;
 
 	/* Hack:  otherwise identical rods sort by
 		increasing recharge time --dsb */
