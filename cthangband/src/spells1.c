@@ -5780,7 +5780,7 @@ struct potion_smash_effect_type
 static potion_smash_effect_type potion_smash_effects[] =
 {
 	{OBJ_POTION_SALT_WATER, TRUE, FALSE, 0, 0, 0, 2},
-	{OBJ_POTION_SLIME_MOLD_JUICE, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_SLIME_MOULD_JUICE, TRUE, FALSE, 0, 0, 0, 2},
 	{OBJ_POTION_LOSE_MEMORIES, TRUE, FALSE, 0, 0, 0, 2},
 	{OBJ_POTION_DEC_STR, TRUE, FALSE, 0, 0, 0, 2},
 	{OBJ_POTION_DEC_INT, TRUE, FALSE, 0, 0, 0, 2},

@@ -630,7 +630,7 @@ static cptr comment_2b[MAX_COMMENT_2B] =
 	"As if!  How about %s gold pieces?",
 	"My arse!  How about %s gold pieces?",
 	"May the fleas of 1000 orcs molest you!  Try %s gold pieces.",
-	"May your most favourite parts go moldy!  Try %s gold pieces.",
+	"May your most favourite parts go mouldy!  Try %s gold pieces.",
 	"May Cthulhu find you tasty!  Perhaps %s gold pieces?",
 	"Your mother was an Ogre!  Perhaps %s gold pieces?"
 };

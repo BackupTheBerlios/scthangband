@@ -3647,7 +3647,7 @@ void gain_level_reward(int effect, int skill)
 		case REW_GAIN_ABL:
 			msg_format("The voice of %s rings out:",
 				chaos_patron_shorts[p_ptr->chaos_patron]);
-			msg_print("'Stay, mortal, and let me mold thee.'");
+			msg_print("'Stay, mortal, and let me mould thee.'");
 			if ((randint(3)==1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
@@ -3899,10 +3899,10 @@ static chaos_type chaos_info[] =
 		"You can turn ordinary items to gold.",
 		"You gain the Midas touch.",
 		"You lose the Midas touch."},
-	{IDX(MUT_GROW_MOLD) 1,
-		"You can cause mold to grow near you.",
-		"You feel a sudden affinity for mold.",
-		"You feel a sudden dislike for mold."},
+	{IDX(MUT_GROW_MOULD) 1,
+		"You can cause mould to grow near you.",
+		"You feel a sudden affinity for mould.",
+		"You feel a sudden dislike for mould."},
 	{IDX(MUT_RESIST) 3,
 		"You can harden yourself to the ravages of the elements.",
 		"You feel like you can protect yourself.",

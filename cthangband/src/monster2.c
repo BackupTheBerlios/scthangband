@@ -2884,7 +2884,7 @@ void message_pain(int m_idx, int dam)
 	percentage = (int)(tmp);
 
 
-	/* Jelly's, Mold's, Vortex's, Quthl's */
+	/* Jellies, Moulds, Vortices, Qs */
 	if (strchr("jmvQ", r_ptr->d_char))
 	{
 		if (percentage > 95)

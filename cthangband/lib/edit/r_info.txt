@@ -542,7 +542,7 @@ D:He wants to kill a hero to prove that he's hard.
 ##### Normal monsters #####
 ##### Level 1 #####
 
-N:52:& Grey mold~
+N:52:& Grey mould~
 G:m:s
 I:+0:2:1d2:2:1:0
 W:1:1:3
@@ -1064,7 +1064,7 @@ F:WEIRD_MIND | BASH_DOOR |
 F:ANIMAL
 D:It is about two feet long and has sharp pincers.
 
-N:100:& Yellow mold~
+N:100:& Yellow mould~
 G:m:y
 I:+0:2:8d8:2:10:99
 W:3:1:9
@@ -1387,7 +1387,7 @@ F:EVIL | FORCE_MAXHP | UNDEAD | IM_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 D:Even today, nobody knows where it lurks... 
 
-N:129:& Brown mold~
+N:129:& Brown mould~
 G:m:u
 I:+0:1:15d8:2:12:99
 W:6:1:20
@@ -1680,7 +1680,7 @@ B:HIT:TERRIFY:1d4
 F:PASS_WALL | NO_CONF | NO_SLEEP | NONLIVING | IM_ACID
 D:A hole in the fabric of reality, leading to who knows what plane... 
 
-N:154:& Green mold~
+N:154:& Green mould~
 G:m:g
 I:+0:1:21d8:2:14:75
 W:8:2:28
@@ -2036,7 +2036,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | ORC | IM_POIS
 D:He is a cunning and devious orc with a chaotic nature.
 
-N:183:& Hairy mold~
+N:183:& Hairy mould~
 G:m:U
 I:+0:1:15d8:2:15:70
 W:10:2:32
@@ -2047,7 +2047,7 @@ F:IM_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 D:It is a strange hairy growth on the dungeon floor.
 
-N:184:& Disenchanter mold~
+N:184:& Disenchanter mould~
 G:m:v
 I:+0:1:16d8:2:20:70
 W:10:2:40
@@ -3198,7 +3198,7 @@ F:HURT_ROCK |
 F:NO_CONF | NO_SLEEP | NO_FEAR | NONLIVING
 D:It is a massive animated statue.
 
-N:277:& Red mold~
+N:277:& Red mould~
 G:m:r
 I:+0:1:17d8:2:16:70
 W:19:1:64
@@ -6870,7 +6870,7 @@ D:surrounded by a sickly green glow.
 
 ##### Level 47 #####
 
-N:527:& Death mold~
+N:527:& Death mould~
 G:m:D
 I:+30:7:100d20:200:60:0
 W:47:1:1000
@@ -6879,7 +6879,7 @@ B:HIT:EXP_80:5d5
 F:FORCE_SLEEP | NEVER_MOVE | 
 F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
 F:NO_CONF | NO_SLEEP | NO_FEAR
-D:It is the epitome of all that is evil, in a mold.  Its lifeless form draws 
+D:It is the epitome of all that is evil, in a mould.  Its lifeless form draws 
 D:power from sucking the souls of those that approach it, a nimbus of pure 
 D:evil surrounds it.  Luckily for you, it can't move.
 

@@ -3555,7 +3555,7 @@ name_centry ident_info[] =
 	{'j', "Jelly"},
 	{'k', "Kobold"},
 	{'l', "Louse"},
-	{'m', "Mold"},
+	{'m', "Mould"},
 	{'n', "Naga"},
 	{'o', "Orc"},
 	{'p', "Person/Human"},

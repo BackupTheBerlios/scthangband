@@ -757,7 +757,7 @@ static void regen_monsters(void)
  * items from being pseudo-id'd, or to allow psychometry to
  * detect whether the unidentified potion/scroll/etc is
  * good (Cure Light Wounds, Restore Strength, etc) or
- * bad (Poison, Weakness etc) or 'useless' (Slime Mold Juice, etc).
+ * bad (Poison, Weakness etc) or 'useless' (Slime Mould Juice, etc).
  */
 bool psychometry(void)
 {

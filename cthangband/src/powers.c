@@ -1451,7 +1451,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case OBJ_POTION_WATER+PO_K_IDX:
 		case OBJ_POTION_APPLE_JUICE+PO_K_IDX:
-		case OBJ_POTION_SLIME_MOLD_JUICE+PO_K_IDX:
+		case OBJ_POTION_SLIME_MOULD_JUICE+PO_K_IDX:
 		{
 			msg_print("You feel less thirsty.");
 			(*ident) = TRUE;
@@ -5335,12 +5335,26 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)alchemy();
 			return SUCCESS;
 		}
-		case MUT_GROW_MOLD+PO_MUTA:
+		case MUT_GROW_MOULD+PO_MUTA:
 		{
-			for (i=0; i < 8; i++)
+			
+			for (b = FALSE, i=0; i < 8; i++)
 			{
-				summon_specific_friendly(py, px, plev, SUMMON_MOULD, FALSE);
+				if (summon_specific_friendly(py, px, plev, SUMMON_MOULD, FALSE))
+					b = TRUE;
 			}
+
+			if (!b)
+			{
+				object_type q[1];
+
+				/* No room for monsters, so create some food. */
+				object_prep(q, OBJ_SLIME_MOULD);
+
+				/* Drop the object from heaven */
+				drop_near(q, -1, py, px);
+			}
+
 			return SUCCESS;
 		}
 		case MUT_RESIST+PO_MUTA:

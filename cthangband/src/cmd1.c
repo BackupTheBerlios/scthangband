@@ -1455,7 +1455,7 @@ static powertype powers[] = {
 {POWER_MUTA, MUT_BERSERK, 8, 8, A_STR, 14, "berserk",0, 0},
 {POWER_MUTA, MUT_POLYMORPH, 18, 20, A_CON, 18, "polymorph",0, 0},
 {POWER_MUTA, MUT_MIDAS_TCH, 10, 5, A_INT, 12, "midas touch",0, 0},
-{POWER_MUTA, MUT_GROW_MOLD, 1, 6, A_CON, 14, "grow mold",0, 0},
+{POWER_MUTA, MUT_GROW_MOULD, 1, 6, A_CON, 14, "grow mould",0, 0},
 {POWER_MUTA, MUT_RESIST, 10, 12, A_CON, 12, "resist elements",0, 0},
 {POWER_MUTA, MUT_EARTHQUAKE, 12, 12, A_STR, 16, "earthquake",0, 0},
 {POWER_MUTA, MUT_EAT_MAGIC, 17, 1, A_WIS, 15, "eat magic",0, 0},

@@ -2745,10 +2745,10 @@ static bool vault_aux_jelly(int UNUSED p, int r_idx)
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
-	/* Also decline evil jellies (like death molds and shoggoths) */
+	/* Also decline evil jellies (like death moulds and shoggoths) */
 	if (r_ptr->flags3 & (RF3_EVIL)) return (FALSE);
 
-	/* Require icky thing, jelly, mold, or mushroom */
+	/* Require icky thing, jelly, mould, or mushroom */
 	if (!strchr("ijm,", r_ptr->d_char)) return (FALSE);
 
 	/* Okay */
