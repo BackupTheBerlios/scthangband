@@ -1100,9 +1100,9 @@ logaux(x, 1) logaux(x, 0) 255)
 /* #define RACE_HALF_ELF 10 */
 /* #define RACE_HALF_GIANT 11 */
 /* #define RACE_HALF_OGRE 12 */
-#define RACE_HALF_ORC 13
+/* #define RACE_HALF_ORC 13 */
 /* #define RACE_HALF_TITAN 14 */
-#define RACE_HALF_TROLL 15
+/* #define RACE_HALF_TROLL 15 */
 /* #define RACE_HIGH_ELF 16 */
 /* #define RACE_HOBBIT 17 */
 /* #define RACE_HUMAN 18 */
@@ -1118,6 +1118,11 @@ logaux(x, 1) logaux(x, 0) 255)
 /* #define RACE_YEEK 28 */
 #define RACE_ZOMBIE 29
 #define RACE_NONE 255
+
+#define RACE_BLANK 0 /* Leaves a bones file which has no racial flags. */
+#define RACE_UNDEAD 1 /* Never leaves a bones file. Prefers night. */
+#define RACE_ORC 2 /* Can leave an orc bones file. */
+#define RACE_TROLL 3 /* Can leave a troll bones file. */
 
 #define RP_BARBARIAN 1
 #define RP_BROO 2
@@ -2728,7 +2733,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TR0_SAVE	(1L<<7)	/* A direct saving throw bonus. */
 #define TR0_NO_CUT (1L<<8) /* Immunity to cuts. */
 #define TR0_NO_STUN (1L<<9) /* Immunity to stunning. */
-#define TR0_UNDEAD (1L<<10) /* Prefers night, can't become a ghost. */
 
 #define TR0_SAVE_SK (1L<<16) /* A skill-based saving throw bonus. */
 #define TR0_AC_SK (1L<<17) /* A skill-based AC bonus. */

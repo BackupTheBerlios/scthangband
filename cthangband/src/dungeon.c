@@ -3925,7 +3925,7 @@ static void create_character(void)
 	player_birth();
 
 	/* Hack -- enter the world at dawn unless undead*/
-	if (p_ptr->undead)
+	if (rp_ptr->grace == RACE_UNDEAD)
 	{
 		turn=5*TOWN_DAWN+1;
 	}

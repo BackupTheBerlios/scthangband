@@ -1559,7 +1559,6 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	/* Various flags */
 	if (flags[0][iilog(TR0_NO_CUT)]) p_ptr->no_cut = TRUE;
 	if (flags[0][iilog(TR0_NO_STUN)]) p_ptr->no_stun = TRUE;
-	if (flags[0][iilog(TR0_UNDEAD)]) p_ptr->undead = TRUE;
 	if (flags[3][iilog(TR3_AGGRAVATE)]) p_ptr->aggravate = TRUE;
 	if (flags[3][iilog(TR3_TELEPORT)]) p_ptr->teleport = TRUE;
 	if (flags[3][iilog(TR3_DRAIN_EXP)]) p_ptr->exp_drain = TRUE;

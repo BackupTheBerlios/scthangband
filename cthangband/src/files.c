@@ -4936,7 +4936,7 @@ static void make_bones(void)
 	FILE                *fp;
 
 	/* Undead can't be raised as undead. */
-	if (p_ptr->undead) return;
+	if (rp_ptr->grace == RACE_UNDEAD) return;
 
 	/* Ignore wizards and borgs */
 	if (!(noscore & 0x00FF))

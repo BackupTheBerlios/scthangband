@@ -988,9 +988,10 @@ struct player_race
 
 	byte chaos; /* A chaos feature this race is likely to get. */
 	byte chaos_chance; /* THe chance of gaining the above chaos feature. */
-
 	byte infra;			/* Infra-vision	range */
+
 	byte chart;		/* Initial chart for get_history() */
+	byte grace;	/* Race restriction for ghosts. */
 
 	cptr **name_syls;	/* Syllable list for random name generation. */
 	make_item_type items[MAX_RACE_ITEMS]; /* Objects to be given at birth. */
@@ -1225,7 +1226,6 @@ struct player_type
 	bool impact;		/* Earthquake blows */
 	bool no_cut;	/* Immune to cuts. */
 	bool no_stun;	/* Immune to stunning. */
-	bool undead;	/* Prefers night, doesn't turn into ghost. */
 
 	s16b dis_to_h;		/* Known bonus to hit */
 	s16b dis_to_d;		/* Known bonus to dam */

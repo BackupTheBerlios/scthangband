@@ -268,10 +268,10 @@ static void set_ghost_aux(cptr gb_name, int ghost_race)
 	C_COPY(r_ptr->blow, rt_ptr->blow, 4, monster_blow);
 
 	/* Remove the RF3_ORC and RF3_TROLL flags if necessary. */
-	switch (grace)
+	switch (race_info[grace].grace)
 	{
-		case RACE_HALF_ORC: r_ptr->flags3 &= ~(RF3_TROLL); break;
-		case RACE_HALF_TROLL: r_ptr->flags3 &= ~(RF3_ORC); break;
+		case RACE_ORC: r_ptr->flags3 &= ~(RF3_TROLL); break;
+		case RACE_TROLL: r_ptr->flags3 &= ~(RF3_ORC); break;
 		default: r_ptr->flags3 &= ~(RF3_TROLL | RF3_ORC);
 	}
 }
@@ -1549,7 +1549,7 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 			if (p_ptr->prace == RACE_IMP) return;
 
 			/* Undead characters are 50% likely to be unaffected */
-			if (p_ptr->undead)
+			if (rp_ptr->grace == RACE_UNDEAD)
 			{
 				if (randint(100) < (25 + (skill_set[SKILL_SAVE].value/2))) return;
 			}
