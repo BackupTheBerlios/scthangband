@@ -139,7 +139,7 @@ s16b item_use_energy(object_ctype *o_ptr)
  */
 void do_cmd_eat_food(object_type *o_ptr)
 {
-	bool	normal_food = FALSE;
+	bool normal_food = FALSE;
 
 	/* Sound */
 	sound(SOUND_EAT);
@@ -170,8 +170,8 @@ void do_cmd_eat_food(object_type *o_ptr)
 		}
 		case EAT_SKELETON:
 		{
-	        if (normal_food)
-	        {
+			if (normal_food)
+			{
 				object_type q_ptr[1];
 
 				msg_print("The food falls through your jaws!");
@@ -208,7 +208,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
 }
-    
+
 /*
  * Quaff a potion (from the pack or the floor)
  */
@@ -224,11 +224,11 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 	/* Analyze the potion (which is always used up). */
 	use_object(o_ptr, 0);
 
-    if (rp_ptr->eat == EAT_SKELETON && one_in(12))
-    {
-        msg_print("Some of the fluid falls through your jaws!");
-        potion_smash_effect(0, py, px, o_ptr->k_idx);
-    }
+	if (rp_ptr->eat == EAT_SKELETON && one_in(12))
+	{
+		msg_print("Some of the fluid falls through your jaws!");
+		potion_smash_effect(0, py, px, o_ptr->k_idx);
+	}
 
 	/* Recalculate/redraw stuff (later) */
 	update_object(o_ptr);
@@ -278,7 +278,7 @@ static bool curse_object(int o_idx, int e_idx, cptr where)
 
 	/* Tell the player the bad news */
 	o_ptr->ident |= (IDENT_SENSE);
-		
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -405,7 +405,7 @@ static bool use_device_p(object_type *o_ptr)
 }
 
 /*
- * Use a staff.			-RAK-
+ * Use a staff. -RAK-
  *
  * One charge of one staff disappears.
  *

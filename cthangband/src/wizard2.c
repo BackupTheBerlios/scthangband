@@ -43,7 +43,7 @@ static int choose_on_screen(int (*aux)(void))
 	/* Return the remembered value. */
 	return i;
 }
-  
+
 
 /* A "no choice" selection for choose_something(). */
 #define CHOOSE_NOTHING -1
@@ -154,7 +154,7 @@ void do_cmd_summon_horde(void)
  */
 static void prt_binary(u32b flags, int row, int col)
 {
-	int        	i;
+	int         i;
 	u32b        bitmask;
 
 	/* Scan the flags */
@@ -225,19 +225,19 @@ static void ang_sort_swap_skills(vptr u, vptr UNUSED v, int a, int b)
 }
 
 /*
- * Aux function for "do_cmd_wiz_change()".	-RAK-
+ * Aux function for "do_cmd_wiz_change()". -RAK-
  */
 static void do_cmd_wiz_change_aux(void)
 {
-	int			i,win;
+	int i,win;
 
-	int			tmp_int;
+	int tmp_int;
 
-	long		tmp_long;
+	long tmp_long;
 
-	char		tmp_val[160];
+	char tmp_val[160];
 
-	char		ppp[80];
+	char ppp[80];
 
 	player_skill *skills[MAX_SKILLS];
 
@@ -351,7 +351,7 @@ void do_cmd_wiz_change(void)
 
 
 /*
- * Wizard routines for creating objects		-RAK-
+ * Wizard routines for creating objects -RAK-
  * And for manipulating them!                   -Bernd-
  *
  * This has been rewritten to make the whole procedure
@@ -413,9 +413,9 @@ void do_cmd_wiz_change(void)
  */
 static void wiz_display_item(object_type *o_ptr)
 {
-	int 	i, j = 13;
+	int  i, j = 13;
 
-	u32b	f1, f2, f3;
+	u32b f1, f2, f3;
 
 
 	/* Extract the flags */
@@ -427,45 +427,45 @@ static void wiz_display_item(object_type *o_ptr)
 	mc_put_fmt(2, j, "%v", object_desc_f3, o_ptr, OD_ART | OD_SHOP, 3);
 
 	mc_put_fmt(4, j, "kind = %-5d  tval = %-5d  extra = %-5d",
-	           o_ptr->k_idx, o_ptr->tval, k_info[o_ptr->k_idx].extra);
+				o_ptr->k_idx, o_ptr->tval, k_info[o_ptr->k_idx].extra);
 
 	mc_put_fmt(5, j, "number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
-	           o_ptr->number, o_ptr->weight, o_ptr->ac, o_ptr->dd, o_ptr->ds);
+				o_ptr->number, o_ptr->weight, o_ptr->ac, o_ptr->dd, o_ptr->ds);
 
 	mc_put_fmt(6, j, "pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
-	           o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d);
+				o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d);
 
 	mc_put_fmt(7, j, "name1 = %-4d  name2 = %-4d  cost = %ld",
-	           o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr, TRUE));
+				o_ptr->name1, o_ptr->name2, (long)object_value(o_ptr, TRUE));
 
 	mc_put_fmt(8, j, "ident = %04x  timeout = %-d",
 		o_ptr->ident, o_ptr->timeout);
 
 	prt("+------------FLAGS1------------+", 10, j);
-    prt("AFFECT........SLAY........BRAND.", 11, j);
-    prt("              cvae      xsqpaefc", 12, j);
-    prt("siwdcc  ssidsahanvudotgddhuoclio", 13, j);
-    prt("tnieoh  trnipttmiinmrrnrrraiierl", 14, j);
-    prt("rtsxna..lcfgdkcpmldncltggpksdced", 15, j);
+	prt("AFFECT........SLAY........BRAND.", 11, j);
+	prt("              cvae      xsqpaefc", 12, j);
+	prt("siwdcc  ssidsahanvudotgddhuoclio", 13, j);
+	prt("tnieoh  trnipttmiinmrrnrrraiierl", 14, j);
+	prt("rtsxna..lcfgdkcpmldncltggpksdced", 15, j);
 	prt_binary(f1, 16, j);
 
 	prt("+------------FLAGS2------------+", 17, j);
 	prt("SUST....IMMUN.RESIST............", 18, j);
-    prt("        aefcprpsaefcpfldbc sn   ", 19, j);
-    prt("siwdcc  cliooeatcliooeialoshtncd", 20, j);
-    prt("tnieoh  ierlifraierliatrnnnrhehi", 21, j);
-    prt("rtsxna..dcedslatdcedsrekdfddrxss", 22, j);
+	prt("        aefcprpsaefcpfldbc sn   ", 19, j);
+	prt("siwdcc  cliooeatcliooeialoshtncd", 20, j);
+	prt("tnieoh  ierlifraierliatrnnnrhehi", 21, j);
+	prt("rtsxna..dcedslatdcedsrekdfddrxss", 22, j);
 	prt_binary(f2, 23, j);
 
 	prt("+------------FLAGS3------------+", 10, j+32);
-    prt("fe      ehsi  st    iiiiadta  hp", 11, j+32);
-    prt("il   n taihnf ee    ggggcregb vr", 12, j+32);
-    prt("re  nowysdose eld   nnnntalrl ym", 13, j+32);
-    prt("ec  omrcyewta ieirmsrrrriieaeccc", 14, j+32);
-    prt("aa  taauktmatlnpgeihaefcvnpvsuuu", 15, j+32);
-    prt("uu  egirnyoahivaeggoclioaeoasrrr", 16, j+32);
-    prt("rr  litsopdretitsehtierltxrtesss", 17, j+32);
-    prt("aa  echewestreshtntsdcedeptedeee", 18, j+32);
+	prt("fe      ehsi  st    iiiiadta  hp", 11, j+32);
+	prt("il   n taihnf ee    ggggcregb vr", 12, j+32);
+	prt("re  nowysdose eld   nnnntalrl ym", 13, j+32);
+	prt("ec  omrcyewta ieirmsrrrriieaeccc", 14, j+32);
+	prt("aa  taauktmatlnpgeihaefcvnpvsuuu", 15, j+32);
+	prt("uu  egirnyoahivaeggoclioaeoasrrr", 16, j+32);
+	prt("rr  litsopdretitsehtierltxrtesss", 17, j+32);
+	prt("aa  echewestreshtntsdcedeptedeee", 18, j+32);
 	prt_binary(f3, 19, j+32);
 }
 
@@ -474,40 +474,40 @@ static void wiz_display_item(object_type *o_ptr)
  */
 static name_centry tval_names[] =
 {
-	{TV_SWORD,	"Sword"},
-	{TV_POLEARM,	"Pole-arm"},
-	{TV_HAFTED,	"Hafted Weapon"},
-	{TV_BOW,	"Bow"},
-	{TV_ARROW,	"Arrows"},
-	{TV_BOLT,	"Bolts"},
-	{TV_SHOT,	"Shots"},
-	{TV_SHIELD,	"Shield"},
-	{TV_CROWN,	"Crown"},
-	{TV_HELM,	"Helm"},
-	{TV_GLOVES,	"Gloves"},
-	{TV_BOOTS,	"Boots"},
-	{TV_CLOAK,	"Cloak"},
-	{TV_DRAG_ARMOR,	"Dragon Scale Mail"},
-	{TV_HARD_ARMOR,	"Hard Armour"},
-	{TV_SOFT_ARMOR,	"Soft Armour"},
-	{TV_RING,	"Ring"},
-	{TV_AMULET,	"Amulet"},
-	{TV_LITE,	"Lite"},
-	{TV_POTION,	"Potion"},
-	{TV_SCROLL,	"Scroll"},
-	{TV_WAND,	"Wand"},
-	{TV_STAFF,	"Staff"},
-	{TV_ROD,	"Rod"},
-	{TV_SORCERY_BOOK,	"Sorcery Book"},
-	{TV_THAUMATURGY_BOOK,	"Thaumaturgy Book"},
-	{TV_CONJURATION_BOOK,	"Conjuration Book"},
-	{TV_NECROMANCY_BOOK,	"Necromancy Book"},
-	{TV_CHARM,	"Charm"},
-	{TV_SPIKE,	"Spike"},
-	{TV_DIGGING,	"Digger"},
-	{TV_CHEST,	"Chest"},
-	{TV_FOOD,	"Food"},
-	{TV_FLASK,	"Flask"},
+	{TV_SWORD, "Sword"},
+	{TV_POLEARM, "Pole-arm"},
+	{TV_HAFTED, "Hafted Weapon"},
+	{TV_BOW, "Bow"},
+	{TV_ARROW, "Arrows"},
+	{TV_BOLT, "Bolts"},
+	{TV_SHOT, "Shots"},
+	{TV_SHIELD, "Shield"},
+	{TV_CROWN, "Crown"},
+	{TV_HELM, "Helm"},
+	{TV_GLOVES, "Gloves"},
+	{TV_BOOTS, "Boots"},
+	{TV_CLOAK, "Cloak"},
+	{TV_DRAG_ARMOR, "Dragon Scale Mail"},
+	{TV_HARD_ARMOR, "Hard Armour"},
+	{TV_SOFT_ARMOR, "Soft Armour"},
+	{TV_RING, "Ring"},
+	{TV_AMULET, "Amulet"},
+	{TV_LITE, "Lite"},
+	{TV_POTION, "Potion"},
+	{TV_SCROLL, "Scroll"},
+	{TV_WAND, "Wand"},
+	{TV_STAFF, "Staff"},
+	{TV_ROD, "Rod"},
+	{TV_SORCERY_BOOK, "Sorcery Book"},
+	{TV_THAUMATURGY_BOOK, "Thaumaturgy Book"},
+	{TV_CONJURATION_BOOK, "Conjuration Book"},
+	{TV_NECROMANCY_BOOK, "Necromancy Book"},
+	{TV_CHARM, "Charm"},
+	{TV_SPIKE, "Spike"},
+	{TV_DIGGING, "Digger"},
+	{TV_CHEST, "Chest"},
+	{TV_FOOD, "Food"},
+	{TV_FLASK, "Flask"},
 	{0, NULL}
 };
 
@@ -587,7 +587,7 @@ static void monster_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  * then on the race itself.
  *
  * Hack - this function relies on there being no more than 60 symbols which
- * are used to represent monsters, or 60 monsters with a symbol. 
+ * are used to represent monsters, or 60 monsters with a symbol.
  */
 static int choose_monster_type(void)
 {
@@ -648,12 +648,12 @@ void wiz_create_named_art(int a_idx)
  */
 static void wiz_tweak_item(object_type *o_ptr)
 {
-	cptr	p;
+	cptr p;
 	char        tmp_val[80];
 
 
 	/* Hack -- leave artifacts alone */
-    if (allart_p(o_ptr)) return;
+	if (allart_p(o_ptr)) return;
 
 	p = "Enter new 'pval' setting: ";
 	sprintf(tmp_val, "%d", o_ptr->pval);
@@ -686,7 +686,7 @@ static void wiz_tweak_item(object_type *o_ptr)
  */
 static void wiz_change_item(object_type *o_ptr)
 {
-	cptr	p;
+	cptr p;
 	char        tmp_val[80];
 
 	/* Hack -- leave artifacts alone */
@@ -698,7 +698,7 @@ static void wiz_change_item(object_type *o_ptr)
 	o_ptr->k_idx = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 	wiz_display_item(o_ptr);
-	
+
 	/* There's no easy way to detect impossible ego items, but restricting
 	it to weapons and non-dragon armour is simple. */
 	switch (o_ptr->tval)
@@ -711,7 +711,7 @@ static void wiz_change_item(object_type *o_ptr)
 		default:
 		return;
 	}
-	
+
 	p = "Enter new 'ego' number: ";
 	sprintf(tmp_val, "%d", o_ptr->name2);
 	if (!get_string(p, tmp_val, 5)) return;
@@ -734,7 +734,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 
 	/* Hack -- leave artifacts alone */
-    if (allart_p(o_ptr)) return;
+	if (allart_p(o_ptr)) return;
 
 
 	/* Get local object */
@@ -825,8 +825,8 @@ static void wiz_statistics(object_type *o_ptr)
 	bool good, great;
 
 	object_type forge;
-	object_type	*q_ptr;
-	
+	object_type *q_ptr;
+
 	cptr q = "Rolls: %ld, Matches: %ld, Better: %ld, Worse: %ld, Other: %ld";
 
 
@@ -872,7 +872,7 @@ static void wiz_statistics(object_type *o_ptr)
 
 		/* Let us know what we are doing */
 		msg_format("Creating a lot of %s items. Base level = %d.",
-		           quality, (dun_depth));
+			quality, (dun_depth));
 		msg_print(NULL);
 
 		/* Set counters to zero */
@@ -922,27 +922,27 @@ static void wiz_statistics(object_type *o_ptr)
 
 			/* Check for match */
 			if ((q_ptr->pval == o_ptr->pval) &&
-			    (q_ptr->to_a == o_ptr->to_a) &&
-			    (q_ptr->to_h == o_ptr->to_h) &&
-			    (q_ptr->to_d == o_ptr->to_d))
+				(q_ptr->to_a == o_ptr->to_a) &&
+				(q_ptr->to_h == o_ptr->to_h) &&
+				(q_ptr->to_d == o_ptr->to_d))
 			{
 				matches++;
 			}
 
 			/* Check for better */
 			else if ((q_ptr->pval >= o_ptr->pval) &&
-			         (q_ptr->to_a >= o_ptr->to_a) &&
-			         (q_ptr->to_h >= o_ptr->to_h) &&
-			         (q_ptr->to_d >= o_ptr->to_d))
+					(q_ptr->to_a >= o_ptr->to_a) &&
+					(q_ptr->to_h >= o_ptr->to_h) &&
+					(q_ptr->to_d >= o_ptr->to_d))
 			{
 				better++;
 			}
 
 			/* Check for worse */
 			else if ((q_ptr->pval <= o_ptr->pval) &&
-			         (q_ptr->to_a <= o_ptr->to_a) &&
-			         (q_ptr->to_h <= o_ptr->to_h) &&
-			         (q_ptr->to_d <= o_ptr->to_d))
+					(q_ptr->to_a <= o_ptr->to_a) &&
+					(q_ptr->to_h <= o_ptr->to_h) &&
+					(q_ptr->to_d <= o_ptr->to_d))
 			{
 				worse++;
 			}
@@ -976,7 +976,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 
 
 	/* Never duplicate artifacts */
-    if (allart_p(o_ptr)) return;
+	if (allart_p(o_ptr)) return;
 
 
 	/* Default */
@@ -1064,11 +1064,11 @@ void do_cmd_wiz_play(object_type *o_ptr)
 			case 'q':
 			wiz_quantity_item(q_ptr);
 			break;
-			
+
 			case 'c':
 			wiz_change_item(q_ptr);
 			break;
-			
+
 			default:
 			bell(0);
 		}
@@ -1104,7 +1104,7 @@ void do_cmd_wiz_play(object_type *o_ptr)
 
 
 /*
- * Wizard routine for creating objects		-RAK-
+ * Wizard routine for creating objects -RAK-
  * Heavily modified to allow magification and artifactification  -Bernd-
  *
  * Note that wizards cannot create objects on top of other objects.
@@ -1198,9 +1198,9 @@ void do_cmd_wiz_jump(int level)
 	/* Ask for level */
 	if (level <= 0)
 	{
-		char	ppp[80];
+		char ppp[80];
 
-		char	tmp_val[160];
+		char tmp_val[160];
 
 		/* Prompt */
 		sprintf(ppp, "Jump to level (0-%d): ", dun_defs[cur_dungeon].max_level);
@@ -1249,7 +1249,7 @@ void do_cmd_wiz_learn(int max_level)
 		{
 			/* Get local object */
 			q_ptr = &forge;
-			
+
 			/* Prepare object */
 			object_prep(q_ptr, i);
 
@@ -1269,7 +1269,7 @@ void do_cmd_wiz_summon(int num)
 
 	for (i = 0; i < num; i++)
 	{
-        (void)summon_specific(py, px, (dun_depth), 0);
+		(void)summon_specific(py, px, (dun_depth), 0);
 	}
 }
 
@@ -1362,7 +1362,7 @@ void do_cmd_magebolt(void)
  */
 void do_cmd_debug(void)
 {
-	char		cmd;
+	char cmd;
 
 
 	/* Get a "debug command" */

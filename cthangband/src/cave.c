@@ -403,7 +403,7 @@ bool cave_valid_bold(int y, int x)
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
-		
+
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
 
@@ -411,7 +411,7 @@ bool cave_valid_bold(int y, int x)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Forbid artifact grids */
-        if (allart_p(o_ptr)) return (FALSE);
+		if (allart_p(o_ptr)) return (FALSE);
 	}
 
 	/* Accept */
@@ -545,10 +545,10 @@ static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
 
 	/* Monsters which would otherwise be invisible become red. */
 	else if ((*ap) == r_ptr->x_attr && (*cp) == r_ptr->x_char) a = TERM_RED;
-	
+
 	/* Only the above types of monster are modified here. */
 	else return FALSE;
-	
+
 	/* Monsters which are the colour in question anyway become yellow. */
 	if (a == r_ptr->x_attr) a = TERM_YELLOW;
 
@@ -720,10 +720,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	{
 		/* Memorized (or visible) floor */
 		if ((c_ptr->info & (CAVE_MARK)) ||
-		    (((c_ptr->info & (CAVE_LITE)) ||
-		      ((c_ptr->info & (CAVE_GLOW)) &&
-		       (c_ptr->info & (CAVE_VIEW)))) &&
-		     !p_ptr->blind))
+			(((c_ptr->info & (CAVE_LITE)) ||
+				((c_ptr->info & (CAVE_GLOW)) &&
+				(c_ptr->info & (CAVE_VIEW)))) &&
+			!p_ptr->blind))
 		{
 			/* Access floor */
 			f_ptr = &f_info[FEAT_FLOOR];
@@ -1069,11 +1069,11 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 			}
 
 
-			/* Hack - allow non-clear uniques to be set uniformly violet, 
+			/* Hack - allow non-clear uniques to be set uniformly violet,
 			or yellow if violet normally. */
 			else if (do_violet_unique(r_ptr, ap, cp));
-	    /* Multi-hued monster */
-        else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
+		/* Multi-hued monster */
+		else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
 			{
 		/* Is it a shapechanger? */
 		if (r_ptr->flags2 & (RF2_SHAPECHANGER))
@@ -1083,20 +1083,20 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 				image_monster(ap, cp);
 			}
 			else
-            {
+			{
 				(*cp) = (randint(25)==1?
 				image_object_hack[randint(strlen(image_object_hack))]:
 				image_monster_hack[randint(strlen(image_monster_hack))]);
-            }
+			}
 		}
 		else
-		    (*cp) = c;
+			(*cp) = c;
 
 				/* Multi-hued attr */
-        if (r_ptr->flags2 & (RF2_ATTR_ANY))
+		if (r_ptr->flags2 & (RF2_ATTR_ANY))
 				(*ap) = randint(15);
 		else switch (randint(7))
-				      {  case 1:
+						{  case 1:
 						(*ap)=TERM_RED;
 						break;
 					case 2:
@@ -1114,10 +1114,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 					case 6:
 			(*ap)=TERM_L_DARK;
 						break;
-		    case 7:
+			case 7:
 			(*ap)=TERM_GREEN;
 			break;
-				       }
+						}
 			}
 
 			/* Normal monster (not "clear" in any way) */
@@ -1285,7 +1285,7 @@ void highlight_square(int win, int y, int x)
 
 	/* Do nothing if the cursor remains within the same square. */
 	if (win == win2 && y == y2 && x == x2) return;
-	
+
 	/* Remember the square for next time. */
 	win2 = win;
 	y2 = y;
@@ -1408,7 +1408,7 @@ void note_spot(int y, int x)
 			/* Memorize */
 			c_ptr->info |= (CAVE_MARK);
 		}
-		
+
 		/* Memorize torch-lit walls */
 		else if (c_ptr->info & (CAVE_LITE))
 		{
@@ -1600,7 +1600,7 @@ void display_map(int *cy, int *cx, int *my, int *mx)
 	Term_get_size(&map_wid, &map_hgt);
 
 	ratio = MAX(MAX((cur_wid+map_wid-1)/map_wid, (cur_hgt+map_hgt-1)/map_hgt), 1);
-	
+
 	map_hgt = (cur_hgt+ratio-1)/ratio + 1;
 	map_wid = (cur_wid+ratio-1)/ratio + 1;
 
@@ -1699,10 +1699,10 @@ void display_map(int *cy, int *cx, int *my, int *mx)
 			tc = mc[y][x];
 
 			/* Hack -- fake monochrome */
-            if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-                && (p_ptr->invuln)) ta = TERM_WHITE;
-            else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-                && (p_ptr->wraith_form)) ta = TERM_L_DARK;
+			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
+				&& (p_ptr->invuln)) ta = TERM_WHITE;
+			else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
+				&& (p_ptr->wraith_form)) ta = TERM_L_DARK;
 
 			/* Add the character */
 			Term_addch(ta, tc);
@@ -2182,10 +2182,10 @@ void forget_lite(void)
  * called when the "lite" array is full.
  */
 #define cave_lite_hack(Y,X) \
-    cave[Y][X].info |= (CAVE_LITE); \
-    lite_y[lite_n] = (Y); \
-    lite_x[lite_n] = (X); \
-    lite_n++
+	cave[Y][X].info |= (CAVE_LITE); \
+	lite_y[lite_n] = (Y); \
+	lite_x[lite_n] = (X); \
+	lite_n++
 
 
 
@@ -2489,10 +2489,10 @@ void forget_view(void)
  * called when the "view" array is full.
  */
 #define cave_view_hack(C,Y,X) \
-    (C)->info |= (CAVE_VIEW); \
-    view_y[view_n] = (Y); \
-    view_x[view_n] = (X); \
-    view_n++
+	(C)->info |= (CAVE_VIEW); \
+	view_y[view_n] = (Y); \
+	view_x[view_n] = (X); \
+	view_n++
 
 
 
@@ -3427,7 +3427,7 @@ void wiz_lite(void)
 		/* Memorize */
 		o_ptr->marked = TRUE;
 	}
-	
+
 	/* Scan all normal grids */
 	for (y = 1; y < cur_hgt-1; y++)
 	{
@@ -3514,7 +3514,7 @@ void wiz_dark(void)
 		/* Forget the object */
 		o_ptr->marked = FALSE;
 	}
-	
+
 	/* Mega-Hack -- Forget the view and lite */
 	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
 
@@ -3655,7 +3655,7 @@ static bool PURE projectable_p(int y, int x, int d)
 
 	/* Pattern or explosive rune. */
 	else if ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
-              (cave[y][x].feat >= FEAT_MINOR_GLYPH)) return TRUE;
+		(cave[y][x].feat >= FEAT_MINOR_GLYPH)) return TRUE;
 
 	/* Bad terrain feature. */
 	else return FALSE;

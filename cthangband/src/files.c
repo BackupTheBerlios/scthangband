@@ -241,7 +241,7 @@ cptr add_stats(s16b sex, s16b race, s16b template, bool maximise,
 	}
 
 	sd_ptr = &stat_default[stat_default_total];
-	
+
 	sd_ptr->sex = sex;
 	sd_ptr->race = race;
 	sd_ptr->template = template;
@@ -489,7 +489,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 	switch (buf[0])
 	{
 		/* Process %:<filename> -- process a given file. */
-		case '%': 
+		case '%':
 		{
 			/* Attempt to Process the given file */
 			if (process_pref_file(buf + 2))
@@ -498,7 +498,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				return 0;
 		}
 		/* Process O:<version> -- save file version for this file. */
-		case 'O': 
+		case 'O':
 		{
 			j = tokenize(buf+2, 16, zz);
 			if (!j || j > MAX_SF_VAR) return "format not O:<ver>:<ver>:...";
@@ -592,7 +592,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			}
 			return NULL;
 		}
-		/* 
+		/*
 		 * Simply extract the tokens and pass to squelch.c, as no action is
 		 * appropriate without detailed knowledge.
 		 */
@@ -680,7 +680,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case 'C':
 		{
 			int mode;
-	
+
 			/* Hack - handle ---reset--- as a special case */
 			if (!strcmp(buf+2, "---reset---"))
 			{
@@ -694,25 +694,25 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				C_WIPE(keymap_act, (MAX_UCHAR+1)*KEYMAP_MODES, cptr);
 				return SUCCESS;
 			}
-	
+
 			if (tokenize(buf+2, 2, zz) != 2) return "format not C:<mode>:<key>";
-	
+
 			mode = strtol(zz[0], NULL, 0);
 			if ((mode < 0) || (mode >= KEYMAP_MODES))
 				return "no such keymap mode";
-	
+
 			if (strlen(format("%v", text_to_ascii_f1, zz[1])) != 1)
 				return "no such key";
 			i = (byte)(format(0)[0]);
-	
+
 			FREE(keymap_act[mode][i]);
-	
+
 			keymap_act[mode][i] = string_make(macro__buf);
-	
+
 			return (0);
 		}
-	
-	
+
+
 		/* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info */
 		case 'V':
 		{
@@ -752,7 +752,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			}
 			return 0;
 		}
-		
+
 		/* Process "Y:<str>"/"X:<str>" -- turn option on/off */
 		case 'Y': case 'X':
 		{
@@ -775,7 +775,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 			{
 				if (op_ptr->o_var && op_ptr->o_text &&
-				    !strcmp(op_ptr->o_text, buf + 2))
+					!strcmp(op_ptr->o_text, buf + 2))
 				{
 					/* Set the option. */
 					(*op_ptr->o_var) = (buf[0] == 'Y');
@@ -843,7 +843,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		}
 
 		/*
-		 * Process D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name> for initial stats 
+		 * Process D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name> for initial stats
 		 */
 		case 'D':
 		{
@@ -856,7 +856,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			if (total < A_MAX+4 || total > A_MAX+5)
 			{
 				return "format not D:<sex>:<race>:<class>:<maximise>:<str>:<int>:<wis>:<dex>:<con>:<chr>:<name>";
-			}			
+			}
 
 			D_GET_RACE(sex, 0, sex_info, MAX_SEXES, "sex");
 			D_GET_RACE(race, 1, race_info, MAX_RACES, "race");
@@ -1291,7 +1291,7 @@ errr check_time(void)
 #ifdef CHECK_TIME
 
 	time_t              c;
-	struct tm		*tp;
+	struct tm *tp;
 
 	/* No restrictions */
 	if (!check_time_flag) return (0);
@@ -1321,7 +1321,7 @@ errr check_time_init(void)
 
 	FILE        *fp;
 
-	char	buf[1024];
+	char buf[1024];
 
 
 	/* Open the file */
@@ -1439,10 +1439,10 @@ errr check_load_init(void)
 
 	FILE        *fp;
 
-	char	buf[1024];
+	char buf[1024];
 
-	char	temphost[MAXHOSTNAMELEN+1];
-	char	thishost[MAXHOSTNAMELEN+1];
+	char temphost[MAXHOSTNAMELEN+1];
+	char thishost[MAXHOSTNAMELEN+1];
 
 
 	/* Open the "load" file */
@@ -1470,7 +1470,7 @@ errr check_load_init(void)
 
 		/* Skip other hosts */
 		if (!streq(temphost, thishost) &&
-		    !streq(temphost, "localhost")) continue;
+			!streq(temphost, "localhost")) continue;
 
 		/* Use that value */
 		check_load_value = value;
@@ -1497,7 +1497,7 @@ errr check_load_init(void)
 static char percent_to_colour(s16b cur, s16b max)
 {
 	if (cur == max) return 'G';
-  	if (cur > (max * hitpoint_warn) / 10) return 'y';
+	if (cur > (max * hitpoint_warn) / 10) return 'y';
 	return 'r';
 }
 
@@ -1624,7 +1624,7 @@ static s32b critical_average(int weight, int plus, int dam)
 /*
  * Give the average base damage the player gains from martial arts based on
  * do_ma_attack(), which works as follows:
- * 
+ *
  * An attack is selected i times.
  * The game chooses attacks randomly until one is selected, which happens
  * (skill-ma_ptr->chance)/skill of the time.
@@ -1716,7 +1716,7 @@ static s32b average_ma_damage(void)
 /*
  * Given an object to be scrutinised, find a weapon and some ammunition (if
  * appropriate) to use it.
- * 
+ *
  * *wp_ptr and *am_ptr will eventually refer to the weapon and ammunition
  * to be used, but should initially point to blank object_types.
  */
@@ -1799,7 +1799,7 @@ static void weapon_stats_calc(object_ctype *wp_ptr,
 	/* Weapons use the intrinsic damage bonus */
 	if (slot == INVEN_WIELD) (*todam) = p_ptr->dis_to_d;
 	else (*todam) = 0;
-	
+
 	/* Everything uses the intrinsic hit bonus */
 	(*tohit) = p_ptr->dis_to_h;
 
@@ -1826,7 +1826,7 @@ static void weapon_stats_calc(object_ctype *wp_ptr,
 		if (wp_ptr->k_idx) power = get_bow_mult(wp_ptr);
 		/* Without a launcher everything has a power equal to throw_mult in cmd2.c */
 		else power = 1;
-	
+
 		object_flags_known(wp_ptr, &junk, &junk, &f3);
 
 		/* Apply the "Extra Might" flag */
@@ -1837,12 +1837,12 @@ static void weapon_stats_calc(object_ctype *wp_ptr,
 		damsides = am_ptr->ds;
 		damdice = am_ptr->dd;
 	}
-	
+
 	dicedam = 60*damdice*(1+damsides)/2;
 
 	/* Calculate the damage bonus. */
 	(*damage) += 60*(*todam);
-	
+
 	/* Martial arts damage. */
 	if (slot == INVEN_WIELD && ma_empty_hands())
 	{
@@ -1877,13 +1877,13 @@ static void weapon_stats_calc(object_ctype *wp_ptr,
 		else
 		{
 			(*damage) += dicedam * slay * 19 / 18;
-		}			
+		}
 	}
 
 	/* BUG - this considers negative rolls. */
 	(*damage) = MAX((*damage), 0);
 
-	/* Round blows/turn up according to the energy used. 
+	/* Round blows/turn up according to the energy used.
 	 * Hack - do not round mutated blows here, although they are rounded. */
 	(*weap_blow) = TURN_ENERGY*60/(TURN_ENERGY*60/(*weap_blow));
 
@@ -1947,7 +1947,7 @@ void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam, s16b *
 }
 
 static void display_player_weapon(const bool missile,
-	 const int x1, const int x2, const int y1)
+	const int x1, const int x2, const int y1)
 {
 	s16b show_tohit, show_todam, weap_blow, mut_blow;
 	s32b damage;
@@ -2045,7 +2045,7 @@ static cptr likert(int x, int y)
  */
 static void display_player_various(void)
 {
-    int tmp, damdice, damsides, dambonus, blows;
+	int tmp, damdice, damsides, dambonus, blows;
 	int xthn, xthb, muta_att = 0;
 	object_type *o_ptr;
 
@@ -2066,16 +2066,16 @@ static void display_player_various(void)
 	xthb = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
 
 
-     /* Average damage per round */
-     o_ptr = &inventory[INVEN_WIELD];
-     dambonus = p_ptr->dis_to_d;
-     if (object_known_p(o_ptr)) dambonus += o_ptr->to_d;
-     damdice = o_ptr->dd;
-     damsides = o_ptr->ds;   /* dam += (o_ptr->dd * (o_ptr->ds + 1)) >> 1; */
-     blows = p_ptr->num_blow;
-     /* dam *= p_ptr->num_blow; */
+	/* Average damage per round */
+	o_ptr = &inventory[INVEN_WIELD];
+	dambonus = p_ptr->dis_to_d;
+	if (object_known_p(o_ptr)) dambonus += o_ptr->to_d;
+	damdice = o_ptr->dd;
+	damsides = o_ptr->ds;   /* dam += (o_ptr->dd * (o_ptr->ds + 1)) >> 1; */
+	blows = p_ptr->num_blow;
+	/* dam *= p_ptr->num_blow; */
 
-     /* Basic abilities */
+	/* Basic abilities */
 
 	mc_put_fmt(16, 1, "Fighting    : %s", likert(xthn, 12));
 	mc_put_fmt(17, 1, "Bows/Throw  : %s", likert(xthb, 12));
@@ -2226,8 +2226,8 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(row+5, col, "Light:", 2, TR2_RES_LITE);
 	display_player_flag_aux(row+6, col, "Dark :", 2, TR2_RES_DARK);
 	display_player_flag_aux(row+7, col, "Shard:", 2, TR2_RES_SHARDS);
-    display_player_flag_aux(row+8, col, "Blind:", 2, TR2_RES_BLIND);
-    display_player_flag_aux(row+9, col, "Conf :", 2, TR2_RES_CONF);
+	display_player_flag_aux(row+8, col, "Blind:", 2, TR2_RES_BLIND);
+	display_player_flag_aux(row+9, col, "Conf :", 2, TR2_RES_CONF);
 
 	/*** Set 2 ***/
 
@@ -2238,15 +2238,15 @@ static void display_player_flag_info(void)
 
 	c_put_str(TERM_WHITE, "abcdefghijkl@", row-1, col+8);
 
-    display_player_flag_aux(row+0, col, "Sound :", 2, TR2_RES_SOUND);
-    display_player_flag_aux(row+1, col, "Nether:", 2, TR2_RES_NETHER);
-    display_player_flag_aux(row+2, col, "Nexus :", 2, TR2_RES_NEXUS);
-    display_player_flag_aux(row+3, col, "Chaos :", 2, TR2_RES_CHAOS);
-    display_player_flag_aux(row+4, col, "Disnch:", 2, TR2_RES_DISEN);
-    display_player_flag_aux(row+5, col, "Fear  :", 2, TR2_RES_FEAR);
-    display_player_flag_aux(row+6, col, "Reflct:", 2, TR2_REFLECT);
-    display_player_flag_aux(row+7, col, "AuFire:", 3, TR3_SH_FIRE);
-    display_player_flag_aux(row+8, col, "AuElec:", 3, TR3_SH_ELEC);
+	display_player_flag_aux(row+0, col, "Sound :", 2, TR2_RES_SOUND);
+	display_player_flag_aux(row+1, col, "Nether:", 2, TR2_RES_NETHER);
+	display_player_flag_aux(row+2, col, "Nexus :", 2, TR2_RES_NEXUS);
+	display_player_flag_aux(row+3, col, "Chaos :", 2, TR2_RES_CHAOS);
+	display_player_flag_aux(row+4, col, "Disnch:", 2, TR2_RES_DISEN);
+	display_player_flag_aux(row+5, col, "Fear  :", 2, TR2_RES_FEAR);
+	display_player_flag_aux(row+6, col, "Reflct:", 2, TR2_REFLECT);
+	display_player_flag_aux(row+7, col, "AuFire:", 3, TR3_SH_FIRE);
+	display_player_flag_aux(row+8, col, "AuElec:", 3, TR3_SH_ELEC);
 
 	/*** Set 3 ***/
 
@@ -2255,17 +2255,17 @@ static void display_player_flag_info(void)
 
 	mc_put_fmt(row-2, col+15, "%v", equippy_f0);
 
-    c_put_str(TERM_WHITE, "abcdefghijkl@", row-1, col+15);
+	c_put_str(TERM_WHITE, "abcdefghijkl@", row-1, col+15);
 
-    display_player_flag_aux(row+0, col, "Speed        :", 1, TR1_SPEED);
-    display_player_flag_aux(row+1, col, "Free Action  :", 2, TR2_FREE_ACT);
-    display_player_flag_aux(row+2, col, "See Invisible:", 3, TR3_SEE_INVIS);
-    display_player_flag_aux(row+3, col, "Hold Life    :", 2, TR2_HOLD_LIFE);
-    display_player_flag_aux(row+4, col, "Telepathy    :", 3, TR3_TELEPATHY);
-    display_player_flag_aux(row+5, col, "Slow Digest  :", 3, TR3_SLOW_DIGEST);
-    display_player_flag_aux(row+6, col, "Regeneration :", 3, TR3_REGEN);
-    display_player_flag_aux(row+7, col, "Levitation   :", 3, TR3_FEATHER);
-    display_player_flag_aux(row+8, col, "Perm Lite    :", 3, TR3_LITE);
+	display_player_flag_aux(row+0, col, "Speed        :", 1, TR1_SPEED);
+	display_player_flag_aux(row+1, col, "Free Action  :", 2, TR2_FREE_ACT);
+	display_player_flag_aux(row+2, col, "See Invisible:", 3, TR3_SEE_INVIS);
+	display_player_flag_aux(row+3, col, "Hold Life    :", 2, TR2_HOLD_LIFE);
+	display_player_flag_aux(row+4, col, "Telepathy    :", 3, TR3_TELEPATHY);
+	display_player_flag_aux(row+5, col, "Slow Digest  :", 3, TR3_SLOW_DIGEST);
+	display_player_flag_aux(row+6, col, "Regeneration :", 3, TR3_REGEN);
+	display_player_flag_aux(row+7, col, "Levitation   :", 3, TR3_FEATHER);
+	display_player_flag_aux(row+8, col, "Perm Lite    :", 3, TR3_LITE);
 }
 
 /*
@@ -2368,7 +2368,7 @@ static void display_player_skills(void)
  */
 static void display_player_misc_info(void)
 {
-	char	buf[80];
+	char buf[80];
 
 	/* Display basics */
 	put_str("Name      :", 2, 1);
@@ -2386,9 +2386,9 @@ static void display_player_misc_info(void)
 	put_str("Mana(Max) :", 8, 1);
 
 	(void) sprintf(buf, "%d(%d)", (int) p_ptr->chp, (int) p_ptr->mhp);
-    c_put_str(TERM_L_BLUE, buf, 7, 13);
-    (void) sprintf(buf, "%d(%d)", (int) p_ptr->csp, (int) p_ptr->msp);
-	c_put_str(TERM_L_BLUE, buf, 8, 13);	
+	c_put_str(TERM_L_BLUE, buf, 7, 13);
+	(void) sprintf(buf, "%d(%d)", (int) p_ptr->csp, (int) p_ptr->msp);
+	c_put_str(TERM_L_BLUE, buf, 8, 13);
 }
 
 
@@ -2399,7 +2399,7 @@ int equip_mod(int i)
 {
 	/* Calculate equipment adjustment */
 	int e_adj = 0;
-      
+
 	/* Icky formula to deal with the 18 barrier */
 	if ((p_ptr->stat_max[i]>18) && (p_ptr->stat_top[i]>18))
 		e_adj = (p_ptr->stat_top[i] - p_ptr->stat_max[i])/10;
@@ -2408,9 +2408,9 @@ int equip_mod(int i)
 	if ((p_ptr->stat_max[i]<=18) && (p_ptr->stat_top[i]>18))
 		e_adj = (p_ptr->stat_top[i] - 18)/10 - p_ptr->stat_max[i] + 18;
 
-        if ((p_ptr->stat_max[i]>18) && (p_ptr->stat_top[i]<=18))
-            e_adj = p_ptr->stat_top[i] - (p_ptr->stat_max[i]-18)/10 - 19;
-      
+		if ((p_ptr->stat_max[i]>18) && (p_ptr->stat_top[i]<=18))
+			e_adj = p_ptr->stat_top[i] - (p_ptr->stat_max[i]-18)/10 - 19;
+
 	/* Deduct template and race bonuses if in maximize */
 	if (maximise_mode)
 	{
@@ -2422,7 +2422,7 @@ int equip_mod(int i)
 
 /*
  * Special display, part 2b
- * 
+ *
  * How to print out the modifications and sustains.
  * Positive mods with no sustain will be light green.
  * Positive mods with a sustain will be dark green.
@@ -2456,10 +2456,10 @@ static void display_player_stat_info(void)
 	/* Print out the labels for the columns */
 	c_put_str(TERM_WHITE, "Stat", row-1, stat_col);
 	c_put_str(TERM_BLUE, "Intrnl", row-1, stat_col+5);
-    c_put_str(TERM_L_BLUE, "Rce Cls Mod", row-1, stat_col+12);
+	c_put_str(TERM_L_BLUE, "Rce Cls Mod", row-1, stat_col+12);
 	c_put_str(TERM_L_GREEN, "Actual", row-1, stat_col+24);
 	c_put_str(TERM_YELLOW, "Currnt", row-1, stat_col+31);
-  
+
 	/* Display the stats */
 	for (i = 0; i < 6; i++)
 	{
@@ -2468,12 +2468,12 @@ static void display_player_stat_info(void)
 
 		/* Reduced name of stat */
 		c_put_str(TERM_WHITE, stat_names_reduced[i], row+i, stat_col);
-      
+
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out     */
 		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_max[i]);
 		c_put_str(TERM_BLUE, buf, row+i, stat_col+5);
-      
+
 		/* Race, template, and equipment modifiers */
 		(void) sprintf(buf, "%3d", (int) rp_ptr->r_adj[i]);
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+12);
@@ -2481,11 +2481,11 @@ static void display_player_stat_info(void)
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+16);
 		(void) sprintf(buf, "%3d", (int) e_adj);
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+20);
-      
+
 		/* Actual maximal modified value */
 		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_top[i]);
 		c_put_str(TERM_L_GREEN, buf, row+i, stat_col+24);
-      
+
 		/* Only display stat_use if not maximal */
 		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
 		{
@@ -2535,7 +2535,7 @@ static void display_player_stat_info(void)
 					/* Label boost */
 					if (o_ptr->pval < 10) c = '0' + o_ptr->pval;
 				}
-				
+
 				/* Bad */
 				if (o_ptr->pval < 0)
 				{
@@ -2562,7 +2562,7 @@ static void display_player_stat_info(void)
 
 		/* Advance */
 		col++;
-    }
+	}
 
 	/* Player flags */
 	player_flags(&f1, &f2, &f3);
@@ -2575,65 +2575,65 @@ static void display_player_stat_info(void)
 		a = TERM_SLATE;
 		c = '.';
 
-        /* Chaos Features ... */
+		/* Chaos Features ... */
 			if (stat == A_STR)
-            {
-                if (p_has_mutation(MUT_HYPER_STR)) dummy += 4;
-                if (p_has_mutation(MUT_PUNY))   dummy -= 4;
-            }
-            else if (stat == A_WIS || stat == A_INT)
-            {
-                if (p_has_mutation(MUT_HYPER_INT)) dummy += 4;
-                if (p_has_mutation(MUT_MORONIC)) dummy -= 4;
-            }
-            else if (stat == A_DEX)
-            {
+			{
+				if (p_has_mutation(MUT_HYPER_STR)) dummy += 4;
+				if (p_has_mutation(MUT_PUNY))   dummy -= 4;
+			}
+			else if (stat == A_WIS || stat == A_INT)
+			{
+				if (p_has_mutation(MUT_HYPER_INT)) dummy += 4;
+				if (p_has_mutation(MUT_MORONIC)) dummy -= 4;
+			}
+			else if (stat == A_DEX)
+			{
 				if (p_has_mutation(MUT_IRON_SKIN)) dummy -= 1;
 				if (p_has_mutation(MUT_LIMBER)) dummy += 3;
 				if (p_has_mutation(MUT_ARTHRITIS)) dummy -= 3;
-            }
-            else if (stat == A_CON)
-            {
-                if (p_has_mutation(MUT_RESILIENT)) dummy += 4;
-                if (p_has_mutation(MUT_XTRA_FAT)) dummy += 2;
-                if (p_has_mutation(MUT_ALBINO)) dummy -= 4;
-                if (p_has_mutation(MUT_FLESH_ROT)) dummy -= 2;
-            }
-            else if (stat == A_CHR)
-            {
-                if (p_has_mutation(MUT_SILLY_VOI)) dummy -= 4;
-                if (p_has_mutation(MUT_BLANK_FAC)) dummy -= 1;
-                if (p_has_mutation(MUT_FLESH_ROT)) dummy -= 1;
-                if (p_has_mutation(MUT_SCALES)) dummy -= 1;
-                if (p_has_mutation(MUT_WART_SKIN)) dummy -= 2;
+			}
+			else if (stat == A_CON)
+			{
+				if (p_has_mutation(MUT_RESILIENT)) dummy += 4;
+				if (p_has_mutation(MUT_XTRA_FAT)) dummy += 2;
+				if (p_has_mutation(MUT_ALBINO)) dummy -= 4;
+				if (p_has_mutation(MUT_FLESH_ROT)) dummy -= 2;
+			}
+			else if (stat == A_CHR)
+			{
+				if (p_has_mutation(MUT_SILLY_VOI)) dummy -= 4;
+				if (p_has_mutation(MUT_BLANK_FAC)) dummy -= 1;
+				if (p_has_mutation(MUT_FLESH_ROT)) dummy -= 1;
+				if (p_has_mutation(MUT_SCALES)) dummy -= 1;
+				if (p_has_mutation(MUT_WART_SKIN)) dummy -= 2;
 				if (p_has_mutation(MUT_ILL_NORM)) dummy = 0;
-            }
+			}
 
 
 			/* Boost */
-            if (dummy)
+			if (dummy)
 			{
 				/* Default */
 				c = '*';
 
 				/* Good */
-                if (dummy > 0)
+				if (dummy > 0)
 				{
 					/* Good */
 					a = TERM_L_GREEN;
 
 					/* Label boost */
-                    if (dummy < 10) c = '0' + dummy;
+					if (dummy < 10) c = '0' + dummy;
 				}
-				
+
 				/* Bad */
-                if (dummy < 0)
+				if (dummy < 0)
 				{
 					/* Bad */
 					a = TERM_RED;
 
 					/* Label boost */
-                    if (dummy < 10) c = '0' - dummy;
+					if (dummy < 10) c = '0' - dummy;
 				}
 			}
 
@@ -2650,7 +2650,7 @@ static void display_player_stat_info(void)
 
 		/* Dump */
 		Term_putch(col, row+stat, a, c);
-    }
+	}
 }
 
 static void display_player_basics(void)
@@ -2690,12 +2690,12 @@ static void display_player_stat_info_birth(void)
 
 		/* Reduced name of stat */
 		c_put_str(TERM_WHITE, stat_names_reduced[i], row+i, stat_col);
-      
+
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out     */
 		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_max[i]);
 		c_put_str(TERM_BLUE, buf, row+i, stat_col+5);
-      
+
 		/* Race, template, and equipment modifiers */
 		(void) sprintf(buf, "%3d", (int) rp_ptr->r_adj[i]);
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+12);
@@ -2703,11 +2703,11 @@ static void display_player_stat_info_birth(void)
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+16);
 		(void) sprintf(buf, "%3d", (int) e_adj);
 		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+20);
-      
+
 		/* Actual maximal modified value */
 		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_top[i]);
 		c_put_str(TERM_L_GREEN, buf, row+i, stat_col+24);
-      
+
 		/* Only display stat_use if not maximal */
 		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
 		{
@@ -2736,8 +2736,8 @@ static cptr object_flag_names[96] =
 	"Add Tun..",
 	"Add Speed",
 	"Add Blows",
-    "Chaotic",
-    "Vampiric",
+	"Chaotic",
+	"Vampiric",
 	"Slay Anim.",
 	"Slay Evil",
 	"Slay Und.",
@@ -2747,9 +2747,9 @@ static cptr object_flag_names[96] =
 	"Slay Giant",
 	"Slay Drag.",
 	"Kill Drag.",
-    "Sharpness",
+	"Sharpness",
 	"Impact",
-    "Poison Brd",
+	"Poison Brd",
 	"Acid Brand",
 	"Elec Brand",
 	"Fire Brand",
@@ -2768,7 +2768,7 @@ static cptr object_flag_names[96] =
 	"Imm Fire",
 	"Imm Cold",
 	"Rand R/P",
-    "Reflect",
+	"Reflect",
 	"Free Act",
 	"Hold Life",
 	"Res Acid",
@@ -2776,7 +2776,7 @@ static cptr object_flag_names[96] =
 	"Res Fire",
 	"Res Cold",
 	"Res Pois",
-    "Res Fear",
+	"Res Fear",
 	"Res Lite",
 	"Res Dark",
 	"Res Blind",
@@ -2790,20 +2790,20 @@ static cptr object_flag_names[96] =
 
 
 
-    "Aura Fire",
+	"Aura Fire",
 
-    "Aura Elec",
- 	NULL,
+	"Aura Elec",
+	NULL,
 	"AutoCurse",
-    "NoTeleport",
-    "AntiMagic",
-    "WraithForm",
-    "EvilCurse",
- 	"Easy Know",
- 	"Hide Type",
+	"NoTeleport",
+	"AntiMagic",
+	"WraithForm",
+	"EvilCurse",
+	"Easy Know",
+	"Hide Type",
 	"Show Mods",
 	"Insta Art",
-    "Levitate",
+	"Levitate",
 	"Lite",
 	"See Invis",
 	"Telepathy",
@@ -2868,7 +2868,7 @@ bool PURE player_has_flag_known(int set, u32b flag)
 static void display_player_ben(void)
 {
 	int x, y;
-	
+
 	u32b f[3];
 
 	/* Get the known flags. */
@@ -2918,7 +2918,7 @@ static void display_player_ben(void)
 static void display_player_ben_one(int mode)
 {
 	int i, n, x, y;
-	
+
 	object_type *o_ptr;
 
 	u32b f1, f2, f3;
@@ -2939,7 +2939,7 @@ static void display_player_ben_one(int mode)
 		object_flags_known(o_ptr, &f1, &f2, &f3);
 
 		/* Incorporate */
-		b[n][0] = (short)(f1 & 0xFFFF); 
+		b[n][0] = (short)(f1 & 0xFFFF);
 		b[n][1] = (short)(f1 >> 16);
 		b[n][2] = (short)(f2 & 0xFFFF);
 		b[n][3] = (short)(f2 >> 16);
@@ -2953,7 +2953,7 @@ static void display_player_ben_one(int mode)
 
 	/* Player flags */
 	player_flags(&f1, &f2, &f3);
-	
+
 	/* Incorporate */
 	b[n][0] = (short)(f1 & 0xFFFF);
 	b[n][1] = (short)(f1 >> 16);
@@ -3107,7 +3107,7 @@ bool display_player(int mode)
 
 			/* Extra info */
 			display_player_weapon(FALSE, 1, 22, 9);
-			display_player_weapon(TRUE, 28, 49, 9); 
+			display_player_weapon(TRUE, 28, 49, 9);
 
 			/* HP, etc. */
 			display_player_right();
@@ -3123,7 +3123,7 @@ bool display_player(int mode)
 
 			/* Extra info */
 			display_player_weapon(FALSE, 1, 22, 9);
-			display_player_weapon(TRUE, 28, 49, 9); 
+			display_player_weapon(TRUE, 28, 49, 9);
 
 			/* HP, etc. */
 			display_player_right();
@@ -3156,14 +3156,14 @@ bool display_player(int mode)
 			return TRUE;
 		}
 		case DPLAY_CHAOS:
-	    {
+		{
 			/* Nothing happens without permission or mutations. */
 			if (!skip_chaos_features && p_mutated())
 			{
-	        	do_cmd_knowledge_chaos_features();
+				do_cmd_knowledge_chaos_features();
 			}
 			return FALSE;
-	    }
+		}
 		case DPLAY_FLAG_1:
 		{
 			display_player_ben_one(0);
@@ -3271,15 +3271,15 @@ static void dump_pref(FILE *fff, cptr init, int option)
  */
 void file_character(cptr name)
 {
-	int			i, x, y;
+	int i, x, y;
 
-	cptr		paren = ")";
+	cptr paren = ")";
 
-	int			fd = -1;
+	int fd = -1;
 
-	FILE		*fff = NULL;
+	FILE *fff = NULL;
 
-	char		buf[1024];
+	char buf[1024];
 
 	long kills;
 
@@ -3358,7 +3358,7 @@ void file_character(cptr name)
 	dump_pref(fff, "Arena Levels", empty_levels);
 	dump_pref(fff, "Long Stairs", multi_stair);
 	dump_pref(fff, "Stupid Monsters", stupid_monsters);
-	
+
 	i = p_ptr->max_dlv+dun_defs[cur_dungeon].offset;
 	fprintf(fff, "\n Recall:             Level %d (%d') in %s\n",
 		i, 50*i, dun_name+dun_defs[cur_dungeon].name);
@@ -3418,13 +3418,13 @@ next_cave:
 	else
 		fprintf(fff,"\n You have defeated %ld enemies.\n", kills);
 
-    
 
-    if (p_mutated())
-    {
-        fprintf(fff, "\n\n  [Chaos Features]\n\n");
-        dump_chaos_features(fff);
-    }
+
+	if (p_mutated())
+	{
+		fprintf(fff, "\n\n  [Chaos Features]\n\n");
+		dump_chaos_features(fff);
+	}
 
 
 	/* Skip some lines */
@@ -3583,8 +3583,8 @@ struct hyperlink
 	/* Hypertext info */
 	link_det link[400];
 
-	int cur_link;	/* Currently selected link. */
-	int max_link;	/* Number of links known. */
+	int cur_link; /* Currently selected link. */
+	int max_link; /* Number of links known. */
 };
 
 static cptr *help_files = NULL;
@@ -3603,8 +3603,8 @@ static int num_links;
 #define MAX_LINKS 1024
 
 /* The option currently selected */
-#define MAX_HELP_STRS	5
-#define CUR_HELP_STR	help_str_list[help_strs-1]
+#define MAX_HELP_STRS 5
+#define CUR_HELP_STR help_str_list[help_strs-1]
 static cptr help_str_list[MAX_HELP_STRS];
 static int help_strs = 0;
 
@@ -3643,7 +3643,7 @@ void help_track(cptr str)
 		{
 			help_strs++;
 		}
-	
+
 		/* Set the current string */
 		CUR_HELP_STR = str;
 	}
@@ -3951,7 +3951,7 @@ static void display_help_page_aux(FILE *fff)
 	hyperlink_type h_ptr[1];
 
 	FILE *ftmp;
-	
+
 	/* Clear everything to start. */
 	WIPE(h_ptr, hyperlink_type);
 
@@ -4207,7 +4207,7 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 
 		/* Show a general "title" */
 		prt(format("[%s %s, %s, Line %d/%d]", GAME_NAME, GAME_VERSION,
-			   h_ptr->caption, line, size), 0, 0);
+				h_ptr->caption, line, size), 0, 0);
 
 		/* Prompt -- small files */
 		if (size <= (hgt - 4))
@@ -4320,7 +4320,7 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 		{
 			line = 0;
 		}
-		
+
 		/* Jump to end */
 		else if (k == '1')
 		{
@@ -4546,7 +4546,7 @@ void init_help_files(void)
 	{
 		quit_fmt("Cannot open '%s'!", syshelpfile);
 	}
-		
+
 
 	/* Count the file references. */
 	for (i = 1; !my_fgets(fff, buf, 1024);)
@@ -4770,7 +4770,7 @@ bool get_name(void)
 
 	/* Erase the prompt, etc */
 	clear_from(22);
-	
+
 	return changed;
 }
 
@@ -4800,8 +4800,8 @@ void do_cmd_suicide(void)
 	{
 		/* Verify */
 		if (!get_check("Do you really want to abandon your quest? ")) return;
-        if (!noscore)
-        {
+		if (!noscore)
+		{
 			/* Special Verification for suicide */
 			prt("Please verify QUIT by typing the '@' sign: ", 0, 0);
 			flush();
@@ -4835,18 +4835,18 @@ void do_cmd_save_game(bool is_autosave)
 {
 	/* Enable backwards compatibility */
 	bool as_4_1_0 = FALSE;
-	
-    /* Autosaves do not disturb */
-    if (!is_autosave)
-    {
-        /* Disturb the player */
-        disturb(1);
+
+	/* Autosaves do not disturb */
+	if (!is_autosave)
+	{
+		/* Disturb the player */
+		disturb(1);
 
 #ifdef ALLOW_410_SAVES
 	/* Determine the appropriate save version */
 	as_4_1_0 = get_check("Save a 4.1.0 save file? ");
 #endif
-    }
+	}
 	else if (!autosave_q)
 	{
 		msg_print("Autosaving the game...");
@@ -4895,7 +4895,7 @@ void do_cmd_save_game(bool is_autosave)
 
 
 /*
- * Hack -- Calculates the total number of points earned		-JWT-
+ * Hack -- Calculates the total number of points earned -JWT-
  */
 static long total_points(void)
 {
@@ -4905,7 +4905,7 @@ static long total_points(void)
 
 
 /*
- * Centers a string within a 31 character string		-JWT-
+ * Centers a string within a 31 character string -JWT-
  */
 static void center_string(char *buf, cptr str)
 {
@@ -5003,13 +5003,13 @@ static void print_tomb(void)
 	if (!done)
 	{
 
-	char	tmp[160];
+	char tmp[160];
 
-	char	buf[1024];
+	char buf[1024];
 
 	FILE        *fp;
 
-	time_t	ct = time((time_t)0);
+	time_t ct = time((time_t)0);
 
 
 	/* Clear screen */
@@ -5109,9 +5109,9 @@ static void print_tomb(void)
  */
 static void show_info(void)
 {
-	int			i;
+	int i;
 
-	object_type		*o_ptr;
+	object_type *o_ptr;
 
 	/* Hack -- Know everything in the inven/equip */
 	for (i = 0; i < INVEN_TOTAL; i++)
@@ -5120,7 +5120,7 @@ static void show_info(void)
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
-		
+
 		/* Aware and Known */
 		object_aware(o_ptr);
 		object_known(o_ptr);
@@ -5254,9 +5254,9 @@ static int highscore_write(high_score *score)
  */
 static int highscore_where(high_score *score)
 {
-	int			i;
+	int i;
 
-	high_score		the_score;
+	high_score the_score;
 
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return (-1);
@@ -5282,10 +5282,10 @@ static int highscore_where(high_score *score)
  */
 static int highscore_add(high_score *score)
 {
-	int			i, slot;
-	bool		done = FALSE;
+	int i, slot;
+	bool done = FALSE;
 
-	high_score		the_score, tmpscore;
+	high_score the_score, tmpscore;
 
 
 	/* Paranoia -- it may not have opened */
@@ -5330,13 +5330,13 @@ static int highscore_add(high_score *score)
  */
 void display_scores_aux(int from, int to, int note, high_score *score)
 {
-	int		i, j, k, n, attr, place;
+	int i, j, k, n, attr, place;
 	int psc;
 
-	high_score	the_score;
+	high_score the_score;
 
-	char	out_val[256];
-	char	tmp_val[160];
+	char out_val[256];
+	char tmp_val[160];
 
 
 	/* Paranoia -- it may not have opened */
@@ -5372,7 +5372,7 @@ void display_scores_aux(int from, int to, int note, high_score *score)
 		Term_clear();
 
 		/* Title */
-        put_str("              sCthangband Hall of Fame", 0, 0);
+		put_str("              sCthangband Hall of Fame", 0, 0);
 
 		/* Indicate non-top scores */
 		if (k > 0)
@@ -5433,8 +5433,8 @@ void display_scores_aux(int from, int to, int note, high_score *score)
 
 			/* Dump some info */
 			sprintf(out_val, "%3d.%9s  %s the %s %s",
-			        place, the_score.pts, the_score.who,
-			        race_info[pr].title, template_info[pc].title);
+					place, the_score.pts, the_score.who,
+					race_info[pr].title, template_info[pc].title);
 
 			/* Dump the first line */
 			c_put_str((byte)attr, out_val, n*4 + 2, 0);
@@ -5442,13 +5442,13 @@ void display_scores_aux(int from, int to, int note, high_score *score)
 			/* Another line of info */
 			sprintf(out_val, "               %s %s on %s %d",
 				(strcmp(the_score.how, "Woke up")) ? "Killed by" : "",
-			        the_score.how, "Dungeon Level", cdun);
+					the_score.how, "Dungeon Level", cdun);
 
 			/* Hack -- some people die in the town */
 			if (!cdun)
 			{
 				sprintf(out_val, "               Killed by %s on the surface",
-				        the_score.how);
+						the_score.how);
 			}
 
 			/* Append a "maximum level" */
@@ -5459,8 +5459,8 @@ void display_scores_aux(int from, int to, int note, high_score *score)
 
 			/* And still another line of info */
 			sprintf(out_val,
-			        "               (User %s, Date %s, Gold %s, Turn %s).",
-			        user, when, gold, aged);
+					"               (User %s, Date %s, Gold %s, Turn %s).",
+					user, when, gold, aged);
 			c_put_str((byte)attr, out_val, n*4 + 4, 0);
 		}
 
@@ -5522,7 +5522,7 @@ void template_score(int ptemplate)
 	int pr, pc, clev;
 	high_score the_score;
 	char buf[1024], out_val[256],tmp_str[80];
-	
+
 	sprintf(tmp_str,"The Masters of the %s Profession",template_info[ptemplate].title);
 	prt(tmp_str,5,0);
 	/* Build the filename */
@@ -5556,7 +5556,7 @@ void template_score(int ptemplate)
 		if (pc == ptemplate)
 		{
 			sprintf(out_val, "%3d) %s the %s (Score %d)",
-			    (m + 1), the_score.who,
+				(m + 1), the_score.who,
 				race_info[pr].title,atoi(the_score.pts));
 			prt(out_val, (m + 7), 0);
 			m++;
@@ -5584,7 +5584,7 @@ void template_score(int ptemplate)
 
 /*
  * Race Legends
- * -KMW- 
+ * -KMW-
  */
 void race_score(int race_num)
 {
@@ -5592,7 +5592,7 @@ void race_score(int race_num)
 	int pr, pc, clev, lastlev,psc;
 	high_score the_score;
 	char buf[1024], out_val[256], tmp_str[80];
-	
+
 	lastlev = 0;
 	(void) sprintf(tmp_str,"The %s Heroes of Note",race_info[race_num].title);
 	prt(tmp_str, 5, 15);
@@ -5630,11 +5630,11 @@ void race_score(int race_num)
 		if (pr == race_num)
 		{
 			sprintf(out_val, "%3d) %s, the %s (Score %d)",
-			    (m + 1), the_score.who,
+				(m + 1), the_score.who,
 			template_info[pc].title, atoi(the_score.pts));
 			prt(out_val, (m + 7), 0);
 			m++;
-			lastlev = clev;  
+			lastlev = clev;
 		}
 		j++;
 	}
@@ -5643,7 +5643,7 @@ void race_score(int race_num)
 	if (p_ptr->prace == race_num)
 	{
 		sprintf(out_val, "You) %s, the %s (Score %ld)",
-		    player_name, 
+			player_name,
 			cp_ptr->title,total_points());
 		prt(out_val, (m + 8), 0);
 	}
@@ -5781,7 +5781,7 @@ static void make_record(high_score *score)
  */
 static errr top_twenty(void)
 {
-	int		  j;
+	int   j;
 
 	high_score   the_score;
 
@@ -5884,7 +5884,7 @@ static errr top_twenty(void)
  */
 errr predict_score(void)
 {
-	int		  j;
+	int   j;
 
 	high_score   the_score;
 
@@ -5935,7 +5935,7 @@ errr predict_score(void)
 
 
 /*
- * Change the player into a King!			-RAK-
+ * Change the player into a King! -RAK-
  */
 static void kingly(void)
 {
@@ -6188,7 +6188,7 @@ static line_list *get_rnd_line_file(cptr file_name)
 }
 
 /*
- * Return a random line from a file, or NULL on errors. 
+ * Return a random line from a file, or NULL on errors.
  */
 static cptr get_rnd_line(cptr file_name)
 {
@@ -6210,7 +6210,7 @@ static cptr get_rnd_line(cptr file_name)
 /*
  * Process the above as a vstrnfmt_aux function.
  *
- * Format: 
+ * Format:
  * "%v", get_rnd_line_f1, (cptr)file_name
  * or:
  * "%.*v", (int)len, get_rnd_line_f1, file_name
@@ -6248,7 +6248,7 @@ static Signal_Handler_t wrap_signal(int sig, Signal_Handler_t handler)
 	return signal(sig, handler);
 }
 
-/* Call this instead of calling signal() directly. */  
+/* Call this instead of calling signal() directly. */
 Signal_Handler_t (*signal_aux)(int, Signal_Handler_t) = wrap_signal;
 
 
@@ -6400,7 +6400,7 @@ static void handle_signal_abort(int sig)
 
 	/* Give a warning */
 	Term_putstr(0, 23, -1, TERM_RED,
-	            "A gruesome software bug LEAPS out at you!");
+				"A gruesome software bug LEAPS out at you!");
 
 	/* Message */
 	Term_putstr(45, 23, -1, TERM_RED, "Panic save...");

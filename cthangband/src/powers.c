@@ -160,7 +160,7 @@ static project_ball_type power_project_ball_table[] =
 	{ACT_BA_FIRE_2+PO_ACTIVATION, GF_FIRE, 120, 3, NULL},
 	{ACT_BA_COLD_3+PO_ACTIVATION, GF_COLD, 200, 3, NULL},
 	{ACT_BA_ELEC_3+PO_ACTIVATION, GF_ELEC, 250, 3, NULL},
-/*	{ACT_BA_MISS_3+PO_ACTIVATION, GF_MISSILE, 300, -4, NULL}, */ /* Strange message order. */
+/* {ACT_BA_MISS_3+PO_ACTIVATION, GF_MISSILE, 300, -4, NULL}, */ /* Strange message order. */
 	{OBJ_RING_ACID+PO_K_IDX, GF_ACID, 50, 2, NULL},
 	{OBJ_RING_ICE+PO_K_IDX, GF_COLD, 50, 2, NULL},
 	{OBJ_RING_FIRE+PO_K_IDX, GF_FIRE, 50, 2, NULL},
@@ -558,83 +558,83 @@ cptr describe_power(int power, int lev)
 static void phlogiston (void)
 {
 
-    int max_flog = 0;
-    object_type * o_ptr = &inventory[INVEN_LITE];
+	int max_flog = 0;
+	object_type * o_ptr = &inventory[INVEN_LITE];
 
 	/* It's a lamp */
-    if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
+	if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
 	{
-        max_flog = FUEL_LAMP;
+		max_flog = FUEL_LAMP;
 	}
 
 	/* It's a torch */
-    else if (o_ptr->k_idx == OBJ_WOODEN_TORCH)
+	else if (o_ptr->k_idx == OBJ_WOODEN_TORCH)
 	{
-        max_flog = FUEL_TORCH;
+		max_flog = FUEL_TORCH;
 	}
 
 	/* No torch to refill */
 	else
 	{
-        msg_print("You are not wielding anything which uses phlogiston.");
-        return;
+		msg_print("You are not wielding anything which uses phlogiston.");
+		return;
 	}
 
-    if (o_ptr->pval >= max_flog)
-    {
-        msg_print("No more phlogiston can be put in this item.");
-        return;
-    }
+	if (o_ptr->pval >= max_flog)
+	{
+		msg_print("No more phlogiston can be put in this item.");
+		return;
+	}
 
 	/* Refuel */
-    o_ptr->pval += (max_flog / 2);
+	o_ptr->pval += (max_flog / 2);
 
 	/* Message */
-    msg_print("You add phlogiston to your light item.");
+	msg_print("You add phlogiston to your light item.");
 
 	/* Comment */
-    if (o_ptr->pval >= max_flog)
+	if (o_ptr->pval >= max_flog)
 	{
-        o_ptr->pval = max_flog;
-        msg_print("Your light item is full.");
+		o_ptr->pval = max_flog;
+		msg_print("Your light item is full.");
 	}
 
 
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
 }
-    
+
 static void call_the_(void)
 {
 	int i;
-				
-    if (cave_floor_bold(py-1,px-1) && cave_floor_bold(py-1, px) &&
-        cave_floor_bold(py-1,px+1) && cave_floor_bold(py,px-1) &&
-        cave_floor_bold(py,px+1) && cave_floor_bold(py+1,px-1) &&
-        cave_floor_bold(py+1,px) && cave_floor_bold(py+1,px+1))
+
+	if (cave_floor_bold(py-1,px-1) && cave_floor_bold(py-1, px) &&
+		cave_floor_bold(py-1,px+1) && cave_floor_bold(py,px-1) &&
+		cave_floor_bold(py,px+1) && cave_floor_bold(py+1,px-1) &&
+		cave_floor_bold(py+1,px) && cave_floor_bold(py+1,px+1))
 	{
 		for (i = 1; i < 10; i++)
-	    if (i-5) fire_ball(GF_SHARD, i,
+		if (i-5) fire_ball(GF_SHARD, i,
 				175, 2);
 
 		for (i = 1; i < 10; i++)
-	    if (i-5) fire_ball(GF_MANA, i,
+		if (i-5) fire_ball(GF_MANA, i,
 				175, 3);
-		
+
 		for (i = 1; i < 10; i++)
-	    if (i-5) fire_ball(GF_NUKE, i,
+		if (i-5) fire_ball(GF_NUKE, i,
 				175, 4);
 	}
-    else
-    {
-        msg_format("You %s the %s too close to a wall!",
-            "cast",
-            "spell");
-        msg_print("There is a loud explosion!");
-        destroy_area(py, px, 20+(skill_set[SKILL_THAUMATURGY].value/2), TRUE);
-        msg_print("The dungeon collapses...");
-        take_hit(100 + (randint(150)), "a suicidal Call the Void", MON_CALLING_THE_VOID);
-    }
+	else
+	{
+		msg_format("You %s the %s too close to a wall!",
+			"cast",
+			"spell");
+		msg_print("There is a loud explosion!");
+		destroy_area(py, px, 20+(skill_set[SKILL_THAUMATURGY].value/2), TRUE);
+		msg_print("The dungeon collapses...");
+		take_hit(100 + (randint(150)), "a suicidal Call the Void", MON_CALLING_THE_VOID);
+	}
 }
 
 /*
@@ -750,8 +750,8 @@ static bool brand_bolts(void)
 		if (o_ptr->tval != TV_BOLT) continue;
 
 		/* Skip artifacts and ego-items */
-        if (allart_p(o_ptr) || ego_item_p(o_ptr))
-            continue;
+		if (allart_p(o_ptr) || ego_item_p(o_ptr))
+			continue;
 
 		/* Skip cursed/broken items */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) continue;
@@ -792,7 +792,7 @@ static void rustproof(void)
 {
 	errr err;
 
-	object_type	*o_ptr;
+	object_type *o_ptr;
 
 	/* Select a piece of armour */
 	item_tester_hook = item_tester_hook_armour;
@@ -825,24 +825,24 @@ static void rustproof(void)
 void do_poly_wounds(int cause)
 {
 
-    s16b wounds = p_ptr->cut, hit_p = (p_ptr->mhp - p_ptr->chp);
-    s16b change = damroll(skill_set[SKILL_TOUGH].value/2, 5);
-    bool Nasty_effect = (randint(5)==1);
+	s16b wounds = p_ptr->cut, hit_p = (p_ptr->mhp - p_ptr->chp);
+	s16b change = damroll(skill_set[SKILL_TOUGH].value/2, 5);
+	bool Nasty_effect = (randint(5)==1);
 
-    if (!(wounds || hit_p || Nasty_effect)) return;
+	if (!(wounds || hit_p || Nasty_effect)) return;
 
-    if (Nasty_effect)
-        {
-            msg_print("A new wound was created!");
-            take_hit(change, "a polymorphed wound", cause);
-            set_flag(TIMED_CUT, change);
-        }
-    else
-        {
-            msg_print("Your wounds are polymorphed into less serious ones.");
-            hp_player(change);
-            set_flag(TIMED_CUT, (p_ptr->cut)-(change/2));
-        }
+	if (Nasty_effect)
+		{
+			msg_print("A new wound was created!");
+			take_hit(change, "a polymorphed wound", cause);
+			set_flag(TIMED_CUT, change);
+		}
+	else
+		{
+			msg_print("Your wounds are polymorphed into less serious ones.");
+			hp_player(change);
+			set_flag(TIMED_CUT, (p_ptr->cut)-(change/2));
+		}
 }
 
 static void do_poly_race(void)
@@ -1002,32 +1002,32 @@ static void brand_weapon(int brand_type)
 	object_type *o_ptr = &inventory[INVEN_WIELD];
 
 	/* you can never modify artifacts / ego-items */
-    /* you can never modify cursed items */
-    /* TY: You _can_ modify broken items (if you're silly enough) */
+	/* you can never modify cursed items */
+	/* TY: You _can_ modify broken items (if you're silly enough) */
 	if (o_ptr->k_idx && !allart_p(o_ptr) && !ego_item_p(o_ptr) && !cursed_p(o_ptr))
 	{
 		cptr act = NULL;
 		byte name2;
 
-	    switch (brand_type)
-	    {
-	        case 4:
-	            act = "seems very unstable now.";
+		switch (brand_type)
+		{
+			case 4:
+				act = "seems very unstable now.";
 				name2 = EGO_PLANAR;
-	            break;
-	        case 3:
-	            act = "thirsts for blood!";
+				break;
+			case 3:
+				act = "thirsts for blood!";
 				name2 = EGO_VAMPIRIC;
-	            break;
-	        case 2:
-	            act = "is coated with poison.";
-	            name2 = EGO_BRAND_POIS;
-	            break;
-	        case 1:
-	            act = "is engulfed in raw chaos!";
-	            name2 = EGO_CHAOTIC;
-	            break;
-	        default:
+				break;
+			case 2:
+				act = "is coated with poison.";
+				name2 = EGO_BRAND_POIS;
+				break;
+			case 1:
+				act = "is engulfed in raw chaos!";
+				name2 = EGO_CHAOTIC;
+				break;
+			default:
 			if (rand_int(100) < 25)
 			{
 				act = "is covered in a fiery shield!";
@@ -1038,7 +1038,7 @@ static void brand_weapon(int brand_type)
 				act = "glows deep, icy blue!";
 				name2 = EGO_BRAND_COLD;
 			}
-	    }
+		}
 
 		/* Display a message. */
 		msg_format("Your %v %s", object_desc_f3, o_ptr, FALSE, 0, act);
@@ -1053,7 +1053,7 @@ static void brand_weapon(int brand_type)
 	{
 		if (flush_failure) flush();
 
-        msg_print("The Branding failed.");
+		msg_print("The Branding failed.");
 	}
 }
 
@@ -1062,63 +1062,63 @@ static void brand_weapon(int brand_type)
 
 void wild_magic(int spell)
 {
-    int counter = 0;
+	int counter = 0;
 
-    switch(randint(spell) + randint(8) + 1)
+	switch(randint(spell) + randint(8) + 1)
 
-    {
-        case 1: case 2: case 3:
-            teleport_player(10);
-            break;
-        case 4: case 5: case 6:
-            teleport_player(100);
-            break;
-        case 7: case 8:
-            teleport_player(200);
-            break;
-        case 9: case 10: case 11:
-            unlite_area(10,3);
-            break;
-        case 12: case 13: case 14:
-            lite_area(damroll(2,3),2);
-            break;
-        case 15:
-            destroy_doors_touch();
-            break;
-        case 16: case 17:
-            wall_breaker(50);
+	{
+		case 1: case 2: case 3:
+			teleport_player(10);
 			break;
-        case 18:
-            sleep_monsters_touch(50);
-            break;
-        case 19: case 20:
-            trap_creation();
-            break;
-        case 21: case 22:
-            door_creation();
-            break;
-        case 23: case 24: case 25:
-            aggravate_monsters(1);
-            break;
-        case 26:
-            earthquake(py, px, 5);
-            break;
-        case 27: case 28:
-            (void) gain_chaos_feature(0);
-            break;
-        case 29: case 30:
-            apply_disenchant(0);
-            break;
-        case 31:
-            lose_all_info();
-            break;
-        case 32:
-            fire_ball(GF_CHAOS, 0, spell + 5, 1 + (spell/10));
-            break;
-        case 33:
-            wall_stone();
-            break;
-        case 34: case 35:
+		case 4: case 5: case 6:
+			teleport_player(100);
+			break;
+		case 7: case 8:
+			teleport_player(200);
+			break;
+		case 9: case 10: case 11:
+			unlite_area(10,3);
+			break;
+		case 12: case 13: case 14:
+			lite_area(damroll(2,3),2);
+			break;
+		case 15:
+			destroy_doors_touch();
+			break;
+		case 16: case 17:
+			wall_breaker(50);
+			break;
+		case 18:
+			sleep_monsters_touch(50);
+			break;
+		case 19: case 20:
+			trap_creation();
+			break;
+		case 21: case 22:
+			door_creation();
+			break;
+		case 23: case 24: case 25:
+			aggravate_monsters(1);
+			break;
+		case 26:
+			earthquake(py, px, 5);
+			break;
+		case 27: case 28:
+			(void) gain_chaos_feature(0);
+			break;
+		case 29: case 30:
+			apply_disenchant(0);
+			break;
+		case 31:
+			lose_all_info();
+			break;
+		case 32:
+			fire_ball(GF_CHAOS, 0, spell + 5, 1 + (spell/10));
+			break;
+		case 33:
+			wall_stone();
+			break;
+		case 34: case 35:
 		{
 			int wild_monsters[] =
 			{
@@ -1130,22 +1130,22 @@ void wild_magic(int spell)
 				SUMMON_MIMIC,
 			};
 			int type = wild_monsters[rand_int(N_ELEMENTS(wild_monsters))];
-            while (counter++ < 8)
-            {
-            (void) summon_specific(py, px, ((dun_depth) * 3) / 2, type);
-                    }
-            break;
-		}
-        case 36: case 37:
-            activate_hi_summon();
-            break;
-        case 38:
-            summon_reaver();
+			while (counter++ < 8)
+			{
+			(void) summon_specific(py, px, ((dun_depth) * 3) / 2, type);
+					}
 			break;
-        default:
-            activate_ty_curse();
-    }
-    return;
+		}
+		case 36: case 37:
+			activate_hi_summon();
+			break;
+		case 38:
+			summon_reaver();
+			break;
+		default:
+			activate_ty_curse();
+	}
+	return;
 }
 
 /*
@@ -1175,7 +1175,7 @@ static void dismiss_pets(bool some)
 	msg_format("You have dismissed %d all%s.", Dismissed,
 		(Dismissed==1?"y":"ies"));
 }
-					
+
 /*
  * Remove all mutations from the player.
  */
@@ -1196,7 +1196,7 @@ static void cure_mutations(void)
  * effect.
  *
  * power identifies the power used, calculated as in get_power().
- * dir indicates a direction which has been chosen 
+ * dir indicates a direction which has been chosen
  * The calling function may remove/drain the object if use is unset, but must
  * do so if it is set.
  */
@@ -1425,31 +1425,31 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-        case OBJ_POTION_BOOZE+PO_K_IDX: /* Booze */
+		case OBJ_POTION_BOOZE+PO_K_IDX: /* Booze */
 		{
-            if (!((p_ptr->resist_conf) || (p_ptr->resist_chaos)))
+			if (!((p_ptr->resist_conf) || (p_ptr->resist_chaos)))
 			{
 				if (add_flag(TIMED_CONFUSED, rand_int(20) + 15))
 				{
 					(*ident) = TRUE;
 				}
-                if (randint(2)==1)
-                {
-                    if (add_flag(TIMED_IMAGE, rand_int(150) + 150))
-                    {
-                        (*ident) = TRUE;
-                    }
-                }
-                if (randint(13)==1)
-                {
-                    (*ident) = TRUE;
-                    if(randint(3)==1) lose_all_info();
-                    else wiz_dark();
-                    teleport_player(100);
-                    wiz_dark();
-                    msg_print("You wake up somewhere with a sore head...");
-                    msg_print("You can't remember a thing, or how you got here!");
-                }
+				if (randint(2)==1)
+				{
+					if (add_flag(TIMED_IMAGE, rand_int(150) + 150))
+					{
+						(*ident) = TRUE;
+					}
+				}
+				if (randint(13)==1)
+				{
+					(*ident) = TRUE;
+					if(randint(3)==1) lose_all_info();
+					else wiz_dark();
+					teleport_player(100);
+					wiz_dark();
+					msg_print("You wake up somewhere with a sore head...");
+					msg_print("You can't remember a thing, or how you got here!");
+				}
 			}
 			return SUCCESS;
 		}
@@ -1566,7 +1566,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case OBJ_POTION_HEROISM+PO_K_IDX:
 		{
-            if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
 			if (add_flag(TIMED_HERO, randint(25) + 25)) (*ident) = TRUE;
 			if (hp_player(10)) (*ident) = TRUE;
 			return SUCCESS;
@@ -1574,7 +1574,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case OBJ_POTION_BERSERK_STR+PO_K_IDX:
 		{
-            if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
 			if (add_flag(TIMED_SHERO, randint(25) + 25)) (*ident) = TRUE;
 			if (hp_player(30)) (*ident) = TRUE;
 			return SUCCESS;
@@ -1809,28 +1809,28 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-        case OBJ_POTION_CURING+PO_K_IDX:
-        {
-            if (hp_player(50)) (*ident) = TRUE;
-            if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+		case OBJ_POTION_CURING+PO_K_IDX:
+		{
+			if (hp_player(50)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
-            if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
-        return SUCCESS;
-        }
+			if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
+		return SUCCESS;
+		}
 
-        case OBJ_POTION_NEW_LIFE+PO_K_IDX:
-        {
-        do_cmd_rerate();
+		case OBJ_POTION_NEW_LIFE+PO_K_IDX:
+		{
+		do_cmd_rerate();
 		cure_mutations();
-        (*ident) = TRUE;
-        return SUCCESS;
-        }
+		(*ident) = TRUE;
+		return SUCCESS;
+		}
 		case OBJ_SCROLL_DARKNESS+PO_K_IDX:
 		{
-            if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
+			if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
 				(void)add_flag(TIMED_BLIND, 3 + randint(5));
 			}
@@ -2132,71 +2132,71 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-        /* New Zangband scrolls */
-        case OBJ_SCROLL_FIRE+PO_K_IDX:
-        {
-            fire_ball(GF_FIRE, 0,
-                150, 4); /* Note: "Double" damage since it is centered on
-                            the player ... */
-            if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-                take_hit(50+randint(50), "a Scroll of Fire", MON_HARMFUL_SCROLL);
-            (*ident) = TRUE;
-            return SUCCESS;
-        }
+		/* New Zangband scrolls */
+		case OBJ_SCROLL_FIRE+PO_K_IDX:
+		{
+			fire_ball(GF_FIRE, 0,
+				150, 4); /* Note: "Double" damage since it is centered on
+							the player ... */
+			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
+				take_hit(50+randint(50), "a Scroll of Fire", MON_HARMFUL_SCROLL);
+			(*ident) = TRUE;
+			return SUCCESS;
+		}
 
-        case OBJ_SCROLL_ICE+PO_K_IDX:
-        {
-            fire_ball(GF_ICE, 0,
-                175, 4);
-            if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-                take_hit(100+randint(100), "a Scroll of Ice", MON_HARMFUL_SCROLL);
-            (*ident) = TRUE;
-            return SUCCESS;
-        }
+		case OBJ_SCROLL_ICE+PO_K_IDX:
+		{
+			fire_ball(GF_ICE, 0,
+				175, 4);
+			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
+				take_hit(100+randint(100), "a Scroll of Ice", MON_HARMFUL_SCROLL);
+			(*ident) = TRUE;
+			return SUCCESS;
+		}
 
-        case OBJ_SCROLL_CHAOS+PO_K_IDX:
-        {
-            fire_ball(GF_CHAOS, 0,
-                222, 4);
-            if (!p_ptr->resist_chaos)
-                take_hit(111+randint(111), "a Scroll of Chaos", MON_HARMFUL_SCROLL);
-            (*ident) = TRUE;
-            return SUCCESS;
-        }
+		case OBJ_SCROLL_CHAOS+PO_K_IDX:
+		{
+			fire_ball(GF_CHAOS, 0,
+				222, 4);
+			if (!p_ptr->resist_chaos)
+				take_hit(111+randint(111), "a Scroll of Chaos", MON_HARMFUL_SCROLL);
+			(*ident) = TRUE;
+			return SUCCESS;
+		}
 
-        case OBJ_SCROLL_RUMOUR+PO_K_IDX:
-        {
-            msg_print("There is message on the scroll. It says:");
-            msg_print(NULL);
-            switch(randint(20))
-            {   case 1:
-                    msg_format("%v", get_rnd_line_f1, "chainswd.txt");
-                    break;
-                case 2:
-                    msg_format("%v", get_rnd_line_f1, "error.txt");
-                    break;
-                case 3: case 4: case 5:
-                    msg_format("%v", get_rnd_line_f1, "death.txt");
-                    break;
-                default:
-                    msg_format("%v", get_rnd_line_f1, "rumors.txt");
+		case OBJ_SCROLL_RUMOUR+PO_K_IDX:
+		{
+			msg_print("There is message on the scroll. It says:");
+			msg_print(NULL);
+			switch(randint(20))
+			{   case 1:
+					msg_format("%v", get_rnd_line_f1, "chainswd.txt");
+					break;
+				case 2:
+					msg_format("%v", get_rnd_line_f1, "error.txt");
+					break;
+				case 3: case 4: case 5:
+					msg_format("%v", get_rnd_line_f1, "death.txt");
+					break;
+				default:
+					msg_format("%v", get_rnd_line_f1, "rumors.txt");
 
-            }
-            msg_print(NULL);
-            msg_print("The scroll disappears in a puff of smoke!");
-            (*ident) = TRUE;
-            return SUCCESS;
-        }
+			}
+			msg_print(NULL);
+			msg_print("The scroll disappears in a puff of smoke!");
+			(*ident) = TRUE;
+			return SUCCESS;
+		}
 
-        case OBJ_SCROLL_ARTIFACT_CREATION+PO_K_IDX:
-        {
-            (void) artifact_scroll();
-            (*ident) = TRUE;
-            return SUCCESS;
-        }
+		case OBJ_SCROLL_ARTIFACT_CREATION+PO_K_IDX:
+		{
+			(void) artifact_scroll();
+			(*ident) = TRUE;
+			return SUCCESS;
+		}
 		case OBJ_STAFF_DARKNESS+PO_K_IDX:
 		{
-            if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
+			if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
 				if (add_flag(TIMED_BLIND, 3 + randint(5))) (*ident) = TRUE;
 			}
@@ -2329,7 +2329,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
-            if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2568,18 +2568,18 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_WAND_ACID_BOLT+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            fire_bolt_or_beam(20, GF_ACID, dir, damroll(3, 8));
+			fire_bolt_or_beam(20, GF_ACID, dir, damroll(3, 8));
 			(*ident) = TRUE;
 			return SUCCESS;
-        }
+		}
 
-        case OBJ_WAND_TAME_MONSTER+PO_K_IDX:
+		case OBJ_WAND_TAME_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-           if (charm_monster(dir, 45))
-             (*ident) = TRUE;
-           return SUCCESS;
-        }
+			if (charm_monster(dir, 45))
+			(*ident) = TRUE;
+			return SUCCESS;
+		}
 
 		case OBJ_WAND_FIRE_BOLT+PO_K_IDX:
 		{
@@ -2603,13 +2603,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (fire_bolt(GF_OLD_DRAIN, dir, 125)) (*ident) = TRUE;
 			return SUCCESS;
 		}
-        case OBJ_WAND_SHARD_BALL+PO_K_IDX:
-        {
+		case OBJ_WAND_SHARD_BALL+PO_K_IDX:
+		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            fire_ball(GF_SHARD, dir, 75 + (randint(50)), 2);
-            (*ident) = TRUE;
+			fire_ball(GF_SHARD, dir, 75 + (randint(50)), 2);
+			(*ident) = TRUE;
 			return SUCCESS;
-        }
+		}
 		case OBJ_WAND_WONDER+PO_K_IDX:
 		{
 			return do_power(choose_random_wand(), plev, dir, FALSE, use, ident);
@@ -2639,7 +2639,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_ROD_ILLUMINATION+PO_K_IDX:
 		{
 			if (lite_area(damroll(2, 8), 2)) (*ident) = TRUE;
- 			return SUCCESS;
+			return SUCCESS;
 		}
 
 		case OBJ_ROD_ENLIGHTENMENT+PO_K_IDX:
@@ -2670,7 +2670,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
-            if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2783,354 +2783,354 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-        case OBJ_ROD_HAVOC+PO_K_IDX:
+		case OBJ_ROD_HAVOC+PO_K_IDX:
 		{
-            call_chaos(plev);
+			call_chaos(plev);
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
 
-           case ACT_SUNLIGHT+PO_ACTIVATION:
-            {
+			case ACT_SUNLIGHT+PO_ACTIVATION:
+			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                msg_print("A line of sunlight appears.");
-                lite_line(dir);
-                   return SUCCESS;
-               }
+				msg_print("A line of sunlight appears.");
+				lite_line(dir);
+					return SUCCESS;
+				}
 
-            case ACT_BO_MISS_1+PO_ACTIVATION:
+			case ACT_BO_MISS_1+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_MISSILE, dir, damroll(2, 6));
 				return SUCCESS;
 			}
 
-            case ACT_BO_ELEC_1+PO_ACTIVATION:
+			case ACT_BO_ELEC_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_ELEC, dir, damroll(4, 8));
 				return SUCCESS;
 			}
 
-            case ACT_BO_ACID_1+PO_ACTIVATION:
+			case ACT_BO_ACID_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_ACID, dir, damroll(5, 8));
 				return SUCCESS;
 			}
 
-            case ACT_BO_COLD_1+PO_ACTIVATION:
-            {
+			case ACT_BO_COLD_1+PO_ACTIVATION:
+			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_COLD, dir, damroll(6, 8));
 				return SUCCESS;
 			}
 
-            case ACT_BO_FIRE_1+PO_ACTIVATION:
+			case ACT_BO_FIRE_1+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_FIRE, dir, damroll(9, 8));
 				return SUCCESS;
 			}
 
-            case ACT_DRAIN_1+PO_ACTIVATION:
-            {
+			case ACT_DRAIN_1+PO_ACTIVATION:
+			{
 
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                if (fire_bolt(GF_OLD_DRAIN, dir, 100))
+				if (fire_bolt(GF_OLD_DRAIN, dir, 100))
 				return SUCCESS;
 			}
 
-            case ACT_DRAIN_2+PO_ACTIVATION:
+			case ACT_DRAIN_2+PO_ACTIVATION:
 			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_OLD_DRAIN, dir, 120);
 				return SUCCESS;
 			}
 
-            case ACT_VAMPIRE_1+PO_ACTIVATION:
-            {
+			case ACT_VAMPIRE_1+PO_ACTIVATION:
+			{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               for (i = 0; i < 3; i++)
-               {
-                   if (fire_bolt(GF_OLD_DRAIN, dir, 50))
-                       hp_player(50);
-                    }
-                   return SUCCESS;
-                }
+				for (i = 0; i < 3; i++)
+				{
+					if (fire_bolt(GF_OLD_DRAIN, dir, 50))
+						hp_player(50);
+					}
+					return SUCCESS;
+				}
 
-            case ACT_BO_MISS_2+PO_ACTIVATION:
-            {
+			case ACT_BO_MISS_2+PO_ACTIVATION:
+			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_ARROW, dir, 150);
 				return SUCCESS;
 			}
 
-            case ACT_WHIRLWIND+PO_ACTIVATION:
-         {
-            {
-             int y = 0, x = 0;
-             cave_type       *c_ptr;
-             monster_type    *m_ptr;
+			case ACT_WHIRLWIND+PO_ACTIVATION:
+		{
+			{
+			int y = 0, x = 0;
+			cave_type       *c_ptr;
+			monster_type    *m_ptr;
 
-             for (dir = 0; dir < 8; dir++) {
-                 y = py + ddy_ddd[dir];
-                 x = px + ddx_ddd[dir];
-                 c_ptr = &cave[y][x];
+			for (dir = 0; dir < 8; dir++) {
+				y = py + ddy_ddd[dir];
+				x = px + ddx_ddd[dir];
+				c_ptr = &cave[y][x];
 
-                 /* Get the monster */
-                 m_ptr = &m_list[c_ptr->m_idx];
+				/* Get the monster */
+				m_ptr = &m_list[c_ptr->m_idx];
 
-                 /* Hack -- attack monsters */
-                 if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x)))
-               py_attack(y, x);
-             }
-             }
-             return SUCCESS;
-            }
+				/* Hack -- attack monsters */
+				if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x)))
+				py_attack(y, x);
+			}
+			}
+			return SUCCESS;
+			}
 
-            case ACT_VAMPIRE_2+PO_ACTIVATION:
-            {
+			case ACT_VAMPIRE_2+PO_ACTIVATION:
+			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               for (i = 0; i < 3; i++)
-               {
-                   if (fire_bolt(GF_OLD_DRAIN, dir, 100))
-                       hp_player(100);
-                    }
+				for (i = 0; i < 3; i++)
+				{
+					if (fire_bolt(GF_OLD_DRAIN, dir, 100))
+						hp_player(100);
+					}
 
-                   return SUCCESS;
-                }
+					return SUCCESS;
+				}
 
-            case ACT_CALL_CHAOS+PO_ACTIVATION:
-            {
-                call_chaos(plev);
-                return SUCCESS;
-            }
+			case ACT_CALL_CHAOS+PO_ACTIVATION:
+			{
+				call_chaos(plev);
+				return SUCCESS;
+			}
 
-            case ACT_SHARD+PO_ACTIVATION:
-            {
+			case ACT_SHARD+PO_ACTIVATION:
+			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_ball(GF_SHARD, dir,
-                        120 + (plev), 2);
-                return SUCCESS;
-            }
+				fire_ball(GF_SHARD, dir,
+						120 + (plev), 2);
+				return SUCCESS;
+			}
 
-            case ACT_DISP_EVIL+PO_ACTIVATION:
+			case ACT_DISP_EVIL+PO_ACTIVATION:
 			{
 				dispel_evil(plev * 5);
 				return SUCCESS;
 			}
 
-            case ACT_BA_MISS_3+PO_ACTIVATION:
-            {
-			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                    msg_print("You breathe the elements.");
-                    fire_ball(GF_MISSILE, dir, 300, -4);
-                return SUCCESS;
-            }
-
-            case ACT_DISP_GOOD+PO_ACTIVATION:
+			case ACT_BA_MISS_3+PO_ACTIVATION:
 			{
-                dispel_good(plev * 5);
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+					msg_print("You breathe the elements.");
+					fire_ball(GF_MISSILE, dir, 300, -4);
 				return SUCCESS;
 			}
 
-            case ACT_CONFUSE+PO_ACTIVATION:
+			case ACT_DISP_GOOD+PO_ACTIVATION:
+			{
+				dispel_good(plev * 5);
+				return SUCCESS;
+			}
+
+			case ACT_CONFUSE+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt(GF_OLD_CONF, dir, 20);
 				return SUCCESS;
 			}
 
-            case ACT_SLEEP+PO_ACTIVATION:
+			case ACT_SLEEP+PO_ACTIVATION:
 			{
 				sleep_monsters_touch(plev);
 				return SUCCESS;
 			}
 
-            case ACT_QUAKE+PO_ACTIVATION:
-            {
-                earthquake(py, px, 10);
-                   return SUCCESS;
-                }
+			case ACT_QUAKE+PO_ACTIVATION:
+			{
+				earthquake(py, px, 10);
+					return SUCCESS;
+				}
 
-            case ACT_TERROR+PO_ACTIVATION:
-            {
-                turn_monsters(40 + plev);
-                return SUCCESS;
-            }
+			case ACT_TERROR+PO_ACTIVATION:
+			{
+				turn_monsters(40 + plev);
+				return SUCCESS;
+			}
 
-            case ACT_BANISH_EVIL+PO_ACTIVATION:
-            {
-                if (banish_evil(100))
-                {
-                    msg_print("The power of the artifact banishes evil!");
-                }
-                return SUCCESS;
-            }
+			case ACT_BANISH_EVIL+PO_ACTIVATION:
+			{
+				if (banish_evil(100))
+				{
+					msg_print("The power of the artifact banishes evil!");
+				}
+				return SUCCESS;
+			}
 
-            case ACT_GENOCIDE+PO_ACTIVATION:
+			case ACT_GENOCIDE+PO_ACTIVATION:
 			{
 				if (genocide(TRUE) == POWER_ERROR_ABORT) (*use) = FALSE;
 				return SUCCESS;
 			}
 
-            case ACT_MASS_GENO+PO_ACTIVATION:
-            {
+			case ACT_MASS_GENO+PO_ACTIVATION:
+			{
 				(void)mass_genocide(TRUE);
 				return SUCCESS;
 			}
 
-           case ACT_CHARM_ANIMAL+PO_ACTIVATION:
-           {
+			case ACT_CHARM_ANIMAL+PO_ACTIVATION:
+			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-             (void) charm_animal(dir, plev);
-             return SUCCESS;
-            }
+			(void) charm_animal(dir, plev);
+			return SUCCESS;
+			}
 
-            case ACT_CHARM_UNDEAD+PO_ACTIVATION:
-            {
+			case ACT_CHARM_UNDEAD+PO_ACTIVATION:
+			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               (void)control_one_undead(dir, plev);
-                   return SUCCESS;
-                }
+				(void)control_one_undead(dir, plev);
+					return SUCCESS;
+				}
 
-            case ACT_CHARM_OTHER+PO_ACTIVATION:
-            {
+			case ACT_CHARM_OTHER+PO_ACTIVATION:
+			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                 (void) charm_monster(dir, plev);
-               return SUCCESS;
-            }
+				(void) charm_monster(dir, plev);
+				return SUCCESS;
+			}
 
-            case ACT_CHARM_ANIMALS+PO_ACTIVATION:
-            {
-            (void) charm_animals(plev * 2);
-             return SUCCESS;
-            }
+			case ACT_CHARM_ANIMALS+PO_ACTIVATION:
+			{
+			(void) charm_animals(plev * 2);
+			return SUCCESS;
+			}
 
-            case ACT_CHARM_OTHERS+PO_ACTIVATION:
-            {
-               charm_monsters(plev * 2);
-		       return SUCCESS;
-            }
+			case ACT_CHARM_OTHERS+PO_ACTIVATION:
+			{
+				charm_monsters(plev * 2);
+				return SUCCESS;
+			}
 
-            case ACT_SUMMON_ANIMAL+PO_ACTIVATION:
-            {
-                 (void)summon_specific_friendly(py, px, plev, SUMMON_ANIMAL_RANGER, TRUE);
-                     return SUCCESS;
-                }
+			case ACT_SUMMON_ANIMAL+PO_ACTIVATION:
+			{
+				(void)summon_specific_friendly(py, px, plev, SUMMON_ANIMAL_RANGER, TRUE);
+					return SUCCESS;
+				}
 
-            case ACT_SUMMON_PHANTOM+PO_ACTIVATION:
-            {
-                (void)summon_specific_friendly(py, px, (dun_depth), SUMMON_PHANTOM, TRUE);
-                msg_print("You summon a phantasmal servant.");
-                return SUCCESS;
-            }
+			case ACT_SUMMON_PHANTOM+PO_ACTIVATION:
+			{
+				(void)summon_specific_friendly(py, px, (dun_depth), SUMMON_PHANTOM, TRUE);
+				msg_print("You summon a phantasmal servant.");
+				return SUCCESS;
+			}
 
-            case ACT_SUMMON_ELEMENTAL+PO_ACTIVATION:
-            {
-                       if (randint(3) == 1) {
-                   if (summon_specific((int)py,(int)px, (int)(plev * 1.5),
-                           SUMMON_ELEMENTAL)) {
-                   msg_print("An elemental materializes...");
-                   msg_print("You fail to control it!");
-                   }
-               } else {
-                   if (summon_specific_friendly((int)py, (int)px,
-				   	(int)(plev * 1.5), SUMMON_ELEMENTAL, plev == 50))
+			case ACT_SUMMON_ELEMENTAL+PO_ACTIVATION:
+			{
+						if (randint(3) == 1) {
+					if (summon_specific((int)py,(int)px, (int)(plev * 1.5),
+							SUMMON_ELEMENTAL)) {
+					msg_print("An elemental materializes...");
+					msg_print("You fail to control it!");
+					}
+				} else {
+					if (summon_specific_friendly((int)py, (int)px,
+						(int)(plev * 1.5), SUMMON_ELEMENTAL, plev == 50))
 				{
-                   msg_print("An elemental materializes...");
-                   msg_print("It seems obedient to you.");
-                   }
-               }
-               return SUCCESS;
-            }
+					msg_print("An elemental materializes...");
+					msg_print("It seems obedient to you.");
+					}
+				}
+				return SUCCESS;
+			}
 
-            case ACT_SUMMON_DEMON+PO_ACTIVATION:
-            {
-                       if (randint(3) == 1) {
-                   if (summon_specific((int)py, (int)px, (int)(plev * 1.5),
-                           SUMMON_DEMON)) {
-                   msg_print("The area fills with a stench of sulphur and brimstone.");
-                   msg_print("'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'");
-                   }
-               } else {
-                   if (summon_specific_friendly((int)py, (int)px, (int)(plev * 1.5),
-                                SUMMON_DEMON, plev == 50 )) {
-                   msg_print("The area fills with a stench of sulphur and brimstone.");
-                   msg_print("'What is thy bidding... Master?'");
-                   }
-               }
-               return SUCCESS;
-            }
+			case ACT_SUMMON_DEMON+PO_ACTIVATION:
+			{
+						if (randint(3) == 1) {
+					if (summon_specific((int)py, (int)px, (int)(plev * 1.5),
+							SUMMON_DEMON)) {
+					msg_print("The area fills with a stench of sulphur and brimstone.");
+					msg_print("'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'");
+					}
+				} else {
+					if (summon_specific_friendly((int)py, (int)px, (int)(plev * 1.5),
+								SUMMON_DEMON, plev == 50 )) {
+					msg_print("The area fills with a stench of sulphur and brimstone.");
+					msg_print("'What is thy bidding... Master?'");
+					}
+				}
+				return SUCCESS;
+			}
 
-            case ACT_SUMMON_UNDEAD+PO_ACTIVATION:
-            {
-               if (randint(3) == 1) {
-                   if (summon_specific((int)py, (int)px, (int)(plev * 1.5),
-                           (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD))) {
-                   msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-                   msg_print("'The dead arise... to punish you for disturbing them!'");
-                   }
-               } else {
-                   if (summon_specific_friendly((int)py,(int)px, (int)(plev * 1.5),
-                       (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
-                           ((plev > 24) && (randint(3) == 1)))) {
-                   msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-                   msg_print("Ancient, long-dead forms arise from the ground to serve you!");
-                   }
-               }
-               return SUCCESS;
-            }
-                
-            case ACT_CURE_LW+PO_ACTIVATION:
-            {
-                (void)set_flag(TIMED_AFRAID, 0);
+			case ACT_SUMMON_UNDEAD+PO_ACTIVATION:
+			{
+				if (randint(3) == 1) {
+					if (summon_specific((int)py, (int)px, (int)(plev * 1.5),
+							(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD))) {
+					msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
+					msg_print("'The dead arise... to punish you for disturbing them!'");
+					}
+				} else {
+					if (summon_specific_friendly((int)py,(int)px, (int)(plev * 1.5),
+						(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
+							((plev > 24) && (randint(3) == 1)))) {
+					msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
+					msg_print("Ancient, long-dead forms arise from the ground to serve you!");
+					}
+				}
+				return SUCCESS;
+			}
+
+			case ACT_CURE_LW+PO_ACTIVATION:
+			{
+				(void)set_flag(TIMED_AFRAID, 0);
 				(void)hp_player(30);
-                return SUCCESS;
-            }
+				return SUCCESS;
+			}
 
-            case ACT_CURE_MW+PO_ACTIVATION:
-            {
+			case ACT_CURE_MW+PO_ACTIVATION:
+			{
 				hp_player(damroll(4, 8));
 				(void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
 				return SUCCESS;
 			}
 
-            case ACT_CURE_POISON+PO_ACTIVATION:
+			case ACT_CURE_POISON+PO_ACTIVATION:
 			{
 				(void)set_flag(TIMED_AFRAID, 0);
 				(void)set_flag(TIMED_POISONED, 0);
 				return SUCCESS;
 			}
 
-            case ACT_REST_LIFE+PO_ACTIVATION:
-            {
+			case ACT_REST_LIFE+PO_ACTIVATION:
+			{
 				restore_level();
 				return SUCCESS;
 			}
 
-            case ACT_REST_ALL+PO_ACTIVATION:
-            {
-                (void)do_res_stat(A_STR);
-                (void)do_res_stat(A_INT);
-                (void)do_res_stat(A_WIS);
-                (void)do_res_stat(A_DEX);
-                (void)do_res_stat(A_CON);
-                (void)do_res_stat(A_CHR);
-                (void)restore_level();
-                   return SUCCESS;
-                }
+			case ACT_REST_ALL+PO_ACTIVATION:
+			{
+				(void)do_res_stat(A_STR);
+				(void)do_res_stat(A_INT);
+				(void)do_res_stat(A_WIS);
+				(void)do_res_stat(A_DEX);
+				(void)do_res_stat(A_CON);
+				(void)do_res_stat(A_CHR);
+				(void)restore_level();
+					return SUCCESS;
+				}
 
-            case ACT_CURE_700+PO_ACTIVATION:
+			case ACT_CURE_700+PO_ACTIVATION:
 			{
 				msg_print("You feel a warm tingling inside...");
-                (void)hp_player(700);
+				(void)hp_player(700);
 				(void)set_flag(TIMED_CUT, 0);
 				return SUCCESS;
 			}
 
-            case ACT_CURE_1000+PO_ACTIVATION:
+			case ACT_CURE_1000+PO_ACTIVATION:
 			{
 				msg_print("You feel much better...");
 				(void)hp_player(1000);
@@ -3138,24 +3138,24 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ACT_PROT_EVIL+PO_ACTIVATION:
-            {
+			case ACT_PROT_EVIL+PO_ACTIVATION:
+			{
 				i = 3 * plev;
 				(void)add_flag(TIMED_PROTEVIL, randint(25) + i);
 				return SUCCESS;
 			}
 
-            case ACT_RESIST_ALL+PO_ACTIVATION:
+			case ACT_RESIST_ALL+PO_ACTIVATION:
 			{
-                (void)add_flag(TIMED_OPPOSE_ACID, randint(40) + 40);
-                (void)add_flag(TIMED_OPPOSE_ELEC, randint(40) + 40);
-                (void)add_flag(TIMED_OPPOSE_FIRE, randint(40) + 40);
-                (void)add_flag(TIMED_OPPOSE_COLD, randint(40) + 40);
-                (void)add_flag(TIMED_OPPOSE_POIS, randint(40) + 40);
+				(void)add_flag(TIMED_OPPOSE_ACID, randint(40) + 40);
+				(void)add_flag(TIMED_OPPOSE_ELEC, randint(40) + 40);
+				(void)add_flag(TIMED_OPPOSE_FIRE, randint(40) + 40);
+				(void)add_flag(TIMED_OPPOSE_COLD, randint(40) + 40);
+				(void)add_flag(TIMED_OPPOSE_POIS, randint(40) + 40);
 				return SUCCESS;
 			}
 
-            case ACT_SPEED+PO_ACTIVATION:
+			case ACT_SPEED+PO_ACTIVATION:
 			{
 				if (!p_ptr->fast)
 				{
@@ -3168,7 +3168,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ACT_XTRA_SPEED+PO_ACTIVATION:
+			case ACT_XTRA_SPEED+PO_ACTIVATION:
 			{
 				if (!p_ptr->fast)
 				{
@@ -3181,104 +3181,104 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ACT_WRAITH+PO_ACTIVATION:
-            {
-                add_flag(TIMED_WRAITH, randint(plev/2) + (plev/2));
-                return SUCCESS;
-            }
+			case ACT_WRAITH+PO_ACTIVATION:
+			{
+				add_flag(TIMED_WRAITH, randint(plev/2) + (plev/2));
+				return SUCCESS;
+			}
 
-            case ACT_LIGHT+PO_ACTIVATION:
-            {
+			case ACT_LIGHT+PO_ACTIVATION:
+			{
 				lite_area(damroll(2, 15), 3);
 				return SUCCESS;
 			}
 
-            case ACT_MAP_LIGHT+PO_ACTIVATION:
+			case ACT_MAP_LIGHT+PO_ACTIVATION:
 			{
 				map_area();
 				lite_area(damroll(2, 15), 3);
 				return SUCCESS;
 			}
 
-            case ACT_DETECT_ALL+PO_ACTIVATION:
+			case ACT_DETECT_ALL+PO_ACTIVATION:
 			{
 				msg_print("An image forms in your mind...");
 				detect_all();
 				return SUCCESS;
 			}
 
-            case ACT_DETECT_XTRA+PO_ACTIVATION:
+			case ACT_DETECT_XTRA+PO_ACTIVATION:
 			{
-                detect_all();
+				detect_all();
 				probing();
-                identify_fully();
+				identify_fully();
 				return SUCCESS;
 			}
 
-            case ACT_ID_FULL+PO_ACTIVATION:
-            {
-            identify_fully();
-                   return SUCCESS;
-                }
+			case ACT_ID_FULL+PO_ACTIVATION:
+			{
+			identify_fully();
+					return SUCCESS;
+				}
 
-            case ACT_ID_PLAIN+PO_ACTIVATION:
+			case ACT_ID_PLAIN+PO_ACTIVATION:
 			{
 
-                if (!ident_spell()) (*ident) = FALSE;
+				if (!ident_spell()) (*ident) = FALSE;
 				return SUCCESS;
 			}
 
-            case ACT_RUNE_EXPLO+PO_ACTIVATION:
-            {
-                   explosive_rune();
-                   return SUCCESS;
-            }
+			case ACT_RUNE_EXPLO+PO_ACTIVATION:
+			{
+					explosive_rune();
+					return SUCCESS;
+			}
 
-            case ACT_RUNE_PROT+PO_ACTIVATION:
-            {
-                   warding_glyph();
-                   return SUCCESS;
-                }
+			case ACT_RUNE_PROT+PO_ACTIVATION:
+			{
+					warding_glyph();
+					return SUCCESS;
+				}
 
-            case ACT_SATIATE+PO_ACTIVATION:
-            {
-                (void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
-                   return SUCCESS;
-                }
+			case ACT_SATIATE+PO_ACTIVATION:
+			{
+				(void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
+					return SUCCESS;
+				}
 
-            case ACT_DEST_DOOR+PO_ACTIVATION:
-            {
+			case ACT_DEST_DOOR+PO_ACTIVATION:
+			{
 				destroy_doors_touch();
 				return SUCCESS;
 			}
 
-            case ACT_STONE_MUD+PO_ACTIVATION:
+			case ACT_STONE_MUD+PO_ACTIVATION:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				wall_to_mud(dir);
 				return SUCCESS;
 			}
 
-            case ACT_RECHARGE+PO_ACTIVATION:
+			case ACT_RECHARGE+PO_ACTIVATION:
 			{
 
 				recharge(60);
 				return SUCCESS;
 			}
 
-            case ACT_ALCHEMY+PO_ACTIVATION:
-            {
-                   (void) alchemy();
-                   return SUCCESS;
-                }
+			case ACT_ALCHEMY+PO_ACTIVATION:
+			{
+					(void) alchemy();
+					return SUCCESS;
+				}
 
-            case ACT_DIM_DOOR+PO_ACTIVATION:
-           {
+			case ACT_DIM_DOOR+PO_ACTIVATION:
+			{
 				if (!dimension_door(plev, 10)) (*ident) = FALSE;
-                 return SUCCESS;
-            }
+				return SUCCESS;
+			}
 
-            case ACT_TELEPORT+PO_ACTIVATION:
+			case ACT_TELEPORT+PO_ACTIVATION:
 			{
 				teleport_player(100);
 				return SUCCESS;
@@ -3340,15 +3340,15 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				i = rand_int(5);
 				msg_format("You breathe %s.",
-				           ((i == 1) ? "lightning" :
-				            ((i == 2) ? "frost" :
-				             ((i == 3) ? "acid" :
-				              ((i == 4) ? "poison gas" : "fire")))));
+							((i == 1) ? "lightning" :
+							((i == 2) ? "frost" :
+							((i == 3) ? "acid" :
+								((i == 4) ? "poison gas" : "fire")))));
 				fire_ball(((i == 1) ? GF_ELEC :
-				           ((i == 2) ? GF_COLD :
-				            ((i == 3) ? GF_ACID :
-				             ((i == 4) ? GF_POIS : GF_FIRE)))),
-				          dir, 250, -2);
+							((i == 2) ? GF_COLD :
+							((i == 3) ? GF_ACID :
+							((i == 4) ? GF_POIS : GF_FIRE)))),
+							dir, 250, -2);
 				return SUCCESS;
 			}
 
@@ -3373,9 +3373,9 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				i = rand_int(2);
 				msg_format("You breathe %s.",
-				           ((i == 1 ? "chaos" : "disenchantment")));
+							((i == 1 ? "chaos" : "disenchantment")));
 				fire_ball((i == 1 ? GF_CHAOS : GF_DISENCHANT),
-				          dir, 220, -2);
+							dir, 220, -2);
 				return SUCCESS;
 			}
 
@@ -3384,9 +3384,9 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				i = rand_int(2);
 				msg_format("You breathe %s.",
-				           ((i == 1 ? "sound" : "shards")));
+							((i == 1 ? "sound" : "shards")));
 				fire_ball((i == 1 ? GF_SOUND : GF_SHARDS),
-				          dir, 230, -2);
+							dir, 230, -2);
 				return SUCCESS;
 			}
 
@@ -3395,13 +3395,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				i = rand_int(4);
 				msg_format("You breathe %s.",
-				           ((i == 1) ? "chaos" :
-				            ((i == 2) ? "disenchantment" :
-				             ((i == 3) ? "sound" : "shards"))));
+							((i == 1) ? "chaos" :
+							((i == 2) ? "disenchantment" :
+							((i == 3) ? "sound" : "shards"))));
 				fire_ball(((i == 1) ? GF_CHAOS :
-				           ((i == 2) ? GF_DISENCHANT :
-				            ((i == 3) ? GF_SOUND : GF_SHARDS))),
-				          dir, 250, -2);
+							((i == 2) ? GF_DISENCHANT :
+							((i == 3) ? GF_SOUND : GF_SHARDS))),
+							dir, 250, -2);
 				return SUCCESS;
 			}
 
@@ -3410,7 +3410,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				i = rand_int(2);
 				msg_format("You breathe %s.",
-				           ((i == 0 ? "light" : "darkness")));
+							((i == 0 ? "light" : "darkness")));
 				fire_ball((i == 0 ? GF_LITE : GF_DARK), dir, 200, -2);
 				return SUCCESS;
 			}
@@ -3419,11 +3419,11 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				msg_print("You breathe the elements.");
-                fire_ball(GF_MISSILE, dir, 300, -3);
+				fire_ball(GF_MISSILE, dir, 300, -3);
 				return SUCCESS;
 			}
 			case ART_POLARIS+PO_NAME1:
-            {
+			{
 				lite_area(damroll(2, 15), 3);
 				return SUCCESS;
 			}
@@ -3438,15 +3438,15 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_TRAPEZOHEDRON+PO_NAME1:
 			{
 				wiz_lite();
-                msg_print("The gemstone drains your vitality...");
-                take_hit(damroll(3,8), "the Gemstone 'Trapezohedron'", MON_DANGEROUS_EQUIPMENT);
+				msg_print("The gemstone drains your vitality...");
+				take_hit(damroll(3,8), "the Gemstone 'Trapezohedron'", MON_DANGEROUS_EQUIPMENT);
 				(void)detect_traps();
 				(void)detect_doors();
 				(void)detect_stairs();
-                if (get_check("Activate recall? "))
-                {
+				if (get_check("Activate recall? "))
+				{
 					set_recall(FALSE);
-                }
+				}
 
 				return SUCCESS;
 			}
@@ -3463,11 +3463,11 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ART_MAGIC+PO_NAME1:
+			case ART_MAGIC+PO_NAME1:
 			{
 
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                if (fire_bolt(GF_OLD_DRAIN, dir, 100))
+				if (fire_bolt(GF_OLD_DRAIN, dir, 100))
 				return SUCCESS;
 			}
 
@@ -3500,10 +3500,10 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_BLADETURNER+PO_NAME1:
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                    msg_print("You breathe the elements.");
-                    fire_ball(GF_MISSILE, dir, 300, -4);
-                msg_print("Your armor glows many colours...");
-                (void)set_flag(TIMED_AFRAID, 0);
+					msg_print("You breathe the elements.");
+					fire_ball(GF_MISSILE, dir, 300, -4);
+				msg_print("Your armor glows many colours...");
+				(void)set_flag(TIMED_AFRAID, 0);
 				(void)add_flag(TIMED_SHERO, randint(50) + 50);
 				(void)hp_player(30);
 				(void)add_flag(TIMED_BLESSED, randint(50) + 50);
@@ -3525,13 +3525,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_VAMPLORD+PO_NAME1:
 			{
-                (void)set_flag(TIMED_POISONED, 0);
-                (void)set_flag(TIMED_CUT, 0);
-                (void)set_flag(TIMED_STUN, 0);
-                (void)set_flag(TIMED_CONFUSED, 0);
-                (void)set_flag(TIMED_BLIND, 0);
-                (void)add_flag(TIMED_HERO, randint(25) + 25);
-                (void)hp_player(777);
+				(void)set_flag(TIMED_POISONED, 0);
+				(void)set_flag(TIMED_CUT, 0);
+				(void)set_flag(TIMED_STUN, 0);
+				(void)set_flag(TIMED_CONFUSED, 0);
+				(void)set_flag(TIMED_BLIND, 0);
+				(void)add_flag(TIMED_HERO, randint(25) + 25);
+				(void)hp_player(777);
 				return SUCCESS;
 			}
 
@@ -3547,13 +3547,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ART_POWER+PO_NAME1: case ART_MASK+PO_NAME1:
-        
-            {
-                turn_monsters(40 + plev);
-                return SUCCESS;
-        
-            }
+			case ART_POWER+PO_NAME1: case ART_MASK+PO_NAME1:
+
+			{
+				turn_monsters(40 + plev);
+				return SUCCESS;
+
+			}
 
 			case ART_SKULLKEEPER+PO_NAME1:
 			{
@@ -3565,7 +3565,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			case ART_SUN+PO_NAME1:
 			{
 				msg_print("You feel a warm tingling inside...");
-                (void)hp_player(700);
+				(void)hp_player(700);
 				(void)set_flag(TIMED_CUT, 0);
 				return SUCCESS;
 			}
@@ -3687,33 +3687,33 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ART_KARAKAL+PO_NAME1:
+			case ART_KARAKAL+PO_NAME1:
 			{
-                switch(randint(13))
-                {
-                    case 1: case 2: case 3: case 4: case 5:
-                        teleport_player(10);
-                        return SUCCESS;
-                    case 6: case 7: case 8: case 9: case 10:
-                        teleport_player(222);
-                        return SUCCESS;
-                    case 11: case 12:
-                        (void)stair_creation();
-                        return SUCCESS;
-                    default:
+				switch(randint(13))
+				{
+					case 1: case 2: case 3: case 4: case 5:
+						teleport_player(10);
+						return SUCCESS;
+					case 6: case 7: case 8: case 9: case 10:
+						teleport_player(222);
+						return SUCCESS;
+					case 11: case 12:
+						(void)stair_creation();
+						return SUCCESS;
+					default:
 						if(get_check("Leave this level? "))
 						{
 							change_level(dun_level, START_RANDOM);
-                        }
+						}
 						return SUCCESS;
-                }
+				}
 			}
 
-            case ART_DAWN+PO_NAME1:
-            {
-                (void)summon_specific_friendly(py, px, (dun_depth), SUMMON_REAVER, TRUE);
-                return SUCCESS;
-            }
+			case ART_DAWN+PO_NAME1:
+			{
+				(void)summon_specific_friendly(py, px, (dun_depth), SUMMON_REAVER, TRUE);
+				return SUCCESS;
+			}
 
 			case ART_THEODEN+PO_NAME1:
 			{
@@ -3776,9 +3776,9 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_ATAL+PO_NAME1:
 			{
-                detect_all();
+				detect_all();
 				probing();
-                identify_fully();
+				identify_fully();
 				return SUCCESS;
 			}
 
@@ -3951,7 +3951,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			msg_print("A wave of pure physical force radiates out from your body!");
 			project(0, 3+plev/10, py, px,
-            plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS, PROJECT_KILL|PROJECT_ITEM|PROJECT_GRID);
+			plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS, PROJECT_KILL|PROJECT_ITEM|PROJECT_GRID);
 			return SUCCESS;
 		}
 
@@ -4013,8 +4013,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_HOLY_ORB+PO_SPELL:
 	{
-	   if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            fire_ball(GF_HOLY_FIRE, dir,
+		if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			fire_ball(GF_HOLY_FIRE, dir,
 				(damroll(3, 6) + plev + (plev /  4)),((plev < 30) ? 2 : 3));
 		return SUCCESS;
 	}
@@ -4037,9 +4037,9 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_EXORCISM+PO_SPELL:
 	{
-         (void) dispel_undead(plev);
-         (void) dispel_demons(plev);
-         (void) turn_evil(plev);
+		(void) dispel_undead(plev);
+		(void) dispel_demons(plev);
+		(void) turn_evil(plev);
 		return SUCCESS;
 	}
 	case SP_DISPEL_CURSE+PO_SPELL:
@@ -4049,13 +4049,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_DISPEL_UNDEAD_AND_DEMONS+PO_SPELL:
 	{
-            (void)dispel_undead(plev * 3);
-        (void)dispel_demons(plev * 3);
+			(void)dispel_undead(plev * 3);
+		(void)dispel_demons(plev * 3);
 		return SUCCESS;
 	}
 	case SP_DAY_OF_THE_DOVE+PO_SPELL:
 	{
-                  charm_monsters(plev * 2);
+					charm_monsters(plev * 2);
 		return SUCCESS;
 	}
 	case SP_DISPEL_EVIL+PO_SPELL:
@@ -4073,7 +4073,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_HOLY_WORD+PO_SPELL:
 	{
-	   (void)dispel_evil(plev * 4);
+		(void)dispel_evil(plev * 4);
 			(void)hp_player(1000);
 			(void)set_flag(TIMED_AFRAID, 0);
 			(void)set_flag(TIMED_POISONED, 0);
@@ -4096,7 +4096,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_BLESS_WEAPON+PO_SPELL:
 	{
-            bless_weapon();
+			bless_weapon();
 		return SUCCESS;
 	}
 	case SP_RESTORATION+PO_SPELL:
@@ -4124,21 +4124,21 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_DIVINE_INTERVENTION+PO_SPELL:
 	{
-         project(0, 1, py, px, 777, GF_HOLY_FIRE,   PROJECT_KILL);
-         dispel_monsters(plev * 4);
-         slow_monsters(plev * 4);
-         stun_monsters(plev*4);
-         confuse_monsters(plev*4);
-         turn_monsters(plev*4);
-         stasis_monsters(plev*4);
-         (void)add_flag(TIMED_SHERO, randint(25) + 25);
-         (void)hp_player(300);
-         if (!p_ptr->fast) {   /* Haste */
-         (void)set_flag(TIMED_FAST, randint(20 + (plev) ) + plev);
-         } else {
-         (void)add_flag(TIMED_FAST, randint(5));
-         }
-         (void)set_flag(TIMED_AFRAID, 0);
+		project(0, 1, py, px, 777, GF_HOLY_FIRE,   PROJECT_KILL);
+		dispel_monsters(plev * 4);
+		slow_monsters(plev * 4);
+		stun_monsters(plev*4);
+		confuse_monsters(plev*4);
+		turn_monsters(plev*4);
+		stasis_monsters(plev*4);
+		(void)add_flag(TIMED_SHERO, randint(25) + 25);
+		(void)hp_player(300);
+		if (!p_ptr->fast) {   /* Haste */
+		(void)set_flag(TIMED_FAST, randint(20 + (plev) ) + plev);
+		} else {
+		(void)add_flag(TIMED_FAST, randint(5));
+		}
+		(void)set_flag(TIMED_AFRAID, 0);
 		return SUCCESS;
 	}
 	case SP_DETECT_CREATURES+PO_SPELL:
@@ -4157,7 +4157,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)detect_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
-		return SUCCESS; 
+		return SUCCESS;
 	}
 	case SP_FORAGING+PO_SPELL:
 	{
@@ -4166,23 +4166,23 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_DAYLIGHT+PO_SPELL:
 	{
-               (void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
-            if (p_ptr->hurt_light && !(p_ptr->resist_lite))
-            {
-                msg_print("The daylight scorches your flesh!");
-                take_hit(damroll(2,2), "daylight", MON_LIGHT);
-                            }
+				(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
+			if (p_ptr->hurt_light && !(p_ptr->resist_lite))
+			{
+				msg_print("The daylight scorches your flesh!");
+				take_hit(damroll(2,2), "daylight", MON_LIGHT);
+							}
 		return SUCCESS;
 	}
 	case SP_ANIMAL_TAMING+PO_SPELL:
 	{
-         if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-         (void) charm_animal(dir, plev);
+		if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+		(void) charm_animal(dir, plev);
 		return SUCCESS;
 	}
 	case SP_CURE_WOUNDS_AND_POISON+PO_SPELL:
 	{
-            (void)set_flag(TIMED_CUT, 0);
+			(void)set_flag(TIMED_CUT, 0);
 			(void)set_flag(TIMED_POISONED, 0);
 		return SUCCESS;
 	}
@@ -4196,7 +4196,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt_or_beam(plev-10, GF_ELEC, dir,
-						  damroll(3+((plev-5)/4), 8));
+							damroll(3+((plev-5)/4), 8));
 		return SUCCESS;
 	}
 	case SP_NATURE_AWARENESS+PO_SPELL:
@@ -4253,7 +4253,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_ANIMAL_FRIENDSHIP+PO_SPELL:
 	{
-        (void) charm_animals(plev * 2);
+		(void) charm_animals(plev * 2);
 		return SUCCESS;
 	}
 	case SP_STONE_TELL+PO_SPELL:
@@ -4268,7 +4268,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_PROTECT_FROM_CORROSION+PO_SPELL:
 	{
-               rustproof();
+				rustproof();
 		return SUCCESS;
 	}
 	case SP_EARTHQUAKE+PO_SPELL:
@@ -4278,24 +4278,24 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	}
 	case SP_WHIRLWIND_ATTACK+PO_SPELL:
 	{
-         {
-         int y = 0, x = 0;
-         cave_type       *c_ptr;
-         monster_type    *m_ptr;
+		{
+		int y = 0, x = 0;
+		cave_type       *c_ptr;
+		monster_type    *m_ptr;
 
-         for (dir = 0; dir < 8; dir++) {
-             y = py + ddy_ddd[dir];
-             x = px + ddx_ddd[dir];
-             c_ptr = &cave[y][x];
+		for (dir = 0; dir < 8; dir++) {
+			y = py + ddy_ddd[dir];
+			x = px + ddx_ddd[dir];
+			c_ptr = &cave[y][x];
 
-             /* Get the monster */
-             m_ptr = &m_list[c_ptr->m_idx];
+			/* Get the monster */
+			m_ptr = &m_list[c_ptr->m_idx];
 
-             /* Hack -- attack monsters */
-             if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x)))
-           py_attack(y, x);
-         }
-         }
+			/* Hack -- attack monsters */
+			if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x)))
+			py_attack(y, x);
+		}
+		}
 		return SUCCESS;
 	}
 	case SP_BLIZZARD+PO_SPELL:
@@ -4324,24 +4324,24 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
-            if (p_ptr->hurt_light && !(p_ptr->resist_lite))
-            {
-                msg_print("The sunlight scorches your flesh!");
-                take_hit(50, "sunlight", MON_LIGHT);
-            }
+			if (p_ptr->hurt_light && !(p_ptr->resist_lite))
+			{
+				msg_print("The sunlight scorches your flesh!");
+				take_hit(50, "sunlight", MON_LIGHT);
+			}
 		return SUCCESS;
 	}
 	case SP_ELEMENTAL_BRANDING+PO_SPELL:
 	{
-            brand_weapon(0);
+			brand_weapon(0);
 		return SUCCESS;
 	}
 	case SP_NATURES_WRATH+PO_SPELL:
 	{
-            (void)dispel_monsters(plev * 4);
-            earthquake(py, px, 20 + (plev / 2) );
-         project(0, 1+plev/12, py, px,
-             100+plev, GF_DISINTEGRATE, PROJECT_KILL|PROJECT_ITEM);
+			(void)dispel_monsters(plev * 4);
+			earthquake(py, px, 20 + (plev / 2) );
+		project(0, 1+plev/12, py, px,
+			100+plev, GF_DISINTEGRATE, PROJECT_KILL|PROJECT_ITEM);
 		return SUCCESS;
 	}
 		case SP_DETECT_MONSTERS+PO_SPELL:
@@ -4360,7 +4360,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)detect_doors();
 			(void)detect_stairs();
 			return SUCCESS;
-		} 
+		}
 		case SP_LIGHT_AREA+PO_SPELL:
 		{
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
@@ -4369,12 +4369,12 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_CONFUSE_MONSTER+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            (void)fire_bolt(GF_OLD_CONF, dir, ( plev * 3) / 2 );
+			(void)fire_bolt(GF_OLD_CONF, dir, ( plev * 3) / 2 );
 			return SUCCESS;
 		}
 		case SP_TELEPORT+PO_SPELL:
 		{
-            teleport_player(plev * 5);
+			teleport_player(plev * 5);
 			return SUCCESS;
 		}
 		case SP_SLEEP_MONSTER+PO_SPELL:
@@ -4385,7 +4385,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_RECHARGING+PO_SPELL:
 		{
-               (void)recharge(plev * 2);
+				(void)recharge(plev * 2);
 			return SUCCESS;
 		}
 		case SP_MAGIC_MAPPING+PO_SPELL:
@@ -4445,8 +4445,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_CHARM_MONSTER+PO_SPELL:
 		{
-                 if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                 (void) charm_monster(dir, plev);
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				(void) charm_monster(dir, plev);
 			return SUCCESS;
 		}
 		case SP_DIMENSION_DOOR+PO_SPELL:
@@ -4459,7 +4459,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case SP_SELF_KNOWLEDGE+PO_SPELL:
 		{
-           (void)self_knowledge();
+			(void)self_knowledge();
 			return SUCCESS;
 		}
 		case SP_TELEPORT_LEVEL+PO_SPELL:
@@ -4482,22 +4482,22 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_TELEKINESIS+PO_SPELL:
 		{
-         if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-         fetch(dir, plev*15, FALSE);
+		if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+		fetch(dir, plev*15, FALSE);
 			return SUCCESS;
 		}
 		case SP_EXPLOSIVE_RUNE+PO_SPELL:
 		{
-               explosive_rune();
+				explosive_rune();
 			return SUCCESS;
 		}
 		case SP_CLAIRVOYANCE+PO_SPELL:
 		{
 			wiz_lite();
-            if (!(p_ptr->telepathy))
-            {
-                (void)add_flag(TIMED_ESP, randint(30) + 25);
-            }
+			if (!(p_ptr->telepathy))
+			{
+				(void)add_flag(TIMED_ESP, randint(30) + 25);
+			}
 			return SUCCESS;
 		}
 		case SP_ENCHANT_WEAPON+PO_SPELL:
@@ -4512,7 +4512,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_ALCHEMY+PO_SPELL:
 		{
-		       (void) alchemy();
+				(void) alchemy();
 			return SUCCESS;
 		}
 
@@ -4520,7 +4520,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 				fire_bolt_or_beam(plev-10, GF_MISSILE, dir,
-						  damroll(3 + ((plev - 1) / 5), 4));
+							damroll(3 + ((plev - 1) / 5), 4));
 			return SUCCESS;
 		}
 		case SP_TRAP_DOOR_DESTRUCTION+PO_SPELL:
@@ -4532,25 +4532,25 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
 			return SUCCESS;
-		} 
+		}
 		case SP_TOUCH_OF_CONFUSION+PO_SPELL:
 		{
-            if (!(p_ptr->confusing))
-            {
-                msg_print("Your hands start glowing.");
-                p_ptr->confusing = TRUE;
-            }
+			if (!(p_ptr->confusing))
+			{
+				msg_print("Your hands start glowing.");
+				p_ptr->confusing = TRUE;
+			}
 			return SUCCESS;
 		}
 		case SP_MANA_BURST+PO_SPELL:
 		{
-             if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-             fire_ball(GF_MISSILE, dir,
-            (damroll(3, 5) + plev +
-             (plev / 4)),
-            ((plev < 30) ? 2 : 3));
-          /* Shouldn't actually use GF_MANA, as it will destroy all
-       * items on the floor */
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			fire_ball(GF_MISSILE, dir,
+			(damroll(3, 5) + plev +
+			(plev / 4)),
+			((plev < 30) ? 2 : 3));
+			/* Shouldn't actually use GF_MANA, as it will destroy all
+		* items on the floor */
 			return SUCCESS;
 		}
 		case SP_FIRE_BOLT+PO_SPELL:
@@ -4563,8 +4563,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_FIST_OF_FORCE+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-           fire_ball(GF_DISINTEGRATE, dir,
-               damroll(8+((plev-5)/4), 8), 0);
+			fire_ball(GF_DISINTEGRATE, dir,
+				damroll(8+((plev-5)/4), 8), 0);
 			return SUCCESS;
 		}
 		case SP_TELEPORT_SELF+PO_SPELL:
@@ -4574,62 +4574,62 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_WONDER+PO_SPELL:
 		{
-           {
-           /* This spell should become more useful (more
-              controlled) as the player gains experience levels.
-              Thus, add 1/5 of the player's level to the die roll.
-              This eliminates the worst effects later on, while
-              keeping the results quite random.  It also allows
-              some potent effects only at high level. */
+			{
+			/* This spell should become more useful (more
+				controlled) as the player gains experience levels.
+				Thus, add 1/5 of the player's level to the die roll.
+				This eliminates the worst effects later on, while
+				keeping the results quite random.  It also allows
+				some potent effects only at high level. */
 
-               int die = randint(100) + plev / 5;
+				int die = randint(100) + plev / 5;
 
-               if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               if (die > 100)
-                   msg_print ("You feel a surge of power!");
-               if (die < 8) fire_bolt(GF_OLD_CLONE, dir, 0);
-               else if (die < 14) fire_bolt(GF_OLD_SPEED, dir, plev);
-               else if (die < 26) fire_bolt(GF_OLD_HEAL, dir, plev);
-               else if (die < 31) fire_bolt(GF_OLD_POLY, dir, plev);
-               else if (die < 36)
-                   fire_bolt_or_beam (plev - 10,
-                   GF_MISSILE, dir,
-                   damroll(3 + ((plev - 1) / 5), 4));
-               else if (die < 41) fire_bolt(GF_OLD_CONF, dir, plev);
-               else if (die < 46) fire_ball (GF_POIS, dir, 20 + (plev / 2), 3);
-               else if (die < 51) lite_line (dir);
-               else if (die < 56)
-                   fire_bolt_or_beam (plev - 10, GF_ELEC, dir,
-                   damroll(3+((plev-5)/4),8));
-               else if (die < 61)
-                   fire_bolt_or_beam (plev - 10, GF_COLD, dir,
-                   damroll(5+((plev-5)/4),8));
-               else if (die < 66)
-                   fire_bolt_or_beam (plev, GF_ACID, dir,
-                   damroll(6+((plev-5)/4),8));
-               else if (die < 71)
-                   fire_bolt_or_beam (plev, GF_FIRE, dir,
-                   damroll(8+((plev-5)/4),8));
-               else if (die < 76) fire_bolt(GF_OLD_DRAIN, dir, 75);
-               else if (die < 81) fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
-               else if (die < 86) fire_ball(GF_ACID, dir, 40 + plev, 2);
-               else if (die < 91) fire_ball(GF_ICE, dir, 70 + plev, 3);
-               else if (die < 96) fire_ball(GF_FIRE, dir, 80 + plev, 3);
-               else if (die < 101) fire_bolt(GF_OLD_DRAIN, dir, 100 + plev);
-               else if (die < 104) earthquake(py, px, 12);
-               else if (die < 106) destroy_area(py, px, 15, TRUE);
-               else if (die < 108) genocide(TRUE);
-               else if (die < 110) dispel_monsters(120);
-               else /* RARE */
-               {
-                   dispel_monsters (150);
-                   slow_monsters(plev);
-                   sleep_monsters(plev);
-                   hp_player (300);
-               }
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				if (die > 100)
+					msg_print ("You feel a surge of power!");
+				if (die < 8) fire_bolt(GF_OLD_CLONE, dir, 0);
+				else if (die < 14) fire_bolt(GF_OLD_SPEED, dir, plev);
+				else if (die < 26) fire_bolt(GF_OLD_HEAL, dir, plev);
+				else if (die < 31) fire_bolt(GF_OLD_POLY, dir, plev);
+				else if (die < 36)
+					fire_bolt_or_beam (plev - 10,
+					GF_MISSILE, dir,
+					damroll(3 + ((plev - 1) / 5), 4));
+				else if (die < 41) fire_bolt(GF_OLD_CONF, dir, plev);
+				else if (die < 46) fire_ball (GF_POIS, dir, 20 + (plev / 2), 3);
+				else if (die < 51) lite_line (dir);
+				else if (die < 56)
+					fire_bolt_or_beam (plev - 10, GF_ELEC, dir,
+					damroll(3+((plev-5)/4),8));
+				else if (die < 61)
+					fire_bolt_or_beam (plev - 10, GF_COLD, dir,
+					damroll(5+((plev-5)/4),8));
+				else if (die < 66)
+					fire_bolt_or_beam (plev, GF_ACID, dir,
+					damroll(6+((plev-5)/4),8));
+				else if (die < 71)
+					fire_bolt_or_beam (plev, GF_FIRE, dir,
+					damroll(8+((plev-5)/4),8));
+				else if (die < 76) fire_bolt(GF_OLD_DRAIN, dir, 75);
+				else if (die < 81) fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
+				else if (die < 86) fire_ball(GF_ACID, dir, 40 + plev, 2);
+				else if (die < 91) fire_ball(GF_ICE, dir, 70 + plev, 3);
+				else if (die < 96) fire_ball(GF_FIRE, dir, 80 + plev, 3);
+				else if (die < 101) fire_bolt(GF_OLD_DRAIN, dir, 100 + plev);
+				else if (die < 104) earthquake(py, px, 12);
+				else if (die < 106) destroy_area(py, px, 15, TRUE);
+				else if (die < 108) genocide(TRUE);
+				else if (die < 110) dispel_monsters(120);
+				else /* RARE */
+				{
+					dispel_monsters (150);
+					slow_monsters(plev);
+					sleep_monsters(plev);
+					hp_player (300);
+				}
 			return SUCCESS;
 		}
-           }
+			}
 		case SP_CHAOS_BOLT+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -4639,14 +4639,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_SONIC_BOOM+PO_SPELL:
 		{
-                   project(0, 2+plev/10, py, px,
-               45+plev, GF_SOUND, PROJECT_KILL|PROJECT_ITEM);
+					project(0, 2+plev/10, py, px,
+				45+plev, GF_SOUND, PROJECT_KILL|PROJECT_ITEM);
 			return SUCCESS;
 		}
 		case SP_DOOM_BOLT+PO_SPELL:
 		{
 				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_beam(GF_MANA, dir, damroll(11+((plev-5)/4), 8));
+				fire_beam(GF_MANA, dir, damroll(11+((plev-5)/4), 8));
 			return SUCCESS;
 		}
 		case SP_FIRE_BALL+PO_SPELL:
@@ -4676,8 +4676,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_CHAIN_LIGHTNING+PO_SPELL:
 		{
-          for (dir = 0; dir <= 9; dir++)
-            fire_beam(GF_ELEC, dir, damroll(5+(plev/10), 8));
+			for (dir = 0; dir <= 9; dir++)
+			fire_beam(GF_ELEC, dir, damroll(5+(plev/10), 8));
 			return SUCCESS;
 		}
 		case SP_ARCANE_BINDING+PO_SPELL:
@@ -4688,8 +4688,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_DISINTEGRATE+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-           fire_ball(GF_DISINTEGRATE, dir,
-               80 + (plev), 3 + (plev/40));
+			fire_ball(GF_DISINTEGRATE, dir,
+				80 + (plev), 3 + (plev/40));
 			return SUCCESS;
 		}
 		case SP_ALTER_REALITY+PO_SPELL:
@@ -4700,7 +4700,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_POLYMORPH_SELF+PO_SPELL:
 		{
-            do_poly_self();
+			do_poly_self();
 			return SUCCESS;
 		}
 		case SP_CHAOS_BRANDING+PO_SPELL:
@@ -4717,7 +4717,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				msg_print("The area fills with a stench of sulphur and brimstone.");
 				msg_print("'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'");
 			}
-        	}
+			}
 		else
 		{
 			if (summon_specific_friendly((int)py,(int) px, (plev*3)/2,
@@ -4732,42 +4732,42 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_BEAM_OF_GRAVITY+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                fire_beam(GF_GRAVITY, dir, damroll(9+((plev-5)/4), 8));
+				fire_beam(GF_GRAVITY, dir, damroll(9+((plev-5)/4), 8));
 			return SUCCESS;
 		}
 		case SP_METEOR_SWARM+PO_SPELL:
 		{
-           {
-		       int x, y, dx, dy, d, count = 0;
-		       int b = 10 + randint(10); 
-		       for (i = 0; i < b; i++) {
-			   do {
-			       count++;
-			       if (count > 1000)  break;
-			       x = px - 5 + randint(10);
-			       y = py - 5 + randint(10);
-			       dx = (px > x) ? (px - x) : (x - px);
-			       dy = (py > y) ? (py - y) : (y - py);
-			       /* Approximate distance */
-                   d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
-               } while ((d > 5) || (!(player_has_los_bold(y, x))));
-			   
-			   if (count > 1000)   break;
-			   count = 0;
-               project(0, 2, y, x, (plev*3)/2, GF_METEOR, PROJECT_KILL|PROJECT_JUMP|PROJECT_ITEM);
-		       }
-		   }
+			{
+				int x, y, dx, dy, d, count = 0;
+				int b = 10 + randint(10);
+				for (i = 0; i < b; i++) {
+				do {
+					count++;
+					if (count > 1000)  break;
+					x = px - 5 + randint(10);
+					y = py - 5 + randint(10);
+					dx = (px > x) ? (px - x) : (x - px);
+					dy = (py > y) ? (py - y) : (y - py);
+					/* Approximate distance */
+					d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+				} while ((d > 5) || (!(player_has_los_bold(y, x))));
+
+				if (count > 1000)   break;
+				count = 0;
+				project(0, 2, y, x, (plev*3)/2, GF_METEOR, PROJECT_KILL|PROJECT_JUMP|PROJECT_ITEM);
+				}
+			}
 			return SUCCESS;
 		}
 		case SP_FLAME_STRIKE+PO_SPELL:
 		{
 			fire_ball(GF_FIRE, 0,
-                150 + (2*plev), 8);
+				150 + (2*plev), 8);
 			return SUCCESS;
 		}
 		case SP_CALL_CHAOS+PO_SPELL:
 		{
-            call_chaos(plev);
+			call_chaos(plev);
 			return SUCCESS;
 		}
 		case SP_SHARD_BALL+PO_SPELL:
@@ -4786,9 +4786,9 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_BREATHE_CHAOS+PO_SPELL:
 		{
-               if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-               fire_ball(GF_CHAOS,dir,p_ptr->chp,
-                     -2);
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				fire_ball(GF_CHAOS,dir,p_ptr->chp,
+					-2);
 			return SUCCESS;
 		}
 		case SP_CALL_THE_VOID+PO_SPELL:
@@ -4805,281 +4805,281 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_MIND_BLAST+PO_SPELL:
 		{
-               if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                 fire_bolt_or_beam(plev-10, GF_PSI, dir,
-                              damroll(3 + ((plev - 1) / 5), 3));
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				fire_bolt_or_beam(plev-10, GF_PSI, dir,
+								damroll(3 + ((plev - 1) / 5), 3));
 			return SUCCESS;
 		}
 		case SP_TAROT_DRAW+PO_SPELL:
 		{
 
-           {
-                /* A limited power 'wonder' spell */
+			{
+				/* A limited power 'wonder' spell */
 
-               int die = die = (randint(110)) + plev / 5;
-               /* get a level bonus */
+				int die = die = (randint(110)) + plev / 5;
+				/* get a level bonus */
 
-            msg_print("You shuffle your Tarot deck and draw a card...");
+			msg_print("You shuffle your Tarot deck and draw a card...");
 
-            if (die < 7 )
-            {
-                msg_print("Oh no! It's the Blasted Tower!");
-                for (i = 0; i < randint(3); i++)
-                    (void)activate_hi_summon();
-            }
-            else if (die < 14)
-            {
-                msg_print("Oh no! It's the Devil!");
-                (void) summon_specific(py, px, (dun_depth), SUMMON_DEMON);
-            }
-            else if (die < 18 )
-            {
-                msg_print("Oh no! It's the Hanged Man.");
-                activate_ty_curse();
-            }
-            else if (die < 22 )
-            {
-                msg_print("It's the swords of discord.");
-                aggravate_monsters(1);
-            }
-            else if (die < 26)
-            {
-                msg_print("It's the Fool.");
-                (void) do_dec_stat(A_INT);
-                (void) do_dec_stat(A_WIS);
-            }
-            else if (die < 30)
-            {
-                msg_print("It's a picture of a strange monster.");
-                if (!(summon_specific(py, px, ((dun_depth) * 3) / 2, 32 + randint(6))))
-                    msg_print("Nobody answers to your call.");
-            }
-            else if (die < 33)
-            {
-                msg_print("It's the Moon.");
-                unlite_area(10,3);
-            }
-            else if (die < 38)
-            {
-                msg_print("It's the Wheel of Fortune.");
-                wild_magic((randint(32))-1);
-            }
-            else if (die < 40)
-            {
-                msg_print("It's a teleport card.");
-                teleport_player(10);
-            }
-            else if (die <42)
-            {
-                msg_print("It's the Star.");
-                add_flag(TIMED_BLESSED, plev);
-            }
-            else if (die <47)
-            {
-                msg_print("It's a teleport card.");
-                teleport_player(100);
-            }
-            else if (die <52)
-            {
-                msg_print("It's a teleport card.");
-                teleport_player(200);
-            }
-            else if (die <60)
-            {
-                msg_print("It's the Tower.");
-                wall_breaker(plev);
-            }
-            else if (die <72)
-            {
-                msg_print("It's Temperance.");
-                sleep_monsters_touch(plev);
-            }
-            else if (die <80)
-            {
-                msg_print("It's the Tower.");
-                earthquake(py, px, 5);
-            }
-            else if (die<82)
-            {
-                msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_MOULD, FALSE)))
-                    msg_print("Nobody answers to your call.");
-            }
-            else if (die<84)
-            {
-                msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BAT, FALSE)))
-                    msg_print("Nobody answers to your call.");
-            }
-            else if (die<86)
-            {
-                msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_VORTEX, FALSE)))
-                    msg_print("Nobody answers to your call.");
-            }
-            else if (die<88)
-            {
-                msg_print("It's a picture of a friendly monster.");
-                if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_TREASURE, FALSE)))
-                    msg_print("Nobody answers to your call.");
-            }
-            else if (die<96)
-            {
-                msg_print("It's the Lovers.");
-                if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                (void) charm_monster(dir, MIN(plev, 20));
-            }
-            else if (die<101)
-            {
-                msg_print("It's the Hermit.");
-                wall_stone();
-            }
-            else if (die< 111)
-            {
-                msg_print("It's the Judgement.");
-                do_cmd_rerate();
+			if (die < 7 )
+			{
+				msg_print("Oh no! It's the Blasted Tower!");
+				for (i = 0; i < randint(3); i++)
+					(void)activate_hi_summon();
+			}
+			else if (die < 14)
+			{
+				msg_print("Oh no! It's the Devil!");
+				(void) summon_specific(py, px, (dun_depth), SUMMON_DEMON);
+			}
+			else if (die < 18 )
+			{
+				msg_print("Oh no! It's the Hanged Man.");
+				activate_ty_curse();
+			}
+			else if (die < 22 )
+			{
+				msg_print("It's the swords of discord.");
+				aggravate_monsters(1);
+			}
+			else if (die < 26)
+			{
+				msg_print("It's the Fool.");
+				(void) do_dec_stat(A_INT);
+				(void) do_dec_stat(A_WIS);
+			}
+			else if (die < 30)
+			{
+				msg_print("It's a picture of a strange monster.");
+				if (!(summon_specific(py, px, ((dun_depth) * 3) / 2, 32 + randint(6))))
+					msg_print("Nobody answers to your call.");
+			}
+			else if (die < 33)
+			{
+				msg_print("It's the Moon.");
+				unlite_area(10,3);
+			}
+			else if (die < 38)
+			{
+				msg_print("It's the Wheel of Fortune.");
+				wild_magic((randint(32))-1);
+			}
+			else if (die < 40)
+			{
+				msg_print("It's a teleport card.");
+				teleport_player(10);
+			}
+			else if (die <42)
+			{
+				msg_print("It's the Star.");
+				add_flag(TIMED_BLESSED, plev);
+			}
+			else if (die <47)
+			{
+				msg_print("It's a teleport card.");
+				teleport_player(100);
+			}
+			else if (die <52)
+			{
+				msg_print("It's a teleport card.");
+				teleport_player(200);
+			}
+			else if (die <60)
+			{
+				msg_print("It's the Tower.");
+				wall_breaker(plev);
+			}
+			else if (die <72)
+			{
+				msg_print("It's Temperance.");
+				sleep_monsters_touch(plev);
+			}
+			else if (die <80)
+			{
+				msg_print("It's the Tower.");
+				earthquake(py, px, 5);
+			}
+			else if (die<82)
+			{
+				msg_print("It's a picture of a friendly monster.");
+				if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_MOULD, FALSE)))
+					msg_print("Nobody answers to your call.");
+			}
+			else if (die<84)
+			{
+				msg_print("It's a picture of a friendly monster.");
+				if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_BAT, FALSE)))
+					msg_print("Nobody answers to your call.");
+			}
+			else if (die<86)
+			{
+				msg_print("It's a picture of a friendly monster.");
+				if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_VORTEX, FALSE)))
+					msg_print("Nobody answers to your call.");
+			}
+			else if (die<88)
+			{
+				msg_print("It's a picture of a friendly monster.");
+				if (!(summon_specific_friendly(py, px, ((dun_depth) * 3) / 2, SUMMON_TREASURE, FALSE)))
+					msg_print("Nobody answers to your call.");
+			}
+			else if (die<96)
+			{
+				msg_print("It's the Lovers.");
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				(void) charm_monster(dir, MIN(plev, 20));
+			}
+			else if (die<101)
+			{
+				msg_print("It's the Hermit.");
+				wall_stone();
+			}
+			else if (die< 111)
+			{
+				msg_print("It's the Judgement.");
+				do_cmd_rerate();
 				cure_mutations();
-            }
-            else if (die < 120)
-            {
-                msg_print("It's the Sun.");
-                wiz_lite();
-            }
-            else
-            {
-                msg_print("It's the World.");
-                    msg_print("You feel more experienced.");
+			}
+			else if (die < 120)
+			{
+				msg_print("It's the Sun.");
+				wiz_lite();
+			}
+			else
+			{
+				msg_print("It's the World.");
+					msg_print("You feel more experienced.");
 					gain_skills(100);
-                }
+				}
 
-           }
+			}
 			return SUCCESS;
 		}
 		case SP_RESET_RECALL+PO_SPELL:
 		{
 			char ppp[] = "Reset to which level (1-   ): ", tmp_val[4];
-                /* Prompt */
-                sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_dlv);
+				/* Prompt */
+				sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_dlv);
 
-                /* Default */
-                sprintf(tmp_val, "%d", MAX(dun_level,1));
+				/* Default */
+				sprintf(tmp_val, "%d", MAX(dun_level,1));
 
-                /* Ask for a level */
-                if (!get_string(ppp, tmp_val, 4))
+				/* Ask for a level */
+				if (!get_string(ppp, tmp_val, 4))
 				{
 					(*use) = FALSE;
 					return SUCCESS;
 				}
 
-                /* Extract request */
-                i = atoi(tmp_val);
+				/* Extract request */
+				i = atoi(tmp_val);
 
-                /* Paranoia */
-                if (i < 1) i = 1;
+				/* Paranoia */
+				if (i < 1) i = 1;
 
-                /* Paranoia */
-                if (i > p_ptr->max_dlv) i = p_ptr->max_dlv;
+				/* Paranoia */
+				if (i > p_ptr->max_dlv) i = p_ptr->max_dlv;
 
-                /* Accept request */
-                msg_format("Recall depth set to level %d (%d').", i, i * 50 );
+				/* Accept request */
+				msg_format("Recall depth set to level %d (%d').", i, i * 50 );
 			return SUCCESS;
 		}
 		case SP_TELEPORT_2+PO_SPELL:
 		{
-            teleport_player(plev * 4);
+			teleport_player(plev * 4);
 			return SUCCESS;
 		}
 		case SP_DIMENSION_DOOR_2+PO_SPELL:
 		{
-       {
+		{
 			if (!dimension_door(plev, 10)) (*use) = FALSE;
 			return SUCCESS;
 		}
-            }
+			}
 		case SP_SUMMON_OBJECT+PO_SPELL:
 		{
-             if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                 fetch(dir, plev*15, TRUE);
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				fetch(dir, plev*15, TRUE);
 			return SUCCESS;
 		}
 		case SP_SUMMON_ANIMAL+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the wilderness...");
-            if (randint(5)>2)
-            {
-              if (!(summon_specific_friendly(py, px, plev, SUMMON_ANIMAL_RANGER, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_ANIMAL))
-                {
-                    msg_print("The summoned animal gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the wilderness...");
+			if (randint(5)>2)
+			{
+				if (!(summon_specific_friendly(py, px, plev, SUMMON_ANIMAL_RANGER, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_ANIMAL))
+				{
+					msg_print("The summoned animal gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 		case SP_PHANTASMAL_SERVANT+PO_SPELL:
 		{
-               if (summon_specific_friendly(py, px, (plev*3)/2, SUMMON_PHANTOM, FALSE))
-               {
-                    msg_print ("'Your wish, master?'");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
+				if (summon_specific_friendly(py, px, (plev*3)/2, SUMMON_PHANTOM, FALSE))
+				{
+					msg_print ("'Your wish, master?'");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
 			return SUCCESS;
 		}
 		case SP_SUMMON_MONSTER+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind...");
-            if (randint(5)>2)
-            {
-             if (!(summon_specific_friendly(py, px, plev, 0, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, 0))
-                {
-                    msg_print("The summoned creature gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind...");
+			if (randint(5)>2)
+			{
+			if (!(summon_specific_friendly(py, px, plev, 0, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, 0))
+				{
+					msg_print("The summoned creature gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 		case SP_CONJURE_ELEMENTAL+PO_SPELL:
 		{
-        {
-            if (randint(6)>3)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_ELEMENTAL, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_ELEMENTAL))
-                {
-                      msg_print("You fail to control the elemental creature!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			if (randint(6)>3)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_ELEMENTAL, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_ELEMENTAL))
+				{
+						msg_print("You fail to control the elemental creature!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 
 			return SUCCESS;
 		}
@@ -5097,143 +5097,143 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			}
 		case SP_BANISH+PO_SPELL:
 		{
-             banish_monsters(plev*4);
+			banish_monsters(plev*4);
 			return SUCCESS;
 		}
 		case SP_JOKER_CARD+PO_SPELL:
 		{
-            msg_print("You concentrate on a joker card...");
-            switch(randint(4))
-            {
-                case 1: i = SUMMON_MOULD; break;
-                case 2: i = SUMMON_BAT; break;
-                case 3: i = SUMMON_VORTEX; break;
-                default: i = SUMMON_TREASURE; break;
+			msg_print("You concentrate on a joker card...");
+			switch(randint(4))
+			{
+				case 1: i = SUMMON_MOULD; break;
+				case 2: i = SUMMON_BAT; break;
+				case 3: i = SUMMON_VORTEX; break;
+				default: i = SUMMON_TREASURE; break;
 
-            }
-            if (randint(2)==1)
-            {
-                if (summon_specific(py, px, plev, i))
-                    msg_print("The summoned creature gets angry!");
-                 else
-                    msg_print("Nobody answers to your call.");
-                }
-            else
-            {
-                if (!(summon_specific_friendly(py, px, plev, i, FALSE)))
-                    msg_print("Nobody answers to your call.");
-            }
+			}
+			if (randint(2)==1)
+			{
+				if (summon_specific(py, px, plev, i))
+					msg_print("The summoned creature gets angry!");
+				else
+					msg_print("Nobody answers to your call.");
+				}
+			else
+			{
+				if (!(summon_specific_friendly(py, px, plev, i, FALSE)))
+					msg_print("Nobody answers to your call.");
+			}
 			return SUCCESS;
 		}
 		case SP_SUMMON_SPIDERS+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind along the planar webs...");
-            if (randint(5)>2)
-            {
-                if (!(summon_specific_friendly(py, px, plev, SUMMON_SPIDER, TRUE)))
-                    msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_SPIDER))
-                {
-                    msg_print("The summoned spiders get angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind along the planar webs...");
+			if (randint(5)>2)
+			{
+				if (!(summon_specific_friendly(py, px, plev, SUMMON_SPIDER, TRUE)))
+					msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_SPIDER))
+				{
+					msg_print("The summoned spiders get angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 		case SP_SUMMON_REPTILES+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the cold, damp places...");
-            if (randint(5)>2)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_HYDRA, TRUE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_HYDRA))
-                {
-                    msg_print("The summoned reptile gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the cold, damp places...");
+			if (randint(5)>2)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_HYDRA, TRUE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_HYDRA))
+				{
+					msg_print("The summoned reptile gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 		case SP_SUMMON_HOUNDS+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the elemental planes...");
-            if (randint(5)>2)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_HOUND, TRUE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_HOUND))
-                {
-                    msg_print("The summoned hounds get angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the elemental planes...");
+			if (randint(5)>2)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_HOUND, TRUE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_HOUND))
+				{
+					msg_print("The summoned hounds get angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 
 			return SUCCESS;
 		}
 		case SP_PLANAR_BRANDING+PO_SPELL:
 		{
-            brand_weapon(4);
+			brand_weapon(4);
 			return SUCCESS;
 		}
 		case SP_PLANAR_BEING+PO_SPELL:
 		{
-	        if (one_in(8)) i = MUT_WRAITH;
-	        else i = MUT_BLINK;
-	        if (gain_chaos_feature(i))
-    	        msg_print("You have turned into a Planar Being.");
+			if (one_in(8)) i = MUT_WRAITH;
+			else i = MUT_BLINK;
+			if (gain_chaos_feature(i))
+				msg_print("You have turned into a Planar Being.");
 			return SUCCESS;
 		}
 		case SP_DEATH_DEALING+PO_SPELL:
 		{
-            (void)dispel_living(plev * 3);
+			(void)dispel_living(plev * 3);
 			return SUCCESS;
 		}
 		case SP_SUMMON_REAVER+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the planes of order...");
-            if (randint(10)>3)
-            {
-              if (!(summon_specific_friendly(py, px, plev, SUMMON_REAVER, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_REAVER))
-                {
-                    msg_print("The summoned Black Reaver gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the planes of order...");
+			if (randint(10)>3)
+			{
+				if (!(summon_specific_friendly(py, px, plev, SUMMON_REAVER, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_REAVER))
+				{
+					msg_print("The summoned Black Reaver gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 		case SP_PLANAR_DIVINATION+PO_SPELL:
@@ -5243,147 +5243,147 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_PLANAR_LORE+PO_SPELL:
 		{
-            identify_fully();
+			identify_fully();
 			return SUCCESS;
 		}
 		case SP_SUMMON_UNDEAD+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to beyond the grave...");
-            if (randint(10)>3)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_UNDEAD, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_UNDEAD))
-                {
-                    msg_print("The summoned undead creature gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to beyond the grave...");
+			if (randint(10)>3)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_UNDEAD, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_UNDEAD))
+				{
+					msg_print("The summoned undead creature gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 		case SP_SUMMON_DRAGON+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the treasure troves...");
-            if (randint(10)>3)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_DRAGON, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_DRAGON))
-                {
-                    msg_print("The summoned dragon gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the treasure troves...");
+			if (randint(10)>3)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_DRAGON, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_DRAGON))
+				{
+					msg_print("The summoned dragon gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 
 			return SUCCESS;
 		}
 		case SP_MASS_SUMMONS+PO_SPELL:
 		{
 			b = TRUE;
-            msg_print ("You concentrate on several images at once...");
-            for (i = 0; i < 3 + (plev / 10); i++)
-            {
-                if (randint(10)>3)
-                {
-                 if (summon_specific_friendly(py, px, plev, 0, FALSE))
-                    b = FALSE;
-                }
-                else
-                {
-                    if (summon_specific(py, px, plev, 0))
-                    {
-                        msg_print("A summoned creature gets angry!");
-                        b = FALSE;
-                    }
-                }
-            }
+			msg_print ("You concentrate on several images at once...");
+			for (i = 0; i < 3 + (plev / 10); i++)
+			{
+				if (randint(10)>3)
+				{
+				if (summon_specific_friendly(py, px, plev, 0, FALSE))
+					b = FALSE;
+				}
+				else
+				{
+					if (summon_specific(py, px, plev, 0))
+					{
+						msg_print("A summoned creature gets angry!");
+						b = FALSE;
+					}
+				}
+			}
 			if (b) msg_print("Nobody answers to your call.");
 			return SUCCESS;
 		}
 		case SP_SUMMON_DEMON_2+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the pits of hell...");
-            if (randint(10)>3)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_DEMON, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_DEMON))
-                {
-                    msg_print("The summoned demon gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the pits of hell...");
+			if (randint(10)>3)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_DEMON, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_DEMON))
+				{
+					msg_print("The summoned demon gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 		case SP_SUMMON_ANCIENT_DRAGON+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the ancient caves...");
-            if (randint(10)>3)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_DRAGON, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_HI_DRAGON))
-                {
-                    msg_print("The summoned ancient dragon gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the ancient caves...");
+			if (randint(10)>3)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_DRAGON, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_HI_DRAGON))
+				{
+					msg_print("The summoned ancient dragon gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 
 			return SUCCESS;
 		}
 		case SP_SUMMON_GREATER_UNDEAD+PO_SPELL:
 		{
-        {
-            msg_print ("You reach out your mind to the darkest tombs...");
-            if (randint(10)>3)
-            {
-             if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_UNDEAD, FALSE)))
-                msg_print("Nobody answers to your call.");
-            }
-            else
-            {
-                if (summon_specific(py, px, plev, SUMMON_HI_UNDEAD))
-                {
-                    msg_print("The summoned greater undead creature gets angry!");
-                }
-                else
-                {
-                    msg_print("Nobody answers to your call.");
-                }
-            }
-        }
+		{
+			msg_print ("You reach out your mind to the darkest tombs...");
+			if (randint(10)>3)
+			{
+			if (!(summon_specific_friendly(py, px, plev, SUMMON_HI_UNDEAD, FALSE)))
+				msg_print("Nobody answers to your call.");
+			}
+			else
+			{
+				if (summon_specific(py, px, plev, SUMMON_HI_UNDEAD))
+				{
+					msg_print("The summoned greater undead creature gets angry!");
+				}
+				else
+				{
+					msg_print("Nobody answers to your call.");
+				}
+			}
+		}
 			return SUCCESS;
 		}
 
@@ -5391,37 +5391,37 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case SP_DETECT_UNLIFE+PO_SPELL:
 		{
-       (void) detect_monsters_nonliving();
+		(void) detect_monsters_nonliving();
 			return SUCCESS;
 		}
 		case SP_MALEDICTION+PO_SPELL:
 		{
-         if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-         /* A radius-0 ball may (1) be aimed at objects etc.,
-          * and will affect them; (2) may be aimed at ANY
-          * visible monster, unlike a 'bolt' which must travel
-          * to the monster. */
+		if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+		/* A radius-0 ball may (1) be aimed at objects etc.,
+			* and will affect them; (2) may be aimed at ANY
+			* visible monster, unlike a 'bolt' which must travel
+			* to the monster. */
 
-         fire_ball(GF_HELL_FIRE, dir,
-           damroll(3 + ((plev - 1) / 5), 3), 0);
-         if (randint(5)==1) {   /* Special effect first */
-         i = randint(1000);
-         if (i == 666)
-           fire_bolt(GF_DEATH_RAY, dir, plev);
-         else if (i < 500)
-           fire_bolt(GF_TURN_ALL, dir, plev);
-         else if (i < 800)
-           fire_bolt(GF_OLD_CONF, dir, plev);
-         else
-           fire_bolt(GF_STUN, dir, plev);
-         }
+		fire_ball(GF_HELL_FIRE, dir,
+			damroll(3 + ((plev - 1) / 5), 3), 0);
+		if (randint(5)==1) {   /* Special effect first */
+		i = randint(1000);
+		if (i == 666)
+			fire_bolt(GF_DEATH_RAY, dir, plev);
+		else if (i < 500)
+			fire_bolt(GF_TURN_ALL, dir, plev);
+		else if (i < 800)
+			fire_bolt(GF_OLD_CONF, dir, plev);
+		else
+			fire_bolt(GF_STUN, dir, plev);
+		}
 			return SUCCESS;
 		}
 		case SP_DETECT_EVIL+PO_SPELL:
 		{
 			(void)detect_monsters_evil();
 			return SUCCESS;
-		} 
+		}
 		case SP_STINKING_CLOUD+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -5439,59 +5439,59 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			(void)fire_bolt(GF_TURN_ALL, dir, plev);
-            (void) fire_bolt(GF_STUN, dir, plev);
+			(void) fire_bolt(GF_STUN, dir, plev);
 			return SUCCESS;
 		}
 		case SP_ENSLAVE_UNDEAD+PO_SPELL:
 		{
-         if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-           (void)control_one_undead(dir, plev);
+		if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			(void)control_one_undead(dir, plev);
 			return SUCCESS;
 		}
 		case SP_ORB_OF_ENTROPY+PO_SPELL:
 		{
-         if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-         fire_ball(GF_OLD_DRAIN, dir,
-           (damroll(3, 6) + plev + (plev / 4)),
-           ((plev < 30) ? 2 : 3));
+		if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+		fire_ball(GF_OLD_DRAIN, dir,
+			(damroll(3, 6) + plev + (plev / 4)),
+			((plev < 30) ? 2 : 3));
 			return SUCCESS;
 		}
 		case SP_NETHER_BOLT+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            fire_bolt_or_beam(plev, GF_NETHER, dir,
+			fire_bolt_or_beam(plev, GF_NETHER, dir,
 				damroll(6+((plev-5)/4), 8));
 			return SUCCESS;
 		}
 		case SP_TERROR+PO_SPELL:
 		{
-             turn_monsters(30+plev);
+			turn_monsters(30+plev);
 			return SUCCESS;
 		}
 		case SP_VAMPIRIC_DRAIN+PO_SPELL:
 		{
-       if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-       i = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
-                 if (fire_bolt(GF_OLD_DRAIN, dir, i)) {
-           (void)hp_player(i);
-           /* Gain nutritional sustenance: 150/hp drained */
-           /* A Food ration gives 5000 food points (by contrast) */
-           /* Don't ever get more than "Full" this way */
-           /* But if we ARE Gorged,  it won't cure us */
-           i = p_ptr->food + MIN(5000, 100 * i);
-           if (p_ptr->food < PY_FOOD_MAX)   /* Not gorged already */
-             (void)set_flag(TIMED_FOOD, i >= PY_FOOD_MAX ? PY_FOOD_MAX-1 : i);
-       }
+		if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+		i = plev + randint(plev) * MAX(1, plev/10);   /* Dmg */
+				if (fire_bolt(GF_OLD_DRAIN, dir, i)) {
+			(void)hp_player(i);
+			/* Gain nutritional sustenance: 150/hp drained */
+			/* A Food ration gives 5000 food points (by contrast) */
+			/* Don't ever get more than "Full" this way */
+			/* But if we ARE Gorged,  it won't cure us */
+			i = p_ptr->food + MIN(5000, 100 * i);
+			if (p_ptr->food < PY_FOOD_MAX)   /* Not gorged already */
+			(void)set_flag(TIMED_FOOD, i >= PY_FOOD_MAX ? PY_FOOD_MAX-1 : i);
+		}
 			return SUCCESS;
 		}
 		case SP_POISON_BRANDING+PO_SPELL:
 		{
-            brand_weapon(2);
+			brand_weapon(2);
 			return SUCCESS;
 		}
 		case SP_DISPEL_GOOD+PO_SPELL:
 		{
-            (void)dispel_good(plev * 4);
+			(void)dispel_good(plev * 4);
 			return SUCCESS;
 		}
 		case SP_GENOCIDE+PO_SPELL:
@@ -5506,86 +5506,86 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_BERSERK+PO_SPELL:
 		{
-            (void)add_flag(TIMED_SHERO, randint(25) + 25);
+			(void)add_flag(TIMED_SHERO, randint(25) + 25);
 			(void)hp_player(30);
 			(void)set_flag(TIMED_AFRAID, 0);
 			return SUCCESS;
 		}
 		case SP_INVOKE_SPIRITS+PO_SPELL:
 		{
-           {
-               int die = randint(100) + plev / 5;
-               if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			{
+				int die = randint(100) + plev / 5;
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 
-              msg_print("You call on the power of the dead...");
-               if (die > 100)
-                 msg_print ("You feel a surge of eldritch force!");
+				msg_print("You call on the power of the dead...");
+				if (die > 100)
+				msg_print ("You feel a surge of eldritch force!");
 
-               if (die < 8) {
-               msg_print("Oh no! Mouldering forms rise from the earth around you!");
-               (void) summon_specific(py, px, (dun_depth), SUMMON_UNDEAD);
-               } else if (die < 14) {
-               msg_print("An unnamable evil brushes against your mind...");
-               add_flag(TIMED_AFRAID, randint(4) + 4);
-               } else if (die < 26) {
-               msg_print("Your head is invaded by a horde of gibbering spectral voices...");
-               add_flag(TIMED_CONFUSED, randint(4) + 4);
-               } else if (die < 31) {
-               fire_bolt(GF_OLD_POLY, dir,plev);
-               } else if (die < 36) {
-               fire_bolt_or_beam(plev - 10,
-                          GF_MISSILE, dir,
-                          damroll(3 + ((plev - 1) / 5), 4));
-               } else if (die < 41) {
-               fire_bolt(GF_OLD_CONF, dir, plev);
-               } else if (die < 46) {
-               fire_ball (GF_POIS, dir, 20 + (plev / 2), 3);
-               } else if (die < 51) {
-               lite_line(dir);
-               } else if (die < 56) {
-               fire_bolt_or_beam(plev - 10, GF_ELEC, dir,
-                          damroll(3+((plev-5)/4),8));
-               } else if (die < 61) {
-               fire_bolt_or_beam(plev - 10, GF_COLD, dir,
-                          damroll(5+((plev-5)/4),8));
-               } else if (die < 66) {
-               fire_bolt_or_beam(plev, GF_ACID, dir,
-                          damroll(6+((plev-5)/4),8));
-               } else if (die < 71) {
-               fire_bolt_or_beam(plev, GF_FIRE, dir,
-                          damroll(8+((plev-5)/4),8));
-               } else if (die < 76) {
-               fire_bolt(GF_OLD_DRAIN, dir, 75);
-               } else if (die < 81) {
-               fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
-               } else if (die < 86) {
-               fire_ball(GF_ACID, dir, 40 + plev, 2);
-               } else if (die < 91) {
-               fire_ball(GF_ICE, dir, 70 + plev, 3);
-               } else if (die < 96) {
-               fire_ball(GF_FIRE, dir, 80 + plev, 3);
-               } else if (die < 101) {
-               fire_bolt(GF_OLD_DRAIN, dir, 100 + plev);
-               } else if (die < 104) {
-               earthquake(py, px, 12);
-               } else if (die < 106) {
-               destroy_area(py, px, 15, TRUE);
-               } else if (die < 108) {
-               genocide(TRUE);
-               } else if (die < 110) {
-               dispel_monsters(120);
-               } else { /* RARE */
-               dispel_monsters (150);
-               slow_monsters(plev);
-               sleep_monsters(plev);
-               hp_player (300);
-               }
+				if (die < 8) {
+				msg_print("Oh no! Mouldering forms rise from the earth around you!");
+				(void) summon_specific(py, px, (dun_depth), SUMMON_UNDEAD);
+				} else if (die < 14) {
+				msg_print("An unnamable evil brushes against your mind...");
+				add_flag(TIMED_AFRAID, randint(4) + 4);
+				} else if (die < 26) {
+				msg_print("Your head is invaded by a horde of gibbering spectral voices...");
+				add_flag(TIMED_CONFUSED, randint(4) + 4);
+				} else if (die < 31) {
+				fire_bolt(GF_OLD_POLY, dir,plev);
+				} else if (die < 36) {
+				fire_bolt_or_beam(plev - 10,
+							GF_MISSILE, dir,
+							damroll(3 + ((plev - 1) / 5), 4));
+				} else if (die < 41) {
+				fire_bolt(GF_OLD_CONF, dir, plev);
+				} else if (die < 46) {
+				fire_ball (GF_POIS, dir, 20 + (plev / 2), 3);
+				} else if (die < 51) {
+				lite_line(dir);
+				} else if (die < 56) {
+				fire_bolt_or_beam(plev - 10, GF_ELEC, dir,
+							damroll(3+((plev-5)/4),8));
+				} else if (die < 61) {
+				fire_bolt_or_beam(plev - 10, GF_COLD, dir,
+							damroll(5+((plev-5)/4),8));
+				} else if (die < 66) {
+				fire_bolt_or_beam(plev, GF_ACID, dir,
+							damroll(6+((plev-5)/4),8));
+				} else if (die < 71) {
+				fire_bolt_or_beam(plev, GF_FIRE, dir,
+							damroll(8+((plev-5)/4),8));
+				} else if (die < 76) {
+				fire_bolt(GF_OLD_DRAIN, dir, 75);
+				} else if (die < 81) {
+				fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
+				} else if (die < 86) {
+				fire_ball(GF_ACID, dir, 40 + plev, 2);
+				} else if (die < 91) {
+				fire_ball(GF_ICE, dir, 70 + plev, 3);
+				} else if (die < 96) {
+				fire_ball(GF_FIRE, dir, 80 + plev, 3);
+				} else if (die < 101) {
+				fire_bolt(GF_OLD_DRAIN, dir, 100 + plev);
+				} else if (die < 104) {
+				earthquake(py, px, 12);
+				} else if (die < 106) {
+				destroy_area(py, px, 15, TRUE);
+				} else if (die < 108) {
+				genocide(TRUE);
+				} else if (die < 110) {
+				dispel_monsters(120);
+				} else { /* RARE */
+				dispel_monsters (150);
+				slow_monsters(plev);
+				sleep_monsters(plev);
+				hp_player (300);
+				}
 
-               if (die < 31)
-                 msg_print("Sepulchral voices chuckle. 'Soon you will join us, mortal.'");
+				if (die < 31)
+				msg_print("Sepulchral voices chuckle. 'Soon you will join us, mortal.'");
 			return SUCCESS;
 		}
-           }
+			}
 		case SP_DARK_BOLT+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -5596,7 +5596,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_BATTLE_FRENZY+PO_SPELL:
 		{
 			(void)add_flag(TIMED_SHERO, randint(25) + 25);
-            (void)hp_player(30);
+			(void)hp_player(30);
 			(void)set_flag(TIMED_AFRAID, 0);
 			if (!p_ptr->fast)
 			{
@@ -5611,16 +5611,16 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_VAMPIRISM_TRUE+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-           for (i = 0; i < 3; i++)
-           {
-               if (fire_bolt(GF_OLD_DRAIN, dir, 100))
-                   hp_player(100);
-                }
+			for (i = 0; i < 3; i++)
+			{
+				if (fire_bolt(GF_OLD_DRAIN, dir, 100))
+					hp_player(100);
+				}
 			return SUCCESS;
 		}
 		case SP_VAMPIRIC_BRANDING+PO_SPELL:
 		{
-            brand_weapon(3);
+			brand_weapon(3);
 			return SUCCESS;
 		}
 		case SP_MASS_GENOCIDE+PO_SPELL:
@@ -5636,126 +5636,126 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_RAISE_THE_DEAD+PO_SPELL:
 		{
-                   if (randint(3) == 1) {
-               if (summon_specific(py, px, (plev*3)/2,
-                       (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD))) {
-               msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-               msg_print("'The dead arise... to punish you for disturbing them!'");
-               }
-           } else {
-               if (summon_specific_friendly((int)py,(int)px, (plev*3)/2,
-                       (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
-                       ((plev > 24) && (randint(3) == 1)))) {
-               msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
-               msg_print("Ancient, long-dead forms arise from the ground to serve you!");
-               }
-           }
+					if (randint(3) == 1) {
+				if (summon_specific(py, px, (plev*3)/2,
+						(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD))) {
+				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
+				msg_print("'The dead arise... to punish you for disturbing them!'");
+				}
+			} else {
+				if (summon_specific_friendly((int)py,(int)px, (plev*3)/2,
+						(plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
+						((plev > 24) && (randint(3) == 1)))) {
+				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
+				msg_print("Ancient, long-dead forms arise from the ground to serve you!");
+				}
+			}
 			return SUCCESS;
 		}
 		case SP_ESOTERIA+PO_SPELL:
 		{
 		if (randint(50)>plev)
-		    (void) ident_spell();
+			(void) ident_spell();
 		else
-		    identify_fully();
+			identify_fully();
 			return SUCCESS;
 		}
 		case SP_WORD_OF_DEATH+PO_SPELL:
 		{
-	    (void)dispel_living(plev * 3);
+		(void)dispel_living(plev * 3);
 			return SUCCESS;
 		}
 		case SP_EVOCATION+PO_SPELL:
 		{
-        (void)dispel_monsters(plev * 4);
-         turn_monsters(plev*4);
-         banish_monsters(plev*4);
+		(void)dispel_monsters(plev * 4);
+		turn_monsters(plev*4);
+		banish_monsters(plev*4);
 			return SUCCESS;
 		}
 		case SP_HELLFIRE+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            fire_ball(GF_HELL_FIRE, dir,
-                    666, 3);
-            take_hit(50+randint(50), "the strain of casting Hellfire", MON_CASTING_HELLFIRE);
+			fire_ball(GF_HELL_FIRE, dir,
+					666, 3);
+			take_hit(50+randint(50), "the strain of casting Hellfire", MON_CASTING_HELLFIRE);
 			return SUCCESS;
 		}
 		case SP_OMNICIDE+PO_SPELL:
 		{
-         p_ptr->csp -= 100;  /* Display doesn't show mana cost (100)
-       * as deleted until the spell has finished. This gives a
-       * false impression of how high your mana is climbing.
-       * Therefore, 'deduct' the cost temporarily before entering the
-       * loop, then add it back at the end so that the rest of the
-       * program can deduct it properly */
-         for (i = 1; i < m_max; i++)
-         {
-             monster_type    *m_ptr = &m_list[i];
-             monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+		p_ptr->csp -= 100;  /* Display doesn't show mana cost (100)
+		* as deleted until the spell has finished. This gives a
+		* false impression of how high your mana is climbing.
+		* Therefore, 'deduct' the cost temporarily before entering the
+		* loop, then add it back at the end so that the rest of the
+		* program can deduct it properly */
+		for (i = 1; i < m_max; i++)
+		{
+			monster_type    *m_ptr = &m_list[i];
+			monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
-             /* Paranoia -- Skip dead monsters */
-             if (!m_ptr->r_idx) continue;
+			/* Paranoia -- Skip dead monsters */
+			if (!m_ptr->r_idx) continue;
 
-             /* Hack -- Skip Unique Monsters */
-             if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
+			/* Hack -- Skip Unique Monsters */
+			if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
 
-			 /* Skip Quest Monsters */
-			 if (r_ptr->flags1 & RF1_GUARDIAN) continue;
+			/* Skip Quest Monsters */
+			if (r_ptr->flags1 & RF1_GUARDIAN) continue;
 
-             /* Delete the monster */
-             delete_monster_idx(i,TRUE);
+			/* Delete the monster */
+			delete_monster_idx(i,TRUE);
 
-             /* Take damage */
-             take_hit(randint(4), "the strain of casting Omnicide", MON_CASTING_MASS_GENOCIDE);
+			/* Take damage */
+			take_hit(randint(4), "the strain of casting Omnicide", MON_CASTING_MASS_GENOCIDE);
 
-             /* Absorb power of dead soul */
-             p_ptr->csp++;
+			/* Absorb power of dead soul */
+			p_ptr->csp++;
 
-             /* Visual feedback */
-             move_cursor_relative(py, px);
+			/* Visual feedback */
+			move_cursor_relative(py, px);
 
-             /* Redraw */
-             p_ptr->redraw |= (PR_HP | PR_MANA);
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP | PR_MANA);
 
-             /* Window stuff */
-             p_ptr->window |= (PW_PLAYER);
-			 p_ptr->window |=(PW_SPELL);
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
+			p_ptr->window |=(PW_SPELL);
 
-             /* Handle */
-             handle_stuff();
+			/* Handle */
+			handle_stuff();
 
-             /* Fresh */
-             Term_fresh();
+			/* Fresh */
+			Term_fresh();
 
-             /* Delay */
-             Term_xtra(TERM_XTRA_DELAY,
-               delay_factor * delay_factor * delay_factor);
-         }
-         p_ptr->csp += 100;   /* Restore, ready to be deducted properly */
+			/* Delay */
+			Term_xtra(TERM_XTRA_DELAY,
+				delay_factor * delay_factor * delay_factor);
+		}
+		p_ptr->csp += 100;   /* Restore, ready to be deducted properly */
 
 			return SUCCESS;
 		}
 		case SP_WRAITHFORM+PO_SPELL:
 		{
-        add_flag(TIMED_WRAITH, randint(plev/2) + (plev/2));
+		add_flag(TIMED_WRAITH, randint(plev/2) + (plev/2));
 			return SUCCESS;
 		}
 		case SP_ZAP+PO_SPELL:
 		{
-               if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-                 fire_bolt_or_beam(plev-10, GF_ELEC, dir,
-                              damroll(3 + ((plev - 1) / 5), 3));
+				if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+				fire_bolt_or_beam(plev-10, GF_ELEC, dir,
+								damroll(3 + ((plev - 1) / 5), 3));
 			return SUCCESS;
 		}
 		case SP_WIZARD_LOCK+PO_SPELL:
 		{
-             if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            (void) wizard_lock(dir);
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			(void) wizard_lock(dir);
 			return SUCCESS;
 		}
 		case SP_DETECT_INVISIBILITY+PO_SPELL:
 		{
-            (void)detect_monsters_invis();
+			(void)detect_monsters_invis();
 			return SUCCESS;
 		}
 		case SP_DETECT_MONSTERS_2+PO_SPELL:
@@ -5765,7 +5765,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_BLINK+PO_SPELL:
 		{
-            teleport_player(10);
+			teleport_player(10);
 			return SUCCESS;
 		}
 		case SP_LIGHT_AREA_2+PO_SPELL:
@@ -5775,14 +5775,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_TRAP_AND_DOOR_DESTRUCTION+PO_SPELL:
 		{
-             if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            (void) destroy_door(dir);
+			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
+			(void) destroy_door(dir);
 			return SUCCESS;
 		}
 		case SP_CURE_LIGHT_WOUNDS+PO_SPELL:
 		{
-            (void) hp_player(damroll(2, 8));
-            (void) set_flag(TIMED_CUT, p_ptr->cut - 10);
+			(void) hp_player(damroll(2, 8));
+			(void) set_flag(TIMED_CUT, p_ptr->cut - 10);
 			return SUCCESS;
 		}
 		case SP_DETECT_DOORS_AND_TRAPS_2+PO_SPELL:
@@ -5794,7 +5794,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_PHLOGISTON+PO_SPELL:
 		{
-            phlogiston();
+			phlogiston();
 			return SUCCESS;
 		}
 		case SP_DETECT_TREASURE+PO_SPELL:
@@ -5821,13 +5821,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_CURE_MEDIUM_WOUNDS+PO_SPELL:
 		{
-            (void)hp_player(damroll(4, 8));
-            (void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
+			(void)hp_player(damroll(4, 8));
+			(void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
 			return SUCCESS;
 		}
 		case SP_TELEPORT_3+PO_SPELL:
 		{
-            teleport_player(plev * 5);
+			teleport_player(plev * 5);
 			return SUCCESS;
 		}
 		case SP_STONE_TO_MUD+PO_SPELL:
@@ -5839,7 +5839,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_RAY_OF_LIGHT+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            msg_print("A line of light appears.");
+			msg_print("A line of light appears.");
 			lite_line(dir);
 			return SUCCESS;
 		}
@@ -5850,7 +5850,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_RECHARGING_2+PO_SPELL:
 		{
-               (void)recharge(plev * 2);
+				(void)recharge(plev * 2);
 			return SUCCESS;
 		}
 		case SP_TELEPORT_LEVEL_3+PO_SPELL:
@@ -5866,15 +5866,15 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_ELEMENTAL_BALL+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-            switch (randint(4))
-            {
-                case 1: i = GF_FIRE; break;
-                case 2: i = GF_ELEC; break;
-                case 3: i = GF_COLD; break;
-                default: i = GF_ACID;
-            }
-            fire_ball(i, dir,
-                    75 + (plev), 2);
+			switch (randint(4))
+			{
+				case 1: i = GF_FIRE; break;
+				case 2: i = GF_ELEC; break;
+				case 3: i = GF_COLD; break;
+				default: i = GF_ACID;
+			}
+			fire_ball(i, dir,
+					75 + (plev), 2);
 			return SUCCESS;
 		}
 		case SP_DETECTION+PO_SPELL:
@@ -5888,14 +5888,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			set_recall(TRUE);
 			return SUCCESS;
 		}
-            }
+			}
 		case SP_CLAIRVOYANCE_2+PO_SPELL:
 		{
 			wiz_lite();
-            if (!(p_ptr->telepathy))
-            {
-                (void)add_flag(TIMED_ESP, randint(30) + 25);
-            }
+			if (!(p_ptr->telepathy))
+			{
+				(void)add_flag(TIMED_ESP, randint(30) + 25);
+			}
 			return SUCCESS;
 		}
 
@@ -6054,7 +6054,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case RP_VAMPIRE+PO_RACIAL:
 		{
-	       /* Only works on adjacent monsters */
+			/* Only works on adjacent monsters */
 			cave_type *c_ptr;
 			s16b dummy;
 			if (!dir) return POWER_ERROR_NO_SUCH_REP_DIR;   /* was get_aim_dir */
@@ -6240,7 +6240,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			for (i=0; i < INVEN_TOTAL; i++)
 			{
 				object_type *o_ptr = &inventory[i];
-			
+
 				if (!o_ptr->k_idx) continue;
 				o_ptr->ident |= IDENT_SENSE_CURSED;
 			}

@@ -72,10 +72,10 @@ static name_centry group_item[] =
 	{ TV_WAND,              "Wands" },
 	{ TV_STAFF,             "Staffs" },
 
-    { TV_SORCERY_BOOK,    "Books (Sorcery)" },
-    { TV_THAUMATURGY_BOOK,      "Books (Thaumaturgy)" },
-    { TV_CONJURATION_BOOK,      "Books (Conjuration)" },
-    { TV_NECROMANCY_BOOK,     "Books (Necromancy)" },
+	{ TV_SORCERY_BOOK,    "Books (Sorcery)" },
+	{ TV_THAUMATURGY_BOOK,      "Books (Thaumaturgy)" },
+	{ TV_CONJURATION_BOOK,      "Books (Conjuration)" },
+	{ TV_NECROMANCY_BOOK,     "Books (Necromancy)" },
 
 	{ TV_CHARM, "Charm" },
 
@@ -102,7 +102,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 {
 	object_type forge;
 	object_type *q_ptr;
-	
+
 	object_kind *k_ptr;
 
 
@@ -509,7 +509,7 @@ static void spoil_artifact(cptr fname)
 
 
 
- /*
+/*
  * Create a spoiler file for monsters   -BEN-
  */
 static void spoil_mon_desc(cptr fname)

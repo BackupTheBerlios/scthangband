@@ -39,7 +39,7 @@
 #ifdef ALLOW_TEMPLATES
 
 /* A macro for how large the current info array can grow before it overflows. */
-#define MAX_I	(int)(z_info->fake_info_size/head->info_len)
+#define MAX_I (int)(z_info->fake_info_size/head->info_len)
 
 
 /*** Helper arrays for parsing ascii template files ***/
@@ -112,16 +112,16 @@ static flag_name info_flags[] =
 	{"DEX", TR1, TR1_DEX},
 	{"CON", TR1, TR1_CON},
 	{"CHR", TR1, TR1_CHR},
-/*	{"XXX1", TR1, TR1_XXX1}, */
-/*	{"XXX2", TR1, TR1_XXX2}, */
+/* {"XXX1", TR1, TR1_XXX1}, */
+/* {"XXX2", TR1, TR1_XXX2}, */
 	{"STEALTH", TR1, TR1_STEALTH},
 	{"SEARCH", TR1, TR1_SEARCH},
 	{"INFRA", TR1, TR1_INFRA},
 	{"TUNNEL", TR1, TR1_TUNNEL},
 	{"SPEED", TR1, TR1_SPEED},
 	{"BLOWS", TR1, TR1_BLOWS},
-    {"CHAOTIC", TR1, TR1_CHAOTIC},
-    {"VAMPIRIC", TR1, TR1_VAMPIRIC},
+	{"CHAOTIC", TR1, TR1_CHAOTIC},
+	{"VAMPIRIC", TR1, TR1_VAMPIRIC},
 	{"SLAY_ANIMAL", TR1, TR1_SLAY_ANIMAL},
 	{"SLAY_EVIL", TR1, TR1_SLAY_EVIL},
 	{"SLAY_UNDEAD", TR1, TR1_SLAY_UNDEAD},
@@ -132,9 +132,9 @@ static flag_name info_flags[] =
 	{"SLAY_DRAGON", TR1, TR1_SLAY_DRAGON},
 	{"KILL_DRAGON", TR1, TR1_KILL_DRAGON},
 	{"X15_DRAGON", TR1, TR1_X15_DRAGON},
-    {"VORPAL", TR1, TR1_VORPAL},
+	{"VORPAL", TR1, TR1_VORPAL},
 	{"IMPACT", TR1, TR1_IMPACT},
-    {"BRAND_POIS", TR1, TR1_BRAND_POIS},
+	{"BRAND_POIS", TR1, TR1_BRAND_POIS},
 	{"BRAND_ACID", TR1, TR1_BRAND_ACID},
 	{"BRAND_ELEC", TR1, TR1_BRAND_ELEC},
 	{"BRAND_FIRE", TR1, TR1_BRAND_FIRE},
@@ -152,7 +152,7 @@ static flag_name info_flags[] =
 	{"IM_FIRE", TR2, TR2_IM_FIRE},
 	{"IM_COLD", TR2, TR2_IM_COLD},
 	{"RAND_EXTRA", TR2, TR2_RAND_EXTRA},
-    {"REFLECT", TR2, TR2_REFLECT},
+	{"REFLECT", TR2, TR2_REFLECT},
 	{"FREE_ACT", TR2, TR2_FREE_ACT},
 	{"HOLD_LIFE", TR2, TR2_HOLD_LIFE},
 	{"RES_ACID", TR2, TR2_RES_ACID},
@@ -160,7 +160,7 @@ static flag_name info_flags[] =
 	{"RES_FIRE", TR2, TR2_RES_FIRE},
 	{"RES_COLD", TR2, TR2_RES_COLD},
 	{"RES_POIS", TR2, TR2_RES_POIS},
-    {"RES_FEAR", TR2, TR2_RES_FEAR},
+	{"RES_FEAR", TR2, TR2_RES_FEAR},
 	{"RES_LITE", TR2, TR2_RES_LITE},
 	{"RES_DARK", TR2, TR2_RES_DARK},
 	{"RES_BLIND", TR2, TR2_RES_BLIND},
@@ -171,14 +171,14 @@ static flag_name info_flags[] =
 	{"RES_NEXUS", TR2, TR2_RES_NEXUS},
 	{"RES_CHAOS", TR2, TR2_RES_CHAOS},
 	{"RES_DISEN", TR2, TR2_RES_DISEN},
-    {"SH_FIRE", TR3, TR3_SH_FIRE},
-    {"SH_ELEC", TR3, TR3_SH_ELEC},
+	{"SH_FIRE", TR3, TR3_SH_FIRE},
+	{"SH_ELEC", TR3, TR3_SH_ELEC},
 	{"SHOW_ARMOUR", TR3, TR3_SHOW_ARMOUR},
 	{"AUTO_CURSE", TR3, TR3_AUTO_CURSE},
-    {"NO_TELE", TR3, TR3_NO_TELE},
-    {"NO_MAGIC", TR3, TR3_NO_MAGIC},
-    {"WRAITH", TR3, TR3_WRAITH}, /* UNUSED */
-    {"TY_CURSE", TR3, TR3_TY_CURSE},
+	{"NO_TELE", TR3, TR3_NO_TELE},
+	{"NO_MAGIC", TR3, TR3_NO_MAGIC},
+	{"WRAITH", TR3, TR3_WRAITH}, /* UNUSED */
+	{"TY_CURSE", TR3, TR3_TY_CURSE},
 	{"EASY_KNOW", TR3, TR3_EASY_KNOW},
 	{"HIDE_TYPE", TR3, TR3_HIDE_TYPE},
 	{"SHOW_MODS", TR3, TR3_SHOW_MODS},
@@ -207,18 +207,18 @@ static flag_name info_flags[] =
 	/* General monster flags */
 
 	{"UNIQUE", RF1, RF1_UNIQUE},
-/*	{"GUARDIAN", RF1, RF1_GUARDIAN}, */ /* Set from q_list[]. */
+/* {"GUARDIAN", RF1, RF1_GUARDIAN}, */ /* Set from q_list[]. */
 	{"MALE", RF1, RF1_MALE},
 	{"FEMALE", RF1, RF1_FEMALE},
 	{"CHAR_CLEAR", RF1, RF1_CHAR_CLEAR},
 	{"CHAR_MULTI", RF1, RF1_CHAR_MULTI},
 	{"ATTR_CLEAR", RF1, RF1_ATTR_CLEAR},
 	{"ATTR_MULTI", RF1, RF1_ATTR_MULTI},
-/*	{"ALWAYS_GUARD", RF1, RF1_ALWAYS_GUARD}, */
+/* {"ALWAYS_GUARD", RF1, RF1_ALWAYS_GUARD}, */
 	{"FORCE_MAXHP", RF1, RF1_FORCE_MAXHP},
 	{"FORCE_SLEEP", RF1, RF1_FORCE_SLEEP},
-/*	{"FORCE_EXTRA", RF1, RF1_FORCE_EXTRA}, */
-/*	{"FRIEND", RF1, RF1_FRIEND}, */
+/* {"FORCE_EXTRA", RF1, RF1_FORCE_EXTRA}, */
+/* {"FRIEND", RF1, RF1_FRIEND}, */
 	{"FRIENDS", RF1, RF1_FRIENDS},
 	{"ESCORT", RF1, RF1_ESCORT},
 	{"ESCORTS", RF1, RF1_ESCORTS},
@@ -237,23 +237,23 @@ static flag_name info_flags[] =
 	{"DROP_GOOD", RF1, RF1_DROP_GOOD},
 	{"DROP_GREAT", RF1, RF1_DROP_GREAT},
 	{"DROP_USEFUL", RF1, RF1_DROP_USEFUL}, /* UNUSED */
-/*	{"DROP_CHOSEN", RF1, RF1_DROP_CHOSEN}, */
+/* {"DROP_CHOSEN", RF1, RF1_DROP_CHOSEN}, */
 	{"STUPID", RF2, RF2_STUPID},
 	{"SMART", RF2, RF2_SMART},
-    {"CAN_SPEAK", RF2, RF2_CAN_SPEAK},
-    {"REFLECTING", RF2, RF2_REFLECTING},
+	{"CAN_SPEAK", RF2, RF2_CAN_SPEAK},
+	{"REFLECTING", RF2, RF2_REFLECTING},
 	{"INVISIBLE", RF2, RF2_INVISIBLE},
 	{"COLD_BLOOD", RF2, RF2_COLD_BLOOD},
 	{"EMPTY_MIND", RF2, RF2_EMPTY_MIND},
 	{"WEIRD_MIND", RF2, RF2_WEIRD_MIND},
 	{"MULTIPLY", RF2, RF2_MULTIPLY},
 	{"REGENERATE", RF2, RF2_REGENERATE},
-    {"SHAPECHANGER", RF2, RF2_SHAPECHANGER},
-    {"ATTR_ANY", RF2, RF2_ATTR_ANY},
+	{"SHAPECHANGER", RF2, RF2_SHAPECHANGER},
+	{"ATTR_ANY", RF2, RF2_ATTR_ANY},
 	{"POWERFUL", RF2, RF2_POWERFUL},
-    {"ELDRITCH_HORROR", RF2, RF2_ELDRITCH_HORROR},
-    {"AURA_FIRE", RF2, RF2_AURA_FIRE},
-    {"AURA_ELEC", RF2, RF2_AURA_ELEC},
+	{"ELDRITCH_HORROR", RF2, RF2_ELDRITCH_HORROR},
+	{"AURA_FIRE", RF2, RF2_AURA_FIRE},
+	{"AURA_ELEC", RF2, RF2_AURA_ELEC},
 	{"OPEN_DOOR", RF2, RF2_OPEN_DOOR},
 	{"BASH_DOOR", RF2, RF2_BASH_DOOR},
 	{"PASS_WALL", RF2, RF2_PASS_WALL},
@@ -262,14 +262,14 @@ static flag_name info_flags[] =
 	{"KILL_BODY", RF2, RF2_KILL_BODY},
 	{"TAKE_ITEM", RF2, RF2_TAKE_ITEM},
 	{"KILL_ITEM", RF2, RF2_KILL_ITEM},
-      {"RUN_AWAY", RF2, RF2_RUN_AWAY},
+	{"RUN_AWAY", RF2, RF2_RUN_AWAY},
 	{"ELEMENTAL", RF2, RF2_ELEMENTAL},
 	{"MIMIC", RF2, RF2_MIMIC},
 	{"PHANTOM", RF2, RF2_PHANTOM},
 	{"CULTIST", RF2, RF2_CULTIST},
 	{"SHAMAN", RF2, RF2_SHAMAN},
-/*	{"BRAIN_6", RF2, RF2_BRAIN_6}, */
-/*	{"BRAIN_7", RF2, RF2_BRAIN_7}, */
+/* {"BRAIN_6", RF2, RF2_BRAIN_6}, */
+/* {"BRAIN_7", RF2, RF2_BRAIN_7}, */
 	{"ORC", RF3, RF3_ORC},
 	{"TROLL", RF3, RF3_TROLL},
 	{"GIANT", RF3, RF3_GIANT},
@@ -278,10 +278,10 @@ static flag_name info_flags[] =
 	{"UNDEAD", RF3, RF3_UNDEAD},
 	{"EVIL", RF3, RF3_EVIL},
 	{"ANIMAL", RF3, RF3_ANIMAL},
-    {"GREAT_OLD_ONE", RF3, RF3_GREAT_OLD_ONE},
-    {"GOOD", RF3, RF3_GOOD},
+	{"GREAT_OLD_ONE", RF3, RF3_GREAT_OLD_ONE},
+	{"GOOD", RF3, RF3_GOOD},
 	{"PLAYER_GHOST", RF3, RF3_PLAYER_GHOST},
-    {"NONLIVING", RF3, RF3_NONLIVING},
+	{"NONLIVING", RF3, RF3_NONLIVING},
 	{"HURT_LITE", RF3, RF3_HURT_LITE},
 	{"HURT_ROCK", RF3, RF3_HURT_ROCK},
 	{"HURT_FIRE", RF3, RF3_HURT_FIRE},
@@ -291,7 +291,7 @@ static flag_name info_flags[] =
 	{"IM_FIRE", RF3, RF3_IM_FIRE},
 	{"IM_COLD", RF3, RF3_IM_COLD},
 	{"IM_POIS", RF3, RF3_IM_POIS},
-    {"RES_TELE", RF3, RF3_RES_TELE},
+	{"RES_TELE", RF3, RF3_RES_TELE},
 	{"RES_NETH", RF3, RF3_RES_NETH},
 	{"IM_WATER", RF3, RF3_IM_WATER},
 	{"RES_PLAS", RF3, RF3_RES_PLAS},
@@ -306,9 +306,9 @@ static flag_name info_flags[] =
 	/* Monster magic flags */
 
 	{"SHRIEK", RF4, RF4_SHRIEK},
-/*	{"XXX3X3", RF4, RF4_XXX2}, */
-/*	{"XXX3X4", RF4, RF4_XXX3}, */
-    {"BA_SHARD", RF4, RF4_BA_SHARD}, /* UNUSED */
+/* {"XXX3X3", RF4, RF4_XXX2}, */
+/* {"XXX3X4", RF4, RF4_XXX3}, */
+	{"BA_SHARD", RF4, RF4_BA_SHARD}, /* UNUSED */
 	{"ARROW_1", RF4, RF4_ARROW_1},
 	{"ARROW_2", RF4, RF4_ARROW_2},
 	{"ARROW_3", RF4, RF4_ARROW_3},
@@ -333,10 +333,10 @@ static flag_name info_flags[] =
 	{"BR_PLAS", RF4, RF4_BR_PLAS},
 	{"BR_WALL", RF4, RF4_BR_WALL},
 	{"BR_MANA", RF4, RF4_BR_MANA},
-    {"BA_NUKE", RF4, RF4_BA_NUKE},
-    {"BR_NUKE", RF4, RF4_BR_NUKE},
-    {"BA_CHAO", RF4, RF4_BA_CHAO},
-    {"BR_DISI", RF4, RF4_BR_DISI},
+	{"BA_NUKE", RF4, RF4_BA_NUKE},
+	{"BR_NUKE", RF4, RF4_BR_NUKE},
+	{"BA_CHAO", RF4, RF4_BA_CHAO},
+	{"BR_DISI", RF4, RF4_BR_DISI},
 	{"BA_ACID", RF5, RF5_BA_ACID},
 	{"BA_ELEC", RF5, RF5_BA_ELEC},
 	{"BA_FIRE", RF5, RF5_BA_FIRE},
@@ -370,23 +370,23 @@ static flag_name info_flags[] =
 	{"SLOW", RF5, RF5_SLOW},
 	{"HOLD", RF5, RF5_HOLD},
 	{"HASTE", RF6, RF6_HASTE},
-    {"DREAD_CURSE", RF6, RF6_DREAD_CURSE},
+	{"DREAD_CURSE", RF6, RF6_DREAD_CURSE},
 	{"HEAL", RF6, RF6_HEAL},
-/*	{"XXX2X6", RF6, RF6_XXX2}, */
+/* {"XXX2X6", RF6, RF6_XXX2}, */
 	{"BLINK", RF6, RF6_BLINK},
 	{"TPORT", RF6, RF6_TPORT},
-/*	{"XXX3X6", RF6, RF6_XXX3}, */
-/*	{"XXX4X6", RF6, RF6_XXX4}, */
+/* {"XXX3X6", RF6, RF6_XXX3}, */
+/* {"XXX4X6", RF6, RF6_XXX4}, */
 	{"TELE_TO", RF6, RF6_TELE_TO},
 	{"TELE_AWAY", RF6, RF6_TELE_AWAY},
 	{"TELE_LEVEL", RF6, RF6_TELE_LEVEL},
-/*	{"XXX5X6", RF6, RF6_XXX5}, */
+/* {"XXX5X6", RF6, RF6_XXX5}, */
 	{"DARKNESS", RF6, RF6_DARKNESS},
 	{"TRAPS", RF6, RF6_TRAPS},
 	{"FORGET", RF6, RF6_FORGET},
 	{"S_IB", RF6, RF6_S_IB},
-    {"S_KIN", RF6, RF6_S_KIN},
-    {"S_REAVER", RF6, RF6_S_REAVER},
+	{"S_KIN", RF6, RF6_S_KIN},
+	{"S_REAVER", RF6, RF6_S_REAVER},
 	{"S_MONSTER", RF6, RF6_S_MONSTER},
 	{"S_MONSTERS", RF6, RF6_S_MONSTERS},
 	{"S_ANT", RF6, RF6_S_ANT},
@@ -480,7 +480,7 @@ static errr byte_ok(int value)
 #define okchar(char) (char == '\0' || char == ':')
 
 /*
- * Return the string within an array which also exists within a string, 
+ * Return the string within an array which also exists within a string,
  * returning (for example) 1 for the first element.
  * Returns 0 if there isn't exactly one such string.
  */
@@ -535,7 +535,7 @@ static s16b find_string(char *buf, cptr *array)
 		*s=' '; \
 }
 
-/* A routine to set x to be the number after a given letter, and then clear it from the text string. 
+/* A routine to set x to be the number after a given letter, and then clear it from the text string.
  * If there are no such flags, it does nothing. If there are more than one, it returns an error.
  * THIS ASSUMES THAT ALL VALID VALUES ARE NON-NEGATIVE
  */
@@ -588,7 +588,7 @@ static bool find_string_x(char *buf, cptr string)
  * buf is the string these characters are copied from.
  * this is the character which starts and ends this type of string.
  * all contains the characters which start and end all types of string being searched for.
- * output contains the text strings for the array in question. 
+ * output contains the text strings for the array in question.
  * this_size contains the current offset of the final character in output.
  * max_size contains the maximum offset allowed.
  * offset contains the offset for this event (should be 0 initially).
@@ -599,12 +599,12 @@ static errr do_get_string(char *buf, char this, cptr all, char *output, u32b *th
 	bool escaped = FALSE;
 	do {
 		s = strchr(s+1, this);
-		
+
 	} while (s && *(s-1) == '\\');
 
 	/* No such string. */
 	if (!s) return SUCCESS;
-	
+
 	/* Go to the first character in the string itself. */
 	s++;
 
@@ -615,7 +615,7 @@ static errr do_get_string(char *buf, char this, cptr all, char *output, u32b *th
 
 	/* No explicit end, so use end of buf. */
 	if (t == s) t = strchr(s, '\0');
-	
+
 	/* Now copy the string to temp, being careful of \\s and rogue termination characters. */
 	for (r = q = s, last = t; r < t; r++, q++)
 	{
@@ -631,7 +631,7 @@ static errr do_get_string(char *buf, char this, cptr all, char *output, u32b *th
 			q--;
 			escaped = TRUE;
 		}
-		/* Normal parsing of termination characters depends on which string is parsed first, 
+		/* Normal parsing of termination characters depends on which string is parsed first,
 		 * so reject all of them. We accept this termination character because it's unambiguous. */
 		else if (strchr(all, *r) && *r != this)
 		{
@@ -876,7 +876,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					make_item_type *i_ptr = &d_ptr->par.item;
 					if (find_string_x(buf, "ARTEFACT")) i_ptr->flags |= EI_ART;
 					if (find_string_x(buf, "EGO")) i_ptr->flags |= EI_EGO;
-					
+
 					if (find_string_x(buf, "RANDOM"))
 					{
 						i_ptr->flags |= EI_RAND;
@@ -979,7 +979,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					}
 					break;
 				}
-				case DEATH_MONSTER:  
+				case DEATH_MONSTER:
 				{
 					make_monster_type *i_ptr = &d_ptr->par.monster;
 					i_ptr->strict = find_string_x(buf, "STRICT");
@@ -1026,7 +1026,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					readclearnum(i_ptr->radius,'r');
 					readclearnum(i_ptr->dice,'(');
 					readclearnum(i_ptr->sides,'d');
-					
+
 					/* Require an explosion type */
 					if (!i_ptr->method)
 					{
@@ -1139,7 +1139,7 @@ static errr add_text(u32b *offset, header *head, cptr buf)
 	if (*offset == 0)
 	{
 		/* Advance and save the text index */
-		*offset = ++head->text_size;	
+		*offset = ++head->text_size;
 	}
 
 	/* Append chars to the text */
@@ -1226,7 +1226,7 @@ static u32b add_name(header *head, cptr buf)
 
 	/* Advance the index */
 	head->name_size += strlen(buf);
-	
+
 	/* Return the name index */
 	return index;
 }
@@ -1379,7 +1379,7 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 	vault_type *v_ptr = *extra;
 
 	if (*buf != 'N' && !v_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
-	
+
 	switch (*buf)
 	{
 		case 'N':
@@ -1513,7 +1513,7 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 
 	/* Current entry */
 	object_kind *k_ptr = *extra;
-	
+
 	/* If this isn't the start of a record, there should already be one. */
 	if (!strchr("NT", *buf) && !k_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
 
@@ -1844,7 +1844,7 @@ errr parse_o_base(char *buf, header *head, vptr *extra)
 
 					/* Reject items with a different p_id. */
 					if (k_ptr->u_idx != error_idx) continue;
-		
+
 					/* Reduce cost if necessary. */
 					if (!cost || k_ptr->cost < cost) cost = k_ptr->cost;
 				}
@@ -1903,7 +1903,7 @@ static errr parse_unid_flavourless(header *head)
 
 		/* Not flavourless. */
 		if (strchr(ob_name+ob_ptr->name, CM_ACT+CI_FLAVOUR)) continue;
-			
+
 		/* Add an entry. */
 		try(parse_unid_flavourless_aux(head, i));
 	}
@@ -1927,12 +1927,12 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 	unident_type *u_ptr = *extra;
 	char *s, end[1];
 
-	/* 
+	/*
 	 * Only 'N' entries can set u_ptr.
 	 */
 	/* There better be a current u_ptr. */
 	if ((*buf != 'N') && !u_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
-		
+
 	/* Actually parse the current field. */
 	switch (buf[0])
 	{
@@ -1946,7 +1946,7 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 
 			/* Set u_ptr */
 			*extra = u_ptr = (unident_type*)head->info_ptr + error_idx;
-			
+
 			/* Store the name. */
 			if (!(u_ptr->name = add_name(head, s)))
 				return PARSE_ERROR_OUT_OF_MEMORY;
@@ -1981,14 +1981,14 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 
 			/* Extract the attr */
 			u_ptr->d_attr = color_char_to_attr(col);
-			
+
 			/* Verify indices' legality */
 			try(byte_ok(p_id));
 			try(byte_ok(s_id));
 
 			/* Change the primary index to an o_base one. */
 			u_ptr->p_id = p_id;
-			
+
 			/* Extract the secondary index */
 			u_ptr->s_id = s_id;
 
@@ -2317,7 +2317,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 				}
 			}
 		}
-		
+
 		/* Hack -- Process 'F' for flags */
 		case 'F':
 		{
@@ -2387,7 +2387,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 	monster_race *r_ptr = (monster_race *)(*extra);
 
 	if (*buf != 'N' && !r_ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
-	
+
 	switch (*buf)
 	{
 		/* Process 'N' for "New/Number/Name" */
@@ -2491,7 +2491,7 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			/* Save the values */
 			r_ptr->level = lev;
 			r_ptr->rarity = rar;
-/*			r_ptr->extra = pad;*/
+/* r_ptr->extra = pad;*/
 			r_ptr->mexp = exp;
 
 			return SUCCESS;
@@ -3219,13 +3219,13 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 				/* Look for a matching entry. */
 				for (i = 0; i < N_ELEMENTS(header_names); i++)
 					if (prefix(s, header_names[i])) break;
-	
+
 				if (i == N_ELEMENTS(header_names))
 					return PARSE_ERROR_INVALID_FLAG;
 
 				/* Set the file to the next number (0 is nothing) */
 				ptr->file = i+1;
-	
+
 				/* Find the end of the string. */
 				s += strlen(header_names[i]);
 			}
@@ -3264,7 +3264,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 			/* Store the text */
 			return add_text(&ptr->text, head, s);
 		}
-		
+
 		/* Process 'B' for "To" (before) */
 		case 'B':
 		{
@@ -3289,7 +3289,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 			ptr->conv = MACRO_CONV_REPLACE;
 
 			ptr->text = ++head->text_size;
-			for (s--; s; s = strchr(s, ',')) 
+			for (s--; s; s = strchr(s, ','))
 			{
 				int i = atoi(++s);
 				try(byte_ok(i));
@@ -3468,7 +3468,7 @@ static errr init_info_txt_final(header *head)
 		 * (unused) level field. */
 		case R_HEAD:
 		{
-			monster_race *r_ptr = ((monster_race*)(head->info_ptr)) + 
+			monster_race *r_ptr = ((monster_race*)(head->info_ptr)) +
 				MON_PLAYER_GHOST;
 			cptr rname = head->name_ptr+r_ptr->name;
 			r_ptr->level = MIN(255, strlen(rname));
@@ -3491,7 +3491,7 @@ static int PURE num_macros(const header *head)
 #define NUM_MACROS num_macros(head)
 
 
-#define NO_VERSION	-2
+#define NO_VERSION -2
 
 static errr parse_info_line_aux(char *buf, header *head, vptr *extra)
 {
@@ -3554,7 +3554,7 @@ static errr parse_info_line(char *buf, header *head, int initmacro, vptr *extra)
 
 		/* Bad file restriction. */
 		if (macro_ptr->file && macro_ptr->file != head->header_num) continue;
-	
+
 		/* Bad prefix restriction. */
 		if (macro_ptr->pref && macro_ptr->pref != buf[0]) continue;
 
@@ -3583,7 +3583,7 @@ static errr parse_info_line(char *buf, header *head, int initmacro, vptr *extra)
 			if (macro_ptr->field && *s == ':') field++;
 
 			/* A match has been found. */
-			if (field == macro_ptr->field && 
+			if (field == macro_ptr->field &&
 				prefix(s, macro_name+macro_ptr->name))
 			{
 				switch (macro_ptr->conv)
@@ -3642,7 +3642,7 @@ static errr parse_info_line(char *buf, header *head, int initmacro, vptr *extra)
 
 								/* Copy back. */
 								strcpy(buf2, buf3);
-									
+
 								t = strchr(buf2, '\0');
 								KILL(buf3);
 								done++;
@@ -3768,11 +3768,11 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	return SUCCESS;;
 }
 
-#else	/* ALLOW_TEMPLATES */
+#else /* ALLOW_TEMPLATES */
 
 #ifdef MACINTOSH
 static int i = 0;
 #endif
 
-#endif	/* ALLOW_TEMPLATES */
+#endif /* ALLOW_TEMPLATES */
 

@@ -61,7 +61,7 @@ static void wr_s16b(s16b v)
 
 static void wr_u32b(u32b v)
 {
-	sf_put((byte)(v & 0xFF)); 
+	sf_put((byte)(v & 0xFF));
 	sf_put((byte)((v >> 8) & 0xFF));
 	sf_put((byte)((v >> 16) & 0xFF));
 	sf_put((byte)((v >> 24) & 0xFF));
@@ -131,9 +131,9 @@ static void wr_item(object_type *o_ptr)
 
 	wr_byte(o_ptr->marked);
 
-    wr_u32b(o_ptr->flags1);
-    wr_u32b(o_ptr->flags2);
-    wr_u32b(o_ptr->flags3);
+	wr_u32b(o_ptr->flags1);
+	wr_u32b(o_ptr->flags2);
+	wr_u32b(o_ptr->flags3);
 
 	/* Held by monster index */
 	wr_s16b(o_ptr->held_m_idx);
@@ -155,7 +155,7 @@ static void wr_item(object_type *o_ptr)
 
 	/* Save the inscription (if any) */
 	wr_string(quark_str(o_ptr->note));
-	
+
 	/* Save the randart name, if any. */
 	wr_string(quark_str(o_ptr->art_name));
 
@@ -199,7 +199,7 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
-    wr_u32b(m_ptr->smart);
+	wr_u32b(m_ptr->smart);
 	wr_byte(0);
 
 	if (has_flag(SF_FEAR_DAMAGE))
@@ -319,7 +319,7 @@ static void wr_xtra(s16b k_idx)
 static void wr_store(store_type *st_ptr)
 {
 	int j;
-	
+
 	/* Save the type */
 	wr_byte(st_ptr->type);
 
@@ -370,16 +370,16 @@ static errr wr_randomizer(void)
 
 	/* Zero */
 	wr_u16b(0);
-	
+
 	/* Place */
 	wr_u16b(Rand_place);
-	
+
 	/* State */
 	for (i = 0; i < RAND_DEG; i++)
 	{
 		wr_u32b(Rand_state[i]);
 	}
-	
+
 	/* Success */
 	return (0);
 }
@@ -428,12 +428,12 @@ static void wr_options(void)
 
 	wr_u16b(c);
 
-    /* Autosave info */
-    wr_byte(autosave_l);
+	/* Autosave info */
+	wr_byte(autosave_l);
 	tmp8u = (autosave_t) ? 1 : 0;
 	if (has_flag(SF_Q_SAVE) && autosave_q) tmp8u |= 2;
-    wr_byte(tmp8u);
-    wr_s16b(autosave_freq);
+	wr_byte(tmp8u);
+	wr_s16b(autosave_freq);
 
 	/*** Extract options ***/
 
@@ -574,7 +574,7 @@ static void wr_extra(void)
 	wr_byte(0);     /* oops */
 
 	wr_byte(p_ptr->hitdie);
-    wr_u16b(p_ptr->expfact);
+	wr_u16b(p_ptr->expfact);
 
 	wr_s16b(p_ptr->age);
 	wr_s16b(p_ptr->ht);
@@ -605,7 +605,7 @@ static void wr_extra(void)
 	{
 		j = 27;
 	}
-	
+
 	for (i=0; i<j; i++)
 	{
 		wr_byte(skill_set[i].value);
@@ -683,12 +683,12 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->oppose_acid);
 	wr_s16b(p_ptr->oppose_elec);
 	wr_s16b(p_ptr->oppose_pois);
-    wr_s16b(p_ptr->tim_esp);
-    wr_s16b(p_ptr->wraith_form);
+	wr_s16b(p_ptr->tim_esp);
+	wr_s16b(p_ptr->wraith_form);
 	if (has_flag(SF_STORE_VAMP)) wr_s16b(p_ptr->vamp_drain);
 	strip_bytes(18);
 
-    wr_s16b(p_ptr->chaos_patron);
+	wr_s16b(p_ptr->chaos_patron);
 	for (i = 0; i < 3; i++) wr_u32b(p_ptr->muta[i]);
 
 	wr_byte(p_ptr->confusing);
@@ -812,7 +812,7 @@ static void wr_dungeon(void)
 			/* Extract the cave flags */
 			tmp16u = c_ptr->info;
 			if (!has_flag(SF_16_CAVE_FLAG)) tmp16u &= 0x00FF;
-			
+
 			/* If the run is broken, or too full, flush it */
 			if ((tmp16u != prev_char) || (count == MAX_UCHAR))
 			{
@@ -861,7 +861,7 @@ static void wr_dungeon(void)
 
 			/* Extract a byte */
 			tmp8u = c_ptr->feat;
-			
+
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
@@ -919,7 +919,7 @@ static void wr_dungeon(void)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-		
+
 		/* Dump it */
 		wr_monster(m_ptr);
 	}
@@ -988,11 +988,11 @@ static bool wr_savefile_new(void)
 
 	/*** Actually write the file ***/
 
-    /* Dump the file header */
+	/* Dump the file header */
 	xor_byte = 0;
-	    wr_byte(sf_major);
+		wr_byte(sf_major);
 	xor_byte = 0;
-	    wr_byte(sf_minor);
+		wr_byte(sf_minor);
 	xor_byte = 0;
 	wr_byte(sf_patch);
 	xor_byte = 0;
@@ -1265,7 +1265,7 @@ bool save_player(bool as_4_1_0)
 		current_version(sf_flags_sf, &sf_major, &sf_minor, &sf_patch);
 	}
 
-	
+
 
 #if defined(SET_UID) && defined(SECURE)
 

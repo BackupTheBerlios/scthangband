@@ -653,7 +653,7 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 			{
 				/* Draw pending attr/char pairs */
 				(void)((*Term->pict_hook)(fx, y, fn,
-				       &scr_aa[fx], &scr_cc[fx],&scr_taa[fx], &scr_tcc[fx]));
+						&scr_aa[fx], &scr_cc[fx],&scr_taa[fx], &scr_tcc[fx]));
 
 				/* Forget */
 				fn = 0;
@@ -1161,11 +1161,11 @@ void Term_fresh(void)
 
 	/* Trivial Refresh */
 	if ((y1 > y2) &&
-	    (scr->cu == old->cu) &&
-	    (scr->cv == old->cv) &&
-	    (scr->cx == old->cx) &&
-	    (scr->cy == old->cy) &&
-	    !(Term->total_erase))
+		(scr->cu == old->cu) &&
+		(scr->cv == old->cv) &&
+		(scr->cx == old->cx) &&
+		(scr->cy == old->cy) &&
+		!(Term->total_erase))
 	{
 		/* Nothing */
 		return /*(1)*/;
@@ -1190,7 +1190,7 @@ void Term_fresh(void)
 
 		/* Clear the displayed screen image. */
 		Term_win_clear(old);
-		
+
 		/* Forget "total erase" */
 		Term->total_erase = FALSE;
 
@@ -1623,7 +1623,7 @@ errr Term_erase(int x, int y, int n)
 		/* Save the "literal" information */
 		scr_aa[x] = na;
 		scr_cc[x] = nc;
-		
+
 		scr_taa[x] = 0;
 		scr_tcc[x] = 0;
 
@@ -1962,7 +1962,7 @@ errr Term_inkey(char *ch, bool wait, bool take)
 /* The size of the term_wins[] array. This should be chosen so that it is at
  * least as high as the greatest number of displays the game will have saved
  * at once. */
-#define NUM_TERM_WINS	8
+#define NUM_TERM_WINS 8
 
 static int cur_saved_term = 0;
 

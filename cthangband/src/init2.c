@@ -65,7 +65,7 @@ static void create_user_dir(void)
 		case SUCCESS:
 		{
 			char from[1024], to[1024];
-			/* New directory, so copy default user file to it. 
+			/* New directory, so copy default user file to it.
 			 * Maybe it should copy all pref files in ANGBAND_DIR_USER... */
 
 			/* Build the paths. */
@@ -298,7 +298,7 @@ static errr check_modification_date(int fd, cptr template_file)
 
 #endif /* CHECK_MODIFICATION_TIME && HAS_STAT */
 
-/* 
+/*
  * A hook for a function which compares the modification date of a raw fd
  * to the text file from which it was derived.
  */
@@ -358,7 +358,7 @@ static errr init_info_raw(int fd, header *head)
 	if (fd_read(fd, (char*)(&test), sizeof(header)) ||
 		(!streq(test.version, head->version)) ||
 		(test.header_num != head->header_num) ||
-	    (test.info_len != head->info_len))
+		(test.info_len != head->info_len))
 	{
 		/* Error */
 		return (-1);
@@ -714,7 +714,7 @@ static void init_x_final(int num)
 	}
 	return;
 }
-		
+
 #ifdef ALLOW_TEMPLATES
 #define IF_AT(X) X
 #else /* ALLOW_TEMPLATES */
@@ -1177,20 +1177,20 @@ s16b store_table[MAX_STORE_TYPES][STORE_CHOICES] =
 		OBJ_THAUMATURGY_CHAOS_MASTERY,
 		OBJ_THAUMATURGY_CHAOS_MASTERY,
 
-		 OBJ_NECROMANCY_BLACK_PRAYERS,
-		 OBJ_NECROMANCY_BLACK_PRAYERS,
-		 OBJ_NECROMANCY_BLACK_MASS,
-		 OBJ_NECROMANCY_BLACK_MASS,
+		OBJ_NECROMANCY_BLACK_PRAYERS,
+		OBJ_NECROMANCY_BLACK_PRAYERS,
+		OBJ_NECROMANCY_BLACK_MASS,
+		OBJ_NECROMANCY_BLACK_MASS,
 
-		 OBJ_NECROMANCY_BLACK_PRAYERS,
-		 OBJ_NECROMANCY_BLACK_PRAYERS,
-		 OBJ_NECROMANCY_BLACK_MASS,
-		 OBJ_NECROMANCY_BLACK_MASS,
+		OBJ_NECROMANCY_BLACK_PRAYERS,
+		OBJ_NECROMANCY_BLACK_PRAYERS,
+		OBJ_NECROMANCY_BLACK_MASS,
+		OBJ_NECROMANCY_BLACK_MASS,
 
-		 OBJ_NECROMANCY_BLACK_PRAYERS,
-		 OBJ_NECROMANCY_BLACK_PRAYERS,
-		 OBJ_NECROMANCY_BLACK_MASS,
-		 OBJ_NECROMANCY_BLACK_MASS,
+		OBJ_NECROMANCY_BLACK_PRAYERS,
+		OBJ_NECROMANCY_BLACK_PRAYERS,
+		OBJ_NECROMANCY_BLACK_MASS,
+		OBJ_NECROMANCY_BLACK_MASS,
 
 		OBJ_CONJURATION_MINOR_CONJURINGS,
 		OBJ_CONJURATION_MINOR_CONJURINGS,
@@ -1363,7 +1363,7 @@ static errr init_other(void)
 
 			/* Allocate the stock */
 			C_MAKE(st_ptr->stock, st_ptr->stock_size, object_type);
-			
+
 			/* Get the type of store */
 			st_ptr->type = town_defs[i].store[j];
 		}
@@ -1708,7 +1708,7 @@ static void check_options(void)
 	{
 		/* Exit. */
 		quit("Failed to parse option_info.");
-	}	
+	}
 }
 
 /*
@@ -2078,7 +2078,7 @@ void init_angband(void)
 	 */
 	init_x_info("quests", quest_type, parse_q_list, "d_quest", q_list,
 		dummy, dummy, quests, Q_HEAD)
- 
+
 	/* Initialize feature info */
 	init_x_info("vaults", vault_type, parse_v_info, "v_info", v_info,
 		v_name, v_text, v_max, V_HEAD)

@@ -70,9 +70,9 @@ int usleep(huge usecs)
 	int                 nfds = 0;
 
 #ifdef FD_SET
-	fd_set		*no_fds = NULL;
+	fd_set *no_fds = NULL;
 #else
-	int			*no_fds = NULL;
+	int *no_fds = NULL;
 #endif
 
 
@@ -105,7 +105,7 @@ int usleep(huge usecs)
 /*
  * Hack -- External functions
  */
-#ifndef	_PWD_H
+#ifndef _PWD_H
 extern struct passwd *getpwuid();
 extern struct passwd *getpwnam();
 #endif /* _PWD_H */
@@ -194,8 +194,8 @@ void user_name(char *buf, int id)
  */
 static errr path_parse(char *buf, uint max, cptr file)
 {
-	cptr		u, s;
-	struct passwd	*pw;
+	cptr u, s;
+	struct passwd *pw;
 
 
 	/* Assume no result */
@@ -313,14 +313,14 @@ static void path_build(char *buf, uint max, cptr path, cptr file)
 		/* Use the file itself */
 		strnfmt(buf, max, "%s", file);
 	}
-	
+
 	/* Absolute file, on "normal" systems */
 	else if (prefix(file, PATH_SEP) && !streq(PATH_SEP, ""))
 	{
 		/* Use the file itself */
 		strnfmt(buf, max, "%s", file);
 	}
-	
+
 	/* No path given */
 	else if (!path[0])
 	{
@@ -376,7 +376,7 @@ errr my_fclose(FILE *fff)
 /*
  * Process a path_build() function as a vstrnfmt_aux function.
  *
- * Format: 
+ * Format:
  * "%v", path_build_f2, (cptr)path, (cptr)file
  */
 void path_build_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
@@ -738,7 +738,7 @@ errr my_mkdir(cptr path, uint mode)
 	if (!rc) return SUCCESS;
 
 	else if (errno == EEXIST) return FILE_ERROR_FILE_EXISTS;
-	
+
 	else return FILE_ERROR_CANNOT_OPEN_FILE;
 }
 #endif /* PRIVATE_USER_PATH */
@@ -882,7 +882,7 @@ errr fd_seek(int fd, huge n)
 	if (p < 0) return (1);
 
 	/* Failure */
-	if (p != (long)n) return (1); 
+	if (p != (long)n) return (1);
 
 	/* Success */
 	return (0);
@@ -1057,7 +1057,7 @@ static ascii_conv ascii_text_conv_hardcoded[] =
 
 /*
  * Fill the ascii_text_conv[] table with strings for each ascii character.
- */ 
+ */
 void init_ascii_text_conv(void)
 {
 	int i;
@@ -1071,7 +1071,7 @@ void init_ascii_text_conv(void)
 		{
 			if (i == ptr->ch) s = ptr->str;
 		}
-		
+
 		if (i < 32)
 		{
 			sprintf(buf, "^%c", i+64);
@@ -1100,7 +1100,7 @@ void init_ascii_text_conv(void)
 /*
  * Hack -- convert a printable string into real ascii
  *
- * Format: 
+ * Format:
  * "%v", text_to_ascii_f1, (cptr)str
  */
 void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
@@ -1133,7 +1133,7 @@ next:
 /*
  * Hack - convert a string into a printable form.
  *
- * Format: 
+ * Format:
  * "%v", ascii_to_text_f1, (cptr)str
  */
 void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
@@ -1666,7 +1666,7 @@ bool is_keymap_or_macro(void)
 
 	/* Keymap */
 	if (is_keymap()) return TRUE;
-	
+
 	/* Macro */
 	if (!Term_inkey(&c, FALSE, FALSE) && c & 0xE0) return TRUE;
 
@@ -1832,7 +1832,7 @@ char inkey(void)
 	{
 		/* Hack -- Handle "inkey_scan" */
 		if (!inkey_base && inkey_scan &&
-		    (0 != Term_inkey(&kk, FALSE, FALSE)))
+			(0 != Term_inkey(&kk, FALSE, FALSE)))
 		{
 			break;
 		}
@@ -1854,7 +1854,7 @@ char inkey(void)
 			Term_activate(term_screen);
 
 			/* Mega-Hack -- reset saved flag */
-  			character_saved = FALSE;
+			character_saved = FALSE;
 
 			/* Mega-Hack -- reset signal counter */
 			signal_count = 0;
@@ -1901,7 +1901,7 @@ char inkey(void)
 
 					/* Excessive delay */
 					if (w >= 100) break;
-		
+
 					/* Delay */
 					Term_xtra(TERM_XTRA_DELAY, w);
 				}
@@ -2042,7 +2042,7 @@ cptr quark_str(u16b i)
 	/* Verify */
 	if (i >= quark__num)
 		quit("Out of bounds quark string error.");
-	
+
 	/* Access the quark */
 	q = quark__str[i];
 
@@ -2392,7 +2392,7 @@ static void msg_flush(int x)
 }
 
 
-/* 
+/*
  * Hack - prevent messages from being printed or remembered until further
  * notice.
  */
@@ -2620,7 +2620,7 @@ static bool next_line(int nx)
 /*
  * Wrap the text on the current line as the cursor.
  * Return FALSE on errors.
- */ 
+ */
 static bool wrap_text(int nx)
 {
 	int x, y, w, h, i, n;
@@ -2806,7 +2806,7 @@ void roff(cptr str)
 /*
  * Write a line of (possibly multicolour) text to the screen using mc_add()
  * above.
- */ 
+ */
 static void mc_put_str_aux(const int y, const int x, const int l, cptr str)
 {
 	int attr, dattr = attr = TERM_WHITE;
@@ -2964,11 +2964,11 @@ bool askfor_aux(char *buf, int len)
 			case '\010':
 			if (l > 0)
 			{
- 				k--;
+				k--;
 				l--;
 				for (j = l; j < k; j++)
 					buf[j] = buf[j+1];
- 			}
+			}
 			break;
 
 			case '\t':
@@ -3002,7 +3002,7 @@ bool askfor_aux(char *buf, int len)
 			{
 				if (l < k) l++;
 				break;
-			}			
+			}
 			case '7':
 			if (edit_mode)
 			{
@@ -3014,13 +3014,13 @@ bool askfor_aux(char *buf, int len)
 			{
 				if (l < k)
 				{
- 					k--;
+					k--;
 					for (j = l; j < k; j++)
 						buf[j] = buf[j+1];
 				}
 				break;
- 			}
-				
+			}
+
 			/* Parse normall if the above are not macros. */
 
 			default:
@@ -3241,22 +3241,22 @@ s16b get_quantity(cptr prompt, int max,bool allbydefault)
 		return (amt);
 	}
 
- #ifdef ALLOW_REPEAT
-     
- 	/* Get the item index */
- 	if ((max != 1) && repeat_pull(&amt)) {
- 
- 		/* Enforce the maximum */
- 		if (amt > max) amt = max;
- 	
- 		/* Enforce the minimum */
- 		if (amt < 0) amt = 0;
- 
- 		/* Use it */
- 		return (amt);
- 	}
- 
- #endif /* ALLOW_REPEAT -- TNB */
+#ifdef ALLOW_REPEAT
+
+	/* Get the item index */
+	if ((max != 1) && repeat_pull(&amt)) {
+
+		/* Enforce the maximum */
+		if (amt > max) amt = max;
+
+		/* Enforce the minimum */
+		if (amt < 0) amt = 0;
+
+		/* Use it */
+		return (amt);
+	}
+
+#endif /* ALLOW_REPEAT -- TNB */
 
 	/* Build a prompt if needed */
 	if (!prompt)
@@ -3273,7 +3273,7 @@ s16b get_quantity(cptr prompt, int max,bool allbydefault)
 	amt =1;
 	/* unless allbydefault is true */
 	if(allbydefault) amt=max;
-	
+
 	/* Build the default */
 	sprintf(buf, "%d", amt);
 
@@ -3292,12 +3292,12 @@ s16b get_quantity(cptr prompt, int max,bool allbydefault)
 	/* Enforce the minimum */
 	if (amt < 0) amt = 0;
 
- #ifdef ALLOW_REPEAT
- 
-     if (amt) repeat_push(amt);
-     
- #endif /* ALLOW_REPEAT -- TNB */
- 
+#ifdef ALLOW_REPEAT
+
+	if (amt) repeat_push(amt);
+
+#endif /* ALLOW_REPEAT -- TNB */
+
 
 	/* Return the result */
 	return (amt);
@@ -3646,7 +3646,7 @@ bool is_a_vowel(int ch)
 
 
 
- 
+
 /*
  * Extract a direction from the keymap of the key pressed.
  */
@@ -3673,92 +3673,92 @@ int get_keymap_dir(char ch)
 		/* Convert to a direction */
 		for (s = act; *s; ++s)
 		{
- 			/* Use any digits in keymap */
+			/* Use any digits in keymap */
 			if (ISDIGIT(*s)) d = D2I(*s);
 		}
 	}
 	return d;
 }
- 
- 
- #ifdef ALLOW_REPEAT
- 
- #define REPEAT_MAX		20
- 
- /* Number of chars saved */
- static int repeat__cnt = 0;
- 
- /* Current index */
- static int repeat__idx = 0;
- 
- /* Saved "stuff" */
- static int repeat__key[REPEAT_MAX];
- 
- void repeat_push(int what)
- {
- 	/* Too many keys */
- 	if (repeat__cnt == REPEAT_MAX) return;
- 	
- 	/* Push the "stuff" */
- 	repeat__key[repeat__cnt++] = what;
- 	
- 	/* Prevents us from pulling keys */
- 	++repeat__idx;
- }
- 
- bool repeat_pull(int *what)
- {
- 	/* All out of keys */
- 	if (repeat__idx == repeat__cnt) return (FALSE);
- 	
- 	/* Grab the next key, advance */
- 	*what = repeat__key[repeat__idx++];
- 	
- 	/* Success */
- 	return (TRUE);
- }
- 
- void repeat_check(void)
- {
- 	int		what;
- 
-     /* Ignore some commands */
-     if (command_cmd == ESCAPE) return;
-     if (command_cmd == ' ') return;
-     if (command_cmd == '\r') return;
-     if (command_cmd == '\n') return;
-     
- 	/* Repeat Last Command */
- 	if (command_cmd == 'n') {
- 		
- 		/* Reset */
- 		repeat__idx = 0;
- 		
- 		/* Get the command */
- 		if (repeat_pull(&what)) {
- 		
- 			/* Save the command */
- 			command_cmd = what;
- 		}
- 	}
- 	
- 	/* Start saving new command */
- 	else {
- 		
- 		/* Reset */
- 		repeat__cnt = 0;
- 		repeat__idx = 0;
- 		
- 		what = command_cmd;
- 		
- 		/* Save this command */
- 		repeat_push(what);
- 	}
- }
- 
- #endif /* ALLOW_REPEAT -- TNB */
- 
- 
+
+
+#ifdef ALLOW_REPEAT
+
+#define REPEAT_MAX 20
+
+/* Number of chars saved */
+static int repeat__cnt = 0;
+
+/* Current index */
+static int repeat__idx = 0;
+
+/* Saved "stuff" */
+static int repeat__key[REPEAT_MAX];
+
+void repeat_push(int what)
+{
+	/* Too many keys */
+	if (repeat__cnt == REPEAT_MAX) return;
+
+	/* Push the "stuff" */
+	repeat__key[repeat__cnt++] = what;
+
+	/* Prevents us from pulling keys */
+	++repeat__idx;
+}
+
+bool repeat_pull(int *what)
+{
+	/* All out of keys */
+	if (repeat__idx == repeat__cnt) return (FALSE);
+
+	/* Grab the next key, advance */
+	*what = repeat__key[repeat__idx++];
+
+	/* Success */
+	return (TRUE);
+}
+
+void repeat_check(void)
+{
+	int what;
+
+	/* Ignore some commands */
+	if (command_cmd == ESCAPE) return;
+	if (command_cmd == ' ') return;
+	if (command_cmd == '\r') return;
+	if (command_cmd == '\n') return;
+
+	/* Repeat Last Command */
+	if (command_cmd == 'n') {
+
+		/* Reset */
+		repeat__idx = 0;
+
+		/* Get the command */
+		if (repeat_pull(&what)) {
+
+			/* Save the command */
+			command_cmd = what;
+		}
+	}
+
+	/* Start saving new command */
+	else {
+
+		/* Reset */
+		repeat__cnt = 0;
+		repeat__idx = 0;
+
+		what = command_cmd;
+
+		/* Save this command */
+		repeat_push(what);
+	}
+}
+
+#endif /* ALLOW_REPEAT -- TNB */
+
+
 #ifdef SUPPORT_GAMMA
 
 /* Table of gamma values */

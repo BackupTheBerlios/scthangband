@@ -99,9 +99,9 @@ void do_cmd_redraw(void)
  */
 void do_cmd_change_name(void)
 {
-	char	c;
+	char c;
 
-	int		mode = 0;
+	int mode = 0;
 
 	char tmp[80];
 
@@ -176,7 +176,7 @@ void do_cmd_change_name(void)
 		/* Flush messages */
 		msg_print(NULL);
 	}
-			
+
 	/* Restore the screen */
 	Term_load();
 
@@ -196,7 +196,7 @@ void do_cmd_message_one(void)
 
 
 /*
- * Show previous messages to the user	-BEN-
+ * Show previous messages to the user -BEN-
  *
  * The screen format uses line 0 and 23 for headers and prompts,
  * skips line 1 and 22, and uses line 2 thru 21 for old messages.
@@ -281,7 +281,7 @@ void do_cmd_messages(void)
 
 		/* Display header XXX XXX XXX */
 		prt(format("Message Recall (%d-%d of %d), Offset %d",
-		    i, i+j-1, n, q), 0, 0);
+			i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
 		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", prompty, 0);
@@ -304,7 +304,7 @@ void do_cmd_messages(void)
 			/* Success */
 			continue;
 		}
-		
+
 		/* Horizontal scroll */
 		if (k == '6')
 		{
@@ -418,15 +418,15 @@ void do_cmd_messages(void)
 static option_type autosave_info[3] =
 {
 	{ &autosave_l,      FALSE, 255, 0x01, 0x00,
-	    "autosave_l",    "Autosave when entering new levels" },
+		"autosave_l",    "Autosave when entering new levels" },
 
 	{ &autosave_t,      FALSE, 255, 0x02, 0x00,
-	    "autosave_t",   "Timed autosave" },
+		"autosave_t",   "Timed autosave" },
 
 	{ &autosave_q,      FALSE, 255, 0x04, 0x00,
-	    "autosave_q",   "Quiet autosaves" },
+		"autosave_q",   "Quiet autosaves" },
 	};
-       
+
 static s16b toggle_frequency(s16b current)
 {
 	if (current == 0) return 50;
@@ -476,11 +476,11 @@ static void unident_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  */
 static void do_cmd_options_autosave(cptr info)
 {
-	char	ch;
+	char ch;
 
 	int     i, k = 0, n = 3;
 
-	char	buf[80];
+	char buf[80];
 
 
 	/* Clear screen */
@@ -492,10 +492,10 @@ static void do_cmd_options_autosave(cptr info)
 		/* Prompt XXX XXX XXX */
 		sprintf(buf, "%s (RET to advance, y/n to set, 'F' for frequency, ESC to accept) ", info);
 		prt(buf, 0, 0);
-	
+
 		/* Display the options */
 		for (i = 0; i < n; i++)
- 		{
+		{
 			byte a = TERM_WHITE;
 
 			/* Color current option */
@@ -503,9 +503,9 @@ static void do_cmd_options_autosave(cptr info)
 
 			/* Display the option text */
 			sprintf(buf, "%-48s: %s  (%s)",
-			    autosave_info[i].o_desc,
-			    (*autosave_info[i].o_var ? "yes" : "no "),
-			    autosave_info[i].o_text);
+				autosave_info[i].o_desc,
+				(*autosave_info[i].o_var ? "yes" : "no "),
+				autosave_info[i].o_text);
 			c_prt(a, buf, i + 2, 0);
 	}
 
@@ -572,7 +572,7 @@ static void do_cmd_options_autosave(cptr info)
 			{
 				autosave_freq = toggle_frequency(autosave_freq);
 				prt(format("Timed autosave frequency: every %d turns",
-				    autosave_freq), 5, 0);
+					autosave_freq), 5, 0);
 				break;
 			}
 
@@ -655,14 +655,14 @@ void opt_special_effect(const option_type * const op_ptr)
  */
 void do_cmd_options_aux(int page, cptr info, cptr file)
 {
-	char	ch;
+	char ch;
 
-	int	i, k = 0, n;
+	int i, k = 0, n;
 
-	int	opt[MAX_OPTS_PER_PAGE];
+	int opt[MAX_OPTS_PER_PAGE];
 	bool old_val[MAX_OPTS_PER_PAGE];
 
-	char	buf[80];
+	char buf[80];
 
 
 	/* Lookup the options */
@@ -883,7 +883,7 @@ static void do_cmd_options_win(void)
 			char a = (i == y) ? 'B' : 'w';
 
 			/* Write the flag name in. */
-			mc_put_fmt(i+5, 0, "$%cDisplay %s", a, display_func[i].name);		
+			mc_put_fmt(i+5, 0, "$%cDisplay %s", a, display_func[i].name);
 
 			/* Display the windows */
 			for (j = 0; j < 8; j++)
@@ -910,7 +910,7 @@ static void do_cmd_options_win(void)
 
 		/* Track this option. */
 		help_track(buf);
-	
+
 		/* Get key */
 		ch = inkey();
 
@@ -1082,7 +1082,7 @@ static void do_cmd_options_redraw(void)
 			/* Fill the screen with dots. */
 			fill_screen('D');
 		}
-		
+
 
 		/* Redraw almost everything. */
 		p_ptr->redraw |= PR_ALL & ~(PR_MAP | PR_WIPE);
@@ -1118,7 +1118,7 @@ static void do_cmd_options_delay(void)
 	{
 		int k, msec = delay_factor * delay_factor * delay_factor;
 		prt(format("Current base delay factor: %d (%d msec)",
-		           delay_factor, msec), 22, 0);
+					delay_factor, msec), 22, 0);
 		prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
 		k = inkey();
 		if (k == ESCAPE) break;
@@ -1264,32 +1264,32 @@ static void inscription_dump(FILE *fff)
 static name_centry tval_names_inscribe[] =
 {
 	{FAKE_TV_BASE, "Unidentified item"},
-	{TV_SWORD,	"Sword"},
-	{TV_POLEARM,	"Polearm"},
-	{TV_HAFTED,	"Hafted Weapon"},
-	{TV_DIGGING,	"Digger"},
-	{TV_BOW,	"Bow"},
-	{TV_ARROW,	"Missile"},
-	{TV_CHEST,	"Chest"},
-	{TV_DRAG_ARMOR,	"Dragon Scale Mail"},
-	{TV_HARD_ARMOR,	"Hard Armor"},
-	{TV_SOFT_ARMOR,	"Soft Armor"},
-	{TV_SHIELD,	"Shield"},
-	{TV_CROWN,	"Crown"},
-	{TV_HELM,	"Helm"},
-	{TV_GLOVES,	"Gloves"},
-	{TV_BOOTS,	"Boots"},
-	{TV_CLOAK,	"Cloak"},
-	{TV_RING,	"Ring"},
-	{TV_AMULET,	"Amulet"},
+	{TV_SWORD, "Sword"},
+	{TV_POLEARM, "Polearm"},
+	{TV_HAFTED, "Hafted Weapon"},
+	{TV_DIGGING, "Digger"},
+	{TV_BOW, "Bow"},
+	{TV_ARROW, "Missile"},
+	{TV_CHEST, "Chest"},
+	{TV_DRAG_ARMOR, "Dragon Scale Mail"},
+	{TV_HARD_ARMOR, "Hard Armor"},
+	{TV_SOFT_ARMOR, "Soft Armor"},
+	{TV_SHIELD, "Shield"},
+	{TV_CROWN, "Crown"},
+	{TV_HELM, "Helm"},
+	{TV_GLOVES, "Gloves"},
+	{TV_BOOTS, "Boots"},
+	{TV_CLOAK, "Cloak"},
+	{TV_RING, "Ring"},
+	{TV_AMULET, "Amulet"},
 	{TV_FOOD, "Food"},
-	{TV_POTION,	"Potion"},
-	{TV_SCROLL,	"Scroll"},
-	{TV_WAND,	"Wand"},
-	{TV_STAFF,	"Staff"},
-	{TV_ROD,	"Rod"},
-	{TV_SORCERY_BOOK,	"Spellbook"},
-	{TV_CHARM,	"Charm"},
+	{TV_POTION, "Potion"},
+	{TV_SCROLL, "Scroll"},
+	{TV_WAND, "Wand"},
+	{TV_STAFF, "Staff"},
+	{TV_ROD, "Rod"},
+	{TV_SORCERY_BOOK, "Spellbook"},
+	{TV_CHARM, "Charm"},
 	{TV_SKELETON, "Other thing"},
 	{0, NULL}
 };
@@ -1421,7 +1421,7 @@ good:
  * title is the name of the category of these items.
  * print_f1 is the main method of turning the index into the name for an entry.
  */
-static void do_cmd_options_inscribe_aux(name_entry *list, u16b **quarks, 
+static void do_cmd_options_inscribe_aux(name_entry *list, u16b **quarks,
 	int listm, cptr title, void (*print_f1)(char *, uint, cptr, va_list *))
 {
 	int i;
@@ -1668,7 +1668,7 @@ static void object_k_name_squelch_f1(char *buf, uint max,
 	cptr UNUSED fmt, va_list *vp)
 {
 	int n = va_arg(*vp, int);
-	strnfmt(buf, max, "$%c%v",qual_str[k_info[n].squelch].str[1], 
+	strnfmt(buf, max, "$%c%v",qual_str[k_info[n].squelch].str[1],
 		object_k_name_f1, n, quark_str(k_info[n].note));
 }
 /*
@@ -1702,7 +1702,7 @@ static void do_cmd_options_squelch_aux(name_centry *cat)
 		{
 			if (qual[i]) mc_roff(qual_str[i].str);
 		}
-  
+
 		if (!get_com(&ch, "Destroy which %s? [%c-%c, ^a, ^n, ^s, Escape]",
 			cat->str, option_chars[0], option_chars[num-1])) break;
 
@@ -1917,8 +1917,8 @@ static errr option_dump_aux(cptr fname)
 	return SUCCESS;
 }
 
-#define DCO_ERROR_ABORT	1
-#define DCO_ERROR_FILE	2
+#define DCO_ERROR_ABORT 1
+#define DCO_ERROR_FILE 2
 
 /*
  * Dump the options to a file.
@@ -2091,7 +2091,7 @@ void do_cmd_options(void)
 		bell(0);
 		continue;
 
-good:	/* Success */
+good: /* Success */
 
 		/* Track the help for this sub-menu (as e.g. option=1). */
 		strchr(buf, '\0')[-1] = ol_ptr->ch;
@@ -2322,8 +2322,8 @@ static void do_cmd_macro_aux(char *buf, int len)
 
 	/* Flush */
 	flush();
- 
- 
+
+
 	/* Hack -- display the trigger */
 	Term_addstr(-1, TERM_WHITE, format("%v", ascii_to_text_f1, buf));
 }
@@ -2350,7 +2350,7 @@ static void do_cmd_macro_aux_keymap(char *buf)
 
 	/* Hack -- display the trigger */
 	Term_addstr(-1, TERM_WHITE, tmp);
-	
+
 	/* Notice if the key isn't its own text representation. */
 	if (strcmp(tmp, buf))
 	{
@@ -2359,11 +2359,11 @@ static void do_cmd_macro_aux_keymap(char *buf)
 		Term_addch(TERM_WHITE, buf[0]);
 		Term_addch(TERM_WHITE, ')');
 	}
-				
+
 	/* Flush */
 	flush();
 }
-				
+
 
 /*
  * Hack -- append all keymaps to the given file
@@ -2504,13 +2504,13 @@ static void do_cmd_macros(void)
 			/* Prompt */
 			prt("File: ", 18, 0);
 
-  			/* Default filename */
+				/* Default filename */
 			sprintf(tmp, "%s.prf", player_name);
 
-  			/* Ask for a file */
+				/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
 
-  			/* Process the given filename */
+				/* Process the given filename */
 			if (0 != process_pref_file(tmp))
 			{
 				/* Prompt */
@@ -2534,7 +2534,7 @@ static void do_cmd_macros(void)
 			/* Prompt */
 			prt("File: ", 18, 0);
 
- 			/* Default filename */
+			/* Default filename */
 			sprintf(tmp, "%s.prf", player_name);
 
 			/* Ask for a file */
@@ -2708,7 +2708,7 @@ static void do_cmd_macros(void)
 
 				/* Analyze the current action */
 				strnfmt(buf, sizeof(buf), "%v", ascii_to_text_f1, macro__buf);
-	
+
 				/* Display the current action */
 				prt(buf, 22, 0);
 
@@ -2829,7 +2829,7 @@ struct visual_type
 	 */
 	void (*get)(int, cptr *, byte *, char *, byte **, char **);
 
-	/* 
+	/*
 	 * Dump functions.
 	 * If pref_str is set, this determines the string dump_visual_stuff() uses
 	 * for each pref string.
@@ -2852,7 +2852,7 @@ struct visual_type
 	u16b max;
 
 	/* The character which starts every preference line to indicate the type. */
-	char startchar; 
+	char startchar;
 
 	/* Indicate that colour has meaning for these visual prefs. */
 	bool attr;
@@ -3168,7 +3168,7 @@ static void modify_visuals(visual_type *vs_ptr)
 				max = 256;
 				break;
 			default:
-err:			/* Not a valid response, so ask again. */
+err: /* Not a valid response, so ask again. */
 				bell(0);
 				continue;
 		}
@@ -3251,7 +3251,7 @@ err:			/* Not a valid response, so ask again. */
 		}
 
 		/* Prompt */
-		mc_put_fmt(CMDLINE+7, 0, "Command (n/N%s%s): ", 
+		mc_put_fmt(CMDLINE+7, 0, "Command (n/N%s%s): ",
 			(vs_ptr->attr) ? "/a/A" : "", (vs_ptr->chars) ? "/c/C" : "");
 	}
 }
@@ -3418,7 +3418,7 @@ static errr dump_colours_aux(cptr file)
 
 		/* Dump the monster attr/char info */
 		fprintf(fff, "V:%d:0x%02X:0x%02X:0x%02X:0x%02X\n\n",
-		        i, kv, rv, gv, bv);
+				i, kv, rv, gv, bv);
 	}
 
 	/* All done */
@@ -3549,19 +3549,19 @@ static void do_cmd_colors(void)
 
 				/* Describe the color */
 				Term_putstr(5, 10, -1, TERM_WHITE,
-				            format("Color = %d, Name = %s", a, name));
+							format("Color = %d, Name = %s", a, name));
 
 				/* Label the Current values */
 				Term_putstr(5, 12, -1, TERM_WHITE,
-				            format("K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
-				                   angband_color_table[a][0],
-				                   angband_color_table[a][1],
-				                   angband_color_table[a][2],
-				                   angband_color_table[a][3]));
+							format("K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
+									angband_color_table[a][0],
+									angband_color_table[a][1],
+									angband_color_table[a][2],
+									angband_color_table[a][3]));
 
 				/* Prompt */
 				Term_putstr(0, 14, -1, TERM_WHITE,
-				            "Command (n/N/k/K/r/R/g/G/b/B): ");
+							"Command (n/N/k/K/r/R/g/G/b/B): ");
 
 				/* Get a command */
 				i = inkey();
@@ -3680,8 +3680,8 @@ void do_cmd_note(void)
  */
 void do_cmd_version(void)
 {
-   /* Silly message */
-    msg_format("You are playing %s %s.", GAME_NAME, GAME_VERSION);
+	/* Silly message */
+	msg_format("You are playing %s %s.", GAME_NAME, GAME_VERSION);
 	/* These are ANSI standard constants so should work on any compiler */
 #ifdef SHOW_COMPILE_TIME
 	msg_format("(Compiled %s %s)", __TIME__, __DATE__);
@@ -3741,7 +3741,7 @@ void do_cmd_feeling(bool FeelingOnly)
 		}
 		return;
 	}
-	
+
 	/* You are in a dungeon, so... */
 	if(!FeelingOnly)
 	{
@@ -4030,7 +4030,7 @@ static void do_cmd_knowledge_artifacts(void)
 
 	/* Open a new file */
 	FILE *fff = my_fopen_temp(file_name, 1024);
-	
+
 	if (fff)
 	{
 	int i, k, x, y;
@@ -4069,7 +4069,7 @@ static void do_cmd_knowledge_artifacts(void)
 			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 			{
 				object_type *o_ptr;
-			
+
 				/* Acquire object */
 				o_ptr = &o_list[this_o_idx];
 
@@ -4168,7 +4168,7 @@ static void do_cmd_knowledge_uniques(void)
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
 				my_fprintf(fff, " %v %c $%c%v is %s\n", get_symbol(r_ptr),
-					quest,	(dead) ? 'D' : 'w', monster_desc_aux_f3,
+					quest, (dead) ? 'D' : 'w', monster_desc_aux_f3,
 					r_ptr, 1, MDF_DEF, (dead) ? "dead" : "alive");
 			}
 		}
@@ -4223,7 +4223,7 @@ static void do_cmd_knowledge_pets(void)
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			t_friends++;
 			t_levels += r_ptr->level;
-			my_fprintf(fff, "%v %v\n",	get_symbol(r_ptr),
+			my_fprintf(fff, "%v %v\n", get_symbol(r_ptr),
 				monster_desc_f2, m_ptr, 0x88);
 		}
 	}
@@ -4281,7 +4281,7 @@ static long count_kills(FILE *fff, bool noisy)
 			if (This > 1) flags |= MDF_NUMBER;
 			else if (r_ptr->flags1 & RF1_UNIQUE) flags |= MDF_DEF;
 			else flags |= MDF_INDEF;
-			
+
 			my_fprintf(fff, " %v   %v\n", get_symbol(r_ptr),
 				monster_desc_aux_f3, r_ptr, This, flags);
 		}
@@ -4371,12 +4371,12 @@ static void do_cmd_knowledge_deaths(void)
 
 	/* Open a new file */
 	FILE *fff = my_fopen_temp(file_name, 1024);
-	
+
 	if (fff)
 	{
 
 	typedef struct death_type death_type;
-	
+
 	C_TNEW(races, MAX_R_IDX, s16b);
 
 	long i, Uniques = 0, Races = 0, Deaths = 0;
@@ -4386,7 +4386,7 @@ static void do_cmd_knowledge_deaths(void)
 	{
 		if (r_info[i].r_deaths) races[Races++] = i;
 	}
-	
+
 	/* Are there any? */
 	if (!Races)
 	{
@@ -4493,7 +4493,7 @@ static void do_cmd_knowledge_objects(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-    show_file(file_name, "Known Objects");
+	show_file(file_name, "Known Objects");
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -4621,7 +4621,7 @@ static void do_cmd_knowledge_player_save(FILE *fff)
 			{
 				skill_sav += (15 + ((skill_set[SKILL_RACIAL].value/2) / 5));
 			}
-			
+
 			/* Affect Skill -- saving throw (WIS) */
 			skill_sav += adj_wis_sav[p_ptr->stat_ind[A_WIS]];
 		}
@@ -4675,7 +4675,7 @@ static void do_cmd_knowledge_player_theft(FILE *fff)
 
 /*
  * Print out messages for setting each counter to an interesting value.
- */ 
+ */
 static bool do_cmd_knowledge_player_counter(FILE *fff)
 {
 	bool rc;
@@ -4782,9 +4782,9 @@ bool shops_good(int town)
 	/* The current town has space allocated for shops. */
 	if (town_defs[town].numstores)
 	{
-	 	town_type *t_ptr = &town_defs[town];
+		town_type *t_ptr = &town_defs[town];
 		int i;
- 		for (i = 0; i < t_ptr->numstores; i++)
+		for (i = 0; i < t_ptr->numstores; i++)
 		{
 			/* Found a real store */
 			if (t_ptr->store[i] != STORE_NONE) return TRUE;
@@ -4813,16 +4813,16 @@ void shops_display(int town)
 
 		/* Only count real stores */
 		if (t_ptr->store[i] == STORE_NONE) continue;
- 
- 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
- 
+
+		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
+
 		/* Display the name of the store. */
 		Term_putstr(0, ++j, Term->wid, TERM_WHITE, store_title(i+offset));
 
 		/* Put the character used at the top. */
 		Term_putch(0, j, f_ptr->x_attr, f_ptr->x_char);
 	}
-}	
+}
 
 
 /*
@@ -4836,7 +4836,7 @@ static void do_cmd_knowledge_shops(void)
 {
 	/* I hope this isn't too silly... */
 	int town = cur_town;
-	
+
 	/* Paranoia (?) - no town */
 	if (!is_town_p(wildy, wildx)) town = 0;
 	for (;;)
@@ -4856,7 +4856,7 @@ static void do_cmd_knowledge_shops(void)
 			do
 			{
 				town=(town+1)%MAX_TOWNS;
-				
+
 			} while (!shops_good(town));
 		}
 		else if (c == '-')
@@ -4864,7 +4864,7 @@ static void do_cmd_knowledge_shops(void)
 			do
 			{
 				town=(town+MAX_TOWNS-1)%MAX_TOWNS;
-				
+
 			} while (!shops_good(town));
 		}
 		else

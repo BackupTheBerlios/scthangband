@@ -92,8 +92,8 @@ const byte adj_mag_study[NUM_STAT_INDICES] =
 	5       /* 18/180-18/189 */,
 	5       /* 18/190-18/199 */,
 	5       /* 18/200-18/209 */,
-    6       /* 18/210-18/219 */,
-    6       /* 18/220+ */
+	6       /* 18/210-18/219 */,
+	6       /* 18/220+ */
 };
 
 
@@ -137,9 +137,9 @@ const byte adj_mag_mana[NUM_STAT_INDICES] =
 	15      /* 18/170-18/179 */,
 	16      /* 18/180-18/189 */,
 	16      /* 18/190-18/199 */,
-    17      /* 18/200-18/209 */,
-    17      /* 18/210-18/219 */,
-    18      /* 18/220+ */
+	17      /* 18/200-18/209 */,
+	17      /* 18/210-18/219 */,
+	18      /* 18/220+ */
 };
 
 
@@ -276,8 +276,8 @@ const byte adj_chr_gold[NUM_STAT_INDICES] =
 	82      /* 18/180-18/189 */,
 	81      /* 18/190-18/199 */,
 	80      /* 18/200-18/209 */,
-    79      /* 18/210-18/219 */,
-    78      /* 18/220+ */
+	79      /* 18/210-18/219 */,
+	78      /* 18/220+ */
 };
 
 
@@ -461,7 +461,7 @@ const byte adj_int_dis[NUM_STAT_INDICES] =
 	18      /* 18/190-18/199 */,
 	19      /* 18/200-18/209 */,
 	19      /* 18/210-18/219 */,
-    20      /* 18/220+ */
+	20      /* 18/220+ */
 };
 
 
@@ -507,7 +507,7 @@ const byte adj_dex_ta[NUM_STAT_INDICES] =
 	128 + 14        /* 18/190-18/199 */,
 	128 + 15        /* 18/200-18/209 */,
 	128 + 15        /* 18/210-18/219 */,
-    128 + 16        /* 18/220+ */
+	128 + 16        /* 18/220+ */
 };
 
 
@@ -599,7 +599,7 @@ const byte adj_dex_th[NUM_STAT_INDICES] =
 	128 + 14        /* 18/190-18/199 */,
 	128 + 15        /* 18/200-18/209 */,
 	128 + 15        /* 18/210-18/219 */,
-    128 + 16        /* 18/220+ */
+	128 + 16        /* 18/220+ */
 };
 
 
@@ -645,7 +645,7 @@ const byte adj_str_th[NUM_STAT_INDICES] =
 	128 + 14        /* 18/190-18/199 */,
 	128 + 15        /* 18/200-18/209 */,
 	128 + 15        /* 18/210-18/219 */,
-    128 + 16        /* 18/220+ */
+	128 + 16        /* 18/220+ */
 };
 
 
@@ -675,23 +675,23 @@ const byte adj_str_wgt[NUM_STAT_INDICES] =
 	26      /* 18/30-18/39 */,
 	28      /* 18/40-18/49 */,
 	30      /* 18/50-18/59 */,
-    31      /* 18/60-18/69 */,
-    31      /* 18/70-18/79 */,
-    32      /* 18/80-18/89 */,
-    32      /* 18/90-18/99 */,
-    33      /* 18/100-18/109 */,
-    33      /* 18/110-18/119 */,
-    34      /* 18/120-18/129 */,
-    34      /* 18/130-18/139 */,
-    35      /* 18/140-18/149 */,
-    35      /* 18/150-18/159 */,
-    36      /* 18/160-18/169 */,
-    36      /* 18/170-18/179 */,
-    37      /* 18/180-18/189 */,
-    37      /* 18/190-18/199 */,
-    38      /* 18/200-18/209 */,
-    38      /* 18/210-18/219 */,
-    39      /* 18/220+ */
+	31      /* 18/60-18/69 */,
+	31      /* 18/70-18/79 */,
+	32      /* 18/80-18/89 */,
+	32      /* 18/90-18/99 */,
+	33      /* 18/100-18/109 */,
+	33      /* 18/110-18/119 */,
+	34      /* 18/120-18/129 */,
+	34      /* 18/130-18/139 */,
+	35      /* 18/140-18/149 */,
+	35      /* 18/150-18/159 */,
+	36      /* 18/160-18/169 */,
+	36      /* 18/170-18/179 */,
+	37      /* 18/180-18/189 */,
+	37      /* 18/190-18/199 */,
+	38      /* 18/200-18/209 */,
+	38      /* 18/210-18/219 */,
+	39      /* 18/220+ */
 };
 
 
@@ -781,9 +781,9 @@ const byte adj_str_dig[NUM_STAT_INDICES] =
 	85      /* 18/170-18/179 */,
 	90      /* 18/180-18/189 */,
 	95      /* 18/190-18/199 */,
-    100     /* 18/200-18/209 */,
-    100     /* 18/210-18/219 */,
-    100     /* 18/220+ */
+	100     /* 18/200-18/209 */,
+	100     /* 18/210-18/219 */,
+	100     /* 18/220+ */
 };
 
 
@@ -1011,9 +1011,9 @@ const byte adj_con_mhp[NUM_STAT_INDICES] =
 	128 + 18        /* 18/170-18/179 */,
 	128 + 20        /* 18/180-18/189 */,
 	128 + 22        /* 18/190-18/199 */,
-    128 + 25        /* 18/200-18/209 */,
-    128 + 26        /* 18/210-18/219 */,
-    128 + 27        /* 18/220+ */
+	128 + 25        /* 18/200-18/209 */,
+	128 + 26        /* 18/210-18/219 */,
+	128 + 27        /* 18/220+ */
 };
 
 
@@ -1099,20 +1099,20 @@ byte blows_table[12][12] =
  * except to balance out heavy inventory.
  */
 
-/* Hack - a short macro to convert values based on a turn energy of 100 
+/* Hack - a short macro to convert values based on a turn energy of 100
  * to ones based on TURN_ENERGY */
 #define TE *TURN_ENERGY/100
 
- /*
-  * This table has been inverted for Cthangband. The new values
-  * are 1000/x where x is the old value. This gives the same spread
-  * but subtracting extract_energy[n] each move and always adding
-  * 10 per turn, rather than adding extract_energy[n] each turn and
-  * always subtracting 100.
-  *
-  * This has been done to allow the seperating out of movement speed
-  * and attack speed.
-  */
+/*
+ * This table has been inverted for Cthangband. The new values
+ * are 1000/x where x is the old value. This gives the same spread
+ * but subtracting extract_energy[n] each move and always adding
+ * 10 per turn, rather than adding extract_energy[n] each turn and
+ * always subtracting 100.
+ *
+ * This has been done to allow the seperating out of movement speed
+ * and attack speed.
+ */
 u16b extract_energy[200] =
 {
 	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
@@ -1150,7 +1150,7 @@ player_sex sex_info[MAX_SEXES] =
 		"Female",
 		"Queen"
 	},
-	
+
 	{
 		"Male",
 		"King"
@@ -1459,100 +1459,100 @@ static race_bonus_type zombie_bonuses[] =
 player_race race_info[MAX_RACES] =
 {
 	{
-        "Barbarian",
-        { 3, -2,  -1,  1,  2, -2 },
-        8, 0, 12,  8,  12, 14, 14, 13,
-        11, 120,
-        14, 8,
-        82, 5, 200, 20,
-        78,  6, 190, 15,
+		"Barbarian",
+		{ 3, -2,  -1,  1,  2, -2 },
+		8, 0, 12,  8,  12, 14, 14, 13,
+		11, 120,
+		14, 8,
+		82, 5, 200, 20,
+		78,  6, 190, 15,
 		{RP_BARBARIAN, 0},
 		{0, 0, TR2_RES_FEAR, 0},
 		NULL, 0, 0, 0,
-        0, 1, RACE_BLANK, EAT_NORMAL, human_syllables,
+		0, 1, RACE_BLANK, EAT_NORMAL, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Broo",
-        { 2, -2, -1, -1, 2, -4 },
-        5, 8, 9, 8, 8, 10, 14, 12,
-        11, 140,
-        14, 6,
-        65,  6, 150, 20,
-        61,  6, 120, 15,
+	},
+	{
+		"Broo",
+		{ 2, -2, -1, -1, 2, -4 },
+		5, 8, 9, 8, 8, 10, 14, 12,
+		11, 140,
+		14, 6,
+		65,  6, 150, 20,
+		61,  6, 120, 15,
 		{RP_BROO, 0},
 		{TR0_CHAOS, 0, TR2_RES_SOUND | TR2_RES_CONF, 0},
 		NULL, 0, MUT_POLYMORPH, 10,
-        0, 129, RACE_BLANK, EAT_NORMAL, orc_syllables,
+		0, 129, RACE_BLANK, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Cyclops",
-        { 4, -3, -3, -3, 4, -6 },
-        6, 5, 5, 6, 6, 10, 17, 14,
-        13, 130,
-        50, 24,
-        92, 10, 255, 60,
-        80,  8, 235, 60,
+	},
+	{
+		"Cyclops",
+		{ 4, -3, -3, -3, 4, -6 },
+		6, 5, 5, 6, 6, 10, 17, 14,
+		13, 130,
+		50, 24,
+		92, 10, 255, 60,
+		80,  8, 235, 60,
 		{RP_CYCLOPS, 0},
 		{0, 0, TR2_RES_SOUND, 0},
 		NULL, 0, 0, 0,
-        1, 77, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
+		1, 77, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Dark-Elf",
-        { -1, 3, 2, 2, -2, 1 },
-        15, 25, 30, 16, 26, 24, 8, 13,
-        9, 150,
+	},
+	{
+		"Dark-Elf",
+		{ -1, 3, 2, 2, -2, 1 },
+		15, 25, 30, 16, 26, 24, 8, 13,
+		9, 150,
 		75, 75,
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		{RP_DARK_ELF, 0},
 		{0, 0, TR2_RES_DARK, 0},
 		dark_elf_bonuses, N_ELEMENTS(dark_elf_bonuses), 0, 0,
-        5, 69, RACE_BLANK, EAT_NORMAL, elf_syllables,
+		5, 69, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Draconian",
-        { 2, 1, 1, 1, 2, -3 },
-        8, 15, 13, 10, 12, 20, 12, 12,
-        11, 250,
-        75, 33,
-        76,  1, 160,  5,
-        72,  1, 130,  5,
+	},
+	{
+		"Draconian",
+		{ 2, 1, 1, 1, 2, -3 },
+		8, 15, 13, 10, 12, 20, 12, 12,
+		11, 250,
+		75, 33,
+		76,  1, 160,  5,
+		72,  1, 130,  5,
 		{RP_DRACONIAN, 0},
 		{0, 0, 0, TR3_FEATHER},
 		draconian_bonuses, N_ELEMENTS(draconian_bonuses), 0, 0,
-        2, 89, RACE_BLANK, EAT_NORMAL, gnome_syllables,
+		2, 89, RACE_BLANK, EAT_NORMAL, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
+	},
 	{
 		"Dwarf",
-        {  2, -2,  2, -2,  2, -3 },
-        12,  19,  20,  8,  24,  20, 15,  10,
-        11,  125,
+		{  2, -2,  2, -2,  2, -3 },
+		12,  19,  20,  8,  24,  20, 15,  10,
+		11,  125,
 		35, 15,
 		48,  3, 150, 10,
 		46,  3, 120, 10,
@@ -1568,8 +1568,8 @@ player_race race_info[MAX_RACES] =
 	},
 	{
 		"Elf",
-        { -1,  2,  2,  1, -2,  2 },
-        15,  16,  16,  14, 26,  24, 8, 15,
+		{ -1,  2,  2,  1, -2,  2 },
+		15,  16,  16,  14, 26,  24, 8, 15,
 		8,  120,
 		75, 75,
 		60,  4, 100,  6,
@@ -1588,7 +1588,7 @@ player_race race_info[MAX_RACES] =
 		"Gnome",
 		{ -1,  2,  0,  2,  1, -2 },
 		20, 22, 22,  16, 22,  26, 7, 14,
-        8,  135,
+		8,  135,
 		50, 40,
 		42,  3, 90,  6,
 		39,  3, 75,  3,
@@ -1602,31 +1602,31 @@ player_race race_info[MAX_RACES] =
 			{0, 0, 0, 0, 0, 0},
 		},
 	},
-    {
-        "Golem",
-        { 4, -5, -5, 0, 4, -4 },
-        5, 5, 20, 8, 8, 16, 17, 10,
-        12, 200,
-        1, 100,
-        66,  1, 200,  6,
-        62,  1, 180,  6,
+	{
+		"Golem",
+		{ 4, -5, -5, 0, 4, -4 },
+		5, 5, 20, 8, 8, 16, 17, 10,
+		12, 200,
+		1, 100,
+		66,  1, 200,  6,
+		62,  1, 180,  6,
 		{RP_GOLEM, 0},
 		{TR0_AC_SK | TR0_NO_CUT | TR0_NO_STUN, 0, TR2_RES_POIS | TR2_FREE_ACT,
 			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		golem_bonuses, N_ELEMENTS(golem_bonuses), 0, 0,
-        4, 98, RACE_BLANK, EAT_UNDEAD, dwarf_syllables,
+		4, 98, RACE_BLANK, EAT_UNDEAD, dwarf_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
+	},
 	{
-        "Great-One",
+		"Great-One",
 		{  1,  2,  2,  2,  3,  2 },
 		14, 15,  15,  14, 16, 26, 15, 13,
-        10,  225,
-        50, 50,
+		10,  225,
+		50, 50,
 		82, 5, 190, 20,
 		78,  6, 180, 15,
 		{RP_GREAT, RP_GREAT_2},
@@ -1641,7 +1641,7 @@ player_race race_info[MAX_RACES] =
 	},
 	{
 		"Half-Elf",
-        { -1,  1,  1,  1, -1,  1 },
+		{ -1,  1,  1,  1, -1,  1 },
 		12,  13,  13,  12, 22,  22, 10,  12,
 		9,  110,
 		24, 16,
@@ -1657,32 +1657,32 @@ player_race race_info[MAX_RACES] =
 			{0, 0, 0, 0, 0, 0},
 		},
 	},
-    {
-        "Half-Giant",
-        { 4, -2, -2, -2, 3, -3 },
-        4, 2, 4, 6, 8, 10, 18, 12,
-        13, 150,
-        40, 10,
-        100,10, 255, 65,
-        80, 10, 240, 64,
+	{
+		"Half-Giant",
+		{ 4, -2, -2, -2, 3, -3 },
+		4, 2, 4, 6, 8, 10, 18, 12,
+		13, 150,
+		40, 10,
+		100,10, 255, 65,
+		80, 10, 240, 64,
 		{RP_HALF_GIANT, 0},
 		{0, 0, TR2_SUST_STR | TR2_RES_SHARDS, 0},
 		NULL, 0, 0, 0,
-        3, 75, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
+		3, 75, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Half-Ogre",
-        { 3, -1, -1, -1, 3, -3 },
-        7, 5, 5, 6, 8, 10, 17, 10,
-        12,  130,
-        40, 10,
-        92, 10, 255, 60,
-        80,  8, 235, 60,
+	},
+	{
+		"Half-Ogre",
+		{ 3, -1, -1, -1, 3, -3 },
+		7, 5, 5, 6, 8, 10, 17, 10,
+		12,  130,
+		40, 10,
+		92, 10, 255, 60,
+		80,  8, 235, 60,
 		{RP_HALF_OGRE, 0},
 		{0, 0, TR2_RES_DARK | TR2_SUST_STR, 0},
 		NULL, 0, 0, 0,
@@ -1692,12 +1692,12 @@ player_race race_info[MAX_RACES] =
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
+	},
 	{
 		"Half-Orc",
-        {  2, -1,  0,  0,  1, -4 },
+		{  2, -1,  0,  0,  1, -4 },
 		7, 7, 7,  8,  10, 14, 14, 8,
-        10,  110,
+		10,  110,
 		11,  4,
 		66,  1, 150,  5,
 		62,  1, 120,  5,
@@ -1711,29 +1711,29 @@ player_race race_info[MAX_RACES] =
 			{0, 0, 0, 0, 0, 0},
 		},
 	},
-    {
-        "Half-Titan",
-        { 5, 1, 1, -2, 3, 1 },
-        5, 15, 12, 6, 12, 16, 18, 10,
-        14, 255,
-        100,30,
-        111, 11, 255, 86,
-        99, 11, 250, 86,
+	{
+		"Half-Titan",
+		{ 5, 1, 1, -2, 3, 1 },
+		5, 15, 12, 6, 12, 16, 18, 10,
+		14, 255,
+		100,30,
+		111, 11, 255, 86,
+		99, 11, 250, 86,
 		{RP_HALF_TITAN, 0},
 		{0, 0, TR2_RES_CHAOS | TR2_RES_CONF | TR2_SUST_STR, 0},
 		NULL, 0, 0, 0,
-        0, 76, RACE_BLANK, EAT_NORMAL, human_syllables,
+		0, 76, RACE_BLANK, EAT_NORMAL, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
+	},
 	{
 		"Half-Troll",
 		{ 4, -4, -2, -4,  3, -6 },
 		5, 2, 2, 6,  8, 10, 17, 7,
-        12,  137,
+		12,  137,
 		20, 10,
 		96, 10, 250, 50,
 		84,  8, 225, 40,
@@ -1749,8 +1749,8 @@ player_race race_info[MAX_RACES] =
 	},
 	{
 		"High-Elf",
-        {  1,  3,  2,  3,  1,  5 },
-        14,  30, 30,  18,  16, 28, 13, 18,
+		{  1,  3,  2,  3,  1,  5 },
+		14,  30, 30,  18,  16, 28, 13, 18,
 		10,  200,
 		100, 30,
 		90, 10, 190, 20,
@@ -1764,11 +1764,11 @@ player_race race_info[MAX_RACES] =
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
+	},
 	{
 		"Hobbit",
 		{ -2,  2,  1,  3,  2,  1 },
-        25, 28, 28, 20, 34,  30, 7, 17,
+		25, 28, 28, 20, 34,  30, 7, 17,
 		7,  110,
 		21, 12,
 		36,  3, 60,  3,
@@ -1801,210 +1801,210 @@ player_race race_info[MAX_RACES] =
 			{0, 0, 0, 0, 0, 0},
 		},
 	},
-    {
-        "Imp",
-        { -1, -1, -1, 1, 2, -3 },
-        7, 12, 9, 12, 8, 20, 12, 8,
-        10, 110,
-        13,  4,
-        68,  1, 150,  5,
-        64,  1, 120,  5,
+	{
+		"Imp",
+		{ -1, -1, -1, 1, 2, -3 },
+		7, 12, 9, 12, 8, 20, 12, 8,
+		10, 110,
+		13,  4,
+		68,  1, 150,  5,
+		64,  1, 120,  5,
 		{RP_IMP, 0},
 		{0, 0, TR2_RES_FIRE, 0},
 		imp_bonuses, N_ELEMENTS(imp_bonuses), MUT_HORNS, 60,
-        3, 94, RACE_BLANK, EAT_NORMAL, cthuloid_syllables,
+		3, 94, RACE_BLANK, EAT_NORMAL, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Klackon",
-        { 2, -1, -1, 1, 2, -2 },
-        20, 15, 15, 10, 8, 20, 12, 12,
-        12, 135,
-        20, 3,
-        60,  3, 80,  4,
-        54,  3, 70,  4,
+	},
+	{
+		"Klackon",
+		{ 2, -1, -1, 1, 2, -2 },
+		20, 15, 15, 10, 8, 20, 12, 12,
+		12, 135,
+		20, 3,
+		60,  3, 80,  4,
+		54,  3, 70,  4,
 		{RP_KLACKON, 0},
 		{TR0_SPEED_SK, 0, TR2_RES_ACID | TR2_RES_CONF, 0},
 		NULL, 0, 0, 0,
-        2, 84, RACE_BLANK, EAT_NORMAL, klackon_syllables,
+		2, 84, RACE_BLANK, EAT_NORMAL, klackon_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Kobold",
-        { 1, -1, 0, 1, 0, -4 },
-        8, 7, 8, 8, 12, 16, 13, 7,
-        9, 125,
-        11,  3,
-        60,  1, 130,  5,
-        55,  1, 100,  5,
+	},
+	{
+		"Kobold",
+		{ 1, -1, 0, 1, 0, -4 },
+		8, 7, 8, 8, 12, 16, 13, 7,
+		9, 125,
+		11,  3,
+		60,  1, 130,  5,
+		55,  1, 100,  5,
 		{RP_KOBOLD, 0},
 		{0, 0, TR2_RES_POIS, 0},
 		NULL, 0, 0, 0,
-        3, 82, RACE_BLANK, EAT_NORMAL, orc_syllables,
+		3, 82, RACE_BLANK, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Mind-Flayer",
-        { -3, 4, 4, 0, -2, -5 },
-        20, 35, 25, 14, 20, 24, 7, 8,
-        9, 140,
-        100, 25,
-        68,  6, 142, 15,
-        63,  6, 112, 10,
+	},
+	{
+		"Mind-Flayer",
+		{ -3, 4, 4, 0, -2, -5 },
+		20, 35, 25, 14, 20, 24, 7, 8,
+		9, 140,
+		100, 25,
+		68,  6, 142, 15,
+		63,  6, 112, 10,
 		{RP_MIND_FLAYER, 0},
 		{0, 0, TR2_SUST_INT | TR2_SUST_WIS, 0},
 		mind_flayer_bonuses, N_ELEMENTS(mind_flayer_bonuses),
 		MUT_TENTACLES, 60,
-        4, 92, RACE_BLANK, EAT_NORMAL, cthuloid_syllables,
+		4, 92, RACE_BLANK, EAT_NORMAL, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Nibelung",
-        { 1, -1, 2, 0, 2, -4 },
-        13, 15, 20, 12, 20, 20, 13, 10,
-        11, 135,
-        40, 12,
-        43,  3, 92,  6,
-        40,  3, 78,  3,
+	},
+	{
+		"Nibelung",
+		{ 1, -1, 2, 0, 2, -4 },
+		13, 15, 20, 12, 20, 20, 13, 10,
+		11, 135,
+		40, 12,
+		43,  3, 92,  6,
+		40,  3, 78,  3,
 		{RP_NIBELUNG, 0},
 		{0, 0, TR2_RES_DARK | TR2_RES_DISEN, 0},
 		NULL, 0, 0, 0,
-        5, 87, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
+		5, 87, RACE_BLANK, EAT_NORMAL, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Skeleton",
-        { 0, -2, -2, 0, 1, -4 },
-        5, 5, 15, 8, 8, 16, 13, 10,
-        10, 145,
-        100, 35,
-        72,  6, 50, 5,
-        66,  4, 50, 5,
+	},
+	{
+		"Skeleton",
+		{ 0, -2, -2, 0, 1, -4 },
+		5, 5, 15, 8, 8, 16, 13, 10,
+		10, 145,
+		100, 35,
+		72,  6, 50, 5,
+		66,  4, 50, 5,
 		{RP_SKELETON, 0},
 		{TR0_NO_CUT, 0,
 			TR2_HOLD_LIFE | TR2_RES_POIS | TR2_RES_SHARDS, TR3_SEE_INVIS},
 		skeleton_bonuses, N_ELEMENTS(skeleton_bonuses), 0, 0,
-        2, 102, RACE_UNDEAD, EAT_SKELETON, human_syllables,
+		2, 102, RACE_UNDEAD, EAT_SKELETON, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-         "Spectre",
-         { -5, 4, 4, 2, -3, -6 },
-        20, 35, 30, 20, 20, 28, 5, 8,
-        7, 180,
-        100, 30,
-        72, 6, 100, 25,
-        66, 4, 100, 20,
+	},
+	{
+		"Spectre",
+		{ -5, 4, 4, 2, -3, -6 },
+		20, 35, 30, 20, 20, 28, 5, 8,
+		7, 180,
+		100, 30,
+		72, 6, 100, 25,
+		66, 4, 100, 20,
 		{RP_SPECTRE, 0},
 		{TR0_NO_CUT | TR0_HEAL_NETHER | TR0_WEAK_WRAITH, 0,
 			TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_POIS | TR2_RES_NETHER,
 			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		spectre_bonuses, N_ELEMENTS(spectre_bonuses), 0, 0,
-         5, 110, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
+		5, 110, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Sprite",
-        {  -4, 3, 3, 3, -2, 2 },
-        20, 20, 20, 18, 30, 20, 6, 10,
-        7, 175,
-        50, 25,
-        32,  2, 75,  2,
-        29,  2, 65,  2,
+	},
+	{
+		"Sprite",
+		{  -4, 3, 3, 3, -2, 2 },
+		20, 20, 20, 18, 30, 20, 6, 10,
+		7, 175,
+		50, 25,
+		32,  2, 75,  2,
+		29,  2, 65,  2,
 		{RP_SPRITE, 0},
 		{TR0_SPEED_SK, 0, TR2_RES_LITE, TR3_FEATHER},
 		NULL, 0, 0, 0,
-        4, 124, RACE_BLANK, EAT_NORMAL, elf_syllables,
+		4, 124, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-         "Vampire",
-         { 3, 3, -1, -1, 1, 2 },
-         14, 20, 20, 18, 12, 16, 12, 10,
-         11, 200,
-         100, 30,
-           72,  6, 180, 25,
-           66,  4, 150, 20,
+	},
+	{
+		"Vampire",
+		{ 3, 3, -1, -1, 1, 2 },
+		14, 20, 20, 18, 12, 16, 12, 10,
+		11, 200,
+		100, 30,
+			72,  6, 180, 25,
+			66,  4, 150, 20,
 		{RP_VAMPIRE, 0},
 		{TR0_IM_DARK | TR0_HURT_LIGHT, 0, TR2_HOLD_LIFE | TR2_RES_COLD |
 			TR2_RES_DARK | TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
 		vampire_bonuses, N_ELEMENTS(vampire_bonuses), MUT_HYPN_GAZE, 60,
-         5, 113, RACE_UNDEAD, EAT_VAMPIRE, human_syllables,
+		5, 113, RACE_UNDEAD, EAT_VAMPIRE, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_SCROLL_LIGHT, 0, 0, 0, 3, 7},
 			{OBJ_SCROLL_DARKNESS, 0, 0, 0, 2, 5},
 		},
-    },
-    {
-        "Yeek",
-        { -2, 1, 1, 1, -2, -7 },
-        12, 14, 20, 40, 20, 30, 8, 8,
-        7, 100,
-        14, 3,
-        50,  3, 90,  6,
-        50,  3, 75,  3,
+	},
+	{
+		"Yeek",
+		{ -2, 1, 1, 1, -2, -7 },
+		12, 14, 20, 40, 20, 30, 8, 8,
+		7, 100,
+		14, 3,
+		50,  3, 90,  6,
+		50,  3, 75,  3,
 		{RP_YEEK, 0},
 		{0, 0, TR2_RES_ACID, 0},
 		yeek_bonuses, N_ELEMENTS(yeek_bonuses), MUT_SHRIEK, 60,
-        2, 78, RACE_BLANK, EAT_NORMAL, hobbit_syllables,
+		2, 78, RACE_BLANK, EAT_NORMAL, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
-    {
-        "Zombie",
-        { 2, -6, -6, 1, 4, -5 },
-        5, 5, 18, 0, 8, 10, 15, 10,
-        13, 135,
-        100, 30,
-        72, 6, 100, 25,
-        66, 4, 100, 20,
+	},
+	{
+		"Zombie",
+		{ 2, -6, -6, 1, 4, -5 },
+		5, 5, 18, 0, 8, 10, 15, 10,
+		13, 135,
+		100, 30,
+		72, 6, 100, 25,
+		66, 4, 100, 20,
 		{RP_ZOMBIE, 0},
 		{0, 0, TR2_HOLD_LIFE | TR2_RES_NETHER | TR2_RES_POIS,
 			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		zombie_bonuses, N_ELEMENTS(zombie_bonuses), 0, 0,
-        2, 107, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
+		2, 107, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
 			{0, 0, 0, 0, 0, 0},
 		},
-    }
+	}
 };
 
 
@@ -2107,7 +2107,7 @@ player_template template_info[MAX_TEMPLATE] =
 		{0, 0, 20, 5, 10, 30, 20, 20, 30, 10, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 20, 20, 20, 0, 0, 30},
- 		{
+		{
 			{OBJ_RING_RES_POISON, 0, 0, 0, 1, 1},
 			{OBJ_DAGGER, EGO_BRAND_POIS, EI_EGO, 0, 1, 1},
 			{OBJ_SOFT_LEATHER_ARMOUR, 0, 0, 0, 1, 1},
@@ -2145,7 +2145,7 @@ player_template template_info[MAX_TEMPLATE] =
 			{0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0},
 		},
-    },
+	},
 	{
 		"Mindcrafter", 0, BIAS_PRIESTLY, 0, 40,
 		{ -2, 2, 5, -1, 0, 1},
@@ -2489,11 +2489,11 @@ static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
 	/* Det. monsters/traps */
 	{"Precognition", "", 0, 1, 15, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PRECOGNITION, 0},
 	/* ~MM */
-	{"Neural Blast", "dam LEV-1/4+3;dLEV/15+3", 1, 1, 20, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_NEURAL_BLAST, 0}, 
+	{"Neural Blast", "dam LEV-1/4+3;dLEV/15+3", 1, 1, 20, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_NEURAL_BLAST, 0},
 	/* Phase/dimension door (range 10 for sk 0-49, LEV+2 above) */
 	{"Minor Displacement", NULL, 3, 2, 25, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MINOR_DISPLACEMENT, 0},
 	/* Tele. Self / All */
-	{"Major Displacement", "range LEV*5", 7, 6, 35, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MAJOR_DISPLACEMENT, 0}, 
+	{"Major Displacement", "range LEV*5", 7, 6, 35, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MAJOR_DISPLACEMENT, 0},
 	{"Domination", "", 9, 7, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_DOMINATION, 0},
 	/* Telekinetic "bolt" */
 	{"Pulverise", "dam LEV-5/4+8;d8", 11, 7, 30, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PULVERISE, 0},
@@ -2503,8 +2503,8 @@ static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
 	/* Ball -> LOS */
 	{"Mind Wave", "dam LEV-5/10+1*LEV", 18, 10, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MIND_WAVE, 0},
 	{"Adrenaline Channeling", "dur 11-LEV*3/2", 23, 15, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_ADRENALINE_CHANNELING, 0},
- 	/* Convert enemy HP to mana */
- 	{"Psychic Drain", "dam LEV/2;d6", 25, 10, 40, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PSYCHIC_DRAIN, 0},
+	/* Convert enemy HP to mana */
+	{"Psychic Drain", "dam LEV/2;d6", 25, 10, 40, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PSYCHIC_DRAIN, 0},
 	/* Ball -> LOS (dam LEV*3 for sk 0-79, LEV*4 above) */
 	{"Telekinetic Wave", NULL, 29, 20, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_TELEKINETIC_WAVE, 0},
 };
@@ -2551,8 +2551,8 @@ book_type book_info[MAX_BK] =
  *
  * name,increase,0,0,0,0,0,exp_to_raise,x,y
  */
- player_skill skill_set[MAX_SKILLS] =
- {
+player_skill skill_set[MAX_SKILLS] =
+{
 	{IDX(SKILL_TOUGH) "Toughness","You are toughening up.",
 		0,0,0,0,0,5,5,10},
 	{IDX(SKILL_MANA) "Mana Channeling",
@@ -2738,7 +2738,7 @@ cptr stat_names_reduced[6] =
  * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.
  *
  * Note that options which are only set at character creation but are active
- * throughout the game should always be followed by a BIRTHR option which 
+ * throughout the game should always be followed by a BIRTHR option which
  * should contain a pointer to the variable actually read in the game.
  *
  * Note also that these BIRTHR options have no text name. This, and the lack
@@ -2754,8 +2754,8 @@ option_type option_info[] =
 	{ &quick_messages,              TRUE, OPTS_UI,      0, 1,
 	"quick_messages",               "Quick -more- prompts" },
 
-	{ &quick_prompt,		TRUE,	OPTS_UI,	2, 27,
-	"quick_prompt",			"Quick [y/n] prompts" },
+	{ &quick_prompt, TRUE, OPTS_UI, 2, 27,
+	"quick_prompt", "Quick [y/n] prompts" },
 
 	{ &other_query_flag,    FALSE, OPTS_UI,      0, 2,
 	"other_query_flag",             "Prompt for various information" },
@@ -2778,8 +2778,8 @@ option_type option_info[] =
 	{ &stack_force_notes,   TRUE, OPTS_OBJ,      0, 8,
 	"stack_force_notes",    "Merge inscriptions when stacking" },
 
-	{ &stack_force_notes_all,	FALSE, OPTS_OBJ,	3,	1,
-	"stack_force_notes_all",	"Merge all inscriptions when stacking" },
+	{ &stack_force_notes_all, FALSE, OPTS_OBJ, 3, 1,
+	"stack_force_notes_all", "Merge all inscriptions when stacking" },
 
 	{ &stack_force_costs,   FALSE, OPTS_OBJ,      0, 9,
 	"stack_force_costs",    "Merge discounts when stacking" },
@@ -2793,15 +2793,15 @@ option_type option_info[] =
 	{ &show_choices,                TRUE, OPTS_DISPLAY,      0, 12,
 	"show_choices",                 "Show choices in certain sub-windows" },
 
-    { &show_details,                TRUE, OPTS_DISPLAY,      0, 13,
+	{ &show_details,                TRUE, OPTS_DISPLAY,      0, 13,
 	"show_details",                 "Show more detailed monster descriptons" },
 
-	{ &show_choices_main,		TRUE,	OPTS_DISPLAY,	2,26,
-	"show_choices_main",		"Show certain choices in the main window"},
-	
-    { &ring_bell,                   FALSE, OPTS_DISPLAY,      0, 14,
+	{ &show_choices_main, TRUE, OPTS_DISPLAY, 2,26,
+	"show_choices_main", "Show certain choices in the main window"},
+
+	{ &ring_bell,                   FALSE, OPTS_DISPLAY,      0, 14,
 	"ring_bell",                    "Audible bell (on errors, etc)" },
-    /* Changed to default to FALSE -- it's so extremely annoying!!! -TY */
+	/* Changed to default to FALSE -- it's so extremely annoying!!! -TY */
 
 	{ &use_color,                   TRUE, OPTS_DISPLAY,      0, 15,
 	"use_color",                    "Use color if possible (slow)" },
@@ -2821,8 +2821,8 @@ option_type option_info[] =
 	{ &find_examine,                TRUE, OPTS_DISTURB,      0, 19,
 	"find_examine",                 "Run into potential corners" },
 
-	{ &stop_corner,	FALSE, OPTS_DISTURB,	3, 0,
-	"stop_corner",	"Stop at corners"},
+	{ &stop_corner, FALSE, OPTS_DISTURB, 3, 0,
+	"stop_corner", "Stop at corners"},
 
 	{ &disturb_move,                FALSE, OPTS_DISTURB,      0, 20,
 	"disturb_move",                 "Disturb whenever any monster moves" },
@@ -2836,8 +2836,8 @@ option_type option_info[] =
 	{ &disturb_state,               TRUE, OPTS_DISTURB,      0, 23,
 	"disturb_state",                "Disturb whenever player state changes" },
 
-	{ &disturb_dawn,	FALSE, OPTS_DISTURB,	3, 9,
-	"disturb_dawn",	"Disturb when the sun rises or sets" },
+	{ &disturb_dawn, FALSE, OPTS_DISTURB, 3, 9,
+	"disturb_dawn", "Disturb when the sun rises or sets" },
 
 	{ &disturb_minor,               FALSE, OPTS_DISTURB,      0, 24,
 	"disturb_minor",                "Disturb whenever boring things happen" },
@@ -2845,21 +2845,21 @@ option_type option_info[] =
 	{ &alert_failure,               FALSE, OPTS_DISTURB,      0, 27,
 	"alert_failure",                "Alert user to various failures" },
 
-    { &last_words,                  FALSE, OPTS_MISC,      0, 28,
-      "last_words",                 "Get last words when the character dies" },
+	{ &last_words,                  FALSE, OPTS_MISC,      0, 28,
+		"last_words",                 "Get last words when the character dies" },
 
-    { &small_levels,                TRUE, OPTS_MISC,      0, 30,
-       "small_levels",              "Allow unusually small dungeon levels" },
+	{ &small_levels,                TRUE, OPTS_MISC,      0, 30,
+		"small_levels",              "Allow unusually small dungeon levels" },
 
-    { &empty_levels,                TRUE, OPTS_MISC,      0, 31,
-        "empty_levels",             "Allow empty 'arena' levels" },
+	{ &empty_levels,                TRUE, OPTS_MISC,      0, 31,
+		"empty_levels",             "Allow empty 'arena' levels" },
 
 	/*** Game-Play ***/
 
 	{ &auto_haggle,                 TRUE, OPTS_MISC,      1, 0,
 	"auto_haggle",                  "Auto-haggle in stores" },
 
-	{ &verbose_haggle,	FALSE, OPTS_MISC, 2, 25,
+	{ &verbose_haggle, FALSE, OPTS_MISC, 2, 25,
 	"verbose_haggle", "Verbose auto_haggle messages" },
 
 	{ &auto_scum,                   TRUE, OPTS_MISC,      1, 1,
@@ -2900,8 +2900,8 @@ option_type option_info[] =
 
 
 
-    { &equippy_chars,               TRUE, OPTS_OBJ,      1, 14,
-        "equippy_chars",           "Display 'equippy' chars" },
+	{ &equippy_chars,               TRUE, OPTS_OBJ,      1, 14,
+		"equippy_chars",           "Display 'equippy' chars" },
 
 	{ &smart_learn,                 TRUE, OPTS_MON,      1, 15,
 	"smart_learn",                  "Monsters learn from their mistakes" },
@@ -2909,15 +2909,15 @@ option_type option_info[] =
 	{ &smart_cheat,                 FALSE, OPTS_MON,      1, 16,
 	"smart_cheat",                  "Monsters exploit players weaknesses" },
 
- #ifdef ALLOW_EASY_OPEN
- 	{ &easy_open,                   TRUE, OPTS_MISC,      1, 17,
- 	"easy_open",                    "Open and close automatically" },
- #endif /* ALLOW_EASY_OPEN -- TNB */
- 
- #ifdef ALLOW_EASY_DISARM
+#ifdef ALLOW_EASY_OPEN
+	{ &easy_open,                   TRUE, OPTS_MISC,      1, 17,
+	"easy_open",                    "Open and close automatically" },
+#endif /* ALLOW_EASY_OPEN -- TNB */
+
+#ifdef ALLOW_EASY_DISARM
 	{ &easy_disarm,                 TRUE, OPTS_MISC,      1, 18,
- 	"easy_disarm",                  "Disarm traps automatically" },
- #endif /* ALLOW_EASY_DISARM -- TNB */
+	"easy_disarm",                  "Disarm traps automatically" },
+#endif /* ALLOW_EASY_DISARM -- TNB */
 
 
 	/*** Efficiency ***/
@@ -2934,7 +2934,7 @@ option_type option_info[] =
 	{ &avoid_other,                 FALSE, OPTS_PERF,      1, 22,
 	"avoid_other",                  "Avoid processing special colors" },
 
-	{ &flush_error,	TRUE, OPTS_PERF, 3, 19,
+	{ &flush_error, TRUE, OPTS_PERF, 3, 19,
 	"flush_error", "Flush input on incorrect keypresses." },
 
 	{ &flush_failure,               TRUE, OPTS_PERF,      1, 23,
@@ -2955,7 +2955,7 @@ option_type option_info[] =
 	{ &compress_savefile,   FALSE, OPTS_PERF,      1, 29,
 	"compress_savefile",    "Compress messages in savefiles" },
 
-    { &hilite_player,               FALSE, OPTS_DISPLAY,      1, 30,
+	{ &hilite_player,               FALSE, OPTS_DISPLAY,      1, 30,
 	"hilite_player",                "Hilite the player with the cursor" },
 
 	{ &view_yellow_lite,    TRUE, OPTS_PERF,      1, 31,
@@ -2970,33 +2970,33 @@ option_type option_info[] =
 	{ &view_special_lite,   TRUE, OPTS_PERF,      2, 3,
 	"view_special_lite",    "Use special colors for floor grids (slow)" },
 
-    { &skip_chaos_features,        FALSE, OPTS_MISC, 2, 4,
-       "skip_chaos_features",      "Skip chaos features in 'C'haracter Display" },
+	{ &skip_chaos_features,        FALSE, OPTS_MISC, 2, 4,
+		"skip_chaos_features",      "Skip chaos features in 'C'haracter Display" },
 
-    { &plain_descriptions,    FALSE, OPTS_OBJ, 2, 5,
-        "plain_descriptions", "Plain object descriptions" },
+	{ &plain_descriptions,    FALSE, OPTS_OBJ, 2, 5,
+		"plain_descriptions", "Plain object descriptions" },
 
-    { &stupid_monsters,      FALSE, OPTS_MON, 2, 6,
-        "stupid_monsters",  "Monsters behave stupidly" },
+	{ &stupid_monsters,      FALSE, OPTS_MON, 2, 6,
+		"stupid_monsters",  "Monsters behave stupidly" },
 
-    { &auto_destroy,        TRUE, OPTS_OBJ, 2, 7,
-        "auto_destroy",     "No query to destroy known worthless items" },
+	{ &auto_destroy,        TRUE, OPTS_OBJ, 2, 7,
+		"auto_destroy",     "No query to destroy known worthless items" },
 
-    { &wear_confirm,        TRUE, OPTS_OBJ,2, 8,
-        "confirm_wear",     "Confirm to wear/wield known cursed items" },
+	{ &wear_confirm,        TRUE, OPTS_OBJ,2, 8,
+		"confirm_wear",     "Confirm to wear/wield known cursed items" },
 
-    { &confirm_wear_all,        TRUE, OPTS_OBJ,3, 7,
-        "confirm_wear_all",     "Confirm to wear/wield potentially cursed items" },
+	{ &confirm_wear_all,        TRUE, OPTS_OBJ,3, 7,
+		"confirm_wear_all",     "Confirm to wear/wield potentially cursed items" },
 
-    { &confirm_stairs,      FALSE, OPTS_UI, 2, 9,
-        "confirm_stairs",   "Prompt before exiting a dungeon level" },
+	{ &confirm_stairs,      FALSE, OPTS_UI, 2, 9,
+		"confirm_stairs",   "Prompt before exiting a dungeon level" },
 
-    { &disturb_allies,        FALSE, OPTS_DISTURB, 2, 10,
-        "disturb_allies",     "Disturb when visible allies move" },
+	{ &disturb_allies,        FALSE, OPTS_DISTURB, 2, 10,
+		"disturb_allies",     "Disturb when visible allies move" },
 
-    { &multi_stair,        TRUE, OPTS_MISC, 2, 11,
-        "multi_stair",     "Stairs can be longer than one level" },
-	
+	{ &multi_stair,        TRUE, OPTS_MISC, 2, 11,
+		"multi_stair",     "Stairs can be longer than one level" },
+
 	{ &rand_unbiased,    FALSE, OPTS_PERF,2,12,
 	"rand_unbiased","Random numbers have bias removed (slow)"},
 
@@ -3004,22 +3004,22 @@ option_type option_info[] =
 	"unify_commands","Use a single 'u'se command for all objects"},
 
 	{ &testing_stack,               TRUE, OPTS_OBJ, 2, 14,
-    "testing_stack",                "Allow objects to stack on floor" },
+	"testing_stack",                "Allow objects to stack on floor" },
 
 	{ &show_piles, FALSE, OPTS_OBJ, 3, 21,
 	"show_piles", "Show stacks with a special colour/character" },
 
 	{ &testing_carry,               TRUE, OPTS_MON, 2, 15,
-    "testing_carry",                "Allow monsters to carry objects" },
+	"testing_carry",                "Allow monsters to carry objects" },
 
 	{ &centre_view,               TRUE, OPTS_DISPLAY, 2, 16,
-    "centre_view",                "Centre view around player (v.slow)" },
+	"centre_view",                "Centre view around player (v.slow)" },
 
 	{&macro_edit, TRUE, OPTS_UI, 3, 11,
 	"macro_edit", "Use macros as edit keys in prompts" },
 
 	{ &beginner_help, TRUE, OPTS_UI, 0, 25,
-	"beginner_help",	"Display beginner help on startup" },
+	"beginner_help", "Display beginner help on startup" },
 
 	{&scroll_edge, FALSE, OPTS_DISPLAY, 3, 13,
 	"scroll_edge", "Scroll until detection reaches the edge"},
@@ -3028,7 +3028,7 @@ option_type option_info[] =
 	"allow_fake_colour", "Use special monochrome display for emphasis"},
 
 	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
-    "no_centre_run",                "Do not centre view whilst running" },
+	"no_centre_run",                "Do not centre view whilst running" },
 
 #ifdef USE_X11
 	{ &track_mouse, TRUE, OPTS_PERF, 3, 22,
@@ -3039,112 +3039,112 @@ option_type option_info[] =
 	"auto_more",                    "Automatically clear '-more-' prompts" },
 
 #ifdef SCORE_QUITTERS
-	{ &score_quitters_w,		FALSE, OPTS_BIRTH, 0, 26,
-	"score_quitter",			"Remember scores of those who quit the game" },
+	{ &score_quitters_w, FALSE, OPTS_BIRTH, 0, 26,
+	"score_quitter", "Remember scores of those who quit the game" },
 
 	{ &score_quitters, 0, OPTS_BIRTHR, 3, 14, 0, ""},
 #endif /* SCORE_QUITTERS */
 
 	{ &maximise_mode_w,               TRUE, OPTS_BIRTH, 2, 18,
-    "maximise_mode",                "Include race/template bonuses in stat calcs" },
+	"maximise_mode",                "Include race/template bonuses in stat calcs" },
 
 	{ &maximise_mode, 0, OPTS_BIRTHR, 3, 15, 0, ""},
 
 	{ &preserve_mode_w,               TRUE, OPTS_BIRTH, 2, 19,
-    "preserve_mode",                "Artifacts are not lost if you never saw them" },
+	"preserve_mode",                "Artifacts are not lost if you never saw them" },
 
 	{ &preserve_mode, 0, OPTS_BIRTHR, 3, 16, 0, ""},
 
-	{ &allow_quickstart,		TRUE,	OPTS_BIRTH, 3, 4,
-	"allow_quickstart",	"Allow the player to start by using Quick-Start"},
-	
-	{ &allow_pickstats,		TRUE,	OPTS_BIRTH, 3, 6,
-	"allow_pickstats",	"Allow the player to choose pre-set stats"},
+	{ &allow_quickstart, TRUE, OPTS_BIRTH, 3, 4,
+	"allow_quickstart", "Allow the player to start by using Quick-Start"},
+
+	{ &allow_pickstats, TRUE, OPTS_BIRTH, 3, 6,
+	"allow_pickstats", "Allow the player to choose pre-set stats"},
 
 #ifdef USE_MAIN_C
-	{ &display_credits,	TRUE,	OPTS_BIRTH, 3, 5,
-	"display_credits",	"Require a keypress to clear the initial screen"},
+	{ &display_credits, TRUE, OPTS_BIRTH, 3, 5,
+	"display_credits", "Require a keypress to clear the initial screen"},
 #endif
 
 	{ &use_autoroller,               TRUE, OPTS_BIRTH, 2, 20,
-    "use_autoroller",                "Allow stats to be rolled repeatedly with minima" },
+	"use_autoroller",                "Allow stats to be rolled repeatedly with minima" },
 
 	{ &spend_points, TRUE, OPTS_BIRTH, 2, 21,
-    "spend_points", "Allow stats to be chosen by spending points" },
+	"spend_points", "Allow stats to be chosen by spending points" },
 
-    { &speak_unique_w,                FALSE, OPTS_BIRTH,      0, 29,
-       "speak_unique",              "Allow shopkeepers and uniques to speak" },
+	{ &speak_unique_w,                FALSE, OPTS_BIRTH,      0, 29,
+		"speak_unique",              "Allow shopkeepers and uniques to speak" },
 
-	{ &speak_unique,	0,	OPTS_BIRTHR, 3, 20, 0, ""},
+	{ &speak_unique, 0, OPTS_BIRTHR, 3, 20, 0, ""},
 
 	{ &ironman_shop_w,               FALSE, OPTS_BIRTH, 2, 22,
-    "ironman_shop",                "Shops (except for libraries) are locked" },
+	"ironman_shop",                "Shops (except for libraries) are locked" },
 
 	{ &ironman_shop, 0, OPTS_BIRTHR, 3, 17, 0, ""},
 
-	{ &ironman_feeling_w,	FALSE, OPTS_BIRTH, 3, 3,
-	"ironman_feeling",	"Level feelings are only given after 2500 turns" },
+	{ &ironman_feeling_w, FALSE, OPTS_BIRTH, 3, 3,
+	"ironman_feeling", "Level feelings are only given after 2500 turns" },
 
 	{ &ironman_feeling, 0, OPTS_BIRTHR, 3, 18, 0, ""},
 
-	{ &chaos_patrons_w,	TRUE,	OPTS_BIRTH, 3, 23,
-	"chaos_patrons",	"Chaos patrons give your character gifts"},
+	{ &chaos_patrons_w, TRUE, OPTS_BIRTH, 3, 23,
+	"chaos_patrons", "Chaos patrons give your character gifts"},
 
 	{ &chaos_patrons, TRUE, OPTS_BIRTHR, 2, 24, 0, ""},
 
-	{ &spoil_base,			FALSE, OPTS_SPOIL,	2, 31,
-	"spoil_base",			"Gain knowledge of normal items" },
+	{ &spoil_base, FALSE, OPTS_SPOIL, 2, 31,
+	"spoil_base", "Gain knowledge of normal items" },
 
-	{ &spoil_ego,			FALSE, OPTS_SPOIL,	2, 30,
-	"spoil_ego",			"Gain knowledge of ego items" },
-    
+	{ &spoil_ego, FALSE, OPTS_SPOIL, 2, 30,
+	"spoil_ego", "Gain knowledge of ego items" },
+
 	{ &spoil_art,                  FALSE, OPTS_SPOIL,     2, 28,
-	"spoil_art",			"Gain knowledge of standard artifacts" },
+	"spoil_art", "Gain knowledge of standard artifacts" },
 
-	{ &spoil_value,	FALSE, OPTS_SPOIL,	2, 23,
-	"spoil_value",	"Gain knowledge of the apparent prices of items" },
+	{ &spoil_value, FALSE, OPTS_SPOIL, 2, 23,
+	"spoil_value", "Gain knowledge of the apparent prices of items" },
 
-	{ &spoil_mon,			FALSE, OPTS_SPOIL,	2, 0,
-	"spoil_mon",			"Gain knowledge of monsters" },
+	{ &spoil_mon, FALSE, OPTS_SPOIL, 2, 0,
+	"spoil_mon", "Gain knowledge of monsters" },
 
-	{ &spoil_stat,			FALSE, OPTS_SPOIL,	2,	29,
-	"spoil_stat",			"Gain knowledge of the effects of stat changes"},
+	{ &spoil_stat, FALSE, OPTS_SPOIL, 2, 29,
+	"spoil_stat", "Gain knowledge of the effects of stat changes"},
 
-	{ &spoil_flag,	FALSE, OPTS_SPOIL, 3, 10,
-	"spoil_flag",	"Gain knowledge of the effects of various flags."},
+	{ &spoil_flag, FALSE, OPTS_SPOIL, 3, 10,
+	"spoil_flag", "Gain knowledge of the effects of various flags."},
 
-	{ &spoil_dam,	FALSE, OPTS_SPOIL,	3,	8,
-	"spoil_dam",	"Gain knowledge of melee weapon damage."},
+	{ &spoil_dam, FALSE, OPTS_SPOIL, 3, 8,
+	"spoil_dam", "Gain knowledge of melee weapon damage."},
 
-	{ &cheat_peek,		FALSE,	OPTS_CHEAT,	7, 8,
-	"cheat_peek",		"Peek into object creation" },
+	{ &cheat_peek, FALSE, OPTS_CHEAT, 7, 8,
+	"cheat_peek", "Peek into object creation" },
 
-	{ &cheat_hear,		FALSE, OPTS_CHEAT,	7, 9,
-	"cheat_hear",		"Peek into monster creation" },
+	{ &cheat_hear, FALSE, OPTS_CHEAT, 7, 9,
+	"cheat_hear", "Peek into monster creation" },
 
-	{ &cheat_room,		FALSE,	OPTS_CHEAT,	7, 10,
-	"cheat_room",		"Peek into dungeon creation" },
+	{ &cheat_room, FALSE, OPTS_CHEAT, 7, 10,
+	"cheat_room", "Peek into dungeon creation" },
 
-	{ &cheat_xtra,		FALSE,	OPTS_CHEAT,	7, 11,
-	"cheat_xtra",		"Peek into something else" },
+	{ &cheat_xtra, FALSE, OPTS_CHEAT, 7, 11,
+	"cheat_xtra", "Peek into something else" },
 
-	{ &cheat_item,		FALSE,	OPTS_CHEAT,	7, 15,
-	"cheat_item",		"Know complete item info" },
+	{ &cheat_item, FALSE, OPTS_CHEAT, 7, 15,
+	"cheat_item", "Know complete item info" },
 
-	{ &cheat_live,		FALSE,	OPTS_CHEAT,	7, 13,
-	"cheat_live",		"Allow player to avoid death" },
+	{ &cheat_live, FALSE, OPTS_CHEAT, 7, 13,
+	"cheat_live", "Allow player to avoid death" },
 
-	{ &cheat_skll,		FALSE,	OPTS_CHEAT,	7, 14,
-	"cheat_skll",		"Peek into skill rolls" },
+	{ &cheat_skll, FALSE, OPTS_CHEAT, 7, 14,
+	"cheat_skll", "Peek into skill rolls" },
 
 #ifdef ALLOW_WIZARD
-	{ &cheat_wzrd,		FALSE,	OPTS_CHEAT,	7, 1,
-	"cheat_wzrd",		"Wizard (Debug) Mode active" },
+	{ &cheat_wzrd, FALSE, OPTS_CHEAT, 7, 1,
+	"cheat_wzrd", "Wizard (Debug) Mode active" },
 #endif /* ALLOW_WIZARD */
 
-	{ &cheat_save,	FALSE,	OPTS_CHEAT, 7, 12,
+	{ &cheat_save, FALSE, OPTS_CHEAT, 7, 12,
 	"cheat_save", "Don't auto-save on in-game events"},
-	
+
 
 	/*** End of Table ***/
 
@@ -3167,48 +3167,48 @@ force_type option_force[] =
 
 cptr chaos_patron_shorts[MAX_PATRON] =
 {
-    "Thed",
-    "Ragnaglar",
-    "Cacodemon",
-    "Malia",
-    "Pochnargo",
+	"Thed",
+	"Ragnaglar",
+	"Cacodemon",
+	"Malia",
+	"Pochnargo",
 
-    "Thanatar",
-    "Gbaji",
-    "Vivamort",
-    "Krarsht",
-    "Wakboth",
+	"Thanatar",
+	"Gbaji",
+	"Vivamort",
+	"Krarsht",
+	"Wakboth",
 
-    "Bagog",
-    "Gark",
-    "Ikadz",
-    "Kajabor",
-    "Krjalk",
+	"Bagog",
+	"Gark",
+	"Ikadz",
+	"Kajabor",
+	"Krjalk",
 
-    "Ompalam"
+	"Ompalam"
 };
 
 int chaos_stats[MAX_PATRON] =
 {
-    A_CON,  /* Thed */
-    A_CON,  /* Ragnaglar */
-    A_STR,  /* Cacodemon */
-    A_STR,  /* Malia */
-    A_STR,  /* Pochnargo */
+	A_CON,  /* Thed */
+	A_CON,  /* Ragnaglar */
+	A_STR,  /* Cacodemon */
+	A_STR,  /* Malia */
+	A_STR,  /* Pochnargo */
 
-    A_INT,  /* Thanatar */
-    A_STR,  /* Gbaji */
-    A_INT,  /* Vivamort */
-    A_CON,  /* Krarsht */
-    A_CHR,  /* Wakboth */
+	A_INT,  /* Thanatar */
+	A_STR,  /* Gbaji */
+	A_INT,  /* Vivamort */
+	A_CON,  /* Krarsht */
+	A_CHR,  /* Wakboth */
 
-    -1,     /* Bagog */
-    A_STR,  /* Gark */
-    A_CHR,  /* Ikadz */
-    A_CON,  /* Kajabor */
-    A_INT,  /* Krjalk */
+	-1,     /* Bagog */
+	A_STR,  /* Gark */
+	A_CHR,  /* Ikadz */
+	A_CON,  /* Kajabor */
+	A_INT,  /* Krjalk */
 
-    A_STR,  /* Ompalam */
+	A_STR,  /* Ompalam */
 };
 
 
@@ -3217,135 +3217,135 @@ int chaos_stats[MAX_PATRON] =
 int chaos_rewards[MAX_PATRON][20] =
 {
 
-    /* Thed, Mother of Broo: */
-    {
-      REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL, REW_LOSE_ABL,
-      REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_POLY_SLF,
-      REW_POLY_SLF, REW_POLY_SLF, REW_GAIN_ABL, REW_GAIN_ABL, REW_GAIN_EXP,
-      REW_GOOD_OBJ, REW_CHAOS_WP, REW_GREA_OBJ, REW_AUGM_ABL, REW_AUGM_ABL
-    },
+	/* Thed, Mother of Broo: */
+	{
+		REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL, REW_LOSE_ABL,
+		REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_POLY_SLF,
+		REW_POLY_SLF, REW_POLY_SLF, REW_GAIN_ABL, REW_GAIN_ABL, REW_GAIN_EXP,
+		REW_GOOD_OBJ, REW_CHAOS_WP, REW_GREA_OBJ, REW_AUGM_ABL, REW_AUGM_ABL
+	},
 
-    /* Ragnaglar the Unclean: */
-    {
-      REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_H_SUMMON, REW_SUMMON_M,
-      REW_SUMMON_M, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_POLY_WND,
-      REW_POLY_SLF, REW_HEAL_FUL, REW_HEAL_FUL, REW_GAIN_ABL, REW_SER_UNDE,
-      REW_CHAOS_WP, REW_GOOD_OBJ, REW_GOOD_OBJ, REW_GOOD_OBS, REW_GOOD_OBS
-    },
+	/* Ragnaglar the Unclean: */
+	{
+		REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_H_SUMMON, REW_SUMMON_M,
+		REW_SUMMON_M, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_POLY_WND,
+		REW_POLY_SLF, REW_HEAL_FUL, REW_HEAL_FUL, REW_GAIN_ABL, REW_SER_UNDE,
+		REW_CHAOS_WP, REW_GOOD_OBJ, REW_GOOD_OBJ, REW_GOOD_OBS, REW_GOOD_OBS
+	},
 
-    /* Cacodemon, Spawn of the Devil: */
-    {
-      REW_WRATH, REW_WRATH, REW_HURT_LOT, REW_PISS_OFF, REW_H_SUMMON,
-      REW_SUMMON_M, REW_IGNORE, REW_IGNORE, REW_DESTRUCT, REW_SER_UNDE,
-      REW_GENOCIDE, REW_MASS_GEN, REW_MASS_GEN, REW_DISPEL_C, REW_GOOD_OBJ,
-      REW_CHAOS_WP, REW_GOOD_OBS, REW_GOOD_OBS, REW_AUGM_ABL, REW_AUGM_ABL
-    },
+	/* Cacodemon, Spawn of the Devil: */
+	{
+		REW_WRATH, REW_WRATH, REW_HURT_LOT, REW_PISS_OFF, REW_H_SUMMON,
+		REW_SUMMON_M, REW_IGNORE, REW_IGNORE, REW_DESTRUCT, REW_SER_UNDE,
+		REW_GENOCIDE, REW_MASS_GEN, REW_MASS_GEN, REW_DISPEL_C, REW_GOOD_OBJ,
+		REW_CHAOS_WP, REW_GOOD_OBS, REW_GOOD_OBS, REW_AUGM_ABL, REW_AUGM_ABL
+	},
 
-    /* Malia, Mistress of Disease: */
-    {
-      REW_WRATH, REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL,
-      REW_IGNORE, REW_IGNORE, REW_SER_UNDE, REW_DESTRUCT, REW_GENOCIDE,
-      REW_MASS_GEN, REW_MASS_GEN, REW_HEAL_FUL, REW_GAIN_ABL, REW_GAIN_ABL,
-      REW_CHAOS_WP, REW_GOOD_OBS, REW_GOOD_OBS, REW_AUGM_ABL, REW_AUGM_ABL
-    },
+	/* Malia, Mistress of Disease: */
+	{
+		REW_WRATH, REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL,
+		REW_IGNORE, REW_IGNORE, REW_SER_UNDE, REW_DESTRUCT, REW_GENOCIDE,
+		REW_MASS_GEN, REW_MASS_GEN, REW_HEAL_FUL, REW_GAIN_ABL, REW_GAIN_ABL,
+		REW_CHAOS_WP, REW_GOOD_OBS, REW_GOOD_OBS, REW_AUGM_ABL, REW_AUGM_ABL
+	},
 
-    /* Pochnargo the Mutator: */
-    {
-      REW_TY_CURSE, REW_TY_CURSE, REW_PISS_OFF, REW_RUIN_ABL, REW_LOSE_ABL,
-      REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_WND, REW_POLY_WND,
-      REW_GENOCIDE, REW_DISPEL_C, REW_GOOD_OBJ, REW_GOOD_OBJ, REW_SER_MONS,
-      REW_GAIN_ABL, REW_CHAOS_WP, REW_GAIN_EXP, REW_AUGM_ABL, REW_GOOD_OBS
-    },
-
-
-    /* Thanatar the Assassin: */
-    {
-      REW_WRATH, REW_TY_CURSE, REW_PISS_OFF, REW_H_SUMMON, REW_H_SUMMON,
-      REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_POLY_SLF,
-      REW_POLY_SLF, REW_SER_DEMO, REW_HEAL_FUL, REW_GAIN_ABL, REW_GAIN_ABL,
-      REW_CHAOS_WP, REW_DO_HAVOC, REW_GOOD_OBJ, REW_GREA_OBJ, REW_GREA_OBS
-    },
-    
-    /* Gbaji the Deceiver: */
-    {
-      REW_TY_CURSE, REW_HURT_LOT, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL,
-      REW_SUMMON_M, REW_LOSE_EXP, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_WND,
-      REW_SER_UNDE, REW_HEAL_FUL, REW_HEAL_FUL, REW_GAIN_EXP, REW_GAIN_EXP,
-      REW_CHAOS_WP, REW_GOOD_OBJ, REW_GOOD_OBS, REW_GREA_OBS, REW_AUGM_ABL
-    },
+	/* Pochnargo the Mutator: */
+	{
+		REW_TY_CURSE, REW_TY_CURSE, REW_PISS_OFF, REW_RUIN_ABL, REW_LOSE_ABL,
+		REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_WND, REW_POLY_WND,
+		REW_GENOCIDE, REW_DISPEL_C, REW_GOOD_OBJ, REW_GOOD_OBJ, REW_SER_MONS,
+		REW_GAIN_ABL, REW_CHAOS_WP, REW_GAIN_EXP, REW_AUGM_ABL, REW_GOOD_OBS
+	},
 
 
-    /* Vivamort the Vampire Lord: */
-    {
-      REW_WRATH, REW_PISS_OFF, REW_RUIN_ABL, REW_LOSE_EXP, REW_H_SUMMON,
-      REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_SLF,
-      REW_POLY_SLF, REW_MASS_GEN, REW_SER_DEMO, REW_HEAL_FUL, REW_CHAOS_WP,
-      REW_CHAOS_WP, REW_GOOD_OBJ, REW_GAIN_EXP, REW_GREA_OBJ, REW_AUGM_ABL
-    },
+	/* Thanatar the Assassin: */
+	{
+		REW_WRATH, REW_TY_CURSE, REW_PISS_OFF, REW_H_SUMMON, REW_H_SUMMON,
+		REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_POLY_SLF,
+		REW_POLY_SLF, REW_SER_DEMO, REW_HEAL_FUL, REW_GAIN_ABL, REW_GAIN_ABL,
+		REW_CHAOS_WP, REW_DO_HAVOC, REW_GOOD_OBJ, REW_GREA_OBJ, REW_GREA_OBS
+	},
 
-    /* Krarsht, the Hungry One: */
-    {
-      REW_WRATH, REW_TY_CURSE, REW_PISS_OFF, REW_CURSE_WP, REW_RUIN_ABL,
-      REW_IGNORE, REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_WND,
-      REW_GOOD_OBJ, REW_GOOD_OBJ, REW_SER_MONS, REW_HEAL_FUL, REW_GAIN_EXP,
-      REW_GAIN_ABL, REW_CHAOS_WP, REW_GOOD_OBS, REW_GREA_OBJ, REW_AUGM_ABL
-    },
+	/* Gbaji the Deceiver: */
+	{
+		REW_TY_CURSE, REW_HURT_LOT, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL,
+		REW_SUMMON_M, REW_LOSE_EXP, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_WND,
+		REW_SER_UNDE, REW_HEAL_FUL, REW_HEAL_FUL, REW_GAIN_EXP, REW_GAIN_EXP,
+		REW_CHAOS_WP, REW_GOOD_OBJ, REW_GOOD_OBS, REW_GREA_OBS, REW_AUGM_ABL
+	},
 
-    /* Wakboth, the Devil: */
-    {
-      REW_WRATH, REW_CURSE_AR, REW_CURSE_WP, REW_CURSE_WP, REW_CURSE_AR,
-      REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF,
-      REW_POLY_WND, REW_HEAL_FUL, REW_HEAL_FUL, REW_GAIN_EXP, REW_AUGM_ABL,
-      REW_GOOD_OBJ, REW_GOOD_OBJ, REW_CHAOS_WP, REW_GREA_OBJ, REW_GREA_OBS
-    },
 
-    /* Bagog, the Scorpion Queen: */
-    {
-      REW_WRATH, REW_SER_DEMO, REW_CURSE_WP, REW_CURSE_AR, REW_LOSE_EXP,
-      REW_GAIN_ABL, REW_LOSE_ABL, REW_POLY_WND, REW_POLY_SLF, REW_IGNORE,
-      REW_DESTRUCT, REW_MASS_GEN, REW_CHAOS_WP, REW_GREA_OBJ, REW_HURT_LOT,
-      REW_AUGM_ABL, REW_RUIN_ABL, REW_H_SUMMON, REW_GREA_OBS, REW_AUGM_ABL
-    },
+	/* Vivamort the Vampire Lord: */
+	{
+		REW_WRATH, REW_PISS_OFF, REW_RUIN_ABL, REW_LOSE_EXP, REW_H_SUMMON,
+		REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_SLF,
+		REW_POLY_SLF, REW_MASS_GEN, REW_SER_DEMO, REW_HEAL_FUL, REW_CHAOS_WP,
+		REW_CHAOS_WP, REW_GOOD_OBJ, REW_GAIN_EXP, REW_GREA_OBJ, REW_AUGM_ABL
+	},
 
-    /* Gark the Calm: */
-    {
-      REW_WRATH, REW_HURT_LOT, REW_HURT_LOT, REW_H_SUMMON, REW_H_SUMMON,
-      REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_SER_MONS, REW_SER_DEMO,
-      REW_POLY_SLF, REW_POLY_WND, REW_HEAL_FUL, REW_GOOD_OBJ, REW_GOOD_OBJ,
-      REW_CHAOS_WP, REW_GOOD_OBS, REW_GOOD_OBS, REW_GREA_OBJ, REW_GREA_OBS
-    },
+	/* Krarsht, the Hungry One: */
+	{
+		REW_WRATH, REW_TY_CURSE, REW_PISS_OFF, REW_CURSE_WP, REW_RUIN_ABL,
+		REW_IGNORE, REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_WND,
+		REW_GOOD_OBJ, REW_GOOD_OBJ, REW_SER_MONS, REW_HEAL_FUL, REW_GAIN_EXP,
+		REW_GAIN_ABL, REW_CHAOS_WP, REW_GOOD_OBS, REW_GREA_OBJ, REW_AUGM_ABL
+	},
 
-    /* Ikadz, Lord of Torture: */
-    {
-      REW_WRATH, REW_PISS_OFF, REW_PISS_OFF, REW_RUIN_ABL, REW_LOSE_ABL,
-      REW_LOSE_EXP, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_SER_DEMO,
-      REW_POLY_SLF, REW_HEAL_FUL, REW_HEAL_FUL, REW_GOOD_OBJ, REW_GAIN_EXP,
-      REW_GAIN_EXP, REW_CHAOS_WP, REW_GAIN_ABL, REW_GREA_OBJ, REW_AUGM_ABL
-    },
+	/* Wakboth, the Devil: */
+	{
+		REW_WRATH, REW_CURSE_AR, REW_CURSE_WP, REW_CURSE_WP, REW_CURSE_AR,
+		REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF,
+		REW_POLY_WND, REW_HEAL_FUL, REW_HEAL_FUL, REW_GAIN_EXP, REW_AUGM_ABL,
+		REW_GOOD_OBJ, REW_GOOD_OBJ, REW_CHAOS_WP, REW_GREA_OBJ, REW_GREA_OBS
+	},
 
-    /* Kajabor: */
-    {
-      REW_WRATH, REW_PISS_OFF, REW_HURT_LOT, REW_RUIN_ABL, REW_LOSE_ABL,
-      REW_LOSE_EXP, REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_SLF,
-      REW_POLY_SLF, REW_POLY_WND, REW_HEAL_FUL, REW_GOOD_OBJ, REW_GAIN_ABL,
-      REW_GAIN_ABL, REW_SER_UNDE, REW_CHAOS_WP, REW_GREA_OBJ, REW_AUGM_ABL
-    },
+	/* Bagog, the Scorpion Queen: */
+	{
+		REW_WRATH, REW_SER_DEMO, REW_CURSE_WP, REW_CURSE_AR, REW_LOSE_EXP,
+		REW_GAIN_ABL, REW_LOSE_ABL, REW_POLY_WND, REW_POLY_SLF, REW_IGNORE,
+		REW_DESTRUCT, REW_MASS_GEN, REW_CHAOS_WP, REW_GREA_OBJ, REW_HURT_LOT,
+		REW_AUGM_ABL, REW_RUIN_ABL, REW_H_SUMMON, REW_GREA_OBS, REW_AUGM_ABL
+	},
 
-    /* Krjalk, the Traitor: */
-    {
-      REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL, REW_LOSE_ABL,
-      REW_LOSE_EXP, REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_SLF,
-      REW_POLY_SLF, REW_POLY_WND, REW_HEAL_FUL, REW_CHAOS_WP, REW_GREA_OBJ,
-      REW_GAIN_ABL, REW_GAIN_ABL, REW_GAIN_EXP, REW_GAIN_EXP, REW_AUGM_ABL
-    },
+	/* Gark the Calm: */
+	{
+		REW_WRATH, REW_HURT_LOT, REW_HURT_LOT, REW_H_SUMMON, REW_H_SUMMON,
+		REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_SER_MONS, REW_SER_DEMO,
+		REW_POLY_SLF, REW_POLY_WND, REW_HEAL_FUL, REW_GOOD_OBJ, REW_GOOD_OBJ,
+		REW_CHAOS_WP, REW_GOOD_OBS, REW_GOOD_OBS, REW_GREA_OBJ, REW_GREA_OBS
+	},
 
-    /* Ompalam, Lord of Slavery: */
-    {
-      REW_WRATH, REW_HURT_LOT, REW_PISS_OFF, REW_LOSE_ABL, REW_LOSE_EXP,
-      REW_IGNORE,   REW_IGNORE,   REW_DISPEL_C, REW_DO_HAVOC, REW_DO_HAVOC,
-      REW_POLY_SLF, REW_POLY_SLF, REW_GAIN_EXP, REW_GAIN_ABL, REW_GAIN_ABL,
-      REW_SER_MONS, REW_GOOD_OBJ, REW_CHAOS_WP, REW_GREA_OBJ, REW_GOOD_OBS
-    }
+	/* Ikadz, Lord of Torture: */
+	{
+		REW_WRATH, REW_PISS_OFF, REW_PISS_OFF, REW_RUIN_ABL, REW_LOSE_ABL,
+		REW_LOSE_EXP, REW_IGNORE, REW_IGNORE, REW_POLY_WND, REW_SER_DEMO,
+		REW_POLY_SLF, REW_HEAL_FUL, REW_HEAL_FUL, REW_GOOD_OBJ, REW_GAIN_EXP,
+		REW_GAIN_EXP, REW_CHAOS_WP, REW_GAIN_ABL, REW_GREA_OBJ, REW_AUGM_ABL
+	},
+
+	/* Kajabor: */
+	{
+		REW_WRATH, REW_PISS_OFF, REW_HURT_LOT, REW_RUIN_ABL, REW_LOSE_ABL,
+		REW_LOSE_EXP, REW_IGNORE, REW_IGNORE, REW_IGNORE, REW_POLY_SLF,
+		REW_POLY_SLF, REW_POLY_WND, REW_HEAL_FUL, REW_GOOD_OBJ, REW_GAIN_ABL,
+		REW_GAIN_ABL, REW_SER_UNDE, REW_CHAOS_WP, REW_GREA_OBJ, REW_AUGM_ABL
+	},
+
+	/* Krjalk, the Traitor: */
+	{
+		REW_WRATH, REW_CURSE_WP, REW_CURSE_AR, REW_RUIN_ABL, REW_LOSE_ABL,
+		REW_LOSE_EXP, REW_IGNORE, REW_POLY_SLF, REW_POLY_SLF, REW_POLY_SLF,
+		REW_POLY_SLF, REW_POLY_WND, REW_HEAL_FUL, REW_CHAOS_WP, REW_GREA_OBJ,
+		REW_GAIN_ABL, REW_GAIN_ABL, REW_GAIN_EXP, REW_GAIN_EXP, REW_AUGM_ABL
+	},
+
+	/* Ompalam, Lord of Slavery: */
+	{
+		REW_WRATH, REW_HURT_LOT, REW_PISS_OFF, REW_LOSE_ABL, REW_LOSE_EXP,
+		REW_IGNORE,   REW_IGNORE,   REW_DISPEL_C, REW_DO_HAVOC, REW_DO_HAVOC,
+		REW_POLY_SLF, REW_POLY_SLF, REW_GAIN_EXP, REW_GAIN_ABL, REW_GAIN_ABL,
+		REW_SER_MONS, REW_GOOD_OBJ, REW_CHAOS_WP, REW_GREA_OBJ, REW_GOOD_OBS
+	}
 };
 
 #ifdef VERBOSE_MARTIAL_ARTS
@@ -3377,11 +3377,11 @@ martial_arts ma_blows[MAX_MA+1] =
 		96, 69, 10, 12, 18},
 
 	/* A weak unarmed attack for unskilled characters. */
-	{ "You hit %v.",							0, 0, 1, 1, 0},
+	{ "You hit %v.", 0, 0, 1, 1, 0},
 };
 
 /*
- * Window definitions. Defined here to ensure that the names are available 
+ * Window definitions. Defined here to ensure that the names are available
  * before any code which isn't system specific is run.
  * Everything else is blank, to be filled in later.
  */
@@ -3721,7 +3721,7 @@ name_centry ident_info[] =
 	{'8', "Entrance to your home"},
 	{'9', "Entrance to Book Store"},
 	{':', "Rubble"},
-    {';', "A glyph of warding / explosive rune"},
+	{';', "A glyph of warding / explosive rune"},
 	{'<', "An up staircase"},
 	{'=', "A ring"},
 	{'>', "A down staircase"},

@@ -13,7 +13,7 @@
 
 #include "angband.h"
 
-/* 
+/*
  * At the moment, it contains functions to allow a prompt which contains a
  * large number of relatively short options, which are shrunk to fit.
  */
@@ -97,7 +97,7 @@ static void strip_names(char **start, int num, uint len)
 			times[j] = 1;
 			order[j] = j;
 			has_sub[j] = 0;
-			
+
 			/* Don't continue past the end of the name. */
 			if (!sub[j]) break;
 
@@ -107,7 +107,7 @@ static void strip_names(char **start, int num, uint len)
 			/* End last word and advance. */
 			*(sub[j]++) = '\0';
 		}
-		
+
 		/* Look for duplicated words. */
 		for (k = 1; k < j; k++)
 		{
@@ -115,7 +115,7 @@ static void strip_names(char **start, int num, uint len)
 			{
 				/* Ignore different words. */
 				if (strcmp(sub[l], sub[k])) continue;
-				
+
 				/* Increment the number of previous occurrences */
 				times[k]++;
 			}
@@ -134,7 +134,7 @@ static void strip_names(char **start, int num, uint len)
 
 					/* Not enough found. */
 					if (!time) break;
-					
+
 					/* Don't consider this copy again. */
 					time++;
 
@@ -149,10 +149,10 @@ static void strip_names(char **start, int num, uint len)
 				}
 			}
 		}
-		
+
 		/* Sort the list. */
 		ang_sort(has_sub, order, j, ang_sort_comp_strip, ang_sort_swap_strip);
-		
+
 		/* Remove words, most common first. */
 		for (k = 0; k < j && strlen(start[i]) > len; k++)
 		{

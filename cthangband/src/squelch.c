@@ -52,7 +52,7 @@ static int PURE object_quality(object_ctype *o_ptr)
  * It gets a bit paranoid at times but I'm pretty sure that it won't
  * destroy anything you didn't tell it to...  Sensing stuff in the rest
  * of the program can be a bit strange.
- * Broken items get squelched with cursed. Is that right?	
+ * Broken items get squelched with cursed. Is that right?
  * Items sensed as 'uncursed' but not known are ignored.
  */
 static PURE bool destroy_it(object_ctype *o1_ptr)
@@ -103,7 +103,7 @@ static bool squelch_object(object_type **o_ptr)
  * Finish once the player has examined (and possibly squelched) everything,
  * if any of the commands take energy or if various "impossible" things happen.
  *
- * This should be similar to (but simpler than) process_player(), 
+ * This should be similar to (but simpler than) process_player(),
  *
  * This messes around with keymaps in order to allow keymap to be a sequence
  * of keypresses to execute for every squelched object. It would not work if

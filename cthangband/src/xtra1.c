@@ -172,7 +172,7 @@ static void prt_stat(int stat)
 	if (p_ptr->stat_use[stat] > 18+219) attr = 'w';
 	else if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat]) attr = 'y';
 	else attr = 'G';
-	
+
 	/* Choose a name style (reduced or normal) */
 	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
 		name = stat_names_reduced[stat];
@@ -265,7 +265,7 @@ static void prt_sp(void)
  */
 static void prt_spirit(void)
 {
-	int	i, j;
+	int i, j;
 	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 
 	char life[25] = "Life", *ls = life+4;
@@ -273,7 +273,7 @@ static void prt_spirit(void)
 
 	for (i = j = 0; i < MAX_SPIRITS; i++)
 	{
-		spirit_type	*s_ptr = spirits+i;
+		spirit_type *s_ptr = spirits+i;
 
 		/* Add to the appropriate string. */
 		if (i % 2) s = &ls;
@@ -322,7 +322,7 @@ static void prt_depth(void)
 		depths = format(
 			descr[!!(dun_defs[cur_dungeon].flags & DF_TOWER)][(int)depth_in_feet], level);
 	}
-	
+
 	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
 	{
 		depths = dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].shortname;
@@ -400,7 +400,7 @@ static void prt_state(void)
 
 
 /*
- * Prints the speed of a character.			-CJS-
+ * Prints the speed of a character. -CJS-
  */
 static void prt_speed(void)
 {
@@ -429,7 +429,7 @@ static void prt_study(void)
 {
 	char buf[16], *t = buf;
 
-	if (p_ptr->oppose_acid || p_ptr->oppose_elec || p_ptr->oppose_fire || p_ptr->oppose_cold || p_ptr->oppose_pois) 
+	if (p_ptr->oppose_acid || p_ptr->oppose_elec || p_ptr->oppose_fire || p_ptr->oppose_cold || p_ptr->oppose_pois)
 	{
 		t += sprintf(t, "$%cA", atchar[OPPOSE_COL(p_ptr->oppose_acid)]);
 		t += sprintf(t, "$%cE", atchar[OPPOSE_COL(p_ptr->oppose_elec)]);
@@ -450,8 +450,8 @@ static void prt_study(void)
 
 
 /*
- * Redraw the "monster health bar"	-DRS-
- * Rather extensive modifications by	-BEN-
+ * Redraw the "monster health bar" -DRS-
+ * Rather extensive modifications by -BEN-
  *
  * The "monster health bar" provides visual feedback on the "health"
  * of the monster currently being "tracked".  There are several ways
@@ -565,12 +565,12 @@ static void calc_spells(void)
 {
 	const s16b old_new_spells = p_ptr->new_spells;
 
-	int			i, j, k;
-	int			num_allowed, num_known;
-	magic_type		*s_ptr;
+	int i, j, k;
+	int num_allowed, num_known;
+	magic_type *s_ptr;
 
 
-    cptr p = "spell";
+	cptr p = "spell";
 
 
 	/* Hack -- wait for creation */
@@ -581,8 +581,8 @@ static void calc_spells(void)
 
 
 	/* Extract total allowed spells */
-    num_allowed = ((adj_mag_study[p_ptr->stat_ind[A_INT]] *
-                   skill_set[SKILL_MANA].value) / 4);
+	num_allowed = ((adj_mag_study[p_ptr->stat_ind[A_INT]] *
+					skill_set[SKILL_MANA].value) / 4);
 
 	/* Ensure at least one */
 	num_allowed++;
@@ -715,7 +715,7 @@ static void calc_spells(void)
 	for (j = k = 0; j < 128; j++)
 	{
 		/* Access the spell */
-        s_ptr = num_to_spell(j);
+		s_ptr = num_to_spell(j);
 
 		/* Skip spells we cannot remember */
 		if (s_ptr->min > spell_skill(s_ptr)) continue;
@@ -731,7 +731,7 @@ static void calc_spells(void)
 	/* Cannot learn more spells than exist */
 	if (p_ptr->new_spells > k) p_ptr->new_spells = k;
 
-    
+
 
 	/* Spell count changed */
 	if (old_new_spells != p_ptr->new_spells)
@@ -741,9 +741,8 @@ static void calc_spells(void)
 		if (p_ptr->new_spells)
 		{
 			/* Message */
-			msg_format("You can learn %d more %s%s.",
-			           p_ptr->new_spells, p,
-			           (p_ptr->new_spells != 1) ? "s" : "");
+			msg_format("You can learn %d more %s%s.", p_ptr->new_spells, p,
+				(p_ptr->new_spells != 1) ? "s" : "");
 		}
 
 		/* Redraw Study Status */
@@ -789,7 +788,7 @@ bool PURE cumber_glove(object_ctype *o_ptr)
 
 	/* Free action helps spellcasting. */
 	if (f[1] & (TR2_FREE_ACT)) return FALSE;
-	
+
 	/* A dexterity bonus helps spellcasting. */
 	if ((f[0] & (TR1_DEX)) && (o_ptr->pval > 0)) return FALSE;
 
@@ -812,7 +811,7 @@ bool PURE cumber_helm(object_ctype *o_ptr)
 
 	/* Telepathy helps mindcraft. */
 	if (f[2] & (TR3_TELEPATHY)) return FALSE;
-	
+
 	/* A wisdom bonus helps mindcraft. */
 	if ((f[0] & (TR1_WIS)) && (o_ptr->pval > 0)) return FALSE;
 
@@ -832,14 +831,14 @@ bool PURE cumber_helm(object_ctype *o_ptr)
  */
 static void calc_mana(void)
 {
-	int	msp, levels, cur_wgt, max_wgt;
+	int msp, levels, cur_wgt, max_wgt;
 	int     mchi;
 
 	const bool old_cumber_armor = p_ptr->cumber_armor;
 	const bool old_cumber_glove = p_ptr->cumber_glove;
 	const bool old_cumber_helm = p_ptr->cumber_helm;
 
-	object_type	*o_ptr;
+	object_type *o_ptr;
 
 
 
@@ -956,7 +955,7 @@ static void calc_mana(void)
 	{
 		p_ptr->cumber_helm = FALSE;
 	}
-	
+
 
 	/* Chi can never be negative */
 	if (mchi < 0) mchi = 0;
@@ -1201,15 +1200,15 @@ int PURE wield_skill(object_ctype *o_ptr)
 static bool ma_heavy_armor(void)
 {
 
-    u16b arm_wgt = 0;
-    arm_wgt += inventory[INVEN_BODY].weight;
-    arm_wgt += inventory[INVEN_HEAD].weight;
-    arm_wgt += inventory[INVEN_ARM].weight;
-    arm_wgt += inventory[INVEN_OUTER].weight;
-    arm_wgt += inventory[INVEN_HANDS].weight;
-    arm_wgt += inventory[INVEN_FEET].weight;
+	u16b arm_wgt = 0;
+	arm_wgt += inventory[INVEN_BODY].weight;
+	arm_wgt += inventory[INVEN_HEAD].weight;
+	arm_wgt += inventory[INVEN_ARM].weight;
+	arm_wgt += inventory[INVEN_OUTER].weight;
+	arm_wgt += inventory[INVEN_HANDS].weight;
+	arm_wgt += inventory[INVEN_FEET].weight;
 
-    return (arm_wgt > (u16b)((u16b)100 + (u16b)(skill_set[SKILL_MA].value * 2))) ;
+	return (arm_wgt > (u16b)((u16b)100 + (u16b)(skill_set[SKILL_MA].value * 2))) ;
 }
 
 
@@ -1366,7 +1365,7 @@ static race_bonus_type muta_bonuses[] =
 /*
  * Hack - add in the permanent effects of a mutation which behaves in an unusual
  * way.
- * Return TRUE if this is 
+ * Return TRUE if this is
  */
 static bool calc_bonuses_weird(s16b (*flags)[32], int flag, int val)
 {
@@ -1682,20 +1681,20 @@ static void calc_bonuses_add(s16b (*flags)[32])
  */
 static void calc_bonuses(void)
 {
-	int			i, j, hold;
+	int i, j, hold;
 
-	int			old_speed;
+	int old_speed;
 
-	int			old_telepathy;
-	int			old_see_inv;
+	int old_telepathy;
+	int old_see_inv;
 
-	int			old_dis_ac;
-	int			old_dis_to_a;
+	int old_dis_ac;
+	int old_dis_to_a;
 
 	const bool old_heavy_wield = p_ptr->heavy_wield;
 	const bool old_heavy_shoot = p_ptr->heavy_shoot;
 
-	object_type		*o_ptr;
+	object_type *o_ptr;
 
 	const bool old_ma_cumber_armour = p_ptr->ma_cumber_armour;
 
@@ -1770,11 +1769,11 @@ static void calc_bonuses(void)
 	p_ptr->resist_blind = FALSE;
 	p_ptr->resist_neth = FALSE;
 	p_ptr->resist_fear = FALSE;
-    p_ptr->reflect = FALSE;
-    p_ptr->sh_fire = FALSE;
-    p_ptr->sh_elec = FALSE;
-    p_ptr->anti_magic = FALSE;
-    p_ptr->anti_tele = FALSE;
+	p_ptr->reflect = FALSE;
+	p_ptr->sh_fire = FALSE;
+	p_ptr->sh_elec = FALSE;
+	p_ptr->anti_magic = FALSE;
+	p_ptr->anti_tele = FALSE;
 
 	p_ptr->immune_acid = FALSE;
 	p_ptr->immune_elec = FALSE;
@@ -1962,12 +1961,12 @@ static void calc_bonuses(void)
 		p_ptr->dis_to_a += 100;
 	}
 
-    /* wraith_form */
-    if (p_ptr->wraith_form)
+	/* wraith_form */
+	if (p_ptr->wraith_form)
 	{
 		p_ptr->ac += 100;
 		p_ptr->dis_to_a += 100;
-        p_ptr->reflect = TRUE;
+		p_ptr->reflect = TRUE;
 	}
 
 	/* Temporary blessing */
@@ -2015,15 +2014,15 @@ static void calc_bonuses(void)
 	}
 
 	/* Most martial artists gain speed with skill. */
-    if (!p_ptr->ma_cumber_armour)
+	if (!p_ptr->ma_cumber_armour)
 	{
 		p_ptr->pspeed += (skill_set[SKILL_MA].value / 20);
 	}
 
-    if (p_ptr->tim_esp)
-    {
-        p_ptr->telepathy = TRUE;
-    }
+	if (p_ptr->tim_esp)
+	{
+		p_ptr->telepathy = TRUE;
+	}
 
 	/* Temporary see invisible */
 	if (p_ptr->tim_invis)
@@ -2235,14 +2234,14 @@ static void calc_bonuses(void)
 		if (p_ptr->num_blow < 60) p_ptr->num_blow = 60;
 
 
-        /* Boost digging skill by weapon weight */
+		/* Boost digging skill by weapon weight */
 		p_ptr->skill_dig += (o_ptr->weight / 10);
 	}
 
 
-    /* Different calculation for mystics with empty hands */
-    else
-    {
+	/* Different calculation for mystics with empty hands */
+	else
+	{
 		int ma_blow = 0;
 
 		if (skill_set[SKILL_MA].value == 100)
@@ -2252,26 +2251,26 @@ static void calc_bonuses(void)
 		else if (skill_set[SKILL_MA].value > 10)
 			ma_blow = skill_set[SKILL_MA].value * 3 - 30;
 
-            if (p_ptr->ma_cumber_armour)
-                ma_blow /= 2;
+			if (p_ptr->ma_cumber_armour)
+				ma_blow /= 2;
 
-            p_ptr->num_blow += 60 + ma_blow;
+			p_ptr->num_blow += 60 + ma_blow;
 
-            if (!p_ptr->ma_cumber_armour)
-            {
-                p_ptr->to_h += (skill_set[SKILL_MA].value / 6);
-                p_ptr->to_d += (skill_set[SKILL_MA].value / 6);
+			if (!p_ptr->ma_cumber_armour)
+			{
+				p_ptr->to_h += (skill_set[SKILL_MA].value / 6);
+				p_ptr->to_d += (skill_set[SKILL_MA].value / 6);
 
-                p_ptr->dis_to_h += (skill_set[SKILL_MA].value / 6);
-                p_ptr->dis_to_d += (skill_set[SKILL_MA].value / 6);
-            }
-    }
- 
-    p_ptr->to_h += (skill_set[p_ptr->wield_skill].value/10);
-    p_ptr->to_d += (skill_set[p_ptr->wield_skill].value/10);
+				p_ptr->dis_to_h += (skill_set[SKILL_MA].value / 6);
+				p_ptr->dis_to_d += (skill_set[SKILL_MA].value / 6);
+			}
+	}
 
-    p_ptr->dis_to_h += (skill_set[p_ptr->wield_skill].value/10);
-    p_ptr->dis_to_d += (skill_set[p_ptr->wield_skill].value/10);
+	p_ptr->to_h += (skill_set[p_ptr->wield_skill].value/10);
+	p_ptr->to_d += (skill_set[p_ptr->wield_skill].value/10);
+
+	p_ptr->dis_to_h += (skill_set[p_ptr->wield_skill].value/10);
+	p_ptr->dis_to_d += (skill_set[p_ptr->wield_skill].value/10);
 
 
 	/* Affect Skill -- stealth (bonus one) */
@@ -2305,8 +2304,8 @@ static void calc_bonuses(void)
 	if (p_ptr->num_fire < 60) p_ptr->num_fire = 60;
 	if (p_ptr->num_fire > 600) p_ptr->num_fire = 600;
 
-    if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95))
-        p_ptr->skill_sav = 95;
+	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95))
+		p_ptr->skill_sav = 95;
 
 	/* Hack -- handle "xtra" mode */
 	if (character_xtra) return;
@@ -2655,11 +2654,11 @@ void redraw_stuff(void)
 		prt_timers();
 	}
 
-    if (p_ptr->redraw & (PR_EQUIPPY))
-    {
-        p_ptr->redraw &= ~(PR_EQUIPPY);
-        prt_equippy(); /* To draw / delete equippy chars */
-    }
+	if (p_ptr->redraw & (PR_EQUIPPY))
+	{
+		p_ptr->redraw &= ~(PR_EQUIPPY);
+		prt_equippy(); /* To draw / delete equippy chars */
+	}
 
 	if (p_ptr->redraw & (PR_TIME))
 	{
@@ -2689,7 +2688,7 @@ void redraw_stuff(void)
 		p_ptr->redraw &= ~(PR_ENERGY);
 		prt_energy();
 	}
-	
+
 	if (p_ptr->redraw & (PR_HP))
 	{
 		p_ptr->redraw &= ~(PR_HP);
@@ -2701,12 +2700,12 @@ void redraw_stuff(void)
 		p_ptr->redraw &= ~(PR_MANA);
 		prt_sp();
 	}
-	
- 	if (p_ptr->redraw & (PR_SPIRIT))
- 	{
- 		p_ptr->redraw &= ~(PR_SPIRIT);
- 		prt_spirit();
- 	}
+
+	if (p_ptr->redraw & (PR_SPIRIT))
+	{
+		p_ptr->redraw &= ~(PR_SPIRIT);
+		prt_spirit();
+	}
 
 	if (p_ptr->redraw & (PR_GOLD))
 	{
@@ -2786,7 +2785,7 @@ static bool win_equip_good(void)
 		/* There is some equipment */
 		if (inventory[i].k_idx) return TRUE;
 	}
-		
+
 	/* There is no equipment */
 	return FALSE;
 }
@@ -2872,7 +2871,7 @@ static bool win_overhead_good(void)
 	/* The map doesn't fit on the main display. */
 	if (windows[0].term->wid < cur_wid) return TRUE;
 	if (windows[0].term->hgt < cur_hgt) return TRUE;
-	
+
 	/* This is shown on the main display. */
 	return FALSE;
 }
@@ -2886,7 +2885,7 @@ static void win_overhead_display(void)
 
 	/* Redraw map */
 	display_map(0, 0, 0, &x);
-	
+
 	/* Hack - also give the world map if the player is in a town. */
 	if (!dun_level)
 	{
@@ -2975,7 +2974,7 @@ static bool win_object_details_good(void)
 
 	/* Other objects are interesting. */
 	return TRUE;
-}	
+}
 
 static void win_object_details_display(void)
 {
@@ -2983,16 +2982,16 @@ static void win_object_details_display(void)
 
 	/* Never display non-objects. */
 	if (!o_ptr || !(o_ptr->k_idx)) return;
-	
+
 	/* Never display invisible floor objects */
 	if (find_object(o_ptr) == OUP_FLOOR && !los(py, px, o_ptr->iy, o_ptr->ix))
 	{
 		return;
 	}
-	
+
 	/* Describe fully. */
 	identify_fully_aux(o_ptr, 2);
-	
+
 	/* Put the name at the top. */
 	mc_put_fmt(0, 0, "%v %v", get_symbol_f2, object_attr(o_ptr),
 		object_char(o_ptr), object_desc_f3, o_ptr, TRUE, 3);
@@ -3008,7 +3007,7 @@ static bool win_help_good(void)
 }
 
 /*
- * Display some help text. 
+ * Display some help text.
  */
 static void win_help_display(void)
 {
@@ -3025,7 +3024,7 @@ static void win_help_display(void)
  */
 static bool win_visible_good(void)
 {
-	int i; 
+	int i;
 
 	/* Hallucinating players find anything interesting. */
 	if (p_ptr->image) return TRUE;
@@ -3053,7 +3052,7 @@ typedef struct monster_list_entry monster_list_entry;
 
 struct monster_list_entry
 {
-	s16b r_idx;			/* Monster race index */
+	s16b r_idx; /* Monster race index */
 	byte amount;
 };
 
@@ -3175,7 +3174,7 @@ static void win_visible_display(void)
 
 	/* XXX Hallucination - no monster list */
 	if (p_ptr->image)
-	{		
+	{
 		c_prt(TERM_WHITE,"You see a lot of pretty colours.",0,0);
 
 		return;
@@ -3205,14 +3204,14 @@ static void win_visible_display(void)
 				if (who[j].r_idx == m_ptr->r_idx)
 				{
 					who[j].amount++;
-					
+
 					found = TRUE;
 
 					break;
 				}
 			}
 		}
-		
+
 		if (!found)
 		{
 			who[items].r_idx = m_ptr->r_idx;
@@ -3273,8 +3272,8 @@ static void win_visible_display(void)
 			else
 			{
 				if (!r_ptr->flags1 & RF1_UNIQUE) attr = 's';
-			}			
-			
+			}
+
 			dump_race(w, h, num, attr, who+i);
 		}
 	}
@@ -3396,7 +3395,7 @@ static int window_rotate(const window_type *w_ptr)
 		n = (w_ptr->current+c)%NUM_DISPLAY_FUNCS;
 
 		/* Don't stop at a priority of 0. */
-		if (w_ptr->rep[n] == 0) continue; 
+		if (w_ptr->rep[n] == 0) continue;
 
 		/* Stop at any other interesting display. */
 		if ((*display_func[n].good)()) return n;
@@ -3439,7 +3438,7 @@ static int window_best(const window_type *w_ptr, const u32b rep_mask)
 		else
 			i_good = w_ptr->pri[i]*4; /* 3 */
 
-		if (!i_good) continue;	/* 1 (hack) */
+		if (!i_good) continue; /* 1 (hack) */
 		if (i >= w_ptr->current) i_good++; /* 5 */
 		if (rep_mask & d_ptr->flag) i_good += 2; /* 4 */
 		if ((*d_ptr->good)()) i_good += 64; /* 2 */
@@ -3484,9 +3483,9 @@ static void show_display_func(window_type *w_ptr, int display)
 void window_stuff(void)
 {
 	int m, n;
-	
+
 	u32b old_window = p_ptr->window & WINDOW_STUFF_MASK;
-	
+
 	/* Remember the original term (i.e. term_screen) */
 	term *old = Term;
 
@@ -3606,7 +3605,7 @@ void handle_stuff(void)
 
 bool ma_empty_hands(void)
 {
-    return !(inventory[INVEN_WIELD].k_idx);
+	return !(inventory[INVEN_WIELD].k_idx);
 }
 
 /*
@@ -3670,7 +3669,7 @@ void skill_exp(int index)
 {
 	/* No experience is gained on the surface */
 	if (!dun_level) return;
-	
+
 	if (cheat_skll)
 	{
 		msg_format("Check %s skill, values %d/%d, exp %d/%d.",skill_set[index].name,
@@ -3686,7 +3685,7 @@ void skill_exp(int index)
 		}
 		return;
 	}
-	
+
 	/* Debugging message */
 	if (cheat_skll)
 	{

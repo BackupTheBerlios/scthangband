@@ -108,7 +108,7 @@
 
 /*
  * Road Directions
-  */
+	*/
 #define ROAD_LEFT 0x01
 #define ROAD_UP 0x02
 #define ROAD_DOWN 0x04
@@ -116,7 +116,7 @@
 
 /*
  * Store Types
-  */
+	*/
 
 #define STORE_GENERAL    0
 #define STORE_ARMOURY    1
@@ -312,9 +312,9 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Melee attacks... */
 
 /* Maximum HP gained by a single vampiric attack. */
-#define MAX_VAMPIRIC_DRAIN 100 
+#define MAX_VAMPIRIC_DRAIN 100
 /* Increase in the vampiric gain possible per game turn after draining. */
-#define VAMPIRIC_RECOVERY 10 
+#define VAMPIRIC_RECOVERY 10
 
 /* Martial arts... */
 # define MAX_MA 17 /* Number of skilled martial arts attacks. */
@@ -680,9 +680,9 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * OPTION: Maximum number of "quarks" (see "io.c")
  * Default: assume at most 512 different inscriptions are used
+ * 256 more were added for random artefacts.
  */
 #define QUARK_MAX       768
-        /* Was 512... 256 quarks added for random artifacts */
 
 /*
  * OPTION: Maximum number of messages to remember (see "io.c")
@@ -740,7 +740,7 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /* Give it a scroll-like name. Only for first character, removed in
  * flavor_init(). */
-#define CH_SCROLL   0x7F 
+#define CH_SCROLL   0x7F
 
 #define find_cm(c) ((c) & (CM_ACT | CM_TRUE | CM_FALSE | CM_NORM))
 #define find_ci(c) ((c) & 0x07)
@@ -1130,7 +1130,7 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 
 /* Constants to define how long a few of the xtra1.c prt_*() functions are. */
-#define COL_END     12 /* Last character in left border */ 
+#define COL_END     12 /* Last character in left border */
 #define BORDER_WIDTH 12 /* The length of a border string. */
 
 /* Pointers to various on-screen displays handled by redraw_stuff(). */
@@ -2380,7 +2380,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define GF_TURN_ALL     66
 #define GF_DISP_UNDEAD  67
 #define GF_DISP_EVIL    68
-#define GF_DISP_ALL 69    
+#define GF_DISP_ALL 69
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
 #define GF_DISP_LIVING  71
 #define GF_SHARD       72
@@ -2406,7 +2406,7 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /*
  * Distance at which pets follow the player
-  */
+	*/
 #define FOLLOW_DISTANCE 4
 
 /*
@@ -2678,7 +2678,7 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /* Many items ignore all four. */
 #define TR3_IGNORE_ALL \
-	(TR3_IGNORE_ACID | TR3_IGNORE_ELEC | TR3_IGNORE_FIRE | TR3_IGNORE_COLD) 
+	(TR3_IGNORE_ACID | TR3_IGNORE_ELEC | TR3_IGNORE_FIRE | TR3_IGNORE_COLD)
 
 /*
  * Hack -- flag set 1 -- mask for "pval-dependant" flags.
@@ -2686,22 +2686,22 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define TR1_PVAL_MASK   \
 	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
-	 TR1_CON | TR1_CHR | \
-	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
-     TR1_SPEED | TR1_BLOWS )
+	TR1_CON | TR1_CHR | \
+	TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
+	TR1_SPEED | TR1_BLOWS )
 
 
 
 
 /* "Fake" object flags for calc_bonuses_object. */
-#define TR0_TO_H	(1L<<0)	/* Bonus to hit chance. */
-#define TR0_DIS_TO_H	(1L<<1)	/* Known bonus to hit chance. */
-#define TR0_TO_D	(1L<<2)	/* Bonus to damage. */
-#define TR0_DIS_TO_D	(1L<<3)	/* Known bonus to damage. */
-#define TR0_AC	(1L<<4)	/* Modifier to AC. */
-#define TR0_DIS_AC	(1L<<5)	/* Known base AC. */
-#define TR0_DIS_TO_A	(1L<<6)	/* Known bonus to AC. */
-#define TR0_SAVE	(1L<<7)	/* A direct saving throw bonus. */
+#define TR0_TO_H (1L<<0) /* Bonus to hit chance. */
+#define TR0_DIS_TO_H (1L<<1) /* Known bonus to hit chance. */
+#define TR0_TO_D (1L<<2) /* Bonus to damage. */
+#define TR0_DIS_TO_D (1L<<3) /* Known bonus to damage. */
+#define TR0_AC (1L<<4) /* Modifier to AC. */
+#define TR0_DIS_AC (1L<<5) /* Known base AC. */
+#define TR0_DIS_TO_A (1L<<6) /* Known bonus to AC. */
+#define TR0_SAVE (1L<<7) /* A direct saving throw bonus. */
 #define TR0_NO_CUT (1L<<8) /* Immunity to cuts. */
 #define TR0_NO_STUN (1L<<9) /* Immunity to stunning. */
 #define TR0_RES_ELDRITCH (1L<<10) /* Resistance/immunity to sanity blasting. */
@@ -2710,7 +2710,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TR0_HEAL_NETHER (1L<<13) /* Be healed by nether attacks. */
 
 /* Move through walls, taking no damage if low on HP. */
-#define TR0_WEAK_WRAITH (1L<<14) 
+#define TR0_WEAK_WRAITH (1L<<14)
 
 #define TR0_SAVE_SK (1L<<16) /* A skill-based saving throw bonus. */
 #define TR0_AC_SK (1L<<17) /* A skill-based AC bonus. */
@@ -3019,33 +3019,33 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 
 #define RF4_INT_MASK \
-   0L
+	0L
 
 #define RF5_INT_MASK \
-  (RF5_HOLD | RF5_SLOW | RF5_CONF | RF5_BLIND | RF5_SCARE)
+	(RF5_HOLD | RF5_SLOW | RF5_CONF | RF5_BLIND | RF5_SCARE)
 
 #define RF6_INT_MASK \
-   (RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
-    RF6_HEAL | RF6_HASTE | RF6_TRAPS | RF6_S_IB | \
-    RF6_S_KIN | RF6_S_REAVER | RF6_S_MONSTER | RF6_S_MONSTERS | \
-    RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
-    RF6_S_CTHULOID | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
-    RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_GOO | RF6_S_UNIQUE)
+	(RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
+	RF6_HEAL | RF6_HASTE | RF6_TRAPS | RF6_S_IB | \
+	RF6_S_KIN | RF6_S_REAVER | RF6_S_MONSTER | RF6_S_MONSTERS | \
+	RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
+	RF6_S_CTHULOID | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
+	RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_GOO | RF6_S_UNIQUE)
 
- 
+
 /*
  * Hack -- "bolt" spells that may hurt fellow monsters
  */
 #define RF4_BOLT_MASK \
-  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4)
+	(RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4)
 
 #define RF5_BOLT_MASK \
-   (RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
-    RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
-    RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
+	(RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
+	RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
+	RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
 
 #define RF6_BOLT_MASK \
-   0L
+	0L
 
 /* The default value for full_grid. */
 #define MAX_FULL_GRID (MAX_HGT+MAX_WID+1)
@@ -3053,16 +3053,16 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Hack -- summon spells */
 
 #define RF4_SUMMON_MASK \
-    0L
+	0L
 
 #define RF5_SUMMON_MASK \
-    0L
+	0L
 
 #define RF6_SUMMON_MASK \
-    (RF6_S_KIN | RF6_S_REAVER | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
-     RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_CTHULOID | RF6_S_DEMON | \
-     RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
-     RF6_S_GOO | RF6_S_UNIQUE | RF6_S_IB)
+	(RF6_S_KIN | RF6_S_REAVER | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
+	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_CTHULOID | RF6_S_DEMON | \
+	RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
+	RF6_S_GOO | RF6_S_UNIQUE | RF6_S_IB)
 
 
 
@@ -3187,7 +3187,7 @@ logaux(x, 1) logaux(x, 0) 255)
  * Determine if a given inventory item is "tried"
  */
 #define object_tried_p(T) \
-    (k_info[(T)->k_idx].tried)
+	(k_info[(T)->k_idx].tried)
 
 
 /*
@@ -3197,9 +3197,9 @@ logaux(x, 1) logaux(x, 0) 255)
  * Test Three -- Check for "Empty" + "Aware"
  */
 #define object_known_p(T) \
-    (((T)->ident & (IDENT_KNOWN)) || \
-     (k_info[(T)->k_idx].flags3 & TR3_EASY_KNOW && object_aware_p(T)) || \
-     (object_aware_p(T) && (T)->ident & IDENT_EMPTY))
+	(((T)->ident & (IDENT_KNOWN)) || \
+	(k_info[(T)->k_idx].flags3 & TR3_EASY_KNOW && object_aware_p(T)) || \
+	(object_aware_p(T) && (T)->ident & IDENT_EMPTY))
 
 /*
  * Artifacts use the "name1" field
@@ -3214,7 +3214,7 @@ logaux(x, 1) logaux(x, 0) 255)
 	((artifact_p(T) || (T)->art_name) ? TRUE : FALSE)
 
 /*
- * The level at which an object is generated for rating, etc. 
+ * The level at which an object is generated for rating, etc.
  * Maybe this would be better as "the depth at which this item is most likely
  * to be generated"?
  */
@@ -3280,13 +3280,13 @@ logaux(x, 1) logaux(x, 0) 255)
  * Determines if a map location is fully inside the outer walls
  */
 #define in_bounds(Y,X) \
-   (((Y) > 0) && ((X) > 0) && ((Y) < cur_hgt-1) && ((X) < cur_wid-1))
+	(((Y) > 0) && ((X) > 0) && ((Y) < cur_hgt-1) && ((X) < cur_wid-1))
 
 /*
  * Determines if a map location is on or inside the outer walls
  */
 #define in_bounds2(Y,X) \
-   (((Y) >= 0) && ((X) >= 0) && ((Y) < cur_hgt) && ((X) < cur_wid))
+	(((Y) >= 0) && ((X) >= 0) && ((Y) < cur_hgt) && ((X) < cur_wid))
 
 
 /*
@@ -3294,8 +3294,8 @@ logaux(x, 1) logaux(x, 0) 255)
  * Note that "panel_contains(Y,X)" always implies "in_bounds2(Y,X)".
  */
 #define panel_contains(Y,X) \
-  (((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
-   ((X) >= panel_col_min) && ((X) <= panel_col_max))
+	(((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
+	((X) >= panel_col_min) && ((X) <= panel_col_max))
 
 
 
@@ -3309,7 +3309,7 @@ logaux(x, 1) logaux(x, 0) 255)
  * do not, allowing an extremely fast single bit check below.
  */
 #define cave_floor_grid(C) \
-    (~(C)->feat & 0x20 && (C)->feat != FEAT_BUSH && (C)->feat != FEAT_WATER)
+	(~(C)->feat & 0x20 && (C)->feat != FEAT_BUSH && (C)->feat != FEAT_WATER)
 
 #define cave_floor_bold(Y,X) cave_floor_grid(&cave[Y][X])
 
@@ -3320,8 +3320,8 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 2 -- forbid normal objects
  */
 #define cave_clean_grid(C) \
-    (((C)->feat == FEAT_FLOOR) && \
-     (!(C)->o_idx))
+	(((C)->feat == FEAT_FLOOR) && \
+	(!(C)->o_idx))
 
 #define cave_clean_bold(Y,X) cave_clean_grid(&cave[Y][X])
 
@@ -3333,9 +3333,9 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 3 -- forbid the player
  */
 #define cave_empty_grid(C) \
-    (cave_floor_grid(C) && \
-     !((C)->m_idx) && \
-     !((C) == &cave[py][px]))
+	(cave_floor_grid(C) && \
+	!((C)->m_idx) && \
+	!((C) == &cave[py][px]))
 
 #define cave_empty_bold(Y,X) cave_empty_grid(&cave[Y][X])
 
@@ -3348,10 +3348,10 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 4 -- forbid the player
  */
 #define cave_naked_grid(C) \
-    (((C)->feat == FEAT_FLOOR) && \
-     !((C)->o_idx) && \
-     !((C)->m_idx) && \
-     !((C) == &cave[py][px]))
+	(((C)->feat == FEAT_FLOOR) && \
+	!((C)->o_idx) && \
+	!((C)->m_idx) && \
+	!((C) == &cave[py][px]))
 
 #define cave_naked_bold(Y,X) cave_naked_grid(&cave[Y][X])
 
@@ -3365,12 +3365,12 @@ logaux(x, 1) logaux(x, 0) 255)
  * Line 5-6 -- shop doors
  */
 #define cave_perma_grid(C) \
-    (((C)->feat >= FEAT_PERM_BUILDING) || \
-     (((C)->feat == FEAT_LESS) || \
-      ((C)->feat == FEAT_MORE)) || \
-	  ((C)->feat == FEAT_BUSH) || \
-     (((C)->feat >= FEAT_SHOP_HEAD) && \
-      ((C)->feat <= FEAT_SHOP_TAIL)))
+	(((C)->feat >= FEAT_PERM_BUILDING) || \
+	(((C)->feat == FEAT_LESS) || \
+		((C)->feat == FEAT_MORE)) || \
+		((C)->feat == FEAT_BUSH) || \
+	(((C)->feat >= FEAT_SHOP_HEAD) && \
+		((C)->feat <= FEAT_SHOP_TAIL)))
 
 /*
  * Determine if a "legal" grid is within "los" of the player
@@ -3378,7 +3378,7 @@ logaux(x, 1) logaux(x, 0) 255)
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_has_los_bold(Y,X) \
-    ((cave[Y][X].info & (CAVE_VIEW)) != 0)
+	((cave[Y][X].info & (CAVE_VIEW)) != 0)
 
 
 
@@ -3508,8 +3508,8 @@ extern int PlayerUID;
  * Return the "attr" for a given item.
  */
 #define object_kind_attr(T) \
-    ((((!object_aware_kp(T)) || ((T)->x_attr == TERM_DARK))) ? \
-    (u_info[(T)->u_idx].x_attr) : ((T)->x_attr))
+	((((!object_aware_kp(T)) || ((T)->x_attr == TERM_DARK))) ? \
+	(u_info[(T)->u_idx].x_attr) : ((T)->x_attr))
 
 #define object_attr(T) object_kind_attr(k_info+(T)->k_idx)
 
@@ -3517,8 +3517,8 @@ extern int PlayerUID;
  * Return the "char" for a given item.
  */
 #define object_kind_char(T) \
-    ((((!object_aware_kp(T)) || ((T)->x_char == ' '))) ? \
-    (u_info[(T)->u_idx].x_char) : ((T)->x_char))
+	((((!object_aware_kp(T)) || ((T)->x_char == ' '))) ? \
+	(u_info[(T)->u_idx].x_char) : ((T)->x_char))
 
 #define object_char(T) object_kind_char(k_info+(T)->k_idx)
 

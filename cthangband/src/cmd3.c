@@ -38,9 +38,9 @@ void do_cmd_inven(bool equip)
 	show_inven(equip, TRUE);
 
 	/* Build a prompt */
-   sprintf(out_val, "%s: carrying %d.%d pounds (%d%% of capacity). Command: ",
+	sprintf(out_val, "%s: carrying %d.%d pounds (%d%% of capacity). Command: ",
 		title, total_weight / 10, total_weight % 10,
-       (total_weight * 100) / ((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
+		(total_weight * 100) / ((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
 
 	/* Get a command */
 	prt(out_val, 0, 0);
@@ -108,22 +108,22 @@ void do_cmd_wield(object_type *o_ptr)
 
 
 
-    if ((cursed_p(o_ptr)) && (wear_confirm)
-        && (object_known_p(o_ptr) || (o_ptr->ident & (IDENT_SENSE_CURSED))))
-    {
-        if (!(get_check(format("Really use the %v {cursed}? ", 
+	if ((cursed_p(o_ptr)) && (wear_confirm)
+		&& (object_known_p(o_ptr) || (o_ptr->ident & (IDENT_SENSE_CURSED))))
+	{
+		if (!(get_check(format("Really use the %v {cursed}? ",
 			object_desc_f3, o_ptr, FALSE, 0))))
-            return;
-    }
+			return;
+	}
 	/* confirm_wear_all is triggered whenever something may be cursed.
 	 * Slots are excluded because items to be placed in them are always
 	 * created uncursed. */
 	else if (confirm_wear_all && ~o_ptr->ident & IDENT_SENSE_CURSED &&
 		wield_slot(o_ptr) >= INVEN_WIELD && wield_slot(o_ptr) <= INVEN_FEET)
 	{
-        if (!(get_check(format("Really use the %v? ", 
+		if (!(get_check(format("Really use the %v? ",
 			object_desc_f3, o_ptr, FALSE, 3))))
-            return;
+			return;
 	}
 
 	/* Take a turn */
@@ -212,7 +212,7 @@ void do_cmd_wield(object_type *o_ptr)
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA);
 
-    p_ptr->redraw |= (PR_EQUIPPY);
+	p_ptr->redraw |= (PR_EQUIPPY);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -242,7 +242,7 @@ void do_cmd_takeoff(object_type *o_ptr)
 	/* Take off the item */
 	(void)inven_takeoff(o_ptr, 255);
 
-    p_ptr->redraw |= (PR_EQUIPPY);
+	p_ptr->redraw |= (PR_EQUIPPY);
 }
 
 
@@ -270,7 +270,7 @@ void do_cmd_drop(object_type *o_ptr)
 	/* Drop (some of) the item */
 	inven_drop(o_ptr, amt);
 
-    p_ptr->redraw |= (PR_EQUIPPY);
+	p_ptr->redraw |= (PR_EQUIPPY);
 }
 
 /*
@@ -361,7 +361,7 @@ void do_cmd_destroy(object_type *o_ptr)
 /*
  * Hide an object stack on the floor, and ask if its tval should be hidden.
  *
- * Only floor items are considered, as the player is assumed not to 
+ * Only floor items are considered, as the player is assumed not to
  */
 void do_cmd_hide_object(object_type *o_ptr)
 {
@@ -480,7 +480,7 @@ void do_cmd_uninscribe(object_type *o_ptr)
  */
 void do_cmd_inscribe(object_type *o_ptr)
 {
-	char		out_val[80];
+	char out_val[80];
 
 	/* Message */
 	msg_format("Inscribing %v.", object_desc_f3, o_ptr, TRUE, 3);
@@ -666,7 +666,7 @@ void do_cmd_look(void)
  */
 void do_cmd_locate(void)
 {
-	int		dir, y1, x1, y2, x2;
+	int dir, y1, x1, y2, x2;
 
 	/* Start at current panel */
 	y2 = y1 = panel_row;
@@ -691,7 +691,7 @@ void do_cmd_locate(void)
 			/* Get a command (or Cancel) */
 			if (!get_com(&command,
 				"Map sector [%d,%d], which is%s%s%s your sector.  Direction?",
-			        y2, x2, ys, xs, of)) break;
+					y2, x2, ys, xs, of)) break;
 
 			/* Extract the action (if any) */
 			dir = get_keymap_dir(command);
@@ -871,18 +871,18 @@ static void ang_sort_swap_hook(vptr u, vptr v, int a, int b)
  */
 static void do_cmd_query_symbol_aux(u16b *who)
 {
-	int		i, n, r_idx;
-	char	sym, query;
-	char	buf[128];
+	int i, n, r_idx;
+	char sym, query;
+	char buf[128];
 
-	bool	symbol = FALSE;
-	bool	uniq = FALSE;
-	bool	norm = FALSE;
-	bool	string = FALSE;
+	bool symbol = FALSE;
+	bool uniq = FALSE;
+	bool norm = FALSE;
+	bool string = FALSE;
 
-	bool	recall = FALSE;
+	bool recall = FALSE;
 
-	u16b	why = 0;
+	u16b why = 0;
 
 	name_centry *nam_ptr;
 

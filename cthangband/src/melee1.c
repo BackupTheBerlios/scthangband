@@ -141,24 +141,24 @@ bool make_attack_normal(int m_idx)
 	monster_blow *mb_ptr;
 	blow_method_type *b_ptr;
 
-	monster_type	*m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = &m_list[m_idx];
 
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	
 
-	int			i, j, k, tmp, rlev;
-	int			do_cut, do_stun;
 
-	s32b		gold;
+	int i, j, k, tmp, rlev;
+	int do_cut, do_stun;
 
-	object_type		*o_ptr;
+	s32b gold;
+
+	object_type *o_ptr;
 
 	C_TNEW(m_name, MNAME_MAX, char);
 
-	char		ddesc[80];
+	char ddesc[80];
 
-	bool		blinked;
+	bool blinked;
 
 	bool touched = FALSE, fear = FALSE, living = TRUE;
 	bool visible = FALSE;
@@ -198,19 +198,19 @@ bool make_attack_normal(int m_idx)
 
 	/* Assume no blink */
 	blinked = FALSE;
-	
-	/* Give back movement energy */	
+
+	/* Give back movement energy */
 	m_ptr->energy += extract_energy[m_ptr->mspeed];
 	/* And take some attack energy instead */
 	m_ptr->energy -= (TURN_ENERGY/r_ptr->num_blows);
 
-		 visible = FALSE;
-		 obvious = FALSE;
+		visible = FALSE;
+		obvious = FALSE;
 
-		 power = 0;
-		 damage = 0;
+		power = 0;
+		damage = 0;
 
-		 act = NULL;
+		act = NULL;
 
 		/* Choose an attack randomly. */
 		mb_ptr = choose_blow(m_ptr, r_ptr->blow);
@@ -219,10 +219,10 @@ bool make_attack_normal(int m_idx)
 		if (!mb_ptr) return FALSE;
 
 		/* Extract the attack infomation */
-		 effect = mb_ptr->effect;
-		 method = mb_ptr->method;
-		 d_dice = mb_ptr->d_dice;
-		 d_side = mb_ptr->d_side;
+		effect = mb_ptr->effect;
+		method = mb_ptr->method;
+		d_dice = mb_ptr->d_dice;
+		d_side = mb_ptr->d_side;
 
 		/* Extract the attack details. */
 		b_ptr = get_blow_method(method);
@@ -237,34 +237,34 @@ bool make_attack_normal(int m_idx)
 		/* Extract the attack "power" */
 		switch (effect)
 		{
-			case RBE_HURT:	power = 60; break;
-			case RBE_POISON:	power =  5; break;
-			case RBE_UN_BONUS:	power = 20; break;
-			case RBE_UN_POWER:	power = 15; break;
-			case RBE_EAT_GOLD:	power =  5; break;
-			case RBE_EAT_ITEM:	power =  5; break;
-			case RBE_EAT_FOOD:	power =  5; break;
-			case RBE_EAT_LITE:	power =  5; break;
-			case RBE_ACID:	power =  0; break;
-			case RBE_ELEC:	power = 10; break;
-			case RBE_FIRE:	power = 10; break;
-			case RBE_COLD:	power = 10; break;
-			case RBE_BLIND:	power =  2; break;
-			case RBE_CONFUSE:	power = 10; break;
-			case RBE_TERRIFY:	power = 10; break;
-			case RBE_PARALYZE:	power =  2; break;
-			case RBE_LOSE_STR:	power =  0; break;
-			case RBE_LOSE_DEX:	power =  0; break;
-			case RBE_LOSE_CON:	power =  0; break;
-			case RBE_LOSE_INT:	power =  0; break;
-			case RBE_LOSE_WIS:	power =  0; break;
-			case RBE_LOSE_CHR:	power =  0; break;
-			case RBE_LOSE_ALL:	power =  2; break;
-			case RBE_SHATTER:	power = 60; break;
-			case RBE_EXP_10:	power =  5; break;
-			case RBE_EXP_20:	power =  5; break;
-			case RBE_EXP_40:	power =  5; break;
-			case RBE_EXP_80:	power =  5; break;
+			case RBE_HURT: power = 60; break;
+			case RBE_POISON: power =  5; break;
+			case RBE_UN_BONUS: power = 20; break;
+			case RBE_UN_POWER: power = 15; break;
+			case RBE_EAT_GOLD: power =  5; break;
+			case RBE_EAT_ITEM: power =  5; break;
+			case RBE_EAT_FOOD: power =  5; break;
+			case RBE_EAT_LITE: power =  5; break;
+			case RBE_ACID: power =  0; break;
+			case RBE_ELEC: power = 10; break;
+			case RBE_FIRE: power = 10; break;
+			case RBE_COLD: power = 10; break;
+			case RBE_BLIND: power =  2; break;
+			case RBE_CONFUSE: power = 10; break;
+			case RBE_TERRIFY: power = 10; break;
+			case RBE_PARALYZE: power =  2; break;
+			case RBE_LOSE_STR: power =  0; break;
+			case RBE_LOSE_DEX: power =  0; break;
+			case RBE_LOSE_CON: power =  0; break;
+			case RBE_LOSE_INT: power =  0; break;
+			case RBE_LOSE_WIS: power =  0; break;
+			case RBE_LOSE_CHR: power =  0; break;
+			case RBE_LOSE_ALL: power =  2; break;
+			case RBE_SHATTER: power = 60; break;
+			case RBE_EXP_10: power =  5; break;
+			case RBE_EXP_20: power =  5; break;
+			case RBE_EXP_40: power =  5; break;
+			case RBE_EXP_80: power =  5; break;
 		}
 
 
@@ -277,9 +277,9 @@ bool make_attack_normal(int m_idx)
 
 			/* Hack -- Apply "protection from evil" */
 			if ((p_ptr->protevil > 0) &&
-			    (r_ptr->flags3 & (RF3_EVIL)) &&
-			    ((skill_set[SKILL_SAVE].value/2)  >= rlev) &&
-			    ((rand_int(100) + (skill_set[SKILL_SAVE].value/2)) > 50))
+				(r_ptr->flags3 & (RF3_EVIL)) &&
+				((skill_set[SKILL_SAVE].value/2)  >= rlev) &&
+				((rand_int(100) + (skill_set[SKILL_SAVE].value/2)) > 50))
 			{
 				/* Remember the Evil-ness */
 				if (m_ptr->ml)
@@ -417,8 +417,8 @@ bool make_attack_normal(int m_idx)
 
 						/* Drain charged wands/staffs */
 						if (((o_ptr->tval == TV_STAFF) ||
-						     (o_ptr->tval == TV_WAND)) &&
-						    (o_ptr->pval))
+							(o_ptr->tval == TV_WAND)) &&
+							(o_ptr->pval))
 						{
 							/* Message */
 							msg_print("Energy drains from your pack!");
@@ -461,8 +461,8 @@ bool make_attack_normal(int m_idx)
 
 					/* Saving throw (unless paralyzed) based on dex and level */
 					if (!p_ptr->paralyzed &&
-					    (rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-					                      (skill_set[SKILL_SAVE].value/2))))
+						(rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+											(skill_set[SKILL_SAVE].value/2))))
 					{
 						/* Saving throw message */
 						msg_print("You quickly protect your money pouch!");
@@ -514,8 +514,8 @@ bool make_attack_normal(int m_idx)
 
 					/* Saving throw (unless paralyzed) based on dex and level */
 					if (!p_ptr->paralyzed &&
-					    (rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-					                      (skill_set[SKILL_SAVE].value/2))))
+						(rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+											(skill_set[SKILL_SAVE].value/2))))
 					{
 						/* Saving throw message */
 						msg_print("You grab hold of your backpack!");
@@ -543,13 +543,13 @@ bool make_attack_normal(int m_idx)
 						if (!o_ptr->k_idx) continue;
 
 						/* Skip artifacts */
-                        if (allart_p(o_ptr)) continue;
+						if (allart_p(o_ptr)) continue;
 
 						/* Message */
 						msg_format("%sour %v (%c) was stolen!",
-						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           object_desc_f3, o_ptr, FALSE, 3,
-								   index_to_label(o_ptr));
+									((o_ptr->number > 1) ? "One of y" : "Y"),
+									object_desc_f3, o_ptr, FALSE, 3,
+									index_to_label(o_ptr));
 
 						/* Option */
 						if (testing_carry)
@@ -580,8 +580,8 @@ bool make_attack_normal(int m_idx)
 								/* Build stack */
 								m_ptr->hold_o_idx = j_ptr - o_list;
 							}
-                        }
-						
+						}
+
 						/* Steal the items */
 						item_increase(o_ptr, -1);
 						item_optimize(o_ptr);
@@ -621,9 +621,9 @@ bool make_attack_normal(int m_idx)
 
 						/* Message */
 						msg_format("%sour %v (%c) was eaten!",
-						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           object_desc_f3, o_ptr, FALSE, 0,
-								   index_to_label(o_ptr));
+									((o_ptr->number > 1) ? "One of y" : "Y"),
+									object_desc_f3, o_ptr, FALSE, 0,
+									index_to_label(o_ptr));
 
 						/* Steal the items */
 						item_increase(o_ptr, -1);
@@ -1126,56 +1126,56 @@ bool make_attack_normal(int m_idx)
 				/* Apply the stun */
 				if (k) (void)add_flag(TIMED_STUN, k);
 			}
-            if (touched)
-            {
-                if (p_ptr->sh_fire && living)
-                {   if (!(r_ptr->flags3 & RF3_IM_FIRE))
-                    {
-                        msg_format("%^s is suddenly very hot!", m_name);
-                        if (mon_take_hit(m_idx, damroll(2,6), &fear,
-                            " turns into a pile of ash."))
-                        {
-                            blinked = FALSE;
-                            living = FALSE;
-                        }
-                    }
-                    else
-                    {
-                        if (m_ptr->ml)
-                            r_ptr->r_flags3 |= RF3_IM_FIRE;
+			if (touched)
+			{
+				if (p_ptr->sh_fire && living)
+				{   if (!(r_ptr->flags3 & RF3_IM_FIRE))
+					{
+						msg_format("%^s is suddenly very hot!", m_name);
+						if (mon_take_hit(m_idx, damroll(2,6), &fear,
+							" turns into a pile of ash."))
+						{
+							blinked = FALSE;
+							living = FALSE;
+						}
+					}
+					else
+					{
+						if (m_ptr->ml)
+							r_ptr->r_flags3 |= RF3_IM_FIRE;
 
-                    }
+					}
 
-                }
-                if (p_ptr->sh_elec && living)
-                {   if (!(r_ptr->flags3 & RF3_IM_ELEC))
-                    {
-                        msg_format("%^s gets zapped!", m_name);
-                        if (mon_take_hit(m_idx, damroll(2,6), &fear,
-                            " turns into a pile of cinder."))
-                            {
-                                blinked = FALSE;
-                                living = FALSE;
-                            }
-                    }
-                    else
-                    {
-                            if (m_ptr->ml)
-                            r_ptr->r_flags3 |= RF3_IM_ELEC;
-                    }
+				}
+				if (p_ptr->sh_elec && living)
+				{   if (!(r_ptr->flags3 & RF3_IM_ELEC))
+					{
+						msg_format("%^s gets zapped!", m_name);
+						if (mon_take_hit(m_idx, damroll(2,6), &fear,
+							" turns into a pile of cinder."))
+						{
+							blinked = FALSE;
+							living = FALSE;
+						}
+					}
+					else
+					{
+							if (m_ptr->ml)
+							r_ptr->r_flags3 |= RF3_IM_ELEC;
+					}
 
-                            
-                }
-                touched = FALSE;
-            }
 
-            if (r_ptr->flags2 & RF2_RUN_AWAY)
+				}
+				touched = FALSE;
+			}
+
+			if (r_ptr->flags2 & RF2_RUN_AWAY)
 		{
-                              r_ptr->r_flags2 |= (RF2_RUN_AWAY);
+								r_ptr->r_flags2 |= (RF2_RUN_AWAY);
 			msg_format("%^s runs away.", m_name);
 			delete_monster(m_ptr->fy, m_ptr->fx);
 		}
-        }
+		}
 
 		/* Monster missed player */
 		else
@@ -1216,16 +1216,16 @@ bool make_attack_normal(int m_idx)
 	/* Blink away */
 	if (blinked)
 	{
-        msg_print("The thief flees laughing!");
+		msg_print("The thief flees laughing!");
 		teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 	}
 
 
-    if (m_ptr->ml && fear)
-    {
-        sound (SOUND_FLEE);
-        msg_format("%^s flees in terror!", m_name);
-    }
+	if (m_ptr->ml && fear)
+	{
+		sound (SOUND_FLEE);
+		msg_format("%^s flees in terror!", m_name);
+	}
 
 	TFREE(m_name);
 

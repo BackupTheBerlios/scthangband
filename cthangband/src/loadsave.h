@@ -1,5 +1,5 @@
 #define LOADSAVE_H
-#define SFM_SPECIAL	0x80
+#define SFM_SPECIAL 0x80
 
 /*
  * The next variable in the save file is also a version variable.

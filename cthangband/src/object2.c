@@ -21,7 +21,7 @@
 void excise_dun_object(object_type *j_ptr)
 {
 	s16b this_o_idx, next_o_idx = 0;
-	
+
 	s16b prev_o_idx = 0;
 
 
@@ -32,7 +32,7 @@ void excise_dun_object(object_type *j_ptr)
 	if (j_ptr->held_m_idx)
 	{
 		monster_type *m_ptr;
-		
+
 		/* Monster */
 		m_ptr = &m_list[j_ptr->held_m_idx];
 
@@ -40,7 +40,7 @@ void excise_dun_object(object_type *j_ptr)
 		for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 		{
 			object_type *o_ptr;
-		
+
 			/* Acquire object */
 			o_ptr = &o_list[this_o_idx];
 
@@ -61,16 +61,16 @@ void excise_dun_object(object_type *j_ptr)
 				else
 				{
 
-                                        object_type *k_ptr;
+										object_type *k_ptr;
 
-                                        /* Previous object */
-                                        k_ptr = &o_list[prev_o_idx];
+										/* Previous object */
+										k_ptr = &o_list[prev_o_idx];
 
-                                        /* Remove from list */
-                                        k_ptr->next_o_idx = next_o_idx;
- 
+										/* Remove from list */
+										k_ptr->next_o_idx = next_o_idx;
+
 				}
-				
+
 				/* Forget next pointer */
 				o_ptr->next_o_idx = 0;
 
@@ -82,7 +82,7 @@ void excise_dun_object(object_type *j_ptr)
 			prev_o_idx = this_o_idx;
 		}
 	}
-	
+
 	/* Dungeon */
 	else
 	{
@@ -98,7 +98,7 @@ void excise_dun_object(object_type *j_ptr)
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 		{
 			object_type *o_ptr;
-		
+
 			/* Acquire object */
 			o_ptr = &o_list[this_o_idx];
 
@@ -119,18 +119,18 @@ void excise_dun_object(object_type *j_ptr)
 				else
 				{
 
-                                        object_type *k_ptr;
+										object_type *k_ptr;
 
-                                        /* Previous object */
-                                        k_ptr = &o_list[prev_o_idx];
-                                        
-                                        /* Remove from list */
-                                        k_ptr->next_o_idx = next_o_idx;
- 
+										/* Previous object */
+										k_ptr = &o_list[prev_o_idx];
+
+										/* Remove from list */
+										k_ptr->next_o_idx = next_o_idx;
+
 
 
 				}
-				
+
 				/* Forget next pointer */
 				o_ptr->next_o_idx = 0;
 
@@ -173,7 +173,7 @@ void delete_dun_object(object_type *j_ptr)
 
 	/* Wipe the object */
 	object_wipe(j_ptr);
-	
+
 	/* Count objects */
 	o_cnt--;
 }
@@ -187,7 +187,7 @@ void delete_object(int y, int x)
 	cave_type *c_ptr;
 
 	s16b this_o_idx, next_o_idx = 0;
-	
+
 
 	/* Refuse "illegal" locations */
 	if (!in_bounds(y, x)) return;
@@ -224,7 +224,7 @@ void delete_object(int y, int x)
 
 /*
  * Rotate the objects in the stack under the player, so that the top item is
- * sent to the bottom and the rest are moved up. 
+ * sent to the bottom and the rest are moved up.
  */
 void do_cmd_rotate_stack(void)
 {
@@ -233,20 +233,20 @@ void do_cmd_rotate_stack(void)
 	cave_type *c_ptr = &cave[y][x];
 
 	/* Get the object being moved. */
-	o_idx =	c_ptr->o_idx;
+	o_idx = c_ptr->o_idx;
 
 	/* Only rotate a pile of two or more objects. */
 	if (o_idx && o_list[o_idx].next_o_idx)
 	{
 		/* Remove the first object from the list. */
 		excise_dun_object(o_list+o_idx);
-	
+
 		/* Find end of the list. */
 		for (i = c_ptr->o_idx; o_list[i].next_o_idx; i = o_list[i].next_o_idx);
-	
+
 		/* Add after the last object. */
 		o_list[i].next_o_idx = o_idx;
-	
+
 		/* Display the square again. */
 		lite_spot(y,x);
 	}
@@ -350,7 +350,7 @@ static void compact_objects_purge(int size)
 			if (o_ptr->held_m_idx)
 			{
 				monster_type *m_ptr;
-				
+
 				/* Acquire monster */
 				m_ptr = &m_list[o_ptr->held_m_idx];
 
@@ -361,7 +361,7 @@ static void compact_objects_purge(int size)
 				/* Monsters protect their objects */
 				if (rand_int(100) < 90) continue;
 			}
-			
+
 			/* Dungeon */
 			else
 			{
@@ -377,7 +377,7 @@ static void compact_objects_purge(int size)
 			chance = 90;
 
 			/* Hack -- only compact artifacts in emergencies */
-	    if (allart_p(o_ptr)
+		if (allart_p(o_ptr)
 		&& (cnt < 1000)) chance = 100;
 
 			/* Apply the saving throw */
@@ -419,7 +419,7 @@ static void compact_objects_aux(int i1, int i2)
 	{
 		/* Acquire object */
 		o_ptr = &o_list[i];
-		
+
 		/* Skip "dead" objects */
 		if (!o_ptr->k_idx) continue;
 
@@ -440,10 +440,10 @@ static void compact_objects_aux(int i1, int i2)
 	if (o_ptr->held_m_idx)
 	{
 		monster_type *m_ptr;
-		
+
 		/* Acquire monster */
 		m_ptr = &m_list[o_ptr->held_m_idx];
-		
+
 		/* Repair monster */
 		if (m_ptr->hold_o_idx == i1)
 		{
@@ -457,7 +457,7 @@ static void compact_objects_aux(int i1, int i2)
 	{
 		int y, x;
 
-		/* Acquire location */  
+		/* Acquire location */
 		y = o_ptr->iy;
 		x = o_ptr->ix;
 
@@ -482,7 +482,7 @@ static void compact_objects_aux(int i1, int i2)
 
 /*
  * Remove dead (or purged) objects from the object list.
- */	
+ */
 static void compact_objects_excise(void)
 {
 	int i;
@@ -572,14 +572,14 @@ void wipe_o_list(bool preserve)
 		if (o_ptr->held_m_idx)
 		{
 			monster_type *m_ptr;
-			
+
 			/* Monster */
 			m_ptr = &m_list[o_ptr->held_m_idx];
-			
+
 			/* Hack -- see above */
 			m_ptr->hold_o_idx = 0;
 		}
-		
+
 		/* Dungeon */
 		else
 		{
@@ -640,7 +640,7 @@ object_type *o_pop(void)
 	for (i = 1; i < o_max; i++)
 	{
 		object_type *o_ptr;
-		
+
 		/* Acquire object */
 		o_ptr = &o_list[i];
 
@@ -845,14 +845,14 @@ void object_tried(object_type *o_ptr)
  * Return the value of the flags the object has...
  * Consider all flags if this is being done to find an appropriate randart.
  * If this is being done to price an item, flags based on the k_idx, name1
- * and name2 fields are counted elsewhere. 
+ * and name2 fields are counted elsewhere.
  */
 s32b PURE flag_cost(object_ctype *o_ptr, bool all)
 {
-    s32b total = 0;
-    u32b f1, f2, f3;
+	s32b total = 0;
+	u32b f1, f2, f3;
 	int plusses = o_ptr->pval;
-        object_flags(o_ptr, &f1, &f2, &f3);
+		object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Remove the standard flags. */
 	if (!all)
@@ -864,198 +864,198 @@ s32b PURE flag_cost(object_ctype *o_ptr, bool all)
 		f1 &= ~(k_ptr->flags1 | e_ptr->flags1 | a_ptr->flags1);
 		f2 &= ~(k_ptr->flags2 | e_ptr->flags2 | a_ptr->flags2);
 		f3 &= ~(k_ptr->flags3 | e_ptr->flags3 | a_ptr->flags3);
-	}		
+	}
 
-    if (f1 & TR1_STR) total += (1000 * plusses);
-    if (f1 & TR1_INT) total += (1000 * plusses);
-    if (f1 & TR1_WIS) total += (1000 * plusses);
-    if (f1 & TR1_DEX) total += (1000 * plusses);
-    if (f1 & TR1_CON) total += (1000 * plusses);
-    if (f1 & TR1_CHR) total += (250 * plusses);
-    if (f1 & TR1_CHAOTIC) total += 10000;
-    if (f1 & TR1_VAMPIRIC) total += 13000;
-    if (f1 & TR1_STEALTH) total += (250 * plusses);
-    if (f1 & TR1_SEARCH) total += (100 * plusses);
-    if (f1 & TR1_INFRA) total += (150 * plusses);
-    if (f1 & TR1_TUNNEL) total += (175 * plusses);
-    if ((f1 & TR1_SPEED) && (plusses > 0))
-            total += (10000 + (2500 * plusses));
-    if ((f1 & TR1_BLOWS) && (plusses > 0))
-            total += (10000 + (2500 * plusses));
-    if (f1 & TR1_XXX1) total += 0;
-    if (f1 & TR1_XXX2) total += 0;
-    if (f1 & TR1_SLAY_ANIMAL) total += 3500;
-    if (f1 & TR1_SLAY_EVIL) total += 4500;
-    if (f1 & TR1_SLAY_UNDEAD) total += 3500;
-    if (f1 & TR1_SLAY_DEMON) total += 3500;
-    if (f1 & TR1_SLAY_ORC) total += 3000;
-    if (f1 & TR1_SLAY_TROLL) total += 3500;
-    if (f1 & TR1_SLAY_GIANT) total += 3500;
+	if (f1 & TR1_STR) total += (1000 * plusses);
+	if (f1 & TR1_INT) total += (1000 * plusses);
+	if (f1 & TR1_WIS) total += (1000 * plusses);
+	if (f1 & TR1_DEX) total += (1000 * plusses);
+	if (f1 & TR1_CON) total += (1000 * plusses);
+	if (f1 & TR1_CHR) total += (250 * plusses);
+	if (f1 & TR1_CHAOTIC) total += 10000;
+	if (f1 & TR1_VAMPIRIC) total += 13000;
+	if (f1 & TR1_STEALTH) total += (250 * plusses);
+	if (f1 & TR1_SEARCH) total += (100 * plusses);
+	if (f1 & TR1_INFRA) total += (150 * plusses);
+	if (f1 & TR1_TUNNEL) total += (175 * plusses);
+	if ((f1 & TR1_SPEED) && (plusses > 0))
+			total += (10000 + (2500 * plusses));
+	if ((f1 & TR1_BLOWS) && (plusses > 0))
+			total += (10000 + (2500 * plusses));
+	if (f1 & TR1_XXX1) total += 0;
+	if (f1 & TR1_XXX2) total += 0;
+	if (f1 & TR1_SLAY_ANIMAL) total += 3500;
+	if (f1 & TR1_SLAY_EVIL) total += 4500;
+	if (f1 & TR1_SLAY_UNDEAD) total += 3500;
+	if (f1 & TR1_SLAY_DEMON) total += 3500;
+	if (f1 & TR1_SLAY_ORC) total += 3000;
+	if (f1 & TR1_SLAY_TROLL) total += 3500;
+	if (f1 & TR1_SLAY_GIANT) total += 3500;
 	switch (f1 & TR1_ALL_SLAY_DRAGON)
 	{
 		case TR1_SLAY_DRAGON: total += 3500; break;
 		case TR1_KILL_DRAGON: total += 5500; break;
 		case TR1_X15_DRAGON: total += 10000; break;
 	}
-    if (f1 & TR1_VORPAL) total += 5000;
-    if (f1 & TR1_IMPACT) total += 5000;
-    if (f1 & TR1_BRAND_POIS) total += 7500;
-    if (f1 & TR1_BRAND_ACID) total += 7500;
-    if (f1 & TR1_BRAND_ELEC) total += 7500;
-    if (f1 & TR1_BRAND_FIRE) total += 5000;
-    if (f1 & TR1_BRAND_COLD) total += 5000;
-    if (f2 & TR2_SUST_STR) total += 850;
-    if (f2 & TR2_SUST_INT) total += 850;
-    if (f2 & TR2_SUST_WIS) total += 850;
-    if (f2 & TR2_SUST_DEX) total += 850;
-    if (f2 & TR2_SUST_CON) total += 850;
-    if (f2 & TR2_SUST_CHR) total += 250;
-    if (f2 & TR2_RAND_RESIST) total += 0;
-    if (f2 & TR2_RAND_POWER) total += 0;
-    if (f2 & TR2_IM_ACID) total += 10000;
-    if (f2 & TR2_IM_ELEC) total += 10000;
-    if (f2 & TR2_IM_FIRE) total += 10000;
-    if (f2 & TR2_IM_COLD) total += 10000;
-    if (f2 & TR2_RAND_EXTRA) total += 0;
-    if (f2 & TR2_REFLECT) total += 10000;
-    if (f2 & TR2_FREE_ACT) total += 4500;
-    if (f2 & TR2_HOLD_LIFE) total += 8500;
-    if (f2 & TR2_RES_ACID) total += 1250;
-    if (f2 & TR2_RES_ELEC) total += 1250;
-    if (f2 & TR2_RES_FIRE) total += 1250;
-    if (f2 & TR2_RES_COLD) total += 1250;
-    if (f2 & TR2_RES_POIS) total += 2500;
-    if (f2 & TR2_RES_FEAR) total += 2500;
-    if (f2 & TR2_RES_LITE) total += 1750;
-    if (f2 & TR2_RES_DARK) total += 1750;
-    if (f2 & TR2_RES_BLIND) total += 2000;
-    if (f2 & TR2_RES_CONF) total += 2000;
-    if (f2 & TR2_RES_SOUND) total += 2000;
-    if (f2 & TR2_RES_SHARDS) total += 2000;
-    if (f2 & TR2_RES_NETHER) total += 2000;
-    if (f2 & TR2_RES_NEXUS) total += 2000;
-    if (f2 & TR2_RES_CHAOS) total += 2000;
-    if (f2 & TR2_RES_DISEN) total += 10000;
-    if (f3 & TR3_SH_FIRE) total += 3750;
-    if (f3 & TR3_SH_ELEC) total += 5000;
-    if (f3 & TR3_SHOW_ARMOUR) total += 0;
-    if (f3 & TR3_NO_TELE) total += 2500;
-    if (f3 & TR3_NO_MAGIC) total += 2500;
-    if (f3 & TR3_WRAITH) total += 250000;
-    if (f3 & TR3_TY_CURSE) total -= 15000;
-    if (f3 & TR3_EASY_KNOW) total += 0;
-    if (f3 & TR3_HIDE_TYPE) total += 0;
-    if (f3 & TR3_SHOW_MODS) total += 0;
-    if (f3 & TR3_GOOD) total += 0;
-    if (f3 & TR3_FEATHER) total += 1250;
-    if (f3 & TR3_LITE) total += 1250;
-    if (f3 & TR3_SEE_INVIS) total += 2000;
-    if (f3 & TR3_TELEPATHY) total += 12500;
-    if (f3 & TR3_SLOW_DIGEST) total += 750;
-    if (f3 & TR3_REGEN) total += 2500;
-    if (f3 & TR3_XTRA_MIGHT) total += 2250;
-    if (f3 & TR3_XTRA_SHOTS) total += 10000;
-    if (f3 & TR3_IGNORE_ACID) total += 100;
-    if (f3 & TR3_IGNORE_ELEC) total += 100;
-    if (f3 & TR3_IGNORE_FIRE) total += 100;
-    if (f3 & TR3_IGNORE_COLD) total += 100;
-    if (f3 & TR3_ACTIVATE) total += 100;
-    if (f3 & TR3_DRAIN_EXP) total -= 12500;
-    if (f3 & TR3_TELEPORT)
-           { if (o_ptr->ident & IDENT_CURSED)
-                    total -= 7500;
-             else
-                    total += 250;
-            }
-    if (f3 & TR3_AGGRAVATE) total -= 10000;
-    if (f3 & TR3_BLESSED) total += 750;
-    if (f3 & TR3_CURSED) total -= 5000;
-    if (f3 & TR3_AUTO_CURSE) total -= 10000;
-    if (f3 & TR3_HEAVY_CURSE) total -= 12500;
-    if (f3 & TR3_PERMA_CURSE) total -= 15000;
+	if (f1 & TR1_VORPAL) total += 5000;
+	if (f1 & TR1_IMPACT) total += 5000;
+	if (f1 & TR1_BRAND_POIS) total += 7500;
+	if (f1 & TR1_BRAND_ACID) total += 7500;
+	if (f1 & TR1_BRAND_ELEC) total += 7500;
+	if (f1 & TR1_BRAND_FIRE) total += 5000;
+	if (f1 & TR1_BRAND_COLD) total += 5000;
+	if (f2 & TR2_SUST_STR) total += 850;
+	if (f2 & TR2_SUST_INT) total += 850;
+	if (f2 & TR2_SUST_WIS) total += 850;
+	if (f2 & TR2_SUST_DEX) total += 850;
+	if (f2 & TR2_SUST_CON) total += 850;
+	if (f2 & TR2_SUST_CHR) total += 250;
+	if (f2 & TR2_RAND_RESIST) total += 0;
+	if (f2 & TR2_RAND_POWER) total += 0;
+	if (f2 & TR2_IM_ACID) total += 10000;
+	if (f2 & TR2_IM_ELEC) total += 10000;
+	if (f2 & TR2_IM_FIRE) total += 10000;
+	if (f2 & TR2_IM_COLD) total += 10000;
+	if (f2 & TR2_RAND_EXTRA) total += 0;
+	if (f2 & TR2_REFLECT) total += 10000;
+	if (f2 & TR2_FREE_ACT) total += 4500;
+	if (f2 & TR2_HOLD_LIFE) total += 8500;
+	if (f2 & TR2_RES_ACID) total += 1250;
+	if (f2 & TR2_RES_ELEC) total += 1250;
+	if (f2 & TR2_RES_FIRE) total += 1250;
+	if (f2 & TR2_RES_COLD) total += 1250;
+	if (f2 & TR2_RES_POIS) total += 2500;
+	if (f2 & TR2_RES_FEAR) total += 2500;
+	if (f2 & TR2_RES_LITE) total += 1750;
+	if (f2 & TR2_RES_DARK) total += 1750;
+	if (f2 & TR2_RES_BLIND) total += 2000;
+	if (f2 & TR2_RES_CONF) total += 2000;
+	if (f2 & TR2_RES_SOUND) total += 2000;
+	if (f2 & TR2_RES_SHARDS) total += 2000;
+	if (f2 & TR2_RES_NETHER) total += 2000;
+	if (f2 & TR2_RES_NEXUS) total += 2000;
+	if (f2 & TR2_RES_CHAOS) total += 2000;
+	if (f2 & TR2_RES_DISEN) total += 10000;
+	if (f3 & TR3_SH_FIRE) total += 3750;
+	if (f3 & TR3_SH_ELEC) total += 5000;
+	if (f3 & TR3_SHOW_ARMOUR) total += 0;
+	if (f3 & TR3_NO_TELE) total += 2500;
+	if (f3 & TR3_NO_MAGIC) total += 2500;
+	if (f3 & TR3_WRAITH) total += 250000;
+	if (f3 & TR3_TY_CURSE) total -= 15000;
+	if (f3 & TR3_EASY_KNOW) total += 0;
+	if (f3 & TR3_HIDE_TYPE) total += 0;
+	if (f3 & TR3_SHOW_MODS) total += 0;
+	if (f3 & TR3_GOOD) total += 0;
+	if (f3 & TR3_FEATHER) total += 1250;
+	if (f3 & TR3_LITE) total += 1250;
+	if (f3 & TR3_SEE_INVIS) total += 2000;
+	if (f3 & TR3_TELEPATHY) total += 12500;
+	if (f3 & TR3_SLOW_DIGEST) total += 750;
+	if (f3 & TR3_REGEN) total += 2500;
+	if (f3 & TR3_XTRA_MIGHT) total += 2250;
+	if (f3 & TR3_XTRA_SHOTS) total += 10000;
+	if (f3 & TR3_IGNORE_ACID) total += 100;
+	if (f3 & TR3_IGNORE_ELEC) total += 100;
+	if (f3 & TR3_IGNORE_FIRE) total += 100;
+	if (f3 & TR3_IGNORE_COLD) total += 100;
+	if (f3 & TR3_ACTIVATE) total += 100;
+	if (f3 & TR3_DRAIN_EXP) total -= 12500;
+	if (f3 & TR3_TELEPORT)
+			{ if (o_ptr->ident & IDENT_CURSED)
+					total -= 7500;
+			else
+					total += 250;
+			}
+	if (f3 & TR3_AGGRAVATE) total -= 10000;
+	if (f3 & TR3_BLESSED) total += 750;
+	if (f3 & TR3_CURSED) total -= 5000;
+	if (f3 & TR3_AUTO_CURSE) total -= 10000;
+	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
+	if (f3 & TR3_PERMA_CURSE) total -= 15000;
 
-    /* Also, give some extra for activatable powers... */
+	/* Also, give some extra for activatable powers... */
 
-    if ((o_ptr->art_name) && (o_ptr->flags3 & (TR3_ACTIVATE)))
-    {
-        int type = o_ptr->activation;
+	if ((o_ptr->art_name) && (o_ptr->flags3 & (TR3_ACTIVATE)))
+	{
+		int type = o_ptr->activation;
 
-        if (type == ACT_SUNLIGHT) total += 250;
-        else if (type == ACT_BO_MISS_1) total += 250;
-        else if (type == ACT_BA_POIS_1) total += 300;
-        else if (type == ACT_BO_ELEC_1) total += 250;
-        else if (type == ACT_BO_ACID_1) total += 250;
-        else if (type == ACT_BO_COLD_1) total += 250;
-        else if (type == ACT_BO_FIRE_1) total += 250;
-        else if (type == ACT_BA_COLD_1) total += 750;
-        else if (type == ACT_BA_FIRE_1) total += 1000;
-        else if (type == ACT_DRAIN_1) total += 500;
-        else if (type == ACT_BA_COLD_2) total += 1250;
-        else if (type == ACT_BA_ELEC_2) total += 1500;
-        else if (type == ACT_DRAIN_2) total += 750;
-        else if (type == ACT_VAMPIRE_1) total = 1000;
-        else if (type == ACT_BO_MISS_2) total += 1000;
-        else if (type == ACT_BA_FIRE_2) total += 1750;
-        else if (type == ACT_BA_COLD_3) total += 2500;
-        else if (type == ACT_BA_ELEC_3) total += 2500;
-        else if (type == ACT_WHIRLWIND) total += 7500;
-        else if (type == ACT_VAMPIRE_2) total += 2500;
-        else if (type == ACT_CALL_CHAOS) total += 5000;
-        else if (type == ACT_SHARD) total += 5000;
-        else if (type == ACT_DISP_EVIL) total += 4000;
-        else if (type == ACT_DISP_GOOD) total += 3500;
-        else if (type == ACT_BA_MISS_3) total += 5000;
-        else if (type == ACT_CONFUSE) total += 500;
-        else if (type == ACT_SLEEP) total += 750;
-        else if (type == ACT_QUAKE) total += 600;
-        else if (type == ACT_TERROR) total += 2500;
-        else if (type == ACT_TELE_AWAY) total += 2000;
-        else if (type == ACT_GENOCIDE) total += 10000;
-        else if (type == ACT_MASS_GENO) total += 10000;
-        else if (type == ACT_CHARM_ANIMAL) total += 7500;
-        else if (type == ACT_CHARM_UNDEAD) total += 10000;
-        else if (type == ACT_CHARM_OTHER) total += 10000;
-        else if (type == ACT_CHARM_ANIMALS) total += 12500;
-        else if (type == ACT_CHARM_OTHERS) total += 17500;
-        else if (type == ACT_SUMMON_ANIMAL) total += 10000;
-        else if (type == ACT_SUMMON_PHANTOM) total += 12000;
-        else if (type == ACT_SUMMON_ELEMENTAL) total += 15000;
-        else if (type == ACT_SUMMON_DEMON) total += 20000;
-        else if (type == ACT_SUMMON_UNDEAD) total += 20000;
-        else if (type == ACT_CURE_LW) total += 500;
-        else if (type == ACT_CURE_MW) total += 750;
-        else if (type == ACT_REST_LIFE) total += 7500;
-        else if (type == ACT_REST_ALL) total += 15000;
-        else if (type == ACT_CURE_700) total += 10000;
-        else if (type == ACT_CURE_1000) total += 15000;
-        else if (type == ACT_ESP) total += 1500;
-        else if (type == ACT_BERSERK) total += 800;
-        else if (type == ACT_PROT_EVIL) total += 5000;
-        else if (type == ACT_RESIST_ALL) total += 5000;
-        else if (type == ACT_SPEED) total += 15000;
-        else if (type == ACT_XTRA_SPEED) total += 25000;
-        else if (type == ACT_WRAITH) total += 25000;
-        else if (type == ACT_INVULN) total += 25000;
-        else if (type == ACT_LIGHT) total += 150;
-        else if (type == ACT_MAP_LIGHT) total += 500;
-        else if (type == ACT_DETECT_ALL) total += 1000;
-        else if (type == ACT_DETECT_XTRA) total += 12500;
-        else if (type == ACT_ID_FULL) total += 10000;
-        else if (type == ACT_ID_PLAIN) total += 1250;
-        else if (type == ACT_RUNE_EXPLO) total += 4000;
-        else if (type == ACT_RUNE_PROT) total += 10000;
-        else if (type == ACT_SATIATE) total += 2000;
-        else if (type == ACT_DEST_DOOR) total += 100;
-        else if (type == ACT_STONE_MUD) total += 1000;
-        else if (type == ACT_RECHARGE) total += 1000;
-        else if (type == ACT_ALCHEMY) total += 10000;
-        else if (type == ACT_DIM_DOOR) total += 10000;
-        else if (type == ACT_TELEPORT) total += 2000;
-        else if (type == ACT_RECALL) total += 7500;
-    }
+		if (type == ACT_SUNLIGHT) total += 250;
+		else if (type == ACT_BO_MISS_1) total += 250;
+		else if (type == ACT_BA_POIS_1) total += 300;
+		else if (type == ACT_BO_ELEC_1) total += 250;
+		else if (type == ACT_BO_ACID_1) total += 250;
+		else if (type == ACT_BO_COLD_1) total += 250;
+		else if (type == ACT_BO_FIRE_1) total += 250;
+		else if (type == ACT_BA_COLD_1) total += 750;
+		else if (type == ACT_BA_FIRE_1) total += 1000;
+		else if (type == ACT_DRAIN_1) total += 500;
+		else if (type == ACT_BA_COLD_2) total += 1250;
+		else if (type == ACT_BA_ELEC_2) total += 1500;
+		else if (type == ACT_DRAIN_2) total += 750;
+		else if (type == ACT_VAMPIRE_1) total = 1000;
+		else if (type == ACT_BO_MISS_2) total += 1000;
+		else if (type == ACT_BA_FIRE_2) total += 1750;
+		else if (type == ACT_BA_COLD_3) total += 2500;
+		else if (type == ACT_BA_ELEC_3) total += 2500;
+		else if (type == ACT_WHIRLWIND) total += 7500;
+		else if (type == ACT_VAMPIRE_2) total += 2500;
+		else if (type == ACT_CALL_CHAOS) total += 5000;
+		else if (type == ACT_SHARD) total += 5000;
+		else if (type == ACT_DISP_EVIL) total += 4000;
+		else if (type == ACT_DISP_GOOD) total += 3500;
+		else if (type == ACT_BA_MISS_3) total += 5000;
+		else if (type == ACT_CONFUSE) total += 500;
+		else if (type == ACT_SLEEP) total += 750;
+		else if (type == ACT_QUAKE) total += 600;
+		else if (type == ACT_TERROR) total += 2500;
+		else if (type == ACT_TELE_AWAY) total += 2000;
+		else if (type == ACT_GENOCIDE) total += 10000;
+		else if (type == ACT_MASS_GENO) total += 10000;
+		else if (type == ACT_CHARM_ANIMAL) total += 7500;
+		else if (type == ACT_CHARM_UNDEAD) total += 10000;
+		else if (type == ACT_CHARM_OTHER) total += 10000;
+		else if (type == ACT_CHARM_ANIMALS) total += 12500;
+		else if (type == ACT_CHARM_OTHERS) total += 17500;
+		else if (type == ACT_SUMMON_ANIMAL) total += 10000;
+		else if (type == ACT_SUMMON_PHANTOM) total += 12000;
+		else if (type == ACT_SUMMON_ELEMENTAL) total += 15000;
+		else if (type == ACT_SUMMON_DEMON) total += 20000;
+		else if (type == ACT_SUMMON_UNDEAD) total += 20000;
+		else if (type == ACT_CURE_LW) total += 500;
+		else if (type == ACT_CURE_MW) total += 750;
+		else if (type == ACT_REST_LIFE) total += 7500;
+		else if (type == ACT_REST_ALL) total += 15000;
+		else if (type == ACT_CURE_700) total += 10000;
+		else if (type == ACT_CURE_1000) total += 15000;
+		else if (type == ACT_ESP) total += 1500;
+		else if (type == ACT_BERSERK) total += 800;
+		else if (type == ACT_PROT_EVIL) total += 5000;
+		else if (type == ACT_RESIST_ALL) total += 5000;
+		else if (type == ACT_SPEED) total += 15000;
+		else if (type == ACT_XTRA_SPEED) total += 25000;
+		else if (type == ACT_WRAITH) total += 25000;
+		else if (type == ACT_INVULN) total += 25000;
+		else if (type == ACT_LIGHT) total += 150;
+		else if (type == ACT_MAP_LIGHT) total += 500;
+		else if (type == ACT_DETECT_ALL) total += 1000;
+		else if (type == ACT_DETECT_XTRA) total += 12500;
+		else if (type == ACT_ID_FULL) total += 10000;
+		else if (type == ACT_ID_PLAIN) total += 1250;
+		else if (type == ACT_RUNE_EXPLO) total += 4000;
+		else if (type == ACT_RUNE_PROT) total += 10000;
+		else if (type == ACT_SATIATE) total += 2000;
+		else if (type == ACT_DEST_DOOR) total += 100;
+		else if (type == ACT_STONE_MUD) total += 1000;
+		else if (type == ACT_RECHARGE) total += 1000;
+		else if (type == ACT_ALCHEMY) total += 10000;
+		else if (type == ACT_DIM_DOOR) total += 10000;
+		else if (type == ACT_TELEPORT) total += 2000;
+		else if (type == ACT_RECALL) total += 7500;
+	}
 
 
-    return total;
+	return total;
 
 }
 
@@ -1157,8 +1157,8 @@ static s32b PURE object_value_aux(object_ctype *o_ptr)
 	}
 
 	/* Add the modifiers for random flags. */
-    if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
-             value += flag_cost (o_ptr, FALSE);
+	if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
+			value += flag_cost (o_ptr, FALSE);
 
 	/* Analyze pval bonus */
 	switch (o_ptr->tval)
@@ -1486,8 +1486,8 @@ int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr)
 			/* Require identical "artifact" names */
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
-            /* Random artifacts never stack */
-            if (o_ptr->art_name || j_ptr->art_name) return (FALSE);
+			/* Random artifacts never stack */
+			if (o_ptr->art_name || j_ptr->art_name) return (FALSE);
 
 			/* Require identical "ego-item" names */
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
@@ -1510,7 +1510,7 @@ int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr)
 		default:
 		{
 			/* Require knowledge or former similarity. */
-			if (!(k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && 
+			if (!(k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) &&
 				(!object_known_p(o_ptr) || !object_known_p(j_ptr)))
 			{
 				if (!same_stack(o_ptr, j_ptr)) return (0);
@@ -1523,11 +1523,11 @@ int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr)
 
 
 
-    /* Hack -- Identical flags! */
-    if ((o_ptr->flags1 != j_ptr->flags1) ||
-        (o_ptr->flags2 != j_ptr->flags2) ||
-        (o_ptr->flags3 != j_ptr->flags3))
-            return (0);
+	/* Hack -- Identical flags! */
+	if ((o_ptr->flags1 != j_ptr->flags1) ||
+		(o_ptr->flags2 != j_ptr->flags2) ||
+		(o_ptr->flags3 != j_ptr->flags3))
+			return (0);
 
 	/* Hack -- Require identical "cursed" status */
 	if ((o_ptr->ident & (IDENT_CURSED)) != (j_ptr->ident & (IDENT_CURSED))) return (0);
@@ -1651,7 +1651,7 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- blend "known" status */
 	if (object_known_p(j_ptr)) object_known(o_ptr);
 
-    /* Hack -- clear "storebought" if only one has it */
+	/* Hack -- clear "storebought" if only one has it */
 	o_ptr->ident &= ~(~j_ptr->ident & IDENT_STOREB);
 
 	/* Hack - blend other IDENT_* flags */
@@ -1911,7 +1911,7 @@ static void add_ability(object_type *o_ptr)
 		case 7: o_ptr->flags2 |= (TR2_HOLD_LIFE); return;
 	}
 }
-		
+
 /*
  * Add a random power to *o_ptr.
  */
@@ -1957,18 +1957,18 @@ static void random_artifact_resistance(object_type * o_ptr)
 			o_ptr->flags3 |= TR3_AGGRAVATE;
 	}
 
-    if (give_power)
-    {
-        /* Randomize the "xtra" power */
+	if (give_power)
+	{
+		/* Randomize the "xtra" power */
 		add_ability(o_ptr);
-    }
+	}
 
-    artifact_bias = 0;
+	artifact_bias = 0;
 
-    if (give_resistance)
-    {
-        random_resistance(o_ptr, FALSE, ((randint(22))+16));
-    }
+	if (give_resistance)
+	{
+		random_resistance(o_ptr, FALSE, ((randint(22))+16));
+	}
 }
 
 
@@ -2068,9 +2068,9 @@ void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  * of 1/5*(1-1/5/2)=18% of being generated if in depth, rather than the
  * former having a probability of 20% and the latter 16%.
  */
-#define MAKE_ART_CERTAIN_FAIL	1
-#define MAKE_ART_RANDOM_FAIL	2
-#define MAKE_ART_NONE	3
+#define MAKE_ART_CERTAIN_FAIL 1
+#define MAKE_ART_RANDOM_FAIL 2
+#define MAKE_ART_NONE 3
 
 static errr make_artifact(object_type *o_ptr, bool special)
 {
@@ -2103,7 +2103,7 @@ static errr make_artifact(object_type *o_ptr, bool special)
 		{
 			if (a_ptr->k_idx != o_ptr->k_idx) continue;
 		}
-			
+
 		/* Note artefact */
 		order[arts++] = i;
 		/* Give a basic description */
@@ -2181,9 +2181,9 @@ static bool PURE ego_can_curse(int k_idx)
 	}
 	return FALSE;
 }
-	
 
-/* 
+
+/*
  * Choose an ego type appropriate for o_ptr at random.
  */
 static byte get_ego_item(object_ctype *o_ptr, int level, bool cursed)
@@ -2248,7 +2248,7 @@ static byte get_ego_item(object_ctype *o_ptr, int level, bool cursed)
  */
 static void a_m_aux_1(object_type *o_ptr, int level, int power)
 {
-    int tohit1 = randint(5) + m_bonus(5, level);
+	int tohit1 = randint(5) + m_bonus(5, level);
 	int todam1 = randint(5) + m_bonus(5, level);
 
 	int tohit2 = m_bonus(10, level);
@@ -2336,16 +2336,16 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 
 static void dragon_resist(object_type * o_ptr)
 {
-    do
-    {
-        artifact_bias = 0;
+	do
+	{
+		artifact_bias = 0;
 
-        if (randint(4)==1)
-            random_resistance(o_ptr, FALSE, rand_range(5, 18));
-        else
-            random_resistance(o_ptr, FALSE, rand_range(17, 38));
-        }
-        while (one_in(2));
+		if (randint(4)==1)
+			random_resistance(o_ptr, FALSE, rand_range(5, 18));
+		else
+			random_resistance(o_ptr, FALSE, rand_range(17, 38));
+		}
+		while (one_in(2));
 }
 
 
@@ -2358,7 +2358,7 @@ static void a_m_aux_2(object_type *o_ptr, const int level, const int power)
 
 	const int toac2 = m_bonus(10, level);
 
-    artifact_bias = 0;
+	artifact_bias = 0;
 
 	/* Good */
 	if (power > 0)
@@ -2403,7 +2403,7 @@ struct bonus_type
 	s16b power; /* Cursed status, see BT_* flags. */
 };
 
-#define BV_PVAL	1 /* Affects pval */
+#define BV_PVAL 1 /* Affects pval */
 #define BV_TO_H 2 /* Affects to hit bonus */
 #define BV_TO_D 3 /* Affects damage bonus */
 #define BV_TO_A 4 /* Affects armour bonus */
@@ -2788,7 +2788,7 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		/* Hack - turn into a randart, not an ego item. */
 		case E_SPEC_RANDART:
 		{
-		    artifact_bias = 0;
+			artifact_bias = 0;
 			o_ptr->name2 = 0;
 			create_artifact(o_ptr, FALSE);
 			return TRUE;
@@ -3193,8 +3193,8 @@ void make_item(object_type *o_ptr, make_item_type *i_ptr, int how, int idx)
 		create_artifact(o_ptr, FALSE);
 
 		/* Use a name if specified */
-		if (i_ptr->name) 
- 		{
+		if (i_ptr->name)
+		{
 			o_ptr->art_name = quark_add(event_name+i_ptr->name);
 		}
 	}
@@ -3348,7 +3348,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, int how, int idx)
 
 	/* Notice "okay" out-of-depth objects */
 	if (!cursed_p(j_ptr) && !broken_p(j_ptr) &&
-	    (object_k_level(k_info+j_ptr->k_idx) > (dun_depth)))
+		(object_k_level(k_info+j_ptr->k_idx) > (dun_depth)))
 	{
 		/* Rating increase */
 		rating += (object_k_level(k_info+j_ptr->k_idx) - (dun_depth));
@@ -3356,7 +3356,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, int how, int idx)
 		/* Cheat -- peek at items */
 		object_mention(j_ptr);
 	}
-	
+
 	/* Set the stack field for the new object. */
 	set_stack_number(j_ptr);
 
@@ -3424,18 +3424,18 @@ void place_object(int y, int x, bool good, bool great, int how, int idx)
 
 		/* Notice */
 		note_spot(y, x);
-		
+
 		/* Redraw */
 		lite_spot(y, x);
 	}
-    else
-    {
+	else
+	{
 			/* Hack -- Preserve artifacts */
-            if (q_ptr->name1)
-            {
-                a_info[q_ptr->name1].cur_num = 0;
-            }
-    }
+			if (q_ptr->name1)
+			{
+				a_info[q_ptr->name1].cur_num = 0;
+			}
+	}
 
 }
 
@@ -3446,7 +3446,7 @@ void place_object(int y, int x, bool good, bool great, int how, int idx)
 /*
  * XXX XXX XXX Do not use these hard-coded values.
  */
-#define OBJ_GOLD_LIST	OBJ_COPPER	/* First "gold" entry */
+#define OBJ_GOLD_LIST OBJ_COPPER /* First "gold" entry */
 #define MAX_GOLD (OBJ_ADAMANTITE-OBJ_COPPER+1) /* Number of "gold" entries */
 
 /*
@@ -3547,7 +3547,7 @@ void place_gold(int y, int x, int how, int idx)
 
 		/* Notice */
 		note_spot(y, x);
-		
+
 		/* Redraw */
 		lite_spot(y, x);
 	}
@@ -3622,7 +3622,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
 
 	/* Handle normal "breakage" */
-    if (!allart_p(j_ptr) && percent(chance))
+	if (!allart_p(j_ptr) && percent(chance))
 	{
 		if (k_info[j_ptr->k_idx].tval == TV_POTION)
 		{
@@ -3640,7 +3640,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 		/* Debug */
 		if (cheat_wzrd) msg_print("(breakage)");
 
-        /* Failure */
+		/* Failure */
 		return NULL;
 	}
 
@@ -3692,10 +3692,10 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 			{
 				object_type *o_ptr;
-					
+
 				/* Acquire object */
 				o_ptr = &o_list[this_o_idx];
-						
+
 				/* Acquire next object */
 				next_o_idx = o_ptr->next_o_idx;
 
@@ -3733,7 +3733,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 			/* Track it */
 			by = ty;
 			bx = tx;
-			
+
 			/* Okay */
 			flag = TRUE;
 		}
@@ -3741,11 +3741,11 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 
 
 	/* Handle lack of space */
-    if (!flag && !(allart_p(j_ptr)))
+	if (!flag && !(allart_p(j_ptr)))
 	{
 		/* Message */
 		msg_format("The %v disappear%s.",
-			   object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
+				object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
 
 		/* Debug */
 		if (cheat_wzrd) msg_print("(no floor space)");
@@ -3763,7 +3763,7 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 			ty = rand_spread(by, 1);
 			tx = rand_spread(bx, 1);
 		}
-		
+
 		/* Random locations */
 		else
 		{
@@ -3796,13 +3796,13 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
-	
+
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
-		
+
 		/* Acquire next object */
 		next_o_idx = o_ptr->next_o_idx;
-		
+
 		/* Check for combination */
 		if (object_similar(o_ptr, j_ptr))
 		{
@@ -3825,16 +3825,16 @@ object_type *drop_near(object_type *j_ptr, int chance, int y, int x)
 	{
 		/* Message */
 		msg_format("The %v disappear%s.",
-			   object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
+			object_desc_f3, j_ptr, FALSE, 0, (plural ? "" : "s"));
 
 		/* Debug */
 		if (cheat_wzrd) msg_print("(too many objects)");
 
-        /* Hack -- Preserve artifacts */
-        if (j_ptr->name1)
-        {
-            a_info[j_ptr->name1].cur_num = 0;
-        }
+		/* Hack -- Preserve artifacts */
+		if (j_ptr->name1)
+		{
+			a_info[j_ptr->name1].cur_num = 0;
+		}
 
 		/* Failure */
 		return NULL;
@@ -4082,10 +4082,10 @@ void item_optimize(object_type *o_ptr)
 
 		/* Erase the "final" slot */
 		object_wipe(j_ptr);
-		
+
 		/* Stop tracking */
 		object_track(j_ptr);
-		
+
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_SPELL);
 
@@ -4107,7 +4107,7 @@ void item_optimize(object_type *o_ptr)
 
 		/* Recalculate mana XXX */
 		p_ptr->update |= (PU_MANA);
-		
+
 		/* Window stuff */
 		p_ptr->window |= (PW_EQUIP | PW_SPELL);
 	}
@@ -4144,7 +4144,7 @@ static bool ang_sort_comp_pack_aux(object_ctype *a_ptr, object_ctype *b_ptr);
  * Set *j_ptr to the slot object o_ptr should go into in the player's
  * inventory.
  * Return TRUE if the objects can be combined, FALSE if it needs to be inserted.
- * 
+ *
  * This assumes that ang_sort_comp_pack_aux() and object_similar() will fail
  * for every object after the first one for which the former fails.
  */
@@ -4422,7 +4422,7 @@ void combine_pack(void)
 /* Check k_idx as a macro. */
 #define k_idx(O) ((O)->k_idx)
 
-/* 
+/*
  * A custom macro for the below which return if either a_ptr or b_ptr fails
  * the PAR function/macro.
  */
@@ -4487,7 +4487,7 @@ static bool PURE ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 	object_ctype *inv = u, *a_ptr = inv+a, *b_ptr = inv+b;
 	return ang_sort_comp_pack_aux(a_ptr, b_ptr);
 }
-	
+
 /*
  * Swap two inventory items.
  */
@@ -4561,7 +4561,7 @@ void display_koff(int k_idx)
 
 
 	/* Display spells in books */
-    if (item_tester_spells(q_ptr))
+	if (item_tester_spells(q_ptr))
 	{
 		display_spells(2, 0, q_ptr);
 	}

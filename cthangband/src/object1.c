@@ -290,22 +290,22 @@ static byte default_tval_to_attr(int tval)
 
 		case TV_RING:
 		{
-	    return (TERM_ORANGE);
+		return (TERM_ORANGE);
 		}
 
 		case TV_STAFF:
 		{
-	    return (TERM_VIOLET);
+		return (TERM_VIOLET);
 		}
 
 		case TV_WAND:
 		{
-	    return (TERM_VIOLET);
+		return (TERM_VIOLET);
 		}
 
 		case TV_ROD:
 		{
-	    return (TERM_VIOLET);
+		return (TERM_VIOLET);
 		}
 
 		case TV_SCROLL:
@@ -315,7 +315,7 @@ static byte default_tval_to_attr(int tval)
 
 		case TV_POTION:
 		{
-	    return (TERM_BLUE);
+		return (TERM_BLUE);
 		}
 
 		case TV_FLASK:
@@ -325,12 +325,12 @@ static byte default_tval_to_attr(int tval)
 
 		case TV_FOOD:
 		{
-	    return (TERM_GREEN);
+		return (TERM_GREEN);
 		}
 
 	case TV_SORCERY_BOOK:
 		{
-	    return (TERM_L_BLUE);
+		return (TERM_L_BLUE);
 		}
 
 	case TV_THAUMATURGY_BOOK:
@@ -338,14 +338,14 @@ static byte default_tval_to_attr(int tval)
 			return (TERM_L_RED);
 		}
 
-    case TV_CONJURATION_BOOK:
-        {
-            return (TERM_ORANGE);
-        }
-    case TV_NECROMANCY_BOOK:
-        {
-            return (TERM_SLATE);
-        }
+	case TV_CONJURATION_BOOK:
+		{
+			return (TERM_ORANGE);
+		}
+	case TV_NECROMANCY_BOOK:
+		{
+			return (TERM_SLATE);
+		}
 	}
 
 	return (TERM_WHITE);
@@ -437,9 +437,9 @@ void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f3) |= e_ptr->flags3;
 	}
 
-    /* Random artifact ! */
-    if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
-    {
+	/* Random artifact ! */
+	if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
+	{
 		(*f1) |= o_ptr->flags1;
 		(*f2) |= o_ptr->flags2;
 		(*f3) |= o_ptr->flags3;
@@ -535,7 +535,7 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 
 	j_ptr->pval = known;
 
-	/* 
+	/*
 	 * The player always knows where the object was found. The game does not
 	 * attempt to predict whether the player can tell which monster dropped it,
 	 * but this knowledge doesn't help much for an identified item.
@@ -701,7 +701,7 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 	}
 }
 
-/* 
+/*
  * A macro used below to clear a j_ptr field if the corresponding q_ptr field
  * is set to 0.
  */
@@ -875,7 +875,7 @@ cptr find_next_good_flag(cptr s, byte reject, byte require)
 
 		/* Ordinary characters do nothing. */
 		if (*s & 0xE0);
-				
+
 		/* NULs are parsed elewhere. */
 		else if (*s == '\0') return s;
 
@@ -911,7 +911,7 @@ cptr find_next_good_flag(cptr s, byte reject, byte require)
 
 	/* The loop finished with a flag-altering character, but
 	 * the character after it may be printable. */
- 	return s+1;
+	return s+1;
 }
 
 /*
@@ -987,7 +987,7 @@ static const char hidden_name[] = {CH_ARTICLE,
  */
 
 /* The number of strings which can be in the process of being printed at once. */
-#define MAX_NAME_LEVEL	8
+#define MAX_NAME_LEVEL 8
 
 static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	int mode)
@@ -1005,9 +1005,9 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
  * the output string for the first letter or number, and adds "a" or "an"
  * to the beginning as appropriate. */
 
-#define ARTICLE_NO	0
-#define ARTICLE_REQUEST	1
-#define ARTICLE_LETTER	2
+#define ARTICLE_NO 0
+#define ARTICLE_REQUEST 1
+#define ARTICLE_LETTER 2
 
 	int wants_article = ARTICLE_NO;
 
@@ -1020,15 +1020,15 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 
 	int                     power,i;
 
-	cptr	r[MAX_NAME_LEVEL];
+	cptr r[MAX_NAME_LEVEL];
 	char            *t;
 
 	/* tmp_val_base is twice as large as necessary as little bounds checking
 	 * is performed. This probably isn't good enough. */
 	C_TNEW(tmp_val_base, len+80, char);
-	char		*tmp_val = tmp_val_base;
+	char *tmp_val = tmp_val_base;
 
-	object_kind	*k1_ptr;
+	object_kind *k1_ptr;
 	unident_type *u1_ptr;
 	o_base_type *ob1_ptr;
 	obj_know_type know_ptr[1];
@@ -1064,8 +1064,8 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	strings[CI_FLAVOUR] = (know_ptr->u_idx) ? u_name+u1_ptr->name : "";
 	strings[CI_BASE] = (know_ptr->p_id) ? ob_name+ob1_ptr->name : "";
 	strings[CI_EGO] = (ok_ptr->name2) ? e_name+e_info[o_ptr->name2].name : "";
- 	strings[CI_ARTEFACT] = (o_ptr->name1) ? a_name+a_info[o_ptr->name1].name :
- 		(o_ptr->art_name) ? quark_str(o_ptr->art_name) : "";
+	strings[CI_ARTEFACT] = (o_ptr->name1) ? a_name+a_info[o_ptr->name1].name :
+		(o_ptr->art_name) ? quark_str(o_ptr->art_name) : "";
 
 	/* If any of the above remain unset, they shall be ignored. */
 	for (i = 0; i < 8; i++)
@@ -1206,7 +1206,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 		else if (find_cm(*r[this_level]) != CM_ACT)
 		{
 			r[this_level] = find_next_good_flag(r[this_level], reject | current, ~(reject | current));
-	  	}
+			}
 		/* Paranoia - too many levels.
 		 * As "current" prevents the same string from being
 		 * started recursively, this can't happen. */
@@ -1244,7 +1244,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 		{
 			tmp_val -= 2;
 			strncpy(tmp_val, "a ", 2);
-  		}
+			}
 	}
 
 	/* No more details wanted */
@@ -1386,8 +1386,8 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 
 	/* Hack -- Wands and Staffs have charges */
 	if (ok_ptr->pval &&
-	    ((o_ptr->tval == TV_STAFF) ||
-	     (o_ptr->tval == TV_WAND)))
+		((o_ptr->tval == TV_STAFF) ||
+		(o_ptr->tval == TV_WAND)))
 	{
 		/* Dump " (N charges)" */
 		t += sprintf(t, " (%d charge%s)",
@@ -1484,17 +1484,17 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 
 				j_ptr->ident &= ~(IDENT_CURSED);
 				j_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
-	 			value = object_value(j_ptr, FALSE);
+				value = object_value(j_ptr, FALSE);
 			}
 
 			/* Let the player know when a known cursed item is not broken. */
 			if (worthless && value)
 			{
-	 			sprintf(tmp2[0], "(%ld)", value);
+				sprintf(tmp2[0], "(%ld)", value);
 			}
 			else
 			{
-	 			sprintf(tmp2[0], "%ld", value);
+				sprintf(tmp2[0], "%ld", value);
 			}
 			k[i++] = tmp2[0];
 		}
@@ -1523,7 +1523,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 
 			/* Append the inscriptions from bottom to top. */
 			while (i-- && t < tmp_val+len-2)
-			{ 
+			{
 				/* This leaves enough space for formatting. */
 				sprintf(t, "%.*s", MAX(0, len-(t-tmp_val)-2), k[i]);
 				t = strchr(t, '\0');
@@ -1587,161 +1587,161 @@ static cptr PURE item_activation(object_ctype *o_ptr)
 	if (!(f3 & (TR3_ACTIVATE))) return "nothing";
 
 	/* Randarts store their activations in object_type. */
-        switch (o_ptr->activation)
-        {
-            case ACT_SUNLIGHT:
-                return "beam of sunlight every 10 turns";
-            case ACT_BO_MISS_1:
-                return "magic missile (2d6) every 2 turns";
-            case ACT_BA_POIS_1:
-                return "stinking cloud (12), rad. 3, every 4+d4 turns";
-            case ACT_BO_ELEC_1:
-                return "lightning bolt (4d8) every 6+d6 turns";
-            case ACT_BO_ACID_1:
-                return "acid bolt (5d8) every 5+d5 turns";
-            case ACT_BO_COLD_1:
-                return "frost bolt (6d8) every 7+d7 turns";
-            case ACT_BO_FIRE_1:
-                return "fire bolt (9d8) every 8+d8 turns";
-            case ACT_BA_COLD_1:
-                return "ball of cold (48) every 400 turns";
-            case ACT_BA_FIRE_1:
-                return "ball of fire (72) every 400 turns";
-            case ACT_DRAIN_1:
-                return "drain life (100) every 100+d100 turns";
-            case ACT_BA_COLD_2:
-                return "ball of cold (100) every 300 turns";
-            case ACT_BA_ELEC_2:
-                return "ball of lightning (100) every 500 turns";
-            case ACT_DRAIN_2:
-                return "drain life (120) every 400 turns";
-            case ACT_VAMPIRE_1:
-                return "vampiric drain (3*50) every 400 turns";
-            case ACT_BO_MISS_2:
-                return "arrows (150) every 90+d90 turns";
-            case ACT_BA_FIRE_2:
-                return "fire ball (120) every 225+d225 turns";
-            case ACT_BA_COLD_3:
-                return "ball of cold (200) every 325+d325 turns";
-            case ACT_WHIRLWIND:
-                return "whirlwind attack every 250 turns";
-            case ACT_VAMPIRE_2:
-                return "vampiric drain (3*100) every 400 turns";
-            case ACT_CALL_CHAOS:
-                return "call chaos every 350 turns";
-            case ACT_SHARD:
-                return "shard ball (120+level) every 400 turns";
-            case ACT_DISP_EVIL:
-                return "dispel evil (level*5) every 300+d300 turns";
-            case ACT_DISP_GOOD:
-                return "dispel good (level*5) every 300+d300 turns";
-            case ACT_BA_MISS_3:
-                return "elemental breath (300) every 500 turns";
-            case ACT_CONFUSE:
-                return "confuse monster every 15 turns";
-            case ACT_SLEEP:
-                return "sleep nearby monsters every 55 turns";
-            case ACT_QUAKE:
-                return "earthquake (rad 10) every 50 turns";
-            case ACT_TERROR:
-                return "terror every 3 * (level+10) turns";
-            case ACT_TELE_AWAY:
-                return "teleport away every 200 turns";
-            case ACT_BANISH_EVIL:
-                return "banish evil every 250+d250 turns";
-            case ACT_GENOCIDE:
-                return "genocide every 500 turns";
-            case ACT_MASS_GENO:
-                return "mass genocide every 1000 turns";
-            case ACT_CHARM_ANIMAL:
-                return "charm animal every 300 turns";
-            case ACT_CHARM_UNDEAD:
-                return "enslave undead every 333 turns";
-            case ACT_CHARM_OTHER:
-                return "charm monster every 400 turns";
-            case ACT_CHARM_ANIMALS:
-                return "animal friendship every 500 turns";
-            case ACT_CHARM_OTHERS:
-                return "mass charm every 750 turns";
-            case ACT_SUMMON_ANIMAL:
-                return "summon animal every 200+d300 turns";
-            case ACT_SUMMON_PHANTOM:
-                return "summon phantasmal servant every 200+d200 turns";
-            case ACT_SUMMON_ELEMENTAL:
-                return "summon elemental every 750 turns";
-            case ACT_SUMMON_DEMON:
-                return "summon demon every 666+d333 turns";
-            case ACT_SUMMON_UNDEAD:
-                return "summon undead every 666+d333 turns";
-            case ACT_CURE_LW:
-                return "remove fear & heal 30 hp every 10 turns";
-            case ACT_CURE_MW:
-                return "heal 4d8 & wounds every 3+d3 turns";
-            case ACT_CURE_POISON:
-                return "remove fear and cure poison every 5 turns";
-            case ACT_REST_LIFE:
-                return "restore life levels every 450 turns";
-            case ACT_REST_ALL:
-                return "restore stats and life levels every 750 turns";
-            case ACT_CURE_700:
-                return "heal 700 hit points every 250 turns";
-            case ACT_CURE_1000:
-                return "heal 1000 hit points every 888 turns";
-            case ACT_ESP:
-                return "temporary ESP (dur 25+d30) every 200 turns";
-            case ACT_BERSERK:
-                return "heroism and berserk (dur 50+d50) every 100+d100 turns";
-            case ACT_PROT_EVIL:
-                return "protect evil (dur level*3 + d25) every 225+d225 turns";
-            case ACT_RESIST_ALL:
-                return "resist elements (dur 40+d40) every 200 turns";
-            case ACT_SPEED:
-                return "speed (dur 20+d20) every 250 turns";
-            case ACT_XTRA_SPEED:
-                return "speed (dur 75+d75) every 200+d200 turns";
-            case ACT_WRAITH:
-                return "wraith form (level/2 + d(level/2)) every 1000 turns";
-            case ACT_INVULN:
-                return "invulnerability (dur 8+d8) every 1000 turns";
-            case ACT_LIGHT:
-                return "light area (dam 2d15) every 10+d10 turns";
-            case ACT_MAP_LIGHT:
-                return "light (dam 2d15) & map area every 50+d50 turns";
-            case ACT_DETECT_ALL:
-                return "detection every 55+d55 turns";
-            case ACT_DETECT_XTRA:
-                return "detection, probing and identify true every 1000 turns";
-            case ACT_ID_FULL:
-                return "identify true every 750 turns";
-            case ACT_ID_PLAIN:
-                return "identify spell every 10 turns";
-            case ACT_RUNE_EXPLO:
-                return "explosive rune every 200 turns";
-            case ACT_RUNE_PROT:
-                return "rune of protection every 400 turns";
-            case ACT_SATIATE:
-                return "satisfy hunger every 200 turns";
-            case ACT_DEST_DOOR:
-                return "destroy doors every 10 turns";
-            case ACT_STONE_MUD:
-                return "stone to mud every 5 turns";
-            case ACT_RECHARGE:
-                return "recharging every 70 turns";
-            case ACT_ALCHEMY:
-                return "alchemy every 500 turns";
-            case ACT_DIM_DOOR:
-                return "dimension door every 100 turns";
-            case ACT_TELEPORT:
-                return "teleport (range 100) every 45 turns";
+		switch (o_ptr->activation)
+		{
+			case ACT_SUNLIGHT:
+				return "beam of sunlight every 10 turns";
+			case ACT_BO_MISS_1:
+				return "magic missile (2d6) every 2 turns";
+			case ACT_BA_POIS_1:
+				return "stinking cloud (12), rad. 3, every 4+d4 turns";
+			case ACT_BO_ELEC_1:
+				return "lightning bolt (4d8) every 6+d6 turns";
+			case ACT_BO_ACID_1:
+				return "acid bolt (5d8) every 5+d5 turns";
+			case ACT_BO_COLD_1:
+				return "frost bolt (6d8) every 7+d7 turns";
+			case ACT_BO_FIRE_1:
+				return "fire bolt (9d8) every 8+d8 turns";
+			case ACT_BA_COLD_1:
+				return "ball of cold (48) every 400 turns";
+			case ACT_BA_FIRE_1:
+				return "ball of fire (72) every 400 turns";
+			case ACT_DRAIN_1:
+				return "drain life (100) every 100+d100 turns";
+			case ACT_BA_COLD_2:
+				return "ball of cold (100) every 300 turns";
+			case ACT_BA_ELEC_2:
+				return "ball of lightning (100) every 500 turns";
+			case ACT_DRAIN_2:
+				return "drain life (120) every 400 turns";
+			case ACT_VAMPIRE_1:
+				return "vampiric drain (3*50) every 400 turns";
+			case ACT_BO_MISS_2:
+				return "arrows (150) every 90+d90 turns";
+			case ACT_BA_FIRE_2:
+				return "fire ball (120) every 225+d225 turns";
+			case ACT_BA_COLD_3:
+				return "ball of cold (200) every 325+d325 turns";
+			case ACT_WHIRLWIND:
+				return "whirlwind attack every 250 turns";
+			case ACT_VAMPIRE_2:
+				return "vampiric drain (3*100) every 400 turns";
+			case ACT_CALL_CHAOS:
+				return "call chaos every 350 turns";
+			case ACT_SHARD:
+				return "shard ball (120+level) every 400 turns";
+			case ACT_DISP_EVIL:
+				return "dispel evil (level*5) every 300+d300 turns";
+			case ACT_DISP_GOOD:
+				return "dispel good (level*5) every 300+d300 turns";
+			case ACT_BA_MISS_3:
+				return "elemental breath (300) every 500 turns";
+			case ACT_CONFUSE:
+				return "confuse monster every 15 turns";
+			case ACT_SLEEP:
+				return "sleep nearby monsters every 55 turns";
+			case ACT_QUAKE:
+				return "earthquake (rad 10) every 50 turns";
+			case ACT_TERROR:
+				return "terror every 3 * (level+10) turns";
+			case ACT_TELE_AWAY:
+				return "teleport away every 200 turns";
+			case ACT_BANISH_EVIL:
+				return "banish evil every 250+d250 turns";
+			case ACT_GENOCIDE:
+				return "genocide every 500 turns";
+			case ACT_MASS_GENO:
+				return "mass genocide every 1000 turns";
+			case ACT_CHARM_ANIMAL:
+				return "charm animal every 300 turns";
+			case ACT_CHARM_UNDEAD:
+				return "enslave undead every 333 turns";
+			case ACT_CHARM_OTHER:
+				return "charm monster every 400 turns";
+			case ACT_CHARM_ANIMALS:
+				return "animal friendship every 500 turns";
+			case ACT_CHARM_OTHERS:
+				return "mass charm every 750 turns";
+			case ACT_SUMMON_ANIMAL:
+				return "summon animal every 200+d300 turns";
+			case ACT_SUMMON_PHANTOM:
+				return "summon phantasmal servant every 200+d200 turns";
+			case ACT_SUMMON_ELEMENTAL:
+				return "summon elemental every 750 turns";
+			case ACT_SUMMON_DEMON:
+				return "summon demon every 666+d333 turns";
+			case ACT_SUMMON_UNDEAD:
+				return "summon undead every 666+d333 turns";
+			case ACT_CURE_LW:
+				return "remove fear & heal 30 hp every 10 turns";
+			case ACT_CURE_MW:
+				return "heal 4d8 & wounds every 3+d3 turns";
+			case ACT_CURE_POISON:
+				return "remove fear and cure poison every 5 turns";
+			case ACT_REST_LIFE:
+				return "restore life levels every 450 turns";
+			case ACT_REST_ALL:
+				return "restore stats and life levels every 750 turns";
+			case ACT_CURE_700:
+				return "heal 700 hit points every 250 turns";
+			case ACT_CURE_1000:
+				return "heal 1000 hit points every 888 turns";
+			case ACT_ESP:
+				return "temporary ESP (dur 25+d30) every 200 turns";
+			case ACT_BERSERK:
+				return "heroism and berserk (dur 50+d50) every 100+d100 turns";
+			case ACT_PROT_EVIL:
+				return "protect evil (dur level*3 + d25) every 225+d225 turns";
+			case ACT_RESIST_ALL:
+				return "resist elements (dur 40+d40) every 200 turns";
+			case ACT_SPEED:
+				return "speed (dur 20+d20) every 250 turns";
+			case ACT_XTRA_SPEED:
+				return "speed (dur 75+d75) every 200+d200 turns";
+			case ACT_WRAITH:
+				return "wraith form (level/2 + d(level/2)) every 1000 turns";
+			case ACT_INVULN:
+				return "invulnerability (dur 8+d8) every 1000 turns";
+			case ACT_LIGHT:
+				return "light area (dam 2d15) every 10+d10 turns";
+			case ACT_MAP_LIGHT:
+				return "light (dam 2d15) & map area every 50+d50 turns";
+			case ACT_DETECT_ALL:
+				return "detection every 55+d55 turns";
+			case ACT_DETECT_XTRA:
+				return "detection, probing and identify true every 1000 turns";
+			case ACT_ID_FULL:
+				return "identify true every 750 turns";
+			case ACT_ID_PLAIN:
+				return "identify spell every 10 turns";
+			case ACT_RUNE_EXPLO:
+				return "explosive rune every 200 turns";
+			case ACT_RUNE_PROT:
+				return "rune of protection every 400 turns";
+			case ACT_SATIATE:
+				return "satisfy hunger every 200 turns";
+			case ACT_DEST_DOOR:
+				return "destroy doors every 10 turns";
+			case ACT_STONE_MUD:
+				return "stone to mud every 5 turns";
+			case ACT_RECHARGE:
+				return "recharging every 70 turns";
+			case ACT_ALCHEMY:
+				return "alchemy every 500 turns";
+			case ACT_DIM_DOOR:
+				return "dimension door every 100 turns";
+			case ACT_TELEPORT:
+				return "teleport (range 100) every 45 turns";
 			case ACT_TELEPORT_WAIT:
 				return "teleport (range 100) every 50+d50 turns";
-            case ACT_RECALL:
-                return "word of recall every 200 turns";
+			case ACT_RECALL:
+				return "word of recall every 200 turns";
 			case 0:
 				break;
-            default:
-                return "a bad randart activation";
-        }
+			default:
+				return "a bad randart activation";
+		}
 
 	/* Some artifacts can be activated */
 	switch (o_ptr->name1)
@@ -1760,8 +1760,8 @@ static cptr PURE item_activation(object_ctype *o_ptr)
 			return "remove fear and cure poison every 5 turns";
 		case ART_STARLIGHT:
 			return "frost ball (100) every 300 turns";
-        case ART_DAWN:
-            return "summon a Black Reaver every 500+d500 turns";
+		case ART_DAWN:
+			return "summon a Black Reaver every 500+d500 turns";
 		case ART_EVERFLAME:
 			return "fire ball (72) every 400 turns";
 		case ART_FIRESTAR:
@@ -1781,23 +1781,23 @@ static cptr PURE item_activation(object_ctype *o_ptr)
 		case ART_ERIRIL:
 			return "identify every 10 turns";
 		case ART_ATAL:
-            return "probing, detection and full id  every 1000 turns";
+			return "probing, detection and full id  every 1000 turns";
 		case ART_TROLLS:
 			return "mass genocide every 1000 turns";
 		case ART_SPLEENSLICER:
 			return "cure wounds (4d7) every 3+d3 turns";
 		case ART_DEATH:
 			return "fire branding of bolts every 999 turns";
-        case ART_KARAKAL:
-            return "a getaway every 35 turns";
+		case ART_KARAKAL:
+			return "a getaway every 35 turns";
 		case ART_ODIN:
-            return "lightning ball (100) every 500 turns";
+			return "lightning ball (100) every 500 turns";
 		case ART_DESTINY:
 			return "stone to mud every 5 turns";
 		case ART_SOULKEEPER:
 			return "heal (1000) every 888 turns";
 		case ART_VAMPLORD:
-            return ("heal (777), curing and heroism every 300 turns");
+			return ("heal (777), curing and heroism every 300 turns");
 		case ART_ORCS:
 			return "genocide every 500 turns";
 		case ART_NYOGTHA:
@@ -1829,23 +1829,23 @@ static cptr PURE item_activation(object_ctype *o_ptr)
 		case ART_SKULLKEEPER:
 			return "detection every 55+d55 turns";
 		case ART_SUN:
-            return "heal (700) every 250 turns";
+			return "heal (700) every 250 turns";
 		case ART_RAZORBACK:
 			return "star ball (150) every 1000 turns";
 		case ART_BLADETURNER:
-            return "breathe elements (300), berserk rage, bless, and resistance";
+			return "breathe elements (300), berserk rage, bless, and resistance";
 		case ART_POLARIS:
 			return "illumination every 10+d10 turns";
 		case ART_XOTH:
-            return "magic mapping and light every 50+d50 turns";
+			return "magic mapping and light every 50+d50 turns";
 		case ART_TRAPEZOHEDRON:
-            return "clairvoyance and recall, draining you";
+			return "clairvoyance and recall, draining you";
 		case ART_ALHAZRED:
 			return "dispel evil (x5) every 300+d300 turns";
 		case ART_LOBON:
 			return "protection from evil every 225+d225 turns";
-        case ART_MAGIC:
-            return "a strangling attack (100) every 100+d100 turns";
+		case ART_MAGIC:
+			return "a strangling attack (100) every 100+d100 turns";
 		case ART_BAST:
 			return "haste self (75+d75 turns) every 150+d150 turns";
 		case ART_ELEMFIRE:
@@ -1856,8 +1856,8 @@ static cptr PURE item_activation(object_ctype *o_ptr)
 			return "large lightning ball (250) every 425+d425 turns";
 		case ART_NYARLATHOTEP:
 			return "bizarre things every 450+d450 turns";
-        case ART_POWER: case ART_MASK:
-            return "rays of fear in every direction";
+		case ART_POWER: case ART_MASK:
+			return "rays of fear in every direction";
 	}
 
 
@@ -1949,7 +1949,7 @@ cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 /* The maximum number of strings allowed for identify_fully_aux().
  * This should always be greater than the greatest possible number, as one is
  * currently used for termination. */
-#define MAX_IFA	128
+#define MAX_IFA 128
 
 /*
  * Set *i_ptr as an allocated string, remember the fact.
@@ -1984,12 +1984,12 @@ static void alloc_ifa(cptr *i_ptr, cptr str, ...)
 
 #define CERT ((act & (A_INCREASE | A_DEC10 | A_DEC25)) ? "at least " : "")
 
-#define A_RESTORE	0x01
-#define A_INCREASE	0x02
-#define A_INCRES	(A_INCREASE | A_RESTORE)
-#define A_DEC10	0x04	/* A small temporary decrease, as do_dec_stat(). */
-#define A_DEC25	0x08	/* A large permanent decrease, as a potion of ruination. */
-#define A_WIELD	0x10	/* Hack - indicates a melee weapon. */
+#define A_RESTORE 0x01
+#define A_INCREASE 0x02
+#define A_INCRES (A_INCREASE | A_RESTORE)
+#define A_DEC10 0x04 /* A small temporary decrease, as do_dec_stat(). */
+#define A_DEC25 0x08 /* A large permanent decrease, as a potion of ruination. */
+#define A_WIELD 0x10 /* Hack - indicates a melee weapon. */
 
 #define CMPU(X) (pn_ptr->X - po_ptr->X)
 #define CMPUU(X) (ABS(CMPU(X)))
@@ -2121,7 +2121,7 @@ static void change_stat_min(int stat, int act)
 	{
 		/* Doesn't affect this stat. */
 		if (~stat & 1<<i) continue;
-		
+
 		/* Restores this stat. */
 		if (act & A_RESTORE) (void)res_stat(i);
 
@@ -2134,7 +2134,7 @@ static void change_stat_min(int stat, int act)
 			p_ptr->stat_cur[i] += gain;
 			p_ptr->stat_max[i] += gain;
 		}
-		
+
 		/* A temporary loss of 10 */
 		if ((act & A_DEC10) && (p_ptr->stat_cur[i] > 3))
 		{
@@ -2378,7 +2378,7 @@ static void res_stat_details(object_type *o_ptr, int real_k_idx, int *i, cptr *i
 
 
 /* Offset for a continued string, -1 as these start with a space anyway. */
-#define IFD_OFFSET	3
+#define IFD_OFFSET 3
 
 /*
  * Find the number of characters in in before the last space before the
@@ -2388,10 +2388,10 @@ static int wrap_str(cptr in, int max)
 {
 	int len = strlen(in);
 	cptr t;
-	
+
 	/* Short enough anyway. */
 	if (len < max) return len;
-	
+
 	/* Find the last space before (or including) the max character. */
 	for (t = in+max-1; *t != ' '; t--);
 
@@ -2500,7 +2500,7 @@ static void identify_fully_dump(cptr *i_ptr)
 			len = wrap_str(s, xlen);
 			mc_put_fmt(k, minx, "%.*s", len, s);
 		}
-		
+
 		/* Find the next segment. */
 		s += len;
 	}
@@ -2535,7 +2535,7 @@ static void identify_fully_dump_file(FILE *fff, cptr *i_ptr)
 
 		len = wrap_str(s, xlen-x);
 		fprintf(fff, "%*s%.*s\n", x, "", len, s);
-		
+
 		/* Find the next segment. */
 		s += len;
 	}
@@ -2585,7 +2585,7 @@ s16b PURE launcher_type(object_ctype *o_ptr)
 
 		/* Not the right sort of launcher. */
 		if (k_info[k_idx].extra != o_ptr->tval) continue;
-		
+
 		/* Success. */
 		return k_idx;
 	}
@@ -2828,28 +2828,28 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 	/* Hack - describe the wield skill of weaponry. */
 	switch (wield_skill(o_ptr))
 	{
- 	case SKILL_CLOSE:
- 		info[i++] = "It trains your close combat skill.";
- 				break;
+	case SKILL_CLOSE:
+		info[i++] = "It trains your close combat skill.";
+				break;
 	case SKILL_CRUSH:
- 		info[i++] = "It trains your crushing weapons skill.";
- 				break;
- 	case SKILL_STAB:
- 		info[i++] = "It trains your stabbing weapons skill.";
- 		break;
+		info[i++] = "It trains your crushing weapons skill.";
+				break;
+	case SKILL_STAB:
+		info[i++] = "It trains your stabbing weapons skill.";
+		break;
 	case SKILL_SLASH:
- 		info[i++] = "It trains your slashing weapons skill.";
- 			break;
+		info[i++] = "It trains your slashing weapons skill.";
+			break;
 	case  SKILL_MISSILE:
- 		info[i++] = "It trains your missile skill.";
- 		break;
- 	}
+		info[i++] = "It trains your missile skill.";
+		break;
+	}
 
 
 	/* And then describe it fully */
 
 	j = 0;
-	
+
 	/* Recognise items which affect stats (detailed) */
 	if (!brief && player && spoil_stat)
 	{
@@ -2890,27 +2890,27 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 	}
 
 
-    if (o_ptr->flags1 & (TR1_CHAOTIC))
+	if (o_ptr->flags1 & (TR1_CHAOTIC))
 	{
-        info[i++] = "It produces chaotic effects.";
+		info[i++] = "It produces chaotic effects.";
 	}
 
-    if (o_ptr->flags1 & (TR1_VAMPIRIC))
+	if (o_ptr->flags1 & (TR1_VAMPIRIC))
 	{
-        info[i++] = "It drains life from your foes.";
+		info[i++] = "It drains life from your foes.";
 	}
 
-    if (o_ptr->flags1 & (TR1_IMPACT))
+	if (o_ptr->flags1 & (TR1_IMPACT))
 	{
 		info[i++] = "It can cause earthquakes.";
 	}
 
-    if (o_ptr->flags1 & (TR1_VORPAL))
+	if (o_ptr->flags1 & (TR1_VORPAL))
 	{
-        info[i++] = "It is very sharp and can cut your foes.";
+		info[i++] = "It is very sharp and can cut your foes.";
 	}
 
-	/* Calculate actual damage of weapons. 
+	/* Calculate actual damage of weapons.
 	 * This only considers slays and brands at the moment. */
 	if (spoil_dam && player)
 	{
@@ -3047,7 +3047,7 @@ nextbit:
 		{
 			do_list_flags("It causes extra damage via", "and", board, j);
 		}
-		
+
 		j = 0;
 		if ((o_ptr->flags1 & TR1_ALL_SLAY_DRAGON) == TR1_X15_DRAGON)
 		{
@@ -3136,13 +3136,13 @@ nextbit:
 		do_list_flags("It provides resistance to", "and", board, j);
 	}
 
-    if (o_ptr->flags3 & (TR3_WRAITH))
-    {
-        info[i++] = "It renders you incorporeal.";
-    }
+	if (o_ptr->flags3 & (TR3_WRAITH))
+	{
+		info[i++] = "It renders you incorporeal.";
+	}
 	if (o_ptr->flags3 & (TR3_FEATHER))
 	{
-        info[i++] = "It allows you to levitate.";
+		info[i++] = "It allows you to levitate.";
 	}
 	if (o_ptr->flags3 & (TR3_LITE))
 	{
@@ -3164,26 +3164,26 @@ nextbit:
 	{
 		info[i++] = "It speeds your regenerative powers.";
 	}
-    if (o_ptr->flags2 & (TR2_REFLECT))
-    {
-        info[i++] = "It reflects bolts and arrows.";
-    }
-    if (o_ptr->flags3 & (TR3_SH_FIRE))
-    {
-        info[i++] = "It produces a fiery sheath.";
-    }
-    if (o_ptr->flags3 & (TR3_SH_ELEC))
-    {
-        info[i++] = "It produces an electric sheath.";
-    }
-    if (o_ptr->flags3 & (TR3_NO_MAGIC))
-    {
-        info[i++] = "It produces an anti-magic shell.";
-    }
-    if (o_ptr->flags3 & (TR3_NO_TELE))
-    {
-        info[i++] = "It prevents teleportation.";
-    }
+	if (o_ptr->flags2 & (TR2_REFLECT))
+	{
+		info[i++] = "It reflects bolts and arrows.";
+	}
+	if (o_ptr->flags3 & (TR3_SH_FIRE))
+	{
+		info[i++] = "It produces a fiery sheath.";
+	}
+	if (o_ptr->flags3 & (TR3_SH_ELEC))
+	{
+		info[i++] = "It produces an electric sheath.";
+	}
+	if (o_ptr->flags3 & (TR3_NO_MAGIC))
+	{
+		info[i++] = "It produces an anti-magic shell.";
+	}
+	if (o_ptr->flags3 & (TR3_NO_TELE))
+	{
+		info[i++] = "It prevents teleportation.";
+	}
 	if (o_ptr->flags3 & (TR3_XTRA_MIGHT))
 	{
 		info[i++] = "It fires missiles with extra might.";
@@ -3241,8 +3241,8 @@ nextbit:
 		info[i++] = "It has been blessed by the gods.";
 	}
 
-	/* Describe random possibilities if not *identified*. 
-	 * Note that this only has a precise meaning for artefacts. 
+	/* Describe random possibilities if not *identified*.
+	 * Note that this only has a precise meaning for artefacts.
 	 * Bug - LITE can be mentioned both here and in its own right. Unfortunately it's not easy to fix. */
 
 	j = 0;
@@ -3267,7 +3267,7 @@ nextbit:
 		cptr pref = (o_ptr->name1) ? "It gives you" : "It may give you";
 		do_list_flags(pref, "and", board, j);
 	}
-	
+
 
 		if (o_ptr->flags3 & (TR3_PERMA_CURSE))
 		{
@@ -3287,14 +3287,14 @@ nextbit:
 		info[i++] = "It will curse itself.";
 	}
 
-    if (o_ptr->flags3 & (TR3_TY_CURSE))
-    {
-        info[i++] = "It carries an ancient foul curse.";
-    }
+	if (o_ptr->flags3 & (TR3_TY_CURSE))
+	{
+		info[i++] = "It carries an ancient foul curse.";
+	}
 
 	/* Hack - simple items don't get ignore flags listed. */
 	if (brief && o_ptr->flags3 & TR3_EASY_KNOW);
-	
+
 	else if ((o_ptr->flags3 & (TR3_IGNORE_ALL)) == TR3_IGNORE_ALL)
 	{
 		info[i++] = "It cannot be harmed by the elements.";
@@ -3821,7 +3821,7 @@ void show_inven(bool equip, bool all)
 
 	int             out_index[23];
 	byte    out_color[23];
-	cptr	out_desc[23], o_name;
+	cptr out_desc[23], o_name;
 
 	/* Ensure that unset out_desc strings are NULL. */
 	C_WIPE(out_desc, 23, char*);
@@ -3914,7 +3914,7 @@ void show_inven(bool equip, bool all)
 		{
 			byte  a = object_attr(o_ptr);
 			char c = object_char(o_ptr);
-			
+
 #ifdef AMIGA
 			if (a & 0x80) a |= 0x40;
 #endif
@@ -4063,7 +4063,7 @@ static bool get_item_allow(object_ctype *o_ptr)
 static bool get_item_okay(object_ctype *o_ptr)
 {
 	/* Illegal items */
-	if (!is_inventory_p(o_ptr) && 
+	if (!is_inventory_p(o_ptr) &&
 		(o_ptr->ix != px || o_ptr->iy != py)) return (FALSE);
 
 	/* Verify the item */
@@ -4247,9 +4247,9 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 
 	object_type *i1, *i2, *e1, *e2;
 
-    bool done;
+	bool done;
 
-    bool allow_floor = FALSE;
+	bool allow_floor = FALSE;
 
 	char tmp_val[160];
 
@@ -4258,46 +4258,46 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 	char *t;
 
 #ifdef ALLOW_REPEAT
-     
-     /* Get the item index */
-     if (repeat_pull(&k)) {
-         
+
+	/* Get the item index */
+	if (repeat_pull(&k)) {
+
 		o_ptr = cnv_idx_to_obj(k);
 
-         /* Floor item? */
-         if (o_ptr >= o_list && o_ptr < o_list + MAX_O_IDX) {
+		/* Floor item? */
+		if (o_ptr >= o_list && o_ptr < o_list + MAX_O_IDX) {
 
- 			/* Scan all objects in the grid */
- 			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
- 			{
- 				/* Acquire object */
- 				o_ptr = &o_list[this_o_idx];
- 
- 				/* Acquire next object */
- 				next_o_idx = o_ptr->next_o_idx;
- 
- 				/* Validate the item */
- 				if (!item_tester_okay(o_ptr)) continue;
- 
- 				/* Success */
+			/* Scan all objects in the grid */
+			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+			{
+				/* Acquire object */
+				o_ptr = &o_list[this_o_idx];
+
+				/* Acquire next object */
+				next_o_idx = o_ptr->next_o_idx;
+
+				/* Validate the item */
+				if (!item_tester_okay(o_ptr)) continue;
+
+				/* Success */
 				return o_ptr;
- 	        }
-         }
-         
-         /* Verify the item */
-         else if (get_item_okay(o_ptr)) {
-         
- 	        /* Success */
+			}
+		}
+
+		/* Verify the item */
+		else if (get_item_okay(o_ptr)) {
+
+			/* Success */
 			return o_ptr;
-         }
+		}
 		/* Invalid item. */
-		 else
+		else
 		{
 			o_ptr = NULL;
 		}
-     }
- 
- #endif /* ALLOW_REPEAT -- TNB */
+	}
+
+#endif /* ALLOW_REPEAT -- TNB */
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
@@ -4400,7 +4400,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 
 	/* Allow the user to choose to see everything. */
 	command_see |= show_choices_main;
- 
+
 	/* Hack -- start out in "display" mode */
 	if (command_see) nterm = Term_save_aux();
 
@@ -4521,7 +4521,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 				/* Use floor item */
 				if (allow_floor)
 				{
-                    /* Scan all objects in the grid */
+					/* Scan all objects in the grid */
 					for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 					{
 						/* Acquire object */
@@ -4758,7 +4758,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 						else
 						{
 							if (this_price > best_price) continue;
-						}	
+						}
 					}
 					o_ptr = j_ptr;
 					best_price = this_price;
@@ -4821,12 +4821,12 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 
 	/* Clear the prompt line */
 	prt("", 0, 0);
- 
- #ifdef ALLOW_REPEAT
- 
-     if (o_ptr) repeat_push(cnv_obj_to_idx(o_ptr));
-     
- #endif /* ALLOW_REPEAT */
+
+#ifdef ALLOW_REPEAT
+
+	if (o_ptr) repeat_push(cnv_obj_to_idx(o_ptr));
+
+#endif /* ALLOW_REPEAT */
 
 	/* Return the object if something was picked. */
 	return o_ptr;
@@ -5131,7 +5131,7 @@ static bool forbid_cast(void)
  * Paranoia - check wizard mode before running a wizard command.
  * This is only accessible via do_cmd_debug() at present, which performs
  * its own checks.
- */ 
+ */
 static bool forbid_non_debug(void)
 {
 	return !cheat_wzrd;
@@ -5233,7 +5233,7 @@ static s16b PURE string_to_s16b(cptr s)
  * Look through an object's inscription for a command alias for the given
  * command.
  * If one is found, return the object_function which is corresponds with.
- * Otherwise, return the object_function which corresponds with 
+ * Otherwise, return the object_function which corresponds with
  */
 static object_function PURE *get_function_for_object(s16b cmd,
 	object_ctype *o_ptr)

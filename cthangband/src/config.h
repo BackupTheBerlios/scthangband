@@ -256,7 +256,7 @@
 
 
 /*
- * OPTION: Allow use of the monster health bar	-DRS-
+ * OPTION: Allow use of the monster health bar -DRS-
  */
 #define DRS_SHOW_HEALTH_BAR
 
@@ -400,13 +400,13 @@
  * OPTION: Person to bother if something goes wrong.
  */
 #define MAINT_NAME "Kieron Dunbar"
-#define MAINTAINER	"kieron@dimetrodon.demon.co.uk"
+#define MAINTAINER "kieron@dimetrodon.demon.co.uk"
 
 
 /*
  * OPTION: Default font (when using X11).
  */
-#define DEFAULT_X11_FONT		"5x8"
+#define DEFAULT_X11_FONT "5x8"
 
 #define DEFAULT_X11_FONT_0            "9x15"
 #define DEFAULT_X11_FONT_1            "6x12"
@@ -470,7 +470,7 @@
 
 /* (see above) */
 #ifndef DRS_SMART_OPTIONS
- #define DRS_SMART_OPTIONS
+#define DRS_SMART_OPTIONS
 #endif
 
 /* For longer martial arts descriptions */
@@ -487,21 +487,21 @@
 /* Testing upkeep */
 /* # define TRACK_FRIENDS */
 
- /*
-  * OPTION: Repeat last command -- TNB
-  */
- #define ALLOW_REPEAT
- 
- /*
-  * OPTION: Make opening and closing things easy -- TNB
-  */
- #define ALLOW_EASY_OPEN
- 
- /*
-  * OPTION: Make disarming traps easy -- TNB
-  */
- #define ALLOW_EASY_DISARM
- 
+/*
+ * OPTION: Repeat last command -- TNB
+ */
+#define ALLOW_REPEAT
+
+/*
+ * OPTION: Make opening and closing things easy -- TNB
+ */
+#define ALLOW_EASY_OPEN
+
+/*
+ * OPTION: Make disarming traps easy -- TNB
+ */
+#define ALLOW_EASY_DISARM
+
 /*
  * Check the modification time of *_info.raw files
  * (by Keldon Jones)

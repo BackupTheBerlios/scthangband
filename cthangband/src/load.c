@@ -39,22 +39,22 @@
 /*
  * Local "savefile" pointer
  */
-static FILE	*fff;
+static FILE *fff;
 
 /*
  * Hack -- old "encryption" byte
  */
-static byte	xor_byte, sf_extra;
+static byte xor_byte, sf_extra;
 
 /*
  * Hack -- simple "checksum" on the actual values
  */
-static u32b	v_check = 0L;
+static u32b v_check = 0L;
 
 /*
  * Hack -- simple "checksum" on the encoded bytes
  */
-static u32b	x_check = 0L;
+static u32b x_check = 0L;
 
 
 
@@ -209,7 +209,7 @@ static void rd_string(char *str, int max)
 	{
 		/* Read a char */
 		rd_char(s);
-		
+
 		/* Stop at the end of the string. */
 		if (!*s) break;
 
@@ -570,7 +570,7 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
-    rd_u32b(&m_ptr->smart);
+	rd_u32b(&m_ptr->smart);
 	rd_byte(&tmp8u);
 
 	if (has_flag(SF_FEAR_DAMAGE))
@@ -787,10 +787,10 @@ static void rd_randomizer(void)
 
 	/* Tmp */
 	rd_u16b(&tmp16u);
-	
+
 	/* Place */
 	rd_u16b(&Rand_place);
-	
+
 	/* State */
 	for (i = 0; i < RAND_DEG; i++)
 	{
@@ -888,7 +888,7 @@ static void rd_options(void)
 		/* Copy the saved value to the option. */
 		op_ptr->o_var[0] = (0 != (flag[set] & (1L << bit)));
 	}
-		
+
 	/* Copy across the birth options if they weren't previously known. */
 	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 	{
@@ -975,7 +975,7 @@ static void rd_options(void)
 static void rd_ghost(void)
 {
 	int i;
-    
+
 	monster_race *r_ptr = r_info+MON_PLAYER_GHOST;
 
 	/* Name */
@@ -1041,7 +1041,7 @@ static void skill_copy(int to, int from)
 {
 	player_skill *sf_ptr = skill_set+from;
 	player_skill *st_ptr = skill_set+to;
-	
+
 	st_ptr->value = sf_ptr->value;
 	st_ptr->max_value = sf_ptr->max_value;
 	st_ptr->base = sf_ptr->base;
@@ -1130,7 +1130,7 @@ static void rd_extra(void)
 		strip_bytes(6*(tmp8u-MAX_SKILLS));
 		if (has_flag(SF_SKILL_BASE)) strip_bytes(2*(tmp8u-MAX_SKILLS));
 	}
-	
+
 	if (tmp8u < SKILL_PSEUDOID) skill_copy(SKILL_PSEUDOID, SKILL_DEVICE);
 
 
@@ -1241,7 +1241,7 @@ static void rd_extra(void)
 			wild_grid[i][j].dungeon=tmp8u;
 
 			/* Fill in the town and dungeon locations if possible */
-			
+
 			if(tmp8u < MAX_CAVES)
 			{
 				dun_defs[tmp8u].y=i;
@@ -1530,7 +1530,7 @@ static errr rd_dungeon(void)
 	/* Read the dungeon items */
 	for (i = 1; i < MIN(limit, MAX_O_IDX); i++)
 	{
-		
+
 		int o_idx;
 
 		object_type *o_ptr;
@@ -1570,7 +1570,7 @@ static errr rd_dungeon(void)
 			/* Place the object */
 			m_ptr->hold_o_idx = o_idx;
 		}
-		
+
 		/* Dungeon */
 		else
 		{
@@ -2059,12 +2059,12 @@ good:
 		msg_format("Deleting %u unrecognised stores", tmp16u - MAX_STORES_TOTAL);
 		for (i = 0; i < tmp16u - MAX_STORES_TOTAL; i++) rd_store(0);
 	}
-	
+
 	for (i = 0; i < MIN(MAX_STORES_TOTAL, tmp16u); i++)
 	{
 		if (rd_store(i)) return (22);
 	}
-	
+
 	/* I'm not dead yet... */
 	if (!death)
 	{
@@ -2306,9 +2306,9 @@ bool load_player(bool new_game)
 	{
 
 		/* Extract version */
-        sf_major = vvv[0];
-        sf_minor = vvv[1];
-        sf_patch = vvv[2];
+		sf_major = vvv[0];
+		sf_minor = vvv[1];
+		sf_patch = vvv[2];
 		sf_extra = vvv[3];
 
 		/* Clear screen */
@@ -2336,7 +2336,7 @@ bool load_player(bool new_game)
 	{
 		/* Hack -- Verify the timestamp */
 		if (sf_when > (statbuf.st_ctime + 100) ||
-		    sf_when < (statbuf.st_ctime - 100))
+			sf_when < (statbuf.st_ctime - 100))
 		{
 			/* Message */
 			what = "Invalid timestamp";
@@ -2354,13 +2354,13 @@ bool load_player(bool new_game)
 		byte cur[3];
 		current_version(sf_flags_sf, cur, cur+1, cur+2);
 		/* Give a conversion warning */
-        if ((cur[0] != sf_major) ||
-            (cur[1] != sf_minor) ||
-            (cur[2] != sf_patch))
+		if ((cur[0] != sf_major) ||
+			(cur[1] != sf_minor) ||
+			(cur[2] != sf_patch))
 		{
 			/* Message */
-            msg_format("Converted a %d.%d.%d savefile.",
-                       sf_major, sf_minor, sf_patch);
+			msg_format("Converted a %d.%d.%d savefile.",
+						sf_major, sf_minor, sf_patch);
 			msg_print(NULL);
 		}
 
@@ -2393,7 +2393,7 @@ bool load_player(bool new_game)
 			died_from = "(alive and well)";
 
 			/* Accept the quest list. */
-			
+
 		}
 
 		/* Success */
@@ -2421,7 +2421,7 @@ bool load_player(bool new_game)
 
 	/* Message */
 	msg_format("Error (%s) reading %d.%d.%d savefile.",
-		   what, sf_major, sf_minor, sf_patch);
+		what, sf_major, sf_minor, sf_patch);
 	msg_print(NULL);
 
 	/* Oops */

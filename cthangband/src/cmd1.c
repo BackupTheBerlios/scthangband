@@ -145,7 +145,7 @@ struct slay_type
 	bool have; /* Should the monster have the flag (a slay) or not (a brand)? */
 };
 
-/* 
+/*
  * Array of the slays and brands an object can have, with the relevant monster
  * flags for each.
  */
@@ -239,60 +239,60 @@ static s16b tot_dam_aux(object_ctype *o_ptr, int tdam, monster_type *m_ptr)
 
 static void touch_zap_player(monster_type *m_ptr)
 {
-        int             aura_damage = 0;
-        monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+		int             aura_damage = 0;
+		monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
-        if (r_ptr->flags2 & (RF2_AURA_FIRE))
-        {
-            if (!(p_ptr->immune_fire))
-            {
-                aura_damage
-                    = damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
+		if (r_ptr->flags2 & (RF2_AURA_FIRE))
+		{
+			if (!(p_ptr->immune_fire))
+			{
+				aura_damage
+					= damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
 
-                msg_print("You are suddenly very hot!");
+				msg_print("You are suddenly very hot!");
 
-                if (p_ptr->oppose_fire) aura_damage = (aura_damage+2) / 3;
-                if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
+				if (p_ptr->oppose_fire) aura_damage = (aura_damage+2) / 3;
+				if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
 
-                take_hit(aura_damage,
+				take_hit(aura_damage,
 					format("%v", monster_desc_f2, m_ptr, 0x88), m_ptr->r_idx);
-                r_ptr->r_flags2 |= RF2_AURA_FIRE;
-                handle_stuff();
-            }
-        }
+				r_ptr->r_flags2 |= RF2_AURA_FIRE;
+				handle_stuff();
+			}
+		}
 
 
-        if (r_ptr->flags2 & (RF2_AURA_ELEC))
-        {
-            if (!(p_ptr->immune_elec))
-            {
-                aura_damage
-                    = damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
+		if (r_ptr->flags2 & (RF2_AURA_ELEC))
+		{
+			if (!(p_ptr->immune_elec))
+			{
+				aura_damage
+					= damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
 
-                if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
-                if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;
-                
-                msg_print("You get zapped!");
-                take_hit(aura_damage,
+				if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
+				if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;
+
+				msg_print("You get zapped!");
+				take_hit(aura_damage,
 					format("%v", monster_desc_f2, m_ptr, 0x88), m_ptr->r_idx);
-                r_ptr->r_flags2 |= RF2_AURA_ELEC;
-                handle_stuff();
-            }
-        }
+				r_ptr->r_flags2 |= RF2_AURA_ELEC;
+				handle_stuff();
+			}
+		}
 }
 
 static void do_natural_attack(s16b m_idx, natural_attack *n_ptr)
 {
 	bool fear[1];
-    int             k, bonus, chance;
-    monster_type    *m_ptr = &m_list[m_idx];
-    monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+	int             k, bonus, chance;
+	monster_type    *m_ptr = &m_list[m_idx];
+	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Slow down the attack */
 	energy_use += TURN_ENERGY/10;
 
 	/* Calculate the "attack quality" */
-    bonus = p_ptr->to_h;
+	bonus = p_ptr->to_h;
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
@@ -301,20 +301,20 @@ static void do_natural_attack(s16b m_idx, natural_attack *n_ptr)
 			/* Sound */
 			sound(SOUND_HIT);
 
-            msg_format("You hit %v with your %s.",
+			msg_format("You hit %v with your %s.",
 				monster_desc_f2, m_ptr, 0, n_ptr->desc);
-			
+
 			/* Give experience if it wasn't too easy */
 			if (chance < (r_ptr->ac * 3))
 			{
 				skill_exp(SKILL_CLOSE);
 			}
 
-            k = damroll(n_ptr->dd, n_ptr->ds);
-            k = critical_norm(n_ptr->wgt, p_ptr->to_h, k);
+			k = damroll(n_ptr->dd, n_ptr->ds);
+			k = critical_norm(n_ptr->wgt, p_ptr->to_h, k);
 
 			/* Apply the player damage bonuses */
-            k += p_ptr->to_d;   
+			k += p_ptr->to_d;
 
 			/* No negative damage */
 			if (k < 0) k = 0;
@@ -326,11 +326,11 @@ static void do_natural_attack(s16b m_idx, natural_attack *n_ptr)
 			}
 
 
-            if (m_ptr->smart & SM_ALLY)
-            {
-                msg_format("%^v gets angry!", monster_desc_f2, m_ptr, 0);
-                m_ptr->smart &= ~SM_ALLY;
-            }
+			if (m_ptr->smart & SM_ALLY)
+			{
+				msg_format("%^v gets angry!", monster_desc_f2, m_ptr, 0);
+				m_ptr->smart &= ~SM_ALLY;
+			}
 
 		if (n_ptr->typ == GF_HIT)
 		{
@@ -432,7 +432,7 @@ static int do_ma_attack(monster_type *m_ptr)
 	if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
 	if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
 	if (!live_monster_wide_p(r_ptr)) resist_stun += 88;
-	
+
 	/* Calculate the damage. */
 	k = damroll(ma_ptr->dd, ma_ptr->ds);
 	k = critical_norm((skill/2) * (randint(10)), ma_ptr->min_level/2, k);
@@ -511,7 +511,7 @@ void py_attack(int y, int x)
 	cave_type               *c_ptr = &cave[y][x];
 
 	monster_type    *m_ptr = &m_list[c_ptr->m_idx];
-    monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
 	object_type             *o_ptr;
 
@@ -520,12 +520,12 @@ void py_attack(int y, int x)
 
 	bool fear = FALSE, old_fear = (m_ptr->monfear != 0);
 
-    bool        backstab = FALSE, vorpal_cut = FALSE, chaos_effect = FALSE;
-    bool        stab_fleeing = FALSE;
-    bool        do_quake = FALSE;
-	bool		drain_life = FALSE;
-    u32b        f1, f2, f3; /* A massive hack -- life-draining weapons */
-    bool        no_extra = FALSE;
+	bool        backstab = FALSE, vorpal_cut = FALSE, chaos_effect = FALSE;
+	bool        stab_fleeing = FALSE;
+	bool        do_quake = FALSE;
+	bool drain_life = FALSE;
+	u32b        f1, f2, f3; /* A massive hack -- life-draining weapons */
+	bool        no_extra = FALSE;
 
 
 
@@ -534,10 +534,10 @@ void py_attack(int y, int x)
 		/* Can't backstab creatures that we can't see, right? */
 		backstab = TRUE;
 	}
-    if ((old_fear) && (m_ptr->ml) && (rand_int(50) < p_ptr->skill_stl))
-    {
+	if ((old_fear) && (m_ptr->ml) && (rand_int(50) < p_ptr->skill_stl))
+	{
 		stab_fleeing = TRUE;
-    }
+	}
 
 	/* Disturb the player */
 	/*disturb(1);*/
@@ -550,43 +550,43 @@ void py_attack(int y, int x)
 	/* Extract monster name (or "it") */
 	strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
-    /* Auto-Recall if possible and visible */
+	/* Auto-Recall if possible and visible */
 	if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
 	/* Track a new monster */
-    if (m_ptr->ml) health_track(c_ptr->m_idx);
+	if (m_ptr->ml) health_track(c_ptr->m_idx);
 
 
 
-         /* Stop if friendly */
-         if (m_ptr->smart & SM_ALLY &&
-            ! (p_ptr->stun || p_ptr->confused || p_ptr->image ||
-              ((p_has_mutation(MUT_BERS_RAGE)) && p_ptr->shero) ||
-                !(m_ptr->ml)))
-   {
+		/* Stop if friendly */
+		if (m_ptr->smart & SM_ALLY &&
+			! (p_ptr->stun || p_ptr->confused || p_ptr->image ||
+				((p_has_mutation(MUT_BERS_RAGE)) && p_ptr->shero) ||
+				!(m_ptr->ml)))
+	{
 		if (inventory[INVEN_WIELD].name1 != ART_STORMBRINGER)
-     {
-       msg_format("You stop to avoid hitting %s.", m_name);
+	{
+		msg_format("You stop to avoid hitting %s.", m_name);
 
 		TFREE(m_name);
-       return;
-     }
+		return;
+	}
 
-            msg_format("Your black blade greedily attacks %s!",
-                m_name);
+			msg_format("Your black blade greedily attacks %s!",
+				m_name);
 
-   }
+	}
 
 
 
 	/* Handle player fear */
 	if (p_ptr->afraid)
-    {   /* Message */
-        if (m_ptr->ml)
+	{   /* Message */
+		if (m_ptr->ml)
 		msg_format("You are too afraid to attack %s!", m_name);
 
-        else
-        msg_format ("There is something scary in your way!");
+		else
+		msg_format ("There is something scary in your way!");
 
 		TFREE(m_name);
 
@@ -611,21 +611,21 @@ void py_attack(int y, int x)
 			sound(SOUND_HIT);
 
 			/* Message */
-            if (!(backstab || stab_fleeing))
-                {
-                    if (!(ma_empty_hands()))
-                    msg_format("You hit %s.", m_name);
-                }
-            else if (backstab)
+			if (!(backstab || stab_fleeing))
+				{
+					if (!(ma_empty_hands()))
+					msg_format("You hit %s.", m_name);
+				}
+			else if (backstab)
 			{
-                msg_format("You cruelly stab the helpless, sleeping %v!",
-                    monster_desc_aux_f3, r_ptr, 1, 0);
+				msg_format("You cruelly stab the helpless, sleeping %v!",
+					monster_desc_aux_f3, r_ptr, 1, 0);
 				skill_exp(SKILL_STEALTH);
-            }
+			}
 			else
 			{
-                msg_format("You backstab the fleeing %v!",
-                    monster_desc_aux_f3, r_ptr, 1, 0);
+				msg_format("You backstab the fleeing %v!",
+					monster_desc_aux_f3, r_ptr, 1, 0);
 				skill_exp(SKILL_STEALTH);
 			}
 
@@ -633,32 +633,32 @@ void py_attack(int y, int x)
 			if (chance < (r_ptr->ac * 3))
 			{
 				skill_exp(p_ptr->wield_skill);
-            }
+			}
 				/* Hack -- bare hands do one damage */
 			k = 1;
 
 
-	   object_flags(o_ptr, &f1, &f2, &f3);
+		object_flags(o_ptr, &f1, &f2, &f3);
 
-       if ((f1 & TR1_CHAOTIC) && (randint(2)==1))
-           chaos_effect = TRUE;
-       else
-            chaos_effect = FALSE;
+		if ((f1 & TR1_CHAOTIC) && (randint(2)==1))
+			chaos_effect = TRUE;
+		else
+			chaos_effect = FALSE;
 
-       if ((f1 & TR1_VAMPIRIC) || (chaos_effect && (randint(5)<3)))
-       /* Prepare for drain... */
-	   {
-        chaos_effect = FALSE;
-        if (live_monster_wide_p(r_ptr)) drain_life = TRUE;
+		if ((f1 & TR1_VAMPIRIC) || (chaos_effect && (randint(5)<3)))
+		/* Prepare for drain... */
+		{
+		chaos_effect = FALSE;
+		if (live_monster_wide_p(r_ptr)) drain_life = TRUE;
 	}
 
-    if (f1 & TR1_VORPAL && (randint((o_ptr->name1 == ART_VORPAL_BLADE)?3:6) == 1))
-        vorpal_cut = TRUE;
-    else vorpal_cut = FALSE;
+	if (f1 & TR1_VORPAL && (randint((o_ptr->name1 == ART_VORPAL_BLADE)?3:6) == 1))
+		vorpal_cut = TRUE;
+	else vorpal_cut = FALSE;
 
 	/* Handle martial arts. */
-    if (ma_empty_hands())
-    {
+	if (ma_empty_hands())
+	{
 		k = do_ma_attack(m_ptr);
 		if ((chance < (r_ptr->ac * 3)) ||
 			(skill_set[SKILL_MA].value * 3 < r_ptr->ac * 4))
@@ -668,37 +668,37 @@ void py_attack(int y, int x)
 	}
 
 	/* Handle normal weapon */
-    else if (o_ptr->k_idx)
+	else if (o_ptr->k_idx)
 	{
 		k = damroll(o_ptr->dd, o_ptr->ds);
 		k = tot_dam_aux(o_ptr, k, m_ptr);
-        if (backstab)
-        {
-            backstab = FALSE;
-            k *= (3 + (skill_set[SKILL_STEALTH].value / 20));
-        }
-        else if (stab_fleeing)
-        {
-            k = ((3 * k) / 2);
-        }
-        if ((p_ptr->impact && ((k > 50) || randint(7)==1))
-            || (chaos_effect && (randint(250)==1)))
-            {
-		    do_quake = TRUE;
-            chaos_effect = FALSE;
-            }
+		if (backstab)
+		{
+			backstab = FALSE;
+			k *= (3 + (skill_set[SKILL_STEALTH].value / 20));
+		}
+		else if (stab_fleeing)
+		{
+			k = ((3 * k) / 2);
+		}
+		if ((p_ptr->impact && ((k > 50) || randint(7)==1))
+			|| (chaos_effect && (randint(250)==1)))
+			{
+			do_quake = TRUE;
+			chaos_effect = FALSE;
+			}
 
-        k = critical_norm(o_ptr->weight, o_ptr->to_h, k);
+		k = critical_norm(o_ptr->weight, o_ptr->to_h, k);
 
-        if (vorpal_cut)
-        {
+		if (vorpal_cut)
+		{
 			int chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
-            int i;
+			int i;
 
-            if ((o_ptr->name1 == ART_DEMONBLADE) && one_in(2))
-            {
-                msg_format("%v", get_rnd_line_f1, "chainswd.txt");
-            }
+			if ((o_ptr->name1 == ART_DEMONBLADE) && one_in(2))
+			{
+				msg_format("%v", get_rnd_line_f1, "chainswd.txt");
+			}
 			else if (o_ptr->name1 == ART_VORPAL_BLADE)
 			{
 				msg_print("Your Vorpal Blade goes snicker-snack!");
@@ -714,14 +714,14 @@ void py_attack(int y, int x)
 			/* Multiply to get the new damage. */
 			if (32767 / i < k) k = 32767;
 			else k *= i;
-        }
+		}
 
-        k += o_ptr->to_d;
+		k += o_ptr->to_d;
 
 			}
 
 			/* Apply the player damage bonuses */
-            k += p_ptr->to_d;   
+			k += p_ptr->to_d;
 
 			/* No negative damage */
 			if (k < 0) k = 0;
@@ -747,29 +747,29 @@ void py_attack(int y, int x)
 			add_flag(TIMED_VAMP, drain_heal);
 
 			/* Give a message if anything happened. */
- 			if (drain_heal)
+			if (drain_heal)
 				msg_format("Your weapon drains life from %s!", m_name);
 
 			/* Gain the drained HP. */
 			hp_player(drain_heal);
- 		}
+		}
 
 
 			/* Damage, check for fear and death */
 			mon_take_hit(c_ptr->m_idx, k, &fear, NULL);
 
-            if (m_ptr->r_idx && m_ptr->smart & SM_ALLY)
-            {
-                msg_format("%^s gets angry!", m_name);
-                m_ptr->smart &= ~SM_ALLY;
-            }
+			if (m_ptr->r_idx && m_ptr->smart & SM_ALLY)
+			{
+				msg_format("%^s gets angry!", m_name);
+				m_ptr->smart &= ~SM_ALLY;
+			}
 
 
-        touch_zap_player(m_ptr);
+		touch_zap_player(m_ptr);
 
 
 			/* Confusion attack */
-            if ((p_ptr->confusing) || (chaos_effect && (randint(10)!=1)))
+			if ((p_ptr->confusing) || (chaos_effect && (randint(10)!=1)))
 			{
 				/* Cancel glowing hands */
 			if (p_ptr->confusing)
@@ -803,27 +803,27 @@ void py_attack(int y, int x)
 				}
 			}
 
-    else if (chaos_effect && (randint(2)==1))
-    {
-        chaos_effect = FALSE;
-        msg_format("%^s disappears!", m_name);
-        teleport_away(c_ptr->m_idx, 50);
-        no_extra = TRUE;
-
-    }
-
-
-    else if (chaos_effect && cave_floor_bold(y,x)
-            && (randint(90) > r_ptr->level))
+	else if (chaos_effect && (randint(2)==1))
 	{
-        if (!((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags1 & RF1_GUARDIAN)))
-        {
+		chaos_effect = FALSE;
+		msg_format("%^s disappears!", m_name);
+		teleport_away(c_ptr->m_idx, 50);
+		no_extra = TRUE;
+
+	}
+
+
+	else if (chaos_effect && cave_floor_bold(y,x)
+			&& (randint(90) > r_ptr->level))
+	{
+		if (!((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags1 & RF1_GUARDIAN)))
+		{
 
 				/* Pick a "new" monster race */
-        int tmp = poly_r_idx(m_ptr->r_idx);
-        chaos_effect = FALSE;
+		int tmp = poly_r_idx(m_ptr->r_idx);
+		chaos_effect = FALSE;
 
-        /* Handle polymorph */
+		/* Handle polymorph */
 		if (tmp != m_ptr->r_idx)
 		{
 			monster_race *r2_ptr = &r_info[tmp];
@@ -839,7 +839,7 @@ void py_attack(int y, int x)
 				case 3: msg_format("%^s changes subtly!", m_name); break;
 			}
 
-            /* "Kill" the "old" monster */
+			/* "Kill" the "old" monster */
 			delete_monster_idx(c_ptr->m_idx,TRUE);
 
 			/* Create a new monster (no groups) */
@@ -850,21 +850,21 @@ void py_attack(int y, int x)
 			/* Hack -- Get new monster */
 			m_ptr = &m_list[c_ptr->m_idx];
 
-            /* Oops, we need a different name... */
-            strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
+			/* Oops, we need a different name... */
+			strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 			/* Hack -- Get new race */
 			r_ptr = &r_info[m_ptr->r_idx];
 
-            fear = FALSE;
+			fear = FALSE;
 
-            }
-         }
-         else
-         msg_format("%^s is unaffected.", m_name);
+			}
+		}
+		else
+		msg_format("%^s is unaffected.", m_name);
 
-         }
-        }
+		}
+		}
 
 		/* Player misses */
 		else
@@ -872,19 +872,19 @@ void py_attack(int y, int x)
 			/* Sound */
 			sound(SOUND_MISS);
 
-            backstab = FALSE; /* Clumsy! */
+			backstab = FALSE; /* Clumsy! */
 
 			/* Message */
 			msg_format("You miss %s.", m_name);
 		}
 
 	/*
-     * Chaos features which yield extra 'natural' attacks
+	 * Chaos features which yield extra 'natural' attacks
 	 * only give attacks occasionally - depending on number
 	 * on speed of player with weapon
 	 */
-    if ((!no_extra) && one_in((p_ptr->num_blow+30)/60))
-    {
+	if ((!no_extra) && one_in((p_ptr->num_blow+30)/60))
+	{
 		natural_attack *n_ptr;
 		FOR_ALL_IN(natural_attacks, n_ptr)
 		{
@@ -892,11 +892,11 @@ void py_attack(int y, int x)
 			{
 				do_natural_attack(c_ptr->m_idx, n_ptr);
 			}
-        }
+		}
 	}
 
 	/* Hack -- delay fear messages */
-    if (m_ptr->r_idx && m_ptr->ml && !old_fear && m_ptr->monfear)
+	if (m_ptr->r_idx && m_ptr->ml && !old_fear && m_ptr->monfear)
 	{
 		/* Sound */
 		sound(SOUND_FLEE);
@@ -918,11 +918,11 @@ void py_attack(int y, int x)
  */
 void do_cmd_attack(void)
 {
-	int			y, x;
+	int y, x;
 
-	cave_type	*c_ptr;
+	cave_type *c_ptr;
 
-	bool		more = FALSE;
+	bool more = FALSE;
 
 
 	/* Set repeat if requested. */
@@ -1113,7 +1113,7 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 
 				/* Assume a default death */
 				cptr note_dies = " dies.";
-				
+
 				/* Give experience (if it wasn't too easy) */
 				if ((chance - cur_dis) < (r_ptr->ac * 3))
 				{
@@ -1122,10 +1122,10 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 
 				/* Some monsters get "destroyed" */
 				if ((r_ptr->flags3 & (RF3_DEMON)) ||
-				    (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				    (r_ptr->flags3 & (RF3_CTHULOID)) ||
-				    (r_ptr->flags2 & (RF2_STUPID)) ||
-				    (strchr("Evg", r_ptr->d_char)))
+					(r_ptr->flags3 & (RF3_UNDEAD)) ||
+					(r_ptr->flags3 & (RF3_CTHULOID)) ||
+					(r_ptr->flags2 & (RF2_STUPID)) ||
+					(strchr("Evg", r_ptr->d_char)))
 				{
 					/* Special note at death */
 					note_dies = " is destroyed.";
@@ -1153,7 +1153,7 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 
 					/* Hack -- Track this monster */
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
-              }
+				}
 
 				/* Apply special damage XXX XXX XXX */
 				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
@@ -1166,7 +1166,7 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 				if (cheat_wzrd)
 				{
 					msg_format("You do %d (out of %d) damage.",
-					           tdam, m_ptr->hp);
+								tdam, m_ptr->hp);
 				}
 
 				/* Hit the monster, check for death */
@@ -1181,13 +1181,13 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 					/* Message */
 					message_pain(c_ptr->m_idx, tdam);
 
-                  /* Anger friends */
-                   if ((m_ptr->smart & SM_ALLY)
-                    && (k_info[q_ptr->k_idx].tval != TV_POTION))
-                    {
-                      msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
-                      m_ptr->smart &= ~SM_ALLY;
-                   }
+					/* Anger friends */
+					if ((m_ptr->smart & SM_ALLY)
+					&& (k_info[q_ptr->k_idx].tval != TV_POTION))
+					{
+						msg_format("%v gets angry!", monster_desc_f2, m_ptr, 0);
+						m_ptr->smart &= ~SM_ALLY;
+					}
 
 					/* Take note */
 					if (fear && m_ptr->ml)
@@ -1223,7 +1223,7 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 	{
 		breakage = 0;
 	}
-	
+
 	/* Drop (or break) near that location */
 	drop_near(q_ptr, breakage, y, x);
 }
@@ -1255,7 +1255,7 @@ static void do_cmd_fire_aux(object_type *o_ptr,
  * for the damage multiplier.
  *
  * Note that Bows of "Extra Shots" give an extra shot.
- */ 
+ */
 void do_cmd_fire(object_type *o_ptr)
 {
 	/* Get the "bow" (if any) */
@@ -1369,21 +1369,21 @@ static powercosttype powercosts[] = {
 typedef struct powertype powertype;
 struct powertype
 {
-	byte type;	/* Determine which style of index to use. */
-	byte power;	/* An index to the race or mutation responsible. */
-	s16b min_level;	/* A penalty for racial_success_chance() which depends partly on level. */
-	s16b cost;	/* Cost of power. Negative values refer to skill-based values */
+	byte type; /* Determine which style of index to use. */
+	byte power; /* An index to the race or mutation responsible. */
+	s16b min_level; /* A penalty for racial_success_chance() which depends partly on level. */
+	s16b cost; /* Cost of power. Negative values refer to skill-based values */
 	byte use_stat;  /* The stat considered by racial_success_chance() */
 	int difficulty; /* Another penalty for racial_success_chance(). */
-	cptr text;	/* The description of the power given to the player. */
-	cptr text2;	/* An additional phrase to be inserted after the cost is given. */
+	cptr text; /* The description of the power given to the player. */
+	cptr text2; /* An additional phrase to be inserted after the cost is given. */
 	cptr atext; /* Text to print as the power is used. */
 };
-/* The string will be turned into a longer form later. 
+/* The string will be turned into a longer form later.
  * In general, this is text+"     "+"(racial, cost power->cost, power->use_stat power->difficulty)".
  * If power->cost is negative, the cost is taken from powercosts[-power->cost].
  * If text2 isn't 0, it is added as a separate statement after the cost, separated from that and
- * power->use_stat by commas. 
+ * power->use_stat by commas.
  * The number of spaces will be adjusted as necessary.
  */
 /*
@@ -1472,7 +1472,7 @@ static powertype powers[] = {
 {POWER_DISMISS, PET_DISMISS_ONE, 0, 0, 0, 0, "dismiss ally",0, 0},
 {POWER_DISMISS, PET_DISMISS_MANY, 0, 0, 0, 0, "dismiss allies",0, 0},
 {0,0,0,0,0,0,0,0,0}};
-#define MAX_POWERS	36 /* There shouldn't be more powers than this at a time. */
+#define MAX_POWERS 36 /* There shouldn't be more powers than this at a time. */
 static powertype *cur_powers[MAX_POWERS];
 
 
@@ -1517,8 +1517,8 @@ static void use_innate_power(powertype *pw_ptr)
 static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
 {
 	int difficulty = pw_ptr->difficulty;
-	
-				
+
+
 	const int plev = MAX(1,skill_set[SKILL_RACIAL].value/2);
 	const int stat = p_ptr->stat_cur[pw_ptr->use_stat];
 
@@ -1559,7 +1559,7 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
 	(*denom) = stat*difficulty;
 }
 
-/* 
+/*
  * Describe a power for do_cmd_racial_power.
  * In general, this becomes text+"     "+"(racial, cost power->cost, power->use_stat power->difficulty)".
  * If power->cost is negative, the cost is taken from powercosts[-power->cost].
@@ -1571,7 +1571,7 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
 static void racial_string(byte idx, byte *x, char * text)
 {
 	powertype *pw_ptr = cur_powers[idx];
-						
+
 	/* Set the distance from the left margin. */
 	(*x) = RACIAL_MIN_X;
 
@@ -1636,7 +1636,7 @@ static void racial_string(byte idx, byte *x, char * text)
 	}
 }
 
-/* 
+/*
  * The confirmation string for do_cmd_racial_power.
  */
 static void racial_confirm_string(byte choice, char * out)
@@ -1702,10 +1702,10 @@ static int count_powers(void)
 }
 
 /*
- * A generic menu display function for lists of options such as a spell list. 
+ * A generic menu display function for lists of options such as a spell list.
  * "display" must set the x co-ordinate for the display and return the string which is to be displayed
  * to describe option "num" when the full list is displayed.
- * "confirm" must display a prompt asking for confirmation of option "choice" and return the 
+ * "confirm" must display a prompt asking for confirmation of option "choice" and return the
  * String1 and string2 are configurable strings in the initial prompt.
  * string contains the string displayed at the top of the screen when the command is called.
  * (*display)(byte num) is a pointer to the function which describes an option, taking its index.
@@ -1791,7 +1791,7 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 			case 'y': case 'z': case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
 			case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N':
 			case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V':
-			case 'W': case 'X': case 'Y': case 'Z': 
+			case 'W': case 'X': case 'Y': case 'Z':
 			{
 				ask = ISUPPER(choice);
 				select = A2I(FORCELOWER(choice));
@@ -1819,7 +1819,7 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 		}
 	}
 }
-				
+
 /*
  * Decide whether a power has been used successfully.
  */
@@ -1831,7 +1831,7 @@ static bool racial_aux(powertype *pw_ptr)
 	bool use_mana = TRUE;
 	s16b num, denom;
 	int cost = pw_ptr->cost;
-	
+
 	/* Determine the cost if level-based. */
 	if (cost < 0)
 	{
@@ -1872,7 +1872,7 @@ static bool racial_aux(powertype *pw_ptr)
 			return FALSE;
 		}
 	}
-            
+
 	/* Else attempt to do it! */
 
 	/* take time and pay the price */
@@ -1896,11 +1896,11 @@ static bool racial_aux(powertype *pw_ptr)
 		p_ptr->cchi -= num;
 		p_ptr->redraw |= PR_MANA;
 	}
-					
+
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
-					
+
 	/* Success? */
 	racial_success_chance(pw_ptr, &num, &denom);
 	if (rand_int(denom) < num)
@@ -1914,7 +1914,7 @@ static bool racial_aux(powertype *pw_ptr)
 	}
 	return FALSE;
 }
-				
+
 /*
  * Use a racial/mutated power.
  */
@@ -1939,7 +1939,7 @@ void do_cmd_racial_power(void)
 	if (total != 255)
 	{
 		powertype *pw_ptr = cur_powers[total];
-				
+
 		switch (pw_ptr->type)
 		{
 			case POWER_RACIAL: case POWER_MUTA:
@@ -1950,9 +1950,9 @@ void do_cmd_racial_power(void)
 			case POWER_DISMISS:
 			use_innate_power(pw_ptr);
 			break;
-            default:
+			default:
 			msg_print("You don't know what that does.");
-        }
-    }
+		}
+	}
 }
 
