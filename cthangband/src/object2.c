@@ -1129,10 +1129,6 @@ s32b object_value_real(object_type *o_ptr)
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
-	/* Add the modifiers for random flags. */
-    if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
-             value += flag_cost (o_ptr, FALSE);
-
 	/* Artifact */
 	if (o_ptr->name1)
 	{
@@ -1157,6 +1153,9 @@ s32b object_value_real(object_type *o_ptr)
 		value += e_ptr->cost;
 	}
 
+	/* Add the modifiers for random flags. */
+    if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
+             value += flag_cost (o_ptr, FALSE);
 
 	/* Analyze pval bonus */
 	switch (o_ptr->tval)
