@@ -1783,7 +1783,7 @@ void do_cmd_macros(void)
  * deals with another.
  */
 
-typedef struct visual_type visual_type;
+typedef const struct visual_type visual_type;
 
 struct visual_type
 {
@@ -1816,11 +1816,11 @@ struct visual_type
 	/* The text string printed before an option dump. */
 	cptr initstring;
 
+	/* The number of entries available (usually set during initialisation). */
+	u16b *max;
+
 	/* The character which starts every preference line to indicate the type. */
 	char startchar; 
-
-	/* The number of entries available (usually set during initialisation). */
-	u16b max;
 
 	/* Indicate that colour has meaning for these visual prefs. */
 	bool attr;
@@ -2026,22 +2026,26 @@ void do_cmd_visuals(void)
 
 	char buf[1024];
 
+	/* max_moncol is a macro, so set a variable to it so that it can be
+	 * given a pointer. */
+	u16b max_moncol = MAX_MONCOL;
+
 	/* Enter in the data for the various types of thing being altered. */
 	visual_type visual[5] =
 	{
 		{"monster attr/chars", get_visuals_mon, 0, pref_str_std,
-			0, "Monster attr/char definitions", 'R', MAX_R_IDX, TRUE, TRUE},
+			0, "Monster attr/char definitions", &MAX_R_IDX, 'R', TRUE, TRUE},
 		{"object attr/chars", get_visuals_obj, 0, pref_str_std,
-			visual_reject_obj, "Object attr/char definitions", 'K', MAX_K_IDX,
+			visual_reject_obj, "Object attr/char definitions", &MAX_K_IDX, 'K',
 			TRUE, TRUE},
 		{"feature attr/chars", get_visuals_feat, 0, pref_str_std,
-			visual_reject_feat, "Feature attr/char definitions", 'F',
-			MAX_F_IDX, TRUE, TRUE},
+			visual_reject_feat, "Feature attr/char definitions", &MAX_F_IDX, 
+			'F', TRUE, TRUE},
 		{"monster memory attrs", get_visuals_moncol, visual_dump_moncol, 0,
-			0, "Monster memory attr definitions", 'M', MAX_MONCOL, TRUE, FALSE},
+			0, "Monster memory attr definitions", &max_moncol, 'M', TRUE, FALSE},
 		{"unidentified object attr/chars", get_visuals_unident, 0,
 			pref_str_unident, visual_reject_unident,
-			"Unidentified object attr/char definitions", 'U', MAX_U_IDX, TRUE,
+			"Unidentified object attr/char definitions", &MAX_U_IDX, 'U', TRUE,
 			TRUE},
 	};
 
@@ -2148,7 +2152,7 @@ void do_cmd_visuals(void)
 				fprintf(fff, "%c:---reset---\n\n", vs_ptr->startchar);
 
 				/* Dump entries */
-				for (i = 0; i < vs_ptr->max; i++)
+				for (i = 0; i < *vs_ptr->max; i++)
 				{
 					cptr name;
 					byte da, *xa;
@@ -2190,11 +2194,11 @@ void do_cmd_visuals(void)
 			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
 
 			int inc, max, num;
-			uint r = vs_ptr->max-1, *out;
+			uint r = *vs_ptr->max-1, *out;
 
 			bool started = FALSE;
 
-			/* Make a note of log(vs_ptr->max-1)/log(10) */
+			/* Make a note of log(*vs_ptr->max-1)/log(10) */
 			const uint numlen = strlen(format("%d", r));
 
 			prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
@@ -2282,7 +2286,7 @@ dcv_retry:
 					case 'n':
 						prompt = "Select number of desired entry: ";
 						out = &r;
-						max = vs_ptr->max;
+						max = *vs_ptr->max;
 						break;
 					case 'a':
 						prompt = "Select number of desired colour: ";
