@@ -2888,6 +2888,13 @@ static void process_command(void)
 			break;
 		}
 
+			/* Unified use function */
+			case KTRL('u'):
+			{
+				do_cmd_handle();
+				break;
+			}
+
 			/* Read a scroll */
 		case 'r':
 		{
