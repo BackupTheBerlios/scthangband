@@ -2072,7 +2072,7 @@ bool live_monster_wide_p(monster_race *r_ptr)
  * This is the only function which may place a monster in the dungeon,
  * except for the savefile loading code.
  */
-bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force)
+monster_type *place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force)
 {
 	cave_type		*c_ptr;
 
@@ -2082,32 +2082,32 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 
 
 	/* Verify location */
-	if (!in_bounds(y, x)) return (FALSE);
+	if (!in_bounds(y, x)) return NULL;
 
 	/* Require empty space */
-	if (!cave_empty_bold(y, x)) return (FALSE);
+	if (!cave_empty_bold(y, x)) return NULL;
 
 	/* Hack -- no creation on glyph of warding */
-	if (cave[y][x].feat == FEAT_GLYPH) return (FALSE);
-    if (cave[y][x].feat == FEAT_MINOR_GLYPH) return (FALSE);
+	if (cave[y][x].feat == FEAT_GLYPH) return NULL;
+    if (cave[y][x].feat == FEAT_MINOR_GLYPH) return NULL;
 
     /* Nor on the Pattern */
     if ((cave[y][x].feat >= FEAT_PATTERN_START)
         && (cave[y][x].feat <= FEAT_PATTERN_XTRA2))
-            return (FALSE);
+            return NULL;
 
 	/* Paranoia */
-	if (!r_idx) return (FALSE);
+	if (!r_idx) return NULL;
 
 	/* Paranoia */
-	if (!r_ptr->name) return (FALSE);
+	if (!r_ptr->name) return NULL;
 
 
 	/* Hack -- "unique" monsters must be "unique" */
 	if ((r_ptr->flags1 & (RF1_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num) && !force)
 	{
 		/* Cannot create */
-		return (FALSE);
+		return NULL;
 	}
 
 	/*
@@ -2120,18 +2120,18 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 		if (!q_ptr)
 		{
 			/* Not a quest level */
-			return(FALSE);
+			return NULL;
 		}
 		if (r_idx != q_ptr->r_idx)
 		{
 			/* Not your turn yet */
-			return(FALSE);
+			return NULL;
 		}
 
 		if (r_ptr->cur_num >= (q_ptr->max_num - q_ptr->cur_num))
 		{
 			/* Too many already */
-			return (FALSE);
+			return NULL;
 		}
 	}
 
@@ -2177,10 +2177,9 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
-    hack_m_idx_ii = c_ptr->m_idx;
 
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return (FALSE);
+	if (!c_ptr->m_idx) return NULL;
 
 
 	/* Get a new monster record */
@@ -2298,7 +2297,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 
 
 	/* Success */
-	return (TRUE);
+	return m_ptr;
 }
 
 
@@ -2442,15 +2441,17 @@ static bool place_monster_okay(int place_monster_idx, int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, bool force)
+monster_type *place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, bool force)
 {
- 	int			i;
-
- 	monster_race	*r_ptr = &r_info[r_idx];
+	int i;
+	monster_type *m_ptr;
+	monster_race *r_ptr = &r_info[r_idx];
 
 
  	/* Place one monster, or fail */
-    if (!place_monster_one(y, x, r_idx, slp, charm, force)) return (FALSE);
+	m_ptr = place_monster_one(y, x, r_idx, slp, charm, force);
+	if (!m_ptr) return NULL;
+
 	/* Escorts for certain monsters */
 	if (r_ptr->flags1 & (RF1_ESCORT))
 	{
@@ -2492,7 +2493,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 	}
 	
 	/* Require the "group" flag */
-	if (!grp) return (TRUE);
+	if (!grp) return m_ptr;
 
 
 	/* Friends for certain monsters */
@@ -2503,7 +2504,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 	}
 
 	/* Success */
-	return (TRUE);
+	return m_ptr;
 }
 
 
@@ -2579,7 +2580,7 @@ static bool PURE get_mon_horde(int UNUSED p, int r_idx)
  */
 static bool alloc_horde_aux(int y, int x, int level)
 {
-
+	monster_type *m_ptr;
     int i, r_idx;
 
 	get_mon_num_filter(get_mon_horde, 0);
@@ -2591,10 +2592,10 @@ static bool alloc_horde_aux(int y, int x, int level)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster */
-	if (place_monster_aux(y, x, r_idx, FALSE, FALSE, FALSE, FALSE))
-	{
-		monster_type *m_ptr = &m_list[hack_m_idx_ii];
+	m_ptr = place_monster_aux(y, x, r_idx, FALSE, FALSE, FALSE, FALSE);
 
+	if (m_ptr)
+	{
 		for (i = rand_range(6, 15); i; i--)
 		{
 			summon_specific(m_ptr->fy, m_ptr->fx, level,
@@ -2851,7 +2852,7 @@ bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool 
 
 
 	/* Attempt to place the monster (awake, allow groups) */
-    return place_monster_aux(y, x, r_idx, FALSE, Group_ok, charm, FALSE);
+    return !!place_monster_aux(y, x, r_idx, FALSE, Group_ok, charm, FALSE);
  }
 
 /*
@@ -2883,26 +2884,27 @@ bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok)
  */
 bool multiply_monster(int m_idx, bool charm, bool clone)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m2_ptr, *m_ptr = &m_list[m_idx];
 
 	int y, x;
-
-	bool result = FALSE;
 
 	if (!scatter(&y, &x, m_ptr->fy, m_ptr->fx, 1, cave_empty_bold_p))
 		return FALSE;
 
 	/* Create a new monster (awake, no groups) */
-	result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, charm, FALSE);
+	m2_ptr = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, charm, FALSE);
 
-	if (clone && result) m_list[hack_m_idx_ii].smart |= SM_CLONED;
+	/* Nothing was created. */
+	if (!m2_ptr) return FALSE;
+
+	if (clone) m2_ptr->smart |= SM_CLONED;
 
 	/* Both resulting monsters are next generation */
 	m_ptr->generation++;
-	m_list[hack_m_idx_ii].generation = m_ptr->generation;
+	m2_ptr->generation = m_ptr->generation;
 
 	/* Result */
-	return (result);
+	return TRUE;
 }
 
 

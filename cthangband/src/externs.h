@@ -1335,10 +1335,10 @@ extern bool live_monster_p(monster_race *r_ptr);
 extern bool live_monster_wide_p(monster_race *r_ptr);
 #endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
-extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force);
+extern monster_type *place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force);
 #endif
 #if (defined(CMD1_C) || defined(GENERATE_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(WIZARD2_C))
-extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, bool force);
+extern monster_type *place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, bool force);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
 extern bool place_monster(int y, int x, int level, bool slp, bool grp);
@@ -2687,9 +2687,9 @@ extern s16b m_cnt;
 #if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern s16b hack_m_idx;
 #endif
-#if (defined(MONSTER2_C) || defined(VARIABLE_C))
-extern s16b hack_m_idx_ii;
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool multi_rew;
 #endif
