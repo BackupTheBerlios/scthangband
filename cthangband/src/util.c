@@ -2743,6 +2743,7 @@ static bool wrap_text(int nx)
 static cptr mc_add(cptr s, int mx, int *dattr, int *attr, bool *ignore)
 {
 	int nattr;
+	bool spec;
 
 	/* With no specified width, use however much space is left on the line. */
 	if (mx == DEFAULT)
@@ -2755,20 +2756,23 @@ static cptr mc_add(cptr s, int mx, int *dattr, int *attr, bool *ignore)
 	}
 
 	/* Print until either the space or the string is exhausted. */
-	for (; *s && *s != '\n' && mx; s++)
+	for (spec = FALSE; *s && *s != '\n' && mx; s++)
 	{
-		if (*ignore || *s != '$')
+		/* Ignoring special chars, or not finding them. $$ is simply a $. */
+		if (*ignore || (spec == (*s == '$')))
 		{
 			/* Add the character, finish if the cursor has gone too far. */
 			Term_addch(*attr, *s);
 			mx--;
 		}
-		/* $$ prints $. */
-		else if (*(++s) == '$')
+		else if (*s == '$')
 		{
-			Term_addch(*attr, '$');
-			mx--;
+			spec = TRUE;
+			continue;
 		}
+
+		/* From here on, we're looking for special character codes. */
+
 		/* $< saves the current colour as a default. */
 		else if (*s == '<')
 		{
@@ -2793,9 +2797,20 @@ static cptr mc_add(cptr s, int mx, int *dattr, int *attr, bool *ignore)
 		else
 		{
 			Term_addch(TERM_RED, '$');
+			if (--mx) Term_addch(TERM_RED, *s);
 			mx--;
 		}
+
+		/* Almost everything cancels a special code. */
+		spec = FALSE;
 	}
+
+	/* The string terminated prematurely. */
+	if (spec && mx)
+	{
+		Term_addch(TERM_RED, '$');
+	}
+
 	return s;
 }
 

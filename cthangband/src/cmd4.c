@@ -2256,7 +2256,7 @@ static void do_cmd_macro_aux(char *buf, int len)
 
 
 	/* Hack -- display the trigger */
-	mc_add_fmt("%v", ascii_to_text_f1, buf);
+	mc_add_fmt("$!%v", ascii_to_text_f1, buf);
 }
 
 
@@ -2278,13 +2278,13 @@ static void do_cmd_macro_aux_keymap(char *buf)
 
 	/* Hack -- display the trigger */
 	strnfmt(tmp, sizeof(tmp), "%v", ascii_to_text_f1, buf);
-	mc_add_fmt("%s", tmp);
+	mc_add_fmt("$!%s", tmp);
 
 	/* Notice if the key isn't its own text representation. */
 	if (strcmp(tmp, buf))
 	{
 		/* buf[0] could be anything, so output the character alone. */
-		mc_add_fmt(" (%c)", buf[0]);
+		mc_add_fmt("$! (%c)", buf[0]);
 	}
 
 	/* Flush */
