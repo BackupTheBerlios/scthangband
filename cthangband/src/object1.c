@@ -4128,7 +4128,8 @@ static void next_object(object_type **o_ptr)
  * "o_ptr" is set to the selected item (or is left alone if none is chosen).
  * "tag" is the "n" in the above description.
  * "cmd" is the "x" in the above description.
- * "j_ptr" i
+ * "first" is the first object to check (it's either the last object in this
+ * part of the inventory or the first object on the floor).
  */
 static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 {
@@ -4150,8 +4151,8 @@ static bool get_tag(object_type **o_ptr, char tag, s16b cmd, object_type *first)
 	/* Check every object */
 	for (j_ptr = first; j_ptr; next_object(&j_ptr))
 	{
-		/* Only check equipment if we were doing it first. */
-		if (j_ptr == inventory+INVEN_WIELD && j_ptr > first) break;
+		/* Never check the overflow slot. */
+		if (j_ptr == inventory+INVEN_PACK) break;
 
 		/* Skip non-objects */
 		if (!j_ptr->k_idx) continue;
@@ -4582,28 +4583,27 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			case '7': case '8': case '9':
 			{
 				bool tmp;
-
-				object_type *first;
+				object_type *ot;
 
 				/* Assume no object by default. */
 				o_ptr = NULL;
 
-				first = inventory + ((command_wrk) ? INVEN_WIELD : 0);
+				ot = inventory + ((command_wrk) ? INVEN_TOTAL : INVEN_PACK) -1;
 
 				/* XXX XXX Look up that tag */
-				tmp = get_tag(&o_ptr, which, command_cmd, first);
+				tmp = get_tag(&o_ptr, which, command_cmd, ot);
 
-				first = inventory + ((command_wrk) ? 0 : INVEN_WIELD);
+				ot = inventory + ((command_wrk) ? INVEN_PACK : INVEN_TOTAL) -1;
 
 				/* Look it up in the rest of the inventory if allowed. */
 				if (!tmp && equip && inven)
-					tmp = get_tag(&o_ptr, which, command_cmd, first);
+					tmp = get_tag(&o_ptr, which, command_cmd, ot);
 
-				first = o_list + c_ptr->o_idx;
+				ot = o_list + c_ptr->o_idx;
 
 				/* Look it up on the floor if allowed. */
 				if (!tmp && allow_floor)
-					tmp = get_tag(&o_ptr, which, command_cmd, first);
+					tmp = get_tag(&o_ptr, which, command_cmd, ot);
 
 				if (!o_ptr)
 				{
