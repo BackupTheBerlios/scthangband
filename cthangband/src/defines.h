@@ -2249,13 +2249,13 @@
 #define TR2_SUST_DEX            0x00000008L
 #define TR2_SUST_CON            0x00000010L
 #define TR2_SUST_CHR            0x00000020L
-#define TR2_XXX1                        0x00000040L     /* Later */
-#define TR2_XXX2                        0x00000080L     /* Later */
+#define TR2_RAND_RESIST                 0x00000040L     /* Gives a random resistance */
+#define TR2_RAND_POWER                  0x00000080L     /* Gives a random power */
 #define TR2_IM_ACID                     0x00000100L
 #define TR2_IM_ELEC                     0x00000200L
 #define TR2_IM_FIRE                     0x00000400L
 #define TR2_IM_COLD                     0x00000800L
-#define TR2_XXX3                        0x00001000L     /* Later */
+#define TR2_RAND_EXTRA                  0x00001000L     /* Gives either a random resistance or power */
 #define TR2_REFLECT                     0x00002000L     /* Reflect 'bolts' */
 #define TR2_FREE_ACT            0x00004000L     /* Free Action */
 #define TR2_HOLD_LIFE           0x00008000L     /* Hold Life */

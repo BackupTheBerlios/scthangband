@@ -882,13 +882,13 @@ s32b flag_cost(object_type * o_ptr, int plusses)
     if (f2 & TR2_SUST_DEX) total += 850;
     if (f2 & TR2_SUST_CON) total += 850;
     if (f2 & TR2_SUST_CHR) total += 250;
-    if (f2 & TR2_XXX1) total += 0;
-    if (f2 & TR2_XXX2) total += 0;
+    if (f2 & TR2_RAND_RESIST) total += 0;
+    if (f2 & TR2_RAND_POWER) total += 0;
     if (f2 & TR2_IM_ACID) total += 10000;
     if (f2 & TR2_IM_ELEC) total += 10000;
     if (f2 & TR2_IM_FIRE) total += 10000;
     if (f2 & TR2_IM_COLD) total += 10000;
-    if (f2 & TR2_XXX3) total += 0;
+    if (f2 & TR2_RAND_EXTRA) total += 0;
     if (f2 & TR2_REFLECT) total += 10000;
     if (f2 & TR2_FREE_ACT) total += 4500;
     if (f2 & TR2_HOLD_LIFE) total += 8500;
@@ -1751,68 +1751,24 @@ static void object_mention(object_type *o_ptr)
 
 void random_artifact_resistance(object_type * o_ptr)
 {
-    bool give_resistance = FALSE, give_power = FALSE;
-
-    if (o_ptr->name1 == ART_MASK) /* Terror Mask now has good and bad sides... */
-    {
-			give_power = TRUE;
+	artifact_type *a_ptr = &a_info[o_ptr->name1];
+	bool give_resistance = a_ptr->flags2 & TR2_RAND_RESIST;
+	bool give_power = a_ptr->flags2 & TR2_RAND_POWER;
+	if (a_ptr->flags2 & TR2_RAND_EXTRA)
+        {
+		if (rand_int(2))
             give_resistance = TRUE;
-            o_ptr->art_flags3 |=
-                (TR3_CURSED | TR3_HEAVY_CURSE | TR3_AGGRAVATE);
-            o_ptr->ident |= IDENT_CURSED;
-    }
-	else if (o_ptr->name1 == ART_STORMBRINGER)
-	{
-		if (randint(2)==1)
-		{
-			o_ptr->art_flags3 |= TR3_DRAIN_EXP;
-		}
 		else
+            give_power = TRUE;
+        }
+	if (o_ptr->name1 == ART_STORMBRINGER)
 		{
-			o_ptr->art_flags3 |= TR3_AGGRAVATE;
+			/* Give something nice. */
+			if (randint(2)==1)
+				o_ptr->art_flags3 |= TR3_DRAIN_EXP;
+			else
+				o_ptr->art_flags3 |= TR3_AGGRAVATE;
 		}
-	}
-
-    switch(o_ptr->name1)
-    {
-
-        case ART_ORCS: case ART_HEARTGUARD: case ART_OGRELORDS:
-        case ART_KOBOLD: case ART_SERPENTS:
-        case ART_RAWHIDE: case ART_STABILITY: case ART_MINDCRAFTER:
-        case ART_NYOGTHA: case ART_BLACKREAVER: case ART_VITRIOL:
-        case ART_HOPE: case ART_CHARITY: case ART_FAITH:
-        case ART_STING: case ART_JUSTICE:
-        case ART_WYVERNSCALE:
-        {
-            /* Give a resistance */
-            give_resistance = TRUE;
-        }
-        break;
-        case ART_DEFENCE: case ART_BRIGHTBLADE: case ART_BLACKICE:
-        case ART_EVERFLAME: case ART_FIRETONGUE: case ART_DRAGONSLAYER:
-        case ART_SOULSWORD: case ART_BOWSERPENTS: case ART_DEATH:
-        {
-            /* Give a resistance OR a power */
-            if (randint(2)==1) give_resistance = TRUE;
-            else give_power = TRUE;
-        }
-        break;
-        case ART_ELEMICE: case ART_ELEMSTORM: case ART_MISERY:
-        case ART_COMBAT: case ART_SWASHBUCKLER: case ART_GNORRI:
-        case ART_ATAL:
-        {
-            /* Give a power */
-            give_power = TRUE;
-        }
-        break;
-        case ART_NYARLATHOTEP: case ART_SUN: case ART_MJOLLNIR:
-        {
-            /* Give both */
-            give_power = TRUE;
-            give_resistance = TRUE;
-        }
-        break;
-    }
 
     if (give_power)
     {

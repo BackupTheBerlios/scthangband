@@ -556,6 +556,9 @@ static const flag_desc misc_flags2_desc[] =
     { TR2_REFLECT,    "Reflection" },
 	{ TR2_FREE_ACT,   "Free Action" },
 	{ TR2_HOLD_LIFE,  "Hold Life" },
+	{ TR2_RAND_POWER, "Random Power" },
+	{ TR2_RAND_RESIST, "Random Resistance" },
+	{ TR2_RAND_EXTRA, "Random Power/Resistance" },
 };
 
 /*
@@ -926,7 +929,7 @@ static void analyze_misc_magic (object_type *o_ptr, cptr *misc_list)
 		{
 			*misc_list++ = "Heavily Cursed";
 		}
-		else
+		else if (f3 & (TR3_CURSED))
 		{
 			*misc_list++ = "Cursed";
 		}
