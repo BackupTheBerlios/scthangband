@@ -4141,8 +4141,10 @@ bool dispel_demons(int dam)
 
 /*
  * Wake up all monsters, and speed up "los" monsters.
+ * mw_ptr is only used for a comparison, so both NULL and m_list aggravate
+ * every monster.
  */
-void aggravate_monsters(int who)
+void aggravate_monsters(monster_type *mw_ptr)
 {
 	int i;
 
@@ -4159,7 +4161,7 @@ void aggravate_monsters(int who)
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip aggravating monster (or player) */
-		if (i == who) continue;
+		if (m_ptr == mw_ptr) continue;
 
 		/* Wake up nearby sleeping monsters */
 		if (m_ptr->cdis < MAX_SIGHT * 2)
@@ -5434,7 +5436,7 @@ void activate_ty_curse(void)
 	switch(randint(27))
 	{
 		case 1: case 2: case 3: case 16: case 17:
-		aggravate_monsters(1);
+		aggravate_monsters(NULL);
 		if (randint(6)!=1) break;
 		case 4: case 5: case 6:
 		activate_hi_summon();

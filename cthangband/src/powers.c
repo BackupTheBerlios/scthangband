@@ -1101,7 +1101,7 @@ void wild_magic(int spell)
 			door_creation();
 			break;
 		case 23: case 24: case 25:
-			aggravate_monsters(1);
+			aggravate_monsters(NULL);
 			break;
 		case 26:
 			earthquake(py, px, 5);
@@ -1887,7 +1887,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_SCROLL_AGGRAVATE_MONSTER+PO_K_IDX:
 		{
 			msg_print("There is a high pitched humming noise.");
-			aggravate_monsters(1);
+			aggravate_monsters(NULL);
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -4290,7 +4290,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			else if (die < 22 )
 			{
 				msg_print("It's the swords of discord.");
-				aggravate_monsters(1);
+				aggravate_monsters(NULL);
 			}
 			else if (die < 26)
 			{
@@ -5253,7 +5253,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case MUT_SHRIEK+PO_MUTA:
 		{
 			(void)fire_ball(GF_SOUND, 0, 4 * plev, 8);
-			(void)aggravate_monsters(0);
+			(void)aggravate_monsters(NULL);
 			return SUCCESS;
 		}
 		case MUT_DET_CURSE+PO_MUTA:

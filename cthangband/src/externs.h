@@ -1884,7 +1884,7 @@ extern bool dispel_living(int dam);
 extern bool dispel_demons(int dam);
 #endif
 #if (defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS2_C))
-extern void aggravate_monsters(int who);
+extern void aggravate_monsters(monster_type *mw_ptr);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern errr genocide(bool player_cast);

@@ -36,6 +36,7 @@ sCthangband _CVS_
     memory access.
   * The spirit display on the map screen was squashed, and wasn't redrawn when
     a new spirit was contacted.
+  * Aggravate monster scrolls, and most other sources, did not affect monster 1.
 
 sCthangband 1.0.13
 * Monsters do not recover from fear if they have too few HP to survive one of

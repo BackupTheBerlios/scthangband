@@ -2697,7 +2697,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			if (!direct) break;
 			disturb(1);
 			msg_format("%^s makes a high pitched shriek.", m_name);
-			aggravate_monsters(m_idx);
+			aggravate_monsters(m_ptr);
 			break;
 		}
 
