@@ -3639,32 +3639,53 @@ void notice_stuff(void)
 /*
  * Is cave[y][x] in a room?
  *
- * Do this by looking for either three adjacent or four arbitrary surrounding
- * squares.
+ * Do this by looking for three adjacent surrounding squares, or one of the
+ * following patterns:
+ *
+ * #.# .#. @ = (x,y)
+ * .@. #@# . = cave_floor_bold() square
+ * #.# .#. # = any square.
  */
 static bool is_room_func_p(int y, int x)
 {
-	int i,adj,tot;
+	int i,adj;
+	bool plus, eks;
 
 	/* An array which rotates around 0,0 anticlockwise. */
 	int xs[9] = { 1, 1, 0,-1,-1,-1, 0, 1, 1};
 	int ys[9] = { 0,-1,-1,-1, 0, 1, 1, 1, 0};
 
-	/* Assume that non-floor squares are dealt with elsewhere. */
+	/* Hack - assume that ineligible non-floor squares are excluded elsewhere. */
 	if (!cave_floor_bold(y,x)) return TRUE;
 
-	for (i = tot = adj = 0; i < 9; i++)
+	for (i = adj = 0, plus = eks = TRUE; i < 9; i++)
 	{
 		if (!cave_floor_bold(y+ys[i], x+xs[i]))
 		{
 			adj = 0;
+			/* Hack - count checkerboard areas as room explicitly. I can't think
+			 * of an elegant way of doing this at present... */
+			if (i % 2)
+			{
+				plus = FALSE;
+			}
+			else
+			{
+				eks = FALSE;
+			}
 		}
-		else if ((i && tot++ == 3) || adj++ == 2)
+		else if (adj++ == 2)
 		{
 			return TRUE;
 		}
 	}
-	return FALSE;
+
+	for (i = 1; i < 9; i += 2)
+	{
+		if (!cave_floor_bold(y+ys[i], x+xs[i])) return FALSE;
+	}
+
+	return (plus || eks);
 }
 
 /*
