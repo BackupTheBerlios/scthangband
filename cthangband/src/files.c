@@ -4993,8 +4993,6 @@ static void print_tomb(void)
 
 	char buf[1024];
 
-	FILE        *fp;
-
 	time_t ct = time((time_t)0);
 
 
@@ -5901,6 +5899,40 @@ errr predict_score(void)
 
 
 /*
+ * Hack - showfile() modified to accept a variable.
+ */
+static void showfile_kingly(cptr name, int y)
+{
+	FILE *fp;
+	char buf[1024];
+
+	/* Check that the filename refers to a real file */
+	if (!(fp = my_fopen_path(ANGBAND_DIR_FILE, name, "r"))) return;
+
+	/* Dump the file to the screen */
+	for (; !my_fgets(fp, buf, 1024); y++)
+	{
+		char *t = strstr(buf, "WINNER");
+		if (t)
+		{
+			cptr u = t + strlen("WINNER"), s = sp_ptr->winner;
+			assert(strlen(s) <= strlen("WINNER")); /* sex_info */
+			while (*s) *t++ = *s++;
+			while ((*t++ = *u++));
+		}
+
+		/* Display and advance */
+		mc_put_str(y, 0, buf);
+	}
+
+	/* Close */
+	my_fclose(fp);
+
+	/* Flush it */
+	Term_fresh();
+}
+
+/*
  * Change the player into a King! -RAK-
  */
 static void kingly(void)
@@ -5917,8 +5949,8 @@ static void kingly(void)
 	/* Clear screen */
 	Term_clear();
 
-	/* Display a crown */
-	showfile("winner.txt", 0);
+	/* Hack - Display a crown */
+	showfile_kingly("winner.txt", 0);
 
 	/* Flush input */
 	flush();
