@@ -3918,7 +3918,8 @@ static bool win_floor_good(void)
 	if (p_ptr->image) return TRUE;
 
 	/* A visible wall. */
-	return (cave[WFY][WFX].info & CAVE_MARK || player_can_see_bold(WFY, WFX));
+	return (cave[tracked_co_ord.y][tracked_co_ord.x].info & CAVE_MARK ||
+		player_can_see_bold(tracked_co_ord.y, tracked_co_ord.x));
 }
 
 
@@ -3929,7 +3930,8 @@ static bool win_floor_good(void)
  */
 static void win_floor_display(void)
 {
-	cptr verb = (WFX == px && WFY == py) ? "are standing on" : "see";
+	bool here = (tracked_co_ord.x == px && tracked_co_ord.y == py);
+	cptr verb = (here) ? "are standing on" : "see";
 
 	if (p_ptr->image)
 	{
@@ -3937,18 +3939,26 @@ static void win_floor_display(void)
 	}
 	else
 	{
-		int y;
-		cave_type *c_ptr = &cave[WFY][WFX];
+		int y = 0;
+		cave_type *c_ptr = &cave[tracked_co_ord.y][tracked_co_ord.x];
+		monster_type *m_ptr = m_list+c_ptr->m_idx;
+		monster_race *r_ptr = r_info+m_ptr->r_idx;
 		object_type *o_ptr = o_list+c_ptr->o_idx;
 
-		mc_put_fmt(0, 0, "You %s %v.\n", verb, feature_desc_f2,
+		mc_put_fmt(y++, 0, "You %s %v.\n", verb, feature_desc_f2,
 			c_ptr->feat, FDF_MIMIC | FDF_INDEF);
 
-		for (y = 1; y < Term->hgt && o_ptr != o_list;
+		if (c_ptr->m_idx || here)
+		{
+			mc_put_fmt(y++, 0, "%v %v", get_symbol_f2, r_ptr->x_attr,
+				r_ptr->x_char, monster_desc_f2, m_ptr, 0x0C);
+		}
+
+		for (; y < Term->hgt && o_ptr != o_list;
 			y++, o_ptr = o_list+o_ptr->next_o_idx)
 		{
 			mc_put_fmt(y, 0, "%v %v", get_symbol_f2, object_attr(o_ptr),
-				object_char(o_ptr), object_desc_f3, o_ptr, FALSE, 3);
+				object_char(o_ptr), object_desc_f3, o_ptr, TRUE, 3);
 		}
 	}
 }
@@ -4459,7 +4469,7 @@ void update_object(object_type *o_ptr, int where)
 	if (where & OUP_FLOOR)
 	{
 		/* Display the floor under the player, as the object may be there. */
-		p_ptr->window |= PW_FLOOR;
+		if (o_ptr->iy == py && o_ptr->ix == px) cave_track(py, px);
 	}
 	if (where & OUP_INVEN)
 	{

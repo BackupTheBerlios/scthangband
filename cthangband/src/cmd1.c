@@ -1813,6 +1813,9 @@ void move_to(s16b y, s16b x)
 		/* Check for new panel (redraw map) */
 		verify_panel();
 
+		/* Track the player's location. */
+		cave_track(py, px);
+
 		/* Update stuff */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
 
@@ -1823,7 +1826,7 @@ void move_to(s16b y, s16b x)
 		p_ptr->update |= (PU_DISTANCE);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD | PW_FLOOR);
+		p_ptr->window |= (PW_OVERHEAD);
 }
 
 /*

@@ -146,8 +146,6 @@ bool multi_rew = FALSE;
 int total_friends = 0;
 s32b total_friend_levels = 0;
 
-byte current_function = 0;	/* A variable to give subsidiary functions information about what's happening. */
-
 /*
  * Software options (set via the '=' command).  See "tables.c"
  */
@@ -404,6 +402,11 @@ s16b object_kind_idx;
  * Object to track
  */
 object_type *tracked_o_ptr;
+
+/*
+ * Floor square to track
+ */
+co_ord tracked_co_ord;
 
 /*
  * User info

@@ -3740,6 +3740,18 @@ void object_track(object_type *o_ptr)
 	p_ptr->window |= (PW_OBJECT_DETAILS);
 }
 
+/*
+ * Track the given floor square.
+ */
+void cave_track(const int y, const int x)
+{
+	/* Remember the new cave square (or 0 to clear). */
+	tracked_co_ord.x = x;
+	tracked_co_ord.y = y;
+
+	p_ptr->window |= (PW_FLOOR);
+}
+
 
 
 /*

@@ -168,7 +168,7 @@ void delete_dun_object(object_type *j_ptr)
 		lite_spot(y, x);
 
 		/* Window stuff (if appropriate). */
-		if (y == py && x == px) p_ptr->window |= PW_FLOOR;
+		if (y == py && x == px) cave_track(py, px);
 	}
 
 	/* Wipe the object */
@@ -3252,7 +3252,7 @@ static void drop_near_finish(int chance, int by, int bx)
 	}
 
 	/* Window stuff (if needed) */
-	if (by == py && bx == px) p_ptr->window |= PW_FLOOR;
+	if (by == py && bx == px) cave_track(by, bx);
 }
 
 /*

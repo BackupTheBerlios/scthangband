@@ -4100,9 +4100,6 @@ bool target_set(int mode)
 	
 	cave_type		*c_ptr;
 
-	/* Enter targetting mode */
-	current_function = FUNC_TARGET_SET;
-
 	/* Cancel target */
 	target_who = 0;
 	target_row = py;
@@ -4178,7 +4175,7 @@ bool target_set(int mode)
 					done = TRUE;
 
 					/* Window stuff */
-					p_ptr->window |= PW_FLOOR;
+					cave_track(target_row, target_col);
 					break;
 				}
 
@@ -4211,7 +4208,7 @@ bool target_set(int mode)
 					}
 
 					/* Window stuff */
-					p_ptr->window |= PW_FLOOR;
+					cave_track(target_row, target_col);
 					break;
 				}
 
@@ -4224,7 +4221,7 @@ bool target_set(int mode)
 					}
 
 					/* Window stuff */
-					p_ptr->window |= PW_FLOOR;
+					cave_track(target_row, target_col);
 					break;
 				}
 
@@ -4234,7 +4231,7 @@ bool target_set(int mode)
 					target_col = px;
 
 					/* Window stuff */
-					p_ptr->window |= PW_FLOOR;
+					cave_track(target_row, target_col);
 				}
 
 				case 'o':
@@ -4266,7 +4263,7 @@ bool target_set(int mode)
 				if (i >= 0) m = i;
 
 				/* Window stuff */
-				p_ptr->window |= PW_FLOOR;
+				cave_track(target_row, target_col);
 			}
 		}
 
@@ -4308,7 +4305,7 @@ bool target_set(int mode)
 					done = TRUE;
 
 					/* Window stuff */
-					p_ptr->window |= PW_FLOOR;
+					cave_track(target_row, target_col);
 					break;
 				}
 
@@ -4336,7 +4333,7 @@ bool target_set(int mode)
 					target_col = px;
 
 					/* Window stuff */
-					p_ptr->window |= PW_FLOOR;
+					cave_track(target_row, target_col);
 				}
 
 				case 'o':
@@ -4377,7 +4374,7 @@ bool target_set(int mode)
 					target_row++;
 
 				/* Window stuff */
-				p_ptr->window |= PW_FLOOR;
+				cave_track(target_row, target_col);
 			}
 		}
 	}
@@ -4391,8 +4388,8 @@ bool target_set(int mode)
 	/* Don't show violet uniques in normal play */
 	do_violet_uniques(FALSE);
 
-	/* Leave targetting mode */
-	current_function = 0;
+	/* Show the player's square again. */
+	cave_track(py, px);
 
 	/* Failure to set target */
 	if (!target_who) return (FALSE);

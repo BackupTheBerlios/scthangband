@@ -1310,7 +1310,7 @@ extern s16b get_mon_num(int level);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(GENERATE_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void monster_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(MONSTER2_C) || defined(SPELLS2_C))
@@ -2657,8 +2657,8 @@ extern int total_friends;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(VARIABLE_C))
 extern s32b total_friend_levels;
 #endif
-#if (defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern byte current_function;
+#if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern co_ord tracked_co_ord;
 #endif
 #if (defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool inscribe_depth;
@@ -4003,6 +4003,12 @@ extern void update_object(object_type *o_ptr, int where);
 
 #if (defined(DUNGEON_C) || defined(STORE_C))
 extern void process_command(void);
+#endif
+
+/* cave.c */
+
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(OBJECT2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+extern void cave_track(const int y, const int x);
 #endif
 
 /* (null) */

@@ -1311,6 +1311,8 @@ static errr init_other(void)
 	/* Allocate and Wipe the monster list */
 	C_MAKE(m_list, MAX_M_IDX, monster_type);
 
+	/* Hack - the player can always see herself. */
+	m_list[0].ml = TRUE;
 
 	/* Allocate and wipe each line of the cave */
 	for (i = 0; i < MAX_HGT; i++)
