@@ -1004,7 +1004,7 @@ static errr save_stats(void)
 	fff = my_fopen_path(ANGBAND_DIR_USER, "user-loc.prf", "a");
 
 	/* Failure */
-	if (!fff) return ERR_PARSE;
+	if (!fff) return FILE_ERROR_CANNOT_OPEN_FILE;
 
 	/* Start dumping */
 	fprintf(fff, "\n\n# Initial stat dump\n\n");

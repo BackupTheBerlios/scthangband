@@ -62,7 +62,7 @@ static void create_user_dir(void)
 			/* Do nothing to a pre-existing directory. */
 			break;
 		}
-		case FILE_ERROR_FATAL:
+		case FILE_ERROR_CANNOT_OPEN_FILE:
 		{
 			/* Something bad happened, so hope the old user dir is okay... */
 			return;

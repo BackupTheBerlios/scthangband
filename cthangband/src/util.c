@@ -649,7 +649,7 @@ errr fd_copy(cptr out, cptr in)
 	FILE *fin = my_fopen(in, "r");
 	FILE *fout = my_fopen(out, "w");
 
-	if (!fin || !fout) return FILE_ERROR_FATAL;
+	if (!fin || !fout) return FILE_ERROR_CANNOT_OPEN_FILE;
 
 	/* Copy across faithfully. */
 	while (fgets(buf, 1024, fin)) fprintf(fout, "%s", buf);
@@ -669,7 +669,7 @@ errr my_mkdir(cptr path, uint mode)
 	char buf[1024];
 	int rc;
 
-	if (path_parse(buf, 1024, path)) return FILE_ERROR_FATAL;
+	if (path_parse(buf, 1024, path)) return FILE_ERROR_CANNOT_OPEN_FILE;
 
 	rc = mkdir(buf, mode);
 
@@ -678,7 +678,7 @@ errr my_mkdir(cptr path, uint mode)
 
 	else if (errno == EEXIST) return FILE_ERROR_FILE_EXISTS;
 	
-	else return FILE_ERROR_FATAL;
+	else return FILE_ERROR_CANNOT_OPEN_FILE;
 }
 
 /*
@@ -3862,7 +3862,7 @@ errr add_resize_hook(void (*resize_hook)(void))
 	{
 		/* Warning, as this probably means a hook isn't being removed. */
 		if (alert_failure) msg_print("Too many resize hooks.");
-		return ERR_MEMORY;
+		return HOOK_ERROR_OUT_OF_MEMORY;
 	}
 	else
 	{
@@ -3883,7 +3883,7 @@ errr delete_resize_hook(void (*resize_hook)(void))
 		resize_hooks[i] = resize_hooks[num_resize_hooks--];
 		return SUCCESS;
 	}
-	return ERR_MISSING;
+	return HOOK_ERROR_NO_SUCH_HOOK;
 }
 
 void resize_main_term(void)

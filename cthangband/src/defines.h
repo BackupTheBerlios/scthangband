@@ -2670,16 +2670,6 @@ logaux(x, 1) logaux(x, 0) 255)
 /* Error codes from err_str */
 
 #define SUCCESS 0	/* No error */
-#define ERR_PARSE 1	/* parse error */
-#define ERR_VERSION 2	/* obsolete file */
-#define ERR_MISSING 3	/* missing record header */
-#define ERR_ORDER 4	/* non-sequential records */
-#define ERR_FLAG 5	/* invalid flag specification */
-#define ERR_DIRECTIVE 6	/* undefined directive */
-#define ERR_MEMORY 7	/* out of memory */
-
-#define FILE_ERROR_FILE_EXISTS	1
-#define FILE_ERROR_FATAL	-1
 
 #define PARSE_ERROR_GENERIC                  1
 #define PARSE_ERROR_OBSOLETE_FILE            2
@@ -2697,11 +2687,17 @@ logaux(x, 1) logaux(x, 0) 255)
 
 #define PARSE_ERROR_MAX                     14
 
+#define FILE_ERROR_CANNOT_OPEN_FILE -101
+#define FILE_ERROR_FILE_EXISTS	101
+
+#define HOOK_ERROR_NO_SUCH_HOOK	201
+#define HOOK_ERROR_OUT_OF_MEMORY 202
+
 /* Errors from process_pref_file_aux(). */
-#define PREF_ERROR_GENERIC	1
-#define PREF_ERROR_UNKNOWN_PARAMETER 3
-#define PREF_ERROR_OUT_OF_BOUNDS	8
-#define PREF_ERROR_INCORRECT_SYNTAX	13
+#define PREF_ERROR_GENERIC	301
+#define PREF_ERROR_UNKNOWN_PARAMETER 302
+#define PREF_ERROR_OUT_OF_BOUNDS	303
+#define PREF_ERROR_INCORRECT_SYNTAX	304
 
 #ifndef SUCCESS
 #define SUCCESS	0

@@ -186,12 +186,6 @@ static s16b tokenize(char *buf, s16b num, char **tokens)
 
 
 
-/* Just in case */
-#ifndef SUCCESS
-#define SUCCESS 0
-#define ERR_PARSE 1
-#define ERR_MEMORY 7
-#endif
 /*
  * Insert a set of stats into the stat_default array.
  */
@@ -214,27 +208,27 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
 	/* Ignore nonsense values */
 	if (maximise != DEFAULT_STATS)
 	{
-		if (sex < 0 || sex >= MAX_SEXES) return ERR_PARSE;
-		if (race < 0 || race >= MAX_RACES) return ERR_PARSE;
-		if (template < 0 || template >= MAX_TEMPLATE) return ERR_PARSE;
-		if (maximise != TRUE && maximise != FALSE) return ERR_PARSE;
+		if (sex < 0 || sex >= MAX_SEXES) return PARSE_ERROR_OUT_OF_BOUNDS;
+		if (race < 0 || race >= MAX_RACES) return PARSE_ERROR_OUT_OF_BOUNDS;
+		if (template < 0 || template >= MAX_TEMPLATE) return PARSE_ERROR_OUT_OF_BOUNDS;
+		if (maximise != TRUE && maximise != FALSE) return PARSE_ERROR_OUT_OF_BOUNDS;
 		for (i = 0; i < A_MAX; i++)
 		{
 			if (maximise)
 			{
 				/* Stats above 17 are not allowed. */
-				if (stat[i] > 17) return ERR_PARSE;
+				if (stat[i] > 17) return PARSE_ERROR_OUT_OF_BOUNDS;
 
 				/* Stats below 8 with external values below 3 are not allowed. */
-				if (stat[i] < 8 && stat[i]+race_info[race].r_adj[i]+template_info[template].c_adj[i] < 3) return ERR_PARSE;
+				if (stat[i] < 8 && stat[i]+race_info[race].r_adj[i]+template_info[template].c_adj[i] < 3) return PARSE_ERROR_OUT_OF_BOUNDS;
 			}
 			else
 			{
 				/* Stats above their maxima are not allowed. */
-				if (stat[i] > maxstat(race, template, i)) return ERR_PARSE;
+				if (stat[i] > maxstat(race, template, i)) return PARSE_ERROR_OUT_OF_BOUNDS;
 
 				/* Stats below 3 are not allowed. */
-				if (stat[i] < 3) return ERR_PARSE;
+				if (stat[i] < 3) return PARSE_ERROR_OUT_OF_BOUNDS;
 			}
 		}
 	}
@@ -246,7 +240,7 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
 	if (stat_default_total == MAX_STAT_DEFAULT)
 	{
 		/* Too many defaults, so give an error in the absence of a better idea. */
-		return ERR_MEMORY;
+		return PARSE_ERROR_OUT_OF_MEMORY;
 	}
 
 	sd_ptr = &stat_default[stat_default_total];
@@ -263,7 +257,7 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
 	sd_ptr->name = quark_add(name);
 
 	/* Require space for the name. */
-	if (!sd_ptr->name) return ERR_MEMORY;
+	if (!sd_ptr->name) return PARSE_ERROR_OUT_OF_MEMORY;
 
 	/* Look for duplicates.
 	 * These are common as saving creates a new copy of everything.
@@ -725,7 +719,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 					break;
 				}
 				default:
-				return ERR_PARSE;
+				return PARSE_ERROR_OUT_OF_BOUNDS;
 			}
 			return err;
 		}

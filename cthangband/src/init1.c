@@ -655,7 +655,7 @@ if (readnum(chr) == -2) \
 { \
 	msg_format("Too many '%c's!", chr); \
 	msg_print(NULL); \
-	return ERR_PARSE; \
+	return PARSE_ERROR_GENERIC; \
 } \
 else if (readnum(chr) > -1) \
 { \
@@ -747,7 +747,7 @@ static errr do_get_string(char *buf, char this, cptr all, char *output, u32b *th
 		else if (strchr(all, *r) && *r != this)
 		{
 			printf("Unexpected termination character!");
-			return ERR_PARSE;
+			return PARSE_ERROR_GENERIC;
 		}
 		/* Everything else is fine. */
 		else
@@ -760,7 +760,7 @@ static errr do_get_string(char *buf, char this, cptr all, char *output, u32b *th
 	if (max_size-(*this_size) < strlen(s))
 	{
 		msg_print("Not enough space for string!");
-		return ERR_MEMORY;
+		return PARSE_ERROR_OUT_OF_MEMORY;
 	}
 	/* Advance and save the index. */
 	if (!(*offset)) (*offset) = ++(*this_size);
@@ -880,14 +880,14 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 			if (!r_idx)
 			{
 				msg_print("No r_idx specified!");
-				return ERR_MISSING;
+				return PARSE_ERROR_MISSING_RECORD_HEADER;
 			}
 
 			/* Find an unused event slot */
 			if ((++error_idx) >= MAX_I)
 			{
 				msg_print("Too many events!");
-				return ERR_MEMORY;
+				return PARSE_ERROR_OUT_OF_MEMORY;
 			}
 			d_ptr = (death_event_type*)head->info_ptr+error_idx;
 
@@ -935,7 +935,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 			d_ptr->r_idx != (d_ptr-1)->r_idx))
 			{
 				msg_print("IF_PREV without previous entry.");
-				return ERR_FLAG;
+				return PARSE_ERROR_INVALID_FLAG;
 			}
 
 			/* Look for flags compatible with the event type
@@ -1020,7 +1020,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 						if (!a_ptr->name)
 						{
 							msg_print("No valid artefact specified.");
-							return ERR_PARSE;
+							return PARSE_ERROR_GENERIC;
 						}
 						/* Take an unstated k_idx to be that of the artefact. */
 						else if (!i_ptr->k_idx)
@@ -1031,7 +1031,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 						else if (i_ptr->k_idx != a_ptr->k_idx)
 						{
 							msg_print("Incompatible object and artefact.");
-							return ERR_PARSE;
+							return PARSE_ERROR_GENERIC;
 						}
 					}
 #ifdef ALLOW_EGO_DROP
@@ -1042,7 +1042,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 						if (!e_ptr->name)
 						{
 							msg_print("No valid ego type specified.");
-							return ERR_PARSE;
+							return PARSE_ERROR_GENERIC;
 						}
 						/* Ensure that the ego type is possible for this k_idx. */
 					}
@@ -1052,7 +1052,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					if (k_info[i_ptr->k_idx].name == 0)
 					{
 						msg_print("No valid object specified.");
-						return ERR_PARSE;
+						return PARSE_ERROR_GENERIC;
 					}
 
 					/* Ensure that RAND has not been used without a sensible thing
@@ -1064,14 +1064,14 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					))
 					{
 						msg_print("Nothing valid to randomise.");
-						return ERR_PARSE;
+						return PARSE_ERROR_GENERIC;
 					}
 
 					/* Prevent badly formatted ranges. */
 					if (i_ptr->min > i_ptr->max || !i_ptr->min)
 					{
 						msg_print("Bad number parameter.");
-						return ERR_FLAG;
+						return PARSE_ERROR_INVALID_FLAG;
 					}
 					break;
 				}
@@ -1104,14 +1104,14 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					if (i_ptr->min > i_ptr->max || !i_ptr->min)
 					{
 						msg_print("Bad number parameter.");
-						return ERR_FLAG;
+						return PARSE_ERROR_INVALID_FLAG;
 					}
 
 					/* Prevent non-existant monster references. */
 					if (!i_ptr->num || i_ptr->num >= MAX_R_IDX)
 					{
 						msg_print("No monster specified!");
-						return ERR_FLAG;
+						return PARSE_ERROR_INVALID_FLAG;
 					}
 					break;
 				}
@@ -1127,14 +1127,14 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					if (!i_ptr->method)
 					{
 						msg_print("No method indicated.");
-						return ERR_FLAG;
+						return PARSE_ERROR_INVALID_FLAG;
 					}
 					/* Allow (d30) or (100) damage formats,
 					 * but not no damage indicator at all. */
 					if (!i_ptr->dice && !i_ptr->sides)
 					{
 						msg_print("No damage indicator.");
-						return ERR_FLAG;
+						return PARSE_ERROR_INVALID_FLAG;
 					}
 					else if (!i_ptr->dice)
 					{
@@ -1153,7 +1153,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					if (i_ptr->metal == -1)
 					{
 						msg_print("No coin type!");
-						return ERR_FLAG;
+						return PARSE_ERROR_INVALID_FLAG;
 					}
 					break;
 				}
@@ -1162,7 +1162,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 				default: /* i.e. no valid type specification */
 				{
 					msg_print("No event type specified!");
-					return ERR_MISSING;
+					return PARSE_ERROR_MISSING_RECORD_HEADER;
 				}
 			}
 			/* Fill in the other general flags now the text
@@ -1180,14 +1180,14 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 			if (!d_ptr->num || d_ptr->num > d_ptr->denom)
 			{
 				msg_print("Bad probability specification.");
-				return ERR_PARSE;
+				return PARSE_ERROR_GENERIC;
 			}
 			/* The type-specific text field should have either been reset, or not
 			 * set in the first place. */
 			if (temp_name_offset)
 			{
 				msg_print("Meaningless text field found.");
-				return ERR_PARSE;
+				return PARSE_ERROR_GENERIC;
 			}
 
 			/* Finally check that everything has been read. */
@@ -1198,7 +1198,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					if (!strchr(": )\"", *s))
 					{
 						msg_print("Uninterpreted characters!");
-						return ERR_PARSE;
+						return PARSE_ERROR_GENERIC;
 					}
 				}
 			}
