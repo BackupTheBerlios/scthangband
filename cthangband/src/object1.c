@@ -1584,7 +1584,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		case TV_BOW:
 
 		/* Mega-Hack -- Extract the "base power" */
-		power = o_ptr->ds;
+		power = get_bow_mult(o_ptr);
 
 		/* Apply the "Extra Might" flag */
 		if (f3 & (TR3_XTRA_MIGHT)) power++;

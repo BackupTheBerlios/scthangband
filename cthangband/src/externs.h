@@ -1348,7 +1348,7 @@ extern void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode)
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
 extern cptr item_activation(object_type *o_ptr);
 #endif
-#if (defined(CMD2_C) || defined(OBJECT1_C))
+#if (defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern int get_bow_mult(object_type *o_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
