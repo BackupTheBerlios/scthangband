@@ -602,6 +602,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 
 	char		out_val[160];
 
+	char help_name[] = "spirit=???";
 
  #ifdef ALLOW_REPEAT
  
@@ -676,6 +677,20 @@ static int get_favour(int *sn, int spirit,int sphere)
 	/* Build a prompt (accept all spells) */
 	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) invoke which favour? ",
 		I2A(0), I2A(num - 1));
+
+	/* Build a help prompt. */
+	i = MIN(MAX(spirit, 0), 99);
+
+	switch (sphere)
+	{
+		case SPIRIT_LIFE: choice = 'L'; break;
+		case SPIRIT_NATURE: choice = 'W'; break;
+		default: choice = '?';
+	}
+	sprintf(strchr(help_name, '?'), "%c%d", choice, i);
+
+	/* Look for that prompt. */
+	help_track(help_name);
 
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
@@ -759,6 +774,8 @@ static int get_favour(int *sn, int spirit,int sphere)
 		flag = TRUE;
 	}
 
+	/* Remove the help stuff. */
+	help_track(NULL);
 
 	/* Restore the screen */
 	if (redraw) Term_load();
