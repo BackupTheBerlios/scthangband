@@ -3624,6 +3624,48 @@ bool projectable(int y1, int x1, int y2, int x2)
 }
 
 /*
+ * A general "find a location" function.
+ * Obtains a location on the map which matches "accept" with v as its parameter.
+ *
+ * This isn`t very efficient as it calls accept at least once on every grid,
+ * but it doesn't need to use large arrays to do this.
+ */
+bool rand_location(int *yp, int *xp, bool (*accept)(int, int, vptr), vptr v)
+{
+	int x, y, t;
+
+	for (t = y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			if ((*accept)(y, x, v)) t++;
+		}
+	}
+
+	/* No matching squares exist. */
+	if (!t) return FALSE;
+
+	t = rand_int(t);
+
+	for (y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			if ((*accept)(y, x, v) && !t--)
+			{
+				*yp = y;
+				*xp = x;
+				return TRUE;
+			}
+		}
+	}
+
+	/* Paranoia. */
+	assert(!"the acceptable grid list isn't constant!");
+	return FALSE;
+}
+
+/*
  * Return TRUE if the new location is suitable for scatter() below.
  */
 static bool PURE scatter_good(int ny, int nx, int y, int x, int d,

@@ -2034,11 +2034,15 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /*
  * Start Points for surface levels
+ * These need to fit in a byte, and real features are treated in a special
+ * way, so an obviously invalid positive number is used for those which are
+ * not features.
  */
 
-#define START_STAIRS 0 /* Player came up stairs */
-#define START_WALK 1 /* Player walked here */
-#define START_RANDOM 2 /* Player WoR'ed here */
+#define START_WALK (LAST_FEAT+1) /* Player walked here */
+#define START_RANDOM (LAST_FEAT+2) /* Player WoR'ed or fell here */
+#define START_UP_STAIRS FEAT_LESS /* Player came down stairs */
+#define START_DOWN_STAIRS FEAT_MORE /* Player came up stairs */
 
 /*
  * Bit flags for the "project()" function

@@ -384,9 +384,6 @@ static void sense_inventory(void)
 	}
 }
 
-static bool create_up_stair; /* Auto-create "up stairs" */
-static bool create_down_stair; /* Auto-create "down stairs" */
-
 /*
  * Change level, setting various relevant things.
  */
@@ -399,15 +396,6 @@ void change_level(s16b new_level, byte come_from)
 	if (autosave_l)
 	{
 		do_cmd_save_game(TRUE);
-	}
-
-	/* Try to recognise when the player wants stairs next to him. */
-	if (come_from == START_STAIRS && new_level && new_level != dun_level)
-	{
-		if ((new_level > dun_level) ^ !!(dun_defs[cur_dungeon].flags & DF_TOWER))
-			create_up_stair = TRUE;
-		else
-			create_down_stair = TRUE;
 	}
 
 	/* Set the means of entry. */
@@ -3339,49 +3327,6 @@ static void dungeon(void)
 		p_ptr->max_dlv = dun_level;
 	}
 
-
-	/* Paranoia -- No stairs down from Quest */
-	if (is_quest())
-	{
-		if (dun_defs[cur_dungeon].flags & DF_TOWER)
-		{
-			create_up_stair = FALSE;
-		}
-		else
-		{
-			create_down_stair = FALSE;
-		}
-	}
-
-	/* Paranoia -- no stairs from town */
-	if (dun_level <= 0) create_down_stair = create_up_stair = FALSE;
-
-	/* Option -- no connected stairs */
-	if (!dungeon_stair) create_down_stair = create_up_stair = FALSE;
-
-	/* Make a stairway. */
-	if (create_up_stair || create_down_stair)
-	{
-		/* Place a stairway */
-		if (cave_valid_bold(py, px))
-		{
-			/* XXX XXX XXX */
-			delete_object(py, px);
-
-			/* Make stairs */
-			if (create_down_stair)
-			{
-				cave_set_feat(py, px, FEAT_MORE);
-			}
-			else
-			{
-				cave_set_feat(py, px, FEAT_LESS);
-			}
-		}
-
-		/* Cancel the stair request */
-		create_down_stair = create_up_stair = FALSE;
-	}
 
 	/* Verify the panel */
 	verify_panel(FALSE);

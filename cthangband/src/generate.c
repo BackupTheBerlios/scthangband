@@ -186,6 +186,51 @@
 
 static bool new_player_spot(void);
 
+/*
+ * Return TRUE if (x,y) contains feature v and no monsters.
+ */
+static bool PURE is_feat_spot(int y, int x, vptr v)
+{
+	int feat = *((byte*)(v));
+	cave_type *c_ptr = &cave[y][x];
+
+	return (c_ptr->feat == feat && !c_ptr->m_idx);
+}
+
+static bool place_player(void)
+{
+	/* If the player teleported (or recalled) in, place them randomly */
+	if (came_from == START_RANDOM)
+	{
+		return new_player_spot();
+	}
+	else if(came_from == START_WALK)
+	{
+		/* Don't need to alter px & py,
+			but need to make sure player does not
+			start on a tree or water */
+		if((cave[py][px].feat == FEAT_TREE) ||
+			(cave[py][px].feat == FEAT_BUSH) ||
+			(cave[py][px].feat == FEAT_WATER))
+		{
+			cave[py][px].feat = FEAT_FLOOR;
+		}
+	}
+	/* If the player should start from a feature, move him there. */
+	else
+	{
+		int x, y;
+
+		/* Find a spot. */
+		if (!rand_location(&y, &x, is_feat_spot, &came_from)) return FALSE;
+
+		/* Set the player's location there. */
+		py = y;
+		px = x;
+	}
+	return TRUE;
+}
+
 
 /*
  * Simple structure to hold a map location
@@ -592,10 +637,33 @@ bool PURE daytime_p(void)
 
 
 /*
+ * Don't create stairs if forbidden by the DF_NIGHTTIME flag.
+ */
+static bool PURE hide_terrain_stairs(void)
+{
+	int d = wild_grid[wildy][wildx].dungeon;
+
+	/* No stairs to hide. */
+	if (d >= MAX_CAVES) return FALSE;
+
+	/* No day time ban on stairs. */
+	if (~dun_defs[d].flags & DF_NIGHTTIME) return FALSE;
+
+	/* It is night. */
+	if (!daytime_p()) return FALSE;
+
+	/* Always show the stairs we just used. */
+	if (came_from == START_DOWN_STAIRS) return FALSE;
+
+	/* Cover the stairs up. */
+	return TRUE;
+}
+
+/*
  * Generate a terrain level using ``plasma'' fractals.
  *
  */
-static void terrain_gen(void)
+static cptr terrain_gen(void)
 {
 	int x, y,main_feat,door_feat,do_posts,dummy;
 	int table_size = sizeof(terrain_table[0]) / sizeof(int);
@@ -1056,8 +1124,7 @@ static void terrain_gen(void)
 				cave[y-14][x+i].info |= (CAVE_MARK | CAVE_GLOW);
 			}
 
-			if (~d_ptr->flags & DF_NIGHTTIME || came_from == START_STAIRS ||
-				!daytime_p())
+			if (!hide_terrain_stairs())
 			{
 				/* Access the stair grid */
 				cave[y][x].feat=FEAT_LESS;
@@ -1112,7 +1179,7 @@ static void terrain_gen(void)
 			cave[y-1][x+1].feat = FEAT_FLOOR;
 			cave[y][x-2].feat = FEAT_FLOOR;
 			cave[y][x-1].feat = FEAT_FLOOR;
-			if (d_ptr->flags & DF_NIGHTTIME && daytime_p())
+			if (hide_terrain_stairs())
 			{
 				/* Someone leaves a rock over the door. */
 				cave[y][x].feat=FEAT_PERM_BUILDING;
@@ -1134,30 +1201,9 @@ static void terrain_gen(void)
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
 
-	/* If the player teleported (or recalled) in, place them randomly */
-	if(came_from == START_RANDOM)
-	{
-		new_player_spot();
-	}
-	/* If the above was not used, x and y will be the stair location */
-	else if(came_from == START_STAIRS)
-	{
-		py = y;
-		px = x;
-	}
-	else if(came_from == START_WALK)
-	{
-		/* Don't need to alter px & py,
-			but need to make sure player does not
-			start on a tree or water */
-		if((cave[py][px].feat == FEAT_TREE) ||
-			(cave[py][px].feat == FEAT_BUSH) ||
-			(cave[py][px].feat == FEAT_WATER))
-		{
-			cave[py][px].feat = FEAT_FLOOR;
-		}
-	}
-
+	/* Put the player on the map, or fail. */
+	if (!place_player())
+		return "could not place player";
 
 	for (y = 1; y < cur_hgt-1; y++)
 	{
@@ -1195,6 +1241,7 @@ static void terrain_gen(void)
 		(void)alloc_monster(3, dun_depth, TRUE);
 	}
 
+	return SUCCESS;
 }
 
 
@@ -4632,6 +4679,9 @@ static cptr cave_gen(void)
 	/* Place 1 or 2 up stairs near some walls */
 	alloc_stairs(FEAT_LESS, rand_range(1, 2), 3);
 
+	/* Add an extra stairway somewhere on the level. */
+	if (came_from == START_UP_STAIRS || came_from == START_DOWN_STAIRS)
+		alloc_stairs(came_from, 1, 0);
 
 	/* Determine the character location */
 	if (!new_player_spot())
@@ -4732,6 +4782,10 @@ static cptr cave_gen(void)
 		/* A ghost makes the level special */
 		good_item_flag = TRUE;
 	}
+
+	/* Put the player on the map, or fail. */
+	if (!place_player())
+		return "could not place player";
 
 	return NULL;
 }
@@ -5016,21 +5070,15 @@ static void town_gen_hack(void)
 	Rand_quick = FALSE;
 
 
-	/* If the player teleported (or recalled) in, place them randomly */
-	if(came_from == START_RANDOM)
+	/* Put the player on the map. */
+	if (!place_player())
 	{
-		new_player_spot();
-	}
-	/* If the above was not used, x and y will be the stair location */
-	else if(came_from == START_STAIRS)
-	{
-		py = y;
-		px = x;
+		/* Paranoia - this should not be able to fail. */
+		py = px = 1;
 	}
 
 	/* Randomise the spirit names for the shops */
 	generate_spirit_names();
-
 }
 
 
@@ -5298,7 +5346,7 @@ void generate_cave(void)
 			else
 			{
 				/* Make a wilderness */
-				terrain_gen();
+				why = terrain_gen();
 			}
 		}
 

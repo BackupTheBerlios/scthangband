@@ -35,7 +35,7 @@ extern bool player_can_see_bold(int y, int x);
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(OBJECT1_C))
 extern bool no_lite(void);
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
+#if (defined(CAVE_C) || defined(GENERATE_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern bool cave_valid_bold(int y, int x);
 #endif
 #if (defined(CAVE_C) || defined(MAIN_AMI_C))
@@ -1493,7 +1493,7 @@ extern void excise_dun_object(object_type *j_ptr);
 #if (defined(CMD2_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void delete_dun_object(object_type *j_ptr);
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS2_C))
+#if (defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS2_C))
 extern void delete_object(int y, int x);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C))
@@ -2915,7 +2915,7 @@ extern bool view_torch_grids;
 #if (defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool dungeon_align;
 #endif
-#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool dungeon_stair;
 #endif
 #if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3907,5 +3907,11 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(CMD5_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* cave.c */
+
+#if (defined(CAVE_C) || defined(GENERATE_C))
+extern bool rand_location(int *yp, int *xp, bool (*accept)(int, int, vptr), vptr v);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

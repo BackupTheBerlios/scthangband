@@ -123,10 +123,9 @@ static int coords_to_dir(int y, int x)
  * deeper stores whether we are moving to a deeper or a shallower level.
  * stairs stores whether we want stairs at the player's feet or not.
  */
-static void use_stairs(cptr dir, bool deeper, bool trapdoor)
+static void use_stairs(cptr dir, bool deeper, int start)
 {
 	int i, levels = (multi_stair) ? randint(5) : 1;
-	int start = (trapdoor) ? START_RANDOM : START_STAIRS;
 
 	if (dun_level && confirm_stairs)
 	{
@@ -136,7 +135,8 @@ static void use_stairs(cptr dir, bool deeper, bool trapdoor)
 	/* Take some time... */
 	energy_use = extract_energy[p_ptr->pspeed];
 
-	if (trapdoor)
+	/* Hack - assume that only trap doors yield random movement. */
+	if (start == START_RANDOM)
 	{
 		msg_print("You deliberately jump through the trap door.");
 	}
@@ -178,6 +178,9 @@ static void use_stairs(cptr dir, bool deeper, bool trapdoor)
 		}
 	}
 
+	/* Prevent connected stairs in the dungeon, if requested. */
+	if (dun_level+levels && !dungeon_stair) start = START_RANDOM;
+
 	change_level(dun_level+levels, start);
 
 	/* Check for leaving dungeon */
@@ -202,11 +205,12 @@ void do_cmd_go_up(void)
 	if (c_ptr->feat != FEAT_LESS)
 	{
 		msg_print("I see no up staircase here.");
-		return;
 	}
-
-	deeper = (!dun_level || dun_defs[cur_dungeon].flags & DF_TOWER);
-	use_stairs("up", deeper, FALSE);
+	else
+	{
+		deeper = (!dun_level || dun_defs[cur_dungeon].flags & DF_TOWER);
+		use_stairs("up", deeper, START_DOWN_STAIRS);
+	}
 }
 
 
@@ -217,18 +221,27 @@ void do_cmd_go_down(void)
 {
 	/* Player grid */
 	cave_type *c_ptr = &cave[py][px];
-	bool deeper, trapdoor;
+	bool deeper;
+	int start;
 
 	/* Verify stairs */
-	if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_TRAP_DOOR))
+	if (c_ptr->feat == FEAT_MORE)
+	{
+		start = START_UP_STAIRS;
+	}
+	else if (c_ptr->feat == FEAT_TRAP_DOOR)
+	{
+		start = START_RANDOM;
+	}
+	else
 	{
 		msg_print("I see no down staircase here.");
 		return;
 	}
 
 	deeper = (!dun_level || ~dun_defs[cur_dungeon].flags & DF_TOWER);
-	trapdoor = (c_ptr->feat == FEAT_TRAP_DOOR);
-	use_stairs("down", deeper, trapdoor);
+
+	use_stairs("down", deeper, start);
 }
 
 

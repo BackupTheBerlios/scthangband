@@ -6,6 +6,7 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Create the player on a random staircase on entering a level.
 * Change existing stairs around when a quest is finished.
 * Add the ability to record a keymap with the game giving feedback.
 * Display messages from previous turns in a darker colour.
