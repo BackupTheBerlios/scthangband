@@ -2521,6 +2521,8 @@ static void calc_bonuses(bool quiet)
 		p_ptr->see_infra++;
 	}
 
+	/* Negative infravision does not make sense. */
+	if (p_ptr->see_infra < 0) p_ptr->see_infra = 0;
 
 	/* Hack -- Res Chaos -> Res Conf */
 	if (p_ptr->resist_chaos)
