@@ -3661,10 +3661,10 @@ void request_command(bool shopping)
 	}
 
 	/* Use the command */
-	if (!(cmd & 0xFF00)) command_cmd = cmd;
+	command_cmd = cmd;
 
-	/* Remember the command. */
-	record_keymap(cmd);
+	/* Remember ordinary commands. */
+	if (!(cmd & 0xFF00)) record_keymap(cmd);
 
 	/* Hack -- Auto-repeat certain commands */
 	if (always_repeat && (command_arg <= 0))
