@@ -1072,7 +1072,7 @@ s32b flag_cost(object_type * o_ptr, bool all)
  * Enchantments above +15, and enchantments which are not armour to_a or
  * weapon to_d or to_h cannot be obtained by scrolls.
  */
-static u32b mod_cost(object_type *o_ptr)
+static s32b mod_cost(object_type *o_ptr)
 {
 	object_kind *k_ptr = k_info+o_ptr->k_idx;
 	return 100 * (
