@@ -980,6 +980,8 @@ extern void gain_spell_exp(magic_type*);
 extern u16b spell_energy(u16b,u16b);
 extern byte spell_skill(magic_type*);
 extern void calc_hitpoints(void);
+extern bool cumber_glove(object_type *o_ptr);
+extern bool cumber_helm(object_type *o_ptr);
 extern void calc_mana(void);
 extern void calc_spells(void);
 extern int wield_skill(byte, byte);

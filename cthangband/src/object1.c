@@ -3275,6 +3275,30 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		info[i++] = "It fires missiles excessively fast.";
 	}
 
+	if (cumber_glove(j_ptr))
+	{
+		if (j_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
+		{
+			info[i++] = "It inhibits spellcasting.";
+		}
+		else
+		{
+			info[i++] = "It may inhibit spellcasting.";
+		}
+	}
+
+	if (cumber_helm(j_ptr))
+	{
+		if (j_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
+		{
+			info[i++] = "It inhibits mindcrafting.";
+		}
+		else
+		{
+			info[i++] = "It may inhibit mindcrafting.";
+		}
+	}
+
 	if (f3 & (TR3_DRAIN_EXP))
 	{
 		info[i++] = "It drains experience.";
