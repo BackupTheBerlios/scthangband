@@ -153,20 +153,19 @@ cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
  */
 void squelch_dump(FILE *fff)
 {
-	cptr s;
 	int i;
+
+	cptr en = (allow_squelch) ? "En" : "Dis";
+	char Y = (allow_squelch) ? 'Y' : 'N';
 
 	/* Title. */
 	fprintf(fff, "\n\n# Automatic squelch option dump\n\n");
 
 	/* Reset. */
-	fprintf(fff, "# Reset squelch options\nQ:--reset--\n\n");
+	fprintf(fff, "# Reset squelch options\nQ:---reset---\n\n");
 
 	/* Save allow_squelch. */
-	if (allow_squelch)
-		fprintf(fff, "# Enable squelching\nQ:Allow_squelch:Y");
-	else
-		fprintf(fff, "# Disable squelching\nQ:Allow_squelch:N");
+	fprintf(fff, "# %sable squelching\nQ:allow_squelch:%c\n\n", en, Y);
 
 	/* Save the object settings. */
 	for (i = 0; i < MAX_K_IDX; i++)
@@ -177,13 +176,6 @@ void squelch_dump(FILE *fff)
 		/* Save the setting. */
 		my_fprintf(fff, "# %v\n", object_k_name_f1, i);
 		fprintf(fff, "Q:%d:%d\n\n", i, squelch_kind[i]);
-
-		/* Not a real object, but dump it anyway. */
-		s = k_name+k_info[i].name;
-
-		if (!*s) s = "Unknown object";
-
-		fprintf(fff, "# %s\nQ:%d:%d", s, i, squelch_kind[i]);
 	}
 }
 
@@ -451,7 +443,7 @@ name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
 	char sym[61];
 
 	/* Clear screen */
-	Term_clear();
+	clear_from(1);
 
 	/* Clear the Array */
 	WIPE(sym, sym);

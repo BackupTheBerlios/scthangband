@@ -2362,7 +2362,7 @@ extern void mc_put_str(const int y, const int x, cptr str);
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void clear_from(int row);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
@@ -3307,7 +3307,7 @@ extern cptr f_name;
 #if (defined(ANGBAND_H))
 extern object_kind *k_info;
 #endif
-#if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(VARIABLE_C))
+#if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern cptr k_name;
 #endif
 #if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
