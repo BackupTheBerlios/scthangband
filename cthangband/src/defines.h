@@ -2851,6 +2851,11 @@
 
 
 
+/* Find the specified day within the year. */
+#define YEARDAY(X) (((X/365)%4 == 3) ? X%1461-1095 : X%1461%365 + (X%1461%365 > 58))
+
+
+
 
 /*
  * Hack -- Prepare to use the "Secure" routines

@@ -725,11 +725,22 @@ static void process_world(void)
 		}
 		day += p_ptr->startdate;
 
-		if (p_ptr->birthday == (day % 365))
+		if (YEARDAY(p_ptr->birthday) == YEARDAY(day))
 		{
 			/* It's your birthday... */
 			msg_print("Happy Birthday!");
-			acquirement(py, px, randint(2) + 1, TRUE);
+
+			/* Those born on 29th Feb. get lots of presents */
+			if (YEARDAY(day) == 59)
+				acquirement(py, px, damroll(3,4), TRUE);
+			else
+				acquirement(py, px, 1+randint(2), TRUE);
+			p_ptr->age++;
+		}
+
+		/* You don't appear to have a birthday this year... */
+		else if (YEARDAY(p_ptr->birthday) < YEARDAY(day-1) && YEARDAY(p_ptr->birthday) > YEARDAY(day))
+		{
 			p_ptr->age++;
 		}
 	}
@@ -748,7 +759,7 @@ static void process_world(void)
 		day += p_ptr->startdate;
 
 		/* Specials on some nights of the year */
-		switch (day % 365)
+		switch (YEARDAY(day))
 		{
 		case 0: /* January 1st */
 			{
@@ -756,7 +767,7 @@ static void process_world(void)
 				acquirement(py,px,randint(2)+1,FALSE);
 				break;
 			}
-		case 304: /* November 1st (Night of October 31st) */
+		case 305: /* November 1st (Night of October 31st) */
 			{
 				msg_print("All Hallows Eve and the ghouls come out to play...");
 				summon_specific(py,px,dun_level+dun_offset,SUMMON_UNDEAD);

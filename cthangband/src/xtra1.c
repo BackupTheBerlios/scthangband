@@ -13,70 +13,22 @@
 #include "angband.h"
 
 /*
- * Helper function for day_to_date()
- */
-
-void day_to_date_aux(s16b day,char *suffix)
-{
-	switch (day)
-	{
-		case 1:
-			sprintf(suffix," %dst ",day);
-			break;
-		case 2:
-			sprintf(suffix," %dnd ",day);
-			break;
-		case 3:
-			sprintf(suffix," %drd ",day);
-			break;
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-			sprintf(suffix," %dth ",day);
-			break;
-		case 21:
-		case 31:
-			sprintf(suffix,"%dst ",day);
-			break;
-		case 22:
-			sprintf(suffix,"%dnd ",day);
-			break;
-		case 23:
-			sprintf(suffix,"%drd ",day);
-			break;
-		default:
-			sprintf(suffix,"%dth ",day);
-	}
-}
-
-/*
  * Converts a number (0 to 365) into a date
  */
 void day_to_date(s16b day,char *date)
 {
-	bool leapyear = FALSE;
-	char *mon[]={"", "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-
-	s16b days[]={1, 32,60,91, 121,152,182, 213,244,274, 305,335,366};
+	cptr mon[13]={"","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+	s16b days[13]={0,31,60,91, 121,152,182, 213,244,274,305,335,366};
 
 	byte i;
 
-	/* We start on the 1st, not the 0th */
-	day++;
-	
-	/* It /could/ happen... */
-	if (!((day/365+1)%4)) leapyear = TRUE;
-	
-	day = (day % 1461) % 365;
+	day = YEARDAY(day);
 
 	for (i = 1; i < 13; i++)
 	{
-		if ((day < days[i]) || (day == days[i] && i && leapyear))
+		if (day < days[i])
 	{
-			sprintf(date, "%2d %s ", day-days[i-1]+(!leapyear || i < 2), mon[i]);
+			sprintf(date, "%2d %s ", day-days[i-1]+1, mon[i]);
 		return;
 	}
 	}

@@ -2350,10 +2350,8 @@ static void get_history(void)
 static void get_ahw_average(void)
 {
 	p_ptr->age = rp_ptr->b_age + (rp_ptr->m_age + 1) / 2;
-	/* As this value is increased by 1 in day_to_date(), this is how
-	get_ahw() expresses 1st January */
-	p_ptr->birthday = 365;
-	p_ptr->startdate = 365;
+	/* i.e. 1st January */
+	p_ptr->birthday = 0; p_ptr->startdate = 0;
 	/* Mean figures for weight and height. */
 	if (p_ptr->psex == SEX_MALE)
 	{	
@@ -2374,9 +2372,9 @@ static void get_ahw(void)
 {
 	/* Calculate the age */
 	p_ptr->age = rp_ptr->b_age + randint(rp_ptr->m_age);
-	p_ptr->birthday=randint(365);
+	p_ptr->birthday=rand_int(1481);
 	/* This isn't stored in the birther struct as it isn't important yet...*/
-	p_ptr->startdate=randint(365);
+	p_ptr->startdate=rand_int(1481);
 
 	/* Calculate the height/weight for males */
 	if (p_ptr->psex == SEX_MALE)
