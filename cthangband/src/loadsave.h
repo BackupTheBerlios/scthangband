@@ -43,6 +43,12 @@
  */
 #define SF_16_CAVE_FLAG	0x0100
 
+/*
+ * Save MAX_SKILLS in the save file to allow painless addition (but not
+ * replacement) of skills.
+ */
+#define SF_SAVE_MAX_SKILLS 0x0200
+
 /* A few variables only used in load.c and save.c. */
 extern byte sf_major;
 extern byte sf_minor;

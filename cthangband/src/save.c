@@ -954,7 +954,23 @@ static void wr_extra(void)
 	wr_u32b(p_ptr->exp);
 	wr_u16b(p_ptr->exp_frac);
 
-	for (i=0;i<MAX_SKILLS;i++)
+#ifdef SF_SAVE_MAX_SKILLS
+
+	if (has_flag(SF_SAVE_MAX_SKILLS))
+	{
+		j = MAX_SKILLS;
+		wr_byte(j);
+	}
+	else
+
+#endif /* SF_SAVE_MAX_SKILLS */
+
+	/* Without SAVE_MAX_SKILLS, there are assumed to be 27 skills. */
+	{
+		j = 27;
+	}
+	
+	for (i=0; i<j; i++)
 	{
 		wr_byte(skill_set[i].value);
 		wr_byte(skill_set[i].max_value);
@@ -1583,6 +1599,9 @@ static void current_version(u16b *flags, byte *major, byte *minor, byte *patch)
 #endif
 #ifdef SF_16_CAVE_FLAG
 	| SF_16_CAVE_FLAG
+#endif
+#ifdef SF_SAVE_MAX_SKILLS
+	| SF_SAVE_MAX_SKILLS
 #endif
 	;
 

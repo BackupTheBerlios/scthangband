@@ -1008,7 +1008,18 @@ static void rd_extra(void)
 	rd_s32b(&p_ptr->exp);
 	rd_u16b(&p_ptr->exp_frac);
 
-	for (i=0;i<MAX_SKILLS;i++)
+#ifdef SF_SAVE_MAX_SKILLS
+	if (has_flag(SF_SAVE_MAX_SKILLS))
+	{
+		rd_byte(&tmp8u);
+	}
+	else
+#endif /* SF_SAVE_MAX_SKILLS */
+	{
+		tmp8u = 27;
+	}
+
+	for (i=0; i < tmp8u && i < MAX_SKILLS; i++)
 	{
 		rd_byte(&(skill_set[i].value));
 		rd_byte(&(skill_set[i].max_value));
@@ -1024,6 +1035,16 @@ static void rd_extra(void)
 		rd_u16b(&(skill_set[i].exp_to_raise));
 		rd_u16b(&(skill_set[i].experience));
 	}
+
+	/* If too many skills were saved. strip the extras. */
+	if (MAX_SKILLS < tmp8u)
+	{
+		strip_bytes(6*(tmp8u-MAX_SKILLS));
+#ifdef SF_SKILL_BASE
+		if (has_flag(SF_SKILL_BASE)) strip_bytes(2*(tmp8u-MAX_SKILLS));
+#endif /* SF_SKILL_BASE */
+	}
+	
 	rd_s16b(&p_ptr->mhp);
 	rd_s16b(&p_ptr->chp);
 	rd_u16b(&p_ptr->chp_frac);

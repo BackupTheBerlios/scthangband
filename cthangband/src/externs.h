@@ -941,8 +941,12 @@ extern bool has_flag(u16b flag);
 #if 0
 #else
 #endif
+#ifdef SF_SAVE_MAX_SKILLS
+#endif /* SF_SAVE_MAX_SKILLS */
 #ifdef SF_SKILL_BASE
 #endif
+#ifdef SF_SKILL_BASE
+#endif /* SF_SKILL_BASE */
 #ifdef SF_CURSE
 #endif
 #ifdef SF_16_CAVE_FLAG
@@ -2209,6 +2213,10 @@ extern u16b sf_saves;
 #if 0
 #else
 #endif
+#ifdef SF_SAVE_MAX_SKILLS
+#endif /* SF_SAVE_MAX_SKILLS */
+#ifdef SF_SKILL_BASE
+#endif
 #ifdef SF_CURSE
 #endif
 #ifdef SF_16_CAVE_FLAG
@@ -2236,6 +2244,8 @@ extern u16b sf_saves;
 #ifdef SF_3D_WINPRI
 #endif
 #ifdef SF_16_CAVE_FLAG
+#endif
+#ifdef SF_SAVE_MAX_SKILLS
 #endif
 #if defined(FILES_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(SAVE_C)
 extern bool save_player(bool as_4_1_0);
