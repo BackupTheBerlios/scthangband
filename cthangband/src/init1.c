@@ -690,7 +690,7 @@ static bool find_string_x(char *buf, cptr string)
 	cptr array[2];
 	array[0] = string;
 	array[1] = NULL;
-	return (bool)find_string(buf, array);
+	return (0 != find_string(buf, array));
 }
 
 /* Find a string beginning and ending with a given character. Complain if it contains one of a set of other

@@ -4083,7 +4083,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		/* Default -- assume no polymorph */
 		note = " is unaffected!";
 
-        charm = (bool)(m_ptr->smart & SM_ALLY); 
+        charm = (m_ptr->smart & SM_ALLY) != 0; 
 
 		/* Pick a "new" monster race */
 		tmp = poly_r_idx(m_ptr->r_idx);

@@ -2037,7 +2037,7 @@ static errr rd_savefile_new_aux(void)
 			if (has_flag(SF_QUEST_KNOWN))
 			{
 				rd_byte(&tmp8u);
-				q_ptr->known = tmp8u;
+				q_ptr->known = tmp8u != 0;
 			}
 			else
 			{

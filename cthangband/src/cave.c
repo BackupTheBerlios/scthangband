@@ -1412,7 +1412,7 @@ void prt_map(void)
 {
 	int cx, cy;
 
-	int v;
+	bool v;
 
 	/* Access the cursor state */
 	(void)Term_get_cursor(&v);

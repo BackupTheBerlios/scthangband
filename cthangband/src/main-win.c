@@ -3084,7 +3084,7 @@ static void start_screensaver(void)
 #endif /* ALLOW_BORG */
 
 	/* Play game */
-	play_game((bool)!file_exists);
+	play_game(!file_exists);
 }
 
 #endif /* USE_SAVER */

@@ -1823,7 +1823,7 @@ bool is_keymap_or_macro(void)
  */
 char inkey(void)
 {
-	int v;
+	bool v;
 
 	char kk;
 

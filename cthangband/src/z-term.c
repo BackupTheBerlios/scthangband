@@ -1365,7 +1365,7 @@ errr Term_fresh(void)
 /*
  * Set the cursor visibility
  */
-errr Term_set_cursor(int v)
+errr Term_set_cursor(bool v)
 {
 	/* Already done */
 	if (Term->scr->cv == v) return (1);
@@ -1766,13 +1766,13 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 /*
  * Extract the cursor visibility
  */
-errr Term_get_cursor(int *v)
+void Term_get_cursor(bool *v)
 {
 	/* Extract visibility */
 	(*v) = Term->scr->cv;
 
-	/* Success */
-	return (0);
+	/* Success (?) */
+	return;
 }
 
 

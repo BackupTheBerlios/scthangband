@@ -2638,7 +2638,7 @@ bool alloc_monster(int dis, int slp)
 		}
 		else
 		{
-			if (place_monster(y, x, (bool)slp, (bool)TRUE)) return (TRUE);
+			if (place_monster(y, x, slp != 0, TRUE)) return (TRUE);
 		}
 
 #ifdef MONSTER_HORDES

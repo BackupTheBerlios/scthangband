@@ -555,7 +555,7 @@ static void display_help(void)
 {
 	/* Save the screen somewhere. */
 	int t = Term_save_aux();
-	int v;
+	bool v;
 
 	/* Show the help. */
 	clear_from(0);

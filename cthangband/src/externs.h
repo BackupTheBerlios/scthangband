@@ -441,7 +441,7 @@ extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C))
-extern errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name);
+extern errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern errr process_pref_file_aux(char *buf, u16b *sf_flags);
@@ -3834,7 +3834,7 @@ extern void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc);
 extern errr Term_fresh(void);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
-extern errr Term_set_cursor(int v);
+extern errr Term_set_cursor(bool v);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_gotoxy(int x, int y);
@@ -3867,7 +3867,7 @@ extern errr Term_redraw(void);
 extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
-extern errr Term_get_cursor(int *v);
+extern void Term_get_cursor(bool *v);
 #endif
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_get_size(int *w, int *h);

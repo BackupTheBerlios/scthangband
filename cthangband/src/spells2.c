@@ -4205,7 +4205,7 @@ if (a_scroll)
 
 else
 
-    get_random_name(new_name, (bool)(o_ptr->tval >= TV_BOOTS), power_level);
+    get_random_name(new_name, (o_ptr->tval >= TV_BOOTS), power_level);
 
     if (cheat_xtra)
     {

@@ -189,7 +189,7 @@ static s16b tokenize(char *buf, s16b num, char **tokens)
 /*
  * Insert a set of stats into the stat_default array.
  */
-errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
+errr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
 {
 	stat_default_type *sd_ptr;
 	byte i;
@@ -702,7 +702,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 					char name[32];
 					create_random_name(ator(*zz[1]), name);
 					err = add_stats(ator(*zz[0]), ator(*zz[1]),
-					 ator(*zz[2]), strtol(zz[3], NULL, 0),
+					 ator(*zz[2]), strtol(zz[3], NULL, 0) != 0,
 					 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
 					 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
 					 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), name);
@@ -711,7 +711,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				case 11:
 				{
 					err = add_stats(ator(*zz[0]), ator(*zz[1]),
-					 ator(*zz[2]), strtol(zz[3], NULL, 0),
+					 ator(*zz[2]), strtol(zz[3], NULL, 0) != 0,
 					 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
 					 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
 					 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), zz[10]);

@@ -6750,7 +6750,7 @@ static void do_alarm_message_input(int y)
 
 static errr Term_user_acn(int n)
 {
-	int i;
+	bool i;
 	int optn = 0;
 	int k, adj;
 	int redraw_mung = 0;

@@ -1376,7 +1376,7 @@ void do_cmd_study(void)
 	handle_stuff();
 
 	/* Ask for a spell, allow cancel */
-	if (!get_spell(&spell, "study", sval, (bool)FALSE,spell_school)
+	if (!get_spell(&spell, "study", sval, FALSE,spell_school)
 	&& (spell == -1)) return;
 
 	/* Nothing to study */
@@ -1898,7 +1898,7 @@ void do_cmd_cast(void)
 
 	/* Ask for a spell */
 	if (!get_spell(&spell,"cast",
-		sval, (bool)TRUE, spell_school))
+		sval, TRUE, spell_school))
 	{
 		if (spell == -2)
 		msg_format("You don't know any %ss in that book.", prayer);
@@ -2250,7 +2250,7 @@ void do_cmd_cast(void)
 		else
 		{
 			if (summon_specific_friendly((int)py,(int) px, (plev*3)/2,
-				SUMMON_DEMON, (bool)(plev == 50 ? TRUE : FALSE)))
+				SUMMON_DEMON, plev == 50))
 			{
 				msg_print("The area fills with a stench of sulphur and brimstone.");
 				msg_print("'What is thy bidding... Master?'");
@@ -3085,7 +3085,7 @@ void do_cmd_cast(void)
            } else {
                if (summon_specific_friendly((int)py,(int)px, (plev*3)/2,
                        (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
-                       (bool)(((plev > 24) && (randint(3) == 1)) ? TRUE : FALSE))) {
+                       ((plev > 24) && (randint(3) == 1)))) {
                msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
                msg_print("Ancient, long-dead forms arise from the ground to serve you!");
                }

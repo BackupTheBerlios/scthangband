@@ -4211,8 +4211,9 @@ static bool activate_random_artifact(object_type * o_ptr)
                    msg_print("You fail to control it!");
                    }
                } else {
-                   if (summon_specific_friendly((int)py, (int)px, (int)(plev * 1.5),
-                                SUMMON_ELEMENTAL,(bool)(plev == 50 ? TRUE : FALSE))) {
+                   if (summon_specific_friendly((int)py, (int)px,
+				   	(int)(plev * 1.5), SUMMON_ELEMENTAL, plev == 50))
+				{
                    msg_print("An elemental materializes...");
                    msg_print("It seems obedient to you.");
                    }
@@ -4231,7 +4232,7 @@ static bool activate_random_artifact(object_type * o_ptr)
                    }
                } else {
                    if (summon_specific_friendly((int)py, (int)px, (int)(plev * 1.5),
-                                SUMMON_DEMON, (bool)(plev == 50 ? TRUE : FALSE))) {
+                                SUMMON_DEMON, plev == 50 )) {
                    msg_print("The area fills with a stench of sulphur and brimstone.");
                    msg_print("'What is thy bidding... Master?'");
                    }
@@ -4251,7 +4252,7 @@ static bool activate_random_artifact(object_type * o_ptr)
                } else {
                    if (summon_specific_friendly((int)py,(int)px, (int)(plev * 1.5),
                        (plev > 47 ? SUMMON_HI_UNDEAD : SUMMON_UNDEAD),
-                           (bool)(((plev > 24) && (randint(3) == 1)) ? TRUE : FALSE))) {
+                           ((plev > 24) && (randint(3) == 1)))) {
                    msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
                    msg_print("Ancient, long-dead forms arise from the ground to serve you!");
                    }
