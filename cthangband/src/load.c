@@ -476,9 +476,6 @@ static void rd_item(object_type *o_ptr)
 	/* Acquire standard weight */
 	o_ptr->weight = k_ptr->weight;
 
-	/* Hack -- extract the "broken" flag */
-	if (!o_ptr->pval < 0) o_ptr->ident |= (IDENT_BROKEN);
-
 
 	/* Artifacts */
 	if (o_ptr->name1)
