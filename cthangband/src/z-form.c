@@ -7,7 +7,7 @@
 #include "externs.h"
 
 /*
- * Here is some information about the routines in this file.
+ * Here is some information about the routines in this file. (to be updated)
  *
  * In general, the following routines take a "buffer", a "max length",
  * a "format string", and some "arguments", and use the format string
@@ -142,35 +142,7 @@
 /*
  * The "type" of the "user defined print routine" pointer
  */
-typedef uint (*vstrnfmt_aux_func)(char *buf, uint max, cptr fmt, vptr arg);
-
-/*
- * The "default" user defined print routine.  Ignore the "fmt" string.
- */
-static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, vptr arg)
-{
-	uint len;
-	char tmp[32];
-
-	/* XXX XXX */
-	fmt = fmt ? fmt : 0;
-
-	/* Pointer display */
-	sprintf(tmp, "<<%p>>", arg);
-	len = strlen(tmp);
-	if (len >= max) len = max - 1;
-	tmp[len] = '\0';
-	strcpy(buf, tmp);
-	return (len);
-}
-
-/*
- * The "current" user defined print routine.  It can be changed
- * dynamically by sending the proper "%r" sequence to "vstrnfmt()"
- */
-static vstrnfmt_aux_func vstrnfmt_aux = vstrnfmt_aux_dflt;
-
-
+typedef void (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
 
 /*
  * Basic "vararg" format function.
@@ -313,20 +285,6 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			/* Continue */
 			continue;
 		}
-
-		/* Hack -- Pre-process "%r" */
-		if (*s == 'r')
-		{
-			/* Extract the next argument, and save it (globally) */
-			vstrnfmt_aux = va_arg(vp, vstrnfmt_aux_func);
-
-			/* Skip the "r" */
-			s++;
-
-			/* Continue */
-			continue;
-		}
-
 
 		/* Begin the "aux" string */
 		q = 0;
@@ -554,7 +512,6 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			case 's':
 			{
 				cptr arg;
-				char arg2[1024];
 
 				/* Access next argument */
 				arg = va_arg(vp, cptr);
@@ -562,11 +519,11 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				/* Hack -- convert NULL to EMPTY */
 				if (!arg) arg = "";
 
-				/* Hack -- trim long strings */
-				else if (strlen(arg) >= 1024)
+				/* There should always be a precision specifier to avoid
+				 * the chance of overflow. */
+				if (!strchr(aux, '.'))
 				{
-					sprintf(arg2, "%.*s", 1023, arg);
-					arg = arg2;
+					sprintf(strchr(aux, 's'), ".%us", N_ELEMENTS(tmp)-1);
 				}
 
 				/* Format the argument */
@@ -577,16 +534,15 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			}
 
 			/* User defined data */
-			case 'V':
 			case 'v':
 			{
-				vptr arg;
+				vstrnfmt_aux_func tmp_func;
 
-				/* Access next argument */
-				arg = va_arg(vp, vptr);
+				/* Extract the function to call */
+				tmp_func = va_arg(vp, vstrnfmt_aux_func);
 
 				/* Format the "user data" */
-				(void)vstrnfmt_aux(tmp, 1000, aux, arg);
+				tmp_func(tmp, 1000, aux, &vp);
 
 				/* Done */
 				break;

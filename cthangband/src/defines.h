@@ -3334,11 +3334,6 @@ extern int PlayerUID;
 #define CMD_SHOP	-7680
 
 /*
- * Given an array, determine how many elements are in the array.
- */
-#define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
-
-/*
  * The boundaries of the map.
  */
 #define PRT_MINX (COL_END+1)
