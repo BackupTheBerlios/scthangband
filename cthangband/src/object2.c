@@ -4071,8 +4071,8 @@ void place_object(int y, int x, bool good, bool great)
 /*
  * XXX XXX XXX Do not use these hard-coded values.
  */
-#define OBJ_GOLD_LIST   480     /* First "gold" entry */
-#define MAX_GOLD        18      /* Number of "gold" entries */
+#define OBJ_GOLD_LIST	OBJ_COPPER	/* First "gold" entry */
+#define MAX_GOLD (OBJ_ADAMANTITE-OBJ_COPPER+1) /* Number of "gold" entries */
 
 /*
  * Make a treasure object
