@@ -310,7 +310,7 @@ errr (*check_modification_date_hook)(int fd, cptr template_file) = 0;
 /*
  * Initialize the header of an *_info.raw file.
  */
-static void init_header_aux(header *head, int len, byte num,
+static void init_header(header *head, int len, byte num,
 	parse_info_txt_func parse, cptr name)
 {
 	/* Save the "version" */
@@ -343,9 +343,6 @@ static void init_header_aux(header *head, int len, byte num,
 		C_MAKE(head->info_ptr, 1, maxima);
 	}
 }
-
-/* Just because... */
-#define init_header(W,X,Y,Z) init_header_aux(head,sizeof(W),X,Y,Z)
 
 /*
  * Initialize a "*_info" array, by parsing a binary "image" file
@@ -724,7 +721,7 @@ static void init_x_final(int num)
 #define init_x_info(title, type, parse, file, x_info, x_name, x_text, x_max, num) \
 { \
 	note(format("[Initializing arrays... (%s)]", title)); \
-	init_header(type, num, IF_AT(parse), file); \
+	init_header(head, sizeof(type), num, IF_AT(parse), file); \
 	init_info(head); \
 	x_info = head->info_ptr; \
 	if (x_name != dummy) x_name = head->name_ptr; \
