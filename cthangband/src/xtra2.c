@@ -108,14 +108,14 @@ static bool PURE cave_floor_bold_p(int y, int x)
 
 /*
  * Create something at the point of death.
- * There are many things 
+ * Return the type of coin to make if requested, 0 for no preference;
  */
-static void drop_special(monster_type *m_ptr)
+static int drop_special(monster_type *m_ptr)
 {
 	s32b total_num = 1;
 	s32b total_denom = 1;
-	u16b i;
 	bool one_dropped = FALSE;
+	int i, coin_type = 0;
 	
 	for (i = 0; i < MAX_DEATH_EVENTS; ++i)
 	{
@@ -234,6 +234,9 @@ good_DM:
 			}
 		}
 	}
+
+	/* Let the caller know the coin type preference, if any. */
+	return coin_type;
 }
 
 typedef struct temp_effect_type temp_effect_type;
@@ -978,6 +981,7 @@ void monster_death(int m_idx)
 
 	int number = 0;
 	int total = 0;
+	int coin_type;
 
 	bool quest = FALSE;
 	
@@ -1039,8 +1043,8 @@ void monster_death(int m_idx)
 	/* Forget objects */
 	m_ptr->hold_o_idx = 0;
 
-	/* Do special things when appropriate. */
-	drop_special(m_ptr);
+	/* Do special things when appropriate. This may change coin_type. */
+	coin_type = drop_special(m_ptr);
 
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & (RF1_DROP_60)) && (rand_int(100) < 60)) number++;
@@ -1092,7 +1096,8 @@ void monster_death(int m_idx)
 		if ((!quest || (j > 1)) && do_gold && (!do_item || (rand_int(100) < 50)))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr, FOUND_MONSTER, m_ptr->r_idx)) continue;
+			if (!make_gold(q_ptr, FOUND_MONSTER, m_ptr->r_idx, coin_type))
+				continue;
 
 			/* XXX XXX XXX */
 			dump_gold++;
@@ -1123,9 +1128,6 @@ void monster_death(int m_idx)
 
 	/* Reset the object level */
 	object_level = (dun_depth);
-
-	/* Reset "coin" type */
-	coin_type = 0;
 
 
 	/* Take note of any dropped treasure */

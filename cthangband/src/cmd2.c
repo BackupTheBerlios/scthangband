@@ -455,7 +455,7 @@ static void chest_death(int y, int x, s16b o_idx)
 		if (small && !one_in(4))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr, FOUND_CHEST, o_ptr->k_idx)) continue;
+			if (!make_gold(q_ptr, FOUND_CHEST, o_ptr->k_idx, 0)) continue;
 		}
 
 		/* Otherwise drop an item */

@@ -3456,7 +3456,7 @@ void place_object(int y, int x, bool good, bool great, int how, int idx)
  *
  * The location must be a legal, clean, floor grid.
  */
-bool make_gold(object_type *j_ptr, int how, int idx)
+bool make_gold(object_type *j_ptr, int how, int idx, int coin_type)
 {
 	int i;
 
@@ -3521,8 +3521,8 @@ void place_gold(int y, int x, int how, int idx)
 	/* Wipe the object */
 	object_wipe(q_ptr);
 
-	/* Make some gold */
-	if (!make_gold(q_ptr, how, idx)) return;
+	/* Make some random gold */
+	if (!make_gold(q_ptr, how, idx, 0)) return;
 
 
 	/* Make an object */

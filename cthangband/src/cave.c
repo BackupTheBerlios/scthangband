@@ -3683,7 +3683,7 @@ bool move_in_direction(int *xx, int *yy, int x1, int y1, int x2, int y2, bool (*
 static bool PURE projectable_p(int y, int x, int d)
 {
 	/* Too far. */
-	if (d > MAX_RANGE) return FALSE;
+	if (d > MAX_RANGE || in_bounds2(y, x)) return FALSE;
 
 	/* Floor */
 	else if (cave_floor_bold(y, x)) return TRUE;

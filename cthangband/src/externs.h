@@ -1560,7 +1560,7 @@ extern bool make_object(object_type *j_ptr, bool good, bool great, int how, int 
 extern void place_object(int y, int x, bool good, bool great, int how, int idx);
 #endif
 #if (defined(CMD2_C) || defined(OBJECT2_C) || defined(XTRA2_C))
-extern bool make_gold(object_type *j_ptr, int how, int idx);
+extern bool make_gold(object_type *j_ptr, int how, int idx, int coin_type);
 #endif
 #if (defined(CMD2_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(SPELLS1_C))
 extern void place_gold(int y, int x, int how, int idx);
@@ -2642,9 +2642,9 @@ extern bool inkey_scan;
 #if (defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool inkey_flag;
 #endif
-#if (defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
-extern s16b coin_type;
-#endif
+
+
+
 #if (defined(CMD2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern bool opening_chest;
 #endif
