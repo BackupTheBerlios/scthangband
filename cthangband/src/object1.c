@@ -2803,7 +2803,7 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	rsd_start = i;
 
 	/* Recognise items which affect stats */
-	if (object_aware_p(o_ptr))
+	if (object_aware_p(o_ptr) || (o_ptr->ident & IDENT_TRIED))
 	{
 		byte stat = 0;
 		s16b pval = 0;
