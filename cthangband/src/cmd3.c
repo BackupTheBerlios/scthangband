@@ -1220,7 +1220,7 @@ static cptr ident_info[] =
 	">:A down staircase",
 	"?:A scroll",
 	"@:You",
-	/*A:Unused*/
+	"A:Golem",
 	"B:Bird",
 	"C:Canine",
 	"D:Ancient Dragon/Wyrm",
@@ -1258,7 +1258,7 @@ static cptr ident_info[] =
 	"d:Dragon",
 	"e:Floating Eye",
 	"f:Feline",
-	"g:Golem",
+	"g:Ghoul",
 	"h:Hobbit/Elf/Dwarf",
 	"i:Icky Thing",
 	"j:Jelly",
