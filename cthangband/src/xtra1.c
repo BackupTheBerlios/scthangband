@@ -3991,31 +3991,47 @@ static void win_visible_display(void)
 }
 
 /*
- * Check whether there are objects on the same square as the player.
+ * Check whether the floor display is "interesting".
+ * True if the player character can see some floor at his feet.
  */
 static bool win_floor_good(void)
 {
-	/* The player has a character, so there must be a floor. */
-	return character_dungeon;
+	/* No floor to stand on. */
+	if (!character_dungeon) return FALSE;
+
+	/* An imaginary floor to stand on. */
+	if (p_ptr->image) return TRUE;
+
+	/* A visible wall. */
+	return player_can_see_bold(py, px);
 }
 
 
 /*
  * Display a list of objects on the floor.
+ *
+ * The correct code here depends unpleasantly on that of target_set_aux().
  */
 static void win_floor_display(void)
 {
-	int y;
-	object_type *o_ptr = o_list+cave[py][px].o_idx;
-
-	mc_put_str(format("You are standing on %s.\n",
-		f_name+f_info[cave[py][px].feat].name), 0, 0);
-
-	for (y = 1; y < Term->hgt && o_ptr != o_list;
-		y++, o_ptr = o_list+o_ptr->next_o_idx)
+	if (p_ptr->image)
 	{
-		mc_put_str(format("%v %v", get_symbol_f2, object_attr(o_ptr),
-			object_char(o_ptr), object_desc_f3, o_ptr, FALSE, 3), y, 0);
+		mc_put_str(format("You are standing on something strange.\n"), 0, 0);
+	}
+	else
+	{
+		int y;
+		object_type *o_ptr = o_list+cave[py][px].o_idx;
+
+		mc_put_str(format("You are standing on %s.\n",
+			f_name+f_info[cave[py][px].feat].name), 0, 0);
+
+		for (y = 1; y < Term->hgt && o_ptr != o_list;
+			y++, o_ptr = o_list+o_ptr->next_o_idx)
+		{
+			mc_put_str(format("%v %v", get_symbol_f2, object_attr(o_ptr),
+				object_char(o_ptr), object_desc_f3, o_ptr, FALSE, 3), y, 0);
+		}
 	}
 }
 

@@ -29,7 +29,7 @@ extern int distance(int y1, int x1, int y2, int x2);
 #if (defined(CAVE_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(XTRA1_C))
 extern bool los(int y1, int x1, int y2, int x2);
 #endif
-#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool player_can_see_bold(int y, int x);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C))
