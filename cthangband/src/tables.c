@@ -3132,7 +3132,7 @@ option_type option_info[] =
 	{ &quick_messages,              TRUE, OPTS_UI,      0, 1,
 	"quick_messages",               "Quick -more- prompts" },
 
-	{ &quick_prompt,		TRUE,	1,	2, 27,
+	{ &quick_prompt,		TRUE,	OPTS_UI,	2, 27,
 	"quick_prompt",			"Quick [y/n] prompts" },
 
 	{ &other_query_flag,    FALSE, OPTS_UI,      0, 2,
@@ -3168,7 +3168,7 @@ option_type option_info[] =
 	{ &show_weights,                TRUE, OPTS_OBJ,      0, 11,
 	"show_weights",                 "Show weights in object listings" },
 
-	{ &inscribe_depth,	TRUE,	4,	3,	2,
+	{ &inscribe_depth,	TRUE,	OPTS_OBJ,	3,	2,
 	"inscribe_depth",	"Inscribe depth on items at creation" },
 
 	{ &show_choices,                TRUE, OPTS_UI,      0, 12,
@@ -3177,7 +3177,7 @@ option_type option_info[] =
     { &show_details,                TRUE, OPTS_UI,      0, 13,
 	"show_details",                 "Show more detailed monster descriptons" },
 
-	{ &show_choices_main,		TRUE,	1,	2,26,
+	{ &show_choices_main,		TRUE,	OPTS_UI,	2,26,
 	"show_choices_main",		"Show certain choices in the main window"},
 	
     { &ring_bell,                   FALSE, OPTS_UI,      0, 14,
@@ -3414,14 +3414,14 @@ option_type option_info[] =
 	{ &preserve_mode,               TRUE, OPTS_BIRTH, 2, 19,
     "preserve_mode",                "Artifacts are not lost if you never saw them" },
 
-	{ &allow_quickstart,		TRUE,	7, 3, 4,
+	{ &allow_quickstart,		TRUE,	OPTS_BIRTH, 3, 4,
 	"allow_quickstart",	"Allow the player to start by using Quick-Start"},
 	
-	{ &allow_pickstats,		TRUE,	7, 3, 6,
+	{ &allow_pickstats,		TRUE,	OPTS_BIRTH, 3, 6,
 	"allow_pickstats",	"Allow the player to choose pre-set stats"},
 
 #if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
-	{ &display_credits,	TRUE,	7, 3, 5,
+	{ &display_credits,	TRUE,	OPTS_BIRTH, 3, 5,
 	"display_credits",	"Require a keypress to clear the initial screen"},
 #endif
 
