@@ -1214,6 +1214,8 @@ logaux(x, 1) logaux(x, 0) 255)
 #define FEAT_WATER_BORDER 0x65
 #define FEAT_PATH_BORDER 0x66
 
+#define LAST_FEAT FEAT_PATH_BORDER /* Highest used feature index. */
+
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
 

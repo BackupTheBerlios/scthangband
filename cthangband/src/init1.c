@@ -1386,6 +1386,15 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			if (1 != sscanf(buf+2, "%d%c", &mimic, end))
 				return PARSE_ERROR_INCORRECT_SYNTAX;
 
+			if (mimic < 0 || mimic > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			/* Don't allow, don't explain. */
+			if (mimic == error_idx) return PARSE_ERROR_GENERIC;
+
+			/* Mimic fields override graphics ones entirely. */
+			if (f_ptr->priority || f_ptr->d_char || f_ptr->d_attr)
+				return PARSE_ERROR_GENERIC;
+
 			/* Save the values */
 			f_ptr->mimic = mimic;
 
@@ -1402,6 +1411,9 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			{
 				return PARSE_ERROR_INCORRECT_SYNTAX;
 			}
+
+			/* Mimic fields override graphics ones entirely. */
+			if (f_ptr->mimic != error_idx) return PARSE_ERROR_GENERIC;
 
 			/* Extract and check the color */
 			if (color_char_to_attr(col) < 0) return PARSE_ERROR_OUT_OF_BOUNDS;
@@ -3726,13 +3738,24 @@ static errr init_info_txt_final(header *head)
 			r_ptr->level = MIN(255, strlen(rname));
 			break;
 		}
-		/* Forbid features which mimic mimics as pointless obfuscation. */
 		case F_HEAD:
 		{
 			feature_type *finfo = head->info_ptr;
 			int i;
-			for (i = 0; i < head->info_num; i++)
+
+			/* Check that the array is large enough for the game. */
+			if (error_idx < LAST_FEAT) error_idx = LAST_FEAT;
+
+			for (i = 0; i <= error_idx; i++)
 			{
+				/* Avoid out of bounds features, now the size is known. */
+				if (finfo[i].mimic > error_idx)
+				{
+					msg_format("Feature %d mimics a non-existent feature.");
+					return PARSE_ERROR_OUT_OF_BOUNDS;
+				}
+				/* Forbid features which mimic mimics as pointless
+				 * obfuscation. */
 				if (finfo[finfo[i].mimic].mimic != finfo[i].mimic)
 				{
 					msg_format("Feature %d cannot be a mimic, "
@@ -4016,11 +4039,12 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 		try(parse_info_line(buf, head, NUM_MACROS, &extra));
 	}
 
+	head->info_num = error_idx+1;
+
 	/* Carry out any post-initialisation checks. */
 	try(init_info_txt_final(head));
 
 	/* Set the info size. */
-	head->info_num = error_idx+1;
 	head->info_size = head->info_len * head->info_num;
 
 	/* Complete the "name" and "text" sizes */
