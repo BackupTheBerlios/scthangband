@@ -212,7 +212,7 @@ static void low_mana_check(int *chance, const magic_type *s_ptr)
 			/* Not enough mana to cast */
 			if (s_ptr->mana > p_ptr->cchi)
 			{
-				chance += 5 * (s_ptr->mana - p_ptr->cchi);
+				(*chance) += 5 * (s_ptr->mana - p_ptr->cchi);
 			}
 			return;
 		}
