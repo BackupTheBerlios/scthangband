@@ -1915,7 +1915,6 @@ typedef struct ifa_type ifa_type;
 struct ifa_type
 {
 	cptr txt;
-	bool alloc;
 	byte attr;
 };
 
@@ -1944,10 +1943,7 @@ static void alloc_ifa(ifa_type *i_ptr, cptr str, ...)
 	va_start(vp, str);
 
 	/* Format and allocate the input string. */
-	i_ptr->txt = string_make(vformat(str, vp));
-
-	/* Remember that it has been allocated. */
-	i_ptr->alloc = TRUE;
+	i_ptr->txt = safe_string_make(vformat(str, vp));
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -2553,7 +2549,7 @@ static void identify_fully_clear(ifa_type *i_ptr)
 {
 	do
 	{
-		if (i_ptr->alloc) FREE(i_ptr->txt);
+		safe_free((vptr)i_ptr->txt);
 	}
 	while ((++i_ptr)->txt);
 }

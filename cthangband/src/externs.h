@@ -3923,7 +3923,7 @@ extern void plog(cptr str);
 #if (defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern void (*quit_aux)(cptr);
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_FORM_C) || defined(Z_UTIL_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_FORM_C) || defined(Z_UTIL_C) || defined(Z_VIRT_C))
 extern void quit(cptr str);
 #endif
 #if (defined(MAIN_CRB_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
@@ -3953,7 +3953,7 @@ extern vptr (*ralloc_aux)(huge);
 #if (defined(ANGBAND_H) || defined(Z_VIRT_H) || defined(Z_VIRT_C))
 extern vptr ralloc(huge len);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
 #endif
 
@@ -3994,5 +3994,14 @@ extern int add_chaos_features(cptr *info, bool (*reject)(int));
 
 #if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool allow_fake_colour;
+#endif
+
+/* z-virt.c */
+
+#if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(Z_VIRT_C))
+extern void safe_free(vptr p);
+#endif
+#if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
+extern cptr safe_string_make(cptr str);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

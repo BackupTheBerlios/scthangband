@@ -3122,18 +3122,6 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define term_screen     (windows[0].term)
 
-/* A default value for things which don't really need one, provided to
- * suppress the compile-time errors they generate.
- * Use as (e.g.) "int UNREAD(i);".
- * Defining DEBUG inhibits this, as attempts to use uninitialised variables
- * can then be recognised by debugging tools.
- */
-#ifdef DEBUG
-#define UNREAD(VAR)	VAR
-#else /* DEBUG */
-#define UNREAD(VAR) VAR = 0
-#endif /* DEBUG */
-
 /*
  * Determine if a given inventory item is "aware"
  *

@@ -771,7 +771,7 @@ void take_hit(int damage, cptr hit_from, int monster)
 	if (p_ptr->chp < 0)
 	{
 		cptr imstr = (p_ptr->image) ? "(?)" : "";
-		died_from = string_make(format("%s%s", hit_from, imstr));
+		died_from = safe_string_make(format("%s%s", hit_from, imstr));
 	}
 
     if (pen_invuln)

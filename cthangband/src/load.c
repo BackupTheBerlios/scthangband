@@ -1047,7 +1047,7 @@ static void rd_extra(void)
 	{
 		char buf[1024];
 		rd_string(buf, 1024);
-		died_from = string_make(buf);
+		died_from = safe_string_make(buf);
 	}
 
 	for (i = 0; i < 4; i++)
@@ -2393,8 +2393,8 @@ bool load_player(void)
 		/* Still alive */
 		if (p_ptr->chp >= 0)
 		{
-			/* Froget the cause of death from the save file. */
-			FREE(died_from);
+			/* Forget the cause of death, if none. */
+			safe_free((vptr)died_from);
 
 			/* Reset cause of death */
 			died_from = "(alive and well)";
