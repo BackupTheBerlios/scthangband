@@ -1781,6 +1781,17 @@ void random_artifact_resistance(object_type * o_ptr)
                 (TR3_CURSED | TR3_HEAVY_CURSE | TR3_AGGRAVATE);
             o_ptr->ident |= IDENT_CURSED;
     }
+	else if (o_ptr->name1 == ART_STORMBRINGER)
+	{
+		if (randint(2)==1)
+		{
+			o_ptr->art_flags3 |= TR3_DRAIN_EXP;
+		}
+		else
+		{
+			o_ptr->art_flags3 |= TR3_AGGRAVATE;
+		}
+	}
 
     switch(o_ptr->name1)
     {
@@ -1954,8 +1965,6 @@ static bool make_artifact(object_type *o_ptr)
 		/* Hack -- mark the item as an artifact */
 		o_ptr->name1 = i;
 
-       random_artifact_resistance(o_ptr); /* Hack: Some artifacts
-                                            get random extra powers */
 		/* Success */
 		return (TRUE);
 	}
@@ -3671,6 +3680,9 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 
 		/* Hack -- Mark the artifact as "created" */
 		a_ptr->cur_num = 1;
+
+		/* Hack -- some artifacts get random extra powers */
+		random_artifact_resistance(o_ptr);
 
 		/* Extract the other fields */
 		o_ptr->pval = a_ptr->pval;

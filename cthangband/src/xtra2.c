@@ -2010,40 +2010,20 @@ void monster_death(int m_idx)
 	/* Forget objects */
 	m_ptr->hold_o_idx = 0;
 
-    /* Mega^2-hack -- destroying the Stormbringer gives it us! */
+    /* Mega^1.8-hack -- destroying the Stormbringer gives it us! */
     if (strstr((r_name + r_ptr->name),"Stormbringer"))
 	{
 		/* Get local object */
 		q_ptr = &forge;
 
-        /* Prepare to make the Stormbringer */
-        object_prep(q_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+            /* Mega-Hack -- Prepare to make "Stormbringer" */
+            object_prep(q_ptr, lookup_kind(TV_SWORD, SV_RUNESWORD));
 
-        /* Mega-Hack -- Name the sword  */
+            /* Mega-Hack -- Mark this item as "Stormbringer" */
+            q_ptr->name1 = ART_STORMBRINGER;
 
-        q_ptr->art_name = quark_add("'Stormbringer'");
-        q_ptr->to_h = 16;
-        q_ptr->to_d = 16;
-        q_ptr->ds = 6;
-        q_ptr->dd = 6;
-        q_ptr->pval = 2;
-
-        q_ptr->art_flags1 |= ( TR1_VAMPIRIC | TR1_STR | TR1_CON );
-        q_ptr->art_flags2 |= ( TR2_FREE_ACT | TR2_HOLD_LIFE |
-                               TR2_RES_NEXUS | TR2_RES_CHAOS | TR2_RES_NETHER |
-                               TR2_RES_CONF ); /* No longer resist_disen */
-        q_ptr->art_flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
-                            TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
-                            /* Just to be sure */
-
-        q_ptr->art_flags3 |= TR3_NO_TELE; /* How's that for a downside? */
-
-        /* For game balance... */
-        q_ptr->art_flags3 |= (TR3_CURSED | TR3_HEAVY_CURSE);
-        q_ptr->ident |= IDENT_CURSED;
-
-        if (randint(2)==1) q_ptr->art_flags3 |= (TR3_DRAIN_EXP);
-        q_ptr->art_flags3 |= (TR3_AGGRAVATE);
+            /* Mega-Hack -- Actually create "Stormbringer" */
+            apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
 
 		/* Drop it in the dungeon */
         drop_near(q_ptr, -1, y, x);

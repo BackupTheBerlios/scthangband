@@ -3517,3 +3517,11 @@ A:50/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
+# Stormbringer -- see artifact list
+
+N:524:& Runesword~
+G:|:D
+I:23:31:0
+W:1:0:180:4000
+P:0:6d5:0:0:0
+F:INSTA_ART | SHOW_MODS

@@ -1203,13 +1203,7 @@ void py_attack(int y, int x)
               ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero) ||
                 !(m_ptr->ml)))
    {
-       if (!(inventory[INVEN_WIELD].art_name))
-       {
-       msg_format("You stop to avoid hitting %s.", m_name);
-       return;
-        }
-
-       if (!(streq(quark_str(inventory[INVEN_WIELD].art_name), "'Stormbringer'")))
+		if (inventory[INVEN_WIELD].name1 != ART_STORMBRINGER)
      {
        msg_format("You stop to avoid hitting %s.", m_name);
        return;
@@ -1824,13 +1818,10 @@ void move_player(int dir, int do_pickup)
 	m_ptr = &m_list[c_ptr->m_idx];
 
 
-    if (inventory[INVEN_WIELD].art_name)
-    {
-        if (streq(quark_str(inventory[INVEN_WIELD].art_name), "'Stormbringer'"))
+	if (inventory[INVEN_WIELD].name1 == ART_STORMBRINGER)
         {
 			stormbringer = TRUE;
 		}
-    }
 
 	/* Player can not walk through "permanent walls"... */
 	/* unless in Shadow Form */

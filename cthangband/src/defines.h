@@ -981,6 +981,8 @@
 #define ART_BOWSERPENTS                        125
 #define ART_DEATH            126
 
+/* Another sword */
+#define ART_STORMBRINGER	127
 
 
 /*** Ego-Item indexes (see "lib/edit/e_info.txt") ***/
@@ -1343,6 +1345,7 @@
 #define SV_TWO_HANDED_SWORD             25      /* 3d6 */
 #define SV_EXECUTIONERS_SWORD   28      /* 4d5 */
 #define SV_BLADE_OF_CHAOS               30      /* 6d5 */
+#define SV_RUNESWORD	31	/* 6d5 */
 
 /* The "sval" codes for TV_SHIELD */
 #define SV_SMALL_LEATHER_SHIELD         2
