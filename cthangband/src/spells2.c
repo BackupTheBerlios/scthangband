@@ -5759,34 +5759,28 @@ static void cave_temp_room_aux(int y, int x)
 	 * always be lit (this needs at least two exceptions to do anything). */
 	if (temp_n > 8)
 	{
-		int i,t, lit;
+		int i;
+		bool flit;
 		/* Do not "leave" the current room */
-		for (i = t = lit = 0;; i++)
+		for (i = flit = 0; i < 8; i++)
 		{
-			int y2 = y+yc[i%8], x2 = x+yc[i%8];
-			if (in_bounds(y2, x2) && (cave[y2][x2].info & CAVE_TEMP))
+			int y2 = y+yc[i%8], x2 = x+xc[i%8];
+
+			/* Only check floor squares which are to be lit. */
+			if (!in_bounds(y2, x2)) continue;
+			if (~cave[y2][x2].info & CAVE_TEMP) continue;
+			if (!cave_floor_bold(y2,x2)) continue;
+
+			/* Look for a second floor square. */
+			if (flit) break;
+			flit = TRUE;
+
+			/* Look for corners, which need not be next to floor squares. */
+			if (yc[i%8] && xc[i%8])
 			{
-				switch (lit)
-				{
-					case 0: case 2: lit++; break;
-					case 1: if (cave_floor_bold(y2,x2)) lit++; break;
-				}
-				if (lit > 2) break;
-				if (cave_floor_bold(y2,x2))
-				{
-					t++;
-					if (t > 1) break;
-				}
-			}
-			else
-			{
-				lit = 0;
-				if (i > 7) return;
+				if (cave[y2][x].info & cave[y][x2].info & CAVE_TEMP) break;
 			}
 		}
-
-		/* At least one other adjacent non-wall square is marked. */
-		if (t < 2) return;
 	}
 
 	/* Mark the grid as "seen" */
