@@ -388,7 +388,7 @@ errr my_fclose(FILE *fff)
 
 #ifdef HAVE_MKSTEMP
 
-FILE *my_fopen_temp(char *buf, int max)
+FILE *my_fopen_temp(char *buf, uint max)
 {
 	int fd;
 

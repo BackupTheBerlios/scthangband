@@ -1877,7 +1877,7 @@ extern FILE *my_fopen(cptr file, cptr mode);
 extern errr my_fclose(FILE *fff);
 #endif
 #if (defined(HAVE_MKSTEMP)) && (defined(CMD4_C) || defined(UTIL_C))
-extern FILE *my_fopen_temp(char *buf, int max);
+extern FILE *my_fopen_temp(char *buf, uint max);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_MAC_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern errr my_fgets(FILE *fff, char *buf, huge n);
