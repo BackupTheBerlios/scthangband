@@ -484,6 +484,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define MDF_INDEF	0x01	/* Give an indefinite article (a ...). */
 #define MDF_NUMBER	0x02	/* Give a number (10 ...). */
 #define MDF_DEF	0x04	/* Give a definite article (the ...). */
+#define MDF_YOUR	0x08	/* Give a possessive "article" (your ...). */
 #define MDF_MANY	0x80	/* Not 1 object. */
 
 /*
@@ -2626,9 +2627,9 @@ logaux(x, 1) logaux(x, 0) 255)
  * New monster race bit flags
  */
 #define RF4_SHRIEK                      0x00000001      /* Shriek for help */
-#define RF4_ODD_ART                     0x00000002      /* Takes an unusual article */
+#define RF4_XXX2                        0x00000002      /* Takes an unusual article */
 #define RF4_XXX3                        0x00000004      /* (?) */
-#define RF4_SHARD                      0x00000008   /* Fire shard balls */
+#define RF4_SHARD                       0x00000008      /* Fire shard balls */
 #define RF4_ARROW_1                     0x00000010      /* Fire an arrow (light) */
 #define RF4_ARROW_2                     0x00000020      /* Fire an arrow (heavy) */
 #define RF4_ARROW_3                     0x00000040      /* Fire missiles (light) */

@@ -1237,8 +1237,8 @@ s16b get_mon_num(int level)
 }
 
 /*
- * Describe a name for a monster of a given race, pluralising where appropriate.
- * This is based on object_desc(), but is far simpler.
+ * Describe a name for a monster of a given type of monster, pluralising where
+ * asked.
  *
  * num def   indef number string       The table on the left gives the format
  *   1 FALSE FALSE FALSE  "Newt"        of its output.
@@ -1248,9 +1248,8 @@ s16b get_mon_num(int level)
  *  10 FALSE TRUE  -      "some Newts"
  *  10 TRUE  -     FALSE  "the Newts"
  *  10 TRUE  -     TRUE   "the 10 Newts"
-
  */
-static cptr monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
+static void monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
 	int num, byte flags)
 {
 	cptr artstr = ""; /* Needed, as no sanity checking is done in init1.c. */
@@ -1261,12 +1260,11 @@ static cptr monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
 	if (num == 1) reject |= 1<<MCI_PLURAL;
 	else flags |= MDF_MANY;
 
-	/* Some flags are redundant as above. */
-	if (flags & MDF_DEF) flags &= ~(MDF_INDEF);
-	if (flags & MDF_INDEF) flags &= ~(MDF_NUMBER);
+	/* MDF_INDEF inhibits MDF_NUMBER, but is overriden by MDF_DEF below. */
+	if (flags & MDF_INDEF && ~flags & MDF_DEF) flags &= ~(MDF_NUMBER);
 
 	/* None needed. */
-	if (!(flags & (MDF_DEF | MDF_INDEF | MDF_NUMBER)))
+	if (!(flags & (MDF_DEF | MDF_INDEF | MDF_NUMBER | MDF_YOUR)))
 	{
 		reject |= 1<<MCI_ARTICLE;
 	}
@@ -1283,6 +1281,10 @@ static cptr monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
 		/* To be turned into English later... */
 		char artstr_art[2] = {CM_ACT | MCI_ARTICLE, '\0'};
 		artstr = artstr_art;
+	}
+	else if (flags & MDF_YOUR)
+	{
+		artstr = "your";
 	}
 	if (flags & MDF_NUMBER)
 	{
@@ -1331,9 +1333,6 @@ static cptr monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
 			if (((*t++ = *s++)) == '\0') break;
 		}
 	}
-
-	/* And return it. */
-	return out;
 }
 
 /*
@@ -1350,12 +1349,11 @@ static cptr monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
 void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	/* Extract the arguments. */
-	monster_race *r_ptr = va_arg(*vp, monster_race *);
+	vptr *r_ptr = va_arg(*vp, vptr);
 	int num = va_arg(*vp, int);
 	uint flags = va_arg(*vp, uint);
 	uint len;
-	cptr s;
-	char *tmp;
+	cptr s, name;
 
 	/* Use %.123v to specify a maximum length of 123. */
 	if ((s = strchr(fmt, '.')))
@@ -1363,30 +1361,35 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 		long m = strtol(s+1, 0, 0);
 		len = MAX(0, m);
 	}
-	/* Without a length specifier, the normal limit is MNAME_MAX. */
-	if (len > MNAME_MAX)
+	else
 	{
 		len = MNAME_MAX;
 	}
 
-	if (max < len*2)
+	/* Ensure that both buffers fit within buf. */
+	if (max < len*2) len = max/2;
+
+	/*
+	 * The first argument is either a monster_race * or a cptr.
+	 * The former is easy to spot as it will be a pointer into r_info.
+	 * This means that the anything else is assumed to be a cptr.
+	 */
+	if ((monster_race*)r_ptr >= r_info &&
+		(monster_race*)r_ptr < r_info+MAX_R_IDX)
 	{
-		len = max/2;
+		name = r_name+((monster_race*)(r_ptr))->name;
+	}
+	else
+	{
+		name = (cptr)r_ptr;
 	}
 
-	/* Check the arguments. */
-	if (r_ptr < r_info || r_ptr >= r_info+MAX_R_IDX ||
-		flags & ~0xFF || !len)
-	{
-		sprintf(buf, "%.*s", max-1, "(error)");
-		return;
-	}
-
-	monster_desc_aux_2(buf, buf+len, len, r_name+r_ptr->name, num, flags);
+	/* Create the name now the arguments are known. */
+	monster_desc_aux_2(buf, buf+len, len, name, num, flags);
 }
 
 /*
- * Build a string describing a monster in some way.
+ * Build a string describing a specific monster in some way.
  *
  * We can correctly describe monsters based on their visibility.
  * We can force all monsters to be treated as visible or invisible.
@@ -1434,7 +1437,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 {
 	monster_race	*r_ptr = (m_ptr) ? &r_info[m_ptr->r_idx] : r_info;
 
-	cptr name, prefix_ = "", suffix_ = "";
+	cptr name, suffix_ = "";
 
     char        silly_name[80];
 
@@ -1508,8 +1511,9 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 	/* Handle all other visible monster requests */
 	else
 	{
+		byte	flags = 0;
 
-    /* Are we hallucinating? (Idea from Nethack...) */
+		/* Are we hallucinating? (Idea from Nethack...) */
 	    if (p_ptr->image)
 	    {
 			if(randint(2)==1)
@@ -1519,17 +1523,25 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 					hallu_race = &r_info[randint(MAX_R_IDX-2)];
 				}
 				while (hallu_race->flags1 & RF1_UNIQUE);
-				name = format("%v", monster_desc_aux_f3, hallu_race, 1, 0);
+				name = r_name+hallu_race->name;
 	        }
 	        else
 	        {
-	            get_rnd_line("silly.txt", silly_name);
+				/* 
+				 * Hack - get_rnd_line() only returns a plain string, so add an
+				 * article here. Luckily, monster_desc() only deals with
+				 * singular monsters...
+				 */
+				silly_name[0] = CM_TRUE | MCI_ARTICLE;
+				silly_name[1] = CM_ACT | MCI_ARTICLE;
+				silly_name[2] = CM_NORM | MCI_ARTICLE;
+				get_rnd_line("silly.txt", silly_name+3);
 				name = silly_name;
 	        }
 	    }
 		else
 		{
-			name = format("%v", monster_desc_aux_f3, r_ptr, 1, 0);
+			name = r_name+r_ptr->name;
 		}
 
 		/* It could be a Unique */
@@ -1541,11 +1553,8 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 		/* It could be an indefinite monster */
 		else if (mode & 0x08)
 		{
-			/* XXX Check plurality for "some" */
-
 			/* Indefinite monsters need an indefinite article */
-			prefix_ = (is_a_vowel(name[0]) == !(r_ptr->flags4 & RF4_ODD_ART))
-				? "an " : "a ";
+			flags |= MDF_INDEF;
 		}
 
 		/* It could be a normal, definite, monster */
@@ -1553,9 +1562,9 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 		{
 			/* Definite monsters need a definite article */
             if (m_ptr->smart & (SM_ALLY))
-				prefix_ = "your ";
+				flags |= MDF_YOUR;
             else
-				prefix_ = "the ";
+				flags |= MDF_DEF;
 		}
 
 		/* Handle the Possessive as a special afterthought */
@@ -1566,18 +1575,19 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 			/* Simply append "apostrophe" and "s" */
 			suffix_ = "'s";
 		}
+
+		/* Create the name now the flags are known. */
+		strnfmt(buf, size, "%v", monster_desc_aux_f3, name, 1, flags);
 	}
 	/* Copy to buf, avoiding overflow. */
 	{
-		int p = strlen(prefix_);
 		int n = strlen(name);
 		int s = strlen(suffix_);
 
-		n = MIN(n, MAX(0, size-p-s));
-		s = MIN(s, MAX(0, size-n-p));
-		p = MIN(p, MAX(0, size-n-s));
-		
-		sprintf(buf, "%.*s%.*s%.*s", p, prefix_, n, name, s, suffix_);
+		n = MIN(n, MAX(0, size-s));
+		s = size;
+
+		sprintf(buf, "%.*s%.*s", n, name, s, suffix_);
 	}
 }
 
