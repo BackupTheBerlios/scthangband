@@ -660,6 +660,33 @@ static bool PURE hide_terrain_stairs(void)
 }
 
 /*
+ * Handle daylight and add some random monsters.
+ */
+static void surface_gen_final(int monsters)
+{
+	bool day = daytime_p();
+	int y, x;
+
+	/* Daylight makes things glow. */
+	for (y = 0; y < cur_hgt; y++)
+	{
+		for (x = 0; x < cur_wid; x++)
+		{
+			cave_type *c_ptr = &cave[y][x];
+
+			/* Perma-Lite */
+			if (day) c_ptr->info |= (CAVE_GLOW);
+
+			/* Memorize */
+			if (day && view_perma_grids) c_ptr->info |= (CAVE_MARK);
+		}
+	}
+
+	/* Make some residents. */
+	while (monsters--) alloc_monster(3, dun_depth, TRUE);
+}
+
+/*
  * Generate a terrain level using ``plasma'' fractals.
  *
  */
@@ -1205,41 +1232,8 @@ static cptr terrain_gen(void)
 	if (!place_player())
 		return "could not place player";
 
-	for (y = 1; y < cur_hgt-1; y++)
-	{
-		for (x = 1; x < cur_wid-1; x++)
-		{
-			/* Nasty hack to allow pseudo-rooms */
-			if (cave[y][x].feat == FEAT_FLOOR)
-			{
-				cave[y][x].info |= (CAVE_ROOM);
-			}
-		}
-	}
-
-	/* Day Light */
-	if (daytime_p())
-	{
-		/* Lite up the town */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				/* Perma-Lite */
-				cave[y][x].info |= (CAVE_GLOW);
-				/* Memorize */
-				if (view_perma_grids) cave[y][x].info |= (CAVE_MARK);
-			}
-		}
-	}
-
-	replace_all_friends();
-
-	/* Make some wilderness monsters (same number as dungeon level) */
-	for (x = 0; x < MIN_M_ALLOC_LEVEL; x++)
-	{
-		(void)alloc_monster(3, dun_depth, TRUE);
-	}
+	/* Handle daylight and add monsters. */
+	surface_gen_final(MIN_M_ALLOC_LEVEL);
 
 	return SUCCESS;
 }
@@ -5163,38 +5157,11 @@ static void town_gen(void)
 	/* Hack -- Build the buildings/stairs (from memory) */
 	town_gen_hack();
 
+	/* Curiously, there are more people about at night. */
+	i = (daytime_p()) ? MIN_M_ALLOC_TD : MIN_M_ALLOC_TN;
 
-	/* Day Light */
-	if (daytime_p())
-	{
-		/* Lite up the town */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
-				cave_type *c_ptr = &cave[y][x];
-
-				/* Perma-Lite */
-				c_ptr->info |= (CAVE_GLOW);
-
-				/* Memorize */
-				if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
-			}
-		}
-
-		replace_all_friends();
-		/* Make some day-time residents */
-		for (i = 0; i < MIN_M_ALLOC_TD; i++)
-			(void)alloc_monster(3, dun_depth, TRUE);
-	}
-
-	/* Night Time */
-	else
-	{
-		/* Make some night-time residents */
-		for (i = 0; i < MIN_M_ALLOC_TN; i++)
-			(void)alloc_monster(3, dun_depth, TRUE);
-	}
+	/* Handle daylight and add monsters. */
+	surface_gen_final(i);
 }
 
 
@@ -5381,6 +5348,7 @@ void generate_cave(void)
 		/* Hack -- no feeling in the town */
 		if (dun_level <= 0) feeling = 0;
 
+		/* Scatter allied monsters around the player. */
 		replace_all_friends();
 
 		/* Prevent object over-flow */
