@@ -1396,8 +1396,12 @@ static errr init_other(void)
 	(void)format("");
 
 	/* Prepare the stat_default array */
-	C_MAKE(stat_default, MAX_STAT_DEFAULT, stat_default_type);
-	(void)add_stats(0,0,0,DEFAULT_STATS,8,8,8,8,8,8,"Default");
+	{
+		s16b stat[A_MAX];
+		C_MAKE(stat_default, MAX_STAT_DEFAULT, stat_default_type);
+		for (i = 0; i < A_MAX; i++) stat[i] = 8;
+		add_stats(0, 0, 0, DEFAULT_STATS, stat, "Default");
+	}
 
 	/* Initialise the term_wins array. */
 	init_term_wins();

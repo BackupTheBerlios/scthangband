@@ -13,6 +13,8 @@ sCthangband _CVS_
   that type, or to all similar unidentified items.
 * Objects get a line in their "examine" text describing where they were found.
 * Remove the (redundant) inscribe_depth option.
+* Allow names rather than indices to be used for races, templates and sexes in
+  initial stat dumps.
 * Spoilers now use the same information functions as the rest of the code.
 * Monsters can be set to drop ego items in r_info.txt.
 * Fix the following bugs:

@@ -889,9 +889,12 @@ static errr save_stats(void)
 	for (i = 1; i < stat_default_total; i++)
 	{
 		stat_default_type *sd_ptr = &stat_default[i];
-		fprintf(fff, "D:%c:%c:%c:%d", rtoa(sd_ptr->sex), rtoa(sd_ptr->race),
-			rtoa(sd_ptr->template), sd_ptr->maximise);
+		fprintf(fff, "D:%s:%s:%s:%d",
+			sex_info[sd_ptr->sex].title, race_info[sd_ptr->race].title,
+			template_info[sd_ptr->template].title, sd_ptr->maximise);
+
 		for (l = 0; l< A_MAX; l++) fprintf(fff, ":%d", sd_ptr->stat[l]);
+
 		fprintf(fff, ":%s\n", quark_str(sd_ptr->name));
 	}
 
@@ -1269,10 +1272,8 @@ static bool point_mod_player(void)
 			strcpy(name, player_name);
 			if (get_string("Please choose a name: ", name, 32))
 			{
-				(void)add_stats(p_ptr->psex, p_ptr->prace, p_ptr->ptemplate, maximise_mode,
-				p_ptr->stat_max[A_STR], p_ptr->stat_max[A_INT], p_ptr->stat_max[A_WIS],
-				p_ptr->stat_max[A_DEX], p_ptr->stat_max[A_CON], p_ptr->stat_max[A_CHR],
-				name);
+				(void)add_stats(p_ptr->psex, p_ptr->prace, p_ptr->ptemplate,
+					maximise_mode, p_ptr->stat_max, name);
 				save_stats();
 			}
 		}

@@ -190,21 +190,14 @@ static s16b tokenize(char *buf, s16b num, char **tokens)
  * Insert a set of stats into the stat_default array.
  * Returns NULL on success, and an error string on failure.
  */
-cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b st, s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
+cptr add_stats(s16b sex, s16b race, s16b template, bool maximise,
+	s16b *stat, cptr name)
 {
 	stat_default_type *sd_ptr;
 	int i;
-	s16b stat[A_MAX];
 
 	/* Don't even try after character generation. */
 	if (!stat_default) return SUCCESS;
-
-	stat[A_STR] = st;
-	stat[A_INT] = in;
-	stat[A_WIS] = wi;
-	stat[A_DEX] = dx;
-	stat[A_CON] = co;
-	stat[A_CHR] = ch;
 
 	/* Ignore nonsense values */
 	if (maximise != DEFAULT_STATS)
@@ -373,6 +366,27 @@ static cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 	return SUCCESS;
 }
 
+
+
+/*
+ * A strange macro which obtains a race, template or sex index from an index
+ * letter or a name in a zz[] parameter.
+ */
+#define D_GET_RACE(OUT, PARAM, INFO, MAX, STR) \
+	if (strlen(zz[PARAM]) == 1) \
+	{ \
+		OUT = ator(*zz[PARAM]); \
+	} \
+	else \
+	{ \
+		int i; \
+		for (i = 0; i < MAX; i++) \
+		{ \
+			if (!strcmp(zz[PARAM], INFO[i].title)) break; \
+		} \
+		if (i == MAX) return "No such " STR "."; \
+		OUT = i; \
+	}
 
 /*
  * Parse a sub-file of the "extra info" (format shown below)
@@ -827,41 +841,50 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			w_ptr->pri[display] = pri;
 			return SUCCESS;
 		}
+
 		/*
 		 * Process D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name> for initial stats 
 		 */
 		case 'D':
 		{
-			byte total = tokenize(buf+2, 11, zz);
-			cptr err;
-			/* We can accept D with or without a name, but everything else must be there. */
-			switch (total)
+			char dname[32], *name;
+			int sex, race, template, total = tokenize(buf+2, A_MAX+5, zz);
+			s16b stat[A_MAX];
+			bool maximise;
+			/* We can accept D with or without a name, but everything else must
+			 * be there. */
+			if (total < A_MAX+4 || total > A_MAX+5)
 			{
-				/* No name given, so make one up. */
-				case 10:
-				{
-					char name[32];
-					create_random_name(ator(*zz[1]), name);
-					err = add_stats(ator(*zz[0]), ator(*zz[1]),
-					 ator(*zz[2]), strtol(zz[3], NULL, 0) != 0,
-					 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
-					 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
-					 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), name);
-					break;
-				}
-				case 11:
-				{
-					err = add_stats(ator(*zz[0]), ator(*zz[1]),
-					 ator(*zz[2]), strtol(zz[3], NULL, 0) != 0,
-					 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
-					 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
-					 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), zz[10]);
-					break;
-				}
-				default:
 				return "format not D:<sex>:<race>:<class>:<maximise>:<str>:<int>:<wis>:<dex>:<con>:<chr>:<name>";
+			}			
+
+			D_GET_RACE(sex, 0, sex_info, MAX_SEXES, "sex");
+			D_GET_RACE(race, 1, race_info, MAX_RACES, "race");
+			D_GET_RACE(template, 2, template_info, MAX_TEMPLATE, "template");
+
+			if (!strcmp(zz[3], "0"))
+				maximise = FALSE;
+			else if (!strcmp(zz[3], "1"))
+				maximise = TRUE;
+			else
+				return "Maximise mode must be 0 or 1.";
+
+			for (i = 0; i < A_MAX; i++) stat[i] = atoi(zz[i+4]);
+
+			/* No name given, so make one up. */
+			if (total == A_MAX+4)
+			{
+				create_random_name(race, dname);
+				name = buf;
 			}
-			return err;
+			/* Use the provided name. */
+			else
+			{
+				name = zz[A_MAX+4];
+			}
+
+			/* Attempt to add the stats. */
+			return add_stats(sex, race, template, maximise, stat, name);
 		}
 		case 'L':
 		{
