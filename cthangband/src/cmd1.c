@@ -1872,6 +1872,9 @@ void move_to(s16b y, s16b x)
 		/* Update stuff */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
 
+		/* Update floor objects. */
+		p_ptr->notice |= PN_FSQUELCH;
+
 		/* A different area of the grid is eligible for monster creation. */
 		full_grid = MAX_FULL_GRID;
 

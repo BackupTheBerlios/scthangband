@@ -1523,6 +1523,19 @@ void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
 }
 
 /*
+ * Return the name of an object specified by k_idx in buf.
+ */
+void object_k_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int n = va_arg(*vp, int);
+	object_type q_ptr[1];
+
+	object_prep(q_ptr, n);
+
+	strnfmt(buf, max, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
+}
+
+/*
  * Determine the "Activation" (if any) for an artifact
  * Return a string, or NULL for "no activation"
  */
@@ -4649,6 +4662,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 
 					/* Skip specified objects */
 					if (strstr(quark_str(j_ptr->note), "!k")) continue;
+					if (strstr(quark_str(j_ptr->note), "!K")) continue;
 
 					/* Found a cursed item. */
 					if (cursed_p(j_ptr)) cursed = o_ptr;

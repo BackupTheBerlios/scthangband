@@ -70,6 +70,11 @@ A:^E
 C:0:_
 C:1:_
 
+# Reveal hidden object
+A:"Q:allow_squelch:N\n^K
+C:0:^K
+C:1:^V
+
 # Hack -- use traditional keys to enter option sub-menus.
 A:=M
 C:0:@
@@ -88,10 +93,6 @@ C:1:&
 # Hack -- Return
 A:\r
 C:0:^J
-
-# Hack -- Commit suicide
-A:Q
-C:0:^K
 
 ##### Roguelike Keyset Mappings #####
 
@@ -234,10 +235,6 @@ C:1:O
 # Hide object
 A:K
 C:1:^Q
-
-# Reveal hidden object
-A:^K
-C:1:^V
 
 ##### "Escape" macro #####
 A:\e

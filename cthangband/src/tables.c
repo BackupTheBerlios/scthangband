@@ -3193,3 +3193,6 @@ cptr_ch feeling_str[SENSE_MAX] =
 	{IDX(SENSE_QP_OBJ) "powerful"},
 	{IDX(SENSE_Q_ART) "unbreakable"},
 };
+
+cptr option_chars =
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789;:'@#~<>/?";

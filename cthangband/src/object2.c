@@ -1654,6 +1654,20 @@ static PURE byte merge_discounts(object_ctype *o_ptr, object_ctype *j_ptr)
 }
 
 /*
+ * Combine two strings, adding a space between them if necessary, and return
+ * as a quark.
+ */
+u16b merge_quarks(cptr s, cptr t)
+{
+	assert(s && t); /* quark_str() does not return 0. */
+
+	if (!*s) return quark_add(t);
+	if (!*t) return quark_add(s);
+
+	return quark_add(format("%s %s", s, t));
+}
+
+/*
  * Allow one item to "absorb" another, assuming they are similar
  * Return true if every object was completely absorbed.
  */
@@ -1671,17 +1685,11 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 	o_ptr->ident |= j_ptr->ident;
 
 	/* Hack -- blend "inscriptions" */
-	if (j_ptr->note && o_ptr->note && j_ptr->note != o_ptr->note)
+	if (j_ptr->note != o_ptr->note)
 	{
 		cptr jq = quark_str(j_ptr->note);
 		cptr oq = quark_str(o_ptr->note);
-		if (strstr(oq, jq)) /* o_ptr->note = o_ptr->note */ ;
-		else if (strstr(jq, oq)) o_ptr->note = j_ptr->note;
-		else o_ptr->note = quark_add(format("%s %s", oq, jq));
-	}
-	else if (j_ptr->note)
-	{
-		o_ptr->note = j_ptr->note;
+		o_ptr->note = merge_quarks(oq, jq);
 	}
 
 	/* Combine the discounts. */
@@ -2123,7 +2131,7 @@ static errr make_artifact(object_type *o_ptr, bool special)
 /*
  * Test that an ego type is suitable for the current object.
  */
-static bool get_ego_test(object_ctype *o_ptr, const ego_item_type *e_ptr,
+static bool PURE get_ego_test(object_ctype *o_ptr, const ego_item_type *e_ptr,
 	bool cursed)
 {
 	bool ecursed = !(e_ptr->cost);
@@ -2135,6 +2143,22 @@ static bool get_ego_test(object_ctype *o_ptr, const ego_item_type *e_ptr,
 	/* True if the cursed status matches the desired one. */
 	return cursed == ecursed;
 }
+
+/*
+ * Return TRUE if the k_idx given can be cursed by an ego type.
+ */
+static bool PURE ego_can_curse(int k_idx)
+{
+	object_type o_ptr[1];
+	const ego_item_type *e_ptr;
+	object_prep(o_ptr, k_idx);
+	for (e_ptr = e_info; e_ptr < e_info+z_info->e_max; e_ptr++)
+	{
+		if (get_ego_test(o_ptr, e_ptr, TRUE)) return TRUE;
+	}
+	return FALSE;
+}
+	
 
 /* 
  * Choose an ego type appropriate for o_ptr at random.
@@ -2304,9 +2328,6 @@ static void dragon_resist(object_type * o_ptr)
 
 /*
  * Apply magic to an item known to be "armor"
- *
- * Hack -- note special processing for crown/helm
- * Hack -- note special processing for robe of permanence
  */
 static void a_m_aux_2(object_type *o_ptr, const int level, const int power)
 {
@@ -2563,6 +2584,20 @@ static void a_m_aux_3(object_type *o_ptr, const int level, const int power)
 
 	/* Set most of the values as in the table above. */
 	set_var(o_ptr, level, power);
+}
+
+/*
+ * Return TRUE if an object can be cursed by a_m_aux_3().
+ * Only set_var() can do this at present.
+ */
+static bool PURE aux3_can_curse(int k_idx)
+{
+	bonus_type *b_ptr;
+	FOR_ALL_IN(bonus_table, b_ptr)
+	{
+		if (b_ptr->k_idx == k_idx && b_ptr->power == BT_VARY) return TRUE;
+	}
+	return FALSE;
 }
 
 
@@ -3108,6 +3143,41 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	apply_magic_2(o_ptr, lev);
 }
 
+/*
+ * Return TRUE if apply_magic() can leave an object either cursed or uncursed.
+ * This is deficient
+ */
+bool PURE magic_can_curse(int k_idx)
+{
+	switch (k_info[k_idx].tval)
+	{
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOW:
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_DRAG_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_SOFT_ARMOR:
+		case TV_SHIELD:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_CLOAK:
+		case TV_GLOVES:
+		case TV_BOOTS:
+		{
+			/* a_m_aux_1() and a_m_aux_2() can curse almost anything. */
+			return TRUE;
+		}
+		default:
+		{
+			return aux3_can_curse(k_idx) || ego_can_curse(k_idx);
+		}
+	}
+}
 
 
 /*

@@ -1434,6 +1434,9 @@ static errr init_other(void)
 	/* Initialise the term_wins array. */
 	init_term_wins();
 
+	/* Initialise the squelch information. */
+	init_squelch();
+
 	/* Success */
 	return (0);
 }

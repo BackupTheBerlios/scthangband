@@ -38,6 +38,26 @@ u16b ident_power(object_ctype *o_ptr)
 }
 
 /*
+ * Return TRUE if an object wuth the specified k_idx can be generated either
+ * cursed or uncursed.
+ * This isn't definitive, so it should be kept in line with apply_magic(),
+ * curse_equipment(), etc..
+ */
+bool PURE k_can_curse(int k_idx)
+{
+	object_type o_ptr[1];
+	int i;
+
+	if (magic_can_curse(k_idx)) return TRUE;
+
+	object_prep(o_ptr, k_idx);
+	i = wield_slot(o_ptr);
+	if (i >= INVEN_WIELD && i <= INVEN_FEET) return TRUE;
+
+	return FALSE;
+}
+
+/*
  * Test whether an object has been observed to have special powers which
  * could not hav e been expected based on its current level of identification.
  */
@@ -189,6 +209,8 @@ int PURE find_feeling(object_ctype *o_ptr)
 
 			if (o_ptr->ident & IDENT_CURSED)
 				return (powerful) ? SENSE_CP_OBJ : SENSE_C_OBJ;
+			else if (k_can_curse(o_ptr->k_idx))
+				return (powerful) ? SENSE_QP_OBJ : SENSE_Q_OBJ;
 			else
 				return (powerful) ? SENSE_QP_OBJ : SENSE_NONE;
 		}
@@ -223,6 +245,35 @@ static bool rand_range_test(u32b min, u32b max, u32b x)
 	else return FALSE;
 }
 
+/*
+ * Return TRUE if a k_idx refers to an object which can be pseudo-identified.
+ */
+bool k_can_sense(int k_idx)
+{
+	switch (k_info[k_idx].tval)
+	{
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
 
 /*
  * Sense the inventory
@@ -248,7 +299,7 @@ static void sense_inventory(void)
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
 		cptr you_are, using, really, is;
-		bool okay = FALSE, repeat;
+		bool repeat;
 		u16b oldident;
 
 		int feel, oldfeel;
@@ -262,34 +313,8 @@ static void sense_inventory(void)
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
 
-		/* Valid "tval" codes */
-		switch (o_ptr->tval)
-		{
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-			case TV_BOW:
-			case TV_DIGGING:
-			case TV_HAFTED:
-			case TV_POLEARM:
-			case TV_SWORD:
-			case TV_BOOTS:
-			case TV_GLOVES:
-			case TV_HELM:
-			case TV_CROWN:
-			case TV_SHIELD:
-			case TV_CLOAK:
-			case TV_SOFT_ARMOR:
-			case TV_HARD_ARMOR:
-			case TV_DRAG_ARMOR:
-			{
-				okay = TRUE;
-				break;
-			}
-		}
-
 		/* Skip non-sense machines */
-		if (!okay) continue;
+		if (!k_can_sense(o_ptr->k_idx)) continue;
 
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) && (0 != rand_int(5))) continue;
@@ -3681,7 +3706,7 @@ static void dungeon(void)
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_QUIET);
 
 	/* Combine / Reorder the pack */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_FSQUELCH);
 
 	/* Notice stuff */
 	notice_stuff();

@@ -425,85 +425,59 @@ static void wiz_display_item(object_type *o_ptr)
 	prt_binary(f3, 19, j+32);
 }
 
-
 /*
  * A list of tvals and their textual names
  */
-static name_centry tvals[] =
+name_centry tval_names[] =
 {
-	{ TV_SWORD,             "Sword"                },
-	{ TV_POLEARM,           "Polearm"              },
-	{ TV_HAFTED,            "Hafted Weapon"        },
-	{ TV_BOW,               "Bow"                  },
-	{ TV_ARROW,             "Arrows"               },
-	{ TV_BOLT,              "Bolts"                },
-	{ TV_SHOT,              "Shots"                },
-	{ TV_SHIELD,            "Shield"               },
-	{ TV_CROWN,             "Crown"                },
-	{ TV_HELM,              "Helm"                 },
-	{ TV_GLOVES,            "Gloves"               },
-	{ TV_BOOTS,             "Boots"                },
-	{ TV_CLOAK,             "Cloak"                },
-	{ TV_DRAG_ARMOR,        "Dragon Scale Mail"    },
-	{ TV_HARD_ARMOR,        "Hard Armor"           },
-	{ TV_SOFT_ARMOR,        "Soft Armor"           },
-	{ TV_RING,              "Ring"                 },
-	{ TV_AMULET,            "Amulet"               },
-	{ TV_LITE,              "Lite"                 },
-	{ TV_POTION,            "Potion"               },
-	{ TV_SCROLL,            "Scroll"               },
-	{ TV_WAND,              "Wand"                 },
-	{ TV_STAFF,             "Staff"                },
-	{ TV_ROD,               "Rod"                  },
-    { TV_SORCERY_BOOK,      "Sorcery Book"    },
-    { TV_THAUMATURGY_BOOK,        "Thaumaturgy Book"      },
-    { TV_CONJURATION_BOOK,        "Conjuration Book"       },
-    { TV_NECROMANCY_BOOK,       "Necromancy Book"     },
-	{ TV_CHARM, "Charm" },
-	{ TV_SPIKE,             "Spikes"               },
-	{ TV_DIGGING,           "Digger"               },
-	{ TV_CHEST,             "Chest"                },
-	{ TV_FOOD,              "Food"                 },
-	{ TV_FLASK,             "Flask"                },
-	{ 0,                    NULL                   }
+	{TV_SWORD,	"Sword"},
+	{TV_POLEARM,	"Pole-arm"},
+	{TV_HAFTED,	"Hafted Weapon"},
+	{TV_BOW,	"Bow"},
+	{TV_ARROW,	"Arrows"},
+	{TV_BOLT,	"Bolts"},
+	{TV_SHOT,	"Shots"},
+	{TV_SHIELD,	"Shield"},
+	{TV_CROWN,	"Crown"},
+	{TV_HELM,	"Helm"},
+	{TV_GLOVES,	"Gloves"},
+	{TV_BOOTS,	"Boots"},
+	{TV_CLOAK,	"Cloak"},
+	{TV_DRAG_ARMOR,	"Dragon Scale Mail"},
+	{TV_HARD_ARMOR,	"Hard Armour"},
+	{TV_SOFT_ARMOR,	"Soft Armour"},
+	{TV_RING,	"Ring"},
+	{TV_AMULET,	"Amulet"},
+	{TV_LITE,	"Lite"},
+	{TV_POTION,	"Potion"},
+	{TV_SCROLL,	"Scroll"},
+	{TV_WAND,	"Wand"},
+	{TV_STAFF,	"Staff"},
+	{TV_ROD,	"Rod"},
+	{TV_SORCERY_BOOK,	"Sorcery Book"},
+	{TV_THAUMATURGY_BOOK,	"Thaumaturgy Book"},
+	{TV_CONJURATION_BOOK,	"Conjuration Book"},
+	{TV_NECROMANCY_BOOK,	"Necromancy Book"},
+	{TV_CHARM,	"Charm"},
+	{TV_SPIKE,	"Spike"},
+	{TV_DIGGING,	"Digger"},
+	{TV_CHEST,	"Chest"},
+	{TV_FOOD,	"Food"},
+	{TV_FLASK,	"Flask"},
+	{0, NULL}
 };
 
-
 /*
- * Strip an "object name" into a buffer
+ * Return whether k_info[i] can be generated and is part of the specified
+ * category.
  */
-static void strip_name(char *buf, int k_idx)
+static bool good_cat_object(int a, name_centry *cat)
 {
-	object_type forge;
+	/* Hack -- skip items which only have special generation methods. */
+	if (!kind_created_p(k_info+a)) return FALSE;
 
-	object_prep(&forge, k_idx);
-
-	strnfmt(buf, ONAME_MAX, "%v", object_desc_f3, &forge, OD_SHOP, 0);
-}
-
-
-/*
- * Sorting hook for wiz_create_item()
- *
- * Sort from highest frequency to lowest.
- */
-static bool ang_sort_comp_wci(vptr u, vptr v, int a, int b)
-{
-	int *has_sub = (int*)u;
-	int *order = (int*)v;
-	return (has_sub[order[a]] >= has_sub[order[b]]);
-}
-
-/*
- * Swapping hook for wiz_create_item()
- */
-static void ang_sort_swap_wci(vptr UNUSED u, vptr v, int a, int b)
-{
-	int *order = (int*)v;
-	int temp;
-	temp = order[a];
-	order[a] = order[b];
-	order[b] = temp;
+	/* Simply check the tval. */
+	return (k_info[a].tval == cat->idx);
 }
 
 /*
@@ -516,64 +490,43 @@ static void ang_sort_swap_wci(vptr UNUSED u, vptr v, int a, int b)
  */
 static int wiz_create_itemtype(void)
 {
-	int                  i, num, max_num;
-	int                  col, row;
-	uint max_len;
-	int			 tval;
+	bool (*item_good)(int, name_centry *) = good_cat_object;
+	void (*print_f1)(char *, uint, cptr, va_list *) = object_k_name_f1;
 
-	cptr                 tval_str, s;
-	char                 ch;
+	int i, num;
+	int col, row;
+	uint len;
+	name_centry *cat;
 
-	int			 choice[60];
+	cptr s;
+	char ch;
 
-	C_TNEW(bufx, 60*ONAME_MAX, char);
-	char		*buf[60];
+	int	choice[60];
 
 	/* A list of the valid options for this prompt. */
-	cptr body =	"abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRST0123456789;:'@#~<>/?";
+	cptr body =	option_chars;
+	char sym[61], buf[80];
 
-	for (i = 0; i < 60; i++) buf[i] = bufx+i*ONAME_MAX;
+	C_TNEW(bufx, 61*ONAME_MAX, char);
+	char *obuf[61];
+	bool abort;
 
-	/* Clear screen */
-	Term_clear();
+	WIPE(sym, sym);
 
-	/* Print all tval's and their descriptions */
-	for (num = 0; (num < 60) && tvals[num].idx; num++)
+	/* Choose a category until a valid response is given. */
+	do
 	{
-		row = 2 + (num % 20);
-		col = 30 * (num / 20);
-		ch = body[num];
-		prt(format("[%c] %s", ch, tvals[num].str), row, col);
+		cat = choose_item_category(item_good, &abort, tval_names,
+			"Select a category:", FALSE);
 	}
+	while (!cat && !abort);
 
-	/* Me need to know the maximal possible tval_index */
-	max_num = num;
-
-	/* Choose! */
-	if (!get_com("Get what type of object? ", &ch))
-	{
-		TFREE(bufx);
-		return (0);
-	}
-
-	/* Analyze choice */
-	num = -1;
-	s = strchr(body, ch);
-	if (s) num = s - body;
-
-	/* Bail out if choice is illegal */
-	if ((num < 0) || (num >= max_num))
-	{
-		TFREE(bufx);
-		return (0);
-	}
-
-	/* Base object type chosen, fill in tval */
-	tval = tvals[num].idx;
-	tval_str = tvals[num].str;
-
+	if (abort) return 0;
 
 	/*** And now we go for k_idx ***/
+
+	/* Turn obuf[] into a 2 dimensional array. */
+	for (i = 0; i < 61; i++) obuf[i] = bufx+i*ONAME_MAX;
 
 	/* Clear screen */
 	Term_clear();
@@ -581,178 +534,43 @@ static int wiz_create_itemtype(void)
 	/* We have to search the whole itemlist. */
 	for (num = 0, i = 1; (num < 60) && (i < MAX_K_IDX); i++)
 	{
-		object_kind *k_ptr = &k_info[i];
-
-		/* Analyze matching items */
-		if (k_ptr->tval == tval)
-		{
-			/* Hack -- skip items which only have special generation methods. */
-			if (!kind_created_p(k_ptr)) continue;
-
-			/* Prepare it */
-			row = 2 + (num % 20);
-			col = 30 * (num / 20);
-			ch = body[num];
-
-			/* Acquire the "name" of object "i" */
-			strip_name(buf[num], i);
-
-			/* Remember the object index */
-			choice[num++] = i;
-		}
+		if (item_good(i, cat)) choice[num++] = i;
 	}
 
-	max_len = 80/((num+19)/20);
+	len = 80/((num+19)/20);
 
-	/*
-	 * Remove words to make every string short enough.
-	 * Starting with the commonest word present in a too-long string,
-	 * words are removed until the total length is within the maximum.
-	 * 
-	 * There are max_len spaces between the starts of adjacent entries.
-	 * The actual format is "[x] entry ", making 5 unavailable.
-	 *
-	 * This may treat repeated words inconsistently, e.g. by
-	 * removing the first "of" in "pack of cards of Tarot"
-	 * when a "die of dodecahedral shape" is shortened,
-	 */
+	/* The name of each option will be stored and trimmed to fit. */
+	for (i = 0; i <= 60; i++) obuf[i] = bufx+i*ONAME_MAX;
 
-	/* Look for prefixes to cut. */
-	for (i = 0; i < num; i++)
-	{
-		char *this;
-		int j,k,l;
-		char *sub[10];
-		int has_sub[10], times[10], order[10];
+	/* Get names for each valid object which can all fit on screen at once. */
+	get_names(obuf, obuf[60], num, choice, len, print_f1);
 
-		/* Short enough already. */
-		if (strlen(buf[i]) < max_len-4) continue;
-
-		/* Copy to temporary string. */
-		this = format("%s", buf[i]);
-
-		/* Locate each word. */
-		for (j = 0; j < 10; j++)
-		{
-			/* Find the end of the current word or the start of the string. */
-			if (j)
-				sub[j] = strchr(sub[j-1], ' ');
-			else
-				sub[j] = this;
-
-			/* Set times and order to default values. */
-			times[j] = 1;
-			order[j] = j;
-			has_sub[j] = 0;
-			
-			/* Don't continue past the end of the name. */
-			if (!sub[j]) break;
-
-			/* Don't change the string for the first word. */
-			if (!j) continue;
-
-			/* End last word and advance. */
-			*(sub[j]++) = '\0';
-		}
-		
-		/* Look for duplicated words. */
-		for (k = 1; k < j; k++)
-		{
-			for (l = 0; l < k; l++)
-			{
-				/* Ignore different words. */
-				if (strcmp(sub[l], sub[k])) continue;
-				
-				/* Increment the number of previous occurrences */
-				times[k]++;
-			}
-		}
-		/* Calculate how often each word appears in other entries. */
-		for (k = 0; k < j; k++)
-		{
-			for (l = has_sub[k] = 0; l < num; l++)
-			{
-				cptr time;
-				int m;
-				for (m = 1, time = buf[l];; m++)
-				{
-					/* Find the next copy. */
-					time = strstr(time, sub[k]);
-
-					/* Not enough found. */
-					if (!time) break;
-					
-					/* Don't consider this copy again. */
-					time++;
-
-					/* Go to the next copy. */
-					if (m < times[k]) continue;
-
-					/* This is a real substring. */
-					has_sub[k]++;
-
-					/* Finish. */
-					break;
-				}
-			}
-		}
-		
-		/* Sort the list. */
-		ang_sort_comp = ang_sort_comp_wci;
-		ang_sort_swap = ang_sort_swap_wci;
-		ang_sort(has_sub, order, j);
-		
-		k = 0;
-		/* Remove words, most common first. */
-		while (strlen(buf[i]) > max_len-5)
-		{
-			/* Replace the word in every string in which it appears. */
-			for (l = 0;l < num; l++)
-			{
-				char *a, *b;
-
-				/* Does it appear here? */
-				if (!((a = strstr(buf[l], sub[k])))) continue;
-
-				/* Actually remove the substring. */
-				for (b = a--+strlen(sub[k]);(*a = *b); a++, b++);
-			}
-			
-			/* Mext. */
-			k++;
-		}
-	}
-	
 	/* Print everything */
 	for (i = 0; i < num; i++)
 	{
 		row = 2 + (i % 20);
-		col = max_len * (i / 20);
+		col = len * (i / 20);
 		ch = body[i];
 		
 		/* Print it */
-		prt(format("[%c] %s", ch, buf[i]), row, col);
+		mc_put_fmt(row, col, "$![%c] %.*^s", ch, len-4, obuf[i]);
 	}
 
-	/* Finished with the buf[] array. */
+	/* Finished with the obuf[] array. */
 	TFREE(bufx);
 
-	/* Me need to know the maximal possible remembered object_index */
-	max_num = num;
-
 	/* Choose! */
-	if (!get_com(format("What Kind of %s? ", tval_str), &ch)) return (0);
+	sprintf(buf, "What kind of %.60s? ", cat->str);
+	if (!get_com(buf, &ch)) return (0);
 
 	/* Analyze choice */
-	num = -1;
 	s = strchr(body, ch);
-	if (s) num = s - body;
 
-	/* Bail out if choice is "illegal" */
-	if ((num < 0) || (num >= max_num)) return (0);
+	/* Bail out if choice is not recognised. */
+	if (!s || s >= body+num) return 0;
 
 	/* And return successful */
-	return (choice[num]);
+	return (choice[s - body]);
 }
 
 /*
@@ -784,7 +602,7 @@ static int choose_something(name_centry *start, cptr type, int max,
 	int	choice[60];
 
 	/* A list of the valid options for this prompt. */
-	cptr body =	"abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRST0123456789;:'@#~<>/?";
+	cptr body =	option_chars;
 	char sym[61], buf[80];
 	WIPE(sym, sym);
 
@@ -792,7 +610,7 @@ static int choose_something(name_centry *start, cptr type, int max,
 	Term_clear();
 
 	/* Print all tval's and their descriptions */
-	for (num = 0, cat = start; (num < 60) && cat->idx; cat++)
+	for (num = 0, cat = start; (num < 60) && cat->str; cat++)
 	{
 		for (i = 0; i < max; i++)
 		{
@@ -807,7 +625,7 @@ static int choose_something(name_centry *start, cptr type, int max,
 		if (sym_from_cat) sym[num] = cat->idx;
 		else sym[num] = body[num];
 
-		choice[num] = cat-tvals;
+		choice[num] = cat-start;
 		mc_put_fmt(row, col, "$![%c] %.25s", sym[num++], cat->str);
 	}
 
@@ -822,7 +640,7 @@ static int choose_something(name_centry *start, cptr type, int max,
 	if (!s) return (0);
 
 	/* Base object type chosen, fill in tval */
-	cat = &tvals[choice[s - sym]];
+	cat = &start[choice[s - sym]];
 
 
 	/*** And now we go for a_idx ***/
@@ -854,7 +672,8 @@ static int choose_something(name_centry *start, cptr type, int max,
 	}
 
 	/* Choose! */
-	if (!get_com(format("What Kind of %s? ", cat->str), &ch)) return (0);
+	sprintf(buf, "What kind of %.60s? ", cat->str);
+	if (!get_com(buf, &ch)) return (0);
 
 	/* Analyze choice */
 	s = strchr(body, ch);
@@ -893,7 +712,7 @@ static void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 
 	if (!make_fake_artifact(q_ptr, n)) return;
 
-	strnfmt(buf, max, "%v", object_desc_f3, q_ptr, 0, 0);
+	strnfmt(buf, max, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
 }
 
 /*
@@ -901,7 +720,7 @@ static void artefact_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  */
 static int choose_artefact(void)
 {
-	return choose_something(tvals, "artifact", MAX_A_IDX,
+	return choose_something(tval_names, "artifact", MAX_A_IDX,
 		FALSE, good_cat_artefact, artefact_name_f1);
 }
 

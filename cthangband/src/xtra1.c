@@ -2787,6 +2787,19 @@ void notice_stuff(void)
 	/* Notice stuff */
 	if (!p_ptr->notice) return;
 
+	/* Squelch floor things. */
+	if (p_ptr->notice & PN_FSQUELCH)
+	{
+		squelch_grid();
+		p_ptr->notice &= ~(PN_FSQUELCH);
+	}
+
+	/* Squelch inventory things. */
+	if (p_ptr->notice & PN_ISQUELCH)
+	{
+		squelch_inventory();
+		p_ptr->notice &= ~(PN_ISQUELCH);
+	}
 
 	/* Combine the pack */
 	if (p_ptr->notice & (PN_COMBINE))
@@ -4392,13 +4405,16 @@ void update_object(object_type *o_ptr, int where)
 
 	if (where & OUP_FLOOR)
 	{
+		/* Squelch the item if needed. */
+		p_ptr->notice |= PN_FSQUELCH;
+
 		/* Display the floor under the player, as the object may be there. */
-		if (o_ptr->iy == py && o_ptr->ix == px) cave_track(py, px);
+		if (o_ptr && o_ptr->iy == py && o_ptr->ix == px) cave_track(py, px);
 	}
 	if (where & OUP_INVEN)
 	{
 		/* Put the object in the correct position. */
-		p_ptr->notice |= PN_COMBINE | PN_REORDER;
+		p_ptr->notice |= PN_COMBINE | PN_REORDER | PN_ISQUELCH;
 
 		/* Correct the speed, for if the weight has changed. */
 		p_ptr->update |= PU_BONUS;

@@ -460,6 +460,15 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			}
 			else return "format not K:<num>:<a>/<c>";
 		}
+		/* 
+		 * Simply extract the tokens and pass to squelch.c, as no action is
+		 * appropriate without detailed knowledge.
+		 */
+		case 'Q':
+		{
+			int i = tokenize(buf+2, 16, zz);
+			return process_pref_squelch(zz, i, sf_flags);
+		}
 		/* Process "U:<p_id>:<s_id>:<a>/<c>"  -- attr/char for unidentified objects */
 		case 'U':
 		{

@@ -870,7 +870,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define OPTS_MACRO -6
 #define OPTS_VISUAL -7
 #define OPTS_COLOUR -8
-
+#define OPTS_SQUELCH -9
 #define OPTS_TO_FILE -10
 #define OPTS_FROM_FILE -11
 #define OPTS_ALL_TO_FILE -12
@@ -2177,8 +2177,10 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Bit flags for the "p_ptr->notice" variable
  */
-#define PN_COMBINE      0x00000001L     /* Combine the pack */
-#define PN_REORDER      0x00000002L     /* Reorder the pack */
+#define PN_COMBINE	(1L<<0)	/* Combine the pack */
+#define PN_REORDER	(1L<<1)	/* Reorder the pack */
+#define PN_ISQUELCH	(1L<<2)	/* Squelch the pack */
+#define PN_FSQUELCH	(1L<<3)	/* Squelch the floor items */
 /* xxx (many) */
 
 

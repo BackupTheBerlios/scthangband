@@ -1135,6 +1135,28 @@ static void do_cmd_options_hp(void)
 }
 
 /*
+ * Dump a version string to an open file.
+ */
+void dump_version(FILE *fff)
+{
+	int i;
+
+	assert(fff); /* Caller. */
+
+	/* Header. */
+	fprintf(fff, "\n# Current version\n");
+
+	/* Start the line. */
+	fprintf(fff, "O");
+
+	/* Dump the version. */
+	for (i = 0; i < MAX_SF_VAR; i++) fprintf(fff, ":%u", sf_flags_now[i]);
+
+	/* Finish the line. */
+	fprintf(fff, "\n");
+}
+
+/*
  * Actually dump options to an open file.
  *
  * This does not dump cheat options on the assumption that this is desired.
@@ -1209,6 +1231,12 @@ static errr option_dump_aux(cptr fname)
 	{
 		fprintf(fff, "L:%s:%d:%d\n", co_ptr->name, co_ptr->x, co_ptr->y);
 	}
+
+	/* Dump the current version, as squelch settings use k_idx indices. */
+	dump_version(fff);
+
+	/* Save the squelch settings. */
+	squelch_dump(fff);
 
 	/* Mention options which can't be read. */
 	fprintf(fff, "\n\n# Unparsable options\n\n");
@@ -1312,17 +1340,18 @@ static option_list opt_lists[] =
 	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 5, 12},
 	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', 5, 13},
 	{"Help", NULL, OPTS_HELP, '?', 5, 15},
+	{"Autosave Options", NULL, OPTS_SAVE, 'A', 5, 16},
 	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 43, 4},
 	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 43, 5},
-	{"Autosave Options", NULL, OPTS_SAVE, 'A', 43, 6},
-	{"Window Options", NULL, OPTS_WINDOW, 'W', 43, 7},
-	{"Redraw Options", NULL, OPTS_REDRAW, 'R', 43, 8},
-	{"Interact with Macros", NULL, OPTS_MACRO, 'M', 43, 9},
-	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', 43, 10},
-	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', 43, 11},
+	{"Window Options", NULL, OPTS_WINDOW, 'W', 43, 6},
+	{"Redraw Options", NULL, OPTS_REDRAW, 'R', 43, 7},
+	{"Interact with Macros", NULL, OPTS_MACRO, 'M', 43, 8},
+	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', 43, 9},
+	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', 43, 10},
+	{"Squelch Settings", NULL, OPTS_SQUELCH, 'Q', 43, 11},
 	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 13},
 	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', 43, 14},
-	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 15},
+	{"Load preferences", NULL, OPTS_FROM_FILE, 'O', 43, 15},
 };
 
 
@@ -1458,6 +1487,11 @@ good:	/* Success */
 			case OPTS_COLOUR:
 			{
 				do_cmd_colors();
+				break;
+			}
+			case OPTS_SQUELCH:
+			{
+				do_cmd_options_squelch();
 				break;
 			}
 			case OPTS_HELP:
@@ -2191,16 +2225,11 @@ static void get_visuals_mon(int i, cptr *name, byte *da, char *dc,
 static void get_visuals_obj(int i, cptr *name, byte *da, char *dc,
 	byte **xa, char **xc)
 {
-	object_type forge;
-
 	/* Get most of the visuals. */
 	get_visuals(k_info);
 
-	/* Create the object */
-	object_prep(&forge, i);
-
-	/* Place in a temporary buffer. */
-	(*name) = format("%v", object_desc_f3, &forge, OD_SHOP, 0);
+	/* Place the name in a temporary buffer. */
+	(*name) = format("%v", object_k_name_f1, i);
 }
 
 /*
@@ -2349,11 +2378,11 @@ static errr dump_visuals_aux(cptr tmp, visual_type *vs_ptr)
 	{
 		/* Start dumping */
 		fprintf(fff, "\n\n");
-		fprintf(fff, "# %s\n\n", vs_ptr->initstring);
+		fprintf(fff, "# %s\n", vs_ptr->initstring);
 
-		/* This could convert to any version, but... */
-		fprintf(fff, "O:");
-		for (i = 0; i < MAX_SF_VAR; i++) fprintf(fff, "%u", sf_flags_now[i]);
+		/* Print the version. */
+		dump_version(fff);
+
 		fprintf(fff, "\n%c:---reset---\n\n", vs_ptr->startchar);
 
 		/* Dump entries */

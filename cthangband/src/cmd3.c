@@ -494,7 +494,7 @@ void do_cmd_destroy(void)
 	item_optimize(o_ptr);
 }
 
-static bool item_tester_unhidden(object_ctype *o_ptr)
+bool item_tester_unhidden(object_ctype *o_ptr)
 {
 	return !hidden_p(o_ptr);
 }

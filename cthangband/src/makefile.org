@@ -31,9 +31,9 @@ SRCS = \
   main-dos.c main-emx.c main-gcu.c main-gtk.c main-ibm.c main-lsl.c main-mac.c \
   main-ros.c main-sla.c main-vcs.c main-vme.c main-win.c main-x11.c main-xaw.c \
   main-xpj.c main-xxx.c main.c melee1.c melee2.c monster1.c monster2.c \
-  object1.c object2.c quest.c powers.c readdib.c save.c spells1.c spells2.c store.c \
-  tables.c util.c variable.c wizard1.c wizard2.c xtra1.c xtra2.c z-form.c \
-  z-rand.c z-term.c z-util.c z-virt.c main-crb.o
+  object1.c object2.c quest.c powers.c readdib.c save.c spells1.c spells2.c \
+  squelch.c store.c tables.c util.c variable.c wizard1.c wizard2.c xtra1.c \
+  xtra2.c z-form.c z-rand.c z-term.c z-util.c z-virt.c main-crb.c
 
 OBJS = \
   birth.o cave.o cmd1.o cmd2.o cmd3.o cmd4.o cmd5.o cmd6.o dungeon.o files.o \
@@ -41,9 +41,9 @@ OBJS = \
   main-dos.o main-emx.o main-gcu.o main-gtk.o main-ibm.o main-lsl.o main-mac.o \
   main-ros.o main-sla.o main-vcs.o main-vme.o main-win.o main-x11.o main-xaw.o \
   main-xpj.o main-xxx.o main.o melee1.o melee2.o monster1.o monster2.o \
-  object1.o object2.o quest.o powers.o readdib.o save.o spells1.o spells2.o store.o \
-  tables.o util.o variable.o wizard1.o wizard2.o xtra1.o xtra2.o z-form.o \
-  z-rand.o z-term.o z-util.o z-virt.o main-crb.o
+  object1.o object2.o quest.o powers.o readdib.o save.o spells1.o spells2.o \
+  squelch.o store.o tables.o util.o variable.o wizard1.o wizard2.o xtra1.o \
+  xtra2.o z-form.o z-rand.o z-term.o z-util.o z-virt.o main-crb.o
 
 
 
@@ -314,6 +314,7 @@ quest.o: quest.c $(INCS)
 save.o: save.c $(INCS) loadsave.h
 spells1.o: spells1.c $(INCS)
 spells2.o: spells2.c $(INCS)
+squelch.o: squelch.c $(INCS)
 store.o: store.c $(INCS)
 tables.o: tables.c $(INCS)
 util.o: util.c $(INCS)
