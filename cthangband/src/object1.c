@@ -4555,7 +4555,7 @@ static bool find_tag_keymap(char in, char *out)
 	/* Use a dynamic string to prevent overflow. */
 	C_MAKE(buf, strlen(t)+1, char);
 	text_to_ascii(buf, t);
-	
+
 	/* Too long. */
 	if (strlen(buf) != 1)
 	{
@@ -4613,7 +4613,8 @@ static int get_tag(int *cp, char tag)
 			}
 
 			/* Check the special tags */
-			else if (s[2] == tag && find_tag_keymap(s[1], &c) && (c == tag))
+			else if (s[2] == tag && find_tag_keymap(s[1], &c) &&
+				(c == command_cmd))
 			{
 				/* Save the actual inventory ID */
 				*cp = i;
