@@ -368,9 +368,9 @@ extern void do_cmd_cantrip(void);
 #if (defined(CMD5_C) || defined(DUNGEON_C))
 extern void do_cmd_invoke(void);
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C))
-extern void mindcraft_info(char *p, int power);
-#endif
+
+
+
 #if (defined(CMD5_C) || defined(DUNGEON_C))
 extern void do_cmd_mindcraft(void);
 #endif
@@ -1544,21 +1544,21 @@ extern void combine_pack(void);
 #if (defined(OBJECT2_C) || defined(XTRA1_C))
 extern void reorder_pack(void);
 #endif
-#if (defined(OBJECT2_C) || defined(XTRA1_C))
+#if (defined(CMD5_C) || defined(XTRA1_C))
 extern void display_spell_list(void);
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C))
-extern s16b spell_chance(int spell,int school);
-#endif
-#if (defined(CMD5_C) || defined(OBJECT2_C))
-extern bool spell_okay(int spell, bool known, int school);
-#endif
-#if (defined(CMD5_C) || defined(OBJECT2_C))
-extern void get_favour_info(char *p, int spell, int sphere);
-#endif
-#if (defined(CMD5_C) || defined(OBJECT2_C))
-extern void get_cantrip_info(char *p, int spell);
-#endif
+
+
+
+
+
+
+
+
+
+
+/* cmd5.c */
+
 #if (defined(CMD5_C) || defined(OBJECT2_C) || defined(STORE_C))
 extern void print_spells(byte *spells, int num, int y, int x, int school);
 #endif
@@ -2027,10 +2027,10 @@ extern const byte adj_mag_study[NUM_STAT_INDICES];
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern const byte adj_mag_mana[NUM_STAT_INDICES];
 #endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern const byte adj_mag_fail[NUM_STAT_INDICES];
 #endif
-#if (defined(CMD5_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C))
+#if (defined(CMD5_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern const byte adj_mag_stat[NUM_STAT_INDICES];
 #endif
 #if (defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C))
@@ -2114,7 +2114,7 @@ extern u32b spell_flags[4];
 #if (defined(CMD5_C) || defined(OBJECT2_C) || defined(TABLES_C))
 extern u32b cantrip_flags[7];
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(CMD5_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern cptr spell_names[MAX_SCHOOL][32];
 #endif
 #if (defined(CMD5_C) || defined(TABLES_C))
@@ -2123,7 +2123,7 @@ extern cptr cantrip_names[32];
 #if (defined(CMD5_C) || defined(TABLES_C))
 extern cptr favour_names[MAX_SPHERE][32];
 #endif
-#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern  player_skill skill_set[MAX_SKILLS];
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(OBJECT1_C) || defined(TABLES_C))
@@ -2159,7 +2159,7 @@ extern int chaos_rewards[MAX_PATRON][20];
 #if (defined(CMD1_C) || defined(TABLES_C))
 extern martial_arts ma_blows[MAX_MA];
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(CMD5_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS];
 #endif
 #if (defined(ANGBAND_H))
@@ -2312,13 +2312,13 @@ extern void msg_format(cptr fmt, ...);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void c_put_str(byte attr, cptr str, int row, int col);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void put_str(cptr str, int row, int col);
 #endif
 #if (defined(CMD4_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void c_prt(byte attr, cptr str, int row, int col);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void prt(cptr str, int row, int col);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
@@ -2336,7 +2336,7 @@ extern void mc_put_str(const int y, const int x, cptr str);
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void clear_from(int row);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(WIZARD2_C))
@@ -3254,16 +3254,16 @@ extern player_race *rp_ptr;
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern player_template *cp_ptr;
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CMD5_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern player_magic *mp_ptr;
 #endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern u32b spell_learned[MAX_SCHOOL];
 #endif
-#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern u32b spell_worked[MAX_SCHOOL];
 #endif
-#if (defined(BIRTH_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern u32b spell_forgotten[MAX_SCHOOL];
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
@@ -3587,10 +3587,10 @@ extern void skill_exp(int index);
 #if (defined(CMD5_C) || defined(XTRA1_C))
 extern void gain_spell_exp(magic_type *spell);
 #endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(OBJECT2_C) || defined(XTRA1_C))
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(XTRA1_C))
 extern u16b spell_energy(u16b skill,u16b min);
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C) || defined(XTRA1_C))
+#if (defined(CMD5_C) || defined(XTRA1_C))
 extern byte spell_skill(magic_type *spell);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
@@ -3854,7 +3854,7 @@ extern errr Term_addstr(int n, byte a, cptr s);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern void Term_putch(int x, int y, byte a, char c);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(OBJECT2_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_putstr(int x, int y, int n, byte a, cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(MONSTER1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
