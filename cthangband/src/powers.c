@@ -89,6 +89,52 @@ static add_timed_type power_add_timed_table[] =
 	{RACE_GOLEM+PO_RACIAL, TIMED_SHIELD, 31, 50, FALSE},
 };
 
+typedef const struct project_ball_type project_ball_type;
+struct project_ball_type
+{
+	int power;
+	int type;
+	int dam;
+	int rad;
+};
+
+#if 0
+static project_ball_type power_project_ball_table[] =
+{
+	{OBJ_WAND_STINKING_CLOUD+PO_K_IDX, GF_POIS, 12, 2},
+	{OBJ_WAND_ACID_BALL+PO_K_IDX, GF_ACID, 60, 2},
+	{OBJ_WAND_ELEC_BALL+PO_K_IDX, GF_ELEC, 32, 2},
+	{OBJ_WAND_FIRE_BALL+PO_K_IDX,
+	{OBJ_WAND_COLD_BALL+PO_K_IDX,
+	{OBJ_WAND_DRAGON_FIRE+PO_K_IDX,
+	{OBJ_WAND_DRAGON_COLD+PO_K_IDX,
+	{OBJ_WAND_SHARD_BALL+PO_K_IDX,
+	{OBJ_ROD_ACID_BALL+PO_K_IDX,
+	{OBJ_ROD_ELEC_BALL+PO_K_IDX,
+	{OBJ_ROD_FIRE_BALL+PO_K_IDX,
+	{OBJ_ROD_COLD_BALL+PO_K_IDX,
+	{ACT_BA_POIS_1+PO_ACTIVATION,
+	{ACT_BA_COLD_1+PO_ACTIVATION,
+	{ACT_BA_FIRE_1+PO_ACTIVATION,
+	{ACT_BA_COLD_2+PO_ACTIVATION,
+	{ACT_BA_ELEC_2+PO_ACTIVATION,
+	{ACT_BA_FIRE_2+PO_ACTIVATION,
+	{ACT_BA_COLD_3+PO_ACTIVATION,
+	{ACT_BA_ELEC_3+PO_ACTIVATION,
+	{ACT_SHARD+PO_ACTIVATION,
+	{ACT_BA_MISS_3+PO_ACTIVATION,
+	{OBJ_DSM_BLUE+PO_K_IDX,
+	{OBJ_DSM_WHITE+PO_K_IDX,
+	{OBJ_DSM_BLACK+PO_K_IDX,
+	{OBJ_DSM_GREEN+PO_K_IDX,
+	{OBJ_DSM_RED+PO_K_IDX,
+	{OBJ_DSM_BRONZE+PO_K_IDX,
+	{OBJ_DSM_GOLD+PO_K_IDX,
+	{OBJ_DSM_POWER+PO_K_IDX,
+	{
+};
+#endif
+
 static cptr timer_verbs[TIMED_MAX] =
 {
 	"blinds you",
@@ -1885,7 +1931,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case OBJ_SCROLL_PROTECTION_FROM_EVIL+PO_K_IDX:
 		{
-			i = 3 * (skill_set[SKILL_DEVICE].value/2);
+			i = 3 * plev;
 			if (add_flag(TIMED_PROTEVIL, randint(25) + i)) (*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -2181,13 +2227,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case OBJ_STAFF_SLEEP_MONSTERS+PO_K_IDX:
 		{
-			if (sleep_monsters((skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (sleep_monsters((plev))) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_STAFF_SLOW_MONSTERS+PO_K_IDX:
 		{
-			if (slow_monsters((skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (slow_monsters(plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2226,8 +2272,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_STAFF_HOLINESS+PO_K_IDX:
 		{
 			if (dispel_evil(120)) (*ident) = TRUE;
-			i = 3 * (skill_set[SKILL_DEVICE].value/2);
-			if (add_flag(TIMED_PROTEVIL, randint(25) + i)) (*ident) = TRUE;
+			if (add_flag(TIMED_PROTEVIL, randint(25) + 3*plev)) (*ident) = TRUE;
 			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
 			if (hp_player(50)) (*ident) = TRUE;
@@ -2267,7 +2312,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_WAND_HASTE_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (speed_monster(dir,(skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (speed_monster(dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2318,14 +2363,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_WAND_SLEEP_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (sleep_monster(dir,(skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (sleep_monster(dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_WAND_SLOW_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (slow_monster(dir,(skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (slow_monster(dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2353,7 +2398,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_WAND_POLYMORPH+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (poly_monster(dir,(skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (poly_monster(dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2629,14 +2674,14 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_ROD_SLEEP_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (sleep_monster(dir,(skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (sleep_monster(dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_ROD_SLOW_MONSTER+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (slow_monster(dir,(skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (slow_monster(dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2650,7 +2695,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_ROD_POLYMORPH+PO_K_IDX:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			if (poly_monster(dir,(skill_set[SKILL_DEVICE].value/2))) (*ident) = TRUE;
+			if (poly_monster(dir, plev)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2720,7 +2765,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
         case OBJ_ROD_HAVOC+PO_K_IDX:
 		{
-            call_chaos(skill_set[SKILL_DEVICE].value/2);
+            call_chaos(plev);
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -2894,7 +2939,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_CALL_CHAOS+PO_ACTIVATION:
             {
-                call_chaos(skill_set[SKILL_DEVICE].value/2);
+                call_chaos(plev);
                 return SUCCESS;
             }
 
@@ -2935,7 +2980,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
             case ACT_SLEEP+PO_ACTIVATION:
 			{
-				sleep_monsters_touch((skill_set[SKILL_DEVICE].value/2));
+				sleep_monsters_touch(plev);
 				return SUCCESS;
 			}
 
@@ -3474,14 +3519,13 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_LOBON+PO_NAME1:
 			{
-				i = 3 * (skill_set[SKILL_DEVICE].value/2);
-				(void)add_flag(TIMED_PROTEVIL, randint(25) + i);
+				(void)add_flag(TIMED_PROTEVIL, randint(25) + 3*plev);
 				return SUCCESS;
 			}
 
 			case ART_ALHAZRED+PO_NAME1:
 			{
-				dispel_evil((skill_set[SKILL_DEVICE].value/2) * 5);
+				dispel_evil(plev * 5);
 				return SUCCESS;
 			}
 
@@ -3593,7 +3637,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
             case ART_POWER+PO_NAME1: case ART_MASK+PO_NAME1:
         
             {
-                turn_monsters(40 + (skill_set[SKILL_DEVICE].value/2));
+                turn_monsters(40 + plev);
                 return SUCCESS;
         
             }
@@ -3625,7 +3669,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 			case ART_DARKNESS+PO_NAME1:
 			{
-				sleep_monsters_touch((skill_set[SKILL_DEVICE].value/2));
+				sleep_monsters_touch(plev);
 				return SUCCESS;
 			}
 
@@ -6665,9 +6709,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
  */
 bool use_object_power(const int power, int dir, bool *ident, bool *use)
 {
-	/* plev is only used for random artefacts here, for which this is the
-	 * correct formula.
-	 */
+	/* Define plev in a similar way to spells. */
 	const int plev = MAX(1, skill_set[SKILL_DEVICE].value/2);
 
 	switch (do_power(power, plev, dir, *ident, use, ident))
