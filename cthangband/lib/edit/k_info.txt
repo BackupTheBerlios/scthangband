@@ -3525,3 +3525,10 @@ I:23:31:0
 W:1:0:180:4000
 P:0:6d5:0:0:0
 F:INSTA_ART | SHOW_MODS
+
+# Hack - 10 000 AU item for price comparison in shops.
+
+N:525:No tea
+G:t:w
+I:90:90:0
+W:0:0:0:10000

@@ -1941,13 +1941,19 @@ static void display_store(void)
 		cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + cur_store_type].name);
 		cptr owner_name = (ot_ptr->owner_name);
 		cptr race_name = race_info[ot_ptr->owner_race].title;
+		object_type tmp;
 
 		/* Put the owner name and race */
 		sprintf(buf, "%s (%s)", owner_name, race_name);
 		put_str(buf, 3, 10);
 
+		/* Hack - Create a 10000gp item for price_item() */
+		object_prep(&tmp, lookup_kind(TV_PRICE_COMPARE, SV_PRICE_COMPARE));
+		object_aware(&tmp);
+
 		/* Show the max price in the store (above prices) */
-		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost));
+		sprintf(buf, "%s (%ld) [%ld]", store_name, (long)(ot_ptr->max_cost),
+			price_item(&tmp, ot_ptr->min_inflate, TRUE));
 		prt(buf, 3, 50);
 
 		/* Label the item descriptions */

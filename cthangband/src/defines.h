@@ -1775,6 +1775,12 @@
 #define SV_BOOK_MIN_GOOD    2
 
 /*
+ * The object used for price comparison.
+ */
+#define TV_PRICE_COMPARE 90
+#define SV_PRICE_COMPARE 90
+
+/*
  * Handedness Values for Weapons
  */
 
