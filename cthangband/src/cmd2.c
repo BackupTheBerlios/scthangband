@@ -759,28 +759,22 @@ void do_cmd_open(void)
 
 	bool more = FALSE;
 
- #ifdef ALLOW_EASY_OPEN
- 
- 	/* Option: Pick a direction */
- 	if (easy_open) {
- 
- 	    int num_doors, num_chests;
- 	
- 	    /* Count closed doors (locked or jammed) */
- 	    num_doors = count_dt(&y, &x, FEAT_DOOR_HEAD, FEAT_DOOR_TAIL);
- 	    
- 	    /* Count chests (locked) */
- 	    num_chests = count_chests(&y, &x, FALSE);
- 	    
- 	    /* See if only one target */
- 	    if (num_doors || num_chests) {
- 	        bool too_many = (num_doors && num_chests) || (num_doors > 1) ||
- 				(num_chests > 1);
- 	        if (!too_many) command_dir = coords_to_dir(y, x);
- 	    }
- 	}
- 
- #endif /* ALLOW_EASY_OPEN -- TNB */
+#ifdef ALLOW_EASY_OPEN
+
+	/* Option: Pick a direction */
+	if (easy_open)
+	{
+		/* Count closed doors (locked or jammed) */
+		int num_doors = count_dt(&y, &x, FEAT_DOOR_HEAD, FEAT_DOOR_TAIL);
+
+		/* Count chests (locked) */
+		int num_chests = count_chests(&y, &x, FALSE);
+
+		/* Set if only one target */
+		if (num_doors + num_chests == 1) command_dir = coords_to_dir(y, x);
+	}
+
+#endif /* ALLOW_EASY_OPEN -- TNB */
 
 	/* Set repeat if requested. */
 	cnv_arg_to_rep();
@@ -894,18 +888,13 @@ void do_cmd_close(void)
 
 	bool		more = FALSE;
 
- #ifdef ALLOW_EASY_OPEN
- 
- 	/* Option: Pick a direction */
- 	if (easy_open) {
- 
- 		/* Count open doors */
- 		if (count_dt(&y, &x, FEAT_OPEN, FEAT_OPEN) == 1) {
- 			command_dir = coords_to_dir(y, x);
- 		}
- 	}
- 
- #endif /* ALLOW_EASY_OPEN -- TNB */
+#ifdef ALLOW_EASY_OPEN
+
+	/* Select an open door if allowed. */
+	if (easy_open && count_dt(&y, &x, FEAT_OPEN, FEAT_OPEN) == 1)
+			command_dir = coords_to_dir(y, x);
+
+#endif /* ALLOW_EASY_OPEN -- TNB */
 
 	/* Set repeat if requested. */
 	cnv_arg_to_rep();
@@ -1528,28 +1517,22 @@ void do_cmd_disarm(void)
 
 	bool more = FALSE;
 
- #ifdef ALLOW_EASY_DISARM
- 
- 	/* Option: Pick a direction */
- 	if (easy_disarm) {
- 
- 	    int num_traps, num_chests;
- 	
- 	    /* Count visible traps */
- 	    num_traps = count_dt(&y, &x, FEAT_TRAP_HEAD, FEAT_TRAP_TAIL);
- 	    
- 	    /* Count chests (trapped) */
- 	    num_chests = count_chests(&y, &x, TRUE);
- 	    
- 	    /* See if only one target */
- 	    if (num_traps || num_chests) {
- 	        bool too_many = (num_traps && num_chests) || (num_traps > 1) ||
- 				(num_chests > 1);
- 	        if (!too_many) command_dir = coords_to_dir(y, x);
- 	    }
- 	}
- 
- #endif /* ALLOW_EASY_DISARM -- TNB */
+#ifdef ALLOW_EASY_DISARM
+
+	/* Option: Pick a direction */
+	if (easy_disarm)
+	{
+		/* Count visible traps */
+		int num_traps = count_dt(&y, &x, FEAT_TRAP_HEAD, FEAT_TRAP_TAIL);
+	    
+		/* Count chests (trapped) */
+		int num_chests = count_chests(&y, &x, TRUE);
+
+		/* See if only one target */
+		if (num_traps + num_chests == 1) command_dir = coords_to_dir(y, x);
+	}
+
+#endif /* ALLOW_EASY_DISARM -- TNB */
 
 	/* Set repeat if requested. */
 	cnv_arg_to_rep();
