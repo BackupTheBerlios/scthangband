@@ -1480,44 +1480,21 @@ static void calc_torch(void)
 	{
 		o_ptr = &inventory[i];
 
+		/* Skip empty slots */
+		if (!o_ptr->k_idx) continue;
+
 		/* Examine actual lites */
-		if ((i == INVEN_LITE) && (o_ptr->k_idx) && (o_ptr->tval == TV_LITE))
+		if ((i == INVEN_LITE) && (o_ptr->k_idx) && (o_ptr->tval == TV_LITE)
+			&& (allart_p(o_ptr) || o_ptr->pval > 0))
 		{
-			/* Torches (with fuel) provide some lite */
-			if ((o_ptr->k_idx == OBJ_WOODEN_TORCH) && (o_ptr->pval > 0))
-			{
-				p_ptr->cur_lite += 1;
-				continue;
-			}
-
-			/* Lanterns (with fuel) provide more lite */
-			if ((o_ptr->k_idx == OBJ_BRASS_LANTERN) && (o_ptr->pval > 0))
-			{
-				p_ptr->cur_lite += 2;
-				continue;
-			}
-
-			/* Artifact Lites provide permanent, bright, lite */
-			if (allart_p(o_ptr))
-			{
-				p_ptr->cur_lite += 3;
-				continue;
-			}
-
-			/* notreached */
-		}
-		else
-		{
-			/* Skip empty slots */
-			if (!o_ptr->k_idx) continue;
-
-			/* Extract the flags */
-			object_flags(o_ptr, &f1, &f2, &f3);
-
-			/* does this item glow? */
-			if (f3 & TR3_LITE) p_ptr->cur_lite++;
+			p_ptr->cur_lite += k_info[o_ptr->k_idx].extra;
 		}
 
+		/* Extract the flags */
+		object_flags(o_ptr, &f1, &f2, &f3);
+
+		/* Check for extra light. */
+		if (f3 & TR3_LITE) p_ptr->cur_lite++;
 	}
 
 	/* max radius is 5 without rewriting other code -- */

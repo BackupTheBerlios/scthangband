@@ -3009,20 +3009,11 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	}
 
 	/* Hack -- describe lite's */
-	if (o_ptr->tval == TV_LITE)
+	if (o_ptr->tval == TV_LITE && k_info[o_ptr->k_idx].extra)
 	{
-		if (allart_p(o_ptr))
-		{
-			info[i++].txt = "It provides light (radius 3) forever.";
-		}
-		else if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
-		{
-			info[i++].txt = "It provides light (radius 2) when fueled.";
-		}
-		else
-		{
-			info[i++].txt = "It provides light (radius 1) when fueled.";
-		}
+		alloc_ifa(info+i++, format("It provides light (radius %d) %s.",
+			k_info[o_ptr->k_idx].extra,
+			((allart_p(o_ptr))) ? "forever" : "when fueled."));
 	}
 
 	/* Hack - describe the wield skill of weaponry. */
