@@ -3343,3 +3343,6 @@ extern int PlayerUID;
 
 /* String used in show_file_tome() to indicate a non-ToME link target. */
 #define CC_LINK_PREFIX	"%%%%%"
+
+#define is_inventory_p(O_PTR) \
+	(o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)

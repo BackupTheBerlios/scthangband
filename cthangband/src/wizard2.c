@@ -1122,7 +1122,7 @@ static void wiz_quantity_item(object_type *o_ptr)
  */
 void do_cmd_wiz_play(void)
 {
-	int item;
+	errr err;
 
 	object_type	forge;
 	object_type *q_ptr;
@@ -1135,9 +1135,9 @@ void do_cmd_wiz_play(void)
 
 
 	/* Get an item (from equip or inven) */
-	if (!((o_ptr = get_item(&item, "Play with which object? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Play with which object? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to play with.");
+		if (err == -2) msg_print("You have nothing to play with.");
 		return;
 	}
 

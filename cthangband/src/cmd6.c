@@ -62,11 +62,21 @@ static bool activate_random_artifact(object_type * o_ptr);
 
 
 /*
+ * Calculate the energy needed to use a magical device.
+ */
+s16b item_use_energy(object_type *o_ptr)
+{
+	if (is_worn_p(o_ptr))
+		return TURN_ENERGY/10;
+	else
+		return extract_energy[p_ptr->pspeed];
+}
+
+/*
  * Eat some food (from the pack or floor)
  */
 void do_cmd_eat_food(object_type *o_ptr)
 {
-	int item;
 	int			ident;
 	bool	normal_food = FALSE;
 
@@ -78,16 +88,13 @@ void do_cmd_eat_food(object_type *o_ptr)
 	/* Get an item if we weren't passed one */
 	if(!o_ptr)
 	{
+		errr err;
 		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Eat which item? ", FALSE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Eat which item? ", FALSE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have nothing to eat.");
+			if (err == -2) msg_print("You have nothing to eat.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_FOOD;
@@ -104,7 +111,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 
 	/* Take a turn */
-	energy_use = extract_energy[p_ptr->pspeed];
+	energy_use = item_use_energy(o_ptr);
 
 	/* Identity not known yet */
 	ident = FALSE;
@@ -381,7 +388,6 @@ void do_cmd_eat_food(object_type *o_ptr)
  */
 void do_cmd_quaff_potion(object_type *o_ptr)
 {
-	int item;
 	int		ident;
 
 
@@ -392,16 +398,13 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 	/* Get an item if we weren't passed one */
 	if(!o_ptr)
 	{
+		errr err;
 		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Quaff which potion? ", TRUE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Quaff which potion? ", TRUE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no potions to quaff.");
+			if (err == -2) msg_print("You have no potions to quaff.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_POTION;
@@ -417,13 +420,7 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 
 
 	/* Take a turn */
-	if (item < INVEN_POUCH_1)
-	{
-		energy_use = extract_energy[p_ptr->pspeed];
-	} else {
-		/* Potions in a pouch are immediately accessible */
-		energy_use = TURN_ENERGY/10;
-	}
+	energy_use = item_use_energy(o_ptr);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -1158,7 +1155,6 @@ bool curse_weapon(void)
  */
 void do_cmd_read_scroll(object_type *o_ptr)
 {
-	int item;
 	int			k, used_up, ident;
 
 	/* Check some conditions */
@@ -1185,16 +1181,13 @@ void do_cmd_read_scroll(object_type *o_ptr)
 	/* Get an item if we weren't passed one */
 	if(!o_ptr)
 	{
+		errr err;
 		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Read which scroll? ", TRUE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Read which scroll? ", TRUE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no scrolls to read.");
+			if (err == -2) msg_print("You have no scrolls to read.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_SCROLL;
@@ -1207,13 +1200,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
 	item_tester_tval = 0;
 
 	/* Take a turn */
-	if (item < INVEN_POUCH_1)
-	{
-		energy_use = extract_energy[p_ptr->pspeed];
-	} else {
-		/* Scrolls in a pouch are immediately accessible */
-		energy_use = TURN_ENERGY/10;
-	}
+	energy_use = item_use_energy(o_ptr);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -1718,7 +1705,6 @@ static bool use_device_p(object_type *o_ptr)
 	return (rand_int(denom) < num);
 }
 
-
 /*
  * Use a staff.			-RAK-
  *
@@ -1728,7 +1714,6 @@ static bool use_device_p(object_type *o_ptr)
  */
 void do_cmd_use_staff(object_type *o_ptr)
 {
-	int item;
 	int			ident, k;
 
 	/* Hack -- let staffs of identify get aborted */
@@ -1741,16 +1726,13 @@ void do_cmd_use_staff(object_type *o_ptr)
 	/* Get an item if we weren't already passed one */
 	if(!o_ptr)
 	{
+		errr err;
 		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Use which staff? ", FALSE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Use which staff? ", FALSE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no staff to use.");
+			if (err == -2) msg_print("You have no staff to use.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_STAFF;
@@ -1763,7 +1745,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 	item_tester_tval = 0;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
+	if ((!is_inventory_p(o_ptr)) && (o_ptr->number > 1))
 	{
 		msg_print("You must first pick up the staffs.");
 		return;
@@ -1771,7 +1753,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 
 
 	/* Take a turn */
-	energy_use = extract_energy[p_ptr->pspeed];
+	energy_use = item_use_energy(o_ptr);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2095,7 +2077,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 	skill_exp(SKILL_DEVICE);
 
 	/* XXX Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
+	if ((is_inventory_p(o_ptr)) && (o_ptr->number > 1))
 	{
 		object_type forge;
 		object_type *q_ptr;
@@ -2115,7 +2097,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 		/* Unstack the used item */
 		o_ptr->number--;
 		total_weight -= q_ptr->weight;
-		item = inven_carry(q_ptr, FALSE);
+		inven_carry(q_ptr, FALSE);
 
 		/* Message */
 		msg_print("You unstack your staff.");
@@ -2193,16 +2175,13 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	/* Get an item if we weren't passed one */
 	if(!o_ptr)
 	{
+		errr err;
 		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Aim which wand? ", TRUE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Aim which wand? ", TRUE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no wand to aim.");
+			if (err == -2) msg_print("You have no wand to aim.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_WAND;
@@ -2215,7 +2194,7 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	item_tester_tval = 0;
 
 	/* Mega-Hack -- refuse to aim a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
+	if ((!is_inventory_p(o_ptr)) && (o_ptr->number > 1))
 	{
 		msg_print("You must first pick up the wands.");
 		return;
@@ -2227,13 +2206,7 @@ void do_cmd_aim_wand(object_type *o_ptr)
 
 
 	/* Take a turn */
-	if (item < INVEN_POUCH_1)
-	{
-		energy_use = extract_energy[p_ptr->pspeed];
-	} else {
-		/* Wands in a pouch are immediately accessible */
-		energy_use = TURN_ENERGY/10;
-	}
+	energy_use = item_use_energy(o_ptr);;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2522,7 +2495,7 @@ void do_cmd_aim_wand(object_type *o_ptr)
 	o_ptr->pval--;
 
 	/* Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
+	if ((is_inventory_p(o_ptr)) && (o_ptr->number > 1))
 	{
 		object_type forge;
 		object_type *q_ptr;
@@ -2611,7 +2584,6 @@ static bool directional_rod_p(s16b k_idx)
  */
 void do_cmd_zap_rod(object_type *o_ptr)
 {
-	int item;
 	int			ident, dir;
 
 	/* Hack -- let perception get aborted */
@@ -2624,16 +2596,13 @@ void do_cmd_zap_rod(object_type *o_ptr)
 	/* Get an item if we do not already have one */
 	if(!o_ptr)
 	{
+		errr err;
 		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Zap which rod? ", FALSE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Zap which rod? ", FALSE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no rod to zap.");
+			if (err == -2) msg_print("You have no rod to zap.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_ROD;
@@ -2646,7 +2615,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 	item_tester_tval = 0;
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
+	if ((!is_inventory_p(o_ptr)) && (o_ptr->number > 1))
 	{
 		msg_print("You must first pick up the rods.");
 		return;
@@ -2662,7 +2631,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 
 
 	/* Take a turn */
-	energy_use = extract_energy[p_ptr->pspeed];
+	energy_use = item_use_energy(o_ptr);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2963,7 +2932,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 	}
 
 	/* XXX Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
+	if ((is_inventory_p(o_ptr)) && (o_ptr->number > 1))
 	{
 		object_type forge;
 		object_type *q_ptr;
@@ -2983,7 +2952,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 		/* Unstack the used item */
 		o_ptr->number--;
 		total_weight -= q_ptr->weight;
-		item = inven_carry(q_ptr, FALSE);
+		inven_carry(q_ptr, FALSE);
 
 		/* Message */
 		msg_print("You unstack your rod.");
@@ -3147,12 +3116,12 @@ void do_cmd_activate(object_type *o_ptr)
 	/* Get an item if we weren't passed one from the inventory*/
 	if(!o_ptr)
 	{
-		int item;
+		errr err;
 
 		/* Get an item (from equip) */
-		if (!((o_ptr = get_item(&item, "Activate which item? ", TRUE, FALSE, FALSE))))
+		if (!((o_ptr = get_item(&err, "Activate which item? ", TRUE, FALSE, FALSE))))
 		{
-			if (item == -2) msg_print("You have nothing to activate.");
+			if (err == -2) msg_print("You have nothing to activate.");
 			return;
 		}
 	}
@@ -3170,7 +3139,7 @@ void do_cmd_activate(object_type *o_ptr)
 	item_tester_hook = 0;
 
 	/* Take a turn */
-	energy_use = TURN_ENERGY/10;
+	energy_use = item_use_energy(o_ptr);
 
 
 	/* Roll for failure. */

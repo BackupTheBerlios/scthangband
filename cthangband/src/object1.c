@@ -2507,7 +2507,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 /*
  * Inform the player if an object is currently being worn.
  */
-static bool is_worn_p(object_type *o_ptr)
+bool is_worn_p(object_type *o_ptr)
 {
 	/* Real inventory object. */
 	if (o_ptr >= inventory+INVEN_WIELD && o_ptr < inventory+INVEN_TOTAL)
@@ -4389,7 +4389,7 @@ static int get_tag(int *cp, char tag)
  *
  * Note that "Term_save()" / "Term_load()" blocks must not overlap.
  */
-object_type *get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
+object_type *get_item(errr *cp, cptr pmt, bool equip, bool inven, bool floor)
 {
 	cave_type *c_ptr = &cave[py][px];
 

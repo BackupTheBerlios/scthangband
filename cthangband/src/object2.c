@@ -4848,7 +4848,7 @@ void item_charges(object_type *o_ptr)
 {
 	int item = cnv_obj_to_idx(o_ptr);
 
-	if (item >= 0)
+	if (is_inventory_p(o_ptr))
 	{
 		inven_item_charges(item);
 	}
@@ -4865,7 +4865,7 @@ void item_increase(object_type *o_ptr, int num)
 {
 	int item = cnv_obj_to_idx(o_ptr);
 
-	if (item >= 0)
+	if (is_inventory_p(o_ptr))
 	{
 		inven_item_increase(item, num);
 	}
@@ -4882,7 +4882,7 @@ void item_describe(object_type *o_ptr)
 {
 	int item = cnv_obj_to_idx(o_ptr);
 
-	if (item >= 0)
+	if (is_inventory_p(o_ptr))
 	{
 		inven_item_describe(item);
 	}
@@ -4899,7 +4899,7 @@ void item_optimize(object_type *o_ptr)
 {
 	int item = cnv_obj_to_idx(o_ptr);
 
-	if (item >= 0)
+	if (is_inventory_p(o_ptr))
 	{
 		inven_item_optimize(item);
 	}

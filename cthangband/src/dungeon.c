@@ -761,7 +761,7 @@ static void regen_monsters(void)
  */
 bool psychometry(void)
 {
-	int                     item;
+	errr err;
 
 	object_type             *o_ptr;
 
@@ -769,9 +769,9 @@ bool psychometry(void)
         cptr            feel, oldfeel;
 
 	/* Get an item (from equip or inven or floor) */
-    if (!((o_ptr = get_item(&item, "Meditate on which item? ", TRUE, TRUE, TRUE))))
+    if (!((o_ptr = get_item(&err, "Meditate on which item? ", TRUE, TRUE, TRUE))))
 	{
-        if (item == -2) msg_print("You have nothing appropriate.");
+        if (err == -2) msg_print("You have nothing appropriate.");
 		TFREE(o_name);
 		return (FALSE);
 	}

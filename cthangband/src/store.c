@@ -3279,8 +3279,9 @@ static void store_purchase(void)
  */
 static void store_sell_aux(char *o_name)
 {
+	errr err;
 	int choice;
-	int item, item_pos;
+	int item_pos;
 	int amt;
 
 	s32b price, value, dummy;
@@ -3300,15 +3301,15 @@ static void store_sell_aux(char *o_name)
 	item_tester_hook = store_will_buy;
 
 	/* Get an item (from equip or inven) */
-	if (!((o_ptr = get_item(&item, pmt, TRUE, TRUE, FALSE))))
+	if (!((o_ptr = get_item(&err, pmt, TRUE, TRUE, FALSE))))
 	{
-		if (item == -2) msg_print("You have nothing that I want.");
+		if (err == -2) msg_print("You have nothing that I want.");
 		return;
 	}
 
 
 	/* Hack -- Cannot remove cursed items */
-	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
+	if (is_worn_p(o_ptr) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");
@@ -3365,7 +3366,7 @@ static void store_sell_aux(char *o_name)
 		/* Describe the transaction */
 		if (!auto_haggle || verbose_haggle)
 		{
-		msg_format("Selling %s (%c).", o_name, index_to_label(item));
+		msg_format("Selling %s (%c).", o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
 		msg_print(NULL);
 		}
 
@@ -3480,7 +3481,7 @@ static void store_sell_aux(char *o_name)
 	else
 	{
 		/* Describe */
-		msg_format("You drop %s (%c).", o_name, index_to_label(item));
+		msg_format("You drop %s (%c).", o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
 
 		/* Take it from the players inventory */
 		item_increase(q_ptr, -amt);

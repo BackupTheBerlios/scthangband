@@ -2331,7 +2331,8 @@ static int breakage_chance(object_type *o_ptr)
  */
 void do_cmd_fire(void)
 {
-	int dir, item;
+	errr err;
+	int dir;
 	int j, y, x, ny, nx, ty, tx;
 	int tdam, tdis, thits, tmul;
 	int bonus, chance;
@@ -2366,9 +2367,9 @@ void do_cmd_fire(void)
 	item_tester_tval = p_ptr->tval_ammo;
 
 	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&item, "Fire which item? ", FALSE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Fire which item? ", FALSE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to fire.");
+		if (err == -2) msg_print("You have nothing to fire.");
 		return;
 	}
 
@@ -2645,7 +2646,8 @@ bool item_tester_hook_destroy(object_type *o_ptr)
  */
 void do_cmd_throw(void)
 {
-	int dir, item;
+	errr err;
+	int dir;
 	int j, y, x, ny, nx, ty, tx;
 	int chance, tdam, tdis;
 	int mul, div;
@@ -2667,9 +2669,9 @@ void do_cmd_throw(void)
 	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&item, "Throw which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Throw which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to throw.");
+		if (err == -2) msg_print("You have nothing to throw.");
 		return;
 	}
 
@@ -3450,14 +3452,15 @@ static void use_power(powertype *pw_ptr)
 			case iilog(MUT1_EAT_MAGIC):
 			{
 				object_type * o_ptr;
-				int lev, item;
+				errr err;
+				int lev;
 				cptr q;
 
 				item_tester_hook = item_tester_hook_recharge;
 
 				/* Get an item */
 				q = "Drain which item? ";
-				if (!((o_ptr = get_item(&item, q, TRUE,TRUE,TRUE)))) break;
+				if (!((o_ptr = get_item(&err, q, TRUE,TRUE,TRUE)))) break;
 
 				lev = wand_power(&k_info[o_ptr->k_idx]);
 

@@ -1180,7 +1180,7 @@ static void print_spirits(int *valid_spirits,int num,int y, int x)
 
 static void rustproof(void)
 {
-	int		item;
+	errr err;
 
 	object_type	*o_ptr;
 
@@ -1190,9 +1190,9 @@ static void rustproof(void)
 	item_tester_hook = item_tester_hook_armour;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Rustproof which piece of armour? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Rustproof which piece of armour? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to rustproof.");
+		if (err == -2) msg_print("You have nothing to rustproof.");
 		TFREE(o_name);
 		return;
 	}
@@ -1206,13 +1206,13 @@ static void rustproof(void)
 	if ((o_ptr->to_a < 0) && !(o_ptr->ident & IDENT_CURSED))
 	{
 		msg_format("%s %s look%s as good as new!",
-			((item >= 0) ? "Your" : "The"), o_name,
+			((is_inventory_p(o_ptr)) ? "Your" : "The"), o_name,
 			((o_ptr->number > 1) ? "" : "s"));
 			o_ptr->to_a = 0;
 	}
 
 	msg_format("%s %s %s now protected against corrosion.",
-		((item >= 0) ? "Your" : "The"), o_name,
+		((is_inventory_p(o_ptr)) ? "Your" : "The"), o_name,
 		((o_ptr->number > 1) ? "are" : "is"));
 
 	TFREE(o_name);
@@ -1243,11 +1243,11 @@ void do_cmd_browse(object_type *o_ptr)
 	/* Get an item if we do not already have one */
 	if(!o_ptr)
 	{
-		int item;
+		errr err;
 		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Browse which book? ", FALSE, TRUE, TRUE))))
+		if (!((o_ptr = get_item(&err, "Browse which book? ", FALSE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no books that you can read.");
+			if (err == -2) msg_print("You have no books that you can read.");
 			return;
 		}
 	}
@@ -1312,7 +1312,8 @@ void do_cmd_browse(object_type *o_ptr)
  */
 void do_cmd_study(void)
 {
-	int	i, item, sval;
+	errr err;
+	int	i, sval;
 	int	spell_school = 0;
 	int	spell = -1;
 
@@ -1347,9 +1348,9 @@ void do_cmd_study(void)
 	item_tester_tval = TV_SORCERY_BOOK;
 
 	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&item, "Study which book? ", FALSE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Study which book? ", FALSE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have no books that you can read.");
+		if (err == -2) msg_print("You have no books that you can read.");
 		return;
 	}
 
@@ -1852,7 +1853,8 @@ static void wild_magic(int spell)
  */
 void do_cmd_cast(void)
 {
-	int	item, sval, spell, dir;
+	errr err;
+	int	sval, spell, dir;
 	int	chance, beam;
 	int	plev = 0;
 	int	spell_school = 0, dummy = 0;
@@ -1888,9 +1890,9 @@ void do_cmd_cast(void)
 	item_tester_tval = TV_SORCERY_BOOK;
 
 	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&item, "Use which book? ", FALSE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Use which book? ", FALSE, TRUE, TRUE))))
 	{
-        if (item == -2) msg_format("You have no %s books!", prayer);
+        if (err == -2) msg_format("You have no %s books!", prayer);
 		return;
 	}
 
@@ -3295,13 +3297,13 @@ void do_cmd_cast(void)
  */
 void do_cmd_cantrip(void)
 {
-	int	item, sval, spell, dir;
+	errr err;
+	int	sval, spell, dir;
 	int	chance, beam;
 	int	plev = 0;
 	int	dummy = 0;
 
 	const cptr prayer = "cantrip";
-	bool from_pouch = FALSE;
 	bool item_break = FALSE;
 
 	object_type	*o_ptr;
@@ -3327,14 +3329,11 @@ void do_cmd_cantrip(void)
 	item_tester_tval = TV_CHARM;
 
 	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&item, "Use which charm? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Use which charm? ", TRUE, TRUE, TRUE))))
 	{
-        if (item == -2) msg_print("You have no charms!");
+        if (err == -2) msg_print("You have no charms!");
 		return;
 	}
-
-	/* Remember if we got this from a pouch */
-	from_pouch = ((item >= INVEN_POUCH_1) && (item <= INVEN_POUCH_6));
 
 	/* Access the item's sval */
 	sval = k_info[o_ptr->k_idx].extra;
@@ -3542,14 +3541,7 @@ void do_cmd_cantrip(void)
 	}
 
 	/* Take some time - a cantrip always takes 100, unless the charm is in a pouch */
-	if (from_pouch)
-	{
-		energy_use = TURN_ENERGY/10;
-	}
-	else
-	{
-		energy_use = extract_energy[p_ptr->pspeed];
-	}
+	energy_use = item_use_energy(o_ptr);
 
 	/* If item is going to break, give it a chance of survival at low skill levels, on
 	 * the assumption that the user didn't manage to do anything to the charm.  This will

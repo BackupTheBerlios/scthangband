@@ -147,7 +147,8 @@ static bool item_tester_hook_wear(object_type *o_ptr)
  */
 void do_cmd_wield(void)
 {
-	int item, slot;
+	errr err;
+	int  slot;
 
 	object_type forge;
 	object_type *q_ptr;
@@ -161,9 +162,9 @@ void do_cmd_wield(void)
 	item_tester_hook = item_tester_hook_wear;
 
 	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&item, "Wear/Wield which item? ", FALSE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Wear/Wield which item? ", FALSE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing you can wear or wield.");
+		if (err == -2) msg_print("You have nothing you can wear or wield.");
 		return;
 	}
 
@@ -313,15 +314,15 @@ void do_cmd_wield(void)
  */
 void do_cmd_takeoff(void)
 {
-	int item;
+	errr err;
 
 	object_type *o_ptr;
 
 
 	/* Get an item (from equip) */
-	if (!((o_ptr = get_item(&item, "Take off which item? ", TRUE, FALSE, FALSE))))
+	if (!((o_ptr = get_item(&err, "Take off which item? ", TRUE, FALSE, FALSE))))
 	{
-		if (item == -2) msg_print("You are not wearing anything to take off.");
+		if (err == -2) msg_print("You are not wearing anything to take off.");
 		return;
 	}
 
@@ -341,7 +342,7 @@ void do_cmd_takeoff(void)
 	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Take off the item */
-	(void)inven_takeoff(item, 255);
+	(void)inven_takeoff(cnv_obj_to_idx(o_ptr), 255);
 
     p_ptr->redraw |= (PR_EQUIPPY);
 }
@@ -352,20 +353,21 @@ void do_cmd_takeoff(void)
  */
 void do_cmd_drop(void)
 {
-	int item, amt = 1;
+	errr err;
+	int  amt = 1;
 
 	object_type *o_ptr;
 
 	/* Get an item (from equip or inven) */
-	if (!((o_ptr = get_item(&item, "Drop which item? ", TRUE, TRUE, FALSE))))
+	if (!((o_ptr = get_item(&err, "Drop which item? ", TRUE, TRUE, FALSE))))
 	{
-		if (item == -2) msg_print("You have nothing to drop.");
+		if (err == -2) msg_print("You have nothing to drop.");
 		return;
 	}
 
 
 	/* Hack -- Cannot remove cursed items */
-	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
+	if (is_worn_p(o_ptr) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");
@@ -390,7 +392,7 @@ void do_cmd_drop(void)
 	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 	/* Drop (some of) the item */
-	inven_drop(item, amt);
+	inven_drop(cnv_obj_to_idx(o_ptr), amt);
 
     p_ptr->redraw |= (PR_EQUIPPY);
 }
@@ -400,7 +402,8 @@ void do_cmd_drop(void)
  */
 void do_cmd_destroy(void)
 {
-	int			item, amt = 1;
+	errr err;
+	int			 amt = 1;
 	int			old_number;
 
 	bool		force = FALSE;
@@ -415,9 +418,9 @@ void do_cmd_destroy(void)
 	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Destroy which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Destroy which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to destroy.");
+		if (err == -2) msg_print("You have nothing to destroy.");
 		return;
 	}
 
@@ -529,15 +532,15 @@ void destroy_pack(void)
  */
 void do_cmd_observe(void)
 {
-	int			item;
+	errr err;
 
 	object_type		*o_ptr;
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Examine which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Examine which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to examine.");
+		if (err == -2) msg_print("You have nothing to examine.");
 		return;
 	}
 
@@ -556,15 +559,15 @@ void do_cmd_observe(void)
  */
 void do_cmd_uninscribe(void)
 {
-	int   item;
+	errr err;
 
 	object_type *o_ptr;
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Un-inscribe which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Un-inscribe which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to un-inscribe.");
+		if (err == -2) msg_print("You have nothing to un-inscribe.");
 		return;
 	}
 
@@ -594,7 +597,7 @@ void do_cmd_uninscribe(void)
  */
 void do_cmd_inscribe(void)
 {
-	int			item;
+	errr err;
 
 	object_type		*o_ptr;
 
@@ -602,9 +605,9 @@ void do_cmd_inscribe(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Inscribe which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Inscribe which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to inscribe.");
+		if (err == -2) msg_print("You have nothing to inscribe.");
 		return;
 	}
 
@@ -656,8 +659,6 @@ static bool item_tester_refill_lantern(object_type *o_ptr)
  */
 static void do_cmd_refill_lamp(object_type *o_ptr)
 {
-	int item;
-
 	object_type *j_ptr;
 
 
@@ -667,16 +668,13 @@ static void do_cmd_refill_lamp(object_type *o_ptr)
 	/* Get an item if we weren't passed one */
 	if (!o_ptr)
 	{
-		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Refill with which flask? ", TRUE, TRUE, TRUE))))
+		errr err;
+		/* Get an (from inven or floor) */
+		if (!((o_ptr = get_item(&err, "Refill with which flask? ", TRUE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no flasks of oil.");
+			if (err == -2) msg_print("You have no flasks of oil.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_hook = item_tester_refill_lantern;
@@ -736,7 +734,6 @@ static bool item_tester_refill_torch(object_type *o_ptr)
  */
 static void do_cmd_refill_torch(object_type *o_ptr)
 {
-	int item;
 	object_type *j_ptr;
 
 
@@ -746,16 +743,13 @@ static void do_cmd_refill_torch(object_type *o_ptr)
 	/* Get an item if we weren't passed one */
 	if(!o_ptr)
 	{
-		/* Get an item (from inven or floor) */
-		if (!((o_ptr = get_item(&item, "Refuel with which torch? ", FALSE, TRUE, TRUE))))
+		errr err;
+		/* Get an (from inven or floor) */
+		if (!((o_ptr = get_item(&err, "Refuel with which torch? ", FALSE, TRUE, TRUE))))
 		{
-			if (item == -2) msg_print("You have no extra torches.");
+			if (err == -2) msg_print("You have no extra torches.");
 			return;
 		}
-	}
-	else
-	{
-		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_hook = item_tester_refill_torch;
@@ -1418,19 +1412,19 @@ void do_cmd_query_symbol(void)
 /* 'Handle' an object, doing whatever seems the sensible thing to it... */
 void do_cmd_handle(void)
 {
-	int item;
+	errr err;
 
 	object_type *o_ptr;
 
 	/* Get an item (from equip or inven) */
-	if (!((o_ptr = get_item(&item, "Use which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Use which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to use.");
+		if (err == -2) msg_print("You have nothing to use.");
 		return;
 	}
 
 	/* First test Wielded items */
-	if ((item >= INVEN_WIELD) && (item < INVEN_POUCH_1))
+	if (is_worn_p(o_ptr))
 	{
 		/* Try to activate the wielded item, whatever it is */
 		do_cmd_activate(o_ptr);
@@ -1484,6 +1478,7 @@ void do_cmd_handle(void)
 		}
 	case TV_CHARM:
 	{
+		int item = cnv_obj_to_idx(o_ptr);
 		get_cantrip(&item, k_info[o_ptr->k_idx].extra);
 		break;
 	}

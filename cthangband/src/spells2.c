@@ -454,7 +454,8 @@ bool restore_level(void)
  */
 bool alchemy(void)
 {
-	int                     item, amt = 1;
+	errr err;
+	int                     amt = 1;
 	int                     old_number;
     long        price;
 
@@ -474,9 +475,9 @@ bool alchemy(void)
 	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from equip or inven or floor) */
-    if (!((o_ptr = get_item(&item, "Turn which item to gold? ", TRUE, TRUE, TRUE))))
+    if (!((o_ptr = get_item(&err, "Turn which item to gold? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to turn to gold.");
+		if (err == -2) msg_print("You have nothing to turn to gold.");
 		TFREE(o_name);
 		return FALSE;
 	}
@@ -2766,12 +2767,10 @@ bool enchant(object_type *o_ptr, int n, int eflag)
  */
 bool enchant_spell(int num_hit, int num_dam, int num_ac)
 {
-	int                     item;
+	errr err;
 	bool            okay = FALSE;
 
 	object_type             *o_ptr;
-
-	C_TNEW(o_name, ONAME_MAX, char);
 
 
 	/* Assume enchant weapon */
@@ -2781,21 +2780,17 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	if (num_ac) item_tester_hook = item_tester_hook_armour;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Enchant which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to enchant.");
-		TFREE(o_name);
+		if (err == -2) msg_print("You have nothing to enchant.");
 		return (FALSE);
 	}
 
 
-	/* Description */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
 	/* Describe */
-	msg_format("%s %s glow%s brightly!",
-		   ((item >= 0 && !allart_p(o_ptr)) ? "Your" : "The"), o_name,
-		   ((o_ptr->number > 1) ? "" : "s"));
+	msg_format("%s %v glow%s brightly!",
+		   ((is_inventory_p(o_ptr) && !allart_p(o_ptr)) ? "Your" : "The"),
+		   object_desc_f3, o_ptr, FALSE, 0, ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Enchant */
 	if (enchant(o_ptr, num_hit, ENCH_TOHIT)) okay = TRUE;
@@ -2813,14 +2808,12 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	}
 	else
 	{
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 1);
-	
 		/* Describe again */
-		msg_format("You now %s %s", (item >= 0) ? "have" : "see", o_name);
+		msg_format("You now %s %v", (is_inventory_p(o_ptr)) ? "have" : "see",
+			object_desc_f3, o_ptr, TRUE, 1);
 	}	
 
 	/* Something happened */
-	TFREE(o_name);
 	return (TRUE);
 }
 
@@ -4229,7 +4222,7 @@ else
 
 bool artifact_scroll(void)
 {
-	int                     item;
+	errr err;
 	bool            okay = FALSE;
 
 	object_type             *o_ptr;
@@ -4241,9 +4234,9 @@ bool artifact_scroll(void)
 	item_tester_hook = item_tester_hook_weapon;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Enchant which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to enchant.");
+		if (err == -2) msg_print("You have nothing to enchant.");
 		TFREE(o_name);
 		return (FALSE);
 	}
@@ -4254,7 +4247,7 @@ bool artifact_scroll(void)
 
 	/* Describe */
     msg_format("%s %s radiate%s a blinding light!",
-		   ((item >= 0) ? "Your" : "The"), o_name,
+		   (is_inventory_p(o_ptr)) ? "Your" : "The", o_name,
 		   ((o_ptr->number > 1) ? "" : "s"));
 
     if (o_ptr->name1 || o_ptr->art_name)
@@ -4307,7 +4300,7 @@ bool artifact_scroll(void)
  */
 bool ident_spell(void)
 {
-	int                     item;
+	errr                     err;
 
 	object_type             *o_ptr;
 
@@ -4315,9 +4308,9 @@ bool ident_spell(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Identify which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to identify.");
+		if (err == -2) msg_print("You have nothing to identify.");
 		TFREE(o_name);
 		return (FALSE);
 	}
@@ -4340,15 +4333,15 @@ bool ident_spell(void)
 	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Describe */
-	if (item >= INVEN_WIELD)
+	if (is_worn_p(o_ptr))
 	{
 		msg_format("%^s: %s (%c).",
-			   describe_use(item), o_name, index_to_label(item));
+			   describe_use(cnv_obj_to_idx(o_ptr)), o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
 	}
-	else if (item >= 0)
+	else if (is_inventory_p(o_ptr))
 	{
 		msg_format("In your pack: %s (%c).",
-			   o_name, index_to_label(item));
+			   o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
 	}
 	else
 	{
@@ -4370,7 +4363,7 @@ bool ident_spell(void)
  */
 bool identify_fully(void)
 {
-	int                     item;
+	errr                     err;
 
 	object_type             *o_ptr;
 
@@ -4378,9 +4371,9 @@ bool identify_fully(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Identify which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to identify.");
+		if (err == -2) msg_print("You have nothing to identify.");
 		TFREE(o_name);
 		return (FALSE);
 	}
@@ -4409,15 +4402,15 @@ bool identify_fully(void)
 	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
 	/* Describe */
-	if (item >= INVEN_WIELD)
+	if (is_worn_p(o_ptr))
 	{
 		msg_format("%^s: %s (%c).",
-			   describe_use(item), o_name, index_to_label(item));
+			   describe_use(cnv_obj_to_idx(o_ptr)), o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
 	}
-	else if (item >= 0)
+	else if (is_inventory_p(o_ptr))
 	{
 		msg_format("In your pack: %s (%c).",
-			   o_name, index_to_label(item));
+			   o_name, index_to_label(cnv_obj_to_idx(o_ptr)));
 	}
 	else
 	{
@@ -4479,7 +4472,8 @@ bool item_tester_hook_recharge(object_type *o_ptr)
  */
 bool recharge(int num)
 {
-	int                 i, t, item, lev;
+	errr err;
+	int                 i, t,  lev;
 
 	object_type             *o_ptr;
 
@@ -4488,9 +4482,9 @@ bool recharge(int num)
 	item_tester_hook = item_tester_hook_recharge;
 
 	/* Get an item (from inven or floor) */
-	if (!((o_ptr = get_item(&item, "Recharge which item? ", TRUE, TRUE, TRUE))))
+	if (!((o_ptr = get_item(&err, "Recharge which item? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have nothing to recharge.");
+		if (err == -2) msg_print("You have nothing to recharge.");
 		return (FALSE);
 	}
 
@@ -6281,7 +6275,7 @@ void wall_breaker(int plev)
 
 void bless_weapon(void)
 {
-	int                     item;
+	errr err;
     object_type             *o_ptr;
     u32b f1, f2, f3;
 
@@ -6293,9 +6287,9 @@ void bless_weapon(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-    if (!((o_ptr = get_item(&item, "Bless which weapon? ", TRUE, TRUE, TRUE))))
+    if (!((o_ptr = get_item(&err, "Bless which weapon? ", TRUE, TRUE, TRUE))))
 	{
-		if (item == -2) msg_print("You have weapon to bless.");
+		if (err == -2) msg_print("You have weapon to bless.");
 		TFREE(o_name);
 		return;
 	}
@@ -6315,13 +6309,13 @@ void bless_weapon(void)
         {
 
             msg_format("The black aura on %s %s disrupts the blessing!",
-                   ((item >= 0) ? "your" : "the"), o_name);
+                   ((cnv_obj_to_idx(o_ptr) >= 0) ? "your" : "the"), o_name);
 			TFREE(o_name);
             return;
         }
 
         msg_format("A malignant aura leaves %s %s.",
-            ((item>=0)? "your" : "the"), o_name);
+           (is_inventory_p(item) ? "your" : "the"), o_name);
 
 		/* Uncurse it */
 		o_ptr->ident &= ~(IDENT_CURSED);
@@ -6345,7 +6339,7 @@ Ego weapons and normal weapons can be blessed automatically. */
     if (f3 & TR3_BLESSED)
     {
             msg_format("%s %s %s blessed already.",
-                   ((item >= 0) ? "Your" : "The"), o_name,
+                   (is_inventory_p(o_ptr) ? "Your" : "The"), o_name,
                    ((o_ptr->number > 1) ? "were" : "was"));
 			TFREE(o_name);
             return;
@@ -6355,7 +6349,7 @@ Ego weapons and normal weapons can be blessed automatically. */
     {
 	/* Describe */
 	msg_format("%s %s shine%s!",
-	       ((item >= 0) ? "Your" : "The"), o_name,
+	       (is_inventory_p(o_ptr) ? "Your" : "The"), o_name,
 	       ((o_ptr->number > 1) ? "" : "s"));
 	o_ptr->flags3 |= TR3_BLESSED;
     }
@@ -6395,7 +6389,7 @@ Ego weapons and normal weapons can be blessed automatically. */
         {
             msg_print("There is a static feeling in the air...");
             msg_format("%s %s %s disenchanted!",
-                   ((item >= 0) ? "Your" : "The"), o_name,
+                   (is_inventory_p(o_ptr) ? "Your" : "The"), o_name,
                    ((o_ptr->number > 1) ? "were" : "was"));
         }
 
