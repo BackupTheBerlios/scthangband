@@ -546,7 +546,7 @@ static cptr spell_string(int i, const magic_type *s_ptr, cptr comment)
 
 	if (s_ptr->flags & MAGIC_FORGOT)
 	{
-		comment = " forgotten";
+		comment = "forgotten";
 	}
 	else if (~s_ptr->flags & MAGIC_LEARNED)
 	{
