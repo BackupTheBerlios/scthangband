@@ -1399,7 +1399,7 @@ void do_cmd_wiz_jump(void)
 	}
 
 	/* Paranoia */
-	if (command_arg < 1) command_arg =1;
+	if (command_arg < 0) command_arg = 0;
 
 	/* Paranoia */
 	if (command_arg > dun_defs[cur_dungeon].max_level) command_arg = dun_defs[cur_dungeon].max_level;
