@@ -765,7 +765,7 @@ s16b get_obj_num(int level)
 	}
 
 	/* Find the object. */
-	for (i = 0; i < alloc_race_size; i++)
+	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* Decrement */
 		value -= table[i].prob2;

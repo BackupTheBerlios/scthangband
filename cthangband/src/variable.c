@@ -30,7 +30,8 @@ cptr copyright[5] =
 cptr syshelpfile;
 
 /*
- * Run-time arguments
+ * Run-time arguments (arg_wizard only exists to keep system-specific files
+ * happy).
  */
 bool arg_fiddle = FALSE;			/* Command arg -- Request fiddle mode */
 bool arg_wizard = FALSE;			/* Command arg -- Request wizard mode (unused) */
@@ -119,7 +120,6 @@ bool inkey_flag;		/* See the "inkey()" function */
 bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
 
 bool repair_monsters;	/* Hack -- optimize detect monsters */
-bool repair_objects;	/* Hack -- optimize detect objects */
 
 s16b total_weight;		/* Total weight being carried */
 
@@ -136,9 +136,6 @@ s16b m_cnt = 0;			/* Number of live monsters */
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
 s16b hack_m_idx_ii = 0;
 bool multi_rew = FALSE;
-
-int total_friends = 0;
-s32b total_friend_levels = 0;
 
 /*
  * Software options (set via the '=' command).  See "tables.c"

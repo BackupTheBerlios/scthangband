@@ -2654,11 +2654,11 @@ extern bool shimmer_monsters;
 
 
 
+
+
+
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern bool repair_monsters;
-#endif
-#if (defined(DUNGEON_C) || defined(VARIABLE_C))
-extern bool repair_objects;
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD6_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b total_weight;
@@ -2693,12 +2693,12 @@ extern s16b hack_m_idx_ii;
 #if (defined(DUNGEON_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool multi_rew;
 #endif
-#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(VARIABLE_C))
-extern int total_friends;
-#endif
-#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(VARIABLE_C))
-extern s32b total_friend_levels;
-#endif
+
+
+
+
+
+
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool rogue_like_commands;
 #endif
@@ -3287,7 +3287,7 @@ extern s16b alloc_kind_size;
 #if (defined(INIT2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern alloc_entry *alloc_kind_table;
 #endif
-#if (defined(INIT2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
+#if (defined(INIT2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern s16b alloc_race_size;
 #endif
 #if (defined(INIT2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))

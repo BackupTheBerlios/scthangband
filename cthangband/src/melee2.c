@@ -6679,14 +6679,6 @@ void process_monsters(void)
 		if (!m_ptr->r_idx) continue;
 
 
-            /* Calculate "upkeep" for friendly monsters */
-            if (m_ptr->smart & (SM_ALLY))
-            {
-                total_friends++;
-                total_friend_levels += r_info[m_ptr->r_idx].level;
-            }
-
-
 		/* Handle "fresh" monsters */
 		if (m_ptr->mflag & (MFLAG_BORN))
 		{

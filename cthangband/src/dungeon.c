@@ -1343,30 +1343,35 @@ static void process_food(void)
 
 static int process_upkeep(void)
 {
-	/* No pets, no upkeep. */
-    if (!total_friends) return 0;
+	int i, n = 0, l = 0;
 
-#ifdef TRACK_FRIENDS
-	if (cheat_wzrd)
-	msg_format("Total friends: %d.", total_friends);
-#endif
-	if (total_friends > 1 + (skill_set[SKILL_RACIAL].value / 40))
+	for (i = 1; i < m_max; i++)
 	{
-		int i = (total_friend_levels);
-
-		/* Put i within reasonable bounds. */
-		i = MIN(MAX(i, 10), 100);
-
-#ifdef TRACK_FRIENDS
-		if (cheat_wzrd)
-			msg_format("Levels %d, upkeep %d", total_friend_levels, i);
-#endif
-		return i;
-    }
-	else
-	{
-		return 0;
+		if (m_list[i].r_idx && (m_list[i].smart & SM_ALLY))
+		{
+			n++;
+			l += r_info[m_list[i].r_idx].level;
+		}
 	}
+
+	/* No pets, no upkeep. */
+    if (!n) return 0;
+
+#ifdef TRACK_FRIENDS
+	if (cheat_wzrd) msg_format("Total friends: %d.", n);
+#endif
+
+	/* Not enough pets to be costly. */
+	if (n <= 1 + (skill_set[SKILL_RACIAL].value / 40)) return 0;
+
+	/* Put "l" within reasonable bounds. */
+	i = MIN(MAX(l, 10), 100);
+
+#ifdef TRACK_FRIENDS
+	if (cheat_wzrd) msg_format("Levels %d, upkeep %d", l, i);
+#endif
+
+	return i;
 }
 
 static int get_regen_amount(void)
@@ -3354,7 +3359,6 @@ static void dungeon(void)
 	/* Check visual effects */
 	shimmer_monsters = TRUE;
 	repair_monsters = TRUE;
-	repair_objects = TRUE;
 
 
 	/* Disturb */
@@ -3556,9 +3560,6 @@ static void dungeon(void)
 
 		/* Hack -- Notice death or departure */
 		if (!alive || death || new_level_flag) break;
-
-        total_friends = 0;
-        total_friend_levels = 0;
 
         /* Process all of the monsters */
 		process_monsters();
