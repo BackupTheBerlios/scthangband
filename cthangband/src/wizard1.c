@@ -1844,7 +1844,6 @@ static void spoil_mon_info(cptr fname)
 		if (flags6 & (RF6_DARKNESS))          vp[vn++] = "create darkness";
 		if (flags6 & (RF6_TRAPS))             vp[vn++] = "create traps";
 		if (flags6 & (RF6_FORGET))            vp[vn++] = "cause amnesia";
-		if (flags6 & (RF6_XXX6))            vp[vn++] = "do something";
         if (flags6 & (RF6_S_MONSTER))         vp[vn++] = "summon a monster";
 		if (flags6 & (RF6_S_MONSTERS))        vp[vn++] = "summon monsters";
         if (flags6 & (RF6_S_KIN))             vp[vn++] = "summon aid";
@@ -1852,6 +1851,7 @@ static void spoil_mon_info(cptr fname)
 		if (flags6 & (RF6_S_SPIDER))          vp[vn++] = "summon spiders";
 		if (flags6 & (RF6_S_HOUND))           vp[vn++] = "summon hounds";
 		if (flags6 & (RF6_S_HYDRA))           vp[vn++] = "summon hydras";
+		if (flags6 & (RF6_S_IB))	vp[vn++] = "summon beings of Ib";
 		if (flags6 & (RF6_S_CTHULOID))           vp[vn++] = "summon a Cthuloid entity";
 		if (flags6 & (RF6_S_DEMON))           vp[vn++] = "summon a demon";
 		if (flags6 & (RF6_S_UNDEAD))          vp[vn++] = "summon an undead";

@@ -528,12 +528,40 @@ static s16b object_table[][2] =
 
 static u32b monster_version[] =
 {
+#ifdef SF_R_INFO_1
+	SF_R_INFO_1,
+#else
 	0,
+#endif
 	0
 };
 static s16b monster_table[][2] =
 {
 	{MON_PLAYER,	0},
+	{MON_NOBODY_THE_UNNAMED_GHOST______________________________________,	576},
+#ifdef SF_R_INFO_1
+	{MON_POISON,	-1},
+	{MON_LIGHT,	-1},
+	{MON_TRAP,	-1},
+	{MON_CHAOS_PATRON,	-1},
+	{MON_CASTING_GENOCIDE,	-1},
+	{MON_CASTING_MASS_GENOCIDE,	-1},
+	{MON_CALLING_THE_VOID,	-1},
+	{MON_CASTING_HELLFIRE,	-1},
+	{MON_EARTHQUAKE,	-1},
+	{MON_CORRUPT_PATTERN,	-1},
+	{MON_PATTERN,	-1},
+	{MON_SOLID_ROCK,	-1},
+	{MON_BLEEDING,	-1},
+	{MON_STARVATION,	-1},
+	{MON_DANGEROUS_EQUIPMENT,	-1},
+	{MON_DANGEROUS_MUTATION,	-1},
+	{MON_POISONOUS_FOOD,	-1},
+	{MON_HARMFUL_POTION,	-1},
+	{MON_HARMFUL_SCROLL,	-1},
+	{MON_CONCENTRATING_TOO_HARD,	-1},
+	{MON_FATAL_POLYMORPH,	-1},
+#endif
 	{MON_FILTHY_STREET_URCHIN,	1},
 	{MON_SCRAWNY_CAT,	2},
 	{MON_SCRUFFY_LITTLE_DOG,	3},
@@ -891,6 +919,9 @@ static s16b monster_table[][2] =
 	{MON_ETHEREAL_DRAKE,	355},
 	{MON_GROO_THE_WANDERER,	356},
 	{MON_FASOLT_THE_GIANT,	357},
+#ifdef SF_R_INFO_1
+	{MON_BOKRUG_THE_WATER_LIZARD,	-1},
+#endif
 	{MON_CHAOS_GHOST,	358},
 	{MON_SPECTRE,	359},
 	{MON_WATER_TROLL,	360},
@@ -1109,7 +1140,6 @@ static s16b monster_table[][2] =
 	{MON_SAURON_THE_SORCERER,	573},
 	{MON_NYARLATHOTEP,	574},
 	{MON_AZATHOTH_THE_DAEMON_SULTAN,	575},
-	{MON_NOBODY_THE_UNNAMED_GHOST______________________________________,	576},
 };
 
 #ifdef FUTURE_SAVEFILES
@@ -2680,6 +2710,12 @@ const u16b sf_flags_now = 0x00000000
 #ifdef SF_K_INFO_1
 	| SF_K_INFO_1
 #endif
+#ifdef SF_QUEST_KNOWN
+	| SF_QUEST_KNOWN
+#endif
+#ifdef SF_R_INFO_1
+	| SF_R_INFO_1
+#endif
 	;
 
 /*
@@ -2753,14 +2789,14 @@ s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v)
 	/* Find the newest version flag which is included in each of old and new. */
 	for (i = 0, from = to = max; i < max; i++)
 	{
-		if (from_v & object_version[i]) from = i;
-		if (to_v & object_version[i]) to = i;
+		if (from_v & monster_version[i]) from = i;
+		if (to_v & monster_version[i]) to = i;
 	}
 
 	/* No change. */
 	if (from == to) return idx;
 
-	/* Return the new version of the given object. */
+	/* Return the new version of the given monster. */
 	for (i = 0; i < N_ELEMENTS(monster_table); i++)
 	{
 		if (monster_table[i][from] != idx) continue;
@@ -2779,7 +2815,7 @@ s16b convert_r_idx(s16b idx, u32b from_v, u32b to_v)
 	}
 	/* 
 	 * As anything can happen to strange indices in the system area, convert
-	 * them to bad objects in order for them to be safely removed later.
+	 * them to bad monsters in order for them to be safely removed later.
 	 */
 	else
 	{

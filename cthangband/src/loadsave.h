@@ -57,4 +57,10 @@
 /*
  * Track which quests have been encountered.
  */
-#define SF_QUEST_KNOWN	0x0800
+/* #define SF_QUEST_KNOWN	0x0800 */
+
+/*
+ * Rearrange r_info.txt so that all of the unusual monsters are at the beginning.
+ * Add Bokrug and various causes of death to it.
+ */
+#define SF_R_INFO_1	0x1000

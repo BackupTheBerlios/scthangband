@@ -1781,11 +1781,12 @@ static errr rd_savefile_new_aux(void)
 		int j = convert_r_idx(i, sf_flags, sf_flags_now);
 
 		/* No such monster. */
-		if (j < 0)
+		if (j < 0 || j >= MAX_R_IDX)
 		{
 			monster_race dummy;
 			rd_lore(&dummy);
-			if (i > OBJ_MAX_DISTRO) warn = TRUE;
+			if (i > MON_MAX_DISTRO) warn = TRUE;
+			printf("%d=%d ", i,j);
 		}
 		/* Read the lore */
 		else

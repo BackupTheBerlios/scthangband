@@ -429,7 +429,7 @@ static flag_name info_flags[] =
 	{"DARKNESS", RF6, RF6_DARKNESS},
 	{"TRAPS", RF6, RF6_TRAPS},
 	{"FORGET", RF6, RF6_FORGET},
-/*	{"XXX6X6", RF6, RF6_XXX6}, */
+	{"S_IB", RF6, RF6_S_IB},
     {"S_KIN", RF6, RF6_S_KIN},
     {"S_REAVER", RF6, RF6_S_REAVER},
 	{"S_MONSTER", RF6, RF6_S_MONSTER},

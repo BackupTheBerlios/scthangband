@@ -1462,7 +1462,7 @@ while (effects-- && more_effects)
         switch (randint(12))
         {
         case 1: case 2:
-            do_poly_wounds(MON_POLYMORPH);
+            do_poly_wounds(MON_FATAL_POLYMORPH);
             break;
         case 3: case 4:
             (void) gain_chaos_feature(0);
@@ -1528,7 +1528,7 @@ while (effects-- && more_effects)
             if (randint(6)==1)
             {
                 msg_print("You find living difficult in your present form!");
-                take_hit(damroll(randint(skill_set[SKILL_TOUGH].value/2),skill_set[SKILL_TOUGH].value/2), "a lethal chaos feature", MON_POLYMORPH);
+                take_hit(damroll(randint(skill_set[SKILL_TOUGH].value/2),skill_set[SKILL_TOUGH].value/2), "a lethal chaos feature", MON_FATAL_POLYMORPH);
             }
             /* No break; here! */
         default:

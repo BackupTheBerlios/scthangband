@@ -3349,7 +3349,7 @@ static void do_cmd_knowledge_deaths(void)
 
 		/* Display a summary at the bottom. */
 		fprintf(fff,"----------------------------------------------\n");
-		fprintf(fff,"Total: Killed %lu times by %lu types of creature (%lu times by uniques).\n", Deaths, Races, Uniques);
+		fprintf(fff,"Total: Killed %lu times by %lu different things (%lu times by uniques).\n", Deaths, Races, Uniques);
 	}
 
 	TFREE(races);

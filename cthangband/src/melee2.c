@@ -2345,10 +2345,18 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
            break;
        }
 
-       case (160+iilog(RF6_XXX6)):
-       {
+		case (160+iilog(RF6_S_IB)):
+		{
+           disturb(0, 0);
+           if (blind || !see_m) msg_format("%^s mumbles.", m_name);
+           else msg_format("%^s magically summons beings of Ib.", m_name);
+           for (k = 0; k < 6; k++)
+           {
+               count += summon_specific_aux(y, x, rlev, SUMMON_IB, TRUE, friendly);
+           }
+           if (blind && count) msg_print("You hear many things appear nearby.");
            break;
-       }
+		}
 
        case (160+iilog(RF6_S_KIN)):
        {
@@ -3840,9 +3848,17 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			break;
 		}
 
-		case (160+iilog(RF6_XXX6)):
+		case (160+iilog(RF6_S_IB)):
 		{
-			break;
+           disturb(1, 0);
+           if (blind) msg_format("%^s mumbles.", m_name);
+           else msg_format("%^s magically summons beings of Ib.", m_name);
+           for (k = count = 0; k < 6; k++)
+           {
+               count += summon_specific(y, x, rlev, SUMMON_IB);
+           }
+           if (blind && count) msg_print("You hear many things appear nearby.");
+           break;
 		}
 
 		case (160+iilog(RF6_S_KIN)):

@@ -1063,7 +1063,7 @@ static cptr ident_info[] =
 	"f:Feline",
 	"g:Ghoul",
 	"h:Hobbit/Elf/Dwarf",
-	"i:Icky Thing",
+	"i:Beings of Ib",
 	"j:Jelly",
 	"k:Kobold",
 	"l:Louse",
