@@ -322,6 +322,7 @@ bool spoil_ego;		/* Know complete ego item info */
 bool spoil_value;	/* Know the apparent prices of items */
 bool spoil_base;	/* Know complete info about base items */
 bool spoil_stat;	/* Know the significance of stat values */
+bool spoil_dam;	/* Know the damage done by a melee weapon */
 bool spoil_flag; /* Know the effects of various flags */
 
 /* Cheating options */

@@ -3454,6 +3454,9 @@ option_type option_info[] =
 	{ &spoil_flag,	FALSE,	8, 3, 10,
 	"spoil_flag",	"Gain knowledge of the effects of various flags."},
 
+	{ &spoil_dam,	FALSE,	8,	3,	8,
+	"spoil_dam",	"Gain knowledge of melee weapon damage."},
+
 	{ &bypass_prompt,		FALSE,	1,	2, 24,
 	"bypass_prompt",	"Bypass spirit selection prompt where appropriate" },
 

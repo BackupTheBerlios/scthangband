@@ -1591,6 +1591,18 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* All done */
 		break;
+
+		/* Other stuff, if allowed */
+		default:
+		if (spoil_dam && object_aware_p(o_ptr) && (o_ptr->ds && o_ptr->dd))
+		{
+			t = object_desc_chr(t, ' ');
+			t = object_desc_chr(t, p1);
+			t = object_desc_num(t, o_ptr->dd);
+			t = object_desc_chr(t, 'd');
+			t = object_desc_num(t, o_ptr->ds);
+			t = object_desc_chr(t, p2);
+		}
 	}
 
 
@@ -2678,8 +2690,9 @@ static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, c
 	/* Check disarming skill. */
 	if ((dif = test(adj_dex_dis, A_DEX) + test(adj_int_dis, A_INT))) descr(format("  It %s your disarming skill.", DIF_INC));
 
-	/* Determine the effect on number of blows. This has no effect on martial arts. */
-	if (inventory[INVEN_WIELD].k_idx)
+	/* Determine the effect on number of blows. This has no effect on
+	 * martial arts, and has been superceded by spoil_dam. */
+	if (inventory[INVEN_WIELD].k_idx && !spoil_dam)
 	{
 		/* mul and wgt are as in calc_bonuses(). Would player_type be a better place for them? */
 		int mul = 3, wgt = 35, div;
@@ -2713,6 +2726,8 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	u32b f1, f2, f3;
 
 	cptr            info[128];
+
+	int dam_start = 0, dam_end = 0;
 
 	/* Remember whether we should treat the item as identified */
 	bool hack_known, hack_aware;
@@ -2908,27 +2923,6 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		info[i++] = "It affects your attack speed.";
 	}
 
-	if (f1 & (TR1_BRAND_ACID))
-	{
-		info[i++] = "It does extra damage from acid.";
-	}
-	if (f1 & (TR1_BRAND_ELEC))
-	{
-		info[i++] = "It does extra damage from electricity.";
-	}
-	if (f1 & (TR1_BRAND_FIRE))
-	{
-		info[i++] = "It does extra damage from fire.";
-	}
-	if (f1 & (TR1_BRAND_COLD))
-	{
-		info[i++] = "It does extra damage from frost.";
-	}
-
-    if (f1 & (TR1_BRAND_POIS))
-	{
-        info[i++] = "It poisons your foes.";
-	}
 
     if (f1 & (TR1_CHAOTIC))
 	{
@@ -2950,6 +2944,124 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
         info[i++] = "It is very sharp and can cut your foes.";
 	}
 
+	/* Calculate actual damage of weapons. 
+	 * This only considers slays and brands at the moment. */
+	if (spoil_dam)
+	{
+		s16b tohit, todam, weap_blow, mut_blow, dam;
+		bool slay = FALSE;
+		byte count;
+		cptr board[6];
+		/* Calculate execute dragon */
+		if (f1 & TR1_KILL_DRAGON)
+		{
+			/* Should really have a third slay dragon flag... */
+			if (o_ptr->name1 == ART_LIGHTNING)
+			{
+				weapon_stats(o_ptr, 15, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			}
+			else
+			{
+				weapon_stats(o_ptr, 5, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			}
+			slay = TRUE;
+			info[i++] = string_make(format("It causes %d,%d damage to dragons.", dam/60, dam%60));
+			f1 &= ~(TR1_SLAY_DRAGON);
+		}
+		dam_start = i;
+
+/* A simple recursive format string, used to describe slaying weapons. */
+#define describe_slay(string) if (count) info[i++] = string_make(format("It causes %d,%d damage %s %s%s%s%s%s%s%s%s%s%s%s.", dam/60, dam%60, string, \
+			(count > 5) ? board[5] : "", (count > 5) ? ", " : "", \
+			(count > 4) ? board[4] : "", (count > 4) ? ", " : "", \
+			(count > 3) ? board[3] : "", (count > 3) ? ", " : "", \
+			(count > 2) ? board[2] : "", (count > 2) ? ", " : "", \
+			(count > 1) ? board[1] : "", (count > 1) ? " and " : "", \
+			board[0]))
+
+		/* Calculate x3 slays */
+		count = 0;
+		if (f1 & TR1_SLAY_DRAGON) board[count++] = "dragons";
+		if (f1 & TR1_SLAY_ORC) board[count++] = "orcs";
+		if (f1 & TR1_SLAY_TROLL) board[count++] = "trolls";
+		if (f1 & TR1_SLAY_GIANT) board[count++] = "giants";
+		if (f1 & TR1_SLAY_DEMON) board[count++] = "demons";
+		if (f1 & TR1_SLAY_UNDEAD) board[count++] = "undead";
+		if (count)
+		{
+			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			slay = TRUE;
+			describe_slay("to");
+		}
+		/* Calculate brands */
+		count = 0;
+		if (f1 & TR1_BRAND_FIRE) board[count++] = "fire";
+		if (f1 & TR1_BRAND_COLD) board[count++] = "cold";
+		if (f1 & TR1_BRAND_ELEC) board[count++] = "electricity";
+		if (f1 & TR1_BRAND_ACID) board[count++] = "acid";
+		if (f1 & TR1_BRAND_POIS) board[count++] = "poison";
+		if (count)
+		{
+			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			slay = TRUE;
+			describe_slay("via");
+		}
+		/* Calculate x2 slays */
+		count = 0;
+		if (f1 & TR1_SLAY_EVIL) board[count++] = "evil monsters";
+		if (f1 & TR1_SLAY_ANIMAL) board[count++] = "animals";
+		if (count)
+		{
+			weapon_stats(o_ptr, 2, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			slay = TRUE;
+			describe_slay("to");
+		}
+		weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+		count = 0;
+		if (slay)
+			board[count++] = "all other monsters";
+		else if (dam)
+			board[count++] = "all monsters";
+		describe_slay("to");
+
+		/* Describe blows per turn. */
+		switch (wield_slot(o_ptr))
+		{
+			case INVEN_WIELD: info[i] = "blows"; break;
+			case INVEN_BOW: info[i] = "shots"; break;
+			default: info[i] = 0;
+		}
+		if (info[i])
+		{
+			info[i] = string_make(format("It gives you %d,%d %s per turn", weap_blow/60, weap_blow%60, info[i]));
+			i++;
+		}
+		dam_end = i;
+	}
+	/* Without spoil_dam, simply list the slays. */
+	else
+	{
+		if (f1 & (TR1_BRAND_ACID))
+		{
+			info[i++] = "It does extra damage from acid.";
+		}
+		if (f1 & (TR1_BRAND_ELEC))
+		{
+			info[i++] = "It does extra damage from electricity.";
+		}
+		if (f1 & (TR1_BRAND_FIRE))
+		{
+			info[i++] = "It does extra damage from fire.";
+		}
+		if (f1 & (TR1_BRAND_COLD))
+		{
+			info[i++] = "It does extra damage from frost.";
+		}
+
+		if (f1 & (TR1_BRAND_POIS))
+		{
+		        info[i++] = "It poisons your foes.";
+		}
 	if (f1 & (TR1_KILL_DRAGON))
 	{
 		info[i++] = "It is a great bane of dragons.";
@@ -2985,6 +3097,7 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	if (f1 & (TR1_SLAY_ANIMAL))
 	{
 		info[i++] = "It is especially deadly against natural creatures.";
+	}
 	}
 
 	if (f2 & (TR2_SUST_STR))
@@ -3335,6 +3448,11 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	/* Clean up stat-modifier information, if necessary. */
 	i = rsd_start;
 	while (i < rsd_end)
+	{
+		string_free(info[i++]);
+	}
+	i = dam_start;
+	while (i < dam_end)
 	{
 		string_free(info[i++]);
 	}
