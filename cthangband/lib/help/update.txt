@@ -8,6 +8,7 @@ read from the bottom up.
 sCthangband _CVS_
 * Display messages from previous turns in a darker colour.
 * Only update the "object recall" when manipulating spellbooks.
+* Describe what effects skill restoration will have on the I screen.
 * Fix the following bugs:
   * player_has_flag() may have given unreliable results.
   * The redraw prefs help command displayed the wrong text.

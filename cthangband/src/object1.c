@@ -2435,6 +2435,39 @@ int PURE get_bow_mult(object_ctype *o_ptr)
 }
 
 /*
+ * Describe the actual effect of a stat restoration item.
+ * If it will have no effects at the moment, or isn't a stat restoration item,
+ * do nothing.
+ */
+static void desc_res_skill(cptr *info, int *i, int k_idx)
+{
+	/* Hack - notice which objects restore levels. */
+	s16b *r, res_objs[] = {OBJ_POTION_LIFE, OBJ_POTION_RES_LIFE_LEVELS,
+		OBJ_ROD_RESTORATION, OBJ_FAKE_RESTORING};
+
+	FOR_ALL_IN(res_objs, r)
+	{
+		if (k_idx == *r)
+		{
+			player_skill *sk_ptr;
+			int t = 0, i2 = *i;
+
+			FOR_ALL_IN(skill_set, sk_ptr)
+			{
+				if (sk_ptr->value >= sk_ptr->max_value) continue;
+				alloc_ifa(info+(++*i), "$W  It restores your %s skill (%d-%d).",
+					sk_ptr->name, sk_ptr->value, sk_ptr->max_value);
+				t++;
+			}
+			if (!t) return;
+			alloc_ifa(info+i2, "It restores %d of your skills.", t);
+			(*i)++;
+			return;
+		}
+	}
+}
+
+/*
  * Find the k_idx of a launcher which can fire a given missile.
  * Always returns the first such launcher in k_info.
  */
@@ -2728,6 +2761,7 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 	if (!brief && player && spoil_stat)
 	{
 		res_stat_details(o_ptr, o1_ptr->k_idx, &i, info);
+		desc_res_skill(info, &i, o_ptr->k_idx);
 	}
 	/* If brevity is required or spoilers are not, put stats with the other
 	 * pval effects. */
