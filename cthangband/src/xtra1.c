@@ -3957,11 +3957,11 @@ static void win_visible_display(void)
 			/* Dump the monster name */
 			if (who[i].amount == 1)
 			{
-				len = 23;
+				len = w-3;
 			}
 			else
 			{
-				len = 23-strlen(format(" (x%d)", who[i].amount));
+				len = w-3-strlen(format(" (x%d)", who[i].amount));
 			}
 			name = format("%.*s", len,
 				monster_desc_aux(0, r_info+who[i].r_idx, who[i].amount, 0));
