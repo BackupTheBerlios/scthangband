@@ -3554,13 +3554,13 @@ static void annoy_spirit(spirit_type *s_ptr,u32b amount)
  */
 static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 {
-	s32b i = rand_int(10000000);
+	s32b i = rand_int(1000000);
 
 	/* Do nothing most of the time. */
-	if (i%100 >= f_ptr->minskill) return;
+	if (i%10) return;
 
 	/* Reduce the scale of the number. */
- 	i /= 100;
+ 	i /= 10;
 
  	/* Abandonment. up to 2% chance for a level 45 favour. */
 	if (i < f_ptr->minskill * f_ptr->minskill)
@@ -3588,12 +3588,9 @@ static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 		if (j == 1000) msg_format("They get lost on the way...");
 	}
 
-	/* Hostility, and plenty of it. */
-	else
+	/* Annoy the spirit even more if this makes sense. */
+	if (s_ptr->pact)
 	{
-		/* Annoy the spirit even more.
-		 * Hack - this can currently give a double message...
-		 */
 		annoy_spirit(s_ptr, rand_range(15, 150));
 	}
 }
