@@ -4084,4 +4084,7 @@ extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,
 #if (defined(BIRTH_C) || defined(FILES_C))
 extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
 #endif
+#if (defined(DUNGEON_C) || defined(FILES_C))
+extern bool PURE player_has_flag_known(int set, u32b flag);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -2962,59 +2962,62 @@ static cptr object_flag_names[96] =
 	"Prm Curse"
 };
 
+/*
+ * Return the flags the player is assumed to know his character to have.
+ */
+static void player_flags_known(u32b *f1, u32b *f2, u32b *f3)
+{
+	object_type *o_ptr;
+
+	/* Assume the racial flags are known. */
+	player_flags(f1, f2, f3);
+
+	/* Check the equipment. */
+	for (o_ptr = inventory+INVEN_WIELD; o_ptr <= inventory+INVEN_FEET; o_ptr++)
+	{
+		object_type j_ptr[1];
+
+		/* Known object things. */
+		object_info_known(j_ptr, o_ptr, 0);
+
+		/* Add the flags. */
+		(*f1) |= j_ptr->flags1;
+		(*f2) |= j_ptr->flags2;
+		(*f3) |= j_ptr->flags3;
+	}
+}
+
+/*
+ * Return TRUE if the player knows his character possesses one of the
+ * indicated flags in the given variable.
+ */
+bool PURE player_has_flag_known(int set, u32b flag)
+{
+	u32b f[3];
+	assert(set > 0 && set < 4);
+	player_flags_known(f, f+1, f+2);
+	return (f[set-1] & flag) != 0;
+}
 
 /*
  * Summarize resistances
  */
 static void display_player_ben(void)
 {
-	int i, x, y;
+	int x, y;
 	
-	object_type *o_ptr;
+	u32b f[3];
 
-	u32b f1, f2, f3;
-
-	u16b b[6];
-
-
-	/* Reset */
-	for (i = 0; i < 6; i++) b[i] = 0;
-	
-
-	/* Scan equipment */
-	for (i = INVEN_WIELD; i < INVEN_POUCH_1; i++)
-	{
-		/* Object */
-		o_ptr = &inventory[i];
-
-		/* Known object flags */
-		object_flags_known(o_ptr, &f1, &f2, &f3);
-
-		/* Incorporate */
-		b[0] |= (f1 & 0xFFFF);
-		b[1] |= (f1 >> 16);
-		b[2] |= (f2 & 0xFFFF);
-		b[3] |= (f2 >> 16);
-		b[4] |= (f3 & 0xFFFF);
-		b[5] |= (f3 >> 16);
-	}
-
-
-	/* Player flags */
-	player_flags(&f1, &f2, &f3);
-	
-	/* Incorporate */
-	b[0] |= (f1 & 0xFFFF);
-	b[1] |= (f1 >> 16);
-	b[2] |= (f2 & 0xFFFF);
-	b[3] |= (f2 >> 16);
-	b[4] |= (f3 & 0xFFFF);
-	b[5] |= (f3 >> 16);
-
+	/* Get the known flags. */
+	player_flags_known(f, f+1, f+2);
 
 	/* Scan cols */
 	for (x = 0; x < 6; x++)
 	{
+		/* Split each variable in two. */
+		u32b b = f[x/2];
+		if (x % 2) b >>= 16;
+
 		/* Scan rows */
 		for (y = 0; y < 16; y++)
 		{
@@ -3033,7 +3036,7 @@ static void display_player_ben(void)
 			Term_putch(x * 13 + 10, y + 4, TERM_WHITE, ':');
 
 			/* Check flag */
-			if (b[x] & (1<<y))
+			if (b & (1<<y))
 			{
 				a = TERM_WHITE;
 				c = '+';

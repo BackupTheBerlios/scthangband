@@ -2014,6 +2014,12 @@ static void process_equip(object_type *o_ptr)
 				/* Do nothing */
 				/* msg_print("Teleport aborted.") */ ;
 			}
+			else if (player_has_flag_known(3, TR3_NO_TELE))
+			{
+				/* Give a message to make it clear what's happening. */
+				msg_print(
+					"You feel uncertain about your position for a moment.");
+			}
 			else if (get_check("Teleport? "))
 			{
 				disturb(0,0);
