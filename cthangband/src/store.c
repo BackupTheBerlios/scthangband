@@ -1042,10 +1042,10 @@ static int store_check_num(object_type *o_ptr)
 	else
 	{
 		/* Check all the items */
-		for (i = st_ptr->stock_num-1; i; i--)
+		for (i = st_ptr->stock_num; i; i--)
 		{
 			/* Get the existing item */
-			j_ptr = &st_ptr->stock[i];
+			j_ptr = &st_ptr->stock[i-1];
 
 			/* How many obects can be added to the inventory? The only similar
 			* pile which can accept this object is the last one (the others
