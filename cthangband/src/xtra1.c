@@ -1032,6 +1032,19 @@ static void win_message_display(void)
 }
 
 
+extern void display_wild_map(uint xmin);
+
+
+/*
+ * Return whether PW_OVERHEAD is interesting
+ */
+static bool win_overhead_good(void)
+{
+	/* If the map fits on the main screen, there's no point in displaying
+	 * a second copy. */
+	return !(cur_wid <= SCREEN_WID && cur_hgt <= SCREEN_HGT);
+}
+
 /*
  * Display the overhead map in a window.
  */
@@ -1041,6 +1054,15 @@ static void win_overhead_display(void)
 
 		/* Redraw map */
 	display_map(&unused1, &unused2);
+	
+	/* Hack - also give the world map if the player is in a town. */
+	if (!dun_level)
+	{
+		/* map_wid definition should be identical to that in display_map()) */
+		const int map_wid = cur_wid/MAX(cur_hgt/SCREEN_HGT, cur_wid/SCREEN_WID);
+
+		display_wild_map(map_wid+3);
+	}
 }
 
 
@@ -3859,7 +3881,7 @@ static void init_window_stuff(void)
 	display_func[iilog(PW_VISIBLE)].display = win_visible_display;
 	display_func[iilog(PW_MESSAGE)].good = win_message_good;
 	display_func[iilog(PW_MESSAGE)].display = win_message_display;
-	display_func[iilog(PW_OVERHEAD)].good = func_true;
+	display_func[iilog(PW_OVERHEAD)].good = win_overhead_good;
 	display_func[iilog(PW_OVERHEAD)].display = win_overhead_display;
 	display_func[iilog(PW_MONSTER)].good = win_monster_good;
 	display_func[iilog(PW_MONSTER)].display = win_monster_display;

@@ -1686,15 +1686,30 @@ void display_map(int *cy, int *cx)
 	view_granite_lite = old_view_granite_lite;
 }
 
-/* Display a "small-scale" map of the wilderness */
-void display_wild_map()
+
+
+/*
+ * Display a "small-scale" map of the wilderness
+ */
+void display_wild_map(uint xmin)
 {
 	bool dungeon_has_guardians[MAX_CAVES];
-	int x,y,i;
-	char wild_map_symbol[2];
+	s16b x,y;
+	int i;
+	uint l;
+	char wild_map_symbol;
 	byte wild_map_attr;
 	char buffer[60];
-	wild_map_symbol[1]='\0';
+	cptr tmp;
+
+	char symbol_conv[MAX_CAVES];
+
+	/* The towns use numbers */
+	for (i = 0; i < MAX_TOWNS; i++) symbol_conv[i] = '0'+i;
+	
+	/* The dungeons use '*' */
+	for (i = MAX_TOWNS; i < MAX_CAVES; i++) symbol_conv[i] = '*';
+
 	/* First work out which dungeons have guardians left */
 	for(i=0;i<MAX_CAVES;i++)
 	{
@@ -1712,11 +1727,11 @@ void display_wild_map()
 	{
 		for(x=0;x<12;x++)
 		{
-			wild_map_symbol[0] = '^';
+			wild_map_symbol = '^';
 			wild_map_attr = TERM_GREEN;
 			if (wild_grid[y][x].dungeon < MAX_CAVES)
 			{
-				wild_map_symbol[0] = '*';
+				wild_map_symbol = symbol_conv[wild_grid[y][x].dungeon];
 				wild_map_attr = TERM_UMBER;
 				if(dungeon_has_guardians[wild_grid[y][x].dungeon])
 				{
@@ -1725,7 +1740,6 @@ void display_wild_map()
 			}
 			if(wild_grid[y][x].dungeon < MAX_TOWNS)
 			{
-				wild_map_symbol[0] = '0' + (char)wild_grid[y][x].dungeon;
 				wild_map_attr = TERM_WHITE;
 				if(dungeon_has_guardians[wild_grid[y][x].dungeon])
 				{
@@ -1734,34 +1748,48 @@ void display_wild_map()
 			}
 			if((wildx == x) && (wildy == y))
 			{
-				wild_map_symbol[0] = '@';
+				wild_map_symbol = '@';
 				wild_map_attr = TERM_YELLOW;
 			}
 			if((x == 0) || (y == 0) || (x == 11) || (y == 11))
 			{
-				wild_map_symbol[0] = '~';
+				wild_map_symbol = '~';
 				wild_map_attr = TERM_BLUE;
 			}
-			c_put_str(wild_map_attr,wild_map_symbol,y+2,x+2);
+			Term_putch(xmin+x+1, y+2, wild_map_attr, wild_map_symbol);
 		}
 	}
 	/* Print border */
-	put_str("+------------+",1,1);
+	put_str("+------------+",1,xmin);
 	for(y=0;y<12;y++)
 	{
-		put_str("|",y+2,1);
-		put_str("|",y+2,14);
+		put_str("|",y+2,xmin);
+		put_str("|",y+2,xmin+13);
 	}
-	put_str("+------------+",14,1);
+	put_str("+------------+",14,xmin);
+
+	/* Find the longest legend. */
+	for (l = i = 0; i < MAX_TOWNS; i++)
+	{
+		l = MAX(l, strlen(town_defs[i].name));
+	}
+
 	/* Print legend */
 	for (y=0;y<MAX_TOWNS;y++)
 	{
+		if (l+xmin+23 > Term->wid)
+			sprintf(buffer,"%d = %s",y,dun_defs[y].shortname);
+		else
 		sprintf(buffer,"%d = %s",y,town_defs[y].name);
-		c_put_str(TERM_WHITE,buffer,y+1,19);
+		c_put_str(TERM_WHITE,buffer,y+1,xmin+19);
 	}
-	c_put_str(TERM_UMBER,"* = dungeon entrance",MAX_TOWNS+2,19);
-	c_put_str(TERM_RED,"(Places that still have guardians are marked in red)",MAX_TOWNS+4,19);
-	c_put_str(TERM_YELLOW,"@ = you",MAX_TOWNS+6,19);
+
+	c_put_str(TERM_UMBER,"* = dungeon entrance",MAX_TOWNS+2,xmin+19);
+	tmp = "(Places that still have guardians are marked in red)";
+	if (xmin+strlen(tmp) > Term->wid)
+		tmp = "(red = has guardian)";
+	c_put_str(TERM_RED,tmp,MAX_TOWNS+4,xmin+18);
+	c_put_str(TERM_YELLOW,"@ = you",MAX_TOWNS+6,xmin+18);
 }
 
 /*
@@ -1791,7 +1819,7 @@ void do_cmd_view_map(void)
 	/* Display the map */
 	if (dun_level == 0)
 	{
-		display_wild_map();
+		display_wild_map(1);
 	}
 	else
 	{
