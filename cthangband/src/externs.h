@@ -2573,7 +2573,7 @@ extern bool allow_pickstats;
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_feeling;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
 extern s16b hitpoint_warn ;
 #endif
 #if (defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
@@ -3557,5 +3557,11 @@ extern void win_help_display(void);
 
 #if (defined(INIT2_C) || defined(Z_TERM_C))
 extern void init_term_wins(void);
+#endif
+
+/* files.c */
+
+#if (defined(FILES_C) || defined(XTRA1_C))
+extern void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -1247,6 +1247,37 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
 
 
 /*
+ * Determine the colour of a display based on the proportion of maximum.
+ */
+static byte percent_to_colour(s16b cur, s16b max)
+{
+	if (cur == max) return TERM_L_GREEN;
+  	if (cur > (max * hitpoint_warn) / 10) return TERM_YELLOW;
+	return TERM_RED;
+}
+
+/*
+ * Print out a ratio (as for hit points).
+ */
+void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max)
+{
+	cptr temp = format(" %d/%d", cur, max);
+	byte attr = percent_to_colour(cur, max);
+
+	/* Clear a space. */
+	Term_erase(minx, y, maxx-minx+1);
+
+	/* Print the text string in white. */
+	if (txt) put_str(txt, y, minx);
+
+	/* Trim initial numbers if the number string would be too long. */
+	if (strlen(temp) > maxx-minx+1) temp += strlen(temp)-maxx+minx-1;
+
+	/* Print the number string in colour. */
+	c_put_str(attr, temp, y, maxx-strlen(temp));
+}
+
+/*
  * Calculate the number of blows and the damage done by a given weapon using
  * a specified slay multiplier, together with the to-hit and to-damage bonuses
  * of the weapon.
@@ -1563,7 +1594,7 @@ static void display_player_sides(bool missile)
 	cptr temp;
 
 	/* The last column of the numbers. See prt_num() */
-	const byte col = 1+strlen("+ To Damage ")+3+6;
+	const int col = 1+strlen("+ To Damage ")+3+6;
 
 	object_type *o_ptr = &inventory[(missile) ? INVEN_BOW : INVEN_WIELD];
 
@@ -1589,35 +1620,9 @@ static void display_player_sides(bool missile)
 	temp = format("%d,%d", damage/60, damage%60);
 	c_put_str(TERM_L_BLUE, temp, 13, col-strlen(temp));
 
-	prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
-
-	if (p_ptr->chp >= p_ptr->mhp)
-	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_L_GREEN);
-	}
-	else if (p_ptr->chp > (p_ptr->mhp * hitpoint_warn) / 10)
-	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_YELLOW);
-	}
-	else
-	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_RED);
-	}
-
-	prt_num("Max SP (Mana)  ", p_ptr->msp, 11, 52, TERM_L_GREEN);
-
-	if (p_ptr->csp >= p_ptr->msp)
-	{
-		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_L_GREEN);
-	}
-	else if (p_ptr->csp > (p_ptr->msp * hitpoint_warn) / 10)
-	{
-		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_YELLOW);
-	}
-	else
-	{
-		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
-	}
+	prt_nums("Hit Points:", 9, 52, 76, p_ptr->chp, p_ptr->mhp);
+	prt_nums("Spell Points:", 10, 52, 76, p_ptr->csp, p_ptr->msp);
+	prt_nums("Chi Points:", 11, 52, 76, p_ptr->cchi, p_ptr->mchi);
 
 	prt_lnum("Gold           ", p_ptr->au, 13, 52, TERM_L_GREEN);
 }

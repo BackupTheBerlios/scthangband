@@ -223,38 +223,11 @@ static void prt_energy(void)
  }
 
 /*
- * Determine the colour of a display based on the proportion of maximum.
- */
-static byte percent_to_colour(s16b cur, s16b max)
-{
-	if (cur == max) return TERM_L_GREEN;
-  	if (cur > (max * hitpoint_warn) / 10) return TERM_YELLOW;
-	return TERM_RED;
-}
-
-/*
  * Prints Cur/Max hit points
  */
 static void prt_hp(void)
 {
-	char tmp[32];
-	cptr tmp2;
-	cptr blank_line = "            ";
-
-	byte color;
-	
-	put_str(blank_line, ROW_HP, COL_START);
- 	sprintf(tmp, "%d/%d", p_ptr->chp, p_ptr->mhp);
- 	
- 	if (strlen(tmp)==9)
-		tmp2 = "HP ";
- 	else if (strlen(tmp)<9)
- 		tmp2 = "HP: ";
- 	else
-		tmp2 = "";
- 	put_str(tmp2, ROW_HP, COL_START);
-	color = percent_to_colour(p_ptr->chp, p_ptr->mhp);
- 	c_put_str(color, tmp, ROW_HP, COL_END-strlen(tmp));
+	prt_nums("HP:", ROW_HP, COL_START, COL_END, p_ptr->chp, p_ptr->mhp);
 }
 
 
@@ -263,40 +236,8 @@ static void prt_hp(void)
  */
 static void prt_sp(void)
 {
-	char tmp[32];
-	cptr tmp2;
-	byte color;
-	cptr blank_line = "            ";
-
-	put_str(blank_line, ROW_SP, COL_START);
-	put_str(blank_line, ROW_CHI, COL_START);
- 	sprintf(tmp, "%d/%d", p_ptr->csp, p_ptr->msp);
- 	
- 	if (strlen(tmp)==9)
-		tmp2 = "SP ";
- 	else if (strlen(tmp)<9)
-		tmp2 = "SP: ";
- 	else
-		tmp2 = "";
- 	put_str(tmp2, ROW_SP, COL_START);
-	color = percent_to_colour(p_ptr->csp, p_ptr->msp);
- 	c_put_str(color, tmp, ROW_SP, COL_END-strlen(tmp));
-
-	/* Now repeat for chi */
-	
-	sprintf(tmp, "%d/%d", p_ptr->cchi, p_ptr->mchi);
-  
- 	if (strlen(tmp)==9)
-		tmp2 = "CH ";
- 	else if (strlen(tmp)<9)
-		tmp2 = "CH: ";
- 	else
-		tmp2 = "";
- 	put_str(tmp2, ROW_CHI, COL_START);
-	color = percent_to_colour(p_ptr->cchi, p_ptr->mchi);
- 	c_put_str(color, tmp, ROW_CHI, COL_END-strlen(tmp));
-
-	
+	prt_nums("SP:", ROW_SP, COL_START, COL_END, p_ptr->csp, p_ptr->msp);
+	prt_nums("CH:", ROW_CHI, COL_START, COL_END, p_ptr->cchi, p_ptr->mchi);
 }
 
 /*
