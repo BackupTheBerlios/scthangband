@@ -57,7 +57,7 @@ extern void lite_spot(int y, int x);
 extern void prt_map(void);
 #endif
 #if (defined(CAVE_C) || defined(XTRA1_C))
-extern void display_map(int *cy, int *cx, bool max);
+extern void display_map(int *cy, int *cx, int *my, int *mx);
 #endif
 #if (defined(CAVE_C) || defined(XTRA1_C))
 extern void display_wild_map(uint xmin);

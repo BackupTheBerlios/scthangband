@@ -3436,15 +3436,15 @@ static bool win_overhead_good(void)
  */
 static void win_overhead_display(void)
 {
-	int cy, cx;
+	int x;
 
 	/* Redraw map */
-	display_map(&cy, &cx, TRUE);
+	display_map(0, 0, 0, &x);
 	
 	/* Hack - also give the world map if the player is in a town. */
 	if (!dun_level)
 	{
-		display_wild_map(cx+3);
+		display_wild_map(x+3);
 	}
 }
 

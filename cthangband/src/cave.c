@@ -1516,10 +1516,10 @@ static byte priority(byte f, byte a, char c)
  * function to work with any graphic attr/char mappings, and the
  * attempts to optimize this function where possible.
  *
- * If max is false, cy and cx are the player's co-ordinates.
- * If max is true, cy and cx are the bottom right corner of the map.
+ * If present, cy and cx are set to the player's co-ordinates.
+ * If present, my and mx are set to the bottom right corner of the map.
  */
-void display_map(int *cy, int *cx, bool max)
+void display_map(int *cy, int *cx, int *my, int *mx)
 {
 	int i, j, x, y;
 
@@ -1656,19 +1656,13 @@ void display_map(int *cy, int *cx, bool max)
 	FREE(mc);
 	FREE(mp);
 
-	if (max)
-	{
-		/* Edge of map */
-		(*cx) = map_wid;
-		(*cy) = map_hgt;
-	}
-	else
-	{
-		/* Player location */
-		(*cy) = py / ratio + 1;
-		(*cx) = px / ratio + 1;
-	}
+	/* Edge of map */
+	if (my) (*my) = map_hgt;
+	if (mx) (*mx) = map_wid;
 
+	/* Player location */
+	if (cy) (*cy) = py / ratio + 1;
+	if (cx) (*cx) = px / ratio + 1;
 
 	/* Restore lighting effects */
 	view_special_lite = old_view_special_lite;
@@ -1820,7 +1814,8 @@ void display_wild_map(uint xmin)
  */
 void do_cmd_view_map(void)
 {
-	int cy, cx;
+	cptr str;
+	int cy, cx, my, mx;
 
 	/* Enter "icky" mode */
 	character_icky = TRUE;
@@ -1844,11 +1839,12 @@ void do_cmd_view_map(void)
 	}
 	else
 	{
-		display_map(&cy, &cx, FALSE);
+		display_map(&cy, &cx, &my, &mx);
 	}
 
 	/* Wait for it */
-	put_str("Hit any key to continue", 23, 23);
+	str = "Hit any key to continue";
+	put_str(str, my+1, (mx-strlen(str))/2);
 
 	/* Hilite the player */
 	move_cursor(cy, cx);
