@@ -880,7 +880,7 @@ cptr ANGBAND_DIR_XTRA;
 
 /*
  * Here is a "hook" used during calls to "get_item()" and
- * "show_inven()" and "show_equip()", and the choice window routines.
+ * "show_inven()", and the choice window routines.
  */
 bool (*item_tester_hook)(object_ctype*);
 

@@ -5039,7 +5039,7 @@ static void show_info(void)
 	if (equip_cnt())
 	{
 		Term_clear();
-		show_equip(TRUE);
+		show_inven(TRUE, TRUE);
 		prt("You are using: -more-", 0, 0);
 		if (inkey() == ESCAPE) return;
 	}
@@ -5048,7 +5048,7 @@ static void show_info(void)
 	if (inven_cnt())
 	{
 		Term_clear();
-		show_inven(TRUE);
+		show_inven(FALSE, TRUE);
 		prt("You are carrying: -more-", 0, 0);
 		if (inkey() == ESCAPE) return;
 	}

@@ -34,7 +34,7 @@ void do_cmd_inven(void)
 	Term_save();
 
 	/* Display the inventory */
-	show_inven(TRUE);
+	show_inven(FALSE, TRUE);
 
 	/* Build a prompt */
    sprintf(out_val, "Inventory: carrying %d.%d pounds (%d%% of capacity). Command: ",
@@ -84,7 +84,7 @@ void do_cmd_equip(void)
 	Term_save();
 
 	/* Display the equipment */
-	show_equip(TRUE);
+	show_inven(TRUE, TRUE);
 
 	/* Build a prompt */
    sprintf(out_val, "Equipment: carrying %d.%d pounds (%d%% of capacity). Command: ",

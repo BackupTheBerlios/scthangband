@@ -3535,7 +3535,7 @@ cptr PURE describe_use(object_ctype *o_ptr)
 
 /*
  * Here is a "pseudo-hook" used during calls to "get_item()" and
- * "show_inven()" and "show_equip()", and the choice window routines.
+ * "show_inven()", and the choice window routines.
  */
 static byte item_tester_tval;
 
@@ -3624,7 +3624,7 @@ void display_inven(void)
 
 
 /*
- * Choice window "shadow" of the "show_equip()" function
+ * Choice window "shadow" of the "show_inven(equip)" function
  */
 void display_equip(void)
 {
@@ -3674,14 +3674,17 @@ void display_equip(void)
 
 
 /*
- * Display the inventory.
+ * Display the inventory or equipment.
  *
  * Hack -- do not display "trailing" empty slots
  */
-void show_inven(bool all)
+void show_inven(bool equip, bool all)
 {
-	int             i, j, k, l, z = 0;
+	int             i, j, k, l, z;
 	int             col, len, lim, wid;
+
+	const int min = (equip) ? INVEN_WIELD : 0;
+	const int max = (equip) ? INVEN_TOTAL : INVEN_PACK;
 
 	object_type     *o_ptr;
 
@@ -3706,6 +3709,9 @@ void show_inven(bool all)
 	/* Maximum space allowed for descriptions */
 	lim = wid - 1 - 3;
 
+	/* Require space for labels (if needed) */
+	if (equip && show_labels) lim -= (14 + 2);
+
 	/* Require space for weight (if needed) */
 	if (show_weights) lim -= 9;
 
@@ -3715,20 +3721,21 @@ void show_inven(bool all)
 	/* Respect the maximum name length. */
 	if (lim > ONAME_MAX) lim = ONAME_MAX;
 
-	/* Find the "final" slot */
-	for (i = 0; i < INVEN_PACK; i++)
+	/* Find the "final" slot if desired */
+	for (i = min, z = 0; !equip && i < max; i++)
 	{
-		o_ptr = &inventory[i];
-
 		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+		if (!inventory[i].k_idx) continue;
 
 		/* Track */
 		z = i + 1;
 	}
 
+	/* Equipment lists always include all slots. */
+	if (equip) z = max;
+
 	/* Display the inventory */
-	for (k = 0, i = 0; i < z; i++)
+	for (k = 0, i = min; i < z; i++)
 	{
 		o_ptr = &inventory[i];
 
@@ -3745,6 +3752,9 @@ void show_inven(bool all)
 
 		/* Find the predicted "line length" */
 		l = strlen(out_desc[k]) + 5;
+
+		/* Require space for labels (if needed) */
+		if (equip && show_labels) lim += (14 + 2);
 
 		/* Be sure to account for the weight */
 		if (show_weights) l += 9;
@@ -3793,139 +3803,8 @@ void show_inven(bool all)
 			Term_draw(col + 3, j + 1, a, c);
 		}
 
-		/* Display the entry itself */
-		c_put_str(out_color[j], out_desc[j], j + 1, equippy_chars ? (col + 5) : (col + 3));
-
-		/* Display the weight if needed */
-		if (show_weights)
-		{
-			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, " %3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, j + 1, wid-9);
-		}
-	}
-
-	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
-
-	/* Save the new column */
-	command_gap = col;
-
-	/* Clean up. */
-	for (k = 0; k < 23; k++) FREE(out_desc[k]);
-}
-
-
-
-/*
- * Display the equipment.
- */
-void show_equip(bool all)
-{
-	int                     i, j, k, l;
-	int                     col, len, lim, wid;
-
-	object_type             *o_ptr;
-
-	char            tmp_val[80];
-
-	int                     out_index[23];
-	byte            out_color[23];
-	cptr out_desc[23], o_name;
-
-	/* Ensure that unset out_desc strings are NULL. */
-	C_WIPE(out_desc, 23, char*);
-
-	/* Starting column */
-	col = command_gap;
-
-	/* Get size */
-	Term_get_size(&wid, &i);
-
-	/* Maximal length */
-	len = wid - 1 - col;
-
-	/* Maximum space allowed for descriptions */
-	lim = wid - 1 - 3;
-
-	/* Require space for labels (if needed) */
-	if (show_labels) lim -= (14 + 2);
-
-	/* Require space for weight (if needed) */
-	if (show_weights) lim -= 9;
-	if (equippy_chars) lim -= 2;
-
-	/* Respect the maximum name length. */
-	if (lim > ONAME_MAX) lim = ONAME_MAX;
-
-	/* Scan the equipment list */
-	for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
-		o_ptr = &inventory[i];
-
-		/* Is this item acceptable? */
-		if (!all && !item_tester_okay(o_ptr)) continue;
-
-		/* Description */
-		o_name = format("%.*v", lim, object_desc_f3, o_ptr, TRUE, 3);
-
-		/* Save the color */
-		out_index[k] = i;
-		out_color[k] = tval_to_attr[o_ptr->tval % 128];
-		out_desc[k] = string_make(o_name);
-
-		/* Extract the maximal length (see below) */
-		l = strlen(out_desc[k]) + (2 + 3);
-
-		/* Increase length for labels (if needed) */
-		if (show_labels) l += (14 + 2);
-
-		/* Increase length for weight (if needed) */
-		if (show_weights) l += 9;
-		if (equippy_chars) l += 2;
-
-		/* Maintain the max-length */
-		if (l > len) len = l;
-
-		/* Advance the entry */
-		k++;
-	}
-
-	/* Hack -- Find a column to start in */
-	col = (len > wid - 4) ? 0 : (wid - 1 - len);
-
-	/* Output each entry */
-	for (j = 0; j < k; j++)
-	{
-		/* Get the index */
-		i = out_index[j];
-
-		/* Get the item */
-		o_ptr = &inventory[i];
-
-		/* Clear the line */
-		prt("", j + 1, col ? col - 2 : col);
-
-		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", index_to_label(o_ptr));
-
-		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, j+1, col);
-
-				if (equippy_chars)
-		{
-			byte a = object_attr(o_ptr);
-			char c = object_char(o_ptr);
-			
-#ifdef AMIGA
-			if (a & 0x80) a |= 0x40;
-#endif
-
-			Term_draw(col + 3, j + 1, a, c);
-		}
-
 		/* Use labels */
-		if (show_labels)
+		if (equip && show_labels)
 		{
 			/* Mention the use */
 			(void)sprintf(tmp_val, "%-14s: ", mention_use(i));
@@ -3939,15 +3818,16 @@ void show_equip(bool all)
 		else
 		{
 			/* Display the entry itself */
-			c_put_str(out_color[j], out_desc[j], j+1, equippy_chars ? col + 5 : col + 3);
+			c_put_str(out_color[j], out_desc[j], j + 1,
+				equippy_chars ? (col + 5) : (col + 3));
 		}
 
 		/* Display the weight if needed */
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, " %3d.%d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, j+1, wid-9);
+			(void)sprintf(tmp_val, " %3d.%1d lb", wgt / 10, wgt % 10);
+			put_str(tmp_val, j + 1, wid-9);
 		}
 	}
 
@@ -4425,12 +4305,12 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 		/* Inventory screen */
 		else if (!command_wrk)
 		{
-			show_inven(FALSE);
+			show_inven(FALSE, FALSE);
 		}
 		/* Equipment screen */
 		else
 		{
-			show_equip(FALSE);
+			show_inven(TRUE, FALSE);
 		}
 
 		t = tmp_val;

@@ -1463,11 +1463,11 @@ extern void display_inven(void);
 extern void display_equip(void);
 #endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C))
-extern void show_inven(bool all);
+extern void show_inven(bool equip, bool all);
 #endif
-#if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C))
-extern void show_equip(bool all);
-#endif
+
+
+
 #if (defined(OBJECT1_C) || defined(SQUELCH_C))
 extern void next_object(object_type **o_ptr);
 #endif
