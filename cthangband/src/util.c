@@ -3068,6 +3068,9 @@ char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to)
 {
 	char i[2]=" ";
 	cptr c;
+	bool alloc_prompt = (prompt == format(0));
+
+	if (alloc_prompt) prompt = string_make(prompt);
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
@@ -3094,6 +3097,8 @@ char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to)
 
 	/* Leave a record somewhere convenient. */
 	format(text, Term->wid-strlen(text)+5, prompt, " ", ascii_to_text_f1, i);
+
+	if (alloc_prompt) FREE(prompt);
 
 	/* Tell the calling routine */
 	return conv_to[c - conv_from];
