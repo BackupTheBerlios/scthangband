@@ -3757,6 +3757,41 @@ static void do_cmd_knowledge_player_save(FILE *fff)
 }
 
 /*
+ * Print out where the player is about to recall to, if anywhere.
+ */
+static bool do_cmd_knowledge_player_recall(FILE *fff)
+{
+	cptr to;
+	if (!p_ptr->word_recall) return FALSE;
+	if (dun_level)
+	{
+		to = town_name+town_defs[cur_town].name;
+	}
+	else
+	{
+		to = dun_name+dun_defs[recall_dungeon].name;
+	}
+	fprintf(fff, "You are waiting to recall to %s.\n", to);
+
+	return TRUE;
+}
+
+/*
+ * Print the player's chance of avoiding theft and falling.
+ */
+static void do_cmd_knowledge_player_theft(FILE *fff)
+{
+	int safe = adj_dex_safe[p_ptr->stat_ind[A_DEX]];
+	int tough = skill_set[SKILL_TOUGH].value/2;
+	int save = skill_set[SKILL_SAVE].value/2;
+	fprintf(fff, "You have a %d%% chance of avoiding theft attacks.\n",
+		safe + save);
+	fprintf(fff,
+		"You have a %d%% chance of bashing doors without being paralysed.\n",
+		safe+tough);
+}
+
+/*
  * Print out various things about the player and his equipment.
  * This should include all of the messages printed by update_stuff() as
  * it is intended as a simple way to access that information.
@@ -3772,12 +3807,28 @@ static void do_cmd_knowledge_player_misc(FILE *fff)
 	if (p_ptr->cumber_glove)
 		fprintf(fff, "Your covered hands feel unsuitable for spellcasting.\n");
 	if (p_ptr->cumber_armor)
-		fprintf(fff, "The weight of your armor spellcasting difficult.\n");
+		fprintf(fff, "The weight of your armor makes spellcasting difficult.\n");
 	if (p_ptr->cumber_helm)
 		fprintf(fff, "Your covered head feels unsuitable for mindcrafting.\n");
 	if (p_ptr->new_spells)
 		fprintf(fff, "You can learn %d more spell%s.\n", p_ptr->new_spells,
 				(p_ptr->new_spells != 1) ? "s" : "");
+}
+
+/*
+ * Output the current feeling to a file in the dungeon. Do nothing otherwise.
+ */
+static bool do_cmd_knowledge_player_feeling(FILE *fff)
+{
+	if (dun_level)
+	{
+		fprintf(fff, "%s\n", do_cmd_feeling_text[MIN(MAX(feeling, 0), 10)]);
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
 }
 
 /*
@@ -3798,6 +3849,12 @@ static void do_cmd_knowledge_player(void)
 	fprintf(fff, "\n");
 	do_cmd_knowledge_player_save(fff);
 	fprintf(fff, "\n");
+	do_cmd_knowledge_player_theft(fff);
+	fprintf(fff, "\n");
+	if (do_cmd_knowledge_player_feeling(fff))
+		fprintf(fff, "\n");
+	if (do_cmd_knowledge_player_recall(fff))
+		fprintf(fff, "\n");
 	do_cmd_knowledge_player_misc(fff);
 
 	/* Close the file. */

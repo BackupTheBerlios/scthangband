@@ -2128,7 +2128,7 @@ extern byte adj_str_blow[];
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_dex_blow[];
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(TABLES_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern byte adj_dex_safe[];
 #endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(TABLES_C))
