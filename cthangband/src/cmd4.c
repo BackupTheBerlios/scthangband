@@ -1147,13 +1147,17 @@ static void do_cmd_options_delay(void)
 	/* Get a new value */
 	while (1)
 	{
-		int k, msec = delay_factor * delay_factor * delay_factor;
-		prt(format("Current base delay factor: %d (%d msec)",
-					delay_factor, msec), 22, 0);
+		int k;
+		mc_put_fmt(22, 0, "Current base delay factor: %d msec%v",
+			delay_factor, clear_f0);
 		prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
 		k = inkey();
 		if (k == ESCAPE) break;
-		if (ISDIGIT(k)) delay_factor = D2I(k);
+		else if (ISDIGIT(k))
+		{
+			int i = D2I(k);
+			delay_factor = i*i*i;
+		}
 		else bell(0);
 	}
 }
@@ -1951,7 +1955,7 @@ static void dump_normal_options(FILE *fff)
 
 	/* Mention miscellaneous options. */
 	fprintf(fff, "\n\n# Miscellaneous options\n\n");
-	fprintf(fff, "# Base delay factor (0-9)\nZ:base delay factor:%d\n\n",
+	fprintf(fff, "# Base delay factor (>= 0)\nZ:base delay factor:%d\n\n",
 		delay_factor);
 	fprintf(fff, "# Hitpoint warning (0-9)\nZ:hitpoint warning:%d\n\n",
 		hitpoint_warn);

@@ -4884,8 +4884,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			Term_fresh();
 
 			/* Delay */
-			Term_xtra(TERM_XTRA_DELAY,
-				delay_factor * delay_factor * delay_factor);
+			Term_xtra(TERM_XTRA_DELAY, delay_factor);
 		}
 		p_ptr->csp += 100;   /* Restore, ready to be deducted properly */
 

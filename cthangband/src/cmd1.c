@@ -1019,8 +1019,6 @@ static bool do_cmd_fire_aux(object_type *o_ptr,
 	byte missile_attr;
 	char missile_char;
 
-	int msec = delay_factor * delay_factor * delay_factor;
-
 
 	/* Get a direction (or cancel) */
 	if (!get_aim_dir(&dir)) return FALSE;
@@ -1081,7 +1079,7 @@ static bool do_cmd_fire_aux(object_type *o_ptr,
 			print_rel(missile_char, missile_attr, y, x);
 			move_cursor_relative(y, x);
 			Term_fresh();
-			Term_xtra(TERM_XTRA_DELAY, msec);
+			Term_xtra(TERM_XTRA_DELAY, delay_factor);
 			lite_spot(y, x);
 			Term_fresh();
 		}
@@ -1090,7 +1088,7 @@ static bool do_cmd_fire_aux(object_type *o_ptr,
 		else
 		{
 			/* Pause anyway, for consistancy */
-			Term_xtra(TERM_XTRA_DELAY, msec);
+			Term_xtra(TERM_XTRA_DELAY, delay_factor);
 		}
 
 

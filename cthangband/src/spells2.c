@@ -3715,8 +3715,6 @@ errr genocide(bool player_cast)
 
 	errr result = POWER_ERROR_FAIL;
 
-	int             msec = delay_factor * delay_factor * delay_factor;
-
 	/* Mega-Hack -- Get a monster symbol */
 	if (!get_com(&typ, "Choose a monster race (by symbol) to genocide: "))
 		return POWER_ERROR_ABORT;
@@ -3765,7 +3763,7 @@ errr genocide(bool player_cast)
 		Term_fresh();
 
 		/* Delay */
-		Term_xtra(TERM_XTRA_DELAY, msec);
+		Term_xtra(TERM_XTRA_DELAY, delay_factor);
 
 		/* Take note */
 		result = SUCCESS;
@@ -3783,8 +3781,6 @@ errr mass_genocide(bool player_cast)
 	int             i;
 
 	errr result = POWER_ERROR_FAIL;
-
-	int             msec = delay_factor * delay_factor * delay_factor;
 
 
 	/* Delete the (nearby) monsters */
@@ -3830,7 +3826,7 @@ errr mass_genocide(bool player_cast)
 		Term_fresh();
 
 		/* Delay */
-		Term_xtra(TERM_XTRA_DELAY, msec);
+		Term_xtra(TERM_XTRA_DELAY, delay_factor);
 
 		/* Note effect */
 		result = SUCCESS;

@@ -397,8 +397,9 @@ static void wr_options(void)
 
 	/*** Special Options ***/
 
-	/* Write "delay_factor" */
-	wr_byte((byte)(delay_factor));
+	/* Write the cube root of "delay_factor", rounded up. */
+	for (i = 0; i*i*i < delay_factor; i++) ;
+	wr_byte((byte)i);
 
 	/* Write "hitpoint_warn" */
 	wr_byte((byte)(hitpoint_warn));

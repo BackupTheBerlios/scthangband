@@ -854,10 +854,9 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			else if (!strcmp(zz[0], "base delay factor"))
 			{
 				long l = strtol(zz[1], NULL, 0);
-				if (!isdigit(zz[1][0]) || l < 0 || l > 9)
+				if (!isdigit(zz[1][0]) || l < 0 || l > MAX_SHORT)
 					return "invalid base delay factor";
 
-				/* delay_factor would probably make more sense cubed... */
 				delay_factor = l;
 			}
 			else if (!strcmp(zz[0], "hitpoint warning"))

@@ -836,9 +836,9 @@ static void rd_options(void)
 
 	/*** Special info */
 
-	/* Read "delay_factor" */
+	/* Read "delay_factor" (cube root) */
 	rd_byte(&b);
-	delay_factor = b;
+	delay_factor = b*b*b;
 
 	/* Read "hitpoint_warn" */
 	rd_byte(&b);

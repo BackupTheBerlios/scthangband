@@ -301,7 +301,7 @@ bool allow_pickstats; /* Allow the player to choose a stat template. */
 
 s16b hitpoint_warn = 2; /* Hitpoint warning (0 to 9) */
 
-s16b delay_factor = 4; /* Delay factor (0 to 9) */
+s16b delay_factor = 64; /* Delay factor (0 to 9) */
 
 bool autosave_l;        /* Autosave before entering new levels */
 bool autosave_t;        /* Timed autosave */

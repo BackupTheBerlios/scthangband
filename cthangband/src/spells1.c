@@ -5237,8 +5237,6 @@ bool project(monster_type *mw_ptr, int rad, int y, int x, int dam, int typ, int 
 	int dist_centre;
 	int y_target, x_target; /* For reflecting monsters */
 
-	int msec = delay_factor * delay_factor * delay_factor;
-
 	/* Affected location(s) */
 	cave_type *c_ptr;
 
@@ -5406,7 +5404,7 @@ bool project(monster_type *mw_ptr, int rad, int y, int x, int dam, int typ, int 
 				move_cursor_relative(y9, x9);
 				Term_fresh();
 				visual = TRUE;
-				Term_xtra(TERM_XTRA_DELAY, msec);
+				Term_xtra(TERM_XTRA_DELAY, delay_factor);
 				lite_spot(y9, x9);
 				Term_fresh();
 			}
@@ -5415,7 +5413,7 @@ bool project(monster_type *mw_ptr, int rad, int y, int x, int dam, int typ, int 
 			else if (visual)
 			{
 				/* Delay for consistency */
-				Term_xtra(TERM_XTRA_DELAY, msec);
+				Term_xtra(TERM_XTRA_DELAY, delay_factor);
 			}
 		}
 
@@ -5617,7 +5615,7 @@ bool project(monster_type *mw_ptr, int rad, int y, int x, int dam, int typ, int 
 			/* Delay (efficiently) */
 			if (visual || drawn)
 			{
-				Term_xtra(TERM_XTRA_DELAY, msec);
+				Term_xtra(TERM_XTRA_DELAY, delay_factor);
 			}
 		}
 
