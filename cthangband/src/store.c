@@ -4475,8 +4475,6 @@ void do_cmd_store(void)
 
 	cave_type		*c_ptr;
 
-	void (*old_resize_hook)(void);
-
 	/* Access the player grid */
 	c_ptr = &cave[py][px];
 
@@ -4530,9 +4528,8 @@ void do_cmd_store(void)
 	/* Forget the view */
 	forget_view();
 	
-	/* Set the redraw hook. */
-	old_resize_hook = term_screen->resize_hook;
-	term_screen->resize_hook = resize_store;
+	/* Set the resize hook. */
+	add_resize_hook(resize_store);
 
 	/* Hack -- Character is in "icky" mode */
 	character_icky = TRUE;
@@ -4698,8 +4695,8 @@ void do_cmd_store(void)
 	/* Clear the screen */
 	Term_clear();
 
-	/* Reset the resize_hook. */
-	term_screen->resize_hook = old_resize_hook;
+	/* Reset the resize hook. */
+	delete_resize_hook(resize_store);
 
 	/* Update everything */
 	p_ptr->update |= (PU_VIEW | PU_LITE);

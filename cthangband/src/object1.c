@@ -4695,8 +4695,6 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	char out_val[160];
 
 	int term = 0;
-	void (*old_resize_hook)(void);
-
 #ifdef ALLOW_REPEAT
      
      /* Get the item index */
@@ -4852,9 +4850,8 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	}
 
 
-	/* Hack - set no-op resize function for simplicity. */
-	old_resize_hook = term_screen->resize_hook;
-	term_screen->resize_hook = resize_inkey;
+	/* Add a resize hook. */
+	add_resize_hook(resize_inkey);
 
 	/* Allow the user to choose to see everything. */
 	command_see |= show_choices_main;
@@ -4964,9 +4961,6 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 		{
 			case RESIZE_INKEY_KEY:
 			{
-				/* Resize the screen as normal. */
-				(*old_resize_hook)();
-
 				/* Put this screen in term */
 				Term_release(term);
 				term = Term_save_aux();
@@ -5288,6 +5282,9 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	}
 
 
+	/* Reset the resize hook. */
+	delete_resize_hook(resize_inkey);
+
 	/* Fix the screen if necessary */
 	if (command_see) Term_load_aux(term);
 
@@ -5329,9 +5326,6 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
      if (item) repeat_push(*cp);
      
  #endif /* ALLOW_REPEAT */
-
-	/* Reset resize hook. */
-	term_screen->resize_hook = old_resize_hook;
 
 	/* Return TRUE if something was picked */
 	return (item);

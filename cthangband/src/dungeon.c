@@ -4369,7 +4369,10 @@ void play_game(bool new_game)
 	(void)Term_set_cursor(0);
 
 	/* Initialise the resize hook XXX XXX XXX */
-	term_screen->resize_hook = resize_map;
+	term_screen->resize_hook = resize_main_term;
+
+	/* The main screen always attempts to resize the map. */
+	add_resize_hook(resize_map);
 
 	/* Terms controlled by window_stuff() always use resize_window(). */
 	for (i = 1; i < ANGBAND_TERM_MAX; i++)

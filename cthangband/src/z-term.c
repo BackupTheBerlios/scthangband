@@ -2117,6 +2117,9 @@ bool Term_load_aux(int win)
 	 * really be redrawn. */
 	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt)
 	{
+		/* Try the resize hook if possible. */
+		if (Term->resize_hook != 0) (*Term->resize_hook)();
+
 		/* Warn the calling function that things didn't work correctly. */
 		return FALSE;
 	}

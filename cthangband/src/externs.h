@@ -3946,4 +3946,13 @@ extern void path_build_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER2_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern FILE *my_fopen_path(cptr path, cptr file, cptr mode);
 #endif
+#if (defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
+extern errr add_resize_hook(void (*resize_hook)(void));
+#endif
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
+extern errr delete_resize_hook(void (*resize_hook)(void));
+#endif
+#if (defined(DUNGEON_C) || defined(UTIL_C))
+extern void resize_main_term(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

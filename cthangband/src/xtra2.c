@@ -2892,7 +2892,7 @@ void resize_map(void)
 	panel_bounds_prt();
 
 	/* Redraw everything (even the left-hand bar, which is unchanged). */
-	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+	p_ptr->redraw |= (PR_WIPE_1 | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
 
 	/* Hack -- update */
 	redraw_stuff();

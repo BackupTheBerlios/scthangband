@@ -3777,3 +3777,51 @@ void build_gamma_table(int gamma)
 }
 
 #endif /* SUPPORT_GAMMA */
+
+#define MAX_RESIZE_HOOKS 8
+
+static void (*resize_hooks[MAX_RESIZE_HOOKS])(void);
+static uint num_resize_hooks = 0;
+
+/*
+ * Add an action to term_screen->resize_hook.
+ */
+errr add_resize_hook(void (*resize_hook)(void))
+{
+	/* No room. */
+	if (num_resize_hooks == MAX_RESIZE_HOOKS)
+	{
+		/* Warning, as this probably means a hook isn't being removed. */
+		if (alert_failure) msg_print("Too many resize hooks.");
+		return ERR_MEMORY;
+	}
+	else
+	{
+		resize_hooks[num_resize_hooks++] = resize_hook;
+		return SUCCESS;
+	}
+}
+
+/*
+ * Remove an action from term_screen->resize_hook.
+ */
+errr delete_resize_hook(void (*resize_hook)(void))
+{
+	uint i;
+	for (i = 0; i < num_resize_hooks; i++)
+	{
+		if (resize_hooks[i] != resize_hook) continue;
+		resize_hooks[i] = resize_hooks[num_resize_hooks--];
+		return SUCCESS;
+	}
+	return ERR_MISSING;
+}
+
+void resize_main_term(void)
+{
+	uint i;
+	for (i = 0; i < num_resize_hooks; i++)
+	{
+		(*resize_hooks[i])();
+	}
+}

@@ -2038,7 +2038,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PR_MAP          0x04000000L     /* Display Map */
 #define PR_WIPE         0x08000000L     /* Hack -- Total Redraw */
 #define PR_ENERGY	0x10000000L	/* Display last turn's energy use */
-/* xxx */
+#define PR_WIPE_1	0x20000000L /* Hack -- row from line 1 */
 /* xxx */
 /* xxx */
 

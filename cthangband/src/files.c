@@ -4439,10 +4439,9 @@ start_of_while:
  */
 errr show_file(cptr name, cptr what)
 {
-	void (*old_resize_hook)(void) = term_screen->resize_hook;
-	term_screen->resize_hook = resize_inkey;
+	add_resize_hook(resize_inkey);
 	show_file_tome(name, what, 0);
-	term_screen->resize_hook = old_resize_hook;
+	delete_resize_hook(resize_inkey);
 	return 0;
 }
 

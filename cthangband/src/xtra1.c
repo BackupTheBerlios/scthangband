@@ -3123,6 +3123,14 @@ void redraw_stuff(void)
 		Term_clear();
 	}
 
+	/* Hack -- clear most of the screen */
+	if (p_ptr->redraw & (PR_WIPE_1))
+	{
+		p_ptr->redraw &= ~(PR_WIPE_1);
+		msg_print(NULL);
+		clear_from(1);
+	}
+
 
 	if (p_ptr->redraw & (PR_MAP))
 	{
