@@ -2566,7 +2566,7 @@ extern bool cheat_wzrd;
 #if (defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool use_sound;
 #endif
-#if (defined(CAVE_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
+#if (defined(CAVE_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(Z_TERM_C))
 extern bool use_graphics;
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -2722,7 +2722,7 @@ extern bool show_choices_main;
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool ring_bell;
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
+#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(Z_TERM_C))
 extern bool use_color;
 #endif
 #if (defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))

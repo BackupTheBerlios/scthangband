@@ -1672,10 +1672,6 @@ void roff_top(int r_idx)
 	a1 = r_ptr->d_attr;
 	a2 = r_ptr->x_attr;
 
- 	/* Hack -- fake monochrome */
-	if (!use_color) a1 = TERM_WHITE;
-	if (!use_color) a2 = TERM_WHITE;
-
 	/* Clear the top line */
 	Term_erase(0, 0, 255);
 

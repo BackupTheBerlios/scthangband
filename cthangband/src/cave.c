@@ -1227,9 +1227,9 @@ void print_rel(char c, byte a, int y, int x)
 	{
 		/* Hack -- fake monochrome */
         if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-                && (p_ptr->invuln || !use_color )) a = TERM_WHITE;
+                && (p_ptr->invuln)) a = TERM_WHITE;
         else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-             && (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
+             && (p_ptr->wraith_form)) a = TERM_L_DARK;
 
 		/* Draw the char using the attr */
 		Term_draw(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c);
@@ -1388,9 +1388,9 @@ void lite_spot(int y, int x)
 
 		/* Hack -- fake monochrome */
 		if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-			&& (p_ptr->invuln || !use_color)) a = TERM_WHITE;
+			&& (p_ptr->invuln)) a = TERM_WHITE;
 		else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-			&& (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
+			&& (p_ptr->wraith_form)) a = TERM_L_DARK;
 
 		/* Hack -- Queue it */
 		Term_queue_char(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c, ta, tc);
@@ -1440,9 +1440,9 @@ void prt_map(void)
 
 			/* Hack -- fake monochrome */
 			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->invuln || !use_color)) a = TERM_WHITE;
+				&& (p_ptr->invuln)) a = TERM_WHITE;
 			else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
+				&& (p_ptr->wraith_form)) a = TERM_L_DARK;
 
 			/* Efficiency -- Redraw that grid of the map */
 			Term_queue_char(cx, cy, a, c, ta, tc);
@@ -1683,9 +1683,9 @@ void display_map(int *cy, int *cx, bool max)
 
 			/* Hack -- fake monochrome */
             if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-                && (p_ptr->invuln || !use_color)) ta = TERM_WHITE;
+                && (p_ptr->invuln)) ta = TERM_WHITE;
             else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-                && (p_ptr->wraith_form && use_color )) ta = TERM_L_DARK;
+                && (p_ptr->wraith_form)) ta = TERM_L_DARK;
 
 			/* Add the character */
 			Term_addch(ta, tc);

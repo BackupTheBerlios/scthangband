@@ -505,9 +505,6 @@ static byte mh_attr(int max)
  */
 static byte spell_color(int type)
 {
-	/* Hack -- fake monochrome */
-	if (!use_color) return (TERM_WHITE);
-
 	/* Analyze */
 	switch (type)
 	{

@@ -2433,9 +2433,6 @@ static void msg_flush(int x)
 {
 	byte a = TERM_L_BLUE;
 
-	/* Hack -- fake monochrome */
-	if (!use_color) a = TERM_WHITE;
-
 	/* Pause for response */
 	Term_putstr(x, 0, -1, a, MORE_STR);
 
@@ -2623,9 +2620,6 @@ void msg_format(cptr fmt, ...)
  */
 void c_put_str(byte attr, cptr str, int row, int col)
 {
-	/* Hack -- fake monochrome */
-	if (!use_color) attr = TERM_WHITE;
-
 	/* Position cursor, Dump the attr/text */
 	Term_putstr(col, row, -1, attr, str);
 }
@@ -2647,9 +2641,6 @@ void put_str(cptr str, int row, int col)
  */
 void c_prt(byte attr, cptr str, int row, int col)
 {
-	/* Hack -- fake monochrome */
-	if (!use_color) attr = TERM_WHITE;
-
 	/* Clear line, position cursor */
 	Term_erase(col, row, 255);
 
@@ -2690,10 +2681,6 @@ bool c_roff(byte a, cptr str)
 	int w, h;
 
 	cptr s;
-
-
-	/* Hack -- fake monochrome */
-	if (!use_color) a = TERM_WHITE;
 
 
 	/* Obtain the size */

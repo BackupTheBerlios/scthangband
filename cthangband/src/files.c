@@ -2151,9 +2151,6 @@ static void display_player_equippy(int y, int x)
         a = object_attr(o_ptr);
         c = object_char(o_ptr);
 
-		/* No color */
-		if (!use_color) a = TERM_WHITE;
-
         if ((!equippy_chars) ||
             (!o_ptr->k_idx)) /* Clear the part of the screen */
             {
@@ -2647,9 +2644,6 @@ static void display_player_stat_info(void)
 					c = 's';
 			}
 
-			/* Handle monochrome */
-			if (!use_color) a = TERM_WHITE;
-
 			/* Dump proper character */
 			Term_putch(col, row+stat, a, c);
 		}
@@ -2745,9 +2739,6 @@ static void display_player_stat_info(void)
 				c = 's';
 		}
 
-
-		/* No color */
-		if (!use_color) a = TERM_WHITE;
 
 		/* Dump */
 		Term_putch(col, row+stat, a, c);
@@ -3004,9 +2995,6 @@ static void display_player_ben(void)
 				c = '+';
 			}
 
-			/* Monochrome */
-			if (!use_color) a = TERM_WHITE;
-
 			/* Dump flag */
 			Term_putch(x * 13 + 11, y + 4, a, c);
 		}
@@ -3100,9 +3088,6 @@ static void display_player_ben_one(int mode)
 					a = TERM_WHITE;
 					c = '+';
 				}
-
-				/* Monochrome */
-				if (!use_color) a = TERM_WHITE;
 
 				/* Dump flag */
 				Term_putch(x * 26 + 11 + n, y + 4, a, c);

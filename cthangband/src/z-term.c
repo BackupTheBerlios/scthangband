@@ -499,6 +499,10 @@ void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc)
 	/* Hack -- Ignore non-changes */
 	if ((oa == a) && (oc == c) && (ota == ta) && (otc == tc)) return;
 
+	/* Hack -- fake monochrome */
+	if (a != TERM_DARK && !use_graphics && use_color) a = TERM_WHITE;
+	if (ta != TERM_DARK && !use_graphics && use_color) ta = TERM_WHITE;
+
 	/* Save the "literal" information */
 	scr_aa[x] = a;
 	scr_cc[x] = c;
@@ -533,6 +537,9 @@ static void Term_queue_chars(int x, int y, int n, byte a, cptr s)
 
 	byte *scr_taa = Term->scr->ta[y];
 	char *scr_tcc = Term->scr->tc[y];
+
+	/* Hack -- fake monochrome */
+	if (a != TERM_DARK && !use_graphics && use_color) a = TERM_WHITE;
 
 	/* Queue the attr/chars */
 	for ( ; n; x++, s++, n--)

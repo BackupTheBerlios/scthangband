@@ -3511,6 +3511,7 @@ force_type option_force[] =
 	{&stack_force_notes, FALSE, &stack_force_notes_all},
 	{&wear_confirm, FALSE, &confirm_wear_all},
 	{&flow_by_sound, FALSE, &flow_by_smell},
+	{&use_graphics, TRUE, &use_color},
 	{0, 0, 0}
 };
 

@@ -3847,9 +3847,6 @@ void display_inven(void)
 		/* Get a color */
 		attr = tval_to_attr[o_ptr->tval % 128];
 
-		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
-
 		/* Display the entry itself */
 		c_put_str(attr, format("%.*v", (show_weights) ? wid-12 : wid-3,
 			object_desc_f3, o_ptr, TRUE, 3), i, 3);
@@ -3888,9 +3885,6 @@ void display_equip(void)
 
 		/* Get the color */
 		attr = tval_to_attr[o_ptr->tval % 128];
-
-		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the entry itself */
 		c_put_str(attr, format("%.*v",

@@ -796,7 +796,7 @@ static void do_cmd_options_win(void)
 			cptr s = windows[j].name;
 
 			/* Use color */
-			if (use_color && (j == x)) a = TERM_L_BLUE;
+			if (j == x) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
 			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, s);
@@ -810,7 +810,7 @@ static void do_cmd_options_win(void)
 			cptr str = window_flag_desc[i];
 
 			/* Use color */
-			if (use_color && (i == y)) a = TERM_L_BLUE;
+			if (i == y) a = TERM_L_BLUE;
 
 			/* Unused option */
 			if (!str) str = "(Unused option)";
@@ -826,7 +826,7 @@ static void do_cmd_options_win(void)
 				char c1 = '.', c2 = ' ';
 
 				/* Use color */
-				if (use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
+				if ((i == y) && (j == x)) a = TERM_L_BLUE;
 
 				/* Active flags */
 				if (REP(j,i)) c1 = min+REP(j,i);
