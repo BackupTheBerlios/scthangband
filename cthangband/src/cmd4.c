@@ -64,6 +64,10 @@ extern void do_cmd_redraw(void)
 	/* Window stuff */
 	p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | PW_OBJECT | PW_OBJECT_DETAILS);
 
+	/* Hack - recalculate the panel. */
+	panel_row_min = panel_col_min = -1;
+	verify_panel();
+
 	/* Hack -- update */
 	handle_stuff();
 

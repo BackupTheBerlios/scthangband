@@ -3402,6 +3402,9 @@ option_type option_info[] =
 	{&macro_edit, TRUE, OPTS_UI, 3, 11,
 	"macro_edit", "Use macros as edit keys in prompts" },
 
+	{&scroll_edge, FALSE, OPTS_UI, 3, 13,
+	"scroll_edge", "Scroll until detection reaches the edge"},
+
 	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
     "no_centre_run",                "Do not centre view whilst running" },
 

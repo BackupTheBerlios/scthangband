@@ -116,6 +116,14 @@ Use macros as edit keys in prompts      [macro_edit]
     Turn this off if you have trouble inscribing an object with "1" or using
     the edit commands.
 
+***** <scroll_edge>
+Scroll until detection reaches the edge [scroll_edge]
+
+This only has an effect if the main window is larger than the default size, so
+that the visible area is larger than the detection area.
+If set, the map moves until the player's detection area includes the corner.
+If unset, the map stops moving when the visible area includes the corner.
+
 *****
 === Disturbance options ===
 

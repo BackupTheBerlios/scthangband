@@ -3649,7 +3649,7 @@ extern void panel_bounds(void);
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
 extern void panel_bounds_center(void);
 #endif
-#if (defined(CMD1_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(XTRA2_C))
 extern void verify_panel(void);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
@@ -3911,5 +3911,11 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
+#endif
+
+/* variable.c */
+
+#if (defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+extern bool scroll_edge;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

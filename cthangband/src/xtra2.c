@@ -2735,6 +2735,9 @@ static void panel_bounds_prt(void)
 	panel_row_prt = (panel_row_centre - (Term->hgt-PRT_MINY)/2);
 	panel_col_prt = (panel_col_centre - (Term->wid-PRT_MINX)/2);
 
+	/* Blank space is always fine with scroll_edge. */
+	if (scroll_edge) return;
+
 	/* Blank space is fine if the dungeon doesn't fill the screen. */
 	if (PRT_MAXY-PRT_MINY > cur_hgt);
 
