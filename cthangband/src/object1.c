@@ -1119,7 +1119,10 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	char            b1 = '[', b2 = ']';
 	char            c1 = '{', c2 = '}';
 
-	char            tmp_val_base[160];
+	/* tmp_val_base is twice as large as necessary as little bounds checking
+	 * is performed. This probably isn't good enough. */
+	char            tmp_val_base[ONAME_MAX*2];
+
 	char		*tmp_val = tmp_val_base;
 
 	u32b            f1, f2, f3;
@@ -1823,6 +1826,9 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		cptr k[4];
 		int i = 0;
 
+		/* This is long enough for "(2147483647)" and for "100% off".*/
+		char tmp2[2][13];
+
 		/* Find the sections of inscription. */
 
 		/* Obtain the value this would have if uncursed if allowed. If this
@@ -1857,18 +1863,21 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 			/* Let the player known when a known cursed item is not broken. */
 			if (worthless && value)
 			{
-				/* Hack - use an offset to the format buffer to allow a second
-				 * temporary string. */
-	 			k[i++] = format("          (%ld)", value)+10;
+	 			sprintf(tmp2[0], "(%ld)", value);
 			}
 			else
 			{
-				k[i++] = format("          %ld", value)+10;
+	 			sprintf(tmp2[0], "%ld", value);
 			}
+			k[i++] = tmp2[0];
 		}
 
 		/* Hack - this must be <9 character long. See above. */
-		if (o1_ptr->discount) k[i++] = format("%d%% off", o1_ptr->discount);
+		if (o1_ptr->discount)
+		{
+			sprintf(tmp2[1], "%d%% off", o1_ptr->discount);
+			k[i++] = tmp2[1];
+		}
 
 		if (*((k[i] = find_feeling(o1_ptr))) != '\0') i++;
 		if (o1_ptr->note) k[i++] = quark_str(o1_ptr->note);
