@@ -1164,10 +1164,14 @@ static void do_cmd_options_hp(void)
  * It does not dump autosave frequency, base delay or hitpoint warning level
  * as the game has no way of loading these.
  */
-static void option_dump_aux(FILE *fff)
+static errr option_dump_aux(cptr fname)
 {
 	const co_ord *co_ptr;
 	uint i,j;
+
+	FILE *fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
+
+	if (!fff) return -1;
 
 	/* Skip some lines */
 	fprintf(fff, "\n\n");
@@ -1235,6 +1239,10 @@ static void option_dump_aux(FILE *fff)
 		delay_factor * delay_factor * delay_factor);
 	fprintf(fff, "# Hitpoint warning %d\n", hitpoint_warn * 10);
 	fprintf(fff, "# Autosave frequency %d\n\n", autosave_freq);
+
+	fclose(fff);
+
+	return SUCCESS;
 }
 
 #define DCO_ERROR_ABORT	1
@@ -1245,7 +1253,6 @@ static void option_dump_aux(FILE *fff)
  */
 static errr option_dump(void)
 {
-	FILE *fff;
 	char ftmp[256];
 
 	/* Prompt */
@@ -1260,16 +1267,11 @@ static errr option_dump(void)
 	/* Handle abort. */
 	if (!askfor_aux(ftmp, 256)) return DCO_ERROR_ABORT;
 
-	fff = my_fopen_path(ANGBAND_DIR_USER, ftmp, "a");
-
-	if (!fff) return DCO_ERROR_FILE;
-
-	option_dump_aux(fff);
-
-	fclose(fff);
+	if (option_dump_aux(ftmp)) return DCO_ERROR_FILE;
 
 	return SUCCESS;
 }
+
 
 static errr option_load(void)
 {
@@ -1290,6 +1292,27 @@ static errr option_load(void)
 	if (process_pref_file(ftmp)) return DCO_ERROR_FILE;
 
 	return SUCCESS;
+}
+
+/*
+ * Give some feedback for one of the above functions.
+ * Note that a user abort passes unmentioned.
+ */
+static void dco_feedback(errr err)
+{
+	switch (err)
+	{
+		case DCO_ERROR_FILE:
+		{
+			msg_print("Failed!");
+			break;
+		}
+		case SUCCESS:
+		{
+			msg_print("Done.");
+			break;
+		}
+	}
 }
 
 typedef struct option_list option_list;
@@ -1320,11 +1343,14 @@ static option_list opt_lists[] =
 	{"Window Flags", NULL, OPTS_WINDOW, 'W', 43, 7},
 	{"Status Flags", NULL, OPTS_REDRAW, 'T', 43, 8},
 	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 10},
-	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 11},
+	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', 43, 11},
+	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 12},
 	{0,0,0,0,0,0}
 };
 
 
+/* Forward declare. */
+static errr preference_dump(void);
 
 /*
  * Set or unset various options.
@@ -1418,28 +1444,17 @@ void do_cmd_options(void)
 				}
 				case OPTS_TO_FILE:
 				{
-					errr err = option_dump();
-					if (err == DCO_ERROR_FILE)
-					{
-						msg_print("Failed!");
-					}
-					else if (err == SUCCESS)
-					{
-						msg_print("Done.");
-					}
+					dco_feedback(option_dump());
+					break;
+				}
+				case OPTS_ALL_TO_FILE:
+				{
+					dco_feedback(preference_dump());
 					break;
 				}
 				case OPTS_FROM_FILE:
 				{
-					errr err = option_load();
-					if (err == DCO_ERROR_FILE)
-					{
-						msg_print("Failed!");
-					}
-					else if (err == SUCCESS)
-					{
-						msg_print("Done.");
-					}
+					dco_feedback(option_load());
 					break;
 				}
 			}
@@ -1533,7 +1548,7 @@ static errr macro_dump(cptr fname)
 
 	/* Success */
 	return (0);
-		}
+}
 
 
 /*
@@ -1583,7 +1598,6 @@ static void do_cmd_macro_aux(char *buf)
 	Term_addstr(-1, TERM_WHITE, format("%v", ascii_to_text_f1, buf));
 }
 
-#endif
 
 
 /*
@@ -1682,6 +1696,7 @@ static errr keymap_dump(cptr fname)
 	/* Success */
 	return (0);
 }
+#endif /* ALLOW_MACROS */
 
 
 
@@ -2311,23 +2326,10 @@ static visual_type visual[5] =
 		0, "Unidentified object attr/char definitions", 0, 'U', TRUE, TRUE},
 };
 
-static void dump_visuals(visual_type *vs_ptr)
+static errr dump_visuals_aux(cptr tmp, visual_type *vs_ptr)
 {
 	int i;
 	FILE *fff;
-	char tmp[71];
-
-	/* Prompt */
-	prt(format("Command: Dump %s", vs_ptr->text), CMDLINE, 0);
-
-	/* Prompt */
-	prt("File: ", CMDLINE+2, 0);
-
-	/* Default filename */
-	sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-	/* Get a filename */
-	if (!askfor_aux(tmp, sizeof(tmp)-1)) return;
 
 	/* Drop priv's */
 	safe_setuid_drop();
@@ -2339,7 +2341,7 @@ static void dump_visuals(visual_type *vs_ptr)
 	safe_setuid_grab();
 
 	/* Failure */
-	if (!fff) return;
+	if (!fff) return -1;
 
 	/* This requires a normal pref file output. */
 	if (vs_ptr->pref_str)
@@ -2385,8 +2387,34 @@ static void dump_visuals(visual_type *vs_ptr)
 	/* Close */
 	my_fclose(fff);
 
-	/* Message */
-	msg_format("Dumped %s.", vs_ptr->text);
+	return SUCCESS;
+}
+
+static void dump_visuals(visual_type *vs_ptr)
+{
+	char tmp[71];
+
+	/* Prompt */
+	prt(format("Command: Dump %s", vs_ptr->text), CMDLINE, 0);
+
+	/* Prompt */
+	prt("File: ", CMDLINE+2, 0);
+
+	/* Default filename */
+	sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+
+	/* Get a filename */
+	if (!askfor_aux(tmp, sizeof(tmp)-1)) return;
+
+	if (dump_visuals_aux(tmp, vs_ptr))
+	{
+		msg_format("Failed to dump %s.", vs_ptr->text);
+	}
+	else
+	{
+		/* Message */
+		msg_format("Dumped %s.", vs_ptr->text);
+	}
 }
 
 static void modify_visuals(visual_type *vs_ptr)
@@ -2671,6 +2699,67 @@ void do_cmd_visuals(void)
 	character_icky = FALSE;
 }
 
+#ifdef ALLOW_COLORS
+/*
+ * Dump colour definitions to a named file.
+ */
+static errr dump_colours_aux(cptr file)
+{
+	FILE *fff;
+	int i;
+
+	/* Drop priv's */
+	safe_setuid_drop();
+
+	/* Append to the file */
+	fff = my_fopen_path(ANGBAND_DIR_USER, file, "a");
+
+	/* Grab priv's */
+	safe_setuid_grab();
+
+	/* Failure */
+	if (!fff) return -1;
+
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Color redefinitions\n\n");
+
+	/* Dump colors */
+	for (i = 0; i < 256; i++)
+	{
+		uint kv = angband_color_table[i][0];
+		uint rv = angband_color_table[i][1];
+		uint gv = angband_color_table[i][2];
+		uint bv = angband_color_table[i][3];
+
+		cptr name = "unknown";
+
+		/* Skip non-entries */
+		if (!kv && !rv && !gv && !bv) continue;
+
+		/* Extract the color name */
+		if (i < 16) name = color_names[i];
+
+		/* Dump a comment */
+		fprintf(fff, "# Color '%s'\n", name);
+
+		/* Dump the monster attr/char info */
+		fprintf(fff, "V:%d:0x%02X:0x%02X:0x%02X:0x%02X\n\n",
+		        i, kv, rv, gv, bv);
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Message */
+	msg_print("Dumped color redefinitions.");
+
+	return FALSE;
+}
+#endif /* ALLOW_COLORS */
 
 /*
  * Interact with "colors"
@@ -2678,8 +2767,6 @@ void do_cmd_visuals(void)
 void do_cmd_colors(void)
 {
 	int i;
-
-	FILE *fff;
 
 	char tmp[160];
 
@@ -2762,54 +2849,7 @@ void do_cmd_colors(void)
 			/* Get a filename */
 			if (!askfor_aux(tmp, 70)) continue;
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
-			/* Append to the file */
-			fff = my_fopen_path(ANGBAND_DIR_USER, tmp, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Color redefinitions\n\n");
-
-			/* Dump colors */
-			for (i = 0; i < 256; i++)
-			{
-				uint kv = angband_color_table[i][0];
-				uint rv = angband_color_table[i][1];
-				uint gv = angband_color_table[i][2];
-				uint bv = angband_color_table[i][3];
-
-				cptr name = "unknown";
-
-				/* Skip non-entries */
-				if (!kv && !rv && !gv && !bv) continue;
-
-				/* Extract the color name */
-				if (i < 16) name = color_names[i];
-
-				/* Dump a comment */
-				fprintf(fff, "# Color '%s'\n", name);
-
-				/* Dump the monster attr/char info */
-				fprintf(fff, "V:%d:0x%02X:0x%02X:0x%02X:0x%02X\n\n",
-				        i, kv, rv, gv, bv);
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped color redefinitions.");
+			if (dump_colours_aux(tmp)) continue;
 		}
 
 		/* Edit colors */
@@ -2901,6 +2941,54 @@ void do_cmd_colors(void)
 
 	/* Leave "icky" mode */
 	character_icky = FALSE;
+}
+
+
+/*
+ * Dump all of the above preferences to a file.
+ */
+static errr preference_dump(void)
+{
+	char ftmp[256];
+	visual_type *vs_ptr;
+
+	/* Prompt */
+	prt("Command: Append options to a file", 21, 0);
+
+	/* Prompt */
+	prt("File: ", 21, 0);
+
+	/* Default filename */
+	sprintf(ftmp, "%.251s.prf", player_base);
+
+	/* Handle abort. */
+	if (!askfor_aux(ftmp, 256)) return DCO_ERROR_ABORT;
+
+	/* Dump options. */
+	if (option_dump_aux(ftmp)) return DCO_ERROR_FILE;
+
+#ifdef ALLOW_MACROS
+	/* Dump macros. */
+	if (macro_dump(ftmp)) return DCO_ERROR_FILE;
+
+	/* Dump keymaps. */
+	if (keymap_dump(ftmp)) return DCO_ERROR_FILE;
+#endif /* ALLOW_MACROS */
+
+#ifdef ALLOW_VISUALS
+	/* Dump visuals. */
+	for (vs_ptr = visual; vs_ptr < END_PTR(visual); vs_ptr++)
+	{
+		if (dump_visuals_aux(ftmp, vs_ptr)) return DCO_ERROR_FILE;
+	}
+#endif /* ALLOW_VISUALS */
+
+#ifdef ALLOW_COLORS
+	/* Dump colours. */
+	if (dump_colours_aux(ftmp)) return DCO_ERROR_FILE;
+#endif /* ALLOW_COLORS */
+
+	return SUCCESS;
 }
 
 

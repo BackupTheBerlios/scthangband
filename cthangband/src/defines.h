@@ -593,6 +593,7 @@ logaux(x, 1) logaux(x, 0) 255)
 
 #define OPTS_TO_FILE -10
 #define OPTS_FROM_FILE -11
+#define OPTS_ALL_TO_FILE -12
 
 /*
  * Refueling constants
