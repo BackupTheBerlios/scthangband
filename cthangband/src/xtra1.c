@@ -152,24 +152,24 @@ static void prt_field(cptr info, int row, int col)
  * Translate a negative co-ordinate into one relative to the far edge of the
  * screen.
  */
-static int get_y(const co_ord *t)
+static int PURE get_y(const redraw_type *t)
 {
 	if (t->y >= 0) return t->y;
 	else return Term->hgt + t->y;
 }
 
-static int get_x(const co_ord *t)
+static int PURE get_x(const redraw_type *t)
 {
 	if (t->x >= 0) return t->x;
 	else return Term->wid + t->x;
 }
 
 /* Shorten "put it where the table says it should go" for y,x functions. */
-#define GET_YX(T) get_y(T), get_x(T)
+#define GET_YX(T) get_y(T), get_x(T), (T)->l
 
 static void prt_equippy(void)
 {
-	mc_put_fmt(GET_YX(XY_EQUIPPY), "%v", equippy_f0);
+	mc_put_lfmt(GET_YX(XY_EQUIPPY), "%v", equippy_f0);
 }
 
 /*
@@ -202,7 +202,7 @@ static void prt_stat(int stat)
 	}
 
 	/* Display name and number */
-	mc_put_fmt(GET_YX(XY_STAT+stat), "%.3s%c  $%c%v",
+	mc_put_lfmt(GET_YX(XY_STAT+stat), "%.3s%c  $%c%v",
 		name, colon, attr, cnv_stat_f1, p_ptr->stat_use[stat]);
 }
 
@@ -211,7 +211,7 @@ static void prt_stat(int stat)
  */
 static void prt_gold(void)
 {
-	mc_put_fmt(GET_YX(XY_GOLD), "AU $G%9ld", (long)p_ptr->au);
+	mc_put_lfmt(GET_YX(XY_GOLD), "AU $G%9ld", (long)p_ptr->au);
 }
 
 /*
@@ -226,7 +226,7 @@ static void prt_time(void)
 	/* Only keep loose minutes */
 	minute = minute % 60;
 
-	mc_put_fmt(GET_YX(XY_TIME), "%2d:%02d %v",
+	mc_put_lfmt(GET_YX(XY_TIME), "%2d:%02d %v",
 		hour, minute, day_to_date_f1, day+p_ptr->startdate);
 }
 
@@ -236,7 +236,7 @@ static void prt_time(void)
  */
 static void prt_ac(void)
 {
-	mc_put_fmt(GET_YX(XY_AC), "AC:    $G%5d", p_ptr->dis_ac+p_ptr->dis_to_a);
+	mc_put_lfmt(GET_YX(XY_AC), "AC:    $G%5d", p_ptr->dis_ac+p_ptr->dis_to_a);
 }
 
 /*
@@ -244,7 +244,7 @@ static void prt_ac(void)
  */
 static void prt_energy(void)
 {
-	mc_put_fmt(GET_YX(XY_ENERGY), "LE:     $G%4d", old_energy_use);
+	mc_put_lfmt(GET_YX(XY_ENERGY), "LE:     $G%4d", old_energy_use);
 }
 
 /*
@@ -252,7 +252,7 @@ static void prt_energy(void)
  */
 static void prt_hp(void)
 {
-	prt_nums("HP:", GET_YX(XY_HP), BORDER_WIDTH, p_ptr->chp, p_ptr->mhp);
+	prt_nums("HP:", GET_YX(XY_HP), p_ptr->chp, p_ptr->mhp);
 }
 
 
@@ -261,8 +261,8 @@ static void prt_hp(void)
  */
 static void prt_sp(void)
 {
-	prt_nums("SP:", GET_YX(XY_SP), BORDER_WIDTH, p_ptr->csp, p_ptr->msp);
-	prt_nums("CH:", GET_YX(XY_CHI), BORDER_WIDTH, p_ptr->cchi, p_ptr->mchi);
+	prt_nums("SP:", GET_YX(XY_SP), p_ptr->csp, p_ptr->msp);
+	prt_nums("CH:", GET_YX(XY_CHI), p_ptr->cchi, p_ptr->mchi);
 }
 
 /*
@@ -277,49 +277,43 @@ static void prt_sp(void)
  */
 static void prt_spirit(void)
 {
-	const int row_wild = get_y(XY_WILD_SPIRIT);
-	const int col_wild = get_x(XY_WILD_SPIRIT);
-	const int end_wild = col_wild+BORDER_WIDTH;
-	const int row_life = get_y(XY_LIFE_SPIRIT);
-	const int col_life = get_x(XY_LIFE_SPIRIT);
-	const int end_life = col_life+BORDER_WIDTH;
-
 	int	i, j;
-	char	il[4];
 	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
-	spirit_type	*s_ptr;
-	put_str("Life", row_life, col_life);
-	put_str("Wild", row_wild, col_wild);
-	j=0;
-	for (i=0;i<MAX_SPIRITS;i++)
+
+	char life[25] = "Life", *ls = life+4;
+	char wild[25] = "Wild", *ws = wild+4, **s;
+
+	for (i = j = 0; i < MAX_SPIRITS; i++)
 	{
-		s_ptr=&(spirits[i]);
+		spirit_type	*s_ptr = spirits+i;
+
+		/* Add to the appropriate string. */
+		if (i % 2) s = &ls;
+		else s = &ws;
+
 		if(!(s_ptr->pact))
 		{
-			sprintf(il,"$d#");
+			*s += sprintf(*s, "$d#");
 		}
-   		else if (s_ptr->minskill > plev)
+		else if (s_ptr->minskill > plev)
 		{
- 			sprintf(il,"$D#");
- 		}
- 		else if(s_ptr->annoyance > 8)
+			*s += sprintf(*s, "$D#");
+		}
+		else if(s_ptr->annoyance > 8)
 		{
- 			sprintf(il, "$r%c", I2A(j++));
- 		}
- 		else if(s_ptr->annoyance > 0)
+			*s += sprintf(*s, "$r%c", I2A(j++));
+		}
+		else if(s_ptr->annoyance > 0)
 		{
- 			sprintf(il, "$y%c", I2A(j++));
- 		}
- 		else
+			*s += sprintf(*s, "$y%c", I2A(j++));
+		}
+		else
 		{
- 			sprintf(il, "$G%c", I2A(j++));
- 		}
-		/* Should this check the sphere parameter? */
- 		if (i % 2 == 0)
- 			mc_put_str(row_life, end_life-MAX_SPIRITS+1+i, il);
- 		else
- 			mc_put_str(row_wild, end_wild-MAX_SPIRITS+i, il);
+			*s += sprintf(*s, "$G%c", I2A(j++));
+		}
 	}
+	mc_put_lfmt(GET_YX(XY_LIFE_SPIRIT), "%s", life);
+	mc_put_lfmt(GET_YX(XY_WILD_SPIRIT), "%s", wild);
 }
 
 /*
@@ -350,7 +344,7 @@ static void prt_depth(void)
 		depths = format("Wild (%d,%d)",wildx,wildy);
 	}
 	/* Right-Adjust the "depth", and clear old values */
-	mc_put_fmt(GET_YX(XY_DEPTH), "%9s", depths);
+	mc_put_lfmt(GET_YX(XY_DEPTH), "%9s", depths);
 }
 
 
@@ -360,7 +354,7 @@ static void prt_depth(void)
 static void prt_hunger(void)
 {
 	cptr s = prt_flag(TIMED_FOOD);
-	mc_put_str(GET_YX(XY_HUNGRY), s);
+	mc_put_lfmt(GET_YX(XY_HUNGRY), "%s", s);
 }
 
 
@@ -370,7 +364,7 @@ static void prt_hunger(void)
 static void prt_blind(void)
 {
 	cptr s = prt_flag(TIMED_BLIND);
-	mc_put_str(GET_YX(XY_BLIND), s);
+	mc_put_lfmt(GET_YX(XY_BLIND), "%s", s);
 }
 
 
@@ -380,7 +374,7 @@ static void prt_blind(void)
 static void prt_confused(void)
 {
 	cptr s = prt_flag(TIMED_CONFUSED);
-	mc_put_str(GET_YX(XY_CONFUSED), s);
+	mc_put_lfmt(GET_YX(XY_CONFUSED), "%s", s);
 }
 
 
@@ -390,7 +384,7 @@ static void prt_confused(void)
 static void prt_afraid(void)
 {
 	cptr s = prt_flag(TIMED_AFRAID);
-	mc_put_str(GET_YX(XY_AFRAID), s);
+	mc_put_lfmt(GET_YX(XY_AFRAID), "%s", s);
 }
 
 
@@ -400,7 +394,7 @@ static void prt_afraid(void)
 static void prt_poisoned(void)
 {
 	cptr s = prt_flag(TIMED_POISONED);
-	mc_put_str(GET_YX(XY_POISONED), s);
+	mc_put_lfmt(GET_YX(XY_POISONED), "%s", s);
 }
 
 
@@ -460,7 +454,7 @@ static void prt_state(void)
 	}
 
 	/* Display the info (or blanks) */
-	mc_put_str(GET_YX(XY_STATE), s);
+	mc_put_lfmt(GET_YX(XY_STATE), "%s", s);
 }
 
 
@@ -482,7 +476,7 @@ static void prt_speed(void)
 	else change = "$d";
 
 	/* Display the speed */
-	mc_put_fmt(GET_YX(XY_SPEED), "%-14v", vstrnfmt_fn, "%s (%+d)", change, i);
+	mc_put_lfmt(GET_YX(XY_SPEED), "%-14v", vstrnfmt_fn, "%s (%+d)", change, i);
 }
 
 /*
@@ -492,30 +486,32 @@ static void prt_speed(void)
 
 static void prt_study(void)
 {
+	char buf[16], *t = buf;
+
 	if (p_ptr->oppose_acid || p_ptr->oppose_elec || p_ptr->oppose_fire || p_ptr->oppose_cold || p_ptr->oppose_pois) 
 	{
-		move_cursor(GET_YX(XY_STUDY));
-		Term_addch(OPPOSE_COL(p_ptr->oppose_acid), 'A');
-		Term_addch(OPPOSE_COL(p_ptr->oppose_elec), 'E');
-		Term_addch(OPPOSE_COL(p_ptr->oppose_fire), 'F');
-		Term_addch(OPPOSE_COL(p_ptr->oppose_cold), 'C');
-		Term_addch(OPPOSE_COL(p_ptr->oppose_pois), 'P');
+		t += sprintf(t, "$%cA", atchar[OPPOSE_COL(p_ptr->oppose_acid)]);
+		t += sprintf(t, "$%cE", atchar[OPPOSE_COL(p_ptr->oppose_elec)]);
+		t += sprintf(t, "$%cF", atchar[OPPOSE_COL(p_ptr->oppose_fire)]);
+		t += sprintf(t, "$%cC", atchar[OPPOSE_COL(p_ptr->oppose_cold)]);
+		t += sprintf(t, "$%cP", atchar[OPPOSE_COL(p_ptr->oppose_pois)]);
 	}
 	else if (p_ptr->new_spells)
 	{
-		put_str("Study", GET_YX(XY_STUDY));
+		sprintf(t, "Study");
 	}
 	else
 	{
-		put_str("     ", GET_YX(XY_STUDY));
+		*t = '\0';
 	}
+	mc_put_lfmt(GET_YX(XY_STUDY), "%s", buf);
 }
 
 
 static void prt_cut(void)
 {
 	cptr s = prt_flag(TIMED_CUT);
-	mc_put_str(GET_YX(XY_CUT), s);
+	mc_put_lfmt(GET_YX(XY_CUT), "%s", s);
 }
 
 
@@ -523,7 +519,7 @@ static void prt_cut(void)
 static void prt_stun(void)
 {
 	cptr s = prt_flag(TIMED_POISONED);
-	mc_put_str(GET_YX(XY_POISONED), s);
+	mc_put_lfmt(GET_YX(XY_POISONED), "%s", s);
 }
 
 
@@ -625,10 +621,10 @@ static void health_redraw(void)
 	}
 
 	/* Default to "unknown" */
-	put_str(str, GET_YX(XY_INFO));
+	mc_put_lfmt(GET_YX(XY_INFO), str);
 
 	/* Dump the current "health" (use '*' symbols) */
-	mc_put_fmt(GET_YX(XY_INFO), "$%c%.*s", attr, len, smb);
+	mc_put_lfmt(GET_YX(XY_INFO), "$%c%.*s", attr, len, smb);
 
 #endif
 

@@ -1443,13 +1443,25 @@ struct display_func_type
 typedef struct co_ord co_ord;
 struct co_ord
 {
-#ifdef CHECK_ARRAYS
-	co_ord *idx;
-#endif /* CHECK_ARRAYS */
-	cptr name;
 	int x;
 	int y;
 };
+
+/*
+ * Describe the information needed to explain how to redraw a string display.
+ * Anything not marked as fixed can be changed in the redraw prefs.
+ */
+typedef struct redraw_type redraw_type;
+struct redraw_type
+{
+#ifdef CHECK_ARRAYS
+	redraw_type *idx; /* Index (fixed). */
+#endif /* CHECK_ARRAYS */
+	cptr name; /* Description (fixed). */
+	s16b x, y; /* Actual co-ordinates. */
+	s16b l; /* Maximum length of the string (0 disables it). */
+};
+
 
 /* A set of strings in a particular order. */
 typedef struct cptr_ch cptr_ch;

@@ -2183,7 +2183,7 @@ extern byte chest_traps[64];
 #if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(TABLES_C))
 extern cptr color_names[16];
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern cptr atchar;
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
@@ -2226,7 +2226,7 @@ extern spirit_type spirits[MAX_SPIRITS];
 extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #endif
 #if (defined(ANGBAND_H))
-extern co_ord screen_coords[NUM_SCREEN_COORDS];
+extern redraw_type screen_coords[NUM_SCREEN_COORDS];
 #endif
 #if (defined(INIT1_C) || defined(MONSTER1_C) || defined(POWERS_C) || defined(TABLES_C))
 extern cptr explode_flags[];
@@ -2318,7 +2318,7 @@ extern errr fd_write(int fd, cptr buf, huge n);
 #if (!(defined(ACORN))) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C))
 extern errr fd_close(int fd);
 #endif
-#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void move_cursor(int row, int col);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C))
@@ -2378,7 +2378,7 @@ extern void msg_format(cptr fmt, ...);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void c_put_str(byte attr, cptr str, int row, int col);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C))
 extern void put_str(cptr str, int row, int col);
 #endif
 #if (defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -3809,7 +3809,7 @@ extern errr Term_gotoxy(int x, int y);
 #if (defined(CAVE_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
 extern void Term_draw(int x, int y, byte a, char c);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_addch(byte a, char c);
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
@@ -4027,5 +4027,11 @@ extern void update_objects(int where);
 
 #if (defined(CMD4_C) || defined(XTRA2_C))
 extern cptr PURE prt_flag_long(int flag);
+#endif
+
+/* util.c */
+
+#if (defined(UTIL_C) || defined(XTRA1_C))
+extern void mc_put_lfmt(const int y, const int x, const int l, cptr fmt, ...);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

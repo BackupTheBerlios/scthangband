@@ -464,6 +464,7 @@ These control where everything on the main window apart from the map (which is c
 n/N: Move to the next/previous display type.
 x/X: Move the display one square left/right.
 y/Y: Move the display one square down/up.
+l/L: Increase/decrease the length allowed to this display.
 Tab: Represent unused space with black dots/empty space.
 ?  : Show this help.
 

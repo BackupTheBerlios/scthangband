@@ -992,7 +992,7 @@ static void do_cmd_options_redraw(void)
 	for (c = KTRL('R'), n = 0, clear = FALSE; c != ESCAPE; c = inkey())
 	{
 		int inc = isupper(c) ? -1 : 1;
-		co_ord *co_ptr = screen_coords+n;
+		redraw_type *co_ptr = screen_coords+n;
 
 		switch (c)
 		{
@@ -1016,6 +1016,11 @@ static void do_cmd_options_redraw(void)
 			case 'y': case 'Y':
 			{
 				co_ptr->y += inc;
+				break;
+			}
+			case 'l': case 'L':
+			{
+				co_ptr->l += inc;
 				break;
 			}
 			case '\t':
@@ -1055,10 +1060,10 @@ static void do_cmd_options_redraw(void)
 
 		mc_put_fmt(5, COL_END+2, "Number = %2d, Name = %s", n, co_ptr->name);
 
-		mc_put_fmt(7, COL_END+2, "x co-ord: %d, y co-ord: %d",
-			co_ptr->x, co_ptr->y);
+		mc_put_fmt(7, COL_END+2, "x co-ord: %d, y co-ord: %d, length: %d",
+			co_ptr->x, co_ptr->y, co_ptr->l);
 
-		put_str("Command (n/N/x/X/y/Y/Tab/?):", 10, COL_END+2);
+		put_str("Command (n/N/x/X/y/Y/l/L/Tab/?):", 10, COL_END+2);
 	}
 
 	/* Remove the resize hook. */
@@ -1143,7 +1148,7 @@ void dump_version(FILE *fff)
  */
 static errr option_dump_aux(cptr fname)
 {
-	const co_ord *co_ptr;
+	const redraw_type *co_ptr;
 	uint i,j;
 
 	FILE *fff = my_fopen_path(ANGBAND_DIR_USER, fname, "a");
@@ -4009,7 +4014,9 @@ static bool do_cmd_knowledge_player_counter(FILE *fff)
 	{
 		cptr s = prt_flag_long(i);
 		if (!s) continue;
-		fprintf(fff, "%s\n", s);
+		if (!rc) fprintf(fff,
+			"You are subject to the following temporary effects:\n");
+		fprintf(fff, "  %s\n", s);
 		rc = TRUE;
 	}
 	return rc;

@@ -733,10 +733,11 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		}
 		case 'L':
 		{
-			if (tokenize(buf+2, 3, zz) == 3)
+			int i = tokenize(buf+2, 3, zz);
+			if (i == 3 || i == 4)
 			{
-				int x,y;
-				co_ord *co_ptr;
+				int x,y,l;
+				redraw_type *co_ptr;
 				for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords);
 					co_ptr++)
 				{
@@ -745,8 +746,8 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				return "no such display";
 L_okay:
 
-				if (!isdigit(zz[1][0]) || !isdigit(zz[2][0]))
-					return "non-numerical co-ordinate";
+				for (j = 1; j < i; j++)
+					if (!isdigit(zz[j][0])) return "non-numerical co-ordinate";
 
 				x = atoi(zz[1]);
 				y = atoi(zz[2]);
@@ -756,6 +757,15 @@ L_okay:
 
 				co_ptr->x = x;
 				co_ptr->y = y;
+
+				/* Read (optional) length. */
+				if (i > 3)
+				{
+					int l = atoi(zz[3]);
+					if (l < 0 || l > 255)
+						return "length must be between 0 and 255.";
+					co_ptr->l = l;
+				}
 
 				return SUCCESS;
 			}

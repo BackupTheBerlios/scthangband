@@ -2744,16 +2744,6 @@ void prt(cptr str, int row, int col)
 
 
 /*
- * Check whether the cursor is in a legal state.
- * In particular, check that it hasn't been moved out of the screen area.
- */
-static bool useless_cursor(void)
-{
-	int i[2];
-	return (Term_locate(i, i+1) == 1);
-}
-
-/*
  * Move the cursor to the beginning of the next line and clear it.
  * Return FALSE if already on the bottom line.
  */
@@ -2811,6 +2801,8 @@ static bool wrap_text(int nx)
 }
 
 
+#define DEFAULT -1
+
 /*
  * Print a multi-coloured string where colour-changes are denoted as follows:
  *
@@ -2823,27 +2815,40 @@ static bool wrap_text(int nx)
  *
  * Anything else is printed directly.
  *
- * This function returns under three circumstances:
+ * This function returns under four circumstances:
  *
  * 1. The cursor goes out of bounds (returns the first unprinted character).
  * 2. The end of the string is reached (returns the \0).
  * 3. A \n is found (returns the \n).
- */ 
-static cptr mc_add(cptr s, int *dattr, int *attr, bool *ignore)
+ */
+static cptr mc_add(cptr s, int mx, int *dattr, int *attr, bool *ignore)
 {
 	int nattr;
 
-	for (; *s && *s != '\n' && !useless_cursor(); s++)
+	/* With no specified width, use however much space is left on the line. */
+	if (mx == DEFAULT)
+	{
+		int cx, y;
+		Term_get_size(&mx, &y);
+		Term_locate(&cx, &y);
+
+		mx -= cx;
+	}
+
+	/* Print until either the space or the string is exhausted. */
+	for (; *s && *s != '\n' && mx; s++)
 	{
 		if (*ignore || *s != '$')
 		{
 			/* Add the character, finish if the cursor has gone too far. */
 			Term_addch(*attr, *s);
+			mx--;
 		}
 		/* $$ prints $. */
 		else if (*(++s) == '$')
 		{
 			Term_addch(*attr, '$');
+			mx--;
 		}
 		/* $< saves the current colour as a default. */
 		else if (*s == '<')
@@ -2865,11 +2870,11 @@ static cptr mc_add(cptr s, int *dattr, int *attr, bool *ignore)
 		{
 			*attr = nattr;
 		}
-		/* An incorrect request is printed normally. */
+		/* An incorrect request gives a warning. */
 		else
 		{
-			Term_addch(*attr, '$');
-			Term_addch(*attr, *s);
+			Term_addch(TERM_RED, '$');
+			mx--;
 		}
 	}
 	return s;
@@ -2885,7 +2890,7 @@ static void mc_roff_aux(int x, cptr s)
 	int dattr = TERM_WHITE, attr = TERM_WHITE;
 	bool ignore = FALSE;
 
-	while (*((s = mc_add(s, &dattr, &attr, &ignore))))
+	while (*((s = mc_add(s, DEFAULT, &dattr, &attr, &ignore))))
 	{
 		if (strchr(" \n", *s))
 		{
@@ -2939,12 +2944,17 @@ void roff(cptr str)
  * Write a line of (possibly multicolour) text to the screen using mc_add()
  * above.
  */ 
-void mc_put_str(const int y, const int x, cptr str)
+static void mc_put_str_aux(const int y, const int x, const int l, cptr str)
 {
 	int attr, dattr = attr = TERM_WHITE;
 	bool ignore = FALSE;
 	if (Term_gotoxy(x, y)) return;
-	mc_add(str, &dattr, &attr, &ignore);
+	mc_add(str, l, &dattr, &attr, &ignore);
+}
+
+void mc_put_str(const int y, const int x, cptr str)
+{
+	mc_put_str_aux(y, x, DEFAULT, str);
 }
 
 /*
@@ -2953,12 +2963,38 @@ void mc_put_str(const int y, const int x, cptr str)
  */
 void mc_put_fmt(const int y, const int x, cptr fmt, ...)
 {
-	/* The screen can only be 255 characters wide, so this is enough. */
-	char buf[256];
+	/* The screen can only be 256 characters wide, so this is enough. */
+	char buf[257];
 
+	/* Print it. */
 	get_va_arg_buf(buf, fmt);
 	mc_put_str(y, x, buf);
 }
+
+/*
+ * Hack - enter a coloured formatted string into a field of a specified
+ * width.
+ *
+ * This takes the width as a separate parameter (which should be turned into
+ * a general "precision" specifier), and acts as if the last used parameter
+ * was clear_f0 without an explicit call.
+ * This makes sense as the function is only used in one way at present.
+ */
+void mc_put_lfmt(const int y, const int x, const int l, cptr fmt, ...)
+{
+	/* The screen can only be 256 characters wide, so this is enough. */
+	char buf[257], *t;
+
+	/* Hack - allow the caller to request a limit. */
+	get_va_arg_buf(buf, fmt);
+
+	/* Hack - add a lot of space to the end of buf as an implicit clear_f0. */
+	for (t = strchr(buf, '\0'); t < END_PTR(buf)-1; t++) *t = ' ';
+	*t = '\0';
+
+	mc_put_str_aux(y, x, l, buf);
+}
+
 
 /*
  * Clear part of the screen

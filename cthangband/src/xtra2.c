@@ -454,7 +454,7 @@ static void worsen_cuts(int v)
  * used by the array's standard use) to allow the spacing to be checked.
  */
 #ifdef CHECK_ARRAYS
-#define NEXT "",
+#define NEXT "", 
 #define OFFSET(V) ((V)+1)
 #else /* CHECK_ARRAYS */
 #define NEXT
@@ -464,34 +464,34 @@ static void worsen_cuts(int v)
 
 static cptr const temp_effects_show[] =
 {
-	NEXT "$oBlind", "    ",
-	NEXT "$oConfused", "        ",
-	NEXT "$oPoisoned", "        ",
-	NEXT "$oAfraid", "      ",
-	NEXT "$rParalysed!", 0,
-	NEXT "Hallu", "     ",
-	NEXT 0, 0, /* Fast */
-	NEXT 0, 0, /* Slow */
-	NEXT "Stone", "     ",
-	NEXT "Bless", "     ",
-	NEXT "Hero", "    ",
-	NEXT "Berserk", "       ",
-	NEXT "ProtEvil", "        ",
-	NEXT "Wraith", "      ",
-	NEXT "Invuln", "      ",
-	NEXT "ESP", "   ",
-	NEXT "SeeInv", "      ",
-	NEXT "Infra", "     ",
-	NEXT 0, 0, 0, /* op. acid */
-	NEXT 0, 0, 0, /* op. electricity */
-	NEXT 0, 0, 0, /* op. fire */
-	NEXT 0, 0, 0, /* op. cold */
-	NEXT 0, 0, 0, /* op. poison */
-	NEXT 0, "            ", "$oStun        ", "$oHeavy stun  ", "$rKnocked out ",
-	NEXT 0, "            ", "$yGraze       ", "$yLight cut   ", "$oBad cut     ",
-		"$oNasty cut   ", "$rSevere cut  ", "$rDeep gash   ", "$RMortal wound",
-	NEXT 0, 0, "      ", "$GFull  ", "$gGorged", "$rWeak  ", "$oWeak  ",
-		"$yHungry", 0, 0,
+	NEXT "$oBlind", "",
+	NEXT "$oConfused", "",
+	NEXT "$oPoisoned", "",
+	NEXT "$oAfraid", "",
+	NEXT "$rParalysed!", "",
+	NEXT "Hallu", "",
+	NEXT "Fast", "", /* Fast */
+	NEXT "Slow", "", /* Slow */
+	NEXT "Stone", "",
+	NEXT "Bless", "",
+	NEXT "Hero", "",
+	NEXT "Berserk", "",
+	NEXT "ProtEvil", "",
+	NEXT "Wraith", "",
+	NEXT "Invuln", "",
+	NEXT "ESP", "",
+	NEXT "SeeInv", "",
+	NEXT "Infra", "",
+	NEXT "", "", "RAcid", /* op. acid */
+	NEXT "", "", "RElec", /* op. electricity */
+	NEXT "", "", "RFire", /* op. fire */
+	NEXT "", "", "RCold", /* op. cold */
+	NEXT "", "", "RPoison", /* op. poison */
+	NEXT "", "", "$oStun", "$oHeavy stun", "$rKnocked out",
+	NEXT "", "", "$yGraze", "$yLight cut", "$oBad cut",
+		"$oNasty cut", "$rSevere cut", "$rDeep gash", "$RMortal wound",
+	NEXT "", "", "", "$GFull", "$gGorged", "$rWeak", "$oWeak",
+		"$yHungry", "", "",
 	NEXT
 };
 
@@ -524,16 +524,16 @@ static cptr const temp_effects_text[] =
 		"Your consciousness contracts again.", 
 	NEXT "Your eyes feel very sensitive!", "Your eyes feel less sensitive.", 
 	NEXT "Your eyes begin to tingle!", "Your eyes stop tingling.",
-	NEXT 0, "You feel resistant to acid!", "You feel less resistant to acid.",
-	NEXT 0, "You feel resistant to electricity!",
+	NEXT "", "You feel resistant to acid!", "You feel less resistant to acid.",
+	NEXT "", "You feel resistant to electricity!",
 		"You feel less resistant to electricity.",
-	NEXT 0, "You feel resistant to fire!", "You feel less resistant to fire.",
-	NEXT 0, "You feel resistant to cold!", "You feel less resistant to cold.",
-	NEXT 0, "You feel resistant to poison!",
+	NEXT "", "You feel resistant to fire!", "You feel less resistant to fire.",
+	NEXT "", "You feel resistant to cold!", "You feel less resistant to cold.",
+	NEXT "", "You feel resistant to poison!",
 		"You feel less resistant to poison.",
-	NEXT 0, "You are no longer stunned.", "You have been stunned.",
+	NEXT "", "You are no longer stunned.", "You have been stunned.",
 		"You have been heavily stunned.", "You have been knocked out.",
-	NEXT 0, "You are no longer bleeding.", "You have been given a graze.",
+	NEXT "", "You are no longer bleeding.", "You have been given a graze.",
 		"You have been given a light cut.", "You have been given a bad cut.",
 		"You have been given a nasty cut.", "You have been given a severe cut.",
 		"You have been given a deep gash.",
@@ -628,22 +628,29 @@ void check_temp_effects(void)
 	const temp_effect_type *ptr;
 	cptr str;
 
-	for (ptr = temp_effects; ptr < END_PTR(temp_effects); ptr++)
+	FOR_ALL_IN(temp_effects, ptr)
 	{
-		if (temp_effects+ptr->idx != ptr)
+		if (temp_effects + ptr->idx != ptr)
 			quit_fmt("temp_effects index %d misplaced.", ptr->idx);
 		if (!get_flag(ptr->idx))
 			quit_fmt("No temp_effects flag available for index %d.", ptr->idx);
 
-		str = temp_effects_text[ptr->text + ptr - temp_effects];
+		/* Check that the text markers are in the right place. */
+		str = temp_effects_text[ptr->text + ptr->idx];
 		if (!str) str = "null";
-		if (*str) quit_fmt("Text marker for temp_effects index %d is %s, "
-			"when it should be \"\".", ptr->idx, str);
+		if (*str) quit_fmt("Text marker for temp_effects index %d is "
+			"%s, when it should be \"\".", ptr->idx, str);
+
+		/* Check that the show markers are in the right place. */
+		str = temp_effects_show[ptr->text + ptr->idx];
+		if (!str) str = "null";
+		if (*str) quit_fmt("Show marker for temp effects index %d is "
+			"\"%s\", when it should be NULL.", ptr->idx, str);
 
 		/* Try to determine when a basic "change to current state" fails
 		 * accidentally. */
-		if ((*ptr->notice)(0, 1) < 0 && (*ptr->notice)(20000, 0) < 0 &&
-			(ptr->notice != notice_nothing))
+		if ((ptr->notice != notice_nothing) && (*ptr->notice)(-1, 1) < 0 &&
+			(*ptr->notice)(0, 1) < 0 && (*ptr->notice)(20000, 0) < 0)
 			quit_fmt("Notice function not expressive enough for temp_effects index %d.",
 				ptr->idx);
 	}
@@ -697,7 +704,7 @@ static bool set_flag_aux(int flag, int v, bool add)
 	msg = temp_effects_text[t_ptr->text + notice + OFFSET(flag)];
 
 	/* Print it if it's real. */
-	if (msg) msg_print(msg);
+	if (*msg) msg_print(msg);
 
 	/* Disturb */
 	if (disturb_state) disturb(0);

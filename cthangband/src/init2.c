@@ -1627,14 +1627,13 @@ static errr init_alloc(void)
  */
 static void check_screen_coords(void)
 {
-	const co_ord *co_ptr;
-	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
+	const redraw_type *ptr;
+	FOR_ALL_IN(screen_coords, ptr)
 	{
-		if (co_ptr->idx != co_ptr)
+		if (ptr->idx != ptr)
 		{
 			quit_fmt("The %s screen co-ordinates have index %d rather than %d",
-				co_ptr->name, co_ptr - screen_coords,
-				co_ptr->idx - screen_coords);
+				ptr->name, ptr - screen_coords, ptr->idx - screen_coords);
 		}
 	}
 }
@@ -1672,7 +1671,7 @@ static void check_options(void)
 	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 	{
 		/* Negative categories are special. */
-		if (op_ptr->o_page >= 0 && n[op_ptr->o_page]++ >= MAX_OPTS_PER_PAGE)
+		if (n[op_ptr->o_page]++ >= MAX_OPTS_PER_PAGE)
 		{
 			plog_fmt("The %s option overflows its category.", op_ptr->o_text);
 			error = TRUE;
@@ -1726,16 +1725,16 @@ static void check_options(void)
  */
 static void check_book_info(void)
 {
-	int i;
-	for (i = 0; i < N_ELEMENTS(book_info); i++)
+	const book_type *ptr;
+	FOR_ALL_IN(book_info, ptr)
 	{
-		const book_type *b_ptr = book_info+i;
+		int i = ptr - book_info;
 
 		/* Bad index. */
-		if (b_ptr->idx != i) quit_fmt("Book %d has index %d.", i, b_ptr->idx);
+		if (ptr->idx != i) quit_fmt("Book %d has index %d.", i, ptr->idx);
 
 		/* Bad value. */
-		if (!b_ptr->info || !b_ptr->flags) quit_fmt("Book %d is malformed.", i);
+		if (!ptr->info || !ptr->flags) quit_fmt("Book %d is malformed.", i);
 	}
 }
 
