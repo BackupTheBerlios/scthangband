@@ -4351,6 +4351,9 @@ void play_game(bool new_game)
 	reset_visuals();
 
 
+	/* Update stuff */
+	p_ptr->update |= (PU_MA_ARMOUR);
+
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 

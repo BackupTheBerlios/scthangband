@@ -1562,6 +1562,10 @@ static void calc_ma_armour(void)
 			inventory[i].to_a = 0;
 		}
 	}
+
+	/* Display the changes. */
+	p_ptr->redraw |= PR_ARMOR;
+	p_ptr->window |= PW_EQUIP | PW_PLAYER;
 }
 
 
@@ -1951,6 +1955,15 @@ static void calc_bonuses(bool quiet)
 		}
 	}
 
+	/* Mystic get extra ac for armour _not worn_ */
+	p_ptr->ma_cumber_armour = ma_heavy_armor();
+
+	/* Calculate any martial arts AC now, so the effect can be counted below. */
+	if (!p_ptr->ma_cumber_armour || !old_ma_cumber_armour)
+	{
+		calc_ma_armour();
+		p_ptr->update &= ~(PU_MA_ARMOUR);
+	}
 
     /* I'm adding the chaos features here for the lack of a better place... */
 	if (p_ptr->muta3)
@@ -2130,9 +2143,6 @@ static void calc_bonuses(bool quiet)
 			p_ptr->stat_add[A_CHR] = 0;
 		}
 	}
-
-	/* Mystic get extra ac for armour _not worn_ */
-	p_ptr->ma_cumber_armour = ma_heavy_armor();
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -2797,9 +2807,6 @@ static void calc_bonuses(bool quiet)
 			msg_print("The weight of your armor disrupts your balance.");
 		else
 			msg_print("You regain your balance.");
-
-		/* Calculate the effect on AC. */
-		p_ptr->update |= PU_MA_ARMOUR;
 	}
 }
 
@@ -4291,13 +4298,23 @@ void skill_exp(int index)
 		if(((byte)rand_int(100)>=(skill_set[index].value)) && (skill_set[index].value < 100))
 		{
 			skill_set[index].value++;
-			calc_hitpoints(); /* The hit-points might have changed */
-			calc_mana(FALSE); /* As might mana */
-			calc_spells(FALSE); /* And spells */
+
+			/* Update other skill-related variables. */
+			switch (index)
+			{
+				case SKILL_TOUGH: p_ptr->update |= PU_HP; break;
+				case SKILL_MANA: p_ptr->update |= PU_SPELLS | PU_MANA; break;
+				case SKILL_CHI: p_ptr->update |= PU_MANA; break;
+				case SKILL_MA: p_ptr->update |= PU_MA_ARMOUR; break;
+			}
+			update_stuff();
+
 			msg_format("%s %c%d%%->%d%%%c",skill_set[index].increase,
 			(skill_check_possible(index) ? '(' : '['),skill_set[index].value-1,
 			skill_set[index].value, (skill_check_possible(index) ? ')' : ']'));
+
 			p_ptr->window |= PW_PLAYER_SKILLS; /* Window stuff */
+
 			update_skill_maxima(); /* Update the maxima and possibly give rewards */
 		}
 	}
