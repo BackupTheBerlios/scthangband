@@ -252,9 +252,7 @@ static void prt_energy(void)
  */
 static void prt_hp(void)
 {
-	int x = get_x(XY_HP);
-	int y = get_y(XY_HP);
-	prt_nums("HP:", y, x, x+BORDER_WIDTH, p_ptr->chp, p_ptr->mhp);
+	prt_nums("HP:", GET_YX(XY_HP), BORDER_WIDTH, p_ptr->chp, p_ptr->mhp);
 }
 
 
@@ -263,12 +261,8 @@ static void prt_hp(void)
  */
 static void prt_sp(void)
 {
-	int x = get_x(XY_SP);
-	int y = get_y(XY_SP);
-	prt_nums("SP:", y, x, x+BORDER_WIDTH, p_ptr->csp, p_ptr->msp);
-	x = get_x(XY_CHI);
-	y = get_y(XY_CHI);
-	prt_nums("CH:", y, x, x+BORDER_WIDTH, p_ptr->cchi, p_ptr->mchi);
+	prt_nums("SP:", GET_YX(XY_SP), BORDER_WIDTH, p_ptr->csp, p_ptr->msp);
+	prt_nums("CH:", GET_YX(XY_CHI), BORDER_WIDTH, p_ptr->cchi, p_ptr->mchi);
 }
 
 /*

@@ -500,7 +500,7 @@ extern errr check_load(void);
 extern errr check_load_init(void);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))
-extern void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max);
+extern void prt_nums(cptr txt, int y, int x, int l, int cur, int max);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
 extern void weapon_stats(object_type *o_ptr, int slay, s16b *tohit, s16b *todam, s16b *weap_blow, s16b *mut_blow, s32b *damage);

@@ -1330,36 +1330,41 @@ errr check_load_init(void)
 /*
  * Determine the colour of a display based on the proportion of maximum.
  */
-static byte percent_to_colour(s16b cur, s16b max)
+static char percent_to_colour(s16b cur, s16b max)
 {
-	if (cur == max) return TERM_L_GREEN;
-  	if (cur > (max * hitpoint_warn) / 10) return TERM_YELLOW;
-	return TERM_RED;
+	if (cur == max) return 'G';
+  	if (cur > (max * hitpoint_warn) / 10) return 'y';
+	return 'r';
 }
 
 /*
  * Print out a ratio (as for hit points).
  */
-void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max)
+void prt_nums(cptr txt, int y, int x, int l, int cur, int max)
 {
-	cptr temp = format(" %d/%d", cur, max);
-	byte attr = percent_to_colour(cur, max);
-	uint len = maxx+1-minx;
-	
-	/* Paranoia */
-	if (maxx < minx) return;
+	char temp[32], attr = percent_to_colour(cur, max);
+	int tl;
 
-	/* Clear a space. */
-	Term_erase(minx, y, len);
+	/* temp is too large to overflow. */
+	sprintf(temp, "%d/%d", cur, max);
+	tl = strlen(temp);
+
+	/* Paranoia */
+	if (l < 0) return;
 
 	/* Print the text string in white. */
-	if (txt) put_str(txt, y, minx);
+	mc_put_fmt(y, x, "%-*.*s", l, l, txt);
 
-	/* Trim initial numbers if the number string would be too long. */
-	if (strlen(temp) > len) temp += strlen(temp)-len;
-
-	/* Print the number string in colour. */
-	c_put_str(attr, temp, y, maxx-strlen(temp));
+	if (tl >= l)
+	{
+		/* Trim the end if the number string would be too long. */
+		mc_put_fmt(y, x, "$%c%.*s", attr, l, temp);
+	}
+	else
+	{
+		/* Print the number string in colour. */
+		mc_put_fmt(y, x+l-tl-1, "$%c %s", attr, temp);
+	}
 }
 
 static void choose_ammunition(object_ctype *wp_ptr, object_type **am_ptr)
@@ -1828,9 +1833,9 @@ static void display_player_sides(bool missile)
 	temp = format("%ld,%ld", damage/60, damage%60);
 	c_put_str(TERM_L_BLUE, temp, 13, col-strlen(temp));
 
-	prt_nums("Hit Points:", 9, 52, 76, p_ptr->chp, p_ptr->mhp);
-	prt_nums("Spell Points:", 10, 52, 76, p_ptr->csp, p_ptr->msp);
-	prt_nums("Chi Points:", 11, 52, 76, p_ptr->cchi, p_ptr->mchi);
+	prt_nums("Hit Points:", 9, 52, 24, p_ptr->chp, p_ptr->mhp);
+	prt_nums("Spell Points:", 10, 52, 24, p_ptr->csp, p_ptr->msp);
+	prt_nums("Chi Points:", 11, 52, 24, p_ptr->cchi, p_ptr->mchi);
 
 	mc_put_fmt(13, 52, "Gold           $G%9ld", p_ptr->au);
 }
