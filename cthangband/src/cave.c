@@ -1481,6 +1481,9 @@ static byte priority_table[][2] =
 	/* Dark */
 	{ FEAT_NONE, 2 },
 
+	/* Dark (no traps) */
+	{ FEAT_NONE_TD, 3 },
+
 	/* Floors */
 	{ FEAT_FLOOR, 5 },
 
