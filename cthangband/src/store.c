@@ -3316,13 +3316,6 @@ static void store_sell(void)
 		do_store_browse(o_ptr);
 		return;
 	}
-	/* Require full knowledge */
-	if (!(o_ptr->ident & (IDENT_MENTAL)))
-	{
-	/* This can only happen in the home */
-        msg_print("You have no special knowledge about that item.");
-        return;
-	}
 
    /* Description */
    object_desc(o_name, o_ptr, TRUE, 3);

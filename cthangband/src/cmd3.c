@@ -638,13 +638,6 @@ void do_cmd_observe(void)
 	/* Description */
 	object_desc(o_name, o_ptr, TRUE, 3);
 
-	/* Require full knowledge */
-	if (!(o_ptr->ident & (IDENT_MENTAL)))
-	{
-		msg_format("You have no special knowledge about %s.", o_name);
-		return;
-	}
-
 
 	/* Describe */
 	msg_format("Examining %s...", o_name);

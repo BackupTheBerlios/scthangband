@@ -2849,8 +2849,8 @@ bool identify_fully_aux(object_type *o_ptr)
 	cptr            info[128];
 
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	/* Extract the known flags */
+	object_flags_known(o_ptr, &f1, &f2, &f3);
 
 
 	/* Mega-Hack -- describe activation */
@@ -3275,8 +3275,28 @@ bool identify_fully_aux(object_type *o_ptr)
 		info[i++] = "It has been blessed by the gods.";
 	}
 
-	if (cursed_p(o_ptr))
+	/* Describe random possibilities if not *identified*. 
+	 * Note that this only has a precise meaning for artefacts. 
+	 * Bug - LITE can be mentioned both here and in its own right. Unfortunately it's not easy to fix. */
+	if (~o_ptr->ident & IDENT_MENTAL && !cheat_item)
 	{
+		if (f2 & (TR2_RAND_RESIST))
+		{
+			if (o_ptr->name1) info[i++] = "It gives you a random resistance.";
+			else info[i++] = "It may give you a random resistance.";
+		}
+		if (f2 & (TR2_RAND_POWER))
+		{
+			if (o_ptr->name1) info[i++] = "It gives you a random power.";
+			else info[i++] = "It may give you a random power.";
+		}
+		if (f2 & (TR2_RAND_EXTRA))
+		{
+			if (o_ptr->name1) info[i++] = "It gives you a random power or resistance.";
+			else info[i++] = "It may give you a random power or resistance.";
+		}
+	}
+
 		if (f3 & (TR3_PERMA_CURSE))
 		{
 			info[i++] = "It is permanently cursed.";
@@ -3285,11 +3305,10 @@ bool identify_fully_aux(object_type *o_ptr)
 		{
 			info[i++] = "It is heavily cursed.";
 		}
-		else
+	else if (f3 & (TR3_CURSED))
 		{
 			info[i++] = "It is cursed.";
 		}
-	}
 
 	if (f3 & (TR3_AUTO_CURSE))
 	{
