@@ -208,7 +208,7 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 				monster_race *r_ptr = &r_info[i_ptr->num];
 				C_TNEW(m_name, MNAME_MAX, char);
 				monster_desc_aux(m_name, r_ptr, i_ptr->max, MDF_INDEF);
-				(*out)(format("%s%s %s be created", (i_ptr->max > 1) ? "some " : "", m_name, DDE_MAY));
+				(*out)(format("%s %s be created", m_name, DDE_MAY));
 				TFREE(m_name);
 				break;
 			}
