@@ -109,6 +109,7 @@
 #include <sys/stat.h>
 #endif /* HAS_STAT */
 
+/* Most displays rely on main.c to start the game up, but a few do not. */
 #if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
 #define USE_MAIN_C
 #endif
