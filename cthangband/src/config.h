@@ -284,7 +284,7 @@
 /*
  * Register score if the player quits.
  */
-/*#define SCORE_QUITTERS*/
+#define SCORE_QUITTERS
 
 
 /*

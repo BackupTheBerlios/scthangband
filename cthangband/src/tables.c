@@ -2723,8 +2723,10 @@ option_type option_info[] =
 	{ &auto_more,                   FALSE,  OPTS_DISTURB,      3, 12,
 	"auto_more",                    "Automatically clear '-more-' prompts" },
 
+#ifdef SCORE_QUITTERS
 	{ &score_quitters,		FALSE, OPTS_BIRTH, 2, 29,
-	"score_quitter",			"Remember scores of those who quit the game" },
+	"score_quitters",			"Remember scores of those who quit the game" },
+#endif /* SCORE_QUITTERS */
 
 	{ &maximise_mode,               TRUE, OPTS_BIRTH, 2, 18,
     "maximise_mode",                "Include race/template bonuses in stat calcs" },

@@ -228,7 +228,9 @@ bool maximise_mode; /* Unify stat bonuses */
 bool use_autoroller; /* Autoroll characters */
 bool spend_points; /* Spend points on stats */
 bool ironman_shop; /* Not allowed in shops */
+#ifdef SCORE_QUITTERS
 bool score_quitters; /* Quitting can give a high score */
+#endif /* SCORE_QUITTERS */
 
 /* Option Set 3 -- Game-Play */
 

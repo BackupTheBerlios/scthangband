@@ -2866,7 +2866,7 @@ extern bool spend_points;
 #if (defined(FILES_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_shop;
 #endif
-#if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(SCORE_QUITTERS)) && (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool score_quitters;
 #endif
 #if (defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
