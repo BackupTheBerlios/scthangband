@@ -3044,7 +3044,7 @@ static powertype *cur_powers[MAX_POWERS];
 
 
 #define RACIAL_MIN_X 13 /* The distance across the screen at which the display starts. */
-#define MIN_STRING_LEN 25 /* The space allowed for all description strings. Longer strings are still longer. */
+#define MIN_STRING_LEN 22 /* The space allowed for all description strings. Longer strings are still longer. */
 
 
 #ifndef A_MAX
