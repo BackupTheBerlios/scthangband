@@ -310,7 +310,6 @@ I:Sword:0:CLOSE
 W:0.5lb:1
 A:0/1
 P:(1d1) (-2,-4) [0,+0]
-P:0:1d1:-2:-4:0
 
 N:31:& Broken Sword~
 G:|:D:0
