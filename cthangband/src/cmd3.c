@@ -848,7 +848,7 @@ static void do_cmd_refill_lamp(int item)
 	item_tester_hook = 0;
 
 	/* Take a partial turn */
-	energy_use = extract_energy[p_ptr->pspeed];
+	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 	/* Access the lantern */
 	j_ptr = &inventory[INVEN_LITE];
