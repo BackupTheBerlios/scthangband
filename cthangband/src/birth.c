@@ -729,7 +729,7 @@ static bool load_stat_set(bool);
 static bc_type birth_option(void)
 		{
 			bool old_allow_quickstart = allow_quickstart;
-			bool old_spend_points = spend_points & !use_autoroller;
+			bool old_spend_points = spend_points && !use_autoroller;
 			bool old_allow_pickstats = allow_pickstats;
 			bool old_maximise_mode = maximise_mode;
 			Term_save();
@@ -3958,12 +3958,25 @@ static bool player_birth_aux(void)
 				while (TRUE)
 				{
 					char *s;
+					int stat = 0;
+					
+					if (p_ptr->stat_max[0])
+					{
+						/* If there are default stats, set the default
+						 * to this one. */
+						stat = modify_stat_value(p_ptr->stat_max[i],
+						rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
+
+						cnv_stat(stat, inp);
+					}
+					else
+					{
+						/* Default */
+						*inp = '\0';
+					}
 
 					/* Move the cursor */
 					put_str("", 16 + i, 30);
-
-					/* Default */
-					strcpy(inp, "");
 
 					/* Get a response (or escape) */
 					if (!askfor_aux(inp, 8)) inp[0] = '\0';
