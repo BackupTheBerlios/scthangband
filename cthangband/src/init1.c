@@ -620,14 +620,14 @@ static errr check_version(char *buf, header *head)
 static s16b find_string(char *buf, cptr *array)
 {
 	u16b i, value = 0;
-	cptr place = 0;
+	char *place = 0;
 
 	/* Find a string surrounded by ':'s. */
 	for (i = 0; array[i]; i++)
 	{
 		if (strlen(array[i]) && strstr(buf, array[i]))
 		{
-			cptr tmp = strstr(buf, array[i]);
+			char *tmp = strstr(buf, array[i]);
 			/* Check that this can't be merely a substring */
 			if (!okchar(*(tmp-1))) continue;
 			if (!okchar(*(tmp+strlen(array[i])))) continue;
