@@ -2633,6 +2633,9 @@ static void make_birth_item(make_item_type *i_ptr)
 {		
 	object_type o_ptr[1];
 
+	/* No such item. */
+	if (!i_ptr->k_idx) return;
+
 	/* Actually create the item. */
 	make_item(o_ptr, i_ptr);
 
