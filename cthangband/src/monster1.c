@@ -119,7 +119,7 @@ static bool know_damage(int r_idx, int i)
 /*
  * Display information about death events
  */
-cptr describe_death_events(int r_idx, cptr he, bool omniscient)
+static cptr describe_death_events(int r_idx, cptr he, bool omniscient)
 {
 	u16b j;
 	s16b start = -1, end = -1;
@@ -236,7 +236,7 @@ struct roff_monster_type
  * escape sequences for them. It doesn't print anything directly as it doesn't
  * know what colour everything should be by default.
  */
-cptr roff_monster(u32b flags2, u32b flags3)
+static cptr roff_monster(u32b flags2, u32b flags3)
 {
 	roff_monster_type cats[] =
 	{

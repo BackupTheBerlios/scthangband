@@ -1458,18 +1458,10 @@ static void spoil_mon_desc(cptr fname)
  */
 
 /*
- * Pronoun arrays
- */
-static cptr wd_che[3] =
-{ "It", "He", "She" };
-static cptr wd_lhe[3] =
-{ "it", "he", "she" };
-
-/*
  * Buffer text to the given file. (-SHAWN-)
  * This is basically c_roff() from mon-desc.c with a few changes.
  */
-static void spoil_out(cptr str)
+static void spoil_out_aux(cptr str)
 {
 	cptr r;
 
@@ -1534,18 +1526,41 @@ static void spoil_out(cptr str)
 	}
 }
 
+/*
+ * Use a format string with spoil_out().
+ */
+static void spoil_out(cptr fmt, ...)
+{
+	if (fmt)
+	{
+		char buf[1024];
+		va_list vp;
+		va_start(vp, fmt);
+		vstrnfmt(buf, sizeof(buf), fmt, vp);
+		va_end(vp);
+
+		spoil_out_aux(buf);
+	}
+	else
+	{
+		spoil_out_aux(fmt);
+	}
+}
 
 /*
  * Create a spoiler file for monsters (-SHAWN-)
  */
 static void spoil_mon_info(cptr fname)
 {
-	char buf[1024];
-	int msex, vn, i, j, k, n;
-	bool breath, magic, sin;
-	cptr p, q;
-	cptr vp[64];
+	int n, x, y;
+	bool breath, magic;
 	u32b flags1, flags2, flags3, flags4, flags5, flags6;
+
+	const bool old_spoil_mon = spoil_mon;
+
+	byte a;
+	char c, c2;
+	byte old_moncol[MAX_MONCOL];
 
 	/* Open the file */
 	my_fopen_wiz(fname);
@@ -1559,11 +1574,17 @@ static void spoil_mon_info(cptr fname)
 	}
 
 
-	/* Dump the header */
-	sprintf(buf, "Monster Spoilers for %s Version %s\n", GAME_NAME,
-		GAME_VERSION);
+	/* Give full information. */
+	spoil_mon = TRUE;
 
-	spoil_out(buf);
+	for (n = 0; n < MAX_MONCOL; n++) old_moncol[n] = moncol[n].attr;
+
+	/* Hack - hide some information. */
+	moncol[0].attr = moncol[8].attr = moncol[18].attr = TERM_DARK;
+
+	/* Dump the header */
+	spoil_out("Monster Spoilers for %s Version %s\n",
+		GAME_NAME, GAME_VERSION);
 	spoil_out("------------------------------------------\n\n");
 
 	/*
@@ -1571,6 +1592,7 @@ static void spoil_mon_info(cptr fname)
 	 */
 	for (n = 1; n < MAX_R_IDX; n++)
 	{
+
 		monster_race *r_ptr = &r_info[n];
 
 		/* Skip "fake" monsters. */
@@ -1585,11 +1607,6 @@ static void spoil_mon_info(cptr fname)
 		flags6 = r_ptr->flags6;
 		breath = FALSE;
 		magic = FALSE;
-
-		/* Extract a gender (if applicable) */
-		if (flags1 & (RF1_FEMALE)) msex = 2;
-		else if (flags1 & (RF1_MALE)) msex = 1;
-		else msex = 0;
 
 
 		/* Prefix */
@@ -1607,623 +1624,85 @@ static void spoil_mon_info(cptr fname)
 		}
 
 		/* Name */
-		spoil_out(format("%v  (", monster_desc_aux_f3, r_ptr, 1, 0));
+		spoil_out("%v  (", monster_desc_aux_f3, r_ptr, 1, 0);
 
 		/* Color */
 		spoil_out(attr_to_text(r_ptr->d_attr));
 
 		/* Symbol --(-- */
-		sprintf(buf, " '%c')\n", r_ptr->d_char);
-		spoil_out(buf);
+		spoil_out(" '%c')\n", r_ptr->d_char);
 
 
 		/* Indent */
-		sprintf(buf, "=== ");
-		spoil_out(buf);
+		spoil_out("=== ");
 
 		/* Number */
-		sprintf(buf, "Num:%d  ", n);
-		spoil_out(buf);
+		spoil_out("Num:%d  ", n);
 
 		/* Level */
-		sprintf(buf, "Lev:%d  ", r_ptr->level);
-		spoil_out(buf);
+		spoil_out("Lev:%d  ", r_ptr->level);
 
 		/* Rarity */
-		sprintf(buf, "Rar:%d  ", r_ptr->rarity);
-		spoil_out(buf);
+		spoil_out("Rar:%d  ", r_ptr->rarity);
 
 		/* Speed */
-		if (r_ptr->speed >= 110)
-		{
-			sprintf(buf, "Spd:+%d  ", (r_ptr->speed - 110));
-		}
-		else
-		{
-			sprintf(buf, "Spd:-%d  ", (110 - r_ptr->speed));
-		}
-		spoil_out(buf);
+		spoil_out("Spd:%+d  ", (r_ptr->speed - 110));
 
 		/* Hitpoints */
 		if ((flags1 & (RF1_FORCE_MAXHP)) || (r_ptr->hside == 1))
 		{
-			sprintf(buf, "Hp:%d  ", r_ptr->hdice * r_ptr->hside);
+			spoil_out("Hp:%d  ", r_ptr->hdice * r_ptr->hside);
 		}
 		else
 		{
-			sprintf(buf, "Hp:%dd%d  ", r_ptr->hdice, r_ptr->hside);
+			spoil_out("Hp:%dd%d  ", r_ptr->hdice, r_ptr->hside);
 		}
-		spoil_out(buf);
 
 		/* Armor Class */
-		sprintf(buf, "Ac:%d  ", r_ptr->ac);
-		spoil_out(buf);
+		spoil_out("Ac:%d  ", r_ptr->ac);
 
 		/* Power */
-		sprintf(buf, "Power:%ld\n", (long)(r_ptr->mexp));
-		spoil_out(buf);
+		spoil_out("Power:%ld\n", (long)(r_ptr->mexp));
 
+		/* Display the monster on screen. */
+		display_roff(n);
 
-		/* Describe */
-		spoil_out(r_text + r_ptr->text);
-		spoil_out("  ");
-
-
-		spoil_out(roff_monster(flags2, flags3));
-
-		spoil_out(" moves");
-
-		if ((flags1 & (RF1_RAND_50)) && (flags1 & (RF1_RAND_25)))
+		/* Dump the on-screen display (excluding the title). */
+		for (c2 = 0, y = 1; y < Term->hgt; y++)
 		{
-			spoil_out(" extremely erratically");
-		}
-		else if (flags1 & (RF1_RAND_50))
-		{
-			spoil_out(" somewhat erratically");
-		}
-		else if (flags1 & (RF1_RAND_25))
-		{
-			spoil_out(" a bit erratically");
-		}
-		else
-		{
-			spoil_out(" normally");
-		}
-
-		if (flags1 & (RF1_NEVER_MOVE))
-		{
-			spoil_out(", but does not deign to chase intruders");
-		}
-
-		spoil_out(".  ");
-
-
-
-
-		if (flags1 & (RF1_FORCE_SLEEP))
-		{
-			sprintf(buf, "%s is always created sluggish.  ", wd_che[msex]);
-            spoil_out(buf);
-		}
-
-        if (flags2 & (RF2_AURA_FIRE))
-        {
-            sprintf(buf, "%s is surrounded in flames.  ", wd_che[msex]);
-            spoil_out(buf);
-        }
-
-        if (flags2 & (RF2_AURA_ELEC))
-        {
-            sprintf(buf, "%s is surrounded in electricity.  ", wd_che[msex]);
-            spoil_out(buf);
-        }
-
-        if (flags2 & (RF2_REFLECTING))
-        {
-            sprintf(buf, "%s reflects bolt spells.  ", wd_che[msex]);
-            spoil_out(buf);
-        }
-
-		if (flags1 & (RF1_ESCORT))
-		{
-			sprintf(buf, "%s usually appears with ", wd_che[msex]);
-			spoil_out(buf);
-			if (flags1 & (RF1_ESCORTS)) spoil_out("escorts.  ");
-			else spoil_out("an escort.  ");
-		}
-
-		if (flags1 & (RF1_FRIENDS))
-		{
-			sprintf(buf, "%s usually appears in groups.  ", wd_che[msex]);
-			spoil_out(buf);
-		}
-
-
-		/* Collect inate attacks */
-		vn = 0;
-		if (flags4 & (RF4_SHRIEK)) vp[vn++] = "shriek for help";
-		if (flags4 & (RF4_XXX3)) vp[vn++] = "do something";
-	if (flags4 & (RF4_BA_SHARD)) vp[vn++] = "produce shard balls";
-		if (flags4 & (RF4_ARROW_1)) vp[vn++] = "fire arrows";
-		if (flags4 & (RF4_ARROW_2)) vp[vn++] = "fire arrows";
-		if (flags4 & (RF4_ARROW_3)) vp[vn++] = "fire missiles";
-		if (flags4 & (RF4_ARROW_4)) vp[vn++] = "fire missiles";
-
-		if (vn)
-		{
-			spoil_out(wd_che[msex]);
-			for (i = 0; i < vn; i++)
+			for (x = 0; x < Term->wid; x++)
 			{
-				if (!i) spoil_out(" may ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" or ");
-				spoil_out(vp[i]);
-			}
-			spoil_out(".  ");
-		}
+				/* Check the character. */
+				Term_what(x, y, &a, &c);
 
-		/* Collect breaths */
-		vn = 0;
-		if (flags4 & (RF4_BR_ACID)) vp[vn++] = "acid";
-		if (flags4 & (RF4_BR_ELEC)) vp[vn++] = "lightning";
-		if (flags4 & (RF4_BR_FIRE)) vp[vn++] = "fire";
-		if (flags4 & (RF4_BR_COLD)) vp[vn++] = "frost";
-		if (flags4 & (RF4_BR_POIS)) vp[vn++] = "poison";
-		if (flags4 & (RF4_BR_NETH)) vp[vn++] = "nether";
-		if (flags4 & (RF4_BR_LITE)) vp[vn++] = "light";
-		if (flags4 & (RF4_BR_DARK)) vp[vn++] = "darkness";
-		if (flags4 & (RF4_BR_CONF)) vp[vn++] = "confusion";
-		if (flags4 & (RF4_BR_SOUN)) vp[vn++] = "sound";
-		if (flags4 & (RF4_BR_CHAO)) vp[vn++] = "chaos";
-		if (flags4 & (RF4_BR_DISE)) vp[vn++] = "disenchantment";
-		if (flags4 & (RF4_BR_NEXU)) vp[vn++] = "nexus";
-		if (flags4 & (RF4_BR_TIME)) vp[vn++] = "time";
-		if (flags4 & (RF4_BR_INER)) vp[vn++] = "inertia";
-		if (flags4 & (RF4_BR_GRAV)) vp[vn++] = "gravity";
-		if (flags4 & (RF4_BR_SHAR)) vp[vn++] = "shards";
-		if (flags4 & (RF4_BR_PLAS)) vp[vn++] = "plasma";
-		if (flags4 & (RF4_BR_WALL)) vp[vn++] = "force";
-		if (flags4 & (RF4_BR_MANA)) vp[vn++] = "mana";
-	if (flags4 & (RF4_BR_NUKE)) vp[vn++] = "toxic waste";
-    if (flags4 & (RF4_BR_DISI)) vp[vn++] = "disintegration";
+				/* Ignore blanked text. */
+				if (a == TERM_DARK) continue;
 
-		if (vn)
-		{
-			breath = TRUE;
-			spoil_out(wd_che[msex]);
-			for (i = 0; i < vn; i++)
-			{
-				if (!i) spoil_out(" may breathe ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" or ");
-				spoil_out(vp[i]);
-			}
-			if (flags2 & (RF2_POWERFUL)) spoil_out(" powerfully");
-		}
+				/* Ignore repeated spaces. */
+				if (c == ' ' && c2 == ' ') continue;
 
-		/* Collect spells */
-		vn = 0;
-		if (flags5 & (RF5_BA_ACID))           vp[vn++] = "produce acid balls";
-		if (flags5 & (RF5_BA_ELEC))           vp[vn++] = "produce lightning balls";
-		if (flags5 & (RF5_BA_FIRE))           vp[vn++] = "produce fire balls";
-		if (flags5 & (RF5_BA_COLD))           vp[vn++] = "produce frost balls";
-		if (flags5 & (RF5_BA_POIS))           vp[vn++] = "produce poison balls";
-		if (flags5 & (RF5_BA_NETH))           vp[vn++] = "produce nether balls";
-		if (flags5 & (RF5_BA_WATE))           vp[vn++] = "produce water balls";
-	if (flags4 & (RF4_BA_NUKE))           vp[vn++] = "produce balls of radiation";
-		if (flags5 & (RF5_BA_MANA))           vp[vn++] = "produce mana storms";
-		if (flags5 & (RF5_BA_DARK))           vp[vn++] = "produce darkness storms";
-        if (flags4 & (RF4_BA_CHAO))           vp[vn++] = "invoke raw chaos";
-        if (flags6 & (RF6_DREAD_CURSE))            vp[vn++] = "invoke the Dread Curse of Azathoth";
-		if (flags5 & (RF5_DRAIN_MANA))        vp[vn++] = "drain mana";
-		if (flags5 & (RF5_MIND_BLAST))        vp[vn++] = "cause mind blasting";
-		if (flags5 & (RF5_BRAIN_SMASH))       vp[vn++] = "cause brain smashing";
-        if (flags5 & (RF5_CAUSE_1))           vp[vn++] = "cause light wounds and cursing";
-        if (flags5 & (RF5_CAUSE_2))           vp[vn++] = "cause serious wounds and cursing";
-        if (flags5 & (RF5_CAUSE_3))           vp[vn++] = "cause critical wounds and cursing";
-		if (flags5 & (RF5_CAUSE_4))           vp[vn++] = "cause mortal wounds";
-		if (flags5 & (RF5_BO_ACID))           vp[vn++] = "produce acid bolts";
-		if (flags5 & (RF5_BO_ELEC))           vp[vn++] = "produce lightning bolts";
-		if (flags5 & (RF5_BO_FIRE))           vp[vn++] = "produce fire bolts";
-		if (flags5 & (RF5_BO_COLD))           vp[vn++] = "produce frost bolts";
-		if (flags5 & (RF5_BO_POIS))           vp[vn++] = "produce poison bolts";
-		if (flags5 & (RF5_BO_NETH))           vp[vn++] = "produce nether bolts";
-		if (flags5 & (RF5_BO_WATE))           vp[vn++] = "produce water bolts";
-		if (flags5 & (RF5_BO_MANA))           vp[vn++] = "produce mana bolts";
-		if (flags5 & (RF5_BO_PLAS))           vp[vn++] = "produce plasma bolts";
-		if (flags5 & (RF5_BO_ICEE))           vp[vn++] = "produce ice bolts";
-		if (flags5 & (RF5_MISSILE))           vp[vn++] = "produce magic missiles";
-		if (flags5 & (RF5_SCARE))             vp[vn++] = "terrify";
-		if (flags5 & (RF5_BLIND))             vp[vn++] = "blind";
-		if (flags5 & (RF5_CONF))              vp[vn++] = "confuse";
-		if (flags5 & (RF5_SLOW))              vp[vn++] = "slow";
-		if (flags5 & (RF5_HOLD))              vp[vn++] = "paralyze";
-		if (flags6 & (RF6_HASTE))             vp[vn++] = "haste-self";
-		if (flags6 & (RF6_HEAL))              vp[vn++] = "heal-self";
-		if (flags6 & (RF6_XXX2))            vp[vn++] = "do something";
-		if (flags6 & (RF6_BLINK))             vp[vn++] = "blink-self";
-		if (flags6 & (RF6_TPORT))             vp[vn++] = "teleport-self";
-		if (flags6 & (RF6_XXX3))            vp[vn++] = "do something";
-		if (flags6 & (RF6_XXX4))            vp[vn++] = "do something";
-		if (flags6 & (RF6_TELE_TO))           vp[vn++] = "teleport to";
-		if (flags6 & (RF6_TELE_AWAY))         vp[vn++] = "teleport away";
-		if (flags6 & (RF6_TELE_LEVEL))        vp[vn++] = "teleport level";
-		if (flags6 & (RF6_XXX5))              vp[vn++] = "do something";
-		if (flags6 & (RF6_DARKNESS))          vp[vn++] = "create darkness";
-		if (flags6 & (RF6_TRAPS))             vp[vn++] = "create traps";
-		if (flags6 & (RF6_FORGET))            vp[vn++] = "cause amnesia";
-        if (flags6 & (RF6_S_MONSTER))         vp[vn++] = "summon a monster";
-		if (flags6 & (RF6_S_MONSTERS))        vp[vn++] = "summon monsters";
-        if (flags6 & (RF6_S_KIN))             vp[vn++] = "summon aid";
-		if (flags6 & (RF6_S_ANT))             vp[vn++] = "summon ants";
-		if (flags6 & (RF6_S_SPIDER))          vp[vn++] = "summon spiders";
-		if (flags6 & (RF6_S_HOUND))           vp[vn++] = "summon hounds";
-		if (flags6 & (RF6_S_HYDRA))           vp[vn++] = "summon hydras";
-		if (flags6 & (RF6_S_IB))	vp[vn++] = "summon beings of Ib";
-		if (flags6 & (RF6_S_CTHULOID))           vp[vn++] = "summon a Cthuloid entity";
-		if (flags6 & (RF6_S_DEMON))           vp[vn++] = "summon a demon";
-		if (flags6 & (RF6_S_UNDEAD))          vp[vn++] = "summon an undead";
-		if (flags6 & (RF6_S_DRAGON))          vp[vn++] = "summon a dragon";
-		if (flags6 & (RF6_S_HI_UNDEAD))       vp[vn++] = "summon greater undead";
-		if (flags6 & (RF6_S_HI_DRAGON))       vp[vn++] = "summon ancient dragons";
-        if (flags6 & (RF6_S_REAVER))           vp[vn++] = "summon Black Reavers";
-        if (flags6 & (RF6_S_GOO))          vp[vn++] = "summon Great Old Ones";
-		if (flags6 & (RF6_S_UNIQUE))          vp[vn++] = "summon unique monsters";
+				/* Dump the character. */
+				spoil_out("%c", c);
 
-		if (vn)
-		{
-			magic = TRUE;
-			if (breath)
-			{
-				spoil_out(", and is also");
-			}
-			else
-			{
-				spoil_out(wd_che[msex]);
-				spoil_out(" is");
-			}
-			spoil_out(" magical, casting spells");
-			if (flags2 & (RF2_SMART)) spoil_out(" intelligently");
-			for (i = 0; i < vn; i++)
-			{
-				if (!i) spoil_out(" which ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" or ");
-				spoil_out(vp[i]);
-			}
-		}
-
-		if (breath || magic)
-		{
-			sprintf(buf, "; 1 time in %d.  ",
-				200 / (r_ptr->freq_inate + r_ptr->freq_spell));
-			spoil_out(buf);
-		}
-
-		/* Collect special abilities. */
-		vn = 0;
-		if (flags2 & (RF2_OPEN_DOOR)) vp[vn++] = "open doors";
-		if (flags2 & (RF2_BASH_DOOR)) vp[vn++] = "bash down doors";
-		if (flags2 & (RF2_PASS_WALL)) vp[vn++] = "pass through walls";
-		if (flags2 & (RF2_KILL_WALL)) vp[vn++] = "bore through walls";
-		if (flags2 & (RF2_MOVE_BODY)) vp[vn++] = "push past weaker monsters";
-		if (flags2 & (RF2_KILL_BODY)) vp[vn++] = "destroy weaker monsters";
-		if (flags2 & (RF2_TAKE_ITEM)) vp[vn++] = "pick up objects";
-		if (flags2 & (RF2_KILL_ITEM)) vp[vn++] = "destroy objects";
-
-		if (vn)
-		{
-			spoil_out(wd_che[msex]);
-			for (i = 0; i < vn; i++)
-			{
-				if (!i) spoil_out(" can ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" and ");
-				spoil_out(vp[i]);
-			}
-			spoil_out(".  ");
-		}
-
-		if (flags2 & (RF2_INVISIBLE))
-		{
-			spoil_out(wd_che[msex]);
-			spoil_out(" is invisible.  ");
-		}
-		if (flags2 & (RF2_COLD_BLOOD))
-		{
-			spoil_out(wd_che[msex]);
-			spoil_out(" is cold blooded.  ");
-		}
-		if (flags2 & (RF2_EMPTY_MIND))
-		{
-			spoil_out(wd_che[msex]);
-			spoil_out(" is not detected by telepathy.  ");
-		}
-		if (flags2 & (RF2_WEIRD_MIND))
-		{
-			spoil_out(wd_che[msex]);
-			spoil_out(" is rarely detected by telepathy.  ");
-		}
-		if (flags2 & (RF2_MULTIPLY))
-		{
-			spoil_out(wd_che[msex]);
-			spoil_out(" breeds explosively.  ");
-		}
-		if (flags2 & (RF2_REGENERATE))
-		{
-			spoil_out(wd_che[msex]);
-			spoil_out(" regenerates quickly.  ");
-		}
-
-		/* Collect susceptibilities */
-		vn = 0;
-		if (flags3 & (RF3_HURT_ROCK)) vp[vn++] = "rock remover";
-		if (flags3 & (RF3_HURT_LITE)) vp[vn++] = "bright light";
-		if (flags3 & (RF3_HURT_FIRE)) vp[vn++] = "fire";
-		if (flags3 & (RF3_HURT_COLD)) vp[vn++] = "cold";
-
-		if (vn)
-		{
-			spoil_out(wd_che[msex]);
-			for (i = 0; i < vn; i++)
-			{
-				if (!i) spoil_out(" is hurt by ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" and ");
-				spoil_out(vp[i]);
-			}
-			spoil_out(".  ");
-		}
-
-		/* Collect immunities */
-		vn = 0;
-		if (flags3 & (RF3_IM_ACID)) vp[vn++] = "acid";
-		if (flags3 & (RF3_IM_ELEC)) vp[vn++] = "lightning";
-		if (flags3 & (RF3_IM_FIRE)) vp[vn++] = "fire";
-		if (flags3 & (RF3_IM_COLD)) vp[vn++] = "cold";
-		if (flags3 & (RF3_IM_POIS)) vp[vn++] = "poison";
-		if (flags3 & (RF3_IM_WATER)) vp[vn++] = "water";
-
-		if (vn)
-		{
-			spoil_out(wd_che[msex]);
-			for (i = 0; i < vn; i++)
-			{
-				if (!i) spoil_out(" resists ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" and ");
-				spoil_out(vp[i]);
-			}
-			spoil_out(".  ");
-		}
-
-		/* Collect resistances */
-		vn = 0;
-		if (flags3 & (RF3_RES_NETH)) vp[vn++] = "nether";
-		if (flags3 & (RF3_RES_PLAS)) vp[vn++] = "plasma";
-		if (flags3 & (RF3_RES_NEXU)) vp[vn++] = "nexus";
-		if (flags3 & (RF3_RES_DISE)) vp[vn++] = "disenchantment";
-        if (flags3 & (RF3_RES_TELE)) vp[vn++] = "teleportation";
-
-		if (vn)
-		{
-			spoil_out(wd_che[msex]);
-			for (i = 0; i < vn; i++)
-			{
-				if (!i) spoil_out(" resists ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" and ");
-				spoil_out(vp[i]);
-			}
-			spoil_out(".  ");
-		}
-
-		/* Collect non-effects */
-		vn = 0;
-		if (flags3 & (RF3_NO_STUN)) vp[vn++] = "stunned";
-		if (flags3 & (RF3_NO_FEAR)) vp[vn++] = "frightened";
-		if (flags3 & (RF3_NO_CONF)) vp[vn++] = "confused";
-		if (flags3 & (RF3_NO_SLEEP)) vp[vn++] = "slept";
-
-		if (vn)
-		{
-			spoil_out(wd_che[msex]);
-			for (i = 0; i < vn; i++)
-			{
-				if (!i) spoil_out(" cannot be ");
-				else if (i < vn-1) spoil_out(", ");
-				else spoil_out(" or ");
-				spoil_out(vp[i]);
-			}
-			spoil_out(".  ");
-		}
-
-		spoil_out(wd_che[msex]);
-		if (r_ptr->sleep > 200)     spoil_out(" prefers to ignore");
-		else if (r_ptr->sleep > 95) spoil_out(" pays very little attention to");
-		else if (r_ptr->sleep > 75) spoil_out(" pays little attention to");
-		else if (r_ptr->sleep > 45) spoil_out(" tends to overlook");
-		else if (r_ptr->sleep > 25) spoil_out(" takes quite a while to see");
-		else if (r_ptr->sleep > 10) spoil_out(" takes a while to see");
-		else if (r_ptr->sleep > 5)  spoil_out(" is fairly observant of");
-		else if (r_ptr->sleep > 3)  spoil_out(" is observant of");
-		else if (r_ptr->sleep > 1)  spoil_out(" is very observant of");
-		else if (r_ptr->sleep > 0)  spoil_out(" is vigilant for");
-		else spoil_out(" is ever vigilant for");
-
-		sprintf(buf, " intruders, which %s may notice from %d feet.  ",
-			wd_lhe[msex], 10 * r_ptr->aaf);
-		spoil_out(buf);
-
-		i = 0;
-		if (flags1 & (RF1_DROP_60)) i += 1;
-		if (flags1 & (RF1_DROP_90)) i += 2;
-		if (flags1 & (RF1_DROP_1D2)) i += 2;
-		if (flags1 & (RF1_DROP_2D2)) i += 4;
-		if (flags1 & (RF1_DROP_3D2)) i += 6;
-		if (flags1 & (RF1_DROP_4D2)) i += 8;
-
-		/* Drops gold and/or items */
-		if (i)
-		{
-			sin = FALSE;
-			spoil_out(wd_che[msex]);
-			spoil_out(" will carry");
-
-			if (i == 1)
-			{
-				spoil_out(" a"); sin = TRUE;
-			}
-			else if (i == 2)
-			{
-				spoil_out(" one or two");
-				sin = TRUE;
-			}
-			else
-			{
-				sprintf(buf, " up to %u", i);
-				spoil_out(buf);
+				/* Remember the character. */
+				c2 = c;
 			}
 
-			if (flags1 & (RF1_DROP_GREAT))
-			{
-				if (sin) spoil_out("n");
-				spoil_out(" exceptional object");
-			}
-			else if (flags1 & (RF1_DROP_GOOD))
-			{
-				spoil_out(" good object");
-			}
-			else if (flags1 & (RF1_DROP_USEFUL))
-			{
-				spoil_out(" useful object");
-			}
-			else if (flags1 & (RF1_ONLY_ITEM))
-			{
-				spoil_out(" object");
-			}
-			else if (flags1 & (RF1_ONLY_GOLD))
-			{
-				spoil_out(" treasure");
-			}
-			else
-			{
-				if (sin) spoil_out("n");
-				spoil_out(" object");
-				if (i > 1) spoil_out("s");
-				spoil_out(" or treasure");
-			}
-			if (i > 1) spoil_out("s");
-
-			spoil_out(".  ");
-		}
-
-			/* Include death events here. */
-			spoil_out(describe_death_events(n, wd_lhe[msex], TRUE));
-
-		/* Count the actual attacks */
-		for (i = 0, j = 0; j < 4; j++)
-		{
-			if (get_blow_method(r_ptr->blow[j].method)) i++;
-		}
-
-		/* Examine the actual attacks */
-		for (k = 0, j = 0; j < 4; j++)
-		{
-			blow_method_type *b_ptr = get_blow_method(r_ptr->blow[j].method);
-
-			/* No such method. */
-			if (!b_ptr) continue;
- 
-			/* Method string. */
-			p = b_ptr->name;
-
-			/* Default effect */
-			q = "???";
-
-			/* Acquire the effect */
-			switch (r_ptr->blow[j].effect)
-			{
-				case RBE_HURT:  q = "attack"; break;
-				case RBE_POISON:        q = "poison"; break;
-				case RBE_UN_BONUS:      q = "disenchant"; break;
-				case RBE_UN_POWER:      q = "drain charges"; break;
-				case RBE_EAT_GOLD:      q = "steal gold"; break;
-				case RBE_EAT_ITEM:      q = "steal items"; break;
-				case RBE_EAT_FOOD:      q = "eat your food"; break;
-				case RBE_EAT_LITE:      q = "absorb light"; break;
-				case RBE_ACID:  q = "shoot acid"; break;
-                case RBE_ELEC:  q = "electrocute"; break;
-				case RBE_FIRE:  q = "burn"; break;
-				case RBE_COLD:  q = "freeze"; break;
-				case RBE_BLIND: q = "blind"; break;
-				case RBE_CONFUSE:       q = "confuse"; break;
-				case RBE_TERRIFY:       q = "terrify"; break;
-				case RBE_PARALYZE:      q = "paralyze"; break;
-				case RBE_LOSE_STR:      q = "reduce strength"; break;
-				case RBE_LOSE_INT:      q = "reduce intelligence"; break;
-				case RBE_LOSE_WIS:      q = "reduce wisdom"; break;
-				case RBE_LOSE_DEX:      q = "reduce dexterity"; break;
-				case RBE_LOSE_CON:      q = "reduce constitution"; break;
-				case RBE_LOSE_CHR:      q = "reduce charisma"; break;
-				case RBE_LOSE_ALL:      q = "reduce all stats"; break;
-				case RBE_SHATTER:       q = "shatter"; break;
-				case RBE_EXP_10:        q = "lower experience (by 10d6+)"; break;
-				case RBE_EXP_20:        q = "lower experience (by 20d6+)"; break;
-				case RBE_EXP_40:        q = "lower experience (by 40d6+)"; break;
-				case RBE_EXP_80:        q = "lower experience (by 80d6+)"; break;
-			}
-
-
-			if (!k)
-			{
-				spoil_out(wd_che[msex]);
-				spoil_out(" can ");
-			}
-			else if (k < i-1)
-			{
-				spoil_out(", ");
-			}
-			else
-			{
-				spoil_out(", and ");
-			}
-
-			/* Describe the method */
-			spoil_out(p);
-
-			/* Describe the effect, if any */
-			if (r_ptr->blow[j].effect)
-			{
-				spoil_out(" to ");
-				spoil_out(q);
-				if (r_ptr->blow[j].d_dice && r_ptr->blow[j].d_side)
-				{
-					spoil_out(" with damage");
-					if (r_ptr->blow[j].d_side == 1)
-						sprintf(buf, " %d", r_ptr->blow[j].d_dice);
-					else
-						sprintf(buf, " %dd%d",
-						r_ptr->blow[j].d_dice, r_ptr->blow[j].d_side);
-					spoil_out(buf);
-				}
-			}
-
-			k++;
-		}
-
-		if (k)
-		{
-			spoil_out(".  ");
-		}
-		else if (flags1 & (RF1_NEVER_BLOW))
-		{
-			sprintf(buf, "%s has no physical attacks.  ", wd_che[msex]);
-			spoil_out(buf);
+			/* Put a space at the end of every line. */
+			if (c2 != ' ') spoil_out(" ");
 		}
 
 		spoil_out(NULL);
 	}
+
+	/* Restore spoil_mon. */
+	spoil_mon = old_spoil_mon;
+
+	/* Restore moncol[]. */
+	for (n = 0; n < MAX_MONCOL; n++) moncol[n].attr = old_moncol[n];
+
+	/* Don't leave a monster display lying around. */
+	Term_clear();
 
 	/* Check for errors */
 	if (ferror(fff) || my_fclose(fff))

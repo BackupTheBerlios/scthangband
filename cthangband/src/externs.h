@@ -1261,7 +1261,7 @@ extern errr init_xxx(int argc, char **argv);
 #if (defined(CMD2_C) || defined(MELEE1_C))
 extern int check_hit(int power, int level);
 #endif
-#if (defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(WIZARD1_C))
+#if (defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C))
 extern blow_method_type *get_blow_method(byte idx);
 #endif
 #if (defined(MELEE1_C) || defined(MELEE2_C))
@@ -1277,21 +1277,21 @@ extern void curse_equipment(int chance, int heavy_chance);
 extern void process_monsters(void);
 #endif
 
+
+
+
+
+
+
 /* monster1.c */
 
-#if (defined(MONSTER1_C) || defined(WIZARD1_C))
-extern cptr describe_death_events(int r_idx, cptr he, bool omniscient);
-#endif
-#if (defined(MONSTER1_C) || defined(WIZARD1_C))
-extern cptr roff_monster(u32b flags2, u32b flags3);
-#endif
 #if (defined(CMD3_C) || defined(MONSTER1_C))
 extern void roff_top(int r_idx);
 #endif
 #if (defined(CMD3_C) || defined(MONSTER1_C) || defined(XTRA2_C))
 extern void screen_roff(int r_idx);
 #endif
-#if (defined(MONSTER1_C) || defined(XTRA1_C))
+#if (defined(MONSTER1_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern void display_roff(int r_idx);
 #endif
 
@@ -2207,7 +2207,7 @@ extern martial_arts ma_blows[MAX_MA+1];
 #if (defined(ANGBAND_H))
 extern window_type windows[ANGBAND_TERM_MAX];
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(TABLES_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(WIZARD1_C))
 extern moncol_type moncol[MAX_MONCOL];
 #endif
 #if (defined(ANGBAND_H))
@@ -3035,7 +3035,7 @@ extern bool testing_carry;
 #if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_art;
 #endif
-#if (defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
 extern bool spoil_mon;
 #endif
 #if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3398,7 +3398,7 @@ extern monster_race *r_info;
 #if (defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern char *r_name;
 #endif
-#if (defined(INIT2_C) || defined(MONSTER1_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
+#if (defined(INIT2_C) || defined(MONSTER1_C) || defined(VARIABLE_C))
 extern cptr r_text;
 #endif
 #if (defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -3767,7 +3767,7 @@ extern void dump_chaos_features(FILE * OutFile);
 
 /* z-form.c */
 
-#if (defined(UTIL_C) || defined(Z_FORM_C))
+#if (defined(UTIL_C) || defined(WIZARD1_C) || defined(Z_FORM_C))
 extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
 #endif
 #if (defined(XTRA1_C) || defined(Z_FORM_C))
@@ -3779,7 +3779,7 @@ extern char *vformat(cptr fmt, va_list vp);
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern uint strnfmt(char *buf, uint max, cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern char *format(cptr fmt, ...);
 #endif
 #if (defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_FORM_C))
@@ -3887,7 +3887,7 @@ extern void Term_get_size(int *w, int *h);
 #if (defined(STORE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_locate(int *x, int *y);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_X11_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_X11_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern void Term_what(int x, int y, byte *a, char *c);
 #endif
 #if (defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
