@@ -1349,7 +1349,7 @@ extern bool alloc_horde(int y, int x, int level);
 #if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
 extern void alloc_monster(int dis, int level, bool slp);
 #endif
-#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C))
+#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C))
 extern bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool charm);
 #endif
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
@@ -3905,7 +3905,7 @@ extern byte object_skill_count;
 
 /* z-rand.c */
 
-#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
+#if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
 extern bool percent(int m);
 #endif
 
