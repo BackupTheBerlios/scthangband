@@ -4434,7 +4434,7 @@ bool gain_chaos_feature(int choose_mut)
 	{
 		FOR_ALL_IN(chaos_oppose, co_ptr)
 		{
-			if (co_ptr[0][i] == mut)
+			if (co_ptr[0][i] == mut && p_has_mutation(co_ptr[0][!i]))
 			{
 				/* This is fine as lose_chaos_feature only prints one string. */
 				lose_chaos_feature(co_ptr[0][!i]);
