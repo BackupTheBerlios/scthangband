@@ -2281,10 +2281,10 @@ static void calc_bonuses(void)
 	p_ptr->pspeed = 110;
 
 	/* Start with a single blow per turn */
-	p_ptr->num_blow = 1;
+	p_ptr->num_blow = 60;
 
 	/* Start with a single shot per turn */
-	p_ptr->num_fire = 1;
+	p_ptr->num_fire = 60;
 
 	/* Reset the "xtra" tval */
 	p_ptr->tval_xtra = 0;
@@ -2521,13 +2521,13 @@ static void calc_bonuses(void)
 		if (f1 & (TR1_SPEED)) p_ptr->pspeed += o_ptr->pval;
 
 		/* Affect blows */
-		if (f1 & (TR1_BLOWS)) extra_blows += o_ptr->pval;
+		if (f1 & (TR1_BLOWS)) extra_blows += (o_ptr->pval * 60);
 
 		/* Hack -- cause earthquakes */
 		if (f1 & (TR1_IMPACT)) p_ptr->impact = TRUE;
 
 		/* Boost shots */
-		if (f3 & (TR3_XTRA_SHOTS)) extra_shots++;
+		if (f3 & (TR3_XTRA_SHOTS)) extra_shots+=60;
 
 		/* Various flags */
 		if (f3 & (TR3_AGGRAVATE)) p_ptr->aggravate = TRUE;
@@ -2949,7 +2949,10 @@ static void calc_bonuses(void)
 			case SV_SLING:
 			{
 				p_ptr->tval_ammo = TV_SHOT;
-				extra_shots += (skill_set[SKILL_MISSILE].value/45);
+				if (skill_set[SKILL_MISSILE].value==100)
+					extra_shots += 120;
+				else if (skill_set[SKILL_MISSILE].value>22)
+					extra_shots += (skill_set[SKILL_MISSILE].value*4/3-30);
 				break;
 			}
 
@@ -2957,7 +2960,10 @@ static void calc_bonuses(void)
 			case SV_LONG_BOW:
 			{
 				p_ptr->tval_ammo = TV_ARROW;
-				extra_shots += (skill_set[SKILL_MISSILE].value/30);
+				if (skill_set[SKILL_MISSILE].value==100)
+					extra_shots += 180;
+				if (skill_set[SKILL_MISSILE].value>15)
+					extra_shots += (skill_set[SKILL_MISSILE].value*2-30);
 				break;
 			}
 
@@ -2965,7 +2971,9 @@ static void calc_bonuses(void)
 			case SV_HEAVY_XBOW:
 			{
 				p_ptr->tval_ammo = TV_BOLT;
-				extra_shots += (skill_set[SKILL_MISSILE].value/60);
+				/* At 100 skill, a crossbow gives 1 1/6 extra shots anyway. */
+				if (skill_set[SKILL_MISSILE].value>30)
+					extra_shots += (skill_set[SKILL_MISSILE].value-30);
 				break;
 			}
 		}
@@ -2976,7 +2984,7 @@ static void calc_bonuses(void)
 		
 
 		/* Require at least one shot */
-		if (p_ptr->num_fire < 1) p_ptr->num_fire = 1;
+		if (p_ptr->num_fire < 60) p_ptr->num_fire = 60;
 	}
 
 
@@ -3028,14 +3036,20 @@ static void calc_bonuses(void)
 		/* Maximal value */
 		if (p_ptr->num_blow > num) p_ptr->num_blow = num;
 
+		/* Convert to blows per 60 turns */
+		p_ptr->num_blow *= 60;
+
 		/* Add in the "bonus blows" */
 		p_ptr->num_blow += extra_blows;
 
-        /* Level bonus for warriors (1-3) */
-        p_ptr->num_blow += (skill_set[p_ptr->wield_skill].value/30);
+		/* Level bonus for warriors (0-3) */
+		if (skill_set[p_ptr->wield_skill].value==100)
+			p_ptr->num_blow += 180;
+		else if (skill_set[p_ptr->wield_skill].value>15)
+			p_ptr->num_blow += (skill_set[p_ptr->wield_skill].value*2-30);
 
 		/* Require at least one blow */
-		if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
+		if (p_ptr->num_blow < 60) p_ptr->num_blow = 60;
 
 
         /* Boost digging skill by weapon weight */
@@ -3049,18 +3063,17 @@ static void calc_bonuses(void)
 
             p_ptr->num_blow = 0;
 
-            if ((skill_set[SKILL_MA].value/2) >  9) p_ptr->num_blow++;
-            if ((skill_set[SKILL_MA].value/2) > 19) p_ptr->num_blow++;
-            if ((skill_set[SKILL_MA].value/2) > 29) p_ptr->num_blow++;
-            if ((skill_set[SKILL_MA].value/2) > 34) p_ptr->num_blow++;
-            if ((skill_set[SKILL_MA].value/2) > 39) p_ptr->num_blow++;
-            if ((skill_set[SKILL_MA].value/2) > 44) p_ptr->num_blow++;
-            if ((skill_set[SKILL_MA].value/2) > 49) p_ptr->num_blow++;
+		if (skill_set[SKILL_MA].value == 100)
+			p_ptr->num_blow = 420;
+		else if (skill_set[SKILL_MA].value > 59)
+			p_ptr->num_blow = skill_set[SKILL_MA].value * 6 - 210;
+		else if (skill_set[SKILL_MA].value > 10)
+			p_ptr->num_blow = skill_set[SKILL_MA].value * 3 - 30;
 
             if (ma_heavy_armor())
                 p_ptr->num_blow /= 2;
 
-            p_ptr->num_blow += 1 + extra_blows;
+            p_ptr->num_blow += 60 + extra_blows;
 
             if (!ma_heavy_armor())
             {
@@ -3110,13 +3123,13 @@ static void calc_bonuses(void)
 	/* Limit Skill -- digging from 1 up */
 	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
 
-	/* Limit Skill -- number of attacks from 1 to 10 */
-	if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
-	if (p_ptr->num_blow > 10) p_ptr->num_blow = 10;
+	/* Limit Skill -- number of attacks from 60 to 600 per 60 rounds*/
+	if (p_ptr->num_blow < 60) p_ptr->num_blow = 60;
+	if (p_ptr->num_blow > 600) p_ptr->num_blow = 600;
 
-	/* Limit Skill -- number of shots from 1 to 10 */
-	if (p_ptr->num_fire < 1) p_ptr->num_fire = 1;
-	if (p_ptr->num_fire > 10) p_ptr->num_fire = 10;
+	/* Limit Skill -- number of shots from 60 to 600 per 60 rounds*/
+	if (p_ptr->num_fire < 60) p_ptr->num_fire = 60;
+	if (p_ptr->num_fire > 600) p_ptr->num_fire = 600;
 
     if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95))
         p_ptr->skill_sav = 95;

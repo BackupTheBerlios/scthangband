@@ -1417,27 +1417,27 @@ static void display_player_various(void)
 
 	put_str("Blows/Round:", 16, 55);
     if (!muta_att)
-        put_str(format("%d", p_ptr->num_blow), 16, 69);
+        put_str(format("%d,%d", p_ptr->num_blow/60, p_ptr->num_blow%60), 16, 69);
     else
-        put_str(format("%d+%d", p_ptr->num_blow, muta_att), 16, 69);
+	  put_str(format("%d,%d+%d", p_ptr->num_blow/60, p_ptr->num_blow%60, muta_att), 16, 69);
 
 	put_str("Shots/Round:", 17, 55);
-	put_str(format("%d", p_ptr->num_fire), 17, 69);
+	put_str(format("%d,%d", p_ptr->num_fire/60, p_ptr->num_fire%60), 17, 69);
 
-   put_str("Wpn.dmg/Rnd:", 18, 55);    /* From PsiAngband */
-     if ((damdice == 0) || (damsides == 0)) {
-   if (dambonus <= 0)
-     desc = "nil!";
-   else
-     desc = format("%d", blows * dambonus);
-     } else {
-   if (dambonus == 0)
-     desc = format("%dd%d", blows * damdice, damsides);
-   else
-     desc = format("%dd%d%s%d", blows * damdice, damsides,
-           (dambonus < 0 ? "":"+"), blows * dambonus);
-     }
-   put_str(desc, 18, 69);
+ 	put_str("Avg. dmg/rnd:", 18, 55);
+ 	if ((damdice == 0) || (damsides == 0)) {
+ 		if (dambonus <= 0)
+ 			desc = "nil!";
+ 		else
+ 			tmp = blows * dambonus;
+ 			desc = format("%d,%d", tmp/60, tmp%60);
+ 		} else {
+		/* damsides+1 gives the average for two blows.
+		tmp is exact as blows is even here. */
+ 		tmp=blows/2*(damdice*(damsides+1)+dambonus*2);
+ 		desc=format("%d,%d", tmp/60, tmp%60);
+ 	}
+ 	put_str(desc, 18, 69);
 
 
 	put_str("Infra-Vision:", 19, 55);

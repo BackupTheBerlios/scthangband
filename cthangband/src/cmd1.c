@@ -1237,8 +1237,8 @@ void py_attack(int y, int x)
 	bonus = p_ptr->to_h + o_ptr->to_h;
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
-	/* Attack speed is based on theoretical number of blows */
-	energy_use=(100/p_ptr->num_blow);
+	/* Attack speed is based on theoretical number of blows per 60 turns*/
+	energy_use=(6000/p_ptr->num_blow);
 		/* Test for hit */
 		if (test_hit_norm(chance, r_ptr->ac, m_ptr->ml))
 		{
@@ -1635,7 +1635,7 @@ void py_attack(int y, int x)
 	 * only give attacks occasionally - depending on number
 	 * on speed of player with weapon
 	 */
-    if ((!no_extra) && (randint(p_ptr->num_blow)==1))
+    if ((!no_extra) && (randint((p_ptr->num_blow+30)/60)==1))
     {
 		if (p_ptr->muta2 & MUT2_HORNS && !mdeath)
 			natural_attack(c_ptr->m_idx, MUT2_HORNS, &fear, &mdeath);

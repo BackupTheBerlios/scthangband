@@ -2569,7 +2569,7 @@ void do_cmd_fire(void)
 
 
 	/* Take a (partial) turn */
-	energy_use = (100 / thits);
+	energy_use = (6000 / thits);
 
 
 	/* Start at the player */
