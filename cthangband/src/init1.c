@@ -3523,7 +3523,7 @@ static errr parse_info_line(char *buf, header *head, int initmacro, vptr *extra)
 	char *buf2end = buf2+1023;
 	int i;
 
-	*buf2end = '\0';
+	WIPE(buf2, buf2);
 
 	for (i = initmacro-1; i >= 0; i--)
 	{

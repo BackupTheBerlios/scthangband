@@ -1722,8 +1722,8 @@ static void updatebargain(s32b price, s32b minprice)
 static void display_entry(int pos)
 {
 	int			i, pricedot = 0;
-	char wt_str[12];
-	char price_str[14];
+	char wt_str[12]="";
+	char price_str[14]="";
 	cptr fillstr = (pos % 2) ? " " : ".";
 	int maxwid = Term->wid-2;
 
@@ -1773,11 +1773,6 @@ static void display_entry(int pos)
 
 		pricedot = 13-strlen(price_str);
 	}
-	else
-	/* Describe an item in the home */
-	{
-		price_str[0] = '\0';
-	}
 
 	if (show_weights)
 	{
@@ -1788,10 +1783,6 @@ static void display_entry(int pos)
 
 		sprintf(wt_str, "$w%d.%d lb", wgt/10, wgt%10);
 		maxwid -= strlen(wt_str);
-	}
-	else
-	{
-		wt_str[0] = '\0';
 	}
 
 	Term_erase(0, i+6, 255);
