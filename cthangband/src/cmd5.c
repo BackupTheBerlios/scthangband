@@ -1581,13 +1581,13 @@ static void phlogiston (void)
     object_type * o_ptr = &inventory[INVEN_LITE];
 
 	/* It's a lamp */
-    if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == SV_LITE_LANTERN))
+    if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
 	{
         max_flog = FUEL_LAMP;
 	}
 
 	/* It's a torch */
-    else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == SV_LITE_TORCH))
+    else if (o_ptr->k_idx == OBJ_WOODEN_TORCH)
 	{
         max_flog = FUEL_TORCH;
 	}

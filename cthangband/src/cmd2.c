@@ -401,16 +401,14 @@ static void chest_death(int y, int x, s16b o_idx)
 	object_type *q_ptr;
 
 	object_type *o_ptr = &o_list[o_idx];
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 
 	/* Small chests often hold "gold" */
-	small = (o_ptr->sval < SV_CHEST_MIN_LARGE);
+	small = (k_ptr->extra / 10) == XT_CHEST_SMALL;
 
 	/* Determine how much to drop (see above) */
-	number = (o_ptr->sval % SV_CHEST_MIN_LARGE) * 2;
-
-	/* Zero pval means empty chest */
-	if (!o_ptr->pval) number = 0;
+	number = (k_ptr->extra % 10) * 2;
 
 	/* Opening a chest */
 	opening_chest = TRUE;

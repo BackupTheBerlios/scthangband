@@ -54,6 +54,8 @@
 #   If tval is 20, 21, 22 or 23, it represents the skill exercised by attacking
 # things with it. Typical values are 8 (close combat), 22 (stab), 23 (slash)
 # and 24 (crush).
+#   If tval is 7, it represents the capacity of the chest and whether it can
+# contain gold.
 
 # 'P' is for power information. The items base armour class, its base
 # damage and pluses to-hit, to-dam and to-ac (assuming the latter 
@@ -310,6 +312,7 @@ I:23:21:0
 W:15:SLASH:140:350
 A:15/1
 P:0:3d4:0:0:0
+F:GOOD
 
 N:32:& Scimitar~
 G:|:W:0
@@ -317,6 +320,7 @@ I:23:18:0
 W:10:SLASH:130:250
 A:10/1
 P:0:2d5:0:0:0
+F:GOOD
 
 N:33:& Tulwar~
 G:|:W:0
@@ -324,6 +328,7 @@ I:23:15:0
 W:5:SLASH:100:200
 A:5/1
 P:0:2d4:0:0:0
+F:GOOD
 
 N:34:& Broad Sword~
 G:|:W:0
@@ -331,6 +336,7 @@ I:23:16:0
 W:10:SLASH:150:255
 A:10/1:15/1
 P:0:2d5:0:0:0
+F:GOOD
 
 N:35:& Short Sword~
 G:|:W:0
@@ -338,6 +344,7 @@ I:23:10:0
 W:5:STAB:80:90
 A:5/1
 P:0:1d7:0:0:0
+F:GOOD
 
 N:36:& Blade~ of Chaos
 G:|:v:0
@@ -345,7 +352,7 @@ I:23:30:0
 W:70:SLASH:180:4000
 A:70/8
 P:0:6d5:0:0:0
-F:RES_CHAOS
+F:RES_CHAOS | GOOD
 
 N:37:& Two-Handed Sword~
 G:|:W:0
@@ -353,6 +360,7 @@ I:23:25:0
 W:30:SLASH:200:775
 A:30/1:40/1
 P:0:3d6:0:0:0
+F:GOOD
 
 N:38:& Main Gauche~
 G:|:W:0
@@ -360,6 +368,7 @@ I:23:5:0
 W:3:CLOSE:30:25
 A:3/1
 P:0:1d5:0:0:0
+F:GOOD
 
 N:39:& Cutlass~
 G:|:W:0
@@ -367,6 +376,7 @@ I:23:12:0
 W:5:SLASH:110:85
 A:5/1
 P:0:1d7:0:0:0
+F:GOOD
 
 N:40:& Executioner's Sword~
 G:|:r:0
@@ -374,6 +384,7 @@ I:23:28:0
 W:40:SLASH:260:850
 A:40/1
 P:0:4d5:0:0:0
+F:GOOD
 
 N:41:& Katana~
 G:|:W:13
@@ -381,6 +392,7 @@ I:23:20:0
 W:20:SLASH:120:400
 A:20/1
 P:0:3d4:0:0:0
+F:GOOD
 
 N:42:& Long Sword~
 G:|:W:0
@@ -388,6 +400,7 @@ I:23:17:0
 W:10:SLASH:130:300
 A:10/1:20/1
 P:0:2d5:0:0:0
+F:GOOD
 
 N:43:& Dagger~
 G:|:W:0
@@ -395,6 +408,7 @@ I:23:4:0
 W:0:CLOSE:12:10
 A:0/1:5/1:10/1:20/1
 P:0:1d4:0:0:0
+F:GOOD
 
 N:44:& Rapier~
 G:|:W:0
@@ -402,6 +416,7 @@ I:23:7:0
 W:5:STAB:40:42
 A:5/1
 P:0:1d6:0:0:0
+F:GOOD
 
 N:45:& Sabre~
 G:|:W:0
@@ -409,6 +424,7 @@ I:23:11:0
 W:5:SLASH:50:50
 A:5/1
 P:0:1d7:0:0:0
+F:GOOD
 
 N:46:& Small Sword~
 G:|:W:0
@@ -416,6 +432,7 @@ I:23:8:0
 W:5:SLASH:75:48
 A:5/1
 P:0:1d6:0:0:0
+F:GOOD
 
 N:47:& Broken Sword~
 G:|:D:0
@@ -432,6 +449,7 @@ I:21:6:0
 W:20:CRUSH:150:200
 A:20/1
 P:0:2d4:0:0:0
+F:GOOD
 
 N:49:& Whip~
 G:\:D:0
@@ -439,6 +457,7 @@ I:21:2:0
 W:3:CLOSE:30:30
 A:3/1
 P:0:1d6:0:0:0
+F:GOOD
 
 N:50:& Flail~
 G:\:D:0
@@ -446,6 +465,7 @@ I:21:13:0
 W:10:CRUSH:150:353
 A:10/1
 P:0:2d6:0:0:0
+F:GOOD
 
 N:51:& Two-Handed Flail~
 G:\:y:0
@@ -453,6 +473,7 @@ I:21:18:0
 W:45:CRUSH:280:590
 A:45/1
 P:0:3d6:0:0:0
+F:GOOD
 
 N:52:& Morning Star~
 G:\:D:0
@@ -460,6 +481,7 @@ I:21:12:0
 W:10:CRUSH:150:396
 A:10/1
 P:0:2d6:0:0:0
+F:GOOD
 
 N:53:& Mace~
 G:\:D:0
@@ -467,6 +489,7 @@ I:21:5:0
 W:5:CRUSH:120:130
 A:5/1
 P:0:2d4:0:0:0
+F:GOOD
 
 N:54:& Quarterstaff~
 G:\:U:0
@@ -474,6 +497,7 @@ I:21:3:0
 W:10:CRUSH:150:200
 A:10/1
 P:0:1d9:0:0:0
+F:GOOD
 
 N:55:& War Hammer~
 G:\:D:0
@@ -481,6 +505,7 @@ I:21:8:0
 W:5:CRUSH:120:225
 A:5/1
 P:0:3d3:0:0:0
+F:GOOD
 
 N:56:& Lead-Filled Mace~
 G:\:D:0
@@ -488,6 +513,7 @@ I:21:15:0
 W:15:CRUSH:180:502
 A:15/1
 P:0:3d4:0:0:0
+F:GOOD
 
 N:57:& Mace~ of Disruption
 G:\:v:0
@@ -495,7 +521,7 @@ I:21:20:0
 W:80:CRUSH:400:4300
 A:80/8
 P:0:5d8:0:0:0
-F:SLAY_UNDEAD
+F:SLAY_UNDEAD | GOOD
 
 N:58:& Lucerne Hammer~
 G:\:B:0
@@ -503,6 +529,7 @@ I:21:10:0
 W:10:CRUSH:120:376
 A:10/1
 P:0:2d5:0:0:0
+F:GOOD
 
 ##### Polearms #####
 
@@ -512,6 +539,7 @@ I:22:10:0
 W:15:SLASH:180:408
 A:15/1
 P:0:2d6:0:0:0
+F:GOOD
 
 N:60:& Glaive~
 G:/:s:0
@@ -519,6 +547,7 @@ I:22:13:0
 W:20:CRUSH:190:363
 A:20/1
 P:0:2d6:0:0:0
+F:GOOD
 
 N:61:& Halberd~
 G:/:s:0
@@ -526,6 +555,7 @@ I:22:15:0
 W:25:CRUSH:190:430
 A:25/1
 P:0:3d5:0:0:0
+F:GOOD
 
 N:62:& Awl-Pike~
 G:/:s:0
@@ -533,6 +563,7 @@ I:22:4:0
 W:10:STAB:160:340
 A:10/1
 P:0:1d8:0:0:0
+F:GOOD
 
 N:63:& Pike~
 G:/:s:0
@@ -540,6 +571,7 @@ I:22:8:0
 W:15:CRUSH:160:358
 A:15/1
 P:0:2d5:0:0:0
+F:GOOD
 
 N:64:& Spear~
 G:/:s:0
@@ -547,6 +579,7 @@ I:22:2:0
 W:5:STAB:50:36
 A:5/1
 P:0:1d6:0:0:0
+F:GOOD
 
 N:65:& Trident~
 G:/:y:0
@@ -554,6 +587,7 @@ I:22:5:0
 W:5:STAB:70:120
 A:5/1
 P:0:1d8:0:0:0
+F:GOOD
 
 N:66:& Lance~
 G:/:s:0
@@ -561,6 +595,7 @@ I:22:20:0
 W:10:CRUSH:300:230
 A:10/1
 P:0:2d8:0:0:0
+F:GOOD
 
 N:67:& Great Axe~
 G:/:s:0
@@ -568,6 +603,7 @@ I:22:25:0
 W:40:SLASH:230:500
 A:40/1
 P:0:4d4:0:0:0
+F:GOOD
 
 N:68:& Battle Axe~
 G:/:s:0
@@ -575,6 +611,7 @@ I:22:22:0
 W:15:CRUSH:170:334
 A:15/1
 P:0:2d8:0:0:0
+F:GOOD
 
 N:69:& Lochaber Axe~
 G:/:D:0
@@ -582,6 +619,7 @@ I:22:28:0
 W:45:CRUSH:250:750
 A:45/1
 P:0:3d8:0:0:0
+F:GOOD
 
 N:70:& Broad Axe~
 G:/:s:0
@@ -589,6 +627,7 @@ I:22:11:0
 W:15:SLASH:160:304
 A:15/1
 P:0:2d6:0:0:0
+F:GOOD
 
 N:71:& Scythe~
 G:/:s:0
@@ -596,6 +635,7 @@ I:22:17:0
 W:45:SLASH:250:800
 A:45/1
 P:0:5d3:0:0:0
+F:GOOD
 
 N:72:& Scythe~ of Slicing
 G:/:r:0
@@ -603,6 +643,7 @@ I:22:30:0
 W:60:SLASH:250:3500
 A:60/4
 P:0:8d4:0:0:0
+F:GOOD
 
 ##### Bows, Crossbows, Slings #####
 
@@ -611,30 +652,35 @@ G:}:U:0
 I:19:12:0
 W:3:0:30:50
 A:3/1
+F:GOOD
 
 N:74:& Long Bow~
 G:}:U:0
 I:19:13:0
 W:10:0:40:120
 A:10/1
+F:GOOD
 
 N:75:& Light Crossbow~
 G:}:s:0
 I:19:23:0
 W:15:0:110:140
 A:15/1
+F:GOOD
 
 N:76:& Heavy Crossbow~
 G:}:s:0
 I:19:24:0
 W:30:0:200:300
 A:30/1
+F:GOOD
 
 N:77:& Sling~
 G:}:u:0
 I:19:2:0
 W:1:0:5:5
 A:1/1
+F:GOOD
 
 ##### Missiles #####
 
@@ -644,6 +690,7 @@ I:17:1:0
 W:3:0:2:1
 A:3/1:15/1
 P:0:1d4:0:0:0
+F:GOOD
 
 N:79:& Seeker Arrow~
 G:{:G:0
@@ -651,6 +698,7 @@ I:17:2:0
 W:55:0:2:20
 A:55/2
 P:0:4d4:0:0:0
+F:GOOD
 
 N:80:& Bolt~
 G:{:s:0
@@ -658,6 +706,7 @@ I:18:1:0
 W:3:0:3:2
 A:3/1:25/1
 P:0:1d5:0:0:0
+F:GOOD
 
 N:81:& Seeker Bolt~
 G:{:B:0
@@ -665,6 +714,7 @@ I:18:2:0
 W:65:0:3:25
 A:65/4
 P:0:4d5:0:0:0
+F:GOOD
 
 N:82:& Rounded Pebble~
 G:{:s:0
@@ -672,6 +722,7 @@ I:16:0:0
 W:0:0:4:1
 A:0/1
 P:0:1d2:0:0:0
+F:GOOD
 
 N:83:& Iron Shot~
 G:{:s:0
@@ -679,6 +730,7 @@ I:16:1:0
 W:3:0:5:2
 A:3/1
 P:0:1d3:0:0:0
+F:GOOD
 
 ##### Shovels and Picks #####
 
@@ -688,6 +740,7 @@ I:20:1:1
 W:1:CRUSH:60:10
 A:5/16
 P:0:1d2:0:0:0
+F:GOOD
 
 N:85:& Gnomish Shovel~
 G:\:G:0
@@ -695,6 +748,7 @@ I:20:2:2
 W:20:CRUSH:60:100
 A:20/4
 P:0:1d2:0:0:0
+F:GOOD
 
 N:86:& Dwarven Shovel~
 G:\:B:0
@@ -702,6 +756,7 @@ I:20:3:3
 W:40:CRUSH:120:200
 A:40/1
 P:0:1d3:0:0:0
+F:GOOD
 
 N:87:& Pick~
 G:\:s:0
@@ -709,6 +764,7 @@ I:20:4:1
 W:5:CRUSH:150:50
 A:10/16
 P:0:1d3:0:0:0
+F:GOOD
 
 N:88:& Orcish Pick~
 G:\:g:0
@@ -716,6 +772,7 @@ I:20:5:2
 W:30:CRUSH:150:300
 A:30/4
 P:0:1d3:0:0:0
+F:GOOD
 
 N:89:& Dwarven Pick~
 G:\:b:0
@@ -723,6 +780,7 @@ I:20:6:3
 W:50:CRUSH:200:600
 A:50/1
 P:0:1d4:0:0:0
+F:GOOD
 
 ##### Armour #####
 
@@ -733,7 +791,7 @@ W:30:0:5:1500
 A:30/4
 P:4:0d0:0:0:4
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
-F:STEALTH | SEARCH
+F:STEALTH | SEARCH | GOOD
 
 N:91:& Pair~ of Soft Leather Boots
 G:]:U:0
@@ -741,6 +799,7 @@ I:30:2:0
 W:3:0:20:7
 A:3/1
 P:2:1d1:0:0:0
+F:GOOD
 
 N:92:& Pair~ of Hard Leather Boots
 G:]:U:0
@@ -748,6 +807,7 @@ I:30:3:0
 W:5:0:40:12
 A:5/1
 P:3:1d1:0:0:0
+F:GOOD
 
 N:93:& Pair~ of Metal Shod Boots
 G:]:s:0
@@ -755,6 +815,7 @@ I:30:6:0
 W:20:0:80:50
 A:20/1
 P:6:1d1:0:0:0
+F:GOOD
 
 N:94:& Hard Leather Cap~
 G:]:u:0
@@ -762,6 +823,7 @@ I:32:2:0
 W:3:0:15:12
 A:3/1
 P:2:0d0:0:0:0
+F:GOOD
 
 N:95:& Metal Cap~
 G:]:s:0
@@ -769,6 +831,7 @@ I:32:3:0
 W:10:0:20:30
 A:10/1
 P:3:1d1:0:0:0
+F:GOOD
 
 N:96:& Iron Helm~
 G:]:s:0
@@ -776,6 +839,7 @@ I:32:5:0
 W:20:0:75:75
 A:20/1
 P:5:1d3:0:0:0
+F:GOOD
 
 N:97:& Steel Helm~
 G:]:W:0
@@ -783,6 +847,7 @@ I:32:6:0
 W:40:0:60:200
 A:40/1
 P:6:1d3:0:0:0
+F:GOOD
 
 N:98:& Iron Crown~
 G:]:s:0
@@ -790,6 +855,7 @@ I:33:10:0
 W:45:0:20:500
 A:45/1
 P:0:1d1:0:0:0
+F:GOOD
 
 N:99:& Golden Crown~
 G:]:y:0
@@ -797,7 +863,7 @@ I:33:11:0
 W:45:0:30:1000
 A:45/1
 P:0:1d1:0:0:0
-F:IGNORE_ACID
+F:IGNORE_ACID | GOOD
 
 N:100:& Jewel Encrusted Crown~
 G:]:v:0
@@ -805,7 +871,7 @@ I:33:12:0
 W:50:0:40:2000
 A:50/1
 P:0:1d1:0:0:0
-F:IGNORE_ACID
+F:IGNORE_ACID | GOOD
 
 N:101:& Robe~
 G:(:b:0
@@ -813,6 +879,7 @@ I:36:2:0
 W:1:0:20:4
 A:1/1:50/1
 P:2:0d0:0:0:0
+F:GOOD
 
 N:102:& Filthy Rag~
 G:(:D:0
@@ -827,6 +894,7 @@ I:36:4:0
 W:3:0:80:18
 A:3/1
 P:4:0d0:0:0:0
+F:GOOD
 
 N:104:Soft Studded Leather~
 G:(:U:0
@@ -834,6 +902,7 @@ I:36:5:0
 W:3:0:90:35
 A:3/1
 P:5:1d1:0:0:0
+F:GOOD
 
 N:105:Hard Leather Armour~
 G:(:U:0
@@ -841,6 +910,7 @@ I:36:6:0
 W:5:0:100:150
 A:5/1
 P:6:1d1:-1:0:0
+F:GOOD
 
 N:106:Hard Studded Leather~
 G:(:U:0
@@ -848,6 +918,7 @@ I:36:7:0
 W:10:0:110:200
 A:10/1
 P:7:1d2:-1:0:0
+F:GOOD
 
 N:107:Leather Scale Mail~
 G:(:U:0
@@ -855,6 +926,7 @@ I:36:11:0
 W:15:0:140:450
 A:15/1
 P:11:1d1:-1:0:0
+F:GOOD
 
 N:108:Metal Scale Mail~
 G:[:s:0
@@ -862,6 +934,7 @@ I:37:3:0
 W:25:0:250:550
 A:25/1
 P:13:1d4:-2:0:0
+F:GOOD
 
 N:109:Chain Mail~
 G:[:s:0
@@ -869,6 +942,7 @@ I:37:4:0
 W:25:0:220:750
 A:25/1
 P:14:1d4:-2:0:0
+F:GOOD
 
 N:110:Rusty Chain Mail~
 G:[:r:0
@@ -883,6 +957,7 @@ I:37:6:0
 W:30:0:270:900
 A:30/1
 P:16:1d4:-2:0:0
+F:GOOD
 
 N:112:Bar Chain Mail~
 G:[:s:0
@@ -890,6 +965,7 @@ I:37:8:0
 W:35:0:280:950
 A:35/1
 P:18:1d4:-2:0:0
+F:GOOD
 
 N:113:Metal Brigandine Armour~
 G:[:s:0
@@ -897,6 +973,7 @@ I:37:9:0
 W:35:0:290:1100
 A:35/1
 P:19:1d4:-3:0:0
+F:GOOD
 
 N:114:Partial Plate Armour~
 G:[:W:0
@@ -904,6 +981,7 @@ I:37:12:0
 W:45:0:260:1200
 A:45/1
 P:22:1d6:-3:0:0
+F:GOOD
 
 N:115:Metal Lamellar Armour~
 G:[:W:0
@@ -911,6 +989,7 @@ I:37:13:0
 W:45:0:340:1250
 A:45/1
 P:23:1d6:-3:0:0
+F:GOOD
 
 N:116:Full Plate Armour~
 G:[:W:0
@@ -918,6 +997,7 @@ I:37:15:0
 W:45:0:380:1350
 A:45/1
 P:25:2d4:-3:0:0
+F:GOOD
 
 N:117:Ribbed Plate Armour~
 G:[:W:0
@@ -925,6 +1005,7 @@ I:37:18:0
 W:50:0:380:1500
 A:50/1
 P:28:2d4:-3:0:0
+F:GOOD
 
 N:118:Adamantite Plate Mail~
 G:[:G:0
@@ -932,7 +1013,7 @@ I:37:30:0
 W:75:0:420:20000
 A:75/8
 P:40:2d4:-4:0:0
-F:IGNORE_ACID
+F:IGNORE_ACID | GOOD
 
 N:119:Mithril Plate Mail~
 G:[:B:0
@@ -940,7 +1021,7 @@ I:37:25:0
 W:60:0:300:15000
 A:60/4
 P:35:2d4:-3:0:0
-F:IGNORE_ACID
+F:IGNORE_ACID | GOOD
 
 N:120:Mithril Chain Mail~
 G:[:B:0
@@ -948,7 +1029,7 @@ I:37:20:0
 W:55:0:150:7000
 A:55/4
 P:28:1d4:-1:0:0
-F:IGNORE_ACID
+F:IGNORE_ACID | GOOD
 
 N:121:Double Chain Mail~
 G:[:s:0
@@ -956,6 +1037,7 @@ I:37:7:0
 W:30:0:250:850
 A:30/1
 P:16:1d4:-2:0:0
+F:GOOD
 
 
 # This shield does not belong here
@@ -966,7 +1048,7 @@ I:34:10:0
 W:70:0:100:10000
 A:70/8
 P:10:1d1:0:0:10
-F:IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC | IGNORE_ACID
+F:IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC | IGNORE_ACID | GOOD
 
 
 ### The Cloaks ###
@@ -977,6 +1059,7 @@ I:35:1:0
 W:1:0:10:3
 A:1/1:20/1
 P:1:0d0:0:0:0
+F:GOOD
 
 N:124:& Shadow Cloak~
 G:(:D:0
@@ -984,7 +1067,7 @@ I:35:6:0
 W:60:0:5:7500
 A:75/5
 P:6:0d0:0:0:4
-F:RES_DARK | RES_LITE
+F:RES_DARK | RES_LITE | GOOD
 
 
 ### The Gloves ###
@@ -995,6 +1078,7 @@ I:31:1:0
 W:1:0:5:3
 A:1/1
 P:1:0d0:0:0:0
+F:GOOD
 
 N:126:& Set~ of Gauntlets
 G:]:U:0
@@ -1002,6 +1086,7 @@ I:31:2:0
 W:10:0:25:35
 A:10/1
 P:2:1d1:0:0:0
+F:GOOD
 
 N:127:& Set~ of Cesti
 G:]:W:0
@@ -1009,6 +1094,7 @@ I:31:5:0
 W:50:0:40:100
 A:50/1
 P:5:1d1:0:0:0
+F:GOOD
 
 
 ### The shields ###
@@ -1019,6 +1105,7 @@ I:34:2:0
 W:3:0:50:30
 A:3/1
 P:2:1d1:0:0:0
+F:GOOD
 
 N:129:& Large Leather Shield~
 G:):U:0
@@ -1026,6 +1113,7 @@ I:34:4:0
 W:15:0:100:120
 A:15/1
 P:4:1d2:0:0:0
+F:GOOD
 
 N:130:& Small Metal Shield~
 G:):s:0
@@ -1033,6 +1121,7 @@ I:34:3:0
 W:10:0:65:50
 A:10/1
 P:3:1d2:0:0:0
+F:GOOD
 
 N:131:& Large Metal Shield~
 G:):s:0
@@ -1040,7 +1129,7 @@ I:34:5:0
 W:30:0:120:200
 A:30/1
 P:5:1d3:0:0:0
-
+F:GOOD
 
 ##### Rings #####
 
@@ -1077,7 +1166,7 @@ G: :d:2
 I:45:31:0
 W:80:0:2:100000
 A:80/1
-F:SPEED | HIDE_TYPE
+F:SPEED | HIDE_TYPE | GOOD
 
 N:137:Searching
 G: :d:2
@@ -1321,7 +1410,7 @@ W:50:0:3:30000
 A:50/4:80/3
 P:0:0d0:0:0:3
 F:FREE_ACT | SEE_INVIS | SEARCH |
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:172:DOOM
 G: :d:3
@@ -2617,7 +2706,7 @@ I:90:2:0
 W:40:0:30:25000
 A:40/1
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:337:[Unausprechlichen Kulten]
 G:?:b:201
@@ -2625,49 +2714,49 @@ I:90:3:0
 W:90:0:30:100000
 A:90/3
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 ##### Chests #####
 
 N:338:& Small wooden chest~
 G:~:s:0
 I:7:1:0
-W:5:0:250:20
+W:5:SMALL WOOD:250:20
 A:5/1
 P:0:2d3:0:0:0
 
 N:339:& Large wooden chest~
 G:~:s:0
 I:7:5:0
-W:15:0:500:60
+W:15:LARGE WOOD:500:60
 A:15/1
 P:0:2d5:0:0:0
 
 N:340:& Small iron chest~
 G:~:s:0
 I:7:2:0
-W:25:0:300:100
+W:25:SMALL IRON:300:100
 A:25/1
 P:0:2d4:0:0:0
 
 N:341:& Large iron chest~
 G:~:s:0
 I:7:6:0
-W:35:0:1000:150
+W:35:LARGE IRON:1000:150
 A:35/1
 P:0:2d6:0:0:0
 
 N:342:& Small steel chest~
 G:~:s:0
 I:7:3:0
-W:45:0:500:200
+W:45:SMALL STEEL:500:200
 A:45/1
 P:0:2d4:0:0:0
 
 N:343:& Large steel chest~
 G:~:s:0
 I:7:7:0
-W:55:0:1000:250
+W:55:LARGE STEEL:1000:250
 A:55/1
 P:0:2d6:0:0:0
 
@@ -3025,7 +3114,7 @@ I:91:2:0
 W:50:0:30:25000
 A:50/1
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:388:[Revelations of Glaaki]
 G:?:r:202
@@ -3033,7 +3122,7 @@ I:91:3:0
 W:100:0:30:100000
 A:100/3
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 ##### Junk #####
 
@@ -3122,7 +3211,7 @@ W:60:0:200:30000
 A:60/8
 P:30:2d4:-2:0:10
 F:RES_ACID |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:401:Blue Dragon Scale Mail~
 G:[:b:0
@@ -3131,7 +3220,7 @@ W:40:0:200:35000
 A:40/8
 P:30:2d4:-2:0:10
 F:RES_ELEC |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:402:White Dragon Scale Mail~
 G:[:w:0
@@ -3140,7 +3229,7 @@ W:50:0:200:40000
 A:50/8
 P:30:2d4:-2:0:10
 F:RES_COLD |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:403:Red Dragon Scale Mail~
 G:[:r:0
@@ -3149,7 +3238,7 @@ W:80:0:200:100000
 A:80/8
 P:30:2d4:-2:0:10
 F:RES_FIRE |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:404:Green Dragon Scale Mail~
 G:[:g:0
@@ -3158,7 +3247,7 @@ W:70:0:200:80000
 A:70/8
 P:30:2d4:-2:0:10
 F:RES_POIS |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:405:Multi-Hued Dragon Scale Mail~
 G:[:v:0
@@ -3167,7 +3256,7 @@ W:100:0:200:150000
 A:100/16
 P:30:2d4:-2:0:10
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:406:Pseudo Dragon Scale Mail~
 G:[:v:0
@@ -3176,7 +3265,7 @@ W:65:0:200:60000
 A:65/16
 P:30:2d4:-2:0:10
 F:RES_LITE | RES_DARK |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:407:Law Dragon Scale Mail~
 G:[:B:0
@@ -3185,7 +3274,7 @@ W:80:0:200:80000
 A:80/16
 P:30:2d4:-2:0:10
 F:RES_SOUND | RES_SHARDS |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:408:Bronze Dragon Scale Mail~
 G:[:U:0
@@ -3194,7 +3283,7 @@ W:55:0:200:30000
 A:55/8
 P:30:2d4:-2:0:10
 F:RES_CONF |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:409:Gold Dragon Scale Mail~
 G:[:y:0
@@ -3203,7 +3292,7 @@ W:65:0:200:40000
 A:65/8
 P:30:2d4:-2:0:10
 F:RES_SOUND |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:410:Chaos Dragon Scale Mail~
 G:[:v:0
@@ -3212,7 +3301,7 @@ W:75:0:200:70000
 A:75/16
 P:30:2d4:-2:0:10
 F:RES_CHAOS | RES_DISEN |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:411:Balance Dragon Scale Mail~
 G:[:v:0
@@ -3221,7 +3310,7 @@ W:90:0:200:100000
 A:90/16
 P:30:2d4:-2:0:10
 F:RES_CHAOS | RES_DISEN | RES_SOUND | RES_SHARDS |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:412:Power Dragon Scale Mail~
 G:[:v:0
@@ -3232,7 +3321,7 @@ P:40:2d4:-3:0:15
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS | 
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_CONF |
-F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 ## PDSM has been restored to (almost) its former glory in Zangband
 
@@ -3242,7 +3331,7 @@ I:32:7:0
 W:45:0:50:10000
 A:80/4
 P:8:1d3:0:0:10
-F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:414:& Dragon Shield~
 G:[:G:0
@@ -3250,7 +3339,7 @@ I:34:6:0
 W:70:0:100:10000
 A:80/4
 P:8:1d3:0:0:10
-F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD | GOOD
 
 ##### Extra potions #####
 
@@ -3695,7 +3784,7 @@ I:92:2:0
 W:40:0:30:25000
 A:40/1
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:515:[Liber Ivonis]
 G:?:o:203
@@ -3703,7 +3792,7 @@ I:92:3:0
 W:90:0:30:100000
 A:90/3
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 # Necromancy Spellbooks
 
@@ -3727,7 +3816,7 @@ I:93:2:0
 W:50:0:30:25000
 A:50/1
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:519:[Kitab Al Azif]
 G:?:v:204
@@ -3735,7 +3824,7 @@ I:93:3:0
 W:90:0:30:100000
 A:90/3
 P:0:1d1:0:0:0
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:520:Reflection
 G: :d:3
@@ -3771,7 +3860,7 @@ I:40:15:0
 W:50:0:3:25000
 A:50/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RAND_RESIST
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 # Stormbringer -- see artifact list
 

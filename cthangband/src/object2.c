@@ -3891,69 +3891,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
  */
 static bool kind_is_good(int k_idx)
 {
-	object_kind *k_ptr = &k_info[k_idx];
-
-	/* Analyze the item type */
-	switch (k_ptr->tval)
-	{
-		/* Armor -- Good unless damaged */
-		case TV_HARD_ARMOR:
-		case TV_SOFT_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		{
-			if (k_ptr->to_a < 0) return (FALSE);
-			return (TRUE);
-		}
-
-		/* Weapons -- Good unless damaged */
-		case TV_BOW:
-		case TV_SWORD:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_DIGGING:
-		{
-			if (k_ptr->to_h < 0) return (FALSE);
-			if (k_ptr->to_d < 0) return (FALSE);
-			return (TRUE);
-		}
-
-		/* Ammo -- Arrows/Bolts are good */
-		case TV_BOLT:
-		case TV_ARROW:
-		{
-			return (TRUE);
-		}
-
-        /* Books -- High level books are good */
-		case TV_SORCERY_BOOK:
-		case TV_THAUMATURGY_BOOK:
-    	case TV_CONJURATION_BOOK:
-		case TV_NECROMANCY_BOOK:
-		{
-			if (k_ptr->sval >= SV_BOOK_MIN_GOOD) return (TRUE);
-			return (FALSE);
-		}
-	}
-	/* Other things -- a few things are good */
-	switch (k_idx)
-	{
-		case OBJ_RING_SPEED:
-		case OBJ_AMULET_THE_MAGI:
-		case OBJ_AMULET_RESISTANCE:
-		{
-			return (TRUE);
-		}
-		default:
-		{
-			return (FALSE);
-		}
-	}
+	return (k_info[k_idx].flags3 & TR1_GOOD != 0);
 }
 
 

@@ -372,7 +372,7 @@ static flag_name info_flags[] =
 	{"CON", 0, TR1_CON},
 	{"CHR", 0, TR1_CHR},
 /*	{"XXX1", 0, TR1_XXX1}, */
-/*	{"XXX2", 0, TR1_XXX2}, */
+	{"GOOD", 0, TR1_GOOD},
 	{"STEALTH", 0, TR1_STEALTH},
 	{"SEARCH", 0, TR1_SEARCH},
 	{"INFRA", 0, TR1_INFRA},

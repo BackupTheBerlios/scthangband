@@ -812,3 +812,27 @@ F:k_info:W:3
 X:CRUSH
 Y:24
 F:k_info:W:3
+
+# Chests
+
+X:SMALL
+Y:1
+F:k_info:W:3
+
+X:LARGE
+Y:2
+F:k_info:W:3
+
+X: WOOD
+Y:1
+F:k_info:W:3
+
+X: IRON
+Y:2
+F:k_info:W:3
+
+X: STEEL
+Y:3
+F:k_info:W:3
+
+# Books

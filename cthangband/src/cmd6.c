@@ -67,6 +67,7 @@ static bool activate_random_artifact(object_type * o_ptr);
 void do_cmd_eat_food(int item)
 {
 	int			ident, lev;
+	bool	normal_food = FALSE;
 
 	object_type		*o_ptr;
 
@@ -296,16 +297,6 @@ void do_cmd_eat_food(int item)
 		}
 
 
-		case OBJ_RATION_OF_FOOD:
-		case OBJ_HARD_BISCUIT:
-		case OBJ_STRIP_OF_VENISON:
-		case OBJ_SLIME_MOLD:
-		{
-			msg_print("That tastes good.");
-			ident = TRUE;
-			break;
-		}
-
 		case OBJ_PIECE_OF_ELVISH_WAYBREAD:
 		{
 			msg_print("That tastes good.");
@@ -315,11 +306,10 @@ void do_cmd_eat_food(int item)
 			break;
 		}
 
-		case OBJ_PINT_OF_FINE_ALE:
-		case OBJ_BOTTLE_OF_FINE_WINE:
+		default:
 		{
 			msg_print("That tastes good.");
-			ident = TRUE;
+			ident = normal_food = TRUE;
 			break;
 		}
 	}
@@ -342,50 +332,49 @@ void do_cmd_eat_food(int item)
 
 
 	/* Food can feed the player */
-     if (p_ptr->prace == RACE_VAMPIRE) {
-   /* Reduced nutritional benefit */
-   (void)set_food(p_ptr->food + (o_ptr->pval / 10));
-   msg_print("Mere victuals hold scant sustenance for a being such as yourself.");
-   if (p_ptr->food < PY_FOOD_ALERT)   /* Hungry */
-     msg_print("Your hunger can only be satisfied with fresh blood!");
-     }
-     else if (p_ptr->prace == RACE_SKELETON)
-     {
+	switch (p_ptr->prace)
+	{
+		case RACE_VAMPIRE:
+		{
+			set_food(p_ptr->food + (o_ptr->pval / 10));
+			msg_print("Mere victuals hold scant sustenance for a being such as yourself.");
+			if (p_ptr->food < PY_FOOD_ALERT)   /* Hungry */
+				msg_print("Your hunger can only be satisfied with fresh blood!");
+			break;
+		}
+		case RACE_SKELETON:
+		{
+	        if (normal_food)
+	        {
+				object_type q_ptr[1];
 
+				msg_print("The food falls through your jaws!");
 
-        if (!((o_ptr->k_idx == OBJ_PIECE_OF_ELVISH_WAYBREAD)
-            ||  (o_ptr->sval < SV_FOOD_BISCUIT)))
-        {
+				/* Create the item (should this be object_copy()?) */
+				object_copy(q_ptr, o_ptr);
 
-            object_type forge;
-            object_type * q_ptr = & forge;
-
-            msg_print("The food falls through your jaws!");
-
-
-            /* Create the item (should this be object_copy()?) */
-            object_prep(q_ptr, o_ptr->k_idx);
-
-            /* Drop the object from heaven */
-            drop_near(q_ptr, -1, py, px);
-        }
-        else
-        {
-            msg_print("The food falls through your jaws and vanishes!");
-        }
-        
-    }
-    else if ((p_ptr->prace == RACE_GOLEM) || (p_ptr->prace == RACE_ZOMBIE) ||
-             (p_ptr->prace == RACE_SPECTRE))
-    {
-        msg_print("The food of mortals is poor sustenance for you.");
-        set_food(p_ptr->food + ((o_ptr->pval) / 20));
-    }
-
-     else {
-	(void)set_food(p_ptr->food + o_ptr->pval);
-    }
-
+				/* Drop the object from heaven */
+				drop_near(q_ptr, -1, py, px);
+			}
+			else
+			{
+				msg_print("The food falls through your jaws and vanishes!");
+			}
+			break;
+		}
+		case RACE_GOLEM:
+		case RACE_ZOMBIE:
+		case RACE_SPECTRE:
+		{
+			msg_print("The food of mortals is poor sustenance for you.");
+			set_food(p_ptr->food + ((o_ptr->pval) / 20));
+			break;
+		}
+		default:
+		{
+			set_food(p_ptr->food + o_ptr->pval);
+		}
+	}
 
 
 
@@ -2650,8 +2639,53 @@ void do_cmd_aim_wand(int item)
 }
 
 
-
-
+/*
+ * Recognise a directional rod. Should match do_cmd_zap_rod().
+ */
+static bool directional_rod_p(s16b k_idx)
+{
+	switch (k_idx)
+	{
+		case OBJ_ROD_TRAP_LOCATION:
+		case OBJ_ROD_DOOR_STAIR_LOCATION:
+		case OBJ_ROD_PERCEPTION:
+		case OBJ_ROD_RECALL:
+		case OBJ_ROD_ILLUMINATION:
+		case OBJ_ROD_ENLIGHTENMENT:
+		case OBJ_ROD_DETECTION:
+		case OBJ_ROD_PROBING:
+		case OBJ_ROD_CURING:
+		case OBJ_ROD_HEALING:
+		case OBJ_ROD_RESTORATION:
+		case OBJ_ROD_SPEED:
+		case OBJ_ROD_TELEPORT_OTHER:
+        case OBJ_ROD_HAVOC:
+		{
+			return FALSE;
+		}
+		case OBJ_ROD_DISARMING:
+		case OBJ_ROD_LIGHT:
+		case OBJ_ROD_SLEEP_MONSTER:
+		case OBJ_ROD_SLOW_MONSTER:
+		case OBJ_ROD_DRAIN_LIFE:
+		case OBJ_ROD_POLYMORPH:
+		case OBJ_ROD_ACID_BOLT:
+		case OBJ_ROD_ELEC_BOLT:
+		case OBJ_ROD_FIRE_BOLT:
+		case OBJ_ROD_COLD_BOLT:
+		case OBJ_ROD_ACID_BALL:
+		case OBJ_ROD_ELEC_BALL:
+		case OBJ_ROD_FIRE_BALL:
+		case OBJ_ROD_COLD_BALL:
+		{
+			return TRUE;
+		}
+		default:
+		{
+			return FALSE;
+		}
+	}
+}
 
 /*
  * Activate (zap) a Rod
@@ -2715,8 +2749,7 @@ void do_cmd_zap_rod(int item)
 
 
 	/* Get a direction (unless KNOWN not to need it) */
-    if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) && !(o_ptr->k_idx == OBJ_ROD_HAVOC))
-            || !object_aware_p(o_ptr))
+	if (directional_rod_p(o_ptr->k_idx) || !object_aware_p(o_ptr))
 	{
 		/* Get a direction, allow cancel */
 		if (!get_aim_dir(&dir)) return;

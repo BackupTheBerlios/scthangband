@@ -1842,7 +1842,16 @@ logaux(x, 1) logaux(x, 0) 255)
 #define OBJ_RUNESWORD_STORMBRINGER 524
 #define OBJ_NO_TEA 525
 
+/* extra info for chests (decimal) */
+#define XT_CHEST_SMALL	10
+#define XT_CHEST_LARGE	20
 
+#define XT_CHEST_RUIN	0
+#define XT_CHEST_WOOD	1
+#define XT_CHEST_IRON	2
+#define XT_CHEST_STEEL	3
+
+#define XT_GOOD_BOOK	1
 
 #define SV_UNKNOWN	255	/* A sval for unknown objects. */
 
@@ -2818,7 +2827,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TR1_CON                         0x00000010L     /* CON += "pval" */
 #define TR1_CHR                         0x00000020L     /* CHR += "pval" */
 #define TR1_XXX1                        0x00000040L     /* Later */
-#define TR1_XXX2                        0x00000080L     /* Later */
+#define TR1_GOOD                        0x00000080L     /* Hack - a "good" object. */
 #define TR1_STEALTH                     0x00000100L     /* Stealth += "pval" */
 #define TR1_SEARCH                      0x00000200L     /* Search += "pval" */
 #define TR1_INFRA                       0x00000400L     /* Infra += "pval" */

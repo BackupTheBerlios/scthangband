@@ -1199,9 +1199,7 @@ static void process_world(void)
            }
        }
 
-       if ((inventory[INVEN_LITE].tval)
-            && (inventory[INVEN_LITE].sval >= SV_LITE_GALADRIEL)
-            && (inventory[INVEN_LITE].sval < SV_LITE_THRAIN)
+       if ((allart_p(&inventory[INVEN_LITE]))
             && !(p_ptr->resist_lite))
         {
             object_type * o_ptr = &inventory[INVEN_LITE];

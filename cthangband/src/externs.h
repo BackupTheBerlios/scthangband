@@ -401,12 +401,12 @@ extern void do_cmd_use_staff(int item);
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
 extern void do_cmd_aim_wand(int item);
 #endif
-#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
-extern void do_cmd_zap_rod(int item);
-#endif
-#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
-extern void do_cmd_activate(int item);
-#endif
+
+
+
+
+
+
 
 /* dungeon.c */
 
@@ -1444,7 +1444,7 @@ extern void object_wipe(object_type *o_ptr);
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 #endif
-#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD6_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_prep(object_type *o_ptr, int k_idx);
 #endif
 #if (defined(OBJECT2_C) || defined(WIZARD2_C))
@@ -3906,5 +3906,14 @@ extern errr string_free(cptr str);
 
 #if (defined(INIT2_C) || defined(STORE_C))
 extern s16b store_table[MAX_STORE_TYPES][STORE_CHOICES];
+#endif
+
+/* cmd6.c */
+
+#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
+extern void do_cmd_zap_rod(int item);
+#endif
+#if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
+extern void do_cmd_activate(int item);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
