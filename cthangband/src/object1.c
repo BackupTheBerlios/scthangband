@@ -868,7 +868,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	if (o_ptr->ident & IDENT_STORE && !object_aware_p(o_ptr))
 	{
 		/* This index is known to have a flavour name of "". */
-		x_ptr->u_idx = z_info->u_max-1;
+		if (x_ptr) x_ptr->u_idx = z_info->u_max-1;
 	}
 
 	/* Hack - unset j_ptr->k_idx if it isn't known (the k_idx of items in
