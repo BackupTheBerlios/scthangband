@@ -2252,7 +2252,7 @@ extern name_centry ident_info[];
 #if (defined(DUNGEON_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern cptr_ch feeling_str[SENSE_MAX];
 #endif
-#if (defined(CMD4_C) || defined(TABLES_C) || defined(UI_C) || defined(WIZARD2_C))
+#if (defined(CMD4_C) || defined(TABLES_C) || defined(WIZARD2_C))
 extern cptr option_chars;
 #endif
 #if (defined(CMD1_C) || defined(FILES_C) || defined(TABLES_C))
@@ -2262,10 +2262,10 @@ extern natural_attack natural_attacks[5];
 /* ui.c */
 
 #if (defined(BIRTH_C) || defined(UI_C))
-extern int display_entry_list_bounded(name_centry *list, int num, int truncate, int minx, int miny, int maxx, int maxy);
+extern int display_entry_list_bounded(name_centry *list, cptr options, int num, int truncate, int minx, int miny, int maxx, int maxy);
 #endif
 #if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
-extern int display_entry_list(name_centry *list, int num, int maxy, bool truncate);
+extern int display_entry_list(name_centry *list, cptr options, int num, int maxy, bool truncate);
 #endif
 #if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
 extern int build_choice_list_1(name_entry *list, name_centry *start, int listm, int items, bool (*item_good)(int, int));
@@ -3931,5 +3931,11 @@ extern void mark_spot(int y, int x);
 
 #if ((defined(USE_X11) || defined(USE_XAW) || defined(USE_XPJ))) && (defined(MAID_X11_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C))
 extern void react_keypress(XKeyEvent *ev);
+#endif
+
+/* tables.c */
+
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(TABLES_C))
+extern cptr options_36;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -1326,7 +1326,7 @@ static void do_cmd_options_inscribe_aux(name_entry *list, u16b **quarks,
 		clear_from(0);
 
 		reprint_item_list(list, listm, print_f1);
-		display_entry_list(list, listm, 0, FALSE);
+		display_entry_list(list, option_chars, listm, 0, FALSE);
 
 		if (!get_com(&ch, "Inscribe which %s? [%c-%c, ^A for all, ^U for uninscribe, Escape]",
 			title, option_chars[0], option_chars[listm-1])) break;
@@ -1435,7 +1435,7 @@ static void do_cmd_options_inscribe(void)
 
 		clear_from(0);
 
-		ymax = display_entry_list(choice, max, 2, TRUE);
+		ymax = display_entry_list(choice, option_chars, max, 2, TRUE);
 
 		mc_put_fmt(ymax+1, 0, "[Ctrl-S] Save inscription settings");
 
@@ -1586,7 +1586,7 @@ static void do_cmd_options_squelch_aux(name_centry *cat)
 		clear_from(0);
 
 		reprint_item_list(list, num, object_k_name_squelch_f1);
-		display_entry_list(list, num, 0, FALSE);
+		display_entry_list(list, option_chars, num, 0, FALSE);
 
 		Term_gotoxy(0, 1);
 
@@ -1677,7 +1677,7 @@ static void do_cmd_options_squelch(void)
 
 		clear_from(0);
 
-		ymax = display_entry_list(choice, max, 3, TRUE);
+		ymax = display_entry_list(choice, option_chars, max, 3, TRUE);
 
 		mc_put_fmt(ymax+1, 0, "[Ctrl-A] %sable auto-squelching",
 			(allow_squelch) ? "dis" : "en");

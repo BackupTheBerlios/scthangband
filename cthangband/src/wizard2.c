@@ -62,7 +62,7 @@ static int choose_something_str(cptr noun, cptr verb, cptr pron,
 	clear_from(0);
 
 	/* Print a list of options on screen. */
-	display_entry_list(list, num, 0, truncate);
+	display_entry_list(list, option_chars, num, 0, truncate);
 
 	/* Wait for valid input or escape. */
 	while (get_com(&ch, "%^s %s %s? [%c-%c]", verb, pron, noun,

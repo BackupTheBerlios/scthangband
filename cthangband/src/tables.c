@@ -4056,6 +4056,9 @@ cptr_ch feeling_str[SENSE_MAX] =
 cptr option_chars =
 	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789;:'@#~<>/?";
 
+cptr options_36 =
+	"abcdefghijklmnopqrstuvwxyz0123456789";
+
 natural_attack natural_attacks[5] =
 {
 	{MUT_SCOR_TAIL, 7, 3, 5, GF_POIS, "tail"},

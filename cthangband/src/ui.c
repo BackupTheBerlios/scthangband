@@ -170,7 +170,7 @@ static void strip_names(char **start, int num, uint len)
 	}
 }
 
-static int display_item_list(char **list, int num, bool truncate,
+static int display_item_list(char **list, cptr options, int num, bool truncate,
 	int minx, int miny, int maxx, int maxy)
 {
 	int cx, cy, i, len;
@@ -205,7 +205,7 @@ static int display_item_list(char **list, int num, bool truncate,
 		int ty = miny + (i % cy);
 		int tx = minx + cx * (i / cy);
 
-		mc_put_lfmt(ty, tx, cx-1, "[%c] %s", option_chars[i], list[i]);
+		mc_put_lfmt(ty, tx, cx-1, "[%c] %s", options[i], list[i]);
 	}
 
 	return miny + cy;
@@ -216,8 +216,8 @@ static int display_item_list(char **list, int num, bool truncate,
  * This copies everything to a separate array as strip_names() may change the
  * strings, but the strings within the name_centry are not changed.
  */
-int display_entry_list_bounded(name_centry *list, int num, int truncate,
-	int minx, int miny, int maxx, int maxy)
+int display_entry_list_bounded(name_centry *list, cptr options, int num,
+	int truncate, int minx, int miny, int maxx, int maxy)
 {
 	int i;
 	C_TNEW(tmp, num, char *);
@@ -226,7 +226,7 @@ int display_entry_list_bounded(name_centry *list, int num, int truncate,
 	for (i = 0; i < num; i++) tmp[i] = string_make(list[i].str);
 
 	/* Display the list and store its length. */
-	i = display_item_list(tmp, num, truncate, minx, miny, maxx, maxy);
+	i = display_item_list(tmp, options, num, truncate, minx, miny, maxx, maxy);
 
 	/* Clean up and return. */
 	while (num--) FREE(tmp[num]);
@@ -237,14 +237,16 @@ int display_entry_list_bounded(name_centry *list, int num, int truncate,
 /*
  * Display a name list at a standard location on the screen.
  */
-int display_entry_list(name_centry *list, int num, int maxy, bool truncate)
+int display_entry_list(name_centry *list, cptr options, int num, int maxy,
+	bool truncate)
 {
 	int i, j;
 
 	Term_get_size(&i, &j);
 
 	/* Display the list and store its length. */
-	i = display_entry_list_bounded(list, num, truncate, 0, 2, i, j-maxy);
+	i = display_entry_list_bounded(list, options, num,
+		truncate, 0, 2, i, j-maxy);
 
 	return i;
 }

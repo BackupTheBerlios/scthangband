@@ -426,7 +426,9 @@ static cptr set_option(cptr option, cptr value)
 #define D_GET_RACE(OUT, PARAM, INFO, MAX, STR) \
 	if (strlen(zz[PARAM]) == 1) \
 	{ \
-		OUT = ator(*zz[PARAM]); \
+		cptr s = strchr(options_36, *zz[PARAM]); \
+		if (!s) return "No such " STR "."; \
+		OUT = s-options_36; \
 	} \
 	else \
 	{ \
@@ -958,7 +960,9 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			D_GET_RACE(race, 1, race_info, MAX_RACES, "race");
 			if (strlen(zz[2]) == 1)
 			{
-				template = ator(*zz[2]);
+				cptr s = strchr(options_36, *zz[2]);
+				if (!s) return "No such template.";
+				template = s-options_36;
 			}
 			else
 			{

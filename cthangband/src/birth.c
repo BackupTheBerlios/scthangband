@@ -649,13 +649,14 @@ static bc_type birth_option(void)
  *
  * allow_abort should be set if aborting is distinct from starting afresh.
  */
-static bc_type birth_choice(int row, s16b max, cptr prompt, int *option,
-	bool allow_abort)
+static bc_type birth_choice(int row, cptr options, s16b max, cptr prompt,
+	int *option, bool allow_abort)
 {
 	char c, pmt[256];
-	cptr s = (allow_abort) ? ", * for random or ESCAPE to abort" :
+	cptr u, s = (allow_abort) ? ", * for random or ESCAPE to abort" :
 		" or * for random";
-	strnfmt(pmt, sizeof(pmt), "%s (%c-%c%s): ", prompt, I2A(0), rtoa(max-1), s);
+	strnfmt(pmt, sizeof(pmt), "%s (%c-%c%s): ",
+		prompt, options[0], options[max-1], s);
 	while (1)
 	{
 		put_str(pmt, row, 2);
@@ -675,11 +676,14 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option,
 			(*option) = rand_int(max);
 			return BC_OKAY;
 		}
+		else if ((u = strchr(options, c)))
+		{
+			(*option) = u - options;
+			return BC_OKAY;
+		}
 		else
 		{
-			(*option) = ator(c);
-			if (((*option) >= 0) && ((*option) < max)) return BC_OKAY;
-			else bell(0);
+			bell(0);
 		}
 	}
 }
@@ -705,7 +709,8 @@ static bc_type get_init_spirit(bool choice)
 	/* Ask the player. */
 	clear_from(15);
 
-	b = birth_choice(17, MAX_SPHERE, "Choose a life spirit(a) or wild spirit(b)", &k, TRUE);
+	b = birth_choice(17, options_36, MAX_SPHERE,
+		"Choose a life spirit(a) or wild spirit(b)", &k, TRUE);
 
 	/* Nothing chosen. */
 	if (b != BC_OKAY) return b;
@@ -1449,7 +1454,7 @@ static bc_type load_stat_set(bool menu)
 			stat_default_type *sd_ptr = temp_stat_default[x];
 			char buf[120]="";
 			int z;
-			sprintf(buf, "%c) %s (", rtoa(x), quark_str(sd_ptr->name));
+			sprintf(buf, "%c) %s (", options_36[x], quark_str(sd_ptr->name));
 
 			/* If we're just starting, we need to know the race & template. */
 			if (p_ptr->prace == RACE_NONE)
@@ -1488,7 +1493,8 @@ static bc_type load_stat_set(bool menu)
 		prt("Selecting a character will set the sex, race, template and stats as shown.",  start-1, 5);
 
 		/* Ask for a choice */
-		rc = birth_choice(start+1, y, "Choose a stat template", &x, TRUE);
+		rc = birth_choice(start+1, options_36, y, "Choose a stat template", &x,
+			TRUE);
 
 		/* Finally clean up. */
 		clear_from(start);
@@ -1641,8 +1647,8 @@ static bc_type get_hermetic_skills()
 	}
 
 	/* Display the options. */
-	display_entry_list_bounded(magic_skills, N_ELEMENTS(magic_skills), TRUE,
-		0, 22, 80, 23);
+	display_entry_list_bounded(magic_skills, options_36,
+		N_ELEMENTS(magic_skills), TRUE, 0, 22, 80, 23);
 
 	for(i= cp_ptr->choices; i > 0; i--)
 	{
@@ -1650,7 +1656,7 @@ static bc_type get_hermetic_skills()
 		sprintf(buf, "%d choice%s left. Choose a school or type",
 			i, (i > 1 ? "s" : ""));
 
-		b = birth_choice(21, MAX_SCHOOL*2, buf, &k, TRUE);
+		b = birth_choice(21, options_36, MAX_SCHOOL*2, buf, &k, TRUE);
 		if (b) return b;
 
 		skill_set[magic_skills[k].idx].value += 5;
@@ -2911,11 +2917,11 @@ static bc_type ask_quick_start(void)
 	} \
 \
 	/* Show the options. */ \
-	display_entry_list_bounded(list, MAX, TRUE, 0, 17, 80, 22); \
+	display_entry_list_bounded(list, options_36, MAX, TRUE, 0, 17, 80, 22); \
 \
 	/* Choose. */ \
-	if (birth_choice(15, MAX, "Choose a " NAME, &k, FALSE) == BC_RESTART) \
-		return FALSE; \
+	if (birth_choice(15, options_36, MAX, "Choose a " NAME, &k, FALSE) \
+		== BC_RESTART) return FALSE; \
 \
 	/* Set it. */ \
 	p_ptr->P_VAR = k; \
@@ -2972,11 +2978,12 @@ static bool choose_template(void)
 	}
 
 	/* Show the options. */
-	display_entry_list_bounded(list, this - list, TRUE, 0, 17, 80, 22);
+	display_entry_list_bounded(list, options_36, this-list,
+		TRUE, 0, 17, 80, 22);
 
 	/* Choose. */
-	if (birth_choice(15, this - list, "Choose a template", &k, FALSE)
-		== BC_RESTART) return FALSE;
+	if (birth_choice(15, options_36, this - list, "Choose a template",
+		&k, FALSE) == BC_RESTART) return FALSE;
 
 	/* Set it. */
 	p_ptr->ptemplate = list[k].idx;
