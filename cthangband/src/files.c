@@ -6084,7 +6084,7 @@ static errr get_rnd_line(const char * file_name, uint len, char * output)
 
 
 	/* Parse the file */
-	while (!my_fgets(fp, buf, 80))
+	while (!my_fgets(fp, buf, sizeof(buf)))
 	{
 		/* Stop at the first line which is neither empty nor a comment. */
 		if (buf[0] && buf[0] != '#')
@@ -6100,7 +6100,7 @@ static errr get_rnd_line(const char * file_name, uint len, char * output)
     line = randint(lines);
     for (counter = 0; counter <= line; counter++)
     {
-    if (!(0 == my_fgets(fp, buf, 80)))
+    if (!(0 == my_fgets(fp, buf, sizeof(buf))))
         return (1);
     else if (counter == line)
         break;
