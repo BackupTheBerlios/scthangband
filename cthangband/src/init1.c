@@ -880,6 +880,40 @@ static errr parse_object(make_item_type *i_ptr, char *buf, u16b *name)
 }
 
 /*
+ * Parse an object which is described in buf in a simple way with no parameters
+ * for other functions. If there is a name for a randart, it is given as ^name^
+ * and stored in the fake name array.
+ */
+static errr parse_object_simple(header *head, make_item_type *i_ptr, char *buf)
+{
+	u16b name = 0;
+
+	try(do_get_string(buf, '^', "^", head->name_ptr, &head->name_size,
+		z_info->fake_name_size, &name));
+
+	try(parse_object(i_ptr, buf, &name));
+
+	/* The type-specific text field should have either been reset, or not
+	 * set in the first place. */
+	if (name)
+	{
+		msg_print("Meaningless text field found.");
+		return PARSE_ERROR_GENERIC;
+	}
+
+	/* Check that the whole of "buf" has been parsed. */
+	for (; *buf; buf++)
+	{
+		if (!strchr(": )\"", *buf))
+		{
+			msg_print("Uninterpreted characters!");
+			return PARSE_ERROR_GENERIC;
+		}
+	}
+	return SUCCESS;
+}
+
+/*
  * Parse the description of a monster into a make_monster_type.
  */
 static errr parse_monster(make_monster_type *i_ptr, char *buf)
@@ -3124,6 +3158,198 @@ errr parse_s_info(char *buf, header *head, vptr *extra)
 }
 
 /*
+ * Set the skill in "ptr" containing "name" as a substring to "v".
+ */
+static errr parse_template_skill(player_template *tp_ptr, cptr name, long v)
+{
+	player_skill *sk_ptr;
+	int skill = -1;
+
+	/* Find the one skill with a name containing "name", or fail. */
+	FOR_ALL_IN(skill_set, sk_ptr)
+	{
+		if (!strstr(sk_ptr->name, name)) continue;
+		if (skill >= 0) return PARSE_ERROR_INVALID_FLAG;
+		skill = sk_ptr - skill_set;
+	}
+	if (skill < 0) return PARSE_ERROR_INVALID_FLAG;
+
+	/* Bounds check (should this become a signed char?). */
+	if (ABS(v) > MAX_SHORT) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+	/* Copy to tp_ptr. */
+	tp_ptr->skill[skill] = v;
+
+	return SUCCESS;
+}
+
+/*
+ * Initialize the "player templates" array, by parsing an ascii "template" file.
+ */
+errr parse_template(char *buf, header *head, vptr *extra)
+{
+	char end[1];
+	player_template *ptr = *extra;
+	long p[6];
+	int i;
+
+	/* Only N can start a record. */
+	if (!ptr && *buf != 'N') return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	switch (*buf)
+	{
+		/* Process 'N' for "New/Number/Name" */
+		case 'N':
+		{
+			/* Get the index */
+			int i = atoi(buf+2);
+
+			/* Find the colon before the name */
+			char *s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return PARSE_ERROR_GENERIC;
+
+			/* Advance to the name */
+			s++;
+
+			/* Verify index. */
+			try(byte_ok(i));
+
+			/* Advance the index */
+			error_idx = i;
+
+			/* Paranoia - there should always be space for 256 entries. */
+			if (error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			/* Point at the "info" */
+			*extra = ptr = (player_template*)head->info_ptr + error_idx;
+
+			/* Store the name */
+			if (!(ptr->name = add_name(head, s)))
+				return PARSE_ERROR_OUT_OF_MEMORY;
+
+			return SUCCESS;
+		}
+		/* Process 'X' for "Extra info" */
+		case 'X':
+		{
+			/* Read. */
+			if (sscanf(buf+2, "%ld%c", p, end) != 1)
+				return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			/* Bounds check. */
+			if (*p < 0 || *p > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			/* Copy. */
+			ptr->choices = *p;
+
+			return SUCCESS;
+		}
+		/* Process 'S' for "Stat bonuses" */
+		case 'S':
+		{
+			assert(A_MAX == 6); /* Give up sscanf? Never! */
+
+			/* Read. */
+			if (sscanf(buf+2, "%ld:%ld:%ld:%ld:%ld:%ld%c",
+				p, p+1, p+2, p+3, p+4, p+5, end) != 6)
+				return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			for (i = 0; i < A_MAX; i++)
+			{
+				/* Bounds check. */
+				if (ABS(p[i]) > MAX_SHORT) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+				/* Copy. */
+				ptr->c_adj[i] = p[i];
+			}
+
+			return SUCCESS;
+		}
+		/* Process 'A' for "Artefact effects" */
+		case 'A':
+		{
+			/* Read. */
+			if (sscanf(buf+2, "%ld:%ld:%ld%c", p, p+1, p+2, end) != 3)
+				return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			/* Bounds check. */
+			if (p[0] < 0 || p[0] > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+			if (p[1] < 0 || p[1] > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+			if (p[2] < 0 || p[2] > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			/* Copy. */
+			ptr->art1_bias = p[0];
+			ptr->art2_bias = p[1];
+			ptr->art2_chance = p[2];
+
+			return SUCCESS;
+		}
+		/* Process 'K' for "Skill bonuses" */
+		case 'K':
+		{
+			/* Parse each argument in turn (except for the last one). */
+			char tmp[SKILL_NAME_LEN];
+			assert(SKILL_NAME_LEN >= 128); /* Hmm... */
+			for (buf++; sscanf(buf, ":%128[^=:]=%ld:%c", tmp, p, end) == 3;
+				buf = strchr(buf+1, ':'))
+			{
+				try(parse_template_skill(ptr, tmp, *p));
+			}
+			/* Parse the final argument, or fail. */
+			if (sscanf(buf, ":%128[^=:]=%ld%c", tmp, p, end) == 2)
+			{
+				try(parse_template_skill(ptr, tmp, *p));
+			}
+			else
+			{
+				return PARSE_ERROR_INCORRECT_SYNTAX;
+			}
+
+			return SUCCESS;
+		}
+		/* Process 'E' for "Initial equipment" */
+		case 'E':
+		{
+			for (i = 0; i < MAX_TPL_ITEMS; i++)
+			{
+				/* Parse the object and finish. */
+				if (!ptr->items[i].k_idx)
+				{
+					 return parse_object_simple(head, ptr->items+i, buf+2);
+				}
+			}
+			return PARSE_ERROR_TOO_MANY_ARGUMENTS;
+		}
+		/* Process 'O' for "Alternate initial equipment" */
+		case 'O':
+		{
+			for (i = 0; i < MAX_TPL_ITEMS; i++)
+			{
+				if (!ptr->items[i].k_idx) break;
+			}
+
+			/* No equipment has been described yet. */
+			if (!i) return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+			/* Find the backup for the last item given. */
+			i += MAX_TPL_ITEMS-1;
+
+			/* Already defined. */
+			if (ptr->items[i].k_idx) return PARSE_ERROR_TOO_MANY_ARGUMENTS;
+
+			/* Parse the object and finish. */
+			return parse_object_simple(head, ptr->items+i, buf+2);
+		}
+		default:
+		{
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+		}
+	}
+}
+
+/*
  * Find out if the input string starts with any of a set
  * of target strings. If it does, return the number of
  * the match. If not, return -1.
@@ -3238,6 +3464,7 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 					"d_town",
 					"d_quest",
 					"s_info",
+					"template",
 				};
 				uint i;
 

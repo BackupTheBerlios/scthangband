@@ -204,7 +204,7 @@ cptr add_stats(s16b sex, s16b race, s16b template, bool maximise,
 	{
 		if (sex < 0 || sex >= MAX_SEXES) return "no such sex";
 		if (race < 0 || race >= MAX_RACES) return "no such race";
-		if (template < 0 || template >= MAX_TEMPLATE) return "no such template";
+		if (template < 0 || template >= z_info->templates) return "no such template";
 		if (maximise != TRUE && maximise != FALSE) return "bad maximise value";
 		for (i = 0; i < A_MAX; i++)
 		{
@@ -379,7 +379,6 @@ static cptr process_pref_squelch(char **zz, int n, u16b *sf_flags)
 	} \
 	else \
 	{ \
-		int i; \
 		for (i = 0; i < MAX; i++) \
 		{ \
 			if (!strcmp(zz[PARAM], INFO[i].title)) break; \
@@ -848,7 +847,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 		case 'D':
 		{
 			char dname[32], *name;
-			int sex, race, template, total = tokenize(buf+2, A_MAX+5, zz);
+			int i, sex, race, template, total = tokenize(buf+2, A_MAX+5, zz);
 			s16b stat[A_MAX];
 			bool maximise;
 			/* We can accept D with or without a name, but everything else must
@@ -860,7 +859,19 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 
 			D_GET_RACE(sex, 0, sex_info, MAX_SEXES, "sex");
 			D_GET_RACE(race, 1, race_info, MAX_RACES, "race");
-			D_GET_RACE(template, 2, template_info, MAX_TEMPLATE, "template");
+			if (strlen(zz[2]) == 1)
+			{
+				template = ator(*zz[2]);
+			}
+			else
+			{
+				for (i = 0; i < z_info->templates; i++)
+				{
+					if (!strcmp(zz[2], tp_name+template_info[i].name)) break;
+				}
+				if (i == z_info->templates) return "No such template.";
+				template = i;
+			}
 
 			if (!strcmp(zz[3], "0"))
 				maximise = FALSE;
@@ -1113,7 +1124,7 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			/* Template */
 			else if (streq(b+1, "TEMPLATE") && cp_ptr)
 			{
-				v = cp_ptr->title;
+				v = tp_name+cp_ptr->name;
 			}
 
 			/* Player */
@@ -2379,7 +2390,7 @@ static void display_player_misc_info(void)
 	c_put_str(TERM_L_BLUE, player_name, 2, 13);
 	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 13);
 	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 13);
-	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 13);
+	c_put_str(TERM_L_BLUE, tp_name+cp_ptr->name, 5, 13);
 
 	/* Display extras */
 	put_str("Hits(Max) :", 7, 1);
@@ -2659,7 +2670,7 @@ static void display_player_basics(void)
 	mc_put_fmt(2, 1, "Name        : $B$!%s", player_name);
 	mc_put_fmt(3, 1, "Sex         : $B$!%s", sp_ptr->title);
 	mc_put_fmt(4, 1, "Race        : $B$!%s", rp_ptr->title);
-	mc_put_fmt(5, 1, "Template    : $B$!%s", cp_ptr->title);
+	mc_put_fmt(5, 1, "Template    : $B$!%s", tp_name+cp_ptr->name);
 	mc_put_fmt(6, 1, "Exp. factor : $B%ld", p_ptr->expfact);
 }
 
@@ -5062,7 +5073,7 @@ static void print_tomb(void)
 	put_str(buf, 9, 11);
 
 
-	center_string(buf, cp_ptr->title);
+	center_string(buf, tp_name+cp_ptr->name);
 	put_str(buf, 10, 11);
 
 	(void)sprintf(tmp, "Exp: %ld", (long)p_ptr->exp);
@@ -5434,7 +5445,7 @@ void display_scores_aux(int from, int to, int note, high_score *score)
 			/* Dump some info */
 			sprintf(out_val, "%3d.%9s  %s the %s %s",
 					place, the_score.pts, the_score.who,
-					race_info[pr].title, template_info[pc].title);
+					race_info[pr].title, tp_name+template_info[pc].name);
 
 			/* Dump the first line */
 			c_put_str((byte)attr, out_val, n*4 + 2, 0);
@@ -5523,7 +5534,7 @@ void template_score(int ptemplate)
 	high_score the_score;
 	char buf[1024], out_val[256],tmp_str[80];
 
-	sprintf(tmp_str,"The Masters of the %s Profession",template_info[ptemplate].title);
+	sprintf(tmp_str,"The Masters of the %s Profession",tp_name+template_info[ptemplate].name);
 	prt(tmp_str,5,0);
 	/* Build the filename */
 	strnfmt(buf, 1024, "%v", path_build_f2, ANGBAND_DIR_APEX, "scores.raw");
@@ -5631,7 +5642,7 @@ void race_score(int race_num)
 		{
 			sprintf(out_val, "%3d) %s, the %s (Score %d)",
 				(m + 1), the_score.who,
-			template_info[pc].title, atoi(the_score.pts));
+			tp_name+template_info[pc].name, atoi(the_score.pts));
 			prt(out_val, (m + 7), 0);
 			m++;
 			lastlev = clev;
@@ -5644,7 +5655,7 @@ void race_score(int race_num)
 	{
 		sprintf(out_val, "You) %s, the %s (Score %ld)",
 			player_name,
-			cp_ptr->title,total_points());
+			tp_name+cp_ptr->name,total_points());
 		prt(out_val, (m + 8), 0);
 	}
 
@@ -5768,7 +5779,7 @@ static void make_record(high_score *score)
 	fprintf(fp, "Du:%s ", dun_str);
 	fprintf(fp, "Sx:%s ", sex_info[p_ptr->psex].title);
 	fprintf(fp, "Ra:%s ", race_info[p_ptr->prace].title);
-	fprintf(fp, "Tm:%s ", template_info[p_ptr->ptemplate].title);
+	fprintf(fp, "Tm:%s ", tp_name+template_info[p_ptr->ptemplate].name);
 	fprintf(fp, "Na:%s\n", TRIM(score->who));
 	my_fclose(fp);
 }

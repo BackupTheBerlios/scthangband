@@ -424,7 +424,7 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
 	message_flush();
 
 	/* Quit */
-	quit_fmt("Error in '%s.txt' file.", filename);
+	quit_fmt("Error in '%s' file.", filename);
 }
 
 #endif /* ALLOW_TEMPLATES */
@@ -1637,7 +1637,11 @@ static void check_skill_set(void)
 	const player_skill *ptr;
 	for (ptr = skill_set; ptr < END_PTR(skill_set); ptr++)
 	{
-		if (ptr != skill_set+ptr->idx)
+		if (strlen(ptr->name) >= SKILL_NAME_LEN)
+		{
+			quit_fmt("SKILL_NAME_LEN is too short for \"%s\".", ptr->name);
+		}
+		else if (ptr != skill_set+ptr->idx)
 		{
 			quit_fmt("The %s skill has index %d rather than %d.", ptr->name,
 				ptr - skill_set, ptr->idx);
@@ -2079,13 +2083,17 @@ void init_angband(void)
 	init_x_info("quests", quest_type, parse_q_list, "d_quest", q_list,
 		dummy, dummy, quests, Q_HEAD)
 
-	/* Initialize feature info */
+	/* Initialise vault info */
 	init_x_info("vaults", vault_type, parse_v_info, "v_info", v_info,
 		v_name, v_text, v_max, V_HEAD)
 
-	/* Initialize feature info */
+	/* Initialise shopkeeper info */
 	init_x_info("shopkeepers", owner_type, parse_s_info, "s_info", owners,
 		s_name, dummy, owners, S_HEAD)
+
+	/* Initialise player template info. */
+	init_x_info("player templates", player_template, parse_template, "template",
+		template_info, tp_name, dummy, templates, TPL_HEAD)
 
 	/* Delete the fake arrays, we're done with them. */
 	KILL(head->fake_info_ptr);

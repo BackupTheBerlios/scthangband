@@ -157,11 +157,6 @@
  */
 #define MAX_RACES 30 /* Fingers crossed, hope this works... */
 
-/*
- * Maximum number of player "template" types (see "table.c", etc)
- */
-#define MAX_TEMPLATE 13
-
 /* The number of "patrons" available (for Chaotic types) */
 #define MAX_PATRON 16
 
@@ -3569,6 +3564,11 @@ extern int PlayerUID;
 
 #define SKILL_NONE MAX_SKILLS
 
+/*
+ * Maximum skill name length. Only used during initialisation at present.
+ */
+#define SKILL_NAME_LEN 128
+
 /* Spoiler flags */
 #define SPOIL_EGO_ITEMS 0
 #define SPOIL_ARTIFACTS 0
@@ -3592,6 +3592,7 @@ extern int PlayerUID;
 #define T_HEAD 13
 #define Q_HEAD 14
 #define S_HEAD 15
+#define TPL_HEAD 16
 
 
 /*

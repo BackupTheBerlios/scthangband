@@ -2147,13 +2147,13 @@ extern cptr *hobbit_syllables[];
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT1_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(STORE_C) || defined(TABLES_C))
 extern player_race race_info[MAX_RACES];
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(TABLES_C))
-extern player_template template_info[MAX_TEMPLATE];
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(VARIABLE_C))
+extern player_template *template_info;
 #endif
 #if (defined(CMD5_C) || defined(INIT2_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern book_type book_info[MAX_BK];
 #endif
-#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern player_skill skill_set[MAX_SKILLS];
 #endif
 #if (defined(CMD2_C) || defined(OBJECT1_C) || defined(TABLES_C))
@@ -3907,5 +3907,17 @@ extern byte object_skill_count;
 
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_RAND_C))
 extern bool percent(int m);
+#endif
+
+/* init1.c */
+
+#if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
+extern errr parse_template(char *buf, header *head, vptr *extra);
+#endif
+
+/* variable.c */
+
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT2_C) || defined(VARIABLE_C))
+extern cptr tp_name;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

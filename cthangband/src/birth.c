@@ -866,7 +866,7 @@ static errr save_stats(void)
 		stat_default_type *sd_ptr = &stat_default[i];
 		fprintf(fff, "D:%s:%s:%s:%d",
 			sex_info[sd_ptr->sex].title, race_info[sd_ptr->race].title,
-			template_info[sd_ptr->template].title, sd_ptr->maximise);
+			tp_name+template_info[sd_ptr->template].name, sd_ptr->maximise);
 
 		for (l = 0; l< A_MAX; l++) fprintf(fff, ":%d", sd_ptr->stat[l]);
 
@@ -1269,7 +1269,7 @@ static bool point_mod_player(void)
 		/* Modify the player's template. */
 		if (i == IDX_TEMPLATE)
 		{
-			MOD_ADD(p_ptr->ptemplate, (ISLOWER(stat) ? 1 : -1), MAX_TEMPLATE);
+			MOD_ADD(p_ptr->ptemplate, (ISLOWER(stat) ? 1 : -1), z_info->templates);
 			cp_ptr = &template_info[p_ptr->ptemplate];
 		}
 
@@ -1515,7 +1515,9 @@ static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 			/* If we're just starting, we need to know the race & template. */
 			if (p_ptr->prace == RACE_NONE)
 			{
-				sprintf(buf+strlen(buf), "%s %s %s) (", sex_info[sd_ptr->sex].title, race_info[sd_ptr->race].title, template_info[sd_ptr->template].title);
+				sprintf(buf+strlen(buf), "%s %s %s) (",
+					sex_info[sd_ptr->sex].title, race_info[sd_ptr->race].title,
+					tp_name+template_info[sd_ptr->template].name);
 			}
 			for (z = 0; z < A_MAX; z++)
 			{
@@ -2603,7 +2605,7 @@ static void player_outfit(void)
 		}
 
 		/* Give the player the object. */
-		make_birth_item(i_ptr, NULL);
+		make_birth_item(i_ptr, tp_name);
 	}
 }
 
@@ -2847,7 +2849,7 @@ static bool quick_start_character(void)
 	mc_put_fmt(2, 1, "Name        : $B$!%s", player_name);
 	mc_put_fmt(3, 1, "Sex         : $B$!%s", sp_ptr->title);
 	mc_put_fmt(4, 1, "Race        : $B$!%s", rp_ptr->title);
-	mc_put_fmt(5, 1, "Template    : $B$!%s", cp_ptr->title);
+	mc_put_fmt(5, 1, "Template    : $B$!%s", tp_name+cp_ptr->name);
 	mc_put_fmt(6, 1, "Exp. factor : $B%ld", p_ptr->expfact);
 
 	/*** Generate ***/
@@ -3079,8 +3081,34 @@ static bool choose_race(void)
  */
 static bool choose_template(void)
 {
-	CHOOSE_SRT(template_info, MAX_TEMPLATE, "template", ptemplate, cp_ptr, 5,
-		"Your 'template' determines various starting abilities and bonuses.");
+	int k;
+	name_entry *this;
+
+	C_TNEW(list, z_info->templates, name_entry);
+
+	/* Extra info */
+	mc_roff_xy(5, 12, "Your 'template' determines various starting abilities and bonuses.");
+
+	FOR_ALL_IN(list, this)
+	{
+		this->idx = this - list;
+		this->str = tp_name+template_info[this->idx].name;
+	}
+
+	/* Show the options. */
+	display_entry_list_bounded(list, z_info->templates, TRUE, 0, 17, 80, 22);
+
+	/* Choose. */
+	if (birth_choice(15, z_info->templates, "Choose a template", &k, FALSE)
+		== BC_RESTART) return FALSE;
+
+	/* Set it. */
+	p_ptr->ptemplate = k;
+	cp_ptr = &template_info[k];
+
+	/* Display */
+	mc_put_fmt(5, 15, "$B%s", tp_name+cp_ptr->name);
+	return TRUE;
 }
 
 /*

@@ -152,24 +152,25 @@ struct maxima
 	u16b mname; /* Usual maximum length of monster_desc() strings. */
 	u16b ar_delay; /* Delay between rolls of the auto-roller. */
 
-	u16b macros; /* Total size of "macro_info" */
-	u16b v_max; /* Total size of "v_info[]" */
-	u16b f_max; /* Total size of "f_info[]" */
-	u16b k_max; /* Total size of "k_info[]" */
-	u16b u_max; /* Total size of "u_info[]" */
-	u16b ob_max; /* Total size of "o_base[]" */
-	u16b a_max; /* Total size of "a_info[]" */
-	u16b e_max; /* Total size of "e_info[]" */
-	u16b r_max; /* Total size of "r_info[]" */
-	u16b event_max; /* Total size of "death_events[]" */
-	u16b p_max; /* Total size of "p_info[]" */
-	u16b h_max; /* Total size of "h_info[]" */
+	u16b macros; /* Elements in "macro_info" */
+	u16b v_max; /* Elements in "v_info[]" */
+	u16b f_max; /* Elements in "f_info[]" */
+	u16b k_max; /* Elements in "k_info[]" */
+	u16b u_max; /* Elements in "u_info[]" */
+	u16b ob_max; /* Elements in "o_base[]" */
+	u16b a_max; /* Elements in "a_info[]" */
+	u16b e_max; /* Elements in "e_info[]" */
+	u16b r_max; /* Elements in "r_info[]" */
+	u16b event_max; /* Elements in "death_events[]" */
+	u16b p_max; /* Elements in "p_info[]" */
+	u16b h_max; /* Elements in "h_info[]" */
 	u16b b_max; /* Total size per element of "b_info[]" */
-	u16b flavor_max; /* Total size of "flavor_info[]" */
-	u16b quests; /* Total size of "q_list[]" */
-	u16b dungeons; /* Total size of "dun_defs[]" */
-	u16b towns; /* Total size of "town_defs[]" */
-	u16b owners; /* Total size of "owners[]" */
+	u16b flavor_max; /* Elements in "flavor_info[]" */
+	u16b quests; /* Elements in "q_list[]" */
+	u16b dungeons; /* Elements in "dun_defs[]" */
+	u16b towns; /* Elements in "town_defs[]" */
+	u16b owners; /* Elements in "owners[]" */
+	u16b templates; /* Elements in template_info[] */
 };
 
 
@@ -1028,7 +1029,7 @@ typedef struct player_template player_template;
 
 struct player_template
 {
-	cptr title; /* Type of template */
+	u16b name; /* Type of template. */
 
 	byte choices; /* Number of choices for hermetic skills */
 

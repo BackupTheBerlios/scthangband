@@ -729,6 +729,12 @@ owner_type *owners;
 cptr s_name;
 
 /*
+ * The player template array.
+ */
+player_template *template_info;
+cptr tp_name;
+
+/*
  * Hack -- The special Angband "System Suffix"
  * This variable is used to choose an appropriate "pref-xxx" file
  */
