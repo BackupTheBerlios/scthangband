@@ -133,7 +133,7 @@ G:,:v:1:20
 N:Red
 G:,:R:1:21
 
-N:Red
+N:Red Spotted
 G:,:r:1:22
 
 N:Slimy
