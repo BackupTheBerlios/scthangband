@@ -2608,6 +2608,9 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 		
 /* Shorthand notation for res_stat_details() */
 
+/* Flags for an item which affects all stats (for convenience). */
+#define A_ALL ((1<<A_STR)+(1<<A_INT)+(1<<A_WIS)+(1<<A_DEX)+(1<<A_CON)+(1<<A_CHR))
+
 /* A basic test */
 #define test(x,y) (x[stat_res[y]] - x[p_ptr->stat_ind[y]])
 
@@ -2621,150 +2624,322 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 #define dotest(x,y,str) if ((dif = test(x,y))) descr(str)
 
 #define DIF ABS(dif)
-#define DIF_INC ((dif > 0) ? "increases" : "decreases")
-#define DIF_DEC ((dif < 0) ? "increases" : "decreases")
-#define DIF_MOR ((dif > 0) ? "more" : "less")
-#define DIF_LES ((dif < 0) ? "more" : "less")
+#define DIF_INC ((dif < 0) ? "increases" : "decreases")
+#define DIF_DEC ((dif > 0) ? "increases" : "decreases")
+#define DIF_MOR ((dif < 0) ? "more" : "less")
+#define DIF_LES ((dif > 0) ? "more" : "less")
+
+#define CERT ((act & (A_INCREASE | A_DEC10 | A_DEC25)) ? "at least " : "")
+
+#define A_RESTORE	0x01
+#define A_INCREASE	0x02
+#define A_INCRES	(A_INCREASE | A_RESTORE)
+#define A_DEC10	0x04	/* A small temporary decrease, as do_dec_stat(). */
+#define A_DEC25	0x08	/* A large permanent decrease, as a potion of ruination. */
 
 /* Just in case birthrand.diff isn't applied. */
 #ifndef A_MAX
 #define A_MAX 6
 #endif
 
+#define CMPU(X) (pn_ptr->X - po_ptr->X)
+#define CMP(X) ((dif = CMPU(X)))
+#define CMPUJ(X) CMPU(X[j])
+#define CMPJ(X) ((dif = CMPUJ(X)))
+#define CMPS(X) ((dif = X[pn_ptr->stat_ind[j]] - X[po_ptr->stat_ind[j]]))
+#define CMPT(X,Y) ((dif = X[pn_ptr->stat_ind[Y]] - X[po_ptr->stat_ind[Y]]))
+
 /*
- * Describe a stat restoration/modification item.
- *
- * Stat is a bit-map for which 0x01 to 0x20 represent the stats, 0x40 indicates
- * that it increases the given stat as a potion of stat does, and 0x80 indicates
- * that it restores the given stat. Stat potions do actually have both flags.
- *
- * Note that pval may not be the same as o_ptr->pval.
- *
- * As p_ptr isn't p_body here, most of the effects could be deduced by judicious
- * calls to update_stuff() rather than calculating them from the stats here.
- * Maybe later...
+ * Actually describe a stat modifying item.
+ * As the modifications have taken place, this just queries the old and new
+ * versions of p_ptr to see what has changed.
  */
-static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, cptr *info, bool *info_a)
+static void res_stat_details_comp(player_type *po_ptr, player_type *pn_ptr, int *i, cptr *info, bool *info_a, byte act)
 {
-	s16b stat_res[6], dif, j;
+	int j,dif, dif2;
 	cptr stats[6] = {"strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"};
 
-	/* Simple information available without stat spoilers. */
 	for (j = 0; j < A_MAX; j++)
 	{
-		stat_res[j] = p_ptr->stat_ind[j];
-		if (~stat & 1<<j) continue;
-		if (p_ptr->stat_max[j] > p_ptr->stat_cur[j] && stat & 0x80)
+		if (CMPJ(stat_max) > 0)
+		{
+			descr(format("It adds %s%d to your %s.", CERT, dif, stats[j]));
+		}
+		else if (dif < 0)
+		{
+			descr(format("It removes %s%d from your %s.", CERT, -dif, stats[j]));
+		}
+		else if (CMPJ(stat_cur))
+		{
 			descr(format("It restores your %s.", stats[j]));
-		if (pval > 0)
-		{
-			descr(format("It adds %d to your %s.", pval, stats[j]));
-		}
-		else if (pval < 0)
-		{
-			descr(format("It removes %d from your %s.", -pval, stats[j]));
-		}
-		else if (p_ptr->stat_max[j] < 18+100 && stat & 0x40)
-		{
-			descr(format("It affects your %s.", stats[j]));
 		}
 
-		/* Nothing more to say without spoilers. */
-		if (!spoil_stat) continue;
+		/* No effect, so boring. */
+		if (!CMPJ(stat_use)) continue;
 
-		/* Store the expected values after the stat has been restored/augmented. */
-			
-		if (stat & 1<<j)
-		{
-			/* Start with the internal stats. */
-			if (stat & 0x80) dif = p_ptr->stat_max[j];
-			else dif = p_ptr->stat_cur[j];
-			/* Find the minima from inc_stat() */
-			if (stat & 0x40)
-	{
-				if (dif < 18 || dif > 18+97)
-					dif++;
-				else if (dif < 18+100)
-	{
-					dif += (((18+100) - dif) / 2 + 3) / 4 + 1;
-					if (dif > 18+99) dif = 18+99;
-	}
-	}
-			/* Add current equipment modifiers. */
-			dif = modify_stat_value(dif, p_ptr->stat_add[j]);
-			/* Add the item's pval if any. */
-			dif = modify_stat_value(dif, pval);
-			stat_res[j] = ind_stat(dif);
-		}
-
-		/* Only check possible modifiers. */
-		if (stat_res[j] == p_ptr->stat_ind[j]) continue;
-
-	/* With spoilers, feed the results into the various stat tables
-	 * Note that dif is only useful where the tables need little interpretation. */
 		switch (j)
 		{
 			case A_CHR:
-			dotest(adj_mag_study, A_CHR, format("  It causes you to annoy spirits %s.", DIF_LES));
-			dotest(adj_mag_fail, A_CHR, format("  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF));
-			dotest(adj_mag_stat, A_CHR, format("  It %s your spiritual success rates.", DIF_INC));
-			dotest(adj_chr_gold, A_CHR, format("  It %s your bargaining power.", DIF_DEC));
+			if (CMPS(adj_mag_study)) descr(format("  It causes you to annoy spirits %s.", DIF_LES));
+			if (CMPS(adj_mag_study)) descr(format("  It causes you to annoy spirits %s.", DIF_LES));
+			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum spiritual success rate by %d%%.", DIF_DEC, DIF));
+			if (CMPS(adj_mag_stat)) descr(format("  It %s your spiritual success rates.", DIF_INC));
+			if (CMPS(adj_chr_gold)) descr(format("  It %s your bargaining power.", DIF_DEC));
 			break;
 			case A_WIS:
-			dotest(adj_mag_mana, A_WIS, format("  It gives you %d %s chi at 100%% skill.", DIF*25, DIF_MOR));
-			dotest(adj_mag_fail, A_WIS, format("  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF));
-			dotest(adj_mag_stat, A_WIS, format("  It %s your mindcraft success rates.", DIF_INC));
-			dotest(adj_wis_sav, A_WIS, format("  It %s your saving throw by %d%%.", DIF_INC, DIF));
+			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPU(mchi)));
+			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF));
+			if (CMPS(adj_mag_stat)) descr(format("  It %s your mindcraft success rates.", DIF_INC));
+			if (CMPS(adj_wis_sav)) descr(format("  It %s your saving throw by %d%%.", DIF_INC, DIF));
 			break;
 			case A_INT: /* Rubbish in the case of icky gloves or heavy armour. */
-			dotest(adj_mag_study, A_INT, format("  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR));
-			dotest(adj_mag_mana, A_INT, format("  It gives you %d %s mana at 100%% skill.", DIF*25, DIF_MOR));
-			dotest(adj_mag_fail, A_INT, format("  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF));
-			dotest(adj_mag_stat, A_INT, format("  It %s your spellcasting success rates.", DIF_INC));
-			dotest(adj_int_dev, A_INT, format("  It %s your success rate with magical devices.", DIF_INC));
+			if (CMPS(adj_mag_study)) descr(format("  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR));
+			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPU(msp)));
+			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF));
+			if (CMPS(adj_mag_stat)) descr(format("  It %s your spellcasting success rates.", DIF_INC));
+			if (CMP(skill_dev)) descr(format("  It %s your success rate with magical devices.", DIF_INC));
 			break;
 			case A_CON:
-			dotest(adj_con_fix, A_CON, format("  It %s your regeneration rate.", DIF_INC));
-			dotest(adj_con_mhp, A_CON, format("  It gives you %d %s hit points at 100%% skill.", DIF*25, DIF_MOR));
+			if (CMPS(adj_con_fix)) descr(format("  It %s your regeneration rate.", DIF_INC));
+			if (CMPS(adj_con_mhp)) descr(format("  It gives you %d %s hit points at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPU(mhp)));
 			break;
 			case A_DEX:
-			dotest(adj_dex_ta, A_DEX, format("  It %s your AC by %d.", DIF_INC, DIF));
-			dotest(adj_dex_th, A_DEX, format("  It %s your chance to hit opponents by %d.", DIF_INC, DIF));
-			dotest(adj_dex_safe, A_DEX, format("  It makes you %d%% %s resistant to theft.", dif, DIF_MOR));
+			if (CMP(dis_to_a)) descr(format("  It %s your AC by %d.", DIF_INC, DIF));
+			if (CMP(dis_to_h)) descr(format("  It %s your chance to hit opponents by %d.", DIF_INC, DIF));
+			/* Fix me - this also covers stunning, but is affected by saving throw. */
+			if (CMPS(adj_dex_safe)) descr(format("  It makes you %d%% %s resistant to theft.", dif, DIF_MOR));
+			if ((dif2 = CMPS(adj_dex_dis)+CMPT(adj_int_dis, A_INT))) { dif = dif2; descr(format("  It %s your disarming skill.", DIF_INC));}
+			if ((CMP(num_blow))) descr(format("  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60));
 			break;
 			case A_STR:
-			dotest(adj_str_td, A_STR, format("  It %s your ability to damage opponents by %d.", DIF_INC, DIF));
-			dotest(adj_str_th, A_STR, format("  It %s your chance to hit opponents by %d.", DIF_INC, DIF));
-			dotest(adj_str_wgt, A_STR, format("  It %s your maximum carrying capacity by %d.", DIF_INC, DIF));
-			dotest(adj_str_hold, A_STR, format("  It makes you %s able to use heavy weapons.", DIF_MOR));
-			dotest(adj_str_dig, A_STR, format("  It allows you to dig %s effectively.", DIF_MOR));
+			if (CMP(dis_to_d)) descr(format("  It %s your ability to damage opponents by %d.", DIF_INC, DIF));
+			if (CMPS(adj_str_wgt)) descr(format("  It %s your maximum carrying capacity by %d.", DIF_INC, DIF));
+			if (CMPS(adj_str_hold)) descr(format("  It makes you %s able to use heavy weapons.", DIF_MOR));
+			if (CMP(skill_dig)) descr(format("  It allows you to dig %s effectively.", DIF_MOR));
 		}
 	}
-
-	/* Nothing more to say without spoilers. */
-	if (!spoil_stat) return;
-
-	/* Check disarming skill. */
-	if ((dif = test(adj_dex_dis, A_DEX) + test(adj_int_dis, A_INT))) descr(format("  It %s your disarming skill.", DIF_INC));
-
-	/* Determine the effect on number of blows. This has no effect on
-	 * martial arts, and has been superceded by spoil_dam. */
-	if (inventory[INVEN_WIELD].k_idx && !spoil_dam)
-	{
-		/* mul and wgt are as in calc_bonuses(). Would player_type be a better place for them? */
-		int mul = 3, wgt = 35, div;
-		/* This is all rubbish if it is a weapon. */
-		if (wield_slot(o_ptr) == INVEN_WIELD)
-			div = o_ptr->weight;
-		else
-			div = inventory[INVEN_WIELD].weight;
-		if (div < wgt) div = wgt;
-
-		if ((dif = blows(stat_res) - blows(p_ptr->stat_ind)))
-		descr(format("  It %s your number of blows per turn by %d.", DIF_INC, DIF));
-	}
-	
 }
+
+/*
+ * Increase a stat by the minimum amount possible.
+ */
+static void change_stat_min(int stat, int act)
+{
+	int i;
+	for (i = 0; i < A_MAX; i++)
+	{
+		/* Doesn't affect this stat. */
+		if (~stat & 1<<i) continue;
+		
+		/* Restores this stat. */
+		if (act & A_RESTORE) (void)res_stat(i);
+
+		/* Affect this stat (as inc_stat(), but minimal). */
+		if ((act & A_INCREASE) && (p_ptr->stat_cur[i] < 118))
+		{
+			int gain, value = p_ptr->stat_cur[i];
+			if (value < 18 || value > 115) gain = 1;
+			else gain = ((118-value)/2+3)/2+1;
+			p_ptr->stat_cur[i] += gain;
+			p_ptr->stat_max[i] += gain;
+		}
+		
+		/* A temporary loss of 10 */
+		if ((act & A_DEC10) && (p_ptr->stat_cur[i] > 3))
+		{
+			int loss, cur = p_ptr->stat_cur[i];
+			if (cur < 19) loss = 1;
+
+			else loss =
+#if 0 /* It's always 5, so don't waste time calculating it. */
+			MAX((((cur-18)/2+1)/2+2)*10/100, 10/2);
+#else
+			5;
+#endif
+			if (cur > 18 && cur-loss <= 18)
+				p_ptr->stat_cur[i] = 18;
+			else
+				p_ptr->stat_cur[i] -= loss;
+		}
+		/* A permanent loss of 25 */
+		if ((act & A_DEC25) && (p_ptr->stat_max[i] > 3))
+		{
+			int loss, cur = p_ptr->stat_max[i];
+			if (cur < 19) loss = 1;
+			else loss =
+#if 0 /* It's always 10, so don't waste time calculating it. */
+			MAX((((cur-18)/2+1)/2+2)*25/100, 25/2);
+#else
+			12;
+#endif
+			if (p_ptr->stat_cur[i] > 18 && p_ptr->stat_cur[i]-loss <= 18)
+				p_ptr->stat_cur[i] = 18;
+			else
+				p_ptr->stat_cur[i] = MAX(p_ptr->stat_cur[i]-loss, 3);
+
+			if (p_ptr->stat_max[i] > 18 && p_ptr->stat_max[i]-loss <= 18)
+				p_ptr->stat_max[i] = 18;
+			else
+				p_ptr->stat_max[i] -= loss;
+		}
+	}
+}
+
+static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval)
+{
+	int j;
+	struct convtype {
+	byte tval;
+	byte sval;
+	byte act;
+	byte stat;
+	} conv[] = {
+		/* Increase stat potions */
+		{TV_POTION, SV_POTION_INC_STR, A_INCRES, 1<<A_STR},
+		{TV_POTION, SV_POTION_INC_INT, A_INCRES, 1<<A_INT},
+		{TV_POTION, SV_POTION_INC_WIS, A_INCRES, 1<<A_WIS},
+		{TV_POTION, SV_POTION_INC_DEX, A_INCRES, 1<<A_DEX},
+		{TV_POTION, SV_POTION_INC_CON, A_INCRES, 1<<A_CON},
+		{TV_POTION, SV_POTION_INC_CHR, A_INCRES, 1<<A_CHR},
+		{TV_POTION, SV_POTION_STAR_ENLIGHTENMENT, A_INCRES, (1<<A_INT | 1<<A_WIS)},
+		{TV_POTION, SV_POTION_AUGMENTATION, A_INCRES, A_ALL},
+		/* Restore stat potions */
+		{TV_POTION, SV_POTION_RES_STR, A_RESTORE, 1<<A_STR},
+		{TV_POTION, SV_POTION_RES_INT, A_RESTORE, 1<<A_INT},
+		{TV_POTION, SV_POTION_RES_WIS, A_RESTORE, 1<<A_WIS},
+		{TV_POTION, SV_POTION_RES_DEX, A_RESTORE, 1<<A_DEX},
+		{TV_POTION, SV_POTION_RES_CON, A_RESTORE, 1<<A_CON},
+		{TV_POTION, SV_POTION_RES_CHR, A_RESTORE, 1<<A_CHR},
+		{TV_POTION, SV_POTION_LIFE, A_RESTORE, A_ALL},
+		/* Restore stat mushrooms */
+		{TV_FOOD, SV_FOOD_RESTORE_STR, A_RESTORE, 1<<A_STR},
+		{TV_FOOD, SV_FOOD_RESTORE_CON, A_RESTORE, 1<<A_CON},
+		{TV_FOOD, SV_FOOD_RESTORING, A_RESTORE, A_ALL},
+		/* Other restore stat items */
+		{TV_STAFF, SV_STAFF_THE_MAGI, A_RESTORE, 1<<A_INT},
+		{TV_ROD, SV_ROD_RESTORATION, A_RESTORE, A_ALL},
+		/* Decrease stat potions */
+		{TV_POTION, SV_POTION_DEC_STR, A_DEC10, 1<<A_STR},
+		{TV_POTION, SV_POTION_DEC_INT, A_DEC10, 1<<A_INT},
+		{TV_POTION, SV_POTION_DEC_WIS, A_DEC10, 1<<A_WIS},
+		{TV_POTION, SV_POTION_DEC_DEX, A_DEC10, 1<<A_DEX},
+		{TV_POTION, SV_POTION_DEC_CON, A_DEC10, 1<<A_CON},
+		{TV_POTION, SV_POTION_DEC_CHR, A_DEC10, 1<<A_CHR},
+		{TV_POTION, SV_POTION_RUINATION, A_DEC25, A_ALL},
+		/* Decrease stat food */
+		{TV_FOOD, SV_FOOD_WEAKNESS, A_DEC10, A_STR},
+		{TV_FOOD, SV_FOOD_SICKNESS, A_DEC10, A_CON},
+		{TV_FOOD, SV_FOOD_STUPIDITY, A_DEC10, A_INT},
+		{TV_FOOD, SV_FOOD_NAIVETY, A_DEC10, A_WIS},
+		{TV_FOOD, SV_FOOD_UNHEALTH, A_DEC10, A_CON},
+		{TV_FOOD, SV_FOOD_DISEASE, A_DEC10, A_STR},
+		{0,0,0,0},
+	};
+
+	/* Start with the permanent modifiers items in */
+	if (o_ptr->art_flags1 & TR1_STR) *stat |= 1<<A_STR;
+	if (o_ptr->art_flags1 & TR1_INT) *stat |= 1<<A_INT;
+	if (o_ptr->art_flags1 & TR1_WIS) *stat |= 1<<A_WIS;
+	if (o_ptr->art_flags1 & TR1_DEX) *stat |= 1<<A_DEX;
+	if (o_ptr->art_flags1 & TR1_CON) *stat |= 1<<A_CON;
+	if (o_ptr->art_flags1 & TR1_CHR) *stat |= 1<<A_CHR;
+
+	/* If one of these flags exist, the modifier refers to it. */
+	if (stat) *pval = o_ptr->pval;
+	else *pval = 0;
+
+	/* Look for stat-affecting potions, food, etc..*/
+	for (j = 0, *act = *stat = 0; conv[j].tval; j++)
+	{
+		if (conv[j].tval == o_ptr->tval && conv[j].sval == o_ptr->sval)
+		{
+			*stat |= conv[j].stat;
+			*act |= conv[j].act;
+		}
+	}
+}
+
+/*
+ * Find out what, if any, stat changes the given item causes.
+ */
+static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_a)
+{
+	byte stat, act;
+	s16b pval;
+	object_type j_ptr[1];
+	player_type p2_ptr[1];
+
+	/* Find out the stat flags and pval (if relevant). */
+	get_stat_flags(o_ptr, &stat, &act, &pval);
+
+	/* Boring */
+	if (!stat) return;
+
+	/* As update_stuff() can cause potentially irreversible changes,
+	* use a copy instead. */
+
+	COPY(p2_ptr, p_ptr, player_type);
+	p_ptr = p2_ptr;
+
+	/*
+	 * Carry out a pessimistic version of any restore/increase the item
+	 * gives.
+	 */
+	if (stat & (A_RESTORE | A_INCREASE)) change_stat_min(stat, act);
+
+	/* A worn item. */
+	if ((o_ptr >= inventory+INVEN_WIELD) && (o_ptr < inventory+INVEN_TOTAL))
+	{
+		/* Put o_ptr somewhere safe. */
+		object_copy(j_ptr, o_ptr);
+		object_wipe(o_ptr);
+
+		/* Correct bonuses quietly. */
+		p_ptr->update = PU_BONUS | PU_QUIET;
+		update_stuff();
+
+		/* Compare the original with the same with the item removed. */
+		res_stat_details_comp(&p_body, p2_ptr, i, info, info_a, act);
+
+		/* Replace o_ptr. */
+		object_copy(o_ptr, j_ptr);
+	}
+	/* A wearable item. */
+	else if (pval)
+	{
+		int slot = wield_slot(o_ptr);
+
+		/* Put the currently worn item somewhere safe. */
+		object_copy(j_ptr, inventory+slot);
+
+		/* Put o_ptr in its place. */
+		object_copy(inventory+slot, o_ptr);
+
+		/* Correct bonuses quietly. */
+		p_ptr->update = PU_BONUS | PU_QUIET;
+		update_stuff();
+
+		/* Compare the original with the same with this object wielded. */
+		res_stat_details_comp(p2_ptr, &p_body, i, info, info_a, act);
+
+		/* Replace inveotory+slot */
+		object_copy(inventory+slot, j_ptr);
+	}
+	/* A usable item. */
+	else
+	{
+		/* Correct bonuses quietly. */
+		p_ptr->update = PU_BONUS | PU_QUIET;
+		update_stuff();
+
+		/* Compare the original with the same with this object wielded. */
+		res_stat_details_comp(p2_ptr, &p_body, i, info, info_a, act);
+	}
+
+	/* Return p_ptr to normal. */
+	p_ptr = &p_body;
+}
+
 
 /* Offset for a continued string, -1 as these start with a space anyway. */
 #define IFD_OFFSET	3
@@ -3035,119 +3210,19 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
  		break;
  	}
 
-	
-#define A_ALL ((1<<A_STR)+(1<<A_INT)+(1<<A_WIS)+(1<<A_DEX)+(1<<A_CON)+(1<<A_CHR))
-
-	/* Recognise items which affect stats */
-	if (!brief && (object_aware_p(o_ptr) || (o_ptr->ident & IDENT_TRIED)))
-	{
-		byte stat = 0;
-		s16b pval = 0;
-		object_type forge;
-		player_type *p2_ptr = NULL;
-		struct convtype {
-		byte tval;
-		byte sval;
-		byte stat;
-		s16b pval;
-		} conv[] = {
-		/* Increase stat potions */
-		{TV_POTION, SV_POTION_INC_STR, (byte)(0xC0+(1<<A_STR)), 0},
-		{TV_POTION, SV_POTION_INC_INT, (byte)(0xC0+(1<<A_INT)), 0},
-		{TV_POTION, SV_POTION_INC_WIS, (byte)(0xC0+(1<<A_WIS)), 0},
-		{TV_POTION, SV_POTION_INC_DEX, (byte)(0xC0+(1<<A_DEX)), 0},
-		{TV_POTION, SV_POTION_INC_CON, (byte)(0xC0+(1<<A_CON)), 0},
-		{TV_POTION, SV_POTION_INC_CHR, (byte)(0xC0+(1<<A_CHR)), 0},
-		{TV_POTION, SV_POTION_STAR_ENLIGHTENMENT, (byte)(0xC0+(1<<A_INT)+(1<<A_WIS)), 0},
-		{TV_POTION, SV_POTION_AUGMENTATION, (byte)(0xC0+A_ALL), 0},
-		/* Restore stat potions */
-		{TV_POTION, SV_POTION_RES_STR, (byte)(0x80+(1<<A_STR)), 0},
-		{TV_POTION, SV_POTION_RES_INT, (byte)(0x80+(1<<A_INT)), 0},
-		{TV_POTION, SV_POTION_RES_WIS, (byte)(0x80+(1<<A_WIS)), 0},
-		{TV_POTION, SV_POTION_RES_DEX, (byte)(0x80+(1<<A_DEX)), 0},
-		{TV_POTION, SV_POTION_RES_CON, (byte)(0x80+(1<<A_CON)), 0},
-		{TV_POTION, SV_POTION_RES_CHR, (byte)(0x80+(1<<A_CHR)), 0},
-		{TV_POTION, SV_POTION_LIFE, (byte)(0x80+A_ALL), 0},
-		/* Restore stat mushrooms */
-		{TV_FOOD, SV_FOOD_RESTORE_STR, (byte)(0x80+(1<<A_STR)), 0},
-		{TV_FOOD, SV_FOOD_RESTORE_CON, (byte)(0x80+(1<<A_CON)), 0},
-		{TV_FOOD, SV_FOOD_RESTORING, (byte)(0x80+A_ALL), 0},
-		/* Other restore stat items */
-		{TV_STAFF, SV_STAFF_THE_MAGI, (byte)(0x80+(1<<A_INT)), 0},
-		{TV_ROD, SV_ROD_RESTORATION, (byte)(0x80+A_ALL), 0},
-		/* Decrease stat potions */
-		{TV_POTION, SV_POTION_DEC_STR, (byte)(0x80+(1<<A_STR)), -1},
-		{TV_POTION, SV_POTION_DEC_INT, (byte)(0x80+(1<<A_INT)), -1},
-		{TV_POTION, SV_POTION_DEC_WIS, (byte)(0x80+(1<<A_WIS)), -1},
-		{TV_POTION, SV_POTION_DEC_DEX, (byte)(0x80+(1<<A_DEX)), -1},
-		{TV_POTION, SV_POTION_DEC_CON, (byte)(0x80+(1<<A_CON)), -1},
-		{TV_POTION, SV_POTION_DEC_CHR, (byte)(0x80+(1<<A_CHR)), -1},
-		{TV_POTION, SV_POTION_RUINATION, (byte)(A_ALL), -2},
-		/* Decrease stat food */
-		{TV_FOOD, SV_FOOD_WEAKNESS, (byte)(1<<A_STR), -1},
-		{TV_FOOD, SV_FOOD_SICKNESS, (byte)(1<<A_CON), -1},
-		{TV_FOOD, SV_FOOD_STUPIDITY, (byte)(1<<A_INT), -1},
-		{TV_FOOD, SV_FOOD_NAIVETY, (byte)(1<<A_WIS), -1},
-		{TV_FOOD, SV_FOOD_UNHEALTH, (byte)(1<<A_CON), -1},
-		{TV_FOOD, SV_FOOD_DISEASE,  (byte)(1<<A_STR), -1},
-		{0,0,0,0},
-		};
-
-		/* Start with the permanent modifiers items in */
-		if (f1 & TR1_STR) stat |= 1<<A_STR;
-		if (f1 & TR1_INT) stat |= 1<<A_INT;
-		if (f1 & TR1_WIS) stat |= 1<<A_WIS;
-		if (f1 & TR1_DEX) stat |= 1<<A_DEX;
-		if (f1 & TR1_CON) stat |= 1<<A_CON;
-		if (f1 & TR1_CHR) stat |= 1<<A_CHR;
-
-		/* If one of these flags exist, the modifier refers to it. */
-		if (stat) pval = o_ptr->pval;
-
-		/* Look for stat-affecting potions, food, etc..*/
-		for (j = 0; conv[j].tval; j++)
-			if (conv[j].tval == o_ptr->tval && conv[j].sval == o_ptr->sval)
-			{
-				stat |= conv[j].stat;
-				pval = conv[j].pval;
-			}
-
-		/* Remove item if equipped to correct bonuses */
-		if (o_ptr > inventory+INVEN_PACK && o_ptr < inventory+INVEN_TOTAL)
-		{
-			/* As update_stuff() can cause potentially irreversible changes,
-			* make a backup of player_type first. */
-			player_type p2_body;
-			p2_ptr = &p2_body;
-
-			COPY(p2_ptr, p_ptr, player_type);
-
-		object_copy(&forge, o_ptr);
-		object_wipe(o_ptr);
-
-			/* Correct bonuses quietly. */
-			p_ptr->update = PU_BONUS | PU_QUIET;
-		update_stuff();
-		}
-
-		/* Output the results. */
-		if (stat) res_stat_details(stat, pval, &forge, &i, info, info_a);
-
-		/* Replace object if needed */
-		if (p2_ptr)
-		{
-		object_copy(o_ptr, &forge);
-
-			/* Return the bonuses to their real values */
-			COPY(p_ptr, p2_ptr, player_type);
-		}
-	}
 
 	/* And then describe it fully */
 
 	j = 0;
-	/* Brief mode puts stats here, too. */
-	if (brief)
+	
+	/* Recognise items which affect stats (detailed) */
+	if (!brief && spoil_stat)
+	{
+		res_stat_details(o_ptr, &i, info, info_a);
+	}
+	/* If brevity is required or spoilers are not, put stats with the other
+	 * pval effects. */
+	else
 	{
 		if (f1 & (TR1_STR)) board[j++] = "strength";
 		if (f1 & (TR1_INT)) board[j++] = "intelligence";

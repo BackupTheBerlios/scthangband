@@ -1274,7 +1274,7 @@ extern bool inc_stat(int stat);
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
 extern bool dec_stat(int stat, int amount, int permanent);
 #endif
-#if (defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
+#if (defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern bool res_stat(int stat);
 #endif
 #if (defined(CMD5_C) || defined(MELEE1_C) || defined(SPELLS1_C))
@@ -1670,7 +1670,7 @@ extern byte adj_mag_stat[] ;
 #if (defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C))
 extern byte adj_chr_gold[] ;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_int_dev[] ;
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
@@ -1682,16 +1682,16 @@ extern byte adj_dex_dis[] ;
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_int_dis[] ;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_dex_ta[] ;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_str_td[] ;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_dex_th[] ;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_str_th[] ;
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
@@ -1700,7 +1700,7 @@ extern byte adj_str_wgt[] ;
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_str_hold[] ;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_str_dig[] ;
 #endif
 #if (defined(CMD2_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
@@ -3056,7 +3056,7 @@ extern void day_to_date(s16b day,char *date);
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(XTRA1_C))
 extern void cnv_stat(int val, char *out_val);
 #endif
-#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(XTRA1_C))
 extern s16b modify_stat_value(int value, int amount);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
@@ -3524,5 +3524,11 @@ extern int color_char_to_attr(char c);
 
 #if (defined(UTIL_C) || defined(XTRA1_C))
 extern bool is_keymap_or_macro(void);
+#endif
+
+/* variable.c */
+
+#if (defined(OBJECT1_C) || defined(VARIABLE_C))
+extern player_type p_body;
 #endif
 #endif /* INCLUDED_EXTERNS_H */

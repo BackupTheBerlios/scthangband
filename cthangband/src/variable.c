@@ -678,9 +678,9 @@ cptr keymap_act[KEYMAP_MODES][256];
 /*** Player information ***/
 
 /*
- * Static player info record
+ * Player info record
  */
-static player_type p_body;
+player_type p_body;
 
 /*
  * Pointer to the player info
