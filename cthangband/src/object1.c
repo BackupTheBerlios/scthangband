@@ -1909,41 +1909,18 @@ cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
  * currently used for termination. */
 #define MAX_IFA	128
 
-/* Information passed from identify_fully_get() to the output functions. */
-typedef struct ifa_type ifa_type;
-
-struct ifa_type
-{
-	cptr txt;
-	byte attr;
-};
-
 /*
- * Set i_ptr->txt as an allocated string, remember the fact.
+ * Set *i_ptr as an allocated string, remember the fact.
  */
-static void alloc_ifa(ifa_type *i_ptr, cptr str, ...)
+static void alloc_ifa(cptr *i_ptr, cptr str, ...)
 {
 	va_list vp;
-
-	/*
-	 * Hack - Convert an initial $x to a colour code. 
-	 * I'll change it once I've checked what happens to the string.
-	 */
-	if (str[0] == '$' && strchr(atchar, str[1]))
-	{
-		i_ptr->attr = color_char_to_attr(str[1]);
-		str += 2;
-	}
-	else
-	{
-		i_ptr->attr = TERM_WHITE;
-	}
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, str);
 
 	/* Format and allocate the input string. */
-	i_ptr->txt = safe_string_make(vformat(str, vp));
+	*i_ptr = safe_string_make(vformat(str, vp));
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -1993,7 +1970,7 @@ static void alloc_ifa(ifa_type *i_ptr, cptr str, ...)
  * As the modifications have taken place, this just queries the old and new
  * versions of p_ptr to see what has changed.
  */
-static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int *i, ifa_type *info, byte act)
+static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int *i, cptr *info, byte act)
 {
 	int j,dif;
 	byte attr;
@@ -2274,7 +2251,7 @@ bool PURE is_inventory_p(object_ctype *o_ptr)
 /*
  * Find out what, if any, stat changes the given item causes.
  */
-static void res_stat_details(object_type *o_ptr, int real_k_idx, int *i, ifa_type *info)
+static void res_stat_details(object_type *o_ptr, int real_k_idx, int *i, cptr *info)
 {
 	byte stat, act;
 	s16b pval;
@@ -2396,7 +2373,7 @@ static int wrap_str(cptr in, int max)
 /*
  * Show the flags an object has in an interactive way.
  */
-static void identify_fully_show(ifa_type *i_ptr)
+static void identify_fully_show(cptr *i_ptr)
 {
 	int k, len, minx = 15, xlen = Term->wid - minx+1, maxy = Term->hgt;
 	cptr s = "";
@@ -2413,13 +2390,10 @@ static void identify_fully_show(ifa_type *i_ptr)
 	/* We will print on top of the map. */
 	for (k = 2;;)
 	{
-		/* Hack - turn the default colour (black) into white. */
-		byte attr = (i_ptr->attr) ? i_ptr->attr : TERM_WHITE;
-		
 		/* Grab the next string. */
 		if (*s == '\0')
 		{
-			s = (i_ptr++)->txt;
+			s = *i_ptr++;
 
 			/* Finished. */
 			if (!s) break;
@@ -2431,20 +2405,20 @@ static void identify_fully_show(ifa_type *i_ptr)
 		if (*s == ' ')
 		{
 			len = wrap_str(s, xlen-IFD_OFFSET);
-			c_prt(attr, format("%.*s", len, s), k++, minx+IFD_OFFSET);
+			mc_put_fmt(k++, minx+IFD_OFFSET, "%.*s", len, s);
 		}
 		/* If not, don't. */
 		else
 		{
 			len = wrap_str(s, xlen);
-			c_prt(attr, format("%.*s", len, s), k++, minx);
+			mc_put_fmt(k++, minx, "%.*s", len, s);
 		}
 
 		/* Find the next segment. */
 		s += len;
 
 		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == maxy-1) && (i_ptr->txt))
+		if ((k == maxy-1) && (*i_ptr))
 		{
 			prt("-- more --", k, minx);
 			inkey();
@@ -2464,7 +2438,7 @@ static void identify_fully_show(ifa_type *i_ptr)
 /*
  * Show the first maxy-1 lines of the information stored in info.
  */
-static void identify_fully_dump(ifa_type *i_ptr)
+static void identify_fully_dump(cptr *i_ptr)
 {
 	int j,k, len, minx = 0, xlen = Term->wid - minx+1, maxy = Term->hgt;
 	cptr s = "";
@@ -2474,13 +2448,10 @@ static void identify_fully_dump(ifa_type *i_ptr)
 
 	for (k = 2, j = 0; k <= maxy; k++)
 	{
-		/* Hack - turn the default colour (black) into white. */
-		byte attr = (i_ptr->attr) ? i_ptr->attr : TERM_WHITE;
-		
 		/* Grab the next string. */
 		if (*s == '\0')
 		{
-			s = (i_ptr++)->txt;
+			s = *i_ptr++;
 
 			/* Finished. */
 			if (!s) break;
@@ -2492,13 +2463,13 @@ static void identify_fully_dump(ifa_type *i_ptr)
 		if (*s == ' ')
 		{
 			len = wrap_str(s, xlen-IFD_OFFSET);
-			c_prt(attr, format("%.*s", len, s), k, minx+IFD_OFFSET);
+			mc_put_fmt(k, minx+IFD_OFFSET, "%.*s", len, s);
 		}
 		/* If not, don't. */
 		else
 		{
 			len = wrap_str(s, xlen);
-			c_prt(attr, format("%.*s", len, s), k, minx);
+			mc_put_fmt(k, minx, "%.*s", len, s);
 		}
 		
 		/* Find the next segment. */
@@ -2511,7 +2482,7 @@ static void identify_fully_dump(ifa_type *i_ptr)
 /*
  * Dump the information stored in info to a specified file.
  */
-static void identify_fully_dump_file(FILE *fff, ifa_type *i_ptr)
+static void identify_fully_dump_file(FILE *fff, cptr *i_ptr)
 {
 	int j,k, len, x, xlen = 80;
 	cptr s = "";
@@ -2521,7 +2492,7 @@ static void identify_fully_dump_file(FILE *fff, ifa_type *i_ptr)
 		/* Grab the next string. */
 		if (*s == '\0')
 		{
-			s = (i_ptr++)->txt;
+			s = *i_ptr++;
 			if (!s) break;
 		}
 
@@ -2545,13 +2516,13 @@ static void identify_fully_dump_file(FILE *fff, ifa_type *i_ptr)
 /*
  * Clear any allocated strings in info[].
  */
-static void identify_fully_clear(ifa_type *i_ptr)
+static void identify_fully_clear(cptr *i_ptr)
 {
 	do
 	{
-		safe_free((vptr)i_ptr->txt);
+		safe_free((vptr)*i_ptr);
 	}
-	while ((++i_ptr)->txt);
+	while (*(++i_ptr));
 }
 
 /*
@@ -2638,7 +2609,7 @@ byte PURE ammunition_type(object_ctype *o_ptr)
  *
  * If brief is set, various less interesting things are omitted.
  */
-static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
+static void identify_fully_get(object_ctype *o1_ptr, cptr *info, bool brief)
 {
 	int                     i = 0, j;
 
@@ -2655,9 +2626,9 @@ static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 	/* Mega-Hack -- describe activation */
 	if (o_ptr->flags3 & (TR3_ACTIVATE))
 	{
-		info[i++].txt = "It can be activated for...";
-		info[i++].txt = item_activation(o_ptr);
-		info[i++].txt = "...if it is being worn.";
+		info[i++] = "It can be activated for...";
+		info[i++] = item_activation(o_ptr);
+		info[i++] = "...if it is being worn.";
 	}
 
 	/* Describe use of the base object, if any. */
@@ -2666,7 +2637,7 @@ static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 		/* There's a description in k_info.txt. */
 		if (k_info[o_ptr->k_idx].text)
 		{
-			info[i++].txt = k_text+k_info[o_ptr->k_idx].text;
+			info[i++] = k_text+k_info[o_ptr->k_idx].text;
 		}
 		/* Give an effect-based description if there was none. */
 		else
@@ -2694,19 +2665,19 @@ static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 	switch (wield_skill(o_ptr))
 	{
  	case SKILL_CLOSE:
- 		info[i++].txt="It trains your close combat skill.";
+ 		info[i++] = "It trains your close combat skill.";
  				break;
 	case SKILL_CRUSH:
- 		info[i++].txt="It trains your crushing weapons skill.";
+ 		info[i++] = "It trains your crushing weapons skill.";
  				break;
  	case SKILL_STAB:
- 		info[i++].txt="It trains your stabbing weapons skill.";
+ 		info[i++] = "It trains your stabbing weapons skill.";
  		break;
 	case SKILL_SLASH:
- 		info[i++].txt="It trains your slashing weapons skill.";
+ 		info[i++] = "It trains your slashing weapons skill.";
  			break;
 	case  SKILL_MISSILE:
- 		info[i++].txt="It trains your missile skill.";
+ 		info[i++] = "It trains your missile skill.";
  		break;
  	}
 
@@ -2757,22 +2728,22 @@ static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 
     if (o_ptr->flags1 & (TR1_CHAOTIC))
 	{
-        info[i++].txt = "It produces chaotic effects.";
+        info[i++] = "It produces chaotic effects.";
 	}
 
     if (o_ptr->flags1 & (TR1_VAMPIRIC))
 	{
-        info[i++].txt = "It drains life from your foes.";
+        info[i++] = "It drains life from your foes.";
 	}
 
     if (o_ptr->flags1 & (TR1_IMPACT))
 	{
-		info[i++].txt = "It can cause earthquakes.";
+		info[i++] = "It can cause earthquakes.";
 	}
 
     if (o_ptr->flags1 & (TR1_VORPAL))
 	{
-        info[i++].txt = "It is very sharp and can cut your foes.";
+        info[i++] = "It is very sharp and can cut your foes.";
 	}
 
 	/* Calculate actual damage of weapons. 
@@ -2960,7 +2931,7 @@ nextbit:
 	if (o_ptr->flags2 & (TR2_SUST_CHR)) board[j++] = "charisma";
 	if (j == 6)
 	{
-		info[i++].txt = "It sustains all of your stats.";
+		info[i++] = "It sustains all of your stats.";
 	}
 	else if (j)
 	{
@@ -3003,59 +2974,59 @@ nextbit:
 
     if (o_ptr->flags3 & (TR3_WRAITH))
     {
-        info[i++].txt = "It renders you incorporeal.";
+        info[i++] = "It renders you incorporeal.";
     }
 	if (o_ptr->flags3 & (TR3_FEATHER))
 	{
-        info[i++].txt = "It allows you to levitate.";
+        info[i++] = "It allows you to levitate.";
 	}
 	if (o_ptr->flags3 & (TR3_LITE))
 	{
-		info[i++].txt = "It provides permanent light.";
+		info[i++] = "It provides permanent light.";
 	}
 	if (o_ptr->flags3 & (TR3_SEE_INVIS))
 	{
-		info[i++].txt = "It allows you to see invisible monsters.";
+		info[i++] = "It allows you to see invisible monsters.";
 	}
 	if (o_ptr->flags3 & (TR3_TELEPATHY))
 	{
-		info[i++].txt = "It gives telepathic powers.";
+		info[i++] = "It gives telepathic powers.";
 	}
 	if (o_ptr->flags3 & (TR3_SLOW_DIGEST))
 	{
-		info[i++].txt = "It slows your metabolism.";
+		info[i++] = "It slows your metabolism.";
 	}
 	if (o_ptr->flags3 & (TR3_REGEN))
 	{
-		info[i++].txt = "It speeds your regenerative powers.";
+		info[i++] = "It speeds your regenerative powers.";
 	}
     if (o_ptr->flags2 & (TR2_REFLECT))
     {
-        info[i++].txt = "It reflects bolts and arrows.";
+        info[i++] = "It reflects bolts and arrows.";
     }
     if (o_ptr->flags3 & (TR3_SH_FIRE))
     {
-        info[i++].txt = "It produces a fiery sheath.";
+        info[i++] = "It produces a fiery sheath.";
     }
     if (o_ptr->flags3 & (TR3_SH_ELEC))
     {
-        info[i++].txt = "It produces an electric sheath.";
+        info[i++] = "It produces an electric sheath.";
     }
     if (o_ptr->flags3 & (TR3_NO_MAGIC))
     {
-        info[i++].txt = "It produces an anti-magic shell.";
+        info[i++] = "It produces an anti-magic shell.";
     }
     if (o_ptr->flags3 & (TR3_NO_TELE))
     {
-        info[i++].txt = "It prevents teleportation.";
+        info[i++] = "It prevents teleportation.";
     }
 	if (o_ptr->flags3 & (TR3_XTRA_MIGHT))
 	{
-		info[i++].txt = "It fires missiles with extra might.";
+		info[i++] = "It fires missiles with extra might.";
 	}
 	if (o_ptr->flags3 & (TR3_XTRA_SHOTS))
 	{
-		info[i++].txt = "It fires missiles excessively fast.";
+		info[i++] = "It fires missiles excessively fast.";
 	}
 
 	if (!(o_ptr->flags3 & TR3_NO_MAGIC) && cumber_glove(o_ptr))
@@ -3065,11 +3036,11 @@ nextbit:
 			/* Hack - the "no encumbrance" flag isn't set without spoilers.
 			 * so double-check as the player has been told. */
 			if (cumber_glove(o1_ptr))
-				info[i++].txt = "It inhibits spellcasting.";
+				info[i++] = "It inhibits spellcasting.";
 		}
 		else
 		{
-			info[i++].txt = "It may inhibit spellcasting.";
+			info[i++] = "It may inhibit spellcasting.";
 		}
 	}
 
@@ -3080,30 +3051,30 @@ nextbit:
 			/* Hack - the "no encumbrance" flag isn't set without spoilers,
 			 * so double-check as the player has been told. */
 			if (cumber_helm(o1_ptr))
-				info[i++].txt = "It inhibits mindcrafting.";
+				info[i++] = "It inhibits mindcrafting.";
 		}
 		else
 		{
-			info[i++].txt = "It may inhibit mindcrafting.";
+			info[i++] = "It may inhibit mindcrafting.";
 		}
 	}
 
 	if (o_ptr->flags3 & (TR3_DRAIN_EXP))
 	{
-		info[i++].txt = "It drains experience.";
+		info[i++] = "It drains experience.";
 	}
 	if (o_ptr->flags3 & (TR3_TELEPORT))
 	{
-		info[i++].txt = "It induces random teleportation.";
+		info[i++] = "It induces random teleportation.";
 	}
 	if (o_ptr->flags3 & (TR3_AGGRAVATE))
 	{
-		info[i++].txt = "It aggravates nearby creatures.";
+		info[i++] = "It aggravates nearby creatures.";
 	}
 
 	if (o_ptr->flags3 & (TR3_BLESSED))
 	{
-		info[i++].txt = "It has been blessed by the gods.";
+		info[i++] = "It has been blessed by the gods.";
 	}
 
 	/* Describe random possibilities if not *identified*. 
@@ -3136,25 +3107,25 @@ nextbit:
 
 		if (o_ptr->flags3 & (TR3_PERMA_CURSE))
 		{
-			info[i++].txt = "It is permanently cursed.";
+			info[i++] = "It is permanently cursed.";
 		}
 		else if (o_ptr->flags3 & (TR3_HEAVY_CURSE))
 		{
-			info[i++].txt = "It is heavily cursed.";
+			info[i++] = "It is heavily cursed.";
 		}
 	else if (o_ptr->flags3 & (TR3_CURSED))
 		{
-			info[i++].txt = "It is cursed.";
+			info[i++] = "It is cursed.";
 		}
 
 	if (o_ptr->flags3 & (TR3_AUTO_CURSE))
 	{
-		info[i++].txt = "It will curse itself.";
+		info[i++] = "It will curse itself.";
 	}
 
     if (o_ptr->flags3 & (TR3_TY_CURSE))
     {
-        info[i++].txt = "It carries an ancient foul curse.";
+        info[i++] = "It carries an ancient foul curse.";
     }
 
 	/* Hack - simple items don't get ignore flags listed. */
@@ -3162,7 +3133,7 @@ nextbit:
 	
 	else if ((o_ptr->flags3 & (TR3_IGNORE_ALL)) == TR3_IGNORE_ALL)
 	{
-		info[i++].txt = "It cannot be harmed by the elements.";
+		info[i++] = "It cannot be harmed by the elements.";
 	}
 	else if (!(o_ptr->flags3 & (TR3_IGNORE_ALL)))
 	{
@@ -3204,9 +3175,9 @@ bool identify_fully_aux(object_ctype *o_ptr, byte flags)
 	bool full = (flags & 0x01) != 0;
 	bool paged = (flags & 0x02) == 0;
 
-	ifa_type info[MAX_IFA];
+	cptr info[MAX_IFA];
 
-	C_WIPE(info, MAX_IFA, ifa_type);
+	WIPE(info, info);
 
 	if (full)
 	{
@@ -3224,7 +3195,7 @@ bool identify_fully_aux(object_ctype *o_ptr, byte flags)
 	}
 
 	/* Nothing was revealed, so show nothing. */
-	if (!info[0].txt) return FALSE;
+	if (!*info) return FALSE;
 
 	if (paged)
 	{
@@ -3247,9 +3218,9 @@ bool identify_fully_aux(object_ctype *o_ptr, byte flags)
  */
 void identify_fully_file(object_ctype *o_ptr, FILE *fff)
 {
-	ifa_type info[MAX_IFA];
+	cptr info[MAX_IFA];
 
-	C_WIPE(info, MAX_IFA, ifa_type);
+	WIPE(info, info);
 
 	/* Grab the flags. */
 	identify_fully_get(o_ptr, info, TRUE);
