@@ -2013,7 +2013,7 @@ struct visual_type
 	(*xc) = &(x_info[i].x_char))
 
 #define get_name(x_info, x_name) \
-	if (name) (*name) = x_name+x_info[i].name;
+	(*name) = x_name+x_info[i].name;
 
 #define get_all(x_info, x_name) \
 { \
