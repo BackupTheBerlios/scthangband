@@ -312,7 +312,6 @@ static void prt_spirit(void)
  		else if(s_ptr->annoyance > 8)
 		{
  			sprintf(il, "$r%c", I2A(j++));
- 			j++;
  		}
  		else if(s_ptr->annoyance > 0)
 		{
