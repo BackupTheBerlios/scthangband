@@ -694,10 +694,14 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SCH_THAUMATURGY 2
 #define SCH_CONJURATION 3
 
+#define SCH_HEDGE 4
+#define SCH_SPIRIT 5
+
 #define SP_VIS 0
 #define SP_NATURAE 1
 #define SP_CORPORIS 2
 #define SP_ANIMAE 3
+#define SP_NONE 4
 
 /* Spirit 'Spheres' */
 #define MAX_SPHERE 2

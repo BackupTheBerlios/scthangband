@@ -21,7 +21,7 @@ static s16b favour_chance(int fav,int sphere);
 static bool spirit_okay(int spirit, bool call);
 static void print_spirits(int *valid_spirits,int num,int y, int x);
 static void rustproof(void);
-static s32b favour_annoyance(favour_type *f_ptr);
+static s32b favour_annoyance(magic_type *f_ptr);
 static void annoy_spirit(spirit_type *s_ptr,u32b amount);
 
 
@@ -245,7 +245,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 static bool cantrip_okay(int fav)
 {
 	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
-	cantrip_type *s_ptr;
+	magic_type *s_ptr;
 
 	/* Access the favour */
     s_ptr = &(cantrip_info[fav]);
@@ -263,7 +263,7 @@ void print_cantrips(byte *spells, int num, int y, int x)
 	int                     i, spell;
 
 	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
-	cantrip_type              *s_ptr;
+	magic_type              *s_ptr;
 
 	cptr            comment;
 
@@ -325,7 +325,7 @@ int get_cantrip(int *sn, int sval)
 	bool		flag, redraw, okay;
 	char		choice;
 
-	cantrip_type	*s_ptr;
+	magic_type	*s_ptr;
 
 	char		out_val[160];
 
@@ -520,7 +520,7 @@ int get_cantrip(int *sn, int sval)
 static bool favour_okay(int fav,  int sphere)
 {
 	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
-	favour_type *s_ptr;
+	magic_type *s_ptr;
 
 	/* Access the favour */
     s_ptr = &(favour_info[sphere][fav]);
@@ -538,7 +538,7 @@ static s16b cantrip_chance(int ctp)
 	int             chance, minfail;
 	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
 
-	cantrip_type      *s_ptr;
+	magic_type      *s_ptr;
 
 
 	/* Access the spell */
@@ -590,7 +590,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 	bool		flag, redraw, okay;
 	char		choice;
 
-	favour_type	*s_ptr;
+	magic_type	*s_ptr;
 
 	char		out_val[160];
 
@@ -756,7 +756,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 			/* Prompt */
 			strnfmt(tmp_val, 78, "%s (%d mana, %d%% fail)? ",
 				favour_names[sphere][spell],
-				s_ptr->annoy_inc, favour_chance(spell,sphere));
+				s_ptr->smana, favour_chance(spell,sphere));
 
 			/* Belay that order */
 			if (!get_check(tmp_val)) continue;
@@ -803,7 +803,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 static int spirit_energy(int favour_sphere, int spell)
 {
 	int plev = MAX((skill_set[SKILL_SHAMAN].value/2), 1);
-	favour_type *f_ptr = &(favour_info[favour_sphere][spell]);
+	magic_type *f_ptr = &(favour_info[favour_sphere][spell]);
 	return spell_energy(plev,(u16b)(f_ptr->minskill));
 }
 
@@ -815,7 +815,7 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 	int                     i, spell;
 
 	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
-	favour_type              *s_ptr;
+	magic_type              *s_ptr;
 
 	cptr            comment;
 
@@ -871,7 +871,7 @@ static s16b favour_chance(int fav,int sphere)
 	int             chance, minfail;
 	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 
-	favour_type      *s_ptr;
+	magic_type      *s_ptr;
 
 
 	/* Access the spell */
@@ -3236,7 +3236,7 @@ void do_cmd_cantrip(void)
 
 	object_type	*o_ptr;
 
-	cantrip_type	*s_ptr;
+	magic_type	*s_ptr;
 
 	/* Require lite */
 	if (p_ptr->blind || no_lite())
@@ -3458,7 +3458,7 @@ void do_cmd_cantrip(void)
 			item_break = FALSE;
 		}
 	} else {
-		if (rand_int(1000) < s_ptr->mana) item_break=TRUE;
+		if (rand_int(1000) < s_ptr->smana) item_break=TRUE;
 	}
 
 	if (item_break)
@@ -3483,12 +3483,12 @@ void do_cmd_cantrip(void)
 /*
  * calculate the annoyance factor of a favour
  */
-static s32b favour_annoyance(favour_type *f_ptr)
+static s32b favour_annoyance(magic_type *f_ptr)
 {
 	s32b annoy;
 
 	/* Base annoyance is taken from the spell */
-	annoy = f_ptr->annoy_inc + rand_int(10)+5;
+	annoy = f_ptr->smana + rand_int(10)+5;
 
 	/* decrease based on charisma bonus for studying and skill*/
 	annoy -= (adj_mag_study[p_ptr->stat_ind[A_CHR]] * (skill_set[SKILL_SHAMAN].value/20));
@@ -3536,7 +3536,7 @@ static void annoy_spirit(spirit_type *s_ptr,u32b amount)
  *
  * Return the extra anger this should cause to avoid double messages.
  */
-static int spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
+static int spirit_punish(spirit_type *s_ptr, magic_type *f_ptr)
 {
 	s32b i = rand_int(100000);
 
@@ -3605,7 +3605,7 @@ void do_cmd_invoke(void)
 
 	spirit_type	*s_ptr;
 
-	favour_type	*f_ptr;
+	magic_type	*f_ptr;
 
 	/* Not when confused */
 	if (p_ptr->confused)

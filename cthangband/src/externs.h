@@ -2103,10 +2103,10 @@ extern player_template template_info[MAX_TEMPLATE];
 extern player_magic magic_info;
 #endif
 #if (defined(CMD5_C) || defined(TABLES_C))
-extern favour_type favour_info[MAX_SPHERE][32];
+extern magic_type favour_info[MAX_SPHERE][32];
 #endif
 #if (defined(CMD5_C) || defined(TABLES_C))
-extern cantrip_type cantrip_info[32];
+extern magic_type cantrip_info[32];
 #endif
 #if (defined(CMD5_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C))
 extern u32b spell_flags[4];
