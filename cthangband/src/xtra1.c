@@ -43,33 +43,17 @@ void day_to_date(s16b day,char *date)
  */
 void cnv_stat(int val, char *out_val)
 {
-	/* Above 18 */
-	if (val > 18)
-	{
-		int bonus = (val - 18);
-
-		if (bonus > 220)
-		{
-			sprintf(out_val, "30+");
-		}
-		else if (bonus > 100)
-		{
-			bonus = (bonus -101) /10;
-			sprintf(out_val,"    %d",bonus+19);
-		}
-		else if (bonus == 100)
-		{
-			sprintf(out_val, "18/100"); 
-		}
-		else
-		{
-			sprintf(out_val, " 18/%2d", bonus);
-		}
-	}
-	/* From 3 to 18 */
-	else
+	if (val < 19)
 	{
 		sprintf(out_val, "    %2d", val);
+		}
+	else if (val < 8119)
+		{
+		sprintf(out_val, " %2d/%02d", (val-18)/100+18, (val-18)%100);
+		}
+	else
+	{
+		strcpy(out_val, " XX/XX");
 	}
 }
 
@@ -146,28 +130,30 @@ static void prt_field(cptr info, int row, int col)
 static void prt_stat(int stat)
 {
 	char tmp[32];
+	byte attr;
+	cptr name;
 
-	/* Display "injured" stat */
-	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
-	{
-		put_str(stat_names_reduced[stat], ROW_STAT + stat, 0);
-		cnv_stat(p_ptr->stat_use[stat], tmp);
-		c_put_str(TERM_YELLOW, tmp, ROW_STAT + stat, COL_STAT + 6);
-	}
+	/* Choose a colour (white >18/219, yellow reduced, light green normal. */
+	if (p_ptr->stat_use[stat] > 18+219) attr = TERM_WHITE;
+	else if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat]) attr = TERM_YELLOW;
+	else attr = TERM_L_GREEN;
+	
+	/* Choose a name style (reduced or normal) */
+	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat]) name = stat_names_reduced[stat];
+	else name = stat_names[stat];
 
-	/* Display "healthy" stat */
-	else
-	{
-		put_str(stat_names[stat], ROW_STAT + stat, 0);
-		cnv_stat(p_ptr->stat_use[stat], tmp);
-		c_put_str(TERM_L_GREEN, tmp, ROW_STAT + stat, COL_STAT + 6);
-	}
+	/* Display name */
+	put_str(name, ROW_STAT + stat, 0);
 
 	/* Indicate natural maximum */
 	if (p_ptr->stat_max[stat] == 18+100)
 	{
 		put_str("!", ROW_STAT + stat, 3);
 	}
+
+	/* Display number */
+	cnv_stat(p_ptr->stat_use[stat], tmp);
+	c_put_str(attr, tmp, ROW_STAT + stat, COL_STAT + 6);
 }
 
 /*
