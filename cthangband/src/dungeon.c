@@ -64,26 +64,25 @@ static cptr value_check_aux1(object_type *o_ptr)
  */
 static cptr value_check_aux2(object_type *o_ptr)
 {
+	bool powerful = (o_ptr->ident & IDENT_SENSE_POWER) && spoil_base;
+
 	/* Cursed items (all of them) */
-	if (cursed_p(o_ptr)) return "cursed";
+	/* Should this be "very cursed", or would that just be confusing? */
+	if (cursed_p(o_ptr)) return (powerful) ? "very bad" : "cursed";
 
 	/* Broken items (all of them) */
 	if (broken_p(o_ptr)) return "useless";
 
 	/* Artifacts -- except cursed/broken ones */
-    if (allart_p(o_ptr)) return "good";
-
 	/* Ego-Items -- except cursed/broken ones */
-	if (ego_item_p(o_ptr)) return "good";
-
 	/* Good armor bonus */
-	if (o_ptr->to_a > 0) return "good";
-
 	/* Good weapon bonuses */
-	if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+    if (allart_p(o_ptr) || ego_item_p(o_ptr) || (o_ptr->to_a > 0) ||
+		(o_ptr->to_h + o_ptr->to_d > 0))
+		return (powerful) ? "very good" : "good";
 
 	/* No feeling */
-	return "";
+	return (powerful) ? "powerful" : "";
 }
 
 
@@ -98,6 +97,8 @@ cptr find_feeling(object_type *o_ptr)
 	/* Some feelings that don't depend on sensing, but on trying. */
 	if (!object_known_p(o_ptr) && (o_ptr->ident & (IDENT_EMPTY)))
 		return "empty";
+	/* Items in stores never return a feeling. */
+	else if (o_ptr->ident & IDENT_STORE) return "";
 	/* Hack - wearable items become "poss. cursed", usable ones "tried"*/
 	else if (!object_aware_p(o_ptr) && object_tried_p(o_ptr))
 	{
@@ -137,10 +138,17 @@ cptr find_feeling(object_type *o_ptr)
 					return value_check_aux2(o_ptr);
 			}
 		case IDENT_SENSE_CURSED:
+		{
+			/* Never give "powerful" flags for identified items. */
+			bool powerful = !object_known_p(o_ptr) && (o_ptr->ident & IDENT_SENSE_POWER);
+
 			if (o_ptr->ident & IDENT_CURSED)
-				return "cursed";
+				return (powerful) ? "very bad" : "cursed";
 			else
-				return "uncursed";
+				return (powerful) ? "powerful" : "uncursed";
+		}
+		/* IDENT_SENSE_VALUE is only set alone by an attempt to break an
+		 * artefact, so has few plausible values. */
 		case IDENT_SENSE_VALUE:
 			if (allart_p(o_ptr))
 				/* Artefacts */

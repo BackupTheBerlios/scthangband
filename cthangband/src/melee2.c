@@ -6801,7 +6801,7 @@ static void process_monster(int m_idx, bool is_friend)
 				{
 					u32b f1, f2, f3;
 
-					u32b flg3 = 0L;
+					u32b f1_want = 0L;
 
 					char m_name[MNAME_MAX];
 					char o_name[ONAME_MAX];
@@ -6816,18 +6816,17 @@ static void process_monster(int m_idx, bool is_friend)
 					monster_desc(m_name, m_ptr, 0x04);
 
 					/* React to objects that hurt the monster */
-					if (f1 & (TR1_KILL_DRAGON)) flg3 |= (RF3_DRAGON);
-					if (f1 & (TR1_SLAY_DRAGON)) flg3 |= (RF3_DRAGON);
-					if (f1 & (TR1_SLAY_TROLL)) flg3 |= (RF3_TROLL);
-					if (f1 & (TR1_SLAY_GIANT)) flg3 |= (RF3_GIANT);
-					if (f1 & (TR1_SLAY_ORC)) flg3 |= (RF3_ORC);
-					if (f1 & (TR1_SLAY_DEMON)) flg3 |= (RF3_DEMON);
-					if (f1 & (TR1_SLAY_UNDEAD)) flg3 |= (RF3_UNDEAD);
-					if (f1 & (TR1_SLAY_ANIMAL)) flg3 |= (RF3_ANIMAL);
-					if (f1 & (TR1_SLAY_EVIL)) flg3 |= (RF3_EVIL);
+					if (r_ptr->flags3 & (RF3_DRAGON)) f1_want |= (TR1_KILL_DRAGON | TR1_SLAY_DRAGON);
+					if (r_ptr->flags3 & (RF3_TROLL)) f1_want |= (TR1_SLAY_TROLL);
+					if (r_ptr->flags3 & (RF3_GIANT)) f1_want |= (TR1_SLAY_GIANT);
+					if (r_ptr->flags3 & (RF3_ORC)) f1_want |= (TR1_SLAY_ORC);
+					if (r_ptr->flags3 & (RF3_DEMON)) f1_want |= (TR1_SLAY_DEMON);
+					if (r_ptr->flags3 & (RF3_UNDEAD)) f1_want |= (TR1_SLAY_UNDEAD);
+					if (r_ptr->flags3 & (RF3_ANIMAL)) f1_want |= (TR1_SLAY_ANIMAL);
+					if (r_ptr->flags3 & (RF3_EVIL)) f1_want |= (TR1_SLAY_EVIL);
 
 					/* The object cannot be picked up by the monster */
-                    if (allart_p(o_ptr) || (r_ptr->flags3 & flg3))
+                    if (allart_p(o_ptr) || (f1 & f1_want))
 					{
 						/* Only give a message for "take_item" */
 						if (r_ptr->flags2 & (RF2_TAKE_ITEM))
@@ -6838,9 +6837,16 @@ static void process_monster(int m_idx, bool is_friend)
 							/* Describe observable situations */
 							if (m_ptr->ml && player_has_los_bold(ny, nx))
 							{
+								/* Should we expect this to happen? */
+								object_flags_known(o_ptr, &f1, &f2, &f3);
+
 								/* Dump a message */
 								msg_format("%^s tries to pick up %s, but fails.",
 									   m_name, o_name);
+
+								/* Remember this event if unexpected. */
+								if (!(f1 & f1_want))
+									o_ptr->ident |= IDENT_SENSE_POWER;
 							}
 						}
 					}

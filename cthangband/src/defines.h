@@ -2224,6 +2224,8 @@
 #define IDENT_SENSE_VALUE	0x0200	/* Item is known to be an artefact */
 #define IDENT_SENSE_HEAVY	0x0400	/* Item has been pseudo-identified heavily */
 #define IDENT_TRIED		0x0800	/* Item has been tried */
+#define IDENT_STORE	0x1000 /* Item is in a shop */
+#define IDENT_SENSE_POWER	0x2000	/* Item is known to be "powerful" */
 
 #define IDENT_SENSE	(IDENT_SENSE_CURSED | IDENT_SENSE_VALUE) /* Item has been pseudo-identified */
 

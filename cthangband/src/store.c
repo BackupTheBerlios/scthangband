@@ -1371,6 +1371,9 @@ static int store_carry(object_type *o_ptr)
 		o_ptr->ident |= (IDENT_MENTAL | IDENT_SENSE);
 	}
 
+	/* Note that item is in a store */
+	o_ptr->ident |= (IDENT_STORE);
+
 	/* Check each existing item (try to combine) */
 	for (slot = 0; slot < st_ptr->stock_num; slot++)
 	{
@@ -1784,9 +1787,6 @@ static void display_entry(int pos)
 		{
 			object_desc_store(o_name, o_ptr, TRUE, 3);
 		}
-
-		/* Hack - don't show "uncursed" here, it gets in the way. */
-		if (strstr(o_name, "{uncursed}")) strstr(o_name, "{uncursed}")[0] = '\0';
 
 
 		o_name[maxwid] = '\0';
@@ -2882,6 +2882,9 @@ static void store_purchase(void)
 
 				/* Hack -- clear the "fixed" flag from the item */
 				j_ptr->ident &= ~(IDENT_FIXED);
+
+				/* Hack -- clear the "store" flag from the item */
+				j_ptr->ident &= ~(IDENT_STORE);
 
 				/* Describe the transaction */
 				object_desc(o_name, j_ptr, TRUE, 3);

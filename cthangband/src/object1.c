@@ -680,14 +680,17 @@ static void object_flags_pid(object_kind *k_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 /*
- * Obtain the "flags" for an item which are known to the player
+ * Find out the known information about an object.
+ * This currently only sets flags and pval.
  */
-void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+static void object_info_known(object_type *j_ptr, object_type *o_ptr)
 {
 	bool spoil = FALSE;
 	int i;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	object_wipe(j_ptr);
 
 	/* Assume that the player has noticed certain things when using an
 	 * unidentified item. The IDENT_TRIED flag is currently only set when
@@ -697,41 +700,42 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	if (spoil_flag && o_ptr->ident & IDENT_TRIED)
 	{
 		/* Get all flags */
-		object_flags(o_ptr, f1, f2, f3);
+		object_flags(o_ptr, &(j_ptr->art_flags1), &(j_ptr->art_flags2), &(j_ptr->art_flags3));
 		
 		/* Clear non-obvious flags */
-	 	(*f1) &= (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR | TR1_INFRA | TR1_SPEED | TR1_BLOWS);
+	 	j_ptr->art_flags1 &= (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR | TR1_INFRA | TR1_SPEED | TR1_BLOWS);
 
 		/* *Hack* - notice if the modifier is cancelled out by other modifiers */
 		for (i = 0; i < 6; i++)
 		{
-			if (p_ptr->stat_top[i] == 3 && (*f1 & TR1_STR << i) && equip_mod(i) >= 0)
+			if (p_ptr->stat_top[i] == 3 && (j_ptr->art_flags1 & TR1_STR << i) && equip_mod(i) >= 0)
 			{
-				*f1 &= ~(TR1_STR << i);
+				j_ptr->art_flags1 &= ~(TR1_STR << i);
 			}
 		}
 		/* This should just check the effect of the weapon, but it's easier this way. */
-		if (p_ptr->num_blow == 1) *f1 &= ~(TR1_BLOWS);
+		if (p_ptr->num_blow == 1) j_ptr->art_flags1 &= ~(TR1_BLOWS);
 				
-		(*f2) = 0L;
-		(*f3) &= (TR3_LITE | TR3_XTRA_MIGHT | TR3_XTRA_SHOTS);
+		j_ptr->art_flags2 = 0L;
+		j_ptr->art_flags3 &= (TR3_LITE | TR3_XTRA_MIGHT | TR3_XTRA_SHOTS);
 		/* Don't assume that the multiplier is always known. */
-		if (!spoil_base) (*f3) &= ~(TR3_XTRA_MIGHT);
-	}
-	else
+		if (!spoil_base) j_ptr->art_flags3 &= ~(TR3_XTRA_MIGHT);
+
+		/* If a flag is known, set the pval. */
+		if (j_ptr->art_flags1 || j_ptr->art_flags2 || j_ptr->art_flags3)
 	{
-		/* Clear all flags */
-	(*f1) = (*f2) = (*f3) = 0L;
+			j_ptr->pval = o_ptr->pval;
+		}
 	}
 
 	/* The player can know certain things about unaware items. */
 	if (spoil_base && !object_aware_p(o_ptr))
-		object_flags_pid(k_ptr, f1, f2, f3);
+		object_flags_pid(k_ptr, &(j_ptr->art_flags1), &(j_ptr->art_flags2), &(j_ptr->art_flags3));
 		
 
 	/* Check for cursing even if unidentified */
 	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
-		(*f3) |= TR3_CURSED;
+		j_ptr->art_flags3 |= TR3_CURSED;
 
 	if (cheat_item && (
 #ifdef SPOIL_ARTIFACTS
@@ -748,9 +752,9 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	if ((spoil_base || spoil || o_ptr->ident & IDENT_MENTAL) &&
 	(object_known_p(o_ptr) || object_aware_p(o_ptr)))
 	{
-	(*f1) |= k_ptr->flags1;
-	(*f2) |= k_ptr->flags2;
-	(*f3) |= k_ptr->flags3;
+	j_ptr->art_flags1 |= k_ptr->flags1;
+	j_ptr->art_flags2 |= k_ptr->flags2;
+	j_ptr->art_flags3 |= k_ptr->flags3;
 	}
 		
 	/* Must be identified for further details. */
@@ -761,9 +765,9 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
-		(*f1) |= e_ptr->flags1;
-		(*f2) |= e_ptr->flags2;
-		(*f3) |= e_ptr->flags3;
+		j_ptr->art_flags1 |= e_ptr->flags1;
+		j_ptr->art_flags2 |= e_ptr->flags2;
+		j_ptr->art_flags3 |= e_ptr->flags3;
 	}
 
 	/* Pre-defined artifacts (known basic flags) */
@@ -771,16 +775,16 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	{
 		artifact_type *a_ptr = &a_info[o_ptr->name1];
 
-		(*f1) |= a_ptr->flags1;
-		(*f2) |= a_ptr->flags2;
-		(*f3) |= a_ptr->flags3;
+		j_ptr->art_flags1 |= a_ptr->flags1;
+		j_ptr->art_flags2 |= a_ptr->flags2;
+		j_ptr->art_flags3 |= a_ptr->flags3;
 	}
 
 	/* Check for both types of cursing */
 	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
-		(*f3) |= TR3_CURSED;
+		j_ptr->art_flags3 |= TR3_CURSED;
 	else if (o_ptr->ident & IDENT_SENSE_CURSED)
-		(*f3) &= ~(TR3_CURSED | TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
+		j_ptr->art_flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
 
 	/* Need full knowledge or spoilers */
 	if (!spoil && !(o_ptr->ident & IDENT_MENTAL)) return;
@@ -788,9 +792,9 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
     /* Random artifact ! */
     if (o_ptr->art_flags1 || o_ptr->art_flags2 || o_ptr->art_flags3)
     {
-	(*f1) |= o_ptr->art_flags1;
-	(*f2) |= o_ptr->art_flags2;
-	(*f3) |= o_ptr->art_flags3;
+	j_ptr->art_flags1 |= o_ptr->art_flags1;
+	j_ptr->art_flags2 |= o_ptr->art_flags2;
+	j_ptr->art_flags3 |= o_ptr->art_flags3;
 
     }
 
@@ -808,12 +812,12 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
                 /* Choose a sustain */
                 switch (o_ptr->xtra2 % 6)
                 {
-                    case 0: (*f2) |= (TR2_SUST_STR); break;
-                    case 1: (*f2) |= (TR2_SUST_INT); break;
-                    case 2: (*f2) |= (TR2_SUST_WIS); break;
-                    case 3: (*f2) |= (TR2_SUST_DEX); break;
-                    case 4: (*f2) |= (TR2_SUST_CON); break;
-                    case 5: (*f2) |= (TR2_SUST_CHR); break;
+                    case 0: j_ptr->art_flags2 |= (TR2_SUST_STR); break;
+                    case 1: j_ptr->art_flags2 |= (TR2_SUST_INT); break;
+                    case 2: j_ptr->art_flags2 |= (TR2_SUST_WIS); break;
+                    case 3: j_ptr->art_flags2 |= (TR2_SUST_DEX); break;
+                    case 4: j_ptr->art_flags2 |= (TR2_SUST_CON); break;
+                    case 5: j_ptr->art_flags2 |= (TR2_SUST_CHR); break;
                 }
 
                 break;
@@ -824,17 +828,17 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
                 /* Choose a power */
                 switch (o_ptr->xtra2 % 11)
                 {
-                    case 0: (*f2) |= (TR2_RES_BLIND); break;
-                    case 1: (*f2) |= (TR2_RES_CONF); break;
-                    case 2: (*f2) |= (TR2_RES_SOUND); break;
-                    case 3: (*f2) |= (TR2_RES_SHARDS); break;
-                    case 4: (*f2) |= (TR2_RES_NETHER); break;
-                    case 5: (*f2) |= (TR2_RES_NEXUS); break;
-                    case 6: (*f2) |= (TR2_RES_CHAOS); break;
-                    case 7: (*f2) |= (TR2_RES_DISEN); break;
-                    case 8: (*f2) |= (TR2_RES_POIS); break;
-                    case 9: (*f2) |= (TR2_RES_DARK); break;
-                    case 10: (*f2) |= (TR2_RES_LITE); break;
+                    case 0: j_ptr->art_flags2 |= (TR2_RES_BLIND); break;
+                    case 1: j_ptr->art_flags2 |= (TR2_RES_CONF); break;
+                    case 2: j_ptr->art_flags2 |= (TR2_RES_SOUND); break;
+                    case 3: j_ptr->art_flags2 |= (TR2_RES_SHARDS); break;
+                    case 4: j_ptr->art_flags2 |= (TR2_RES_NETHER); break;
+                    case 5: j_ptr->art_flags2 |= (TR2_RES_NEXUS); break;
+                    case 6: j_ptr->art_flags2 |= (TR2_RES_CHAOS); break;
+                    case 7: j_ptr->art_flags2 |= (TR2_RES_DISEN); break;
+                    case 8: j_ptr->art_flags2 |= (TR2_RES_POIS); break;
+                    case 9: j_ptr->art_flags2 |= (TR2_RES_DARK); break;
+                    case 10: j_ptr->art_flags2 |= (TR2_RES_LITE); break;
                 }
 
                 break;
@@ -845,14 +849,14 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
                 /* Choose an ability */
                 switch (o_ptr->xtra2 % 8)
                 {
-                    case 0: (*f3) |= (TR3_FEATHER); break;
-                    case 1: (*f3) |= (TR3_LITE); break;
-                    case 2: (*f3) |= (TR3_SEE_INVIS); break;
-                    case 3: (*f3) |= (TR3_TELEPATHY); break;
-                    case 4: (*f3) |= (TR3_SLOW_DIGEST); break;
-                    case 5: (*f3) |= (TR3_REGEN); break;
-                    case 6: (*f2) |= (TR2_FREE_ACT); break;
-                    case 7: (*f2) |= (TR2_HOLD_LIFE); break;
+                    case 0: j_ptr->art_flags3 |= (TR3_FEATHER); break;
+                    case 1: j_ptr->art_flags3 |= (TR3_LITE); break;
+                    case 2: j_ptr->art_flags3 |= (TR3_SEE_INVIS); break;
+                    case 3: j_ptr->art_flags3 |= (TR3_TELEPATHY); break;
+                    case 4: j_ptr->art_flags3 |= (TR3_SLOW_DIGEST); break;
+                    case 5: j_ptr->art_flags3 |= (TR3_REGEN); break;
+                    case 6: j_ptr->art_flags2 |= (TR2_FREE_ACT); break;
+                    case 7: j_ptr->art_flags2 |= (TR2_HOLD_LIFE); break;
                 }
 
                 break;
@@ -880,6 +884,20 @@ cptr descr_base(byte p_id)
 		return (u_name+u_info[u_idx].name);
 	}
 }
+
+/*
+ * Obtain the "flags" for an item which are known to the player
+ */
+void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+{
+	object_type j;
+	object_info_known(&j, o_ptr);
+	(*f1) = j.art_flags1;
+	(*f2) = j.art_flags2;
+	(*f3) = j.art_flags3;
+}
+
+
 
 
 
@@ -1680,7 +1698,29 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* Dump "pval" flags for wearable items */
-	if (known && (f1 & (TR1_PVAL_MASK)))
+	if (f1 & TR1_PVAL_MASK)
+	{
+		u32b g1;
+		if (known)
+		{
+			g1 = f1;
+		}
+		/* Find the known flags if the pval is known. */
+		else
+		{
+			object_type j;
+			object_info_known(&j, o_ptr);
+			if (j.pval)
+			{
+				g1 = j.art_flags1;
+			}
+			else
+			{
+				g1 = 0;
+			}
+		}
+
+		if (g1 & (TR1_PVAL_MASK))
 	{
 		/* Start the display */
 		t = object_desc_chr(t, ' ');
@@ -1688,6 +1728,9 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* Dump the "pval" itself */
 		t = object_desc_int(t, o_ptr->pval);
+
+			/* Differentiate known pvals from deduced ones. */
+			if (!known) t = object_desc_chr(t, '?');
 
 		/* Do not display the "pval" flags */
 		if (f3 & (TR3_HIDE_TYPE))
@@ -1738,6 +1781,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* Finish the display */
 		t = object_desc_chr(t, p2);
+		}
 	}
 
 
@@ -1754,12 +1798,13 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	/* Combine the user-defined and automatic inscriptions. */
 	{
-		char k[3][75];
+		char k[4][75];
 		int i = 0;
 		tmp_val2[0] = '\0';
 
 		/* Find the sections of inscription. */
 		if (spoil_value) sprintf(k[i++], "%ld", object_value(o_ptr));
+		if (o_ptr->discount) sprintf(k[i++], "%d%% off", o_ptr->discount);
 		if (strlen(strcpy(k[i], find_feeling(o_ptr)))) i++;
 		if (o_ptr->note) strlen(strcpy(k[i++], quark_str(o_ptr->note)));
 

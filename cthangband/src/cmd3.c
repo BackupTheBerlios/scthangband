@@ -143,6 +143,29 @@ static bool item_tester_hook_wear(object_type *o_ptr)
 
 
 /*
+ * If the player knows more about an item from having tried it than merely
+ * from visual inspection, give it a "powerful" feeling to indicate this.
+ */
+static bool is_powerful(object_type *o_ptr)
+{
+	/* If the player knows more about the item from having tried it, give a
+	 * "powerful" feeling to indicate this. */
+	if (o_ptr->ident & IDENT_TRIED)
+	{
+		u32b f[3], g[3];
+		object_flags_known(o_ptr, f+0, f+1, f+2);
+		o_ptr->ident &= ~IDENT_TRIED;
+		object_flags_known(o_ptr, g+0, g+1, g+2);
+		o_ptr->ident |= IDENT_TRIED;
+		return !C_SAME(f, g, 3, u32b);
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+/*
  * Wield or wear a single item from the pack or floor
  */
 void do_cmd_wield(void)
@@ -313,6 +336,9 @@ void do_cmd_wield(void)
 
 	/* Note that it has been tried. */
 	o_ptr->ident |= (IDENT_TRIED);
+
+	/* Note if it was, in being tried, found to be powerful. */
+	if (is_powerful(o_ptr)) o_ptr->ident |= IDENT_SENSE_POWER;
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
