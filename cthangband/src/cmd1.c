@@ -616,6 +616,9 @@ void carry(int pickup)
 					/* Message */
 					msg_format("You have %s (%c).", o_name, index_to_label(slot));
 
+					/* Remember the object */
+					object_track(o_ptr);
+
 					/* Delete the object */
 					delete_object_idx(this_o_idx);
 				}

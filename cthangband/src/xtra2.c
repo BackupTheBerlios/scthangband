@@ -3442,6 +3442,9 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		}
 
 
+		/* Hack - track the first object in the square, if any. */
+		if (c_ptr->o_idx) object_track(&o_list[c_ptr->o_idx]);
+
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 		{

@@ -2019,7 +2019,7 @@
 #define PW_OVERHEAD     0x00000080L     /* Display overhead view */
 #define PW_MONSTER      0x00000100L     /* Display monster recall */
 #define PW_OBJECT       0x00000200L     /* Display object recall */
-/* xxx */
+#define PW_OBJECT_DETAILS	0x00000400L	/* Display object details */
 #define PW_SNAPSHOT     0x00000800L     /* Display snap-shot */
 /* xxx */
 /* xxx */
@@ -2044,7 +2044,7 @@ logaux(x, 1) logaux(x, 0) 255
 /* The set of windows affected by window_stuff(). */
 #define WINDOW_STUFF_MASK (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | \
 	PW_VISIBLE | PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
-	PW_OBJECT | PW_RETURN)
+	PW_OBJECT | PW_OBJECT_DETAILS | PW_RETURN)
 
 /*** General index values ***/
 

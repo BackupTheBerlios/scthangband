@@ -343,6 +343,9 @@ void do_cmd_wield(void)
 		k_info[o_ptr->k_idx].tried = TRUE;
 	}
 
+	/* Display the object if required */
+	object_track(o_ptr);
+
 	/* Note whether it is cursed or not. */
 	o_ptr->ident |= (IDENT_SENSE_CURSED);
 

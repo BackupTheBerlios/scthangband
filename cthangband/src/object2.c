@@ -4428,6 +4428,9 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			/* Combine the items */
 			object_absorb(o_ptr, j_ptr);
 
+			/* Remember the combined item */
+			o_idx = o_ptr - o_list;
+
 			/* Success */
 			done = TRUE;
 
@@ -4436,8 +4439,8 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		}
 	}
 
-	/* Get new object */
-	o_idx = o_pop();
+	/* Get new object if not absorbed. */
+	if (!done) o_idx = o_pop();
 
 	/* Failure */
 	if (!done && !o_idx)
@@ -4717,6 +4720,9 @@ void inven_item_optimize(int item)
 		/* Erase the "final" slot */
 		object_wipe(&inventory[i]);
 		
+		/* Stop tracking */
+		object_track(&inventory[i]);
+		
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN);
 	}
@@ -4729,6 +4735,9 @@ void inven_item_optimize(int item)
 
 		/* Erase the empty slot */
 		object_wipe(&inventory[item]);
+
+		/* Stop tracking */
+		object_track(&inventory[item]);
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -5024,6 +5033,9 @@ s16b inven_carry(object_type *o_ptr, bool final)
 	/* Increase the weight */
 	total_weight += (o_ptr->number * o_ptr->weight);
 
+	/* Display the object if required */
+	object_track(o_ptr);
+
 	/* Count the items */
 	inven_cnt++;
 
@@ -5179,8 +5191,13 @@ void inven_drop(int item, int amt)
 	/* Message */
 	msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
+	{
 	/* Drop it near the player */
-	drop_near(q_ptr, 0, py, px);
+		s16b o_idx = drop_near(q_ptr, 0, py, px);
+
+		/* Remember the object */
+		object_track(&o_list[o_idx]);
+	}
 
 	/* Modify, Describe, Optimize */
 	inven_item_increase(item, -amt);

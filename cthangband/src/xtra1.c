@@ -1074,6 +1074,42 @@ static void win_object_display(void)
 
 
 /*
+ * Return whether PW_OBJECT_DETAILS is interesting.
+ */
+static bool win_object_details_good(void)
+{
+	object_type *o_ptr = cnv_idx_to_obj(object_idx);
+
+	/* Non-objects are boring. */
+	if (!o_ptr || !(o_ptr->k_idx)) return FALSE;
+
+	/* Invisible floor objects are boring. */
+	if (object_idx < 0 && !los(py, px, o_ptr->iy, o_ptr->ix)) return FALSE;
+
+	/* Other objects are interesting. */
+	return TRUE;
+}	
+
+static void win_object_details_display(void)
+{
+	object_type *o_ptr = cnv_idx_to_obj(object_idx);
+	char o_name[ONAME_MAX];
+	
+	/* Never display non-objects. */
+	if (!o_ptr || !(o_ptr->k_idx)) return;
+	
+	/* Never display invisible floor objects */
+	if (object_idx < 0 && !los(py, px, o_ptr->iy, o_ptr->ix)) return;
+	
+	/* Describe fully. */
+	identify_fully_aux(o_ptr, 2);
+	
+	/* Put the name at the top. */
+	object_desc(o_name, o_ptr, TRUE, 3);
+	Term_putstr(0, 0, Term->wid, TERM_WHITE, o_name);
+}
+
+/*
  * Return whether PW_VISIBLE is interesting
  */
 static bool win_visible_good(void)
@@ -3740,6 +3776,8 @@ static void init_window_stuff(void)
 	display_func[iilog(PW_MONSTER)].display = win_monster_display;
 	display_func[iilog(PW_OBJECT)].good = win_object_good;
 	display_func[iilog(PW_OBJECT)].display = win_object_display;
+	display_func[iilog(PW_OBJECT_DETAILS)].good = win_object_details_good;
+	display_func[iilog(PW_OBJECT_DETAILS)].display = win_object_details_display;
 #if 0
 	/* The following displays are defined but never used. */
 	display_func[iilog(PW_SNAPSHOT)].good = func_false;

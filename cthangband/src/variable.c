@@ -408,7 +408,10 @@ s16b monster_race_idx;
  */
 s16b object_kind_idx;
 
-
+/*
+ * Object to track
+ */
+s16b object_idx;
 
 /*
  * User info

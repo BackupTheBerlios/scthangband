@@ -2700,9 +2700,15 @@ static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, c
  * Describe a "fully identified" item
  * If full is set, the game describes the item as if it was fully identified.
  */
-bool identify_fully_aux(object_type *o_ptr, bool full)
+bool identify_fully_aux(object_type *o_ptr, byte flags)
 {
+	bool full = (flags & 0x01) != 0;
+	bool paged = (flags & 0x02) == 0;
+	
+	
 	int                     i = 0, j, k, rsd_start, rsd_end;
+
+	byte minx, maxy;
 
 	u32b f1, f2, f3;
 
@@ -3247,37 +3253,53 @@ bool identify_fully_aux(object_type *o_ptr, bool full)
 	/* No special effects */
 	if (!i) return (FALSE);
 
+	minx = (paged) ? 15 : 0;
+	maxy = Term->hgt;
 
+	if (paged)
+	{
 	/* Save the screen */
 	Term_save();
 
 	/* Erase the screen */
-	for (k = 1; k < 24; k++) prt("", k, 13);
+		for (k = 1; k < maxy; k++) prt("", k, (minx > 2) ? minx-2 : 0);
+	}
 
 	/* Label the information */
-	prt("     Item Attributes:", 1, 15);
+	prt("     Item Attributes:", 1, minx);
 
-	/* We will print on top of the map (column 13) */
+	/* We will print on top of the map (column 13 in paged mode ) */
 	for (k = 2, j = 0; j < i; j++)
 	{
 		/* Show the info */
-		prt(info[j], k++, 15);
+		prt(info[j], k++, minx);
 
 		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == 22) && (j+1 < i))
+		if ((k == maxy) && (j+1 < i))
 		{
-			prt("-- more --", k, 15);
+			if (paged)
+		{
+				prt("-- more --", k, minx);
 			inkey();
-			for (; k > 2; k--) prt("", k, 15);
+				for (; k > 2; k--) prt("", k, minx);
+			}
+			/* Starting over is not an option, so finish instead. */
+			else
+			{
+				break;
+			}
 		}
 	}
 
+	if (paged)
+	{
 	/* Wait for it */
-	prt("[Press any key to continue]", k, 15);
+		prt("[Press any key to continue]", k, minx);
 	inkey();
 
 	/* Restore the screen */
 	Term_load();
+	}
 
 	/* Clean up stat-modifier information, if necessary. */
 	i = rsd_start;
@@ -4764,6 +4786,14 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Forget the item_tester_hook restriction */
 	item_tester_hook = NULL;
 
+	/* Show item if possible. */
+	if (item)
+	{
+		if (*cp < 0)
+			object_track(&o_list[-(*cp)]);
+		else
+			object_track(&inventory[(*cp)]);
+	}
 
 	/* Clean up */
 	if (show_choices)
