@@ -3063,14 +3063,13 @@ void redraw_stuff(void)
 	if (p_ptr->redraw & (PR_WIPE_0))
 	{
 		p_ptr->redraw &= ~(PR_WIPE_0);
-		msg_print(NULL);
+		prt("", 0, 0);
 	}
 
 	/* Hack -- clear the rest of the screen */
 	if (p_ptr->redraw & (PR_WIPE_1))
 	{
 		p_ptr->redraw &= ~(PR_WIPE_1);
-		msg_print(NULL);
 		clear_from(1);
 	}
 
