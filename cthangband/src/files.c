@@ -3437,8 +3437,8 @@ errr file_character(cptr name, bool full)
         else
             fprintf(fff, "\n Long Stairs:       OFF");
 
-            fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_dlv[cur_dungeon],
-                          50 * (p_ptr->max_dlv[cur_dungeon]));
+		i = p_ptr->max_dlv[cur_dungeon]+dun_defs[cur_dungeon].offset;
+		fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", i, 50 *i);
 
 
         if (noscore)
@@ -3474,6 +3474,28 @@ errr file_character(cptr name, bool full)
             }
         }
 
+		for (i = y = 0; i < MAX_CAVES; i++)
+		{
+			dun_type *d_ptr = dun_defs+i;
+			quest *q_ptr;
+			
+			/* Find the deepest guaranteed quest, if any. */
+			if (d_ptr->first_level > d_ptr->second_level) q_ptr = q_list+2*i;
+			else if (d_ptr->second_level) q_ptr = q_list+2*i+1;
+			else continue;
+
+			/* Not done it yet? */
+			if (q_ptr->cur_num != q_ptr->max_num) continue;
+			
+			/* Put a gap before and after the section. */
+			if (!y) fprintf(fff, "\n");
+			y = 1;
+
+			/* Print a message. */
+			fprintf(fff, " You have conquered %s.\n", d_ptr->name);
+		}
+			
+
         if (Total < 1)
             fprintf(fff,"\n You have defeated no enemies yet.\n");
         else if (Total == 1)
@@ -3504,19 +3526,53 @@ errr file_character(cptr name, bool full)
 			object_desc(o_name, &inventory[i], TRUE, 3);
 			fprintf(fff, "%c%s %s\n",
 			        index_to_label(i), paren, o_name);
+
+			/* Describe random object attributes */
+			identify_fully_file(inventory+i, fff);
 		}
 		fprintf(fff, "\n\n");
 	}
 
 	/* Dump the inventory */
 	fprintf(fff, "  [Character Inventory]\n\n");
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < INVEN_PACK && inventory[i].k_idx; i++)
 	{
 		object_desc(o_name, &inventory[i], TRUE, 3);
 		fprintf(fff, "%c%s %s\n",
 		        index_to_label(i), paren, o_name);
+
+		/* Describe random object attributes */
+		identify_fully_file(inventory+i, fff);
 	}
 	fprintf(fff, "\n\n");
+
+	/* Dump each home in turn */
+	for (x = 0; x < MAX_STORES_TOTAL; x++)
+	{
+		store_type *st_ptr = store+x;
+		int town = x/MAX_STORES_PER_TOWN;
+
+		/* Not your home. */
+		if (!st_ptr->bought) continue;
+
+		/* Empty */
+		if (!st_ptr->stock_num)
+		{
+			fprintf(fff, "  [Home in %s empty]\n\n", dun_defs[town].shortname);
+			continue;
+		}
+		/* Dump the contents */
+		fprintf(fff, "[Home Inventory (%s)]\n\n", dun_defs[town].shortname);
+		for (i = 0; i < st_ptr->stock_num; i++)
+		{
+			object_desc(o_name, &st_ptr->stock[i], TRUE, 3);
+			fprintf(fff, "%c%s %s\n", I2A(i%12), paren, o_name);
+
+			/* Describe random object attributes */
+			identify_fully_file(&st_ptr->stock[i], fff);
+		}
+		fprintf(fff, "\n");
+	}
 
 	fprintf(fff, "  [Last Ten Messages]\n\n");
 	dump_final_messages(fff);

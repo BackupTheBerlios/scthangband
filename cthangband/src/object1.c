@@ -3645,6 +3645,34 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 
 
 /*
+ * Describe item details to a specified stream.
+ */
+void identify_fully_file(object_type *o_ptr, FILE *fff)
+{
+	int i = 0;
+	cptr info[128];
+	bool info_a[128];
+
+	/* Set "brief" mode. */
+	brief = TRUE;
+
+	C_WIPE(info_a, 128, bool);
+
+	/* Grab the flags. */
+	i = identify_fully_get(o_ptr, info, info_a);
+
+	/* Dump the flags, wrapping at 80 characters. */
+	identify_fully_dump_file(fff, info, i);
+
+	/* Clear any allocated strings. */
+	identify_fully_clear(info, info_a, i);
+
+
+	/* Leave "brief" mode. */
+	brief = FALSE;
+}
+
+/*
  * Convert an inventory index into a one character label
  * Note that the label does NOT distinguish inven/equip.
  */

@@ -695,6 +695,7 @@ extern void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 extern void object_desc(char *buf, object_type *o_ptr, int pref, int mode);
 extern void object_desc_store(char *buf, object_type *o_ptr, int pref, int mode);
 extern bool identify_fully_aux(object_type *o_ptr, byte flags);
+extern void identify_fully_file(object_type *o_ptr, FILE *fff);
 extern s16b index_to_label(int i);
 extern s16b label_to_inven(int c);
 extern s16b label_to_equip(int c);
