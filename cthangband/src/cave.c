@@ -3944,7 +3944,7 @@ bool is_room_p(int y, int x)
 		{
 			t = 0;
 		}
-		else if (t++)
+		else if (t++ == 2)
 		{
 			return TRUE;
 		}
