@@ -4377,22 +4377,12 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 		show_page(fff, h_ptr, 1, hgt - 3, line);
 
 		/* Show a general "title" */
-		prt(format("[%s %s, %s, Line %d/%d]", GAME_NAME, GAME_VERSION,
-				h_ptr->caption, line, size), 0, 0);
+		mc_put_fmt(0, 0, "[%s %s, %s, Line %d/%d]", GAME_NAME, GAME_VERSION,
+				h_ptr->caption, line, size);
 
-		/* Prompt -- small files */
-		if (size <= (hgt - 4))
-		{
-			/* Wait for it */
-			prt("[Press ESC to exit.]", hgt - 1, 0);
-		}
-
-		/* Prompt -- large files */
-		else
-		{
-			/* Wait for it */
-			prt("[Press 2, 8, 4, 6, /, =, #, %, backspace, or ESC to exit.]", hgt - 1, 0);
-		}
+		/* Prompt */
+		mc_put_str(hgt - 1, 0,
+			"[Press 2, 8, 4, 6, /, =, #, %, backspace, or ESC to exit.]");
 
 		/* Get a keypress */
 		k = inkey();
