@@ -2097,7 +2097,7 @@ void do_cmd_use_staff(object_type *o_ptr)
 		/* Unstack the used item */
 		o_ptr->number--;
 		total_weight -= q_ptr->weight;
-		inven_carry(q_ptr, FALSE);
+		inven_carry(q_ptr);
 
 		/* Message */
 		msg_print("You unstack your staff.");
@@ -2515,7 +2515,7 @@ void do_cmd_aim_wand(object_type *o_ptr)
 		/* Unstack the used item */
 		o_ptr->number--;
 		total_weight -= q_ptr->weight;
-		item = inven_carry(q_ptr, FALSE);
+		item = inven_carry(q_ptr);
 
 		/* Message */
 		msg_print("You unstack your wand.");
@@ -2952,7 +2952,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 		/* Unstack the used item */
 		o_ptr->number--;
 		total_weight -= q_ptr->weight;
-		inven_carry(q_ptr, FALSE);
+		inven_carry(q_ptr);
 
 		/* Message */
 		msg_print("You unstack your rod.");

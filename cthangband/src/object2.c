@@ -4954,49 +4954,44 @@ bool inven_carry_okay(object_type *o_ptr)
  * Note that this code must remove any location/stack information
  * from the object once it is placed into the inventory.
  *
- * The "final" flag tells this function to bypass the "combine"
- * and "reorder" code until later.
+ * This does not produce a sorted pack, but does combine items.
  */
-s16b inven_carry(object_type *o_ptr, bool final)
+s16b inven_carry(object_type *o_ptr)
 {
-	int i, j, k;
+	int j;
 	int n = -1;
 
 	object_type     *j_ptr;
 
 
-	/* Not final */
-	if (!final)
+	/* Check for combining */
+	for (j = 0; j < INVEN_PACK; j++)
 	{
-		/* Check for combining */
-		for (j = 0; j < INVEN_PACK; j++)
+		j_ptr = &inventory[j];
+
+		/* Skip non-objects */
+		if (!j_ptr->k_idx) continue;
+
+		/* Hack -- track last item */
+		n = j;
+
+		/* Check if the two items can be combined */
+		if (object_similar(j_ptr, o_ptr))
 		{
-			j_ptr = &inventory[j];
+			/* Combine the items */
+			(void)object_absorb(j_ptr, o_ptr);
 
-			/* Skip non-objects */
-			if (!j_ptr->k_idx) continue;
+			/* Increase the weight */
+			total_weight += (o_ptr->number * o_ptr->weight);
 
-			/* Hack -- track last item */
-			n = j;
+			/* Recalculate bonuses */
+			p_ptr->update |= (PU_BONUS);
 
-			/* Check if the two items can be combined */
-			if (object_similar(j_ptr, o_ptr))
-			{
-				/* Combine the items */
-				(void)object_absorb(j_ptr, o_ptr);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_SPELL);
 
-				/* Increase the weight */
-				total_weight += (o_ptr->number * o_ptr->weight);
-
-				/* Recalculate bonuses */
-				p_ptr->update |= (PU_BONUS);
-
-				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_SPELL);
-
-				/* Success */
-				return (j);
-			}
+			/* Success */
+			return (j);
 		}
 	}
 
@@ -5014,79 +5009,11 @@ s16b inven_carry(object_type *o_ptr, bool final)
 		if (!j_ptr->k_idx) break;
 	}
 
-	/* Use that slot */
-	i = j;
-
-
-	/* Hack -- pre-reorder the pack */
-	if (!final && (i < INVEN_PACK))
-	{
-		s32b            o_value, j_value;
-
-		/* Get the "value" of the item */
-		o_value = object_value(o_ptr);
-
-		/* Scan every occupied slot */
-		for (j = 0; j < INVEN_PACK; j++)
-		{
-			j_ptr = &inventory[j];
-
-			/* Use empty slots */
-			if (!j_ptr->k_idx) break;
-
-			/* Objects sort by decreasing type */
-			if (o_ptr->tval > j_ptr->tval) break;
-			if (o_ptr->tval < j_ptr->tval) continue;
-
-			/* Non-aware (flavored) items always come last */
-			if (!object_aware_p(o_ptr)) continue;
-			if (!object_aware_p(j_ptr)) break;
-
-			/* Objects sort by increasing k_idx */
-			if (o_ptr->k_idx < j_ptr->k_idx) break;
-			if (o_ptr->k_idx > j_ptr->k_idx) continue;
-
-			/* Unidentified objects always come last */
-			if (!object_known_p(o_ptr)) continue;
-			if (!object_known_p(j_ptr)) break;
-
-
-
-           /* Hack:  otherwise identical rods sort by
-              increasing recharge time --dsb */
-           if (o_ptr->tval == TV_ROD) {
-    	       if (o_ptr->timeout < j_ptr->timeout) break;
-	           if (o_ptr->timeout > j_ptr->timeout) continue;
-           }
-
-			/* Determine the "value" of the pack item */
-			j_value = object_value(j_ptr);
-
-			/* Objects sort by decreasing value */
-			if (o_value > j_value) break;
-			if (o_value < j_value) continue;
-		}
-
-		/* Use that slot */
-		i = j;
-
-		/* Slide objects */
-		for (k = n; k >= i; k--)
-		{
-			/* Hack -- Slide the item */
-			object_copy(&inventory[k+1], &inventory[k]);
-		}
-
-		/* Wipe the empty slot */
-		object_wipe(&inventory[i]);
-	}
-
-
 	/* Acquire a copy of the item */
-	object_copy(&inventory[i], o_ptr);
+	object_copy(&inventory[j], o_ptr);
 
 	/* Access new object */
-	o_ptr = &inventory[i];
+	o_ptr = &inventory[j];
 
 	/* Clean out unused fields */
 	o_ptr->iy = o_ptr->ix = 0;
@@ -5112,7 +5039,7 @@ s16b inven_carry(object_type *o_ptr, bool final)
 	p_ptr->window |= (PW_INVEN | PW_SPELL);
 
 	/* Return the slot */
-	return (i);
+	return (j);
 }
 
 
@@ -5189,7 +5116,7 @@ s16b inven_takeoff(int item, int amt)
 	item_optimize(o_ptr);
 
 	/* Carry the object */
-	slot = inven_carry(q_ptr, FALSE);
+	slot = inven_carry(q_ptr);
 
 	{
 		C_TNEW(o_name, ONAME_MAX, char);

@@ -2972,7 +2972,7 @@ static void player_outfit(void)
         /* These objects are "storebought" */
         q_ptr->ident |= IDENT_STOREB;
 
-        (void)inven_carry(q_ptr, FALSE);
+        (void)inven_carry(q_ptr);
 
                                         
     }
@@ -2983,7 +2983,7 @@ static void player_outfit(void)
         q_ptr->number = (char)rand_range(3, 7);
         object_aware(q_ptr);
         object_known(q_ptr);
-        (void)inven_carry(q_ptr, FALSE);
+        (void)inven_carry(q_ptr);
     }
 
 
@@ -3003,7 +3003,7 @@ static void player_outfit(void)
         /* These objects are "storebought" */
         q_ptr->ident |= IDENT_STOREB;
 
-        (void)inven_carry(q_ptr, FALSE);
+        (void)inven_carry(q_ptr);
 
         /* Get local object */
         q_ptr = &forge;
@@ -3017,7 +3017,7 @@ static void player_outfit(void)
         /* These objects are "storebought" */
         q_ptr->ident |= IDENT_STOREB;
 
-        (void)inven_carry(q_ptr, FALSE);
+        (void)inven_carry(q_ptr);
 
     }
     else
@@ -3029,7 +3029,7 @@ static void player_outfit(void)
         q_ptr->pval = (char)rand_range(3, 7) * 500;
         object_aware(q_ptr);
         object_known(q_ptr);
-        (void)inven_carry(q_ptr, FALSE);
+        (void)inven_carry(q_ptr);
     }
     /* For characters starting with magical skill, give them a spellbook */
     if (skill_set[SKILL_MANA].value > 0) {
@@ -3060,7 +3060,7 @@ static void player_outfit(void)
 		q_ptr->number = 1;
 		object_aware(q_ptr);
 		object_known(q_ptr);
-		(void)inven_carry(q_ptr, FALSE);
+		(void)inven_carry(q_ptr);
     }
         	 		
 
@@ -3099,7 +3099,7 @@ static void player_outfit(void)
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
-		(void)inven_carry(q_ptr, FALSE);
+		(void)inven_carry(q_ptr);
 	}
 }
 

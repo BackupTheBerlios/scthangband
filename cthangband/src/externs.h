@@ -1523,7 +1523,7 @@ extern void place_trap(int y, int x);
 extern bool inven_carry_okay(object_type *o_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(STORE_C))
-extern s16b inven_carry(object_type *o_ptr, bool final);
+extern s16b inven_carry(object_type *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT2_C))
 extern s16b inven_takeoff(int item, int amt);

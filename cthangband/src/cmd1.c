@@ -623,7 +623,7 @@ void carry(int pickup)
 					int slot;
 
 					/* Carry the item */
-					slot = inven_carry(o_ptr, FALSE);
+					slot = inven_carry(o_ptr);
 
 					/* Get the item again */
 					o_ptr = &inventory[slot];

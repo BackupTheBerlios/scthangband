@@ -3151,7 +3151,7 @@ static void store_purchase_aux(char *o_name)
 				j_ptr->note = 0;
 
 				/* Give it to the player */
-				item_new = inven_carry(j_ptr, FALSE);
+				item_new = inven_carry(j_ptr);
 
 				/* Describe the final result */
 				strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[item_new], TRUE, 3);
@@ -3231,7 +3231,7 @@ static void store_purchase_aux(char *o_name)
 	else
 	{
 		/* Give it to the player */
-		item_new = inven_carry(j_ptr, FALSE);
+		item_new = inven_carry(j_ptr);
 
 		/* Describe just the result */
 		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &inventory[item_new], TRUE, 3);
