@@ -142,7 +142,11 @@ int spell_skill(const magic_type *s_ptr)
 		total += skill_set[s_ptr->skill2].value;
 
 	total /= 4; /* This gives a total of 0-50 */
-	if (total == 0) total++; /* So that we have a minimum of 1 */
+
+	/* This turns it into 1-50 for almost all books. */
+	if (total == 0 && s_ptr->skill1 != SKILL_MINDCRAFTING)
+		 total++;
+
 	return (total);
 }
 
