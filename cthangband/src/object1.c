@@ -1763,22 +1763,22 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 /* What actually needs to be done with the strings below. */
 #define ADD_PV(X) \
-	t = object_desc_str(t, " to "); \
+	t = object_desc_chr(t, ' '); \
 	t = object_desc_str(t, (X))
 
 				/* Give details about a single bonus. */
 				switch (g1 & TR1_PVAL_MASK)
 				{
-					case TR1_STR: ADD_PV("strength"); break;
-					case TR1_INT: ADD_PV("intelligence"); break;
-					case TR1_WIS: ADD_PV("wisdom"); break;
-					case TR1_DEX: ADD_PV("dexterity"); break;
-					case TR1_CON: ADD_PV("constitution"); break;
-					case TR1_CHR: ADD_PV("charisma"); break;
+					case TR1_STR: ADD_PV("str"); break;
+					case TR1_INT: ADD_PV("int"); break;
+					case TR1_WIS: ADD_PV("wis"); break;
+					case TR1_DEX: ADD_PV("dex"); break;
+					case TR1_CON: ADD_PV("con"); break;
+					case TR1_CHR: ADD_PV("chr"); break;
 					case TR1_STEALTH: ADD_PV("stealth"); break;
-					case TR1_SEARCH: ADD_PV("searching"); break;
-					case TR1_INFRA: ADD_PV("infravision"); break;
-					case TR1_TUNNEL: ADD_PV("tunneling"); break;
+					case TR1_SEARCH: ADD_PV("search"); break;
+					case TR1_INFRA: ADD_PV("infra"); break;
+					case TR1_TUNNEL: ADD_PV("dig"); break;
 					case TR1_SPEED: ADD_PV("movement speed"); break;
 					case TR1_BLOWS: ADD_PV("attack speed"); break;
 				}
