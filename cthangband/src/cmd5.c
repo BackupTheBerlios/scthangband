@@ -3551,13 +3551,10 @@ static void annoy_spirit(spirit_type *s_ptr,u32b amount)
  */
 static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 {
-	s32b i = rand_int(1000000);
+	s32b i = rand_int(100000);
 
-	/* Do nothing most of the time. */
-	if (i%10) return;
-
-	/* Reduce the scale of the number. */
- 	i /= 10;
+	/* Do nothing from 40-85% of the time. */
+	if (rand_int(100) > ((s_ptr - spirits)/MAX_SPHERE+1)*15) return;
 
  	/* Abandonment. up to 2% chance for a level 45 favour. */
 	if (i < f_ptr->minskill * f_ptr->minskill)
@@ -3578,7 +3575,7 @@ static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 
 		for (j = 0; j < 1000; j++)
 		{
-			if (summon_specific(py, px, dun_depth, type) && rand_int(2)) break;
+			if (summon_specific(py, px, dun_depth, type) && !rand_int(3)) break;
 		}
 
 		/* Nothing happened. */
