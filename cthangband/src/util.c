@@ -1308,9 +1308,6 @@ void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 static bool macro__use[256];
 
 
-/* Store whether the last input was a macro or not. */
-static bool is_macro;
-
 /*
  * Find the macro (if any) which exactly matches the given pattern
  */
@@ -1645,9 +1642,6 @@ static char inkey_aux(void)
 	/* No macro pending */
 	if (k < 0) return (ch);
 
-	/* Remember the macro */
-	if (macro_edit) is_macro = TRUE;
-	
 
 	/* Wait for a macro, or a timeout */
 	while (TRUE)
@@ -1888,9 +1882,6 @@ char inkey(void)
 
 	/* Forget pointer */
 	inkey_next = NULL;
-
-	/* No macro in progress */
-	if (macro_edit) is_macro = FALSE;
 
 #ifdef ALLOW_BORG
 
@@ -2937,7 +2928,7 @@ bool askfor_aux(char *buf, int len)
 
 	int k = 0, l = 0;
 
-	bool done = FALSE;
+	bool done = FALSE, edit_mode = FALSE;
 
 
 	/* Locate the cursor */
@@ -2962,8 +2953,8 @@ bool askfor_aux(char *buf, int len)
 	Term_erase(x, y, len);
 	Term_putstr(x, y, -1, TERM_YELLOW, buf);
 
-	/* Reset is_macro to ensure that each prompt is the same. */
-	if (!macro_edit) is_macro = FALSE;
+	/* Reset edit_mode to ensure that each prompt is the same. */
+	if (!macro_edit) edit_mode = FALSE;
 
 	/* Give help, if requested. */
 	help_track("string_prompt_det");
@@ -2976,6 +2967,9 @@ bool askfor_aux(char *buf, int len)
 
 		/* Get a key */
 		i = inkey();
+
+		/* Use macros to denote edit mode if allowed. */
+		if (macro_edit) edit_mode = parse_macro;
 
 		/* Analyze the key */
 		switch (i)
@@ -3008,7 +3002,7 @@ bool askfor_aux(char *buf, int len)
 				k = strlen(buf);
 				l = k;
 			}
-			if (!macro_edit) is_macro = !is_macro;
+			if (!macro_edit) edit_mode = !edit_mode;
 			break;
 
 			/*
@@ -3017,31 +3011,31 @@ bool askfor_aux(char *buf, int len)
 			 * they pass through to it otherwise.
 			 */
 			case '1':
-			if (is_macro)
+			if (edit_mode)
 			{
 				l = k;
 				break;
 			}
 			case '4':
-			if (is_macro)
+			if (edit_mode)
 			{
 				if (l > 0) l--;
 			break;
 			}
 			case '6':
-			if (is_macro)
+			if (edit_mode)
 			{
 				if (l < k) l++;
 				break;
 			}			
 			case '7':
-			if (is_macro)
+			if (edit_mode)
 			{
 				l = 0;
 				break;
 			}
 			case '.':
-			if (is_macro)
+			if (edit_mode)
 			{
 				if (l < k)
 				{
