@@ -3303,7 +3303,7 @@ static void do_cmd_knowledge_pets(void)
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			t_friends++;
 			t_levels += r_ptr->level;
-			monster_desc(pet_name, m_ptr, 0x88, MNAME_MAX);
+			monster_desc(pet_name, m_ptr, 0x88, Term->wid-2);
 			strcat(pet_name, "\n");
 			fprintf(fff,"%s %s\n", get_symbol(r_ptr), pet_name);
 		}
