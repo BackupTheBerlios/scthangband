@@ -1187,12 +1187,7 @@ static void wiz_quantity_item(object_type *o_ptr)
  */
 void do_cmd_wiz_play(object_type *o_ptr)
 {
-	errr err;
-
-	object_type	forge;
-	object_type *q_ptr;
-
-	object_type *o_ptr;
+	object_type q_ptr[1];
 
 	char ch;
 
@@ -1205,9 +1200,6 @@ void do_cmd_wiz_play(object_type *o_ptr)
 	Term_save();
 
 
-	/* Get local object */
-	q_ptr = &forge;
-	
 	/* Copy object */
 	object_copy(q_ptr, o_ptr);
 

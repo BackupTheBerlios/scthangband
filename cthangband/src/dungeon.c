@@ -2332,13 +2332,6 @@ void process_command(void)
 
 			/*** Inventory Commands ***/
 
-			/* Destroy an item */
-		case 'k':
-		{
-			do_cmd_destroy();
-			break;
-		}
-
 		/* Reveal all hidden objects. */
 		case KTRL('K'):
 		{

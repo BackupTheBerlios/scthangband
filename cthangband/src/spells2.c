@@ -514,8 +514,21 @@ bool restore_level(void)
 bool alchemy(void)
 {
 	s32b price;
-	object_type o_ptr[1];
-	if (do_cmd_destroy_aux("turn", " to gold", o_ptr)) return FALSE;
+	object_type q_ptr[1], *o_ptr;
+	errr err;
+
+	/* Restrict the choices */
+	item_tester_hook = item_tester_hook_destroy;
+
+	/* Get an item (from equip or inven or floor) */
+	o_ptr = get_item(&err, "Turn which item to gold? ", TRUE, TRUE, TRUE);
+	if (!o_ptr)
+	{
+		if (err == -2) msg_print("You have nothing to turn to gold.");
+		return FALSE;
+	}
+
+	if (do_cmd_destroy_aux("turn", " to gold", q_ptr, o_ptr)) return FALSE;
 
 	/* Find the value for alchemy. */
 	price = object_value(o_ptr, TRUE) * o_ptr->number;

@@ -4985,6 +4985,30 @@ static bool PURE item_tester_hook_fire(object_ctype *o_ptr)
 }
 
 /*
+ * Hook to determine if an item can be destroyed (or turned to gold).
+ */
+bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
+{
+	object_type j_ptr[1];
+
+	int feel = find_feeling(o_ptr);
+	object_info_known(j_ptr, o_ptr);
+
+	/* Reject known artefacts. */
+	if (allart_p(j_ptr)) return FALSE;
+
+	/* Reject known cursed worn items. */
+	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
+
+	/* Reject felt artefacts. */
+	if (feel == SENSE_C_ART || feel == SENSE_G_ART || feel == SENSE_Q_ART)
+		return FALSE;
+
+	/* Accept everything else. */
+	return TRUE;
+}
+
+/*
  * Check that the player is wielding a light which can be refuelled.
  */
 static bool forbid_refuel(void)
@@ -5143,6 +5167,8 @@ static object_function object_functions[] =
 		NULL, NULL, 0, TRUE, FALSE, FALSE},
 	{'d', do_cmd_drop, "drop", "item",
 		NULL, item_tester_hook_drop, 0, TRUE, TRUE, FALSE},
+	{'k', do_cmd_destroy, "destroy", "item",
+		NULL, item_tester_hook_destroy, 0, TRUE, TRUE, TRUE},
 	{'K', do_cmd_hide_object, "hide", "item",
 		NULL, item_tester_unhidden, 0, TRUE, TRUE, TRUE},
 	{'I', do_cmd_observe, "examine", "item",
@@ -5159,7 +5185,6 @@ static object_function object_functions[] =
 		NULL, item_tester_hook_drop, 0, TRUE, TRUE, TRUE},
 	{'F', do_cmd_refill, "refuel", "item",
 		forbid_refuel, item_tester_refuel, 0, TRUE, TRUE, TRUE},
-	/* destroy */
 	/* *identify* */
 	{CMD_DEBUG+'o', do_cmd_wiz_play, "play with", "object",
 		forbid_non_debug, NULL, 0, TRUE, TRUE, TRUE},
@@ -5213,6 +5238,21 @@ static object_type *get_object(object_function *func)
 	else
 		msg_format("You do not have a %s to %s.", func->noun, func->verb);
 
+	return NULL;
+}
+
+/*
+ * Look up a function in object_functions[], and return an appropriate
+ * object for it.
+ */
+object_type *get_object_from_function(void (*func)(object_type *))
+{
+	object_function *ptr;
+
+	FOR_ALL_IN(object_functions, ptr)
+	{
+		if (ptr->func == func) return get_object(ptr);
+	}
 	return NULL;
 }
 

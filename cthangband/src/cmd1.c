@@ -1298,12 +1298,6 @@ void do_cmd_fire(object_type *o_ptr)
 	do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
 }
 
-/* 
- * Hack - store the multiplier here. Must be returned to 1 at the end of each
- * action.
- */
-static int throw_mult = 1;
-
 /*
  * Throw an object from the pack or floor.
  *
@@ -1313,11 +1307,11 @@ static int throw_mult = 1;
  * to hit bonus of the weapon to have an effect?  Should it ever cause
  * the item to be destroyed?  Should it do any damage at all?
  */
-void do_cmd_throw(object_type *o_ptr)
+static void do_cmd_throw_aux(object_type *o_ptr, int mult)
 {
 	/* Extract a "distance multiplier" */
 	/* Changed for 'launcher' chaos feature */
-	int p = 10 + 2 * (throw_mult - 1);
+	int p = 10 + 2 * (mult - 1);
 
 	/* Enforce a minimum "weight" of one pound */
 	int q = ((o_ptr->weight > 10) ? o_ptr->weight : 10);
@@ -1326,7 +1320,7 @@ void do_cmd_throw(object_type *o_ptr)
 	int tdis = MIN((adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * p / q, 10);
 
 	/* Hack -- Base damage from thrown object */
-	int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d * throw_mult;
+	int tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d * mult;
 
 	/* Chance of hitting */
 	int chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
@@ -1338,15 +1332,24 @@ void do_cmd_throw(object_type *o_ptr)
 }
 
 /*
- * Hack - throw a missile hard.
+ * Throw a missile with normal power.
+ */
+void do_cmd_throw(object_type *o_ptr)
+{
+	do_cmd_throw_aux(o_ptr, 1);
+}
+
+/*
+ * Hack - throw a missile (which has not yet been chosen) hard.
  */
 void do_cmd_throw_hard(int mult)
 {
-	throw_mult = mult;
+	object_type *o_ptr = get_object_from_function(do_cmd_throw);
 
-	do_cmd_use_object('v');
+	/* Aborted. */
+	if (!o_ptr) return;
 
-	throw_mult = 1;
+	do_cmd_throw_aux(o_ptr, mult);
 }
 
 /*

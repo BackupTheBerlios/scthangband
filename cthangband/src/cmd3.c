@@ -333,30 +333,6 @@ void do_cmd_drop(object_type *o_ptr)
 }
 
 /*
- * Hook to determine if an item can be destroyed (or turned to gold).
- */
-static bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
-{
-	object_type j_ptr[1];
-
-	int feel = find_feeling(o_ptr);
-	object_info_known(j_ptr, o_ptr);
-
-	/* Reject known artefacts. */
-	if (allart_p(j_ptr)) return FALSE;
-
-	/* Reject known cursed worn items. */
-	if (is_worn_p(o_ptr) && cursed_p(j_ptr)) return FALSE;
-
-	/* Reject felt artefacts. */
-	if (feel == SENSE_C_ART || feel == SENSE_G_ART || feel == SENSE_Q_ART)
-		return FALSE;
-
-	/* Accept everything else. */
-	return TRUE;
-}
-
-/*
  * Destroy an item
  * Return a POWER_ERROR if no transformation occurred, set *name and *value
  * and return SUCCESS otherwise.
@@ -366,31 +342,10 @@ static bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
  * q_ptr is a pointer to an object which is used to store the object destroyed
  * on successful completion. It is junk otherwise.
  */
-errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr)
+errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr, object_type *o_ptr)
 {
-	char buf[80];
-	errr err;
-
-	bool force = FALSE;
-
-	object_type *o_ptr;
-
-
 	/* Hack -- force destruction */
-	if (command_arg > 0) force = TRUE;
-
-	/* Restrict the choices */
-	item_tester_hook = item_tester_hook_destroy;
-
-	/* Get a string. */
-	strnfmt(buf, sizeof(buf), "%^s which item%s? ", verb, dative);
-
-	/* Get an item (from equip or inven or floor) */
-	if (!((o_ptr = get_item(&err, buf, TRUE, TRUE, TRUE))))
-	{
-		if (err == -2) msg_format("You have nothing to %s%s.", verb, dative);
-		return POWER_ERROR_ABORT;
-	}
+	bool force = (command_arg > 0);
 
 	/* Get an object with the number to destroy. */
 	object_copy(q_ptr, o_ptr);
@@ -449,16 +404,16 @@ errr do_cmd_destroy_aux(cptr verb, cptr dative, object_type *q_ptr)
 /*
  * Destroy an item
  */
-void do_cmd_destroy(void)
+void do_cmd_destroy(object_type *o_ptr)
 {
-	object_type o_ptr[1];
+	object_type q_ptr[1];
 
-	errr err = do_cmd_destroy_aux("destroy", "", o_ptr);
+	errr err = do_cmd_destroy_aux("destroy", "", q_ptr, o_ptr);
 
 	if (err != POWER_ERROR_ABORT) energy_use = extract_energy[p_ptr->pspeed];
 
 	if (!err)
-		msg_format("You have destroyed %v.", object_desc_f3, o_ptr, TRUE, 3);
+		msg_format("You have destroyed %v.", object_desc_f3, q_ptr, TRUE, 3);
 }
 
 
