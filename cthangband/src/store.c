@@ -293,14 +293,7 @@ static void room_rest(bool night)
 	/* Maintain each shop (except homes etc) */
 	for (n = 0; n < MAX_STORES_TOTAL - 1; n++)
 	{
-		/* Maintain */
-		if ((store[n].type !=99) &&
-			(store[n].type != STORE_HOME) &&
-			(store[n].type != STORE_HALL) &&
-			(store[n].type != STORE_PAWN))
-		{
-			store_maint(n);
-		}
+		store_maint(n);
 	}
 	/* And restore the globals */
 	cur_store_num=temp_store_num;
@@ -4399,9 +4392,12 @@ void store_maint(int which)
 
 	int		old_rating = rating;
 
-	/* Ignore home */
-	if ((store[which].type == STORE_HOME) || (store[which].type == STORE_HALL) || (store[which].type == STORE_PAWN)) return;
-
+	/* Hack - ignore non-shops (should check shop-like properties). */
+	switch (store[which].type)
+	{
+		case STORE_HOME: case STORE_HALL: case STORE_PAWN: case 99:
+			return;
+	}
 	
 	/* Save the store indices */
 	cur_store_num = which;

@@ -1026,15 +1026,7 @@ static void process_shops(void)
 	/* Maintain each shop */
 	for (n = 0; n < MAX_STORES_TOTAL; n++)
 	{
-		/* Ignore home, hall  and pawnbrokers */
-		if ((store[n].type != 99) &&
-			(store[n].type != STORE_HOME) &&
-			(store[n].type != STORE_HALL) &&
-			(store[n].type != STORE_PAWN))
-		{
-			/* Maintain */
-			store_maint(n);
-		}
+		store_maint(n);
 	}
 
 	/* Sometimes, shuffle the shop-keepers */

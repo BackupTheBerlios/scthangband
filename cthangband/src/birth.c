@@ -4100,15 +4100,8 @@ void player_birth(void)
 		/* Initialize */
 		store_init(n);
 
-		/* Ignore home, hall  and pawnbrokers */
-		if ((store[n].type != 99) &&
-			(store[n].type != STORE_HOME) &&
-			(store[n].type != STORE_HALL) &&
-			(store[n].type != STORE_PAWN))
-		{
-			/* Maintain the shop (ten times) */
-			for (i = 0; i < 10; i++) store_maint(n);
-		}
+		/* Maintain the shop (ten times) */
+		for (i = 0; i < 10; i++) store_maint(n);
 	}
 }
 

@@ -3232,7 +3232,7 @@ extern object_type *o_list;
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern monster_type *m_list;
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern store_type *store;
 #endif
 #if (defined(ANGBAND_H))
