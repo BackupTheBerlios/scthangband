@@ -3145,7 +3145,7 @@ static void player_birth_quests(void)
 		while (same_level);
 		
 		/* Make sure uniques aren't created outside their level */
-		if (r_info[q_list[i].r_idx].flags1 & RF1_UNIQUE) r_info[q_list[i].r_idx].flags1 |= RF1_ALWAYS_GUARD;
+		if (r_info[q_list[i].r_idx].flags1 & RF1_UNIQUE) r_info[q_list[i].r_idx].flags1 |= RF1_GUARDIAN;
 
 		/* Now place quest in a random dungeon
 		 * but not on its lowest two levels as they *may*

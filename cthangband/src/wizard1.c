@@ -1369,7 +1369,7 @@ static void spoil_mon_desc(cptr fname)
 		cptr pre;
 
 		/* Get the "name" */
-		if (r_ptr->flags1 & (RF1_ALWAYS_GUARD)) pre = "[G]";
+		if (r_ptr->flags1 & (RF1_GUARDIAN)) pre = "[G]";
 		else if (r_ptr->flags1 & (RF1_UNIQUE)) pre = "[U]";
 		else pre = "The";
 
@@ -1579,7 +1579,7 @@ static void spoil_mon_info(cptr fname)
 
 
 		/* Prefix */
-		if (flags1 & (RF1_ALWAYS_GUARD))
+		if (flags1 & (RF1_GUARDIAN))
 		{
 			spoil_out("[G] ");
 		}

@@ -3190,7 +3190,7 @@ void do_cmd_cast(void)
              if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
 
 			 /* Skip Quest Monsters */
-			 if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) continue;
+			 if (r_ptr->flags1 & RF1_GUARDIAN) continue;
 
              /* Delete the monster */
              delete_monster_idx(i,TRUE);

@@ -585,7 +585,7 @@ static void roff_aux(int r_idx)
 
 	/* Assume some "obvious" flags */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) flags1 |= (RF1_UNIQUE);
-	if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) flags1 |= (RF1_GUARDIAN);
+	if (r_ptr->flags1 & RF1_GUARDIAN) flags1 |= (RF1_GUARDIAN);
 	if (r_ptr->flags1 & (RF1_MALE)) flags1 |= (RF1_MALE);
 	if (r_ptr->flags1 & (RF1_FEMALE)) flags1 |= (RF1_FEMALE);
 

@@ -4812,7 +4812,7 @@ bool genocide(bool player_cast)
 		if (r_ptr->d_char != typ) continue;
 
 		/* Skip Quest Monsters - Dean Anderson */
-		if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) continue;
+		if (r_ptr->flags1 & RF1_GUARDIAN) continue;
 
 		/* Delete the monster */
 		delete_monster_idx(i,TRUE);
@@ -4874,7 +4874,7 @@ bool mass_genocide(bool player_cast)
 		if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
 
 		/* Skip Quest Monsters - Dean Anderson */
-		if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) continue;
+		if (r_ptr->flags1 & RF1_GUARDIAN) continue;
 
 		/* Skip distant monsters */
 		if (m_ptr->cdis > MAX_SIGHT) continue;

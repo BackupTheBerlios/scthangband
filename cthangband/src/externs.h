@@ -119,7 +119,7 @@ extern void object_track(object_type *o_ptr);
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void disturb(int stop_stealth, int unused_flag);
 #endif
-#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool is_quest(int level);
 #endif
 
@@ -1561,7 +1561,7 @@ extern void display_koff(int k_idx);
 
 /* quest.c */
 
-#if (defined(GENERATE_C) || defined(LOAD_C) || defined(QUEST_C))
+#if (defined(GENERATE_C) || defined(QUEST_C))
 extern int get_quest_monster(void);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(XTRA2_C))
@@ -3996,5 +3996,11 @@ extern bool is_worn_p(object_type *o_ptr);
 
 #if (defined(CMD5_C) || defined(CMD6_C))
 extern s16b item_use_energy(object_type *o_ptr);
+#endif
+
+/* quest.c */
+
+#if (defined(DUNGEON_C) || defined(QUEST_C))
+extern void set_guardians(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

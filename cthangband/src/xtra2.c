@@ -2301,7 +2301,7 @@ void monster_death(int m_idx)
 	if (r_ptr->flags1 & (RF1_DROP_4D2)) number += damroll(4, 2);
 
     if (cloned) number = 0; /* Clones drop no stuff */
- 	if ((is_quest(dun_level)) && ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)))
+ 	if ((is_quest(dun_level)) && (r_ptr->flags1 & RF1_GUARDIAN))
 	{
 		q_idx = get_quest_number ();
 		q_list[q_idx].cur_num++;
@@ -2311,12 +2311,16 @@ void monster_death(int m_idx)
 		{
 			/* The quest monsters must have all died. */
 			note_monster_death(r_ptr, q_list[q_idx].cur_num-q_list[q_idx].cur_num_known);
+
+			/* Remove the block on normal generation. */
+			r_ptr->flags1 &= ~(RF1_GUARDIAN);
 			
 			/* Drop at least 2 items (the stair will probably destroy one */
 			number += 2;
 			quest = TRUE;
 			q_list[q_idx].level=0;
 		}
+
 	}
 
 
@@ -2382,7 +2386,7 @@ void monster_death(int m_idx)
 
 
 	/* Only process "Quest Monsters" */
-	if (!((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD))) return;
+	if (!(r_ptr->flags1 & RF1_GUARDIAN)) return;
 
 	/* Check if quest is complete (Heino Vander Sanden) */
 	if (q_list[q_idx].cur_num != q_list[q_idx].max_num) return;

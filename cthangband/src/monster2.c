@@ -843,7 +843,7 @@ void compact_monsters(int size)
 			if (r_ptr->flags1 & (RF1_UNIQUE)) chance = 99;
 
 			/* Only compact "Quest" Monsters in emergencies */
-			if (((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) && (cnt < 1000)) chance = 100;
+			if ((r_ptr->flags1 & RF1_GUARDIAN) && (cnt < 1000)) chance = 100;
 
 			/* All monsters get a saving throw */
 			if (rand_int(100) < chance) continue;
@@ -2271,7 +2271,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	 * Check quest monsters
 	 * Heino Vander Sanden
 	 */
-	if (((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) && !force)
+	if ((r_ptr->flags1 & RF1_GUARDIAN) && !force)
 	{
 		int q_idx = get_quest_number();
 		if (q_idx<0)

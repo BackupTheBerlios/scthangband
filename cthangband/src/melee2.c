@@ -249,7 +249,7 @@ static void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
    /* It is dead now... or is it? */
    if (m_ptr->hp < 0)
    {
-    if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD))
+    if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags1 & RF1_GUARDIAN))
         {
             m_ptr->hp = 1;
         }

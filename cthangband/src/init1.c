@@ -252,14 +252,14 @@ static flag_name info_flags[] =
 	/* General monster flags */
 
 	{"UNIQUE", RF1, RF1_UNIQUE},
-	{"GUARDIAN", RF1, RF1_GUARDIAN},
+/*	{"GUARDIAN", RF1, RF1_GUARDIAN}, */ /* Set from q_list[]. */
 	{"MALE", RF1, RF1_MALE},
 	{"FEMALE", RF1, RF1_FEMALE},
 	{"CHAR_CLEAR", RF1, RF1_CHAR_CLEAR},
 	{"CHAR_MULTI", RF1, RF1_CHAR_MULTI},
 	{"ATTR_CLEAR", RF1, RF1_ATTR_CLEAR},
 	{"ATTR_MULTI", RF1, RF1_ATTR_MULTI},
-/*	{"ALWAYS_GUARD", RF1, RF1_ALWAYS_GUARD}, */ /* Set from quests. */
+/*	{"ALWAYS_GUARD", RF1, RF1_ALWAYS_GUARD}, */
 	{"FORCE_MAXHP", RF1, RF1_FORCE_MAXHP},
 	{"FORCE_SLEEP", RF1, RF1_FORCE_SLEEP},
 /*	{"FORCE_EXTRA", RF1, RF1_FORCE_EXTRA}, */

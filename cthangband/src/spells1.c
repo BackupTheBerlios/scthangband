@@ -33,7 +33,7 @@ s16b poly_r_idx(int r_idx)
 	int i, r, lev1, lev2;
 
 	/* Hack -- Uniques never polymorph */
-	if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) return (r_idx);
+	if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags1 & RF1_GUARDIAN)) return (r_idx);
 
 	/* Allowable range of "levels" for resulting monster */
 	lev1 = r_ptr->level - ((randint(20)/randint(9))+1);
@@ -3141,7 +3141,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				obvious = FALSE;
 			    }
 			} else {
-				if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD) ) {
+				if (r_ptr->flags1 & RF1_GUARDIAN) {
 					note = " hates you too much!";
 				} else {
 					if ((dam > 29) && (randint(100) < dam)) {
@@ -3441,7 +3441,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
                /* No obvious effect */
                note = " is unaffected!";
                obvious = FALSE;
-           } else if (p_ptr->aggravate || (r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) {
+           } else if (p_ptr->aggravate || (r_ptr->flags1 & RF1_GUARDIAN)) {
                note = " hates you too much!";
            } else {
                note = " suddenly seems friendly!";
@@ -3468,7 +3468,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
                /* No obvious effect */
                note = " is unaffected!";
                obvious = FALSE;
-           } else if (p_ptr->aggravate || (r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) {
+           } else if (p_ptr->aggravate || (r_ptr->flags1 & RF1_GUARDIAN)) {
                note = " hates you too much!";
            } else {
                note = " is in your thrall!";
@@ -3501,7 +3501,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
                /* No obvious effect */
                note = " is unaffected!";
                obvious = FALSE;
-           } else if (p_ptr->aggravate || (r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) {
+           } else if (p_ptr->aggravate || (r_ptr->flags1 & RF1_GUARDIAN)) {
                note = " hates you too much!";
            } else {
                    note = " is tamed!";
@@ -4090,18 +4090,20 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	if (r_ptr->flags1 & (RF1_GUARDIAN)) do_poly = FALSE;
 
 
+#if 0 /* Is it redundant, or is it a bug? */
 	/* "Unique" monsters can only be "killed" by the player */
-	if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD))
+	if (r_ptr->flags1 & RF1_GUARDIAN)
 	{
 		/* Uniques may only be killed by the player */
 		if (who && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}
+#endif
 
 	/*
 	 * "Quest" monsters can only be "killed" by the player
 	 * Heino Vander Sanden
 	 */
-	if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD))
+	if (r_ptr->flags1 & RF1_GUARDIAN)
 	{
 		if ((who > 0) && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}

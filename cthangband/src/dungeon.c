@@ -4509,6 +4509,8 @@ void play_game(bool new_game)
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
+	/* Set quest monsters. */
+	set_guardians();
 
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
@@ -4587,6 +4589,9 @@ void play_game(bool new_game)
 
 		/* Handle "death" */
 		if (death) break;
+
+		/* Set quest monsters for the new level. */
+		set_guardians();
 
 		/* Make a new level */
  		generate_cave();

@@ -1559,7 +1559,7 @@ void py_attack(int y, int x)
     else if (chaos_effect && cave_floor_bold(y,x)
             && (randint(90) > r_ptr->level))
 	{
-        if (!((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)))
+        if (!((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags1 & RF1_GUARDIAN)))
         {
 
 				/* Pick a "new" monster race */

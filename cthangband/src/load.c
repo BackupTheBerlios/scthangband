@@ -1625,18 +1625,6 @@ func_false();
 		rd_monster(&dummy);
 	}
 
-
-	/*
-	 * Reenable quest
-	 * Heino Vander Sanden
-	 */
-	if (is_quest(dun_level))
-	{
-		int r_idx = get_quest_monster();
-
-		r_info[r_idx].flags1 |= (RF1_GUARDIAN);
-	}
-
 	/*** Success ***/
 
 	/* The dungeon is ready */

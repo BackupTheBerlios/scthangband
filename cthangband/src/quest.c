@@ -120,6 +120,33 @@ void quest_discovery(void)
 }
 
 /*
+ * Mark quest monsters out as being special.
+ */
+void set_guardians(void)
+{
+	monster_race *r_ptr;
+	quest *q_ptr;
+
+	/* Remove any previous quest monster status. */
+	for (r_ptr = r_info; r_ptr < r_info+MAX_R_IDX; r_ptr++)
+	{
+		r_ptr->flags1 &= ~(RF1_GUARDIAN);
+	}
+
+	/* Set quest monster status for the current quest and any unique quests. */
+	for (q_ptr = q_list; q_ptr < q_list+MAX_Q_IDX; q_ptr++)
+	{
+		r_ptr = r_info+q_ptr->r_idx;
+
+		if ((get_quest_monster() == q_ptr->r_idx) ||
+			(r_ptr->flags1 & RF1_UNIQUE))
+		{
+			r_ptr->flags1 |= RF1_GUARDIAN;
+		}
+	}
+}
+
+/*
  * Search the next quest level
  */
 #if 0
