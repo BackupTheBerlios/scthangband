@@ -16,6 +16,7 @@ sCthangband _CVS_
 * Make the description of encumbering armour in the display menu clearer.
 * Correct/alter some documentation.
 * Fix the following bugs:
+  * Dungeon-specific monsters were always generated awake.
   * Objects were described as "powerful" incorrectly.
   * The 'z' key could select items with curses the player knew nothing about.
   * Compiling with BCC still led to frequent crashes.
