@@ -860,11 +860,11 @@ static void process_objects(object_type *o_ptr)
 			break;
 		}
 
-		/* Get a command (normal) */
-		request_command(FALSE);
-
 		/* Hack - let the player clear any pending keys. */
 		msg_print(NULL);
+
+		/* Get a command (normal) */
+		request_command(FALSE);
 
 		/* Process the command */
 		process_command();
