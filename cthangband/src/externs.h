@@ -479,7 +479,7 @@ extern void display_player(int mode);
 #if (defined(CMD4_C) || defined(FILES_C))
 extern errr file_character(cptr name, bool UNUSED full);
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
 extern void do_cmd_help(cptr name);
 #endif
 #if (defined(FILES_C) || defined(INIT1_C) || defined(OBJECT1_C) || defined(UTIL_C))

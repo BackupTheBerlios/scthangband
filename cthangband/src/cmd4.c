@@ -1330,6 +1330,7 @@ static option_list opt_lists[] =
 	{"Birth Options", NULL, OPTS_BIRTH, 'B', 5, 11},
 	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 5, 12},
 	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', 5, 13},
+	{"Help", NULL, OPTS_HELP, '?', 5, 15},
 	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 43, 4},
 	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 43, 5},
 	{"Autosave Options", NULL, OPTS_SAVE, 'A', 43, 6},
@@ -1358,7 +1359,7 @@ static void do_cmd_colors(void);
  */
 void do_cmd_options(void)
 {
-	int k;
+	int k, t;
 
 	option_list *ol_ptr;
 
@@ -1366,7 +1367,7 @@ void do_cmd_options(void)
 	character_icky = TRUE;
 
 	/* Save the screen */
-	Term_save();
+	t = Term_save_aux();
 
 	/* Display the general options help */
 	help_track("option_prompt");
@@ -1478,6 +1479,10 @@ good:	/* Success */
 				do_cmd_colors();
 				break;
 			}
+			case OPTS_HELP:
+			{
+				do_cmd_help("custom.txt");
+			}
 		}
 
 		/* Flush messages */
@@ -1491,7 +1496,10 @@ good:	/* Success */
 	help_track(NULL);
 
 	/* Restore the screen */
-	Term_load();
+	Term_load_aux(t);
+
+	/* Forget the restored screen. */
+	Term_release(t);
 
 	/* Leave "icky" mode */
 	character_icky = FALSE;
