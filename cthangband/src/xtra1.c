@@ -1308,18 +1308,16 @@ bool player_no_stun(void)
 #define TR2 2
 #define TR3 3
 
-/* "Fake" object flags for calc_bonuses_object. 
- * These are really fake, as they're never represented as flags... 
- */
-#define TR0_TO_H	0	/* Bonus to hit chance. */
-#define TR0_DIS_TO_H	1	/* Known bonus to hit chance. */
-#define TR0_TO_D	2	/* Bonus to damage. */
-#define TR0_DIS_TO_D	3	/* Known bonus to damage. */
-#define TR0_AC	4	/* Modifier to AC. */
-#define TR0_DIS_AC	5	/* Known base AC. */
-#define TR0_DIS_TO_A	6	/* Known bonus to AC. */
-#define TR0_WEIRD	7	/* An unusual bonus. */
-#define TR0_SAVE	8	/* A direct saving throw bonus. */
+/* "Fake" object flags for calc_bonuses_object. */
+#define TR0_TO_H	(1L<<0)	/* Bonus to hit chance. */
+#define TR0_DIS_TO_H	(1L<<1)	/* Known bonus to hit chance. */
+#define TR0_TO_D	(1L<<2)	/* Bonus to damage. */
+#define TR0_DIS_TO_D	(1L<<3)	/* Known bonus to damage. */
+#define TR0_AC	(1L<<4)	/* Modifier to AC. */
+#define TR0_DIS_AC	(1L<<5)	/* Known base AC. */
+#define TR0_DIS_TO_A	(1L<<6)	/* Known bonus to AC. */
+#define TR0_WEIRD	(1L<<7)	/* An unusual bonus. */
+#define TR0_SAVE	(1L<<8)	/* A direct saving throw bonus. */
 
 /*
  * Is this flag associated with an integer (rather than a boolean)?
@@ -1369,13 +1367,13 @@ static void calc_bonuses_object(s16b (*flags)[32], object_ctype *o_ptr)
 	}
 
 	/* Add some other object variables as appropriate. */
-	flags[0][TR0_AC] += o_ptr->ac + o_ptr->to_a;
-	flags[0][TR0_DIS_AC] += o_ptr->ac;
-	if (known) flags[0][TR0_DIS_TO_A] += o_ptr->to_a;
-	if (!is_weapon) flags[0][TR0_TO_H] += o_ptr->to_h;
-	if (!is_weapon) flags[0][TR0_TO_D] += o_ptr->to_d;
-	if (!is_weapon && known) flags[0][TR0_DIS_TO_H] += o_ptr->to_h;
-	if (!is_weapon && known) flags[0][TR0_DIS_TO_D] += o_ptr->to_d;
+	flags[TR0][iilog(TR0_AC)] += o_ptr->ac + o_ptr->to_a;
+	flags[TR0][iilog(TR0_DIS_AC)] += o_ptr->ac;
+	if (known) flags[TR0][iilog(TR0_DIS_TO_A)] += o_ptr->to_a;
+	if (!is_weapon) flags[TR0][iilog(TR0_TO_H)] += o_ptr->to_h;
+	if (!is_weapon) flags[TR0][iilog(TR0_TO_D)] += o_ptr->to_d;
+	if (!is_weapon && known) flags[TR0][iilog(TR0_DIS_TO_H)] += o_ptr->to_h;
+	if (!is_weapon && known) flags[TR0][iilog(TR0_DIS_TO_D)] += o_ptr->to_d;
 }
 
 typedef struct race_bonus_type race_bonus_type;
@@ -1527,7 +1525,8 @@ static void calc_bonuses_weird(s16b (*flags)[32], int mut)
 	{
 		case MUT_MAGIC_RES:
 		{
-			flags[TR0][TR0_SAVE] += (15 + skill_set[SKILL_RACIAL].value/10);
+			flags[TR0][iilog(TR0_SAVE)] +=
+				(15 + skill_set[SKILL_RACIAL].value/10);
 			break;
 		}
 		case MUT_ILL_NORM:
@@ -1538,8 +1537,9 @@ static void calc_bonuses_weird(s16b (*flags)[32], int mut)
 		}
 		case MUT_MAX+RACE_GOLEM:
 		{
-			flags[TR0][TR0_AC] += 20 + skill_set[SKILL_RACIAL].value/10;
-			flags[TR0][TR0_DIS_TO_A] += 20 + skill_set[SKILL_RACIAL].value/10;
+			flags[TR0][iilog(TR0_AC)] += 20 + skill_set[SKILL_RACIAL].value/10;
+			flags[TR0][iilog(TR0_DIS_TO_A)] +=
+				20 + skill_set[SKILL_RACIAL].value/10;
 			break;
 		}
 	}
@@ -1550,7 +1550,7 @@ static void calc_bonuses_weird(s16b (*flags)[32], int mut)
  */
 static void calc_bonuses_muta_aux(s16b (*flags)[32], race_bonus_type *ptr)
 {
-	s16b *this = &flags[ptr->set][ptr->flag];
+	s16b *this = &flags[ptr->set][iilog(ptr->flag)];
 
 	/* Not skilled enough yet. */
 	if (ptr->min > skill_set[ptr->skill].value) return;
@@ -1638,7 +1638,7 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	p_ptr->skill_dig += flags[1][iilog(TR1_TUNNEL)] * 20;
 
 	/* Affect saving throw. */
-	p_ptr->skill_sav += flags[0][TR0_SAVE];
+	p_ptr->skill_sav += flags[0][iilog(TR0_SAVE)];
 
 	/* Affect speed */
 	p_ptr->pspeed += flags[1][iilog(TR1_SPEED)];
@@ -1707,21 +1707,21 @@ static void calc_bonuses_add(s16b (*flags)[32])
 	if (flags[2][iilog(TR2_SUST_CHR)]) p_ptr->sustain[A_CHR] = TRUE;
 
 	/* Add the armour class */
-	p_ptr->ac += flags[0][TR0_AC];
+	p_ptr->ac += flags[0][iilog(TR0_AC)];
 
 	/* The base armor class is always known */
-	p_ptr->dis_ac += flags[0][TR0_DIS_AC];
+	p_ptr->dis_ac += flags[0][iilog(TR0_DIS_AC)];
 
 	/* Apply the mental bonuses to armor class, if known */
-	p_ptr->dis_to_a += flags[0][TR0_DIS_TO_A];
+	p_ptr->dis_to_a += flags[0][iilog(TR0_DIS_TO_A)];
 
 	/* Apply the bonuses to hit/damage */
-	p_ptr->to_h += flags[0][TR0_TO_H];
-	p_ptr->to_d += flags[0][TR0_TO_D];
+	p_ptr->to_h += flags[0][iilog(TR0_TO_H)];
+	p_ptr->to_d += flags[0][iilog(TR0_TO_D)];
 
 	/* Apply the mental bonuses tp hit/damage, if known */
-	p_ptr->dis_to_h += flags[0][TR0_DIS_TO_H];
-	p_ptr->dis_to_d += flags[0][TR0_DIS_TO_D];
+	p_ptr->dis_to_h += flags[0][iilog(TR0_DIS_TO_H)];
+	p_ptr->dis_to_d += flags[0][iilog(TR0_DIS_TO_D)];
 }
 
 
