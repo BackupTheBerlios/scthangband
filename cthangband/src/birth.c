@@ -815,8 +815,17 @@ static bc_type get_init_spirit(bool choice)
 
 	b = birth_choice(17, MAX_SPHERE, "Choose a life spirit(a) or wild spirit(b)", &k, TRUE);
 
-	if (!b) spirits[k].pact = TRUE;
-	return b;
+	/* Nothing chosen. */
+	if (b != BC_OKAY) return b;
+
+	/* Name the spirit. */
+	generate_spirit_names();
+
+	/* Form a pact with it. */
+	spirits[k].pact = TRUE;
+
+	/* Finished. */
+	return BC_OKAY;
 }
 /*
  * Add the random element to each skill, set the maximum and reset the base where

@@ -1668,9 +1668,23 @@ static errr rd_savefile_new_aux(void)
 	/* Read spirit info */
 	for (i=0;i<MAX_SPIRITS;i++)
 	{
-		rd_u16b(&(spirits[i].pact));
-		rd_u32b(&(spirits[i].annoyance));
-		rd_string(spirits[i].name,20);
+		char temp[20];
+
+		rd_u16b(&tmp16u);
+		rd_u32b(&tmp32u);
+		rd_string(temp, 20);
+
+		/*
+		 * Ignore for dead characters as it does nothing.
+		 * This should be changed next time the version number
+		 * changes so that dead characters' save files don't store
+		 * this useless information, but it does no real harm.
+		 */
+		if (death) continue;
+
+		spirits[i].pact = tmp16u;
+		spirits[i].annoyance = tmp32u;
+		strcpy(spirits[i].name, temp);
 	}
 
 	/* Read the inventory */

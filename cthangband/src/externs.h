@@ -589,6 +589,7 @@ extern void race_score(int race_num);
 extern void template_score(int ptemplate);
 
 /* generate.c */
+extern void generate_spirit_names(void);
 extern void generate_cave(void);
 void replace_secret_door(int y, int x);
 
