@@ -240,7 +240,7 @@ static void sense_inventory(void)
 {
 	int		i;
 
-	int		plev = skill_set[SKILL_PSEUDOID].value;
+	const int plev = MAX(1, skill_set[SKILL_PSEUDOID].value/2);
 
 	bool	heavy = FALSE;
 

@@ -575,7 +575,7 @@ void self_knowledge(void)
 
 	cptr    info[128];
 
-    int plev = skill_set[SKILL_RACIAL].value/2;
+	const int plev = MAX(1, skill_set[SKILL_RACIAL].value/2);
 
     strcpy (Dummy, "");
 

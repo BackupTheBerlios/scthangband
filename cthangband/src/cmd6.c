@@ -3812,10 +3812,8 @@ void do_cmd_activate(object_type *o_ptr)
  */
 static bool activate_random_artifact(object_type * o_ptr)
 {
-    int plev = skill_set[SKILL_DEVICE].value/2;
+	const int plev = MAX(1, skill_set[SKILL_DEVICE].value/2);
     int k, dir, dummy = 0;
-
-	if (plev == 0) plev++;
 
     if (!(o_ptr->activation)) return FALSE; /* oops? */
 

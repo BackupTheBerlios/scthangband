@@ -4226,7 +4226,7 @@ void display_spell_list(void)
 	int             y = 1;
 	int             x = 1;
 	int             minfail = 0;
-	int             plev = (skill_set[SKILL_MINDCRAFTING].value/2);
+	const int plev = MAX(1, skill_set[SKILL_MINDCRAFTING].value/2);
 	int             chance = 0;
 	mindcraft_power spell;
 	char            comment[80];
@@ -4390,7 +4390,7 @@ static void spell_info(char *p, int spell, int school)
 #ifdef DRS_SHOW_SPELL_INFO
 {
 	magic_type *spell_ptr = &mp_ptr->info[school][spell];
-    int plev = spell_skill(spell_ptr);
+	const int plev = spell_skill(spell_ptr);
 
 	/* Analyze the spell */
 switch (school)
@@ -4500,11 +4500,10 @@ void get_favour_info(char *p, int spell, int sphere)
 
 #ifdef DRS_SHOW_SPELL_INFO
 {
-    int plev = skill_set[SKILL_SHAMAN].value/2;
+	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 
    /* See below */
         int orb = (plev / 4);
-		if (plev == 0) plev++;
 
 	/* Analyze the spell */
 switch (sphere)
@@ -4575,9 +4574,7 @@ void get_cantrip_info(char *p, int spell)
 
 #ifdef DRS_SHOW_SPELL_INFO
 {
-    int plev = skill_set[SKILL_HEDGE].value/2;
-
-	if (plev == 0) plev++;
+	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
 
 	switch (spell)
 	{
@@ -4606,7 +4603,7 @@ void get_cantrip_info(char *p, int spell)
 static u16b spellcast_energy(int spell_school, int spell)
 {
 	magic_type	*s_ptr = &mp_ptr->info[spell_school][spell];
-	int plev = spell_skill(s_ptr);
+	const int plev = spell_skill(s_ptr);
 
 	return spell_energy((u16b)plev,(u16b)(s_ptr->minskill));
 }

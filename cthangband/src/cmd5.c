@@ -244,11 +244,8 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
  */
 static bool cantrip_okay(int fav)
 {
-	byte plev = skill_set[SKILL_HEDGE].value/2;
+	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
 	cantrip_type *s_ptr;
-
-	/* Make sure we can always use at least one favour */
-	if (plev == 0) plev++;
 
 	/* Access the favour */
     s_ptr = &(cantrip_info[fav]);
@@ -265,7 +262,7 @@ void print_cantrips(byte *spells, int num, int y, int x)
 {
 	int                     i, spell;
 
-	byte plev = skill_set[SKILL_HEDGE].value/2;
+	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
 	cantrip_type              *s_ptr;
 
 	cptr            comment;
@@ -273,8 +270,6 @@ void print_cantrips(byte *spells, int num, int y, int x)
 	char info[80];
 
 	char            out_val[160];
-
-	if (plev == 0) plev++;
 
     /* Title the list */
     prt("", y, x);
@@ -524,11 +519,8 @@ int get_cantrip(int *sn, int sval)
  */
 static bool favour_okay(int fav,  int sphere)
 {
-	byte plev = skill_set[SKILL_SHAMAN].value/2;
+	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 	favour_type *s_ptr;
-
-	/* Make sure we can always use at least one favour */
-	if (plev == 0) plev++;
 
 	/* Access the favour */
     s_ptr = &(favour_info[sphere][fav]);
@@ -544,7 +536,7 @@ static bool favour_okay(int fav,  int sphere)
 static s16b cantrip_chance(int ctp)
 {
 	int             chance, minfail;
-	byte plev = skill_set[SKILL_HEDGE].value/2;
+	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
 
 	cantrip_type      *s_ptr;
 
@@ -822,7 +814,7 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 {
 	int                     i, spell;
 
-	byte plev = skill_set[SKILL_SHAMAN].value/2;
+	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 	favour_type              *s_ptr;
 
 	cptr            comment;
@@ -834,7 +826,6 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
 	if (x == -1) x = 15;
 
-	if (plev == 0) plev++;
     if ((sphere<0 || sphere>MAX_SPHERE - 1) && cheat_wzrd)
 	msg_print ("Warning! print_favours called with null sphere");
 
@@ -878,7 +869,7 @@ static void print_favours(byte *spells, int num, int y, int x, int sphere)
 static s16b favour_chance(int fav,int sphere)
 {
 	int             chance, minfail;
-	byte plev = skill_set[SKILL_SHAMAN].value/2;
+	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 
 	favour_type      *s_ptr;
 
@@ -1102,10 +1093,8 @@ int get_spirit(int *sn, cptr prompt, bool call)
 static bool spirit_okay(int spirit, bool call)
 {
 
-	byte plev = skill_set[SKILL_SHAMAN].value/2;
+	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 	spirit_type *s_ptr;
-
-	if (plev == 0) plev++;
 
 	/* Access the spell */
     s_ptr = &(spirits[spirit]);
@@ -1131,7 +1120,7 @@ static bool spirit_okay(int spirit, bool call)
 static void print_spirits(int *valid_spirits,int num,int y, int x)
 {
 	int                     i;
-	byte plev = skill_set[SKILL_SHAMAN].value/2;
+	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 	spirit_type              *s_ptr;
 	cptr            comment;
 	char            out_val[160];
@@ -1140,7 +1129,6 @@ static void print_spirits(int *valid_spirits,int num,int y, int x)
 	/* Hack - Treat an 'x' value of -1 as a request for a default value. */
 	if (x == -1) x = 15;
 
-	if(plev == 0) plev++;
     /* Title the list */
     prt("", y, x);
 	put_str("Name", y, x + 5);
@@ -3240,7 +3228,7 @@ void do_cmd_cantrip(void)
 	errr err;
 	int	sval, spell, dir;
 	int	chance, beam;
-	int	plev = 0;
+	const int plev = MAX(1, skill_set[SKILL_HEDGE].value/2);
 	int	dummy = 0;
 
 	const cptr prayer = "cantrip";
@@ -3293,9 +3281,6 @@ void do_cmd_cantrip(void)
 	}
 
 	s_ptr = &(cantrip_info[spell]);
-
-	plev = skill_set[SKILL_HEDGE].value/2;
-	if (plev == 0) plev++;
 
 	/* Spell failure chance */
 	chance = cantrip_chance(spell);
@@ -3611,9 +3596,9 @@ static int spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
  */
 void do_cmd_invoke(void)
 {
+	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 	int	spell, dir;
 	int	chance, beam;
-	u16b	plev = 0;
 	int	favour_sphere = 0;
 	int spirit;
 	bool	none_came = FALSE;
@@ -3658,10 +3643,6 @@ void do_cmd_invoke(void)
 	favour_sphere = s_ptr->sphere;
 
 	f_ptr = &(favour_info[favour_sphere][spell]);
-
-	/* Access the player's skill */
-	plev = skill_set[SKILL_SHAMAN].value/2;
-	if (plev == 0) plev++;
 
 	/* Spell failure chance */
 	chance = favour_chance(spell,favour_sphere);
@@ -4042,7 +4023,7 @@ void do_cmd_invoke(void)
 
 void mindcraft_info(char *p, int power)
 {
-    int plev = skill_set[SKILL_MINDCRAFTING].value/2;
+	const int plev = MAX(1, skill_set[SKILL_MINDCRAFTING].value/2);
 
     strcpy(p, "");
 

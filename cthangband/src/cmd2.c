@@ -3080,7 +3080,7 @@ static void use_power(powertype *pw_ptr);
 
 static void use_power(powertype *pw_ptr)
 	{
-	const byte plev = MIN(skill_set[SKILL_RACIAL].value/2,1);
+	const int plev = MAX(skill_set[SKILL_RACIAL].value/2,1);
 	int dir;
 	s16b i;
 
@@ -3911,8 +3911,8 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
 	int difficulty = pw_ptr->difficulty;
 	
 				
-	const byte plev = MIN(1,skill_set[SKILL_RACIAL].value/2);
-	const byte stat = (byte)p_ptr->stat_cur[pw_ptr->use_stat];
+	const int plev = MAX(1,skill_set[SKILL_RACIAL].value/2);
+	const int stat = p_ptr->stat_cur[pw_ptr->use_stat];
 
 	/* Should never happen, but... */
 	if (difficulty > 100)
@@ -3956,7 +3956,7 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
  */
 static bool racial_aux(powertype *pw_ptr)
 {
-	bool plev = MIN(1,skill_set[SKILL_RACIAL].value/2);
+	const int plev = MAX(1,skill_set[SKILL_RACIAL].value/2);
 	bool use_hp = FALSE;
 	bool use_chi = FALSE;
 	bool use_mana = TRUE;
