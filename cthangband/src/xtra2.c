@@ -1266,7 +1266,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
        {
             int curses = 1 + randint(3);
 			msg_format("%^s retreats into another dimension!",m_name);
-            msg_format("Nyarlathotep puts a terrible curse on you!", m_name);
+            msg_print("Nyarlathotep puts a terrible curse on you!");
             curse_equipment(100, 50);
             do { activate_ty_curse(); } while (--curses);
         }
@@ -1282,7 +1282,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
                 if (randint(REWARD_CHANCE)==1)
                 {
                     msg_format("There was a price on %s's head.", m_name);
-                    msg_format("%^s was wanted for %s", m_name,
+                    msg_format("%^s was wanted for %v", m_name,
 						get_rnd_line_f1, "crime.txt");
                     reward = 250 * (randint (10) + r_ptr->level - 5);
  

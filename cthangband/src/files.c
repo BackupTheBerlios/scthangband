@@ -3739,7 +3739,7 @@ next_cave:
 		for (i = 0; i < st_ptr->stock_num; i++)
 		{
 			my_fprintf(fff, "%c%s %v\n", I2A(i%12), paren,
-				"%v", object_desc_f3, &st_ptr->stock[i], TRUE, 3);
+				object_desc_f3, &st_ptr->stock[i], TRUE, 3);
 
 			/* Describe random object attributes */
 			identify_fully_file(&st_ptr->stock[i], fff);

@@ -1065,7 +1065,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 
             if (m_ptr->smart & SM_ALLY)
             {
-                msg_format("%^s gets angry!", monster_desc_f2, m_ptr, 0);
+                msg_format("%^v gets angry!", monster_desc_f2, m_ptr, 0);
                 m_ptr->smart &= ~SM_ALLY;
             }
 
@@ -1100,7 +1100,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 			sound(SOUND_MISS);
 
             /* Message */
-			msg_format("You miss %s.", monster_desc_f2, m_ptr, 0);
+			msg_format("You miss %v.", monster_desc_f2, m_ptr, 0);
 		}
 }
 

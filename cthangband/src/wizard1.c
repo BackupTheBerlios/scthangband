@@ -1377,8 +1377,8 @@ static void spoil_mon_desc(cptr fname)
 		else if (r_ptr->flags1 & (RF1_UNIQUE)) pre = "[U]";
 		else pre = "The";
 
-		strnfmt(nam, N_ELEMENTS(nam), "%s %.*v", pre, monster_desc_aux_f3,
-			N_ELEMENTS(nam)-strlen(pre)-1, r_ptr, 1, 0);
+		strnfmt(nam, N_ELEMENTS(nam), "%s %.*v", pre,
+			N_ELEMENTS(nam)-strlen(pre)-1, monster_desc_aux_f3, r_ptr, 1, 0);
 
 		/* Level */
 		sprintf(lev, "%d", r_ptr->level);

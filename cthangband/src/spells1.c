@@ -2199,7 +2199,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 				/* Observe the resist */
 				if (o_ptr->marked)
 				{
-					msg_format("The %s %s unaffected!",
+					msg_format("The %v %s unaffected!",
 						object_desc_f3, o_ptr, FALSE, 0,
 						(plural ? "are" : "is"));
 				}

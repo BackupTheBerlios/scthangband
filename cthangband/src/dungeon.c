@@ -785,7 +785,7 @@ bool psychometry(void)
 	if (feel[0] == '\0')
 	{
     	msg_format("You do not perceive anything unusual about the %v.",
-			"%v", object_desc_f3, o_ptr, FALSE, 0);
+			object_desc_f3, o_ptr, FALSE, 0);
 		return TRUE;
     }
 
@@ -797,7 +797,7 @@ bool psychometry(void)
 	if (o_ptr->number == 1) is = "is";
 	else is = "are";
 
-	msg_format("You feel that the %v %s%s %s...", "%v",
+	msg_format("You feel that the %v %s%s %s...",
 		object_desc_f3, o_ptr, FALSE, 0, really , is, feel);
 
 	/* Recalculate/redraw stuff (later) */

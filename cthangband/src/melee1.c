@@ -515,7 +515,7 @@ bool make_attack_normal(int m_idx)
 						/* Message */
 						msg_format("%sour %v (%c) was stolen!",
 						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           "%v", object_desc_f3, o_ptr, FALSE, 3,
+						           object_desc_f3, o_ptr, FALSE, 3,
 								   index_to_label(o_ptr));
 
 						/* Option */
