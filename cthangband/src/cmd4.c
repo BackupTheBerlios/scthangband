@@ -3246,11 +3246,11 @@ static void do_cmd_knowledge_pets(void)
 		/* Calculate "upkeep" for friendly monsters */
 		if (m_ptr->smart & (SM_ALLY))
 		{
-			C_TNEW(pet_name, MNAME_MAX, char);
+			C_TNEW(pet_name, Term->wid-1, char);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			t_friends++;
 			t_levels += r_ptr->level;
-			monster_desc(pet_name, m_ptr, 0x88, Term->wid-2);
+			strnfmt(pet_name, Term->wid-1, "%v", monster_desc_f2, m_ptr, 0x88);
 			strcat(pet_name, "\n");
 			my_fputs(fff, format("%v %s\n", get_symbol(r_ptr), pet_name), 0);
 			TFREE(pet_name);

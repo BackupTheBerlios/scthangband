@@ -5043,7 +5043,7 @@ bool probing(void)
 			if (!probe) msg_print("Probing...");
 
 			/* Get "the monster" or "something" */
-			monster_desc(m_name, m_ptr, 0x04, MNAME_MAX);
+			strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x04);
 
 			/* Describe the monster */
 			msg_format("%^s has %d hit points.", m_name, m_ptr->hp);
@@ -5446,7 +5446,7 @@ void earthquake(int cy, int cx, int r)
 					}
 
 					/* Describe the monster */
-					monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 					/* Scream in pain */
 					msg_format("%^s wails out in pain!", m_name);
@@ -5656,7 +5656,7 @@ static void cave_temp_room_lite(void)
 					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Acquire the monster name */
-					monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 					/* Dump a message */
 					msg_format("%^s wakes up.", m_name);

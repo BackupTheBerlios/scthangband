@@ -2581,7 +2581,7 @@ void do_cmd_fire(void)
 					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Get "the monster" or "it" */
-					monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 					/* Message */
 					msg_format("The %s hits %s.", o_name, m_name);
@@ -2635,7 +2635,7 @@ void do_cmd_fire(void)
 						sound(SOUND_FLEE);
 
 						/* Get the monster name (or "it") */
-						monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+						strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 						/* Message */
 						msg_format("%^s flees in terror!", m_name);
@@ -2911,7 +2911,7 @@ void do_cmd_throw(void)
 					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Get "the monster" or "it" */
-					monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 					/* Message */
 					msg_format("The %s hits %s.", o_name, m_name);
@@ -2956,7 +2956,7 @@ void do_cmd_throw(void)
                     && (!(k_info[q_ptr->k_idx].tval == TV_POTION)))
                     {
 					C_TNEW(m_name, MNAME_MAX, char);
-                   monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+                   strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
                       msg_format("%s gets angry!", m_name);
                       m_ptr->smart &= ~SM_ALLY;
 					TFREE(m_name);
@@ -2971,7 +2971,7 @@ void do_cmd_throw(void)
 						sound(SOUND_FLEE);
 
 						/* Get the monster name (or "it") */
-						monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+						strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 						/* Message */
 						msg_format("%^s flees in terror!", m_name);
@@ -2999,7 +2999,7 @@ void do_cmd_throw(void)
               if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
                     {
 					C_TNEW(m_name, MNAME_MAX, char);
-                   monster_desc(m_name, &m_list[cave[y][x].m_idx], 0, MNAME_MAX);
+                   strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, &m_list[cave[y][x].m_idx], 0);
                    msg_format("%s gets angry!", m_name);
                    m_list[cave[y][x].m_idx].smart &= ~SM_ALLY;
 					TFREE(m_name);
@@ -3744,7 +3744,7 @@ static void dismiss_pets(bool some)
 						else
 						{
 				char friend_name[80], check_friend[80];
-				monster_desc(friend_name, m_ptr, 0x80, MNAME_MAX);
+				strnfmt(friend_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x80);
 				sprintf(check_friend, "Dismiss %s? ", friend_name);
 				delete_this = get_check(check_friend);
 				}

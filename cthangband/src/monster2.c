@@ -1433,7 +1433,7 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
  *   0x22 --> Possessive, genderized if visable ("his") or "its"
  *   0x23 --> Reflexive, genderized if visable ("himself") or "itself"
  */
-void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
+static void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 {
 	monster_race	*r_ptr = (m_ptr) ? &r_info[m_ptr->r_idx] : r_info;
 
@@ -1729,7 +1729,7 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 		{
 			C_TNEW(m_name, MNAME_MAX, char);
 
-			monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+			strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 			if (p_ptr->image)
 			{
@@ -3430,7 +3430,7 @@ void message_pain(int m_idx, int dam)
 
 
 	/* Get the monster name */
-	monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+	strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 	/* Notice non-damage */
 	if (dam == 0)

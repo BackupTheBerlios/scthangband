@@ -258,7 +258,7 @@ static void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 		C_TNEW(m_name, MNAME_MAX, char);
 
 		/* Extract monster name */
-        monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+        strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 		/* Make a sound */
 		sound(SOUND_KILL);
@@ -1230,16 +1230,16 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
 /*		C_TNEW(ddesc, MNAME_MAX, char);*/
 
 		/* Get the monster name (or "it") */
-		monster_desc(m_name, m_ptr, 0x00, MNAME_MAX);
+		strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x00);
 
 		/* Get the monster possessive ("his"/"her"/"its") */
-		monster_desc(m_poss, m_ptr, 0x22, MNAME_MAX);
+		strnfmt(m_poss, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x22);
 
 		/* Get the target's name (or "it") */
-		monster_desc(t_name, t_ptr, 0x00, MNAME_MAX);
+		strnfmt(t_name, MNAME_MAX, "%v", monster_desc_f2, t_ptr, 0x00);
 
 		/* Hack -- Get the "died from" name */
-/*		monster_desc(ddesc, m_ptr, 0x88, MNAME_MAX);*/
+/*		strnfmt(ddesc, MNAME_MAX, "%v", monster_desc_f2, _ptr, 0x88);*/
 
 		/* Choose a spell to cast */
 		thrown_spell = spell[rand_int(num)];
@@ -2741,13 +2741,13 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 	C_TNEW(ddesc, MNAME_MAX, char);
 
 	/* Get the monster name (or "it") */
-	monster_desc(m_name, m_ptr, 0x00, MNAME_MAX);
+	strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x00);
 
 	/* Get the monster possessive ("his"/"her"/"its") */
-	monster_desc(m_poss, m_ptr, 0x22, MNAME_MAX);
+	strnfmt(m_poss, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x22);
 
 	/* Hack -- Get the "died from" name */
-	monster_desc(ddesc, m_ptr, 0x88, MNAME_MAX);
+	strnfmt(ddesc, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x88);
 
 	/* Cast the spell. */
 	switch (thrown_spell)
@@ -4379,7 +4379,7 @@ static bool make_attack_spell(int m_idx)
        if ((thrown_spell >= 128) && (rand_int(100) < failrate))
        {
 			C_TNEW(m_name, MNAME_MAX, char);
-			monster_desc(m_name, m_ptr, 0x00, MNAME_MAX);
+			strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x00);
 
            /* Message */
            msg_format("%^s tries to cast a spell, but fails.", m_name);
@@ -5220,13 +5220,13 @@ static bool get_moves(int m_idx, int *mm)
 
 
    /* Get the monster name (or "it") */
-   monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+   strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
    /* Get the monster name (or "it") */
-   monster_desc(t_name, t_ptr, 0, MNAME_MAX);
+   strnfmt(t_name, MNAME_MAX, "%v", monster_desc_f2, t_ptr, 0);
 
    /* Get the "died from" information (i.e. "a kobold") */
-/*   monster_desc(ddesc, m_ptr, 0x88, MNAME_MAX);*/
+/*   strnfmt(ddesc, MNAME_MAX, "%v", monster_desc_f2, _ptr, 0x88);*/
 
    /* Assume no blink */
    blinked = FALSE;
@@ -5841,7 +5841,7 @@ static void process_monster(int m_idx, bool is_friend)
 					C_TNEW(m_name, MNAME_MAX, char);
 
 					/* Acquire the monster name */
-					monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 					/* Dump a message */
 					msg_format("%^s wakes up.", m_name);
@@ -5893,7 +5893,7 @@ static void process_monster(int m_idx, bool is_friend)
 				C_TNEW(m_name, MNAME_MAX, char);
 
 				/* Acquire the monster name */
-				monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+				strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 				/* Dump a message */
 				msg_format("%^s is no longer stunned.", m_name);
@@ -5932,7 +5932,7 @@ static void process_monster(int m_idx, bool is_friend)
 				C_TNEW(m_name, MNAME_MAX, char);
 
 				/* Acquire the monster name */
-				monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+				strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 				/* Dump a message */
 				msg_format("%^s is no longer confused.", m_name);
@@ -5954,7 +5954,7 @@ static void process_monster(int m_idx, bool is_friend)
     if (gets_angry)
     {
 		C_TNEW(m_name, MNAME_MAX, char);
-       monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+       strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
        msg_format("%^s suddenly becomes hostile!", m_name);
        m_ptr->smart &= ~SM_ALLY;
 		TFREE(m_name);
@@ -5986,8 +5986,8 @@ static void process_monster(int m_idx, bool is_friend)
 				C_TNEW(m_poss, MNAME_MAX, char);
 
 				/* Acquire the monster name/poss */
-				monster_desc(m_name, m_ptr, 0, MNAME_MAX);
-				monster_desc(m_poss, m_ptr, 0x22, MNAME_MAX);
+				strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
+				strnfmt(m_poss, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x22);
 
 				/* Dump a message */
 				msg_format("%^s recovers %s courage.", m_name, m_poss);
@@ -6082,7 +6082,7 @@ static void process_monster(int m_idx, bool is_friend)
 
 				/* Acquire the monster name/poss */
                 if (m_ptr->ml)
-                    monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+                    strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 				/* Some of smeagol.txt requires that he be male. */
                 else if (is_smeagol)
                     strcpy(m_name, "He");
@@ -6657,7 +6657,7 @@ static void process_monster(int m_idx, bool is_friend)
 					object_desc(o_name, o_ptr, TRUE, 3);
 
 					/* Acquire the monster name */
-					monster_desc(m_name, m_ptr, 0x04, MNAME_MAX);
+					strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x04);
 
 					/* React to objects that hurt the monster */
 					if (r_ptr->flags3 & (RF3_DRAGON)) f1_want |=
@@ -6832,7 +6832,7 @@ static void process_monster(int m_idx, bool is_friend)
 			C_TNEW(m_name, MNAME_MAX, char);
 
 			/* Acquire the monster name */
-			monster_desc(m_name, m_ptr, 0, MNAME_MAX);
+			strnfmt(m_name, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0);
 
 			/* Dump a message */
 			msg_format("%^s turns to fight!", m_name);
