@@ -3053,6 +3053,10 @@ cptr color_names[16] =
 	"Light Umber",
 };
 
+/*
+ * The character used to represent each colour.
+ */
+cptr atchar = "dwsorgbuDWvyRGBU";
 
 /*
  * Abbreviations of healthy stats

@@ -1974,7 +1974,6 @@ static void pref_str_unident(FILE *fff, int i, char startchar, byte a, char c)
 static void visual_dump_moncol(FILE *fff)
 {
 	s16b n;
-	cptr atchar="dwsorgbuDWvyRGBU";
 	char out[80] = "M";
 
 	for (n = 0; n < MAX_MONCOL; n++)
@@ -2973,8 +2972,6 @@ void do_cmd_save_screen(void)
  */
 static cptr get_symbol_aux(byte a, char c)
 {
- 	cptr atchar="dwsorgbuDWvyRGBU";
-
 	/* Hack - show_file() does not display unprintable characters,
 	 * so replace them with something it will display. */
 	if (!isprint(c)) c = '#';
@@ -3143,8 +3140,6 @@ static void do_cmd_knowledge_uniques(void)
 	FILE *fff;
 
 	char file_name[1024];
-
-	cptr atchar="dwsorgbuDWvyRGBU";
 
 	/* Open a new file */
 	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
