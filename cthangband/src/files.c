@@ -886,7 +886,7 @@ errr process_pref_file(cptr name)
 
 	char buf[1024];
 
-	int num = -1;
+	int num;
 
 	errr err = 0;
 
@@ -904,12 +904,8 @@ errr process_pref_file(cptr name)
 
 
 	/* Process the file */
-	while (0 == my_fgets(fp, buf, 1024))
+	for (num = 0; !my_fgets(fp, buf, 1024); num++)
 	{
-		/* Count lines */
-		num++;
-
-
 		/* Skip "empty" lines */
 		if (!buf[0]) continue;
 

@@ -4027,16 +4027,20 @@ static void dungeon(void)
  */
 static void process_some_user_pref_files(void)
 {
-	char buf[1024];
+	char buf[NAME_LEN+4];
 
-	/* Access the "font" or "graf" pref file, based on "use_graphics" */
-	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-	
-	/* Process that file */
-	process_pref_file(buf);
+	/* Process the "font" or "graf" pref file, based on "use_graphics" */
+	if (use_graphics)
+	{
+		process_pref_file("graf.prf");
+	}
+	else
+	{
+		process_pref_file("font.prf");
+	}
 
 	/* Process the "user.prf" file */
-	(void)process_pref_file("user.prf");
+	process_pref_file("user.prf");
 
 	/* Access the "character" pref file */
 	sprintf(buf, "%s.prf", player_base);
