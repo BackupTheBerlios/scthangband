@@ -5753,7 +5753,7 @@ static void cave_temp_room_aux(int y, int x)
 		/* Do not "leave" the current room */
 		for (i = t = 0; i < 10; i++)
 		{
-			if (!cave_floor_bold(y+ddy[i],x+ddy[x])) continue;
+			if (!cave_floor_bold(y+ddy[i],x+ddx[i])) continue;
 			if (cave[y+ddy[i]][x+ddx[i]].info & CAVE_TEMP) t++;
 		}
 
