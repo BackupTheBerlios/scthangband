@@ -2801,13 +2801,7 @@ static bool vault_aux_chapel(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Require "shaman"*/
-	if (!strstr(format("%v",monster_desc_aux_f3, r_ptr, 1, 0), "haman"))
-	{
-		return (FALSE);
-	}
-
-	/* Okay */
-	return (TRUE);
+	return !!(r_ptr->flags2 & RF2_SHAMAN);
 }
 
 /*
@@ -2820,11 +2814,8 @@ static bool vault_aux_cult(int UNUSED p, int r_idx)
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
-	/* Require "shaman"*/
-	if (!strstr(format("%v",monster_desc_aux_f3, r_ptr, 1, 0), "Cult"))
-	{
-		return (FALSE);
-	}
+	/* Require cultists. */
+	return !!(r_ptr->flags2 & RF2_CULTIST);
 
 	/* Okay */
 	return (TRUE);

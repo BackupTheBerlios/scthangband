@@ -280,8 +280,8 @@ static flag_name info_flags[] =
 	{"ELEMENTAL", RF2, RF2_ELEMENTAL},
 	{"MIMIC", RF2, RF2_MIMIC},
 	{"PHANTOM", RF2, RF2_PHANTOM},
-/*	{"BRAIN_4", RF2, RF2_BRAIN_4}, */
-/*	{"BRAIN_5", RF2, RF2_BRAIN_5}, */
+	{"CULTIST", RF2, RF2_CULTIST},
+	{"SHAMAN", RF2, RF2_SHAMAN},
 /*	{"BRAIN_6", RF2, RF2_BRAIN_6}, */
 /*	{"BRAIN_7", RF2, RF2_BRAIN_7}, */
 	{"ORC", RF3, RF3_ORC},

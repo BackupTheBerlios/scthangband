@@ -753,7 +753,10 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 L_okay:
 
 			for (j = 1; j < i; j++)
-				if (!isdigit(zz[j][0])) return "non-numerical co-ordinate";
+			{
+				if (!atoi(zz[j]) && zz[j][0] != '0')
+					return "non-numerical co-ordinate";
+			}
 
 			x = atoi(zz[1]);
 			y = atoi(zz[2]);
