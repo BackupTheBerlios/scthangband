@@ -3140,7 +3140,7 @@ static void win_visible_display(void)
 			(total > 1 ? "s" : ""));
 
 		/* Print the monsters in reverse order */
-		for (i = z_info->r_max, n = 0; i >= 0; i--)
+		for (i = z_info->r_max, n = 0; i > 0; i--)
 		{
 			monster_race *r_ptr = &r_info[i];
 
