@@ -537,16 +537,44 @@ static void roff_aux(int r_idx)
 	}
 	else if (r_ptr->r_tkills || spoil_mon)
 	{
-		if (depth_in_feet)
+		bool force = ((flags1 & RF1_GUARDIAN) && (flags1 & RF1_UNIQUE));
+		s16b depth = r_ptr->level;
+		cptr when, pre, post;
+		if (force)
 		{
-			c_roff(MONCOL_DEPTH, format("%^s is normally found at depths of %d feet",
-			            wd_he[msex], r_ptr->level * 50));
+			int i;
+			for (i = 0; i < MAX_Q_IDX; i++)
+			{
+				quest *q_ptr = &q_list[i];
+				if (q_ptr->r_idx == r_ptr-r_info)
+				{
+					depth = q_ptr->level+dun_defs[q_ptr->dungeon].offset;
+					break;
+				}
+			}
+			/* A quest monster without a quest?! */
+			if (i == MAX_Q_IDX) force = FALSE;
+		}
+		if (force)
+		{
+			when = "always";
 		}
 		else
 		{
-			c_roff(MONCOL_DEPTH, format("%^s is normally found on dungeon level %d",
-			            wd_he[msex], r_ptr->level));
+			when = "normally";
 		}
+		if (depth_in_feet)
+		{
+			pre = "at depths of ";
+			post = " feet";
+			depth *= 50;
+		}
+		else
+		{
+			pre = "on dungeon level ";
+			post = "";
+		}
+		c_roff(MONCOL_DEPTH, format("%^s is %s found %s%d%s", wd_he[msex], when, pre, depth, post));
 		old = TRUE;
 	}
 
