@@ -2274,7 +2274,7 @@ extern errr macro_add(cptr pat, cptr act);
 extern void flush(void);
 #endif
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(MAIN_X11_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern void bell(cptr reason);
+extern void bell(cptr fmt, ...);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern void sound(int val);

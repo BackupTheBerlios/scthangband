@@ -1569,17 +1569,19 @@ void flush(void)
 
 
 /*
- * Flush the screen, make a noise
+ * Flush the screen, make a noise, give a message.
+ * Hack - bell(0) means "no message", not format(0).
  */
-void bell(cptr reason)
+void bell(cptr fmt, ...)
 {
 	/* Mega-Hack -- Flush the output */
 	Term_fresh();
 
-	/* Hack -- memorize the reason if possible */
-	if (character_generated && reason)
+	/* Store a message if allowed and requested. */
+	if (character_generated && fmt)
 	{
-		message_add(format("ERROR: %s", reason));
+		get_va_arg_string(fmt);
+		message_add(format("ERROR: %s", format(0)));
 	}
 
 	/* Make a bell noise (if allowed) */
