@@ -33,14 +33,8 @@ void do_cmd_inven(void)
 	/* Save the screen */
 	Term_save();
 
-	/* Hack -- show empty slots */
-	item_tester_full = TRUE;
-
 	/* Display the inventory */
-	show_inven();
-
-	/* Hack -- hide empty slots */
-	item_tester_full = FALSE;
+	show_inven(TRUE);
 
 	/* Build a prompt */
    sprintf(out_val, "Inventory: carrying %d.%d pounds (%d%% of capacity). Command: ",
@@ -89,14 +83,8 @@ void do_cmd_equip(void)
 	/* Save the screen */
 	Term_save();
 
-	/* Hack -- show empty slots */
-	item_tester_full = TRUE;
-
 	/* Display the equipment */
-	show_equip();
-
-	/* Hack -- undo the hack above */
-	item_tester_full = FALSE;
+	show_equip(TRUE);
 
 	/* Build a prompt */
    sprintf(out_val, "Equipment: carrying %d.%d pounds (%d%% of capacity). Command: ",

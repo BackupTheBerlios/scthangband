@@ -1463,10 +1463,10 @@ extern void display_inven(void);
 extern void display_equip(void);
 #endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C))
-extern void show_inven(void);
+extern void show_inven(bool all);
 #endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C))
-extern void show_equip(void);
+extern void show_equip(bool all);
 #endif
 #if (defined(OBJECT1_C) || defined(SQUELCH_C))
 extern void next_object(object_type **o_ptr);
@@ -3473,9 +3473,9 @@ extern cptr ANGBAND_DIR_USER;
 #if (defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_DIR_XTRA;
 #endif
-#if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern bool item_tester_full;
-#endif
+
+
+
 
 
 

@@ -3539,15 +3539,11 @@ cptr PURE describe_use(object_ctype *o_ptr)
  */
 static byte item_tester_tval;
 
-
 /*
  * Check an item against the item tester info
  */
 bool item_tester_okay(object_ctype *o_ptr)
 {
-	/* Hack -- allow listing empty slots */
-	if (item_tester_full) return (TRUE);
-
 	/* Require an item */
 	if (!o_ptr->k_idx) return (FALSE);
 
@@ -3682,7 +3678,7 @@ void display_equip(void)
  *
  * Hack -- do not display "trailing" empty slots
  */
-void show_inven(void)
+void show_inven(bool all)
 {
 	int             i, j, k, l, z = 0;
 	int             col, len, lim, wid;
@@ -3737,7 +3733,7 @@ void show_inven(void)
 		o_ptr = &inventory[i];
 
 		/* Is this item acceptable? */
-		if (!item_tester_okay(o_ptr)) continue;
+		if (!all && item_tester_okay(o_ptr)) continue;
 
 		/* Describe the object */
 		o_name = format("%.*v", lim, object_desc_f3, o_ptr, TRUE, 3);
@@ -3824,7 +3820,7 @@ void show_inven(void)
 /*
  * Display the equipment.
  */
-void show_equip(void)
+void show_equip(bool all)
 {
 	int                     i, j, k, l;
 	int                     col, len, lim, wid;
@@ -3836,7 +3832,6 @@ void show_equip(void)
 	int                     out_index[23];
 	byte            out_color[23];
 	cptr out_desc[23], o_name;
-
 
 	/* Ensure that unset out_desc strings are NULL. */
 	C_WIPE(out_desc, 23, char*);
@@ -3869,7 +3864,7 @@ void show_equip(void)
 		o_ptr = &inventory[i];
 
 		/* Is this item acceptable? */
-		if (!item_tester_okay(o_ptr)) continue;
+		if (!all && !item_tester_okay(o_ptr)) continue;
 
 		/* Description */
 		o_name = format("%.*v", lim, object_desc_f3, o_ptr, TRUE, 3);
@@ -4430,12 +4425,12 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 		/* Inventory screen */
 		else if (!command_wrk)
 		{
-			show_inven();
+			show_inven(FALSE);
 		}
 		/* Equipment screen */
 		else
 		{
-			show_equip();
+			show_equip(FALSE);
 		}
 
 		t = tmp_val;
@@ -5231,8 +5226,6 @@ static object_type *get_object(object_function *func)
 
 	/* Found something. */
 	if (o_ptr) return o_ptr;
-
-	strcpy(buf, "You do not have a");
 
 	/* The player knows he aborted. */
 	if (err == GET_ITEM_ERROR_ABORT) return NULL;
