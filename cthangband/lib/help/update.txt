@@ -7,6 +7,7 @@ read from the bottom up.
 
 sCthangband _CVS_
 * List the actual name of a hidden object when it is examined.
+* Selecting an object to buy with a capital letter gives a "Try" prompt.
 * Allow an ego type to be selected when creating an object in wizard mode.
 * Set the EASY_KNOW flag for non-random items in the source.
 * Fix the following bugs

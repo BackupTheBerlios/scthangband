@@ -2520,20 +2520,22 @@ static void display_store(void)
 /*
  * Get the ID of a store item and return its value -RAK-
  */
-static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
+static object_type *get_stock_aux(cptr pmt, int i, int j,
+	object_type *stock)
 {
-	char command;
+	int k;
+	char ch;
 
 #ifdef ALLOW_REPEAT
 
 	/* Get the item index */
-	if (repeat_pull(com_val))
+	if (repeat_pull(&k))
 	{
 		/* Verify the item */
-		if ((*com_val >= i) && (*com_val <= j))
+		if (k >= i && k <= j)
 		{
 			/* Success */
-			return (TRUE);
+			return &stock[k];
 		}
 	}
 
@@ -2542,57 +2544,50 @@ static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
-
-	/* Assume failure */
-	*com_val = (-1);
-
 	/* Ask until done */
 	while (TRUE)
 	{
-		int k;
-
 		/* Escape */
-		if (!get_com(&command, "(Items %c-%c, ESC to exit) %s",
-			I2A(i), I2A(j), pmt)) break;
+		if (!get_com(&ch, "(Items %c-%c, ESC to exit) %s",
+			I2A(i), I2A(j), pmt)) return NULL;
 
 		/* Convert */
-		k = (ISLOWER(command) ? A2I(command) : -1);
+		k = (ISALPHA(ch) ? A2I(TOLOWER(ch)) : -1);
 
-		/* Legal responses */
-		if ((k >= i) && (k <= j))
+		/* Illegal response. */
+		if ((k < i) || (k > j))
 		{
-			*com_val = k;
-			break;
+			bell("Illegal store object choice.");
 		}
-
-		/* Oops */
-		bell(0);
-	}
-
-	/* Clear the prompt */
-	prt("", 0, 0);
-
-	/* Cancel */
-	if (command == ESCAPE) return (FALSE);
-
+		/* Abort. */
+		else if (ISUPPER(ch) && !get_check(format("Try %v? ",
+			object_desc_f3, &stock[k], TRUE, 3)))
+		{
+			return NULL;
+		}
+		/* Accept the choice. */
+		else
+		{
 #ifdef ALLOW_REPEAT
 
-	repeat_push(*com_val);
+			repeat_push(k);
 
 #endif /* ALLOW_REPEAT -- TNB */
 
-
-	/* Success */
-	return (TRUE);
+			return &stock[k];
+		}
+	}
 }
 
 /*
  * A wrapper to provide the (known) limits for the prompt above.
  */
-static int get_stock(int *com_val, cptr pmt)
+static object_type *get_stock(cptr pmt)
 {
 	int i = MIN(st_ptr->stock_num - store_top, STORE_ITEMS_PER_PAGE);
-	return get_stock_aux(com_val, pmt, 0, i-1);
+	object_type *o_ptr = &st_ptr->stock[store_top];
+
+	return get_stock_aux(pmt, 0, i-1, o_ptr);
 }
 
 /*
@@ -3357,7 +3352,6 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 static void store_purchase(void)
 {
 	int i, amt, choice;
-	int item;
 
 	s32b price, best;
 
@@ -3389,13 +3383,9 @@ static void store_purchase(void)
 	}
 
 	/* Get the item number to be bought */
-	if (!get_stock(&item, prompt)) return;
-
-	/* Get the actual index */
-	item = item + store_top;
-
-	/* Get the actual item */
-	o_ptr = &st_ptr->stock[item];
+	o_ptr = get_stock(prompt);
+	
+	if (!o_ptr) return;
 
 	/* Assume the player wants just one of them */
 	amt = 1;
@@ -3470,8 +3460,7 @@ static void store_purchase(void)
 			/* Message */
 			if (!auto_haggle || verbose_haggle)
 			{
-				msg_format("Buying %v (%c).", object_desc_f3, j_ptr, TRUE, 3,
-					I2A(item));
+				msg_format("Buying %v.", object_desc_f3, j_ptr, TRUE, 3);
 				msg_print(NULL);
 			}
 
@@ -3541,8 +3530,8 @@ static void store_purchase(void)
 				i = st_ptr->stock_num;
 
 				/* Remove the bought items from the store */
-				store_item_increase(item, -amt);
-				store_item_optimize(item);
+				store_item_increase(o_ptr - st_ptr->stock, -amt);
+				store_item_optimize(o_ptr - st_ptr->stock);
 
 				/* Store is empty*/
 				if (st_ptr->stock_num == 0)
@@ -3619,8 +3608,8 @@ static void store_purchase(void)
 		i = st_ptr->stock_num;
 
 		/* Remove the items from the home */
-		store_item_increase(item, -amt);
-		store_item_optimize(item);
+		store_item_increase(o_ptr - st_ptr->stock, -amt);
+		store_item_optimize(o_ptr - st_ptr->stock);
 
 		/* The item is gone */
 		if (i != st_ptr->stock_num)
@@ -3836,8 +3825,6 @@ static void store_sell(void)
  */
 static void store_examine(void)
 {
-	int item;
-
 	object_type *o_ptr;
 
 	cptr prompt;
@@ -3856,13 +3843,9 @@ static void store_examine(void)
 	prompt = "Which item do you want to examine? ";
 
 	/* Get the item number to be examined */
-	if (!get_stock(&item, prompt)) return;
-
-	/* Get the actual index */
-	item = item + store_top;
-
-	/* Get the actual item */
-	o_ptr = &st_ptr->stock[item];
+	o_ptr = get_stock(prompt);
+	
+	if (!o_ptr) return;
 
 	/* If it is a spell book then browse it */
 	if (item_tester_spells(o_ptr))
@@ -3877,8 +3860,6 @@ static void store_examine(void)
 		/* Make it look as though we are aware of the item if necessary. */
 		if (!identify_fully_aux(o_ptr, 0))
 			msg_print("You see nothing special.");
-
-		return;
 	}
 }
 
