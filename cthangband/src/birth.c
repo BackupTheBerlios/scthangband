@@ -3853,13 +3853,13 @@ static bool player_birth_aux(void)
 
 	/* Display some helpful information */
 	Term_putstr(5, 7, -1, TERM_WHITE,
-		"Please answer the following questions.  Most of the questions");
+		"Please answer the following questions.  Most of the questions display");
 	Term_putstr(5, 8, -1, TERM_WHITE,
-		"display a set of standard answers, and many will also accept");
+		"a set of standard answers, and many will also accept special responses,");
 	Term_putstr(5, 9, -1, TERM_WHITE,
-		"special responses, including 'Q' to quit, '=' to change options");
+		"including 'Q' to quit, '=' to change options, 'S' to restart character");
 	Term_putstr(5, 10, -1, TERM_WHITE,
-		"or '?' for help.  Note that 'Q' and 'S' must be capitalized.");
+		"creation and '?' for help.  Note that 'Q' and 'S' must be capitalized.");
 
 
 	/*** Quick-Start ***/
@@ -3879,7 +3879,7 @@ static bool player_birth_aux(void)
 			c = 'n';
 			break;
 		}
-		put_str("Quick-Start? (y/n/Q/S/?/=): ", 15, 2);
+		put_str("Quick-Start? (y/n): ", 15, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 		else if (c == 'S') return (FALSE);
