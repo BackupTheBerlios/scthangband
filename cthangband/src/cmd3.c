@@ -161,22 +161,10 @@ void do_cmd_wield(void)
 	item_tester_hook = item_tester_hook_wear;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Wear/Wield which item? ", FALSE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Wear/Wield which item? ", FALSE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing you can wear or wield.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -341,22 +329,10 @@ void do_cmd_takeoff(void)
 
 
 	/* Get an item (from equip) */
-	if (!get_item(&item, "Take off which item? ", TRUE, FALSE, FALSE))
+	if (!((o_ptr = get_item(&item, "Take off which item? ", TRUE, FALSE, FALSE))))
 	{
 		if (item == -2) msg_print("You are not wearing anything to take off.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -391,22 +367,10 @@ void do_cmd_drop(void)
 	object_type *o_ptr;
 
 	/* Get an item (from equip or inven) */
-	if (!get_item(&item, "Drop which item? ", TRUE, TRUE, FALSE))
+	if (!((o_ptr = get_item(&item, "Drop which item? ", TRUE, TRUE, FALSE))))
 	{
 		if (item == -2) msg_print("You have nothing to drop.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -461,22 +425,10 @@ void do_cmd_destroy(void)
 	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Destroy which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Destroy which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to destroy.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -604,22 +556,10 @@ void do_cmd_observe(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Examine which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Examine which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to examine.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* Describe */
@@ -643,22 +583,10 @@ void do_cmd_uninscribe(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Un-inscribe which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Un-inscribe which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to un-inscribe.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* Nothing to remove */
@@ -695,22 +623,10 @@ void do_cmd_inscribe(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Inscribe which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Inscribe which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to inscribe.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* Message */
@@ -759,10 +675,10 @@ static bool item_tester_refill_lantern(object_type *o_ptr)
 /*
  * Refill the players lamp (from the pack or floor)
  */
-static void do_cmd_refill_lamp(int item)
+static void do_cmd_refill_lamp(object_type *o_ptr)
 {
+	int item;
 
-	object_type *o_ptr;
 	object_type *j_ptr;
 
 
@@ -770,26 +686,18 @@ static void do_cmd_refill_lamp(int item)
 	item_tester_hook = item_tester_refill_lantern;
 
 	/* Get an item if we weren't passed one */
-	if (item == -999)
+	if (!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Refill with which flask? ", TRUE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Refill with which flask? ", TRUE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no flasks of oil.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_hook = item_tester_refill_lantern;
@@ -858,10 +766,9 @@ static bool item_tester_refill_torch(object_type *o_ptr)
 /*
  * Refuel the players torch (from the pack or floor)
  */
-static void do_cmd_refill_torch(int item)
+static void do_cmd_refill_torch(object_type *o_ptr)
 {
-
-	object_type *o_ptr;
+	int item;
 	object_type *j_ptr;
 
 
@@ -869,26 +776,18 @@ static void do_cmd_refill_torch(int item)
 	item_tester_hook = item_tester_refill_torch;
 
 	/* Get an item if we weren't passed one */
-	if(item == -999)
+	if(!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Refuel with which torch? ", FALSE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Refuel with which torch? ", FALSE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no extra torches.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_hook = item_tester_refill_torch;
@@ -926,7 +825,7 @@ static void do_cmd_refill_torch(int item)
 	}
 
 	/* Decrease the item (from the pack) */
-	if (item >= 0)
+	if (cnv_obj_to_idx(o_ptr) >= 0)
 	{
 		inven_item_increase(item, -1);
 		inven_item_describe(item);
@@ -951,7 +850,7 @@ static void do_cmd_refill_torch(int item)
 /*
  * Refill the players lamp, or restock his torches
  */
-void do_cmd_refill(int item)
+void do_cmd_refill(object_type *j_ptr)
 {
 	object_type *o_ptr;
 
@@ -967,13 +866,13 @@ void do_cmd_refill(int item)
 	/* It's a lamp */
 	else if (o_ptr->k_idx == OBJ_BRASS_LANTERN)
 	{
-		do_cmd_refill_lamp(item);
+		do_cmd_refill_lamp(j_ptr);
 	}
 
 	/* It's a torch */
 	else if (o_ptr->k_idx == OBJ_WOODEN_TORCH)
 	{
-		do_cmd_refill_torch(item);
+		do_cmd_refill_torch(j_ptr);
 	}
 
 	/* No torch to refill */
@@ -1567,28 +1466,17 @@ void do_cmd_handle(void)
 	object_type *o_ptr;
 
 	/* Get an item (from equip or inven) */
-	if (!get_item(&item, "Use which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Use which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to use.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* First test Wielded items */
 	if ((item >= INVEN_WIELD) && (item < INVEN_POUCH_1))
 	{
 		/* Try to activate the wielded item, whatever it is */
-		do_cmd_activate(item);
+		do_cmd_activate(o_ptr);
 		return;
 	}
 	/* The item is in our inventory or in a pouch*/
@@ -1596,37 +1484,37 @@ void do_cmd_handle(void)
 	{
 	case TV_STAFF:
 		{
-			do_cmd_use_staff(item);
+			do_cmd_use_staff(o_ptr);
 			break;
 		}
 	case TV_WAND:
 		{
-			do_cmd_aim_wand(item);
+			do_cmd_aim_wand(o_ptr);
 			break;
 		}
 	case TV_ROD:
 		{
-			do_cmd_zap_rod(item);
+			do_cmd_zap_rod(o_ptr);
 			break;
 		}
 	case TV_SCROLL:
 		{
-			do_cmd_read_scroll(item);
+			do_cmd_read_scroll(o_ptr);
 			break;
 		}
 	case TV_POTION:
 		{
-			do_cmd_quaff_potion(item);
+			do_cmd_quaff_potion(o_ptr);
 			break;
 		}
 	case TV_FLASK:case TV_LITE:
 		{
-			do_cmd_refill(item);
+			do_cmd_refill(o_ptr);
 			break;
 		}
 	case TV_FOOD:
 		{
-			do_cmd_eat_food(item);
+			do_cmd_eat_food(o_ptr);
 			break;
 		}
 	case TV_SORCERY_BOOK:
@@ -1634,7 +1522,7 @@ void do_cmd_handle(void)
 	case TV_CONJURATION_BOOK:
 	case TV_NECROMANCY_BOOK:
 		{
-			do_cmd_browse(item);
+			do_cmd_browse(o_ptr);
 			break;
 		}
 	case TV_CHARM:

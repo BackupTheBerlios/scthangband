@@ -3300,22 +3300,10 @@ static void store_sell_aux(char *o_name)
 	item_tester_hook = store_will_buy;
 
 	/* Get an item (from equip or inven) */
-	if (!get_item(&item, pmt, TRUE, TRUE, FALSE))
+	if (!((o_ptr = get_item(&item, pmt, TRUE, TRUE, FALSE))))
 	{
 		if (item == -2) msg_print("You have nothing that I want.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -4197,7 +4185,7 @@ static void store_process_command(void)
 			/* Browse a book */
 		case 'b':
 		{
-			do_cmd_browse(-1);
+			do_cmd_browse(NULL);
 			break;
 		}
 

@@ -474,23 +474,11 @@ bool alchemy(void)
 	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from equip or inven or floor) */
-    if (!get_item(&item, "Turn which item to gold? ", TRUE, TRUE, TRUE))
+    if (!((o_ptr = get_item(&item, "Turn which item to gold? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to turn to gold.");
 		TFREE(o_name);
 		return FALSE;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -2804,23 +2792,11 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	if (num_ac) item_tester_hook = item_tester_hook_armour;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to enchant.");
 		TFREE(o_name);
 		return (FALSE);
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -4276,23 +4252,11 @@ bool artifact_scroll(void)
 	item_tester_hook = item_tester_hook_weapon;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Enchant which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to enchant.");
 		TFREE(o_name);
 		return (FALSE);
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -4362,23 +4326,11 @@ bool ident_spell(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to identify.");
 		TFREE(o_name);
 		return (FALSE);
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -4437,23 +4389,11 @@ bool identify_fully(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Identify which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to identify.");
 		TFREE(o_name);
 		return (FALSE);
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -4559,22 +4499,10 @@ bool recharge(int num)
 	item_tester_hook = item_tester_hook_recharge;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Recharge which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Recharge which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to recharge.");
 		return (FALSE);
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -6387,23 +6315,11 @@ void bless_weapon(void)
 
 
 	/* Get an item (from equip or inven or floor) */
-    if (!get_item(&item, "Bless which weapon? ", TRUE, TRUE, TRUE))
+    if (!((o_ptr = get_item(&item, "Bless which weapon? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have weapon to bless.");
 		TFREE(o_name);
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 

@@ -769,23 +769,11 @@ bool psychometry(void)
         cptr            feel, oldfeel;
 
 	/* Get an item (from equip or inven or floor) */
-    if (!get_item(&item, "Meditate on which item? ", TRUE, TRUE, TRUE))
+    if (!((o_ptr = get_item(&item, "Meditate on which item? ", TRUE, TRUE, TRUE))))
 	{
         if (item == -2) msg_print("You have nothing appropriate.");
 		TFREE(o_name);
 		return (FALSE);
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* It is fully known, no information needed. */
@@ -2699,7 +2687,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_browse(-999);
+			do_cmd_browse(NULL);
 			} else {
 				do_cmd_handle();
 			}
@@ -2785,7 +2773,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_activate(-999);
+			do_cmd_activate(NULL);
 			} else {
 				do_cmd_handle();
 			}
@@ -2797,7 +2785,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_eat_food(-999);
+			do_cmd_eat_food(NULL);
 			} else {
 				do_cmd_handle();
 			}
@@ -2809,7 +2797,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_refill(-999);
+			do_cmd_refill(NULL);
 			} else {
 				do_cmd_handle();
 			}
@@ -2835,7 +2823,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_aim_wand(-999);
+			do_cmd_aim_wand(NULL);
 			} else {
 				do_cmd_handle();
 			}
@@ -2847,7 +2835,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_zap_rod(-999);
+			do_cmd_zap_rod(NULL);
 			} else {
 				do_cmd_handle();
 			}
@@ -2859,7 +2847,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_quaff_potion(-999);
+			do_cmd_quaff_potion(NULL);
 			} else {
 				do_cmd_handle();
 			}
@@ -2878,7 +2866,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_read_scroll(-999);
+			do_cmd_read_scroll(NULL);
 			} else {
 				do_cmd_handle();
 		}
@@ -2890,7 +2878,7 @@ static void process_command(void)
 		{
 			if(!unify_commands)
 			{
-			do_cmd_use_staff(-999);
+			do_cmd_use_staff(NULL);
 			} else {
 				do_cmd_handle();
 			}

@@ -1135,22 +1135,10 @@ void do_cmd_wiz_play(void)
 
 
 	/* Get an item (from equip or inven) */
-	if (!get_item(&item, "Play with which object? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Play with which object? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to play with.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 

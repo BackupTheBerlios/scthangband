@@ -3734,7 +3734,7 @@ object_type *cnv_idx_to_obj(s16b index)
 /*
  * Returns the object_idx appropriate for a given item.
  */
-static s16b cnv_obj_to_idx(object_type *o_ptr)
+s16b cnv_obj_to_idx(object_type *o_ptr)
 {
 	if (o_ptr >= inventory && o_ptr-inventory < INVEN_TOTAL)
 	{

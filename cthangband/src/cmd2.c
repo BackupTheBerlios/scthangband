@@ -2370,20 +2370,10 @@ void do_cmd_fire(void)
 	item_tester_tval = p_ptr->tval_ammo;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Fire which item? ", FALSE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Fire which item? ", FALSE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to fire.");
 		return;
-	}
-
-	/* Access the item (if in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -2691,20 +2681,10 @@ void do_cmd_throw(void)
 	item_tester_hook = item_tester_hook_destroy;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Throw which item? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Throw which item? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to throw.");
 		return;
-	}
-
-	/* Access the item (if in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -3501,16 +3481,7 @@ static void use_power(powertype *pw_ptr)
 
 				/* Get an item */
 				q = "Drain which item? ";
-				if (!get_item(&item, q, TRUE,TRUE,TRUE)) break;
-
-				if (item >= 0)
-                {
-					o_ptr = &inventory[item];
-			}
-			else
-			{
-					o_ptr = &o_list[0 - item];
-			}
+				if (!((o_ptr = get_item(&item, q, TRUE,TRUE,TRUE)))) break;
 
 				lev = wand_power(&k_info[o_ptr->k_idx]);
 

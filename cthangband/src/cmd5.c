@@ -1190,23 +1190,11 @@ static void rustproof(void)
 	item_tester_hook = item_tester_hook_armour;
 
 	/* Get an item (from equip or inven or floor) */
-	if (!get_item(&item, "Rustproof which piece of armour? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Rustproof which piece of armour? ", TRUE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have nothing to rustproof.");
 		TFREE(o_name);
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 
@@ -1240,7 +1228,7 @@ static void rustproof(void)
  * Note that browsing is allowed while confused or blind,
  * and in the dark, primarily to allow browsing in stores.
  */
-void do_cmd_browse(int item)
+void do_cmd_browse(object_type *o_ptr)
 {
 	int		sval;
 	int		spell = -1;
@@ -1248,33 +1236,20 @@ void do_cmd_browse(int item)
 
 	byte		spells[64];
 
-	object_type	*o_ptr;
-
 
 	/* Restrict choices to "useful" books */
 	item_tester_tval = TV_SORCERY_BOOK;
 
 	/* Get an item if we do not already have one */
-	if(item < 0)
+	if(!o_ptr)
 	{
+		int item;
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Browse which book? ", FALSE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Browse which book? ", FALSE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no books that you can read.");
 			return;
 		}
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	item_tester_tval = TV_SORCERY_BOOK;
@@ -1372,22 +1347,10 @@ void do_cmd_study(void)
 	item_tester_tval = TV_SORCERY_BOOK;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Study which book? ", FALSE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Study which book? ", FALSE, TRUE, TRUE))))
 	{
 		if (item == -2) msg_print("You have no books that you can read.");
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* Access the item's sval */
@@ -1925,22 +1888,10 @@ void do_cmd_cast(void)
 	item_tester_tval = TV_SORCERY_BOOK;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Use which book? ", FALSE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Use which book? ", FALSE, TRUE, TRUE))))
 	{
         if (item == -2) msg_format("You have no %s books!", prayer);
 		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* Access the item's sval */
@@ -3376,29 +3327,14 @@ void do_cmd_cantrip(void)
 	item_tester_tval = TV_CHARM;
 
 	/* Get an item (from inven or floor) */
-	if (!get_item(&item, "Use which charm? ", TRUE, TRUE, TRUE))
+	if (!((o_ptr = get_item(&item, "Use which charm? ", TRUE, TRUE, TRUE))))
 	{
         if (item == -2) msg_print("You have no charms!");
 		return;
 	}
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-
-		/* Remember if we got this from a pouch */
-		if ((item >= INVEN_POUCH_1) && (item <= INVEN_POUCH_6))
-		{
-			from_pouch = TRUE;
-		}
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	/* Remember if we got this from a pouch */
+	from_pouch = ((item >= INVEN_POUCH_1) && (item <= INVEN_POUCH_6));
 
 	/* Access the item's sval */
 	sval = k_info[o_ptr->k_idx].extra;

@@ -4216,20 +4216,8 @@ static bool verify(cptr prompt, int item)
 
 	char    out_val[160];
 
-	object_type *o_ptr;
+	object_type *o_ptr = cnv_idx_to_obj(item);
 
-	/* Inventory */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	
-	/* Floor */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-	
 	/* Describe */
 	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
 
@@ -4252,20 +4240,8 @@ static bool get_item_allow(int item)
 {
 	cptr s;
 
-	object_type *o_ptr;
+	object_type *o_ptr = cnv_idx_to_obj(item);
 
-	/* Inventory */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	
-	/* Floor */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-	
 	/* Find a '!' */
 	s = strchr(quark_str(o_ptr->note), '!');
 
@@ -4385,11 +4361,11 @@ static int get_tag(int *cp, char tag)
  * use of "capital" letters will "examine" an inventory/equipment item,
  * and prompt for its use.
  *
- * If a legal item is selected, we save it in "cp" and return TRUE.
+ * If a legal item is selected, we save it in "cp" and return a pointer to it.
  * If this "legal" item is on the floor, we use a "cp" equal to zero
  * minus the dungeon index of the item on the floor.
  *
- * Otherwise, we return FALSE, and set "cp" to:
+ * Otherwise, we return NULL, and set "cp" to:
  *   -1 for "User hit space/escape"
  *   -2 for "No legal items to choose"
  *
@@ -4413,7 +4389,7 @@ static int get_tag(int *cp, char tag)
  *
  * Note that "Term_save()" / "Term_load()" blocks must not overlap.
  */
-bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
+object_type *get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 {
 	cave_type *c_ptr = &cave[py][px];
 
@@ -4437,14 +4413,14 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
      /* Get the item index */
      if (repeat_pull(cp)) {
          
+		object_type *o_ptr = cnv_idx_to_obj(*cp);
+
          /* Floor item? */
-         if (*cp < 0) {
-         	
+         if (o_ptr >= o_list && o_ptr < o_list + MAX_O_IDX) {
+
  			/* Scan all objects in the grid */
  			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
  			{
- 				object_type *o_ptr;
- 
  				/* Acquire object */
  				o_ptr = &o_list[this_o_idx];
  
@@ -4464,7 +4440,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
  				item_tester_hook = NULL;
  				
  				/* Success */
- 				return (TRUE);
+				return cnv_idx_to_obj(*cp);
  	        }
          }
          
@@ -4478,7 +4454,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
  	        item_tester_hook = NULL;
  	        
  	        /* Success */
- 	        return (TRUE);
+			return cnv_idx_to_obj(*cp);
          }
      }
  
@@ -5041,10 +5017,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Show item if possible. */
 	if (item)
 	{
-		if (*cp < 0)
-			object_track(&o_list[-(*cp)]);
-		else
-			object_track(&inventory[(*cp)]);
+		object_track(cnv_idx_to_obj(*cp));
 	}
 
 	/* Clean up */
@@ -5064,8 +5037,8 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
      
  #endif /* ALLOW_REPEAT */
 
-	/* Return TRUE if something was picked */
-	return (item);
+	/* Return the object if something was picked. */
+	return (item) ? cnv_idx_to_obj(*cp) : NULL;
 }
 
 

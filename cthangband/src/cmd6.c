@@ -64,38 +64,30 @@ static bool activate_random_artifact(object_type * o_ptr);
 /*
  * Eat some food (from the pack or floor)
  */
-void do_cmd_eat_food(int item)
+void do_cmd_eat_food(object_type *o_ptr)
 {
+	int item;
 	int			ident;
 	bool	normal_food = FALSE;
 
-	object_type		*o_ptr;
 
 
 	/* Restrict choices to food */
 	item_tester_tval = TV_FOOD;
 
 	/* Get an item if we weren't passed one */
-	if(item == -999)
+	if(!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Eat which item? ", FALSE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Eat which item? ", FALSE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have nothing to eat.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_FOOD;
@@ -398,37 +390,29 @@ void do_cmd_eat_food(int item)
 /*
  * Quaff a potion (from the pack or the floor)
  */
-void do_cmd_quaff_potion(int item)
+void do_cmd_quaff_potion(object_type *o_ptr)
 {
+	int item;
 	int		ident;
 
-	object_type	*o_ptr;
 
 
 	/* Restrict choices to potions */
 	item_tester_tval = TV_POTION;
 
 	/* Get an item if we weren't passed one */
-	if(item == -999)
+	if(!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Quaff which potion? ", TRUE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Quaff which potion? ", TRUE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no potions to quaff.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_POTION;
@@ -1194,11 +1178,10 @@ bool curse_weapon(void)
  * include scrolls with no effects but recharge or identify, which are
  * cancelled before use.  XXX Reading them still takes a turn, though.
  */
-void do_cmd_read_scroll(int item)
+void do_cmd_read_scroll(object_type *o_ptr)
 {
+	int item;
 	int			k, used_up, ident;
-
-	object_type		*o_ptr;
 
 	/* Check some conditions */
 	if (p_ptr->blind)
@@ -1222,26 +1205,18 @@ void do_cmd_read_scroll(int item)
 	item_tester_tval = TV_SCROLL;
 
 	/* Get an item if we weren't passed one */
-	if(item == -999)
+	if(!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Read which scroll? ", TRUE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Read which scroll? ", TRUE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no scrolls to read.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_SCROLL;
@@ -1784,11 +1759,10 @@ static bool use_device_p(object_type *o_ptr)
  *
  * Hack -- staffs of identify can be "cancelled".
  */
-void do_cmd_use_staff(int item)
+void do_cmd_use_staff(object_type *o_ptr)
 {
+	int item;
 	int			ident, k;
-
-	object_type		*o_ptr;
 
 	/* Hack -- let staffs of identify get aborted */
 	bool use_charge = TRUE;
@@ -1798,26 +1772,18 @@ void do_cmd_use_staff(int item)
 	item_tester_tval = TV_STAFF;
 
 	/* Get an item if we weren't already passed one */
-	if(item == -999)
+	if(!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Use which staff? ", FALSE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Use which staff? ", FALSE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no staff to use.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_STAFF;
@@ -2257,37 +2223,28 @@ static int choose_random_wand(void)
  * basic "bolt" rods, but the basic "ball" wands do the same damage
  * as the basic "ball" rods.
  */
-void do_cmd_aim_wand(int item)
+void do_cmd_aim_wand(object_type *o_ptr)
 {
+	int item;
 	int			ident, k_idx, dir;
-
-	object_type		*o_ptr;
 
 
 	/* Restrict choices to wands */
 	item_tester_tval = TV_WAND;
 
 	/* Get an item if we weren't passed one */
-	if(item == -999)
+	if(!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Aim which wand? ", TRUE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Aim which wand? ", TRUE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no wand to aim.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_WAND;
@@ -2703,11 +2660,10 @@ static bool directional_rod_p(s16b k_idx)
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
  */
-void do_cmd_zap_rod(int item)
+void do_cmd_zap_rod(object_type *o_ptr)
 {
+	int item;
 	int			ident, dir;
-
-	object_type		*o_ptr;
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
@@ -2717,26 +2673,18 @@ void do_cmd_zap_rod(int item)
 	item_tester_tval = TV_ROD;
 
 	/* Get an item if we do not already have one */
-	if(item == -999)
+	if(!o_ptr)
 	{
 		/* Get an item (from inven or floor) */
-		if (!get_item(&item, "Zap which rod? ", FALSE, TRUE, TRUE))
+		if (!((o_ptr = get_item(&item, "Zap which rod? ", FALSE, TRUE, TRUE))))
 		{
 			if (item == -2) msg_print("You have no rod to zap.");
 			return;
 		}
 	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
 	else
 	{
-		o_ptr = &o_list[0 - item];
+		item = cnv_obj_to_idx(o_ptr);
 	}
 
 	item_tester_tval = TV_ROD;
@@ -3239,37 +3187,25 @@ static bool brand_bolts(void)
  * Note that it always takes a turn to activate an artifact, even if
  * the user hits "escape" at the "direction" prompt.
  */
-void do_cmd_activate(int item)
+void do_cmd_activate(object_type *o_ptr)
 {
     int         i, k, dir, chance;
-
-	object_type *o_ptr;
 
 
 	/* Prepare the hook */
 	item_tester_hook = item_tester_hook_activate;
 
 	/* Get an item if we weren't passed one from the inventory*/
-	if(item == -999)
+	if(!o_ptr)
 	{
+		int item;
+
 		/* Get an item (from equip) */
-		if (!get_item(&item, "Activate which item? ", TRUE, FALSE, FALSE))
+		if (!((o_ptr = get_item(&item, "Activate which item? ", TRUE, FALSE, FALSE))))
 		{
 			if (item == -2) msg_print("You have nothing to activate.");
 			return;
 		}
-	}
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
 	}
 
 	/* Prepare the hook */
