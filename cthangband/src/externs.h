@@ -1564,7 +1564,7 @@ extern void check_bonus_table(void);
 #if (defined(BIRTH_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void apply_magic_2(object_type *o_ptr, const int lev);
 #endif
-#if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C))
 extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT2_C))
@@ -1834,7 +1834,7 @@ extern bool enchant_spell(int num_hit, int num_dam, int num_ac);
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern void random_resistance (object_type * o_ptr, bool is_scroll, int specific);
 #endif
-#if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+#if (defined(OBJECT2_C) || defined(SPELLS2_C))
 extern bool create_artifact(object_type *o_ptr, bool a_scroll);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
@@ -2360,7 +2360,7 @@ extern bool is_keymap_or_macro(void);
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern char inkey(void);
 #endif
-#if (defined(CMD3_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(XTRA2_C))
+#if (defined(CMD3_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(UTIL_C))
 extern s16b quark_add(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SQUELCH_C) || defined(UTIL_C))
@@ -3410,7 +3410,7 @@ extern cptr r_text;
 #if (defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern death_event_type *death_event;
 #endif
-#if (defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(INIT2_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern cptr event_name;
 #endif
 #if (defined(INIT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -4006,5 +4006,11 @@ extern cptr safe_string_make(cptr str);
 
 #if (defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void do_dec_stat_time(int stat, bool msg);
+#endif
+
+/* object2.c */
+
+#if (defined(OBJECT2_C) || defined(XTRA2_C))
+extern void make_item(object_type *o_ptr, make_item_type *i_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

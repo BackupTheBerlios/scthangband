@@ -6,6 +6,7 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Allow ego items to be generated as special monster drops.
 * Fix the following bugs:
   * Starting the game with -n gave too many quests.
   * Town monsters could be created elsewhere at level generation, and nothing

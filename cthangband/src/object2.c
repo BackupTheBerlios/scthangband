@@ -3123,6 +3123,46 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 }
 
 /*
+ * Create an item based on a make_item_type template (as from death_event).
+ */
+void make_item(object_type *o_ptr, make_item_type *i_ptr)
+{
+	bool ego = (i_ptr->flags & EI_EGO) != 0;
+	bool art = (i_ptr->flags & EI_ART) != 0;
+	bool rand = (i_ptr->flags & EI_RAND) != 0;
+
+	/* Prepare the object */
+	object_prep(o_ptr, i_ptr->k_idx);
+
+	if (rand && art)
+	{
+		/* Make a random artefact (which automatically names it). */
+		create_artifact(o_ptr, FALSE);
+
+		/* Use a name if specified */
+		if (i_ptr->name) 
+ 		{
+			o_ptr->art_name = quark_add(event_name+i_ptr->name);
+		}
+	}
+	if (rand && ego)
+	{
+		/* Pick a random uncursed ego item. This should probably check for
+		 * ego-types which don't survive add_ego_special()... */
+		o_ptr->name2 = get_ego_item(o_ptr, object_level, FALSE);
+	}
+
+	if (!rand && art) o_ptr->name1 = i_ptr->x_idx;
+
+	if (!rand && ego) o_ptr->name2 = i_ptr->x_idx;
+
+	o_ptr->number = rand_range(i_ptr->min, i_ptr->max);
+
+	/* Add any special bonuses this ego type expects. */
+	apply_magic_2(o_ptr, object_level);
+}
+
+/*
  * Return TRUE if apply_magic() can leave an object either cursed or uncursed.
  * This is deficient
  */

@@ -141,30 +141,11 @@ static void drop_special(monster_type *m_ptr)
 			/* Drop some or fewer objects. */
 			case DEATH_OBJECT:
 			{
-				make_item_type *i_ptr = &d_ptr->par.item;
 				object_type o_ptr[1];
-				object_prep(o_ptr, i_ptr->k_idx);
-#ifdef ALLOW_EGO_DROP
-/* I can neither check that the ego item is plausible nor prevent apply_magic
- *  from over-writing it without effort, and nothing currently uses the flag. */
-				if (i_ptr->flags & EI_EGO)
-					o_ptr->name2 = i_ptr->x_idx;
-#endif
-				if (i_ptr->flags & EI_ART)
-					o_ptr->name1 = i_ptr->x_idx;
-				if ((i_ptr->flags & (EI_ART | EI_RAND)) == (EI_ART | EI_RAND))
-				{
-					/* Make a random artefact (which automatically names it). */
-					create_artifact(o_ptr, FALSE);
 
-					/* Use a name if specified */
-					if (i_ptr->name) 
- 					{
-						o_ptr->art_name = quark_add(event_name+i_ptr->name);
-					}
-				}
-				o_ptr->number = rand_range(i_ptr->min, i_ptr->max);
-				apply_magic(o_ptr, object_level, FALSE, FALSE, FALSE);
+				/* Create the item from the definition. */
+				make_item(o_ptr, &d_ptr->par.item);
+
 				if (d_ptr->text) msg_print(event_text+d_ptr->text);
 				drop_near(o_ptr, -1, m_ptr->fy, m_ptr->fx);
 				d_ptr->flags |= EF_KNOWN;

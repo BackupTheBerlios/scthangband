@@ -521,14 +521,14 @@ static s16b find_string(char *buf, cptr *array)
 			value = i + 1;
 			place = tmp;
 		}
-		}
+	}
 
 	/* None there. */
 	if (!value) return 0;
 	/* If exactly one has been found, remove it. Leave the ':'s, though. */
 	for (i = 0; i < strlen(array[value-1]); i++)
 	{
-		*(place+i)=' ';
+		place[i]=' ';
 	}
 	return value;
 }
@@ -754,6 +754,30 @@ static s16b find_monster_race(char *buf)
 	return out;
 }
 
+
+static int find_string_ego_info(char *buf, int k_idx)
+{
+	C_TNEW(array, MAX_E_IDX, cptr);
+	int i;
+	for (i = 1; i < z_info->e_max; i++)
+	{
+		ego_item_type *e_ptr = e_info+i;
+		if (e_ptr->name && e_ptr->max_obj >= k_idx
+			&& e_ptr->min_obj <= k_idx)
+		{
+			array[i-1] = e_name+e_ptr->name;
+		}
+		else
+		{
+			array[i-1] = "";
+		}
+	}
+	array[MAX_E_IDX-1] = 0;
+	k_idx = find_string(buf, array);
+	TFREE(array);
+	return k_idx;
+}
+
 /*
  * Initialize the "death_event" array, by parsing part of the "r_info.txt" file
  */
@@ -875,13 +899,11 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					{
 						find_string_info(a_name, a_info, MAX_A_IDX, i_ptr->x_idx);
 					}
-#ifdef ALLOW_EGO_DROP
-					else if (i_ptr->flags & EI_EGO)
-					{
-						find_string_info(e_name, e_info, MAX_E_IDX, i_ptr->x_idx);
-					}
-#endif
 					find_string_info(k_name, k_info, MAX_K_IDX, i_ptr->k_idx);
+					if (i_ptr->flags & EI_EGO)
+					{
+						i_ptr->x_idx = find_string_ego_info(buf, i_ptr->k_idx);
+					}
 					if (readnum('k'))
 					{
 						readclearnum(i_ptr->k_idx, 'k');
@@ -890,12 +912,10 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 					{
 						readclearnum(i_ptr->x_idx, 'a');
 					}
-#ifdef ALLOW_EGO_DROP
 					else if (i_ptr->flags & EI_EGO)
 					{
 						readclearnum(i_ptr->x_idx, 'e');
 					}
-#endif
 					readclearnum(i_ptr->min, '(');
 					readclearnum(i_ptr->max, '-');
 
@@ -937,7 +957,6 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 							return PARSE_ERROR_GENERIC;
 						}
 					}
-#ifdef ALLOW_EGO_DROP
 					else if (i_ptr->flags & EI_EGO && ~i_ptr->flags & EI_RAND)
 					{
 						ego_item_type *e_ptr = &e_info[i_ptr->x_idx];
@@ -949,7 +968,6 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 						}
 						/* Ensure that the ego type is possible for this k_idx. */
 					}
-#endif
 
 					/* Ensure that a possible k_idx field has been created. */
 					if (k_info[i_ptr->k_idx].name == 0)
@@ -960,11 +978,8 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 
 					/* Ensure that RAND has not been used without a sensible thing
 					 * to randomise. */
-					if (i_ptr->flags & EI_RAND && ~i_ptr->flags & (EI_ART
-#ifdef ALLOW_EGO_DROP
-					| EI_EGO
-#endif
-					))
+					if (i_ptr->flags & EI_RAND &&
+						~i_ptr->flags & (EI_ART | EI_EGO))
 					{
 						msg_print("Nothing valid to randomise.");
 						return PARSE_ERROR_GENERIC;

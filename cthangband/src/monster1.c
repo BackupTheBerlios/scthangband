@@ -176,10 +176,8 @@ cptr describe_death_events(int r_idx, cptr he, bool omniscient)
 				if (i_ptr->max > 1) o_ptr->number = UNKNOWN_OBJECT_NUMBER;
 				if (i_ptr->flags & EI_ART)
 					o_ptr->name1 = i_ptr->x_idx;
-#ifdef ALLOW_EGO_DROP
 				if (i_ptr->flags & EI_EGO)
-				o_ptr->name2 = EP_EGO;
-#endif
+					o_ptr->name2 = i_ptr->x_idx;
 				s = format("%s%s %s drop %v", s, he, DDE_MAY,
 					object_desc_f3, o_ptr, OD_ART | OD_SHOP, 0);
 				break;
