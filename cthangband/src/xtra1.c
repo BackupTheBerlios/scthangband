@@ -4031,9 +4031,9 @@ static int window_best(const window_type *w_ptr, const u32b rep_mask)
 
 		/* Decide whether display i is better than display n. */
 		if (rep_mask & d_ptr->flag)
-			i_good = w_ptr->rep[i];
+			i_good = w_ptr->rep[i]*4;
 		else
-			i_good = w_ptr->pri[i]; /* 3 */
+			i_good = w_ptr->pri[i]*4; /* 3 */
 
 		if (!i_good) continue;	/* 1 (hack) */
 		if (i >= w_ptr->current) i_good++; /* 5 */
