@@ -4931,24 +4931,21 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* No broken items, so return any cursed ones found */
 				if (i == end) i = cursed;
 
-				/* No broken or cursed items */
-				if (i == -1)
-				{
-					bell();
-					break;
-				}
-				else
+				/* There was a broken or cursed item. */
+				if (i != -1)
 				{
 					/* Continue, preserving case */
 				which += index_to_label(i) - 'z';
 				}
 			}
 
-			/* Select the most valuable object in the selection. */
-			case 'y': case 'Y':
-			if (strchr("Yy", which) && spoil_value)
+			/* Select the most/least valuable object in the selection. */
+			case 'x': case 'X': case 'y': case 'Y':
+			if (strchr("XxYy", which) && spoil_value)
 			{
-				byte i, start, end, best;
+				int i, start, end, best;
+				bool high = strchr("Xx", which);
+				bool upper = isupper(which);
 				s32b best_price;
 				if (command_wrk)
 				{
@@ -4961,18 +4958,28 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 					end = INVEN_PACK;
 				}
 				/* Look through the items, finding the best value. */
-				for (i = start, best_price = 0; i < end; i++)
+				for (i = start, best = -1; i < end; i++)
 				{
 					object_type *o_ptr = &inventory[i];
 					s32b this_price;
 					if (!get_item_okay(i)) continue;
 					this_price = object_value(o_ptr) * o_ptr->number;
+					if (best >= start)
+					{
+					if (high)
+					{
 					if (this_price < best_price) continue;
+					}
+					else
+					{
+						if (this_price > best_price) continue;
+					}	
+					}
 					best = i;
 					best_price = this_price;
 				}
 				/* Paranoia */
-				if (best_price == 0)
+				if (best < 0)
 				{
 					bell();
 					break;
@@ -4980,7 +4987,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				else
 				{
 					/* Continue, preserving case */
-					which += index_to_label(best) - 'y';
+					which = index_to_label(best) + (upper) ? 'A'-'a' : 0;
 				}
 			}
 			default:
