@@ -1338,22 +1338,30 @@ static bool point_mod_player(void)
 /* Hack - special race for default stat set. */
 #define RACE_NONE 255
 
+/* Clean up and return. */
+#define RETURN(X) \
+{ \
+	TFREE(temp_stat_default); \
+	return X; \
+}
+
 /*
  * Load a set of stats.
  *
  * If menu is true, the player wants a choice.
  */
-static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
+static bc_type load_stat_set(bool menu)
 {
+	C_TNEW(temp_stat_default, stat_default_total+1, s16b);
 	bc_type rc;
 	int x;
 	s16b y;
 
 	/* Not allowed to do this. */
-	if (!allow_pickstats) return BC_ABORT;
+	if (!allow_pickstats) RETURN(BC_ABORT);
 
 	/* Paranoia - there should be a default entry */
-	if (!stat_default_total) return BC_ABORT;
+	if (!stat_default_total) RETURN(BC_ABORT);
 
 	/* Find a set of stats which match the current race and template
 	 * Templates with maximise set to DEFAULT_STATS are acceptable for
@@ -1389,7 +1397,7 @@ static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 	}
 
 	/* Don't do anything without a choice. */
-	if (!y) return BC_ABORT;
+	if (!y) RETURN(BC_ABORT);
 
 	/* Give the player the choices. */
 	if (menu)
@@ -1457,18 +1465,20 @@ static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 
 		/* Finally clean up. */
 		clear_from(start);
+
+		/* Pass the return to the caller. */
+		RETURN(rc);
 	}
 	/* We're starting for the first time, so give the player the last set saved. */
 	else if (!p_ptr->stat_cur[0])
 	{
 		x = y-1;
-		rc = BC_OKAY;
 	}
 	/* The player has already chosen stats, and hasn't asked to load new ones,
 	 * so do nothing. */
 	else
 	{
-		return BC_ABORT;
+		RETURN(BC_ABORT);
 	}
 	/* Something has been chosen, so copy everything across. */
 	if (x != -1)
@@ -1493,18 +1503,7 @@ static bc_type load_stat_set_aux(bool menu, s16b *temp_stat_default)
 			p_ptr->stat_cur[y] = p_ptr->stat_max[y] = tmp;
 		}
 	}
-	return rc;
-}
-
-/*
- * A wrapper around the above to handle dynamic allocation.
- */
-static bc_type load_stat_set(bool menu)
-{
-	C_TNEW(temp_stat_default, stat_default_total+1, s16b);
-	bc_type returncode = load_stat_set_aux(menu, temp_stat_default);
-	TFREE(temp_stat_default);
-	return returncode;
+	RETURN(BC_OKAY);
 }
 
 /*
