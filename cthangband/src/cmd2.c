@@ -2836,7 +2836,7 @@ void do_cmd_throw(int throw_mult)
        if ((hit_body) || (!cave_floor_bold(ny, nx)) || (randint(100) < j)) {
        /* Message */
        msg_format("The %v shatters!", object_desc_f3, q_ptr, FALSE, 3);
-       if (potion_smash_effect(1, y, x, q_ptr->k_idx))
+       if (potion_smash_effect(m_list+1, y, x, q_ptr->k_idx))
        {
               if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
                     {

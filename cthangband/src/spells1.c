@@ -1991,7 +1991,7 @@ static bool project_f(int r, int y, int x, int dam, int typ)
  *
  * We return "TRUE" if the effect of the projection is "obvious".
  */
-static bool project_o(int who, int r, int y, int x, int dam, int typ)
+static bool project_o(monster_type *m_ptr, int r, int y, int x, int dam, int typ)
 {
 	cave_type *c_ptr = &cave[y][x];
 
@@ -2003,9 +2003,6 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
     bool is_potion = FALSE;
 
-
-	/* XXX XXX XXX */
-	who = who ? who : 0;
 
 	/* Reduce damage by distance */
 	dam = (dam + r) / (r + 1);
@@ -2250,7 +2247,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
                    /* Potions produce effects when 'shattered' */
                    if (is_potion) {
-                   (void)potion_smash_effect(who, y, x, o_kidx);
+                   (void)potion_smash_effect(m_ptr, y, x, o_kidx);
                    }
                 
 
@@ -5722,7 +5719,7 @@ done_reflect: /* Success */
 		if (flg & (PROJECT_ITEM))
 		{
 			/* Affect the object in the grid */
-			if (project_o(who, dist, y, x, dam, typ)) notice = TRUE;
+			if (project_o(mw_ptr, dist, y, x, dam, typ)) notice = TRUE;
 		}
 		/* Check monsters */
 		if (flg & (PROJECT_KILL))
@@ -5783,8 +5780,10 @@ done_reflect: /* Success */
   *          the potion was in her inventory);
   *    o_ptr --- pointer to the potion object.
   */
-bool potion_smash_effect(int who, int y, int x, int o_kidx)
+bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 {
+	int who = (m_ptr) ? (m_ptr - m_list) : 0;
+
 	int       radius = 2;
 	int       dt = 0;
 	int       dam = 0;
