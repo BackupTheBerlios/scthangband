@@ -1229,7 +1229,7 @@ s16b get_mon_num(int level)
 /* Add a string at t (within buf) if there is enough room. */
 #define MDA_ADD(X) \
 { \
-	if (t-buf+strlen(X)+1 < MNAME_MAX) \
+	if (t-buf+strlen(X)+1 < max) \
 	{ \
 		strcpy(t, (X)); \
 		t += strlen(X); \
@@ -1250,13 +1250,13 @@ s16b get_mon_num(int level)
  *  10 TRUE  -     TRUE   "the 10 Newts"
 
  */
-static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
+static cptr monster_desc_aux_2(char *out, char *buf, uint max, cptr name,
+	int num, byte flags)
 {
 	cptr artstr = ""; /* Needed, as no sanity checking is done in init1.c. */
 	cptr s;
 	char *t;
 	byte reject = 0;
-	C_TNEW(buf, MNAME_MAX, char);
 
 	if (num == 1) reject |= 1<<MCI_PLURAL;
 	else flags |= MDF_MANY;
@@ -1291,7 +1291,7 @@ static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 		artstr = out;
 	}
 
-	for (s = name, t = buf; *s && t < buf+MNAME_MAX-1; s++)
+	for (s = name, t = buf; *s && t < buf+max-1; s++)
 	{
 		if (*s & 0xE0)
 		{
@@ -1312,14 +1312,14 @@ static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 	*t = '\0';
 
 	/* Decipher articles, and copy across. */
-	for (s = buf, t = out; t < out+MNAME_MAX-1;)
+	for (s = buf, t = out; t < out+max-1;)
 	{
 		if (*s == (MCI_ARTICLE | CM_ACT))
 		{
 			cptr u,article;
 			for (u = s; !isalnum(*u) && *u; u++);
 			article = (strchr("aeiouAEIOU8", *u)) ? "an" : "a";
-			if (t-out+strlen(article)+1 < MNAME_MAX)
+			if (t-out+strlen(article)+1 < max)
 			{
 				strcpy(t, article);
 				t = strchr(t, '\0');
@@ -1332,30 +1332,57 @@ static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 		}
 	}
 
-	TFREE(buf);
-
 	/* And return it. */
 	return out;
 }
 
 /*
- * A wrapper around the above function provided so that a buf of NULL is
- * parsed as a request to return the output in the format buffer.
+ * Process the above as a vstrnfmt_aux function.
+ *
+ * Format: 
+ * "%v", monster_desc_aux_f3, (monster_race*)r_ptr, (int)num, (byte)flags
+ * or:
+ * "%.*v", (int)len, monster_desc_aux_f3, r_ptr, num, flags
+ *
+ * Note that max is expected to be >= 2*len, which is true for normal values
+ * of each.
  */
-cptr monster_desc_aux(char *buf, monster_race *r_ptr, int num, byte flags)
+void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 {
-	if (buf)
+	/* Extract the arguments. */
+	monster_race *r_ptr = va_arg(*vp, monster_race *);
+	int num = va_arg(*vp, int);
+	uint flags = va_arg(*vp, uint);
+	uint len;
+	cptr s;
+	char *tmp;
+
+	/* Use %.123v to specify a maximum length of 123. */
+	if ((s = strchr(fmt, '.')))
 	{
-		return monster_desc_aux_2(buf, r_name+r_ptr->name, num, flags);
+		long m = strtol(s+1, 0, 0);
+		len = MAX(0, m);
 	}
-	else
+	/* Without a length specifier, the normal limit is MNAME_MAX. */
+	if (len > MNAME_MAX)
 	{
-		C_TNEW(tmp, MNAME_MAX, char);
-		buf = format("%s", monster_desc_aux_2(tmp, r_name+r_ptr->name, num,
-			flags));
-		TFREE(tmp);
-		return buf;
+		len = MNAME_MAX;
 	}
+
+	if (max < len*2)
+	{
+		len = max/2;
+	}
+
+	/* Check the arguments. */
+	if (r_ptr < r_info || r_ptr >= r_info+MAX_R_IDX ||
+		flags & ~0xFF || !len)
+	{
+		sprintf(buf, "%.*s", max-1, "(error)");
+		return;
+	}
+
+	monster_desc_aux_2(buf, buf+len, len, r_name+r_ptr->name, num, flags);
 }
 
 /*
@@ -1492,7 +1519,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 					hallu_race = &r_info[randint(MAX_R_IDX-2)];
 				}
 				while (hallu_race->flags1 & RF1_UNIQUE);
-				name = monster_desc_aux(0, r_ptr, 1, 0);
+				name = format("%v", monster_desc_aux_f3, hallu_race, 1, 0);
 	        }
 	        else
 	        {
@@ -1502,7 +1529,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 	    }
 		else
 		{
-			name = monster_desc_aux(0, r_ptr, 1, 0);
+			name = format("%v", monster_desc_aux_f3, r_ptr, 1, 0);
 		}
 
 		/* It could be a Unique */
@@ -2238,8 +2265,8 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 		if (r_ptr->flags1 & (RF1_UNIQUE))
 		{
 			/* Message for cheaters */
-			if (cheat_hear) msg_format("Deep Unique (%s).",
-				monster_desc_aux(0, r_ptr, 1, 0));
+			if (cheat_hear) msg_format("Deep Unique (%v).",
+				monster_desc_aux_f3, r_ptr, 1, 0);
 
 			/* Boost rating by twice delta-depth */
 			rating += (r_ptr->level - (dun_depth)) * 2;
@@ -2249,8 +2276,8 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 		else
 		{
 			/* Message for cheaters */
-			if (cheat_hear) msg_format("Deep Monster (%s).",
-				monster_desc_aux(0, r_ptr, 1, 0));
+			if (cheat_hear) msg_format("Deep Monster (%v).",
+				monster_desc_aux_f3, r_ptr, 1, 0);
 
 			/* Boost rating by delta-depth */
 			rating += (r_ptr->level - (dun_depth));
@@ -2261,8 +2288,8 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	else if (r_ptr->flags1 & (RF1_UNIQUE))
 	{
 		/* Unique monsters induce message */
-		if (cheat_hear) msg_format("Unique (%s).",
-			monster_desc_aux(0, r_ptr, 1, 0));
+		if (cheat_hear) msg_format("Unique (%v).",
+			monster_desc_aux_f3, r_ptr, 1, 0);
 	}
 
 
@@ -3039,7 +3066,7 @@ static bool summon_specific_okay(int r_idx)
 		}
         case SUMMON_REAVER:
         {
-            okay = ((strstr(monster_desc_aux(0, r_ptr, 1, 0),
+            okay = ((strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
 				"Black reaver")) && !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
@@ -3055,7 +3082,7 @@ static bool summon_specific_okay(int r_idx)
 
         case SUMMON_AVATAR:
         {
-            okay = (strstr(monster_desc_aux(0, r_ptr, 1, 0),
+            okay = (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
 				"Avatar of Nyarlathotep") && !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
@@ -3102,14 +3129,14 @@ static bool summon_specific_okay(int r_idx)
 
         case SUMMON_PHANTOM:
         {
-            okay = (strstr(monster_desc_aux(0, r_ptr, 1, 0),"Phantom")
-				&& !(r_ptr->flags1 & (RF1_UNIQUE)));
+            okay = (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
+				"Phantom") && !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
         case SUMMON_ELEMENTAL:
         {
-            okay = (strstr(monster_desc_aux(0, r_ptr, 1, 0),"lemental")
-				&& !(r_ptr->flags1 & (RF1_UNIQUE)));
+            okay = (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
+				"lemental") && !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
 

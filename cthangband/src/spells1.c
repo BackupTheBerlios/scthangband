@@ -2670,7 +2670,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		/* Water (acid) damage -- Water spirits/elementals are immune */
 		case GF_WATER:
 		{
-			cptr name = monster_desc_aux(0, r_ptr, 1, 0);
+			cptr name = format("%v", monster_desc_aux_f3, r_ptr, 1, 0);
 			if (seen) obvious = TRUE;
             if (((r_ptr->d_char == 'E')
                 && (prefix(name, "w"))) || (strstr(name, "unmaker")))

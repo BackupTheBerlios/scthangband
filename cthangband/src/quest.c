@@ -78,9 +78,9 @@ void print_quest_message(void)
 	monster_race	*r_ptr = &r_info[q_list[q_idx].r_idx];
 	int q_num = q_list[q_idx].max_num - q_list[q_idx].cur_num_known;
 	byte flag = (q_list[q_idx].max_num == 1) ? MDF_DEF : MDF_NUMBER;
-	cptr name = monster_desc_aux(0, r_ptr, q_num, flag);
 
-	msg_format("You still have to kill %s.", name);
+	msg_format("You still have to kill %v.", monster_desc_aux_f3, r_ptr,
+		q_num, flag);
 }
 
 /* Array of places to find an inscription */
@@ -101,7 +101,6 @@ void quest_discovery(void)
 	int 	q_idx = get_quest_number();
 	monster_race	*r_ptr = &r_info[q_list[q_idx].r_idx];
 	int q_num = q_list[q_idx].max_num;
-	C_TNEW(name, MNAME_MAX, char);
 
 	/* Get a properly formatted name. Note that no monster will actually
 	be given an article as only uniques are currently allowed to be
@@ -113,12 +112,11 @@ void quest_discovery(void)
 		flags = MDF_DEF;
 	else
 		flags = MDF_INDEF;
-	monster_desc_aux(name, r_ptr, q_num, flags);
 
 	msg_print (find_quest[rand_range(0,4)]);
 	msg_print (NULL);
-	msg_format("Beware, this level is protected by %s!", name);
-	TFREE(name);
+	msg_format("Beware, this level is protected by %v!", monster_desc_aux_f3,
+		r_ptr, q_num, flags);
 }
 
 /*

@@ -1373,23 +1373,15 @@ static void spoil_mon_desc(cptr fname)
 	for (i = 0; i < n; i++)
 	{
 		monster_race *r_ptr = &r_info[who[i]];
-
-		cptr name = monster_desc_aux(0, r_ptr, 1, 0);
+		cptr pre;
 
 		/* Get the "name" */
-		if (r_ptr->flags1 & (RF1_ALWAYS_GUARD))
-		{
-			sprintf(nam, "[G] %.*s", N_ELEMENTS(nam)-strlen("[G] ")-1, name);
-		}
-		else if (r_ptr->flags1 & (RF1_UNIQUE))
-		{
-			sprintf(nam, "[U] %.*s", N_ELEMENTS(nam)-strlen("[U] ")-1, name);
-		}
-		else
-		{
-			sprintf(nam, "The %.*s", N_ELEMENTS(nam)-strlen("The ")-1, name);
-		}
+		if (r_ptr->flags1 & (RF1_ALWAYS_GUARD)) pre = "[G]";
+		else if (r_ptr->flags1 & (RF1_UNIQUE)) pre = "[U]";
+		else pre = "The";
 
+		strnfmt(nam, N_ELEMENTS(nam), "%s %.*s", pre, monster_desc_aux_f3,
+			N_ELEMENTS(nam)-strlen(pre)-1, r_ptr, 1, 0);
 
 		/* Level */
 		sprintf(lev, "%d", r_ptr->level);
@@ -1608,9 +1600,7 @@ static void spoil_mon_info(cptr fname)
 		}
 
 		/* Name */
-		sprintf(buf, "%.*s  (", N_ELEMENTS(buf)-strlen("  (")-1,
-			monster_desc_aux(0, r_ptr, 1, 0));
-		spoil_out(buf);
+		spoil_out(format("%v  (", monster_desc_aux_f3, r_ptr, 1, 0));
 
 		/* Color */
 		spoil_out(attr_to_text(r_ptr->d_attr));

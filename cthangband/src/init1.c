@@ -1047,8 +1047,8 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 						for (i = 1; i < MAX_R_IDX; i++)
 						{
 							if (r_info[i].name)
-								array[i-1] = string_make(monster_desc_aux(0,
-									r_info+i, 1, 0));
+								array[i-1] = string_make(format("%v",
+									monster_desc_aux_f3, r_info+i, 1, 0));
 							else
 								array[i-1] = string_make("");
 						}

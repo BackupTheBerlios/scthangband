@@ -480,7 +480,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define find_ci(c) ((c) & 0x07)
 #define is_cx_char(c) (c && (c == find_cm(c) + find_ci(c)))
 
-/* monster_desc_aux() flags. */
+/* monster_desc_aux_f3() flags. */
 #define MDF_INDEF	0x01	/* Give an indefinite article (a ...). */
 #define MDF_NUMBER	0x02	/* Give a number (10 ...). */
 #define MDF_DEF	0x04	/* Give a definite article (the ...). */

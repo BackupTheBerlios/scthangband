@@ -498,11 +498,8 @@ errr my_fgets(FILE *fff, char *buf, huge n)
  *
  * XXX XXX XXX Process internal weirdness?
  */
-errr my_fputs(FILE *fff, cptr buf, huge n)
+errr my_fputs(FILE *fff, cptr buf, huge UNUSED n)
 {
-	/* XXX XXX */
-	n = n ? n : 0;
-
 	/* Dump, ignore errors */
 	(void)fprintf(fff, "%s\n", buf);
 

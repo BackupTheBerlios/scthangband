@@ -6050,7 +6050,7 @@ static void process_monster(int m_idx, bool is_friend)
 
 
     /* Hack! "Black Reaver" monster makes noise... */
-    if (strstr(monster_desc_aux(0, r_ptr, 1, 0),"Black Reaver"))
+    if (strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),"Black Reaver"))
     {
 		if (!(m_ptr->ml))
 		{
@@ -6072,11 +6072,11 @@ static void process_monster(int m_idx, bool is_friend)
 				C_TNEW(m_name, MNAME_MAX, char);
                 char bravado[80];
 
-                bool is_groo = !!(strstr(monster_desc_aux(0, r_ptr, 1, 0),
-					"Groo"));
+				bool is_groo = !!(strstr(format("%v", monster_desc_aux_f3,
+					r_ptr, 1, 0), "Groo"));
 
-                bool is_smeagol = !!(strstr(monster_desc_aux(0, r_ptr, 1, 0),
-					"Smeagol"));
+				bool is_smeagol = !!(strstr(format("%v", monster_desc_aux_f3,
+					r_ptr, 1, 0), "Smeagol"));
  
 
 

@@ -1321,14 +1321,14 @@ void py_attack(int y, int x)
                 }
             else if (backstab)
 			{
-                msg_format("You cruelly stab the helpless, sleeping %s!",
-                    monster_desc_aux(0, r_ptr, 1, 0));
+                msg_format("You cruelly stab the helpless, sleeping %v!",
+                    monster_desc_aux_f3, r_ptr, 1, 0);
 				skill_exp(SKILL_STEALTH);
             }
 			else
 			{
                 msg_format("You backstab the fleeing %s!",
-                    (monster_desc_aux(0, r_ptr, 1, 0)));
+                    monster_desc_aux_f3, r_ptr, 1, 0);
 				skill_exp(SKILL_STEALTH);
 			}
 

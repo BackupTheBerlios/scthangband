@@ -1875,7 +1875,7 @@ get_visuals(f_info, f_name)
 static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
 {
 	get_visuals(r_info, (char*)NULL)
-	*name = monster_desc_aux(0, r_info+i, 1, 0);
+	*name = format("%v", monster_desc_aux_f3, r_info+i, 1, 0);
 }
 
 /*
@@ -2976,37 +2976,47 @@ void do_cmd_save_screen(void)
 }
 
 
-#if 0  /* This unfortunately doesn't work everywhere. */
-#define GET_SYMBOL_LEN	(strlen(CC_PREFIX "c" CC_PREFIX CC_PREFIX "w")+2)
-#else /* 0 */
-#define GET_SYMBOL_LEN 7
-#endif /* 0 */
-
 /*
  * A simple function to include a coloured symbol in a text file for
  * show_file().
+ *
+ * Format:
+ * "%v", get_symbol_f2, (byte)at, (char)ch
  */
-cptr get_symbol_aux(byte a, char c)
+void get_symbol_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
-	/* Hack - show_file() does not display unprintable characters,
-	 * so replace them with something it will display. */
-	if (!isprint(c)) c = '#';
+	uint at = va_arg(*vp, uint);
+	int ch = va_arg(*vp, int);
 
-	else if (strlen(CC_PREFIX) == 1 && c == CC_PREFIX[0])
-		return format("%s%c%s%s%sw", CC_PREFIX, atchar[a], CC_PREFIX, CC_PREFIX,
-			CC_PREFIX);
+	/* Paranoia - max is not long enough. */
+	if (max <= strlen(CC_PREFIX "c" CC_PREFIX CC_PREFIX "w")+2) return;
 
-	return format("%s%c%c%sw", CC_PREFIX, atchar[a], c, CC_PREFIX);
+	/* Check formatting. */
+	if (at != (byte)at || ch != (char)ch)
+	{
+		strcpy(buf, "(error)");
+	}
+	/* Double CC_PREFIX to print it if necessary. */
+	else if (strlen(CC_PREFIX) == 1 && ch == CC_PREFIX[0])
+	{
+		sprintf(buf, "%c%c%c%c%cw", ch, atchar[at], ch, ch, ch);
+	}
+	/* Normal string. */
+	else
+	{
+		sprintf(buf, "%s%c%c%sw", CC_PREFIX, atchar[at], ch, CC_PREFIX);
+	}
 }
 
 /*
  * A wrapper to find an appropriate attr/char combination from the *_info
- * array. The isprint() check is necessary as show_file() reacts badly to
+ * array. The isprint() checks are necessary as show_file() reacts badly to
  * unprintable characters.
  */
 #define get_symbol(x_ptr) \
-	get_symbol_aux((x_ptr)->x_attr, \
-		isprint((x_ptr)->x_char) ? (x_ptr)->x_char : (x_ptr)->d_char)
+	get_symbol_f2, (x_ptr)->x_attr, \
+		isprint((x_ptr)->x_char) ? (x_ptr)->x_char : \
+		isprint((x_ptr)->d_char) ? (x_ptr)->d_char : '#'
 
 /*
  * Check the status of "artifacts"
@@ -3129,8 +3139,8 @@ static void do_cmd_knowledge_artifacts(void)
 		}
 
 		/* Hack -- Build the artifact name */
-		fprintf(fff, " %s   The %s\n",
-			get_symbol(&k_info[a_ptr->k_idx]), base_name);
+		my_fputs(fff, format(" %v   The %s\n",
+			get_symbol(&k_info[a_ptr->k_idx]), base_name), 0);
 	}
 
 	/* Free the "okay" array */
@@ -3163,7 +3173,6 @@ static void do_cmd_knowledge_uniques(void)
 	FILE *fff;
 
 	char file_name[1024];
-	C_TNEW(m_name, MNAME_MAX, char);
 
 	/* Open a new file */
 	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
@@ -3182,14 +3191,11 @@ static void do_cmd_knowledge_uniques(void)
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
-				char sym[GET_SYMBOL_LEN];
-				strcpy(sym, get_symbol(r_ptr));
-
-				fprintf(fff, " %s %c %s%c%s is %s\n", sym,
+				my_fputs(fff, format(" %v %c %s%c%v is %s", get_symbol(r_ptr),
 					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', CC_PREFIX, 
 					(dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE],
-					monster_desc_aux(m_name, r_ptr, 1, MDF_DEF),
-					(dead ? "dead" : "alive"));
+					monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
+					(dead) ? "dead" : "alive"), 0);
 			}
 		}
 	}
@@ -3246,7 +3252,7 @@ static void do_cmd_knowledge_pets(void)
 			t_levels += r_ptr->level;
 			monster_desc(pet_name, m_ptr, 0x88, Term->wid-2);
 			strcat(pet_name, "\n");
-			fprintf(fff,"%s %s\n", get_symbol(r_ptr), pet_name);
+			my_fputs(fff, format("%v %s\n", get_symbol(r_ptr), pet_name), 0);
 			TFREE(pet_name);
 		}
 	}
@@ -3302,9 +3308,8 @@ static int count_kills(FILE *fff, bool noisy)
 			else if (r_ptr->flags1 & RF1_UNIQUE) flags |= MDF_DEF;
 			else flags |= MDF_INDEF;
 			
-
-			fprintf(fff, " %s   ", get_symbol(r_ptr));
-			fprintf(fff, "%s\n", monster_desc_aux(0, r_ptr, This, flags));
+			my_fputs(fff, format(" %v   %v", get_symbol(r_ptr),
+				monster_desc_aux_f3, r_ptr, This, flags), 0);
 		}
 	}
 	return Total;
@@ -3419,7 +3424,6 @@ static void do_cmd_knowledge_deaths(void)
 		/* Display the sorted list. */
 		for (i = 0; i < Races; i++)
 		{
-			char sym[GET_SYMBOL_LEN];
 			monster_race *r_ptr = &r_info[races[i]];
 			int num = (r_ptr->flags1 & RF1_UNIQUE) ? 1 : r_ptr->r_deaths;
 			byte flags;
@@ -3436,12 +3440,10 @@ static void do_cmd_knowledge_deaths(void)
 				flags = 0;
 			}
 
-			strcpy(sym, get_symbol(r_ptr));
-
 			/* Format the string, including the monster's ASCII representation. */
-			fprintf(fff, " %s   %d w%s killed by %s.\n", sym, r_ptr->r_deaths,
-				(r_ptr->r_deaths == 1) ? "as" : "ere",
-				monster_desc_aux(0, r_ptr, num, flags));
+			my_fputs(fff, format(" %v   %d w%s killed by %v.\n",
+				get_symbol(r_ptr), r_ptr->r_deaths, (r_ptr->r_deaths == 1) ?
+				"as" : "ere", monster_desc_aux_f3, r_ptr, num, flags), 0);
 
 			/* Count the total. */
 			Deaths+=r_ptr->r_deaths;
@@ -3512,8 +3514,8 @@ static void do_cmd_knowledge_objects(void)
 			object_desc_store(o_name, i_ptr, FALSE, 0);
 
 			/* Print a message */
-			fprintf(fff, " %s   %s\n", get_symbol_aux(object_attr(i_ptr),
-				object_char(i_ptr)), o_name);
+			my_fputs(fff, format(" %v   %s\n", get_symbol_f2,
+				object_attr(i_ptr), object_char(i_ptr), o_name), 0);
 		}
 	}
 
