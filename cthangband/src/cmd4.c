@@ -196,10 +196,10 @@ void do_cmd_message_one(void)
 
 
 /*
- * Show previous messages to the user -BEN-
+ * Show previous messages to the user
  *
- * The screen format uses line 0 and 23 for headers and prompts,
- * skips line 1 and 22, and uses line 2 thru 21 for old messages.
+ * Uses show_file() to display the messages. The user can put arbitrary strings
+ * into this, but the interpreter should cope with anything we throw at it.
  *
  * This command shows you which commands you are viewing, and allows
  * you to "search" for strings in the recall.
@@ -211,205 +211,39 @@ void do_cmd_message_one(void)
  * Attempt to only hilite the matching portions of the string.
  */
 void do_cmd_messages(void)
-	{
-	int i, j, k, n, q;
+{
+	char file_name[1024];
+	FILE *fff;
+	int n, t;
 
-	char shower[80];
-	char finder[80];
-
-
-	/* Wipe finder */
-	strcpy(finder, "");
-
-	/* Wipe shower */
-	strcpy(shower, "");
-
+	if (!((fff = my_fopen_temp(ARRAY(file_name))))) return;
 
 	/* Total messages */
-	n = message_num();
+	for (n = message_num(); n; n--)
+	{
+		fprintf(fff, "%s\n", message_str(n-1));
+	}
 
-	/* Start on first message */
-	i = 0;
+	/* Close the file */
+	my_fclose(fff);
 
-	/* Start at leftmost edge */
-	q = 0;
-
-
-	/* Enter "icky" mode */
-	character_icky = TRUE;
+	/* Hack - start at the bottom, with the most recent messages. */
+	set_gnext("1");
 
 	/* Save the screen */
-	Term_save();
+	t = Term_save_aux();
 
-	/* Process requests until done */
-	while (1)
-	{
-		const int max = Term->hgt-4, prompty = max+3;
-
-		/* Clear screen */
-		Term_clear();
-
-		/* Dump up to 20 lines of messages */
-		for (j = 0; (j < max) && (i + j < n); j++)
-		{
-			cptr msg = message_str((short)(i+j));
-
-			/* Apply horizontal scroll */
-			msg = (strlen(msg) >= (size_t)q) ? (msg + q) : "";
-
-			/* Dump the messages, bottom to top */
-			mc_put_str(max+1-j, 0, msg);
-
-			/* Hilite "shower" */
-			if (shower[0])
-			{
-				cptr str = msg;
-
-				/* Display matches */
-				while ((str = strstr(str, shower)) != NULL)
-				{
-					int len = strlen(shower);
-
-					/* Display the match */
-					mc_put_fmt(max+1-j, str-msg, "$y%.*s", len, shower);
-
-					/* Advance */
-					str += len;
-				}
-			}
-		}
-
-		/* Display header XXX XXX XXX */
-		prt(format("Message Recall (%d-%d of %d), Offset %d",
-			i, i+j-1, n, q), 0, 0);
-
-		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", prompty, 0);
-
-		/* Get a command */
-		k = inkey();
-
-		/* Exit on Escape */
-		if (k == ESCAPE) break;
-
-		/* Hack -- Save the old index */
-		j = i;
-
-		/* Horizontal scroll */
-		if (k == '4')
-		{
-			/* Scroll left */
-			q = (q >= 40) ? (q - 40) : 0;
-
-			/* Success */
-			continue;
-		}
-
-		/* Horizontal scroll */
-		if (k == '6')
-		{
-			/* Scroll right */
-			q = q + 40;
-
-			/* Success */
-			continue;
-	}
-
-		/* Hack -- handle show */
-		if (k == '=')
-		{
-			/* Prompt */
-			prt("Show: ", prompty, 0);
-
-			/* Get a "shower" string, or continue */
-			if (!askfor_aux(shower, 80)) continue;
-
-			/* Okay */
-			continue;
-}
-
-		/* Hack -- handle find */
-		if (k == '/')
-		{
-			int z;
-
-			/* Prompt */
-			prt("Find: ", prompty, 0);
-
-			/* Get a "finder" string, or continue */
-			if (!askfor_aux(finder, 80)) continue;
-
-			/* Show it */
-			strcpy(shower, finder);
-
-			/* Scan messages */
-			for (z = i + 1; z < n; z++)
-			{
-				cptr msg = message_str((short)z);
-
-				/* Search for it */
-				if (strstr(msg, finder))
-				{
-					/* New location */
-					i = z;
-
-					/* Done */
-					break;
-				}
-			}
-		}
-
-		/* Recall 1 older message */
-		if ((k == '8') || (k == '\n') || (k == '\r'))
-		{
-			/* Go newer if legal */
-			if (i + 1 < n) i += 1;
-		}
-
-		/* Recall 10 older messages */
-		if (k == '+')
-	{
-			/* Go older if legal */
-			if (i + max/2 < n) i += max/2;
-		}
-
-		/* Recall 20 older messages */
-		if ((k == 'p') || (k == KTRL('P')) || (k == ' '))
-		{
-			/* Go older if legal */
-			if (i + max < n) i += max;
-		}
-
-		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')))
-			{
-			/* Go newer (if able) */
-			i = (i >= max) ? (i - max) : 0;
-			}
-
-		/* Recall 10 newer messages */
-		if (k == '-')
-		{
-			/* Go newer (if able) */
-			i = (i >= max/2) ? (i - max/2) : 0;
-		}
-
-		/* Recall 1 newer messages */
-		if (k == '2')
-		{
-			/* Go newer (if able) */
-			i = (i >= 1) ? (i - 1) : 0;
-	}
-
-		/* Hack -- Error of some kind */
-		if (i == j) bell(0);
-	}
+	/* Display the file contents */
+	show_file(file_name, "Message Recall");
 
 	/* Restore the screen */
-	Term_load();
+	Term_load_aux(t);
 
-	/* Leave "icky" mode */
-	character_icky = FALSE;
+	/* Forget the restored screen. */
+	Term_release(t);
+
+	/* Remove the file */
+	fd_kill(file_name);
 }
 
 #define DCO_ERROR_ABORT 1

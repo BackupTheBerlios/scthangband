@@ -2381,7 +2381,7 @@ extern void sound(int val);
 #if (defined(MAIN_CRB_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool screen_is_icky(void);
 #endif
-#if (defined(BIRTH_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void set_gnext(cptr next);
 #endif
 #if (defined(SQUELCH_C) || defined(UTIL_C))
