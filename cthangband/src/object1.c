@@ -688,12 +688,12 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 				/* See cumber_helm(). The object is known not to boost wis. */
 				if ((j_ptr->flags1 & ~f1 & TR1_WIS) ||
 					(j_ptr->pval && o_ptr->pval <= 0))
-				j_ptr->flags3 |= TR3_TELEPATHY;
+					j_ptr->flags3 |= TR3_TELEPATHY;
 			}
 		}
 
 		/* Cursing uses a separate ident flag. */
-		if (j_ptr->ident & IDENT_SENSE_CURSED)
+		if (o_ptr->ident & IDENT_SENSE_CURSED)
 		{
 			j_ptr->flags3 |= TR3_CURSED;
 
@@ -715,7 +715,7 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 		if (f3 & TR3_SHOW_MODS) j_ptr->dd = j_ptr->ds = 1;
 
 		/* Hack - resist_chaos by any means gives resist_conf. */
-		if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
+		if (j_ptr->flags2 & f2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
 	}
 }
 
