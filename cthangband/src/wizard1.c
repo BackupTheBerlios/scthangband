@@ -1197,7 +1197,7 @@ bool make_fake_artifact(object_type *o_ptr, int name1)
 	if (!a_ptr->name) return FALSE;
 
 	/* Acquire the "kind" index */
-	i = lookup_kind(a_ptr->tval, a_ptr->sval);
+	i = a_ptr->k_idx;
 
 	/* Oops */
 	if (!i) return (FALSE);
@@ -1278,7 +1278,7 @@ static void spoil_artifact(cptr fname)
 			artifact_type *a_ptr = &a_info[j];
 
 			/* We only want objects in the current group */
-			if (a_ptr->tval != group_artifact[i].tval) continue;
+			if (k_info[a_ptr->k_idx].tval != group_artifact[i].tval) continue;
 
 			/* Get local object */
 			q_ptr = &forge;

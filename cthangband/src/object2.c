@@ -1904,8 +1904,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 		/* Must have the correct fields if "normal" */
 		if (!special)
 		{
-		if (a_ptr->tval != o_ptr->tval) continue;
-		if (a_ptr->sval != o_ptr->sval) continue;
+			if (a_ptr->k_idx != o_ptr->k_idx) continue;
 		}		
 			
 		/* Note artefact */
@@ -1946,7 +1945,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 		if (special)
 		{
 			/* Find the base object */
-			int k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+			int k_idx = a_ptr->k_idx;
 			object_kind *k_ptr = &k_info[k_idx];
 
 			/* Roll for the base object */

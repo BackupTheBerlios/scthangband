@@ -3090,7 +3090,7 @@ static void do_cmd_knowledge_artifacts(void)
 		strcpy(base_name, "Unknown Artifact");
 
 		/* Obtain the base object type */
-		z = lookup_kind(a_ptr->tval, a_ptr->sval);
+		z = a_ptr->k_idx;
 
 		/* Real object */
 		if (z)
@@ -3113,7 +3113,7 @@ static void do_cmd_knowledge_artifacts(void)
 
 		/* Hack -- Build the artifact name */
 		fprintf(fff, " %s   The %s\n",
-			get_symbol((&k_info[lookup_kind(a_ptr->tval, a_ptr->sval)])), base_name);
+			get_symbol(&k_info[a_ptr->k_idx]), base_name);
 	}
 
 	/* Free the "okay" array */

@@ -974,11 +974,10 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 						/* Take an unstated k_idx to be that of the artefact. */
 						else if (!i_ptr->k_idx)
 						{
-							i_ptr->k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+							i_ptr->k_idx = a_ptr->k_idx;
 						}
 						/* Ensure that any stated k_idx is the right one. */
-						else if (k_info[i_ptr->k_idx].tval != a_ptr->tval ||
-							k_info[i_ptr->k_idx].sval != a_ptr->sval)
+						else if (i_ptr->k_idx != a_ptr->k_idx)
 						{
 							msg_print("Incompatible object and artefact.");
 							return ERR_PARSE;
@@ -2095,23 +2094,20 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 		}
 		case 'I':
 		{
-			int tval, sval, k_idx, pval;
+			int k_idx, pval;
 
-			if (3 == sscanf(buf+2, "%d:%d:%d", &tval, &sval, &pval))
-			{
-				a_ptr->tval = tval;
-				a_ptr->sval = sval;
-			}
 			/* Scan for the values */
-			else if (2 == sscanf(buf+2, "%d:%d",
-			                &k_idx, &pval))
-			{
-			/* Save the values */
-				a_ptr->tval = k_info[k_idx].tval;
-				a_ptr->sval = k_info[k_idx].sval;
-			}
-			else return 1;
+			if (2 != sscanf(buf+2, "%d:%d", &k_idx, &pval)) return 1;
 
+			/* Test the values */
+			if (k_idx < 0 || k_idx >= MAX_K_IDX || !k_info[k_idx].name ||
+				(pval < -32768 || pval > 32767))
+			{
+				return PARSE_ERROR_OUT_OF_BOUNDS;
+			}
+
+			/* Save the values */
+			a_ptr->k_idx = k_idx;
 			a_ptr->pval = pval;
 
 			/* Next... */

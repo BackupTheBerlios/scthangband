@@ -293,8 +293,7 @@ struct artifact_type
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
 
-	byte tval;			/* Artifact type */
-	byte sval;			/* Artifact sub type */
+	s16b k_idx;			/* Artifact type */
 
 	s16b pval;			/* Artifact extra info */
 

@@ -86,7 +86,7 @@ void wiz_create_named_art(int a_idx)
        if (!a_ptr->name) return;
 
        /* Acquire the "kind" index */
-       i = lookup_kind(a_ptr->tval, a_ptr->sval);
+       i = a_ptr->k_idx;
 
        /* Oops */
        if (!i) return;
