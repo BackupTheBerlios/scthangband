@@ -2468,7 +2468,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 static void a_m_aux_4(object_type *o_ptr, int level, int power)
 {
 	/* Apply magic (good or bad) according to type */
-	if (o_ptr->k_idx == OBJ_WOODEN_TORCH || o_ptr->k_idx = OBJ_BRASS_LANTERN)
+	if (o_ptr->k_idx == OBJ_WOODEN_TORCH || o_ptr->k_idx == OBJ_BRASS_LANTERN)
 	{
 		if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
 	}
