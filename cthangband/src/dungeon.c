@@ -230,10 +230,6 @@ static void sense_inventory(void)
 	/* Okay sensing for everyone*/
 	if (0 != rand_int(20000L / (plev * plev + 40))) return;
 
-	/* Heavy sensing at higher skill levels*/
-	if (plev > 20) heavy = TRUE;
-
-
 	/*** Sense everything ***/
 
 	/* Check everything */
@@ -241,7 +237,19 @@ static void sense_inventory(void)
 	{
 		bool okay = FALSE, repeat;
 		u16b oldident;
- 
+
+		/* Pseudo-id heaviness increases with level. Note that it becomes
+		 * harder to tell that a "good" object isn't "excellent" at higher
+		 * skill levels <60 because you're less likely to ever get the second
+		 * "good" message you get when it is pseudo-identified first lightly
+		 * and then heavily. */
+		if (skill_set[SKILL_PSEUDOID].value > 59) heavy = TRUE;
+		else if (skill_set[SKILL_PSEUDOID].value < 21) heavy = FALSE;
+		else
+		{
+			/* I could just use this for the calculation, but... */
+			heavy = (rand_range(20, 59) < skill_set[SKILL_PSEUDOID].value);
+		}
 
 		o_ptr = &inventory[i];
 
