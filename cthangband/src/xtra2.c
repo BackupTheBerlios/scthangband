@@ -383,8 +383,8 @@ static int notice_food(int old, int new)
 	/* Boring if they're the same. */
 	if (i == j) return -1;
 
-	if (old < new) return END_PTR(t)-j-1;
-	else return END_PTR(t)-j+5;
+	if (old < new) return END_PTR(t)-j-2;
+	else return END_PTR(t)-j+4;
 }
 
 /*
