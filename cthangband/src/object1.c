@@ -4457,14 +4457,6 @@ void show_equip(void)
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
 
-		/* Indicate AC from a lack of armour where appropriate */
-		if (ma_empty_hands() && !mystic_notify_aux && (j = mystic_armour(i)) > 0)
-		{
-			o_ptr->ac = j;
-			o_ptr->art_flags3 |= TR3_SHOW_ARMOUR;
-		}
-/*			sprintf(strchr(out_desc[k], '\0'), " [%d]", j);*/
-
 		/* Description */
 		object_desc(o_name, o_ptr, TRUE, 3);
 

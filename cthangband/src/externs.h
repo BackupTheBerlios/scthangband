@@ -3406,7 +3406,7 @@ extern bool (*get_obj_num_hook)(int k_idx);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(VARIABLE_C))
 extern bool angband_keymap_flag ;
 #endif
-#if (defined(OBJECT1_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool mystic_notify_aux;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -3520,9 +3520,9 @@ extern void help_track(cptr str);
 #if (defined(CMD4_C) || defined(XTRA1_C))
 extern void win_help_display(void);
 #endif
-#if (defined(OBJECT1_C) || defined(XTRA1_C))
-extern int mystic_armour(int slot);
-#endif
+
+
+
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern bool cumber_glove(object_type *o_ptr);
 #endif
@@ -3556,7 +3556,7 @@ extern void resize_window(void);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void handle_stuff(void);
 #endif
-#if (defined(CMD1_C) || defined(OBJECT1_C) || defined(XTRA1_C))
+#if (defined(CMD1_C) || defined(XTRA1_C))
 extern bool ma_empty_hands(void);
 #endif
 #if (defined(FILES_C) || defined(XTRA1_C))

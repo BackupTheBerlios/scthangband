@@ -1588,6 +1588,10 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	if (p2_ptr->psex != MAX_SEXES)
 	{
 		COPY(p_ptr, p2_ptr, player_type);
+
+		/* Check that everything not in player_type is as it should be. */
+		p_ptr->update |= PU_BONUS;
+		update_stuff();
 	}
 }
 

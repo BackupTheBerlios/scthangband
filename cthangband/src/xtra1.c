@@ -1795,7 +1795,7 @@ static void calc_spells(bool quiet)
 
 /* Calculated the AC bonus from a given empty armour slot. It does not check that
 the player is eligible for such bonuses in the first place. */
-int mystic_armour(int slot)
+static int mystic_armour(int slot)
 {
 	int i = 0;
 	if (!inventory[slot].k_idx) {
@@ -2928,13 +2928,31 @@ static void calc_bonuses(bool quiet)
 			p_ptr->stat_add[A_CHR] = 0;
 		}
 	}
+
+	/* Mystic get extra ac for armour _not worn_ */
+	mystic_armour_aux = ma_heavy_armor();
+
+	for (i=INVEN_BODY; i<=INVEN_FEET; i++)
+	{
+		if (inventory[i].k_idx);
+		
+		else if ((ma_empty_hands()) && !(ma_heavy_armor()))
+		{
+			inventory[i].to_a = mystic_armour(i);
+		}
+		else
+		{
+			inventory[i].to_a = 0;
+		}
+	}
+
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
 		o_ptr = &inventory[i];
 
 		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+		if (!o_ptr->k_idx && !o_ptr->to_a) continue;
 
 		/* Extract the item flags */
 		object_flags(o_ptr, &f1, &f2, &f3);
@@ -3053,18 +3071,6 @@ static void calc_bonuses(bool quiet)
 		/* Apply the mental bonuses tp hit/damage, if known */
 		if (object_known_p(o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
 		if (object_known_p(o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
-	}
-
-	mystic_armour_aux = ma_heavy_armor();
-
-	/* Mystic get extra ac for armour _not worn_ */
-	if ((ma_empty_hands()) && !(mystic_armour_aux))
-	{
-		for (i=INVEN_BODY; i<=INVEN_FEET; i++){
-			j = mystic_armour(i);
-			p_ptr->to_a += j;
-			p_ptr->dis_to_a += j;
-		}
 	}
 
     /* Hack -- aura of fire also provides light */
