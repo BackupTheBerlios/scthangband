@@ -3840,9 +3840,12 @@ void update_objects(int where)
 		/* Display the inventory window. */
 		p_ptr->window |= PW_INVEN;
 	}
-	/* Pouches are . */
+	/* Pouches don't need to be reordered, and don't affect the player. */
 	if (where & OUP_POUCH)
 	{
+		/* Hide any apppropriate objects. */
+		p_ptr->notice |= PN_ISQUELCH;
+
 		/* Correct the speed, for if the weight has changed. */
 		p_ptr->update |= PU_BONUS;
 
@@ -3851,6 +3854,9 @@ void update_objects(int where)
 	}
 	if (where & OUP_EQUIP)
 	{
+		/* Hide any apppropriate objects. */
+		p_ptr->notice |= PN_ISQUELCH;
+
 		/* Update various item bonuses. */
 		p_ptr->update |= PU_BONUS;
 
