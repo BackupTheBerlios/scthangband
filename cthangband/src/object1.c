@@ -4065,7 +4065,8 @@ static bool get_item_allow(object_ctype *o_ptr)
 static bool get_item_okay(object_ctype *o_ptr)
 {
 	/* Illegal items */
-	if (!is_inventory_p(o_ptr)) return (FALSE);
+	if (!is_inventory_p(o_ptr) && 
+		(o_ptr->ix != px || o_ptr->iy != py)) return (FALSE);
 
 	/* Verify the item */
 	if (!item_tester_okay(o_ptr)) return (FALSE);
@@ -4617,6 +4618,49 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Check that the item is suitable in various ways. */
 				get_item_valid(&o_ptr, &done, FALSE);
 
+				break;
+			}
+
+			/*
+			 * Select the tracked object if possible.
+			 */
+			case '!':
+			{
+				/* Get the object currently being tracked. */
+				o_ptr = tracked_o_ptr;
+
+				if (!o_ptr)
+				{
+					bell("No tracked object.");
+					break;
+				}
+				else if (!is_inventory_p(o_ptr))
+				{
+					if (!floor)
+					{
+						bell("Floor items are not allowed.");
+						break;
+					}
+				}
+				else if (o_ptr < inventory+INVEN_PACK)
+				{
+					if (!inven)
+					{
+						bell("Pack items are not allowed.");
+						break;
+					}
+				}
+				else
+				{
+					if (!equip)
+					{
+						bell("Equipped items are not allowed.");
+						break;
+					}
+				}
+
+				/* Check that the item is suitable in various ways. */
+				get_item_valid(&o_ptr, &done, FALSE);
 				break;
 			}
 

@@ -402,7 +402,7 @@ s16b object_kind_idx;
 /*
  * Object to track
  */
-object_ctype *tracked_o_ptr;
+object_type *tracked_o_ptr;
 
 /*
  * Floor square to track

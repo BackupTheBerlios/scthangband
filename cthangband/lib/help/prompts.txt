@@ -37,6 +37,7 @@ This allows you to select a single object from some or all of your equipment, yo
  0-9   - selects an object inscribed with @n or @zn where n is the number and z the command. An object inscribed with @zn will be used in preference to one inscribed with @n.
 return - selects the item, if there is only one available at the prompt.
   -    - selects a floor item (if possible)
+  !    - selects the last object to be selected in various ways.
   /    - switch between inventory and equipment (if possible)
 *, ?,
 space  - displays/hides the list of objects.

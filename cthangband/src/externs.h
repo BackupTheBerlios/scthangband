@@ -3121,8 +3121,8 @@ extern s16b monster_race_idx;
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b object_kind_idx;
 #endif
-#if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern object_ctype *tracked_o_ptr;
+#if (defined(CAVE_C) || defined(OBJECT1_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern object_type *tracked_o_ptr;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern co_ord tracked_co_ord;
