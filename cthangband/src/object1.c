@@ -603,10 +603,10 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 		/* Obtain the full flags for o_ptr first. */
 		object_flags(o_ptr, &f1, &f2, &f3);
 
-		/* Start from no knowledge. */
+		/* Start with a little basic knowledge. */
 		j_ptr->flags1 = 0;
 		j_ptr->flags2 = 0;
-		j_ptr->flags3 = 0;
+		j_ptr->flags3 = TR3_SHOW_ARMOUR | TR3_SHOW_MODS | TR3_HIDE_TYPE;
 
 		/* There are some flags unaware items can be known to have. */
 		if (spoil_base && !aware)
@@ -689,6 +689,9 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 					(j_ptr->pval && o_ptr->pval <= 0))
 					j_ptr->flags3 |= TR3_TELEPATHY;
 			}
+
+			/* If a pval flag is known to be set, the pval itself is known. */
+			if (f1 & TR1_PVAL_MASK & j_ptr->flags1) j_ptr->pval = 1;
 		}
 
 		/* Cursing uses a separate ident flag. */
@@ -703,15 +706,12 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 			}
 		}
 
-		/* If a pval flag is known to be set, the pval itself is known. */
-		if (f1 & TR1_PVAL_MASK & j_ptr->flags1) j_ptr->pval = 1;
-
 		/* If an activation is known to exist, magically know what it is. */
 		j_ptr->activation = !!(f3 & TR3_ACTIVATE);
 
 		/* Special "always show these" flags. */
-		if (f3 & TR3_SHOW_ARMOUR) j_ptr->ac = 1;
-		if (f3 & TR3_SHOW_MODS) j_ptr->dd = j_ptr->ds = 1;
+		if (j_ptr->flags3 & f3 & TR3_SHOW_ARMOUR) j_ptr->ac = 1;
+		if (j_ptr->flags3 & f3 & TR3_SHOW_MODS) j_ptr->dd = j_ptr->ds = 1;
 
 		/* Hack - resist_chaos by any means gives resist_conf. */
 		if (j_ptr->flags2 & f2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
@@ -739,9 +739,12 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
  *
  * As far as is practical, the functions which inspect objects should work with
  * objects created by this function in a reasonable way.
+ *
+ * Hack - setting clear_mods causes various things to be cleared rather than
+ * set to a default value.
  */
 static void set_known_fields(object_type *j_ptr, object_ctype *o_ptr,
-	const obj_know_type *ok_ptr)
+	const obj_know_type *ok_ptr, bool clear_mods)
 {
 	/* Start with everything known. */
 	object_copy(j_ptr, o_ptr);
@@ -772,15 +775,29 @@ static void set_known_fields(object_type *j_ptr, object_ctype *o_ptr,
 	OIK_MASK(activation)
 
 	/* OBJ_UNKNOWN has a lot of things set to safe values. */
-	OIK_MASK_SPECIAL(to_h, k_info[j_ptr->k_idx].to_h)
-	OIK_MASK_SPECIAL(to_d, k_info[j_ptr->k_idx].to_d)
-	OIK_MASK_SPECIAL(to_a, k_info[j_ptr->k_idx].to_a)
-	OIK_MASK_SPECIAL(ac, k_info[j_ptr->k_idx].ac)
-	OIK_MASK(pval)
+	if (clear_mods)
+	{
+		OIK_MASK(to_h)
+		OIK_MASK(to_d)
+		OIK_MASK(to_a)
+		OIK_MASK(ac)
+		OIK_MASK(dd)
+		OIK_MASK(ds)
+		OIK_MASK(pval)
+	}
+	else
+	{
+		object_kind *k_ptr = &k_info[j_ptr->k_idx];
+		OIK_MASK_SPECIAL(to_h, k_ptr->to_h)
+		OIK_MASK_SPECIAL(to_d, k_ptr->to_d)
+		OIK_MASK_SPECIAL(to_a, k_ptr->to_a)
+		OIK_MASK_SPECIAL(ac, k_ptr->ac)
+		OIK_MASK_SPECIAL(dd, k_ptr->dd)
+		OIK_MASK_SPECIAL(ds, k_ptr->ds)
+		OIK_MASK_SPECIAL(pval, k_ptr->pval)
+	}
 	OIK_MASK(timeout)
 	OIK_MASK(weight)
-	OIK_MASK_SPECIAL(dd, k_info[j_ptr->k_idx].dd)
-	OIK_MASK_SPECIAL(ds, k_info[j_ptr->k_idx].ds)
 	OIK_MASK(note)
 	OIK_MASK(art_name)
 	OIK_MASK(next_o_idx)
@@ -795,7 +812,7 @@ void object_info_known(object_type *j_ptr, object_ctype *o_ptr)
 {
 	obj_know_type ok_ptr[1];
 	object_knowledge(ok_ptr, o_ptr);
-	set_known_fields(j_ptr, o_ptr, ok_ptr);
+	set_known_fields(j_ptr, o_ptr, ok_ptr, FALSE);
 
 	if (is_inventory_p(o_ptr))
 	{
@@ -1021,7 +1038,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	}
 
 	/* Set o_ptr according to the known information. */
-	set_known_fields(o_ptr, o1_ptr, know_ptr);
+	set_known_fields(o_ptr, o1_ptr, know_ptr, TRUE);
 
 	k1_ptr = &k_info[o1_ptr->k_idx];
 	u1_ptr = &u_info[k1_ptr->u_idx];
@@ -1345,7 +1362,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 		}
 	}
 	/* No base armor, but does increase armor */
-	else if (o_ptr->to_a)
+	else if (ok_ptr->to_a && o_ptr->to_a)
 	{
 		t += sprintf(t, " [%+d]", o_ptr->to_a);
 	}

@@ -38,6 +38,8 @@ sCthangband _CVS_
   * Skeletons could multiply normal food by trying to eat some from a pile.
   * Reduced stats were displayed incorrectly on the character screen.
   * Removing (e.g.) a dagger (+0,+0) when carrying several gives an odd message.
+  * Unidentified objects could have spurious pvals, to-hit bonuses, etc., shown.
+  * Unidentified objects could have a real (unknown) pval shown.
 
 sCthangband 1.0.12
 * Dodging blows because of martial arts gives experience in the skill.
