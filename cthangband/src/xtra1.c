@@ -1139,7 +1139,10 @@ static void win_object_details_display(void)
 	
 	/* Put the name at the top. */
 	object_desc(o_name, o_ptr, TRUE, 3);
-	Term_putstr(0, 0, Term->wid, TERM_WHITE, o_name);
+	Term_putstr(2, 0, Term->wid-2, TERM_WHITE, o_name);
+
+	/* Put the character used at the top. */
+	Term_putch(0, 0, object_attr(o_ptr), object_char(o_ptr));
 }
 
 /* The option currently selected */

@@ -629,6 +629,9 @@ void carry(int pickup)
 			/* Describe the object */
 			object_desc(o_name, o_ptr, TRUE, 3);
 
+			/* Display description if needed. */
+			object_track(o_ptr);
+
 			/* Describe the object */
 			if (!pickup)
 			{
