@@ -3550,7 +3550,7 @@ extern bool player_no_cut(void);
 #if (defined(XTRA1_C) || defined(XTRA2_C))
 extern bool player_no_stun(void);
 #endif
-#if (defined(DUNGEON_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
 extern void notice_stuff(void);
 #endif
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))

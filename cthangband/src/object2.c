@@ -3962,6 +3962,28 @@ bool PURE inven_carry_okay(object_ctype *o_ptr)
 	return (FALSE);
 }
 
+/* Forward declare. */
+static bool ang_sort_comp_pack_aux(object_ctype *a_ptr, object_ctype *b_ptr);
+
+/*
+ * Set *j_ptr to the slot object o_ptr should go into in the player's
+ * inventory.
+ * Return TRUE if the objects can be combined, FALSE if it needs to be inserted.
+ * 
+ * This assumes that ang_sort_comp_pack_aux() and object_similar() will fail
+ * for every object after the first one for which the former fails.
+ */
+static bool PURE inven_carry_aux(object_type **j_ptr, object_type *o_ptr)
+{
+	for (*j_ptr = inventory; *j_ptr < inventory+INVEN_PACK; *j_ptr++)
+	{
+		/* An object which can absorb o_ptr. */
+		if (object_similar(*j_ptr, o_ptr)) return TRUE;
+
+		/* No object, or an object which will be later in the pack. */
+		if (!ang_sort_comp_pack_aux(*j_ptr, o_ptr)) return FALSE;
+	}
+}
 
 /*
  * Add an item to the players inventory, and return the slot used.
@@ -3972,94 +3994,37 @@ bool PURE inven_carry_okay(object_ctype *o_ptr)
  *
  * This function can be used to "over-fill" the player's pack, but only
  * once, and such an action must trigger the "overflow" code immediately.
- * Note that when the pack is being "over-filled", the new item must be
- * placed into the "overflow" slot, and the "overflow" must take place
- * before the pack is reordered, but (optionally) after the pack is
- * combined.  This may be tricky.  See "dungeon.c" for info.
  *
  * Note that this code must remove any location/stack information
  * from the object once it is placed into the inventory.
  */
 object_type *inven_carry(object_type *o_ptr)
 {
-	int j;
-	object_type     *j_ptr, *empty;
+	object_type     *j_ptr, *q_ptr;
 
-
-	/* Check for combining */
-	for (j = 0, empty = NULL; j <= INVEN_PACK; j++)
+	if (inven_carry_aux(&j_ptr, o_ptr))
 	{
-		j_ptr = &inventory[j];
-
-		/* Skip non-objects */
-		if (!j_ptr->k_idx)
+		object_absorb(j_ptr, o_ptr);
+	}
+	else
+	{
+		/* Find the last real slot. */
+		for (q_ptr = inventory+INVEN_PACK; q_ptr > j_ptr; q_ptr--)
 		{
-			if (!empty) empty = j_ptr;
-			continue;
+			if (q_ptr[-1].k_idx)
+			{
+				object_copy(q_ptr, q_ptr-1);
+			}
 		}
-
-		/* Check if the two items can be combined */
-		if (object_similar(j_ptr, o_ptr))
-		{
-			/* Combine the items */
-			(void)object_absorb(j_ptr, o_ptr);
-
-			/* Increase the weight */
-			total_weight += (o_ptr->number * o_ptr->weight);
-
-			/* Recalculate bonuses */
-			p_ptr->update |= (PU_BONUS);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN | PW_SPELL);
-
-			/* Success */
-			return j_ptr;
-		}
+		object_copy(j_ptr, o_ptr);
 	}
 
-
-	/* Paranoia - destroy the overflow slot if all were full. */
-	if (!empty) empty = inventory+INVEN_PACK;
-
-
-	/* Acquire a copy of the item */
-	object_copy(empty, o_ptr);
-
-	/* Access new object */
-	o_ptr = empty;
-
-	/* Clean out unused fields */
-	o_ptr->iy = o_ptr->ix = 0;
-	o_ptr->next_o_idx = 0;
-	o_ptr->held_m_idx = 0;
-	
 	/* Increase the weight */
 	total_weight += (o_ptr->number * o_ptr->weight);
 
-	/* Hack - track this object. */
-	o_ptr->ident |= IDENT_TEMP;
+	/* Recalculate/redraw various things. */
+	update_object(j_ptr, 0);
 
-	/* Recalculate/redraw stuff (later) */
-	update_object(o_ptr, 0);
-
-	/* Reorder the pack now. */
-	notice_stuff();
-
-	/* Find (part of) the object again. */
-	for (o_ptr = inventory; o_ptr < inventory+INVEN_PACK; o_ptr++)
-	{
-		if (o_ptr->ident & IDENT_TEMP)
-		{
-			o_ptr->ident &= ~IDENT_TEMP;
-			j_ptr = o_ptr;
-		}
-	}
-
-	/* Display the object if required */
-	object_track(j_ptr);
-
-	/* Return the slot */
 	return j_ptr;
 }
 
@@ -4261,34 +4226,45 @@ void combine_pack(void)
 	if (flag) msg_print("You combine some items in your pack.");
 }
 
+/* Check k_idx as a macro. */
+#define k_idx(O) ((O)->k_idx)
+
+/* 
+ * A custom macro for the below which return if either a_ptr or b_ptr fails
+ * the PAR function/macro.
+ */
+#define SORT_BOOL(PAR) \
+	a = !PAR(a_ptr); \
+	b = !PAR(b_ptr); \
+	if (a != b) return b; \
+	else if (b) return old;
 
 /*
- * Return TRUE if the desired position for u[a] in the pack >=  that of u[b].
+ * Return TRUE if the desired position for a_ptr in the pack >=  that of b_ptr.
  */
-static bool PURE ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
+static bool ang_sort_comp_pack_aux(object_ctype *a_ptr, object_ctype *b_ptr)
 {
-	object_ctype *inv = u, *a_ptr = inv+a, *b_ptr = inv+b;
 	s32b dif;
 
+	/* Notice (and try to preserve) the order before this call. */
+	bool a, b, old = (a_ptr->ix <= b_ptr->ix);
+
 	/* Skip empty slots */
-	if (!b_ptr->k_idx) return TRUE;
-	if (!a_ptr->k_idx) return FALSE;
+	SORT_BOOL(k_idx)
 
 	/* Objects sort by decreasing type */
 	dif = a_ptr->tval - b_ptr->tval;
 	if (dif) return (dif > 0);
 
 	/* Non-aware (flavored) items always come last */
-	if (!object_aware_p(b_ptr)) return TRUE;
-	if (!object_aware_p(a_ptr)) return FALSE;
+	SORT_BOOL(object_aware_p);
 
 	/* Objects sort by increasing k_idx */
 	dif = a_ptr->k_idx - b_ptr->k_idx;
 	if (dif) return (dif < 0);
 
 	/* Unidentified objects always come last */
-	if (!object_known_p(b_ptr)) return TRUE;
-	if (!object_known_p(a_ptr)) return FALSE;
+	SORT_BOOL(object_known_p);
 
 	/* Hack:  otherwise identical rods sort by
 		increasing recharge time --dsb */
@@ -4306,10 +4282,19 @@ static bool PURE ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 	dif = a_ptr->number - b_ptr->number;
 	if (dif) return (dif > 0);
 
-	/* Similar enough to make order random. */
-	return TRUE;
+	/* Use the previous order where nothing better suggests itself. */
+	return old;
 }
 
+/*
+ * A comp hook for reorder_pack.
+ */
+static bool PURE ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
+{
+	object_ctype *inv = u, *a_ptr = inv+a, *b_ptr = inv+b;
+	return ang_sort_comp_pack_aux(a_ptr, b_ptr);
+}
+	
 /*
  * Swap two inventory items.
  */
@@ -4326,10 +4311,18 @@ static void ang_sort_swap_pack(vptr u, vptr UNUSED v, int a, int b)
  */
 void reorder_pack(void)
 {
+	int i;
+
+	/* Hack - write the previous order into the objects. */
+	for (i = 0; i < INVEN_PACK; i++) inventory[i].ix = i;
+
 	/* Sort the pack using the above functions. */
 	ang_sort_comp = ang_sort_comp_pack;
 	ang_sort_swap = ang_sort_swap_pack;
 	ang_sort(inventory, 0, INVEN_PACK);
+
+	/* Hack - erase the order again. */
+	for (i = 0; i < INVEN_PACK; i++) inventory[i].ix = 0;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
