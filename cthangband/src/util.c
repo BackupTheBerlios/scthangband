@@ -1327,13 +1327,13 @@ static sint macro_find_ready(cptr pat)
  * with some kind of "powerful keymap" ability, but this might make it hard
  * to change the "roguelike" option from inside the game.  XXX XXX XXX
  */
-errr macro_add(cptr pat, cptr act)
+void macro_add(cptr pat, cptr act)
 {
 	int n;
 
 
 	/* Paranoia -- require data */
-	if (!pat || !act) return (-1);
+	if (!pat || !act) return;
 
 
 	/* Look for any existing macro */
@@ -1361,9 +1361,6 @@ errr macro_add(cptr pat, cptr act)
 
 	/* Efficiency */
 	macro__use[(byte)(pat[0])] = TRUE;
-
-	/* Success */
-	return (0);
 }
 
 

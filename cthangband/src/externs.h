@@ -2364,7 +2364,7 @@ extern void s16b_to_string_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 extern sint macro_find_exact(cptr pat);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(UTIL_C))
-extern errr macro_add(cptr pat, cptr act);
+extern void macro_add(cptr pat, cptr act);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void flush(void);
