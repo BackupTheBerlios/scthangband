@@ -4093,8 +4093,8 @@ void play_game(bool new_game)
 	/* Remove the stat_default array */
 	KILL(stat_default);
 
-	/* Flash a message */
-	prt("Please wait...", 0, 0);
+	/* Flash a message if none are already shown. */
+	if (!msg_flag) prt("Please wait...", 0, 0);
 
 	/* Flush the message */
 	Term_fresh();

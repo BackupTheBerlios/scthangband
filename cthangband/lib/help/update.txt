@@ -27,6 +27,7 @@ sCthangband _CVS_
   * Two directions were ignored when something looked to escape an earthquake.
   * Functions such as isdigit() and tolower() were called incorrectly.
   * Aborting an object prompt gave a "no objects" error message.
+  * Non-fatal errors on loading gave a -more- prompt after the message had gone.
 
 sCthangband 1.0.13
 * Monsters do not recover from fear if they have too few HP to survive one of
