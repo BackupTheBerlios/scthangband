@@ -446,7 +446,7 @@ name_centry *choose_item_category(bool (*item_good)(int, name_centry *),
 	}
 
 	/* Choose! */
-	if (!get_com(prompt, &ch))
+	if (!get_com(&ch, prompt))
 	{
 		(*abort) = TRUE;
 	}
@@ -550,7 +550,6 @@ void do_cmd_options_squelch(void)
 
 	/* A list of the valid options for this prompt. */
 	cptr body =	option_chars;
-	char buf[80];
 
 	C_TNEW(bufx, 61*ONAME_MAX, char);
 	char *obuf[61];
@@ -596,10 +595,6 @@ void do_cmd_options_squelch(void)
 		/* Get names for each valid object which can all fit on screen at once. */
 		get_names(obuf, obuf[60], num, choice, len, print_f1);
 
-		/* The question is always the same. */
-		sprintf(buf, "What kind of %.27s? [%c-%c, ^a (all), ^n (none), ^s (step)]",
-			cat->str, body[0], body[num-1]);
-
 		/* Now loop through until the player has finished. */
 		while (1)
 		{
@@ -624,7 +619,8 @@ void do_cmd_options_squelch(void)
 			}
 			
 			/* Choose! */
-			if (!get_com(buf, &ch)) break;
+			if (!get_com(&ch, "What kind of %.27s? [%c-%c, ^a (all), ^n (none),"
+				" ^s (step)]", cat->str, body[0], body[num-1])) break;
 			s = strchr(body, ch);
 
 			if (s && s < body+num)

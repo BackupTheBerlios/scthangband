@@ -674,8 +674,6 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 
 	const magic_type	*s_ptr;
 
-	char		out_val[160];
-
 
 #ifdef ALLOW_REPEAT
 
@@ -732,15 +730,13 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 		p_ptr->window |= (PW_SPELL);
 	}
 
-	/* Build a prompt (accept all spells) */
-	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) %^s which %s? ",
-		I2A(0), I2A(num - 1), verb, noun);
-
 	/* Add a resize hook. */
 	add_resize_hook(resize_inkey);
 
 	/* Get a spell from the user */
-	for (t_clear = t_list = 0; !flag && get_com(out_val, &choice); )
+	for (t_clear = t_list = 0; !flag &&
+		get_com(&choice, "(%c-%c, *=List, ESC=exit) %^s which %s? ", I2A(0),
+			I2A(num - 1), verb, noun); )
 	{
 		/* Ensure t_clear and t_list point to the saved screens of this size. */
 		if (choice == RESIZE_INKEY_KEY)
@@ -939,7 +935,6 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	int		ask;
 	bool		flag, redraw, okay;
 	char		choice;
-	char		out_val[160];
 	int valid_spirits[MAX_SPIRITS],total;
 
  #ifdef ALLOW_REPEAT
@@ -1005,12 +1000,10 @@ int get_spirit(int *sn, cptr prompt, bool call)
 		/* No redraw yet */
 		redraw = FALSE;
 	}
-	/* Build a prompt (accept all spirits) */
-	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) %^s which spirit? ",
-		I2A(0), I2A(total - 1), prompt);
 
 	/* Get a spell from the user */
-	while (!flag && get_com(out_val, &choice))
+	while (!flag && get_com(&choice, "(%c-%c, *=List, ESC=exit) %^s which spirit? ",
+		I2A(0), I2A(total - 1), prompt))
 	{
 		/* Request redraw */
 		if ((choice == ' ') || (choice == '*') || (choice == '?'))

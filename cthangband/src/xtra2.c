@@ -3198,15 +3198,15 @@ static bool get_aim_dir_aux(int *dp, bool allow_repeat)
 		/* Choose a prompt */
 		if (!target_okay())
 		{
-			p = "Direction ('*' to choose a target, Escape to cancel)? ";
+			p = "'*' to choose a target";
 		}
 		else
 		{
-			p = "Direction ('5' for target, '*' to re-target, Escape to cancel)? ";
+			p = "'5' for target, '*' to re-target";
 		}
 
 		/* Get a command (or Cancel) */
-		if (!get_com(p, &command)) break;
+		if (!get_com(&command, "Direction (%s, Escape to cancel)? ")) break;
 
 		/* Convert various keys to "standard" keys */
 		switch (command)
@@ -3339,7 +3339,7 @@ bool get_rep_dir(int *dp)
 		char ch;
 
 		/* Get a command (or Cancel) */
-		if (!get_com("Direction (Escape to cancel)? ", &ch)) break;
+		if (!get_com(&ch, "Direction (Escape to cancel)? ")) break;
 
 		/* Look up the direction */
 		dir = get_keymap_dir(ch);

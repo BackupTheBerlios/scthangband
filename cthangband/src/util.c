@@ -582,16 +582,20 @@ errr my_fgets_long(char *buf, size_t n, FILE *fff)
  * format buffer.
  */
 #define get_va_arg_string(fmt) \
+do { \
 	va_list vp; \
 	va_start(vp, (fmt)); \
 	vformat((fmt), vp); \
-	va_end(vp);
+	va_end(vp); \
+} while (0)
 
 #define get_va_arg_buf(buf, fmt) \
+do { \
 	va_list vp; \
 	va_start(vp, (fmt)); \
 	vstrnfmt((buf), sizeof(buf), (fmt), vp); \
-	va_end(vp);
+	va_end(vp); \
+} while (0)
 
 /*
  * A version of "fprintf()" which uses strnfmt to process its arguments.
@@ -602,7 +606,7 @@ errr my_fgets_long(char *buf, size_t n, FILE *fff)
  */
 int my_fprintf(FILE *fff, cptr fmt, ...)
 {
-	get_va_arg_string(fmt)
+	get_va_arg_string(fmt);
 
 	return fprintf(fff, "%s", format(0));
 }
@@ -3213,8 +3217,12 @@ bool get_check(cptr prompt)
  *
  * Returns TRUE unless the character is "Escape"
  */
-bool get_com(cptr prompt, char *command)
+bool get_com(char *command, cptr fmt, ...)
 {
+	char prompt[257];
+
+	get_va_arg_buf(prompt, fmt);
+
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
@@ -3532,7 +3540,7 @@ void request_command(bool shopping)
 			if ((cmd == ' ') || (cmd == '\n') || (cmd == '\r'))
 			{
 				/* Get a real command */
-				bool tmp = get_com("Command: ", &cmd_char);
+				bool tmp = get_com(&cmd_char, "Command: ");
 				cmd = cmd_char;
 				if (!tmp)
 				{
@@ -3550,7 +3558,7 @@ void request_command(bool shopping)
 		if (cmd == '\\')
 		{
 			/* Get a real command */
-			(void)get_com("Command: ", &cmd_char);
+			(void)get_com(&cmd_char, "Command: ");
 			cmd = cmd_char;
 
 			/* Hack -- bypass keymaps */
@@ -3562,7 +3570,7 @@ void request_command(bool shopping)
 		if (cmd == '^')
 		{
 			/* Get a new command and controlify it */
-			if (get_com("Control: ", &cmd_char)) cmd = KTRL(cmd_char);
+			if (get_com(&cmd_char, "Control: ")) cmd = KTRL(cmd_char);
 		}
 
 

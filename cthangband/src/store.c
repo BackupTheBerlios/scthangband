@@ -2022,8 +2022,6 @@ static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
 {
 	char	command;
 
-	cptr prompt;
-
  #ifdef ALLOW_REPEAT
      
      /* Get the item index */
@@ -2046,16 +2044,14 @@ static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
 	/* Assume failure */
 	*com_val = (-1);
 
-	/* Build the prompt */
-	prompt = format("(Items %c-%c, ESC to exit) %s", I2A(i), I2A(j), pmt);
-
 	/* Ask until done */
 	while (TRUE)
 	{
 		int k;
 
 		/* Escape */
-		if (!get_com(prompt, &command)) break;
+		if (!get_com(&command, "(Items %c-%c, ESC to exit) %s",
+			I2A(i), I2A(j), pmt)) break;
 
 		/* Convert */
 		k = (ISLOWER(command) ? A2I(command) : -1);

@@ -519,7 +519,7 @@ static int wiz_create_itemtype(void)
 
 	/* A list of the valid options for this prompt. */
 	cptr body =	option_chars;
-	char sym[61], buf[80];
+	char sym[61];
 
 	C_TNEW(bufx, 61*ONAME_MAX, char);
 	char *obuf[61];
@@ -574,8 +574,7 @@ static int wiz_create_itemtype(void)
 	TFREE(bufx);
 
 	/* Choose! */
-	sprintf(buf, "What kind of %.60s? ", cat->str);
-	if (!get_com(buf, &ch)) return (0);
+	if (!get_com(&ch, "What kind of %.60s? ", cat->str)) return (0);
 
 	/* Analyze choice */
 	s = strchr(body, ch);
@@ -617,7 +616,7 @@ static int choose_something(name_centry *start, cptr type, int max,
 
 	/* A list of the valid options for this prompt. */
 	cptr body =	option_chars;
-	char sym[61], buf[80];
+	char sym[61];
 	WIPE(sym, sym);
 
 	/* Clear screen */
@@ -644,8 +643,7 @@ static int choose_something(name_centry *start, cptr type, int max,
 	}
 
 	/* Choose! */
-	sprintf(buf, "Get what type of %.60s? ", type);
-	if (!get_com(buf, &ch)) return (0);
+	if (!get_com(&ch, "Get what type of %.60s? ", type)) return (0);
 
 	/* Analyze choice */
 	s = strchr(sym, ch);
@@ -685,9 +683,7 @@ static int choose_something(name_centry *start, cptr type, int max,
 		mc_put_fmt(row, col, "$![%c] %.*^v", ch, len-4, print_f1, choice[i]);
 	}
 
-	/* Choose! */
-	sprintf(buf, "What kind of %.60s? ", cat->str);
-	if (!get_com(buf, &ch)) return (0);
+	if (!get_com(&ch, "What kind of %.60s? ", cat->str)) return (0);
 
 	/* Analyze choice */
 	s = strchr(body, ch);
@@ -930,7 +926,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 		wiz_display_item(q_ptr);
 
 		/* Ask wizard what to do. */
-		if (!get_com("[a]ccept, [n]ormal, [g]ood, [e]xcellent? ", &ch))
+		if (!get_com(&ch, "[a]ccept, [n]ormal, [g]ood, [e]xcellent? "))
 		{
 			changed = FALSE;
 			break;
@@ -1022,7 +1018,7 @@ static void wiz_statistics(object_type *o_ptr)
 		wiz_display_item(o_ptr);
 
 		/* Get choices */
-		if (!get_com(pmt, &ch)) break;
+		if (!get_com(&ch, pmt)) break;
 
 		if (ch == 'n' || ch == 'N')
 		{
@@ -1207,11 +1203,14 @@ void do_cmd_wiz_play(object_type *o_ptr)
 	/* The main loop */
 	while (!finished)
 	{
+		cptr pmt =
+			"[a]ccept [s]tatistics [r]eroll [c]hange [t]weak [q]uantity? ";
+
 		/* Display the item */
 		wiz_display_item(q_ptr);
 
 		/* Get choice */
-		(void)get_com("[a]ccept [s]tatistics [r]eroll [c]hange [t]weak [q]uantity? ", &ch);
+		(void)get_com(&ch, pmt);
 
 		switch (FORCELOWER(ch))
 		{
@@ -1541,7 +1540,7 @@ void do_cmd_debug(void)
 
 
 	/* Get a "debug command" */
-	(void)(get_com("Wizard Command: ", &cmd));
+	(void)(get_com(&cmd, "Wizard Command: "));
 
 	command_new = CMD_DEBUG + cmd;
 }

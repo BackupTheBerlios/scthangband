@@ -2427,7 +2427,7 @@ extern char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to);
 extern bool get_check(cptr prompt);
 #endif
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool get_com(cptr prompt, char *command);
+extern bool get_com(char *command, cptr fmt, ...);
 #endif
 #if (defined(CMD3_C) || defined(STORE_C) || defined(UTIL_C))
 extern s16b get_quantity(cptr prompt, int max,bool allbydefault);

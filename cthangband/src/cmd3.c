@@ -665,11 +665,6 @@ void do_cmd_locate(void)
 {
 	int		dir, y1, x1, y2, x2;
 
-	char	tmp_val[80];
-
-	char	out_val[160];
-
-
 	/* Start at current panel */
 	y2 = y1 = panel_row;
 	x2 = x1 = panel_col;
@@ -677,33 +672,23 @@ void do_cmd_locate(void)
 	/* Show panels until done */
 	while (1)
 	{
-		/* Describe the location */
-		if ((y2 == y1) && (x2 == x1))
-		{
-			tmp_val[0] = '\0';
-		}
-		else
-		{
-			sprintf(tmp_val, "%s%s of",
-			        ((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
-			        ((x2 < x1) ? " West" : (x2 > x1) ? " East" : ""));
-		}
-
-		/* Prepare to ask which way to look */
-		sprintf(out_val,
-		        "Map sector [%d,%d], which is%s your sector.  Direction?",
-		        y2, x2, tmp_val);
-
 		/* Assume no direction */
 		dir = 0;
 
 		/* Get a direction */
 		while (!dir)
 		{
+			cptr yss[3] = {" North", "", " South"};
+			cptr xss[3] = {" West", "", " East"};
+			cptr ys = yss[SGN(y2-y1)+1], xs = xss[SGN(x2-x1)+1];
+			cptr of = (*xs || *ys) ? " of" : "";
+
 			char command;
 
 			/* Get a command (or Cancel) */
-			if (!get_com(out_val, &command)) break;
+			if (!get_com(&command,
+				"Map sector [%d,%d], which is%s%s%s your sector.  Direction?",
+			        y2, x2, ys, xs, of)) break;
 
 			/* Extract the action (if any) */
 			dir = get_keymap_dir(command);
@@ -899,7 +884,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	name_centry *nam_ptr;
 
 	/* Get a character, or abort */
-	if (!get_com("Enter character to be identified: ", &sym)) return;
+	if (!get_com(&sym, "Enter character to be identified: ")) return;
 
 	/* Find that character info, and describe it.
 	 * This assumes that no monster uses \0 as its symbol. */

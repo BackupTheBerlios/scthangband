@@ -2472,7 +2472,7 @@ static void modify_visuals(visual_type *vs_ptr)
 		/* Hack - allow control codes to be entered separately. */
 		if (i == '^')
 		{
-			if (get_com("Control: ", &i)) i = KTRL(i);
+			if (get_com(&i, "Control: ")) i = KTRL(i);
 			else continue;
 		}
 

@@ -1723,15 +1723,12 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 
 	while (1)
 	{
-		/* Display the available choices */
-		cptr prompt = format("(%s %c-%c, *=List %s, ESC=exit) %s ",
-		string1, I2A(0), (num > 26) ? I2A(MIN(num-1-first, page-1)) :
-		I2A(num - 1), (!last) ? "Open" : (last < num) ? "More" : "Close",
-		string2);
-
 		if (started || !show_choices_main)
 		{
-			(void)get_com(prompt, &choice);
+			(void)get_com(&choice, "(%s %c-%c, *=List %s, ESC=exit) %s ",
+				string1, I2A(0), (num > 26) ? I2A(MIN(num-1-first, page-1)) :
+				I2A(num - 1), (!last) ? "Open" : (last < num) ? "More" :
+				"Close", string2);
 		}
 		else
 		{
