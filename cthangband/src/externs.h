@@ -3032,22 +3032,22 @@ extern bool display_credits;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool allow_pickstats;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
+#if (defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern s16b hitpoint_warn;
 #endif
-#if (defined(CMD1_C) || defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
+#if (defined(CMD1_C) || defined(LOAD_C) || defined(POWERS_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern s16b delay_factor;
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool autosave_l;
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool autosave_t;
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool autosave_q;
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
+#if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern s16b autosave_freq;
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(VARIABLE_C))
@@ -3886,5 +3886,26 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
+#endif
+
+/* cmd4.c */
+
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern void print_s16b_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
+#endif
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern bool parse_bool(void *out, cptr in);
+#endif
+#if (defined(CMD4_C) || defined(TABLES_C))
+extern bool parse_s16b(void *out, cptr in);
+#endif
+
+/* tables.c */
+
+#if (defined(CMD4_C) || defined(FILES_C) || defined(TABLES_C))
+extern option_special autosave_info[6];
 #endif
 #endif /* INCLUDED_EXTERNS_H */

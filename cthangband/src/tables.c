@@ -3349,6 +3349,45 @@ force_type option_force[] =
 	{0, 0, 0}
 };
 
+static const s16b frequency_list[] =
+{
+	0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000
+};
+
+static const s16b delay_factors[] =
+{
+	0, 1, 8, 27, 64, 125, 216, 343, 512, 729
+};
+
+static const s16b hitpoint_warns[] =
+{
+	0, 10, 20, 30, 40, 50, 60, 70, 80, 90
+};
+
+/*
+ * Some extra options, which may 
+ */
+option_special autosave_info[6] =
+{
+	{print_bool_f1, parse_bool, NULL, 0, &autosave_l,
+		"autosave_l", "Autosave when entering new levels"},
+
+	{print_bool_f1, parse_bool, NULL, 0, &autosave_t,
+		"autosave_t", "Timed autosave"},
+
+	{print_bool_f1, parse_bool, NULL, 0, &autosave_q,
+		"autosave_q", "Quiet autosaves"},
+
+	{print_s16b_f1, parse_s16b, ARRAY(frequency_list), &autosave_freq,
+		"autosave_freq", "Turns between autosaves"},
+
+	{print_s16b_f1, parse_s16b, ARRAY(delay_factors), &delay_factor,
+		"base delay factor", "Delay (in ms) for various graphical effects"},
+
+	{print_s16b_f1, parse_s16b, ARRAY(hitpoint_warns), &hitpoint_warn,
+		"hitpoint warning", "Percent of HP at which to give a special warning"},
+};
+
 cptr chaos_patron_shorts[MAX_PATRON] =
 {
 	"Thed",

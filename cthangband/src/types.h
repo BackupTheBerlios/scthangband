@@ -756,6 +756,22 @@ struct option_type
 
 
 /*
+ * A more complex option structure.
+ * This includes an array and a function to print out the current value.
+ */
+typedef struct option_special option_special;
+struct option_special
+{
+	void (*print_f1)(char *, uint, cptr, va_list *); /* value->string */
+	bool (*parse)(void *, cptr); /* string->value */
+	const s16b *vals; /* A list of the values this option can take. */
+	u16b nvals; /* N_ELEMENTS(vals) */
+	void *var; /* A pointer to the variable being set. Normally a s16b. */
+	cptr text; /* The name by which the option may be referred. */
+	cptr desc; /* A short description of the option. */
+};
+
+/*
  * Structure to specify how some options can override other options.
  */
 typedef struct force_type force_type;

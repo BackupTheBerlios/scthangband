@@ -418,35 +418,6 @@ void do_cmd_messages(void)
 /* Option-handling code */
 
 /*
- * An option structure.
- */
-typedef struct option_special option_special;
-struct option_special
-{
-	void (*print_f1)(char *, uint, cptr, va_list *);
-	const s16b *vals; /* A list of the values this option can take. */
-	u16b nvals; /* N_ELEMENTS(vals) */
-	void *var; /* A pointer to the variable being set. Normally a s16b. */
-	cptr text; /* The name by which the option may be referred. */
-	cptr desc; /* A short description of the option. */
-};
-
-static const s16b frequency_list[] =
-{
-	0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000
-};
-
-static const s16b delay_factors[] =
-{
-	0, 1, 8, 27, 64, 125, 216, 343, 512, 729
-};
-
-static const s16b hitpoint_warns[] =
-{
-	0, 10, 20, 30, 40, 50, 60, 70, 80, 90
-};
-
-/*
  * Increase/decrease *var to the next element of array[], if possible.
  * Assume that *var >= 0.
  */
@@ -467,7 +438,7 @@ static void set_s16b(s16b *var, bool inc, const s16b *array, uint max)
 /*
  * Print a bool option setting into buf.
  */
-static void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	bool v = *((bool*)(va_arg(*vp, void *)));
 	strnfmt(buf, max, "%s", (v) ? "yes" : "no");
@@ -476,32 +447,43 @@ static void print_bool_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 /*
  * Print a s16b option setting into buf.
  */
-static void print_s16b_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+void print_s16b_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	s16b v = *((s16b*)(va_arg(*vp, void *)));
 	strnfmt(buf, max, (v) ? "%d" : "off", v);
 }
 
-static option_special autosave_info[] =
+/*
+ * Try to parse "in" as something produced by a function above.
+ * If successful, put the result in *out and return TRUE.
+ * Otherwise, return FALSE.
+ */
+#define PARSE_TYPE(TYPE, FUNC_F1, MIN, MAX) \
+{ \
+	char buf[32]; \
+	TYPE v[1]; \
+	long l; \
+	for (*v = l = MIN; l <= MAX; l++, (*v)++) \
+	{ \
+		strnfmt(ARRAY(buf), "%v", FUNC_F1, (void*)v); \
+		if (!strcmp(in, buf)) \
+		{ \
+			*((TYPE *)(out)) = *v; \
+			return TRUE; \
+		} \
+	} \
+	return FALSE; \
+}
+
+bool parse_bool(void *out, cptr in)
 {
-	{print_bool_f1, NULL, 0, &autosave_l,
-		"autosave_l", "Autosave when entering new levels"},
+	PARSE_TYPE(bool, print_bool_f1, FALSE, TRUE)
+}
 
-	{print_bool_f1, NULL, 0, &autosave_t,
-		"autosave_t", "Timed autosave"},
-
-	{print_bool_f1, NULL, 0, &autosave_q,
-		"autosave_q", "Quiet autosaves"},
-
-	{print_s16b_f1, ARRAY(frequency_list), &autosave_freq,
-		"autosave_freq", "Turns between autosaves"},
-
-	{print_s16b_f1, ARRAY(delay_factors), &delay_factor,
-		"base delay factor", "Delay (in ms) for various graphical effects"},
-
-	{print_s16b_f1, ARRAY(hitpoint_warns), &hitpoint_warn, "hitpoint warning",
-		"Percent of HP at which to give a special warning"},
-};
+bool parse_s16b(void *out, cptr in)
+{
+	PARSE_TYPE(s16b, print_s16b_f1, 0, MAX_SHORT)
+}
 
 /*
  * Give a description of an unidentified object.
@@ -1935,6 +1917,31 @@ static void tval_attr_dump(FILE *fff)
 }
 
 /*
+ * Save the "numerical" options to a file.
+ * Also mention those which cannot be stored in a save file.
+ */
+static void dump_numerical_options(FILE *fff)
+{
+	option_special *ptr;
+
+	/* Start dumping */
+	fprintf(fff, "\n\n# Automatic option dump (numerical)\n\n");
+
+	/* Dump each of the numerical options in turn. */
+	FOR_ALL_IN(autosave_info, ptr)
+	{
+		/* Paranoia - require a real option */
+		if (!ptr->text) continue;
+
+		/* Comment */
+		fprintf(fff, "# Option '%s'\n", ptr->desc);
+
+		/* Dump the option */
+		my_fprintf(fff, "Z:%s:%v\n\n", ptr->text, ptr->print_f1, ptr->var);
+	}
+}
+
+/*
  * Save the "normal" options to a file.
  * Also mention those which cannot be stored in a save file.
  */
@@ -1979,15 +1986,6 @@ static void dump_normal_options(FILE *fff)
 	{
 		fprintf(fff, "?:1\n\n");
 	}
-
-	/* Mention miscellaneous options. */
-	fprintf(fff, "\n\n# Miscellaneous options\n\n");
-	fprintf(fff, "# Base delay factor (>= 0)\nZ:base delay factor:%d\n\n",
-		delay_factor);
-	fprintf(fff, "# Hitpoint warning (0-99)\nZ:hitpoint warning:%d\n\n",
-		hitpoint_warn);
-	fprintf(fff, "# Autosave frequency (>= 0)\nZ:autosave frequency:%d\n\n",
-		autosave_freq);
 }
 
 /*
@@ -2078,6 +2076,9 @@ static errr option_dump(void)
 
 	/* Dump options */
 	dump_normal_options(fff);
+
+	/* Dump numerical options. */
+	dump_numerical_options(fff);
 
 	/* Dump window flags */
 	dump_window_options(fff);
@@ -3689,6 +3690,9 @@ static errr preference_dump(void)
 
 	/* Dump options */
 	dump_normal_options(fff);
+
+	/* Dump numerical options. */
+	dump_numerical_options(fff);
 
 	/* Dump window flags */
 	dump_window_options(fff);
