@@ -516,7 +516,7 @@ static char get_check_ynq(cptr prompt)
 	/* Help */
 	help_track("ynq_prompt");
 
-	rc = get_check_aux(prompt, "%.*s[y/n]%s%v", "nN\033yY\rQq", "nnnyyyqq");
+	rc = get_check_aux(prompt, "%.*s[y/n/q]%s%v", "nN\033yY\rQq", "nnnyyyqq");
 
 	/* Leave a message. */
 	message_add(format(0));
