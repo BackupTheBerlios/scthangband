@@ -622,6 +622,9 @@
 #define A_CON   4
 #define A_CHR   5
 
+/* Total number of "stats" */
+#define A_MAX	6
+
 /*
  * Player sex constants (hard-coded by save-files, arrays, etc)
  */

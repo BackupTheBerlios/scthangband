@@ -970,6 +970,7 @@ static void display_player_birth(int points)
 #define IDX_TEMPLATE 16
 #define IDX_FILE 32
 #define IDX_FINISH 64
+#define IDX_RAND_ONE 128
 #define IDX_LOAD 256
 #define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
 
@@ -1026,6 +1027,9 @@ static bool point_mod_player(void)
 				break;
 			case 'f': case 'F':
 				i = IDX_FILE;
+				break;
+			case 'z': case 'Z':
+				i = IDX_RAND_ONE;
 				break;
 			case 'Q':
 				quit(NULL);
@@ -1087,6 +1091,12 @@ static bool point_mod_player(void)
 				p_ptr->ptemplate %= MAX_TEMPLATE;
 				cp_ptr = &template_info[p_ptr->ptemplate];
 			}
+
+		/* Modify a random stat. */
+		if (i == IDX_RAND_ONE)
+		{
+			i = rand_int(A_MAX);
+		}		
 
 		if (i & IDX_ALL)
 		{
