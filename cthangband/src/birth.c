@@ -919,7 +919,8 @@ static void wield_weapons(bool wield)
 	{
 		int k;
 
-		if (p_ptr->ptemplate == TPL_SWASHBUCKLER)
+		/* Hack - there are two reasonable choices for example weapon. */
+		if (cp_ptr->skill[SKILL_STAB] > cp_ptr->skill[SKILL_CLOSE])
 			k = OBJ_RAPIER;
 		else	
 			k = OBJ_WHIP;
