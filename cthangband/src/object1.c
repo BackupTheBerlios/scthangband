@@ -4231,14 +4231,15 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 	object_type *i1, *i2, *e1, *e2;
 
     bool done;
-    int ver;
 
     bool allow_floor = FALSE;
 
 	char tmp_val[160];
-	char out_val[160];
 
 	int nterm = 0;
+
+	char *t;
+
 #ifdef ALLOW_REPEAT
      
      /* Get the item index */
@@ -4426,62 +4427,34 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			show_equip();
 		}
 
-		/* Viewing inventory */
-		if (!command_wrk)
+		t = tmp_val;
+		t += sprintf(t, "(%s: ", (command_wrk) ? "Equip" : "Inven");
+
+		if (!command_wrk && i1 <= i2)
 		{
-			/* Begin the prompt */
-			sprintf(out_val, "Inven:");
-
-			/* Some legal items */
-			if (i1 <= i2)
-			{
-				/* Build the prompt */
-				sprintf(tmp_val, " %c-%c,", index_to_label(i1),
-					index_to_label(i2));
-
-				/* Append */
-				strcat(out_val, tmp_val);
-			}
-
-			/* Indicate ability to "view" */
-			if (!command_see) strcat(out_val, " * to see,");
-
-			/* Append */
-			if (equip) strcat(out_val, " / for Equip,");
+			/* Display the options. */
+			t += sprintf(t, "%c-%c", index_to_label(i1),
+				index_to_label(i2));
+		}
+		if (command_wrk && e1 <= e2)
+		{
+			/* Display the options. */
+			t += sprintf(t, "%c-%c", index_to_label(e1),
+				index_to_label(e2));
 		}
 
-		/* Viewing equipment */
-		else
-		{
-			/* Begin the prompt */
-			sprintf(out_val, "Equip:");
+		/* Indicate ability to "view" */
+		t += sprintf(t, ", * to %s,", (command_see) ? "hide" : "see");
 
-			/* Some legal items */
-			if (e1 <= e2)
-			{
-				/* Build the prompt */
-				sprintf(tmp_val, " %c-%c,", index_to_label(e1),
-					index_to_label(e2));
+		/* Indicate legality of the other selection. */
+		if (inven && equip)
+			t += sprintf(t, " / for %s", (command_wrk) ? "Inven" : "Equip");
 
-				/* Append */
-				strcat(out_val, tmp_val);
-			}
-
-			/* Indicate ability to "view" */
-			if (!command_see) strcat(out_val, " * to see,");
-
-			/* Append */
-			if (inven) strcat(out_val, " / for Inven,");
-		}
-
-		/* Indicate legality of the "floor" item */
-		if (allow_floor) strcat(out_val, " - for floor,");
+		/* Indicate legality of the "floor" items. */
+		if (allow_floor) t += sprintf(t, " - for floor,");
 
 		/* Finish the prompt */
-		strcat(out_val, " ESC");
-
-		/* Build the prompt */
-		sprintf(tmp_val, "(%s) %s", out_val, pmt);
+		sprintf(t, " ESC) %s", pmt);
 
 		/* Show the prompt */
 		prt(tmp_val, 0, 0);
@@ -4704,6 +4677,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 			{
 				object_type *start, *end, *j_ptr = NULL;
 				bool high = strchr("Xx", which) != NULL;
+				bool upper = isupper(which);
 				s32b UNREAD(best_price);
 
 				/* Can only judge value with spoil_value set. */
@@ -4747,24 +4721,17 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 					bell(0);
 					break;
 				}
-				else
-				{
-					bool upper = isupper(which);
-					/* Continue, preserving case */
-					which = index_to_label(o_ptr);
-					if (upper) which += 'A'-'a';
-				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, isupper(which));
+				get_item_valid(&o_ptr, &done, upper);
 
 				break;
 			}
 			default:
 			{
 				/* Extract "query" setting */
-				ver = isupper(which);
-				if (ver) which = tolower(which);
+				bool upper = isupper(which);
+				if (upper) which = tolower(which);
 
 				/* Convert letter to inventory index */
 				if (!command_wrk)
@@ -4779,7 +4746,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				}
 
 				/* Check that the item is suitable in various ways. */
-				get_item_valid(&o_ptr, &done, ver);
+				get_item_valid(&o_ptr, &done, upper);
 
 				break;
 			}
