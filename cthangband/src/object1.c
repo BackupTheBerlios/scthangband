@@ -2231,24 +2231,22 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 }
 
 /*
+ * Return the original if given For objects produced by object_info_known().
+ * Return the input otherwise.
+ */
+static object_type PURE *get_real_obj(object_type *o_ptr)
+{
+	if (!o_ptr->iy && o_ptr->ix) return inventory+o_ptr->ix-1;
+	else return o_ptr;
+}
+
+/*
  * Inform the player if an object is currently being worn.
  */
 bool is_worn_p(object_type *o_ptr)
 {
-	/* Real inventory object. */
-	if (o_ptr >= inventory+INVEN_WIELD && o_ptr < inventory+INVEN_TOTAL)
-	{
-		return TRUE;
-	}
-	/* Fake "is worn" code from object_info_known(). */
-	else if (!o_ptr->iy && o_ptr->ix > INVEN_WIELD && o_ptr->ix <= INVEN_TOTAL)
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
+	o_ptr = get_real_obj(o_ptr);
+	return (o_ptr >= inventory+INVEN_WIELD && o_ptr < inventory+INVEN_TOTAL);
 }
 
 /*
