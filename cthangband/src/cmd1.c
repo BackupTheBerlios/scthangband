@@ -1002,8 +1002,10 @@ static int breakage_chance(object_type *o_ptr)
  *
  * Note that most thrown things are completely safe from damage unless you
  * throw them at monsters.
+ *
+ * Return TRUE if an object was fired, FALSE otherwise.
  */
-static void do_cmd_fire_aux(object_type *o_ptr,
+static bool do_cmd_fire_aux(object_type *o_ptr,
 	int tdis, int tdam, int chance)
 {
 	int dir;
@@ -1021,7 +1023,7 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 
 
 	/* Get a direction (or cancel) */
-	if (!get_aim_dir(&dir)) return;
+	if (!get_aim_dir(&dir)) return FALSE;
 
 	/* Obtain a local object */
 	object_copy(q_ptr, o_ptr);
@@ -1226,6 +1228,9 @@ static void do_cmd_fire_aux(object_type *o_ptr,
 
 	/* Drop (or break) near that location */
 	drop_near(q_ptr, breakage, y, x);
+
+	/* An object was fired. */
+	return TRUE;
 }
 
 /*
@@ -1282,10 +1287,9 @@ void do_cmd_fire(object_type *o_ptr)
 	/* Boost the damage */
 	tdam *= mult;
 
-	/* Take a (partial) turn */
-	energy_use = (60*TURN_ENERGY / thits);
-
-	do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
+	/* Take time if completed. */
+	if (do_cmd_fire_aux(o_ptr, tdis, tdam, chance))
+		energy_use = (60*TURN_ENERGY / thits);
 }
 
 /*
@@ -1315,10 +1319,9 @@ static void do_cmd_throw_aux(object_type *o_ptr, int mult)
 	/* Chance of hitting */
 	int chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
 
-	/* Take a turn */
-	energy_use = extract_energy[p_ptr->pspeed];
-
-	do_cmd_fire_aux(o_ptr, tdis, tdam, chance);
+	/* Take time if completed. */
+	if (do_cmd_fire_aux(o_ptr, tdis, tdam, chance))
+		energy_use = extract_energy[p_ptr->pspeed];
 }
 
 /*
