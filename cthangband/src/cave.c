@@ -1710,6 +1710,24 @@ void display_wild_map(uint xmin)
 	/* The dungeons use '*' */
 	for (i = MAX_TOWNS; i < MAX_CAVES; i++) symbol_conv[i] = '*';
 
+	/* Give the dungeon locations. */
+	if (TRUE)
+	{
+		/* The other dungeons uses letters */
+		symbol_conv[8] = 'y';
+		symbol_conv[9] = 'o';
+		symbol_conv[10] = 'z';
+		symbol_conv[11] = 'C';
+		symbol_conv[12] = 'V';
+		symbol_conv[13] = 'D';
+		symbol_conv[14] = 'N';
+		symbol_conv[15] = 'u';
+		symbol_conv[16] = 'E';
+		symbol_conv[17] = 'S';
+		symbol_conv[18] = 'k';
+		symbol_conv[19] = 'K';
+	}
+
 	/* First work out which dungeons have guardians left */
 	for(i=0;i<MAX_CAVES;i++)
 	{
@@ -1782,6 +1800,26 @@ void display_wild_map(uint xmin)
 		else
 		sprintf(buffer,"%d = %s",y,town_defs[y].name);
 		c_put_str(TERM_WHITE,buffer,y+1,xmin+19);
+	}
+
+	/* Print dungeon legend */
+	for (i = MAX_TOWNS; i < MAX_CAVES; i++)
+	{
+		x = (i - MAX_TOWNS) % 2;
+		x = (xmin+(x*Term->wid))/(1+x);
+		y = MAX(16, MAX_TOWNS+8) + (i-MAX_TOWNS)/2;
+
+		tmp = dun_defs[i].name;
+
+		/* Trim an initial "the ". */
+		if (!strncmp(tmp, "the ", 4)) tmp += 4;
+
+		/* If the name is too long, use the short name instead. */
+		if ((strlen(tmp)+4)*2+xmin >= Term->wid)
+			tmp = format("%c = %s", symbol_conv[i], dun_defs[i].shortname);
+		else
+			tmp = format("%c = %s", symbol_conv[i], tmp);
+		c_put_str(TERM_WHITE, tmp, y, x);
 	}
 
 	c_put_str(TERM_UMBER,"* = dungeon entrance",MAX_TOWNS+2,xmin+19);
