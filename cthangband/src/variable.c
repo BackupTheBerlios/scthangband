@@ -213,6 +213,7 @@ bool verbose_haggle;		/* Verbose messages if auto_haggle is set */
 bool find_ignore_stairs;	/* Run past stairs */
 bool find_ignore_doors;		/* Run through open doors */
 bool find_cut;				/* Run past known corners */
+bool stop_corner;				/* Stop at corners */
 bool find_examine;			/* Run into potential corners */
 
 bool disturb_move;			/* Disturb whenever any monster moves */

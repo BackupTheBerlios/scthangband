@@ -3195,6 +3195,9 @@ option_type option_info[] =
 	{ &find_examine,                TRUE,   2,      0, 19,
 	"find_examine",                 "Run into potential corners" },
 
+	{ &stop_corner,	FALSE,	2,	3, 0,
+	"stop_corner",	"Stop at corners"},
+
 	{ &disturb_move,                FALSE,   2,      0, 20,
 	"disturb_move",                 "Disturb whenever any monster moves" },
 

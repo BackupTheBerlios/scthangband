@@ -2844,6 +2844,12 @@ static bool run_test(void)
 			return (TRUE);
 		}
 
+		/* At least one option which isn't in the current direction */
+		else if (stop_corner && (option2 || option != prev_dir))
+		{
+			return TRUE;
+		}
+
 		/* One option */
 		else if (!option2)
 		{

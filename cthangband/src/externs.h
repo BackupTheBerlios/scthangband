@@ -193,6 +193,7 @@ extern bool ring_bell;
 extern bool find_ignore_stairs;
 extern bool find_ignore_doors;
 extern bool find_cut;
+extern bool stop_corner;
 extern bool find_examine;
 extern bool disturb_near;
 extern bool disturb_move;
