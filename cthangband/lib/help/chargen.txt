@@ -225,7 +225,7 @@ A Warrior Monk has studied how to fight unarmed at a monastery of strict discipl
 
 Zen-Monk
 {STR:+2 INT:-1 WIS:+2 DEX:+2 CON:+0 CHR:-1}
-A Zen Monk has studied both the body and the mind, having skills in the martial arts and using *****mindcraft.txt*[mindcraft].
+A Zen Monk has studied both the body and the mind, having skills in the martial arts and using *****mindcrft.txt*[mindcraft].
 
 Assassin
 {STR:+1 INT:+0 WIS:+0 DEX:+3 CON:+2 CHR:-2}
@@ -253,7 +253,7 @@ A Warlock is a less adept student of *****hermetic.txt*[hermetic magic], but bet
 
 Powerweaver
 {STR:-3 INT:+3 WIS:+3 DEX:-2 CON:-2 CHR:+3}
-A Powerweaver thinks that *****mindcraft.txt*[mental power] is just the thing to go along with *****hermetic.txt*[hermetic studies].
+A Powerweaver thinks that *****mindcrft.txt*[mental power] is just the thing to go along with *****hermetic.txt*[hermetic studies].
 
 Tourist
 {STR:+0 INT:+0 WIS:+0 DEX:+0 CON:+2 CHR:-1}
