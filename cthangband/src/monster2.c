@@ -1005,7 +1005,7 @@ static void monster_desc_aux(char *buf, uint max, cptr name, int num,
 	}
 	if (flags & MDF_NUMBER)
 	{
-		/* out is just used as a temporary buffer here... */
+		/* Add a number to the end of the article. */
 		sprintf(tmp, "%s%s%d", artstr, (artstr[0]) ? " " : "", num);
 		artstr = tmp;
 	}
