@@ -860,6 +860,12 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		/* Hack - the random powers of *IDENTIFIED* items are known. */
 		j_ptr->flags2 &= ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
     }
+	/* *Hack* - randarts are always immune to the elements. */
+	else if (j_ptr->art_name && spoil_art)
+	{
+		j_ptr->flags3 |= TR3_IGNORE_ALL & o_ptr->flags3;
+	}
+
 
     if (j_ptr->ident & IDENT_MENTAL && !(o_ptr->art_name))
     {
