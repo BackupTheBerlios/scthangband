@@ -21,28 +21,10 @@ static FILE *fff = NULL;
  */
 static cptr attr_to_text(byte a)
 {
-	switch (a)
-	{
-		case TERM_DARK:    return ("xxx");
-		case TERM_WHITE:   return ("White");
-		case TERM_SLATE:   return ("Slate");
-		case TERM_ORANGE:  return ("Orange");
-		case TERM_RED:     return ("Red");
-		case TERM_GREEN:   return ("Green");
-		case TERM_BLUE:    return ("Blue");
-		case TERM_UMBER:   return ("Umber");
-		case TERM_L_DARK:  return ("L.Dark");
-		case TERM_L_WHITE: return ("L.Slate");
-		case TERM_VIOLET:  return ("Violet");
-		case TERM_YELLOW:  return ("Yellow");
-		case TERM_L_RED:   return ("L.Red");
-		case TERM_L_GREEN: return ("L.Green");
-		case TERM_L_BLUE:  return ("L.Blue");
-		case TERM_L_UMBER: return ("L.Umber");
-	}
-
-	/* Oops */
-	return ("Icky");
+	if (/* a >= 0 && */ a < N_ELEMENTS(color_names))
+		return color_names[a];
+	else
+		return "Icky";
 }
 
 
@@ -349,27 +331,8 @@ static void spoil_obj_desc(cptr fname)
 
 /*
  * Artifact Spoilers by: randy@PICARD.tamu.edu (Randy Hutson)
+ * Largely rewritten now, though...
  */
-
-
-/*
- * Returns a "+" string if a number is non-negative and an empty
- * string if negative
- */
-#define POSITIZE(v) (((v) >= 0) ? "+" : "")
-
-/*
- * These are used to format the artifact spoiler file. INDENT1 is used
- * to indent all but the first line of an artifact spoiler. INDENT2 is
- * used when a line "wraps". (Bladeturner's resistances cause this.)
- */
-#define INDENT1 "    "
-#define INDENT2 "      "
-
-/*
- * MAX_LINE_LEN specifies when a line should wrap.
- */
-#define MAX_LINE_LEN 75
 
 /*
  * The artifacts categorized by type

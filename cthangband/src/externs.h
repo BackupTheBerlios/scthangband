@@ -2156,7 +2156,7 @@ extern  player_skill skill_set[MAX_SKILLS];
 #if (defined(CMD2_C) || defined(OBJECT1_C) || defined(TABLES_C))
 extern byte chest_traps[64];
 #endif
-#if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(TABLES_C))
+#if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(TABLES_C) || defined(WIZARD1_C))
 extern cptr color_names[16];
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C) || defined(XTRA1_C))
