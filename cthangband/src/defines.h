@@ -2445,6 +2445,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Special Object Flags
  */
+#define IDENT_TOUCHED 0x0001 /* Item has been touched by the player. */
 #define IDENT_FIXED             0x0002    /* Item has been "haggled" */
 #define IDENT_EMPTY             0x0004    /* Item charges are known */
 #define IDENT_KNOWN             0x0008    /* Item abilities are known */
@@ -2457,7 +2458,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define IDENT_SENSE_HEAVY 0x0400 /* Item has been pseudo-identified heavily */
 #define IDENT_TRIED  0x0800 /* Item has been tried */
 #define IDENT_STORE 0x1000 /* Item is in a shop */
-#define IDENT_TOUCHED 0x2000 /* Item has been touched by the player. */
 
 /* If a monster fails to pick something up, it is marked as "powerful".
  * As it would take 2^n bits to record which types of monster had this problem
