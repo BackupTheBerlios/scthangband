@@ -635,7 +635,7 @@ extern errr fd_seek(int fd, huge offset);
 #if (defined(__riscos)) && (defined(FILES_C) || defined(MAIN_ACN_C) || defined(UTIL_C))
 extern errr fd_lock(int fd, int what);
 #endif
-#if (defined(__riscos)) && (defined(CMD4_C) || defined(MAIN_ACN_C) || defined(UTIL_C))
+#if (defined(__riscos)) && (defined(MAIN_ACN_C) || defined(UTIL_C))
 extern errr path_temp(char *buf, int max);
 #endif
 
@@ -1835,9 +1835,9 @@ extern int usleep(huge usecs);
 #if (defined(SET_UID)) && (defined(MAIN_C) || defined(UTIL_C))
 extern void user_name(char *buf, int id);
 #endif
-#if (!(defined(ACORN))) && (defined(CMD4_C) || defined(MAIN_ACN_C) || defined(UTIL_C))
-extern errr path_temp(char *buf, int max);
-#endif
+
+
+
 #if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MONSTER1_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 #endif
@@ -2342,7 +2342,7 @@ extern bool disturb_dawn;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool disturb_minor;
 #endif
-#if (defined(CMD2_C) || defined(CMD4_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD2_C) || defined(CMD4_C) || defined(MONSTER2_C) || defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool alert_failure;
 #endif
 #if (defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3569,5 +3569,11 @@ extern void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max);
 
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool auto_more;
+#endif
+#if (defined(HAVE_MKSTEMP)) && (defined(CMD4_C) || defined(UTIL_C))
+extern FILE *my_fopen_temp(char *buf, int max);
+#endif
+#if (!(defined(HAVE_MKSTEMP))) && (defined(CMD4_C) || defined(UTIL_C))
+extern FILE *my_fopen_temp(char *buf, int max);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

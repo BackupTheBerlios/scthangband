@@ -2997,11 +2997,8 @@ static void do_cmd_knowledge_artifacts(void)
 	bool okay[MAX_A_IDX];
 
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	/* Scan the artifacts */
 	for (k = 0; k < MAX_A_IDX; k++)
@@ -3135,11 +3132,9 @@ static void do_cmd_knowledge_uniques(void)
 
 	cptr atchar="dwsorgbuDWvyRGBU";
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
+
 
 	/* Scan the monster races */
 	for (k = 1; k < MAX_R_IDX-1; k++)
@@ -3276,11 +3271,8 @@ static void do_cmd_knowledge_pets(void)
 	char file_name[1024];
 
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	/* Process the monsters (backwards) */
 	for (i = m_max - 1; i >= 1; i--)
@@ -3377,11 +3369,8 @@ static void do_cmd_knowledge_kill_count(void)
 	s32b Total = 0;
 
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	/* Count monsters slain */
 	Total = count_kills(fff, FALSE);
@@ -3449,11 +3438,8 @@ static void do_cmd_knowledge_deaths(void)
 
 	s32b i, Uniques = 0, Races = 0, Deaths = 0;
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	/* Count the monsters who have killed some ancestors. */
 	for (i = 0; i < MAX_R_IDX; i++)
@@ -3528,11 +3514,8 @@ static void do_cmd_knowledge_objects(void)
 	char file_name[1024];
 
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	/* Scan the object kinds */
 	for (k = 1; k < MAX_K_IDX; k++)
@@ -3584,11 +3567,8 @@ void do_cmd_knowledge_chaos_features(void)
 	char file_name[1024];
 
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
-
 	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	if (fff) dump_chaos_features(fff);
 

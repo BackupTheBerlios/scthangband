@@ -274,12 +274,14 @@ static errr path_parse(char *buf, int max, cptr file)
 #endif /* SET_UID */
 
 
+#ifndef HAVE_MKSTEMP
+
 /*
  * Hack -- acquire a "temporary" file name if possible
  *
  * This filename is always in "system-specific" form.
  */
-errr path_temp(char *buf, int max)
+static errr path_temp(char *buf, int max)
 {
 	cptr s;
 
@@ -296,6 +298,7 @@ errr path_temp(char *buf, int max)
 	return (0);
 }
 
+#endif /* HAVE_MKSTEMP */
 
 /*
  * Create a new path by appending a file (or directory) to a path
@@ -377,6 +380,51 @@ errr my_fclose(FILE *fff)
 
 
 #endif /* ACORN */
+
+/*
+ * Create a temporary file, store its name in buf, open it, and return a
+ * pointer to it. Return NULL on failure.
+ */
+
+#ifdef HAVE_MKSTEMP
+
+FILE *my_fopen_temp(char *buf, int max)
+{
+	int fd;
+
+	/* Paranoia */
+	if (strlen("/tmp/anXXXXXX") >= max)
+	{
+		if (alert_failure) msg_print("Buffer too short for temporary file name!");
+		return (NULL);
+	}
+
+	/* Prepare the buffer for mkstemp */
+	strcpy(buf, "/tmp/anXXXXXX");
+
+	/* Secure creation of a temporary file */
+	fd = mkstemp(buf);
+
+	/* Check the file-descriptor */
+	if (fd < 0) return (NULL);
+
+	/* Return a file stream */
+	return (fdopen(fd, "w"));
+}
+
+#else /* HAVE_MKSTEMP */
+
+FILE *my_fopen_temp(char *buf, int max)
+{
+	/* Generate a temporary filename */
+	if (path_temp(buf, max)) return (NULL);
+
+	/* Open the file */
+	return (my_fopen(buf, "w"));
+}
+
+#endif /* HAVE_MKSTEMP */
+
 
 
 /*
