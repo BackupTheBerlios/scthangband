@@ -3594,6 +3594,9 @@ extern int PlayerUID;
 #define screen_save() Term_save()
 #define screen_load() Term_load()
 
+/* A more friendly strcmp? */
+#define streq(A, B) !strcmp((A), (B))
+
 /* String used in show_file_aux() to indicate a non-ToME link target. */
 #define CC_LINK_PREFIX	"%%%%%"
 #define CC_LINK_LEN 5 /* strlen(CC_LINK_PREFIX) */
