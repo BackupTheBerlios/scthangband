@@ -509,8 +509,6 @@ int main(int argc, char *argv[])
 		/* Require proper options */
 		if (*arg++ != '-') show_usage();
 
-		puts(arg);
-
 		/* Check option format */
 		switch (FORCELOWER(*arg))
 		{
