@@ -1289,7 +1289,7 @@ void do_cmd_browse(int item)
 	item_tester_tval = 0;
 
 	/* Access the item's sval */
-	sval = o_ptr->extra;
+	sval = k_info[o_ptr->k_idx].extra;
 
 	/* Track the object kind */
 	object_kind_track(o_ptr->k_idx);
@@ -1391,7 +1391,7 @@ void do_cmd_study(void)
 	}
 
 	/* Access the item's sval */
-	sval = o_ptr->extra;
+	sval = k_info[o_ptr->k_idx].extra;
 
 	spell_school=o_ptr->tval - 90;
 
@@ -1932,7 +1932,7 @@ void do_cmd_cast(void)
 	}
 
 	/* Access the item's sval */
-	sval = o_ptr->extra;
+	sval = k_info[o_ptr->k_idx].extra;
 
 	spell_school = o_ptr->tval - 90;
 
@@ -3389,7 +3389,7 @@ void do_cmd_cantrip(void)
 	}
 
 	/* Access the item's sval */
-	sval = o_ptr->extra;
+	sval = k_info[o_ptr->k_idx].extra;
 
 	/* Track the object kind */
 	object_kind_track(o_ptr->k_idx);

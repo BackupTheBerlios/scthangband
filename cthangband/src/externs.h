@@ -2179,9 +2179,9 @@ extern wild_type wild_grid[12][12];
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(TABLES_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern spirit_type spirits[MAX_SPIRITS];
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
-extern tval_ammo_type tval_ammo[];
-#endif
+
+
+
 
 /* util.c */
 
@@ -3253,7 +3253,7 @@ extern char *f_name;
 #if (defined(INIT2_C) || defined(VARIABLE_C))
 extern char *f_text;
 #endif
-#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
+#if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern object_kind *k_info;
 #endif
 #if (defined(CMD4_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
@@ -3484,7 +3484,7 @@ extern bool cumber_helm(object_type *o_ptr);
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern int wield_skill(object_type *o_ptr);
 #endif
-#if (defined(FILES_C) || defined(XTRA1_C))
+#if (defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA1_C))
 extern byte ammunition_type(object_type *o_ptr);
 #endif
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
@@ -3915,5 +3915,11 @@ extern void do_cmd_zap_rod(int item);
 #endif
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
 extern void do_cmd_activate(int item);
+#endif
+
+/* object1.c */
+
+#if (defined(CMD2_C) || defined(OBJECT1_C))
+extern int get_bow_mult(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

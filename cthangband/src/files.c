@@ -1430,8 +1430,8 @@ static void weapon_stats_calc(object_type *wp_ptr, object_type *am_ptr,
 	{
 		u32b junk, f3;
 
-		/* Mega-Hack -- Extract the "base power" */
-		if (wp_ptr->k_idx) power = (wp_ptr->sval % 10);
+		/* Hack -- Extract the "base power" */
+		if (wp_ptr->k_idx) power = wp_ptr->ds;
 		/* Without a launcher everything has a power equal to throw_mult in cmd2.c */
 		else power = 1;
 	

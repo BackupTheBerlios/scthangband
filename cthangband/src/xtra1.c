@@ -1601,23 +1601,6 @@ int wield_skill(object_type *o_ptr)
 }
 
 /*
- * Find the ammunition tval used by a given launcher.
- */
-byte ammunition_type(object_type *o_ptr)
-{
-	tval_ammo_type *tv_ptr;
-
-	for (tv_ptr = tval_ammo; tv_ptr->bow_kidx; tv_ptr++)
-	{
-		/* Found something */
-		if (tv_ptr->bow_kidx == o_ptr->k_idx) return tv_ptr->ammo_tval;
-	}
-
-	/* Nothing */
-	return 0;
-}
-
-/*
  * Test whether the worn armour weighs too much for effective martial arts.
  */
 static bool ma_heavy_armor(void)

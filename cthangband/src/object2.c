@@ -5948,7 +5948,7 @@ void display_koff(int k_idx)
 
 
 		/* Access the item's sval */
-		sval = q_ptr->extra;
+		sval = k_info[q_ptr->k_idx].extra;
 
 		/* Extract spells */
 	for (spell = 0; spell < 32; spell++)
@@ -5976,7 +5976,7 @@ void display_koff(int k_idx)
 
 
 		/* Access the item's sval */
-		sval = q_ptr->extra;
+		sval = k_info[q_ptr->k_idx].extra;
 
 		/* Extract spells */
 	for (spell = 0; spell < 32; spell++)
@@ -5993,4 +5993,3 @@ void display_koff(int k_idx)
 	print_cantrips(spells, num, 2, 0);
 	}
 }
-

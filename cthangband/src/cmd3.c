@@ -1744,7 +1744,7 @@ void do_cmd_handle(void)
 		}
 	case TV_CHARM:
 	{
-		get_cantrip(&item, o_ptr->extra);
+		get_cantrip(&item, k_info[o_ptr->k_idx].extra);
 		break;
 	}
 	default:

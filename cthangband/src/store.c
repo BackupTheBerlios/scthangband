@@ -4982,7 +4982,7 @@ static void do_store_browse( object_type *o_ptr)
 
 
 	/* Access the item's sval */
-	sval = o_ptr->extra;
+	sval = k_info[o_ptr->k_idx].extra;
 
 	/* Extract spells */
 	for (spell = 0; spell < 32; spell++)

@@ -1590,7 +1590,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		case TV_BOW:
 
 		/* Mega-Hack -- Extract the "base power" */
-		power = (o1_ptr->sval % 10);
+		power = o_ptr->ds;
 
 		/* Apply the "Extra Might" flag */
 		if (f3 & (TR3_XTRA_MIGHT)) power++;
@@ -2923,21 +2923,55 @@ static void identify_fully_clear(ifa_type *i_ptr)
 /* Set brief to suppress various strings in identify_fully_get(). */
 static bool brief = FALSE;
 
+
+/*
+ * Hack - Determine the multiplier for a bow.
+ * This is stored in a non-traditional field, and relies upon the bow doing
+ * no damage when thrown.
+ */
+int get_bow_mult(object_type *o_ptr)
+{
+	if (o_ptr->ds && !o_ptr->dd)
+	{
+		return o_ptr->ds;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
 /*
  * Find the k_idx of a launcher which can fire a given missile.
+ * Always returns the first such launcher in k_info.
  */
 s16b launcher_type(object_type *o_ptr)
 {
-	tval_ammo_type *tv_ptr;
-
-	for (tv_ptr = tval_ammo; tv_ptr->bow_kidx; tv_ptr++)
+	s16b k_idx;
+	for (k_idx = 0; k_idx < MAX_K_IDX; k_idx++)
 	{
-		/* Found something */
-		if (tv_ptr->ammo_tval == o_ptr->tval) return tv_ptr->bow_kidx;
+		/* Not a launcher. */
+		if (k_info[k_idx].tval != TV_BOW) continue;
+
+		/* Not the right sort of launcher. */
+		if (k_info[k_idx].extra != o_ptr->tval) continue;
+		
+		/* Success. */
+		return k_idx;
 	}
 
 	/* Nothing */
 	return OBJ_NOTHING;
+}
+
+
+/*
+ * Find the ammunition tval used by a given launcher.
+ * Do not check that this is a missile launcher.
+ */
+byte ammunition_type(object_type *o_ptr)
+{
+	return k_info[o_ptr->k_idx].extra;
 }
 
 /* A wrapper around list_flags() for identify_fully_get(), provided for

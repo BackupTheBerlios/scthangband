@@ -2449,47 +2449,8 @@ void do_cmd_fire(void)
 	bonus = (p_ptr->to_h + q_ptr->to_h + j_ptr->to_h);
 	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
-	/* Assume a base multiplier */
-	tmul = 1;
-
-	/* Analyze the launcher */
-	switch (j_ptr->k_idx)
-	{
-		/* Sling and ammo */
-		case OBJ_SLING:
-		{
-			tmul = 2;
-			break;
-		}
-
-		/* Short Bow and Arrow */
-		case OBJ_SHORT_BOW:
-		{
-			tmul = 2;
-			break;
-		}
-
-		/* Long Bow and Arrow */
-		case OBJ_LONG_BOW:
-		{
-			tmul = 3;
-			break;
-		}
-
-		/* Light Crossbow and Bolt */
-		case OBJ_LIGHT_CROSSBOW:
-		{
-			tmul = 3;
-			break;
-		}
-
-		/* Heavy Crossbow and Bolt */
-		case OBJ_HEAVY_CROSSBOW:
-		{
-			tmul = 4;
-			break;
-		}
-	}
+	/* Find the base multiplier */
+	tmul = get_bow_mult(j_ptr);
 
 	/* Get extra "power" from "extra might" */
 	if (p_ptr->xtra_might) tmul++;

@@ -835,4 +835,8 @@ X: STEEL
 Y:3
 F:k_info:W:3
 
-# Books
+# Bows
+
+X:x
+Y:0d
+F:k_info:P:3
