@@ -197,19 +197,45 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
 /*
  * Open a given text file in the user directory for writing.
  */
-static void my_fopen_wiz(cptr fname)
+static FILE *my_fopen_wiz(cptr fname)
 {
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
+	/* Drop priv's */
+	safe_setuid_drop();
+
 	/* Build and open the filename with the standard name. */
 	fff = my_fopen_path(ANGBAND_DIR_USER, fname, "w");
+
+	/* Grab priv's */
+	safe_setuid_grab();
+
+	/* Warn of errors. */
+	if (!fff) msg_print("Cannot create spoiler file.");
+
+	return fff;
+}
+
+/*
+ * Close fff, and report success/failure.
+ */
+static void my_fclose_wiz(void)
+{
+	if (ferror(fff) || my_fclose(fff))
+	{
+		msg_print("Cannot close spoiler file.");
+	}
+	else
+	{
+		msg_print("Successfully created a spoiler file.");
+	}
 }
 
 /*
  * Create a spoiler file for items
  */
-static void spoil_obj_desc(cptr fname)
+static void spoil_obj_desc(void)
 {
 	int i, k, s, t, n = 0;
 
@@ -219,18 +245,6 @@ static void spoil_obj_desc(cptr fname)
 
 	char wgt[80];
 	char dam[80];
-
-
-	/* Open the file */
-	my_fopen_wiz(fname);
-
-	/* Oops */
-	if (!fff)
-	{
-		msg_print("Cannot create spoiler file.");
-		TFREE(o_name);
-		return;
-	}
 
 
 	/* Header */
@@ -316,18 +330,7 @@ static void spoil_obj_desc(cptr fname)
 	}
 
 	TFREE(o_name);
-
-	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
-	{
-		msg_print("Cannot close spoiler file.");
-		return;
-	}
-
-	/* Message */
-	msg_print("Successfully created a spoiler file.");
 }
-
 
 
 /*
@@ -413,7 +416,7 @@ static void print_header(void)
 /*
  * Create a spoiler file for artifacts
  */
-static void spoil_artifact(cptr fname)
+static void spoil_artifact(void)
 {
 	int i, j;
 
@@ -423,16 +426,6 @@ static void spoil_artifact(cptr fname)
 	const bool old_spoil_art = spoil_art;
 	const bool old_spoil_base = spoil_base;
 	const bool old_cheat_item = cheat_item;
-
-	/* Open the file */
-	my_fopen_wiz(fname);
-
-	/* Oops */
-	if (!fff)
-	{
-		msg_print("Cannot create spoiler file.");
-		return;
-	}
 
 	/* Use full spoilers, but no cheating. */
 	spoil_art = spoil_base = TRUE;
@@ -494,16 +487,6 @@ static void spoil_artifact(cptr fname)
 	spoil_art = old_spoil_art;
 	spoil_base = old_spoil_base;
 	cheat_item = old_cheat_item;
-
-	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
-	{
-		msg_print("Cannot close spoiler file.");
-		return;
-	}
-
-	/* Message */
-	msg_print("Successfully created a spoiler file.");
 }
 
 
@@ -513,19 +496,8 @@ static void spoil_artifact(cptr fname)
 /*
  * Create a spoiler file for monsters   -BEN-
  */
-static void spoil_mon_desc(cptr fname)
+static void spoil_mon_desc(void)
 {
-	/* Open the file */
-	my_fopen_wiz(fname);
-
-	/* Oops */
-	if (!fff)
-	{
-		msg_print("Cannot create spoiler file.");
-	}
-	else
-	{
-
 	int i, n = 0;
 
 	C_TNEW(who, MAX_R_IDX, s16b);
@@ -624,19 +596,6 @@ static void spoil_mon_desc(cptr fname)
 
 	/* Free the "who" array */
 	TFREE(who);
-
-	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
-	{
-		msg_print("Cannot close spoiler file.");
-	}
-	else
-	{
-		/* Worked */
-		msg_print("Successfully created a spoiler file.");
-	}
-	}
-	return;
 }
 
 
@@ -741,7 +700,7 @@ static void spoil_out(cptr fmt, ...)
 /*
  * Create a spoiler file for monsters (-SHAWN-)
  */
-static void spoil_mon_info(cptr fname)
+static void spoil_mon_info(void)
 {
 	int n, x, y;
 	bool breath, magic;
@@ -752,18 +711,6 @@ static void spoil_mon_info(cptr fname)
 	byte a;
 	char c, c2;
 	byte old_moncol[MAX_MONCOL];
-
-	/* Open the file */
-	my_fopen_wiz(fname);
-
-
-	/* Oops */
-	if (!fff)
-	{
-		msg_print("Cannot create spoiler file.");
-		return;
-	}
-
 
 	/* Give full information. */
 	spoil_mon = TRUE;
@@ -897,21 +844,26 @@ static void spoil_mon_info(cptr fname)
 
 	/* Don't leave a monster display lying around. */
 	Term_clear();
-
-	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
-	{
-		msg_print("Cannot close spoiler file.");
-		return;
-	}
-
-	msg_print("Successfully created a spoiler file.");
 }
 
+typedef const struct option_list option_list;
+struct option_list
+{
+	cptr title;
+	cptr fname;
+	void (*func)(void);
+	char ch;
+	byte x;
+	byte y;
+};
 
-
-
-
+static option_list spoiler_list[] =
+{
+	{"Brief Object Info", "obj-desc.spo", spoil_obj_desc, '1', 5, 5},
+	{"Brief Artifact Info", "artifact.spo", spoil_artifact, '2', 6, 5},
+	{"Brief Monster Info", "mon-desc.spo", spoil_mon_desc, '3', 7, 5},
+	{"Full Monster Info", "mon-info.spo", spoil_mon_info, '4', 8, 5},
+};
 
 /*
  * Create Spoiler files         -BEN-
@@ -919,18 +871,14 @@ static void spoil_mon_info(cptr fname)
 void do_cmd_spoilers(void)
 {
 	int i;
-
+	
+	option_list *this;
 
 	/* Enter "icky" mode */
 	character_icky = TRUE;
 
 	/* Save the screen */
 	Term_save();
-
-
-	/* Drop priv's */
-	safe_setuid_drop();
-
 
 	/* Interact */
 	while (1)
@@ -939,64 +887,48 @@ void do_cmd_spoilers(void)
 		Term_clear();
 
 		/* Info */
-		prt("Create a spoiler file.", 2, 0);
+		mc_put_fmt(2, 0, "Create a spoiler file.");
 
-		/* Prompt for a file */
-		prt("(1) Brief Object Info (obj-desc.spo)", 5, 5);
-		prt("(2) Brief Artifact Info (artifact.spo)", 6, 5);
-		prt("(3) Brief Monster Info (mon-desc.spo)", 7, 5);
-		prt("(4) Full Monster Info (mon-info.spo)", 8, 5);
+		FOR_ALL_IN(spoiler_list, this)
+		{
+			mc_put_fmt(this->y, this->x, "(%c) %s (%s)",
+				this->ch, this->title, this->fname);
+		}
 
 		/* Prompt */
-		prt("Command: ", 12, 0);
+		mc_put_fmt(12, 0, "Command: ");
 
 		/* Get a choice */
 		i = inkey();
 
 		/* Escape */
-		if (i == ESCAPE)
+		if (i == ESCAPE) break;
+
+		FOR_ALL_IN(spoiler_list, this)
 		{
-			break;
+			if (i == this->ch) goto good;
 		}
 
-		/* Option (1) */
-		else if (i == '1')
+		/* Hack - the above loop has two exit points. */
+		if (FALSE)
 		{
-			spoil_obj_desc("obj-desc.spo");
+good:
+			/* Output the spoilers to the appropriate file. */
+			if (my_fopen_wiz(this->fname))
+			{
+				(*this->func)();
+				my_fclose_wiz();
+			}
 		}
-
-		/* Option (2) */
-		else if (i == '2')
-		{
-			spoil_artifact("artifact.spo");
-		}
-
-		/* Option (3) */
-		else if (i == '3')
-		{
-			spoil_mon_desc("mon-desc.spo");
-		}
-
-		/* Option (4) */
-		else if (i == '4')
-		{
-			spoil_mon_info("mon-info.spo");
-		}
-
-		/* Oops */
 		else
 		{
-			bell(0);
+			/* None found. */
+			bell("Illegal command for spoilers!");
 		}
 
 		/* Flush messages */
 		msg_print(NULL);
 	}
-
-
-	/* Grab priv's */
-	safe_setuid_grab();
-
 
 	/* Restore the screen */
 	Term_load();
