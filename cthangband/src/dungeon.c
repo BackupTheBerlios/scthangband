@@ -2542,8 +2542,8 @@ void process_command(void)
 			/* Gain new spells/prayers */
 		case 'G':
 		{
-			msg_format("You need some peace and quiet to research.");
-			msg_format("Why not try a bookstore?");
+			msg_print("You need some peace and quiet to research.");
+			msg_print("Why not try a bookstore?");
 			break;
 		}
 

@@ -3533,7 +3533,7 @@ static void store_process_command(void)
 						{
 							if (price > p_ptr->au)
 							{
-								msg_format("You do not have the gold!");
+								msg_print("You do not have the gold!");
 							}
 							else
 							{
@@ -3560,7 +3560,7 @@ static void store_process_command(void)
 						{
 							if (price > p_ptr->au)
 							{
-								msg_format("You do not have the gold!");
+								msg_print("You do not have the gold!");
 							}
 							else
 							{
@@ -3587,7 +3587,7 @@ static void store_process_command(void)
 						{
 							if (price > p_ptr->au)
 							{
-								msg_format("You do not have the gold!");
+								msg_print("You do not have the gold!");
 							}
 							else
 							{
@@ -3618,7 +3618,7 @@ static void store_process_command(void)
 						{
 							if (price > p_ptr->au)
 							{
-								msg_format("You do not have the gold!");
+								msg_print("You do not have the gold!");
 							}
 							else
 							{
@@ -3631,7 +3631,7 @@ static void store_process_command(void)
 								decrease_insults();
 								store_prt_gold();
 								identify_pack();
-								msg_format("All your goods have been identified.");
+								msg_print("All your goods have been identified.");
 							}
 							p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 							handle_stuff();
@@ -3642,7 +3642,7 @@ static void store_process_command(void)
 				   {
 					   	if (p_ptr->ritual != TOWN_NONE)
 					   {
-						   msg_format("You have already done the ritual!");
+						   msg_print("You have already done the ritual!");
 					   }
 					   else
 					   {
@@ -3655,7 +3655,7 @@ static void store_process_command(void)
 							{
 								if (price > p_ptr->au)
 								{
-									msg_format("You do not have the gold!");
+									msg_print("You do not have the gold!");
 								}
 								else
 								{
@@ -3668,7 +3668,7 @@ static void store_process_command(void)
 									decrease_insults();
 									store_prt_gold();
 									p_ptr->ritual = cur_town;
-									msg_format("You perform the Ritual of True Recall.");
+									msg_print("You perform the Ritual of True Recall.");
 								}
 								p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 							handle_stuff();
@@ -3721,7 +3721,7 @@ static void store_process_command(void)
 							{
 								if (price > p_ptr->au)
 								{
-									msg_format("You do not have the gold!");
+									msg_print("You do not have the gold!");
 								}
 								else
 								{
@@ -3754,11 +3754,11 @@ static void store_process_command(void)
 						store_type *h_ptr = find_house(cur_town);
 					   if (h_ptr && h_ptr->bought)
 					   {
-						   msg_format("You already have the deeds!");
+						   msg_print("You already have the deeds!");
 					   }
 					   else if (!free_homes())
 					   {
-						   msg_format("Sorry, we have no houses on our books.");
+						   msg_print("Sorry, we have no houses on our books.");
 					   }
 					   else
 					   {
@@ -3766,7 +3766,7 @@ static void store_process_command(void)
 							{
 								if (price > p_ptr->au)
 								{
-									msg_format("You do not have the gold!");
+									msg_print("You do not have the gold!");
 								}
 								else
 								{
@@ -3779,7 +3779,7 @@ static void store_process_command(void)
 									decrease_insults();
 									store_prt_gold();
 									h_ptr->bought = 1;
-									msg_format("You may move in at once.");
+									msg_print("You may move in at once.");
 								}
 								p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 								handle_stuff();
@@ -3818,7 +3818,7 @@ static void store_process_command(void)
 							{
 								if (price > p_ptr->au)
 								{
-									msg_format("You do not have the gold!");
+									msg_print("You do not have the gold!");
 								}
 								else
 								{
@@ -3841,7 +3841,7 @@ static void store_process_command(void)
 							{
 								if (price > p_ptr->au)
 								{
-									msg_format("You do not have the gold!");
+									msg_print("You do not have the gold!");
 								}
 								else
 								{
@@ -3866,7 +3866,7 @@ static void store_process_command(void)
 							{
 								if (price > p_ptr->au)
 								{
-									msg_format("You do not have the gold!");
+									msg_print("You do not have the gold!");
 								}
 								else
 								{
@@ -3893,7 +3893,7 @@ static void store_process_command(void)
 							{
 								if (price > p_ptr->au)
 								{
-									msg_format("You do not have the gold!");
+									msg_print("You do not have the gold!");
 								}
 								else
 								{

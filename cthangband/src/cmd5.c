@@ -1798,7 +1798,7 @@ static int spirit_punish(spirit_type *s_ptr, const magic_type *f_ptr)
 		}
 
 		/* Nothing happened. */
-		if (j == 1000) msg_format("They get lost on the way...");
+		if (j == 1000) msg_print("They get lost on the way...");
 	}
 
 	/* Annoy the spirit even more. */
@@ -1934,7 +1934,7 @@ void do_cmd_mindcraft(void)
 	if (rand_int(100) < chance)
 	{
 	    if (flush_failure) flush();
-	    msg_format("You failed to concentrate hard enough!");
+	    msg_print("You failed to concentrate hard enough!");
 
 	    if (randint(100) < (chance/2))
 		{    /* Backfire */

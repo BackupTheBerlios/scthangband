@@ -3591,7 +3591,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			}
 			else if (rand_int(100) < p_ptr->skill_sav)
 			{
-				msg_format("You resist the effects!");
+				msg_print("You resist the effects!");
 				skill_exp(SKILL_SAVE);
 			}
 			else
@@ -3639,7 +3639,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
             msg_format("%^s invokes the Dread Curse of Azathoth!", m_name);
             if (rand_int(100) < p_ptr->skill_sav)
 			{
-				msg_format("You resist the effects!");
+				msg_print("You resist the effects!");
 				skill_exp(SKILL_SAVE);
 			}
             else

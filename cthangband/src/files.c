@@ -3557,7 +3557,7 @@ errr file_character(cptr name, bool UNUSED full)
 	if (!fff)
 	{
 		/* Message */
-		msg_format("Character dump failed!");
+		msg_print("Character dump failed!");
 		msg_print(NULL);
 
 		/* Error */

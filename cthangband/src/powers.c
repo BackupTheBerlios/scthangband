@@ -6277,7 +6277,7 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case RACE_DRACONIAN+PO_RACIAL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
-			msg_format("You breathe poison.");
+			msg_print("You breathe poison.");
 			fire_ball(GF_POIS, dir, (plev)*2, -((plev)/15) + 1);
 			return SUCCESS;
 		}
