@@ -27,9 +27,9 @@ Cthulhu has caused the disaster: kill him and it will go away.
 A Mithril mail will not rust.
 An Adamantite mail will not rust.
 A Rusty Chain Mail cannot rust any further.
-If you are a mage, you will NOT want to find Raal's Tome of Destruction!
+If you are a wizard, you will NOT want to find Raal's Tome of Destruction!
 You won't want to find Raal's Tome of Destruction!
-You won't want to find Raal's Tome of Destruction, unless you are a mage.
+You won't want to find Raal's Tome of Destruction, unless you are a wizard.
 A Wand of Death is useless against monsters that are tougher than you.
 A Wand of Death is of little use against foes that are dead already.
 Try taking off your armor before fighting a Gelatinous Cube!

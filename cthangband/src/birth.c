@@ -116,7 +116,7 @@ static hist_type bg[] =
 	{"Ranger.  ",						 40, 9, 54, 80},
 	{"Archer.  ",						 70, 9, 54, 90},
 	{"Warrior.  ",						 87, 9, 54, 110},
-	{"Mage.  ",							 95, 9, 54, 125},
+	{"Wizard.  ",						 95, 9, 54, 125},
 	{"Prince.  ",						 99, 9, 54, 140},
 	{"King.  ",							100, 9, 54, 145},
 
@@ -129,7 +129,7 @@ static hist_type bg[] =
 	{"Home Owner.  ",						 50, 11, 3, 100},
 	{"Burglar.  ",						 80, 11, 3, 110},
 	{"Warrior.  ",						 95, 11, 3, 115},
-	{"Mage.  ",							 99, 11, 3, 125},
+	{"Wizard.  ",							 99, 11, 3, 125},
 	{"Clan Elder.  ",						100, 11, 3, 140},
 
 	{"You are one of several children of a Gnome ",		 85, 13, 14, 45},
@@ -139,7 +139,7 @@ static hist_type bg[] =
 	{"Braggart.  ",						 50, 14, 3, 70},
 	{"Prankster.  ",						 75, 14, 3, 85},
 	{"Warrior.  ",						 95, 14, 3, 100},
-	{"Mage.  ",							100, 14, 3, 125},
+	{"Wizard.  ",							100, 14, 3, 125},
 
 	{"You are one of two children of a Dwarven ",		 25, 16, 17, 40},
 	{"You are the only child of a Dwarven ",			100, 16, 17, 50},
@@ -361,7 +361,7 @@ static hist_type bg[] =
 
     {"Warrior.  ", 50, 90, 91, 50 },
     {"Priest.  ", 65, 90, 91, 65 },
-    {"Mage.  ", 85, 90, 91, 70 },
+    {"Wizard.  ", 85, 90, 91, 70 },
     {"Noble.  ", 100, 90, 91, 100 },
 
     {"You have green wings, green skin and yellow belly.", 30, 91, 0, 50 },
@@ -2822,7 +2822,7 @@ static byte player_init[MAX_TEMPLATE][3][2] =
     },
 
     {
-        /* Mage */
+        /* Wizard */
         { TV_RING, SV_RING_SUSTAIN_INT },
         { TV_POTION, SV_POTION_RESTORE_MANA },
         { TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },

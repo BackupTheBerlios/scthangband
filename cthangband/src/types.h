@@ -768,11 +768,6 @@ struct store_type
 
 
 
-/*
- * The "name" of spell 'N' is stored as spell_names[X][N],
- * where X is 0 for mage-spells and 1 for priest-spells.
- */
-
 typedef struct magic_type magic_type;
 
 struct magic_type

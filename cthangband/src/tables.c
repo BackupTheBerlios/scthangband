@@ -1552,7 +1552,7 @@ owner_type owners[MAX_STORES_TOTAL][MAX_OWNERS] =
 	},
 	{
 		/* Ilek Vad Store 5 (Magic)*/
-        { "Vuirak the High-Mage",        15000,  200, 110,  7,  8, RACE_BROO},
+        { "Vuirak the Wizard",        15000,  200, 110,  7,  8, RACE_BROO},
 		{ "Madish the Smart",         20000,  215, 113,  6, 10, RACE_BROO},
         { "Falebrimbor",       30000,  200, 110,  7, 10, RACE_HIGH_ELF},
         { "Felil-Gand the Subtle",       30000,  175, 110,  5, 11, RACE_DARK_ELF},
@@ -2279,7 +2279,7 @@ player_template template_info[MAX_TEMPLATE] =
 		0, 4, 2, 0, 0, 0, 15}
 	},
 	{
-		"Mage", 3,
+		"Wizard", 3,
 		{-2, 5, 2, 1, -1, 1},
 		{10, 10, 10, 10, 10,
 		0, 25, 5, 15, 20, 10, 5,

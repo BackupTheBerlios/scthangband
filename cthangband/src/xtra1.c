@@ -1962,7 +1962,7 @@ static void calc_mana(bool quiet)
 	/* Get the gloves */
 	o_ptr = &inventory[INVEN_HANDS];
 
-	/* Normal gloves hurt mage-type spells */
+	/* Normal gloves hurt wizard spells */
 	if (cumber_glove(o_ptr))
 	{
 		/* Encumbered */

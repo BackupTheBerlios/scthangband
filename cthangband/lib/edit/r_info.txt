@@ -448,7 +448,7 @@ S:1_IN_12 |
 S:HEAL | SCARE | CAUSE_1
 D:He is tripping over his fetishes.
 
-N:40:Novice mage
+N:40:Novice wizard
 G:p:R
 I:110:1:6d4:20:6:5
 W:2:1:0:7
@@ -865,7 +865,7 @@ S:1_IN_8
 S:ARROW_1
 D:Is it a man or an ape? Either way it doesn't seem too friendly. 
 
-N:77:Novice mage
+N:77:Novice wizard
 G:p:R
 I:110:1:6d4:20:6:10
 W:5:2:0:7
@@ -1620,7 +1620,7 @@ F:WEIRD_MIND | BASH_DOOR |
 F:ANIMAL | IM_POIS
 D:It is a vast black spider whose bulbous body is bloated with poison.
 
-N:142:Dark elven mage
+N:142:Dark elven wizard
 G:h:v
 I:120:2:7d10:20:16:20
 W:10:1:0:50
@@ -2475,7 +2475,7 @@ F:OPEN_DOOR | BASH_DOOR | NONLIVING |
 F:EVIL | DEMON | IM_FIRE | NO_FEAR
 D:It is a small demonic spirit full of malevolence.
 
-N:213:Gnome mage
+N:213:Gnome wizard
 G:h:R
 I:110:1:7d8:20:20:20
 W:15:2:0:40
@@ -2487,7 +2487,7 @@ F:EVIL
 S:1_IN_4 | 
 S:BLINK | DARKNESS | BO_COLD | 
 S:S_MONSTER
-D:A mage of short stature.
+D:A wizard of short stature.
 
 N:214:Clear hound
 G:Z:B
@@ -3251,7 +3251,7 @@ F:OPEN_DOOR | BASH_DOOR | FRIENDS
 F:EVIL | IM_POIS | HURT_LITE
 S:1_IN_5 | 
 S:CONF | MISSILE | DARKNESS | BO_MANA
-D:A dark elven mage with spells of frightening destructive power.
+D:A dark elven wizard with spells of frightening destructive power.
 
 N:272:Master rogue
 G:p:D
@@ -3729,7 +3729,7 @@ S:BR_NEXU
 D:A locus of conflicting points coalesce to form the vague shape of a huge 
 D:hound.  Or is it just your imagination?
 
-N:308:Ogre mage
+N:308:Ogre wizard
 G:O:o
 I:110:5:30d12:20:40:30
 W:27:2:0:300
@@ -3881,7 +3881,7 @@ F:BASH_DOOR | IM_COLD | IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | NONLIVING
 F:HURT_ROCK | NO_CONF | NO_SLEEP | CHAR_MULTI  
 D:A sentient, moving section of wall.
 
-N:319:Mage
+N:319:Wizard
 G:p:r
 I:110:2:15d8:20:40:10
 W:28:1:0:150
@@ -3895,7 +3895,7 @@ S:1_IN_3 |
 S:HASTE | TPORT | TELE_TO | BLIND | CONF | 
 S:BO_FIRE | BO_COLD | BO_ELEC | 
 S:S_MONSTER
-D:A fat mage with glasses.
+D:A fat wizard with glasses.
 
 N:320:Mind flayer
 G:h:v
