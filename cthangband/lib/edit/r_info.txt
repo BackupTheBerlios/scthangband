@@ -4925,7 +4925,7 @@ S:BR_ACID | BR_FIRE | BR_COLD | BR_ELEC | BR_POIS
 D:It has a form that legends are made of.  Beautiful scales of shimmering 
 D:and magical colours cover it.
 
-N:391:& Raal's Tome of Destruction~
+N:391:& Raal's Tome~ of Destruction
 G:?:r
 I:+10:1:50d15:20:150:15
 W:36:4:0:1500
@@ -5526,7 +5526,7 @@ S:1_IN_7 |
 S:BLIND | CONF | BO_FIRE
 D:It is a black, horned humanoid with wings.
 
-N:431:& Baron of hell~
+N:431:& Baron~ of hell
 G:U:U
 I:+0:3:150d10:10:130:40
 W:38:3:0:900
@@ -6744,7 +6744,7 @@ D:give them up.
 
 ##### Level 53 #####
 
-N:506:& Lord of Chaos~
+N:506:& Lord~ of Chaos
 G:p:v
 I:+20:5:45d55:30:80:5
 W:53:3:0:17500
@@ -7747,7 +7747,7 @@ D:glowing eyes burning with hatred.
 
 ##### Level 83 #####
 
-N:559:& Snake of Yig~
+N:559:& Snake~ of Yig
 G:J:r
 I:+10:3:48d10:25:80:30
 W:83:4:0:600
