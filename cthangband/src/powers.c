@@ -99,14 +99,14 @@ static cptr timer_verbs[TIMED_MAX] =
 	"gives you hallucinations",
 	"speeds you",
 	"slows you",
-	"protects you",
+	"protects you from harm",
 	"blesses you",
 	"makes you heroic",
-	"drives you berserk",
+	"makes you berserk",
 	"protects you from evil",
-	"renders you incorporeal",
+	"makes you incorporeal",
 	"makes you invulnerable",
-	"gives you telepathy",
+	"makes you telepathic",
 	"lets you see invisible things",
 	"lets you see infra-red light",
 	"protects you from acid",
@@ -156,30 +156,143 @@ static errr power_add_timed(int power, bool *ident)
 	return err;
 }
 
-static cptr list_timers(cptr init, cptr conj, add_timed_type **tim, int total)
+/*
+ * Combine a list of strings as "init str[0], str[1], ..., conj str[total-1]."
+ */
+static cptr list_timers(cptr init, cptr conj, cptr *str, int total)
 {
-	cptr s, end;
-	int i;
+	char buf[1024];
+	int i, l = 0;
+	const int maxlen = sizeof(buf)-1;
+	cptr end;
 
-	/* Paranoia. */
-	if (!init || !conj) return "";
+	assert(init && conj);
 
-	s = format("%s ", init);
-	
+	l = sprintf(buf+0, "%.*s ", maxlen-0, init);
+
 	for (i = 0; i < total; i++)
 	{
 		if (i == total-1) end = ".";
 		else if (i == total-2) end = " and ";
 		else end = ", ";
 
-		add_timed_type *ptr = tim[i];
-		s = format("%s%s for %d-%d turns%s",
-			s, timer_verbs[ptr->flag], ptr->min, ptr->max, end);
+		l += sprintf(buf+l, "%.*s", maxlen-l, str[i]);
+
+		l += sprintf(buf+l, "%.*s", maxlen-l, end);
 	}
 
-	return s;
+	return format(buf);
 }
 
+/* Display the period of this effect. Currently unused. */
+/* #define SHOW_TIMES */
+
+/*
+ * Put a string in str which represents the whole (possible nested) phrase.
+ * Create arrays to call itself on a subset if needed.
+ *
+ * This should call list_timers for each section of the string, but it isn't
+ * needed at present.
+ * It should also sort the strings initially to limit redundancy.
+ */
+static cptr timers_to_strings(add_timed_type **tim, int total)
+{
+	int i, j, k, match_p[10], match_s[10];
+#ifdef SHOW_TIMES
+	bool match_n[10];
+#endif
+
+	char buf[10][80];
+	cptr str[10];
+
+	for (i = 0; i < 10; i++) str[i] = buf[i];
+	for (i = 0; i < 10; i++) strcpy(buf[i], "!!");
+
+	assert(total <= 10);
+
+	/* Boring... */
+	if (!total) return 0;
+
+	for (i = 0; i < total-1; i++)
+	{
+		add_timed_type *t1 = tim[i], *t2 = tim[i+1];
+		cptr s1 = timer_verbs[t1->flag];
+		cptr s2 = timer_verbs[t2->flag];
+		cptr e1 = strchr(s1, '\0');
+		cptr e2 = strchr(s2, '\0');
+		cptr v1, v2;
+
+#ifdef SHOW_TIMES
+		/* Notice if the numbers match. */
+		match_n[i] = (t1->min == t2->min && t1->max == t2->max);
+#endif
+
+		/* Notice an initial matching section. */
+		for (v1 = s1, v2 = s2; *v1 && *v1 == *v2; v1++, v2++) ;
+		match_p[i] = v1-s1;
+
+		/* Notice a final matching section (ignoring the \0). */
+		for (v1 = e1, v2 = e2; e1 != s1 && e2 != s2 && *e1 == *e2; e1--, e2--) ;
+		match_s[i] = MAX(0, e1-v1-1);
+	}
+
+	match_p[total-1] = 0;
+	match_s[total-1] = 0;
+#ifdef SHOW_TIMES
+	match_n[total-1] = FALSE;
+#endif
+
+	for (j = 0; j < total; j = i)
+	{
+		for (i = j+1; i < total; i++)
+		{
+#ifdef SHOW_TIMES
+			if (!match_n[i-1]) break;
+#endif
+			if (match_p[i-1] != match_p[j]) break;
+			if (match_s[i-1] != match_s[j]) break;
+		}
+
+		for (k = j; k < i; k++)
+		{
+			add_timed_type *t_ptr = tim[k];
+			cptr s = timer_verbs[t_ptr->flag];
+			int len = strlen(s);
+
+			if (k != j)
+			{
+				len -= match_p[j];
+				s += match_p[j];
+			}
+#ifdef SHOW_TIMES
+			if (k != i-1)
+#endif
+
+			{
+				len -= match_s[j];
+				strnfmt(buf[k], sizeof(buf[k]), "%.*s", len, s);
+			}
+#ifdef SHOW_TIMES
+			else
+			{
+				strnfmt(buf[k], sizeof(buf[k]),
+					"%.*s for %d-%d turns", len, s, t_ptr->min, t_ptr->max);
+			}
+#endif
+		}
+	}
+	return list_timers("It", "and", str, total);
+}
+
+/*
+ * Describe an add_timed_type power.
+ * This should have a format something like "It protects you from A for B-C
+ * turns, protects you from D and E for F-G turns and protects you from H and
+ * Is you for J-K turns."
+ *
+ * It doesn't handle that correctly, but does give good enough descriptions of
+ * the powers actually used, so it's good enough for now.
+ */
 static cptr power_describe_timer(int power)
 {
 	add_timed_type *ptr, *a[10];
@@ -193,8 +306,7 @@ static cptr power_describe_timer(int power)
 			a[j++] = ptr;
 		}
 	}
-	if (!j) return 0;
-	else return list_timers("It", "and", a, j);
+	return timers_to_strings(a, j);
 }
 
 /*
