@@ -2668,6 +2668,7 @@ static void alloc_ifa(ifa_type *i_ptr, cptr str)
 #endif
 
 #define CMPU(X) (pn_ptr->X - po_ptr->X)
+#define CMPUU(X) (ABS(CMPU(X)))
 #define CMP(X) ((dif = CMPU(X)))
 #define CMPUJ(X) CMPU(X[j])
 #define CMPJ(X) ((dif = CMPUJ(X)))
@@ -2726,21 +2727,21 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 			if (CMPS(adj_chr_gold)) descr(format("  It %s your bargaining power.", DIF_DEC));
 			break;
 			case A_WIS:
-			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPU(mchi)));
+			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s chi at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mchi)));
 			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum mindcraft success rate by %d%%.", DIF_DEC, DIF));
 			if (CMPS(adj_mag_stat)) descr(format("  It %s your mindcraft success rates.", DIF_INC));
 			if (CMPS(adj_wis_sav)) descr(format("  It %s your saving throw by %d%%.", DIF_INC, DIF));
 			break;
 			case A_INT: /* Rubbish in the case of icky gloves or heavy armour. */
 			if (CMPS(adj_mag_study)) descr(format("  It allows you to learn %d %s spells at 100%% skill.", DIF*25, DIF_MOR));
-			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPU(msp)));
+			if (CMPS(adj_mag_mana)) descr(format("  It gives you %d %s mana at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(msp)));
 			if (CMPS(adj_mag_fail)) descr(format("  It %s your maximum spellcasting success rate by %d%%.", DIF_DEC, DIF));
 			if (CMPS(adj_mag_stat)) descr(format("  It %s your spellcasting success rates.", DIF_INC));
 			if (CMP(skill_dev)) descr(format("  It %s your success rate with magical devices.", DIF_INC));
 			break;
 			case A_CON:
 			if (CMPS(adj_con_fix)) descr(format("  It %s your regeneration rate.", DIF_INC));
-			if (CMPS(adj_con_mhp)) descr(format("  It gives you %d %s hit points at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPU(mhp)));
+			if (CMPS(adj_con_mhp)) descr(format("  It gives you %d %s hit points at 100%% skill (%d now).", DIF*25, DIF_MOR, CMPUU(mhp)));
 			break;
 			case A_DEX:
 			if (CMP(dis_to_a)) descr(format("  It %s your AC by %d.", DIF_INC, DIF));
