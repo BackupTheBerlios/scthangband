@@ -991,7 +991,7 @@ static void handle_quest_stairs(void)
 			{
 				if (force_change == t || (force_leave != t && one_in(2)))
 				{
-					if (cave[y][x].info & CAVE_VIEW) seen = TRUE;
+					if (player_can_see_bold(y, x)) seen = TRUE;
 					cave_set_feat(y, x, stairs[in]);
 				}
 				t++;
