@@ -3164,17 +3164,17 @@ wild_type wild_grid[12][12] = {
 /* Shamanic spirits */
 spirit_type spirits[MAX_SPIRITS] =
 {
-	{"","a minor life spirit",0,0,0x000000ff,SPIRIT_LIFE,1},
-	{"","a minor wild spirit",0,0,0x000000ff,SPIRIT_NATURE,1},
+	{"","a minor life spirit",0x000000ff,0,0,SPIRIT_LIFE,1, 15},
+	{"","a minor wild spirit",0x000000ff,0,0,SPIRIT_NATURE,1, 15},
 
-	{"","a lesser life spirit",0,0,0x0000ff00,SPIRIT_LIFE,7},
-	{"","a lesser wild spirit",0,0,0x0000ff00,SPIRIT_NATURE,5},
+	{"","a lesser life spirit",0x0000ff00,0,0,SPIRIT_LIFE,7, 30},
+	{"","a lesser wild spirit",0x0000ff00,0,0,SPIRIT_NATURE,5, 30},
 
-	{"","a greater life spirit",0,0,0x00ff0000,SPIRIT_LIFE,15},
-	{"","a greater wild spirit",0,0,0x00ff0000,SPIRIT_NATURE,7},
+	{"","a greater life spirit",0x00ff0000,0,0,SPIRIT_LIFE,15, 45},
+	{"","a greater wild spirit",0x00ff0000,0,0,SPIRIT_NATURE,7, 45},
 
-	{"","a major life spirit",0,0,0xff000000,SPIRIT_LIFE,5},
-	{"","a major wild spirit",0,0,0xff000000,SPIRIT_NATURE,20},
+	{"","a major life spirit",0xff000000,0,0,SPIRIT_LIFE,5, 60},
+	{"","a major wild spirit",0xff000000,0,0,SPIRIT_NATURE,20, 60},
 };
 
 /*

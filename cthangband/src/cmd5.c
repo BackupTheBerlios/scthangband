@@ -3548,13 +3548,18 @@ static void annoy_spirit(spirit_type *s_ptr,u32b amount)
  *
  * This makes more severe punishments more common for high level spells,
  * compounding the relative rarity that any punishment will occur.
+ *
+ * Return the extra anger this should cause to avoid double messages.
  */
-static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
+static int spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 {
 	s32b i = rand_int(100000);
 
 	/* Do nothing from 40-85% of the time. */
-	if (rand_int(100) > ((s_ptr - spirits)/MAX_SPHERE+1)*15) return;
+	if (rand_int(100) > s_ptr->punish_chance) return 0;
+
+	/* Warn of a punishment. */
+	msg_format("%s is enraged!", s_ptr->name);
 
  	/* Abandonment. up to 2% chance for a level 45 favour. */
 	if (i < f_ptr->minskill * f_ptr->minskill)
@@ -3562,10 +3567,13 @@ static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 		msg_format("%s disowns you!", s_ptr->name);
 
 		s_ptr->pact = FALSE;
+
+		/* No other effect makes sense now. */
+		return 0;
 	}
 
 	/* Summoning, up to 43% chance for a level 45 favour. */
-	else if (i < f_ptr->minskill * 1000)
+	if (i < f_ptr->minskill * 1000)
 	{
 		/* Choose an appropriate summon type most of the time. */
 		int j, type = (!rand_int(3)) ? 0 : (s_ptr->sphere == SPIRIT_NATURE) ?
@@ -3582,11 +3590,8 @@ static void spirit_punish(spirit_type *s_ptr, favour_type *f_ptr)
 		if (j == 1000) msg_format("They get lost on the way...");
 	}
 
-	/* Annoy the spirit even more if this makes sense. */
-	if (s_ptr->pact)
-	{
-		annoy_spirit(s_ptr, rand_range(15, 150));
-	}
+	/* Annoy the spirit even more. */
+	return rand_range(15, 150);
 }
 
 /*
@@ -3663,12 +3668,13 @@ void do_cmd_invoke(void)
 	/* Failed spell */
 	else if (rand_int(100) < chance)
 	{
+		int anger;
 		if (flush_failure) flush();
 		msg_format("%s refuses your call!",s_ptr->name);
-		/* The spirit still gets somewhat pissed off */
-		annoy_spirit(s_ptr,rand_int(favour_annoyance(f_ptr)));
 		/* Chance for retribution based on level of favour */
-		spirit_punish(s_ptr, f_ptr);
+		anger = spirit_punish(s_ptr, f_ptr);
+		/* The spirit gets somewhat pissed off if it hasn't left. */
+		if (s_ptr->pact) annoy_spirit(s_ptr,anger+rand_int(favour_annoyance(f_ptr)));
 	}
 	/* Process spell */
 	else

@@ -1357,6 +1357,12 @@ extern void update_mon(int m_idx, bool full);
 #if (defined(MONSTER2_C) || defined(XTRA1_C))
 extern void update_monsters(bool full);
 #endif
+#if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+extern bool live_monster_p(monster_race *r_ptr);
+#endif
+#if (defined(CMD1_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
+extern bool live_monster_wide_p(monster_race *r_ptr);
+#endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
 extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force);
 #endif
@@ -1420,9 +1426,6 @@ extern cptr find_next_good_flag(cptr s, byte reject, byte require);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
-
-
-
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
 extern cptr item_activation(object_type *o_ptr);
 #endif
@@ -2051,9 +2054,6 @@ extern void store_maint(int which);
 extern void store_init(int which);
 #endif
 
-
-
-
 /* tables.c */
 
 #if (defined(CMD6_C) || defined(GENERATE_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(XTRA2_C))
@@ -2439,6 +2439,9 @@ extern errr delete_resize_hook(void (*resize_hook)(void));
 #endif
 #if (defined(DUNGEON_C) || defined(UTIL_C))
 extern void resize_main_term(void);
+#endif
+#if (defined(STORE_C) || defined(UTIL_C))
+extern void repeat_string_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 
 /* variable.c */
@@ -3067,9 +3070,6 @@ extern bool good_item_flag;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool new_level_flag;
 #endif
-
-
-
 #if (defined(CMD1_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern int full_grid;
 #endif
@@ -3996,20 +3996,5 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
-#endif
-
-/* monster2.c */
-
-#if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
-extern bool live_monster_p(monster_race *r_ptr);
-#endif
-#if (defined(CMD1_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
-extern bool live_monster_wide_p(monster_race *r_ptr);
-#endif
-
-/* util.c */
-
-#if (defined(STORE_C) || defined(UTIL_C))
-extern void repeat_string_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
