@@ -475,6 +475,32 @@ static void unident_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 }
 
 /*
+ * Give a description of the base object name style.
+ * Use a real unidentified object description if possible.
+ */
+static void o_base_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
+{
+	int i, p_id = va_arg(*vp, int);
+
+	/* Search u_info for a place where this p_id is used. */
+	for (i = 0; i < z_info->u_max; i++)
+	{
+		/* Found a match. */
+		if (u_info[i].p_id == p_id)
+		{
+			strnfmt(buf, max, "%v", unident_name_f1, i);
+			return;
+		}
+	}
+
+	/* Copy the template name directly. */
+	sprintf(buf, "%.*s", max-1, ob_name+o_base[p_id].name);
+
+	/* Mask any unusual characters in it with X. */
+	while (*buf++) if (!ISPRINT(*buf)) *buf = 'X';
+}
+
+/*
  * Interact with some options for cheating
  */
 static void do_cmd_options_autosave(cptr info)
@@ -1250,7 +1276,7 @@ static void save_preferences(void (*func)(FILE *fff))
  */
 static void inscription_dump(FILE *fff)
 {
-	int i,j;
+	int i;
 
 	/* Title. */
 	fprintf(fff, "\n\n# Automatic default inscription dump\n\n");
@@ -1276,15 +1302,8 @@ static void inscription_dump(FILE *fff)
 		/* Nothing more to say. */
 		if (!o_base[i].note) continue;
 
-		/* Add a comment if this o_base is used. */
-		for (j = 0; i < z_info->u_max; i++)
-		{
-			if (u_info[j].p_id == i)
-			{
-				my_fprintf(fff, "# %v\n", unident_name_f1, j);
-				break;
-			}
-		}
+		/* Add a comment. */
+		my_fprintf(fff, "# %v\n", o_base_name_f1, i);
 
 		/* Save the setting. */
 		fprintf(fff, "}:%d:%s\n\n", i, quark_str(k_info[i].note));
@@ -1870,9 +1889,19 @@ static void tval_attr_dump(FILE *fff)
 		char a = atchar[k_info[i].i_attr];
 
 		/* Nothing new to say. */
-		if (a == TERM_WHITE) continue;
+		if (a == 'w') continue;
 
 		my_fprintf(fff, "# %v\nE:k:%d:%c\n\n", object_k_name_f1, i, i, a);
+	}
+
+	for (i = 0; i < z_info->ob_max; i++)
+	{
+		char a = atchar[o_base[i].i_attr];
+
+		/* Nothing new to say. */
+		if (a == 'w') continue;
+
+		my_fprintf(fff, "# %v\nE:u:%d:%c\n\n", o_base_name_f1, i, i, a);
 	}
 }
 

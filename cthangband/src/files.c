@@ -655,6 +655,9 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				for (i = 0; i < z_info->k_max; i++)
 					k_info[i].i_attr = TERM_WHITE;
 
+				for (i = 0; i < z_info->ob_max; i++)
+					o_base[i].i_attr = TERM_WHITE;
+
 				return SUCCESS;
 			}
 			else if (tokenize(buf+2, 16, zz) == 3)
@@ -673,10 +676,17 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				 * are found. */
 				else if (c == 't')
 				{
-					if (l < 0 || l > 255) return "no such tval";
+					if (l < 0 || l > 255 || l == TV_UNKNOWN)
+						return "no such tval";
 					for (i = 0; i < z_info->k_max; i++)
 					{
 						if (k_info[i].tval == l) k_info[i].i_attr = a;
+					}
+
+					/* Hack - propegate tval selections to appropriate p_ids. */
+					for (i = 0; i < z_info->ob_max; i++)
+					{
+						if (o_base[i].tval == l) o_base[i].i_attr = a;
 					}
 				}
 				/* Set the object_kind with this k_idx. */
@@ -684,6 +694,12 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				{
 					if (l < 0 || l >= z_info->k_max) return "no such k_idx";
 					k_info[l].i_attr = a;
+				}
+				/* Set the o_base_type with this p_id. */
+				else if (c == 'u')
+				{
+					if (l < 0 || l >= z_info->ob_max) return "no such p_id";
+					o_base[l].i_attr = a;
 				}
 				else
 				{

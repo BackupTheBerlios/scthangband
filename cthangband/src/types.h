@@ -279,6 +279,7 @@ struct o_base_type
 	u32b flags2; /* Expected flags, set 2 */
 	u32b flags3; /* Expected flags, set 3 */
 	byte tval; /* The tval for this base type, TV_UNKNOWN if none. */
+	byte i_attr; /* The colour of such an item in the player's inventory. */
 };
 
 /*

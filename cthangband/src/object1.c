@@ -3591,7 +3591,30 @@ bool item_tester_okay(object_ctype *o_ptr)
 		return item_tester_okay_aux(o_ptr, item_tester_hook, item_tester_tval);
 }
 
+/*
+ * Obtain the correct colour in which to show an object in an inventory list.
+ */
+byte get_i_attr(object_type *o_ptr)
+{
+	obj_know_type ok_ptr[1];
+	object_knowledge(ok_ptr, o_ptr);
 
+	/* Use the k_idx if known. */
+	if (ok_ptr->obj->k_idx)
+	{
+		return k_info[o_ptr->k_idx].i_attr;
+	}
+	/* Use the p_id if known (which is true because of the way p_id works). */
+	else if (ok_ptr->p_id)
+	{
+		return o_base[u_info[k_info[o_ptr->k_idx].u_idx].p_id].i_attr;
+	}
+	/* Paranoia */
+	else
+	{
+		return TERM_WHITE;
+	}
+}
 
 
 /*
@@ -3623,7 +3646,7 @@ void display_inven(bool equip)
 		object_type *o_ptr = &inventory[i];
 
 		/* Get a color */
-		char attr = atchar[k_info[o_ptr->k_idx].i_attr];
+		char attr = atchar[get_i_attr(o_ptr)];
 
 		cptr slot1, slot2;
 
@@ -3722,7 +3745,7 @@ void show_inven(bool equip, bool all)
 
 		/* Save the object index, color, and description */
 		out_index[k] = i;
-		out_color[k] = k_info[o_ptr->k_idx].i_attr;
+		out_color[k] = get_i_attr(o_ptr);
 		out_desc[k] = string_make(o_name);
 
 		/* Find the predicted "line length" */

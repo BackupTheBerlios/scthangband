@@ -3296,7 +3296,7 @@ extern char *u_name;
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern o_base_type *o_base;
 #endif
-#if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern cptr ob_name;
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
@@ -3919,5 +3919,11 @@ extern int feature_priorities;
 
 #if (defined(ALLOW_VISUALS)) && (defined(CMD4_C) || defined(INIT2_C))
 extern void init_visuals(void);
+#endif
+
+/* object1.c */
+
+#if (defined(OBJECT1_C) || defined(STORE_C))
+extern byte get_i_attr(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
