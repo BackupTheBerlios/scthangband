@@ -2371,7 +2371,7 @@ extern void prt(cptr str, int row, int col);
 #if (defined(MONSTER1_C) || defined(UTIL_C))
 extern bool c_roff(byte a, cptr str);
 #endif
-#if (defined(MONSTER1_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C))
 extern void roff(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(UTIL_C))
