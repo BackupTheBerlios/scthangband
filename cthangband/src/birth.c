@@ -3645,7 +3645,7 @@ static bool player_birth_aux(void)
 				/* Fully rested */
 				p_ptr->csp = p_ptr->msp;
 				p_ptr->cchi = p_ptr->mchi;
-				p_ptr->energy = 1050;
+				p_ptr->energy = 1050; /* Should this be based on TURN_ENERGY? */
 
 				/* Display the player */
 				display_player(mode);
@@ -4013,7 +4013,7 @@ static bool player_birth_aux(void)
 		p_ptr->muta3 = 0;
 
 		/* Player is ready to move... */
-		p_ptr->energy=1050;
+		p_ptr->energy=1050; /* Should this be based on TURN_ENERGY? */
 
 		/* Player has no recal ritual yet */
 		p_ptr->ritual = MAX_TOWNS + 1;

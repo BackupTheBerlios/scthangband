@@ -2205,7 +2205,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	}
 
 
-	/* Give a random starting energy */
+	/* Give a random starting energy (should this be a TURN_ENERGY thing?) */
 	m_ptr->energy = rand_int(100)+900;
 
 	/* Force monster to wait for player */
