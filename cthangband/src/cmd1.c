@@ -1103,7 +1103,148 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 		}
 }
 
+/*
+ * Choose a martial arts attack from those in ma_blows based on your current
+ * skill level.
+ */
+static martial_arts *choose_ma_attack(int skill)
+{
+	martial_arts *ma_ptr, *new_ptr;
+	int i,max;
 
+	/* Find the last martial arts technique the player may be able to use. */
+	for (max = 0; max < MAX_MA; max++)
+	{
+		if (ma_blows[max].min_level > skill) break;
+	}
+
+	/* Very low skills use a special "unskilled" blow. */
+	if (!max) return ma_blows+MAX_MA;
+
+	/* As do stunned or confused characters (rather than the weak skilled blow
+	 * used in other variants). */
+	if (p_ptr->stun || p_ptr->confused) return ma_blows+MAX_MA;
+
+	for (i = MAX(1, skill/14), ma_ptr = ma_blows+MAX_MA; i; i--)
+	{
+		do
+		{
+			new_ptr = &ma_blows[(rand_int(max))];
+		}
+		while (rand_int(skill/2*2) < new_ptr->chance);
+
+		/* keep the highest level attack available we found */
+		if (new_ptr->min_level > ma_ptr->min_level)
+		{
+			ma_ptr = new_ptr;
+			if (cheat_wzrd && cheat_xtra)
+			{
+				msg_print("Attack re-selected.");
+			}
+		}
+	}
+	return ma_ptr;
+}
+
+/*
+ * Return TRUE if a monster can be kicked in the ankle.
+ * This gives some unintuitive results.
+ */
+static PURE bool mon_has_knee(const monster_race *r_ptr)
+{
+	/* What would this knee do? */
+	if (r_ptr->flags1 & RF1_NEVER_MOVE) return FALSE;
+
+	/* Monsters with symbols which suggest no knees... */
+	if (strchr("UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char))
+		return FALSE;
+
+	/* Assume it has knees. */
+	return TRUE;
+}
+
+/*
+ * Calculate the damage a martial art and carry out various side effects.
+ */
+static int do_ma_attack(monster_type *m_ptr)
+{
+	int k, resist_stun = 0, stun_effect = 0;
+	bool survives;
+	int skill = skill_set[SKILL_MA].value;
+	monster_race *r_ptr = r_info+m_ptr->r_idx;
+	martial_arts *ma_ptr = choose_ma_attack(skill);
+
+	/* Calculate the stun resistance. */
+	if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
+	if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
+	if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
+	if (!live_monster_wide_p(r_ptr)) resist_stun += 88;
+	
+	/* Calculate the damage. */
+	k = damroll(ma_ptr->dd, ma_ptr->ds);
+	k = critical_norm((skill/2) * (randint(10)), ma_ptr->min_level/2, k);
+
+	/* Hack - say some extra stuff if the monster will survive. */
+	survives = (k + p_ptr->to_d < m_ptr->hp);
+
+	if (ma_ptr->effect == MA_KNEE && r_ptr->flags1 & RF1_MALE)
+	{
+		msg_format("You hit %v in the groin with your knee!",
+			monster_desc_f2, m_ptr, 0);
+
+		if (survives)
+		{
+			msg_format("%^v moans in agony!", monster_desc_f2, m_ptr, 0);
+			stun_effect = 7 + randint(13);
+			resist_stun /= 3;
+		}
+	}
+
+	else if (ma_ptr->effect == MA_SLOW && mon_has_knee(r_ptr))
+	{
+		msg_format("You kick %v in the ankle.", monster_desc_f2, m_ptr, 0);
+
+		if (survives)
+		{
+			if (!(r_ptr->flags1 & RF1_UNIQUE) &&
+				(randint(skill_set[SKILL_MA].value/2) > r_ptr->level)
+				&& m_ptr->mspeed > 60)
+			{
+				msg_format("%^v starts limping slower.",
+					monster_desc_f2, m_ptr, 0);
+				m_ptr->mspeed -= 10;
+			}
+		}
+	}
+
+	else
+	{
+		if (ma_ptr->effect)
+		{
+			stun_effect = rand_range(ma_ptr->effect/2+1, ma_ptr->effect/2*2);
+		}
+
+		msg_format(ma_ptr->desc, monster_desc_f2, m_ptr, 0);
+	}
+
+	if (stun_effect && survives)
+	{
+		if ((skill_set[SKILL_MA].value/2) >
+			randint(r_ptr->level + resist_stun + 10))
+		{
+			if (m_ptr->stunned)
+			{
+				msg_format("%^v is more stunned.", monster_desc_f2, m_ptr, 0);
+			}
+			else
+			{
+				msg_format("%^v is stunned.", monster_desc_f2, m_ptr, 0);
+			}
+			m_ptr->stunned += (stun_effect);
+		}
+	}
+	return k;
+}
 
 /*
  * Player attacks a (poor, defenseless) creature        -RAK-
@@ -1266,128 +1407,16 @@ void py_attack(int y, int x)
         vorpal_cut = TRUE;
     else vorpal_cut = FALSE;
 
+	/* Handle martial arts. */
     if (ma_empty_hands())
     {
-        int special_effect = 0, stun_effect = 0, times = 0;
-        martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
-        int resist_stun = 0;
-        if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
-        if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
-        if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
-        if (!live_monster_wide_p(r_ptr)) resist_stun += 88;
-
-        for (times = 0; times < (skill_set[SKILL_MA].value<14?1:skill_set[SKILL_MA].value/14); times++)
-        /* Attempt 'times' */
-        {
-            do
-            {
-				if(skill_set[SKILL_MA].value < 2)
-				{
-					ma_ptr = &ma_blows[0];
-				}
-				else
-				{
-					ma_ptr = &ma_blows[(randint(MAX_MA-1))];
-				}
-            }
-            while ((ma_ptr->min_level > skill_set[SKILL_MA].value/2)
-                    || (randint(skill_set[SKILL_MA].value/2) < ma_ptr->chance));
-
-            /* keep the highest level attack available we found */
-            if ((ma_ptr->min_level > old_ptr->min_level) &&
-                !(p_ptr->stun || p_ptr->confused))
-            {
-                old_ptr = ma_ptr;
-                if (cheat_wzrd && cheat_xtra)
-                {
-                    msg_print("Attack re-selected.");
-                }
-            }
-            else
-            {
-                ma_ptr = old_ptr;
-            }
-        }
-
-        k = damroll(ma_ptr->dd, ma_ptr->ds);
-
-
-
-
-        if (ma_ptr->effect == MA_KNEE)
-        {
-            if (r_ptr->flags1 & RF1_MALE)
-            {
-                msg_format("You hit %s in the groin with your knee!", m_name);
-                special_effect = MA_KNEE;
-            }
-            else
-                msg_format(ma_ptr->desc, m_name);
-        }
-
-        else if (ma_ptr->effect == MA_SLOW)
-        {
-            if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-                    || strchr("UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
-            {
-                msg_format("You kick %s in the ankle.", m_name);
-                special_effect = MA_SLOW;
-
-            }
-            else
-
-                msg_format(ma_ptr->desc, m_name);
-        }
-        else {
-                if (ma_ptr->effect)
-                    {
-                    stun_effect
-                        = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
-                    }
-
-                msg_format(ma_ptr->desc, m_name);
-            }
-
-
-        k = critical_norm((skill_set[SKILL_MA].value/2) * (randint(10)), ma_ptr->min_level, k);
-
-        if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < m_ptr->hp))
-        {
-            msg_format("%^s moans in agony!", m_name);
-            stun_effect = 7 + randint(13);
-            resist_stun /= 3;
-        }
-
-        else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d) < m_ptr->hp))
-        {
-            if (!(r_ptr->flags1 & RF1_UNIQUE) &&
-               (randint(skill_set[SKILL_MA].value/2) > r_ptr->level)
-               && m_ptr->mspeed > 60)
-            {
-                msg_format("%^s starts limping slower.", m_name);
-                m_ptr->mspeed -= 10;
-            }
-        }
-
-
-        if (stun_effect && ((k + p_ptr->to_d) < m_ptr->hp))
-        {
-            if ((skill_set[SKILL_MA].value/2) > randint(r_ptr->level + resist_stun + 10))
-            {
-                if (m_ptr->stunned)
-                  msg_format("%^s is more stunned.", m_name);
-                else
-                  msg_format("%^s is stunned.", m_name);
-
-                m_ptr->stunned += (stun_effect);
-            }
-
-        }
-		if ((chance < (r_ptr->ac * 3)) || (skill_set[SKILL_MA].value * 3 < r_ptr->ac * 4))
+		k = do_ma_attack(m_ptr);
+		if ((chance < (r_ptr->ac * 3)) ||
+			(skill_set[SKILL_MA].value * 3 < r_ptr->ac * 4))
 		{
 			skill_exp(SKILL_MA);
 		}
-    }
+	}
 
 	/* Handle normal weapon */
     else if (o_ptr->k_idx)
@@ -1417,18 +1446,21 @@ void py_attack(int y, int x)
 			int chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
             int i;
 
-            if ((o_ptr->name1 == ART_DEMONBLADE) && randint(2)!=1)
+            if ((o_ptr->name1 == ART_DEMONBLADE) && one_in(2))
             {
                 msg_format("%v", get_rnd_line_f1, "chainswd.txt");
             }
-
-            if (o_ptr->name1 == ART_VORPAL_BLADE)
-                msg_print("Your Vorpal Blade goes snicker-snack!");
-            else
-                msg_format("Your weapon cuts deep into %s!", m_name);
+			else if (o_ptr->name1 == ART_VORPAL_BLADE)
+			{
+				msg_print("Your Vorpal Blade goes snicker-snack!");
+			}
+			else
+			{
+				msg_format("Your weapon cuts deep into %s!", m_name);
+			}
 
 			/* Paranoia - it's only improbable. */
-			for (i = 0; i < 32767 && one_in(chance); i++) ;
+			for (i = 1; i < 32767 && one_in(chance); i++) ;
 
 			/* Multiply to get the new damage. */
 			if (32767 / i < k) k = 32767;

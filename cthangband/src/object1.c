@@ -2234,7 +2234,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
  * Return the original if given For objects produced by object_info_known().
  * Return the input otherwise.
  */
-static object_type PURE *get_real_obj(object_type *o_ptr)
+object_type PURE *get_real_obj(object_type *o_ptr)
 {
 	if (!o_ptr->iy && o_ptr->ix) return inventory+o_ptr->ix-1;
 	else return o_ptr;

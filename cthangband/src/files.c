@@ -1464,6 +1464,98 @@ static s32b critical_average(int weight, int plus, int dam)
 }
 
 /*
+ * Give the average base damage the player gains from martial arts based on
+ * do_ma_attack(), which works as follows:
+ * 
+ * An attack is selected i times.
+ * The game chooses attacks randomly until one is selected, which happens
+ * (skill-ma_ptr->chance)/skill of the time.
+ * The attack with the greatest skill is chosen. If there are two such,
+ * the one chosen first is used.
+ *
+ * This does tend to underestimate the damage at high levels, but not by much.
+ */
+static s32b average_ma_damage(void)
+{
+	int i, j, k, t, skill = skill_set[SKILL_MA].value/2*2;
+	s32b c[MAX_MA], d[MAX_MA], tdam, denom;
+	for (t = 0; t < MAX_MA; t++)
+	{
+		if (ma_blows[t].min_level > skill) break;
+	}
+	if (!t || p_ptr->stun || p_ptr->confused)
+	{
+		martial_arts *ma_ptr = ma_blows+MAX_MA;
+		s32b crit, dam = 60*ma_ptr->dd*(ma_ptr->ds+1)/2;
+		for (k = 1, crit = 0; k <= 10; k++)
+		{
+			crit += critical_average(skill/2*k, ma_ptr->min_level/2, dam);
+		}
+		return crit/10;
+	}
+
+	/* Initialise d with the lowest blow. */
+	WIPE(d,d);
+	d[0] = 1;
+
+	for (i = MAX(1, skill/14); i; i--)
+	{
+		bool overflow = FALSE;
+		WIPE(c,c);
+
+		for (j = 0; j < t; j++)
+		{
+			/* Calculate how likely the routine is to select attack j. */
+			martial_arts *ma_ptr = ma_blows+j;
+			int chance = MAX(0, skill - ma_ptr->chance);
+
+			/* Transfer the chance for each previously selected attack. */
+			for (k = 0; k < t; k++)
+			{
+				/* If j is a higher level attack, it is used instead of k. */
+				if (ma_blows[k].min_level < ma_ptr->min_level)
+				{
+					c[j] += d[k]*chance;
+				}
+				/* Otherwise, k is still the chosen attack. */
+				else
+				{
+					c[k] += d[k]*chance;
+				}
+			}
+		}
+
+		for (j = 0; j < t; j++)
+		{
+			if (c[j] > MAX_S32B/MA_INTERVAL) overflow = TRUE;
+		}
+
+		/* Copy back, rounding if necessary. */
+		for (j = 0; j < t; j++)
+		{
+			if (overflow)
+				d[j] = c[j]/MA_INTERVAL;
+			else
+				d[j] = c[j];
+		}
+	}
+
+	for (j = denom = 0; j < MAX_MA; j++) denom += d[j];
+
+	for (j = tdam = 0; j < MAX_MA; j++)
+	{
+		s32b crit, dam = 60*ma_blows[j].dd*(ma_blows[j].ds+1)/2;
+		for (k = 1, crit = 0; k <= 10; k++)
+		{
+			crit += critical_average(skill/2*k, ma_blows[j].min_level/2, dam);
+		}
+		tdam += crit*d[j]/10;
+	}
+
+	return tdam/denom;
+}
+
+/*
  * Given an object to be scrutinised, find a weapon and some ammunition (if
  * appropriate) to use it.
  * 
@@ -1473,12 +1565,13 @@ static s32b critical_average(int weight, int plus, int dam)
 static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
 	object_type **am_ptr)
 {
-	s16b slot = wield_slot(o_ptr);
+	int slot = wield_slot(o_ptr);
+	object_type *j_ptr = get_real_obj(o_ptr);
 
 	/* Is o_ptr equipped? */
-	if (o_ptr == inventory+INVEN_WIELD || o_ptr == inventory+INVEN_BOW)
+	if (j_ptr == inventory+INVEN_WIELD || j_ptr == inventory+INVEN_BOW)
 	{
-		slot = o_ptr-inventory;
+		slot = j_ptr-inventory;
 	}
 
 	/* Set the weapon and ammunition pointers. */
@@ -1507,9 +1600,11 @@ static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
 	return slot;
 }
 
-	/* Now that's done, we do some statistical stuff.
-	 * We want to know the to-hit bonus, the damage bonus, the number of blows
-	 * per turn and the average damage per turn. */
+/*
+ * Now that's done, we do some statistical stuff.
+ * We want to know the to-hit bonus, the damage bonus, the number of blows
+ * per turn and the average damage per turn.
+ */
 static void weapon_stats_calc(object_type *wp_ptr, object_type *am_ptr,
 	int slot, int slay, s16b *tohit, s16b *todam, s16b *weap_blow,
 	s16b *mut_blow, s32b *damage)

@@ -1753,6 +1753,49 @@ static void check_book_info(void)
 	}
 }
 
+/*
+ * Check various things about ma_blows[].
+ */
+static void check_ma_blows(void)
+{
+	bool first_attack = FALSE;
+	martial_arts *ma_ptr;
+
+	/* ma_blows[MAX_MA] is used for unskilled attacks. */
+	assert(!ma_blows[MAX_MA].min_level);
+	assert(!ma_blows[MAX_MA].chance);
+
+	for (ma_ptr = ma_blows; ma_ptr < ma_blows+MAX_MA; ma_ptr++)
+	{
+		/* Check that a player who passes the "min_level" check for the easiest
+		 * attack has a "chance" of using at least one attack. */
+		if (ma_ptr->min_level == ma_blows->min_level &&
+			ma_ptr->chance <= ma_blows->level)
+		{
+			first_attack = TRUE;
+		}
+
+		if (ma_ptr != ma_blows && ma_ptr->min_level < ma_ptr[-1].min_level)
+		{
+			quit_fmt("Mis-ordered martial arts techniques: %d < %d.",
+				ma_ptr->min_level, ma_ptr[-1].min_level);
+		}
+
+		/* Field silliness. */
+		if (ma_ptr->min_level < 0 || ma_ptr->min_level > 100 ||
+			ma_ptr->chance < -1 || ma_ptr->chance > 99 ||
+			ma_ptr->dd < 0 || ma_ptr->ds < 0)
+		{
+			quit_fmt("Martial arts technique \"%s\" (%d) malformed.",
+				ma_ptr->desc, ma_ptr-ma_blows);
+		}
+	}
+
+	if (!first_attack)
+		quit_fmt("There is a %d%% minimum attack, but no attack can be used "
+		"at %d%% skill.", ma_blows->min_level, ma_blows->min_level);
+}
+
 #endif /* CHECK_ARRAYS */
 
 /*
@@ -1772,6 +1815,7 @@ static void check_arrays(void)
 	check_timeouts();
 	check_book_info();
 	check_magic_info();
+	check_ma_blows();
 #endif /* CHECK_ARRAYS */
 }
 

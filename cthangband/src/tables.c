@@ -2710,47 +2710,36 @@ int chaos_rewards[MAX_PATRON][20] =
     }
 };
 
-martial_arts ma_blows[MAX_MA] =
-{
 #ifdef VERBOSE_MARTIAL_ARTS
-	{ "You hit %s.",							0, 0, 1, 1, 0},
-    { "You punch %s.",                          1, 0, 1, 4, 0 },
-    { "You kick %s.",                           2, 0, 1, 6, 0 },
-    { "You strike %s.",                         3, 0, 1, 7, 0 },
-    { "You hit %s with your knee.",             5, 5, 2, 3, MA_KNEE },
-    { "You hit %s with your elbow.",            7, 5, 1, 8, 0 },
-    { "You butt %s.",                           9, 10, 2, 5, 0 },
-    { "You kick %s.",                           11, 10, 3, 4, MA_SLOW },
-    { "You uppercut %s.",                       13, 12, 4, 4, 6 },
-    { "You double-kick %s.",                    16, 15, 5, 4, 8 },
-    { "You hit %s with a Cat's Claw.",          20, 20, 5, 5, 0 },
-    { "You hit %s with a jump kick.",           25, 25, 5, 6, 10 },
-    { "You hit %s with an Eagle's Claw.",       29, 25, 6, 6, 0 },
-    { "You hit %s with a circle kick.",         33, 30, 6, 8, 10 },
-    { "You hit %s with an Iron Fist.",          37, 35, 8, 8, 10 },
-    { "You hit %s with a flying kick.",         41, 35, 8, 10, 12 },
-    { "You hit %s with a Dragon Fist.",       45, 35, 10, 10, 16 },
-    { "You hit %s with a Crushing Blow.",         48, 35, 10, 12, 18 },
-#else
-    { "You hit %s.",							0, 0, 1, 1, 0},
-	{ "You punch %s.",                          1, 0, 1, 4, 0 },
-    { "You kick %s.",                           2, 0, 1, 6, 0 },
-    { "You strike %s.",                         3, 0, 1, 7, 0 },
-    { "You knee %s.",             5, 5, 2, 3, MA_KNEE },
-    { "You hit %s.",            7, 5, 1, 8, 0 },
-    { "You butt %s.",                           9, 10, 2, 5, 0 },
-    { "You kick %s.",                           11, 10, 3, 4, MA_SLOW },
-    { "You uppercut %s.",                       13, 12, 4, 4, 6 },
-    { "You double-kick %s.",                    16, 15, 5, 4, 8 },
-    { "You hit %s.",          20, 20, 5, 5, 0 },
-    { "You kick %s.",           25, 25, 5, 6, 10 },
-    { "You hit %s.",       29, 25, 6, 6, 0 },
-    { "You kick %s.",         33, 30, 6, 8, 10 },
-    { "You punch %s.",          37, 35, 8, 8, 10 },
-    { "You kick %s.",         41, 35, 8, 10, 12 },
-    { "You punch %s.",       45, 35, 10, 10, 16 },
-    { "You punch %s.",       48, 35, 10, 12, 18 },
-#endif
+#define MA(BRIEF,VERBOSE) VERBOSE
+#else /* VERBOSE_MARTIAL_ARTS */
+#define MA(BRIEF,VERBOSE) BRIEF
+#endif /* VERBOSE_MARTIAL_ARTS */
+
+martial_arts ma_blows[MAX_MA+1] =
+{
+	{ "You punch %v.",                          2, 0, 1, 4, 0 },
+	{ "You kick %v.",                           4, 0, 1, 6, 0 },
+	{ "You strike %v.",                         6, 0, 1, 7, 0 },
+	{MA("You knee %v.", "You hit %v with your knee."), 10, 9, 2, 3, MA_KNEE },
+	{MA("You hit %v.", "You hit %v with your elbow."), 14, 9, 1, 8, 0 },
+	{ "You butt %v.",                           18, 19, 2, 5, 0 },
+	{ "You kick %v.",                           22, 19, 3, 4, MA_SLOW },
+	{ "You uppercut %v.",                       26, 23, 4, 4, 6 },
+	{ "You double-kick %v.",                    32, 29, 5, 4, 8 },
+	{MA("You hit %v.", "You hit %v with a Cat's Claw."), 40, 39, 5, 5, 0 },
+	{MA("You kick %v.", "You hit %v with a jump kick."), 50, 49, 5, 6, 10 },
+	{MA("You hit %v.", "You hit %v with an Eagle's Claw."), 58, 49, 6, 6, 0 },
+	{MA("You kick %v.", "You hit %v with a circle kick."), 66, 59, 6, 8, 10 },
+	{MA("You punch %v.", "You hit %v with an Iron Fist."), 74, 69, 8, 8, 10 },
+	{MA("You kick %v.", "You hit %v with a flying kick."), 82, 69, 8, 10, 12 },
+	{MA("You punch %v.", "You hit %v with a Dragon Fist."),
+		90, 69, 10, 10, 16},
+	{MA("You punch %v.", "You hit %v with a Crushing Blow."),
+		96, 69, 10, 12, 18},
+
+	/* A weak unarmed attack for unskilled characters. */
+	{ "You hit %v.",							0, 0, 1, 1, 0},
 };
 
 static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =

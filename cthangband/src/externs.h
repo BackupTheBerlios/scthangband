@@ -2156,8 +2156,8 @@ extern int chaos_stats[MAX_PATRON];
 #if (defined(TABLES_C) || defined(XTRA2_C))
 extern int chaos_rewards[MAX_PATRON][20];
 #endif
-#if (defined(CMD1_C) || defined(TABLES_C))
-extern martial_arts ma_blows[MAX_MA];
+#if (defined(CMD1_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C))
+extern martial_arts ma_blows[MAX_MA+1];
 #endif
 
 
@@ -4092,5 +4092,11 @@ extern bool PURE player_has_flag_known(int set, u32b flag);
 
 #if (defined(CMD5_C) || defined(POWERS_C))
 extern cptr describe_power(int power, int lev);
+#endif
+
+/* object1.c */
+
+#if (defined(FILES_C) || defined(OBJECT1_C))
+extern object_type PURE *get_real_obj(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
