@@ -1494,13 +1494,23 @@ static void calc_bonuses_muta(s16b (*flags)[32])
 static void calc_bonuses_race(s16b (*flags)[32])
 {
 	race_bonus_type *ptr;
+	int i, j;
 
-	/* No bonuses at all. */
+	/* Binary flags which are always present are simple. */
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 32; j++)
+		{
+			if (rp_ptr->flags[i] & (1L << j)) flags[i][j] = TRUE;
+		}
+	}
+
+	/* No other bonuses present. */
 	if (!rp_ptr->bonuses) return;
 
 	for (ptr = rp_ptr->bonus; ptr < rp_ptr->bonus+rp_ptr->bonuses; ptr++)
 	{
-		/* Check skills and add in the mutation. */
+		/* Check skills and add in the bonus. */
 		calc_bonuses_muta_aux(flags, ptr);
 	}
 }

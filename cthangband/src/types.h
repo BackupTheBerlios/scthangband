@@ -981,6 +981,7 @@ struct player_race
 	byte f_m_wt;		/* mod weight (females) */
 
 	s16b power[2];	/* Race-based power indices. */
+	u32b flags[4]; /* Various flags to give the race unconditionally. */
 
 	race_bonus_type *bonus; /* A pointer to the extra things this race gets. */
 	byte bonuses; /* The number of elements in bonus. */
