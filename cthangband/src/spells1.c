@@ -5093,7 +5093,7 @@ static int dist_to_line(int x, int y, int x1, int y1, int x2, int y2)
  * Generic "beam"/"bolt"/"ball/breath" projection routine.  -BEN-
  *
  * Input:
- *   who: Index of "source" monster (or "zero" for "player")
+ *   mw_ptr: Index of "source" monster (or NULL for "player")
  *   rad: Radius of explosion (0 = beam/bolt, 1 to 9 = ball, -9 to -1 = breath)
  *   y,x: Target location (or location to travel "towards")
  *   dam: Base damage roll to apply to affected monsters (or player)
@@ -5228,10 +5228,8 @@ static int dist_to_line(int x, int y, int x1, int y1, int x2, int y2)
  * Mega-Hack -- when only a single monster is affected, we automatically track
  * (and recall) that monster, unless "PROJECT_JUMP" is used.  XXX XXX XXX
  */
-bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
+bool project(monster_type *mw_ptr, int rad, int y, int x, int dam, int typ, int flg)
 {
-	monster_type *mw_ptr = (who) ? &m_list[who] : NULL;
-
 	int i, t, dist;
 	int y1, x1, y2, x2;
 	int y0, x0, y9, x9;
@@ -5284,7 +5282,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	}
 
 	/* Hack -- Start at player */
-	else if (!who)
+	else if (!mw_ptr)
 	{
 		x1 = px;
 		y1 = py;
@@ -5293,8 +5291,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Start at a monster */
 	else
 	{
-		x1 = m_list[who].fx;
-		y1 = m_list[who].fy;
+		x1 = mw_ptr->fx;
+		y1 = mw_ptr->fy;
 	}
 
     y_target = y1;
@@ -5683,7 +5681,8 @@ done_reflect: /* Success */
 				ref_ptr->r_flags2 |= RF2_REFLECTING;
 				notice = TRUE;
 			}
-			notice |= project(c_ptr->m_idx, 0, t_y, t_x,  dam, typ, flg);
+			notice |=
+				project(&m_list[c_ptr->m_idx], 0, t_y, t_x,  dam, typ, flg);
 
 			/* Don't affect this monster, but affect everything else here. */
 			flg &= ~(PROJECT_KILL);
@@ -5733,7 +5732,7 @@ done_reflect: /* Success */
 	}
 
 	/* Player affected one monster (without "jumping") */
-	if (!who && (project_m_n == 1) && !(flg & (PROJECT_JUMP)))
+	if (!mw_ptr && (project_m_n == 1) && !(flg & (PROJECT_JUMP)))
 	{
 		/* Location */
 		x = project_m_x;
@@ -5771,9 +5770,9 @@ done_reflect: /* Success */
   * while lying on the floor.
   *
   * Arguments:
-  *    who   ---  who caused the potion to shatter (0=player)
+  *    m_ptr   ---  who caused the potion to shatter (NULL=player)
   *          potions that smash on the floor are assumed to
-  *          be caused by no-one (who = 1), as are those that
+  *          be caused by no-one (m_ptr = m_list+1), as are those that
   *          shatter inside the player inventory.
   *          (Not anymore -- I changed this; TY)
   *    y, x  --- coordinates of the potion (or player if
@@ -5782,8 +5781,6 @@ done_reflect: /* Success */
   */
 bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 {
-	int who = (m_ptr) ? (m_ptr - m_list) : 0;
-
 	int       radius = 2;
 	int       dt = 0;
 	int       dam = 0;
@@ -5922,7 +5919,7 @@ bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 			/* Do nothing */  ;
 	}
 
-	(void) project(who, radius, y, x, dam, dt,
+	(void) project(m_ptr, radius, y, x, dam, dt,
 		(PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
 	/* XXX  those potions that explode need to become "known" */
 	return angry;

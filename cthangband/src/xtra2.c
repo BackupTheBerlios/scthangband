@@ -222,7 +222,7 @@ good_DM:
 				if (cheat_xtra) msg_format("Explosion of radius %d, power %d and type %d triggered.", i_ptr->radius, damage, typ);
 
 				/* Then cause an explosion. */
-				(void)project((m_ptr - m_list), i_ptr->radius, m_ptr->fy, m_ptr->fx, damage, i_ptr->method, typ);
+				(void)project(m_ptr, i_ptr->radius, m_ptr->fy, m_ptr->fx, damage, i_ptr->method, typ);
 				d_ptr->flags |= EF_KNOWN;
 				break;
 			}

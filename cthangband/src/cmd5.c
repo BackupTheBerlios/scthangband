@@ -1976,7 +1976,7 @@ void do_cmd_mindcraft(void)
 			else
 			{   /* Mana storm */
 				msg_print("Your mind unleashes its power in an uncontrollable storm!");
-				project(1, 2+psi/10, py, px,
+				project(m_list+1, 2+psi/10, py, px,
                 psi * 2, GF_MANA,PROJECT_JUMP|PROJECT_KILL|PROJECT_GRID|PROJECT_ITEM);
 				if (p_ptr->cchi < s_ptr->mana)
 				{

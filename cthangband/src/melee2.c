@@ -777,7 +777,7 @@ static void bolt(int m_idx, int typ, int dam_hp)
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 	/* Target the player with a bolt attack */
-	(void)project(m_idx, 0, py, px, dam_hp, typ, flg);
+	(void)project(m_list+m_idx, 0, py, px, dam_hp, typ, flg);
 }
 
  
@@ -1039,7 +1039,7 @@ static void breathe_on(int m_idx, int typ, int dam_hp, int rad)
 	rad = 0 - rad;
 
 	/* Target the player with a ball attack */
-	(void)project(m_idx, rad, py, px, dam_hp, typ, flg);
+	(void)project(m_list+m_idx, rad, py, px, dam_hp, typ, flg);
 }
 
 /*
@@ -1058,7 +1058,7 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
 	if (rad < 1) rad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
 	/* Target the player with a ball attack */
-	(void)project(m_idx, rad, py, px, dam_hp, typ, flg);
+	(void)project(m_list+m_idx, rad, py, px, dam_hp, typ, flg);
 }
 
  /*
@@ -1077,7 +1077,7 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
    /* Determine the radius of the blast */
    if (rad < 1) rad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
-   (void)project(m_idx, rad, y, x, dam_hp, typ, flg);
+   (void)project(m_list+m_idx, rad, y, x, dam_hp, typ, flg);
  }
 
 
@@ -1090,7 +1090,7 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
  {
    int flg = PROJECT_STOP | PROJECT_KILL;
 
-   (void)project(m_idx, 0, y, x, dam_hp, typ, flg);
+   (void)project(m_list+m_idx, 0, y, x, dam_hp, typ, flg);
  }
 
 
@@ -2316,7 +2316,7 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
            else msg_format("%^s gestures in shadow.", m_name);
            if (seen)
              msg_format("%^s is surrounded by darkness.", t_name);
-           (void)project(m_idx, 3, y, x, 0, GF_DARK_WEAK, PROJECT_GRID | PROJECT_KILL);
+           (void)project(m_list+m_idx, 3, y, x, 0, GF_DARK_WEAK, PROJECT_GRID | PROJECT_KILL);
            /* Lite up the room */
            unlite_room(y, x);
            break;
@@ -5405,7 +5405,7 @@ static bool get_moves(int m_idx, int *mm)
            if (pt)
            {
 
-             project(m_idx, 0, t_ptr->fy, t_ptr->fx,
+             project(m_list+m_idx, 0, t_ptr->fy, t_ptr->fx,
                 (pt==GF_OLD_SLEEP?r_ptr->level:damage), pt, PROJECT_KILL | PROJECT_STOP);
 
              if (touched)
@@ -5419,7 +5419,7 @@ static bool get_moves(int m_idx, int *mm)
                          if(t_ptr->ml)
                              tr_ptr->r_flags2 |= RF2_AURA_FIRE;
                      }
-              project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+              project(m_list+t_idx, 0, m_ptr->fy, m_ptr->fx,
                       damroll (1 + ((tr_ptr->level) / 26),
                       1 + ((tr_ptr->level) / 17)),
                       GF_FIRE, PROJECT_KILL | PROJECT_STOP);
@@ -5434,7 +5434,7 @@ static bool get_moves(int m_idx, int *mm)
                          if(t_ptr->ml)
                              tr_ptr->r_flags2 |= RF2_AURA_ELEC;
                      }
-              project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+              project(m_list+t_idx, 0, m_ptr->fy, m_ptr->fx,
                       damroll (1 + ((tr_ptr->level) / 26),
                       1 + ((tr_ptr->level) / 17)),
                       GF_ELEC, PROJECT_KILL | PROJECT_STOP);
