@@ -1618,6 +1618,9 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Add together the stacks, and return TRUE if the second is empty. */
 	rc = store_object_absorb(o_ptr, j_ptr);
 
+	/* Combine the stack numbers. */
+	if (!o_ptr->stack) o_ptr->stack = j_ptr->stack;
+
 	/* Give a new stack number if necessary. */
 	if (!same_stack(o_ptr, j_ptr))
 	{

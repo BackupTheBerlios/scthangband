@@ -4430,8 +4430,9 @@ void update_object(object_type *o_ptr, int where)
 		p_ptr->window |= PW_PLAYER;
 	}
 
-	/* Give the changed object a valid stack number if appropriate. */
-	if (!o_ptr->stack)
+	/* Hack - Give the changed object a valid stack number if appropriate.
+	 * There may be a better place to put this. */
+	if (o_ptr && !o_ptr->stack)
 	{
 		set_stack_number(o_ptr);
 	}
