@@ -3560,6 +3560,32 @@ void play_game(bool new_game)
 	}
 #endif /* WINDOWS */
 
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+	/* Display news.txt again, as in init_angband(). This
+	 * is done because news.txt was removed when the save game
+	 * was loaded, and we didn't know whether to wait below without
+	 * it. We don't do this without display_credits because the rest
+	 * of the initialisation process should be very quick. */
+	if (display_credits)
+	{
+		char buf[1024];
+		FILE *fp;
+		Term_clear();
+		path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
+		fp = my_fopen(buf, "r");
+		if (fp)
+		{
+			int i = 0;
+			while (0 == my_fgets(fp, buf, 1024))
+			{
+				Term_putstr(0, i++, -1, TERM_WHITE, buf);
+			}
+			my_fclose(fp);
+		}
+		Term_fresh();
+	}
+#endif
+
 	/* Nothing loaded */
 	if (!character_loaded)
 	{
@@ -3623,6 +3649,12 @@ void play_game(bool new_game)
 			}
 		}
 	}
+
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+	/* Wait for response if required */
+	if (display_credits) pause_line(23);
+#endif
+
 
 	/* Roll new character */
 	if (new_game)
@@ -3807,12 +3839,6 @@ void play_game(bool new_game)
 		wildx=town_defs[cur_town].x;
 		wildy=town_defs[cur_town].y;
 		came_from = START_RANDOM;
-
-		/* Initialise spirits */
-		for (i=0;i<MAX_SPIRITS;i++)
-		{
-			spirits[i].pact=FALSE;
-		}
 
 		/* Roll up a new character */
 		player_birth();

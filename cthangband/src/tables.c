@@ -3388,6 +3388,14 @@ option_type option_info[] =
 	{ &preserve_mode,               TRUE,  7, 2, 19,
     "preserve_mode",                "Artifacts are not lost if you never saw them" },
 
+	{ &allow_quickstart,		TRUE,	7, 3, 4,
+	"allow_quickstart",	"Allow the player to start by using Quick-Start"},
+	
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+	{ &display_credits,	TRUE,	7, 3, 5,
+	"display_credits",	"Require a keypress to clear the initial screen"},
+#endif
+
 	{ &use_autoroller,               TRUE,  7, 2, 20,
     "use_autoroller",                "Stats are rolled repeatedly with minima" },
 

@@ -177,6 +177,10 @@ extern bool always_pickup;
 extern bool always_repeat;
 extern bool use_old_target;
 extern bool depth_in_feet;
+extern bool allow_quickstart;
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+extern bool display_credits;
+#endif
 extern bool use_color;
 extern bool compress_savefile;
 extern bool hilite_player;

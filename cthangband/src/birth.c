@@ -705,48 +705,103 @@ static char *cthuloid_syllable3[] =
 	"l","a","u","oa","oggua","oth","ath","aggua","lu","lo","loth","lotha","agn","axl",
 };
 
+typedef byte bc_type;
+
 static void get_starting_skills(void);
 static void get_hermetic_skills_randomly(void);
-static void get_hermetic_skills(void);
+static bc_type get_hermetic_skills(void);
 static void get_ahw_average(void);
 static void get_money(bool randomly);
 static int get_social_average(void);
 static void display_player_birth_details(void);
+static void get_final(void);
+
+/* Return codes for birth_choice() */
+#define BC_OKAY	0
+#define BC_ABORT	1
+#define BC_RESTART	2
+
+/*
+ * Ask for a range of options. Accept a few other specific responses.
+ * The list of options should already have been displayed.
+ *
+ * allow_abort should be set if aborting is distinct from starting afresh.
+ */
+static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool allow_abort)
+{
+	char c;
+	while (1)
+		{
+		put_str(format("%s (%c-%c%s): ", prompt, I2A(0), rtoa(max-1), (allow_abort) ? " or ESCAPE to abort" : ""), row, 2);
+				c = inkey();
+		if (c == 'Q') quit(NULL);
+		else if (c == 'S') return BC_RESTART;
+		else if (c == '?') do_cmd_help(syshelpfile);
+		else if (c == ESCAPE && allow_abort) return BC_ABORT;
+		else if (c == '=')
+		{
+			bool old_allow_quickstart = allow_quickstart;
+			bool old_spend_points = spend_points & !use_autoroller;
+			bool old_maximise_mode = maximise_mode;
+			Term_save();
+			do_cmd_options_aux(7, "Startup Options");
+			Term_load();
+			/* Start again if the set of questions being asked changes.
+			 * This does not include show_credits because this takes
+			 * effect before we reach this point. */
+			if (allow_quickstart && !old_allow_quickstart) return BC_RESTART;
+			if (old_spend_points != (!spend_points || use_autoroller)) return BC_RESTART;
+			/* We need not restart for maximise mode, but we should
+			 * try to keep the stats the same. We do abort if possible
+			 * because we may have passed point_mod_player().
+			 *  */
+			if (old_maximise_mode != maximise_mode)
+			{
+				byte x;
+				for (x = 0; x < A_MAX; x++)
+				{
+					s16b mod = rp_ptr->r_adj[x]+cp_ptr->c_adj[x];
+					if (maximise_mode) mod *= -1;
+					mod = modify_stat_value(p_ptr->stat_cur[x], mod);
+					p_ptr->stat_cur[x] = p_ptr->stat_max[x] = mod;
+					if (allow_abort) return BC_ABORT;
+				}
+			}
+		}
+		else
+		{
+			(*option) = (islower(c) ? ator(c) : -1);
+			if (((*option) >= 0) && ((*option) < max)) return BC_OKAY;
+			else bell();
+		}
+	}
+}
 
 /*
  * For characters starting with shaman skill, start them with a spirit
  */
-
-static void get_init_spirit(bool choice)
+static bc_type get_init_spirit(bool choice)
 {
-	char c;
-	char buf[240];
+	int k;
+	bc_type b;
 
-	/* The player will only ever need one initial spirit. */
-	spirits[0].pact = FALSE;
-	spirits[1].pact = FALSE;
+	/* Only those with some shamanism skill start with a spirit. */
+	if (!skill_set[SKILL_SHAMAN].value) return BC_OKAY;
 
-	clear_from(15);
-	if (skill_set[SKILL_SHAMAN].value > 0)
+	/* Acquire a random spirit if only temporary. */
+	if (!choice)
 	{
-		if (choice)
-		{
-			c = '\0';
-			while (1) {
-				sprintf(buf, "Choose a life spirit(a) or wild spirit(b): ");
-				put_str(buf, 17, 2);
-				c = inkey();
-				c = tolower(c);
-				if (c == 'a') break;
-				if (c == 'b') break;
-			}
-			if (c == 'a') spirits[0].pact = TRUE;
-			if (c == 'b') spirits[1].pact = TRUE;
-		}
-		else
-			spirits[rand_int(2)].pact = TRUE;
-
+		spirits[rand_int(MAX_SPHERE)].pact = TRUE;
+		return BC_OKAY;
 	}
+
+	/* Ask the player. */
+	clear_from(15);
+
+	b = birth_choice(17, MAX_SPHERE, "Choose a life spirit(a) or wild spirit(b)", &k, TRUE);
+
+	if (!b) spirits[k].pact = TRUE;
+	return b;
 }
 /*
  * Add the random element to each skill, set the maximum and reset the base where
@@ -1156,13 +1211,12 @@ static bool point_mod_player(void)
 			for (x = 0; x < A_MAX; x++)
 		{
 				s16b tmp = stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x];
-				if (tmp > 0)
-				{
-					/* Correct the points allocation */
-					points += change_points_by_stat(p_ptr->stat_cur[x], tmp);
-					/* Then change the stat */
-					p_ptr->stat_cur[x] = p_ptr->stat_max[x] = tmp;
-				}
+
+				/* Use stats of 8 as a default. */
+				if (tmp == 0 && p_ptr->stat_cur[x] == 0) tmp = 8;
+
+				/* Change the stat if required. */
+				if (tmp) p_ptr->stat_cur[x] = p_ptr->stat_max[x] = tmp;
 			}
 		}
 
@@ -1302,13 +1356,24 @@ static bool point_mod_player(void)
 			/* Display everything */
 			display_player_birth(points, details);
 		}
-	}
-	/* Finally randomise the skill bonuses and set magic up as the player wants. */
+		/* Randomise the skill bonuses and set magic up as the player
+		 * wants. If the player aborts the latter, we return here. */
+		if (i == IDX_FINISH)
+		{
+			bc_type b;
 	get_starting_skills();
-	get_hermetic_skills();
-	get_init_spirit(TRUE);
-	get_random_skills(TRUE);
+			if (((b = get_hermetic_skills())) == BC_ABORT) i = IDX_START;
+			else if (b == BC_RESTART) return FALSE;
+			else if (((b = get_init_spirit(TRUE))) == BC_ABORT) i = IDX_START;
+			else if (b == BC_RESTART) return FALSE;
+			else
+			{
  	wield_weapons(FALSE);
+				get_random_skills(TRUE);
+				get_final();
+			}
+		}
+	}
 	return TRUE;
 }
 
@@ -1410,6 +1475,12 @@ static void get_starting_skills(void)
 		skill_set[i].ceiling=100;
 	}
 
+	/* Wipe spirit associations */
+	for (i=0;i<MAX_SPIRITS;i++)
+	{
+		spirits[i].pact = 0;
+	}
+
 	/* Now add some from template */
 	skill_set[SKILL_CLOSE].value+=cp_ptr->skill[0];
 	skill_set[SKILL_STAB].value+=cp_ptr->skill[1];
@@ -1509,15 +1580,13 @@ static void get_hermetic_skills_randomly()
 /*
  * Get hermetic skills
  */
-static void get_hermetic_skills()
+static bc_type get_hermetic_skills()
 {
 	int k,i,choices;
-	char c;
-	char buf[80];
 
 	choices = cp_ptr->choices;
 
-	if (!choices) return;
+	if (!choices) return BC_OKAY;
 	
     /* Extra info */
 		clear_from(15);
@@ -1543,20 +1612,11 @@ static void get_hermetic_skills()
 
 		for(i=choices;i>0;i--)
 		{
-
 			/* Get a choice */
-			while (1)
-			{
-				sprintf(buf, "%d choic%s left. Choose a school or type (a-h): ",i,(i>1 ? "es":"e"));
-				put_str(buf, 21, 2);
-				c = inkey();
-				if (c == 'Q') quit(NULL);
-				k = (islower(c) ? A2I(c) : -1);
-				if ((k >= 0) && (k <= 7)) break;
-				if (c == '?') do_cmd_help(syshelpfile);
-
-				else bell();
-			}
+		cptr buf = string_make(format("%d choic%s left. Choose a school or type", i,(i>1 ? "es":"e")));
+		bc_type b = birth_choice(21, MAX_SCHOOL*2, buf, &k, TRUE);
+		(void)string_free(buf);
+		if (b) return b;
 
 			switch(k)
 			{
@@ -1832,6 +1892,7 @@ static void get_stats(void)
 			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = p_ptr->stat_use[i];
 		}
 	}
+	return BC_OKAY;
 }
 
 
@@ -2718,6 +2779,41 @@ void player_birth_quests(void)
 	}
 }
 
+
+/*
+ * Finish off generation by adding a few random things.
+ */
+static void get_final(void)
+{
+	/* Roll for base hitpoints */
+	get_extra();
+
+	/* Roll for age/height/weight */
+	get_ahw();
+
+	/* Roll for social class */
+	get_history();
+
+	/* Roll for gold */
+	get_money(TRUE);
+
+	/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
+	p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
+
+	/* Calculate the bonuses and hitpoints */
+	p_ptr->update |= (PU_BONUS | PU_HP);
+
+	/* Update stuff */
+	update_stuff();
+
+	/* Fully healed */
+	p_ptr->chp = p_ptr->mhp;
+	
+	/* Fully rested */
+	p_ptr->csp = p_ptr->msp;
+	p_ptr->cchi = p_ptr->mchi;
+}
+
 /*
  * Helper function for 'player_birth()'
  *
@@ -2768,7 +2864,7 @@ static bool player_birth_aux()
 	Term_putstr(5, 11, -1, TERM_WHITE,
 		"display a set of standard answers, and many will also accept");
 	Term_putstr(5, 12, -1, TERM_WHITE,
-		"some special responses, including 'Q' to quit, 'S' to restart");
+		"special responses, including 'Q' to quit, '=' to change options");
 	Term_putstr(5, 13, -1, TERM_WHITE,
 		"or '?' for help.  Note that 'Q' and 'S' must be capitalized.");
 
@@ -2779,15 +2875,17 @@ static bool player_birth_aux()
 	Term_putstr(5, 15, -1, TERM_WHITE,
 		"Quick-Start gives you a completely random character without");
 	Term_putstr(5, 16, -1, TERM_WHITE,
-		"further prompting.  At this point, you may press the '=' key");
-	Term_putstr(5,17,-1,TERM_WHITE,
-		"to change the startup options. You will not be able to change");
-	Term_putstr(5,18,-1,TERM_WHITE,
-		"these once you have started character generation.");
+		"further prompting.");
 
 	/* Choose */
 	while (1)
 	{
+		/* Unsetting allow_quickstart causes this prompt to be ignored. */
+		if (!allow_quickstart)
+		{
+			c = 'n';
+			break;
+		}
 		sprintf(buf, "Quick-Start? (y/n/Q/S/?/=): ");
 		put_str(buf, 20, 2);
 		c = inkey();
@@ -3188,6 +3286,7 @@ static bool player_birth_aux()
 			}
 			
 			/* Input loop */
+			if (!point_mod)
 			while (TRUE)
 			{
 				/* Calculate the bonuses and hitpoints */
@@ -3315,18 +3414,7 @@ static bool player_birth_aux()
 		}
 
 		/* Choose */
-		while (1)
-		{
-			sprintf(buf, "Choose a sex (%c-%c): ", I2A(0), I2A(n-1));
-			put_str(buf, 20, 2);
-			c = inkey();
-			if (c == 'Q') quit(NULL);
-			if (c == 'S') return (FALSE);
-			k = (islower(c) ? A2I(c) : -1);
-			if ((k >= 0) && (k < n)) break;
-			if (c == '?') do_cmd_help(syshelpfile);
-			else bell();
-		}
+			if (birth_choice(20, MAX_SEXES, "Choose a sex", &k, FALSE) == BC_RESTART) return FALSE;
 
 		/* Set sex */
 		p_ptr->psex = k;
@@ -3368,41 +3456,7 @@ static bool player_birth_aux()
 		}
 
 		/* Choose */
-		while (1)
-		{
-			sprintf(buf, "Choose a race (%c-4): ", I2A(0));
-			put_str(buf, 17, 2);
-			c = inkey();
-			if (c == 'Q') quit(NULL);
-			if (c == 'S') return (FALSE);
-			if (c == '1')
-			{
-				k = 26; /* RACE_VAMPIRE; */
-				break;
-			}
-			else if (c == '2')
-			{
-				k = 27; /* RACE_SPECTRE; */
-				break;
-			}
-			else if (c == '3')
-			{
-				k = 28;  /* RACE_SPRITE; */
-				break;
-			}
-			else if (c == '4')
-			{
-				k = 29; /* RACE_BROO; */
-				break;
-			}
-			else
-			{
-				k = (islower(c) ? A2I(c) : -1);
-				if ((k >= 0) && (k < n)) break;
-				if (c == '?') do_cmd_help(syshelpfile);
-				else bell();
-			}
-		}
+			if (birth_choice(17, MAX_RACES, "Choose a race", &k, FALSE) == BC_RESTART) return FALSE;
 
 		/* Set race */
 		p_ptr->prace = k;
@@ -3452,19 +3506,7 @@ static bool player_birth_aux()
 			put_str(buf, 19 + (n/3), 2 + 20 * (n%3));
 		}
 
-		/* Get a template */
-		while (1)
-		{
-			sprintf(buf, "Choose a template (%c-%c): ", I2A(0), I2A(n-1));
-			put_str(buf, 18, 2);
-			c = inkey();
-			if (c == 'Q') quit(NULL);
-			if (c == 'S') return (FALSE);
-			k = (islower(c) ? A2I(c) : -1);
-			if ((k >= 0) && (k < n)) break;
-			if (c == '?') do_cmd_help(syshelpfile);
-			else bell();
-		}
+			if (birth_choice(18, MAX_TEMPLATE, "Choose a template", &k, FALSE) == BC_RESTART) return FALSE;
 
 		/* Set template */
 		p_ptr->ptemplate = k;
@@ -3600,8 +3642,30 @@ static bool player_birth_aux()
 		clear_from(10);
 
 
+		p_ptr->muta1 = 0;
+		p_ptr->muta2 = 0;
+		p_ptr->muta3 = 0;
+
+		/* Player is ready to move... */
+		p_ptr->energy=1050;
+
+		/* Player has no recal ritual yet */
+		p_ptr->ritual = MAX_TOWNS + 1;
+
+		/* Player has no house yet */
+		for(i=0;i<MAX_TOWNS;i++)
+		{
+			p_ptr->house[i] = 0;
+		}
+
 		/*** Generate ***/
 
+		/* Not here in the case of point_mod */
+		if (point_mod)
+		{
+			return point_mod_player();
+		}
+		
 		/* Roll */
 		while (TRUE)
 		{
@@ -3641,16 +3705,8 @@ static bool player_birth_aux()
 			/* Otherwise just get a character */
 			else
 			{
-				/* Get a new character */
-				if (point_mod)
-				{
-					point_mod_player();  
-				}
-				else
-				{
 					get_stats();
 				}
-			}
 
 			/* Auto-roll */
 			while (autoroll)
@@ -3735,22 +3791,6 @@ static bool player_birth_aux()
 			/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
 			p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
 
-			p_ptr->muta1 = 0;
-			p_ptr->muta2 = 0;
-			p_ptr->muta3 = 0;
-
-			/* Player is ready to move... */
-			p_ptr->energy=1000;
-
-			/* Player has no recal ritual yet */
-			p_ptr->ritual = MAX_TOWNS + 1;
-
-			/* Player has no house yet */
-			for(i=0;i<MAX_TOWNS;i++)
-			{
-				p_ptr->house[i] = 0;
-			}
-	
 			/* Input loop */
 			while (TRUE)
 			{
@@ -3766,7 +3806,6 @@ static bool player_birth_aux()
 				/* Fully rested */
 				p_ptr->csp = p_ptr->msp;
 				p_ptr->cchi = p_ptr->mchi;
-				p_ptr->energy = 1050;
 
 				/* Display the player */
 				display_player(mode);
@@ -3839,6 +3878,8 @@ static bool player_birth_aux()
 
 		/* Get a name, recolor it, prepare savefile */
 
+		/* Allow name to be edited, recolor it, prepare savefile
+		 * The user has already had an opportunity to do so with point_mod */
 		get_name();
 
 

@@ -316,6 +316,11 @@ bool cheat_skll;        /* Peek into skill rolls */
 
 /* Special options */
 
+bool allow_quickstart;	/* Allow Quick-Start */
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
+bool display_credits;	/* Require a keypress to clear the initial credit screen. */
+#endif
+
 s16b hitpoint_warn = 2;		/* Hitpoint warning (0 to 9) */
 
 s16b delay_factor = 4;		/* Delay factor (0 to 9) */
