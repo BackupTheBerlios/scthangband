@@ -1601,15 +1601,12 @@ static int project_m_y;
  *
  * XXX XXX XXX Perhaps we should affect doors?
  */
-static bool project_f(int who, int r, int y, int x, int dam, int typ)
+static bool project_f(int r, int y, int x, int dam, int typ)
 {
 	cave_type       *c_ptr = &cave[y][x];
 
 	bool    obvious = FALSE;
 
-
-	/* XXX XXX XXX */
-	who = who ? who : 0;
 
 	/* Reduce damage by distance */
 	dam = (dam + r) / (r + 1);
@@ -2322,7 +2319,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
  *
  * We attempt to return "TRUE" if the player saw anything "useful" happen.
  */
-static bool project_m(int who, int r, int y, int x, int dam, int typ)
+static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int typ)
 {
 	int tmp;
 
@@ -2376,7 +2373,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	if (!c_ptr->m_idx ||
 
 	/* Never affect projector */
-		(who && (c_ptr->m_idx == who)))
+		(mw_ptr == m_ptr))
 	{
 		TFREE(killer);
 		TFREE(m_name);
@@ -2401,7 +2398,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		note_dies = " is destroyed.";
 	}
 
-    if ((!who) && (m_ptr->smart & SM_ALLY)) {
+    if ((!mw_ptr) && (m_ptr->smart & SM_ALLY)) {
        bool get_angry = FALSE;
        /* Grrr? */
        switch (typ) {
@@ -2470,7 +2467,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
        }
 
        /* Now anger it if appropriate */
-       if (get_angry == TRUE && !(who)) {
+       if (get_angry == TRUE && !mw_ptr) {
        msg_format("%^s gets angry!", m_name);
        m_ptr->smart &= ~SM_ALLY;
        }
@@ -4084,7 +4081,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	if (r_ptr->flags1 & RF1_GUARDIAN)
 	{
 		/* Uniques may only be killed by the player */
-		if (who && (dam > m_ptr->hp)) dam = m_ptr->hp;
+		if (mw_ptr && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}
 #endif
 
@@ -4094,7 +4091,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	 */
 	if (r_ptr->flags1 & RF1_GUARDIAN)
 	{
-		if ((who > 0) && (dam > m_ptr->hp)) dam = m_ptr->hp;
+		if (mw_ptr && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}
 
 
@@ -4230,7 +4227,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 
 	/* If another monster did the damage, hurt the monster by hand */
-	if (who)
+	if (mw_ptr)
 	{
 		/* Redraw (later) if needed */
 		if (health_who == c_ptr->m_idx) p_ptr->redraw |= (PR_HEALTH);
@@ -4966,13 +4963,13 @@ static void project_p_aux(monster_type *m_ptr, int dam, int typ)
  * We return "TRUE" if any "obvious" effects were observed.  XXX XXX Actually,
  * we just assume that the effects were obvious, for historical reasons.
  */
-static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
+static bool project_p(monster_type *m_ptr, int r, int y, int x, int dam, int typ, int a_rad)
 {
 	/* Player is not here */
 	if ((x != px) || (y != py) ||
 
 	/* Player cannot hurt himself */
-		!who)
+		!m_ptr)
 	{
 		return (FALSE);
 	}
@@ -4992,8 +4989,8 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
         /* Choose 'new' target */
         do
         {
-            t_y = m_list[who].fy + rand_int(3);
-            t_x = m_list[who].fx + rand_int(3);
+            t_y = m_ptr->fy + rand_int(3);
+            t_x = m_ptr->fx + rand_int(3);
             max_attempts--;
         }
 
@@ -5003,8 +5000,8 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
         if (max_attempts < 1)
         {
 
-            t_y = m_list[who].fy;
-            t_x = m_list[who].fx;
+            t_y = m_ptr->fy;
+            t_x = m_ptr->fx;
         }
 
         project(0, 0, t_y, t_x, dam, typ,
@@ -5021,7 +5018,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 	dam = (dam + r) / (r + 1);
 
 	/* Actually carry out the effect. */
-	project_p_aux(&m_list[who], dam, typ);
+	project_p_aux(m_ptr, dam, typ);
 
 	/* Disturb */
 	disturb(1);
@@ -5236,6 +5233,8 @@ static int dist_to_line(int x, int y, int x1, int y1, int x2, int y2)
  */
 bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 {
+	monster_type *mw_ptr = (who) ? &m_list[who] : NULL;
+
 	int i, t, dist;
 	int y1, x1, y2, x2;
 	int y0, x0, y9, x9;
@@ -5717,7 +5716,7 @@ done_reflect: /* Success */
 		if (flg & (PROJECT_GRID))
 		{
 			/* Affect the feature in that grid */
-			if (project_f(who, dist, y, x, dam, typ)) notice = TRUE;
+			if (project_f(dist, y, x, dam, typ)) notice = TRUE;
 		}
 		/* Check objects. */
 		if (flg & (PROJECT_ITEM))
@@ -5729,10 +5728,10 @@ done_reflect: /* Success */
 		if (flg & (PROJECT_KILL))
 		{
 			/* Affect the monster in the grid */
-			if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
+			if (project_m(mw_ptr, dist, y, x, dam, typ)) notice = TRUE;
 
 			/* Affect the player in the grid */
-			if (project_p(who, dist, y, x, dam, typ, rad)) notice = TRUE;
+			if (project_p(mw_ptr, dist, y, x, dam, typ, rad)) notice = TRUE;
 		}
 	}
 
