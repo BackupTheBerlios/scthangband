@@ -3942,73 +3942,78 @@ static s16b count_powers(void)
  * The function returns the index of the option chosen, 255 if none are chosen.
  */
 static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(byte, char *), byte num, cptr string1, cptr string2, cptr substring)
-				{
+{
 	bool ask, started = FALSE;
 	char choice;
-	byte select = 0, first = 0, last = 0;
-	byte page = (substring) ? 22 : 23;
-	char string[80];
+	int select, first = 0, last = 0;
+	int page = (substring) ? 22 : 23;
 
-	while (!select)
+	while (1)
 	{
 		/* Display the available choices */
-		strnfmt(string, 78, "(%s %c-%c, *=List %s, ESC=exit) %s ",
-		string1, I2A(0), (num > 26) ? I2A(MIN(num-1-first, page-1)) : I2A(num - 1),
-		(!last) ? "Open" : (last < num) ? "More" : "Close", string2);
+		cptr prompt = format("(%s %c-%c, *=List %s, ESC=exit) %s ",
+		string1, I2A(0), (num > 26) ? I2A(MIN(num-1-first, page-1)) :
+		I2A(num - 1), (!last) ? "Open" : (last < num) ? "More" : "Close",
+		string2);
 
 		if (started || !show_choices_main)
-					{
-			(void)get_com(string, &choice);
-					}
-					else
-					{
+		{
+			(void)get_com(prompt, &choice);
+		}
+		else
+		{
 			/* Hack - pretend the player pressed space initially given show_choices_main. */
 			choice = ' ';
 			started = TRUE;
-					}
+		}
 		switch (choice)
 		{
 			/* Don't choose anything. */
 			case ESCAPE:
-			select = 255;
-			break;
+			{
+				if (last) Term_load();
+				return 255;
+			}
 			/* Request redraw */
 			case ' ': case '*': case '?':
-					
-			/* Avoid leaving old text on the screen. */
-			if (last) Term_load();
-					
-			if (last < num)
-					{
-				byte y, x, ctr;
-				first = last;
-				y = 24-page;
-				if (substring) prt(substring, 1, x);
+			{
+				/* Avoid leaving old text on the screen. */
+				if (last) Term_load();
 
-				if (!first) Term_save();
-				for (ctr = 0; ctr < num-first && ctr < page; ctr++)
-						{
-					char text[160];
-					(*display)(last+ctr, &x, text+1);
-					/* Use a-z if possible, but use the currently displayed page otherwise. */
-					if (num > 26)
-						text[0] = I2A(ctr);
-						else
-						text[0] = I2A(ctr+last);
-					prt(text, y+ctr, x);
-						}
-				prt ("", y+ctr, x);
-				last += ctr;
-					}
-					else
+				if (last < num)
+				{
+					byte y, x, ctr;
+					first = last;
+					y = 24-page;
+					if (substring) prt(substring, 1, x);
+
+					if (!first) Term_save();
+					for (ctr = 0; ctr < num-first && ctr < page; ctr++)
 					{
-				first = last = 0;
+						char text[160];
+						(*display)(last+ctr, &x, text+1);
+						/* Use a-z if possible, but use the currently displayed page otherwise. */
+						if (num > 26)
+							text[0] = I2A(ctr);
+						else
+							text[0] = I2A(ctr+last);
+						prt(text, y+ctr, x);
+					}
+					prt ("", y+ctr, x);
+					last += ctr;
+				}
+				else
+				{
+					first = last = 0;
+				}
+				break;
 			}
-			break;
 			/* Choose any default option. */
 			case '\r':
-			if (num != 1) break;
-			choice = 'a';
+			{
+				if (num != 1) break;
+				choice = 'a';
+			}
 			/* Possible valid choices. */
 			case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h':
 			case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p':
@@ -4017,41 +4022,40 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 			case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N':
 			case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V':
 			case 'W': case 'X': case 'Y': case 'Z': 
-			ask = isupper(choice);
-			select = A2I(FORCELOWER(choice));
-			/* If there are more than 26 entries, adjust for the current position of 'a'.*/
-			if (num > 26) select += first;
-			/* A plausible choice, */
-			if (select < num)
-						{
-				if (ask) /* Need confirmation. */
+			{
+				ask = isupper(choice);
+				select = A2I(FORCELOWER(choice));
+				/* If there are more than 26 entries, adjust for the current position of 'a'.*/
+				if (num > 26) select += first;
+				/* A plausible choice, */
+				if (select < num)
 				{
-					char tmp_val[160];
-					(*confirm)(select, tmp_val);
-					if (!get_check(tmp_val)) select = 0;
-						}
-				break;
+					if (ask) /* Need confirmation. */
+					{
+						char tmp_val[160];
+						(*confirm)(select, tmp_val);
+						if (!get_check(tmp_val)) select = 255;
 					}
+					if (last) Term_load();
+					return select;
+				}
+				/* else fall through. */
+			}
 			/* Not a valid choice. */
 			default:
-			bell();
-					}
+			{
+				bell();
+			}
+		}
 	}
-	/* Clean up display */
-					
-	/* Restore the screen */
-	if (last) Term_load();
-
-	/* Return the selection, 255 if none. */
-	return select;
-				}
+}
 				
 /*
  * Determine the chance of using a given power based on features of the power and the player.
  * The power should succeed if rand_int((*denom))<(*num).
  */
 static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
-				{
+{
 	int difficulty = pw_ptr->difficulty;
 	
 				
@@ -4060,9 +4064,9 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
 
 	/* Should never happen, but... */
 	if (difficulty > 100)
-				{
+	{
 		difficulty = 100;
-				}
+	}
 
 	/* Adjust by racial skill */
 	if (plev > pw_ptr->min_level + 30) difficulty -= 10;
@@ -4099,46 +4103,54 @@ static void racial_success_chance(powertype *pw_ptr, s16b *num, s16b *denom)
  * Decide whether a power has been used successfully.
  */
 static bool racial_aux(powertype *pw_ptr)
-				{
+{
 	bool plev = MIN(1,skill_set[SKILL_RACIAL].value/2);
 	bool use_hp = FALSE;
 	bool use_chi = FALSE;
 	bool use_mana = TRUE;
 	s16b num, denom;
-					
+	int cost = pw_ptr->cost;
+	
+	/* Determine the cost if level-based. */
+	if (cost < 0)
+	{
+		powercosttype *pc_ptr = powercosts-cost;
+		cost = pc_ptr->minc + plev / pc_ptr->levc;
+	}
+
 	if (p_ptr->cchi >= p_ptr->csp)
-					{
+	{
 		use_mana = FALSE;
 		use_chi = TRUE;
-		if (p_ptr->cchi < pw_ptr->cost)
+		if (p_ptr->cchi < cost)
 		{
 			use_chi = FALSE;
 			use_hp = TRUE;
 		}
-					}
-					else
-					{
-		if (p_ptr->csp < pw_ptr->cost)
+	}
+	else
+	{
+		if (p_ptr->csp < cost)
 		{
 			use_mana = FALSE;
 			use_hp = TRUE;
-					}
-				}
+		}
+	}
 
 
 	if (p_ptr->confused)
-				{
+	{
 		msg_print("You are too confused to use this power.");
 		return FALSE;
-				}
+	}
 
-	else if (use_hp && (p_ptr->chp < pw_ptr->cost))
-				{
+	else if (use_hp && (p_ptr->chp < cost))
+	{
 		if (!(get_check("Really use the power in your weakened state? ")))
-					{
+		{
 			return FALSE;
 		}
-					}
+	}
             
 	/* Else attempt to do it! */
 
@@ -4146,23 +4158,23 @@ static bool racial_aux(powertype *pw_ptr)
 	energy_use = spell_energy(plev,pw_ptr->min_level);
 
 	/* Hack - use num to store the actual cost of the attempt. */
-	num = rand_range(pw_ptr->cost/2+1, pw_ptr->cost/2*2);
+	num = rand_range(cost/2+1, cost/2*2);
 
 	if (use_hp)
-						{
+	{
 		take_hit (num, "concentrating too hard");
 		p_ptr->redraw |= PR_HP;
-						}
+	}
 	else if (use_mana)
-						{
+	{
 		p_ptr->csp -= num;
 		p_ptr->redraw |= PR_MANA;
-					}
-					else
-					{
+	}
+	else
+	{
 		p_ptr->cchi -= num;
 		p_ptr->redraw |= PR_MANA;
-				}
+	}
 					
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -4171,22 +4183,22 @@ static bool racial_aux(powertype *pw_ptr)
 	/* Success? */
 	racial_success_chance(pw_ptr, &num, &denom);
 	if (rand_int(denom) < num)
-					{
+	{
 		skill_exp(SKILL_RACIAL);
 		return TRUE;
-					}
-					else
-					{
+	}
+	else
+	{
 		msg_print("You've failed to concentrate hard enough.");
-					}
+	}
 	return FALSE;
-				}
+}
 				
 /*
  * Use a racial/mutated power.
  */
 void do_cmd_racial_power(void)
-				{
+{
 	char out_val[160];
 					
 	/* Count the available powers. */
@@ -4196,10 +4208,10 @@ void do_cmd_racial_power(void)
 	energy_use = 0;
 
 	if (!total)
-					{
+	{
 		msg_print("You have no abilities to use.");
 		return;
-				}
+	}
 
 	/* Build a prompt (accept all spells) */
 	strnfmt(out_val, 78, "(Powers %c-%c, *=List, ESC=exit) Use which ability? ", I2A(0), I2A(total - 1));
@@ -4209,7 +4221,7 @@ void do_cmd_racial_power(void)
 
 	/* Something has been selected */
 	if (total != 255)
-				{
+	{
 		powertype *pw_ptr = cur_powers[total];
 				
 		switch (pw_ptr->type)
