@@ -1399,18 +1399,6 @@ void sound(int val)
 	Term_xtra(TERM_XTRA_SOUND, val);
 }
 
-/*
- * Check whether the screen is in a suitable mode for writing.
- * character_icky is set whenever the main map is not being displayed on
- * term_screen.
- * If Term is not term_screen, the wrong display is being written to.
- */
-bool screen_is_icky(void)
-{
-	if (character_icky) return TRUE;
-	if (Term != term_screen) return TRUE;
-	return FALSE;
-}
 
 
 /*
@@ -1721,7 +1709,7 @@ char inkey(void)
 	(void)Term_get_cursor(&v);
 
 	/* Show the cursor if waiting, except sometimes in "command" mode */
-	if (!inkey_scan && (!inkey_flag || hilite_player || screen_is_icky()))
+	if (!inkey_scan && (!inkey_flag || hilite_player || character_icky))
 	{
 		/* Show the cursor */
 		(void)Term_set_cursor(1);

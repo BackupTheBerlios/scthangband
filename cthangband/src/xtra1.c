@@ -1052,55 +1052,27 @@ static void win_overhead_display(void)
 }
 
 
-#define STORE_NONE 99
-
 /*
  * PW_SHOPS is interesting if the player is in a town with shops.
  */
 static bool win_shops_good(void)
 {
-	/* In a town with space allocated for shops. */
-	if ((wild_grid[wildy][wildx].dungeon < MAX_TOWNS) &&
-	!dun_level && town_defs[cur_town].numstores)
-	{
-	 	town_type *t_ptr = &town_defs[cur_town];
-		int i;
- 		for (i = 0; i < t_ptr->numstores; i++)
+	if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS && !dun_level)
 		{
-			/* Found a real store */
-			if (t_ptr->store[i] != STORE_NONE) return TRUE;
-		}
+		return shops_good(cur_town);
 	}
+	else
+	{
 	return FALSE;
+}
 }
 
 /*
  * Give a list of shops in the current town.
  */
-static void win_shops_display(void)
-{
-	const int offset = MAX_STORES_PER_TOWN*cur_town;
-	int i,j;
-	town_type *t_ptr = &town_defs[cur_town];
-	Term_putstr(0,0, Term->wid, TERM_WHITE,
-		format("List of shops in %s",
-			dun_defs[wild_grid[wildy][wildx].dungeon].shortname));
-
-	for (i = 0, j = 1; i < t_ptr->numstores; i++)
+void win_shops_display(void)
 	{
-		feature_type *f_ptr;
-
-		/* Only count real stores */
-		if (t_ptr->store[i] == STORE_NONE) continue;
- 
- 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
- 
-		/* Display the name of the store. */
-		Term_putstr(0, ++j, Term->wid, TERM_WHITE, store_title(i+offset));
-
-		/* Put the character used at the top. */
-		Term_putch(0, j, f_ptr->x_attr, f_ptr->x_char);
-	}
+	shops_display(cur_town);
 }
 
 
@@ -3605,16 +3577,12 @@ void update_stuff(void)
 	}
 
 
-	/* Only making temporary changes, no screen updates */
-	if (quiet) return;
-
-
 	/* Character is not ready yet, no screen updates */
 	if (!character_generated) return;
 
 
 	/* Character is in "icky" mode, no screen updates */
-	if (screen_is_icky()) return;
+	if (character_icky) return;
 
 
 	if (p_ptr->update & (PU_UN_LITE))
@@ -3679,7 +3647,7 @@ void redraw_stuff(void)
 
 
 	/* Character is in "icky" mode, no screen updates */
-	if (screen_is_icky()) return;
+	if (character_icky) return;
 
 
 
@@ -3964,6 +3932,9 @@ void window_stuff(void)
 	/* Not initialised yet. */
 	if (!display_func) init_window_stuff();
 
+	/* Prevent screen updates from being written to the wrong screen. */
+	character_icky++;
+
 	/* Only process this display once. */
 	p_ptr->window &= ~(old_window);
 
@@ -4063,6 +4034,9 @@ void window_stuff(void)
 
 	/* Restore the original terminal. */
 	Term_activate(old);
+
+	/* Leave "icky" mode */
+	character_icky--;
 
 	/* Reset window_stuff_rotate. */
 	window_stuff_rotate = FALSE;
