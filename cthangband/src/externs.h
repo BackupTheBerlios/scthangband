@@ -2225,7 +2225,7 @@ extern spirit_type spirits[MAX_SPIRITS];
 #if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
 extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #endif
-#if (defined(ANGBAND_H))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern redraw_type screen_coords[NUM_SCREEN_COORDS];
 #endif
 #if (defined(INIT1_C) || defined(MONSTER1_C) || defined(POWERS_C) || defined(TABLES_C))
@@ -2404,6 +2404,9 @@ extern void mc_put_str(const int y, const int x, cptr str);
 #endif
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
+#endif
+#if (defined(UTIL_C) || defined(XTRA1_C))
+extern void mc_put_lfmt(const int y, const int x, const int l, cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(SQUELCH_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void clear_from(int row);
@@ -2780,6 +2783,9 @@ extern bool show_piles;
 #if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool beginner_help;
 #endif
+#if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool allow_fake_colour;
+#endif
 #if (defined(CMD1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool find_ignore_stairs;
 #endif
@@ -2917,6 +2923,12 @@ extern bool score_quitters_w;
 #endif
 #if (defined(SCORE_QUITTERS)) && (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool score_quitters;
+#endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool chaos_patrons_w;
+#endif
+#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+extern bool chaos_patrons;
 #endif
 #if (defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool auto_haggle;
@@ -3064,6 +3076,9 @@ extern bool cheat_live;
 #endif
 #if (defined(CMD4_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool cheat_skll;
+#endif
+#if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool cheat_save;
 #endif
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool allow_quickstart;
@@ -3263,12 +3278,6 @@ extern u16b *message__ptr;
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern char *message__buf;
 #endif
-
-
-
-
-
-
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_VCS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(VARIABLE_C))
 extern byte angband_color_table[256][4];
 #endif
@@ -3635,6 +3644,9 @@ extern void skill_exp(int index);
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern int find_object(object_ctype *o_ptr);
 #endif
+#if (defined(CMD3_C) || defined(SPELLS2_C) || defined(XTRA1_C))
+extern void update_objects(int where);
+#endif
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void update_object(object_type *o_ptr);
 #endif
@@ -3649,6 +3661,12 @@ extern bool add_flag(int flag, int v);
 #endif
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool set_flag(int flag, int v);
+#endif
+#if (defined(XTRA1_C) || defined(XTRA2_C))
+extern cptr PURE prt_flag(int flag);
+#endif
+#if (defined(CMD4_C) || defined(XTRA2_C))
+extern cptr PURE prt_flag_long(int flag);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
 extern void gain_exp(s32b amount);
@@ -3707,17 +3725,32 @@ extern void gain_level_reward(int chosen_reward);
 #if (defined(SPELLS2_C) || defined(XTRA2_C))
 extern  bool tgt_pt(int *x,int *y);
 #endif
+#if (defined(INIT2_C) || defined(XTRA2_C))
+extern void init_chaos(void);
+#endif
+#if (defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
+extern bool PURE p_mutated(void);
+#endif
+#if (defined(BIRTH_C) || defined(POWERS_C) || defined(XTRA2_C))
+extern void p_clear_mutations(void);
+#endif
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA1_C) || defined(XTRA2_C))
+extern bool PURE p_has_mutation(int idx);
+#endif
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern bool gain_chaos_feature(int choose_mut);
 #endif
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
 extern bool lose_chaos_feature(int choose_mut);
 #endif
-#if (defined(DUNGEON_C) || defined(XTRA2_C))
-extern bool get_hack_dir(int *dp);
+#if (defined(SPELLS2_C) || defined(XTRA2_C))
+extern int add_chaos_features(cptr *info, bool (*reject)(int));
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(XTRA2_C))
 extern void dump_chaos_features(FILE * OutFile);
+#endif
+#if (defined(DUNGEON_C) || defined(XTRA2_C))
+extern bool get_hack_dir(int *dp);
 #endif
 
 /* z-form.c */
@@ -3956,82 +3989,10 @@ extern vptr ralloc(huge len);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
 #endif
-
-/* variable.c */
-
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool chaos_patrons_w;
-#endif
-#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern bool chaos_patrons;
-#endif
-
-/* xtra2.c */
-
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA1_C) || defined(XTRA2_C))
-extern bool PURE p_has_mutation(int idx);
-#endif
-
-
-
-
-
-
-#if (defined(INIT2_C) || defined(XTRA2_C))
-extern void init_chaos(void);
-#endif
-#if (defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
-extern bool PURE p_mutated(void);
-#endif
-#if (defined(BIRTH_C) || defined(POWERS_C) || defined(XTRA2_C))
-extern void p_clear_mutations(void);
-#endif
-#if (defined(SPELLS2_C) || defined(XTRA2_C))
-extern int add_chaos_features(cptr *info, bool (*reject)(int));
-#endif
-
-/* variable.c */
-
-#if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool allow_fake_colour;
-#endif
-
-/* z-virt.c */
-
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(Z_VIRT_C))
 extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* variable.c */
-
-#if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
-extern bool cheat_save;
-#endif
-
-/* xtra2.c */
-
-#if (defined(XTRA1_C) || defined(XTRA2_C))
-extern cptr PURE prt_flag(int flag);
-#endif
-
-/* xtra1.c */
-
-#if (defined(CMD3_C) || defined(SPELLS2_C) || defined(XTRA1_C))
-extern void update_objects(int where);
-#endif
-
-/* xtra2.c */
-
-#if (defined(CMD4_C) || defined(XTRA2_C))
-extern cptr PURE prt_flag_long(int flag);
-#endif
-
-/* util.c */
-
-#if (defined(UTIL_C) || defined(XTRA1_C))
-extern void mc_put_lfmt(const int y, const int x, const int l, cptr fmt, ...);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

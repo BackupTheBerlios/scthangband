@@ -1455,7 +1455,7 @@ typedef struct redraw_type redraw_type;
 struct redraw_type
 {
 #ifdef CHECK_ARRAYS
-	redraw_type *idx; /* Index (fixed). */
+	int idx; /* Index (fixed). */
 #endif /* CHECK_ARRAYS */
 	cptr name; /* Description (fixed). */
 	s16b x, y; /* Actual co-ordinates. */

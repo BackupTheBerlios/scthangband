@@ -736,7 +736,7 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 			int i = tokenize(buf+2, 3, zz);
 			if (i == 3 || i == 4)
 			{
-				int x,y,l;
+				int x,y;
 				redraw_type *co_ptr;
 				for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords);
 					co_ptr++)

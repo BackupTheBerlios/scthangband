@@ -1620,6 +1620,9 @@ static errr init_alloc(void)
 
 
 
+#define FOR_ALL_IN_CNT(ARRAY, PTR, CNT) \
+	for ((PTR) = (ARRAY), (CNT) = 0; (PTR) < END_PTR(ARRAY); (PTR)++, (CNT)++)
+
 #ifdef CHECK_ARRAYS
 
 /*
@@ -1628,12 +1631,13 @@ static errr init_alloc(void)
 static void check_screen_coords(void)
 {
 	const redraw_type *ptr;
-	FOR_ALL_IN(screen_coords, ptr)
+	int i;
+	FOR_ALL_IN_CNT(screen_coords, ptr, i)
 	{
-		if (ptr->idx != ptr)
+		if (ptr->idx != i)
 		{
 			quit_fmt("The %s screen co-ordinates have index %d rather than %d",
-				ptr->name, ptr - screen_coords, ptr->idx - screen_coords);
+				ptr->name, i, ptr->idx);
 		}
 	}
 }

@@ -165,7 +165,8 @@ static int PURE get_x(const redraw_type *t)
 }
 
 /* Shorten "put it where the table says it should go" for y,x functions. */
-#define GET_YX(T) get_y(T), get_x(T), (T)->l
+#define GET_YX(T) get_y(screen_coords+T), get_x(screen_coords+T), \
+	screen_coords[T].l
 
 static void prt_equippy(void)
 {

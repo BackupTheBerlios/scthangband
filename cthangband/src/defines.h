@@ -1146,29 +1146,29 @@ logaux(x, 1) logaux(x, 0) 255)
 #define BORDER_WIDTH 12 /* The length of a border string. */
 
 /* Pointers to various on-screen displays handled by redraw_stuff(). */
-#define XY_TIME (screen_coords+0) /* 12:34 10 Jan */
-#define XY_GOLD (screen_coords+1) /* "AU xxxxxxxxx" */
-#define XY_EQUIPPY (screen_coords+2) /* equippy chars */
-#define XY_STAT (screen_coords+3) /* "xxx:  xxxxxx" */
-#define XY_AC (screen_coords+9) /* "AC:    xxxxx" */
-#define XY_HP (screen_coords+10) /* "HP: xxx/yyy, etc." */
-#define XY_SP (screen_coords+11) /* "SP: xxx/yyy, etc." */
-#define XY_CHI (screen_coords+12) /* "CH: xxx/yyy, etc." */
-#define XY_LIFE_SPIRIT (screen_coords+13) /* "Life: a c e g"*/
-#define XY_WILD_SPIRIT (screen_coords+14) /* "Wild: b d f h"*/
-#define XY_INFO (screen_coords+15) /* "xxxxxxxxxxxx" (monster info) */
-#define XY_ENERGY (screen_coords+16) /* LE: xxx */
-#define XY_CUT (screen_coords+17) /* <cut> */
-#define XY_STUN (screen_coords+18) /* <stun> */
-#define XY_HUNGRY (screen_coords+19) /* "Weak" / "Hungry" / "Full" / "Gorged" */
-#define XY_BLIND (screen_coords+20) /* "Blind" */
-#define XY_CONFUSED (screen_coords+21) /* "Confused" */
-#define XY_AFRAID (screen_coords+22) /* "Afraid" */
-#define XY_POISONED (screen_coords+23) /* "Poisoned" */
-#define XY_STATE (screen_coords+24) /* <state> */
-#define XY_SPEED (screen_coords+25) /* "Slow (-NN)" or "Fast (+NN)" */
-#define XY_STUDY (screen_coords+26) /* "Study" */
-#define XY_DEPTH (screen_coords+27) /* "Lev NNN" / "NNNN ft" */
+#define XY_TIME 0 /* 12:34 10 Jan */
+#define XY_GOLD 1 /* "AU xxxxxxxxx" */
+#define XY_EQUIPPY 2 /* equippy chars */
+#define XY_STAT 3 /* "xxx:  xxxxxx" */
+#define XY_AC 9 /* "AC:    xxxxx" */
+#define XY_HP 10 /* "HP: xxx/yyy, etc." */
+#define XY_SP 11 /* "SP: xxx/yyy, etc." */
+#define XY_CHI 12 /* "CH: xxx/yyy, etc." */
+#define XY_LIFE_SPIRIT 13 /* "Life: a c e g"*/
+#define XY_WILD_SPIRIT 14 /* "Wild: b d f h"*/
+#define XY_INFO 15 /* "xxxxxxxxxxxx" (monster info) */
+#define XY_ENERGY 16 /* LE: xxx */
+#define XY_CUT 17 /* <cut> */
+#define XY_STUN 18 /* <stun> */
+#define XY_HUNGRY 19 /* "Weak" / "Hungry" / "Full" / "Gorged" */
+#define XY_BLIND 20 /* "Blind" */
+#define XY_CONFUSED 21 /* "Confused" */
+#define XY_AFRAID 22 /* "Afraid" */
+#define XY_POISONED 23 /* "Poisoned" */
+#define XY_STATE 24 /* <state> */
+#define XY_SPEED 25 /* "Slow (-NN)" or "Fast (+NN)" */
+#define XY_STUDY 26 /* "Study" */
+#define XY_DEPTH 27 /* "Lev NNN" / "NNNN ft" */
 
 /* The size of the screen_coords[] array. */
 #define NUM_SCREEN_COORDS 28
