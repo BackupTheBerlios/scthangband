@@ -2950,10 +2950,6 @@ logaux(x, 1) logaux(x, 0) 255
    ((X) >= panel_col_min) && ((X) <= panel_col_max))
 
 
-/*
- * A version of quark_str which is safe over the range [0,quark__num].
- */
-#define quarkstr(x) ((x) ? quark_str(x) : "")
 
 /*
  * Determine if a "legal" grid is a "floor" grid

@@ -524,18 +524,10 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->xtra2);
 
 	/* Save the inscription (if any) */
-	wr_string(quarkstr(o_ptr->note));
+	wr_string(quark_str(o_ptr->note));
 	
-	/* If it is a "new" named artifact, save the name */        
-	if (o_ptr->art_name)
-	{
-        wr_string(quark_str(o_ptr->art_name));
-	}
-	else
-	{
-		wr_string("");
-	}
-
+	/* Save the randart name, if any. */
+	wr_string(quark_str(o_ptr->art_name));
 }
 
 

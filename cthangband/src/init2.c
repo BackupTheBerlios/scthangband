@@ -3086,6 +3086,9 @@ static errr init_other(void)
 	/* Quark variables */
 	C_MAKE(quark__str, QUARK_MAX, cptr);
 
+	/* Set quark 0 to something safe. */
+	quark__str[0] = "";
+
 	/* Message variables */
 	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
 	C_MAKE(message__buf, MESSAGE_BUF, char);

@@ -349,7 +349,7 @@ static void sense_inventory(void)
 		}
 
 		/* Skip repeated feelings */
-		if (streq(feel, quarkstr(o_ptr->note))) continue;
+		if (streq(feel, quark_str(o_ptr->note))) continue;
 		
 		/* Stop everything */
 		if (disturb_minor) disturb(0, 0);
@@ -834,7 +834,7 @@ void curse(object_type *o_ptr)
 	o_ptr->ident |= IDENT_CURSED;
 	o_ptr->art_flags3 |= TR3_CURSED;
 	o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
-	if (streq(quarkstr(o_ptr->note), "uncursed"))
+	if (streq(quark_str(o_ptr->note), "uncursed"))
 	{
 		o_ptr->note = 0;
 	}
@@ -1727,7 +1727,7 @@ static void process_world(void)
             else
                 {
                 if ((!disturb_other) ||
-                    (strchr(quarkstr(o_ptr->note),'.')))
+                    (strchr(quark_str(o_ptr->note),'.')))
                     {
                         /* Do nothing */
                         /* msg_print("Teleport aborted.") */ ;

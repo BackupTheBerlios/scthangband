@@ -1246,11 +1246,6 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
 }
 
 
-/* Just in case */
-#ifndef quarkstr
-#define quarkstr(x) ((x) ? quark_str(x) : "")
-#endif
-
 /*
  * Calculate the number of blows and the damage done by a given weapon using
  * a specified slay multiplier, together with the to-hit and to-damage bonuses
@@ -1324,7 +1319,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 		{
 			object_type *j_ptr = &inventory[i];
 			if (j_ptr->tval != p_ptr->tval_ammo) continue;
-			if (!strstr(quarkstr(j_ptr->note), "@ff")) continue;
+			if (!strstr(quark_str(j_ptr->note), "@ff")) continue;
 			am_ptr = j_ptr;
 			break;
 		}
@@ -1353,7 +1348,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 		{
 			for (i = 0; i <= INVEN_PACK; i++)
 			{
-				if (!strstr(quarkstr(inventory[i].note), "@ff")) continue;
+				if (!strstr(quark_str(inventory[i].note), "@ff")) continue;
 				if (ammunition_type(&inventory[i]) != o_ptr->tval) continue;
 				wp_ptr = &inventory[INVEN_BOW];
 				object_copy(&wp, wp_ptr);
