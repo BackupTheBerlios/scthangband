@@ -3785,19 +3785,21 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 	{
 		for (s = h_ptr->rbuf; *s;)
 		{
-			if (strlen(s) <= w-x-1) break;
+			if (strlen(s) < w-x) break;
 
 			for (h = 0, space = 0; h < w-x; h++)
 			{
 				/* Allow extra space for hyperlinks. */
 				if (prefix(s+h, "*****"))
 				{
-					cptr t = strchr(s+h, '[');
-					if (t) x += s+h-t;
-					h = t-s;
+					uint i = strcspn(s+h, "[");
+					x -= i;
+					h += i;
 				}
 				if (s[h] == ' ') space = h;
 			}
+
+			if (strlen(s) < w-x) break;
 
 			/* If there are no spaces, print the line. */
 			if (!space) space = w-x-1;
