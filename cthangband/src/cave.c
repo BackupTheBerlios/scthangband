@@ -1504,10 +1504,7 @@ void prt_map(void)
 			map_info(y, x, &a, &c, &ta, &tc);
 
 			/* Hack -- fake monochrome */
-			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->invuln)) a = TERM_WHITE;
-			else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->wraith_form)) a = TERM_L_DARK;
+			fake_colour(&a);
 
 			/* Efficiency -- Redraw that grid of the map */
 			Term_queue_char(cx, cy, a, c, ta, tc);
@@ -1563,6 +1560,36 @@ static byte priority(byte f, byte a, char c)
 	}
 }
 
+/*
+ * Deduce the feature with the highest priority (as determined above) in the
+ * specified square area of the level.
+ */
+static void get_best_priority(char *ta, byte *tc,
+	int minx, int miny, int maxx, int maxy)
+{
+	int x, y, pri, mpri;
+	char a, da, UNREAD(ma);
+	byte c, dc, UNREAD(mc);
+
+	for (mpri = 0, x = minx; x <= maxx; x++)
+	{
+		for (y = miny; y <= maxy; y++)
+		{
+			map_info(y, x, &a, &c, &da, &dc);
+			pri = priority(cave[y][x].feat, a, c);
+			if (pri > mpri)
+			{
+				mpri = pri;
+				mc = c;
+				ma = a;
+			}
+		}
+	}
+
+	/* Save the results. */
+	*ta = ma;
+	*tc = mc;
+}
 
 /*
  * Display a "small-scale" map of the dungeon in the active Term
@@ -1582,15 +1609,10 @@ static byte priority(byte f, byte a, char c)
  */
 void display_map(int *cy, int *cx, int *my, int *mx)
 {
-	int i, j, x, y;
+	int x, y;
 
 	byte ta;
 	char tc;
-
-	byte tp;
-
-	byte **ma, **mp;
-	char **mc;
 
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
@@ -1608,119 +1630,41 @@ void display_map(int *cy, int *cx, int *my, int *mx)
 	old_view_special_lite = view_special_lite;
 	old_view_granite_lite = view_granite_lite;
 
+	/* Draw the horizontal edges */
+	mc_put_fmt(0, 0, "+%v+", repeat_string_f2, "-", map_wid-1);
+	mc_put_fmt(map_hgt, 0, "+%v+", repeat_string_f2, "-", map_wid-1);
+
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
 	view_granite_lite = FALSE;
 
-	/* Allocate temporary memory for the maps */
-	C_MAKE(ma, map_hgt + 2, byte *);
-	C_MAKE(mc, map_hgt + 2, char *);
-	C_MAKE(mp, map_hgt + 2, byte *);
-
-	/* Allocate each line in the maps */
-	for (i = 0; i < map_hgt + 2; i++)
-	{
-		C_MAKE(ma[i], map_wid + 2, byte);
-		C_MAKE(mc[i], map_wid + 2, char);
-		C_MAKE(mp[i], map_wid + 2, byte);
-	}
-
-
-	/* Clear the chars and attributes */
-	for (y = 0; y <= map_hgt; ++y)
-	{
-		for (x = 0; x <= map_wid; ++x)
-		{
-			/* Nothing here */
-			ma[y][x] = TERM_WHITE;
-			mc[y][x] = ' ';
-
-			/* No priority */
-			mp[y][x] = 0;
-		}
-	}
-
-	/* Fill in the map */
-	for (i = 0; i < cur_wid; ++i)
-	{
-		for (j = 0; j < cur_hgt; ++j)
-		{
-			/* Location */
-			x = i / ratio + 1;
-			y = j / ratio + 1;
-
-			/* Extract the current attr/char at that map location */
-			map_info(j, i, &ta, &tc, &ta, &tc);
-
-			/* Extract the priority of that attr/char */
-			tp = priority(cave[j][i].feat, ta, tc);
-
-			/* Save "best" */
-			if (mp[y][x] < tp)
-			{
-				/* Save the char */
-				mc[y][x] = tc;
-
-				/* Save the attr */
-				ma[y][x] = ta;
-
-				/* Save priority */
-				mp[y][x] = tp;
-			}
-		}
-	}
-
-
-	/* Draw the corners */
-	mc[0][0] = '+';
-	mc[0][map_wid] = '+';
-	mc[map_hgt][0] = '+';
-	mc[map_hgt][map_wid] = '+';
-
-	/* Draw the horizontal edges */
-	for (x = 1; x < map_wid; x++) mc[0][x] = '-';
-	for (x = 1; x < map_wid; x++) mc[map_hgt][x] = '-';
-
-	/* Draw the vertical edges */
-	for (y = 1; y < map_hgt; y++) mc[y][0] = '|';
-	for (y = 1; y < map_hgt; y++) mc[y][map_wid] = '|';
-
-
 	/* Display each map line in order */
-	for (y = 0; y <= map_hgt; ++y)
+	for (y = 1; y < map_hgt; ++y)
 	{
 		/* Start a new line */
-		Term_gotoxy(0, y);
+		Term_putch(0, y, TERM_WHITE, '|');
 
 		/* Display the line */
-		for (x = 0; x <= map_wid; ++x)
+		for (x = 1; x < map_wid; ++x)
 		{
-			ta = ma[y][x];
-			tc = mc[y][x];
+			/* Find the character to print for the squares this covers. */
+			get_best_priority(&ta, &tc,
+				(x-1)*ratio, (y-1)*ratio, x*ratio-1, y*ratio-1);
 
 			/* Hack -- fake monochrome */
-			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->invuln)) ta = TERM_WHITE;
-			else if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
-				&& (p_ptr->wraith_form)) ta = TERM_L_DARK;
+			fake_colour(&ta);
 
 			/* Add the character */
 			Term_addch(ta, tc);
 		}
+
+		/* Add the right-hand edge. */
+		Term_addch(TERM_WHITE, '|');
 	}
 
-	/* Free each line in the maps */
-	for (i = 0; i < map_hgt + 2; i++)
-	{
-		FREE(ma[i]);
-		FREE(mc[i]);
-		FREE(mp[i]);
-	}
-
-	/* Free arrays */
-	FREE(ma);
-	FREE(mc);
-	FREE(mp);
+	/* Restore lighting effects */
+	view_special_lite = old_view_special_lite;
+	view_granite_lite = old_view_granite_lite;
 
 	/* Edge of map */
 	if (my) (*my) = map_hgt;
@@ -1729,10 +1673,6 @@ void display_map(int *cy, int *cx, int *my, int *mx)
 	/* Player location */
 	if (cy) (*cy) = py / ratio + 1;
 	if (cx) (*cx) = px / ratio + 1;
-
-	/* Restore lighting effects */
-	view_special_lite = old_view_special_lite;
-	view_granite_lite = old_view_granite_lite;
 }
 
 

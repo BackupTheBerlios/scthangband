@@ -2414,7 +2414,7 @@ extern void mc_put_str(const int y, const int x, cptr str);
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(FILES_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern void mc_add_fmt(cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(INIT2_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
 #if (defined(UI_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -2480,7 +2480,7 @@ extern errr delete_resize_hook(void (*resize_hook)(void));
 #if (defined(DUNGEON_C) || defined(UTIL_C))
 extern void resize_main_term(void);
 #endif
-#if (defined(CMD4_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CAVE_C) || defined(CMD4_C) || defined(STORE_C) || defined(UTIL_C))
 extern void repeat_string_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
 #if (defined(MAIN_X11_C) || defined(UTIL_C))
