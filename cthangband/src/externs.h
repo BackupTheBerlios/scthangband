@@ -2846,15 +2846,15 @@ extern bool auto_more;
 
 
 
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool preserve_mode_w;
-#endif
+
+
+
 #if (defined(CMD3_C) || defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool preserve_mode;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool maximise_mode_w;
-#endif
+
+
+
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool maximise_mode;
 #endif
@@ -2864,33 +2864,33 @@ extern bool use_autoroller;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spend_points;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool ironman_shop_w;
-#endif
+
+
+
 #if (defined(FILES_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_shop;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool ironman_feeling_w;
-#endif
+
+
+
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_feeling;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool speak_unique_w;
-#endif
+
+
+
 #if (defined(MELEE2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool speak_unique;
 #endif
-#if (defined(SCORE_QUITTERS)) && (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool score_quitters_w;
-#endif
+
+
+
 #if (defined(SCORE_QUITTERS)) && (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool score_quitters;
 #endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool chaos_patrons_w;
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool chaos_patrons;
 #endif

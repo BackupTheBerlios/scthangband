@@ -2908,6 +2908,19 @@ cptr stat_names_reduced[6] =
 
 
 /*
+ * A few birth options which are only accessed through option_info.
+ */
+static bool preserve_mode_w;
+static bool maximise_mode_w;
+static bool ironman_shop_w;
+static bool ironman_feeling_w;
+static bool speak_unique_w;
+#ifdef SCORE_QUITTERS
+static bool score_quitters_w;
+#endif /* SCORE_QUITTERS */
+static bool chaos_patrons_w;
+
+/*
  * Available Options (full to 3,25).
  * In addition, 7,2 and 7,8-15 are used for cheat options, and the
  * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.

@@ -200,23 +200,16 @@ bool auto_more; /* Automatically clear '-more-' prompts */
 
 /* Option Set B -- Birth Options */
 
-bool preserve_mode_w;
 bool preserve_mode; /* Don't lose missed artifacts */
-bool maximise_mode_w;
 bool maximise_mode; /* Unify stat bonuses */
 bool use_autoroller; /* Autoroll characters */
 bool spend_points; /* Spend points on stats */
-bool ironman_shop_w;
 bool ironman_shop; /* Not allowed in shops */
-bool ironman_feeling_w;
 bool ironman_feeling; /* Only give real feeling after 2500 turns. */
-bool speak_unique_w;
 bool speak_unique; /* Speaking uniques + shopkeepers */
 #ifdef SCORE_QUITTERS
-bool score_quitters_w;
 bool score_quitters; /* Quitting can give a high score */
 #endif /* SCORE_QUITTERS */
-bool chaos_patrons_w;
 bool chaos_patrons; /* Chaos patrons exist in the game. */
 
 /* Option Set 3 -- Game-Play */
