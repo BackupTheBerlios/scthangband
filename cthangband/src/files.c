@@ -1008,6 +1008,8 @@ errr process_pref_file(cptr name)
 	/* Process the file */
 	for (num = 0; !my_fgets(fp, buf, 1024); num++)
 	{
+		char buf2[1024];
+
 		/* Skip "empty" lines */
 		if (!buf[0]) continue;
 
@@ -1052,9 +1054,11 @@ errr process_pref_file(cptr name)
 			continue;
 		}
 
+		/* Make a copy to make any error message clearer. */
+		strcpy(buf2, buf);
 
 		/* Process the line */
-		err = process_pref_file_aux(buf, &sf_flags);
+		err = process_pref_file_aux(buf2, &sf_flags);
 
 		/* Oops */
 		if (err) break;
