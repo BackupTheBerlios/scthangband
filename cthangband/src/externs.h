@@ -555,7 +555,7 @@ extern errr init_r_info_txt(FILE *fp, char *buf);
 /* init2.c */
 
 #if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C))
-extern void init_file_paths(char *path);
+extern void init_file_paths(cptr path);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
 extern s16b error_idx;
@@ -2682,10 +2682,10 @@ extern int player_euid;
 extern int player_egid;
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ACN_C) || defined(MAIN_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern char player_name[32];
+extern char player_name[NAME_LEN];
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(VARIABLE_C))
-extern char player_base[32];
+extern char player_base[NAME_LEN];
 #endif
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
 extern char died_from[80];
@@ -3564,7 +3564,4 @@ extern void init_term_wins(void);
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max);
 #endif
-
-/* (null) */
-
 #endif /* INCLUDED_EXTERNS_H */

@@ -81,12 +81,12 @@ extern unsigned _ovrbuffer = 0x1500;
  */
 static void init_stuff(void)
 {
-	char path[1024];
+	cptr path;
 
 #if defined(AMIGA) || defined(VM)
 
 	/* Hack -- prepare "path" */
-	strcpy(path, "Angband:");
+	path = "Angband:";
 
 #else /* AMIGA / VM */
 
@@ -96,10 +96,17 @@ static void init_stuff(void)
 	tail = getenv("ANGBAND_PATH");
 
 	/* Use the angband_path, or a default */
-	strcpy(path, tail ? tail : DEFAULT_PATH);
+	path = (tail) ? tail : DEFAULT_PATH;
 
 	/* Hack -- Add a path separator (only if needed) */
-	if (!suffix(path, PATH_SEP)) strcat(path, PATH_SEP);
+	if (!suffix(path, PATH_SEP))
+	{
+		char *path_buf = C_NEW(strlen(path)+strlen(PATH_SEP)+1, char);
+		sprintf(path_buf, "%s%s", path, PATH_SEP);
+		init_file_paths(path_buf);
+		FREE2(path_buf);
+		return;
+	}
 
 #endif /* AMIGA / VM */
 
@@ -400,7 +407,7 @@ int main(int argc, char *argv[])
 			case 'U':
 			{
 				if (!argv[i][2]) goto usage;
-				strcpy(player_name, &argv[i][2]);
+				sprintf(player_name, "%.*s", NAME_LEN-1, &argv[i][2]);
 				break;
 			}
 

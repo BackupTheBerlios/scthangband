@@ -554,12 +554,20 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			case 's':
 			{
 				cptr arg;
+				char arg2[1024];
 
 				/* Access next argument */
 				arg = va_arg(vp, cptr);
 
 				/* Hack -- convert NULL to EMPTY */
 				if (!arg) arg = "";
+
+				/* Hack -- trim long strings */
+				else if (strlen(arg) >= 1024)
+				{
+					sprintf(arg2, "%.*s", 1023, arg);
+					arg = arg2;
+				}
 
 				/* Format the argument */
 				sprintf(tmp, aux, arg);

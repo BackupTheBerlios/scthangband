@@ -413,12 +413,12 @@ int player_egid;
 /*
  * Current player's character name
  */
-char player_name[32];
+char player_name[NAME_LEN];
 
 /*
  * Stripped version of "player_name"
  */
-char player_base[32];
+char player_base[NAME_LEN];
 
 /*
  * What killed the player

@@ -68,11 +68,8 @@
  * this function to be called multiple times, for example, to
  * try several base "path" values until a good one is found.
  */
-void init_file_paths(char *path)
+void init_file_paths(cptr path)
 {
-	char *tail;
-
-
 	/*** Free everything ***/
 
 	/* Free the main path */
@@ -95,10 +92,6 @@ void init_file_paths(char *path)
 
 	/* Hack -- save the main directory */
 	ANGBAND_DIR = string_make(path);
-
-	/* Prepare to append to the Base Path */
-	tail = path + strlen(path);
-
 
 #ifdef VM
 
@@ -123,45 +116,16 @@ void init_file_paths(char *path)
 
 	/*** Build the sub-directory names ***/
 
-	/* Build a path name */
-	strcpy(tail, "apex");
-	ANGBAND_DIR_APEX = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "bone");
-	ANGBAND_DIR_BONE = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "data");
-	ANGBAND_DIR_DATA = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "edit");
-	ANGBAND_DIR_EDIT = string_make(path);
-
-	/* Build a path name */
-    strcpy(tail, "file");
-	ANGBAND_DIR_FILE = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "help");
-	ANGBAND_DIR_HELP = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "info");
-	ANGBAND_DIR_INFO = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "save");
-	ANGBAND_DIR_SAVE = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "user");
-	ANGBAND_DIR_USER = string_make(path);
-
-	/* Build a path name */
-    strcpy(tail, "xtra");
-	ANGBAND_DIR_XTRA = string_make(path);
+	ANGBAND_DIR_APEX = string_make(format("%s%s", path, "apex"));
+	ANGBAND_DIR_BONE = string_make(format("%s%s", path, "bone"));
+	ANGBAND_DIR_DATA = string_make(format("%s%s", path, "data"));
+	ANGBAND_DIR_EDIT = string_make(format("%s%s", path, "edit"));
+	ANGBAND_DIR_FILE = string_make(format("%s%s", path, "file"));
+	ANGBAND_DIR_HELP = string_make(format("%s%s", path, "help"));
+	ANGBAND_DIR_INFO = string_make(format("%s%s", path, "info"));
+	ANGBAND_DIR_SAVE = string_make(format("%s%s", path, "save"));
+	ANGBAND_DIR_USER = string_make(format("%s%s", path, "user"));
+	ANGBAND_DIR_XTRA = string_make(format("%s%s", path, "xtra"));
 
 #endif /* VM */
 
@@ -196,8 +160,7 @@ void init_file_paths(char *path)
 			string_free(ANGBAND_DIR_DATA);
 
 			/* Build a new path name */
-			sprintf(tail, "data-%s", next);
-			ANGBAND_DIR_DATA = string_make(path);
+			ANGBAND_DIR_DATA = string_make(format("data-%s", next));
 		}
 	}
 

@@ -3260,3 +3260,5 @@ extern int PlayerUID;
 #define SPOIL_EGO_ITEMS	0
 #define SPOIL_ARTIFACTS	0
 
+/* Size of player_name */
+#define NAME_LEN 32
