@@ -4005,11 +4005,16 @@ errr type_string(char *str, uint len)
 {
 	char *s;
 
+	term *old = Term;
+
 	/* Paranoia - no string. */
 	if (!str) return TERM_ERROR_BAD_INPUT;
 
 	/* Hack - calculate the string length here if none given. */
 	if (!len) len = strlen(str);
+
+	/* Activate the main window, as all pastes go there. */
+	Term_activate(term_screen);
 
 	/* Not enough space for the string. */
 	if (Term_queue_space() <= (int)len)
@@ -4022,6 +4027,9 @@ errr type_string(char *str, uint len)
 		/* Catch errors other than "str[i] == 0", which is ignored. */
 		if (err && err != TERM_ERROR_BAD_INPUT) return err;
 	}
+
+	/* Activate the original window. */
+	Term_activate(old);
 
 	return SUCCESS;
 }
