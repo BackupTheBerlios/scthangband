@@ -84,7 +84,6 @@
 
 V:_CVS_
 
-
 ##### Non-objects #####
 
 # An empty slot
@@ -305,8 +304,6 @@ I:80:7500:0
 W:5:3:10
 A:5/1:10/1:20/1
 D:A very filling meal, which cures 4d8 and any lingering poisons.
-
-## XXX 29 XXX ##
 
 ##### Edged Weapons #####
 
@@ -1087,7 +1084,7 @@ F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_CONF |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
-##### The Cloaks #####
+##### Cloaks #####
 
 N:124:& Cloak~
 G:(:g:0
@@ -1232,8 +1229,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | GOOD
 
-
-##### The Gloves #####
+##### Gloves #####
 
 N:141:& Set~ of Leather Gloves
 G:]:U:0
@@ -1258,7 +1254,6 @@ W:50:40:100
 A:50/1
 P:5:1d1:0:0:0
 F:GOOD
-
 
 ##### Boots #####
 
@@ -2925,8 +2920,6 @@ P:0:1d2:0:0:0
 D:It cures blindness, poison, confusion, stunning, cuts and hallucination when 
 D:you use it.
 
-
-
 N:355:Earthquakes
 G: :d:10
 I:55:0:0
@@ -3554,7 +3547,6 @@ W:0:3:0
 A:0/1
 P:0:1d1:0:0:0
 
-
 ##### Skeletons #####
 
 N:433:& Broken Skull~
@@ -3613,10 +3605,7 @@ W:5:60:0
 A:5/1
 P:0:1d2:0:0:0
 
-## XXX 399 XXX ##
-
-
-##### Treasure #####
+#### Treasure #####
 
 N:441:copper
 G:$:u:0
@@ -3708,7 +3697,6 @@ G:$:G:0
 I:100:0:0
 W:1:0:80
 
-
 ##### "Special Artifacts" #####
 
 # These objects do not specify "full names" because the artifact name
@@ -3725,8 +3713,7 @@ W:1:0:80
 # have a different "color" and "flavor", and also to allow the use of
 # special "base names" (such as "Necklace").
 
-
-# The Star Essence of Polaris -- see artifact list
+# The Star Essence of Polaris
 
 N:459:& Star Essence~
 G:*:y:0
@@ -3735,7 +3722,7 @@ W:1:10:10000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
-# The Star Essence of Xoth -- see artifact list
+# The Star Essence of Xoth
 
 N:460:& Star Essence~
 G:*:y:0
@@ -3744,7 +3731,7 @@ W:30:5:10000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
-# The Arkenstone of Thrain -- replaced with Jewel of Judgement
+# The Gemstone 'Trapezohedron'
 
 N:461:& Gemstone~
 G:*:R:0
@@ -3754,7 +3741,7 @@ P:0:1d1:0:0:0
 F:INSTA_ART
 
 
-# The Amulet of Carlammas -- see artifact list
+# The Amulet of Lobon
 
 N:462:& Amulet~ $
 G: :d:3
@@ -3762,7 +3749,7 @@ I:40:0:0
 W:50:3:60000
 F:INSTA_ART
 
-# The Amulet of Ingwe -- see artifact list
+# The Amulet of Abd Al'Hazred
 
 N:463:& Amulet~ $
 G: :d:3
@@ -3770,7 +3757,7 @@ I:40:0:0
 W:60:3:90000
 F:INSTA_ART
 
-# The Necklace of the Dwarves -- see artifact list
+# The Necklace of the Dwarves
 
 N:464:& Necklace~ $
 G: :d:3
@@ -3779,7 +3766,7 @@ W:70:3:75000
 F:INSTA_ART
 
 
-# The Ring of Barahir -- see artifact list
+# The Ring of Magic
 
 N:465:& Ring~ $
 G: :d:2
@@ -3787,7 +3774,7 @@ I:45:0:0
 W:50:2:65000
 F:INSTA_ART
 
-# The Ring of Tulkas -- see artifact list
+# The Ring of Bast
 
 N:466:& Ring~ $
 G: :d:2
@@ -3795,7 +3782,7 @@ I:45:0:0
 W:90:2:150000
 F:INSTA_ART
 
-# The Ring of Power (Narya) -- see artifact list
+# The Ring of Elemental Power (Fire)
 
 N:467:& Ring~ $
 G: :d:2
@@ -3803,7 +3790,7 @@ I:45:0:0
 W:80:2:100000
 F:INSTA_ART
 
-# The Ring of Power (Nenya) -- see artifact list
+# The Ring of Elemental Power (Ice)
 
 N:468:& Ring~ $
 G: :d:2
@@ -3811,7 +3798,7 @@ I:45:0:0
 W:90:2:200000
 F:INSTA_ART
 
-# The Ring of Power (Vilya) -- see artifact list
+# The Ring of Elemental Power (Storm)
 
 N:469:& Ring~ $
 G: :d:2
@@ -3819,7 +3806,7 @@ I:45:0:0
 W:100:2:300000
 F:INSTA_ART
 
-# The Ring of Power (The One Ring) -- see artifact list
+# The Ring of Nyarlathotep
 
 N:470:& Ring~ $
 G: :d:12
@@ -3827,7 +3814,7 @@ I:45:0:0
 W:110:2:5000000
 F:INSTA_ART
 
-# Stormbringer -- see artifact list
+# The Runesword 'Stormbringer'
 
 N:471:& Runesword~
 G:|:D:0
@@ -3836,12 +3823,16 @@ W:1:180:4000
 P:0:6d5:0:0:0
 F:INSTA_ART | SHOW_MODS
 
+# The Mighty Hammer of Worlds
+
 N:472:& Mighty Hammer~
 G:\:D:0
 I:21:0:0
 W:15:200:1000
 P:0:3d9:0:0:0
 F:SHOW_MODS | INSTA_ART
+
+# The Lead Crown of the Universe
 
 N:473:& Lead Crown~
 G:]:D:0
