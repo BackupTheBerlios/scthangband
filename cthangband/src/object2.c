@@ -228,6 +228,39 @@ void delete_object(int y, int x)
 
 
 /*
+ * Rotate the objects in the stack under the player, so that the top item is
+ * sent to the bottom and the rest are moved up. 
+ */
+void do_cmd_rotate_stack(void)
+{
+	int i, o_idx;
+	int y = py, x = px;
+	cave_type *c_ptr = &cave[y][x];
+
+	/* Get the object being moved. */
+	o_idx =	c_ptr->o_idx;
+
+	/* Only rotate a pile of two or more objects. */
+	if (o_idx && o_list[o_idx].next_o_idx)
+	{
+		/* Remove the first object from the list. */
+		excise_object_idx(o_idx);
+	
+		/* Find end of the list. */
+		for (i = c_ptr->o_idx; o_list[i].next_o_idx; i = o_list[i].next_o_idx);
+	
+		/* Add after the last object. */
+		o_list[i].next_o_idx = o_idx;
+	
+		/* Display the square again. */
+		lite_spot(y,x);
+	}
+
+	/* Remember the object beneath the player. */
+	object_track(&o_list[c_ptr->o_idx]);
+}
+
+/*
  * Move an object from index i1 to index i2 in the object list
  */
 static void compact_objects_aux(int i1, int i2)

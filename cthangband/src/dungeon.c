@@ -3001,6 +3001,14 @@ static void process_command(void)
 			break;
 		}
 
+		/* Rotate the stack of items under the player. */
+		case KTRL('W'):
+		{
+			do_cmd_rotate_stack();
+			break;
+		}
+		
+		
             /* Check artifacts, uniques, objects */
 		case '~':
         case '|':
