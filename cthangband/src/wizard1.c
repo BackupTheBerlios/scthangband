@@ -164,7 +164,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 
 
 	/* Description (too brief) */
-	strnfmt(buf, ONAME_MAX, "%v", object_desc_store_f3, q_ptr, FALSE, 0);
+	strnfmt(buf, ONAME_MAX, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
 
 
 	/* Misc info */
@@ -731,7 +731,8 @@ static cptr *spoiler_flag_aux(const u32b art_flags, const flag_desc *flag_ptr,
 static void analyze_general (object_type *o_ptr, char *desc_ptr)
 {
 	/* Get a "useful" description of the object */
-	strnfmt(desc_ptr, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 1);
+	strnfmt(desc_ptr, ONAME_MAX, "%v",
+		object_desc_f3, o_ptr, OD_ART | OD_SHOP, 1);
 }
 
 /*

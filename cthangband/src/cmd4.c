@@ -2036,7 +2036,7 @@ static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, ch
 	object_prep(&forge, i);
 
 	/* Place in a temporary buffer. */
-	(*name) = format("%v", object_desc_store_f3, &forge, FALSE, 0);
+	(*name) = format("%v", object_desc_f3, &forge, OD_SHOP, 0);
 }
 
 /*
@@ -3227,7 +3227,7 @@ static void do_cmd_knowledge_artifacts(void)
 
 		/* Hack -- Build the artifact name */
 		my_fprintf(fff, " %v   %v\n", get_symbol(&k_info[a_ptr->k_idx]),
-			object_desc_store_f3, q_ptr, TRUE, 0);
+			object_desc_f3, q_ptr, OD_ART | OD_SHOP, 0);
 	}
 
 	/* Free the "okay" array */
@@ -3595,7 +3595,7 @@ static void do_cmd_knowledge_objects(void)
 			my_fprintf(fff, " %v   %v\n", get_symbol_f2,
 				object_attr(i_ptr), isprint(object_char(i_ptr)) ?
 				object_char(i_ptr) : '#',
-				object_desc_store_f3, i_ptr, FALSE, 0);
+				object_desc_f3, i_ptr, OD_SHOP, 0);
 		}
 	}
 

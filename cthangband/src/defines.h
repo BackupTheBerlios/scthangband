@@ -500,6 +500,12 @@ logaux(x, 1) logaux(x, 0) 255)
 
 
 /*
+ * object_desc() flags.
+ */
+#define OD_ART	0x01	/* Display article/quantity if one is relevant. */
+#define OD_SHOP	0x02	/* Display as in shop, hiding various things. */
+
+/*
  * Misc constants
  */
 #define TOWN_DAWN               10000   /* Number of turns from dawn to dawn XXX */

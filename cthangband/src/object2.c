@@ -1737,7 +1737,7 @@ static void object_mention(object_type *o_ptr)
 	C_TNEW(o_name, ONAME_MAX, char);
 
 	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, OD_SHOP, 0);
 
 	/* Artifact */
 	if (artifact_p(o_ptr))
@@ -1827,7 +1827,7 @@ static cptr get_art_name(artifact_type *a_ptr, char *buf)
 {
 	object_type forge;
 	make_fake_artifact(&forge, a_ptr-a_info);
-	strnfmt(buf, ONAME_MAX, "%v", object_desc_store_f3, &forge, FALSE, 0);
+	strnfmt(buf, ONAME_MAX, "%v", object_desc_f3, &forge, OD_SHOP, 0);
 	return buf;
 }
 
@@ -5670,7 +5670,7 @@ void display_koff(int k_idx)
 
 
 	/* Describe */
-	strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, q_ptr, FALSE, 0);
+	strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, q_ptr, OD_SHOP, 0);
 
 	/* Mention the object name */
 	Term_putstr(0, 0, -1, TERM_WHITE, o_name);

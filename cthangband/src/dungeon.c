@@ -153,8 +153,6 @@ cptr find_feeling(object_type *o_ptr)
 	/* Some feelings that don't depend on sensing, but on trying. */
 	if (!object_known_p(o_ptr) && (o_ptr->ident & (IDENT_EMPTY)))
 		return "empty";
-	/* Items in stores never return a feeling. */
-	else if (o_ptr->ident & IDENT_STORE) return "";
 	/* Hack - wearable items become "poss. cursed", usable ones "tried"*/
 	else if (!object_aware_p(o_ptr) && object_tried_p(o_ptr))
 	{

@@ -181,7 +181,8 @@ cptr describe_death_events(int r_idx, cptr he, bool omniscient)
 				if (i_ptr->flags & EI_EGO)
 				o_ptr->name2 = EP_EGO;
 #endif
-				strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, o_ptr, TRUE, 0);
+				strnfmt(o_name, ONAME_MAX, "%v",
+					object_desc_f3, o_ptr, OD_ART | OD_SHOP, 0);
 				s = format("%s%s %s drop %s", s, he, DDE_MAY, o_name);
 				TFREE(o_name);
 				break;

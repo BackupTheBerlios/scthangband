@@ -1041,9 +1041,12 @@ static char *object_desc_str(char *t, cptr s)
 #define MAX_NAME_LEVEL	8
 
 /* Julian Lighton's improved code */
-static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
+static void object_desc(char *buf, uint len, object_type *o1_ptr, byte flags,
 	int mode)
 {
+	bool pref = (flags & OD_ART) != 0;
+	bool in_shop = (flags & OD_SHOP) || (o1_ptr->ident & IDENT_STORE);
+
 	/* The strings from which buf is compiled. */
 	cptr strings[8] = {0,0,0,0,0,0,0,0};
 
@@ -1120,7 +1123,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	/* Identified artefacts, and all identified objects if
 	 * show_flavors is unset, do not include a FLAVOUR string. */
 	if ((~reject & CI_K_IDX) && (artifact_p(o_ptr) || plain_descriptions ||
-		(o_ptr->ident & (IDENT_STOREB | IDENT_STORE))))
+		in_shop || (o_ptr->ident & IDENT_STOREB)))
 		reject |= 1 << CI_FLAVOUR;
 
 	/* Singular objects take no plural. */
@@ -1525,7 +1528,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		 * Hack - suppress for empty slots.
 		 */
 		if (spoil_value && spoil_base && o_ptr->k_idx &&
-			(!auto_haggle || (~o_ptr->ident & IDENT_STORE)))
+			(!auto_haggle || !in_shop))
 		{
 			s32b value;
 			bool worthless;
@@ -1575,7 +1578,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		}
 
 		/* find_feeling() gives hints about the real object. */
-		if (*((k[i] = find_feeling(o1_ptr))) != '\0') i++;
+		if (!in_shop && *((k[i] = find_feeling(o1_ptr))) != '\0') i++;
 
 		if (o_ptr->note) k[i++] = quark_str(o_ptr->note);
 
@@ -1609,7 +1612,7 @@ copyback:
 void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	object_type *o_ptr = va_arg(*vp, object_type *);
-	int pref = va_arg(*vp, int);
+	byte pref = va_arg(*vp, byte);
 	int mode = va_arg(*vp, int);
 	cptr s;
 	uint len;
@@ -1630,60 +1633,6 @@ void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
 
 	object_desc(buf, len, o_ptr, pref, mode);
 }
-
-/*
- * Hack -- describe an item currently in a store's inventory
- * This allows an item to *look* like the player is "aware" of it
- */
-static void object_desc_store(char *buf, uint len, object_type *o_ptr, int pref, int mode)
-{
-	/* Save the "ident" field */
-	u16b old_ident = o_ptr->ident;
-
-	/* Set the "known" flag */
-	o_ptr->ident |= (IDENT_STORE);
-
-	/* Describe the object */
-	strnfmt(buf, len, "%v", object_desc_f3, o_ptr, pref, mode);
-
-	o_ptr->ident = old_ident;
-}
-
-/*
- * Process the above as a vstrnfmt_aux function.
- *
- * Format: 
- * "%v", object_desc_store_f3, (object_type*)o_ptr, (int)pref, (int)mode
- * or:
- * "%.*v", (int)len, object_desc_store_f3, o_ptr, pref, mode
- */
-void object_desc_store_f3(char *buf, uint max, cptr fmt, va_list *vp)
-{
-	object_type *o_ptr = va_arg(*vp, object_type *);
-	int pref = va_arg(*vp, int);
-	int mode = va_arg(*vp, int);
-	cptr s;
-	uint len;
-
-	/* Use %.123v to specify a maximum length of 123. */
-	if ((s = strchr(fmt, '.')))
-	{
-		long m = strtol(s+1, 0, 0);
-		len = MAX(0, m+1);
-	}
-	else
-	{
-		len = ONAME_MAX;
-	}
-
-	/* Ensure that the buffer fits within buf. */
-	if (max < len) len = max;
-
-	object_desc_store(buf, len, o_ptr, pref, mode);
-}
-
-
-
 
 /*
  * Determine the "Activation" (if any) for an artifact
