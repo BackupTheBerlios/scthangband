@@ -273,7 +273,7 @@ static errr path_parse(char *buf, int max, cptr file)
  *
  * This filename is always in "system-specific" form.
  */
-static errr path_temp(char *buf, int max)
+static errr path_temp(char *buf, uint max)
 {
 	cptr s;
 
@@ -281,10 +281,10 @@ static errr path_temp(char *buf, int max)
 	s = tmpnam(NULL);
 
 	/* Oops */
-	if (!s) return (-1);
+	if (!s || strlen(s) >= max) return (-1);
 
 	/* Format to length */
-	strnfmt(buf, max, "%s", s);
+	strcpy(buf, s);
 
 	/* Success */
 	return (0);
