@@ -1867,11 +1867,11 @@ static void calc_bonuses(void)
 	/* Start with "normal" speed */
 	p_ptr->pspeed = 110;
 
-	/* Start with a single blow per turn */
-	p_ptr->num_blow = 60;
+	/* No blows have been counted yet. */
+	p_ptr->num_blow = 0;
 
-	/* Start with a single shot per turn */
-	p_ptr->num_fire = 60;
+	/* No shots have been counted yet. */
+	p_ptr->num_fire = 0;
 
 	/* Reset the "ammo" tval */
 	p_ptr->tval_ammo = 0;
@@ -2293,33 +2293,17 @@ static void calc_bonuses(void)
 	/* Normal weapons */
 	else if (o_ptr->k_idx)
 	{
-		int str_index, dex_index;
-
-		int num = 5, wgt = 35, mul = 3, div = 0, blow;
-
 		/* Enforce a minimum "weight" (tenth pounds) */
-		div = ((o_ptr->weight < wgt) ? wgt : o_ptr->weight);
+		int div = MAX(35, o_ptr->weight);
 
-		/* Access the strength vs weight */
-		str_index = (adj_str_blow[p_ptr->stat_ind[A_STR]] * mul / div);
-
-		/* Maximal value */
-		if (str_index > 11) str_index = 11;
+		/* Index by strength vs weight (bounded). */
+		int strx = MIN(11, (adj_str_blow[p_ptr->stat_ind[A_STR]] * 3 / div));
 
 		/* Index by dexterity */
-		dex_index = (adj_dex_blow[p_ptr->stat_ind[A_DEX]]);
-
-		/* Maximal value */
-		if (dex_index > 11) dex_index = 11;
+		int dexx = adj_dex_blow[p_ptr->stat_ind[A_DEX]];
 
 		/* Use the blows table */
-		blow = blows_table[str_index][dex_index];
-
-		/* Maximal value */
-		if (p_ptr->num_blow > num) blow = num;
-
-		/* Convert to blows per 60 turns */
-		blow *= 60;
+		int blow = blows_table[strx][dexx] * 2;
 
 		/* Add in the "bonus blows" */
 		p_ptr->num_blow += blow;

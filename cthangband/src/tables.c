@@ -869,13 +869,13 @@ const byte adj_dex_blow[NUM_STAT_INDICES] =
 	9       /* 18/130-18/139 */,
 	10      /* 18/140-18/149 */,
 	11      /* 18/150-18/159 */,
-	12      /* 18/160-18/169 */,
-	14      /* 18/170-18/179 */,
-	16      /* 18/180-18/189 */,
-	18      /* 18/190-18/199 */,
-	20      /* 18/200-18/209 */,
-	20      /* 18/210-18/219 */,
-	20      /* 18/220+ */
+	11      /* 18/160-18/169 */,
+	11      /* 18/170-18/179 */,
+	11      /* 18/180-18/189 */,
+	11      /* 18/190-18/199 */,
+	11      /* 18/200-18/209 */,
+	11      /* 18/210-18/219 */,
+	11      /* 18/220+ */
 };
 
 
@@ -1021,10 +1021,12 @@ const byte adj_con_mhp[NUM_STAT_INDICES] =
  * This table is used to help calculate the number of blows the player can
  * make in a single round of attacks (one player turn) with a normal weapon.
  *
- * This number ranges from a single blow/round for weak players to up to six
+ * This number ranges from a single blow/round for weak players to up to five
  * blows/round for powerful warriors.
  *
- * Note that certain artifacts and ego-items give "bonus" blows/round.
+ * Note that certain artifacts and ego-items give "bonus" blows/round, that up
+ * to three blows per round can be gained from weapon skill, and that the total
+ * by all methods is capped at 10 blows per round.
  *
  * To get "P", we look up the relevant "adj_str_blow[]" (see above),
  * multiply it by "mul", and then divide it by "div", rounding down.
@@ -1038,43 +1040,43 @@ const byte adj_con_mhp[NUM_STAT_INDICES] =
 byte blows_table[12][12] =
 {
 	/* P/D */
-	/* 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11+ */
+	/*  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11+ */
 
 	/* 0  */
-	{  1,   1,   1,   1,   1,   1,   2,   2,   2,   2,   2,   3 },
+	{  30,  30,  30,  30,  30,  30,  60,  60,  60,  60,  60,  90},
 
 	/* 1  */
-	{  1,   1,   1,   1,   2,   2,   3,   3,   3,   4,   4,   4 },
+	{  30,  30,  30,  30,  60,  60,  90,  90,  90, 120, 120, 120},
 
 	/* 2  */
-	{  1,   1,   2,   2,   3,   3,   4,   4,   4,   5,   5,   5 },
+	{  30,  30,  60,  60,  90,  90, 120, 120, 120, 150, 150, 150},
 
 	/* 3  */
-	{  1,   2,   2,   3,   3,   4,   4,   4,   5,   5,   5,   5 },
+	{  30,  60,  60,  90,  90, 120, 120, 120, 150, 150, 150, 150},
 
 	/* 4  */
-	{  1,   2,   2,   3,   3,   4,   4,   5,   5,   5,   5,   5 },
+	{  30,  60,  60,  90,  90, 120, 120, 150, 150, 150, 150, 150},
 
 	/* 5  */
-	{  2,   2,   3,   3,   4,   4,   5,   5,   5,   5,   5,   6 },
+	{  60,  60,  90,  90, 120, 120, 150, 150, 150, 150, 150, 150},
 
-	/* 6  */
-	{  2,   2,   3,   3,   4,   4,   5,   5,   5,   5,   5,   6 },
+	/* 5  */
+	{  60,  60,  90,  90, 120, 120, 150, 150, 150, 150, 150, 150},
 
 	/* 7  */
-	{  2,   3,   3,   4,   4,   4,   5,   5,   5,   5,   5,   6 },
+	{  60,  90,  90, 120, 120, 120, 150, 150, 150, 150, 150, 150},
 
 	/* 8  */
-	{  3,   3,   3,   4,   4,   4,   5,   5,   5,   5,   6,   6 },
+	{  90,  90,  90, 120, 120, 120, 150, 150, 150, 150, 150, 150},
 
 	/* 9  */
-	{  3,   3,   4,   4,   4,   4,   5,   5,   5,   5,   6,   6 },
+	{  90,  90, 120, 120, 120, 120, 150, 150, 150, 150, 150, 150},
 
 	/* 10 */
-	{  3,   3,   4,   4,   4,   4,   5,   5,   5,   6,   6,   6 },
+	{  90,  90, 120, 120, 120, 120, 150, 150, 150, 150, 150, 150},
 
 	/* 11+ */
-	{  3,   3,   4,   4,   4,   4,   5,   5,   6,   6,   6,   6 },
+	{  90,  90, 120, 120, 120, 120, 150, 150, 150, 150, 150, 150},
 };
 
 
