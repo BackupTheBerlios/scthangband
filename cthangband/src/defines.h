@@ -2416,6 +2416,7 @@ logaux(x, 1) logaux(x, 0) 255
 
 
 
+
 /*** Monster blow constants ***/
 
 

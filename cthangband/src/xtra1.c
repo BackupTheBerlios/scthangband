@@ -3538,12 +3538,16 @@ void update_stuff(void)
 	}
 
 
+	/* Only making temporary changes, no screen updates */
+	if (quiet) return;
+
+
 	/* Character is not ready yet, no screen updates */
 	if (!character_generated) return;
 
 
 	/* Character is in "icky" mode, no screen updates */
-	if (character_icky) return;
+	if (screen_is_icky()) return;
 
 
 	if (p_ptr->update & (PU_UN_LITE))
@@ -3608,7 +3612,7 @@ void redraw_stuff(void)
 
 
 	/* Character is in "icky" mode, no screen updates */
-	if (character_icky) return;
+	if (screen_is_icky()) return;
 
 
 
@@ -3893,9 +3897,6 @@ void window_stuff(void)
 	/* Not initialised yet. */
 	if (!display_func) init_window_stuff();
 
-	/* Prevent screen updates from being written to the wrong screen. */
-	character_icky++;
-
 	/* Only process this display once. */
 	p_ptr->window &= ~(old_window);
 
@@ -3995,9 +3996,6 @@ void window_stuff(void)
 
 	/* Restore the original terminal. */
 	Term_activate(old);
-
-	/* Leave "icky" mode */
-	character_icky--;
 
 	/* Reset window_stuff_rotate. */
 	window_stuff_rotate = FALSE;
