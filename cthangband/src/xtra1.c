@@ -4249,8 +4249,8 @@ u16b spell_energy(u16b skill,u16b min)
 		/* base calculation to give an inverse curve */
 		en = 3*TURN_ENERGY/(skill-min);
 		/* Force limits */
-		if (en > TURN_ENERGY) en = 100;
-		if (en < TURN_ENERGY/10) en = 10;
+		if (en > TURN_ENERGY) en = TURN_ENERGY;
+		if (en < TURN_ENERGY/10) en = TURN_ENERGY/10;
 	}
 
 	return (u16b)(en);
