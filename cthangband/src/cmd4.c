@@ -1130,19 +1130,19 @@ void do_cmd_options(void)
 				/* Process the general options */
 				do_cmd_options_aux(1, "User Interface Options");
 				break;
-			}
+		}
 
 			/* Disturbance Options */
 			case '2':
-			{
+		{
 				/* Spawn */
 				do_cmd_options_aux(2, "Disturbance Options");
 				break;
-			}
+		}
 
 			/* Creature Options */
 			case '3':
-			{
+		{
 				/* Spawn */
 				do_cmd_options_aux(3, "Creature Options");
 				break;
@@ -2824,7 +2824,9 @@ static cptr do_cmd_feeling_text[11] =
 
 
 /*
- * Note that "feeling" is not given unless some time has passed.
+ * Display the feeling.
+ * if ironman_feeling is set, this gives no useful information before the 2500th
+ * turn.
  */
 void do_cmd_feeling(bool FeelingOnly)
 {
@@ -2865,12 +2867,16 @@ void do_cmd_feeling(bool FeelingOnly)
 			print_quest_message();
 		}
 	}
-	/* Display the feeling  if you have been on the level long enough */
-	if ((turn - old_turn) >= 2500)
+
+	if (ironman_feeling && turn-old_turn < 2500)
 	{
+		/* Give an uninformative message if requested. */
+		if (!FeelingOnly) msg_print(do_cmd_feeling_text[0]);
+	}
+	else
+	{
+		/* Display the feeling */
 		msg_print(do_cmd_feeling_text[feeling]);
-	} else {
-		msg_print(do_cmd_feeling_text[0]);
 	}
 
 	if ((cheat_wzrd) || (cheat_skll))

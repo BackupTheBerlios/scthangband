@@ -2576,6 +2576,9 @@ extern bool display_credits;
 #if (defined(BIRTH_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool allow_pickstats;
 #endif
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool ironman_feeling;
+#endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern s16b hitpoint_warn ;
 #endif

@@ -3682,6 +3682,13 @@ static void dungeon(void)
 		/* Hack -- Compress the object list occasionally */
 		if (o_cnt + 32 < o_max) compact_objects(0);
 
+		if ((turn-old_turn) == ((ironman_feeling) ? 2500 : 0))
+		{
+			if(dun_level >0)
+			{
+				do_cmd_feeling(TRUE);
+			}
+		}
 
 		/* Process the player */
 		process_player();
@@ -3753,13 +3760,6 @@ static void dungeon(void)
 
 		/* Count game turns */
 		turn++;
-		if ((turn-old_turn)==2500)
-		{
-			if(dun_level >0)
-			{
-				do_cmd_feeling(TRUE);
-			}
-		}
 	}
 }
 

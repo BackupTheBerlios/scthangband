@@ -324,6 +324,8 @@ bool display_credits;	/* Require a keypress to clear the initial credit screen. 
 #endif
 bool allow_pickstats;	/* Allow the player to choose a stat template. */
 
+bool ironman_feeling;	/* Only give real feeling after 2500 turns. */
+
 s16b hitpoint_warn = 2;		/* Hitpoint warning (0 to 9) */
 
 s16b delay_factor = 4;		/* Delay factor (0 to 9) */

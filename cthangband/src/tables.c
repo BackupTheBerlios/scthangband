@@ -3437,6 +3437,9 @@ option_type option_info[] =
 	{ &ironman_shop,               FALSE,  7, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },
 
+	{ &ironman_feeling,	FALSE, 7, 3, 1,
+	"ironman_feeling",	"Level feelings are only given after 2500 turns" },
+
 	{ &spoil_base,			FALSE, 8,	2, 31,
 	"spoil_base",			"Gain knowledge of normal items" },
 
