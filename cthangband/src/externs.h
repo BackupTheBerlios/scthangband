@@ -2974,13 +2974,13 @@ extern bool testing_stack;
 #if (defined(MELEE1_C) || defined(MELEE2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool testing_carry;
 #endif
-#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_art;
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(MONSTER1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_mon;
 #endif
-#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_ego;
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))

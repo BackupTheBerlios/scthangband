@@ -174,10 +174,26 @@ static bool noneedtobargain(s32b minprice);
 static int get_which_store(void);
 
 /*
+ * Determine the value a shopkeeper places on an item.
+ * The shopkeeper knows all about the prices of things.
+ * Identified items are *identified*.
+ */
+static s32b PURE object_value_sell(object_ctype *o_ptr)
+{
+	s32b value;
+	bool old_spoil_art = spoil_art;
+	bool old_spoil_ego = spoil_ego;
+	spoil_art = spoil_ego = TRUE;
+	value = object_value(o_ptr, object_known_p(o_ptr));
+	spoil_art = old_spoil_art;
+	spoil_ego = old_spoil_ego;
+	return value;
+}
+
+/*
  * Determine if haggling is necessary.
  * purse should be 0 if buying as infinity isn't an s32b.
  */
-
 static bool needtohaggle(s32b purse)
 {
 	int noneed = noneedtobargain(final_ask);
@@ -728,7 +744,10 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 
 
 	/* Get the value of one of the items */
-	price = object_value(o_ptr, TRUE);
+	if (flip)
+		price = object_value_sell(o_ptr);
+	else
+		price = object_value(o_ptr, TRUE);
 
 	/* Worthless items */
 	if (price <= 0) return (0L);
@@ -1233,7 +1252,7 @@ static bool store_will_buy(object_ctype *o_ptr)
 	}
 
 	/* XXX XXX XXX Ignore "worthless" items */
-	if (object_value(o_ptr, TRUE) <= 0) return (FALSE);
+	if (object_value_sell(o_ptr) <= 0) return (FALSE);
 
 	/* Okay if there's room */
 	return (store_check_num(o_ptr));
@@ -2679,17 +2698,6 @@ static bool service_haggle(s32b service_cost, s32b *price, cptr service, byte ty
 
 	/* Do not cancel */
 	return (FALSE);
-}
-
-
-/*
- * Objects being sold to the store are in a strange position.
- * If the player is aware of the object, the shopkeeper knows all about it.
- * Otherwise, he's no better off than the player.
- */
-static s32b PURE object_value_sell(object_ctype *o_ptr)
-{
-	return object_value(o_ptr, object_aware_p(o_ptr));
 }
 
 
