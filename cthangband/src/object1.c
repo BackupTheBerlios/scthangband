@@ -1287,7 +1287,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		/* Hack -- The only one of its kind */
 	else if (known && allart_p(o1_ptr))
 		{
-			t = object_desc_str(t, "The ");
+			t = object_desc_str(t, "the ");
 		}
 	/* A single one (later) */
 	else
