@@ -877,7 +877,7 @@ static void recharged_notice(object_type *o_ptr)
 		if (s[1] == '!')
 		{
 			cptr verb = (o_ptr->number == 1) ? "is" : "are";
-			cptr gen = (allart_p(o_ptr)) ? "The" : "your";
+			cptr gen = (allart_p(o_ptr)) ? "The" : "Your";
 
 			/* Describe (briefly) */
 			object_desc(o_name, o_ptr, FALSE, 0);
