@@ -4733,6 +4733,9 @@ void show_link(cptr link)
 	Term_release(t);
 }
 
+/*
+ * Create the list of links from the help files for later use.
+ */
 static void init_links(void)
 {
 	cptr *file;
@@ -4769,7 +4772,11 @@ static void init_links(void)
 	}
 
 	/* Allow links to be re-initialised. */
-	if (links) FREE(links);
+	if (links)
+	{
+		while (num_links--) FREE(links[num_links].str);
+		FREE(links);
+	}
 
 	/* Copy everything to a permanent location. */
 	C_MAKE(links, max, link_type);
