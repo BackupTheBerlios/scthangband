@@ -2696,7 +2696,7 @@ static void process_command(void)
             if (p_ptr->anti_magic)
             {
                 msg_print("An anti-magic shell disrupts your spell!");
-                energy_use = 5; /* Still use a bit */
+                energy_use = TURN_ENERGY/20; /* Still use a bit */
             }
             else
             {
@@ -2710,7 +2710,7 @@ static void process_command(void)
             if (p_ptr->anti_magic)
             {
                 msg_print("An anti-magic shell blocks your call!");
-                energy_use = 5; /* Still use a bit */
+                energy_use = TURN_ENERGY/20; /* Still use a bit */
             }
             else
             {
@@ -2724,7 +2724,7 @@ static void process_command(void)
             if (p_ptr->anti_magic)
             {
                 msg_print("An anti-magic shell disrupts your psionic ability!");
-                energy_use = 5; /* Still use a bit */
+                energy_use = TURN_ENERGY/20; /* Still use a bit */
             }
             else
             {
@@ -2738,7 +2738,7 @@ static void process_command(void)
             if (p_ptr->anti_magic)
             {
                 msg_print("An anti-magic shell disrupts your magic!");
-                energy_use = 5; /* Still use a bit */
+                energy_use = TURN_ENERGY/20; /* Still use a bit */
             }
             else
             {
@@ -3128,7 +3128,7 @@ static void process_player(void)
     }
 
 	/* Give the player some energy */
-	p_ptr->energy += 10; 
+	p_ptr->energy += TICK_ENERGY; 
 
 	/* No turn yet */
 	if (p_ptr->energy < 1000) return;

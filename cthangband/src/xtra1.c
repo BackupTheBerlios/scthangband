@@ -4235,25 +4235,25 @@ void gain_spell_exp(magic_type *spell)
  */
 u16b spell_energy(u16b skill,u16b min)
 {
-	u16b en;
+	u32b en;
 	
 	/* Safety check to prevent overflows */
 	if (min >= skill) 
 	{
 		/* Base calculation gives a square curve */
-		en=100+((min-skill)*(min-skill));
-		if (en > 300) en = 300;
+		en=TURN_ENERGY+((min-skill)*(min-skill)*TURN_ENERGY/100);
+		if (en > 3*TURN_ENERGY) en = 3*TURN_ENERGY;
 	}
 	else
 	{
 		/* base calculation to give an inverse curve */
-		en = 300/(skill-min);
+		en = 3*TURN_ENERGY/(skill-min);
 		/* Force limits */
-		if (en > 100) en = 100;
-		if (en < 10) en = 10;
+		if (en > TURN_ENERGY) en = 100;
+		if (en < TURN_ENERGY/10) en = 10;
 	}
 
-	return (en);
+	return (u16b)(en);
 }
 
 /*

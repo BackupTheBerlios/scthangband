@@ -1791,9 +1791,11 @@ owner_type owners[MAX_STORES_TOTAL][MAX_OWNERS] =
  * point of getting 45 energy per turn.  After that point,
  * furthur increases in speed are more or less pointless,
  * except to balance out heavy inventory.
- *
- * Note that currently the fastest monster is "Fast (+30)".
  */
+
+/* Hack - a short macro to convert values based on a turn energy of 100 
+ * to ones based on TURN_ENERGY */
+#define TE *TURN_ENERGY/100
 
  /*
   * This table has been inverted for Cthangband. The new values
@@ -1807,26 +1809,26 @@ owner_type owners[MAX_STORES_TOTAL][MAX_OWNERS] =
   */
 u16b extract_energy[200] =
 {
-	/* Slow */     1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,
-	/* Slow */     1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,
-	/* Slow */     1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,
-	/* Slow */     1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,
-	/* Slow */     1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,
-	/* Slow */     1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,
-	/* S-50 */     1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,  1000,
-	/* S-40 */     500,  500,  500,  500,  500,  500,  500,  500,  500,  500,
-	/* S-30 */     500,  500,  500,  500,  500,  500,  500,  333,  333,  333,
-	/* S-20 */     333,  333,  333,  333,  333,  250,  250,  250,  250,  250,
-	/* S-10 */     200,  200,  200,  200,  167,  167,  143,  143,  125,  111,
-	/* Norm */    100, 91, 83, 77, 71, 67, 63, 59, 56, 53,
-	/* F+10 */    50, 48, 45, 43, 42, 40, 38, 37, 36, 34,
-	/* F+20 */    33, 32, 31, 30, 29, 29, 28, 28, 27, 27,
-	/* F+30 */    26, 26, 26, 26, 25, 25, 25, 24, 24, 24,
-	/* F+40 */    24, 24, 24, 23, 23, 23, 23, 23, 23, 23,
-	/* F+50 */    22, 22, 22, 22, 22, 22, 22, 22, 22, 22,
-	/* F+60 */    21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
-	/* F+70 */    20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
-	/* Fast */    20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
+	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
+	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
+	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
+	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
+	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
+	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
+	/* S-50 */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
+	/* S-40 */     500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,
+	/* S-30 */     500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,333 TE,333 TE,333 TE,
+	/* S-20 */     333 TE,333 TE,333 TE,333 TE,333 TE,250 TE,250 TE,250 TE,250 TE,250 TE,
+	/* S-10 */     200 TE,200 TE,200 TE,200 TE,167 TE,167 TE,143 TE,143 TE,125 TE,111 TE,
+	/* Norm */    100 TE,91 TE,83 TE,77 TE,71 TE,67 TE,63 TE,59 TE,56 TE,53 TE,
+	/* F+10 */    50 TE,48 TE,45 TE,43 TE,42 TE,40 TE,38 TE,37 TE,36 TE,34 TE,
+	/* F+20 */    33 TE,32 TE,31 TE,30 TE,29 TE,29 TE,28 TE,28 TE,27 TE,27 TE,
+	/* F+30 */    26 TE,26 TE,26 TE,26 TE,25 TE,25 TE,25 TE,24 TE,24 TE,24 TE,
+	/* F+40 */    24 TE,24 TE,24 TE,23 TE,23 TE,23 TE,23 TE,23 TE,23 TE,23 TE,
+	/* F+50 */    22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,
+	/* F+60 */    21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,
+	/* F+70 */    20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,
+	/* Fast */    20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,
 };
 
 

@@ -2806,6 +2806,10 @@ logaux(x, 1) logaux(x, 0) 255
 #define SUCCESS	0
 #endif
 
+/* Energy constants */
+#define TURN_ENERGY	1000 /* Energy used in one player turn. */
+#define TICK_ENERGY 100	/* Energy given in one game turn. */
+
 /*** Macro Definitions ***/
 
 

@@ -1489,7 +1489,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 	
 	/* Round blows/turn up according to the energy used. 
 	 * Hack - do not round mutated blows here, although they are rounded. */
-	(*weap_blow) = 6000/(6000/(*weap_blow));
+	(*weap_blow) = TURN_ENERGY*60/(TURN_ENERGY*60/(*weap_blow));
 
 	/* Consider the number of blows and bow multiplier. */
 	(*damage) = (*damage)*power*(*weap_blow)/60;

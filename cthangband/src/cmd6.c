@@ -463,7 +463,7 @@ void do_cmd_quaff_potion(int item)
 		energy_use = extract_energy[p_ptr->pspeed];
 	} else {
 		/* Potions in a pouch are immediately accessible */
-		energy_use = 10;
+		energy_use = TURN_ENERGY/10;
 	}
 
 	/* Not identified yet */
@@ -1264,7 +1264,7 @@ void do_cmd_read_scroll(int item)
 		energy_use = extract_energy[p_ptr->pspeed];
 	} else {
 		/* Scrolls in a pouch are immediately accessible */
-		energy_use = 10;
+		energy_use = TURN_ENERGY/10;
 	}
 
 	/* Not identified yet */
@@ -2228,7 +2228,7 @@ void do_cmd_aim_wand(int item)
 		energy_use = extract_energy[p_ptr->pspeed];
 	} else {
 		/* Wands in a pouch are immediately accessible */
-		energy_use = 10;
+		energy_use = TURN_ENERGY/10;
 	}
 
 	/* Not identified yet */
@@ -3205,7 +3205,7 @@ void do_cmd_activate(int item)
 	item_tester_hook = 0;
 
 	/* Take a turn */
-	energy_use = 10;
+	energy_use = TURN_ENERGY/10;
 
 	/* Extract the item level */
 	lev = k_info[o_ptr->k_idx].level;

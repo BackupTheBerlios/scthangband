@@ -6285,7 +6285,7 @@ static void process_monster(int m_idx, bool is_friend)
 		/* Give back movement energy */	
 		m_ptr->energy += extract_energy[m_ptr->mspeed];
 		/* And take some attack energy instead */
-		m_ptr->energy -= (100/r_ptr->num_blows);
+		m_ptr->energy -= (TURN_ENERGY/r_ptr->num_blows);
 		return;
 	}
          /* Attempt to cast a spell at an enemy other than the
@@ -6296,7 +6296,7 @@ static void process_monster(int m_idx, bool is_friend)
 		/* Give back movement energy */	
 		m_ptr->energy += extract_energy[m_ptr->mspeed];
 		/* And take some attack energy instead */
-		m_ptr->energy -= (100/r_ptr->num_blows);
+		m_ptr->energy -= (TURN_ENERGY/r_ptr->num_blows);
 		return;
 	}
 
@@ -7119,7 +7119,7 @@ void process_monsters(void)
 
 
 		/* Give this monster some energy */
-		m_ptr->energy += 10;
+		m_ptr->energy += TICK_ENERGY;
 
 
 		/* Not enough energy to move */

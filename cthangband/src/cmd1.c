@@ -1071,7 +1071,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	const char * atk_desc;
 	
 	/* Slow down the attack */
-	energy_use += 10;
+	energy_use += TURN_ENERGY/10;
 
     switch (attack)
     {
@@ -1295,7 +1295,7 @@ void py_attack(int y, int x)
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 	/* Attack speed is based on theoretical number of blows per 60 turns*/
-	energy_use=(6000/p_ptr->num_blow);
+	energy_use=(TURN_ENERGY*60/p_ptr->num_blow);
 		/* Test for hit */
 		if (test_hit_norm(chance, r_ptr->ac, m_ptr->ml))
 		{

@@ -206,7 +206,7 @@ bool make_attack_normal(int m_idx)
 	/* Give back movement energy */	
 	m_ptr->energy += extract_energy[m_ptr->mspeed];
 	/* And take some attack energy instead */
-	m_ptr->energy -= (100/r_ptr->num_blows);
+	m_ptr->energy -= (TURN_ENERGY/r_ptr->num_blows);
 
 	/* Select an attack at random */
 	ap_cnt=rand_range(0,blow_types-1);

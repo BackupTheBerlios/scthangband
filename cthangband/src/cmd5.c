@@ -3619,7 +3619,7 @@ void do_cmd_cantrip(void)
 	/* Take some time - a cantrip always takes 100, unless the charm is in a pouch */
 	if (from_pouch)
 	{
-		energy_use = 10;
+		energy_use = TURN_ENERGY/10;
 	}
 	else
 	{
