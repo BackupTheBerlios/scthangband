@@ -1372,7 +1372,7 @@ void weapon_stats(object_type *o_ptr, byte slay, s16b *tohit, s16b *todam, s16b 
 		for (i = 0; i < MAX_K_IDX; i++)
 		{
 			if (k_info[i].tval != p_ptr->tval_ammo) continue;
-			object_prep(&am, lookup_kind(p_ptr->tval_ammo, i));
+			object_prep(&am, i);
 			am_ptr = &am;
 			break;
 		}
