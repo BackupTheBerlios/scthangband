@@ -5118,12 +5118,12 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 					if (cursed_p(o_ptr) && o_ptr->ident & IDENT_SENSE_CURSED)
 					{
 						if (cursed < 0) cursed = i;
-				}
+					}
 					/* Return the first non-cursed worthless item */
 					else
 					{
 						break;
-				}
+					}
 				}
 				/* No broken items, so return any cursed ones found */
 				if (i == end) i = cursed;
@@ -5163,14 +5163,14 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 					this_price = object_value(o_ptr) * o_ptr->number;
 					if (best >= start)
 					{
-					if (high)
-					{
-					if (this_price < best_price) continue;
-					}
-					else
-					{
-						if (this_price > best_price) continue;
-					}	
+						if (high)
+						{
+							if (this_price < best_price) continue;
+						}
+						else
+						{
+							if (this_price > best_price) continue;
+						}	
 					}
 					best = i;
 					best_price = this_price;
@@ -5184,7 +5184,8 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				else
 				{
 					/* Continue, preserving case */
-					which = index_to_label(best) + (upper) ? 'A'-'a' : 0;
+					which = index_to_label(best);
+					if (upper) which += 'A'-'a';
 				}
 			}
 			default:
