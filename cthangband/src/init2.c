@@ -1723,7 +1723,7 @@ void init_angband(void)
 	header head[1];
 
 	/* Hack - a pointer intended not to match anything. */
-	vptr dummy = (vptr)&init_angband;
+	cptr dummy = buf;
 
 	WIPE(head, header);
 
