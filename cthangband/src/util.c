@@ -3536,12 +3536,13 @@ void request_command(bool shopping)
 
 				/* Start using the buffer */
 				inkey_next = request_command_buffer;
+
+				continue;
 			}
 		}
-		else if (cmd)
-		{
-			break;
-		}
+
+		/* Found a command, so finish. */
+		if (cmd) break;
 	}
 
 	/* Use the command */
