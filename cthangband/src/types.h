@@ -992,6 +992,7 @@ struct player_race
 
 	byte chart;		/* Initial chart for get_history() */
 	byte grace;	/* Race restriction for ghosts. */
+	byte eat;	/* Proportion of sustenance gained from eating. */
 
 	cptr **name_syls;	/* Syllable list for random name generation. */
 	make_item_type items[MAX_RACE_ITEMS]; /* Objects to be given at birth. */

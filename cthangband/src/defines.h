@@ -1095,7 +1095,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /* #define RACE_DWARF 5 */
 /* #define RACE_ELF 6 */
 /* #define RACE_GNOME 7 */
-#define RACE_GOLEM 8
+/* #define RACE_GOLEM 8 */
 #define RACE_GREAT 9
 /* #define RACE_HALF_ELF 10 */
 /* #define RACE_HALF_GIANT 11 */
@@ -1111,13 +1111,19 @@ logaux(x, 1) logaux(x, 0) 255)
 /* #define RACE_KOBOLD 21 */
 /* #define RACE_MIND_FLAYER 22 */
 /* #define RACE_NIBELUNG 23 */
-#define RACE_SKELETON 24
+/* #define RACE_SKELETON 24 */
 #define RACE_SPECTRE 25
 /* #define RACE_SPRITE 26 */
 #define RACE_VAMPIRE 27
 /* #define RACE_YEEK 28 */
-#define RACE_ZOMBIE 29
+/* #define RACE_ZOMBIE 29 */
 #define RACE_NONE 255
+
+/* Flags for player_race.eat. */
+#define EAT_NORMAL 1 /* Full nutrition from eating. */
+#define EAT_VAMPIRE 10 /* 1/10 nutrition. */
+#define EAT_UNDEAD 20 /* 1/20 nutrition. */
+#define EAT_SKELETON 0 /* No nutrition from eating, may break potions. */
 
 #define RACE_BLANK 0 /* Leaves a bones file which has no racial flags. */
 #define RACE_UNDEAD 1 /* Never leaves a bones file. Prefers night. */

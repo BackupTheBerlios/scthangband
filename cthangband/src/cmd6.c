@@ -158,9 +158,9 @@ void do_cmd_eat_food(object_type *o_ptr)
 	update_object(o_ptr);
 
 	/* Food can feed the player */
-	switch (p_ptr->prace)
+	switch (rp_ptr->eat)
 	{
-		case RACE_VAMPIRE:
+		case EAT_VAMPIRE:
 		{
 			add_flag(TIMED_FOOD, (o_ptr->pval / 10));
 			msg_print("Mere victuals hold scant sustenance for a being such as yourself.");
@@ -168,7 +168,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 				msg_print("Your hunger can only be satisfied with fresh blood!");
 			break;
 		}
-		case RACE_SKELETON:
+		case EAT_SKELETON:
 		{
 	        if (normal_food)
 	        {
@@ -189,9 +189,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 			}
 			break;
 		}
-		case RACE_GOLEM:
-		case RACE_ZOMBIE:
-		case RACE_SPECTRE:
+		case EAT_UNDEAD:
 		{
 			msg_print("The food of mortals is poor sustenance for you.");
 			add_flag(TIMED_FOOD, ((o_ptr->pval) / 20));
@@ -226,7 +224,7 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 	/* Analyze the potion (which is always used up). */
 	use_object(o_ptr, 0);
 
-    if ((p_ptr->prace == RACE_SKELETON) && (randint(12)==1))
+    if (rp_ptr->eat == EAT_SKELETON && one_in(12))
     {
         msg_print("Some of the fluid falls through your jaws!");
         potion_smash_effect(0, py, px, o_ptr->k_idx);
