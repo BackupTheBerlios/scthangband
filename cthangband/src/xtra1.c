@@ -3577,6 +3577,10 @@ void update_stuff(void)
 	}
 
 
+	/* Only making temporary changes, no screen updates */
+	if (quiet) return;
+
+
 	/* Character is not ready yet, no screen updates */
 	if (!character_generated) return;
 
