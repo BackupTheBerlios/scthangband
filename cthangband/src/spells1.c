@@ -5095,13 +5095,37 @@ static char bolt_graf_char(int y, int x, int ny, int nx, int typ)
 	return (ball_graf_char(typ));
 }
 
+/*
+ * Find the distance from (x, y) to a line.
+ */
+static int dist_to_line(int x, int y, int x1, int y1, int x2, int y2)
+{
+	/* Vector from (x, y) to (x1, y1) */
+	int py = y1 - y;
+	int px = x1 - x;
+
+	/* Normal vector */
+	int ny = x2 - x1;
+	int nx = y1 - y2;
+
+	/* Length of N */
+	int d = distance(x1, y1, x2, y2);
+
+	/* Component of P on N */
+	d = ((d) ? ((py * ny + px * nx) / d) : 0);
+
+	/* Absolute value */
+	return ((d >= 0) ? d : 0 - d);
+}
+
+
 
 /*
- * Generic "beam"/"bolt"/"ball" projection routine.  -BEN-
+ * Generic "beam"/"bolt"/"ball/breath" projection routine.  -BEN-
  *
  * Input:
  *   who: Index of "source" monster (or "zero" for "player")
- *   rad: Radius of explosion (0 = beam/bolt, 1 to 9 = ball)
+ *   rad: Radius of explosion (0 = beam/bolt, 1 to 9 = ball, -9 to -1 = breath)
  *   y,x: Target location (or location to travel "towards")
  *   dam: Base damage roll to apply to affected monsters (or player)
  *   typ: Type of damage to apply to monsters (and objects)
@@ -5119,6 +5143,7 @@ static char bolt_graf_char(int y, int x, int ny, int nx, int typ)
  * A "beam" travels from source to target, affecting all grids passed through.
  * A "ball" travels from source to the target, exploding at the target, and
  *   affecting everything within the given radius of the target location.
+ * See below for details about the path of a "breath".
  *
  * Traditionally, a "bolt" does not affect anything on the ground, and does
  * not pass over the heads of interposing monsters, much like a traditional
@@ -5207,6 +5232,7 @@ static char bolt_graf_char(int y, int x, int ny, int nx, int typ)
  * that only the first gm[1] grids in the blast area thus take full damage.
  * Also, note that gm[rad+1] is always equal to "grids", which is the total
  * number of blast grids.
+ * Finally, note that the gm[] array is only used for ball attacks.
  *
  * Note that once the projection is complete, (y2,x2) holds the final location
  * of bolts/beams, and the "epicenter" of balls.
@@ -5238,8 +5264,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	int i, t, dist;
 	int y1, x1, y2, x2;
 	int y0, x0, y9, x9;
-    int dist_hack = 0;
-    int y_saver, x_saver; /* For reflecting monsters */
+    int dist_centre;
+    int y_target, x_target; /* For reflecting monsters */
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
@@ -5300,8 +5326,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		y1 = m_list[who].fy;
 	}
 
-    y_saver = y1;
-    x_saver = x1;
+    y_target = y1;
+    x_target = x1;
 
 
 	/* Default "destination" */
@@ -5439,7 +5465,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Hack -- make sure beams get to "explode" */
 	gm[1] = grids;
 
-    dist_hack = dist;
+    dist_centre = dist;
 
 	/* If we found a "target", explode there */
 	if (dist <= MAX_RANGE)
@@ -5651,165 +5677,115 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		}
 	}
 
-
-	/* Check features */
-	if (flg & (PROJECT_GRID))
+	/* Hack - handle reflective monsters. */
+	if (flg & (PROJECT_KILL) && grids == 1)
 	{
-		/* Start with "dist" of zero */
-		dist = 0;
-
-		/* Scan for features */
-		for (i = 0; i < grids; i++)
+		monster_race *ref_ptr = &r_info[m_list[c_ptr->m_idx].r_idx];
+		if ((ref_ptr->flags2 & (RF2_REFLECTING)) && (one_in(10))
+			&& (dist_centre > 1))
 		{
-			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
+			int t_y, t_x, max_attempts;
 
-			/* Get the grid location */
-			y = gy[i];
-			x = gx[i];
+			/* Choose 'new' target */
+			for (max_attempts = 0; max_attempts < 10; max_attempts++)
+			{
+				
+				t_y = y_target + rand_range(-1, 1);
+				t_x = x_target + rand_range(-1, 1);
+			
+				/* Paranoia - bounced through the walls. */
+				if (!in_bounds2(t_y, t_x)) goto done_reflect;
 
+				/* Visible from the first grid. */
+				if (los(y, x, t_y, t_x)) goto done_reflect;
+			}
+
+			/* Failure. */
+			t_y = y_target;
+			t_x = x_target;
+
+done_reflect: /* Success */
+
+			if (m_list[c_ptr->m_idx].ml)
+			{
+				msg_print("The attack bounces!");
+				ref_ptr->r_flags2 |= RF2_REFLECTING;
+				notice = TRUE;
+			}
+			notice |= project(c_ptr->m_idx, 0, t_y, t_x,  dam, typ, flg);
+
+			/* Don't affect this monster, but affect everything else here. */
+			flg &= ~(PROJECT_KILL);
+		}
+	}
+
+	/* No monsters have been hit yet. */
+	project_m_n = 0;
+
+	/* Start at a distance of nought. */
+	dist = 0;
+
+	/* Scan grids for stuff. */
+	for (i = 0; i < grids; i++)
+	{
+		/* Breaths recalculate for each grid. */
+		if (breath) dist = dist_to_line(x, y, x1, y1, x2, y2);
+
+		/* Hack -- Notice new "dist" values */
+		else if (gm[dist+1] == i) dist++;
+
+		/* Get the grid location */
+		y = gy[i];
+		x = gx[i];
+
+		/* Find the closest point in the blast. */
+		if (breath) 
+
+		/* Check features */
+		if (flg & (PROJECT_GRID))
+		{
 			/* Affect the feature in that grid */
 			if (project_f(who, dist, y, x, dam, typ)) notice = TRUE;
 		}
-	}
-
-
-	/* Check objects */
-	if (flg & (PROJECT_ITEM))
-	{
-		/* Start with "dist" of zero */
-		dist = 0;
-
-		/* Scan for objects */
-		for (i = 0; i < grids; i++)
+		/* Check objects. */
+		if (flg & (PROJECT_ITEM))
 		{
-			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
-
-			/* Get the grid location */
-			y = gy[i];
-			x = gx[i];
-
 			/* Affect the object in the grid */
 			if (project_o(who, dist, y, x, dam, typ)) notice = TRUE;
 		}
+		/* Check monsters */
+		if (flg & (PROJECT_KILL))
+		{
+			/* Affect the monster in the grid */
+			if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
+
+			/* Affect the player in the grid */
+			if (project_p(who, dist, y, x, dam, typ, rad)) notice = TRUE;
+		}
 	}
 
-
-	/* Check monsters */
-	if (flg & (PROJECT_KILL))
+	/* Player affected one monster (without "jumping") */
+	if (!who && (project_m_n == 1) && !(flg & (PROJECT_JUMP)))
 	{
-		/* Mega-Hack */
-		project_m_n = 0;
-		project_m_x = 0;
-		project_m_y = 0;
+		/* Location */
+		x = project_m_x;
+		y = project_m_y;
 
-		/* Start with "dist" of zero */
-		dist = 0;
+		/* Access */
+		c_ptr = &cave[y][x];
 
-		/* Scan for monsters */
-		for (i = 0; i < grids; i++)
+		/* Track if possible */
+		if (c_ptr->m_idx)
 		{
-			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
+			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
-			/* Get the grid location */
-			y = gy[i];
-			x = gx[i];
+			/* Hack -- auto-recall */
+			if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
-            if (grids > 1)
-            {
-                /* Affect the monster in the grid */
-                if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
-            }
-            else
-            {
-                monster_race *ref_ptr = &r_info[m_list[c_ptr->m_idx].r_idx];
-                if ((ref_ptr->flags2 & (RF2_REFLECTING)) && (randint(10)!=1)
-                     && (dist_hack > 1))
-                {
-                    byte t_y, t_x;
-                    int max_attempts = 10;
-
-                    /* Choose 'new' target */
-                    do
-                    {
-                        t_y = y_saver - 1 + randint(3);
-                        t_x = x_saver - 1 + randint(3);
-                        max_attempts--;
-                    }
-
-                    while ((max_attempts > 0) && in_bounds2_unsigned(t_y, t_x) &&
-                            !(los(y, x, t_y, t_x)));
-
-                    if (max_attempts < 1)
-                    {
-
-                        t_y = y_saver;
-                        t_x = x_saver;
-                    }
-                    
-                    if (m_list[c_ptr->m_idx].ml)
-                    {
-                        msg_print("The attack bounces!");
-                        ref_ptr->r_flags2 |= RF2_REFLECTING;
-                    }
-                    project(c_ptr->m_idx, 0, t_y, t_x,  dam, typ, flg);
-                }
-                else
-                {
-                    if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
-                }
-
-            }
-		}
-
-		/* Player affected one monster (without "jumping") */
-		if (!who && (project_m_n == 1) && !(flg & (PROJECT_JUMP)))
-		{
-			/* Location */
-			x = project_m_x;
-			y = project_m_y;
-
-			/* Access */
-			c_ptr = &cave[y][x];
-
-			/* Track if possible */
-			if (c_ptr->m_idx)
-			{
-				monster_type *m_ptr = &m_list[c_ptr->m_idx];
-
-				/* Hack -- auto-recall */
-				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
-
-				/* Hack - auto-track */
-				if (m_ptr->ml) health_track(c_ptr->m_idx);
-			}
+			/* Hack - auto-track */
+			if (m_ptr->ml) health_track(c_ptr->m_idx);
 		}
 	}
-
-
-	/* Check player */
-	if (flg & (PROJECT_KILL))
-	{
-		/* Start with "dist" of zero */
-		dist = 0;
-
-		/* Scan for player */
-		for (i = 0; i < grids; i++)
-		{
-			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
-
-			/* Get the grid location */
-			y = gy[i];
-			x = gx[i];
-
-			/* Affect the player */
-            if (project_p(who, dist, y, x, dam, typ, rad)) notice = TRUE;
-		}
-	}
-
 
 	/* Return "something was noticed" */
 	return (notice);
