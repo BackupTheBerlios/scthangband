@@ -1460,7 +1460,7 @@ void do_cmd_wiz_summon(int num)
  *
  * XXX XXX XXX This function is rather dangerous
  */
-static void do_cmd_wiz_named_aux(int r_idx, int slp, bool friend)
+static void do_cmd_wiz_named_aux(int r_idx, bool slp, bool friend)
 {
 	int x, y;
 
@@ -1481,7 +1481,7 @@ static void do_cmd_wiz_named_aux(int r_idx, int slp, bool friend)
 /*
  * Make a hostile monster.
  */
-void do_cmd_wiz_named(int r_idx, int slp)
+void do_cmd_wiz_named(int r_idx, bool slp)
 {
 	do_cmd_wiz_named_aux(r_idx, slp, FALSE);
 }
@@ -1489,7 +1489,7 @@ void do_cmd_wiz_named(int r_idx, int slp)
 /*
  * Make a friendly monster.
  */
-void do_cmd_wiz_named_friendly(int r_idx, int slp)
+void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 {
 	do_cmd_wiz_named_aux(r_idx, slp, TRUE);
 }

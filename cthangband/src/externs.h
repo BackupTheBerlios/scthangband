@@ -3567,10 +3567,10 @@ extern void do_cmd_wiz_learn(void);
 extern void do_cmd_wiz_summon(int num);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_named(int r_idx, int slp);
+extern void do_cmd_wiz_named(int r_idx, bool slp);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
-extern void do_cmd_wiz_named_friendly(int r_idx, int slp);
+extern void do_cmd_wiz_named_friendly(int r_idx, bool slp);
 #endif
 #if (defined(ALLOW_WIZARD)) && (defined(DUNGEON_C) || defined(WIZARD2_C))
 extern void do_cmd_wiz_zap(void);
