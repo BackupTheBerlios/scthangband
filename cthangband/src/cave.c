@@ -3768,7 +3768,7 @@ void object_kind_track(int k_idx)
 /*
  * Track the given item.
  */
-void object_track(object_type *o_ptr)
+void object_track(object_ctype *o_ptr)
 {
 	/* object_track(0) means "forget it, whatever it was". */
 	if (!o_ptr)

@@ -114,7 +114,7 @@ extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(XTRA2_C))
-extern void object_track(object_type *o_ptr);
+extern void object_track(object_ctype *o_ptr);
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(OBJECT2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void cave_track(const int y, const int x);
@@ -135,7 +135,7 @@ extern bool test_hit_fire(int chance, int ac, int vis);
 extern s16b critical_shot(int weight, int plus, int dam);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C))
-extern s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr);
+extern s16b tot_dam_aux(object_ctype *o_ptr, int tdam, monster_type *m_ptr);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C))
 extern void search(void);
@@ -216,7 +216,7 @@ extern void do_cmd_rest(void);
 extern void do_cmd_fire(void);
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern bool item_tester_hook_destroy(object_type *o_ptr);
+extern bool PURE item_tester_hook_destroy(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C))
 extern void do_cmd_throw(int throw_mult);
@@ -356,13 +356,13 @@ extern u16b spell_energy(u16b skill,u16b min);
 extern int get_spirit(int *sn, cptr prompt, bool call);
 #endif
 #if (defined(CMD5_C) || defined(OBJECT2_C))
-extern bool PURE display_spells_p(object_type *o_ptr);
+extern bool PURE display_spells_p(object_ctype *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(OBJECT2_C))
-extern void display_spells(int y, int x, object_type *o_ptr);
+extern void display_spells(int y, int x, object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(STORE_C))
-extern void do_cmd_browse(object_type *o_ptr);
+extern void do_cmd_browse(object_ctype *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(STORE_C))
 extern void do_cmd_study(void);
@@ -389,10 +389,10 @@ extern void check_magic_info(void);
 /* cmd6.c */
 
 #if (defined(CMD6_C) || defined(OBJECT1_C))
-extern cptr describe_object_power(object_type *o_ptr);
+extern cptr describe_object_power(object_ctype *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(CMD6_C))
-extern s16b item_use_energy(object_type *o_ptr);
+extern s16b item_use_energy(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
 extern void do_cmd_eat_food(object_type *o_ptr);
@@ -410,7 +410,7 @@ extern bool curse_weapon(void);
 extern void do_cmd_read_scroll(object_type *o_ptr);
 #endif
 #if (defined(CMD6_C) || defined(OBJECT1_C))
-extern void get_device_chance(object_type *o_ptr, int *num, int *denom);
+extern void get_device_chance(object_ctype *o_ptr, int *num, int *denom);
 #endif
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C))
 extern void do_cmd_use_staff(object_type *o_ptr);
@@ -431,10 +431,10 @@ extern void do_cmd_activate(object_type *o_ptr);
 /* dungeon.c */
 
 #if (defined(DUNGEON_C) || defined(MELEE2_C))
-extern u16b ident_power(object_type *o_ptr);
+extern u16b ident_power(object_ctype *o_ptr);
 #endif
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
-extern cptr find_feeling(object_type *o_ptr);
+extern cptr PURE find_feeling(object_ctype *o_ptr);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C))
 extern void change_level(s16b new_level, byte come_from);
@@ -656,16 +656,13 @@ extern void init_angband(void);
 extern void cleanup_angband(void);
 #endif
 
-/* loadsave.c */
+/* load.c */
 
-#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
-extern bool has_flag(int flag);
-#endif
 #if (defined(DUNGEON_C) || defined(LOAD_C))
 extern bool load_player(void);
 #endif
 
-
+/* loadsave.c */
 
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern byte sf_major;
@@ -703,8 +700,14 @@ extern s16b convert_r_idx(s16b idx, const u16b *from_v, const u16b *to_v);
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern s16b convert_owner(s16b idx, const u16b *from_v, const u16b *to_v);
 #endif
+#if (defined(CMD4_C) || defined(LOADSAVE_C) || defined(OBJECT1_C))
+extern void current_flags(u16b *flags);
+#endif
 #if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
 extern void current_version(u16b *flags, byte *major, byte *minor, byte *patch);
+#endif
+#if (defined(LOAD_C) || defined(LOADSAVE_C) || defined(SAVE_C))
+extern bool has_flag(int flag);
 #endif
 
 /* maid-x11.c */
@@ -1373,13 +1376,13 @@ extern void flavor_init(void);
 extern void reset_visuals(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
-extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
+extern void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
 #if (defined(CMD4_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
-extern void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr);
+extern void object_info_known(object_type *j_ptr, object_ctype *o_ptr, object_extra *x_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
-extern void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
+extern void object_flags_known(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
 #if (defined(MONSTER2_C) || defined(OBJECT1_C) || defined(XTRA2_C))
 extern cptr find_next_good_flag(cptr s, byte reject, byte require);
@@ -1388,43 +1391,43 @@ extern cptr find_next_good_flag(cptr s, byte reject, byte require);
 extern void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
 #if (defined(OBJECT1_C) || defined(WIZARD1_C))
-extern cptr item_activation(object_type *o_ptr);
+extern cptr PURE item_activation(object_ctype *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(POWERS_C))
 extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
-extern object_type PURE *get_real_obj(object_type *o_ptr);
+extern object_ctype PURE *get_real_obj(object_ctype *o_ptr);
 #endif
 #if (defined(CMD6_C) || defined(OBJECT1_C))
-extern bool is_worn_p(object_type *o_ptr);
+extern bool PURE is_worn_p(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(OBJECT1_C))
-extern int get_bow_mult(object_type *o_ptr);
+extern int PURE get_bow_mult(object_ctype *o_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
-extern s16b launcher_type(object_type *o_ptr);
+extern s16b PURE launcher_type(object_ctype *o_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA1_C))
-extern byte ammunition_type(object_type *o_ptr);
+extern byte PURE ammunition_type(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C))
-extern bool identify_fully_aux(object_type *o_ptr, byte flags);
+extern bool identify_fully_aux(object_ctype *o_ptr, byte flags);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
-extern void identify_fully_file(object_type *o_ptr, FILE *fff);
+extern void identify_fully_file(object_ctype *o_ptr, FILE *fff);
 #endif
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern s16b index_to_label(object_type *o_ptr);
+extern s16b PURE index_to_label(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA1_C))
-extern s16b wield_slot(object_type *o_ptr);
+extern s16b PURE wield_slot(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS2_C))
-extern cptr describe_use(object_type *o_ptr);
+extern cptr PURE describe_use(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT1_C))
-extern bool item_tester_okay(object_type *o_ptr);
+extern bool item_tester_okay(object_ctype *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
 extern void display_inven(void);
@@ -1478,25 +1481,25 @@ extern void object_aware(object_type *o_ptr);
 extern void object_tried(object_type *o_ptr);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
-extern s32b flag_cost(object_type * o_ptr, bool all);
+extern s32b PURE flag_cost(object_ctype *o_ptr, bool all);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C))
-extern s32b object_value_real(object_type *o_ptr);
+extern s32b PURE object_value_real(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
-extern s32b object_value(object_type *o_ptr);
+extern s32b PURE object_value(object_ctype *o_ptr);
 #endif
 #if (defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern void set_stack_number(object_type *o_ptr);
 #endif
 #if (defined(OBJECT2_C))
-extern bool PURE same_stack(const object_type *o_ptr, const object_type *j_ptr);
+extern bool PURE same_stack(object_ctype *o_ptr, object_ctype *j_ptr);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C))
-extern int object_similar_2(object_type *o_ptr, object_type *j_ptr);
+extern int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C))
-extern bool object_similar(object_type *o_ptr, object_type *j_ptr);
+extern bool PURE object_similar(object_ctype *o_ptr, object_ctype *j_ptr);
 #endif
 #if (defined(OBJECT2_C) || defined(STORE_C))
 extern bool object_absorb(object_type *o_ptr, object_type *j_ptr);
@@ -1504,8 +1507,8 @@ extern bool object_absorb(object_type *o_ptr, object_type *j_ptr);
 #if (defined(BIRTH_C) || defined(CMD2_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_wipe(object_type *o_ptr);
 #endif
-#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern void object_copy(object_type *o_ptr, object_type *j_ptr);
+#if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+extern void object_copy(object_type *o_ptr, object_ctype *j_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern void object_prep(object_type *o_ptr, int k_idx);
@@ -1547,19 +1550,19 @@ extern void pick_trap(int y, int x);
 extern void place_trap(int y, int x);
 #endif
 #if (defined(CMD6_C) || defined(OBJECT2_C))
-extern void item_charges(object_type *o_ptr);
+extern void item_charges(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern void item_increase(object_type *o_ptr, int num);
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(STORE_C))
-extern void item_describe(object_type *o_ptr);
+extern void item_describe(object_ctype *o_ptr);
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C))
 extern void item_optimize(object_type *o_ptr);
 #endif
 #if (defined(CMD1_C) || defined(OBJECT2_C) || defined(STORE_C))
-extern bool inven_carry_okay(object_type *o_ptr);
+extern bool PURE inven_carry_okay(object_ctype *o_ptr);
 #endif
 #if (defined(BIRTH_C) || defined(CMD1_C) || defined(CMD6_C) || defined(OBJECT2_C) || defined(STORE_C))
 extern object_type *inven_carry(object_type *o_ptr);
@@ -1775,7 +1778,7 @@ extern bool detect_all(void);
 extern void stair_creation(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool item_tester_hook_armour(object_type *o_ptr);
+extern bool PURE item_tester_hook_armour(object_ctype *o_ptr);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool enchant(object_type *o_ptr, int n, int eflag);
@@ -1799,7 +1802,7 @@ extern bool ident_spell(void);
 extern bool identify_fully(void);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
-extern bool item_tester_hook_recharge(object_type *o_ptr);
+extern bool PURE item_tester_hook_recharge(object_ctype *o_ptr);
 #endif
 #if (defined(POWERS_C) || defined(SPELLS2_C))
 extern bool recharge(int num);
@@ -3116,7 +3119,7 @@ extern s16b monster_race_idx;
 extern s16b object_kind_idx;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
-extern object_type *tracked_o_ptr;
+extern object_ctype *tracked_o_ptr;
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern co_ord tracked_co_ord;
@@ -3419,7 +3422,7 @@ extern bool item_tester_full;
 extern byte item_tester_tval;
 #endif
 #if (defined(CMD2_C) || defined(CMD3_C) || defined(CMD5_C) || defined(CMD6_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
-extern bool (*item_tester_hook)(object_type*);
+extern bool (*item_tester_hook)(object_ctype*);
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool (*ang_sort_comp)(vptr u, vptr v, int a, int b);
@@ -3533,13 +3536,13 @@ extern void cnv_stat_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 extern s16b modify_stat_value(int value, int amount);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
-extern bool cumber_glove(object_type *o_ptr);
+extern bool PURE cumber_glove(object_ctype *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
-extern bool cumber_helm(object_type *o_ptr);
+extern bool PURE cumber_helm(object_ctype *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(XTRA1_C))
-extern int wield_skill(object_type *o_ptr);
+extern int PURE wield_skill(object_ctype *o_ptr);
 #endif
 #if (defined(XTRA1_C) || defined(XTRA2_C))
 extern bool player_no_cut(void);
@@ -3593,7 +3596,7 @@ extern bool skill_check_possible(int index);
 extern void skill_exp(int index);
 #endif
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(XTRA1_C))
-extern int find_object(object_type *o_ptr);
+extern int find_object(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void update_object(object_type *o_ptr, int where);
@@ -3912,11 +3915,5 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
-#endif
-
-/* loadsave.c */
-
-#if (defined(CMD4_C) || defined(LOADSAVE_C) || defined(OBJECT1_C))
-extern void current_flags(u16b *flags);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

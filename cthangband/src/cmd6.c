@@ -65,7 +65,7 @@
  * -255--1: activation (byte)
  * 1-32767: k_idx (s16b)
  */
-static int get_power(const object_type *o_ptr)
+static int get_power(object_ctype *o_ptr)
 {
 	if (o_ptr->activation)
 	{
@@ -116,7 +116,7 @@ static bool use_object(object_type *o_ptr, int dir)
 	return use;
 }
 
-cptr describe_object_power(object_type *o_ptr)
+cptr describe_object_power(object_ctype *o_ptr)
 {
 	int power = get_power(o_ptr);
 	int plev = MAX(1, skill_set[SKILL_DEVICE].value/2);
@@ -126,7 +126,7 @@ cptr describe_object_power(object_type *o_ptr)
 /*
  * Calculate the energy needed to use a magical device.
  */
-s16b item_use_energy(object_type *o_ptr)
+s16b item_use_energy(object_ctype *o_ptr)
 {
 	if (is_worn_p(o_ptr))
 		return TURN_ENERGY/10;
@@ -442,7 +442,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
  *
  * NB: This does not check that the device is suitable for this calculation.
  */
-void get_device_chance(object_type *o_ptr, int *num, int *denom)
+void get_device_chance(object_ctype *o_ptr, int *num, int *denom)
 {
 	/* Find the object level. */
 	int lev;
@@ -893,7 +893,7 @@ void do_cmd_zap_rod(object_type *o_ptr)
 /*
  * Hook to determine if an object is activatable
  */
-static bool item_tester_hook_activate(object_type *o_ptr)
+static bool item_tester_hook_activate(object_ctype *o_ptr)
 {
 	u32b f1, f2, f3;
 

@@ -2539,7 +2539,7 @@ void stair_creation(void)
 /*
  * Hook to specify "weapon"
  */
-static bool item_tester_hook_weapon(object_type *o_ptr)
+static bool PURE item_tester_hook_weapon(object_ctype *o_ptr)
 {
 	switch (o_ptr->tval)
 	{
@@ -2563,7 +2563,7 @@ static bool item_tester_hook_weapon(object_type *o_ptr)
 /*
  * Hook to specify "armour"
  */
-bool item_tester_hook_armour(object_type *o_ptr)
+bool PURE item_tester_hook_armour(object_ctype *o_ptr)
 {
 	switch (o_ptr->tval)
 	{
@@ -2584,7 +2584,7 @@ bool item_tester_hook_armour(object_type *o_ptr)
 	return (FALSE);
 }
 
-static bool item_tester_unknown(object_type *o_ptr)
+static bool PURE item_tester_unknown(object_ctype *o_ptr)
 {
 	if (object_known_p(o_ptr))
 		return FALSE;
@@ -2593,7 +2593,7 @@ static bool item_tester_unknown(object_type *o_ptr)
 }
 
 
-static bool item_tester_unknown_star(object_type *o_ptr)
+static bool PURE item_tester_unknown_star(object_ctype *o_ptr)
 {
 	if (o_ptr->ident & IDENT_MENTAL)
 		return FALSE;
@@ -4436,7 +4436,7 @@ bool identify_fully(void)
 /*
  * Hook for "get_item()".  Determine if something is rechargable.
  */
-bool item_tester_hook_recharge(object_type *o_ptr)
+bool PURE item_tester_hook_recharge(object_ctype *o_ptr)
 {
 	/* Recharge staffs */
 	if (o_ptr->tval == TV_STAFF) return (TRUE);

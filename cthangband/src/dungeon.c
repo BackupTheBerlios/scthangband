@@ -21,7 +21,7 @@
  * Return what o_ptr->ident would be if a monster had just failed to pick
  * it up.
  */
-u16b ident_power(object_type *o_ptr)
+u16b ident_power(object_ctype *o_ptr)
 {
 	/* Clear the current flag. */
 	u16b out = o_ptr->ident & ~(IDENT_POWER_ALL);
@@ -41,7 +41,7 @@ u16b ident_power(object_type *o_ptr)
  * Test whether an object has been observed to have special powers which
  * could not hav e been expected based on its current level of identification.
  */
-static bool is_powerful(object_type *o_ptr)
+static bool PURE is_powerful(object_ctype *o_ptr)
 {
 	object_type t_ptr[1],u_ptr[1];
 
@@ -57,25 +57,21 @@ static bool is_powerful(object_type *o_ptr)
 	 * powers. */
 	if (~o_ptr->ident & IDENT_TRIED) return FALSE;
 
-	/* Check whether trying it added to its known powers. Only check flags,
-	 * as there is expected to be a pval based on the flags even if it isn't
-	 * known, and everything else should be the same. */
-	object_info_known(t_ptr, o_ptr, 0);
-	o_ptr->ident &= ~IDENT_TRIED;
+	/* Set t_ptr and u_ptr as the tried and untried versions of this object. */
+	object_copy(u_ptr, o_ptr);
+	u_ptr->ident &= ~IDENT_TRIED;
+	object_info_known(t_ptr, u_ptr, 0);
 	object_info_known(u_ptr, o_ptr, 0);
-	o_ptr->ident |= IDENT_TRIED;
-	if (t_ptr->flags1 != u_ptr->flags1) return TRUE;
-	if (t_ptr->flags2 != u_ptr->flags2) return TRUE;
-	if (t_ptr->flags3 != u_ptr->flags3) return TRUE;
 
-	return FALSE;
+	/* Only extra knowledge should create a difference. */
+	return DIFF(t_ptr, u_ptr, object_type);
 }
 
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
-static cptr value_check_aux1(object_type *o_ptr)
+static cptr PURE value_check_aux1(object_ctype *o_ptr)
 {
 
 	/* Artifacts */
@@ -118,7 +114,7 @@ static cptr value_check_aux1(object_type *o_ptr)
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
  */
-static cptr value_check_aux2(object_type *o_ptr)
+static cptr PURE value_check_aux2(object_ctype *o_ptr)
 {
 	bool powerful = is_powerful(o_ptr);
 
@@ -148,7 +144,7 @@ static cptr value_check_aux2(object_type *o_ptr)
 /*
  *  Return an appropriate "feeling" for an object
  */
-cptr find_feeling(object_type *o_ptr)
+cptr PURE find_feeling(object_ctype *o_ptr)
 {
 	/* Some feelings that don't depend on sensing, but on trying. */
 	if (!object_known_p(o_ptr) && (o_ptr->ident & (IDENT_EMPTY)))

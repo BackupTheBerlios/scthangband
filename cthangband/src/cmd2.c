@@ -2566,7 +2566,7 @@ void do_cmd_fire(void)
 /*
  * Hook to determine if an item is not both worn and cursed.
  */
-bool item_tester_hook_destroy(object_type *o_ptr)
+bool PURE item_tester_hook_destroy(object_ctype *o_ptr)
 {
 	/* Accept all uncursed items. */
 	if (!cursed_p(o_ptr)) return TRUE;

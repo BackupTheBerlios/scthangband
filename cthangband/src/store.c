@@ -918,7 +918,7 @@ static void mass_produce(object_type *o_ptr)
  *
  * See "object_similar()" for the same function for the "player"
  */
-static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
+static bool PURE store_object_similar(object_ctype *o_ptr, object_ctype *j_ptr)
 {
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return (0);
@@ -1003,7 +1003,7 @@ bool store_object_absorb(object_type *j_ptr, object_type *o_ptr)
  *
  * Returns the number of items that can be absorbed from o_ptr.
  */
-static int store_check_num(object_type *o_ptr)
+static int store_check_num(object_ctype *o_ptr)
 {
 	int        i;
 	object_type *j_ptr;
@@ -1047,7 +1047,7 @@ static int store_check_num(object_type *o_ptr)
 }
 
 
-static bool is_blessed(object_type *o_ptr)
+static bool is_blessed(object_ctype *o_ptr)
 {
     u32b f1, f2, f3;
     object_flags(o_ptr, &f1, &f2, &f3);
@@ -1062,7 +1062,7 @@ static bool is_blessed(object_type *o_ptr)
  *
  * Note that a shop-keeper must refuse to buy "worthless" items
  */
-static bool store_will_buy(object_type *o_ptr)
+static bool store_will_buy(object_ctype *o_ptr)
 {
 	/* Hack -- The Home is simple */
 	if (cur_store_type == STORE_HOME) return (TRUE);

@@ -402,7 +402,7 @@ s16b object_kind_idx;
 /*
  * Object to track
  */
-object_type *tracked_o_ptr;
+object_ctype *tracked_o_ptr;
 
 /*
  * Floor square to track
@@ -900,7 +900,7 @@ byte item_tester_tval;
  * Here is a "hook" used during calls to "get_item()" and
  * "show_inven()" and "show_equip()", and the choice window routines.
  */
-bool (*item_tester_hook)(object_type*);
+bool (*item_tester_hook)(object_ctype*);
 
 
 

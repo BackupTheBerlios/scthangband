@@ -571,6 +571,7 @@ struct cave_type
  */
 
 typedef struct object_type object_type;
+typedef const object_type object_ctype;
 
 struct object_type
 {

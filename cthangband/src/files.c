@@ -1380,7 +1380,7 @@ void prt_nums(cptr txt, int y, int minx, int maxx, int cur, int max)
 	c_put_str(attr, temp, y, maxx-strlen(temp));
 }
 
-static void choose_ammunition(object_type *wp_ptr, object_type **am_ptr)
+static void choose_ammunition(object_ctype *wp_ptr, object_type **am_ptr)
 {
 	object_type *o_ptr;
 	int i;
@@ -1407,7 +1407,7 @@ static void choose_ammunition(object_type *wp_ptr, object_type **am_ptr)
 	return;
 }
 
-static void choose_bow(object_type *am_ptr, object_type **wp_ptr)
+static void choose_bow(object_ctype *am_ptr, object_type **wp_ptr)
 {
 	object_type *o_ptr;
 	s16b k_idx;
@@ -1573,7 +1573,7 @@ static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
 	object_type **am_ptr)
 {
 	int slot = wield_slot(o_ptr);
-	object_type *j_ptr = get_real_obj(o_ptr);
+	object_ctype *j_ptr = get_real_obj(o_ptr);
 
 	/* Is o_ptr equipped? */
 	if (j_ptr == inventory+INVEN_WIELD || j_ptr == inventory+INVEN_BOW)
@@ -1612,9 +1612,9 @@ static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
  * We want to know the to-hit bonus, the damage bonus, the number of blows
  * per turn and the average damage per turn.
  */
-static void weapon_stats_calc(object_type *wp_ptr, object_type *am_ptr,
-	int slot, int slay, s16b *tohit, s16b *todam, s16b *weap_blow,
-	s16b *mut_blow, s32b *damage)
+static void weapon_stats_calc(object_ctype *wp_ptr,
+	object_ctype *am_ptr, int slot, int slay, s16b *tohit, s16b *todam,
+	s16b *weap_blow, s16b *mut_blow, s32b *damage)
 {
 	int power, damsides, damdice, dicedam;
 

@@ -1196,7 +1196,7 @@ static void print_spirits(int *valid_spirits,int num,int y, int x)
 /*
  * Is it a book?
  */
-static PURE bool item_tester_book(object_type *o_ptr)
+static PURE bool item_tester_book(object_ctype *o_ptr)
 {
 	switch (o_ptr->tval)
 	{
@@ -1213,18 +1213,18 @@ static PURE bool item_tester_book(object_type *o_ptr)
 /*
  * Does it have a book_type associated with it?
  */
-static PURE bool item_tester_book_etc(object_type *o_ptr)
+static PURE bool item_tester_book_etc(object_ctype *o_ptr)
 {
 	return (k_idx_to_book(o_ptr->k_idx) != 0);
 }
 
-bool PURE display_spells_p(object_type *o_ptr)
+bool PURE display_spells_p(object_ctype *o_ptr)
 {
 	item_tester_hook = item_tester_book_etc;
 	return item_tester_okay(o_ptr);
 }
 
-void display_spells(int y, int x, object_type *o_ptr)
+void display_spells(int y, int x, object_ctype *o_ptr)
 {
 	book_type *b_ptr;
 	int		num;
@@ -1251,7 +1251,7 @@ void display_spells(int y, int x, object_type *o_ptr)
  * Note that browsing is allowed while confused or blind,
  * and in the dark, primarily to allow browsing in stores.
  */
-void do_cmd_browse(object_type *o_ptr)
+void do_cmd_browse(object_ctype *o_ptr)
 {
 	/* Get an item if we do not already have one */
 	if(!o_ptr)

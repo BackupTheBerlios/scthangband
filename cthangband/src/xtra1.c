@@ -1035,7 +1035,7 @@ static int mystic_armour(int slot)
 /*
  * Return whether a given object inhibits spellcasting.
  */
-bool cumber_glove(object_type *o_ptr)
+bool PURE cumber_glove(object_ctype *o_ptr)
 {
 	u32b f[3];
 
@@ -1058,7 +1058,7 @@ bool cumber_glove(object_type *o_ptr)
 /*
  * Return whether a given object inhibits mindcrafting.
  */
-bool cumber_helm(object_type *o_ptr)
+bool PURE cumber_helm(object_ctype *o_ptr)
 {
 	u32b f[3];
 
@@ -1444,7 +1444,7 @@ static int weight_limit(void)
 
 /* Calculate the skill used by a certain weapon. */
 
-int wield_skill(object_type *o_ptr)
+int PURE wield_skill(object_ctype *o_ptr)
 {
 	switch (o_ptr->tval)
 	{
@@ -3388,7 +3388,7 @@ static void win_object_display(void)
  */
 static bool win_object_details_good(void)
 {
-	object_type *o_ptr = tracked_o_ptr;
+	object_ctype *o_ptr = tracked_o_ptr;
 
 	/* Non-objects are boring. */
 	if (!o_ptr || !(o_ptr->k_idx)) return FALSE;
@@ -3405,7 +3405,7 @@ static bool win_object_details_good(void)
 
 static void win_object_details_display(void)
 {
-	object_type *o_ptr = tracked_o_ptr;
+	object_ctype *o_ptr = tracked_o_ptr;
 
 	/* Never display non-objects. */
 	if (!o_ptr || !(o_ptr->k_idx)) return;
@@ -4361,7 +4361,7 @@ void skill_exp(int index)
 /*
  * Determine where an object is in terms of OUP_* flags.
  */
-int find_object(object_type *o_ptr)
+int find_object(object_ctype *o_ptr)
 {
 	int slot;
 	/* Floor item. */

@@ -840,7 +840,7 @@ static s32b object_value_base(object_type *o_ptr)
  * If this is being done to price an item, flags based on the k_idx, name1
  * and name2 fields are counted elsewhere. 
  */
-s32b flag_cost(object_type * o_ptr, bool all)
+s32b PURE flag_cost(object_ctype *o_ptr, bool all)
 {
     s32b total = 0;
     u32b f1, f2, f3;
@@ -1068,7 +1068,7 @@ s32b flag_cost(object_type * o_ptr, bool all)
  * Enchantments above +15, and enchantments which are not armour to_a or
  * weapon to_d or to_h cannot be obtained by scrolls.
  */
-static s32b mod_cost(object_type *o_ptr)
+static s32b PURE mod_cost(object_ctype *o_ptr)
 {
 	object_kind *k_ptr = k_info+o_ptr->k_idx;
 	return 100 * (
@@ -1106,7 +1106,7 @@ static s32b mod_cost(object_type *o_ptr)
  *
  * Every wearable item with a "pval" bonus is worth extra (see below).
  */
-s32b object_value_real(object_type *o_ptr)
+s32b PURE object_value_real(object_ctype *o_ptr)
 {
 	s32b value;
 
@@ -1280,7 +1280,7 @@ s32b object_value_real(object_type *o_ptr)
  * Note that discounted items stay discounted forever, even if
  * the discount is "forgotten" by the player via memory loss.
  */
-s32b object_value(object_type *o_ptr)
+s32b PURE object_value(object_ctype *o_ptr)
 {
 	s32b value;
 
@@ -1363,7 +1363,7 @@ void set_stack_number(object_type *o_ptr)
 /*
  * Return TRUE if the specified objects came from the same stack originally.
  */
-bool PURE same_stack(const object_type *o_ptr, const object_type *j_ptr)
+bool PURE same_stack(object_ctype *o_ptr, object_ctype *j_ptr)
 {
 	return (o_ptr->stack && o_ptr->stack == j_ptr->stack);
 }
@@ -1386,7 +1386,7 @@ bool PURE same_stack(const object_type *o_ptr, const object_type *j_ptr)
  *
  * Chests, and activatable items, never stack (for various reasons).
  */
-int object_similar_2(object_type *o_ptr, object_type *j_ptr)
+int PURE object_similar_2(object_ctype *o_ptr, object_ctype *j_ptr)
 {
 
 	int total = o_ptr->number + j_ptr->number;
@@ -1562,7 +1562,7 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 }
 
 
-bool object_similar(object_type *o_ptr, object_type *j_ptr)
+bool PURE object_similar(object_ctype *o_ptr, object_ctype *j_ptr)
 {
 	return (object_similar_2(o_ptr, j_ptr) == j_ptr->number);
 }
@@ -1573,7 +1573,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
  *
  * This can never decrease the total value of the merged stacks.
  */
-static byte merge_discounts(object_type *o_ptr, object_type *j_ptr)
+static PURE byte merge_discounts(object_ctype *o_ptr, object_ctype *j_ptr)
 {
 	int d1 = o_ptr->discount, d2 = j_ptr->discount;
 	int n1 = o_ptr->number, n2 = j_ptr->number;
@@ -1646,7 +1646,7 @@ void object_wipe(object_type *o_ptr)
 /*
  * Prepare an object based on an existing object
  */
-void object_copy(object_type *o_ptr, object_type *j_ptr)
+void object_copy(object_type *o_ptr, object_ctype *j_ptr)
 {
 	/* Copy the structure */
 	COPY(o_ptr, j_ptr, object_type);
@@ -1786,7 +1786,7 @@ static s16b m_bonus(int max, int level)
 /*
  * Cheat -- describe a created object for the user
  */
-static void object_mention(object_type *o_ptr)
+static void object_mention(object_ctype *o_ptr)
 {
 	/* Only describe for cheaters. */
 	if (!cheat_peek) return;
@@ -1931,7 +1931,7 @@ static bool rarity_roll(byte level, byte rarity)
 /*
  * Copy the normal name of an artefact into a buffer, return it.
  */
-static cptr get_art_name(artifact_type *a_ptr, char *buf)
+static cptr get_art_name(const artifact_type *a_ptr, char *buf)
 {
 	object_type forge;
 	make_fake_artifact(&forge, a_ptr-a_info);
@@ -2051,7 +2051,7 @@ static errr make_artifact(object_type *o_ptr, bool special)
 /*
  * Test that an ego type is suitable for the current object.
  */
-static bool get_ego_test(const object_type *o_ptr, const ego_item_type *e_ptr,
+static bool get_ego_test(object_ctype *o_ptr, const ego_item_type *e_ptr,
 	bool cursed)
 {
 	bool ecursed = !(e_ptr->cost);
@@ -2067,7 +2067,7 @@ static bool get_ego_test(const object_type *o_ptr, const ego_item_type *e_ptr,
 /* 
  * Choose an ego type appropriate for o_ptr at random.
  */
-static byte get_ego_item(const object_type *o_ptr, int level, bool cursed)
+static byte get_ego_item(object_ctype *o_ptr, int level, bool cursed)
 {
 	int e_idx, num;
 
@@ -3717,7 +3717,7 @@ void place_trap(int y, int x)
 /*
  * Describe the charges on an item.
  */
-void item_charges(object_type *o_ptr)
+void item_charges(object_ctype *o_ptr)
 {
 	cptr pref, plu;
 
@@ -3777,7 +3777,7 @@ void item_increase(object_type *o_ptr, int num)
 /*
  * Describe an item.
  */
-void item_describe(object_type *o_ptr)
+void item_describe(object_ctype *o_ptr)
 {
 	cptr verb;
 
@@ -3870,7 +3870,7 @@ void item_optimize(object_type *o_ptr)
 /*
  * Check if we have space for an item in the pack without overflow
  */
-bool inven_carry_okay(object_type *o_ptr)
+bool PURE inven_carry_okay(object_ctype *o_ptr)
 {
 	int j;
 
@@ -4193,9 +4193,9 @@ void combine_pack(void)
 /*
  * Return TRUE if the desired position for u[a] in the pack >=  that of u[b].
  */
-static bool ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
+static bool PURE ang_sort_comp_pack(vptr u, vptr UNUSED v, int a, int b)
 {
-	object_type *inv = u, *a_ptr = inv+a, *b_ptr = inv+b;
+	object_ctype *inv = u, *a_ptr = inv+a, *b_ptr = inv+b;
 	s32b dif;
 
 	/* Skip empty slots */

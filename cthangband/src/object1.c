@@ -435,7 +435,7 @@ void reset_visuals(void)
 /*
  * Obtain the "flags" for an item
  */
-void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -488,7 +488,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
  * not known to the player which is needed to define the object, or is NULL.
  * Ideally it should not be necessary.
  */
-void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr)
+void object_info_known(object_type *j_ptr, object_ctype *o_ptr, object_extra *x_ptr)
 {
 	bool cheat = cheat_item;
 	int i;
@@ -760,7 +760,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 /*
  * Obtain the "flags" for an item which are known to the player
  */
-void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+void object_flags_known(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 {
 	object_type j;
 	object_info_known(&j, o_ptr, 0);
@@ -916,7 +916,7 @@ static char *object_desc_str(char *t, cptr s)
 #define MAX_NAME_LEVEL	8
 
 /* Julian Lighton's improved code */
-static void object_desc(char *buf, uint len, object_type *o1_ptr, byte flags,
+static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	int mode)
 {
 	bool pref = (flags & OD_ART) != 0;
@@ -965,16 +965,15 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, byte flags,
 	object_extra x_ptr[1];
 
 	/* Hack - place the in_shop flag inside o_ptr. */
-	if (in_shop)
+	if (in_shop && ~o1_ptr->ident & IDENT_STORE)
 	{
-		/* Give the object the IDENT_STORE flag for a moment. */
-		u16b ident = o1_ptr->ident;
-		o1_ptr->ident |= IDENT_STORE;
-
+		/* Make a similar object with an IDENT_STORE_FLAG. */
+		object_type q_ptr[1];
+		object_copy(q_ptr, o1_ptr);
+		q_ptr->ident |= IDENT_STORE;
+		
 		/* Extract the known information. */
-		object_info_known(o_ptr, o1_ptr, x_ptr);
-
-		o1_ptr->ident = ident;
+		object_info_known(o_ptr, q_ptr, x_ptr);
 	}
 	else
 	{
@@ -1519,7 +1518,7 @@ void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
  * Determine the "Activation" (if any) for an artifact
  * Return a string, or NULL for "no activation"
  */
-cptr item_activation(object_type *o_ptr)
+cptr PURE item_activation(object_ctype *o_ptr)
 {
 	u32b f1, f2, f3;
 
@@ -2236,7 +2235,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
  * Return the original if given For objects produced by object_info_known().
  * Return the input otherwise.
  */
-object_type PURE *get_real_obj(object_type *o_ptr)
+object_ctype PURE *get_real_obj(object_ctype *o_ptr)
 {
 	if (!o_ptr->iy && o_ptr->ix) return inventory+o_ptr->ix-1;
 	else return o_ptr;
@@ -2245,7 +2244,7 @@ object_type PURE *get_real_obj(object_type *o_ptr)
 /*
  * Inform the player if an object is currently being worn.
  */
-bool is_worn_p(object_type *o_ptr)
+bool PURE is_worn_p(object_ctype *o_ptr)
 {
 	o_ptr = get_real_obj(o_ptr);
 	return (o_ptr >= inventory+INVEN_WIELD && o_ptr < inventory+INVEN_TOTAL);
@@ -2539,7 +2538,7 @@ static void identify_fully_clear(ifa_type *i_ptr)
  * This is stored in a non-traditional field, and relies upon the bow doing
  * no damage when thrown.
  */
-int get_bow_mult(object_type *o_ptr)
+int PURE get_bow_mult(object_ctype *o_ptr)
 {
 	if (o_ptr->ds && !o_ptr->dd)
 	{
@@ -2555,7 +2554,7 @@ int get_bow_mult(object_type *o_ptr)
  * Find the k_idx of a launcher which can fire a given missile.
  * Always returns the first such launcher in k_info.
  */
-s16b launcher_type(object_type *o_ptr)
+s16b PURE launcher_type(object_ctype *o_ptr)
 {
 	s16b k_idx;
 	for (k_idx = 0; k_idx < MAX_K_IDX; k_idx++)
@@ -2600,7 +2599,7 @@ static int get_device_chance_dec(object_type *o_ptr)
  * Find the ammunition tval used by a given launcher.
  * Do not check that this is a missile launcher.
  */
-byte ammunition_type(object_type *o_ptr)
+byte PURE ammunition_type(object_ctype *o_ptr)
 {
 	return k_info[o_ptr->k_idx].extra;
 }
@@ -2618,7 +2617,7 @@ byte ammunition_type(object_type *o_ptr)
  *
  * If brief is set, various less interesting things are omitted.
  */
-static void identify_fully_get(object_type *o1_ptr, ifa_type *info, bool brief)
+static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 {
 	int                     i = 0, j;
 
@@ -3184,7 +3183,7 @@ nextbit:
  * Describe a "fully identified" item
  * If full is set, the game describes the item as if it was fully identified.
  */
-bool identify_fully_aux(object_type *o_ptr, byte flags)
+bool identify_fully_aux(object_ctype *o_ptr, byte flags)
 {
 	bool full = (flags & 0x01) != 0;
 	bool paged = (flags & 0x02) == 0;
@@ -3195,21 +3194,21 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 
 	if (full)
 	{
-		bool hack_known, hack_aware;
-		hack_known = (object_known_p(o_ptr) != FALSE);
-		hack_aware = (object_aware_p(o_ptr) != FALSE);
-		object_known(o_ptr);
-		object_aware(o_ptr);
+		object_type q_ptr[1];
+
+		object_copy(q_ptr, o_ptr);
+		object_known(q_ptr);
+		object_aware(q_ptr);
 
 		identify_fully_get(o_ptr, info, FALSE);
-	
-		if (!hack_aware) k_info[o_ptr->k_idx].aware = FALSE;
-		if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
 	}
 	else
 	{
 		identify_fully_get(o_ptr, info, FALSE);
 	}
+
+	/* Nothing was revealed, so show nothing. */
+	if (!info[0].txt) return FALSE;
 
 	if (paged)
 	{
@@ -3223,15 +3222,14 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	/* Clear any allocated strings. */
 	identify_fully_clear(info);
 
-	/* Gave knowledge */
-	return (TRUE);
+	return TRUE;
 }
 
 
 /*
  * Describe item details to a specified stream.
  */
-void identify_fully_file(object_type *o_ptr, FILE *fff)
+void identify_fully_file(object_ctype *o_ptr, FILE *fff)
 {
 	ifa_type info[MAX_IFA];
 
@@ -3251,7 +3249,7 @@ void identify_fully_file(object_type *o_ptr, FILE *fff)
  * Convert an inventory index into a one character label
  * Note that the label does NOT distinguish inven/equip.
  */
-s16b index_to_label(object_type *o_ptr)
+s16b PURE index_to_label(object_ctype *o_ptr)
 {
 	int i = o_ptr - inventory;
 
@@ -3268,7 +3266,7 @@ s16b index_to_label(object_type *o_ptr)
  * Convert a label into the index of an item in the "inven"
  * Return "-1" if the label does not indicate a real item
  */
-static object_type *label_to_inven(int c)
+static object_type PURE *label_to_inven(int c)
 {
 	object_type *o_ptr;
 	int i;
@@ -3294,7 +3292,7 @@ static object_type *label_to_inven(int c)
  * Convert a label into the index of a item in the "equip"
  * Return "-1" if the label does not indicate a real item
  */
-static object_type *label_to_equip(int c)
+static object_type PURE *label_to_equip(int c)
 {
 	object_type *o_ptr;
 	int i;
@@ -3320,7 +3318,7 @@ static object_type *label_to_equip(int c)
 /*
  * Determine which equipment slot (if any) an item likes
  */
-s16b wield_slot(object_type *o_ptr)
+s16b PURE wield_slot(object_ctype *o_ptr)
 {
 	/* Slot for equipment */
 	switch (o_ptr->tval)
@@ -3475,7 +3473,7 @@ static cptr mention_use(int i)
  * Return a string describing how a given item is being worn.
  * Currently, only used for items in the equipment, not inventory.
  */
-cptr describe_use(object_type *o_ptr)
+cptr PURE describe_use(object_ctype *o_ptr)
 {
 	switch (o_ptr - inventory)
 	{
@@ -3525,7 +3523,7 @@ cptr describe_use(object_type *o_ptr)
 /*
  * Check an item against the item tester info
  */
-bool item_tester_okay(object_type *o_ptr)
+bool item_tester_okay(object_ctype *o_ptr)
 {
 	/* Hack -- allow listing empty slots */
 	if (item_tester_full) return (TRUE);
@@ -3953,7 +3951,7 @@ void show_equip(void)
 /*
  * Returns the object referred to by the given object_idx.
  */
-static object_type *cnv_idx_to_obj(s16b index)
+static object_type PURE *cnv_idx_to_obj(s16b index)
 {
 	if (index < 0)
 	{
@@ -3974,7 +3972,7 @@ static object_type *cnv_idx_to_obj(s16b index)
 /*
  * Returns the object_idx appropriate for a given item.
  */
-static s16b cnv_obj_to_idx(object_type *o_ptr)
+static s16b PURE cnv_obj_to_idx(object_ctype *o_ptr)
 {
 	if (o_ptr >= inventory && o_ptr-inventory < INVEN_TOTAL)
 	{
@@ -4000,7 +3998,7 @@ static s16b cnv_obj_to_idx(object_type *o_ptr)
  *
  * The item can be negative to mean "item on floor".
  */
-static bool verify(cptr prompt, object_type *o_ptr)
+static bool verify(cptr prompt, object_ctype *o_ptr)
 {
 	char    out_val[256];
 
@@ -4018,7 +4016,7 @@ static bool verify(cptr prompt, object_type *o_ptr)
  *
  * The item can be negative to mean "item on floor".
  */
-static bool get_item_allow(object_type *o_ptr)
+static bool get_item_allow(object_ctype *o_ptr)
 {
 	cptr s;
 
@@ -4048,7 +4046,7 @@ static bool get_item_allow(object_type *o_ptr)
 /*
  * Auxiliary function for "get_item()" -- test an index
  */
-static bool get_item_okay(object_type *o_ptr)
+static bool get_item_okay(object_ctype *o_ptr)
 {
 	/* Illegal items */
 	if (!is_inventory_p(o_ptr)) return (FALSE);

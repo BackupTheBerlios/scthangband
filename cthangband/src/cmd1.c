@@ -169,7 +169,7 @@ static s16b critical_norm(int weight, int plus, int dam)
  * Note that most brands and slays are x3, except Slay Animal (x2),
  * Slay Evil (x2), and Kill dragon (x5).
  */
-s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
+s16b tot_dam_aux(object_ctype *o_ptr, int tdam, monster_type *m_ptr)
 {
 	int mult = 1;
 
