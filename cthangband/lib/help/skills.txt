@@ -45,7 +45,7 @@ Crushing Weapons (Checked every 10 uses)
 
 This skill determines your chance to hit an opponent when fighting with one of the following weapons: Pole Arms (other than those mentioned above) Maces, Hammers, Picks, Shovels and Clubs.
 
-Missile Weapons (Checked every 10 uses)
+Missile Weapons (Checked every 4 uses)
 
 This skill determines your chance to hit an opponent when fighting with one of the following weapons: Bows, Crossbows, Slings and any thrown item.
 

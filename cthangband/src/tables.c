@@ -2921,6 +2921,8 @@ cptr favour_names[MAX_SPHERE][32]=
 
 /*
  * Player's Skills
+ *
+ * name,increase,0,0,0,0,0,exp_to_raise
  */
  player_skill skill_set[MAX_SKILLS] =
  {
@@ -2933,7 +2935,7 @@ cptr favour_names[MAX_SPHERE][32]=
 	 { "Searching","You are getting better at searching.",0,0,0,0,0,1},
 	 { "Perception","You are getting more perceptive.",0,0,0,0,0,1},
 	 { "Close Combat","Your combat skills are increasing.",0,0,0,0,0,10},
-	 { "Missile","Your accuracy is increasing.",0,0,0,0,0,10},
+	 { "Missile","Your accuracy is increasing.",0,0,0,0,0,4},
 	 { "Martial Arts","Your martial arts are improving.",0,0,0,0,0,9},
 	 { "Corporis","Your magice corporis is improving.",0,0,0,0,0,2},
 	 { "Animae","Your magice animae magic is improving.",0,0,0,0,0,2},
