@@ -5759,12 +5759,11 @@ static void cave_temp_room_aux(int y, int x)
 	 * always be lit (this needs at least two exceptions to do anything). */
 	if (temp_n > 8)
 	{
-		int i;
-		bool flit;
+		int i, flit;
 		/* Do not "leave" the current room */
 		for (i = flit = 0; i < 8; i++)
 		{
-			int y2 = y+yc[i%8], x2 = x+xc[i%8];
+			int y2 = y+yc[i], x2 = x+xc[i];
 
 			/* Only check floor squares which are to be lit. */
 			if (!in_bounds(y2, x2)) continue;
@@ -5776,11 +5775,12 @@ static void cave_temp_room_aux(int y, int x)
 			flit = TRUE;
 
 			/* Look for corners, which need not be next to floor squares. */
-			if (yc[i%8] && xc[i%8])
+			if (y2 != y && x2 != x)
 			{
 				if (cave[y2][x].info & cave[y][x2].info & CAVE_TEMP) break;
 			}
 		}
+		if (i == 8) return;
 	}
 
 	/* Mark the grid as "seen" */
