@@ -1,3 +1,4 @@
+%%%%% <windowpri.txt>
 === Window Options ===
 
 Some platforms support "sub-windows", which are windows which can be used to display useful information generally available through other means. This screen governs their contents.

@@ -1,3 +1,4 @@
+%%%%% <general.txt>
 === Command Descriptions ===
 
 The following command descriptions are listed as the command name plus the "underlying command" key. This is followed by the command name and "roguelike" keyset key, if different from the underlying command key. Then comes a brief description of the command, including information about alternative methods of specifying the command in each keyset, when needed.
@@ -20,19 +21,16 @@ Use this command to display a list of the objects currently being used by your c
 $GDrop an item (d)
 This drops an item from your inventory or equipment onto the dungeon floor. If the floor spot you are standing on already has an object in it, Angband will attempt to drop the item onto an adjacent space. Be warned that if the floor is full and you attempt to drop something, it may disappear and be destroyed. Doors and traps are considered objects for the purpose of determining if the space is occupied. This command may take a quantity, and takes some energy.
 
-~~~~~01
 %%%%% <cmd=k>
 $GDestroy an item (k) or Destroy an item (Ctrl-D)
 This destroys an item in your inventory or on the dungeon floor. If the selected pile contains multiple objects, you may specify a quantity. You may have to verify this command. This command may take a quantity, and takes some energy.
 
-~~~~~02
 %%%%% <cmd=K>
 $GHide an item (K)/(Ctrl-Q)
 This hides an item in your inventory or on the dungeon floor. Hidden objects on the floor are not displayed by the game, but are affected by the game in exactly the same way as before. Hidden objects in your inventory are displayed as "(hidden)", and can be easily selected with the 'z' option at any object prompt, but are normal in other respects. 
 
 As this action only changes how the game represents an object to the player, it takes no energy to perform.
 
-~~~~~03
 %%%%% <cmd=^K>
 $GReveal hidden items (Ctrl-K)/(Ctrl-V)
 This causes all hidden objects to be displayed as normal. Note that a hidden object may have been destroyed or picked up whilst it was hidden.

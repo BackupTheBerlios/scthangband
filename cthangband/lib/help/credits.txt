@@ -1,3 +1,4 @@
+%%%%% <credits.txt>
 Many thanks go to the following people for helping to make sCthangband what it
 is today:
 

@@ -1,3 +1,4 @@
+%%%%% <debug.txt>
 === Debug Command Descriptions ===
 
 This is a list of commands provided to enable efficient testing of various

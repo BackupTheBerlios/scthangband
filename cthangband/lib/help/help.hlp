@@ -1,3 +1,4 @@
+%%%%% <help.hlp>
  Please choose one of the following online help files:
 
     *****/?hlponhlp.txt*0[[?$]] How to use the help system
@@ -21,9 +22,27 @@
 %%%%? [EQU $SYS x11]
     *****/ohelp-x11.txt*0[[o$]] Extra features for the X11 port
 %%%%? 0
-(The following files are not actually listed in the help text, but are included to make it easier to search for help files during initialisation.)
+(The following is a list of the files which should be in this directory.
+It will not be displayed in the game.)
 
-    *****/qdebug.txt*0[[p$]] Debugging commands
-    *****/rdebug-b.txt*0[[q$]] Brief debugging command list
-    *****/jwindowpri.txt*0[[r$]] Customising sCthangband windows
-%%%%? 1
+%%%%F chargen.txt
+%%%%F credits.txt
+%%%%F custom.txt
+%%%%F deathevent.txt
+%%%%F debug-b.txt
+%%%%F debug.txt
+%%%%F general.txt
+%%%%F hedge.txt
+%%%%F help.hlp
+%%%%F help-x11.txt
+%%%%F hermetic.txt
+%%%%F history.txt
+%%%%F hlponhlp.txt
+%%%%F mindcrft.txt
+%%%%F outdoors.txt
+%%%%F prompts.txt
+%%%%F shaman.txt
+%%%%F skills.txt
+%%%%F speed.txt
+%%%%F update.txt
+%%%%F windowpri.txt

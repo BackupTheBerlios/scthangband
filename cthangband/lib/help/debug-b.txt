@@ -1,4 +1,4 @@
-%%%%% <brief debug>
+%%%%% <brief debug> <debug-b.txt>
 
                                 $rWizard Commands
                                 $r===============

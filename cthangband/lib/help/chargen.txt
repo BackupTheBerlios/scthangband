@@ -1,3 +1,4 @@
+%%%%% <chargen.txt>
 Characters
 ==========
 
@@ -33,7 +34,7 @@ S, I, W, D, C, H: Decrease the specified stat.
                /: Change from one birth display to the other.
                f: Save the current set of stats to a file.
                l: Load a saved set of stats for this race and template.
-               =: Modify the birth options (see *****custom.txt*01[custom.txt] for details).
+               =: Modify the birth options (see *****option=B*[custom.txt] for details).
                ?: Display help.
 
 Primary Stats

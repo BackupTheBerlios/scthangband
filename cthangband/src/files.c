@@ -3930,7 +3930,7 @@ int color_char_to_attr(char c)
 typedef struct link_det link_det;
 struct link_det
 {
-	char file[32];
+	char tag[32];
 	char key;
 	int x;
 	int y;
@@ -3966,6 +3966,20 @@ struct hyperlink
 	int max_link;	/* Number of links known. */
 };
 
+static cptr *help_files = NULL;
+
+typedef struct link_type link_type;
+struct link_type
+{
+	cptr str; /* The line which includes the links. */
+	cptr file; /* The file the links appear in. */
+	long pos; /* The position in the file of the line after the link. */
+};
+
+static link_type *links = NULL;
+static int num_links;
+
+#define MAX_LINKS 1024
 
 /*
  * Attempt to open a file in a standard Angband directory for show_file_aux().
@@ -4009,9 +4023,6 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 	 * output file anyway. */
 	for (x = 0, skip = FALSE; !my_fgets_long(h_ptr->rbuf, 1024, fff); )
 	{
-		/* Skip game links. */
-		if (prefix(h_ptr->rbuf, CC_LINK_PREFIX)) continue;
-
 		/* Interpret conditions. */
 		if (prefix(h_ptr->rbuf, CC_IF_PREFIX))
 		{
@@ -4172,14 +4183,7 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		if (prefix(buf, "|||||")) continue;
 
 		/* Skip game links (done in reflow_file(). */
-		/* if (prefix(buf, CC_LINK_PREFIX)) continue; */
-
-		/* Skip tags */
-		if (prefix(buf, "~~~~~"))
-		{
-			y++;
-			continue;
-		}
+		if (prefix(buf, CC_LINK_PREFIX)) continue;
 
 		/* Dump the line */
 		x = 0;
@@ -4325,9 +4329,23 @@ static void display_help_page_aux(FILE *fff)
 }
 
 /*
+ * If link is mentioned as a link in links[], return the name of the file it
+ * appears in.
+ */
+static cptr link_name_to_file(cptr link)
+{
+	link_type *l_ptr;
+	for (l_ptr = links; l_ptr < links+num_links; l_ptr++)
+	{
+		if (strstr(l_ptr->str, link)) return l_ptr->file;
+	}
+	return NULL;
+}
+
+/*
  * A show_file() function based on ToME's version.
  */
-static char show_file_aux(cptr name, cptr what, int line)
+static char show_file_aux(cptr name, cptr what, cptr link)
 {
 	int i, k, x;
 
@@ -4338,6 +4356,9 @@ static char show_file_aux(cptr name, cptr what, int line)
 
 	/* Number of "real" lines in the file */
 	int size = 0;
+
+	/* Current line. */
+	int line = 0;
 
 	/* This function is from a standard help directory. */
 	bool is_temp_file = FALSE;
@@ -4447,15 +4468,12 @@ static char show_file_aux(cptr name, cptr what, int line)
 			link_color_sel = color_char_to_attr(buf[6]);
 		}
 
-                /* Tag ? */
-                if (prefix(buf, "~~~~~"))
+		/* Tag ? */
+		if (prefix(buf, CC_LINK_PREFIX))
 		{
-			if (line < 0)
+			if (link && strstr(buf+CC_LINK_LEN, link))
 			{
-				if (atoi(buf + 5) == -line)
-				{
-					line = next + 1;
-				}
+				line = next + 1;
 			}
 		}
 
@@ -4488,10 +4506,10 @@ static char show_file_aux(cptr name, cptr what, int line)
 				/* Zap the link info */
 				while (buf[xx] != '*')
 				{
-					h_ptr->link[h_ptr->max_link].file[xx - xdeb] = buf[xx];
+					h_ptr->link[h_ptr->max_link].tag[xx - xdeb] = buf[xx];
 					xx++;
 				}
-				h_ptr->link[h_ptr->max_link].file[xx - xdeb] = '\0';
+				h_ptr->link[h_ptr->max_link].tag[xx - xdeb] = '\0';
 				xx++;
 				stmp = xx;
 				while (buf[xx] != '[')
@@ -4675,11 +4693,14 @@ static char show_file_aux(cptr name, cptr what, int line)
 		/* Recurse on numbers */
 		else if (k == '\r')
 		{
-			if (h_ptr->link[h_ptr->cur_link].x != -1)
+			link_det *ld_ptr = &h_ptr->link[h_ptr->cur_link];
+			if (ld_ptr->x != -1)
 			{
+				cptr link = ld_ptr->tag;
+				cptr file = link_name_to_file(link);
+
 				/* Recurse on that file */
-				k = show_file_aux(h_ptr->link[h_ptr->cur_link].file, NULL,
-					h_ptr->link[h_ptr->cur_link].line);
+				k = show_file_aux(file, NULL, link);
 			}
 		}
 		else
@@ -4687,9 +4708,15 @@ static char show_file_aux(cptr name, cptr what, int line)
 			/* No other key ? lets look for a shortcut */
 			for (i = 0; i < h_ptr->max_link; i++)
 			{
-				if (h_ptr->link[i].key != k) continue;
-				k = show_file_aux(h_ptr->link[i].file, NULL, h_ptr->link[i].line);
-				break;
+				link_det *ld_ptr = &h_ptr->link[i];
+				if (ld_ptr->key == k)
+				{
+					cptr link = ld_ptr->tag;
+					cptr file = link_name_to_file(link);
+
+					/* Recurse on that file */
+					k = show_file_aux(file, NULL, link);
+				}
 			}
 		}
 		if (line < 0) line = 0;
@@ -4716,21 +4743,6 @@ void show_file(cptr name, cptr what)
 	show_file_aux(name, what, 0);
 	delete_resize_hook(resize_inkey);
 }
-
-static cptr *help_files = NULL;
-
-typedef struct link_type link_type;
-struct link_type
-{
-	cptr str; /* The line which includes the links. */
-	cptr file; /* The file the links appear in. */
-	long pos; /* The position in the file of the line after the link. */
-};
-
-static link_type *links = NULL;
-static int num_links;
-
-#define MAX_LINKS 1024
 
 static void init_links(void)
 {

@@ -1,3 +1,4 @@
+%%%%% <prompts.txt>
 === In-game Prompts ===
 
 There are a number of styles of prompt in the game. This is an attempt to list some of them, give a means of finding an example from within the game and explain the input acceptable at each.

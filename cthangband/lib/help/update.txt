@@ -1,3 +1,4 @@
+%%%%% <update.txt>
 sCthangband
 Based on Cthangband 4.1.0b and Zangband 2.1.0e
 
