@@ -2756,7 +2756,7 @@ static void apply_magic_1(object_type *o_ptr, int lev, bool okay, bool good,
 	{
 		if (cheat_peek) msg_format("Rolling %d", i);
 		/* Roll for an artifact */
-		if (make_artifact(o_ptr, FALSE)) break;
+		if (make_artifact(o_ptr, FALSE)) return;
 	}
 
 	/* Apply magic */
