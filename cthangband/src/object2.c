@@ -4253,59 +4253,8 @@ void display_koff(int k_idx)
 
 
 	/* Display spells in books */
-    if (q_ptr->tval >= TV_SORCERY_BOOK && q_ptr->tval <= TV_NECROMANCY_BOOK)
+    if (display_spells_p(q_ptr))
 	{
-		int                     sval;
-
-		int                     spell = -1;
-		int                     num = 0;
-
-		byte            spells[64];
-
-
-		/* Access the item's sval */
-		sval = k_info[q_ptr->k_idx].extra;
-
-		/* Extract spells */
-	for (spell = 0; spell < 32; spell++)
-		{
-			/* Check for this spell */
-	    if (spell_flags[sval] & (1L << spell))
-	    
-			{
-				/* Collect this spell */
-				spells[num++] = spell;
-			}
-		}
-		/* Print spells */
-	print_spells(spells, num, 2, 0,
-		    (q_ptr->tval -90));
-	}
-	if (q_ptr->tval == TV_CHARM)
-	{
-		int                     sval;
-
-		int                     spell = -1;
-		int                     num = 0;
-
-		byte            spells[64];
-
-
-		/* Access the item's sval */
-		sval = k_info[q_ptr->k_idx].extra;
-
-		/* Extract spells */
-	for (spell = 0; spell < 32; spell++)
-		{
-			/* Check for this spell */
-	    if (cantrip_flags[sval] & (1L << spell))
-	    
-			{
-				/* Collect this spell */
-				spells[num++] = spell;
-			}
-		}
-		/* Print spells */
-	print_cantrips(spells, num, 2, 0);
+		display_spells(q_ptr);
 	}
 }

@@ -335,7 +335,7 @@ extern void do_cmd_knowledge(void);
 
 /* cmd5.c */
 
-#if (defined(CMD5_C) || defined(OBJECT2_C))
+#if (defined(CMD5_C))
 extern void print_cantrips(byte *spells, int num, int y, int x);
 #endif
 
@@ -1559,7 +1559,7 @@ extern void display_spell_list(void);
 
 /* cmd5.c */
 
-#if (defined(CMD5_C) || defined(OBJECT2_C) || defined(STORE_C))
+#if (defined(CMD5_C))
 extern void print_spells(byte *spells, int num, int y, int x, int school);
 #endif
 #if (defined(OBJECT2_C) || defined(XTRA1_C))
@@ -2108,10 +2108,10 @@ extern magic_type favour_info[MAX_SPHERE][32];
 #if (defined(CMD5_C) || defined(TABLES_C))
 extern magic_type cantrip_info[32];
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(TABLES_C))
+#if (defined(CMD5_C) || defined(TABLES_C))
 extern u32b spell_flags[4];
 #endif
-#if (defined(CMD5_C) || defined(OBJECT2_C) || defined(TABLES_C))
+#if (defined(CMD5_C) || defined(TABLES_C))
 extern u32b cantrip_flags[7];
 #endif
 
@@ -2285,7 +2285,7 @@ extern bool screen_is_icky(void);
 #if (defined(UTIL_C) || defined(XTRA1_C))
 extern bool is_keymap_or_macro(void);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_DOS_C) || defined(MAIN_ROS_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern char inkey(void);
 #endif
 #if (defined(CMD3_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(XTRA2_C))
@@ -4026,5 +4026,11 @@ extern book_type book_info[31];
 extern void print_spells_aux(byte *spells, int num, int y, int x, book_type *b_ptr,
 	int school)
 ;
+#endif
+#if (defined(CMD5_C) || defined(OBJECT2_C))
+extern bool PURE display_spells_p(object_type *o_ptr);
+#endif
+#if (defined(CMD5_C) || defined(OBJECT2_C))
+extern void display_spells(object_type *o_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

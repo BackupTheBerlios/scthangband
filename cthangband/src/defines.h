@@ -690,9 +690,9 @@ logaux(x, 1) logaux(x, 0) 255)
 
 /* Schools and types of spells */
 #define SCH_SORCERY 0
-#define SCH_NECROMANCY 1
-#define SCH_THAUMATURGY 2
-#define SCH_CONJURATION 3
+#define SCH_THAUMATURGY 1
+#define SCH_CONJURATION 2
+#define SCH_NECROMANCY 3
 
 #define SCH_HEDGE 4
 #define SCH_SPIRIT 5

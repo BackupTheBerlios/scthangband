@@ -172,7 +172,6 @@ static s32b cur_ask, final_ask;
 static cptr pmt;
 static bool noneedtobargain(s32b minprice);
 static int get_which_store(void);
-static void do_store_browse( object_type *o_ptr);
 
 /*
  * Determine if haggling is necessary.
@@ -3373,7 +3372,7 @@ static void store_sell(void)
         (o_ptr->tval == TV_THAUMATURGY_BOOK) ||
         (o_ptr->tval == TV_CONJURATION_BOOK) || (o_ptr->tval == TV_NECROMANCY_BOOK))
 	{
-		do_store_browse(o_ptr);
+		do_cmd_browse(o_ptr);
 		return;
 	}
 
@@ -4571,53 +4570,4 @@ static int get_which_store(void)
 	}
 	/* Should never get to here, but just in case... */
 	return -1;
-}
-
-/*
- * Peruse the spells/prayers in a Book in the shop
- *
- * Note that *all* spells in the book are listed
- *
- */
-static void do_store_browse( object_type *o_ptr)
-{
-	int		sval;
-	int		spell = -1;
-	int		num = 0;
-
-	byte		spells[64];
-
-
-	/* Access the item's sval */
-	sval = k_info[o_ptr->k_idx].extra;
-
-	/* Extract spells */
-	for (spell = 0; spell < 32; spell++)
-	{
-		/* Check for this spell */
-		if ((spell_flags[sval] & (1L << spell)))
-		{
-			/* Collect this spell */
-			spells[num++] = spell;
-		}
-	}
-
-
-	/* Save the screen */
-	Term_save();
-
-	/* Display the spells */
-	print_spells(spells, num, 1, -1, (o_ptr->tval-90));
-
-	/* Clear the top line */
-	prt("", 0, 0);
-
-	/* Prompt user */
-	put_str("[Press any key to continue]", 0, 23);
-
-	/* Wait for key */
-	(void)inkey();
-
-	/* Restore the screen */
-	Term_load();
 }

@@ -139,6 +139,27 @@ static void low_mana_check(int *chance, const magic_type *s_ptr)
 }
 
 /*
+ * List the spells which can be cast from b_ptr
+ */
+static int build_spell_list(byte *s, const book_type *b_ptr)
+{
+	int i, j;
+	assert(b_ptr);
+
+	/* Extract spells */
+	for (i = j = 0; i < MAX_SPELLS_PER_BOOK; i++)
+	{
+		/* Check for this spell */
+		if (b_ptr->flags & (1L << i))
+		{
+			/* Collect this spell */
+			s[j++] = i;
+		}
+	}
+	return j;
+}
+
+/*
  * Returns spell chance of failure for an arbitrary spell
  */
 static int spell_chance(const magic_type *s_ptr)
@@ -650,6 +671,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 	char		out_val[160];
 
 	cptr p = "spell";
+
 
  #ifdef ALLOW_REPEAT
  
@@ -1169,16 +1191,8 @@ static int get_favour(int *sn, int spirit,int sphere)
  #endif /* ALLOW_REPEAT -- TNB */
  
 
-	/* Extract spells */
-	for (spell = 0; spell < 32; spell++)
-	{
-		/* Check for this spell */
-		if ((spirits[spirit].favour_flags & (1L << spell)))
-		{
-			/* Collect this spell */
-			spells[num++] = spell;
-		}
-	}
+	/* Count the spells out. */
+	num = build_spell_list(spells, spirit_to_book(spirits+spirit));
 
 	/* Assume no usable spells */
 	okay = FALSE;
@@ -1759,6 +1773,31 @@ static PURE bool item_tester_book_etc(object_type *o_ptr)
 	return (k_idx_to_book(o_ptr->k_idx) != 0);
 }
 
+bool PURE display_spells_p(object_type *o_ptr)
+{
+	item_tester_hook = item_tester_book_etc;
+	return item_tester_okay(o_ptr);
+}
+
+void display_spells(object_type *o_ptr)
+{
+	book_type *b_ptr;
+	int		num;
+
+	byte		spells[64];
+
+	assert(display_spells_p(o_ptr));
+
+	/* Access the item's sval */
+	b_ptr = k_idx_to_book(o_ptr->k_idx);
+
+	/* Count the spells out. */
+	num = build_spell_list(spells, b_ptr);
+
+	/* Display the spells */
+	print_spells_b(spells, num, 1, -1, b_ptr);
+}
+
 /*
  * Peruse the spells/prayers in a Book
  *
@@ -1769,13 +1808,6 @@ static PURE bool item_tester_book_etc(object_type *o_ptr)
  */
 void do_cmd_browse(object_type *o_ptr)
 {
-	book_type *b_ptr;
-	int		spell = -1;
-	int		num = 0;
-
-	byte		spells[64];
-
-
 	/* Get an item if we do not already have one */
 	if(!o_ptr)
 	{
@@ -1792,15 +1824,11 @@ void do_cmd_browse(object_type *o_ptr)
 		}
 	}
 
-	item_tester_hook = item_tester_book_etc;
-	if(!item_tester_okay(o_ptr))
+	if(!display_spells_p(o_ptr))
 	{
 		msg_print("You can't read that.");
 		return;
 	}
-
-	/* Access the item's sval */
-	b_ptr = k_idx_to_book(o_ptr->k_idx);
 
 	/* Track the object kind */
 	object_kind_track(o_ptr->k_idx);
@@ -1808,24 +1836,11 @@ void do_cmd_browse(object_type *o_ptr)
 	/* Hack -- Handle stuff */
 	handle_stuff();
 
-
-	/* Extract spells */
-	for (spell = 0; spell < 32; spell++)
-	{
-		/* Check for this spell */
-		if ((b_ptr->flags & (1L << spell)))
-		{
-			/* Collect this spell */
-			spells[num++] = spell;
-		}
-	}
-
-
 	/* Save the screen */
 	Term_save();
 
 	/* Display the spells */
-	print_spells_b(spells, num, 1, -1, b_ptr);
+	display_spells(o_ptr);
 
 	/* Clear the top line */
 	prt("", 0, 0);
