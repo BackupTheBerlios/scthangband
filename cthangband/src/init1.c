@@ -1287,6 +1287,7 @@ static u32b add_name(header *head, cptr buf)
 	switch (head->header_num)
 	{
 		case K_HEAD: case A_HEAD: case E_HEAD: case OB_HEAD: case U_HEAD:
+		case R_HEAD:
 		if (check_string(buf)) return 0;
 	}
 

@@ -484,6 +484,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define MDF_INDEF	0x01	/* Give an indefinite article (a ...). */
 #define MDF_NUMBER	0x02	/* Give a number (10 ...). */
 #define MDF_DEF	0x04	/* Give a definite article (the ...). */
+#define MDF_MANY	0x80	/* Not 1 object. */
 
 /*
  * Store constants

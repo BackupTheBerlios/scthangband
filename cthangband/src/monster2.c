@@ -1240,35 +1240,56 @@ s16b get_mon_num(int level)
  * Describe a name for a monster of a given race, pluralising where appropriate.
  * This is based on object_desc(), but is far simpler.
  *
- * number def   indef string       The table on the left gives the format of its
- *   1    FALSE FALSE "Newt"       output.
- *   1    FALSE TRUE  "a Newt"
- *   1    TRUE  -     "the Newt"
- * not 1  FALSE FALSE "Newts"
- * not 1  FALSE TRUE  "some Newts"
- * not 1  TRUE  -     "the Newts"
+ * num def   indef number string       The table on the left gives the format
+ *   1 FALSE FALSE FALSE  "Newt"        of its output.
+ *  10 FALSE FALSE FALSE  "Newts"
+ *  10 FALSE FALSE TRUE   "10 Newts"
+ *   1 FALSE TRUE  -      "a Newt"
+ *  10 FALSE TRUE  -      "some Newts"
+ *  10 TRUE  -     FALSE  "the Newts"
+ *  10 TRUE  -     TRUE   "the 10 Newts"
 
  */
 static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 {
 	cptr artstr = ""; /* Needed, as no sanity checking is done in init1.c. */
-	const char artstr_art[2] = {CM_ACT | MCI_ARTICLE, '\0'};
-		
-	bool number = (flags & MDF_NUMBER) != 0;
 	cptr s;
 	char *t;
 	byte reject = 0;
 	C_TNEW(buf, MNAME_MAX, char);
 
 	if (num == 1) reject |= 1<<MCI_PLURAL;
-	if (!(flags & (MDF_INDEF | MDF_DEF)))
+	else flags |= MDF_MANY;
+
+	/* Some flags are redundant as above. */
+	if (flags & MDF_DEF) flags &= ~(MDF_INDEF);
+	if (flags & MDF_INDEF) flags &= ~(MDF_NUMBER);
+
+	/* None needed. */
+	if (!(flags & (MDF_DEF | MDF_INDEF | MDF_NUMBER)))
+	{
 		reject |= 1<<MCI_ARTICLE;
+	}
 	else if (flags & MDF_DEF)
+	{
 		artstr = "the";
-	else if (num != 1)
+	}
+	else if (flags & MDF_INDEF && flags & MDF_MANY)
+	{
 		artstr = "some";
-	else
+	}
+	else if (flags & MDF_INDEF)
+	{
+		/* To be turned into English later... */
+		char artstr_art[2] = {CM_ACT | MCI_ARTICLE, '\0'};
 		artstr = artstr_art;
+	}
+	if (flags & MDF_NUMBER)
+	{
+		/* out is just used as a temporary buffer here... */
+		sprintf(out, "%s%d", (artstr[0]) ? " " : "", num);
+		artstr = out;
+	}
 
 	for (s = name, t = buf; *s && t < buf+MNAME_MAX-1; s++)
 	{
@@ -1290,18 +1311,8 @@ static cptr monster_desc_aux_2(char *out, cptr name, int num, byte flags)
 	/* Finish off. */
 	*t = '\0';
 
-	if (number)
-	{
-		sprintf(out, "%d ", num);
-		t = strchr(out, '\0');
-	}
-	else
-	{
-		t = out;
-	}
-
 	/* Decipher articles, and copy across. */
-	for (s = buf; t < out+MNAME_MAX-1;)
+	for (s = buf, t = out; t < out+MNAME_MAX-1;)
 	{
 		if (*s == (MCI_ARTICLE | CM_ACT))
 		{
