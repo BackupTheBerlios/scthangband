@@ -1207,6 +1207,10 @@ static void display_player_birth_details(void)
 	}
 }
 
+/* A macro for A = (A+B) mod M */
+#define MOD_ADD(A, B, M) \
+	(A) += (B)+(M); \
+	(A) %= (M);
 
 /* Indexes for point_mod_player (0-6 hard-coded as stats and nothing) */
 #define IDX_STATS	((A_STR+1) | (A_INT+1) | (A_WIS+1) | (A_DEX+1) | (A_CON+1) | (A_CHR+1))
@@ -1412,26 +1416,22 @@ static bool point_mod_player(void)
 
 		/* Modify the player's race. */
 		if (i == IDX_RACE)
-			{
-				p_ptr->prace += (islower(stat) ? 1 : -1);
-				p_ptr->prace %= MAX_RACES;
-				rp_ptr = &race_info[p_ptr->prace];
-			}
+		{
+			MOD_ADD(p_ptr->prace, (islower(stat) ? 1 : -1), MAX_RACES);
+			rp_ptr = &race_info[p_ptr->prace];
+		}
 
 		/* Modify the player's template. */
 		if (i == IDX_TEMPLATE)
-			{
-				p_ptr->ptemplate += (islower(stat) ? 1 : -1);
-				p_ptr->ptemplate %= MAX_TEMPLATE;
-				cp_ptr = &template_info[p_ptr->ptemplate];
-			}
+		{
+			MOD_ADD(p_ptr->ptemplate, (islower(stat) ? 1 : -1), MAX_TEMPLATE);
+			cp_ptr = &template_info[p_ptr->ptemplate];
+		}
 
 		/* Modify the player's sex. */
 		if (i == IDX_SEX)
 		{
-			p_ptr->psex += (islower(stat) ? 1 : -1);
-			p_ptr->psex += MAX_SEXES;
-			p_ptr->psex %= MAX_SEXES;
+			MOD_ADD(p_ptr->psex, (islower(stat) ? 1 : -1), MAX_SEXES);
 			sp_ptr = &sex_info[p_ptr->psex];
 		}
 
