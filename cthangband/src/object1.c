@@ -2698,8 +2698,9 @@ static void res_stat_details(byte stat, s16b pval, object_type *o_ptr, int *i, c
 
 /*
  * Describe a "fully identified" item
+ * If full is set, the game describes the item as if it was fully identified.
  */
-bool identify_fully_aux(object_type *o_ptr)
+bool identify_fully_aux(object_type *o_ptr, bool full)
 {
 	int                     i = 0, j, k, rsd_start, rsd_end;
 
@@ -2707,6 +2708,15 @@ bool identify_fully_aux(object_type *o_ptr)
 
 	cptr            info[128];
 
+	/* Remember whether we should treat the item as identified */
+	bool hack_known, hack_aware;
+	if (full)
+	{
+		hack_known = (object_known_p(o_ptr) != FALSE);
+		hack_aware = (object_aware_p(o_ptr) != FALSE);
+		object_known(o_ptr);
+		object_aware(o_ptr);
+	}
 
 	/* Extract the known flags */
 	object_flags_known(o_ptr, &f1, &f2, &f3);
@@ -3226,6 +3236,13 @@ bool identify_fully_aux(object_type *o_ptr)
 		info[i++] = "It cannot be harmed by cold.";
 	}
 
+
+	/* Return item to its normal stat if needed */
+	if (full)
+	{
+		if (!hack_aware) k_info[o_ptr->k_idx].aware = FALSE;
+		if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
+	}
 
 	/* No special effects */
 	if (!i) return (FALSE);

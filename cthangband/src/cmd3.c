@@ -687,7 +687,7 @@ void do_cmd_observe(void)
 	msg_format("Examining %s...", o_name);
 
 	/* Describe it fully */
-	if (!identify_fully_aux(o_ptr)) msg_print("You see nothing special.");
+	if (!identify_fully_aux(o_ptr, FALSE)) msg_print("You see nothing special.");
 }
 
 

@@ -4121,7 +4121,7 @@ if (a_scroll)
     {
          char dummy_name[80];
          strcpy(dummy_name, "");
-         identify_fully_aux(o_ptr);
+         identify_fully_aux(o_ptr, FALSE);
          o_ptr->ident |= IDENT_STOREB; /* This will be used later on... */
          if (!(get_string("What do you want to call the artifact? ", dummy_name, 80)))
         strcpy(new_name,"(a DIY Artifact)");
@@ -4391,7 +4391,7 @@ bool identify_fully(void)
 	}
 
 	/* Describe it fully */
-	identify_fully_aux(o_ptr);
+	identify_fully_aux(o_ptr, FALSE);
 
 	/* Success */
 	return (TRUE);

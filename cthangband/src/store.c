@@ -2427,7 +2427,7 @@ static void service_help(byte type)
 			object_type forge;
 			object_prep(&forge, lookup_kind(TV_FOOD, SV_FOOD_RESTORING));
 			/* This gives an unwelcome "Item attributes" description. */
-			if (!identify_fully_aux(&forge))
+			if (!identify_fully_aux(&forge, TRUE))
 				msg_print("This won't help you at present.");
 			break;
  		}
@@ -3437,15 +3437,17 @@ static void store_sell(void)
 
    /* Description */
    if (cur_store_type == STORE_HOME || cur_store_type == STORE_PAWN)
+	{
    object_desc(o_name, o_ptr, TRUE, 3);
-   else
+		msg_format("Examining %s...", o_name);
+		if (!identify_fully_aux(o_ptr, FALSE)) msg_print("You see nothing special.");
+	}
+	else /* Make it look as though we are aware of the item. */
+	{
 	object_desc_store(o_name, o_ptr, TRUE, 3);
-
-   /* Describe */
    msg_format("Examining %s...", o_name);
-
-   /* Describe it fully */
-   if (!identify_fully_aux(o_ptr)) msg_print("You see nothing special.");
+		if (!identify_fully_aux(o_ptr, TRUE)) msg_print("You see nothing special.");
+	}
 
    return;
  }
