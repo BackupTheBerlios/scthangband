@@ -581,8 +581,8 @@ static int wiz_create_itemtype(void)
 		/* Analyze matching items */
 		if (k_ptr->tval == tval)
 		{
-			/* Hack -- Skip instant artifacts */
-			if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
+			/* Hack -- skip items which only have special generation methods. */
+			if (!kind_created_p(k_ptr)) continue;
 
 			/* Prepare it */
 			row = 2 + (num % 20);

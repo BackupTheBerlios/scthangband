@@ -3543,8 +3543,8 @@ static void do_cmd_knowledge_objects(void)
 	{
 		object_kind *k_ptr = &k_info[k];
 
-		/* Hack -- skip artifacts */
-		if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
+		/* Hack -- skip items which only have special generation methods. */
+		if (!kind_created_p(k_ptr)) continue;
 
 		/* List known flavored objects */
 		if (u_info[k_ptr->u_idx].s_id && k_ptr->aware)

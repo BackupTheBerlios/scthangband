@@ -372,7 +372,7 @@ static flag_name info_flags[] =
 	{"CON", 0, TR1_CON},
 	{"CHR", 0, TR1_CHR},
 /*	{"XXX1", 0, TR1_XXX1}, */
-	{"GOOD", 0, TR1_GOOD},
+/*	{"XXX2", 0, TR1_XXX2}, */
 	{"STEALTH", 0, TR1_STEALTH},
 	{"SEARCH", 0, TR1_SEARCH},
 	{"INFRA", 0, TR1_INFRA},
@@ -441,7 +441,7 @@ static flag_name info_flags[] =
 	{"EASY_KNOW", 2, TR3_EASY_KNOW},
 	{"HIDE_TYPE", 2, TR3_HIDE_TYPE},
 	{"SHOW_MODS", 2, TR3_SHOW_MODS},
-	{"INSTA_ART", 2, TR3_INSTA_ART},
+	{"GOOD", 2, TR3_GOOD},
 	{"FEATHER", 2, TR3_FEATHER},
 	{"LITE", 2, TR3_LITE},
 	{"SEE_INVIS", 2, TR3_SEE_INVIS},

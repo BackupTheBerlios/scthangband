@@ -2320,109 +2320,113 @@ logaux(x, 1) logaux(x, 0) 255)
  * powerful as actually granting resistance/immunity to the wearer.
  */
 
-#define TR1_STR                         0x00000001L     /* STR += "pval" */
-#define TR1_INT                         0x00000002L     /* INT += "pval" */
-#define TR1_WIS                         0x00000004L     /* WIS += "pval" */
-#define TR1_DEX                         0x00000008L     /* DEX += "pval" */
-#define TR1_CON                         0x00000010L     /* CON += "pval" */
-#define TR1_CHR                         0x00000020L     /* CHR += "pval" */
-#define TR1_XXX1                        0x00000040L     /* Later */
-#define TR1_GOOD                        0x00000080L     /* Hack - a "good" object. */
-#define TR1_STEALTH                     0x00000100L     /* Stealth += "pval" */
-#define TR1_SEARCH                      0x00000200L     /* Search += "pval" */
-#define TR1_INFRA                       0x00000400L     /* Infra += "pval" */
-#define TR1_TUNNEL                      0x00000800L     /* Tunnel += "pval" */
-#define TR1_SPEED                       0x00001000L     /* Speed += "pval" */
-#define TR1_BLOWS                       0x00002000L     /* Blows += "pval" */
-#define TR1_CHAOTIC                     0x00004000L
-#define TR1_VAMPIRIC                    0x00008000L
-#define TR1_SLAY_ANIMAL         0x00010000L
-#define TR1_SLAY_EVIL           0x00020000L
-#define TR1_SLAY_UNDEAD         0x00040000L
-#define TR1_SLAY_DEMON          0x00080000L
-#define TR1_SLAY_ORC            0x00100000L
-#define TR1_SLAY_TROLL          0x00200000L
-#define TR1_SLAY_GIANT          0x00400000L
-#define TR1_SLAY_DRAGON         0x00800000L
-#define TR1_KILL_DRAGON         0x01000000L     /* Execute Dragon */
+#define TR1_STR			0x00000001L		/* STR += "pval" */
+#define TR1_INT			0x00000002L		/* INT += "pval" */
+#define TR1_WIS			0x00000004L		/* WIS += "pval" */
+#define TR1_DEX			0x00000008L		/* DEX += "pval" */
+#define TR1_CON			0x00000010L		/* CON += "pval" */
+#define TR1_CHR			0x00000020L		/* CHR += "pval" */
+#define TR1_XXX1		0x00000040L		/* Unused */
+#define TR1_XXX2		0x00000080L		/* Unused */
+#define TR1_STEALTH		0x00000100L		/* Stealth += "pval" */
+#define TR1_SEARCH		0x00000200L		/* Search += "pval" */
+#define TR1_INFRA		0x00000400L		/* Infra += "pval" */
+#define TR1_TUNNEL		0x00000800L		/* Tunnel += "pval" */
+#define TR1_SPEED		0x00001000L		/* Speed += "pval" */
+#define TR1_BLOWS		0x00002000L		/* Blows += "pval" */
+#define TR1_CHAOTIC		0x00004000L
+#define TR1_VAMPIRIC	0x00008000L
+#define TR1_SLAY_ANIMAL 0x00010000L
+#define TR1_SLAY_EVIL	0x00020000L
+#define TR1_SLAY_UNDEAD 0x00040000L
+#define TR1_SLAY_DEMON	0x00080000L
+#define TR1_SLAY_ORC	0x00100000L
+#define TR1_SLAY_TROLL	0x00200000L
+#define TR1_SLAY_GIANT	0x00400000L
+#define TR1_SLAY_DRAGON 0x00800000L
+#define TR1_KILL_DRAGON 0x01000000L		/* Execute Dragon */
 #define TR1_X15_DRAGON	0x01800000L
-#define TR1_ALL_SLAY_DRAGON	(TR1_SLAY_DRAGON | TR1_KILL_DRAGON | TR1_X15_DRAGON)
-#define TR1_VORPAL                      0x02000000L     /* Later */
-#define TR1_IMPACT                      0x04000000L     /* Cause Earthquakes */
-#define TR1_BRAND_POIS                  0x08000000L
-#define TR1_BRAND_ACID          0x10000000L
-#define TR1_BRAND_ELEC          0x20000000L
-#define TR1_BRAND_FIRE          0x40000000L
-#define TR1_BRAND_COLD          0x80000000L
+#define TR1_VORPAL		0x02000000L		/* Later */
+#define TR1_IMPACT		0x04000000L		/* Cause Earthquakes */
+#define TR1_BRAND_POIS	0x08000000L
+#define TR1_BRAND_ACID	0x10000000L
+#define TR1_BRAND_ELEC	0x20000000L
+#define TR1_BRAND_FIRE	0x40000000L
+#define TR1_BRAND_COLD	0x80000000L
 
-#define TR2_SUST_STR            0x00000001L
-#define TR2_SUST_INT            0x00000002L
-#define TR2_SUST_WIS            0x00000004L
-#define TR2_SUST_DEX            0x00000008L
-#define TR2_SUST_CON            0x00000010L
-#define TR2_SUST_CHR            0x00000020L
-#define TR2_RAND_RESIST                 0x00000040L     /* Gives a random resistance */
-#define TR2_RAND_POWER                  0x00000080L     /* Gives a random power */
-#define TR2_IM_ACID                     0x00000100L
-#define TR2_IM_ELEC                     0x00000200L
-#define TR2_IM_FIRE                     0x00000400L
-#define TR2_IM_COLD                     0x00000800L
-#define TR2_RAND_EXTRA                  0x00001000L     /* Gives either a random resistance or power */
-#define TR2_REFLECT                     0x00002000L     /* Reflect 'bolts' */
-#define TR2_FREE_ACT            0x00004000L     /* Free Action */
-#define TR2_HOLD_LIFE           0x00008000L     /* Hold Life */
-#define TR2_RES_ACID            0x00010000L
-#define TR2_RES_ELEC            0x00020000L
-#define TR2_RES_FIRE            0x00040000L
-#define TR2_RES_COLD            0x00080000L
-#define TR2_RES_POIS            0x00100000L
-#define TR2_RES_FEAR            0x00200000L     /* Added for Zangband */
-#define TR2_RES_LITE            0x00400000L
-#define TR2_RES_DARK            0x00800000L
-#define TR2_RES_BLIND           0x01000000L
-#define TR2_RES_CONF            0x02000000L
-#define TR2_RES_SOUND           0x04000000L
-#define TR2_RES_SHARDS          0x08000000L
-#define TR2_RES_NETHER          0x10000000L
-#define TR2_RES_NEXUS           0x20000000L
-#define TR2_RES_CHAOS           0x40000000L
-#define TR2_RES_DISEN           0x80000000L
+#define TR1_ALL_SLAY_DRAGON	\
+	(TR1_SLAY_DRAGON | TR1_KILL_DRAGON | TR1_X15_DRAGON)
+
+#define TR2_SUST_STR	0x00000001L
+#define TR2_SUST_INT	0x00000002L
+#define TR2_SUST_WIS	0x00000004L
+#define TR2_SUST_DEX	0x00000008L
+#define TR2_SUST_CON	0x00000010L
+#define TR2_SUST_CHR	0x00000020L
+#define TR2_RAND_RESIST 0x00000040L		/* Gives a random resistance */
+#define TR2_RAND_POWER	0x00000080L		/* Gives a random power */
+#define TR2_IM_ACID		0x00000100L
+#define TR2_IM_ELEC		0x00000200L
+#define TR2_IM_FIRE		0x00000400L
+#define TR2_IM_COLD		0x00000800L
+#define TR2_RAND_EXTRA	0x00001000L		/* Gives either a random resistance or power */
+#define TR2_REFLECT		0x00002000L		/* Reflect 'bolts' */
+#define TR2_FREE_ACT	0x00004000L		/* Free Action */
+#define TR2_HOLD_LIFE	0x00008000L		/* Hold Life */
+#define TR2_RES_ACID	0x00010000L
+#define TR2_RES_ELEC	0x00020000L
+#define TR2_RES_FIRE	0x00040000L
+#define TR2_RES_COLD	0x00080000L
+#define TR2_RES_POIS	0x00100000L
+#define TR2_RES_FEAR	0x00200000L		/* Added for Zangband */
+#define TR2_RES_LITE	0x00400000L
+#define TR2_RES_DARK	0x00800000L
+#define TR2_RES_BLIND	0x01000000L
+#define TR2_RES_CONF	0x02000000L
+#define TR2_RES_SOUND	0x04000000L
+#define TR2_RES_SHARDS	0x08000000L
+#define TR2_RES_NETHER	0x10000000L
+#define TR2_RES_NEXUS	0x20000000L
+#define TR2_RES_CHAOS	0x40000000L
+#define TR2_RES_DISEN	0x80000000L
 
 
-#define TR3_SH_FIRE							0x00000001L     /* Immolation (Fire) */
-#define TR3_SH_ELEC							0x00000002L     /* Electric Sheath */
-#define TR3_SHOW_ARMOUR						   	0x00000004L     /* Always show AC */
-#define TR3_AUTO_CURSE          0x00000008L     /* Item is self-cursing */
-#define TR3_NO_TELE                     0x00000010L     /* Anti-teleportation */
-#define TR3_NO_MAGIC                    0x00000020L     /* Anti-magic */
-#define TR3_WRAITH                      0x00000040L     /* Wraithform */
-#define TR3_TY_CURSE                    0x00000080L     /* The Ancient Curse */
-#define TR3_EASY_KNOW           0x00000100L     /* Aware -> Known */
-#define TR3_HIDE_TYPE           0x00000200L     /* Hide "pval" description */
-#define TR3_SHOW_MODS           0x00000400L     /* Always show Tohit/Todam */
-#define TR3_INSTA_ART           0x00000800L     /* Item must be an artifact */
-#define TR3_FEATHER                     0x00001000L     /* Feather Falling */
-#define TR3_LITE                        0x00002000L     /* Permanent Light */
-#define TR3_SEE_INVIS           0x00004000L     /* See Invisible */
-#define TR3_TELEPATHY           0x00008000L     /* Telepathy */
-#define TR3_SLOW_DIGEST         0x00010000L     /* Item slows down digestion */
-#define TR3_REGEN                       0x00020000L     /* Item induces regeneration */
-#define TR3_XTRA_MIGHT          0x00040000L     /* Bows get extra multiplier */
-#define TR3_XTRA_SHOTS          0x00080000L     /* Bows get extra shots */
-#define TR3_IGNORE_ACID         0x00100000L     /* Item ignores Acid Damage */
-#define TR3_IGNORE_ELEC         0x00200000L     /* Item ignores Elec Damage */
-#define TR3_IGNORE_FIRE         0x00400000L     /* Item ignores Fire Damage */
-#define TR3_IGNORE_COLD         0x00800000L     /* Item ignores Cold Damage */
-#define TR3_IGNORE_ALL	(TR3_IGNORE_ACID | TR3_IGNORE_ELEC | TR3_IGNORE_FIRE | TR3_IGNORE_COLD) /* Many items ignore all four. */
-#define TR3_ACTIVATE            0x01000000L     /* Item can be activated */
-#define TR3_DRAIN_EXP           0x02000000L     /* Item drains Experience */
-#define TR3_TELEPORT            0x04000000L     /* Item teleports player */
-#define TR3_AGGRAVATE           0x08000000L     /* Item aggravates monsters */
-#define TR3_BLESSED                     0x10000000L     /* Item is Blessed */
-#define TR3_CURSED                      0x20000000L     /* Item is Cursed */
-#define TR3_HEAVY_CURSE         0x40000000L     /* Item is Heavily Cursed */
-#define TR3_PERMA_CURSE         0x80000000L     /* Item is Perma Cursed */
+#define TR3_SH_FIRE		0x00000001L		/* Immolation (Fire) */
+#define TR3_SH_ELEC		0x00000002L		/* Electric Sheath */
+#define TR3_SHOW_ARMOUR	0x00000004L		/* Always show AC */
+#define TR3_AUTO_CURSE	0x00000008L		/* Item is self-cursing */
+#define TR3_NO_TELE		0x00000010L		/* Anti-teleportation */
+#define TR3_NO_MAGIC	0x00000020L		/* Anti-magic */
+#define TR3_WRAITH		0x00000040L		/* Wraithform */
+#define TR3_TY_CURSE	0x00000080L		/* The Ancient Curse */
+#define TR3_EASY_KNOW	0x00000100L		/* Aware -> Known */
+#define TR3_HIDE_TYPE	0x00000200L		/* Hide "pval" description */
+#define TR3_SHOW_MODS	0x00000400L		/* Always show Tohit/Todam */
+#define TR3_GOOD		0x00000800L		/* Hack - a "good" object. */
+#define TR3_FEATHER		0x00001000L		/* Feather Falling */
+#define TR3_LITE		0x00002000L		/* Permanent Light */
+#define TR3_SEE_INVIS	0x00004000L		/* See Invisible */
+#define TR3_TELEPATHY	0x00008000L		/* Telepathy */
+#define TR3_SLOW_DIGEST	0x00010000L		/* Item slows down digestion */
+#define TR3_REGEN		0x00020000L		/* Item induces regeneration */
+#define TR3_XTRA_MIGHT	0x00040000L		/* Bows get extra multiplier */
+#define TR3_XTRA_SHOTS	0x00080000L		/* Bows get extra shots */
+#define TR3_IGNORE_ACID	0x00100000L		/* Item ignores Acid Damage */
+#define TR3_IGNORE_ELEC	0x00200000L		/* Item ignores Elec Damage */
+#define TR3_IGNORE_FIRE	0x00400000L		/* Item ignores Fire Damage */
+#define TR3_IGNORE_COLD	0x00800000L		/* Item ignores Cold Damage */
+#define TR3_ACTIVATE	0x01000000L		/* Item can be activated */
+#define TR3_DRAIN_EXP	0x02000000L		/* Item drains Experience */
+#define TR3_TELEPORT	0x04000000L		/* Item teleports player */
+#define TR3_AGGRAVATE	0x08000000L		/* Item aggravates monsters */
+#define TR3_BLESSED		0x10000000L		/* Item is Blessed */
+#define TR3_CURSED		0x20000000L		/* Item is Cursed */
+#define TR3_HEAVY_CURSE	0x40000000L		/* Item is Heavily Cursed */
+#define TR3_PERMA_CURSE	0x80000000L		/* Item is Perma Cursed */
 
+/* Many items ignore all four. */
+#define TR3_IGNORE_ALL \
+	(TR3_IGNORE_ACID | TR3_IGNORE_ELEC | TR3_IGNORE_FIRE | TR3_IGNORE_COLD) 
 
 /*
  * Hack -- flag set 1 -- mask for "pval-dependant" flags.
@@ -2430,7 +2434,7 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define TR1_PVAL_MASK   \
 	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
-     TR1_CON | TR1_CHR | \
+	 TR1_CON | TR1_CHR | \
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS )
 
@@ -2905,6 +2909,12 @@ logaux(x, 1) logaux(x, 0) 255)
 #define cursed_p(T) \
 	((T)->ident & (IDENT_CURSED))
 
+/*
+ * Object kind which is created by the normal item generation routine
+ * (rather than the insta-art one or under special circumstances).
+ */
+#define kind_created_p(T) \
+	((T)->chance[0] != 0)
 
 
 /*

@@ -880,7 +880,7 @@ s32b flag_cost(object_type * o_ptr, bool all)
     if ((f1 & TR1_BLOWS) && (plusses > 0))
             total += (10000 + (2500 * plusses));
     if (f1 & TR1_XXX1) total += 0;
-    if (f1 & TR1_GOOD) total += 0;
+    if (f1 & TR1_XXX2) total += 0;
     if (f1 & TR1_SLAY_ANIMAL) total += 3500;
     if (f1 & TR1_SLAY_EVIL) total += 4500;
     if (f1 & TR1_SLAY_UNDEAD) total += 3500;
@@ -943,7 +943,7 @@ s32b flag_cost(object_type * o_ptr, bool all)
     if (f3 & TR3_EASY_KNOW) total += 0;
     if (f3 & TR3_HIDE_TYPE) total += 0;
     if (f3 & TR3_SHOW_MODS) total += 0;
-    if (f3 & TR3_INSTA_ART) total += 0;
+    if (f3 & TR3_GOOD) total += 0;
     if (f3 & TR3_FEATHER) total += 1250;
     if (f3 & TR3_LITE) total += 1250;
     if (f3 & TR3_SEE_INVIS) total += 2000;
@@ -3890,7 +3890,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
  */
 static bool kind_is_good(int k_idx)
 {
-	return ((k_info[k_idx].flags1 & TR1_GOOD) != 0);
+	return ((k_info[k_idx].flags3 & TR3_GOOD) != 0);
 }
 
 

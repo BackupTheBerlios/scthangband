@@ -328,8 +328,8 @@ static void spoil_obj_desc(cptr fname)
 			/* Skip wrong tval's */
 			if (k_ptr->tval != group_item[i].tval) continue;
 
-			/* Hack -- Skip instant-artifacts */
-			if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
+			/* Hack -- skip items which only have special generation methods. */
+			if (!kind_created_p(k_ptr)) continue;
 
 			/* Save the index */
 			who[n++] = k;
