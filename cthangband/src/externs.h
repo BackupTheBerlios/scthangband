@@ -563,12 +563,6 @@ extern s16b error_idx;
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
 extern s16b error_line;
 #endif
-
-
-
-
-
-
 #if (defined(INIT2_C) || defined(MAIN_ACN_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C))
 extern void init_angband(void);
 #endif
@@ -581,9 +575,6 @@ extern bool has_flag(u16b flag);
 #if (defined(LOAD_C) || defined(SAVE_C))
 extern errr rd_savefile_new(void);
 #endif
-
-
-
 
 /* main-acn.c */
 
@@ -1835,9 +1826,6 @@ extern int usleep(huge usecs);
 #if (defined(SET_UID)) && (defined(MAIN_C) || defined(UTIL_C))
 extern void user_name(char *buf, int id);
 #endif
-
-
-
 #if (!(defined(ACORN))) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 #endif
@@ -2213,15 +2201,9 @@ extern s16b inven_cnt;
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern s16b equip_cnt;
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern s16b o_cnt ;
 #endif
-
-
-
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
 extern s16b m_cnt ;
 #endif
@@ -2354,9 +2336,6 @@ extern bool speak_unique;
 #if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool small_levels;
 #endif
-
-
-
 #if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool empty_levels;
 #endif
@@ -2846,9 +2825,6 @@ extern byte spell_order[128];
 #if (defined(BIRTH_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern s16b player_hp[100];
 #endif
-
-
-
 #if (defined(GENERATE_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern vault_type *v_info;
 #endif
@@ -2858,9 +2834,6 @@ extern char *v_name;
 #if (defined(GENERATE_C) || defined(INIT2_C) || defined(VARIABLE_C))
 extern char *v_text;
 #endif
-
-
-
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern feature_type *f_info;
 #endif
@@ -2870,9 +2843,6 @@ extern char *f_name;
 #if (defined(INIT2_C) || defined(VARIABLE_C))
 extern char *f_text;
 #endif
-
-
-
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern object_kind *k_info;
 #endif
@@ -2882,9 +2852,6 @@ extern char *k_name;
 #if (defined(INIT2_C) || defined(VARIABLE_C))
 extern char *k_text;
 #endif
-
-
-
 #if (defined(DEFINES_H) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern unident_type *u_info;
 #endif
@@ -2894,9 +2861,6 @@ extern char *u_name;
 #if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern s16b *pid_base;
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern artifact_type *a_info;
 #endif
@@ -2906,9 +2870,6 @@ extern char *a_name;
 #if (defined(VARIABLE_C))
 extern char *a_text;
 #endif
-
-
-
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern ego_item_type *e_info;
 #endif
@@ -2918,9 +2879,6 @@ extern char *e_name;
 #if (defined(VARIABLE_C))
 extern char *e_text;
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(QUEST_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern monster_race *r_info;
 #endif
@@ -2930,9 +2888,6 @@ extern char *r_name;
 #if (defined(INIT2_C) || defined(MONSTER1_C) || defined(VARIABLE_C) || defined(WIZARD1_C))
 extern char *r_text;
 #endif
-
-
-
 #if (defined(INIT2_C) || defined(LOAD_C) || defined(MONSTER1_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern death_event_type *death_event;
 #endif
@@ -3002,9 +2957,6 @@ extern bool (*get_obj_num_hook)(int k_idx);
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_WIN_C) || defined(VARIABLE_C))
 extern bool angband_keymap_flag ;
 #endif
-
-
-
 #if (defined(OBJECT1_C) || defined(VARIABLE_C) || defined(XTRA1_C))
 extern bool mystic_notify_aux;
 #endif
@@ -3089,9 +3041,6 @@ extern void handle_stuff(void);
 #if (defined(CMD1_C) || defined(OBJECT1_C) || defined(XTRA1_C))
 extern bool ma_empty_hands(void);
 #endif
-
-
-
 #if (defined(FILES_C) || defined(XTRA1_C))
 extern bool skill_check_possible(int index);
 #endif
@@ -3589,7 +3538,7 @@ extern FILE *my_fopen_temp(char *buf, int max);
 /* init1.c */
 
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_z_info(char *buf, header *head, vptr *extra);
+extern errr parse_z_info(char *buf, header *head, vptr UNUSED *extra);
 #endif
 
 
@@ -3658,7 +3607,7 @@ extern errr init_info_txt(FILE *fp, char *buf, header *head);
 extern errr parse_k_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_u_info(char *buf, header *head, vptr *extra);
+extern errr parse_u_info(char *buf, header *head, vptr UNUSED *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
 extern errr parse_a_info(char *buf, header *head, vptr *extra);
@@ -3673,6 +3622,6 @@ extern errr parse_r_info(char *buf, header *head, vptr *extra);
 extern errr parse_v_info(char *buf, header *head, vptr *extra);
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
-extern errr parse_r_event(char *buf, header *head, vptr *r_idx);
+extern errr parse_r_event(char *buf, header *head, vptr *extra);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
