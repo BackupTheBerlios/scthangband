@@ -2358,10 +2358,9 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
                              m_name, m_poss,
                              ((r_ptr->flags1) & RF1_UNIQUE ?
                               "minions" : "kin"));
-             summon_kin_type = r_ptr->d_char; /* Big hack */
              for (k = 0; k < 6; k++)
              {
-				count += summon_specific_aux(y, x, rlev, SUMMON_KIN, TRUE, friendly);
+				count += summon_specific_aux(y, x, rlev, SUMMON_NO_UNIQUES | r_ptr->d_char, TRUE, friendly);
              }
              if (blind && count) msg_print("You hear many things appear nearby.");
 
@@ -3860,10 +3859,9 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
                             m_name, m_poss,
                             ((r_ptr->flags1) & RF1_UNIQUE ?
                              "minions" : "kin"));
-            summon_kin_type = r_ptr->d_char; /* Big hack */
             for (k = count = 0; k < 6; k++)
             {
-                   count += summon_specific(y, x, rlev, SUMMON_KIN);
+                   count += summon_specific(y, x, rlev, SUMMON_NO_UNIQUES | r_ptr->d_char);
             }
             if (blind && count) msg_print("You hear many things appear nearby.");
 

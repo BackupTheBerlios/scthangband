@@ -2780,11 +2780,10 @@ bool alloc_horde(int y, int x)
 
     m_ptr = &m_list[hack_m_idx_ii];
 
-    summon_kin_type = r_ptr->d_char;
-
     for (attempts = randint(10) + 5; attempts; attempts--)
     {
-        (void) summon_specific(m_ptr->fy, m_ptr->fx, (dun_depth), SUMMON_KIN);
+        (void) summon_specific(m_ptr->fy, m_ptr->fx, (dun_depth),
+			r_ptr->d_char | SUMMON_NO_UNIQUES);
     }
 
     return TRUE;
@@ -2948,27 +2947,18 @@ static bool summon_specific_okay(int r_idx)
 	if ((summon_specific_type & SUMMON_NO_UNIQUES) &&
 		(r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);
 
+	/* Hack - summon by symbol. */
+	if (!(summon_specific_type & ~SUMMON_NO_UNIQUES & 0xFF00))
+	{
+		return (r_ptr->d_char == (summon_specific_type & ~SUMMON_NO_UNIQUES));
+	}
+
 	/* Check our requirements */
 	switch (summon_specific_type & ~(SUMMON_NO_UNIQUES))
 	{
-		case SUMMON_ANT:
-		{
-			return (r_ptr->d_char == 'a');
-		}
-
-		case SUMMON_SPIDER:
-		{
-			return (r_ptr->d_char == 'S');
-		}
-
 		case SUMMON_HOUND:
 		{
 			return ((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z'));
-		}
-
-		case SUMMON_HYDRA:
-		{
-			return (r_ptr->d_char == 'M');
 		}
 
 		case SUMMON_CTHULOID:
@@ -2998,11 +2988,6 @@ static bool summon_specific_okay(int r_idx)
 			        (r_ptr->d_char == 'W'));
 		}
 
-		case SUMMON_HI_DRAGON:
-		{
-			return (r_ptr->d_char == 'D');
-		}
-
 		case SUMMON_GOO:
 		{
             return !!(r_ptr->flags3 & (RF3_GREAT_OLD_ONE)); 
@@ -3018,38 +3003,6 @@ static bool summon_specific_okay(int r_idx)
 			/* Should this use RF1_ORC? */
 			return !!(r_ptr->flags3 & (RF3_ORC));
 		}
-        case SUMMON_KOBOLD:
-		{
-			return (r_ptr->d_char == 'k');
-		}
-        case SUMMON_YEEK:
-		{
-            return (r_ptr->d_char == 'y');
-		}
-        case SUMMON_HUMAN:
-		{
-            return (r_ptr->d_char == 'p');
-		}
-        case SUMMON_MOULD:
-		{
-			return (r_ptr->d_char == 'm');
-		}
-        case SUMMON_BAT:
-		{
-			return (r_ptr->d_char == 'b');
-		}
-        case SUMMON_QUYLTHULG:
-		{
-			return (r_ptr->d_char == 'Q');
-		}
-        case SUMMON_VORTEX:
-		{
-			return (r_ptr->d_char == 'v');
-		}
-        case SUMMON_TREASURE:
-		{
-			return (r_ptr->d_char == '$');
-		}
 
         case SUMMON_MIMIC:
 		{
@@ -3059,17 +3012,13 @@ static bool summon_specific_okay(int r_idx)
                      (r_ptr->d_char == '$') ||
                      (r_ptr->d_char == '|'));
 		}
+
         case SUMMON_REAVER:
         {
             return !!(strstr(format("%v", monster_desc_aux_f3, r_ptr, 1, 0),
 				"Black reaver"));
         }
 
-
-        case SUMMON_KIN:
-        {
-			return (r_ptr->d_char == summon_kin_type);
-        }
 
         case SUMMON_ANIMAL:
 		{

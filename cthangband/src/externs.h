@@ -2653,9 +2653,9 @@ extern s16b hack_m_idx_ii;
 #if (defined(DUNGEON_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern bool multi_rew;
 #endif
-#if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(VARIABLE_C))
-extern char summon_kin_type;
-#endif
+
+
+
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(VARIABLE_C))
 extern int total_friends;
 #endif
