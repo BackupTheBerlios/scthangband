@@ -1639,7 +1639,7 @@ extern quest_type *cnv_monster_to_quest(monster_race *r_ptr);
 
 /* readdib.c */
 
-#if (defined(READDIB_H) || defined(MAIN_WIN_C) || defined(READDIB_C))
+#if ((defined(WINDOWS) && defined(USE_GRAPHICS))) && (defined(READDIB_H) || defined(MAIN_WIN_C) || defined(READDIB_C))
 extern BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo);
 #endif
 
