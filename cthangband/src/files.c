@@ -3121,7 +3121,8 @@ static void display_player_name_stats(void)
 		prt_num("Weight       ", (int)p_ptr->wt, 4, 32, TERM_L_BLUE);
 		prt_num("Social Class ", (int)p_ptr->sc, 5, 32, TERM_L_BLUE);
 		put_str("Birthday",6,32);
-		c_put_str(TERM_L_BLUE,format("%v", p_ptr->birthday),6,48);
+		c_put_str(TERM_L_BLUE,format("%v", day_to_date_f1, p_ptr->birthday),
+			6,48);
 
 		/* Display the stats */
 		for (i = 0; i < 6; i++)
