@@ -3803,11 +3803,17 @@ void do_cmd_suicide(void)
  */
 void do_cmd_save_game(bool is_autosave)
 {
+	/* Enable backwards compatibility */
+	bool as_4_1_0 = FALSE;
+	
     /* Autosaves do not disturb */
     if (!is_autosave)
     {
         /* Disturb the player */
         disturb(1, 0);
+
+	/* Determine the appropriate save version */
+	as_4_1_0 = get_check("Save a 4.1.0 save file? ");
     }
 	else if (!autosave_q)
 	{
@@ -3833,7 +3839,7 @@ void do_cmd_save_game(bool is_autosave)
 	signals_ignore_tstp();
 
 	/* Save the player */
-	if (save_player())
+	if (save_player(as_4_1_0))
 	{
 		if (!is_autosave || !autosave_q) prt("Saving game... done.", 0, 0);
 	}
@@ -4985,7 +4991,7 @@ void close_game(void)
 		if (total_winner) kingly();
 
 		/* Save memories */
-		if (!save_player()) msg_print("death save failed!");
+		if (!save_player(FALSE)) msg_print("death save failed!");
 
 		/* Dump bones file */
 		make_bones();
@@ -5062,7 +5068,7 @@ void exit_game_panic(void)
 	(void)strcpy(died_from, "(panic save)");
 
 	/* Panic save, or get worried */
-	if (!save_player()) quit("panic save failed!");
+	if (!save_player(FALSE)) quit("panic save failed!");
 
 	/* Successful panic save */
 	quit("panic save succeeded!");
@@ -5278,7 +5284,7 @@ static void handle_signal_abort(int sig)
 	signals_ignore_tstp();
 
 	/* Attempt to save */
-	if (save_player())
+	if (save_player(FALSE))
 	{
 		Term_putstr(45, 23, -1, TERM_RED, "Panic save succeeded!");
 	}

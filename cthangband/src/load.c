@@ -288,7 +288,17 @@ static void rd_item(object_type *o_ptr)
 		rd_byte(&old_dd);
 		rd_byte(&old_ds);
 
-		rd_byte(&o_ptr->ident);
+		/* ident enlarged to enable splitting of IDENT_SENSE */
+		if (!older_than(4,1,1))
+		{
+			rd_u16b(&o_ptr->ident);
+		}
+		else
+		{
+			byte temp;
+			rd_byte(&temp);
+			o_ptr->ident = (u32b)(IDENT_SENSE * (temp & 0x01)) + (temp & ~0x01);
+		}
 
 		rd_byte(&o_ptr->marked);
 
@@ -1030,6 +1040,10 @@ static void rd_extra(void)
 
 	/* Current turn */
 	rd_s32b(&turn);
+
+	/* Turn on which auto-cursing will next occur */
+	if (!older_than(4,1,1))
+		rd_s32b(&curse_turn);
 }
 
 

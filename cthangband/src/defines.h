@@ -33,13 +33,13 @@
 
 
 /*
- * Current version number of Cthangband: 4.1.0
+ * Current version number of Cthangband: 4.1.0 (increased to 4.1.1 unofficially)
  */
 
 /* <<VERSION STAMP>> */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   1
-#define VERSION_PATCH   0
+#define VERSION_PATCH   1
 
 
 /*
@@ -2162,16 +2162,18 @@
 /*
  * Special Object Flags
  */
-#define IDENT_SENSE             0x01    /* Item has been "sensed" */
-#define IDENT_FIXED             0x02    /* Item has been "haggled" */
-#define IDENT_EMPTY             0x04    /* Item charges are known */
-#define IDENT_KNOWN             0x08    /* Item abilities are known */
-#define IDENT_STOREB    0x10    /* Item is storebought !!!! */
-#define IDENT_MENTAL    0x20    /* Item information is known */
-#define IDENT_CURSED    0x40    /* Item is temporarily cursed */
-#define IDENT_BROKEN    0x80    /* Item is permanently worthless */
 
+#define IDENT_FIXED             0x0002    /* Item has been "haggled" */
+#define IDENT_EMPTY             0x0004    /* Item charges are known */
+#define IDENT_KNOWN             0x0008    /* Item abilities are known */
+#define IDENT_STOREB    0x0010    /* Item is storebought !!!! */
+#define IDENT_MENTAL    0x0020    /* Item information is known */
+#define IDENT_CURSED    0x0040    /* Item is temporarily cursed */
+#define IDENT_BROKEN    0x0080    /* Item is permanently worthless */
+#define IDENT_SENSE_CURSED	0x0100	/* Item has known (un)cursed status */
+#define IDENT_SENSE_VALUE	0x0200	/* Item is known to be an artefact */
 
+#define IDENT_SENSE	(IDENT_SENSE_CURSED | IDENT_SENSE_VALUE) /* Item has been pseudo-identified */
 
 /*
  * Special Monster Flags (all temporary)

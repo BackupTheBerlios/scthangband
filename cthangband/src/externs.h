@@ -557,6 +557,7 @@ extern void do_cmd_activate(int);
 /* dungeon.c */
 extern void play_game(bool new_game);
 extern bool psychometry(void);
+extern void curse(object_type *o_ptr);
 
 /* files.c */
 extern void safe_setuid_drop(void);
@@ -727,7 +728,7 @@ extern void get_cantrip_info(char*, int);
 extern int get_cantrip(int*, int);
 
 /* save.c */
-extern bool save_player(void);
+extern bool save_player(bool);
 extern bool load_player(void);
 
 /* spells1.c */

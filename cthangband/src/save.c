@@ -5,6 +5,12 @@
 #include "angband.h"
 
 
+/*
+ * Hack -- actual patch version of save file (0 for 4.1.0, 1 for modified version (known as 4.1.1)).
+ * Needed to give the user control over the save file generated.
+ */
+static byte vpatch;
+
 #ifdef FUTURE_SAVEFILES
 
 /*
@@ -201,10 +207,10 @@ static void put_string(char *str)
 }
 
 
-
 /*
- * Write a savefile for Angband 2.8.0
+ * Write a savefile for Angband 2.8.0 (not that you'd ever want to, of course).
  */
+#if 0
 static errr wr_savefile(void)
 {
 	int             i;
@@ -285,8 +291,7 @@ static errr wr_savefile(void)
 	/* Success */
 	return (0);
 }
-
-
+#endif
 
 
 
@@ -561,7 +566,15 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->dd);
 	wr_byte(o_ptr->ds);
 
-	wr_byte(o_ptr->ident);
+	if (vpatch == 0)
+	{
+		byte temp = (o_ptr->ident & 0xFE) | (0x01 * ((o_ptr->ident & IDENT_SENSE) == IDENT_SENSE));
+		wr_byte(temp);
+	}
+	else
+	{
+		wr_u16b(o_ptr->ident);
+	}
 
 	wr_byte(o_ptr->marked);
 
@@ -1081,6 +1094,9 @@ static void wr_extra(void)
 
 	/* Current turn */
 	wr_s32b(turn);
+
+	if (vpatch > 0)
+		wr_s32b(curse_turn);
 }
 
 
@@ -1280,7 +1296,7 @@ static bool wr_savefile_new(void)
 	xor_byte = 0;
     wr_byte(VERSION_MINOR);
 	xor_byte = 0;
-    wr_byte(VERSION_PATCH);
+	wr_byte(vpatch);
 	xor_byte = 0;
 
 	tmp8u = (byte)(rand_int(256));
@@ -1522,12 +1538,14 @@ static bool save_player_aux(char *name)
 /*
  * Attempt to save the player in a savefile
  */
-bool save_player(void)
+bool save_player(bool as_4_1_0)
 {
+
 	int             result = FALSE;
 
 	char    safe[1024];
 
+	vpatch = (as_4_1_0) ? 0 : VERSION_PATCH;
 
 #ifdef SET_UID
 

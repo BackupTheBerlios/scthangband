@@ -529,7 +529,7 @@ struct object_type
 
 	s16b timeout;		/* Timeout Counter */
 
-	byte ident;			/* Special flags  */
+	u16b ident;			/* Special flags  */
 	
 	byte handed;     /* Number of hands needed to wield  */
 
