@@ -116,9 +116,16 @@
 
 /* Try to mark unused variables as such in a way the compiler understands. */
 #if defined(__GNUC__) || defined(__TINYC__)
-#define UNUSED __attribute__((unused))
+#define UNUSED __attribute__((__unused__))
 #else
 #define UNUSED
+#endif
+
+/* Indicate functions which have no side-effects if possible. */
+#ifdef __GNUC__
+#define PURE __attribute__((__pure__))
+#else
+#define PURE
 #endif
 
 /* Avoid variable-length arrays unless allowed and supported. */

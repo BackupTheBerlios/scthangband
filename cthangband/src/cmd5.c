@@ -2423,7 +2423,6 @@ void do_cmd_cast(void)
 		       break;
 	   case 2: /* Detect Doors and Traps */
 			(void)detect_traps();
-			mark_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
 		       break; 
@@ -3809,7 +3808,6 @@ void do_cmd_cantrip(void)
         break;
         case 8: /* Detect Doors & Traps */
 			(void)detect_traps();
-			mark_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
         break;
@@ -4175,7 +4173,6 @@ void do_cmd_invoke(void)
 		       break;
 	   case 5: /* Detect Traps + Secret Doors */
 			(void)detect_traps();
-			mark_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
 		       break;
@@ -4317,7 +4314,6 @@ void do_cmd_invoke(void)
 		       break;
 	   case 2: /* Detect Doors + Traps */
 			(void)detect_traps();
-			mark_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
 		       break; 
@@ -4357,7 +4353,6 @@ void do_cmd_invoke(void)
        case 10: /* Nature Awareness -- downgraded */
 			map_area();
 			(void)detect_traps();
-			mark_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
 			(void)detect_monsters_normal();
@@ -5010,7 +5005,6 @@ void do_cmd_mindcraft(void)
 				if (psi > 4)
 				{
 					b |=  detect_traps();
-					mark_traps();
 				}
 			}
 			else

@@ -1675,26 +1675,33 @@ bool lose_all_info(void)
 
 
 /*
- * Set CAVE_TRAP for every square covered by detect_traps().
- * This is a separate function as trap detection could caused by an
- * unidentified object. It must cover the same area, of course.
+ * Check whether the current panel contains traps.
  */
-void mark_traps(void)
+PURE bool detect_traps_p(void)
 {
 	int x,y;
 
+	/* Scan the current panel */
 	for (y = panel_row_min; y <= panel_row_max; y++)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			cave[y][x].info |= (CAVE_TRAP);
+			/* Access the grid */
+			const cave_type *c_ptr = &cave[y][x];
+
+			/* Detected a trap. */
+			if (c_ptr->feat == FEAT_INVIS ||
+				((c_ptr->feat >= FEAT_TRAP_HEAD) &&
+				(c_ptr->feat <= FEAT_TRAP_TAIL)))
+			{
+				return TRUE;
+			}
 		}
 	}
-
-	p_ptr->redraw |= PR_MAP;
-	redraw_stuff();
+	return FALSE;
 }
-	
+
+
 
 /*
  * Detect all traps on current panel
@@ -1705,8 +1712,6 @@ bool detect_traps(void)
 
 	bool detect = FALSE;
 
-	cave_type *c_ptr;
-
 
 	/* Scan the current panel */
 	for (y = panel_row_min; y <= panel_row_max; y++)
@@ -1714,7 +1719,9 @@ bool detect_traps(void)
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
 			/* Access the grid */
-			c_ptr = &cave[y][x];
+			cave_type *c_ptr = &cave[y][x];
+
+			const u16b old_info = c_ptr->info;
 
 			/* Detect invisible traps */
 			if (c_ptr->feat == FEAT_INVIS)
@@ -1736,6 +1743,12 @@ bool detect_traps(void)
 				/* Obvious */
 				detect = TRUE;
 			}
+
+			/* Remember that this square has been checked at some point. */
+			c_ptr->info |= (CAVE_TRAP);
+
+			/* Redraw if necessary. */
+			if (c_ptr->info != old_info) lite_spot(y, x);
 		}
 	}
 
@@ -2455,7 +2468,9 @@ bool detect_monsters_xxx(u32b match_flag)
 
 
 /*
- * Detect everything
+ * Detect everything.
+ * This function assumes that it is expected to check for traps, and so
+ * should not be called for items which may remain unidentified.
  */
 bool detect_all(void)
 {
@@ -2470,7 +2485,6 @@ bool detect_all(void)
 	if (detect_objects_normal()) detect = TRUE;
 	if (detect_monsters_invis()) detect = TRUE;
 	if (detect_monsters_normal()) detect = TRUE;
-	if (detect) mark_traps();
 	
 	/* Result */
 	return (detect);

@@ -1697,8 +1697,8 @@ extern void self_knowledge(void);
 #if (defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS2_C))
 extern bool lose_all_info(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C))
-extern void mark_traps(void);
+#if (defined(CMD6_C) || defined(SPELLS2_C))
+extern PURE bool detect_traps_p(void);
 #endif
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C))
 extern bool detect_traps(void);
@@ -3545,7 +3545,7 @@ extern void notice_stuff(void);
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void update_stuff(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void redraw_stuff(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))

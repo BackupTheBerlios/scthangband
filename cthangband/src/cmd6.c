@@ -865,7 +865,6 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			(void)do_inc_stat(A_INT);
 			(void)do_inc_stat(A_WIS);
 			(void)detect_traps();
-			mark_traps();
 			(void)detect_doors();
 			(void)detect_stairs();
 			(void)detect_treasure();
@@ -1139,9 +1138,14 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		}
 
 		case OBJ_SCROLL_TRAP_DETECTION:
+		case OBJ_STAFF_TRAP_LOCATION:
+		case OBJ_ROD_TRAP_LOCATION:
 		{
-			if (detect_traps()) (*ident) = TRUE;
-			if (known || ident) mark_traps();
+			if (known || detect_traps_p())
+			{
+				(*ident) = TRUE;
+				detect_traps();
+			}
 			return SUCCESS;
 		}
 
@@ -1423,13 +1427,6 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		case OBJ_STAFF_OBJECT_LOCATION:
 		{
 			if (detect_objects_normal()) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_STAFF_TRAP_LOCATION:
-		{
-			if (detect_traps()) (*ident) = TRUE;
-			if (known || ident) mark_traps();
 			return SUCCESS;
 		}
 
@@ -1833,13 +1830,6 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		case OBJ_WAND_WONDER:
 		{
 			return do_power(choose_random_wand(), dir, FALSE, use, ident);
-		}
-
-		case OBJ_ROD_TRAP_LOCATION:
-		{
-			if (detect_traps()) (*ident) = TRUE;
-			if (known || ident) mark_traps();
-			return SUCCESS;
 		}
 
 		case OBJ_ROD_DOOR_STAIR_LOCATION:
@@ -2901,7 +2891,6 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
                 msg_print("The gemstone drains your vitality...");
                 take_hit(damroll(3,8), "the Gemstone 'Trapezohedron'", MON_DANGEROUS_EQUIPMENT);
 				(void)detect_traps();
-				mark_traps();
 				(void)detect_doors();
 				(void)detect_stairs();
                 if (get_check("Activate recall? "))
