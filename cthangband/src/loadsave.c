@@ -1181,6 +1181,9 @@ const u16b sf_flags_now = 0x00000000
 #ifdef SF_R_INFO_1
 	| SF_R_INFO_1
 #endif
+#ifdef SF_ROD_STACKING
+	| SF_ROD_STACKING
+#endif
 	;
 
 /*

@@ -1258,11 +1258,20 @@ static errr rd_inventory(void)
 	{
 		u16b n;
 
+#ifdef SF_ROD_STACKING
+		s16b next_o_idx;
+#endif /* SF_ROD_STACKING */
+
 		/* Get the next item index */
 		rd_u16b(&n);
 
 		/* Nope, we reached the end */
 		if (n == 0xFFFF) break;
+
+#ifdef SF_ROD_STACKING
+		/* Get the next object. */
+		if (has_flag(SF_ROD_STACKING)) rd_s16b(&next_o_idx);
+#endif /* SF_ROD_STACKING */
 
 		/* Wipe the object */
 		object_wipe(q_ptr);
@@ -1270,17 +1279,14 @@ static errr rd_inventory(void)
 		/* Read the item */
 		rd_item(q_ptr);
 
+#ifdef SF_ROD_STACKING
+		/* Get the next object. */
+		if (has_flag(SF_ROD_STACKING)) q_ptr->next_o_idx = next_o_idx;
+#endif /* SF_ROD_STACKING */
+
 		/* Hack -- verify item */
 		if (!q_ptr->k_idx) return (53);
 
-#ifdef SF_ROD_STACKING
-		if (n == 0xFFFE)
-		{
-			o_ptr->next_o_idx = o_pop();
-			o_ptr = o_list+o_ptr->next_o_idx;
-		}
-		else
-#endif /* SF_ROD_STACKING */
 		/* Wield equipment */
 		if (n >= INVEN_WIELD)
 		{
