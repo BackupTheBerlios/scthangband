@@ -4575,7 +4575,7 @@ bool recharge(int num)
 
 
 	/* Extract the object "level" */
-	lev = k_info[o_ptr->k_idx].level;
+	lev = k_info[o_ptr->k_idx].extra;
 
 	/* Recharge a rod */
 	if (o_ptr->tval == TV_ROD)

@@ -358,9 +358,8 @@ static void wiz_display_item(object_type *o_ptr)
 
 	prt(buf, 2, j);
 
-	prt(format("kind = %-5d  level = %-4d  tval = %-5d  extra = %-5d",
-	           o_ptr->k_idx, k_info[o_ptr->k_idx].level,
-	           o_ptr->tval, k_info[o_ptr->k_idx].extra), 4, j);
+	prt(format("kind = %-5d  tval = %-5d  extra = %-5d",
+	           o_ptr->k_idx, o_ptr->tval, k_info[o_ptr->k_idx].extra), 4, j);
 
 	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
 	           o_ptr->number, o_ptr->weight,
@@ -1415,7 +1414,7 @@ void do_cmd_wiz_learn(void)
 		object_kind *k_ptr = &k_info[i];
 
 		/* Induce awareness */
-		if (k_ptr->level <= command_arg)
+		if (object_k_level(k_ptr) <= command_arg)
 		{
 			/* Get local object */
 			q_ptr = &forge;

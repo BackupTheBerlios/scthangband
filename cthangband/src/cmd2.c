@@ -408,7 +408,7 @@ static void chest_death(int y, int x, s16b o_idx)
 	small = (k_ptr->extra / 10) == XT_CHEST_SMALL;
 
 	/* Determine how much to drop (see above) */
-	number = (k_ptr->extra % 10) * 2;
+	number = chest_number(k_ptr);
 
 	/* Opening a chest */
 	opening_chest = TRUE;
@@ -3559,7 +3559,7 @@ static void use_power(powertype *pw_ptr)
 					o_ptr = &o_list[0 - item];
 			}
 
-				lev = k_info[o_ptr->k_idx].level;
+				lev = wand_power(&k_info[o_ptr->k_idx]);
 
 				if (o_ptr->tval == TV_ROD)
         {

@@ -395,7 +395,7 @@ void compact_objects(int size)
 			if (!o_ptr->k_idx) continue;
 
 			/* Hack -- High level objects start out "immune" */
-			if (k_ptr->level > cur_lev) continue;
+			if (object_k_level(k_ptr) > cur_lev) continue;
 
 			/* Monster */
 			if (o_ptr->held_m_idx)
@@ -1827,6 +1827,17 @@ static bool rarity_roll(byte level, byte rarity)
 }
 
 /*
+ * Copy the normal name of an artefact into a buffer, return it.
+ */
+static cptr get_art_name(artifact_type *a_ptr, char *buf)
+{
+	object_type forge;
+	make_fake_artifact(&forge, a_ptr-a_info);
+	object_desc_store(buf, &forge, FALSE, 0);
+	return buf;
+}
+
+/*
  * Makes an artefact. Is either called from make_object() on a blank object in
  * order to create a "special" artefact, or from apply_magic() on a real object
  * in order to create a "normal" artefact. In the former case, apply_magic()
@@ -1852,10 +1863,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 {
 	int                     i, arts = 0;
 
-	/* Special artefacts are blank objects initially, others never are. */
-	int min = (special) ? 0 : ART_MIN_NORMAL;
-	int max = (special) ? ART_MIN_NORMAL : MAX_A_IDX;
-	C_TNEW(order, max-min, byte);
+	C_TNEW(order, MAX_A_IDX, byte);
 
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number > 1)
@@ -1864,7 +1872,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 		return 0;
 	}
 
-	for (i = min; i < max; i++)
+	for (i = 0; i < MAX_A_IDX; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 
@@ -1874,11 +1882,14 @@ static char make_artifact(object_type *o_ptr, bool special)
 		/* Cannot make an artefact twice */
 		if (a_ptr->cur_num) continue;
 
+		/* Exclude special/non-special artefacts as required. */
+		if (!a_ptr->level2 != !special) continue;
+
 		/* Must have the correct fields if "normal" */
 		if (!special)
 		{
 			if (a_ptr->k_idx != o_ptr->k_idx) continue;
-		}		
+		}
 			
 		/* Note artefact */
 		order[arts++] = i;
@@ -1893,7 +1904,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 
 	/* Roll for each of the available artefacts */
 	while (arts)
-		{
+	{
 		/* Pick an artefact from the list. */
 		artifact_type *a_ptr = &a_info[order[i = rand_int(arts--)]];
 
@@ -1904,42 +1915,30 @@ static char make_artifact(object_type *o_ptr, bool special)
 		if (cheat_peek)
 		{
 			C_TNEW(buf, ONAME_MAX, char);
-			object_type forge;
-			make_fake_artifact(&forge, a_ptr-a_info);
-			object_desc_store(buf, &forge, FALSE, 0);
-			msg_format("Rolling for %s", buf);
+			msg_format("Rolling for %s.", get_art_name(a_ptr, buf));
 			TFREE(buf);
 		}
 
 		/* Roll for the artefact. */
 		if (!rarity_roll(a_ptr->level, a_ptr->rarity)) continue;
 
-		/* Normal artefacts have already passed their base object rolls. */
-		if (special)
-		{
-			/* Find the base object */
-			int k_idx = a_ptr->k_idx;
-			object_kind *k_ptr = &k_info[k_idx];
+		/* Secondary roll for special artefacts */
+		if (!rarity_roll(a_ptr->level2, 1)) continue;
 
-			/* Roll for the base object */
-			if (!rarity_roll(k_ptr->level, 1)) continue;
-
-			/* Assign the template */
-			object_prep(o_ptr, k_idx);
-		}
+		/* Assign the template */
+		object_prep(o_ptr, a_ptr->k_idx);
 
 		/* Mega-Hack -- mark the item as an artifact */
 		o_ptr->name1 = a_ptr-a_info;
 
 		/* Success */
-		TFREE(order);
-		return 1;
+		break;
 	}
 
-	
-	/* Failure */
 	TFREE(order);
-	return 0;
+
+	/* Return whether an artefact was created. */
+	return (o_ptr->name1 != 0);
 }
 
 
@@ -3525,10 +3524,10 @@ static void a_m_aux_4(object_type *o_ptr, int UNUSED level, int UNUSED power)
 		case TV_CHEST:
 		{
 			/* Hack -- skip ruined chests */
-			if (k_info[o_ptr->k_idx].level <= 0) break;
+			if (!chest_number(&k_info[o_ptr->k_idx])) break;
 
 			/* Hack -- pick a "difficulty" */
-			o_ptr->pval = randint(k_info[o_ptr->k_idx].level);
+			o_ptr->pval = randint(k_info[o_ptr->k_idx].pval);
 
 			/* Never exceed "difficulty" of 55 to 59 */
 			if (o_ptr->pval > 55) o_ptr->pval = (short)(55 + rand_int(5)); 
@@ -3969,10 +3968,10 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 
 	/* Notice "okay" out-of-depth objects */
 	if (!cursed_p(j_ptr) && !broken_p(j_ptr) &&
-	    (k_info[j_ptr->k_idx].level > (dun_depth)))
+	    (object_k_level(k_info+j_ptr->k_idx) > (dun_depth)))
 	{
 		/* Rating increase */
-		rating += (k_info[j_ptr->k_idx].level - (dun_depth));
+		rating += (object_k_level(k_info+j_ptr->k_idx) - (dun_depth));
 
 		/* Cheat -- peek at items */
 		if (cheat_peek) object_mention(j_ptr);

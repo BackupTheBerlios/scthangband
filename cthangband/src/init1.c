@@ -1648,15 +1648,13 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 		/* Process 'W' for "More Info" (one line only) */
 		case 'W':
 		{
-			int level, wgt;
+			int wgt;
 			long cost;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%ld",
-			                &level, &wgt, &cost)) return (1);
+			if (2 != sscanf(buf+2, "%d:%ld", &wgt, &cost)) return (1);
 
 			/* Save the values */
-			k_ptr->level = level;
 			k_ptr->weight = wgt;
 			k_ptr->cost = cost;
 
@@ -2113,15 +2111,16 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 		}
 		case 'W':
 		{
-			int level, rarity, wgt;
+			int level, level2, rarity, wgt;
 			long cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			                &level, &rarity, &wgt, &cost)) return (1);
+			if (5 != sscanf(buf+2, "%d:%d:%d:%d:%ld",
+			                &level, &level2, &rarity, &wgt, &cost)) return (1);
 
 			/* Save the values */
 			a_ptr->level = level;
+			a_ptr->level2 = level2;
 			a_ptr->rarity = rarity;
 			a_ptr->weight = wgt;
 			a_ptr->cost = cost;

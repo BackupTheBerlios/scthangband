@@ -152,8 +152,8 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 	q_ptr->to_d = 0;
 
 
-	/* Level */
-	(*lev) = k_ptr->level;
+	/* Level (is this appropriate?) */
+	(*lev) = object_k_level(k_ptr);
 
 	/* Value */
 	(*val) = object_value(q_ptr);

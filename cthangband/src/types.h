@@ -215,8 +215,6 @@ struct object_kind
 	s16b ac;			/* Base armor */
 	byte dd, ds;		/* Damage dice/sides */
 
-	s32b cost;			/* Object "base cost" */
-
 	u32b flags1;		/* Flags, set 1 */
 	u32b flags2;		/* Flags, set 2 */
 	u32b flags3;		/* Flags, set 3 */
@@ -224,9 +222,8 @@ struct object_kind
 	byte locale[4];		/* Allocation level(s) */
 	byte chance[4];		/* Allocation chance(s) */
 
+	s32b cost;			/* Object "base cost" */
 	s16b weight;		/* Weight */
-	byte level;			/* Level */
-	/* byte extra2; */	/* Nothing */
 
 	byte d_attr;		/* Default object attribute */
 	char d_char;		/* Default object character */
@@ -236,6 +233,8 @@ struct object_kind
 	u16b u_idx;	/* The u_info[] entry which represents this item. */
 	bool aware;			/* The player is "aware" of the item's effects */
 	bool tried;			/* The player has "tried" one of the items */
+
+	/* u16b blank; */	/* Nothing */
 };
 
 
@@ -307,10 +306,10 @@ struct artifact_type
 	u32b flags3;		/* Artifact Flags, set 3 */
 
 	byte level;			/* Artifact level */
+	byte level2;		/* Secondary level for "special" artifacts */
 	byte rarity;		/* Artifact rarity */
 
 	byte cur_num;		/* Number created (0 or 1) */
-	byte max_num;		/* Unused (should be "1") */
 };
 
 

@@ -1309,18 +1309,14 @@ logaux(x, 1) logaux(x, 0) 255)
 #define ACT_RECALL              126
 /* 127 -> unused */
 
-/*** Object "tval" and "sval" codes ***/
+/*** Object "tval" and "k_idx" codes ***/
 
 
 /*
  * The values for the "tval" field of various objects.
  *
  * This value is the primary means by which items are sorted in the
- * player inventory, followed by "sval" and "cost".
- *
- * Note that a "BOW" with tval = 19 and sval S = 10*N+P takes a missile
- * weapon with tval = 16+N, and does (xP) damage when so combined.  This
- * fact is not actually used in the source, but it is kind of interesting.
+ * player inventory, followed by "k_idx" and "cost".
  *
  * Note that as of 2.7.8, the "item flags" apply to all items, though
  * only armor and weapons and a few other items use any of these flags.
@@ -1856,6 +1852,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define XT_CHEST_WOOD	1
 #define XT_CHEST_IRON	2
 #define XT_CHEST_STEEL	3
+
+#define chest_number(K_PTR) \
+	(((K_PTR)->extra % 10) * 2)
 
 /*
  * Charisma value used for price comparison. Gives an adj_chr_gold[] of 100%.
@@ -2889,6 +2888,21 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define allart_p(T) \
 	((artifact_p(T) || (T)->art_name) ? TRUE : FALSE)
+
+/*
+ * The level at which an object is generated for rating, etc. 
+ * Maybe this would be better as "the depth at which this item is most likely
+ * to be generated"?
+ */
+#define object_k_level(K_PTR) \
+	((K_PTR)->locale[0])
+
+/*
+ * The difficulty with which a wand, staff or rod can be used.
+ */
+#define wand_power(K_PTR) \
+	((((K_PTR)->tval == TV_WAND) || ((K_PTR)->tval == TV_STAFF) || \
+	((K_PTR)->tval == TV_ROD)) ? ((K_PTR)->extra) : 0)
 
 /*
  * Ego-Items use the "name2" field

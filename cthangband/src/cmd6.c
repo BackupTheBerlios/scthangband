@@ -66,7 +66,7 @@ static bool activate_random_artifact(object_type * o_ptr);
  */
 void do_cmd_eat_food(int item)
 {
-	int			ident, lev;
+	int			ident;
 	bool	normal_food = FALSE;
 
 	object_type		*o_ptr;
@@ -116,9 +116,6 @@ void do_cmd_eat_food(int item)
 
 	/* Identity not known yet */
 	ident = FALSE;
-
-	/* Object level */
-	lev = k_info[o_ptr->k_idx].level;
 
 	/* Analyze the food */
 	switch (o_ptr->k_idx)
@@ -403,7 +400,7 @@ void do_cmd_eat_food(int item)
  */
 void do_cmd_quaff_potion(int item)
 {
-	int		ident, lev;
+	int		ident;
 
 	object_type	*o_ptr;
 
@@ -457,9 +454,6 @@ void do_cmd_quaff_potion(int item)
 
 	/* Not identified yet */
 	ident = FALSE;
-
-	/* Object level */
-	lev = k_info[o_ptr->k_idx].level;
 
 	/* Analyze the potion */
 	switch (o_ptr->k_idx)
@@ -1202,7 +1196,7 @@ bool curse_weapon(void)
  */
 void do_cmd_read_scroll(int item)
 {
-	int			k, used_up, ident, lev;
+	int			k, used_up, ident;
 
 	object_type		*o_ptr;
 
@@ -1272,9 +1266,6 @@ void do_cmd_read_scroll(int item)
 
 	/* Not identified yet */
 	ident = FALSE;
-
-	/* Object level */
-	lev = k_info[o_ptr->k_idx].level;
 
 	/* Assume the scroll will get used up */
 	used_up = TRUE;
@@ -1800,7 +1791,7 @@ void do_cmd_use_staff(int item)
 	ident = FALSE;
 
 	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
+	lev = wand_power(&k_info[o_ptr->k_idx]);
 
 	/* Base chance of success */
 	chance = p_ptr->skill_dev;
@@ -2298,7 +2289,7 @@ void do_cmd_aim_wand(int item)
 	ident = FALSE;
 
 	/* Get the level */
-	lev = k_info[o_ptr->k_idx].level;
+	lev = wand_power(&k_info[o_ptr->k_idx]);
 
 	/* Base chance of success */
 	chance = p_ptr->skill_dev;
@@ -2763,7 +2754,7 @@ void do_cmd_zap_rod(int item)
 	ident = FALSE;
 
 	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
+	lev = wand_power(&k_info[o_ptr->k_idx]);
 
 	/* Base chance of success */
 	chance = p_ptr->skill_dev;
@@ -3261,9 +3252,6 @@ static bool brand_bolts(void)
  * Activate a wielded object.  Wielded objects never stack.
  * And even if they did, activatable objects never stack.
  *
- * Currently, only (some) artifacts, and Dragon Scale Mail, can be activated.
- * But one could, for example, easily make an activatable "Ring of Plasma".
- *
  * Note that it always takes a turn to activate an artifact, even if
  * the user hits "escape" at the "direction" prompt.
  */
@@ -3316,7 +3304,7 @@ void do_cmd_activate(int item)
 	energy_use = TURN_ENERGY/10;
 
 	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
+	lev = object_k_level(k_info+o_ptr->k_idx);
 
 	/* Hack -- use artifact level instead */
 	if (artifact_p(o_ptr)) lev = a_info[o_ptr->name1].level;
