@@ -800,6 +800,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RACE_VAMPIRE             27
 #define RACE_YEEK                    28
 #define RACE_ZOMBIE               29
+#define RACE_NONE 255
 
 /*
  * Player template constants (hard-coded by save-files, arrays, etc)

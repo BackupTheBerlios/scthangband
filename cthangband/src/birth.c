@@ -1613,7 +1613,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 		stat_default_type *sd_ptr = &stat_default[x];
 
 		/* Don't load default stats without a race/template combination chosen. */
-		if (x == DEFAULT_STATS && !p_ptr->prace) continue;
+		if (x == DEFAULT_STATS && p_ptr->prace == RACE_NONE) continue;
 		
 		/* Hack - make the default stats take the current race, class and maximise values */
 		if (x == DEFAULT_STATS)
@@ -1628,7 +1628,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 
 		/* Accept if the race, template are correct,
 		 * or if no race has been specified. */
-		if (!p_ptr->prace || 
+		if (p_ptr->prace == RACE_NONE || 
 			(sd_ptr->race == p_ptr->prace &&
 			sd_ptr->template == p_ptr->ptemplate))
 		{
@@ -1648,7 +1648,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 		byte start = 14;
 
 		/* Allow more room if we need to display a race and template. */
-		byte width = (p_ptr->prace) ? 40 : 80;
+		byte width = (p_ptr->prace != RACE_NONE) ? 40 : 80;
 		
 		/* If not, start at the top. This should be enough... */
 		if (y > 560/width) start = 0;
@@ -1662,7 +1662,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 			sprintf(buf, "%c) %s (", rtoa(x), quark_str(sd_ptr->name));
 
 			/* If we're just starting, we need to know the race & template. */
-			if (!p_ptr->prace)
+			if (p_ptr->prace == RACE_NONE)
 			{
 				sprintf(buf+strlen(buf), "%s %s %s) (", sex_info[sd_ptr->sex].title, race_info[sd_ptr->race].title, template_info[sd_ptr->template].title);
 			}
@@ -1724,7 +1724,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 	if (x != -1)
 	{
 		stat_default_type *sd_ptr = &stat_default[temp_stat_default[x]];
-		if (!p_ptr->prace)
+		if (p_ptr->prace == RACE_NONE)
 		{
 			p_ptr->psex = sd_ptr->sex;
 			sp_ptr = &sex_info[sd_ptr->sex];
@@ -2794,6 +2794,8 @@ static void player_wipe(void)
 		r_ptr->r_pkills = 0;
 	}
 
+	/* Reset the player's race. */
+	p_ptr->prace = RACE_NONE;
 
 	/* Hack -- Well fed player */
 	p_ptr->food = PY_FOOD_FULL - 1;
@@ -3881,7 +3883,7 @@ static bool player_birth_aux(void)
 		 * ask again. The stats selected do not currently carry forward
 		 * into autoroller selections, but this should be easy to change.
 		 */
-		if (!p_ptr->prace)
+		if (p_ptr->prace == RACE_NONE)
 		{
 
 			/*** Player sex ***/
