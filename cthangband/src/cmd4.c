@@ -4030,13 +4030,6 @@ void shops_display(int town)
 	int i,j;
 	town_type *t_ptr = &town_defs[town];
 
-	/* Paranoia (?) - no town */
-	if (!is_town_p(wildy, wildx))
-	{
-		if (alert_failure) message_add("ERROR: No current town.");
-		bell();
-		return;
-	}
 	clear_from(0);
 	Term_putstr(0,0, Term->wid, TERM_WHITE,
 		format("List of shops in %s",
