@@ -2673,7 +2673,7 @@ static bool alloc_monster_aux(int dis, int level, bool slp, int bias)
  */
 void alloc_monster(int dis, int level, bool slp)
 {
-	if (dun_bias && dun_bias && magik(100))
+	if (dun_bias && magik(100))
 	{
 		if (alloc_monster_aux(dis, level+5, slp, dun_bias)) return;
 	}
@@ -2710,8 +2710,8 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 		switch (set)
 		{
 			case 1: rflag = &(r_ptr->flags1); break;
-			case 2: rflag = &(r_ptr->flags1); break;
-			case 3: rflag = &(r_ptr->flags1); break;
+			case 2: rflag = &(r_ptr->flags2); break;
+			case 3: rflag = &(r_ptr->flags3); break;
 			default:
 			{
 				/* Paranoia - no other summon types are possible. */
