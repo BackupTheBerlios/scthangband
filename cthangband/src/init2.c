@@ -631,6 +631,12 @@ static void init_x_final(int num)
 		case U_HEAD:
 		init_u_info_final();
 		return;
+
+		/* If the *_name array size is fixed, the maximum string length must
+		 * not excede it. */
+		case Z_HEAD:
+		if (ONAME_LEN < ONAME_MAX) ONAME_MAX = ONAME_LEN;
+		if (MNAME_LEN < MNAME_MAX) MNAME_MAX = MNAME_LEN;
 	}
 	return;
 }
@@ -1788,7 +1794,7 @@ void init_angband(void)
 	header head[1];
 
 	/* Hack - a pointer intended not to match anything. */
-	vptr dummy = &init_angband;
+	vptr dummy = (vptr)&init_angband;
 
 
 	/*** Verify the "news" file ***/
@@ -1886,6 +1892,7 @@ void init_angband(void)
 
 	init_x_info("maxima", maxima, parse_z_info, "z_info", z_info,
 		dummy, dummy, u_max, Z_HEAD);
+
 
 	/* Initialise the fake arrays now their sizes are known. */
 	C_MAKE(head->fake_info_ptr, z_info->fake_info_size, char);

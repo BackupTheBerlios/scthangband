@@ -1809,7 +1809,7 @@ static s16b m_bonus(int max, int level)
  */
 static void object_mention(object_type *o_ptr)
 {
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 	/* Describe */
 	object_desc_store(o_name, o_ptr, FALSE, 0);
@@ -1923,10 +1923,14 @@ static char make_artifact(object_type *o_ptr, bool special)
 	/* Special artefacts are blank objects initially, others never are. */
 	int min = (special) ? 0 : ART_MIN_NORMAL;
 	int max = (special) ? ART_MIN_NORMAL : MAX_A_IDX;
-	byte order[max - min];
+	byte *order = C_NEW(max - min, byte);
 
 	/* Paranoia -- no "plural" artifacts */
-	if (o_ptr->number > 1) return 0;
+	if (o_ptr->number > 1)
+	{
+		FREE2(order);
+		return 0;
+	}
 
 	for (i = min; i < max; i++)
 	{
@@ -1950,11 +1954,15 @@ static char make_artifact(object_type *o_ptr, bool special)
 		/* Give a basic description */
 	}
 
-	if (!arts) return 2;
+	if (!arts)
+	{
+		FREE2(order);
+		return 2;
+	}
 
 	/* Roll for each of the available artefacts */
 	while (arts)
-		{
+	{
 		/* Pick an artefact from the list. */
 		artifact_type *a_ptr = &a_info[order[i = rand_int(arts--)]];
 
@@ -1964,7 +1972,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 		/* Give a basic description */
 		if (cheat_peek)
 		{
-			char buf[ONAME_MAX];
+			char buf[ONAME_LEN];
 			object_type forge;
 			make_fake_artifact(&forge, a_ptr-a_info);
 			object_desc_store(buf, &forge, FALSE, 0);
@@ -1992,11 +2000,13 @@ static char make_artifact(object_type *o_ptr, bool special)
 		o_ptr->name1 = a_ptr-a_info;
 
 		/* Success */
+		FREE2(order);
 		return 1;
 	}
 
 	
 	/* Failure */
+	FREE2(order);
 	return 0;
 }
 
@@ -4339,7 +4349,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 
 	cave_type *c_ptr;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 	bool flag = FALSE;
 	bool done = FALSE;
@@ -4744,7 +4754,7 @@ void inven_item_describe(int item)
 {
 	object_type     *o_ptr = &inventory[item];
 
-	char    o_name[ONAME_MAX];
+	char    o_name[ONAME_LEN];
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3);
@@ -4900,7 +4910,7 @@ void floor_item_describe(int item)
 {
 	object_type     *o_ptr = &o_list[item];
 
-	char    o_name[ONAME_MAX];
+	char    o_name[ONAME_LEN];
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3);
@@ -5181,7 +5191,7 @@ s16b inven_takeoff(int item, int amt)
 
 	cptr act;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 
 	/* Get the item to take off */
@@ -5258,7 +5268,7 @@ void inven_drop(int item, int amt)
 
 	object_type *o_ptr;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 
 	/* Access original object */
@@ -6004,7 +6014,7 @@ void display_koff(int k_idx)
 	object_type forge;
 	object_type *q_ptr;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 
 	/* Erase the window */

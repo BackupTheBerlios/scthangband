@@ -1925,7 +1925,7 @@ dump_visual(VISUAL_FEATURE, f_info, 'F', "Feature attr/char definitions")
 static void visual_dump_unident(FILE *fff)
 {
 	s16b i;
-	char buf[ONAME_MAX];
+	char buf[ONAME_LEN];
 
 	visual_type *vs_ptr = VISUAL_UNIDENT;
 
@@ -2216,7 +2216,8 @@ void do_cmd_visuals(void)
 		{
 			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
 
-			int r = vs_ptr->max-1, inc, *out, max, num;
+			int inc, max, num;
+			uint r = vs_ptr->max-1, *out;
 
 			bool started = FALSE;
 
@@ -2225,7 +2226,7 @@ void do_cmd_visuals(void)
 			/* Hack -- query until done */
 			while (1)
 			{
-				int da, dc, ca, cc;
+				uint da, dc, ca, cc;
 				char *text;
 				cptr prompt;
 dcv_retry:
@@ -2875,7 +2876,7 @@ void do_cmd_save_screen(void)
 			for (x = 0; x < 79; x++)
 			{
 				/* Get the attr/char */
-				(void)(Term_what(x, y, &a, &c));
+				(void)(Term_what(x, y, &a, (char*)&c));
 
 				/* c can take all sorts of strange values, so dump an
 				 * abstract representation using characters in the range
@@ -2904,7 +2905,7 @@ void do_cmd_save_screen(void)
 			for (x = 0; x < 79; x++)
 			{
 				/* Get the attr/char */
-				(void)(Term_what(x, y, &a, &c));
+				(void)(Term_what(x, y, &a, (char*)&c));
 
 				/* Dump it */
 				buf[x] = c;
@@ -2930,7 +2931,7 @@ void do_cmd_save_screen(void)
 				char hack[17] = "dwsorgbuDWvyRGBU";
 
 				/* Get the attr/char */
-				(void)(Term_what(x, y, &a, &c));
+				(void)(Term_what(x, y, &a, (char*)&c));
 
 				/* Dump it */
 				buf[x] = hack[a&0x0F];
@@ -3003,11 +3004,14 @@ static void do_cmd_knowledge_artifacts(void)
 
 	char base_name[80];
 
-	bool okay[MAX_A_IDX];
+	bool *okay;
 
 
 	/* Open a new file */
 	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
+
+	/* Allocate the "okay" array */
+	C_MAKE(okay, MAX_A_IDX, bool);
 
 	/* Scan the artifacts */
 	for (k = 0; k < MAX_A_IDX; k++)
@@ -3114,6 +3118,9 @@ static void do_cmd_knowledge_artifacts(void)
 		fprintf(fff, " %s   The %s\n",
 			get_symbol((&k_info[lookup_kind(a_ptr->tval, a_ptr->sval)])), base_name);
 	}
+
+	/* Free the "okay" array */
+	FREE2(okay);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3228,35 +3235,33 @@ static void plural_aux(char * Name)
  */
 void full_name(char * Name, bool plural, bool article, bool strangearticle)
 {
+	char *string = NULL;
 	/* Hack - give "long" version of creeping X coins */
 	if (strstr(Name, "coins"))
 	{
-		char string[strlen(Name)+9];
-		sprintf(string, "pile of %s", Name);
-		strcpy(Name, string);
+		string = format("pile of %s", Name);
+		sprintf(Name, "%.*s", MNAME_MAX, string);
 	}
 	if (plural)
 	{
 		plural_aux(Name);
 		if (article)
 		{
-			char string[strlen(Name)+6];
-			sprintf(string, "some %s", Name);
+			string = format("some %s", Name);
 			strcpy(Name, string);
 		}
 	}
 	/* Give an indefinite article as required. Plurals never take indefinite articles. */
 	else if (article)
 	{
-		char string[strlen(Name)+4];
 		/* Testing whether the word starts with a vowel or not is usually sufficient. */
 		bool an = is_a_vowel(Name[0]);
 		/* There needs to be a way of overriding this, however. */
 		if (strangearticle) an = !an;
 		/* Use the string we have decided upon. */
-		sprintf(string, "%s %s", (an) ? "an" : "a", Name);
-		strcpy(Name, string);
+		string = format("%s %s", (an) ? "an" : "a", Name);
 	}
+	if (string) sprintf(Name, "%.*s", MNAME_MAX, string);
 }
 
 /*
@@ -3443,12 +3448,14 @@ static void do_cmd_knowledge_deaths(void)
 
 	typedef struct death_type death_type;
 	
-	s16b races[MAX_R_IDX];
+	s16b *races;
 
 	s32b i, Uniques = 0, Races = 0, Deaths = 0;
 
 	/* Open a new file */
 	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
+
+	C_MAKE(races, MAX_R_IDX, s16b);
 
 	/* Count the monsters who have killed some ancestors. */
 	for (i = 0; i < MAX_R_IDX; i++)
@@ -3499,6 +3506,8 @@ static void do_cmd_knowledge_deaths(void)
 		fprintf(fff,"Total: Killed %lu times by %lu types of creature (%lu times by uniques).\n", Deaths, Races, Uniques);
 	}
 
+	KILL2(races);
+
 	/* Close the file */
 	my_fclose(fff);
 
@@ -3518,7 +3527,7 @@ static void do_cmd_knowledge_objects(void)
 
 	FILE *fff;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 	char file_name[1024];
 

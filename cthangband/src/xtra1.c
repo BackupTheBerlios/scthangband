@@ -1067,7 +1067,7 @@ static bool win_object_details_good(void)
 static void win_object_details_display(void)
 {
 	object_type *o_ptr = cnv_idx_to_obj(object_idx);
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 	
 	/* Never display non-objects. */
 	if (!o_ptr || !(o_ptr->k_idx)) return;

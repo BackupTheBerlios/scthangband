@@ -255,7 +255,7 @@ static void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
         }
     else
 	{
-		char m_name[MNAME_MAX];
+		char m_name[MNAME_LEN];
 
 		/* Extract monster name */
         monster_desc(m_name, m_ptr, 0);
@@ -1113,7 +1113,7 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
      int i, k, t_idx;
      int chance, thrown_spell, count = 0;
      byte spell[96], num = 0;
-     char m_name[MNAME_MAX], t_name[80];
+     char m_name[MNAME_LEN], t_name[80];
      char m_poss[80];
      char ddesc[80];
      int rlev;                /* monster level */
@@ -2876,7 +2876,7 @@ static bool make_attack_spell(int m_idx)
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
-	char            m_name[MNAME_MAX];
+	char            m_name[MNAME_LEN];
 	char            m_poss[80];
 
 	char            ddesc[80];
@@ -5374,7 +5374,7 @@ static bool get_moves(int m_idx, int *mm)
 
    int                     ac, rlev,pt;
 
-   char            m_name[MNAME_MAX],t_name[80];
+   char            m_name[MNAME_LEN],t_name[80];
 
    char            ddesc[80],temp[80];
 
@@ -6011,7 +6011,7 @@ static void process_monster(int m_idx, bool is_friend)
 				/* Notice the "waking up" */
 				if (m_ptr->ml)
 				{
-					char m_name[MNAME_MAX];
+					char m_name[MNAME_LEN];
 
 					/* Acquire the monster name */
 					monster_desc(m_name, m_ptr, 0);
@@ -6061,7 +6061,7 @@ static void process_monster(int m_idx, bool is_friend)
 			/* Message if visible */
 			if (m_ptr->ml)
 			{
-				char m_name[MNAME_MAX];
+				char m_name[MNAME_LEN];
 
 				/* Acquire the monster name */
 				monster_desc(m_name, m_ptr, 0);
@@ -6098,7 +6098,7 @@ static void process_monster(int m_idx, bool is_friend)
 			/* Message if visible */
 			if (m_ptr->ml)
 			{
-				char m_name[MNAME_MAX];
+				char m_name[MNAME_LEN];
 
 				/* Acquire the monster name */
 				monster_desc(m_name, m_ptr, 0);
@@ -6120,7 +6120,7 @@ static void process_monster(int m_idx, bool is_friend)
 
     if (gets_angry)
     {
-       char m_name[MNAME_MAX];
+       char m_name[MNAME_LEN];
        monster_desc(m_name, m_ptr, 0);
        msg_format("%^s suddenly becomes hostile!", m_name);
        m_ptr->smart &= ~SM_ALLY;
@@ -6148,7 +6148,7 @@ static void process_monster(int m_idx, bool is_friend)
 			/* Visual note */
 			if (m_ptr->ml)
 			{
-				char m_name[MNAME_MAX];
+				char m_name[MNAME_LEN];
 				char m_poss[80];
 
 				/* Acquire the monster name/poss */
@@ -6232,7 +6232,7 @@ static void process_monster(int m_idx, bool is_friend)
         {
             if (player_has_los_bold(oy, ox) && (r_ptr->flags2 & (RF2_CAN_SPEAK)))
 			{
-				char m_name[MNAME_MAX];
+				char m_name[MNAME_LEN];
                 char bravado[80];
 
                 bool is_groo = !!(strstr(r_name + r_ptr->name, "Groo"));
@@ -6807,8 +6807,8 @@ static void process_monster(int m_idx, bool is_friend)
 
 					u32b f1_want = 0L;
 
-					char m_name[MNAME_MAX];
-					char o_name[ONAME_MAX];
+					char m_name[MNAME_LEN];
+					char o_name[ONAME_LEN];
 
 					/* Extract some flags */
 					object_flags(o_ptr, &f1, &f2, &f3);
@@ -6981,7 +6981,7 @@ static void process_monster(int m_idx, bool is_friend)
 		/* Message if seen */
 		if (m_ptr->ml)
 		{
-			char m_name[MNAME_MAX];
+			char m_name[MNAME_LEN];
 
 			/* Acquire the monster name */
 			monster_desc(m_name, m_ptr, 0);

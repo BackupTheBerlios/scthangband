@@ -1486,7 +1486,7 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
     if (!necro)
     {
 
-        char            m_name[MNAME_MAX];
+        char            m_name[MNAME_LEN];
         monster_race * r_ptr = &r_info[m_ptr->r_idx];
         power = (r_ptr->level)+10;
 
@@ -3210,7 +3210,7 @@ void message_pain(int m_idx, int dam)
 	monster_type		*m_ptr = &m_list[m_idx];
 	monster_race		*r_ptr = &r_info[m_ptr->r_idx];
 
-	char			m_name[MNAME_MAX];
+	char			m_name[MNAME_LEN];
 
 
 	/* Get the monster name */

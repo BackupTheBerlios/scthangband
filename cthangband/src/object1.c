@@ -163,9 +163,9 @@ s16b lookup_unident(byte p_id, byte s_id)
  */
 void flavor_init(void)
 {
-	s16b i,j;
-	byte k_ptr_p_id[MAX_K_IDX];
-	byte k_ptr_s_id[MAX_K_IDX];
+	s16b i,j, *k_idx, *u_idx;
+	byte *k_ptr_p_id = C_ZNEW(MAX_K_IDX, byte);
+	byte *k_ptr_s_id = C_ZNEW(MAX_K_IDX, byte);
 
 	/* Hack - setting cheat_wzrd and cheat_extra generates a lot of messages */
 	bool old_cheat_wzrd = cheat_wzrd;
@@ -221,13 +221,16 @@ void flavor_init(void)
 	{
 		if (u_info[pid_base[k_ptr_p_id[i]]].flags & UNID_BASE_ONLY) k_ptr_s_id[i] = SID_BASE;
 	}
+
+	k_idx = C_ZNEW(MAX_K_IDX, s16b);
+	u_idx = C_ZNEW(MAX_U_IDX, s16b);
+
 	/*
 	 * Finally, give each k_idx with a variable description a valid s_id.
 	 * We've already checked that there are enough to go around.
 	 */
 	for (i = 0; i < 256; i++)
-		{
-		s16b k_idx[MAX_K_IDX], u_idx[MAX_U_IDX];
+	{
 		s16b k_top, u_top;
 
 		/* Ignore constant/special p_ids */
@@ -272,6 +275,11 @@ void flavor_init(void)
 
 	/* Hack - reset cheat_wzrd if desired */
 	cheat_wzrd = old_cheat_wzrd;
+
+	FREE2(k_ptr_p_id);
+	FREE2(k_ptr_s_id);
+	FREE2(k_idx);
+	FREE2(u_idx);
 }
 
 
@@ -1416,7 +1424,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	{
 		byte article = 0;
 		char *s, *u;
-		for (s = u = t-1;; s--, u--)
+		for (s = u = t-1; ; s--, u--)
 		{
 			/* article characters are preceded by two spaces,
 			 * so a 3-character string can be inserted without
@@ -3033,7 +3041,7 @@ static void identify_fully_show(ifa_type *i_ptr)
 	prt("     Item Attributes:", 1, minx);
 
 	/* We will print on top of the map. */
-	for (k = 2;;)
+	for (k = 2; ;)
 	{
 		/* Hack - turn the default colour (black) into white. */
 		byte attr = (i_ptr->attr) ? i_ptr->attr : TERM_WHITE;
@@ -3138,7 +3146,7 @@ static void identify_fully_dump_file(FILE *fff, ifa_type *i_ptr)
 	int j,k, len, x, xlen = 80;
 	cptr s = "";
 
-	for (k = 2, j = 0;;)
+	for (k = 2, j = 0; ;)
 	{
 		/* Grab the next string. */
 		if (*s == '\0')
@@ -4107,7 +4115,7 @@ void display_inven(void)
 
 	char    tmp_val[80];
 
-	char    o_name[ONAME_MAX];
+	char    o_name[ONAME_LEN];
 
 
 	/* Find the "final" slot */
@@ -4192,7 +4200,7 @@ void display_equip(void)
 
 	char    tmp_val[80];
 
-	char    o_name[ONAME_MAX];
+	char    o_name[ONAME_LEN];
 
 
 	/* Display the equipment */
@@ -4277,7 +4285,7 @@ void show_inven(void)
 
 	object_type     *o_ptr;
 
-	char    o_name[ONAME_MAX];
+	char    o_name[ONAME_LEN];
 
 	char    tmp_val[80];
 
@@ -4415,7 +4423,7 @@ void show_equip(void)
 
 	char            tmp_val[80];
 
-	char            o_name[ONAME_MAX];
+	char            o_name[ONAME_LEN];
 
 	int                     out_index[23];
 	byte            out_color[23];
@@ -4557,7 +4565,7 @@ void show_equip(void)
  */
 static bool verify(cptr prompt, int item)
 {
-	char    o_name[ONAME_MAX];
+	char    o_name[ONAME_LEN];
 
 	char    out_val[160];
 

@@ -785,7 +785,7 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 		}
 		else
 		{
-			(*option) = (islower(c) ? ator(c) : -1);
+			(*option) = ator(c);
 			if (((*option) >= 0) && ((*option) < max)) return BC_OKAY;
 			else bell();
 		}
@@ -1483,11 +1483,10 @@ static bool point_mod_player(void)
  *
  * If menu is true, the player wants a choice.
  */
-static bool load_stat_set(bool menu)
+static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 {
 	int x;
 	s16b y;
-	s16b temp_stat_default[stat_default_total+1];
 
 	/* Paranoia - there should be a default entry */
 	if (!stat_default_total) return TRUE;
@@ -1634,6 +1633,17 @@ static bool load_stat_set(bool menu)
 					
 	}
 	return TRUE;
+}
+
+/*
+ * A wrapper around the above to handle dynamic allocation.
+ */
+static bool load_stat_set(bool menu)
+{
+	s16b *temp_stat_default = C_ZNEW(stat_default_total+1, s16b);
+	bool returncode = load_stat_set_aux(menu, temp_stat_default);
+	FREE2(temp_stat_default);
+	return returncode;
 }
 
 /*
@@ -2216,7 +2226,7 @@ static void get_extra(void)
 static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 {
 	s16b i;
-	byte seen[total];
+	byte *seen;
 	s16b social_class = 0;
 	byte roll = 0, droll = 0, dnext = 0;
 
@@ -2229,6 +2239,8 @@ static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 	 * should give a very good approximation.
 	 */
 	if (oldseen[chart] > 10) return 0;
+
+	seen = C_ZNEW(total, byte);
 
 	/* Copy the chart across. */
 	for (i = 0; i < total; i++)
@@ -2271,9 +2283,11 @@ static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 	/* Add the last set of charts. */
 	social_class += get_social_average_aux(seen, dnext, total)*(roll-droll)/100;
 
+	KILL2(seen);
+
 	/* And return the result (multiplied by 100 to minimise rounding errors). */
 	return social_class;
-	}
+}
 
 /*
  * Finds the average social class for a given race.
@@ -2300,11 +2314,13 @@ static s16b get_social_average(byte race)
 		 * current branch. This is needed in order to recognise when
 		 * a recursion has occurred.
 		 */
-		byte seen[total];
+		byte *seen = C_ZNEW(total, byte);
 
 		for (i = 0; i < total; i++) seen[i] = 0;
 
 		social_class += get_social_average_aux(seen, chart, total);
+
+		FREE2(seen);
 	}
 
 	/* Get a social class of the expected order of magnitude. */
@@ -3808,7 +3824,7 @@ static bool player_birth_aux(void)
 			}
 			else
 			{
-				sprintf(buf, "%d%c %s", (n - 25), p2, str); /* HACK */
+				sprintf(buf, "%d%c %s", (n - 26), p2, str); /* HACK */
 			}
 			put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
 		}

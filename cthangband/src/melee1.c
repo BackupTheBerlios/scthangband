@@ -144,9 +144,9 @@ bool make_attack_normal(int m_idx)
 
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 
-	char		m_name[MNAME_MAX];
+	char		m_name[MNAME_LEN];
 
 	char		ddesc[80];
 

@@ -521,7 +521,7 @@ static int wiz_create_itemtype(void)
 
 	int			 choice[60];
 
-	char		buf[60][ONAME_MAX];
+	char		buf[60][ONAME_LEN];
 
 
 	/* Clear screen */
@@ -603,7 +603,7 @@ static int wiz_create_itemtype(void)
 	/* Look for prefixes to cut. */
 	for (i = 0; i < num; i++)
 	{
-		char this[strlen(buf[i])+1];
+		char *this;
 		int j,k,l;
 		char *sub[10];
 		int has_sub[10], times[10], order[10];
@@ -612,7 +612,7 @@ static int wiz_create_itemtype(void)
 		if (strlen(buf[i]) < max_len-4) continue;
 
 		/* Copy to temporary string. */
-		strcpy(this, buf[i]);
+		this = format("%s", buf[i]);
 
 		/* Locate each word. */
 		for (j = 0; j < 10; j++)

@@ -3337,7 +3337,7 @@ errr file_character(cptr name, bool UNUSED full)
 
 	FILE		*fff = NULL;
 
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 
 	char		buf[1024];
 

@@ -157,7 +157,7 @@ void do_cmd_wield(void)
 
 	cptr act;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 
 	/* Restrict the choices */
@@ -483,7 +483,7 @@ void do_cmd_destroy(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 
 	char		out_val[160];
 
@@ -636,7 +636,7 @@ void do_cmd_observe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 
 
 	/* Get an item (from equip or inven or floor) */
@@ -732,7 +732,7 @@ void do_cmd_inscribe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 
 	char		out_val[80];
 
@@ -1448,7 +1448,7 @@ static void roff_top(int r_idx)
  *
  * Note that the player ghosts are ignored. XXX XXX XXX
  */
-void do_cmd_query_symbol(void)
+static void do_cmd_query_symbol_aux(u16b *who)
 {
 	int		i, n, r_idx;
 	char	sym, query;
@@ -1461,7 +1461,6 @@ void do_cmd_query_symbol(void)
 	bool	recall = FALSE;
 
 	u16b	why = 0;
-	u16b	who[MAX_R_IDX];
 
 
 	/* Get a character, or abort */
@@ -1500,7 +1499,6 @@ void do_cmd_query_symbol(void)
 
 	/* Display the result */
 	prt(buf, 0, 0);
-
 
 	/* Collect matching monsters */
 	for (n = 0, i = 1; i < MAX_R_IDX-1; i++)
@@ -1646,6 +1644,17 @@ void do_cmd_query_symbol(void)
 	/* Re-display the identity */
 	prt(buf, 0, 0);
 }
+
+/*
+ * A wrapper around do_cmd_query_symbol_aux() to allocate the who array.
+ */
+void do_cmd_query_symbol(void)
+{
+	u16b *who = C_ZNEW(MAX_R_IDX, u16b);
+	do_cmd_query_symbol_aux(who);
+	FREE2(who);
+}
+
 
 /* 'Handle' an object, doing whatever seems the sensible thing to it... */
 void do_cmd_handle(void)

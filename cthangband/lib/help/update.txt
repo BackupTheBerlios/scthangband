@@ -4,7 +4,19 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
-sCthangband 1.0.1 changes
+sCthangband 1.0.2 changes:
+
+Call debug commands from process_command().
+
+Provide context-sensitive help for debug commands.
+
+Fix a bug whereby the races represented by numbers could not be selected, and
+the range given didn't match the displayed range.
+
+Change numerous arrays which had a size determined at run-time because of
+z_info into dynamic ones, or ones which have a constant size.
+
+sCthangband 1.0.1 changes:
 Remove the level feelings delay (although the original behaviour exists as an
 option), as it can make the difference between being given a level feeling
 before you clear a level and getting one afterwards.

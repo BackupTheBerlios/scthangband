@@ -1316,7 +1316,7 @@ static void spoil_mon_desc(cptr fname)
 {
 	int i, n = 0;
 
-	s16b who[MAX_R_IDX];
+	s16b *who;
 
 	char buf[1024];
 
@@ -1357,6 +1357,8 @@ static void spoil_mon_desc(cptr fname)
 	fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
 		"----", "---", "---", "---", "--", "--", "-----------");
 
+	/* Allocate the "who" array */
+	C_MAKE(who, MAX_R_IDX, s16b);
 
 	/* Scan the monsters (except the ghost) */
 	for (i = 1; i < MAX_R_IDX - 1; i++)
@@ -1434,6 +1436,8 @@ static void spoil_mon_desc(cptr fname)
 	/* End it */
 	fprintf(fff, "\n");
 
+	/* Free the "who" array */
+	FREE2(who);
 
 	/* Check for errors */
 	if (ferror(fff) || my_fclose(fff))

@@ -462,7 +462,7 @@ bool alchemy(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_MAX];
+	char            o_name[ONAME_LEN];
 
 	char            out_val[160];
 
@@ -2780,7 +2780,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_MAX];
+	char            o_name[ONAME_LEN];
 
 
 	/* Assume enchant weapon */
@@ -4249,7 +4249,7 @@ bool artifact_scroll(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_MAX];
+	char            o_name[ONAME_LEN];
 
 
 	/* Assume enchant weapon */
@@ -4336,7 +4336,7 @@ bool ident_spell(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_MAX];
+	char            o_name[ONAME_LEN];
 
 
 	/* Get an item (from equip or inven or floor) */
@@ -4408,7 +4408,7 @@ bool identify_fully(void)
 
 	object_type             *o_ptr;
 
-	char            o_name[ONAME_MAX];
+	char            o_name[ONAME_LEN];
 
 
 	/* Get an item (from equip or inven or floor) */
@@ -5007,7 +5007,7 @@ bool probing(void)
 		/* Probe visible monsters */
 		if (m_ptr->ml)
 		{
-			char m_name[MNAME_MAX];
+			char m_name[MNAME_LEN];
 
 			/* Start the message */
 			if (!probe) msg_print("Probing...");
@@ -5372,7 +5372,7 @@ void earthquake(int cy, int cx, int r)
 				if (!(r_ptr->flags2 & (RF2_KILL_WALL)) &&
 				    !(r_ptr->flags2 & (RF2_PASS_WALL)))
 				{
-					char m_name[MNAME_MAX];
+					char m_name[MNAME_LEN];
 
 					/* Assume not safe */
 					sn = 0;
@@ -5619,7 +5619,7 @@ static void cave_temp_room_lite(void)
 				/* Notice the "waking up" */
 				if (m_ptr->ml)
 				{
-					char m_name[MNAME_MAX];
+					char m_name[MNAME_LEN];
 
 					/* Acquire the monster name */
 					monster_desc(m_name, m_ptr, 0);
@@ -6328,7 +6328,7 @@ void bless_weapon(void)
     object_type             *o_ptr;
     u32b f1, f2, f3;
 
-	char            o_name[ONAME_MAX];
+	char            o_name[ONAME_LEN];
 
 
 	/* Assume enchant weapon */

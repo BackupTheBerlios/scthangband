@@ -31,3 +31,4 @@
 ***** [l] update.txt
 ***** [m] skills.txt
 ***** [n] speed.txt
+***** [o] debug.txt

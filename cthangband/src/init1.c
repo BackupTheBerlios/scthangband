@@ -788,7 +788,7 @@ static s16b find_string(char *buf, cptr *array)
  */
 #define find_string_info(x_name, x_info, max, w) \
 { \
-	cptr array[max]; \
+	cptr *array = C_ZNEW(max, cptr); \
 	for (i = 1; i < max; i++) \
 		if (x_info[i].name) \
 			array[i-1] = x_name+x_info[i].name; \
@@ -796,6 +796,7 @@ static s16b find_string(char *buf, cptr *array)
 			array[i-1] = ""; \
 	array[max-1] = 0; \
 	w = find_string(buf, array); \
+	KILL2(array); \
 }
 
 /*
@@ -803,7 +804,9 @@ static s16b find_string(char *buf, cptr *array)
  */
 static bool find_string_x(char *buf, cptr string)
 {
-	cptr array[2] = {string, 0};
+	cptr array[2];
+	array[0] = string;
+	array[1] = NULL;
 	return (bool)find_string(buf, array);
 }
 
@@ -1358,9 +1361,9 @@ static u32b add_name(header *head, cptr buf)
  */
 errr parse_z_info(char *buf, header *head, vptr UNUSED *extra)
 {
-	z_info = head->info_ptr;
 	char c;
 	long max;
+	maxima *z = head->info_ptr;
 
 	/* Hack - Always use record 0. */
 	error_idx = 0;
@@ -1370,14 +1373,14 @@ errr parse_z_info(char *buf, header *head, vptr UNUSED *extra)
 
 	switch (c)
 	{
-		case 'O': z_info->o_max = max; break;
-		case 'M': z_info->m_max = max; break;
-		case 'B': z_info->oname = max; break;
-		case 'D': z_info->mname = max; break;
-		case 'N': z_info->fake_name_size = max; break;
-		case 'T': z_info->fake_text_size = max; break;
-		case 'I': z_info->fake_info_size = max; break;
-		case 'R': z_info->ar_delay = max; break;
+		case 'O': z->o_max = max; break;
+		case 'M': z->m_max = max; break;
+		case 'B': z->oname = max; break;
+		case 'D': z->mname = max; break;
+		case 'N': z->fake_name_size = max; break;
+		case 'T': z->fake_text_size = max; break;
+		case 'I': z->fake_info_size = max; break;
+		case 'R': z->ar_delay = max; break;
 		default: return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 	}
 

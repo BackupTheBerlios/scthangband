@@ -1795,7 +1795,7 @@ static void display_entry(int pos)
 	object_type		*o_ptr;
 	s32b		x;
 
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 	char		out_val[160];
 
 
@@ -2413,7 +2413,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	bool		cancel = FALSE;
 	char		out_val[160];
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 
 	pmt = "Asking";
 	*price = 0;
@@ -2831,7 +2831,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 	bool		cancel = FALSE;
 	char		out_val[160];
-	char		o_name[ONAME_MAX];
+	char		o_name[ONAME_LEN];
 
 	pmt = "Offer";
 	*price = 0;
@@ -2990,7 +2990,7 @@ static void store_purchase(void)
 
 	object_type *o_ptr;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 	char out_val[160];
 
@@ -3308,7 +3308,7 @@ static void store_sell(void)
 
 	cptr pmt = "Sell which item? ";
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 
 	/* Prepare a prompt */
@@ -3543,7 +3543,7 @@ static void store_sell(void)
 
    object_type *o_ptr;
 
-   char o_name[ONAME_MAX];
+   char o_name[ONAME_LEN];
 
    char out_val[160];
 
@@ -4586,7 +4586,7 @@ void do_cmd_store(void)
 				object_type forge;
 				object_type *q_ptr;
 
-				char o_name[ONAME_MAX];
+				char o_name[ONAME_LEN];
 
 
 				/* Give a message */

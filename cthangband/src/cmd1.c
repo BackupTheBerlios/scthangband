@@ -578,7 +578,7 @@ void carry(int pickup)
 
 	s16b this_o_idx, next_o_idx = 0;
 
-	char o_name[ONAME_MAX];
+	char o_name[ONAME_LEN];
 
 	bool gold_only = FALSE;
 
@@ -1073,7 +1073,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
     int             n_weight = 0;
     monster_type    *m_ptr = &m_list[m_idx];
     monster_race    *r_ptr = &r_info[m_ptr->r_idx];
-	char            m_name[MNAME_MAX];
+	char            m_name[MNAME_LEN];
 
     int dss, ddd;
 
@@ -1216,7 +1216,7 @@ void py_attack(int y, int x)
 
 	object_type             *o_ptr;
 
-	char            m_name[MNAME_MAX];
+	char            m_name[MNAME_LEN];
 
 
 	bool            fear = FALSE;
@@ -1938,7 +1938,7 @@ void move_player(int dir, int do_pickup)
 
 
 
-         char m_name[MNAME_MAX];
+         char m_name[MNAME_LEN];
 
          bool p_can_pass_walls = FALSE;
          bool wall_is_perma = FALSE;

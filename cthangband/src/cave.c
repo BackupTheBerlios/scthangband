@@ -1355,7 +1355,7 @@ void lite_spot(int y, int x)
 	if (panel_contains(y, x))
 	{
 		byte a;
-		byte c;
+		char c;
 
 #ifdef USE_TRANSPARENCY
 		byte ta;

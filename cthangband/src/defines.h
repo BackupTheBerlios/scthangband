@@ -41,7 +41,7 @@
 #define GAME_NAME	"sCthangband"
 #define VERSION_MAJOR   1
 #define VERSION_MINOR   0
-#define VERSION_PATCH   1
+#define VERSION_PATCH   2
 
 
 /*
@@ -3164,11 +3164,18 @@ extern int PlayerUID;
  */
 #define SOUND_MAX 29
 
-
 /* Size of the buffer needed for object_desc() */
 #define ONAME_MAX (z_info->oname)
 /* And for monster_desc() */
 #define MNAME_MAX (z_info->mname)
+
+#ifdef VARIABLE_ARRAYS
+#define ONAME_LEN ONAME_MAX
+#define MNAME_LEN MNAME_MAX
+#else /* VARIABLE_ARRAYS */
+#define ONAME_LEN 1024
+#define MNAME_LEN 1024
+#endif
 
 /*
  * Hack -- attempt to reduce various values
