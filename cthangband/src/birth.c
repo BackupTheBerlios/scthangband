@@ -2285,9 +2285,6 @@ static void get_extra(void)
 {
 	int		i, j;
 	int		lastroll;
-#ifdef SHOW_LIFE_RATE
-    int         percent;
-#endif
     
 
 

@@ -3784,7 +3784,6 @@ void show_inven(void)
 
 	/* Clean up. */
 	for (k = 0; k < 23; k++) FREE(out_desc[k]);
-	TFREE(o_name);
 }
 
 
@@ -3932,7 +3931,6 @@ void show_equip(void)
 
 	/* Clean up. */
 	for (k = 0; k < 23; k++) FREE(out_desc[k]);
-	TFREE(o_name);
 }
 
 

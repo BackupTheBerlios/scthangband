@@ -316,7 +316,7 @@ static void rd_item(object_type *o_ptr)
 		rd_byte(&o_ptr->ident);
 #endif
 
-		rd_byte(&o_ptr->marked);
+		rd_char(&o_ptr->marked);
 
 	/* Old flags */
 	rd_u32b(&o_ptr->flags1);
@@ -836,7 +836,7 @@ static void rd_options(void)
 	cheat_live = (c & 0x2000) ? TRUE : FALSE;
 	cheat_skll = (c & 0x4000) ? TRUE : FALSE;
 
-		rd_byte(&autosave_l);
+		rd_char(&autosave_l);
 		rd_byte(&b);
 		autosave_t = (b & 0x01) != 0;
 #ifdef SF_Q_SAVE
