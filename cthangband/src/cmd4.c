@@ -2873,20 +2873,11 @@ void do_cmd_feeling(bool FeelingOnly)
 
 
 /*
- * Encode the screen colors
- */
-static char hack[17] = "dwsorgbuDWvyRGBU";
-
-
-/*
  * Hack -- load a screen dump from a file
  */
 void do_cmd_load_screen(void)
 {
-	int i, y, x;
-
-	byte a = 0;
-	char c = ' ';
+	int y, x;
 
 	bool okay = TRUE;
 
@@ -2924,48 +2915,13 @@ void do_cmd_load_screen(void)
 		/* Show each row */
 		for (x = 0; x < 79; x++)
 		{
-			/* Put the attr/char */
-			Term_draw(x, y, TERM_WHITE, buf[x]);
-		}
-	}
-
-	/* Get the blank line */
-	if (my_fgets(fff, buf, 1024)) okay = FALSE;
-
-
-	/* Dump the screen */
-	for (y = 0; okay && (y < 24); y++)
-	{
-		/* Get a line of data */
-		if (my_fgets(fff, buf, 1024)) okay = FALSE;
-
-		/* Dump each row */
-		for (x = 0; x < 79; x++)
-		{
-			/* Get the attr/char */
-			(void)(Term_what(x, y, &a, &c));
-
-			/* Look up the attr */
-			for (i = 0; i < 16; i++)
-			{
-				/* Use attr matches */
-				if (hack[i] == buf[x]) a = i;
-			}
-
-			/* Hack -- fake monochrome */
-			if (!use_color) a = TERM_WHITE;
+			byte a = (buf[2*x]-' ')%32;
+			unsigned char c = (buf[2*x+1]-' ')+(((buf[2*x]-' ')/0x10)*0x40);
 
 			/* Put the attr/char */
 			Term_draw(x, y, a, c);
 		}
-
-		/* End the row */
-		fprintf(fff, "\n");
 	}
-
-
-	/* Get the blank line */
-	if (my_fgets(fff, buf, 1024)) okay = FALSE;
 
 
 	/* Close it */
@@ -3012,7 +2968,7 @@ void do_cmd_save_screen(void)
 		int y, x;
 
 		byte a = 0;
-		char c = ' ';
+		unsigned char c = ' ';
 
 		FILE *fff;
 
@@ -3045,7 +3001,36 @@ void do_cmd_save_screen(void)
 		Term_save();
 
 
-		/* Dump the screen */
+		/* Dump the screen (reloadable version) */
+		for (y = 0; y < 24; y++)
+		{
+			/* Dump each row */
+			for (x = 0; x < 79; x++)
+			{
+				/* Get the attr/char */
+				(void)(Term_what(x, y, &a, &c));
+
+				/* c can take all sorts of strange values, so dump an
+				 * abstract representation using characters in the range
+				 * 32-95 only.
+				 */
+
+				/* Dump them */
+				buf[2*x] = (a%0x10)+(c/0x40)*0x10+' ';
+				buf[2*x+1] = (c%0x40)+' ';
+			}
+
+			/* Terminate */
+			buf[2*x] = '\0';
+
+			/* End the row */
+			fprintf(fff, "%s\n", buf);
+		}
+
+		/* Skip a line */
+		fprintf(fff, "\n");
+
+		/* Dump the screen (original version, requires "printable" characters) */
 		for (y = 0; y < 24; y++)
 		{
 			/* Dump each row */
@@ -3075,6 +3060,8 @@ void do_cmd_save_screen(void)
 			/* Dump each row */
 			for (x = 0; x < 79; x++)
 			{
+				char hack[17] = "dwsorgbuDWvyRGBU";
+
 				/* Get the attr/char */
 				(void)(Term_what(x, y, &a, &c));
 
@@ -3091,6 +3078,7 @@ void do_cmd_save_screen(void)
 
 		/* Skip a line */
 		fprintf(fff, "\n");
+
 
 
 		/* Close it */
