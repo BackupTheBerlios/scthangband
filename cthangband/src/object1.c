@@ -3396,11 +3396,14 @@ s16b wield_slot(object_type *o_ptr)
 
 		case TV_RING:
 		{
-			/* Use the right hand first */
+			/* Use the right hand if unused */
 			if (!inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
 
-			/* Use the left hand for swapping (by default) */
-			return (INVEN_LEFT);
+			/* Use the left hand for swapping if possible */
+			if (!inventory[INVEN_LEFT].k_idx || !(inventory[INVEN_LEFT].ident & IDENT_CURSED)) return (INVEN_LEFT);
+
+			/* Use the right otherwise */
+			return (INVEN_RIGHT);
 		}
 
 		case TV_AMULET:
