@@ -955,7 +955,7 @@ extern GraphicsContext *screen;
 #if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
 extern GraphicsContext *backscreen;
 #endif
-#if (defined(USE_LSL)) && (defined(CAVE_C) || defined(MAIN_AMI_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_VME_C))
+#if (defined(USE_LSL)) && (defined(MAIN_AMI_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_VME_C))
 extern GraphicsContext *buffer;
 #endif
 #if (defined(USE_LSL)) && (defined(MAID_X11_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C))

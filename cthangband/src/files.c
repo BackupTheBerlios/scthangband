@@ -3828,6 +3828,38 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 }
 
 /*
+ * Find the specified text in a file after a point, return the line
+ * at which it occurs.
+ */
+static int find_text(FILE *fff, hyperlink_type *h_ptr, int minline)
+{
+	int y;
+
+	/* This are trivial without a search string. */
+	if (!h_ptr->finder[0]) return minline;
+
+	/* Start at the beginning. */
+	rewind(fff);
+
+	/* Find and skip the indicated line. */
+	for (y = 0; y <= minline; y++)
+	{
+		/* Skip a line */
+		if (my_fgets(fff, h_ptr->rbuf, 1024)) return minline;
+	}
+
+	/* Search from it. */
+	while (!my_fgets(fff, h_ptr->rbuf, 1024))
+	{
+		if (strstr(h_ptr->rbuf, h_ptr->finder)) return y;
+		y++;
+	}
+
+	/* No match, so do nothing. */
+	return minline;
+}
+
+/*
  * Show a section of a help file between stated limits.
  */
 static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int minline)
@@ -3907,8 +3939,18 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		x = 0;
 		while (buf[x])
 		{
+			/* Link */
+			if (h_ptr->shower[0] && prefix(buf+x, h_ptr->shower))
+			{
+				out_ptr += sprintf(out_ptr, "%s%c%s%s%c",
+					CC_PREFIX, atchar[TERM_YELLOW], h_ptr->shower,
+					CC_PREFIX, atchar[TERM_WHITE]);
+
+				x += strlen(h_ptr->shower);
+				continue;
+			}
 			/* Hyperlink ? */
-			if (prefix(buf + x, "*****"))
+			else if (prefix(buf + x, "*****"))
 			{
 				int xx = x + 5;
 
@@ -4057,17 +4099,11 @@ static char show_file_aux(cptr name, cptr what, int line)
 	/* Number of "real" lines in the file */
 	int size = 0;
 
-	/* Backup value for "line" */
-	int back = 0;
-
 	/* This function is from a standard help directory. */
 	bool is_temp_file = FALSE;
 
 	/* Current help file */
 	FILE *fff = NULL;
-
-	/* Find this string (if any) */
-	cptr find = NULL;
 
 	/* Char array type of hyperlink info */
 	hyperlink_type h_ptr[1];
@@ -4289,7 +4325,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 		}
 
 		/* Hack -- try showing */
-		if (k == '=')
+		else if (k == '=')
 		{
 			/* Get "h_ptr->shower" */
 			prt("Show: ", hgt - 1, 0);
@@ -4297,16 +4333,14 @@ static char show_file_aux(cptr name, cptr what, int line)
 		}
 
 		/* Hack -- try finding */
-		if (k == '/')
+		else if (k == '/')
 		{
 			/* Get "h_ptr->finder" */
 			prt("Find: ", hgt - 1, 0);
 			if (askfor_aux(h_ptr->finder, 80))
 			{
-				/* Find it */
-				find = h_ptr->finder;
-				back = line;
-				line = line + 1;
+				/* Find it. */
+				line = find_text(fff, h_ptr, line);
 
 				/* Show it */
 				strcpy(h_ptr->shower, h_ptr->finder);
@@ -4314,7 +4348,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 		}
 
 		/* Hack -- go to a specific line */
-		if (k == '#')
+		else if (k == '#')
 		{
 			char tmp[81];
 			prt("Goto Line: ", hgt - 1, 0);
@@ -4326,7 +4360,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 		}
 
 		/* Hack -- go to a specific file */
-		if (k == '%')
+		else if (k == '%')
 		{
 			char tmp[81];
 			prt("Goto File: ", hgt - 1, 0);
@@ -4338,32 +4372,44 @@ static char show_file_aux(cptr name, cptr what, int line)
 		}
 
 		/* Hack -- Allow backing up */
-		if (k == '-')
+		else if (k == '-' || k == '9')
 		{
 			line = line - (hgt - 4);
 			if (line < 0) line = 0;
 		}
 
-		if (k == '8')
+		else if (k == '8')
 		{
 			line--;
 			if (line < 0) line = 0;
 		}
 
 		/* Hack -- Advance a single line */
-		if (k == '2')
+		else if (k == '2')
 		{
 			line = line + 1;
 		}
 
 		/* Advance one page */
-		if (k == ' ')
+		else if (k == ' ' || k == '3')
 		{
 			line = line + (hgt - 4);
 		}
 
+		/* Jump to start */
+		else if (k == '7')
+		{
+			line = 0;
+		}
+		
+		/* Jump to end */
+		else if (k == '1')
+		{
+			line = size - (hgt - 4);
+		}
+
 		/* Advance one link */
-		if ((k == '6') || (k == '\t'))
+		else if ((k == '6') || (k == '\t'))
 		{
 			h_ptr->cur_link++;
 			if (h_ptr->cur_link >= h_ptr->max_link)
@@ -4375,7 +4421,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 				line = h_ptr->link_y[h_ptr->cur_link] - (hgt - 4);
 		}
 		/* Return one link */
-		if (k == '4')
+		else if (k == '4')
 		{
 			h_ptr->cur_link--;
 			if (h_ptr->cur_link < 0) h_ptr->cur_link = 0;
@@ -4387,7 +4433,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 		}
 
 		/* Recurse on numbers */
-		if (k == '\r')
+		else if (k == '\r')
 		{
 			if (h_ptr->link_x[h_ptr->cur_link] != -1)
 			{
@@ -4396,18 +4442,16 @@ static char show_file_aux(cptr name, cptr what, int line)
 					h_ptr->link_line[h_ptr->cur_link]);
 			}
 		}
-
-		/* No other key ? lets look for a shortcut */
-		for (i = 0; i < h_ptr->max_link; i++)
+		else
 		{
-			if (h_ptr->link_key[i] == k) break;
+			/* No other key ? lets look for a shortcut */
+			for (i = 0; i < h_ptr->max_link; i++)
+			{
+				if (h_ptr->link_key[i] != k) continue;
+				k = show_file_aux(h_ptr->link[i], NULL, h_ptr->link_line[i]);
+				break;
+			}
 		}
-
-		/* None found. */
-		if (i == h_ptr->max_link) continue;
-			
-		/* Recurse on that file, carry forward the return code. */
-		k = show_file_aux(h_ptr->link[i], NULL, h_ptr->link_line[i]);
 	}
 
 	/* Close the file */
