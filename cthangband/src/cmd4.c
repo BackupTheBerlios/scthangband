@@ -3999,7 +3999,7 @@ static void do_cmd_knowledge_player_theft(FILE *fff)
 static void do_cmd_knowledge_player_misc(FILE *fff)
 {
 	if (p_ptr->ma_cumber_armour)
-		fprintf(fff, "The weight of your armor disrupts your balance.\n");
+		fprintf(fff, "Your armour is too heavy for you to practice unarmed combat.\n");
 	if (p_ptr->heavy_wield)
 		fprintf(fff, "Your weapon is too heavy for you to wield properly.\n");
 	if (p_ptr->heavy_shoot)
