@@ -2608,9 +2608,9 @@ extern s16b signal_count;
 #if (defined(CMD4_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool inkey_base;
 #endif
-#if (defined(UTIL_C) || defined(VARIABLE_C))
-extern bool inkey_xtra;
-#endif
+
+
+
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
 extern bool inkey_scan;
 #endif
@@ -4002,5 +4002,11 @@ extern blow_method_type *get_blow_method(byte idx);
 
 #if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
 extern blow_method_type blow_methods[NUM_BLOW_METHODS];
+#endif
+
+/* variable.c */
+
+#if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
+extern bool flush_error;
 #endif
 #endif /* INCLUDED_EXTERNS_H */
