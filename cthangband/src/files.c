@@ -4907,7 +4907,7 @@ bool get_name(void)
 
 
 /* The string used to indicate that the player quit. */
-#define SUICIDE_STRING "Woke up"
+#define SUICIDE_STRING "waking up"
 
 /*
  * Hack -- commit suicide
