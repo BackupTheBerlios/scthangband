@@ -4647,7 +4647,7 @@ bool get_rep_dir(int *dp)
  * NB: This assumes that CM_ACT | MCI_ARTICLE is never used at the start of the
  * string.
  */
-static void convert_articles(char *str)
+void convert_articles(char *str)
 {
 	cptr s, a;
 	char *t;

@@ -4012,4 +4012,7 @@ extern void mc_put_str(cptr str, const int y, const int x);
 #if (defined(CMD2_C) || defined(CMD4_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void feature_desc_f2(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
+#if (defined(MONSTER2_C) || defined(XTRA2_C))
+extern void convert_articles(char *str);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

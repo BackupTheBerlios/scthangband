@@ -991,10 +991,11 @@ s16b get_mon_num(int level)
  *  10 TRUE  -     FALSE  "the Newts"
  *  10 TRUE  -     TRUE   "the 10 Newts"
  */
-static void monster_desc_aux(char *out, char *buf, uint max, cptr name,
-	int num, byte flags)
+static void monster_desc_aux(char *buf, uint max, cptr name, int num,
+	byte flags)
 {
 	cptr artstr = "";
+	char tmp[20];
 	cptr s;
 	char *t;
 	byte reject = 0;
@@ -1020,9 +1021,9 @@ static void monster_desc_aux(char *out, char *buf, uint max, cptr name,
 	}
 	else if (flags & MDF_INDEF)
 	{
-		/* To be turned into English later... */
-		char artstr_art[2] = {CM_ACT | MCI_ARTICLE, '\0'};
-		artstr = artstr_art;
+		/* CM_ACT | MCI_ARTICLE, to be turned into English later... */
+		sprintf(tmp, ".%c", CM_ACT | MCI_ARTICLE);
+		artstr = tmp;
 	}
 	else if (flags & MDF_YOUR)
 	{
@@ -1031,8 +1032,8 @@ static void monster_desc_aux(char *out, char *buf, uint max, cptr name,
 	if (flags & MDF_NUMBER)
 	{
 		/* out is just used as a temporary buffer here... */
-		sprintf(out, "%s%s%d", artstr, (artstr[0]) ? " " : "", num);
-		artstr = out;
+		sprintf(tmp, "%s%s%d", artstr, (artstr[0]) ? " " : "", num);
+		artstr = tmp;
 	}
 
 	for (s = name, t = buf; *s && t < buf+max-1; s++)
@@ -1055,26 +1056,8 @@ static void monster_desc_aux(char *out, char *buf, uint max, cptr name,
 	/* Finish off. */
 	*t = '\0';
 
-	/* Decipher articles, and copy across. */
-	for (s = buf, t = out; t < out+max-1;)
-	{
-		if (*s == (MCI_ARTICLE | CM_ACT))
-		{
-			cptr u,article;
-			for (u = s; !isalnum(*u) && *u; u++);
-			article = (strchr("aeiouAEIOU8", *u)) ? "an" : "a";
-			if (t-out+strlen(article)+1 < max)
-			{
-				strcpy(t, article);
-				t = strchr(t, '\0');
-				s++;
-			}
-		}
-		else
-		{
-			if (((*t++ = *s++)) == '\0') break;
-		}
-	}
+	/* Turn any article strings into normal characters. */
+	convert_articles(buf);
 }
 
 /*
@@ -1109,7 +1092,7 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	}
 
 	/* Ensure that both buffers fit within buf. */
-	if (max < len*2) len = max/2;
+	if (max < len) len = max;
 
 	/*
 	 * The first argument is either a monster_race * or a cptr.
@@ -1127,7 +1110,7 @@ void monster_desc_aux_f3(char *buf, uint max, cptr fmt, va_list *vp)
 	}
 
 	/* Create the name now the arguments are known. */
-	monster_desc_aux(buf, buf+len, len, name, num, flags);
+	monster_desc_aux(buf, len, name, num, flags);
 }
 
 /*
