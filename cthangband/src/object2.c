@@ -973,7 +973,7 @@ s32b flag_cost(object_type * o_ptr, bool all)
 
     /* Also, give some extra for activatable powers... */
 
-    if ((o_ptr->art_name) && (o_ptr->art_flags3 & (TR3_ACTIVATE)))
+    if ((o_ptr->art_name) && (o_ptr->flags3 & (TR3_ACTIVATE)))
     {
         int type = o_ptr->xtra2;
 
@@ -1099,7 +1099,7 @@ s32b object_value_real(object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Add the modifiers for random flags. */
-    if (o_ptr->art_flags1 || o_ptr->art_flags2 || o_ptr->art_flags3)
+    if (o_ptr->flags1 || o_ptr->flags2 || o_ptr->flags3)
              value += flag_cost (o_ptr, FALSE);
 
 	/* Artifact */
@@ -1502,10 +1502,10 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 
 
 
-    /* Hack -- Identical art_flags! */
-    if ((o_ptr->art_flags1 != j_ptr->art_flags1) ||
-        (o_ptr->art_flags2 != j_ptr->art_flags2) ||
-        (o_ptr->art_flags3 != j_ptr->art_flags3))
+    /* Hack -- Identical flags! */
+    if ((o_ptr->flags1 != j_ptr->flags1) ||
+        (o_ptr->flags2 != j_ptr->flags2) ||
+        (o_ptr->flags3 != j_ptr->flags3))
             return (0);
 
 	/* Hack -- Require identical "cursed" status */
@@ -1818,9 +1818,9 @@ void random_artifact_resistance(object_type * o_ptr)
 		{
 			/* Give something nice. */
 			if (randint(2)==1)
-				o_ptr->art_flags3 |= TR3_DRAIN_EXP;
+				o_ptr->flags3 |= TR3_DRAIN_EXP;
 			else
-				o_ptr->art_flags3 |= TR3_AGGRAVATE;
+				o_ptr->flags3 |= TR3_AGGRAVATE;
 		}
 
     if (give_power)
@@ -2153,7 +2153,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 					{
 						o_ptr->name2 = EGO_HA;
                         if (randint(4)==1)
-                            { o_ptr->art_flags1 |= TR1_BLOWS;
+                            { o_ptr->flags1 |= TR1_BLOWS;
                               if (o_ptr->pval > 2) o_ptr->pval =
                                          o_ptr->pval - (randint(2));
                             }
@@ -2163,7 +2163,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 					case 2:
 					{
 						o_ptr->name2 = EGO_DF;
-                        if (randint(3)==1) o_ptr->art_flags2 |= TR2_RES_POIS;
+                        if (randint(3)==1) o_ptr->flags2 |= TR2_RES_POIS;
                         random_resistance(o_ptr, FALSE, ((randint(22))+16));
 						break;
 					}
@@ -2208,7 +2208,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
                         random_resistance(o_ptr, FALSE, ((randint(12))+4));
 						if (rand_int(100) < 20)
 						{
-                            if (randint(3)==1) o_ptr->art_flags2 |= TR2_RES_POIS;
+                            if (randint(3)==1) o_ptr->flags2 |= TR2_RES_POIS;
                             random_resistance(o_ptr, FALSE, ((randint(14))+4));
 							o_ptr->name2 = EGO_KILL_DRAGON;
 						}
@@ -2220,8 +2220,8 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 						o_ptr->name2 = EGO_SLAY_EVIL;
 						if (rand_int(100) < 20)
 						{
-                            o_ptr->art_flags2 |= TR2_RES_FEAR;
-                            o_ptr->art_flags3 |= TR3_BLESSED;
+                            o_ptr->flags2 |= TR2_RES_FEAR;
+                            o_ptr->flags3 |= TR3_BLESSED;
 							o_ptr->name2 = EGO_KILL_EVIL;
 						}
 						break;
@@ -2230,10 +2230,10 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 					case 13: case 14:
 					{
 						o_ptr->name2 = EGO_SLAY_UNDEAD;
-                        o_ptr->art_flags2 |= TR2_HOLD_LIFE;
+                        o_ptr->flags2 |= TR2_HOLD_LIFE;
 						if (rand_int(100) < 20)
 						{
-                            o_ptr->art_flags2 |= TR2_RES_NETHER;
+                            o_ptr->flags2 |= TR2_RES_NETHER;
 							o_ptr->name2 = EGO_KILL_UNDEAD;
 						}
 						break;
@@ -2282,7 +2282,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 					case 27:
 					{
 						o_ptr->name2 = EGO_WEST;
-                        if (randint(3)==1) o_ptr->art_flags2 |= TR2_RES_FEAR;
+                        if (randint(3)==1) o_ptr->flags2 |= TR2_RES_FEAR;
 						break;
 					}
 
@@ -2330,11 +2330,11 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
                         }
                        if (randint(5)==1)
                        {
-                            o_ptr->art_flags1 |= TR1_BRAND_POIS;
+                            o_ptr->flags1 |= TR1_BRAND_POIS;
                         }
                        if (o_ptr->tval == TV_SWORD && (randint(3)==1))
                        {
-                            o_ptr->art_flags1 |= TR1_VORPAL;
+                            o_ptr->flags1 |= TR1_VORPAL;
                         }
                        break;
                     }
@@ -2342,15 +2342,15 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
                     {
                         o_ptr->name2 = EGO_PLANAR;
                         random_resistance(o_ptr, FALSE, ((randint(22))+16));
-                        if (randint(5)==1) o_ptr->art_flags1 |= TR1_SLAY_DEMON;
+                        if (randint(5)==1) o_ptr->flags1 |= TR1_SLAY_DEMON;
                         break;
                     }
                     case 40:
                     {
                         o_ptr->name2 = EGO_PATTERN;
-                        if (randint(3)==1) o_ptr->art_flags2 |= TR2_HOLD_LIFE;
-                        if (randint(3)==1) o_ptr->art_flags1 |= TR1_DEX;
-                        if (randint(5)==1) o_ptr->art_flags2 |= TR2_RES_FEAR;
+                        if (randint(3)==1) o_ptr->flags2 |= TR2_HOLD_LIFE;
+                        if (randint(3)==1) o_ptr->flags1 |= TR1_DEX;
+                        if (randint(5)==1) o_ptr->flags2 |= TR2_RES_FEAR;
                         random_resistance(o_ptr, FALSE, ((randint(22))+16));
                         break;
                     }
@@ -2364,7 +2364,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
                         else /* Hafted */
                         {
                             o_ptr->name2 = EGO_EARTHQUAKES;
-                            if (randint(3)==1) o_ptr->art_flags1 |= TR1_BLOWS;
+                            if (randint(3)==1) o_ptr->flags1 |= TR1_BLOWS;
                             o_ptr->pval = m_bonus(3, level);
                         }
                     }
@@ -2386,7 +2386,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 				if (rand_int(MAX_DEPTH) < level)
 				{
 					o_ptr->name2 = EGO_MORGUL;
-                    if (randint(6)==1) o_ptr->art_flags3 |= TR3_TY_CURSE;
+                    if (randint(6)==1) o_ptr->flags3 |= TR3_TY_CURSE;
 				}
 			}
 
@@ -2642,7 +2642,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 					case 17: case 18:
 					{
 						o_ptr->name2 = EGO_RESISTANCE;
-                        if (randint(4)==1) o_ptr->art_flags2 |= TR2_RES_POIS;
+                        if (randint(4)==1) o_ptr->flags2 |= TR2_RES_POIS;
                         random_resistance(o_ptr, FALSE, ((randint(22))+16));
 						break;
 					}
@@ -2714,7 +2714,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
                     case 10: case 20:
 					{
                     random_resistance(o_ptr, FALSE, ((randint(34))+4));
-                    if (randint(4)==1) o_ptr->art_flags2 |= TR2_RES_POIS;
+                    if (randint(4)==1) o_ptr->flags2 |= TR2_RES_POIS;
                     o_ptr->name2 = EGO_ENDURANCE;
                     break;
 					}
@@ -2912,7 +2912,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 					default:
 					{
 						o_ptr->name2 = EGO_SEEING;
-                        if (randint(3)==1) o_ptr->art_flags3 |= TR3_TELEPATHY;
+                        if (randint(3)==1) o_ptr->flags3 |= TR3_TELEPATHY;
 						break;
 					}
                 }
@@ -3000,7 +3000,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 					case 7: case 8:
 					{
 						o_ptr->name2 = EGO_SEEING;
-                        if (randint(7)==1) o_ptr->art_flags3 |= TR3_TELEPATHY;
+                        if (randint(7)==1) o_ptr->flags3 |= TR3_TELEPATHY;
 						break;
 					}
 					case 9: case 10:
@@ -3444,7 +3444,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                 case SV_AMULET_RESISTANCE:
                 {
                     if (randint(3)==1) random_resistance(o_ptr, FALSE, ((randint(34))+4));
-                    if (randint(5)==1) o_ptr->art_flags2 |= TR2_RES_POIS;
+                    if (randint(5)==1) o_ptr->flags2 |= TR2_RES_POIS;
                 }
                 break;
 
@@ -3475,7 +3475,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					o_ptr->pval = randint(5) + m_bonus(5, level);
 					o_ptr->to_a = randint(5) + m_bonus(5, level);
 
-                    if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
+                    if (randint(3)==1) o_ptr->flags3 |= TR3_SLOW_DIGEST;
 
 					/* Boost the rating */
 					rating += 25;

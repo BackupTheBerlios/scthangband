@@ -2801,15 +2801,15 @@ void curse_equipment(int chance, int heavy_chance)
     {
         if (!(o3 & TR3_HEAVY_CURSE))
             changed = TRUE;
-        o_ptr->art_flags3 |= TR3_HEAVY_CURSE;
-        o_ptr->art_flags3 |= TR3_CURSED;
+        o_ptr->flags3 |= TR3_HEAVY_CURSE;
+        o_ptr->flags3 |= TR3_CURSED;
         o_ptr->ident |= IDENT_CURSED;
     }
     else
     {
         if (!(o_ptr->ident & (IDENT_CURSED)))
             changed = TRUE;
-        o_ptr->art_flags3 |= TR3_CURSED;
+        o_ptr->flags3 |= TR3_CURSED;
         o_ptr->ident |= IDENT_CURSED;
 	o_ptr->ident |= IDENT_SENSE_CURSED;
     }
@@ -6885,7 +6885,7 @@ static void process_monster(int m_idx, bool is_friend)
 									   m_name, o_name);
 
 								/* Remember this event if unexpected. */
-								if (!(j_ptr->art_flags1 & f1_want) &&
+								if (!(j_ptr->flags1 & f1_want) &&
 									!allart_p(j_ptr))
 									o_ptr->ident = ident_power(o_ptr);
 							}

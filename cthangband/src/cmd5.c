@@ -1213,7 +1213,7 @@ static void rustproof(void)
 	/* Description */
 	object_desc(o_name, o_ptr, FALSE, 0);
 
-	o_ptr->art_flags3 |= TR3_IGNORE_ACID;
+	o_ptr->flags3 |= TR3_IGNORE_ACID;
 
 	if ((o_ptr->to_a < 0) && !(o_ptr->ident & IDENT_CURSED))
 	{

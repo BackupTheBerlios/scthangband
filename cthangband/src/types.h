@@ -620,9 +620,9 @@ struct object_type
 	u16b note;			/* Inscription index */
     u16b art_name;      /* Artifact name (random artifacts) */
 
-    u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
-    u32b art_flags2;        /* Flags, set 2  for the random artifacts of*/
-    u32b art_flags3;        /* Flags, set 3  Zangband */
+    u32b flags1;        /* Flags, set 1 */
+    u32b flags2;        /* Flags, set 2 */
+    u32b flags3;        /* Flags, set 3 */
 
 	
 	s16b next_o_idx;	/* Next object in stack (if any) */

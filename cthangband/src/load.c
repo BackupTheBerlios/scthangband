@@ -313,9 +313,9 @@ static void rd_item(object_type *o_ptr)
 		rd_byte(&o_ptr->marked);
 
 	/* Old flags */
-	rd_u32b(&o_ptr->art_flags1);
-	rd_u32b(&o_ptr->art_flags2);
-	rd_u32b(&o_ptr->art_flags3);
+	rd_u32b(&o_ptr->flags1);
+	rd_u32b(&o_ptr->flags2);
+	rd_u32b(&o_ptr->flags3);
 
 	/* New version */
 		/* Monster holding object */

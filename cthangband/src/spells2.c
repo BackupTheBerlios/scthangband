@@ -359,11 +359,11 @@ static int remove_curse_aux(int all)
 		/* Hack -- Assume felt */
 		o_ptr->ident |= (IDENT_SENSE_CURSED);
 
-        if (o_ptr->art_flags3 & (TR3_CURSED))
-            o_ptr->art_flags3 &= ~(TR3_CURSED);
+        if (o_ptr->flags3 & (TR3_CURSED))
+            o_ptr->flags3 &= ~(TR3_CURSED);
 
-        if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
-            o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+        if (o_ptr->flags3 & (TR3_HEAVY_CURSE))
+            o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
 
 		/* You can't palm that ring of speed (-20) off quite so easily... */
 		if (broken_p(o_ptr))
@@ -2691,10 +2691,10 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 					o_ptr->ident &= ~(IDENT_CURSED);
 					o_ptr->ident |= (IDENT_SENSE_CURSED);
 
-                    if (o_ptr->art_flags3 & (TR3_CURSED))
-                        o_ptr->art_flags3 &= ~(TR3_CURSED);
-                    if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
-                        o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+                    if (o_ptr->flags3 & (TR3_CURSED))
+                        o_ptr->flags3 &= ~(TR3_CURSED);
+                    if (o_ptr->flags3 & (TR3_HEAVY_CURSE))
+                        o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
 
 				}
 			}
@@ -2721,10 +2721,10 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 					o_ptr->ident &= ~(IDENT_CURSED);
 					o_ptr->ident |= (IDENT_SENSE_CURSED);
 
-                    if (o_ptr->art_flags3 & (TR3_CURSED))
-                        o_ptr->art_flags3 &= ~(TR3_CURSED);
-                    if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
-                        o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+                    if (o_ptr->flags3 & (TR3_CURSED))
+                        o_ptr->flags3 &= ~(TR3_CURSED);
+                    if (o_ptr->flags3 & (TR3_HEAVY_CURSE))
+                        o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
 
 				}
 			}
@@ -2751,10 +2751,10 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 					o_ptr->ident &= ~(IDENT_CURSED);
 					o_ptr->ident |= (IDENT_SENSE_CURSED);
 
-                    if (o_ptr->art_flags3 & (TR3_CURSED))
-                        o_ptr->art_flags3 &= ~(TR3_CURSED);
-                    if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
-                        o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+                    if (o_ptr->flags3 & (TR3_CURSED))
+                        o_ptr->flags3 &= ~(TR3_CURSED);
+                    if (o_ptr->flags3 & (TR3_HEAVY_CURSE))
+                        o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
 				}
 			}
 		}
@@ -2867,14 +2867,14 @@ static void curse_artifact (object_type * o_ptr)
 	    if (o_ptr->to_a) o_ptr->to_a = 0 - ((o_ptr->to_a) + randint(4));
 	    if (o_ptr->to_h) o_ptr->to_h = 0 - ((o_ptr->to_h) + randint(4));
 	    if (o_ptr->to_d) o_ptr->to_d = 0 - ((o_ptr->to_d) + randint(4));
-	    o_ptr->art_flags3 |= ( TR3_HEAVY_CURSE | TR3_CURSED );
-	    if (randint(4)==1) o_ptr-> art_flags3 |= TR3_PERMA_CURSE;
-	    if (randint(3)==1) o_ptr-> art_flags3 |= TR3_TY_CURSE;
-	    if (randint(2)==1) o_ptr-> art_flags3 |= TR3_AGGRAVATE;
-	    if (randint(3)==1) o_ptr-> art_flags3 |= TR3_DRAIN_EXP;
-	    if (randint(2)==1) o_ptr-> art_flags3 |= TR3_TELEPORT;
-        else if (randint(3)==1) o_ptr->art_flags3 |= TR3_NO_TELE;
-        if (randint(3)==1) o_ptr->art_flags3 |= TR3_NO_MAGIC;
+	    o_ptr->flags3 |= ( TR3_HEAVY_CURSE | TR3_CURSED );
+	    if (randint(4)==1) o_ptr-> flags3 |= TR3_PERMA_CURSE;
+	    if (randint(3)==1) o_ptr-> flags3 |= TR3_TY_CURSE;
+	    if (randint(2)==1) o_ptr-> flags3 |= TR3_AGGRAVATE;
+	    if (randint(3)==1) o_ptr-> flags3 |= TR3_DRAIN_EXP;
+	    if (randint(2)==1) o_ptr-> flags3 |= TR3_TELEPORT;
+        else if (randint(3)==1) o_ptr->flags3 |= TR3_NO_TELE;
+        if (randint(3)==1) o_ptr->flags3 |= TR3_NO_MAGIC;
 	    o_ptr->ident |= IDENT_CURSED;
 
 }
@@ -2886,116 +2886,116 @@ static void random_plus (object_type * o_ptr, bool is_scroll)
 
     if (artifact_bias == BIAS_WARRIOR)
     {
-	if (!(o_ptr->art_flags1 & TR1_STR))
+	if (!(o_ptr->flags1 & TR1_STR))
 	{
-	    o_ptr->art_flags1 |= TR1_STR;
+	    o_ptr->flags1 |= TR1_STR;
 	    if (randint(2)==1) return; /* 50% chance of being a "free" power */
 	}
-	if (!(o_ptr->art_flags1 & TR1_CON))
+	if (!(o_ptr->flags1 & TR1_CON))
 	{
-	    o_ptr->art_flags1 |= TR1_CON;
+	    o_ptr->flags1 |= TR1_CON;
 	    if (randint(2)==1) return;
 	}
 
-	if (!(o_ptr->art_flags1 & TR1_DEX))
+	if (!(o_ptr->flags1 & TR1_DEX))
 	{
-	    o_ptr->art_flags1 |= TR1_DEX;
+	    o_ptr->flags1 |= TR1_DEX;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_MAGE)
     {
-	if (!(o_ptr->art_flags1 & TR1_INT))
+	if (!(o_ptr->flags1 & TR1_INT))
 	{
-	    o_ptr->art_flags1 |= TR1_INT;
+	    o_ptr->flags1 |= TR1_INT;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_PRIESTLY)
     {
-	if (!(o_ptr->art_flags1 & TR1_WIS))
+	if (!(o_ptr->flags1 & TR1_WIS))
 	{
-	    o_ptr->art_flags1 |= TR1_WIS;
+	    o_ptr->flags1 |= TR1_WIS;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_RANGER)
     {
-	if (!(o_ptr->art_flags1 & TR1_CON))
+	if (!(o_ptr->flags1 & TR1_CON))
 	{
-	    o_ptr->art_flags1 |= TR1_CON;
+	    o_ptr->flags1 |= TR1_CON;
 	    if (randint(2)==1) return; /* 50% chance of being a "free" power */
 	}
-	if (!(o_ptr->art_flags1 & TR1_DEX))
+	if (!(o_ptr->flags1 & TR1_DEX))
 	{
-	    o_ptr->art_flags1 |= TR1_DEX;
+	    o_ptr->flags1 |= TR1_DEX;
 	    if (randint(2)==1) return;
 	}
 
-	if (!(o_ptr->art_flags1 & TR1_STR))
+	if (!(o_ptr->flags1 & TR1_STR))
 	{
-	    o_ptr->art_flags1 |= TR1_STR;
+	    o_ptr->flags1 |= TR1_STR;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_ROGUE)
     {
-	if (!(o_ptr->art_flags1 & TR1_STEALTH))
+	if (!(o_ptr->flags1 & TR1_STEALTH))
 	{
-	    o_ptr->art_flags1 |= TR1_STEALTH;
+	    o_ptr->flags1 |= TR1_STEALTH;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags1 & TR1_SEARCH))
+	if (!(o_ptr->flags1 & TR1_SEARCH))
 	{
-	    o_ptr->art_flags1 |= TR1_SEARCH;
+	    o_ptr->flags1 |= TR1_SEARCH;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_STR)
     {
-	if (!(o_ptr->art_flags1 & TR1_STR))
+	if (!(o_ptr->flags1 & TR1_STR))
 	{
-	    o_ptr->art_flags1 |= TR1_STR;
+	    o_ptr->flags1 |= TR1_STR;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_WIS)
     {
-	if (!(o_ptr->art_flags1 & TR1_WIS))
+	if (!(o_ptr->flags1 & TR1_WIS))
 	{
-	    o_ptr->art_flags1 |= TR1_WIS;
+	    o_ptr->flags1 |= TR1_WIS;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_INT)
     {
-	if (!(o_ptr->art_flags1 & TR1_INT))
+	if (!(o_ptr->flags1 & TR1_INT))
 	{
-	    o_ptr->art_flags1 |= TR1_INT;
+	    o_ptr->flags1 |= TR1_INT;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_DEX)
     {
-	if (!(o_ptr->art_flags1 & TR1_DEX))
+	if (!(o_ptr->flags1 & TR1_DEX))
 	{
-	    o_ptr->art_flags1 |= TR1_DEX;
+	    o_ptr->flags1 |= TR1_DEX;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_CON)
     {
-	if (!(o_ptr->art_flags1 & TR1_CON))
+	if (!(o_ptr->flags1 & TR1_CON))
 	{
-	    o_ptr->art_flags1 |= TR1_CON;
+	    o_ptr->flags1 |= TR1_CON;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_CHR)
     {
-	if (!(o_ptr->art_flags1 & TR1_CHR))
+	if (!(o_ptr->flags1 & TR1_CHR))
 	{
-	    o_ptr->art_flags1 |= TR1_CHR;
+	    o_ptr->flags1 |= TR1_CHR;
 	    if (randint(2)==1) return;
 	}
     }
@@ -3005,7 +3005,7 @@ static void random_plus (object_type * o_ptr, bool is_scroll)
     switch (randint(this_type))
     {
     case 1: case 2:
-	o_ptr->art_flags1 |= TR1_STR;
+	o_ptr->flags1 |= TR1_STR;
 /*  if (is_scroll) msg_print ("It makes you feel strong!"); */
 	if (!(artifact_bias) && randint(13)!=1)
 	    artifact_bias = BIAS_STR;
@@ -3013,7 +3013,7 @@ static void random_plus (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_WARRIOR;
 	break;
     case 3: case 4:
-	o_ptr->art_flags1 |= TR1_INT;
+	o_ptr->flags1 |= TR1_INT;
 /*  if (is_scroll) msg_print ("It makes you feel smart!"); */
 	if (!(artifact_bias) && randint(13)!=1)
 	    artifact_bias = BIAS_INT;
@@ -3021,7 +3021,7 @@ static void random_plus (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_MAGE;
 	break;
     case 5: case 6:
-	o_ptr->art_flags1 |= TR1_WIS;
+	o_ptr->flags1 |= TR1_WIS;
 /*  if (is_scroll) msg_print ("It makes you feel wise!"); */
 	if (!(artifact_bias) && randint(13)!=1)
 	    artifact_bias = BIAS_WIS;
@@ -3029,7 +3029,7 @@ static void random_plus (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_PRIESTLY;
 	break;
     case 7: case 8:
-	o_ptr->art_flags1 |= TR1_DEX;
+	o_ptr->flags1 |= TR1_DEX;
 /*  if (is_scroll) msg_print ("It makes you feel nimble!"); */
 	if (!(artifact_bias) && randint(13)!=1)
 	    artifact_bias = BIAS_DEX;
@@ -3037,7 +3037,7 @@ static void random_plus (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_ROGUE;
 	break;
     case 9: case 10:
-	o_ptr->art_flags1 |= TR1_CON;
+	o_ptr->flags1 |= TR1_CON;
 /*  if (is_scroll) msg_print ("It makes you feel healthy!"); */
 	if (!(artifact_bias) && randint(13)!=1)
 	    artifact_bias = BIAS_CON;
@@ -3045,42 +3045,42 @@ static void random_plus (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_RANGER;
 	break;
     case 11: case 12:
-	o_ptr->art_flags1 |= TR1_CHR;
+	o_ptr->flags1 |= TR1_CHR;
 /*  if (is_scroll) msg_print ("It makes you look great!"); */
 	if (!(artifact_bias) && randint(13)!=1)
 	    artifact_bias = BIAS_CHR;
 	break;
     case 13: case 14:
-	o_ptr->art_flags1 |= TR1_STEALTH;
+	o_ptr->flags1 |= TR1_STEALTH;
 /*  if (is_scroll) msg_print ("It looks muffled."); */
 	if (!(artifact_bias) && randint(3)==1)
 	    artifact_bias = BIAS_ROGUE;
 	break;
     case 15: case 16:
-	o_ptr->art_flags1 |= TR1_SEARCH;
+	o_ptr->flags1 |= TR1_SEARCH;
 /*  if (is_scroll) msg_print ("It makes you see better."); */
 	if (!(artifact_bias) && randint(9)==1)
 	    artifact_bias = BIAS_RANGER;
 	break;
     case 17: case 18:
-	o_ptr->art_flags1 |= TR1_INFRA;
+	o_ptr->flags1 |= TR1_INFRA;
 /*  if (is_scroll) msg_print ("It makes you see tiny red animals.");*/
 	break;
     case 19:
-	o_ptr->art_flags1 |= TR1_SPEED;
+	o_ptr->flags1 |= TR1_SPEED;
 /*  if (is_scroll) msg_print ("It makes you move faster!"); */
 	if (!(artifact_bias) && randint(11)==1)
 	    artifact_bias = BIAS_ROGUE;
 	break;
     case 20: case 21:
-	o_ptr->art_flags1 |= TR1_TUNNEL;
+	o_ptr->flags1 |= TR1_TUNNEL;
 /*  if (is_scroll) msg_print ("Gravel flies from it!"); */
 	break;
     case 22: case 23:
 	if (o_ptr->tval == TV_BOW) random_plus(o_ptr, is_scroll);
 	else
 	{
-	o_ptr->art_flags1 |= TR1_BLOWS;
+	o_ptr->flags1 |= TR1_BLOWS;
 /*  if (is_scroll) msg_print ("It seems faster!"); */
 	if (!(artifact_bias) && randint(11)==1)
 	    artifact_bias = BIAS_WARRIOR;
@@ -3098,122 +3098,122 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
   {
     if (artifact_bias == BIAS_ACID)
     {
-	if (!(o_ptr->art_flags2 & TR2_RES_ACID))
+	if (!(o_ptr->flags2 & TR2_RES_ACID))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_ACID;
+	    o_ptr->flags2 |= TR2_RES_ACID;
 	    if (randint(2)==1) return;
 	}
-    if (randint(BIAS_LUCK)==1 && !(o_ptr->art_flags2 & TR2_IM_ACID))
+    if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_ACID))
 	{
-	    o_ptr->art_flags2 |= TR2_IM_ACID;
+	    o_ptr->flags2 |= TR2_IM_ACID;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_ELEC)
     {
-	if (!(o_ptr->art_flags2 & TR2_RES_ELEC))
+	if (!(o_ptr->flags2 & TR2_RES_ELEC))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_ELEC;
+	    o_ptr->flags2 |= TR2_RES_ELEC;
 	    if (randint(2)==1) return;
 	}
     if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR &&
-        ! (o_ptr->art_flags3 & TR3_SH_ELEC))
+        ! (o_ptr->flags3 & TR3_SH_ELEC))
         {
-            o_ptr->art_flags2 |= TR3_SH_ELEC;
+            o_ptr->flags2 |= TR3_SH_ELEC;
             if (randint(2)==1) return;
         }
-    if (randint(BIAS_LUCK)==1 && !(o_ptr->art_flags2 & TR2_IM_ELEC))
+    if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_ELEC))
 	{
-	    o_ptr->art_flags2 |= TR2_IM_ELEC;
+	    o_ptr->flags2 |= TR2_IM_ELEC;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_FIRE)
     {
-	if (!(o_ptr->art_flags2 & TR2_RES_FIRE))
+	if (!(o_ptr->flags2 & TR2_RES_FIRE))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_FIRE;
+	    o_ptr->flags2 |= TR2_RES_FIRE;
 	    if (randint(2)==1) return;
 	}
     if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR &&
-        ! (o_ptr->art_flags3 & TR3_SH_FIRE))
+        ! (o_ptr->flags3 & TR3_SH_FIRE))
         {
-            o_ptr->art_flags3 |= TR3_SH_FIRE | TR3_LITE;
+            o_ptr->flags3 |= TR3_SH_FIRE | TR3_LITE;
             if (randint(2)==1) return;
         }
-    if (randint(BIAS_LUCK)==1 && !(o_ptr->art_flags2 & TR2_IM_FIRE))
+    if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_FIRE))
 	{
-	    o_ptr->art_flags2 |= TR2_IM_FIRE;
+	    o_ptr->flags2 |= TR2_IM_FIRE;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_COLD)
     {
-	if (!(o_ptr->art_flags2 & TR2_RES_COLD))
+	if (!(o_ptr->flags2 & TR2_RES_COLD))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_COLD;
+	    o_ptr->flags2 |= TR2_RES_COLD;
 	    if (randint(2)==1) return;
 	}
-    if (randint(BIAS_LUCK)==1 && !(o_ptr->art_flags2 & TR2_IM_COLD))
+    if (randint(BIAS_LUCK)==1 && !(o_ptr->flags2 & TR2_IM_COLD))
 	{
-	    o_ptr->art_flags2 |= TR2_IM_COLD;
+	    o_ptr->flags2 |= TR2_IM_COLD;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_POIS)
     {
-	if (!(o_ptr->art_flags2 & TR2_RES_POIS))
+	if (!(o_ptr->flags2 & TR2_RES_POIS))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_POIS;
+	    o_ptr->flags2 |= TR2_RES_POIS;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_WARRIOR)
     {
-	if (randint(3)!=1 && (!(o_ptr->art_flags2 & TR2_RES_FEAR)))
+	if (randint(3)!=1 && (!(o_ptr->flags2 & TR2_RES_FEAR)))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_FEAR;
+	    o_ptr->flags2 |= TR2_RES_FEAR;
 	    if (randint(2)==1) return;
 	}
-    if ((randint(3)==1) && (!(o_ptr->art_flags3 & TR3_NO_MAGIC)))
+    if ((randint(3)==1) && (!(o_ptr->flags3 & TR3_NO_MAGIC)))
     {
-        o_ptr->art_flags3 |= TR3_NO_MAGIC;
+        o_ptr->flags3 |= TR3_NO_MAGIC;
         if (randint(2)==1) return;
     }
     }
     else if (artifact_bias == BIAS_NECROMANTIC)
     {
-	if (!(o_ptr->art_flags2 & TR2_RES_NETHER))
+	if (!(o_ptr->flags2 & TR2_RES_NETHER))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_NETHER;
+	    o_ptr->flags2 |= TR2_RES_NETHER;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags2 & TR2_RES_POIS))
+	if (!(o_ptr->flags2 & TR2_RES_POIS))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_POIS;
+	    o_ptr->flags2 |= TR2_RES_POIS;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags2 & TR2_RES_DARK))
+	if (!(o_ptr->flags2 & TR2_RES_DARK))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_DARK;
+	    o_ptr->flags2 |= TR2_RES_DARK;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_CHAOS)
     {
-	if (!(o_ptr->art_flags2 & TR2_RES_CHAOS))
+	if (!(o_ptr->flags2 & TR2_RES_CHAOS))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_CHAOS;
+	    o_ptr->flags2 |= TR2_RES_CHAOS;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags2 & TR2_RES_CONF))
+	if (!(o_ptr->flags2 & TR2_RES_CONF))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_CONF;
+	    o_ptr->flags2 |= TR2_RES_CONF;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags2 & TR2_RES_DISEN))
+	if (!(o_ptr->flags2 & TR2_RES_DISEN))
 	{
-	    o_ptr->art_flags2 |= TR2_RES_DISEN;
+	    o_ptr->flags2 |= TR2_RES_DISEN;
 	    if (randint(2)==1) return;
 	}
     }
@@ -3226,7 +3226,7 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
         random_resistance(o_ptr, is_scroll, specific);
 	else
 	{
-	o_ptr->art_flags2 |= TR2_IM_ACID;
+	o_ptr->flags2 |= TR2_IM_ACID;
 /*  if (is_scroll) msg_print("It looks totally incorruptible."); */
 	if (!(artifact_bias))
 	    artifact_bias = BIAS_ACID;
@@ -3237,7 +3237,7 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
 	    random_resistance(o_ptr, is_scroll, specific);
 	else
 	{
-	o_ptr->art_flags2 |= TR2_IM_ELEC;
+	o_ptr->flags2 |= TR2_IM_ELEC;
 /*  if (is_scroll) msg_print("It looks completely grounded."); */
 	if (!(artifact_bias))
 	    artifact_bias = BIAS_ELEC;
@@ -3248,7 +3248,7 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
 	    random_resistance(o_ptr, is_scroll, specific);
 	else
 	{
-	o_ptr->art_flags2 |= TR2_IM_COLD;
+	o_ptr->flags2 |= TR2_IM_COLD;
 /*  if (is_scroll) msg_print("It feels very warm."); */
 	if (!(artifact_bias))
 	    artifact_bias = BIAS_COLD;
@@ -3259,38 +3259,38 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
 	    random_resistance(o_ptr, is_scroll, specific);
 	else
 	{
-	o_ptr->art_flags2 |= TR2_IM_FIRE;
+	o_ptr->flags2 |= TR2_IM_FIRE;
 /*  if (is_scroll) msg_print("It feels very cool."); */
 	if (!(artifact_bias))
 	    artifact_bias = BIAS_FIRE;
 	}
 	break;
     case 5: case 6: case 13:
-	o_ptr->art_flags2 |= TR2_RES_ACID;
+	o_ptr->flags2 |= TR2_RES_ACID;
 /*  if (is_scroll) msg_print("It makes your stomach rumble."); */
 	if (!(artifact_bias))
 	    artifact_bias = BIAS_ACID;
 	break;
     case 7: case 8: case 14:
-	o_ptr->art_flags2 |= TR2_RES_ELEC;
+	o_ptr->flags2 |= TR2_RES_ELEC;
 /*  if (is_scroll) msg_print("It makes you feel grounded."); */
     if (!(artifact_bias))
 	    artifact_bias = BIAS_ELEC;
 	break;
     case 9: case 10: case 15:
-	o_ptr->art_flags2 |= TR2_RES_FIRE;
+	o_ptr->flags2 |= TR2_RES_FIRE;
 /*  if (is_scroll) msg_print("It makes you feel cool!");*/
 	if (!(artifact_bias))
 	    artifact_bias = BIAS_FIRE;
 	break;
     case 11: case 12: case 16:
-	o_ptr->art_flags2 |= TR2_RES_COLD;
+	o_ptr->flags2 |= TR2_RES_COLD;
 /*  if (is_scroll) msg_print("It makes you feel full of hot air!");*/
 	if (!(artifact_bias))
 	    artifact_bias = BIAS_COLD;
 	break;
     case 17: case 18:
-	o_ptr->art_flags2 |= TR2_RES_POIS;
+	o_ptr->flags2 |= TR2_RES_POIS;
 /*  if (is_scroll) msg_print("It makes breathing easier for you."); */
 	if (!(artifact_bias) && randint(4)!=1)
 	    artifact_bias = BIAS_POIS;
@@ -3300,60 +3300,60 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
 	    artifact_bias = BIAS_ROGUE;
 	break;
     case 19: case 20:
-	o_ptr->art_flags2 |= TR2_RES_FEAR;
+	o_ptr->flags2 |= TR2_RES_FEAR;
 /*  if (is_scroll) msg_print("It makes you feel brave!"); */
 	if (!(artifact_bias) && randint(3)==1)
 	    artifact_bias = BIAS_WARRIOR;
 	break;
     case 21:
-	o_ptr->art_flags2 |= TR2_RES_LITE;
+	o_ptr->flags2 |= TR2_RES_LITE;
 /*  if (is_scroll) msg_print("It makes everything look darker.");*/
 	break;
     case 22:
-	o_ptr->art_flags2 |= TR2_RES_DARK;
+	o_ptr->flags2 |= TR2_RES_DARK;
 /*  if (is_scroll) msg_print("It makes everything look brigher.");*/
 	break;
     case 23: case 24:
-	o_ptr->art_flags2 |= TR2_RES_BLIND;
+	o_ptr->flags2 |= TR2_RES_BLIND;
 /*  if (is_scroll) msg_print("It makes you feel you are wearing glasses.");*/
 	break;
     case 25: case 26:
-	o_ptr->art_flags2 |= TR2_RES_CONF;
+	o_ptr->flags2 |= TR2_RES_CONF;
 /*  if (is_scroll) msg_print("It makes you feel very determined.");*/
 	if (!(artifact_bias) && randint(6)==1)
 	    artifact_bias = BIAS_CHAOS;
 	break;
     case 27: case 28:
-	o_ptr->art_flags2 |= TR2_RES_SOUND;
+	o_ptr->flags2 |= TR2_RES_SOUND;
 /*  if (is_scroll) msg_print("It makes you feel deaf!");*/
 	break;
     case 29: case 30:
-	o_ptr->art_flags2 |= TR2_RES_SHARDS;
+	o_ptr->flags2 |= TR2_RES_SHARDS;
 /*  if (is_scroll) msg_print("It makes your skin feel thicker.");*/
 	break;
     case 31: case 32:
-	o_ptr->art_flags2 |= TR2_RES_NETHER;
+	o_ptr->flags2 |= TR2_RES_NETHER;
 /*  if (is_scroll) msg_print("It makes you feel like visiting a graveyard!");*/
 	if (!(artifact_bias) && randint(3)==1)
 	    artifact_bias = BIAS_NECROMANTIC;
 	break;
     case 33: case 34:
-	o_ptr->art_flags2 |= TR2_RES_NEXUS;
+	o_ptr->flags2 |= TR2_RES_NEXUS;
 /*  if (is_scroll) msg_print("It makes you feel normal.");*/
 	break;
     case 35: case 36:
-	o_ptr->art_flags2 |= TR2_RES_CHAOS;
+	o_ptr->flags2 |= TR2_RES_CHAOS;
 /*  if (is_scroll) msg_print("It makes you feel very firm.");*/
 	if (!(artifact_bias) && randint(2)==1)
 	    artifact_bias = BIAS_CHAOS;
 	break;
     case 37: case 38:
-	o_ptr->art_flags2 |= TR2_RES_DISEN;
+	o_ptr->flags2 |= TR2_RES_DISEN;
 /*  if (is_scroll) msg_print("It is surrounded by a static feeling.");*/
 	break;
     case 39:
     if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
-        o_ptr->art_flags3 |= TR3_SH_ELEC;
+        o_ptr->flags3 |= TR3_SH_ELEC;
     else
 	    random_resistance(o_ptr, is_scroll, specific);
     if (!(artifact_bias))
@@ -3361,7 +3361,7 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
     break;
     case 40:
     if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
-        o_ptr->art_flags3 |= TR3_SH_FIRE | TR3_LITE;
+        o_ptr->flags3 |= TR3_SH_FIRE | TR3_LITE;
     else
 	    random_resistance(o_ptr, is_scroll, specific);
     if (!(artifact_bias))
@@ -3370,7 +3370,7 @@ void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
     case 41:
     if (o_ptr->tval == TV_SHIELD || o_ptr->tval == TV_CLOAK ||
         o_ptr->tval == TV_HELM || o_ptr->tval == TV_HARD_ARMOR)
-        o_ptr->art_flags2 |= TR2_REFLECT;
+        o_ptr->flags2 |= TR2_REFLECT;
     else
 	    random_resistance(o_ptr, is_scroll, specific);
     break;
@@ -3382,73 +3382,73 @@ static void random_misc (object_type * o_ptr, bool is_scroll)
 
     if (artifact_bias == BIAS_RANGER)
     {
-	if (!(o_ptr->art_flags2 & TR2_SUST_CON))
+	if (!(o_ptr->flags2 & TR2_SUST_CON))
 	{
-	    o_ptr->art_flags2 |= TR2_SUST_CON;
+	    o_ptr->flags2 |= TR2_SUST_CON;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_STR)
     {
-	if (!(o_ptr->art_flags2 & TR2_SUST_STR))
+	if (!(o_ptr->flags2 & TR2_SUST_STR))
 	{
-	    o_ptr->art_flags2 |= TR2_SUST_STR;
+	    o_ptr->flags2 |= TR2_SUST_STR;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_WIS)
     {
-	if (!(o_ptr->art_flags2 & TR2_SUST_WIS))
+	if (!(o_ptr->flags2 & TR2_SUST_WIS))
 	{
-	    o_ptr->art_flags2 |= TR2_SUST_WIS;
+	    o_ptr->flags2 |= TR2_SUST_WIS;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_INT)
     {
-	if (!(o_ptr->art_flags2 & TR2_SUST_INT))
+	if (!(o_ptr->flags2 & TR2_SUST_INT))
 	{
-	    o_ptr->art_flags2 |= TR2_SUST_INT;
+	    o_ptr->flags2 |= TR2_SUST_INT;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_DEX)
     {
-	if (!(o_ptr->art_flags2 & TR2_SUST_DEX))
+	if (!(o_ptr->flags2 & TR2_SUST_DEX))
 	{
-	    o_ptr->art_flags2 |= TR2_SUST_DEX;
+	    o_ptr->flags2 |= TR2_SUST_DEX;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_CON)
     {
-	if (!(o_ptr->art_flags2 & TR2_SUST_CON))
+	if (!(o_ptr->flags2 & TR2_SUST_CON))
 	{
-	    o_ptr->art_flags2 |= TR2_SUST_CON;
+	    o_ptr->flags2 |= TR2_SUST_CON;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_CHR)
     {
-	if (!(o_ptr->art_flags2 & TR2_SUST_CHR))
+	if (!(o_ptr->flags2 & TR2_SUST_CHR))
 	{
-	    o_ptr->art_flags2 |= TR2_SUST_CHR;
+	    o_ptr->flags2 |= TR2_SUST_CHR;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_CHAOS)
     {
-	if (!(o_ptr->art_flags3 & TR3_TELEPORT))
+	if (!(o_ptr->flags3 & TR3_TELEPORT))
 	{
-	    o_ptr->art_flags3 |= TR3_TELEPORT;
+	    o_ptr->flags3 |= TR3_TELEPORT;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_FIRE)
     {
-	if (!(o_ptr->art_flags3 & TR3_LITE))
+	if (!(o_ptr->flags3 & TR3_LITE))
 	{
-	    o_ptr->art_flags3 |= TR3_LITE; /* Freebie */
+	    o_ptr->flags3 |= TR3_LITE; /* Freebie */
 	}
     }
 
@@ -3456,47 +3456,47 @@ static void random_misc (object_type * o_ptr, bool is_scroll)
     switch (randint(31))
     {
     case 1:
-	o_ptr->art_flags2 |= TR2_SUST_STR;
+	o_ptr->flags2 |= TR2_SUST_STR;
 /*  if (is_scroll) msg_print ("It makes you feel you cannot become weaker."); */
 	if (!artifact_bias)
 	    artifact_bias = BIAS_STR;
 	break;
     case 2:
-	o_ptr->art_flags2 |= TR2_SUST_INT;
+	o_ptr->flags2 |= TR2_SUST_INT;
 /*  if (is_scroll) msg_print ("It makes you feel you cannot become more stupid.");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_INT;
 	break;
     case 3:
-	o_ptr->art_flags2 |= TR2_SUST_WIS;
+	o_ptr->flags2 |= TR2_SUST_WIS;
 /*  if (is_scroll) msg_print ("It makes you feel you cannot become simpler.");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_WIS;
 	break;
     case 4:
-	o_ptr->art_flags2 |= TR2_SUST_DEX;
+	o_ptr->flags2 |= TR2_SUST_DEX;
 /*  if (is_scroll) msg_print ("It makes you feel you cannot become clumsier.");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_DEX;
 	break;
     case 5:
-	o_ptr->art_flags2 |= TR2_SUST_CON;
+	o_ptr->flags2 |= TR2_SUST_CON;
 /*  if (is_scroll) msg_print ("It makes you feel you cannot become less healthy.");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_CON;
 	break;
     case 6:
-	o_ptr->art_flags2 |= TR2_SUST_CHR;
+	o_ptr->flags2 |= TR2_SUST_CHR;
 /*  if (is_scroll) msg_print ("It makes you feel you cannot become uglier.");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_CHR;
 	break;
     case 7: case 8: case 14:
-	o_ptr->art_flags2 |= TR2_FREE_ACT;
+	o_ptr->flags2 |= TR2_FREE_ACT;
 /*  if (is_scroll) msg_print ("It makes you feel like a young rebel!");*/
 	break;
     case 9:
-	o_ptr->art_flags2 |= TR2_HOLD_LIFE;
+	o_ptr->flags2 |= TR2_HOLD_LIFE;
 /*  if (is_scroll) msg_print ("It makes you feel immortal.");*/
 	if (!artifact_bias && (randint(5)==1))
 	    artifact_bias = BIAS_PRIESTLY;
@@ -3504,53 +3504,53 @@ static void random_misc (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_NECROMANTIC;
 	break;
     case 10: case 11:
-	o_ptr->art_flags3 |= TR3_LITE;
+	o_ptr->flags3 |= TR3_LITE;
 /*  if (is_scroll) msg_print ("It starts shining.");*/
 	break;
     case 12: case 13:
-	o_ptr->art_flags3 |= TR3_FEATHER;
+	o_ptr->flags3 |= TR3_FEATHER;
 /*  if (is_scroll) msg_print ("It feels lighter.");*/
 	break;
     case 15: case 16: case 17:
-	o_ptr->art_flags3 |= TR3_SEE_INVIS;
+	o_ptr->flags3 |= TR3_SEE_INVIS;
 /*  if (is_scroll) msg_print ("It makes you see the air!");*/
 	break;
     case 18:
-	o_ptr->art_flags3 |= TR3_TELEPATHY;
+	o_ptr->flags3 |= TR3_TELEPATHY;
 /*  if (is_scroll) msg_print ("It makes you hear voices inside your head!");*/
 	if (!artifact_bias && (randint(9)==1))
 	    artifact_bias = BIAS_MAGE;
 	break;
     case 19: case 20:
-	o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
+	o_ptr->flags3 |= TR3_SLOW_DIGEST;
 /*  if (is_scroll) msg_print ("It makes you feel less hungry.");*/
 	break;
     case 21: case 22:
-	o_ptr->art_flags3 |= TR3_REGEN;
+	o_ptr->flags3 |= TR3_REGEN;
 /*  if (is_scroll) msg_print ("It looks as good as new.");*/
 	break;
     case 23:
-	o_ptr->art_flags3 |= TR3_TELEPORT;
+	o_ptr->flags3 |= TR3_TELEPORT;
 /*  if (is_scroll) msg_print ("Its position feels uncertain!");*/
 	break;
     case 24: case 25: case 26:
 	if (o_ptr->tval>=TV_BOOTS) random_misc(o_ptr, is_scroll);
 	else
 	{
-		o_ptr->art_flags3 |= TR3_SHOW_MODS;
+		o_ptr->flags3 |= TR3_SHOW_MODS;
 		o_ptr->to_a = 4 + (randint(11));
 	}
 	break;
     case 27: case 28: case 29:
-	o_ptr->art_flags3 |= TR3_SHOW_MODS;
+	o_ptr->flags3 |= TR3_SHOW_MODS;
 	o_ptr->to_h += 4 + (randint(11));
 	o_ptr->to_d += 4 + (randint(11));
 	break;
     case 30:
-        o_ptr->art_flags3 |= TR3_NO_MAGIC;
+        o_ptr->flags3 |= TR3_NO_MAGIC;
         break;
     case 31:
-        o_ptr->art_flags3 |= TR3_NO_TELE;
+        o_ptr->flags3 |= TR3_NO_TELE;
         break;
     }
 
@@ -3562,106 +3562,106 @@ static void random_slay (object_type * o_ptr, bool is_scroll)
 
     if (artifact_bias == BIAS_CHAOS && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_CHAOTIC))
+	if (!(o_ptr->flags1 & TR1_CHAOTIC))
 	{
-	    o_ptr->art_flags1 |= TR1_CHAOTIC;
+	    o_ptr->flags1 |= TR1_CHAOTIC;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_PRIESTLY &&
 	    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM) &&
-	    !(o_ptr->art_flags3 & TR3_BLESSED))
+	    !(o_ptr->flags3 & TR3_BLESSED))
 
     {
-	o_ptr->art_flags3 |= TR3_BLESSED; /* A free power for "priestly"
+	o_ptr->flags3 |= TR3_BLESSED; /* A free power for "priestly"
 					     random artifacts */
     }
 
 
     else if (artifact_bias == BIAS_NECROMANTIC && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_VAMPIRIC))
+	if (!(o_ptr->flags1 & TR1_VAMPIRIC))
 	{
-	    o_ptr->art_flags1 |= TR1_VAMPIRIC;
+	    o_ptr->flags1 |= TR1_VAMPIRIC;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags1 & TR1_BRAND_POIS) && (randint(2)==1))
+	if (!(o_ptr->flags1 & TR1_BRAND_POIS) && (randint(2)==1))
 	{
-	    o_ptr->art_flags1 |= TR1_BRAND_POIS;
+	    o_ptr->flags1 |= TR1_BRAND_POIS;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_RANGER && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_SLAY_ANIMAL))
+	if (!(o_ptr->flags1 & TR1_SLAY_ANIMAL))
 	{
-	    o_ptr->art_flags1 |= TR1_SLAY_ANIMAL;
+	    o_ptr->flags1 |= TR1_SLAY_ANIMAL;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_ROGUE && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_BRAND_POIS))
+	if (!(o_ptr->flags1 & TR1_BRAND_POIS))
 	{
-	    o_ptr->art_flags1 |= TR1_BRAND_POIS;
+	    o_ptr->flags1 |= TR1_BRAND_POIS;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_POIS && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_BRAND_POIS))
+	if (!(o_ptr->flags1 & TR1_BRAND_POIS))
 	{
-	    o_ptr->art_flags1 |= TR1_BRAND_POIS;
+	    o_ptr->flags1 |= TR1_BRAND_POIS;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_FIRE && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_BRAND_FIRE))
+	if (!(o_ptr->flags1 & TR1_BRAND_FIRE))
 	{
-	    o_ptr->art_flags1 |= TR1_BRAND_FIRE;
+	    o_ptr->flags1 |= TR1_BRAND_FIRE;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_COLD && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_BRAND_COLD))
+	if (!(o_ptr->flags1 & TR1_BRAND_COLD))
 	{
-	    o_ptr->art_flags1 |= TR1_BRAND_COLD;
+	    o_ptr->flags1 |= TR1_BRAND_COLD;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_ELEC && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_BRAND_ELEC))
+	if (!(o_ptr->flags1 & TR1_BRAND_ELEC))
 	{
-	    o_ptr->art_flags1 |= TR1_BRAND_ELEC;
+	    o_ptr->flags1 |= TR1_BRAND_ELEC;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_ACID && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_BRAND_ACID))
+	if (!(o_ptr->flags1 & TR1_BRAND_ACID))
 	{
-	    o_ptr->art_flags1 |= TR1_BRAND_ACID;
+	    o_ptr->flags1 |= TR1_BRAND_ACID;
 	    if (randint(2)==1) return;
 	}
     }
     else if (artifact_bias == BIAS_LAW && !(o_ptr->tval == TV_BOW))
     {
-	if (!(o_ptr->art_flags1 & TR1_SLAY_EVIL))
+	if (!(o_ptr->flags1 & TR1_SLAY_EVIL))
 	{
-	    o_ptr->art_flags1 |= TR1_SLAY_EVIL;
+	    o_ptr->flags1 |= TR1_SLAY_EVIL;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags1 & TR1_SLAY_UNDEAD))
+	if (!(o_ptr->flags1 & TR1_SLAY_UNDEAD))
 	{
-	    o_ptr->art_flags1 |= TR1_SLAY_UNDEAD;
+	    o_ptr->flags1 |= TR1_SLAY_UNDEAD;
 	    if (randint(2)==1) return;
 	}
-	if (!(o_ptr->art_flags1 & TR1_SLAY_DEMON))
+	if (!(o_ptr->flags1 & TR1_SLAY_DEMON))
 	{
-	    o_ptr->art_flags1 |= TR1_SLAY_DEMON;
+	    o_ptr->flags1 |= TR1_SLAY_DEMON;
 	    if (randint(2)==1) return;
 	}
     }
@@ -3671,11 +3671,11 @@ static void random_slay (object_type * o_ptr, bool is_scroll)
     switch (randint(34))
     {
     case 1: case 2:
-	o_ptr->art_flags1 |= TR1_SLAY_ANIMAL;
+	o_ptr->flags1 |= TR1_SLAY_ANIMAL;
 /*  if (is_scroll) msg_print ("You start hating animals.");*/
 	break;
     case 3: case 4:
-	o_ptr->art_flags1 |= TR1_SLAY_EVIL;
+	o_ptr->flags1 |= TR1_SLAY_EVIL;
 /*  if (is_scroll) msg_print ("You hate evil creatures.");*/
 	if (!artifact_bias && (randint(2)==1))
 	    artifact_bias = BIAS_LAW;
@@ -3683,40 +3683,40 @@ static void random_slay (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_PRIESTLY;
 	break;
     case 5: case 6:
-	o_ptr->art_flags1 |= TR1_SLAY_UNDEAD;
+	o_ptr->flags1 |= TR1_SLAY_UNDEAD;
 /*  if (is_scroll) msg_print ("You hate undead creatures.");*/
 	if (!artifact_bias && (randint(9)==1))
 	    artifact_bias = BIAS_PRIESTLY;
 	break;
     case 7: case 8:
-	o_ptr->art_flags1 |= TR1_SLAY_DEMON;
+	o_ptr->flags1 |= TR1_SLAY_DEMON;
 /*  if (is_scroll) msg_print ("You hate demons.");*/
 	if (!artifact_bias && (randint(9)==1))
 	    artifact_bias = BIAS_PRIESTLY;
 	break;
     case 9: case 10:
-	o_ptr->art_flags1 |= TR1_SLAY_ORC;
+	o_ptr->flags1 |= TR1_SLAY_ORC;
 /*  if (is_scroll) msg_print ("You hate orcs.");*/
 	break;
     case 11: case 12:
-	o_ptr->art_flags1 |= TR1_SLAY_TROLL;
+	o_ptr->flags1 |= TR1_SLAY_TROLL;
 /*  if (is_scroll) msg_print ("You hate trolls.");*/
 	break;
     case 13: case 14:
-	o_ptr->art_flags1 |= TR1_SLAY_GIANT;
+	o_ptr->flags1 |= TR1_SLAY_GIANT;
 /*  if (is_scroll) msg_print ("You hate giants.");*/
 	break;
     case 15: case 16:
-	o_ptr->art_flags1 |= TR1_SLAY_DRAGON;
+	o_ptr->flags1 |= TR1_SLAY_DRAGON;
 /*  if (is_scroll) msg_print ("You hate dragons.");*/
 	break;
     case 17: 
-	o_ptr->art_flags1 |= TR1_KILL_DRAGON;
+	o_ptr->flags1 |= TR1_KILL_DRAGON;
 /*  if (is_scroll) msg_print ("You feel an intense hatred of dragons.");*/
 	break;
     case 18:  case 19:
 	if (o_ptr->tval == TV_SWORD)
-	    {   o_ptr->art_flags1 |= TR1_VORPAL;
+	    {   o_ptr->flags1 |= TR1_VORPAL;
 /*      if (is_scroll) msg_print ("It looks extremely sharp!");*/
 		if (!artifact_bias && (randint(9)==1))
 		    artifact_bias = BIAS_WARRIOR;
@@ -3724,35 +3724,35 @@ static void random_slay (object_type * o_ptr, bool is_scroll)
 	else random_slay(o_ptr, is_scroll);
 	break;
     case 20:
-	o_ptr->art_flags1 |= TR1_IMPACT;
+	o_ptr->flags1 |= TR1_IMPACT;
 /*  if (is_scroll) msg_print ("The ground trembles beneath you.");*/
 	break;
     case 21: case 22:
-	o_ptr->art_flags1 |= TR1_BRAND_FIRE;
+	o_ptr->flags1 |= TR1_BRAND_FIRE;
 /*  if (is_scroll) msg_print ("It feels hot!");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_FIRE;
 	break;
     case 23: case 24:
-	o_ptr->art_flags1 |= TR1_BRAND_COLD;
+	o_ptr->flags1 |= TR1_BRAND_COLD;
 /*  if (is_scroll) msg_print ("It feels cold!");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_COLD;
 	break;
     case 25: case 26:
-	o_ptr->art_flags1 |= TR1_BRAND_ELEC;
+	o_ptr->flags1 |= TR1_BRAND_ELEC;
 /*  if (is_scroll) msg_print ("Ouch! You get zapped!");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_ELEC;
 	break;
     case 27: case 28:
-	o_ptr->art_flags1 |= TR1_BRAND_ACID;
+	o_ptr->flags1 |= TR1_BRAND_ACID;
 /*  if (is_scroll) msg_print ("Its smell makes you feel dizzy.");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_ACID;
 	break;
     case 29: case 30:
-	o_ptr->art_flags1 |= TR1_BRAND_POIS;
+	o_ptr->flags1 |= TR1_BRAND_POIS;
 /*  if (is_scroll) msg_print ("It smells rotten.");*/
 	if (!artifact_bias && (randint(3)!=1))
 	    artifact_bias = BIAS_POIS;
@@ -3762,13 +3762,13 @@ static void random_slay (object_type * o_ptr, bool is_scroll)
 	    artifact_bias = BIAS_ROGUE;
 	break;
     case 31: case 32:
-	o_ptr->art_flags1 |= TR1_VAMPIRIC;
+	o_ptr->flags1 |= TR1_VAMPIRIC;
 /*  if (is_scroll) msg_print ("You think it bit you!");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_NECROMANTIC;
 	break;
 	default:
-	o_ptr->art_flags1 |= TR1_CHAOTIC;
+	o_ptr->flags1 |= TR1_CHAOTIC;
 /*  if (is_scroll) msg_print ("It looks very confusing.");*/
 	if (!artifact_bias)
 	    artifact_bias = BIAS_CHAOS;
@@ -3780,13 +3780,13 @@ static void random_slay (object_type * o_ptr, bool is_scroll)
     switch (randint(6))
     {
 	case 1: case 2: case 3:
-	o_ptr->art_flags3 |= TR3_XTRA_MIGHT;
+	o_ptr->flags3 |= TR3_XTRA_MIGHT;
 /*  if (is_scroll) msg_print ("It looks mightier than before."); */
 	if (!artifact_bias && randint(9)==1)
 	    artifact_bias = BIAS_RANGER;
 	break;
 	default:
-	o_ptr->art_flags3 |= TR3_XTRA_SHOTS;
+	o_ptr->flags3 |= TR3_XTRA_SHOTS;
 /*  if (is_scroll) msg_print ("It seems faster!"); */
 	if (!artifact_bias && randint(9)==1)
 	    artifact_bias = BIAS_RANGER;
@@ -4029,7 +4029,7 @@ static void give_activation_power (object_type * o_ptr)
     /* A type was chosen... */
 	o_ptr->xtra1 = EGO_XTRA_ACTIVATE;
     o_ptr->xtra2 = type;
-    o_ptr->art_flags3 |= TR3_ACTIVATE;
+    o_ptr->flags3 |= TR3_ACTIVATE;
     o_ptr->timeout = 0;
 }
 
@@ -4162,7 +4162,7 @@ while(powers--)
 
 if (has_pval)
     {
-	if (o_ptr->art_flags1 & TR1_BLOWS)
+	if (o_ptr->flags1 & TR1_BLOWS)
 	    o_ptr->pval = randint(2) + 1;
 	else
 	{
@@ -4182,7 +4182,7 @@ if (has_pval)
 	    o_ptr->to_h += randint(o_ptr->to_h>19?1:20-o_ptr->to_h);
 	    o_ptr->to_d += randint(o_ptr->to_d>19?1:20-o_ptr->to_d);
 	}
-    o_ptr->art_flags3 |= (TR3_IGNORE_ALL); /* Just to be sure */
+    o_ptr->flags3 |= (TR3_IGNORE_ALL); /* Just to be sure */
     total_flags = flag_cost(o_ptr, TRUE);
     if (cheat_peek) msg_format("%ld", total_flags);
 
@@ -6444,7 +6444,7 @@ Ego weapons and normal weapons can be blessed automatically. */
 	msg_format("%s %s shine%s!",
 	       ((item >= 0) ? "Your" : "The"), o_name,
 	       ((o_ptr->number > 1) ? "" : "s"));
-	o_ptr->art_flags3 |= TR3_BLESSED;
+	o_ptr->flags3 |= TR3_BLESSED;
     }
     else
     {

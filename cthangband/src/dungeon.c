@@ -64,9 +64,9 @@ static bool is_powerful(object_type *o_ptr)
 	o_ptr->ident &= ~IDENT_TRIED;
 	object_info_known(u_ptr, o_ptr, 0);
 	o_ptr->ident |= IDENT_TRIED;
-	if (t_ptr->art_flags1 != u_ptr->art_flags1) return TRUE;
-	if (t_ptr->art_flags2 != u_ptr->art_flags2) return TRUE;
-	if (t_ptr->art_flags3 != u_ptr->art_flags3) return TRUE;
+	if (t_ptr->flags1 != u_ptr->flags1) return TRUE;
+	if (t_ptr->flags2 != u_ptr->flags2) return TRUE;
+	if (t_ptr->flags3 != u_ptr->flags3) return TRUE;
 
 	return FALSE;
 }
@@ -843,8 +843,8 @@ bool psychometry(void)
 void curse(object_type *o_ptr)
 {
 	o_ptr->ident |= IDENT_CURSED;
-	o_ptr->art_flags3 |= TR3_CURSED;
-	o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+	o_ptr->flags3 |= TR3_CURSED;
+	o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
 	if (streq(quark_str(o_ptr->note), "uncursed"))
 	{
 		o_ptr->note = 0;

@@ -956,10 +956,10 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
     /* Random artifacts don't stack !*/
     if (o_ptr->art_name || j_ptr->art_name) return (0);
 
-    /* Hack -- Identical art_flags! */
-    if ((o_ptr->art_flags1 != j_ptr->art_flags1) ||
-        (o_ptr->art_flags2 != j_ptr->art_flags2) ||
-        (o_ptr->art_flags3 != j_ptr->art_flags3))
+    /* Hack -- Identical flags! */
+    if ((o_ptr->flags1 != j_ptr->flags1) ||
+        (o_ptr->flags2 != j_ptr->flags2) ||
+        (o_ptr->flags3 != j_ptr->flags3))
             return (0);
 
 	/* Hack -- Never stack "powerful" items */
