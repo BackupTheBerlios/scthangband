@@ -3432,10 +3432,10 @@ option_type option_info[] =
 #endif
 
 	{ &use_autoroller,               TRUE, OPTS_BIRTH, 2, 20,
-    "use_autoroller",                "Stats are rolled repeatedly with minima" },
+    "use_autoroller",                "Allow stats to be rolled repeatedly with minima" },
 
 	{ &spend_points,               FALSE, OPTS_BIRTH, 2, 21,
-    "spend_points",                "Stats are not rolled, points are spent on them" },
+    "spend_points",                "Allow stats to be chosen by spending points" },
 
 	{ &ironman_shop,               FALSE, OPTS_BIRTH, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },
