@@ -4045,7 +4045,7 @@ static bool ang_sort_comp_pack_aux(object_ctype *a_ptr, object_ctype *b_ptr);
  */
 static bool PURE inven_carry_aux(object_type **j_ptr, object_type *o_ptr)
 {
-	for (*j_ptr = inventory; *j_ptr < inventory+INVEN_PACK; *j_ptr++)
+	for (*j_ptr = inventory; *j_ptr <= inventory+INVEN_PACK; (*j_ptr)++)
 	{
 		/* An object which can absorb o_ptr. */
 		if (object_similar(*j_ptr, o_ptr)) return TRUE;
@@ -4053,6 +4053,10 @@ static bool PURE inven_carry_aux(object_type **j_ptr, object_type *o_ptr)
 		/* No object, or an object which will be later in the pack. */
 		if (!ang_sort_comp_pack_aux(*j_ptr, o_ptr)) return FALSE;
 	}
+
+	/* Paranoia - the INVEN_PACK slot at least should be free. */
+	*j_ptr = NULL;
+	return FALSE;
 }
 
 /*
@@ -4076,7 +4080,7 @@ object_type *inven_carry(object_type *o_ptr)
 	{
 		object_absorb(j_ptr, o_ptr);
 	}
-	else
+	else if (j_ptr)
 	{
 		/* Find the last real slot. */
 		for (q_ptr = inventory+INVEN_PACK; q_ptr > j_ptr; q_ptr--)
@@ -4087,6 +4091,10 @@ object_type *inven_carry(object_type *o_ptr)
 			}
 		}
 		object_copy(j_ptr, o_ptr);
+	}
+	else
+	{
+		return NULL;
 	}
 
 	/* Increase the weight */
