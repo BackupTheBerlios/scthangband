@@ -73,11 +73,10 @@ void do_cmd_inven(bool equip)
  */
 bool PURE item_tester_hook_wear(object_ctype *o_ptr)
 {
-	/* Check for a usable slot */
-	if (wield_slot(o_ptr) >= INVEN_WIELD) return (TRUE);
+	int i = wield_slot(o_ptr);
 
-	/* Assume not wearable */
-	return (FALSE);
+	/* Check for a usable slot */
+	return (i >= INVEN_WIELD && i < INVEN_TOTAL);
 }
 
 /*
@@ -89,6 +88,9 @@ void do_cmd_wield(object_type *o_ptr)
 	object_type *q_ptr, *j_ptr;
 
 	cptr act;
+
+	/* This should only be called with valid items. */
+	assert(item_tester_hook_wear(o_ptr));
 
 	/* Check the slot */
 	j_ptr = inventory + wield_slot(o_ptr);
@@ -116,7 +118,8 @@ void do_cmd_wield(object_type *o_ptr)
 	/* confirm_wear_all is triggered whenever something may be cursed.
 	 * Slots are excluded because items to be placed in them are always
 	 * created uncursed. */
-	else if (confirm_wear_all && ~o_ptr->ident & IDENT_SENSE_CURSED && wield_slot(o_ptr) >= INVEN_WIELD && wield_slot(o_ptr) <= INVEN_FEET)
+	else if (confirm_wear_all && ~o_ptr->ident & IDENT_SENSE_CURSED &&
+		wield_slot(o_ptr) >= INVEN_WIELD && wield_slot(o_ptr) <= INVEN_FEET)
 	{
         if (!(get_check(format("Really use the %v? ", 
 			object_desc_f3, o_ptr, FALSE, 3))))

@@ -2352,14 +2352,14 @@ static void res_stat_details(object_type *o_ptr, int real_k_idx, int *i, cptr *i
 		object_copy(j_ptr, inventory+slot);
 
 		/* Hack - the player should know how to wear everything. */
-		if (slot == -1)
+		if (slot == INVEN_NONE)
 		{
 			object_type tmp;
 			object_prep(&tmp, real_k_idx);
 			slot = wield_slot(&tmp);
 
 			/* Paranoia - not a wearable item? */
-			if (slot == -1)
+			if (slot == INVEN_NONE)
 			{
 				p_ptr = &p_body;
 				return;
@@ -3578,7 +3578,7 @@ s16b PURE wield_slot(object_ctype *o_ptr)
 	}
 
 	/* No slot available */
-	return (-1);
+	return INVEN_NONE;
 }
 
 

@@ -1720,13 +1720,13 @@ static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
 		{
 			(*wp_ptr) = o_ptr;
 			object_wipe(*am_ptr);
-			break;
+			return INVEN_WIELD;
 		}
 		case INVEN_BOW:
 		{
 			(*wp_ptr) = o_ptr;
 			choose_ammunition(o_ptr, am_ptr);
-			break;
+			return INVEN_BOW;
 		}
 		/* This is a missile, so wp_ptr is expected to be a bow. */
 		default:
@@ -1736,7 +1736,6 @@ static int choose_weapon(object_type *o_ptr, object_type **wp_ptr,
 			return INVEN_BOW;
 		}
 	}
-	return slot;
 }
 
 /*
