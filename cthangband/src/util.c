@@ -3027,14 +3027,13 @@ bool get_check(cptr prompt)
 {
 	int i;
 
-	C_TNEW(buf, Term->wid, char);
+	cptr tmp = format("%.*s[y/n] ", Term->wid-strlen("[y/n] "), prompt);
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
 	/* Prompt for it (should "? " be added to long prompts?). */
-	sprintf(buf, "%.*s[y/n] ", Term->wid-8, prompt);
-	prt(buf, 0, 0);
+	prt(tmp, 0, 0);
 
 	/* Help */
 	help_track("yn_prompt");
@@ -3053,24 +3052,14 @@ bool get_check(cptr prompt)
 	/* Done with help */
 	help_track(NULL);
 
+	/* Leave a record */
+	msg_format("%s%v", tmp, ascii_to_text_f1, format("%c", i));
+	
 	/* Erase the prompt */
 	prt("", 0, 0);
 
-	/* Normal negation */
-	if ((i != 'Y') && (i != 'y') && (i != '\r'))
-		i = 'n';
-	/* Success */
-	else
-		i = 'y';
-		
-	/* Leave a (mildly inaccurate) record */
-	sprintf(strchr(buf, '\0'), " %c", i);
-	message_add(buf);
-
-	TFREE(buf);
-
 	/* Tell the calling routine */
-	return (i == 'y') ? TRUE : FALSE;
+	return (strchr("Yy\r", i)) ? TRUE : FALSE;
 }
 
 

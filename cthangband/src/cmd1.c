@@ -511,14 +511,10 @@ void search(void)
  */
 static char get_check_ynq(cptr prompt)
 {
-	/* There can be Term->wid characters in the prompt, and 4 in the
-	 * ascii_to_text() output. */
-	C_TNEW(tmp, Term->wid+5, char);
-
 	char i;
 
 	/* Create a single-line prompt. */
-	sprintf(tmp, "%.*s[y/n/q] ", Term->wid-(int)strlen("[y/n/q] "), prompt);
+	cptr tmp = format("%.*s[y/n/q] ", Term->wid-strlen("[y/n/q] "), prompt);
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
@@ -542,13 +538,11 @@ static char get_check_ynq(cptr prompt)
 	/* Done with help */
 	help_track(NULL);
 
-	/* Erase the prompt */
-	prt("", 0, 0);
-
 	/* Leave a record */
 	msg_format("%s%v", tmp, ascii_to_text_f1, format("%c", i));
 	
-	TFREE(tmp);
+	/* Erase the prompt */
+	prt("", 0, 0);
 
 	/* Return output (default to no). */
 	switch (i)

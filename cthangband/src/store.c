@@ -2633,16 +2633,14 @@ static bool get_check_service(cptr prompt, byte type)
 {
 	int i;
 
-	char buf[80];
+	/* Create a single-line prompt. */
+	cptr tmp = format("%.*s[y/n/?] ", Term->wid-strlen("[y/n/?] "), prompt);
 
 	/* Paranoia XXX XXX XXX */
 	msg_print(NULL);
 
-	/* Hack -- Build a "useful" prompt */
-	strnfmt(buf, 78, "%.70s[y/n/?] ", prompt);
-
 	/* Prompt for it */
-	prt(buf, 0, 0);
+	prt(tmp, 0, 0);
 
 	/* Help */
 	help_track("yn?_prompt");
@@ -2657,7 +2655,7 @@ static bool get_check_service(cptr prompt, byte type)
 		if (i == '?') 
 		{
 			service_help(type);
-			prt(buf, 0, 0);
+			prt(tmp, 0, 0);
 		}
 		else if (quick_prompt)
 			break;
@@ -2668,21 +2666,14 @@ static bool get_check_service(cptr prompt, byte type)
 	/* Done with help */
 	help_track(NULL);
 
+	/* Leave a record */
+	msg_format("%s%v", tmp, ascii_to_text_f1, format("%c", i));
+	
 	/* Erase the prompt */
 	prt("", 0, 0);
 
-	/* Normal negation */
-	if ((i != 'Y') && (i != 'y') && (i != '\r'))
-		i = 'n';
-	/* Success */
-	else
-		i = 'y';
-		
-	/* Leave a (mildly inaccurate) record */
-	message_add(format("%.70s[y/n] %c", prompt, i));
-	
 	/* Tell the calling routine */
-	return (i == 'y') ? TRUE : FALSE;
+	return (strchr("Yy\r", i)) ? TRUE : FALSE;
 }
 
 /* Haggle for a fixed price service from a store owner */
