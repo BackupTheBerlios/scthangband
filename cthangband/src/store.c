@@ -980,13 +980,23 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 
 /*
  * Allow a store item to absorb another item
+ * Returns true if the entire stack was absorbed.
  */
-static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
+static bool store_object_absorb(object_type *j_ptr, object_type *o_ptr)
 {
 	int total = o_ptr->number + j_ptr->number;
 
-	/* Combine quantity, lose excess items */
-	o_ptr->number = (total > 99) ? 99 : total;
+	if (total <= MAX_STACK_SIZE-1)
+	{
+		j_ptr->number = total;
+		return TRUE;
+	}
+	else
+	{
+		j_ptr->number = MAX_STACK_SIZE-1;
+		o_ptr->number = total-MAX_STACK_SIZE+1;
+		return FALSE;
+	}
 }
 
 
@@ -994,14 +1004,16 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
  * Check to see if the shop will be carrying too many objects	-RAK-
  * Note that the shop, just like a player, will not accept things
  * it cannot hold.  Before, one could "nuke" potions this way.
+ *
+ * Returns the number of items that can be absorbed from o_ptr.
  */
-static bool store_check_num(object_type *o_ptr)
+static int store_check_num(object_type *o_ptr)
 {
 	int        i;
 	object_type *j_ptr;
 
 	/* Free space is always usable */
-	if (st_ptr->stock_num < st_ptr->stock_size) return TRUE;
+	if (st_ptr->stock_num < st_ptr->stock_size) return MAX_STACK_SIZE-1;
 
 	/* The "home" acts like the player */
 	if (cur_store_type == STORE_HOME)
@@ -1021,18 +1033,21 @@ static bool store_check_num(object_type *o_ptr)
 	else
 	{
 		/* Check all the items */
-		for (i = 0; i < st_ptr->stock_num; i++)
+		for (i = st_ptr->stock_num-1; i; i--)
 		{
 			/* Get the existing item */
 			j_ptr = &st_ptr->stock[i];
 
-			/* Can the new object be combined with the old one? */
-			if (store_object_similar(j_ptr, o_ptr)) return (TRUE);
+			/* How many obects can be added to the inventory? The only similar
+			* pile which can accept this object is the last one (the others
+			* having 99 objects each), so only one similar is checked.
+			* This may be 0. */
+			if (store_object_similar(j_ptr, o_ptr)) return (MAX_STACK_SIZE-1-j_ptr->number);
 		}
 	}
 
 	/* But there was no room at the inn... */
-	return (FALSE);
+	return (0);
 }
 
 
@@ -1368,11 +1383,8 @@ static int store_carry(object_type *o_ptr)
 		/* Can the existing items be incremented? */
 		if (store_object_similar(j_ptr, o_ptr))
 		{
-			/* Hack -- extra items disappear */
-			store_object_absorb(j_ptr, o_ptr);
-
-			/* All done */
-			return (slot);
+			/* Return the last slot objects were left in. */
+			if (store_object_absorb(j_ptr, o_ptr)) return (slot);
 		}
 	}
 
@@ -3084,19 +3096,22 @@ static void store_sell(void)
 
 
 	/* Is there room in the store (or the home?) */
-	if (!store_check_num(q_ptr))
+	if (!((amt = store_check_num(q_ptr))))
 	{
 		if (cur_store_type == STORE_HOME) msg_print("Your home is full.");
 		else msg_print("I have not the room in my store to keep it.");
 		return;
 	}
-
+	else
+	{
+		amt = MIN(amt, o_ptr->number);
+	}
 
 	/* Find out how many the player wants (letter means "all") */
 	if (o_ptr->number > 1)
 	{
 		/* Get a quantity */
-		amt = get_quantity(NULL, o_ptr->number,TRUE);
+		amt = get_quantity(NULL,amt,TRUE);
 
 		/* Allow user abort */
 		if (amt <= 0) return;
@@ -4489,6 +4504,20 @@ void store_maint(int which)
 		}
 	}
 
+	if (st_ptr->stock_num > 1)
+	{
+		/* Never keep more than 99 of something. */
+		for (j = 1; j < st_ptr->stock_num; j++)
+		{
+			/* Find slots which have the same contents as their predecessors. */
+			if (store_object_similar(st_ptr->stock+j, st_ptr->stock+j-1))
+			{
+				/* Destroy the item */
+				store_item_increase(j, st_ptr->stock[j].number);
+				store_item_optimize(j);
+			}
+		}
+	}
 
 	/* Choose the number of slots to keep */
 	j = st_ptr->stock_num;
