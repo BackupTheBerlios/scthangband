@@ -1882,7 +1882,7 @@ void init_angband(void)
 		k_name, k_text, k_max, K_HEAD)
 
 	init_x_info("base objects", o_base_type, parse_o_base, "o_base", o_base,
-		o_base_name, dummy, ob_max, OB_HEAD)
+		ob_name, dummy, ob_max, OB_HEAD)
 
 	/* Initialize unidentified object info
 	 * This leaves space for scrolls, and checks that it is large

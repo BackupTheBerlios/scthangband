@@ -1935,7 +1935,7 @@ static errr parse_unid_flavourless(header *head)
 		if (!ob_ptr->name) continue;
 
 		/* Not flavourless. */
-		if (strchr(o_base_name+ob_ptr->name, CM_ACT+CI_FLAVOUR)) continue;
+		if (strchr(ob_name+ob_ptr->name, CM_ACT+CI_FLAVOUR)) continue;
 			
 		/* Check that u_info is large enough. */
 		if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
@@ -2972,6 +2972,32 @@ static errr init_info_txt_pre(header *head)
 	return SUCCESS;
 }
 
+/*
+ * Find the flags shared by every object with a given p_id.
+ */
+static void find_ob_flags(header *head)
+{
+	int i;
+	o_base_type *obase = head->info_ptr;
+	for (i = 0; i < 256; i++)
+	{
+		obase[i].flags1 = 0xFFFFFFFF;
+		obase[i].flags2 = 0xFFFFFFFF;
+		obase[i].flags3 = 0xFFFFFFFF;
+	}
+	for (i = 0; i < z_info->k_max; i++)
+	{
+		object_kind *k_ptr = k_info+i;
+
+		/* Hack - object_kind.u_idx stores p_id during initialisation. */
+		o_base_type *ob_ptr = obase+k_ptr->u_idx;
+
+		ob_ptr->flags1 &= k_ptr->flags1;
+		ob_ptr->flags2 &= k_ptr->flags2;
+		ob_ptr->flags3 &= k_ptr->flags3;
+	}
+}
+
 #define ITFE(W,X) \
 if (!(((maxima *)(head->info_ptr))->W)) \
 { \
@@ -3018,6 +3044,9 @@ static errr init_info_txt_final(header *head)
 		}
 		case OB_HEAD:
 		{
+			/* Fill in object_base_type.flags*. */
+			find_ob_flags(head);
+
 			/* There should always be 256 entries. */
 			error_idx = 255;
 

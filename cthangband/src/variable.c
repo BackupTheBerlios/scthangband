@@ -752,7 +752,7 @@ s16b *pid_base;
  * The base object arrays
  */
 o_base_type *o_base;
-char *o_base_name;
+char *ob_name;
 
 /*
  * The artifact arrays

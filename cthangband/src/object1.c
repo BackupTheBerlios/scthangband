@@ -626,50 +626,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 /*
- * Obtain the flags a given unaware object kind must have.
- * This only adds flags, so is safe to use on a set of flags which isn't clear.
- */
-static void object_flags_pid(object_kind *k_ptr, u32b *f1, u32b *f2, u32b *f3)
-{
-	u32b g3,g2,g1=g2=g3=0xFFFFFFFFL;
-	s16b i;
-	bool started = FALSE;
-	byte p_id = u_info[k_ptr->u_idx].p_id;
-
-	/* Don't do anything without spoilers. */
-	if (!spoil_base) return;
-
-	/* Don't do anything with aware items here. */
-	if (object_aware_kp(k_ptr)) return;
-	
-	/* Find the flags common to all possible k_idxs */
-	for (i = 0; i < MAX_K_IDX; i++)
-	{
-		object_kind *k2_ptr = &k_info[i];
-
-		/* Can't look like this item. */
-		if (u_info[k_ptr->u_idx].p_id != p_id) continue;
-
-		/* Already identified this item. */
-		if (object_aware_kp(k2_ptr)) continue;
-
-		g1 &= k2_ptr->flags1;
-		g2 &= k2_ptr->flags2;
-		g3 &= k2_ptr->flags3;
-		started = TRUE;
-	}
-	
-	/* No information if no objects found (should not happen anyway) */
-	if (!started) return;
-
-	/* Add in the newly discovered flags. */
-	(*f1) |= g1;
-	(*f2) |= g2;
-	(*f3) |= g3;
-}
-
-
-/*
  * Create an object containing the known information about an object.
  *
  * o_ptr points to the original object.
@@ -811,9 +767,18 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		}
 	}
 
-	/* The player can know certain things about unaware items. */
+	/* Find the flags the player can know about unaware items.
+	 * Hack - ignore other things the player is certain to know, as the
+	 * player wants clear potions and the like.
+	 */
 	if (spoil_base && !object_aware_p(o_ptr))
-		object_flags_pid(k_ptr, &(j_ptr->art_flags1), &(j_ptr->art_flags2), &(j_ptr->art_flags3));
+	{
+		o_base_type *ob_ptr = o_base+u_info[k_ptr->u_idx].p_id;
+
+		j_ptr->art_flags1 |= ob_ptr->flags1;
+		j_ptr->art_flags2 |= ob_ptr->flags2;
+		j_ptr->art_flags3 |= ob_ptr->flags3;
+	}
 		
 
 	/* Check for cursing even if unidentified */
@@ -1287,7 +1252,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 
 	reject = current = 0;
 
-	strings[CI_BASE] = o_base_name+ob_ptr->name;
+	strings[CI_BASE] = ob_name+ob_ptr->name;
 	strings[CI_FLAVOUR] = u_name+u_ptr->name;
 	strings[CI_K_IDX] = k_name+k_ptr->name;
 	strings[CI_EGO] = e_name+e_info[o1_ptr->name2].name;

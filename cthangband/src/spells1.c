@@ -2019,7 +2019,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 	/* Scan all objects in the grid */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
-		object_type *o_ptr;
+		object_type *o_ptr, j_ptr[1];
 	
 		bool is_art = FALSE;
 		bool ignore = FALSE;
@@ -2033,6 +2033,9 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
 		/* Acquire next object */
 		next_o_idx = o_ptr->next_o_idx;
+
+		/* Extract the known information */
+		object_info_known(j_ptr, o_ptr, 0);
 
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3);
@@ -2049,7 +2052,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Acid -- Lots of things */
 			case GF_ACID:
 			{
-				if (set_acid_destroy(o_ptr))
+				if (set_acid_destroy(j_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " melt!" : " melts!");
@@ -2061,7 +2064,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Elec -- Rings and Wands */
 			case GF_ELEC:
 			{
-				if (set_elec_destroy(o_ptr))
+				if (set_elec_destroy(j_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " are destroyed!" : " is destroyed!");
@@ -2073,7 +2076,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Fire -- Flammable objects */
 			case GF_FIRE:
 			{
-				if (set_fire_destroy(o_ptr))
+				if (set_fire_destroy(j_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
@@ -2085,7 +2088,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Cold -- potions and flasks */
 			case GF_COLD:
 			{
-				if (set_cold_destroy(o_ptr))
+				if (set_cold_destroy(j_ptr))
 				{
 					note_kill = (plural ? " shatter!" : " shatters!");
 					do_kill = TRUE;
@@ -2097,13 +2100,13 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Fire + Elec */
 			case GF_PLASMA:
 			{
-				if (set_fire_destroy(o_ptr))
+				if (set_fire_destroy(j_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
 					if (f3 & (TR3_IGNORE_FIRE)) ignore = TRUE;
 				}
-				if (set_elec_destroy(o_ptr))
+				if (set_elec_destroy(j_ptr))
 				{
 					ignore = FALSE;
 					do_kill = TRUE;
@@ -2116,13 +2119,13 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			/* Fire + Cold */
 			case GF_METEOR:
 			{
-				if (set_fire_destroy(o_ptr))
+				if (set_fire_destroy(j_ptr))
 				{
 					do_kill = TRUE;
 					note_kill = (plural ? " burn up!" : " burns up!");
 					if (f3 & (TR3_IGNORE_FIRE)) ignore = TRUE;
 				}
-				if (set_cold_destroy(o_ptr))
+				if (set_cold_destroy(j_ptr))
 				{
 					ignore = FALSE;
 					do_kill = TRUE;
@@ -2138,7 +2141,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			case GF_FORCE:
 			case GF_SOUND:
 			{
-				if (set_cold_destroy(o_ptr))
+				if (set_cold_destroy(j_ptr))
 				{
 					note_kill = (plural ? " shatter!" : " shatters!");
 					do_kill = TRUE;

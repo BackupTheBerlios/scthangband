@@ -275,6 +275,9 @@ struct o_base_type
 {
 	u32b name;	/* Name (offset) */
 	s32b cost;	/* Unaware cost */
+	u32b flags1;	/* Expected flags, set 1 */
+	u32b flags2;	/* Expected flags, set 2 */
+	u32b flags3;	/* Expected flags, set 3 */
 };
 
 /*

@@ -1375,7 +1375,7 @@ extern void reset_visuals(void);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(OBJECT1_C))
+#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
 extern void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
@@ -3314,7 +3314,7 @@ extern s16b *pid_base;
 extern o_base_type *o_base;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
-extern char *o_base_name;
+extern char *ob_name;
 #endif
 #if (defined(BIRTH_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern artifact_type *a_info;
