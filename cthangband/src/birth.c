@@ -2742,10 +2742,6 @@ static void player_wipe(void)
 	/* No weight */
 	total_weight = 0;
 
-	/* No items */
-	inven_cnt = 0;
-	equip_cnt = 0;
-
 	/* Clear the inventory */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{

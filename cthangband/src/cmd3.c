@@ -230,9 +230,6 @@ void do_cmd_wield(void)
 	/* Increase the weight */
 	total_weight += q_ptr->weight;
 
-	/* Increment the equip counter by hand */
-	equip_cnt++;
-
 	/* Where is the item now */
 	switch (j_ptr - inventory)
 	{

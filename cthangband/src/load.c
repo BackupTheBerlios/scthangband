@@ -1320,10 +1320,6 @@ static errr rd_inventory(void)
 	/* No weight */
 	total_weight = 0;
 
-	/* No items */
-	inven_cnt = 0;
-	equip_cnt = 0;
-
 	/* Read until done */
 	while (1)
 	{
@@ -1355,13 +1351,10 @@ static errr rd_inventory(void)
 
 			/* Add the weight */
 			total_weight += (q_ptr->number * q_ptr->weight);
-
-			/* One more item */
-			equip_cnt++;
 		}
 
 		/* Warning -- backpack is full */
-		else if (inven_cnt == INVEN_PACK)
+		else if (slot == INVEN_PACK)
 		{
 			/* Oops */
 			note("Too many items in the inventory!");
@@ -1381,9 +1374,6 @@ static errr rd_inventory(void)
 
 			/* Add the weight */
 			total_weight += (q_ptr->number * q_ptr->weight);
-
-			/* One more item */
-			inven_cnt++;
 		}
 	}
 

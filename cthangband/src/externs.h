@@ -2653,12 +2653,12 @@ extern bool hack_chaos_feature;
 #if (defined(OBJECT2_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern int artifact_bias;
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
-extern s16b inven_cnt;
-#endif
-#if (defined(BIRTH_C) || defined(CMD3_C) || defined(FILES_C) || defined(LOAD_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
-extern s16b equip_cnt;
-#endif
+
+
+
+
+
+
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS2_C) || defined(VARIABLE_C))
 extern s16b o_max;
 #endif

@@ -4682,9 +4682,6 @@ void item_optimize(object_type *o_ptr)
 	{
 		object_type *j_ptr;
 
-		/* One less item */
-		inven_cnt--;
-
 		/* Slide everything down */
 		for (j_ptr = o_ptr; j_ptr < inventory+INVEN_PACK; j_ptr++)
 		{
@@ -4704,9 +4701,6 @@ void item_optimize(object_type *o_ptr)
 	}
 	else
 	{
-		/* One less item */
-		equip_cnt--;
-
 		/* Erase the empty slot */
 		object_wipe(o_ptr);
 
@@ -4735,16 +4729,13 @@ bool inven_carry_okay(object_type *o_ptr)
 {
 	int j;
 
-	/* Empty slot? */
-	if (inven_cnt < INVEN_PACK) return (TRUE);
-
 	/* Similar slot? */
 	for (j = 0; j < INVEN_PACK; j++)
 	{
 		object_type *j_ptr = &inventory[j];
 
-		/* Skip non-objects */
-		if (!j_ptr->k_idx) continue;
+		/* Empty slot? */
+		if (!j_ptr->k_idx) return TRUE;
 
 		/* Check if the two items can be combined */
 		if (object_similar(j_ptr, o_ptr)) return (TRUE);
@@ -4778,17 +4769,22 @@ object_type *inven_carry(object_type *o_ptr)
 {
 	int j;
 	int n = -1;
+	bool full;
 
 	object_type     *j_ptr;
 
 
 	/* Check for combining */
-	for (j = 0; j < INVEN_PACK; j++)
+	for (j = 0, full = TRUE; j < INVEN_PACK; j++)
 	{
 		j_ptr = &inventory[j];
 
 		/* Skip non-objects */
-		if (!j_ptr->k_idx) continue;
+		if (!j_ptr->k_idx)
+		{
+			full = FALSE;
+			continue;
+		}
 
 		/* Hack -- track last item */
 		n = j;
@@ -4815,7 +4811,7 @@ object_type *inven_carry(object_type *o_ptr)
 
 
 	/* Paranoia */
-	if (inven_cnt > INVEN_PACK) return NULL;
+	if (full) return NULL;
 
 
 	/* Find an empty slot */
@@ -4843,9 +4839,6 @@ object_type *inven_carry(object_type *o_ptr)
 
 	/* Display the object if required */
 	object_track(o_ptr);
-
-	/* Count the items */
-	inven_cnt++;
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -5052,9 +5045,6 @@ void combine_pack(void)
 
 				/* Take note */
 				flag = TRUE;
-
-				/* One object is gone */
-				inven_cnt--;
 
 				/* Slide everything down */
 				for (k = i; k < INVEN_PACK; k++)

@@ -3355,6 +3355,31 @@ static void dump_final_messages(FILE * OutFile)
 	}
 }
 
+/*
+ * Return whether the player has some equipment.
+ */
+static bool equip_cnt(void)
+{
+	int i;
+	for (i = INVEN_WIELD; i <= INVEN_POUCH_6; i++)
+	{
+		if (inventory[i].k_idx) return TRUE;
+	}
+	return FALSE;
+}
+
+/*
+ * Return whether the player has some inventory.
+ */
+static bool inven_cnt(void)
+{
+	int i;
+	for (i = 0; i < INVEN_PACK; i++)
+	{
+		if (inventory[i].k_idx) return TRUE;
+	}
+	return FALSE;
+}
 
 /*
  * Hack -- Dump a character description file
@@ -3646,7 +3671,7 @@ next_cave:
 
 
 	/* Dump the equipment */
-	if (equip_cnt)
+	if (equip_cnt())
 	{
 		fprintf(fff, "  [Character Equipment]\n\n");
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -5118,7 +5143,7 @@ static void show_info(void)
 	/* Show equipment and inventory */
 
 	/* Equipment -- if any */
-	if (equip_cnt)
+	if (equip_cnt())
 	{
 		Term_clear();
 		item_tester_full = TRUE;
@@ -5128,7 +5153,7 @@ static void show_info(void)
 	}
 
 	/* Inventory -- if any */
-	if (inven_cnt)
+	if (inven_cnt())
 	{
 		Term_clear();
 		item_tester_full = TRUE;
