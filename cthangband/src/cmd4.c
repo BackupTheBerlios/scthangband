@@ -555,6 +555,30 @@ static void do_cmd_options_autosave(cptr info)
 }
 
 /*
+ * Display help in the main window. Remove it at the next keypress.
+ */
+static void display_help(void)
+{
+	/* Save the screen somewhere. */
+	int t = Term_save_aux();
+	int v;
+
+	/* Show the help. */
+	clear_from(0);
+	win_help_display();
+
+	/* Ask for a keypress without a visible cursor. */
+	Term_get_cursor(&v);
+	Term_set_cursor(0);
+	inkey();
+	Term_set_cursor(v);
+
+	/* Restore the screen. */
+	Term_load_aux(t);
+	Term_release(t);
+}
+
+/*
  * Display a text file on screen. Returns success or failure.
  */
 static bool showfile(cptr name, byte col)
@@ -749,16 +773,15 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			}
 			case '?':
 			{
-				/* Hack - show help on the main term. */
-				int t = Term_save_aux();
+				/* Track this option (again). */
 				help_track(option_info[opt[k]].o_text);
-				clear_from(0);
-				win_help_display();
-				(void)inkey();
-				help_track(NULL);
-				Term_load_aux(t);
-				Term_release(t);
+
+				/* Hack - show help on the main term. */
+				display_help();
 				break;
+
+				/* Clear the remembered option. */
+				help_track(NULL);
 			}
 			default:
 			{
@@ -993,6 +1016,9 @@ static void do_cmd_options_redraw(void)
 	/* Add a special resize hook. */
 	add_resize_hook(resize_inkey);
 
+	/* Help stuff. */
+	help_track("option=redraw");
+
 	for (c = KTRL('R'), n = 0, clear = FALSE; c != ESCAPE; c = inkey())
 	{
 		int inc = isupper(c) ? -1 : 1;
@@ -1027,6 +1053,12 @@ static void do_cmd_options_redraw(void)
 				clear = !clear;
 				break;
 			}
+			case '?':
+			{
+				/* Hack - show help on the main term. */
+				display_help();
+				break;
+			}
 			default:
 			{
 				bell();
@@ -1056,8 +1088,11 @@ static void do_cmd_options_redraw(void)
 		mc_put_fmt(7, COL_END+2, "x co-ord: %d, y co-ord: %d",
 			co_ptr->x, co_ptr->y);
 
-		put_str("Command (n/N/x/X/y/Y/Tab):", 10, COL_END+2);
+		put_str("Command (n/N/x/X/y/Y/Tab/?):", 10, COL_END+2);
 	}
+
+	/* Help stuff. */
+	help_track(NULL);
 
 	/* Remove the resize hook. */
 	delete_resize_hook(resize_inkey);

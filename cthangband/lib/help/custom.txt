@@ -432,6 +432,22 @@ If this option is set, no messages will be printed, or input required, as the ga
 
 See the "Window Options" help file for details.
 
+=== Redraw Options ===
+
+%%%%% <option=redraw>
+These control where everything on the main window apart from the map (which is currently fixed) goes. They are controlled with the following keys:
+
+n/N: Move to the next/previous display type.
+x/X: Move the display one square left/right.
+y/Y: Move the display one square down/up.
+Tab: Represent unused space with black dots/empty space.
+?  : Show this help.
+
+Negative x and y co-ordinates are interpreted as offsets from the right and bottom edge of the screen. This allows information to be shown on the bottom row without needing it to be updated if the window is resized.
+
+There are many locations which are unsuitable due to (for instance) being covered up by the map. You may still use them, but no particular care has been taken to ensure that the resulting display is useful.
+
+%%%%%
 === Spoiler Options ===
 
 Several of these options affect the things which are displayed about objects which the player has not used a scroll of *identify* or equivalent on. These affect how the object is portrayed on the character information screen ('C') and the object information display ('I').
