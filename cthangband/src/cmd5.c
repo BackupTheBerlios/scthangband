@@ -43,16 +43,29 @@ static book_type *k_idx_to_book(int i)
 	}
 }
 
+/* Find an arbitrary spell in a book. */
+#define a_spell_from(B) ((B)->info+iilog((B)->flags))
+
 static int k_idx_to_school(int i)
 {
 	book_type *b_ptr = k_idx_to_book(i);
+
+	/* Not a book. */
 	if (!b_ptr) return -2;
-	for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
+
+	assert(b_ptr->flags); /* check_spell_info() */
+
+	switch (a_spell_from(b_ptr)->skill1)
 	{
-		if (b_ptr->flags & (1L << i))
-			return b_ptr->info[i].skill1;
+		case SKILL_SORCERY: return SCH_SORCERY;
+		case SKILL_THAUMATURGY: return SCH_THAUMATURGY;
+		case SKILL_CONJURATION: return SCH_CONJURATION;
+		case SKILL_NECROMANCY: return SCH_NECROMANCY;
+
+		/* Not one of these books. */
+		default: return -1;
 	}
-}	
+}
 
 static book_type *spirit_to_book(int i)
 {
@@ -2794,6 +2807,8 @@ void check_magic_info(void)
 	int i;
 	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
 	{
+		if (!b_ptr->flags) quit_fmt("Book %d is empty.", b_ptr-book_info);
+
 		for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
 		{
 			if (~b_ptr->flags & (1L << i)) continue;
