@@ -1925,12 +1925,12 @@ struct visual_type {
 	cptr text;	/* A text string describing the option */
 	void (*dump)(FILE *fff); /* A function that dumps the preferences to an open file. */
 	/* A function that retrieves the attrs and chars for the current entry. */
-	void (*load)(s16b n, byte *da, byte *dc, byte *ca, byte *cc);
+	void (*load)(uint n, uint *da, uint *dc, uint *ca, uint *cc);
 	/* A function that retrieves the name for the current entry. */
-	char* (*name)(char *buf, s16b n);
+	char* (*name)(char *buf, uint n);
 	/* A function that saves the attrs and chars for the current entry. */
-	void (*save)(s16b n, byte ca, byte cc);
-	bool (*reject)(s16b n);
+	void (*save)(uint n, uint ca, uint cc);
+	bool (*reject)(uint n);
 	s16b max; /* The number of entries available. */
 	bool attr; /* Has a colour. */
 	bool chars; /* Has a character. */
@@ -1948,7 +1948,7 @@ static visual_type visual[5];
 /*
  * Find the name of an unidentified object.
  */
-static char *visual_name_unident(char *buf, s16b n)
+static char *visual_name_unident(char *buf, uint n)
 {
 	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
 	object_kind hack_k, *k_ptr = &k_info[1];
@@ -1973,25 +1973,25 @@ static char *visual_name_unident(char *buf, s16b n)
 	return buf;
 }
 
-static char *visual_name_mon(char *buf, s16b n)
+static char *visual_name_mon(char *buf, uint n)
 {
 	strcpy(buf, r_name+r_info[n].name);
 	return buf;
 }
 
-static char *visual_name_feat(char *buf, s16b n)
+static char *visual_name_feat(char *buf, uint n)
 {
 	strcpy(buf, f_name+f_info[n].name);
 	return buf;
 }
 
-static char *visual_name_moncol(char *buf, s16b n)
+static char *visual_name_moncol(char *buf, uint n)
 {
 	strcpy(buf, moncol[n].name);
 	return buf;
 }
 
-static char *visual_name_obj(char *buf, s16b n)
+static char *visual_name_obj(char *buf, uint n)
 {
 	/* Create the object */
 	object_type forge;
@@ -2110,16 +2110,16 @@ static void visual_dump_unident(FILE *fff)
 	(*cc) = (byte)(x_info[n].x_char); \
 }
 
-static void visual_load_mon(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
+static void visual_load_mon(uint n, uint *da, uint *dc, uint *ca, uint *cc)
 load_visual(r_info, r_name)
 
-static void visual_load_feat(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
+static void visual_load_feat(uint n, uint *da, uint *dc, uint *ca, uint *cc)
 load_visual(f_info, f_name)
 
-static void visual_load_unident(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
+static void visual_load_unident(uint n, uint *da, uint *dc, uint *ca, uint *cc)
 load_visual(u_info, u_name)
 
-static void visual_load_obj(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
+static void visual_load_obj(uint n, uint *da, uint *dc, uint *ca, uint *cc)
 	load_visual(k_info, k_name)
 
 /*
@@ -2131,16 +2131,16 @@ static void visual_load_obj(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
 	x_info[n].x_char = cc; \
 }
 
-static void visual_save_mon(s16b n, byte ca, byte cc)
+static void visual_save_mon(uint n, uint ca, uint cc)
 save_visual(r_info)
 
-static void visual_save_obj(s16b n, byte ca, byte cc)
+static void visual_save_obj(uint n, uint ca, uint cc)
 save_visual(k_info)
 
-static void visual_save_feat(s16b n, byte ca, byte cc)
+static void visual_save_feat(uint n, uint ca, uint cc)
 save_visual(f_info)
 
-static void visual_save_unident(s16b n, byte ca, byte cc)
+static void visual_save_unident(uint n, uint ca, uint cc)
 save_visual(u_info)
 
 static void visual_dump_moncol(FILE *fff)
@@ -2166,30 +2166,30 @@ static void visual_dump_moncol(FILE *fff)
 	fprintf(fff, "\n\n\n\n");
 }
 
-static void visual_load_moncol(s16b n, byte *da, byte *dc, byte *ca, byte *cc)
+static void visual_load_moncol(uint n, uint *da, uint *dc, uint *ca, uint *cc)
 {
 	moncol_type *mc_ptr = &moncol[n];
 	(*da) = TERM_WHITE;
 	(*ca) = mc_ptr->attr;
 }
 
-static void visual_save_moncol(s16b n, byte ca, byte cc)
+static void visual_save_moncol(uint n, uint ca, uint cc)
 {
 	moncol_type *mc_ptr = &moncol[n];
 	mc_ptr->attr = ca;
 }
 
-static bool visual_reject_feat(s16b n)
+static bool visual_reject_feat(uint n)
 {
 	return (f_info[n].mimic != n);
 }
 
-static bool visual_reject_unident(s16b n)
+static bool visual_reject_unident(uint n)
 {
 	return (u_info[n].s_id == SID_BASE);
 }
 
-static bool visual_reject_obj(s16b n)
+static bool visual_reject_obj(uint n)
 {
 	return (k_info[n].name == 0);
 }
@@ -2342,7 +2342,7 @@ void do_cmd_visuals(void)
 		{
 			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
 
-			s16b r = vs_ptr->max-1, inc;
+			int r = vs_ptr->max-1, inc, *out, max, num;
 
 			bool started = FALSE;
 
@@ -2351,8 +2351,9 @@ void do_cmd_visuals(void)
 			/* Hack -- query until done */
 			while (1)
 			{
-				byte da, dc, ca, cc;
+				int da, dc, ca, cc;
 				char *text;
+				cptr prompt;
 
 				/* Grab the information for the current entry.*/
 				(*(vs_ptr->load))(r, &da, &dc, &ca, &cc);
@@ -2411,21 +2412,67 @@ void do_cmd_visuals(void)
 				/* All done */
 				if (i == ESCAPE) break;
 
-				/* Analyze */
-				inc = (islower(i)) ? 1 : -1;
-				i = FORCELOWER(i);
+				/* Split i into base character and modifier. */
+				inc = (iscntrl(i)) ? 0 : (islower(i)) ? 1 : -1;
+				i = 'a'+i-(iscntrl(i) ? KTRL('A') : (islower(i)) ? 'a' : 'A');
 
-				if (i == 'n') r = (r+inc+vs_ptr->max) % vs_ptr->max;
-				if (i == 'a') ca += inc;
-				if (i == 'c') cc += inc;
+				switch (i)
+				{
+					case 'n':
+						prompt = "Select number of desired entry: ";
+						out = &r;
+						max = vs_ptr->max;
+						break;
+					case 'a':
+						prompt = "Select number of desired colour: ";
+						out = &ca;
+						max = 256;
+						break;
+					case 'c':
+						prompt = "Select number of desired character: ";
+						out = &cc;
+						max = 256;
+						break;
+					default:
+						max = 0;
+				}
+
+				/* No valid selection. */
+				if (!max) continue;
+
+				/* Analyze */
+				if (inc == 0)
+				{
+					char str[5] = "";
+
+					inc = 0;
+
+					if (get_string(prompt, str, 4))
+					{
+						num = strtol(str, NULL, 0);
+
+						/* Number out of bounds. */
+						if (num < 0 || num >= max) continue;
+
+						/* Invalid number in bounds. */
+						if (i == 'n' && vs_ptr->reject &&
+							(*vs_ptr->reject)(num)) continue;
+
+						/* Everything as it should be. */
+						(*out) = num;
+					}
+				}
+				else
+				{
+					(*out) = ((*out) + max + inc) % max;
 
 				/* Handle rejection criteria if necessary. */
 				if (i == 'n' && vs_ptr->reject)
 					while ((*vs_ptr->reject)(r))
 						r = (r+inc+vs_ptr->max) % vs_ptr->max;
-
+				}
 				/* Save the information if it has changed.*/
-				if (strchr("ac", i)) (*(vs_ptr->save))(r, ca, cc);
+				if (strchr("ac", i)) (*(vs_ptr->save))(r, (byte)ca, (byte)cc);
 			}
 		}
 
