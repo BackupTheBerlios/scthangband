@@ -1438,6 +1438,32 @@ static void choose_bow(object_type *am_ptr, object_type **wp_ptr)
 }
 
 /*
+ * Calculate the average critical damage from a melee attack.
+ * This tends to underestimate the effects of critical hits, but is  fairly
+ * accurate.
+ */
+static s32b critical_average(int weight, int plus, int dam)
+{
+	int j, p = weight + ((p_ptr->to_h + plus) * 5) +
+		(skill_set[p_ptr->wield_skill].value);
+	s32b c;
+
+	if (p <= 0) return dam;
+	if (p > 5000) p = 5000;
+
+	for (j = weight+1, c = 0; j <= weight+650; j++)
+	{
+		if (j < 400) c += dam+5;
+		else if (j < 700) c += dam+10;
+		else if (j < 900) c += 2*dam+15;
+		else if (j < 1300) c += 2*dam+20;
+		else c += ((5*dam)/2)+25;
+	}
+
+	return dam+c/650*p/5000;
+}
+
+/*
  * Given an object to be scrutinised, find a weapon and some ammunition (if
  * appropriate) to use it.
  * 
@@ -1546,7 +1572,8 @@ static void weapon_stats_calc(object_type *wp_ptr, object_type *am_ptr,
 	/* Add in the slays. */
 	if (slot == INVEN_WIELD)
 	{
-		(*damage) += dicedam * slay;
+		(*damage) +=
+			critical_average(wp_ptr->weight, wp_ptr->to_h, dicedam * slay);
 	}
 	else
 	{
