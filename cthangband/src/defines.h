@@ -2053,12 +2053,13 @@ logaux(x, 1) logaux(x, 0) 255
 #define PW_MONSTER      0x00000100L     /* Display monster recall */
 #define PW_OBJECT       0x00000200L     /* Display object recall */
 #define PW_OBJECT_DETAILS	0x00000400L	/* Display object details */
-#define PW_SNAPSHOT     0x00000800L     /* Display snap-shot */
+#define PW_SNAPSHOT     0x00000800L     /* Display snap-shot (unused) */
 #define PW_SHOPS	0x00001000L	/* Display shop information */
+#define PW_HELP	(1L<<13)	/* Display context-sensitive help */
 /* xxx */
 /* xxx */
-#define PW_BORG_1       0x00004000L     /* Display borg messages */
-#define PW_BORG_2       0x00008000L     /* Display borg status */
+#define PW_BORG_1       0x00004000L     /* Display borg messages (unused) */
+#define PW_BORG_2       0x00008000L     /* Display borg status (unused) */
 #define PW_NONE	0x40000000L	/* A blank screen. */
 #define PW_RETURN		0x80000000L		/* A "something happened" flag for window_stuff. */
 
@@ -2078,7 +2079,7 @@ logaux(x, 1) logaux(x, 0) 255
 /* The set of windows affected by window_stuff(). */
 #define WINDOW_STUFF_MASK (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | \
 	PW_VISIBLE | PW_PLAYER_SKILLS | PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | \
-	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_RETURN)
+	PW_OBJECT | PW_OBJECT_DETAILS | PW_SHOPS | PW_HELP | PW_RETURN)
 
 /*** General index values ***/
 

@@ -2528,7 +2528,7 @@ void prt(cptr str, int row, int col)
  * This function will correctly handle any width up to the maximum legal
  * value of 256, though it works best for a standard 80 character width.
  */
-void c_roff(byte a, cptr str)
+bool c_roff(byte a, cptr str)
 {
 	int x, y;
 
@@ -2621,6 +2621,9 @@ void c_roff(byte a, cptr str)
 		/* Advance */
 		if (++x > w) x = w;
 	}
+
+	/* i.e. if the text has reached the bottom of the term. */
+	return (y < h);
 }
 
 /*

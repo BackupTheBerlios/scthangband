@@ -1142,6 +1142,170 @@ static void win_object_details_display(void)
 	Term_putstr(0, 0, Term->wid, TERM_WHITE, o_name);
 }
 
+/* The option currently selected */
+#define MAX_HELP_STRS	5
+#define CUR_HELP_STR	help_str[help_strs]
+static cptr help_str[MAX_HELP_STRS];
+static int help_strs = 0;
+
+/*
+ * Remember or forget a help request. Only the latest one is
+ * currently processed.
+ */
+void help_track(cptr str)
+{
+	/* Remove one. */
+	if (!str)
+	{
+		if (help_strs) help_strs--;
+	}
+	else
+	{
+		/* Too many strings memorised. */
+		if (help_strs++ == MAX_HELP_STRS-1)
+		{
+			int i;
+			for (i = 1; i < MAX_HELP_STRS; i++)
+			{
+				help_str[i-1] = help_str[i];
+			}
+		}
+	
+		/* Set the current string */
+		CUR_HELP_STR = str;
+	}
+
+	/* Window stuff */
+	p_ptr->window |= PW_HELP;
+}
+
+/*
+ * Return whether PW_HELP is interesting.
+ */
+static bool win_help_good(void)
+{
+	/* There's a help hook present (should check for actual help). */
+	return (help_strs != 0);
+}
+
+static cptr *help_files = NULL;
+
+/*
+ * Initialise the help_files[] array above.
+ * Return false if the base help file was not found, true otherwise.
+ */
+static bool init_help_files(char *buf)
+{
+	int i;
+	FILE *fff;
+
+	/* Open an index file. */
+	path_build(buf, 1024, ANGBAND_DIR_HELP, syshelpfile);
+
+	if (!((fff = my_fopen(buf, "r"))))
+	{
+		prt(format("Cannot open '%s'!", buf), Term->hgt/2, 0);
+		return FALSE;
+	}
+		
+
+	/* Count the file references. */
+	for (i = 1; !my_fgets(fff, buf, 1024);)
+	{
+		if (prefix(buf, "***** [")) i++;
+	}
+
+	/* Create the help_files array. */
+	help_files = C_NEW(i, cptr);
+
+	/* Hack - The last element must be NULL. */
+	help_files[--i] = NULL;
+
+	/* Return to the start of the file. */
+	fseek(fff, 0, SEEK_SET);
+
+	/* Fill the help_files array. */
+	while (!my_fgets(fff, buf, 1024))
+	{
+		/* Not a reference. */
+		if (!prefix(buf, "***** [")) continue;
+		
+		/* Fill in the help_files array (backwards). */
+		help_files[--i] = string_make(buf+strlen("***** [a] "));
+	}
+	return TRUE;
+}
+
+#define CC_PREFIX	"#####"
+
+/*
+ * Print a multi-coloured string where colour-changes are denoted by #####.
+ * Unlike show_file_tome, this uses c_roff() to ensure that its lines are
+ * wrapped, and so works best with files without unnecessary formatting.
+ */
+static void mc_roff(cptr s)
+{
+	cptr t;
+	byte attr;
+	
+	for (attr = TERM_WHITE; (t = strstr(s, CC_PREFIX));)
+	{
+		if (!c_roff(attr, format("%.*s", t-s, s))) return;
+		s = t + strlen(CC_PREFIX)+1;
+		attr = color_char_to_attr(s[-1]);
+	}
+	c_roff(attr, s);
+}
+
+static void win_help_display(void)
+{
+	char buf[1024];
+	FILE *fff;
+	cptr *str;
+
+	/* Nothing to show. */
+	if (!help_str) return;
+
+	/* Try to read the list of files at first. */
+	if (!help_files && !init_help_files(buf)) return;
+
+	/* Search every potentially relevant file (should use an index, but...) */
+	for (str = help_files; *str; str++)
+	{
+		path_build(buf, 1024, ANGBAND_DIR_HELP, *str);
+		
+		/* No such file? */
+		if (!((fff = my_fopen(buf, "r"))))
+		{
+			prt(format("Cannot open '%s'!", buf), Term->hgt/2, 0);
+			return;
+		}
+
+		Term_gotoxy(0,0);
+
+		while (!my_fgets(fff, buf, 1024))
+		{
+			/* Not an option heading. */
+			if (strncmp(buf, "*****", strlen("*****"))) continue;
+
+			/* Not this option heading. */
+			if (!strstr(buf, format("<%s>", CUR_HELP_STR))) continue;
+
+			while (!my_fgets(fff, buf, 1024) &&
+				strncmp(buf, "*****", strlen("*****")))
+			{
+				/* Print the line out in a possibly colourful way. */
+				mc_roff(buf);
+				
+				/* Go to the next line. */
+				roff("\n");
+			}
+			/* Only expect one match. */
+			return;
+		}
+	}
+}
+
 /*
  * Return whether PW_VISIBLE is interesting
  */
@@ -3893,6 +4057,8 @@ static void init_window_stuff(void)
 	display_func[iilog(PW_OBJECT)].display = win_object_display;
 	display_func[iilog(PW_OBJECT_DETAILS)].good = win_object_details_good;
 	display_func[iilog(PW_OBJECT_DETAILS)].display = win_object_details_display;
+	display_func[iilog(PW_HELP)].good = win_help_good;
+	display_func[iilog(PW_HELP)].display = win_help_display;
 #if 0
 	/* The following displays are defined but never used. */
 	display_func[iilog(PW_SNAPSHOT)].good = func_false;

@@ -2405,6 +2405,9 @@ static void process_command(void)
 
                 char error_m[80];
 
+	char track_str[20]="cmd=";
+	cptr t;
+
  #ifdef ALLOW_REPEAT /* TNB */
  
      /* Handle repeating the last command */
@@ -2412,7 +2415,11 @@ static void process_command(void)
  
  #endif /* ALLOW_REPEAT -- TNB */
  
-
+	/* Track this command (if not instantaneous). */
+	t = format("%c%c", (command_cmd & 0xFF00)/0x0100, command_cmd & 0x00FF);
+	if (!*t) t++;
+	ascii_to_text(track_str+strlen("cmd="), t);
+	help_track(track_str);
 
 	/* Parse the command */
 	switch (command_cmd)
@@ -3089,6 +3096,9 @@ static void process_command(void)
 			break;
 		}
 	}
+
+	/* Clear the tracked command. */
+	help_track(NULL);
 }
 
 

@@ -481,8 +481,14 @@ static void do_cmd_options_cheat(cptr info)
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
 
+		/* Track this option. */
+		help_track(cheat_info[k].o_text);
+
 		/* Get a key */
 		ch = inkey();
+
+		/* Assume the help needed has changed. */
+		help_track(NULL);
 
 		/* Analyze */
 		switch (ch)
@@ -616,8 +622,14 @@ static void do_cmd_options_autosave(cptr info)
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
 
+		/* Track this option. */
+		help_track(autosave_info[k].o_text);
+
 		/* Get a key */
 		ch = inkey();
+
+		/* Assume the help needed has changed. */
+		help_track(NULL);
 
 		/* Analyze */
 		switch (ch)
@@ -802,8 +814,14 @@ void do_cmd_options_aux(int page, cptr info)
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
 
+		/* Track this option. */
+		help_track(option_info[opt[k]].o_text);
+
 		/* Get a key */
 		ch = inkey();
+
+		/* Assume the help needed has changed. */
+		help_track(NULL);
 
 		/* Analyze */
 		switch (ch)
@@ -966,8 +984,14 @@ static void do_cmd_options_win(void)
 		/* Place Cursor */
 		Term_gotoxy(35 + x * 5+((second) ? 1 : 0), y + 5);
 
+		/* Track this option. */
+		help_track(window_flag_desc[y]);
+
 		/* Get key */
 		ch = inkey();
+
+		/* Assume the help needed has changed. */
+		help_track(NULL);
 
 		/* Analyze */
 		switch (ch)
@@ -1207,6 +1231,9 @@ void do_cmd_options(void)
 				/* Prompt */
 				prt("Command: Base Delay Factor", 18, 0);
 
+				/* Track this option. */
+				help_track("base_delay");
+
 				/* Get a new value */
 				while (1)
 				{
@@ -1221,12 +1248,18 @@ void do_cmd_options(void)
 				}
 
 				break;
+
+				/* The help needed has changed. */
+				help_track(NULL);
 			}
 
 			/* Hack -- hitpoint warning factor */
 			case 'H':
 			case 'h':
 			{
+				/* Track this option. */
+				help_track("hitpoint_warning");
+
 				/* Prompt */
 				prt("Command: Hitpoint Warning", 18, 0);
 
@@ -1241,6 +1274,9 @@ void do_cmd_options(void)
 					if (isdigit(k)) hitpoint_warn = D2I(k);
 					else bell();
 				}
+
+				/* The help needed has changed. */
+				help_track(NULL);
 
 				break;
 			}
