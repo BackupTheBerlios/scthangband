@@ -85,7 +85,7 @@ static void create_user_dir(void)
 	}
 
 	/* The system user directory will not be looked at again. */
-	string_free(ANGBAND_DIR_USER);
+	FREE(ANGBAND_DIR_USER);
 	ANGBAND_DIR_USER = ANGBAND_DIR_USER_LOC;
 }
 
@@ -129,20 +129,20 @@ void init_file_paths(cptr path)
 	/*** Free everything ***/
 
 	/* Free the main path */
-	string_free(ANGBAND_DIR);
+	FREE(ANGBAND_DIR);
 
 	/* Free the sub-paths */
-	string_free(ANGBAND_DIR_APEX);
-	string_free(ANGBAND_DIR_BONE);
-	string_free(ANGBAND_DIR_DATA);
-	string_free(ANGBAND_DIR_EDIT);
-	string_free(ANGBAND_DIR_FILE);
-	string_free(ANGBAND_DIR_HELP);
-	string_free(ANGBAND_DIR_INFO);
-	string_free(ANGBAND_DIR_PREF);
-	string_free(ANGBAND_DIR_SAVE);
-	string_free(ANGBAND_DIR_USER);
-	string_free(ANGBAND_DIR_XTRA);
+	FREE(ANGBAND_DIR_APEX);
+	FREE(ANGBAND_DIR_BONE);
+	FREE(ANGBAND_DIR_DATA);
+	FREE(ANGBAND_DIR_EDIT);
+	FREE(ANGBAND_DIR_FILE);
+	FREE(ANGBAND_DIR_HELP);
+	FREE(ANGBAND_DIR_INFO);
+	FREE(ANGBAND_DIR_PREF);
+	FREE(ANGBAND_DIR_SAVE);
+	FREE(ANGBAND_DIR_USER);
+	FREE(ANGBAND_DIR_XTRA);
 
 
 	/*** Prepare the "path" ***/
@@ -223,7 +223,7 @@ void init_file_paths(cptr path)
 		if (next)
 		{
 			/* Forget the old path name */
-			string_free(ANGBAND_DIR_DATA);
+			FREE(ANGBAND_DIR_DATA);
 
 			/* Build a new path name */
 			ANGBAND_DIR_DATA = string_make(format("data-%s", next));

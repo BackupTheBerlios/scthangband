@@ -1190,7 +1190,7 @@ static errr Infofnt_nuke(void)
 	if (ifnt->name)
 	{
 		/* Free the name */
-		string_free(ifnt->name);
+		FREE(ifnt->name);
 	}
 
 	/* Nuke info if needed */

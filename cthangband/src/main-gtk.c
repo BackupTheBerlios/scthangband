@@ -2438,10 +2438,10 @@ static void free_menu_paths(void)
 	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
 		/* XXX XXX Free Term menu path */
-		string_free((cptr)term_entry[i].path);
+		FREE((cptr)term_entry[i].path);
 
 		/* XXX XXX Free Font menu path */
-		string_free((cptr)font_entry[i].path);
+		FREE((cptr)font_entry[i].path);
 	}
 }
 

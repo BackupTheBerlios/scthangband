@@ -3771,7 +3771,7 @@ static errr parse_info_line(char *buf, header *head, int initmacro, vptr *extra)
 
 				/* Parse the rest of this string. */
 				strcpy(buf, this_buf);
-				string_free(this_buf);
+				FREE(this_buf);
 				try(parse_info_line(buf, head, i, extra));
 
 				/* All done. */

@@ -1534,7 +1534,7 @@ static errr term_force_font(term_data *td, cptr path)
 		if (!used) RemoveFontResource(td->font_file);
 
 		/* Free the old name */
-		string_free(td->font_file);
+		FREE(td->font_file);
 
 		/* Forget it */
 		td->font_file = NULL;
@@ -4489,7 +4489,7 @@ static void hook_quit(cptr str)
 	for (i = MAX_TERM_DATA - 1; i >= 0; --i)
 	{
 		term_force_font(&data[i], NULL);
-		if (data[i].font_want) string_free(data[i].font_want);
+		if (data[i].font_want) FREE(data[i].font_want);
 		if (data[i].w) DestroyWindow(data[i].w);
 		data[i].w = 0;
 
@@ -4513,7 +4513,7 @@ static void hook_quit(cptr str)
 		{
 			if (!sound_file[i][j]) break;
 
-			string_free(sound_file[i][j]);
+			FREE(sound_file[i][j]);
 		}
 	}
 #endif /* USE_SOUND */
@@ -4529,15 +4529,15 @@ static void hook_quit(cptr str)
 	if (hIcon) DestroyIcon(hIcon);
 
 	/* Free strings */
-	string_free(ini_file);
-	string_free(argv0);
-	string_free(ANGBAND_DIR_XTRA_FONT);
-	string_free(ANGBAND_DIR_XTRA_GRAF);
-	string_free(ANGBAND_DIR_XTRA_SOUND);
-	string_free(ANGBAND_DIR_XTRA_HELP);
+	FREE(ini_file);
+	FREE(argv0);
+	FREE(ANGBAND_DIR_XTRA_FONT);
+	FREE(ANGBAND_DIR_XTRA_GRAF);
+	FREE(ANGBAND_DIR_XTRA_SOUND);
+	FREE(ANGBAND_DIR_XTRA_HELP);
 
 #ifdef USE_MUSIC
-	string_free(ANGBAND_DIR_XTRA_MUSIC);
+	FREE(ANGBAND_DIR_XTRA_MUSIC);
 #endif /* USE_MUSIC */
 
 #ifdef HAS_CLEANUP

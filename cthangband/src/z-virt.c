@@ -116,20 +116,3 @@ cptr string_make(cptr str)
 }
 
 
-/*
- * Un-allocate a string allocated above.
- * Depends on no changes being made to the string.
- */
-errr string_free(cptr str)
-{
-	/* Succeed on non-strings */
-	if (!str) return (0);
-
-	/* Kill the buffer of chars we must have allocated above */
-	rnfree((vptr)(str));
-
-	/* Success */
-	return (0);
-}
-
-

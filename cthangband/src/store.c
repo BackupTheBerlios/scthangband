@@ -1927,7 +1927,7 @@ static cptr store_title_aux(void)
 			/* Hack - return real charisma. */
 			p_ptr->stat_ind[A_CHR] = old_charisma;
 
-			string_free(tmp_str);
+			FREE(tmp_str);
 		}
 	}
 

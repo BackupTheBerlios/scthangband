@@ -1868,7 +1868,7 @@ void do_cmd_macros(void)
 				strnfmt(macro__buf, 1024, "%v", text_to_ascii_f1, tmp);
 
 				/* Free old keymap */
-				string_free(keymap_act[mode][(byte)(buf[0])]);
+				FREE(keymap_act[mode][(byte)(buf[0])]);
 
 				/* Make new keymap */
 				keymap_act[mode][(byte)(buf[0])] = string_make(macro__buf);
@@ -1894,7 +1894,7 @@ void do_cmd_macros(void)
 			do_cmd_macro_aux_keymap(buf);
 
 			/* Free old keymap */
-			string_free(keymap_act[mode][(byte)(buf[0])]);
+			FREE(keymap_act[mode][(byte)(buf[0])]);
 
 			/* Make new keymap */
 			keymap_act[mode][(byte)(buf[0])] = NULL;

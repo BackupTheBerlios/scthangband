@@ -2514,7 +2514,7 @@ static void identify_fully_clear(ifa_type *i_ptr)
 {
 	do
 	{
-		if (i_ptr->alloc) string_free(i_ptr->txt);
+		if (i_ptr->alloc) FREE(i_ptr->txt);
 	}
 	while ((++i_ptr)->txt);
 }
@@ -3768,7 +3768,7 @@ void show_inven(void)
 	command_gap = col;
 
 	/* Clean up. */
-	for (k = 0; k < 23; k++) string_free(out_desc[k]);
+	for (k = 0; k < 23; k++) FREE(out_desc[k]);
 	TFREE(o_name);
 }
 
@@ -3916,7 +3916,7 @@ void show_equip(void)
 	command_gap = col;
 
 	/* Clean up. */
-	for (k = 0; k < 23; k++) string_free(out_desc[k]);
+	for (k = 0; k < 23; k++) FREE(out_desc[k]);
 	TFREE(o_name);
 }
 

@@ -1435,7 +1435,7 @@ errr macro_add(cptr pat, cptr act)
 	if (n >= 0)
 	{
 		/* Free the old macro action */
-		string_free(macro__act[n]);
+		FREE(macro__act[n]);
 	}
 
 	/* Create a new macro */

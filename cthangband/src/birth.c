@@ -1997,7 +1997,7 @@ static bc_type get_hermetic_skills()
 			/* Get a choice */
 		cptr buf = string_make(format("%d choic%s left. Choose a school or type", i,(i>1 ? "es":"e")));
 		bc_type b = birth_choice(21, MAX_SCHOOL*2, buf, &k, TRUE);
-		(void)string_free(buf);
+		(void)FREE(buf);
 		if (b) return b;
 
 			switch(k)

@@ -533,7 +533,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				{
 					for (mode = 0; mode < KEYMAP_MODES; mode++)
 					{
-						string_free(keymap_act[mode][i]);
+						FREE(keymap_act[mode][i]);
 					}
 				}
 				C_WIPE(keymap_act, (MAX_UCHAR+1)*KEYMAP_MODES, cptr);
@@ -549,7 +549,7 @@ errr process_pref_file_aux(char *buf, u16b *sf_flags)
 				return (1);
 			i = (byte)(format(0)[0]);
 	
-			string_free(keymap_act[mode][i]);
+			FREE(keymap_act[mode][i]);
 	
 			keymap_act[mode][i] = string_make(macro__buf);
 	
