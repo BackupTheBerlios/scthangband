@@ -2099,8 +2099,6 @@ static void process_recall(void)
 
 		wildx=town_defs[cur_town].x;
 		wildy=town_defs[cur_town].y;
-
-		came_from=START_RANDOM;
 	}
 }
 
@@ -3947,11 +3945,7 @@ static void resurrect(bool wizard)
 #endif
 
 	/* Teleport to town */
-	new_level_flag = TRUE;
-	came_from=START_RANDOM;
-
-	/* Go to town */
-	dun_level = 0;
+	change_level(0, START_RANDOM);
 
 	/* Do not die */
 	death = FALSE;
