@@ -3176,7 +3176,7 @@ extern int PlayerUID;
  */
 #if defined(__GNUC__) || \
 	(defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
-#define VARIABLE_ARRAYS
+/*#define VARIABLE_ARRAYS*/
 #endif
 
 #ifdef VARIABLE_ARRAYS
