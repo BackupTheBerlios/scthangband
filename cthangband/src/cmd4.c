@@ -3084,7 +3084,7 @@ static void do_cmd_knowledge_uniques(void)
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
-				my_fprintf(fff, " %v %c %s%c%v is %s", get_symbol(r_ptr),
+				my_fprintf(fff, " %v %c %s%c%v is %s\n", get_symbol(r_ptr),
 					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', CC_PREFIX,
 					(dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE],
 					monster_desc_aux_f3, r_ptr, 1, MDF_DEF,
@@ -3198,7 +3198,7 @@ static int count_kills(FILE *fff, bool noisy)
 			else if (r_ptr->flags1 & RF1_UNIQUE) flags |= MDF_DEF;
 			else flags |= MDF_INDEF;
 			
-			my_fprintf(fff, " %v   %v", get_symbol(r_ptr),
+			my_fprintf(fff, " %v   %v\n", get_symbol(r_ptr),
 				monster_desc_aux_f3, r_ptr, This, flags);
 		}
 	}
