@@ -4322,8 +4322,10 @@ void show_inven(void)
 
 	int             out_index[23];
 	byte    out_color[23];
-	char    out_desc[23][80];
+	char    *out_desc[23];
 
+	/* Ensure that unset out_desc strings are NULL. */
+	C_WIPE(out_desc, 23, char*);
 
 	/* Starting column */
 	col = command_gap;
@@ -4369,7 +4371,7 @@ void show_inven(void)
 		/* Save the object index, color, and description */
 		out_index[k] = i;
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
-		(void)strcpy(out_desc[k], o_name);
+		out_desc[k] = string_make(o_name);
 
 		/* Find the predicted "line length" */
 		l = strlen(out_desc[k]) + 5;
@@ -4439,6 +4441,8 @@ void show_inven(void)
 	/* Save the new column */
 	command_gap = col;
 
+	/* Clean up. */
+	for (k = 0; k < 23; k++) string_free(out_desc[k]);
 	TFREE(o_name);
 }
 
@@ -4460,8 +4464,11 @@ void show_equip(void)
 
 	int                     out_index[23];
 	byte            out_color[23];
-	char            out_desc[23][80];
+	char            *out_desc[23];
 
+
+	/* Ensure that unset out_desc strings are NULL. */
+	C_WIPE(out_desc, 23, char*);
 
 	/* Starting column */
 	col = command_gap;
@@ -4496,7 +4503,7 @@ void show_equip(void)
 		/* Save the color */
 		out_index[k] = i;
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
-		(void)strcpy(out_desc[k], o_name);
+		out_desc[k] = string_make(o_name);
 
 		/* Extract the maximal length (see below) */
 		l = strlen(out_desc[k]) + (2 + 3);
@@ -4581,6 +4588,8 @@ void show_equip(void)
 	/* Save the new column */
 	command_gap = col;
 
+	/* Clean up. */
+	for (k = 0; k < 23; k++) string_free(out_desc[k]);
 	TFREE(o_name);
 }
 
