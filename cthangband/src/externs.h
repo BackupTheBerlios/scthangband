@@ -3923,7 +3923,7 @@ extern void plog(cptr str);
 #if (defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern void (*quit_aux)(cptr);
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(SAVE_C) || defined(UTIL_C) || defined(Z_FORM_C) || defined(Z_UTIL_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_XXX_C) || defined(MAIN_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_FORM_C) || defined(Z_UTIL_C))
 extern void quit(cptr str);
 #endif
 #if (defined(MAIN_CRB_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(Z_UTIL_C))
@@ -3968,7 +3968,7 @@ extern bool chaos_patrons;
 
 /* xtra2.c */
 
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern bool PURE p_has_mutation(int idx);
 #endif
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
@@ -3977,10 +3977,16 @@ extern void p_set_mutation(int idx);
 #if (defined(MONSTER2_C) || defined(XTRA2_C))
 extern void p_clear_mutation(int idx);
 #endif
+#if (defined(INIT2_C) || defined(XTRA2_C))
+extern void init_chaos(void);
+#endif
 #if (defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern bool PURE p_mutated(void);
 #endif
 #if (defined(BIRTH_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern void p_clear_mutations(void);
+#endif
+#if (defined(SPELLS2_C) || defined(XTRA2_C))
+extern int add_chaos_features(cptr *info, bool (*reject)(int));
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -1417,6 +1417,9 @@ static errr init_other(void)
 	/* Initialise the squelch information. */
 	init_squelch();
 
+	/* Initialise the chaos feature information. */
+	init_chaos();
+
 	/* Success */
 	return (0);
 }

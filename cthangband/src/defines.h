@@ -306,6 +306,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define MUT_VULN_ELEM                  93
 #define MUT_MOTION                     94
 #define MUT_SUS_STATS                  95
+#define MUT_MAX	96	/* Fixed by the size of the muta* flags. */
 
 /* Melee attacks... */
 

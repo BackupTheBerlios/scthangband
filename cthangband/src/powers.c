@@ -5206,10 +5206,10 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		case SP_PLANAR_BEING+PO_SPELL:
 		{
-        if (randint(8)==1) i = 103;
-        else i = 30;
-        if (gain_chaos_feature(i))
-            msg_print("You have turned into a Planar Being.");
+	        if (one_in(8)) i = MUT_WRAITH+1;
+	        else i = MUT_BLINK+1;
+	        if (gain_chaos_feature(i))
+    	        msg_print("You have turned into a Planar Being.");
 			return SUCCESS;
 		}
 		case SP_DEATH_DEALING+PO_SPELL:
