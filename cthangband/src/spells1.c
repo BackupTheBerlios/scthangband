@@ -2072,6 +2072,15 @@ static void anger_monster(monster_type *m_ptr)
 	}
 }
 
+
+/* Clean up and return from the function below. */
+#define RETURN(RC) \
+{ \
+	TFREE(m_name); \
+	TFREE(killer); \
+	return (RC); \
+}
+
 /*
  * Helper function for "project()" below.
  *
@@ -2126,7 +2135,7 @@ static void anger_monster(monster_type *m_ptr)
  * We attempt to return "TRUE" if the player saw anything "useful" happen.
  */
 static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam,
-	int typ, bool *m_hurt)
+	int typ, s16b *m_hurt)
 {
 	int tmp;
 
@@ -2177,21 +2186,17 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam,
 	cptr note_dies = " dies.";
 
 	/* Nobody here */
-	if (!c_ptr->m_idx ||
+	if (!c_ptr->m_idx) RETURN(FALSE);
 
 	/* Never affect projector */
-		(mw_ptr == m_ptr) ||
-
-		/* Never hit a monster twice. */
-		(m_hurt[c_ptr->m_idx]))
-	{
-		TFREE(killer);
-		TFREE(m_name);
-		return (FALSE);
-	}
+	if (mw_ptr == m_ptr) RETURN(FALSE);
+	
+	/* Never affect a monster which has already been hit once. */
+	for (; *m_hurt; m_hurt++)
+		if (*m_hurt == c_ptr->m_idx) RETURN(FALSE);
 
 	/* Notice that the monster has been hit. */
-	m_hurt[c_ptr->m_idx] = TRUE;
+	*m_hurt = c_ptr->m_idx;
 
 	/* Reduce damage by distance */
 	dam = (dam + r) / (r + 1);
@@ -3859,13 +3864,7 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam,
 
 
 	/* Absolutely no effect */
-	if (skipped)
-	{
-		TFREE(killer);
-		TFREE(m_name);
-		return (FALSE);
-	}
-
+	if (skipped) RETURN(FALSE);
 
 	/* "Unique" monsters cannot be polymorphed */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) do_poly = FALSE;
@@ -4130,11 +4129,8 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam,
 	else
 		project_m_n = -1;
 
-	TFREE(killer);
-	TFREE(m_name);
-
 	/* Return "Anything seen?" */
-	return (obvious);
+	RETURN(obvious);
 }
 
 
@@ -4749,22 +4745,20 @@ static void project_p_aux(monster_type *m_ptr, int dam, int typ)
  * we just assume that the effects were obvious, for historical reasons.
  */
 static bool project_p(monster_type *m_ptr, int r, int y, int x, int dam,
-	int typ, bool *m_hurt, int a_rad)
+	int typ, s16b *m_hurt, int a_rad)
 {
 	/* Player is not here */
-	if ((x != px) || (y != py) ||
+	if ((x != px) || (y != py)) return FALSE;
 
 	/* Player cannot hurt himself */
-		!m_ptr ||
+	if (!m_ptr) return FALSE;
 
-		/* Never hit the player twice. */
-		(*m_hurt))
-	{
-		return (FALSE);
-	}
+	/* Never affect a player which has already been hit once. */
+	for (; *m_hurt; m_hurt++)
+		if (*m_hurt == -1) return FALSE;
 
 	/* Remember that the player has been hit. */
-	*m_hurt = TRUE;
+	*m_hurt = -1;
 
 	if (p_ptr->reflect && !a_rad && !one_in(10))
 	{
@@ -5481,11 +5475,16 @@ done_reflect: /* Success */
 		}
 	}
 
+	/*
+	 * Hack - List the monsters and players which have been hit by this attack,
+	 * and ensure that something which has been affected is not affected
+	 * again.
+	 * This only comes into play for teleporting attacks, for which this
+	 * is too rare to provide interesting gameplay.
+	 * Indirect attacks (such as from exploding potions) are handled separately.
+	 */
 	{
-		/* Ensure that no monster is hit twice by this project() effect.
-		 * This isn't stored statically, as potion_smash_effect(), etc.,
-		 * can hurt a monster again. */
-		C_TNEW(m_hurt, m_max, bool);
+		s16b m_hurt[257];
 		WIPE(m_hurt, m_hurt);
 
 		/* No monsters have been hit yet. */
