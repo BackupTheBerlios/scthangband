@@ -1827,18 +1827,34 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* Obtain the value this would have if uncursed if allowed. If this
 		 * differs from the present value, put parentheses around the number. */
-		if (spoil_value)
+		if (spoil_value && spoil_base)
 		{
-			s32b value = object_value(o_ptr);
-			bool worthless = value == 0;
-			if (worthless && cursed_p(o_ptr))
+			object_type j_ptr[1];
+			s32b value;
+			bool worthless;
+
+			object_info_known(j_ptr, o_ptr);
+
+			/* *Hack* - object_flags() doesn't pick up the IGNORE_* flags
+			 * derived from the tval, so AND the known flags with the real
+			 * ones to get the known ones that object_value() checks. */
+
+			j_ptr->art_flags1 = f1;
+			j_ptr->art_flags2 = f2;
+			j_ptr->art_flags3 = o_ptr->art_flags3;
+
+			/* Without the appropriate spoiler flags, ignore the fact that
+			 * it is an ego item or artefact. */
+			if (!spoil_ego) j_ptr->name2 = 0;
+			if (!spoil_art) j_ptr->name1 = 0;
+
+			value = object_value(j_ptr);
+			worthless = !value;
+			if (worthless && cursed_p(j_ptr))
 			{
-				u32b f3 = o_ptr->art_flags3 & (TR3_CURSED | TR3_HEAVY_CURSE);
-				o_ptr->ident &= ~(IDENT_CURSED);
-				o_ptr->art_flags3 &= ~f3;
-	 			value = object_value(o_ptr);
-				o_ptr->ident |= (IDENT_CURSED);
-				o_ptr->art_flags3 |= f3;
+				j_ptr->ident &= ~(IDENT_CURSED);
+				j_ptr->art_flags3 &= (TR3_CURSED | TR3_HEAVY_CURSE);
+	 			value = object_value(j_ptr);
 			}
 			/* Hack - assume cursed items are worthless. */
 			if (worthless && value)
