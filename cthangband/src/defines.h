@@ -2726,10 +2726,12 @@
  * Determine if a given inventory item is "known"
  * Test One -- Check for special "known" tag
  * Test Two -- Check for "Easy Know" + "Aware"
+ * Test Three -- Check for "Empty" + "Aware"
  */
 #define object_known_p(T) \
     (((T)->ident & (IDENT_KNOWN)) || \
-     (k_info[(T)->k_idx].easy_know && k_info[(T)->k_idx].aware))
+     (k_info[(T)->k_idx].easy_know && k_info[(T)->k_idx].aware) || \
+     (k_info[(T)->k_idx].aware && (T)->ident & IDENT_EMPTY))
 
 /*
  * Artifacts use the "name1" field
