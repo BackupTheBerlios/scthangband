@@ -6,6 +6,7 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* List the actual name of a hidden object when it is examined.
 * Fix the following bugs
   * It was possible to discover the identity of objects the player was not aware
     of using the preferences.

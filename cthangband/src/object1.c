@@ -2658,6 +2658,10 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 	/* Extract the known info */
 	object_info_known(o_ptr, o1_ptr);
 
+	/* Hack - give the name here for a hidden object, just in case. */
+	if (hidden_p(o_ptr)) alloc_ifa(info+i++, "It is really %v.", object_desc_f3,
+		o1_ptr, OD_ART | OD_NOHIDE, 0);
+
 	/* Mega-Hack -- describe activation */
 	if (o_ptr->flags3 & (TR3_ACTIVATE))
 	{
@@ -4226,7 +4230,7 @@ static object_type *get_item_aux(errr *err, cptr pmt, bool equip, bool inven,
 			next_o_idx = o_ptr->next_o_idx;
 
 			/* Accept the item on the floor if legal */
-			if (item_tester_okay(o_ptr)) allow_floor = TRUE;
+			if (item_tester_okay(o_ptr) && !hidden_p(o_ptr)) allow_floor = TRUE;
 		}
 	}
 
