@@ -2865,10 +2865,282 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 	}
 }
 
-#define ITFE(W,X) if (!(((maxima *)(head->info_ptr))->W)) {msg_format("Missing M:%c:* header.", X); error = TRUE;}
+/*
+ * Find out if the input string starts with any of a set
+ * of target strings. If it does, return the number of
+ * the match. If not, return -1.
+ *
+ * The strings[] array should always end with a null pointer.
+ */
+static int is_streq(cptr in, cptr *strings)
+{
+	int i;
+	for (i = 0; strings[i]; i++)
+	{
+		if (!strncmp(in, strings[i], strlen(strings[i])))
+		{
+			return i;
+		}
+	}
+	return -1;
+}
 
 /*
- * Check that the important parts of z_info have been filled in during parsing.
+ * Initialize the "macro_info" array, by parsing an ascii "template" file
+ */
+errr parse_macro_info(char *buf, header *head, vptr *extra)
+{
+	char *s = buf+2;
+
+	/* Current entry */
+	init_macro_type *ptr = *extra;
+
+	bool scope_restriction = ptr &&
+		(ptr->file || ptr->pref || ptr->field);
+
+	/* Everything else needs a record. */
+	switch (*buf)
+	{
+		case 'Y': case 'B': case 'A': case 'M': case 'S':
+		if (scope_restriction) return PARSE_ERROR_GENERIC;
+		case 'F':
+		if (!ptr) return PARSE_ERROR_MISSING_RECORD_HEADER;
+		case 'X':
+		break;
+		default: /* What is this thing? */
+		return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
+	}
+
+	/* Process 'X' for "From" */
+	switch (*buf)
+	{
+		case 'X':
+		{
+			/* Paranoia -- require a name */
+			if (!*s) return (PARSE_ERROR_GENERIC);
+
+			/* Advance the index (not counting the current macro) */
+			z_info->macros=++error_idx;
+
+			/* Verify information */
+			if (error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			/* Point at the "info" */
+			*extra = ptr = (init_macro_type*)head->info_ptr + error_idx;
+
+			/* Store the name */
+			if (!(ptr->name = add_name(head, s)))
+				return (PARSE_ERROR_OUT_OF_MEMORY);
+
+			return SUCCESS;
+		}
+		/* Process 'F' for "Flags" */
+		case 'F':
+		{
+			/* If a previous 'F' field is known, add a second entry. */
+			if (scope_restriction)
+			{
+				init_macro_type *macro2_ptr;
+
+				/* Advance the index */
+				z_info->macros=++error_idx;
+
+				/* Verify information */
+				if (error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+				/* Point at the "info" */
+				macro2_ptr = (init_macro_type*)head->info_ptr + error_idx;
+
+				/* Copy across. */
+				macro2_ptr->name = ptr->name;
+				macro2_ptr->text = ptr->text;
+				macro2_ptr->conv = ptr->conv;
+
+				/* Accept the new entry. */
+				*extra = ptr = macro2_ptr;
+			}
+
+			if (*s == ':' || *s == '\0')
+			{
+				ptr->file = 0;
+			}
+			else if (isdigit(*s))
+			{
+				int file = atoi(s);
+				if (file < 0 || file > 256) return PARSE_ERROR_OUT_OF_BOUNDS;
+				ptr->file = file;
+			}
+			else
+			{
+				cptr header_names[] =
+				{
+					"z_info",
+					"macro_info",
+					"f_info",
+					"k_info",
+					"u_info",
+					"a_info",
+					"e_info",
+					"r_info",
+					"r_event",
+					"v_info",
+				};
+			
+	
+				uint i;
+				for (i = 0; i < N_ELEMENTS(header_names); i++)
+				{
+					/* Only notice matching entries. */
+					if (strcmp_pf(s, header_names[i])) continue;
+	
+					/* Set the file to the next number (0 is nothing) */
+					ptr->file = i+1;
+	
+					/* Find the end of the string. */
+					s += strlen(header_names[i]);
+	
+					goto found;
+				}
+				return PARSE_ERROR_INVALID_FLAG;
+			}
+found:
+			s = strchr(s, ':');
+			if (s == NULL || *(++s) == '\0')
+			{
+				ptr->pref = ptr->field = 0;
+				return SUCCESS;
+			}
+			else if (*s == ':')
+			{
+				ptr->pref = 0;
+			}
+			else
+			{
+				ptr->pref = *s;
+			}
+			s = strchr(s, ':');
+			if (s == NULL || *(++s) == '\0')
+			{
+				ptr->field = 0;
+			}
+			else
+			{
+				int i = atoi(s);
+				if (i < 1 || i > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+				ptr->field = i;
+			}
+			return SUCCESS;
+		}
+		/* Process 'Y' for "To" (replace) */
+		case 'Y':
+		{
+			ptr->conv = MACRO_CONV_REPLACE;
+
+			/* Store the text */
+			return add_text(&ptr->text, head, s);
+		}
+		
+		/* Process 'B' for "To" (before) */
+		case 'B':
+		{
+			ptr->conv = MACRO_CONV_BEFORE;
+
+			/* Store the text */
+			return add_text(&ptr->text, head, s);
+		}
+
+		/* Process 'A' for "To" (after) */
+		case 'A':
+		{
+			ptr->conv = MACRO_CONV_AFTER;
+
+			/* Store the text */
+			return add_text(&ptr->text, head, s);
+		}
+
+		/* Process 'M' for "To" (numerical replace) */
+		case 'M':
+		{
+			ptr->conv = MACRO_CONV_REPLACE;
+
+			ptr->text = ++head->text_size;
+			for (s--; s; s = strchr(s, ',')) 
+			{
+				int i = atoi(++s);
+				if (i < 0 || i > 255)
+				{
+					return PARSE_ERROR_OUT_OF_BOUNDS;
+				}
+				else if (head->text_size+9 > z_info->fake_text_size)
+				{
+					return PARSE_ERROR_OUT_OF_MEMORY;
+				}
+				else
+				{
+					macro_text[head->text_size] = i;
+					head->text_size = head->text_size + 1;
+				}
+			}
+			return SUCCESS;
+		}
+
+		/* Hack - Process 'S' for "To" (special procedures) */
+		case 'S':
+		{
+			cptr macro_spec_name[] =
+			{
+				"move to front",
+				0
+			};
+
+			char conv_string[2]=" ";
+			int i = is_streq(s, macro_spec_name);
+
+			/* Failure */
+			if (i == -1) return PARSE_ERROR_INVALID_FLAG;
+
+			ptr->conv = MACRO_CONV_SPECIAL;
+
+			conv_string[0] = i;
+
+			return add_text(&ptr->text, head, conv_string);
+		}
+		default: /* Never reached */
+		return UNREAD_VALUE;
+	}
+}
+
+
+/*
+ * Do any file-specific things which needs to be done before parsing starts.
+ */
+static void init_info_txt_pre(header *head)
+{
+	switch (head->header_num)
+	{
+		/*
+		 * Macros are valid for later parts of macro_info, so array references
+		 * need to make sense whilst it is being read.
+		 */
+		case MACRO_HEAD:
+		{
+			macro_info = head->info_ptr;
+			macro_text = head->text_ptr;
+			macro_name = head->name_ptr;
+			break;
+		}
+	}
+}
+
+#define ITFE(W,X) \
+if (!(((maxima *)(head->info_ptr))->W)) \
+{ \
+	msg_format("Missing M:%c:* header.", X); \
+	return PARSE_ERROR_MISSING_RECORD_HEADER; \
+}
+
+/*
+ * Do any file-specific things which needs to be done after parsing finishes.
  */
 static errr init_info_txt_final(header *head)
 {
@@ -2877,7 +3149,6 @@ static errr init_info_txt_final(header *head)
 		/* Ensure the essential elements of z_info have been filled in. */
 		case Z_HEAD:
 		{
-			bool error = FALSE;
 			ITFE(fake_info_size, 'I')
 			ITFE(fake_text_size, 'T')
 			ITFE(fake_name_size, 'N')
@@ -2885,7 +3156,6 @@ static errr init_info_txt_final(header *head)
 			ITFE(m_max, 'M')
 			ITFE(oname, 'N')
 			ITFE(mname, 'D')
-			if (error) return PARSE_ERROR_MISSING_RECORD_HEADER;
 			break;
 		}
 		/* Add in any necessary scrolls. */
@@ -2899,10 +3169,306 @@ static errr init_info_txt_final(header *head)
 			KILL2(kt_info);
 			break;
 		}
+		case MACRO_HEAD:
+		{
+			/* Force all later raw files to be rebuilt, as this changes them. */
+			rebuild_raw = 0xFFFF & ~(1<<MACRO_HEAD | 1<<Z_HEAD);
+		}
 	}
 	return SUCCESS;
 }
 
+#define NO_VERSION	-2
+
+static errr parse_info_line_aux(char *buf, header *head, vptr *extra)
+{
+	/* Then parse the resulting string. */
+
+	/* Skip comments and blank lines */
+	if (!buf[0] || (buf[0] == '#')) return SUCCESS;
+
+	/* Verify correct "colon" format */
+	if (buf[1] != ':') return (PARSE_ERROR_GENERIC);
+
+
+	/* Hack -- Process 'V' for "Version" */
+	if (buf[0] == 'V')
+	{
+		int v1, v2, v3;
+
+		/* Scan for the values */
+		if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			(v1 != head->v_major) ||
+			(v2 != head->v_minor) ||
+			(v3 != head->v_patch))
+		{
+			return (PARSE_ERROR_OBSOLETE_FILE);
+		}
+
+		/* Okay to proceed */
+		error_idx = -1;
+
+		/* Finished. */
+		return SUCCESS;
+	}
+
+	/* No version yet */
+	if (error_idx == NO_VERSION) return (PARSE_ERROR_OBSOLETE_FILE);
+
+	/* Parse the line */
+	return (*(head->parse_info_txt))(buf, head, extra);
+}
+
+/*
+ * Parse a line from an ascii "template" file, applying a series of macros
+ * to it as appropriate.
+ *
+ * This function can recurse once for every macro which acts on a given line.
+ *
+ * It enforces the macros in the opposite order to that in which they are given.
+ */
+static errr parse_info_line(char *buf, header *head, int start, vptr *extra)
+{
+	char buf2[1024];
+	char *buf2end = buf2+1023;
+	int i;
+
+	*buf2end = '\0';
+
+	for (i = start-1; i >= 0; i--)
+	{
+		init_macro_type *macro_ptr = macro_info+i;
+
+		char *t;
+		cptr s;
+		int done = 0, field = (macro_ptr->field) ? 1 : 0;
+
+		/* Bad file restriction. */
+		if (macro_ptr->file && macro_ptr->file != head->header_num) continue;
+	
+		/* Bad prefix restriction. */
+		if (macro_ptr->pref && macro_ptr->pref != buf[0]) continue;
+
+		/* A macro may or may not modify the current string.
+		 * If it does, t needs to be set to the start of the
+		 * output line. */
+		switch (macro_ptr->conv)
+		{
+			case MACRO_CONV_REPLACE:
+			case MACRO_CONV_SPECIAL:
+			t = buf2;
+			break;
+			case MACRO_CONV_BEFORE:
+			case MACRO_CONV_AFTER:
+			t = 0;
+			break;
+			default: /* Paranoia. */
+			msg_format("Strange macro conversion type %d found.", macro_ptr->conv);
+			return PARSE_ERROR_GENERIC;
+		}
+
+		/* Copy across, substituting and parsing. */
+		for (s = buf; t && t < buf2end && *s; s++)
+		{
+			/* Count the fields if required, starting each at the colon. */
+			if (macro_ptr->field && *s == ':') field++;
+
+			/* A match has been found. */
+			if (field == macro_ptr->field && 
+				!strncmp(s, macro_name+macro_ptr->name, strlen(macro_name+macro_ptr->name)))
+			{
+				switch (macro_ptr->conv)
+				{
+					case MACRO_CONV_REPLACE:
+					{
+						cptr u = macro_text+macro_ptr->text;
+
+						/* Remember that something happened. */
+						done++;
+
+						/* Copy as much of the string as is possible. */
+						while (*u && t < buf2end) *(t++) = *(u++);
+
+						break;
+					}
+					case MACRO_CONV_BEFORE:
+					case MACRO_CONV_AFTER:
+					{
+						/* Count the matches for now. */
+						done++;
+
+						break;
+					}
+					case MACRO_CONV_SPECIAL:
+					{
+						switch (macro_text[macro_ptr->text])
+						{
+							case MACRO_SPEC_MOVE_TO_FRONT:
+							{
+								char *buf3 = C_ZNEW(strlen(buf2)+strlen(macro_name+macro_ptr->name)+1, char);
+								char *start = t;
+
+								/* Find the start of this section of
+								 * buf2. */
+								while (start > buf2 && *start != ':') start--;
+
+								/* If it doesn't start at the beginning,
+								 * copy the initial section across. */
+								if (start > buf2)
+								{
+									*(start++) = '\0';
+									sprintf(buf3, "%s:", buf2);
+								}
+								else
+								{
+									*buf3 = '\0';
+								}
+
+								/* Copy the string from the macro across. */
+								strcat(buf3, macro_name+macro_ptr->name);
+
+								/* Copy the rest of the string across. */
+								*t = '\0';
+								strcat(buf3, start);
+
+								/* Copy back. */
+								strcpy(buf2, buf3);
+									
+								t = strchr(buf2, '\0');
+								C_KILL(buf3, sizeof(buf3), char);
+								done++;
+							}
+						}
+					}
+				}
+
+				/* Don't process any part of the token again for
+				 * this macro. */
+				s += strlen(macro_name+macro_ptr->name)-1;
+
+				/* Don't do anything else. */
+				continue;
+
+			}
+
+			/* If the string is being modified, write the changed
+			 * version. */
+			if (t)
+			{
+				*(t++) = *s;
+			}
+		}
+
+		/* Finish off. */
+		(*t) = '\0';
+
+		/* Nothing happened. */
+		if (!done);
+
+		else switch (macro_ptr->conv)
+		{
+			case MACRO_CONV_AFTER:
+			{
+				/* Parse the rest of this string. */
+				try(parse_info_line(buf, head, i, extra));
+
+				/* Parse the inserted string(s) fully. */
+				for (i = 0; i < done; i++)
+				{
+					strcpy(buf, macro_text+macro_ptr->text);
+					try(parse_info_line(buf, head, z_info->macros, extra));
+				}
+
+				/* All done. */
+				return SUCCESS;
+			}
+			case MACRO_CONV_BEFORE:
+			{
+				cptr this_buf = string_make(buf);
+				int j;
+
+				/* Parse the inserted string(s) fully. */
+				for (j = 0; j < done; j++)
+				{
+					strcpy(buf, macro_text+macro_ptr->text);
+					try(parse_info_line(buf, head, z_info->macros, extra));
+				}
+
+				/* Parse the rest of this string. */
+				strcpy(buf, this_buf);
+				string_free(this_buf);
+				try(parse_info_line(buf, head, i, extra));
+
+				/* All done. */
+				return SUCCESS;
+			}
+			case MACRO_CONV_REPLACE:
+			case MACRO_CONV_SPECIAL:
+			{
+				strcpy(buf, buf2);
+				break;
+			}
+		}
+	}
+
+	/* Now any macros have been processed, parse the line. */
+	return parse_info_line_aux(buf, head, extra);
+}
+
+/*
+ * Initialize an "*_info" array, by parsing an ascii "template" file
+ */
+errr init_info_txt(FILE *fp, char *buf, header *head)
+{
+	vptr extra = NULL;
+
+	/* Before the version string. */
+	error_idx = -2;
+
+	/* Just before the first line */
+	error_line = 0;
+
+
+	/* Prepare the "fake" stuff */
+	head->name_size = 0;
+	head->text_size = 0;
+
+	/* Carry out any pre-initialisation stuff. */
+	init_info_txt_pre(head);
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* No macros are available for z_info, some for macro_info, and all for
+		 * other files. */
+		int macros = (head->header_num == Z_HEAD) ? 0 :  z_info->macros;
+
+		error_line++;
+		try(parse_info_line(buf, head, macros, &extra));
+	}
+
+	/* Set the info size. */
+	head->info_num = error_idx+1;
+	head->info_size = head->info_len * head->info_num;
+
+	/* Complete the "name" and "text" sizes */
+	if (head->name_size) head->name_size++;
+	if (head->text_size) head->text_size++;
+
+	/* Carry out any post-initialisation checks. */
+	try(init_info_txt_final(head));
+
+	/* This doesn't need to be rebuilt. */
+	rebuild_raw &= ~(head->header_num);
+
+	/* No version yet */
+	if (error_idx == NO_VERSION) return (PARSE_ERROR_OBSOLETE_FILE);
+
+	/* Carry out any post-initialisation checks and finish. */
+	return init_info_txt_final(head);
+}
+
+#if 0
 /*
  * Initialize an "*_info" array, by parsing an ascii "template" file
  */
@@ -2985,7 +3551,7 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 	/* Success */
 	return SUCCESS;
 }
-
+#endif
 
 #else	/* ALLOW_TEMPLATES */
 

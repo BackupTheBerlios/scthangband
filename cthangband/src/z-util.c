@@ -159,6 +159,20 @@ bool prefix(cptr s, cptr t)
 }
 
 
+/*
+ * strncmp(s, t, strlen(t))
+ */
+int strcmp_pf(cptr s, cptr t)
+{
+	/* Scan "t" */
+	for (; *t; t++, s++)
+	{
+		if (*t != *s) return ((byte)(*t) - (byte)(*s));
+	}
+
+	/* Matched, we have a prefix */
+	return (0);
+}
 
 /*
  * Redefinable "plog" action

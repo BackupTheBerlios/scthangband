@@ -3282,10 +3282,17 @@ extern int PlayerUID;
 #define NAME_LEN 32
 
 /* Header identities. */
-#define K_HEAD	11
-#define U_HEAD	21 
-#define Z_HEAD	26
-#define EVENT_HEAD	27
+#define Z_HEAD	1
+#define MACRO_HEAD	2
+#define F_HEAD	3
+#define K_HEAD	4
+#define U_HEAD	5
+#define A_HEAD	6
+#define E_HEAD	7
+#define R_HEAD	8
+#define EVENT_HEAD	9
+#define V_HEAD	10
+
 
 /*
  * Command numbers for do_cmd_wizard(), etc..
@@ -3317,3 +3324,19 @@ extern int PlayerUID;
 #define PRT_MAXX (Term->wid-1)
 #define PRT_MINY (1)
 #define PRT_MAXY (Term->hgt-1)
+
+/* init_macro_type conversion types */
+#define MACRO_CONV_REPLACE	0	/* Replace "name" with "text". */
+#define MACRO_CONV_AFTER	1	/* Process the line "text" after the current one. */
+#define MACRO_CONV_BEFORE	2	/* Process the line "text" before the current one. */
+#define MACRO_CONV_SPECIAL	3	/* Do something special. */
+
+/*
+ * Special macros are macros whose effects are hard-coded, but are listed
+ * in macro_info so that they can be turned off and potentially be used
+ * under other circumstances.
+ */
+#define MACRO_SPEC_MOVE_TO_FRONT	0	/* Used for CH_ARTICLE */
+
+/* The number of special macros. */
+#define MAX_MACRO_SPECIAL	1

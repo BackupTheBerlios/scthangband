@@ -1,0 +1,83 @@
+# File: macro.txt
+
+
+# This file is used to initialize the "lib/data/macro.raw" file, which is
+# used to initialize the "text file macro" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+# After modifying this file, delete the "lib/data/macro.raw" file.
+
+# "lib/data/macro.raw" can be safely deleted if ALLOW_TEMPLATES is undefined.
+
+# === Understanding macro.txt ===
+
+# The purpose of this file is to provide a convenient way of replacing
+# an arbitrary string in a text file with another arbitrary string.
+
+# Macros are applied to a line in a file in order from the last one to
+# the first. This is to enable macros to be defined for macro.txt itself.
+
+# The format of macro.txt is as follows:
+
+# X:name
+# Y:definition
+# A:definition
+# B:definition
+# S:keyword
+# M:number,number,number,number
+# F:file:character:field
+
+# 'X' indicates the beginning of an entry, and gives the name which
+# Angband will look for when parsing later parts of this text file,
+# or other text files in this directory.
+
+# 'Y' gives a text string which will be substituted for the name wherever
+# it is found. This can be empty if it is desired that a string disappear.
+
+# 'A' gives a text string which, if X is found, will be parsed as a line
+# after the line in which X is found.
+
+# 'B' gives a text string which, if X is found, will be parsed as a line
+# before the line in which X is found.
+
+# 'S' gives the name of a flag which causes a more complex hard-coded
+# macro to be run if the name specified is matched.
+# The only macro defined at present is "move to front", which causes
+# the string matched to be placed at the beginning of the field which
+# contains it.
+
+# There must be exactly one "name" and one "definition" in a macro
+
+# If present, 'F' restricts the scope of a macro as follows:
+
+# If there is a file entry, substitutions will only be made in the specified
+# file. 
+# If there is a character entry, substitutions will only be made in lines
+# which begin with the specified character.
+# If there is a field entry, substitutions will only be made in the given
+# entry in the line where colons distinguish entries. Entry 1 is usually
+# the initial character.
+
+# If there are multiple 'F' lines, lines in info files which meet any one of
+# them are changed by the given macro.
+
+# The 'F' line(s) should generally be at the end of the entry.
+
+# Version stamp (required)
+
+V:1.0.3
+
+# Vault types
+
+X:Lesser
+Y:7
+F:v_info:X:2
+
+X:Greater
+Y:8
+F:v_info:X:2
+
+X:x
+Y::
+F:v_info:X:4

@@ -110,7 +110,28 @@ struct header
 
 	parse_info_txt_func parse_info_txt;
 
-	u16b header_num;
+	byte header_num;
+};
+
+/*
+ * A set of macros used to turn a relatively pretty text file into something
+ * the file parser understands.
+ *
+ * This is the only way to insert non-printable or 8-bit characters into text
+ * files.
+ */
+typedef struct init_macro_type init_macro_type;
+
+struct init_macro_type
+{
+	u32b name;			/* Name (offset) */
+	u32b text;			/* Text (offset) */
+
+	byte file;			/* File restriction */
+	char pref;			/* Prefix restriction */
+	byte field;			/* (colon-delimited) field */
+
+	byte conv;			/* Type of conversion to be made. */
 };
 
 /*
@@ -134,6 +155,7 @@ struct maxima
 	u16b mname;		/* Maximum length of monster_desc() strings. */
 	u16b ar_delay;	/* Delay between rolls of the auto-roller. */
 
+	u16b macros;	/* Total size for "macro_info" */
 	u16b v_max;		/* Total size for "v_info[]" */
 	u16b f_max;		/* Total size for "f_info[]" */
 	u16b k_max;		/* Total size for "k_info[]" */
@@ -1386,8 +1408,6 @@ struct tval_ammo_type {
 
 
 
-#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(OBJECT1_C))
-
 /* Hack - provide a structure for things about an object which may be unknown,
  * but are needed by various functions. */
 typedef struct object_extra object_extra;
@@ -1397,4 +1417,3 @@ struct object_extra {
 	byte tval;
 };
 
-#endif

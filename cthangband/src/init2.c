@@ -247,7 +247,7 @@ static errr check_modification_date(int fd, cptr template_file)
 /*
  * Initialize the header of an *_info.raw file.
  */
-static void init_header_aux(header *head, int len, int num,
+static void init_header_aux(header *head, int len, byte num,
 	parse_info_txt_func parse, cptr name)
 {
 	/* Save the "version" */
@@ -398,151 +398,8 @@ static void init_info(header *head)
 
 	/*** Load the binary image file ***/
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
-
-	/* Attempt to open the "raw" file */
-	fd = fd_open(buf, O_RDONLY);
-
-	/* Process existing "raw" file */
-	if (fd >= 0)
+	if (~rebuild_raw & 1<<(head->header_num))
 	{
-#ifdef CHECK_MODIFICATION_TIME
-
-		err = check_modification_date(fd, format("%s.txt", filename));
-
-#endif /* CHECK_MODIFICATION_TIME */
-
-		/* Attempt to parse the "raw" file */
-		if (!err)
-			err = init_info_raw(fd, head);
-
-		/* Close it */
-		fd_close(fd);
-	}
-
-	/* Do we have to parse the *.txt file? */
-	if (err)
-	{
-		/*** Make the fake arrays ***/
-
-		if (head->header_num != Z_HEAD)
-		{
-			head->info_ptr = C_WIPE(head->fake_info_ptr, z_info->fake_info_size, char);
-			head->name_ptr = C_WIPE(head->fake_name_ptr, z_info->fake_name_size, char);
-			head->text_ptr = C_WIPE(head->fake_text_ptr, z_info->fake_text_size, char);
-		}
-		else
-		{
-			head->info_ptr = C_WIPE(head->info_ptr, sizeof(maxima), char);
-		}
-
-		/*** Load the ascii template file ***/
-
-		/* Build the filename */
-
-		/* Hack - the death_event array is read from r_info.txt, not
-		 * r_event.txt. */
-		if (head->header_num == EVENT_HEAD)
-		{
-			path_build(buf, 1024, ANGBAND_DIR_EDIT, "r_info.txt");
-		}
-		else
-		{
-			path_build(buf, 1024, ANGBAND_DIR_EDIT, format("%s.txt", filename));
-		}
-
-		/* Open the file */
-		fp = my_fopen(buf, "r");
-
-		/* Parse it */
-		if (!fp) quit(format("Cannot open '%s.txt' file.", filename));
-
-		/* Parse the file */
-		err = init_info_txt(fp, buf, head);
-
-		/* Close it */
-		my_fclose(fp);
-
-		/* Errors */
-		if (err) display_parse_error(filename, err, buf);
-
-
-		/*** Dump the binary image file ***/
-
-		/* File type is "DATA" */
-		FILE_TYPE(FILE_TYPE_DATA);
-
-		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
-
-
-		/* Attempt to open the file */
-		fd = fd_open(buf, O_RDONLY);
-
-		/* Failure */
-		if (fd < 0)
-		{
-			int mode = 0644;
-
-			/* Grab permissions */
-			safe_setuid_grab();
-
-			/* Create a new file */
-			fd = fd_make(buf, mode);
-
-			/* Drop permissions */
-			safe_setuid_drop();
-
-			/* Failure */
-			if (fd < 0)
-			{
-				char why[1024];
-
-				/* Message */
-				sprintf(why, "Cannot create the '%s' file!", buf);
-
-				/* Crash and burn */
-				quit(why);
-			}
-		}
-
-		/* Close it */
-		fd_close(fd);
-
-		/* Grab permissions */
-		safe_setuid_grab();
-
-		/* Attempt to create the raw file */
-		fd = fd_open(buf, O_WRONLY);
-
-		/* Drop permissions */
-		safe_setuid_drop();
-
-		/* Dump to the file */
-		if (fd >= 0)
-		{
-			/* Dump it */
-			fd_write(fd, (cptr)head, sizeof(header));
-
-			/* Dump the "*_info" array */
-			fd_write(fd, head->info_ptr, head->info_size);
-
-			/* Dump the "*_name" array */
-			fd_write(fd, head->name_ptr, head->name_size);
-
-			/* Dump the "*_text" array */
-			fd_write(fd, head->text_ptr, head->text_size);
-
-			/* Close */
-			fd_close(fd);
-		}
-
-#endif /* ALLOW_TEMPLATES */
-
-
-		/*** Load the binary image file ***/
-
 		/* Build the filename */
 		path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
 
@@ -550,21 +407,164 @@ static void init_info(header *head)
 		fd = fd_open(buf, O_RDONLY);
 
 		/* Process existing "raw" file */
-		if (fd < 0) quit(format("Cannot load '%s.raw' file.", filename));
+		if (fd >= 0)
+		{
+#ifdef CHECK_MODIFICATION_TIME
 
-		/* Attempt to parse the "raw" file */
-		err = init_info_raw(fd, head);
+			err = check_modification_date(fd, format("%s.txt", filename));
 
-		/* Close it */
-		fd_close(fd);
+#endif /* CHECK_MODIFICATION_TIME */
 
-		/* Error */
-		if (err) quit(format("Cannot parse '%s.raw' file.", filename));
+			/* Attempt to parse the "raw" file */
+			if (!err)
+				err = init_info_raw(fd, head);
 
-#ifdef ALLOW_TEMPLATES
+			/* Close it */
+			fd_close(fd);
+		}
 	}
+
+	/* Do we have to parse the *.txt file? */
+	if (!err) return;
+
+	/*** Reset the fake arrays ***/
+
+	if (head->header_num != Z_HEAD)
+	{
+		head->info_ptr = C_WIPE(head->fake_info_ptr, z_info->fake_info_size, char);
+		head->name_ptr = C_WIPE(head->fake_name_ptr, z_info->fake_name_size, char);
+		head->text_ptr = C_WIPE(head->fake_text_ptr, z_info->fake_text_size, char);
+	}
+	else
+	{
+		head->info_ptr = C_WIPE(head->info_ptr, sizeof(maxima), char);
+	}
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+
+	/* Hack - the death_event array is read from r_info.txt, not
+	 * r_event.txt. */
+	if (head->header_num == EVENT_HEAD)
+	{
+		path_build(buf, 1024, ANGBAND_DIR_EDIT, "r_info.txt");
+	}
+	else
+	{
+		path_build(buf, 1024, ANGBAND_DIR_EDIT, format("%s.txt", filename));
+	}
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit(format("Cannot open '%s.txt' file.", filename));
+
+	/* Parse the file */
+	err = init_info_txt(fp, buf, head);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err) display_parse_error(filename, err, buf);
+
+
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+
+
+	/* Attempt to open the file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Failure */
+	if (fd < 0)
+	{
+		int mode = 0644;
+
+		/* Grab permissions */
+		safe_setuid_grab();
+
+		/* Create a new file */
+		fd = fd_make(buf, mode);
+
+		/* Drop permissions */
+		safe_setuid_drop();
+
+		/* Failure */
+		if (fd < 0)
+		{
+			char why[1024];
+
+			/* Message */
+			sprintf(why, "Cannot create the '%s' file!", buf);
+
+			/* Crash and burn */
+			quit(why);
+		}
+	}
+
+	/* Close it */
+	fd_close(fd);
+
+	/* Grab permissions */
+	safe_setuid_grab();
+
+	/* Attempt to create the raw file */
+	fd = fd_open(buf, O_WRONLY);
+
+	/* Drop permissions */
+	safe_setuid_drop();
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (cptr)head, sizeof(header));
+
+		/* Dump the "*_info" array */
+		fd_write(fd, head->info_ptr, head->info_size);
+
+		/* Dump the "*_name" array */
+		fd_write(fd, head->name_ptr, head->name_size);
+
+		/* Dump the "*_text" array */
+		fd_write(fd, head->text_ptr, head->text_size);
+
+		/* Close */
+		fd_close(fd);
+	}
+
 #endif /* ALLOW_TEMPLATES */
+
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit(format("Cannot load '%s.raw' file.", filename));
+
+	/* Attempt to parse the "raw" file */
+	err = init_info_raw(fd, head);
+
+	/* Close it */
+	fd_close(fd);
+
+	/* Error */
+	if (err) quit(format("Cannot parse '%s.raw' file.", filename));
 }
+
 
 static void init_u_info_final(void)
 {
@@ -1892,8 +1892,14 @@ void init_angband(void)
 	C_MAKE(head->fake_name_ptr, z_info->fake_name_size, char);
 	C_MAKE(head->fake_text_ptr, z_info->fake_text_size, char);
 
+	/* initialisation macros are only used in init1.c. */
+#ifdef ALLOW_TEMPLATES
+	init_x_info("macros", init_macro_type, parse_macro_info, "macro",
+		macro_info, macro_name, macro_text, macros, MACRO_HEAD)
+#endif /* ALLOW_TEMPLATES */
+
 	init_x_info("features", feature_type, parse_f_info, "f_info", f_info,
-		f_name, f_text, f_max, 0)
+		f_name, f_text, f_max, F_HEAD)
 
 	init_x_info("objects", object_kind, parse_k_info, "k_info", k_info,
 		k_name, k_text, k_max, K_HEAD)
@@ -1907,16 +1913,16 @@ void init_angband(void)
 
 	/* Initialize artifact info */
 	init_x_info("artifacts", artifact_type, parse_a_info, "a_info", a_info,
-		a_name, dummy, a_max, 0)
+		a_name, dummy, a_max, A_HEAD)
 
 	/* Initialize ego-item info */
 	init_x_info("ego-items", ego_item_type, parse_e_info, "e_info", e_info,
-		e_name, dummy, e_max, 0)
+		e_name, dummy, e_max, E_HEAD)
 
 	/* Initialize monster info */
 	note("[Initializing arrays... (monsters)]");
 	init_x_info("monsters", monster_race, parse_r_info, "r_info", r_info,
-		r_name, r_text, r_max, 0)
+		r_name, r_text, r_max, R_HEAD)
 
 	/* Initialize death events. *
 	 * Must come after init_(k|a|e|r)_info(). */
@@ -1927,12 +1933,17 @@ void init_angband(void)
 	/* Initialize feature info */
 	note("[Initializing arrays... (vaults)]");
 	init_x_info("vaults", vault_type, parse_v_info, "v_info", v_info,
-		v_name, v_text, v_max, 0)
+		v_name, v_text, v_max, V_HEAD)
 
 	/* Delete the fake arrays, we're done with them. */
 	KILL2(head->fake_info_ptr);
 	KILL2(head->fake_name_ptr);
 	KILL2(head->fake_text_ptr);
+
+	/* Delete the initialisation macro arrays, we're done with them. */
+	KILL2(macro_info);
+	KILL2(macro_text);
+	KILL2(macro_name);
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (other)]");
