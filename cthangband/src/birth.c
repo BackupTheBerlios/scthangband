@@ -735,38 +735,35 @@ static void get_stats(void);
  * Display the birth option menu, notice when certain options change.
  */
 static bc_type birth_option(void)
-		{
-			bool old_allow_quickstart = allow_quickstart;
-			bool old_spend_points = spend_points && !use_autoroller;
-			bool old_allow_pickstats = allow_pickstats;
-			bool old_maximise_mode = maximise_mode;
-			Term_save();
-			do_cmd_options_aux(7, "Startup Options", NULL);
-			Term_load();
-			/* Start again if the set of questions being asked changes.
-			 * This does not include show_credits because this takes
-			 * effect before we reach this point. */
-			if (allow_quickstart && !old_allow_quickstart) return BC_RESTART;
-	else if (old_spend_points != (!spend_points || use_autoroller)) return BC_RESTART;
-			if (allow_pickstats && !old_allow_pickstats) return BC_RESTART;
-			/* We need not restart for maximise mode, but we should
+{
+	bool old_allow_quickstart = allow_quickstart;
+	bool old_allow_pickstats = allow_pickstats;
+	Term_save();
+	do_cmd_options_aux(7, "Startup Options", NULL);
+	Term_load();
+	/* Start again if the set of questions being asked changes.
+	 * This does not include show_credits because this takes
+	 * effect before we reach this point. */
+	if (allow_quickstart && !old_allow_quickstart) return BC_RESTART;
+	if (allow_pickstats && !old_allow_pickstats) return BC_RESTART;
+	/* We need not restart for maximise mode, but we should
 	 * try to keep the stats the same. We always abort because
 	 * we may have passed point_mod_player(). This will be ignored
 	 * if we haven't. This must be the last check.
 	 */
-	else if (old_maximise_mode != maximise_mode)
-			{
-				byte x;
-				for (x = 0; x < A_MAX; x++)
-				{
-					s16b mod = rp_ptr->r_adj[x]+cp_ptr->c_adj[x];
-					if (maximise_mode) mod *= -1;
-					mod = modify_stat_value(p_ptr->stat_cur[x], mod);
-					p_ptr->stat_cur[x] = p_ptr->stat_max[x] = mod;
-				}
+	if (old_maximise_mode != maximise_mode)
+	{
+		byte x;
+		for (x = 0; x < A_MAX; x++)
+		{
+			s16b mod = rp_ptr->r_adj[x]+cp_ptr->c_adj[x];
+			if (maximise_mode) mod *= -1;
+			mod = modify_stat_value(p_ptr->stat_cur[x], mod);
+			p_ptr->stat_cur[x] = p_ptr->stat_max[x] = mod;
+		}
 		return BC_ABORT;
-			}
-	else return BC_OKAY;
+	}
+	return BC_OKAY;
 }
 
 /*
