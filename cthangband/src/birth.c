@@ -2335,7 +2335,7 @@ static void get_extra(void)
  * Oldseen is an array which indicates how often each chart has been used in the
  * path leading to the current one, generally 0 or 1.
  */
-static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
+static s16b get_social_average_aux(byte *oldseen, int chart, int total)
 {
 	/* We stop at nothing. */
 	if (chart == 0) return 0;
@@ -2359,8 +2359,8 @@ static s16b get_social_average_aux(byte *oldseen, byte chart, byte total)
 			seen[i]=oldseen[i];
 		}
 
-		/* We have now seen this chart. */
-		seen[chart] = TRUE;
+		/* We have now seen this chart (again). */
+		seen[chart]++;
 
 		/* Get the next charts. */
 		for (i=0; bg[i].chart; i++)
