@@ -2249,7 +2249,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 						screen_roff(m_ptr->r_idx);
 
 						/* Hack -- Complete the prompt (again) */
-						Term_addstr(-1, TERM_WHITE, format("  [r,%s]", info));
+						mc_add_fmt("  [r,%s]", info);
 
 						/* Command */
 						query = inkey();

@@ -1039,7 +1039,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 		roff_top(r_idx);
 
 		/* Hack -- Complete the prompt */
-		Term_addstr(-1, TERM_WHITE, " [(r)ecall, ESC]");
+		mc_add_fmt(" [(r)ecall, ESC]");
 
 		/* Interact */
 		while (1)
@@ -1054,7 +1054,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 				screen_roff(who[i]);
 
 				/* Hack -- Complete the prompt (again) */
-				Term_addstr(-1, TERM_WHITE, " [(r)ecall, ESC]");
+				mc_add_fmt(" [(r)ecall, ESC]");
 			}
 
 			/* Command */

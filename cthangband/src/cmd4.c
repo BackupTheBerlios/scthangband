@@ -1689,7 +1689,7 @@ static void do_cmd_options_squelch_aux(name_centry *cat)
 		/* Dump the right choices for this category */
 		for (i = 0; i < HIDE_CATS; i++)
 		{
-			if (qual[i]) mc_roff(qual_str[i].str);
+			if (qual[i]) mc_add_fmt("%s", qual_str[i].str);
 		}
 
 		if (!get_com(&ch, "Destroy which %s? [%c-%c, ^a, ^n, ^s, Escape]",
@@ -2052,17 +2052,17 @@ void do_cmd_options(void)
 		Term_clear();
 
 		/* Why are we here */
-		prt("Game Options", 2, 0);
+		mc_put_str(2, 0, "Game Options");
 
 		/* Give some choices */
 		for (ol_ptr = opt_lists; ol_ptr < END_PTR(opt_lists); ol_ptr++)
 		{
-			prt(format("(%c) %s", ol_ptr->ch, ol_ptr->title), ol_ptr->y,
-				ol_ptr->x);
+			mc_put_fmt(ol_ptr->y, ol_ptr->x,
+				"(%c) %s", ol_ptr->ch, ol_ptr->title);
 		}
 
 		/* Prompt */
-		prt("Command: ", 18, 0);
+		mc_put_str(18, 0, "Command: ");
 
 		/* Get command */
 		k = inkey();
@@ -2087,7 +2087,7 @@ good: /* Success */
 		help_track(buf);
 
 		/* Give a message (usually cleared immediately). */
-		roff(ol_ptr->title);
+		mc_put_fmt(18, 0, "Command: %s", ol_ptr->title);
 
 		if (ol_ptr->num > -1)
 		{
@@ -2314,7 +2314,7 @@ static void do_cmd_macro_aux(char *buf, int len)
 
 
 	/* Hack -- display the trigger */
-	Term_addstr(-1, TERM_WHITE, format("%v", ascii_to_text_f1, buf));
+	mc_add_fmt("%v", ascii_to_text_f1, buf);
 }
 
 
@@ -2327,26 +2327,22 @@ static void do_cmd_macro_aux(char *buf, int len)
  */
 static void do_cmd_macro_aux_keymap(char *buf)
 {
-	cptr tmp;
+	char tmp[MAX_ASCII_LEN+1];
 	/* Flush */
 	flush();
 
 	/* Get a key */
-	buf[0] = inkey();
-	buf[1] = '\0';
-
-	tmp = format("%v", ascii_to_text_f1, buf);
+	sprintf(buf, "%c", inkey());
 
 	/* Hack -- display the trigger */
-	Term_addstr(-1, TERM_WHITE, tmp);
+	strnfmt(tmp, sizeof(tmp), "%v", ascii_to_text_f1, buf);
+	mc_add_fmt("%s", tmp);
 
 	/* Notice if the key isn't its own text representation. */
 	if (strcmp(tmp, buf))
 	{
 		/* buf[0] could be anything, so output the character alone. */
-		Term_addstr(-1, TERM_WHITE, " (");
-		Term_addch(TERM_WHITE, buf[0]);
-		Term_addch(TERM_WHITE, ')');
+		mc_add_fmt(" (%c)", buf[0]);
 	}
 
 	/* Flush */

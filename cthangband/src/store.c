@@ -2260,7 +2260,7 @@ static void updatebargain(s32b price, s32b minprice)
  */
 static void display_entry(int pos)
 {
-	int i, pricedot = 0;
+	int x, y, pricedot;
 	char wt_str[12]="";
 	char price_str[14]="";
 	cptr fillstr = (pos % 2) ? " " : ".";
@@ -2273,12 +2273,12 @@ static void display_entry(int pos)
 	char namec = atchar[tval_to_attr[o_ptr->tval]];
 
 	/* Get the "offset" */
-	i = pos - store_top;
+	y = pos - store_top;
 
 	/* Describe an item (fully) in a store */
 	if (cur_store_type != STORE_HOME)
 	{
-		s32b x;
+		s32b v;
 
 		/* Must leave room for the "price" */
 		maxwid -= 15;
@@ -2287,30 +2287,34 @@ static void display_entry(int pos)
 		if (o_ptr->ident & (IDENT_FIXED))
 		{
 			/* Extract the "minimum" price */
-			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
+			v = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 		}
 		else if (auto_haggle)
 		{
 			/* Extract the "minimum" price */
-			x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
+			v = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
 			/* Hack -- Apply Sales Tax if needed */
-			if (!noneedtobargain(x)) x += x / 10;
+			if (!noneedtobargain(v)) v += v / 10;
 		}
 		/* Display a "haggle" cost */
 		else
 		{
 			/* Extrect the "maximum" price */
-			x = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
+			v = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
 		}
 
 		/* Make a string from the price. */
-		sprintf(price_str, "$%c%ld %c", (x > p_ptr->au) ? 's' : 'w', (long)x,
+		sprintf(price_str, "$%c%ld %c", (v > p_ptr->au) ? 's' : 'w', (long)v,
 
 			/* Denote IDENT_FIXED items with a 'F'. */
 			(o_ptr->ident & (IDENT_FIXED)) ? 'F' : ' ');
 
 		pricedot = 13-strlen(price_str);
+	}
+	else
+	{
+		pricedot = 0;
 	}
 
 	if (show_weights)
@@ -2324,23 +2328,18 @@ static void display_entry(int pos)
 		maxwid -= strlen(wt_str);
 	}
 
-	Term_erase(0, i+6, 255);
-
 	/* Label it, clear the line --(-- */
-	mc_roff(format("$%c%c) $%c%.*v", labelc, I2A(i), namec, maxwid,
-		object_desc_f3, o_ptr, TRUE, 3));
+	mc_put_fmt(y+6, 0, "$%c%c) $%c%.*v%n%v", labelc, I2A(y), namec, maxwid,
+		object_desc_f3, o_ptr, TRUE, 3, &x, clear_f0);
 
 	if (*wt_str && *price_str) pricedot += 2;
 
 	if (*wt_str || *price_str)
 	{
-		int j[1];
-		Term_locate(&i, j);
+		x = maxwid - x + strlen("a) ");
 
-		i = maxwid - i + strlen("a) ");
-
-		mc_roff(format("$D%v%s$D%v%s", repeat_string_f2, fillstr, i, wt_str,
-			repeat_string_f2, fillstr, pricedot, price_str));
+		mc_put_fmt(y+6, x, "$D%v%s$D%v%s", repeat_string_f2, fillstr, x, wt_str,
+			repeat_string_f2, fillstr, pricedot, price_str);
 	}
 }
 

@@ -734,10 +734,10 @@ static void roff_aux(int r_idx)
 		c_roff(MONCOL_AURA, format("%^s reflects bolt spells.  ", wd_he[msex]));
 	}
 
-		if (flags2 & (RF2_RUN_AWAY))
-		{
-				roff(format("%^s runs away after attacking.  ", wd_he[msex]));
-		}
+	if (flags2 & (RF2_RUN_AWAY))
+	{
+		c_roff(MONCOL_AURA, format("%^s runs away after attacking.  ", wd_he[msex]));
+	}
 
 
 	/* Describe escorts */
@@ -1479,7 +1479,7 @@ static void roff_aux(int r_idx)
 
 
 	/* All done */
-	roff("\n");
+	c_roff(TERM_WHITE, "\n");
 
 
 	/* Hack -- Restore monster memory */

@@ -2766,47 +2766,50 @@ void mc_roff_xy(int x, int y, cptr s)
 }
 
 /*
- * As above, starting at the current position and wrapping to 0.
+ * Print a string (as above) which starts in a particular colour and wraps to
+ * the left margin.
  */
-void mc_roff(cptr s)
+void c_roff(byte a, cptr str)
 {
-	mc_roff_aux(0, s);
+	char buf[1024];
+	sprintf(buf, "$%c$!", atchar[a]);
+	while (*str)
+	{
+		str += sprintf(buf+4, "%.1019s", str);
+		mc_roff_aux(0, buf);
+	}
 }
-
-/*
- * Print a string (as above) which starts in a particular colour.
- */
-bool c_roff(byte a, cptr str)
-{
-	mc_roff(format("$%c%s", atchar[a], str));
-	return TRUE;
-}
-
-/*
- * As above, but in "white"
- */
-void roff(cptr str)
-{
-	/* Spawn */
-	c_roff(TERM_WHITE, str);
-}
-
 
 /*
  * Write a line of (possibly multicolour) text to the screen using mc_add()
- * above.
+ * above. The maximum of characters printed will be l, or as many as will fit
+ * if l is DEFAULT.
  */
-static void mc_put_str_aux(const int y, const int x, const int l, cptr str)
+static void mc_add_str_aux(const int l, cptr str)
 {
 	int attr, dattr = attr = TERM_WHITE;
 	bool ignore = FALSE;
-	if (Term_gotoxy(x, y)) return;
 	mc_add(str, l, &dattr, &attr, &ignore);
 }
 
 void mc_put_str(const int y, const int x, cptr str)
 {
-	mc_put_str_aux(y, x, DEFAULT, str);
+	if (Term_gotoxy(x, y)) return;
+	mc_add_str_aux(DEFAULT, str);
+}
+
+/*
+ * Write a line of formatted multicolour text at the current cursor location
+ * using mc_add().
+ */
+void mc_add_fmt(cptr fmt, ...)
+{
+	/* Get the string. */
+	char str[257];
+	get_va_arg_buf(str, fmt);
+
+	/* Print it. */
+	mc_add_str_aux(DEFAULT, str);
 }
 
 /*
@@ -2844,7 +2847,8 @@ void mc_put_lfmt(const int y, const int x, const int l, cptr fmt, ...)
 	for (t = strchr(buf, '\0'); t < END_PTR(buf)-1; t++) *t = ' ';
 	*t = '\0';
 
-	mc_put_str_aux(y, x, l, buf);
+	if (Term_gotoxy(x, y)) return;
+	mc_add_str_aux(l, buf);
 }
 
 

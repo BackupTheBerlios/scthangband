@@ -903,12 +903,12 @@ int maxstat(int race, int temp, int stat)
 /* Display player information for point_mod_player(). */
 static void display_player_birth(int points, bool details, bool rolled)
 {
-	char b1 = '[';
-	char b2 = ']';
-	char modpts[4];
-	cptr finstr = "'ESC' to finish, ";
-	cptr arstr = " with minima";
-	char attr;
+	/* Mention finishing if it is possible at the moment. */
+	cptr finstr = (rolled || (spend_points && points >= 0)) ?
+		"'ESC' to finish, " : "";
+
+	/* Only mention the autoroller if allowed. */
+	cptr arstr = (USE_AUTOROLLER) ? " with minima" : "";
 
 	/* Display details if required. */
 	if (details)
@@ -922,7 +922,6 @@ static void display_player_birth(int points, bool details, bool rolled)
 	}
 	/* Display the information required during creation. */
 	clear_from(23);
-	sprintf(modpts,"%d",points);
 
 	mc_put_fmt(2, 73, "<-S/s->");
 	mc_put_fmt(3, 73, "<-I/s->");
@@ -938,39 +937,27 @@ static void display_player_birth(int points, bool details, bool rolled)
 	mc_put_fmt(5, 1, "<T>Template");
 
 	/* Start the first string. */
-	Term_putch(2, 21, TERM_WHITE, b1);
+	mc_put_fmt(21, 2, "[");
 
 	/* Calculate point string, if used. */
-	if (!spend_points)
+	if (spend_points)
 	{
-		attr = 0;
-		if (!rolled) finstr = "";
-	}
-	else if (points == 0) attr = 'g';
-	else if (points > 0) attr = 'y';
-	else if (rolled) attr = 'B';
-	else
-	{
-		/* Can't finish, so clear finstr. */
-		attr = 'r';
-		finstr = "";
-	}
+		/* Pick a colour appropriate to the circumstances. */
+		char attr = (!points) ? 'g' : (points > 0) ? 'y' : (rolled) ? 'B' : 'r';
 
-	/* Only mention the autoroller if allowed. */
-	if (!USE_AUTOROLLER) arstr = "";
-
-	/* Write the point string, if any. */
-	if (attr) mc_roff(format("$%c%d$w points left. ", attr, points));
+		/* Print it out. */
+		mc_add_fmt("$%c%d$w points left. ", attr, points);
+	}
 
 	/* Write the rest of the first string. */
-	mc_roff(format("Press %sX to restart,%c", finstr, b2));
+	mc_add_fmt("Press %sX to restart,]", finstr);
 
 	/* Write the second string. */
-	prt("['f' to save, 'l' to load, '/' to change display, '=' for options,]",
-		22, 2);
+	mc_put_fmt(22, 2,
+		"['f' to save, 'l' to load, '/' to change display, '=' for options,]");
 
 	/* Write the third string. */
-	prt(format("['a' to roll%s, or '?' for help.]", arstr), 23, 2);
+	mc_put_fmt(23, 2, "['a' to roll%s, or '?' for help.]", arstr);
 }
 
 /*
@@ -2812,9 +2799,6 @@ static bool quick_start_character(void)
 
 	char UNREAD(c);
 
-	char b1 = '[';
-	char b2 = ']';
-
 	birther prev_stat;
 
 
@@ -2881,6 +2865,9 @@ static bool quick_start_character(void)
 		/* Input loop */
 		while (TRUE)
 		{
+			cptr prevs = (prev) ? "'p' for prev" : "";
+			cptr modes = (mode) ? "'h' for Misc." : "'h' for History";
+
 			/* Calculate the bonuses and hitpoints */
 			p_ptr->update |= (PU_BONUS | PU_HP);
 
@@ -2898,14 +2885,8 @@ static bool quick_start_character(void)
 			display_player(mode);
 
 			/* Prepare a prompt (must squeeze everything in) */
-			Term_gotoxy(2, 23);
-			Term_addch(TERM_WHITE, b1);
-			Term_addstr(-1, TERM_WHITE, "'r' to reroll");
-			if (prev) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
-			if (mode) Term_addstr(-1, TERM_WHITE, ", 'h' for Misc.");
-			else Term_addstr(-1, TERM_WHITE, ", 'h' for History");
-			Term_addstr(-1, TERM_WHITE, ", or ESC to accept");
-			Term_addch(TERM_WHITE, b2);
+			mc_put_fmt(23, 2, "['r' to reroll%s, %s, or ESC to accept]",
+				prevs, modes);
 
 			/* Prompt and get a command */
 			c = inkey();

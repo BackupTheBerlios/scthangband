@@ -2895,24 +2895,17 @@ static void display_player_ben(void)
 		/* Scan rows */
 		for (y = 0; y < 16; y++)
 		{
-			cptr str = "$s.";
+			/* Check flag */
+			cptr flag = (b & (1<<y)) ? "+" : "$s.";
 
+			/* Find name. */
 			cptr name = object_flag_names[16*x+y];
 
 			/* No name */
 			if (!name) continue;
 
-			/* Dump name */
-			mc_put_fmt(y + 4, x * 13, "%10s:", name);
-
-			/* Check flag */
-			if (b & (1<<y))
-			{
-				str = "+";
-			}
-
-			/* Dump flag */
-			mc_put_fmt(y+4, x * 13 + 11, str);
+			/* Dump stuff */
+			mc_put_fmt(y + 4, x * 13, "%10s:%s", name, flag);
 		}
 	}
 }
@@ -2992,16 +2985,11 @@ static void display_player_ben_one(int mode)
 			/* Check flags */
 			for (n = 0; n < 13; n++)
 			{
-				cptr str = "$s.";
-
 				/* Check flag */
-				if (b[n][3*mode+x] & (1<<y))
-				{
-					str = "+";
-				}
+				cptr flag = (b[n][3*mode+x] & (1<<y)) ? "+" : "$s.";
 
 				/* Dump flag */
-				mc_put_fmt(y+4, x*26+11+n, str);
+				mc_add_fmt(flag);
 			}
 		}
 	}
@@ -3933,11 +3921,8 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 		}
 
 		/* Print the line. */
-		strcpy(out_ptr, "\n");
-		mc_roff(out_buf);
-
-		/* Count the printed lines */
-		y++;
+		*out_ptr = '\0';
+		mc_put_str(y++, 0, out_buf);
 	}
 }
 
