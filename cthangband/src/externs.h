@@ -4034,4 +4034,10 @@ extern object_type *get_object_from_function(void (*func)(object_type *));
 #if (defined(OBJECT1_C) || defined(SPELLS2_C))
 extern void do_identify_fully(object_type *o_ptr);
 #endif
+
+/* util.c */
+
+#if (defined(INIT2_C) || defined(UTIL_C))
+extern void init_ascii_text_conv(void);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -2130,6 +2130,9 @@ void init_angband(void)
 	/* Initialise the help file links. */
 	init_help_files();
 
+	/* Initialise ascii_to_text(). */
+	init_ascii_text_conv();
+
 	/* Access the "basic" pref file */
 	strcpy(buf, "pref.prf");
 

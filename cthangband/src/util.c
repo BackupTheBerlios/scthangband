@@ -1052,171 +1052,69 @@ void move_cursor(int row, int col)
 
 
 
-/*
- * Convert a decimal to a single digit octal number
- */
-static char octify(uint i)
-{
-	return (hexsym[i%8]);
-}
+static cptr ascii_text_conv[256];
 
 /*
- * Convert a decimal to a single digit hex number
- */
-static char hexify(uint i)
+ * Fill the ascii_text_conv[] table with strings for each ascii character.
+ */ 
+void init_ascii_text_conv(void)
 {
-	return (hexsym[i%16]);
+	int i;
+	for (i = 0; i < 256; i++)
+	{
+		char buf[MAX_ASCII_LEN+1], *s = buf;
+
+		if (i == ESCAPE)
+		{
+			strcpy(s, "\\e");
+		}
+		else if (i == ' ')
+		{
+			strcpy(s, "\\s");
+		}
+		else if (i == '\b')
+		{
+			strcpy(s, "\\b");
+		}
+		else if (i == '\t')
+		{
+			strcpy(s, "\\t");
+		}
+		else if (i == '\n')
+		{
+			strcpy(s, "\\n");
+		}
+		else if (i == '\r')
+		{
+			strcpy(s, "\\r");
+		}
+		else if (i == '^')
+		{
+			strcpy(s, "\\^");
+		}
+		else if (i == '\\')
+		{
+			strcpy(s, "\\\\");
+		}
+		else if (i < 32)
+		{
+			sprintf(s, "^%c", i+64);
+		}
+		else if (i < 127)
+		{
+			sprintf(s, "%c", i);
+		}
+		else
+		{
+			sprintf(s, "\\x%c%c", hexsym[i/16], hexsym[i%16]);
+		}
+
+		ascii_text_conv[i] = string_make(s);
+	}
 }
-
-
-/*
- * Convert a octal-digit into a decimal
- */
-static int deoct(char c)
-{
-	if (isdigit(c)) return (D2I(c));
-	return (0);
-}
-
-/*
- * Convert a hexidecimal-digit into a decimal
- */
-static int dehex(char c)
-{
-	if (isdigit(c)) return (D2I(c));
-	if (islower(c)) return (A2I(c) + 10);
-	if (isupper(c)) return (A2I(tolower(c)) + 10);
-	return (0);
-}
-
 
 /*
  * Hack -- convert a printable string into real ascii
- *
- * I have no clue if this function correctly handles, for example,
- * parsing "\xFF" into a (signed) char.  Whoever thought of making
- * the "sign" of a "char" undefined is a complete moron.  Oh well.
- */
-static void text_to_ascii(char *buf, uint max, cptr str)
-{
-	char *s = buf;
-
-	/* Analyze the "ascii" string */
-	while (*str && s+1 < buf+max-1)
-	{
-		/* Backslash codes */
-		if (*str == '\\')
-		{
-			/* Skip the backslash */
-			str++;
-
-			/* Hex-mode XXX */
-			if (*str == 'x')
-			{
-				*s = 16 * dehex(*++str);
-				*s++ += dehex(*++str);
-			}
-
-			/* Hack -- simple way to specify "backslash" */
-			else if (*str == '\\')
-			{
-				*s++ = '\\';
-			}
-
-			/* Hack -- simple way to specify "caret" */
-			else if (*str == '^')
-			{
-				*s++ = '^';
-			}
-
-			/* Hack -- simple way to specify "space" */
-			else if (*str == 's')
-			{
-				*s++ = ' ';
-			}
-
-			/* Hack -- simple way to specify Escape */
-			else if (*str == 'e')
-			{
-				*s++ = ESCAPE;
-			}
-
-			/* Backspace */
-			else if (*str == 'b')
-			{
-				*s++ = '\b';
-			}
-
-			/* Newline */
-			else if (*str == 'n')
-			{
-				*s++ = '\n';
-			}
-
-			/* Return */
-			else if (*str == 'r')
-			{
-				*s++ = '\r';
-			}
-
-			/* Tab */
-			else if (*str == 't')
-			{
-				*s++ = '\t';
-			}
-
-			/* Octal-mode */
-			else if (*str == '0')
-			{
-				*s = 8 * deoct(*++str);
-				*s++ += deoct(*++str);
-			}
-
-			/* Octal-mode */
-			else if (*str == '1')
-			{
-				*s = 64 + 8 * deoct(*++str);
-				*s++ += deoct(*++str);
-			}
-
-			/* Octal-mode */
-			else if (*str == '2')
-			{
-				*s = 64 * 2 + 8 * deoct(*++str);
-				*s++ += deoct(*++str);
-			}
-
-			/* Octal-mode */
-			else if (*str == '3')
-			{
-				*s = 64 * 3 + 8 * deoct(*++str);
-				*s++ += deoct(*++str);
-			}
-
-			/* Skip the final char */
-			str++;
-		}
-
-		/* Normal Control codes */
-		else if (*str == '^')
-		{
-			str++;
-			*s++ = (*str++ & 037);
-		}
-
-		/* Normal chars */
-		else
-		{
-			*s++ = *str++;
-		}
-	}
-
-	/* Terminate */
-	*s = '\0';
-}
-
-/*
- * Call text_to_ascii() as a vstrnfmt_aux function.
  *
  * Format: 
  * "%v", text_to_ascii_f1, (cptr)str
@@ -1224,92 +1122,28 @@ static void text_to_ascii(char *buf, uint max, cptr str)
 void text_to_ascii_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	cptr str = va_arg(*vp, cptr);
-	text_to_ascii(buf, max, str);
-}
+	byte *s = buf;
+	int i;
 
-/*
- * Hack -- convert a string into a printable form
- */
-static void ascii_to_text(char *buf, uint max, cptr str)
-{
-	char *s = buf;
-
-	/* Analyze the "ascii" string */
-	while (*str && s+MAX_ASCII_LEN < buf+max-1)
+	for (; *str && (char*)s+MAX_ASCII_LEN < buf+max-1; str++)
 	{
-		byte i = (byte)(*str++);
-
-		if (i == ESCAPE)
+		for (i = 0; i < 256; i++)
 		{
-			*s++ = '\\';
-			*s++ = 'e';
+			if (prefix(str, ascii_text_conv[i]))
+			{
+				*s++ = i;
+				goto next;
+			}
 		}
-		else if (i == ' ')
-		{
-			*s++ = '\\';
-			*s++ = 's';
-		}
-		else if (i == '\b')
-		{
-			*s++ = '\\';
-			*s++ = 'b';
-		}
-		else if (i == '\t')
-		{
-			*s++ = '\\';
-			*s++ = 't';
-		}
-		else if (i == '\n')
-		{
-			*s++ = '\\';
-			*s++ = 'n';
-		}
-		else if (i == '\r')
-		{
-			*s++ = '\\';
-			*s++ = 'r';
-		}
-		else if (i == '^')
-		{
-			*s++ = '\\';
-			*s++ = '^';
-		}
-		else if (i == '\\')
-		{
-			*s++ = '\\';
-			*s++ = '\\';
-		}
-		else if (i < 32)
-		{
-			*s++ = '^';
-			*s++ = i + 64;
-		}
-		else if (i < 127)
-		{
-			*s++ = i;
-		}
-		else if (i < 64)
-		{
-			*s++ = '\\';
-			*s++ = '0';
-			*s++ = octify(i / 8);
-			*s++ = octify(i % 8);
-		}
-		else
-		{
-			*s++ = '\\';
-			*s++ = 'x';
-			*s++ = hexify(i / 16);
-			*s++ = hexify(i % 16);
-		}
+		/* Paranoia - an unrecognised sequence. */
+		*s++ = *str;
+next:
+		continue;
 	}
-
-	/* Terminate */
-	*s = '\0';
 }
 
 /*
- * Call ascii_to_text() as a vstrnfmt_aux function.
+ * Hack - convert a string into a printable form.
  *
  * Format: 
  * "%v", ascii_to_text_f1, (cptr)str
@@ -1317,7 +1151,13 @@ static void ascii_to_text(char *buf, uint max, cptr str)
 void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 {
 	cptr str = va_arg(*vp, cptr);
-	ascii_to_text(buf, max, str);
+	char *s = buf;
+
+	/* Analyze the "ascii" string */
+	for (; *str && s+MAX_ASCII_LEN < buf+max-1; str++)
+	{
+		s += sprintf(s, "%s", ascii_text_conv[(byte)*str]);
+	}
 }
 
 
