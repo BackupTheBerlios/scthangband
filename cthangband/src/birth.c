@@ -1848,13 +1848,15 @@ void create_random_name(int race, char *name)
 static void get_starting_skills(void)
 {
 	int i;
-	/* Wipe skills */
+	/* Set default skills */
 	for(i=0;i<MAX_SKILLS;i++)
 	{
-		skill_set[i].value=0;
-		skill_set[i].experience=0;
-		skill_set[i].base=0;
-		skill_set[i].ceiling=100;
+		/* Set value and base from template. */
+		skill_set[i].base = skill_set[i].value = cp_ptr->skill[i];
+
+		/* Use default EXP and ceiling. */
+		skill_set[i].experience = 0;
+		skill_set[i].ceiling = 100;
 	}
 
 	/* Wipe spirit associations */
@@ -1863,40 +1865,10 @@ static void get_starting_skills(void)
 		spirits[i].pact = 0;
 	}
 
-	/* Now add some from template */
-	skill_set[SKILL_CLOSE].value+=cp_ptr->skill[0];
-	skill_set[SKILL_STAB].value+=cp_ptr->skill[1];
-	skill_set[SKILL_SLASH].value+=cp_ptr->skill[2];
-	skill_set[SKILL_CRUSH].value+=cp_ptr->skill[3];
-	skill_set[SKILL_MISSILE].value+=cp_ptr->skill[4];
-	skill_set[SKILL_TOUGH].value+=cp_ptr->skill[5];
-	skill_set[SKILL_DEVICE].value+=cp_ptr->skill[6];
-	skill_set[SKILL_DISARM].value+=cp_ptr->skill[7];
-	skill_set[SKILL_PERCEPTION].value+=cp_ptr->skill[8];
-	skill_set[SKILL_SAVE].value+=cp_ptr->skill[9];
-	skill_set[SKILL_SEARCH].value+=cp_ptr->skill[10];
-	skill_set[SKILL_STEALTH].value+=cp_ptr->skill[11];
-	skill_set[SKILL_MA].value+=cp_ptr->skill[12];
-	skill_set[SKILL_MINDCRAFTING].value+=cp_ptr->skill[13];
-	skill_set[SKILL_CHI].value+=cp_ptr->skill[14];
-	skill_set[SKILL_SHAMAN].value+=cp_ptr->skill[15];
-	skill_set[SKILL_HEDGE].value+=cp_ptr->skill[16];
-	skill_set[SKILL_MANA].value+=cp_ptr->skill[17];
-	skill_set[SKILL_PSEUDOID].value+=cp_ptr->skill[18];
-
-	/* Template skills will become base skills - you can start advancing 
-	 * them immediately */
-
-	for(i=0;i<MAX_SKILLS;i++)
-	{
-		skill_set[i].base=skill_set[i].value;
-	}
-	skill_set[SKILL_TOUGH].base+= 1;
-
 	/* 
 	 * add basic everyman values (mainly from race)
 	 */
-	skill_set[SKILL_TOUGH].value+=2;
+	skill_set[SKILL_TOUGH].value+=4;
 	skill_set[SKILL_DEVICE].value+=rp_ptr->device_bonus;
 	skill_set[SKILL_DISARM].value+=rp_ptr->disarm_bonus;
 	skill_set[SKILL_CLOSE].value+=rp_ptr->melee_bonus;

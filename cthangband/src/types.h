@@ -999,7 +999,7 @@ struct player_template
 
 	s16b qmin[A_MAX];	/* Minimum quick-start stats -max+17 */
 
-	s16b skill[19];		/* Skill improvements */
+	s16b skill[MAX_SKILLS];		/* Skill improvements */
 
 	/* Objects to be given at the start (including backups for items which
 	 * are useless for the chosen race). */
