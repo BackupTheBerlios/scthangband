@@ -813,8 +813,7 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 			s_ptr = &b_ptr->info[spell%32];
 
 			/* Display help now. */
-			if (redraw)
-				put_str(spell_help(s_ptr), maxy, x);
+			if (redraw) mc_roff_xy(x, maxy, spell_help(s_ptr));
 
 			/* Prompt */
 			(*confirm)(tmp_val, 78, s_ptr, verb);
@@ -822,7 +821,8 @@ static bool get_spell_aux(int *sn, book_type *b_ptr, cptr noun, cptr verb,
 			/* Belay that order */
 			if (!get_check(tmp_val))
 			{
-				Term_erase(x, maxy, 255);
+				/* Return the screen to its previous state. */
+				if (redraw) Term_load_aux(t_list);
 				continue;
 			}
 		}

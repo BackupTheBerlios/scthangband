@@ -2735,18 +2735,18 @@ static bool useless_cursor(void)
  * Move the cursor to the beginning of the next line and clear it.
  * Return FALSE if already on the bottom line.
  */
-static bool next_line(void)
+static bool next_line(int nx)
 {
 	int x,y;
 	Term_locate(&x, &y);
-	return (!Term_erase(0, y+1, 255));
+	return (!Term_erase(nx, y+1, 255));
 }
 
 /*
  * Wrap the text on the current line as the cursor.
  * Return FALSE on errors.
  */ 
-static bool wrap_text(void)
+static bool wrap_text(int nx)
 {
 	int x, y, w, h, i, n;
 
@@ -2757,7 +2757,7 @@ static bool wrap_text(void)
 	Term_locate(&x, &y);
 
 	/* Scan existing text */
-	for (i = w - 1, n = 0; i >= 0; i--)
+	for (i = w - 1, n = 0; i >= nx; i--)
 	{
 		/* Grab existing attr/char */
 		Term_what(i, y, &av[i], &cv[i]);
@@ -2770,13 +2770,13 @@ static bool wrap_text(void)
 	}
 
 	/* Special case */
-	if (n == 0) n = w;
+	if (n == nx) n = w;
 
 	/* Clear the partial word. */
 	Term_erase(n, y, 255);
 
 	/* Clear line, move cursor. Return if this is not possible. */
-	if (Term_erase(0, y+1, 255)) return FALSE;
+	if (Term_erase(nx, y+1, 255)) return FALSE;
 
 	/* Wrap the word (if any) */
 	for (i = n; i < w; i++)
@@ -2856,24 +2856,42 @@ static cptr mc_add(cptr s, int *dattr, int *attr, bool *ignore)
 /*
  * Print a multi-coloured string using the above routine, automatically
  * wrapping the text at spaces as necessary to avoid breaking a word between
- * lines.
+ * lines. Characters to the left of column x are ignored at all points.
  */
-void mc_roff(cptr s)
+static void mc_roff_aux(int x, cptr s)
 {
 	int dattr = TERM_WHITE, attr = TERM_WHITE;
 	bool ignore = FALSE;
+
 	while (*((s = mc_add(s, &dattr, &attr, &ignore))))
 	{
 		if (strchr(" \n", *s))
 		{
 			s++;
-			if (!next_line()) return;
+			if (!next_line(x)) return;
 		}
 		else
 		{
-			if (!wrap_text()) return;
+			if (!wrap_text(x)) return;
 		}
 	}
+}
+
+/*
+ * As above, starting at the specified position and wrapping to x.
+ */
+void mc_roff_xy(int x, int y, cptr s)
+{
+	Term_gotoxy(x, y);
+	mc_roff_aux(x, s);
+}
+
+/*
+ * As above, starting at the current position and wrapping to 0.
+ */
+void mc_roff(cptr s)
+{
+	mc_roff_aux(0, s);
 }
 
 /*
