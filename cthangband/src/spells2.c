@@ -5746,17 +5746,18 @@ static void cave_temp_room_aux(int y, int x)
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
 
-	/* Hack - don't check the first two squares, as the below will always
-	 * fail. */
-	if (temp_n > 2)
+	/* Hack - don't check the nine squares surrounding the player, as they can
+	 * always be lit (this needs at least two exceptions to do anything). */
+	if (temp_n > 8)
 	{
 		/* Do not "leave" the current room */
 		for (i = t = 0; i < 10; i++)
 		{
+			if (!cave_floor_bold(y+ddy[i],x+ddy[x])) continue;
 			if (cave[y+ddy[i]][x+ddx[i]].info & CAVE_TEMP) t++;
 		}
 
-		/* At least one other adjacent square must be marked. */
+		/* At least one other adjacent non-wall square is marked. */
 		if (t < 2) return;
 	}
 
@@ -5767,6 +5768,10 @@ static void cave_temp_room_aux(int y, int x)
 	temp_y[temp_n] = y;
 	temp_x[temp_n] = x;
 	temp_n++;
+#ifdef TESTING_cave_temp_room_aux
+	move_cursor_relative(y,x);
+	inkey();
+#endif
 }
 
 
