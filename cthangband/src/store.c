@@ -1731,7 +1731,7 @@ static void display_entry(int pos)
 
 	/* Label it, clear the line --(-- */
 	(void)sprintf(out_val, "%c) ", I2A(i));
-	prt(out_val, i+6, 0);
+	c_prt((k_info[o_ptr->k_idx].aware) ? TERM_WHITE : TERM_SLATE, out_val, i+6, 0);
 
 		if (equippy_chars)
 	{
@@ -2974,8 +2974,12 @@ static void store_purchase(void)
 				/* Item is still here */
 				else
 				{
-					/* Redraw the item */
-					display_entry(item);
+					/* Redraw all entries with the same object kind. */
+					s16b k_idx=st_ptr->stock[item].k_idx;
+					int i = item-1;
+					while (k_idx == st_ptr->stock[++i].k_idx) display_entry(i);
+					i = item;
+					while (k_idx == st_ptr->stock[--i].k_idx) display_entry(i);
 				}
 			}
 
