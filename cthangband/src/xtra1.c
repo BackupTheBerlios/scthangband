@@ -3990,6 +3990,10 @@ static void win_visible_display(void)
 	FREE(who);
 }
 
+#define WFX ((current_function == FUNC_TARGET_SET) ? target_col : px)
+#define WFY ((current_function == FUNC_TARGET_SET) ? target_row : py)
+
+
 /*
  * Check whether the floor display is "interesting".
  * True if the player character can see some floor at his feet.
@@ -4003,7 +4007,7 @@ static bool win_floor_good(void)
 	if (p_ptr->image) return TRUE;
 
 	/* A visible wall. */
-	return player_can_see_bold(py, px);
+	return (cave[WFY][WFX].info & CAVE_MARK || player_can_see_bold(WFY, WFX));
 }
 
 
@@ -4014,17 +4018,21 @@ static bool win_floor_good(void)
  */
 static void win_floor_display(void)
 {
+	cptr verb = (WFX == px && WFY == py) ? "are standing on" : "see";
+
 	if (p_ptr->image)
 	{
-		mc_put_str(format("You are standing on something strange.\n"), 0, 0);
+		mc_put_str(format("You %s something strange.\n", verb),
+			0, 0);
 	}
 	else
 	{
 		int y;
-		object_type *o_ptr = o_list+cave[py][px].o_idx;
+		cave_type *c_ptr = &cave[WFY][WFX];
+		object_type *o_ptr = o_list+c_ptr->o_idx;
 
-		mc_put_str(format("You are standing on %v.\n",
-			feature_desc_f2, cave[py][px].feat, FDF_MIMIC | FDF_INDEF), 0, 0);
+		mc_put_str(format("You %s %v.\n", verb, feature_desc_f2,
+			c_ptr->feat, FDF_MIMIC | FDF_INDEF), 0, 0);
 
 		for (y = 1; y < Term->hgt && o_ptr != o_list;
 			y++, o_ptr = o_list+o_ptr->next_o_idx)

@@ -2410,7 +2410,7 @@ extern int keymap_mode(void);
 #if (defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C))
 extern void request_command(bool shopping);
 #endif
-#if (defined(OBJECT1_C) || defined(UTIL_C) || defined(XTRA2_C))
+#if (defined(OBJECT1_C) || defined(UTIL_C))
 extern bool is_a_vowel(int ch);
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(UTIL_C) || defined(XTRA2_C))
@@ -2680,7 +2680,7 @@ extern int total_friends;
 #if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(VARIABLE_C))
 extern s32b total_friend_levels;
 #endif
-#if (defined(VARIABLE_C) || defined(XTRA2_C))
+#if (defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern byte current_function;
 #endif
 #if (defined(OBJECT2_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3118,10 +3118,10 @@ extern s16b wildy;
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern s16b target_who;
 #endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern s16b target_col;
 #endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern s16b target_row;
 #endif
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
