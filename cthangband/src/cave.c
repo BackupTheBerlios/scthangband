@@ -1579,6 +1579,10 @@ void display_map(int *cy, int *cx)
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
 
+	const int ratio = MAX(cur_hgt/SCREEN_HGT, cur_wid/SCREEN_WID);
+	const int map_hgt = (cur_hgt+ratio-1)/ratio + 1;
+	const int map_wid = (cur_wid+ratio-1)/ratio + 1;
+
 
 	/* Save lighting effects */
 	old_view_special_lite = view_special_lite;
@@ -1590,9 +1594,9 @@ void display_map(int *cy, int *cx)
 
 
 	/* Clear the chars and attributes */
-	for (y = 0; y < MAP_HGT+2; ++y)
+	for (y = 0; y <= map_hgt; ++y)
 	{
-		for (x = 0; x < MAP_WID+2; ++x)
+		for (x = 0; x <= map_wid; ++x)
 		{
 			/* Nothing here */
 			ma[y][x] = TERM_WHITE;
@@ -1609,8 +1613,8 @@ void display_map(int *cy, int *cx)
 		for (j = 0; j < cur_hgt; ++j)
 		{
 			/* Location */
-			x = i / RATIO + 1;
-			y = j / RATIO + 1;
+			x = i / ratio + 1;
+			y = j / ratio + 1;
 
 			/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
@@ -1638,28 +1642,24 @@ void display_map(int *cy, int *cx)
 	}
 
 
-	/* Corners */
-	i = (cur_wid+RATIO-1)/RATIO + 1;
-	j = (cur_hgt+RATIO-1)/RATIO + 1;
-
 	/* Draw the corners */
-	mc[0][0] = mc[0][i] = mc[j][0] = mc[j][i] = '+';
+	mc[0][0] = mc[0][map_wid] = mc[map_hgt][0] = mc[map_hgt][map_wid] = '+';
 
 	/* Draw the horizontal edges */
-	for (x = 1; x < i; x++) mc[0][x] = mc[j][x] = '-';
+	for (x = 1; x < map_wid; x++) mc[0][x] = mc[map_hgt][x] = '-';
 
 	/* Draw the vertical edges */
-	for (y = 1; y < j; y++) mc[y][0] = mc[y][i] = '|';
+	for (y = 1; y < map_hgt; y++) mc[y][0] = mc[y][map_wid] = '|';
 
 
 	/* Display each map line in order */
-	for (y = 0; y <= j; ++y)
+	for (y = 0; y <= map_hgt; ++y)
 	{
 		/* Start a new line */
 		Term_gotoxy(0, y);
 
 		/* Display the line */
-		for (x = 0; x <= i; ++x)
+		for (x = 0; x <= map_wid; ++x)
 		{
 			ta = ma[y][x];
 			tc = mc[y][x];
@@ -1677,8 +1677,8 @@ void display_map(int *cy, int *cx)
 
 
 	/* Player location */
-	(*cy) = py / RATIO + 1;
-	(*cx) = px / RATIO + 1;
+	(*cy) = py / ratio + 1;
+	(*cx) = px / ratio + 1;
 
 
 	/* Restore lighting effects */
