@@ -441,53 +441,39 @@ void teleport_player_to(int ny, int nx)
  */
 void teleport_player_level(void)
 {
+	bool into;
     if (p_ptr->anti_tele)
     {
         msg_print("A mysterious force prevents you from teleporting!");
         return;
     }
 
-	if (dun_level <= 0)
-	{
+	/* Always go into the dungeon if outside. */
+	if (dun_level <= 0) into = TRUE;
+	/* Don't go any further if you can't. */
+	else if (is_quest(dun_level) || (dun_level >= dun_defs[cur_dungeon].max_level)) into = FALSE;
+	/* Else choose randomly. */
+	else into = (magik(50));
+	
+	/* Get a special message if you leave a tower altogether. */
+	if (!into && dun_defs[cur_dungeon].tower && dun_level == 1)
+		msg_print("You fall out of the tower!");
+	/* "into" is down in dungeons, up in towers. */
+	else if (into ^ dun_defs[cur_dungeon].tower)
 		msg_print("You sink through the floor.");
-                if (autosave_l)
-                {
-			do_cmd_save_game(TRUE);
-                }
-		dun_level++;
-		new_level_flag = TRUE;
-	}
-	else if (is_quest(dun_level) || (dun_level >= dun_defs[cur_dungeon].max_level))
-	{
-		msg_print("You rise up through the ceiling.");
-                if (autosave_l)
-                {
-                    do_cmd_save_game(TRUE);
-                }
-		dun_level--;
-		new_level_flag = TRUE;
-	}
-	else if (rand_int(100) < 50)
-	{
-		msg_print("You rise up through the ceiling.");
-                if (autosave_l)
-                {
-			do_cmd_save_game(TRUE);
-                }
-		dun_level--;
-		new_level_flag = TRUE;
-		came_from=START_RANDOM;
-	}
 	else
-	{
-		msg_print("You sink through the floor.");
-                if (autosave_l)
-                {
-                    do_cmd_save_game(TRUE);
-                }
+		msg_print("You rise up through the ceiling.");
+
+	if (autosave_l) do_cmd_save_game(TRUE);
+
+	if (into)
 		dun_level++;
+	else
+		dun_level--;
+
 		new_level_flag = TRUE;
-	}
+
+		came_from=START_RANDOM;
 
 	/* Sound */
 	sound(SOUND_TPLEVEL);
