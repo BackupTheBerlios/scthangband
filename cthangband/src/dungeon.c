@@ -3912,9 +3912,6 @@ void play_game(bool new_game)
 {
 	int i;
 
-	/* Hack - store "RNG not initialised" in Rand_quick. */
-	Rand_quick = TRUE;
-
 	/* Hack -- Character is "icky" */
 	character_icky = TRUE;
 
@@ -3982,12 +3979,10 @@ void play_game(bool new_game)
 	}
 
 	/* Init the RNG */
-	if (Rand_quick)
+	if (Rand_place == RAND_DEG)
 	{
-		u32b seed;
-
 		/* Basic seed */
-		seed = (time(NULL));
+		u32b seed = (time(NULL));
 
 #ifdef SET_UID
 
@@ -3995,10 +3990,6 @@ void play_game(bool new_game)
 		seed = ((seed >> 3) * (getpid() << 1));
 
 #endif
-
-		/* Use the complex RNG */
-		Rand_quick = FALSE;
-
 		/* Seed the "complex" RNG */
 		Rand_state_init(seed);
 	}

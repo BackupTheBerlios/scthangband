@@ -3692,13 +3692,13 @@ extern void core_fmt(cptr fmt, ...);
 #if (defined(TABLES_C) || defined(Z_RAND_C))
 extern bool rand_unbiased;
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
+#if (defined(GENERATE_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
 extern bool Rand_quick;
 #endif
 #if (defined(GENERATE_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(Z_RAND_C))
 extern u32b Rand_value;
 #endif
-#if (defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C))
+#if (defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C))
 extern u16b Rand_place;
 #endif
 #if (defined(LOAD_C) || defined(SAVE_C) || defined(Z_RAND_C))
