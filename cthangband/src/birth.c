@@ -867,13 +867,15 @@ static void wield_weapons(bool wield)
 		else	
 			sv = SV_WHIP;
 		object_prep(&inventory[INVEN_WIELD], lookup_kind(TV_SWORD, sv));
-		object_prep(&inventory[INVEN_BOW], lookup_kind(TV_BOW, SV_SHORT_BOW));
+		object_prep(&inventory[INVEN_BOW], lookup_kind(TV_BOW, SV_LONG_BOW));
 	}
 	else
 	{
 		object_wipe(&inventory[INVEN_WIELD]);
 		object_wipe(&inventory[INVEN_BOW]);
 	}
+	p_ptr->update |= PU_BONUS;
+	update_stuff();
 }
 
 /*
@@ -996,12 +998,16 @@ static void display_player_birth(int points, bool details)
 	char b2 = ']';
 	char modpts[4];
 
-	/* Display the usual information. */
-		display_player(0);
-
 	/* Display details if required. */
-	if (details) display_player_birth_details();
-
+	if (details)
+	{
+		display_player(1);
+		display_player_birth_details();
+	}
+	else
+	{
+		display_player(0);
+	}
 	/* Display the information required during creation. */
 		clear_from(23);
 		sprintf(modpts,"%d",points);
@@ -1057,40 +1063,85 @@ static void display_player_birth(int points, bool details)
 static void display_player_birth_details(void)
 {
 	byte i;
-	cptr dpbd_strings[8] = {
-	"Spells at 100%",
-	"SP at 100%",
-	"Min spell fail",
-	"Min favour fail",
-	"Chi at 100%",
-	"Min mindcraft fail",
-	"Weight limit",
-	"Regeneration rate",
-	};
 
-	for (i = 0; i < 4; i++)
-	{
 		/* Clear some space */
-		Term_erase(0, 16+i, 55);
-
-		/* Insert the strings. */
-		put_str(dpbd_strings[i], 16+i, 1);
-		put_str(dpbd_strings[i+4], 16+i, 28);
-
-		/* Add a colon for each. */
-		put_str(":", 16+i, 19);
-		put_str(":", 16+i, 46);
+	for (i = 15; i < 20; i++)
+	{
+		Term_erase(0, i, 80);
 	}
-	/* Insert the numbers. */
-	c_put_str(TERM_L_GREEN, format("%d", adj_mag_study[ind_stat(p_ptr->stat_top[A_INT])]*25+1), 16, 21);
-	c_put_str(TERM_L_GREEN, format("%d", adj_mag_mana[ind_stat(p_ptr->stat_top[A_INT])]*25+1), 17, 21);
-	c_put_str(TERM_L_GREEN, format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_INT])]), 18, 21);
-	c_put_str(TERM_L_GREEN, format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_CHR])]), 19, 21);
 
-	c_put_str(TERM_L_GREEN, format("%d", adj_mag_mana[ind_stat(p_ptr->stat_top[A_WIS])]*25+1), 16, 48);
-	c_put_str(TERM_L_GREEN, format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_WIS])]), 17, 48);
-	c_put_str(TERM_L_GREEN, format("%d", adj_str_wgt[ind_stat(p_ptr->stat_top[A_STR])]*10), 18, 48);
-	c_put_str(TERM_L_GREEN, format("%d", adj_con_fix[ind_stat(p_ptr->stat_top[A_CON])]), 19, 48);
+	put_str("(Miscellaneous Abilities)", 15, 25);
+
+	for (i = 0; i < 12; i++)
+	{
+		byte r = i%4;
+		byte c = i/4;
+		cptr string, temp;
+
+		/* Find the number. These must correspond with the strings above. */
+		switch (i)
+		{
+			case 0:
+			string = "Spells at 100%";
+			temp = format("%d", adj_mag_study[ind_stat(p_ptr->stat_top[A_INT])]*25+1);
+			break;
+			case 1:
+			string = "SP at 100%";
+			temp = format("%d", adj_mag_mana[ind_stat(p_ptr->stat_top[A_INT])]*25+1);
+			break;
+			case 2:
+			string = "Min spell fail";
+			temp = format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_INT])]);
+			break;
+			case 3:
+			string = "Min favour fail";
+			temp = format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_CHR])]);
+			break;
+			case 4:
+			string = "Chi at 100%";
+			temp = format("%d", adj_mag_mana[ind_stat(p_ptr->stat_top[A_WIS])]*25+1);
+			break;
+			case 5:
+			string = "Min mindcraft fail";
+			temp = format("%d%%", adj_mag_fail[ind_stat(p_ptr->stat_top[A_WIS])]);
+			break;
+			case 6:
+			string = "Saving throw bonus";
+			temp = format("%d%%", adj_wis_sav[ind_stat(p_ptr->stat_top[A_WIS])]);
+			break;
+			case 7:
+			string = "Disarming bonus";
+			temp = format("%d", adj_dex_dis[ind_stat(p_ptr->stat_top[A_DEX])]+adj_int_dis[ind_stat(p_ptr->stat_top[A_INT])]);
+			break;
+			case 8:
+			string = "Weight limit";
+			temp = format("%d", adj_str_wgt[ind_stat(p_ptr->stat_top[A_STR])]*10);
+			break;
+			case 9:
+			string = "Weapon weight limit";
+			temp = format("%d", adj_str_hold[ind_stat(p_ptr->stat_top[A_STR])]);
+			break;
+			case 10:
+			string = "Regeneration rate";
+			temp = format("%d", adj_con_fix[ind_stat(p_ptr->stat_top[A_CON])]);
+			break;
+			case 11:
+			string = "Theft avoidance";
+			temp = format("%d%%", adj_dex_safe[ind_stat(p_ptr->stat_top[A_DEX])]);
+			break;
+			default:
+			string = "Error!";
+			temp = "Error!";
+		}
+		/* Insert the string. */
+		put_str(string, 16+r, 1+27*c);
+
+		/* Add a colon. */
+		put_str(":", 16+r, 19+27*c);
+
+		/* Insert the number. */
+		c_put_str(TERM_L_GREEN, temp, 16+r, 21+27*c);
+	}
 }
 
 
