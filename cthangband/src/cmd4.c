@@ -1163,8 +1163,6 @@ static errr macro_dump(cptr fname)
 
 	FILE *fff;
 
-	char buf[1024];
-
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -1188,21 +1186,12 @@ static errr macro_dump(cptr fname)
 		/* Start the macro */
 		fprintf(fff, "# Macro '%d'\n\n", i);
 
-		/* Extract the action */
-		strnfmt(buf, sizeof(buf), "%v", ascii_to_text_f1, macro__act[i]);
+		/* Dump the action. */
+		my_fputs(fff, format("A:%v\n", ascii_to_text_f1, macro__act[i]), 0);
 
-		/* Dump the macro */
-		fprintf(fff, "A:%s\n", buf);
-
-		/* Extract the action */
-		strnfmt(buf, sizeof(buf), "%v", ascii_to_text_f1, macro__pat[i]);
-
-		/* Dump normal macros */
-		fprintf(fff, "P:%s\n", buf);
-
-		/* End the macro */
-		fprintf(fff, "\n\n");
-}
+		/* Dump the trigger. */
+		my_fputs(fff, format("P:%v\n\n", ascii_to_text_f1, macro__pat[i]), 0);
+	}
 
 	/* Start dumping */
 	fprintf(fff, "\n\n\n\n");
@@ -1226,9 +1215,6 @@ static errr macro_dump(cptr fname)
 static void do_cmd_macro_aux(char *buf)
 {
 	int i, n = 0;
-
-	char tmp[1024];
-
 
 	/* Flush */
 	flush();
@@ -1262,12 +1248,9 @@ static void do_cmd_macro_aux(char *buf)
 	flush();
  
  
-	/* Convert the trigger */
-	strnfmt(tmp, sizeof(tmp), "%v", ascii_to_text_f1, buf);
-
 	/* Hack -- display the trigger */
-	Term_addstr(-1, TERM_WHITE, tmp);
-	}
+	Term_addstr(-1, TERM_WHITE, format("%v", ascii_to_text_f1, buf));
+}
 
 #endif
 
@@ -1280,21 +1263,15 @@ static void do_cmd_macro_aux(char *buf)
  */
 static void do_cmd_macro_aux_keymap(char *buf)
 {
-	char tmp[1024];
-
-
+	cptr tmp;
 	/* Flush */
 	flush();
-
 
 	/* Get a key */
 	buf[0] = inkey();
 	buf[1] = '\0';
 
-
-	/* Convert to ascii */
-	strnfmt(tmp, sizeof(tmp), "%v", ascii_to_text_f1, buf);
-
+	tmp = format("%v", ascii_to_text_f1, buf);
 
 	/* Hack -- display the trigger */
 	Term_addstr(-1, TERM_WHITE, tmp);
@@ -1322,9 +1299,6 @@ static errr keymap_dump(cptr fname)
 
 	FILE *fff;
 
-	char key[1024];
-	char buf[1024];
-
 	int mode = keymap_mode();
 
 
@@ -1349,8 +1323,9 @@ static errr keymap_dump(cptr fname)
 
 	/* Dump them */
 	for (i = 0; i < 256; i++)
-		{
+	{
 		cptr act;
+		char buf[2]=" ";
 
 		/* Loop up the keymap */
 		act = keymap_act[mode][i];
@@ -1360,16 +1335,11 @@ static errr keymap_dump(cptr fname)
 
 		/* Encode the key */
 		buf[0] = i;
-		buf[1] = '\0';
-		strnfmt(key, sizeof(key), "%v", ascii_to_text_f1, buf);
-
-		/* Encode the action */
-		strnfmt(buf, sizeof(buf), "%v", ascii_to_text_f1, act);
 
 		/* Dump the macro */
-		fprintf(fff, "A:%s\n", buf);
-                fprintf(fff, "C:%d:%s\n", mode, key);
-		}
+		my_fputs(fff, format("A:%v\nC:%d:%v\n", ascii_to_text_f1, buf, mode,
+			ascii_to_text_f1, act), 0);
+	}
 
 	/* Start dumping */
 	fprintf(fff, "\n\n\n");
@@ -2993,9 +2963,7 @@ static void do_cmd_knowledge_artifacts(void)
 	
 	if (fff)
 	{
-	int i, k, z, x, y;
-
-	C_TNEW(base_name, ONAME_MAX, char);
+	int i, k, x, y;
 
 	/* Allocate the "okay" array */
 	C_TNEW(okay, MAX_A_IDX, bool);
@@ -3072,45 +3040,21 @@ static void do_cmd_knowledge_artifacts(void)
 	for (k = 0; k < MAX_A_IDX; k++)
 	{
 		artifact_type *a_ptr = &a_info[k];
+		object_type q_ptr[1];
 
 		/* List "dead" ones */
 		if (!okay[k]) continue;
 
-		/* Paranoia */
-		strcpy(base_name, "Unknown Artifact");
-
-		/* Obtain the base object type */
-		z = a_ptr->k_idx;
-
-		/* Real object */
-		if (z)
-		{
-			object_type forge;
-			object_type *q_ptr;
-
-			/* Get local object */
-			q_ptr = &forge;
-
-			/* Create fake object */
-			object_prep(q_ptr, z);
-
-			/* Make it an artifact */
-			q_ptr->name1 = k;
-
-			/* Describe the artifact */
-			strnfmt(base_name, ONAME_MAX, "%v", object_desc_store_f3, q_ptr, FALSE, 0);
-		}
+		/* Skip "empty" ones */
+		if (!make_fake_artifact(q_ptr, k)) continue;
 
 		/* Hack -- Build the artifact name */
-		my_fputs(fff, format(" %v   The %s\n",
-			get_symbol(&k_info[a_ptr->k_idx]), base_name), 0);
+		my_fputs(fff, format(" %v   %v\n", get_symbol(&k_info[a_ptr->k_idx]),
+			object_desc_store_f3, q_ptr, TRUE, 0), 0);
 	}
 
 	/* Free the "okay" array */
 	TFREE(okay);
-
-	/* Free the "base_name" string */
-	TFREE(base_name);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3209,14 +3153,10 @@ static void do_cmd_knowledge_pets(void)
 		/* Calculate "upkeep" for friendly monsters */
 		if (m_ptr->smart & (SM_ALLY))
 		{
-			C_TNEW(pet_name, Term->wid-1, char);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			t_friends++;
 			t_levels += r_ptr->level;
-			strnfmt(pet_name, Term->wid-1, "%v", monster_desc_f2, m_ptr, 0x88);
-			strcat(pet_name, "\n");
-			my_fputs(fff, format("%v %s\n", get_symbol(r_ptr), pet_name), 0);
-			TFREE(pet_name);
+			my_fputs(fff, format("%v %v\n", get_symbol(r_ptr), monster_desc_f2, m_ptr, 0x88), 0);
 		}
 	}
 
@@ -3441,17 +3381,11 @@ static void do_cmd_knowledge_objects(void)
 
 	FILE *fff;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	char file_name[1024];
 
 
 	/* Open a new file */
-	if (!((fff = my_fopen_temp(file_name, 1024))))
-	{
-		TFREE(o_name);
-		return;
-	}
+	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
 
 	/* Scan the object kinds */
 	for (k = 1; k < MAX_K_IDX; k++)
@@ -3473,13 +3407,11 @@ static void do_cmd_knowledge_objects(void)
 			/* Create fake object */
 			object_prep(i_ptr, k);
 
-			/* Describe the object */
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_store_f3, i_ptr, FALSE, 0);
-
 			/* Print a message */
-			my_fputs(fff, format(" %v   %s", get_symbol_f2,
+			my_fputs(fff, format(" %v   %v", get_symbol_f2,
 				object_attr(i_ptr), isprint(object_char(i_ptr)) ?
-				object_char(i_ptr) : '#', o_name), 0);
+				object_char(i_ptr) : '#',
+				object_desc_store_f3, i_ptr, FALSE, 0), 0);
 		}
 	}
 
@@ -3491,8 +3423,6 @@ static void do_cmd_knowledge_objects(void)
 
 	/* Remove the file */
 	fd_kill(file_name);
-
-	TFREE(o_name);
 }
 
 /*

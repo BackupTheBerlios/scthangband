@@ -3424,7 +3424,7 @@ extern u16b rebuild_raw;
 
 /* wizard1.c */
 
-#if (defined(ALLOW_SPOILERS)) && (defined(OBJECT2_C) || defined(WIZARD1_C))
+#if (defined(ALLOW_SPOILERS)) && (defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD1_C))
 extern bool make_fake_artifact(object_type *o_ptr, int name1);
 #endif
 #if (defined(ALLOW_SPOILERS)) && (defined(DUNGEON_C) || defined(WIZARD1_C))
