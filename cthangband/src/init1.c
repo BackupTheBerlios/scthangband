@@ -560,6 +560,7 @@ else if (readnum(chr) > -1) \
  */
 #define find_string_info(x_name, x_info, max, w) \
 { \
+	int i; \
 	C_TNEW(array, max, cptr); \
 	for (i = 1; i < max; i++) \
 		if (x_info[i].name) \
@@ -765,6 +766,197 @@ static int find_string_ego_info(char *buf, int k_idx)
 }
 
 /*
+ * Parse a description of an object into a make_item_type template.
+ * name points to a number which indicates a name for this object, if any.
+ * It will be cleared if it is used.
+ */
+static errr parse_object(make_item_type *i_ptr, char *buf, u16b *name)
+{
+	if (find_string_x(buf, "ARTEFACT")) i_ptr->flags |= EI_ART;
+	if (find_string_x(buf, "EGO")) i_ptr->flags |= EI_EGO;
+
+	if (find_string_x(buf, "RANDOM"))
+	{
+		i_ptr->flags |= EI_RAND;
+	}
+	else if (i_ptr->flags & EI_ART)
+	{
+		find_string_info(a_name, a_info, MAX_A_IDX, i_ptr->x_idx);
+	}
+	find_string_info(k_name, k_info, MAX_K_IDX, i_ptr->k_idx);
+	if (i_ptr->flags & EI_EGO)
+	{
+		i_ptr->x_idx = find_string_ego_info(buf, i_ptr->k_idx);
+	}
+	if (readnum('k'))
+	{
+		readclearnum(i_ptr->k_idx, 'k');
+	}
+	if (i_ptr->flags & EI_ART)
+	{
+		readclearnum(i_ptr->x_idx, 'a');
+	}
+	else if (i_ptr->flags & EI_EGO)
+	{
+		readclearnum(i_ptr->x_idx, 'e');
+	}
+	readclearnum(i_ptr->min, '(');
+	readclearnum(i_ptr->max, '-');
+
+	/* Add the name of a randart, if provided. */
+	if (i_ptr->flags & EI_RAND && i_ptr->flags & EI_ART)
+	{
+		if (*name)
+		{
+			i_ptr->name = *name;
+			*name = 0;
+		}
+	}
+	/* Interpret no number parameter as being 1. */
+	if (i_ptr->min == 0 && i_ptr->max == 0)
+	{
+		i_ptr->max=i_ptr->min=1;
+	}
+
+	/* Ensure that a possible x_idx field has been created for
+	 * any non-random artefact or ego item */
+	if (i_ptr->flags & EI_ART && ~i_ptr->flags & EI_RAND)
+	{
+		artifact_type *a_ptr = &a_info[i_ptr->x_idx];
+		/* Ensure this is a real artefact. */
+		if (!a_ptr->name)
+		{
+			msg_print("No valid artefact specified.");
+			return PARSE_ERROR_GENERIC;
+		}
+		/* Take an unstated k_idx to be that of the artefact. */
+		else if (!i_ptr->k_idx)
+		{
+			i_ptr->k_idx = a_ptr->k_idx;
+		}
+		/* Ensure that any stated k_idx is the right one. */
+		else if (i_ptr->k_idx != a_ptr->k_idx)
+		{
+			msg_print("Incompatible object and artefact.");
+			return PARSE_ERROR_GENERIC;
+		}
+	}
+	else if (i_ptr->flags & EI_EGO && ~i_ptr->flags & EI_RAND)
+	{
+		ego_item_type *e_ptr = &e_info[i_ptr->x_idx];
+		/* Ensure this is a real ego item. */
+		if (!e_ptr->name)
+		{
+			msg_print("No valid ego type specified.");
+			return PARSE_ERROR_GENERIC;
+		}
+		/* Ensure that the ego type is possible for this k_idx. */
+	}
+
+	/* Ensure that a possible k_idx field has been created. */
+	if (k_info[i_ptr->k_idx].name == 0)
+	{
+		msg_print("No valid object specified.");
+		return PARSE_ERROR_GENERIC;
+	}
+
+	/* Ensure that RAND has not been used without a sensible thing
+	 * to randomise. */
+	if (i_ptr->flags & EI_RAND &&
+		~i_ptr->flags & (EI_ART | EI_EGO))
+	{
+		msg_print("Nothing valid to randomise.");
+		return PARSE_ERROR_GENERIC;
+	}
+
+	/* Prevent badly formatted ranges. */
+	if (i_ptr->min > i_ptr->max || !i_ptr->min)
+	{
+		msg_print("Bad number parameter.");
+		return PARSE_ERROR_INVALID_FLAG;
+	}
+
+	return SUCCESS;
+}
+
+/*
+ * Parse the description of a monster into a make_monster_type.
+ */
+static errr parse_monster(make_monster_type *i_ptr, char *buf)
+{
+	i_ptr->strict = find_string_x(buf, "STRICT");
+	i_ptr->num = find_monster_race(buf);
+	readclearnum(i_ptr->num, 'n');
+	readclearnum(i_ptr->radius, 'r');
+	readclearnum(i_ptr->min, '(');
+	readclearnum(i_ptr->max, '-');
+
+	/* Interpret no number parameter as being 1. */
+	if (i_ptr->min == 0 && i_ptr->max == 0)
+	{
+		i_ptr->max=i_ptr->min=1;
+	}
+
+	/* As the original square still has the original monster
+	 * on it, parse a missing or 0 parameter as 1.
+	 * Should there be a way of using the original
+	 * square if requested? */
+	if (!i_ptr->radius)
+	{
+		i_ptr->radius = 1;
+	}
+
+	/* Prevent badly formatted ranges. */
+	if (i_ptr->min > i_ptr->max || !i_ptr->min)
+	{
+		msg_print("Bad number parameter.");
+		return PARSE_ERROR_INVALID_FLAG;
+	}
+
+	/* Prevent non-existant monster references. */
+	if (!i_ptr->num || i_ptr->num >= MAX_R_IDX)
+	{
+		msg_print("No monster specified!");
+		return PARSE_ERROR_INVALID_FLAG;
+	}
+	return SUCCESS;
+}
+
+/*
+ * Parse the description of an explosion into a make_explosion_type.
+ */
+static errr parse_explosion(make_explosion_type *i_ptr, char *buf)
+{
+	i_ptr->method = find_string(buf, explode_flags);
+	readclearnum(i_ptr->radius,'r');
+	readclearnum(i_ptr->dice,'(');
+	readclearnum(i_ptr->sides,'d');
+
+	/* Require an explosion type */
+	if (!i_ptr->method)
+	{
+		msg_print("No method indicated.");
+		return PARSE_ERROR_INVALID_FLAG;
+	}
+	/* Allow (d30) or (100) damage formats,
+	 * but not no damage indicator at all. */
+	if (!i_ptr->dice && !i_ptr->sides)
+	{
+		msg_print("No damage indicator.");
+		return PARSE_ERROR_INVALID_FLAG;
+	}
+	else if (!i_ptr->dice)
+	{
+		i_ptr->dice = 1;
+	}
+	else if (!i_ptr->sides)
+	{
+		i_ptr->sides = 1;
+	}
+	return SUCCESS;
+}
+
+/*
  * Initialize the "death_event" array, by parsing part of the "r_info.txt" file
  */
 errr parse_r_event(char *buf, header *head, vptr *extra)
@@ -784,8 +976,6 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 		{
 			/* Current entry */
 			death_event_type *d_ptr;
-
-			int i;
 			u16b temp_name_offset = 0;
 
 
@@ -810,19 +1000,17 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 			 * means that it can't terminate a string.
 			 * This is the string which is printed when an event occurs.
 			 */
-			i = do_get_string(buf, '"', "^\"", head->text_ptr, &(head->text_size), z_info->fake_text_size, &(d_ptr->text));
-			if (i) return i;
+			try(do_get_string(buf, '"', "^\"", head->text_ptr,
+				&(head->text_size), z_info->fake_text_size, &(d_ptr->text)));
+
 			/* This is a second text string, the use of which depends on the type of event.
 			 * It currently only supplies a name for a randart. We haven't yet found out
 			 * what type of event it is, so we save the offset to a temporary variable to
 			 * deal with later.
 			 */
-			{
-				u32b temp_name_size = head->name_size;
-				i = do_get_string(buf, '^', "^\"", head->name_ptr, &(temp_name_size), z_info->fake_name_size, &temp_name_offset);
-				if (i) return i;
-				head->name_size = (u16b)temp_name_size;
-			}
+			try(do_get_string(buf, '^', "^\"", head->name_ptr,
+				&(head->name_size), z_info->fake_name_size, &temp_name_offset));
+
 			/* Now the text strings have been removed, we remove the \\s from the file. Note that, if a name
 			 * contains a \\ character, this must be listed as \\. Similarly, a " must be listed as \" and
 			 * a ^ as \^. There should hopefully not be many of these.
@@ -873,181 +1061,18 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 			{
 				case DEATH_OBJECT:
 				{
-					make_item_type *i_ptr = &d_ptr->par.item;
-					if (find_string_x(buf, "ARTEFACT")) i_ptr->flags |= EI_ART;
-					if (find_string_x(buf, "EGO")) i_ptr->flags |= EI_EGO;
-
-					if (find_string_x(buf, "RANDOM"))
-					{
-						i_ptr->flags |= EI_RAND;
-					}
-					else if (i_ptr->flags & EI_ART)
-					{
-						find_string_info(a_name, a_info, MAX_A_IDX, i_ptr->x_idx);
-					}
-					find_string_info(k_name, k_info, MAX_K_IDX, i_ptr->k_idx);
-					if (i_ptr->flags & EI_EGO)
-					{
-						i_ptr->x_idx = find_string_ego_info(buf, i_ptr->k_idx);
-					}
-					if (readnum('k'))
-					{
-						readclearnum(i_ptr->k_idx, 'k');
-					}
-					if (i_ptr->flags & EI_ART)
-					{
-						readclearnum(i_ptr->x_idx, 'a');
-					}
-					else if (i_ptr->flags & EI_EGO)
-					{
-						readclearnum(i_ptr->x_idx, 'e');
-					}
-					readclearnum(i_ptr->min, '(');
-					readclearnum(i_ptr->max, '-');
-
-					/* Add the name of a randart, if provided. */
-					if (i_ptr->flags & EI_RAND && i_ptr->flags & EI_ART)
-					{
-						if (temp_name_offset)
-						{
-							i_ptr->name = temp_name_offset;
-							temp_name_offset = 0;
-						}
-					}
-					/* Interpret no number parameter as being 1. */
-					if (i_ptr->min == 0 && i_ptr->max == 0)
-					{
-						i_ptr->max=i_ptr->min=1;
-					}
-
-					/* Ensure that a possible x_idx field has been created for
-					 * any non-random artefact or ego item */
-					if (i_ptr->flags & EI_ART && ~i_ptr->flags & EI_RAND)
-					{
-						artifact_type *a_ptr = &a_info[i_ptr->x_idx];
-						/* Ensure this is a real artefact. */
-						if (!a_ptr->name)
-						{
-							msg_print("No valid artefact specified.");
-							return PARSE_ERROR_GENERIC;
-						}
-						/* Take an unstated k_idx to be that of the artefact. */
-						else if (!i_ptr->k_idx)
-						{
-							i_ptr->k_idx = a_ptr->k_idx;
-						}
-						/* Ensure that any stated k_idx is the right one. */
-						else if (i_ptr->k_idx != a_ptr->k_idx)
-						{
-							msg_print("Incompatible object and artefact.");
-							return PARSE_ERROR_GENERIC;
-						}
-					}
-					else if (i_ptr->flags & EI_EGO && ~i_ptr->flags & EI_RAND)
-					{
-						ego_item_type *e_ptr = &e_info[i_ptr->x_idx];
-						/* Ensure this is a real ego item. */
-						if (!e_ptr->name)
-						{
-							msg_print("No valid ego type specified.");
-							return PARSE_ERROR_GENERIC;
-						}
-						/* Ensure that the ego type is possible for this k_idx. */
-					}
-
-					/* Ensure that a possible k_idx field has been created. */
-					if (k_info[i_ptr->k_idx].name == 0)
-					{
-						msg_print("No valid object specified.");
-						return PARSE_ERROR_GENERIC;
-					}
-
-					/* Ensure that RAND has not been used without a sensible thing
-					 * to randomise. */
-					if (i_ptr->flags & EI_RAND &&
-						~i_ptr->flags & (EI_ART | EI_EGO))
-					{
-						msg_print("Nothing valid to randomise.");
-						return PARSE_ERROR_GENERIC;
-					}
-
-					/* Prevent badly formatted ranges. */
-					if (i_ptr->min > i_ptr->max || !i_ptr->min)
-					{
-						msg_print("Bad number parameter.");
-						return PARSE_ERROR_INVALID_FLAG;
-					}
+					try(parse_object(&d_ptr->par.item, buf,
+						&temp_name_offset));
 					break;
 				}
 				case DEATH_MONSTER:
 				{
-					make_monster_type *i_ptr = &d_ptr->par.monster;
-					i_ptr->strict = find_string_x(buf, "STRICT");
-					i_ptr->num = find_monster_race(buf);
-					readclearnum(i_ptr->num, 'n');
-					readclearnum(i_ptr->radius, 'r');
-					readclearnum(i_ptr->min, '(');
-					readclearnum(i_ptr->max, '-');
-
-					/* Interpret no number parameter as being 1. */
-					if (i_ptr->min == 0 && i_ptr->max == 0)
-					{
-						i_ptr->max=i_ptr->min=1;
-					}
-
-					/* As the original square still has the original monster
-					 * on it, parse a missing or 0 parameter as 1.
-					 * Should there be a way of using the original
-					 * square if requested? */
-					if (!i_ptr->radius)
-					{
-						i_ptr->radius = 1;
-					}
-
-					/* Prevent badly formatted ranges. */
-					if (i_ptr->min > i_ptr->max || !i_ptr->min)
-					{
-						msg_print("Bad number parameter.");
-						return PARSE_ERROR_INVALID_FLAG;
-					}
-
-					/* Prevent non-existant monster references. */
-					if (!i_ptr->num || i_ptr->num >= MAX_R_IDX)
-					{
-						msg_print("No monster specified!");
-						return PARSE_ERROR_INVALID_FLAG;
-					}
+					try(parse_monster(&d_ptr->par.monster, buf));
 					break;
 				}
 				case DEATH_EXPLODE:
 				{
-					make_explosion_type *i_ptr = &d_ptr->par.explosion;
-					i_ptr->method = find_string(buf, explode_flags);
-					readclearnum(i_ptr->radius,'r');
-					readclearnum(i_ptr->dice,'(');
-					readclearnum(i_ptr->sides,'d');
-
-					/* Require an explosion type */
-					if (!i_ptr->method)
-					{
-						msg_print("No method indicated.");
-						return PARSE_ERROR_INVALID_FLAG;
-					}
-					/* Allow (d30) or (100) damage formats,
-					 * but not no damage indicator at all. */
-					if (!i_ptr->dice && !i_ptr->sides)
-					{
-						msg_print("No damage indicator.");
-						return PARSE_ERROR_INVALID_FLAG;
-					}
-					else if (!i_ptr->dice)
-					{
-						i_ptr->dice = 1;
-					}
-					else if (!i_ptr->sides)
-					{
-						i_ptr->sides = 1;
-					}
+					try(parse_explosion(&d_ptr->par.explosion, buf));
 					break;
 				}
 				case DEATH_COIN:
