@@ -3035,7 +3035,7 @@ void do_cmd_throw(void)
        if ((hit_body) || (!cave_floor_bold(ny, nx)) || (cave[ny][nx].feat == FEAT_WATER) || (randint(100) < j)) {
        /* Message */
        msg_format("The %s shatters!", o_name);
-       if (potion_smash_effect(1, y, x, q_ptr->sval))
+       if (potion_smash_effect(1, y, x, q_ptr->k_idx))
        {
               if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
                     {

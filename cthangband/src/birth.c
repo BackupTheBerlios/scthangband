@@ -2844,7 +2844,7 @@ static void player_wipe(void)
 
 
 /*
- * Each player starts out with a few items, given as tval/sval pairs.
+ * Each player starts out with a few items, given as k_idx.
  * In addition, he always has some food and a few torches.
  */
 
