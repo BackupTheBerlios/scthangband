@@ -2253,7 +2253,8 @@ static void display_player_stat_info(void)
 			{
 				/* Dark green "s" */
 				a = TERM_GREEN;
-				c = 's';
+				if (c == '.')
+					c = 's';
 			}
 
 			/* Handle monochrome */
@@ -2350,7 +2351,8 @@ static void display_player_stat_info(void)
 		{
 			/* Dark green "s" */
 			a = TERM_GREEN;
-			c = 's';
+			if (c == '.')
+				c = 's';
 		}
 
 
