@@ -862,6 +862,13 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 
 	/* Hack - unset j_ptr->k_idx if it isn't known. */
 	if (!object_aware_p(j_ptr)) j_ptr->k_idx = OBJ_UNKNOWN;
+
+	/* The player is always aware of items in normal stores, and flavours are
+	 * hidden. */
+	if (o_ptr->ident & IDENT_STORE)
+	{
+		j_ptr->k_idx = o_ptr->k_idx;
+	}
 }
 
 
@@ -1105,7 +1112,7 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 	/* Identified artefacts, and all identified objects if
 	 * show_flavors is unset, do not include a FLAVOUR string. */
 	if ((~reject & CI_K_IDX) && (artifact_p(o_ptr) || plain_descriptions ||
-		(o_ptr->ident & IDENT_STOREB)))
+		(o_ptr->ident & (IDENT_STOREB | IDENT_STORE))))
 		reject |= 1 << CI_FLAVOUR;
 
 	/* Singular objects take no plural. */
@@ -1509,7 +1516,8 @@ static void object_desc(char *buf, uint len, object_type *o1_ptr, int pref,
 		 * differs from the present value, put parentheses around the number.
 		 * Hack - suppress for empty slots.
 		 */
-		if (spoil_value && spoil_base && o_ptr->k_idx)
+		if (spoil_value && spoil_base && o_ptr->k_idx &&
+			(!auto_haggle || (~o_ptr->ident & IDENT_STORE)))
 		{
 			s32b value;
 			bool worthless;
@@ -1621,46 +1629,16 @@ void object_desc_f3(char *buf, uint max, cptr fmt, va_list *vp)
  */
 static void object_desc_store(char *buf, uint len, object_type *o_ptr, int pref, int mode)
 {
-	/* Save the "aware" flag */
-	bool hack_aware = k_info[o_ptr->k_idx].aware;
-
-	/* Save the "known" flag */
-	bool hack_known = (o_ptr->ident & (IDENT_KNOWN)) ? TRUE : FALSE;
-
-	/* Save "spoil_value" */
-	bool hack_value = spoil_value;
-
-	/* Save the "plain_descriptions" flag */
-	bool old_plain_descriptions = plain_descriptions;
+	/* Save the "ident" field */
+	u16b old_ident = o_ptr->ident;
 
 	/* Set the "known" flag */
-	o_ptr->ident |= (IDENT_KNOWN);
-
-	/* Force "aware" for description */
-	k_info[o_ptr->k_idx].aware = TRUE;
-
-	/* Unset "spoil_value" unless "auto_haggle" is not set. */
-	spoil_value &= !(auto_haggle);
-
-	/* Set the "plain_descriptions" flag */
-	plain_descriptions = TRUE;
+	o_ptr->ident |= (IDENT_STORE);
 
 	/* Describe the object */
 	strnfmt(buf, len, "%v", object_desc_f3, o_ptr, pref, mode);
 
-
-	/* Restore "aware" flag */
-	k_info[o_ptr->k_idx].aware = hack_aware;
-
-	/* Clear the known flag */
-	if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
-
-	/* Restore "spoil_value" */
-	spoil_value = hack_value;
-
-	/* Restore the "plain_descriptions" flag */
-	plain_descriptions = old_plain_descriptions;
-
+	o_ptr->ident = old_ident;
 }
 
 /*
