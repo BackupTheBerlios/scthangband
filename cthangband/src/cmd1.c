@@ -1691,7 +1691,7 @@ void py_attack(int y, int x)
  */
 void do_cmd_attack(void)
 {
-	int			y, x, dir;
+	int			y, x;
 
 	cave_type	*c_ptr;
 
@@ -1712,12 +1712,8 @@ void do_cmd_attack(void)
 	}
 
 	/* Get a direction to attack, or Abort */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get grid */
 		c_ptr = &cave[y][x];
 

@@ -642,7 +642,7 @@ static bool do_cmd_open_aux(int y, int x)
  */
 void do_cmd_open(void)
 {
-	int y, x, dir;
+	int y, x;
 	
 	s16b o_idx;
 
@@ -687,12 +687,8 @@ void do_cmd_open(void)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Get requested location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get requested grid */
 		c_ptr = &cave[y][x];
 
@@ -793,7 +789,7 @@ static bool do_cmd_close_aux(int y, int x)
  */
 void do_cmd_close(void)
 {
-	int			y, x, dir;
+	int			y, x;
 
 	cave_type	*c_ptr;
 
@@ -826,12 +822,8 @@ void do_cmd_close(void)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Get requested location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get grid and contents */
 		c_ptr = &cave[y][x];
 
@@ -1078,7 +1070,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
  */
 void do_cmd_tunnel(void)
 {
-	int			y, x, dir;
+	int			y, x;
 
 	cave_type	*c_ptr;
 
@@ -1099,12 +1091,8 @@ void do_cmd_tunnel(void)
 	}
 
 	/* Get a direction to tunnel, or Abort */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get grid */
 		c_ptr = &cave[y][x];
 
@@ -1458,7 +1446,7 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
  */
 void do_cmd_disarm(void)
 {
-	int y, x, dir;
+	int y, x;
 	
 	s16b o_idx;
 
@@ -1503,12 +1491,8 @@ void do_cmd_disarm(void)
 	}
 
 	/* Get a direction (or abort) */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get grid and contents */
 		c_ptr = &cave[y][x];
 
@@ -1545,7 +1529,7 @@ void do_cmd_disarm(void)
 		else
 		{
 			/* Disarm the trap */
-			more = do_cmd_disarm_aux(y, x, dir);
+			more = do_cmd_disarm_aux(y, x, coords_to_dir(y, x));
 		}
 	}
 
@@ -1665,7 +1649,7 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
  */
 void do_cmd_bash(void)
 {
-	int			y, x, dir;
+	int			y, x;
 
 	cave_type	*c_ptr;
 
@@ -1686,12 +1670,8 @@ void do_cmd_bash(void)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Bash location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get grid */
 		c_ptr = &cave[y][x];
 
@@ -1720,7 +1700,7 @@ void do_cmd_bash(void)
 		else
 		{
 			/* Bash the door */
-			more = do_cmd_bash_aux(y, x, dir);
+			more = do_cmd_bash_aux(y, x, coords_to_dir(y, x));
 		}
 	}
 
@@ -1775,7 +1755,7 @@ void do_cmd_alter(void)
 	 * the command continuing after the fight has finished. */
 	static char alter_cmd = 0;
 
-	int			y, x, dir;
+	int			y, x;
 
 	cave_type	*c_ptr;
 
@@ -1796,12 +1776,8 @@ void do_cmd_alter(void)
 	}
 
 	/* Get a direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get grid */
 		c_ptr = &cave[y][x];
 
@@ -1839,7 +1815,7 @@ void do_cmd_alter(void)
             && (c_ptr->feat < FEAT_MINOR_GLYPH))
 		{
 			/* Tunnel */
-			more = do_cmd_bash_aux(y, x, dir);
+			more = do_cmd_bash_aux(y, x, coords_to_dir(y, x));
 			alter_cmd = 'B';
 		}
 
@@ -1857,7 +1833,7 @@ void do_cmd_alter(void)
             && (c_ptr->feat < FEAT_MINOR_GLYPH))
 		{
 			/* Tunnel */
-			more = do_cmd_disarm_aux(y, x, dir);
+			more = do_cmd_disarm_aux(y, x, coords_to_dir(y, x));
 			alter_cmd = 'D';
 		}
 
@@ -1915,19 +1891,15 @@ static object_type *get_spike(void)
  */
 void do_cmd_spike(void)
 {
-	int                  y, x, dir;
+	int                  y, x;
 	object_type *o_ptr;
 
 	cave_type		*c_ptr;
 
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_target(&x, &y))
 	{
-		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
 		/* Get grid and contents */
 		c_ptr = &cave[y][x];
 

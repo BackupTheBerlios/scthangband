@@ -3384,6 +3384,22 @@ bool get_rep_dir(int *dp)
 	return (TRUE);
 }
 
+/*
+ * Call get_rep_dir() and return its target as a location rather than a
+ * direction.
+ */
+bool get_rep_target(int *x, int *y)
+{
+	int dir;
+
+	/* Request a direction and abort if appropriate. */
+	if (!get_rep_dir(&dir)) return FALSE;
+
+	*x = px + ddx[dir];
+	*y = py + ddy[dir];
+
+	return TRUE;
+}
 
 /*
  * Extract the target from a get_aim_dir() call.
