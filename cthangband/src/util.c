@@ -162,11 +162,12 @@ void user_name(char *buf, int id)
  *
  * Note that "canonical" filenames use a leading "slash" to indicate an absolute
  * path, and a leading "tilde" to indicate a special directory, and default to a
- * relative path, but MSDOS uses a leading "drivename plus colon" to indicate the
- * use of a "special drive", and then the rest of the path is parsed "normally",
- * and MACINTOSH uses a leading colon to indicate a relative path, and an embedded
- * colon to indicate a "drive plus absolute path", and finally defaults to a file
- * in the current working directory, which may or may not be defined.
+ * relative path, but MSDOS uses a leading "drivename plus colon" to indicate
+ * the use of a "special drive", and then the rest of the path is parsed
+ * "normally", and MACINTOSH uses a leading colon to indicate a relative path,
+ * and an embedded colon to indicate a "drive plus absolute path", and finally
+ * defaults to a file in the current working directory, which may or may not be
+ * defined.
  *
  * We should probably parse a leading "~~/" as referring to "ANGBAND_DIR". (?)
  */
@@ -413,7 +414,8 @@ FILE *my_fopen_temp(char *buf, uint max)
 	/* Paranoia */
 	if (strlen("/tmp/anXXXXXX") >= max)
 	{
-		if (alert_failure) msg_print("Buffer too short for temporary file name!");
+		if (alert_failure)
+			msg_print("Buffer too short for temporary file name!");
 		return (NULL);
 	}
 
@@ -2874,7 +2876,8 @@ void clear_from(int row)
  * Get some input at the cursor location.
  * Assume the buffer is initialized to a default string.
  * Note that this string is often "empty" (see below).
- * The default buffer is displayed in yellow until cleared or made the current string.
+ * The default buffer is displayed in yellow until cleared or made the current
+ * string.
  * Pressing RETURN right away accepts the default entry.
  * Normal chars clear the default and append the char.
  * Backspace clears the default or deletes the char before the cursor.
@@ -3838,7 +3841,8 @@ void build_gamma_table(int gamma)
 			 * divided by 256*256 each itteration, to get back to
 			 * the original power series.
 			 */
-			diff = (((diff / 256) * gamma_helper[i]) * (gamma - 256)) / (256 * n);
+			diff = (((diff / 256) * gamma_helper[i]) * (gamma - 256)) /
+				(256 * n);
 		}
 
 		/*

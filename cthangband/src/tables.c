@@ -1103,6 +1103,9 @@ byte blows_table[12][12] =
  * to ones based on TURN_ENERGY */
 #define TE *TURN_ENERGY/100
 
+#define EE(A,B,C,D,E,F,G,H,I,J) \
+	A TE, B TE, C TE, D TE, E TE, F TE, G TE, H TE, I TE, J TE,
+
 /*
  * This table has been inverted for Cthangband. The new values
  * are 1000/x where x is the old value. This gives the same spread
@@ -1115,26 +1118,26 @@ byte blows_table[12][12] =
  */
 u16b extract_energy[200] =
 {
-	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
-	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
-	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
-	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
-	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
-	/* Slow */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
-	/* S-50 */     1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,1000 TE,
-	/* S-40 */     500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,
-	/* S-30 */     500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,500 TE,333 TE,333 TE,333 TE,
-	/* S-20 */     333 TE,333 TE,333 TE,333 TE,333 TE,250 TE,250 TE,250 TE,250 TE,250 TE,
-	/* S-10 */     200 TE,200 TE,200 TE,200 TE,167 TE,167 TE,143 TE,143 TE,125 TE,111 TE,
-	/* Norm */    100 TE,91 TE,83 TE,77 TE,71 TE,67 TE,63 TE,59 TE,56 TE,53 TE,
-	/* F+10 */    50 TE,48 TE,45 TE,43 TE,42 TE,40 TE,38 TE,37 TE,36 TE,34 TE,
-	/* F+20 */    33 TE,32 TE,31 TE,30 TE,29 TE,29 TE,28 TE,28 TE,27 TE,27 TE,
-	/* F+30 */    26 TE,26 TE,26 TE,26 TE,25 TE,25 TE,25 TE,24 TE,24 TE,24 TE,
-	/* F+40 */    24 TE,24 TE,24 TE,23 TE,23 TE,23 TE,23 TE,23 TE,23 TE,23 TE,
-	/* F+50 */    22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,22 TE,
-	/* F+60 */    21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,21 TE,
-	/* F+70 */    20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,
-	/* Fast */    20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,20 TE,
+	/* Slow */ EE(1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+	/* Slow */ EE(1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+	/* Slow */ EE(1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+	/* Slow */ EE(1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+	/* Slow */ EE(1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+	/* Slow */ EE(1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+	/* Slow */ EE(1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000)
+	/* S-40 */ EE( 500,  500,  500,  500,  500,  500,  500,  500,  500,  500)
+	/* S-30 */ EE( 500,  500,  500,  500,  500,  500,  500,  333,  333,  333)
+	/* S-20 */ EE( 333,  333,  333,  333,  333,  250,  250,  250,  250,  250)
+	/* S-10 */ EE( 200,  200,  200,  200,  167,  167,  143,  143,  125,  111)
+	/* Norm */ EE( 100,   91,   83,   77,   71,   67,   63,   59,   56,   53)
+	/* F+10 */ EE(  50,   48,   45,   43,   42,   40,   38,   37,   36,   34)
+	/* F+20 */ EE(  33,   32,   31,   30,   29,   29,   28,   28,   27,   27)
+	/* F+30 */ EE(  26,   26,   26,   26,   25,   25,   25,   24,   24,   24)
+	/* F+40 */ EE(  24,   24,   24,   23,   23,   23,   23,   23,   23,   23)
+	/* F+50 */ EE(  22,   22,   22,   22,   22,   22,   22,   22,   22,   22)
+	/* F+60 */ EE(  21,   21,   21,   21,   21,   21,   21,   21,   21,   21)
+	/* F+70 */ EE(  20,   20,   20,   20,   20,   20,   20,   20,   20,   20)
+	/* Fast */ EE(  20,   20,   20,   20,   20,   20,   20,   20,   20,   20)
 };
 
 
@@ -1520,7 +1523,8 @@ static race_power sprite_power = {RP_SPRITE, 12, 12, A_INT, 15,
 static race_power vampire_power = {RP_VAMPIRE, 2, -3, A_CON, 9,
 	"drain life",0, 0};
 
-static race_power yeek_power = {RP_YEEK, 15, 15, A_WIS, 10, "scare monster",0, 0};
+static race_power yeek_power = {RP_YEEK, 15, 15, A_WIS, 10,
+	"scare monster", 0, 0};
 
 /*
  * Player Races
@@ -1597,7 +1601,8 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		{0, 0, TR2_RES_DARK, 0},
-		dark_elf_bonuses, &dark_elf_power,  N_ELEMENTS(dark_elf_bonuses), 1, 0, 0,
+		dark_elf_bonuses, &dark_elf_power,  N_ELEMENTS(dark_elf_bonuses), 1,
+			0, 0,
 		5, 69, RACE_BLANK, EAT_NORMAL, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1614,7 +1619,8 @@ player_race race_info[MAX_RACES] =
 		76,  1, 160,  5,
 		72,  1, 130,  5,
 		{0, 0, 0, TR3_FEATHER},
-		draconian_bonuses, &draconian_power,  N_ELEMENTS(draconian_bonuses), 1, 0, 0,
+		draconian_bonuses, &draconian_power,  N_ELEMENTS(draconian_bonuses), 1,
+			0, 0,
 		2, 89, RACE_BLANK, EAT_NORMAL, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1681,7 +1687,8 @@ player_race race_info[MAX_RACES] =
 		1, 100,
 		66,  1, 200,  6,
 		62,  1, 180,  6,
-		{TR0_AC_SK | TR0_NO_CUT | TR0_NO_STUN, 0, TR2_RES_POIS | TR2_FREE_ACT, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		{TR0_AC_SK | TR0_NO_CUT | TR0_NO_STUN, 0,
+			TR2_RES_POIS | TR2_FREE_ACT, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		golem_bonuses, &golem_power,  N_ELEMENTS(golem_bonuses), 1, 0, 0,
 		4, 98, RACE_BLANK, EAT_UNDEAD, dwarf_syllables,
 		{
@@ -1801,7 +1808,8 @@ player_race race_info[MAX_RACES] =
 		96, 10, 250, 50,
 		84,  8, 225, 40,
 		{0, 0, TR2_SUST_STR, 0},
-		half_troll_bonuses, &half_troll_power,  N_ELEMENTS(half_troll_bonuses), 1, 0, 0,
+		half_troll_bonuses, &half_troll_power,
+			N_ELEMENTS(half_troll_bonuses), 1, 0, 0,
 		3, 22, RACE_TROLL, EAT_NORMAL, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1920,8 +1928,8 @@ player_race race_info[MAX_RACES] =
 		68,  6, 142, 15,
 		63,  6, 112, 10,
 		{0, 0, TR2_SUST_INT | TR2_SUST_WIS, 0},
-		mind_flayer_bonuses, &mind_flayer_power,  N_ELEMENTS(mind_flayer_bonuses), 1,
-		MUT_TENTACLES, 60,
+		mind_flayer_bonuses, &mind_flayer_power,
+			N_ELEMENTS(mind_flayer_bonuses), 1, MUT_TENTACLES, 60,
 		4, 92, RACE_BLANK, EAT_NORMAL, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1954,8 +1962,10 @@ player_race race_info[MAX_RACES] =
 		100, 35,
 		72,  6, 50, 5,
 		66,  4, 50, 5,
-		{TR0_NO_CUT, 0, TR2_HOLD_LIFE | TR2_RES_POIS | TR2_RES_SHARDS, TR3_SEE_INVIS},
-		skeleton_bonuses, &skeleton_power,  N_ELEMENTS(skeleton_bonuses), 1, 0, 0,
+		{TR0_NO_CUT, 0, TR2_HOLD_LIFE | TR2_RES_POIS | TR2_RES_SHARDS,
+			TR3_SEE_INVIS},
+		skeleton_bonuses, &skeleton_power,  N_ELEMENTS(skeleton_bonuses), 1,
+			0, 0,
 		2, 102, RACE_UNDEAD, EAT_SKELETON, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -1971,7 +1981,9 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 		72, 6, 100, 25,
 		66, 4, 100, 20,
-		{TR0_NO_CUT | TR0_HEAL_NETHER | TR0_WEAK_WRAITH, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_POIS | TR2_RES_NETHER, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		{TR0_NO_CUT | TR0_HEAL_NETHER | TR0_WEAK_WRAITH, 0,
+			TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_POIS | TR2_RES_NETHER,
+			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		spectre_bonuses, &spectre_power,  N_ELEMENTS(spectre_bonuses), 1, 0, 0,
 		5, 110, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
 		{
@@ -2005,8 +2017,10 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 			72,  6, 180, 25,
 			66,  4, 150, 20,
-		{TR0_IM_DARK | TR0_HURT_LIGHT, 0, TR2_HOLD_LIFE | TR2_RES_COLD | TR2_RES_DARK | TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
-		vampire_bonuses, &vampire_power,  N_ELEMENTS(vampire_bonuses), 1, MUT_HYPN_GAZE, 60,
+		{TR0_IM_DARK | TR0_HURT_LIGHT, 0, TR2_HOLD_LIFE | TR2_RES_COLD |
+			TR2_RES_DARK | TR2_RES_NETHER | TR2_RES_POIS, TR3_LITE},
+		vampire_bonuses, &vampire_power,  N_ELEMENTS(vampire_bonuses), 1,
+			MUT_HYPN_GAZE, 60,
 		5, 113, RACE_UNDEAD, EAT_VAMPIRE, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -2039,7 +2053,8 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 		72, 6, 100, 25,
 		66, 4, 100, 20,
-		{0, 0, TR2_HOLD_LIFE | TR2_RES_NETHER | TR2_RES_POIS, TR3_SEE_INVIS | TR3_SLOW_DIGEST},
+		{0, 0, TR2_HOLD_LIFE | TR2_RES_NETHER | TR2_RES_POIS,
+			TR3_SEE_INVIS | TR3_SLOW_DIGEST},
 		zombie_bonuses, &skeleton_power,  N_ELEMENTS(zombie_bonuses), 1, 0, 0,
 		2, 107, RACE_UNDEAD, EAT_UNDEAD, human_syllables,
 		{
@@ -2808,272 +2823,272 @@ option_type option_info[] =
 {
 	/*** User-Interface ***/
 
-	{ &rogue_like_commands, FALSE, OPTS_UI,      0, 0,
-	"rogue_like_commands",  "Rogue-like commands" },
+	{ &rogue_like_commands, FALSE, OPTS_UI, 0, 0,
+	"rogue_like_commands", "Rogue-like commands" },
 
-	{ &quick_messages,              TRUE, OPTS_UI,      0, 1,
-	"quick_messages",               "Quick -more- prompts" },
+	{ &quick_messages, TRUE, OPTS_UI, 0, 1,
+	"quick_messages", "Quick -more- prompts" },
 
 	{ &quick_prompt, TRUE, OPTS_UI, 2, 27,
 	"quick_prompt", "Quick [y/n] prompts" },
 
-	{ &other_query_flag,    FALSE, OPTS_UI,      0, 2,
-	"other_query_flag",             "Prompt for various information" },
+	{ &other_query_flag, FALSE, OPTS_UI, 0, 2,
+	"other_query_flag", "Prompt for various information" },
 
-	{ &carry_query_flag,    FALSE, OPTS_OBJ,      0, 3,
-	"carry_query_flag",             "Prompt before picking things up" },
+	{ &carry_query_flag, FALSE, OPTS_OBJ, 0, 3,
+	"carry_query_flag", "Prompt before picking things up" },
 
-	{ &use_old_target,              TRUE, OPTS_MON,      0, 4,
-	"use_old_target",               "Use old target by default" },
+	{ &use_old_target, TRUE, OPTS_MON, 0, 4,
+	"use_old_target", "Use old target by default" },
 
-	{ &always_pickup,               TRUE, OPTS_OBJ,      0, 5,
-	"always_pickup",                "Pick things up by default" },
+	{ &always_pickup, TRUE, OPTS_OBJ, 0, 5,
+	"always_pickup", "Pick things up by default" },
 
-	{ &always_repeat,               TRUE, OPTS_UI,      0, 6,
-	"always_repeat",                "Repeat obvious commands" },
+	{ &always_repeat, TRUE, OPTS_UI, 0, 6,
+	"always_repeat", "Repeat obvious commands" },
 
-	{ &depth_in_feet,               TRUE, OPTS_DISPLAY,      0, 7,
-	"depth_in_feet",                "Show dungeon level in feet" },
+	{ &depth_in_feet, TRUE, OPTS_DISPLAY, 0, 7,
+	"depth_in_feet", "Show dungeon level in feet" },
 
-	{ &stack_force_notes,   TRUE, OPTS_OBJ,      0, 8,
-	"stack_force_notes",    "Merge inscriptions when stacking" },
+	{ &stack_force_notes, TRUE, OPTS_OBJ, 0, 8,
+	"stack_force_notes", "Merge inscriptions when stacking" },
 
 	{ &stack_force_notes_all, FALSE, OPTS_OBJ, 3, 1,
 	"stack_force_notes_all", "Merge all inscriptions when stacking" },
 
-	{ &stack_force_costs,   FALSE, OPTS_OBJ,      0, 9,
-	"stack_force_costs",    "Merge discounts when stacking" },
+	{ &stack_force_costs, FALSE, OPTS_OBJ, 0, 9,
+	"stack_force_costs", "Merge discounts when stacking" },
 
-	{ &show_labels,                 TRUE, OPTS_OBJ,      0, 10,
-	"show_labels",                  "Show labels in object listings" },
+	{ &show_labels, TRUE, OPTS_OBJ, 0, 10,
+	"show_labels", "Show labels in object listings" },
 
-	{ &show_weights,                TRUE, OPTS_OBJ,      0, 11,
-	"show_weights",                 "Show weights in object listings" },
+	{ &show_weights, TRUE, OPTS_OBJ, 0, 11,
+	"show_weights", "Show weights in object listings" },
 
-	{ &show_choices,                TRUE, OPTS_DISPLAY,      0, 12,
-	"show_choices",                 "Show choices in certain sub-windows" },
+	{ &show_choices, TRUE, OPTS_DISPLAY, 0, 12,
+	"show_choices", "Show choices in certain sub-windows" },
 
-	{ &show_details,                TRUE, OPTS_DISPLAY,      0, 13,
-	"show_details",                 "Show more detailed monster descriptons" },
+	{ &show_details, TRUE, OPTS_DISPLAY, 0, 13,
+	"show_details", "Show more detailed monster descriptons" },
 
 	{ &show_choices_main, TRUE, OPTS_DISPLAY, 2,26,
 	"show_choices_main", "Show certain choices in the main window"},
 
-	{ &ring_bell,                   FALSE, OPTS_DISPLAY,      0, 14,
-	"ring_bell",                    "Audible bell (on errors, etc)" },
+	{ &ring_bell, FALSE, OPTS_DISPLAY, 0, 14,
+	"ring_bell", "Audible bell (on errors, etc)" },
 	/* Changed to default to FALSE -- it's so extremely annoying!!! -TY */
 
-	{ &use_color,                   TRUE, OPTS_DISPLAY,      0, 15,
-	"use_color",                    "Use color if possible (slow)" },
+	{ &use_color, TRUE, OPTS_DISPLAY, 0, 15,
+	"use_color", "Use color if possible (slow)" },
 
 
 	/*** Disturbance ***/
 
-	{ &find_ignore_stairs,  FALSE, OPTS_DISTURB,      0, 16,
-	"find_ignore_stairs",   "Run past stairs" },
+	{ &find_ignore_stairs, FALSE, OPTS_DISTURB, 0, 16,
+	"find_ignore_stairs", "Run past stairs" },
 
-	{ &find_ignore_doors,   FALSE, OPTS_DISTURB,      0, 17,
-	"find_ignore_doors",    "Run through open doors" },
+	{ &find_ignore_doors, FALSE, OPTS_DISTURB, 0, 17,
+	"find_ignore_doors", "Run through open doors" },
 
-	{ &find_cut,                    TRUE, OPTS_DISTURB,      0, 18,
-	"find_cut",                             "Run past known corners" },
+	{ &find_cut, TRUE, OPTS_DISTURB, 0, 18,
+	"find_cut", "Run past known corners" },
 
-	{ &find_examine,                TRUE, OPTS_DISTURB,      0, 19,
-	"find_examine",                 "Run into potential corners" },
+	{ &find_examine, TRUE, OPTS_DISTURB, 0, 19,
+	"find_examine", "Run into potential corners" },
 
 	{ &stop_corner, FALSE, OPTS_DISTURB, 3, 0,
 	"stop_corner", "Stop at corners"},
 
-	{ &disturb_move,                FALSE, OPTS_DISTURB,      0, 20,
-	"disturb_move",                 "Disturb whenever any monster moves" },
+	{ &disturb_move, FALSE, OPTS_DISTURB, 0, 20,
+	"disturb_move", "Disturb whenever any monster moves" },
 
-	{ &disturb_near,                TRUE, OPTS_DISTURB,      0, 21,
-	"disturb_near",                 "Disturb whenever viewable monster moves" },
+	{ &disturb_near, TRUE, OPTS_DISTURB, 0, 21,
+	"disturb_near", "Disturb whenever viewable monster moves" },
 
-	{ &disturb_panel,               TRUE, OPTS_DISTURB,      0, 22,
-	"disturb_panel",                "Disturb whenever map panel changes" },
+	{ &disturb_panel, TRUE, OPTS_DISTURB, 0, 22,
+	"disturb_panel", "Disturb whenever map panel changes" },
 
-	{ &disturb_state,               TRUE, OPTS_DISTURB,      0, 23,
-	"disturb_state",                "Disturb whenever player state changes" },
+	{ &disturb_state, TRUE, OPTS_DISTURB, 0, 23,
+	"disturb_state", "Disturb whenever player state changes" },
 
 	{ &disturb_dawn, FALSE, OPTS_DISTURB, 3, 9,
 	"disturb_dawn", "Disturb when the sun rises or sets" },
 
-	{ &disturb_minor,               FALSE, OPTS_DISTURB,      0, 24,
-	"disturb_minor",                "Disturb whenever boring things happen" },
+	{ &disturb_minor, FALSE, OPTS_DISTURB, 0, 24,
+	"disturb_minor", "Disturb whenever boring things happen" },
 
-	{ &alert_failure,               FALSE, OPTS_DISTURB,      0, 27,
-	"alert_failure",                "Alert user to various failures" },
+	{ &alert_failure, FALSE, OPTS_DISTURB, 0, 27,
+	"alert_failure", "Alert user to various failures" },
 
-	{ &last_words,                  FALSE, OPTS_MISC,      0, 28,
-		"last_words",                 "Get last words when the character dies" },
+	{ &last_words, FALSE, OPTS_MISC, 0, 28,
+		"last_words", "Get last words when the character dies" },
 
-	{ &small_levels,                TRUE, OPTS_MISC,      0, 30,
-		"small_levels",              "Allow unusually small dungeon levels" },
+	{ &small_levels, TRUE, OPTS_MISC, 0, 30,
+		"small_levels", "Allow unusually small dungeon levels" },
 
-	{ &empty_levels,                TRUE, OPTS_MISC,      0, 31,
-		"empty_levels",             "Allow empty 'arena' levels" },
+	{ &empty_levels, TRUE, OPTS_MISC, 0, 31,
+		"empty_levels", "Allow empty 'arena' levels" },
 
 	/*** Game-Play ***/
 
-	{ &auto_haggle,                 TRUE, OPTS_MISC,      1, 0,
-	"auto_haggle",                  "Auto-haggle in stores" },
+	{ &auto_haggle, TRUE, OPTS_MISC, 1, 0,
+	"auto_haggle", "Auto-haggle in stores" },
 
 	{ &verbose_haggle, FALSE, OPTS_MISC, 2, 25,
 	"verbose_haggle", "Verbose auto_haggle messages" },
 
-	{ &auto_scum,                   TRUE, OPTS_MISC,      1, 1,
-	"auto_scum",                    "Auto-scum for good levels" },
+	{ &auto_scum, TRUE, OPTS_MISC, 1, 1,
+	"auto_scum", "Auto-scum for good levels" },
 
-	{ &stack_allow_items,   TRUE, OPTS_OBJ,      1, 2,
-	"stack_allow_items",    "Allow weapons and armor to stack" },
+	{ &stack_allow_items, TRUE, OPTS_OBJ, 1, 2,
+	"stack_allow_items", "Allow weapons and armor to stack" },
 
-	{ &stack_allow_wands,   TRUE, OPTS_OBJ,      1, 3,
-	"stack_allow_wands",    "Allow wands/staffs/rods to stack" },
+	{ &stack_allow_wands, TRUE, OPTS_OBJ, 1, 3,
+	"stack_allow_wands", "Allow wands/staffs/rods to stack" },
 
-	{ &expand_look,                 FALSE, OPTS_MISC,      1, 4,
-	"expand_look",                  "Expand the power of the look command" },
+	{ &expand_look, FALSE, OPTS_MISC, 1, 4,
+	"expand_look", "Expand the power of the look command" },
 
-	{ &expand_list,                 FALSE, OPTS_MISC,      1, 5,
-	"expand_list",                  "Expand the power of the list commands" },
+	{ &expand_list, FALSE, OPTS_MISC, 1, 5,
+	"expand_list", "Expand the power of the list commands" },
 
-	{ &view_perma_grids,    TRUE, OPTS_MISC,      1, 6,
-	"view_perma_grids",             "Map remembers all perma-lit grids" },
+	{ &view_perma_grids, TRUE, OPTS_MISC, 1, 6,
+	"view_perma_grids", "Map remembers all perma-lit grids" },
 
-	{ &view_torch_grids,    FALSE, OPTS_MISC,      1, 7,
-	"view_torch_grids",             "Map remembers all torch-lit grids" },
+	{ &view_torch_grids, FALSE, OPTS_MISC, 1, 7,
+	"view_torch_grids", "Map remembers all torch-lit grids" },
 
-	{ &dungeon_align,               TRUE, OPTS_MISC,      1, 8,
-	"dungeon_align",                "Generate dungeons with aligned rooms" },
+	{ &dungeon_align, TRUE, OPTS_MISC, 1, 8,
+	"dungeon_align", "Generate dungeons with aligned rooms" },
 
-	{ &dungeon_stair,               TRUE, OPTS_MISC,      1, 9,
-	"dungeon_stair",                "Generate dungeons with connected stairs" },
+	{ &dungeon_stair, TRUE, OPTS_MISC, 1, 9,
+	"dungeon_stair", "Generate dungeons with connected stairs" },
 
-	{ &dungeon_small,               FALSE, OPTS_MISC,      1, 10,
-	"dungeon_small",                "Usually generate small dungeons" },
+	{ &dungeon_small, FALSE, OPTS_MISC, 1, 10,
+	"dungeon_small", "Usually generate small dungeons" },
 
-	{ &flow_by_sound,               FALSE, OPTS_MON,      1, 11,
-	"flow_by_sound",                "Monsters chase current location (v.slow)" },
+	{ &flow_by_sound, FALSE, OPTS_MON, 1, 11,
+	"flow_by_sound", "Monsters chase current location (v.slow)" },
 
-	{ &flow_by_smell,               TRUE, OPTS_MON,      1, 12,
-	"flow_by_smell",                "Monsters chase recent locations (v.slow)" },
+	{ &flow_by_smell, TRUE, OPTS_MON, 1, 12,
+	"flow_by_smell", "Monsters chase recent locations (v.slow)" },
 
 
 
-	{ &equippy_chars,               TRUE, OPTS_OBJ,      1, 14,
-		"equippy_chars",           "Display 'equippy' chars" },
+	{ &equippy_chars, TRUE, OPTS_OBJ, 1, 14,
+		"equippy_chars", "Display 'equippy' chars" },
 
-	{ &smart_learn,                 TRUE, OPTS_MON,      1, 15,
-	"smart_learn",                  "Monsters learn from their mistakes" },
+	{ &smart_learn, TRUE, OPTS_MON, 1, 15,
+	"smart_learn", "Monsters learn from their mistakes" },
 
-	{ &smart_cheat,                 FALSE, OPTS_MON,      1, 16,
-	"smart_cheat",                  "Monsters exploit players weaknesses" },
+	{ &smart_cheat, FALSE, OPTS_MON, 1, 16,
+	"smart_cheat", "Monsters exploit players weaknesses" },
 
 #ifdef ALLOW_EASY_OPEN
-	{ &easy_open,                   TRUE, OPTS_MISC,      1, 17,
-	"easy_open",                    "Open and close automatically" },
+	{ &easy_open, TRUE, OPTS_MISC, 1, 17,
+	"easy_open", "Open and close automatically" },
 #endif /* ALLOW_EASY_OPEN -- TNB */
 
 #ifdef ALLOW_EASY_DISARM
-	{ &easy_disarm,                 TRUE, OPTS_MISC,      1, 18,
-	"easy_disarm",                  "Disarm traps automatically" },
+	{ &easy_disarm, TRUE, OPTS_MISC, 1, 18,
+	"easy_disarm", "Disarm traps automatically" },
 #endif /* ALLOW_EASY_DISARM -- TNB */
 
 
 	/*** Efficiency ***/
 
-	{ &view_reduce_lite,    FALSE, OPTS_PERF,      1, 19,
-	"view_reduce_lite",             "Reduce lite-radius when running" },
+	{ &view_reduce_lite, FALSE, OPTS_PERF, 1, 19,
+	"view_reduce_lite", "Reduce lite-radius when running" },
 
-	{ &view_reduce_view,    FALSE, OPTS_PERF,      1, 20,
-	"view_reduce_view",             "Reduce view-radius in town" },
+	{ &view_reduce_view, FALSE, OPTS_PERF, 1, 20,
+	"view_reduce_view", "Reduce view-radius in town" },
 
-	{ &avoid_abort,                 FALSE, OPTS_PERF,      1, 21,
-	"avoid_abort",                  "Avoid checking for user abort" },
+	{ &avoid_abort, FALSE, OPTS_PERF, 1, 21,
+	"avoid_abort", "Avoid checking for user abort" },
 
-	{ &avoid_other,                 FALSE, OPTS_PERF,      1, 22,
-	"avoid_other",                  "Avoid processing special colors" },
+	{ &avoid_other, FALSE, OPTS_PERF, 1, 22,
+	"avoid_other", "Avoid processing special colors" },
 
 	{ &flush_error, TRUE, OPTS_PERF, 3, 19,
 	"flush_error", "Flush input on incorrect keypresses." },
 
-	{ &flush_failure,               TRUE, OPTS_PERF,      1, 23,
-	"flush_failure",                "Flush input on various failures" },
+	{ &flush_failure, TRUE, OPTS_PERF, 1, 23,
+	"flush_failure", "Flush input on various failures" },
 
-	{ &flush_disturb,               FALSE, OPTS_PERF,      1, 24,
-	"flush_disturb",                "Flush input whenever disturbed" },
+	{ &flush_disturb, FALSE, OPTS_PERF, 1, 24,
+	"flush_disturb", "Flush input whenever disturbed" },
 
-	{ &fresh_before,                TRUE, OPTS_PERF,      1, 26,
-	"fresh_before",                 "Flush output before every command" },
+	{ &fresh_before, TRUE, OPTS_PERF, 1, 26,
+	"fresh_before", "Flush output before every command" },
 
-	{ &fresh_after,                 FALSE, OPTS_PERF,      1, 27,
-	"fresh_after",                  "Flush output after every command" },
+	{ &fresh_after, FALSE, OPTS_PERF, 1, 27,
+	"fresh_after", "Flush output after every command" },
 
-	{ &fresh_message,               FALSE, OPTS_PERF,      1, 28,
-	"fresh_message",                "Flush output after every message" },
+	{ &fresh_message, FALSE, OPTS_PERF, 1, 28,
+	"fresh_message", "Flush output after every message" },
 
-	{ &compress_savefile,   FALSE, OPTS_PERF,      1, 29,
-	"compress_savefile",    "Compress messages in savefiles" },
+	{ &compress_savefile, FALSE, OPTS_PERF, 1, 29,
+	"compress_savefile", "Compress messages in savefiles" },
 
-	{ &hilite_player,               FALSE, OPTS_DISPLAY,      1, 30,
-	"hilite_player",                "Hilite the player with the cursor" },
+	{ &hilite_player, FALSE, OPTS_DISPLAY, 1, 30,
+	"hilite_player", "Hilite the player with the cursor" },
 
-	{ &view_yellow_lite,    TRUE, OPTS_PERF,      1, 31,
-	"view_yellow_lite",             "Use special colors for torch-lit grids" },
+	{ &view_yellow_lite, TRUE, OPTS_PERF, 1, 31,
+	"view_yellow_lite", "Use special colors for torch-lit grids" },
 
-	{ &view_bright_lite,    TRUE, OPTS_PERF,      2, 1,
-	"view_bright_lite",             "Use special colors for 'viewable' grids" },
+	{ &view_bright_lite, TRUE, OPTS_PERF, 2, 1,
+	"view_bright_lite", "Use special colors for 'viewable' grids" },
 
-	{ &view_granite_lite,   TRUE, OPTS_PERF,      2, 2,
-	"view_granite_lite",    "Use special colors for wall grids (slow)" },
+	{ &view_granite_lite, TRUE, OPTS_PERF, 2, 2,
+	"view_granite_lite", "Use special colors for wall grids (slow)" },
 
-	{ &view_special_lite,   TRUE, OPTS_PERF,      2, 3,
-	"view_special_lite",    "Use special colors for floor grids (slow)" },
+	{ &view_special_lite, TRUE, OPTS_PERF, 2, 3,
+	"view_special_lite", "Use special colors for floor grids (slow)" },
 
-	{ &skip_chaos_features,        FALSE, OPTS_MISC, 2, 4,
-		"skip_chaos_features",      "Skip chaos features in 'C'haracter Display" },
+	{ &skip_chaos_features, FALSE, OPTS_MISC, 2, 4,
+		"skip_chaos_features", "Skip chaos features in 'C'haracter Display" },
 
-	{ &plain_descriptions,    FALSE, OPTS_OBJ, 2, 5,
+	{ &plain_descriptions, FALSE, OPTS_OBJ, 2, 5,
 		"plain_descriptions", "Plain object descriptions" },
 
-	{ &stupid_monsters,      FALSE, OPTS_MON, 2, 6,
-		"stupid_monsters",  "Monsters behave stupidly" },
+	{ &stupid_monsters, FALSE, OPTS_MON, 2, 6,
+		"stupid_monsters", "Monsters behave stupidly" },
 
-	{ &auto_destroy,        TRUE, OPTS_OBJ, 2, 7,
-		"auto_destroy",     "No query to destroy known worthless items" },
+	{ &auto_destroy, TRUE, OPTS_OBJ, 2, 7,
+		"auto_destroy", "No query to destroy known worthless items" },
 
-	{ &wear_confirm,        TRUE, OPTS_OBJ,2, 8,
-		"confirm_wear",     "Confirm to wear/wield known cursed items" },
+	{ &wear_confirm, TRUE, OPTS_OBJ,2, 8,
+		"confirm_wear", "Confirm to wear/wield known cursed items" },
 
-	{ &confirm_wear_all,        TRUE, OPTS_OBJ,3, 7,
-		"confirm_wear_all",     "Confirm to wear/wield potentially cursed items" },
+	{ &confirm_wear_all, TRUE, OPTS_OBJ,3, 7,
+		"confirm_wear_all", "Confirm to wear/wield potentially cursed items" },
 
-	{ &confirm_stairs,      FALSE, OPTS_UI, 2, 9,
-		"confirm_stairs",   "Prompt before exiting a dungeon level" },
+	{ &confirm_stairs, FALSE, OPTS_UI, 2, 9,
+		"confirm_stairs", "Prompt before exiting a dungeon level" },
 
-	{ &disturb_allies,        FALSE, OPTS_DISTURB, 2, 10,
-		"disturb_allies",     "Disturb when visible allies move" },
+	{ &disturb_allies, FALSE, OPTS_DISTURB, 2, 10,
+		"disturb_allies", "Disturb when visible allies move" },
 
-	{ &multi_stair,        TRUE, OPTS_MISC, 2, 11,
-		"multi_stair",     "Stairs can be longer than one level" },
+	{ &multi_stair, TRUE, OPTS_MISC, 2, 11,
+		"multi_stair", "Stairs can be longer than one level" },
 
-	{ &rand_unbiased,    FALSE, OPTS_PERF,2,12,
+	{ &rand_unbiased, FALSE, OPTS_PERF,2,12,
 	"rand_unbiased","Random numbers have bias removed (slow)"},
 
-	{ &unify_commands,  FALSE, OPTS_OBJ,2,13,
+	{ &unify_commands, FALSE, OPTS_OBJ,2,13,
 	"unify_commands","Use a single 'u'se command for all objects"},
 
-	{ &testing_stack,               TRUE, OPTS_OBJ, 2, 14,
-	"testing_stack",                "Allow objects to stack on floor" },
+	{ &testing_stack, TRUE, OPTS_OBJ, 2, 14,
+	"testing_stack", "Allow objects to stack on floor" },
 
 	{ &show_piles, FALSE, OPTS_OBJ, 3, 21,
 	"show_piles", "Show stacks with a special colour/character" },
 
-	{ &testing_carry,               TRUE, OPTS_MON, 2, 15,
-	"testing_carry",                "Allow monsters to carry objects" },
+	{ &testing_carry, TRUE, OPTS_MON, 2, 15,
+	"testing_carry", "Allow monsters to carry objects" },
 
-	{ &centre_view,               TRUE, OPTS_DISPLAY, 2, 16,
-	"centre_view",                "Centre view around player (v.slow)" },
+	{ &centre_view, TRUE, OPTS_DISPLAY, 2, 16,
+	"centre_view", "Centre view around player (v.slow)" },
 
 	{&macro_edit, TRUE, OPTS_UI, 3, 11,
 	"macro_edit", "Use macros as edit keys in prompts" },
@@ -3087,16 +3102,16 @@ option_type option_info[] =
 	{&allow_fake_colour, TRUE, OPTS_DISPLAY, 3, 24,
 	"allow_fake_colour", "Use special monochrome display for emphasis"},
 
-	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,
-	"no_centre_run",                "Do not centre view whilst running" },
+	{ &no_centre_run, FALSE, OPTS_PERF, 2, 17,
+	"no_centre_run", "Do not centre view whilst running" },
 
 #ifdef USE_X11
 	{ &track_mouse, TRUE, OPTS_PERF, 3, 22,
 	"track_mouse", "Track the cursor in various extra windows." },
 #endif
 
-	{ &auto_more,                   FALSE,  OPTS_DISTURB,      3, 12,
-	"auto_more",                    "Automatically clear '-more-' prompts" },
+	{ &auto_more, FALSE, OPTS_DISTURB, 3, 12,
+	"auto_more", "Automatically clear '-more-' prompts" },
 
 	{ &object_skill, TRUE, OPTS_OBJ, 3, 25,
 	"object_skill", "Testing: make skill checks depend on touching objects" },
@@ -3108,13 +3123,13 @@ option_type option_info[] =
 	{ &score_quitters, 0, OPTS_BIRTHR, 3, 14, 0, ""},
 #endif /* SCORE_QUITTERS */
 
-	{ &maximise_mode_w,               TRUE, OPTS_BIRTH, 2, 18,
-	"maximise_mode",                "Include race/template bonuses in stat calcs" },
+	{ &maximise_mode_w, TRUE, OPTS_BIRTH, 2, 18,
+	"maximise_mode", "Include race/template bonuses in stat calcs" },
 
 	{ &maximise_mode, 0, OPTS_BIRTHR, 3, 15, 0, ""},
 
-	{ &preserve_mode_w,               TRUE, OPTS_BIRTH, 2, 19,
-	"preserve_mode",                "Artifacts are not lost if you never saw them" },
+	{ &preserve_mode_w, TRUE, OPTS_BIRTH, 2, 19,
+	"preserve_mode", "Artifacts are not lost if you never saw them" },
 
 	{ &preserve_mode, 0, OPTS_BIRTHR, 3, 16, 0, ""},
 
@@ -3129,19 +3144,19 @@ option_type option_info[] =
 	"display_credits", "Require a keypress to clear the initial screen"},
 #endif
 
-	{ &use_autoroller,               TRUE, OPTS_BIRTH, 2, 20,
-	"use_autoroller",                "Allow stats to be rolled repeatedly with minima" },
+	{ &use_autoroller, TRUE, OPTS_BIRTH, 2, 20,
+	"use_autoroller", "Allow stats to be rolled repeatedly with minima" },
 
 	{ &spend_points, TRUE, OPTS_BIRTH, 2, 21,
 	"spend_points", "Allow stats to be chosen by spending points" },
 
-	{ &speak_unique_w,                FALSE, OPTS_BIRTH,      0, 29,
-		"speak_unique",              "Allow shopkeepers and uniques to speak" },
+	{ &speak_unique_w, FALSE, OPTS_BIRTH, 0, 29,
+		"speak_unique", "Allow shopkeepers and uniques to speak" },
 
 	{ &speak_unique, 0, OPTS_BIRTHR, 3, 20, 0, ""},
 
-	{ &ironman_shop_w,               FALSE, OPTS_BIRTH, 2, 22,
-	"ironman_shop",                "Shops (except for libraries) are locked" },
+	{ &ironman_shop_w, FALSE, OPTS_BIRTH, 2, 22,
+	"ironman_shop", "Shops (except for libraries) are locked" },
 
 	{ &ironman_shop, 0, OPTS_BIRTHR, 3, 17, 0, ""},
 
@@ -3161,7 +3176,7 @@ option_type option_info[] =
 	{ &spoil_ego, FALSE, OPTS_SPOIL, 2, 30,
 	"spoil_ego", "Gain knowledge of ego items" },
 
-	{ &spoil_art,                  FALSE, OPTS_SPOIL,     2, 28,
+	{ &spoil_art, FALSE, OPTS_SPOIL, 2, 28,
 	"spoil_art", "Gain knowledge of standard artifacts" },
 
 	{ &spoil_value, FALSE, OPTS_SPOIL, 2, 23,
@@ -3211,11 +3226,11 @@ option_type option_info[] =
 
 	/*** End of Table ***/
 
-	{ NULL,                 0, 0, 0, 0,
-	NULL,                   NULL }
+	{ NULL, 0, 0, 0, 0,
+	NULL, NULL }
 };
 
-/* "if (option_force[].1 == option_force[].2) option_force[].3 is irrelevant." */
+/* if (option_force[].1 == option_force[].2) option_force[].3 is irrelevant. */
 force_type option_force[] =
 {
 	{&small_levels, FALSE, &dungeon_small},
@@ -3492,27 +3507,32 @@ moncol_type moncol[MAX_MONCOL] = {
 };
 
 
-wild_type wild_grid[12][12] = {
+/* A macro to make modifications to make the initial settings more obvious. */
+#define WG(X) {X,0,0,0,0,0}
+
+wild_type wild_grid[12][12] =
+{
 	/* {terrain,town,seed,roadmap,dun_min,dun_max}
-	 * all entries except terrain are zeroed at this point, with values being filled in later
+	 * all entries except terrain are zeroed at this point, with values being
+	 * filled in later
 	 *
 	 * terrain 0 = impassable sea
 	 * terrain 1 = coast
 	 * terrains 2 - 5 are depths of forest
 	 *
 	 */
-	{ {0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{2,0,0,0,0,0},{2,0,0,0,0,0},{2,0,0,0,0,0},{4,0,0,0,0,0},{2,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{2,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{2,0,0,0,0,0},{3,0,0,0,0,0},{4,0,0,0,0,0},{5,0,0,0,0,0},{4,0,0,0,0,0},{4,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{2,0,0,0,0,0},{4,0,0,0,0,0},{5,0,0,0,0,0},{5,0,0,0,0,0},{5,0,0,0,0,0},{4,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{2,0,0,0,0,0},{3,0,0,0,0,0},{4,0,0,0,0,0},{5,0,0,0,0,0},{4,0,0,0,0,0},{4,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{3,0,0,0,0,0},{4,0,0,0,0,0},{4,0,0,0,0,0},{4,0,0,0,0,0},{4,0,0,0,0,0},{5,0,0,0,0,0},{4,0,0,0,0,0},{3,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{3,0,0,0,0,0},{4,0,0,0,0,0},{5,0,0,0,0,0},{4,0,0,0,0,0},{3,0,0,0,0,0},{4,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{2,0,0,0,0,0},{3,0,0,0,0,0},{4,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{3,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{2,0,0,0,0,0},{3,0,0,0,0,0},{3,0,0,0,0,0},{2,0,0,0,0,0},{2,0,0,0,0,0},{2,0,0,0,0,0},{2,0,0,0,0,0},{2,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{1,0,0,0,0,0},{0,0,0,0,0,0},},
-	{ {0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},},
+	{ WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),},
+	{ WG(0),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(2),WG(2),WG(2),WG(4),WG(2),WG(3),WG(2),WG(2),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(2),WG(3),WG(4),WG(5),WG(4),WG(4),WG(3),WG(2),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(2),WG(4),WG(5),WG(5),WG(5),WG(4),WG(3),WG(2),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(2),WG(3),WG(4),WG(5),WG(4),WG(4),WG(3),WG(2),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(3),WG(4),WG(4),WG(4),WG(4),WG(5),WG(4),WG(3),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(3),WG(4),WG(5),WG(4),WG(3),WG(4),WG(3),WG(2),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(2),WG(3),WG(4),WG(3),WG(2),WG(3),WG(3),WG(2),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(2),WG(3),WG(3),WG(2),WG(2),WG(2),WG(2),WG(2),WG(1),WG(0),},
+	{ WG(0),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(1),WG(0),},
+	{ WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),WG(0),},
 };
 
 /* Shamanic spirits */
@@ -3578,15 +3598,22 @@ static cptr desc_moan[] =
 
 blow_method_type blow_methods[NUM_BLOW_METHODS] =
 {
-	{RBF_TOUCH | RBF_CUT | RBF_STUN, "hit", "%^s hits %s.", NULL, "%^s misses %s.", "HIT"},
+	{RBF_TOUCH | RBF_CUT | RBF_STUN,
+		"hit", "%^s hits %s.", NULL, "%^s misses %s.", "HIT"},
 	{RBF_TOUCH, "touch", "%^s touches %s.", NULL, "%^s misses %s.", "TOUCH"},
-	{RBF_TOUCH | RBF_STUN, "punch", "%^s punches %s.", NULL, "%^s misses %s.", "PUNCH"},
-	{RBF_TOUCH | RBF_STUN, "kick", "%^s kicks %s.", NULL, "%^s misses %s.", "KICK"},
-	{RBF_TOUCH | RBF_CUT, "claw", "%^s claws %s.", NULL, "%^s misses %s.", "CLAW"},
-	{RBF_TOUCH | RBF_CUT, "bite", "%^s bites %s.", NULL, "%^s misses %s.", "BITE"},
+	{RBF_TOUCH | RBF_STUN,
+		"punch", "%^s punches %s.", NULL, "%^s misses %s.", "PUNCH"},
+	{RBF_TOUCH | RBF_STUN,
+		"kick", "%^s kicks %s.", NULL, "%^s misses %s.", "KICK"},
+	{RBF_TOUCH | RBF_CUT,
+		"claw", "%^s claws %s.", NULL, "%^s misses %s.", "CLAW"},
+	{RBF_TOUCH | RBF_CUT,
+		"bite", "%^s bites %s.", NULL, "%^s misses %s.", "BITE"},
 	{RBF_TOUCH, "sting", "%^s stings %s.", NULL, "%^s misses %s.", "STING"},
-	{RBF_TOUCH | RBF_STUN, "butt", "%^s butts %s.", NULL, "%^s misses %s.", "BUTT"},
-	{RBF_TOUCH | RBF_STUN, "crush", "%^s crushes %s.", NULL, "%^s misses %s.", "CRUSH"},
+	{RBF_TOUCH | RBF_STUN,
+		"butt", "%^s butts %s.", NULL, "%^s misses %s.", "BUTT"},
+	{RBF_TOUCH | RBF_STUN,
+		"crush", "%^s crushes %s.", NULL, "%^s misses %s.", "CRUSH"},
 	{RBF_TOUCH, "engulf", "%^s engulfs %s.", NULL, "%^s misses %s.", "ENGULF"},
 	{RBF_TOUCH, "crawl on you", "%^s crawl on %s.", NULL, NULL, "CRAWL"},
 	{0, "drool on you", "%^s drool on %s.", NULL, NULL, "DROOL"},
