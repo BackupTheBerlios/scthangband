@@ -4463,12 +4463,6 @@ void do_cmd_store(void)
 	/* Interact with player */
 	while (!leave_store)
 	{
-		/* Hack - clear any remaining comments. */
-		msg_print(NULL);
-
-		/* Hack -- Clear line 1 */
-		prt("", 1, 0);
-
 		/* Clear */
         clear_from(21);
         
