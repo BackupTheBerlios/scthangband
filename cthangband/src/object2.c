@@ -1910,7 +1910,11 @@ static cptr get_art_name(artifact_type *a_ptr, char *buf)
  * of 1/5*(1-1/5/2)=18% of being generated if in depth, rather than the
  * former having a probability of 20% and the latter 16%.
  */
-static char make_artifact(object_type *o_ptr, bool special)
+#define MAKE_ART_CERTAIN_FAIL	1
+#define MAKE_ART_RANDOM_FAIL	2
+#define MAKE_ART_NONE	3
+
+static errr make_artifact(object_type *o_ptr, bool special)
 {
 	int                     i, arts = 0;
 
@@ -1920,7 +1924,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 	if (o_ptr->number > 1)
 	{
 		TFREE(order);
-		return 0;
+		return MAKE_ART_CERTAIN_FAIL;
 	}
 
 	for (i = 0; i < MAX_A_IDX; i++)
@@ -1950,7 +1954,7 @@ static char make_artifact(object_type *o_ptr, bool special)
 	if (!arts)
 	{
 		TFREE(order);
-		return 2;
+		return MAKE_ART_NONE;
 	}
 
 	/* Roll for each of the available artefacts */
@@ -1983,13 +1987,14 @@ static char make_artifact(object_type *o_ptr, bool special)
 		o_ptr->name1 = a_ptr-a_info;
 
 		/* Success */
-		break;
+		TFREE(order);
+		return SUCCESS;
 	}
 
 	TFREE(order);
 
-	/* Return whether an artefact was created. */
-	return (o_ptr->name1 != 0);
+	/* Nothing was created. */
+	return MAKE_ART_RANDOM_FAIL;
 }
 
 /*
@@ -2745,9 +2750,19 @@ static void apply_magic_1(object_type *o_ptr, const int lev, const bool okay,
 	/* Roll for artifacts if allowed */
 	for (i = 0; i < rolls; i++)
 	{
+		errr err;
 		if (cheat_peek) msg_format("Rolling %d", i);
 		/* Roll for an artifact */
-		if (make_artifact(o_ptr, FALSE)) return;
+		err = make_artifact(o_ptr, FALSE);
+
+		/* Continue if the roll went against us. */
+		if (err == MAKE_ART_RANDOM_FAIL) continue;
+
+		/* Return if an artefact has been produced. */
+		else if (err == SUCCESS) return;
+
+		/* Finish if it failed for some other reason. */
+		else break;
 	}
 
 	/* Apply magic */
@@ -2966,7 +2981,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 
 
 	/* Generate a special object, or a normal object */
-	if ((rand_int(prob) != 0) || make_artifact(j_ptr, TRUE) != 1)
+	if ((rand_int(prob) != 0) || (make_artifact(j_ptr, TRUE) != SUCCESS))
 	{
 		int k_idx;
 
