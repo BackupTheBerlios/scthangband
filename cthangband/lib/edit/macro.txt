@@ -101,9 +101,11 @@ X:#:monster_desc() names
 A:F:r_info:N:3
 F:macros:#
 
-X:#:monster_desc() names
-A:F:d_quest:Q:4
-F:macros:#
+# d_info.txt actually uses processed names.
+
+# X:#:monster_desc() names
+# A:F:d_quest:Q:4
+# F:macros:#
 
 X:#:feature_desc() names
 A:F:f_info:N:3

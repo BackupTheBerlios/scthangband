@@ -4965,7 +4965,7 @@ F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL
 D:Cool and confident, fast and lithe; protect your possessions quickly!
 
-N:405:Fire Phantom~
+N:405:& Fire Phantom~
 G:G:R
 I:+10:2:10d100:20:90:40
 W:34:5:1200

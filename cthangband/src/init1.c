@@ -3042,7 +3042,7 @@ errr parse_q_list(char *buf, header *head, vptr *extra)
 			mon = find_monster_race(buf);
 
 			/* Check that a monster was found. */
-			if (mon < 0) return PARSE_ERROR_INVALID_FLAG;
+			if (mon < 1 || mon >= MAX_R_IDX) return PARSE_ERROR_INVALID_FLAG;
 
 			/* Only one unique can exist. */
 			if ((r_info[mon].flags1 & RF1_UNIQUE) && num > 1)
