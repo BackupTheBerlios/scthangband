@@ -21,6 +21,26 @@ extern void object_info_known(object_type *j_ptr, object_type *o_ptr);
 extern void do_cmd_rotate_stack(void);
 
 /*
+ * Return what o_ptr->ident would be if a monster had just failed to pick
+ * it up.
+ */
+u16b ident_power(object_type *o_ptr)
+{
+	/* Clear the current flag. */
+	u16b out = o_ptr->ident & ~(IDENT_POWER_ALL);
+
+	/* Paranoia */
+	if (o_ptr->ident & IDENT_MENTAL);
+
+	/* Set the appropriate flag. */
+	else if (object_known_p(o_ptr)) out |= IDENT_POWER_KNOWN;
+	else if (object_aware_p(o_ptr)) out |= IDENT_POWER_AWARE;
+	else out |= IDENT_POWER_UNAWARE;
+	
+	return out;
+}
+
+/*
  * Test whether an object has been observed to have special powers which
  * could not hav e been expected based on its current level of identification.
  */
@@ -28,12 +48,10 @@ static bool is_powerful(object_type *o_ptr)
 {
 	object_type t,u, *t_ptr=&t, *u_ptr=&u;
 
-	/* Hack - Allow the IDENT_SENSE_POWER flag to bypass this code.
-	 * This is not totally safe, as there's no way to find out what monster
-	 * gave it this flag if the player has since learnt that it has some
-	 * slays.
-	 */
-	if (o_ptr->ident & IDENT_SENSE_POWER) return TRUE;
+	/* Items which a monster has failed to pick up are flagged as powerful.
+	 * If the current flag is the same as the flag it would have if a monster
+	 * did so now, the item is powerful. */
+	if (ident_power(o_ptr) == o_ptr->ident) return TRUE;
 
 	/* If the player hasn't tried it, there's no other way to know its
 	 * powers. */

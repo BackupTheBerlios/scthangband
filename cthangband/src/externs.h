@@ -404,6 +404,9 @@ extern void do_cmd_activate(int item);
 
 /* dungeon.c */
 
+#if (defined(DUNGEON_C) || defined(MELEE2_C))
+extern u16b ident_power(object_type *o_ptr);
+#endif
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern cptr find_feeling(object_type *o_ptr);
 #endif
@@ -968,10 +971,10 @@ extern void reset_visuals(void);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(DUNGEON_C) || defined(OBJECT1_C))
+#if (defined(DUNGEON_C) || defined(MELEE2_C) || defined(OBJECT1_C))
 extern void object_info_known(object_type *j_ptr, object_type *o_ptr);
 #endif
-#if (defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C))
+#if (defined(FILES_C) || defined(OBJECT1_C))
 extern void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C))

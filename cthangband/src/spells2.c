@@ -1661,6 +1661,9 @@ bool lose_all_info(void)
 
 		/* Hack -- Clear the "heavily felt" flag */
 		o_ptr->ident &= ~(IDENT_SENSE_HEAVY);
+
+		/* Hack - Clear the "powerful" flags */
+		o_ptr->ident &= ~(IDENT_POWER_ALL);
 	}
 
 	/* Recalculate bonuses */

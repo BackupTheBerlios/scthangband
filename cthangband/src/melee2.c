@@ -6835,6 +6835,8 @@ static void process_monster(int m_idx, bool is_friend)
 						/* Only give a message for "take_item" */
 						if (r_ptr->flags2 & (RF2_TAKE_ITEM))
 						{
+							object_type j_ptr[1];
+
 							/* Take note */
 							did_take_item = TRUE;
 
@@ -6842,15 +6844,16 @@ static void process_monster(int m_idx, bool is_friend)
 							if (m_ptr->ml && player_has_los_bold(ny, nx))
 							{
 								/* Should we expect this to happen? */
-								object_flags_known(o_ptr, &f1, &f2, &f3);
+								object_info_known(j_ptr, o_ptr);
 
 								/* Dump a message */
 								msg_format("%^s tries to pick up %s, but fails.",
 									   m_name, o_name);
 
 								/* Remember this event if unexpected. */
-								if (!(f1 & f1_want))
-									o_ptr->ident |= IDENT_SENSE_POWER;
+								if (!(j_ptr->art_flags1 & f1_want) &&
+									!allart_p(j_ptr))
+									o_ptr->ident = ident_power(o_ptr);
 							}
 						}
 					}

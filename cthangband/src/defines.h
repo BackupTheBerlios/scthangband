@@ -2266,7 +2266,16 @@ logaux(x, 1) logaux(x, 0) 255
 #define IDENT_SENSE_HEAVY	0x0400	/* Item has been pseudo-identified heavily */
 #define IDENT_TRIED		0x0800	/* Item has been tried */
 #define IDENT_STORE	0x1000 /* Item is in a shop */
-#define IDENT_SENSE_POWER	0x2000	/* Item is known to be "powerful" */
+
+/* If a monster fails to pick something up, it is marked as "powerful".
+ * As it would take 2^n bits to record which types of monster had this problem
+ * given n slays, just clear it when the player identifies the type or the
+ * object. As iterating through every object for the "aware" case is hard,
+ * store it and ignore it instad. */
+#define IDENT_POWER_UNAWARE	0x2000	/* Item was seen to be "powerful" when unaware. */
+#define IDENT_POWER_AWARE	0x4000	/* Item was seen to be "powerful" when aware. */
+#define IDENT_POWER_KNOWN	(IDENT_POWER_UNAWARE | IDENT_POWER_AWARE)
+#define IDENT_POWER_ALL (IDENT_POWER_UNAWARE | IDENT_POWER_AWARE | IDENT_POWER_KNOWN)
 
 #define IDENT_SENSE	(IDENT_SENSE_CURSED | IDENT_SENSE_VALUE) /* Item has been pseudo-identified */
 
