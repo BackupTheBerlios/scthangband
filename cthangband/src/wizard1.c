@@ -1378,7 +1378,7 @@ static void spoil_mon_desc(cptr fname)
 	{
 		monster_race *r_ptr = &r_info[who[i]];
 
-		cptr name = (r_name + r_ptr->name);
+		cptr name = monster_desc_aux(0, r_ptr, 1, 0);
 
 		/* Get the "name" */
 		if (r_ptr->flags1 & (RF1_ALWAYS_GUARD))
@@ -1618,7 +1618,7 @@ static void spoil_mon_info(cptr fname)
 		}
 
 		/* Name */
-		sprintf(buf, "%s  (", (r_name + r_ptr->name));  /* ---)--- */
+		sprintf(buf, "%s  (", monster_desc_aux(0, r_ptr, 1, 0));;  /* ---)--- */
 		spoil_out(buf);
 
 		/* Color */

@@ -89,7 +89,7 @@ void wiz_create_named_art(int a_idx)
        i = a_ptr->k_idx;
 
        /* Oops */
-       if (!i) return;
+       if (i <= 0 || i >= MAX_K_IDX) return;
 
        /* Create the artifact */
        object_prep(q_ptr, i);

@@ -1042,7 +1042,21 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 				{
 					make_monster_type *i_ptr = &d_ptr->par.monster;
 					i_ptr->strict = find_string_x(buf, "STRICT");
-					find_string_info(r_name, r_info, MAX_R_IDX, i_ptr->num);
+					{
+						C_TNEW(array, MAX_R_IDX, cptr);
+						for (i = 1; i < MAX_R_IDX; i++)
+						{
+							if (r_info[i].name)
+								array[i-1] = string_make(monster_desc_aux(0,
+									r_info+i, 1, 0));
+							else
+								array[i-1] = string_make("");
+						}
+						array[MAX_R_IDX-1] = 0;
+						i_ptr->num = find_string(buf, array);
+						for (i = 0; i < MAX_R_IDX; i++) string_free(array[i]);
+						TFREE(array);
+					}
 					readclearnum(i_ptr->num, 'n');
 					readclearnum(i_ptr->radius, 'r');
 					readclearnum(i_ptr->min, '(');

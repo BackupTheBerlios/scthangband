@@ -477,9 +477,14 @@ logaux(x, 1) logaux(x, 0) 255)
 #define CH_SCROLL	0x7F	/* Give it a scroll-like name. Only for first character, removed in flavor_init(). */
 
 #define find_cm(c) ((c) & (CM_ACT | CM_TRUE | CM_FALSE | CM_NORM))
-#define find_ci(c) ((c) & (CI_K_IDX | CI_FLAVOUR | CI_PLURAL | \
-	CI_EGO | CI_ARTEFACT))
+#define find_ci(c) ((c) & 0x07)
 #define is_cx_char(c) (c && (c == find_cm(c) + find_ci(c)))
+
+/* monster_desc_aux() flags. */
+#define MDF_INDEF	0x01	/* Give an indefinite article (a ...). */
+#define MDF_NUMBER	0x02	/* Give a number (10 ...). */
+#define MDF_DEF	0x04	/* Give a definite article (the ...). */
+#define MDF_CAPITAL	0x08	/* Capitalise the first letter. */
 
 /*
  * Store constants
@@ -3359,6 +3364,7 @@ extern int PlayerUID;
 
 /* Default values for various unknown things. */
 #define UNKNOWN_OBJECT_NUMBER	255	/* object_type.number */
+#define UNKNOWN_MONSTER_NUMBER	-1	/* monster_type.number */
 
 /*
  * The key sent by resize_inkey. This is an arbitary control key to ensure that

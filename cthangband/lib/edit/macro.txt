@@ -144,14 +144,17 @@ M:27
 X:%=P
 M:4
 #:object_desc() names
+F:r_info:N:3
 
 X:%+P
 M:12
 #:object_desc() names
+F:r_info:N:3
 
 X:%-P
 M:20
 #:object_desc() names
+F:r_info:N:3
 
 X:%p
 M:28
@@ -196,6 +199,23 @@ M:8
 X:%b
 M:24
 #:object_desc() names
+
+X:%=I
+M:5
+#:object_desc() names
+F:r_info:N:3
+
+X:%+I
+M:13
+F:r_info:N:3
+
+X:%-I
+M:21
+F:r_info:N:3
+
+X:%i
+M:29
+F:r_info:N:3
 
 # %Base flags are always at the beginning to make searching for them
 # more efficient.
@@ -266,6 +286,12 @@ F:u_info:s
 X:s
 B:N:%Scroll ---length 16---
 F:u_info:s
+
+# Make "& " have roughly the same effect for monsters as objects.
+
+X:& 
+Y:%+I%i %=I
+F:r_info:N:3
 
 # Ensure that tvals are expressed as numbers.
 
@@ -1435,3 +1461,65 @@ X:.
 Y:
 F:a_info:W:5
 F:k_info:W:2
+
+# Monster plural strings.
+# The section after %-P is only printed for singular names.
+# The section after %+p is only printed for plural names.
+# The initial section, and the section after %=P, are printed for all names.
+# Only the last matching pattern listed is used.
+
+X:~
+Y:%+Ps%=P
+F:r_info:N:3
+
+X:s~
+Y:s%+Pes%=P
+F:r_info:N:3
+
+X:ch~
+Y:ch%+Pes%=P
+F:r_info:N:3
+
+X:ich~
+Y:ich%+Ps%=P
+
+X:y~
+Y:%-Py%+Pies%=P
+F:r_info:N:3
+
+X:ouse~
+Y:%-Pous%+Pic%=Pe
+F:r_info:N:3
+
+X:ay~
+Y:ay%+Ps%=P
+F:r_info:N:3
+
+X:thief~
+Y:thie%-Pf%+Pves%=P
+F:r_info:N:3
+
+X:olf~
+Y:ol%-Pf%+Pves%=P
+F:r_info:N:3
+
+X:ex~
+Y:%-Pex%+Pices%=P
+F:r_info:N:3
+
+X: Man~
+Y: M%-Pa%+Pe%=Pn
+F:r_info:N:3
+
+X:kelman~
+Y:kelm%-Pa%+Pe%=Pn
+F:r_info:N:3
+
+X:child~
+Y:child%+Pren%=P
+F:r_info:N:3
+
+X:lous~
+Y:l%-Pous%+Pi%=P
+F:r_info:N:3
+

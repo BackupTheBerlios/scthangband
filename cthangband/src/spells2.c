@@ -2848,8 +2848,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	}
 	else
 	{
-		object_desc(o_name, o_ptr, FALSE, 1);
-		full_name(o_name, (o_ptr->number > 1), TRUE, FALSE);
+		object_desc(o_name, o_ptr, TRUE, 1);
 	
 		/* Describe again */
 		msg_format("You now %s %s", (item >= 0) ? "have" : "see", o_name);

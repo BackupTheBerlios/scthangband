@@ -207,8 +207,7 @@ void describe_death_events(int r_idx, cptr he, void (*out)(cptr), bool omniscien
 				make_monster_type *i_ptr = &d_ptr->par.monster;
 				monster_race *r_ptr = &r_info[i_ptr->num];
 				C_TNEW(m_name, MNAME_MAX, char);
-				strcpy(m_name, r_name+r_ptr->name);
-				full_name(m_name, (i_ptr->max == 1), TRUE, ((r_ptr->flags4 & RF4_ODD_ART) != 0));
+				monster_desc_aux(m_name, r_ptr, i_ptr->max, MDF_INDEF);
 				(*out)(format("%s%s %s be created", (i_ptr->max > 1) ? "some " : "", m_name, DDE_MAY));
 				TFREE(m_name);
 				break;
@@ -1679,6 +1678,9 @@ void roff_top(int r_idx)
 	if (!use_color) a1 = TERM_WHITE;
 	if (!use_color) a2 = TERM_WHITE;
 
+	/* Convert to characters. */
+	a1 = atchar[a1];
+	a2 = atchar[a2];
 
 	/* Clear the top line */
 	Term_erase(0, 0, 255);
@@ -1686,24 +1688,9 @@ void roff_top(int r_idx)
 	/* Reset the cursor */
 	Term_gotoxy(0, 0);
 
-	/* A title (use "The" for non-uniques) */
-	if (!(r_ptr->flags1 & (RF1_UNIQUE)))
-	{
-		Term_addstr(-1, TERM_WHITE, "The ");
-	}
-
 	/* Dump the name */
-	Term_addstr(-1, TERM_WHITE, (r_name + r_ptr->name));
-
-	/* Append the "standard" attr/char info */
-	Term_addstr(-1, TERM_WHITE, " ('");
-	Term_addch(a1, c1);
-	Term_addstr(-1, TERM_WHITE, "')");
-
-	/* Append the "optional" attr/char info */
-	Term_addstr(-1, TERM_WHITE, "/('");
-	Term_addch(a2, c2);
-	Term_addstr(-1, TERM_WHITE, "'):");
+	mc_roff(format("%s (#####%c%c#####w)/(#####%c%c#####w):",
+		monster_desc_aux(0, r_ptr, 1, (MDF_DEF | MDF_CAPITAL)), a1, c1, a2, c2));
 }
 
 

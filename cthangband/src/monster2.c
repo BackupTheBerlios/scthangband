@@ -1223,7 +1223,136 @@ s16b get_mon_num(int level)
 
 
 
+#define MCI_PLURAL	0x04
+#define MCI_ARTICLE	0x05
 
+/* Add a string at t (within buf) if there is enough room. */
+#define MDA_ADD(X) \
+{ \
+	if (t-buf+strlen(X)+1 < MNAME_MAX) \
+	{ \
+		strcpy(t, (X)); \
+		t += strlen(X); \
+	} \
+}
+
+/*
+ * Describe a name for a monster of a given race, pluralising where appropriate.
+ * This is based on object_desc(), but is far simpler.
+ *
+ * number indef string   The table on the left gives the format of its output.
+ *   1    FALSE "Newt"
+ *   1    TRUE  "a Newt"
+ * not 1  FALSE "Newts"
+ * not 1  TRUE  "some Newts"
+ */
+static cptr monster_desc_aux_2(char *out, monster_race *r_ptr, int num, byte flags)
+{
+	bool indef = (flags & MDF_INDEF) != 0;
+	bool def = (flags & MDF_DEF) != 0;
+	bool number = (flags & MDF_NUMBER) != 0;
+	bool capital = (flags & MDF_CAPITAL) != 0;
+	cptr s;
+	char *t;
+	byte reject = 0;
+	C_TNEW(buf, MNAME_MAX, char);
+
+	if (num == 1) reject |= 1<<MCI_PLURAL;
+	if (!indef && !def) reject |= 1<<MCI_ARTICLE;
+
+	
+	for (s = r_name+r_ptr->name, t = buf; *s && t < buf+MNAME_MAX-1; s++)
+	{
+		if (*s & 0xE0)
+		{
+			*t++ = *s;
+		}
+		else if (find_cm(*s) == CM_NORM);
+		else if (find_cm(*s) != CM_ACT)
+		{
+			s = find_next_good_flag(s, reject, ~reject)-1;
+		}
+		else if (find_ci(*s) == MCI_ARTICLE)
+		{
+			if (indef)
+			{
+				if (num == 1)
+				{
+					*t++ = *s;
+				}
+				else
+				{
+					MDA_ADD("some")
+				}
+			}
+			else if (def)
+			{
+				MDA_ADD("the")
+			}
+		}
+	}
+
+	/* Finish off. */
+	*t = '\0';
+
+	if (number)
+	{
+		sprintf(out, "%d ", num);
+		t = strchr(out, '\0');
+	}
+	else
+	{
+		t = out;
+	}
+
+	/* Decipher articles, and copy across. */
+	for (s = buf; t < out+MNAME_MAX-1;)
+	{
+		if (*s == (MCI_ARTICLE | CM_ACT))
+		{
+			cptr u,article;
+			for (u = s; !isalnum(*u) && *u; u++);
+			article = (strchr("aeiouAEIOU8", *u)) ? "an" : "a";
+			if (t-out+strlen(article)+1 < MNAME_MAX)
+			{
+				strcpy(t, article);
+				t = strchr(t, '\0');
+				s++;
+			}
+		}
+		else
+		{
+			if (((*t++ = *s++)) == '\0') break;
+		}
+	}
+
+	/* Setting capital forces the initial letter to be capitalised. */
+	if (capital) *out = FORCEUPPER(*out);
+
+	TFREE(buf);
+
+	/* And return it. */
+	return out;
+}
+
+/*
+ * A wrapper around the above function provided so that a buf of NULL is
+ * parsed as a request to return the output in the format buffer.
+ */
+cptr monster_desc_aux(char *buf, monster_race *r_ptr, int num, byte flags)
+{
+	if (buf)
+	{
+		return monster_desc_aux_2(buf, r_ptr, num, flags);
+	}
+	else
+	{
+		C_TNEW(tmp, MNAME_MAX, char);
+		buf = format("%s", monster_desc_aux_2(tmp, r_ptr, num, flags));
+		TFREE(tmp);
+		return buf;
+	}
+}
 
 /*
  * Build a string describing a monster in some way.
@@ -1274,7 +1403,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 {
 	monster_race	*r_ptr = (m_ptr) ? &r_info[m_ptr->r_idx] : r_info;
 
-	cptr name = r_name+r_ptr->name, prefix_ = "", suffix_ = "";
+	cptr name, prefix_ = "", suffix_ = "";
 
     char        silly_name[80];
 
@@ -1359,7 +1488,7 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 					hallu_race = &r_info[randint(MAX_R_IDX-2)];
 				}
 				while (hallu_race->flags1 & RF1_UNIQUE);
-				name = r_name + hallu_race->name;
+				name = monster_desc_aux(0, r_ptr, 1, 0);
 	        }
 	        else
 	        {
@@ -1367,6 +1496,10 @@ void monster_desc(char *buf, monster_type *m_ptr, int mode, int size)
 				name = silly_name;
 	        }
 	    }
+		else
+		{
+			name = monster_desc_aux(0, r_ptr, 1, 0);
+		}
 
 		/* It could be a Unique */
 		if ((r_ptr->flags1 & (RF1_UNIQUE)) && !(p_ptr->image))
@@ -2037,7 +2170,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 
 	monster_race	*r_ptr = &r_info[r_idx];
 
-	cptr		name = (r_name + r_ptr->name);
+	cptr name = (cheat_hear) ? monster_desc_aux(0, r_ptr, 1, 0) : "";
 
 
 	/* Verify location */
@@ -2901,8 +3034,8 @@ static bool summon_specific_okay(int r_idx)
 		}
         case SUMMON_REAVER:
         {
-            okay = ((strstr((r_name + r_ptr->name),"Black reaver")) &&
-                !(r_ptr->flags1 & (RF1_UNIQUE)));
+            okay = ((strstr(monster_desc_aux(0, r_ptr, 1, 0),
+				"Black reaver")) && !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
 
@@ -2917,8 +3050,8 @@ static bool summon_specific_okay(int r_idx)
 
         case SUMMON_AVATAR:
         {
-            okay = ((strstr((r_name + r_ptr->name),"Avatar of Nyarlathotep")) &&
-                !(r_ptr->flags1 & (RF1_UNIQUE)));
+            okay = (strstr(monster_desc_aux(0, r_ptr, 1, 0),
+				"Avatar of Nyarlathotep") && !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
         case SUMMON_ANIMAL:
@@ -2964,14 +3097,14 @@ static bool summon_specific_okay(int r_idx)
 
         case SUMMON_PHANTOM:
         {
-            okay = ((strstr((r_name + r_ptr->name),"Phantom")) &&
-                !(r_ptr->flags1 & (RF1_UNIQUE)));
+            okay = (strstr(monster_desc_aux(0, r_ptr, 1, 0),"Phantom")
+				&& !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
         case SUMMON_ELEMENTAL:
         {
-            okay = ((strstr((r_name + r_ptr->name),"lemental")) &&
-                !(r_ptr->flags1 & (RF1_UNIQUE)));
+            okay = (strstr(monster_desc_aux(0, r_ptr, 1, 0),"lemental")
+				&& !(r_ptr->flags1 & (RF1_UNIQUE)));
             break;
         }
 

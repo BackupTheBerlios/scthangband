@@ -976,7 +976,7 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
  * criteria or the end of the string is reached.
  * Return the first "safe" character.
  */
-static cptr find_next_good_flag(cptr s, byte reject, byte require)
+cptr find_next_good_flag(cptr s, byte reject, byte require)
 {
 	int bad;
 

@@ -1863,13 +1863,19 @@ struct visual_type
 
 /* Wrapers for the above for each type used here. */
 
-static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
-get_visuals(r_info, r_name)
-
 static void get_visuals_feat(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
 get_visuals(f_info, f_name)
 
 /* Non-standard get_visuals_* functions. */
+
+/*
+ * The strings in r_name are processed before they are printed.
+ */
+static void get_visuals_mon(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
+{
+	get_visuals(r_info, (char*)NULL)
+	*name = monster_desc_aux(0, r_info+i, 1, 0);
+}
 
 /*
  * The strings in k_name are processed before they are printed.
@@ -2966,6 +2972,8 @@ void do_cmd_save_screen(void)
 }
 
 
+#define GET_SYMBOL_LEN	(strlen("[[[[[cc]")+1)
+
 /*
  * A simple function to include a coloured symbol in a text file for
  * show_file().
@@ -3140,6 +3148,7 @@ static void do_cmd_knowledge_uniques(void)
 	FILE *fff;
 
 	char file_name[1024];
+	C_TNEW(m_name, MNAME_MAX, char);
 
 	/* Open a new file */
 	if (!((fff = my_fopen_temp(file_name, 1024)))) return;
@@ -3158,10 +3167,14 @@ static void do_cmd_knowledge_uniques(void)
 			/* Only display "known" uniques */
 			if (dead || spoil_mon || r_ptr->r_sights)
 			{
-				fprintf(fff, " %s %c [[[[[%c%s is %s]\n",
-				 get_symbol(r_ptr), (r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ',
-				        (dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE], (r_name + r_ptr->name),
-				        (dead ? "dead" : "alive"));
+				char sym[GET_SYMBOL_LEN];
+				strcpy(sym, get_symbol(r_ptr));
+
+				fprintf(fff, " %s %c [[[[[%c%s is %s]\n", sym,
+					(r_ptr->flags1 & RF1_GUARDIAN) ? '!' : ' ', 
+					(dead) ? atchar[TERM_L_DARK] : atchar[TERM_WHITE],
+					monster_desc_aux(m_name, r_ptr, 1, 0),
+					(dead ? "dead" : "alive"));
 			}
 		}
 	}
@@ -3174,87 +3187,6 @@ static void do_cmd_knowledge_uniques(void)
 
 	/* Remove the file */
 	fd_kill(file_name);
-}
-
-
-static void plural_aux(char * Name)
-{
-	cptr initstrings[] = {" of ", " to ", 0};
-	cptr plurals[][2] = {
-		{"young", "young"}, /* Dark young of Shub-Niggurath */
-		{"Manes", "Manes"}, /* Manes */
-		{"Ninja", "Ninja"}, /* Ninja */
-		{"kelman", "kelmen"}, /* Pukelman */
-		{"child", "children"}, /* Small child */
-		{" Man", " Men"}, /* Wild Man */
-		{"ex", "ices"}, /* X vortex */
-		{"olf", "olves"}, /* X Wolf */
-		{"thief", "thieves"}, /* X thief (NOT to be mistaken for chief) */
-		{"ay", "ays"}, /* Stairway to hell */
-		{"ouse", "ice"}, /* X mouse/louse */
-		{"y", "ies"}, /* Harpy, Jelly, etc. */
-		{"ch", "ches"}, /* mushroom patch, lich, etc. */
-		{"s", "ses"}, /* moss, Colossus, etc. */
-		{"", "s"}, /* everything else */
-	};
-	int NameLen = strlen(Name);
-	byte i;
-	if (NameLen == 0) return;
-	for (i = 0; initstrings[i]; i++)
-	{
-		cptr aider = strstr(Name, initstrings[i]);
-		if (aider > Name)
- 		{
-			char dummy[80] = "";
-			strncpy(dummy, Name, aider - Name);
-			plural_aux(dummy);
-			strcat(dummy, aider);
-		strcpy (Name, dummy);
-		return;
-	}
-	        }
-	for (i = 0; plurals[i]; i++)
-		{
-		if (streq(&(Name[NameLen-strlen(plurals[i][0])]), plurals[i][0]))
-		{
-			strcpy(&Name[NameLen-strlen(plurals[i][0])], plurals[i][1]);
-		return;
-	}
-	}
-	}
-
-/*
- * Gives the long form of a name for do_cmd_knowledge_kill_count, etc..
- */
-void full_name(char * Name, bool plural, bool article, bool strangearticle)
-{
-	char *string = NULL;
-	/* Hack - give "long" version of creeping X coins */
-	if (strstr(Name, "coins"))
-	{
-		string = format("pile of %s", Name);
-		sprintf(Name, "%.*s", MNAME_MAX, string);
-	}
-	if (plural)
-	{
-		plural_aux(Name);
-		if (article)
-		{
-			string = format("some %s", Name);
-			strcpy(Name, string);
-		}
-	}
-	/* Give an indefinite article as required. Plurals never take indefinite articles. */
-	else if (article)
-	{
-		/* Testing whether the word starts with a vowel or not is usually sufficient. */
-		bool an = is_a_vowel(Name[0]);
-		/* There needs to be a way of overriding this, however. */
-		if (strangearticle) an = !an;
-		/* Use the string we have decided upon. */
-		string = format("%s %s", (an) ? "an" : "a", Name);
-	}
-	if (string) sprintf(Name, "%.*s", MNAME_MAX, string);
 }
 
 /*
@@ -3293,13 +3225,14 @@ static void do_cmd_knowledge_pets(void)
 		/* Calculate "upkeep" for friendly monsters */
 		if (m_ptr->smart & (SM_ALLY))
 		{
-			char pet_name[80];
+			C_TNEW(pet_name, MNAME_MAX, char);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			t_friends++;
 			t_levels += r_ptr->level;
 			monster_desc(pet_name, m_ptr, 0x88, Term->wid-2);
 			strcat(pet_name, "\n");
 			fprintf(fff,"%s %s\n", get_symbol(r_ptr), pet_name);
+			TFREE(pet_name);
 		}
 	}
 
@@ -3349,14 +3282,12 @@ static int count_kills(FILE *fff, bool noisy)
 		Total += This;
 		if (This && noisy)
 		{
-			char string[80];
-			strcpy(string, r_name+r_ptr->name);
-			full_name(string, This > 1, FALSE, FALSE);
+			byte flags = 0;
+			if (This > 1) flags |= MDF_NUMBER;
+			else if (~r_ptr->flags1 & RF1_UNIQUE) flags |= MDF_INDEF;
 
-			if (r_ptr->flags1 & (RF1_UNIQUE) && This == 1)
-				fprintf(fff, " %s   %s\n", get_symbol(r_ptr), (r_name + r_ptr->name));
-			else
-				fprintf(fff, " %s   %d %s\n", get_symbol(r_ptr), This, string);
+			fprintf(fff, " %s   ", get_symbol(r_ptr));
+			fprintf(fff, "%s\n", monster_desc_aux(0, r_ptr, This, flags));
 		}
 	}
 	return Total;
@@ -3471,22 +3402,29 @@ static void do_cmd_knowledge_deaths(void)
 		/* Display the sorted list. */
 		for (i = 0; i < Races; i++)
 		{
-			char string[80];
+			char sym[GET_SYMBOL_LEN];
 			monster_race *r_ptr = &r_info[races[i]];
-			bool plural = r_ptr->r_deaths > 1 && ~r_ptr->flags1 & RF1_UNIQUE;
-			bool article = r_ptr->r_deaths == 1 && ~r_ptr->flags1 & RF1_UNIQUE;
+			int num = (r_ptr->flags1 & RF1_UNIQUE) ? 1 : r_ptr->r_deaths;
+			byte flags;
+			if (r_ptr->flags1 & RF1_UNIQUE)
+			{
+				flags = MDF_DEF;
+			}
+			else if (r_ptr->r_deaths == 1)
+			{
+				flags = MDF_INDEF;
+			}
+			else
+			{
+				flags = MDF_NUMBER;
+			}
 
-			/* Grab the string. */
-			strcpy(string, r_name+r_ptr->name);
-
-			/* Don't leave a single capital letter in non-unique names as it looks odd. */
-			if (~r_ptr->flags1 & RF1_UNIQUE) string[0] = FORCELOWER(string[0]);
-
-			/* Pluralise or add an indefinite article as required. */
-			full_name(string, plural, article, FALSE);
+			strcpy(sym, get_symbol(r_ptr));
 
 			/* Format the string, including the monster's ASCII representation. */
-			fprintf(fff, " %s   %d w%s killed by %s\n", get_symbol(r_ptr), r_ptr->r_deaths, (r_ptr->r_deaths == 1) ? "as" : "ere", string);
+			fprintf(fff, " %s   %d w%s killed by %s.\n", sym, r_ptr->r_deaths,
+				(r_ptr->r_deaths == 1) ? "as" : "ere",
+				monster_desc_aux(0, r_ptr, num, flags));
 
 			/* Count the total. */
 			Deaths+=r_ptr->r_deaths;
@@ -3557,7 +3495,8 @@ static void do_cmd_knowledge_objects(void)
 			object_desc_store(o_name, i_ptr, FALSE, 0);
 
 			/* Print a message */
-			fprintf(fff, " %s   %s\n", get_symbol_aux(object_attr(i_ptr), object_char(i_ptr)), o_name);
+			fprintf(fff, " %s   %s\n", get_symbol_aux(object_attr(i_ptr),
+				object_char(i_ptr)), o_name);
 		}
 	}
 

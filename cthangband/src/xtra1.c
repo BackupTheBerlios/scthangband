@@ -3672,7 +3672,7 @@ void win_help_display(void)
 			if (!strstr(buf, format("<%s>", CUR_HELP_STR))) continue;
 
 			while (!my_fgets(fff, buf, 1024) &&
-				strncmp(buf, "*****", strlen("*****")))
+				!prefix(buf, "*****"))
 			{
 				/* Print the line out in a possibly colourful way. */
 				mc_roff(buf);
@@ -3738,7 +3738,6 @@ struct monster_list_entry
 
 #define get_lore_idx(idx, unused) (&(r_info[idx]))
 #define get_monster_fake(idx, unused) (&(r_info[idx]))
-#define monster_name_idx(idx, unused) (r_name+r_info[idx].name)
 #define monster_lore monster_race
 
 /*
@@ -3895,7 +3894,7 @@ static void win_visible_display(void)
 	/* Are monsters visible? */
 	if (items)
 	{
-		int w, h, num;
+		int w, h, num, len;
 		u16b why = 1;
 		cptr name;
 
@@ -3951,18 +3950,22 @@ static void win_visible_display(void)
 			/* Dump the monster name */
 			if (who[i].amount == 1)
 			{
-				name = format("%.23s", r_name+r_info[who[i].r_idx].name);
+				len = 23;
 			}
 			else
 			{
-				int len = 23-strlen(format(" (x%d)", who[i].amount));
-				name = format("%.*s (x%d)", len,
-					r_name+r_info[who[i].r_idx].name, who[i].amount);
+				len = 23-strlen(format(" (x%d)", who[i].amount));
+			}
+			name = format("%.*s", len,
+				monster_desc_aux(0, r_info+who[i].r_idx, 2, 0));
+
+			if (who[i].amount != 1)
+			{
+				name = format("%s (x%d)", name, who[i].amount);
 			}
 			c_prt(attr, name, (num % (h - 1)) + 1, (num / (h - 1)) * 26+2);
 		}
 	}
-
 	else
 	{
 		c_prt(TERM_WHITE,"You see no monsters.",0,0);

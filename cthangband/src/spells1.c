@@ -2339,8 +2339,6 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
     C_TNEW(m_name, MNAME_MAX, char);
 
-	cptr name = (r_name + r_ptr->name);
-
 	/* Is the monster "seen"? */
 	bool seen = m_ptr->ml;
 
@@ -2672,10 +2670,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		/* Water (acid) damage -- Water spirits/elementals are immune */
 		case GF_WATER:
 		{
+			cptr name = monster_desc_aux(0, r_ptr, 1, 0);
 			if (seen) obvious = TRUE;
-            if ((r_ptr->d_char == 'E')
-                && (prefix(name, "W")
-                ||(strstr((r_name + r_ptr->name),"Unmaker"))))
+            if (((r_ptr->d_char == 'E')
+                && (prefix(name, "w"))) || (strstr(name, "unmaker")))
 			{
 				note = " is immune.";
 				dam = 0;
