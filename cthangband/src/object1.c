@@ -741,9 +741,30 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr)
 		/* Don't assume that the multiplier is always known. */
 		if (!spoil_base) j_ptr->art_flags3 &= ~(TR3_XTRA_MIGHT);
 
+		/* Hack - Set flags known through cumber_*(). Luckily, a mysterious
+		 * failure to encumber the player can only mean one thing. */
+		switch (wield_slot(j_ptr))
+		{
+			case INVEN_HANDS:
+			{
+				if (cumber_glove(j_ptr) && !cumber_glove(o_ptr))
+					j_ptr->art_flags2 |= TR2_FREE_ACT;
+				break;
+			}
+			case INVEN_HEAD:
+			{
+				/* Telepathy is fairly obvious, but this makes it clear. */
+				if (cumber_helm(j_ptr) && !cumber_helm(o_ptr))
+					j_ptr->art_flags3 |= TR3_TELEPATHY;
+				break;
+			}
+		}
+			
+			
+
 		/* If a pval-based flag is known from experience, set the pval. */
 		if (j_ptr->art_flags1 & TR1_PVAL_MASK)
-	{
+		{
 			j_ptr->pval = o_ptr->pval;
 		}
 	}
@@ -3626,7 +3647,10 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	{
 		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
-			info[i++].txt = "It inhibits spellcasting.";
+			/* Hack - the "no encumbrance" flag isn't set without spoilers.
+			 * so double-check as the player has been told. */
+			if (cumber_glove(o1_ptr))
+				info[i++].txt = "It inhibits spellcasting.";
 		}
 		else
 		{
@@ -3638,7 +3662,10 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	{
 		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
-			info[i++].txt = "It inhibits mindcrafting.";
+			/* Hack - the "no encumbrance" flag isn't set without spoilers,
+			 * so double-check as the player has been told. */
+			if (cumber_helm(o1_ptr))
+				info[i++].txt = "It inhibits mindcrafting.";
 		}
 		else
 		{
