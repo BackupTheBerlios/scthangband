@@ -1667,6 +1667,9 @@ static void store_create(void)
 		/* Apply some "low-level" magic (no artifacts) */
 		apply_magic(q_ptr, level, FALSE, FALSE, FALSE);
 
+		/* Store objects never get inscriptions. */
+		q_ptr->note = 0;
+
 		/* Hack -- Charge lite's */
 		if (q_ptr->tval == TV_LITE)
 		{
