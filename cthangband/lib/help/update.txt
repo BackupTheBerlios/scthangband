@@ -12,7 +12,7 @@ sCthangband _CVS_
     wrongly.
   * Loading the "previous" set of stats in quick-start didn't work.
 
-sCthangband 1.0.14
+sCthangband 1.0.15
 * Cause ball attacked aimed in a direction to only be stopped by a wall or a
   visible monster, and those aimed at a target to be stopped by a wall or the
   target.
