@@ -2981,6 +2981,27 @@ s16b launcher_type(object_type *o_ptr)
 
 
 /*
+ * Return the chance of using a device successfully.
+ * Returns 0 if it has no associated skill-based uses.
+ * NB: This assumes that the object contains its flags.
+ */
+static int get_device_chance_dec(object_type *o_ptr)
+{
+	int num,denom;
+	if (!is_wand_p(k_info+o_ptr->k_idx) && (~o_ptr->flags3 & TR3_ACTIVATE))
+	{
+		/* Not a wand, rod, staff or activatable object. */
+		return 0;
+	}
+	else
+	{
+		/* Work it out. */
+		get_device_chance(o_ptr, &num, &denom);
+		return 1000*num/denom;
+	}
+}
+
+/*
  * Find the ammunition tval used by a given launcher.
  * Do not check that this is a missile launcher.
  */
@@ -3027,7 +3048,21 @@ static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 	if (spoil_base && k_info[o_ptr->k_idx].text)
 	{
 		info[i++].txt = k_text+k_info[o_ptr->k_idx].text;
+
+		/* Give the likelihood if appropriate. */
+		switch (o_ptr->tval)
+		{
+			case TV_ROD: case TV_WAND: case TV_STAFF:
+			j = get_device_chance_dec(o_ptr);
+			
+		}
 	}
+
+	j = get_device_chance_dec(o_ptr);
+	if (j) alloc_ifa(info+i++,
+		format("It has a %d.%d%% chance of being used %s.", j/10, j%10,
+		 ((o_ptr->flags3 & TR3_ACTIVATE) && !is_worn_p(o_ptr)) ?
+		 "as soon as you wear it" : "in your current condition"));
 
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE && k_info[o_ptr->k_idx].extra)

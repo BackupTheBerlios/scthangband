@@ -2902,7 +2902,10 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define wand_power(K_PTR) \
 	((((K_PTR)->tval == TV_WAND) || ((K_PTR)->tval == TV_STAFF) || \
-	((K_PTR)->tval == TV_ROD)) ? ((K_PTR)->extra) : 0)
+	((K_PTR)->tval == TV_ROD)) ? ((K_PTR)->extra) : -1)
+
+#define is_wand_p(K_PTR) \
+	(wand_power(K_PTR) != -1)
 
 /*
  * Ego-Items use the "name2" field

@@ -1720,8 +1720,72 @@ void do_cmd_read_scroll(int item)
 
 
 
+/*
+ * Determine the chance of using a magical device as a/b (rand_int(b) < a).
+ *
+ * NB: This does not check that the device is suitable for this calculation.
+ */
+void get_device_chance(object_type *o_ptr, int *num, int *denom)
+{
+	/* Find the object level. */
+	int lev;
+	if (is_wand_p(k_info+o_ptr->k_idx))
+	{
+		lev = MIN(wand_power(k_info+o_ptr->k_idx), 50);
+	}
+	switch (o_ptr->tval)
+	{
+		case TV_ROD: case TV_WAND: case TV_STAFF:
+		{
+		}
+		default:
+		{
+			if (artifact_p(o_ptr))
+			{
+				/* Use the artefact level for normal artefacts. */
+				lev = a_info[o_ptr->name1].level;
+			}
+			else
+			{
+				/* Extract the base item level otherwise. */
+				lev = object_k_level(k_info+o_ptr->k_idx);
+			}
+			/* Limit the difficulty. */
+			lev = MIN(lev, 50);
+		}
+	}
 
+	/* Base chance of success */
+	*num = USE_DEVICE;
+	*denom = p_ptr->skill_dev;
 
+	/* Confusion hurts skill */
+	if (p_ptr->confused) *denom /= 2;
+
+	/* Higher level objects are harder */
+	*denom -= lev;
+
+	/* Give everyone a (slight) chance */
+	if (*denom < USE_DEVICE)
+	{
+		int factor = USE_DEVICE - *denom + 1;
+		*num *= factor;
+		*denom = USE_DEVICE * factor;
+	}
+
+	/* Convert num to the desired form. */
+	(*num) = 1+(*denom)-(*num);
+}
+
+/*
+ * Determine if an attempt to use a magical device succeeded.
+ */
+static bool use_device_p(object_type *o_ptr)
+{
+	int num, denom;
+	get_device_chance(o_ptr, &num, &denom);
+	return (rand_int(denom) < num);
+}
 
 
 /*
@@ -1733,7 +1797,7 @@ void do_cmd_read_scroll(int item)
  */
 void do_cmd_use_staff(int item)
 {
-	int			ident, chance, k, lev;
+	int			ident, k;
 
 	object_type		*o_ptr;
 
@@ -1790,26 +1854,8 @@ void do_cmd_use_staff(int item)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Extract the item level */
-	lev = wand_power(&k_info[o_ptr->k_idx]);
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
-		chance = USE_DEVICE;
-	}
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	/* Roll for failure. */
+	if (!use_device_p(o_ptr))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to use the staff properly.");
@@ -2224,7 +2270,7 @@ static int choose_random_wand(void)
  */
 void do_cmd_aim_wand(int item)
 {
-	int			lev, ident, chance, dir, k_idx;
+	int			ident, k_idx, dir;
 
 	object_type		*o_ptr;
 
@@ -2288,26 +2334,8 @@ void do_cmd_aim_wand(int item)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Get the level */
-	lev = wand_power(&k_info[o_ptr->k_idx]);
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
-		chance = USE_DEVICE;
-	}
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	/* Roll for failure. */
+	if (!use_device_p(o_ptr))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to use the wand properly.");
@@ -2688,7 +2716,7 @@ static bool directional_rod_p(s16b k_idx)
  */
 void do_cmd_zap_rod(int item)
 {
-	int	ident, chance, dir, lev;
+	int			ident, dir;
 
 	object_type		*o_ptr;
 
@@ -2753,37 +2781,19 @@ void do_cmd_zap_rod(int item)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Extract the item level */
-	lev = wand_power(&k_info[o_ptr->k_idx]);
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
-		chance = USE_DEVICE;
-	}
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
-	{
-		if (flush_failure) flush();
-		msg_print("You failed to use the rod properly.");
-		return;
-	}
-
 	/* Still charging */
 	if (o_ptr->pval)
 	{
 		if (flush_failure) flush();
 		msg_print("The rod is still charging.");
+		return;
+	}
+
+	/* Roll for failure. */
+	if (!use_device_p(o_ptr))
+	{
+		if (flush_failure) flush();
+		msg_print("You failed to use the rod properly.");
 		return;
 	}
 
@@ -3257,7 +3267,7 @@ static bool brand_bolts(void)
  */
 void do_cmd_activate(int item)
 {
-    int         i, k, dir, lev, chance;
+    int         i, k, dir, chance;
 
 	object_type *o_ptr;
 
@@ -3303,29 +3313,9 @@ void do_cmd_activate(int item)
 	/* Take a turn */
 	energy_use = TURN_ENERGY/10;
 
-	/* Extract the item level */
-	lev = object_k_level(k_info+o_ptr->k_idx);
 
-	/* Hack -- use artifact level instead */
-	if (artifact_p(o_ptr)) lev = a_info[o_ptr->name1].level;
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
-		chance = USE_DEVICE;
-	}
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	/* Roll for failure. */
+	if (!use_device_p(o_ptr))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to activate it properly.");

@@ -3916,4 +3916,10 @@ extern cptr atchar;
 
 /* (null) */
 
+
+/* cmd6.c */
+
+#if (defined(CMD6_C) || defined(OBJECT1_C))
+extern void get_device_chance(object_type *o_ptr, int *num, int *denom);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
