@@ -1951,9 +1951,6 @@ static void display_store(void)
 
 	/* Display the current gold */
 	store_prt_gold();
-
-	/* Draw in the inventory */
-	display_inventory();
 }
 
 
@@ -2925,7 +2922,6 @@ static void store_purchase(void)
 					if(cur_store_type == STORE_PAWN)
 					{
 						store_top = 0;
-						display_inventory();
 					}
 					else
 					{
@@ -2955,9 +2951,6 @@ static void store_purchase(void)
 
 						/* Start over */
 						store_top = 0;
-
-						/* Redraw everything */
-						display_inventory();
 					}
 				}
 
@@ -2966,20 +2959,6 @@ static void store_purchase(void)
 				{
 					/* Pick the correct screen */
 					if (store_top >= st_ptr->stock_num) store_top -= 12;
-
-					/* Redraw everything */
-					display_inventory();
-				}
-
-				/* Item is still here */
-				else
-				{
-					/* Redraw all entries with the same object kind. */
-					s16b k_idx=st_ptr->stock[item].k_idx;
-					int i = item-1;
-					while (k_idx == st_ptr->stock[++i].k_idx) display_entry(i);
-					i = item;
-					while (k_idx == st_ptr->stock[--i].k_idx) display_entry(i);
 				}
 			}
 
@@ -3014,24 +2993,14 @@ static void store_purchase(void)
 		store_item_increase(item, -amt);
 		store_item_optimize(item);
 
-		/* Hack -- Item is still here */
-		if (i == st_ptr->stock_num)
-		{
-			/* Redraw the item */
-			display_entry(item);
-		}
-
 		/* The item is gone */
-		else
+		if (i != st_ptr->stock_num)
 		{
 			/* Nothing left */
 			if (st_ptr->stock_num == 0) store_top = 0;
 
 			/* Nothing left on that screen */
 			else if (store_top >= st_ptr->stock_num) store_top -= 12;
-
-			/* Redraw everything */
-			display_inventory();
 		}
 	}
 
@@ -3249,7 +3218,6 @@ static void store_sell(void)
 			if (item_pos >= 0)
 			{
 				store_top = (item_pos / 12) * 12;
-				display_inventory();
 			}
 		}
 	}
@@ -3275,7 +3243,6 @@ static void store_sell(void)
 		if (item_pos >= 0)
 		{
 			store_top = (item_pos / 12) * 12;
-			display_inventory();
 		}
 	}
 }
@@ -3420,7 +3387,6 @@ static void store_process_command(void)
 			{
 				store_top += 12;
 				if (store_top >= st_ptr->stock_num) store_top = 0;
-				display_inventory();
 			}
 			break;
 		}
@@ -4130,7 +4096,7 @@ void do_cmd_store(void)
 {
 	int			which;
 
-	int			tmp_chr;
+	int			tmp_chr = 0;
 
 	cave_type		*c_ptr;
 
@@ -4216,9 +4182,6 @@ void do_cmd_store(void)
 	/* Start at the beginning */
 	store_top = 0;
 
-	/* Display the store */
-	display_store();
-
 	/* Do not leave */
 	leave_store = FALSE;
 
@@ -4228,12 +4191,16 @@ void do_cmd_store(void)
 		/* Hack -- Clear line 1 */
 		prt("", 1, 0);
 
-		/* Hack -- Check the charisma */
-		tmp_chr = p_ptr->stat_use[A_CHR];
-
 		/* Clear */
         clear_from(21);
         
+
+		/* Hack -- Check the charisma */
+		if (tmp_chr != p_ptr->stat_use[A_CHR]) display_store();
+		tmp_chr = p_ptr->stat_use[A_CHR];
+
+		/* Display store inventory. */
+		display_inventory();
 
 		/* Basic commands */
 		prt(" ESC) Exit from Building.", 22, 0);
@@ -4368,13 +4335,9 @@ void do_cmd_store(void)
 				if (item_pos >= 0)
 				{
 					store_top = (item_pos / 12) * 12;
-					display_inventory();
 				}
 			}
 		}
-
-		/* Hack -- Redisplay store prices if charisma changes */
-		if (tmp_chr != p_ptr->stat_use[A_CHR]) display_inventory();
 
 		/* Hack -- get kicked out of the store */
 		if (st_ptr->store_open >= turn) leave_store = TRUE;
