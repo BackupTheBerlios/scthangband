@@ -447,7 +447,7 @@ void teleport_player_level(void)
 	/* Don't go any further if you can't. */
 	else if (is_quest(dun_level) || (dun_level >= dun_defs[cur_dungeon].max_level)) into = FALSE;
 	/* Else choose randomly. */
-	else into = (magik(50));
+	else into = (percent(50));
 	
 	/* Get a special message if you leave a tower altogether. */
 	if (!into && dun_defs[cur_dungeon].flags & DF_TOWER && dun_level == 1)

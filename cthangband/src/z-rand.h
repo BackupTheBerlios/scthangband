@@ -50,8 +50,8 @@
 /*
  * Evaluate to TRUE "P" percent of the time
  */
-#define magik(P) \
-	(rand_int(100) < (P))
+#define percent(P) \
+	(((P) > 99) || ((P) > 0 && rand_int(100) < (P)))
 
 #endif
 

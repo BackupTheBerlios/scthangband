@@ -4411,7 +4411,7 @@ bool gain_chaos_feature(int choose_mut)
 	{
 		FOR_ALL_IN(racial_chaos_info, rc_ptr)
 		{
-			if (rc_ptr->race == p_ptr->prace && magik(rc_ptr->chance))
+			if (rc_ptr->race == p_ptr->prace && percent(rc_ptr->chance))
 			{
 				mut = (p_has_mutation(rc_ptr->mutation)) ? 0 : rc_ptr->mutation;
 			}

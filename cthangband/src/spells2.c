@@ -3637,7 +3637,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	{
 		artifact_bias = 0;
 	}
-	else if (magik(cp_ptr->art2_chance))
+	else if (percent(cp_ptr->art2_chance))
 	{
 		artifact_bias = cp_ptr->art2_bias;
 	}

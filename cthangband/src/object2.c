@@ -2891,23 +2891,23 @@ static void apply_magic_1(object_type *o_ptr, const int lev, const bool okay,
 	power = 0;
 
 	/* Roll for "good" */
-	if (good || magik(f1))
+	if (good || percent(f1))
 	{
 		/* Assume "good" */
 		power = 1;
 
 		/* Roll for "great" */
-		if (great || magik(f2)) power = 2;
+		if (great || percent(f2)) power = 2;
 	}
 
 	/* Roll for "cursed" */
-	else if (magik(f1))
+	else if (percent(f1))
 	{
 		/* Assume "cursed" */
 		power = -1;
 
 		/* Roll for "broken" */
-		if (magik(f2)) power = -2;
+		if (percent(f2)) power = -2;
 	}
 
 
