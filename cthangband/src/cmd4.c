@@ -3688,7 +3688,7 @@ void do_cmd_knowledge(void)
 		};
 		knowledge_type knowledge[] = {
 		{"known artifacts", do_cmd_knowledge_artifacts},
-		{"knwon uniques", do_cmd_knowledge_uniques},
+		{"known uniques", do_cmd_knowledge_uniques},
 		{"known objects", do_cmd_knowledge_objects},
 		{"kill count", do_cmd_knowledge_kill_count},
 		{"ancestral causes of death", do_cmd_knowledge_deaths},
