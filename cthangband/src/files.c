@@ -3834,7 +3834,7 @@ static FILE *show_fopen(hyperlink_type *h_ptr, cptr path, cptr name)
 static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 {
 	cptr s;
-	uint w,h,space;
+	int w,h,space;
 	int x;
 	FILE *ftmp = my_fopen_temp(h_ptr->path, sizeof(h_ptr->path));
 	Term_get_size(&w, &h);
@@ -3848,7 +3848,7 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 
 		for (s = h_ptr->rbuf; *s;)
 		{
-			if (strlen(s) < w-x) break;
+			if ((int)strlen(s) < w-x) break;
 
 			for (h = 0, space = 0; h < w-x; h++)
 			{
@@ -3862,7 +3862,7 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 				if (s[h] == ' ') space = h;
 			}
 
-			if (strlen(s) < w-x) break;
+			if ((int)strlen(s) < w-x) break;
 
 			/* If there are no spaces, print the line. */
 			if (!space) space = w-x-1;
@@ -4326,7 +4326,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 
 
 	/* Display the file until a ?, escape, backspace or delete is received. */
-	for (k = 1; !strchr("?\e\b\177", k);)
+	for (k = 1; !strchr("?\033\b\177", k);)
 	{
 		/* Clear screen */
 		clear_from(0);

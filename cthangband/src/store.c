@@ -2639,7 +2639,7 @@ static bool get_check_service(cptr prompt, byte type)
 	while (1)
 	{
 		rc = get_check_aux(
-			prompt, "%.*s[y/n/?]%s%v", "nN\eyY\r?", "\0\0\0\1\1\1?");
+			prompt, "%.*s[y/n/?]%s%v", "nN\033yY\r?", "\0\0\0\1\1\1?");
 
 		/* Accept boolean responses. */
 		if (rc != '?') break;
@@ -4714,7 +4714,7 @@ void store_shuffle(int which)
 	/* Pick a new owner */
 	while (1)
 	{
-		i = rand_int(NUM_OWNERS);
+		int i = rand_int(NUM_OWNERS);
 		owner_type *ow_ptr = owners+i;
 
 		/* Same shopkeeper. */

@@ -1439,7 +1439,7 @@ static errr rd_dungeon(void)
 	/* Header info */
 	rd_s16b(&dun_level);
 	rd_s16b(&dun_offset);
-	rd_s16b(&dun_bias);
+	rd_u16b(&dun_bias);
 	rd_byte (&cur_town);
 	rd_byte (&cur_dungeon);
 	rd_byte (&recall_dungeon);
@@ -1947,7 +1947,7 @@ static errr rd_savefile_new_aux(void)
 #ifdef SF_QUEST_KNOWN
 			if (has_flag(SF_QUEST_KNOWN))
 			{
-				rd_char(&tmp8u);
+				rd_byte(&tmp8u);
 				q_ptr->known = tmp8u;
 			}
 			else

@@ -3131,7 +3131,7 @@ bool get_check(cptr prompt)
 	/* Help */
 	help_track("yn_prompt");
 
-	rc = get_check_aux(prompt, "%.*s[y/n]%s%v", "nN\eyY\r", "\0\0\0\1\1\1");
+	rc = get_check_aux(prompt, "%.*s[y/n]%s%v", "nN\033yY\r", "\0\0\0\1\1\1");
 
 	/* Leave a message. */
 	message_add(format(0));
