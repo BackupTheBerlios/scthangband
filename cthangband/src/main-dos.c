@@ -949,7 +949,7 @@ static errr Term_user_dos(int n)
 
 				/* Prompt */
 				prt("Command: Screen Resolution", 1, 0);
-				prt("Restart Cthangband to get the new screenmode.", 3, 0);
+				prt("Restart sCthangband to get the new screenmode.", 3, 0);
 
 				/* Get a list of the available presets */
 				while (1)

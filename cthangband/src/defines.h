@@ -34,12 +34,13 @@
 
 
 /*
- * Current version number of Cthangband: 4.1.0 (increased to 4.1.3 unofficially)
+ * Current version number of sCthangband: 1.0.0
  */
 
 /* <<VERSION STAMP>> */
-#define VERSION_MAJOR   4
-#define VERSION_MINOR   1
+#define GAME_NAME	"sCthangband"
+#define VERSION_MAJOR   1
+#define VERSION_MINOR   0
 #define VERSION_PATCH   0
 
 

@@ -19,7 +19,7 @@
 
 # Version stamp (required)
 
-V:4.1.0
+V:1.0.0
 
 
 ##### The Player #####

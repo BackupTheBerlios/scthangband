@@ -3329,7 +3329,7 @@ errr file_character(cptr name, bool UNUSED full)
 
 
 	/* Begin dump */
-	fprintf(fff, "  [Cthangband %d.%d.%d Character Dump]\n\n",
+	fprintf(fff, "  [%s %d.%d.%d Character Dump]\n\n", GAME_NAME, 
 	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 
@@ -3857,7 +3857,7 @@ static bool do_cmd_help_aux(cptr name, cptr what, int line)
 		}
 
 		/* Show a general "title" */
-		prt(format("[Cthangband %d.%d.%d, %s, Line %d/%d]",
+		prt(format("[%s %d.%d.%d, %s, Line %d/%d]", GAME_NAME, 
 		           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
 		           caption, line, size), 0, 0);
 
@@ -4925,7 +4925,7 @@ static void display_scores_aux(int from, int to, int note, high_score *score)
 		Term_clear();
 
 		/* Title */
-        put_str("               Cthangband Hall of Fame", 0, 0);
+        put_str("              sCthangband Hall of Fame", 0, 0);
 
 		/* Indicate non-top scores */
 		if (k > 0)

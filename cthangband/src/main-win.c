@@ -449,7 +449,7 @@ static cptr ini_file = NULL;
 /*
  * Name of application
  */
-static cptr AppName  = "Cthangband";
+static cptr AppName  = "sCthangband";
 
 /*
  * Name of sub-window type
@@ -3186,8 +3186,8 @@ static void process_menus(WORD wCmd)
 		case IDM_HELP_ABOUT:
 		{
 			char buf[80];
-			sprintf(buf,"Cthangband %d.%d.%d",version_major,version_minor,version_patch);
-			MessageBox(data[0].w,"Cthangband is maintained by Dean Anderson ('angbandaddict@cthangband.8m.com')\nFor discussion of this and other Angband variants, visit the Angband newsgroup\n(rec.games.roguelike.angband).",buf, MB_ICONEXCLAMATION | MB_OK);
+			sprintf(buf,"sCthangband %d.%d.%d",version_major,version_minor,version_patch);
+			MessageBox(data[0].w,"sCthangband is maintained by Kieron Dunbar ('kieron@dimetrodon.demon.co.uk')\nFor discussion of this and other Angband variants, visit the Angband newsgroup\n(rec.games.roguelike.angband).",buf, MB_ICONEXCLAMATION | MB_OK);
 			break;
 		}
 		default:

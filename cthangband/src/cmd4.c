@@ -1087,7 +1087,7 @@ void do_cmd_options(void)
 		Term_clear();
 
 		/* Why are we here */
-		prt("Cthangband options", 2, 0);
+		prt("Game Options", 2, 0);
 
 		/* Give some choices */
 		prt("(1) User Interface Options", 4, 5);
@@ -2795,7 +2795,7 @@ void do_cmd_note(void)
 void do_cmd_version(void)
 {
    /* Silly message */
-    msg_format("You are playing Cthangband %d.%d.%d.",
+    msg_format("You are playing %s %d.%d.%d.", GAME_NAME, 
 	           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 	/* These are ANSI standard constants so should work on any compiler */
 	msg_format("(Compiled %s %s)", __TIME__, __DATE__);
