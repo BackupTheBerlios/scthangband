@@ -680,7 +680,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	 * object_value_base() amongst other things). */
 	else
 	{
-		j_ptr->k_idx = lookup_kind(TV_UNKNOWN,SV_UNKNOWN);
+		j_ptr->k_idx = lookup_kind(0,0); /* != 0 */
 		j_ptr->tval = TV_UNKNOWN;
 		j_ptr->sval = SV_UNKNOWN;
 	}
@@ -1235,7 +1235,7 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* If k_ptr is nonsensical, use k_info[0] instead. */
-	if (!k_ptr->name) k_ptr = k_info;
+	/* if (!k_ptr->name) k_ptr = k_info; */
 
 	u_ptr = u_info+x_ptr->u_idx;
 	ob_ptr = o_base+u_ptr->p_id;

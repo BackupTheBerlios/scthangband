@@ -235,10 +235,9 @@ D:Moon wine obtained from the Zoogs according to the shopkeeper.
 
 ## XXX 28 XXX ##
 
-## Hack - an unknown object ##
+# There needs to be at least one empty object kind for unknown objects.
 
-N:29:(unknown)
-I:255:255:0
+## XXX 29 XXX ##
 
 ##### Edged Weapons #####
 
