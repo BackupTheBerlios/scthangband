@@ -738,6 +738,7 @@ static bc_type birth_option(void)
 {
 	bool old_allow_quickstart = allow_quickstart;
 	bool old_allow_pickstats = allow_pickstats;
+	bool old_maximise_mode = maximise_mode;
 	Term_save();
 	do_cmd_options_aux(7, "Startup Options", NULL);
 	Term_load();

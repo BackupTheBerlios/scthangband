@@ -119,6 +119,8 @@ u16b total_winner;		/* Semi-Hack -- Game has been won */
 u16b panic_save;		/* Track some special "conditions" */
 u16b noscore;			/* Track various "cheating" conditions */
 
+bool use_transparency = FALSE; /* Use transparent tiles */
+
 s16b signal_count;		/* Hack -- Count interupts */
 
 bool inkey_base;		/* See the "inkey()" function */

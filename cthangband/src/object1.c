@@ -163,8 +163,8 @@ static void get_scroll_name(char * out_string, uint length)
  */
 static void name_scrolls(void)
 {
-	u16b scroll_idx[z_info->u_max];
 	int i, j, scrolls;
+	C_TNEW(scroll_idx, z_info->u_max, u16b);
 
 	/* Iterate through the scrolls, renaming each in turn. */
 	for (i = 0, scrolls = -1; i < z_info->u_max; i++)
@@ -206,6 +206,8 @@ static void name_scrolls(void)
 			}
 		} while (j < scrolls);
 	}
+
+	TFREE(scroll_idx);
 }
 
 
@@ -260,8 +262,9 @@ void flavor_init(void)
 	 */
 	for (i = 0; i < 256; i++)
 	{
-		s16b k_idx[z_info->k_max], u_idx[z_info->u_max];
 		s16b k_top, u_top;
+		C_TNEW(k_idx, z_info->k_max, s16b);
+		C_TNEW(u_idx, z_info->u_max, s16b);
 
 		/* Ignore flavourless p_ids */
 		if (base_only[i] != -1) continue;
@@ -289,6 +292,9 @@ void flavor_init(void)
 			/* Remove it from further consideration. */
 			u_idx[k] = u_idx[u_top];
 		}
+
+		TFREE(k_idx);
+		TFREE(u_idx);
 	}
 
 	/* Hack -- Use the "complex" RNG */
@@ -1182,7 +1188,7 @@ static char *object_desc_int(char *t, sint v)
 void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 {
 	/* The strings from which buf is compiled. */
-	C_TNEW(strings, 8, cptr) = {0,0,0,0,0,0,0,0};
+	cptr strings[8] = {0,0,0,0,0,0,0,0};
 
 /* If a CH_ARTICLE would cause an article to be prepended, this is set
  * to ARTICLE_REQUEST. If one is found, it is changed to ARTICLE_LETTER.
@@ -1440,9 +1446,6 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 			strncpy(tmp_val, "a ", 2);
   		}
 	}
-
-	/* The rest follows a hard-coded format. */
-	TFREE(strings);
 
 	/* No more details wanted */
 	if (mode < 1) goto copyback;

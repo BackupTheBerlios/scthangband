@@ -111,12 +111,16 @@
 #define UNUSED
 #endif
 
-/* Avoid variable-length arrays unless supported. */
+/* Avoid variable-length arrays unless allowed and supported. */
+#ifndef NO_VARIABLE_ARRAYS
 #if defined(__GNUC__) || \
 	(defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L))
 #define VARIABLE_ARRAYS
+# endif
 #endif
 
+/* Allow real types to be defined (note that "real" is a type for MSVC). */
+/* #define USE_FLOAT */
 
 
 /*

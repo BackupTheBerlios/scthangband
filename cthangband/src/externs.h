@@ -14,9 +14,9 @@
 #if (defined(BIRTH_C) || defined(FILES_C))
 extern int maxstat(int race, int temp, int stat);
 #endif
-
-
-
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(GENERATE_C))
+extern void create_random_name(int race, char *name);
+#endif
 #if (defined(BIRTH_C) || defined(DUNGEON_C))
 extern void player_birth(void);
 #endif
@@ -39,12 +39,7 @@ extern bool no_lite(void);
 extern bool cave_valid_bold(int y, int x);
 #endif
 #if (defined(CAVE_C) || defined(MAIN_AMI_C))
-extern void map_info(int y, int x, byte *ap, char *cp,
-#ifdef USE_TRANSPARENCY
-	byte *tap, char *tcp
-#endif /* USE_TRANSPARENCY */
-	)
-;
+extern void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp);
 #endif
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern void move_cursor_relative(int row, int col);
@@ -503,6 +498,9 @@ extern void do_cmd_suicide(void);
 extern void do_cmd_save_game(bool is_autosave);
 #endif
 #if (defined(FILES_C) || defined(MAIN_WIN_C))
+extern int highscore_fd ;
+#endif
+#if (defined(FILES_C) || defined(MAIN_WIN_C))
 extern void display_scores_aux(int from, int to, int note, high_score *score);
 #endif
 #if (defined(FILES_C) || defined(MAIN_EMX_C) || defined(MAIN_C))
@@ -800,9 +798,6 @@ extern int create_menus( void );
 #endif
 #if (defined(MAIN_AMI_C))
 extern void update_menus( void );
-#endif
-#if (defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_WIN_C))
-extern int init_sound( void );
 #endif
 #if (defined(MAIN_AMI_C))
 extern void free_sound( void );
@@ -2373,6 +2368,9 @@ extern bool c_roff(byte a, cptr str);
 #if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void roff(cptr str);
 #endif
+#if (defined(BIRTH_C) || defined(UTIL_C) || defined(XTRA1_C))
+extern void mc_roff(cptr s);
+#endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void clear_from(int row);
 #endif
@@ -2414,6 +2412,12 @@ extern  bool repeat_pull(int *what);
 #endif
 #if (defined(ALLOW_REPEAT)) && (defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C))
 extern  void repeat_check(void);
+#endif
+#if (defined(SUPPORT_GAMMA)) && (defined(MAID_X11_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
+extern byte gamma_table[256];
+#endif
+#if (defined(SUPPORT_GAMMA)) && (defined(MAID_X11_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
+extern void build_gamma_table(int gamma);
 #endif
 
 /* variable.c */
@@ -2580,6 +2584,9 @@ extern u16b panic_save;
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
 extern u16b noscore;
 #endif
+#if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(VARIABLE_C))
+extern bool use_transparency ;
+#endif
 #if (defined(FILES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern s16b signal_count;
 #endif
@@ -2592,7 +2599,7 @@ extern bool inkey_xtra;
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
 extern bool inkey_scan;
 #endif
-#if (defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(UTIL_C) || defined(VARIABLE_C))
+#if (defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool inkey_flag;
 #endif
 #if (defined(OBJECT2_C) || defined(VARIABLE_C) || defined(XTRA2_C))
@@ -3300,7 +3307,7 @@ extern char *f_text;
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C))
 extern object_kind *k_info;
 #endif
-#if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *k_name;
 #endif
 #if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
@@ -3309,7 +3316,7 @@ extern char *k_text;
 #if (defined(DEFINES_H) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
 extern unident_type *u_info;
 #endif
-#if (defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(VARIABLE_C))
 extern char *u_name;
 #endif
 #if (defined(INIT1_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(VARIABLE_C))
@@ -3784,12 +3791,7 @@ extern errr Term_user(int n);
 extern errr Term_xtra(int n, int v);
 #endif
 #if (defined(CAVE_C) || defined(Z_TERM_C))
-extern void Term_queue_char(int x, int y, byte a, char c
-#ifdef USE_TRANSPARENCY
-	,byte ta, char tc
-#endif
-	)
-;
+extern void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ACN_C) || defined(MAIN_AMI_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_fresh(void);
@@ -3946,23 +3948,5 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
-#endif
-
-/* files.c */
-
-#if (defined(FILES_C) || defined(MAIN_WIN_C))
-extern int highscore_fd ;
-#endif
-
-/* util.c */
-
-#if (defined(BIRTH_C) || defined(UTIL_C) || defined(XTRA1_C))
-extern void mc_roff(cptr s);
-#endif
-
-/* birth.c */
-
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(GENERATE_C))
-extern void create_random_name(int race, char *name);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

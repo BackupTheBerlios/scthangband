@@ -1531,12 +1531,10 @@ static errr grab_one_object_flag(u32b **flag, cptr what)
 
 static errr grab_one_kind_flag(object_kind *ptr, cptr what)
 {
-	u32b *f[3] =
-	{
-		&(ptr->flags1),
-		&(ptr->flags2),
-		&(ptr->flags3),
-	};
+	u32b *f[3];
+	f[0] = &(ptr->flags1);
+	f[1] = &(ptr->flags2);
+	f[2] = &(ptr->flags3);
 	return grab_one_object_flag(f, what);
 }
 
@@ -2030,12 +2028,10 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
  */
 static errr grab_one_artifact_flag(artifact_type *ptr, cptr what)
 {
-	u32b *f[3] =
-	{
-		&(ptr->flags1),
-		&(ptr->flags2),
-		&(ptr->flags3),
-	};
+	u32b *f[3];
+	f[0] = &(ptr->flags1);
+	f[1] = &(ptr->flags2);
+	f[2] = &(ptr->flags3);
 	return grab_one_object_flag(f, what);
 }
 
@@ -2187,12 +2183,10 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
  */
 static errr grab_one_ego_item_flag(ego_item_type *ptr, cptr what)
 {
-	u32b *f[3] =
-	{
-		&(ptr->flags1),
-		&(ptr->flags2),
-		&(ptr->flags3),
-	};
+	u32b *f[3];
+	f[0] = &(ptr->flags1);
+	f[1] = &(ptr->flags2);
+	f[2] = &(ptr->flags3);
 	return grab_one_object_flag(f, what);
 }
 

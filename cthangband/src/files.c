@@ -5938,9 +5938,10 @@ static void make_record(high_score *score)
 	time_t ct = time(NULL);
 	FILE *fp;
 	char str[1024];
-	path_build(str, 1024, ANGBAND_DIR_APEX, "record.txt");
 	cptr dun_str;
 	int dun;
+
+	path_build(str, 1024, ANGBAND_DIR_APEX, "record.txt");
 
 	fp = my_fopen(str, "a");
 
@@ -5957,7 +5958,7 @@ static void make_record(high_score *score)
 	}
 	else
 	{
-		strftime(str, 1024, "%-d %b %Y %H:%M:%S", localtime(&ct));
+		strftime(str, 1024, "%d %b %Y %H:%M:%S", localtime(&ct));
 	}
 
 	dun = wild_grid[wildy][wildx].dungeon;

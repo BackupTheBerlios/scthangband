@@ -75,8 +75,6 @@
 
 #include "angband.h"
 
-#include "maid-grf.h"
-
 
 #ifdef WINDOWS
 
@@ -2505,7 +2503,7 @@ static void init_windows(void)
 	/* Main window */
 	td = &data[0];
 	WIPE(td, term_data);
-	td->s = angband_term_name[0];
+	td->s = windows[0].name;
 	td->keys = 1024;
 	td->rows = 24;
 	td->cols = 80;
@@ -2522,7 +2520,7 @@ static void init_windows(void)
 	{
 		td = &data[i];
 		WIPE(td, term_data);
-		td->s = angband_term_name[i];
+		td->swindowse;
 		td->keys = 16;
 		td->rows = 24;
 		td->cols = 80;
@@ -2613,7 +2611,7 @@ static void init_windows(void)
 		}
 
 		term_data_link(td);
-		angband_term[i] = &td->t;
+		windows[i].term = &td->t;
 
 		if (td->visible)
 		{
@@ -2721,14 +2719,14 @@ static void setup_menus(void)
 	}
 
 	/* A character available */
-	if (game_in_progress && character_generated && p_ptr->inkey_flag)
+	if (game_in_progress && character_generated && inkey_flag)
 	{
 		/* Menu "File", Item "Save" */
 		EnableMenuItem(hm, IDM_FILE_SAVE, MF_BYCOMMAND | MF_ENABLED);
 	}
 
 	if (!game_in_progress || !character_generated ||
-	    (p_ptr->inkey_flag))
+	    (inkey_flag))
 	{
 		/* Menu "File", Item "Exit" */
 		EnableMenuItem(hm, IDM_FILE_EXIT, MF_BYCOMMAND | MF_ENABLED);
@@ -2872,7 +2870,7 @@ static void setup_menus(void)
 	              (low_priority ? MF_CHECKED : MF_UNCHECKED));
 
 #ifdef USE_GRAPHICS
-	if (initialized && p_ptr->inkey_flag)
+	if (initialized && inkey_flag)
 	{
 		/* Menu "Options", Item "Graphics" */
 		EnableMenuItem(hm, IDM_OPTIONS_NO_GRAPHICS, MF_ENABLED);
@@ -2884,7 +2882,7 @@ static void setup_menus(void)
 #endif /* USE_GRAPHICS */
 
 #ifdef USE_SOUND
-	if (initialized && p_ptr->inkey_flag)
+	if (initialized && inkey_flag)
 	{
 		/* Menu "Options", Item "Sound" */
 		EnableMenuItem(hm, IDM_OPTIONS_SOUND, MF_ENABLED);
@@ -3205,7 +3203,7 @@ static void process_menus(WORD wCmd)
 		case IDM_FILE_SAVE:
 		{
 			if (game_in_progress && character_generated &&
-			    p_ptr->inkey_flag)
+			    inkey_flag)
 			{
 				/* Hack -- Forget messages */
 				msg_flag = FALSE;
@@ -3285,7 +3283,7 @@ static void process_menus(WORD wCmd)
 			if (game_in_progress && character_generated)
 			{
 				/* Paranoia */
-				if (!p_ptr->inkey_flag)
+				if (!inkey_flag)
 				{
 					plog("You may not do that right now.");
 					break;
@@ -3487,7 +3485,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_NO_GRAPHICS:
 		{
 			/* Paranoia */
-			if (!p_ptr->inkey_flag || !initialized)
+			if (!inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3511,7 +3509,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_OLD_GRAPHICS:
 		{
 			/* Paranoia */
-			if (!p_ptr->inkey_flag || !initialized)
+			if (!inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3535,7 +3533,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_NEW_GRAPHICS:
 		{
 			/* Paranoia */
-			if (!p_ptr->inkey_flag || !initialized)
+			if (!inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3559,7 +3557,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_SOUND:
 		{
 			/* Paranoia */
-			if (!p_ptr->inkey_flag || !initialized)
+			if (!inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3883,7 +3881,7 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		{
 			if (game_in_progress && character_generated)
 			{
-				if (!p_ptr->inkey_flag)
+				if (!inkey_flag)
 				{
 					plog("You may not do that right now.");
 					return 0;
@@ -4880,7 +4878,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	check_for_save_file(lpCmdLine);
 
 	/* Prompt the user */
-	prt("[Choose 'New' or 'Open' from the 'File' menu]", 17, 23);
+	prt("[Choose 'New' or 'Open' from the 'File' menu]", 23, 17);
 	Term_fresh();
 
 	/* Process messages forever */

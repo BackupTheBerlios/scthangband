@@ -51,8 +51,10 @@ typedef void *vptr;
 typedef const char *cptr;
 
 
+#ifdef USE_FLOAT
 /* Since float's are silly, hard code real numbers as doubles */
 typedef double real;
+#endif /* USE_FLOAT */
 
 
 /* Error codes for function return values */
@@ -131,7 +133,9 @@ typedef unsigned long u32b;
 
 /*** Pointers to all the basic types defined above ***/
 
+#ifdef USE_FLOAT
 typedef real *real_ptr;
+#endif /* USE_FLOAT */
 typedef errr *errr_ptr;
 typedef char *char_ptr;
 typedef byte *byte_ptr;

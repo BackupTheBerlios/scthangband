@@ -538,7 +538,7 @@ static char *handle_font(struct term_data *td, char *fontname);
 ULONG trans ( byte g );
 int create_menus ( void );
 void update_menus ( void );
-int init_sound ( void );
+static int init_sound ( void );
 void free_sound ( void );
 static void play_sound ( int v );
 void put_gfx_map ( term_data *td, int x, int y, int c, int a );
@@ -4270,7 +4270,7 @@ void update_menus( void )
 	/* Attach menu to window again */
 }
 
-int init_sound( void )
+static int init_sound( void )
 {
 	static char tmp[MAX_PATH_LENGTH];
 	static char buf[MAX_PATH_LENGTH];

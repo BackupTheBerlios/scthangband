@@ -1798,7 +1798,7 @@ void do_cmd_macros(void)
  * deals with another.
  */
 
-typedef const struct visual_type visual_type;
+typedef struct visual_type visual_type;
 
 struct visual_type
 {
@@ -1832,7 +1832,7 @@ struct visual_type
 	cptr initstring;
 
 	/* The number of entries available (usually set during initialisation). */
-	u16b *max;
+	u16b max;
 
 	/* The character which starts every preference line to indicate the type. */
 	char startchar; 
@@ -1877,16 +1877,12 @@ get_visuals(f_info, f_name)
 static void get_visuals_obj(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
 {
 	C_TNEW(o_name, ONAME_MAX, char);
+	object_type forge;
 
 	/* Get most of the visuals. */
-/*	get_visuals(k_info, k_name);*/
-	(*da) = k_info[i].d_attr;
-	(*dc) = k_info[i].d_char;
-	(*xa) = &(k_info[i].x_attr);
-	(*xc) = &(k_info[i].x_char);
+	get_visuals(k_info, k_name);
 
 	/* Create the object */
-	object_type forge;
 	object_prep(&forge, i);
 
 	/* Describe the object without flavour. */
@@ -1921,18 +1917,13 @@ static void get_visuals_moncol(int i, cptr *name, byte *da, char *dc, byte **xa,
  */
 static void get_visuals_unident(int i, cptr *name, byte *da, char *dc, byte **xa, char **xc)
 {
-	C_TNEW(o_name, ONAME_MAX, char);
-
-	/* Get most of the visuals. */
-	/* get_visuals(u_info, u_name); */
-	(*da) = u_info[i].d_attr;
-	(*dc) = u_info[i].d_char;
-	(*xa) = &(u_info[i].x_attr);
-	(*xc) = &(u_info[i].x_char);
-
 	/* Set everything up. k_info[1] is arbitrary, but it certainly exists. */
 	object_kind hack_k, *k_ptr = &k_info[1];
 	object_type o_ptr[1];
+	C_TNEW(o_name, ONAME_MAX, char);
+
+	/* Get most of the visuals (including a mangled name). */
+	get_visuals(u_info, u_name);
 
 	/* Put *k_ptr somewhere safe and clear it. */
 	COPY(&hack_k, k_ptr, object_kind);
@@ -2044,27 +2035,30 @@ void do_cmd_visuals(void)
 
 	char buf[1024];
 
-	/* max_moncol is a macro, so set a variable to it so that it can be
-	 * given a pointer. */
-	u16b max_moncol = MAX_MONCOL;
-
 	/* Enter in the data for the various types of thing being altered. */
 	visual_type visual[5] =
 	{
 		{"monster attr/chars", get_visuals_mon, 0, pref_str_std,
-			0, "Monster attr/char definitions", &MAX_R_IDX, 'R', TRUE, TRUE},
+			0, "Monster attr/char definitions", 0, 'R', TRUE, TRUE},
 		{"object attr/chars", get_visuals_obj, 0, pref_str_std,
-			visual_reject_obj, "Object attr/char definitions", &MAX_K_IDX, 'K',
+			visual_reject_obj, "Object attr/char definitions", 0, 'K',
 			TRUE, TRUE},
 		{"feature attr/chars", get_visuals_feat, 0, pref_str_std,
-			visual_reject_feat, "Feature attr/char definitions", &MAX_F_IDX, 
-			'F', TRUE, TRUE},
+			visual_reject_feat, "Feature attr/char definitions", 0, 'F', TRUE,
+			TRUE},
 		{"monster memory attrs", get_visuals_moncol, visual_dump_moncol, 0,
-			0, "Monster memory attr definitions", &max_moncol, 'M', TRUE, FALSE},
+			0, "Monster memory attr definitions", 0, 'M', TRUE, FALSE},
 		{"unidentified object attr/chars", get_visuals_unident, 0,
 			pref_str_unident, 0, "Unidentified object attr/char definitions",
-			&MAX_U_IDX, 'U', TRUE, TRUE},
+			0, 'U', TRUE, TRUE},
 	};
+
+	/* Enter the maxima separately, as they are determined at run-time. */
+	visual[0].max = MAX_R_IDX;
+	visual[1].max = MAX_K_IDX;
+	visual[2].max = MAX_F_IDX;
+	visual[3].max = MAX_MONCOL;
+	visual[4].max = MAX_U_IDX;
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -2169,7 +2163,7 @@ void do_cmd_visuals(void)
 				fprintf(fff, "%c:---reset---\n\n", vs_ptr->startchar);
 
 				/* Dump entries */
-				for (i = 0; i < *vs_ptr->max; i++)
+				for (i = 0; i < vs_ptr->max; i++)
 				{
 					cptr name;
 					byte da, *xa;
@@ -2211,7 +2205,7 @@ void do_cmd_visuals(void)
 			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
 
 			int inc, max, num;
-			uint r = *vs_ptr->max-1, *out;
+			uint r = vs_ptr->max-1, *out;
 
 			bool started = FALSE;
 
@@ -2303,7 +2297,7 @@ dcv_retry:
 					case 'n':
 						prompt = "Select number of desired entry: ";
 						out = &r;
-						max = *vs_ptr->max;
+						max = vs_ptr->max;
 						break;
 					case 'a':
 						prompt = "Select number of desired colour: ";

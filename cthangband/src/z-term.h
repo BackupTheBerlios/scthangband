@@ -45,14 +45,11 @@ struct term_win
 	byte *va;
 	char *vc;
 
-#ifdef USE_TRANSPARENCY
 	byte **ta;
 	char **tc;
 
 	byte *vta;
 	char *vtc;
-#endif /* USE_TRANSPARENCY */
-
 };
 
 
@@ -219,11 +216,7 @@ struct term
 
 	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
 
-#ifdef USE_TRANSPARENCY
 	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp);
-#else /* USE_TRANSPARENCY */
-	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp);
-#endif /* USE_TRANSPARENCY */
 
 	void (*resize_hook)(void);
 };

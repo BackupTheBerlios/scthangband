@@ -3208,6 +3208,15 @@ extern int PlayerUID;
 #endif
 
 /*
+ * Available graphic modes
+ */
+#define GRAPHICS_NONE         0
+#define GRAPHICS_ORIGINAL     1
+#define GRAPHICS_ADAM_BOLT    2
+#define GRAPHICS_ANY          3
+#define GRAPHICS_HALF_3D      4
+
+/*
  * Decide whether to display an object by its u_info representation.
  * Never do it with objects which have no u_info counterpart.
  * Always do it with unknown objects.

@@ -2404,9 +2404,7 @@ errr init_x11(int argc, char **argv)
 			/* Use graphics */
 			use_graphics = TRUE;
 
-#ifdef HAS_USE_TRANSPARENCY_VAR
 			use_transparency = TRUE;
-#endif /* HAS_USE_TRANSPARENCY_VAR */
 
 			pict_wid = pict_hgt = 16;
 

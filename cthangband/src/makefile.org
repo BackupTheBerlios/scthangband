@@ -117,12 +117,16 @@ CC = gcc
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" -D"USE_XPJ" \
+# Specifying -ansi -pedantic generates a number of irrelevant warnings, but
+# it doesn't prevent compiling and generates some important warnings.
+
+CFLAGS = -O0 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" -D"USE_XPJ" \
 	-D"USE_TRANSPARENCY" -D"USE_GTK" `gtk-config --cflags` \
 	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
 	-Wno-long-long -Wwrite-strings -Wpointer-arith \
 	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
 	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes \
+	#-ansi -pedantic -D"NO_VARIABLE_ARRAYS"
 	#-Wredundant-decls \
 
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib `gtk-config --libs` 

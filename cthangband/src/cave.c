@@ -555,15 +555,6 @@ static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
 	return (a >= 0);
 }
 
-/* Use a single call method for various functions. */
-#ifdef USE_TRANSPARENCY
-#define map_info_w(y,x,ap,cp,tap,tcp) map_info(y,x,ap,cp,tap,tcp)
-#define Term_queue_char_w(x,y,a,c,ta,tc) Term_queue_char(x,y,a,c,ta,tc)
-#else /* USE_TRANSPARENCY */
-#define map_info_w(y,x,ap,cp,tap,tcp) map_info(y,x,ap,cp)
-#define Term_queue_char_w(x,y,a,c,ta,tc) Term_queue_char(x,y,a,c)
-#endif /* USE_TRANSPARENCY */
-
 
 /*
  * Extract the attr/char to display at the given (legal) map location
@@ -685,11 +676,7 @@ static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
  * "x_ptr->xxx", is quicker than "x_info[x].xxx", if this is incorrect
  * then a whole lot of code should be changed...  XXX XXX
  */
-void map_info(int y, int x, byte *ap, char *cp,
-#ifdef USE_TRANSPARENCY
-	byte *tap, char *tcp
-#endif /* USE_TRANSPARENCY */
-	)
+void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 {
 	cave_type *c_ptr;
 
@@ -708,10 +695,10 @@ void map_info(int y, int x, byte *ap, char *cp,
 		f_ptr = f_info+FEAT_ILLEGAL;
 		*ap = f_ptr->x_attr;
 		*cp = f_ptr->x_char;
-#ifdef USE_TRANSPARENCY
+
 		*tap = f_ptr->x_attr;
 		*tcp = f_ptr->x_char;
-#endif /* USE_TRANSPARENCY */
+
 		return;
 	}
 
@@ -992,11 +979,9 @@ void map_info(int y, int x, byte *ap, char *cp,
 		image_random(ap, cp);
 	}
 
-#ifdef USE_TRANSPARENCY
 	/* Save the terrain info for the transparency effects */
 	(*tap) = a;
 	(*tcp) = c;
-#endif /* USE_TRANSPARENCY */
 
 	/* Save the info */
 	(*ap) = a;
@@ -1395,13 +1380,11 @@ void lite_spot(int y, int x)
 		byte a;
 		char c;
 
-#ifdef USE_TRANSPARENCY
 		byte ta;
 		char tc;
-#endif /* USE_TRANSPARENCY */
 
 		/* Examine the grid */
-		map_info_w(y, x, &a, &c, &ta, &tc);
+		map_info(y, x, &a, &c, &ta, &tc);
 
 		/* Hack -- fake monochrome */
 		if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
@@ -1410,7 +1393,7 @@ void lite_spot(int y, int x)
 			&& (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
 
 		/* Hack -- Queue it */
-		Term_queue_char_w(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c, ta, tc);
+		Term_queue_char(x-X_SCREEN_ADJ, y-Y_SCREEN_ADJ, a, c, ta, tc);
 	}
 }
 
@@ -1449,13 +1432,11 @@ void prt_map(void)
 			byte a;
 			char c;
 
-#ifdef USE_TRANSPARENCY
 			byte ta;
 			char tc;
-#endif /* USE_TRANSPARENCY */
 
 			/* Determine what is there */
-			map_info_w(y, x, &a, &c, &ta, &tc);
+			map_info(y, x, &a, &c, &ta, &tc);
 
 			/* Hack -- fake monochrome */
 			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
@@ -1464,7 +1445,7 @@ void prt_map(void)
 				&& (p_ptr->wraith_form && use_color )) a = TERM_L_DARK;
 
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char_w(cx, cy, a, c, ta, tc);
+			Term_queue_char(cx, cy, a, c, ta, tc);
 		}
 	}
 
@@ -1657,7 +1638,7 @@ void display_map(int *cy, int *cx, bool max)
 			y = j / ratio + 1;
 
 			/* Extract the current attr/char at that map location */
-			map_info_w(j, i, &ta, &tc, &ta, &tc);
+			map_info(j, i, &ta, &tc, &ta, &tc);
 
 			/* Extract the priority of that attr/char */
 			tp = priority(ta, tc);
