@@ -1596,10 +1596,6 @@ static cptr PURE item_activation(object_ctype *o_ptr)
 				return "teleport (range 100) every 50+d50 turns";
 			case ACT_RECALL:
 				return "word of recall every 200 turns";
-			case 0:
-				break;
-			default:
-				return "a bad randart activation";
 		}
 
 	/* Some artifacts can be activated */
@@ -1757,8 +1753,15 @@ static cptr PURE item_activation(object_ctype *o_ptr)
 			return "breathe the elements (300) every 300+d300 turns";
 	}
 
+	{
+		cptr s = describe_object_power(o_ptr);
+		if (s) return safe_string_make(s);
+	}
+
 	/* Error types */
-	switch (o_ptr->tval)
+	if (o_ptr->activation) return "a bad randart activation";
+
+	else switch (o_ptr->tval)
 	{
 		case TV_RING:
 			return "a bad ring activation";
@@ -2665,13 +2668,23 @@ static void identify_fully_get(object_ctype *o1_ptr, cptr *info, byte flags)
 	/* Mega-Hack -- describe activation */
 	if (o_ptr->flags3 & (TR3_ACTIVATE))
 	{
-		info[i++] = "It can be activated for...";
-		info[i++] = item_activation(o_ptr);
+		cptr act = item_activation(o_ptr);
+
+		/* 
+		 * Hack - describe_object_power() and item_activation() don't produce
+		 * grammatically equivalent sentences.
+		 */
+		if (ISUPPER(act[0]))
+			info[i++] = "When activated...";
+		else
+			info[i++] = "It can be activated for...";
+
+		info[i++] = act;
 		info[i++] = "...if it is being worn.";
 	}
 
 	/* Describe use of the base object, if any. */
-	if (spoil_base && !brief)
+	else if (spoil_base && !brief)
 	{
 		/* There's a description in k_info.txt. */
 		if (k_info[o_ptr->k_idx].text)

@@ -3893,7 +3893,7 @@ extern vptr (*ralloc_aux)(huge);
 #if (defined(ANGBAND_H) || defined(Z_VIRT_H) || defined(Z_VIRT_C))
 extern vptr ralloc(huge len);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(UI_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(Z_VIRT_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(UI_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(Z_VIRT_C))
 extern char *string_make(cptr str);
 #endif
 #if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))

@@ -392,18 +392,25 @@ static errr power_project_ball(int power, int dir, bool *ident)
 static cptr balls_to_strings(project_ball_type **table, int total)
 {
 	int i;
-	cptr str[10], pre;
+	cptr str[10], pre, s;
 	assert(total >= 0 && total <= 10);
 	if (!total) return 0;
 
 	for (i = 0; i < total; i++)
 	{
-		str[i] = lookup_gf(table[i]->type)->desc;
+		str[i] = string_make(format("%s (%d, rad %d)",
+			lookup_gf(table[i]->type)->desc, table[i]->dam, table[i]->rad));
 	}
 	if (table[0]->rad < 0) pre = "It fires a breath of";
 	else pre = "It fires a ball of";
 
-	return list_timers(pre, " or ", str, total);
+	/* Format the list as a sentence. */
+	s = list_timers(pre, " or ", str, total);
+
+	/* Clean up. */
+	for (i = 0; i < total; i++) FREE(str[i]);
+
+	return s;
 }
 
 /*
