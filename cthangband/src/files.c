@@ -4092,10 +4092,23 @@ static void print_tomb(void)
 	center_string(buf, tmp);
 	put_str(buf, 13, 11);
 
-	(void)sprintf(tmp, "Killed on Level %d", dun_level);
+	if (dun_level)
+		(void)sprintf(tmp, "Killed on Level %d", dun_level);
+	else
+		(void)strcpy(tmp, "Killed on the Surface");
 	center_string(buf, tmp);
 	put_str(buf, 14, 11);
 
+	if (dun_level > 0)
+		sprintf(tmp, "of %s", dun_defs[wild_grid[wildy][wildx].dungeon].name);
+	else if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+		sprintf(tmp, "in %s", dun_defs[wild_grid[wildy][wildx].dungeon].shortname);
+	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
+		sprintf(tmp, "near %s", dun_defs[wild_grid[wildy][wildx].dungeon].name);
+	else
+		strcpy(tmp, "in the Wilderness");
+	center_string(buf, tmp);
+	put_str(buf, 15, 11);
 
     if (strlen(died_from) > 24)
     {
@@ -4106,12 +4119,11 @@ static void print_tomb(void)
     else
         (void)sprintf(tmp, "by %s.", died_from);
 	center_string(buf, tmp);
-	put_str(buf, 15, 11);
-
+	put_str(buf, 16, 11);
 
 	(void)sprintf(tmp, "%-.24s", ctime(&ct));
 	center_string(buf, tmp);
-	put_str(buf, 17, 11);
+	put_str(buf, 18, 11);
 
 	msg_format("Goodbye, %s!", player_name);
 	}
