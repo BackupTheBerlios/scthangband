@@ -2345,7 +2345,7 @@ static cptr object_flag_names[96] =
 
     "Aura Elec",
  	NULL,
- 	NULL,
+	"AutoCurse",
     "NoTeleport",
     "AntiMagic",
     "WraithForm",

@@ -641,6 +641,20 @@ bool psychometry(void)
 
 
 /*
+ * Lightly curse something specific.
+ */
+void curse(object_type *o_ptr)
+{
+	o_ptr->ident |= IDENT_CURSED;
+	o_ptr->art_flags3 |= TR3_CURSED;
+	o_ptr->art_flags3 &= ~(TR3_HEAVY_CURSE);
+	if (streq(quark_str(o_ptr->note), "uncursed"))
+	{
+		o_ptr->note = 0;
+	}
+}
+
+/*
  * Handle certain things once every 10 game turns
  */
 static void process_world(void)
@@ -1445,6 +1459,17 @@ static void process_world(void)
 
         object_flags(o_ptr, &f1, &f2, &f3);
 
+	/*
+	 * Auto-curse
+	 * Curse_turn is set in remove_curse_aux()).
+	 */
+	if (f3 & TR3_AUTO_CURSE && ~(o_ptr->ident) & IDENT_CURSED && turn > curse_turn)
+	{
+		char o_name[80];
+		curse(o_ptr);
+		object_desc(o_name, o_ptr, FALSE, 0);
+		msg_format("The %s suddenly feels deathly cold!", o_name);
+	}
         if ((f3 & TR3_TY_CURSE) && (randint(TY_CURSE_CHANCE)==1))
             activate_ty_curse();
         if ((o_ptr->name1 == ART_DEMONBLADE) && randint(CHAINSWORD_NOISE) == 1)

@@ -136,6 +136,7 @@ extern s16b object_level;
 extern s16b monster_level;
 extern s32b turn;
 extern s32b old_turn;
+extern s32b curse_turn;
 extern bool cheat_wzrd;
 extern bool use_sound;
 extern bool use_graphics;

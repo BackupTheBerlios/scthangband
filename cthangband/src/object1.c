@@ -961,6 +961,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f2) |= o_ptr->art_flags2;
 	(*f3) |= o_ptr->art_flags3;
 
+	/* Hack - cursing an object via art_flags3 totally supercedes default values */
+	if ((o_ptr->art_flags3 & TR3_CURSED) && !(o_ptr->art_flags3 & TR3_HEAVY_CURSE))
+		*f3 &= ~TR3_HEAVY_CURSE;
     }
 
 	/* Extra powers */
@@ -3283,6 +3286,11 @@ bool identify_fully_aux(object_type *o_ptr)
 		{
 			info[i++] = "It is cursed.";
 		}
+	}
+
+	if (f3 & (TR3_AUTO_CURSE))
+	{
+		info[i++] = "It will curse itself.";
 	}
 
     if (f3 & (TR3_TY_CURSE))

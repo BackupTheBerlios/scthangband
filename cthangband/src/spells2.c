@@ -20,6 +20,8 @@
 /* Bias luck needs to be higher than weird luck, since it is usually tested
 several times... */
 #define ACTIVATION_CHANCE 3
+/* Time between an item becoming uncursed, and cursing itself again. */
+#define CURSE_TIMEOUT	30
 
 extern int artifact_bias;
 
@@ -340,6 +342,9 @@ static int remove_curse_aux(int all)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_EQUIP);
+
+		/* Set auto_curse timeout */
+		curse_turn = turn + CURSE_TIMEOUT;
 
 		/* Count the uncursings */
 		cnt++;

@@ -2272,7 +2272,7 @@
 #define TR3_SH_FIRE							0x00000001L     /* Immolation (Fire) */
 #define TR3_SH_ELEC							0x00000002L     /* Electric Sheath */
 #define TR3_XXX3						   	0x00000004L     /* Later */
-#define TR3_XXX4                          0x00000008L     /* Later */
+#define TR3_AUTO_CURSE          0x00000008L     /* Item is self-cursing */
 #define TR3_NO_TELE                     0x00000010L     /* Anti-teleportation */
 #define TR3_NO_MAGIC                    0x00000020L     /* Anti-magic */
 #define TR3_WRAITH                      0x00000040L     /* Wraithform */

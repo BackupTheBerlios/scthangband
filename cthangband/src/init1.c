@@ -448,7 +448,7 @@ static cptr k_info_flags3[] =
     "SH_FIRE",
     "SH_ELEC",
 	"XXX3",
-	"XXX4",
+	"AUTO_CURSE",
     "NO_TELE",
     "NO_MAGIC",
     "WRAITH",

@@ -934,7 +934,6 @@ s32b flag_cost(object_type * o_ptr, int plusses)
     if (f3 & TR3_SH_FIRE) total += 5000;
     if (f3 & TR3_SH_ELEC) total += 5000;
     if (f3 & TR3_XXX3) total += 0;
-    if (f3 & TR3_XXX4) total += 0;
     if (f3 & TR3_NO_TELE) total += 2500;
     if (f3 & TR3_NO_MAGIC) total += 2500;
     if (f3 & TR3_WRAITH) total += 250000;
@@ -966,6 +965,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
     if (f3 & TR3_AGGRAVATE) total -= 10000;
     if (f3 & TR3_BLESSED) total += 750;
     if (f3 & TR3_CURSED) total -= 5000;
+    if (f3 & TR3_AUTO_CURSE) total -= 10000;
     if (f3 & TR3_HEAVY_CURSE) total -= 12500;
     if (f3 & TR3_PERMA_CURSE) total -= 15000;
 

@@ -910,11 +910,13 @@ static void analyze_misc_magic (object_type *o_ptr, cptr *misc_list)
 	 * being "lightly cursed".
 	 */
 
-	if (cursed_p(o_ptr))
-	{
         if (f3 & (TR3_TY_CURSE))
 		{
             *misc_list++ = "Ancient Curse";
+		}
+		if (f3 & (TR3_AUTO_CURSE))
+		{
+			*misc_list++ = "Self-cursing";
 		}
         if (f3 & (TR3_PERMA_CURSE))
 		{
@@ -928,7 +930,6 @@ static void analyze_misc_magic (object_type *o_ptr, cptr *misc_list)
 		{
 			*misc_list++ = "Cursed";
 		}
-	}
 
 	/* Terminate the description list */
 	*misc_list = NULL;

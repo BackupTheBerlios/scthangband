@@ -288,6 +288,16 @@ void do_cmd_wield(void)
 	/* Message */
 	msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
 
+	/* Auto-curse */
+	{
+		u32b f1, f2, f3;
+	object_flags(o_ptr, &f1, &f2, &f3);
+	if (f3 & TR3_AUTO_CURSE)
+	{
+			curse(o_ptr);
+		}
+	}
+
 	/* Cursed! */
 	if (cursed_p(o_ptr))
 	{
