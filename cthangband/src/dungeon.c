@@ -98,8 +98,32 @@ cptr find_feeling(object_type *o_ptr)
 	/* Some feelings that don't depend on sensing, but on trying. */
 	if (!object_known_p(o_ptr) && (o_ptr->ident & (IDENT_EMPTY)))
 		return "empty";
+	/* Hack - wearable items become "poss. cursed", usable ones "tried"*/
 	else if (!object_aware_p(o_ptr) && object_tried_p(o_ptr))
+	{
+		switch (o_ptr->tval)
+		{
+		/* Food, potions, scrolls, staves, wands and rods can be tried. */
+			case TV_FOOD: case TV_POTION: case TV_SCROLL:
+			case TV_ROD: case TV_WAND: case TV_STAFF:
 		return "tried";
+		/* Amulets and rings can have sval-specific curses... */
+			case TV_RING: case TV_AMULET:
+		/* ... as might weapons and armour, at least in theory... */
+			case TV_DRAG_ARMOR: case TV_HARD_ARMOR: case TV_SOFT_ARMOR:
+			case TV_CLOAK: case TV_SHIELD: case TV_CROWN: case TV_HELM:
+			case TV_GLOVES: case TV_BOOTS: case TV_SWORD: case TV_POLEARM:
+			case TV_HAFTED: case TV_DIGGING: case TV_BOW:
+		/* ... but this should only be mentioned if the player doesn't know better. */
+			if (!(o_ptr->ident & IDENT_SENSE_CURSED))
+				return "poss. cursed";
+			else
+				break;
+		/* Nothing should get here, but... */
+			default:
+				return "buggy";
+		}
+	}
 
 	switch (o_ptr->ident & IDENT_SENSE)
 	{

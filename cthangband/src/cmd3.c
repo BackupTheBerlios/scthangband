@@ -303,6 +303,9 @@ void do_cmd_wield(void)
 	{
 		/* Warn the player */
 		msg_print("Oops! It feels deathly cold!");
+
+		/* Make a note of it (only useful for rings and amulets). */
+		k_info[o_ptr->k_idx].tried = TRUE;
 	}
 
 	/* Note whether it is cursed or not. */
