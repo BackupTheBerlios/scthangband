@@ -118,6 +118,44 @@ extern void fetch(int dir, int wgt, bool require_los);
  #endif /* defined(ALLOW_EASY_OPEN) || defined(ALLOW_EASY_DISARM) -- TNB */
 
 /*
+ * Move up or down via stairs.
+ * deeper stores whether we are moving to a deeper or a shallower level.
+ * stairs stores whether we want stairs at the player's feet or not.
+ */
+static void use_stairs(bool deeper, byte stairs)
+{
+	byte j = (multi_stair) ? randint(5) : 1;
+	byte start = (stairs) ? START_STAIRS : START_RANDOM;
+	if (j > dun_level) j = 1;
+
+	/* Don't allow the player to pass a quest level.
+	 * This is very inefficient, but it's a very simple process.
+	 */
+	if (deeper)
+	{
+		byte i;
+		for (i = 1; i < j; i++)
+		{
+			if (is_quest(dun_level+i)) break;
+			if (dun_level+i == dun_defs[cur_dungeon].max_level) break;
+		}
+		change_level(dun_level+i, start);
+	}
+	else
+	{
+		change_level(dun_level-j, start);
+
+		/* Check for leaving dungeon */
+		if(dun_level == 0)
+		{
+			recall_dungeon = cur_dungeon;
+			wildx=dun_defs[cur_dungeon].x;
+			wildy=dun_defs[cur_dungeon].y;
+		}
+	}
+}
+
+/*
  * Go up one level					-RAK-
  */
 void do_cmd_go_up(void)
@@ -172,64 +210,8 @@ void do_cmd_go_up(void)
 				msg_print("You enter a maze of up staircases.");
 			}
 
-			if (autosave_l)
-			{
-				do_cmd_save_game(TRUE);
-			}
-
-			/* Check which way 'up' is */
-			if (dun_defs[cur_dungeon].tower)
-			{
-				/* We are actually getting 'deeper' */
-				if(multi_stair)
-				{
-					int i;
-					int j=randint(5);
-					if(j>dun_level) j=1; 
-					for(i=0;i<j;i++)
-					{
-						dun_level++;
-						if(is_quest(dun_level)) break;
-					}
-					if(dun_level > dun_defs[cur_dungeon].max_level)
-					{
-						dun_level = dun_defs[cur_dungeon].max_level;
-					}
-				}
-				else
-				{
-					dun_level++;
-				}
-			}
-			else
-			{
-				/* Go up the stairs */
-				if(multi_stair)
-				{
-					int j=randint(5);
-					if (j>dun_level) j=1;
-					dun_level-= j;
-					if(dun_level<0)dun_level=0;
-				}
-				else
-				{
-					dun_level--;
-				}
-
-				/* Check for leaving dungeon */
-				if(dun_level == 0)
-				{
-					recall_dungeon = cur_dungeon;
-					wildx=dun_defs[cur_dungeon].x;
-					wildy=dun_defs[cur_dungeon].y;
-					came_from=START_STAIRS;
-				}
-			}
-		
-			new_level_flag = TRUE;
-
-			/* Create a way back */
-			create_down_stair = TRUE;
+			/* Actually go up. */
+			use_stairs(dun_defs[cur_dungeon].tower, TRUE);
 		}
    }
 }
@@ -296,74 +278,14 @@ void do_cmd_go_down(void)
 				{
 					msg_print("You enter a maze of down staircases.");
 				}
-				/* Now actually go down */
-				if (autosave_l)
-				{
-					do_cmd_save_game(TRUE);
-				}
 			}
-			if (dun_defs[cur_dungeon].tower)
-			{
-				/* We are actually getting 'shallower' */
-				if(multi_stair)
-				{
-					int j=randint(5);
-					if (j>dun_level) j=1;
-					dun_level-= j;
-					if(dun_level<0)dun_level=0;
-				}
-				else
-				{
-					dun_level--;
-				}
-
-				/* Check for leaving dungeon */
-				if(dun_level == 0)
-				{
-					wildx=dun_defs[cur_dungeon].x;
-					wildy=dun_defs[cur_dungeon].y;
-					recall_dungeon = cur_dungeon;
-					came_from=START_STAIRS;
-				}
-			}
-			else
-			{
 				/* Go down */
-				if(multi_stair)
-				{
-					int i;
-					int j=randint(5);
-					if(j>dun_level) j=1; 
-					for(i=0;i<j;i++)
-					{
-						dun_level++;
-						if(is_quest(dun_level)) break;
-					}
-					if(dun_level > dun_defs[cur_dungeon].max_level)
-					{
-						dun_level = dun_defs[cur_dungeon].max_level;
-					}
-				}
-				else
-				{
-					dun_level++;
+			use_stairs(!dun_defs[cur_dungeon].tower, !fall_trap);
 				}
 				/* Hack - If you've gone 'down' to level 0  then go down again to level 1 */
-				if(dun_level == 0) dun_level++;
-			}
-
-			/* We need a new level now */
-			new_level_flag = TRUE;
-
-			if (!fall_trap)
-			{
-				/* Create a way back */
-				create_up_stair = TRUE;
-			}
+				if(dun_level == 0) change_level(1, START_STAIRS);
 		}
 	}
-}
-
 
 
 /*
@@ -3261,9 +3183,7 @@ static void use_power(powertype *pw_ptr)
 				break;
 			case RACE_GREAT+MAX_RACES: /* dream travel */
                     msg_print("You start walking around. Your surroundings change.");
-				if (autosave_l) do_cmd_save_game(TRUE);
-                    new_level_flag = TRUE;
-					came_from=START_RANDOM;
+			change_level(dun_level, START_RANDOM);
             break;
         case RACE_BARBARIAN:
                 msg_print("Raaagh!");

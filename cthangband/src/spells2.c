@@ -6819,12 +6819,6 @@ void alter_reality(void)
 {
 	msg_print("The world changes!");
 
-	if (autosave_l)
-	{
-		do_cmd_save_game(TRUE);
-	}
-
 	/* Leaving */
-	new_level_flag = TRUE;
-	came_from=START_RANDOM;
+	change_level(dun_level, START_RANDOM);
 }

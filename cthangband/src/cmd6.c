@@ -3688,13 +3688,7 @@ void do_cmd_activate(int item)
                     default:
                         if(get_check("Leave this level? "))
                         {
-                            if (autosave_l)
-                            {
-                            do_cmd_save_game(TRUE);
-                            }
-                            
-                            new_level_flag = TRUE;
-							came_from=START_RANDOM;
+				change_level(dun_level, START_RANDOM);
                         }
                 }
                 o_ptr->timeout = 35;

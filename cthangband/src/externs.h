@@ -646,6 +646,9 @@ extern errr rd_savefile_old(void);
 /* load2.c */
 extern errr rd_savefile_new(void);
 
+/* dungeon.c continued (please repatriate me) */
+extern void change_level(s16b new_level, byte come_from);
+
 /* melee1.c */
 /* melee2.c */
 extern bool make_attack_normal(int m_idx);

@@ -299,6 +299,35 @@ static void sense_inventory(void)
 }
 
 /*
+ * Change level, setting various relevant things.
+ */
+void change_level(s16b new_level, byte come_from)
+{
+	/* Save if desired. */
+	if (autosave_l)
+	{
+		do_cmd_save_game(TRUE);
+	}
+
+	/* Try to recognise when the player wants stairs next to him. */
+	if (come_from == START_STAIRS && new_level && new_level != dun_level)
+	{
+		if ((new_level > dun_level) ^ dun_defs[cur_dungeon].tower)
+			create_up_stair = TRUE;
+		else
+			create_down_stair = TRUE;
+	}
+	
+	/* Set the means of entry. */
+	came_from = come_from;
+
+	/* Set the level. */
+	dun_level = new_level;
+
+	/* Change level. */
+	new_level_flag = TRUE;
+}
+/*
  * Go to any level (ripped off from wiz_jump)
  */
 
@@ -352,14 +381,8 @@ static void pattern_teleport(void)
 	/* Accept request */
     msg_format("You teleport to dungeon level %d.", command_arg);
 
-                if (autosave_l)
-                {
-		  do_cmd_save_game(TRUE);
-                }
-
 	/* Change level */
-	dun_level = command_arg;
-	new_level_flag = TRUE;
+	change_level(command_arg, START_RANDOM);
 }
 
 
@@ -2161,30 +2184,20 @@ static void process_world(void)
 			{
 				msg_print("You feel yourself yanked upwards!");
 
-                if (autosave_l)
-                {
-		  do_cmd_save_game(TRUE);
-                }
+				change_level(0, START_RANDOM);
                 
-				dun_level = 0;
 				wildx=town_defs[cur_town].x;
 				wildy=town_defs[cur_town].y;
 
-				new_level_flag = TRUE;
 				came_from=START_RANDOM;
 			}
 			else
 			{
 				msg_print("You feel yourself yanked downwards!");
 
-                if (autosave_l)
-                {
-		  do_cmd_save_game(TRUE);
-                }
+				change_level(MAX(1, p_ptr->max_dlv[cur_dungeon]), START_RANDOM);
+
 				cur_dungeon=recall_dungeon;
-				dun_level = p_ptr->max_dlv[cur_dungeon];
-				if (dun_level < 1) dun_level = 1;
-				new_level_flag = TRUE;
 			}
 			
 			/* Sound */
