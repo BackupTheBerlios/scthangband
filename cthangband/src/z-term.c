@@ -1895,6 +1895,23 @@ errr Term_key_push(int k)
 }
 
 
+/*
+ * Calculate how much space there is in the key queue for the current term.
+ */
+int Term_queue_space(void)
+{
+	/* Find the gap if the tail is before the head. */
+	int space = Term->key_tail - Term->key_head;
+
+	/* Otherwise, add in the extra for looping. */
+	if (space <= 0) space = Term->key_size - space;
+
+	/* The last space is never used as that would be interpreted as leaving
+	 * no pending keypresses. */
+	return space-1;
+}
+
+
 
 
 

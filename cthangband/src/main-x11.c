@@ -1593,6 +1593,114 @@ static void square_to_pixel(int * const x, int * const y,
 	(*y) = oy * Infofnt->hgt + Infowin->oy;
 }
 
+#include "X11/Xatom.h"
+
+/*
+ * Send a message to request that the PRIMARY buffer be sent here.
+ */
+static void paste_x11_request(const Time time)
+{
+	XEvent event[1];
+	XSelectionRequestEvent *ptr = &(event->xselectionrequest);
+
+	/* Set various things. */
+	ptr->type = SelectionRequest;
+	ptr->display = Metadpy->dpy;
+	ptr->owner = XGetSelectionOwner(Metadpy->dpy, XA_PRIMARY);
+	ptr->requestor = Infowin->win;
+	ptr->selection = XA_PRIMARY;
+	ptr->target = XA_STRING;
+	ptr->property = 0; /* Unused */
+	ptr->time = time;
+
+	/* Check the owner. */
+	if (ptr->owner == None)
+	{
+		/* No selection. */
+		bell("No selection found.");
+		return;
+	}
+
+	/* Send the SelectionRequest event. */
+	XSendEvent(Metadpy->dpy, ptr->owner, False, NoEventMask, event);
+}
+
+/*
+ * Process the contents of the PRIMARY buffer as a macro.
+ *
+ * This doesn't use the "time" (time stamp), and so accepts anything a client
+ * tries to send it.
+ */
+static void paste_x11_accept(const XSelectionEvent *ptr)
+{
+	long offset, left;
+
+	/* Failure. */
+	if (ptr->property == None)
+	{
+		bell("Paste failure (remote client could not send).");
+		return;
+	}
+
+	if (ptr->selection != XA_PRIMARY)
+	{
+		bell("Paste failure (remote client did not send primary selection).");
+		return;
+	}
+	if (ptr->target != XA_STRING)
+	{
+		bell("Paste failure (selection in unknown format).");
+		return;
+	}
+
+	for (offset = 0; ; offset += left)
+	{
+		errr err;
+
+		/* A pointer for the pasted information. */
+		unsigned char *data;
+
+		Atom type;
+		int fmt;
+		long nitems;
+		
+		/* Set data to the string, and catch errors. */
+		if (XGetWindowProperty(Metadpy->dpy, Infowin->win, XA_STRING, offset,
+			32767, TRUE, XA_STRING, &type, &fmt, &nitems, &left, &data)) break;
+
+		/* Paste the text. */
+		err = type_string(data);
+
+		/* No room. */
+		if (err == PARSE_ERROR_OUT_OF_MEMORY)
+		{
+			bell("Paste failure (too much text selected).");
+			break;
+		}
+		/* Paranoia? - strange errors. */
+		else if (err)
+		{
+			break;
+		}
+
+		/* Free the data pasted. */
+		XFree(data);
+
+		/* Pasted everything. */
+		if (!left) return;
+	}
+
+	/* An error has occurred, so free the last bit of data before returning. */
+	XFree(data);
+}
+
+/*
+ * Handle various events conditional on presses of a mouse button.
+ */
+static void handle_button(const Time time, int UNUSED x, int UNUSED y, int button, bool press)
+{
+	if (press && button == 2) paste_x11_request(time);
+}
 
 /*
  * Process events
@@ -1668,6 +1776,7 @@ static errr CheckEvent(bool wait)
 			else z = 0;
 
 			/* XXX Handle */
+			handle_button(xev->xbutton.time, x, y, z, xev->type == ButtonPress);
 
 			break;
 		}
@@ -1697,6 +1806,12 @@ static errr CheckEvent(bool wait)
 
 			/* XXX Handle */
 
+			break;
+		}
+
+		case SelectionNotify:
+		{
+			paste_x11_accept(&(xev->xselection));
 			break;
 		}
 
@@ -2177,7 +2292,7 @@ static errr term_data_init(term_data *td, int i)
 
 	/* Ask for certain events */
 	Infowin_set_mask(ExposureMask | StructureNotifyMask | KeyPressMask |
-		PointerMotionMask);
+		PointerMotionMask | ButtonPressMask | ButtonReleaseMask);
 
 	/* Set the window name */
 	Infowin_set_name(name);
