@@ -1050,16 +1050,35 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	/* Clear */
 	(*f1) = (*f2) = (*f3) = 0L;
 
-	/* Must be identified */
-	if (!object_known_p(o_ptr)) return;
+	/* Check for cursing even if unidentified */
+	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
+		(*f3) |= TR3_CURSED;
 
-	/* Base object */
+	if (cheat_item && (
+#ifdef SPOIL_ARTIFACTS
+	/* Full knowledge for some artifacts */
+	allart_p(o_ptr) ||
+#endif
+#ifdef SPOIL_EGO_ITEMS
+	/* Full knowledge for some ego-items */
+	ego_item_p(o_ptr) ||
+#endif
+	(!allart_p(o_ptr) && !ego_item_p(o_ptr)))) spoil = TRUE;
+
+	/* Base objects */
+	if ((spoil_base || spoil || o_ptr->ident & IDENT_MENTAL) &&
+	(object_known_p(o_ptr) || object_aware_p(o_ptr)))
+	{
 	(*f1) = k_ptr->flags1;
 	(*f2) = k_ptr->flags2;
 	(*f3) = k_ptr->flags3;
+	}
+		
+	/* Must be identified for further details. */
+	if (!object_known_p(o_ptr)) return;
 
     /* Ego-item (known basic flags) */
-	if (o_ptr->name2)
+	if (o_ptr->name2 && (spoil_ego || spoil || o_ptr->ident & IDENT_MENTAL))
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
@@ -1068,8 +1087,8 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f3) |= e_ptr->flags3;
 	}
 
-	/* Pre-defined artifacts (all flags known) */
-	if (o_ptr->name1 && spoil_item)
+	/* Pre-defined artifacts (known basic flags) */
+	if (o_ptr->name1 && (spoil_art || spoil || o_ptr->ident & IDENT_MENTAL))
 	{
 		artifact_type *a_ptr = &a_info[o_ptr->name1];
 
@@ -1078,39 +1097,14 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f3) = a_ptr->flags3;
 	}
 
-
-#ifdef SPOIL_ARTIFACTS
-	/* Full knowledge for some artifacts */
-    if (cheat_item && (allart_p(o_ptr))) spoil = TRUE;
-#endif
-
-#ifdef SPOIL_EGO_ITEMS
-	/* Full knowledge for some ego-items */
-	if (cheat_item && ego_item_p(o_ptr)) spoil = TRUE;
-#endif
+	/* Check for both types of cursing */
+	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
+		(*f3) |= TR3_CURSED;
+	else if (o_ptr->ident & IDENT_SENSE_CURSED)
+		(*f3) &= ~(TR3_CURSED | TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
 
 	/* Need full knowledge or spoilers */
 	if (!spoil && !(o_ptr->ident & IDENT_MENTAL)) return;
-
-	/* Artifact */
-	if (o_ptr->name1)
-	{
-		artifact_type *a_ptr = &a_info[o_ptr->name1];
-
-		(*f1) = a_ptr->flags1;
-		(*f2) = a_ptr->flags2;
-		(*f3) = a_ptr->flags3;
-	}
-
-	/* Ego-item */
-	if (o_ptr->name2)
-	{
-		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-		(*f1) |= e_ptr->flags1;
-		(*f2) |= e_ptr->flags2;
-		(*f3) |= e_ptr->flags3;
-	}
 
     /* Random artifact ! */
     if (o_ptr->art_flags1 || o_ptr->art_flags2 || o_ptr->art_flags3)

@@ -3414,8 +3414,17 @@ option_type option_info[] =
 	{ &ironman_shop,               FALSE,  7, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },
 
-	{ &spoil_item,                  FALSE,   1,     2, 23,
-	"spoil_item",			"Gain knowledge of standard artifacts" },
+	{ &spoil_base,			FALSE, 8,	2, 31,
+	"spoil_base",			"Gain knowledge of normal items" },
+
+	{ &spoil_ego,			FALSE, 8,	2, 30,
+	"spoil_ego",			"Gain knowledge of ego items" },
+    
+	{ &spoil_art,                  FALSE,   8,     2, 28,
+	"spoil_art",			"Gain knowledge of standard artifacts" },
+
+	{ &spoil_mon,			FALSE, 8,	2, 0,
+	"spoil_mon",			"Gain knowledge of monsters" },
 
 	/*** End of Table ***/
 

@@ -260,7 +260,6 @@ extern bool cheat_peek;
 extern bool cheat_hear;
 extern bool cheat_room;
 extern bool cheat_xtra;
-extern bool cheat_know;
 extern bool cheat_live;
 extern bool cheat_skll;
 extern bool last_words;              /* Zangband options */
@@ -409,7 +408,10 @@ extern bool mystic_armour_aux;
 extern bool mystic_notify_aux;
 extern spirit_type spirits[MAX_SPIRITS];
 extern bool cheat_item;
-extern bool spoil_item;
+extern bool spoil_art;
+extern bool spoil_mon;
+extern bool spoil_ego;
+extern bool spoil_base;
 extern bool verbose_haggle;
 
 

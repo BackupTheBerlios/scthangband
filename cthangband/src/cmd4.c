@@ -407,7 +407,7 @@ void do_cmd_messages(void)
 /*
  * Number of cheating options
  */
-#define CHEAT_MAX 9
+#define CHEAT_MAX 8
 
 /*
  * Cheating options
@@ -425,9 +425,6 @@ static option_type cheat_info[CHEAT_MAX] =
 
 	{ &cheat_xtra,		FALSE,	255,	0x08, 0x00,
 	"cheat_xtra",		"Peek into something else" },
-
-	{ &cheat_know,		FALSE,	255,	0x10, 0x00,
-	"cheat_know",		"Know complete monster info" },
 
 	{ &cheat_item,		FALSE,	255,	0x80, 0x00,
 	"cheat_item",		"Know complete item info" },
@@ -675,6 +672,40 @@ static void do_cmd_options_autosave(cptr info)
 }
 
 /*
+ * Display a text file on screen. Returns success or failure.
+ */
+static bool showfile(cptr name, byte col)
+{
+	int i = col;
+	FILE *fp;
+	char buf[1024];
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_FILE, name);
+
+	/* Check that the filename refers to a real file */
+	if (!(fp = my_fopen(buf, "r"))) return FALSE;
+
+	/* Dump the file to the screen */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Display and advance */
+		Term_putstr(0, i++, -1, TERM_WHITE, buf);
+	}
+
+	/* Close */
+	my_fclose(fp);
+
+	/* Flush it */
+	Term_fresh();
+
+	/* Success */
+	return TRUE;
+}
+
+#define OPTPAGE_SPOILER	8
+
+/*
  * Interact with some options
  */
 void do_cmd_options_aux(int page, cptr info)
@@ -701,6 +732,10 @@ void do_cmd_options_aux(int page, cptr info)
 
 	/* Clear screen */
 	Term_clear();
+
+	/* Hack - Give a short explanation at the bottom of the "Spoiler" menu */
+	if (page == OPTPAGE_SPOILER && !showfile("spoiler.txt", n+3))
+		c_prt(TERM_RED, "ANGBAND_DIR_FILE/spoiler.txt not found.", n+3, 0);
 
 	/* Interact with the player */
 	while (TRUE)
@@ -1001,11 +1036,14 @@ void do_cmd_options(void)
 		/* Window flags */
 		prt("(W) Window Flags", 14, 5);
 
+		/* Spoilers */
+		prt("(S) Spoiler Options", 16, 5);
+		
 		/* Cheating */
-		prt("(C) Cheating Options", 16, 5);
+		prt("(C) Cheating Options", 17, 5);
 
 		/* Prompt */
-		prt("Command: ", 17, 0);
+		prt("Command: ", 18, 0);
 
 		/* Get command */
 		k = inkey();
@@ -1062,6 +1100,12 @@ void do_cmd_options(void)
 					break;
 				}
 
+			/* Spoiler Options */
+			case 'S':
+				{
+					do_cmd_options_aux(OPTPAGE_SPOILER, "Spoiler Options");
+					break;
+				}
 			/* Cheating Options */
 			case 'C':
 			{
@@ -3004,7 +3048,7 @@ static void do_cmd_knowledge_uniques(void)
 			bool dead = (r_ptr->max_num == 0);
 
 			/* Only display "known" uniques */
-			if (dead || cheat_know || r_ptr->r_sights)
+			if (dead || spoil_mon || r_ptr->r_sights)
 			{
 				/* Print a message */
 				fprintf(fff, "     %s is %s\n",

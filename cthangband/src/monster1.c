@@ -159,15 +159,12 @@ static void roff_aux(int r_idx)
 
 
 	/* Cheat -- Know everything */
-	if (cheat_know)
+	if (spoil_mon)
 	{
 		/* XXX XXX XXX */
 
 		/* Save the "old" memory */
 		save_mem = *r_ptr;
-
-		/* Hack -- Maximal kills */
-		r_ptr->r_tkills = MAX_SHORT;
 
 		/* Hack -- Maximal info */
 		r_ptr->r_wake = r_ptr->r_ignore = MAX_UCHAR;
@@ -1289,7 +1286,7 @@ static void roff_aux(int r_idx)
 
 
 	/* Hack -- Restore monster memory */
-	if (cheat_know)
+	if (spoil_mon)
 	{
 		/* Restore memory */
 		*r_ptr = save_mem;

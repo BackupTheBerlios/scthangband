@@ -2732,7 +2732,6 @@ static void player_wipe(void)
 	cheat_hear = FALSE;
 	cheat_room = FALSE;
 	cheat_xtra = FALSE;
-	cheat_know = FALSE;
 	cheat_live = FALSE;
 	cheat_skll = FALSE;
 	cheat_wzrd = FALSE;
