@@ -1983,7 +1983,7 @@ static char *visual_name_obj(char *buf, s16b n)
 	{ \
 \
 		/* Skip non-entries */ \
-		if ((*vs_ptr->reject)(i)) continue; \
+		if (vs_ptr->reject && (*vs_ptr->reject)(i)) continue; \
 \
 		/* Dump a comment */ \
 		fprintf(fff, "# %s\n", (*vs_ptr->name)(buf, i)); \
