@@ -292,7 +292,7 @@ static void prt_spirit(void)
 
 	int	i, j;
 	char	il[4];
-	byte plev = MIN(1, skill_set[SKILL_SHAMAN].value/2);
+	byte plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
 	spirit_type	*s_ptr;
 	if(plev == 0) plev++;
 	put_str("Life", row_life, col_life);
