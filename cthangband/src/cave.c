@@ -692,6 +692,19 @@ static void map_info(int y, int x, byte *ap, char *cp)
 	byte a;
 	char c;
 
+	/* Illegal locations are simple. */
+	if (!in_bounds2(y, x))
+	{
+		f_ptr = f_info+FEAT_ILLEGAL;
+		*ap = f_ptr->x_attr;
+		*cp = f_ptr->x_char;
+#ifdef USE_TRANSPARENCY
+		*tap = f_ptr->x_attr;
+		*tcp = f_ptr->x_char;
+#endif /* USE_TRANSPARENCY */
+		return;
+	}
+
 	/* Get the cave */
 	c_ptr = &cave[y][x];
 
@@ -1400,7 +1413,7 @@ void lite_spot(int y, int x)
  */
 void prt_map(void)
 {
-	int x, y;
+	int cx, cy;
 
 	int v;
 
@@ -1411,11 +1424,15 @@ void prt_map(void)
 	(void)Term_set_cursor(0);
 
 	/* Dump the map */
-	for (y = panel_row_min; y - panel_row_prt < Term->hgt-1; y++)
+	for (cy = 1; cy < Term->hgt-1; cy++)
 	{
+		int y = cy+panel_row_min-1;
+
 		/* Scan the columns of row "y" */
-		for (x = panel_col_min; x - panel_col_prt < Term->wid; x++)
+		for (cx = 1; cx < Term->wid-COL_END; cx++)
 		{
+			int x = cx+panel_col_min-1;
+
 			byte a;
 			char c;
 
@@ -1424,25 +1441,12 @@ void prt_map(void)
 			char tc;
 #endif /* USE_TRANSPARENCY */
 
-			if (x < cur_wid && y < cur_hgt)
-			{
 #ifdef USE_TRANSPARENCY
-				/* Determine what is there */
-				map_info(y, x, &a, &c, &ta, &tc);
+			/* Determine what is there */
+			map_info(y, x, &a, &c, &ta, &tc);
 #else /* USE_TRANSPARENCY */
-				map_info(y, x, &a, &c);
+			map_info(y, x, &a, &c);
 #endif /* USE_TRANSPARENCY */
-			}
-			else
-			{
-				/* Fake it. */
-				a = TERM_DARK;
-				c = ' ';
-#ifdef USE_TRANSPARENCY
-				ta = TERM_DARK;
-				tc = ' ';
-#endif /* USE_TRANSPARENCY */
-			}
 
 			/* Hack -- fake monochrome */
 			if ((!use_graphics || streq(ANGBAND_SYS, "ibm"))
@@ -1452,9 +1456,9 @@ void prt_map(void)
 
 			/* Efficiency -- Redraw that grid of the map */
 #ifdef USE_TRANSPARENCY
-			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c, ta, tc);
+			Term_queue_char(cx+COL_END, cy, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
-			Term_queue_char(x-panel_col_prt, y-panel_row_prt, a, c);
+			Term_queue_char(cx+COL_END, cy, a, c);
 #endif /* USE_TRANSPARENCY */
 		}
 	}

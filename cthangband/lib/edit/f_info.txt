@@ -72,10 +72,10 @@ G:.:y
 N:9:nothing (checked for traps)
 G:.:u
 
-# 0x0A --> unused
+# 0x0A --> unmapped squares - used when the level is smaller than the window.
 
-N:10:nothing
-G:#:G
+N:10:unmapped square
+G: :d
 
 # 0x0B --> nothing
 

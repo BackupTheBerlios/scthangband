@@ -872,6 +872,7 @@ logaux(x, 1) logaux(x, 0) 255
 #define FEAT_MORE               0x07
 #define FEAT_PATH                0x08
 #define FEAT_NONE_TD	0x09
+#define FEAT_ILLEGAL	0x0A
 
 /* Traps */
 #define FEAT_TRAP_HEAD  0x10
