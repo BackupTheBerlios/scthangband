@@ -3714,6 +3714,8 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		if (make_artifact(o_ptr, FALSE)) break;
 	}
 
+	/* Hack - inscribe with creation depth if desired. */
+	o_ptr->note = depth_string();
 
 	/* Hack -- analyze artifacts */
 	if (o_ptr->name1)
@@ -3938,9 +3940,6 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		/* Hack -- acquire "cursed" flag */
 		if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 	}
-
-	/* Hack - inscribe with creation depth if desired. */
-	o_ptr->note = depth_string();
 }
 
 
