@@ -4508,7 +4508,12 @@ void do_cmd_mindcraft(void)
 			if (psi < 30)
 			{
 				b = detect_monsters_normal();
-				if (psi > 14)  b |=  detect_monsters_invis();
+				if (psi > 19)  b |=  detect_monsters_invis();
+				if (psi > 14)
+				{
+					b |= detect_doors();
+					b |= detect_stairs();
+				}
 				if (psi > 4)
 				{
 					b |=  detect_traps();
