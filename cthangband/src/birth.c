@@ -715,6 +715,7 @@ static void get_money(bool randomly);
 static int get_social_average(void);
 static void display_player_birth_details(void);
 static void get_final(void);
+static bool load_stat_set(bool);
 
 /* Return codes for birth_choice() */
 #define BC_OKAY	0
@@ -742,6 +743,7 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 		{
 			bool old_allow_quickstart = allow_quickstart;
 			bool old_spend_points = spend_points & !use_autoroller;
+			bool old_allow_pickstats = allow_pickstats;
 			bool old_maximise_mode = maximise_mode;
 			Term_save();
 			do_cmd_options_aux(7, "Startup Options");
@@ -751,6 +753,7 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 			 * effect before we reach this point. */
 			if (allow_quickstart && !old_allow_quickstart) return BC_RESTART;
 			if (old_spend_points != (!spend_points || use_autoroller)) return BC_RESTART;
+			if (allow_pickstats && !old_allow_pickstats) return BC_RESTART;
 			/* We need not restart for maximise mode, but we should
 			 * try to keep the stats the same. We do abort if possible
 			 * because we may have passed point_mod_player().
@@ -916,12 +919,21 @@ static int change_points_by_stat(s16b from, s16b to)
 	return points;
 }
 
+/* Just in case */
+#ifndef SUCCESS
+#define SUCCESS 0
+#define ERR_PARSE 1
+#endif
+
 /* Save the current stats */
 static errr save_stats(void)
 {
 	FILE *fff;
 	char buf[1024];
-	byte i,j,k,l;
+	byte i,l;
+
+	/* Paranoia - check that there's something to save (the default entry does not count). */
+	if (stat_default_total <= 1) return SUCCESS;
 
 	/* Drop priv's */
 	safe_setuid_drop();
@@ -936,20 +948,18 @@ static errr save_stats(void)
 	fff = my_fopen(buf, "a");
 
 	/* Failure */
-	if (!fff) return (-1);
+	if (!fff) return ERR_PARSE;
 
 	/* Start dumping */
 	fprintf(fff, "\n\n# Initial stat dump\n\n");
 
-	for (i = 0; i < MAX_RACES; i++)
-		for (j = 0; j < MAX_TEMPLATE; j++)
-			for (k = 0; k < 2; k++)
-				if (stat_default[i][j][k][0])
+	for (i = 1; i < stat_default_total; i++)
 				{
-					fprintf(fff, "D:%c:%c:%d", rtoa(i), rtoa(j), k);
+		stat_default_type *sd_ptr = &stat_default[i];
+		fprintf(fff, "D:%c:%c:%c:%d", rtoa(sd_ptr->sex), rtoa(sd_ptr->race), rtoa(sd_ptr->template), maximise_mode);
 					for (l = 0; l< A_MAX; l++)
-							fprintf(fff, ":%d",stat_default[i][j][k][l]);
-					fprintf(fff, "\n");
+			fprintf(fff, ":%d", sd_ptr->stat[l]);
+		fprintf(fff, ":%s\n", quark_str(sd_ptr->name));
 				}
 
 	/* Close */
@@ -957,6 +967,9 @@ static errr save_stats(void)
 
 	/* Grab priv's */
 	safe_setuid_grab();
+
+	Term_putstr(2,0,-1,TERM_GREEN,"Stats saved.");
+
 
 	/* Success */
 	return (0);
@@ -1007,7 +1020,7 @@ static void display_player_birth(int points, bool details)
 		Term_putstr(1,5,-1,TERM_WHITE,"<T>Template");
 
 
-	Term_gotoxy(2, 22);
+	Term_gotoxy(2, 21);
 		Term_addch(TERM_WHITE, b1);
 		if(points == 0)
 		{
@@ -1028,7 +1041,8 @@ static void display_player_birth(int points, bool details)
 	}
 	Term_addstr(-1, TERM_WHITE, "'Q' to quit, 'X' to restart,");
 		Term_addch(TERM_WHITE, b2);
-	Term_putstr(2, 23, -1, TERM_WHITE, "['f' to save, '/' to change display, '=' for options or '?' for help.]");
+	Term_putstr(2, 22, -1, TERM_WHITE, "['f' to save, 'l' to load, '/' to change display, '=' for options]");
+	Term_putstr(2, 23, -1, TERM_WHITE, "[or '?' for help.]");
 }
 
 /* Just in case */
@@ -1157,6 +1171,9 @@ static bool point_mod_player(void)
 			case 'f': case 'F':
 				i = IDX_FILE;
 				break;
+			case 'l': case 'L':
+				i = IDX_LOAD;
+				break;
 			case 'z': case 'Z':
 				i = IDX_RAND_ONE;
 				break;
@@ -1196,6 +1213,7 @@ static bool point_mod_player(void)
 		{
 			bool old_allow_quickstart = allow_quickstart;
 			bool old_spend_points = spend_points & !use_autoroller;
+			bool old_allow_pickstats = allow_pickstats;
 			bool old_maximise_mode = maximise_mode;
 			Term_save();
 			do_cmd_options_aux(7, "Startup Options");
@@ -1203,6 +1221,7 @@ static bool point_mod_player(void)
 			/* Start again if the set of questions being asked changes.
 			 * This does not include show_credits because this takes
 			 * effect before we reach this point. */
+			if (allow_pickstats && !old_allow_pickstats) return FALSE;
 			if (allow_quickstart && !old_allow_quickstart) return FALSE;
 			if (old_spend_points != (!spend_points || use_autoroller)) return FALSE;
 
@@ -1237,30 +1256,22 @@ static bool point_mod_player(void)
 		/* Save current stats to a pref file */
 		if (i == IDX_FILE)
 		{
-			byte x;
-			/* Set the current stats as default */
-			for (x = 0; x < A_MAX; x++)
-		{
-					stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x] = p_ptr->stat_max[x];
+			char name[32];
+			strcpy(name, player_name);
+			if (get_string("Please choose a name: ", name, 32))
+			{
+				(void)add_stats(p_ptr->psex, p_ptr->prace, p_ptr->ptemplate, maximise_mode,
+				p_ptr->stat_max[A_STR], p_ptr->stat_max[A_INT], p_ptr->stat_max[A_WIS],
+				p_ptr->stat_max[A_DEX], p_ptr->stat_max[A_CON], p_ptr->stat_max[A_CHR],
+				name);
+				save_stats();
 			}
-			/* Save to user.prf */
-			if (!save_stats()) Term_putstr(2, 21, -1, TERM_L_GREEN, "Save successful.");
 		}
 				
 		/* Load saved stats at startup and on demand */
 		if (i & IDX_LOAD)
 		{
-			byte x;
-			for (x = 0; x < A_MAX; x++)
-		{
-				s16b tmp = stat_default[p_ptr->prace][p_ptr->ptemplate][(int)maximise_mode][x];
-
-				/* Use stats of 8 as a default. */
-				if (tmp == 0 && p_ptr->stat_cur[x] == 0) tmp = 8;
-
-				/* Change the stat if required. */
-				if (tmp) p_ptr->stat_cur[x] = p_ptr->stat_max[x] = tmp;
-			}
+			if (!load_stat_set(i == IDX_LOAD)) return FALSE;
 		}
 
 		/* Modify the player's race. */
@@ -1416,6 +1427,164 @@ static bool point_mod_player(void)
 				get_final();
 			}
 		}
+	}
+	return TRUE;
+}
+
+/*
+ * Load a set of stats.
+ *
+ * If menu is true, the player wants a choice.
+ */
+static bool load_stat_set(bool menu)
+{
+	int x;
+	s16b y;
+	s16b temp_stat_default[stat_default_total+1];
+
+	/* Paranoia - there should be a default entry */
+	if (!stat_default_total) return TRUE;
+
+	/* Find a set of stats which match the current race and template
+	 * Templates with maximise set to DEFAULT_STATS are acceptable for
+	 * all race/template combinations.
+	 * 
+	 */
+	for (x = 0, y = 0; x < stat_default_total; x++)
+	{
+		stat_default_type *sd_ptr = &stat_default[x];
+
+		/* Don't load default stats without a race/template combination chosen. */
+		if (x == DEFAULT_STATS && !p_ptr->prace) continue;
+		
+		/* Hack - make the default stats take the current race, class and maximise values */
+		if (x == DEFAULT_STATS)
+		{
+			sd_ptr->race = p_ptr->prace;
+			sd_ptr->template = p_ptr->ptemplate;
+			sd_ptr->maximise = maximise_mode;
+		}
+
+		/* Don't load stats with an incorrect maximise setting. */
+		if (sd_ptr->maximise != maximise_mode) continue;
+
+		/* Accept if the race, template are correct,
+		 * or if no race has been specified. */
+		if (!p_ptr->prace || 
+			(sd_ptr->race == p_ptr->prace &&
+			sd_ptr->template == p_ptr->ptemplate))
+		{
+			temp_stat_default[y++] = x;
+		}
+	}
+
+	/* Don't do anything without a choice. */
+	if (!y) return TRUE;
+
+	/* Give the player the choices. */
+	if (menu)
+	{
+		bc_type b;
+
+		/* Start half-way down the screen if possible. */
+		byte start = 14;
+
+		/* Allow more room if we need to display a race and template. */
+		byte width = (p_ptr->prace) ? 40 : 80;
+		
+		/* If not, start at the top. This should be enough... */
+		if (y > 560/width) start = 0;
+
+		clear_from(start);
+		for (x = 0; x < y; x++)
+		{
+			stat_default_type *sd_ptr = &stat_default[temp_stat_default[x]];
+			char buf[120];
+			byte z;
+			sprintf(buf, "%c) %s (", rtoa(x), quark_str(sd_ptr->name));
+
+			/* If we're just starting, we need to know the race & template. */
+			if (!p_ptr->prace)
+			{
+				sprintf(buf+strlen(buf), "%s %s %s) (", sex_info[sd_ptr->sex].title, race_info[sd_ptr->race].title, template_info[sd_ptr->template].title);
+			}
+			for (z = 0; z < A_MAX; z++)
+			{
+				byte w = sd_ptr->stat[z];
+				char stat[32];
+				if (sd_ptr->maximise)
+				{
+					w=modify_stat_value(w, race_info[sd_ptr->race].r_adj[z]+template_info[sd_ptr->template].c_adj[z]);
+				}
+				cnv_stat(w, stat);
+				w = 0;
+				while (stat[w] == ' ') w++;
+				sprintf(buf+strlen(buf), "%s%s%s", (z) ? "," : "", stat+w, (z+1 < A_MAX) ? "" : ")");
+			}
+
+			/* Don't allow overly long entries. */
+			buf[width] = '\0';
+
+			if (width > 40)
+			{
+				put_str(buf, start+2+x, 0);
+			}
+			else if (x%2)
+			{
+				put_str(buf, start+2+x/2, 40);
+			}
+			else
+			{
+				put_str(buf, start+2+x/2, 0);
+			}
+		}
+		/* Ask for a choice */
+		b = birth_choice(start+1, y, "Choose a template", &x, TRUE);
+		if (b == BC_ABORT)
+		{
+			x = -1;
+		}
+		else if (b == BC_RESTART)
+		{
+			return FALSE;
+		}
+
+		/* Finally clean up. */
+		clear_from(start);
+	}
+	/* We're starting for the first time, so give the player the last set saved. */
+	else if (!p_ptr->stat_cur[0])
+	{
+		x = y-1;
+	}
+	/* The player has already chosen stats, and hasn't asked to load new ones, so do nothing. */
+	else
+	{
+		x = -1;
+	}
+	/* Something has been chosen, so copy everything across. */
+	if (x != -1)
+	{
+		stat_default_type *sd_ptr = &stat_default[temp_stat_default[x]];
+		if (!p_ptr->prace)
+		{
+			p_ptr->psex = sd_ptr->sex;
+			sp_ptr = &sex_info[sd_ptr->sex];
+
+			p_ptr->prace = sd_ptr->race;
+			rp_ptr = &race_info[sd_ptr->race];
+			
+			p_ptr->ptemplate = sd_ptr->template;
+			cp_ptr = &template_info[sd_ptr->template];
+			
+			strncpy(player_name, quark_str(sd_ptr->name), 31);
+		}
+		for (y = 0; y < A_MAX; y++)
+		{
+			s16b tmp = sd_ptr->stat[y];
+			p_ptr->stat_cur[y] = p_ptr->stat_max[y] = tmp;
+		}
+					
 	}
 	return TRUE;
 }
@@ -3437,6 +3606,20 @@ static bool player_birth_aux()
 	else /* Interactive character */
 	{
 	
+		/*** Choose pre-set stat set. ***/
+		if (allow_pickstats)
+		{
+			if (!load_stat_set(TRUE)) return FALSE;
+		}
+
+
+		/* We may have picked a race and template, so we shouldn't
+		 * ask again. The stats selected do not currently carry forward
+		 * into autoroller selections, but this should be easy to change.
+		 */
+		if (!p_ptr->prace)
+		{
+
 		/*** Player sex ***/
 
 		/* Extra info */
@@ -3559,6 +3742,7 @@ static bool player_birth_aux()
 
 		/* Display */
 		c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
+		}
 
 		/* Get initial skill values */
 		/* With point_mod, this will be done later. */

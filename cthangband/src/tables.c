@@ -3391,6 +3391,9 @@ option_type option_info[] =
 	{ &allow_quickstart,		TRUE,	7, 3, 4,
 	"allow_quickstart",	"Allow the player to start by using Quick-Start"},
 	
+	{ &allow_pickstats,		TRUE,	7, 3, 6,
+	"allow_pickstats",	"Allow the player to choose pre-set stats"},
+
 #if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
 	{ &display_credits,	TRUE,	7, 3, 5,
 	"display_credits",	"Require a keypress to clear the initial screen"},

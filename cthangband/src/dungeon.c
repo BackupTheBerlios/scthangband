@@ -3857,6 +3857,8 @@ void play_game(bool new_game)
 		}
 	}
 
+	/* Remove the stat_default array */
+	C_KILL(stat_default, MAX_STAT_DEFAULT, stat_default_type);
 
 	/* Flash a message */
 	prt("Please wait...", 0, 0);

@@ -184,6 +184,107 @@ s16b tokenize(char *buf, s16b num, char **tokens)
 
 
 
+/* Just in case */
+#ifndef SUCCESS
+#define SUCCESS 0
+#define ERR_PARSE 1
+#define ERR_MEMORY 7
+#endif
+/*
+ * Insert a set of stats into the stat_default array.
+ */
+errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st,
+	s16b in, s16b wi, s16b dx, s16b co, s16b ch, cptr name)
+{
+	stat_default_type *sd_ptr;
+	byte i;
+	s16b stat[A_MAX] = {st, in, wi, dx, co, ch};
+
+	/* Don't even try after character generation. */
+	if (!stat_default) return SUCCESS;
+
+	/* Ignore nonsense values */
+	if (maximise != DEFAULT_STATS)
+	{
+		if (sex < 0 || sex >= MAX_SEXES) return ERR_PARSE;
+		if (race < 0 || race >= MAX_RACES) return ERR_PARSE;
+		if (template < 0 || template >= MAX_TEMPLATE) return ERR_PARSE;
+		if (maximise != TRUE && maximise != FALSE) return ERR_PARSE;
+		for (i = 0; i < A_MAX; i++)
+		{
+			if (maximise)
+			{
+				/* Stats above 17 are not allowed. */
+				if (stat[i] > 17) return ERR_PARSE;
+
+				/* Stats below 8 with external values below 3 are not allowed. */
+				if (stat[i] < 8 && stat[i]+race_info[race].r_adj[i]+template_info[template].c_adj[i] < 3) return ERR_PARSE;
+			}
+			else
+			{
+				/* Stats above their maxima are not allowed. */
+				if (stat[i] > maxstat(race, template, i)) return ERR_PARSE;
+
+				/* Stats below 3 are not allowed. */
+				if (stat[i] < 3) return ERR_PARSE;
+			}
+		}
+	}
+
+	/* We should always get a name, but just in case... */
+	if (!strlen(name)) name = "Unknown Soldier";
+
+	/* The array should not fill up. */
+	if (stat_default_total == MAX_STAT_DEFAULT)
+	{
+		/* Too many defaults, so give an error in the absence of a better idea. */
+		return ERR_MEMORY;
+	}
+
+	sd_ptr = &stat_default[stat_default_total];
+	
+	sd_ptr->sex = sex;
+	sd_ptr->race = race;
+	sd_ptr->template = template;
+	sd_ptr->maximise = maximise;
+
+	for (i = 0; i< A_MAX; i++)
+	{
+		sd_ptr->stat[i] = stat[i];
+	}
+	sd_ptr->name = quark_add(name);
+
+	/* Require space for the name. */
+	if (!sd_ptr->name) return ERR_MEMORY;
+
+	/* Look for duplicates.
+	 * These are common as saving creates a new copy of everything.
+	 * We don't check the name because this may be randomly generated,
+	 * and has no effect anyway.
+	 */
+	for (i = 0; i < stat_default_total; i++)
+	{
+		stat_default_type *sd2_ptr = &stat_default[i];
+		if (sd_ptr->race != sd2_ptr->race) continue;
+		if (sd_ptr->template != sd2_ptr->template) continue;
+		if (sd_ptr->maximise != sd2_ptr->maximise) continue;
+		if (sd_ptr->stat[0] != sd2_ptr->stat[0]) continue;
+		if (sd_ptr->stat[1] != sd2_ptr->stat[1]) continue;
+		if (sd_ptr->stat[2] != sd2_ptr->stat[2]) continue;
+		if (sd_ptr->stat[3] != sd2_ptr->stat[3]) continue;
+		if (sd_ptr->stat[4] != sd2_ptr->stat[4]) continue;
+		if (sd_ptr->stat[5] != sd2_ptr->stat[5]) continue;
+
+		/* Take the last name given to a stat set. */
+		sd2_ptr->name = sd_ptr->name;
+		break;
+	}
+
+	/* No duplicates, so advance the index */
+	if (i == stat_default_total) stat_default_total++;
+	return SUCCESS;
+}
+
 /*
  * Parse a sub-file of the "extra info" (format shown below)
  *
@@ -245,7 +346,7 @@ s16b tokenize(char *buf, s16b num, char **tokens)
  *   V:<num>:<kv>:<rv>:<gv>:<bv>
  *
  * Specify a default set of initial statistics for spend_points
- *   D:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>
+ *   D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name>
  */
 errr process_pref_file_aux(char *buf)
 {
@@ -456,35 +557,40 @@ errr process_pref_file_aux(char *buf)
 	}
 
 	/*
-	 * Process D:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr> for initial stats 
+	 * Process D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name> for initial stats 
 	 */
 	else if (buf[0] == 'D')
 	{
-		if (tokenize(buf+2, 9, zz) == 9)
-		{
-			int prace = ator(*zz[0]);
-			int ptemplate = ator(*zz[1]);
-			int pmaximise = strtol(zz[2], NULL, 0);
-			if (prace >= 0 && prace < MAX_RACES && ptemplate >= 0 && ptemplate < MAX_TEMPLATE)
+		byte total = tokenize(buf+2, 11, zz);
+		errr err;
+		/* We can accept D with or without a name, but everything else must be there. */
+		switch (total)
 			{
-				for (i = A_STR; i<= A_CHR; i++)
-				{
-					s16b stat = strtol(zz[i+3], NULL, 0);
-					/* Fail if figures are impossible (maximise mode) */
-					if (pmaximise)
+			/* No name given, so make one up. */
+			case 10:
 					{
-						if (stat < 3 || stat > 17) return (1);
+				char name[32];
+				create_random_name(ator(*zz[1]), name);
+				err = add_stats(ator(*zz[0]), ator(*zz[1]),
+				 ator(*zz[2]), strtol(zz[3], NULL, 0),
+				 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
+				 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
+				 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), name);
+				break;
 					}
-					/* (and non-maximise mode) */
-					else
+			case 11:
 					{
-						if (stat < 3 || stat > maxstat(prace, ptemplate, i)) return (1);
-					}
-					stat_default[prace][ptemplate][pmaximise][i] = stat;
-				}
-				return (0);
+				err = add_stats(ator(*zz[0]), ator(*zz[1]),
+				 ator(*zz[2]), strtol(zz[3], NULL, 0),
+				 strtol(zz[4], NULL, 0), strtol(zz[5], NULL, 0),
+				 strtol(zz[6], NULL, 0), strtol(zz[7], NULL, 0),
+				 strtol(zz[8], NULL, 0), strtol(zz[9], NULL, 0), zz[10]);
+				break;
 			}
+			default:
+			return ERR_PARSE;
 		}
+		return err;
 	}
 
 	/* Failure */

@@ -72,7 +72,8 @@ extern mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS];
 extern town_type town_defs[MAX_TOWNS];
 extern dun_type dun_defs[MAX_CAVES];
 extern wild_type wild_grid[12][12];
-extern s16b stat_default[MAX_RACES][MAX_TEMPLATE][2][6];
+extern stat_default_type *stat_default;
+extern s16b stat_default_total;
 
 /* variable.c */
 extern cptr copyright[5];
@@ -178,6 +179,7 @@ extern bool always_repeat;
 extern bool use_old_target;
 extern bool depth_in_feet;
 extern bool allow_quickstart;
+extern bool allow_pickstats;
 #if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
 extern bool display_credits;
 #endif
@@ -562,6 +564,7 @@ extern void print_equippy(void);
 extern errr check_time_init(void);
 extern errr check_load_init(void);
 extern errr check_time(void);
+extern errr add_stats(s16b, s16b, s16b, s16b, s16b, s16b, s16b, s16b, s16b, s16b, cptr);
 extern errr check_load(void);
 extern void read_times(void);
 extern errr show_file(cptr name, cptr what);

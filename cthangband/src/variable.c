@@ -320,6 +320,7 @@ bool allow_quickstart;	/* Allow Quick-Start */
 #if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
 bool display_credits;	/* Require a keypress to clear the initial credit screen. */
 #endif
+bool allow_pickstats;	/* Allow the player to choose a stat template. */
 
 s16b hitpoint_warn = 2;		/* Hitpoint warning (0 to 9) */
 
@@ -918,5 +919,9 @@ bool mystic_notify_aux;
  bool easy_disarm = TRUE;
  #endif /* ALLOW_EASY_DISARM -- TNB */
 
-/* Default stats for a given race/class combination */
-s16b stat_default[MAX_RACES][MAX_TEMPLATE][2][6];
+/*
+ * Player stat defaults
+ */
+stat_default_type *stat_default;
+s16b stat_default_total;
+

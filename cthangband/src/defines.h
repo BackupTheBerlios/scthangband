@@ -626,6 +626,14 @@
 #define A_MAX	6
 
 /*
+ * Maximum number of default stat sets allowed
+ */
+#define MAX_STAT_DEFAULT ((u16b)(65535/sizeof(stat_default_type)))
+
+/* Hack - stat set 0 is the universal default */
+#define DEFAULT_STATS 0
+
+/*
  * Player sex constants (hard-coded by save-files, arrays, etc)
  */
 #define SEX_FEMALE              0

@@ -1181,6 +1181,18 @@ struct spirit_type {
 	byte sphere; /* sphere of influence */
 	byte minskill; /* Minimum skill to form a pact (= min skill of easiest favour) */
 };
+
+/* Stat defaults */
+typedef struct stat_default_type stat_default_type;
+struct stat_default_type {
+	byte	sex;	/* Sex */
+	byte	race;	/* Race */
+	byte	template;	/* Template */
+	bool	maximise;	/* Whether maximise mode is used in this stat set */
+	byte	stat[A_MAX];	/* The stats used */
+	s16b	name;	/* The quark containing the name */
+};
+
 /* Towns */
 
 typedef struct town_type town_type;
