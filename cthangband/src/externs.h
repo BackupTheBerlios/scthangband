@@ -1649,7 +1649,7 @@ extern void chaos_feature_shuffle(void);
 extern bool project(int who, int rad, int y, int x, int dam, int typ, int flg);
 #endif
 #if (defined(CMD2_C) || defined(CMD6_C) || defined(SPELLS1_C))
-extern bool potion_smash_effect(int who, int y, int x, int o_sval);
+extern bool potion_smash_effect(int who, int y, int x, int o_kidx);
 #endif
 
 /* spells2.c */

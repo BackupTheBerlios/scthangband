@@ -1308,9 +1308,9 @@ static int home_carry(object_type *o_ptr)
 		if (!object_aware_p(o_ptr)) continue;
 		if (!object_aware_p(j_ptr)) break;
 
-		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
+		/* Objects sort by increasing k_idx */
+		if (o_ptr->k_idx < j_ptr->k_idx) break;
+		if (o_ptr->k_idx > j_ptr->k_idx) continue;
 
 		/* Objects in the home can be unknown */
 		if (!object_known_p(o_ptr)) continue;
@@ -1409,9 +1409,9 @@ static int store_carry(object_type *o_ptr)
 		if (o_ptr->tval > j_ptr->tval) break;
 		if (o_ptr->tval < j_ptr->tval) continue;
 
-		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
+		/* Objects sort by increasing k_idx */
+		if (o_ptr->k_idx < j_ptr->k_idx) break;
+		if (o_ptr->k_idx > j_ptr->k_idx) continue;
 
 
        /* Hack:  otherwise identical rods sort by
@@ -1673,8 +1673,8 @@ static void store_create(void)
 		/* Hack -- Charge lite's */
 		if (q_ptr->tval == TV_LITE)
 		{
-			if (q_ptr->sval == SV_LITE_TORCH) q_ptr->pval = FUEL_TORCH / 2;
-			if (q_ptr->sval == SV_LITE_LANTERN) q_ptr->pval = FUEL_LAMP / 2;
+			if (q_ptr->k_idx == OBJ_WOODEN_TORCH) q_ptr->pval = FUEL_TORCH / 2;
+			if (q_ptr->k_idx == OBJ_BRASS_LANTERN) q_ptr->pval = FUEL_LAMP / 2;
 		}
 
 

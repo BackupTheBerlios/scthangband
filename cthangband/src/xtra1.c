@@ -1484,14 +1484,14 @@ static void calc_torch(void)
 		if ((i == INVEN_LITE) && (o_ptr->k_idx) && (o_ptr->tval == TV_LITE))
 		{
 			/* Torches (with fuel) provide some lite */
-			if ((o_ptr->sval == SV_LITE_TORCH) && (o_ptr->pval > 0))
+			if ((o_ptr->k_idx == OBJ_WOODEN_TORCH) && (o_ptr->pval > 0))
 			{
 				p_ptr->cur_lite += 1;
 				continue;
 			}
 
 			/* Lanterns (with fuel) provide more lite */
-			if ((o_ptr->sval == SV_LITE_LANTERN) && (o_ptr->pval > 0))
+			if ((o_ptr->k_idx == OBJ_BRASS_LANTERN) && (o_ptr->pval > 0))
 			{
 				p_ptr->cur_lite += 2;
 				continue;
@@ -2689,9 +2689,9 @@ static void calc_bonuses(bool quiet)
 		p_ptr->tval_ammo = ammunition_type(o_ptr);
 
 		/* Add additional shots for player skill, depending on weapon. */
-		switch (o_ptr->sval)
+		switch (o_ptr->k_idx)
 		{
-			case SV_SLING:
+			case OBJ_SLING:
 			{
 				if (skill_set[SKILL_MISSILE].value==100)
 					extra_shots += 120;
@@ -2700,8 +2700,8 @@ static void calc_bonuses(bool quiet)
 				break;
 			}
 
-			case SV_SHORT_BOW:
-			case SV_LONG_BOW:
+			case OBJ_SHORT_BOW:
+			case OBJ_LONG_BOW:
 			{
 				if (skill_set[SKILL_MISSILE].value==100)
 					extra_shots += 180;
@@ -2710,8 +2710,8 @@ static void calc_bonuses(bool quiet)
 				break;
 			}
 
-			case SV_LIGHT_XBOW:
-			case SV_HEAVY_XBOW:
+			case OBJ_LIGHT_CROSSBOW:
+			case OBJ_HEAVY_CROSSBOW:
 			{
 				/* At 100 skill, a crossbow gives 1 1/6 extra shots anyway. */
 				if (skill_set[SKILL_MISSILE].value>30)

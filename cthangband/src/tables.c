@@ -4013,7 +4013,7 @@ spirit_type spirits[MAX_SPIRITS] =
 	{"","a major wild spirit",0,0,0xff000000,SPIRIT_NATURE,20},
 };
 
-/* Table to determine p_ptr->tval_ammo based on bow sval. */
+/* Table to determine p_ptr->tval_ammo based on bow k_idx. */
 tval_ammo_type tval_ammo[] =
 {
 	{OBJ_SLING, TV_SHOT},
