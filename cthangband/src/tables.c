@@ -1156,6 +1156,224 @@ player_sex sex_info[MAX_SEXES] =
 };
 
 
+/* Dwarves */
+static cptr dwarf_syllable1[] =
+{
+	"B", "D", "F", "G", "Gl", "H", "K", "L", "M", "N", "R", "S", "T", "Th", "V",
+	0
+};
+
+static cptr dwarf_syllable2[] =
+{
+	"a", "e", "i", "o", "oi", "u", 0
+};
+
+static cptr dwarf_syllable3[] =
+{
+	"bur", "fur", "gan", "gnus", "gnar", "li", "lin", "lir", "mli", "nar",
+	"nus", "rin", "ran", "sin", "sil", "sur", 0
+};
+
+static cptr *dwarf_syllables[] =
+{
+	dwarf_syllable1,
+	dwarf_syllable2,
+	dwarf_syllable3,
+};
+
+/* Elves */
+static cptr elf_syllable1[] =
+{
+	"Al", "An", "Bal", "Bel", "Cal", "Cel", "El", "Elr", "Elv", "Eow", "Ear",
+	"F", "Fal", "Fel", "Fin", "G", "Gal", "Gel", "Gl", "Is", "Lan", "Leg",
+	"Lom", "N", "Nal", "Nel",  "S", "Sal", "Sel", "T", "Tal", "Tel", "Thr",
+	"Tin", 0
+};
+
+static cptr elf_syllable2[] =
+{
+	"a", "adrie", "ara", "e", "ebri", "ele", "ere", "i", "io", "ithra", "ilma",
+	"il-Ga", "ili", "o", "orfi", "u", "y", 0
+};
+
+static cptr elf_syllable3[] =
+{
+	"l", "las", "lad", "ldor", "ldur", "linde", "lith", "mir", "n", "nd",
+	"ndel", "ndil", "ndir", "nduil", "ng", "mbor", "r", "rith", "ril", "riand",
+	"rion", "s", "thien", "viel", "wen", "wyn", 0
+};
+
+static cptr *elf_syllables[] =
+{
+	elf_syllable1,
+	elf_syllable2,
+	elf_syllable3,
+};
+
+/* Gnomes */
+static cptr gnome_syllable1[] =
+{
+	"Aar", "An", "Ar", "As", "C", "H", "Han", "Har", "Hel", "Iir", "J", "Jan",
+	"Jar", "K", "L", "M", "Mar", "N", "Nik", "Os", "Ol", "P", "R", "S", "Sam",
+	"San", "T", "Ter", "Tom", "Ul", "V", "W", "Y", 0
+};
+
+static cptr gnome_syllable2[] =
+{
+	"a", "aa",  "ai", "e", "ei", "i", "o", "uo", "u", "uu", 0
+};
+
+static cptr gnome_syllable3[] =
+{
+	"ron", "re", "la", "ki", "kseli", "ksi", "ku", "ja", "ta", "na", "namari",
+	"neli", "nika", "nikki", "nu", "nukka", "ka", "ko", "li", "kki", "rik",
+	"po", "to", "pekka", "rjaana", "rjatta", "rjukka", "la", "lla", "lli",
+	"mo", "nni", 0
+};
+
+static cptr *gnome_syllables[] =
+{
+	gnome_syllable1,
+	gnome_syllable2,
+	gnome_syllable3,
+};
+
+/* Hobbit */
+static cptr hobbit_syllable1[] =
+{
+	"B", "Ber", "Br", "D", "Der", "Dr", "F", "Fr", "G", "H", "L", "Ler", "M",
+	"Mer", "N", "P", "Pr", "Per", "R", "S", "T", "W", 0
+};
+
+static cptr hobbit_syllable2[] =
+{
+	"a", "e", "i", "ia", "o", "oi", "u", 0
+};
+
+static cptr hobbit_syllable3[] =
+{
+	"bo", "ck", "decan", "degar", "do", "doc", "go", "grin", "lba", "lbo",
+	"lda", "ldo", "lla", "ll", "lo", "m", "mwise", "nac", "noc", "nwise", "p",
+	"ppin", "pper", "tho", "to", 0
+};
+
+static cptr *hobbit_syllables[] =
+{
+	hobbit_syllable1,
+	hobbit_syllable2,
+	hobbit_syllable3,
+};
+
+/* Human */
+static cptr human_syllable1[] =
+{
+	"Ab", "Ac", "Ad", "Af", "Agr", "Ast", "As", "Al", "Adw", "Adr", "Ar", "B",
+	"Br", "C", "Cr", "Ch", "Cad", "D", "Dr", "Dw", "Ed", "Eth", "Et", "Er",
+	"El", "Eow", "F", "Fr", "G", "Gr", "Gw", "Gal", "Gl", "H", "Ha", "Ib",
+	"Jer", "K", "Ka", "Ked", "L", "Loth", "Lar", "Leg", "M", "Mir", "N", "Nyd",
+	"Ol", "Oc", "On", "P", "Pr", "R", "Rh", "S", "Sev", "T", "Tr", "Th", "V",
+	"Y", "Z", "W", "Wic", 0
+};
+
+static cptr human_syllable2[] =
+{
+	"a", "ae", "au", "ao", "are", "ale", "ali", "ay", "ardo", "e", "ei", "ea",
+	"eri", "era", "ela", "eli", "enda", "erra", "i", "ia", "ie", "ire", "ira",
+	"ila", "ili", "ira", "igo", "o", "oa", "oi", "oe", "ore", "u", "y", 0
+};
+
+static cptr human_syllable3[] =
+{
+	"a", "and", "b", "bwyn", "baen", "bard", "c", "ctred", "cred", "ch", "can",
+	"d", "dan", "don", "der", "dric", "dfrid", "dus", "f", "g", "gord", "gan",
+	"l", "li", "lgrin", "lin", "lith", "lath", "loth", "ld", "ldric", "ldan",
+	"m", "mas", "mos", "mar", "mond", "n", "nydd", "nidd", "nnon", "nwan",
+	"nyth", "nad", "nn", "nnor", "nd", "p", "r", "ron", "rd", "s", "sh",
+	"seth", "sean", "t", "th", "tha", "tlan", "trem", "tram", "v", "vudd",
+	"w", "wan", "win", "wyn", "wyr", "wyr", "wyth", 0
+};
+
+static cptr *human_syllables[] =
+{
+	human_syllable1,
+	human_syllable2,
+	human_syllable3,
+};
+
+/* Orc */
+static cptr orc_syllable1[] =
+{
+	"B", "Er", "G", "Gr", "H", "P", "Pr", "R", "V", "Vr", "T", "Tr", "M", "Dr",
+	0
+};
+
+static cptr orc_syllable2[] =
+{
+	"a", "i", "o", "oo", "u", "ui", 0
+};
+
+static cptr orc_syllable3[] =
+{
+	"dash", "dish", "dush", "gar", "gor", "gdush", "lo", "gdish", "k", "lg",
+	"nak", "rag", "rbag", "rg", "rk", "ng", "nk", "rt", "ol", "urk", "shnak",
+	"mog", "mak", "rak", 0
+};
+
+static cptr *orc_syllables[] =
+{
+	orc_syllable1,
+	orc_syllable2,
+	orc_syllable3,
+};
+
+/* Klackon */
+static cptr klackon_syllable1[] =
+{
+	"K'", "K", "Kri", "Kir", "Kiri", "Iriki", "Irik", "Karik", "Iri","Akri", 0
+};
+
+static cptr klackon_syllable2[] =
+{
+	"arak", "i", "iri", "ikki", "ki", "kiri","ikir","irak","arik","k'","r", 0
+};
+
+static cptr klackon_syllable3[] =
+{
+	"akkak", "ak", "ik", "ikkik", "irik", "arik", "kidik", "kii", "k", "ki",
+	"riki","irk", 0
+};
+
+static cptr *klackon_syllables[] =
+{
+	klackon_syllable1,
+	klackon_syllable2,
+	klackon_syllable3,
+};
+
+static cptr cthuloid_syllable1[] =
+{
+	"Cth","Az","Fth","Ts","Xo","Q'N","R'L","Ghata","L","Zz","Fl","Cl","S","Y", 0
+};
+
+static cptr cthuloid_syllable2[] =
+{
+	"nar","loi","ul","lu","noth","thon","ath","'N","rhy","oth","aza","agn","oa",
+	"og", 0
+};
+
+static cptr cthuloid_syllable3[] =
+{
+	"l","a","u","oa","oggua","oth","ath","aggua","lu","lo","loth","lotha","agn",
+	"axl", 0
+};
+
+static cptr *cthuloid_syllables[] =
+{
+	cthuloid_syllable1,
+	cthuloid_syllable2,
+	cthuloid_syllable3,
+};
+
 /*
  * Player Races
  *
@@ -1169,6 +1387,7 @@ player_sex sex_info[MAX_SEXES] =
  *      infra,
  *      template-choices,
  *      initial history chart,
+ *      name style,
  *      starting inventory (3 items),
  */
 player_race race_info[MAX_RACES] =
@@ -1182,7 +1401,7 @@ player_race race_info[MAX_RACES] =
         82, 5, 200, 20,
         78,  6, 190, 15,
         0,
-        0x004E5,1,
+        0x004E5, 1, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1198,7 +1417,7 @@ player_race race_info[MAX_RACES] =
         65,  6, 150, 20,
         61,  6, 120, 15,
         0,
-        0x06E5,129,
+        0x06E5, 129, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1214,7 +1433,7 @@ player_race race_info[MAX_RACES] =
         92, 10, 255, 60,
         80,  8, 235, 60,
         1,
-        0x0007,77,
+        0x0007, 77, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1230,7 +1449,7 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
         5,
-        0x0FFF,69,
+        0x0FFF, 69, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1246,7 +1465,7 @@ player_race race_info[MAX_RACES] =
         76,  1, 160,  5,
         72,  1, 130,  5,
         2,
-        0x0F7F,89,
+        0x0F7F, 89, RACE_GNOME,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1262,7 +1481,7 @@ player_race race_info[MAX_RACES] =
 		48,  3, 150, 10,
 		46,  3, 120, 10,
 		5,
-        0x0065,16,
+        0x0065, 16, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1278,7 +1497,7 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		3,
-        0x0FFF,7,
+        0x0FFF, 7, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1294,7 +1513,7 @@ player_race race_info[MAX_RACES] =
 		42,  3, 90,  6,
 		39,  3, 75,  3,
 		4,
-        0x0F3F,13,
+        0x0F3F, 13, RACE_GNOME,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1310,7 +1529,7 @@ player_race race_info[MAX_RACES] =
         66,  1, 200,  6,
         62,  1, 180,  6,
         4,
-        0x0005,98,
+        0x0005, 98, dwarf_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1326,7 +1545,7 @@ player_race race_info[MAX_RACES] =
 		82, 5, 190, 20,
 		78,  6, 180, 15,
 		0,
-        0x0FFF,67,
+        0x0FFF, 67, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1342,7 +1561,7 @@ player_race race_info[MAX_RACES] =
 		66,  6, 130, 15,
 		62,  6, 100, 10,
 		2,
-        0x0FFF,4,
+        0x0FFF, 4, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1358,7 +1577,7 @@ player_race race_info[MAX_RACES] =
         100,10, 255, 65,
         80, 10, 240, 64,
         3,
-        0x0045,75,
+        0x0045, 75, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1374,7 +1593,7 @@ player_race race_info[MAX_RACES] =
         92, 10, 255, 60,
         80,  8, 235, 60,
 		3,
-        0x04C5,74,
+        0x04C5, 74, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1390,7 +1609,7 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		3,
-        0x0FFF,19,
+        0x0FFF, 19, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1406,7 +1625,7 @@ player_race race_info[MAX_RACES] =
         111, 11, 255, 86,
         99, 11, 250, 86,
         0,
-        0x0FFF,76,
+        0x0FFF, 76, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1422,7 +1641,7 @@ player_race race_info[MAX_RACES] =
 		96, 10, 250, 50,
 		84,  8, 225, 40,
 		3,
-        0x00C5,22,
+        0x00C5, 22, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1438,7 +1657,7 @@ player_race race_info[MAX_RACES] =
 		90, 10, 190, 20,
 		82, 10, 180, 15,
 		4,
-        0x0FFF,7,
+        0x0FFF, 7, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1454,7 +1673,7 @@ player_race race_info[MAX_RACES] =
 		36,  3, 60,  3,
 		33,  3, 50,  3,
 		4,
-        0x06E7,10,
+        0x06E7, 10, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1470,7 +1689,7 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		0,
-        0x0FFF,1,
+        0x0FFF, 1, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1486,7 +1705,7 @@ player_race race_info[MAX_RACES] =
         68,  1, 150,  5,
         64,  1, 120,  5,
         3,
-        0x0627,94,
+        0x0627, 94, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1502,7 +1721,7 @@ player_race race_info[MAX_RACES] =
         60,  3, 80,  4,
         54,  3, 70,  4,
         2,
-        0x047D,84,
+        0x047D, 84, klackon_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1518,7 +1737,7 @@ player_race race_info[MAX_RACES] =
         60,  1, 130,  5,
         55,  1, 100,  5,
         3,
-        0x0465,82,
+        0x0465, 82, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1534,7 +1753,7 @@ player_race race_info[MAX_RACES] =
         68,  6, 142, 15,
         63,  6, 112, 10,
         4,
-        0x0F21,92,
+        0x0F21, 92, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1550,7 +1769,7 @@ player_race race_info[MAX_RACES] =
         43,  3, 92,  6,
         40,  3, 78,  3,
         5,
-        0x0F25,87,
+        0x0F25, 87, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1566,7 +1785,7 @@ player_race race_info[MAX_RACES] =
         72,  6, 50, 5,
         66,  4, 50, 5,
         2,
-        0x0F3F,102,
+        0x0F3F, 102, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1582,7 +1801,7 @@ player_race race_info[MAX_RACES] =
         72, 6, 100, 25,
         66, 4, 100, 20,
          5,
-         0x0F21,110,
+         0x0F21, 110, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1598,7 +1817,7 @@ player_race race_info[MAX_RACES] =
         32,  2, 75,  2,
         29,  2, 65,  2,
         4,
-        0x0EE3,124,
+        0x0EE3, 124, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1614,7 +1833,7 @@ player_race race_info[MAX_RACES] =
            72,  6, 180, 25,
            66,  4, 150, 20,
          5,
-         0x0FFF,113,
+         0x0FFF, 113, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_SCROLL_LIGHT, 0, 0, 0, 3, 7},
@@ -1630,7 +1849,7 @@ player_race race_info[MAX_RACES] =
         50,  3, 90,  6,
         50,  3, 75,  3,
         2,
-        0x0FE7,78,
+        0x0FE7, 78, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1646,7 +1865,7 @@ player_race race_info[MAX_RACES] =
         72, 6, 100, 25,
         66, 4, 100, 20,
         2,
-        0x0005,107,
+        0x0005, 107, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},

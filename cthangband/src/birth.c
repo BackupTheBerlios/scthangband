@@ -578,133 +578,6 @@ static s32b last_round;
  * Name segments for random player names
  */
 
-/* Dwarves */
-static cptr dwarf_syllable1[] =
-{
-	"B", "D", "F", "G", "Gl", "H", "K", "L", "M", "N", "R", "S", "T", "Th", "V",
-};
-
-static cptr dwarf_syllable2[] =
-{
-	"a", "e", "i", "o", "oi", "u",
-};
-
-static cptr dwarf_syllable3[] =
-{
-	"bur", "fur", "gan", "gnus", "gnar", "li", "lin", "lir", "mli", "nar", "nus", "rin", "ran", "sin", "sil", "sur",
-};
-
-/* Elves */
-static cptr elf_syllable1[] =
-{
-	"Al", "An", "Bal", "Bel", "Cal", "Cel", "El", "Elr", "Elv", "Eow", "Ear", "F", "Fal", "Fel", "Fin", "G", "Gal", "Gel", "Gl", "Is", "Lan", "Leg", "Lom", "N", "Nal", "Nel",  "S", "Sal", "Sel", "T", "Tal", "Tel", "Thr", "Tin",
-};
-
-static cptr elf_syllable2[] =
-{
-	"a", "adrie", "ara", "e", "ebri", "ele", "ere", "i", "io", "ithra", "ilma", "il-Ga", "ili", "o", "orfi", "u", "y",
-};
-
-static cptr elf_syllable3[] =
-{
-	"l", "las", "lad", "ldor", "ldur", "linde", "lith", "mir", "n", "nd", "ndel", "ndil", "ndir", "nduil", "ng", "mbor", "r", "rith", "ril", "riand", "rion", "s", "thien", "viel", "wen", "wyn",
-};
-
-/* Gnomes */
-static cptr gnome_syllable1[] =
-{
-	"Aar", "An", "Ar", "As", "C", "H", "Han", "Har", "Hel", "Iir", "J", "Jan", "Jar", "K", "L", "M", "Mar", "N", "Nik", "Os", "Ol", "P", "R", "S", "Sam", "San", "T", "Ter", "Tom", "Ul", "V", "W", "Y",
-};
-
-static cptr gnome_syllable2[] =
-{
-	"a", "aa",  "ai", "e", "ei", "i", "o", "uo", "u", "uu",
-};
-
-static cptr gnome_syllable3[] =
-{
-	"ron", "re", "la", "ki", "kseli", "ksi", "ku", "ja", "ta", "na", "namari", "neli", "nika", "nikki", "nu", "nukka", "ka", "ko", "li", "kki", "rik", "po", "to", "pekka", "rjaana", "rjatta", "rjukka", "la", "lla", "lli", "mo", "nni",
-};
-
-/* Hobbit */
-static cptr hobbit_syllable1[] =
-{
-	"B", "Ber", "Br", "D", "Der", "Dr", "F", "Fr", "G", "H", "L", "Ler", "M", "Mer", "N", "P", "Pr", "Per", "R", "S", "T", "W",
-};
-
-static cptr hobbit_syllable2[] =
-{
-	"a", "e", "i", "ia", "o", "oi", "u",
-};
-
-static cptr hobbit_syllable3[] =
-{
-	"bo", "ck", "decan", "degar", "do", "doc", "go", "grin", "lba", "lbo", "lda", "ldo", "lla", "ll", "lo", "m", "mwise", "nac", "noc", "nwise", "p", "ppin", "pper", "tho", "to",
-};
-
-/* Human */
-static cptr human_syllable1[] =
-{
-	"Ab", "Ac", "Ad", "Af", "Agr", "Ast", "As", "Al", "Adw", "Adr", "Ar", "B", "Br", "C", "Cr", "Ch", "Cad", "D", "Dr", "Dw", "Ed", "Eth", "Et", "Er", "El", "Eow", "F", "Fr", "G", "Gr", "Gw", "Gal", "Gl", "H", "Ha", "Ib", "Jer", "K", "Ka", "Ked", "L", "Loth", "Lar", "Leg", "M", "Mir", "N", "Nyd", "Ol", "Oc", "On", "P", "Pr", "R", "Rh", "S", "Sev", "T", "Tr", "Th", "V", "Y", "Z", "W", "Wic",
-};
-
-static cptr human_syllable2[] =
-{
-	"a", "ae", "au", "ao", "are", "ale", "ali", "ay", "ardo", "e", "ei", "ea", "eri", "era", "ela", "eli", "enda", "erra", "i", "ia", "ie", "ire", "ira", "ila", "ili", "ira", "igo", "o", "oa", "oi", "oe", "ore", "u", "y",
-};
-
-static cptr human_syllable3[] =
-{
-	"a", "and", "b", "bwyn", "baen", "bard", "c", "ctred", "cred", "ch", "can", "d", "dan", "don", "der", "dric", "dfrid", "dus", "f", "g", "gord", "gan", "l", "li", "lgrin", "lin", "lith", "lath", "loth", "ld", "ldric", "ldan", "m", "mas", "mos", "mar", "mond", "n", "nydd", "nidd", "nnon", "nwan", "nyth", "nad", "nn", "nnor", "nd", "p", "r", "ron", "rd", "s", "sh", "seth", "sean", "t", "th", "tha", "tlan", "trem", "tram", "v", "vudd", "w", "wan", "win", "wyn", "wyr", "wyr", "wyth",
-};
-
-/* Orc */
-static cptr orc_syllable1[] =
-{
-	"B", "Er", "G", "Gr", "H", "P", "Pr", "R", "V", "Vr", "T", "Tr", "M", "Dr",
-};
-
-static cptr orc_syllable2[] =
-{
-	"a", "i", "o", "oo", "u", "ui",
-};
-
-static cptr orc_syllable3[] =
-{
-	"dash", "dish", "dush", "gar", "gor", "gdush", "lo", "gdish", "k", "lg", "nak", "rag", "rbag", "rg", "rk", "ng", "nk", "rt", "ol", "urk", "shnak", "mog", "mak", "rak",
-};
-
-/* Klackon */
-static cptr klackon_syllable1[] =
-{
-	"K'", "K", "Kri", "Kir", "Kiri", "Iriki", "Irik", "Karik", "Iri","Akri",
-};
-
-static cptr klackon_syllable2[] =
-{
-	"arak", "i", "iri", "ikki", "ki", "kiri","ikir","irak","arik","k'","r",
-};
-
-static cptr klackon_syllable3[] =
-{
-	"akkak", "ak", "ik", "ikkik", "irik", "arik", "kidik", "kii", "k","ki","riki","irk",
-};
-
-static cptr cthuloid_syllable1[] =
-{
-	"Cth","Az","Fth","Ts","Xo","Q'N","R'L","Ghata","L","Zz","Fl","Cl","S","Y",
-};
-
-static cptr cthuloid_syllable2[] =
-{
-	"nar","loi","ul","lu","noth","thon","ath","'N","rhy","oth","aza","agn","oa","og",
-};
-
-static cptr cthuloid_syllable3[] =
-{
-	"l","a","u","oa","oggua","oth","ath","aggua","lu","lo","loth","lotha","agn","axl",
-};
-
 typedef byte bc_type;
 
 static void get_starting_skills(void);
@@ -1660,7 +1533,7 @@ static bool load_stat_set_aux(bool menu, s16b *temp_stat_default)
 		for (x = 0; x < y; x++)
 		{
 			stat_default_type *sd_ptr = &stat_default[temp_stat_default[x]];
-			char buf[120];
+			char buf[120]="";
 			int z;
 			sprintf(buf, "%c) %s (", rtoa(x), quark_str(sd_ptr->name));
 
@@ -1767,79 +1640,26 @@ static bool load_stat_set(bool menu)
  */
 void create_random_name(int race, char *name)
 {
+	int i,j;
+	cptr **syl;
+
 	/* Paranoia */
 	if (!name) return;
 
 	/* Select the monster type */
-	switch (race)
+	syl = race_info[race].name_syls;
+
+	/* Start with no name. */
+	*name = '\0';
+
+	/* Each name is three syllables long. */
+	for (i = 0; i < 3; i++)
 	{
-		/* Create the monster name */
-	case RACE_CYCLOPS:
-	case RACE_DWARF:
-	case RACE_HALF_GIANT:
-	case RACE_GOLEM:
-	case RACE_NIBELUNG:
-		strcpy(name, dwarf_syllable1[rand_int(sizeof(dwarf_syllable1) / sizeof(char*))]);
-		strcat(name, dwarf_syllable2[rand_int(sizeof(dwarf_syllable2) / sizeof(char*))]);
-		strcat(name, dwarf_syllable3[rand_int(sizeof(dwarf_syllable3) / sizeof(char*))]);
-		break;
-	case RACE_DARK_ELF:
-	case RACE_ELF:
-	case RACE_HALF_ELF:
-	case RACE_HIGH_ELF:
-	case RACE_SPRITE:
-		strcpy(name, elf_syllable1[rand_int(sizeof(elf_syllable1) / sizeof(char*))]);
-		strcat(name, elf_syllable2[rand_int(sizeof(elf_syllable2) / sizeof(char*))]);
-		strcat(name, elf_syllable3[rand_int(sizeof(elf_syllable3) / sizeof(char*))]);
-		break;
-	case RACE_DRACONIAN:
-	case RACE_GNOME:
-		strcpy(name, gnome_syllable1[rand_int(sizeof(gnome_syllable1) / sizeof(char*))]);
-		strcat(name, gnome_syllable2[rand_int(sizeof(gnome_syllable2) / sizeof(char*))]);
-		strcat(name, gnome_syllable3[rand_int(sizeof(gnome_syllable3) / sizeof(char*))]);
-		break;
-	case RACE_HOBBIT:
-	case RACE_YEEK:
-		strcpy(name, hobbit_syllable1[rand_int(sizeof(hobbit_syllable1) / sizeof(char*))]);
-		strcat(name, hobbit_syllable2[rand_int(sizeof(hobbit_syllable2) / sizeof(char*))]);
-		strcat(name, hobbit_syllable3[rand_int(sizeof(hobbit_syllable3) / sizeof(char*))]);
-		break;
-	case RACE_BARBARIAN:
-	case RACE_GREAT:
-	case RACE_HALF_TITAN:
-	case RACE_HUMAN:
-	case RACE_SKELETON:
-	case RACE_SPECTRE:
-	case RACE_VAMPIRE:
-	case RACE_ZOMBIE:
-		strcpy(name, human_syllable1[rand_int(sizeof(human_syllable1) / sizeof(char*))]);
-		strcat(name, human_syllable2[rand_int(sizeof(human_syllable2) / sizeof(char*))]);
-		strcat(name, human_syllable3[rand_int(sizeof(human_syllable3) / sizeof(char*))]);
-		break;
-	case RACE_BROO:
-	case RACE_HALF_OGRE:
-	case RACE_HALF_ORC:
-	case RACE_HALF_TROLL:
-	case RACE_KOBOLD:
-		strcpy(name, orc_syllable1[rand_int(sizeof(orc_syllable1) / sizeof(char*))]);
-		strcat(name, orc_syllable2[rand_int(sizeof(orc_syllable2) / sizeof(char*))]);
-		strcat(name, orc_syllable3[rand_int(sizeof(orc_syllable3) / sizeof(char*))]);
-		break;
-	case RACE_KLACKON:
-		strcpy(name, klackon_syllable1[rand_int(sizeof(klackon_syllable1) / sizeof(char*))]);
-		strcat(name, klackon_syllable2[rand_int(sizeof(klackon_syllable2) / sizeof(char*))]);
-		strcat(name, klackon_syllable3[rand_int(sizeof(klackon_syllable3) / sizeof(char*))]);
-		break;
-	case RACE_IMP:
-	case RACE_MIND_FLAYER:
-		strcpy(name, cthuloid_syllable1[rand_int(sizeof(cthuloid_syllable1) / sizeof(char*))]);
-		strcat(name, cthuloid_syllable2[rand_int(sizeof(cthuloid_syllable2) / sizeof(char*))]);
-		strcat(name, cthuloid_syllable3[rand_int(sizeof(cthuloid_syllable3) / sizeof(char*))]);
-		break;
-		/* Create an empty name */
-	default:
-		name[0] = '\0';
-		break;
+		/* Count the possibilities. */
+		for (j = 0; syl[i][j]; j++);
+
+		/* Choose one. */
+		strcat(name, syl[i][rand_int(j)]);
 	}
 }
 
