@@ -1962,7 +1962,7 @@ static void random_artifact_resistance(object_type * o_ptr)
 
 	if (give_resistance)
 	{
-		random_resistance(o_ptr, FALSE, ((randint(22))+16));
+		random_resistance(o_ptr, rand_range(17, 38));
 	}
 }
 
@@ -2334,9 +2334,9 @@ static void dragon_resist(object_type * o_ptr)
 	do
 	{
 		if (randint(4)==1)
-			random_resistance(o_ptr, FALSE, rand_range(5, 18));
+			random_resistance(o_ptr, rand_range(5, 18));
 		else
-			random_resistance(o_ptr, FALSE, rand_range(17, 38));
+			random_resistance(o_ptr, rand_range(17, 38));
 	}
 	while (one_in(2));
 }
@@ -2637,14 +2637,14 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		{
 			add_sustain(o_ptr);
 			if (one_in(3)) o_ptr->flags2 |= TR2_RES_POIS;
-			random_resistance(o_ptr, FALSE, ((randint(22))+16));
+			random_resistance(o_ptr, rand_range(17, 38));
 			return TRUE;
 		}
 		case E_SPEC_PLANAR:
 		{
 			if (one_in(7)) add_ability(o_ptr);
 			if (one_in(5)) o_ptr->flags1 |= TR1_SLAY_DEMON;
-			random_resistance(o_ptr, FALSE, ((randint(22))+16));
+			random_resistance(o_ptr, rand_range(17, 38));
 			o_ptr->activation = ACT_TELEPORT_WAIT;
 			return TRUE;
 		}
@@ -2673,21 +2673,21 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		}
 		case E_SPEC_DRAGON_BANE:
 		{
-			random_resistance(o_ptr, FALSE, rand_range(5, 16));
-			random_resistance(o_ptr, FALSE, rand_range(5, 18));
+			random_resistance(o_ptr, rand_range(5, 16));
+			random_resistance(o_ptr, rand_range(5, 18));
 			if (one_in(3)) o_ptr->flags2 |= TR2_RES_POIS;
 			return TRUE;
 		}
 		case E_SPEC_A_RESISTANCE:
 		{
 			if (one_in(4)) o_ptr->flags2 |= TR2_RES_POIS;
-			random_resistance(o_ptr, FALSE, rand_range(17,38));
+			random_resistance(o_ptr, rand_range(17,38));
 			return TRUE;
 		}
 		case E_SPEC_S_RESISTANCE:
 		{
 			if (one_in(4)) o_ptr->flags2 |= TR2_RES_POIS;
-			random_resistance(o_ptr, FALSE, rand_range(5,38));
+			random_resistance(o_ptr, rand_range(5,38));
 			return TRUE;
 		}
 		case E_SPEC_SEEING:
@@ -2707,7 +2707,7 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		}
 		case E_SPEC_LAW:
 		{
-			random_resistance(o_ptr, FALSE, rand_range(17, 38));
+			random_resistance(o_ptr, rand_range(17, 38));
 			if (one_in(3)) o_ptr->flags2 |= TR2_HOLD_LIFE;
 			if (one_in(3)) o_ptr->flags1 |= TR1_DEX;
 			if (one_in(5)) o_ptr->flags2 |= TR2_RES_FEAR;
@@ -2725,7 +2725,7 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		}
 		case E_SPEC_AM_RESISTANCE:
 		{
-			if (one_in(3)) random_resistance(o_ptr, FALSE, rand_range(5, 38));
+			if (one_in(3)) random_resistance(o_ptr, rand_range(5, 38));
 			if (one_in(5)) o_ptr->flags2 |= TR2_RES_POIS;
 			return TRUE;
 		}
@@ -2738,7 +2738,7 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		{
 			do
 			{
-				random_resistance(o_ptr, FALSE, rand_range(19, 38));
+				random_resistance(o_ptr, rand_range(19, 38));
 			}
 			while (one_in(4));
 			return TRUE;
@@ -2800,16 +2800,16 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 		}
 		case E_SPEC_HIGH:
 		{
-			random_resistance(o_ptr, FALSE, rand_range(17,38));
+			random_resistance(o_ptr, rand_range(17,38));
 			return TRUE;
 		}
 		case E_SPEC_LOW:
 		{
-			random_resistance(o_ptr, FALSE, rand_range(5, 16));
+			random_resistance(o_ptr, rand_range(5, 16));
 		}
 		case E_SPEC_RESIST:
 		{
-			random_resistance(o_ptr, FALSE, rand_range(5, 38));
+			random_resistance(o_ptr, rand_range(5, 38));
 			return TRUE;
 		}
 		/* Nothing. */
