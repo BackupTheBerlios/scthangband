@@ -1458,13 +1458,13 @@ static race_power dark_elf_power = {RP_DARK_ELF, 2, 2, A_INT, 9,
 static race_power draconian_power = {RP_DRACONIAN, 1, -1, A_CON, 12,
 	"breath weapon","dam 2*lvl", 0};
 
-static race_power dwarf_power = {RP_DWARF, 5, 5, A_WIS, 12,
+static race_power dwarf_power = {SP_DETECT_DOORS_AND_TRAPS, 5, 5, A_WIS, 12,
 	"detect doors+traps", 0, "You examine your surroundings."};
 
 static race_power gnome_power = {RP_GNOME, 5, -5, A_INT, 12,
 	"teleport", 0, "Blink!"};
 
-static race_power golem_power = {RP_GOLEM, 20, 15, A_CON, 8,
+static race_power golem_power = {SP_STONE_SKIN, 20, 15, A_CON, 8,
 	"stone skin","dur 30+d20", 0};
 
 static race_power great_powers[2] =
@@ -1478,10 +1478,10 @@ static race_power great_powers[2] =
 static race_power half_giant_power = {RP_HALF_GIANT, 20, 10, A_STR, 12,
 	"stone to mud", 0, 0};
 
-static race_power half_ogre_power = {RP_HALF_OGRE, 25, 35, A_INT, 15,
+static race_power half_ogre_power = {SP_EXPLOSIVE_RUNE, 25, 35, A_INT, 15,
 	"explosive rune", 0, "You carefully set an explosive rune..."};
 
-static race_power half_orc_power = {RP_HALF_ORC, 3, 5, A_WIS, 10,
+static race_power half_orc_power = {SP_REMOVE_FEAR, 3, 5, A_WIS, 10,
 	"remove fear", 0, "You play tough."};
 
 static race_power half_titan_power = {RP_HALF_TITAN, 35, 20, A_INT, 12,
@@ -1505,10 +1505,10 @@ static race_power kobold_power = {RP_KOBOLD, 12, 8, A_DEX, 18,
 static race_power mind_flayer_power = {RP_MIND_FLAYER, 15, 12, A_INT, 14,
 	"mind blast","dam lvl", 0};
 
-static race_power nibelung_power = {RP_DWARF, 10, 5, A_WIS, 10,
+static race_power nibelung_power = {SP_DETECT_DOORS_AND_TRAPS, 10, 5, A_WIS, 10,
 	"detect doors+traps",0, "You examine your surroundings."};
 
-static race_power skeleton_power = {RP_SKELETON, 30, 30, A_WIS, 18,
+static race_power skeleton_power = {SP_RESTORE_LIFE, 30, 30, A_WIS, 18,
 	"restore life", 0, "You attempt to restore your lost energies."};
 
 static race_power spectre_power = {RP_BROO, 4, 6, A_INT, 3,

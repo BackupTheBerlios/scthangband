@@ -594,50 +594,6 @@ static bool chaos_reject_dup(int i)
 }
 
 /*
- * Give a simple description of a racial power, using LEV for expressions
- * involving the player's level.
- * This isn't quite in describe_power() form, as those are of the form
- * [The power] fires ...", whereas this is "You can fire ...".
- */
-static cptr describe_racial_power(int power)
-{
-	switch (power)
-	{
-		case RP_DWARF: return "find traps, doors and stairs";
-		case RP_HOBBIT: return "produce food";
-		case RP_GNOME: return "teleport, range LEV+1;";
-		case RP_HALF_ORC: return "remove fear";
-		case RP_HALF_TROLL: return "enter berserk fury";
-		case RP_GREAT: return "dream travel";
-		case RP_GREAT_2: return "dream a better self";
-		case RP_HALF_OGRE: return "set an explosive rune";
-		case RP_HALF_GIANT: return "break stone walls";
-		case RP_HALF_TITAN: return "probe monsters";
-		case RP_CYCLOPS: return "throw a boulder, dam LEV*3;";
-		case RP_YEEK: return "make a terrifying scream";
-		case RP_KLACKON: return "spit acid, dam. LEV;";
-		case RP_KOBOLD: return "throw a dart of poison, dam. LEV;";
-		case RP_DARK_ELF: return "cast a Magic Missile, dam LEV+4/5+2;";
-		case RP_DRACONIAN: return "breathe, dam. LEV*2;";
-		case RP_MIND_FLAYER: return "mind blast your enemies, dam LEV;";
-		case RP_IMP:
-			if (skill_set[SKILL_RACIAL].value > 59)
-				return "cast a Fire Ball, dam. LEV;";
-			else
-				return "cast a Fire Bolt, dam. LEV;";
-		case RP_GOLEM: return "turn your skin to stone, dur d20+30";
-		case RP_SKELETON: return "restore lost life forces";
-		case RP_VAMPIRE:
-			return "steal life from a foe, dam. LEV*11/10>11;-LEV/10+1>2*LEV";
-		case RP_BROO: return "terrify your enemies";
-		case RP_SPRITE: return "throw magic dust which induces sleep";
-
-		/* Paranoia. */
-		default: return "do nothing special";
-	}
-};
-
-/*
  * Add a list of the player's racial powers to info.
  */
 static int add_race_powers(cptr *info)
@@ -647,13 +603,13 @@ static int add_race_powers(cptr *info)
 
 	for (i = 0; i < rp_ptr->powers; i++)
 	{
-		cptr str = describe_racial_power(rp_ptr->power[i].idx);
+		cptr str = describe_power(rp_ptr->power[i].idx, plev);
 
 		int cost = power_cost(&rp_ptr->power[i], plev);
 
 		/* Describe the power. */
-		info[i] = safe_string_make(format("You can %v (cost %d).",
-			evaluate_text_f3, str, "LEV", plev, cost));
+		info[i] = safe_string_make(format("You have a power which %v "
+			"(cost %d).", evaluate_text_f3, str, "LEV", plev, cost));
 	}
 	return rp_ptr->powers;
 }

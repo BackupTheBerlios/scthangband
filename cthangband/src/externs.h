@@ -1625,7 +1625,7 @@ extern void object_hide(object_type *o_ptr);
 
 /* powers.c */
 
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(POWERS_C))
+#if (defined(CMD5_C) || defined(CMD6_C) || defined(POWERS_C) || defined(SPELLS2_C))
 extern cptr describe_power(int power, int lev);
 #endif
 #if (defined(DUNGEON_C) || defined(POWERS_C) || defined(XTRA2_C))

@@ -94,7 +94,6 @@ static add_timed_type power_add_timed_table[] =
 	{SP_RESIST_ACID, TIMED_OPPOSE_ACID, 21, 40, FALSE},
 	{SP_RESIST_LIGHTNING, TIMED_OPPOSE_ELEC, 21, 40, FALSE},
 	{SP_SEE_INVISIBLE, TIMED_INVIS, 25, 48, FALSE},
-	{RP_GOLEM, TIMED_SHIELD, 31, 50, FALSE},
 };
 
 static cptr timer_verbs[TIMED_MAX] =
@@ -539,6 +538,34 @@ static cptr power_describe_misc(int power, int lev)
 			return "Harms, stuns and teleports nearby monsters.";
 		}
 		/* None written. */
+		case SP_DETECT_DOORS_AND_TRAPS: return "finds traps, doors and stairs";
+		case RP_HOBBIT: return "produces food";
+		case RP_GNOME: return "teleports, range LEV+1;";
+		case SP_REMOVE_FEAR: return "removes fear";
+		case RP_HALF_TROLL: return "enters berserk fury";
+		case RP_GREAT: return "allows dream travel";
+		case RP_GREAT_2: return "lets you dream a better self";
+		case SP_EXPLOSIVE_RUNE: return "sets an explosive rune";
+		case RP_HALF_GIANT: return "breaks stone walls";
+		case RP_HALF_TITAN: return "probes monsters";
+		case RP_CYCLOPS: return "throws a boulder, dam LEV*3;";
+		case RP_YEEK: return "makes a terrifying scream";
+		case RP_KLACKON: return "spits acid, dam. LEV;";
+		case RP_KOBOLD: return "throws a dart of poison, dam. LEV;";
+		case RP_DARK_ELF: return "casts a Magic Missile, dam LEV+4/5+2;";
+		case RP_DRACONIAN: return "breathes, dam. LEV*2;";
+		case RP_MIND_FLAYER: return "mind blasts your enemies, dam LEV;";
+		case RP_IMP:
+			if (lev > 29)
+				return "casts a Fire Ball, dam. LEV;";
+			else
+				return "casts a Fire Bolt, dam. LEV;";
+		case SP_STONE_SKIN: return "turns your skin to stone, dur d20+30";
+		case SP_RESTORE_LIFE: return "restores lost life forces";
+		case RP_VAMPIRE:
+			return "steals life from a foe, dam. LEV*11/10>11;-LEV/10+1>2*LEV";
+		case RP_BROO: return "terrifies your enemies";
+		case RP_SPRITE: return "throws magic dust which induces sleep";
 		default:
 		{
 			return 0;
@@ -1310,7 +1337,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_RESIST_ACID:
 		case SP_RESIST_LIGHTNING:
 		case SP_SEE_INVISIBLE:
-		case RP_GOLEM:
 		case ART_BARZAI+PO_NAME1:
 		{
 			return power_add_timed(power, ident);
@@ -1420,6 +1446,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 
 		case OBJ_FOOD_CURE_PARANOIA+PO_K_IDX:
+		case OBJ_POTION_BOLDNESS+PO_K_IDX:
+		case SP_REMOVE_FEAR:
 		{
 			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
 			return SUCCESS;
@@ -1597,12 +1625,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case OBJ_POTION_BOLDNESS+PO_K_IDX:
-		{
-			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
 		case OBJ_POTION_SPEED+PO_K_IDX:
 		{
 			if (speed_up(16, 40)) (*ident) = TRUE;
@@ -1722,7 +1744,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case ACT_REST_LIFE+PO_ACTIVATION:
 		case ART_NYOGTHA+PO_NAME1:
 		case SP_RESTORE_LIFE:
-		case RP_SKELETON:
 		{
 			if (restore_level()) (*ident) = TRUE;
 			return SUCCESS;
@@ -2453,6 +2474,8 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 
 		case OBJ_STAFF_PROBING+PO_K_IDX:
+		case OBJ_ROD_PROBING+PO_K_IDX:
+		case RP_HALF_TITAN:
 		{
 			probing();
 			(*ident) = TRUE;
@@ -2689,13 +2712,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case OBJ_ROD_DETECTION+PO_K_IDX:
 		{
 			detect_all();
-			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_ROD_PROBING+PO_K_IDX:
-		{
-			probing();
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -3177,7 +3193,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 
 		case ACT_RUNE_EXPLO+PO_ACTIVATION:
 		case SP_EXPLOSIVE_RUNE:
-		case RP_HALF_OGRE:
 		{
 			explosive_rune();
 			return SUCCESS;
@@ -3581,11 +3596,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)set_flag(TIMED_CUT, p_ptr->cut - 10);
 			return SUCCESS;
 		}
-		case SP_REMOVE_FEAR:
-		{
-			(void)set_flag(TIMED_AFRAID, 0);
-			return SUCCESS;
-		}
 		case SP_LIGHT_AREA:
 		case MUT_ILLUMINE+PO_MUTA:
 		{
@@ -3593,7 +3603,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 		case SP_DETECT_DOORS_AND_TRAPS:
-		case RP_DWARF:
 		{
 			(void)detect_traps();
 			(void)detect_doors();
@@ -4985,11 +4994,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			teleport_player(10 + (plev));
 			return SUCCESS;
 		}
-		case RP_HALF_ORC:
-		{
-			(void)set_flag(TIMED_AFRAID, 0);
-			return SUCCESS;
-		}
 		case RP_HALF_TROLL:
 		{
 			(void)set_flag(TIMED_AFRAID, 0);
@@ -5019,11 +5023,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
 			msg_print("You bash at a stone wall.");
 			(void)wall_to_mud(dir);
-			return SUCCESS;
-		}
-		case RP_HALF_TITAN:
-		{
-			probing();
 			return SUCCESS;
 		}
 		case RP_CYCLOPS:
