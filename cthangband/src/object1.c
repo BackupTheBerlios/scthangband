@@ -4840,6 +4840,9 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	char tmp_val[160];
 	char out_val[160];
 
+	int term;
+	void (*old_resize_hook)(void);
+
 #ifdef ALLOW_REPEAT /* TNB */
      
      /* Get the item index */
@@ -4995,14 +4998,15 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	}
 
 
-	/* Hack - suppress screen redraw to avoid resizing silliness. */
-	character_icky = TRUE;
+	/* Hack - set no-op resize function for simplicity. */
+	old_resize_hook = term_screen->resize_hook;
+	term_screen->resize_hook = func_nothing;
 
 	/* Allow the user to choose to see everything. */
 	command_see |= show_choices_main;
  
 	/* Hack -- start out in "display" mode */
-	if (command_see) Term_save();
+	if (command_see) term = Term_save_aux();
 
 
 	/* Repeat until done */
@@ -5118,12 +5122,12 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* Show/hide the list */
 				if (!command_see)
 				{
-					Term_save();
+					term = Term_save_aux();
 					command_see = TRUE;
 				}
 				else
 				{
-					Term_load();
+					Term_load_aux(term);
 					command_see = FALSE;
 				}
 				break;
@@ -5141,8 +5145,8 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* Fix screen */
 				if (command_see)
 				{
-					Term_load();
-					Term_save();
+					Term_load_aux(term);
+					term = Term_save_aux();
 				}
 
 				/* Switch inven/equip */
@@ -5422,7 +5426,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 
 
 	/* Fix the screen if necessary */
-	if (command_see) Term_load();
+	if (command_see) Term_load_aux(term);
 
 	/* Hack -- Cancel "display" */
 	command_see = FALSE;
@@ -5460,8 +5464,8 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
      
  #endif /* ALLOW_REPEAT */
 
-	/* Reset character_icky. */
-	character_icky = FALSE;
+	/* Reset resize hook. */
+	term_screen->resize_hook = old_resize_hook;
 
 	/* Return TRUE if something was picked */
 	return (item);
