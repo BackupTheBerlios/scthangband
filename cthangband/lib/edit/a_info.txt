@@ -17,7 +17,7 @@
 # N: serial number : item name
 # I: k_idx : pval
 # W: depth : depth2 : rarity : weight : cost
-# P: base armor class : base damage : plus to-hit : plus to-dam : plus to-ac
+# P: (base damage) (hit bonus, damage bonus) [base armour, armour bonus]
 # F: flag | flag | etc
 # A: activation : recharge time : recharge time dice
 
@@ -33,8 +33,9 @@
 # "special" artefacts,rarity determines how common the object is,weight is in
 # tenth-pounds and cost is the item's value.
 
-# 'P' is for power information. The items base armor class,its base
-# damage and pluses to-hit,to-dam and to-ac.
+# 'P' is for power information, and lists the qualities of the artefact as
+# a weapon and as armour in roughly the same layout as appears in the game.
+# All fields must be present here to be parsed correctly.
 
 # 'F' is for flags. These are fairly self-explanatory. As many F:
 # lines may be used as are needed to specify all the flags and flags

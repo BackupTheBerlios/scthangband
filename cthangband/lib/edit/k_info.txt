@@ -17,7 +17,7 @@
 # G: symbol : color
 # I: tval : pval : extra
 # W: weight : cost
-# P: base armour class : base damage : plus to-hit : plus to-dam : plus to-ac
+# P: (base damage) (hit bonus, damage bonus) [base armour, armour bonus]
 # A: depth/rarity : depth/rarity : etc
 # F: flag | flag | etc
 # D: description
@@ -60,9 +60,10 @@
 # 'W' is for extra information. Weight is in tenth-pounds (and is unused for
 # artefacts) and cost is the item's base value.
 
-# 'P' is for power information. The items base armour class,its base
-# damage and pluses to-hit,to-dam and to-ac (assuming the latter 
-# three numbers to be fixed: variable bonuses must be hard-coded.)
+# 'P' is for power information, and lists the fixed qualities of the object as
+# a weapon and as armour in roughly the same layout as appears in the game
+# (any variable qualities must be included in the source code at present).
+# All fields must be present here to be parsed correctly.
 
 # 'A' is for allocation - depth and rarity,in pairs. This allows an
 # item to have multiple natural depths and rarities. It is used to
