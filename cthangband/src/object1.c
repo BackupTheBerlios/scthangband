@@ -4932,6 +4932,45 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				}
 			}
 
+			/* Select the most valuable object in the selection. */
+			case 'y': case 'Y':
+			if (strchr("Yy", which) && spoil_value)
+			{
+				byte i, start, end, best;
+				s32b best_price;
+				if (command_wrk)
+				{
+					start = INVEN_WIELD-1;
+					end = INVEN_TOTAL;
+				}
+				else
+				{
+					start = 0;
+					end = INVEN_PACK;
+				}
+				/* Look through the items, finding the best value. */
+				for (i = start, best_price = 0; i < end; i++)
+				{
+					object_type *o_ptr = &inventory[i];
+					s32b this_price;
+					if (!get_item_okay(i)) continue;
+					this_price = object_value(o_ptr) * o_ptr->number;
+					if (this_price < best_price) continue;
+					best = i;
+					best_price = this_price;
+				}
+				/* Paranoia */
+				if (best_price == 0)
+				{
+					bell();
+					break;
+				}
+				else
+				{
+					/* Continue, preserving case */
+					which += index_to_label(best) - 'y';
+				}
+			}
 			default:
 			{
 				/* Extract "query" setting */
