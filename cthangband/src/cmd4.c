@@ -1693,8 +1693,8 @@ static errr keymap_dump(cptr fname)
 		sprintf(buf, "%c", i);
 
 		/* Dump the macro */
-		my_fprintf(fff, "A:%v\nC:%d:%v\n", ascii_to_text_f1, buf,
-			mode, ascii_to_text_f1, act);
+		my_fprintf(fff, "A:%v\nC:%d:%v\n", ascii_to_text_f1, act,
+			mode, ascii_to_text_f1, buf);
 	}
 
 	/* Start dumping */
