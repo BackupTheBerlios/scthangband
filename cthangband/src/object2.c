@@ -5604,9 +5604,6 @@ static void spell_info(char *p, int spell, int school)
 	magic_type *spell_ptr = &mp_ptr->info[school][spell];
     int plev = spell_skill(spell_ptr);
 
-   /* See below */
-        int orb = (plev / 4);
-
 	/* Analyze the spell */
 switch (school)
     {
@@ -5715,7 +5712,6 @@ void get_favour_info(char *p, int spell, int sphere)
 
 #ifdef DRS_SHOW_SPELL_INFO
 {
-	favour_type *spell_ptr = &(favour_info[sphere][spell]);
     int plev = skill_set[SKILL_SHAMAN].value/2;
 
    /* See below */
@@ -5791,11 +5787,8 @@ void get_cantrip_info(char *p, int spell)
 
 #ifdef DRS_SHOW_SPELL_INFO
 {
-	cantrip_type *spell_ptr = &(cantrip_info[spell]);
     int plev = skill_set[SKILL_HEDGE].value/2;
 
-   /* See below */
-    int orb = (plev / 4);
 	if (plev == 0) plev++;
 
 	switch (spell)

@@ -1120,8 +1120,6 @@ static byte likert_color = TERM_WHITE;
  */
 static cptr likert(int x, int y)
 {
-	static char dummy[20] = "";
-
 	/* Paranoia */
 	if (y <= 0) y = 1;
 
@@ -4361,7 +4359,7 @@ void template_score(int ptemplate)
 	/* Now, list the active player if they qualify */
 	if (p_ptr->ptemplate == ptemplate)
 	{
-		sprintf(out_val, "You) %s the %s (Score %d)",
+		sprintf(out_val, "You) %s the %s (Score %ld)",
 		player_name,
 		race_info[p_ptr->prace].title, total_points());
 		prt(out_val, (m + 8), 0);
@@ -4436,7 +4434,7 @@ void race_score(int race_num)
 	/* add player if qualified */
 	if (p_ptr->prace == race_num)
 	{
-		sprintf(out_val, "You) %s, the %s (Score %d)",
+		sprintf(out_val, "You) %s, the %s (Score %ld)",
 		    player_name, 
 			cp_ptr->title,total_points());
 		prt(out_val, (m + 8), 0);

@@ -3700,8 +3700,6 @@ void do_cmd_racial_power(void)
 
 	if (p_ptr->muta1)
 	{
-		int lvl = skill_set[SKILL_RACIAL].value/2;
-
 		if (p_ptr->muta1 & MUT1_SPIT_ACID)
 		{
 			strcpy(power_desc[num],"spit acid        (cost 9, dam lvl, DEX 15)");

@@ -426,7 +426,7 @@ void do_cmd_drop(void)
     p_ptr->redraw |= (PR_EQUIPPY);
 }
 
-
+#if 0
 static bool high_level_book(object_type * o_ptr)
 {
     if ((o_ptr->tval == TV_SORCERY_BOOK) || (o_ptr->tval == TV_THAUMATURGY_BOOK) ||
@@ -437,7 +437,7 @@ static bool high_level_book(object_type * o_ptr)
         }
         return FALSE;
 }
-
+#endif
 
 /*
  * Destroy an item

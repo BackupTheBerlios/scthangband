@@ -1140,7 +1140,6 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						s32b d = damroll(10, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->hold_life)
 						{
 							msg_print("You feel your life slipping away!");
@@ -1169,7 +1168,6 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						s32b d = damroll(20, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->hold_life)
 						{
 							msg_print("You feel your life slipping away!");
@@ -1198,7 +1196,6 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						s32b d = damroll(40, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->hold_life)
 						{
 							msg_print("You feel your life slipping away!");
@@ -1227,7 +1224,6 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						s32b d = damroll(80, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->hold_life)
 						{
 							msg_print("You feel your life slipping away!");

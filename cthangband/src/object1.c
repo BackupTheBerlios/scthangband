@@ -4887,6 +4887,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 }
 
 
+#if 0
 static byte dragon_colour (object_type * o_ptr)
 {
 u32b fl = o_ptr->art_flags2;
@@ -4909,7 +4910,6 @@ return TERM_SLATE;
 
 }
 
-#if 0  
  byte object_attr(object_type *  o_ptr)
  {
  /* rr9: Changed to display unidentified objects */

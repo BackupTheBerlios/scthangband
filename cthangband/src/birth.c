@@ -824,10 +824,6 @@ static bool point_mod_player(void)
 	char b2 = ']';
 	char stat;
 	char modpts[4] = "none";
-	char *buf = "zero";
-	int tmp = 0;
-	int hp = 0;
-	int addhp = 0; 
 	int x = 0;
 	int i = 32767;
 	int points = 34;
@@ -1248,8 +1244,8 @@ void get_hermetic_skills_randomly()
 
 	choices = cp_ptr->choices;
 
-	if (choices)
-	{
+	if (!choices) return;
+	
 		old_choice = rand_range(1,8);
 		for(i=0;i<choices;i++)
 		{
@@ -1285,7 +1281,6 @@ void get_hermetic_skills_randomly()
 			old_choice = choice;
 		}
 	}
-}
 
 /*
  * Get hermetic skills
@@ -1298,9 +1293,9 @@ void get_hermetic_skills()
 
 	choices = cp_ptr->choices;
 
+	if (!choices) return;
+	
     /* Extra info */
-	if (choices)
-	{
 		clear_from(15);
 		Term_putstr(5, 15, -1, TERM_WHITE,
 		"Please select a school or type of hermetic magic to specialise");
@@ -1368,7 +1363,6 @@ void get_hermetic_skills()
 			}
 		}
 	}
-}
 
 /*
  * Save the current data for later

@@ -239,7 +239,7 @@ s16b modify_stat_value(int value, int amount)
 }
 
 
-
+#if 0
 /*
  * Print character info at given row, column in a 13 char field
  */
@@ -251,7 +251,7 @@ static void prt_field(cptr info, int row, int col)
 	/* Dump the info itself */
 	c_put_str(TERM_L_BLUE, info, row, col);
 }
-
+#endif
 
 
 
