@@ -1604,7 +1604,7 @@ void py_attack(int y, int x)
 			delete_monster_idx(c_ptr->m_idx,TRUE);
 
 			/* Create a new monster (no groups) */
-            (void)place_monster_aux(y, x, tmp, FALSE, FALSE, FALSE);
+			(void)place_monster_aux(y, x, tmp, FALSE, FALSE, FALSE, FALSE);
 
 			/* XXX XXX XXX Hack -- Assume success */
 

@@ -627,7 +627,7 @@ s16b place_ghost(void)
 	r_ptr->cur_num = 0;
 	r_ptr->max_num = 1;
 
-	if (!place_monster_one(y, x, MAX_R_IDX-1, FALSE,FALSE))
+	if (!place_monster_one(y, x, MAX_R_IDX-1, FALSE,FALSE, FALSE))
 	{
 		return FALSE;
 	}
@@ -2007,10 +2007,14 @@ void update_monsters(bool full)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  *
+ * If "force" is set, this routine will not prevent any monster from being
+ * generated on a legal square. This can break certain reasonable assumptions
+ * made elsewhere.
+ *
  * This is the only function which may place a monster in the dungeon,
  * except for the savefile loading code.
  */
-bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm)
+bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force)
 {
 	int			i;
 
@@ -2046,7 +2050,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm)
 
 
 	/* Hack -- "unique" monsters must be "unique" */
-	if ((r_ptr->flags1 & (RF1_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num))
+	if ((r_ptr->flags1 & (RF1_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num) && !force)
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -2056,7 +2060,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm)
 	 * Check quest monsters
 	 * Heino Vander Sanden
 	 */
-	if ((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD))
+	if (((r_ptr->flags1 & RF1_GUARDIAN) || (r_ptr->flags1 & RF1_ALWAYS_GUARD)) && !force)
 	{
 		int q_idx = get_quest_number();
 		if (q_idx<0)
@@ -2313,7 +2317,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool charm)
 			if (!cave_empty_bold(my, mx) || (cave[my][mx].feat == FEAT_WATER)) continue;
 
 			/* Attempt to place another monster */
-            if (place_monster_one(my, mx, r_idx, slp, charm))
+            if (place_monster_one(my, mx, r_idx, slp, charm, FALSE))
 			{
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
@@ -2381,7 +2385,7 @@ static bool place_monster_okay(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm)
+bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, bool force)
 {
  	int			i;
 
@@ -2389,7 +2393,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm)
 
 
  	/* Place one monster, or fail */
-    if (!place_monster_one(y, x, r_idx, slp, charm)) return (FALSE);
+    if (!place_monster_one(y, x, r_idx, slp, charm, force)) return (FALSE);
 	/* Escorts for certain monsters */
 	if (r_ptr->flags1 & (RF1_ESCORT))
 	{
@@ -2431,7 +2435,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm)
 			if (!z) break;
 
 			/* Place a single escort */
-            (void)place_monster_one(ny, nx, z, slp, charm);
+	            (void)place_monster_one(ny, nx, z, slp, charm, FALSE);
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & (RF1_FRIENDS)) ||
@@ -2475,7 +2479,7 @@ bool place_monster(int y, int x, bool slp, bool grp)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster */
-    if (place_monster_aux(y, x, r_idx, slp, grp, FALSE)) return (TRUE);
+    if (place_monster_aux(y, x, r_idx, slp, grp, FALSE, FALSE)) return (TRUE);
 
 	/* Oops */
 	return (FALSE);
@@ -2517,7 +2521,7 @@ void put_quest_monster(int r_idx)
 				if (distance(y, x, py, px) > 15) break;
 			}
 		}
-	} while (!place_monster_aux(y, x, r_idx, 0,0,0));
+	} while (!place_monster_aux(y, x, r_idx, 0,0,0, FALSE));
 }
 
 #ifdef MONSTER_HORDES
@@ -2551,7 +2555,7 @@ bool alloc_horde(int y, int x)
     while (--attempts)
     {
         /* Attempt to place the monster */
-		if (place_monster_aux(y, x, r_idx, FALSE, FALSE, FALSE)) break;
+		if (place_monster_aux(y, x, r_idx, FALSE, FALSE, FALSE, FALSE)) break;
     }
 
     if (attempts < 1) return FALSE;
@@ -3060,7 +3064,7 @@ bool summon_specific(int y1, int x1, int lev, int type)
     }
 
 	/* Attempt to place the monster (awake, allow groups) */
-    if (!place_monster_aux(y, x, r_idx, FALSE, Group_ok, FALSE)) return (FALSE);
+    if (!place_monster_aux(y, x, r_idx, FALSE, Group_ok, FALSE, FALSE)) return (FALSE);
 
 
    /* Success */
@@ -3130,7 +3134,7 @@ bool summon_specific(int y1, int x1, int lev, int type)
    if (!r_idx) return (FALSE);
 
    /* Attempt to place the monster (awake, allow groups) */
-     if (!place_monster_aux(y, x, r_idx, FALSE, Group_ok, TRUE)) return (FALSE);
+     if (!place_monster_aux(y, x, r_idx, FALSE, Group_ok, TRUE, FALSE)) return (FALSE);
 
     /* Success */
 	return (TRUE);
@@ -3165,7 +3169,7 @@ bool multiply_monster(int m_idx, bool charm, bool clone)
 		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
 
         /* Create a new monster (awake, no groups) */
-        result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, charm);
+        result = place_monster_aux(y, x, m_ptr->r_idx, FALSE, FALSE, charm, FALSE);
 
 
 		/* Done */

@@ -660,7 +660,7 @@ extern void lore_do_probe(int m_idx);
 extern void lore_treasure(int m_idx, int num_item, int num_gold);
 extern void update_mon(int m_idx, bool full);
 extern void update_monsters(bool full);
-extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm);
+extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, bool force);
 extern bool place_monster(int y, int x, bool slp, bool grp);
 extern bool alloc_horde(int y, int x);
 extern bool alloc_monster(int dis, int slp);
@@ -668,7 +668,7 @@ extern bool summon_specific(int y1, int x1, int lev, int type);
 extern bool multiply_monster(int m_idx, bool charm, bool clone);
 extern void update_smart_learn(int m_idx, int what);
 extern bool summon_specific_friendly(int y1, int x1, int lev, int type, bool Group_ok);
-extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm);
+extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force);
 extern void remove_non_pets(void);
 
 /* object1.c */

@@ -1276,7 +1276,7 @@ static void do_cmd_wiz_named(int r_idx, int slp)
 		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
 
 		/* Place it (allow groups) */
-        if (place_monster_aux(y, x, r_idx, (bool)slp, (bool)TRUE, (bool)FALSE)) break; 
+        if (place_monster_aux(y, x, r_idx, (bool)slp, (bool)TRUE, (bool)FALSE, (bool)TRUE)) break; 
 	}
 }
 
@@ -1308,7 +1308,7 @@ static void do_cmd_wiz_named_friendly(int r_idx, int slp)
 		if (!cave_empty_bold(y, x) || (cave[y][x].feat == FEAT_WATER)) continue;
 
 		/* Place it (allow groups) */
-        if (place_monster_aux(y, x, r_idx, (bool)slp, (bool)TRUE, (bool)TRUE)) break;
+        if (place_monster_aux(y, x, r_idx, (bool)slp, (bool)TRUE, (bool)TRUE, (bool)TRUE)) break;
 	}
 }
 
