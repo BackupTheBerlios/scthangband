@@ -275,7 +275,45 @@ Brings up a full description of your character, including your skill levels, you
 
 %%%%% <cmd=~>
 $GCheck knowledge (~) (|)
-This command allows you to ask about the knowledge possessed by your character. Currently, this includes being able to list all known "artifacts", "uniques", and "objects". Normally, once an artifact is "generated", and "lost", it can never again be found, and will become "known" to the player. With "preserve" mode, an artifact can never be "lost" until it is "known" to the player. In either case, any "known" artifacts not in the possession of the player will never again be "generated". The "uspecial "unique" monsters which can only be killed once per game. Certain "objects" come in "flavors", and you must determine the effect of each "flavor" once for each such type of object, and this command will allow you to display all "known" flavors.
+This command allows you to ask about the knowledge possessed by your character. It brings up a menu at which you enter one of the following numbers to access the information it stores. Pressing escape exits the command.
+
+%%%%% <cmd=~1>
+$gDisplay known artifacts (~ 1) (! 1)
+This displays a list of the artefacts you have seen, listing its name and the character which represents it on the map. If preserve mode is turned off, it also lists artefacts which have been lost on leaving a level.
+
+%%%%% <cmd=~2>
+$gDisplay known uniques <~ 2> <! 2>
+This displays a list of the uniques your current character, or previous characters in the current save file, have seen. It displays the name of each and the character which represents each on the map. It also mentions which are dead and which alive, and indicates which are (or were) quest monsters in the current game with an exclamation mark.
+
+%%%%% <cmd=~3>
+$gDisplay known objects <~ 3> <! 3>
+There are some objects in the game which are described using a colour, flavour, material, etc. before one has been identified rather than an indication of their function. This command gives a list of the items of this nature which have been identified in the current game.
+
+%%%%% <cmd=~4>
+$gDisplay kill count <~ 4> <! 4>
+This gives a list of the monsters your current character has killed, listing the name, number and symbol on the map for each.
+
+%%%%% <cmd=~5>
+$gDisplay ancestral causes of death <~ 5> <! 5>
+This gives a list of how the characters in the current save file have died. It lists which monsters have killed your characters, and also how many were killed by traps, poison and other misfortunes, or ended the game voluntarily. It lists the name, number and symbol on the map for each (non-monster deaths use an arbitrary symbol).
+
+%%%%% <cmd=~6>
+$gDisplay chaos features <~ 6> <! 6>
+This gives a list of the the changes which have been made to your character by chaos (most easily experienced by practicing thaumaturgy), giving a brief description of each. It does not list whether your stats or race have been affected by chaos, but only those things which cannot be acquired in other ways.
+
+%%%%% <cmd=~7>
+$gDisplay current allies <~ 7> <! 7>
+This lists the friendly monsters which are on the current level. No monsters are generated friendly, but certain spells and items can tame hostile monsters. As friendly monsters slow down the rate at which you regain spell points and chi, it also lists the degree to which this is happening.
+
+%%%%% <cmd=~8>
+$gDisplay shop prices <~ 8> <! 8>
+This lists certain information about each shop in the game, giving the symbol for the door, the name and race of the shopkeeper, the type of shop, the largest amount of money the shopkeeper will pay for a single item and a number which represents how good a deal the shopkeeper will give the player's character relative to other shopkeepers.
+
+The + and - keys can be used to view each town with shops in turn, and pressing the symbol which is used to represent a town on the wilderness map (the numbers 0, 1, 2, 4, 5, 6 and 7 by default) will take you to a particular town immediately.
+
+%%%%% <cmd=~9>
+$gDisplay character features <~ 9> <! 9>
+This displays various things about your character which are not listed elsewhere. At the moment, this comprises your saving throw and some of the effects your AC has. These calculations are based on information known to the player, so objects which are not fully identified may make the numbers inaccurate.
 
 %%%%% <cmd=!>
 $GInteract with the system (!)

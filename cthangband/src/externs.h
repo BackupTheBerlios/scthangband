@@ -1411,7 +1411,7 @@ extern void reset_visuals(void);
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
 #endif
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(OBJECT1_C) || defined(SPELLS1_C))
 extern void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_ptr);
 #endif
 #if (defined(FILES_C) || defined(OBJECT1_C))
@@ -2092,7 +2092,7 @@ extern byte adj_chr_gold[];
 #if (defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_int_dev[];
 #endif
-#if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern byte adj_wis_sav[];
 #endif
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(XTRA1_C))

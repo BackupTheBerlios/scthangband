@@ -3671,6 +3671,58 @@ static void do_cmd_knowledge_player_ac(FILE *fff)
 }
 
 /*
+ * Work out what the player's apparent saving throw is. In most cases, this
+ * will be the actual saving throw, but an anti-magic shell can exist but be
+ * unknown.
+ */
+static void do_cmd_knowledge_player_save(FILE *fff)
+{
+	int skill_sav;
+
+	/* Anti-magic may be possessed unknowingly. */
+	if (p_ptr->anti_magic && p_ptr->skill_sav == 95)
+	{
+		/* Look for an object known to grant an anti-magic field. */
+		for (skill_sav = INVEN_WIELD; skill_sav <= INVEN_FEET; skill_sav++)
+		{
+			object_type o_ptr[1];
+			object_info_known(o_ptr, inventory+skill_sav, 0);
+			if (o_ptr->flags3 & TR3_NO_MAGIC) break;
+		}
+
+		/* Found one. */
+		if (skill_sav <= INVEN_FEET)
+		{
+			skill_sav = p_ptr->skill_sav;
+		}
+		/* Calculate what the saving throw would be otherwise (as in
+		 * calc_bonuses()). */
+		else
+		{
+			skill_sav = skill_set[SKILL_SAVE].value;
+
+			if (p_ptr->muta3 & MUT3_MAGIC_RES)
+			{
+				skill_sav += (15 + ((skill_set[SKILL_RACIAL].value/2) / 5));
+			}
+			
+			/* Affect Skill -- saving throw (WIS) */
+			skill_sav += adj_wis_sav[p_ptr->stat_ind[A_WIS]];
+		}
+	}
+	else
+	{
+		skill_sav = p_ptr->skill_sav;
+	}
+
+	/* Only values between 0 and 101 have an effect. */
+	if (skill_sav < 0) skill_sav = 0;
+	else if (skill_sav > 101) skill_sav = 101;
+
+	fprintf(fff, "You have a %d%% saving throw.\n", skill_sav);
+}
+
+/*
  * List various pieces of information about the player.
  */
 static void do_cmd_knowledge_player(void)
@@ -3686,7 +3738,7 @@ static void do_cmd_knowledge_player(void)
 	/* Find out various things. */
 	do_cmd_knowledge_player_ac(fff);
 	fprintf(fff, "\n");
-	fprintf(fff, "You have a %d%% saving throw.\n", MIN(101, p_ptr->skill_sav));
+	do_cmd_knowledge_player_save(fff);
 
 	/* Close the file. */
 	my_fclose(fff);
@@ -3828,7 +3880,6 @@ void do_cmd_knowledge(void)
 {
 	int i;
 
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
@@ -3886,7 +3937,11 @@ void do_cmd_knowledge(void)
 		else if (i > '0' && i < '1'+max_knowledge)
 		{
 			knowledge_type *kn_ptr = &knowledge[i-'1'];
+			char help_str[] = "cmd=~0";
+			help_str[5]=i;
+			help_track(help_str);
 			(*(kn_ptr->func))();
+			help_track(NULL);
 		}
 
 		/* Unknown option */
