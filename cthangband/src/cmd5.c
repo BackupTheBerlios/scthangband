@@ -1974,15 +1974,20 @@ void do_cmd_mindcraft(void)
 				add_flag(TIMED_STUN, randint(8));
 			}
 			else
-			{   /* Mana storm */
+			{   /* Mana storm (use a fake monster to let it hurt the player). */
+				m_list->r_idx = MON_CONCENTRATING_TOO_HARD;
+
 				msg_print("Your mind unleashes its power in an uncontrollable storm!");
-				project(m_list+1, 2+psi/10, py, px,
-                psi * 2, GF_MANA,PROJECT_JUMP|PROJECT_KILL|PROJECT_GRID|PROJECT_ITEM);
+				project(m_list, 2+psi/10, py, px, psi * 2, GF_MANA,
+					PROJECT_JUMP|PROJECT_KILL|PROJECT_GRID|PROJECT_ITEM);
+				b = p_ptr->cchi - psi * MAX(1, psi/10);
 				if (p_ptr->cchi < s_ptr->mana)
 				{
-				p_ptr->cchi = MAX(0, p_ptr->cchi - psi * MAX(1, psi/10));
-				} else {
-					p_ptr->cchi = MAX(s_ptr->mana, p_ptr->cchi - psi * MAX(1, psi/10));
+					p_ptr->cchi = MAX(0, b);
+				}
+				else
+				{
+					p_ptr->cchi = MAX(s_ptr->mana, b);
 				}
 			}
 	    }

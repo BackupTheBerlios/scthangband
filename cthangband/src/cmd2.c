@@ -2831,25 +2831,29 @@ void do_cmd_throw(int throw_mult)
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(q_ptr) : 0);
 
-         /* Potions smash open */
-     if (k_info[q_ptr->k_idx].tval == TV_POTION) {
-       if ((hit_body) || (!cave_floor_bold(ny, nx)) || (randint(100) < j)) {
-       /* Message */
-       msg_format("The %v shatters!", object_desc_f3, q_ptr, FALSE, 3);
-       if (potion_smash_effect(m_list+1, y, x, q_ptr->k_idx))
-       {
-              if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
-                    {
-                   msg_format("%v gets angry!", monster_desc_f2, &m_list[cave[y][x].m_idx], 0);
-                   m_list[cave[y][x].m_idx].smart &= ~SM_ALLY;
-               }
-            }
+	/* Potions smash open */
+	if (k_info[q_ptr->k_idx].tval == TV_POTION)
+	{
+		if ((hit_body) || (!cave_floor_bold(ny, nx)) || (randint(100) < j))
+		{
+			m_list->r_idx = MON_HARMFUL_POTION;
+			msg_format("The %v shatters!", object_desc_f3, q_ptr, FALSE, 3);
+			if (potion_smash_effect(m_list, y, x, q_ptr->k_idx))
+			{
+				if (cave[y][x].m_idx && (m_list[cave[y][x].m_idx].smart & SM_ALLY))
+				{
+					msg_format("%v gets angry!", monster_desc_f2, &m_list[cave[y][x].m_idx], 0);
+					m_list[cave[y][x].m_idx].smart &= ~SM_ALLY;
+				}
+			}
 
-       return;
-       } else {
-       j = 0;
-       }
-      }
+			return;
+		}
+		else
+		{
+			j = 0;
+		}
+	}
 
 
 	/* Drop (or break) near that location */

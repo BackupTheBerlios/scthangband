@@ -4217,7 +4217,7 @@ static bool project_m(monster_type *mw_ptr, int r, int y, int x, int dam, int ty
 
 
 	/* If another monster did the damage, hurt the monster by hand */
-	if (mw_ptr)
+	if (mw_ptr && mw_ptr != m_list)
 	{
 		/* Redraw (later) if needed */
 		if (health_who == c_ptr->m_idx) p_ptr->redraw |= (PR_HEALTH);
@@ -5763,14 +5763,17 @@ done_reflect: /* Success */
   * while lying on the floor.
   *
   * Arguments:
-  *    m_ptr   ---  who caused the potion to shatter (NULL=player)
-  *          potions that smash on the floor are assumed to
-  *          be caused by no-one (m_ptr = m_list+1), as are those that
-  *          shatter inside the player inventory.
-  *          (Not anymore -- I changed this; TY)
-  *    y, x  --- coordinates of the potion (or player if
-  *          the potion was in her inventory);
-  *    o_ptr --- pointer to the potion object.
+  *   m_ptr:  who caused the potion to shatter.
+  *           NULL represents the player, and cannot hurt him.
+  *           m_list represents the player when it can hurt him.
+  *           Anything else is assumed to be another monster.
+  *    y, x:  coordinates of the potion (or player if
+  *           the potion was in her inventory);
+  *  o_kidx:  type of potion being smashed.
+  *
+  * Returns TRUE if the effect should annoy the monster at the current
+  * location. This should only happen if the player caused the effect, but this
+  * isn't checked here.
   */
 bool potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 {
