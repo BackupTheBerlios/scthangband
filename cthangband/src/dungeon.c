@@ -4259,7 +4259,7 @@ void play_game(bool new_game)
 #endif /* WINDOWS */
 
 		/* Attempt to load */
-		if (!load_player())
+		if (!load_player(new_game))
 		{
 			/* Oops */
 			quit("broken savefile");

@@ -695,7 +695,7 @@ extern void cleanup_angband(void);
 /* load.c */
 
 #if (defined(DUNGEON_C) || defined(LOAD_C))
-extern bool load_player(void);
+extern bool load_player(bool new_game);
 #endif
 
 /* loadsave.c */

@@ -1724,7 +1724,7 @@ static void rd_spell_flags(void)
 /*
  * Actually read the savefile
  */
-static errr rd_savefile_new_aux(void)
+static errr rd_savefile_new_aux(bool new_game)
 {
 	int i;
 	bool warn;
@@ -2094,7 +2094,7 @@ good:
 	}
 
 	/* New characters use the base quest list. */
-	if (death)
+	if (death || new_game)
 	{
 		FREE(q_list_new);
 	}
@@ -2147,7 +2147,7 @@ good:
 /*
  * Actually read the savefile
  */
-static errr rd_savefile_new(void)
+static errr rd_savefile_new(bool new_game)
 {
 	errr err;
 
@@ -2158,7 +2158,7 @@ static errr rd_savefile_new(void)
 	if (!fff) return (-1);
 
 	/* Call the sub-function */
-	err = rd_savefile_new_aux();
+	err = rd_savefile_new_aux(new_game);
 
 	/* Check for errors */
 	if (ferror(fff)) err = -1;
@@ -2195,7 +2195,7 @@ static errr rd_savefile_new(void)
  * Note that we always try to load the "current" savefile, even if
  * there is no such file, so we must check for "empty" savefile names.
  */
-bool load_player(void)
+bool load_player(bool new_game)
 {
 	int             fd = -1;
 
@@ -2328,7 +2328,7 @@ bool load_player(void)
 		Term_clear();
 
 		/* Attempt to load */
-		err = rd_savefile_new();
+		err = rd_savefile_new(new_game);
 		/* Message (below) */
 		if (err) what = "Cannot parse savefile";
 	}
