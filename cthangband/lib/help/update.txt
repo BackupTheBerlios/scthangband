@@ -5,8 +5,19 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
-sCthangband _CVS_
+sCthangband 1.0.12
+* Find the next instance of a string if a player searches for it twice in a help
+  file.
 * Add a special help file for new users.
+* Display the skills help if the player presses ? when the skills screen is
+  shown.
+* Improve race, template and speed help.
+* Fix the following bugs:
+  * The game crashed during initialisation if compiled with BCC.
+  * Spoiler files could not be generated.
+  * The martial arts damage calculation was never actually used.
+  * The damage claimed for vorpal weapons was too low.
+  * Too many messages were given if the player has no room to pick something up.
 
 sCthangband 1.0.11
 * Regain SP and CHI, and become hungry, while resting in a house or inn.
