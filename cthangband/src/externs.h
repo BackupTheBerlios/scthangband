@@ -335,7 +335,7 @@ extern magic_type *num_to_spell(int i);
 #if (defined(CMD5_C) || defined(XTRA1_C))
 extern int spell_skill(const magic_type *s_ptr);
 #endif
-#if (defined(CMD5_C) || defined(MONSTER1_C))
+#if (defined(CMD5_C) || defined(MONSTER1_C) || defined(SPELLS2_C))
 extern void evaluate_text_f3(char *buf, uint max, cptr UNUSED fmt,
 	va_list *vp)
 ;
@@ -3998,10 +3998,10 @@ extern vptr ralloc(huge len);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
 #endif
-#if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(Z_VIRT_C))
+#if (defined(DUNGEON_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern void safe_free(vptr p);
 #endif
-#if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(Z_VIRT_C))
+#if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

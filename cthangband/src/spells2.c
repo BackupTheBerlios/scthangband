@@ -559,6 +559,68 @@ static bool chaos_reject_dup(int i)
 	}
 }
 
+typedef struct race_power race_power;
+struct race_power
+{
+	s16b race;
+	byte min;
+	byte max;
+	cptr str;
+};
+
+static const race_power race_powers[] =
+{
+	{RACE_NIBELUNG, 1, 50, "You can find traps, doors and stairs (cost 5)."},
+	{RACE_DWARF, 1, 50, "You can find traps, doors and stairs (cost 5)."},
+	{RACE_HOBBIT, 1, 50, "You can produce food (cost 10)."},
+	{RACE_GNOME, 1, 50, "You can teleport, range LEV+1; (cost LEV/5+5;)."},
+	{RACE_HALF_ORC, 1, 50, "You can remove fear (cost 5)."},
+	{RACE_HALF_TROLL, 1, 50, "You can enter berserk fury (cost 12)."},
+	{RACE_GREAT, 1, 50, "You can dream travel (cost 50)."},
+	{RACE_GREAT, 1, 50, "You can dream a better self (cost 75)."},
+	{RACE_BARBARIAN, 1, 50, "You can enter berserk fury (cost 10)."},
+	{RACE_HALF_OGRE, 1, 50, "You can set an explosive rune (cost 35)."},
+	{RACE_HALF_GIANT, 1, 50, "You can break stone walls (cost 10)."},
+	{RACE_HALF_TITAN, 1, 50, "You can probe monsters (cost 20)."},
+	{RACE_CYCLOPS, 1, 50, "You can throw a boulder, dam LEV*3; (cost 15)."},
+	{RACE_YEEK, 1, 50, "You can make a terrifying scream (cost 15)."},
+	{RACE_KLACKON, 1, 50, "You can spit acid, dam. LEV; (cost 9)."},
+	{RACE_KOBOLD, 1, 50, "You can throw a dart of poison, dam. LEV; (cost 8)."},
+	{RACE_DARK_ELF, 1, 50, "You can cast a Magic Missile, dam LEV+4/5+2; (cost 2)."},
+	{RACE_DRACONIAN, 1, 50, "You can breathe, dam. LEV*2; (cost LEV;)."},
+	{RACE_MIND_FLAYER, 1, 50, "You can mind blast your enemies, dam LEV; (cost 12)."},
+	{RACE_IMP, 30, 50, "You can cast a Fire Ball, dam. LEV; (cost 15)."},
+	{RACE_IMP, 9, 29, "You can cast a Fire Bolt, dam. LEV; (cost 15)."},
+	{RACE_GOLEM, 1, 50, "You can turn your skin to stone, dur d20+30 (cost 15)."},
+	{RACE_ZOMBIE, 1, 50, "You can restore lost life forces (cost 30)."},
+	{RACE_SKELETON, 1, 50, "You can restore lost life forces (cost 30)."},
+    {RACE_VAMPIRE, 1, 50,
+		"You can steal life from a foe, dam. LEV*11/10>11;-LEV/10+1>2*LEV (cost LEV/3+1;)."},
+    {RACE_SPECTRE, 1, 50, "You can wail to terrify your enemies (cost 3)."},
+    {RACE_BROO, 1, 50, "You can growl to terrify your enemies (cost 3)."},
+    {RACE_SPRITE, 1, 50, "You can throw magic dust which induces sleep (cost 12)."},
+};
+
+static int add_race_powers(cptr *info)
+{
+	int i = 0;
+	const race_power *pr_ptr;
+	const int plev = MAX(1, skill_set[SKILL_RACIAL].value/2);
+
+	FOR_ALL_IN(race_powers, pr_ptr)
+	{
+		/* Bad race. */
+		if (pr_ptr->race != p_ptr->prace) continue;
+
+		/* Bad level. */
+		if (pr_ptr->min > plev || pr_ptr->max < plev) continue;
+
+		info[i++] = safe_string_make(format("%v",
+			evaluate_text_f3, pr_ptr->str, "LEV", plev));
+	}
+	return i;
+}
+
 /*
  * self-knowledge... idea from nethack.  Useful for determining powers and
  * resistences of items.  It saves the screen, clears it, then starts listing
@@ -580,13 +642,7 @@ void self_knowledge(void)
 
 	object_type     *o_ptr;
 
-    char Dummy[80];
-
 	cptr    info[128];
-
-	const int plev = MAX(1, skill_set[SKILL_RACIAL].value/2);
-
-    strcpy (Dummy, "");
 
 	/* Acquire item flags from equipment */
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
@@ -607,165 +663,10 @@ void self_knowledge(void)
 		f3 |= t3;
 	}
 
-
-    /* Racial powers... */
-    switch (p_ptr->prace)
-    {
-	case RACE_NIBELUNG: case RACE_DWARF:
-	{
-	    info[i++] = "You can find traps, doors and stairs (cost 5).";
-	}
-    break;
-	case RACE_HOBBIT:
-	{
-		info[i++] = "You can produce food (cost 10).";
-	}
-	break;
-	case RACE_GNOME:
-	{
-		sprintf(Dummy, "You can teleport, range %d (cost %d).",
-			(1+plev), (5 + (plev/5)));
-		info[i++] = Dummy;
-	}
-	break;
-	case RACE_HALF_ORC:
-	{
-	    info[i++] = "You can remove fear (cost 5).";
-	}
-	break;
-	case RACE_HALF_TROLL:
-	{
-	    info[i++] = "You enter berserk fury (cost 12).";
-	}
-	break;
-	case RACE_GREAT:
-	{
-	    info[i++] = "You can dream travel (cost 50).";
-	    info[i++] = "You can dream a better self (cost 75).";
-	}
-	break;
-	case RACE_BARBARIAN:
-	{
-	    info[i++] = "You can enter berserk fury (cost 10).";
-	}
-	break;
-	case RACE_HALF_OGRE:
-	{
-	    info[i++] = "You can set an Explosive Rune (cost 35).";
-	}
-	break;
-	case RACE_HALF_GIANT:
-	{
-	    info[i++] = "You can break stone walls (cost 10).";
-	}
-	break;
-	case RACE_HALF_TITAN:
-	{
-	    info[i++] = "You can probe monsters (cost 20).";
-	}
-	break;
-	case RACE_CYCLOPS:
-	{
-		sprintf(Dummy, "You can throw a boulder, dam. %d (cost 15).",
-		    3 * plev);
-		info[i++] = Dummy;
-	}
-	break;
-	case RACE_YEEK:
-	{
-	    info[i++] = "You can make a terrifying scream (cost 15).";
-	}
-	break;
-	case RACE_KLACKON:
-	{
-		sprintf(Dummy, "You can spit acid, dam. %d (cost 9).",
-		    plev);
-		info[i++] = Dummy;
-	}
-	break;
-	case RACE_KOBOLD:
-	{
-		sprintf(Dummy,
-		    "You can throw a dart of poison, dam. %d (cost 8).",
-		    plev);
-		info[i++] = Dummy;
-	}
-	break;
-	case RACE_DARK_ELF:
-	{
-		sprintf(Dummy, "You can cast a Magic Missile, dam %d (cost 2).",
-		( 3 + ((plev-1) / 5) ) );
-		info[i++] = Dummy;
-	}
-	break;
-	case RACE_DRACONIAN:
-	{
-	    sprintf(Dummy, "You can breathe, dam. %d (cost %d).", 2 * plev,
-		plev);
-	    info[i++] = Dummy;
-	}
-	break;
-	case RACE_MIND_FLAYER:
-	{
-        sprintf(Dummy, "You can mind blast your enemies, dam %d (cost 12).",
-             plev);
-        info[i++] = Dummy;
-	}
-	break;
-	case RACE_IMP:
-	{
-	    if (plev > 29)
-	    {
-		sprintf(Dummy, "You can cast a Fire Ball, dam. %d (cost 15).",
-		    plev);
-		info[i++] = Dummy;
-	    }
-	    else if (plev > 8)
-	    {
-		sprintf(Dummy, "You can cast a Fire Bolt, dam. %d (cost 15).",
-		    plev);
-		info[i++] = Dummy;
-	    }
-	}
-	break;
-	case RACE_GOLEM:
-	{
-	    info[i++] = "You can turn your skin to stone, dur d20+30 (cost 15).";
-	}
-	break;
-	case RACE_ZOMBIE: case RACE_SKELETON:
-	{
-	    info[i++] = "You can restore lost life forces (cost 30).";
-	}
-	break;
-    case RACE_VAMPIRE:
-    {
-            sprintf(Dummy, "You can steal life from a foe, dam. %d-%d (cost %d).",
-                plev+MAX(1, plev/10), plev+plev*MAX(1, plev/10), 1+(plev/3));
-            info[i++] = Dummy;
-    }
-    break;
-    case RACE_SPECTRE:
-    {
-            info[i++] = "You can wail to terrify your enemies (cost 3).";
-    }
-    break;
-    case RACE_BROO:
-    {
-            info[i++] = "You can growl to terrify your enemies (cost 3).";
-    }
-    break;
-    case RACE_SPRITE:
-    {
-            info[i++] = "You can throw magic dust which induces sleep (cost 12).";
-    }
-    break;
-	default:
-	break;
-    }
+	/* Handle racial powers. */
+	i += add_race_powers(info+i);
 
     /* Handle chaos features */
-
 	i += add_chaos_features(info+i, chaos_reject_dup);
 
 	if (p_ptr->blind)
@@ -1218,6 +1119,9 @@ void self_knowledge(void)
 			for (; k > 2; k--) prt("", k, 15);
 		}
 	}
+
+	/* Free any allocated strings. */
+	while (i--) safe_free(info+i);
 
 	/* Pause */
 	prt("[Press any key to continue]", k, 13);
