@@ -3680,20 +3680,13 @@ void win_help_display(void)
 			/* Not this option heading. */
 			if (!strstr(buf+strlen(CC_LINK_PREFIX), CUR_HELP_STR)) continue;
 
-			while (!my_fgets(fff, buf, 1024) &&
-				!prefix(buf, CC_LINK_PREFIX))
-			{
-				/* Print the line out in a possibly colourful way. */
-				mc_roff(buf);
-				
-				/* Go to the next line. */
-				roff("\n");
-			}
+			win_help_display_aux(fff);
+
 			/* Only expect one match. */
 			my_fclose(fff);
 			return;
 		}
-		
+
 		my_fclose(fff);
 	}
 }

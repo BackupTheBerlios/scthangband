@@ -3731,7 +3731,7 @@ struct hyperlink
 typedef struct hyperlink hyperlink_type;
 
 /*
- * Attempt to open a file in a standard Angband directory for show_file_tome().
+ * Attempt to open a file in a standard Angband directory for show_file_aux().
  */
 static FILE *show_fopen(hyperlink_type *h_ptr, cptr path, cptr name)
 {
@@ -3999,9 +3999,48 @@ static void show_page(FILE *fff, hyperlink_type *h_ptr, int miny, int maxy, int 
 }
 
 /*
- * ToME's show_file() function (modified)
+ * Display a screen of text in a non-interactive way.
+ * fff is initially positioned after the current section marker.
  */
-static char show_file_tome(cptr name, cptr what, int line)
+void win_help_display_aux(FILE *fff)
+{
+	int x,y;
+	hyperlink_type h_ptr[1];
+
+	FILE *ftmp;
+	
+	/* Clear everything to start. */
+	WIPE(h_ptr, hyperlink_type);
+
+	/* Create a temporary file to store the current section in. */
+	if (!((ftmp = my_fopen_temp(h_ptr->path, sizeof(h_ptr->path))))) return;
+
+	/* Copy the rest of this section. */
+	while (fgets(h_ptr->rbuf, 1024, fff) &&
+		!prefix(h_ptr->rbuf, CC_LINK_PREFIX))
+	{
+		fprintf(ftmp, "%s", h_ptr->rbuf);
+	}
+
+	fclose(ftmp);
+	ftmp = my_fopen(h_ptr->path, "r");
+
+	/* Find the height of the window. */
+	Term_get_size(&x, &y);
+
+	/* Display the help. */
+	show_page(ftmp, h_ptr, 0, y-1, 0);
+
+	my_fclose(ftmp);
+
+	/* Remove the temporary files */
+	fd_kill(h_ptr->path);
+}
+
+/*
+ * A show_file() function based on ToME's version.
+ */
+static char show_file_aux(cptr name, cptr what, int line)
 {
 	int i, k, x;
 
@@ -4241,7 +4280,7 @@ static char show_file_tome(cptr name, cptr what, int line)
 			if (is_temp_file) fd_kill(h_ptr->path);
 
 			/* Display it again. */
-			return show_file_tome(name, what, 0);
+			return show_file_aux(name, what, 0);
 		}
 
 		/* Hack -- try showing */
@@ -4289,7 +4328,7 @@ static char show_file_tome(cptr name, cptr what, int line)
 			strcpy(tmp, "help.hlp");
 			if (askfor_aux(tmp, 80))
 			{
-				k  = show_file_tome(tmp, NULL, 0);
+				k  = show_file_aux(tmp, NULL, 0);
 			}
 		}
 
@@ -4348,7 +4387,7 @@ static char show_file_tome(cptr name, cptr what, int line)
 			if (h_ptr->link_x[h_ptr->cur_link] != -1)
 			{
 				/* Recurse on that file */
-				k = show_file_tome(h_ptr->link[h_ptr->cur_link], NULL,
+				k = show_file_aux(h_ptr->link[h_ptr->cur_link], NULL,
 					h_ptr->link_line[h_ptr->cur_link]);
 			}
 		}
@@ -4363,7 +4402,7 @@ static char show_file_tome(cptr name, cptr what, int line)
 		if (i == h_ptr->max_link) continue;
 			
 		/* Recurse on that file, carry forward the return code. */
-		k = show_file_tome(h_ptr->link[i], NULL, h_ptr->link_line[i]);
+		k = show_file_aux(h_ptr->link[i], NULL, h_ptr->link_line[i]);
 	}
 
 	/* Close the file */
@@ -4379,12 +4418,12 @@ static char show_file_tome(cptr name, cptr what, int line)
 
 /*
  * Hack -- display the contents of a file on the screen
- * Only a wrapper around show_file_tome() now.
+ * Only a wrapper around show_file_aux() now.
  */
 void show_file(cptr name, cptr what)
 {
 	add_resize_hook(resize_inkey);
-	show_file_tome(name, what, 0);
+	show_file_aux(name, what, 0);
 	delete_resize_hook(resize_inkey);
 }
 
