@@ -5,11 +5,6 @@
 
 #include "angband.h"
 
-#ifdef CHECK_MODIFICATION_TIME
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif /* CHECK_MODIFICATION_TIME */
-
 /*
  * This file is used to initialize various variables and arrays for the
  * Angband game.  Note the use of "fd_read()" and "fd_write()" to bypass
@@ -270,8 +265,12 @@ static cptr err_str[PARSE_ERROR_MAX] =
 
 #endif
 
-#ifdef CHECK_MODIFICATION_TIME
+#if defined(CHECK_MODIFICATION_TIME) && defined(HAS_STAT)
 
+/*
+ * Hack - put the SET_UID version of the check_modification_date() function
+ * here.
+ */
 static errr check_modification_date(int fd, cptr template_file)
 {
 	char buf[1024];
@@ -305,8 +304,13 @@ static errr check_modification_date(int fd, cptr template_file)
 	return (0);
 }
 
-#endif /* CHECK_MODIFICATION_TIME */
+#endif /* CHECK_MODIFICATION_TIME && HAS_STAT */
 
+/* 
+ * A hook for a function which compares the modification date of a raw fd
+ * to the text file from which it was derived.
+ */
+errr (*check_modification_date_hook)(int fd, cptr template_file) = 0;
 
 /*** Initialize from binary image files ***/
 
@@ -494,7 +498,10 @@ static void init_info(header *head)
 		{
 #ifdef CHECK_MODIFICATION_TIME
 
-			err = check_modification_date(fd, textname);
+			if (check_modification_date_hook)
+			{
+				err = (*check_modification_date_hook)(fd, textname);
+			}
 
 #endif /* CHECK_MODIFICATION_TIME */
 
@@ -1644,7 +1651,7 @@ static bool check_screen_coords(void)
  */
 static void check_arrays(void)
 {
-	if (check_screen_coords()) quit("screen_coords is arranged incorrectly.");
+	if (!check_screen_coords()) quit("screen_coords is arranged incorrectly.");
 }
 #endif /* CHECK_ARRAYS */
 
@@ -1838,6 +1845,11 @@ void init_angband(void)
 	/* Close it */
 	(void)fd_close(fd);
 
+
+	/* Hack - find the POSIX check_modification_date() function here. */
+#if defined(CHECK_MODIFICATION_TIME) && defined(HAS_STAT)
+	check_modification_date_hook = check_modification_date;
+#endif /* CHECK_MODIFICATION_TIME && HAS_STAT */
 
 	/*** Initialize some arrays ***/
 

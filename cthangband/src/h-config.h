@@ -316,6 +316,14 @@
     #endif
 #endif
 
+/*
+ * OPTION: Use the stat() and fstat() functions from the POSIX sys/stat.h
+ * header to check the modification date of each raw data file.
+ */
+#if defined(SET_UID) || defined(__POSIX__) /* GCC macro */
+#define HAS_STAT
+#endif /* SET_UID || __POSIX__ */
+
 #endif
 
 

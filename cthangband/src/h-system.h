@@ -102,6 +102,12 @@
 
 #include <stdarg.h>
 
+/* Various systems not covered above may have a working POSIX library, so
+ * include it if they do. */
+#ifdef HAS_STAT
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif /* HAS_STAT */
 
 #endif
 

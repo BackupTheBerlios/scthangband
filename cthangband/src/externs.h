@@ -311,10 +311,10 @@ extern void do_cmd_version(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_feeling(bool FeelingOnly);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_load_screen(void);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(SPELLS1_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(SPELLS1_C))
 extern void do_cmd_save_screen(void);
 #endif
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(XTRA1_C))
@@ -329,7 +329,7 @@ extern bool shops_good(int town);
 #if (defined(CMD4_C) || defined(XTRA1_C))
 extern void shops_display(int town);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(STORE_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_knowledge(void);
 #endif
 
@@ -986,65 +986,65 @@ extern AEEventHandlerUPP AEH_Print_UPP;
 extern AEEventHandlerUPP AEH_Open_UPP;
 #endif
 
+
+
+
+
+
+
 /* main-ros.c */
 
-#if (defined(__riscos)) && (defined(MAIN_ROS_C))
-extern int save_player_panic_acn(void);
+#if (defined(ACORN)) && (defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
+extern FILE *my_fopen(cptr f, cptr m);
 #endif
-#if (defined(__riscos)) && (defined(MAIN_ROS_C))
-extern char *riscosify_name(const char *path);
-#endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
-extern FILE *my_fopen(const char *f, const char *m);
-#endif
-#if (defined(__riscos)) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
+#if (defined(ACORN)) && (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(XTRA1_C))
 extern errr my_fclose(FILE *fp);
 #endif
-#if (defined(__riscos)) && (defined(INIT2_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(INIT2_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
 extern int fd_make(cptr file, int mode);
 #endif
-#if (defined(__riscos)) && (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C))
+#if (defined(ACORN)) && (defined(CMD4_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C) || defined(XTRA2_C))
 extern errr fd_kill(cptr file);
 #endif
-#if (defined(__riscos)) && (defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(MAIN_ROS_C) || defined(SAVE_C) || defined(UTIL_C))
 extern errr fd_move(cptr old, cptr new);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
 extern int fd_open(cptr path, int flags);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(SAVE_C) || defined(UTIL_C))
 extern errr fd_close(int handle);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_read(int handle, char *buf, size_t nbytes);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(FILES_C) || defined(INIT2_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_write(int handle, const char *buf, size_t nbytes);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_seek(int handle, long offset);
 #endif
-#if (defined(__riscos)) && (defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(FILES_C) || defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr fd_lock(int handle, int what);
 #endif
-#if (defined(__riscos)) && (defined(MAIN_ROS_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr path_temp(char *buf, int max);
 #endif
-#if (defined(__riscos)) && (defined(MAIN_ROS_C) || defined(UTIL_C))
+#if (defined(ACORN)) && (defined(MAIN_ROS_C) || defined(UTIL_C))
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 #endif
-#if ((defined(__riscos)) && defined(USE_FILECACHE)) && (defined(MAIN_ROS_C))
-extern FILE *cached_fopen(char *name, char *mode);
+#if ((defined(ACORN)) && defined(USE_FILECACHE)) && (defined(MAIN_ROS_C))
+extern FILE *cached_fopen(cptr name, cptr mode);
 #endif
-#if ((defined(__riscos)) && defined(USE_FILECACHE)) && (defined(MAIN_ROS_C))
+#if ((defined(ACORN)) && defined(USE_FILECACHE)) && (defined(MAIN_ROS_C))
 extern errr cached_fclose(FILE *fch_);
 #endif
-#if ((defined(__riscos)) && defined(USE_FILECACHE)) && (defined(MAIN_ROS_C))
-extern errr cached_fgets(FILE *fch_, char *buffer, int max_len);
+#if ((defined(ACORN)) && defined(USE_FILECACHE)) && (defined(MAIN_ROS_C))
+extern errr cached_fgets(FILE *fch_, char *buffer, size_t max_len);
 #endif
-#if (defined(__riscos)) && (defined(INIT2_C) || defined(MAIN_ROS_C))
-extern errr check_modification_date(int fd, cptr template_file);
-#endif
+
+
+
 
 /* main-sla.c */
 
@@ -4011,6 +4011,9 @@ extern void process_command(void);
 extern void cave_track(const int y, const int x);
 #endif
 
-/* (null) */
+/* init2.c */
 
+#if (defined(INIT2_C) || defined(MAIN_ROS_C))
+extern errr (*check_modification_date_hook)(int fd, cptr template_file);
+#endif
 #endif /* INCLUDED_EXTERNS_H */
