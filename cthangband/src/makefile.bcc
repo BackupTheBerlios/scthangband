@@ -79,6 +79,7 @@ OBJ = \
   spells2.obj \
   store.obj \
   tables.obj \
+  ui.obj \
   util.obj \
   variable.obj \
   wizard1.obj \

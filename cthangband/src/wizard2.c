@@ -92,6 +92,85 @@ static int choose_on_screen(int (*aux)(void))
 }
   
 
+/* A "no choice" selection for choose_something(). */
+#define CHOOSE_NOTHING -1
+
+/*
+ * Display a list of options, allow the player to choose one on screen by symbol
+ * and return the index of the chosen option, or CHOOSE_NOTHING if aborted.
+ */
+static int choose_something_str(cptr noun, cptr verb, cptr pron,
+	bool truncate, name_centry *list, int num)
+{
+	int i;
+	char ch;
+
+	/* Clear screen */
+	clear_from(0);
+
+	/* Print a list of options on screen. */
+	display_entry_list(list, num, 0, truncate);
+
+	/* Wait for valid input or escape. */
+	while (get_com(&ch, "%^s %s %s? [%c-%c]", verb, pron, noun,
+		option_chars[0], option_chars[num-1]))
+	{
+		/* Return a valid response if found. */
+		for (i = 0; i < num; i++) if (option_chars[i] == ch) return i;
+
+		/* Complain otherwise. */
+		bell("Invalid choice '%c'", ch);
+	}
+
+	/* Failure. */
+	return CHOOSE_NOTHING;
+}
+
+/*
+ * Display a two-part prompt to select a single item.
+ * It uses a name_entry to describe the entries in the first part, which
+ * should start at start.
+ * type is the description used in the first prompt (e.g. "object").
+ * max is the number of valid items.
+ * item_good returns whether an item is something which can be generated and
+ * belongs to the specified category.
+ * print_f1 is a vstrnfmt_aux style function which copies the name of the item
+ * specified by number into buf.
+ */
+static int choose_something(name_centry *start, cptr noun, cptr verb, int max,
+	bool truncate, bool (*item_good)(int, int),
+	void (*print_f1)(char *, uint, cptr, va_list *))
+{
+	int i, num, idx;
+	name_entry choice[60];
+
+	/* Save all tvals and their descriptions */
+	num = build_choice_list_1(choice, start, 60, max, item_good);
+
+	/* Request a choice. */
+	i = choose_something_str(noun, verb, "what kind of", TRUE, choice, num);
+	if (i == CHOOSE_NOTHING) return i;
+
+	/* Store the choice. */
+	idx = choice[i].idx;
+	noun = choice[i].str;
+
+	/* Obtain the second list with print_f1. */
+	num = build_choice_list_2(choice, idx, 60, max, item_good);
+	for (i = 0; i < num; i++)
+		choice[i].str = string_make(format("%v", print_f1, choice[i].idx));
+
+	/* Request a choice. */
+	i = choose_something_str(noun, verb, "which", truncate, choice, num);
+
+	/* Remove the allocated strings. */
+	while (num--) FREE(choice[num].str);
+
+	if (i == CHOOSE_NOTHING) return i;
+
+	return choice[i].idx;
+}
+
 /*
  * Hack -- quick debugging hook
  */
@@ -173,7 +252,7 @@ void do_cmd_wiz_bamf(void)
  * Sorting (comparison) hook for skill furthest to the right, and then the
  * bottom.
  */
-static bool ang_sort_comp_skills(vptr u, vptr UNUSED v, int a, int b)
+static bool PURE ang_sort_comp_skills(vptr u, vptr UNUSED v, int a, int b)
 {
 	player_skill **s = (player_skill**)u;
 
@@ -483,218 +562,19 @@ static name_centry tval_names[] =
  * Return whether k_info[i] can be generated and is part of the specified
  * category.
  */
-static bool good_cat_object(int a, name_centry *cat)
+static bool good_cat_object(int k_idx, int tval)
 {
 	/* Hack -- skip items which only have special generation methods. */
-	if (!kind_created_p(k_info+a)) return FALSE;
+	if (!kind_created_p(k_info+k_idx)) return FALSE;
 
 	/* Simply check the tval. */
-	return (k_info[a].tval == cat->idx);
+	return (k_info[k_idx].tval == tval);
 }
 
-/*
- * Specify tval (category) and object. Originally
- * by RAK, heavily modified by -Bernd-
- *
- * This function returns the k_idx of an object type, or zero if failed
- *
- * List up to 50 choices in three columns
- */
 static int wiz_create_itemtype(void)
 {
-	int i, num;
-	int col, row;
-	uint len;
-	name_centry *cat;
-
-	cptr s;
-	char ch;
-
-	int	choice[60];
-
-	C_TNEW(bufx, 61*ONAME_MAX, char);
-	char *obuf[61];
-
-	/* Choose a category until a valid response is given. */
-	while (1)
-	{
-		name_centry *choice[60];
-		int max;
-		char ch, *s;
-
-		/* Display a list of the valid options for this prompt. */
-		display_item_category(&max, good_cat_object, tval_names, choice);
-
-		/* Choose (or not). */
-		if (!get_com(&ch, "Select a category:")) return 0;
-
-		/* Find the choice. */
-		s = strchr(option_chars, ch);
-		if (s && s < option_chars+max)
-		{
-			cat = choice[s - option_chars];
-			break;
-		}
-		else
-		{
-			bell("No such category");
-		}
-	}
-
-	/*** And now we go for k_idx ***/
-
-	/* Turn obuf[] into a 2 dimensional array. */
-	for (i = 0; i < 61; i++) obuf[i] = bufx+i*ONAME_MAX;
-
-	/* Clear screen */
-	Term_clear();
-
-	/* We have to search the whole itemlist. */
-	for (num = 0, i = 1; (num < 60) && (i < MAX_K_IDX); i++)
-	{
-		if (good_cat_object(i, cat)) choice[num++] = i;
-	}
-
-	len = 80/((num+19)/20);
-
-	/* The name of each option will be stored and trimmed to fit. */
-	for (i = 0; i <= 60; i++) obuf[i] = bufx+i*ONAME_MAX;
-
-	/* Get names for each valid object which can all fit on screen at once. */
-	get_names(obuf, obuf[60], num, choice, len, object_k_name_f1);
-
-	/* Print everything */
-	for (i = 0; i < num; i++)
-	{
-		row = 2 + (i % 20);
-		col = len * (i / 20);
-		ch = option_chars[i];
-		
-		/* Print it */
-		mc_put_fmt(row, col, "$![%c] %.*^s", ch, len-4, obuf[i]);
-	}
-
-	/* Finished with the obuf[] array. */
-	TFREE(bufx);
-
-	/* Choose! */
-	if (!get_com(&ch, "What kind of %.60s? ", cat->str)) return (0);
-
-	/* Analyze choice */
-	s = strchr(option_chars, ch);
-
-	/* Bail out if choice is not recognised. */
-	if (!s || s >= option_chars+num) return 0;
-
-	/* And return successful */
-	return (choice[s - option_chars]);
-}
-
-/* A "no choice" selection for choose_something(). */
-#define CHOOSE_NOTHING -1
-
-/*
- * Display a list of options, allow the player to choose one on screen by symbol
- * and return the index of the chosen option, or CHOOSE_NOTHING if aborted.
- */
-static int choose_something_str(cptr what, name_centry *list, int num)
-{
-	int mx, my, cx, cy, i;
-	char ch;
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Calculate the column width and number of rows needed to fit list in. */
-	Term_get_size(&mx, &my);
-	cx = (num + my - 3) / (my - 2);
-	cy = (num + cx - 1) / cx;
-	cx = mx / cx;
-
-	for (i = 0; i < num; i++)
-	{
-		int ty = 2 + (i % cy);
-		int tx = cx * (i / cy);
-
-		mc_put_fmt(ty, tx, "$![%c] %.*s", option_chars[i], cx - 5, list[i].str);
-	}
-	/* Wait for valid input or escape. */
-	while (get_com(&ch, "Get what type of %s? [%c-%c]",
-		what, option_chars[0], option_chars[num-1]))
-	{
-		/* Return a valid response if found. */
-		for (i = 0; i < num; i++) if (option_chars[i] == ch) return i;
-
-		/* Complain otherwise. */
-		bell("Invalid choice '%c'", ch);
-	}
-
-	/* Failure. */
-	return CHOOSE_NOTHING;
-}
-
-/*
- * Display a two-part prompt to select an item.
- * It uses a name_entry to describe the entries in the first part, which
- * should start at start.
- * type is the description used in the first prompt (e.g. "object").
- * max is the number of valid items.
- * item_good returns whether an item is something which can be generated and
- * belongs to the specified category.
- * print_f1 is a vstrnfmt_aux style function which copies the name of the item
- * specified by number into buf.
- */
-static int choose_something(name_centry *start, cptr type, int max,
-	bool (*item_good)(int, int),
-	void (*print_f1)(char *, uint, cptr, va_list *))
-{
-	int i, num, idx;
-	name_centry *cat;
-	name_entry choice[60];
-
-	/* Save all tvals and their descriptions */
-	for (num = 0, cat = start; (num < 60) && cat->str; cat++)
-	{
-		for (i = 0; i < max; i++)
-		{
-			if ((*item_good)(i, cat->idx))
-			{
-				name_entry *this = &choice[num++];
-				this->idx = cat->idx;
-				this->str = cat->str;
-				break;
-			}
-		}
-	}
-
-	/* Request a choice. */
-	i = choose_something_str(type, choice, num);
-	if (i == CHOOSE_NOTHING) return i;
-
-	/* Store the choice. */
-	idx = choice[i].idx;
-	type = choice[i].str;
-
-	/* Obtain the second list with print_f1. */
-	for (num = i = 0; (num < 60) && (i < max); i++)
-	{
-		if ((*item_good)(i, idx))
-		{
-			name_entry *this = &choice[num++];
-			this->idx = i;
-			this->str = string_make(format("%v", print_f1, i));
-		}
-	}
-
-	/* Request a choice. */
-	i = choose_something_str(type, choice, num);
-
-	/* Remove the allocated strings. */
-	while (num--) FREE(choice[num].str);
-
-	if (i == CHOOSE_NOTHING) return i;
-
-	return choice[i].idx;
+	return choose_something(tval_names, "object", "create", z_info->k_max,
+		FALSE, good_cat_object, object_k_name_f1);
 }
 
 /*
@@ -719,7 +599,7 @@ static bool good_cat_artefact(int a, int idx)
  */
 static int choose_artefact(void)
 {
-	return choose_something(tval_names, "artifact", MAX_A_IDX,
+	return choose_something(tval_names, "artifact", "create", MAX_A_IDX, FALSE,
 		good_cat_artefact, artefact_name_f1);
 }
 
@@ -758,7 +638,7 @@ static void monster_name_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  */
 static int choose_monster_type(void)
 {
-	return choose_something(ident_info, "monster", MAX_R_IDX,
+	return choose_something(ident_info, "monster", "create", MAX_R_IDX, TRUE,
 		good_cat_monster, monster_name_f1);
 }
 
