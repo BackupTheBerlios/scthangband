@@ -567,7 +567,16 @@ static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 
 	j_ptr->weight = 1;
 
-	j_ptr->ident = 1;
+	j_ptr->ident = IDENT_FIXED | IDENT_EMPTY | IDENT_KNOWN | IDENT_STOREB |
+		IDENT_MENTAL | IDENT_TRIED | IDENT_STORE | IDENT_SENSE_CURSED |
+		IDENT_SENSE_VALUE | IDENT_SENSE_HEAVY | IDENT_TRIED;
+
+	/* Hack - curses are stored in ident, but are unconnected. */
+	if (o_ptr->ident & IDENT_SENSE_CURSED) j_ptr->ident |= IDENT_CURSED;
+
+	/* Hack - IDENT_BROKEN is fiddled with at various points during the game. */
+	if (o_ptr->ident & IDENT_SENSE_VALUE) j_ptr->ident |= IDENT_BROKEN;
+
 	j_ptr->note = 1;
 
 	j_ptr->art_name = known;
@@ -743,6 +752,8 @@ static void set_known_fields(object_type *j_ptr, object_ctype *o_ptr,
 	j_ptr->flags2 &= ok_ptr->obj->flags2;
 	j_ptr->flags3 &= ok_ptr->obj->flags3;
 
+	j_ptr->ident &= ok_ptr->obj->ident;
+
 	/* Clear parameters which are not treated as bit fields as required.
 	 * As some of these are bit fields, they should be changed if the
 	 * behaviour of object_knowledge() becomes more complex.
@@ -766,7 +777,6 @@ static void set_known_fields(object_type *j_ptr, object_ctype *o_ptr,
 	OIK_MASK(weight)
 	OIK_MASK(dd)
 	OIK_MASK(ds)
-	OIK_MASK(ident)
 	OIK_MASK(note)
 	OIK_MASK(art_name)
 	OIK_MASK(next_o_idx)

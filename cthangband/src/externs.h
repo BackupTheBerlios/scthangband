@@ -3917,7 +3917,7 @@ extern vptr ralloc(huge len);
 extern cptr string_make(cptr str);
 #endif
 #if (defined(MONSTER2_C) || defined(OBJECT2_C) || defined(Z_VIRT_C))
-extern vptr rpanic_none(huge len);
+extern vptr rpanic_none(huge UNUSED len);
 #endif
 
 /* monster2.c */
