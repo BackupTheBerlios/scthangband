@@ -413,6 +413,7 @@ extern bool spoil_mon;
 extern bool spoil_ego;
 extern bool spoil_base;
 extern bool spoil_value;
+extern bool spoil_flag;
 extern bool verbose_haggle;
 
 
@@ -575,6 +576,7 @@ extern errr file_character(cptr name, bool full);
 extern errr process_pref_file_aux(char *buf);
 extern errr process_pref_file(cptr name);
 extern void print_equippy(void);
+extern int equip_mod(int);
 extern errr check_time_init(void);
 extern errr check_load_init(void);
 extern errr check_time(void);

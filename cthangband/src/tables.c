@@ -3429,6 +3429,9 @@ option_type option_info[] =
 	{ &spoil_mon,			FALSE, 8,	2, 0,
 	"spoil_mon",			"Gain knowledge of monsters" },
 
+	{ &spoil_flag,	FALSE,	8, 3, 10,
+	"spoil_flag",	"Gain knowledge of the effects of various flags."},
+
 	/*** End of Table ***/
 
 	{ NULL,                 0, 0, 0, 0,

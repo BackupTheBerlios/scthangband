@@ -308,6 +308,9 @@ void do_cmd_wield(void)
 	/* Note whether it is cursed or not. */
 	o_ptr->ident |= (IDENT_SENSE_CURSED);
 
+	/* Note that it has been tried. */
+	o_ptr->ident |= (IDENT_TRIED);
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 

@@ -1044,11 +1044,44 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 {
 	bool spoil = FALSE;
+	int i;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-	/* Clear */
+	/* Assume that the player has noticed certain things when using an
+	 * unidentified item. The IDENT_TRIED flag is currently only set when
+	 * an item is worn, which works as none of the flags below have an
+	 * effect otherwise, and the flag is only checked here.
+	 */
+	if (spoil_flag && o_ptr->ident & IDENT_TRIED)
+	{
+		/* Get all flags */
+		object_flags(o_ptr, f1, f2, f3);
+		
+		/* Clear non-obvious flags */
+	 	(*f1) &= (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR | TR1_INFRA | TR1_SPEED | TR1_BLOWS);
+
+		/* *Hack* - notice if the modifier is cancelled out by other modifiers */
+		for (i = 0; i < 6; i++)
+		{
+			if (p_ptr->stat_top[i] == 3 && (*f1 & TR1_STR << i) && equip_mod(i) >= 0)
+			{
+				*f1 &= ~(TR1_STR << i);
+			}
+		}
+		/* This should just check the effect of the weapon, but it's easier this way. */
+		if (p_ptr->num_blow == 1) *f1 &= ~(TR1_BLOWS);
+				
+		(*f2) = 0L;
+		(*f3) &= (TR3_LITE | TR3_XTRA_MIGHT | TR3_XTRA_SHOTS);
+		/* Don't assume that the multiplier is always known. */
+		if (!spoil_base) (*f3) &= ~(TR3_XTRA_MIGHT);
+	}
+	else
+	{
+		/* Clear all flags */
 	(*f1) = (*f2) = (*f3) = 0L;
+	}
 
 	/* Check for cursing even if unidentified */
 	if ((o_ptr->ident & IDENT_CURSED) && (o_ptr->ident & IDENT_SENSE_CURSED))
@@ -1069,9 +1102,9 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	if ((spoil_base || spoil || o_ptr->ident & IDENT_MENTAL) &&
 	(object_known_p(o_ptr) || object_aware_p(o_ptr)))
 	{
-	(*f1) = k_ptr->flags1;
-	(*f2) = k_ptr->flags2;
-	(*f3) = k_ptr->flags3;
+	(*f1) |= k_ptr->flags1;
+	(*f2) |= k_ptr->flags2;
+	(*f3) |= k_ptr->flags3;
 	}
 		
 	/* Must be identified for further details. */
@@ -1092,9 +1125,9 @@ void object_flags_known(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	{
 		artifact_type *a_ptr = &a_info[o_ptr->name1];
 
-		(*f1) = a_ptr->flags1;
-		(*f2) = a_ptr->flags2;
-		(*f3) = a_ptr->flags3;
+		(*f1) |= a_ptr->flags1;
+		(*f2) |= a_ptr->flags2;
+		(*f3) |= a_ptr->flags3;
 	}
 
 	/* Check for both types of cursing */
