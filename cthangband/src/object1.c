@@ -4648,40 +4648,6 @@ static bool get_item_okay(int i)
 }
 
 
-/*
- * Return whether "in" is mapped to a single character string.
- * If it is, store the character in out.
- */
-static bool find_tag_keymap(char in, char *out)
-{
-	cptr t = get_keymap(in);
-	char *buf;
-
-	if (!t)
-	{
-		*out = in;
-		return TRUE;
-	}
-	
-	/* Use a dynamic string to prevent overflow. */
-	C_MAKE(buf, strlen(t)+1, char);
-	text_to_ascii(buf, t);
-
-	/* Too long. */
-	if (strlen(buf) != 1)
-	{
-		FREE2(buf);
-		return FALSE;
-	}
-	else
-	{
-		/* Return the character. */
-		*out = *buf;
-		FREE2(buf);
-		return TRUE;
-	}
-}
-
 
 /*
  * Find the "first" inventory object with the given "tag".
@@ -4696,7 +4662,6 @@ static int get_tag(int *cp, char tag)
 {
 	int i;
 	cptr s;
-	char c;
 
 
 	/* Check every object */
@@ -4724,8 +4689,7 @@ static int get_tag(int *cp, char tag)
 			}
 
 			/* Check the special tags */
-			else if (s[2] == tag && ((s[1] == command_cmd) ||
-				(find_tag_keymap(s[1], &c) && (c == command_cmd))))
+			else if (s[2] == tag && s[1] == command_cmd)
 			{
 				/* Save the actual inventory ID */
 				*cp = i;
