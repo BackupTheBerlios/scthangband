@@ -2610,9 +2610,33 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 	{
 		strcpy(t, "nothing.");
 	}
-	return string_make(s);
+	return s;
 }
-		
+
+/* The maximum number of strings allowed for identify_fully_aux().
+ * This should always be greater than the greatest possible number, as one is
+ * currently used for termination. */
+#define MAX_IFA	128
+
+/* Information passed from identify_fully_get() to the output functions. */
+typedef struct ifa_type ifa_type;
+
+struct ifa_type
+{
+	cptr txt;
+	bool alloc;
+	byte attr;
+};
+
+/*
+ * Set i_ptr->txt as an allocated string, remember the fact.
+ */
+static void alloc_ifa(ifa_type *i_ptr, cptr str)
+{
+	i_ptr->alloc = TRUE;
+	i_ptr->txt = string_make(str);
+}
+
 /* Shorthand notation for res_stat_details() */
 
 /* Flags for an item which affects all stats (for convenience). */
@@ -2625,7 +2649,7 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
 #define blows(x) (blows_table[MIN(adj_str_blow[x[A_STR]]*mul/div,11)][MIN(adj_dex_blow[x[A_DEX]], 11)])
 
 /* Save the string to the info array, and note that it needs to be freed. */
-#define descr(str) {info_a[(*i)] = TRUE; info[(*i)++] = string_make(str);}
+#define descr(str) {info[*i].attr = attr; alloc_ifa(info+((*i)++), str);}
 
 /* A format which does a basic test, and saves the output in a string as above. */
 #define dotest(x,y,str) if ((dif = test(x,y))) descr(str)
@@ -2661,13 +2685,17 @@ static cptr list_flags(cptr init, cptr conj, cptr *flags, int total)
  * As the modifications have taken place, this just queries the old and new
  * versions of p_ptr to see what has changed.
  */
-static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int *i, cptr *info, bool *info_a, byte act)
+static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int *i, ifa_type *info, byte act)
 {
 	int j,dif, dif2;
+	byte attr;
 	cptr stats[6] = {"strength", "intelligence", "wisdom", "dexterity", "constitution", "charisma"};
 
 	for (j = 0; j < A_MAX; j++)
 	{
+		/* Give the modifier in white. */
+		attr = TERM_WHITE;
+
 		if (CMPJ(stat_max) > 0)
 		{
 			descr(format("It adds %s%d to your %s.", CERT, dif, stats[j]));
@@ -2691,6 +2719,9 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 
 		/* No effect, so boring. */
 		if (!CMPJ(stat_use)) continue;
+
+		/* Give its effects in grey. */
+		attr = TERM_L_WHITE;
 
 		switch (j)
 		{
@@ -2721,7 +2752,7 @@ static void res_stat_details_comp(player_type *pn_ptr, player_type *po_ptr, int 
 			if (CMP(dis_to_a)) descr(format("  It %s your AC by %d.", DIF_INC, DIF));
 			if (CMP(dis_to_h)) descr(format("  It %s your chance to hit opponents by %d.", DIF_INC, DIF));
 			/* Fix me - this also covers stunning, but is affected by saving throw. */
-			if (CMPS(adj_dex_safe)) descr(format("  It makes you %d%% %s resistant to theft.", dif, DIF_MOR));
+			if (CMPS(adj_dex_safe)) descr(format("  It makes you %d%% %s resistant to theft.", DIF, DIF_MOR));
 			if ((dif2 = CMPS(adj_dex_dis)+CMPT(adj_int_dis, A_INT))) { dif = dif2; descr(format("  It %s your disarming skill.", DIF_INC));}
 			if ((CMP(num_blow))) descr(format("  It %s your number of blows by %d,%d", DIF_INC, DIF/60, DIF%60));
 			break;
@@ -2878,7 +2909,7 @@ static void get_stat_flags(object_type *o_ptr, byte *stat, byte *act, s16b *pval
 /*
  * Find out what, if any, stat changes the given item causes.
  */
-static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_a)
+static void res_stat_details(object_type *o_ptr, int *i, ifa_type *info)
 {
 	byte stat, act;
 	s16b pval;
@@ -2911,7 +2942,7 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 		update_stuff();
 
 		/* Compare the original with the same with this object wielded. */
-		res_stat_details_comp(p2_ptr, &p_body, i, info, info_a, act);
+		res_stat_details_comp(p2_ptr, &p_body, i, info, act);
 	}
 	/* A worn item. */
 	else if (!o_ptr->iy && o_ptr->ix > INVEN_WIELD && o_ptr->ix <= INVEN_TOTAL)
@@ -2928,7 +2959,7 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 		update_stuff();
 
 		/* Compare the original with the same with the item removed. */
-		res_stat_details_comp(&p_body, p2_ptr, i, info, info_a, act);
+		res_stat_details_comp(&p_body, p2_ptr, i, info, act);
 
 		/* Replace o_ptr. */
 		object_copy(o_ptr, j_ptr);
@@ -2949,7 +2980,7 @@ static void res_stat_details(object_type *o_ptr, int *i, cptr *info, bool *info_
 		update_stuff();
 
 		/* Compare the original with the same with this object wielded. */
-		res_stat_details_comp(p2_ptr, &p_body, i, info, info_a, act);
+		res_stat_details_comp(p2_ptr, &p_body, i, info, act);
 
 		/* Replace inveotory+slot */
 		object_copy(inventory+slot, j_ptr);
@@ -2985,9 +3016,9 @@ static int wrap_str(cptr in, int max)
 /*
  * Show the flags an object has in an interactive way.
  */
-static void identify_fully_show(cptr *info, int i)
+static void identify_fully_show(ifa_type *i_ptr)
 {
-	int j,k, len, minx = 15, xlen = Term->wid - minx+1, maxy = Term->hgt;
+	int k, len, minx = 15, xlen = Term->wid - minx+1, maxy = Term->hgt;
 	cptr s = "";
 
 	/* Save the screen */
@@ -3000,13 +3031,18 @@ static void identify_fully_show(cptr *info, int i)
 	prt("     Item Attributes:", 1, minx);
 
 	/* We will print on top of the map. */
-	for (k = 2, j = 0;;)
+	for (k = 2;;)
 	{
+		/* Hack - turn the default colour (black) into white. */
+		byte attr = (i_ptr->attr) ? i_ptr->attr : TERM_WHITE;
+		
 		/* Grab the next string. */
 		if (*s == '\0')
 		{
-			if (j == i) break;
-			s = info[j++];
+			s = (i_ptr++)->txt;
+
+			/* Finished. */
+			if (!s) break;
 		}
 
 		/* Show the info */
@@ -3015,20 +3051,20 @@ static void identify_fully_show(cptr *info, int i)
 		if (*s == ' ')
 		{
 			len = wrap_str(s, xlen-IFD_OFFSET);
-			prt(format("%.*s", len, s), k++, minx+IFD_OFFSET);
+			c_prt(attr, format("%.*s", len, s), k++, minx+IFD_OFFSET);
 		}
 		/* If not, don't. */
 		else
 		{
 			len = wrap_str(s, xlen);
-			prt(format("%.*s", len, s), k++, minx);
+			c_prt(attr, format("%.*s", len, s), k++, minx);
 		}
 
 		/* Find the next segment. */
 		s += len;
 
 		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == maxy) && (j+1 < i))
+		if ((k == maxy-1) && (i_ptr->txt))
 		{
 			prt("-- more --", k, minx);
 			inkey();
@@ -3048,7 +3084,7 @@ static void identify_fully_show(cptr *info, int i)
 /*
  * Show the first maxy-1 lines of the information stored in info.
  */
-static void identify_fully_dump(cptr *info, int i)
+static void identify_fully_dump(ifa_type *i_ptr)
 {
 	int j,k, len, minx = 0, xlen = Term->wid - minx+1, maxy = Term->hgt;
 	cptr s = "";
@@ -3056,13 +3092,18 @@ static void identify_fully_dump(cptr *info, int i)
 	/* Label the information */
 	prt("     Item Attributes:", 1, minx);
 
-	for (k = 2, j = 0;;)
+	for (k = 2, j = 0; k <= maxy; k++)
 	{
+		/* Hack - turn the default colour (black) into white. */
+		byte attr = (i_ptr->attr) ? i_ptr->attr : TERM_WHITE;
+		
 		/* Grab the next string. */
 		if (*s == '\0')
 		{
-			if (j == i) break;
-			s = info[j++];
+			s = (i_ptr++)->txt;
+
+			/* Finished. */
+			if (!s) break;
 		}
 
 		/* Show the info */
@@ -3071,20 +3112,17 @@ static void identify_fully_dump(cptr *info, int i)
 		if (*s == ' ')
 		{
 			len = wrap_str(s, xlen-IFD_OFFSET);
-			prt(format("%.*s", len, s), k++, minx+IFD_OFFSET);
-	}
+			c_prt(attr, format("%.*s", len, s), k, minx+IFD_OFFSET);
+		}
 		/* If not, don't. */
 		else
 		{
 			len = wrap_str(s, xlen);
-			prt(format("%.*s", len, s), k++, minx);
+			c_prt(attr, format("%.*s", len, s), k, minx);
 		}
 		
 		/* Find the next segment. */
 		s += len;
-
-		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == maxy) && (j+1 < i)) break;
 	}
 }
 
@@ -3093,7 +3131,7 @@ static void identify_fully_dump(cptr *info, int i)
 /*
  * Dump the information stored in info to a specified file.
  */
-static void identify_fully_dump_file(FILE *fff, cptr *info, int i)
+static void identify_fully_dump_file(FILE *fff, ifa_type *i_ptr)
 {
 	int j,k, len, x, xlen = 80;
 	cptr s = "";
@@ -3103,8 +3141,8 @@ static void identify_fully_dump_file(FILE *fff, cptr *info, int i)
 		/* Grab the next string. */
 		if (*s == '\0')
 		{
-			if (j == i) break;
-			s = info[j++];
+			s = (i_ptr++)->txt;
+			if (!s) break;
 		}
 
 		/* Show the info */
@@ -3127,13 +3165,13 @@ static void identify_fully_dump_file(FILE *fff, cptr *info, int i)
 /*
  * Clear any allocated strings in info[].
  */
-static void identify_fully_clear(cptr *info, bool *info_a, int limit)
+static void identify_fully_clear(ifa_type *i_ptr)
 {
-	int i;
-	for (i = 0; i < limit; i++)
+	do
 	{
-		if (info_a[i]) string_free(info[i]);
+		if (i_ptr->alloc) string_free(i_ptr->txt);
 	}
+	while ((++i_ptr)->txt);
 }
 
 /* Set brief to suppress various strings in identify_fully_get(). */
@@ -3156,39 +3194,37 @@ static int launcher_type(object_type *o_ptr)
 	return (-1);
 }
 
+/* A wrapper around list_flags() for identify_fully_get(), provided for
+ * clarity and maintainability. */
+#define do_list_flags(init, conj, flags, total) \
+	alloc_ifa(info+i++, list_flags(init, conj, flags, total))
+
 /*
  * Find the strings which describe the flags of o_ptr, place them in info
- * and set info_a for each string allocated.
+ * and note whether each was allocated.
  *
  * Return the total number of strings.
  */
-static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
+static void identify_fully_get(object_type *o1_ptr, ifa_type *info)
 {
 	int                     i = 0, j;
-
-	u32b f1, f2, f3;
 
 	cptr board[16];
 
 	object_type o_ptr[1];
 
 	/* Paranoia - no object. */
-	if (!o1_ptr || !o1_ptr->k_idx) return 0;
+	if (!o1_ptr || !o1_ptr->k_idx) return;
 
 	/* Extract the known info */
 	object_info_known(o_ptr, o1_ptr);
 
-	/* Copy the flags to the traditional variables. */
-	f1 = o_ptr->art_flags1;
-	f2 = o_ptr->art_flags2;
-	f3 = o_ptr->art_flags3;
-
 	/* Mega-Hack -- describe activation */
-	if (f3 & (TR3_ACTIVATE))
+	if (o_ptr->art_flags3 & (TR3_ACTIVATE))
 	{
-		info[i++] = "It can be activated for...";
-		info[i++] = item_activation(o_ptr);
-		info[i++] = "...if it is being worn.";
+		info[i++].txt = "It can be activated for...";
+		info[i++].txt = item_activation(o_ptr);
+		info[i++].txt = "...if it is being worn.";
 	}
 
 
@@ -3197,15 +3233,15 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	{
 		if (allart_p(o_ptr))
 		{
-			info[i++] = "It provides light (radius 3) forever.";
+			info[i++].txt = "It provides light (radius 3) forever.";
 		}
 		else if (o_ptr->sval == SV_LITE_LANTERN)
 		{
-			info[i++] = "It provides light (radius 2) when fueled.";
+			info[i++].txt = "It provides light (radius 2) when fueled.";
 		}
 		else
 		{
-			info[i++] = "It provides light (radius 1) when fueled.";
+			info[i++].txt = "It provides light (radius 1) when fueled.";
 		}
 	}
 
@@ -3213,19 +3249,19 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	switch (wield_skill(o_ptr->tval, o_ptr->sval))
 	{
  	case SKILL_CLOSE:
- 		info[i++]="It trains your close combat skill.";
+ 		info[i++].txt="It trains your close combat skill.";
  				break;
 	case SKILL_CRUSH:
- 		info[i++]="It trains your crushing weapons skill.";
+ 		info[i++].txt="It trains your crushing weapons skill.";
  				break;
  	case SKILL_STAB:
- 		info[i++]="It trains your stabbing weapons skill.";
+ 		info[i++].txt="It trains your stabbing weapons skill.";
  		break;
 	case SKILL_SLASH:
- 		info[i++]="It trains your slashing weapons skill.";
+ 		info[i++].txt="It trains your slashing weapons skill.";
  			break;
 	case  SKILL_MISSILE:
- 		info[i++]="It trains your missile skill.";
+ 		info[i++].txt="It trains your missile skill.";
  		break;
  	}
 
@@ -3237,62 +3273,61 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	/* Recognise items which affect stats (detailed) */
 	if (!brief && spoil_stat)
 	{
-		res_stat_details(o_ptr, &i, info, info_a);
+		res_stat_details(o_ptr, &i, info);
 	}
 	/* If brevity is required or spoilers are not, put stats with the other
 	 * pval effects. */
 	else
 	{
-		if (f1 & (TR1_STR)) board[j++] = "strength";
-		if (f1 & (TR1_INT)) board[j++] = "intelligence";
-		if (f1 & (TR1_WIS)) board[j++] = "wisdom";
-		if (f1 & (TR1_DEX)) board[j++] = "dexterity";
-		if (f1 & (TR1_CON)) board[j++] = "constitution";
-		if (f1 & (TR1_CHR)) board[j++] = "charisma";
+		if (o_ptr->art_flags1 & (TR1_STR)) board[j++] = "strength";
+		if (o_ptr->art_flags1 & (TR1_INT)) board[j++] = "intelligence";
+		if (o_ptr->art_flags1 & (TR1_WIS)) board[j++] = "wisdom";
+		if (o_ptr->art_flags1 & (TR1_DEX)) board[j++] = "dexterity";
+		if (o_ptr->art_flags1 & (TR1_CON)) board[j++] = "constitution";
+		if (o_ptr->art_flags1 & (TR1_CHR)) board[j++] = "charisma";
 	}
-	if (f1 & (TR1_STEALTH)) board[j++] = "stealth";
-	if (f1 & (TR1_SEARCH)) board[j++] = "searching";
-	if (f1 & (TR1_INFRA)) board[j++] = "infravision";
-	if (f1 & (TR1_TUNNEL)) board[j++] = "ability to tunnel";
-	if (f1 & (TR1_SPEED)) board[j++] = "movement speed";
-	if (f1 & (TR1_BLOWS)) board[j++] = "attack speed";
+	if (o_ptr->art_flags1 & (TR1_STEALTH)) board[j++] = "stealth";
+	if (o_ptr->art_flags1 & (TR1_SEARCH)) board[j++] = "searching";
+	if (o_ptr->art_flags1 & (TR1_INFRA)) board[j++] = "infravision";
+	if (o_ptr->art_flags1 & (TR1_TUNNEL)) board[j++] = "ability to tunnel";
+	if (o_ptr->art_flags1 & (TR1_SPEED)) board[j++] = "movement speed";
+	if (o_ptr->art_flags1 & (TR1_BLOWS)) board[j++] = "attack speed";
 	if (j)
 	{
 		if (o_ptr->pval > 0)
-	{
+		{
 			board[j] = format("It adds %d to your", o_ptr->pval);
-	}
+		}
 		else if (o_ptr->pval < 0)
-	{
+		{
 			board[j] = format("It removes %d from your", -o_ptr->pval);
-	}
+		}
 		else
-	{
+		{
 			board[j] = "It affects your";
-	}
-		info_a[i] = TRUE;
-		info[i++] = list_flags(board[j], "and", board, j);
+		}
+		do_list_flags(board[j], "and", board, j);
 	}
 
 
-    if (f1 & (TR1_CHAOTIC))
+    if (o_ptr->art_flags1 & (TR1_CHAOTIC))
 	{
-        info[i++] = "It produces chaotic effects.";
+        info[i++].txt = "It produces chaotic effects.";
 	}
 
-    if (f1 & (TR1_VAMPIRIC))
+    if (o_ptr->art_flags1 & (TR1_VAMPIRIC))
 	{
-        info[i++] = "It drains life from your foes.";
+        info[i++].txt = "It drains life from your foes.";
 	}
 
-    if (f1 & (TR1_IMPACT))
+    if (o_ptr->art_flags1 & (TR1_IMPACT))
 	{
-		info[i++] = "It can cause earthquakes.";
+		info[i++].txt = "It can cause earthquakes.";
 	}
 
-    if (f1 & (TR1_VORPAL))
+    if (o_ptr->art_flags1 & (TR1_VORPAL))
 	{
-        info[i++] = "It is very sharp and can cut your foes.";
+        info[i++].txt = "It is very sharp and can cut your foes.";
 	}
 
 	/* Calculate actual damage of weapons. 
@@ -3302,80 +3337,73 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 		s16b tohit, todam, weap_blow, mut_blow;
 		s32b dam;
 		bool slay = FALSE;
-		byte count;
 		/* Calculate execute dragon */
-		if (f1 & TR1_KILL_DRAGON)
+		j = 0;
+		if (o_ptr->art_flags1 & TR1_KILL_DRAGON) board[j++] = "dragons";
+
+		if (j)
 		{
-			/* Should really have a third slay dragon flag... */
-			if (o_ptr->name1 == ART_LIGHTNING)
-			{
-				weapon_stats(o_ptr, 15, &tohit, &todam, &weap_blow, &mut_blow, &dam);
-			}
-			else
-			{
-				weapon_stats(o_ptr, 5, &tohit, &todam, &weap_blow, &mut_blow, &dam);
-			}
+			int mult = (o_ptr->name1 == ART_LIGHTNING) ? 15 : 5;
+			weapon_stats(o_ptr, mult, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			info_a[i] = TRUE;
-			info[i++] = string_make(format("It causes %d,%d damage to dragons.", dam/60, dam%60));
-			f1 &= ~(TR1_SLAY_DRAGON);
+			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+				"and", board, j);
 		}
 
 		/* Calculate x3 slays */
-		count = 0;
-		if (f1 & TR1_SLAY_DRAGON) board[count++] = "dragons";
-		if (f1 & TR1_SLAY_ORC) board[count++] = "orcs";
-		if (f1 & TR1_SLAY_TROLL) board[count++] = "trolls";
-		if (f1 & TR1_SLAY_GIANT) board[count++] = "giants";
-		if (f1 & TR1_SLAY_DEMON) board[count++] = "demons";
-		if (f1 & TR1_SLAY_UNDEAD) board[count++] = "undead";
-		if (count)
+		j = 0;
+		if ((o_ptr->art_flags1 & TR1_SLAY_DRAGON) &&
+			(~o_ptr->art_flags1 & TR1_KILL_DRAGON)) board[j++] = "dragons";
+		if (o_ptr->art_flags1 & TR1_SLAY_ORC) board[j++] = "orcs";
+		if (o_ptr->art_flags1 & TR1_SLAY_TROLL) board[j++] = "trolls";
+		if (o_ptr->art_flags1 & TR1_SLAY_GIANT) board[j++] = "giants";
+		if (o_ptr->art_flags1 & TR1_SLAY_DEMON) board[j++] = "demons";
+		if (o_ptr->art_flags1 & TR1_SLAY_UNDEAD) board[j++] = "undead";
+		if (j)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			info_a[i] = TRUE;
-			info[i++] = list_flags(format("It causes %d,%d damage to", dam/60, dam%60), "and", board, count);
+			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+				"and", board, j);
 		}
 		/* Calculate brands */
-		count = 0;
-		if (f1 & TR1_BRAND_FIRE) board[count++] = "fire";
-		if (f1 & TR1_BRAND_COLD) board[count++] = "cold";
-		if (f1 & TR1_BRAND_ELEC) board[count++] = "electricity";
-		if (f1 & TR1_BRAND_ACID) board[count++] = "acid";
-		if (f1 & TR1_BRAND_POIS) board[count++] = "poison";
-		if (count)
+		j = 0;
+		if (o_ptr->art_flags1 & TR1_BRAND_FIRE) board[j++] = "fire";
+		if (o_ptr->art_flags1 & TR1_BRAND_COLD) board[j++] = "cold";
+		if (o_ptr->art_flags1 & TR1_BRAND_ELEC) board[j++] = "electricity";
+		if (o_ptr->art_flags1 & TR1_BRAND_ACID) board[j++] = "acid";
+		if (o_ptr->art_flags1 & TR1_BRAND_POIS) board[j++] = "poison";
+		if (j)
 		{
 			weapon_stats(o_ptr, 3, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			info_a[i] = TRUE;
-			info[i++] = list_flags(format("It causes %d,%d damage via", dam/60, dam%60), "and", board, count);
+			do_list_flags(format("It causes %d,%d damage via", dam/60, dam%60),
+				"and", board, j);
 		}
 		/* Calculate x2 slays */
-		count = 0;
-		if (f1 & TR1_SLAY_EVIL) board[count++] = "evil monsters";
-		if (f1 & TR1_SLAY_ANIMAL) board[count++] = "animals";
-		if (count)
+		j = 0;
+		if (o_ptr->art_flags1 & TR1_SLAY_EVIL) board[j++] = "evil monsters";
+		if (o_ptr->art_flags1 & TR1_SLAY_ANIMAL) board[j++] = "animals";
+		if (j)
 		{
 			weapon_stats(o_ptr, 2, &tohit, &todam, &weap_blow, &mut_blow, &dam);
 			slay = TRUE;
-			info_a[i] = TRUE;
-			info[i++] = list_flags(format("It causes %d,%d damage to", dam/60, dam%60), "and", board, count);
+			do_list_flags(format("It causes %d,%d damage to", dam/60, dam%60),
+				"and", board, j);
 		}
 
 		/* Give the damage a weapon does, excluding throwing weapons in brief mode. */
 		if (!brief || (wield_slot(o_ptr) == INVEN_WIELD) ||
 			(wield_slot(o_ptr) == INVEN_BOW) || (launcher_type(o_ptr) != -1))
 		{
-		weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
-		count = 0;
-		if (slay)
-			board[count++] = "all other monsters";
-		else if (dam)
-			board[count++] = "all monsters";
-			if (count)
+			weapon_stats(o_ptr, 1, &tohit, &todam, &weap_blow, &mut_blow, &dam);
+			j = 0;
+			if (slay) board[j++] = "all other monsters";
+			else if (dam) board[j++] = "all monsters";
+			if (j)
 			{
-				info_a[i] = TRUE;
-				info[i++] = list_flags(format("It causes %d,%d damage to", dam/60, dam%60), "and", board, count);
+				do_list_flags(format("It causes %d,%d damage to", dam/60,
+					dam%60), "and", board, j);
 			}
 		}
 
@@ -3388,193 +3416,188 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 		}
 		if (*board)
 		{
-			info_a[i] = TRUE;
-			info[i++] = string_make(format(
-				"It gives you %d,%d %s per turn", weap_blow/60,
-				weap_blow%60, *board));
+			alloc_ifa(info+i++, format("It gives you %d,%d %s per turn",
+				weap_blow/60, weap_blow%60, *board));
 		}
 	}
 	/* Without spoil_dam, simply list the slays. */
 	else
 	{
-		if (f1 & (TR1_BRAND_ACID))
+		if (o_ptr->art_flags1 & (TR1_BRAND_ACID))
 		{
-			info[i++] = "It does extra damage from acid.";
+			info[i++].txt = "It does extra damage from acid.";
 		}
-		if (f1 & (TR1_BRAND_ELEC))
+		if (o_ptr->art_flags1 & (TR1_BRAND_ELEC))
 		{
-			info[i++] = "It does extra damage from electricity.";
+			info[i++].txt = "It does extra damage from electricity.";
 		}
-		if (f1 & (TR1_BRAND_FIRE))
+		if (o_ptr->art_flags1 & (TR1_BRAND_FIRE))
 		{
-			info[i++] = "It does extra damage from fire.";
+			info[i++].txt = "It does extra damage from fire.";
 		}
-		if (f1 & (TR1_BRAND_COLD))
+		if (o_ptr->art_flags1 & (TR1_BRAND_COLD))
 		{
-			info[i++] = "It does extra damage from frost.";
+			info[i++].txt = "It does extra damage from frost.";
 		}
 
-		if (f1 & (TR1_BRAND_POIS))
+		if (o_ptr->art_flags1 & (TR1_BRAND_POIS))
 		{
-		        info[i++] = "It poisons your foes.";
+		        info[i++].txt = "It poisons your foes.";
 		}
-	if (f1 & (TR1_KILL_DRAGON))
-	{
-		info[i++] = "It is a great bane of dragons.";
-	}
-	else if (f1 & (TR1_SLAY_DRAGON))
-	{
-		info[i++] = "It is especially deadly against dragons.";
-	}
-	if (f1 & (TR1_SLAY_ORC))
-	{
-		info[i++] = "It is especially deadly against orcs.";
-	}
-	if (f1 & (TR1_SLAY_TROLL))
-	{
-		info[i++] = "It is especially deadly against trolls.";
-	}
-	if (f1 & (TR1_SLAY_GIANT))
-	{
-		info[i++] = "It is especially deadly against giants.";
-	}
-	if (f1 & (TR1_SLAY_DEMON))
-	{
-		info[i++] = "It strikes at demons with holy wrath.";
-	}
-	if (f1 & (TR1_SLAY_UNDEAD))
-	{
-		info[i++] = "It strikes at undead with holy wrath.";
-	}
-	if (f1 & (TR1_SLAY_EVIL))
-	{
-		info[i++] = "It fights against evil with holy fury.";
-	}
-	if (f1 & (TR1_SLAY_ANIMAL))
-	{
-		info[i++] = "It is especially deadly against natural creatures.";
-	}
+		if (o_ptr->art_flags1 & (TR1_KILL_DRAGON))
+		{
+			info[i++].txt = "It is a great bane of dragons.";
+		}
+		else if (o_ptr->art_flags1 & (TR1_SLAY_DRAGON))
+		{
+			info[i++].txt = "It is especially deadly against dragons.";
+		}
+		if (o_ptr->art_flags1 & (TR1_SLAY_ORC))
+		{
+			info[i++].txt = "It is especially deadly against orcs.";
+		}
+		if (o_ptr->art_flags1 & (TR1_SLAY_TROLL))
+		{
+			info[i++].txt = "It is especially deadly against trolls.";
+		}
+		if (o_ptr->art_flags1 & (TR1_SLAY_GIANT))
+		{
+			info[i++].txt = "It is especially deadly against giants.";
+		}
+		if (o_ptr->art_flags1 & (TR1_SLAY_DEMON))
+		{
+			info[i++].txt = "It strikes at demons with holy wrath.";
+		}
+		if (o_ptr->art_flags1 & (TR1_SLAY_UNDEAD))
+		{
+			info[i++].txt = "It strikes at undead with holy wrath.";
+		}
+		if (o_ptr->art_flags1 & (TR1_SLAY_EVIL))
+		{
+			info[i++].txt = "It fights against evil with holy fury.";
+		}
+		if (o_ptr->art_flags1 & (TR1_SLAY_ANIMAL))
+		{
+			info[i++].txt = "It is especially deadly against natural creatures.";
+		}
 	}
 
 	j = 0;
-	if (f2 & (TR2_SUST_STR)) board[j++] = "strength";
-	if (f2 & (TR2_SUST_INT)) board[j++] = "intelligence";
-	if (f2 & (TR2_SUST_WIS)) board[j++] = "wisdom";
-	if (f2 & (TR2_SUST_DEX)) board[j++] = "dexterity";
-	if (f2 & (TR2_SUST_CON)) board[j++] = "constitution";
-	if (f2 & (TR2_SUST_CHR)) board[j++] = "charisma";
+	if (o_ptr->art_flags2 & (TR2_SUST_STR)) board[j++] = "strength";
+	if (o_ptr->art_flags2 & (TR2_SUST_INT)) board[j++] = "intelligence";
+	if (o_ptr->art_flags2 & (TR2_SUST_WIS)) board[j++] = "wisdom";
+	if (o_ptr->art_flags2 & (TR2_SUST_DEX)) board[j++] = "dexterity";
+	if (o_ptr->art_flags2 & (TR2_SUST_CON)) board[j++] = "constitution";
+	if (o_ptr->art_flags2 & (TR2_SUST_CHR)) board[j++] = "charisma";
 	if (j == 6)
 	{
-		info[i++] = "It sustains all of your stats.";
+		info[i++].txt = "It sustains all of your stats.";
 	}
 	else if (j)
 	{
-		info_a[i] = TRUE;
-		info[i++] = list_flags("It sustains your", "and", board, j);
+		do_list_flags("It sustains your", "and", board, j);
 	}
 
 	j = 0;
-	if (f2 & (TR2_IM_ACID)) board[j++] = "acid";
-	if (f2 & (TR2_IM_ELEC)) board[j++] = "electricity";
-	if (f2 & (TR2_IM_FIRE)) board[j++] = "fire";
-	if (f2 & (TR2_IM_COLD)) board[j++] = "cold";
-	if (f2 & (TR2_FREE_ACT)) board[j++] = "paralysis";
-	if (f2 & (TR2_RES_FEAR)) board[j++] = "fear";
+	if (o_ptr->art_flags2 & (TR2_IM_ACID)) board[j++] = "acid";
+	if (o_ptr->art_flags2 & (TR2_IM_ELEC)) board[j++] = "electricity";
+	if (o_ptr->art_flags2 & (TR2_IM_FIRE)) board[j++] = "fire";
+	if (o_ptr->art_flags2 & (TR2_IM_COLD)) board[j++] = "cold";
+	if (o_ptr->art_flags2 & (TR2_FREE_ACT)) board[j++] = "paralysis";
+	if (o_ptr->art_flags2 & (TR2_RES_FEAR)) board[j++] = "fear";
 	if (j)
 	{
-		info_a[i] = TRUE;
-		info[i++] = list_flags("It provides immunity to", "and", board, j);
+		do_list_flags("It provides immunity to", "and", board, j);
 	}
 
 	j = 0;
-	if (f2 & (TR2_RES_ACID)) board[j++] = "acid";
-	if (f2 & (TR2_RES_ELEC)) board[j++] = "electricity";
-	if (f2 & (TR2_RES_FIRE)) board[j++] = "fire";
-	if (f2 & (TR2_RES_COLD)) board[j++] = "cold";
-	if (f2 & (TR2_RES_POIS)) board[j++] = "poison";
-	if (f2 & (TR2_RES_LITE)) board[j++] = "light";
-	if (f2 & (TR2_RES_DARK)) board[j++] = "dark";
-	if (f2 & (TR2_HOLD_LIFE)) board[j++] = "life draining";
-	if (f2 & (TR2_RES_BLIND)) board[j++] = "blindness";
-	if (f2 & (TR2_RES_CONF)) board[j++] = "confusion";
-	if (f2 & (TR2_RES_SOUND)) board[j++] = "sound";
-	if (f2 & (TR2_RES_SHARDS)) board[j++] = "shards";
-	if (f2 & (TR2_RES_NETHER)) board[j++] = "nether";
-	if (f2 & (TR2_RES_NEXUS)) board[j++] = "nexus";
-	if (f2 & (TR2_RES_CHAOS)) board[j++] = "chaos";
-	if (f2 & (TR2_RES_DISEN)) board[j++] = "disenchantment";
+	if (o_ptr->art_flags2 & (TR2_RES_ACID)) board[j++] = "acid";
+	if (o_ptr->art_flags2 & (TR2_RES_ELEC)) board[j++] = "electricity";
+	if (o_ptr->art_flags2 & (TR2_RES_FIRE)) board[j++] = "fire";
+	if (o_ptr->art_flags2 & (TR2_RES_COLD)) board[j++] = "cold";
+	if (o_ptr->art_flags2 & (TR2_RES_POIS)) board[j++] = "poison";
+	if (o_ptr->art_flags2 & (TR2_RES_LITE)) board[j++] = "light";
+	if (o_ptr->art_flags2 & (TR2_RES_DARK)) board[j++] = "dark";
+	if (o_ptr->art_flags2 & (TR2_HOLD_LIFE)) board[j++] = "life draining";
+	if (o_ptr->art_flags2 & (TR2_RES_BLIND)) board[j++] = "blindness";
+	if (o_ptr->art_flags2 & (TR2_RES_CONF)) board[j++] = "confusion";
+	if (o_ptr->art_flags2 & (TR2_RES_SOUND)) board[j++] = "sound";
+	if (o_ptr->art_flags2 & (TR2_RES_SHARDS)) board[j++] = "shards";
+	if (o_ptr->art_flags2 & (TR2_RES_NETHER)) board[j++] = "nether";
+	if (o_ptr->art_flags2 & (TR2_RES_NEXUS)) board[j++] = "nexus";
+	if (o_ptr->art_flags2 & (TR2_RES_CHAOS)) board[j++] = "chaos";
+	if (o_ptr->art_flags2 & (TR2_RES_DISEN)) board[j++] = "disenchantment";
 	if (j)
 	{
-		info_a[i] = TRUE;
-		info[i++] = list_flags("It provides resistance to", "and", board, j);
+		do_list_flags("It provides resistance to", "and", board, j);
 	}
 
-    if (f3 & (TR3_WRAITH))
+    if (o_ptr->art_flags3 & (TR3_WRAITH))
     {
-        info[i++] = "It renders you incorporeal.";
+        info[i++].txt = "It renders you incorporeal.";
     }
-	if (f3 & (TR3_FEATHER))
+	if (o_ptr->art_flags3 & (TR3_FEATHER))
 	{
-        info[i++] = "It allows you to levitate.";
+        info[i++].txt = "It allows you to levitate.";
 	}
-	if (f3 & (TR3_LITE))
+	if (o_ptr->art_flags3 & (TR3_LITE))
 	{
-		info[i++] = "It provides permanent light.";
+		info[i++].txt = "It provides permanent light.";
 	}
-	if (f3 & (TR3_SEE_INVIS))
+	if (o_ptr->art_flags3 & (TR3_SEE_INVIS))
 	{
-		info[i++] = "It allows you to see invisible monsters.";
+		info[i++].txt = "It allows you to see invisible monsters.";
 	}
-	if (f3 & (TR3_TELEPATHY))
+	if (o_ptr->art_flags3 & (TR3_TELEPATHY))
 	{
-		info[i++] = "It gives telepathic powers.";
+		info[i++].txt = "It gives telepathic powers.";
 	}
-	if (f3 & (TR3_SLOW_DIGEST))
+	if (o_ptr->art_flags3 & (TR3_SLOW_DIGEST))
 	{
-		info[i++] = "It slows your metabolism.";
+		info[i++].txt = "It slows your metabolism.";
 	}
-	if (f3 & (TR3_REGEN))
+	if (o_ptr->art_flags3 & (TR3_REGEN))
 	{
-		info[i++] = "It speeds your regenerative powers.";
+		info[i++].txt = "It speeds your regenerative powers.";
 	}
-    if (f2 & (TR2_REFLECT))
+    if (o_ptr->art_flags2 & (TR2_REFLECT))
     {
-        info[i++] = "It reflects bolts and arrows.";
+        info[i++].txt = "It reflects bolts and arrows.";
     }
-    if (f3 & (TR3_SH_FIRE))
+    if (o_ptr->art_flags3 & (TR3_SH_FIRE))
     {
-        info[i++] = "It produces a fiery sheath.";
+        info[i++].txt = "It produces a fiery sheath.";
     }
-    if (f3 & (TR3_SH_ELEC))
+    if (o_ptr->art_flags3 & (TR3_SH_ELEC))
     {
-        info[i++] = "It produces an electric sheath.";
+        info[i++].txt = "It produces an electric sheath.";
     }
-    if (f3 & (TR3_NO_MAGIC))
+    if (o_ptr->art_flags3 & (TR3_NO_MAGIC))
     {
-        info[i++] = "It produces an anti-magic shell.";
+        info[i++].txt = "It produces an anti-magic shell.";
     }
-    if (f3 & (TR3_NO_TELE))
+    if (o_ptr->art_flags3 & (TR3_NO_TELE))
     {
-        info[i++] = "It prevents teleportation.";
+        info[i++].txt = "It prevents teleportation.";
     }
-	if (f3 & (TR3_XTRA_MIGHT))
+	if (o_ptr->art_flags3 & (TR3_XTRA_MIGHT))
 	{
-		info[i++] = "It fires missiles with extra might.";
+		info[i++].txt = "It fires missiles with extra might.";
 	}
-	if (f3 & (TR3_XTRA_SHOTS))
+	if (o_ptr->art_flags3 & (TR3_XTRA_SHOTS))
 	{
-		info[i++] = "It fires missiles excessively fast.";
+		info[i++].txt = "It fires missiles excessively fast.";
 	}
 
 	if (cumber_glove(o_ptr))
 	{
 		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
-			info[i++] = "It inhibits spellcasting.";
+			info[i++].txt = "It inhibits spellcasting.";
 		}
 		else
 		{
-			info[i++] = "It may inhibit spellcasting.";
+			info[i++].txt = "It may inhibit spellcasting.";
 		}
 	}
 
@@ -3582,30 +3605,30 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	{
 		if (o_ptr->ident & (IDENT_MENTAL | IDENT_TRIED))
 		{
-			info[i++] = "It inhibits mindcrafting.";
+			info[i++].txt = "It inhibits mindcrafting.";
 		}
 		else
 		{
-			info[i++] = "It may inhibit mindcrafting.";
+			info[i++].txt = "It may inhibit mindcrafting.";
 		}
 	}
 
-	if (f3 & (TR3_DRAIN_EXP))
+	if (o_ptr->art_flags3 & (TR3_DRAIN_EXP))
 	{
-		info[i++] = "It drains experience.";
+		info[i++].txt = "It drains experience.";
 	}
-	if (f3 & (TR3_TELEPORT))
+	if (o_ptr->art_flags3 & (TR3_TELEPORT))
 	{
-		info[i++] = "It induces random teleportation.";
+		info[i++].txt = "It induces random teleportation.";
 	}
-	if (f3 & (TR3_AGGRAVATE))
+	if (o_ptr->art_flags3 & (TR3_AGGRAVATE))
 	{
-		info[i++] = "It aggravates nearby creatures.";
+		info[i++].txt = "It aggravates nearby creatures.";
 	}
 
-	if (f3 & (TR3_BLESSED))
+	if (o_ptr->art_flags3 & (TR3_BLESSED))
 	{
-		info[i++] = "It has been blessed by the gods.";
+		info[i++].txt = "It has been blessed by the gods.";
 	}
 
 	/* Describe random possibilities if not *identified*. 
@@ -3613,51 +3636,51 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	 * Bug - LITE can be mentioned both here and in its own right. Unfortunately it's not easy to fix. */
 	if (~o_ptr->ident & IDENT_MENTAL && !cheat_item)
 	{
-		if (f2 & (TR2_RAND_RESIST))
+		if (o_ptr->art_flags2 & (TR2_RAND_RESIST))
 		{
-			if (o_ptr->name1) info[i++] = "It gives you a random resistance.";
-			else info[i++] = "It may give you a random resistance.";
+			if (o_ptr->name1) info[i++].txt = "It gives you a random resistance.";
+			else info[i++].txt = "It may give you a random resistance.";
 		}
-		if (f2 & (TR2_RAND_POWER))
+		if (o_ptr->art_flags2 & (TR2_RAND_POWER))
 		{
-			if (o_ptr->name1) info[i++] = "It gives you a random power.";
-			else info[i++] = "It may give you a random power.";
+			if (o_ptr->name1) info[i++].txt = "It gives you a random power.";
+			else info[i++].txt = "It may give you a random power.";
 		}
-		if (f2 & (TR2_RAND_EXTRA))
+		if (o_ptr->art_flags2 & (TR2_RAND_EXTRA))
 		{
-			if (o_ptr->name1) info[i++] = "It gives you a random power or resistance.";
-			else info[i++] = "It may give you a random power or resistance.";
+			if (o_ptr->name1) info[i++].txt = "It gives you a random power or resistance.";
+			else info[i++].txt = "It may give you a random power or resistance.";
 		}
 	}
 
-		if (f3 & (TR3_PERMA_CURSE))
+		if (o_ptr->art_flags3 & (TR3_PERMA_CURSE))
 		{
-			info[i++] = "It is permanently cursed.";
+			info[i++].txt = "It is permanently cursed.";
 		}
-		else if (f3 & (TR3_HEAVY_CURSE))
+		else if (o_ptr->art_flags3 & (TR3_HEAVY_CURSE))
 		{
-			info[i++] = "It is heavily cursed.";
+			info[i++].txt = "It is heavily cursed.";
 		}
-	else if (f3 & (TR3_CURSED))
+	else if (o_ptr->art_flags3 & (TR3_CURSED))
 		{
-			info[i++] = "It is cursed.";
+			info[i++].txt = "It is cursed.";
 		}
 
-	if (f3 & (TR3_AUTO_CURSE))
+	if (o_ptr->art_flags3 & (TR3_AUTO_CURSE))
 	{
-		info[i++] = "It will curse itself.";
+		info[i++].txt = "It will curse itself.";
 	}
 
-    if (f3 & (TR3_TY_CURSE))
+    if (o_ptr->art_flags3 & (TR3_TY_CURSE))
     {
-        info[i++] = "It carries an ancient foul curse.";
+        info[i++].txt = "It carries an ancient foul curse.";
     }
 
-	if ((f3 & (TR3_IGNORE_ALL)) == TR3_IGNORE_ALL)
+	if ((o_ptr->art_flags3 & (TR3_IGNORE_ALL)) == TR3_IGNORE_ALL)
 	{
-		info[i++] = "It cannot be harmed by the elements.";
+		info[i++].txt = "It cannot be harmed by the elements.";
 	}
-	else if (!(f3 & (TR3_IGNORE_ALL)))
+	else if (!(o_ptr->art_flags3 & (TR3_IGNORE_ALL)))
 	{
 		/* Say nothing. */
 	}
@@ -3665,10 +3688,10 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 	else
 	{
 		j = 0;
-		if (~f3 & (TR3_IGNORE_ACID)) board[j++] = "acid";
-		if (~f3 & (TR3_IGNORE_ELEC)) board[j++] = "electricity";
-		if (~f3 & (TR3_IGNORE_FIRE)) board[j++] = "fire";
-		if (~f3 & (TR3_IGNORE_COLD)) board[j++] = "cold";
+		if (~o_ptr->art_flags3 & (TR3_IGNORE_ACID)) board[j++] = "acid";
+		if (~o_ptr->art_flags3 & (TR3_IGNORE_ELEC)) board[j++] = "electricity";
+		if (~o_ptr->art_flags3 & (TR3_IGNORE_FIRE)) board[j++] = "fire";
+		if (~o_ptr->art_flags3 & (TR3_IGNORE_COLD)) board[j++] = "cold";
 
 		if (o_ptr->ident & IDENT_MENTAL || cheat_item)
 		{
@@ -3680,13 +3703,9 @@ static int identify_fully_get(object_type *o1_ptr, cptr *info, bool *info_a)
 		}
 		if (j)
 		{
-			info_a[i] = TRUE;
-			info[i++] = list_flags(format("It %s be harmed by", board[j]), "and", board, j);
+			do_list_flags(format("It %s be harmed by", board[j]), "and", board, j);
 		}
 	}
-
-	/* Return the number of strings found. */
-	return i;
 }
 
 
@@ -3701,11 +3720,9 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	bool full = (flags & 0x01) != 0;
 	bool paged = (flags & 0x02) == 0;
 
-	int i = 0;
-	cptr info[128];
-	bool info_a[128];
+	ifa_type info[MAX_IFA];
 
-	C_WIPE(info_a, 128, bool);
+	C_WIPE(info, MAX_IFA, ifa_type);
 
 	if (full)
 	{
@@ -3715,27 +3732,27 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		object_known(o_ptr);
 		object_aware(o_ptr);
 
-		i = identify_fully_get(o_ptr, info, info_a);
+		identify_fully_get(o_ptr, info);
 	
 		if (!hack_aware) k_info[o_ptr->k_idx].aware = FALSE;
 		if (!hack_known) o_ptr->ident &= ~(IDENT_KNOWN);
 	}
 	else
 	{
-		i = identify_fully_get(o_ptr, info, info_a);
+		identify_fully_get(o_ptr, info);
 	}
 
 	if (paged)
 	{
-		identify_fully_show(info, i);
+		identify_fully_show(info);
 	}
 	else
 	{
-		identify_fully_dump(info, i);
+		identify_fully_dump(info);
 	}
 
 	/* Clear any allocated strings. */
-	identify_fully_clear(info, info_a, i);
+	identify_fully_clear(info);
 
 	/* Gave knowledge */
 	return (TRUE);
@@ -3747,23 +3764,21 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
  */
 void identify_fully_file(object_type *o_ptr, FILE *fff)
 {
-	int i = 0;
-	cptr info[128];
-	bool info_a[128];
+	ifa_type info[MAX_IFA];
+
+	C_WIPE(info, MAX_IFA, ifa_type);
 
 	/* Set "brief" mode. */
 	brief = TRUE;
 
-	C_WIPE(info_a, 128, bool);
-
 	/* Grab the flags. */
-	i = identify_fully_get(o_ptr, info, info_a);
+	identify_fully_get(o_ptr, info);
 
 	/* Dump the flags, wrapping at 80 characters. */
-	identify_fully_dump_file(fff, info, i);
+	identify_fully_dump_file(fff, info);
 
 	/* Clear any allocated strings. */
-	identify_fully_clear(info, info_a, i);
+	identify_fully_clear(info);
 
 
 	/* Leave "brief" mode. */
