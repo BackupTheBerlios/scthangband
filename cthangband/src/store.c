@@ -2260,7 +2260,7 @@ static void updatebargain(s32b price, s32b minprice)
  */
 static void display_entry(int pos)
 {
-	int x, y, pricedot;
+	int y, pricedot;
 	char wt_str[12]="";
 	char price_str[14]="";
 	cptr fillstr = (pos % 2) ? " " : ".";
@@ -2328,19 +2328,20 @@ static void display_entry(int pos)
 		maxwid -= strlen(wt_str);
 	}
 
-	/* Label it, clear the line --(-- */
-	mc_put_fmt(y+6, 0, "$%c%c) $%c%.*v%n%v", labelc, I2A(y), namec, maxwid,
-		object_desc_f3, o_ptr, TRUE, 3, &x, clear_f0);
-
 	if (*wt_str && *price_str) pricedot += 2;
 
+	/* Write in the weight and price first, as the name will overwrite some of
+	 * the first string of filler text.
+	 */
 	if (*wt_str || *price_str)
 	{
-		x = maxwid - x + strlen("a) ");
-
-		mc_put_fmt(y+6, x, "$D%v%s$D%v%s", repeat_string_f2, fillstr, x, wt_str,
-			repeat_string_f2, fillstr, pricedot, price_str);
+		mc_put_fmt(y+6, 3, "$D%v%s$D%v%s%v", repeat_string_f2, fillstr, maxwid,
+			wt_str, repeat_string_f2, fillstr, pricedot, price_str, clear_f0);
 	}
+
+	/* Label it, clear the line --(-- */
+	mc_put_fmt(y+6, 0, "$%c%c) $%c%.*v", labelc, I2A(y), namec, maxwid,
+		object_desc_f3, o_ptr, TRUE, 3);
 }
 
 
