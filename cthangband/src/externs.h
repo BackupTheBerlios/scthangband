@@ -539,7 +539,7 @@ extern void help_track(cptr str);
 extern void show_file(cptr name, cptr what);
 #endif
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C))
-extern char show_link(cptr link);
+extern void show_link(cptr link);
 #endif
 #if (defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C))
 extern void init_help_files(void);
@@ -3863,16 +3863,16 @@ extern errr Term_inkey(char *ch, bool wait, bool take);
 #if (defined(INIT2_C) || defined(Z_TERM_C))
 extern void init_term_wins(void);
 #endif
-#if (defined(CMD4_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern void Term_release(int win);
 #endif
-#if (defined(CMD4_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern int Term_save_aux(void);
 #endif
 #if (defined(ANGBAND_H) || defined(Z_TERM_C))
 extern void Term_save(void);
 #endif
-#if (defined(CMD4_C) || defined(CMD5_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(Z_TERM_C))
 extern void Term_load_aux(int win);
 #endif
 #if (defined(ANGBAND_H) || defined(Z_TERM_C))

@@ -3875,20 +3875,8 @@ void do_cmd_help(cptr name)
 	/* Hack -- default file */
 	if (!name) name = syshelpfile;
 
-	/* Enter "icky" mode */
-	character_icky = TRUE;
-
-	/* Save the screen */
-	Term_save();
-
-	/* Peruse the main help file */
-	(void)show_file(name, NULL);
-
-	/* Restore the screen */
-	Term_load();
-
-	/* Leave "icky" mode */
-	character_icky = FALSE;
+	/* Peruse the help file. */
+	show_link(name);
 }
 
 
@@ -4381,6 +4369,9 @@ static cptr link_name_to_file(cptr link)
 	return NULL;
 }
 
+/* Forward declare. */
+static char show_link_aux(cptr link);
+
 /*
  * A show_file() function based on ToME's version.
  */
@@ -4727,7 +4718,7 @@ static char show_file_aux(cptr name, cptr what, cptr link)
 		else if (k == '\r')
 		{
 			link_det *ld_ptr = &h_ptr->link[h_ptr->cur_link];
-			if (ld_ptr->x != -1) k = show_link(ld_ptr->tag);
+			if (ld_ptr->x != -1) k = show_link_aux(ld_ptr->tag);
 		}
 		else
 		{
@@ -4774,7 +4765,7 @@ void show_file(cptr name, cptr what)
  * Given the name of a link, show the file which contains it.
  * If link is NULL, use the help last requested.
  */
-char show_link(cptr link)
+static char show_link_aux(cptr link)
 {
 	if (!link) link = cur_help_str();
 	if (link)
@@ -4788,6 +4779,36 @@ char show_link(cptr link)
 		bell("No help string selected!");
 		return 0;
 	}
+}
+
+/*
+ * Display some help text via show_file_aux() based on its link name.
+ */
+void show_link(cptr link)
+{
+	/* Save the screen. */
+	int t = Term_save_aux();
+	character_icky = TRUE;
+
+	/* Allow help. */
+	help_track("option=?");
+
+	/* Allow resize. */
+	add_resize_hook(resize_inkey);
+
+	/* Display the file. */
+	show_link_aux(link);
+
+	/* Forget resize. */
+	delete_resize_hook(resize_inkey);
+
+	/* Forget help. */
+	help_track(NULL);
+
+	/* Restore the screen. */
+	character_icky = FALSE;
+	Term_load_aux(t);
+	Term_release(t);
 }
 
 static void init_links(void)
