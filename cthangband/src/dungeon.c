@@ -979,7 +979,7 @@ static void process_midnight(const int day)
 /*
  * Handle sunrise and sunset.
  */
-static void process_sun(bool dawn)
+static void process_sun(const bool dawn)
 {
 	int x, y;
 	cptr msg = (dawn) ? "risen" : "set";
@@ -1101,7 +1101,7 @@ static void process_time(void)
 	{
 		case 0:
 		{
-			process_sun(FALSE);
+			process_sun(TRUE);
 			break;
 		}
 		case ((10L*TOWN_DAWN)/4):
@@ -1111,7 +1111,7 @@ static void process_time(void)
 		}
 		case ((20L*TOWN_DAWN)/4):
 		{
-			process_sun(TRUE);
+			process_sun(FALSE);
 			break;
 		}
 		case ((30L*TOWN_DAWN)/4):
