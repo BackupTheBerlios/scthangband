@@ -2976,7 +2976,11 @@ void do_cmd_save_screen(void)
 }
 
 
+#if 0  /* This unfortunately doesn't work everywhere. */
 #define GET_SYMBOL_LEN	(strlen(CC_PREFIX "c" CC_PREFIX CC_PREFIX "w")+2)
+#else /* 0 */
+#define GET_SYMBOL_LEN 7
+#endif /* 0 */
 
 /*
  * A simple function to include a coloured symbol in a text file for
