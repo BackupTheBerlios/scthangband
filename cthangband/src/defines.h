@@ -2506,7 +2506,7 @@
  * New monster race bit flags
  */
 #define RF4_SHRIEK                      0x00000001      /* Shriek for help */
-#define RF4_XXX2                        0x00000002      /* (?) */
+#define RF4_ODD_ART                     0x00000002      /* Takes an unusual article */
 #define RF4_XXX3                        0x00000004      /* (?) */
 #define RF4_SHARD                      0x00000008   /* Fire shard balls */
 #define RF4_ARROW_1                     0x00000010      /* Fire an arrow (light) */

@@ -533,6 +533,7 @@ extern void do_cmd_version(void);
 extern void do_cmd_feeling(bool);
 extern void do_cmd_load_screen(void);
 extern void do_cmd_save_screen(void);
+extern void full_name(char *, bool, bool, bool);
 extern void do_cmd_knowledge(void);
 extern void do_cmd_options_aux(int,cptr);
 /* cmd5.c */

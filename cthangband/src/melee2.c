@@ -1259,12 +1259,6 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
            break;
        }
 
-       /* RF4_XXX2X4 */
-       case 96+1:
-       {
-           break;
-       }
-
        /* RF4_XXX3X4 */
        case 96+2:
        {
@@ -3110,12 +3104,6 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			msg_format("%^s makes a high pitched shriek.", m_name);
 			aggravate_monsters(m_idx);
-			break;
-		}
-
-		/* RF4_XXX2X4 */
-		case 96+1:
-		{
 			break;
 		}
 

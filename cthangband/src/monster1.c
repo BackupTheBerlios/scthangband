@@ -547,7 +547,6 @@ static void roff_aux(int r_idx)
 	/* Collect inate attacks */
 	vn = 0;
 	if (flags4 & (RF4_SHRIEK))		vp[vn++] = "shriek for help";
-	if (flags4 & (RF4_XXX2))		vp[vn++] = "do something";
 	if (flags4 & (RF4_XXX3))		vp[vn++] = "do something";
     if (flags4 & (RF4_SHARD))      vp[vn++] = "produce shard balls";
 	if (flags4 & (RF4_ARROW_1))		vp[vn++] = "fire an arrow";

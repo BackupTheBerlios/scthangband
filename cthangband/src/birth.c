@@ -2587,8 +2587,7 @@ int get_number_monster(int i)
 {
 	int num;
 
-	if ((r_info[q_list[i].r_idx].flags1 & (RF1_UNIQUE)) ||
-		(r_info[q_list[i].r_idx].flags2 & (RF2_MULTIPLY)))
+	if (r_info[q_list[i].r_idx].flags1 & (RF1_UNIQUE))
 		return (1);
 	else
 	{

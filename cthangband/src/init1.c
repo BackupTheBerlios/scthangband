@@ -250,7 +250,7 @@ static cptr r_info_flags3[] =
 static cptr r_info_flags4[] =
 {
 	"SHRIEK",
-	"XXX2X4",
+	"ODD_ARTICLE",
 	"XXX3X4",
     "BA_SHARD",  /* WAS: XXX4X4 */
 	"ARROW_1",

@@ -3068,79 +3068,86 @@ static void do_cmd_knowledge_uniques(void)
 	fd_kill(file_name);
 }
 
-void plural_aux(char * Name)
-{
+
+static void plural_aux(char * Name)
+	{
+	cptr initstrings[] = {" of ", " to ", 0};
+	cptr plurals[][2] = {
+		{"young", "young"}, /* Dark young of Shub-Niggurath */
+		{"Manes", "Manes"}, /* Manes */
+		{"Ninja", "Ninja"}, /* Ninja */
+		{"kelman", "kelmen"}, /* Pukelman */
+		{"child", "children"}, /* Small child */
+		{" Man", " Men"}, /* Wild Man */
+		{"ex", "ices"}, /* X vortex */
+		{"olf", "olves"}, /* X Wolf */
+		{"thief", "thieves"}, /* X thief (NOT to be mistaken for chief) */
+		{"ay", "ays"}, /* Stairway to hell */
+		{"ouse", "ice"}, /* X mouse/louse */
+		{"y", "ies"}, /* Harpy, Jelly, etc. */
+		{"ch", "ches"}, /* mushroom patch, lich, etc. */
+		{"s", "ses"}, /* moss, Colossus, etc. */
+		{"", "s"}, /* everything else */
+	};
 	int NameLen = strlen(Name);
-
-	if (strstr(Name, "Disembodied hand"))
+	byte i;
+	if (NameLen == 0) return;
+	for (i = 0; initstrings[i]; i++)
 	{
-		strcpy(Name, "Disembodied hands that strangled people");
-	}
-	else if (strstr(Name, " of "))
-	{
-	        cptr aider = strstr(Name, " of ");
-	        char dummy[80];
-	        int i = 0;
-	        cptr ctr = Name;
-
-	        while (ctr < aider)
-	        {
-	            dummy[i] = *ctr;
-	            ctr++; i++;
-	        }
-
-		if (dummy[i-1] == 's')
-		{
-			strcpy (&(dummy[i]), "es");
-			i++;
-		}
-		else
-		{
-			strcpy (&(dummy[i]), "s");
-		}
-
-		strcpy(&(dummy[i+1]), aider);
-		strcpy(Name, dummy);
-	}
-	else if (strstr(Name, "coins"))
-	{
-		char dummy[80];
-		strcpy (dummy, "piles of ");
-		strcat (dummy, Name);
+		cptr aider = strstr(Name, initstrings[i]);
+		if (aider > Name)
+ 		{
+			char dummy[80] = "";
+			strncpy(dummy, Name, aider - Name);
+			plural_aux(dummy);
+			strcat(dummy, aider);
 		strcpy (Name, dummy);
 		return;
 	}
-	else if (strstr(Name, "Manes"))
-	{
+	        }
+	for (i = 0; plurals[i]; i++)
+		{
+		if (streq(&(Name[NameLen-strlen(plurals[i][0])]), plurals[i][0]))
+		{
+			strcpy(&Name[NameLen-strlen(plurals[i][0])], plurals[i][1]);
 		return;
 	}
-	else if (Name[NameLen-1]=='y')
-	{
-		strcpy(&(Name[NameLen-1]), "ies");
 	}
-	else if (streq(&(Name[NameLen-4]), "ouse"))
-	{
-		strcpy (&(Name[NameLen-4]), "ice");
 	}
-	else if (streq(&(Name[NameLen-6]), "kelman"))
+
+/*
+ * Gives the long form of a name for do_cmd_knowledge_kill_count, etc..
+ */
+void full_name(char * Name, bool plural, bool article, bool strangearticle)
 	{
-		strcpy (&(Name[NameLen-6]), "kelmen");
+	/* Hack - give "long" version of creeping X coins */
+	if (strstr(Name, "coins"))
+	{
+		char string[strlen(Name)+9];
+		sprintf(string, "pile of %s", Name);
+		strcpy(Name, string);
 	}
-	else if (streq(&(Name[NameLen-2]), "ex"))
+	if (plural)
 	{
-		strcpy (&(Name[NameLen-2]), "ices");
+		plural_aux(Name);
+		if (article)
+	{
+			char string[strlen(Name)+6];
+			sprintf(string, "some %s", Name);
+			strcpy(Name, string);
 	}
-	else if (streq(&(Name[NameLen-3]), "olf"))
-	{
-		strcpy (&(Name[NameLen-3]), "olves");
 	}
-	else if ((streq(&(Name[NameLen-2]), "ch")) || (Name[NameLen-1] == 's'))
+	/* Give an indefinite article as required. Plurals never take indefinite articles. */
+	else if (article)
 	{
-		strcpy (&(Name[NameLen]), "es");
-	}
-	else
-	{
-		strcpy (&(Name[NameLen]), "s");
+		char string[strlen(Name)+4];
+		/* Testing whether the word starts with a vowel or not is usually sufficient. */
+		bool an = is_a_vowel(Name[0]);
+		/* There needs to be a way of overriding this, however. */
+		if (strangearticle) an = !an;
+		/* Use the string we have decided upon. */
+		sprintf(string, "%s %s", (an) ? "an" : "a", Name);
+		strcpy(Name, string);
 	}
 }
 
@@ -3221,14 +3228,43 @@ static void do_cmd_knowledge_pets(void)
 
 
 /*
+ * Count the number of monsters killed. As we want to calculate the total before
+ * displaying anything, we run this first without output, and then with.
+ */
+static int count_kills(FILE *fff, bool noisy)
+{
+	/* Monsters slain */
+	int kk, Total = 0;
+
+	for (kk = 1; kk < MAX_R_IDX-1; kk++)
+	{
+		monster_race *r_ptr = &r_info[kk];
+
+		s16b This = r_ptr->r_pkills;
+
+		Total += This;
+		if (This && noisy)
+		{
+			char string[80];
+			strcpy(string, r_name+r_ptr->name);
+			full_name(string, This > 1, FALSE, FALSE);
+
+			if (r_ptr->flags1 & (RF1_UNIQUE) && This == 1)
+				fprintf(fff, "     %s\n", (r_name + r_ptr->name));
+			else
+				fprintf(fff, "     %d %s\n", This, string);
+		}
+	}
+	return Total;
+}
+
+/*
  * Total kill count
  *
  * Note that the player ghosts are ignored.  XXX XXX XXX
  */
 static void do_cmd_knowledge_kill_count(void)
 {
-	int k;
-
 	FILE *fff;
 
 	char file_name[1024];
@@ -3242,90 +3278,18 @@ static void do_cmd_knowledge_kill_count(void)
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
 
-	{
-		/* Monsters slain */
-		int kk;
-
-		for (kk = 1; kk < MAX_R_IDX-1; kk++)
-		{
-			monster_race *r_ptr = &r_info[kk];
-
-			if (r_ptr->flags1 & (RF1_UNIQUE))
-			{
-				bool dead = (r_ptr->max_num == 0);
-
-				if (dead)
-				{
-					Total++;
-				}
-			}
-			else
-			{
-				s16b This = r_ptr->r_pkills;
-
-				if (This > 0)
-				{
-					Total += This;
-				}
-			}
-		}
+	/* Count monsters slain */
+	Total = count_kills(fff, FALSE);
 
 		if (Total < 1)
 			fprintf(fff,"You have defeated no enemies yet.\n\n");
 		else if (Total == 1)
 			fprintf(fff,"You have defeated one enemy.\n\n");
 		else
-			fprintf(fff,"You have defeated %lu enemies.\n\n", Total);
-	}
+		fprintf(fff,"You have defeated %ld enemies.\n\n", Total);
 
-	Total = 0;
-
-	/* Scan the monster races */
-	for (k = 1; k < MAX_R_IDX-1; k++)
-	{
-		monster_race *r_ptr = &r_info[k];
-
-		if (r_ptr->flags1 & (RF1_UNIQUE))
-		{
-			bool dead = (r_ptr->max_num == 0);
-
-			if (dead)
-			{
-				/* Print a message */
-				fprintf(fff, "     %s\n",
-				    (r_name + r_ptr->name));
-				Total++;
-			}
-		}
-		else
-		{
-			s16b This = r_ptr->r_pkills;
-
-			if (This > 0)
-			{
-				if (This < 2)
-				{
-					if (strstr(r_name + r_ptr->name, "coins"))
-					{
-						fprintf(fff, "     1 pile of %s\n", (r_name + r_ptr->name));
-					}
-					else
-					{
-						fprintf(fff, "     1 %s\n", (r_name + r_ptr->name));
-					}
-				}
-				else
-				{
-					char ToPlural[80];
-					strcpy(ToPlural, (r_name + r_ptr->name));
-					plural_aux(ToPlural);
-					fprintf(fff, "     %d %s\n", This, ToPlural);
-				}
-
-				Total += This;
-			}
-		}
-	}
+	/* Display the species-by-species breakdown. */
+	(void)count_kills(fff, TRUE);
 
 	fprintf(fff,"----------------------------------------------\n");
 	fprintf(fff,"   Total: %lu creature%s killed.\n", Total, (Total==1?"":"s"));
