@@ -2981,3 +2981,102 @@ co_ord screen_coords[NUM_SCREEN_COORDS] =
 	{IDX(XY_STUDY) "study", 63, -1},
 	{IDX(XY_DEPTH) "depth", 69, -1},
 };
+
+/* A list of the flags for explosion types understood by project(). */
+cptr explode_flags[] =
+{
+	"ELEC",
+	"POIS",
+	"ACID",
+	"COLD",
+	"FIRE",
+	"","","","",
+	"MISSILE",
+	"ARROW",
+	"PLASMA",
+	"",
+	"WATER",
+	"LITE",
+	"DARK",
+	"LITE_WEAK",
+	"DARK_WEAK",
+	"",
+	"SHARDS",
+	"SOUND",
+	"CONFUSION",
+	"FORCE",
+	"INERTIA",
+	"",
+	"MANA",
+	"METEOR",
+	"ICE",
+	"",
+	"CHAOS",
+	"NETHER",
+	"DISENCHANT",
+	"NEXUS",
+	"TIME",
+	"GRAVITY",
+	"","","","",
+	"KILL_WALL",
+	"KILL_DOOR",
+	"KILL_TRAP",
+	"","",
+	"MAKE_WALL",
+	"MAKE_DOOR",
+	"MAKE_TRAP",
+	"","","",
+	"OLD_CLONE",
+	"OLD_POLY",
+	"OLD_HEAL",
+	"OLD_SPEED",
+	"OLD_SLOW",
+	"OLD_CONF",
+	"OLD_SLEEP",
+	"OLD_DRAIN",
+	"","",
+	"AWAY_UNDEAD",
+	"AWAY_EVIL",
+	"AWAY_ALL",
+	"TURN_UNDEAD",
+	"TURN_EVIL",
+	"TURN_ALL",
+	"DISP_UNDEAD",
+	"DISP_EVIL",
+	"DISP_ALL",
+	"DISP_DEMON",
+	"DISP_LIVING",
+	"SHARD",
+	"NUKE",
+	"MAKE_GLYPH",
+	"STASIS",
+	"STONE_WALL",
+	"DEATH_RAY",
+	"STUN",
+	"HOLY_FIRE",
+	"HELL_FIRE",
+	"DISINTEGRATE",
+	"CHARM",
+	"CONTROL_UNDEAD",
+	"CONTROL_ANIMAL",
+	"PSI",
+	"PSI_DRAIN",
+	"TELEKINESIS",
+	"JAM_DOOR",
+	"DOMINATION",
+	"DISP_GOOD",
+	NULL
+};
+
+/* A list of the types of coins. This can't be taken from k_info.txt because of
+ * the duplicate entries. */
+cptr coin_types[] =
+{
+	"","","COPPER", /* 482 */
+	"","","SILVER", /* 485 */
+	"","","","","GOLD", /* 490 */
+	"","","","","","MITHRIL", /* 496 */
+	"ADAMANTIUM", /* 497 */
+	NULL
+};
+

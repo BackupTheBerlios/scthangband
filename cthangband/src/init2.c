@@ -723,11 +723,16 @@ static void init_x_final(int num)
 	return;
 }
 		
+#ifdef ALLOW_TEMPLATES
+#define IF_AT(X) X
+#else /* ALLOW_TEMPLATES */
+#define IF_AT(X) 0
+#endif /* ALLOW_TEMPLATES */
 
 #define init_x_info(title, type, parse, file, x_info, x_name, x_text, x_max, num) \
 { \
 	note(format("[Initializing arrays... (%s)]", title)); \
-	init_header(type, num, parse, file); \
+	init_header(type, num, IF_AT(parse), file); \
 	init_info(head); \
 	x_info = head->info_ptr; \
 	if (x_name != dummy) x_name = head->name_ptr; \
@@ -735,8 +740,6 @@ static void init_x_final(int num)
 	z_info->x_max = head->info_num;\
 	init_x_final(num); \
 }
-
-
 
 
 
@@ -1979,13 +1982,13 @@ void init_angband(void)
 	init_x_info("maxima", maxima, parse_z_info, "z_info", z_info,
 		dummy, dummy, u_max, Z_HEAD);
 
-	/* Initialise the fake arrays now their sizes are known. */
+#ifdef ALLOW_TEMPLATES
+	/* Initialise the fake arrays if needed. */
 	C_MAKE(head->fake_info_ptr, z_info->fake_info_size, char);
 	C_MAKE(head->fake_name_ptr, z_info->fake_name_size, char);
 	C_MAKE(head->fake_text_ptr, z_info->fake_text_size, char);
 
 	/* initialisation macros are only used in init1.c. */
-#ifdef ALLOW_TEMPLATES
 	init_x_info("macros", init_macro_type, parse_macro_info, "macro",
 		macro_info, macro_name, macro_text, macros, MACRO_HEAD)
 #endif /* ALLOW_TEMPLATES */
@@ -2051,10 +2054,12 @@ void init_angband(void)
 	KILL(head->fake_name_ptr);
 	KILL(head->fake_text_ptr);
 
+#ifdef ALLOW_TEMPLATES
 	/* Delete the initialisation macro arrays, we're done with them. */
 	KILL(macro_info);
 	KILL(macro_text);
 	KILL(macro_name);
+#endif /* ALLOW_TEMPLATES */
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (other)]");

@@ -555,12 +555,12 @@ extern void replace_secret_door(int y, int x);
 extern void generate_cave(void);
 #endif
 
-/* init1.c */
+/* tables.c */
 
-#if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(MONSTER1_C))
+#if (defined(INIT1_C) || defined(MONSTER1_C) || defined(TABLES_C))
 extern cptr explode_flags[];
 #endif
-#if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(MONSTER1_C))
+#if (defined(INIT1_C) || defined(MONSTER1_C) || defined(TABLES_C))
 extern cptr coin_types[];
 #endif
 #if (defined(ALLOW_TEMPLATES)) && (defined(INIT1_C) || defined(INIT2_C))
