@@ -1876,8 +1876,31 @@ static magic_type cantrip_info[32] =
 	{"Clairvoyance", "dur 25+30", 50, 125, 80, 0, SKILL_HEDGE, SKILL_NONE, SP_CLAIRVOYANCE, 0},
 };
 
-/* Forward declare. */
-static magic_type mindcraft_powers[];
+static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
+{
+	/* Det. monsters/traps */
+	{"Precognition", "", 0, 1, 15, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PRECOGNITION, 0},
+	/* ~MM */
+	{"Neural Blast", "dam LEV-1/4+3;dLEV/15+3", 1, 1, 20, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_NEURAL_BLAST, 0}, 
+	/* Phase/dimension door (range 10 for sk 0-49, LEV+2 above) */
+	{"Minor Displacement", NULL, 3, 2, 25, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MINOR_DISPLACEMENT, 0},
+	/* Tele. Self / All */
+	{"Major Displacement", "range LEV*5", 7, 6, 35, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MAJOR_DISPLACEMENT, 0}, 
+	{"Domination", "", 9, 7, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_DOMINATION, 0},
+	/* Telekinetic "bolt" */
+	{"Pulverise", "dam LEV-5/4+8;d8", 11, 7, 30, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PULVERISE, 0},
+	/* Psychic/physical defenses */
+	{"Character Armour", "dur LEV", 13, 12, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_CHARACTER_ARMOUR, 0},
+	{"Psychometry", "", 15, 12, 60, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PSYCHOMETRY, 0},
+	/* Ball -> LOS */
+	{"Mind Wave", "dam LEV-5/10+1*LEV", 18, 10, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MIND_WAVE, 0},
+	{"Adrenaline Channeling", "dur 11-LEV*3/2", 23, 15, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_ADRENALINE_CHANNELING, 0},
+ 	/* Convert enemy HP to mana */
+ 	{"Psychic Drain", "dam LEV/2;d6", 25, 10, 40, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PSYCHIC_DRAIN, 0},
+	/* Ball -> LOS (dam LEV*3 for sk 0-79, LEV*4 above) */
+	{"Telekinetic Wave", NULL, 29, 20, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_TELEKINETIC_WAVE, 0},
+};
+
 
 book_type book_info[MAX_BK] =
 {
@@ -2741,32 +2764,6 @@ martial_arts ma_blows[MAX_MA+1] =
 	/* A weak unarmed attack for unskilled characters. */
 	{ "You hit %v.",							0, 0, 1, 1, 0},
 };
-
-static magic_type mindcraft_powers[MAX_MINDCRAFT_POWERS] =
-{
-	/* Det. monsters/traps */
-	{"Precognition", "", 0, 1, 15, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PRECOGNITION, 0},
-	/* ~MM */
-	{"Neural Blast", "dam LEV-1/4+3;dLEV/15+3", 1, 1, 20, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_NEURAL_BLAST, 0}, 
-	/* Phase/dimension door (range 10 for sk 0-49, LEV+2 above) */
-	{"Minor Displacement", NULL, 3, 2, 25, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MINOR_DISPLACEMENT, 0},
-	/* Tele. Self / All */
-	{"Major Displacement", "range LEV*5", 7, 6, 35, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MAJOR_DISPLACEMENT, 0}, 
-	{"Domination", "", 9, 7, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_DOMINATION, 0},
-	/* Telekinetic "bolt" */
-	{"Pulverise", "dam LEV-5/4+8;d8", 11, 7, 30, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PULVERISE, 0},
-	/* Psychic/physical defenses */
-	{"Character Armour", "dur LEV", 13, 12, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_CHARACTER_ARMOUR, 0},
-	{"Psychometry", "", 15, 12, 60, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PSYCHOMETRY, 0},
-	/* Ball -> LOS */
-	{"Mind Wave", "dam LEV-5/10+1*LEV", 18, 10, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_MIND_WAVE, 0},
-	{"Adrenaline Channeling", "dur 11-LEV*3/2", 23, 15, 50, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_ADRENALINE_CHANNELING, 0},
- 	/* Convert enemy HP to mana */
- 	{"Psychic Drain", "dam LEV/2;d6", 25, 10, 40, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_PSYCHIC_DRAIN, 0},
-	/* Ball -> LOS (dam LEV*3 for sk 0-79, LEV*4 above) */
-	{"Telekinetic Wave", NULL, 29, 20, 45, 0, SKILL_MINDCRAFTING, SKILL_NONE, SP_TELEKINETIC_WAVE, 0},
-};
-
 
 /*
  * Window definitions. Defined here to ensure that the names are available ASAP.

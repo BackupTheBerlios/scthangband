@@ -1842,7 +1842,7 @@ static bool paste_x11_send_text(XSelectionRequestEvent *rq, int (*add)(char *, b
 
 		/* Send the (non-empty) string. */
 		XChangeProperty(DPY, rq->requestor, rq->property, rq->target, 8,
-			PropModeAppend, buf, l);
+			PropModeAppend, (byte*)buf, l);
 	}
 	return TRUE;
 }
@@ -1917,7 +1917,7 @@ static void paste_x11_send(XSelectionRequestEvent *rq)
  */
 static void paste_x11_accept(const XSelectionEvent *ptr)
 {
-	long offset, left;
+	unsigned long offset, left;
 
 	/* Failure. */
 	if (ptr->property == None)
@@ -1955,7 +1955,7 @@ static void paste_x11_accept(const XSelectionEvent *ptr)
 			!= Success) break;
 
 		/* Paste the text. */
-		err = type_string(data, nitems);
+		err = type_string((char*)data, nitems);
 
 		/* Free the data pasted. */
 		XFree(data);

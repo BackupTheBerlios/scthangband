@@ -19,6 +19,7 @@
  */
 
 #include "h-config.h"
+#include "h-define.h"
 #include "config.h"
 
 #if defined(WINDOWS) && defined(USE_GRAPHICS)
@@ -338,4 +339,7 @@ ErrExit2:
 	return (result);
 }
 
+#else /* WINDOWS && USE_GRAPHICS */
+/* The normal headers here include no statements. */
+static UNUSED int i = 1;
 #endif /* WINDOWS && USE_GRAPHICS */
