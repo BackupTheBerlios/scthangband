@@ -5,6 +5,28 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband _CVS_
+* Allow coloured recall messages.
+* Ignore the "hidden" flag for objects shown in character dumps.
+* Allow the player to display the spell list of a charm in a shop.
+* Allow the wizard mode jump command to take the character to the surface.
+* Create a cheat option to prevent saving when the game quits normally.
+* Split the UI options into UI and display options.
+* Add a display option to prevent the game from using "fake monochrome".
+* Make the description of encumbering armour in the display menu clearer.
+* Correct/alter some documentation.
+* Fix the following bugs:
+  * Objects were described as "powerful" incorrectly.
+  * Compiling with BCC still led to frequent crashes.
+  * Characters could get a chaos power on creation if patrons were disabled.
+  * Some indirect help commands did not restore the screen after they finished.
+  * The find command in help often left the searched text off-screen.
+  * The game claimed that the character gained a chaos feature it already had.
+  * Mindflayers could gain tentacles by their mouths and lose them again from
+    their sides.
+  * skip_chaos_feature was always treated as being set.
+  * The player could try to refuel a lamp with itself.
+
 sCthangband 1.0.12
 * Dodging blows because of martial arts gives experience in the skill.
 * A player who is capable of martial arts gains a +5 AC bonus because of this.
