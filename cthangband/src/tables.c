@@ -1876,6 +1876,41 @@ magic_type cantrip_info[32] =
 	{"Clairvoyance", "", 50, 125, 80, 0, SCH_HEDGE, SP_NONE, 0},
 };
 
+book_type book_info[31] =
+{
+	{IDX(BK_SORC_0) magic_info[SCH_SORCERY], 0x000000ff},
+	{IDX(BK_SORC_1) magic_info[SCH_SORCERY], 0x0000ff00},
+	{IDX(BK_SORC_2) magic_info[SCH_SORCERY], 0x00ff0000},
+	{IDX(BK_SORC_3) magic_info[SCH_SORCERY], 0xff000000},
+	{IDX(BK_NECRO_0) magic_info[SCH_NECROMANCY], 0x000000ff},
+	{IDX(BK_NECRO_1) magic_info[SCH_NECROMANCY], 0x0000ff00},
+	{IDX(BK_NECRO_2) magic_info[SCH_NECROMANCY], 0x00ff0000},
+	{IDX(BK_NECRO_3) magic_info[SCH_NECROMANCY], 0xff000000},
+	{IDX(BK_THAUM_0) magic_info[SCH_THAUMATURGY], 0x000000ff},
+	{IDX(BK_THAUM_1) magic_info[SCH_THAUMATURGY], 0x0000ff00},
+	{IDX(BK_THAUM_2) magic_info[SCH_THAUMATURGY], 0x00ff0000},
+	{IDX(BK_THAUM_3) magic_info[SCH_THAUMATURGY], 0xff000000},
+	{IDX(BK_CONJ_0) magic_info[SCH_CONJURATION], 0x000000ff},
+	{IDX(BK_CONJ_1) magic_info[SCH_CONJURATION], 0x0000ff00},
+	{IDX(BK_CONJ_2) magic_info[SCH_CONJURATION], 0x00ff0000},
+	{IDX(BK_CONJ_3) magic_info[SCH_CONJURATION], 0xff000000},
+	{IDX(BK_CHARM_SULPHUR) cantrip_info, 0x10300221},
+	{IDX(BK_CHARM_HEMLOCK) cantrip_info, 0x4a080010},
+	{IDX(BK_CHARM_UNICORN) cantrip_info, 0x00442080},
+	{IDX(BK_CHARM_CRYSTAL) cantrip_info, 0x20001508},
+	{IDX(BK_CHARM_AGARIC) cantrip_info, 0x80800804},
+	{IDX(BK_CHARM_GARLIC) cantrip_info, 0x0003c000},
+	{IDX(BK_CHARM_GEODE) cantrip_info, 0x05000042},
+	{IDX(BK_LIFE_0) favour_info[SPIRIT_LIFE], 0x000000ff},
+	{IDX(BK_LIFE_1) favour_info[SPIRIT_LIFE], 0x0000ff00},
+	{IDX(BK_LIFE_2) favour_info[SPIRIT_LIFE], 0x00ff0000},
+	{IDX(BK_LIFE_3) favour_info[SPIRIT_LIFE], 0xff000000},
+	{IDX(BK_WILD_0) favour_info[SPIRIT_NATURE], 0x000000ff},
+	{IDX(BK_WILD_1) favour_info[SPIRIT_NATURE], 0x0000ff00},
+	{IDX(BK_WILD_2) favour_info[SPIRIT_NATURE], 0x00ff0000},
+	{IDX(BK_WILD_3) favour_info[SPIRIT_NATURE], 0xff000000},
+};
+
 /* Bitwise mask for spells to split them into books */
 
 u32b spell_flags[4]=

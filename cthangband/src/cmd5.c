@@ -22,7 +22,52 @@ static void rustproof(void);
 static s32b favour_annoyance(magic_type *f_ptr);
 static void annoy_spirit(spirit_type *s_ptr,u32b amount);
 
+static book_type *k_idx_to_book(int i)
+{
+	switch (i)
+	{
+		case OBJ_SORCERY_BEGINNERS_HANDBOOK: return book_info+BK_SORC_0;
+		case OBJ_SORCERY_MASTER_SORCERERS_HANDBOOK: return book_info+BK_SORC_1;
+		case OBJ_SORCERY_RLYEH_TEXT: return book_info+BK_SORC_2;
+		case OBJ_SORCERY_UNAUSPRECHLICHEN_KULTEN: return book_info+BK_SORC_3;
+		case OBJ_NECROMANCY_BLACK_PRAYERS: return book_info+BK_NECRO_0;
+		case OBJ_NECROMANCY_BLACK_MASS: return book_info+BK_NECRO_1;
+		case OBJ_NECROMANCY_NECRONOMICON: return book_info+BK_NECRO_2;
+		case OBJ_NECROMANCY_KITAB_AL_AZIF: return book_info+BK_NECRO_3;
+		case OBJ_THAUMATURGY_SIGN_OF_CHAOS: return book_info+BK_THAUM_0;
+		case OBJ_THAUMATURGY_CHAOS_MASTERY: return book_info+BK_THAUM_1;
+		case OBJ_THAUMATURGY_THE_KING_IN_YELLOW: return book_info+BK_THAUM_2;
+		case OBJ_THAUMATURGY_REVELATIONS_OF_GLAAKI: return book_info+BK_THAUM_3;
+		case OBJ_CONJURATION_MINOR_CONJURINGS: return book_info+BK_CONJ_0;
+		case OBJ_CONJURATION_CONJURING_MASTERY: return book_info+BK_CONJ_1;
+		case OBJ_CONJURATION_BOOK_OF_EIBON: return book_info+BK_CONJ_2;
+		case OBJ_CONJURATION_LIBER_IVONIS: return book_info+BK_CONJ_3;
+		case OBJ_LUMP_OF_SULPHUR: return book_info+BK_CHARM_SULPHUR;
+		case OBJ_HEMLOCK_TWIG: return book_info+BK_CHARM_HEMLOCK;
+		case OBJ_SILVER_UNICORN_HORN: return book_info+BK_CHARM_UNICORN;
+		case OBJ_CRYSTAL: return book_info+BK_CHARM_CRYSTAL;
+		case OBJ_FLY_AGARIC_TOADSTOOL: return book_info+BK_CHARM_AGARIC;
+		case OBJ_CLOVE_OF_GARLIC: return book_info+BK_CHARM_GARLIC;
+		case OBJ_GEODE: return book_info+BK_CHARM_GEODE;
+		default: return book_info;
+	}
+}
 
+static book_type *spirit_to_book(spirit_type *s_ptr)
+{
+	switch (s_ptr - spirits)
+	{
+		case 0: return book_info+BK_LIFE_0;
+		case 2: return book_info+BK_LIFE_1;
+		case 4: return book_info+BK_LIFE_2;
+		case 6: return book_info+BK_LIFE_3;
+		case 1: return book_info+BK_WILD_0;
+		case 3: return book_info+BK_WILD_1;
+		case 5: return book_info+BK_WILD_2;
+		case 7: return book_info+BK_WILD_3;
+		default: return book_info;
+	}
+}
 
 
 

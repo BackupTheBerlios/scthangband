@@ -710,6 +710,42 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SPIRIT_LIFE 0
 #define SPIRIT_NATURE 1
 
+/* Spells per "book". Fixed as the spells used are a u32b bit map. */
+#define MAX_SPELLS_PER_BOOK 32
+
+/* A list of the various books, etc., which contain spells. */
+#define BK_SORC_0 0
+#define BK_SORC_1 1
+#define BK_SORC_2 2
+#define BK_SORC_3 3
+#define BK_NECRO_0 4
+#define BK_NECRO_1 5
+#define BK_NECRO_2 6
+#define BK_NECRO_3 7
+#define BK_THAUM_0 8
+#define BK_THAUM_1 9
+#define BK_THAUM_2 10
+#define BK_THAUM_3 11
+#define BK_CONJ_0 12
+#define BK_CONJ_1 13
+#define BK_CONJ_2 14
+#define BK_CONJ_3 15
+#define BK_CHARM_SULPHUR 16
+#define BK_CHARM_HEMLOCK 17
+#define BK_CHARM_UNICORN 18
+#define BK_CHARM_CRYSTAL 19
+#define BK_CHARM_AGARIC 20
+#define BK_CHARM_GARLIC 21
+#define BK_CHARM_GEODE 22
+#define BK_LIFE_0 23
+#define BK_LIFE_1 24
+#define BK_LIFE_2 25
+#define BK_LIFE_3 26
+#define BK_WILD_0 27
+#define BK_WILD_1 28
+#define BK_WILD_2 29
+#define BK_WILD_3 30
+
 /*
  * Maximum number of "normal" pack slots, and the index of the "overflow"
  * slot, which can hold an item, but only temporarily, since it causes the

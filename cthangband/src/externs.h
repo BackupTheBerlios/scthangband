@@ -4013,4 +4013,10 @@ extern void assert_fail(cptr error, cptr file, int line);
 #if (defined(FILES_C) || defined(Z_FORM_C))
 extern void core_fmt(cptr fmt, ...);
 #endif
+
+/* tables.c */
+
+#if (defined(CMD5_C) || defined(INIT2_C) || defined(TABLES_C))
+extern book_type book_info[31];
+#endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -857,6 +857,15 @@ struct magic_type
 	s16b power; /* The index of the spell effect. */
 };
 
+typedef struct book_type book_type;
+struct book_type
+{
+#ifdef CHECK_ARRAYS
+	int idx;
+#endif /* CHECK_ARRAYS */
+	magic_type *info;
+	u32b flags;
+};
 
 /*
  * Structure for the display windows.

@@ -1731,6 +1731,25 @@ static void check_options(void)
 		quit("Failed to parse option_info.");
 	}	
 }
+
+/*
+ * Check that book_info[] uses the correct indices.
+ */
+static void check_book_info(void)
+{
+	int i;
+	for (i = 0; i < N_ELEMENTS(book_info); i++)
+	{
+		const book_type *b_ptr = book_info+i;
+
+		/* Bad index. */
+		if (b_ptr->idx != i) quit_fmt("Book %d has index %d.", i, b_ptr->idx);
+
+		/* Bad value. */
+		if (!b_ptr->info || !b_ptr->flags) quit_fmt("Book %d is malformed.", i);
+	}
+}
+
 #endif /* CHECK_ARRAYS */
 
 /*
@@ -1748,6 +1767,7 @@ static void check_arrays(void)
 	check_options();
 	check_skill_set();
 	check_timeouts();
+	check_book_info();
 #endif /* CHECK_ARRAYS */
 }
 
