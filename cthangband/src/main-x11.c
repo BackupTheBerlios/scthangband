@@ -1214,16 +1214,16 @@ static errr Infofnt_prepare(XFontStruct *info)
 	cs = &(info->max_bounds);
 
 	/* Extract default sizing info */
-	ifnt->asc = info->ascent;
-	ifnt->hgt = info->ascent + info->descent;
-	ifnt->wid = cs->width;
-
 #ifdef OBSOLETE_SIZING_METHOD
-	/* Extract default sizing info */
 	ifnt->asc = cs->ascent;
 	ifnt->hgt = (cs->ascent + cs->descent);
-	ifnt->wid = cs->width;
+#else
+	ifnt->asc = info->ascent;
+	ifnt->hgt = info->ascent + info->descent;
 #endif
+	ifnt->wid = cs->width;
+
+	ifnt->mono = (info->min_bounds.width != info->max_bounds.width);
 
 	/* Success */
 	return (0);
@@ -1339,6 +1339,10 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 	/* Monotize the font */
 	if (Infofnt->mono)
 	{
+		/* Clear some space. */
+		XClearArea(Metadpy->dpy, Infowin->win, x, y - Infofnt->asc,
+			len * Infofnt->wid, Infofnt->hgt, FALSE);
+
 		/* Do each character */
 		for (i = 0; i < len; ++i)
 		{
