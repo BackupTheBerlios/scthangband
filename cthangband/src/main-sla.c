@@ -118,7 +118,7 @@ static char *color_terminals[] =
 /*
  * Stolen from the Midnight Commander
  */
-int has_colors(void)
+static int has_colors(void)
 {
 	int i;
 

@@ -1471,3 +1471,9 @@ struct co_ord
 	int y;
 };
 
+#ifdef HANDLE_SIGNALS
+
+/* Define a signal handler here where everything can see it. */
+typedef void (*Signal_Handler_t)(int);
+
+#endif

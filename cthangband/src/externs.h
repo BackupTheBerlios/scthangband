@@ -530,6 +530,9 @@ extern void exit_game_panic(void);
 #if (defined(CMD1_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(XTRA2_C))
 extern void get_rnd_line_f1(char *buf, uint max, cptr fmt, va_list *vp);
 #endif
+
+
+
 #if (defined(FILES_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_ROS_C) || defined(MAIN_C))
 extern void signals_init(void);
 #endif
@@ -859,9 +862,6 @@ extern void amiga_write_user_name( char *name );
 
 /* main-cap.c */
 
-#if (defined(USE_CAP)) && (defined(MAIN_CAP_C))
-extern errr init_cap_aux(void);
-#endif
 #if ((defined(USE_CAP)) && defined(USE_HARDCODE)) && (defined(MAIN_CAP_C) || defined(MAIN_C))
 extern const char help_cap[];
 #endif
@@ -958,38 +958,6 @@ extern errr init_ibm(int argc, char **argv);
 
 /* main-lsl.c */
 
-#if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
-extern void *read_bmp_file(void);
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_DOS_C) || defined(MAIN_LSL_C) || defined(MAIN_VCS_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C))
-extern GraphicsContext *screen;
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
-extern GraphicsContext *backscreen;
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_AMI_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_VME_C))
-extern GraphicsContext *buffer;
-#endif
-#if (defined(USE_LSL)) && (defined(MAID_X11_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C))
-extern void *font;
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
-extern void initfont(void);
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
-extern void setpal(void);
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
-extern errr term_text_svgalib(int x, int y, int n, unsigned char a, cptr s);
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
-extern errr term_pict_svgalib(int x, int y, int n, const byte *ap, const char *cp,
-                       const byte *tap, const char *tcp)
-;
-#endif
-#if (defined(USE_LSL)) && (defined(MAIN_LSL_C))
-extern void term_load_bitmap(void);
-#endif
 #if (defined(USE_LSL)) && (defined(MAIN_LSL_C) || defined(MAIN_C))
 extern const char help_lsl[];
 #endif
@@ -1080,9 +1048,6 @@ extern errr check_modification_date(int fd, cptr template_file);
 
 /* main-sla.c */
 
-#if (defined(USE_SLA)) && (defined(MAIN_GCU_C) || defined(MAIN_SLA_C))
-extern int has_colors(void);
-#endif
 #if (defined(USE_SLA)) && (defined(MAIN_SLA_C) || defined(MAIN_C))
 extern const char help_sla[];
 #endif
@@ -4017,5 +3982,11 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
+#endif
+
+/* files.c */
+
+#if (defined(HANDLE_SIGNALS)) && (defined(FILES_C) || defined(MAIN_SLA_C))
+extern Signal_Handler_t (*signal_aux)(int, Signal_Handler_t);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

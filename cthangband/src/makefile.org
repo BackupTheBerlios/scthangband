@@ -44,30 +44,24 @@
 #
 
 SRCS = \
-  z-util.c z-virt.c z-form.c z-rand.c z-term.c \
-  variable.c tables.c util.c cave.c \
-  object1.c object2.c monster1.c monster2.c \
-  xtra1.c xtra2.c spells1.c spells2.c \
-  melee1.c melee2.c save.c files.c \
-  cmd1.c cmd2.c cmd3.c cmd4.c cmd5.c cmd6.c \
-  store.c birth.c load.c loadsave.c \
-  wizard1.c wizard2.c \
-  generate.c dungeon.c init1.c init2.c \
-  quest.c main-cap.c \
-  main-xpj.c main-gtk.c main-gcu.c main-x11.c maid-x11.c main-xaw.c main.c
+  birth.c cave.c cmd1.c cmd2.c cmd3.c cmd4.c cmd5.c cmd6.c dungeon.c files.c \
+  generate.c init1.c init2.c load.c loadsave.c maid-x11.c main-ami.c main-cap.c \
+  main-dos.c main-emx.c main-gcu.c main-gtk.c main-ibm.c main-lsl.c main-mac.c \
+  main-ros.c main-sla.c main-vcs.c main-vme.c main-win.c main-x11.c main-xaw.c \
+  main-xpj.c main-xxx.c main.c melee1.c melee2.c monster1.c monster2.c \
+  object1.c object2.c quest.c readdib.c save.c spells1.c spells2.c store.c \
+  tables.c util.c variable.c wizard1.c wizard2.c xtra1.c xtra2.c z-form.c \
+  z-rand.c z-term.c z-util.c z-virt.c 
 
 OBJS = \
-  z-util.o z-virt.o z-form.o z-rand.o z-term.o \
-  variable.o tables.o util.o cave.o \
-  object1.o object2.o monster1.o monster2.o \
-  xtra1.o xtra2.o spells1.o spells2.o \
-  melee1.o melee2.o save.o files.o \
-  cmd1.o cmd2.o cmd3.o cmd4.o cmd5.o cmd6.o \
-  store.o birth.o load.o loadsave.o \
-  wizard1.o wizard2.o \
-  generate.o dungeon.o init1.o init2.o \
-  quest.o main-cap.o \
-  main-xpj.o main-gtk.o main-gcu.o main-x11.o maid-x11.o main-xaw.o main.o
+  birth.o cave.o cmd1.o cmd2.o cmd3.o cmd4.o cmd5.o cmd6.o dungeon.o files.o \
+  generate.o init1.o init2.o load.o loadsave.o maid-x11.o main-ami.o main-cap.o \
+  main-dos.o main-emx.o main-gcu.o main-gtk.o main-ibm.o main-lsl.o main-mac.o \
+  main-ros.o main-sla.o main-vcs.o main-vme.o main-win.o main-x11.o main-xaw.o \
+  main-xpj.o main-xxx.o main.o melee1.o melee2.o monster1.o monster2.o \
+  object1.o object2.o quest.o readdib.o save.o spells1.o spells2.o store.o \
+  tables.o util.o variable.o wizard1.o wizard2.o xtra1.o xtra2.o z-form.o \
+  z-rand.o z-term.o z-util.o z-virt.o 
 
 
 
@@ -129,21 +123,38 @@ STD_CFLAGS = -O3 -fno-strength-reduce -pipe -g  \
 # Test that Cthangband does not require obviously non-c89 things.
 ANSI_CFLAGS = -std=c89 -pedantic -D"NO_VARIABLE_ARRAYS"
 
+# X11-based display with multiple windows.
 X11_CFLAGS = -D"USE_X11"
 X11_LIBS = -L/usr/X11R6/lib -lX11 
 
+# X11 Athena Widget display.
 XAW_CFLAGS = -D"USE_XAW"
 XAW_LIBS = -L/usr/X11R6/lib -lXaw -lXmu -lXt -lX11
 
+# Curses display for a console.
 GCU_CFLAGS = -D"USE_GCU"
 GCU_LIBS = -lcurses -ltermcap
 
-XPJ_CFLAGS = -D"USE_XPJ"
-XPJ_LIBS = $(X11_LIBS)
-
+# X11 GTK display with menus.
 GTK_CFLAGS = -D"USE_GTK" `gtk-config --cflags`
 GTK_LIBS = `gtk-config --libs` 
 
+# X11 display with slanted windows.
+XPJ_CFLAGS = -D"USE_XPJ"
+XPJ_LIBS = $(X11_LIBS)
+
+# S-Lang display for terminal console
+SLA_CFLAGS = -Wall -O2 -fno-strength-reduce -D"USE_SLA" -I/usr/include/slang
+SLA_LIBS = -lslang
+
+# SVGALib display for a console. May need the fontfile to be changed to work.
+LSL_CFLAGS = -D"USE_LSL"
+LSL_LIBS = -lz -lvgagl -lvga
+
+# Virtual console display. May also need source modification.
+VCS_CFLAGS = -D"USE_VCS"
+
+# Termcap/vt100-based display for a console.
 CAP_CFLAGS = -D"USE_CAP"
 CAP_LIBS = -ltermcap
 
@@ -216,27 +227,6 @@ LIBS =                 $(X11_LIBS)   $(GCU_LIBS)   $(GTK_LIBS)
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU" -arch m68k -arch i386
 #LIBS = -lcurses -ltermcap
-
-
-##
-## Variation -- Support Linux + SVGA library
-##
-#CFLAGS = -Wall -O2 -fno-strength-reduce -D"USE_LSL"
-#LIBS = -lz -lvgagl -lvga
-
-
-##
-## Variation -- Support Linux "vcs" (Virtual Console memory) module
-##
-#CFLAGS = -Wall -O2 -fno-strength-reduce -D"USE_VCS"
-#LIBS =
-
-
-##
-## Variation -- Support S-Lang library
-##
-#CFLAGS = -Wall -O2 -fno-strength-reduce -D"USE_SLA" -I/usr/include/slang
-#LIBS = -lslang
 
 
 
