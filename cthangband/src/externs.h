@@ -1458,7 +1458,7 @@ extern s16b PURE wield_slot(object_ctype *o_ptr);
 extern cptr PURE describe_use(object_ctype *o_ptr);
 #endif
 #if (defined(CMD3_C) || defined(OBJECT1_C))
-extern bool item_tester_okay(object_ctype *o_ptr);
+extern bool PURE item_tester_okay_cmd(void (*func)(object_type *), object_ctype *o_ptr);
 #endif
 #if (defined(OBJECT1_C) || defined(STORE_C))
 extern byte get_i_attr(object_type *o_ptr);
@@ -3392,7 +3392,7 @@ extern cptr ANGBAND_DIR_USER;
 #if (defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(VARIABLE_C))
 extern cptr ANGBAND_DIR_XTRA;
 #endif
-#if (defined(CMD3_C) || defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
+#if (defined(OBJECT1_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C))
 extern bool (*item_tester_hook)(object_ctype*);
 #endif
 #if (defined(CAVE_C) || defined(VARIABLE_C) || defined(XTRA2_C))

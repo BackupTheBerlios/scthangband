@@ -3594,7 +3594,7 @@ static bool item_tester_try_cmd(s16b cmd, object_ctype *o_ptr);
 /*
  * Check an item against the item tester info
  */
-bool item_tester_okay(object_ctype *o_ptr)
+static bool item_tester_okay(object_ctype *o_ptr)
 {
 	/* Require an item */
 	if (!o_ptr->k_idx) return (FALSE);
@@ -5136,36 +5136,60 @@ static object_function PURE *get_function_for_object(s16b cmd,
 }
 
 /*
+ * Return TRUE if this object is suitable for this object_function.
+ */
+static bool PURE item_tester_okay_func(object_function *func,
+	object_ctype *o_ptr)
+{
+	/* Only allow functions which can be performed on this object. */
+	if (is_worn_p(o_ptr))
+	{
+		if (!func->equip) return FALSE;
+	}
+	else if (is_inventory_p(o_ptr))
+	{
+		if (!func->inven) return FALSE;
+	}
+	else
+	{
+		if (!func->floor) return FALSE;
+	}
+
+	return item_tester_okay_aux(o_ptr, func->hook, func->tval);
+}
+
+/*
+ * Return TRUE if this object is suitable for this function according to the
+ * above table.
+ */
+bool PURE item_tester_okay_cmd(void (*func)(object_type *), object_ctype *o_ptr)
+{
+	object_function *ptr;
+
+	FOR_ALL_IN(object_functions, ptr)
+	{
+		if (ptr->func == func) return item_tester_okay_func(ptr, o_ptr);
+	}
+
+	/* No object is suitable for an unrecognised function. */
+	return FALSE;
+}
+
+/*
  * Look for a key sequence of the form ~ab where a is cmd.
  */
 static bool item_tester_try_cmd(s16b cmd, object_ctype *o_ptr)
 {
+	/* Look for a key sequence of the form ~ab where a is cmd.
+	 * If one is found, extract the function associated with it.
+	 */
 	object_function *func = get_function_for_object(cmd, o_ptr);
 
-	if (func)
-	{
-		/* Only allow functions which can be performed on this object. */
-		if (is_worn_p(o_ptr))
-		{
-			if (!func->equip) return FALSE;
-		}
-		else if (is_inventory_p(o_ptr))
-		{
-			if (!func->inven) return FALSE;
-		}
-		else
-		{
-			if (!func->floor) return FALSE;
-		}
-	}
-	else
-	{
-		/* Use the hook for the original function. */
-		func = get_object_function(cmd);
-	}
+	/* Without one, use the function for the key pressed. */
+	if (!func) func = get_object_function(cmd);
 
-	/* Use the hook from this function. */
-	return item_tester_okay_aux(o_ptr, func->hook, func->tval);
+	/* Check that this object is suitable for the function chosen. */
+	return item_tester_okay_func(func, o_ptr);
 }
 
 /*

@@ -11,6 +11,7 @@ sCthangband _CVS_
 * Fix the following bugs
   * It was possible to discover the identity of objects the player was not aware
     of using the preferences.
+  * The unified use command allowed ineligible objects to be used.
   * Being cut or stunned had twice the intended chance of decreasing stats.
   * The maximum length of a ghost's name wasn't calculated correctly.
   * Loading a game which contains more monster races than the current r_info
