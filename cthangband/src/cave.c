@@ -3863,13 +3863,7 @@ void disturb(int stop_stealth)
 	if (stop_stealth && p_ptr->sneaking)
 	{
 		/* Cancel */
-		p_ptr->sneaking = FALSE;
-
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
+		do_cmd_toggle_sneak();
 	}
 
 	/* Flush the input if requested */

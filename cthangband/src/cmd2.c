@@ -255,31 +255,14 @@ void do_cmd_search(void)
  */
 void do_cmd_toggle_sneak(void)
 {
-	/* Stop sneaking */
-	if (p_ptr->sneaking)
-	{
-		/* Clear the sneaking flag */
-		p_ptr->sneaking = FALSE;
+	/* Toggle sneaking */
+	p_ptr->sneaking = !p_ptr->sneaking;
 
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
 
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-	}
-
-	/* Start sneaking */
-	else
-	{
-		/* Set the sneaking flag */
-		p_ptr->sneaking = TRUE;
-
-		/* Update stuff */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Redraw stuff */
-		p_ptr->redraw |= (PR_STATE | PR_SPEED);
-	}
+	/* Redraw the state */
+	p_ptr->redraw |= (PR_STATE | PR_SPEED);
 }
 
 

@@ -1286,13 +1286,10 @@ void py_attack(int y, int x)
 
 
 
-    if (p_ptr->sneaking)
-    {
-        if ((m_ptr->csleep) && (m_ptr->ml))
-        {
-            /* Can't backstab creatures that we can't see, right? */
-            backstab = TRUE;
-        }
+	if ((m_ptr->csleep) && (m_ptr->ml))
+	{
+		/* Can't backstab creatures that we can't see, right? */
+		backstab = TRUE;
 	}
     if ((m_ptr->monfear) && (m_ptr->ml) && (rand_int(50) < p_ptr->skill_stl))
     {
