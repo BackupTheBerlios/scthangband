@@ -840,3 +840,11 @@ F:k_info:I:4
 X:x
 Y:0d
 F:k_info:P:3
+
+# init1.c interprets negative numbers as belonging to the user area, but
+# expects them to be in decreasing order. As this is unusual, changing it to
+# a u allows the numbers to appear to be in increasing order instead.
+
+X:u
+Y:-
+F:k_info:N:2

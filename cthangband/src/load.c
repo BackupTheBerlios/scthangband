@@ -259,6 +259,7 @@ static void rd_item(object_type *o_ptr)
 
 	/* Kind */
 	rd_s16b(&o_ptr->k_idx);
+	o_ptr->k_idx = convert_k_idx(o_ptr->k_idx, sf_flags, sf_flags_now);
 
 	/* Location */
 	rd_byte(&o_ptr->iy);
@@ -1812,7 +1813,8 @@ static errr rd_savefile_new_aux(void)
 	/* Read the object memory */
 	for (i = 0; i < MIN(tmp16u, MAX_K_IDX); i++)
 	{
-		object_kind *k_ptr = &k_info[i];
+		int j = convert_k_idx(i, sf_flags_now, sf_flags);
+		object_kind *k_ptr = &k_info[j];
 
 		rd_byte(&tmp8u);
 
@@ -2051,5 +2053,3 @@ errr rd_savefile_new(void)
 	/* Result */
 	return (err);
 }
-
-

@@ -1575,6 +1575,9 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			/* Get the index */
 			i = atoi(buf+2);
 
+			/* Hack - negative indices really refer to the user area. */
+			if (i < 0) i = OBJ_MAX_DISTRO-i;
+
 			/* Verify information */
 			if (i <= error_idx) return (4);
 

@@ -1842,6 +1842,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define OBJ_RUNESWORD_STORMBRINGER 524
 #define OBJ_NO_TEA 525
 
+/* The lower bound of the user area of k_info. */
+#define OBJ_MAX_DISTRO	OBJ_NO_TEA
+
 /* extra info for chests (decimal) */
 #define XT_CHEST_SMALL	10
 #define XT_CHEST_LARGE	20
@@ -1852,12 +1855,9 @@ logaux(x, 1) logaux(x, 0) 255)
 #define XT_CHEST_STEEL	3
 
 /*
- * Handedness Values for Weapons
+ * Charisma value used for price comparison. Gives an adj_chr_gold[] of 100%.
  */
-
-#define ONE_HANDED    1
-#define TWO_HANDED   2
-#define  HAND_AND_HALF   3
+#define CHR_PRICE_COMPARE (18-3)
 
 /*** General flag values ***/
 

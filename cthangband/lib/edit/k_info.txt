@@ -3886,3 +3886,19 @@ N:525:No tea
 G:t:w:0
 I:90:0:0
 W:0:0:10000
+
+### User-defined object space ###
+
+# Objects which are placed after this point and given negative numbers are
+# likely to be supported by future versions if the section of k_info.txt after
+# this comment is copied without modification to k_info.txt for the new version.
+# This is only an issue when changing versions during a game.
+
+# e.g.
+# N:u1:& Invisible Dancing Bandyclef~
+# G:\:d:0
+# I:21:0:CRUSH
+# W:30:100:1000
+# A:30/3
+# P:0:4d5:0:0:0
+# F:GOOD

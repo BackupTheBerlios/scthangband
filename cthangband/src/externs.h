@@ -3901,4 +3901,16 @@ extern cptr string_make(cptr str);
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
 #endif
+
+
+
+
+/* save.c */
+
+#if (defined(LOAD_C) || defined(SAVE_C))
+extern s16b convert_k_idx(s16b k_idx, u32b from_v, u32b to_v);
+#endif
+#if (defined(LOAD_C) || defined(SAVE_C))
+extern const u16b sf_flags_now;
+#endif
 #endif /* INCLUDED_EXTERNS_H */
