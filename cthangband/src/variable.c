@@ -234,6 +234,7 @@ bool stupid_monsters;		/* Monsters use old AI */
 bool auto_destroy;		/* Known worthless items are destroyed without confirmation */
 bool confirm_stairs;		/* Prompt before staircases... */
 bool wear_confirm;		/* Confirm before putting on known cursed items */
+bool confirm_wear_all;		/* Confirm before wearing items with unknown cursed status */
 bool disturb_allies;		/* Allies moving nearby disturb us */
 bool multi_stair;         /* Multiple level staircases */
 bool unify_commands; /* Combine object commands into a single 'u'se command */

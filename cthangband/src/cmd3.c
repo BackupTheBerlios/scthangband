@@ -236,7 +236,19 @@ void do_cmd_wield(void)
         if (!(get_check(dummy)))
             return;
     }
+	/* confirm_wear_all is triggered whenever something may be cursed.
+	 * Slots are excluded because items to be placed in them are always
+	 * created uncursed. */
+	else if (confirm_wear_all && ~o_ptr->ident & IDENT_SENSE_CURSED && wield_slot(o_ptr) >= INVEN_WIELD && wield_slot(o_ptr) <= INVEN_FEET)
+	{
+		char dummy[512];
 
+		/* Describe it */
+		object_desc(o_name, o_ptr, FALSE, 3);
+		
+		sprintf(dummy, "Really use the %s? ", o_name);
+		if (!(get_check(dummy))) return;
+	}
 
 	/* Take a turn */
 	energy_use = 100;

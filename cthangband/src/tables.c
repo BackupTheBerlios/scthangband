@@ -3364,6 +3364,9 @@ option_type option_info[] =
     { &wear_confirm,        TRUE, 4,2, 8,
         "confirm_wear",     "Confirm to wear/wield known cursed items" },
 
+    { &confirm_wear_all,        TRUE, 4,3, 7,
+        "confirm_wear_all",     "Confirm to wear/wield potentially cursed items" },
+
     { &confirm_stairs,      FALSE, 1, 2, 9,
         "confirm_stairs",   "Prompt before exiting a dungeon level" },
 

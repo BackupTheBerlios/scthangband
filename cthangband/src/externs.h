@@ -218,6 +218,7 @@ extern bool plain_descriptions;
 extern bool stupid_monsters;
 extern bool auto_destroy;
 extern bool wear_confirm;
+extern bool confirm_wear_all;
 extern bool confirm_stairs;
 extern bool disturb_allies;
 extern bool multi_stair;
