@@ -1911,7 +1911,7 @@ static cptr store_title_aux(void)
 			tmp_str = string_make(format("%s (%s)", owner_name, race_name));
 
 		/* Hack - Create a 10000gp item for price_item() */
-		object_prep(&tmp, OBJ_NO_TEA);
+		object_prep(&tmp, OBJ_PRICE_COMPARE);
 		object_aware(&tmp);
 
 			/* Hack - standardise the player's charisma. */

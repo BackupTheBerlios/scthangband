@@ -1746,6 +1746,7 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Charisma value used for price comparison. Gives an adj_chr_gold[] of 100%.
  */
+#define OBJ_PRICE_COMPARE OBJ_NO_TEA
 #define CHR_PRICE_COMPARE (18-3)
 
 /*** General flag values ***/
