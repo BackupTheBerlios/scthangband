@@ -480,8 +480,6 @@ static void do_cmd_options_autosave(cptr info)
 
 	int     i, k = 0, n = 3;
 
-	char buf[80];
-
 
 	/* Clear screen */
 	Term_clear();
@@ -490,27 +488,24 @@ static void do_cmd_options_autosave(cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, 'F' for frequency, ESC to accept) ", info);
-		prt(buf, 0, 0);
+		mc_put_fmt(0, 0, "%s (RET to advance, y/n to set,"
+			" 'F' for frequency, ESC to accept)%v", info, clear_f0);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
-			byte a = TERM_WHITE;
+			option_type *op_ptr = &autosave_info[i];
 
-			/* Color current option */
-			if (i == k) a = TERM_L_BLUE;
+			/* Highlight the current option in blue. */
+			char a = (i == k) ? 'B' : 'w';
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%s)",
-				autosave_info[i].o_desc,
-				(*autosave_info[i].o_var ? "yes" : "no "),
-				autosave_info[i].o_text);
-			c_prt(a, buf, i + 2, 0);
-	}
+			mc_put_fmt(i+2, 0, "$%c$!%-48s: %s  (%s)", a, op_ptr->o_desc,
+				(*op_ptr->o_var) ? "yes" : "no ", op_ptr->o_text);
+		}
 
-		prt(format("Timed autosave frequency: every %d turns",  autosave_freq), 5, 0);
-
+		mc_put_fmt(5, 0, "Timed autosave frequency: every %d turns",
+			autosave_freq);
 
 		/* Hilite current option */
 		move_cursor(k + 2, 50);
@@ -528,16 +523,16 @@ static void do_cmd_options_autosave(cptr info)
 		switch (ch)
 		{
 			case ESCAPE:
-		{
-		return;
-	}
+			{
+				return;
+			}
 
 			case '-':
 			case '8':
 			{
 				k = (n + k - 1) % n;
 				break;
-	}
+			}
 
 			case ' ':
 			case '\n':
@@ -546,12 +541,12 @@ static void do_cmd_options_autosave(cptr info)
 			{
 				k = (k + 1) % n;
 				break;
-	}
+			}
 
 			case 'y':
 			case 'Y':
 			case '6':
-{
+			{
 
 				(*autosave_info[k].o_var) = TRUE;
 				k = (k + 1) % n;
@@ -561,11 +556,11 @@ static void do_cmd_options_autosave(cptr info)
 			case 'n':
 			case 'N':
 			case '4':
-	{
+			{
 				(*autosave_info[k].o_var) = FALSE;
 				k = (k + 1) % n;
 				break;
-	}
+			}
 
 			case 'f':
 			case 'F':
@@ -577,11 +572,11 @@ static void do_cmd_options_autosave(cptr info)
 			}
 
 			default:
-		{
+			{
 				bell(0);
 				break;
+			}
 		}
-	}
 	}
 }
 
@@ -618,18 +613,18 @@ static bool showfile(cptr name, byte col)
  * If option_info[i] has no effect because of other option settings,
  * treat it in a special way to make this clear.
  */
-static bool opt_is_forced(int i)
-	{
-	bool *o_var = option_info[i].o_var;
+static bool opt_is_forced(option_type *op_ptr)
+{
+	bool *o_var = op_ptr->o_var;
 	force_type *fs_ptr;
 
 	for (fs_ptr = option_force; fs_ptr->forcing_opt; fs_ptr++)
-		{
+	{
 		if (o_var == fs_ptr->forced_opt &&
 			*(fs_ptr->forcing_opt) == fs_ptr->forcing_value) return TRUE;
-		}
-	return FALSE;
 	}
+	return FALSE;
+}
 
 /*
  * Modify various globals when an option is set/unset.
@@ -662,8 +657,6 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 	int opt[MAX_OPTS_PER_PAGE];
 	bool old_val[MAX_OPTS_PER_PAGE];
 
-	char buf[80];
-
 
 	/* Lookup the options */
 	for (i = 0; i < MAX_OPTS_PER_PAGE; i++) opt[i] = 0;
@@ -686,38 +679,36 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 	/* Give a short explanation at the bottom of the "Spoiler" menu */
 	if (file && !showfile(file, n+3))
 	{
-		c_prt(TERM_RED, format("ANGBAND_DIR_FILE/%s not found.", file), n+3, 0);
+		mc_put_fmt(n+3, 0, "$rANGBAND_DIR_FILE/%s not found.", file);
 	}
 
 	/* Interact with the player */
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept, ? for help) ", info);
-		prt(buf, 0, 0);
+		mc_put_fmt(0, 0, "%s (RET to advance, y/n to set, ESC to accept)%v",
+			info, clear_f0);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
-			int a;
+			/* Highlight the current option in blue. */
+			char a = (i == k) ? 'B' : 'w';
+
 			cptr state, effective;
 
-			/* Color current option */
-			if (i == k)
-				a = TERM_L_BLUE;
-			else
-				a = TERM_WHITE;
+			option_type *op_ptr = &option_info[opt[i]];
 
 			if (page != OPTS_BIRTH || !character_generated)
 				effective = "";
-			else if (option_info[opt[i]+1].o_page != OPTS_BIRTHR)
+			else if (op_ptr[1].o_page != OPTS_BIRTHR)
 				effective = ".... ";
-			else if (*option_info[opt[i]+1].o_var)
+			else if (*op_ptr[1].o_var)
 				effective = "(yes)";
 			else
 				effective = "(no) ";
 
-			if (opt_is_forced(opt[i]))
+			if (opt_is_forced(op_ptr))
 				state = "N/A";
 			else if (*option_info[opt[i]].o_var)
 				state = "yes";
@@ -725,9 +716,8 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 				state = "no ";
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  %s(%s)", option_info[opt[i]].o_desc,
-				state, effective, option_info[opt[i]].o_text);
-			c_prt(a, buf, i + 2, 0);
+			mc_put_fmt(i+2, 0, "$%c$!%-48s: %s  %s(%s)", a,
+				op_ptr->o_desc, state, effective, op_ptr->o_text);
 		}
 
 		/* Hilite current option */
@@ -760,7 +750,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			{
 				do {
 				k = (n + k - 1) % n;
-				} while(opt_is_forced(opt[k]));
+				} while(opt_is_forced(&option_info[opt[k]]));
 				break;
 			}
 
@@ -771,7 +761,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			{
 				do {
 				k = (k + 1) % n;
-				} while(opt_is_forced(opt[k]));
+				} while(opt_is_forced(&option_info[opt[k]]));
 				break;
 			}
 
@@ -782,7 +772,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 				(*option_info[opt[k]].o_var) = TRUE;
 				do {
 				k = (k + 1) % n;
-				} while(opt_is_forced(opt[k]));
+				} while(opt_is_forced(&option_info[opt[k]]));
 				break;
 			}
 
@@ -793,7 +783,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 				(*option_info[opt[k]].o_var) = FALSE;
 				do {
 				k = (k + 1) % n;
-				} while(opt_is_forced(opt[k]));
+				} while(opt_is_forced(&option_info[opt[k]]));
 				break;
 			}
 
@@ -803,7 +793,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 				(*option_info[opt[k]].o_var) ^= 1;
 				do {
 				k = (k + 1) % n;
-				} while(opt_is_forced(opt[k]));
+				} while(opt_is_forced(&option_info[opt[k]]));
 				break;
 			}
 			case '?':

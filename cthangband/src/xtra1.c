@@ -3175,7 +3175,7 @@ static void win_visible_display(void)
 	/* XXX Hallucination - no monster list */
 	if (p_ptr->image)
 	{
-		c_prt(TERM_WHITE,"You see a lot of pretty colours.",0,0);
+		mc_put_str(0, 0, "You see a lot of pretty colours.");
 
 		return;
 	}
@@ -3279,7 +3279,7 @@ static void win_visible_display(void)
 	}
 	else
 	{
-		c_prt(TERM_WHITE,"You see no monsters.",0,0);
+		mc_put_str(0, 0, "You see no monsters.");
 	}
 
 	/* XXX XXX Free the "who" array */

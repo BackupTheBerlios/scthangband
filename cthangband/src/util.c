@@ -2582,25 +2582,16 @@ void put_str(cptr str, int row, int col)
 
 
 /*
- * Display a string on the screen using an attribute, and clear
+ * Display a string on the screen in white, and clear
  * to the end of the line.
  */
-void c_prt(byte attr, cptr str, int row, int col)
+void prt(cptr str, int row, int col)
 {
 	/* Clear line, position cursor */
 	Term_erase(col, row, 255);
 
 	/* Dump the attr/text */
-	Term_addstr(-1, attr, str);
-}
-
-/*
- * As above, but in "white"
- */
-void prt(cptr str, int row, int col)
-{
-	/* Spawn */
-	c_prt(TERM_WHITE, str, row, col);
+	Term_addstr(-1, TERM_WHITE, str);
 }
 
 
