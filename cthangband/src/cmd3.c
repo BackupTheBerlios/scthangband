@@ -1301,14 +1301,17 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	/* Nothing to recall */
 	if (!n) return;
 
-	/* Show help. */
-	help_track("<query 2>");
-
 	/* Prompt XXX XXX XXX */
 	put_str("Recall details? (k/p/y/n): ", 0, 40);
 
+	/* Show help. */
+	help_track("<query 2>");
+
 	/* Query */
 	query = inkey();
+
+	/* Remove help */
+	help_track(NULL);
 
 	/* Restore */
 	prt(buf, 0, 0);
@@ -1344,8 +1347,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 	}
 
 
-	/* Show help (removing the old one first). */
-	help_track(NULL);
+	/* Show help. */
 	help_track("<query 3>");
 
 	/* Start at the end */
