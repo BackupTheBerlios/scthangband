@@ -2990,7 +2990,7 @@ static void apply_magic_1(object_type *o_ptr, const int lev, const bool okay,
 		case TV_RING:
 		case TV_AMULET:
 		{
-			if (!power && (rand_int(100) < 50)) power = -1;
+			if (!power && aux3_can_curse(o_ptr->k_idx) && one_in(2)) power = -1;
 		}
 		/* Fall through... */
 
