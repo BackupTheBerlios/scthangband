@@ -2410,8 +2410,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			}
 
 			/* Display a message (mimic has already been applied). */
-			mc_put_fmt(0, 0, "$!%s%s%s%v [%s]",
-				s1, s2, s3, feature_desc_f2, feat, FDF_INDEF | FDF_REAL, info);
+			mc_put_fmt(0, 0, "$!%s%s%s%v [%s]%v", s1, s2, s3,
+				feature_desc_f2, feat, FDF_INDEF | FDF_REAL, info, clear_f0);
 
 			move_cursor_relative(y, x);
 			query = inkey();
