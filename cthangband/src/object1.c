@@ -3823,13 +3823,11 @@ void show_inven(void)
 
 	object_type     *o_ptr;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	char    tmp_val[80];
 
 	int             out_index[23];
 	byte    out_color[23];
-	cptr	out_desc[23];
+	cptr	out_desc[23], o_name;
 
 	/* Ensure that unset out_desc strings are NULL. */
 	C_WIPE(out_desc, 23, char*);
@@ -3852,6 +3850,9 @@ void show_inven(void)
 	/* Require space for icon */
 	if (equippy_chars) lim -= 2;
 
+	/* Respect the maximum name length. */
+	if (lim > ONAME_MAX) lim = ONAME_MAX;
+
 	/* Find the "final" slot */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
@@ -3873,10 +3874,7 @@ void show_inven(void)
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Describe the object */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-		/* Hack -- enforce max length */
-		o_name[lim] = '\0';
+		o_name = format("%.*v", lim, object_desc_f3, o_ptr, TRUE, 3);
 
 		/* Save the object index, color, and description */
 		out_index[k] = i;
@@ -3970,11 +3968,9 @@ void show_equip(void)
 
 	char            tmp_val[80];
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	int                     out_index[23];
 	byte            out_color[23];
-	cptr out_desc[23];
+	cptr out_desc[23], o_name;
 
 
 	/* Ensure that unset out_desc strings are NULL. */
@@ -3999,6 +3995,9 @@ void show_equip(void)
 	if (show_weights) lim -= 9;
 	if (equippy_chars) lim -= 2;
 
+	/* Respect the maximum name length. */
+	if (lim > ONAME_MAX) lim = ONAME_MAX;
+
 	/* Scan the equipment list */
 	for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
@@ -4008,10 +4007,7 @@ void show_equip(void)
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Description */
-		strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
-		/* Truncate the description */
-		o_name[lim] = 0;
+		o_name = format("%.*v", lim, object_desc_f3, o_ptr, TRUE, 3);
 
 		/* Save the color */
 		out_index[k] = i;
