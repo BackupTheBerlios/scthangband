@@ -904,7 +904,7 @@ errr process_pref_file(cptr name)
 
 	bool bypass = FALSE;
 
-	u16b sf_flags[1] = { 0 };
+	u16b sf_flags = 0;
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
@@ -965,7 +965,7 @@ errr process_pref_file(cptr name)
 
 
 		/* Process the line */
-		err = process_pref_file_aux(buf, sf_flags);
+		err = process_pref_file_aux(buf, &sf_flags);
 
 		/* Oops */
 		if (err) break;

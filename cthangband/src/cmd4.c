@@ -1142,7 +1142,7 @@ void do_cmd_options(void)
 void do_cmd_pref(void)
 {
 	char buf[80];
-	u16b sf_flags[1] = { sf_flags_now };
+	u16b sf_flags = sf_flags_now;
 
 	/* Default */
 	strcpy(buf, "");
@@ -1151,7 +1151,7 @@ void do_cmd_pref(void)
 	if (!get_string("Pref: ", buf, 80)) return;
 
 	/* Process that pref command */
-	(void)process_pref_file_aux(buf, sf_flags);
+	(void)process_pref_file_aux(buf, &sf_flags);
 }
 
 
