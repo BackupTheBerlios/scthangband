@@ -4436,18 +4436,16 @@ int find_object(object_type *o_ptr)
 		return OUP_FLOOR;
 	}
 	/* Inventory item. */
-	else if (o_ptr >= inventory && o_ptr < inventory+INVEN_MAX)
+	else if (o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
 	{
 		slot = o_ptr-inventory;
 		if (slot <= INVEN_PACK) return OUP_INVEN;
 		if (slot >= INVEN_POUCH_1 && slot <= INVEN_POUCH_6) return OUP_POUCH;
 		if (slot >= INVEN_WIELD && slot <= INVEN_FEET) return OUP_EQUIP;
 	}
+
 	/* Unknown. */
-	else
-	{
-		return 0;
-	}
+	return 0;
 }
 
 /*
