@@ -3812,7 +3812,7 @@ W:0:0:5,000,000
 
 N:471:& Runesword~
 G:|:D:0
-I:Sword:0:0
+I:Sword:0:SLASH
 W:0:0:4,000
 P:(6d5) (+0,+0) [0,+0]
 F:SHOW_MODS
@@ -3821,7 +3821,7 @@ F:SHOW_MODS
 
 N:472:& Mighty Hammer~
 G:\:D:0
-I:Hafted:0:0
+I:Hafted:0:CRUSH
 W:0:0:1,000
 P:(3d9) (+0,+0) [0,+0]
 F:SHOW_MODS

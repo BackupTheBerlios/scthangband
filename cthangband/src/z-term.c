@@ -403,7 +403,7 @@ static void term_win_copy(term_win *s, term_win *f, int w, int h)
 void Term_user(void)
 {
 	/* Verify the hook */
-	if (Term->user_hook) return;
+	if (!Term->user_hook) return;
 
 	/* Call the hook */
 	(*Term->user_hook)(0);

@@ -3844,17 +3844,17 @@ static void ang_mon_sort_swap_hook(vptr u, vptr UNUSED v, int a, int b)
 /*
  * Dump a monster description to the screen.
  */
-static void dump_race(int w, int h, int num, char attr, monster_race *r_ptr)
+static void dump_race(int w, int h, int num, char attr, monster_list_entry *ptr)
 {
-	int flags, x = num/(h-1)*w, y = num%(h-1)+1;
+	int x = num/(h-1)*w, y = num%(h-1)+1;
 
-	/* Give a number unless it's boring. */
-	if (num != 0) flags = MDF_NUMBER;
-	else flags = 0;
+	monster_race *r_ptr = r_info+ptr->r_idx;
+	int total = ptr->amount;
+	byte flags = (total == 1) ? 0 : MDF_NUMBER;
 
 	/* Dump the monster name. */
 	mc_put_fmt(y, x, "%v $%c%.*v", get_symbol_f2, r_ptr->x_attr,
-		r_ptr->x_char, attr, w-3, monster_desc_aux_f3, r_ptr, num, flags);
+		r_ptr->x_char, attr, w-3, monster_desc_aux_f3, r_ptr, total, flags);
 }
 
 
@@ -3974,7 +3974,7 @@ static void win_visible_display(void)
 				if (!r_ptr->flags1 & RF1_UNIQUE) attr = 's';
 			}			
 			
-			dump_race(w, h, num, attr, r_ptr);
+			dump_race(w, h, num, attr, who+i);
 		}
 	}
 	else

@@ -2096,6 +2096,9 @@ static void process_world(void)
 	int		i;
     bool    cave_no_regen;
 
+	/* Hack - check vampiric drain every turn. */
+	add_flag(TIMED_VAMP, -VAMPIRIC_RECOVERY);
+
 	/* Every 10 game turns */
 	if (turn % 10) return;
 

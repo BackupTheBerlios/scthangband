@@ -1082,6 +1082,7 @@ struct player_type
 
     s16b tim_esp;       /* Timed ESP */
     s16b wraith_form;   /* Timed wraithform */
+	s16b vamp_drain;	/* Vampiric drain during last round. */
 
     s16b chaos_patron;
     u32b muta1;

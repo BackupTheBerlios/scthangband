@@ -290,6 +290,9 @@ extern void do_cmd_message_one(void);
 #if (defined(CMD4_C) || defined(DUNGEON_C))
 extern void do_cmd_messages(void);
 #endif
+#if (defined(CMD4_C) || defined(FILES_C))
+extern void opt_special_effect(const option_type * const op_ptr);
+#endif
 #if (defined(BIRTH_C) || defined(CMD4_C))
 extern void do_cmd_options_aux(int page, cptr info, cptr file);
 #endif
@@ -3596,7 +3599,7 @@ extern void update_object(object_type *o_ptr, int where);
 #if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(XTRA2_C))
 extern void check_temp_effects(void);
 #endif
-#if (defined(DUNGEON_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(DUNGEON_C) || defined(XTRA2_C))
 extern bool add_flag(int flag, int v);
 #endif
 #if (defined(XTRA2_C))
@@ -3985,12 +3988,6 @@ extern cptr string_make(cptr str);
 
 #if (defined(FILES_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern errr my_fgets_long(char *buf, size_t n, FILE *fff);
-#endif
-
-/* cmd4.c */
-
-#if (defined(CMD4_C) || defined(FILES_C))
-extern void opt_special_effect(const option_type * const op_ptr);
 #endif
 
 /* xtra1.c */

@@ -12,7 +12,6 @@
  */
 
 #include "angband.h"
-#define MAX_VAMPIRIC_DRAIN 100
 
 
 /*
@@ -1131,7 +1130,7 @@ void py_attack(int y, int x)
     bool        backstab = FALSE, vorpal_cut = FALSE, chaos_effect = FALSE;
     bool        stab_fleeing = FALSE;
     bool        do_quake = FALSE;
-	bool		drain_msg = TRUE, drain_life = FALSE;
+	bool		drain_life = FALSE;
     u32b        f1, f2, f3; /* A massive hack -- life-draining weapons */
     bool        no_extra = FALSE;
 
@@ -1448,12 +1447,26 @@ void py_attack(int y, int x)
 			}
 
 		/* Drain the life (message if it has an effect). */
-		if (drain_life && (hp_player(k) || !object_known_p(o_ptr)))
+		if (drain_life)
 		{
-			s16b drain_heal = damroll(4,(k / 6));
-			if (drain_heal > MAX_VAMPIRIC_DRAIN) drain_heal = MAX_VAMPIRIC_DRAIN;
-			if (drain_msg) msg_format("Your weapon drains life from %s!", m_name);
-		}	
+			/* Heal by about 1/3 of the damage caused. */
+			int drain_heal = damroll(4,(k / 6));
+
+			/* Never more than was taken or needed or too much too quickly. */
+			drain_heal = MIN(MIN(MIN(drain_heal, m_ptr->hp),
+				p_ptr->mhp - p_ptr->chp),
+				MAX_VAMPIRIC_DRAIN - p_ptr->vamp_drain);
+
+			/* Remember how much the player has been healed by recently. */
+			add_flag(TIMED_VAMP, drain_heal);
+
+			/* Give a message if anything happened. */
+ 			if (drain_heal)
+				msg_format("Your weapon drains life from %s!", m_name);
+
+			/* Gain the drained HP. */
+			hp_player(drain_heal);
+ 		}
 
 
 			/* Damage, check for fear and death */

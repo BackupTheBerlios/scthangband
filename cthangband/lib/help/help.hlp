@@ -16,6 +16,9 @@
 
  (The following files are for people already familiar with Angband)
 
-    *****/mupdate.txt*0[[l$]] Summary of updates
-    *****/nskills.txt*0[[m$]] The skill system
-    *****/ospeed.txt*0[[n$]] The speed system
+    *****/mupdate.txt*0[[m$]] Summary of updates
+    *****/nskills.txt*0[[n$]] The skill system
+    *****/ospeed.txt*0[[o$]] The speed system
+%%%%? [EQU $SYS x11]
+    *****/phelp-x11.txt*0[[p$]] Extra features for the X11 port
+%%%%? 1

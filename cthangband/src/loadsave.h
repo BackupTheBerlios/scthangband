@@ -66,6 +66,11 @@
 #define SF_R_INFO_1	0x1000
 
 /*
+ * Store the HP gained recently by the player's vampiric melee attacks.
+ */
+#define SF_STORE_VAMP 0x2000
+
+/*
  * Read quests directly into q_info rather than from the dungeon definition.
  */
 #define SF_QUEST_DIRECT	0x4000

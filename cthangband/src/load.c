@@ -1270,6 +1270,12 @@ static void rd_extra(void)
 
 	rd_s16b(&p_ptr->tim_esp);
 	rd_s16b(&p_ptr->wraith_form);
+#ifdef SF_STORE_VAMP
+	if (has_flag(SF_STORE_VAMP))
+	{
+		rd_s16b(&p_ptr->vamp_drain);
+	}
+#endif /* SF_STORE_VAMP */
 	strip_bytes(18);
 	rd_s16b(&p_ptr->chaos_patron);
 	rd_u32b(&p_ptr->muta1);

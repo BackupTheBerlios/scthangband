@@ -703,6 +703,12 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->oppose_pois);
     wr_s16b(p_ptr->tim_esp);
     wr_s16b(p_ptr->wraith_form);
+#ifdef SF_STORE_VAMP
+	if (has_flag(SF_STORE_VAMP))
+	{
+		wr_s16b(p_ptr->vamp_drain);
+	}
+#endif
 	strip_bytes(18);
 
     wr_s16b(p_ptr->chaos_patron);

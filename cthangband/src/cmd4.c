@@ -2743,10 +2743,7 @@ static errr dump_colours_aux(cptr file)
 	/* Close */
 	my_fclose(fff);
 
-	/* Message */
-	msg_print("Dumped color redefinitions.");
-
-	return FALSE;
+	return SUCCESS;
 }
 #endif /* ALLOW_COLORS */
 
@@ -2832,6 +2829,9 @@ static void do_cmd_colors(void)
 			if (!askfor_aux(tmp, 70)) continue;
 
 			if (dump_colours_aux(tmp)) continue;
+
+			/* Message */
+			msg_print("Dumped color redefinitions.");
 		}
 
 		/* Edit colors */
@@ -2962,6 +2962,9 @@ static errr preference_dump(void)
 	/* Dump colours. */
 	if (dump_colours_aux(ftmp)) return DCO_ERROR_FILE;
 #endif /* ALLOW_COLORS */
+
+	/* Messgage. */
+	msg_print("Dumped preferences.");
 
 	return SUCCESS;
 }

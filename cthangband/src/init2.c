@@ -2059,6 +2059,9 @@ void init_angband(void)
 	/* Process that file */
 	process_pref_file(buf);
 
+	/* Flush any messages the pref files created. */
+	msg_print(NULL);
+
 #ifdef CHECK_ARRAYS
 	/* Check that various arrays are in the correct order. */
 	check_arrays();

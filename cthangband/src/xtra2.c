@@ -388,6 +388,15 @@ static int notice_food(int old, int new)
 }
 
 /*
+ * A function to indicate that the game should never react to changes in
+ * a value.
+ */
+static int notice_nothing(int UNUSED old, int UNUSED new)
+{
+	return -1;
+}
+
+/*
  * Handle the random side effects of worsening stunning.
  */
 static void worsen_stun(int v)
@@ -489,6 +498,7 @@ static cptr const temp_effects_text[] =
 		"You have gorged yourself!", "You are getting faint from hunger!",
 			"You are getting weak from hunger!", "You are getting hungry.",
 			"You are no longer full.", "You are no longer gorged.",
+	NEXT
 };
 
 static const temp_effect_type temp_effects[TIMED_MAX] =
@@ -523,6 +533,7 @@ static const temp_effect_type temp_effects[TIMED_MAX] =
 	{IDX(TIMED_STUN) 51, notice_stun, worsen_stun, PR_STUN, PU_BONUS, 0},
 	{IDX(TIMED_CUT) 56, notice_cuts, worsen_cuts, PR_CUT, PU_BONUS, 0},
 	{IDX(TIMED_FOOD) 65, notice_food, 0, PR_HUNGER, PU_BONUS, 0},
+	{IDX(TIMED_VAMP) 76, notice_nothing, 0, 0, 0, 0},
 };
 
 /*
@@ -558,6 +569,7 @@ static s16b *get_flag(int flag)
 		case TIMED_STUN: return &(p_ptr->stun);
 		case TIMED_CUT: return &(p_ptr->cut);
 		case TIMED_FOOD: return &(p_ptr->food);
+		case TIMED_VAMP: return &(p_ptr->vamp_drain);
 		default: return 0;
 	}
 }

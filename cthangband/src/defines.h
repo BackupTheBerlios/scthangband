@@ -316,6 +316,13 @@ logaux(x, 1) logaux(x, 0) 255)
 #define MUT3_MOTION                     0x40000000L
 #define MUT3_SUS_STATS                  0x80000000L
 
+/* Melee attacks... */
+
+/* Maximum HP gained by a single vampiric attack. */
+#define MAX_VAMPIRIC_DRAIN 100 
+/* Increase in the vampiric gain possible per game turn after draining. */
+#define VAMPIRIC_RECOVERY 10 
+
 /* Martial arts... */
 # define MAX_MA 18
 # define MA_KNEE 2
@@ -2769,7 +2776,8 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TIMED_STUN 23
 #define TIMED_CUT 24
 #define TIMED_FOOD 25
-#define TIMED_MAX 26
+#define TIMED_VAMP 26
+#define TIMED_MAX 27
 
 /*** Macro Definitions ***/
 
