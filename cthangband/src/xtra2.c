@@ -2907,6 +2907,16 @@ void resize_map(void)
 }
 
 
+/*
+ * Try to add an unusual keypress to the "queue".
+ *
+ * As this is the "end keymap" key, it will not be interpreted by keymaps.
+ */
+void resize_inkey(void)
+{
+	(void)Term_keypress(RESIZE_INKEY_KEY);
+}
+
 
 /*
  * Monster health description

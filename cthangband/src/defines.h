@@ -3354,3 +3354,10 @@ extern int PlayerUID;
 
 /* The number of special macros. */
 #define MAX_MACRO_SPECIAL	1
+
+
+/*
+ * The key sent by resize_inkey. This is an arbitary control key to ensure that
+ * it isn't parsed by the function which called it (or, hopefully by keymaps).
+ */
+#define RESIZE_INKEY_KEY	28

@@ -3837,7 +3837,7 @@ extern errr Term_what(int x, int y, byte *a, char *c);
 #if (defined(MAIN_AMI_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_flush(void);
 #endif
-#if (defined(MAIN_ACN_C) || defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_TERM_C))
+#if (defined(MAIN_ACN_C) || defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_keypress(int k);
 #endif
 #if (defined(MAIN_DOS_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
@@ -3879,7 +3879,7 @@ extern errr term_init(term *t, int w, int h, int k);
 #if (defined(MAIN_EMX_C) || defined(MAIN_WIN_C) || defined(MAIN_C) || defined(Z_UTIL_C))
 extern cptr argv0 ;
 #endif
-#if (defined(OBJECT1_C) || defined(XTRA1_C) || defined(Z_UTIL_C))
+#if (defined(XTRA1_C) || defined(Z_UTIL_C))
 extern void func_nothing(void);
 #endif
 #if (defined(XTRA1_C) || defined(Z_UTIL_C))
@@ -3951,7 +3951,13 @@ extern errr string_free(cptr str);
 
 /* z-term.c */
 
-#if (defined(CMD4_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(Z_TERM_C))
 extern void Term_release(int win);
+#endif
+
+/* xtra2.c */
+
+#if (defined(OBJECT1_C) || defined(XTRA2_C))
+extern void resize_inkey(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

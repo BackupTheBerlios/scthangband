@@ -4945,7 +4945,7 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 
 	/* Hack - set no-op resize function for simplicity. */
 	old_resize_hook = term_screen->resize_hook;
-	term_screen->resize_hook = func_nothing;
+	term_screen->resize_hook = resize_inkey;
 
 	/* Allow the user to choose to see everything. */
 	command_see |= show_choices_main;
@@ -5053,6 +5053,16 @@ bool get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 		/* Parse it */
 		switch (which)
 		{
+			case RESIZE_INKEY_KEY:
+			{
+				/* Resize the screen as normal. */
+				(*old_resize_hook)();
+
+				/* Put this screen in term */
+				Term_release(term);
+				term = Term_save_aux();
+				break;
+			}
 			case ESCAPE:
 			{
 				command_gap = 50;
