@@ -2918,7 +2918,7 @@ bool askfor_aux(char *buf, int len)
 
 
 	/* Display the default answer */
-	mc_put_fmt(y, x, "$y$!%*s", len, buf);
+	mc_put_fmt(y, x, "$y$!%-*s", len, buf);
 
 	/* Reset edit_mode to ensure that each prompt is the same. */
 	if (!macro_edit) edit_mode = FALSE;
@@ -3034,7 +3034,7 @@ bool askfor_aux(char *buf, int len)
 		buf[k] = '\0';
 
 		/* Update the entry */
-		mc_put_fmt(y, x, "$!%*s", len, buf);
+		mc_put_fmt(y, x, "$!%-*s", len, buf);
 	}
 
 	/* Remove help. */
