@@ -202,6 +202,14 @@ static int spell_chance(const magic_type *s_ptr)
 	return (chance);
 }
 
+/*
+ * Determine if a spell is "okay" for the player to cast
+ */
+static bool magic_okay(const magic_type *s_ptr)
+{
+	return (s_ptr->min <= spell_skill(s_ptr));
+}
+
 /* Give experience to spell skills for a spell */
 static void gain_spell_exp(magic_type *spell)
 {
@@ -502,15 +510,10 @@ static void print_spells_b(byte *spells, int num, int y, int x, book_type *b_ptr
  * The spell must be legible, not forgotten, and also, to cast,
  * it must be known, and to study, it must not be known.
  */
-static bool spell_okay(int spell, bool known, int school)
+static bool spell_okay(magic_type *s_ptr, int spell, bool known, int school)
 {
-	magic_type *s_ptr;
-
-	/* Access the spell */
-    s_ptr = &magic_info[school][spell];
-
 	/* Spell is illegal */
-	if (s_ptr->min > spell_skill(s_ptr)) return (FALSE);
+	if (!magic_okay(s_ptr)) return (FALSE);
 
     /* Spell is forgotten */
     if (spell_forgotten[school] & (1L << spell))
@@ -567,7 +570,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
      if (repeat_pull(sn)) {
          
          /* Verify the spell */
-         if (spell_okay(*sn, known, school_no)) {
+         if (spell_okay(&magic_info[school_no][*sn], *sn, known, school_no)) {
                     
              /* Success */
              return (TRUE);
@@ -598,7 +601,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 	for (i = 0; i < num; i++)
 	{
 		/* Look for "okay" spells */
-		if (spell_okay(spells[i], known, school_no)) okay = TRUE;
+		if (spell_okay(&magic_info[school_no][spells[i]], spells[i], known, school_no)) okay = TRUE;
 	}
 
 	/* No "okay" spells */
@@ -689,7 +692,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 		spell = spells[i];
 
 		/* Require "okay" spells */
-		if (!spell_okay(spell, known, school_no))
+		if (!spell_okay(&magic_info[school_no][spell], spell, known, school_no))
 		{
 			bell(0);
 			msg_format("You may not %s that %s.", prompt, p);
@@ -744,17 +747,6 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
  
 	/* Success */
 	return (TRUE);
-}
-
-/*
- * Determine if a cantrip is "okay" for the player to cast
- */
-static bool cantrip_okay(const magic_type *s_ptr)
-{
-	const int plev = spell_skill(s_ptr);
-
-	/* Okay. */
-	return (s_ptr->min <= plev);
 }
 
 /*
@@ -838,7 +830,7 @@ static int get_cantrip(int *sn, book_type *b_ptr)
      if (repeat_pull(sn)) {
          
          /* Verify the spell */
-         if (cantrip_okay(&b_ptr->info[*sn])) {
+         if (magic_okay(&b_ptr->info[*sn])) {
                     
              /* Success */
              return (TRUE);
@@ -861,7 +853,7 @@ static int get_cantrip(int *sn, book_type *b_ptr)
 	for (i = 0; i < num; i++)
 	{
 		/* Look for "okay" spells */
-		if (cantrip_okay(b_ptr->info+spells[i])) okay = TRUE;
+		if (magic_okay(b_ptr->info+spells[i])) okay = TRUE;
 	}
 
 	/* No "okay" spells */
@@ -952,7 +944,7 @@ static int get_cantrip(int *sn, book_type *b_ptr)
 		spell = spells[i];
 
 		/* Require "okay" spells */
-		if (!cantrip_okay(&b_ptr->info[spell]))
+		if (!magic_okay(&b_ptr->info[spell]))
 		{
 			bell(0);
 			msg_print("You may not cast that cantrip.");
@@ -1009,22 +1001,6 @@ static int get_cantrip(int *sn, book_type *b_ptr)
 }
 
 /*
- * Determine if a favour is "okay" for the player to cast
- */
-static bool favour_okay(int fav,  int sphere)
-{
-	const int plev = MAX(1, skill_set[SKILL_SHAMAN].value/2);
-	magic_type *s_ptr;
-
-	/* Access the favour */
-    s_ptr = &(favour_info[sphere][fav]);
-
-	/* Favour is too hard is illegal */
-	if (s_ptr->min > plev) return (FALSE);
-	return (TRUE);
-}
-
-/*
  * Allow user to choose a favour from the given spirit.
  *
  * If a valid favour is chosen, saves it in '*sn' and returns TRUE
@@ -1056,7 +1032,7 @@ static int get_favour(int *sn, int spirit,int sphere)
      if (repeat_pull(sn)) {
          
          /* Verify the spell */
-         if (favour_okay(*sn,sphere)) {
+         if (magic_okay(&favour_info[sphere][*sn])) {
                     
              /* Success */
              return (TRUE);
@@ -1079,7 +1055,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 	for (i = 0; i < num; i++)
 	{
 		/* Look for "okay" spells */
-		if (favour_okay(spells[i],sphere)) okay = TRUE;
+		if (magic_okay(&favour_info[sphere][spells[i]])) okay = TRUE;
 	}
 
 	/* No "okay" spells */
@@ -1184,7 +1160,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 		spell = spells[i];
 
 		/* Require "okay" spells */
-		if (!favour_okay(spell, sphere))
+		if (!magic_okay(&favour_info[sphere][spell]))
 		{
 			bell(0);
 			msg_print("You may not invoke that favour.");
