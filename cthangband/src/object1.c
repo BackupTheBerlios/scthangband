@@ -2912,77 +2912,25 @@ bool identify_fully_aux(object_type *o_ptr)
 		}
 	}
 
- 	/* Hack -- describe relevant weapon skills (should match calc_bonuses())*/
- 	switch(o_ptr->tval) {
- 		case TV_HAFTED:
- 		if (o_ptr->sval == SV_WHIP)
- 			j = SKILL_CLOSE;
- 		else
-			j = SKILL_CRUSH;
+	/* Hack - describe the wield skill of weaponry. */
+	switch (wield_skill(o_ptr->tval, o_ptr->sval))
+	{
+ 	case SKILL_CLOSE:
+ 		info[i++]="It trains your close combat skill.";
+ 				break;
+	case SKILL_CRUSH:
+ 		info[i++]="It trains your crushing weapons skill.";
+ 				break;
+ 	case SKILL_STAB:
+ 		info[i++]="It trains your stabbing weapons skill.";
  		break;
- 
- 		case TV_POLEARM:
- 		switch(o_ptr->sval) {
- 			case SV_SPEAR:
- 			case SV_AWL_PIKE:
- 			case SV_TRIDENT:
- 				j = SKILL_STAB;
- 				break;
- 			case SV_BEAKED_AXE:
- 			case SV_BROAD_AXE:
- 			case SV_SCYTHE:
- 			case SV_GREAT_AXE:
- 			case SV_SCYTHE_OF_SLICING:
- 				j = SKILL_SLASH;
- 				break;
- 			default:
- 				j = SKILL_CRUSH;
- 		}
- 		break;
- 
- 		case TV_DIGGING:
- 		j = SKILL_CRUSH;
- 		break;
- 
- 		case TV_SWORD:
- 		switch(o_ptr->sval) {
- 			case SV_BROKEN_DAGGER:
- 			case SV_BROKEN_SWORD:
- 			case SV_DAGGER:
- 			case SV_MAIN_GAUCHE:
- 				j = SKILL_CLOSE;
- 				break;
- 			case SV_RAPIER:
- 			case SV_SHORT_SWORD:
- 				j = SKILL_STAB;
- 				break;
- 			default:
- 				j = SKILL_SLASH;
- 				break;
- 		}
- 		break;
- 
- 		case TV_SHOT:
- 		case TV_ARROW:
- 		case TV_BOLT:
- 		case TV_BOW:
- 			j = SKILL_MISSILE;
+	case SKILL_SLASH:
+ 		info[i++]="It trains your slashing weapons skill.";
  			break;
- 		default:
- 			j = -1;
+	case  SKILL_MISSILE:
+ 		info[i++]="It trains your missile skill.";
  		break;
  	}
- 	if (j == SKILL_CLOSE)
- 		info[i++]="It trains your close combat skill.";
- 	else if (j == SKILL_CRUSH)
- 		info[i++]="It trains your crushing weapons skill.";
- 	else if (j == SKILL_STAB)
- 		info[i++]="It trains your stabbing weapons skill.";
- 	else if (j == SKILL_SLASH)
- 		info[i++]="It trains your slashing weapons skill.";
- 	else if (j == SKILL_MISSILE)
- 		info[i++]="It trains your missile skill.";
- 
 
 	/* And then describe it fully */
 

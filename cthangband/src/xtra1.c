@@ -1860,6 +1860,65 @@ static int weight_limit(void)
 }
 
 
+/* Calculate the skill used by a certain weapon. */
+
+int wield_skill(byte tval, byte sval)
+{
+	switch (tval)
+	{
+	case TV_HAFTED:
+		if (sval == SV_WHIP)
+		{
+			return SKILL_CLOSE;
+		}
+		else
+		{
+			return SKILL_CRUSH;
+		}
+	case TV_POLEARM:
+		switch(sval)
+		{
+		case SV_SPEAR:
+		case SV_AWL_PIKE:
+		case SV_TRIDENT:
+			return SKILL_STAB;
+		case SV_BEAKED_AXE:
+		case SV_BROAD_AXE:
+		case SV_SCYTHE:
+		case SV_GREAT_AXE:
+		case SV_SCYTHE_OF_SLICING:
+			return SKILL_SLASH;
+		default:
+			return SKILL_CRUSH;
+		}
+	case TV_DIGGING:
+		return SKILL_CRUSH;
+	case TV_SWORD:
+		switch(sval)
+		{
+		case SV_BROKEN_DAGGER:
+		case SV_BROKEN_SWORD:
+		case SV_DAGGER:
+		case SV_MAIN_GAUCHE:
+			return SKILL_CLOSE;
+		case SV_RAPIER:
+		case SV_SHORT_SWORD:
+			return SKILL_STAB;
+		default:
+			return SKILL_SLASH;
+		}
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+		return SKILL_MISSILE;
+	/* An empty object will have a tval of 0. */
+	case 0:
+		return SKILL_CLOSE;
+	}
+return FALSE;
+}
+
 /*
  * Calculate the players current "state", taking into account
  * not only race intrinsics, but also objects being worn
@@ -1915,70 +1974,11 @@ static void calc_bonuses(void)
 	/* Get weapon type */
 	o_ptr = &inventory[INVEN_WIELD];
 
-	/* Are we wielding anything at all? */
-	if (o_ptr->k_idx)
-	{
-		switch(o_ptr->tval)
-		{
-		case TV_HAFTED:
-			if (o_ptr->sval == SV_WHIP)
+	/* Can we assign a weapon skill? */
+	if (!(p_ptr->wield_skill=wield_skill(o_ptr->tval, o_ptr->sval)))
 			{
-				p_ptr->wield_skill = SKILL_CLOSE;
-			}
-			else
-			{
-				p_ptr->wield_skill = SKILL_CRUSH;
-			}
-			break;
-		case TV_POLEARM:
-			switch(o_ptr->sval)
-			{
-			case SV_SPEAR:
-			case SV_AWL_PIKE:
-			case SV_TRIDENT:
-				p_ptr->wield_skill = SKILL_STAB;
-				break;
-			case SV_BEAKED_AXE:
-			case SV_BROAD_AXE:
-			case SV_SCYTHE:
-			case SV_GREAT_AXE:
-			case SV_SCYTHE_OF_SLICING:
-				p_ptr->wield_skill = SKILL_SLASH;
-				break;
-			default:
-				p_ptr->wield_skill = SKILL_CRUSH;
-			}
-			break;
-		case TV_DIGGING:
-			p_ptr->wield_skill = SKILL_CRUSH;
-			break;
-		case TV_SWORD:
-			switch(o_ptr->sval)
-			{
-			case SV_BROKEN_DAGGER:
-			case SV_BROKEN_SWORD:
-			case SV_DAGGER:
-			case SV_MAIN_GAUCHE:
-				p_ptr->wield_skill = SKILL_CLOSE;
-				break;
-			case SV_RAPIER:
-			case SV_SHORT_SWORD:
-				p_ptr->wield_skill = SKILL_STAB;
-				break;
-			default:
-				p_ptr->wield_skill = SKILL_SLASH;
-				break;
-			}
-			break;
-		default:
 			msg_print("Unknown weapon tval wielded - defaulting to close combat skill.");
 			p_ptr->wield_skill = SKILL_CLOSE;
-
-		}
-	}
-	else
-	{
-		p_ptr->wield_skill = SKILL_CLOSE;
 	}
 
 

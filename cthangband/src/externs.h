@@ -951,6 +951,7 @@ extern byte spell_skill(magic_type*);
 extern void calc_hitpoints(void);
 extern void calc_mana(void);
 extern void calc_spells(void);
+extern int wield_skill(byte, byte);
 
 /* xtra2.c */
 extern bool set_blind(int v);
