@@ -62,6 +62,7 @@ static bool PURE is_powerful(object_ctype *o_ptr)
 	u_ptr->ident &= ~IDENT_TRIED;
 	object_info_known(t_ptr, u_ptr);
 	object_info_known(u_ptr, o_ptr);
+	u_ptr->ident &= ~IDENT_TRIED;
 
 	/* Only extra knowledge should create a difference. */
 	return DIFF(t_ptr, u_ptr, object_type);
