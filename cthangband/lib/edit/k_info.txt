@@ -497,7 +497,7 @@ F:GOOD
 
 N:54:& Lucerne Hammer~
 G:\:B:0
-I:Hafted:0:CRUSH
+I:Polearm:0:STAB
 W:120:376
 A:10/1
 P:0:2d5:0:0:0
