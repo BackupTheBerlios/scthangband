@@ -2188,7 +2188,7 @@ extern byte chest_traps[64];
 #if (defined(CMD4_C) || defined(MAIN_AMI_C) || defined(TABLES_C))
 extern cptr color_names[16];
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(TABLES_C) || defined(UTIL_C))
 extern cptr atchar;
 #endif
 #if (defined(CMD2_C) || defined(FILES_C) || defined(TABLES_C) || defined(WIZARD2_C) || defined(XTRA1_C))
@@ -2377,7 +2377,7 @@ extern bool c_roff(byte a, cptr str);
 #if (defined(CMD4_C) || defined(MONSTER1_C) || defined(UTIL_C))
 extern void roff(cptr str);
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(MONSTER1_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(STORE_C) || defined(UTIL_C))
 extern void mc_roff(cptr s);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -3999,5 +3999,11 @@ extern cptr string_make(cptr str);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C) || defined(Z_VIRT_C))
 extern errr string_free(cptr str);
+#endif
+
+/* util.c */
+
+#if (defined(MONSTER1_C) || defined(UTIL_C))
+extern void mc_put_str(cptr str, const int y, const int x);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

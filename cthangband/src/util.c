@@ -2661,114 +2661,160 @@ void prt(cptr str, int row, int col)
 
 
 /*
- * Print some (colored) text to the screen at the current cursor position,
- * automatically "wrapping" existing text (at spaces) when necessary to
- * avoid placing any text into the last column, and clearing every line
- * before placing any text in that line.  Also, allow "newline" to force
- * a "wrap" to the next line.  Advance the cursor as needed so sequential
- * calls to this function will work correctly.
+ * Check whether the cursor is in a legal state.
+ * In particular, check that it hasn't been moved out of the screen area.
+ */
+static bool useless_cursor(void)
+{
+	int i[2];
+	return (Term_locate(i, i+1) == 1);
+}
+
+/*
+ * Move the cursor to the beginning of the next line and clear it.
+ * Return FALSE if already on the bottom line.
+ */
+static bool next_line(void)
+{
+	int x,y;
+	Term_locate(&x, &y);
+	return (!Term_erase(0, y+1, 255));
+}
+
+/*
+ * Wrap the text on the current line as the cursor.
+ * Return FALSE on errors.
+ */ 
+static bool wrap_text(void)
+{
+	int x, y, w, h, i, n;
+
+	byte av[256];
+	char cv[256];
+
+	Term_get_size(&w, &h);
+	Term_locate(&x, &y);
+
+	/* Scan existing text */
+	for (i = w - 1, n = 0; i >= 0; i--)
+	{
+		/* Grab existing attr/char */
+		Term_what(i, y, &av[i], &cv[i]);
+
+		/* Break on space */
+		if (cv[i] == ' ') break;
+
+		/* Track current word */
+		n = i;
+	}
+
+	/* Special case */
+	if (n == 0) n = w;
+
+	/* Clear the partial word. */
+	Term_erase(n, y, 255);
+
+	/* Clear line, move cursor. Return if this is not possible. */
+	if (Term_erase(0, y+1, 255)) return FALSE;
+
+	/* Wrap the word (if any) */
+	for (i = n; i < w; i++)
+	{
+		/* Dump */
+		Term_addch(av[i], cv[i]);
+	}
+
+	return TRUE;
+}
+
+
+/*
+ * Print a multi-coloured string where colour-changes are denoted as follows:
  *
- * Once this function has been called, the cursor should not be moved
- * until all the related "c_roff()" calls to the window are complete.
+ * $d $w $s $o $r $g $b $u : Change to the specified colour.
+ * $D $W $v $y $R $G $B $U
+ *                      $< : Save a "default" colour.
+ *                      $> : Restore the "default" colour.
+ *                      $$ : Print a literal $.
  *
- * This function will correctly handle any width up to the maximum legal
- * value of 256, though it works best for a standard 80 character width.
+ * Anything else is printed directly.
+ *
+ * This function returns under three circumstances:
+ *
+ * 1. The cursor goes out of bounds (returns the first unprinted character).
+ * 2. The end of the string is reached (returns the \0).
+ * 3. A \n is found (returns the \n).
+ */ 
+static cptr mc_add(cptr s, int *dattr, int *attr)
+{
+	int nattr;
+
+	for (; *s && *s != '\n' && !useless_cursor(); s++)
+	{
+		if (*s != '$')
+		{
+			/* Add the character, finish if the cursor has gone too far. */
+			Term_addch(*attr, *s);
+		}
+		/* $$ prints $. */
+		else if (*(++s) == '$')
+		{
+			Term_addch(*attr, '$');
+		}
+		/* $< saves the current colour as a default. */
+		else if (*s == '<')
+		{
+			*dattr = *attr;
+		}
+		/* $> loads the default colour. */
+		else if (*s == '>')
+		{
+			*attr = *dattr;
+		}
+		/* A specific colour request. */
+		else if (((nattr = color_char_to_attr(*s))) != -1)
+		{
+			*attr = nattr;
+		}
+		/* An incorrect request is printed normally. */
+		else
+		{
+			Term_addch(*attr, '$');
+			Term_addch(*attr, *s);
+		}
+	}
+	return s;
+}
+
+/*
+ * Print a multi-coloured string using the above routine, automatically
+ * wrapping the text at spaces as necessary to avoid breaking a word between
+ * lines.
+ */
+void mc_roff(cptr s)
+{
+	int dattr = TERM_WHITE, attr = TERM_WHITE;
+	while (*((s = mc_add(s, &dattr, &attr))))
+	{
+		if (strchr(" \n", *s))
+		{
+			s++;
+			if (!next_line()) return;
+		}
+		else
+		{
+			if (!wrap_text()) return;
+		}
+	}
+}
+
+/*
+ * Print a string (as above) which starts in a particular colour.
  */
 bool c_roff(byte a, cptr str)
 {
-	int x, y;
-
-	int w, h;
-
-	cptr s;
-
-
-	/* Obtain the size */
-	(void)Term_get_size(&w, &h);
-
-	/* Obtain the cursor */
-	(void)Term_locate(&x, &y);
-
-	/* Process the string */
-	for (s = str; *s; s++)
-	{
-		char ch;
-
-		/* Force wrap */
-		if (*s == '\n')
-		{
-			/* Wrap */
-			x = 0;
-			y++;
-
-			/* Clear line, move cursor */
-			Term_erase(x, y, 255);
-
-			/* Only process once. */
-			continue;
-		}
-
-		/* Clean up the char */
-		ch = (isprint(*s) ? *s : ' ');
-
-		/* Wrap words as needed */
-		if ((x >= w - 1) && (ch != ' '))
-		{
-			int i, n = 0;
-
-			byte av[256];
-			char cv[256];
-
-			/* Wrap word */
-			if (x < w)
-			{
-				/* Scan existing text */
-				for (i = w - 2; i >= 0; i--)
-				{
-					/* Grab existing attr/char */
-					Term_what(i, y, &av[i], &cv[i]);
-
-					/* Break on space */
-					if (cv[i] == ' ') break;
-
-					/* Track current word */
-					n = i;
-				}
-			}
-
-			/* Special case */
-			if (n == 0) n = w;
-
-			/* Clear line */
-			Term_erase(n, y, 255);
-
-			/* Wrap */
-			x = 0;
-			y++;
-
-			/* Clear line, move cursor */
-			Term_erase(x, y, 255);
-
-			/* Wrap the word (if any) */
-			for (i = n; i < w - 1; i++)
-			{
-				/* Dump */
-				Term_addch(av[i], cv[i]);
-
-				/* Advance (no wrap) */
-				if (++x > w) x = w;
-			}
-		}
-
-		/* Dump */
-		Term_addch(a, ch);
-
-		/* Advance */
-		if (++x > w) x = w;
-	}
-
-	/* i.e. if the text has reached the bottom of the term. */
-	return (y < h);
+	mc_roff(format("$%c%s", atchar[a], str));
+	return TRUE;
 }
 
 /*
@@ -2781,53 +2827,16 @@ void roff(cptr str)
 }
 
 
-
 /*
- * Print a multi-coloured string where colour-changes are denoted as follows:
- *
- * $d $w $s $o $r $g $b $u : Change to the specified colour.
- * $D $W $v $y $R $G $B $U
- *                      $< : Save a "default" colour (white initially).
- *                      $> : Restore the "default" colour.
- *                      $$ : Print a literal $.
- *
- * Any other combination is printed directly, although further keys may be
- * redefined in the future.
- */
-void mc_roff(cptr s)
+ * Write a line of (possibly multicolour) text to the screen using mc_add()
+ * above.
+ */ 
+void mc_put_str(cptr str, const int y, const int x)
 {
-	cptr t;
-	int attr, nattr, dattr;
-	
-	for (t = s, attr = dattr = TERM_WHITE; (t = strchr(t, '$')); t++)
-	{
-		if (!c_roff(attr, format("%.*s", t-s, s))) return;
-		s = t + 2;
-		if (s[-1] == '$')
-		{
-			s--;
-			t ++;
-		}
-		else if (s[-1] == '<')
-		{
-			dattr = attr;
-		}
-		else if (s[-1] == '>')
-		{
-			attr = dattr;
-		}
-		else if (((nattr = color_char_to_attr(s[-1]))) != -1)
-		{
-			attr = nattr;
-		}
-		else
-		{
-			s = t++;
-		}
-	}
-	c_roff(attr, s);
+	int attr, dattr = attr = TERM_WHITE;
+	if (Term_gotoxy(x, y)) return;
+	mc_add(str, &dattr, &attr);
 }
-
 
 /*
  * Clear part of the screen
