@@ -197,7 +197,7 @@ extern void do_cmd_walk(int pickup);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_run(void);
 #endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(DUNGEON_C))
+#if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_stay(int pickup);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))

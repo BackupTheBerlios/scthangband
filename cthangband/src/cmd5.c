@@ -3761,7 +3761,7 @@ void do_cmd_invoke(void)
 		if (flush_failure) flush();
 		msg_format("You feel that %s isn't listening...", s_ptr->name);
 		/* And sit still for a little while to avoid this being a short wait command. */
-		do_cmd_stay(FALSE);
+		energy_use = extract_energy[p_ptr->pspeed];
 	}
 	/* Failed spell */
 	else if (rand_int(100) < chance)
@@ -3769,7 +3769,7 @@ void do_cmd_invoke(void)
 		if (flush_failure) flush();
 		msg_format("%s refuses your call!",s_ptr->name);
 		/* the call still took energy */
-		energy_use = spell_energy(plev,(u16b)(f_ptr->minskill));
+		energy_use = spirit_energy(favour_sphere, spell);
 		/* The spirit still gets somewhat pissed off */
 		annoy_spirit(s_ptr,rand_int(favour_annoyance(f_ptr)));
 		/* Chance for retribution based on level of favour */
@@ -3783,7 +3783,7 @@ void do_cmd_invoke(void)
 	else
 	{
 		/* the call takes energy */
-		energy_use = spell_energy(plev,(u16b)(f_ptr->minskill));
+		energy_use = spirit_energy(favour_sphere, spell);
 		/* The spirit gets pissed off */
 		annoy_spirit(s_ptr,favour_annoyance(f_ptr));
 
@@ -4647,7 +4647,7 @@ void do_cmd_mindcraft(void)
 		}
 	}
 	/* Take a turn */
-	energy_use = spell_energy((u16b)psi,(u16b)(spell.min_lev));
+	energy_use = mindcraft_energy(n);
 
 	/* Sufficient mana */
 	if (spell.mana_cost <= p_ptr->cchi)
