@@ -971,11 +971,6 @@ void do_cmd_close(void)
  */
 static void twall(int y, int x)
 {
-	cave_type *c_ptr = &cave[y][x];
-
-	/* Forget the wall */
-	c_ptr->info &= ~(CAVE_MARK);
-
 	/* Remove the feature */
 	cave_set_feat(y, x, FEAT_FLOOR);
 
@@ -1467,9 +1462,6 @@ static bool do_cmd_disarm_aux(int y, int x)
 		/* Reward */
 		gain_exp(power);
 		skill_exp(SKILL_DISARM);
-
-		/* Forget the trap */
-		c_ptr->info &= ~(CAVE_MARK);
 
 		/* Remove the trap */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -2477,7 +2469,6 @@ static void hit_trap(void)
 		case FEAT_TRAP_HEAD + 0x04:
 		{
 			msg_print("There is a flash of shimmering light!");
-			c_ptr->info &= ~(CAVE_MARK);
 			cave_set_feat(py, px, FEAT_FLOOR);
 			num = 2 + randint(3);
 			for (i = 0; i < num; i++)

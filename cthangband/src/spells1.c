@@ -1469,9 +1469,6 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					obvious = TRUE;
 				}
 
-				/* Forget the trap */
-				c_ptr->info &= ~(CAVE_MARK);
-
 				/* Destroy the trap */
 				cave_set_feat(y, x, FEAT_FLOOR);
 			}
@@ -1523,9 +1520,6 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					}
 				}
 
-				/* Forget the door */
-				c_ptr->info &= ~(CAVE_MARK);
-
 				/* Destroy the feature */
 				cave_set_feat(y, x, FEAT_FLOOR);
 			}
@@ -1575,9 +1569,6 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					obvious = TRUE;
 				}
 
-				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
-
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
 			}
@@ -1594,9 +1585,6 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					msg_print("You have found something!");
 					obvious = TRUE;
 				}
-
-				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -1615,9 +1603,6 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					obvious = TRUE;
 				}
 
-				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
-
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
 			}
@@ -1633,9 +1618,6 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					msg_print("The rubble turns into mud!");
 					obvious = TRUE;
 				}
-
-				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
 
 				/* Destroy the rubble */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -1664,9 +1646,6 @@ static bool project_f(int r, int y, int x, int dam, int typ)
 					msg_print("The door turns into mud!");
 					obvious = TRUE;
 				}
-
-				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
 
 				/* Destroy the feature */
 				cave_set_feat(y, x, FEAT_FLOOR);

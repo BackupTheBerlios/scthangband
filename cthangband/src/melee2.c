@@ -6034,9 +6034,6 @@ static void process_monster(int m_idx)
 				msg_print("There is a grinding sound.");
 			}
 
-			/* Forget the wall */
-			c_ptr->info &= ~(CAVE_MARK);
-
 			/* Notice */
 			cave_set_feat(ny, nx, FEAT_FLOOR);
 
@@ -6150,9 +6147,6 @@ static void process_monster(int m_idx)
 					msg_print("The rune of protection is broken!");
 				}
 
-				/* Forget the rune */
-				c_ptr->info &= ~(CAVE_MARK);
-
 				/* Break the rune */
 				cave_set_feat(ny, nx, FEAT_FLOOR);
 
@@ -6182,9 +6176,6 @@ static void process_monster(int m_idx)
 					else
 						msg_print("An explosive rune was disarmed.");
 				}
-
-				/* Forget the rune */
-				c_ptr->info &= ~(CAVE_MARK);
 
 				/* Break the rune */
 				cave_set_feat(ny, nx, FEAT_FLOOR);

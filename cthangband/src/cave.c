@@ -719,11 +719,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	if ((feat <= FEAT_INVIS) || (feat == FEAT_PATH))
 	{
 		/* Memorized (or visible) floor */
-		if ((c_ptr->info & (CAVE_MARK)) ||
-			(((c_ptr->info & (CAVE_LITE)) ||
-				((c_ptr->info & (CAVE_GLOW)) &&
-				(c_ptr->info & (CAVE_VIEW)))) &&
-			!p_ptr->blind))
+		if ((c_ptr->info & (CAVE_MARK)) || player_can_see_bold(y, x))
 		{
 			/* Access floor */
 			f_ptr = &f_info[FEAT_FLOOR];
@@ -3482,6 +3478,13 @@ void wiz_dark(void)
 void cave_set_feat(int y, int x, int feat)
 {
 	cave_type *c_ptr = &cave[y][x];
+
+	/* Forget this grid if it has visibly changed. note_spot() will add the
+	 * MARK flag back where appropriate. */
+	if (f_info[c_ptr->feat].mimic != f_info[feat].mimic)
+	{
+		c_ptr->info &= ~CAVE_MARK;
+	}
 
 	/* Change the feature */
 	c_ptr->feat = feat;
