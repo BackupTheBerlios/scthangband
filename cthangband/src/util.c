@@ -2715,7 +2715,6 @@ void roff(cptr str)
  * Unlike show_file_tome, this uses c_roff() to ensure that its lines are
  * wrapped, and so works best with files without unnecessary formatting.
  */
-#define CC_PREFIX	"#####"
 void mc_roff(cptr s)
 {
 	cptr t;

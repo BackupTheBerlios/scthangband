@@ -1689,8 +1689,9 @@ void roff_top(int r_idx)
 	Term_gotoxy(0, 0);
 
 	/* Dump the name */
-	mc_roff(format("%s (#####%c%c#####w)/(#####%c%c#####w):",
-		monster_desc_aux(0, r_ptr, 1, (MDF_DEF | MDF_CAPITAL)), a1, c1, a2, c2));
+	mc_roff(format("%^s (" CC_PREFIX "%c%c" CC_PREFIX "w)/(" CC_PREFIX "%c%c"
+		CC_PREFIX "w):", monster_desc_aux(0, r_ptr, 1, MDF_DEF ),
+		a1, c1, a2, c2));
 }
 
 

@@ -4324,7 +4324,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 		if (my_fgets(fff, h_ptr->rbuf, 1024)) break;
 
 		/* Get a color */
-		if (prefix(h_ptr->rbuf, "#####"))
+		if (prefix(h_ptr->rbuf, CC_PREFIX))
 		{
 			buf = &h_ptr->rbuf[6];
 		}
@@ -4461,7 +4461,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 			if (my_fgets(fff, h_ptr->rbuf, 1024)) break;
 
 			/* Get a color */
-			if (prefix(h_ptr->rbuf, "#####"))
+			if (prefix(h_ptr->rbuf, CC_PREFIX))
 			{
 				color = color_char_to_attr(h_ptr->rbuf[5]);
 				buf = &h_ptr->rbuf[6];
