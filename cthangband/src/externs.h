@@ -4022,4 +4022,10 @@ extern cptr PURE prt_flag(int flag);
 #if (defined(CMD3_C) || defined(SPELLS2_C) || defined(XTRA1_C))
 extern void update_objects(int where);
 #endif
+
+/* xtra2.c */
+
+#if (defined(CMD4_C) || defined(XTRA2_C))
+extern cptr PURE prt_flag_long(int flag);
+#endif
 #endif /* INCLUDED_EXTERNS_H */

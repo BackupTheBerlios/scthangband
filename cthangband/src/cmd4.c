@@ -3999,6 +3999,23 @@ static void do_cmd_knowledge_player_theft(FILE *fff)
 }
 
 /*
+ * Print out messages for setting each counter to an interesting value.
+ */ 
+static bool do_cmd_knowledge_player_counter(FILE *fff)
+{
+	bool rc;
+	int i;
+	for (rc = FALSE, i = 0; i < TIMED_MAX; i++)
+	{
+		cptr s = prt_flag_long(i);
+		if (!s) continue;
+		fprintf(fff, "%s\n", s);
+		rc = TRUE;
+	}
+	return rc;
+}
+
+/*
  * Print out various things about the player and his equipment.
  * This should include all of the messages printed by update_stuff() as
  * it is intended as a simple way to access that information.
@@ -4061,6 +4078,8 @@ static void do_cmd_knowledge_player(void)
 	if (do_cmd_knowledge_player_feeling(fff))
 		fprintf(fff, "\n");
 	if (do_cmd_knowledge_player_recall(fff))
+		fprintf(fff, "\n");
+	if (do_cmd_knowledge_player_counter(fff))
 		fprintf(fff, "\n");
 	do_cmd_knowledge_player_misc(fff);
 

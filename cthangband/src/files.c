@@ -1845,34 +1845,6 @@ static void display_player_xp(void)
 }
 
 
-/* The next routine would look horrible without this. */
-#define remember(col, msg) {strcpy(text[i], msg); colour[i++] = col;}
-
-/*
- * Displays a few temporary effects on the screen.
- * Returns whether something was displayed.
- */
-static bool display_player_bonus(void)
-{
-	byte i = 0, j;
-	cptr text[5] = {"Blessed","Stone Skin","Heroic","Safe from Evil","Berserk"};
-	byte colour[5] = {TERM_L_GREEN, TERM_SLATE, TERM_YELLOW, TERM_WHITE, TERM_L_RED};
-	const byte pos[5][5] = {{11}, {10, 12}, {9, 11, 13}, {9, 10, 12, 13}, {9, 10, 11, 12, 13}};
-	byte x[5];
-	if (p_ptr->blessed) x[i++] = 0;
-	if (p_ptr->shield) x[i++] = 1;
-	if (p_ptr->hero) x[i++] = 2;
-	if (p_ptr->protevil) x[i++] = 3;
-	if (p_ptr->shero) x[i++] = 4;
-	for (j = i; j;)
-	{
-		j--;
-		c_put_str(colour[x[j]], text[x[j]], pos[i-1][j], 34);
-	}
-	return (i > 0);
-}
-
-
 /*
  * Hack -- pass color info around this file
  */
@@ -3341,10 +3313,7 @@ void display_player(int mode)
 			/* Extra info (melee) */
 			display_player_sides(FALSE);
 
-			/* Temporary bonuses */
-			if (!display_player_bonus())
-
-			/* Experience if no temporary bonuses */
+			/* Experience. */
 			display_player_xp();
 
 			/* Display "various" info */

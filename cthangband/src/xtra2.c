@@ -271,11 +271,17 @@ struct temp_effect_type
 /* Hack - a secondary flag to trigger bad effects. */
 static bool worsen = FALSE;
 
+/* Hack - a request for a "boring" value to which everything is compared. */
+#define TIMER_DEFAULT -1
+
 /*
  * Only say something if a resistance has gone from 0 to non-0 or vice versa.
  */
 static int notice_bool(int old, int new)
 {
+	/* Default value. */
+	if (old == TIMER_DEFAULT) old = 0;
+
 	/* Still positive or 0. */
 	if (!old == !new) return -1;
 	
@@ -294,6 +300,9 @@ static int notice_bool(int old, int new)
 static int notice_res(int old, int new)
 {
 	int *i, *j, t[] = {10, 5, 0, -1};
+
+	/* Default value. */
+	if (old == TIMER_DEFAULT) old = 0;
 
 	/* Paranoia - this was checked before. */
 	if (old < 0 || new < 0) return -1;
@@ -319,6 +328,9 @@ static int notice_res(int old, int new)
 static int notice_stun_aux(int old, int new, int *t, int *t2)
 {
 	int *i, *j;
+
+	/* Default value. */
+	if (old == TIMER_DEFAULT) old = 0;
 
 	/* Paranoia - this was checked before. */
 	if (old < 0 || new < 0) return -1;
@@ -369,6 +381,9 @@ static int notice_food(int old, int new)
 {
 	int *i, *j, t[] = {PY_FOOD_MAX, PY_FOOD_FULL, PY_FOOD_ALERT, PY_FOOD_WEAK,
 		PY_FOOD_FAINT, -1};
+
+	/* Default value. */
+	if (old == TIMER_DEFAULT) old = PY_FOOD_ALERT+1;
 
 	/* Paranoia - this was checked before. */
 	if (old < 0 || new < 0) return -1;
@@ -475,8 +490,8 @@ static cptr const temp_effects_show[] =
 	NEXT 0, "            ", "$oStun        ", "$oHeavy stun  ", "$rKnocked out ",
 	NEXT 0, "            ", "$yGraze       ", "$yLight cut   ", "$oBad cut     ",
 		"$oNasty cut   ", "$rSevere cut  ", "$rDeep gash   ", "$RMortal wound",
-	NEXT "$oWeak  ", "$yHungry", "      ", "$GFull  ", "$gGorged", "$rWeak  ",
-		0, 0, 0, 0,
+	NEXT 0, 0, "      ", "$GFull  ", "$gGorged", "$rWeak  ", "$oWeak  ",
+		"$yHungry", 0, 0,
 	NEXT
 };
 
@@ -720,21 +735,40 @@ bool set_flag(int flag, int v)
  */
 cptr PURE prt_flag(int flag)
 {
-	int notice;
 	s16b *var = get_flag(flag);
-	const temp_effect_type *t_ptr = temp_effects+flag;
 
-	/* Compare all counters with 0, so that any change is an increase. */
-	notice = (*t_ptr->notice)(0, *var);
+	int (*notice)(int, int) = temp_effects[flag].notice;
 
-	/* Hack - try a positive starting value if that didn't work. */
-	if (notice < 0) notice = (*t_ptr->notice)(20000, *var);
+	/* Find an offset for setting a flag to a value. */
+	int n = (*notice)(TIMER_DEFAULT, *var);
 
-	/* Paranoia - still didn't work, so give up. */
-	if (notice < 0) return "$rERROR";
+	/* Hack - try a couple of specific values if the default is current. */
+	if (n < 0) n = (*notice)(0, *var);
+	if (n < 0) n = (*notice)(20000, *var);
+
+	/* Paranoia - didn't find one. */
+	if (n < 0) return "$rERROR";
 
 	/* Return the text string as is. */
-	return temp_effects_show[t_ptr->text + notice + OFFSET(flag)];
+	return temp_effects_show[n + temp_effects[flag].text + OFFSET(flag)];
+}
+
+/*
+ * Return the message given when a flag moves from its "normal" state to its
+ * current one.
+ */
+cptr PURE prt_flag_long(int flag)
+{
+	s16b *var = get_flag(flag);
+
+	/* Find an offset for setting a flag to a value. */
+	int n = (*temp_effects[flag].notice)(TIMER_DEFAULT, *var);
+
+	/* Didn't find one. */
+	if (n < 0) return 0;
+
+	/* Return the long form of the message. */
+	return temp_effects_text[n + temp_effects[flag].text + OFFSET(flag)];
 }
 
 /*
