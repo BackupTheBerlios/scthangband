@@ -801,12 +801,18 @@ static bc_type birth_option(void)
  *
  * allow_abort should be set if aborting is distinct from starting afresh.
  */
-static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool allow_abort)
+static bc_type birth_choice(int row, s16b max, cptr prompt, int *option,
+	bool allow_abort)
 {
-	char c;
+	char c, pmt[256];
+	int i;
+	cptr s[2];
+	cptr s = (allow_abort) ? ", * for random or ESCAPE to abort" :
+		" or * for random";
+	strnfmt(pmt, sizeof(pmt), "%s (%c-%c%s): ", prompt, I2A(0), rtoa(max-1), s);
 	while (1)
 	{
-		put_str(format("%s (%c-%c%s): ", prompt, I2A(0), rtoa(max-1), (allow_abort) ? " or ESCAPE to abort" : ""), row, 2);
+		put_str(pmt, row, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 		else if (c == 'S') return BC_RESTART;
@@ -817,6 +823,11 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 			bc_type b = birth_option();
 			if (allow_abort && b == BC_ABORT) return b;
 			if (b == BC_RESTART) return b;
+		}
+		else if (c == '*')
+		{
+			(*option) = rand_int(max);
+			return BC_OKAY;
 		}
 		else
 		{
