@@ -334,7 +334,7 @@ bool make_attack_normal(int m_idx)
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 					{
-						if (set_poisoned(p_ptr->poisoned + randint(rlev) + 5))
+						if (add_flag(TIMED_POISONED, randint(rlev) + 5))
 						{
 							obvious = TRUE;
 						}
@@ -711,7 +711,7 @@ bool make_attack_normal(int m_idx)
 					/* Increase "blind" */
 					if (!p_ptr->resist_blind)
 					{
-						if (set_blind(p_ptr->blind + 10 + randint(rlev)))
+						if (add_flag(TIMED_BLIND, 10 + randint(rlev)))
 						{
 							obvious = TRUE;
 						}
@@ -731,7 +731,7 @@ bool make_attack_normal(int m_idx)
 					/* Increase "confused" */
 					if (!p_ptr->resist_conf)
 					{
-						if (set_confused(p_ptr->confused + 3 + randint(rlev)))
+						if (add_flag(TIMED_CONFUSED, 3 + randint(rlev)))
 						{
 							obvious = TRUE;
 						}
@@ -762,7 +762,7 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						if (set_afraid(p_ptr->afraid + 3 + randint(rlev)))
+						if (add_flag(TIMED_AFRAID, 3 + randint(rlev)))
 						{
 							obvious = TRUE;
 						}
@@ -797,7 +797,7 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						if (set_paralyzed(p_ptr->paralyzed + 3 + randint(rlev)))
+						if (add_flag(TIMED_PARALYZED, 3 + randint(rlev)))
 						{
 							obvious = TRUE;
 						}
@@ -1060,7 +1060,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the cut */
-				if (k) (void)set_cut(p_ptr->cut + k);
+				if (k) (void)add_flag(TIMED_CUT, k);
 			}
 
 			/* Handle stun */
@@ -1085,7 +1085,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the stun */
-				if (k) (void)set_stun(p_ptr->stun + k);
+				if (k) (void)add_flag(TIMED_STUN, k);
 			}
             if (touched)
             {

@@ -2932,21 +2932,21 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				if (randint(4) == 1) {
 				    switch (randint(4)) {
 				     case 1:
-                    set_confused(p_ptr->confused + 3 + randint(dam));
+                    add_flag(TIMED_CONFUSED, 3 + randint(dam));
 					break;
 				     case 2:
-                    set_stun(p_ptr->stun + randint(dam)); break;
+                    add_flag(TIMED_STUN, randint(dam)); break;
 				     case 3:
                      {
                     if (r_ptr->flags3 & (RF3_NO_FEAR))
                         note = " is unaffected.";
                     else
-                        set_afraid(p_ptr->afraid + 3 + randint(dam));
+                        add_flag(TIMED_AFRAID, 3 + randint(dam));
                     }
                     break;
 				     default:
                     if (!p_ptr->free_act)
-                        (void)set_paralyzed(p_ptr->paralyzed + randint(dam));
+                        (void)add_flag(TIMED_PARALYZED, randint(dam));
 					break;
 				    }
 				}
@@ -3084,17 +3084,17 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 						/* Confuse, stun, terrify */
 						switch (randint(4)) {
 						 case 1:
-						set_stun(p_ptr->stun + dam / 2);
+						add_flag(TIMED_STUN, dam / 2);
 						break;
 						 case 2:
-						set_confused(p_ptr->confused + dam / 2);
+						add_flag(TIMED_CONFUSED, dam / 2);
 						break;
 						 default:
 						 {
 						if (r_ptr->flags3 & (RF3_NO_FEAR))
 							note = " is unaffected.";
 						else
-							set_afraid(p_ptr->afraid + dam);
+							add_flag(TIMED_AFRAID, dam);
 						 }
 						}
 					}
@@ -4486,7 +4486,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			take_hit(dam, killer, m_ptr->r_idx);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
-				(void)set_poisoned(p_ptr->poisoned + rand_int(dam) + 10);
+				(void)add_flag(TIMED_POISONED, rand_int(dam) + 10);
 			}
 			break;
 		}
@@ -4500,7 +4500,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			take_hit(dam, killer, m_ptr->r_idx);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
-				(void)set_poisoned(p_ptr->poisoned + rand_int(dam) + 10);
+				(void)add_flag(TIMED_POISONED, rand_int(dam) + 10);
                 if (randint(5)==1) /* 6 */
                  { msg_print("You undergo a freakish metamorphosis!");
                     if (randint(4)==1) /* 4 */
@@ -4555,7 +4555,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (!p_ptr->resist_sound)
 			{
 				int k = (randint((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
-				(void)set_stun(p_ptr->stun + k);
+				(void)add_flag(TIMED_STUN, k);
 			}
                if (!(p_ptr->resist_fire || p_ptr->oppose_fire
                     || p_ptr->immune_fire))
@@ -4606,11 +4606,11 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
             if (fuzzy) msg_print("You are hit by something wet!");
 			if (!p_ptr->resist_sound)
 			{
-				(void)set_stun(p_ptr->stun + randint(40));
+				(void)add_flag(TIMED_STUN, randint(40));
 			}
 			if (!p_ptr->resist_conf)
 			{
-				(void)set_confused(p_ptr->confused + randint(5) + 5);
+				(void)add_flag(TIMED_CONFUSED, randint(5) + 5);
 			}
 
            if (randint(5)==1)
@@ -4632,11 +4632,11 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			if (!p_ptr->resist_conf)
 			{
-				(void)set_confused(p_ptr->confused + rand_int(20) + 10);
+				(void)add_flag(TIMED_CONFUSED, rand_int(20) + 10);
 			}
 			if (!p_ptr->resist_chaos)
 			{
-				(void)set_image(p_ptr->image + randint(10));
+				(void)add_flag(TIMED_IMAGE, randint(10));
                 if (randint(3)==1)
                 {
                     msg_print("Your body is twisted by chaos!");
@@ -4679,7 +4679,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void)set_cut(p_ptr->cut + dam);
+				(void)add_flag(TIMED_CUT, dam);
 			}
                if ((!p_ptr->resist_shard) || (randint(13)==1))
                 {
@@ -4701,7 +4701,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			else
 			{
 				int k = (randint((dam > 90) ? 35 : (dam / 3 + 5)));
-				(void)set_stun(p_ptr->stun + k);
+				(void)add_flag(TIMED_STUN, k);
 			}
                if ((!p_ptr->resist_sound) || (randint(13)==1))
                 {
@@ -4722,7 +4722,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			if (!p_ptr->resist_conf)
 			{
-				(void)set_confused(p_ptr->confused + randint(20) + 10);
+				(void)add_flag(TIMED_CONFUSED, randint(20) + 10);
 			}
 			take_hit(dam, killer, m_ptr->r_idx);
 			break;
@@ -4766,7 +4766,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
             if (fuzzy) msg_print("You are hit by kinetic force!");
 			if (!p_ptr->resist_sound)
 			{
-				(void)set_stun(p_ptr->stun + randint(20));
+				(void)add_flag(TIMED_STUN, randint(20));
 			}
 			take_hit(dam, killer, m_ptr->r_idx);
 			break;
@@ -4779,7 +4779,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
             if (fuzzy) msg_print("You are hit by shards!");
 			if (!p_ptr->resist_sound)
 			{
-				(void)set_stun(p_ptr->stun + randint(20));
+				(void)add_flag(TIMED_STUN, randint(20));
 			}
              if (p_ptr->resist_shard)
 			{
@@ -4787,7 +4787,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			else
 			{
-                (void)set_cut(p_ptr->  cut + ( dam / 2) );
+                (void)set_flag(TIMED_CUT, p_ptr->  cut + ( dam / 2) );
 			}
 
                if ((!p_ptr->resist_shard) || (randint(12)==1))
@@ -4803,7 +4803,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_INERTIA:
 		{
             if (fuzzy) msg_print("You are hit by something slow!");
-			(void)set_slow(p_ptr->slow + rand_int(4) + 4);
+			(void)add_flag(TIMED_SLOW, rand_int(4) + 4);
 			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
@@ -4818,7 +4818,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			else if (!blind && !p_ptr->resist_blind)
 			{
-				(void)set_blind(p_ptr->blind + randint(5) + 2);
+				(void)add_flag(TIMED_BLIND, randint(5) + 2);
 			}
            if (p_ptr->prace == RACE_VAMPIRE) {
            msg_print("The light scorches your flesh!");
@@ -4852,7 +4852,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
             }
 			else if (!blind && !p_ptr->resist_blind)
 			{
-				(void)set_blind(p_ptr->blind + randint(5) + 2);
+				(void)add_flag(TIMED_BLIND, randint(5) + 2);
 			}
            if (p_ptr->wraith_form)
              hp_player(dam);
@@ -4929,11 +4929,11 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			msg_print("Gravity warps around you.");
             teleport_player(5);
             if (!p_ptr->ffall)
-                (void)set_slow(p_ptr->slow + rand_int(4) + 4);
+                (void)add_flag(TIMED_SLOW, rand_int(4) + 4);
             if (!(p_ptr->resist_sound || p_ptr->ffall))
 			{
 				int k = (randint((dam > 90) ? 35 : (dam / 3 + 5)));
-				(void)set_stun(p_ptr->stun + k);
+				(void)add_flag(TIMED_STUN, k);
 			}
             if (p_ptr->ffall)
             {
@@ -4968,7 +4968,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
     case GF_OLD_SPEED:
        {
            if (fuzzy)  msg_print("You are hit by something!");
-           (void)set_fast(p_ptr->fast + randint(5));
+           (void)add_flag(TIMED_FAST, randint(5));
            dam = 0;
            break;
        }
@@ -4976,14 +4976,14 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
     case GF_OLD_SLOW:
        {
            if (fuzzy) msg_print("You are hit by something slow!");
-           (void)set_slow(p_ptr->slow + rand_int(4) + 4);
+           (void)add_flag(TIMED_SLOW, rand_int(4) + 4);
            break;
        }
     case GF_OLD_SLEEP:
        {
            if (p_ptr->free_act)  break;
            if (fuzzy) msg_print("You fall asleep!");
-           set_paralyzed(p_ptr->paralyzed + dam);
+           add_flag(TIMED_PARALYZED, dam);
            dam = 0;
            break;
        }
@@ -5017,11 +5017,11 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			cold_dam(dam, killer, m_ptr->r_idx);
 			if (!p_ptr->resist_shard)
 			{
-				(void)set_cut(p_ptr->cut + damroll(5, 8));
+				(void)add_flag(TIMED_CUT, damroll(5, 8));
 			}
 			if (!p_ptr->resist_sound)
 			{
-				(void)set_stun(p_ptr->stun + randint(15));
+				(void)add_flag(TIMED_STUN, randint(15));
 			}
 
                if ((!(p_ptr->resist_cold || p_ptr->oppose_cold)) || (randint(12)==1))

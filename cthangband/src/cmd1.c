@@ -728,7 +728,7 @@ static void hit_trap(void)
 
 		    name = "a spiked pit";
 					dam = dam * 2;
-					(void)set_cut(p_ptr->cut + randint(dam));
+					(void)add_flag(TIMED_CUT, randint(dam));
 				}
 
 				/* Take the damage */
@@ -762,7 +762,7 @@ static void hit_trap(void)
 		    name = "a spiked pit";
 
 					dam = dam * 2;
-					(void)set_cut(p_ptr->cut + randint(dam));
+					(void)add_flag(TIMED_CUT, randint(dam));
 
 					if (p_ptr->resist_pois || p_ptr->oppose_pois)
 					{
@@ -772,7 +772,7 @@ static void hit_trap(void)
 					else
 					{
 						dam = dam * 2;
-						(void)set_poisoned(p_ptr->poisoned + randint(dam));
+						(void)add_flag(TIMED_POISONED, randint(dam));
 					}
 				}
 
@@ -829,7 +829,7 @@ static void hit_trap(void)
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
 				take_hit(dam, name, MON_TRAP);
-				(void)set_slow(p_ptr->slow + rand_int(20) + 20);
+				(void)add_flag(TIMED_SLOW, rand_int(20) + 20);
 			}
 			else
 			{
@@ -891,7 +891,7 @@ static void hit_trap(void)
 			msg_print("A black gas surrounds you!");
 			if (!p_ptr->resist_blind)
 			{
-				(void)set_blind(p_ptr->blind + rand_int(50) + 25);
+				(void)add_flag(TIMED_BLIND, rand_int(50) + 25);
 			}
 			break;
 		}
@@ -901,7 +901,7 @@ static void hit_trap(void)
 			msg_print("A gas of scintillating colors surrounds you!");
 			if (!p_ptr->resist_conf)
 			{
-				(void)set_confused(p_ptr->confused + rand_int(20) + 10);
+				(void)add_flag(TIMED_CONFUSED, rand_int(20) + 10);
 			}
 			break;
 		}
@@ -911,7 +911,7 @@ static void hit_trap(void)
 			msg_print("A pungent green gas surrounds you!");
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->poisoned + rand_int(20) + 10);
+				(void)add_flag(TIMED_POISONED, rand_int(20) + 10);
 			}
 			break;
 		}
@@ -921,7 +921,7 @@ static void hit_trap(void)
 			msg_print("A strange white mist surrounds you!");
 			if (!p_ptr->free_act)
 			{
-				(void)set_paralyzed(p_ptr->paralyzed + rand_int(10) + 5);
+				(void)add_flag(TIMED_PARALYZED, rand_int(10) + 5);
 			}
 			break;
 		}

@@ -277,8 +277,8 @@ static void room_rest(bool night)
 		turn = ((turn/100000)+1)*100000;
 	}
 	p_ptr->chp = p_ptr->mhp;
-	set_blind(0);
-	set_confused(0);
+	set_flag(TIMED_BLIND, 0);
+	set_flag(TIMED_CONFUSED, 0);
 	p_ptr->stun = 0;
 	if(night)
 	{

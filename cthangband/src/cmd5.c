@@ -1424,13 +1424,13 @@ void do_poly_wounds(int cause)
         {
             msg_print("A new wound was created!");
             take_hit(change, "a polymorphed wound", cause);
-            set_cut(change);
+            set_flag(TIMED_CUT, change);
         }
     else
         {
             msg_print("Your wounds are polymorphed into less serious ones.");
             hp_player(change);
-            set_cut((p_ptr->cut)-(change/2));
+            set_flag(TIMED_CUT, (p_ptr->cut)-(change/2));
         }
 }
 
@@ -1991,11 +1991,11 @@ void do_cmd_cast(void)
 	   case 13: /* Haste Self */
 			if (!p_ptr->fast)
 			{
-				(void)set_fast(randint(20 + (plev) ) + plev);
+				(void)set_flag(TIMED_FAST, randint(20 + (plev) ) + plev);
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + randint(5));
+				(void)add_flag(TIMED_FAST, randint(5));
 			}
 		       break;
 	   case 14: /* Detection True */
@@ -2023,7 +2023,7 @@ void do_cmd_cast(void)
 		}
 
        case 20: /* Sense Minds */
-            (void)set_tim_esp(p_ptr->tim_esp + randint(30) + 25);
+            (void)add_flag(TIMED_ESP, randint(30) + 25);
 		       break;
        case 21: /* Self knowledge */
            (void)self_knowledge();
@@ -2051,7 +2051,7 @@ void do_cmd_cast(void)
 			wiz_lite();
             if (!(p_ptr->telepathy))
             {
-                (void)set_tim_esp(p_ptr->tim_esp + randint(30) + 25);
+                (void)add_flag(TIMED_ESP, randint(30) + 25);
             }
 		       break;
 	   case 28: /* Enchant Weapon */
@@ -2064,7 +2064,7 @@ void do_cmd_cast(void)
 		       (void) alchemy();
 		       break;
 	   case 31: /* Globe of Invulnerability */
-			(void)set_invuln(p_ptr->invuln + randint(8) + 8);
+			(void)add_flag(TIMED_INVULN, randint(8) + 8);
 		       break;
 	       default:
 		 msg_format("You cast an unknown Sorcery spell: %d.", spell);
@@ -2373,7 +2373,7 @@ void do_cmd_cast(void)
             else if (die <42)
             {
                 msg_print("It's the Star.");
-                set_blessed(p_ptr->blessed + plev);
+                add_flag(TIMED_BLESSED, plev);
             }
             else if (die <47)
             {
@@ -2495,7 +2495,7 @@ void do_cmd_cast(void)
              break;
             }
         case 6: /* Planar Spying */
-            (void)set_tim_esp(p_ptr->tim_esp + randint(30) + 25);
+            (void)add_flag(TIMED_ESP, randint(30) + 25);
         break;
         case 7: /* Teleport Away */
 			if (!get_aim_dir(&dir)) return;
@@ -2893,7 +2893,7 @@ void do_cmd_cast(void)
 			(void)sleep_monster(dir,plev);
 		       break;
 	   case 5: /* Resist Poison */
-			(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_POIS, randint(20) + 20);
 		       break;
        case 6: /* Horrify */
 			if (!get_aim_dir(&dir)) return;
@@ -2929,7 +2929,7 @@ void do_cmd_cast(void)
            /* But if we ARE Gorged,  it won't cure us */
            dummy = p_ptr->food + MIN(5000, 100 * dummy);
            if (p_ptr->food < PY_FOOD_MAX)   /* Not gorged already */
-             (void)set_food(dummy >= PY_FOOD_MAX ? PY_FOOD_MAX-1 : dummy);
+             (void)set_flag(TIMED_FOOD, dummy >= PY_FOOD_MAX ? PY_FOOD_MAX-1 : dummy);
        }
          break;
        case 12: /* Poison Branding */
@@ -2945,9 +2945,9 @@ void do_cmd_cast(void)
 			(void)restore_level();
 		       break;
 	   case 16: /* Berserk */
-            (void)set_shero(p_ptr->shero + randint(25) + 25);
+            (void)add_flag(TIMED_SHERO, randint(25) + 25);
 			(void)hp_player(30);
-			(void)set_afraid(0);
+			(void)set_flag(TIMED_AFRAID, 0);
 		       break;
        case 17: /* Invoke Spirits */
            {
@@ -2963,10 +2963,10 @@ void do_cmd_cast(void)
                (void) summon_specific(py, px, (dun_depth), SUMMON_UNDEAD);
                } else if (die < 14) {
                msg_print("An unnamable evil brushes against your mind...");
-               set_afraid(p_ptr->afraid + randint(4) + 4);
+               add_flag(TIMED_AFRAID, randint(4) + 4);
                } else if (die < 26) {
                msg_print("Your head is invaded by a horde of gibbering spectral voices...");
-               set_confused(p_ptr->confused + randint(4) + 4);
+               add_flag(TIMED_CONFUSED, randint(4) + 4);
                } else if (die < 31) {
                poly_monster (dir,plev);
                } else if (die < 36) {
@@ -3028,16 +3028,16 @@ void do_cmd_cast(void)
 				damroll(4+((plev-5)/4), 8));
 		       break;
        case 19: /* Battle Frenzy */
-			(void)set_shero(p_ptr->shero + randint(25) + 25);
+			(void)add_flag(TIMED_SHERO, randint(25) + 25);
             (void)hp_player(30);
-			(void)set_afraid(0);
+			(void)set_flag(TIMED_AFRAID, 0);
 			if (!p_ptr->fast)
 			{
-				(void)set_fast(randint(20 + (plev / 2) ) + (plev / 2));
+				(void)set_flag(TIMED_FAST, randint(20 + (plev / 2) ) + (plev / 2));
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + randint(5));
+				(void)add_flag(TIMED_FAST, randint(5));
 			}
 		       break;
         case 20: /* Vampirism True */
@@ -3153,7 +3153,7 @@ void do_cmd_cast(void)
 
          break;
         case 31: /* Wraithform */
-        set_shadow(p_ptr->wraith_form + randint(plev/2) + (plev/2));
+        add_flag(TIMED_WRAITH, randint(plev/2) + (plev/2));
         break;
 	       default:
 		 msg_format("You cast an unknown Necromancy spell: %d.", spell);
@@ -3197,7 +3197,7 @@ void do_cmd_cast(void)
 		msg_print("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
-		(void)set_paralyzed(p_ptr->paralyzed + randint(5 * oops + 1));
+		(void)add_flag(TIMED_PARALYZED, randint(5 * oops + 1));
 
 		/* Damage CON (possibly permanently) */
 		if (rand_int(100) < 50)
@@ -3332,7 +3332,7 @@ void do_cmd_cantrip(void)
         break;
         case 7: /* Cure Light Wounds */
             (void) hp_player(damroll(2, 8));
-            (void) set_cut(p_ptr->cut - 10);
+            (void) set_flag(TIMED_CUT, p_ptr->cut - 10);
         break;
         case 8: /* Detect Doors & Traps */
 			(void)detect_traps();
@@ -3355,23 +3355,23 @@ void do_cmd_cantrip(void)
 			(void)detect_objects_normal();
         break;
         case 13: /* Cure Poison */
-			(void)set_poisoned(0);
+			(void)set_flag(TIMED_POISONED, 0);
         break;
         case 14: /* Resist Cold */
-			(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
         break;
         case 15: /* Resist Fire */
-			(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
         break;
         case 16: /* Resist Lightning */
-			(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
         break;
         case 17: /* Resist Acid */
-            (void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
+            (void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
         break;
         case 18: /* Cure Medium Wounds */
             (void)hp_player(damroll(4, 8));
-            (void)set_cut((p_ptr->cut / 2) - 50);
+            (void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
         break;
         case 19: /* Teleport */
             teleport_player(plev * 5);
@@ -3386,10 +3386,10 @@ void do_cmd_cantrip(void)
 			lite_line(dir);
         break;
         case 22: /* Satisfy Hunger */
-			(void)set_food(PY_FOOD_MAX - 1);
+			(void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
         break;
         case 23: /* See Invisible */
-			(void)set_tim_invis(p_ptr->tim_invis + randint(24) + 24);
+			(void)add_flag(TIMED_INVIS, randint(24) + 24);
         break;
         case 24: /* Recharging */
                (void)recharge(plev * 2);
@@ -3428,7 +3428,7 @@ void do_cmd_cantrip(void)
 			wiz_lite();
             if (!(p_ptr->telepathy))
             {
-                (void)set_tim_esp(p_ptr->tim_esp + randint(30) + 25);
+                (void)add_flag(TIMED_ESP, randint(30) + 25);
             }
         break;
         default:
@@ -3689,13 +3689,13 @@ void do_cmd_invoke(void)
 		       break;
 	   case 1: /* Cure Light Wounds */
 			(void)hp_player(damroll(2, 10));
-			(void)set_cut(p_ptr->cut - 10);
+			(void)set_flag(TIMED_CUT, p_ptr->cut - 10);
 		       break;
 	   case 2: /* Bless */
-			(void)set_blessed(p_ptr->blessed + randint(12) + 12);
+			(void)add_flag(TIMED_BLESSED, randint(12) + 12);
 		       break; 
 	   case 3: /* Remove Fear */
-			(void)set_afraid(0);
+			(void)set_flag(TIMED_AFRAID, 0);
 		       break;
 	   case 4: /* Call Light */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
@@ -3708,24 +3708,24 @@ void do_cmd_invoke(void)
 		       break;
 	   case 6: /* Cure Medium Wounds */
 			(void)hp_player(damroll(4, 10));
-			(void)set_cut((p_ptr->cut / 2) - 20);
+			(void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 20);
 		       break;
 	   case 7: /* Satisfy Hunger */
-			(void)set_food(PY_FOOD_MAX - 1);
+			(void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
 		       break;
 	   case 8: /* Remove Curse */
 			remove_curse();
 		       break;
 	   case 9: /* Cure Poison */
-			(void)set_poisoned(0);
+			(void)set_flag(TIMED_POISONED, 0);
 		       break;
 	   case 10: /* Cure Critical Wounds */
 			(void)hp_player(damroll(8, 10));
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)set_flag(TIMED_STUN, 0);
+			(void)set_flag(TIMED_CUT, 0);
 		       break;
 	   case 11: /* Sense Unseen */
-			(void)set_tim_invis(p_ptr->tim_invis + randint(24) + 24);
+			(void)add_flag(TIMED_INVIS, randint(24) + 24);
 		       break;
 	   case 12: /* Orb or Draining */
 	   if (!get_aim_dir(&dir)) return;
@@ -3733,12 +3733,12 @@ void do_cmd_invoke(void)
 				(damroll(3, 6) + plev + (plev /  4)),((plev < 30) ? 2 : 3));
 		       break;
 	   case 13: /* Protection from Evil */
-			(void)set_protevil(p_ptr->protevil + randint(25) + 3 * plev);
+			(void)add_flag(TIMED_PROTEVIL, randint(25) + 3 * plev);
 		       break;
 	   case 14: /* Healing */
 			(void)hp_player(300);
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)set_flag(TIMED_STUN, 0);
+			(void)set_flag(TIMED_CUT, 0);
 		       break;
 	   case 15: /* Glyph of Warding */
 			warding_glyph();
@@ -3770,22 +3770,22 @@ void do_cmd_invoke(void)
 	   case 22: /* Holy Word */
 	   (void)dispel_evil(plev * 4);
 			(void)hp_player(1000);
-			(void)set_afraid(0);
-			(void)set_poisoned(0);
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)set_flag(TIMED_AFRAID, 0);
+			(void)set_flag(TIMED_POISONED, 0);
+			(void)set_flag(TIMED_STUN, 0);
+			(void)set_flag(TIMED_CUT, 0);
 		       break;
 	   case 23: /* Warding True */
 		warding_glyph();
 		glyph_creation();
 		       break;
 	   case 24: /* Heroism */
-			(void)set_hero(p_ptr->hero + randint(25) + 25);
+			(void)add_flag(TIMED_HERO, randint(25) + 25);
 			(void)hp_player(10);
-			(void)set_afraid(0);
+			(void)set_flag(TIMED_AFRAID, 0);
 		       break;
 	   case 25: /* Prayer */
-			(void)set_blessed(p_ptr->blessed + randint(48) + 48);
+			(void)add_flag(TIMED_BLESSED, randint(48) + 48);
 		       break;
        case 26:
             bless_weapon();
@@ -3801,8 +3801,8 @@ void do_cmd_invoke(void)
 		       break;
        case 28: /* Healing True */
 			(void)hp_player(2000);
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)set_flag(TIMED_STUN, 0);
+			(void)set_flag(TIMED_CUT, 0);
 		       break;
        case 29: /* Holy Vision */
 		identify_fully();
@@ -3815,17 +3815,17 @@ void do_cmd_invoke(void)
          confuse_monsters(plev*4);
          turn_monsters(plev*4);
          stasis_monsters(plev*4);
-         (void)set_shero(p_ptr->shero + randint(25) + 25);
+         (void)add_flag(TIMED_SHERO, randint(25) + 25);
          (void)hp_player(300);
          if (!p_ptr->fast) {   /* Haste */
-         (void)set_fast(randint(20 + (plev) ) + plev);
+         (void)set_flag(TIMED_FAST, randint(20 + (plev) ) + plev);
          } else {
-         (void)set_fast(p_ptr->fast + randint(5));
+         (void)add_flag(TIMED_FAST, randint(5));
          }
-         (void)set_afraid(0);
+         (void)set_flag(TIMED_AFRAID, 0);
          break;
 	   case 31: /* Holy Invulnerability */
-			(void)set_invuln(p_ptr->invuln + randint(7) + 7);
+			(void)add_flag(TIMED_INVULN, randint(7) + 7);
 		       break;
 	       default:
 		 msg_format("You cast an unknown Life spell: %d.", spell);
@@ -3840,7 +3840,7 @@ void do_cmd_invoke(void)
 		       break;
 	   case 1: /* First Aid */
 			(void)hp_player(damroll(2, 8));
-			(void)set_cut(p_ptr->cut - 15);
+			(void)set_flag(TIMED_CUT, p_ptr->cut - 15);
 		       break;
 	   case 2: /* Detect Doors + Traps */
 			(void)detect_traps();
@@ -3849,7 +3849,7 @@ void do_cmd_invoke(void)
 			(void)detect_stairs();
 		       break; 
 	   case 3: /* Produce Food */
-			(void)set_food(PY_FOOD_MAX - 1);
+			(void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
 		       break;
        case 4: /* Daylight */
                (void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
@@ -3864,13 +3864,13 @@ void do_cmd_invoke(void)
          (void) charm_animal(dir, plev);
          break;
        case 6: /* Resist Environment */
-			(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-			(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-			(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
 		       break;
        case 7: /* Cure Wounds + Poison */
-            (void)set_cut(0);
-			(void)set_poisoned(0);
+            (void)set_flag(TIMED_CUT, 0);
+			(void)set_flag(TIMED_POISONED, 0);
 		       break;
 	   case 8: /* Stone to Mud */
 			if (!get_aim_dir(&dir)) return;
@@ -3908,9 +3908,9 @@ void do_cmd_invoke(void)
              break;
       case 15: /* Herbal Healing */
 			(void)hp_player(1000);
-			(void)set_stun(0);
-			(void)set_cut(0);
-			(void)set_poisoned(0);
+			(void)set_flag(TIMED_STUN, 0);
+			(void)set_flag(TIMED_CUT, 0);
+			(void)set_flag(TIMED_POISONED, 0);
 		       break;
        case 16: /* Door Building */
 			(void)door_creation();
@@ -3919,14 +3919,14 @@ void do_cmd_invoke(void)
 			(void)stair_creation();
 		       break;
        case 18: /* Stone Skin */
-			(void)set_shield(p_ptr->shield + randint(20) + 30);
+			(void)add_flag(TIMED_SHIELD, randint(20) + 30);
 		       break;
        case 19: /* Resistance True */
-			(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-			(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
-			(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-			(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-			(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_POIS, randint(20) + 20);
 		       break;
         case 20: /* Animal Friendship */
         (void) charm_animals(plev * 2);
@@ -4486,16 +4486,16 @@ void do_cmd_mindcraft(void)
 			else if (b < 15)
 			{
 				msg_print("Weird visions seem to dance before your eyes...");
-				set_image(p_ptr->image + 5 + randint(10));
+				add_flag(TIMED_IMAGE, 5 + randint(10));
 			}
 			else if (b < 45)
 			{
 				msg_print("Your brain is addled!");
-				set_confused(p_ptr->confused + randint(8));
+				add_flag(TIMED_CONFUSED, randint(8));
 			}
 			else if (b < 90)
 			{
-				set_stun(p_ptr->stun + randint(8));
+				add_flag(TIMED_STUN, randint(8));
 			}
 			else
 			{   /* Mana storm */
@@ -4587,12 +4587,12 @@ void do_cmd_mindcraft(void)
 			fire_ball(GF_SOUND, dir, damroll(8+((psi-5)/4), 8),(psi > 20 ? (psi-20)/8 + 1 : 0));
 			break;
 		case MIND_ARMOUR:
-			set_shield(p_ptr->shield + psi);
-			if (psi > 14)   set_oppose_acid(p_ptr->oppose_acid + psi);
-			if (psi > 19)   set_oppose_fire(p_ptr->oppose_fire + psi);
-			if (psi > 24)   set_oppose_cold(p_ptr->oppose_cold + psi);
-			if (psi > 29)   set_oppose_elec(p_ptr->oppose_elec + psi);
-			if (psi > 34)   set_oppose_pois(p_ptr->oppose_pois + psi);
+			add_flag(TIMED_SHIELD, psi);
+			if (psi > 14)   add_flag(TIMED_OPPOSE_ACID, psi);
+			if (psi > 19)   add_flag(TIMED_OPPOSE_FIRE, psi);
+			if (psi > 24)   add_flag(TIMED_OPPOSE_COLD, psi);
+			if (psi > 29)   add_flag(TIMED_OPPOSE_ELEC, psi);
+			if (psi > 34)   add_flag(TIMED_OPPOSE_POIS, psi);
 			break;
 		case MIND_PSYCH:
 			if (psi < 40)
@@ -4616,25 +4616,25 @@ void do_cmd_mindcraft(void)
 			}
 			break;
 		case MIND_ADRENALINE:
-			set_afraid(0);
-			set_stun(0);
+			set_flag(TIMED_AFRAID, 0);
+			set_flag(TIMED_STUN, 0);
 			hp_player(psi);
 			b = 10 + randint((psi*3)/2);
 			if (psi < 35)
 			{
-				set_hero(p_ptr->hero + b);
+				add_flag(TIMED_HERO, b);
 			}
 			else
 			{
-				set_shero(p_ptr->shero + b);
+				add_flag(TIMED_SHERO, b);
 			}
 			if (!p_ptr->fast)
 			{   /* Haste */
-				(void)set_fast(b);
+				(void)set_flag(TIMED_FAST, b);
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + b);
+				(void)add_flag(TIMED_FAST, b);
 			}
 			break;
 		case MIND_PSY_DRAIN:
@@ -4680,7 +4680,7 @@ void do_cmd_mindcraft(void)
 		msg_print("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
-        (void)set_paralyzed(p_ptr->paralyzed + randint(5 * oops + 1));
+        (void)add_flag(TIMED_PARALYZED, randint(5 * oops + 1));
 
 		/* Damage WIS (possibly permanently) */
 		if (rand_int(100) < 50)

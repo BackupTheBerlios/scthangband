@@ -1359,18 +1359,18 @@ void do_cmd_wiz_cure_all(void)
 	p_ptr->chi_frac = 0;
 
 	/* Cure stuff */
-	(void)set_blind(0);
-	(void)set_confused(0);
-	(void)set_poisoned(0);
-	(void)set_afraid(0);
-	(void)set_paralyzed(0);
-	(void)set_image(0);
-	(void)set_stun(0);
-	(void)set_cut(0);
-	(void)set_slow(0);
+	(void)set_flag(TIMED_BLIND, 0);
+	(void)set_flag(TIMED_CONFUSED, 0);
+	(void)set_flag(TIMED_POISONED, 0);
+	(void)set_flag(TIMED_AFRAID, 0);
+	(void)set_flag(TIMED_PARALYZED, 0);
+	(void)set_flag(TIMED_IMAGE, 0);
+	(void)set_flag(TIMED_STUN, 0);
+	(void)set_flag(TIMED_CUT, 0);
+	(void)set_flag(TIMED_SLOW, 0);
 
 	/* No longer hungry */
-	(void)set_food(PY_FOOD_MAX - 1);
+	(void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
 
 	/* Redraw everything */
 	do_cmd_redraw();

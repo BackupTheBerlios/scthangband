@@ -509,12 +509,12 @@ static void pattern_effect(void)
     if (cave[py][px].feat == FEAT_PATTERN_END)
     {
 
-                    (void)set_poisoned(0);
-                    (void)set_image(0);
-                    (void)set_stun(0);
-                    (void)set_cut(0);
-                    (void)set_blind(0);
-                    (void)set_afraid(0);
+                    (void)set_flag(TIMED_POISONED, 0);
+                    (void)set_flag(TIMED_IMAGE, 0);
+                    (void)set_flag(TIMED_STUN, 0);
+                    (void)set_flag(TIMED_CUT, 0);
+                    (void)set_flag(TIMED_BLIND, 0);
+                    (void)set_flag(TIMED_AFRAID, 0);
                     (void)do_res_stat(A_STR);
                     (void)do_res_stat(A_INT);
                     (void)do_res_stat(A_WIS);
@@ -1297,7 +1297,7 @@ static void process_food(void)
 			if (i < 1) i = 1;
 
 			/* Digest some food */
-			(void)set_food(p_ptr->food - i);
+			(void)set_flag(TIMED_FOOD, p_ptr->food - i);
 		}
 	}
 
@@ -1305,7 +1305,7 @@ static void process_food(void)
 	else
 	{
 		/* Digest a lot of food */
-		(void)set_food(p_ptr->food - 100);
+		(void)set_flag(TIMED_FOOD, p_ptr->food - 100);
 	}
 
 	/* Starve to death (slowly) */
@@ -1330,7 +1330,7 @@ static void process_food(void)
 			disturb(1, 0);
 
 			/* Hack -- faint (bypass free action) */
-			(void)set_paralyzed(p_ptr->paralyzed + 1 + rand_int(5));
+			(void)add_flag(TIMED_PARALYZED, 1 + rand_int(5));
 		}
 	}
 }
@@ -1532,7 +1532,7 @@ static void process_chaos(void)
 			disturb(0,0);
 			msg_print("RAAAAGHH!");
 			msg_print("You feel a fit of rage coming over you!");
-			(void) set_shero(p_ptr->shero + 10 + randint(skill_set[SKILL_RACIAL].value/2));
+			(void) add_flag(TIMED_SHERO, 10 + randint(skill_set[SKILL_RACIAL].value/2));
 		}
 
 		if ((p_ptr->muta2 & MUT2_COWARDICE) && (randint(3000)==13))
@@ -1581,13 +1581,13 @@ static void process_chaos(void)
 				{
 					if (!(p_ptr->resist_conf))
 					{
-						(void)set_confused(p_ptr->confused + rand_int(20) + 15);
+						(void)add_flag(TIMED_CONFUSED, rand_int(20) + 15);
 					}
 
 					if ((randint(3)==1) && !(p_ptr->resist_chaos))
 					{
 						msg_print("Thishcischs GooDSChtuff!");
-						(void)set_image(p_ptr->image + rand_int(150) + 150);
+						(void)add_flag(TIMED_IMAGE, rand_int(150) + 150);
 					}
 				}
 			}
@@ -1598,7 +1598,7 @@ static void process_chaos(void)
 			if (!(p_ptr->resist_chaos))
 			{
 				disturb(0,0);
-				(void)set_image(p_ptr->image + rand_int(50) + 20);
+				(void)add_flag(TIMED_IMAGE, rand_int(50) + 20);
 			}
 		}
 
@@ -1645,11 +1645,11 @@ static void process_chaos(void)
 				msg_print("You feel less energetic.");
 				if (p_ptr->fast > 0)
 				{
-					set_fast(0);
+					set_flag(TIMED_FAST, 0);
 				}
 				else
 				{
-					set_slow(p_ptr->slow + randint(30) + 10);
+					add_flag(TIMED_SLOW, randint(30) + 10);
 				}
 			}
 			else
@@ -1657,11 +1657,11 @@ static void process_chaos(void)
 				msg_print("You feel more energetic.");
 				if (p_ptr->slow > 0)
 				{
-					set_slow(0);
+					set_flag(TIMED_SLOW, 0);
 				}
 				else
 				{
-					set_fast(p_ptr->fast + randint(30) + 10);
+					add_flag(TIMED_FAST, randint(30) + 10);
 				}
 			}
 			msg_print(NULL);
@@ -1776,7 +1776,7 @@ static void process_chaos(void)
 			disturb(0,0);
 			msg_print("You feel insubstantial!");
 			msg_print(NULL);
-			set_shadow(p_ptr->wraith_form + randint(skill_set[SKILL_RACIAL].value/4) + (skill_set[SKILL_RACIAL].value/4));
+			add_flag(TIMED_WRAITH, randint(skill_set[SKILL_RACIAL].value/4) + (skill_set[SKILL_RACIAL].value/4));
 		}
 		if ((p_ptr->muta2 & MUT2_POLY_WOUND) &&
 			(randint(3000)==1))
@@ -1814,12 +1814,12 @@ static void process_chaos(void)
 			if (p_ptr->tim_esp > 0)
 			{
 				msg_print("Your mind feels cloudy!");
-				set_tim_esp(0);
+				set_flag(TIMED_ESP, 0);
 			}
 			else
 			{
 				msg_print("Your mind expands!");
-				set_tim_esp(skill_set[SKILL_RACIAL].value/2);
+				set_flag(TIMED_ESP, skill_set[SKILL_RACIAL].value/2);
 			}
 		}
 		if ((p_ptr->muta2 & MUT2_NAUSEA) && !(p_ptr->slow_digest) &&
@@ -1829,7 +1829,7 @@ static void process_chaos(void)
 			disturb(0,0);
 			msg_print("Your stomach roils, and you lose your lunch!");
 			msg_print(NULL);
-			set_food(PY_FOOD_WEAK);
+			set_flag(TIMED_FOOD, PY_FOOD_WEAK);
 		}
 
 		if ((p_ptr->muta2 & MUT2_WALK_SHAD) &&
@@ -1879,7 +1879,7 @@ static void process_chaos(void)
 			disturb(0,0);
 			msg_print("You feel invincible!");
 			msg_print(NULL);
-			(void)set_invuln(p_ptr->invuln + randint(8) + 8);
+			(void)add_flag(TIMED_INVULN, randint(8) + 8);
 		}
 		if ((p_ptr->muta2 & MUT2_SP_TO_HP) &&
 			(randint(2000)==1))
@@ -3877,17 +3877,17 @@ static void resurrect(bool wizard)
 	p_ptr->chi_frac = 0;
 
 	/* Hack -- Healing */
-	(void)set_blind(0);
-	(void)set_confused(0);
-	(void)set_poisoned(0);
-	(void)set_afraid(0);
-	(void)set_paralyzed(0);
-	(void)set_image(0);
-	(void)set_stun(0);
-	(void)set_cut(0);
+	(void)set_flag(TIMED_BLIND, 0);
+	(void)set_flag(TIMED_CONFUSED, 0);
+	(void)set_flag(TIMED_POISONED, 0);
+	(void)set_flag(TIMED_AFRAID, 0);
+	(void)set_flag(TIMED_PARALYZED, 0);
+	(void)set_flag(TIMED_IMAGE, 0);
+	(void)set_flag(TIMED_STUN, 0);
+	(void)set_flag(TIMED_CUT, 0);
 
 	/* Hack -- Prevent starvation */
-	(void)set_food(PY_FOOD_MAX - 1);
+	(void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
 
 	/* Hack -- cancel recall */
 	if (p_ptr->word_recall)

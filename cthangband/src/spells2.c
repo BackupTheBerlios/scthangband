@@ -5055,7 +5055,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
 		{
 			/* Become blind */
-			(void)set_blind(p_ptr->blind + 10 + randint(10));
+			(void)add_flag(TIMED_BLIND, 10 + randint(10));
 		}
 	}
 
@@ -5230,14 +5230,14 @@ void earthquake(int cy, int cx, int r)
 				{
 					msg_print("You are bashed by rubble!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint(50));
+					(void)add_flag(TIMED_STUN, randint(50));
 					break;
 				}
 				case 3:
 				{
 					msg_print("You are crushed between the floor and ceiling!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint(50));
+					(void)add_flag(TIMED_STUN, randint(50));
 					break;
 				}
 			}
@@ -6111,9 +6111,9 @@ void activate_ty_curse(void)
         {
             msg_print("You feel like a statue!");
             if (p_ptr->free_act)
-                set_paralyzed (p_ptr->paralyzed + randint(3));
+                add_flag(TIMED_PARALYZED, randint(3));
             else
-                set_paralyzed (p_ptr->paralyzed + randint(13));
+                add_flag(TIMED_PARALYZED, randint(13));
         }
         if (randint(6)!=1) break;
 	    case 21: case 22: case 23:

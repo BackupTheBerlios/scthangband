@@ -3228,12 +3228,12 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 				msg_print("Your mind is blasted by psionic energy.");
 				if (!p_ptr->resist_conf)
 				{
-					(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+					(void)add_flag(TIMED_CONFUSED, rand_int(4) + 4);
 				}
 
                 if ((!p_ptr->resist_chaos) && (randint(3)==1))
                 {
-                    (void) set_image(p_ptr->image + rand_int(250) + 150);
+                    (void) add_flag(TIMED_IMAGE, rand_int(250) + 150);
                 }
 				take_hit(damroll(8, 8), ddesc, m_ptr->r_idx);
 			}
@@ -3263,17 +3263,17 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 				take_hit(damroll(12, 15), ddesc, m_ptr->r_idx);
 				if (!p_ptr->resist_blind)
 				{
-					(void)set_blind(p_ptr->blind + 8 + rand_int(8));
+					(void)add_flag(TIMED_BLIND, 8 + rand_int(8));
 				}
 				if (!p_ptr->resist_conf)
 				{
-					(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+					(void)add_flag(TIMED_CONFUSED, rand_int(4) + 4);
 				}
 				if (!p_ptr->free_act)
 				{
-					(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+					(void)add_flag(TIMED_PARALYZED, rand_int(4) + 4);
 				}
-				(void)set_slow(p_ptr->slow + rand_int(4) + 4);
+				(void)add_flag(TIMED_SLOW, rand_int(4) + 4);
 
                 while (rand_int(100) > p_ptr->skill_sav)
                     (void)do_dec_stat(A_INT);
@@ -3282,7 +3282,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 
                 if (!p_ptr->resist_chaos)
                 {
-                    (void) set_image(p_ptr->image + rand_int(250) + 150);
+                    (void) add_flag(TIMED_IMAGE, rand_int(250) + 150);
                 }
 
 			}
@@ -3361,7 +3361,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			else
 			{
 				take_hit(damroll(15, 15), ddesc, m_ptr->r_idx);
-				(void)set_cut(p_ptr->cut + damroll(10, 10));
+				(void)add_flag(TIMED_CUT, damroll(10, 10));
 			}
 			break;
 		}
@@ -3505,7 +3505,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			}
 			else
 			{
-				(void)set_afraid(p_ptr->afraid + rand_int(4) + 4);
+				(void)add_flag(TIMED_AFRAID, rand_int(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FEAR);
 			break;
@@ -3528,7 +3528,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			}
 			else
 			{
-				(void)set_blind(12 + rand_int(4));
+				(void)set_flag(TIMED_BLIND, 12 + rand_int(4));
 			}
 			update_smart_learn(m_idx, DRS_BLIND);
 			break;
@@ -3551,7 +3551,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			}
 			else
 			{
-				(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+				(void)add_flag(TIMED_CONFUSED, rand_int(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_CONF);
 			break;
@@ -3573,7 +3573,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			}
 			else
 			{
-				(void)set_slow(p_ptr->slow + rand_int(4) + 4);
+				(void)add_flag(TIMED_SLOW, rand_int(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -3596,7 +3596,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			}
 			else
 			{
-				(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+				(void)add_flag(TIMED_PARALYZED, rand_int(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;

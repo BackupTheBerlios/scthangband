@@ -1470,11 +1470,11 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
 	{
 		if (!p_ptr->resist_conf)
 		{
-			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+			(void)add_flag(TIMED_CONFUSED, rand_int(4) + 4);
 		}
 		if ((!p_ptr->resist_chaos) && (randint(3)==1))
 		{
-			(void) set_image(p_ptr->image + rand_int(250) + 150);
+			(void) add_flag(TIMED_IMAGE, rand_int(250) + 150);
 		}
 		return;
 	}
@@ -1492,11 +1492,11 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
     {
 				if (!p_ptr->resist_conf)
 				{
-					(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+					(void)add_flag(TIMED_CONFUSED, rand_int(4) + 4);
 				}
 				if (!p_ptr->free_act)
 				{
-					(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+					(void)add_flag(TIMED_PARALYZED, rand_int(4) + 4);
 				}
                 while (rand_int(100) > p_ptr->skill_sav)
                     (void)do_dec_stat(A_INT);
@@ -1504,7 +1504,7 @@ static void sanity_blast (monster_type * m_ptr, bool necro)
                     (void)do_dec_stat(A_WIS);
                 if (!p_ptr->resist_chaos)
                 {
-                    (void) set_image(p_ptr->image + rand_int(250) + 150);
+                    (void) add_flag(TIMED_IMAGE, rand_int(250) + 150);
                 }
         return;
     }

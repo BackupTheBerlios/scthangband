@@ -3605,90 +3605,90 @@ extern void update_object(object_type *o_ptr, int where);
 #if (defined(CHECK_ARRAYS)) && (defined(INIT2_C) || defined(XTRA2_C))
 extern void check_temp_effects(void);
 #endif
-#if (defined(CMD1_C) || defined(DUNGEON_C) || defined(XTRA2_C))
+#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
 extern bool add_flag(int flag, int v);
 #endif
-#if (defined(XTRA2_C))
+#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
 extern bool set_flag(int flag, int v);
 #endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_blind(int v);
-#endif
-#if (defined(CMD1_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_confused(int v);
-#endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(SPELLS1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_poisoned(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_afraid(int v);
-#endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_paralyzed(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_image(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(SPELLS1_C) || defined(XTRA2_C))
-extern bool set_fast(int v);
-#endif
-#if (defined(CMD1_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_slow(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(XTRA2_C))
-extern bool set_shield(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_blessed(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_hero(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(XTRA2_C))
-extern bool set_shero(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_protevil(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(XTRA2_C))
-extern bool set_shadow(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(XTRA2_C))
-extern bool set_invuln(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(XTRA2_C))
-extern bool set_tim_esp(int v);
-#endif
-#if (defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_tim_invis(int v);
-#endif
-#if (defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_tim_infra(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_oppose_acid(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_oppose_elec(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_oppose_fire(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_oppose_cold(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(XTRA2_C))
-extern bool set_oppose_pois(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_stun(int v);
-#endif
-#if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_cut(int v);
-#endif
-#if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(WIZARD2_C) || defined(XTRA2_C))
-extern bool set_food(int v);
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(XTRA2_C))
 extern void gain_exp(s32b amount);
 #endif

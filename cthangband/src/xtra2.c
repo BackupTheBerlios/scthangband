@@ -678,160 +678,6 @@ bool set_flag(int flag, int v)
 	return set_flag_aux(flag, v, FALSE);
 }
 
-/* A few globally visible wrappers for the above function. */
-
-bool set_blind(int v)
-{
-	return set_flag(TIMED_BLIND, v);
-}
-
-bool set_confused(int v)
-{
-	return set_flag(TIMED_CONFUSED, v);
-}
-
-bool set_poisoned(int v)
-{
-	return set_flag(TIMED_POISONED, v);
-}
-
-bool set_afraid(int v)
-{
-	return set_flag(TIMED_AFRAID, v);
-}
-
-bool set_paralyzed(int v)
-{
-	return set_flag(TIMED_PARALYZED, v);
-}
-
-bool set_image(int v)
-{
-	return set_flag(TIMED_IMAGE, v);
-}
-
-bool set_fast(int v)
-{
-	return set_flag(TIMED_FAST, v);
-}
-
-bool set_slow(int v)
-{
-	return set_flag(TIMED_SLOW, v);
-}
-
-bool set_shield(int v)
-{
-	return set_flag(TIMED_SHIELD, v);
-}
-
-bool set_blessed(int v)
-{
-	return set_flag(TIMED_BLESSED, v);
-}
-
-bool set_hero(int v)
-{
-	return set_flag(TIMED_HERO, v);
-}
-
-bool set_shero(int v)
-{
-	return set_flag(TIMED_SHERO, v);
-}
-
-bool set_protevil(int v)
-{
-	return set_flag(TIMED_PROTEVIL, v);
-}
-
-bool set_shadow(int v)
-{
-	return set_flag(TIMED_WRAITH, v);
-}
-
-bool set_invuln(int v)
-{
-	return set_flag(TIMED_INVULN, v);
-}
-
-bool set_tim_esp(int v)
-{
-	return set_flag(TIMED_ESP, v);
-}
-
-bool set_tim_invis(int v)
-{
-	return set_flag(TIMED_INVIS, v);
-}
-
-bool set_tim_infra(int v)
-{
-	return set_flag(TIMED_INFRA, v);
-}
-
-bool set_oppose_acid(int v)
-{
-	return set_flag(TIMED_OPPOSE_ACID, v);
-}
-
-bool set_oppose_elec(int v)
-{
-	return set_flag(TIMED_OPPOSE_ELEC, v);
-}
-
-bool set_oppose_fire(int v)
-{
-	return set_flag(TIMED_OPPOSE_FIRE, v);
-}
-
-bool set_oppose_cold(int v)
-{
-	return set_flag(TIMED_OPPOSE_COLD, v);
-}
-
-bool set_oppose_pois(int v)
-{
-	return set_flag(TIMED_OPPOSE_POIS, v);
-}
-
-bool set_stun(int v)
-{
-	return set_flag(TIMED_STUN, v);
-}
-
-bool set_cut(int v)
-{
-	return set_flag(TIMED_CUT, v);
-}
-
-/*
- * Set "p_ptr->food", notice observable changes
- *
- * The "p_ptr->food" variable can get as large as 20000, allowing the
- * addition of the most "filling" item, Elvish Waybread, which adds
- * 7500 food units, without overflowing the 32767 maximum limit.
- *
- * Perhaps we should disturb the player with various messages,
- * especially messages about hunger status changes.  XXX XXX XXX
- *
- * Digestion of food is handled in "dungeon.c", in which, normally,
- * the player digests about 20 food units per 100 game turns, more
- * when "fast", more when "regenerating", less with "slow digestion",
- * but when the player is "gorged", he digests 100 food units per 10
- * game turns, or a full 1000 food units per 100 game turns.
- *
- * Note that the player's speed is reduced by 10 units while gorged,
- * so if the player eats a single food ration (5000 food units) when
- * full (15000 food units), he will be gorged for (5000/100)*10 = 500
- * game turns, or 500/(100/5) = 25 player turns (if nothing else is
- * affecting the player speed).
- */
-bool set_food(int v)
-{
-	return set_flag(TIMED_FOOD, v);
-}
-
 /*
  * Gain experience
  */
@@ -3719,12 +3565,12 @@ void gain_level_reward(int chosen_reward)
                 chaos_patron_shorts[p_ptr->chaos_patron]);
             msg_print("'Rise, my servant!'");
             restore_level();
-            (void)set_poisoned(0);
-            (void)set_blind(0);
-            (void)set_confused(0);
-            (void)set_image(0);
-            (void)set_stun(0);
-            (void)set_cut(0);
+            (void)set_flag(TIMED_POISONED, 0);
+            (void)set_flag(TIMED_BLIND, 0);
+            (void)set_flag(TIMED_CONFUSED, 0);
+            (void)set_flag(TIMED_IMAGE, 0);
+            (void)set_flag(TIMED_STUN, 0);
+            (void)set_flag(TIMED_CUT, 0);
             hp_player(5000);
             for (dummy = 0; dummy < 6; dummy++)
             {

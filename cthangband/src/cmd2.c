@@ -500,7 +500,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg_print("A puff of green gas surrounds you!");
 		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 		{
-			(void)set_poisoned(p_ptr->poisoned + 10 + randint(20));
+			(void)add_flag(TIMED_POISONED, 10 + randint(20));
 		}
 	}
 
@@ -510,7 +510,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg_print("A puff of yellow gas surrounds you!");
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + 10 + randint(20));
+			(void)add_flag(TIMED_PARALYZED, 10 + randint(20));
 		}
 	}
 
@@ -1723,7 +1723,7 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
 		msg_print("You are off-balance.");
 
 		/* Hack -- Lose balance ala paralysis */
-		(void)set_paralyzed(p_ptr->paralyzed + 2 + rand_int(2));
+		(void)add_flag(TIMED_PARALYZED, 2 + rand_int(2));
 	}
 
 	/* Result */
@@ -3115,22 +3115,22 @@ static void use_power(powertype *pw_ptr)
             break;
         case RACE_HALF_ORC:
                     msg_print("You play tough.");
-                    (void)set_afraid(0);
+                    (void)set_flag(TIMED_AFRAID, 0);
             break;
         case RACE_HALF_TROLL:
                 msg_print("RAAAGH!");
-                (void)set_afraid(0);
-                (void)set_shero(p_ptr->shero + 10 + randint(plev));
+                (void)set_flag(TIMED_AFRAID, 0);
+                (void)add_flag(TIMED_SHERO, 10 + randint(plev));
                 (void)hp_player(30);
                         break;
 			case RACE_GREAT: /* Dreaming */
                     msg_print("You dream of a time of health and peace...");
-                    (void)set_poisoned(0);
-                    (void)set_image(0);
-                    (void)set_stun(0);
-                    (void)set_cut(0);
-                    (void)set_blind(0);
-                    (void)set_afraid(0);
+                    (void)set_flag(TIMED_POISONED, 0);
+                    (void)set_flag(TIMED_IMAGE, 0);
+                    (void)set_flag(TIMED_STUN, 0);
+                    (void)set_flag(TIMED_CUT, 0);
+                    (void)set_flag(TIMED_BLIND, 0);
+                    (void)set_flag(TIMED_AFRAID, 0);
                     (void)do_res_stat(A_STR);
                     (void)do_res_stat(A_INT);
                     (void)do_res_stat(A_WIS);
@@ -3145,8 +3145,8 @@ static void use_power(powertype *pw_ptr)
             break;
         case RACE_BARBARIAN:
                 msg_print("Raaagh!");
-                (void)set_afraid(0);
-                (void)set_shero(p_ptr->shero + 10 + randint(plev));
+                (void)set_flag(TIMED_AFRAID, 0);
+                (void)add_flag(TIMED_SHERO, 10 + randint(plev));
                 (void)hp_player(30);
             break;
         case RACE_HALF_OGRE:
@@ -3222,7 +3222,7 @@ static void use_power(powertype *pw_ptr)
                 }
             break;
         case RACE_GOLEM:
-                    (void)set_shield(p_ptr->shield + randint(20) + 30);
+                    (void)add_flag(TIMED_SHIELD, randint(20) + 30);
             break;
         case RACE_SKELETON: case RACE_ZOMBIE:
                 msg_print("You attempt to restore your lost energies.");
@@ -3258,7 +3258,7 @@ static void use_power(powertype *pw_ptr)
                /* But if we ARE Gorged,  it won't cure us */
                dummy = p_ptr->food + MIN(5000, 100 * dummy);
                if (p_ptr->food < PY_FOOD_MAX)   /* Not gorged already */
-                 (void)set_food(dummy >= PY_FOOD_MAX ? PY_FOOD_MAX-1 : dummy);
+                 (void)set_flag(TIMED_FOOD, dummy >= PY_FOOD_MAX ? PY_FOOD_MAX-1 : dummy);
                }
             }
             break;
@@ -3369,17 +3369,17 @@ static void use_power(powertype *pw_ptr)
 					if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 						(c_ptr->feat <= FEAT_RUBBLE))
 		{
-						(void)set_food(p_ptr->food + 3000);
+						(void)add_flag(TIMED_FOOD, 3000);
 		}
 					else if ((c_ptr->feat >= FEAT_MAGMA) &&
 						(c_ptr->feat <= FEAT_QUARTZ_K))
 		{
-						(void)set_food(p_ptr->food + 5000);
+						(void)add_flag(TIMED_FOOD, 5000);
 		}
 					else
 		{
 						msg_print("This granite is very filling!");
-						(void)set_food(p_ptr->food + 10000);
+						(void)add_flag(TIMED_FOOD, 10000);
 		}
 		}
 				(void)wall_to_mud(dir);
@@ -3407,9 +3407,9 @@ static void use_power(powertype *pw_ptr)
 		}
 			break;
 			case iilog(MUT1_BERSERK):
-				(void)set_shero(p_ptr->shero + randint(25) + 25);
+				(void)add_flag(TIMED_SHERO, randint(25) + 25);
 				(void)hp_player(30);
-				(void)set_afraid(0);
+				(void)set_flag(TIMED_AFRAID, 0);
 				break;
 			case iilog(MUT1_POLYMORPH):
 				do_poly_self();
@@ -3430,27 +3430,27 @@ static void use_power(powertype *pw_ptr)
 
 				if (rand_int(5) < num)
 		{
-					(void)set_oppose_acid(p_ptr->oppose_acid + dur);
+					(void)add_flag(TIMED_OPPOSE_ACID, dur);
 					num--;
 		}
 				if (rand_int(4) < num)
 		{
-					(void)set_oppose_elec(p_ptr->oppose_elec + dur);
+					(void)add_flag(TIMED_OPPOSE_ELEC, dur);
 					num--;
 		}
 				if (rand_int(3) < num)
 		{
-					(void)set_oppose_fire(p_ptr->oppose_fire + dur);
+					(void)add_flag(TIMED_OPPOSE_FIRE, dur);
 					num--;
 		}
 				if (rand_int(2) < num)
 		{
-					(void)set_oppose_cold(p_ptr->oppose_cold + dur);
+					(void)add_flag(TIMED_OPPOSE_COLD, dur);
 					num--;
 		}
 				if (num)
 		{
-					(void)set_oppose_pois(p_ptr->oppose_pois + dur);
+					(void)add_flag(TIMED_OPPOSE_POIS, dur);
 					num--;
 	}
 				break;

@@ -233,7 +233,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
-				if (set_poisoned(p_ptr->poisoned + rand_int(10) + 10))
+				if (add_flag(TIMED_POISONED, rand_int(10) + 10))
 				{
 					(*ident) = TRUE;
 				}
@@ -245,7 +245,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->resist_blind)
 			{
-				if (set_blind(p_ptr->blind + rand_int(200) + 200))
+				if (add_flag(TIMED_BLIND, rand_int(200) + 200))
 				{
 					(*ident) = TRUE;
 				}
@@ -257,7 +257,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->resist_fear)
 			{
-				if (set_afraid(p_ptr->afraid + rand_int(10) + 10))
+				if (add_flag(TIMED_AFRAID, rand_int(10) + 10))
 				{
 					(*ident) = TRUE;
 				}
@@ -269,7 +269,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->resist_conf)
 			{
-				if (set_confused(p_ptr->confused + rand_int(10) + 10))
+				if (add_flag(TIMED_CONFUSED, rand_int(10) + 10))
 				{
 					(*ident) = TRUE;
 				}
@@ -281,7 +281,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->resist_chaos)
 			{
-				if (set_image(p_ptr->image + rand_int(250) + 250))
+				if (add_flag(TIMED_IMAGE, rand_int(250) + 250))
 				{
 					(*ident) = TRUE;
 				}
@@ -293,7 +293,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->free_act)
 			{
-				if (set_paralyzed(p_ptr->paralyzed + rand_int(10) + 10))
+				if (add_flag(TIMED_PARALYZED, rand_int(10) + 10))
 				{
 					(*ident) = TRUE;
 				}
@@ -351,25 +351,25 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_FOOD_CURE_POISON:
 		{
-			if (set_poisoned(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_FOOD_CURE_BLINDNESS:
 		{
-			if (set_blind(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_FOOD_CURE_PARANOIA:
 		{
-			if (set_afraid(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_FOOD_CURE_CONFUSION:
 		{
-			if (set_confused(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -406,7 +406,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		case OBJ_PIECE_OF_ELVISH_WAYBREAD:
 		{
 			msg_print("That tastes good.");
-			(void)set_poisoned(0);
+			(void)set_flag(TIMED_POISONED, 0);
 			(void)hp_player(damroll(4, 8));
 			(*ident) = TRUE;
 			return SUCCESS;
@@ -423,16 +423,16 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_POTION_SLOWNESS:
 		{
-			if (set_slow(p_ptr->slow + randint(25) + 15)) (*ident) = TRUE;
+			if (add_flag(TIMED_SLOW, randint(25) + 15)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_SALT_WATER:
 		{
 			msg_print("The potion makes you vomit!");
-			(void)set_food(PY_FOOD_STARVE - 1);
-			(void)set_poisoned(0);
-			(void)set_paralyzed(p_ptr->paralyzed + 4);
+			(void)set_flag(TIMED_FOOD, PY_FOOD_STARVE - 1);
+			(void)set_flag(TIMED_POISONED, 0);
+			(void)add_flag(TIMED_PARALYZED, 4);
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -441,7 +441,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
-				if (set_poisoned(p_ptr->poisoned + rand_int(15) + 10))
+				if (add_flag(TIMED_POISONED, rand_int(15) + 10))
 				{
 					(*ident) = TRUE;
 				}
@@ -453,7 +453,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->resist_blind)
 			{
-				if (set_blind(p_ptr->blind + rand_int(100) + 100))
+				if (add_flag(TIMED_BLIND, rand_int(100) + 100))
 				{
 					(*ident) = TRUE;
 				}
@@ -465,13 +465,13 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
             if (!((p_ptr->resist_conf) || (p_ptr->resist_chaos)))
 			{
-				if (set_confused(p_ptr->confused + rand_int(20) + 15))
+				if (add_flag(TIMED_CONFUSED, rand_int(20) + 15))
 				{
 					(*ident) = TRUE;
 				}
                 if (randint(2)==1)
                 {
-                    if (set_image(p_ptr->image + rand_int(150) + 150))
+                    if (add_flag(TIMED_IMAGE, rand_int(150) + 150))
                     {
                         (*ident) = TRUE;
                     }
@@ -494,7 +494,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->free_act)
 			{
-				if (set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4))
+				if (add_flag(TIMED_PARALYZED, rand_int(4) + 4))
 				{
 					(*ident) = TRUE;
 				}
@@ -567,8 +567,8 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			msg_print("Massive explosions rupture your body!");
 			take_hit(damroll(50, 20), "a potion of Detonation", MON_HARMFUL_POTION);
-			(void)set_stun(p_ptr->stun + 75);
-			(void)set_cut(p_ptr->cut + 5000);
+			(void)add_flag(TIMED_STUN, 75);
+			(void)add_flag(TIMED_CUT, 5000);
 			(*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -583,7 +583,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_POTION_INFRA_VISION:
 		{
-			if (set_tim_infra(p_ptr->tim_infra + 100 + randint(100)))
+			if (add_flag(TIMED_INFRA, 100 + randint(100)))
 			{
 				(*ident) = TRUE;
 			}
@@ -592,7 +592,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_POTION_DETECT_INVIS:
 		{
-			if (set_tim_invis(p_ptr->tim_invis + 12 + randint(12)))
+			if (add_flag(TIMED_INVIS, 12 + randint(12)))
 			{
 				(*ident) = TRUE;
 			}
@@ -601,19 +601,19 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_POTION_SLOW_POISON:
 		{
-			if (set_poisoned(p_ptr->poisoned / 2)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, p_ptr->poisoned / 2)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_NEUTRALIZE_POISON:
 		{
-			if (set_poisoned(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_BOLDNESS:
 		{
-			if (set_afraid(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -621,18 +621,18 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(25) + 15)) (*ident) = TRUE;
+				if (set_flag(TIMED_FAST, randint(25) + 15)) (*ident) = TRUE;
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void)add_flag(TIMED_FAST, 5);
 			}
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_RES_HEAT:
 		{
-			if (set_oppose_fire(p_ptr->oppose_fire + randint(10) + 10))
+			if (add_flag(TIMED_OPPOSE_FIRE, randint(10) + 10))
 			{
 				(*ident) = TRUE;
 			}
@@ -641,7 +641,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_POTION_RES_COLD:
 		{
-			if (set_oppose_cold(p_ptr->oppose_cold + randint(10) + 10))
+			if (add_flag(TIMED_OPPOSE_COLD, randint(10) + 10))
 			{
 				(*ident) = TRUE;
 			}
@@ -650,16 +650,16 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_POTION_HEROISM:
 		{
-            if (set_afraid(0)) (*ident) = TRUE;
-			if (set_hero(p_ptr->hero + randint(25) + 25)) (*ident) = TRUE;
+            if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
+			if (add_flag(TIMED_HERO, randint(25) + 25)) (*ident) = TRUE;
 			if (hp_player(10)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_BERSERK_STR:
 		{
-            if (set_afraid(0)) (*ident) = TRUE;
-			if (set_shero(p_ptr->shero + randint(25) + 25)) (*ident) = TRUE;
+            if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
+			if (add_flag(TIMED_SHERO, randint(25) + 25)) (*ident) = TRUE;
 			if (hp_player(30)) (*ident) = TRUE;
 			return SUCCESS;
 		}
@@ -667,50 +667,50 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		case OBJ_POTION_CURE_LIGHT:
 		{
 			if (hp_player(damroll(2, 8))) (*ident) = TRUE;
-			if (set_blind(0)) (*ident) = TRUE;
-			if (set_cut(p_ptr->cut - 10)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, p_ptr->cut - 10)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_CURE_SERIOUS:
 		{
 			if (hp_player(damroll(4, 8))) (*ident) = TRUE;
-			if (set_blind(0)) (*ident) = TRUE;
-			if (set_confused(0)) (*ident) = TRUE;
-			if (set_cut((p_ptr->cut / 2) - 50)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_CURE_CRITICAL:
 		{
 			if (hp_player(damroll(6, 8))) (*ident) = TRUE;
-			if (set_blind(0)) (*ident) = TRUE;
-			if (set_confused(0)) (*ident) = TRUE;
-			if (set_poisoned(0)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_HEALING:
 		{
 			if (hp_player(300)) (*ident) = TRUE;
-			if (set_blind(0)) (*ident) = TRUE;
-			if (set_confused(0)) (*ident) = TRUE;
-			if (set_poisoned(0)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_POTION_STAR_HEALING:
 		{
 			if (hp_player(1200)) (*ident) = TRUE;
-			if (set_blind(0)) (*ident) = TRUE;
-			if (set_confused(0)) (*ident) = TRUE;
-			if (set_poisoned(0)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -719,12 +719,12 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			msg_print("You feel life flow through your body!");
 			restore_level();
 			hp_player(5000);
-			(void)set_poisoned(0);
-			(void)set_blind(0);
-			(void)set_confused(0);
-			(void)set_image(0);
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)set_flag(TIMED_POISONED, 0);
+			(void)set_flag(TIMED_BLIND, 0);
+			(void)set_flag(TIMED_CONFUSED, 0);
+			(void)set_flag(TIMED_IMAGE, 0);
+			(void)set_flag(TIMED_STUN, 0);
+			(void)set_flag(TIMED_CUT, 0);
 			(void)do_res_stat(A_STR);
 			(void)do_res_stat(A_CON);
 			(void)do_res_stat(A_DEX);
@@ -896,11 +896,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
         case OBJ_POTION_RESISTANCE:
         {
-            (void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-			(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
-			(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-			(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-			(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+            (void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
+			(void)add_flag(TIMED_OPPOSE_POIS, randint(20) + 20);
             (*ident) = TRUE;
         return SUCCESS;
         }
@@ -908,18 +908,18 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
         case OBJ_POTION_CURING:
         {
             if (hp_player(50)) (*ident) = TRUE;
-            if (set_blind(0)) (*ident) = TRUE;
-			if (set_poisoned(0)) (*ident) = TRUE;
-			if (set_confused(0)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
-            if (set_image(0)) (*ident) = TRUE;
+            if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
+            if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
         return SUCCESS;
         }
 
         case OBJ_POTION_INVULNERABILITY:
         {
-            (void)set_invuln(p_ptr->invuln + randint(7) + 7);
+            (void)add_flag(TIMED_INVULN, randint(7) + 7);
             (*ident) = TRUE;
         return SUCCESS;
         }
@@ -941,7 +941,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
             if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
-				(void)set_blind(p_ptr->blind + 3 + randint(5));
+				(void)add_flag(TIMED_BLIND, 3 + randint(5));
 			}
 			if (unlite_area(10, 3)) (*ident) = TRUE;
 			return SUCCESS;
@@ -1160,25 +1160,25 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_SCROLL_SATISFY_HUNGER:
 		{
-			if (set_food(PY_FOOD_MAX - 1)) (*ident) = TRUE;
+			if (set_flag(TIMED_FOOD, PY_FOOD_MAX - 1)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_SCROLL_BLESSING:
 		{
-			if (set_blessed(p_ptr->blessed + randint(12) + 6)) (*ident) = TRUE;
+			if (add_flag(TIMED_BLESSED, randint(12) + 6)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_SCROLL_HOLY_CHANT:
 		{
-			if (set_blessed(p_ptr->blessed + randint(24) + 12)) (*ident) = TRUE;
+			if (add_flag(TIMED_BLESSED, randint(24) + 12)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_SCROLL_HOLY_PRAYER:
 		{
-			if (set_blessed(p_ptr->blessed + randint(48) + 24)) (*ident) = TRUE;
+			if (add_flag(TIMED_BLESSED, randint(48) + 24)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -1196,7 +1196,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		case OBJ_SCROLL_PROTECTION_FROM_EVIL:
 		{
 			i = 3 * (skill_set[SKILL_DEVICE].value/2);
-			if (set_protevil(p_ptr->protevil + randint(25) + i)) (*ident) = TRUE;
+			if (add_flag(TIMED_PROTEVIL, randint(25) + i)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -1321,7 +1321,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
             if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
-				if (set_blind(p_ptr->blind + 3 + randint(5))) (*ident) = TRUE;
+				if (add_flag(TIMED_BLIND, 3 + randint(5))) (*ident) = TRUE;
 			}
 			if (unlite_area(10, 3)) (*ident) = TRUE;
 			return SUCCESS;
@@ -1329,7 +1329,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_STAFF_SLOWNESS:
 		{
-			if (set_slow(p_ptr->slow + randint(30) + 15)) (*ident) = TRUE;
+			if (add_flag(TIMED_SLOW, randint(30) + 15)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -1460,20 +1460,20 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_STAFF_CURING:
 		{
-			if (set_blind(0)) (*ident) = TRUE;
-			if (set_poisoned(0)) (*ident) = TRUE;
-			if (set_confused(0)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
-            if (set_image(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
+            if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_STAFF_HEALING:
 		{
 			if (hp_player(300)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -1519,11 +1519,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(30) + 15)) (*ident) = TRUE;
+				if (set_flag(TIMED_FAST, randint(30) + 15)) (*ident) = TRUE;
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void)add_flag(TIMED_FAST, 5);
 			}
 			return SUCCESS;
 		}
@@ -1551,12 +1551,12 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (dispel_evil(120)) (*ident) = TRUE;
 			i = 3 * (skill_set[SKILL_DEVICE].value/2);
-			if (set_protevil(p_ptr->protevil + randint(25) + i)) (*ident) = TRUE;
-			if (set_poisoned(0)) (*ident) = TRUE;
-			if (set_afraid(0)) (*ident) = TRUE;
+			if (add_flag(TIMED_PROTEVIL, randint(25) + i)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_AFRAID, 0)) (*ident) = TRUE;
 			if (hp_player(50)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -1892,20 +1892,20 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
 		case OBJ_ROD_CURING:
 		{
-			if (set_blind(0)) (*ident) = TRUE;
-			if (set_poisoned(0)) (*ident) = TRUE;
-			if (set_confused(0)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
-            if (set_image(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_BLIND, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_POISONED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CONFUSED, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
+            if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
 		case OBJ_ROD_HEALING:
 		{
 			if (hp_player(500)) (*ident) = TRUE;
-			if (set_stun(0)) (*ident) = TRUE;
-			if (set_cut(0)) (*ident) = TRUE;
+			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
+			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -1925,11 +1925,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(30) + 15)) (*ident) = TRUE;
+				if (set_flag(TIMED_FAST, randint(30) + 15)) (*ident) = TRUE;
 			}
 			else
 			{
-				(void)set_fast(p_ptr->fast + 5);
+				(void)add_flag(TIMED_FAST, 5);
 			}
 			return SUCCESS;
 		}
@@ -2457,7 +2457,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
             case ACT_CURE_LW-256:
             {
-                (void)set_afraid(0);
+                (void)set_flag(TIMED_AFRAID, 0);
 				(void)hp_player(30);
                 return SUCCESS;
             }
@@ -2466,7 +2466,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
             {
                 msg_print("It radiates deep purple...");
 				hp_player(damroll(4, 8));
-				(void)set_cut((p_ptr->cut / 2) - 50);
+				(void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
 				return SUCCESS;
 			}
 
@@ -2474,8 +2474,8 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
             case ACT_CURE_POISON-256:
 			{
                 msg_print("It glows deep blue...");
-				(void)set_afraid(0);
-				(void)set_poisoned(0);
+				(void)set_flag(TIMED_AFRAID, 0);
+				(void)set_flag(TIMED_POISONED, 0);
 				return SUCCESS;
 			}
 
@@ -2505,7 +2505,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
                 msg_print("It glows deep blue...");
 				msg_print("You feel a warm tingling inside...");
                 (void)hp_player(700);
-				(void)set_cut(0);
+				(void)set_flag(TIMED_CUT, 0);
 				return SUCCESS;
 			}
 
@@ -2515,7 +2515,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
                 msg_print("It glows a bright white...");
 				msg_print("You feel much better...");
 				(void)hp_player(1000);
-				(void)set_cut(0);
+				(void)set_flag(TIMED_CUT, 0);
 				return SUCCESS;
 			}
 
@@ -2523,14 +2523,14 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
             case ACT_ESP-256:
             {
-                (void)set_tim_esp(p_ptr->tim_esp + randint(30) + 25);
+                (void)add_flag(TIMED_ESP, randint(30) + 25);
                    return SUCCESS;
                 }
 
             case ACT_BERSERK-256:
             {
-				(void)set_shero(p_ptr->shero + randint(50) + 50);
-				(void)set_blessed(p_ptr->blessed + randint(50) + 50);
+				(void)add_flag(TIMED_SHERO, randint(50) + 50);
+				(void)add_flag(TIMED_BLESSED, randint(50) + 50);
                 return SUCCESS;
             }
 
@@ -2538,18 +2538,18 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
             {
                 msg_print("It lets out a shrill wail...");
 				i = 3 * plev;
-				(void)set_protevil(p_ptr->protevil + randint(25) + i);
+				(void)add_flag(TIMED_PROTEVIL, randint(25) + i);
 				return SUCCESS;
 			}
 
             case ACT_RESIST_ALL-256:
 			{
                 msg_print("It glows many colours...");
-                (void)set_oppose_acid(p_ptr->oppose_acid + randint(40) + 40);
-                (void)set_oppose_elec(p_ptr->oppose_elec + randint(40) + 40);
-                (void)set_oppose_fire(p_ptr->oppose_fire + randint(40) + 40);
-                (void)set_oppose_cold(p_ptr->oppose_cold + randint(40) + 40);
-                (void)set_oppose_pois(p_ptr->oppose_pois + randint(40) + 40);
+                (void)add_flag(TIMED_OPPOSE_ACID, randint(40) + 40);
+                (void)add_flag(TIMED_OPPOSE_ELEC, randint(40) + 40);
+                (void)add_flag(TIMED_OPPOSE_FIRE, randint(40) + 40);
+                (void)add_flag(TIMED_OPPOSE_COLD, randint(40) + 40);
+                (void)add_flag(TIMED_OPPOSE_POIS, randint(40) + 40);
 				return SUCCESS;
 			}
 
@@ -2559,11 +2559,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
                 msg_print("It glows bright green...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(20) + 20);
+					(void)set_flag(TIMED_FAST, randint(20) + 20);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)add_flag(TIMED_FAST, 5);
 				}
 				return SUCCESS;
 			}
@@ -2573,25 +2573,25 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
                 msg_print("It glows brightly...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(75) + 75);
+					(void)set_flag(TIMED_FAST, randint(75) + 75);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)add_flag(TIMED_FAST, 5);
 				}
 				return SUCCESS;
 			}
 
             case ACT_WRAITH-256:
             {
-                set_shadow(p_ptr->wraith_form + randint(plev/2) + (plev/2));
+                add_flag(TIMED_WRAITH, randint(plev/2) + (plev/2));
                 return SUCCESS;
             }
 
 
             case ACT_INVULN-256:
             {
-                (void)set_invuln(p_ptr->invuln + randint(8) + 8);
+                (void)add_flag(TIMED_INVULN, randint(8) + 8);
                    return SUCCESS;
                 }
 
@@ -2662,7 +2662,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 
             case ACT_SATIATE-256:
             {
-                (void)set_food(PY_FOOD_MAX - 1);
+                (void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
                    return SUCCESS;
                 }
 
@@ -2732,7 +2732,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
                 fire_ball(GF_ACID, dir, 50, 2);
-                (void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
+                (void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
 
 				return SUCCESS;
 			}
@@ -2741,7 +2741,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
                 fire_ball(GF_COLD, dir, 50, 2);
-                (void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
+                (void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
 				return SUCCESS;
             }
 
@@ -2749,7 +2749,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
                 fire_ball(GF_FIRE, dir, 50, 2);
-                (void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
+                (void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
 				return SUCCESS;
             }
 			case OBJ_DSM_BLUE:
@@ -2917,7 +2917,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			{
 				msg_print("The amulet lets out a shrill wail...");
 				i = 3 * (skill_set[SKILL_DEVICE].value/2);
-				(void)set_protevil(p_ptr->protevil + randint(25) + i);
+				(void)add_flag(TIMED_PROTEVIL, randint(25) + i);
 				return SUCCESS;
 			}
 
@@ -2943,11 +2943,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 				msg_print("The ring glows brightly...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(75) + 75);
+					(void)set_flag(TIMED_FAST, randint(75) + 75);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)add_flag(TIMED_FAST, 5);
 				}
 				return SUCCESS;
 			}
@@ -2998,15 +2998,15 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
                     msg_print("You breathe the elements.");
                     fire_ball(GF_MISSILE, dir, 300, -4);
                 msg_print("Your armor glows many colours...");
-                (void)set_afraid(0);
-				(void)set_shero(p_ptr->shero + randint(50) + 50);
+                (void)set_flag(TIMED_AFRAID, 0);
+				(void)add_flag(TIMED_SHERO, randint(50) + 50);
 				(void)hp_player(30);
-				(void)set_blessed(p_ptr->blessed + randint(50) + 50);
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(50) + 50);
-				(void)set_oppose_elec(p_ptr->oppose_elec + randint(50) + 50);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(50) + 50);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(50) + 50);
-				(void)set_oppose_pois(p_ptr->oppose_pois + randint(50) + 50);
+				(void)add_flag(TIMED_BLESSED, randint(50) + 50);
+				(void)add_flag(TIMED_OPPOSE_ACID, randint(50) + 50);
+				(void)add_flag(TIMED_OPPOSE_ELEC, randint(50) + 50);
+				(void)add_flag(TIMED_OPPOSE_FIRE, randint(50) + 50);
+				(void)add_flag(TIMED_OPPOSE_COLD, randint(50) + 50);
+				(void)add_flag(TIMED_OPPOSE_POIS, randint(50) + 50);
 				return SUCCESS;
 			}
 
@@ -3016,19 +3016,19 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 				msg_print("Your armor glows a bright white...");
 				msg_print("You feel much better...");
 				(void)hp_player(1000);
-				(void)set_cut(0);
+				(void)set_flag(TIMED_CUT, 0);
 				return SUCCESS;
 			}
 
 			case ART_VAMPLORD-512:
 			{
                 msg_print("A heavenly choir sings...");
-                (void)set_poisoned(0);
-                (void)set_cut(0);
-                (void)set_stun(0);
-                (void)set_confused(0);
-                (void)set_blind(0);
-                (void)set_hero(p_ptr->hero + randint(25) + 25);
+                (void)set_flag(TIMED_POISONED, 0);
+                (void)set_flag(TIMED_CUT, 0);
+                (void)set_flag(TIMED_STUN, 0);
+                (void)set_flag(TIMED_CONFUSED, 0);
+                (void)set_flag(TIMED_BLIND, 0);
+                (void)add_flag(TIMED_HERO, randint(25) + 25);
                 (void)hp_player(777);
 				return SUCCESS;
 			}
@@ -3069,7 +3069,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 				msg_print("Your crown glows deep yellow...");
 				msg_print("You feel a warm tingling inside...");
                 (void)hp_player(700);
-				(void)set_cut(0);
+				(void)set_flag(TIMED_CUT, 0);
 				return SUCCESS;
 			}
 
@@ -3077,11 +3077,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			case ART_BARZAI-512:
 			{
 				msg_print("Your cloak glows many colours...");
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-				(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-				(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+				(void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
+				(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
+				(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
+				(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
+				(void)add_flag(TIMED_OPPOSE_POIS, randint(20) + 20);
 				return SUCCESS;
 			}
 
@@ -3168,11 +3168,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 				msg_print("A wind swirls around your boots...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(20) + 20);
+					(void)set_flag(TIMED_FAST, randint(20) + 20);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)add_flag(TIMED_FAST, 5);
 				}
 				return SUCCESS;
 			}
@@ -3180,8 +3180,8 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			case ART_DANCING-512:
 			{
 				msg_print("Your boots glow deep blue...");
-				(void)set_afraid(0);
-				(void)set_poisoned(0);
+				(void)set_flag(TIMED_AFRAID, 0);
+				(void)set_flag(TIMED_POISONED, 0);
 				return SUCCESS;
 			}
 
@@ -3307,7 +3307,7 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 			{
 				msg_print("Your battle axe radiates deep purple...");
 				hp_player(damroll(4, 8));
-				(void)set_cut((p_ptr->cut / 2) - 50);
+				(void)set_flag(TIMED_CUT, (p_ptr->cut / 2) - 50);
 				return SUCCESS;
 			}
 
@@ -3355,11 +3355,11 @@ static errr do_power(int power, int dir, bool known, bool *use, bool *ident)
 				msg_print("Your mace glows bright green...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(20) + 20);
+					(void)set_flag(TIMED_FAST, randint(20) + 20);
 				}
 				else
 				{
-					(void)set_fast(p_ptr->fast + 5);
+					(void)add_flag(TIMED_FAST, 5);
 				}
 				return SUCCESS;
 			}
@@ -3562,7 +3562,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 	{
 		case RACE_VAMPIRE:
 		{
-			set_food(p_ptr->food + (o_ptr->pval / 10));
+			add_flag(TIMED_FOOD, (o_ptr->pval / 10));
 			msg_print("Mere victuals hold scant sustenance for a being such as yourself.");
 			if (p_ptr->food < PY_FOOD_ALERT)   /* Hungry */
 				msg_print("Your hunger can only be satisfied with fresh blood!");
@@ -3593,12 +3593,12 @@ void do_cmd_eat_food(object_type *o_ptr)
 		case RACE_SPECTRE:
 		{
 			msg_print("The food of mortals is poor sustenance for you.");
-			set_food(p_ptr->food + ((o_ptr->pval) / 20));
+			add_flag(TIMED_FOOD, ((o_ptr->pval) / 20));
 			break;
 		}
 		default:
 		{
-			set_food(p_ptr->food + o_ptr->pval);
+			add_flag(TIMED_FOOD, o_ptr->pval);
 		}
 	}
 
@@ -3665,7 +3665,7 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 
 
 	/* Potions can feed the player (should this be altered for skeletons?) */
-	(void)set_food(p_ptr->food + o_ptr->pval);
+	(void)add_flag(TIMED_FOOD, o_ptr->pval);
 
 
 	/* Destroy a potion */
