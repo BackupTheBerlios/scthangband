@@ -1285,6 +1285,10 @@ static int store_carry(object_type *o_ptr)
 	/* Evaluate the object */
 	value = object_value(o_ptr, TRUE);
 
+
+	/* No home/store items are hidden. */
+	o_ptr->ident &= ~(IDENT_HIDDEN);
+
 	if (!is_home)
 	{
 		/* Cursed/Worthless items "disappear" when sold */
