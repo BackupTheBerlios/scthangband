@@ -3874,6 +3874,13 @@ static void build_type7_or_8(int yval, int xval, int typ)
 	/* No vault chosen. */
 	if (!v_ptr) return;
 
+	/* Hack - the game should have already checked this... */
+	while (!in_bounds2(yval - v_ptr->hgt/2, xval - v_ptr->wid/2) ||
+		!in_bounds2(yval + (v_ptr->hgt+1)/2, xval + (v_ptr->wid+1)/2))
+	{
+		v_ptr = pick_vault(typ);
+	}
+
 	/* Message */
 	if (cheat_room) msg_format("%s Vault %s", type, vault_name(v_ptr));
 
@@ -3885,14 +3892,6 @@ static void build_type7_or_8(int yval, int xval, int typ)
 		(randint(((dun_depth)-40) * ((dun_depth)-40) + 50) < 400))
 	{
 		good_item_flag = TRUE;
-	}
-
-	/* Hack - the game should have already checked this... */
-	while (!in_bounds2(yval - v_ptr->hgt/2, xval - v_ptr->wid/2) ||
-		!in_bounds2(yval + (v_ptr->hgt+1)/2, xval + (v_ptr->wid+1)/2) ||
-		(int)strlen(v_text + v_ptr->text) < v_ptr->wid * v_ptr->hgt)
-	{
-		v_ptr = pick_vault(typ);
 	}
 
 	/* Hack -- Build the vault */

@@ -1423,6 +1423,14 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 			/* Acquire the text */
 			s = buf+2;
 
+			i = strlen(s);
+
+			/* Check the width (vaults must be square). */
+			if (!v_ptr->wid) v_ptr->wid = i;
+			else if (i != v_ptr->wid) return PARSE_ERROR_GENERIC;
+
+			v_ptr->hgt++;
+
 			/* Store the text and continue. */
 			return add_text(&(v_ptr->text), head, s);
 		}
@@ -1431,18 +1439,15 @@ errr parse_v_info(char *buf, header *head, vptr *extra)
 		/* Process 'X' for "Extra info" (one line only) */
 		case 'X':
 		{
-			int typ, rat, hgt, wid;
+			int typ, rat;
 
 			/* Scan for the values */
-			if (4 != 
-				sscanf(buf+2, "%d:%d:%d:%d%c", &typ, &rat, &hgt, &wid, end))
+			if (2 != sscanf(buf+2, "%d:%d%c", &typ, &rat, end))
 					return PARSE_ERROR_INCORRECT_SYNTAX;
 
 			/* Save the values */
 			v_ptr->typ = typ;
 			v_ptr->rat = rat;
-			v_ptr->hgt = hgt;
-			v_ptr->wid = wid;
 
 			/* Next... */
 			return SUCCESS;
