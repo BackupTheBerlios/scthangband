@@ -539,9 +539,6 @@ void carry(int pickup)
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
 
-		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3);
-
 		/* Acquire next object */
 		next_o_idx = o_ptr->next_o_idx;
 
@@ -551,6 +548,9 @@ void carry(int pickup)
 		/* Pick up gold */
 		if (o_ptr->tval == TV_GOLD)
 		{
+			/* Describe the object */
+			object_desc(o_name, o_ptr, FALSE, 0);
+
 			/* Message */
             msg_format("You collect %ld gold pieces worth of %s.",
 				   (long)o_ptr->pval, o_name);
@@ -571,6 +571,9 @@ void carry(int pickup)
 		/* Pick up objects */
 		else
 		{
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3);
+
 			/* Describe the object */
 			if (!pickup)
 			{

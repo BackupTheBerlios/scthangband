@@ -169,10 +169,6 @@ struct object_kind
 	byte extra;			/* Something */
 
 
-	byte k_attr;		/* Standard object attribute */
-	char k_char;		/* Standard object character */
-
-
 	byte d_attr;		/* Default object attribute */
 	byte d_char;		/* Default object character */
 
@@ -180,8 +176,7 @@ struct object_kind
 	byte x_attr;		/* Desired object attribute */
 	char x_char;		/* Desired object character */
 
-
-	bool has_flavor;	/* This object has a flavor */
+	u16b u_idx;	/* The u_info[] entry which represents this item. */
 
 	bool easy_know;		/* Unused */
 
@@ -191,6 +186,27 @@ struct object_kind
 };
 
 
+
+/*
+ * Information about the unidentified forms of object "kinds"
+ */
+typedef struct unident_type unident_type;
+
+struct unident_type
+{
+	u16b name;	/* Name (offset) */
+
+	byte p_id;	/* Primary index (must match corresponding item) */
+	byte s_id;	/* Secondary index (internally generated) */
+
+	byte flags;	/* UNID_* flags */
+
+	byte d_attr;		/* Default colour */
+	char d_char;		/* Default symbol */
+
+	byte x_attr;		/* The desired attr for this object */
+	char x_char;		/* The desired char for this object */
+};
 
 /*
  * Information about "artifacts".

@@ -609,6 +609,123 @@ static errr check_version(char *buf, header *head)
 	}
 }
 
+/*
+ * Compress %x strings into single characters within a NUL-terminated string.
+ *
+ * As my_fgets() only outputs printable characters and '\0's, the
+ * range 1-31 can be used in any way desired.
+ *
+ * This does not replace unparsable characters (such as %f without preceding
+ * %F), so object_desc() does not need to check this.
+ *
+ * NULs will be added from the end of the output string to the end of the
+ * input (which is always at least as large).
+ *
+ * As the output characters are chosen without regard to their meaning, no
+ * part of a compress string should be printed directly.
+ */
+static errr compress_string(char *buf)
+{
+	typedef struct compression_type compression_type;
+	struct compression_type {
+		cptr orig;
+		char new;
+	};
+	char *i,*j;
+	char require;
+	bool changed = FALSE;
+	compression_type *cm_ptr;
+	compression_type compression[] = {
+		/* Require the flag */
+		{"%+A", CM_TRUE+CI_ARTICLE},
+		{"%+K", CM_TRUE+CI_K_IDX},
+		{"%+F", CM_TRUE+CI_FLAVOUR},
+		{"%+P", CM_TRUE+CI_PLURAL},
+		
+		/* Require the absence of the flag */
+		{"%-A", CM_FALSE+CI_ARTICLE},
+		{"%-K", CM_FALSE+CI_K_IDX},
+		{"%-F", CM_FALSE+CI_FLAVOUR},
+		{"%-P", CM_FALSE+CI_PLURAL},
+		
+		/* No requirements regarding the flag. */
+		{"%A", CM_NORM+CI_ARTICLE},
+		{"%K", CM_NORM+CI_K_IDX},
+		{"%F", CM_NORM+CI_FLAVOUR},
+		{"%P", CM_NORM+CI_PLURAL},
+		
+		/* Insert a substring. */
+		{"%a", CM_ACT+CI_ARTICLE},
+		{"%k", CM_ACT+CI_K_IDX},
+		{"%f", CM_ACT+CI_FLAVOUR},
+		{"%p", CM_ACT+CI_PLURAL},
+		
+		/* Enable %s in strings */
+		{"%%", '%'},
+		
+		/* Terminate */
+		{"", 0}
+	};
+	/* Literal replacements. */
+	for (i = j = buf; *i;)
+	{
+		for (cm_ptr = compression; cm_ptr->new; cm_ptr++)
+		{
+			if (!strncmp(cm_ptr->orig, i, strlen(cm_ptr->orig))) break;
+		}
+		/* New combinations */
+		if (cm_ptr->new)
+		{
+			*(j++) = cm_ptr->new;
+			i+=strlen(cm_ptr->orig);
+			changed = TRUE;
+		}
+		/* Normal letters/numbers */
+		else
+		{
+			*(j++) = *(i++);
+		}
+	}
+	/* Finish off */
+	for (; j < i; j++) *j = '\0';
+
+	/* Verify that the CM_ACT flags are legal. */
+	for (i = buf, require = 0x00;*i;i++)
+	{
+		byte flag;
+
+		/* Normal characters */
+		if (*i & 0xE0) continue;
+
+		flag = 1<<find_ci(*i);
+		
+		switch (find_cm(*i))
+		{
+			case CM_FALSE:
+			case CM_NORM:
+				require &= ~flag;
+				break;
+			case CM_TRUE:
+				require |= flag;
+				break;
+			case CM_ACT:
+				if (~require & flag) return PARSE_ERROR_GENERIC;
+				break;
+			default: /* ? */
+		}
+	}
+
+	return SUCCESS;
+}
+
+/* A macro to give effect to the return code of the above. */
+#define do_compress_string(buf) \
+{ \
+	errr err = compress_string(buf); \
+	if (err) return err; \
+}
+
+
 /* A macro to indicate if a character is used to terminate a name. */
 #define okchar(char) (char == '\0' || char == ':')
 
@@ -908,6 +1025,9 @@ errr init_r_event_txt(FILE *fp, char *buf)
 				 * a ^ as \^. There should hopefully not be many of these.
 				 */
 				clear_escapes(buf);
+
+				/* Also convert the %x sequences used in sequences for objects. */
+				do_compress_string(buf);
 
 				/* Save the monster index */
 				d_ptr->r_idx = r_idx;
@@ -1762,6 +1882,9 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			/* Point at the "info" */
 			k_ptr = &k_info[i];
 
+			/* Compress the string */
+			do_compress_string(s);
+
 			/* Hack -- Verify space */
 			if (k_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
 
@@ -1838,26 +1961,28 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		/* Process 'G' for "Graphics" (one line only) */
 		if (buf[0] == 'G')
 		{
-			char sym;
-			int tmp;
+			char sym, col;
+			int tmp, p_id;
 
-			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
-
-			/* Extract the char */
-			sym = buf[2];
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%c:%c:%d", &sym, &col, &p_id))
+			{
+				return (2);
+			}
 
 			/* Extract the attr */
-			tmp = color_char_to_attr(buf[4]);
+			tmp = color_char_to_attr(col);
 
 			/* Paranoia */
 			if (tmp < 0) return (1);
+			if (p_id < 0 || p_id > 255) return (1);
 
 			/* Save the values */
-			k_ptr->k_char = sym;
-			k_ptr->k_attr = tmp;
+			k_ptr->d_char = sym;
+			k_ptr->d_attr = tmp;
+
+			/* Hack - store p_id in k_ptr->u_idx until flavor_init() */
+			k_ptr->u_idx = p_id;
 
 			/* Next... */
 			continue;
@@ -2007,6 +2132,380 @@ errr init_k_info_txt(FILE *fp, char *buf)
 	return (0);
 }
 
+/*
+ * First check that the entry is reasonable in all of its fields.
+ *
+ * Then add an arbitrary number of scroll entries derived from a single base
+ * element if required. These are assigned s_ids between 1 and *scrolls.
+ */
+static errr u_finish_off(s16b scroll_base, s16b *scrolls, unident_type *u_ptr) \
+{
+	unident_type *ub_ptr = &u_info[scroll_base];
+	s16b i;
+
+	/* Nothing started. */
+	if (!u_ptr) return SUCCESS;
+
+	/* Check that the flags are appropriate. */
+	if (u_ptr->s_id == SID_BASE)
+	{
+		if ((*scrolls && !scroll_base) || (!*scrolls && scroll_base))
+		{
+			msg_print("Both a SCROLL flag and a number are needed.");
+			return ERR_PARSE;
+		}
+		else if (u_ptr->flags & UNID_BASE_ONLY && scroll_base)
+		{
+			msg_print("Scrolls cannot be BASE_ONLY.");
+			return ERR_PARSE;
+		}
+		else if (u_ptr->flags & UNID_NO_BASE)
+		{
+			msg_print("This is a base entry itself.");
+			return ERR_PARSE;
+		}
+	}
+	else
+	{
+		if (*scrolls || scroll_base || u_ptr->flags & UNID_BASE_ONLY)
+		{
+			msg_print("Flag restricted to base items found.");
+			return ERR_PARSE;
+		}
+	}
+
+	/* No scrolls to write. */
+	if (!(*scrolls)) return SUCCESS;
+	
+	for (i = 1; i <= (*scrolls); i++)
+	{
+		error_idx++;
+
+		/* Hack -- Verify space */
+		if (error_idx >= UB_U_IDX) return ERR_MEMORY;
+		if (u_head->name_size + MAX_SCROLL_LEN + 8 > fake_name_size) return ERR_MEMORY;
+
+		/* Select the new entry. */
+		u_ptr = &u_info[error_idx];
+
+		/* Copy the structure across. */
+		COPY(u_ptr, ub_ptr, unident_type);
+
+		/* Set the s_id */
+		u_ptr->s_id = i;
+
+		/* Set the flags */
+		u_ptr->flags = UNID_SCROLL_N;
+
+		/* Advance and Save the name index */
+		u_ptr->name = ++u_head->name_size;
+
+		/* Save a default name. */
+		strcpy(u_name+u_ptr->name, "Untitled");
+
+		/* Advance the indices */
+		u_head->name_size += MAX_SCROLL_LEN;
+	}
+
+	/* Don't do this again. */
+	(*scrolls) = 0;
+	
+	return SUCCESS;
+}
+
+/* A macro for the above */
+#define do_u_finish_off \
+	err = u_finish_off(scroll_base, &scrolls, u_ptr); \
+	if (!scrolls) scroll_base = 0; \
+	if (err) return err;
+
+
+/*
+ * Initialize the "u_info" array, by parsing an ascii "template" file
+ */
+errr init_u_info_txt(FILE *fp, char *buf)
+{
+	char *s;
+	errr err;
+
+	/* Not adding any scrolls yet */
+	s16b scrolls = 0, scroll_base = 0;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+
+	/* Current entry */
+	unident_type *u_ptr = NULL;
+
+
+	/* Hack - store p_id and s_id until they are abandoned. */
+	byte u_ptr_p_id[UB_U_IDX];
+	byte u_ptr_s_id[UB_U_IDX];
+	C_WIPE(u_ptr_p_id, UB_U_IDX, byte);
+	C_WIPE(u_ptr_s_id, UB_U_IDX, byte);
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Prepare the "fake" stuff */
+	u_head->name_size = 0;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			errr err = check_version(buf, u_head);
+			if (err) return err;
+			okay = TRUE;
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return ERR_VERSION;
+
+
+		/* Process 'N' for "Name" */
+		if (buf[0] == 'N')
+		{
+			/* Add scrolls, if any. */
+			do_u_finish_off;
+
+			/* Find the colon before the name */
+			s = strchr(buf, ':');
+
+			/* Verify that colon */
+			if (!s) return ERR_PARSE;
+
+			/* Advance to the name */
+			s++;
+
+			/* Paranoia -- require a name */
+			if (!*s) return ERR_PARSE;
+
+			/* Increment the index */
+			error_idx++;
+
+			/* Paranoia */
+			if (error_idx >= UB_U_IDX) return ERR_MEMORY;
+
+			/* Point at the "info" */
+			u_ptr = &u_info[error_idx];
+
+			/* Compress the string */
+			do_compress_string(s);
+
+			/* Hack -- Verify space */
+			if (u_head->name_size + strlen(s) + 8 > fake_name_size) return ERR_MEMORY;
+
+			/* Advance and Save the name index */
+			u_ptr->name = ++u_head->name_size;
+
+			/* Append chars to the name */
+			strcpy(u_name + u_head->name_size, s);
+
+			/* Advance the index */
+			u_head->name_size += strlen(s);
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'M' for "Mimic"
+		 * This creates a copy of one entry with s_id 0 with
+		 * a different p_id. It must be after the original entry
+		 * and not within an entry itself. */
+		if (buf[0] == 'M')
+		{
+			int oldpid, newpid;
+			s16b n;
+
+			do_u_finish_off;
+
+			if (2 != sscanf(buf+2, "%d:%d",
+			                &oldpid, &newpid)) return ERR_PARSE;
+
+			/* Check for valid indices */
+			if (oldpid < 0 || oldpid > 255 || newpid < 0 || newpid > 255)
+				return ERR_PARSE;
+
+			/* Increment the index */
+			error_idx++;
+			
+			/* Paranoia */
+			if (error_idx >= UB_U_IDX) return ERR_MEMORY;
+
+			/* Point at the "info" */
+			u_ptr = &u_info[error_idx];
+			
+			/* Look for the original entry */
+			for (n = 0; n < error_idx; n++)
+			{
+				unident_type *u2_ptr = &u_info[n];
+
+				/* Only consider base entries. */
+				if (u2_ptr->s_id != SID_BASE) continue;
+				
+				/* Look for the specified p_id. */
+				if (u2_ptr->p_id != oldpid) continue;
+				
+				/* Copy the structure across. */
+				COPY(u_ptr, u2_ptr, unident_type);
+				
+				/* Correct the p_id */
+				u2_ptr->p_id = newpid;
+				
+				/* Finished */
+				break;
+			}
+			
+			/* Complain if none found. */
+			if (n == error_idx) return ERR_MISSING;
+			
+			/* Next... */
+			continue;
+		}
+
+		/* There better be a current u_ptr */
+		if (!u_ptr) return (3);
+
+		/* Process 'G' for "Graphics" (one line only) */
+		if (buf[0] == 'G')
+		{
+			char sym, col;
+			int p_id, s_id;
+			s16b i;
+
+			/* Scan for the values */
+			if (4 != sscanf(buf+2, "%c:%c:%d:%d", &sym, &col, &p_id, &s_id)) return ERR_PARSE;
+
+			/* Paranoia */
+			if (color_char_to_attr(col) < 0)
+			{
+				msg_print("Illegal colour.");
+				return ERR_PARSE;
+			}
+			if (!isgraph(sym))
+			{
+				msg_print("Illegal symbol.");
+				return ERR_PARSE;
+			}
+			/* Extract the char */
+			u_ptr->d_char = sym;
+
+			/* Extract the attr */
+			u_ptr->d_attr = color_char_to_attr(col);
+			
+			/* Verify indices' legality */
+			if (p_id < 0 || p_id > 255 ||
+				s_id < 0 || s_id > 255)
+			{
+				msg_print("Illegal index.");
+				return ERR_PARSE;
+			}
+
+			/* Extract the primary index */
+			u_ptr->p_id = p_id;
+			
+			/* Extract the secondary index */
+			u_ptr->s_id = s_id;
+
+			/* Verify uniqueness */
+			for (i = 0; i < error_idx; i++)
+			{
+				unident_type *u2_ptr = &u_info[i];
+				if (u2_ptr->p_id != u_ptr->p_id) continue;
+				if (u2_ptr->s_id != u_ptr->s_id) continue;
+				msg_print("Duplicated indices.");
+				return ERR_PARSE;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Hack -- Process 'F' for flags */
+		if (buf[0] == 'F')
+		{
+			/* Parse every entry textually */
+			for (s = buf + 2; *s; )
+			{
+				char *t;
+
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ':'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ':') t++;
+				}
+
+				/* Parse this entry */
+				if (!strcmp(s, "BASE_ONLY"))
+				{
+					u_ptr->flags |= UNID_BASE_ONLY;
+				}
+				else if (!strcmp(s, "SCROLL"))
+				{
+					scroll_base = u_ptr-u_info;
+				}
+				else if (!strcmp(s, "NO_BASE"))
+				{
+					u_ptr->flags |= UNID_NO_BASE;
+				}
+				else if (atoi(s))
+				{
+					scrolls = atoi(s);
+				}
+				else
+				{
+					return ERR_FLAG;
+				}
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return ERR_DIRECTIVE;
+	}
+
+	do_u_finish_off;
+
+	/* Complete the "name" size */
+	++u_head->name_size;
+
+	/* Set the "info" size. */
+	u_head->info_num = error_idx+1;
+	u_head->info_size = u_head->info_num * u_head->info_len;
+
+	/* No version yet */
+	if (!okay) return ERR_VERSION;
+
+	/* Success */
+	return SUCCESS;
+}
 
 /*
  * Grab one flag in an artifact_type from a textual string

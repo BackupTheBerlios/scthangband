@@ -1919,6 +1919,34 @@ dump_visual(MAX_K_IDX, k_info, k_name, 'K', "Object attr/char definitions")
 static void visual_dump_feat(FILE *fff)
 dump_visual(MAX_F_IDX, f_info, f_name, 'F', "Feature attr/char definitions")
 
+static void visual_dump_unident(FILE *fff)
+{
+	s16b i;
+
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# %s\n\n", "Unidentified object attr/char definitions");
+
+	/* Dump entries */
+	for (i = 0; i < MAX_U_IDX; i++)
+	{
+		unident_type *u_ptr = &u_info[i];
+
+		/* Skip non-entries */
+		if (!(u_ptr->name)) continue;
+
+		/* Dump a comment */
+		fprintf(fff, "# %s\n", u_name+u_ptr->name);
+
+		/* Dump the attr/char info */
+		fprintf(fff, "%c:%d:%d:0x%02X:0x%02X\n\n", 'U',
+		u_ptr->p_id, u_ptr->s_id, (byte)(u_ptr->x_attr), (byte)(u_ptr->x_char));
+	}
+
+	/* All done */
+	fprintf(fff, "\n\n\n\n");
+}
+
 /*
  * Load a name and a set of visual preferences.
  *
@@ -1944,18 +1972,11 @@ load_visual(r_info, r_name)
 static void visual_load_feat(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
 load_visual(f_info, f_name)
 
-/* Don't load the actual attr unless aware as the default depends on the underlying colour.
- * Unfortunately this also resets the user-defined colour because there is no way to
- * tell if the user has changed it. */
+static void visual_load_unident(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+load_visual(u_info, u_name)
+
 static void visual_load_obj(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
-{
 	load_visual(k_info, k_name)
-	if (!k_info[n].aware)
-	{
-		(*da) = TERM_DARK;
-		(*ca) = TERM_DARK;
-	}
-}
 
 /*
  * Save an arbitrary set of attr/char definitions to x_info[n].
@@ -1974,6 +1995,9 @@ save_visual(k_info)
 
 static void visual_save_feat(s16b n, byte ca, byte cc)
 save_visual(f_info)
+
+static void visual_save_unident(s16b n, byte ca, byte cc)
+save_visual(u_info)
 
 static void visual_dump_moncol(FILE *fff)
 {
@@ -2011,6 +2035,17 @@ static void visual_save_moncol(s16b n, byte ca, byte cc)
 	moncol_type *mc_ptr = &moncol[n];
 	mc_ptr->attr = ca;
 }
+
+static bool visual_reject_feat(s16b n)
+{
+	return (f_info[n].mimic != n);
+}
+
+static bool visual_reject_unident(s16b n)
+{
+	return (u_info[n].s_id == 0);
+}
+
 #endif /* ALLOW_VISUALS */
 
 /*
@@ -2028,16 +2063,18 @@ void do_cmd_visuals(void)
 		void (*load)(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name);
 		/* A function that saves the attrs and chars for the current entry. */
 		void (*save)(s16b n, byte ca, byte cc);
+		bool (*reject)(s16b n);
 		s16b max; /* The number of entries available. */
 		bool attr; /* Has a colour. */
 		bool chars; /* Has a character. */
 	};
 	
 	visual_type visual[] = {
-		{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_save_mon, MAX_R_IDX, TRUE, TRUE},
-		{"object attr/chars", visual_dump_obj, visual_load_obj, visual_save_obj, MAX_K_IDX, TRUE, TRUE},
-		{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_save_feat, MAX_F_IDX, TRUE, TRUE},
-		{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_save_moncol, MAX_MONCOL, TRUE, FALSE},
+		{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_save_mon, 0, MAX_R_IDX, TRUE, TRUE},
+		{"object attr/chars", visual_dump_obj, visual_load_obj, visual_save_obj, 0, MAX_K_IDX, TRUE, TRUE},
+		{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_save_feat, visual_reject_feat, MAX_F_IDX, TRUE, TRUE},
+		{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_save_moncol, 0, MAX_MONCOL, TRUE, FALSE},
+		{"unidentified object attr/chars", visual_dump_unident, visual_load_unident, visual_save_unident, visual_reject_unident, MAX_U_IDX, TRUE, TRUE},
 	};
 
 /* Just in case a specific reference needs to be made. */
@@ -2045,6 +2082,7 @@ void do_cmd_visuals(void)
 #define VISUAL_OBJECT	(&visual[1])
 #define VISUAL_FEATURE	(&visual[2])
 #define VISUAL_MONCOL	(&visual[3])
+#define VISUAL_UNIDENT	(&visual[4])
 
 /* The number of members of the visual[] array. */
 #define VISUALS (sizeof(visual)/sizeof(visual_type))
@@ -2175,7 +2213,7 @@ void do_cmd_visuals(void)
 		{
 			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
 
-			s16b r = 0, inc;
+			s16b r = -1, inc;
 
 			prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
 
@@ -2228,7 +2266,8 @@ void do_cmd_visuals(void)
 					    (vs_ptr->chars) ? "/c/C" : ""));
 
 				/* Get a command */
-				i = inkey();
+				if (r >= 0) i = inkey();
+				else i = 'n';
 
 				/* All done */
 				if (i == ESCAPE) break;
@@ -2241,17 +2280,10 @@ void do_cmd_visuals(void)
 				if (i == 'a') ca += inc;
 				if (i == 'c') cc += inc;
 
-				/* Hack - ignore features which mimic others. Note that
-				 * a situation where two features mimic each other would 
-				 * cause problems. But who'd want to do that anyway?
-				 */
-				if (i == 'n' && vs_ptr == VISUAL_FEATURE)
-					while (f_info[r].mimic != r)
+				/* Handle rejection criteria if necessary. */
+				if (i == 'n' && vs_ptr->reject)
+					while ((*vs_ptr->reject)(r))
 						r = (r+inc+vs_ptr->max) % vs_ptr->max;
-
-				/* Hack - ignore objects which are flavoured as their
-				 * attrs and chars are hard-coded.
-				 */
 
 				/* Save the information if it has changed.*/
 				if (strchr("ac", i)) (*(vs_ptr->save))(r, ca, cc);
@@ -3334,7 +3366,7 @@ static void do_cmd_knowledge_objects(void)
 		if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
 
 		/* List known flavored objects */
-		if (k_ptr->has_flavor && k_ptr->aware)
+		if (u_info[k_ptr->u_idx].s_id && k_ptr->aware)
 		{
 			object_type *i_ptr;
 			object_type object_type_body;

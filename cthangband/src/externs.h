@@ -372,6 +372,10 @@ extern header *k_head;
 extern object_kind *k_info;
 extern char *k_name;
 extern char *k_text;
+extern header *u_head;
+extern unident_type *u_info;
+extern char *u_name;
+extern s16b *pid_base;
 extern header *a_head;
 extern artifact_type *a_info;
 extern char *a_name;
@@ -615,6 +619,7 @@ void replace_secret_door(int y, int x);
 extern errr init_v_info_txt(FILE *fp, char *buf);
 extern errr init_f_info_txt(FILE *fp, char *buf);
 extern errr init_k_info_txt(FILE *fp, char *buf);
+extern errr init_u_info_txt(FILE *fp, char *buf);
 extern errr init_a_info_txt(FILE *fp, char *buf);
 extern errr init_e_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
@@ -673,6 +678,7 @@ extern void remove_non_pets(void);
 
 /* object1.c */
 /* object2.c */
+extern s16b lookup_unident(byte p_id, byte s_id);
 extern void flavor_init(void);
 extern void reset_visuals(void);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);

@@ -318,8 +318,8 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st,
  * Specify the attr/char values for "features" by feature index
  *   F:<num>:<a>:<c>
  *
- * Specify the attr/char values for unaware "objects" by kind tval
- *   U:<tv>:<a>:<c>
+ * Specify the attr/char values for unaware "objects" by indices
+ *   U:<p_id>:<s_id>:<a>:<c>
  *
  * Specify the attr/char values for inventory "objects" by kind tval
  *   E:<tv>:<a>:<c>
@@ -411,6 +411,27 @@ errr process_pref_file_aux(char *buf)
 		}
 	}
 
+	/* Process "U:<p_id>:<s_id>:<a>/<c>"  -- attr/char for unidentified objects */
+	else if (buf[0] == 'U')
+	{
+		if (tokenize(buf+2, 4, zz) == 4)
+		{
+			unident_type *u_ptr;
+			i = (huge)strtol(zz[0], NULL, 0);
+			j = (huge)strtol(zz[1], NULL, 0);
+			n1 = strtol(zz[2], NULL, 0);
+			n2 = strtol(zz[3], NULL, 0);
+			if (i < 0 || i > 255 || j < 0 || j > 255) return (1);
+
+			i = lookup_unident(i,j);
+			if (i >= MAX_U_IDX) return (1);
+			if (i < 0) return (1);
+			u_ptr = &u_info[i];
+			if (n1) u_ptr->x_attr = n1;
+			if (n2) u_ptr->x_char = n2;
+			return (0);
+		}
+	}
 
 	/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
 	else if (buf[0] == 'F')

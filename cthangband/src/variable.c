@@ -772,6 +772,14 @@ char *k_name;
 char *k_text;
 
 /*
+ * The unidentified object arrays
+ */
+header *u_head;
+unident_type *u_info;
+char *u_name;
+s16b *pid_base;
+
+/*
  * The artifact arrays
  */
 header *a_head;

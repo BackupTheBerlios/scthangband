@@ -804,7 +804,300 @@ static errr init_k_info(void)
 	return (0);
 }
 
+/*
+ * Initialise the "u_info" array, by parsing a binary "image" file
+ */
+static errr init_u_info_raw(int fd)
+{
+	header test;
 
+	/* Read and Verify the header */
+	if (fd_read(fd, (char*)(&test), sizeof(header)) ||
+	    (test.v_major != u_head->v_major) ||
+	    (test.v_minor != u_head->v_minor) ||
+	    (test.v_patch != u_head->v_patch) ||
+	    (test.v_extra != u_head->v_extra) ||
+	    (test.info_len != u_head->info_len) ||
+	    (test.head_size != u_head->head_size))
+	{
+		/* Error */
+		return (-1);
+	}
+
+
+	/* Accept the header */
+	(*u_head) = test;
+
+	/* There must be room */
+	if (UB_U_IDX < MAX_U_IDX) return ERR_MEMORY;
+	if (MAX_U16B < u_head->name_size) return ERR_MEMORY;
+
+	/* Allocate the "u_info" array */
+	C_MAKE(u_info, u_head->info_num, unident_type);
+
+	/* Read the fake "u_info" array. */
+	fd_read(fd, (char*)(u_info), u_head->info_size);
+
+	/* Allocate the "u_name" array */
+	C_MAKE(u_name, u_head->name_size, char);
+
+	/* Read the "u_name" array */
+	fd_read(fd, (char*)(u_name), u_head->name_size);
+
+	/* Success */
+	return SUCCESS;
+}
+
+
+static errr init_u_info_final(void)
+{
+	s16b i,p_id;
+	
+	/* Allocate the p_id array */
+	pid_base = C_NEW(256, s16b);
+
+	/* Set defaults */
+	for (i = 0; i < 256; i++) pid_base[i] = -1;
+	
+	/* Find real p_ids */
+	for (i = 0; i < MAX_U_IDX; i++)
+	{
+		unident_type *u_ptr = &u_info[i];
+		if (u_ptr->s_id == SID_BASE)
+		{
+			pid_base[u_ptr->p_id] = i;
+		}
+	}
+
+	/* Check that there are enough entries for each p_id to cover
+	 * the object kinds, with one extra per p_id for plain_descriptions. */
+	for (p_id = 0; p_id < 256; p_id++)
+	{
+		s16b bal;
+		byte flags;
+
+		for (i = bal = 0; i < MAX_K_IDX; i++)
+		{
+			if (k_info[i].u_idx == p_id) bal++;
+		}
+		if (!bal) continue;
+
+		/* Extract the flags from the base item. */
+		if (pid_base[p_id] >= 0)
+			flags = u_info[pid_base[p_id]].flags;
+		else
+			flags = 0;
+
+		/* Hack - always-aware items need only one listing */
+		if (flags & UNID_BASE_ONLY) bal = 0;
+
+		for (i = 0; i < MAX_U_IDX; i++)
+		{
+			if (u_info[i].p_id == p_id) bal--;
+		}
+		/* And if there aren't enough, complain. */
+		if (bal >= 0)
+		{
+			quit_fmt("Insufficient u_info entries with p_id %d: %d missing.", p_id, bal+1);
+		}
+	}
+	return SUCCESS;
+}
+
+
+/*
+ * Initialise the "u_info" array
+ *
+ * Note that we let each entry have a unique "name" string,
+ * even if the string happens to be empty (everyone has a unique '\0').
+ */
+static errr init_u_info(void)
+{
+	int fd;
+
+	int mode = 0644;
+
+	errr err = 0;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+	u16b fake_info_size;
+
+	/*** Make the header ***/
+
+	/* Allocate the "header" */
+	MAKE(u_head, header);
+
+	/* Save the "version" */
+	u_head->v_major = VERSION_MAJOR;
+	u_head->v_minor = VERSION_MINOR;
+	u_head->v_patch = VERSION_PATCH;
+	u_head->v_extra = 0;
+
+	/* Save the "record" information */
+	u_head->info_num = MAX_U16B/sizeof(unident_type);
+	u_head->info_len = sizeof(unident_type);
+
+	/* Save the size of "u_head" and "u_info" */
+	u_head->head_size = sizeof(header);
+	u_head->info_size = u_head->info_num * u_head->info_len;
+
+
+#ifdef ALLOW_TEMPLATES
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "u_info.raw");
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+		err = check_modification_date(fd, "u_info.txt");
+		if (err) msg_print("u_info.raw has old modification time.");
+
+#endif /* CHECK_MODIFICATION_TIME */
+		/* Attempt to parse the "raw" file */
+		if (!err) err = init_u_info_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return init_u_info_final();
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 'u_info.raw' file.");
+		msg_print(NULL);
+	}
+
+
+	/*** Make the fake arrays ***/
+
+	/* Fake the size of "u_info" */
+	fake_info_size = MAX_U16B/sizeof(unident_type);
+
+	/* Fake the size of "u_name" */
+	fake_name_size = 20 * 1024L;
+
+	/* Allocate the "k_info" array */
+	C_MAKE(u_info, fake_info_size, unident_type);
+
+	/* Hack -- make "fake" array */
+	C_MAKE(u_name, fake_name_size, char);
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_EDIT, "u_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'u_info.txt' file.");
+
+	/* Parse the file */
+	err = init_u_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		msg_format("Error %d at line %d of 'u_info.txt'.", err, error_line);
+		msg_format("Record %d contains a '%s' error.", error_idx, oops);
+		msg_format("Parsing '%s'.", buf);
+		msg_print(NULL);
+
+		/* Quit */
+		quit("Error in 'k_info.txt' file.");
+	}
+
+
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "u_info.raw");
+
+	/* Kill the old file */
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(u_head), u_head->head_size);
+
+		/* Dump the "u_info" array */
+		fd_write(fd, (char*)(u_info), u_head->info_size);
+
+		/* Dump the "u_name" array */
+		fd_write(fd, (char*)(u_name), u_head->name_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "u_info" array */
+	C_KILL(u_info, fake_info_size, unident_type);
+
+	/* Hack -- Free the "fake" array */
+	C_KILL(u_name, fake_name_size, char);
+
+	/* Forget the array size */
+	fake_name_size = 0;
+
+#endif	/* ALLOW_TEMPLATES */
+
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "u_info.raw");
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot load 'u_info.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_u_info_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 'u_info.raw' file.");
+
+	/* Finalise arrays. */
+	return init_u_info_final();
+}
 
 /*
  * Initialize the "a_info" array, by parsing a binary "image" file
@@ -3317,6 +3610,13 @@ void init_angband(void)
 	/* Initialize object info */
 	note("[Initializing arrays... (objects)]");
 	if (init_k_info()) quit("Cannot initialize objects");
+
+	/* Initialize unidentified object info
+	 * This leaves space for scrolls, and checks that it is large
+	 * eough to map k_info, so must occur after init_k_info().
+	 */
+	note("[Initializing arrays... (unidentified objects)]");
+	if (init_u_info()) quit("Cannot initialize unidentified objects");
 
 	/* Initialize artifact info */
 	note("[Initializing arrays... (artifacts)]");

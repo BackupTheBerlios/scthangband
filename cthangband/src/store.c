@@ -1740,20 +1740,8 @@ static void display_entry(int pos)
 
 	/* Label it, clear the line --(-- */
 	(void)sprintf(out_val, "%c) ", I2A(i));
-	c_prt((k_info[o_ptr->k_idx].aware) ? TERM_WHITE : TERM_SLATE, out_val, i+6, 0);
+	c_prt((object_aware_p(o_ptr)) ? TERM_WHITE : TERM_SLATE, out_val, i+6, 0);
 
-		if (equippy_chars)
-	{
-		byte a = object_attr(o_ptr);
-		char c = object_char(o_ptr);
-		
-#ifdef AMIGA
-		if (a & 0x80)
-			a |= 0x40;
-#endif
-
-		Term_draw(3, i + 6, a, c);
-	}
 
 	/* Describe an item in the home */
 	if (cur_store_type == STORE_HOME)
@@ -1766,7 +1754,7 @@ static void display_entry(int pos)
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3);
 		o_name[maxwid] = '\0';
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, equippy_chars ? 5 : 3);
+		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
 
 		/* Show weights */
 		if (show_weights)
@@ -1802,7 +1790,7 @@ static void display_entry(int pos)
 
 
 		o_name[maxwid] = '\0';
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, equippy_chars ? 5 : 3);
+		c_put_str(tval_to_attr[o_ptr->tval], o_name, i+6, 3);
 
 		/* Show weights */
 		if (show_weights)
