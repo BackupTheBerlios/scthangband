@@ -45,6 +45,19 @@ example, it doesn't matter how good you are at 'Close Combat' - it will
 not help your 'Mindcrafting' skill. The only way to increase your
 'Mindcrafting' skill is to practice mindcrafting.
 
+On the character skill list (normally reached by pressing Chh from the
+dungeon screen), these skills are displayed in colours which indicate how
+each skill can be increased.
+White: Cannot be increased on this level.
+Grey: Can be increased with a potion of restore life levels.
+Yellow: Can be increased by using it as detailed below.
+Orange: Can be increased by either of the above methods.
+
+Skills which this character has never used are always displayed in white.
+
+Grey and orange skills only appear if they are drained, for instance by a
+special monster attack. 
+
 Skill Descriptions
 ==================
 

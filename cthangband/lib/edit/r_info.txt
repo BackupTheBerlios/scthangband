@@ -14,8 +14,11 @@
 # W:<level found at>:<rarity>:<unused>:<kill score>
 # B:<attack type>[:<attack effect>][:<attack damage>]
 # F:<flag1> | <flag2>...
+# E:<information about special things which happen when the monster dies>
 # [S:<spell frequency>]
 # [S:<spell1> | <spell2>...]
+
+# For information about the E flag, see lib/help/deathevent.txt
 
 # Version stamp (required)
 

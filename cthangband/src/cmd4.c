@@ -459,7 +459,7 @@ static void do_cmd_options_cheat(cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept) ", info);
+		sprintf(buf, "%s (RET to advance, y/n/x to set, ESC to accept) ", info);
 		prt(buf, 0, 0);
 	
 		/* Display the options */
