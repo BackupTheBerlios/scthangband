@@ -2558,7 +2558,7 @@ static void calc_bonuses(bool quiet)
 			{
 				if (skill_set[SKILL_MISSILE].value==100)
 					extra_shots += 180;
-				if (skill_set[SKILL_MISSILE].value>15)
+				else if (skill_set[SKILL_MISSILE].value>15)
 					extra_shots += (skill_set[SKILL_MISSILE].value*2-30);
 				break;
 			}
