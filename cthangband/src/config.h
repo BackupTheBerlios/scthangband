@@ -585,4 +585,4 @@
  * Check the modification time of *_info.raw files
  * (by Keldon Jones)
  */
-/* #define CHECK_MODIFICATION_TIME */
+#define CHECK_MODIFICATION_TIME

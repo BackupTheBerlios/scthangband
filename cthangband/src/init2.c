@@ -662,7 +662,7 @@ static errr init_k_info(void)
 #ifdef CHECK_MODIFICATION_TIME
 
 		err = check_modification_date(fd, "k_info.txt");
-		if (err) msg_print"(k_info.raw has old modification time.");
+		if (err) msg_print("k_info.raw has old modification time.");
 
 #endif /* CHECK_MODIFICATION_TIME */
 		/* Attempt to parse the "raw" file */
