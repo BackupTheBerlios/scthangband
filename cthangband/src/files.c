@@ -3740,9 +3740,31 @@ struct hyperlink
 typedef struct hyperlink hyperlink_type;
 
 /*
- * ToME's show_file() function 
+ * Attempt to open a file in a standard Angband directory for show_file_tome().
  */
-static bool show_file_tome(cptr name, cptr what, int line, int mode)
+static FILE *show_fopen(hyperlink_type *h_ptr, cptr path, cptr name)
+{
+	FILE *fff;
+
+	/* Build the filename */
+	strnfmt(h_ptr->path, 1024, "%v", path_build_f2, path, name);
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Open the file */
+	fff = my_fopen(h_ptr->path, "r");
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	return fff;
+}
+
+/*
+ * ToME's show_file() function (modified)
+ */
+static bool show_file_tome(cptr name, cptr what, int line)
 {
 	int i, k, x;
 
@@ -3763,6 +3785,9 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 	/* This screen has sub-screens */
 	bool menu = FALSE;
 
+	/* This function is from a standard help directory. */
+	bool is_temp_file = FALSE;
+
 	/* Current help file */
 	FILE *fff = NULL;
 
@@ -3770,7 +3795,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 	cptr find = NULL;
 
 	/* Char array type of hyperlink info */
-	hyperlink_type *h_ptr;
+	hyperlink_type h_ptr[1];
 
 	/* Pointer to general buffer in the above */
 	char *buf;
@@ -3784,8 +3809,8 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 	/* Read size of screen for big-screen stuff -pav- */
 	int wid, hgt;
 
-	/* Allocate hyperlink data */
-	MAKE(h_ptr, hyperlink_type);
+	/* Clear hyperlink data */
+	WIPE(h_ptr, hyperlink_type);
 
 	/* Setup buffer pointer */
 	buf = h_ptr->rbuf;
@@ -3815,61 +3840,28 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 		safe_setuid_drop();
 	}
 
+	/* Looking for help files now, which will be rewritten. */
+	if (!fff) is_temp_file = TRUE;
+
 	/* Look in "help" */
-	if (!fff)
+	if (!fff && ((fff = show_fopen(h_ptr, ANGBAND_DIR_HELP, name))))
 	{
-		/* h_ptr->caption */
+		/* Caption. */
 		sprintf(h_ptr->caption, "Help file '%s'", name);
-
-		/* Build the filename */
-		strnfmt(h_ptr->path, 1024, "%v", path_build_f2, ANGBAND_DIR_HELP, name);
-
-		/* Grab permission */
-		safe_setuid_grab();
-
-		/* Open the file */
-		fff = my_fopen(h_ptr->path, "r");
-
-		/* Drop permission */
-		safe_setuid_drop();
 	}
 
 	/* Look in "info" */
-	if (!fff)
+	if (!fff && ((fff = show_fopen(h_ptr, ANGBAND_DIR_INFO, name))))
 	{
-		/* h_ptr->caption */
+		/* Caption. */
 		sprintf(h_ptr->caption, "Info file '%s'", name);
-
-		/* Build the filename */
-		strnfmt(h_ptr->path, 1024, "%v", path_build_f2, ANGBAND_DIR_INFO, name);
-
-		/* Grab permission */
-		safe_setuid_grab();
-
-		/* Open the file */
-		fff = my_fopen(h_ptr->path, "r");
-
-		/* Drop permission */
-		safe_setuid_drop();
 	}
 
 	/* Look in "file" */
-	if (!fff)
+	if (!fff && ((fff = show_fopen(h_ptr, ANGBAND_DIR_FILE, name))))
 	{
-		/* h_ptr->caption */
+		/* Caption. */
 		sprintf(h_ptr->caption, "File '%s'", name);
-
-		/* Build the filename */
-		strnfmt(h_ptr->path, 1024, "%v", path_build_f2, ANGBAND_DIR_FILE, name);
-
-		/* Grab permission */
-		safe_setuid_grab();
-
-		/* Open the file */
-		fff = my_fopen(h_ptr->path, "r");
-
-		/* Drop permission */
-		safe_setuid_drop();
 	}
 
 	/* Oops */
@@ -3879,13 +3871,60 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 		msg_format("Cannot open '%s'.", name);
 		msg_print(NULL);
 
-		/* Free hyperlink info */
-		KILL(h_ptr);
-
 		/* Oops */
 		return (TRUE);
 	}
 
+	/*
+	 * Copy to a temporary file and reflow (approximately).
+	 * This allows the program to move up or down a line easily whatever
+	 * the formatting is.
+	 */
+	if (is_temp_file)
+	{
+		char buf[1024], *s;
+		uint w,h,x;
+		FILE *ftmp = my_fopen_temp(buf, sizeof(buf));
+		Term_get_size(&w, &h);
+
+		/* Don't use my_fgets as that needs short lines and it will process the
+		 * output file anyway. */
+		for (x = 0; fgets(h_ptr->rbuf, 1024, fff); )
+		{
+			for (s = h_ptr->rbuf; *s;)
+			{
+				if (strlen(s) <= w-x-1) break;
+
+				for (h = w-x-1; h && s[h] != ' '; h--);
+				if (!h) h = w-x-1;
+				fprintf(ftmp, "%.*s\n", h, s);
+				s += h+1;
+				x = 0;
+			}
+
+			/* Print the end of the line. */
+			fprintf(ftmp, "%s", s);
+
+			/* If the buffer was shorter than the line, only take a short
+			 * line as the first part of the next line. */
+			x = (strchr(s, '\n')) ? 0 : strlen(s);
+		}
+		my_fclose(fff);
+		my_fclose(ftmp);
+
+		/* Deal with the temporary file from now on. */
+		fff = ftmp;
+		strcpy(h_ptr->path, buf);
+
+		/* Grab permission */
+		safe_setuid_grab();
+
+		/* Open the temporary file for reading. */
+		fff = my_fopen(h_ptr->path, "r");
+
+		/* Drop permission */
+		safe_setuid_drop();
+	}
 
 	/* Pre-Parse the file */
 	while (TRUE)
@@ -4012,9 +4051,6 @@ start_of_while:
 			/* Oops */
 			if (!fff)
 			{
-				/* Free hyperlink info */
-				KILL(h_ptr);
-
 				return (FALSE);
 			}
 
@@ -4248,6 +4284,20 @@ start_of_while:
 		/* Get a keypress */
 		k = inkey();
 
+		/* The current line may not stay in the same place, so start again at
+		 * the top of the file. */
+		if (k == RESIZE_INKEY_KEY)
+		{
+			/* Close the file */
+			my_fclose(fff);
+
+			/* Delete the file if temporary. */
+			if (is_temp_file) fd_kill(h_ptr->path);
+
+			/* Display it again. */
+			return show_file_tome(name, what, 0);
+		}
+
 		/* Hack -- return to last screen */
 		if ((k == '?') || (k == 0x7F) || (k == '\010')) break;
 
@@ -4296,7 +4346,7 @@ start_of_while:
 			strcpy(tmp, "help.hlp");
 			if (askfor_aux(tmp, 80))
 			{
-				if (!show_file_tome(tmp, NULL, 0, mode)) k = ESCAPE;
+				if (!show_file_tome(tmp, NULL, 0)) k = ESCAPE;
 			}
 		}
 
@@ -4350,7 +4400,7 @@ start_of_while:
 			if (h_ptr->link_x[cur_link] != -1)
 			{
 				/* Recurse on that file */
-				if (!show_file_tome(h_ptr->link[cur_link], NULL, h_ptr->link_line[cur_link], mode)) k = ESCAPE;
+				if (!show_file_tome(h_ptr->link[cur_link], NULL, h_ptr->link_line[cur_link])) k = ESCAPE;
 			}
 		}
 
@@ -4363,7 +4413,7 @@ start_of_while:
 			if (h_ptr->link_key[i] == k)
 			{
 				/* Recurse on that file */
-				if (!show_file_tome(h_ptr->link[i], NULL, h_ptr->link_line[i], mode)) k = ESCAPE;
+				if (!show_file_tome(h_ptr->link[i], NULL, h_ptr->link_line[i])) k = ESCAPE;
 				break;
 			}
 		}
@@ -4372,8 +4422,8 @@ start_of_while:
 	/* Close the file */
 	my_fclose(fff);
 
-	/* Free hyperlink buffers */
-	KILL(h_ptr);
+	/* Delete the file if temporary. */
+	if (is_temp_file) fd_kill(h_ptr->path);
 
 	/* Escape */
 	if (k == ESCAPE) return (FALSE);
@@ -4389,7 +4439,10 @@ start_of_while:
  */
 errr show_file(cptr name, cptr what)
 {
-	show_file_tome(name, what, 0, 0);
+	void (*old_resize_hook)(void) = term_screen->resize_hook;
+	term_screen->resize_hook = resize_inkey;
+	show_file_tome(name, what, 0);
+	term_screen->resize_hook = old_resize_hook;
 	return 0;
 }
 

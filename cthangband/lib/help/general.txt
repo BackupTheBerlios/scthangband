@@ -78,7 +78,7 @@ Take off equipment (t) or Take off equipment (T)
         and you will drop the item after taking it off.  This command takes
         some energy.
 
-#####
+%%%%%
 --- Movement Commands ---
 
 %%%%% <cmd=;>
@@ -143,7 +143,7 @@ Enter store (Ctrl-E)
 		walking into the door explicitly calls this command, so a keymap for
 		^E will be triggered whenever you enter a store).
 
-#####
+%%%%%
 --- Resting Commands ---
 
 %%%%% <cmd=,>
@@ -174,7 +174,7 @@ Rest (R)
         may take an argument (used for the number of turns to rest), and
         takes some energy.
 
-#####
+%%%%%
 --- Searching Commands ---
 
 %%%%% <cmd=s>
@@ -199,7 +199,7 @@ Toggle search mode (S) or Toggle search mode (#)
         are disturbed.  You may also turn off search mode by entering the
         Search Mode command again.
 
-#####
+%%%%%
 --- Alter Commands ---
 
 %%%%% <cmd=T>
@@ -282,7 +282,7 @@ Alter (+)
         command may take a count, is affected by the "always_repeat" option,
         requires a direction, and takes some energy.
 
-#####
+%%%%%
 --- Spell Commands ---
 
 %%%%% <cmd=b>
@@ -339,7 +339,7 @@ Use bonus power (if any) (U) or (O)
         gathering and the great ones' recovery from harm. This command takes
         some energy.
 
-#####
+%%%%%
 --- Object Manipulation Commands ---
 
 %%%%% <cmd=E>
@@ -413,7 +413,7 @@ Rotate object stack (Ctrl-W)
         sometimes get.
         
 
-#####
+%%%%%
 --- Magical Object Commands ---
 
 %%%%% <cmd=A>
@@ -462,7 +462,7 @@ Use an object (Ctrl-U) (Ctrl-Z)
         flask of oil or item of food, to browse a spellbook or to activate a
         worn item.
 
-#####
+%%%%%
 --- Throwing and Missile Weapons ---
 
 %%%%% <cmd=f>
@@ -535,7 +535,7 @@ Targeting Mode (*)
         can often improve the effects of that attack, since ball attacks are
         not stopped by interposed monsters if the ball is launched at a target.
 
-#####
+%%%%%
 --- Looking Commands ---
 
 %%%%% <cmd=M>
@@ -576,7 +576,7 @@ Observe an item (I)
         This will tell you things about the special powers of the object.
         Currently, it only makes sense for artifacts and ego-items.
 
-#####
+%%%%%
 --- Message Commands ---
 
 %%%%% <cmd=^F>
@@ -598,7 +598,7 @@ Take notes (:)
         This command allows you to take notes, which will then appear in
         your message list (prefixed with "Note:").
 
-#####
+%%%%%
 --- Game Status Commands ---
 
 %%%%% <cmd=C>
@@ -631,7 +631,7 @@ Interact with the system (!)
         This allows some of the system-specific commands for altering the user
         interface.
  
-#####
+%%%%%
 --- Saving and Exiting Commands ---
 
 %%%%% <cmd=^X>
@@ -656,7 +656,7 @@ Quit (wake up) (Q)
         that choice.  Your character will forget all that he has learnt and you
         will have to start again from the very beginning.
 
-#####
+%%%%%
 --- User pref file commands ---
 
 %%%%% <cmd==>
@@ -699,7 +699,7 @@ Enter a user pref command (")
         You may have to use the "redraw" command (^R) after changing certain of
         the aspects of the game, to allow Angband to adapt to your changes.
 
-#####
+%%%%%
 --- Help ---
 
 %%%%% <cmd=?>
@@ -738,7 +738,7 @@ Game Version (V)
         For more information, see the "version.txt" help file.
 
 
-#####
+%%%%%
 --- Extra Commands ---
 
 %%%%% <cmd=^I>

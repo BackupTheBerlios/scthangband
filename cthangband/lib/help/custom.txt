@@ -17,7 +17,7 @@ macros in progress), "fresh" (dump any pending output to the screen), and
 "sub-windows" (see below).
 
 
-#####
+%%%%%
 === User Interface options ===
 
 %%%%% <rogue_like_commands>
@@ -124,7 +124,7 @@ that the visible area is larger than the detection area.
 If set, the map moves until the player's detection area includes the corner.
 If unset, the map stops moving when the visible area includes the corner.
 
-#####
+%%%%%
 === Disturbance options ===
 
 %%%%% <find_ignore_stairs>
@@ -213,7 +213,7 @@ Disturb when visible allies move    [disturb_allies]
     With this flag set, friendly monsters disturb the player in the same way as
     unfriendly ones. With it unset, they never disturb the player.
 
-#####
+%%%%%
 === Creature options ===
 
 %%%%% <use_old_target>
@@ -258,7 +258,7 @@ Allow monsters to carry objects    [testing_carry]
         the objects they were carrying when you kill them. Note that monsters
         which "crush" objects are not affected by this option.
 
-#####
+%%%%%
 === Object options ===
 
 %%%%% <carry_query_flag>
@@ -360,7 +360,7 @@ Use a single 'u'se command for all objects    [unify_commands]
 Allow objects to stack on the floor   [testing_stack]
      Allows a cave grid to hold more than one object (or one kind of object).
 
-#####
+%%%%%
 === Performance options ===
 
 %%%%% <view_reduce_lite>
@@ -499,7 +499,7 @@ Do not centre view whilst running    [no_centre_run]
     This causes the game to act as if centre_view was turned off if the player
     is running at the time.
 
-#####
+%%%%%
 === Miscellaneous options ===
 
 %%%%% <last_words>
@@ -683,7 +683,7 @@ Quiet autosave    [autosave_q]
     If this option is set, no messages will be printed, or input required, as
     the game is being saved via one of the autosave options above.
 
-#####
+%%%%%
 === Window Options ===
 
 See the "Window Options" help file for details.
@@ -747,7 +747,7 @@ Gain knowledge of monsters    [spoil_mon]
 	experiencing all that they can do and can be done to them... or by
 	reading mon-info.spo.
 
-#####
+%%%%%
 === Cheating Options ===
 
 Note that any use of these options prevents you from gaining a place on the
@@ -793,7 +793,7 @@ Wizard (Debug) Mode active    [cheat_wzrd]
 	to remove the requirement for food, allows the debug commands (Ctrl+a) to
 	be used and gives a variety of extra messages.
 
-#####
+%%%%%
 === Birth options ===
 
 %%%%% <spend_points>
