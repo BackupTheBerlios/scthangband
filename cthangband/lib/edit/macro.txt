@@ -272,158 +272,197 @@ F:u_info:s
 X:Skeleton
 Y:1
 F:k_info:I:2
+F:k_info:I:4
 
 X:Bottle
 Y:2
 F:k_info:I:2
+F:k_info:I:4
 
 X:Junk
 Y:3
 F:k_info:I:2
+F:k_info:I:4
 
 X:Spike
 Y:5
 F:k_info:I:2
+F:k_info:I:4
 
 X:Chest
 Y:7
 F:k_info:I:2
+F:k_info:I:4
 
 X:Shot
 Y:16
 F:k_info:I:2
+F:k_info:I:4
 
 X:Arrow
 Y:17
 F:k_info:I:2
+F:k_info:I:4
 
 X:Bolt
 Y:18
 F:k_info:I:2
+F:k_info:I:4
 
 X:Bow
 Y:19
 F:k_info:I:2
+F:k_info:I:4
 
 X:Digging
 Y:20
 F:k_info:I:2
+F:k_info:I:4
 
 X:Hafted
 Y:21
 F:k_info:I:2
+F:k_info:I:4
 
 X:Polearm
 Y:22
 F:k_info:I:2
+F:k_info:I:4
 
 X:Sword
 Y:23
 F:k_info:I:2
+F:k_info:I:4
 
 X:Boots
 Y:30
 F:k_info:I:2
+F:k_info:I:4
 
 X:Gloves
 Y:31
 F:k_info:I:2
+F:k_info:I:4
 
 X:Helmet
 Y:32
 F:k_info:I:2
+F:k_info:I:4
 
 X:Crown
 Y:33
 F:k_info:I:2
+F:k_info:I:4
 
 X:Shield
 Y:34
 F:k_info:I:2
+F:k_info:I:4
 
 X:Cloak
 Y:35
 F:k_info:I:2
+F:k_info:I:4
 
 X:S-Armour
 Y:36
 F:k_info:I:2
+F:k_info:I:4
 
 X:H-Armour
 Y:37
 F:k_info:I:2
+F:k_info:I:4
 
 X:D-Armour
 Y:38
 F:k_info:I:2
+F:k_info:I:4
 
 X:Light
 Y:39
 F:k_info:I:2
+F:k_info:I:4
 
 X:Amulet
 Y:40
 F:k_info:I:2
+F:k_info:I:4
 
 X:Ring
 Y:45
 F:k_info:I:2
+F:k_info:I:4
 
 X:Staff
 Y:55
 F:k_info:I:2
+F:k_info:I:4
 
 X:Wand
 Y:65
 F:k_info:I:2
+F:k_info:I:4
 
 X:Rod
 Y:66
 F:k_info:I:2
+F:k_info:I:4
 
 X:Scroll
 Y:70
 F:k_info:I:2
+F:k_info:I:4
 
 X:Potion
 Y:75
 F:k_info:I:2
+F:k_info:I:4
 
 X:Flask
 Y:77
 F:k_info:I:2
+F:k_info:I:4
 
 X:Food
 Y:80
 F:k_info:I:2
+F:k_info:I:4
 
 X:Sorcery
 Y:90
 F:k_info:I:2
+F:k_info:I:4
 
 X:Thaumaturgy
 Y:91
 F:k_info:I:2
+F:k_info:I:4
 
 X:Conjuration
 Y:92
 F:k_info:I:2
+F:k_info:I:4
 
 X:Necromancy
 Y:93
 F:k_info:I:2
+F:k_info:I:4
 
 X:Charm
 Y:94
 F:k_info:I:2
+F:k_info:I:4
 
 X:Gold
 Y:100
 F:k_info:I:2
+F:k_info:I:4
 
 X:Unknown
 Y:255
 F:k_info:I:2
+F:k_info:I:4
 
 # Add IGNORE_* as appropriate, and SHOW_ARMOUR to armour
 

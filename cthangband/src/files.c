@@ -317,6 +317,9 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
  * Parse another file recursively, see below for details
  *   %:<filename>
  *
+ * Specify the save file version against which the pref file was created.
+ *   O:<num>
+ *
  * Specify the attr/char values for "monsters" by race index
  *   R:<num>:<a>:<c>
  *
@@ -356,7 +359,7 @@ errr add_stats(s16b sex, s16b race, s16b template, s16b maximise, s16b st, s16b 
  * Specify a default set of initial statistics for spend_points
  *   D:<sex>:<race>:<class>:<maximise_mode>:<Str>:<Int>:<Wis>:<Dex>:<Con>:<Chr>:<Name>
  */
-errr process_pref_file_aux(char *buf)
+errr process_pref_file_aux(char *buf, u32b *version)
 {
 	int i, j, n1, n2;
 
