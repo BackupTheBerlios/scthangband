@@ -2360,10 +2360,10 @@ extern void ascii_to_text_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(UTIL_C))
 extern void s16b_to_string_f1(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
-#if (defined(CMD4_C) || defined(MAIN_GTK_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(UTIL_C))
 extern sint macro_find_exact(cptr pat);
 #endif
-#if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_GTK_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(UTIL_C))
 extern errr macro_add(cptr pat, cptr act);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(POWERS_C) || defined(SPELLS2_C) || defined(UTIL_C) || defined(WIZARD2_C))
@@ -3797,7 +3797,7 @@ extern void Term_what(int x, int y, byte *a, char *c);
 #if (defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern void Term_flush(void);
 #endif
-#if (defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C) || defined(Z_TERM_C))
+#if (defined(MAID_X11_C) || defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_keypress(int k);
 #endif
 #if (defined(CMD4_C) || defined(CMD5_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
@@ -3925,5 +3925,11 @@ extern bool repair_mflag_nice;
 
 #if (defined(CAVE_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(SPELLS2_C))
 extern void mark_spot(int y, int x);
+#endif
+
+/* maid-x11.c */
+
+#if ((defined(USE_X11) || defined(USE_XAW) || defined(USE_XPJ))) && (defined(MAID_X11_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C))
+extern void react_keypress(XKeyEvent *ev);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
