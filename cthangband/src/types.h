@@ -983,6 +983,9 @@ struct player_race
 	race_bonus_type *bonus; /* A pointer to the extra things this race gets. */
 	byte bonuses; /* The number of elements in bonus. */
 
+	byte chaos; /* A chaos feature this race is likely to get. */
+	byte chaos_chance; /* THe chance of gaining the above chaos feature. */
+
 	byte infra;			/* Infra-vision	range */
 	byte chart;		/* Initial chart for get_history() */
 

@@ -2135,6 +2135,12 @@ extern u16b extract_energy[200];
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(TABLES_C))
 extern player_sex sex_info[MAX_SEXES];
 #endif
+#if (defined(GENERATE_C) || defined(TABLES_C))
+extern cptr *elf_syllables[];
+#endif
+#if (defined(GENERATE_C) || defined(TABLES_C))
+extern cptr *hobbit_syllables[];
+#endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(INIT1_C) || defined(LOAD_C) || defined(MONSTER2_C) || defined(POWERS_C) || defined(STORE_C) || defined(TABLES_C))
 extern player_race race_info[MAX_RACES];
 #endif
@@ -3233,7 +3239,7 @@ extern player_type *p_ptr;
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(VARIABLE_C))
 extern player_sex *sp_ptr;
 #endif
-#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(POWERS_C) || defined(VARIABLE_C) || defined(XTRA1_C))
+#if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(POWERS_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern player_race *rp_ptr;
 #endif
 #if (defined(BIRTH_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_AMI_C) || defined(SPELLS2_C) || defined(VARIABLE_C) || defined(XTRA1_C))
@@ -3886,14 +3892,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* tables.c */
-
-#if (defined(GENERATE_C) || defined(TABLES_C))
-extern cptr *elf_syllables[];
-#endif
-#if (defined(GENERATE_C) || defined(TABLES_C))
-extern cptr *hobbit_syllables[];
 #endif
 #endif /* INCLUDED_EXTERNS_H */

@@ -1591,6 +1591,7 @@ player_race race_info[MAX_RACES] =
         82, 5, 200, 20,
         78,  6, 190, 15,
 		barbarian_bonuses, N_ELEMENTS(barbarian_bonuses),
+		0, 0,
         0, 1, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1607,6 +1608,7 @@ player_race race_info[MAX_RACES] =
         65,  6, 150, 20,
         61,  6, 120, 15,
 		broo_bonuses, N_ELEMENTS(broo_bonuses),
+		MUT_POLYMORPH, 10,
         0, 129, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1623,6 +1625,7 @@ player_race race_info[MAX_RACES] =
         92, 10, 255, 60,
         80,  8, 235, 60,
 		cyclops_bonuses, N_ELEMENTS(cyclops_bonuses),
+		0, 0,
         1, 77, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1639,6 +1642,7 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		dark_elf_bonuses, N_ELEMENTS(dark_elf_bonuses),
+		0, 0,
         5, 69, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1655,6 +1659,7 @@ player_race race_info[MAX_RACES] =
         76,  1, 160,  5,
         72,  1, 130,  5,
 		draconian_bonuses, N_ELEMENTS(draconian_bonuses),
+		0, 0,
         2, 89, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1671,6 +1676,7 @@ player_race race_info[MAX_RACES] =
 		48,  3, 150, 10,
 		46,  3, 120, 10,
 		dwarf_bonuses, N_ELEMENTS(dwarf_bonuses),
+		0, 0,
 		5, 16, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1687,6 +1693,7 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		elf_bonuses, N_ELEMENTS(elf_bonuses),
+		0, 0,
 		3, 7, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1703,6 +1710,7 @@ player_race race_info[MAX_RACES] =
 		42,  3, 90,  6,
 		39,  3, 75,  3,
 		gnome_bonuses, N_ELEMENTS(gnome_bonuses),
+		0, 0,
 		4, 13, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1719,6 +1727,7 @@ player_race race_info[MAX_RACES] =
         66,  1, 200,  6,
         62,  1, 180,  6,
 		golem_bonuses, N_ELEMENTS(golem_bonuses),
+		0, 0,
         4, 98, dwarf_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -1735,6 +1744,7 @@ player_race race_info[MAX_RACES] =
 		82, 5, 190, 20,
 		78,  6, 180, 15,
 		great_one_bonuses, N_ELEMENTS(great_one_bonuses),
+		0, 0,
 		0, 67, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1751,6 +1761,7 @@ player_race race_info[MAX_RACES] =
 		66,  6, 130, 15,
 		62,  6, 100, 10,
 		NULL, 0,
+		0, 0,
 		2, 4, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1767,6 +1778,7 @@ player_race race_info[MAX_RACES] =
         100,10, 255, 65,
         80, 10, 240, 64,
 		half_giant_bonuses, N_ELEMENTS(half_giant_bonuses),
+		0, 0,
         3, 75, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1783,6 +1795,7 @@ player_race race_info[MAX_RACES] =
         92, 10, 255, 60,
         80,  8, 235, 60,
 		half_ogre_bonuses, N_ELEMENTS(half_ogre_bonuses),
+		0, 0,
 		3, 74, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1799,6 +1812,7 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		half_orc_bonuses, N_ELEMENTS(half_orc_bonuses),
+		0, 0,
 		3, 19, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1815,6 +1829,7 @@ player_race race_info[MAX_RACES] =
         111, 11, 255, 86,
         99, 11, 250, 86,
 		half_titan_bonuses, N_ELEMENTS(half_titan_bonuses),
+		0, 0,
         0, 76, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1831,6 +1846,7 @@ player_race race_info[MAX_RACES] =
 		96, 10, 250, 50,
 		84,  8, 225, 40,
 		half_troll_bonuses, N_ELEMENTS(half_troll_bonuses),
+		0, 0,
 		3, 22, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1847,6 +1863,7 @@ player_race race_info[MAX_RACES] =
 		90, 10, 190, 20,
 		82, 10, 180, 15,
 		high_elf_bonuses, N_ELEMENTS(high_elf_bonuses),
+		0, 0,
 		4, 7, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1863,6 +1880,7 @@ player_race race_info[MAX_RACES] =
 		36,  3, 60,  3,
 		33,  3, 50,  3,
 		hobbit_bonuses, N_ELEMENTS(hobbit_bonuses),
+		0, 0,
 		4, 10, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1879,6 +1897,7 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		NULL, 0,
+		0, 0,
 		0, 1, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1895,6 +1914,7 @@ player_race race_info[MAX_RACES] =
         68,  1, 150,  5,
         64,  1, 120,  5,
 		imp_bonuses, N_ELEMENTS(imp_bonuses),
+		MUT_HORNS, 60,
         3, 94, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1911,6 +1931,7 @@ player_race race_info[MAX_RACES] =
         60,  3, 80,  4,
         54,  3, 70,  4,
 		klackon_bonuses, N_ELEMENTS(klackon_bonuses),
+		0, 0,
         2, 84, klackon_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1927,6 +1948,7 @@ player_race race_info[MAX_RACES] =
         60,  1, 130,  5,
         55,  1, 100,  5,
 		kobold_bonuses, N_ELEMENTS(kobold_bonuses),
+		0, 0,
         3, 82, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1943,6 +1965,7 @@ player_race race_info[MAX_RACES] =
         68,  6, 142, 15,
         63,  6, 112, 10,
 		mind_flayer_bonuses, N_ELEMENTS(mind_flayer_bonuses),
+		MUT_TENTACLES, 60,
         4, 92, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1959,6 +1982,7 @@ player_race race_info[MAX_RACES] =
         43,  3, 92,  6,
         40,  3, 78,  3,
 		nibelung_bonuses, N_ELEMENTS(nibelung_bonuses),
+		0, 0,
         5, 87, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -1975,6 +1999,7 @@ player_race race_info[MAX_RACES] =
         72,  6, 50, 5,
         66,  4, 50, 5,
 		skeleton_bonuses, N_ELEMENTS(skeleton_bonuses),
+		0, 0,
         2, 102, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -1991,6 +2016,7 @@ player_race race_info[MAX_RACES] =
         72, 6, 100, 25,
         66, 4, 100, 20,
 		spectre_bonuses, N_ELEMENTS(spectre_bonuses),
+		0, 0,
          5, 110, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -2007,6 +2033,7 @@ player_race race_info[MAX_RACES] =
         32,  2, 75,  2,
         29,  2, 65,  2,
 		sprite_bonuses, N_ELEMENTS(sprite_bonuses),
+		0, 0,
         4, 124, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -2023,6 +2050,7 @@ player_race race_info[MAX_RACES] =
            72,  6, 180, 25,
            66,  4, 150, 20,
 		vampire_bonuses, N_ELEMENTS(vampire_bonuses),
+		MUT_HYPN_GAZE, 60,
          5, 113, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
@@ -2039,6 +2067,7 @@ player_race race_info[MAX_RACES] =
         50,  3, 90,  6,
         50,  3, 75,  3,
 		yeek_bonuses, N_ELEMENTS(yeek_bonuses),
+		MUT_SHRIEK, 60,
         2, 78, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
@@ -2055,6 +2084,7 @@ player_race race_info[MAX_RACES] =
         72, 6, 100, 25,
         66, 4, 100, 20,
 		zombie_bonuses, N_ELEMENTS(zombie_bonuses),
+		0, 0,
         2, 107, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},

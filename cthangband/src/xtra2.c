@@ -3856,14 +3856,6 @@ struct chaos_type
 	cptr lose;
 };
 
-typedef struct racial_chaos_type racial_chaos_type;
-struct racial_chaos_type
-{
-	int race;
-	int chance;
-	int mutation;
-};
-
 static chaos_type chaos_info[] =
 {
 	{IDX(MUT_SPIT_ACID) 4,
@@ -4252,15 +4244,6 @@ static chaos_type chaos_info[] =
 		"You no longer feel like you can recover from anything."},
 };
 
-static racial_chaos_type racial_chaos_info[] =
-{
-	{RACE_VAMPIRE, 60, MUT_HYPN_GAZE},
-	{RACE_IMP, 60, MUT_HORNS},
-	{RACE_YEEK, 60, MUT_SHRIEK},
-	{RACE_BROO, 10, MUT_POLYMORPH},
-	{RACE_MIND_FLAYER, 60, MUT_TENTACLES},
-};
-
 static int chaos_oppose[][2] =
 {
 	{MUT_HYPER_STR, MUT_PUNY},
@@ -4385,7 +4368,6 @@ static int pick_chaos_feature(int mut, bool want)
  */
 bool gain_chaos_feature(int choose_mut)
 {
-	racial_chaos_type *rc_ptr;
 	int i, (*co_ptr)[2];
 	
 	/* Choose a feature. */
@@ -4397,12 +4379,9 @@ bool gain_chaos_feature(int choose_mut)
 	 */
 	if (mut)
 	{
-		FOR_ALL_IN(racial_chaos_info, rc_ptr)
+		if (percent(rp_ptr->chaos_chance))
 		{
-			if (rc_ptr->race == p_ptr->prace && percent(rc_ptr->chance))
-			{
-				mut = (p_has_mutation(rc_ptr->mutation)) ? 0 : rc_ptr->mutation;
-			}
+			mut = (p_has_mutation(rp_ptr->chaos)) ? 0 : rp_ptr->chaos;
 		}
 	}
 
