@@ -2500,7 +2500,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 /*
  * Hack -- attempt to place a monster at the given location
  *
- * Attempt to find a monster appropriate to the "monster_level"
+ * Attempt to find a monster appropriate to the "level"
  */
 bool place_monster(int y, int x, int level, bool slp, bool grp)
 {
@@ -2594,6 +2594,9 @@ bool alloc_horde(int y, int x, int level)
 }
 #endif
 
+/* Forward declare. */
+static bool summon_specific_okay(int summon_specific_type, int r_idx);
+
 /*
  * Attempt to allocate a random monster in the dungeon.
  *
@@ -2601,11 +2604,12 @@ bool alloc_horde(int y, int x, int level)
  *
  * Use "slp" to choose the initial "sleep" status
  *
- * Use "monster_level" for the monster level
+ * Use "level" for the monster level
  */
 bool alloc_monster(int dis, int level, bool slp)
 {
-	int			y, x;
+	bool rc;
+	int	x, y, bias;
 
 	/* If we already know the grid is full, don't try anything */
 	if (full_grid <= dis) return FALSE;
@@ -2614,33 +2618,33 @@ bool alloc_monster(int dis, int level, bool slp)
 	if (!find_space(&y, &x, dis)) return FALSE;
 
 #ifdef MONSTER_HORDES
-    if (randint(5000)<=(dun_depth))
-    {
-        if (alloc_horde(y, x, level))
-        {
-            if (cheat_hear) msg_print("Monster horde.");
-            return (TRUE);
-        }
-    }
-    else
-    {
-#endif
-        /* Attempt to place the monster, allow groups */
-		if ((dun_bias > 0) && (rand_range(1,10) > 6))
-		{
-			if (summon_specific(y,x,(dun_depth),dun_bias)) return (TRUE);
-		}
-		else
-		{
-			if (place_monster(y, x, level, slp, TRUE)) return (TRUE);
-		}
+	if (rand_int(5000) < dun_depth)
+	{
+		/* Hordes never sleep. (?) */
+		rc = alloc_horde(y, x, level);
 
-#ifdef MONSTER_HORDES
-    }
+		/* Feedbaok. */
+		if (rc && cheat_hear) msg_print("Monster horde.");
+	}
+	else
 #endif
+	{
+		/* Attempt to place the monster, allow groups */
+		bias = (dun_bias && magik(40)) ? dun_bias : 0;
+
+		/* Prepare allocation table ("okay" monster) */
+		if (bias) get_mon_num_prep(summon_specific_okay, bias);
+
+		/* Place an appropriate monster (or group). */
+		rc = place_monster(y, x, level, slp, TRUE);
+
+		/* Restore the normal monster table. */
+		if (bias) get_mon_num_prep(NULL, 0);
+
+	}
 
 	/* Nope */
-	return (FALSE);
+	return rc;
 }
 
 
