@@ -3992,7 +3992,7 @@ extern cptr string_make(cptr str);
 
 /* object1.c */
 
-#if (defined(CMD5_C) || defined(OBJECT1_C))
+#if (defined(OBJECT1_C) || defined(POWERS_C))
 extern cptr list_flags(cptr init, cptr conj, cptr *flags, int total);
 #endif
 
@@ -4086,5 +4086,11 @@ extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
 #endif
 #if (defined(DUNGEON_C) || defined(FILES_C))
 extern bool PURE player_has_flag_known(int set, u32b flag);
+#endif
+
+/* powers.c */
+
+#if (defined(CMD5_C) || defined(POWERS_C))
+extern cptr describe_power(int power, int lev);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

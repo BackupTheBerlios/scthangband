@@ -24,6 +24,285 @@
 
 #include "angband.h"
 
+typedef struct add_timed_type add_timed_type;
+struct add_timed_type
+{
+	s16b power;
+	s16b flag;
+	s16b min;
+	s16b max;
+	bool resist; /* Certain resistances cancel this altogether. */
+};
+
+static add_timed_type power_add_timed_table[] =
+{
+	{OBJ_FOOD_POISON+PO_K_IDX, TIMED_POISONED, 10, 19, FALSE},
+	{OBJ_FOOD_BLINDNESS+PO_K_IDX, TIMED_BLIND, 200, 399, FALSE},
+	{OBJ_FOOD_PARANOIA+PO_K_IDX, TIMED_AFRAID, 10, 19, FALSE},
+	{OBJ_FOOD_CONFUSION+PO_K_IDX, TIMED_CONFUSED, 10, 19, FALSE},
+	{OBJ_FOOD_HALLUCINATION+PO_K_IDX, TIMED_IMAGE, 250, 499, FALSE},
+	{OBJ_FOOD_PARALYSIS+PO_K_IDX, TIMED_PARALYZED, 10, 19, FALSE},
+	{OBJ_POTION_SLOWNESS+PO_K_IDX, TIMED_SLOW, 15, 39, FALSE},
+	{OBJ_POTION_POISON+PO_K_IDX, TIMED_POISONED, 10, 24, TRUE},
+	{OBJ_POTION_BLINDNESS+PO_K_IDX, TIMED_BLIND, 100, 199, TRUE},
+	{OBJ_POTION_SLEEP+PO_K_IDX, TIMED_PARALYZED, 4, 7, TRUE},
+	{OBJ_POTION_INFRA_VISION+PO_K_IDX, TIMED_INFRA, 100, 199, FALSE},
+	{OBJ_POTION_DETECT_INVIS+PO_K_IDX, TIMED_INVIS, 12, 23, FALSE},
+	{OBJ_POTION_RES_HEAT+PO_K_IDX, TIMED_OPPOSE_FIRE, 11, 20, FALSE},
+	{OBJ_POTION_RES_COLD+PO_K_IDX, TIMED_OPPOSE_COLD, 11, 20, FALSE},
+	{OBJ_POTION_RESISTANCE, TIMED_OPPOSE_ACID, 21, 40, FALSE},
+	{OBJ_POTION_RESISTANCE, TIMED_OPPOSE_ELEC, 21, 40, FALSE},
+	{OBJ_POTION_RESISTANCE, TIMED_OPPOSE_FIRE, 21, 40, FALSE},
+	{OBJ_POTION_RESISTANCE, TIMED_OPPOSE_COLD, 21, 40, FALSE},
+	{OBJ_POTION_RESISTANCE, TIMED_OPPOSE_POIS, 21, 40, FALSE},
+	{OBJ_POTION_INVULNERABILITY+PO_K_IDX, TIMED_INVULN, 8, 14, FALSE},
+	{OBJ_SCROLL_BLESSING+PO_K_IDX, TIMED_BLESSED, 7, 18, FALSE},
+	{OBJ_SCROLL_HOLY_CHANT+PO_K_IDX, TIMED_BLESSED, 13, 36, FALSE},
+	{OBJ_SCROLL_HOLY_PRAYER+PO_K_IDX, TIMED_BLESSED, 25, 72, FALSE},
+	{OBJ_STAFF_SLOWNESS+PO_K_IDX, TIMED_SLOW, 16, 45, FALSE},
+	{ACT_ESP+PO_ACTIVATION, TIMED_ESP, 26, 55, FALSE},
+	{ACT_BERSERK+PO_ACTIVATION, TIMED_SHERO, 51, 100, FALSE},
+	{ACT_BERSERK+PO_ACTIVATION, TIMED_BLESSED, 51, 100, FALSE},
+	{ACT_INVULN+PO_ACTIVATION, TIMED_INVULN, 9, 16, FALSE},
+	{SP_BLESS+PO_SPELL, TIMED_BLESSED, 13, 24, FALSE},
+	{SP_SENSE_UNSEEN+PO_SPELL, TIMED_INVIS, 25, 48, FALSE},
+	{SP_PRAYER+PO_SPELL, TIMED_BLESSED, 49, 96, FALSE},
+	{SP_HOLY_INVULNERABILITY+PO_SPELL, TIMED_INVULN, 8, 14, FALSE},
+	{SP_RESIST_ENVIRONMENT+PO_SPELL, TIMED_OPPOSE_COLD, 21, 40, FALSE},
+	{SP_RESIST_ENVIRONMENT+PO_SPELL, TIMED_OPPOSE_FIRE, 21, 40, FALSE},
+	{SP_RESIST_ENVIRONMENT+PO_SPELL, TIMED_OPPOSE_ELEC, 21, 40, FALSE},
+	{SP_STONE_SKIN+PO_SPELL, TIMED_SHIELD, 31, 50, FALSE},
+	{SP_RESISTANCE_TRUE+PO_SPELL, TIMED_OPPOSE_ACID, 21, 40, FALSE},
+	{SP_RESISTANCE_TRUE+PO_SPELL, TIMED_OPPOSE_ELEC, 21, 40, FALSE},
+	{SP_RESISTANCE_TRUE+PO_SPELL, TIMED_OPPOSE_FIRE, 21, 40, FALSE},
+	{SP_RESISTANCE_TRUE+PO_SPELL, TIMED_OPPOSE_COLD, 21, 40, FALSE},
+	{SP_RESISTANCE_TRUE+PO_SPELL, TIMED_OPPOSE_POIS, 21, 40, FALSE},
+	{SP_SENSE_MINDS+PO_SPELL, TIMED_ESP, 26, 55, FALSE},
+	{SP_GLOBE_OF_INVULNERABILITY+PO_SPELL, TIMED_INVULN, 9, 16, FALSE},
+	{SP_PLANAR_SPYING+PO_SPELL, TIMED_ESP, 26, 55, FALSE},
+	{SP_RESIST_POISON+PO_SPELL, TIMED_OPPOSE_POIS, 21, 40, FALSE},
+	{SP_RESIST_COLD+PO_SPELL, TIMED_OPPOSE_COLD, 21, 40, FALSE},
+	{SP_RESIST_FIRE+PO_SPELL, TIMED_OPPOSE_FIRE, 21, 40, FALSE},
+	{SP_RESIST_ACID+PO_SPELL, TIMED_OPPOSE_ACID, 21, 40, FALSE},
+	{SP_RESIST_LIGHTNING+PO_SPELL, TIMED_OPPOSE_ELEC, 21, 40, FALSE},
+	{SP_SEE_INVISIBLE+PO_SPELL, TIMED_INVIS, 25, 48, FALSE},
+	{RACE_GOLEM+PO_RACIAL, TIMED_SHIELD, 31, 50, FALSE},
+};
+
+static cptr timer_verbs[TIMED_MAX] =
+{
+	"blinds you",
+	"confuses you",
+	"poisons you",
+	"scares you",
+	"paralyses you",
+	"gives you hallucinations",
+	"speeds you",
+	"slows you",
+	"protects you",
+	"blesses you",
+	"makes you heroic",
+	"drives you berserk",
+	"protects you from evil",
+	"renders you incorporeal",
+	"makes you invulnerable",
+	"gives you telepathy",
+	"lets you see invisible things",
+	"lets you see infra-red light",
+	"protects you from acid",
+	"protects you from electricity",
+	"protects you from fire",
+	"protects you from cold",
+	"protects you from poison",
+	"stuns you",
+	"cuts you",
+	"feeds you",
+	"TIMED_VAMP"
+};
+
+#define FOR_ALL_IN(ARRAY, PTR) \
+	for ((PTR) = (ARRAY); (PTR) < END_PTR(ARRAY); (PTR)++)
+
+/*
+ * Return 0 if the TIMED_* flag cannot be increased, 1 if it can be at present,
+ * and -1 if it can always be increased (except in cases of overflow).
+ */
+static int allow_timer(int flag)
+{
+	switch (flag)
+	{
+		case TIMED_POISONED: return !p_ptr->resist_pois && !p_ptr->oppose_pois;
+		case TIMED_BLIND: return !p_ptr->resist_blind;
+		case TIMED_PARALYZED: return !p_ptr->free_act;
+		default: return -1;
+	}
+}
+
+static errr power_add_timed(int power, bool *ident)
+{
+	add_timed_type *ptr;
+	errr err = POWER_ERROR_NO_SUCH_POWER;
+	FOR_ALL_IN(power_add_timed_table, ptr)
+	{
+		if (ptr->power == power)
+		{
+			if (!ptr->resist || allow_timer(ptr->flag))
+			{
+				(*ident) = add_flag(ptr->flag, rand_range(ptr->min, ptr->max));
+			}
+			err = SUCCESS;
+		}
+	}
+	return err;
+}
+
+static cptr list_timers(cptr init, cptr conj, add_timed_type **tim, int total)
+{
+	cptr s, end;
+	int i;
+
+	/* Paranoia. */
+	if (!init || !conj) return "";
+
+	s = format("%s ", init);
+	
+	for (i = 0; i < total; i++)
+	{
+		if (i == total-1) end = ".";
+		else if (i == total-2) end = " and ";
+		else end = ", ";
+
+		add_timed_type *ptr = tim[i];
+		s = format("%s%s for %d-%d turns%s",
+			s, timer_verbs[ptr->flag], ptr->min, ptr->max, end);
+	}
+
+	return s;
+}
+
+static cptr power_describe_timer(int power)
+{
+	add_timed_type *ptr, *a[10];
+	int j = 0;
+
+	FOR_ALL_IN(power_add_timed_table, ptr)
+	{
+		if (ptr->power == power)
+		{
+			assert(j < 10);
+			a[j++] = ptr;
+		}
+	}
+	if (!j) return 0;
+	else return list_timers("It", "and", a, j);
+}
+
+/*
+ * Describe various miscellaneous powers.
+ */
+static cptr power_describe_misc(int power, int lev)
+{
+	switch (power)
+	{
+		case SP_PRECOGNITION+PO_SPELL:
+		{
+			cptr board[6], init = "Detects";
+			int j = 0;
+
+			if (lev >= 45)
+				return "Lights the dungeon and detects everything in it.";
+
+			if (lev < 20) board[j++] = "monsters";
+			else board[j++] = "all monsters";
+			if (lev >= 5) board[j++] = "traps";
+			if (lev >= 15) board[j++] = "doors";
+			if (lev >= 15) board[j++] = "stairs";
+			if (lev >= 20) board[j++] = "walls";
+			if (lev >= 30) board[j++] = "objects";
+			return list_flags(init, "and", board, j);
+		}
+		case SP_NEURAL_BLAST+PO_SPELL:
+		{
+			return "Fires a bolt of mental energy at a monster.";
+		}
+		case SP_MINOR_DISPLACEMENT+PO_SPELL:
+		{
+			if (lev < 25) return "Teleports you a short distance away.";
+			else return "Teleports you to a nearby spot of your choosing.";
+		}
+		case SP_MAJOR_DISPLACEMENT+PO_SPELL:
+		{
+			if (lev < 30) return "Teleports you far away.";
+			else return "Teleports you, and other nearby monsters, far away.";
+		}
+		case SP_DOMINATION+PO_SPELL:
+		{
+			if (lev < 30) return "Charms a monster.";
+			else return "Charms all nearby monsters.";
+		}
+		case SP_PULVERISE+PO_SPELL:
+		{
+			return "Creates a ball of sound at a location of your choosing.";
+		}
+		case SP_CHARACTER_ARMOUR+PO_SPELL:
+		{
+			cptr board[6];
+			cptr init = "Gives AC and resistance to";
+			int j = 0;
+
+			if (lev >= 15) board[j++] = "acid";
+			if (lev >= 20) board[j++] = "fire";
+			if (lev >= 25) board[j++] = "cold";
+			if (lev >= 30) board[j++] = "electricity";
+			if (lev >= 35) board[j++] = "poison";
+
+			if (j)
+				return list_flags(init, "and", board, j);
+			else
+				return "Helps to protect you from melee attack.";
+		}
+		case SP_PSYCHOMETRY+PO_SPELL:
+		{
+			if (lev >= 40) return "Identifies an object.";
+			else return "Pseudo-identifies an object.";
+		}
+		case SP_MIND_WAVE+PO_SPELL:
+		{
+			if (lev >= 25)
+				return "Fires mental energy at all visible monsters.";
+			else
+				return "Fires mental energy at nearby monsters.";
+		}
+		case SP_ADRENALINE_CHANNELING+PO_SPELL:
+		{
+			if (lev >= 35)
+				return "Heals you, hastes you and drives you berserk.";
+			else
+				return "Heals you, hastes you and makes you heroic.";
+		}
+		case SP_PSYCHIC_DRAIN+PO_SPELL:
+		{
+			return "Fires mental energy at nearby monsters to gain extra chi.";
+		}
+		case SP_TELEKINETIC_WAVE+PO_SPELL:
+		{
+			return "Harms, stuns and teleports nearby monsters.";
+		}
+		/* None written. */
+		default:
+		{
+			return 0;
+		}
+	}
+}
+
+cptr describe_power(int power, int lev)
+{
+	cptr s;
+	if ((s = power_describe_timer(power))) return s;
+	if ((s = power_describe_misc(power, lev))) return s;
+	return "";
+}
 
 static void phlogiston (void)
 {
@@ -672,75 +951,46 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	switch (power)
 	{
 		case OBJ_FOOD_POISON+PO_K_IDX:
-		{
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-			{
-				if (add_flag(TIMED_POISONED, rand_int(10) + 10))
-				{
-					(*ident) = TRUE;
-				}
-			}
-			return SUCCESS;
-		}
-
 		case OBJ_FOOD_BLINDNESS+PO_K_IDX:
-		{
-			if (!p_ptr->resist_blind)
-			{
-				if (add_flag(TIMED_BLIND, rand_int(200) + 200))
-				{
-					(*ident) = TRUE;
-				}
-			}
-			return SUCCESS;
-		}
-
 		case OBJ_FOOD_PARANOIA+PO_K_IDX:
-		{
-			if (!p_ptr->resist_fear)
-			{
-				if (add_flag(TIMED_AFRAID, rand_int(10) + 10))
-				{
-					(*ident) = TRUE;
-				}
-			}
-			return SUCCESS;
-		}
-
 		case OBJ_FOOD_CONFUSION+PO_K_IDX:
-		{
-			if (!p_ptr->resist_conf)
-			{
-				if (add_flag(TIMED_CONFUSED, rand_int(10) + 10))
-				{
-					(*ident) = TRUE;
-				}
-			}
-			return SUCCESS;
-		}
-
 		case OBJ_FOOD_HALLUCINATION+PO_K_IDX:
-		{
-			if (!p_ptr->resist_chaos)
-			{
-				if (add_flag(TIMED_IMAGE, rand_int(250) + 250))
-				{
-					(*ident) = TRUE;
-				}
-			}
-			return SUCCESS;
-		}
-
 		case OBJ_FOOD_PARALYSIS+PO_K_IDX:
+		case OBJ_POTION_SLOWNESS+PO_K_IDX:
+		case OBJ_POTION_POISON+PO_K_IDX:
+		case OBJ_POTION_BLINDNESS+PO_K_IDX:
+		case OBJ_POTION_SLEEP+PO_K_IDX:
+		case OBJ_POTION_INFRA_VISION+PO_K_IDX:
+		case OBJ_POTION_RES_HEAT+PO_K_IDX:
+		case OBJ_POTION_RES_COLD+PO_K_IDX:
+        case OBJ_POTION_RESISTANCE+PO_K_IDX:
+        case OBJ_POTION_INVULNERABILITY+PO_K_IDX:
+		case OBJ_SCROLL_BLESSING+PO_K_IDX:
+		case OBJ_SCROLL_HOLY_CHANT+PO_K_IDX:
+		case OBJ_SCROLL_HOLY_PRAYER+PO_K_IDX:
+		case OBJ_STAFF_SLOWNESS+PO_K_IDX:
+		case ACT_ESP+PO_ACTIVATION:
+		case ACT_BERSERK+PO_ACTIVATION:
+		case ACT_INVULN+PO_ACTIVATION:
+		case SP_BLESS+PO_SPELL:
+		case SP_SENSE_UNSEEN+PO_SPELL:
+		case SP_PRAYER+PO_SPELL:
+		case SP_HOLY_INVULNERABILITY+PO_SPELL:
+		case SP_RESIST_ENVIRONMENT+PO_SPELL:
+		case SP_STONE_SKIN+PO_SPELL:
+		case SP_RESISTANCE_TRUE+PO_SPELL:
+		case SP_SENSE_MINDS+PO_SPELL:
+		case SP_GLOBE_OF_INVULNERABILITY+PO_SPELL:
+		case SP_PLANAR_SPYING+PO_SPELL:
+		case SP_RESIST_POISON+PO_SPELL:
+		case SP_RESIST_COLD+PO_SPELL:
+		case SP_RESIST_FIRE+PO_SPELL:
+		case SP_RESIST_LIGHTNING+PO_SPELL:
+		case SP_RESIST_ACID+PO_SPELL:
+		case SP_SEE_INVISIBLE+PO_SPELL:
+		case RACE_GOLEM+PO_RACIAL:
 		{
-			if (!p_ptr->free_act)
-			{
-				if (add_flag(TIMED_PARALYZED, rand_int(10) + 10))
-				{
-					(*ident) = TRUE;
-				}
-			}
-			return SUCCESS;
+			return power_add_timed(power, ident);
 		}
 
 		case OBJ_FOOD_DEC_STR+PO_K_IDX:
@@ -862,12 +1112,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case OBJ_POTION_SLOWNESS+PO_K_IDX:
-		{
-			if (add_flag(TIMED_SLOW, randint(25) + 15)) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
 		case OBJ_POTION_SALT_WATER+PO_K_IDX:
 		{
 			msg_print("The potion makes you vomit!");
@@ -875,30 +1119,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)set_flag(TIMED_POISONED, 0);
 			(void)add_flag(TIMED_PARALYZED, 4);
 			(*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_POTION_POISON+PO_K_IDX:
-		{
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-			{
-				if (add_flag(TIMED_POISONED, rand_int(15) + 10))
-				{
-					(*ident) = TRUE;
-				}
-			}
-			return SUCCESS;
-		}
-
-		case OBJ_POTION_BLINDNESS+PO_K_IDX:
-		{
-			if (!p_ptr->resist_blind)
-			{
-				if (add_flag(TIMED_BLIND, rand_int(100) + 100))
-				{
-					(*ident) = TRUE;
-				}
-			}
 			return SUCCESS;
 		}
 
@@ -927,18 +1147,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                     msg_print("You wake up somewhere with a sore head...");
                     msg_print("You can't remember a thing, or how you got here!");
                 }
-			}
-			return SUCCESS;
-		}
-
-		case OBJ_POTION_SLEEP+PO_K_IDX:
-		{
-			if (!p_ptr->free_act)
-			{
-				if (add_flag(TIMED_PARALYZED, rand_int(4) + 4))
-				{
-					(*ident) = TRUE;
-				}
 			}
 			return SUCCESS;
 		}
@@ -1022,24 +1230,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case OBJ_POTION_INFRA_VISION+PO_K_IDX:
-		{
-			if (add_flag(TIMED_INFRA, 100 + randint(100)))
-			{
-				(*ident) = TRUE;
-			}
-			return SUCCESS;
-		}
-
-		case OBJ_POTION_DETECT_INVIS+PO_K_IDX:
-		{
-			if (add_flag(TIMED_INVIS, 12 + randint(12)))
-			{
-				(*ident) = TRUE;
-			}
-			return SUCCESS;
-		}
-
 		case OBJ_POTION_SLOW_POISON+PO_K_IDX:
 		{
 			if (set_flag(TIMED_POISONED, p_ptr->poisoned / 2)) (*ident) = TRUE;
@@ -1067,24 +1257,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			else
 			{
 				(void)add_flag(TIMED_FAST, 5);
-			}
-			return SUCCESS;
-		}
-
-		case OBJ_POTION_RES_HEAT+PO_K_IDX:
-		{
-			if (add_flag(TIMED_OPPOSE_FIRE, randint(10) + 10))
-			{
-				(*ident) = TRUE;
-			}
-			return SUCCESS;
-		}
-
-		case OBJ_POTION_RES_COLD+PO_K_IDX:
-		{
-			if (add_flag(TIMED_OPPOSE_COLD, randint(10) + 10))
-			{
-				(*ident) = TRUE;
 			}
 			return SUCCESS;
 		}
@@ -1334,17 +1506,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-        case OBJ_POTION_RESISTANCE+PO_K_IDX:
-        {
-            (void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_POIS, randint(20) + 20);
-            (*ident) = TRUE;
-        return SUCCESS;
-        }
-
         case OBJ_POTION_CURING+PO_K_IDX:
         {
             if (hp_player(50)) (*ident) = TRUE;
@@ -1354,13 +1515,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			if (set_flag(TIMED_STUN, 0)) (*ident) = TRUE;
 			if (set_flag(TIMED_CUT, 0)) (*ident) = TRUE;
             if (set_flag(TIMED_IMAGE, 0)) (*ident) = TRUE;
-        return SUCCESS;
-        }
-
-        case OBJ_POTION_INVULNERABILITY+PO_K_IDX:
-        {
-            (void)add_flag(TIMED_INVULN, randint(7) + 7);
-            (*ident) = TRUE;
         return SUCCESS;
         }
 
@@ -1609,24 +1763,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
 
-		case OBJ_SCROLL_BLESSING+PO_K_IDX:
-		{
-			if (add_flag(TIMED_BLESSED, randint(12) + 6)) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_SCROLL_HOLY_CHANT+PO_K_IDX:
-		{
-			if (add_flag(TIMED_BLESSED, randint(24) + 12)) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_SCROLL_HOLY_PRAYER+PO_K_IDX:
-		{
-			if (add_flag(TIMED_BLESSED, randint(48) + 24)) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
 		case OBJ_SCROLL_MONSTER_CONFUSION+PO_K_IDX:
 		{
 			if (p_ptr->confusing == 0)
@@ -1768,12 +1904,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				if (add_flag(TIMED_BLIND, 3 + randint(5))) (*ident) = TRUE;
 			}
 			if (unlite_area(10, 3)) (*ident) = TRUE;
-			return SUCCESS;
-		}
-
-		case OBJ_STAFF_SLOWNESS+PO_K_IDX:
-		{
-			if (add_flag(TIMED_SLOW, randint(30) + 15)) (*ident) = TRUE;
 			return SUCCESS;
 		}
 
@@ -2925,19 +3055,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				return SUCCESS;
 			}
 
-            case ACT_ESP+PO_ACTIVATION:
-            {
-                (void)add_flag(TIMED_ESP, randint(30) + 25);
-                   return SUCCESS;
-                }
-
-            case ACT_BERSERK+PO_ACTIVATION:
-            {
-				(void)add_flag(TIMED_SHERO, randint(50) + 50);
-				(void)add_flag(TIMED_BLESSED, randint(50) + 50);
-                return SUCCESS;
-            }
-
             case ACT_PROT_EVIL+PO_ACTIVATION:
             {
                 msg_print("It lets out a shrill wail...");
@@ -2990,12 +3107,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
                 add_flag(TIMED_WRAITH, randint(plev/2) + (plev/2));
                 return SUCCESS;
             }
-
-            case ACT_INVULN+PO_ACTIVATION:
-            {
-                (void)add_flag(TIMED_INVULN, randint(8) + 8);
-                   return SUCCESS;
-                }
 
             case ACT_LIGHT+PO_ACTIVATION:
             {
@@ -3940,11 +4051,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)set_flag(TIMED_CUT, p_ptr->cut - 10);
 		return SUCCESS;
 	}
-	case SP_BLESS+PO_SPELL:
-	{
-			(void)add_flag(TIMED_BLESSED, randint(12) + 12);
-		return SUCCESS; 
-	}
 	case SP_REMOVE_FEAR+PO_SPELL:
 	{
 			(void)set_flag(TIMED_AFRAID, 0);
@@ -3988,11 +4094,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)hp_player(damroll(8, 10));
 			(void)set_flag(TIMED_STUN, 0);
 			(void)set_flag(TIMED_CUT, 0);
-		return SUCCESS;
-	}
-	case SP_SENSE_UNSEEN+PO_SPELL:
-	{
-			(void)add_flag(TIMED_INVIS, randint(24) + 24);
 		return SUCCESS;
 	}
 	case SP_HOLY_ORB+PO_SPELL:
@@ -4078,11 +4179,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)set_flag(TIMED_AFRAID, 0);
 		return SUCCESS;
 	}
-	case SP_PRAYER+PO_SPELL:
-	{
-			(void)add_flag(TIMED_BLESSED, randint(48) + 48);
-		return SUCCESS;
-	}
 	case SP_BLESS_WEAPON+PO_SPELL:
 	{
             bless_weapon();
@@ -4130,11 +4226,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
          (void)set_flag(TIMED_AFRAID, 0);
 		return SUCCESS;
 	}
-	case SP_HOLY_INVULNERABILITY+PO_SPELL:
-	{
-		(void)add_flag(TIMED_INVULN, randint(7) + 7);
-		return SUCCESS;
-	}
 	case SP_DETECT_CREATURES+PO_SPELL:
 	{
 			(void)detect_monsters_normal();
@@ -4172,13 +4263,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	{
          if (!dir) return POWER_ERROR_NO_SUCH_DIR;
          (void) charm_animal(dir, plev);
-		return SUCCESS;
-	}
-	case SP_RESIST_ENVIRONMENT+PO_SPELL:
-	{
-			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
 		return SUCCESS;
 	}
 	case SP_CURE_WOUNDS_AND_POISON+PO_SPELL:
@@ -4250,20 +4334,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 	case SP_STAIR_BUILDING+PO_SPELL:
 	{
 			(void)stair_creation();
-		return SUCCESS;
-	}
-	case SP_STONE_SKIN+PO_SPELL:
-	{
-			(void)add_flag(TIMED_SHIELD, randint(20) + 30);
-		return SUCCESS;
-	}
-	case SP_RESISTANCE_TRUE+PO_SPELL:
-	{
-			(void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
-			(void)add_flag(TIMED_OPPOSE_POIS, randint(20) + 20);
 		return SUCCESS;
 	}
 	case SP_ANIMAL_FRIENDSHIP+PO_SPELL:
@@ -4478,11 +4548,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		}
 		}
 
-		case SP_SENSE_MINDS+PO_SPELL:
-		{
-            (void)add_flag(TIMED_ESP, randint(30) + 25);
-			return SUCCESS;
-		}
 		case SP_SELF_KNOWLEDGE+PO_SPELL:
 		{
            (void)self_knowledge();
@@ -4539,11 +4604,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_ALCHEMY+PO_SPELL:
 		{
 		       (void) alchemy();
-			return SUCCESS;
-		}
-		case SP_GLOBE_OF_INVULNERABILITY+PO_SPELL:
-		{
-			(void)add_flag(TIMED_INVULN, randint(8) + 8);
 			return SUCCESS;
 		}
 
@@ -5040,11 +5100,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			return SUCCESS;
 		}
             }
-		case SP_PLANAR_SPYING+PO_SPELL:
-		{
-            (void)add_flag(TIMED_ESP, randint(30) + 25);
-			return SUCCESS;
-		}
 		case SP_TELEPORT_AWAY_2+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -5490,11 +5545,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)sleep_monster(dir,plev);
 			return SUCCESS;
 		}
-		case SP_RESIST_POISON+PO_SPELL:
-		{
-			(void)add_flag(TIMED_OPPOSE_POIS, randint(20) + 20);
-			return SUCCESS;
-		}
 		case SP_HORRIFY+PO_SPELL:
 		{
 			if (!dir) return POWER_ERROR_NO_SUCH_DIR;
@@ -5886,26 +5936,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 			(void)set_flag(TIMED_POISONED, 0);
 			return SUCCESS;
 		}
-		case SP_RESIST_COLD+PO_SPELL:
-		{
-			(void)add_flag(TIMED_OPPOSE_COLD, randint(20) + 20);
-			return SUCCESS;
-		}
-		case SP_RESIST_FIRE+PO_SPELL:
-		{
-			(void)add_flag(TIMED_OPPOSE_FIRE, randint(20) + 20);
-			return SUCCESS;
-		}
-		case SP_RESIST_LIGHTNING+PO_SPELL:
-		{
-			(void)add_flag(TIMED_OPPOSE_ELEC, randint(20) + 20);
-			return SUCCESS;
-		}
-		case SP_RESIST_ACID+PO_SPELL:
-		{
-            (void)add_flag(TIMED_OPPOSE_ACID, randint(20) + 20);
-			return SUCCESS;
-		}
 		case SP_CURE_MEDIUM_WOUNDS+PO_SPELL:
 		{
             (void)hp_player(damroll(4, 8));
@@ -5933,11 +5963,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 		case SP_SATISFY_HUNGER+PO_SPELL:
 		{
 			(void)set_flag(TIMED_FOOD, PY_FOOD_MAX - 1);
-			return SUCCESS;
-		}
-		case SP_SEE_INVISIBLE+PO_SPELL:
-		{
-			(void)add_flag(TIMED_INVIS, randint(24) + 24);
 			return SUCCESS;
 		}
 		case SP_RECHARGING_2+PO_SPELL:
@@ -6164,11 +6189,6 @@ static errr do_power(int power, int plev, int dir, bool known, bool *use, bool *
 				msg_print("You cast a bolt of fire.");
 				fire_bolt(GF_FIRE, dir, plev);
 			}
-			return SUCCESS;
-		}
-		case RACE_GOLEM+PO_RACIAL:
-		{
-			(void)add_flag(TIMED_SHIELD, randint(20) + 30);
 			return SUCCESS;
 		}
 		case RACE_SKELETON+PO_RACIAL:

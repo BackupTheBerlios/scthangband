@@ -19,7 +19,6 @@ static bool spirit_okay(int spirit, bool call);
 static void print_spirits(int *valid_spirits,int num,int y, int x);
 static s32b favour_annoyance(const magic_type *f_ptr);
 static void annoy_spirit(spirit_type *s_ptr,u32b amount);
-static cptr spell_help(const magic_type *s_ptr);
 
 /*
  * Extract the book index from the object data.
@@ -175,7 +174,15 @@ static int spell_stat(const magic_type *s_ptr)
  */
 static bool use_spell(const magic_type *s_ptr)
 {
-	return use_known_power(-1024 + s_ptr->power, spell_skill(s_ptr));
+	return use_known_power(PO_SPELL + s_ptr->power, spell_skill(s_ptr));
+}
+
+/*
+ * Display help for a spell.
+ */
+static cptr spell_help(const magic_type *s_ptr)
+{
+	return describe_power(PO_SPELL + s_ptr->power, spell_skill(s_ptr));
 }
 
 /*
@@ -1888,112 +1895,6 @@ void do_cmd_invoke(void)
 	p_ptr->window |= (PW_PLAYER);
 	p_ptr->window |=(PW_SPELL);
 }
-
-
-
-/*
- * Return a line of help text appropriate for the given mindcraft power
- * at the given level. 
- * NB: This may return the format buffer.
- */
-static cptr spell_help(const magic_type *s_ptr)
-{
-	int power = s_ptr->power;
-	int skill = spell_skill(s_ptr);
-	switch (power)
-	{
-		case SP_PRECOGNITION:
-		{
-			cptr board[6], init = "Detects";
-			int j = 0;
-
-			if (skill >= 45)
-				return "Lights the dungeon and detects everything in it.";
-
-			if (skill < 20) board[j++] = "monsters";
-			else board[j++] = "all monsters";
-			if (skill >= 5) board[j++] = "traps";
-			if (skill >= 15) board[j++] = "doors";
-			if (skill >= 15) board[j++] = "stairs";
-			if (skill >= 20) board[j++] = "walls";
-			if (skill >= 30) board[j++] = "objects";
-			return list_flags(init, "and", board, j);
-		}
-		case SP_NEURAL_BLAST:
-		{
-			return "Fires a bolt of mental energy at a monster.";
-		}
-		case SP_MINOR_DISPLACEMENT:
-		{
-			if (skill < 25) return "Teleports you a short distance away.";
-			else return "Teleports you to a nearby spot of your choosing.";
-		}
-		case SP_MAJOR_DISPLACEMENT:
-		{
-			if (skill < 30) return "Teleports you far away.";
-			else return "Teleports you, and other nearby monsters, far away.";
-		}
-		case SP_DOMINATION:
-		{
-			if (skill < 30) return "Charms a monster.";
-			else return "Charms all nearby monsters.";
-		}
-		case SP_PULVERISE:
-		{
-			return "Creates a ball of sound at a location of your choosing.";
-		}
-		case SP_CHARACTER_ARMOUR:
-		{
-			cptr board[6];
-			cptr init = "Gives AC and resistance to";
-			int j = 0;
-
-			if (skill >= 15) board[j++] = "acid";
-			if (skill >= 20) board[j++] = "fire";
-			if (skill >= 25) board[j++] = "cold";
-			if (skill >= 30) board[j++] = "electricity";
-			if (skill >= 35) board[j++] = "poison";
-
-			if (j)
-				return list_flags(init, "and", board, j);
-			else
-				return "Helps to protect you from melee attack.";
-		}
-		case SP_PSYCHOMETRY:
-		{
-			if (skill >= 40) return "Identifies an object.";
-			else return "Pseudo-identifies an object.";
-		}
-		case SP_MIND_WAVE:
-		{
-			if (skill >= 25)
-				return "Fires mental energy at all visible monsters.";
-			else
-				return "Fires mental energy at nearby monsters.";
-		}
-		case SP_ADRENALINE_CHANNELING:
-		{
-			if (skill >= 35)
-				return "Heals you, hastes you and drives you berserk.";
-			else
-				return "Heals you, hastes you and makes you heroic.";
-		}
-		case SP_PSYCHIC_DRAIN:
-		{
-			return "Fires mental energy at nearby monsters to gain extra chi.";
-		}
-		case SP_TELEKINETIC_WAVE:
-		{
-			return "Harms, stuns and teleports nearby monsters.";
-		}
-		/* None written. */
-		default:
-		{
-			return "";
-		}
-	}
-}
-
 
 void do_cmd_mindcraft(void)
 {
