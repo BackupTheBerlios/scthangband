@@ -1221,13 +1221,13 @@ void move_cursor_relative(int row, int col)
 /*
  * Hack - provide fake monochrome under certain circumstances.
  */
-static void fake_colour(attr *a)
+static void fake_colour(byte *a)
 {
 	/* Graphics prevent fake colours, except with main-ibm.c. */
 	if (use_graphics && strcmp(ANGBAND_SYS, "ibm")) return;
 
-	if (p_ptr->invuln) a = TERM_WHITE;
-	else if (p_ptr->wraith_form) a = TERM_L_DARK;
+	if (p_ptr->invuln) *a = TERM_WHITE;
+	else if (p_ptr->wraith_form) *a = TERM_L_DARK;
 }
 
 /*
