@@ -3120,7 +3120,7 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options (full to 3,1)
+ * Available Options (full to 3,10)
  */
 option_type option_info[] =
 {
@@ -3437,7 +3437,7 @@ option_type option_info[] =
 	{ &ironman_shop,               FALSE, OPTS_BIRTH, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },
 
-	{ &ironman_feeling,	FALSE, OPTS_BIRTH, 3, 1,
+	{ &ironman_feeling,	FALSE, OPTS_BIRTH, 3, 3,
 	"ironman_feeling",	"Level feelings are only given after 2500 turns" },
 
 	{ &spoil_base,			FALSE, OPTS_SPOIL,	2, 31,
