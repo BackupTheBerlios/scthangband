@@ -2028,9 +2028,9 @@ s16b convert_owner(s16b idx, u32b from_v, u32b to_v)
  */
 void current_version(u16b *flags, byte *major, byte *minor, byte *patch)
 {
-	if (flags) (*flags) = sf_flags_now;
-	if (major) (*major) = SFM_SPECIAL;
-	if (minor) (*minor) = (*flags)/256;
-	if (patch) (*patch) = (*flags)%256;
+	(*flags) = sf_flags_now;
+	(*major) = SFM_SPECIAL;
+	(*minor) = (*flags)/256;
+	(*patch) = (*flags)%256;
 }
 
