@@ -1422,7 +1422,7 @@ static errr init_other(void)
 	/*** Pre-allocate space for the "format()" buffer ***/
 
 	/* Hack -- Just call the "format()" function */
-	(void)format("%s (%s).", "Dean Anderson", MAINTAINER);
+	(void)format("");
 
 	/* Prepare the stat_default array */
 	C_MAKE(stat_default, MAX_STAT_DEFAULT, stat_default_type);

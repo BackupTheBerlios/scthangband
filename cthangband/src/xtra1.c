@@ -3597,6 +3597,16 @@ static bool init_help_files(void)
 	return TRUE;
 }
 
+/*
+ * Centre a string on a specified line of the current term.
+ */
+static void put_str_centre(cptr str, int y)
+{
+	int l = strlen(str);
+	int x = MAX(0, (Term->wid-l)/2);
+	put_str(str, y, x);
+}
+
 void win_help_display(void)
 {
 	FILE *fff;
@@ -3639,6 +3649,13 @@ void win_help_display(void)
 
 		my_fclose(fff);
 	}
+
+	/* Oops - no-one's written the rquested help file. */
+	put_str_centre(
+		"Sorry, help for this command is not available.", Term->hgt/2-1);
+
+	put_str_centre(
+		"Please contact " MAINTAINER " for further information.", Term->hgt/2+1);
 }
 
 /*

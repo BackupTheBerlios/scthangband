@@ -420,7 +420,7 @@
 /*
  * OPTION: Person to bother if something goes wrong.
  */
-#define MAINTAINER	"david@thornley.net"
+#define MAINTAINER	"kieron@dimetrodon.demon.co.uk"
 
 
 /*
