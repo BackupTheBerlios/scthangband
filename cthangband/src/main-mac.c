@@ -10,6 +10,7 @@
  */
 
 
+
 /*
  * This file helps Angband work with Macintosh computers.
  *
@@ -846,6 +847,9 @@ static int pictRows = 79;						/* 16x16 tiles are 70 rows */
 
 static bool arg_transparency;					/* "Fake" arg for tile support */
 
+#ifndef HAS_USE_TRANSPARENCY_VAR
+static bool	use_transparency = FALSE; /* Another "fake" arg, if needed. */
+#endif /* HAS_USE_TRANSPARENCY_VAR */
 
 /*
  * Forward Declare

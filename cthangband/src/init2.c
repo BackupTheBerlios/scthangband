@@ -1979,5 +1979,9 @@ void init_angband(void)
 	note("[Initialization complete]");
 }
 
-
-
+/*
+ * Free resources used by the game.
+ */
+void cleanup_angband(void)
+{
+}

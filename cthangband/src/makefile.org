@@ -54,7 +54,7 @@ SRCS = \
   wizard1.c wizard2.c \
   generate.c dungeon.c init1.c init2.c \
   quest.c \
-  main-gcu.c main-x11.c maid-x11.c main.c
+  main-xpj.c main-gtk.c main-gcu.c main-x11.c maid-x11.c main-xaw.c main.c
 
 OBJS = \
   z-util.o z-virt.o z-form.o z-rand.o z-term.o \
@@ -67,7 +67,7 @@ OBJS = \
   wizard1.o wizard2.o \
   generate.o dungeon.o init1.o init2.o \
   quest.o \
-  main-gcu.o main-x11.o maid-x11.o main.o
+  main-xpj.o main-gtk.o main-gcu.o main-x11.o maid-x11.o main-xaw.o main.o
 
 
 
@@ -100,9 +100,9 @@ CC = gcc
 
 
 #
-# Standard version (see main-x11.c and main-gcu.c)
+# Standard version (see main-x11.c, main-gtk.c and main-gcu.c)
 #
-# This version supports both "X11" and "curses" in a single executable.
+# This version supports "gtk", "X11" and "curses" in a single executable.
 #
 # You may have to add various X11 include/library directories to the
 # "CFLAGS", if your machine places files in a weird location.
@@ -117,16 +117,28 @@ CC = gcc
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" \
-	-D"USE_TRANSPARENCY" \
+CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" -D"USE_XPJ" \
+	-D"USE_TRANSPARENCY" -D"USE_GTK" `gtk-config --cflags` \
 	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
 	-Wno-long-long -Wwrite-strings -Wpointer-arith \
 	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
 	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes \
 	#-Wredundant-decls \
 
-LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
+LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib `gtk-config --libs` 
 
+##
+## Variation -- Only support "main-x11.c" and "main-gcu.c", not "main-gtk.c"
+##
+#CFLAGS = -O3 -fno-strength-reduce -pipe -g -D"USE_X11" -D"USE_GCU" \
+#	-D"USE_TRANSPARENCY" \
+#	-W -Wall -Wmissing-prototypes -Wmissing-declarations \
+#	-Wno-long-long -Wwrite-strings -Wpointer-arith \
+#	-Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
+#	-Waggregate-return -Wno-format-y2k -Wstrict-prototypes \
+#	#-Wredundant-decls \
+#
+#LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
 ##
 ## Variation -- Only support "main-x11.c" (not "main-gcu.c")

@@ -304,7 +304,7 @@ static XFontStruct *getFont(AngbandWidget widget,
 /*
  * Class record constanst
  */
-AngbandClassRec angbandClassRec =
+static AngbandClassRec angbandClassRec =
 {
 	{
 		/* Core class fields initialization */
@@ -365,7 +365,7 @@ AngbandClassRec angbandClassRec =
 /*
  * Class record pointer
  */
-WidgetClass angbandWidgetClass = (WidgetClass) &angbandClassRec;
+static WidgetClass angbandWidgetClass = (WidgetClass) &angbandClassRec;
 
 
 /*
@@ -963,7 +963,7 @@ static XFontStruct *getFont(AngbandWidget widget,
 /*
  * The names of the term_data's
  */
-char *termNames[MAX_TERM_DATA] =
+static char *termNames[MAX_TERM_DATA] =
 {
 	"angband",
 	"term-1",
@@ -979,7 +979,7 @@ char *termNames[MAX_TERM_DATA] =
 /*
  * The special Arg's
  */
-Arg specialArgs[TERM_FALLBACKS] =
+static Arg specialArgs[TERM_FALLBACKS] =
 {
 	{ XtNstartRows,    24},
 	{ XtNstartColumns, 80},
@@ -994,7 +994,7 @@ Arg specialArgs[TERM_FALLBACKS] =
 /*
  * The default Arg's
  */
-Arg defaultArgs[TERM_FALLBACKS] =
+static Arg defaultArgs[TERM_FALLBACKS] =
 {
 	{ XtNstartRows,      24},
 	{ XtNstartColumns,   80},
@@ -1009,7 +1009,7 @@ Arg defaultArgs[TERM_FALLBACKS] =
 /*
  * The application context
  */
-XtAppContext appcon;
+static XtAppContext appcon;
 
 
 /*
@@ -1734,7 +1734,9 @@ errr init_xaw(int argc, char **argv)
 			/* Use graphics */
 			use_graphics = TRUE;
 
+#ifdef HAS_USE_TRANSPARENCY_VAR
 			use_transparency = TRUE;
+#endif /* HAS_USE_TRANSPARENCY_VAR */
 
 			pict_wid = pict_hgt = 16;
 

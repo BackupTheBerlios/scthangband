@@ -275,11 +275,7 @@ static void save_game_gtk(void)
 		msg_flag = FALSE;
 
 		/* Save the game */
-#ifdef ZANGBAND
 		do_cmd_save_game(FALSE);
-#else /* ZANGBAND */
-		do_cmd_save_game();
-#endif /* ZANGBAND */
 	}
 }
 

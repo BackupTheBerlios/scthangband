@@ -35,10 +35,6 @@ struct module
  */
 static const struct module modules[] =
 {
-#ifdef USE_GTK
-	{ "gtk", help_gtk, init_gtk },
-#endif /* USE_GTK */
-
 #ifdef USE_XAW
 	{ "xaw", help_xaw, init_xaw },
 #endif /* USE_XAW */
@@ -46,6 +42,10 @@ static const struct module modules[] =
 #ifdef USE_X11
 	{ "x11", help_x11, init_x11 },
 #endif /* USE_X11 */
+
+#ifdef USE_GTK
+	{ "gtk", help_gtk, init_gtk },
+#endif /* USE_GTK */
 
 #ifdef USE_XPJ
 	{ "xpj", help_xpj, init_xpj },
@@ -648,10 +648,8 @@ int main(int argc, char *argv[])
 	/* Play the game */
 	play_game(new_game);
 
-#if 0 /* Not included yet */
 	/* Free resources */
 	cleanup_angband();
-#endif
 
 	/* Quit */
 	quit(NULL);

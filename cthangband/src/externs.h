@@ -1208,26 +1208,26 @@ extern const char help_x11[] ;
 extern errr init_x11(int argc, char **argv);
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* main-xaw.c */
 
-#if (defined(USE_XAW)) && (defined(MAIN_XAW_C))
-extern AngbandClassRec angbandClassRec ;
-#endif
-#if (defined(USE_XAW)) && (defined(MAIN_XAW_C))
-extern WidgetClass angbandWidgetClass ;
-#endif
-#if (defined(USE_XAW)) && (defined(MAIN_XAW_C))
-extern char *termNames[MAX_TERM_DATA] ;
-#endif
-#if (defined(USE_XAW)) && (defined(MAIN_XAW_C))
-extern Arg specialArgs[TERM_FALLBACKS] ;
-#endif
-#if (defined(USE_XAW)) && (defined(MAIN_XAW_C))
-extern Arg defaultArgs[TERM_FALLBACKS] ;
-#endif
-#if (defined(USE_XAW)) && (defined(MAIN_XAW_C))
-extern XtAppContext appcon;
-#endif
 #if (defined(USE_XAW)) && (defined(MAIN_XAW_C) || defined(MAIN_C))
 extern const char help_xaw[] ;
 #endif

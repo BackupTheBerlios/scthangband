@@ -1387,7 +1387,9 @@ static bool init_graphics(void)
 
 /*			ANGBAND_GRAF = "new";*/
 
+#ifdef HAS_USE_TRANSPARENCY_VAR
 			use_transparency = TRUE;
+#endif /* HAS_USE_TRANSPARENCY_VAR */
 		}
 		else
 		{
@@ -1828,7 +1830,9 @@ static errr Term_xtra_win_react(void)
 	if (use_graphics != arg_graphics)
 	{
 		/* Switch off transparency */
+#ifdef HAS_USE_TRANSPARENCY_VAR
 		use_transparency = FALSE;
+#endif /* HAS_USE_TRANSPARENCY_VAR */
 
 		/* Initialize (if needed) */
 		if (arg_graphics && !init_graphics())
