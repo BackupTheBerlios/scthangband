@@ -2186,6 +2186,41 @@ void do_cmd_use_staff(int item)
 	}
 }
 
+/*
+ * Choose a random wand from a list for the effect of a wand of wonder.
+ */
+static int choose_random_wand(void)
+{
+	int low_wands[] =
+	{
+		OBJ_WAND_LIGHT,
+		OBJ_WAND_TAME_MONSTER,
+		OBJ_WAND_COLD_BOLT,
+		OBJ_WAND_FIRE_BOLT,
+		OBJ_WAND_STONE_TO_MUD,
+		OBJ_WAND_POLYMORPH,
+		OBJ_WAND_HEAL_MONSTER,
+		OBJ_WAND_HASTE_MONSTER,
+		OBJ_WAND_SLOW_MONSTER,
+		OBJ_WAND_CONFUSE_MONSTER,
+		OBJ_WAND_SLEEP_MONSTER,
+		OBJ_WAND_DRAIN_LIFE,
+		OBJ_WAND_TRAP_DOOR_DESTRUCTION,
+		OBJ_WAND_MAGIC_MISSILE,
+		OBJ_WAND_CLONE_MONSTER,
+		OBJ_WAND_SCARE_MONSTER,
+		OBJ_WAND_TELEPORT_OTHER,
+		OBJ_WAND_DISARMING,
+		OBJ_WAND_ELEC_BALL,
+		OBJ_WAND_COLD_BALL,
+		OBJ_WAND_FIRE_BALL,
+		OBJ_WAND_STINKING_CLOUD,
+		OBJ_WAND_ACID_BALL,
+		OBJ_WAND_ACID_BOLT,
+	};
+	return low_wands[rand_int(N_ELEMENTS(low_wands))];
+}
+
 
 /*
  * Aim a wand (from the pack, pouch or floor).
@@ -2321,7 +2356,7 @@ void do_cmd_aim_wand(int item)
 
 	/* XXX Hack -- Wand of wonder can do anything before it */
 	if (k_idx == OBJ_WAND_WONDER)
-		k_idx = lookup_kind(TV_WAND, rand_int(SV_WAND_WONDER));
+		k_idx = choose_random_wand();
 
 	/* Analyze the wand */
 	switch (k_idx)

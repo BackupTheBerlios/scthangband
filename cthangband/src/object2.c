@@ -1586,32 +1586,6 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 
 
 /*
- * Find the index of the object_kind with the given tval and sval
- */
-s16b lookup_kind(int tval, int sval)
-{
-	int k;
-
-	/* Look for it */
-	for (k = 1; k < MAX_K_IDX; k++)
-	{
-		object_kind *k_ptr = &k_info[k];
-
-		/* Found a match */
-		if ((k_ptr->tval == tval) && (k_ptr->sval == sval)) return (k);
-	}
-
-#if 0
-	/* Oops */
-	msg_format("No object (%d,%d)", tval, sval);
-#endif
-
-	/* Oops */
-	return (0);
-}
-
-
-/*
  * Wipe an object clean.
  */
 void object_wipe(object_type *o_ptr)
