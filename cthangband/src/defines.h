@@ -583,6 +583,10 @@ logaux(x, 1) logaux(x, 0) 255)
 #define OPTS_HP	-2
 #define OPTS_SAVE	-3
 #define OPTS_WINDOW	-4
+#define OPTS_REDRAW -5 /* Co-ordinates of redraw_stuff() things. */
+
+#define OPTS_TO_FILE -10
+#define OPTS_FROM_FILE -11
 
 /*
  * Refueling constants
@@ -1907,6 +1911,10 @@ logaux(x, 1) logaux(x, 0) 255)
 #define PR_BASIC \
 	(PR_MISC | PR_TITLE | PR_STATS | PR_LEV | PR_EXP | PR_GOLD | PR_ARMOR | \
 	PR_HP | PR_MANA | PR_DEPTH | PR_HEALTH | PR_TIME)
+
+#define PR_ALL \
+	(PR_WIPE | PR_EXTRA | PR_BASIC | PR_EQUIPPY | PR_SPIRIT | PR_ENERGY | \
+	PR_MAP)
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

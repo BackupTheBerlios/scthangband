@@ -970,6 +970,77 @@ static void do_cmd_options_win(void)
 }
 
 
+static void do_cmd_options_redraw(void)
+{
+	int n;
+	char c;
+
+	/* Allow "normal" screen update for now. */
+	character_icky = FALSE;
+
+	/* Add a special resize hook. */
+	add_resize_hook(resize_inkey);
+
+	for (c = KTRL('R'), n = 0; c != ESCAPE; c = inkey())
+	{
+		int inc = isupper(c) ? -1 : 1;
+		co_ord *co_ptr = screen_coords+n;
+
+		switch (c)
+		{
+			case KTRL('R'): case RESIZE_INKEY_KEY: case ESCAPE:
+			{
+				break;
+			}
+			case 'n': case 'N':
+			{
+				n += inc;
+				n += N_ELEMENTS(screen_coords);
+				n %= N_ELEMENTS(screen_coords);
+				co_ptr = screen_coords+n;
+				break;
+			}
+			case 'x': case 'X':
+			{
+				co_ptr->x += inc;
+				break;
+			}
+			case 'y': case 'Y':
+			{
+				co_ptr->y += inc;
+				break;
+			}
+			default:
+			{
+				bell();
+				break;
+			}
+		}
+
+		/* Clear screen */
+		clear_from(0);
+
+		/* Redraw almost everything. */
+		p_ptr->redraw |= PR_ALL & ~(PR_MAP | PR_WIPE);
+		redraw_stuff();
+
+		put_str("Place status messages", 2, COL_END+2);
+
+		mc_put_fmt(5, COL_END+2, "Number = %2d, Name = %s", n, co_ptr->name);
+
+		mc_put_fmt(7, COL_END+2, "x co-ord: %d, y co-ord: %d",
+			co_ptr->x, co_ptr->y);
+
+		put_str("Command (n/N/x/X/y/Y):", 10, COL_END+2);
+	}
+
+	/* Remove the resize hook. */
+	delete_resize_hook(resize_inkey);
+
+	/* Return to "icky" option menus. */
+	character_icky = TRUE;
+}
+
 /*
  * Set the base delay factor.
  */
@@ -1163,13 +1234,6 @@ struct option_list
 	byte y;
 };
 
-#define OPTS_DELAY	-1
-#define OPTS_HP	-2
-#define OPTS_SAVE	-3
-#define OPTS_WINDOW	-4
-#define OPTS_TO_FILE -5
-#define OPTS_FROM_FILE -6
-
 static option_list opt_lists[] =
 {
 	{"User Interface Options", NULL, OPTS_UI, '1', 5, 4},
@@ -1185,8 +1249,9 @@ static option_list opt_lists[] =
 	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 43, 5},
 	{"Autosave Options", NULL, OPTS_SAVE, 'A', 43, 6},
 	{"Window Flags", NULL, OPTS_WINDOW, 'W', 43, 7},
-	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 9},
-	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 10},
+	{"Status Flags", NULL, OPTS_REDRAW, 'T', 43, 8},
+	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 10},
+	{"Load options", NULL, OPTS_FROM_FILE, 'O', 43, 11},
 	{0,0,0,0,0,0}
 };
 
@@ -1275,6 +1340,11 @@ void do_cmd_options(void)
 				case OPTS_WINDOW:
 				{
 					do_cmd_options_win();
+					break;
+				}
+				case OPTS_REDRAW:
+				{
+					do_cmd_options_redraw();
 					break;
 				}
 				case OPTS_TO_FILE:

@@ -2236,7 +2236,7 @@ extern spirit_type spirits[MAX_SPIRITS];
 #if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
 extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #endif
-#if (defined(DEFINES_H) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C))
+#if (defined(DEFINES_H) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(TABLES_C))
 extern co_ord screen_coords[NUM_SCREEN_COORDS];
 #endif
 
@@ -2389,7 +2389,7 @@ extern void roff(cptr str);
 #if (defined(MONSTER1_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_str(cptr str, const int y, const int x);
 #endif
-#if (defined(UTIL_C) || defined(XTRA1_C))
+#if (defined(CMD4_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern void mc_put_fmt(const int y, const int x, cptr fmt, ...);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -2443,10 +2443,10 @@ extern byte gamma_table[256];
 #if (defined(SUPPORT_GAMMA)) && (defined(MAID_X11_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(UTIL_C))
 extern void build_gamma_table(int gamma);
 #endif
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
 extern errr add_resize_hook(void (*resize_hook)(void));
 #endif
-#if (defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
 extern errr delete_resize_hook(void (*resize_hook)(void));
 #endif
 #if (defined(DUNGEON_C) || defined(UTIL_C))
@@ -3598,7 +3598,7 @@ extern void notice_stuff(void);
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void update_stuff(void);
 #endif
-#if (defined(DUNGEON_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(SPELLS2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void redraw_stuff(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C))
@@ -3748,7 +3748,7 @@ extern void verify_panel(void);
 #if (defined(DUNGEON_C) || defined(XTRA2_C))
 extern void resize_map(void);
 #endif
-#if (defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA2_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(XTRA2_C))
 extern void resize_inkey(void);
 #endif
 #if (defined(CMD3_C) || defined(CMD4_C) || defined(OBJECT2_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
