@@ -3682,7 +3682,7 @@ extern int PlayerUID;
 
 #define FOUND_LEV_UNKNOWN 255 /* Level not known (e.g. for old objects). */
 
-#define FOUND_DUN_UNKNOWN 255 /* Dungeon not known. */
+#define FOUND_DUN_UNKNOWN 254 /* Dungeon not known. */
 #define FOUND_DUN_WILD 255 /* Wilderness. */
 
 /* Current monster indices. */
