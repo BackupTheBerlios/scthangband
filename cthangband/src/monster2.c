@@ -913,6 +913,7 @@ void remove_non_pets(void)
 	}
 }
 
+#if 0
 /*
  * Delete/Remove all the monsters when the player leaves the level
  *
@@ -960,6 +961,7 @@ static void wipe_m_list(void)
 	/* Hack -- no more tracking */
 	health_track(0);
 }
+#endif
 
 
 /*

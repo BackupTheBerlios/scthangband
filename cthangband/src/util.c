@@ -1371,6 +1371,7 @@ errr macro_add(cptr pat, cptr act)
 
 
 
+#if 0
 /*
  * Initialize the "macro" package
  */
@@ -1385,6 +1386,7 @@ static errr macro_init(void)
 	/* Success */
 	return (0);
 }
+#endif
 
 
 /*
