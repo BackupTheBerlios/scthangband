@@ -1414,24 +1414,6 @@ void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 		{
 			r[this_level] = find_next_good_flag(r[this_level], reject | current, ~(reject | current));
 	  	}
-		/* Pluralizer (internal) */
-		else if (*r[this_level] == CM_ACT+CI_PLURAL)
-		{
-			/* Add a plural if possible */
-			if (t != tmp_val)
-			{
-				char k = t[-1];
-
-				/* XXX XXX XXX Mega-Hack */
-
-				/* Hack -- "Cutlass-es" and "Torch-es" */
-				if ((k == 's') || (k == 'h')) *t++ = 'e';
-
-				/* Add an 's' */
-				*t++ = 's';
-			}
-			r[this_level]++;
-		}
 		/* Paranoia - too many levels.
 		 * As "current" prevents the same string from being
 		 * started recursively, this can't happen. */

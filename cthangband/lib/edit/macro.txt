@@ -156,10 +156,6 @@ M:20
 #:object_desc() names
 F:r_info:N:3
 
-X:%p
-M:28
-#:object_desc() names
-
 X:%=E
 M:5
 #:object_desc() names
@@ -255,12 +251,6 @@ Y:%+K of %k%=K%+E %e%=E%+A %a%=A
 
 X: ^
 Y:%+K %k%=K%+E %e%=E%+A %a%=A
-#:object_desc() names
-
-# Give a "s"/"es" plural.
-
-X:~
-Y:%+P%p%=P
 #:object_desc() names
 
 # Give insta-arts their normal representation.
@@ -1462,7 +1452,7 @@ Y:
 F:a_info:W:5
 F:k_info:W:2
 
-# Monster plural strings.
+# Monster/object plural strings.
 # The section after %-P is only printed for singular names.
 # The section after %+p is only printed for plural names.
 # The initial section, and the section after %=P, are printed for all names.
@@ -1471,10 +1461,12 @@ F:k_info:W:2
 X:~
 Y:%+Ps%=P
 F:r_info:N:3
+#:object_desc() names
 
 X:s~
 Y:s%+Pes%=P
 F:r_info:N:3
+#:object_desc() names
 
 X:ch~
 Y:ch%+Pes%=P
