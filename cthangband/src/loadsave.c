@@ -35,16 +35,8 @@ u16b sf_saves;			/* Number of "saves" during this life */
  */
 static u32b object_version[] =
 {
-#ifdef SF_EGO_DISTRO
 	SF_EGO_DISTRO,
-#else
-	0,
-#endif
-#ifdef SF_K_INFO_1
 	SF_K_INFO_1,
-#else
-	0,
-#endif
 	0
 };
 
@@ -532,18 +524,13 @@ static s16b object_table[][3] =
 
 static u32b monster_version[] =
 {
-#ifdef SF_R_INFO_1
 	SF_R_INFO_1,
-#else
-	0,
-#endif
 	0
 };
 static s16b monster_table[][2] =
 {
 	{MON_PLAYER,	0},
 	{MON_NOBODY_THE_UNNAMED_GHOST______________________________________,	576},
-#ifdef SF_R_INFO_1
 	{MON_POISON, -1},
 	{MON_LIGHT, -1},
 	{MON_TRAP, -1},
@@ -579,7 +566,6 @@ static s16b monster_table[][2] =
 	{MON_G_THE_GHOST_3, -1},
 	{MON_G_THE_LICH, -1},
 	{MON_G_THE_GHOST_4, -1},
-#endif
 	{MON_FILTHY_STREET_URCHIN,	1},
 	{MON_SCRAWNY_CAT,	2},
 	{MON_SCRUFFY_LITTLE_DOG,	3},
@@ -937,9 +923,7 @@ static s16b monster_table[][2] =
 	{MON_ETHEREAL_DRAKE,	355},
 	{MON_GROO_THE_WANDERER,	356},
 	{MON_FASOLT_THE_GIANT,	357},
-#ifdef SF_R_INFO_1
 	{MON_BOKRUG_THE_WATER_LIZARD,	-1},
-#endif
 	{MON_CHAOS_GHOST,	358},
 	{MON_SPECTRE,	359},
 	{MON_WATER_TROLL,	360},
@@ -1439,11 +1423,7 @@ static s16b monster_table[][2] =
  */
 static u32b owner_version[] =
 {
-#ifdef SF_QUEST_DIRECT
 	SF_QUEST_DIRECT,
-#else
-	0,
-#endif
 	0
 };
 
@@ -1842,50 +1822,10 @@ static s16b owner_table[][2] =
 /*
  * Define the flags for the current version globally.
  */
-const u16b sf_flags_now = 0x00000000
-#ifdef SF_SKILL_BASE
-	| SF_SKILL_BASE
-#endif
-#ifdef SF_16_IDENT
-	| SF_16_IDENT
-#endif
-#ifdef SF_CURSE
-	| SF_CURSE
-#endif
-#ifdef SF_Q_SAVE
-	| SF_Q_SAVE
-#endif
-#ifdef SF_DEATHEVENTTEXT
-	| SF_DEATHEVENTTEXT
-#endif
-#ifdef SF_QUEST_UNKNOWN
-	| SF_QUEST_UNKNOWN
-#endif
-#ifdef SF_3D_WINPRI
-	| SF_3D_WINPRI
-#endif
-#ifdef SF_16_CAVE_FLAG
-	| SF_16_CAVE_FLAG
-#endif
-#ifdef SF_SAVE_MAX_SKILLS
-	| SF_SAVE_MAX_SKILLS
-#endif
-#ifdef SF_K_INFO_1
-	| SF_K_INFO_1
-#endif
-#ifdef SF_QUEST_KNOWN
-	| SF_QUEST_KNOWN
-#endif
-#ifdef SF_R_INFO_1
-	| SF_R_INFO_1
-#endif
-#ifdef SF_QUEST_DIRECT
-	| SF_QUEST_DIRECT
-#endif
-#ifdef SF_EGO_DISTRO
-	| SF_EGO_DISTRO
-#endif
-	;
+const u16b sf_flags_now = SF_SKILL_BASE | SF_16_IDENT | SF_CURSE | SF_Q_SAVE |
+	SF_DEATHEVENTTEXT | SF_QUEST_UNKNOWN | SF_3D_WINPRI | SF_16_CAVE_FLAG |
+	SF_SAVE_MAX_SKILLS | SF_K_INFO_1 | SF_QUEST_KNOWN | SF_R_INFO_1 |
+	SF_QUEST_DIRECT | SF_EGO_DISTRO;
 
 /*
  * Convert an object table from one version to another.
