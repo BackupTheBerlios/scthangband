@@ -4054,6 +4054,306 @@ static void process_some_user_pref_files(void)
 }
 
 /*
+ * Handle wizard mode resurrection and ritual of recall.
+ * Set "wizard" in the former case.
+ */
+static void resurrect(bool wizard)
+{
+	if (wizard)
+	{
+		/* Message */
+		msg_print("You invoke wizard mode and cheat death.");
+	}
+	else
+	{
+		/* Message */
+		msg_print("Your ritual saves you from death.");
+	}
+
+	msg_print(NULL);
+
+	/* Restore hit points */
+	p_ptr->chp = p_ptr->mhp;
+	p_ptr->chp_frac = 0;
+
+	/* Restore spell and chi points */
+	p_ptr->csp = p_ptr->msp;
+	p_ptr->csp_frac = 0;
+	p_ptr->cchi=p_ptr->mchi;
+	p_ptr->chi_frac = 0;
+
+	/* Hack -- Healing */
+	(void)set_blind(0);
+	(void)set_confused(0);
+	(void)set_poisoned(0);
+	(void)set_afraid(0);
+	(void)set_paralyzed(0);
+	(void)set_image(0);
+	(void)set_stun(0);
+	(void)set_cut(0);
+
+	/* Hack -- Prevent starvation */
+	(void)set_food(PY_FOOD_MAX - 1);
+
+	/* Hack -- cancel recall */
+	if (p_ptr->word_recall)
+	{
+		/* Message */
+		msg_print("A tension leaves the air around you...");
+		msg_print(NULL);
+
+		/* Hack -- Prevent recall */
+		p_ptr->word_recall = 0;
+	}
+
+	/* Note cause of death XXX XXX XXX */
+	if (wizard) (void)strcpy(died_from, "Cheating death");
+
+	/* Teleport to town */
+	new_level_flag = TRUE;
+	came_from=START_RANDOM;
+
+	/* Go to town */
+	dun_level = 0;
+
+	/* Do not die */
+	death = FALSE;
+
+	if (wizard)
+	{
+		/* Mark social class, reset age, if needed */
+		if (p_ptr->sc) p_ptr->sc = p_ptr->age = 0;
+
+		/* Increase age */
+		p_ptr->age++;
+
+		/* Mark savefile */
+		noscore |= 0x0001;
+	}
+	else
+	{
+		/* Go to town of recall */
+		dun_level = 0;
+		cur_town = p_ptr->ritual;
+		wildx=town_defs[cur_town].x;
+		wildy=town_defs[cur_town].y;
+
+		/* Ritual is used */
+		p_ptr->ritual = MAX_TOWNS + 1;
+
+		/* Lose most money and all items */
+		/* You only keep the change in your pocket */
+		if(p_ptr->au > 100) p_ptr->au = 100;
+		destroy_pack();
+	}
+}
+
+/*
+ * Create a new character, and all that goes with it.
+ */
+static void create_character(void)
+{
+	int i,j,x,y;
+
+	/* The dungeon is not ready */
+	character_dungeon = FALSE;
+
+	/* Hack -- seeds for flavors and wilderness*/
+	seed_flavor = rand_int(0x10000000);
+	seed_wild = rand_int(0x10000000);
+	/* Initialise wilderness grid */
+	for (i=0;i<12;i++)
+	{
+		for(j=0;j<12;j++)
+		{
+			wild_grid[i][j].seed=rand_int(0x10000000);
+			wild_grid[i][j].dungeon=MAX_CAVES; /* 0-(MAX_CAVES-1) indicates dungeon */
+			wild_grid[i][j].road_map=0;
+		}
+	}
+
+	/* Hack -- seed for town layouts */
+	for (i = 0; i < MAX_TOWNS; i++)
+	{
+		town_defs[i].seed = rand_int(0x10000000);
+	}
+
+	/* Place towns and dungeons */
+	for(i=0;i<MAX_CAVES;i++)
+	{
+		if(i<MAX_TOWNS)
+		{
+			j=0;
+			while(j == 0)
+			{
+				x=rand_range(2,9);
+				y=rand_range(2,9);
+				j=1;
+				if((wild_grid[y][x].dungeon != MAX_CAVES) ||
+					(wild_grid[y-1][x].dungeon != MAX_CAVES) ||
+					(wild_grid[y+1][x].dungeon != MAX_CAVES) ||
+					(wild_grid[y][x-1].dungeon != MAX_CAVES) ||
+					(wild_grid[y][x+1].dungeon != MAX_CAVES) ||
+					(wild_grid[y-1][x+1].dungeon != MAX_CAVES) ||
+					(wild_grid[y+1][x+1].dungeon != MAX_CAVES) ||
+					(wild_grid[y-1][x-1].dungeon != MAX_CAVES) ||
+					(wild_grid[y+1][x-1].dungeon != MAX_CAVES))
+				{
+					j=0;
+				}
+			}
+		}
+		else
+		{
+			j=0;
+			while(j == 0)
+			{
+				x=rand_range(2,9);
+				y=rand_range(2,9);
+				j=1;
+				if(wild_grid[y][x].dungeon != MAX_CAVES)
+				{
+					j=0;
+				}
+			}
+		}
+		/* There are no dungeons next to this */
+		wild_grid[y][x].dungeon=i;
+		/* now let the town & dungeon know where they are */
+		if (i<MAX_TOWNS)
+		{
+			town_defs[i].x=x;
+			town_defs[i].y=y;
+		}
+		dun_defs[i].x=x;
+		dun_defs[i].y=y;
+	}
+			
+	/* Generate road map... */
+	for(i=0;i<MAX_TOWNS-1;i++)
+	{
+		int cur_x,cur_y,dest_x,dest_y;
+		int x_disp,y_disp,x_sgn,y_sgn;
+		int fin;
+		byte curdir,nextdir;
+
+		cur_x=town_defs[i].x;
+		cur_y=town_defs[i].y;
+		dest_x=town_defs[i+1].x;
+		dest_y=town_defs[i+1].y;
+		fin=0;
+		while(!fin)
+		{
+			x_disp=dest_x-cur_x;
+			x_sgn=0;
+			if (x_disp>0)
+			{
+				x_sgn=1;
+			}
+			if (x_disp<0)
+			{
+				x_sgn=-1;
+				x_disp=-x_disp;
+			}
+			y_disp=dest_y-cur_y;
+			y_sgn=0;
+			if(y_disp>0)
+			{
+				y_sgn=1;
+			}
+			if(y_disp<0)
+			{
+				y_sgn=-1;
+				y_disp=-y_disp;
+			}
+			/* _disp holds distance, _sgn holds sign (direction). Adding ( _disp * _sgn ) to cur_ gives dest_ */
+			if ((x_disp == 0) && (y_disp == 0))
+			{
+				fin=1;
+			}
+			else
+			{
+				/* Check the four directions - with an extra check at the start for symmetry*/
+				if ((x_disp == y_disp) && (x_sgn==1) && (y_sgn == -1))
+				{
+					curdir=ROAD_UP;
+					nextdir=ROAD_DOWN;
+				}
+				else if((x_sgn == 1) && (x_disp >= y_disp))
+				{
+					curdir=ROAD_RIGHT;
+					nextdir=ROAD_LEFT;
+				}
+				else if((y_sgn == 1) && (y_disp >= x_disp))
+				{
+					curdir=ROAD_DOWN;
+					nextdir=ROAD_UP;
+				}
+				else if((x_sgn == -1) && (x_disp >= y_disp))
+				{
+					curdir=ROAD_LEFT;
+					nextdir=ROAD_RIGHT;
+				}
+				else
+				{
+					curdir=ROAD_UP;
+					nextdir=ROAD_DOWN;
+				}
+				/* We now have the current dir and the next dir... */
+				wild_grid[cur_y][cur_x].road_map |= curdir;
+				if(curdir==ROAD_RIGHT)
+				{
+					cur_x++;
+				}
+				else if(curdir == ROAD_LEFT)
+				{
+					cur_x--;
+				}
+				else if(curdir == ROAD_DOWN)
+				{
+					cur_y++;
+				}
+				else
+				{
+					cur_y--;
+				}
+				wild_grid[cur_y][cur_x].road_map |= nextdir;
+			}
+		}
+	}
+
+	/* Start in town 0 */
+	dun_level = 0;
+	cur_town = TOWN_KADATH;
+	while((cur_town == TOWN_KADATH) || (cur_town == TOWN_NIR))
+	{
+		cur_town = (byte)rand_range(0,MAX_TOWNS-1);
+	}
+	cur_dungeon = cur_town;
+	dun_offset = 0;
+	dun_bias = 0;
+	wildx=town_defs[cur_town].x;
+	wildy=town_defs[cur_town].y;
+	came_from = START_RANDOM;
+
+	/* Roll up a new character */
+	player_birth();
+
+	/* Hack -- enter the world at day unless undead*/
+	if ((p_ptr->prace == RACE_SPECTRE) ||
+		 (p_ptr->prace == RACE_ZOMBIE) ||
+		 (p_ptr->prace == RACE_SKELETON) ||
+		 (p_ptr->prace == RACE_VAMPIRE))
+	{
+		turn=50001;
+	}
+	else
+	{
+		turn=1;
+	}
+}
+
+/*
  * Actually play a game
  *
  * If the "new_game" parameter is true, then, after loading the
@@ -4062,7 +4362,7 @@ static void process_some_user_pref_files(void)
  */
 void play_game(bool new_game)
 {
-	int i,j,x,y;
+	int i;
 
 	hack_chaos_feature = FALSE;
 
@@ -4196,205 +4496,7 @@ void play_game(bool new_game)
 
 
 	/* Roll new character */
-	if (new_game)
-	{
-		/* The dungeon is not ready */
-		character_dungeon = FALSE;
-
-		/* Hack -- seeds for flavors and wilderness*/
-		seed_flavor = rand_int(0x10000000);
-		seed_wild = rand_int(0x10000000);
-		/* Initialise wilderness grid */
-		for (i=0;i<12;i++)
-		{
-			for(j=0;j<12;j++)
-			{
-				wild_grid[i][j].seed=rand_int(0x10000000);
-				wild_grid[i][j].dungeon=MAX_CAVES; /* 0-(MAX_CAVES-1) indicates dungeon */
-				wild_grid[i][j].road_map=0;
-			}
-		}
-
-		/* Hack -- seed for town layouts */
-		for (i = 0; i < MAX_TOWNS; i++)
-		{
-		town_defs[i].seed = rand_int(0x10000000);
-		}
-
-		/* Place towns and dungeons */
-		for(i=0;i<MAX_CAVES;i++)
-		{
-			if(i<MAX_TOWNS)
-			{
-				j=0;
-				while(j == 0)
-				{
-					x=rand_range(2,9);
-					y=rand_range(2,9);
-					j=1;
-					if((wild_grid[y][x].dungeon != MAX_CAVES) ||
-						(wild_grid[y-1][x].dungeon != MAX_CAVES) ||
-						(wild_grid[y+1][x].dungeon != MAX_CAVES) ||
-						(wild_grid[y][x-1].dungeon != MAX_CAVES) ||
-						(wild_grid[y][x+1].dungeon != MAX_CAVES) ||
-						(wild_grid[y-1][x+1].dungeon != MAX_CAVES) ||
-						(wild_grid[y+1][x+1].dungeon != MAX_CAVES) ||
-						(wild_grid[y-1][x-1].dungeon != MAX_CAVES) ||
-						(wild_grid[y+1][x-1].dungeon != MAX_CAVES))
-					{
-						j=0;
-					}
-				}
-			}
-			else
-			{
-				j=0;
-				while(j == 0)
-				{
-					x=rand_range(2,9);
-					y=rand_range(2,9);
-					j=1;
-					if(wild_grid[y][x].dungeon != MAX_CAVES)
-					{
-						j=0;
-					}
-				}
-			}
-			/* There are no dungeons next to this */
-			wild_grid[y][x].dungeon=i;
-			/* now let the town & dungeon know where they are */
-			if (i<MAX_TOWNS)
-			{
-				town_defs[i].x=x;
-				town_defs[i].y=y;
-			}
-			dun_defs[i].x=x;
-			dun_defs[i].y=y;
-		}
-			
-		/* Generate road map... */
-		for(i=0;i<MAX_TOWNS-1;i++)
-		{
-			int cur_x,cur_y,dest_x,dest_y;
-			int x_disp,y_disp,x_sgn,y_sgn;
-			int fin;
-			byte curdir,nextdir;
-
-			cur_x=town_defs[i].x;
-			cur_y=town_defs[i].y;
-			dest_x=town_defs[i+1].x;
-			dest_y=town_defs[i+1].y;
-			fin=0;
-			while(!fin)
-			{
-				x_disp=dest_x-cur_x;
-				x_sgn=0;
-				if (x_disp>0)
-				{
-					x_sgn=1;
-				}
-				if (x_disp<0)
-				{
-					x_sgn=-1;
-					x_disp=-x_disp;
-				}
-				y_disp=dest_y-cur_y;
-				y_sgn=0;
-				if(y_disp>0)
-				{
-					y_sgn=1;
-				}
-				if(y_disp<0)
-				{
-					y_sgn=-1;
-					y_disp=-y_disp;
-				}
-				/* _disp holds distance, _sgn holds sign (direction). Adding ( _disp * _sgn ) to cur_ gives dest_ */
-				if ((x_disp == 0) && (y_disp == 0))
-				{
-					fin=1;
-				}
-				else
-				{
-					/* Check the four directions - with an extra check at the start for symmetry*/
-					if ((x_disp == y_disp) && (x_sgn==1) && (y_sgn == -1))
-					{
-						curdir=ROAD_UP;
-						nextdir=ROAD_DOWN;
-					}
-					else if((x_sgn == 1) && (x_disp >= y_disp))
-					{
-						curdir=ROAD_RIGHT;
-						nextdir=ROAD_LEFT;
-					}
-					else if((y_sgn == 1) && (y_disp >= x_disp))
-					{
-						curdir=ROAD_DOWN;
-						nextdir=ROAD_UP;
-					}
-					else if((x_sgn == -1) && (x_disp >= y_disp))
-					{
-						curdir=ROAD_LEFT;
-						nextdir=ROAD_RIGHT;
-					}
-					else
-					{
-						curdir=ROAD_UP;
-						nextdir=ROAD_DOWN;
-					}
-					/* We now have the current dir and the next dir... */
-					wild_grid[cur_y][cur_x].road_map |= curdir;
-					if(curdir==ROAD_RIGHT)
-					{
-						cur_x++;
-					}
-					else if(curdir == ROAD_LEFT)
-					{
-						cur_x--;
-					}
-					else if(curdir == ROAD_DOWN)
-					{
-						cur_y++;
-					}
-					else
-					{
-						cur_y--;
-					}
-					wild_grid[cur_y][cur_x].road_map |= nextdir;
-				}
-			}
-		}
-
-		/* Start in town 0 */
-		dun_level = 0;
-		cur_town = TOWN_KADATH;
-		while((cur_town == TOWN_KADATH) || (cur_town == TOWN_NIR))
-		{
-			cur_town = (byte)rand_range(0,MAX_TOWNS-1);
-		}
-		cur_dungeon = cur_town;
-		dun_offset = 0;
-		dun_bias = 0;
-		wildx=town_defs[cur_town].x;
-		wildy=town_defs[cur_town].y;
-		came_from = START_RANDOM;
-
-		/* Roll up a new character */
-		player_birth();
-
-		/* Hack -- enter the world at day unless undead*/
-		if ((p_ptr->prace == RACE_SPECTRE) ||
-			 (p_ptr->prace == RACE_ZOMBIE) ||
-			 (p_ptr->prace == RACE_SKELETON) ||
-			 (p_ptr->prace == RACE_VAMPIRE))
-		{
-			turn=50001;
-		}
-		else
-		{
-			turn=1;
-		}
-	}
+	if (new_game) create_character();
 
 	/* Remove the stat_default array */
 	C_KILL(stat_default, MAX_STAT_DEFAULT, stat_default_type);
@@ -4488,13 +4590,6 @@ void play_game(bool new_game)
 		if (!alive && !death) break;
 
 
-		/* Erase the old cave */
-		wipe_o_list();
-
-		/* Kill non-pet monsters - pets are saved */
-		remove_non_pets();
-
-
 		/* XXX XXX XXX */
 		msg_print(NULL);
 
@@ -4504,129 +4599,13 @@ void play_game(bool new_game)
 			/* Mega-Hack -- Allow player to cheat death */
             if ((cheat_wzrd || cheat_live) && !get_check("Die? "))
 			{
-				/* Mark social class, reset age, if needed */
-				if (p_ptr->sc) p_ptr->sc = p_ptr->age = 0;
-
-				/* Increase age */
-				p_ptr->age++;
-
-				/* Mark savefile */
-				noscore |= 0x0001;
-
-				/* Message */
-				msg_print("You invoke wizard mode and cheat death.");
-				msg_print(NULL);
-
-				/* Restore hit points */
-				p_ptr->chp = p_ptr->mhp;
-				p_ptr->chp_frac = 0;
-
-				/* Restore spell and chi points */
-				p_ptr->csp = p_ptr->msp;
-				p_ptr->csp_frac = 0;
-				p_ptr->cchi=p_ptr->mchi;
-				p_ptr->chi_frac = 0;
-
-				/* Hack -- Healing */
-				(void)set_blind(0);
-				(void)set_confused(0);
-				(void)set_poisoned(0);
-				(void)set_afraid(0);
-				(void)set_paralyzed(0);
-				(void)set_image(0);
-				(void)set_stun(0);
-				(void)set_cut(0);
-
-				/* Hack -- Prevent starvation */
-				(void)set_food(PY_FOOD_MAX - 1);
-
-				/* Hack -- cancel recall */
-				if (p_ptr->word_recall)
-				{
-					/* Message */
-					msg_print("A tension leaves the air around you...");
-					msg_print(NULL);
-
-					/* Hack -- Prevent recall */
-					p_ptr->word_recall = 0;
-				}
-
-				/* Note cause of death XXX XXX XXX */
-				(void)strcpy(died_from, "Cheating death");
-
-				/* Teleport to town */
-                new_level_flag = TRUE;
-				came_from=START_RANDOM;
-
-				/* Go to town */
-                dun_level = 0;
-
-				/* Do not die */
-				death = FALSE;
+				resurrect(TRUE);
 			}
 			
 			/* Almost identical code -- Allow player to recall at point of death */
-            if (p_ptr->ritual < MAX_TOWNS + 1)
+            else if (p_ptr->ritual < MAX_TOWNS + 1)
 			{
-				/* Message */
-				msg_print("Your ritual saves you from death.");
-				msg_print(NULL);
-
-				/* Restore hit points */
-				p_ptr->chp = p_ptr->mhp;
-				p_ptr->chp_frac = 0;
-
-				/* Restore spell points */
-				p_ptr->csp = p_ptr->msp;
-				p_ptr->csp_frac = 0;
-				p_ptr->cchi=p_ptr->mchi;
-				p_ptr->chi_frac = 0;
-
-				/* Hack -- Healing */
-				(void)set_blind(0);
-				(void)set_confused(0);
-				(void)set_poisoned(0);
-				(void)set_afraid(0);
-				(void)set_paralyzed(0);
-				(void)set_image(0);
-				(void)set_stun(0);
-				(void)set_cut(0);
-
-				/* Hack -- Prevent starvation */
-				(void)set_food(PY_FOOD_MAX - 1);
-
-				/* Hack -- cancel recall */
-				if (p_ptr->word_recall)
-				{
-					/* Message */
-					msg_print("A tension leaves the air around you...");
-					msg_print(NULL);
-
-					/* Hack -- Prevent recall */
-					p_ptr->word_recall = 0;
-				}
-
-				/* Teleport to town */
-                new_level_flag = TRUE;
-				came_from=START_RANDOM;
-
-				/* Go to town of recall */
-                dun_level = 0;
-				cur_town = p_ptr->ritual;
-				wildx=town_defs[cur_town].x;
-				wildy=town_defs[cur_town].y;
-
-
-				/* Do not die */
-				death = FALSE;
-
-				/* Ritual is used */
-				p_ptr->ritual = MAX_TOWNS + 1;
-
-				/* Lose most money and all items */
-				/* You only keep the change in your pocket */
-				if(p_ptr->au > 100) p_ptr->au = 100;
-				destroy_pack();
+				resurrect(FALSE);
 			}
 		}
 

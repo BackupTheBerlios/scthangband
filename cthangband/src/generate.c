@@ -5178,6 +5178,8 @@ static void town_gen(void)
 void generate_cave(void)
 {
 	int i, num;
+	cptr why = NULL;
+	bool okay = FALSE;
 
 
 	/* The dungeon is not ready */
@@ -5235,12 +5237,19 @@ void generate_cave(void)
 	panel_col = max_panel_cols;
 
 	/* Generate */
-	for (num = 0; TRUE; num++)
+	for (num = 0; !okay; num++)
 	{
-		bool okay = TRUE;
+		/* Message if "good" test fails noisily. */
+		if (why) msg_format("Generation restarted (%s)", why);
 
-		cptr why = NULL;
+		/* Assume good */
+		okay = TRUE;
 
+		/* Wipe the objects */
+		wipe_o_list();
+
+		/* Wipe the monsters */
+		remove_non_pets();
 
 		/* XXX XXX XXX XXX */
 		o_max = 1;
@@ -5395,24 +5404,15 @@ void generate_cave(void)
 					/* Message */
 					why = "boring level";
 				}
+				else
+				{
+					why = NULL;
+				}
 
 				/* Try again */
 				okay = FALSE;
 			}
 		}
-
-		/* Accept */
-		if (okay) break;
-
-
-		/* Message */
-		if (why) msg_format("Generation restarted (%s)", why);
-
-		/* Wipe the objects */
-		wipe_o_list();
-
-		/* Wipe the monsters */
-		remove_non_pets();
 	}
 
 

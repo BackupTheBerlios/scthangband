@@ -925,7 +925,7 @@ extern void delete_monster(int y, int x);
 #if (defined(DUNGEON_C) || defined(MONSTER2_C) || defined(SAVE_C))
 extern void compact_monsters(int size);
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(MONSTER2_C))
+#if (defined(GENERATE_C) || defined(MONSTER2_C))
 extern void remove_non_pets(void);
 #endif
 #if (defined(LOAD_C) || defined(MONSTER2_C))
@@ -1069,7 +1069,7 @@ extern void do_cmd_rotate_stack(void);
 #if (defined(DUNGEON_C) || defined(OBJECT2_C) || defined(SAVE_C))
 extern void compact_objects(int size);
 #endif
-#if (defined(DUNGEON_C) || defined(GENERATE_C) || defined(OBJECT2_C))
+#if (defined(GENERATE_C) || defined(OBJECT2_C))
 extern void wipe_o_list(void);
 #endif
 #if (defined(LOAD_C) || defined(MELEE1_C) || defined(OBJECT2_C))
