@@ -3946,8 +3946,8 @@ extern bool PURE item_tester_hook_drop(object_ctype *o_ptr);
 
 /* tables.c */
 
-#if (defined(DUNGEON_C) || defined(OBJECT1_C) || defined(TABLES_C))
-extern cptr_ch feeling_str[];
+#if (defined(DUNGEON_C) || defined(INIT2_C) || defined(OBJECT1_C) || defined(TABLES_C))
+extern cptr_ch feeling_str[SENSE_MAX];
 #endif
 
 /* cmd3.c */

@@ -1661,7 +1661,7 @@ static void check_skill_set(void)
 	const player_skill *ptr;
 	for (ptr = skill_set; ptr < END_PTR(skill_set); ptr++)
 	{
-		if (ptr != skill_set+idx)
+		if (ptr != skill_set+ptr->idx)
 		{
 			quit_fmt("The %s skill has index %d rather than %d.", ptr->name,
 				ptr - skill_set, ptr->idx);
@@ -1770,7 +1770,7 @@ static void check_ma_blows(void)
 		/* Check that a player who passes the "min_level" check for the easiest
 		 * attack has a "chance" of using at least one attack. */
 		if (ma_ptr->min_level == ma_blows->min_level &&
-			ma_ptr->chance <= ma_blows->level)
+			ma_ptr->chance <= ma_blows->min_level)
 		{
 			first_attack = TRUE;
 		}
@@ -1796,7 +1796,16 @@ static void check_ma_blows(void)
 		"at %d%% skill.", ma_blows->min_level, ma_blows->min_level);
 }
 
-#endif /* CHECK_ARRAYS */
+static void check_feeling_str(void)
+{
+	cptr_ch *ptr;
+	FOR_ALL_IN(feeling_str, ptr)
+	{
+		if (ptr->idx != ptr - feeling_str)
+			quit_fmt("feeling_str[] incorrectly ordered.");
+	}
+}
+
 
 /*
  * Check that the members of various arrays are in the correct order,
@@ -1806,7 +1815,6 @@ static void check_ma_blows(void)
  */
 static void check_arrays(void)
 {
-#ifdef CHECK_ARRAYS
 	check_bonus_table();
 	check_screen_coords();
 	check_temp_effects();
@@ -1816,8 +1824,16 @@ static void check_arrays(void)
 	check_book_info();
 	check_magic_info();
 	check_ma_blows();
-#endif /* CHECK_ARRAYS */
+	check_feeling_str();
 }
+#else /* CHECK_ARRAYS */
+/*
+ * Do nothing.
+ */
+static void check_arrays(void)
+{
+}
+#endif /* CHECK_ARRAYS */
 
 /*
  * Hack -- take notes on line 23

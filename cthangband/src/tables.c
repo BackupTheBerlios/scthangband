@@ -3173,7 +3173,7 @@ name_centry ident_info[] =
 	{0, "Unknown Symbol"}
 };
 
-cptr_ch feeling_str[] =
+cptr_ch feeling_str[SENSE_MAX] =
 {
 	{IDX(SENSE_NONE) ""},
 	{IDX(SENSE_C_ART) "terrible"},

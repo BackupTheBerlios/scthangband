@@ -2548,6 +2548,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define SENSE_TRIED 13
 #define SENSE_PCURSE 14
 #define SENSE_U_ART 15
+#define SENSE_MAX 16
 
 /*
  * Special Monster Flags (all temporary)
