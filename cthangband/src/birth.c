@@ -2721,14 +2721,15 @@ static int get_rnd_q_monster(int q_idx)
 
 	/* Don't multipliers to be random guardians */
 	if (r_info[r_idx].flags2 & (RF2_MULTIPLY)) return (0);
+
+	/* Paranoia? - Don't allow uncreatable guardians. */
+	if (!r_info[r_idx].rarity) return (0);
+
 	/* Don't allow duplicate guardians */
 	for (j = 2; j < q_idx; j++)
 	{
 		if (q_list[j].r_idx == r_idx) return (0);
 	}
-
-	/* Paranoia? - Don't allow uncreatable guardians. */
-	if (!r_info[r_idx].rarity)
 
 	return (r_idx);
 }
