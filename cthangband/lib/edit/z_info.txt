@@ -17,7 +17,7 @@ V:1.0.0
 # Maximum number of objects on the level
 # Increasing this can prevent or delay object loss associated with the
 # "Compacting objects..." message.
-M:O:512
+M:O:1024
 
 # Maximum number of monsters on the level
 # Increasing this can prevent or delay monster loss associated with the
