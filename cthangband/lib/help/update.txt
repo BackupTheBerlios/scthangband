@@ -47,6 +47,7 @@ sCthangband _CVS_
   * Death by failed mindcraft, etc., were attributed to a random monster.
   * Pref lines such as "L:blindness:7:-1" weren't parsed correctly.
   * "quest" was always pluralised in dumps.
+  * project_m() leaked memory if its buffers were allocated.
 
 sCthangband 1.0.12
 * Dodging blows because of martial arts gives experience in the skill.
