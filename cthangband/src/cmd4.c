@@ -3984,6 +3984,11 @@ void get_symbol_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
 	{
 		sprintf(buf, "$%c$$$w", atchar[at]);
 	}
+	/* Mask \0 at all costs. */
+	else if (ch == '\0')
+	{
+		sprintf(buf, "$%c#$w", atchar[at]);
+	}
 	/* Normal string. */
 	else
 	{
@@ -4794,11 +4799,9 @@ void shops_display(int town)
 
 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
 
-		/* Display the name of the store. */
-		mc_put_fmt(j++, 0, "%s", store_title(i+offset));
-
-		/* Put the character used at the top. */
-		Term_putch(0, j, f_ptr->x_attr, f_ptr->x_char);
+		/* Display the symbol and name of the store. */
+		mc_put_fmt(j++, 0, "%v%s", get_symbol_f2, f_ptr->x_attr, f_ptr->x_char,
+			store_title(i+offset));
 	}
 }
 
