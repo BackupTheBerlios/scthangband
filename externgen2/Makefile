@@ -4,7 +4,7 @@
 CC = gcc
 link = gcc
 THROWBACK = -Throwback
-CCflags = -c -W -Wall
+CCflags = -c -g -O0 -W -Wall
 
 OBJS = externfunc.o externvar.o \
        interface.o
