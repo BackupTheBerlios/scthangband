@@ -64,6 +64,15 @@ O:Sustain Strength
 E:& Cutlass~
 E:& Lump~ of Sulphur
 
+N:1:Swashbuckler
+S:1:0:-2:3:2:1
+A:Warrior:0:0
+K:Tough=1:Disarm=5:Devices=5:Resist=15:Stealth=5:Search=5:Perception=15
+K:Close=15:Missile=15:Stab=35:Slash=15:Crush=15:Sensing=30
+E:k274
+E:& Rapier~
+E:Hard Leather Armour~
+
 N:2:Gladiator
 S:5:-1:-1:1:3:-1
 A:Warrior:0:0

@@ -3081,30 +3081,38 @@ static bool choose_race(void)
  */
 static bool choose_template(void)
 {
-	int k;
+	int k = 0;
 	name_entry *this;
 
 	C_TNEW(list, z_info->templates, name_entry);
 
+	/* Make some space. */
+	clear_from(12);
+
 	/* Extra info */
 	mc_roff_xy(5, 12, "Your 'template' determines various starting abilities and bonuses.");
 
-	FOR_ALL_IN(list, this)
+	for (k = 0, this = list; k < z_info->templates; k++)
 	{
-		this->idx = this - list;
-		this->str = tp_name+template_info[this->idx].name;
+		/* Not a real template. */
+		if (!template_info[k].name) continue;
+
+		/* Accept and advance. */
+		this->idx = k;
+		this->str = tp_name+template_info[k].name;
+		this++;
 	}
 
 	/* Show the options. */
-	display_entry_list_bounded(list, z_info->templates, TRUE, 0, 17, 80, 22);
+	display_entry_list_bounded(list, this - list, TRUE, 0, 17, 80, 22);
 
 	/* Choose. */
-	if (birth_choice(15, z_info->templates, "Choose a template", &k, FALSE)
+	if (birth_choice(15, this - list, "Choose a template", &k, FALSE)
 		== BC_RESTART) return FALSE;
 
 	/* Set it. */
-	p_ptr->ptemplate = k;
-	cp_ptr = &template_info[k];
+	p_ptr->ptemplate = list[k].idx;
+	cp_ptr = &template_info[p_ptr->ptemplate];
 
 	/* Display */
 	mc_put_fmt(5, 15, "$B%s", tp_name+cp_ptr->name);
