@@ -619,6 +619,21 @@ static bool opt_is_forced(int i)
 	}
 
 /*
+ * Modify various globals when an option is set/unset.
+ */
+static void opt_special_effect(const option_type * const op_ptr)
+{
+	if (op_ptr->o_page == OPTS_CHEAT)
+	{
+		noscore |= (1L<<op_ptr->o_bit);
+	}
+	if (op_ptr->o_var == &equippy_chars)
+	{
+		p_ptr->redraw |= PR_EQUIPPY;
+	}
+}
+
+/*
  * Interact with some options
  */
 void do_cmd_options_aux(int page, cptr info, cptr file)
@@ -737,8 +752,8 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case 'Y':
 			case '6':
 			{
-				if (page == OPTS_CHEAT) noscore |= (1L<<option_info[opt[k]].o_bit);
 				(*option_info[opt[k]].o_var) = TRUE;
+				opt_special_effect(option_info+opt[k]);
 				do {
 				k = (k + 1) % n;
 				} while(opt_is_forced(opt[k]));
@@ -750,6 +765,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case '4':
 			{
 				(*option_info[opt[k]].o_var) = FALSE;
+				opt_special_effect(option_info+opt[k]);
 				do {
 				k = (k + 1) % n;
 				} while(opt_is_forced(opt[k]));
@@ -760,6 +776,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			case 'X':
 			{
 				(*option_info[opt[k]].o_var) ^= 1;
+				opt_special_effect(option_info+opt[k]);
 				do {
 				k = (k + 1) % n;
 				} while(opt_is_forced(opt[k]));

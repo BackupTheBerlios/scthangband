@@ -2777,7 +2777,7 @@ extern bool empty_levels;
 #if (defined(TABLES_C) || defined(VARIABLE_C))
 extern bool player_symbols;
 #endif
-#if (defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool equippy_chars;
 #endif
 #if (defined(FILES_C) || defined(TABLES_C) || defined(VARIABLE_C))

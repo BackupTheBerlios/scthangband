@@ -2831,7 +2831,6 @@ void process_command(void)
 		case '=':
 		{
 			do_cmd_options();
-            p_ptr->redraw |= (PR_EQUIPPY);
 			break;
 		}
 
