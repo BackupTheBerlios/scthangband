@@ -954,7 +954,7 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 	if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
 
 	/* Hack - unset j_ptr->k_idx if it isn't known. */
-	if (!object_aware_p(j_ptr)) j_ptr->k_idx = lookup_kind(0,0); /* != 0 */
+	if (!object_aware_p(j_ptr)) j_ptr->k_idx = OBJ_UNKNOWN;
 }
 
 

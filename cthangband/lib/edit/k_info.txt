@@ -233,9 +233,12 @@ I:80:39:1000
 W:0:0:10:2
 D:Moon wine obtained from the Zoogs according to the shopkeeper.
 
-## XXX 28 XXX ##
+# A special object kind to indicate an unknown k_idx.
+# This can be freely deleted as it is not saved.
 
-# There needs to be at least one empty object kind for unknown objects.
+N:28:Unknown
+G: :d:0
+I:255:255:0
 
 ## XXX 29 XXX ##
 
