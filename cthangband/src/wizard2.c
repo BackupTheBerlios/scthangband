@@ -1188,7 +1188,7 @@ void do_cmd_wiz_play(void)
 			break;
 			
 			default:
-			bell();
+			bell(0);
 		}
 	}
 

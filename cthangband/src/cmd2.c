@@ -3896,7 +3896,7 @@ static byte display_list(void (*display)(byte, byte *, char *), void (*confirm)(
 			/* Not a valid choice. */
 			default:
 			{
-				bell();
+				bell(0);
 			}
 		}
 	}

@@ -174,7 +174,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
 		{
-			bell();
+			bell(0);
 			continue;
 		}
 
@@ -184,7 +184,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, int school_no)
 		/* Require "okay" spells */
 		if (!spell_okay(spell, known, school_no))
 		{
-			bell();
+			bell(0);
 			msg_format("You may not %s that %s.", prompt, p);
 			continue;
 		}
@@ -454,7 +454,7 @@ int get_cantrip(int *sn, int sval)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
 		{
-			bell();
+			bell(0);
 			continue;
 		}
 
@@ -464,7 +464,7 @@ int get_cantrip(int *sn, int sval)
 		/* Require "okay" spells */
 		if (!cantrip_okay(spell))
 		{
-			bell();
+			bell(0);
 			msg_print("You may not cast that cantrip.");
 			continue;
 		}
@@ -738,7 +738,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
 		{
-			bell();
+			bell(0);
 			continue;
 		}
 
@@ -748,7 +748,7 @@ static int get_favour(int *sn, int spirit,int sphere)
 		/* Require "okay" spells */
 		if (!favour_okay(spell, sphere))
 		{
-			bell();
+			bell(0);
 			msg_print("You may not invoke that favour.");
 			continue;
 		}
@@ -1049,14 +1049,14 @@ int get_spirit(int *sn, cptr prompt, bool call)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= MAX_SPIRITS))
 		{
-			bell();
+			bell(0);
 			continue;
 		}
 
 		/* Require "okay" spells */
 		if (!spirit_okay(i, call))
 		{
-			bell();
+			bell(0);
 			msg_format("You may not %s that spirit.", prompt);
 			continue;
 		}
@@ -4255,7 +4255,7 @@ static int get_mindcraft_power(int *sn)
 		/* Totally Illegal */
 		if ((i < 0) || (i >= num))
 		{
-			bell();
+			bell(0);
 			continue;
 		}
 

@@ -4187,7 +4187,7 @@ bool target_set(int mode)
 					}
 					else
 					{
-						bell();
+						bell(0);
 					}
 					break;
 				}
@@ -4243,7 +4243,7 @@ bool target_set(int mode)
 				default:
 				{
 					d = get_keymap_dir(query);
-					if (!d) bell();
+					if (!d) bell(0);
 					break;
 				}
 			}
@@ -4337,7 +4337,7 @@ bool target_set(int mode)
 				default:
 				{
 					d = get_keymap_dir(query);
-					if (!d) bell();
+					if (!d) bell(0);
 					break;
 				}
 			}
@@ -4473,7 +4473,7 @@ bool get_aim_dir(int *dp)
 		if ((dir == 5) && !target_okay()) dir = 0;
 
 		/* Error */
-		if (!dir) bell();
+		if (!dir) bell(0);
 	}
 
 	/* No direction */
@@ -4559,7 +4559,7 @@ bool get_rep_dir(int *dp)
 		dir = get_keymap_dir(ch);
 
 		/* Oops */
-		if (!dir) bell();
+		if (!dir) bell(0);
 	}
 
 	/* Prevent weirdness */
@@ -6404,7 +6404,7 @@ bool get_hack_dir(int *dp)
 		if ((dir == 5) && !target_okay()) dir = 0;
 
 		/* Error */
-		if (!dir) bell();
+		if (!dir) bell(0);
 	}
 
 	/* No direction */

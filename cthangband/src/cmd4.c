@@ -161,7 +161,7 @@ void do_cmd_change_name(void)
 		/* Oops */
 		else
 			{
-			bell();
+			bell(0);
 		}
 
 		/* Flush messages */
@@ -393,7 +393,7 @@ void do_cmd_messages(void)
 	}
 
 		/* Hack -- Error of some kind */
-		if (i == j) bell();
+		if (i == j) bell(0);
 	}
 
 	/* Restore the screen */
@@ -541,7 +541,7 @@ static void do_cmd_options_autosave(cptr info)
 
 			default:
 		{
-				bell();
+				bell(0);
 				break;
 		}
 	}
@@ -796,7 +796,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			}
 			default:
 			{
-				bell();
+				bell(0);
 				break;
 			}
 		}
@@ -974,7 +974,7 @@ static void do_cmd_options_win(void)
 				/* Invalid choice. */
 				else
 				{
-					bell();
+					bell(0);
 				}
 			}
 		}
@@ -1047,7 +1047,7 @@ static void do_cmd_options_redraw(void)
 			}
 			default:
 			{
-				bell();
+				bell(0);
 			}
 		}
 
@@ -1102,7 +1102,7 @@ static void do_cmd_options_delay(void)
 		k = inkey();
 		if (k == ESCAPE) break;
 		if (isdigit(k)) delay_factor = D2I(k);
-		else bell();
+		else bell(0);
 		}
 	}
 
@@ -1124,7 +1124,7 @@ static void do_cmd_options_hp(void)
 		k = inkey();
 		if (k == ESCAPE) break;
 		if (isdigit(k)) hitpoint_warn = D2I(k);
-		else bell();
+		else bell(0);
 	}
 }
 
@@ -1384,7 +1384,7 @@ void do_cmd_options(void)
 		}
 
 		/* Failure. */
-		bell();
+		bell(0);
 		continue;
 
 good:	/* Success */
@@ -2077,7 +2077,7 @@ static void do_cmd_macros(void)
 		else
 		{
 			/* Oops */
-			bell();
+			bell(0);
 		}
 
 		/* Flush messages */
@@ -2518,7 +2518,7 @@ static void modify_visuals(visual_type *vs_ptr)
 				break;
 			default:
 err:			/* Not a valid response, so ask again. */
-				bell();
+				bell(0);
 				continue;
 		}
 
@@ -2667,7 +2667,7 @@ static void do_cmd_visuals(void)
 		/* Unknown option */
 		else
 		{
-			bell();
+			bell(0);
 		}
 
 		/* Flush messages */
@@ -2897,7 +2897,7 @@ static void do_cmd_colors(void)
 		/* Unknown option */
 		else
 		{
-			bell();
+			bell(0);
 		}
 
 		/* Flush messages */
@@ -4153,7 +4153,7 @@ static void do_cmd_knowledge_shops(void)
 				/* None found. */
 				if (i == MAX_TOWNS)
 				{
-					bell();
+					bell(0);
 					break;
 				}
 
@@ -4242,7 +4242,7 @@ void do_cmd_knowledge(void)
 		/* Unknown option */
 		else
 		{
-			bell();
+			bell(0);
 		}
 
 		/* Flush messages */

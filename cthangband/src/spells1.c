@@ -823,7 +823,7 @@ void take_hit(int damage, cptr hit_from, int monster)
 	if (p_ptr->chp < warning)
 	{
 		/* Hack -- bell on first notice */
-		if (old_chp > warning) bell();
+		if (old_chp > warning) bell(0);
 
 		sound(SOUND_WARN);
 

@@ -1544,10 +1544,19 @@ void flush(void)
 /*
  * Flush the screen, make a noise
  */
-void bell(void)
+void bell(cptr reason)
 {
 	/* Mega-Hack -- Flush the output */
 	Term_fresh();
+
+	/* Hack -- memorize the reason if possible */
+	if (character_generated && reason)
+	{
+		message_add(format("ERROR: %s", reason));
+
+		/* Window stuff */
+		p_ptr->window |= (PW_MESSAGE);
+	}
 
 	/* Make a bell noise (if allowed) */
 	if (ring_bell) Term_xtra(TERM_XTRA_NOISE, 0);
@@ -2471,7 +2480,7 @@ static void msg_flush(int x)
 		if (quick_messages) break;
 		if ((cmd == ESCAPE) || (cmd == ' ')) break;
 		if ((cmd == '\n') || (cmd == '\r')) break;
-		bell();
+		bell(0);
 	}
 
 	/* Clear the line */
@@ -3050,7 +3059,7 @@ bool askfor_aux(char *buf, int len)
 			}
 			else
 			{
-				bell();
+				bell(0);
 			}
 			break;
 		}
@@ -3151,7 +3160,7 @@ char get_check_aux(cptr prompt, cptr text, cptr conv_from, cptr conv_to)
 			c = conv_from;
 			break;
 		}
-		bell();
+		bell(0);
 	}
 
 	/* Erase the prompt */
@@ -3471,7 +3480,7 @@ void request_command(bool shopping)
 					if (command_arg >= 1000)
 					{
 						/* Warn */
-						bell();
+						bell(0);
 
 						/* Limit */
 						command_arg = 9999;

@@ -901,7 +901,7 @@ void do_cmd_locate(void)
 			dir = get_keymap_dir(command);
 
 			/* Error */
-			if (!dir) bell();
+			if (!dir) bell(0);
 		}
 
 		/* No direction */

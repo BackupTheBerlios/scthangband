@@ -4477,7 +4477,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Verify legality */
 				if (!inven || !equip)
 				{
-					bell();
+					bell(0);
 					break;
 				}
 
@@ -4526,7 +4526,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				}
 
 				/* Oops */
-				bell();
+				bell(0);
 				break;
 			}
 
@@ -4538,21 +4538,21 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* XXX XXX Look up that tag */
 				if (!((o_ptr = get_tag(which, command_cmd))))
 				{
-					bell();
+					bell(0);
 					break;
 				}
 
 				/* Hack -- Verify item */
 				if (is_worn_p(o_ptr) ? !equip : !inven)
 				{
-					bell();
+					bell(0);
 					break;
 				}
 
 				/* Validate the item */
 				if (!get_item_okay(o_ptr))
 				{
-					bell();
+					bell(0);
 					break;
 				}
 
@@ -4586,14 +4586,14 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* No "default" item. */
 				else
 				{
-					bell();
+					bell(0);
 					break;
 				}
 
 				/* Validate the item */
 				if (!get_item_okay(o_ptr))
 				{
-					bell();
+					bell(0);
 					break;
 				}
 
@@ -4704,7 +4704,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Paranoia */
 				if (!best)
 				{
-					bell();
+					bell(0);
 					break;
 				}
 				else
@@ -4736,7 +4736,7 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 				/* Validate the item */
 				if (!get_item_okay(o_ptr))
 				{
-					bell();
+					bell(0);
 					break;
 				}
 

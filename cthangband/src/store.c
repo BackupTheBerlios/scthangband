@@ -2071,7 +2071,7 @@ static int get_stock_aux(int *com_val, cptr pmt, int i, int j)
 		}
 
 		/* Oops */
-		bell();
+		bell(0);
 	}
 
 	/* Clear the prompt */

@@ -822,7 +822,7 @@ static bc_type birth_choice(int row, s16b max, cptr prompt, int *option, bool al
 		{
 			(*option) = ator(c);
 			if (((*option) >= 0) && ((*option) < max)) return BC_OKAY;
-			else bell();
+			else bell(0);
 		}
 	}
 }
@@ -3746,7 +3746,7 @@ static bool quick_start_character(void)
 			}
 
 			/* Warning */
-			bell();
+			bell(0);
 		}
 
 		/* Are we done? */
@@ -3859,7 +3859,7 @@ static bool player_birth_aux(void)
 			do_cmd_options_aux(7,"Startup Options", NULL);
 			Term_load();
 		}
-		else bell();
+		else bell(0);
 	}
 
 	/* Clean up */

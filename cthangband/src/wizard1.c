@@ -2311,7 +2311,7 @@ void do_cmd_spoilers(void)
 		/* Oops */
 		else
 		{
-			bell();
+			bell(0);
 		}
 
 		/* Flush messages */
