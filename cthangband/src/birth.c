@@ -1528,6 +1528,10 @@ static bool point_mod_player(void)
 			}
 		}
 	}
+
+	/* Process the player name if necessary. */
+	if (!own_name) process_player_name();
+
 	return TRUE;
 }
 
@@ -4370,9 +4374,6 @@ void player_birth(void)
 		/* Roll up a new character */
 		if (player_birth_aux()) break;
 	}
-
-	/* Process the player name, if necessary. */
-	process_player_name();
 
 
 	/* Note player birth in the message recall */

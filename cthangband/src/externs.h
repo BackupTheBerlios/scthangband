@@ -485,7 +485,7 @@ extern int color_char_to_attr(char c);
 #if (defined(CMD4_C) || defined(FILES_C))
 extern errr show_file(cptr name, cptr what);
 #endif
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_EMX_C) || defined(MAIN_WIN_C) || defined(MAIN_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_EMX_C) || defined(MAIN_WIN_C) || defined(MAIN_C))
 extern void process_player_name(void);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C))
