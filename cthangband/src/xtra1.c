@@ -2933,6 +2933,9 @@ static bool is_isolated_room_p(int y, int x)
 	int ys[] = { 0, 1, 1, 1, 0,-1,-1, 0};
 	uint i;
 
+	/* Paranoia - avoid looking out of bounds. */
+	if (!in_bounds(y, x)) return FALSE;
+
 	for (i = 0; i < N_ELEMENTS(xs); i++)
 	{
 		if (cave[y+ys[i]][x+xs[i]].info & CAVE_ROOM) return FALSE;
@@ -2960,9 +2963,9 @@ static void calc_rooms(void)
 			}
 		}
 	}
-	for (y = 0; y < cur_hgt; y++)
+	for (y = 1; y < cur_hgt-1; y++)
 	{
-		for (x = 0; x < cur_wid; x++)
+		for (x = 1; x < cur_wid-1; x++)
 		{
 			if (is_isolated_room_p(y,x))
 			{
