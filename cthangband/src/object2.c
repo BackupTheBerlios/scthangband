@@ -2642,14 +2642,6 @@ static bool PURE aux3_can_curse(int k_idx)
 
 
 /*
- * Return the quark added to an object at point of creation.
- */
-static u16b default_quark(object_ctype *o_ptr)
-{
-	return k_info[o_ptr->k_idx].note;
-}
-
-/*
  * Add a special ego effect to an object (which may have negative pval, etc.).
  * Returns FALSE if the effect was unidentified.
  */
@@ -3192,9 +3184,6 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 	/* Turn the object into an ego-item or artefact (or not). */
 	apply_magic_1(o_ptr, lev, okay, good, great);
 
-	/* Hack - inscribe with default quark, if any. */
-	o_ptr->note = default_quark(o_ptr);
-
 	/* Give it any bonuses its ego- or artefact type requires, and add random
 	 * bonuses to rings and armour. */
 	apply_magic_2(o_ptr, lev);
@@ -3238,9 +3227,6 @@ void make_item(object_type *o_ptr, make_item_type *i_ptr, int how, int idx)
 	if (!rand && ego) o_ptr->name2 = i_ptr->x_idx;
 
 	o_ptr->number = rand_range(i_ptr->min, i_ptr->max);
-
-	/* Hack - inscribe with creation depth if desired. */
-	o_ptr->note = default_quark(o_ptr);
 
 	/* Add any special bonuses this ego type expects. */
 	apply_magic_2(o_ptr, object_level);
@@ -3500,9 +3486,6 @@ bool make_gold(object_type *j_ptr, int how, int idx)
 
 	/* Determine how much the treasure is "worth" */
 	j_ptr->pval = (base + (8L * randint(base)) + randint(8));
-
-	/* Hack - inscribe with creation depth if desired. */
-	j_ptr->note = default_quark(j_ptr);
 
 	/* Set the "how it was found" information. */
 	set_object_found(j_ptr, how, idx);
