@@ -576,7 +576,7 @@ static void prt_state(void)
 static void prt_speed(void)
 {
 	int i = p_ptr->pspeed;
-	char buf[32] = "";
+	char buf[32] = "$D";
 
 	/* Hack -- Visually "undo" the Sneak Mode Slowdown */
 	if (p_ptr->sneaking) i += 10;
@@ -594,7 +594,7 @@ static void prt_speed(void)
 	}
 
 	/* Display the speed */
-	mc_put_fmt(GET_YX(XY_SPEED), "%-16s", buf);
+	mc_put_fmt(GET_YX(XY_SPEED), "%-14s", buf);
 }
 
 /*
