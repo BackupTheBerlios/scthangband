@@ -4533,7 +4533,6 @@ void do_cmd_mindcraft(void)
 			{
 				b = detect_all();
 			}
-			if ((psi > 24) && (psi < 40)) set_tim_esp(p_ptr->tim_esp + psi);
 			if (!b)  msg_print("You feel safe.");
 			break;
 		case 1:   /* Mindblast */

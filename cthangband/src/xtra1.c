@@ -1978,9 +1978,6 @@ static void calc_bonuses(bool quiet)
         p_ptr->resist_sound = TRUE;
     }
 
-	/* High-level mindcrafters have ESP */
-	if (skill_set[SKILL_MINDCRAFTING].value >= 80) p_ptr->telepathy = TRUE;
-
 	/* Start with "normal" speed */
 	p_ptr->pspeed = 110;
 
