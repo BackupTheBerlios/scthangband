@@ -5948,7 +5948,7 @@ void display_koff(int k_idx)
 
 
 		/* Access the item's sval */
-		sval = q_ptr->sval;
+		sval = q_ptr->extra;
 
 		/* Extract spells */
 	for (spell = 0; spell < 32; spell++)
@@ -5976,7 +5976,7 @@ void display_koff(int k_idx)
 
 
 		/* Access the item's sval */
-		sval = q_ptr->sval;
+		sval = q_ptr->extra;
 
 		/* Extract spells */
 	for (spell = 0; spell < 32; spell++)
