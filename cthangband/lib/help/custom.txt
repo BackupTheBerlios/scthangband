@@ -1,4 +1,5 @@
 === Option Descriptions ===
+
 Most of the "options" are accessible through the '=' command, which provides an interface to the various "sets" of options available to the player.
 In the decriptions below, each option is listed as the textual summary which is shown on the "options" screen, plus the internal name of the option in brackets, followed by a textual description of the option.
 Note that the internal name of the option can be used in user pref files to force the option to a given setting, see "command.txt" for more info.
@@ -438,7 +439,7 @@ If this option is set, no messages will be printed, or input required, as the ga
 %%%%%
 === Window Options ===
 
-See the "Window Options" help file for details.
+See *****windowpri.txt*0[windowpri.txt] for details.
 
 %%%%% <option=R>
 === Redraw Options ===
