@@ -1001,8 +1001,8 @@ static void print_header(void)
 {
 	char buf[80];
 
-	sprintf(buf, "Artifact Spoilers for %s Version %d.%d.%d", GAME_NAME,
-		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	sprintf(buf, "Artifact Spoilers for %s Version %s", GAME_NAME,
+	GAME_VERSION);
 	spoiler_underline(buf);
 
 }
@@ -1353,8 +1353,8 @@ static void spoil_mon_desc(cptr fname)
 
 	/* Dump the header */
 
-	fprintf(fff, "Monster Spoilers for %s Version %d.%d.%d\n", GAME_NAME,
-		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	fprintf(fff, "Monster Spoilers for %s Version %s\n", GAME_NAME,
+		GAME_VERSION);
 	fprintf(fff, "------------------------------------------\n\n");
 
 	/* Dump the header */
@@ -1574,8 +1574,8 @@ static void spoil_mon_info(cptr fname)
 
 
 	/* Dump the header */
-	sprintf(buf, "Monster Spoilers for %s Version %d.%d.%d\n", GAME_NAME,
-		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	sprintf(buf, "Monster Spoilers for %s Version %s\n", GAME_NAME,
+		GAME_VERSION);
 
 	spoil_out(buf);
 	spoil_out("------------------------------------------\n\n");

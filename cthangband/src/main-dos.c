@@ -967,7 +967,7 @@ static errr Term_user_dos(int n)
 
 				/* Prompt */
 				prt("Command: Screen Resolution", 1, 0);
-				prt(format("Restart %s to get the new screenmode.", VERSION_NAME), 3, 0);
+				prt(format("Restart %s to get the new screenmode.", GAME_NAME), 3, 0);
 
 				/* Get a list of the available presets */
 				while (1)

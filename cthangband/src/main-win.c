@@ -2633,7 +2633,7 @@ static void init_windows(void)
 	                       td->size_wid, td->size_hgt,
 	                       HWND_DESKTOP, NULL, hInstance, NULL);
 	my_td = NULL;
-	if (!td->w) quit_fmt("Failed to create %s window", VERSION_NAME);
+	if (!td->w) quit_fmt("Failed to create %s window", GAME_NAME);
 
 	term_data_link(td);
 	term_screen = &td->t;

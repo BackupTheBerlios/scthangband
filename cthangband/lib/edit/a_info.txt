@@ -21,7 +21,7 @@
 
 # Version stamp (required)
 
-V:1.0.3
+V:_CVS_
 
 
 

@@ -40,8 +40,8 @@
  *   These two get variant and version data from Angband itself; older
  *   variants may not have these defined and will have to be altered.
  */
-#define VARIANT		VERSION_NAME
-#define VERSION		VERSION_STRING
+#define VARIANT		GAME_NAME
+#define VERSION		GAME_VERSION
 
 /*
  * PORTVERSION

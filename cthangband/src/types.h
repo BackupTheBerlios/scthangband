@@ -84,10 +84,7 @@ typedef errr (*parse_info_txt_func)(char *buf, header *head, vptr *extra);
 
 struct header
 {
-	byte v_major;		/* Version -- major */
-	byte v_minor;		/* Version -- minor */
-	byte v_patch;		/* Version -- patch */
-	byte v_extra;		/* Version -- extra */
+	char version[6];	/* Version */
 
 	u16b info_num;		/* Number of "info" records */
 

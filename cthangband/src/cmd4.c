@@ -2646,8 +2646,7 @@ void do_cmd_note(void)
 void do_cmd_version(void)
 {
    /* Silly message */
-    msg_format("You are playing %s %d.%d.%d.", GAME_NAME, 
-	           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+    msg_format("You are playing %s %s.", GAME_NAME, GAME_VERSION);
 	/* These are ANSI standard constants so should work on any compiler */
 #ifdef SHOW_COMPILE_TIME
 	msg_format("(Compiled %s %s)", __TIME__, __DATE__);

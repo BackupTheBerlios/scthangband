@@ -37,19 +37,12 @@
  * Current version number of sCthangband: 1.0.0
  */
 
-/* <<VERSION STAMP>> */
-#define GAME_NAME	"sCthangband"
-#define VERSION_NAME	GAME_NAME
-#define VERSION_MAJOR   1
-#define VERSION_MINOR   0
-#define VERSION_PATCH   3
-
-
-/*
- * This value is not currently used
+/* <<VERSION STAMP>>
+ * Hack - GAME_VERSION must be <= 5 characters long for the header and >= 5
+ * characters long for main-mac.c. GAME_NAME is less strict.
  */
-#define VERSION_EXTRA   0
-
+#define GAME_NAME	"sCthangband"
+#define GAME_VERSION   "_CVS_"
 
 /*
  * Number of grids used to display the dungeon (vertically).

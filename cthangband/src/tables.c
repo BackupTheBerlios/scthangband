@@ -3766,7 +3766,7 @@ mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS] = {
 {0, name, BLANK_32, BLANK_32, iilog(PW_NONE), 0},
 
 window_type windows[8] = {
-BLANK_WINDOW(VERSION_NAME)
+BLANK_WINDOW(GAME_NAME)
 BLANK_WINDOW("Mirror")
 BLANK_WINDOW("Recall")
 BLANK_WINDOW("Choice")

@@ -252,10 +252,7 @@ static void init_header_aux(header *head, int len, byte num,
 	parse_info_txt_func parse, cptr name)
 {
 	/* Save the "version" */
-	head->v_major = VERSION_MAJOR;
-	head->v_minor = VERSION_MINOR;
-	head->v_patch = VERSION_PATCH;
-	head->v_extra = VERSION_EXTRA;
+	strcpy(head->version, GAME_VERSION);
 
 	/* Save the "record" information */
 	head->info_len = len;
@@ -297,10 +294,7 @@ static errr init_info_raw(int fd, header *head)
 
 	/* Read and verify the header */
 	if (fd_read(fd, (char*)(&test), sizeof(header)) ||
-	    (test.v_major != head->v_major) ||
-	    (test.v_minor != head->v_minor) ||
-	    (test.v_patch != head->v_patch) ||
-	    (test.v_extra != head->v_extra) ||
+		(!streq(test.version, head->version)) ||
 		(test.header_num != head->header_num) ||
 	    (test.info_len != head->info_len))
 	{

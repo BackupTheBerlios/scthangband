@@ -3379,8 +3379,7 @@ errr file_character(cptr name, bool UNUSED full)
 
 
 	/* Begin dump */
-	fprintf(fff, "  [%s %d.%d.%d Character Dump]\n\n", GAME_NAME, 
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	fprintf(fff, "  [%s %s Character Dump]\n\n", GAME_NAME, GAME_VERSION);
 
 
 	/* Display player */
@@ -3909,8 +3908,7 @@ static bool do_cmd_help_aux(cptr name, cptr what, int line)
 		}
 
 		/* Show a general "title" */
-		prt(format("[%s %d.%d.%d, %s, Line %d/%d]", GAME_NAME,
-		           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
+		prt(format("[%s %s, %s, Line %d/%d]", GAME_NAME, GAME_VERSION,
 		           caption, line, size), 0, 0);
 
 		/* Prompt -- menu screen */
@@ -4617,8 +4615,7 @@ static bool show_file_tome(cptr name, cptr what, int line, int mode)
 
 
 		/* Show a general "title" */
-		prt(format("[%s %d.%d.%d, %s, Line %d/%d]", GAME_NAME,
-			   VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
+		prt(format("[%s %s, %s, Line %d/%d]", GAME_NAME, GAME_VERSION,
 			   h_ptr->caption, line, size), 0, 0);
 
 		/* Prompt -- menu screen */
@@ -5862,8 +5859,7 @@ static void get_details(high_score *the_score)
 	s16b i, best = 0;
 
 	/* Save the version */
-	sprintf(the_score->what, "%u.%u.%u",
-			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	sprintf(the_score->what, "%s", GAME_VERSION);
 
 	/* Calculate and save the points */
 	sprintf(the_score->pts, "%9ld", MIN(999999999, total_points()));

@@ -3069,13 +3069,9 @@ static errr parse_info_line_aux(char *buf, header *head, vptr *extra)
 	/* Hack -- Process 'V' for "Version" */
 	if (buf[0] == 'V')
 	{
-		int v1, v2, v3;
-
 		/* Scan for the values */
-		if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
-			(v1 != head->v_major) ||
-			(v2 != head->v_minor) ||
-			(v3 != head->v_patch))
+		if (!streq(buf+2, GAME_VERSION))
+
 		{
 			return (PARSE_ERROR_OBSOLETE_FILE);
 		}

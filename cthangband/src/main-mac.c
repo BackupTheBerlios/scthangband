@@ -1993,10 +1993,10 @@ static void save_prefs(void)
 
 	/*** The current version ***/
 
-	putshort(VERSION_MAJOR);
-	putshort(VERSION_MINOR);
-	putshort(VERSION_PATCH);
-	putshort(VERSION_EXTRA);
+	putshort(GAME_VERSION[0]-'0');
+	putshort(GAME_VERSION[2]-'0');
+	putshort(GAME_VERSION[4]-'0');
+	putshort(0);
 
 
 	/* Dump */
@@ -2044,10 +2044,10 @@ static void load_prefs(void)
 	old_extra = getshort();
 
 	/* Hack -- Verify or ignore */
-	if ((old_major != VERSION_MAJOR) ||
-	    (old_minor != VERSION_MINOR) ||
-	    (old_patch != VERSION_PATCH) ||
-	    (old_extra != VERSION_EXTRA))
+	if ((old_major != GAME_VERSION[0]-'0') ||
+	    (old_minor != GAME_VERSION[0]-'0') ||
+	    (old_patch != GAME_VERSION[0]-'0') ||
+	    (old_extra != 0))
 	{
 		/* Message */
 		mac_warning("Ignoring old preferences.");

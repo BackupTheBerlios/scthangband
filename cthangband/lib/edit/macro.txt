@@ -68,7 +68,7 @@
 
 # Version stamp (required)
 
-V:1.0.3
+V:_CVS_
 
 # There are several macros which apply to all files used by object_desc().
 # To simplify things, these macros create them with a single line.
