@@ -3173,7 +3173,8 @@ void request_command(bool shopping)
 {
 	int i;
 
-	char cmd;
+	s16b cmd;
+	char cmd_char;
 
 	cptr act;
 
@@ -3182,8 +3183,8 @@ void request_command(bool shopping)
 	/* No command yet */
 	command_cmd = 0;
 
-	/* No "argument" yet */
-	command_arg = 0;
+	/* No "argument" yet (exclude special modes). */
+	if (!(command_new & 0xFF00)) command_arg = 0;
 
 	/* No "direction" yet */
 	command_dir = 0;
@@ -3199,7 +3200,7 @@ void request_command(bool shopping)
 			msg_print(NULL);
 
 			/* Use auto-command */
-			cmd = (byte)command_new;
+			cmd = command_new;
 
 			/* Forget it */
 			command_new = 0;
@@ -3304,7 +3305,9 @@ void request_command(bool shopping)
 			if ((cmd == ' ') || (cmd == '\n') || (cmd == '\r'))
 			{
 				/* Get a real command */
-				if (!get_com("Command: ", &cmd))
+				bool tmp = get_com("Command: ", &cmd_char);
+				cmd = cmd_char;
+				if (!tmp)
 				{
 					/* Clear count */
 					command_arg = 0;
@@ -3320,7 +3323,8 @@ void request_command(bool shopping)
 		if (cmd == '\\')
 		{
 			/* Get a real command */
-			(void)get_com("Command: ", &cmd);
+			(void)get_com("Command: ", &cmd_char);
+			cmd = cmd_char;
 
 			/* Hack -- bypass keymaps */
 			if (!inkey_next) inkey_next = "";
@@ -3331,11 +3335,13 @@ void request_command(bool shopping)
 		if (cmd == '^')
 		{
 			/* Get a new command and controlify it */
-			if (get_com("Control: ", &cmd)) cmd = KTRL(cmd);
+			if (get_com("Control: ", &cmd_char)) cmd = KTRL(cmd_char);
 		}
 
 
-		/* Look up applicable keymap */
+		/* Look up applicable keymap if allowed. */
+		if (!(cmd & 0xFF00))
+		{
 			act = get_keymap((byte)(cmd));
 
 			/* Apply keymap if not inside a keymap already */
@@ -3350,6 +3356,7 @@ void request_command(bool shopping)
 				/* Continue */
 				continue;
 			}
+		}
 
 
 		/* Paranoia */
@@ -3367,7 +3374,7 @@ void request_command(bool shopping)
 	if (always_repeat && (command_arg <= 0))
 	{
 		/* Hack -- auto repeat certain commands */
-		if (strchr("TBDoc+", command_cmd))
+		if (!(command_cmd & 0xFF00) && strchr("TBDoc+", command_cmd))
 		{
 			/* Repeat 99 times */
 			command_arg = 99;

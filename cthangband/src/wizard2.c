@@ -13,8 +13,6 @@
 
 #include "angband.h"
 
-static void do_cmd_wiz_help(void);
-
 /*
  * Hack -- Rerate Hitpoints
  */
@@ -68,10 +66,9 @@ void do_cmd_rerate(void)
   
  /*
   * Create the artifact of the specified number -- DAN
-  *
   */
- static void wiz_create_named_art(int a_idx)
- {
+void wiz_create_named_art(int a_idx)
+{
 
        object_type forge;
        object_type *q_ptr;
@@ -126,7 +123,7 @@ void do_cmd_rerate(void)
 /*
  * Hack -- quick debugging hook
  */
-static void do_cmd_wiz_hack_ben(void)
+void do_cmd_wiz_hack_ben(void)
 {
 	msg_print("No 'Wizard Hack' command coded.");
 }
@@ -135,7 +132,7 @@ static void do_cmd_wiz_hack_ben(void)
 
 #ifdef MONSTER_HORDES
 /* Summon a horde of monsters */
-static void do_cmd_summon_horde(void)
+void do_cmd_summon_horde(void)
 {
             int wy = py, wx = px;
             int attempts = 1000;
@@ -177,7 +174,7 @@ static void prt_binary(u32b flags, int row, int col)
 /*
  * Hack -- Teleport to the target
  */
-static void do_cmd_wiz_bamf(void)
+void do_cmd_wiz_bamf(void)
 {
 	/* Must have a target */
 	if (!target_who) return;
@@ -191,7 +188,7 @@ static void do_cmd_wiz_bamf(void)
 /*
  * Aux function for "do_cmd_wiz_change()".	-RAK-
  */
-static void do_cmd_wiz_change_aux(void)
+void do_cmd_wiz_change_aux(void)
 {
 	int			i;
 
@@ -270,7 +267,7 @@ static void do_cmd_wiz_change_aux(void)
 /*
  * Change various "permanent" player variables.
  */
-static void do_cmd_wiz_change(void)
+void do_cmd_wiz_change(void)
 {
 	/* Interact */
 	do_cmd_wiz_change_aux();
@@ -1125,7 +1122,7 @@ static void wiz_quantity_item(object_type *o_ptr)
  *   - Change properties (via wiz_tweak_item)
  *   - Change the number of items (via wiz_quantity_item)
  */
-static void do_cmd_wiz_play(void)
+void do_cmd_wiz_play(void)
 {
 	int item;
 
@@ -1267,7 +1264,7 @@ static void do_cmd_wiz_play(void)
  * Hack -- this routine always makes a "dungeon object", and applies
  * magic to it, and attempts to decline cursed items.
  */
-static void wiz_create_item(int k_idx)
+void wiz_create_item(int k_idx)
 {
 	object_type	forge;
 	object_type *q_ptr;
@@ -1318,7 +1315,7 @@ static void wiz_create_item(int k_idx)
 /*
  * Cure everything instantly
  */
-static void do_cmd_wiz_cure_all(void)
+void do_cmd_wiz_cure_all(void)
 {
 	/* Remove curses */
 	(void)remove_all_curse();
@@ -1368,7 +1365,7 @@ static void do_cmd_wiz_cure_all(void)
 /*
  * Go to any level
  */
-static void do_cmd_wiz_jump(void)
+void do_cmd_wiz_jump(void)
 {
 	/* Ask for level */
 	if (command_arg <= 0)
@@ -1406,7 +1403,7 @@ static void do_cmd_wiz_jump(void)
 /*
  * Become aware of a lot of objects
  */
-static void do_cmd_wiz_learn(void)
+void do_cmd_wiz_learn(void)
 {
 	int i;
 
@@ -1437,7 +1434,7 @@ static void do_cmd_wiz_learn(void)
 /*
  * Summon some creatures
  */
-static void do_cmd_wiz_summon(int num)
+void do_cmd_wiz_summon(int num)
 {
 	int i;
 
@@ -1453,7 +1450,7 @@ static void do_cmd_wiz_summon(int num)
  *
  * XXX XXX XXX This function is rather dangerous
  */
-static void do_cmd_wiz_named(int r_idx, int slp)
+void do_cmd_wiz_named(int r_idx, int slp)
 {
 	int i, x, y;
 
@@ -1485,7 +1482,7 @@ static void do_cmd_wiz_named(int r_idx, int slp)
  *
  * XXX XXX XXX This function is rather dangerous
  */
-static void do_cmd_wiz_named_friendly(int r_idx, int slp)
+void do_cmd_wiz_named_friendly(int r_idx, int slp)
 {
 	int i, x, y;
 
@@ -1514,7 +1511,7 @@ static void do_cmd_wiz_named_friendly(int r_idx, int slp)
 /*
  * Hack -- Delete all nearby monsters
  */
-static void do_cmd_wiz_zap(void)
+void do_cmd_wiz_zap(void)
 {
 	int        i;
 
@@ -1534,7 +1531,7 @@ static void do_cmd_wiz_zap(void)
 /*
  * Fire a magebolt at a creature that does 'enough' damage
  */
-static void do_cmd_magebolt(void)
+void do_cmd_magebolt(void)
 {
 	int dir;
 	int tx, ty;
@@ -1560,23 +1557,6 @@ static void do_cmd_magebolt(void)
 }
 
 
-#ifdef ALLOW_SPOILERS
-
-/*
- * External function
- */
-extern void do_cmd_spoilers(void);
-
-#endif
-
-
-
-/*
- * Hack -- declare external function
- */
-extern void do_cmd_debug(void);
-
-
 
 /*
  * Ask for and parse a "debug command"
@@ -1586,199 +1566,10 @@ void do_cmd_debug(void)
 {
 	char		cmd;
 
-
 	/* Get a "debug command" */
 	(void)(get_com("Wizard Command: ", &cmd));
 
-	/* Analyze the command */
-	switch (cmd)
-	{
-		/* Nothing */
-		case ESCAPE:
-		case ' ':
-		case '\n':
-		case '\r':
-		break;
-
-
-#ifdef ALLOW_SPOILERS
-
-		/* Hack -- Generate Spoilers */
-		case '"':
-		do_cmd_spoilers();
-		break;
-
-#endif
-
-
-		/* Hack -- Help */
-		case '?':
-		do_cmd_wiz_help();
-		break;
-
-
-		/* Cure all maladies */
-		case 'a':
-		do_cmd_wiz_cure_all();
-		break;
-
-		/* Teleport to target */
-		case 'b':
-		do_cmd_wiz_bamf();
-		break;
-
-		/* Create any object */
-		case 'c':
-		wiz_create_item(command_arg);
-		break;
-
-
-        /* Create a named artifact */
-        case 'C':
-        wiz_create_named_art(command_arg);
-        break;
-
-		/* Detect everything */
-		case 'd':
-		detect_all();
-		break;
-
-		/* Edit character */
-		case 'e':
-		do_cmd_wiz_change();
-		break;
-
-		/* View item info */
-		case 'f':
-		(void)identify_fully();
-		break;
-
-		/* Good Objects */
-		case 'g':
-		if (command_arg <= 0) command_arg = 1;
-		acquirement(py, px, command_arg, FALSE);
-		break;
-
-		/* Hitpoint rerating */
-		case 'h':
-		do_cmd_rerate(); break;
-
-#ifdef MONSTER_HORDES
-        case 'H':
-        do_cmd_summon_horde(); break;
-#endif
-
-		/* Identify */
-		case 'i':
-		identify_pack();
-		break;
-
-		/* Go up or down in the dungeon */
-		case 'j':
-		do_cmd_wiz_jump();
-		break;
-
-		/* Self-Knowledge */
-		case 'k':
-		self_knowledge();
-		break;
-
-		/* Learn about objects */
-		case 'l':
-		do_cmd_wiz_learn();
-		break;
-
-		/* Magic Mapping */
-		case 'm':
-		map_area();
-		break;
-
-        /* Chaos Feature */
-        case 'M':
-        (void) gain_chaos_feature(command_arg);
-        break;
-
-        /* Specific reward */
-        case 'r':
-        (void) gain_level_reward(command_arg);
-        break;
-
-        /* Summon _friendly_ named monster */
-        case 'N':
-        do_cmd_wiz_named_friendly(command_arg, TRUE);
-        break;
-
-		/* Summon Named Monster */
-		case 'n':
-		do_cmd_wiz_named(command_arg, TRUE);
-		break;
-
-
-		/* Object playing routines */
-		case 'o':
-		do_cmd_wiz_play();
-		break;
-
-		/* Phase Door */
-		case 'p':
-		teleport_player(10);
-		break;
-
-		/* Summon Random Monster(s) */
-		case 's':
-		if (command_arg <= 0) command_arg = 1;
-		do_cmd_wiz_summon(command_arg);
-		break;
-
-		/* Teleport */
-		case 't':
-		teleport_player(100);
-		break;
-
-		/* Very Good Objects */
-		case 'v':
-		if (command_arg <= 0) command_arg = 1;
-		acquirement(py, px, command_arg, TRUE);
-		break;
-
-		/* Wizard Light the Level */
-		case 'w':
-		wiz_lite();
-		break;
-
-		/* Increase Skills */
-		case 'x':
-		if (command_arg)
-		{
-			gain_skills(command_arg);
-		}
-		else
-		{
-			gain_skills(100);
-		}
-		break;
-
-		/* Zap Monsters (Genocide) */
-		case 'z':
-		do_cmd_wiz_zap();
-		break;
-
-		case 'Z':
-			{
-				do_cmd_magebolt();
-				break;
-			}
-
-		/* Hack -- whatever I desire */
-		case '_':
-		do_cmd_wiz_hack_ben();
-		break;
-
-		/* Not a Wizard Command */
-		default:
-		msg_print("That is not a valid wizard command.");
-		break;
-	}
+	command_new = CMD_DEBUG + cmd;
 }
 
 
@@ -1790,7 +1581,7 @@ static int i = 0;
 
 #endif
 
-static void do_cmd_wiz_help(void)
+void do_cmd_wiz_help(void)
 {
 	/* Enter "icky" mode */
 	character_icky = TRUE;
