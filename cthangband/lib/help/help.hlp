@@ -8,15 +8,16 @@
     (f) Hedge Magic
     (g) Hermetic Magic
     (h) Shamanism
-    (i) Customising Cthangband
-    (j) Customising Cthangband windows
-    (k) History of Moria, Angband, Zangband & Cthangband
+    (i) The great outdoors
+    (j) Customising Cthangband
+    (k) Customising Cthangband windows
+    (l) History of Moria, Angband, Zangband & Cthangband
 
  (The following files are for people already familiar with Angband)
 
-    (l) Summary of updates
-    (m) The skill system
-    (n) The speed system
+    (m) Summary of updates
+    (n) The skill system
+    (o) The speed system
 ***** [a] hlponhlp.txt
 ***** [b] chargen.txt
 ***** [c] general.txt
@@ -25,10 +26,11 @@
 ***** [f] hedge.txt
 ***** [g] hermetic.txt
 ***** [h] shaman.txt
-***** [i] custom.txt
-***** [j] windowpri.txt
-***** [k] history.txt
-***** [l] update.txt
-***** [m] skills.txt
-***** [n] speed.txt
-***** [o] debug.txt
+***** [i] outdoors.txt
+***** [j] custom.txt
+***** [k] windowpri.txt
+***** [l] history.txt
+***** [m] update.txt
+***** [n] skills.txt
+***** [o] speed.txt
+***** [p] debug.txt
