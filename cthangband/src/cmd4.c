@@ -1789,13 +1789,16 @@ static void dump_normal_options(FILE *fff)
 	fprintf(fff, "\n\n# Automatic option dump\n\n");
 
 	/* Dump each of the normal options in turn. */
-	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++, old_cheat = cheat)
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 	{
 		/* Paranoia - require a real option */
 		if (!op_ptr->o_text) continue;
 
 		/* Treat cheat options in a special way. */
 		cheat = (op_ptr->o_page == OPTS_CHEAT);
+
+		/* Only cheaters need to set cheat options. */
+		if (cheat && !noscore) continue;
 
 		if (cheat && !old_cheat)
 		{
@@ -1805,6 +1808,9 @@ static void dump_normal_options(FILE *fff)
 		{
 			fprintf(fff, "?:1\n\n");
 		}
+
+		/* Remember to reset the cheat flag later. */
+		old_cheat = cheat;
 
 		/* Comment */
 		fprintf(fff, "# Option '%s'\n", op_ptr->o_desc);
