@@ -2164,7 +2164,7 @@ option_type option_info[] =
 	{ &always_repeat,               TRUE, OPTS_UI,      0, 6,
 	"always_repeat",                "Repeat obvious commands" },
 
-	{ &depth_in_feet,               TRUE, OPTS_UI,      0, 7,
+	{ &depth_in_feet,               TRUE, OPTS_DISPLAY,      0, 7,
 	"depth_in_feet",                "Show dungeon level in feet" },
 
 	{ &stack_force_notes,   TRUE, OPTS_OBJ,      0, 8,
@@ -2185,20 +2185,20 @@ option_type option_info[] =
 	{ &inscribe_depth,	TRUE,	OPTS_OBJ,	3,	2,
 	"inscribe_depth",	"Inscribe depth on items at creation" },
 
-	{ &show_choices,                TRUE, OPTS_UI,      0, 12,
+	{ &show_choices,                TRUE, OPTS_DISPLAY,      0, 12,
 	"show_choices",                 "Show choices in certain sub-windows" },
 
-    { &show_details,                TRUE, OPTS_UI,      0, 13,
+    { &show_details,                TRUE, OPTS_DISPLAY,      0, 13,
 	"show_details",                 "Show more detailed monster descriptons" },
 
-	{ &show_choices_main,		TRUE,	OPTS_UI,	2,26,
+	{ &show_choices_main,		TRUE,	OPTS_DISPLAY,	2,26,
 	"show_choices_main",		"Show certain choices in the main window"},
 	
-    { &ring_bell,                   FALSE, OPTS_UI,      0, 14,
+    { &ring_bell,                   FALSE, OPTS_DISPLAY,      0, 14,
 	"ring_bell",                    "Audible bell (on errors, etc)" },
     /* Changed to default to FALSE -- it's so extremely annoying!!! -TY */
 
-	{ &use_color,                   TRUE, OPTS_UI,      0, 15,
+	{ &use_color,                   TRUE, OPTS_DISPLAY,      0, 15,
 	"use_color",                    "Use color if possible (slow)" },
 
 
@@ -2295,7 +2295,7 @@ option_type option_info[] =
 
 
 
-    { &player_symbols,              TRUE, OPTS_UI,      1, 13,
+    { &player_symbols,              TRUE, OPTS_DISPLAY,      1, 13,
       "player_symbols",             "Use special symbols for the player char"},
 
     { &equippy_chars,               TRUE, OPTS_OBJ,      1, 14,
@@ -2356,7 +2356,7 @@ option_type option_info[] =
 	{ &compress_savefile,   FALSE, OPTS_PERF,      1, 29,
 	"compress_savefile",    "Compress messages in savefiles" },
 
-    { &hilite_player,               FALSE, OPTS_UI,      1, 30,
+    { &hilite_player,               FALSE, OPTS_DISPLAY,      1, 30,
 	"hilite_player",                "Hilite the player with the cursor" },
 
 	{ &view_yellow_lite,    TRUE, OPTS_PERF,      1, 31,
@@ -2413,13 +2413,13 @@ option_type option_info[] =
 	{ &testing_carry,               TRUE, OPTS_MON, 2, 15,
     "testing_carry",                "Allow monsters to carry objects" },
 
-	{ &centre_view,               TRUE, OPTS_UI, 2, 16,
+	{ &centre_view,               TRUE, OPTS_DISPLAY, 2, 16,
     "centre_view",                "Centre view around player (v.slow)" },
 
 	{&macro_edit, TRUE, OPTS_UI, 3, 11,
 	"macro_edit", "Use macros as edit keys in prompts" },
 
-	{&scroll_edge, FALSE, OPTS_UI, 3, 13,
+	{&scroll_edge, FALSE, OPTS_DISPLAY, 3, 13,
 	"scroll_edge", "Scroll until detection reaches the edge"},
 
 	{ &no_centre_run,               FALSE, OPTS_PERF, 2, 17,

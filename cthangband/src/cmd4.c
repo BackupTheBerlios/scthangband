@@ -1303,30 +1303,34 @@ struct option_list
 	byte y;
 };
 
+#define LEFT 5
+#define RIGHT 43
+
 static option_list opt_lists[] =
 {
-	{"User Interface Options", NULL, OPTS_UI, '1', 5, 4},
-	{"Disturbance Options", NULL, OPTS_DISTURB, '2', 5, 5},
-	{"Creature Options", NULL, OPTS_MON, '3', 5, 6},
-	{"Object Options", NULL, OPTS_OBJ, '4', 5, 7},
-	{"Performance Options", NULL, OPTS_PERF, '5', 5, 8},
-	{"Miscellaneous Options", NULL, OPTS_MISC, '6', 5, 9},
-	{"Birth Options", NULL, OPTS_BIRTH, 'B', 5, 11},
-	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', 5, 12},
-	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', 5, 13},
-	{"Help", NULL, OPTS_HELP, '?', 5, 15},
-	{"Autosave Options", NULL, OPTS_SAVE, 'A', 5, 16},
-	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', 43, 4},
-	{"Hitpoint Warning", NULL, OPTS_HP, 'H', 43, 5},
-	{"Window Options", NULL, OPTS_WINDOW, 'W', 43, 6},
-	{"Redraw Options", NULL, OPTS_REDRAW, 'R', 43, 7},
-	{"Interact with Macros", NULL, OPTS_MACRO, 'M', 43, 8},
-	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', 43, 9},
-	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', 43, 10},
-	{"Squelch Settings", NULL, OPTS_SQUELCH, 'Q', 43, 11},
-	{"Save options", NULL, OPTS_TO_FILE, 'U', 43, 13},
-	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', 43, 14},
-	{"Load preferences", NULL, OPTS_FROM_FILE, 'O', 43, 15},
+	{"Display Options", NULL, OPTS_DISPLAY, '1', LEFT, 4},
+	{"User Interface Options", NULL, OPTS_UI, '2', LEFT, 5},
+	{"Disturbance Options", NULL, OPTS_DISTURB, '3', LEFT, 6},
+	{"Creature Options", NULL, OPTS_MON, '4', LEFT, 7},
+	{"Object Options", NULL, OPTS_OBJ, '5', LEFT, 8},
+	{"Performance Options", NULL, OPTS_PERF, '6', LEFT, 9},
+	{"Miscellaneous Options", NULL, OPTS_MISC, '7', LEFT, 10},
+	{"Birth Options", NULL, OPTS_BIRTH, 'B', LEFT, 12},
+	{"Spoiler Options", "spoiler.txt", OPTS_SPOIL, 'S', LEFT, 13},
+	{"Cheating Options", "o_cheat.txt", OPTS_CHEAT, 'C', LEFT, 14},
+	{"Help", NULL, OPTS_HELP, '?', LEFT, 16},
+	{"Autosave Options", NULL, OPTS_SAVE, 'A', RIGHT, 4},
+	{"Base Delay Factor", NULL, OPTS_DELAY, 'D', RIGHT, 5},
+	{"Hitpoint Warning", NULL, OPTS_HP, 'H', RIGHT, 6},
+	{"Window Options", NULL, OPTS_WINDOW, 'W', RIGHT, 7},
+	{"Redraw Options", NULL, OPTS_REDRAW, 'R', RIGHT, 8},
+	{"Interact with Macros", NULL, OPTS_MACRO, 'M', RIGHT, 9},
+	{"Interact with Visuals", NULL, OPTS_VISUAL, 'V', RIGHT, 10},
+	{"Interact with Colours", NULL, OPTS_COLOUR, 'K', RIGHT, 11},
+	{"Squelch Settings", NULL, OPTS_SQUELCH, 'Q', RIGHT, 12},
+	{"Save options", NULL, OPTS_TO_FILE, 'U', RIGHT, 14},
+	{"Save all preferences", NULL, OPTS_ALL_TO_FILE, 'P', RIGHT, 15},
+	{"Load preferences", NULL, OPTS_FROM_FILE, 'O', RIGHT, 16},
 };
 
 
