@@ -2568,12 +2568,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		/* Death by Physical attack -- non-living monster */
-		else if ((r_ptr->flags3 & (RF3_DEMON)) ||
-		         (r_ptr->flags3 & (RF3_UNDEAD)) ||
-		         (r_ptr->flags3 & (RF3_CTHULOID)) ||
-		         (r_ptr->flags2 & (RF2_STUPID)) ||
-                 (r_ptr->flags3 & (RF3_NONLIVING)) ||
-		         (strchr("Evg", r_ptr->d_char)))
+		else if (!live_monster_p(r_ptr))
 		{
 			msg_format("You have destroyed %s.", m_name);
 		}
@@ -2927,17 +2922,10 @@ static cptr look_mon_desc(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	bool          living = TRUE;
 	int           perc;
 
-
 	/* Determine if the monster is "living" (vs "undead") */
-	if (r_ptr->flags3 & (RF3_UNDEAD)) living = FALSE;
-	if (r_ptr->flags3 & (RF3_DEMON)) living = FALSE;
-	if (r_ptr->flags3 & (RF3_CTHULOID)) living = FALSE;
-    if (r_ptr->flags3 & (RF3_NONLIVING)) living = FALSE;
-	if (strchr("Egv", r_ptr->d_char)) living = FALSE;
+	bool living = live_monster_p(r_ptr);
 
 
 	/* Healthy monsters */

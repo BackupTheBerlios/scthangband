@@ -1260,9 +1260,7 @@ void py_attack(int y, int x)
        /* Prepare for drain... */
 	   {
         chaos_effect = FALSE;
-        if (!((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING)))
-		drain_life = TRUE;
-
+        if (live_monster_wide_p(r_ptr)) drain_life = TRUE;
 	}
 
     if (f1 & TR1_VORPAL && (randint((o_ptr->name1 == ART_VORPAL_BLADE)?3:6) == 1))
@@ -1277,8 +1275,7 @@ void py_attack(int y, int x)
         if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
         if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
         if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
-        if ((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING))
-            resist_stun += 88;
+        if (!live_monster_wide_p(r_ptr)) resist_stun += 88;
 
         for (times = 0; times < (skill_set[SKILL_MA].value<14?1:skill_set[SKILL_MA].value/14); times++)
         /* Attempt 'times' */

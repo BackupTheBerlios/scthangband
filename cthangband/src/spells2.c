@@ -6454,10 +6454,7 @@ Ego weapons and normal weapons can be blessed automatically. */
        if (!panel_contains(y, x)) continue;
 
        /* Detect evil monsters */
-           if ((r_ptr->flags3 & (RF3_NONLIVING)) ||
-           (r_ptr->flags3 & (RF3_UNDEAD)) ||
-           (r_ptr->flags3 & (RF3_CTHULOID)) ||
-           (r_ptr->flags3 & (RF3_DEMON)))
+           if (!live_monster_p(r_ptr))
        {
            /* Update monster recall window */
            if (monster_race_idx == m_ptr->r_idx)

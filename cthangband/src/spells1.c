@@ -2400,12 +2400,8 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 
 	/* Some monsters get "destroyed" */
-	if ((r_ptr->flags3 & (RF3_DEMON)) ||
-	    (r_ptr->flags3 & (RF3_UNDEAD)) ||
-	    (r_ptr->flags3 & (RF3_CTHULOID)) ||
-	    (r_ptr->flags2 & (RF2_STUPID)) ||
-        (r_ptr->flags3 & (RF3_NONLIVING)) ||
-	    (strchr("Evg", r_ptr->d_char)))
+	if ((!live_monster_p(r_ptr)) ||
+	    (r_ptr->flags2 & (RF2_STUPID)))
 	{
 		/* Special note at death */
 		note_dies = " is destroyed.";
@@ -2453,9 +2449,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
          get_angry = TRUE;
        break;
         case GF_DISP_LIVING:
-       if (!(r_ptr->flags3 & (RF3_UNDEAD)) &&
-           !(r_ptr->flags3 & (RF3_NONLIVING)))
-         get_angry = TRUE;
+       if (live_monster_wide_p(r_ptr)) get_angry = TRUE;
        break;
        case GF_PSI: case GF_PSI_DRAIN:
         if (!(r_ptr->flags2 & (RF2_EMPTY_MIND)))
@@ -3193,10 +3187,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		{
 			if (seen) obvious = TRUE;
 
-			if ((r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->flags3 & (RF3_DEMON)) ||
-                (r_ptr->flags3 & (RF3_NONLIVING)) ||
-			    (strchr("Egv", r_ptr->d_char)))
+			if (!live_monster_p(r_ptr))
 			{
 				if (r_ptr->flags3 & (RF3_UNDEAD))
 				{
@@ -3218,8 +3209,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
         case GF_DEATH_RAY:
 		{
 			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & (RF3_UNDEAD)) ||
-                (r_ptr->flags3 & (RF3_NONLIVING)))
+			if (!live_monster_wide_p(r_ptr))
 			{
 				if (r_ptr->flags3 & (RF3_UNDEAD))
 				{
@@ -3993,7 +3983,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	case GF_DISP_LIVING:
 		{
 	    /* Only affect non-undead */
-        if (!(r_ptr->flags3 & (RF3_UNDEAD)) && !(r_ptr->flags3 & (RF3_NONLIVING)))
+        if (live_monster_wide_p(r_ptr))
 			{
 		/* Obvious */
 				if (seen) obvious = TRUE;

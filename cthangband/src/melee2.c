@@ -274,12 +274,8 @@ static void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
             /* Do nothing */
         }
 		/* Death by Physical attack -- non-living monster */
-		else if ((r_ptr->flags3 & (RF3_DEMON)) ||
-		         (r_ptr->flags3 & (RF3_UNDEAD)) ||
-		         (r_ptr->flags3 & (RF3_CTHULOID)) ||
-		         (r_ptr->flags2 & (RF2_STUPID)) ||
-                 (r_ptr->flags3 & (RF3_NONLIVING)) ||
-		         (strchr("Evg", r_ptr->d_char)))
+		else if (!live_monster_p(r_ptr) ||
+		         (r_ptr->flags2 & (RF2_STUPID)))
 		{
             msg_format("%^s is destroyed.", m_name);
 		}

@@ -1958,6 +1958,30 @@ void update_monsters(bool full)
 
 
 /*
+ * Return TRUE if this is a living monster (used in various places).
+ */
+bool live_monster_p(monster_race *r_ptr)
+{
+	if (r_ptr->flags3 & (RF3_UNDEAD)) return FALSE;
+	if (r_ptr->flags3 & (RF3_DEMON)) return FALSE;
+	if (r_ptr->flags3 & (RF3_CTHULOID)) return FALSE;
+    if (r_ptr->flags3 & (RF3_NONLIVING)) return FALSE;
+	if (strchr("Egv", r_ptr->d_char)) return FALSE;
+
+	return TRUE;
+}
+
+/*
+ * Return TRUE if this is a living monster (less restrictive version).
+ */
+bool live_monster_wide_p(monster_race *r_ptr)
+{
+	if (r_ptr->flags3 & (RF3_UNDEAD)) return FALSE;
+    if (r_ptr->flags3 & (RF3_NONLIVING)) return FALSE;
+	return TRUE;
+}
+
+/*
  * Attempt to place a monster of the given race at the given location.
  *
  * To give the player a sporting chance, any monster that appears in
@@ -2800,8 +2824,7 @@ static bool summon_specific_okay(int r_idx)
         }
 		case UNFLAG(SUMMON_LIVING):
 		{
-			return (!r_ptr->flags3 &
-				(RF3_EVIL | RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING));
+			return live_monster_p(r_ptr);
 		}
 		case 0: /* No restrictions. */
 		{

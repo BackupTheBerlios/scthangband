@@ -1279,6 +1279,9 @@ extern unsigned _ovrbuffer;
 #if (defined(CMD1_C) || defined(MELEE1_C))
 extern int check_hit(int power, int level);
 #endif
+#if (defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(WIZARD1_C))
+extern blow_method_type *get_blow_method(byte idx);
+#endif
 #if (defined(MELEE1_C) || defined(MELEE2_C))
 extern bool make_attack_normal(int m_idx);
 #endif
@@ -2227,6 +2230,9 @@ extern wild_type wild_grid[12][12];
 #if (defined(BIRTH_C) || defined(CMD5_C) || defined(DUNGEON_C) || defined(GENERATE_C) || defined(LOAD_C) || defined(SAVE_C) || defined(STORE_C) || defined(TABLES_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern spirit_type spirits[MAX_SPIRITS];
 #endif
+#if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
+extern blow_method_type blow_methods[NUM_BLOW_METHODS];
+#endif
 
 /* util.c */
 
@@ -2608,9 +2614,6 @@ extern s16b signal_count;
 #if (defined(CMD4_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool inkey_base;
 #endif
-
-
-
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(UTIL_C) || defined(VARIABLE_C) || defined(WIZARD2_C))
 extern bool inkey_scan;
 #endif
@@ -2782,9 +2785,6 @@ extern bool alert_failure;
 #if (defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool last_words;
 #endif
-#if (defined(MELEE2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
-extern bool speak_unique;
-#endif
 #if (defined(FILES_C) || defined(GENERATE_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool small_levels;
 #endif
@@ -2869,6 +2869,12 @@ extern bool ironman_feeling_w;
 #if (defined(CMD4_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool ironman_feeling;
 #endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool speak_unique_w;
+#endif
+#if (defined(MELEE2_C) || defined(STORE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA2_C))
+extern bool speak_unique;
+#endif
 #if (defined(SCORE_QUITTERS)) && (defined(TABLES_C) || defined(VARIABLE_C))
 extern bool score_quitters_w;
 #endif
@@ -2931,6 +2937,9 @@ extern bool avoid_abort;
 #endif
 #if (defined(CAVE_C) || defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool avoid_other;
+#endif
+#if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
+extern bool flush_error;
 #endif
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(SPELLS2_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool flush_failure;
@@ -3316,9 +3325,6 @@ extern feature_type *f_info;
 #if (defined(CMD2_C) || defined(CMD4_C) || defined(INIT2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(XTRA2_C))
 extern cptr f_name;
 #endif
-
-
-
 #if (defined(DEFINES_H) || defined(BIRTH_C) || defined(CAVE_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(VARIABLE_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA1_C))
 extern object_kind *k_info;
 #endif
@@ -3769,7 +3775,7 @@ extern uint func_nothing_f0(char UNUSED *buf, uint UNUSED max, cptr UNUSED fmt, 
 #if (defined(UTIL_C) || defined(Z_FORM_C))
 extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
 #endif
-#if (defined(OBJECT1_C) || defined(UTIL_C) || defined(Z_FORM_C))
+#if (defined(Z_FORM_H) || defined(OBJECT1_C) || defined(UTIL_C) || defined(Z_FORM_C))
 extern char *vformat(cptr fmt, va_list vp);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD1_C) || defined(WIZARD2_C) || defined(XTRA2_C) || defined(Z_FORM_C))
@@ -3992,24 +3998,12 @@ extern cptr string_make(cptr str);
 extern errr string_free(cptr str);
 #endif
 
-/* melee1.c */
+/* monster2.c */
 
-#if (defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(WIZARD1_C))
-extern blow_method_type *get_blow_method(byte idx);
+#if (defined(MELEE2_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
+extern bool live_monster_p(monster_race *r_ptr);
 #endif
-
-/* tables.c */
-
-#if (defined(INIT1_C) || defined(MELEE1_C) || defined(TABLES_C))
-extern blow_method_type blow_methods[NUM_BLOW_METHODS];
-#endif
-
-/* variable.c */
-
-#if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
-extern bool flush_error;
-#endif
-#if (defined(TABLES_C) || defined(VARIABLE_C))
-extern bool speak_unique_w;
+#if (defined(CMD1_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
+extern bool live_monster_wide_p(monster_race *r_ptr);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
