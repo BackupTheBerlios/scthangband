@@ -534,12 +534,6 @@ char *message__buf;
 
 
 /*
- * The array of normal options
- */
-u32b option_flag[8];
-u32b option_mask[8];
-
-/*
  * Global table of color definitions
  */
 byte angband_color_table[256][4] =

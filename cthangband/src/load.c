@@ -804,6 +804,7 @@ static void rd_options(void)
 	u32b flag[8];
 	u32b mask[8];
 	byte flagw[8][32];
+	option_type *op_ptr, *o2_ptr;
 
 
 	/*** Oops ***/
@@ -855,60 +856,31 @@ static void rd_options(void)
 	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
 
 	/* Analyze the options */
-	for (n = 0; n < 8; n++)
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 	{
-		/* Analyze the options */
-		for (i = 0; i < 32; i++)
-		{
-			/* Process valid flags */
-			if (mask[n] & (1L << i))
-			{
-				/* Process valid flags */
-				if (option_mask[n] & (1L << i))
-				{
-					/* Set */
-					if (flag[n] & (1L << i))
-					{
-						/* Set */
-						option_flag[n] |= (1L << i);
-					}
-				
-					/* Clear */
-					else
-					{
-						/* Clear */
-						option_flag[n] &= ~(1L << i);
-					}
-				}
-			}
-		}
+		int bit = op_ptr->o_bit, set = op_ptr->o_set;
+
+		/* Not a known option. */
+		if (!(mask[set] & (1L << bit))) continue;
+
+		/* Copy the saved value to the option. */
+		op_ptr->o_var[0] = (0 != (flag[set] & (1L << bit)));
 	}
-
+		
 	/* Copy across the birth options if they weren't previously known. */
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 	{
-		option_type *op_ptr, *o2_ptr;
+		if (op_ptr->o_page != OPTS_BIRTH) continue;
+		o2_ptr = op_ptr+1;
 
-		for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
-		{
-			if (op_ptr->o_page != OPTS_BIRTH) continue;
-			o2_ptr = op_ptr+1;
+		/* Only some birth options affect the game later on. */
+		if (o2_ptr->o_page != OPTS_BIRTHR) continue;
 
-			/* Only some birth options affect the game later on. */
-			if (o2_ptr->o_page != OPTS_BIRTHR) continue;
+		/* Only set previously undefined options. */
+		if (~mask[o2_ptr->o_set] & (1L << o2_ptr->o_bit)) continue;
 
-			/* Only set previously undefined options. */
-			if (option_mask[o2_ptr->o_set] & 1L << (o2_ptr->o_bit)) continue;
-
-			/* Copy the BIRTH option to the BIRTHR equivalent. */
-			if (option_flag[op_ptr->o_set] & 1L << (op_ptr->o_bit))
-			{
-				option_flag[o2_ptr->o_set] |= 1L << (o2_ptr->o_bit);
-			}
-			else
-			{
-				option_flag[o2_ptr->o_set] &= ~(1L << (o2_ptr->o_bit));
-			}
-		}
+		/* Copy the BIRTH option to the BIRTHR equivalent. */
+		o2_ptr->o_var[0] = op_ptr->o_var[0];
 	}
 
 	/*** Window Options ***/
@@ -916,16 +888,16 @@ static void rd_options(void)
 	/* Read the window flags */
 	if (has_flag(SF_3D_WINPRI))
 	{
-	for (n = 0; n < 8; n++)
-	{
-		for (i = 0; i < 32; i++)
+		for (n = 0; n < 8; n++)
 		{
+			for (i = 0; i < 32; i++)
+			{
 				rd_byte(&flagw[n][i]);
 			}
 		}
-					}
-					else
-					{
+	}
+	else
+	{
 		for (n = 0; n < 8; n++)
 		{
 			u32b temp;
@@ -940,9 +912,9 @@ static void rd_options(void)
 				{
 					flagw[n][i] = 0x00;
 				}
-					}
-					}
-				}                           
+			}
+		}
+	}
 
 
 	/* Read the window masks */

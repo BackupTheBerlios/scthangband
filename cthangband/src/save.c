@@ -376,6 +376,8 @@ static void wr_options(void)
 
 	u16b c;
 	byte tmp8u;
+	option_type *op_ptr;
+	u32b flag[8], mask[8];
 
 
 	/*** Oops ***/
@@ -417,39 +419,33 @@ static void wr_options(void)
 
 	/*** Extract options ***/
 
-	/* Analyze the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
+	/* Assume nothing is set by default. */
+	WIPE(flag, flag);
+	WIPE(mask, mask);
 
-		/* Process real entries */
-		if (option_info[i].o_var)
-		{
-			/* Set */
-			if (*option_info[i].o_var)
-			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-			}
-			
-			/* Clear */
-			else
-			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-			}
-		}
+	/* Analyze the options */
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+	{
+		int set = op_ptr->o_set, bit = op_ptr->o_bit;
+
+		/* Ignore non-existant options. (?) */
+		if (!op_ptr->o_var) continue;
+
+		/* Known. */
+		mask[set] |= (1L << bit);
+
+		/* Set */
+		if (*op_ptr->o_var) flag[set] |= (1L << bit);
 	}
 
 
 	/*** Normal options ***/
 
 	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(option_flag[i]);
+	for (i = 0; i < 8; i++) wr_u32b(flag[i]);
 
 	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(option_mask[i]);
+	for (i = 0; i < 8; i++) wr_u32b(mask[i]);
 
 
 	/*** Window options ***/

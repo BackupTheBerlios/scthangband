@@ -2192,7 +2192,7 @@ extern cptr stat_names[6];
 #if (defined(FILES_C) || defined(TABLES_C) || defined(XTRA1_C))
 extern cptr stat_names_reduced[6];
 #endif
-#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C))
 extern option_type option_info[];
 #endif
 #if (defined(CMD4_C) || defined(TABLES_C))
@@ -3263,12 +3263,12 @@ extern u16b *message__ptr;
 #if (defined(INIT2_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern char *message__buf;
 #endif
-#if (defined(DUNGEON_C) || defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern u32b option_flag[8];
-#endif
-#if (defined(INIT2_C) || defined(LOAD_C) || defined(SAVE_C) || defined(VARIABLE_C))
-extern u32b option_mask[8];
-#endif
+
+
+
+
+
+
 #if (defined(CMD4_C) || defined(FILES_C) || defined(MAIN_AMI_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_VCS_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(VARIABLE_C))
 extern byte angband_color_table[256][4];
 #endif

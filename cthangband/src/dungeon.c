@@ -4308,31 +4308,6 @@ void play_game(bool new_game)
 		Rand_state_init(seed);
 	}
 
-	/* Extract the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Set the "default" options */
-		if (option_info[i].o_var)
-		{
-			/* Set */
-			if (option_flag[os] & (1L << ob))
-			{
-				/* Set */
-				(*option_info[i].o_var) = TRUE;
-			}
-			
-			/* Clear */
-			else
-			{
-				/* Clear */
-				(*option_info[i].o_var) = FALSE;
-			}
-		}
-	}
-
 #ifdef USE_MAIN_C
 	/* Display news.txt again, as in init_angband(). This
 	 * is done because news.txt was removed when the save game

@@ -1309,6 +1309,7 @@ s16b store_table[MAX_STORE_TYPES][STORE_CHOICES] =
 static errr init_other(void)
 {
 	int i, j, n;
+	option_type *op_ptr;
 
 	/*** Prepare the "dungeon" information ***/
 
@@ -1383,31 +1384,10 @@ static errr init_other(void)
 	/*** Prepare the options ***/
 
 	/* Scan the options */
-	for (i = 0; option_info[i].o_desc; i++)
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
 	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Set the "default" options */
-		if (option_info[i].o_var)
-		{
-			/* Accept */
-			option_mask[os] |= (1L << ob);
-			
-			/* Set */
-			if (option_info[i].o_norm)
-			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-			}
-			
-			/* Clear */
-			else
-			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-			}
-		}
+		/* Set the variable to its default value. */
+		op_ptr->o_var[0] = op_ptr->o_norm;
 	}
 
 	/* Analyze the windows */
