@@ -5,6 +5,9 @@ Based on Cthangband 4.1.0b and Zangband 2.1.0e
 Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
+sCthangband _CVS_
+* Add a special help file for new users.
+
 sCthangband 1.0.11
 * Regain SP and CHI, and become hungry, while resting in a house or inn.
 * Always benefit from stealth when attacking a sleeping monster.
