@@ -5907,7 +5907,7 @@ static void get_details(high_score *the_score)
 }
 
 /*
- * Dump a record file for a dead character into lib/apex/record.txt or similar.
+ * Dump a record file for a dead character into lib/apex/logfile.txt or similar.
  *
  * Format:
  * V:version UI:uid Ti:date Sc:score Tu:turns Ki:killed by
@@ -5921,7 +5921,7 @@ static void make_record(high_score *score)
 	cptr dun_str;
 	int dun;
 
-	path_build(str, 1024, ANGBAND_DIR_APEX, "record.txt");
+	path_build(str, 1024, ANGBAND_DIR_APEX, "logfile.txt");
 
 	fp = my_fopen(str, "a");
 
@@ -5956,10 +5956,13 @@ static void make_record(high_score *score)
 #define TRIM(X) (X+strspn(X, " "))
 
 	fprintf(fp, "V:%s ", TRIM(score->what));
+#ifdef SET_UID
 	fprintf(fp, "UI:%s ", TRIM(score->uid));
+#endif /* SET_UID */
 	fprintf(fp, "Ti:%s ", str);
 	fprintf(fp, "Sc:%s ", TRIM(score->pts));
 	fprintf(fp, "Tu:%s ", TRIM(score->turns));
+	fprintf(fp, "HP:%d ", p_ptr->mhp);
 	fprintf(fp, "Ki:%s ", TRIM(score->how));
 	fprintf(fp, "Dp:%s ", TRIM(score->cur_dun));
 	fprintf(fp, "Du:%s ", dun_str);
