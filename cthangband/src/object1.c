@@ -4528,6 +4528,9 @@ object_type *get_item(errr *err, cptr pmt, bool equip, bool inven, bool floor)
 						/* Acquire object */
 						o_ptr = &o_list[this_o_idx];
 
+						/* Display description if needed. */
+						object_track(o_ptr);
+
 						/* Acquire next object */
 						next_o_idx = o_ptr->next_o_idx;
 
