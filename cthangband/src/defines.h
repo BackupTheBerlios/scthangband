@@ -1561,7 +1561,7 @@ logaux(x, 1) logaux(x, 0) 255)
 #define TV_NECROMANCY_BOOK  93
 #define TV_CHARM	94
 #define TV_GOLD         100     /* Gold can only be picked up by players */
-#define TV_UNKNOWN	255
+#define TV_UNKNOWN	255 /* Needed for o_base_type.tval. */
 
 /* Various k_idx codes (see k_info.txt) */
 #define OBJ_NOTHING 0
@@ -3605,6 +3605,7 @@ extern int PlayerUID;
 /* Default values for various unknown things. */
 #define UNKNOWN_OBJECT_NUMBER	255	/* object_type.number */
 #define UNKNOWN_MONSTER_NUMBER	-1	/* monster_type.number */
+#define UNKNOWN_U_IDX (z_info->u_max-1) /* object_kind.u_idx */
 
 /*
  * The key sent by resize_inkey. This is an arbitary control key to ensure that

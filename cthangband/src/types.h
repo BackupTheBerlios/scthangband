@@ -1368,17 +1368,6 @@ struct tval_ammo_type {
 
 
 
-/* Hack - provide a structure for things about an object which may be unknown,
- * but are needed by various functions. */
-typedef struct object_extra object_extra;
-struct object_extra
-{
-	s16b k_idx;
-	s16b tval;
-	s16b u_idx;
-	byte p_id;
-};
-
 /*
  * Semi-Portable High Score List Entry (128 bytes) -- BEN
  *

@@ -477,36 +477,37 @@ void object_flags(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	}
 }
 
-
+/* A custom type to tell the player what he knows about an object. */
+typedef struct obj_know_type obj_know_type;
+struct obj_know_type
+{
+	object_type obj[1]; /* The fields of an object_type are known. */
+	bool u_idx; /* The unidentified representation is known. */
+	bool p_id; /* The unidentified description category is known. */
+};
 
 /*
- * Create an object containing the known information about an object.
+ * This uses the obj_know_type structure to indicate the knowledge the player
+ * has of o_ptr.
  *
- * o_ptr points to the original object.
- * j_ptr points to the object to be created.
- * x_ptr either points to an extra array in which is placed various information
- * not known to the player which is needed to define the object, or is NULL.
- * Ideally it should not be necessary.
+ * know_ptr will not contain a real object, but marks each value according to
+ * the knowledge the player has about it.
+ *
+ * If a value is set to 1, the player knows that it has its current state.
+ * If a value is set to 0, the player knows nothing about it.
+ *
+ * The flags[n] fields are described on a bit-by-bit basis, and refer to the
+ * information derived from object_flags() rather than merely those stored in
+ * o_ptr.
  */
-void object_info_known(object_type *j_ptr, object_ctype *o_ptr, object_extra *x_ptr)
+static void object_knowledge(obj_know_type *ok_ptr, object_ctype *o_ptr)
 {
-	bool cheat = cheat_item;
 	int i;
-
-	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-	unident_type *u_ptr = &u_info[k_ptr->u_idx];
-	o_base_type *ob_ptr = &o_base[u_ptr->p_id];
-
-	object_wipe(j_ptr);
-
-	/* If needed, place the k_idx in x_ptr. */
-	if (x_ptr)
-	{
-		x_ptr->tval = o_ptr->tval;
-		x_ptr->k_idx = k_ptr-k_info;
-		x_ptr->u_idx = u_ptr-u_info;
-		x_ptr->p_id = ob_ptr-o_base;
-	}
+	bool cheat = cheat_item;
+	bool full = (o_ptr->ident & IDENT_MENTAL);
+	bool known = object_known_p(o_ptr);
+	bool aware = object_aware_p(o_ptr);
+	object_type *j_ptr = ok_ptr->obj;
 
 	/* Restrict cheating with a couple of compile-time options. */
 #ifndef SPOIL_ARTIFACTS
@@ -515,246 +516,273 @@ void object_info_known(object_type *j_ptr, object_ctype *o_ptr, object_extra *x_
 #ifndef SPOIL_EGO_ITEMS
 	if (ego_item_p(o_ptr)) cheat = FALSE;
 #endif
-	
-	if (cheat)
+
+	/* Cheaters know everything. */
+	if (cheat) full = TRUE;
+
+	/* Fully known objects are always known. */
+	if (full) known = TRUE;
+
+	/* The player is always aware of known items. */
+	if (known) aware = TRUE;
+
+	/* Assume complete ignorance by default. */
+	WIPE(ok_ptr, obj_know_type);
+
+	ok_ptr->p_id = 1;
+
+	ok_ptr->u_idx = aware || !(o_ptr->ident & IDENT_STORE);
+
+	j_ptr->k_idx = aware || (o_ptr->ident & IDENT_STORE);
+
+	j_ptr->k_idx = aware;
+	j_ptr->iy = 1;
+	j_ptr->ix = 1;
+
+	j_ptr->tval = (aware ||
+		o_base[u_info[o_ptr->k_idx].p_id].tval == o_ptr->tval);
+
+	j_ptr->discount = 1;
+	j_ptr->number = 1;
+	j_ptr->marked = 1;
+
+	j_ptr->name1 = known;
+	j_ptr->name2 = known;
+
+	j_ptr->to_h = known;
+	j_ptr->to_d = known;
+
+	j_ptr->to_a = known;
+
+	j_ptr->ac = aware;
+
+	j_ptr->dd = j_ptr->ds = aware;
+
+	j_ptr->pval = known;
+
+	/* Hack - this should distinguish between knowing timeout and knowing
+	 * whether timeout is 0. Only the latter actually happens, so I've kept
+	 * it simple. */
+	j_ptr->timeout = 1;
+
+	j_ptr->weight = 1;
+
+	j_ptr->ident = 1;
+	j_ptr->note = 1;
+
+	j_ptr->art_name = known;
+
+	j_ptr->next_o_idx = 1;
+	j_ptr->held_m_idx = 1;
+
+	if (full)
 	{
-		/* Given full knowledge, everything is easy. */
-		object_copy(j_ptr, o_ptr);
-		object_flags(o_ptr, &j_ptr->flags1, &j_ptr->flags2, &j_ptr->flags3);
-	}
+		/* The player knows everything except that the object has extra random
+		 * (and now known) flags. */
+		j_ptr->flags1 = ~(0L);
+		j_ptr->flags2 = ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
+		j_ptr->flags3 = ~(0L);
 
-	/* Some flags are always assumed to be known. */
-	j_ptr->discount = o_ptr->discount;
-	j_ptr->number = o_ptr->number;
-	j_ptr->weight = o_ptr->weight;
-	j_ptr->ident = o_ptr->ident;
-	j_ptr->note = o_ptr->note;
-	
-	/* The player always knows if something is recharging, but never how long
-	 * it will take. */
-	j_ptr->timeout = !!(o_ptr->timeout);
-
-	/* Similarly for unidentified rods. */
-	if (o_ptr->tval == TV_ROD) j_ptr->pval = o_ptr->pval;
-
-	/* Hack - set k_idx correctly now so that macros for it work. It will
-	 * be unset later if appropriate. */
-	j_ptr->k_idx = o_ptr->k_idx;
-
-	/* Some flags are known for aware objects. */
-	if (cheat || object_aware_p(o_ptr))
-	{
-		j_ptr->tval = o_ptr->tval;
+		j_ptr->activation = j_ptr->pval = 1;
 	}
 	else
 	{
-		j_ptr->tval = o_base[u_info[k_ptr->u_idx].p_id].tval;
-	}
+		u32b f1, f2, f3;
 
-	/* Some flags are known for identified objects. */
-	if (cheat || object_known_p(j_ptr))
-	{
-		j_ptr->name1 = o_ptr->name1;
-		j_ptr->name2 = o_ptr->name2;
-		j_ptr->art_name = o_ptr->art_name;
-		j_ptr->to_h = o_ptr->to_h;
-		j_ptr->to_d = o_ptr->to_d;
-		j_ptr->to_a = o_ptr->to_a;
-		j_ptr->pval = o_ptr->pval;
-	}
+		/* Obtain the full flags for o_ptr first. */
+		object_flags(o_ptr, &f1, &f2, &f3);
 
-	/* Some flags are only used internally */
-	/* j_ptr->next_o_idx = o_ptr->next_o_idx; */
-	/* j_ptr->held_m_idx = o_ptr->held_m_idx; */
+		/* Start from no knowledge. */
+		j_ptr->flags1 = 0;
+		j_ptr->flags2 = 0;
+		j_ptr->flags3 = 0;
 
-	/* Hack - as the inventory list is only differentiated by location,
-	 * and this cannot be transferred to j_ptr, use a null iy and non-null ix
-	 * to indicate the slot used.
-	 */
-	if (o_ptr >= inventory && o_ptr < inventory+INVEN_TOTAL)
-	{
-		j_ptr->iy = 0;
-		j_ptr->ix = o_ptr-inventory+1;
-	}
-	else
-	{
-		j_ptr->iy = o_ptr->iy;
-		j_ptr->ix = o_ptr->ix;
-	}
-
-	/* Assume that the player has noticed certain things when using an
-	 * unidentified item. The IDENT_TRIED flag is currently only set when
-	 * an item is worn, which works as none of the flags below have an
-	 * effect otherwise, and the flag is only checked here.
-	 */
-	if (spoil_flag && j_ptr->ident & IDENT_TRIED)
-	{
-		/* Get all flags */
-		object_flags(o_ptr, &(j_ptr->flags1), &(j_ptr->flags2), &(j_ptr->flags3));
-		
-		/* Clear non-obvious flags */
-	 	j_ptr->flags1 &= (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR | TR1_INFRA | TR1_SPEED | TR1_BLOWS);
-
-		/* *Hack* - notice if the modifier is cancelled out by other modifiers */
-		for (i = 0; i < 6; i++)
+		/* There are some flags unaware items can be known to have. */
+		if (spoil_base && !aware)
 		{
-			if (p_ptr->stat_top[i] == 3 && (j_ptr->flags1 & TR1_STR << i) && equip_mod(i) >= 0)
-			{
-				j_ptr->flags1 &= ~(TR1_STR << i);
-			}
+			o_base_type *ptr = o_base+u_info[k_info[o_ptr->k_idx].u_idx].p_id;
+			j_ptr->flags1 |= ptr->flags1;
+			j_ptr->flags2 |= ptr->flags2;
+			j_ptr->flags3 |= ptr->flags3;
 		}
-		/* This should just check the effect of the weapon, but it's easier this way. */
-		if (p_ptr->num_blow == 1) j_ptr->flags1 &= ~(TR1_BLOWS);
-				
-		j_ptr->flags2 = 0L;
-		j_ptr->flags3 &= (TR3_LITE | TR3_XTRA_MIGHT | TR3_XTRA_SHOTS);
-		/* Don't assume that the multiplier is always known. */
-		if (!spoil_base) j_ptr->flags3 &= ~(TR3_XTRA_MIGHT);
-
-		/* Hack - Set flags known through cumber_*(). Luckily, a mysterious
-		 * failure to encumber the player can only mean one thing. */
-		switch (wield_slot(j_ptr))
+		/* Flags known from the base object. */
+		if (spoil_base && aware)
 		{
-			case INVEN_HANDS:
+			object_kind *ptr = k_info+o_ptr->k_idx;
+			j_ptr->flags1 |= ptr->flags1;
+			j_ptr->flags2 |= ptr->flags2;
+			j_ptr->flags3 |= ptr->flags3;
+		}
+		/* Flags known from the ego type. */
+		if (spoil_ego && known)
+		{
+			ego_item_type *ptr = e_info+o_ptr->name2;
+			j_ptr->flags1 |= ptr->flags1;
+			j_ptr->flags2 |= ptr->flags2;
+			j_ptr->flags3 |= ptr->flags3;
+		}
+		/* Flags known from the artefact type. */
+		if (spoil_art && known)
+		{
+			artifact_type *ptr = a_info+o_ptr->name1;
+			j_ptr->flags1 |= ptr->flags1;
+			j_ptr->flags2 |= ptr->flags2;
+			j_ptr->flags3 |= ptr->flags3;
+		}
+		/* Hack - flags known for random artefacts. */
+		if (o_ptr->art_name && spoil_art)
+		{
+			/* All that is known about randarts is that they ignore elements. */
+			j_ptr->flags3 |= TR3_IGNORE_ALL;
+		}
+
+		/* Hack - this is all a poor attempt to determine if it changed anything
+		 * when the player tried it. It should track this sort of thing... */
+		if (spoil_flag && o_ptr->ident & IDENT_TRIED)
+		{
+			/* Obvious stat effects. */
+			for (i = 0; i < A_MAX; i++)
 			{
-				if (cumber_glove(j_ptr) && !cumber_glove(o_ptr))
+				if (p_ptr->stat_top[i] != 3 || equip_mod(i) < 0)
+				{
+					j_ptr->flags1 |= TR1_STR << i;
+				}
+			}
+
+			/* Obvious extra blows. */
+			if ((o_ptr->pval < 0 && p_ptr->num_blow != 600) ||
+				(o_ptr->pval > 0 && p_ptr->num_blow != 60))
+			{
+				j_ptr->flags1 |= TR1_BLOWS;
+			}
+
+			/* Hack - assume that some other flags are always obvious. */
+			j_ptr->flags3 |= TR3_LITE | TR3_XTRA_SHOTS | TR3_TELEPATHY;
+
+			/* Don't assume the normal multiplier is always known, though. */
+			if (spoil_base) j_ptr->flags3 |= TR3_XTRA_MIGHT;
+
+			/* Hack - Set flags known through cumber_*(). Luckily, a mysterious
+			 * failure to encumber the player can only mean one thing. */
+			if (wield_slot(o_ptr) == INVEN_HANDS)
+			{
+				/* See cumber_glove(). The object is known not to boost dex. */
+				if ((j_ptr->flags1 & ~f1 & TR1_DEX) ||
+					(j_ptr->pval && o_ptr->pval <= 0))
 					j_ptr->flags2 |= TR2_FREE_ACT;
-				break;
 			}
-			case INVEN_HEAD:
+			else if (i == INVEN_HEAD)
 			{
-				/* Telepathy is fairly obvious, but this makes it clear. */
-				if (cumber_helm(j_ptr) && !cumber_helm(o_ptr))
-					j_ptr->flags3 |= TR3_TELEPATHY;
-				break;
+				/* See cumber_helm(). The object is known not to boost wis. */
+				if ((j_ptr->flags1 & ~f1 & TR1_WIS) ||
+					(j_ptr->pval && o_ptr->pval <= 0))
+				j_ptr->flags3 |= TR3_TELEPATHY;
 			}
 		}
-			
-			
 
-		/* If a pval-based flag is known from experience, set the pval. */
-		if (cheat || (j_ptr->flags1 & TR1_PVAL_MASK))
+		/* Cursing uses a separate ident flag. */
+		if (j_ptr->ident & IDENT_SENSE_CURSED)
 		{
-			j_ptr->pval = o_ptr->pval;
+			j_ptr->flags3 |= TR3_CURSED;
+
+			/* Uncursed items are uncursed all the way. */
+			if (!cursed_p(o_ptr))
+			{
+				j_ptr->flags3 |= TR3_HEAVY_CURSE | TR3_PERMA_CURSE;
+			}
 		}
-	}
 
-	/* Find the flags the player can know about unaware items.
-	 * Hack - ignore other things the player is certain to know, as the
-	 * player wants clear potions and the like.
-	 */
-	if (spoil_base && !object_aware_p(j_ptr))
-	{
-		o_base_type *ob_ptr = o_base+u_info[k_ptr->u_idx].p_id;
+		/* If a pval flag is known to be set, the pval itself is known. */
+		if (f1 & TR1_PVAL_MASK & j_ptr->flags1) j_ptr->pval = 1;
 
-		j_ptr->flags1 |= ob_ptr->flags1;
-		j_ptr->flags2 |= ob_ptr->flags2;
-		j_ptr->flags3 |= ob_ptr->flags3;
-	}
-		
+		/* If an activation is known to exist, magically know what it is. */
+		j_ptr->activation = !!(f3 & TR3_ACTIVATE);
 
-	/* Check for cursing even if unidentified */
-	if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
-		j_ptr->flags3 |= TR3_CURSED;
+		/* Special "always show these" flags. */
+		if (f3 & TR3_SHOW_ARMOUR) j_ptr->ac = 1;
+		if (f3 & TR3_SHOW_MODS) j_ptr->dd = j_ptr->ds = 1;
 
-	/* Base objects */
-	if ((spoil_base || j_ptr->ident & IDENT_MENTAL) &&
-	(object_known_p(j_ptr) || object_aware_p(j_ptr)))
-	{
-		j_ptr->flags1 |= k_ptr->flags1;
-		j_ptr->flags2 |= k_ptr->flags2;
-		j_ptr->flags3 |= k_ptr->flags3;
-	}
-
-    /* Ego-item (known basic flags) */
-	if (j_ptr->name2 && (spoil_ego || j_ptr->ident & IDENT_MENTAL))
-	{
-		ego_item_type *e_ptr = &e_info[j_ptr->name2];
-
-		j_ptr->flags1 |= e_ptr->flags1;
-		j_ptr->flags2 |= e_ptr->flags2;
-		j_ptr->flags3 |= e_ptr->flags3;
-	}
-
-	/* Pre-defined artifacts (known basic flags) */
-	if (j_ptr->name1 && (spoil_art || j_ptr->ident & IDENT_MENTAL))
-	{
-		artifact_type *a_ptr = &a_info[j_ptr->name1];
-
-		j_ptr->flags1 |= a_ptr->flags1;
-		j_ptr->flags2 |= a_ptr->flags2;
-		j_ptr->flags3 |= a_ptr->flags3;
-	}
-
-	/* Check for both types of cursing */
-	if ((j_ptr->ident & IDENT_CURSED) && (j_ptr->ident & IDENT_SENSE_CURSED))
-		j_ptr->flags3 |= TR3_CURSED;
-	else if (j_ptr->ident & IDENT_SENSE_CURSED)
-		j_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
-
-    /* Random artifact ! */
-	if (j_ptr->ident & IDENT_MENTAL)
-    {
-		j_ptr->flags1 |= o_ptr->flags1;
-		j_ptr->flags2 |= o_ptr->flags2;
-		j_ptr->flags3 |= o_ptr->flags3;
-
-		/* Hack - the random powers of *IDENTIFIED* items are known. */
-		j_ptr->flags2 &= ~(TR2_RAND_RESIST | TR2_RAND_POWER | TR2_RAND_EXTRA);
-    }
-	/* *Hack* - randarts are always immune to the elements. */
-	else if (j_ptr->art_name && spoil_art)
-	{
-		j_ptr->flags3 |= TR3_IGNORE_ALL & o_ptr->flags3;
-	}
-
-	if (cheat)
-	{
-		object_flags(o_ptr, &j_ptr->flags1, &j_ptr->flags2, &j_ptr->flags3);
-	}
-
-	/* Copy the activation if it's known to have one. */
-	if (j_ptr->flags3 & TR3_ACTIVATE)
-	{
-		j_ptr->activation = o_ptr->activation;
-	}
-
-
-	/*
-	 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC,
-	 * as does awareness.
-	 */
-	if (object_aware_p(j_ptr) || (j_ptr->flags3 & TR3_SHOW_MODS))
-	{
-		j_ptr->dd = o_ptr->dd;
-		j_ptr->ds = o_ptr->ds;
-	}
-	if (object_aware_p(j_ptr) || j_ptr->flags3 & TR3_SHOW_ARMOUR)
-	{
-		j_ptr->ac = o_ptr->ac;
-	}
-
-	/* Hack - resist_chaos by any means gives resist_conf. */
-	if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
-
-	if (object_aware_p(o_ptr) || cheat) ;
-
-	/* The flavour of a shop item may not be known. */
-	else if (o_ptr->ident & IDENT_STORE)
-	{
-		/* This index is known to have a flavour name of "". */
-		if (x_ptr) x_ptr->u_idx = z_info->u_max-1;
-	}
-
-	/* Hack - unset j_ptr->k_idx if it isn't known (the k_idx of items in
-	 * shops is always known). */
-	else
-	{
-		j_ptr->k_idx = OBJ_UNKNOWN;
+		/* Hack - resist_chaos by any means gives resist_conf. */
+		if (j_ptr->flags2 & TR2_RES_CHAOS) j_ptr->flags2 |= TR2_RES_CONF;
 	}
 }
 
+/* 
+ * A macro used below to clear a j_ptr field if the corresponding q_ptr field
+ * is set to 0.
+ */
+#define OIK_MASK(FLAG) \
+	if (!ok_ptr->obj->FLAG) j_ptr->FLAG = 0;
 
+/* As above, but using a special "unknown" value. */
+#define OIK_MASK_SPECIAL(FLAG, VALUE) \
+	if (!ok_ptr->obj->FLAG) j_ptr->FLAG = (VALUE);
+
+/*
+ * Create an object containing the known information about an object based
+ * on the contents of ok_ptr and the object itself, called o_ptr.
+ *
+ * This is intended to produce objects which can be used in the same way as
+ * the original object, except that "does this object do this?" is replaced by
+ * "does the player expect this object to do this?".
+ *
+ * As far as is practical, the functions which inspect objects should work with
+ * objects created by this function in a reasonable way.
+ */
+static void set_known_fields(object_type *j_ptr, object_ctype *o_ptr,
+	const obj_know_type *ok_ptr)
+{
+	/* Start with everything known. */
+	object_copy(j_ptr, o_ptr);
+
+	/* Acquire the composite flags. */
+	object_flags(o_ptr, &j_ptr->flags1, &j_ptr->flags2, &j_ptr->flags3);
+
+	/* Mask things the object is not known to possess. */
+	j_ptr->flags1 &= ok_ptr->obj->flags1;
+	j_ptr->flags2 &= ok_ptr->obj->flags2;
+	j_ptr->flags3 &= ok_ptr->obj->flags3;
+
+	/* Clear parameters which are not treated as bit fields as required.
+	 * As some of these are bit fields, they should be changed if the
+	 * behaviour of object_knowledge() becomes more complex.
+	 */
+	OIK_MASK_SPECIAL(k_idx, OBJ_UNKNOWN)
+	OIK_MASK(iy)
+	OIK_MASK(ix)
+	OIK_MASK_SPECIAL(tval, TV_UNKNOWN)
+	OIK_MASK(discount)
+	OIK_MASK_SPECIAL(number, UNKNOWN_OBJECT_NUMBER)
+	OIK_MASK(marked)
+	OIK_MASK(name1)
+	OIK_MASK(name2)
+	OIK_MASK(activation)
+	OIK_MASK(to_h)
+	OIK_MASK(to_d)
+	OIK_MASK(to_a)
+	OIK_MASK(ac)
+	OIK_MASK(pval)
+	OIK_MASK(timeout)
+	OIK_MASK(weight)
+	OIK_MASK(dd)
+	OIK_MASK(ds)
+	OIK_MASK(ident)
+	OIK_MASK(note)
+	OIK_MASK(art_name)
+	OIK_MASK(next_o_idx)
+	OIK_MASK(held_m_idx)
+}
+
+/*
+ * Copy o_ptr to j_ptr, setting the fields which are unknown to special values
+ * (usually 0).
+ */
+void object_info_known(object_type *j_ptr, object_ctype *o_ptr)
+{
+	obj_know_type ok_ptr[1];
+	object_knowledge(ok_ptr, o_ptr);
+	set_known_fields(j_ptr, o_ptr, ok_ptr);
+}
 
 
 /*
@@ -763,7 +791,7 @@ void object_info_known(object_type *j_ptr, object_ctype *o_ptr, object_extra *x_
 void object_flags_known(object_ctype *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 {
 	object_type j;
-	object_info_known(&j, o_ptr, 0);
+	object_info_known(&j, o_ptr);
 	(*f1) = j.flags1;
 	(*f2) = j.flags2;
 	(*f3) = j.flags3;
@@ -878,30 +906,11 @@ static char *object_desc_str(char *t, cptr s)
  * or not the "number" of items should be described, and how much detail
  * should be used when describing the item.
  *
- * The given "buf" must be 80 chars long to hold the longest possible
+ * The given "buf" must be ONAME_MAX chars long to hold the longest possible
  * description, which can get pretty long, including incriptions, such as:
  * "no more Maces of Disruption (Defender) (+10,+10) [+5] (+3 to stealth)".
  * Note that the inscription will be clipped to keep the total description
- * under 79 chars (plus a terminator).
- *
- * Note that all ego-items (when known) append an "Ego-Item Name", unless
- * the item is also an artifact, which should NEVER happen.
- *
- * Note that all artifacts (when known) append an "Artifact Name", so we
- * have special processing for "Specials" (artifact Lites, Rings, Amulets).
- * The "Specials" never use "modifiers" if they are "known", since they
- * have special "descriptions", such as "The Necklace of the Dwarves".
- *
- * Special Lite's use the "k_info" base-name (Phial, Star, or Arkenstone),
- * plus the artifact name, just like any other artifact, if known.
- *
- * Special Ring's and Amulet's, if not "aware", use the same code as normal
- * rings and amulets, and if "aware", use the "k_info" base-name (Ring or
- * Amulet or Necklace).  They will NEVER "append" the "k_info" name.  But,
- * they will append the artifact name, just like any artifact, if known.
- *
- * None of the Special Rings/Amulets are "EASY_KNOW", though they could be,
- * at least, those which have no "pluses", such as the three artifact lites.
+ * under ONAME_MAX-1 chars (plus a terminator).
  *
  * If "pref" then a "numeric" prefix will be pre-pended.
  *
@@ -915,7 +924,6 @@ static char *object_desc_str(char *t, cptr s)
 /* The number of strings which can be in the process of being printed at once. */
 #define MAX_NAME_LEVEL	8
 
-/* Julian Lighton's improved code */
 static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	int mode)
 {
@@ -946,10 +954,6 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 
 	int                     power,i;
 
-	bool	known;
-
-	bool	show_weapon = FALSE, show_armour = FALSE;
-
 	cptr	r[MAX_NAME_LEVEL];
 	char            *t;
 
@@ -958,62 +962,55 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	C_TNEW(tmp_val_base, len+80, char);
 	char		*tmp_val = tmp_val_base;
 
-	object_kind	*k_ptr;
-	unident_type *u_ptr;
-	o_base_type *ob_ptr;
-	object_type o_ptr[1];
-	object_extra x_ptr[1];
+	object_kind	*k1_ptr;
+	unident_type *u1_ptr;
+	o_base_type *ob1_ptr;
+	obj_know_type know_ptr[1];
+	object_type o_ptr[1], *ok_ptr = know_ptr->obj;
 
 	/* Hack - place the in_shop flag inside o_ptr. */
-	if (in_shop && ~o1_ptr->ident & IDENT_STORE)
+	if (in_shop)
 	{
-		/* Make a similar object with an IDENT_STORE_FLAG. */
-		object_type q_ptr[1];
-		object_copy(q_ptr, o1_ptr);
-		q_ptr->ident |= IDENT_STORE;
-		
+		/* Give the object the IDENT_STORE flag for a moment. */
+		object_copy(o_ptr, o1_ptr);
+		o_ptr->ident |= IDENT_STORE;
+
 		/* Extract the known information. */
-		object_info_known(o_ptr, q_ptr, x_ptr);
+		object_knowledge(know_ptr, o_ptr);
 	}
 	else
 	{
 		/* Simply extract the known information. */
-		object_info_known(o_ptr, o1_ptr, x_ptr);
+		object_knowledge(know_ptr, o1_ptr);
 	}
-	
 
-	k_ptr = &k_info[o_ptr->k_idx];
+	/* Set o_ptr according to the known information. */
+	set_known_fields(o_ptr, o1_ptr, know_ptr);
 
-	/* If k_ptr is nonsensical, use k_info[0] instead. */
-	/* if (!k_ptr->name) k_ptr = k_info; */
-
-	u_ptr = u_info+x_ptr->u_idx;
-	ob_ptr = o_base+x_ptr->p_id;
-
-	known = (object_known_p(o_ptr) ? TRUE : FALSE);
+	k1_ptr = &k_info[o1_ptr->k_idx];
+	u1_ptr = &u_info[k1_ptr->u_idx];
+	ob1_ptr = &o_base[u1_ptr->p_id];
 
 	reject = current = 0;
 
-	strings[CI_BASE] = ob_name+ob_ptr->name;
-	strings[CI_FLAVOUR] = u_name+u_ptr->name;
-	strings[CI_K_IDX] = k_name+k_ptr->name;
-	strings[CI_EGO] = e_name+e_info[o_ptr->name2].name;
-	if (o_ptr->art_name)
-		strings[CI_ARTEFACT] = quark_str(o_ptr->art_name);
-	else
-		strings[CI_ARTEFACT] = a_name+a_info[o_ptr->name1].name;
+	/* Acquire the names if known. */
+	strings[CI_K_IDX] = (ok_ptr->k_idx) ? k_name+k1_ptr->name : "";
+	strings[CI_FLAVOUR] = (know_ptr->u_idx) ? u_name+u1_ptr->name : "";
+	strings[CI_BASE] = (know_ptr->p_id) ? ob_name+ob1_ptr->name : "";
+	strings[CI_EGO] = (ok_ptr->name2) ? e_name+e_info[o_ptr->name2].name : "";
+ 	strings[CI_ARTEFACT] = (o_ptr->name1) ? a_name+a_info[o_ptr->name1].name :
+ 		(o_ptr->art_name) ? quark_str(o_ptr->art_name) : "";
 
-	/* If any of the above have been set to an empty string, they shall be
-	 * ignored. */
+	/* If any of the above remain unset, they shall be ignored. */
 	for (i = 0; i < 8; i++)
 	{
-		if (strings[i] && !strings[i][0]) reject |= 1 <<i;
+		if (strings[i] && !*strings[i]) reject |= 1 <<i;
 	}
 
 	/* Identified artefacts, and all identified objects if
 	 * show_flavors is unset, do not include a FLAVOUR string. */
-	if ((~reject & CI_K_IDX) && (artifact_p(o_ptr) || plain_descriptions ||
-		in_shop || (o_ptr->ident & IDENT_STOREB)))
+	if ((~reject & CI_K_IDX) && (plain_descriptions || in_shop ||
+		(o_ptr->ident & IDENT_STOREB)))
 		reject |= 1 << CI_FLAVOUR;
 
 	/* Singular objects take no plural. */
@@ -1049,6 +1046,9 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 			break;
 		}
 	}
+
+	/* Paranoia - no known starting string. */
+	if (!r[this_level]) r[this_level] = "Mystery";
 
 	/*
 	 * Add an article if required. This is only possible at the start
@@ -1183,16 +1183,16 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	if (o_ptr->tval == TV_CHEST)
 	{
 		/* Not searched yet */
-		if (!known)
+		if (!ok_ptr->pval)
 		{
 			/* Nothing */
 		}
 
-			/* May be "empty" */
+		/* May be "empty" */
 		else if (!o_ptr->pval)
-			{
-				t = object_desc_str(t, " (empty)");
-			}
+		{
+			t = object_desc_str(t, " (empty)");
+		}
 
 		/* May be "disarmed" */
 		else if (o_ptr->pval < 0)
@@ -1219,20 +1219,12 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 					break;
 				}
 				case CHEST_LOSE_STR:
-				{
-					t = object_desc_str(t, " (Poison Needle)");
-					break;
-				}
 				case CHEST_LOSE_CON:
 				{
 					t = object_desc_str(t, " (Poison Needle)");
 					break;
 				}
 				case CHEST_POISON:
-				{
-					t = object_desc_str(t, " (Gas Trap)");
-					break;
-				}
 				case CHEST_PARALYZE:
 				{
 					t = object_desc_str(t, " (Gas Trap)");
@@ -1257,15 +1249,6 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 		}
 	}
 
-
-	/* Display the item like a weapon */
-	if (o_ptr->flags3 & (TR3_SHOW_MODS)) show_weapon = TRUE;
-	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
-
-	/* Display the item like armour */
-	if (o_ptr->flags3 & TR3_SHOW_ARMOUR) show_armour = TRUE;
-	if (o_ptr->ac) show_armour = TRUE;
-
 	/* Bows are displayed as (e.g.) (x2) */
 	if ((power = get_bow_mult(o_ptr)))
 	{
@@ -1284,10 +1267,10 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	}
 
 	/* Add the weapon bonuses */
-	if (known)
+	if (ok_ptr->to_h || ok_ptr->to_d)
 	{
 		/* Show the tohit/todam on request */
-		if (show_weapon)
+		if ((o_ptr->flags3 & TR3_SHOW_MODS) || (o_ptr->to_h && o_ptr->to_d))
 		{
 			t += sprintf(t, " (%+d,%+d)", o_ptr->to_h, o_ptr->to_d);
 		}
@@ -1306,35 +1289,31 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	}
 
 
-	/* Add the armor bonuses */
-	if (known)
+	/* Show the armor class info */
+	if (o_ptr->flags3 & TR3_SHOW_ARMOUR || o_ptr->ac)
 	{
-		/* Show the armor class info */
-		if (show_armour)
+		/* Add the armor bonuses */
+		if (ok_ptr->to_a)
 		{
 			t += sprintf(t, " [%d,%+d]", o_ptr->ac, o_ptr->to_a);
 		}
-
-		/* No base armor, but does increase armor */
-		else if (o_ptr->to_a)
+		else
 		{
-			t += sprintf(t, " [%+d]", o_ptr->to_a);
+			t += sprintf(t, " [%d]", o_ptr->ac);
 		}
 	}
-
-	/* Hack -- always show base armor */
-	else if (show_armour)
+	/* No base armor, but does increase armor */
+	else if (o_ptr->to_a)
 	{
-		t += sprintf(t, " [%d]", o_ptr->ac);
+		t += sprintf(t, " [%+d]", o_ptr->to_a);
 	}
-
 
 	/* No more details wanted */
 	if (mode < 2) goto copyback;
 
 
 	/* Hack -- Wands and Staffs have charges */
-	if (known &&
+	if (ok_ptr->pval &&
 	    ((o_ptr->tval == TV_STAFF) ||
 	     (o_ptr->tval == TV_WAND)))
 	{
@@ -1344,7 +1323,7 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && o_ptr->pval && (!allart_p(o_ptr)))
+	else if ((o_ptr->tval == TV_LITE) && ok_ptr->pval && (!allart_p(o_ptr)))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t += sprintf(t, " (with %d turns of light)", o_ptr->pval);
@@ -1357,8 +1336,8 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 		/* Dump the pval. */
 		t += sprintf(t, " (%+d", o_ptr->pval);
 
-		/* Differentiate known pvals from deduced ones. */
-		if (!known) t = object_desc_chr(t, '?');
+		/* Hack - Differentiate known pvals from deduced ones. */
+		if (!object_known_p(o_ptr)) t = object_desc_chr(t, '?');
 
 		/* Do not display the "pval" flags */
 		if (o_ptr->flags3 & (TR3_HIDE_TYPE))
@@ -1436,8 +1415,8 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 			}
 
 			/* Hack - object_value() needs a real k_idx and tval. */
-			j_ptr->k_idx = x_ptr->k_idx;
-			j_ptr->tval = x_ptr->tval;
+			j_ptr->k_idx = o1_ptr->k_idx;
+			j_ptr->tval = o1_ptr->tval;
 
 			value = object_value(j_ptr);
 			worthless = !value;
@@ -2253,7 +2232,7 @@ bool PURE is_worn_p(object_ctype *o_ptr)
 /*
  * Find out what, if any, stat changes the given item causes.
  */
-static void res_stat_details(object_type *o_ptr, object_extra *x_ptr, int *i, ifa_type *info)
+static void res_stat_details(object_type *o_ptr, int real_k_idx, int *i, ifa_type *info)
 {
 	byte stat, act;
 	s16b pval;
@@ -2320,7 +2299,7 @@ static void res_stat_details(object_type *o_ptr, object_extra *x_ptr, int *i, if
 		if (slot == -1)
 		{
 			object_type tmp;
-			object_prep(&tmp, x_ptr->k_idx);
+			object_prep(&tmp, real_k_idx);
 			slot = wield_slot(&tmp);
 
 			/* Paranoia - not a wearable item? */
@@ -2624,13 +2603,12 @@ static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 	cptr board[16];
 
 	object_type o_ptr[1];
-	object_extra x_ptr[1];
 
 	/* Paranoia - no object. */
 	if (!o1_ptr || !o1_ptr->k_idx) return;
 
 	/* Extract the known info */
-	object_info_known(o_ptr, o1_ptr, x_ptr);
+	object_info_known(o_ptr, o1_ptr);
 
 	/* Mega-Hack -- describe activation */
 	if (o_ptr->flags3 & (TR3_ACTIVATE))
@@ -2654,10 +2632,6 @@ static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 			cptr s = describe_object_power(o_ptr);
 			if (s && *s) alloc_ifa(info+i++, "When used: %s", s);
 		}
-	}
-
-	else if (spoil_base && !brief)
-	{
 	}
 
 	j = get_device_chance_dec(o_ptr);
@@ -2702,7 +2676,7 @@ static void identify_fully_get(object_ctype *o1_ptr, ifa_type *info, bool brief)
 	/* Recognise items which affect stats (detailed) */
 	if (!brief && spoil_stat)
 	{
-		res_stat_details(o_ptr, x_ptr, &i, info);
+		res_stat_details(o_ptr, o1_ptr->k_idx, &i, info);
 	}
 	/* If brevity is required or spoilers are not, put stats with the other
 	 * pval effects. */

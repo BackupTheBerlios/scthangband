@@ -1818,7 +1818,7 @@ static void display_player_sides(bool missile)
 
 	object_type j_ptr[1], *o_ptr = &inventory[(missile) ? INVEN_BOW : INVEN_WIELD];
 
-	object_info_known(j_ptr, o_ptr, 0);
+	object_info_known(j_ptr, o_ptr);
 
 	weapon_stats(j_ptr, 1, &show_tohit, &show_todam, &weap_blow, &mut_blow, &damage);
 
@@ -3112,7 +3112,7 @@ static void player_flags_known(u32b *f1, u32b *f2, u32b *f3)
 		object_type j_ptr[1];
 
 		/* Known object things. */
-		object_info_known(j_ptr, o_ptr, 0);
+		object_info_known(j_ptr, o_ptr);
 
 		/* Add the flags. */
 		(*f1) |= j_ptr->flags1;

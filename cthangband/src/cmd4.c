@@ -3923,7 +3923,7 @@ static void do_cmd_knowledge_player_save(FILE *fff)
 		for (skill_sav = INVEN_WIELD; skill_sav <= INVEN_FEET; skill_sav++)
 		{
 			object_type o_ptr[1];
-			object_info_known(o_ptr, inventory+skill_sav, 0);
+			object_info_known(o_ptr, inventory+skill_sav);
 			if (o_ptr->flags3 & TR3_NO_MAGIC) break;
 		}
 

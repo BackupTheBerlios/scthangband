@@ -824,7 +824,7 @@ void object_tried(object_type *o_ptr)
  * Return the "value" of an "unknown" item
  * Make a guess at the value of non-aware items
  */
-static s32b object_value_base(object_type *o_ptr)
+static s32b PURE object_value_base(object_ctype *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -3041,7 +3041,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 /*
  * Hack -- determine if a template is "good"
  */
-static bool kind_is_good(int k_idx)
+static bool PURE kind_is_good(int k_idx)
 {
 	return ((k_info[k_idx].flags3 & TR3_GOOD) != 0);
 }

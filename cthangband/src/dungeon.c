@@ -60,8 +60,8 @@ static bool PURE is_powerful(object_ctype *o_ptr)
 	/* Set t_ptr and u_ptr as the tried and untried versions of this object. */
 	object_copy(u_ptr, o_ptr);
 	u_ptr->ident &= ~IDENT_TRIED;
-	object_info_known(t_ptr, u_ptr, 0);
-	object_info_known(u_ptr, o_ptr, 0);
+	object_info_known(t_ptr, u_ptr);
+	object_info_known(u_ptr, o_ptr);
 
 	/* Only extra knowledge should create a difference. */
 	return DIFF(t_ptr, u_ptr, object_type);

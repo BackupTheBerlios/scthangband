@@ -2005,7 +2005,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Extract the known information */
-		object_info_known(j_ptr, o_ptr, 0);
+		object_info_known(j_ptr, o_ptr);
 
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3);

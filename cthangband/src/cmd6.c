@@ -96,7 +96,7 @@ static bool use_object(object_type *o_ptr, int dir)
 	 * that effect, so check this.
 	 */
 	object_type j_ptr[1];
-	object_info_known(j_ptr, o_ptr, 0);
+	object_info_known(j_ptr, o_ptr);
 	ident = (power == get_power(j_ptr));
 
 	if (!use_object_power(power, dir, &ident, &use) &&

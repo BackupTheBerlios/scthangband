@@ -6433,7 +6433,7 @@ static void process_monster(int m_idx, bool is_friend)
 							if (m_ptr->ml && player_has_los_bold(ny, nx))
 							{
 								/* Should we expect this to happen? */
-								object_info_known(j_ptr, o_ptr, 0);
+								object_info_known(j_ptr, o_ptr);
 
 								/* Dump a message */
 								msg_format("%^v tries to pick up %v, but fails.",
