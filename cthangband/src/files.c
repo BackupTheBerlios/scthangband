@@ -4583,6 +4583,7 @@ static char show_file_aux(cptr name, cptr what, int line)
 				break;
 			}
 		}
+		if (line < 0) line = 0;
 	}
 
 	/* Close the file */
