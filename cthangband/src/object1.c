@@ -1742,69 +1742,52 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		if (g1 & (TR1_PVAL_MASK))
-	{
-		/* Start the display */
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, p1);
+		{
+			/* Start the display */
+			t = object_desc_chr(t, ' ');
+			t = object_desc_chr(t, p1);
 
-		/* Dump the "pval" itself */
-		t = object_desc_int(t, o_ptr->pval);
+			/* Dump the "pval" itself */
+			t = object_desc_int(t, o_ptr->pval);
 
 			/* Differentiate known pvals from deduced ones. */
 			if (!known) t = object_desc_chr(t, '?');
 
-		/* Do not display the "pval" flags */
-		if (f3 & (TR3_HIDE_TYPE))
-		{
-			/* Nothing */
-		}
+			/* Do not display the "pval" flags */
+			if (f3 & (TR3_HIDE_TYPE))
+			{
+				/* Nothing */
+			}
+			else
+			{
 
-		/* Speed */
-		else if (f1 & (TR1_SPEED))
-		{
-			/* Dump " to speed" */
-			t = object_desc_str(t, " to movement speed");
-		}
+/* What actually needs to be done with the strings below. */
+#define ADD_PV(X) \
+	t = object_desc_str(t, " to "); \
+	t = object_desc_str(t, (X))
 
-		/* Attack speed */
-		else if (f1 & (TR1_BLOWS))
-		{
-			/* Dump " to speed" */
-			t = object_desc_str(t, " to attack speed");
-		}
+				/* Give details about a single bonus. */
+				switch (g1 & TR1_PVAL_MASK)
+				{
+					case TR1_STR: ADD_PV("strength"); break;
+					case TR1_INT: ADD_PV("intelligence"); break;
+					case TR1_WIS: ADD_PV("wisdom"); break;
+					case TR1_DEX: ADD_PV("dexterity"); break;
+					case TR1_CON: ADD_PV("constitution"); break;
+					case TR1_CHR: ADD_PV("charisma"); break;
+					case TR1_STEALTH: ADD_PV("stealth"); break;
+					case TR1_SEARCH: ADD_PV("searching"); break;
+					case TR1_INFRA: ADD_PV("infravision"); break;
+					case TR1_TUNNEL: ADD_PV("tunneling"); break;
+					case TR1_SPEED: ADD_PV("movement speed"); break;
+					case TR1_BLOWS: ADD_PV("attack speed"); break;
+				}
+			}
 
-		/* Stealth */
-		else if (f1 & (TR1_STEALTH))
-		{
-			/* Dump " to stealth" */
-			t = object_desc_str(t, " to stealth");
-		}
-
-		/* Search */
-		else if (f1 & (TR1_SEARCH))
-		{
-			/* Dump " to searching" */
-			t = object_desc_str(t, " to searching");
-		}
-
-		/* Infravision */
-		else if (f1 & (TR1_INFRA))
-		{
-			/* Dump " to infravision" */
-			t = object_desc_str(t, " to infravision");
-		}
-
-		/* Tunneling */
-		else if (f1 & (TR1_TUNNEL))
-		{
-			/* Nothing */
-		}
-
-		/* Finish the display */
-		t = object_desc_chr(t, p2);
+			/* Finish the display */
+			t = object_desc_chr(t, p2);
 		}
 	}
-
 
 	/* Indicate "charging" artifacts XXX XXX XXX */
 	if (known && o_ptr->timeout)
