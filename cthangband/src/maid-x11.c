@@ -40,56 +40,6 @@ static int gamma_val = 0;
 
 
 /*
- * Hack -- Convert an RGB value to an X11 Pixel, or die.
- */
-u32b create_pixel(Display *dpy, byte red, byte green, byte blue)
-{
-	Colormap cmap = DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy));
-
-	XColor xcolour;
-
-#ifdef SUPPORT_GAMMA
-
-	if (!gamma_table_ready)
-	{
-		cptr str = getenv("ANGBAND_X11_GAMMA");
-		if (str != NULL) gamma_val = atoi(str);
-
-		gamma_table_ready = TRUE;
-
-		/* Only need to build the table if gamma exists */
-		if (gamma_val) build_gamma_table(gamma_val);
-	}
-
-	/* Hack -- Gamma Correction */
-	if (gamma_val > 0)
-	{
-		red = gamma_table[red];
-		green = gamma_table[green];
-		blue = gamma_table[blue];
-	}
-
-#endif /* SUPPORT_GAMMA */
-
-	/* Build the color */
-
-	xcolour.red = red * 255;
-	xcolour.green = green * 255;
-	xcolour.blue = blue * 255;
-	xcolour.flags = DoRed | DoGreen | DoBlue;
-
-	/* Attempt to Allocate the Parsed color */
-	if (!(XAllocColor(dpy, cmap, &xcolour)))
-	{
-		quit_fmt("Couldn't allocate bitmap color #%04x%04x%04x\n",
-		         xcolour.red, xcolour.green, xcolour.blue);
-	}
-
-	return (xcolour.pixel);
-}
-
-
-/*
  * Get the name of the default font to use for the term.
  */
 cptr get_default_font(int term_num)
@@ -161,6 +111,60 @@ cptr get_default_font(int term_num)
 
 	return (font);
 }
+
+#endif /* USE_X11 || USE_XAW || USE_XPJ || USE_GTK */
+
+#if defined(USE_X11) || defined(USE_XAW) || defined(USE_XPJ)
+
+/*
+ * Hack -- Convert an RGB value to an X11 Pixel, or die.
+ */
+u32b create_pixel(Display *dpy, byte red, byte green, byte blue)
+{
+	Colormap cmap = DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy));
+
+	XColor xcolour;
+
+#ifdef SUPPORT_GAMMA
+
+	if (!gamma_table_ready)
+	{
+		cptr str = getenv("ANGBAND_X11_GAMMA");
+		if (str != NULL) gamma_val = atoi(str);
+
+		gamma_table_ready = TRUE;
+
+		/* Only need to build the table if gamma exists */
+		if (gamma_val) build_gamma_table(gamma_val);
+	}
+
+	/* Hack -- Gamma Correction */
+	if (gamma_val > 0)
+	{
+		red = gamma_table[red];
+		green = gamma_table[green];
+		blue = gamma_table[blue];
+	}
+
+#endif /* SUPPORT_GAMMA */
+
+	/* Build the color */
+
+	xcolour.red = red * 255;
+	xcolour.green = green * 255;
+	xcolour.blue = blue * 255;
+	xcolour.flags = DoRed | DoGreen | DoBlue;
+
+	/* Attempt to Allocate the Parsed color */
+	if (!(XAllocColor(dpy, cmap, &xcolour)))
+	{
+		quit_fmt("Couldn't allocate bitmap color #%04x%04x%04x\n",
+		         xcolour.red, xcolour.green, xcolour.blue);
+	}
+
+	return (xcolour.pixel);
+}
+
 
 
 #ifdef USE_GRAPHICS
@@ -923,5 +927,5 @@ XImage *ResizeImage(Display *dpy, XImage *Im,
 
 #endif /* USE_GRAPHICS */
 
-#endif /* USE_X11 || USE_XAW || USE_XPJ || USE_GTK */
+#endif /* USE_X11 || USE_XAW || USE_XPJ */
 
