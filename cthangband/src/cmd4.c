@@ -676,7 +676,7 @@ void do_cmd_options_aux(int page, cptr info, cptr file)
 			else
 				a = TERM_WHITE;
 
-			if (page != OPTS_BIRTH)
+			if (page != OPTS_BIRTH || !character_generated)
 				effective = "";
 			else if (option_info[opt[i]+1].o_page != OPTS_BIRTHR)
 				effective = ".... ";
