@@ -54,13 +54,13 @@
  *  contain characters that are valid as part of a RISC OS path variable.
  *  [eg. "Yin-Yangband" is not okay, "EyAngband" is.]
  */
-#define RISCOS_VARIANT	"Angband"
+#define RISCOS_VARIANT	GAME_NAME
 
 /*
  * AUTHORS
  *  For the info box. [eg. "Ben Harrison"]
  */
-#define AUTHORS		"Robert Ruehlmann"
+#define AUTHORS		MAINT_NAME
 
 /*
  * PORTERS

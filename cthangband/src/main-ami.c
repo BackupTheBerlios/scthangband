@@ -19,10 +19,12 @@
 	WWW			: http://www.angband.pwp.blueyonder.co.uk
 */
 
+#include "angband.h"
+
 #ifdef USE_AMI
 
-/* Variant name and version (incorrect, can this be grabbed from defines.h?) */
-#define VARIANT "Angband 3.0.1"
+/* Variant name and version */
+#define VARIANT GAME_NAME " " GAME_VERSION
 
 /* Main 'assign' needed. Kick2.0+ systems usually don't need it anyway */
 #define VERPATH "Angband:"
@@ -30,7 +32,6 @@
 #define CGXSUPPORT		/* Define for RTG support. Leave on */
 
 #ifndef __CEXTRACT__
-#include "angband.h"
 
 #include "vers.h"
 

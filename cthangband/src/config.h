@@ -420,6 +420,7 @@
 /*
  * OPTION: Person to bother if something goes wrong.
  */
+#define MAINT_NAME "Kieron Dunbar"
 #define MAINTAINER	"kieron@dimetrodon.demon.co.uk"
 
 

@@ -16,6 +16,8 @@
 /* Current maintainer: silasd@psyber.com (Silas Dunsmore) */
 /* Unless somebody else wants it.... */
 
+#include "angband.h"
+
 #ifdef USE_EMX
 
 /*
@@ -113,8 +115,6 @@
 #define INCL_WINSWITCHLIST
 #include <os2.h>
 #include <sys/video.h>
-
-#include "angband.h"
 
 
 /*
