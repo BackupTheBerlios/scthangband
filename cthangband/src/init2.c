@@ -1651,6 +1651,72 @@ static void check_screen_coords(void)
 }
 
 /*
+ * Check that option_info[] avoids putting too many options into a category,
+ * or use the same bit in the save file to denote two options.
+ */
+static void check_options(void)
+{
+	bool flag_error = FALSE, error = FALSE;
+	const option_type *op_ptr;
+	int n[OPTS_MAX];
+	u32b flag[8];
+
+	WIPE(n, n);
+	WIPE(flag, flag);
+
+	for (op_ptr = option_info; op_ptr->o_desc; op_ptr++)
+	{
+		/* Negative categories are special. */
+		if (op_ptr->o_page >= 0 && n[op_ptr->o_page]++ >= MAX_OPTS_PER_PAGE)
+		{
+			plog_fmt("The %s option overflows its category.", op_ptr->o_text);
+			error = TRUE;
+		}
+		if (flag[op_ptr->o_set] & (1L << op_ptr->o_bit))
+		{
+			plog_fmt(
+				"The %s option shares a set and a bit with another option.",
+				op_ptr->o_text);
+			flag_error = error = TRUE;
+		}
+		flag[op_ptr->o_set] |= (1L << op_ptr->o_bit);
+	}
+	if (flag_error)
+	{
+		/* Draw a "helpful" table. */
+		int i,j;
+		char buf[40], *s;
+
+		/* Introduction. */
+		plog("The following table shows the unused bits as dots.");
+
+		/* Draw the table. */
+		for (i = 0; i < 8; i++)
+		{
+			for (j = 0, s = buf; j < 32; j++)
+			{
+				if (flag[i] & (1L << j))
+				{
+					*s++ = '*';
+				}
+				else
+				{
+					*s++ = '.';
+				}
+				if ((j % 4) == 3) *s++ = ' ';
+			}
+			*s++ = '\0';
+			plog(buf);
+		}
+	}
+	if (error)
+	{
+		/* Exit. */
+		quit("Failed to parse option_info.");
+	}	
+}
+
+/*
  * Check that the members of various arrays are in the correct order,
  * by calling functions which quit if this is not the case.
  * This should be called when any of the arrays listed below may have changed
@@ -1661,6 +1727,7 @@ static void check_arrays(void)
 	check_bonus_table();
 	check_screen_coords();
 	check_temp_effects();
+	check_options();
 }
 #endif /* CHECK_ARRAYS */
 

@@ -2384,10 +2384,13 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Available Options (full to 3,22), 7 reserved for cheat options
+ * Available Options (full to 3,22 except for 0,25 and 2,24).
+ * In addition, 7,2 7,8-11 and 7,13-15 are used for cheat options, and the
+ * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.
  *
- * Note that birth options should always be followed by BIRTHR ones which
- * store the value used in the game.
+ * Note that options which are only set at character creation but are active
+ * throughout the game should always be followed by a BIRTHR option which 
+ * should contain a pointer to the variable actually read in the game.
  *
  * Note also that these BIRTHR options have no text name. This, and the lack
  * of a BIRTHR option screen, prevents them from being set.
@@ -2690,7 +2693,7 @@ option_type option_info[] =
 	"auto_more",                    "Automatically clear '-more-' prompts" },
 
 #ifdef SCORE_QUITTERS
-	{ &score_quitters_w,		FALSE, OPTS_BIRTH, 2, 29,
+	{ &score_quitters_w,		FALSE, OPTS_BIRTH, 0, 26,
 	"score_quitter",			"Remember scores of those who quit the game" },
 
 	{ &score_quitters, 0, OPTS_BIRTHR, 3, 14, 0, ""},
