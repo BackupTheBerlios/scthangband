@@ -1744,8 +1744,8 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			int ac, hd1, hd2, th, td, ta;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
-			                &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
+			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+			                &hd1, &hd2, &th, &td, &ac, &ta)) return (1);
 
 			k_ptr->ac = ac;
 			k_ptr->dd = hd1;
@@ -2192,8 +2192,8 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 			int ac, hd1, hd2, th, td, ta;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
-			                &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
+			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+			                &hd1, &hd2, &th, &td, &ac, &ta)) return (1);
 
 			a_ptr->ac = ac;
 			a_ptr->dd = hd1;

@@ -898,12 +898,55 @@ X: STEEL
 Y:3
 F:k_info:I:4
 
+
+# Make the P line in a_info.txt and k_info.txt a bit prettier.
+
+X:::
+Y::
+F:a_info:P
+F:k_info:P
+
+X: 
+Y:
+F:a_info:P
+F:k_info:P
+
+X:(
+Y::
+F:a_info:P
+F:k_info:P
+
+X:[
+Y::
+F:a_info:P
+F:k_info:P
+
+X:,
+Y::
+F:a_info:P
+F:k_info:P
+
+X:d
+Y::
+F:a_info:P
+F:k_info:P
+
+X:)
+Y:
+F:a_info:P
+F:k_info:P
+
+X:]
+Y:
+F:a_info:P
+F:k_info:P
+
 # Bows
 
 X:x
 Y:0d
-F:k_info:P:3
-F:a_info:P:3
+F:k_info:P
+F:a_info:P
 
 # init1.c interprets negative numbers as belonging to the user area, but
 # expects them to be in decreasing order. As this is unusual, changing it to
