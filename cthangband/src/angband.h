@@ -44,7 +44,6 @@
  */
 #include "defines.h"
 #include "types.h"
-#include "variable.h"
 #include "externs.h"
 
 

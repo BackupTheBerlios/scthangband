@@ -358,11 +358,16 @@ int full_grid;	/* Monsters can't be created outside a circle of radius full_grid
  * Dungeon size info
  */
 
-s16b max_panel_rows, max_panel_cols;
-s16b panel_row, panel_col;
-s16b panel_row_min, panel_row_max;
-s16b panel_col_min, panel_col_max;
-s16b panel_col_prt, panel_row_prt;
+s16b max_panel_rows;
+s16b max_panel_cols;
+s16b panel_row;
+s16b panel_col;
+s16b panel_row_min;
+s16b panel_row_max;
+s16b panel_col_min;
+s16b panel_col_max;
+s16b panel_col_prt;
+s16b panel_row_prt;
 
 /*
  * Player location in dungeon
