@@ -456,19 +456,19 @@ static void pattern_teleport(void)
 		if (!get_string(ppp, tmp_val, 10)) return;
 
 		/* Extract request */
-		command_arg = atoi(tmp_val);
+		i = atoi(tmp_val);
 
 		/* Paranoia */
-		if (command_arg < 1) command_arg = 1;
+		if (i < 1) i = 1;
 
 		/* Paranoia */
-	    if (command_arg > highestquest) command_arg = highestquest;
+	    if (i > highestquest) i = highestquest;
 
 		/* Accept request */
-	    msg_format("You teleport to dungeon level %d.", command_arg);
+	    msg_format("You teleport to dungeon level %d.", i);
 
 		/* Change level */
-		change_level(command_arg, START_RANDOM);
+		change_level(i, START_RANDOM);
 	}
     else if (get_check("Normal teleport? "))
     {
