@@ -86,7 +86,7 @@ s16b cur_hgt;			/* Current dungeon height */
 s16b cur_wid;			/* Current dungeon width */
 s16b dun_level;			/* Current dungeon level */
 s16b dun_offset;       /* Monster/Object offset for current dungeon */
-s16b dun_bias;			/* Summon flag used to give the dungeon a bias */
+u16b dun_bias;			/* Summon flag used to give the dungeon a bias */
 byte cur_town;          /* Current Town */
 byte cur_dungeon;    /* Current Dungeon */
 byte recall_dungeon; /* Last dungeon recalled from */
@@ -613,13 +613,6 @@ object_type *obj_list;
 monster_type *m_list;
 
 /*
- * Hack -- Quest array (Heino Vander Sanden)
- */
-quest_type q_list[MAX_QUESTS];
-int MAX_Q_IDX;
-
-
-/*
  * The stores [MAX_STORES_TOTAL]
  */
 store_type *store;
@@ -780,6 +773,23 @@ char *r_text;
 death_event_type *death_event;
 char *event_name;
 char *event_text;
+
+/*
+ * The dungeon arrays.
+ */
+dun_type *dun_defs;
+char *dun_name;
+
+/*
+ * The town arrays.
+ */
+town_type *town_defs;
+char *town_name;
+
+/*
+ * The quest array.
+ */
+quest_type *q_list;
 
 /*
  * Hack -- The special Angband "System Suffix"

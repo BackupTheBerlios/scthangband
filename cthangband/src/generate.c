@@ -656,7 +656,7 @@ static void terrain_gen(void)
 		door_feat = FEAT_PATH_BORDER;
 		do_posts=2;
 	}
-	if(wild_grid[wildy-1][wildx].dungeon < MAX_TOWNS)
+	if(is_town_p(wildy-1,wildx))
 	{
 		main_feat=FEAT_PERM_SOLID;
 		door_feat=FEAT_WILD_BORDER;
@@ -703,7 +703,7 @@ static void terrain_gen(void)
 		door_feat = FEAT_PATH_BORDER;
 		do_posts=2;
 	}
-	if(wild_grid[wildy+1][wildx].dungeon < MAX_TOWNS)
+	if(is_town_p(wildy+1,wildx))
 	{
 		main_feat=FEAT_PERM_SOLID;
 		door_feat=FEAT_WILD_BORDER;
@@ -751,7 +751,7 @@ static void terrain_gen(void)
 		door_feat=FEAT_PATH_BORDER;
 		do_posts=2;
 	}
-	if(wild_grid[wildy][wildx-1].dungeon < MAX_TOWNS)
+	if(is_town_p(wildy, wildx-1))
 	{
 		main_feat=FEAT_PERM_SOLID;
 		door_feat=FEAT_WILD_BORDER;
@@ -800,7 +800,7 @@ static void terrain_gen(void)
 		door_feat=FEAT_PATH_BORDER;
 		do_posts=2;
 	}
-	if(wild_grid[wildy][wildx+1].dungeon < MAX_TOWNS)
+	if(is_town_p(wildy, wildx+1))
 	{
 		main_feat=FEAT_PERM_SOLID;
 		door_feat=FEAT_WILD_BORDER;
@@ -835,33 +835,29 @@ static void terrain_gen(void)
 	}
 
 	/* Corner Posts */
-	if((wild_grid[wildy-1][wildx-1].dungeon<MAX_TOWNS) || 
-		(wild_grid[wildy-1][wildx].dungeon<MAX_TOWNS) ||
-		(wild_grid[wildy][wildx-1].dungeon<MAX_TOWNS))
+	if (is_town_p(wildy-1, wildx-1) || is_town_p(wildy-1, wildx) ||
+		is_town_p(wildy, wildx-1))
 	{
 		cave[0][0].feat=FEAT_PERM_SOLID;
 		cave[0][0].info |= (CAVE_MARK | CAVE_GLOW);
 	}
 
-	if((wild_grid[wildy-1][wildx+1].dungeon<MAX_TOWNS) || 
-		(wild_grid[wildy-1][wildx].dungeon<MAX_TOWNS) ||
-		(wild_grid[wildy][wildx+1].dungeon<MAX_TOWNS))
+	if (is_town_p(wildy-1, wildx+1) || is_town_p(wildy-1, wildx) ||
+		is_town_p(wildy, wildx+1))
 	{
 		cave[0][cur_wid-1].feat=FEAT_PERM_SOLID;
 		cave[0][cur_wid-1].info |= (CAVE_MARK | CAVE_GLOW);
 	}
 
-	if((wild_grid[wildy+1][wildx-1].dungeon<MAX_TOWNS) || 
-		(wild_grid[wildy+1][wildx].dungeon<MAX_TOWNS) ||
-		(wild_grid[wildy][wildx-1].dungeon<MAX_TOWNS))
+	if (is_town_p(wildy+1, wildx-1) || is_town_p(wildy+1, wildx) ||
+		is_town_p(wildy, wildx-1))
 	{
 		cave[cur_hgt-1][0].feat=FEAT_PERM_SOLID;
 		cave[cur_hgt-1][0].info |= (CAVE_MARK | CAVE_GLOW);
 	}
 
-	if((wild_grid[wildy+1][wildx+1].dungeon<MAX_TOWNS) || 
-		(wild_grid[wildy+1][wildx].dungeon<MAX_TOWNS) ||
-		(wild_grid[wildy][wildx+1].dungeon<MAX_TOWNS))
+	if (is_town_p(wildy+1, wildx+1) || is_town_p(wildy+1, wildx) ||
+		is_town_p(wildy, wildx+1))
 	{
 		cave[cur_hgt-1][cur_wid-1].feat=FEAT_PERM_SOLID;
 		cave[cur_hgt-1][cur_wid-1].info |= (CAVE_MARK | CAVE_GLOW);
@@ -956,7 +952,7 @@ static void terrain_gen(void)
 
 	if(wild_grid[wildy][wildx].dungeon < MAX_CAVES)
 	{
-		if (dun_defs[wild_grid[wildy][wildx].dungeon].tower)
+		if (dun_defs[wild_grid[wildy][wildx].dungeon].flags & DF_TOWER)
 		{
 			s16b i;
 			/* Place the tower */
@@ -1326,7 +1322,7 @@ static void place_random_stairs(int y, int x)
 	}
 	else if (is_quest(dun_level) || (dun_level == dun_defs[cur_dungeon].max_level))
 	{	
-		if(dun_defs[cur_dungeon].tower)
+		if(dun_defs[cur_dungeon].flags & DF_TOWER)
 		{
 			place_down_stairs(y, x);
 		}
@@ -1500,7 +1496,7 @@ static void alloc_stairs(int feat, int num, int walls)
 				/* Quest -- must go up */
 				else if (is_quest(dun_level) || (dun_level == dun_defs[cur_dungeon].max_level))
 				{
-					if (dun_defs[cur_dungeon].tower)
+					if (dun_defs[cur_dungeon].flags & DF_TOWER)
 					{
 						/* Clear previous contents, add down stairs */
 						c_ptr->feat = FEAT_MORE;
@@ -4892,7 +4888,7 @@ static void town_gen_hack(void)
 
 
 	/* Prepare an Array of "remaining stores", and count them */
-	for (n = 0; n < town_defs[cur_town].numstores; n++) rooms[n] = n+(MAX_STORES_PER_TOWN * cur_town);
+	for (n = 0; n < MAX_STORES_PER_TOWN; n++) rooms[n] = n+(MAX_STORES_PER_TOWN * cur_town);
 
 	/* Place four rows of stores */
 	for (y = 0; y < 4; y++)
@@ -5198,7 +5194,7 @@ void generate_cave(void)
 		cur_wid = (SCREEN_WID);
 	}
 	/* Towers are 1x1 */
-	else if (dun_defs[cur_dungeon].tower)
+	else if (dun_defs[cur_dungeon].flags & DF_TOWER)
 	{
 			cur_hgt = SCREEN_HGT;
 			cur_wid = SCREEN_WID;
@@ -5243,31 +5239,31 @@ void generate_cave(void)
 		dun_offset = dun_defs[cur_dungeon].offset;
 		dun_bias = dun_defs[cur_dungeon].bias;
 	}
+	/* Not too nasty in the wilderness */
+	else if (wild_grid[wildy][wildx].dungeon >= MAX_CAVES)
+	{
+		dun_offset = 2;
+		/* We get mainly animals in the wilderness */
+		dun_bias = SUMMON_ANIMAL;
+	}
 	/* Very nasty at Kadath */
-	else if (wild_grid[wildy][wildx].dungeon == TOWN_KADATH)
+	else if (dun_defs[wild_grid[wildy][wildx].dungeon].flags & DF_KADATH)
 	{
 		dun_offset = 35;
 		dun_bias = SUMMON_CTHULOID;
 	}
 	/* Zero in towns */
-	else if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+	else if (is_town_p(wildy, wildx))
 	{
 		dun_offset = 0;
 		dun_bias = 0;
 	}
 	/* Nastier near dungeons */
-	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
+	else
 	{
 		dun_offset = dun_defs[wild_grid[wildy][wildx].dungeon].offset/2;
 		if (dun_offset < 4) dun_offset = 4;
 		dun_bias = dun_defs[wild_grid[wildy][wildx].dungeon].bias;
-	}
-	/* Not too nasty in the wilderness */
-	else
-	{
-		dun_offset = 2;
-		/* We get mainly animals in the wilderness */
-		dun_bias = SUMMON_ANIMAL;
 	}
 
 	/* Nothing special here yet (if setting this to TRUE doesn't stop the
@@ -5311,7 +5307,7 @@ void generate_cave(void)
 		if (dun_level == 0)
 		{
 			/* If your grid is a town */
-			if(wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+			if(is_town_p(wildy, wildx))
 			{
 				/* Make a town */
 				town_gen();

@@ -2530,7 +2530,7 @@ void stair_creation(void)
 	}
 	else if (is_quest(dun_level) || (dun_level >= dun_defs[cur_dungeon].max_level))
 	{
-		if(dun_defs[cur_dungeon].tower)
+		if(dun_defs[cur_dungeon].flags & DF_TOWER)
 		{
 			cave_set_feat(py, px, FEAT_MORE);
 		}
@@ -5762,7 +5762,7 @@ bool lite_area(int dam, int rad)
 	(void)project(0, rad, py, px, dam, GF_LITE_WEAK, flg);
 
 	/* Hack - don't light up the town. */
-	if (dun_level || wild_grid[wildy][wildx].dungeon >= MAX_TOWNS)
+	if (dun_level || !is_town_p(wildy,wildx))
 	{
 		/* Lite up the room */
 		lite_room(py, px);
@@ -5791,7 +5791,7 @@ bool unlite_area(int dam, int rad)
     (void)project(0, rad, py, px, dam, GF_DARK_WEAK, flg);
 
 	/* Hack - don't darken the town. */
-	if (dun_level || wild_grid[wildy][wildx].dungeon >= MAX_TOWNS)
+	if (dun_level || !is_town_p(wildy,wildx))
 	{
 		/* Darken the room */
 		unlite_room(py, px);

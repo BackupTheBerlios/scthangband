@@ -3488,7 +3488,7 @@ errr file_character(cptr name, bool UNUSED full)
         else
             fprintf(fff, "\n Long Stairs:       OFF");
 
-		i = p_ptr->max_dlv[cur_dungeon]+dun_defs[cur_dungeon].offset;
+		i = p_ptr->max_dlv+dun_defs[cur_dungeon].offset;
 		fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", i, 50 *i);
 
 
@@ -3532,21 +3532,32 @@ errr file_character(cptr name, bool UNUSED full)
 		{
 			dun_type *d_ptr = dun_defs+i;
 			quest_type *q_ptr;
+			bool quests_exist = FALSE;
 			
-			/* Find the deepest guaranteed quest, if any. */
-			if (d_ptr->first_level > d_ptr->second_level) q_ptr = q_list+2*i;
-			else if (d_ptr->second_level) q_ptr = q_list+2*i+1;
-			else continue;
+			for (q_ptr = q_list; q_ptr < q_list+z_info->quests; q_ptr++)
+			{
+				/* Skip quests elsewhere. */
+				if (q_ptr->dungeon != i) continue;
 
-			/* Not done it yet? */
-			if (q_ptr->cur_num != q_ptr->max_num) continue;
-			
+				/* Unfinished quests found. */
+				if (q_ptr->cur_num < q_ptr->max_num) goto next_cave;
+
+				/* Found a finished quest. */
+				quests_exist = TRUE;
+			}
+
+			/* No quests found. */
+			if (!quests_exist) continue;
+
 			/* Put a gap before and after the section. */
 			if (!y) fprintf(fff, "\n");
 			y = 1;
 
 			/* Print a message. */
-			fprintf(fff, " You have conquered %s.\n", d_ptr->name);
+			fprintf(fff, " You have conquered %s.\n", dun_name+d_ptr->name);
+
+next_cave:
+			continue; /* Don't ask me, it just prevents a GCC warning. */
 		}
 			
 
@@ -3612,11 +3623,11 @@ errr file_character(cptr name, bool UNUSED full)
 		/* Empty */
 		if (!st_ptr->stock_num)
 		{
-			fprintf(fff, "  [Home in %s empty]\n\n", dun_defs[town].shortname);
+			fprintf(fff, "  [Home in %s empty]\n\n", dun_name+dun_defs[town].shortname);
 			continue;
 		}
 		/* Dump the contents */
-		fprintf(fff, "[Home Inventory (%s)]\n\n", dun_defs[town].shortname);
+		fprintf(fff, "[Home Inventory (%s)]\n\n", dun_name+dun_defs[town].shortname);
 		for (i = 0; i < st_ptr->stock_num; i++)
 		{
 			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, &st_ptr->stock[i], TRUE, 3);
@@ -4741,14 +4752,7 @@ void do_cmd_save_game(bool is_autosave)
  */
 static long total_points(void)
 {
-	int i, max_depth;
-	
-	for (i = max_depth = 0; i < MAX_CAVES; i++)
-	{
-		max_depth = MAX(max_depth, p_ptr->max_dlv[i] + dun_defs[i].offset);
-	}
-
-	return p_ptr->exp + 100*max_depth;
+	return p_ptr->exp + 100*p_ptr->max_dlv+dun_defs[cur_dungeon].offset;
 }
 
 
@@ -4934,11 +4938,11 @@ static void print_tomb(void)
 	put_str(buf, 14, 11);
 
 	if (dun_level > 0)
-		sprintf(tmp, "of %s", dun_defs[wild_grid[wildy][wildx].dungeon].name);
-	else if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
-		sprintf(tmp, "in %s", dun_defs[wild_grid[wildy][wildx].dungeon].shortname);
+		sprintf(tmp, "of %s", dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].name);
+	else if (is_town_p(wildy, wildx))
+		sprintf(tmp, "in %s", dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].shortname);
 	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
-		sprintf(tmp, "near %s", dun_defs[wild_grid[wildy][wildx].dungeon].name);
+		sprintf(tmp, "near %s", dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].name);
 	else
 		strcpy(tmp, "in the Wilderness");
 	center_string(buf, tmp);
@@ -5518,7 +5522,7 @@ void race_score(int race_num)
 static void get_details(high_score *the_score)
 {
 	time_t ct = time((time_t*)0);
-	s16b i, best = 0;
+	s16b best = 0;
 
 	/* Save the version */
 	sprintf(the_score->what, "%s", GAME_VERSION);
@@ -5552,12 +5556,9 @@ static void get_details(high_score *the_score)
 	/* Save the level if a dungeon */
 	sprintf(the_score->cur_dun, "%3d", (dun_level) ? dun_depth : 0);
 
-	/* Work out the deepest level */
-	for(i=0;i<MAX_CAVES;i++)
-	{
-		int level = p_ptr->max_dlv[i] + dun_defs[i].offset;
-		if (p_ptr->max_dlv[i] && level > best) best=level;
-	}
+	/* Find the deepest level in the current dungeon. */
+	best = p_ptr->max_dlv+dun_defs[cur_dungeon].offset;
+
 	sprintf(the_score->max_dun, "%3d", best);
 
 	/* Save the cause of death (31 chars) */
@@ -5602,7 +5603,7 @@ static void make_record(high_score *score)
 	dun = wild_grid[wildy][wildx].dungeon;
 	if (dun < MAX_CAVES)
 	{
-		dun_str = dun_defs[dun].shortname;
+		dun_str = dun_name+dun_defs[dun].shortname;
 	}
 	else
 	{

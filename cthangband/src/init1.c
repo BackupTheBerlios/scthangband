@@ -117,7 +117,6 @@ static cptr r_info_blow_effect[] =
 
 
 
-
 typedef struct flag_name flag_name;
 
 struct flag_name
@@ -136,7 +135,10 @@ struct flag_name
 #define RF4 6
 #define RF5 7
 #define RF6 8
-#define MAX_FLAG_SETS	9
+#define SUMMON 9
+#define DF 10
+#define SHOP 11
+#define MAX_FLAG_SETS	12
 
 /*
  * Object flags
@@ -446,6 +448,43 @@ static flag_name info_flags[] =
 	{"S_HI_DRAGON", RF6, RF6_S_HI_DRAGON},
 	{"S_GOO", RF6, RF6_S_GOO},
 	{"S_UNIQUE", RF6, RF6_S_UNIQUE},
+
+	/* Summoning "flags". */
+	{"CTHULOID", SUMMON, SUMMON_CTHULOID},
+	{"DEMON", SUMMON, SUMMON_DEMON},
+	{"UNDEAD", SUMMON, SUMMON_UNDEAD},
+	{"DRAGON", SUMMON, SUMMON_DRAGON},
+	{"GREAT_OLD_ONE", SUMMON, SUMMON_GOO},
+	{"ORC", SUMMON, SUMMON_ORC},
+	{"ANIMAL", SUMMON, SUMMON_ANIMAL},
+	{"UNIQUE", SUMMON, SUMMON_UNIQUE},
+	{"HI_UNDEAD", SUMMON, SUMMON_HI_UNDEAD},
+	{"HI_DRAGON", SUMMON, SUMMON_HI_DRAGON},
+	{"HOUND", SUMMON, SUMMON_HOUND},
+	{"MIMIC", SUMMON, SUMMON_MIMIC},
+	{"ANIMAL_RANGER", SUMMON, SUMMON_ANIMAL_RANGER},
+	{"REAVER", SUMMON, SUMMON_REAVER},
+	{"PHANTOM", SUMMON, SUMMON_PHANTOM},
+	{"ELEMENTAL", SUMMON, SUMMON_ELEMENTAL},
+
+	/* Dungeon flags. */
+	{"TOWER", DF, DF_TOWER},
+	{"START", DF, DF_START},
+	{"KADATH", DF, DF_KADATH},
+
+	/* Shop "flags". */
+	{"GENERAL", SHOP, STORE_GENERAL},
+	{"ARMOURY", SHOP, STORE_ARMOURY},
+	{"WEAPON", SHOP, STORE_WEAPON},
+	{"TEMPLE", SHOP, STORE_TEMPLE},
+	{"ALCHEMIST", SHOP, STORE_ALCHEMIST},
+	{"MAGIC", SHOP, STORE_MAGIC},
+	{"BLACK", SHOP, STORE_BLACK},
+	{"HOME", SHOP, STORE_HOME},
+	{"LIBRARY", SHOP, STORE_LIBRARY},
+	{"INN", SHOP, STORE_INN},
+	{"HALL", SHOP, STORE_HALL},
+	{"PAWN", SHOP, STORE_PAWN},
 };
 
 /* A list of the flags for explosion types understood by project(). */
@@ -799,6 +838,52 @@ static void clear_escapes(char *buf)
 }
 
 /*
+ * Given the name of a race, find it in the list of races and remove it.
+ * This does, of course, rely on r_name and r_info being present and correct.
+ *
+ * It should be called with 0 after its last real use to free the nam array.
+ */
+static s16b find_monster_race(char *buf)
+{
+	int i;
+	s16b out;
+	static cptr *array = NULL;
+
+	/* Hack - use find_monster_race(0) to remove the array. */
+	if (!buf)
+	{
+		/* Something to do. */
+		if (array)
+		{
+			for (i = 0; i < MAX_R_IDX; i++) FREE(array[i]);
+			KILL(array);
+		}
+		return 0;
+	}
+	else if (!array)
+	{
+		/* Build up an array of races. */
+		C_MAKE(array, MAX_R_IDX, cptr);
+		for (i = 1; i < MAX_R_IDX; i++)
+		{
+			if (r_info[i].name)
+				array[i-1] = string_make(format("%v",
+					monster_desc_aux_f3, r_info+i, 1, 0));
+			else
+				array[i-1] = string_make("");
+		}
+		/* Terminate the array. */
+		array[MAX_R_IDX-1] = NULL;
+	}
+
+	/* Search it for the input string. */
+	out = find_string(buf, array);
+
+	/* Return the index matched, if any. */
+	return out;
+}
+
+/*
  * Initialize the "death_event" array, by parsing part of the "r_info.txt" file
  */
 errr parse_r_event(char *buf, header *head, vptr *extra)
@@ -1026,21 +1111,7 @@ errr parse_r_event(char *buf, header *head, vptr *extra)
 				{
 					make_monster_type *i_ptr = &d_ptr->par.monster;
 					i_ptr->strict = find_string_x(buf, "STRICT");
-					{
-						C_TNEW(array, MAX_R_IDX, cptr);
-						for (i = 1; i < MAX_R_IDX; i++)
-						{
-							if (r_info[i].name)
-								array[i-1] = string_make(format("%v",
-									monster_desc_aux_f3, r_info+i, 1, 0));
-							else
-								array[i-1] = string_make("");
-						}
-						array[MAX_R_IDX-1] = 0;
-						i_ptr->num = find_string(buf, array);
-						for (i = 0; i < MAX_R_IDX; i++) string_free(array[i]);
-						TFREE(array);
-					}
+					i_ptr->num = find_monster_race(buf);
 					readclearnum(i_ptr->num, 'n');
 					readclearnum(i_ptr->radius, 'r');
 					readclearnum(i_ptr->min, '(');
@@ -1543,7 +1614,7 @@ static errr grab_one_flag(u32b **flag, cptr errstr, cptr what)
 static errr grab_one_kind_flag(object_kind *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
-	WIPE(f, sizeof(f));
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
 	f[TR1] = &(ptr->flags1);
 	f[TR2] = &(ptr->flags2);
 	f[TR3] = &(ptr->flags3);
@@ -2032,7 +2103,7 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 static errr grab_one_artifact_flag(artifact_type *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
-	WIPE(f, sizeof(f));
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
 	f[TR1] = &(ptr->flags1);
 	f[TR2] = &(ptr->flags2);
 	f[TR3] = &(ptr->flags3);
@@ -2188,7 +2259,7 @@ errr parse_a_info(char *buf, header *head, vptr *extra)
 static errr grab_one_ego_item_flag(ego_item_type *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
-	WIPE(f, sizeof(f));
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
 	f[TR1] = &(ptr->flags1);
 	f[TR2] = &(ptr->flags2);
 	f[TR3] = &(ptr->flags3);
@@ -2337,7 +2408,7 @@ errr parse_e_info(char *buf, header *head, vptr *extra)
 static errr grab_one_basic_flag(monster_race *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
-	WIPE(f, sizeof(f));
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
 	f[RF1] = &(ptr->flags1);
 	f[RF2] = &(ptr->flags2);
 	f[RF3] = &(ptr->flags3);
@@ -2347,7 +2418,7 @@ static errr grab_one_basic_flag(monster_race *ptr, cptr what)
 static errr grab_one_spell_flag(monster_race *ptr, cptr what)
 {
 	u32b *f[MAX_FLAG_SETS];
-	WIPE(f, sizeof(f));
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
 	f[RF4] = &(ptr->flags4);
 	f[RF5] = &(ptr->flags5);
 	f[RF6] = &(ptr->flags6);
@@ -2616,6 +2687,349 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 	}
 }
 
+
+
+/*
+ * Grab one value from a textual string
+ *
+ * This is slightly more complicated as the returned value will be 16 bits
+ * long rather than 32.
+ */
+static errr grab_one_summon_flag(u32b *ptr, cptr what)
+{
+	u32b *f[MAX_FLAG_SETS];
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
+	f[SUMMON] = ptr;
+	return grab_one_flag(f, "summon", what);
+}
+
+
+/*
+ * Grab one dungeon flag from a textual string
+ */
+static errr grab_one_dungeon_flag(u32b *ptr, cptr what)
+{
+	u32b *f[MAX_FLAG_SETS];
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
+	f[DF] = ptr;
+	return grab_one_flag(f, "dungeon", what);
+}
+
+/*
+ * Initialize the "dun_defs" array, by parsing an ascii "template" file
+ */
+errr parse_dun_defs(char *buf, header *head, vptr *extra)
+{
+	/* Current entry */
+	dun_type *ptr = *extra;
+
+	/* Only N can start a record. */
+	if (!ptr && *buf != 'N') return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	switch (*buf)
+	{
+		case 'N': /* N:symbol:shortname... */
+		{
+			/* Check the format. */
+			if (buf[3] != ':') return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			/* Check that dun_defs is large enough. */
+			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			/* Set ptr */
+			*extra = ptr = (dun_type*)head->info_ptr + error_idx;
+
+			/* Store the symbol. */
+			ptr->sym = buf[2];
+
+			/* Store the name. */
+			if (!(ptr->shortname = add_name(head, buf+4)))
+				return PARSE_ERROR_OUT_OF_MEMORY;
+
+			return SUCCESS;
+		}
+		case 'D': /* D:name... */
+		{
+			/* Avoid multiple descriptions. */
+			if (ptr->name) return PARSE_ERROR_TOO_MANY_ARGUMENTS;
+
+			/* Store the name. */
+			if (!(ptr->name = add_name(head, buf+2)))
+				return PARSE_ERROR_OUT_OF_MEMORY;
+
+			return SUCCESS;
+		}
+		case 'I': /* I:min-max:bias... */
+		{
+			char t[1024] = "";
+			int min, max, i;
+
+			/* Scan for values. */
+			i = sscanf(buf+2, "%d-%d:%c%1023[^\n]", &min, &max, t, t+1);
+
+			/* Check the format. */
+			if (i < 2) return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			/* Hack - use 0-0 to indicate a town with no dungeon (the entry can
+			 * still be necessary because of the town bias). */
+			if (!min && !max)
+			{
+			}
+			/* Check the level range for sanity. */
+			else if (min <= 0 || max > 127 || min > max)
+			{
+				return PARSE_ERROR_OUT_OF_BOUNDS;
+			}
+			else
+			{
+				ptr->offset = min-1;
+				ptr->max_level = max-min+1;
+			}
+
+			/* Notice whether t contains a character or a string. */
+			if (i == 4)
+			{
+				u32b f = 0;
+				/* Grab a pre-defined summon type. */
+				try(grab_one_summon_flag(&f, t));
+				ptr->bias = f;
+			}			
+			else if (i == 3)
+			{
+				/* Grab a character to summon. */
+				ptr->bias = *t | SUMMON_NO_UNIQUES;
+			}
+
+			return SUCCESS;
+		}
+		case 'F': /* F:TOWER */
+		{
+			char *s, *t;
+			/* Parse every entry textually */
+			for (s = buf + 2; *s; )
+			{
+				u32b f = 0;
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|' || *t == ':') t++;
+				}
+
+				/* Parse this entry */
+				try(grab_one_dungeon_flag(&f, s));
+
+				ptr->flags |= f;
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			return SUCCESS;
+		}
+		case 'Q': case 'T': case 'S': /* Ignore other valid flags. */
+		{
+			return SUCCESS;
+		}
+		default:
+		{
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+		}
+	}
+}
+
+
+/*
+ * Grab one shop flag from a textual string
+ */
+static errr grab_one_shop_type(u32b *ptr, cptr what)
+{
+	u32b *f[MAX_FLAG_SETS];
+	C_WIPE(f, MAX_FLAG_SETS, sizeof(u32b*));
+	f[SHOP] = ptr;
+	return grab_one_flag(f, "shop", what);
+}
+
+/*
+ * Initialize the "town_defs" array, by parsing an ascii "template" file
+ */
+errr parse_town_defs(char *buf, header *head, vptr *extra)
+{
+	/* Current entry */
+	town_type *ptr = *extra;
+
+	/* Only N can start a record. */
+	if (!ptr && *buf != 'N') return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	switch (*buf)
+	{
+		case 'N': /* New */
+		{
+			/* Check that dun_defs is large enough. */
+			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			/* Set ptr */
+			*extra = ptr = (town_type*)head->info_ptr + error_idx;
+
+			/* Hack - clear the shop table. */
+			C_BSET(ptr->store, 99, MAX_STORES_PER_TOWN, byte);
+
+			return SUCCESS;
+		}
+		case 'T': /* House price, town description. */
+		{
+			char s[1024];
+			long i;
+			if (2 != sscanf(buf+2, "%ld:%1023[^\n]", &i, s))
+			{
+				return PARSE_ERROR_INCORRECT_SYNTAX;
+			}
+
+			/* Check that the price is reasonable. */
+			if (i < 0) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			/* Copy the price across. */
+			ptr->house_price = i;
+
+			/* Store the name. */
+			if (!(ptr->name = add_name(head, s)))
+				return PARSE_ERROR_OUT_OF_MEMORY;
+
+			return SUCCESS;
+		}
+		case 'S':
+		{
+			char *s, *t;
+
+			int i;
+			/* Find the first unset store. */
+			for (i = 0; i < MAX_STORES_PER_TOWN; i++)
+			{
+				if (ptr->store[i] == 99) break;
+			}
+			if (i == MAX_STORES_PER_TOWN) return PARSE_ERROR_TOO_MANY_ARGUMENTS;
+
+			/* Parse every entry textually */
+			for (s = buf + 2; *s; )
+			{
+				u32b shop = 0;
+				/* Find the end of this entry */
+				for (t = s; *t && !strchr(" |:", *t); t++) /* loop */;
+
+				/* Avoid overflow. */
+				if (i >= MAX_STORES_PER_TOWN) return PARSE_ERROR_TOO_MANY_ARGUMENTS;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|' || *t == ':') t++;
+				}
+
+				/* Find a shop. */
+				try(grab_one_shop_type(&shop, s));
+
+				/* Remember the shop. */
+				ptr->store[i++] = shop;
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Remember how many were seen. */
+			ptr->numstores = i;
+
+			/* Next... */
+			return SUCCESS;
+		}
+		case 'D': case 'I': case 'Q': case 'F': /* Ignore other valid flags. */
+		{
+			return SUCCESS;
+		}
+		default:
+		{
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+		}
+	}
+}
+
+/*
+ * Initialize the "q_list" array, by parsing an ascii "template" file
+ */
+errr parse_q_list(char *buf, header *head, vptr *extra)
+{
+	/* Find the current dungeon. */
+	dun_type *ptr = *extra;
+	int n = (ptr) ? ptr - dun_defs : -1;
+
+	/* Only N can start a record. */
+	if (n == -1 && *buf != 'N') return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	switch (*buf)
+	{
+		case 'N': /* New */
+		{
+			/* Check that this doesn't somehow overflow the dungeon table. */
+			if (++n >= z_info->dungeons) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			/* Set the index */
+			*extra = dun_defs+n;
+
+			return SUCCESS;
+		}
+		case 'Q':
+		{
+			int lev, num, mon;
+			char t[1024];
+			quest_type *q_ptr;
+
+			/* Scan for values. */
+			if (sscanf(buf+2, "%d:%d:%1023[^\n]", &lev, &num, t) < 3)
+				return PARSE_ERROR_INCORRECT_SYNTAX;
+
+			/* Check that the values are reasonable. */
+			if (lev <= ptr->offset || lev > ptr->offset+ptr->max_level ||
+				num < 1 || num > 255) return PARSE_ERROR_OUT_OF_BOUNDS;
+
+			/* Check that q_list is large enough. */
+			if (++error_idx >= MAX_I) return PARSE_ERROR_OUT_OF_MEMORY;
+
+			q_ptr = (quest_type*)(head->info_ptr)+error_idx;
+
+			/* Find the monster specified. */
+			mon = find_monster_race(buf);
+
+			/* Check that a monster was found. */
+			if (mon < 0) return PARSE_ERROR_INVALID_FLAG;
+
+			/* Only one unique can exist. */
+			if ((r_info[mon].flags1 & RF1_UNIQUE) && num > 1)
+			{
+				return PARSE_ERROR_GENERIC;
+			}
+
+			/* Set everything. */
+			q_ptr->r_idx = mon;
+			q_ptr->level = lev;
+			q_ptr->dungeon = n;
+			q_ptr->max_num = num;
+			q_ptr->known = TRUE; /* Fixed quests are known from the start. */
+		}
+		case 'D': case 'I': case 'T': case 'S': case 'F':
+		{
+			/* Ignore other valid flags. */
+			return SUCCESS;
+		}
+		default:
+		{
+			return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+		}
+	}
+}
+
 /*
  * Find out if the input string starts with any of a set
  * of target strings. If it does, return the number of
@@ -2727,6 +3141,9 @@ errr parse_macro_info(char *buf, header *head, vptr *extra)
 					"r_event",
 					"v_info",
 					"o_base",
+					"d_dun",
+					"d_town",
+					"d_quest",
 				};
 				uint i;
 
@@ -2968,6 +3385,12 @@ static errr init_info_txt_final(header *head)
 			/* The p_ids stored in u_info are derived from
 			 * o_base[]. */
 			rebuild_raw |= 1<<U_HEAD;
+			break;
+		}
+		case EVENT_HEAD: case Q_HEAD:
+		{
+			/* Find the monster name array. */
+			find_monster_race(0);
 			break;
 		}
 	}

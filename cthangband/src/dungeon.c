@@ -394,7 +394,7 @@ void change_level(s16b new_level, byte come_from)
 	/* Try to recognise when the player wants stairs next to him. */
 	if (come_from == START_STAIRS && new_level && new_level != dun_level)
 	{
-		if ((new_level > dun_level) ^ dun_defs[cur_dungeon].tower)
+		if ((new_level > dun_level) ^ !!(dun_defs[cur_dungeon].flags & DF_TOWER))
 			create_up_stair = TRUE;
 		else
 			create_down_stair = TRUE;
@@ -2281,7 +2281,7 @@ static void process_world(void)
 			{
 				msg_print("You feel yourself yanked downwards!");
 
-				change_level(MAX(1, p_ptr->max_dlv[cur_dungeon]), START_RANDOM);
+				change_level(MAX(1, p_ptr->max_dlv), START_RANDOM);
 
 				cur_dungeon=recall_dungeon;
 			}
@@ -3723,16 +3723,16 @@ static void dungeon(void)
 
 
 	/* Track maximum dungeon level */
-	if (p_ptr->max_dlv[cur_dungeon] < dun_level)
+	if (p_ptr->max_dlv < dun_level)
 	{
-		p_ptr->max_dlv[cur_dungeon] = dun_level;
+		p_ptr->max_dlv = dun_level;
 	}
 
 
 	/* Paranoia -- No stairs down from Quest */
 	if (is_quest(dun_level))
 	{
-		if (dun_defs[cur_dungeon].tower)
+		if (dun_defs[cur_dungeon].flags & DF_TOWER)
 		{
 			create_up_stair = FALSE;
 		}
@@ -4130,7 +4130,7 @@ static void create_character(void)
 	/* Place towns and dungeons */
 	for(i=0;i<MAX_CAVES;i++)
 	{
-		if(i<MAX_TOWNS)
+		if(i < MAX_TOWNS && town_defs[i].name)
 		{
 			j=0;
 			while(j == 0)
@@ -4169,7 +4169,7 @@ static void create_character(void)
 		/* There are no dungeons next to this */
 		wild_grid[y][x].dungeon=i;
 		/* now let the town & dungeon know where they are */
-		if (i<MAX_TOWNS)
+		if (is_town_p(y,x))
 		{
 			town_defs[i].x=x;
 			town_defs[i].y=y;
@@ -4179,17 +4179,20 @@ static void create_character(void)
 	}
 			
 	/* Generate road map... */
-	for(i=0;i<MAX_TOWNS-1;i++)
+	for(i=0;i<MAX_TOWNS-1;)
 	{
 		int cur_x,cur_y,dest_x,dest_y;
 		int x_disp,y_disp,x_sgn,y_sgn;
-		int fin;
+		int fin, j;
 		byte curdir,nextdir;
 
 		cur_x=town_defs[i].x;
 		cur_y=town_defs[i].y;
-		dest_x=town_defs[i+1].x;
-		dest_y=town_defs[i+1].y;
+		for (j = i+1; j < MAX_TOWNS; j++) if (town_defs[j].name) break;
+		if (j == MAX_TOWNS) break;
+		dest_x=town_defs[j].x;
+		dest_y=town_defs[j].y;
+		i = j;
 		fin=0;
 		while(!fin)
 		{
@@ -4273,12 +4276,13 @@ static void create_character(void)
 
 	/* Start in town 0 */
 	dun_level = 0;
-	cur_town = TOWN_KADATH;
-	while((cur_town == TOWN_KADATH) || (cur_town == TOWN_NIR))
+	do
 	{
 		cur_town = (byte)rand_range(0,MAX_TOWNS-1);
 	}
+	while(~dun_defs[cur_town].flags & DF_START);
 	cur_dungeon = cur_town;
+	p_ptr->max_dlv = 0;
 	dun_offset = 0;
 	dun_bias = 0;
 	wildx=town_defs[cur_town].x;

@@ -204,7 +204,8 @@ void do_cmd_go_up(void)
 			if(dun_level==0)
 			{
 				cur_dungeon = wild_grid[wildy][wildx].dungeon;
-				msg_format("You enter %s",dun_defs[cur_dungeon].name);
+				p_ptr->max_dlv = 1;
+				msg_format("You enter %s",dun_name+dun_defs[cur_dungeon].name);
 			}
 			else
 			{
@@ -212,7 +213,7 @@ void do_cmd_go_up(void)
 			}
 
 			/* Actually go up. */
-			use_stairs(dun_defs[cur_dungeon].tower, TRUE);
+			use_stairs(!!(dun_defs[cur_dungeon].flags & DF_TOWER), TRUE);
 		}
    }
 }
@@ -273,7 +274,8 @@ void do_cmd_go_down(void)
 				if(dun_level==0)
 				{
 					cur_dungeon = wild_grid[wildy][wildx].dungeon;
-					msg_format("You enter %s",dun_defs[cur_dungeon].name);
+					p_ptr->max_dlv = 1;
+					msg_format("You enter %s",dun_name+dun_defs[cur_dungeon].name);
 				}
 				else
 				{
@@ -281,7 +283,7 @@ void do_cmd_go_down(void)
 				}
 			}
 				/* Go down */
-			use_stairs(!dun_defs[cur_dungeon].tower, !fall_trap);
+			use_stairs(!(dun_defs[cur_dungeon].flags & DF_TOWER), !fall_trap);
 				}
 		}
 	}
@@ -3537,10 +3539,10 @@ static void use_power(powertype *pw_ptr)
 				fire_beam(GF_LITE, dir, 2*plev);
 				break;
 			case iilog(MUT1_RECALL):
-				if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (cur_dungeon == recall_dungeon))
+				if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
 				{
 					if (get_check("Reset recall depth? "))
-					p_ptr->max_dlv[cur_dungeon] = dun_level;
+					p_ptr->max_dlv = dun_level;
 				}
 
 				if (p_ptr->word_recall == 0)
@@ -4087,21 +4089,3 @@ void do_cmd_racial_power(void)
         }
     }
 }
-
-#if 0
-/*
- * Get wilderness dungeon at given coordinates
- */
-byte get_wild_dun(y,x)
-{
-	int i;
-	for(i=MAX_TOWNS;i<MAX_CAVES;i++)
-	{
-		if((x==dun_defs[i].x) && (y==dun_defs[i].y))
-		{
-			return(i);
-		}
-	}
-	return MAX_TOWNS;
-}
-#endif

@@ -1676,13 +1676,13 @@ void display_map(int *cy, int *cx, bool max)
  */
 void display_wild_map(uint xmin)
 {
-	bool dungeon_has_guardians[MAX_CAVES];
 	s16b x,y;
-	int i;
+	int i, j, num_towns;
 	uint l;
 	char wild_map_symbol;
 	byte wild_map_attr;
 	cptr tmp;
+	C_TNEW(dungeon_has_guardians, MAX_CAVES, bool);
 
 	/* First work out which dungeons have guardians left */
 	for(i=0;i<MAX_CAVES;i++)
@@ -1715,7 +1715,7 @@ void display_wild_map(uint xmin)
 				{
 					wild_map_attr = TERM_RED;
 				}
-				else if (w_ptr->dungeon < MAX_TOWNS)
+				else if (is_town_p(y, x))
 				{
 					wild_map_attr = TERM_WHITE;
 				}
@@ -1749,47 +1749,62 @@ void display_wild_map(uint xmin)
 	/* Find the longest legend. */
 	for (l = i = 0; i < MAX_TOWNS; i++)
 	{
-		l = MAX(l, strlen(town_defs[i].name));
+		l = MAX(l, strlen(town_name+town_defs[i].name));
 	}
 
 	/* Print legend */
-	for (y=0;y<MAX_TOWNS;y++)
+	for (num_towns=i=0;i<MAX_TOWNS;i++)
 	{
+		dun_type *d_ptr = dun_defs+i;
+		town_type *t_ptr = town_defs+i;
+
+		/* Not a town. */
+		if (!t_ptr->name) continue;
+
 		if (l+xmin+23 > Term->wid)
-			tmp = format("%d = %s",y,dun_defs[y].shortname);
+			tmp = dun_name+d_ptr->shortname;
 		else
-			tmp = format("%d = %s",y,town_defs[y].name);
-		c_put_str(TERM_WHITE,tmp,y+1,xmin+19);
+			tmp = town_name+t_ptr->name;
+		c_put_str(TERM_WHITE, format("%c = %s", d_ptr->sym, tmp),
+			num_towns+1,xmin+19);
+		num_towns++;
 	}
 
 	/* Print dungeon legend */
-	for (i = MAX_TOWNS; i < MAX_CAVES; i++)
+	for (i = j = 0; i < MAX_CAVES; i++)
 	{
 		dun_type *d_ptr = dun_defs+i;
 
-		x = (i - MAX_TOWNS) % 2;
-		x = (xmin+(x*Term->wid))/(1+x);
-		y = MAX(16, MAX_TOWNS+8) + (i-MAX_TOWNS)/2;
+		/* Already shown. */
+		if (is_town_p(d_ptr->y, d_ptr->x)) continue;
 
-		tmp = dun_defs[i].name;
+		x = j % 2;
+		x = (xmin+(x*Term->wid))/(1+x);
+		y = MAX(16, num_towns+1) + j/2;
+
+		tmp = dun_name+d_ptr->name;
 
 		/* Trim an initial "the ". */
-		if (!strncmp(tmp, "the ", 4)) tmp += 4;
+		if (prefix(tmp, "the ")) tmp += strlen("the ");
 
 		/* If the name is too long, use the short name instead. */
 		if ((strlen(tmp)+4)*2+xmin >= Term->wid)
-			tmp = format("%c = %s", d_ptr->sym, d_ptr->shortname);
+			tmp = format("%c = %s", d_ptr->sym, dun_name+d_ptr->shortname);
 		else
 			tmp = format("%c = %s", d_ptr->sym, tmp);
 		c_put_str(TERM_WHITE, tmp, y, x);
+
+		j++;
 	}
 
-	c_put_str(TERM_UMBER,"* = dungeon entrance",MAX_TOWNS+2,xmin+19);
+	c_put_str(TERM_UMBER,"* = dungeon entrance",num_towns+2,xmin+19);
 	tmp = "(Places that still have guardians are marked in red)";
 	if (xmin+strlen(tmp) > Term->wid)
 		tmp = "(red = has guardian)";
 	c_put_str(TERM_RED,tmp,MAX_TOWNS+4,xmin+18);
 	c_put_str(TERM_YELLOW,"@ = you",MAX_TOWNS+6,xmin+18);
+
+	TFREE(dungeon_has_guardians);
 }
 
 /*

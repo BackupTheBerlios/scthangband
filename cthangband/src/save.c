@@ -290,7 +290,21 @@ static void wr_store(store_type *st_ptr)
 
 	/* Save the current owner */
 	wr_byte(st_ptr->bought);
+#ifdef SF_QUEST_DIRECT
+	if (has_flag(SF_QUEST_DIRECT))
+	{
+		wr_s16b(st_ptr->owner);
+	}
+	else
+	{
+		s16b owner = convert_owner(st_ptr->owner, sf_flags_now, sf_flags);
+		if (owner < 0) quit("Unsupported shopkeeper.");
+		wr_byte(owner % MAX_OWNERS);
+	}
+#else /* SF_QUEST_DIRECT */
 	wr_byte(st_ptr->owner);
+#endif /* SF_QUEST_DIRECT */
+
 
 	/* Save the stock size */
 	wr_byte((byte)(st_ptr->stock_num));
@@ -604,10 +618,25 @@ static void wr_extra(void)
 	wr_u16b(p_ptr->chi_frac);
 
 	/* Max Player and Dungeon Levels */
+#ifdef SF_QUEST_DIRECT
+	if (has_flag(SF_QUEST_DIRECT))
+	{
+		wr_s16b(p_ptr->max_dlv);
+	}
+	else
+	{
+		for (i = 0; i < 20; i++)
+		{
+			if (cur_dungeon == i) wr_s16b(p_ptr->max_dlv);
+			else wr_s16b(0);
+		}
+	}
+#else /* SF_QUEST_DIRECT */
 	for(i=0;i<MAX_CAVES;i++)
 	{
 		wr_s16b(p_ptr->max_dlv[i]);
 	}
+#endif /* SF_QUEST_DIRECT */
 
 	/* More info */
 	wr_s16b(0);     /* oops */
@@ -665,7 +694,20 @@ static void wr_extra(void)
     wr_u32b(p_ptr->muta3);
 
 	wr_byte(p_ptr->confusing);
-	for (i=0;i<MAX_TOWNS;i++) wr_byte(p_ptr->house[i]);
+#ifdef SF_QUEST_DIRECT
+	/* This is duplicated information, but it was used. */
+	if (!has_flag(SF_QUEST_DIRECT))
+	{
+		for (i = 0; i < 8; i++)
+		{
+			store_type *st_ptr = find_house(i);
+			if (st_ptr) wr_byte(st_ptr->bought);
+			else wr_byte(0);
+		}
+	}
+#else /* SF_QUEST_DIRECT */
+	for (i=0;i<8;i++) wr_byte(p_ptr->house[i]);
+#endif /* SF_QUEST_DIRECT */
 	wr_byte(p_ptr->ritual);
 	wr_byte(p_ptr->sneaking);
 	wr_byte(0);

@@ -1308,10 +1308,10 @@ void do_cmd_read_scroll(object_type *o_ptr)
 
 		case OBJ_SCROLL_WORD_OF_RECALL:
 		{
-                if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (cur_dungeon == recall_dungeon))
+                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
                 {
                     if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv[cur_dungeon] = dun_level;
+                    p_ptr->max_dlv = dun_level;
 
                 }
             
@@ -2688,10 +2688,10 @@ void do_cmd_zap_rod(object_type *o_ptr)
 
 		case OBJ_ROD_RECALL:
 		{
-                if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (cur_dungeon == recall_dungeon))
+                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
                 {
                     if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv[cur_dungeon] = dun_level;
+                    p_ptr->max_dlv = dun_level;
 
                 }
             
@@ -3218,10 +3218,10 @@ void do_cmd_activate(object_type *o_ptr)
 				(void)detect_stairs();
                 if (get_check("Activate recall? "))
                 {
-                    if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (cur_dungeon == recall_dungeon))
+                    if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
                         {
                             if (get_check("Reset recall depth? "))
-                            p_ptr->max_dlv[cur_dungeon] = dun_level;
+                            p_ptr->max_dlv = dun_level;
 
                         }
 
@@ -3704,10 +3704,10 @@ void do_cmd_activate(object_type *o_ptr)
 
 			case ART_GHARNE:
 			{
-                if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (recall_dungeon == cur_dungeon))
+                if (dun_level && (p_ptr->max_dlv > dun_level) && (recall_dungeon == cur_dungeon))
                 {
                     if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv[cur_dungeon] = dun_level;
+                    p_ptr->max_dlv = dun_level;
 
                 }
                 
@@ -4768,10 +4768,10 @@ static bool activate_random_artifact(object_type * o_ptr)
 
             case ACT_RECALL:
 			{
-                if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (recall_dungeon == cur_dungeon))
+                if (dun_level && (p_ptr->max_dlv > dun_level) && (recall_dungeon == cur_dungeon))
                 {
                     if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv[cur_dungeon] = dun_level;
+                    p_ptr->max_dlv = dun_level;
 
                 }
                 

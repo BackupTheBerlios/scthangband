@@ -2642,13 +2642,13 @@ void do_cmd_feeling(bool FeelingOnly)
 	/* If you are in a town */
 		if(!FeelingOnly)
 		{
-			if(wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+			if(is_town_p(wildy, wildx))
 			{
-				msg_format("You are in %s.",town_defs[cur_town].name);
+				msg_format("You are in %s.",town_name+town_defs[cur_town].name);
 			}
 			else if(wild_grid[wildy][wildx].dungeon < MAX_CAVES)
 			{
-				msg_format("You are outside %s.",dun_defs[wild_grid[wildy][wildx].dungeon].name);
+				msg_format("You are outside %s.",dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].name);
 			}
 			else
 			{
@@ -2661,7 +2661,7 @@ void do_cmd_feeling(bool FeelingOnly)
 	/* You are in a dungeon, so... */
 	if(!FeelingOnly)
 	{
-		msg_format("You are in %s.",dun_defs[cur_dungeon].name);
+		msg_format("You are in %s.",dun_name+dun_defs[cur_dungeon].name);
 
 		/* Show quest status */
 		if (is_quest(dun_level))
@@ -3477,7 +3477,7 @@ void shops_display(int town)
 	town_type *t_ptr = &town_defs[town];
 
 	/* Paranoia (?) - no town */
-	if (town >= MAX_TOWNS)
+	if (!is_town_p(wildy, wildx))
 	{
 		if (alert_failure) message_add("ERROR: No current town.");
 		bell();
@@ -3486,7 +3486,7 @@ void shops_display(int town)
 	clear_from(0);
 	Term_putstr(0,0, Term->wid, TERM_WHITE,
 		format("List of shops in %s",
-			dun_defs[town].shortname));
+			dun_name+dun_defs[town].shortname));
 
 	for (i = 0, j = 1; i < t_ptr->numstores; i++)
 	{
@@ -3519,7 +3519,7 @@ static void do_cmd_knowledge_shops(void)
 	int town = cur_town;
 	
 	/* Paranoia (?) - no town */
-	if (town >= MAX_TOWNS) town = 0;
+	if (!is_town_p(wildy, wildx)) town = 0;
 	for (;;)
 	{
 		char c;

@@ -2420,7 +2420,7 @@ void monster_death(int m_idx)
 			/* Explain the stairway */
 			msg_print("A magical stairway appears...");
 
-			if (dun_defs[cur_dungeon].tower)
+			if (dun_defs[cur_dungeon].flags & DF_TOWER)
 			{
 				/* Create stairs up */
 				cave_set_feat(y, x, FEAT_LESS);

@@ -450,10 +450,10 @@ void teleport_player_level(void)
 	else into = (magik(50));
 	
 	/* Get a special message if you leave a tower altogether. */
-	if (!into && dun_defs[cur_dungeon].tower && dun_level == 1)
+	if (!into && dun_defs[cur_dungeon].flags & DF_TOWER && dun_level == 1)
 		msg_print("You fall out of the tower!");
 	/* "into" is down in dungeons, up in towers. */
-	else if (into ^ dun_defs[cur_dungeon].tower)
+	else if (into ^ !!(dun_defs[cur_dungeon].flags & DF_TOWER))
 		msg_print("You sink through the floor.");
 	else
 		msg_print("You rise up through the ceiling.");

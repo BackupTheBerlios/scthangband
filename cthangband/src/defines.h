@@ -82,10 +82,14 @@
  * Total number of stores (see "store.c", etc)
  */
 #define MAX_STORES_PER_TOWN			12
-#define MAX_TOWNS					8
-#define MAX_STORES_TOTAL			96  /* Should always be MAX_STORES_PER_TOWN * MAX_TOWNS */
+#define MAX_TOWNS					(z_info->towns)
+#define MAX_STORES_TOTAL	(MAX_STORES_PER_TOWN*MAX_TOWNS)
 #define MAX_STORE_TYPES				12
-#define MAX_CAVES					20  /* 8 in towns plus 12 in wilderness */
+#define MAX_CAVES					(z_info->dungeons)
+
+/* Is there a town at (X,Y) on the world map? */
+#define is_town_p(Y,X) \
+	((wild_grid[Y][X].dungeon < MAX_TOWNS) && town_defs[wild_grid[Y][X].dungeon].name)
 
 /*
  * Road Directions
@@ -111,19 +115,20 @@
 #define STORE_INN                 9
 #define STORE_HALL            10
 #define STORE_PAWN          11
+#define STORE_NONE	99
 
-#define TOWN_CELEPHAIS   0
-#define TOWN_ULTHAR         1
-#define TOWN_DYLATH          2
-#define TOWN_KADATH         3
-#define TOWN_HLANTH          4
-#define TOWN_ILEK                5
-#define TOWN_INGANOK       6
-#define TOWN_NIR                  7
+/*
+ * Dungeon flags
+ */
+#define DF_TOWER 0x01 /* Is this a tower? */
+#define DF_START 0x02 /* Can the player start the game here? */
+#define DF_KADATH 0x04 /* Hack - use Cthuloid monsters at level 35 outside. */
+
 /*
  * Total number of owners per store (see "store.c", etc)
  */
 #define MAX_OWNERS      4
+#define NUM_OWNERS	258
 
 /*
  * Maximum number of player "sex" types (see "table.c", etc)
@@ -320,14 +325,15 @@ logaux(x, 1) logaux(x, 0) 255)
 /*
  * Maximum array bounds for template based arrays
  */
-#define MAX_F_IDX	(z_info->f_max)	/* Max size for "f_info[]" */
-#define MAX_K_IDX	(z_info->k_max)	/* Max size for "k_info[]" */
-#define MAX_U_IDX	(z_info->u_max)	/* Actual size of u_info[] */
-#define MAX_A_IDX	(z_info->a_max)	/* Max size for "a_info[]" */
-#define MAX_E_IDX	(z_info->e_max)	/* Max size for "e_info[]" */
-#define MAX_R_IDX	(z_info->r_max)	/* Max size for "r_info[]" */
-#define MAX_V_IDX	(z_info->v_max)	/* Max size for "v_info[]" Was 16*/
-#define MAX_DEATH_EVENTS (z_info->event_max)	/* Max size for death_events[] */
+#define MAX_F_IDX	(z_info->f_max)	/* Size of "f_info[]" */
+#define MAX_K_IDX	(z_info->k_max)	/* Size of "k_info[]" */
+#define MAX_U_IDX	(z_info->u_max)	/* Size of u_info[] */
+#define MAX_A_IDX	(z_info->a_max)	/* Size of "a_info[]" */
+#define MAX_E_IDX	(z_info->e_max)	/* Size of "e_info[]" */
+#define MAX_R_IDX	(z_info->r_max)	/* Size of "r_info[]" */
+#define MAX_V_IDX	(z_info->v_max)	/* Size of "v_info[]" */
+#define MAX_DEATH_EVENTS (z_info->event_max)	/* Size of "death_events[]" */
+#define MAX_Q_IDX	(z_info->quests) /* Size of "q_list[]" */
 
 
 /*
@@ -335,12 +341,6 @@ logaux(x, 1) logaux(x, 0) 255)
  */
 #define MAX_O_IDX       (z_info->o_max)     /* Max size for "o_list[]" */
 #define MAX_M_IDX       (z_info->m_max)     /* Max size for "m_list[]" */
-
-/*
- * Maximum number of quests 
- */
-#define MAX_QUESTS     100						 /* Max number of quests */
-
 
 /*
  * Maximum number of high scores in the high score file
@@ -3279,6 +3279,9 @@ extern int PlayerUID;
 #define EVENT_HEAD	9
 #define V_HEAD	10
 #define OB_HEAD	11
+#define D_HEAD 12
+#define T_HEAD 13
+#define Q_HEAD 14
 
 
 /*

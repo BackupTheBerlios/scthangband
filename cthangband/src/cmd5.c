@@ -2057,10 +2057,10 @@ void do_cmd_cast(void)
 		       break;
 	   case 23: /* Word of Recall */
 			{
-                if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (cur_dungeon == recall_dungeon))
+                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
                 {
                     if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv[cur_dungeon] = dun_level;
+                    p_ptr->max_dlv = dun_level;
 
                 }
 				if (!p_ptr->word_recall)
@@ -2514,7 +2514,7 @@ void do_cmd_cast(void)
         case 3: /* Reset Recall */
             {
                 /* Prompt */
-                sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_dlv[cur_dungeon]);
+                sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_dlv);
 
                 /* Default */
                 sprintf(tmp_val, "%d", MAX(dun_level,1));
@@ -2529,7 +2529,7 @@ void do_cmd_cast(void)
                 if (dummy < 1) dummy = 1;
 
                 /* Paranoia */
-                if (dummy > p_ptr->max_dlv[cur_dungeon]) dummy = p_ptr->max_dlv[cur_dungeon];
+                if (dummy > p_ptr->max_dlv) dummy = p_ptr->max_dlv;
 
                 /* Accept request */
                 msg_format("Recall depth set to level %d (%d').", dummy, dummy * 50 );
@@ -2632,10 +2632,10 @@ void do_cmd_cast(void)
         break;
         case 14: /* Word of Recall */
 			{
-                if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (cur_dungeon == recall_dungeon))
+                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
                 {
                     if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv[cur_dungeon] = dun_level;
+                    p_ptr->max_dlv = dun_level;
 
                 }
 				if (!p_ptr->word_recall)
@@ -3496,10 +3496,10 @@ void do_cmd_cantrip(void)
         break;
         case 30: /* Word of Recall */
 			{
-                if (dun_level && (p_ptr->max_dlv[cur_dungeon] > dun_level) && (cur_dungeon == recall_dungeon))
+                if (dun_level && (p_ptr->max_dlv > dun_level) && (cur_dungeon == recall_dungeon))
                 {
                     if (get_check("Reset recall depth? "))
-                    p_ptr->max_dlv[cur_dungeon] = dun_level;
+                    p_ptr->max_dlv = dun_level;
 
                 }
 				if (!p_ptr->word_recall)

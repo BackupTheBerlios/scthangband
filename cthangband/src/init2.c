@@ -509,6 +509,11 @@ static void init_info(header *head)
 	{
 		fp = my_fopen_path(ANGBAND_DIR_EDIT, "r_info.txt", "r");
 	}
+	else if (head->header_num == D_HEAD || head->header_num == T_HEAD ||
+		head->header_num == Q_HEAD)
+	{
+		fp = my_fopen_path(ANGBAND_DIR_EDIT, "d_info.txt", "r");
+	}
 	else
 	{
 		fp = my_fopen_path(ANGBAND_DIR_EDIT, format("%s.txt", filename), "r");
@@ -1815,15 +1820,28 @@ void init_angband(void)
 		e_name, dummy, e_max, E_HEAD)
 
 	/* Initialize monster info */
-	note("[Initializing arrays... (monsters)]");
 	init_x_info("monsters", monster_race, parse_r_info, "r_info", r_info,
 		r_name, r_text, r_max, R_HEAD)
 
 	/* Initialize death events. *
 	 * Must come after init_(k|a|e|r)_info(). */
-	note("[Initializing arrays... (death events)]");
 	init_x_info("death events", monster_race, parse_r_event, "r_event",
 	death_event, event_name, event_text, event_max, EVENT_HEAD)
+
+	/* Initialize dungeons. */
+	init_x_info("dungeons", dun_type, parse_dun_defs, "d_dun", dun_defs,
+		dun_name, dummy, dungeons, D_HEAD)
+
+	/* Initialize towns. */
+	init_x_info("towns", town_type, parse_town_defs, "d_town", town_defs,
+		town_name, dummy, towns, T_HEAD)
+
+	/* Initialize quests.
+	 * Must come after parse_r_info() and parse_dun_defs().
+	 * This array is only actually used when a new game is started.
+	 */
+	init_x_info("quests", quest_type, parse_q_list, "d_quest", q_list,
+		dummy, dummy, quests, Q_HEAD)
  
 	/* Initialize feature info */
 	note("[Initializing arrays... (vaults)]");

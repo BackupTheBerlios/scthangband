@@ -314,7 +314,7 @@ static void prt_spirit(void)
  */
 static void prt_depth(void)
 {
-	char depths[32];
+	cptr depths;
 	s16b level = dun_level + dun_offset;
 	cptr descr[2][2] = {
 	{"(Lev %d)", "%d ft"},
@@ -325,17 +325,18 @@ static void prt_depth(void)
 
 	if (dun_level)
 	{
-		(void)sprintf(depths, descr[(int)dun_defs[cur_dungeon].tower][(int)depth_in_feet], level);
+		depths = format(
+			descr[!!(dun_defs[cur_dungeon].flags & DF_TOWER)][(int)depth_in_feet], level);
 	}
 	
 	else if (wild_grid[wildy][wildx].dungeon < MAX_CAVES)
-		{
-			(void)strcpy(depths, dun_defs[wild_grid[wildy][wildx].dungeon].shortname);
-		}
-		else
-		{
-			(void)sprintf(depths, "Wild (%d,%d)",wildx,wildy);
-		}
+	{
+		depths = dun_name+dun_defs[wild_grid[wildy][wildx].dungeon].shortname;
+	}
+	else
+	{
+		depths = format("Wild (%d,%d)",wildx,wildy);
+	}
 	/* Right-Adjust the "depth", and clear old values */
 	prt(format("%9s", depths), ROW_DEPTH, COL_DEPTH);
 }
@@ -3462,7 +3463,7 @@ static void win_overhead_display(void)
  */
 static bool win_shops_good(void)
 {
-	if (wild_grid[wildy][wildx].dungeon < MAX_TOWNS && !dun_level)
+	if (!dun_level && is_town_p(wildy,wildx))
 	{
 		return shops_good(cur_town);
 	}

@@ -710,7 +710,7 @@ static void hit_trap(void)
                 msg_print("You fell through a trap door!");
 				dam = damroll(2, 8);
                 name = "a trap door";
-		   		if (dun_defs[cur_dungeon].tower)
+		   		if (dun_defs[cur_dungeon].flags & DF_TOWER)
 				{
 					change_level(dun_level-1, START_RANDOM);
 				}
@@ -2018,10 +2018,10 @@ void move_player(int dir, int do_pickup)
 			{
 
 				/* Leave town */
-				if(wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+				if(is_town_p(wildy, wildx))
 				{
 					cur_town = wild_grid[wildy][wildx].dungeon;
-					msg_format("You stumble out of %s.",town_defs[cur_town].name);
+					msg_format("You stumble out of %s.",town_name+town_defs[cur_town].name);
 				}
 				/* Test which border has been crossed */
 				if(y==0)
@@ -2044,10 +2044,10 @@ void move_player(int dir, int do_pickup)
 					px=1;
 					wildx++;
 				}
-				if(wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+				if(is_town_p(wildy, wildx))
 				{
 					cur_town = wild_grid[wildy][wildx].dungeon;
-					msg_format("You stumble into %s.",town_defs[cur_town].name);
+					msg_format("You stumble into %s.",town_name+town_defs[cur_town].name);
 				}
 				change_level(0, START_WALK);
 			}
@@ -2110,10 +2110,10 @@ void move_player(int dir, int do_pickup)
 			{
 
 				/* Leave town */
-				if(wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+				if(is_town_p(wildy, wildx))
 				{
 					cur_town = wild_grid[wildy][wildx].dungeon;
-					msg_format("You leave %s.",town_defs[cur_town].name);
+					msg_format("You leave %s.",town_name+town_defs[cur_town].name);
 				}
 				/* Test which border has been crossed */
 				if(y==0)
@@ -2136,10 +2136,10 @@ void move_player(int dir, int do_pickup)
 					px=1;
 					wildx++;
 				}
-				if(wild_grid[wildy][wildx].dungeon < MAX_TOWNS)
+				if(is_town_p(wildy, wildx))
 				{
 					cur_town = wild_grid[wildy][wildx].dungeon;
-					msg_format("You enter %s.",town_defs[cur_town].name);
+					msg_format("You enter %s.",town_name+town_defs[cur_town].name);
 				}
 				change_level(0, START_WALK);
 			}

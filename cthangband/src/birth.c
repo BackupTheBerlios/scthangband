@@ -2628,50 +2628,6 @@ static void birth_put_stats(void)
 }
 
 /*
- *  Initialise the matrix of quests
- */
-static void initialise_quests(void)
-{
-	int i,j;
-
-	/* Start with no quests */
-	for (i = 0; i < MAX_QUESTS; i++)
-	{
-		q_list[i].level = 0;
-		q_list[i].r_idx = 0;
-		q_list[i].cur_num = 0;
-		q_list[i].cur_num_known = 0;
-		q_list[i].max_num = 0;
-	}
-
-	/* Add end of dungeon quests */
-	for(i=0; i< MAX_CAVES; i++)
-	{
-		/* End Creature */
-		j=i*2;
-		if(dun_defs[i].first_guardian > 0)
-		{
-			q_list[j].level = dun_defs[i].first_level;
-			q_list[j].r_idx = dun_defs[i].first_guardian;
-			q_list[j].dungeon = i;
-			q_list[j].max_num = 1;
-			q_list[j].known = TRUE;
-		}
-		j++;
-		/* Second Guardian? */
-		if(dun_defs[i].second_guardian > 0)
-		{
-			q_list[j].level = dun_defs[i].second_level;
-			q_list[j].r_idx = dun_defs[i].second_guardian;
-			q_list[j].dungeon = i;
-			q_list[j].max_num = 1;
-			q_list[j].known = TRUE;
-		}
-	}
-}
-
-
-/*
  * Get number of quest monsters for quest i
  * Heino Vander Sanden
  */
@@ -2773,9 +2729,6 @@ static void player_wipe(void)
 		a_ptr->cur_num = 0;
 	}
 	
-
-	/* Start with no quests */
-	initialise_quests(); /* DEAN */
 
 	/* Reset the "objects" */
 	for (i = 1; i < MAX_K_IDX; i++)
@@ -3119,9 +3072,18 @@ static void player_birth_quests(void)
 {
 	int i,j;
 	bool same_level;
+	int q_max = z_info->quests;
+	quest_type *q_list_tmp;
+
+	/* Add an extra 11-30 random quests. */
+	q_max = z_info->quests+rand_range(11,30);
+	C_MAKE(q_list_tmp, q_max, quest_type);
+	C_COPY(q_list_tmp, q_list, z_info->quests, quest_type);
+	KILL(q_list);
+	q_list = q_list_tmp;
 
 	/* Generate to MAX_Q_IDX with random quests */
-	for (i = (MAX_CAVES*2); i<MAX_Q_IDX; i++)
+	for (i = z_info->quests; i<q_max; i++)
 	{
 		do
 		{
@@ -3140,8 +3102,8 @@ static void player_birth_quests(void)
 			/* Quest monster at least 2 levels out of depth */
 			q_list[i].level -= rand_range(2, 3+(q_list[i].level / 6));
 
-			/* No 2 quests on the same level */
-			for (j = 2; j<i; j++)
+			/* No 2 quests on the same level (?) */
+			for (j = 0; j<i; j++)
 			{
 				if (q_list[i].level == q_list[j].level)
 				{
@@ -3159,14 +3121,13 @@ static void player_birth_quests(void)
 		 * but not on its lowest two levels as they *may*
 		 * contain 'hard-coded' quests.
 		 */
-		j=rand_range(1,MAX_CAVES)-1;
-		while((q_list[i].level <= dun_defs[j].offset) ||
-			      (q_list[i].level >= dun_defs[j].max_level + dun_defs[j].offset) ||
-				  (q_list[i].level == dun_defs[j].first_level + dun_defs[j].offset) ||
-				  (q_list[i].level == dun_defs[j].second_level + dun_defs[j].offset))
+		do
 		{
 			j=rand_range(1,MAX_CAVES)-1;
 		}
+		while((q_list[i].level <= dun_defs[j].offset) ||
+			(q_list[i].level >= dun_defs[j].max_level + dun_defs[j].offset));
+
 		/* j now holds a valid dungeon, so set the quest and
 		 * modify its level
 		 */
@@ -3175,6 +3136,9 @@ static void player_birth_quests(void)
 
 		q_list[i].max_num = get_number_monster(i);
 	}
+
+	/* Remember the new number of quests. */
+	z_info->quests = q_max;
 }
 
 
@@ -3344,8 +3308,6 @@ static bool quick_start_character(void)
 	c_put_str(TERM_L_BLUE, player_name, 2, 13);
 
 	/* Generate quests */
-	/* Set max number of quest */
-	MAX_Q_IDX =randint(20)+10+(2*MAX_CAVES);
 	player_birth_quests();
 
 #ifdef ALLOW_AUTOROLLER
@@ -3672,9 +3634,9 @@ static bool quick_start_character(void)
 		p_ptr->ritual = MAX_TOWNS + 1;
 
 		/* Player has no house yet */
-		for(i=0;i<MAX_TOWNS;i++)
+		for(i=0;i<MAX_STORES_TOTAL;i++)
 		{
-			p_ptr->house[i] = 0;
+			store[i].bought = FALSE;
 		}
 		
 		/* Input loop */
@@ -4004,8 +3966,6 @@ static bool player_birth_aux(void)
 		clear_from(15);
 
 		/* Generate quests */
-		/* Set max number of quest */
-		MAX_Q_IDX =randint(20)+10+(2*MAX_CAVES);
 		player_birth_quests();
 
 		/* Clean up */
@@ -4023,9 +3983,9 @@ static bool player_birth_aux(void)
 		p_ptr->ritual = MAX_TOWNS + 1;
 
 		/* Player has no house yet */
-		for(i=0;i<MAX_TOWNS;i++)
+		for(i=0;i<MAX_STORES_TOTAL;i++)
 		{
-			p_ptr->house[i] = 0;
+			store[i].bought = FALSE;
 		}
 
 		/* Generate the character. */

@@ -26,7 +26,7 @@
  * can know the size, interested people can know the type, and the actual
  * data is available to the parsing routines that acknowledge the type.
  *
- * Note that MAX_CAVES, MAX_TOWNS, MAX_QUESTS, MAX_SCHOOL and MAX_SPIRITS are
+ * Note that MAX_CAVES, MAX_TOWNS, MAX_SCHOOL and MAX_SPIRITS are
  * assumed to be constant here.
  *
  * XXX XXX XXX
@@ -173,6 +173,11 @@ static byte sf_get(void)
 static void rd_byte(byte *ip)
 {
 	*ip = sf_get();
+}
+
+static void rd_char(char *ip)
+{
+	rd_byte((byte*)ip);
 }
 
 static void rd_u16b(u16b *ip)
@@ -617,7 +622,12 @@ static errr rd_store(int n)
 
 	int j;
 
-	byte own, num;
+#ifdef SF_QUEST_DIRECT
+	s16b own;
+#else /* SF_QUEST_DIRECT */
+	byte own;
+#endif /* SF_QUEST_DIRECT */
+	byte num;
 
 	/* Read the basic info */
 	rd_byte(&st_ptr->type);
@@ -626,7 +636,21 @@ static errr rd_store(int n)
 	rd_s32b(&st_ptr->store_open);
 	rd_s16b(&st_ptr->insult_cur);
 	rd_byte(&st_ptr->bought);
+#ifdef SF_QUEST_DIRECT
+	if (has_flag(SF_QUEST_DIRECT))
+	{
+		rd_s16b(&own);
+	}
+	else
+	{
+		rd_byte(&num);
+		own = convert_owner(n*MAX_OWNERS+num, sf_flags, sf_flags_now);
+		if (own < 0 || own > NUM_OWNERS) quit("Odd owner found.");
+	}
+#else /* SF_QUEST_DIRECT */
 	rd_byte(&own);
+#endif /* SF_QUEST_DIRECT */
+
 	rd_byte(&num);
 	rd_s16b(&st_ptr->good_buy);
 	rd_s16b(&st_ptr->bad_buy);
@@ -1098,10 +1122,26 @@ static void rd_extra(void)
 	rd_s16b(&p_ptr->cchi);
 	rd_u16b(&p_ptr->chi_frac);
 
+#ifdef SF_QUEST_DIRECT
+	if (has_flag(SF_QUEST_DIRECT))
+	{
+		rd_s16b(&p_ptr->max_dlv);
+	}
+	else
+	{
+		for (i = 0; i < 20; i++)
+		{
+			s16b tmp;
+			if (cur_dungeon == i) rd_s16b(&p_ptr->max_dlv);
+			else rd_s16b(&tmp);
+		}
+	}
+#else /* SF_QUEST_DIRECT */
 	for(i=0;i<MAX_CAVES;i++)
 	{
 		rd_s16b(&p_ptr->max_dlv[i]);
 	}
+#endif /* SF_QUEST_DIRECT */
 
 	/* More info */
 	strip_bytes(8);
@@ -1156,7 +1196,12 @@ static void rd_extra(void)
 	rd_u32b(&p_ptr->muta3);
 
 	rd_byte(&p_ptr->confusing);
-	for (i=0;i<MAX_TOWNS;i++) rd_byte(&p_ptr->house[i]);
+#ifdef SF_QUEST_DIRECT
+	if (!has_flag(SF_QUEST_DIRECT)) strip_bytes(8);
+#else /* SF_QUEST_DIRECT */
+	for (i=0;i<8;i++) rd_byte(&p_ptr->house[i]);
+#endif /* SF_QUEST_DIRECT */
+
 	rd_byte(&p_ptr->ritual);
 	rd_byte(&p_ptr->sneaking);
 	rd_byte(&tmp8u);
@@ -1852,16 +1897,25 @@ static errr rd_savefile_new_aux(void)
 		/* Load the Quests */
 		rd_u16b(&tmp16u);
 
+#ifdef SF_QUEST_DIRECT
+
+		/* Use the quest list from the save file. */
+		KILL(q_list);
+		C_MAKE(q_list, tmp16u, quest_type);
+
+#else /* SF_QUEST_DIRECT */
+
 		/* Incompatible save files */
 		if (tmp16u > MAX_QUESTS)
 		{
 			note(format("Too many (%u) quests!", tmp16u));
 			return (23);
 		}
-		else
-		{
-			MAX_Q_IDX = tmp16u;
-		}
+
+#endif /* SF_QUEST_DIRECT */
+
+		/* Set the number of quests globally. */
+		MAX_Q_IDX = tmp16u;
 
 		/* Load the Quests */
 		for (i = 0; i < MAX_Q_IDX; i++)
@@ -1877,6 +1931,19 @@ static errr rd_savefile_new_aux(void)
 			q_ptr->cur_num = tmp8u;
 			rd_byte(&tmp8u);
 			q_ptr->max_num = tmp8u;
+#ifdef SF_QUEST_DIRECT
+			/* Check that the quest is inside the dungeon. */
+			if (q_ptr->dungeon >= MAX_CAVES)
+			{
+				msg_print("Removing quest in vanished dungeon.");
+				q_ptr->level = q_ptr->max_num = 0;
+			}
+			else if (q_ptr->level > dun_defs[q_ptr->dungeon].max_level)
+			{
+				msg_print("Removing quest on impossible level.");
+				q_ptr->level = q_ptr->max_num = 0;
+			}
+#endif /* SF_QUEST_DIRECT */
 #ifdef SF_QUEST_UNKNOWN
 			if (has_flag(SF_QUEST_UNKNOWN))
 			{
@@ -1891,13 +1958,14 @@ static errr rd_savefile_new_aux(void)
 #ifdef SF_QUEST_KNOWN
 			if (has_flag(SF_QUEST_KNOWN))
 			{
-				rd_byte(&q_ptr->known);
+				rd_char(&tmp8u);
+				q_ptr->known = tmp8u;
 			}
 			else
 			{
 				/* The default set of known quests is the set of fixed quests. */
-				int j;
 				q_ptr->known = FALSE;
+#ifndef SF_QUEST_DIRECT /* The game doesn't track fixed quests. */
 				for (j = 0; j < MAX_CAVES; j++)
 				{
 					dun_type *d_ptr = dun_defs+j;
@@ -1905,7 +1973,8 @@ static errr rd_savefile_new_aux(void)
 					/* Wrong dungeon. */
 					if (q_ptr->dungeon != j) continue;
 
-					/* Right level. */
+					/* Wrong level. */
+					
 					if (d_ptr->first_level != q_ptr->level &&
 						d_ptr->second_level != q_ptr->level) continue;
 
@@ -1915,8 +1984,9 @@ static errr rd_savefile_new_aux(void)
 					/* Found it. */
 					break;
 				}
+#endif /* SF_QUEST_DIRECT */
 			}
-#endif
+#endif /* SF_QUEST_KNOWN */
 		}
 
 

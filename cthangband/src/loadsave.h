@@ -69,3 +69,8 @@
  * Use stacks of rods with different timeouts.
  */
 #define SF_ROD_STACKING	0x2000
+
+/*
+ * Read quests directly into q_info rather than from the dungeon definition.
+ */
+#define SF_QUEST_DIRECT	0x4000

@@ -306,7 +306,7 @@ static void room_rest(bool night)
 	cur_store_type=temp_store_type;
 	/* Reset the Store and Owner pointers */
 	st_ptr = &store[cur_store_num];
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	ot_ptr = &owners[st_ptr->owner];
 
 	p_ptr->fast = 0;			/* Timed -- Fast */
 	p_ptr->slow = 0;			/* Timed -- Slow */
@@ -2049,7 +2049,7 @@ cptr store_title(int store_num)
 	
 	cur_store_num = store_num;
 	st_ptr = &store[cur_store_num];
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	ot_ptr = &owners[st_ptr->owner];
 	cur_store_type = st_ptr->type;
 
 	/* Determine the title. */
@@ -2614,7 +2614,7 @@ static void service_help(byte type)
 			}			
 			break;
 		case STORE_HALL: /* Buy a house */
-			msg_format("Gives you a house in %s to store your belongings.", town_defs[cur_town].name);
+			msg_format("Gives you a house in %s to store your belongings.", town_name+town_defs[cur_town].name);
 			break;
 		case 128: case 129: case 130: case 131:
 		case 132: case 133: case 134: case 135: /* Associate with spirit */
@@ -3579,6 +3579,16 @@ static void store_sell(void)
 
 
 
+store_type *find_house(int town)
+{
+	int j;
+	for (j = 0; j < town_defs[town].numstores; j++)
+	{
+		store_type *st_ptr = &store[j+MAX_STORES_PER_TOWN * town];
+		if (st_ptr->type == STORE_HOME) return st_ptr;
+	}
+	return NULL;
+}
 
 
 /*
@@ -3940,7 +3950,8 @@ static void store_process_command(void)
 				   }
 			   case STORE_HALL:
 				   {
-					   if (p_ptr->house[cur_town] == 1)
+						store_type *h_ptr = find_house(cur_town);
+					   if (h_ptr && h_ptr->bought)
 					   {
 						   msg_format("You already have the deeds!");
 					   }
@@ -3966,7 +3977,7 @@ static void store_process_command(void)
 									/* Be happy */
 									decrease_insults();
 									store_prt_gold();
-									p_ptr->house[cur_town] = 1;
+									h_ptr->bought = 1;
 									msg_format("You may move in at once.");
 								}
 								p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -4450,6 +4461,13 @@ void do_cmd_store(void)
 
 	which = get_which_store();
 
+	/* Paranoia - not a real shop. */
+	if (which < 0)
+	{
+		msg_print("The shop is empty...");
+		return;
+	}
+
 	/* Check for 'Ironman' option */
 
 	if((ironman_shop) && (store[which].type != STORE_LIBRARY))
@@ -4466,17 +4484,16 @@ void do_cmd_store(void)
 	}
 
 	/* Can't enter house unless you own it */
-	if((store[which].type == STORE_HOME) && (p_ptr->house[cur_town] == 0) && (store[which].bought == 0))
+	if((store[which].type == STORE_HOME) && (store[which].bought == 0))
 	{
 		msg_print("The door is locked.");
 		return;
 	}
 
 	/* Unless, of course, you're buying */
-	if((store[which].type == STORE_HOME) && (p_ptr->house[cur_town] == 1) && (store[which].bought == 0))
+	if((store[which].type == STORE_HOME) && (store[which].bought == 1))
 	{
-		store[which].bought = 1;
-		p_ptr->house[cur_town] = 0;
+		store[which].bought = 2;
 		msg_print("You unlock your new house.");
 		return;
 	}
@@ -4511,7 +4528,7 @@ void do_cmd_store(void)
 	/* Save the store and owner pointers */
 	st_ptr = &store[cur_store_num];
 	cur_store_type=st_ptr->type;
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	ot_ptr = &owners[st_ptr->owner];
 
 
 	/* Start at the beginning */
@@ -4693,13 +4710,23 @@ void store_shuffle(int which)
 	st_ptr = &store[cur_store_num];
 
 	/* Pick a new owner */
-	for (j = st_ptr->owner; j == st_ptr->owner; )
+	while (1)
 	{
-		st_ptr->owner = (byte)(rand_int(MAX_OWNERS)); 
+		j = rand_int(NUM_OWNERS);
+
+		/* Same shopkeeper. */
+		if (j == st_ptr->owner) continue;
+
+		/* Wrong type of shopkeeper. */
+		if (owners[j].shop_type != store[which].type) continue;
+
+		/* Accept the owner. */
+		st_ptr->owner = j;
+		break;
 	}
 
 	/* Activate the new owner */
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	ot_ptr = &owners[st_ptr->owner];
 
 
 	/* Reset the owner data */
@@ -4748,7 +4775,7 @@ void store_maint(int which)
 	st_ptr = &store[cur_store_num];
 
 	/* Activate the owner */
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	ot_ptr = &owners[st_ptr->owner];
 
 
 	/* Store keeper forgives the player */
@@ -4868,12 +4895,19 @@ void store_init(int which)
 	/* Tell the store what type it is */
 	st_ptr->type = cur_store_type;
 
+	/* Don't do much with non-existant stores. */
+	if (cur_store_type == STORE_NONE) return;
+
 	/* Pick an owner */
-	st_ptr->owner = (byte)(rand_int(MAX_OWNERS));
+	do
+	{
+		st_ptr->owner = (byte)(rand_int(NUM_OWNERS));
+	}
+	while (owners[st_ptr->owner].shop_type != st_ptr->type);
 	st_ptr->bought = 0;
 
 	/* Activate the new owner */
-	ot_ptr = &owners[cur_store_num][st_ptr->owner];
+	ot_ptr = &owners[st_ptr->owner];
 
 	/* Initialize the store */
 	st_ptr->store_open = 0;
@@ -4904,7 +4938,7 @@ static int get_which_store(void)
 {
 	int i;
 
-	for(i= (MAX_STORES_PER_TOWN * cur_town); i < ((MAX_STORES_PER_TOWN * cur_town) + (town_defs[cur_town].numstores)); i++)
+	for(i= (MAX_STORES_PER_TOWN * cur_town); i < (MAX_STORES_PER_TOWN * (cur_town+1)); i++)
 	{
 		if((px == store[i].x) && (py == store[i].y))
 		{
@@ -4912,7 +4946,7 @@ static int get_which_store(void)
 		}
 	}
 	/* Should never get to here, but just in case... */
-	return 1;
+	return -1;
 }
 
 /*
