@@ -1200,8 +1200,6 @@ void do_cmd_read_scroll(int item)
 
 	object_type		*o_ptr;
 
-    char  Rumor[80] ;
-
 	/* Check some conditions */
 	if (p_ptr->blind)
 	{
@@ -1665,7 +1663,6 @@ void do_cmd_read_scroll(int item)
                     msg_format("%v", get_rnd_line_f1, "rumors.txt");
 
             }
-            msg_format("%s", Rumor);
             msg_print(NULL);
             msg_print("The scroll disappears in a puff of smoke!");
             ident = TRUE;
