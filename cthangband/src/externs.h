@@ -556,7 +556,7 @@ extern bool get_name(void);
 #if (defined(DUNGEON_C) || defined(FILES_C))
 extern void do_cmd_suicide(void);
 #endif
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C))
+#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C))
 extern void do_cmd_save_game(bool is_autosave);
 #endif
 #if (defined(FILES_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C))

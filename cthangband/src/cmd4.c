@@ -606,6 +606,9 @@ void opt_special_effect(const option_type * const op_ptr)
 {
 	if (op_ptr->o_page == OPTS_CHEAT)
 	{
+		/* Hack - save the game when the player first starts cheating. */
+		if (!noscore) do_cmd_save_game(TRUE);
+
 		noscore |= (1L<<op_ptr->o_bit);
 	}
 	if (op_ptr->o_var == &equippy_chars)
