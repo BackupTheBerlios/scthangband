@@ -3875,6 +3875,36 @@ static FILE *show_fopen(hyperlink_type *h_ptr, cptr path, cptr name)
 }
 
 /*
+ * A wrapper around my_fgets() which doesn't treat overflow as an error, but
+ * appends \n to calls which don't overflow.
+ */
+static errr my_fgets_long(char *buf, size_t n, FILE *fff)
+{
+	errr err;
+
+	/* Paranoia - no room for anything. */
+	if (!n) return PARSE_ERROR_OUT_OF_MEMORY;
+
+	err = my_fgets(fff, buf, n-1);
+	switch (err)
+	{
+		case FILE_ERROR_OVERFLOW:
+		{
+			return SUCCESS;
+		}
+		case SUCCESS:
+		{
+			strcat(buf, "\n");
+			return SUCCESS;
+		}
+		default:
+		{
+			return err;
+		}
+	}
+}
+
+/*
  * Copy a reflowed version of a file to a temporary file, return a pointer to
  * the latter and store its name in h_ptr->path.
  *
@@ -3892,7 +3922,7 @@ static FILE *reflow_file(FILE *fff, hyperlink_type *h_ptr)
 
 	/* Don't use my_fgets as that needs short lines and it will process the
 	 * output file anyway. */
-	for (x = 0, skip = FALSE; fgets(h_ptr->rbuf, 1024, fff); )
+	for (x = 0, skip = FALSE; !my_fgets_long(h_ptr->rbuf, 1024, fff); )
 	{
 		/* Skip game links. */
 		if (prefix(h_ptr->rbuf, CC_LINK_PREFIX)) continue;
@@ -4176,7 +4206,7 @@ void win_help_display_aux(FILE *fff)
 	if (!((ftmp = my_fopen_temp(h_ptr->path, sizeof(h_ptr->path))))) return;
 
 	/* Copy the rest of this section. */
-	while (fgets(h_ptr->rbuf, 1024, fff) &&
+	while (!my_fgets_long(h_ptr->rbuf, 1024, fff) &&
 		!prefix(h_ptr->rbuf, CC_LINK_PREFIX))
 	{
 		fprintf(ftmp, "%s", h_ptr->rbuf);

@@ -3614,19 +3614,32 @@ void win_help_display(void)
 
 		Term_gotoxy(0,0);
 
-		while (fgets(buf, 1024, fff))
+		while (1)
 		{
-			/* Not an option heading. */
-			if (!prefix(buf, CC_LINK_PREFIX)) continue;
+			errr err = my_fgets(fff, buf, 1024);
 
-			/* Not this option heading. */
-			if (!strstr(buf+strlen(CC_LINK_PREFIX), CUR_HELP_STR)) continue;
+			/* Something went wrong. */
+			if (err != SUCCESS && err != FILE_ERROR_OVERFLOW) break;
 
-			win_help_display_aux(fff);
+			/* Found an option heading. */
+			if (prefix(buf, CC_LINK_PREFIX) &&
 
-			/* Only expect one match. */
-			my_fclose(fff);
-			return;
+			/* Found this option heading. */
+				strstr(buf+strlen(CC_LINK_PREFIX), CUR_HELP_STR))
+			{
+				/* Paranoia - option heading lines should be short. */
+				while (err == FILE_ERROR_OVERFLOW)
+					err = my_fgets(fff, buf, 1024);
+
+				win_help_display_aux(fff);
+
+				/* Only expect one match. */
+				my_fclose(fff);
+				return;
+			}
+
+			/* Find the end of the line. */
+			while (err == FILE_ERROR_OVERFLOW) err = my_fgets(fff, buf, 1024);
 		}
 
 		my_fclose(fff);
