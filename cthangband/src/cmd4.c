@@ -241,11 +241,13 @@ void do_cmd_messages(void)
 	/* Process requests until done */
 	while (1)
 	{
+		const int max = Term->hgt-4, prompty = max+3;
+
 		/* Clear screen */
 		Term_clear();
 
 		/* Dump up to 20 lines of messages */
-		for (j = 0; (j < 20) && (i + j < n); j++)
+		for (j = 0; (j < max) && (i + j < n); j++)
 	{
 			cptr msg = message_str((short)(i+j));
 
@@ -253,7 +255,7 @@ void do_cmd_messages(void)
 			msg = (strlen(msg) >= (size_t)q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, TERM_WHITE, msg);
+			Term_putstr(0, max+1-j, -1, TERM_WHITE, msg);
 
 			/* Hilite "shower" */
 			if (shower[0])
@@ -266,7 +268,7 @@ void do_cmd_messages(void)
 					int len = strlen(shower);
 
 					/* Display the match */
-					Term_putstr(str-msg, 21-j, len, TERM_YELLOW, shower);
+					Term_putstr(str-msg, max+1-j, len, TERM_YELLOW, shower);
 
 					/* Advance */
 					str += len;
@@ -279,7 +281,7 @@ void do_cmd_messages(void)
 		    i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
+		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", prompty, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -314,7 +316,7 @@ void do_cmd_messages(void)
 		if (k == '=')
 		{
 			/* Prompt */
-			prt("Show: ", 23, 0);
+			prt("Show: ", prompty, 0);
 
 			/* Get a "shower" string, or continue */
 			if (!askfor_aux(shower, 80)) continue;
@@ -329,7 +331,7 @@ void do_cmd_messages(void)
 			int z;
 
 			/* Prompt */
-			prt("Find: ", 23, 0);
+			prt("Find: ", prompty, 0);
 
 			/* Get a "finder" string, or continue */
 			if (!askfor_aux(finder, 80)) continue;
@@ -365,28 +367,28 @@ void do_cmd_messages(void)
 		if (k == '+')
 	{
 			/* Go older if legal */
-			if (i + 10 < n) i += 10;
+			if (i + max/2 < n) i += max/2;
 		}
 
 		/* Recall 20 older messages */
 		if ((k == 'p') || (k == KTRL('P')) || (k == ' '))
 		{
 			/* Go older if legal */
-			if (i + 20 < n) i += 20;
+			if (i + max < n) i += max;
 		}
 
 		/* Recall 20 newer messages */
 		if ((k == 'n') || (k == KTRL('N')))
 			{
 			/* Go newer (if able) */
-			i = (i >= 20) ? (i - 20) : 0;
+			i = (i >= max) ? (i - max) : 0;
 			}
 
 		/* Recall 10 newer messages */
 		if (k == '-')
 		{
 			/* Go newer (if able) */
-			i = (i >= 10) ? (i - 10) : 0;
+			i = (i >= max/2) ? (i - max/2) : 0;
 		}
 
 		/* Recall 1 newer messages */
