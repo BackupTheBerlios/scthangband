@@ -883,7 +883,7 @@ static void rd_options(void)
 		if (o2_ptr->o_page != OPTS_BIRTHR) continue;
 
 		/* Only set previously undefined options. */
-		if (~mask[o2_ptr->o_set] & (1L << o2_ptr->o_bit)) continue;
+		if (mask[o2_ptr->o_set] & (1L << o2_ptr->o_bit)) continue;
 
 		/* Copy the BIRTH option to the BIRTHR equivalent. */
 		o2_ptr->o_var[0] = op_ptr->o_var[0];

@@ -11,6 +11,7 @@ sCthangband _CVS_
   * Starting the game with -n gave too many quests.
   * Town monsters could be created elsewhere at level generation, and nothing
     could be produced in the town.
+  * Birth options were set to the user-defined value inappropriately on loading.
 
 sCthangband 1.0.13
 * Monsters do not recover from fear if they have too few HP to survive one of
