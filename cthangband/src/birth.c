@@ -3281,26 +3281,264 @@ static void roll_stats_auto(bool point_mod)
 	}
 }
 
-/*
- * Roll some stats. Return TRUE if the player finished with ESCAPE, FALSE
- * on S.
- */
-#if 0 /* Obsolete, left here as a reminder. */
-static bool roll_stats(void)
+
+static bool quick_start_character(void)
 {
+	int i, j, k, m;
+
+	int mode = 0;
+
+	bool flag = FALSE;
+	bool prev = FALSE;
+
+	cptr str;
+
+	char c = UNREAD_VALUE;
+
 	char b1 = '[';
 	char b2 = ']';
-	char c;
 
-	bool prev = FALSE;
+
+	/*** Player sex ***/
+	/* Set sex */
+	p_ptr->psex =(char)rand_range(0,1);
+	sp_ptr = &sex_info[p_ptr->psex];
+	str = sp_ptr->title;
+	/* Display */
+	c_put_str(TERM_L_BLUE, str, 3, 15);
+	
+	/*** Player race ***/
+	/* Set race */
+	k=rand_range(0,MAX_RACES-1);
+	p_ptr->prace = k;
+	rp_ptr = &race_info[p_ptr->prace];
+	str = rp_ptr->title;
+	/* Display */
+	c_put_str(TERM_L_BLUE, str, 4, 15);
+	/*** Player template ***/
+	while(1)
+	{
+		p_ptr->ptemplate = (char)rand_range(0,MAX_TEMPLATE-1);
+		/* Analyze */
+		cp_ptr = &template_info[p_ptr->ptemplate];
+		str = cp_ptr->title;
+
+		if (rp_ptr->choice & (1L << p_ptr->ptemplate )) break;
+	}
+	/* Display */
+	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
+	
+	/* Get skill values */
+	get_starting_skills();
+	get_hermetic_skills_randomly();
+	get_init_spirit(FALSE);
+	get_random_skills(TRUE);
+
+	/* Get a random name */
+	create_random_name(p_ptr->prace,player_name);
+	/* Display */
+	c_put_str(TERM_L_BLUE, player_name, 2, 13);
+
+	/* Generate quests */
+	/* Set max number of quest */
+	MAX_Q_IDX =randint(20)+10+(2*MAX_CAVES);
+	player_birth_quests();
+
+#ifdef ALLOW_AUTOROLLER
+	/* Initialize */
+	if (USE_AUTOROLLER && !spend_points)
+	{
+		int mval[A_MAX];
+		/* Clear fields */
+		auto_round = 0L;
+		last_round = 0L;
+		/* Clean up */
+		clear_from(10);
+		/* Prompt for the minimum stats */
+		put_str("Enter minimum attribute for: ", 15, 2);
+		/* Output the maximum stats */
+		for (i = 0; i < A_MAX; i++)
+		{
+			/* Reset the "success" counter */
+			stat_match[i] = 0;
+			/* Race/Template bonus */
+			j = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+			/* Obtain the "maximal" stat */
+			m = adjust_stat(17, (s16b)j, TRUE);
+			/* Save the maximum */
+			mval[i] = m;
+		}
+		/* Hack in the minimum stats */
+		for (i = 0; i < A_MAX; i++)
+		{
+			stat_limit[i] = 0;
+		}
+		/* Save the minimum stat depending on template */
+		switch(p_ptr->ptemplate)
+		{
+		case TPL_ADVENTURER:
+			stat_limit[A_STR]=mval[A_STR]-1;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			stat_limit[A_CON]=mval[A_CON]-2;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			stat_limit[A_DEX]=mval[A_DEX]-4;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			break;
+		case TPL_SWASHBUCKLER:
+			stat_limit[A_DEX]=mval[A_DEX]-1;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			stat_limit[A_STR]=mval[A_STR]-2;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			stat_limit[A_CHR]=mval[A_CHR]-4;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			break;
+		case TPL_GLADIATOR:
+			stat_limit[A_CON]=mval[A_CON]-1;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			stat_limit[A_STR]=mval[A_STR]-2;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			stat_limit[A_DEX]=mval[A_DEX]-4;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			break;
+		case TPL_WARRIOR_MONK:
+			stat_limit[A_DEX]=mval[A_DEX]-1;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			stat_limit[A_CON]=mval[A_CON]-2;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			stat_limit[A_STR]=mval[A_STR]-4;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			break;
+		case TPL_ZEN_MONK:
+			stat_limit[A_DEX]=mval[A_DEX]-1;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			stat_limit[A_WIS]=mval[A_WIS]-2;
+			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
+			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
+			stat_limit[A_CON]=mval[A_CON]-4;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			break;
+		case TPL_ASSASSIN:
+			stat_limit[A_DEX]=mval[A_DEX]-1;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			stat_limit[A_CON]=mval[A_CON]-2;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			stat_limit[A_INT]=mval[A_INT]-4;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			break;
+		case TPL_RANGER:
+			stat_limit[A_CON]=mval[A_CON]-1;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			stat_limit[A_CHR]=mval[A_CHR]-2;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			stat_limit[A_DEX]=mval[A_DEX]-4;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			break;
+		case TPL_SHAMAN:
+			stat_limit[A_CHR]=mval[A_CHR]-1;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			stat_limit[A_WIS]=mval[A_WIS]-2;
+			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
+			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
+			stat_limit[A_CON]=mval[A_CON]-4;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			break;
+		case TPL_MINDCRAFTER:
+			stat_limit[A_WIS]=mval[A_WIS]-1;
+			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
+			stat_limit[A_INT]=mval[A_INT]-2;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			stat_limit[A_CON]=mval[A_CON]-4;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			break;
+		case TPL_MAGE:
+			stat_limit[A_INT]=mval[A_INT]-1;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			stat_limit[A_DEX]=mval[A_DEX]-2;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
+			stat_limit[A_CON]=mval[A_CON]-4;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			break;
+		case TPL_WARLOCK:
+			stat_limit[A_CON]=mval[A_CON]-1;
+			if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
+			stat_limit[A_INT]=mval[A_INT]-2;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			stat_limit[A_STR]=mval[A_STR]-4;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
+			break;
+		case TPL_POWERWEAVER:
+			stat_limit[A_INT]=mval[A_INT]-1;
+			if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
+			stat_limit[A_WIS]=mval[A_WIS]-2;
+			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
+			if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
+			stat_limit[A_CHR]=mval[A_CHR]-4;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
+			break;
+		case TPL_TOURIST:
+			/* No stat limits */
+			break;
+		}
+	}
+
+#endif /* ALLOW_AUTOROLLER */
+
+	/* Clean up */
+	clear_from(10);
+
+
+	/*** Generate ***/
 
 	/* Roll */
 	while (TRUE)
 	{
-		int mode;
-
 		/* Feedback */
-		if (USE_AUTOROLLER)
+		if (USE_AUTOROLLER && !spend_points)
 		{
 			Term_clear();
 
@@ -3330,15 +3568,72 @@ static bool roll_stats(void)
 
 			/* Label count */
 			put_str("Round:", 9, 61);
-
-			/* Roll for it. */
-			roll_stats_auto(FALSE);
 		}
 
 		/* Otherwise just get a character */
 		else
 		{
+			/* Get a new character */
 			get_stats();
+		}
+
+		/* Auto-roll */
+		while (USE_AUTOROLLER && !spend_points)
+		{
+			bool accept = TRUE;
+
+			/* Get a new character */
+			get_stats();
+
+			/* Advance the round */
+			auto_round++;
+
+			/* Hack -- Prevent overflow */
+			if (auto_round >= 1000000L) break;
+
+			/* Check and count acceptable stats */
+			for (i = 0; i < A_MAX; i++)
+			{
+				/* This stat is okay */
+				if (p_ptr->stat_use[i] >= stat_limit[i])
+				{
+					stat_match[i]++;
+				}
+
+				/* This stat is not okay */
+				else
+				{
+					accept = FALSE;
+				}
+			}
+
+			/* Break if "happy" */
+			if (accept) break;
+
+			/* Take note every 25 rolls */
+			flag = (!(auto_round % 25L));
+
+			/* Update display occasionally */
+			if (flag || (auto_round < last_round + 100))
+			{
+				/* Dump data */
+				birth_put_stats();
+
+				/* Dump round */
+				put_str(format("%6ld", auto_round), 9, 73);
+
+				/* Make sure they see everything */
+				Term_fresh();
+
+				/* Delay 1/10 second */
+				if (flag) Term_xtra(TERM_XTRA_DELAY, z_info->ar_delay);
+
+				/* Do not wait for a key */
+				inkey_scan = TRUE;
+
+				/* Check for a keypress */
+				if (inkey()) break;
+			}
 		}
 
 		/* Flush input */
@@ -3365,7 +3660,21 @@ static bool roll_stats(void)
 		/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
 		p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
 
+		p_ptr->muta1 = 0;
+		p_ptr->muta2 = 0;
+		p_ptr->muta3 = 0;
+
+		/* Player has no recal ritual yet */
+		p_ptr->ritual = MAX_TOWNS + 1;
+
+		/* Player has no house yet */
+		for(i=0;i<MAX_TOWNS;i++)
+		{
+			p_ptr->house[i] = 0;
+		}
+		
 		/* Input loop */
+		if (!spend_points)
 		while (TRUE)
 		{
 			/* Calculate the bonuses and hitpoints */
@@ -3376,10 +3685,11 @@ static bool roll_stats(void)
 
 			/* Fully healed */
 			p_ptr->chp = p_ptr->mhp;
-	
+
 			/* Fully rested */
 			p_ptr->csp = p_ptr->msp;
 			p_ptr->cchi = p_ptr->mchi;
+			p_ptr->energy = 1050; /* Should this be based on TURN_ENERGY? */
 
 			/* Display the player */
 			display_player(mode);
@@ -3450,10 +3760,8 @@ static bool roll_stats(void)
 
 	/*** Finish up ***/
 
-	/* Get a name, recolor it, prepare savefile */
+	/* Allow name to be edited, recolor it, prepare savefile */
 
-	/* Allow name to be edited, recolor it, prepare savefile
-	 * The user has already had an opportunity to do so with point_mod */
 	get_name();
 
 
@@ -3470,9 +3778,8 @@ static bool roll_stats(void)
 	if (c == 'S') return (FALSE);
 
 	/* Accept */
-	return (TRUE);
+	return TRUE;
 }
-#endif
 
 /*
  * Helper function for 'player_birth()'
@@ -3483,27 +3790,15 @@ static bool roll_stats(void)
  */
 static bool player_birth_aux(void)
 {
-	int i, j, k, m, n, v;
-
-	int mode = 0;
-
-	bool flag = FALSE;
-	bool prev = FALSE;
+	int i, k, n;
 
 	cptr str;
 
 	char c;
 
 	char p2 = ')';
-	char b1 = '[';
-	char b2 = ']';
 
 	char buf[80];
-
-	bool autoroll = FALSE;
-	bool point_mod = TRUE;
-
-	char inp[80];
 
 	/*** Intro ***/
 
@@ -3562,508 +3857,16 @@ static bool player_birth_aux(void)
 		else bell();
 	}
 
-	/* Now set point_mod and autoroll correctly. */
-	point_mod = spend_points;
-
-	/* Decide whether to use the autoroller or point_mod interface.
-	 * Note that setting both now gives a point_mod interface with the
-	 * ability to use the autoroller.
-	 */
-	point_mod = spend_points;
-	autoroll = USE_AUTOROLLER && !spend_points;
-
 	/* Clean up */
 	clear_from(15);
 	
 	if ((c == 'Y') || (c == 'y'))
 	{
-	
-		/*** Player sex ***/
-		/* Set sex */
-		p_ptr->psex =(char)rand_range(0,1);
-		sp_ptr = &sex_info[p_ptr->psex];
-		str = sp_ptr->title;
-		/* Display */
-		c_put_str(TERM_L_BLUE, str, 3, 15);
-		
-		/*** Player race ***/
-		/* Set race */
-		k=rand_range(0,MAX_RACES-1);
-		p_ptr->prace = k;
-		rp_ptr = &race_info[p_ptr->prace];
-		str = rp_ptr->title;
-		/* Display */
-		c_put_str(TERM_L_BLUE, str, 4, 15);
-		/*** Player template ***/
-		while(1)
-		{
-			p_ptr->ptemplate = (char)rand_range(0,MAX_TEMPLATE-1);
-			/* Analyze */
-			cp_ptr = &template_info[p_ptr->ptemplate];
-			str = cp_ptr->title;
-
-			if (rp_ptr->choice & (1L << p_ptr->ptemplate )) break;
-		}
-		/* Display */
-		c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
-		
-		/* Get skill values */
-		get_starting_skills();
-		get_hermetic_skills_randomly();
-		get_init_spirit(FALSE);
-		get_random_skills(TRUE);
-
-		/* Get a random name */
-		create_random_name(p_ptr->prace,player_name);
-		/* Display */
-		c_put_str(TERM_L_BLUE, player_name, 2, 13);
-
-		/* Generate quests */
-		/* Set max number of quest */
-		MAX_Q_IDX =randint(20)+10+(2*MAX_CAVES);
-		player_birth_quests();
-
-#ifdef ALLOW_AUTOROLLER
-		/* Set "autoroll" */
-		autoroll = TRUE;
-		/* Initialize */
-		if (autoroll)
-		{
-			int mval[A_MAX];
-			/* Clear fields */
-			auto_round = 0L;
-			last_round = 0L;
-			/* Clean up */
-			clear_from(10);
-			/* Prompt for the minimum stats */
-			put_str("Enter minimum attribute for: ", 15, 2);
-			/* Output the maximum stats */
-			for (i = 0; i < A_MAX; i++)
-			{
-				/* Reset the "success" counter */
-				stat_match[i] = 0;
-				/* Race/Template bonus */
-				j = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
-				/* Obtain the "maximal" stat */
-				m = adjust_stat(17, (s16b)j, TRUE);
-				/* Save the maximum */
-				mval[i] = m;
-			}
-			/* Hack in the minimum stats */
-			for (i = 0; i < A_MAX; i++)
-			{
-				stat_limit[i] = 0;
-			}
-			/* Save the minimum stat depending on template */
-			switch(p_ptr->ptemplate)
-			{
-			case TPL_ADVENTURER:
-				stat_limit[A_STR]=mval[A_STR]-1;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				stat_limit[A_CON]=mval[A_CON]-2;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				stat_limit[A_DEX]=mval[A_DEX]-4;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				break;
-			case TPL_SWASHBUCKLER:
-				stat_limit[A_DEX]=mval[A_DEX]-1;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				stat_limit[A_STR]=mval[A_STR]-2;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				stat_limit[A_CHR]=mval[A_CHR]-4;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				break;
-			case TPL_GLADIATOR:
-				stat_limit[A_CON]=mval[A_CON]-1;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				stat_limit[A_STR]=mval[A_STR]-2;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				stat_limit[A_DEX]=mval[A_DEX]-4;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				break;
-			case TPL_WARRIOR_MONK:
-				stat_limit[A_DEX]=mval[A_DEX]-1;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				stat_limit[A_CON]=mval[A_CON]-2;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				stat_limit[A_STR]=mval[A_STR]-4;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				break;
-			case TPL_ZEN_MONK:
-				stat_limit[A_DEX]=mval[A_DEX]-1;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				stat_limit[A_WIS]=mval[A_WIS]-2;
-				if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-				if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-				stat_limit[A_CON]=mval[A_CON]-4;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				break;
-			case TPL_ASSASSIN:
-				stat_limit[A_DEX]=mval[A_DEX]-1;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				stat_limit[A_CON]=mval[A_CON]-2;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				stat_limit[A_INT]=mval[A_INT]-4;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				break;
-			case TPL_RANGER:
-				stat_limit[A_CON]=mval[A_CON]-1;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				stat_limit[A_CHR]=mval[A_CHR]-2;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				stat_limit[A_DEX]=mval[A_DEX]-4;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				break;
-			case TPL_SHAMAN:
-				stat_limit[A_CHR]=mval[A_CHR]-1;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				stat_limit[A_WIS]=mval[A_WIS]-2;
-				if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-				if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-				stat_limit[A_CON]=mval[A_CON]-4;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				break;
-			case TPL_MINDCRAFTER:
-				stat_limit[A_WIS]=mval[A_WIS]-1;
-				if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-				stat_limit[A_INT]=mval[A_INT]-2;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				stat_limit[A_CON]=mval[A_CON]-4;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				break;
-			case TPL_MAGE:
-				stat_limit[A_INT]=mval[A_INT]-1;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				stat_limit[A_DEX]=mval[A_DEX]-2;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				if (stat_limit[A_DEX] > 18) stat_limit[A_DEX] -= 9;
-				stat_limit[A_CON]=mval[A_CON]-4;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				break;
-			case TPL_WARLOCK:
-				stat_limit[A_CON]=mval[A_CON]-1;
-				if (stat_limit[A_CON] > 18) stat_limit[A_CON] -= 9;
-				stat_limit[A_INT]=mval[A_INT]-2;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				stat_limit[A_STR]=mval[A_STR]-4;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				if (stat_limit[A_STR] > 18) stat_limit[A_STR] -= 9;
-				break;
-			case TPL_POWERWEAVER:
-				stat_limit[A_INT]=mval[A_INT]-1;
-				if (stat_limit[A_INT] > 18) stat_limit[A_INT] -= 9;
-				stat_limit[A_WIS]=mval[A_WIS]-2;
-				if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-				if (stat_limit[A_WIS] > 18) stat_limit[A_WIS] -= 9;
-				stat_limit[A_CHR]=mval[A_CHR]-4;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				if (stat_limit[A_CHR] > 18) stat_limit[A_CHR] -= 9;
-				break;
-			case TPL_TOURIST:
-				/* No stat limits */
-				break;
-			}
-		}
-
-#endif /* ALLOW_AUTOROLLER */
-
-		/* Clean up */
-		clear_from(10);
-
-
-		/*** Generate ***/
-
-		/* Roll */
-		while (TRUE)
-		{
-			/* Feedback */
-			if (autoroll)
-			{
-				Term_clear();
-
-				put_str("Name        :", 2, 1);
-				put_str("Sex         :", 3, 1);
-				put_str("Race        :", 4, 1);
-				put_str("Template    :", 5, 1);
-
-				c_put_str(TERM_L_BLUE, player_name, 2, 15);
-				c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
-				c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 15);
-				c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
-
-				/* Label stats */
-				put_str("STR:", 2 + A_STR, 61);
-				put_str("INT:", 2 + A_INT, 61);
-				put_str("WIS:", 2 + A_WIS, 61);
-				put_str("DEX:", 2 + A_DEX, 61);
-				put_str("CON:", 2 + A_CON, 61);
-				put_str("CHR:", 2 + A_CHR, 61);
-
-				/* Note when we started */
-				last_round = auto_round;
-
-				/* Indicate the state */
-				put_str("(Hit ESC to abort)", 11, 61);
-
-				/* Label count */
-				put_str("Round:", 9, 61);
-			}
-
-			/* Otherwise just get a character */
-			else
-			{
-				/* Get a new character */
-				get_stats();
-			}
-
-			/* Auto-roll */
-			while (autoroll)
-			{
-				bool accept = TRUE;
-
-				/* Get a new character */
-				get_stats();
-
-				/* Advance the round */
-				auto_round++;
-
-				/* Hack -- Prevent overflow */
-				if (auto_round >= 1000000L) break;
-
-				/* Check and count acceptable stats */
-				for (i = 0; i < A_MAX; i++)
-				{
-					/* This stat is okay */
-					if (p_ptr->stat_use[i] >= stat_limit[i])
-					{
-						stat_match[i]++;
-					}
-
-					/* This stat is not okay */
-					else
-					{
-						accept = FALSE;
-					}
-				}
-
-				/* Break if "happy" */
-				if (accept) break;
-
-				/* Take note every 25 rolls */
-				flag = (!(auto_round % 25L));
-
-				/* Update display occasionally */
-				if (flag || (auto_round < last_round + 100))
-				{
-					/* Dump data */
-					birth_put_stats();
-
-					/* Dump round */
-					put_str(format("%6ld", auto_round), 9, 73);
-
-					/* Make sure they see everything */
-					Term_fresh();
-
-					/* Delay 1/10 second */
-					if (flag) Term_xtra(TERM_XTRA_DELAY, z_info->ar_delay);
-
-					/* Do not wait for a key */
-					inkey_scan = TRUE;
-
-					/* Check for a keypress */
-					if (inkey()) break;
-				}
-			}
-
-			/* Flush input */
-			flush();
-
-
-			/*** Display ***/
-
-			/* Mode */
-			mode = 0;
-
-			/* Roll for base hitpoints */
-			get_extra();
-
-			/* Roll for age/height/weight */
-			get_ahw();
-
-			/* Roll for social class */
-			get_history();
-
-			/* Roll for gold */
-			get_money(TRUE);
-
-			/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
-			p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
-
-			p_ptr->muta1 = 0;
-			p_ptr->muta2 = 0;
-			p_ptr->muta3 = 0;
-
-			/* Player has no recal ritual yet */
-			p_ptr->ritual = MAX_TOWNS + 1;
-
-			/* Player has no house yet */
-			for(i=0;i<MAX_TOWNS;i++)
-			{
-				p_ptr->house[i] = 0;
-			}
-			
-			/* Input loop */
-			if (!point_mod)
-			while (TRUE)
-			{
-				/* Calculate the bonuses and hitpoints */
-				p_ptr->update |= (PU_BONUS | PU_HP);
-
-				/* Update stuff */
-				update_stuff();
-
-				/* Fully healed */
-				p_ptr->chp = p_ptr->mhp;
-	
-				/* Fully rested */
-				p_ptr->csp = p_ptr->msp;
-				p_ptr->cchi = p_ptr->mchi;
-				p_ptr->energy = 1050; /* Should this be based on TURN_ENERGY? */
-
-				/* Display the player */
-				display_player(mode);
-
-				/* Prepare a prompt (must squeeze everything in) */
-				Term_gotoxy(2, 23);
-				Term_addch(TERM_WHITE, b1);
-				Term_addstr(-1, TERM_WHITE, "'r' to reroll");
-				if (prev) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
-				if (mode) Term_addstr(-1, TERM_WHITE, ", 'h' for Misc.");
-				else Term_addstr(-1, TERM_WHITE, ", 'h' for History");
-				Term_addstr(-1, TERM_WHITE, ", or ESC to accept");
-				Term_addch(TERM_WHITE, b2);
-
-				/* Prompt and get a command */
-				c = inkey();
-
-				/* Quit */
-				if (c == 'Q') quit(NULL);
-
-				/* Start over */
-				if (c == 'S') return (FALSE);
-
-				/* Escape accepts the roll */
-				if (c == ESCAPE) break;
-
-				/* Reroll this character */
-				if ((c == ' ') || (c == 'r')) break;
-
-				/* Previous character */
-				if (prev && (c == 'p'))
-				{
-					load_prev_data();
-					continue;
-				}
-
-				/* Toggle the display */
-				if ((c == 'H') || (c == 'h'))
-				{
-					mode = ((mode != 0) ? 0 : 1);
-					continue;
-				}
-
-				/* Help */
-				if (c == '?')
-				{
-					do_cmd_help(syshelpfile);
-					continue;
-				}
-
-				/* Warning */
-				bell();
-			}
-
-			/* Are we done? */
-			if (c == ESCAPE) break;
-
-			/* Save this for the "previous" character */
-			save_prev_data();
-
-			/* Note that a previous roll exists */
-			prev = TRUE;
-		}
-
-		/* Clear prompt */
-		clear_from(23);
-
-
-		/*** Finish up ***/
-
-		/* Allow name to be edited, recolor it, prepare savefile */
-
-		get_name();
-
-
-		/* Prompt for it */
-		prt("['Q' to suicide, 'S' to start over, or ESC to continue]", 23, 10);
-
-		/* Get a key */
-		c = inkey();
-
-		/* Quit */
-		if (c == 'Q') quit(NULL);
-
-		/* Start over */
-		if (c == 'S') return (FALSE);
-
-		/* Accept */
-		return TRUE;
+		return quick_start_character();
 	}
 	else /* Interactive character */
 	{
-	
+
 		/*** Choose pre-set stat set. ***/
 		if (allow_pickstats)
 		{
@@ -4078,129 +3881,119 @@ static bool player_birth_aux(void)
 		if (!p_ptr->prace)
 		{
 
-		/*** Player sex ***/
-
-		/* Extra info */
-		Term_putstr(5, 15, -1, TERM_WHITE,
-		"Your 'sex' does not have any significant gameplay effects.");
-
-		/* Prompt for "Sex" */
-		for (n = 0; n < MAX_SEXES; n++)
-		{
-			/* Analyze */
-			p_ptr->psex = n;
+			/*** Player sex ***/
+	
+			/* Extra info */
+			Term_putstr(5, 15, -1, TERM_WHITE,
+			"Your 'sex' does not have any significant gameplay effects.");
+	
+			/* Prompt for "Sex" */
+			for (n = 0; n < MAX_SEXES; n++)
+			{
+				/* Analyze */
+				p_ptr->psex = n;
+				sp_ptr = &sex_info[p_ptr->psex];
+				str = sp_ptr->title;
+	
+				/* Display */
+				sprintf(buf, "%c%c %s", I2A(n), p2, str);
+				put_str(buf, 21 + (n/5), 2 + 15 * (n%5));
+			}
+	
+			/* Choose */
+			if (birth_choice(20, MAX_SEXES, "Choose a sex", &k, FALSE) == BC_RESTART) return FALSE;
+	
+			/* Set sex */
+			p_ptr->psex = k;
 			sp_ptr = &sex_info[p_ptr->psex];
 			str = sp_ptr->title;
-
+	
 			/* Display */
-			sprintf(buf, "%c%c %s", I2A(n), p2, str);
-			put_str(buf, 21 + (n/5), 2 + 15 * (n%5));
-		}
-
-		/* Choose */
-			if (birth_choice(20, MAX_SEXES, "Choose a sex", &k, FALSE) == BC_RESTART) return FALSE;
-
-		/* Set sex */
-		p_ptr->psex = k;
-		sp_ptr = &sex_info[p_ptr->psex];
-		str = sp_ptr->title;
-
-		/* Display */
-		c_put_str(TERM_L_BLUE, str, 3, 15);
-
-		/* Clean up */
-		clear_from(15);
-
-
-		/*** Player race ***/
-
-		/* Extra info */
-		Term_putstr(5, 15, -1, TERM_WHITE,
-		"Your 'race' determines various intrinsic factors and bonuses.");
-
-		/* Dump races */
-		for (n = 0; n < MAX_RACES; n++)
-		{
-			/* Analyze */
-			p_ptr->prace = n;
+			c_put_str(TERM_L_BLUE, str, 3, 15);
+	
+			/* Clean up */
+			clear_from(15);
+	
+	
+			/*** Player race ***/
+	
+			/* Extra info */
+			Term_putstr(5, 15, -1, TERM_WHITE,
+			"Your 'race' determines various intrinsic factors and bonuses.");
+	
+			/* Dump races */
+			for (n = 0; n < MAX_RACES; n++)
+			{
+				/* Analyze */
+				p_ptr->prace = n;
+				rp_ptr = &race_info[p_ptr->prace];
+				str = rp_ptr->title;
+			
+				/* Display */
+	
+				sprintf(buf, "%c%c %s", rtoa(n), p2, str);
+				put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
+			}
+	
+			/* Choose */
+			if (birth_choice(17, MAX_RACES, "Choose a race", &k, FALSE) == BC_RESTART) return FALSE;
+	
+			/* Set race */
+			p_ptr->prace = k;
 			rp_ptr = &race_info[p_ptr->prace];
 			str = rp_ptr->title;
-		
+	
 			/* Display */
-
-			sprintf(buf, "%c%c %s", rtoa(n), p2, str);
-			put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
-		}
-
-		/* Choose */
-			if (birth_choice(17, MAX_RACES, "Choose a race", &k, FALSE) == BC_RESTART) return FALSE;
-
-		/* Set race */
-		p_ptr->prace = k;
-		rp_ptr = &race_info[p_ptr->prace];
-		str = rp_ptr->title;
-
-		/* Display */
-		c_put_str(TERM_L_BLUE, str, 4, 15);
-		
-		/* Get a random name now we have a race*/
-		create_random_name(p_ptr->prace,player_name);
-		/* Display */
-		c_put_str(TERM_L_BLUE, player_name, 2, 15);
-
-		/* Clean up */
-		clear_from(15);
-
-
-		/*** Player template ***/
-
-		/* Extra info */
-		Term_putstr(5, 15, -1, TERM_WHITE,
-		"Your 'template' determines various starting abilities and bonuses.");
-		Term_putstr(5, 16, -1, TERM_WHITE,
-		"Any entries in parentheses should only be used by advanced players.");
-
-		/* Dump templates */
-		for (n = 0; n < MAX_TEMPLATE; n++)
-		{
-			cptr mod = "";
-
-			/* Analyze */
-			p_ptr->ptemplate = n;
+			c_put_str(TERM_L_BLUE, str, 4, 15);
+			
+			/* Get a random name now we have a race*/
+			create_random_name(p_ptr->prace,player_name);
+			/* Display */
+			c_put_str(TERM_L_BLUE, player_name, 2, 15);
+	
+			/* Clean up */
+			clear_from(15);
+	
+	
+			/*** Player template ***/
+	
+			/* Extra info */
+			Term_putstr(5, 15, -1, TERM_WHITE,
+			"Your 'template' determines various starting abilities and bonuses.");
+			Term_putstr(5, 16, -1, TERM_WHITE,
+			"Any entries in parentheses should only be used by advanced players.");
+	
+			/* Dump templates */
+			for (n = 0; n < MAX_TEMPLATE; n++)
+			{
+				cptr mod = "";
+	
+				/* Analyze */
+				p_ptr->ptemplate = n;
+				cp_ptr = &template_info[p_ptr->ptemplate];
+				str = cp_ptr->title;
+	
+				if (!(rp_ptr->choice & (1L << n )))
+				{
+					sprintf(buf, "%c%c (%s)%s", I2A(n), p2, str, mod);
+				}
+				else
+				{
+					sprintf(buf, "%c%c %s%s", I2A(n), p2, str, mod);
+				}
+				/* Display */
+				put_str(buf, 19 + (n/3), 2 + 20 * (n%3));
+			}
+	
+			if (birth_choice(18, MAX_TEMPLATE, "Choose a template", &k, FALSE) == BC_RESTART) return FALSE;
+	
+			/* Set template */
+			p_ptr->ptemplate = k;
 			cp_ptr = &template_info[p_ptr->ptemplate];
 			str = cp_ptr->title;
-
-			if (!(rp_ptr->choice & (1L << n )))
-			{
-				sprintf(buf, "%c%c (%s)%s", I2A(n), p2, str, mod);
-			}
-			else
-			{
-				sprintf(buf, "%c%c %s%s", I2A(n), p2, str, mod);
-			}
+	
 			/* Display */
-			put_str(buf, 19 + (n/3), 2 + 20 * (n%3));
-		}
-
-			if (birth_choice(18, MAX_TEMPLATE, "Choose a template", &k, FALSE) == BC_RESTART) return FALSE;
-
-		/* Set template */
-		p_ptr->ptemplate = k;
-		cp_ptr = &template_info[p_ptr->ptemplate];
-		str = cp_ptr->title;
-
-		/* Display */
-		c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
-		}
-
-		/* Get initial skill values */
-		/* With point_mod, this will be done later. */
-		if (!point_mod)
-		{
-			get_starting_skills();
-			get_hermetic_skills();
-			get_init_spirit(TRUE);
-			get_random_skills(TRUE);
+			c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
 		}
 		
 		/* Clean up */
@@ -4210,118 +4003,6 @@ static bool player_birth_aux(void)
 		/* Set max number of quest */
 		MAX_Q_IDX =randint(20)+10+(2*MAX_CAVES);
 		player_birth_quests();
-
-#ifdef ALLOW_AUTOROLLER
-
-		/*** Autoroll ***/
-
-
-		/* Initialize Autoroller if necessary */
-		if (autoroll)
-		{
-			int mval[A_MAX];
-
-
-
-			/* Clear fields */
-			auto_round = 0L;
-			last_round = 0L;
-
-			/* Clean up */
-			clear_from(10);
-
-			/* Prompt for the minimum stats */
-			put_str("Enter minimum attribute for: ", 15, 2);
-
-			/* Output the maximum stats */
-			for (i = 0; i < A_MAX; i++)
-			{
-				/* Reset the "success" counter */
-				stat_match[i] = 0;
-
-				/* Race/Template bonus */
-				j = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
-
-				/* Obtain the "maximal" stat */
-				m = adjust_stat(17,(s16b) j, TRUE);
-
-				/* Save the maximum */
-				mval[i] = m;
-
-				/* Extract a textual format */
-				/* cnv_stat(m, inp); */
-
-				/* Above 18 */
-				if (m > 18)
-				{
-					sprintf(inp, "(Max of 18/%02d):", (m - 18));
-				}
-
-				/* From 3 to 18 */
-				else
-				{
-					sprintf(inp, "(Max of %2d):", m);
-				}
-
-				/* Prepare a prompt */
-				sprintf(buf, "%-5s%-20s", stat_names[i], inp);
-
-				/* Dump the prompt */
-				put_str(buf, 16 + i, 5);
-			}
-
-			/* Input the minimum stats */
-			for (i = 0; i < A_MAX; i++)
-			{
-				/* Get a minimum stat */
-				while (TRUE)
-				{
-					char *s;
-					int stat = 0;
-					
-					if (p_ptr->stat_max[0])
-					{
-						/* If there are default stats, set the default
-						 * to this one. */
-						stat = modify_stat_value(p_ptr->stat_max[i],
-						rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
-
-						cnv_stat(stat, inp);
-					}
-					else
-					{
-						/* Default */
-						*inp = '\0';
-					}
-
-					/* Move the cursor */
-					put_str("", 16 + i, 30);
-
-					/* Get a response (or escape) */
-					if (!askfor_aux(inp, 8)) inp[0] = '\0';
-
-					/* Hack -- add a fake slash */
-					strcat(inp, "/");
-
-					/* Hack -- look for the "slash" */
-					s = strchr(inp, '/');
-
-					/* Hack -- Nuke the slash */
-					*s++ = '\0';
-
-					/* Hack -- Extract an input */
-					v = atoi(inp) + atoi(s);
-
-					/* Break on valid input */
-					if (v <= mval[i]) break;
-				}
-
-				/* Save the minimum stat */
-				stat_limit[i] = (v > 0) ? v : 0;
-			}
-		}
-
-#endif /* ALLOW_AUTOROLLER */
 
 		/* Clean up */
 		clear_from(10);
