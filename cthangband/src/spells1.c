@@ -948,8 +948,11 @@ static int inven_damage(inven_func typ, int perc)
 	k = 0;
 
 	/* Scan through the slots backwards */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < INVEN_TOTAL; i++)
 	{
+		/* Hack - skip weapons, armour, lights and accessories. */
+		if (i == INVEN_PACK) i = INVEN_POUCH_1;
+		
 		o_ptr = &inventory[i];
 
 		/* Skip non-objects */
