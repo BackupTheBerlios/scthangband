@@ -3552,8 +3552,8 @@ static void win_object_details_display(void)
 
 /* The option currently selected */
 #define MAX_HELP_STRS	5
-#define CUR_HELP_STR	help_str[help_strs]
-static cptr help_str[MAX_HELP_STRS];
+#define CUR_HELP_STR	help_str_list[help_strs]
+static cptr help_str_list[MAX_HELP_STRS];
 static int help_strs = 0;
 
 /*
@@ -3575,7 +3575,7 @@ void help_track(cptr str)
 			int i;
 			for (i = 1; i < MAX_HELP_STRS; i++)
 			{
-				help_str[i-1] = help_str[i];
+				help_str_list[i-1] = help_str_list[i];
 			}
 		}
 		else
@@ -3662,7 +3662,7 @@ void win_help_display(void)
 	cptr *str;
 
 	/* Nothing to show. */
-	if (!help_str) return;
+	if (!help_strs) return;
 
 	/* Try to read the list of files at first. */
 	if (!help_files && !init_help_files()) return;
