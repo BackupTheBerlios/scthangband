@@ -111,7 +111,7 @@ void do_cmd_eat_food(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Identity not known yet */
 	ident = FALSE;
@@ -460,7 +460,7 @@ void do_cmd_quaff_potion(int item)
 	/* Take a turn */
 	if (item < INVEN_POUCH_1)
 	{
-		energy_use = 100;
+		energy_use = extract_energy[p_ptr->pspeed];
 	} else {
 		/* Potions in a pouch are immediately accessible */
 		energy_use = 10;
@@ -1261,7 +1261,7 @@ void do_cmd_read_scroll(int item)
 	/* Take a turn */
 	if (item < INVEN_POUCH_1)
 	{
-		energy_use = 100;
+		energy_use = extract_energy[p_ptr->pspeed];
 	} else {
 		/* Scrolls in a pouch are immediately accessible */
 		energy_use = 10;
@@ -1777,7 +1777,7 @@ void do_cmd_use_staff(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2225,7 +2225,7 @@ void do_cmd_aim_wand(int item)
 	/* Take a turn */
 	if (item < INVEN_POUCH_1)
 	{
-		energy_use = 100;
+		energy_use = extract_energy[p_ptr->pspeed];
 	} else {
 		/* Wands in a pouch are immediately accessible */
 		energy_use = 10;
@@ -2649,7 +2649,7 @@ void do_cmd_zap_rod(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Not identified yet */
 	ident = FALSE;

@@ -1418,7 +1418,7 @@ void do_cmd_study(void)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 
 	/* Learn the spell */
@@ -3623,7 +3623,7 @@ void do_cmd_cantrip(void)
 	}
 	else
 	{
-		energy_use = 100;
+		energy_use = extract_energy[p_ptr->pspeed];
 	}
 
 	/* If item is going to break, give it a chance of survival at low skill levels, on

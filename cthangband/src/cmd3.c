@@ -229,7 +229,7 @@ void do_cmd_wield(void)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Get local object */
 	q_ptr = &forge;
@@ -389,7 +389,7 @@ void do_cmd_takeoff(void)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Take off the item */
 	(void)inven_takeoff(item, 255);
@@ -450,7 +450,7 @@ void do_cmd_drop(void)
 
 
 	/* Take a partial turn */
-	energy_use = 50;
+	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 	/* Drop (some of) the item */
 	inven_drop(item, amt);
@@ -543,7 +543,7 @@ void do_cmd_destroy(void)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Artifacts cannot be destroyed */
 	if (allart_p(o_ptr))
@@ -848,7 +848,7 @@ static void do_cmd_refill_lamp(int item)
 	item_tester_hook = 0;
 
 	/* Take a partial turn */
-	energy_use = 50;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Access the lantern */
 	j_ptr = &inventory[INVEN_LITE];
@@ -948,7 +948,7 @@ static void do_cmd_refill_torch(int item)
 	item_tester_hook = 0;
 
 	/* Take a partial turn */
-	energy_use = 50;
+	energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 	/* Access the primary torch */
 	j_ptr = &inventory[INVEN_LITE];

@@ -3271,7 +3271,7 @@ static void process_player(void)
 		if ((p_ptr->paralyzed) || (p_ptr->stun >= 100))
 		{
 			/* Take a turn */
-			energy_use = 100;
+			energy_use = extract_energy[p_ptr->pspeed];
 		}
 
 		/* Resting */
@@ -3288,7 +3288,7 @@ static void process_player(void)
 			}
 
 			/* Take a turn */
-			energy_use = 100;
+			energy_use = extract_energy[p_ptr->pspeed];
 		}
 
 		/* Running */

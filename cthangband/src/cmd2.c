@@ -306,7 +306,7 @@ void do_cmd_search(void)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Search */
 	search();
@@ -558,7 +558,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Attempt to unlock it */
 	if (o_ptr->pval > 0)
@@ -633,7 +633,7 @@ static bool do_cmd_open_aux(int y, int x, int UNUSED dir)
 	bool more = FALSE;
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Get requested grid */
 	c_ptr = &cave[y][x];
@@ -794,7 +794,7 @@ void do_cmd_open(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a half turn */
-			energy_use = 50;
+			energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -840,7 +840,7 @@ static bool do_cmd_close_aux(int y, int x, int UNUSED dir)
 	bool		more = FALSE;
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Get grid and contents */
 	c_ptr = &cave[y][x];
@@ -928,7 +928,7 @@ void do_cmd_close(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a half turn */
-			energy_use = 50;
+			energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -1058,7 +1058,7 @@ static bool do_cmd_tunnel_aux(int y, int x, int UNUSED dir)
 	bool more = FALSE;
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Get grid */
 	c_ptr = &cave[y][x];
@@ -1196,7 +1196,7 @@ void do_cmd_tunnel(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a half turn */
-			energy_use = 50;
+			energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -1339,7 +1339,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Get the "disarm" factor */
 	i = p_ptr->skill_dis;
@@ -1430,7 +1430,7 @@ static bool do_cmd_disarm_aux(int y, int x, int dir)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Get grid and contents */
 	c_ptr = &cave[y][x];
@@ -1642,7 +1642,7 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Get grid */
 	c_ptr = &cave[y][x];
@@ -1776,7 +1776,7 @@ void do_cmd_bash(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a half turn */
-			energy_use = 50;
+			energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -1842,7 +1842,7 @@ void do_cmd_alter(void)
 		c_ptr = &cave[y][x];
 
 		/* Take a turn */
-		energy_use = 100;
+		energy_use = extract_energy[p_ptr->pspeed];
 		
 		/* Attack monsters */
 		if (c_ptr->m_idx)
@@ -1974,7 +1974,7 @@ void do_cmd_spike(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a half turn */
-			energy_use = 50;
+			energy_use = (extract_energy[p_ptr->pspeed]+1)/2;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -1987,7 +1987,7 @@ void do_cmd_spike(void)
 		else
 		{
 			/* Take a turn */
-			energy_use = 100;
+			energy_use = extract_energy[p_ptr->pspeed];
 
 			/* Successful jamming */
 			msg_print("You jam the door with a spike.");
@@ -2101,7 +2101,7 @@ void do_cmd_stay(int pickup)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 
 	/* Spontaneous Searching */
@@ -2182,7 +2182,7 @@ void do_cmd_rest(void)
 
 
 	/* Take a turn XXX XXX XXX (?) */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 	/* Save the rest code */
 	resting = command_arg;
@@ -2766,7 +2766,7 @@ void do_cmd_throw(void)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = extract_energy[p_ptr->pspeed];
 
 
 	/* Start at the player */
