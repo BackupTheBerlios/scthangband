@@ -4039,12 +4039,11 @@ errr init_info_txt(FILE *fp, char *buf, header *head)
 		try(parse_info_line(buf, head, NUM_MACROS, &extra));
 	}
 
-	head->info_num = error_idx+1;
-
 	/* Carry out any post-initialisation checks. */
 	try(init_info_txt_final(head));
 
 	/* Set the info size. */
+	head->info_num = error_idx+1;
 	head->info_size = head->info_len * head->info_num;
 
 	/* Complete the "name" and "text" sizes */
