@@ -205,6 +205,10 @@ C:1:z
 A:z
 C:1:a
 
+# Use an object
+A:^U
+C:1:^Z
+
 # Cast hedge magic (like a Witch)
 A:h
 C:1:^W

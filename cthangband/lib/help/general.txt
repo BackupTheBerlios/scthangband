@@ -456,7 +456,7 @@ Zap a rod (z) or Activate a rod (a)
         This command takes some energy.
 
 ***** <cmd=^U>
-Use an object (Ctrl-U)
+Use an object (Ctrl-U) (Ctrl-Z)
         This command uses one of many types of object in a way listed above.
         In particular, it allows you to use a staff, wand, rod, scroll, potion,
         flask of oil or item of food, to browse a spellbook or to activate a
