@@ -1134,6 +1134,11 @@ static void process_world(void)
 
 	/*** Check the Food, and Regenerate ***/
 
+#ifdef ALLOW_WIZARD
+	/* Hack - for a wizard, amulets of adornment become amulets of no digestion */
+	if (cheat_wzrd && inventory[INVEN_NECK].sval == SV_AMULET_ADORNMENT);
+	else
+#endif
 	/* Digest normally */
 	if (p_ptr->food < PY_FOOD_MAX)
 	{
