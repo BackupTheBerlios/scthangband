@@ -50,16 +50,25 @@
 # are separated by the '|' symbol.
 
 # Special ego type modifications
+
+# Most of the terms are of the same form as "1/5 rpoison" (which gives poison
+# resistance 1/5 of the time). A few need more explanation:
+
 # Randart: Roll as a random artefact instead of creating as an ego item.
 # No ego: This doesn't create an ego item, but can modify an object's
 # to-hit, to-dam, to-ac, and rating.
-# temporarily. (?)
-# pois+17-38: Random resistance 17-38, 1 in 4 rpois.
-# pois3+17-38: Random resistance 17-38, 1 in 3 rpois.
-# pois+5-38: Random resistance 5-38, 1 in 4 rpois.
-# 23-38: Random resistance 23-38.
-# Telepathy: 1/7 chance of telepathy.
-
+# Ability: Gains one of levitation, extra light, see invisible, telepathy,
+# slow digestion, regeneration, free action or hold life.
+# Power: Gains resistance to one of blindness, confusion, sound, shards, nether,
+# nexus, chaos, disenchantment, poison, dark or light.
+# High: Gains a power (albeit with different chances of each resistance) or
+# fear resistance.
+# Resist: Gains either a High resist or resistance to fire, cold, acid or
+# electricity.
+# Sustain: Sustain a random stat.
+# Slaying: Increase the base damage, give poison brand 1/5 of the time and,
+# for swords, give the vorpal property 1/3 of the time.
+# dragon resists: Gives some random resistances (2 on average).
 
 # Version stamp (required)
 

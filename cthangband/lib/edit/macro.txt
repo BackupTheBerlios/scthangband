@@ -898,16 +898,6 @@ X: STEEL
 Y:3
 F:k_info:I:4
 
-# Armour
-
-X:RNDPVAL
-Y:1
-F:k_info:I:4
-
-X:DRAGON
-Y:2
-F:k_info:I:4
-
 # Make the P line in a_info.txt and k_info.txt a bit prettier.
 
 X:::
@@ -1776,10 +1766,6 @@ X:Resist
 Y:7
 F:e_info:X:3
 
-X:Low
-Y:8
-F:e_info:X:3
-
 X:High, 1/5 slay demon
 Y:10
 F:e_info:X:3
@@ -1835,3 +1821,34 @@ F:e_info:X:3
 X:+1 dice
 Y:23
 F:e_info:X:3
+
+# More special effect codes, but this time applied to rings and amulets.
+
+X:1/3 resist+1/5 rpoison
+Y:24
+F:k_info:I:4
+
+X:1/3 slow digestion
+Y:25
+F:k_info:I:4
+
+X:~4 high resists
+Y:26
+F:k_info:I:4
+
+X:+~1 to pval
+Y:27
+F:k_info:I:4
+
+X:pval != 0
+Y:28
+F:k_info:I:4
+
+X:dragon resists
+Y:29
+F:k_info:I:4
+
+X:random pval
+Y:30
+F:k_info:I:4
+

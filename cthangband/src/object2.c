@@ -1734,8 +1734,10 @@ static s16b m_bonus(int max, int level)
  */
 static void object_mention(object_type *o_ptr)
 {
-	/* Only tell cheaters about objects on creation. */
+	/* Only describe for cheaters. */
 	if (!cheat_peek) return;
+
+	o_ptr->ident |= IDENT_STORE;
 
 	/* Artifact */
 	if (artifact_p(o_ptr))
@@ -1762,6 +1764,8 @@ static void object_mention(object_type *o_ptr)
 		/* Silly message */
 		msg_format("Object (%v)", object_desc_f3, o_ptr, OD_SHOP, 0);
 	}
+
+	o_ptr->ident &= ~IDENT_STORE;
 }
 
 
@@ -2120,7 +2124,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 			if (power < -1)
 			{
 				/* Hack -- Horrible digging bonus */
-				o_ptr->pval = 0 - (5 + randint(5));
+				o_ptr->pval = rand_range(-10, -6);
 			}
 
 			/* Bad */
@@ -2167,7 +2171,7 @@ static void dragon_resist(object_type * o_ptr)
         else
             random_resistance(o_ptr, FALSE, rand_range(17, 38));
         }
-        while (randint(2)==1);
+        while (one_in(2));
 }
 
 
@@ -2184,33 +2188,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 	int toac2 = m_bonus(10, level);
 
     artifact_bias = 0;
-
-	/* Give a bonus to any object with an appropriate k_idx. */
-	switch (k_info[o_ptr->k_idx].extra)
-	{
-		case XT_ARMOUR_DRAGON:
-		{
-			dragon_resist(o_ptr);
-			break;
-		}
-		case XT_ARMOUR_RNDPVAL:
-		{
-			o_ptr->pval = rand_int(o_ptr->pval);
-			break;
-		}
-		case 0:
-		{
-			break;
-		}
-		/* Paranoia. */
-		default:
-		{
-			if (!alert_failure) break;
-			msg_print("Strange weapon extra quality found.");
-			msg_format("k_info[%d].extra = %d.",
-				o_ptr->k_idx, k_info[o_ptr->k_idx].extra);
-		}
-	}
 
 	/* Good */
 	if (power > 0)
@@ -2404,93 +2381,24 @@ static void set_var(object_type *o_ptr, int level, int power)
 	}
 }
 
+
 /*
- * Apply magic to an item known to be a "ring" or "amulet"
+ * Apply magic to an item known not to be a weapon or armour.
  *
- * Hack -- note special "pval boost" code for ring of speed
  * Hack -- note that some items must be cursed (or blessed)
+ * Hack -- note the special code for various items
  */
 static void a_m_aux_3(object_type *o_ptr, int level, int power)
 {
-
-    artifact_bias = 0;
-
-	/* Set most of the values as in the table above. */
-	set_var(o_ptr, level, power);
-
-	/* Set the unusual powers first. */
-	switch (o_ptr->k_idx)
-	{
-		case OBJ_RING_EXTRA_ATTACKS:
-		{
-			/* Prevent a 0 pval. */
-			if (!o_ptr->pval) o_ptr->pval = 1;
-			break;
-		}
-		/* Ring of Speed! */
-		case OBJ_RING_SPEED:
-		{
-			/* Cursed rings can become very bad, uncursed ones very good. */
-			int mod = (cursed_p(o_ptr)) ? -1 : 1;
-
-			/* Super-charge the ring */
-			while (one_in(2)) o_ptr->pval += mod;
-			break;
-		}
-		case OBJ_RING_LORDLY_PROTECTION:
-		{
-			do
-			{
-				random_resistance(o_ptr, FALSE, ((randint(20))+18));
-			}
-			while(one_in(4));
-			break;
-		}
-
-		case OBJ_AMULET_RESISTANCE:
-		{
-			if (randint(3)==1) random_resistance(o_ptr, FALSE, ((randint(34))+4));
-			if (randint(5)==1) o_ptr->flags2 |= TR2_RES_POIS;
-			break;
-		}
-		/* Amulet of the Magi -- never cursed */
-		case OBJ_AMULET_THE_MAGI:
-		{
-			if (randint(3)==1) o_ptr->flags3 |= TR3_SLOW_DIGEST;
-			break;
-		}
-	}
-}
-
-
-/*
- * Apply magic to an item known to be "boring"
- *
- * Hack -- note the special code for various items
- */
-static void a_m_aux_4(object_type *o_ptr, int level, int power)
-{
 	/* Apply magic (good or bad) according to type */
-	if (o_ptr->k_idx == OBJ_WOODEN_TORCH || o_ptr->k_idx == OBJ_BRASS_LANTERN)
+	if (o_ptr->k_idx == OBJ_WOODEN_TORCH || o_ptr->k_idx == OBJ_BRASS_LANTERN
+		|| o_ptr->tval == TV_CHEST)
 	{
 		if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
 	}
-	else if (o_ptr->tval == TV_CHEST)
-	{
-		/* Hack -- skip ruined chests */
-		if (!chest_number(&k_info[o_ptr->k_idx])) return;
 
-		/* Hack -- pick a "difficulty" */
-		o_ptr->pval = randint(k_info[o_ptr->k_idx].pval);
-
-		/* Never exceed "difficulty" of 55 to 59 */
-		if (o_ptr->pval > 55) o_ptr->pval = (short)(55 + rand_int(5)); 
-	}
-	else
-	{
-		/* Set most of the values as in the table above. */
-		set_var(o_ptr, level, power);
-	}
+	/* Set most of the values as in the table above. */
+	set_var(o_ptr, level, power);
 }
 
 
@@ -2620,6 +2528,53 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 			o_ptr->dd++;
 			return TRUE;
 		}
+		case E_SPEC_AM_RESISTANCE:
+		{
+			if (one_in(3)) random_resistance(o_ptr, FALSE, rand_range(5, 38));
+			if (one_in(5)) o_ptr->flags2 |= TR2_RES_POIS;
+			return TRUE;
+		}
+		case E_SPEC_AM_THE_MAGI:
+		{
+			if (one_in(3)) o_ptr->flags3 |= TR3_SLOW_DIGEST;
+			return TRUE;
+		}
+		case E_SPEC_RING_LORDLY:
+		{
+			do
+			{
+				random_resistance(o_ptr, FALSE, rand_range(19, 38));
+			}
+			while (one_in(4));
+			return TRUE;
+		}
+		case E_SPEC_RING_SPEED:
+		{
+			/* Cursed rings can become very bad, uncursed ones very good. */
+			int mod = (cursed_p(o_ptr)) ? -1 : 1;
+
+			/* Super-charge the ring */
+			while (one_in(2)) o_ptr->pval += mod;
+			return TRUE;
+		}
+		case E_SPEC_RING_EXTRA_ATTACKS:
+		{
+			/* Always change a pval of 0 to 1 or -1. */
+			if (o_ptr->pval);
+			else if (cursed_p(o_ptr)) o_ptr->pval--;
+			else o_ptr->pval++;
+			return TRUE;
+		}
+		case E_SPEC_DRAGON_RESIST:
+		{
+			dragon_resist(o_ptr);
+			return TRUE;
+		}
+		case E_SPEC_RNDPVAL:
+		{
+			o_ptr->pval = rand_range(1, o_ptr->pval);
+			return TRUE;
+		}
 		/* Hack - hide the fact that this was a very good/bad item. */
 		case E_SPEC_NO_EGO:
 		{
@@ -2673,6 +2628,26 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
 }
 
 /*
+ * Return the fake "ego_item_type.special" contained in some object kinds.
+ */
+static byte k_ego_special(object_kind *k_ptr)
+{
+	switch (k_ptr->tval)
+	{
+		case TV_BOOTS: case TV_GLOVES: case TV_HELM: case TV_CROWN:
+		case TV_SHIELD: case TV_CLOAK: case TV_SOFT_ARMOR: case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR: case TV_AMULET: case TV_RING:
+		{
+			return k_ptr->extra;
+		}
+		default:
+		{
+			return 0;
+		}
+	}
+}
+
+/*
  * Complete the "creation" of an object by applying "magic" to the item
  *
  * This includes not only rolling for random bonuses, but also putting the
@@ -2703,10 +2678,18 @@ static bool add_ego_special(object_type *o_ptr, const byte special,
  * "good" and "great" arguments are false.  As a total hack, if "great" is
  * true, then the item gets 3 extra "attempts" to become an artifact.
  */
-void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
+
+/*
+ * Turn an ordinary object into an ego item or artefact, and give it appropriate
+ * bonuses.
+ */
+static void apply_magic_1(object_type *o_ptr, int lev, bool okay, bool good,
+	bool great)
 {
 	int i, rolls, f1, f2, power;
 
+	/* Normal artefacts have no business here. */
+	if (o_ptr->name1) return;
 
 	/* Maximum "level" for various things */
 	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
@@ -2759,7 +2742,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	if (great) rolls = 4;
 
 	/* Hack -- Get no rolls if not allowed */
-	if (!okay || o_ptr->name1) rolls = 0;
+	if (!okay) rolls = 0;
 
 	/* Roll for artifacts if allowed */
 	for (i = 0; i < rolls; i++)
@@ -2768,53 +2751,6 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		/* Roll for an artifact */
 		if (make_artifact(o_ptr, FALSE)) break;
 	}
-
-	/* Hack - inscribe with creation depth if desired. */
-	o_ptr->note = depth_string();
-
-	/* Hack -- analyze artifacts */
-	if (o_ptr->name1)
-	{
-		artifact_type *a_ptr = &a_info[o_ptr->name1];
-
-		/* Hack -- Mark the artifact as "created" */
-		a_ptr->cur_num = 1;
-
-		/* Hack -- some artifacts get random extra powers */
-		random_artifact_resistance(o_ptr);
-
-		/* Extract the other fields */
-		o_ptr->pval = a_ptr->pval;
-		o_ptr->ac = a_ptr->ac;
-		o_ptr->dd = a_ptr->dd;
-		o_ptr->ds = a_ptr->ds;
-		o_ptr->to_a = a_ptr->to_a;
-		o_ptr->to_h = a_ptr->to_h;
-		o_ptr->to_d = a_ptr->to_d;
-		o_ptr->weight = a_ptr->weight;
-
-		/* Hack -- extract the "broken" flag */
-		if (!a_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
-
-		/* Hack -- extract the "cursed" flag */
-		if (a_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
-
-		/* Mega-Hack -- increase the rating */
-		rating += 10;
-
-		/* Mega-Hack -- increase the rating again */
-		if (a_ptr->cost > 50000L) rating += 10;
-
-		/* Set the good item flag */
-		good_item_flag = TRUE;
-
-		/* Cheat -- peek at the item */
-		object_mention(o_ptr);
-
-		/* Done */
-		return;
-	}
-
 
 	/* Apply magic */
 	switch (o_ptr->tval)
@@ -2850,25 +2786,74 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		case TV_AMULET:
 		{
 			if (!power && (rand_int(100) < 50)) power = -1;
-			a_m_aux_3(o_ptr, lev, power);
-			break;
 		}
+		/* Fall through... */
 
 		default:
 		{
-			a_m_aux_4(o_ptr, lev, power);
+			a_m_aux_3(o_ptr, lev, power);
 			break;
 		}
 	}
 
 	/* Turn into an ego item, if allowed. */
 	if (ABS(power) > 1) o_ptr->name2 = get_ego_item(o_ptr, lev, power < -1);
+}
+
+/*
+ * Put the finishing touches on ego items and artefacts, give charges to wands
+ * and staffs, fuel to lights and traps to chests.
+ */
+static void apply_magic_2(object_type *o_ptr, int lev)
+{
+	object_kind *k_ptr = k_info+o_ptr->k_idx;
+	artifact_type *a_ptr = a_info+o_ptr->name1;
+	ego_item_type *e_ptr = e_info+o_ptr->name2;
+
+	/* Hack - inscribe with creation depth if desired. */
+	o_ptr->note = depth_string();
+
+	/* Hack -- analyze artifacts */
+	if (o_ptr->name1)
+	{
+		/* Hack -- Mark the artifact as "created" */
+		a_ptr->cur_num = 1;
+
+		/* Hack -- some artifacts get random extra powers */
+		random_artifact_resistance(o_ptr);
+
+		/* Extract the other fields */
+		o_ptr->pval = a_ptr->pval;
+		o_ptr->ac = a_ptr->ac;
+		o_ptr->dd = a_ptr->dd;
+		o_ptr->ds = a_ptr->ds;
+		o_ptr->to_a = a_ptr->to_a;
+		o_ptr->to_h = a_ptr->to_h;
+		o_ptr->to_d = a_ptr->to_d;
+		o_ptr->weight = a_ptr->weight;
+
+		/* Hack -- extract the "broken" flag */
+		if (!a_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
+
+		/* Hack -- extract the "cursed" flag */
+		if (a_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
+
+		/* Mega-Hack -- increase the rating */
+		rating += 10;
+
+		/* Mega-Hack -- increase the rating again */
+		if (a_ptr->cost > 50000L) rating += 10;
+
+		/* Set the good item flag */
+		good_item_flag = TRUE;
+
+		/* Cheat -- describe the item */
+		object_mention(o_ptr);
+	}
 
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2)
 	{
-		ego_item_type *e_ptr = &e_info[o_ptr->name2];
- 
 		/* Hack -- acquire "broken" flag */
 		if (!e_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
@@ -2911,7 +2896,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 
 
 	/* Examine real objects */
-	else if (o_ptr->k_idx)
+	if (o_ptr->k_idx && !o_ptr->name1 && !o_ptr->name2)
 	{
 		object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -2920,15 +2905,27 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 
 		/* Hack -- acquire "cursed" flag */
 		if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
+
+		/* Describe if a rating boost is to be given. */
+		if (k_ptr->rating) object_mention(o_ptr);
+
+		/* Add special effects for rings and amulets. */
+		add_ego_special(o_ptr, k_ego_special(k_ptr), lev);
 	}
 
 	/* Give a rating boost for all items apart from artefacts (?). */
-	if (o_ptr->k_idx)
+	if (o_ptr->k_idx && !o_ptr->name1)
 	{
-		object_kind *k_ptr = k_info+o_ptr->k_idx;
 		rating += k_ptr->rating;
-		if (k_ptr->rating) object_mention(o_ptr);
 	}
+
+}
+
+
+void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
+{
+	apply_magic_1(o_ptr, lev, okay, good, great);
+	apply_magic_2(o_ptr, lev);
 }
 
 

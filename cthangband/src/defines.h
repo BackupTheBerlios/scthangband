@@ -2110,7 +2110,6 @@ logaux(x, 1) logaux(x, 0) 255)
 #define E_SPEC_SUSTAIN 5 /* Add a random sustain. */
 #define E_SPEC_HIGH	6 /* Add a random high resistance. */
 #define E_SPEC_RESIST 7 /* Add a random resistance. */
-#define E_SPEC_LOW 8 /* Add a random low resistance. */
 
 #define E_SPEC_PLANAR 10 /* Give flags as if it was a Planar weapon. */
 #define E_SPEC_DF 11 /* ... a Defender weapon. */
@@ -2126,7 +2125,13 @@ logaux(x, 1) logaux(x, 0) 255)
 #define E_SPEC_LAW 21 /* ... a weapon of Law. */
 #define E_SPEC_LENG 22 /* ... a weapon of Leng. */
 #define E_SPEC_DIE 23 /* ... a pebble/arrow/bolt of slaying. */
-
+#define E_SPEC_AM_RESISTANCE 24 /* ... an amulet of resistance. */
+#define E_SPEC_AM_THE_MAGI 25 /* ... an amulet of the Magi. */
+#define E_SPEC_RING_LORDLY 26 /* ... a ring of lordly protection. */
+#define E_SPEC_RING_SPEED 27 /* ... a ring of speed. */
+#define E_SPEC_RING_EXTRA_ATTACKS 28 /* ... a ring of extra attacks. */
+#define E_SPEC_DRAGON_RESIST 29 /* ... a dragon helm/shield. */
+#define E_SPEC_RNDPVAL 30 /* ... an elven cloak. */
 
 /*** Object flag values ***/
 

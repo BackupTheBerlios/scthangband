@@ -53,8 +53,9 @@
 # represents the skill exercised by attacking things with it. Typical values
 # are 8 (close combat),22 (stab),23 (slash) and 24 (crush).
 #   If tval is 30 (Boots), 31 (Gloves),32 (Helmet), 33 (Crown), 34 (Shield),
-# 35 (Cloak), 36 (Soft Armour), 37 (Hard Armour) or 38 (Dragon Armour), it
-# represents a special creation condition. DRAGON and RANDPVAL are used.
+# 35 (Cloak), 36 (Soft Armour), 37 (Hard Armour), 38 (Dragon Armour), 
+# 40 (Amulet) or 45 (Ring), it represents a special creation condition akin
+# to the special field in e_info.txt.
 #   If tval is 55 (Staff),65 (Wand) or 66 (Staff),it represents the difficulty
 # with which the object is used or recharged,higher being harder.
 #   If tval is 90 (Sorcery),91 (Thaumaturgy),92 (Conjuration),93 (Necromancy)
@@ -1106,7 +1107,7 @@ F:RES_DARK | RES_LITE | GOOD
 # The real pval for this object is between 1 and the stated value.
 N:126:& Elven Cloak~
 G:(:G:0
-I:Cloak:4:RNDPVAL
+I:Cloak:4:random pval
 W:0:0.5lb:1,500
 A:30/4
 P:(0d0) (+0,+0) [4,+4]
@@ -1159,7 +1160,7 @@ F:IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC | IGNORE_ACID | GOOD
 # but does not become an ego item or random artefact.
 N:132:& Dragon Shield~
 G:[:G:0
-I:Shield:0:DRAGON
+I:Shield:0:dragon resists
 W:5:10.0lb:10,000
 A:80/4
 P:(1d3) (+0,+0) [8,+10]
@@ -1229,7 +1230,7 @@ F:GOOD
 # but does not become an ego item or random artefact.
 N:140:& Dragon Helm~
 G:]:G:0
-I:Helmet:0:DRAGON
+I:Helmet:0:dragon resists
 W:5:5.0lb:10,000
 A:80/4
 P:(1d3) (+0,+0) [8,+10]
@@ -1573,21 +1574,21 @@ F:RES_POIS | EASY_KNOW
 
 N:187:Speed
 G: :d:2
-I:Ring:0:0
+I:Ring:0:+~1 to pval
 W:25:0.2lb:100,000
 A:80/1
 F:SPEED | HIDE_TYPE | GOOD
 
 N:188:Extra Attacks
 G: :d:2
-I:Ring:0:0
+I:Ring:0:pval != 0
 W:0:0.2lb:100,000
 A:50/2
 F:BLOWS
 
 N:189:Lordly Protection
 G: :d:2
-I:Ring:0:0
+I:Ring:0:~4 high resists
 W:5:0.2lb:100,000
 A:100/5
 F:RES_DISEN | RES_POIS | HOLD_LIFE | FREE_ACT | RAND_RESIST
@@ -1660,7 +1661,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:199:Resistance
 G: :d:3
-I:Amulet:0:0
+I:Amulet:0:1/3 resist+1/5 rpoison
 W:0:0.3lb:25,000
 A:50/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RAND_RESIST
@@ -1668,7 +1669,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | GOOD
 
 N:200:the Magi
 G: :d:3
-I:Amulet:0:0
+I:Amulet:0:1/3 slow digestion
 W:25:0.3lb:30,000
 A:50/4:80/3
 P:(0d0) (+0,+0) [0,+3]
