@@ -33,6 +33,15 @@ vptr rnfree(vptr p)
 	return (NULL);
 }
 
+/*
+ * Hack - a fake rpanic_aux hook for when "out of memory" errors are handled
+ * by the caller.
+ */
+vptr rpanic_none(huge len)
+{
+	return NULL;
+}
+
 
 /*
  * Optional auxiliary "rpanic" function

@@ -1540,6 +1540,9 @@ static errr rd_dungeon(void)
 	/* Read the item count */
 	rd_u16b(&limit);
 
+	/* Increase the size of m_list to store them all if possible. */
+	while (limit > MAX_O_IDX && grow_o_list()) note("Grown o_list.");
+
 	/* Verify maximum */
 	if (limit > MAX_O_IDX)
 	{
@@ -1615,6 +1618,9 @@ static errr rd_dungeon(void)
 
 	/* Read the monster count */
 	rd_u16b(&limit);
+
+	/* Increase the size of m_list to store them all if possible. */
+	while (limit > MAX_M_IDX && grow_m_list()) note("Grown m_list.");
 
 	/* Too many monsters. */
 	if (limit > MAX_M_IDX)

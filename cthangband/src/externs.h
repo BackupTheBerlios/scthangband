@@ -3904,7 +3904,7 @@ extern vptr (*rnfree_aux)(vptr);
 #if (defined(Z_VIRT_H) || defined(Z_VIRT_C))
 extern vptr rnfree(vptr p);
 #endif
-#if (defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(Z_VIRT_C))
+#if (defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MONSTER2_C) || defined(OBJECT2_C) || defined(Z_VIRT_C))
 extern vptr (*rpanic_aux)(huge);
 #endif
 #if (defined(MAIN_CRB_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(Z_VIRT_C))
@@ -3915,5 +3915,20 @@ extern vptr ralloc(huge len);
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MAIN_GTK_C) || defined(MAIN_LSL_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XPJ_C) || defined(MAIN_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(STORE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_VIRT_C))
 extern cptr string_make(cptr str);
+#endif
+#if (defined(MONSTER2_C) || defined(OBJECT2_C) || defined(Z_VIRT_C))
+extern vptr rpanic_none(huge len);
+#endif
+
+/* monster2.c */
+
+#if (defined(LOAD_C) || defined(MONSTER2_C))
+extern bool grow_m_list(void);
+#endif
+
+/* object2.c */
+
+#if (defined(LOAD_C) || defined(OBJECT2_C))
+extern bool grow_o_list(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

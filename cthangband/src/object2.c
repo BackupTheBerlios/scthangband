@@ -255,6 +255,149 @@ void do_cmd_rotate_stack(void)
 	object_track(&o_list[c_ptr->o_idx]);
 }
 
+
+/*
+ * Try to increase the size of o_list to accommodate current requirements.
+ * Return FALSE if this failed for one reason or another.
+ */
+bool grow_o_list(void)
+{
+#ifdef USE_DYNAMIC_LISTS
+	object_type *new;
+
+	/* This function returns FALSE on out of memory errors, so need not crash. */
+	vptr (*old_rpanic_aux)(huge) = rpanic_aux;
+
+	uint new_max = z_info->o_max*2;
+
+	size_t new_size = new_max*sizeof(object_type);
+
+	/* Can't store o_list's new size. */
+	if (new_max <= z_info->o_max || new_max > MAX_U16B) return FALSE;
+
+	/* Can't request m_list's new size. */
+	if (new_size <= sizeof(object_type) * z_info->o_max) return FALSE;
+
+	/* Failure is safe here. */
+	rpanic_aux = rpanic_none;
+
+	/* Try to allcoate the new memory. */
+	C_MAKE(new, new_max, object_type);
+
+	/* Restore rpanic_aux. */
+	rpanic_aux = old_rpanic_aux;
+
+	/* Handle success. */
+	if (new)
+	{
+		/* Let cheaters know the level is really full. */
+		if (cheat_peek) msg_format("Object list grown from %u to %u.",
+			z_info->o_max, new_max);
+
+		/* Start using the new m_list. */
+		C_COPY(new, o_list, z_info->o_max, object_type);
+		FREE(o_list);
+		o_list = new;
+		z_info->o_max = new_max;
+	}
+
+	return (new != NULL);
+#else /* USE_DYNAMIC_LISTS */
+
+	/* Not allowed to grow the array. */
+	return FALSE;
+
+#endif /* USE_DYNAMIC_LISTS */
+}
+
+/*
+ * Actually remove objects during compacting.
+ */
+static void compact_objects_purge(int size)
+{
+	int i, y, x, num, cnt;
+
+	int cur_lev, cur_dis, chance;
+
+	assert(size > 0); /* See caller(s). */
+
+	msg_print("Compacting objects...");
+
+
+	/* Compact at least 'size' objects */
+	for (num = 0, cnt = 1; num < size; cnt++)
+	{
+		/* Get more vicious each iteration */
+		cur_lev = 5 * cnt;
+
+		/* Get closer each iteration */
+		cur_dis = 5 * (20 - cnt);
+
+		/* Examine the objects */
+		for (i = 1; i < o_max; i++)
+		{
+			object_type *o_ptr = &o_list[i];
+
+			object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+			/* Skip dead objects */
+			if (!o_ptr->k_idx) continue;
+
+			/* Hack -- High level objects start out "immune" */
+			if (object_k_level(k_ptr) > cur_lev) continue;
+
+			/* Monster */
+			if (o_ptr->held_m_idx)
+			{
+				monster_type *m_ptr;
+				
+				/* Acquire monster */
+				m_ptr = &m_list[o_ptr->held_m_idx];
+
+				/* Get the location */
+				y = m_ptr->fy;
+				x = m_ptr->fx;
+
+				/* Monsters protect their objects */
+				if (rand_int(100) < 90) continue;
+			}
+			
+			/* Dungeon */
+			else
+			{
+				/* Get the location */
+				y = o_ptr->iy;
+				x = o_ptr->ix;
+			}
+
+			/* Nearby objects start out "immune" */
+			if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;
+
+			/* Saving throw */
+			chance = 90;
+
+			/* Hack -- only compact artifacts in emergencies */
+	    if (allart_p(o_ptr)
+		&& (cnt < 1000)) chance = 100;
+
+			/* Apply the saving throw */
+			if (rand_int(100) < chance) continue;
+
+			/* Delete the object */
+			delete_dun_object(o_ptr);
+
+			/* Count it */
+			num++;
+		}
+	}
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+}
+
 /*
  * Move an object from index i1 to index i2 in the object list
  */
@@ -337,107 +480,12 @@ static void compact_objects_aux(int i1, int i2)
 	object_wipe(o_ptr);
 }
 
-
 /*
- * Compact and Reorder the object list
- *
- * This function can be very dangerous, use with caution!
- *
- * When actually "compacting" objects, we base the saving throw on a
- * combination of object level, distance from player, and current
- * "desperation".
- *
- * After "compacting" (if needed), we "reorder" the objects into a more
- * compact order, and we reset the allocation info, and the "live" array.
- */
-void compact_objects(int size)
+ * Remove dead (or purged) objects from the object list.
+ */	
+static void compact_objects_excise(void)
 {
-	int i, y, x, num, cnt;
-
-	int cur_lev, cur_dis, chance;
-
-
-	/* Compact */
-	if (size)
-	{
-		/* Message */
-		msg_print("Compacting objects...");
-
-		/* Redraw map */
-		p_ptr->redraw |= (PR_MAP);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
-	}
-
-
-	/* Compact at least 'size' objects */
-	for (num = 0, cnt = 1; num < size; cnt++)
-	{
-		/* Get more vicious each iteration */
-		cur_lev = 5 * cnt;
-
-		/* Get closer each iteration */
-		cur_dis = 5 * (20 - cnt);
-
-		/* Examine the objects */
-		for (i = 1; i < o_max; i++)
-		{
-			object_type *o_ptr = &o_list[i];
-
-			object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-			/* Skip dead objects */
-			if (!o_ptr->k_idx) continue;
-
-			/* Hack -- High level objects start out "immune" */
-			if (object_k_level(k_ptr) > cur_lev) continue;
-
-			/* Monster */
-			if (o_ptr->held_m_idx)
-			{
-				monster_type *m_ptr;
-				
-				/* Acquire monster */
-				m_ptr = &m_list[o_ptr->held_m_idx];
-
-				/* Get the location */
-				y = m_ptr->fy;
-				x = m_ptr->fx;
-
-				/* Monsters protect their objects */
-				if (rand_int(100) < 90) continue;
-			}
-			
-			/* Dungeon */
-			else
-			{
-				/* Get the location */
-				y = o_ptr->iy;
-				x = o_ptr->ix;
-			}
-
-			/* Nearby objects start out "immune" */
-			if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;
-
-			/* Saving throw */
-			chance = 90;
-
-			/* Hack -- only compact artifacts in emergencies */
-	    if (allart_p(o_ptr)
-		&& (cnt < 1000)) chance = 100;
-
-			/* Apply the saving throw */
-			if (rand_int(100) < chance) continue;
-
-			/* Delete the object */
-			delete_dun_object(o_ptr);
-
-			/* Count it */
-			num++;
-		}
-	}
-
+	int i;
 
 	/* Excise dead objects (backwards!) */
 	for (i = o_max - 1; i >= 1; i--)
@@ -455,6 +503,30 @@ void compact_objects(int size)
 	}
 }
 
+/*
+ * Compact and Reorder the object list
+ *
+ * This function can be very dangerous, use with caution!
+ *
+ * When actually "compacting" objects, we base the saving throw on a
+ * combination of object level, distance from player, and current
+ * "desperation".
+ *
+ * After "compacting" (if needed), we "reorder" the objects into a more
+ * compact order, and we reset the allocation info, and the "live" array.
+ */
+void compact_objects(int size)
+{
+	/* Try to increase the space available. */
+	if (size > 0 && !grow_o_list())
+	{
+		/* Purge objects if impossible. */
+		compact_objects_purge(size);
+	}
+
+	/* Remove dead objects from the list. */
+	compact_objects_excise();
+}
 
 
 

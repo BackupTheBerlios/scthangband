@@ -530,6 +530,118 @@ void delete_monster(int y, int x)
 
 
 /*
+ * Try to increase the size of m_list to accommodate current requirements.
+ * Return FALSE if this failed for one reason or another.
+ */
+bool grow_m_list(void)
+{
+#ifdef USE_DYNAMIC_LISTS
+	monster_type *new;
+
+	/* This function returns FALSE on out of memory errors, so need not crash. */
+	vptr (*old_rpanic_aux)(huge) = rpanic_aux;
+
+	uint new_max = z_info->m_max*2;
+
+	size_t new_size = new_max*sizeof(monster_type);
+
+	/* Can't store m_list's new size. */
+	if (new_max <= z_info->m_max || new_max > MAX_U16B) return FALSE;
+
+	/* Can't request m_list's new size. */
+	if (new_size <= sizeof(monster_type) * z_info->m_max) return FALSE;
+
+	/* Failure is safe here. */
+	rpanic_aux = rpanic_none;
+
+	/* Try to allcoate the new memory. */
+	C_MAKE(new, new_max, monster_type);
+
+	/* Restore rpanic_aux. */
+	rpanic_aux = old_rpanic_aux;
+
+	/* Handle success. */
+	if (new)
+	{
+		/* Let cheaters know the level is really full. */
+		if (cheat_hear) msg_format("Monster list grown from %u to %u.",
+			z_info->m_max, new_max);
+
+		/* Start using the new m_list. */
+		C_COPY(new, m_list, z_info->m_max, monster_type);
+		FREE(m_list);
+		m_list = new;
+		z_info->m_max = new_max;
+	}
+
+	return (new != NULL);
+#else /* USE_DYNAMIC_LISTS */
+
+	/* Not allowed to grow the array. */
+	return FALSE;
+
+#endif /* USE_DYNAMIC_LISTS */
+}
+
+/*
+ * Actually remove monsters during compacting.
+ */
+static void compact_monsters_purge(int size)
+{
+	int num, cnt, i;
+	int		cur_lev, cur_dis, chance;
+
+	assert(size > 0); /* See caller(s). */
+
+	msg_print("Compacting monsters...");
+
+	/* Compact at least 'size' objects */
+	for (num = 0, cnt = 1; num < size; cnt++)
+	{
+		/* Get more vicious each iteration */
+		cur_lev = 5 * cnt;
+
+		/* Get closer each iteration */
+		cur_dis = 5 * (20 - cnt);
+
+		/* Check all the monsters */
+		for (i = 1; i < m_max; i++)
+		{
+			monster_type *m_ptr = &m_list[i];
+
+			monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+			/* Paranoia -- skip "dead" monsters */
+			if (!m_ptr->r_idx) continue;
+
+			/* Hack -- High level monsters start out "immune" */
+			if (r_ptr->level > cur_lev) continue;
+
+			/* Ignore nearby monsters */
+			if ((cur_dis > 0) && (m_ptr->cdis < cur_dis)) continue;
+
+			/* Saving throw chance */
+			chance = 90;
+
+			/* Try not to compact Unique Monsters */
+			if (r_ptr->flags1 & (RF1_UNIQUE)) chance = 99;
+
+			/* Only compact "Quest" Monsters in emergencies */
+			if ((r_ptr->flags1 & RF1_GUARDIAN) && (cnt < 1000)) chance = 100;
+
+			/* All monsters get a saving throw */
+			if (rand_int(100) < chance) continue;
+
+			/* Delete the monster */
+			delete_monster_idx(i,TRUE);
+
+			/* Count the monster */
+			num++;
+		}
+	}
+}
+
+/*
  * Move an object from index i1 to index i2 in the object list
  */
 static void compact_monsters_aux(int i1, int i2)
@@ -588,75 +700,12 @@ static void compact_monsters_aux(int i1, int i2)
 	WIPE(&m_list[i1], monster_type);
 }
 
-
 /*
- * Compact and Reorder the monster list
- *
- * This function can be very dangerous, use with caution!
- *
- * When actually "compacting" monsters, we base the saving throw
- * on a combination of monster level, distance from player, and
- * current "desperation".
- *
- * After "compacting" (if needed), we "reorder" the monsters into a more
- * compact order, and we reset the allocation info, and the "live" array.
- */
-void compact_monsters(int size)
+ * Remove dead (or purged) monsters from the monster list.
+ */	
+static void compact_monsters_excise(void)
 {
-	int		i, num, cnt;
-
-	int		cur_lev, cur_dis, chance;
-
-
-	/* Message (only if compacting) */
-	if (size) msg_print("Compacting monsters...");
-
-
-	/* Compact at least 'size' objects */
-	for (num = 0, cnt = 1; num < size; cnt++)
-	{
-		/* Get more vicious each iteration */
-		cur_lev = 5 * cnt;
-
-		/* Get closer each iteration */
-		cur_dis = 5 * (20 - cnt);
-
-		/* Check all the monsters */
-		for (i = 1; i < m_max; i++)
-		{
-			monster_type *m_ptr = &m_list[i];
-
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-			/* Paranoia -- skip "dead" monsters */
-			if (!m_ptr->r_idx) continue;
-
-			/* Hack -- High level monsters start out "immune" */
-			if (r_ptr->level > cur_lev) continue;
-
-			/* Ignore nearby monsters */
-			if ((cur_dis > 0) && (m_ptr->cdis < cur_dis)) continue;
-
-			/* Saving throw chance */
-			chance = 90;
-
-			/* Try not to compact Unique Monsters */
-			if (r_ptr->flags1 & (RF1_UNIQUE)) chance = 99;
-
-			/* Only compact "Quest" Monsters in emergencies */
-			if ((r_ptr->flags1 & RF1_GUARDIAN) && (cnt < 1000)) chance = 100;
-
-			/* All monsters get a saving throw */
-			if (rand_int(100) < chance) continue;
-
-			/* Delete the monster */
-			delete_monster_idx(i,TRUE);
-
-			/* Count the monster */
-			num++;
-		}
-	}
-
+	int i;
 
 	/* Excise dead monsters (backwards!) */
 	for (i = m_max - 1; i >= 1; i--)
@@ -673,6 +722,31 @@ void compact_monsters(int size)
 		/* Compress "m_max" */
 		m_max--;
 	}
+}
+
+/*
+ * Compact and Reorder the monster list
+ *
+ * This function can be very dangerous, use with caution!
+ *
+ * When actually "compacting" monsters, we base the saving throw
+ * on a combination of monster level, distance from player, and
+ * current "desperation".
+ *
+ * After "compacting" (if needed), we "reorder" the monsters into a more
+ * compact order, and we reset the allocation info, and the "live" array.
+ */
+void compact_monsters(int size)
+{
+	/* Try to increase the space available. */
+	if (size > 0 && !grow_m_list())
+	{
+		/* Purge monsters if impossible. */
+		compact_monsters_purge(size);
+	}
+
+	/* Remove dead monsters from the list. */
+	compact_monsters_excise();
 }
 
 /* Take out non-pets */

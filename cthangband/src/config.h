@@ -547,3 +547,8 @@
 #ifndef NDEBUG
 /* #define CHECK_ARRAYS */
 #endif /* NDEBUG */
+
+/* OPTION: Allow m_list and o_list to grow as far as is needed to avoid
+ * compacting either.
+ */
+#define USE_DYNAMIC_LISTS
