@@ -4009,4 +4009,10 @@ extern blow_method_type blow_methods[NUM_BLOW_METHODS];
 #if (defined(TABLES_C) || defined(UTIL_C) || defined(VARIABLE_C))
 extern bool flush_error;
 #endif
+#if (defined(TABLES_C) || defined(VARIABLE_C))
+extern bool speak_unique_w;
+#endif
+
+/* (null) */
+
 #endif /* INCLUDED_EXTERNS_H */

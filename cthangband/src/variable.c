@@ -200,7 +200,6 @@ bool disturb_minor;			/* Disturb whenever boring things happen */
 
 bool alert_failure;		/* Alert user to various failures */
 bool last_words;		/* Get last words upon dying */
-bool speak_unique;		/* Speaking uniques + shopkeepers */
 bool small_levels;		/* Allow unusually small dungeon levels */
 bool empty_levels;		/* Allow empty 'arena' levels */
 bool player_symbols;		/* Use varying symbols for the player char */
@@ -219,6 +218,9 @@ bool centre_view; /* Centre view on player */
 bool macro_edit; /* Use macros as edit keys in string prompts */
 bool no_centre_run; /* Stop centring when running */
 bool auto_more;
+
+/* Option Set B -- Birth Options */
+
 bool preserve_mode_w; 
 bool preserve_mode; /* Don't lose missed artifacts */
 bool maximise_mode_w;
@@ -229,6 +231,8 @@ bool ironman_shop_w;
 bool ironman_shop; /* Not allowed in shops */
 bool ironman_feeling_w;
 bool ironman_feeling;	/* Only give real feeling after 2500 turns. */
+bool speak_unique_w;
+bool speak_unique;		/* Speaking uniques + shopkeepers */
 #ifdef SCORE_QUITTERS
 bool score_quitters_w;
 bool score_quitters; /* Quitting can give a high score */

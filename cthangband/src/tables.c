@@ -2432,7 +2432,7 @@ cptr window_flag_desc[32] =
 
 
 /*
- * Available Options (full to 3,19), 7 reserved for cheat options
+ * Available Options (full to 3,20), 7 reserved for cheat options
  *
  * Note that birth options should always be followed by BIRTHR ones which
  * store the value used in the game.
@@ -2546,9 +2546,6 @@ option_type option_info[] =
 
     { &last_words,                  FALSE, OPTS_MISC,      0, 28,
       "last_words",                 "Get last words when the character dies" },
-
-    { &speak_unique,                FALSE, OPTS_MISC,      0, 29,
-       "speak_unique",              "Allow shopkeepers and uniques to speak" },
 
     { &small_levels,                TRUE, OPTS_MISC,      0, 30,
        "small_levels",              "Allow unusually small dungeon levels" },
@@ -2765,6 +2762,11 @@ option_type option_info[] =
 
 	{ &spend_points,               FALSE, OPTS_BIRTH, 2, 21,
     "spend_points",                "Allow stats to be chosen by spending points" },
+
+    { &speak_unique_w,                FALSE, OPTS_BIRTH,      0, 29,
+       "speak_unique",              "Allow shopkeepers and uniques to speak" },
+
+	{ &speak_unique,	0,	OPTS_BIRTHR, 3, 20, 0, ""},
 
 	{ &ironman_shop_w,               FALSE, OPTS_BIRTH, 2, 22,
     "ironman_shop",                "Shops (except for libraries) are locked" },

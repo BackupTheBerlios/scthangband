@@ -335,10 +335,6 @@ This causes the game to act as if centre_view was turned off if the player is ru
 $GGet last words when the character dies [last_words]
 Display a random line from the "death.txt" file when your character dies. If this option is not selected, the "You die." message is displayed instead.
 
-%%%%% <speak_unique>
-$GAllow shopkeepers and uniques to speak [speak_unique]
-If this option is in use, shopkeepers may sometimes whisper rumours to you. Also certain monsters start boasting as they attack you, and, when they die, they say their 'last words'. A speaking monster may also (if the option is selected) be wanted by the law, in which case you get the reward if you kill it.
-
 %%%%% <small_levels>
 $GAllow unusually small dungeon levels [small_levels]
 This option enables the creation of levels of varying sizes in dungeons (towers always have the smallest possible level size). Levels that are as small as tower levels (i.e. 1 'screen') are possible, yet they can be dangerous, especially for a low level character.
@@ -548,6 +544,12 @@ This causes the "roll" command in the birth screen to generate characters with t
 %%%%% <spend_points>
 $GAllow stats to be chosen by spending points [spend_points]
 This allows the player to create a specific character without rolling it as long as the stats are not too high.
+
+%%%%% <speak_unique>
+$GAllow shopkeepers and uniques to speak [speak_unique]
+If this option is in use, shopkeepers may sometimes whisper rumours to you. Also certain monsters start boasting as they attack you, and, when they die, they say their 'last words'. A speaking monster may also (if the option is selected) be wanted by the law, in which case you get the reward if you kill it.
+
+As this option adds a method of making money and gives warnings about where some uniques are, turning it off makes the game more difficult.
 
 %%%%% <ironman_shop>
 $GShops (except for libraries) are locked [ironman_shop]
