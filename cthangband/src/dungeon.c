@@ -4199,6 +4199,12 @@ static void create_character(void)
 	{
 		turn=1;
 	}
+
+	/* Hack - display a special help file now if allowed. */
+	if (!death && beginner_help)
+	{
+		do_cmd_help("beginner.txt");
+	}
 }
 
 /*

@@ -4061,4 +4061,10 @@ extern cptr inkey_gnext;
 #if (defined(XTRA1_C) || defined(Z_FORM_C))
 extern void vstrnfmt_fn(char *buf, uint max, cptr UNUSED fmt, va_list *vp);
 #endif
+
+/* variable.c */
+
+#if (defined(DUNGEON_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool beginner_help;
+#endif
 #endif /* INCLUDED_EXTERNS_H */

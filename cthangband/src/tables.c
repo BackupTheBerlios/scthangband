@@ -2125,7 +2125,7 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Available Options (full to 3,22 except for 0,25 and 2,24).
+ * Available Options (full to 3,22 except for 2,24).
  * In addition, 7,2 7,8-11 and 7,13-15 are used for cheat options, and the
  * rest of 7,0-15 is reserved for them to ensure that "noscore" is correct.
  *
@@ -2533,6 +2533,9 @@ option_type option_info[] =
 #endif /* ALLOW_WIZARD */
 
 	/*** End of Table ***/
+
+	{ &beginner_help, TRUE, OPTS_UI, 0, 25,
+	"beginner_help",	"Display beginner help on startup" },
 
 	{ NULL,                 0, 0, 0, 0,
 	NULL,                   NULL }
