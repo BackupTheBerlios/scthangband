@@ -539,8 +539,6 @@ void carry(int pickup)
 
 	s16b this_o_idx, next_o_idx = 0;
 
-	C_TNEW(o_name, ONAME_MAX, char);
-
 	bool gold_only = FALSE;
 
 	/* Scan the pile of objects */
@@ -560,12 +558,9 @@ void carry(int pickup)
 		/* Pick up gold */
 		if (o_ptr->tval == TV_GOLD)
 		{
-			/* Describe the object */
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, FALSE, 0);
-
 			/* Message */
-            msg_format("You collect %ld gold pieces worth of %s.",
-				   (long)o_ptr->pval, o_name);
+            msg_format("You collect %ld gold pieces worth of %v.",
+				   (long)o_ptr->pval, object_desc_f3, o_ptr, FALSE, 0);
 
 			/* Collect the gold */
 			p_ptr->au += o_ptr->pval;
@@ -587,22 +582,20 @@ void carry(int pickup)
 		/* Pick up objects */
 		else
 		{
-			/* Describe the object */
-			strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
 			/* Display description if needed. */
 			object_track(o_ptr);
 
 			/* Describe the object */
 			if (!pickup)
 			{
-				msg_format("You see %s.", o_name);
+				msg_format("You see %v.", object_desc_f3, o_ptr, TRUE, 3);
 			}
 
 			/* Note that the pack is too full */
 			else if (!inven_carry_okay(o_ptr))
 			{
-				msg_format("You have no room for %s.", o_name);
+				msg_format("You have no room for %v.",
+					object_desc_f3, o_ptr, TRUE, 3);
 			}
 
 			/* Pick up the item (if requested and allowed) */
@@ -613,7 +606,9 @@ void carry(int pickup)
 				/* Hack -- query every item */
 				if (carry_query_flag && !strstr(quark_str(o_ptr->note), "=g"))
 				{
-					char c = get_check_ynq(format("Pick up %s? ", o_name));
+					char c = get_check_ynq(format("Pick up %.*v? ",
+						Term->wid-strlen("Pick up ? "),
+						object_desc_f3, o_ptr, TRUE, 3));
 
 					/* Pick up this object. */
 					okay = (c == 'y');
@@ -633,11 +628,9 @@ void carry(int pickup)
 					/* Get the item again */
 					o_ptr = &inventory[slot];
 
-					/* Describe the object */
-					strnfmt(o_name, ONAME_MAX, "%v", object_desc_f3, o_ptr, TRUE, 3);
-
 					/* Message */
-					msg_format("You have %s (%c).", o_name, index_to_label(slot));
+					msg_format("You have %v (%c).",
+						object_desc_f3, o_ptr, TRUE, 3, index_to_label(slot));
 
 					/* Remember the object */
 					object_track(o_ptr);
@@ -648,7 +641,6 @@ void carry(int pickup)
 			}
 		}
 	}
-	TFREE(o_name);
 }
 
 

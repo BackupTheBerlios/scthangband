@@ -199,7 +199,7 @@ void do_cmd_wield(void)
     if ((cursed_p(o_ptr)) && (wear_confirm)
         && (object_known_p(o_ptr) || (o_ptr->ident & (IDENT_SENSE_CURSED))))
     {
-        if (!(get_check(format("Really use the %s {cursed}? ", 
+        if (!(get_check(format("Really use the %v {cursed}? ", 
 			object_desc_f3, o_ptr, FALSE, 0))))
             return;
     }
@@ -208,7 +208,7 @@ void do_cmd_wield(void)
 	 * created uncursed. */
 	else if (confirm_wear_all && ~o_ptr->ident & IDENT_SENSE_CURSED && wield_slot(o_ptr) >= INVEN_WIELD && wield_slot(o_ptr) <= INVEN_FEET)
 	{
-        if (!(get_check(format("Really use the %s? ", 
+        if (!(get_check(format("Really use the %v? ", 
 			object_desc_f3, o_ptr, FALSE, 3))))
             return;
 	}
