@@ -1212,7 +1212,8 @@ static errr option_dump_aux(cptr fname)
 	fprintf(fff, "\n\n# Status description locations\n\n");
 	for (co_ptr = screen_coords; co_ptr < END_PTR(screen_coords); co_ptr++)
 	{
-		fprintf(fff, "L:%s:%d:%d\n", co_ptr->name, co_ptr->x, co_ptr->y);
+		fprintf(fff, "L:%s:%d:%d:%d\n",
+			co_ptr->name, co_ptr->x, co_ptr->y, co_ptr->l);
 	}
 
 	/* Dump the current version, as squelch settings use k_idx indices. */
