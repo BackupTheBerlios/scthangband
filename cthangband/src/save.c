@@ -1111,6 +1111,10 @@ static bool wr_savefile_new(void)
 
 	/* Note the stores */
 	tmp16u = MAX_STORES_TOTAL;
+
+	/* Old savefiles can't accept more than 96 shops. */
+	if (!has_flag(SF_QUEST_DIRECT) && tmp16u > 96) tmp16u = 96;
+
 	wr_u16b(tmp16u);
 
 	/* Dump the stores */
