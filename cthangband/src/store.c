@@ -1721,7 +1721,7 @@ static void display_entry(int pos)
 	char wt_str[12];
 	char price_str[14];
 	cptr fillstr = (pos % 2) ? " " : ".";
-	int maxwid = 75;
+	int maxwid = Term->wid-2;
 
 	/* Get the item */
 	object_type		*o_ptr  = &st_ptr->stock[pos];
@@ -1738,7 +1738,7 @@ static void display_entry(int pos)
 		s32b x;
 
 		/* Must leave room for the "price" */
-		maxwid -= 10;
+		maxwid -= 15;
 
 		/* Display a "fixed" cost */
 		if (o_ptr->ident & (IDENT_FIXED))
@@ -1972,6 +1972,8 @@ cptr store_title(int store_num)
  */
 static void display_store(void)
 {
+	int maxwid = Term->wid;
+
 	/* Clear screen */
 	clear_from(1);
 
@@ -1987,7 +1989,7 @@ static void display_store(void)
 		/* If showing weights, show label */
 		if (show_weights)
 		{
-			put_str("Weight", 5, 70);
+			put_str("Weight", 5, maxwid-7);
 		}
 	}
 	
@@ -1999,11 +2001,11 @@ static void display_store(void)
 		/* If showing weights, show label */
 		if (show_weights)
 		{
-			put_str("Weight", 5, 60);
+			put_str("Weight", 5, maxwid-22);
 		}
 
 		/* Label the asking price (in stores) */
-		put_str("Price", 5, 72);
+		put_str("Price", 5, maxwid-10);
 	}
 
 	/* Display the current gold */
