@@ -59,7 +59,7 @@ V:_CVS_
 # The Star Essence of Polaris
 
 N:1:of Polaris
-I:500:1
+I:459:1
 W:1:1:10:10000
 P:0:1d1:0:0:0
 F:ACTIVATE | SEARCH |
@@ -69,7 +69,7 @@ F:INSTA_ART
 # The Star Essence of Xoth
 
 N:2:of Xoth
-I:501:1
+I:460:1
 W:30:25:5:32500
 P:0:1d1:0:0:0
 F:ACTIVATE | SEE_INVIS | HOLD_LIFE |
@@ -80,7 +80,7 @@ F:INSTA_ART | SPEED
 # Was +2 WIS/DEX
 
 N:3:'Trapezodedron'
-I:502:3
+I:461:3
 W:50:50:5:150000
 P:0:1d1:0:0:0
 F:ACTIVATE | SEE_INVIS | HOLD_LIFE | RES_CONF | RES_CHAOS |
@@ -90,7 +90,7 @@ F:INSTA_ART | SPEED | WIS | INT
 # The Amulet of Lobon
 
 N:4:of Lobon
-I:503:2
+I:462:2
 W:50:10:3:60000
 F:CON |  
 F:ACTIVATE | RES_FIRE | 
@@ -100,7 +100,7 @@ F:INSTA_ART
 # The Amulet of Abd Al'Hazred
 
 N:5:of Abd Al'Hazred
-I:504:3
+I:463:3
 W:65:30:3:90000
 F:WIS | CHR | INFRA |  
 F:SEE_INVIS | FREE_ACT | ACTIVATE | 
@@ -111,7 +111,7 @@ F:INSTA_ART
 # The Necklace of the Dwarves
 
 N:6:of the Dwarves
-I:505:3
+I:464:3
 W:70:50:3:75000
 F:STR | CON | INFRA |  
 F:SEE_INVIS | FREE_ACT | REGEN | LITE | 
@@ -124,7 +124,7 @@ F:INSTA_ART
 # The Ring of Magic
 
 N:8:of Magic
-I:506:1
+I:465:1
 W:50:25:2:75000
 F:STR | INT | WIS | DEX | CON | CHR | STEALTH |  
 F:RES_POIS | ACTIVATE | SEE_INVIS | SEARCH |
@@ -134,7 +134,7 @@ F:INSTA_ART
 # The Ring of Bast
 
 N:9:of Bast
-I:507:4
+I:466:4
 W:70:50:2:175000
 F:STR | DEX | CON |  
 F:ACTIVATE | SPEED |
@@ -144,7 +144,7 @@ F:INSTA_ART
 # The Ring of Elemental Power (Fire)
 
 N:10:of Elemental Power (Fire)
-I:508:1
+I:467:1
 W:70:30:2:100000
 P:0:1d1:10:10:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED |  
@@ -157,7 +157,7 @@ F:INSTA_ART
 # The Ring of Elemental Power (Ice)
 
 N:11:of Elemental Power (Ice)
-I:509:2
+I:468:2
 W:80:40:2:200000
 P:0:1d1:11:11:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED |  
@@ -170,7 +170,7 @@ F:INSTA_ART
 # The Ring of Elemental Power (Storm)
 
 N:12:of Elemental Power (Storm)
-I:510:3
+I:469:3
 W:90:50:2:300000
 P:0:1d1:12:12:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED |  
@@ -183,7 +183,7 @@ F:INSTA_ART
 # The Ring of Nyarlathotep
 
 N:13:of Nyarlathotep
-I:511:5
+I:470:5
 W:100:100:2:5000000
 P:0:1d1:15:15:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED |  
@@ -205,7 +205,7 @@ F:INSTA_ART
 # Was (-2) INT | WIS | STEALTH | HIDE_TYPE, (-3) to hit, 30 pounds (?)
 
 N:16:'Razorback'
-I:405:0
+I:116:0
 W:90:9:500:400000
 P:30:2d4:-4:0:25
 F:FREE_ACT | IM_ELEC | 
@@ -218,7 +218,7 @@ F:ACTIVATE
 # Was (-3) DEX | HIDE_TYPE, (-4) to hit, 50 pounds (?)
 
 N:17:'Bladeturner'
-I:412:0
+I:123:0
 W:95:3:600:500000
 P:50:2d4:-8:0:35
 F:HOLD_LIFE | REGEN |
@@ -235,7 +235,7 @@ F:ACTIVATE
 # The Adamantite Plate Mail 'Soulkeeper'
 
 N:19:'Soulkeeper'
-I:118:2
+I:107:2
 W:75:9:420:300000
 P:40:2d4:-4:0:20
 F:CON | 
@@ -247,7 +247,7 @@ F:ACTIVATE
 # The Full Plate Armour of the Gods
 
 N:20:of the Gods
-I:116:1
+I:105:1
 W:30:3:300:50000
 P:25:2d4:0:0:25
 F:CON | 
@@ -258,7 +258,7 @@ F:RES_SOUND | RES_CONF | RES_NEXUS
 # The Metal Brigandine Armour of Serpents
 
 N:21:of Serpents
-I:113:2
+I:102:2
 W:30:3:200:30000
 P:19:1d4:0:0:15
 F:STR | DEX |  
@@ -268,7 +268,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_SOUND | RAND_RESIST
 # The Mithril Chain Mail of the Vampire Hunter
 
 N:22:of the Vampire Hunter
-I:120:4
+I:109:4
 W:40:3:150:135000
 P:28:1d4:-1:0:20
 F:STEALTH | WIS | INT |
@@ -281,7 +281,7 @@ F:ACTIVATE
 # The Mithril Plate Mail of the Orcs
 
 N:23:of the Orcs
-I:108:4
+I:97:4
 W:40:3:250:150000
 P:15:2d4:-2:0:40
 F:STR | CHR |  
@@ -292,7 +292,7 @@ F:RES_DISEN | RAND_RESIST | ACTIVATE
 # The Chain Mail of 'Heartguard'
 
 N:24:'Heartguard'
-I:109:2
+I:98:2
 W:20:3:220:32000
 P:14:1d4:-2:0:15
 F:STR | CHR |  
@@ -302,7 +302,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SHARDS | RES_NEXUS | RAND_RESI
 # The Augmented Chain Mail of the Ogre Lords
 
 N:25:of the Ogre Lords
-I:111:3
+I:100:3
 W:25:9:270:40000
 P:16:1d4:-2:0:20
 F:INT | WIS | CON |  
@@ -315,7 +315,7 @@ F:RES_ACID | RES_POIS | RES_CONF | RAND_RESIST | ACTIVATE
 # The Soft Leather Armour of the Kobold Chief
 
 N:27:of the Kobold Chief
-I:103:4
+I:92:4
 W:20:3:80:45000
 P:4:0d0:0:0:20
 F:STEALTH | 
@@ -325,7 +325,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK | RAND_RESIST
 # The Leather Scale Mail 'Wyvernscale'
 
 N:28:'Wyvernscale'
-I:107:3
+I:96:3
 W:20:3:60:25000
 P:11:1d1:-1:0:25
 F:DEX | RES_ACID | RES_SHARDS | RAND_RESIST
@@ -337,7 +337,7 @@ F:DEX | RES_ACID | RES_SHARDS | RAND_RESIST
 # The Small Metal Shield 'Vitriol'
 
 N:30:'Vitriol'
-I:130:4
+I:129:4
 W:30:6:65:60000
 P:3:1d2:0:0:25
 F:STR | CON |  
@@ -348,7 +348,7 @@ F:RES_CONF | RES_CHAOS | RAND_RESIST
 # The Large Leather Shield 'Rawhide'
 
 N:31:'Rawhide'
-I:129:0
+I:128:0
 W:30:3:60:12000
 P:4:1d2:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK | RAND_RESIST
@@ -357,7 +357,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK | RAND_RESIST
 # The Large Metal Shield 'Stability'
 
 N:32:of Stability
-I:131:0
+I:130:0
 W:40:9:120:160000
 P:5:1d3:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RAND_RESIST | SUST_STR | SUST_INT | 
@@ -370,7 +370,7 @@ F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR
 # The Massive Lead Crown of the Universe
 
 N:34:of the Universe
-I:499:125
+I:473:125
 W:100:1:20:10000000
 P:0:1d1:0:0:0
 F:STR | INT | WIS | DEX | CON | CHR | INFRA |  
@@ -384,7 +384,7 @@ F:INSTA_ART
 # The Iron Crown of Misery
 
 N:35:of Misery
-I:98:-25
+I:138:-25
 W:40:12:20:0
 P:0:1d1:0:0:25
 F:STR | DEX | CON |  
@@ -394,7 +394,7 @@ F:FREE_ACT | SEE_INVIS | TELEPATHY | RAND_POWER | CURSED
 # The Hard Leather Cap of the Mindcrafter
 
 N:36:of the Mindcrafter
-I:94:2
+I:133:2
 W:20:2:15:50000
 P:2:0d0:0:0:10
 F:INT | WIS |  
@@ -404,7 +404,7 @@ F:RES_BLIND | TELEPATHY | RAND_RESIST
 # The Metal Cap of Holiness
 
 N:37:of Holiness
-I:95:3
+I:134:3
 W:10:2:20:22000
 P:3:1d1:0:0:12
 F:WIS | CHR
@@ -413,7 +413,7 @@ F:WIS | CHR
 # The Steel Helm of Hammerhand
 
 N:38:of Hammerhand
-I:97:3
+I:136:3
 W:20:2:60:45000
 P:6:1d3:0:0:20
 F:STR | DEX | CON 
@@ -423,7 +423,7 @@ F:RES_ACID | RES_NEXUS
 # The _DRAGON_ Helm of Power
 
 N:39:of Power
-I:413:4
+I:137:4
 W:40:12:75:300000
 P:8:1d3:0:0:20
 F:STR | DEX | CON |  
@@ -433,7 +433,7 @@ F:LITE | SEE_INVIS | TELEPATHY | ACTIVATE
 # The Iron Helm 'Skullkeeper'
 
 N:40:'Skullkeeper'
-I:96:2
+I:135:2
 W:20:5:75:100000
 P:5:1d3:0:0:10
 F:INT | WIS | SEARCH |  
@@ -443,7 +443,7 @@ F:RES_BLIND | SEE_INVIS | ACTIVATE
 # The Terror Mask (for warriors only...)
 
 N:41:%Base & Terror Mask
-I:96:-1
+I:135:-1
 W:20:5:75:0
 P:5:1d3:25:25:10
 F:INT | WIS | SEARCH | SHOW_MODS |
@@ -456,7 +456,7 @@ F:AGGRAVATE | CURSED | HEAVY_CURSE | TELEPORT
 # The Golden Crown of the Sun
 
 N:42:of the Sun
-I:99:3
+I:139:3
 W:40:40:30:125000
 P:0:1d1:0:0:15
 F:STR | WIS | CON | SPEED |
@@ -470,7 +470,7 @@ F:LITE | SEE_INVIS | REGEN | RAND_RESIST | RAND_POWER | ACTIVATE
 # The Cloak of Barzai
 
 N:44:of Barzai
-I:123:0
+I:124:0
 W:5:45:10:10000
 P:1:0d0:0:0:15
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE
@@ -479,7 +479,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE
 # The Cloak 'Darkness'
 
 N:45:'Darkness'
-I:123:2
+I:124:2
 W:5:45:10:13000
 P:1:0d0:0:0:4
 F:INT | WIS | STEALTH |  
@@ -489,7 +489,7 @@ F:RES_ACID | RES_DARK | ACTIVATE
 # The Cloak of the Swashbuckler
 
 N:46:of the Swashbuckler
-I:123:3
+I:124:3
 W:10:90:10:35000
 P:1:0d0:0:0:18
 F:DEX | CHR |  
@@ -499,7 +499,7 @@ F:FREE_ACT | RES_ACID | RES_FIRE | RES_COLD | RAND_POWER | ACTIVATE
 # The Cloak 'Shade'
 
 N:47:'Shade'
-I:123:0
+I:124:0
 W:5:20:10:8000
 P:1:0d0:0:0:10
 F:FREE_ACT | RES_ACID | SEE_INVIS
@@ -508,7 +508,7 @@ F:FREE_ACT | RES_ACID | SEE_INVIS
 # The Cloak 'Shifter'
 
 N:48:'Shifter'
-I:123:3
+I:124:3
 W:3:10:10:11000
 P:1:0d0:0:0:15
 F:STEALTH | 
@@ -518,7 +518,7 @@ F:RES_ACID | ACTIVATE
 # The Shadow Cloak of Nyogtha
 
 N:49:of Nyogtha
-I:124:2
+I:126:2
 W:40:40:5:55000
 P:6:0d0:0:0:20
 F:INT | WIS | CHR | SPEED | STEALTH |
@@ -528,7 +528,7 @@ F:RES_ACID | RES_FIRE | RES_COLD | RAND_RESIST | ACTIVATE
 # The Shadow Cloak of the Shoggoth
 
 N:50:of the Shoggoth
-I:124:4
+I:126:4
 W:40:40:5:35000
 P:6:0d0:0:0:12
 F:STEALTH | 
@@ -541,7 +541,7 @@ F:FREE_ACT | IM_ACID | SEE_INVIS
 # The Set of Leather Gloves 'Calfskin'
 
 N:52:'Calfskin'
-I:125:2
+I:141:2
 W:10:6:5:36000
 P:1:0d0:8:8:15
 F:STR | CON |  
@@ -551,7 +551,7 @@ F:FREE_ACT | SHOW_MODS
 # The Set of Leather Gloves of Light
 
 N:53:of Light
-I:125:0
+I:141:0
 W:10:3:5:30000
 P:1:0d0:0:0:10
 F:FREE_ACT | RES_LITE | SUST_CON | LITE | ACTIVATE
@@ -560,7 +560,7 @@ F:FREE_ACT | RES_LITE | SUST_CON | LITE | ACTIVATE
 # The Set of Gauntlets 'Ironfist'
 
 N:54:'Ironfist'
-I:126:0
+I:142:0
 W:10:20:25:15000
 P:2:1d1:0:0:15
 F:RES_FIRE | ACTIVATE
@@ -569,7 +569,7 @@ F:RES_FIRE | ACTIVATE
 # The Set of Gauntlets of Ghouls
 
 N:55:of Ghouls
-I:126:4
+I:142:4
 W:10:20:25:33000
 P:2:1d1:0:0:15
 F:RES_COLD | ACTIVATE
@@ -579,7 +579,7 @@ F:SUST_CON | CON | REGEN
 # The Set of Gauntlets 'White Spark'
 
 N:56:'White Spark'
-I:126:0
+I:142:0
 W:10:20:25:11000
 P:2:1d1:0:0:15
 F:RES_ELEC | ACTIVATE
@@ -588,7 +588,7 @@ F:RES_ELEC | ACTIVATE
 # The Set of Gauntlets of the Dead
 
 N:57:of the Dead
-I:126:0
+I:142:0
 W:10:20:25:12000
 P:2:1d1:0:0:15
 F:RES_ACID | ACTIVATE
@@ -597,7 +597,7 @@ F:RES_ACID | ACTIVATE
 # The Set of Gauntlets of Thanos
 
 N:58:of Thanos
-I:126:2
+I:142:2
 W:10:20:25:0
 P:2:1d1:-11:-12:0
 F:STR | DEX | RES_DISEN | RES_NEXUS |
@@ -608,7 +608,7 @@ F:AGGRAVATE | CURSED | SHOW_MODS | HEAVY_CURSE | TY_CURSE | TELEPORT
 # The Set of Cesti of Combat
 
 N:59:of Combat
-I:127:4
+I:143:4
 W:40:15:40:110000
 P:5:1d1:10:10:20
 F:DEX | FREE_ACT | RES_ACID | RAND_POWER | ACTIVATE | SHOW_MODS
@@ -617,7 +617,7 @@ F:DEX | FREE_ACT | RES_ACID | RAND_POWER | ACTIVATE | SHOW_MODS
 # The Pair of Hard Leather Boots of Ithaqua
 
 N:60:of Ithaqua
-I:92:15
+I:145:15
 W:40:120:40:300000
 P:3:1d1:0:0:20
 F:SPEED | 
@@ -627,7 +627,7 @@ F:RES_NEXUS | ACTIVATE
 # The Pair of Soft Leather Boots of Dancing
 
 N:61:of Dancing
-I:91:5
+I:144:5
 W:10:25:20:40000
 P:2:1d1:0:0:15
 F:DEX | CHR | SUST_CHR |
@@ -638,7 +638,7 @@ F:RES_NETHER | RES_CONF | RES_CHAOS | SUST_CON
 # The Pair of Metal Shod Boots of the Black Reaver
 
 N:62:of the Black Reaver
-I:93:10
+I:146:10
 W:30:25:80:15000
 P:6:1d1:0:0:20
 F:STR | CON | RAND_RESIST | SPEED | AGGRAVATE
@@ -875,7 +875,7 @@ F:RES_DISEN | RES_FEAR | BLOWS | SPEED
 # The Long Sword 'Demon Blade'
 
 N:85:'Demon Blade'
-I:23:16:2
+I:25:16
 W:20:15:130:66666
 P:0:11d5:-30:7:0
 F:DEX | CHR | STEALTH | SPEED | AGGRAVATE | BLOWS | VORPAL |
@@ -885,7 +885,7 @@ F:SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS
 # The Rapier of Montoya's Father
 
 N:86:of Montoya's Father
-I:23:7:0
+I:25:7
 W:15:8:40:15000
 P:0:1d6:12:19:0
 F:SLAY_ANIMAL | BRAND_COLD | RES_COLD | RES_LITE | LITE | SHOW_MODS
@@ -894,7 +894,7 @@ F:SLAY_ANIMAL | BRAND_COLD | RES_COLD | RES_LITE | LITE | SHOW_MODS
 # The Sabre of Bluebeard
 
 N:87:of Bluebeard
-I:23:11:1
+I:25:11
 W:15:8:50:25000
 P:0:1d7:6:8:0
 F:BLOWS | 
@@ -905,7 +905,7 @@ F:SLAY_ORC | SHOW_MODS
 # The Small Sword 'Sting'
 
 N:88:'Sting'
-I:23:8:2
+I:25:8
 W:20:15:75:100000
 P:0:1d6:7:8:0
 F:STR | DEX | CON | BLOWS | 
@@ -916,7 +916,7 @@ F:FREE_ACT | RES_LITE | RAND_RESIST | LITE | SEE_INVIS | SHOW_MODS
 # The Scimitar 'of Randolph Carter'
 
 N:89:'of Randolph Carter'
-I:23:18:2
+I:25:18
 W:20:8:130:111111
 P:0:2d5:9:11:0
 F:INT | WIS | BLOWS |
@@ -929,7 +929,7 @@ F:SHOW_MODS
 # The Short Sword of Merlin
 
 N:90:of Merlin
-I:23:10:2
+I:25:10
 W:20:8:80:35000
 P:0:1d7:3:7:0
 F:BLOWS |
@@ -940,7 +940,7 @@ F:SLAY_ANIMAL | SLOW_DIGEST | REGEN | SHOW_MODS | SEE_INVIS | RES_DISEN
 # Was (-5) CON | HIDE_TYPE, +0 armor
 
 N:91:'Doomcaller'
-I:23:30:0
+I:25:30
 W:70:25:180:250000
 P:0:6d5:18:28:-50
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_COLD | SLAY_TROLL | 
@@ -961,7 +961,7 @@ F:FREE_ACT | LITE | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR |DEX
 # The Beaked Axe of Theoden
 
 N:93:of Theoden
-I:22:10:3
+I:24:10
 W:20:15:180:40000
 P:0:2d6:8:10:0
 F:WIS | CON | SLAY_DRAGON | TELEPATHY | SLOW_DIGEST | ACTIVATE | SHOW_MODS
@@ -970,7 +970,7 @@ F:WIS | CON | SLAY_DRAGON | TELEPATHY | SLOW_DIGEST | ACTIVATE | SHOW_MODS
 # The Glaive of Pain
 
 N:94:of Pain
-I:22:13:0
+I:24:13
 W:30:25:190:50000
 P:0:9d6:0:30:0
 F:SHOW_MODS
@@ -979,7 +979,7 @@ F:SHOW_MODS
 # The Halberd 'Armourbane'
 
 N:95:'Armourbane'
-I:22:15:3
+I:24:15
 W:20:8:190:22000
 P:0:3d5:6:9:0
 F:CHR | BRAND_FIRE | SLAY_UNDEAD | SLAY_GIANT | RES_FIRE | RES_SOUND | 
@@ -989,7 +989,7 @@ F:FEATHER | SEE_INVIS | SHOW_MODS | LITE
 # The Pike of Tepes
 
 N:96:of Tepes
-I:22:8:2
+I:24:8
 W:20:15:160:32000
 P:0:2d5:10:12:10
 F:INT | BRAND_COLD | BRAND_FIRE | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | 
@@ -999,7 +999,7 @@ F:RES_FIRE | RES_COLD | SUST_INT | SLOW_DIGEST | SHOW_MODS | LITE
 # The Spear 'Runespear' (of Odin)
 
 N:97:'Runespear'
-I:22:2:4
+I:24:2
 W:15:45:50:180000
 P:0:4d6:15:25:5
 F:INT | WIS | BRAND_FIRE | BRAND_ELEC |
@@ -1011,7 +1011,7 @@ F:SLOW_DIGEST | ACTIVATE | BLESSED | SHOW_MODS | LITE
 # The Spear of Destiny
 
 N:98:of Destiny
-I:22:2:4
+I:24:2
 W:15:45:50:77777
 P:0:1d6:15:15:0
 F:INT | WIS | INFRA | SEARCH |
@@ -1026,7 +1026,7 @@ F:ACTIVATE | BLESSED | SHOW_MODS
 # The Spear of Hagen
 
 N:99:of Hagen
-I:22:2:3
+I:24:2
 W:15:12:50:30000
 P:0:1d6:11:13:0
 F:STEALTH | RES_DARK | INFRA | SPEED |
@@ -1036,7 +1036,7 @@ F:BRAND_COLD | SLAY_UNDEAD | RES_COLD | SEE_INVIS | SHOW_MODS
 # The Lance 'Skewer'
 
 N:100:'Skewer'
-I:22:20:2
+I:24:20
 W:20:23:360:55000
 P:0:3d8:3:21:0
 F:DEX | SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS
@@ -1045,7 +1045,7 @@ F:DEX | SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS
 # The Great Axe of the Yeeks
 
 N:101:of the Yeeks
-I:22:25:3
+I:24:25
 W:30:90:230:150000
 P:0:4d4:10:20:15
 F:CON | KILL_DRAGON | SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -1055,7 +1055,7 @@ F:RES_ACID | RES_FIRE | RES_LITE | RES_DARK | RES_CONF | RES_CHAOS | SHOW_MODS
 # The Great Axe of the Trolls
 
 N:102:of the Trolls
-I:22:25:2
+I:24:25
 W:30:120:230:200000
 P:0:4d4:15:18:8
 F:STR | INT | WIS | DEX | CON | CHR | SLAY_EVIL | BRAND_COLD | SLAY_UNDEAD | 
@@ -1065,7 +1065,7 @@ F:SLAY_ORC | FREE_ACT | IM_COLD | SEE_INVIS | ACTIVATE | BLESSED | SHOW_MODS
 # The Battle Axe of N'Kai
 
 N:103:of N'Kai
-I:22:22:3
+I:24:22
 W:30:15:170:90000
 P:0:3d8:8:11:5
 F:STR | CON | STEALTH | SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -1076,7 +1076,7 @@ F:SEE_INVIS | REGEN | SHOW_MODS
 # The Battle Axe 'Spleen Slicer'
 
 N:104:'Spleen Slicer'
-I:22:22:1
+I:24:22
 W:30:15:170:21000
 P:0:2d8:4:3:0
 F:STR | DEX | SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
@@ -1085,7 +1085,7 @@ F:STR | DEX | SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
 # The Lochaber Axe of the Dwarves
 
 N:105:of the Dwarves
-I:22:28:10
+I:24:28
 W:30:8:250:80000
 P:0:3d8:12:17:0
 F:SLAY_EVIL | TUNNEL | INFRA | SEARCH | SLAY_GIANT |
@@ -1096,7 +1096,7 @@ F:SHOW_MODS
 # The Broad Axe of Nodens
 
 N:106:of Nodens
-I:22:11:3
+I:24:11
 W:20:8:160:50000
 P:0:2d6:13:19:0
 F:CON | SLAY_EVIL | SLAY_TROLL | SLAY_GIANT | SLAY_ORC | 
@@ -1106,7 +1106,7 @@ F:SEE_INVIS | SHOW_MODS
 # The Trident of Wrath
 
 N:107:of Wrath
-I:22:5:2
+I:24:5
 W:15:35:300:90000
 P:0:3d8:16:18:0
 F:STR | DEX | CHAOTIC | SLAY_EVIL | SLAY_UNDEAD | RES_LITE | RES_DARK |
@@ -1116,7 +1116,7 @@ F:SEE_INVIS | BLESSED | SHOW_MODS
 # The Trident of the Gnorri
 
 N:108:of the Gnorri
-I:22:5:4
+I:24:5
 W:30:90:70:120000
 P:0:4d8:15:19:0
 F:DEX | SLAY_DRAGON | SLAY_ANIMAL | FREE_ACT | HOLD_LIFE | IM_ACID | 
@@ -1127,7 +1127,7 @@ F:BLESSED | RAND_POWER | SHOW_MODS
 # The Scythe of G'harne
 
 N:109:of G'harne
-I:22:17:3
+I:24:17
 W:40:8:250:18000
 P:0:5d3:8:8:10
 F:DEX | CHR | BRAND_COLD | BRAND_FIRE | FREE_ACT | RES_FIRE | RES_COLD | 
@@ -1152,7 +1152,7 @@ F:CHR | SUST_CHR | RES_FEAR | RES_LITE | RES_BLIND | REGEN | SHOW_MODS
 # Note that it takes 18/200 strength to wield it correctly
 
 N:111:of Worlds
-I:498:0
+I:472:0
 W:100:1:1000:500000
 P:0:9d9:5:25:10
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | IMPACT | SLAY_UNDEAD | NO_MAGIC |
@@ -1277,7 +1277,7 @@ F:LITE | REGEN | ACTIVATE | SHOW_MODS
 # The Long Bow 'Sureshot'
 
 N:124:'Sureshot'
-I:74:3
+I:80:3
 W:40:20:40:35000
 P:0:0d0:20:22:0
 F:DEX | STEALTH | RES_DISEN | XTRA_SHOTS | SHOW_MODS
@@ -1286,7 +1286,7 @@ F:DEX | STEALTH | RES_DISEN | XTRA_SHOTS | SHOW_MODS
 # The Long Bow of Serpents
 
 N:125:of Serpents
-I:74:3
+I:80:3
 W:30:20:40:20000
 P:0:0d0:17:19:0
 F:DEX | FREE_ACT | XTRA_MIGHT | RAND_EXTRA | SHOW_MODS
@@ -1295,7 +1295,7 @@ F:DEX | FREE_ACT | XTRA_MIGHT | RAND_EXTRA | SHOW_MODS
 # The Light Crossbow of Death
 
 N:126:of Death
-I:75:10
+I:81:10
 W:50:25:110:50000
 P:0:0d0:10:14:0
 F:SPEED | 
@@ -1305,7 +1305,7 @@ F:RES_FIRE | XTRA_MIGHT | RAND_EXTRA | ACTIVATE | SHOW_MODS
 # Adds either DRAIN_EXP or AGGRAVATE during creation.
 
 N:127:'Stormbringer'
-I:524:2
+I:471:2
 W:45:1:180:35000
 P:0:6d6:16:16:0
 F:STR | CON | VAMPIRIC

@@ -36,7 +36,11 @@ u16b sf_saves;			/* Number of "saves" during this life */
  */
 static u32b object_version[] =
 {
+#ifdef SF_K_INFO_1
+	SF_K_INFO_1,
+#else
 	0,
+#endif
 	0
 };
 
@@ -2084,6 +2088,9 @@ const u16b sf_flags_now = 0x00000000
 #endif
 #ifdef SF_SAVE_MAX_SKILLS
 	| SF_SAVE_MAX_SKILLS
+#endif
+#ifdef SF_K_INFO_1
+	| SF_K_INFO_1
 #endif
 	;
 
