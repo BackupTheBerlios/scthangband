@@ -38,11 +38,6 @@ struct birther
 
 
 
-/*
- * The last character displayed
- */
-static birther prev_stat;
-
 
 
 /*
@@ -553,26 +548,6 @@ static hist_type bg[] =
 };
 
 
-
-/*
- * Autoroll limit
- */
-static s16b stat_limit[A_MAX];
-
-/*
- * Autoroll matches
- */
-static s32b stat_match[A_MAX];
-
-/*
- * Autoroll round
- */
-static s32b auto_round;
-
-/*
- * Last round
- */
-static s32b last_round;
 
 /*
  * Name segments for random player names
@@ -1776,7 +1751,7 @@ static bc_type get_hermetic_skills()
 /*
  * Save the current data for later
  */
-static void save_prev_data(void)
+static void save_prev_data(birther prev_stat)
 {
 	int i;
 
@@ -1807,7 +1782,7 @@ static void save_prev_data(void)
 /*
  * Load the previous data
  */
-static void load_prev_data(void)
+static void load_prev_data(birther prev_stat)
 {
 	int        i;
 
@@ -2374,34 +2349,28 @@ static void get_money(bool random)
  *
  * See 'display_player()' for basic method.
  */
-static void birth_put_stats(void)
+static void birth_put_stats(s32b *stat_match, s32b auto_round)
 {
-	int		i, p;
-	byte	attr;
-
-	char	buf[80];
-
+	int		i;
 
 	/* Put the stats (and percents) */
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Put the stat */
-		strnfmt(buf, sizeof(buf), "%v", cnv_stat_f1, p_ptr->stat_use[i]);
-		c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
+		mc_put_fmt(2+i, 66, "$G%-7v", cnv_stat_f1, p_ptr->stat_use[i]);
 
 		/* Put the percent */
 		if (stat_match[i])
 		{
-			p = 1000L * stat_match[i] / auto_round;
-			attr = (p < 100) ? TERM_YELLOW : TERM_L_GREEN;
-			sprintf(buf, "%3d.%d%% ", p/10, p%10);
-			c_put_str(attr, buf, 2 + i, 73);
+			int p = 1000L * stat_match[i] / auto_round;
+			char attr = (p < 100) ? 'y' : 'G';
+			mc_put_fmt(2+i, 73, "$%c%3d.%d%%", attr, p/10, p%10);
 		}
 
 		/* Never happened */
 		else
 		{
-			c_put_str(TERM_RED, "(NONE) ", 2 + i, 73);
+			mc_put_fmt(2+i, 73, "$r(NONE) ");
 		}
 	}
 }
@@ -2797,21 +2766,28 @@ static void roll_stats_auto(bool point_mod)
 	/* Access via point mod mode needs a more careful layout. */
 	const int x = (point_mod) ? 73 : 73;
 	const int y = (point_mod) ? 1 : 9;
+	s16b stat_limit[A_MAX];
+	int i;
+	s32b auto_round = 0L, last_round = 0L;
+	s32b stat_match[A_MAX];
 
-	if (point_mod)
+	WIPE(stat_match, stat_match);
+	for (i = 0; i < A_MAX; i++)
 	{
-		int i;
-		for (i = 0; i < A_MAX; i++)
+		if (maximise_mode)
 		{
 			int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 			stat_limit[i] = adjust_stat(p_ptr->stat_max[i], bonus, FALSE);
+		}
+		else
+		{
+			stat_limit[i] = p_ptr->stat_max[i];
 		}
 	}
 
 	/* Auto-roll */
 	while (1)
 	{
-		int i;
 		bool accept = TRUE;
 		bool flag = FALSE;
 
@@ -2850,9 +2826,9 @@ static void roll_stats_auto(bool point_mod)
 		if (flag || (auto_round < last_round + 100))
 		{
 			/* Dump data */
-			birth_put_stats();
+			birth_put_stats(stat_match, auto_round);
 			/* Dump round if allowed. */
-			put_str(format("%6ld", auto_round), y, x);
+			mc_put_fmt(y, x, "%6ld", auto_round);
 			/* Make sure they see everything */
 			Term_fresh();
 			/* Delay 1/10 second */
@@ -2868,49 +2844,30 @@ static void roll_stats_auto(bool point_mod)
 
 static bool quick_start_character(void)
 {
-	int i, j, k, m;
-
 	int mode = 0;
-
-	bool flag = FALSE;
 	bool prev = FALSE;
-
-	cptr str;
 
 	char UNREAD(c);
 
 	char b1 = '[';
 	char b2 = ']';
 
+	birther prev_stat;
+
+
 
 	/*** Player sex ***/
 	/* Set sex */
 	p_ptr->psex =(char)rand_range(0,1);
 	sp_ptr = &sex_info[p_ptr->psex];
-	str = sp_ptr->title;
-	/* Display */
-	c_put_str(TERM_L_BLUE, str, 3, 15);
 	
-	/*** Player race ***/
-	/* Set race */
-	k=rand_range(0,MAX_RACES-1);
-	p_ptr->prace = k;
-	rp_ptr = &race_info[p_ptr->prace];
-	str = rp_ptr->title;
-	/* Display */
-	c_put_str(TERM_L_BLUE, str, 4, 15);
-	/*** Player template ***/
-	while(1)
-	{
-		p_ptr->ptemplate = (char)rand_range(0,MAX_TEMPLATE-1);
-		/* Analyze */
-		cp_ptr = &template_info[p_ptr->ptemplate];
-		str = cp_ptr->title;
+	process_pref_file("qstart.prf");
 
-		if (rp_ptr->choice & (1L << p_ptr->ptemplate )) break;
-	}
-	/* Display */
-	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
+	set_gnext("*");
+	if (load_stat_set(TRUE)) return FALSE;
+
+	/* Get a random name */
+	create_random_name(p_ptr->prace,player_name);
 	
 	/* Get skill values */
 	get_starting_skills();
@@ -2918,148 +2875,32 @@ static bool quick_start_character(void)
 	get_init_spirit(FALSE);
 	get_random_skills(TRUE);
 
-	/* Get a random name */
-	create_random_name(p_ptr->prace,player_name);
-	/* Display */
-	c_put_str(TERM_L_BLUE, player_name, 2, 13);
-
-#ifdef ALLOW_AUTOROLLER
-	/* Initialize */
-	if (USE_AUTOROLLER)
-	{
-		int mval[A_MAX];
-		/* Clear fields */
-		auto_round = 0L;
-		last_round = 0L;
-		/* Clean up */
-		clear_from(10);
-		/* Prompt for the minimum stats */
-		put_str("Enter minimum attribute for: ", 15, 2);
-		/* Store the maximum/minimum stats */
-		for (i = 0; i < A_MAX; i++)
-		{
-			/* Reset the "success" counter */
-			stat_match[i] = 0;
-			/* Race/Template bonus */
-			j = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
-			/* Obtain the "maximal" stat */
-			m = adjust_stat(17, (s16b)j, TRUE);
-			/* Save the maximum */
-			mval[i] = m;
-
-			/* Save the minimum, if any. The adjustment should be <=0. */
-			stat_limit[i] = adjust_stat(mval[i], cp_ptr->qmin[i]-17, TRUE);
-		}
-	}
-
-#endif /* ALLOW_AUTOROLLER */
+	/* Some stuff which is normally handled in point_mod_player(). */
+	p_ptr->expfact = rp_ptr->r_exp;
 
 	/* Clean up */
-	clear_from(10);
+	clear_from(0);
 
+	/* Display */
+	mc_put_fmt(2, 1, "Name        : $B$!%s", player_name);
+	mc_put_fmt(3, 1, "Sex         : $B$!%s", sp_ptr->title);
+	mc_put_fmt(4, 1, "Race        : $B$!%s", rp_ptr->title);
+	mc_put_fmt(5, 1, "Template    : $B$!%s", cp_ptr->title);
+	mc_put_fmt(6, 1, "Exp. factor : $B%ld", p_ptr->expfact);
 
 	/*** Generate ***/
 
 	/* Roll */
 	while (TRUE)
 	{
-		/* Feedback */
 		if (USE_AUTOROLLER)
 		{
-			Term_clear();
-
-			put_str("Name        :", 2, 1);
-			put_str("Sex         :", 3, 1);
-			put_str("Race        :", 4, 1);
-			put_str("Template    :", 5, 1);
-
-			c_put_str(TERM_L_BLUE, player_name, 2, 15);
-			c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
-			c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 15);
-			c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
-
-			/* Label stats */
-			put_str("STR:", 2 + A_STR, 61);
-			put_str("INT:", 2 + A_INT, 61);
-			put_str("WIS:", 2 + A_WIS, 61);
-			put_str("DEX:", 2 + A_DEX, 61);
-			put_str("CON:", 2 + A_CON, 61);
-			put_str("CHR:", 2 + A_CHR, 61);
-
-			/* Note when we started */
-			last_round = auto_round;
-
-			/* Indicate the state */
-			put_str("(Hit ESC to abort)", 11, 61);
-
-			/* Label count */
-			put_str("Round:", 9, 61);
+			roll_stats_auto(FALSE);
 		}
-
-		/* Otherwise just get a character */
 		else
 		{
-			/* Get a new character */
+			/* Get a new character. */
 			get_stats();
-		}
-
-		/* Auto-roll */
-		while (USE_AUTOROLLER)
-		{
-			bool accept = TRUE;
-
-			/* Get a new character */
-			get_stats();
-
-			/* Advance the round */
-			auto_round++;
-
-			/* Hack -- Prevent overflow */
-			if (auto_round >= 1000000L) break;
-
-			/* Check and count acceptable stats */
-			for (i = 0; i < A_MAX; i++)
-			{
-				/* This stat is okay */
-				if (p_ptr->stat_use[i] >= stat_limit[i])
-				{
-					stat_match[i]++;
-				}
-
-				/* This stat is not okay */
-				else
-				{
-					accept = FALSE;
-				}
-			}
-
-			/* Break if "happy" */
-			if (accept) break;
-
-			/* Take note every 25 rolls */
-			flag = (!(auto_round % 25L));
-
-			/* Update display occasionally */
-			if (flag || (auto_round < last_round + 100))
-			{
-				/* Dump data */
-				birth_put_stats();
-
-				/* Dump round */
-				put_str(format("%6ld", auto_round), 9, 73);
-
-				/* Make sure they see everything */
-				Term_fresh();
-
-				/* Delay 1/10 second */
-				if (flag) Term_xtra(TERM_XTRA_DELAY, z_info->ar_delay);
-
-				/* Do not wait for a key */
-				inkey_scan = TRUE;
-
-				/* Check for a keypress */
-				if (inkey()) break;
-			}
 		}
 
 		/* Flush input */
@@ -3071,24 +2912,8 @@ static bool quick_start_character(void)
 		/* Mode */
 		mode = DPLAY_PLAYER;
 
-		/* Roll for base hitpoints */
-		get_extra();
-
-		/* Roll for age/height/weight */
-		get_ahw();
-
-		/* Roll for social class */
-		get_history();
-
-		/* Roll for gold */
-		get_money(TRUE);
-
-		/* Hack -- get a chaos patron even if you are not chaotic (yet...) */
-		p_ptr->chaos_patron = (randint(MAX_PATRON)) - 1;
-
-		/* Start without chaos features. */
-		p_clear_mutations();
-
+		/* Roll for various things. */
+		get_final();
 
 		/* Input loop */
 		while (TRUE)
@@ -3137,7 +2962,7 @@ static bool quick_start_character(void)
 			/* Previous character */
 			if (prev && (c == 'p'))
 			{
-				load_prev_data();
+				load_prev_data(prev_stat);
 				continue;
 			}
 
@@ -3163,7 +2988,7 @@ static bool quick_start_character(void)
 		if (c == ESCAPE) break;
 
 		/* Save this for the "previous" character */
-		save_prev_data();
+		save_prev_data(prev_stat);
 
 		/* Note that a previous roll exists */
 		prev = TRUE;
@@ -3176,24 +3001,26 @@ static bool quick_start_character(void)
 	/*** Finish up ***/
 
 	/* Allow name to be edited, recolor it, prepare savefile */
-
 	get_name();
 
+	/* Roll for various things (again). */
+	get_final();
 
 	/* Prompt for it */
 	prt("['Q' to suicide, 'S' to start over, or ESC to continue]", 23, 10);
 
-	/* Get a key */
-	c = inkey();
+	/* Get keys until successful. */
+	while (1) switch (inkey())
+	{
+		/* Quit */
+		case 'Q': quit(NULL);
 
-	/* Quit */
-	if (c == 'Q') quit(NULL);
+		/* Start over */
+		case 'S': return FALSE;
 
-	/* Start over */
-	if (c == 'S') return (FALSE);
-
-	/* Accept */
-	return TRUE;
+		/* Accept */
+		case ESCAPE: return TRUE;
+	}
 }
 
 /*

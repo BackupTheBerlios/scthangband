@@ -1402,8 +1402,7 @@ player_race race_info[MAX_RACES] =
         14, 8,
         82, 5, 200, 20,
         78,  6, 190, 15,
-        0,
-        0x004E5, 1, human_syllables,
+        0, 1, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1418,8 +1417,7 @@ player_race race_info[MAX_RACES] =
         14, 6,
         65,  6, 150, 20,
         61,  6, 120, 15,
-        0,
-        0x06E5, 129, orc_syllables,
+        0, 129, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1434,8 +1432,7 @@ player_race race_info[MAX_RACES] =
         50, 24,
         92, 10, 255, 60,
         80,  8, 235, 60,
-        1,
-        0x0007, 77, dwarf_syllables,
+        1, 77, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1450,8 +1447,7 @@ player_race race_info[MAX_RACES] =
 		75, 75,
 		60,  4, 100,  6,
 		54,  4, 80,  6,
-        5,
-        0x0FFF, 69, elf_syllables,
+        5, 69, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1466,8 +1462,7 @@ player_race race_info[MAX_RACES] =
         75, 33,
         76,  1, 160,  5,
         72,  1, 130,  5,
-        2,
-        0x0F7F, 89, RACE_GNOME,
+        2, 89, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1482,8 +1477,7 @@ player_race race_info[MAX_RACES] =
 		35, 15,
 		48,  3, 150, 10,
 		46,  3, 120, 10,
-		5,
-        0x0065, 16, dwarf_syllables,
+		5, 16, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1498,8 +1492,7 @@ player_race race_info[MAX_RACES] =
 		75, 75,
 		60,  4, 100,  6,
 		54,  4, 80,  6,
-		3,
-        0x0FFF, 7, elf_syllables,
+		3, 7, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1514,8 +1507,7 @@ player_race race_info[MAX_RACES] =
 		50, 40,
 		42,  3, 90,  6,
 		39,  3, 75,  3,
-		4,
-        0x0F3F, 13, RACE_GNOME,
+		4, 13, gnome_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1530,8 +1522,7 @@ player_race race_info[MAX_RACES] =
         1, 100,
         66,  1, 200,  6,
         62,  1, 180,  6,
-        4,
-        0x0005, 98, dwarf_syllables,
+        4, 98, dwarf_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1546,8 +1537,7 @@ player_race race_info[MAX_RACES] =
         50, 50,
 		82, 5, 190, 20,
 		78,  6, 180, 15,
-		0,
-        0x0FFF, 67, human_syllables,
+		0, 67, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1562,8 +1552,7 @@ player_race race_info[MAX_RACES] =
 		24, 16,
 		66,  6, 130, 15,
 		62,  6, 100, 10,
-		2,
-        0x0FFF, 4, elf_syllables,
+		2, 4, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1578,8 +1567,7 @@ player_race race_info[MAX_RACES] =
         40, 10,
         100,10, 255, 65,
         80, 10, 240, 64,
-        3,
-        0x0045, 75, dwarf_syllables,
+        3, 75, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1594,8 +1582,7 @@ player_race race_info[MAX_RACES] =
         40, 10,
         92, 10, 255, 60,
         80,  8, 235, 60,
-		3,
-        0x04C5, 74, orc_syllables,
+		3, 74, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1610,8 +1597,7 @@ player_race race_info[MAX_RACES] =
 		11,  4,
 		66,  1, 150,  5,
 		62,  1, 120,  5,
-		3,
-        0x0FFF, 19, orc_syllables,
+		3, 19, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1626,8 +1612,7 @@ player_race race_info[MAX_RACES] =
         100,30,
         111, 11, 255, 86,
         99, 11, 250, 86,
-        0,
-        0x0FFF, 76, human_syllables,
+        0, 76, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1642,8 +1627,7 @@ player_race race_info[MAX_RACES] =
 		20, 10,
 		96, 10, 250, 50,
 		84,  8, 225, 40,
-		3,
-        0x00C5, 22, orc_syllables,
+		3, 22, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1658,8 +1642,7 @@ player_race race_info[MAX_RACES] =
 		100, 30,
 		90, 10, 190, 20,
 		82, 10, 180, 15,
-		4,
-        0x0FFF, 7, elf_syllables,
+		4, 7, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1674,8 +1657,7 @@ player_race race_info[MAX_RACES] =
 		21, 12,
 		36,  3, 60,  3,
 		33,  3, 50,  3,
-		4,
-        0x06E7, 10, hobbit_syllables,
+		4, 10, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1690,8 +1672,7 @@ player_race race_info[MAX_RACES] =
 		14,  6,
 		72,  6, 180, 25,
 		66,  4, 150, 20,
-		0,
-        0x0FFF, 1, human_syllables,
+		0, 1, human_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1706,8 +1687,7 @@ player_race race_info[MAX_RACES] =
         13,  4,
         68,  1, 150,  5,
         64,  1, 120,  5,
-        3,
-        0x0627, 94, cthuloid_syllables,
+        3, 94, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1722,8 +1702,7 @@ player_race race_info[MAX_RACES] =
         20, 3,
         60,  3, 80,  4,
         54,  3, 70,  4,
-        2,
-        0x047D, 84, klackon_syllables,
+        2, 84, klackon_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1738,8 +1717,7 @@ player_race race_info[MAX_RACES] =
         11,  3,
         60,  1, 130,  5,
         55,  1, 100,  5,
-        3,
-        0x0465, 82, orc_syllables,
+        3, 82, orc_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1754,8 +1732,7 @@ player_race race_info[MAX_RACES] =
         100, 25,
         68,  6, 142, 15,
         63,  6, 112, 10,
-        4,
-        0x0F21, 92, cthuloid_syllables,
+        4, 92, cthuloid_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1770,8 +1747,7 @@ player_race race_info[MAX_RACES] =
         40, 12,
         43,  3, 92,  6,
         40,  3, 78,  3,
-        5,
-        0x0F25, 87, dwarf_syllables,
+        5, 87, dwarf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1786,8 +1762,7 @@ player_race race_info[MAX_RACES] =
         100, 35,
         72,  6, 50, 5,
         66,  4, 50, 5,
-        2,
-        0x0F3F, 102, human_syllables,
+        2, 102, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1802,8 +1777,7 @@ player_race race_info[MAX_RACES] =
         100, 30,
         72, 6, 100, 25,
         66, 4, 100, 20,
-         5,
-         0x0F21, 110, human_syllables,
+         5, 110, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1818,8 +1792,7 @@ player_race race_info[MAX_RACES] =
         50, 25,
         32,  2, 75,  2,
         29,  2, 65,  2,
-        4,
-        0x0EE3, 124, elf_syllables,
+        4, 124, elf_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1834,8 +1807,7 @@ player_race race_info[MAX_RACES] =
          100, 30,
            72,  6, 180, 25,
            66,  4, 150, 20,
-         5,
-         0x0FFF, 113, human_syllables,
+         5, 113, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_SCROLL_LIGHT, 0, 0, 0, 3, 7},
@@ -1850,8 +1822,7 @@ player_race race_info[MAX_RACES] =
         14, 3,
         50,  3, 90,  6,
         50,  3, 75,  3,
-        2,
-        0x0FE7, 78, hobbit_syllables,
+        2, 78, hobbit_syllables,
 		{
 			{OBJ_RATION_OF_FOOD, 0, 0, 0, 3, 7},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1866,8 +1837,7 @@ player_race race_info[MAX_RACES] =
         100, 30,
         72, 6, 100, 25,
         66, 4, 100, 20,
-        2,
-        0x0005, 107, human_syllables,
+        2, 107, human_syllables,
 		{
 			{OBJ_SCROLL_SATISFY_HUNGER, 0, 0, 0, 2, 5},
 			{OBJ_WOODEN_TORCH, 0, 0, 0, 3, 7},
@@ -1898,7 +1868,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Adventurer", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{ 3, 1, -1, 2, 2, -1},
-		{16, 0, 0, 13, 15, 0},
 		{1, 0, 5, 5, 20, 5, 5, 10, 20, 20, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 20, 20, 20, 0, 5, 20},
@@ -1914,7 +1883,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Swashbuckler", 0, BIAS_WARRIOR, 0, 0,
 		{1, 0, -2, 3, 2, 1},
-		{15, 0, 0, 16, 0, 13},
 		{1, 0, 5, 5, 15, 5, 5, 15, 15, 15, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 35, 15, 15, 0, 0, 30},
@@ -1930,7 +1898,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Gladiator", 0, BIAS_WARRIOR, 0, 0,
 		{5, -1, -1, 1, 3, -1},
-		{15, 0, 0, 13, 16, 0},
 		{2, 0, 5, 5, 10, 5, 5, 10, 30, 10, 1,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 30, 30, 30, 0, 0, 40},
@@ -1946,7 +1913,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Warrior-Monk", 0, BIAS_WARRIOR, 0, 0,
 		{ 2, 0, -2, 5, 1, -1},
-		{13, 0, 0, 16, 15, 0},
 		{1, 0, 5, 5, 10, 15, 5, 15, 35, 10, 4,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 10, 10, 10, 0, 0, 30},
@@ -1962,7 +1928,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Zen-Monk", 0, BIAS_PRIESTLY, 0, 40,
 		{ 2, -1, 2, 2, 0, -1},
-		{0, 0, 15, 16, 13, 0},
 		{0, 0, 5, 5, 10, 10, 10, 15, 25, 10, 2,
 		0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
 		0, 10, 10, 10, 0, 0, 40},
@@ -1978,7 +1943,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Assassin", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{ 1, 0, 0, 3, 2, -2},
-		{0, 13, 0, 16, 15, 0},
 		{0, 0, 20, 5, 10, 30, 20, 20, 30, 10, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 20, 20, 20, 0, 0, 30},
@@ -1994,7 +1958,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Ranger", 0, BIAS_RANGER, BIAS_WARRIOR, 30,
 		{ 2, -1, -1, 3, 3, 2},
-		{0, 0, 0, 13, 16, 15},
 		{1, 0, 10, 5, 10, 20, 20, 30, 15, 35, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 15, 15, 15, 2, 0, 10},
@@ -2010,7 +1973,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Shaman", 0, BIAS_PRIESTLY, 0, 0,
 		{ -1, 1, 1, -2, 2, 5},
-		{0, 0, 15, 0, 13, 16},
 		{0, 0, 5, 10, 20, 5, 10, 15, 15, 15, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 15, 15, 15, 5, 0, 20},
@@ -2026,7 +1988,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Mindcrafter", 0, BIAS_PRIESTLY, 0, 40,
 		{ -2, 2, 5, -1, 0, 1},
-		{0, 15, 16, 0, 13, 0},
 		{0, 0, 5, 10, 15, 5, 10, 15, 15, 15, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 4, 2,
 		0, 15, 15, 15, 0, 0, 15},
@@ -2042,7 +2003,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Wizard", 3, BIAS_MAGE, 0, 0,
 		{-2, 5, 2, 1, -1, 1},
-		{13, 16, 0, 0, 15, 0},
 		{0, 4, 5, 25, 20, 5, 10, 15, 10, 10, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 10, 10, 10, 0, 0, 5},
@@ -2059,7 +2019,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Warlock", 1, BIAS_MAGE, 0, 0,
 		{1, 3, -1, 0, 2, -1},
-		{13, 15, 0, 0, 16, 0},
 		{1, 2, 5, 10, 15, 5, 10, 10, 15, 10, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 15, 15, 20, 0, 0, 10},
@@ -2075,7 +2034,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Powerweaver", 2, BIAS_MAGE, 0, 0,
 		{-3, 3, 3, -2, -2, 3},
-		{0, 16, 15, 0, 0, 13},
 		{0, 2, 5, 15, 15, 5, 10, 10, 5, 5, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 3, 2,
 		0, 5, 5, 5, 3, 0, 10},
@@ -2091,7 +2049,6 @@ player_template template_info[MAX_TEMPLATE] =
 	{
 		"Tourist", 0, BIAS_ROGUE, BIAS_WARRIOR, 25,
 		{0, 0, 0, 0, 2, -1},
-		{0, 0, 0, 0, 0, 0},
 		{0, 0, 5, 5, 5, 5, 5, 5, 10, 10, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 10, 10, 10, 0, 0, 20},

@@ -158,6 +158,9 @@ extern void do_cmd_go_up(void);
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_go_down(void);
 #endif
+#if (defined(CMD1_C) || defined(CMD2_C))
+extern void cnv_arg_to_rep(void);
+#endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_search(void);
 #endif
@@ -189,9 +192,6 @@ extern void do_cmd_spike(void);
 extern void do_cmd_walk(int pickup);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))
-extern void do_cmd_run(void);
-#endif
-#if (defined(CMD2_C) || defined(DUNGEON_C))
 extern void do_cmd_stay(int pickup);
 #endif
 #if (defined(CMD2_C) || defined(DUNGEON_C))
@@ -200,9 +200,9 @@ extern void do_cmd_rest(void);
 #if (defined(CMD2_C) || defined(POWERS_C) || defined(SPELLS1_C) || defined(SPELLS2_C))
 extern void move_to(s16b y, s16b x);
 #endif
-
-
-
+#if (defined(CMD2_C) || defined(DUNGEON_C))
+extern void do_cmd_run(void);
+#endif
 
 /* cmd3.c */
 
@@ -464,7 +464,7 @@ extern cptr add_stats(s16b sex, s16b race, s16b template, bool maximise, s16b *s
 #if (defined(CMD4_C) || defined(FILES_C) || defined(OBJECT1_C))
 extern cptr process_pref_file_aux(char *buf, u16b *sf_flags);
 #endif
-#if (defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(OBJECT1_C))
+#if (defined(BIRTH_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(INIT2_C) || defined(MAIN_AMI_C) || defined(OBJECT1_C))
 extern errr process_pref_file(cptr name);
 #endif
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_C))
@@ -2013,12 +2013,6 @@ extern void teleport_swap(int dir);
 extern void alter_reality(void);
 #endif
 
-
-
-
-
-
-
 /* squelch.c */
 
 #if (defined(SQUELCH_C) || defined(XTRA1_C))
@@ -2223,6 +2217,21 @@ extern cptr option_chars;
 extern natural_attack natural_attacks[5];
 #endif
 
+/* ui.c */
+
+#if (defined(BIRTH_C) || defined(UI_C))
+extern int display_entry_list_bounded(name_centry *list, int num, int truncate, int minx, int miny, int maxx, int maxy);
+#endif
+#if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
+extern int display_entry_list(name_centry *list, int num, int maxy, bool truncate);
+#endif
+#if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
+extern int build_choice_list_1(name_entry *list, name_centry *start, int listm, int items, bool (*item_good)(int, int));
+#endif
+#if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
+extern int build_choice_list_2(name_entry *list, int idx, int listm, int items, bool (*item_good)(int, int));
+#endif
+
 /* util.c */
 
 #if (!(defined(HAS_MEMSET))) && (defined(ANGBAND_H) || defined(Z_VIRT_H))
@@ -2330,7 +2339,7 @@ extern void sound(int val);
 #if (defined(MAIN_CRB_C) || defined(UTIL_C) || defined(XTRA1_C))
 extern bool screen_is_icky(void);
 #endif
-#if (defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
+#if (defined(BIRTH_C) || defined(SPELLS2_C) || defined(SQUELCH_C) || defined(UTIL_C) || defined(WIZARD2_C))
 extern void set_gnext(cptr next);
 #endif
 #if (defined(SQUELCH_C) || defined(UTIL_C))
@@ -2366,7 +2375,7 @@ extern void msg_print(cptr msg);
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(GENERATE_C) || defined(INIT1_C) || defined(INIT2_C) || defined(LOAD_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(MONSTER1_C) || defined(MONSTER2_C) || defined(OBJECT1_C) || defined(OBJECT2_C) || defined(POWERS_C) || defined(QUEST_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(STORE_C) || defined(UTIL_C) || defined(WIZARD2_C) || defined(XTRA1_C) || defined(XTRA2_C))
 extern void msg_format(cptr fmt, ...);
 #endif
-#if (defined(BIRTH_C) || defined(CAVE_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C))
+#if (defined(CAVE_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(UTIL_C))
 extern void c_put_str(byte attr, cptr str, int row, int col);
 #endif
 #if (defined(BIRTH_C) || defined(CAVE_C) || defined(CMD3_C) || defined(CMD4_C) || defined(CMD5_C) || defined(FILES_C) || defined(OBJECT1_C) || defined(STORE_C) || defined(UTIL_C))
@@ -2552,12 +2561,6 @@ extern bool alive;
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(MELEE2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(SQUELCH_C) || defined(VARIABLE_C))
 extern bool death;
 #endif
-
-
-
-
-
-
 #if (defined(ANGBAND_H))
 extern s16b cur_hgt;
 #endif
@@ -3626,7 +3629,7 @@ extern void init_chaos(void);
 #if (defined(FILES_C) || defined(POWERS_C) || defined(XTRA2_C))
 extern bool PURE p_mutated(void);
 #endif
-#if (defined(BIRTH_C) || defined(POWERS_C) || defined(XTRA2_C))
+#if (defined(POWERS_C) || defined(XTRA2_C))
 extern void p_clear_mutations(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD4_C) || defined(DUNGEON_C) || defined(FILES_C) || defined(MONSTER2_C) || defined(SPELLS1_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -3883,26 +3886,5 @@ extern void safe_free(vptr p);
 #endif
 #if (defined(LOAD_C) || defined(OBJECT1_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(Z_VIRT_C))
 extern cptr safe_string_make(cptr str);
-#endif
-
-/* ui.c */
-
-#if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
-extern int display_entry_list(name_centry *list, int num, int maxy, bool truncate);
-#endif
-#if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
-extern int build_choice_list_1(name_entry *list, name_centry *start, int listm, int items, bool (*item_good)(int, int));
-#endif
-#if (defined(CMD4_C) || defined(UI_C) || defined(WIZARD2_C))
-extern int build_choice_list_2(name_entry *list, int idx, int listm, int items, bool (*item_good)(int, int));
-#endif
-#if (defined(BIRTH_C) || defined(UI_C))
-extern int display_entry_list_bounded(name_centry *list, int num, int truncate, int minx, int miny, int maxx, int maxy);
-#endif
-
-/* cmd2.c */
-
-#if (defined(CMD1_C) || defined(CMD2_C))
-extern void cnv_arg_to_rep(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */

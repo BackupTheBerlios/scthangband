@@ -968,9 +968,7 @@ struct player_race
 
 	byte infra;			/* Infra-vision	range */
 
-    u16b choice;        /* Legal template choices */
 	byte chart;		/* Initial chart for get_history() */
-/*    byte choice_xtra;   */
 
 	cptr **name_syls;	/* Syllable list for random name generation. */
 	make_item_type items[MAX_RACE_ITEMS]; /* Objects to be given at birth. */
@@ -1015,8 +1013,6 @@ struct player_template
 	byte art2_chance;	/* Chance of choosing art2 if a bias is used. */
 
 	s16b c_adj[A_MAX];		/* Template stat modifier */
-
-	s16b qmin[A_MAX];	/* Minimum quick-start stats -max+17 */
 
 	s16b skill[MAX_SKILLS];		/* Skill improvements */
 
