@@ -4429,4 +4429,10 @@ void update_object(object_type *o_ptr, int where)
 		/* Display the player window, as some changes may not do this. (?) */
 		p_ptr->window |= PW_PLAYER;
 	}
+
+	/* Give the changed object a valid stack number if appropriate. */
+	if (!o_ptr->stack)
+	{
+		set_stack_number(o_ptr);
+	}
 }

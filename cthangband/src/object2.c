@@ -1328,6 +1328,46 @@ s32b object_value(object_type *o_ptr)
 
 
 
+
+/*
+ * Set o_ptr->stack to an appropriate value.
+ *
+ * Non-objects and single objects are given the special index of 0.
+ *
+ * Other objects are given numbers in order.
+ *
+ * NB: This makes no effort to check that indices are unique (which may be
+ * impossible with an 8 bit index). It merely makes strange stacks unlikely.
+ */
+void set_stack_number(object_type *o_ptr)
+{
+	static int cur = 0;
+	assert(o_ptr);
+
+	/* Boring objects are not part of a stack. */
+	if (!o_ptr->k_idx || o_ptr->number == 1)
+	{
+		o_ptr->stack = 0;
+	}
+	else
+	{
+		/* This uses the 255 indices in order. This means that same_stack()
+		 * gives some false positives, but this should not be easy to induce. */
+		if (cur == 255) cur = 1;
+		else cur++;
+
+		o_ptr->stack = cur;
+	}
+}
+
+/*
+ * Return TRUE if the specified objects came from the same stack originally.
+ */
+bool PURE same_stack(const object_type *o_ptr, const object_type *j_ptr)
+{
+	return (o_ptr->stack && o_ptr->stack == j_ptr->stack);
+}
+
 /*
  * Determine if an item can "absorb" a second item
  *
@@ -1384,7 +1424,10 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 			if (!stack_allow_wands) return (0);
 
 			/* Require knowledge */
-			if (!object_known_p(o_ptr) || !object_known_p(j_ptr)) return (0);
+			if (!object_known_p(o_ptr) || !object_known_p(j_ptr))
+			{
+				if (!same_stack(o_ptr, j_ptr)) return (0);
+			}
 
 			/* Require identical charges */
 			if (o_ptr->pval != j_ptr->pval) return (0);
@@ -1428,18 +1471,10 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 			/* Fall through */
 		}
 
-		/* Rings, Amulets, Lites */
+		/* Rings, Amulets, Lites, Missiles */
 		case TV_RING:
 		case TV_AMULET:
 		case TV_LITE:
-		{
-			/* Require full knowledge of both items */
-			if (!object_known_p(o_ptr) || !object_known_p(j_ptr)) return (0);
-
-			/* Fall through */
-		}
-
-		/* Missiles */
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
@@ -1475,15 +1510,18 @@ int object_similar_2(object_type *o_ptr, object_type *j_ptr)
 			if (o_ptr->dd != j_ptr->dd) return (FALSE);
 			if (o_ptr->ds != j_ptr->ds) return (FALSE);
 
-			/* Probably okay */
-			break;
+			/* Fall through. */
 		}
 
 		/* Various */
 		default:
 		{
-			/* Require knowledge */
-			if (!object_known_p(o_ptr) || !object_known_p(j_ptr)) return (0);
+			/* Require knowledge or former similarity. */
+			if (!(k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && 
+				(!object_known_p(o_ptr) || !object_known_p(j_ptr)))
+			{
+				if (!same_stack(o_ptr, j_ptr)) return (0);
+			}
 
 			/* Probably okay */
 			break;
@@ -1549,6 +1587,8 @@ static byte merge_discounts(object_type *o_ptr, object_type *j_ptr)
  */
 bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 {
+	bool rc;
+
 	/* Hack -- blend "known" status */
 	if (object_known_p(j_ptr)) object_known(o_ptr);
 
@@ -1572,12 +1612,20 @@ bool object_absorb(object_type *o_ptr, object_type *j_ptr)
 		o_ptr->note = j_ptr->note;
 	}
 
-	/* Hack -- could average discounts XXX XXX XXX */
-	/* Hack -- save largest discount XXX XXX XXX */
+	/* Combine the discounts. */
 	o_ptr->discount = merge_discounts(o_ptr, j_ptr);
-	
+
 	/* Add together the stacks, and return TRUE if the second is empty. */
-	return store_object_absorb(o_ptr, j_ptr);
+	rc = store_object_absorb(o_ptr, j_ptr);
+
+	/* Give a new stack number if necessary. */
+	if (!same_stack(o_ptr, j_ptr))
+	{
+		set_stack_number(o_ptr);
+		j_ptr->stack = o_ptr->stack;
+	}
+
+	return rc;
 }
 
 
@@ -3074,6 +3122,9 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		object_mention(j_ptr);
 	}
 	
+	/* Set the stack field for the new object. */
+	set_stack_number(j_ptr);
+
 	/* Success */
 	return (TRUE);
 }
@@ -3936,8 +3987,6 @@ object_type *inven_carry(object_type *o_ptr)
 	/* Return the slot */
 	return j_ptr;
 }
-
-
 
 /*
  * Take off (some of) a non-cursed equipment item

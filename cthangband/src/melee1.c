@@ -428,6 +428,9 @@ bool make_attack_normal(int m_idx)
 							/* Uncharge */
 							o_ptr->pval = 0;
 
+							/* Forget stacking state. */
+							set_stack_number(o_ptr);
+
 							/* Recalculate/redraw stuff (later) */
 							update_object(o_ptr, 0);
 
@@ -641,6 +644,9 @@ bool make_attack_normal(int m_idx)
 						/* Reduce fuel */
 						o_ptr->pval -= (250 + randint(250));
 						if (o_ptr->pval < 1) o_ptr->pval = 1;
+
+						/* Forget stacking state. */
+						set_stack_number(o_ptr);
 
 						/* Notice */
 						if (!p_ptr->blind)

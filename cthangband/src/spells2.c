@@ -2807,6 +2807,9 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 		/* Describe again */
 		msg_format("You now %s %v", (is_inventory_p(o_ptr)) ? "have" : "see",
 			object_desc_f3, o_ptr, TRUE, 1);
+
+		/* Forget obsolete stacking information. */
+		set_stack_number(o_ptr);
 	}	
 
 	/* Something happened */
@@ -4305,6 +4308,11 @@ bool artifact_scroll(void)
 		/* Message */
 		msg_print("The enchantment failed.");
 	}
+	else
+	{
+		/* Forget obsolete stacking information. */
+		set_stack_number(o_ptr);
+	}
 
 	TFREE(o_name);
 	/* Something happened */
@@ -4567,6 +4575,9 @@ bool recharge(int num)
 
 	/* Recalculate/redraw stuff (later) */
 	update_object(o_ptr, 0);
+
+	/* Forget obsolete stacking information. */
+	set_stack_number(o_ptr);
 
 	/* Something was done */
 	return (TRUE);
@@ -6368,6 +6379,9 @@ Ego weapons and normal weapons can be blessed automatically. */
         }
 
     }
+	/* Forget obsolete stacking information. */
+	set_stack_number(o_ptr);
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 

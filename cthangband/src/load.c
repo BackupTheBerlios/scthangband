@@ -540,6 +540,9 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->dd = old_dd;
 		o_ptr->ds = old_ds;
 	}
+
+	/* Hack - forget existing stacking. */
+	set_stack_number(o_ptr);
 }
 
 

@@ -586,7 +586,7 @@ struct object_type
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
 	byte activation;	/* Object activation (e.g. as randart) */
-	/* byte nothing; */	/* Unused */
+	byte stack;         /* The stack of objects this was part of. */
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
