@@ -1440,6 +1440,32 @@ void sound(int val)
 }
 
 /*
+ * Add a keypress to macro__buf, if required.
+ */
+static void record_keymap(char ch)
+{
+#ifdef ALLOW_MACROS
+	if (!ch) return;
+
+	/* Do nothing unless asked. */
+	if (!keymap_buf_ptr) return;
+
+	sprintf(keymap_buf_ptr, "%c", ch);
+
+	/* Window stuff. */
+	p_ptr->window |= PW_KEYMAP;
+
+	/* Too long. */
+	if (++keymap_buf_ptr == macro__buf + 1023)
+	{
+		keymap_buf_ptr = NULL;
+
+		bell("\"Record action\" aborted: Keymap too long.");
+	}
+#endif /* ALLOW_MACROS */
+}
+
+/*
  * Check whether the screen is in a suitable mode for writing.
  * character_icky is set whenever the main map is not being displayed on
  * term_screen.
@@ -1757,7 +1783,7 @@ char inkey(void)
 	term *old = Term;
 
 
-	/* *Hack* - use the "inkey_gnext" pointer. */
+	/* *Hack* - use the "inkey_gnext" (game keymap) pointer. */
 	if (inkey_gnext && *inkey_gnext && !inkey_xtra)
 	{
 		/* Get next character, and advance */
@@ -1773,7 +1799,7 @@ char inkey(void)
 	/* Forget pointer */
 	inkey_gnext = NULL;
 
-	/* Hack -- Use the "inkey_next" pointer */
+	/* Hack -- Use the "inkey_next" (user keymap) pointer */
 	if (inkey_next && *inkey_next && !inkey_xtra)
 	{
 		/* Get next character, and advance */
@@ -1781,6 +1807,9 @@ char inkey(void)
 
 		/* Cancel the various "global parameters" */
 		inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
+
+		/* Add this key to a new keymap, if required. */
+		record_keymap(ch);
 
 		/* Accept result */
 		return (ch);
@@ -1791,11 +1820,14 @@ char inkey(void)
 
 #ifdef ALLOW_BORG
 
-	/* Mega-Hack -- Use the special hook */
+	/* Mega-Hack -- Use the special (borg) hook */
 	if (inkey_hack && ((ch = (*inkey_hack)(inkey_xtra)) != 0))
 	{
 		/* Cancel the various "global parameters" */
 		inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
+
+		/* Add this key to a new keymap, if required. */
+		record_keymap(ch);
 
 		/* Accept result */
 		return (ch);
@@ -1980,6 +2012,9 @@ char inkey(void)
 
 	/* Cancel the various "global parameters" */
 	inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
+
+	/* Add this key to a new keymap, if required. */
+	record_keymap(ch);
 
 
 	/* Return the keypress */
@@ -3397,7 +3432,10 @@ void request_command(bool shopping)
 
 	cptr act;
 
-
+#ifdef ALLOW_MACROS
+	/* Track keymap_buf_ptr to exclude the request to stop from the keymap. */
+	keymap_cmd_ptr = keymap_buf_ptr;
+#endif /* ALLOW_MACROS */
 
 	/* No "argument" yet (exclude special modes). */
 	if (!(command_new & 0xFF00)) command_arg = 0;
@@ -3560,6 +3598,11 @@ void request_command(bool shopping)
 
 				/* Start using the buffer */
 				inkey_next = request_command_buffer;
+
+#ifdef ALLOW_MACROS
+				/* Forget the trigger. */
+				keymap_buf_ptr--;
+#endif /* ALLOW_MACROS */
 
 				continue;
 			}

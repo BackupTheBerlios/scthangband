@@ -2327,8 +2327,24 @@ static void keymap_dump(FILE *fff)
 			mode, ascii_to_text_f1, buf);
 	}
 }
-#endif /* ALLOW_MACROS */
 
+
+
+/*
+ * Start the keymap recorder.
+ */
+void start_keymap_recorder(void)
+{
+	/* Set the keymap buffer to the start. */
+	keymap_buf_ptr = macro__buf;
+
+	/* Remove the existing keymap. */
+	strcpy(keymap_buf_ptr, "");
+
+	/* Window stuff. */
+	p_ptr->window |= PW_KEYMAP;
+}
+#endif /* ALLOW_MACROS */
 
 
 /*
@@ -2346,12 +2362,23 @@ static void do_cmd_macros(void)
 
 	char buf[1024];
 
+#ifdef ALLOW_MACROS
 	int mode = keymap_mode();
+#endif /* ALLOW_MACROS */
 
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
+
+#ifdef ALLOW_MACROS
+	/* Don't record the keymap action here, as we're about to use it. */
+	if (keymap_buf_ptr)
+	{
+		keymap_buf_ptr = NULL;
+		bell("\"Record action\" aborted: Macro menu entered.");
+	}
+#endif /* ALLOW_MACROS */
 
 	/* Process requests until done */
 	while (1)
@@ -2385,6 +2412,7 @@ static void do_cmd_macros(void)
 		prt("(8) Create a keymap", 11, 5);
 		prt("(9) Remove a keymap", 12, 5);
 		prt("(0) Enter a new action", 13, 5);
+		prt("(r) Record a new action", 14, 5);
 #endif /* ALLOW_MACROS */
 
 		/* Prompt */
@@ -2692,6 +2720,16 @@ static void do_cmd_macros(void)
 
 			/* Extract an action */
 			strnfmt(macro__buf, 1024, "%v", text_to_ascii_f1, buf);
+		}
+
+		/* Record a new action */
+		else if (i == 'r')
+		{
+			/* Start the recorder. */
+			start_keymap_recorder();
+
+			/* Leave the macro option menu immediately. */
+			set_gnext("\e\e");
 		}
 
 #endif /* ALLOW_MACROS */

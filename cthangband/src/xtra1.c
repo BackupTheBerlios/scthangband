@@ -3389,6 +3389,44 @@ static void win_floor_display(void)
 	}
 }
 
+/*
+ * Check whether the "keymap action" display is interesting.
+ * As the current macro is displayed whenever the macro menu is in use,
+ * this is only necessary when a keymap action is being recorded.
+ */
+static bool win_keymap_good(void)
+{
+#ifdef ALLOW_MACROS
+	return !!keymap_buf_ptr;
+#else /* ALLOW_MACROS */
+	return FALSE;
+#endif /* ALLOW_MACROS */
+}
+
+/*
+ * Display the current keymap action in a window.
+ */
+static void win_keymap_display(void)
+{
+#ifdef ALLOW_MACROS
+	/* Introduce the action. */
+	mc_put_str(0, 0, "Current keymap action:");
+
+	if (*macro__buf)
+	{
+		/* Display the action. */
+		mc_roff_xy(0, 1, format("$y$!%v\n\n", ascii_to_text_f1, macro__buf));
+	}
+	else
+	{
+		/* No action has been given yet. */
+		mc_roff_xy(0, 1, "$RNONE\n\n");
+	}
+
+	/* Display some help for the action. */
+	mc_add_fmt("Press '$$' at the command prompt to finish recording and go to the macro option menu.");
+#endif /* ALLOW_MACROS */
+}
 
 /*
  * The list of display functions.
@@ -3412,6 +3450,7 @@ display_func_type display_func[NUM_DISPLAY_FUNCS+1] =
 		win_object_details_display},
 	{PW_FLOOR, "floor information", win_floor_good, win_floor_display},
 	{PW_HELP, "help", win_help_good, win_help_display},
+	{PW_KEYMAP, "keymap action", win_keymap_good, win_keymap_display},
 	{PW_NONE, "", func_false, func_nothing},
 };
 

@@ -6,6 +6,7 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Add the ability to record a keymap with the game giving feedback.
 * Display messages from previous turns in a darker colour.
 * Only update the "object recall" when manipulating spellbooks.
 * Describe what effects skill restoration will have on the I screen.

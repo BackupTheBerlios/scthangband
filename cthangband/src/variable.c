@@ -446,6 +446,18 @@ cptr *macro__act;
 char *macro__buf;
 
 
+#ifdef ALLOW_MACROS
+/*
+ * Pointer in macro__buf for recording a keymap action.
+ */
+char *keymap_buf_ptr;
+
+/*
+ * Pointer in macro__buf to show where the current command invocation began.
+ */
+char *keymap_cmd_ptr;
+#endif /* ALLOW_MACROS */
+
 /*
  * The pointers to the quarks [QUARK_MAX]
  */

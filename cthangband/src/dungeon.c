@@ -2211,14 +2211,6 @@ extern void do_cmd_borg(void);
 
 
 /*
- * A temporary script to run on the game.
- */
-static void do_cmd_script(void)
-{
-	msg_print("You are NOT allowed to do THAT!");
-}
-
-/*
  * Parse and execute the current command
  * Give "Warning" on illegal commands.
  *
@@ -2578,6 +2570,28 @@ void process_command(void)
 			break;
 		}
 
+#ifdef ALLOW_MACROS
+		/* Start/stop recording a keymap. */
+		case '$':
+		{
+			if (keymap_buf_ptr)
+			{
+				/* Remove the request to stop from the buffer. */
+				*keymap_cmd_ptr = '\0';
+
+				/* Stop recording the keymap. */
+				keymap_buf_ptr = NULL;
+
+				/* Go to the macro options to assign it somewhere. */
+				set_gnext("=M");
+			}
+			else
+			{
+				start_keymap_recorder();
+			}
+			break;
+		}
+#endif /* ALLOW_MACROS */
 
 			/*** Misc Commands ***/
 
@@ -2674,13 +2688,6 @@ void process_command(void)
 		case ')':
 		{
 			do_cmd_save_screen();
-			break;
-		}
-
-		/* Hack - process a temporary function. */
-		case '$':
-		{
-			do_cmd_script();
 			break;
 		}
 
