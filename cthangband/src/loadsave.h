@@ -90,3 +90,8 @@
  * Add object_type.stack to track which stack an item belongs to.
  */
 #define SF_STACK_IDX 17
+
+/*
+ * Remember if the player has seen an object at some point.
+ */
+#define SF_OBJECT_SEEN 18

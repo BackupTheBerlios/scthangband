@@ -270,17 +270,28 @@ static void wr_death(void)
 }
 
 /*
- * Write an "xtra" record
+ * Write information about an element of k_info.
  */
 static void wr_xtra(s16b k_idx)
 {
 	byte tmp8u = 0;
-	object_kind *k_ptr = &k_info[k_idx];
+	object_kind dummy, *k_ptr = &dummy;
 
+	/* Write from a blank record, if none known. */
+	WIPE(k_ptr, dummy);
+
+	/* Find what the save version expects the k_idx to be. */
+	k_idx = convert_k_idx(k_idx, sf_flags_now, sf_flags_sf);
+
+	/* Use that k_idx, if any. */
+	if (k_idx >= 0) k_ptr = &k_info[k_idx];
+
+	/* Write stuff. */
 	if (k_ptr->aware) tmp8u |= 0x01;
 	if (k_ptr->tried) tmp8u |= 0x02;
-
 	wr_byte(tmp8u);
+
+	if (has_flag(SF_OBJECT_SEEN)) wr_byte(k_ptr->seen);
 }
 
 
@@ -1047,7 +1058,7 @@ static bool wr_savefile_new(void)
 	/* Dump the object memory */
 	tmp16u = convert_k_idx(MAX_K_IDX, sf_flags_now, sf_flags_sf);
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++) wr_xtra(MAX(0, convert_k_idx(i, sf_flags_sf, sf_flags_now)));
+	for (i = 0; i < tmp16u; i++) wr_xtra(i);
 
 
 	/* Hack -- Dump the quests */

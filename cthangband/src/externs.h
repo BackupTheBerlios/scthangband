@@ -2986,7 +2986,7 @@ extern bool spoil_ego;
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_value;
 #endif
-#if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(CMD4_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool spoil_base;
 #endif
 #if (defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
@@ -3814,7 +3814,7 @@ extern void Term_flush(void);
 #if (defined(MAIN_AMI_C) || defined(MAIN_CAP_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_EMX_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_IBM_C) || defined(MAIN_LSL_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_SLA_C) || defined(MAIN_VCS_C) || defined(MAIN_VME_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_keypress(int k);
 #endif
-#if (defined(CMD5_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
+#if (defined(CMD4_C) || defined(CMD5_C) || defined(MAIN_CRB_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_WIN_C) || defined(UTIL_C) || defined(XTRA2_C) || defined(Z_TERM_C))
 extern errr Term_key_push(int k);
 #endif
 #if (defined(UTIL_C) || defined(Z_TERM_C))

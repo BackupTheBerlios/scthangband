@@ -229,16 +229,17 @@ struct object_kind
 
 	s32b cost;			/* Object "base cost" */
 	s16b weight;		/* Weight */
-	byte rating;		/* Bonus to level rating. */
+	u16b u_idx;	/* The u_info[] entry which represents this item. */
 
 	byte d_attr;		/* Default object attribute */
 	char d_char;		/* Default object character */
 	byte x_attr;		/* Desired object attribute */
 	char x_char;		/* Desired object character */
 
-	u16b u_idx;	/* The u_info[] entry which represents this item. */
+	byte rating;		/* Bonus to level rating. */
 	bool aware;			/* The player is "aware" of the item's effects */
 	bool tried;			/* The player has "tried" one of the items */
+	bool seen;	/* The player has encountered at least one of these. */
 };
 
 

@@ -1035,6 +1035,9 @@ static void object_desc(char *buf, uint len, object_ctype *o1_ptr, byte flags,
 	/* Singular objects take no plural. */
 	if (o_ptr->number == 1) reject |= 1 << CI_PLURAL;
 
+	/* Hack - set k1_ptr->seen if the kind is recognised. */
+	if (*strings[CI_K_IDX]) k1_ptr->seen = TRUE;
+
 	/* Start dumping the result */
 	t = tmp_val;
 

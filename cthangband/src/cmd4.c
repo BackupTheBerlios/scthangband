@@ -2301,9 +2301,12 @@ static bool visual_reject_feat(uint n)
 	return (f_info[n].mimic != n);
 }
 
+/*
+ * Non-objects are rejected, as are unseen objects other than (nothing).
+ */
 static bool visual_reject_obj(uint n)
 {
-	return (k_info[n].name == 0);
+	return (k_info[n].name == 0 || (n && !spoil_base && !k_info[n].seen));
 }
 
 /* The number of members of the visual[] array. */
@@ -2425,12 +2428,13 @@ static void modify_visuals(visual_type *vs_ptr)
 	int inc, max, num;
 	uint r = vs_ptr->max-1, *out;
 
-	bool started = FALSE;
-
 	/* Make a note of log(*vs_ptr->max-1)/log(10) */
 	const uint numlen = strlen(format("%d", r));
 
 	prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
+
+	/* Start by finding the first valid selection. */
+	Term_key_push('n');
 
 	/* Hack -- query until done */
 	while (1)
@@ -2441,62 +2445,8 @@ static void modify_visuals(visual_type *vs_ptr)
 		uint da, dc, ca, cc = 50;
 		cptr prompt, text;
 
-		(*vs_ptr->get)(r, &text, &dal, &dcl, &cal, &ccl);
-
-		da = dal;
-		dc = (byte)dcl;
-		if (cal) ca = *cal;
-		if (ccl) cc = (byte)*ccl;
-
-		/* Clear the line first. */
-		Term_erase(0, CMDLINE+2, Term->wid);
-
-		/* Write name first as it may be in the format buffer. */
-		put_str(text, CMDLINE+2, 5+numlen+strlen("Number = , Name = "));
-
-		/* Label the object */
-		put_str(format("Number = %*d, Name = ", numlen, r),
-			CMDLINE+2, 5);
-
-		/* Display the default/current attr/char. */
-		mc_put_fmt(CMDLINE+4, 40, "<< $%c%c $w>>", (vs_ptr->attr) ? atchar[da] : 'w', (vs_ptr->chars) ? dc : '#');
-		mc_put_fmt(CMDLINE+5, 40, "<< $%c%c $w>>", (vs_ptr->attr) ? atchar[ca] : 'w', (vs_ptr->chars) ? cc : '#');
-
-		if (vs_ptr->attr && vs_ptr->chars)
-		{
-			mc_put_fmt(CMDLINE+4, 10, "Default attr/char = %3u / %3u", da, dc);
-			mc_put_fmt(CMDLINE+5, 10, "Current attr/char = %3u / %3u", ca, cc);
-		}
-		else if (vs_ptr->attr)
-		{
-			mc_put_fmt(CMDLINE+4, 10, "Default attr = %3u", da);
-			mc_put_fmt(CMDLINE+5, 10, "Current attr = %3u", ca);
-		}
-		else if (vs_ptr->chars)
-		{
-			mc_put_fmt(CMDLINE+4, 10, "Default char = %3u", dc);
-			mc_put_fmt(CMDLINE+5, 10, "Current char = %3u", cc);
-		}
-		else
-		{
-			mc_put_fmt(CMDLINE+4, 10, "A white #");
-			mc_put_fmt(CMDLINE+5, 10, "A white #");
-		}
-
-		/* Prompt */
-		mc_put_fmt(CMDLINE+7, 0, "Command (n/N%s%s): ", 
-			(vs_ptr->attr) ? "/a/A" : "", (vs_ptr->chars) ? "/c/C" : "");
-
 		/* Get a command */
-		if (started)
-		{
-			i = inkey();
-		}
-		else
-		{
-			i = 'n';
-			started = TRUE;
-		}
+		i = inkey();
 
 		/* All done */
 		if (i == ESCAPE) break;
@@ -2571,6 +2521,52 @@ err:			/* Not a valid response, so ask again. */
 		/* Save the information if it has changed.*/
 		if (i == 'a' && cal) (*cal) = ca;
 		if (i == 'c' && ccl) (*ccl) = cc;
+
+		(*vs_ptr->get)(r, &text, &dal, &dcl, &cal, &ccl);
+
+		da = dal;
+		dc = (byte)dcl;
+		if (cal) ca = *cal;
+		if (ccl) cc = (byte)*ccl;
+
+		/* Clear the line first. */
+		Term_erase(0, CMDLINE+2, Term->wid);
+
+		/* Write name first as it may be in the format buffer. */
+		put_str(text, CMDLINE+2, 5+numlen+strlen("Number = , Name = "));
+
+		/* Label the object */
+		put_str(format("Number = %*d, Name = ", numlen, r),
+			CMDLINE+2, 5);
+
+		/* Display the default/current attr/char. */
+		mc_put_fmt(CMDLINE+4, 40, "<< $%c%c $w>>", (vs_ptr->attr) ? atchar[da] : 'w', (vs_ptr->chars) ? dc : '#');
+		mc_put_fmt(CMDLINE+5, 40, "<< $%c%c $w>>", (vs_ptr->attr) ? atchar[ca] : 'w', (vs_ptr->chars) ? cc : '#');
+
+		if (vs_ptr->attr && vs_ptr->chars)
+		{
+			mc_put_fmt(CMDLINE+4, 10, "Default attr/char = %3u / %3u", da, dc);
+			mc_put_fmt(CMDLINE+5, 10, "Current attr/char = %3u / %3u", ca, cc);
+		}
+		else if (vs_ptr->attr)
+		{
+			mc_put_fmt(CMDLINE+4, 10, "Default attr = %3u", da);
+			mc_put_fmt(CMDLINE+5, 10, "Current attr = %3u", ca);
+		}
+		else if (vs_ptr->chars)
+		{
+			mc_put_fmt(CMDLINE+4, 10, "Default char = %3u", dc);
+			mc_put_fmt(CMDLINE+5, 10, "Current char = %3u", cc);
+		}
+		else
+		{
+			mc_put_fmt(CMDLINE+4, 10, "A white #");
+			mc_put_fmt(CMDLINE+5, 10, "A white #");
+		}
+
+		/* Prompt */
+		mc_put_fmt(CMDLINE+7, 0, "Command (n/N%s%s): ", 
+			(vs_ptr->attr) ? "/a/A" : "", (vs_ptr->chars) ? "/c/C" : "");
 	}
 }
 

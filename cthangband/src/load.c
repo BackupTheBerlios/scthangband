@@ -657,6 +657,28 @@ static void rd_death(void)
 }
 
 
+/*
+ * Read information about an element of k_info.
+ */
+static void rd_xtra(int k_idx)
+{
+	byte temp;
+	object_kind dummy, *k_ptr = &dummy;
+
+	/* Find what the save version expects the k_idx to be. */
+	k_idx = convert_k_idx(k_idx, sf_flags_sf, sf_flags_now);
+
+	/* Use that kind, if any. */
+	if (k_idx >= 0) k_ptr = &k_info[k_idx];
+
+	/* Read stuff. */
+	rd_byte(&temp);
+
+	k_ptr->aware = (temp & 0x01) != 0;
+	k_ptr->tried = (temp & 0x02) != 0;
+
+	if (has_flag(SF_OBJECT_SEEN)) rd_char(&k_ptr->seen);
+}
 
 
 /*
@@ -1914,19 +1936,7 @@ good:
 	}
 
 	/* Read the object memory */
-	for (i = 0; i < tmp16u; i++)
-	{
-		int j = convert_k_idx(i, sf_flags_sf, sf_flags_now);
-		object_kind *k_ptr = (j >= 0 && j < MAX_K_IDX) ? &k_info[j] : 0;
-
-		rd_byte(&tmp8u);
-
-		if (k_ptr)
-		{
-			k_ptr->aware = (tmp8u & 0x01) ? TRUE: FALSE;
-			k_ptr->tried = (tmp8u & 0x02) ? TRUE: FALSE;
-		}
-	}
+	for (i = 0; i < tmp16u; i++) rd_xtra(i);
 
 	if (arg_fiddle) note("Loaded Object Memory");
 
