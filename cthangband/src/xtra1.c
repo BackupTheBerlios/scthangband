@@ -3933,8 +3933,12 @@ static bool win_floor_good(void)
  */
 static void win_floor_display(void)
 {
-	bool here = (tracked_co_ord.x == px && tracked_co_ord.y == py);
-	cptr verb = (here) ? "are standing on" : "see";
+	cptr verb;
+
+	if (tracked_co_ord.x == px && tracked_co_ord.y == py)
+		verb = "are standing on";
+	else
+		verb = "see";
 
 	if (p_ptr->image)
 	{
@@ -3951,16 +3955,18 @@ static void win_floor_display(void)
 		mc_put_fmt(y++, 0, "You %s %v.\n", verb, feature_desc_f2,
 			c_ptr->feat, FDF_MIMIC | FDF_INDEF);
 
-		if (c_ptr->m_idx || here)
+		if (c_ptr->m_idx && m_ptr->ml)
 		{
 			mc_put_fmt(y++, 0, "%v %v", get_symbol_f2, r_ptr->x_attr,
 				r_ptr->x_char, monster_desc_f2, m_ptr, 0x0C);
 		}
 
 		for (; y < Term->hgt && o_ptr != o_list;
-			y++, o_ptr = o_list+o_ptr->next_o_idx)
+			o_ptr = o_list+o_ptr->next_o_idx)
 		{
-			mc_put_fmt(y, 0, "%v %v", get_symbol_f2, object_attr(o_ptr),
+			if (!o_ptr->marked) continue;
+
+			mc_put_fmt(y++, 0, "%v %v", get_symbol_f2, object_attr(o_ptr),
 				object_char(o_ptr), object_desc_f3, o_ptr, TRUE, 3);
 		}
 	}

@@ -4208,7 +4208,7 @@ bool target_set(int mode)
 					}
 
 					/* Window stuff */
-					cave_track(target_row, target_col);
+					cave_track(temp_y[m], temp_x[m]);
 					break;
 				}
 
@@ -4221,7 +4221,7 @@ bool target_set(int mode)
 					}
 
 					/* Window stuff */
-					cave_track(target_row, target_col);
+					cave_track(temp_y[m], temp_x[m]);
 					break;
 				}
 
@@ -4261,9 +4261,6 @@ bool target_set(int mode)
 
 				/* Use that grid */
 				if (i >= 0) m = i;
-
-				/* Window stuff */
-				cave_track(target_row, target_col);
 			}
 		}
 
