@@ -2656,6 +2656,70 @@ static void display_player_stat_info(void)
     }
 }
 
+/*
+ * Display how race and class affect stats, but compressed to fit into type
+ * 1 display.
+ * Also display name, sex race and template (but not age, height, etc.).
+ */
+static void display_player_stat_info_birth(void)
+{
+	int i, e_adj;
+	int stat_col;
+	int row;
+
+	char buf[80];
+
+	/* Name, Sex, Race, template */
+	put_str("Name        :", 2, 1);
+	put_str("Sex         :", 3, 1);
+	put_str("Race        :", 4, 1);
+	put_str("Template    :", 5, 1);
+
+	c_put_str(TERM_L_BLUE, player_name, 2, 15);
+	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 15);
+	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 15);
+	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 15);
+
+	/* Column */
+	stat_col = 42;
+
+	/* Row */
+	row = 2;
+
+	/* Display the stats */
+	for (i = 0; i < 6; i++)
+	{
+		/* Calculate equipment adjustment (not always 0) */
+		e_adj = equip_mod(i);
+
+		/* Reduced name of stat */
+		c_put_str(TERM_WHITE, stat_names_reduced[i], row+i, stat_col);
+      
+		/* Internal "natural" max value.  Maxes at 18/100 */
+		/* This is useful to see if you are maxed out     */
+		cnv_stat(p_ptr->stat_max[i], buf);
+		c_put_str(TERM_BLUE, buf, row+i, stat_col+5);
+      
+		/* Race, template, and equipment modifiers */
+		(void) sprintf(buf, "%3d", (int) rp_ptr->r_adj[i]);
+		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+12);
+		(void) sprintf(buf, "%3d", (int) cp_ptr->c_adj[i]);
+		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+16);
+		(void) sprintf(buf, "%3d", (int) e_adj);
+		c_put_str(TERM_L_BLUE, buf, row+i, stat_col+20);
+      
+		/* Actual maximal modified value */
+		cnv_stat(p_ptr->stat_top[i], buf);
+		c_put_str(TERM_L_GREEN, buf, row+i, stat_col+24);
+      
+		/* Only display stat_use if not maximal */
+		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
+		{
+			cnv_stat(p_ptr->stat_use[i], buf);
+			c_put_str(TERM_YELLOW, buf, row+i, stat_col+31);
+		}
+	}
+}
 
 /*
  * Object flag names
@@ -3049,6 +3113,18 @@ void display_player(int mode)
 
 	switch (mode)
 	{
+		case -1: /* During character creation only. */
+		{
+			/* Name, sex, race, template and stats (compressed) */
+			display_player_stat_info_birth();
+
+			/* Extra info (melee) */
+			display_player_sides(FALSE);
+
+			/* Experience */
+			display_player_xp();
+			break;
+		}
 		case 0:
 		{
 			/* Name, sex, race, template, age, height, weight, social class and stats. */

@@ -1022,7 +1022,7 @@ static void display_player_birth(int points, bool details)
 	/* Display details if required. */
 	if (details)
 	{
-		display_player(1);
+		display_player(-1);
 		display_player_birth_details();
 	}
 	else
