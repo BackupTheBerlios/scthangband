@@ -4820,7 +4820,7 @@ bool genocide(bool player_cast)
 		if (player_cast)
 		{
 			/* Take damage */
-			take_hit(randint(4), "the strain of casting Genocide");
+			take_hit(randint(4), "the strain of casting Genocide", MON_CASTING_GENOCIDE);
 		}
 
 		/* Visual feedback */
@@ -4885,7 +4885,7 @@ bool mass_genocide(bool player_cast)
 		if (player_cast)
 		{
 			/* Hack -- visual feedback */
-			take_hit(randint(3), "the strain of casting Mass Genocide");
+			take_hit(randint(3), "the strain of casting Mass Genocide", MON_CASTING_MASS_GENOCIDE);
 		}
 
 		move_cursor_relative(py, px);
@@ -5276,7 +5276,7 @@ void earthquake(int cy, int cx, int r)
 		map[16+py-cy][16+px-cx] = FALSE;
 
 		/* Take some damage */
-		if (damage) take_hit(damage, "an earthquake");
+		if (damage) take_hit(damage, "an earthquake", MON_EARTHQUAKE);
 	}
 
 

@@ -723,7 +723,7 @@ static byte base_bolt_char(int type)
  * the game when he dies, since the "You die." message is shown before
  * setting the player to "dead".
  */
-void take_hit(int damage, cptr hit_from)
+void take_hit(int damage, cptr hit_from, int monster)
 {
 	int old_chp = p_ptr->chp;
 
@@ -767,11 +767,14 @@ void take_hit(int damage, cptr hit_from)
 	p_ptr->window |= (PW_PLAYER);
 
 	/* hit_from may be a format string, so copy it across now. */
-	if (p_ptr->chp < 0)
+	if ((p_ptr->chp < 0) && (p_ptr->ritual == MAX_TOWNS + 1))
 	{
-		/* This allocation isn't tracked as it is freed on termination. */
-		died_from = string_make(format(
-			"%s%s", hit_from, (p_ptr->image) ? "(?)" : ""));
+		/* This allocation isn't tracked as it is freed on termination.
+		 * This does mean that being reincarnated via cheat_live may clutter
+		 * up the memory unnecessarily.
+		 */
+		cptr imstr = (p_ptr->image) ? "(?)" : "";
+		died_from = string_make(format("%s%s", hit_from, imstr));
 	}
 
     if (pen_invuln)
@@ -797,15 +800,19 @@ void take_hit(int damage, cptr hit_from)
 			}
 		}
 
-		/* No longer a winner */
+		/* No longer a winner (can this make winning impossible?) */
 		total_winner = FALSE;
 
 		/* Note death */
 		death = TRUE;
 		
 		/* Again, don't print message if player has ritual */
-        if(p_ptr->ritual == MAX_TOWNS + 1)
+        if((p_ptr->ritual == MAX_TOWNS + 1) && !cheat_live)
 		{
+			/* Recognise the killer's efforts, if possible. */
+			monster_race *r_ptr = r_info+monster;
+			if (r_ptr->r_deaths < MAX_SHORT) r_ptr->r_deaths++;
+
 			if (get_check("Dump the screen? "))
 			{
                 do_cmd_save_screen();
@@ -1058,7 +1065,7 @@ static bool minus_ac(void)
 /*
  * Hurt the player with Acid
  */
-void acid_dam(int dam, cptr kb_str)
+void acid_dam(int dam, cptr kb_str, int monster)
 {
 	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1080,7 +1087,7 @@ void acid_dam(int dam, cptr kb_str)
 	if (minus_ac()) dam = (dam + 1) / 2;
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, monster);
 
 	/* Inventory damage */
     if (!(p_ptr->oppose_acid && p_ptr->resist_acid))
@@ -1091,7 +1098,7 @@ void acid_dam(int dam, cptr kb_str)
 /*
  * Hurt the player with electricity
  */
-void elec_dam(int dam, cptr kb_str)
+void elec_dam(int dam, cptr kb_str, int monster)
 {
 	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1110,7 +1117,7 @@ void elec_dam(int dam, cptr kb_str)
             (void) do_dec_stat(A_DEX);
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, monster);
 
 	/* Inventory damage */
     if (!(p_ptr->oppose_elec && p_ptr->resist_elec))
@@ -1123,7 +1130,7 @@ void elec_dam(int dam, cptr kb_str)
 /*
  * Hurt the player with Fire
  */
-void fire_dam(int dam, cptr kb_str)
+void fire_dam(int dam, cptr kb_str, int monster)
 {
 	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1143,7 +1150,7 @@ void fire_dam(int dam, cptr kb_str)
 
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, monster);
 
 	/* Inventory damage */
     if (!(p_ptr->resist_fire && p_ptr->oppose_fire))
@@ -1154,7 +1161,7 @@ void fire_dam(int dam, cptr kb_str)
 /*
  * Hurt the player with Cold
  */
-void cold_dam(int dam, cptr kb_str)
+void cold_dam(int dam, cptr kb_str, int monster)
 {
 	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1174,7 +1181,7 @@ void cold_dam(int dam, cptr kb_str)
 
 
 	/* Take damage */
-	take_hit(dam, kb_str);
+	take_hit(dam, kb_str, monster);
 
 	/* Inventory damage */
     if (!(p_ptr->resist_cold && p_ptr->oppose_cold))
@@ -2965,7 +2972,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			    } else {
 				/* Injure +/- confusion */
 				strnfmt(killer, MNAME_MAX, "%v", monster_desc_f2, m_ptr, 0x88);
-                take_hit(dam, killer);  /* has already been /3 */
+                take_hit(dam, killer, m_ptr->r_idx);  /* has already been /3 */
 				if (randint(4) == 1) {
 				    switch (randint(4)) {
 				     case 1:
@@ -3042,7 +3049,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
                 msg_print("Your psychic energy is drained!");
                 p_ptr->cchi = MAX(0, p_ptr->cchi - damroll(5, dam)/2);
 				p_ptr->redraw |= PR_MANA;
-                take_hit(dam, killer);  /* has already been /3 */
+                take_hit(dam, killer, m_ptr->r_idx);  /* has already been /3 */
 			    }
 			    dam = 0;
 			}
@@ -4487,7 +4494,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_ACID:
 		{
 			if (fuzzy) msg_print("You are hit by acid!");
-			acid_dam(dam, killer);
+			acid_dam(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4495,7 +4502,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_FIRE:
 		{
 			if (fuzzy) msg_print("You are hit by fire!");
-			fire_dam(dam, killer);
+			fire_dam(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4503,7 +4510,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_COLD:
 		{
 			if (fuzzy) msg_print("You are hit by cold!");
-			cold_dam(dam, killer);
+			cold_dam(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4511,7 +4518,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_ELEC:
 		{
 			if (fuzzy) msg_print("You are hit by lightning!");
-			elec_dam(dam, killer);
+			elec_dam(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4524,7 +4531,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
             if ((!(p_ptr->oppose_pois || p_ptr->resist_pois))
                 && randint(HURT_CHANCE)==1)
                 (void) do_dec_stat(A_CON);
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
 				(void)set_poisoned(p_ptr->poisoned + rand_int(dam) + 10);
@@ -4538,7 +4545,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
             if (fuzzy) msg_print("You are hit by radiation!");
             if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
             if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
 				(void)set_poisoned(p_ptr->poisoned + rand_int(dam) + 10);
@@ -4561,7 +4568,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_MISSILE:
 		{
 			if (fuzzy) msg_print("You are hit by something!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4569,14 +4576,14 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
         case GF_HOLY_FIRE:
         {
 			if (fuzzy) msg_print("You are hit by something!");
-            take_hit(dam, killer);
+            take_hit(dam, killer, m_ptr->r_idx);
             break;
 		}
 
         case GF_HELL_FIRE:
         {
 			if (fuzzy) msg_print("You are hit by something!");
-            take_hit(dam, killer);
+            take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4584,7 +4591,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_ARROW:
 		{
 			if (fuzzy) msg_print("You are hit by something sharp!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4592,7 +4599,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_PLASMA:
 		{
             if (fuzzy) msg_print("You are hit by something *HOT*!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			if (!p_ptr->resist_sound)
 			{
 				int k = (randint((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
@@ -4636,7 +4643,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
                    msg_print("You feel invigorated!");
                    hp_player(dam / 4);
            } else {
-                   take_hit(dam, killer);
+                   take_hit(dam, killer, m_ptr->r_idx);
            }
        break;
        }
@@ -4659,7 +4666,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
                     inven_damage(set_cold_destroy, 3);
                 }
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4706,7 +4713,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
                     inven_damage(set_elec_destroy, 2);
                     inven_damage(set_fire_destroy, 2);
                 }
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4727,7 +4734,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
                     inven_damage(set_cold_destroy, 2);
                 }
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4749,7 +4756,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
                     inven_damage(set_cold_destroy, 2);
                 }
 
-            take_hit(dam, killer);
+            take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4765,7 +4772,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
 				(void)set_confused(p_ptr->confused + randint(20) + 10);
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4781,7 +4788,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
 				(void)apply_disenchant(0);
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4797,7 +4804,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
                 apply_nexus(m_ptr);
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4809,7 +4816,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
 				(void)set_stun(p_ptr->stun + randint(20));
 			}
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4836,7 +4843,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
                     inven_damage(set_cold_destroy, 3);
                 }
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4845,7 +4852,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		{
             if (fuzzy) msg_print("You are hit by something slow!");
 			(void)set_slow(p_ptr->slow + rand_int(4) + 4);
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4865,7 +4872,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
            msg_print("The light scorches your flesh!");
            dam *= 2;
            }
-           take_hit(dam, killer);
+           take_hit(dam, killer, m_ptr->r_idx);
            if (p_ptr->wraith_form)
            {
                p_ptr->wraith_form = 0;
@@ -4898,7 +4905,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
            if (p_ptr->wraith_form)
              hp_player(dam);
            else
-             take_hit(dam, killer);
+             take_hit(dam, killer, m_ptr->r_idx);
            break;
         }
 
@@ -4959,7 +4966,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 					}
 				}
 			}
-		take_hit(dam, killer);
+		take_hit(dam, killer, m_ptr->r_idx);
 		break;
 	}
 
@@ -4986,7 +4993,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
                     inven_damage(set_cold_destroy, 2);
                 }
 
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -4994,7 +5001,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
         case GF_DISINTEGRATE:
 		{
             if (fuzzy) msg_print("You are hit by pure energy!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 
@@ -5033,7 +5040,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_MANA:
 		{
             if (fuzzy) msg_print("You are hit by an aura of magic!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
 			break;
 		}
 		
@@ -5041,7 +5048,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_METEOR:
 		{
             if (fuzzy) msg_print("Something falls from the sky on you!");
-			take_hit(dam, killer);
+			take_hit(dam, killer, m_ptr->r_idx);
                if ((!p_ptr->resist_shard) || (randint(13)==1))
                 {
                     if(!p_ptr->immune_fire) inven_damage(set_fire_destroy, 2);
@@ -5055,7 +5062,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		case GF_ICE:
 		{
             if (fuzzy) msg_print("You are hit by something sharp and cold!");
-			cold_dam(dam, killer);
+			cold_dam(dam, killer, m_ptr->r_idx);
 			if (!p_ptr->resist_shard)
 			{
 				(void)set_cut(p_ptr->cut + damroll(5, 8));

@@ -3935,3 +3935,28 @@ extern int PlayerUID;
 
 /* Give a shorter way to find the ghost. */
 #define MON_PLAYER_GHOST MON_NOBODY_THE_UNNAMED_GHOST______________________________________
+
+/* A few "fake" monsters to identify various causes of death. */
+#define MON_POISON	0
+#define MON_LIGHT	0
+#define MON_TRAP	0
+#define MON_CHAOS_PATRON	0
+#define MON_MINDCRAFT	0
+#define MON_CASTING_GENOCIDE	0
+#define MON_CASTING_MASS_GENOCIDE	0
+#define MON_CALLING_THE_VOID	0
+#define MON_CASTING_HELLFIRE	0
+#define MON_EARTHQUAKE	0
+#define MON_CORRUPT_PATTERN	0
+#define MON_PATTERN	0
+#define MON_SOLID_ROCK	0
+#define MON_BLEEDING	0
+#define MON_STARVATION	0
+#define MON_DANGEROUS_EQUIPMENT	0
+#define MON_DANGEROUS_MUTATION	0
+#define MON_POISONOUS_FOOD	0
+#define MON_HARMFUL_POTION	0
+#define MON_HARMFUL_SCROLL	0
+#define MON_CONCENTRATING_TOO_HARD	0
+#define MON_POLYMORPH	0
+#define MON_SUICIDE	0

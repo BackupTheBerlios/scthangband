@@ -2620,12 +2620,6 @@ static void mon_ball(int m_idx, int typ, int dam_hp, int rad)
 			}
 		}
 
-		/* Always take note of monsters that kill you ---
-		 * even accidentally */
-		if (death && (r_ptr->r_deaths < MAX_SHORT)) {
-			r_ptr->r_deaths++;
-		}
-
 		/* A spell was cast */
 		return (TRUE);
 	}
@@ -3246,7 +3240,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
                 {
                     (void) set_image(p_ptr->image + rand_int(250) + 150);
                 }
-				take_hit(damroll(8, 8), ddesc);
+				take_hit(damroll(8, 8), ddesc, m_ptr->r_idx);
 			}
 			break;
 		}
@@ -3271,7 +3265,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			else
 			{
 				msg_print("Your mind is blasted by psionic energy.");
-				take_hit(damroll(12, 15), ddesc);
+				take_hit(damroll(12, 15), ddesc, m_ptr->r_idx);
 				if (!p_ptr->resist_blind)
 				{
 					(void)set_blind(p_ptr->blind + 8 + rand_int(8));
@@ -3314,7 +3308,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			else
 			{
                 curse_equipment(33, 0);
-				take_hit(damroll(3, 8), ddesc);
+				take_hit(damroll(3, 8), ddesc, m_ptr->r_idx);
                 }
 
 			break;
@@ -3334,7 +3328,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			else
 			{
                 curse_equipment(50, 5);
-				take_hit(damroll(8, 8), ddesc);
+				take_hit(damroll(8, 8), ddesc, m_ptr->r_idx);
 			}
 			break;
 		}
@@ -3353,7 +3347,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			else
 			{
                 curse_equipment(80, 15);
-				take_hit(damroll(10, 15), ddesc);
+				take_hit(damroll(10, 15), ddesc, m_ptr->r_idx);
 			}
 			break;
 		}
@@ -3371,7 +3365,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
 			}
 			else
 			{
-				take_hit(damroll(15, 15), ddesc);
+				take_hit(damroll(15, 15), ddesc, m_ptr->r_idx);
 				(void)set_cut(p_ptr->cut + damroll(10, 10));
 			}
 			break;
@@ -3658,7 +3652,7 @@ static void make_attack_spell_aux(int m_idx, monster_race *r_ptr, int rlev, int 
                  int dummy =
                     (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
                 msg_print("Your feel your life fade away!");
-                take_hit(dummy, m_name);
+                take_hit(dummy, m_name, m_ptr->r_idx);
                 curse_equipment(100, 20);
 
                 if (p_ptr->chp < 1) p_ptr->chp = 1;
@@ -4374,12 +4368,6 @@ static bool make_attack_spell(int m_idx)
 		}
 	}
 
-
-	/* Always take note of monsters that kill you */
-	if (death && (r_ptr->r_deaths < MAX_SHORT))
-	{
-		r_ptr->r_deaths++;
-	}
 
 
 	/* A spell was cast */

@@ -718,7 +718,7 @@ static void hit_trap(void)
 				{
 					change_level(dun_level+1, START_RANDOM);
 				}
-			take_hit(dam, name);
+			take_hit(dam, name, MON_TRAP);
 			}
 			break;
 		}
@@ -735,7 +735,7 @@ static void hit_trap(void)
                 msg_print("You fell into a pit!");
 				dam = damroll(2, 6);
                 name = "a pit trap";
-				take_hit(dam, name);
+				take_hit(dam, name, MON_TRAP);
 			}
 			break;
 		}
@@ -767,7 +767,7 @@ static void hit_trap(void)
 				}
 
 				/* Take the damage */
-				take_hit(dam, name);
+				take_hit(dam, name, MON_TRAP);
 			}
 			break;
 		}
@@ -812,7 +812,7 @@ static void hit_trap(void)
 				}
 
 				/* Take the damage */
-				take_hit(dam, name);
+				take_hit(dam, name, MON_TRAP);
 			}
 
 			break;
@@ -845,7 +845,7 @@ static void hit_trap(void)
 		{
 			msg_print("You are enveloped in flames!");
 			dam = damroll(4, 6);
-			fire_dam(dam, "a fire trap");
+			fire_dam(dam, "a fire trap", MON_TRAP);
 			break;
 		}
 
@@ -853,7 +853,7 @@ static void hit_trap(void)
 		{
 			msg_print("You are splashed with acid!");
 			dam = damroll(4, 6);
-			acid_dam(dam, "an acid trap");
+			acid_dam(dam, "an acid trap", MON_TRAP);
 			break;
 		}
 
@@ -863,7 +863,7 @@ static void hit_trap(void)
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
-				take_hit(dam, name);
+				take_hit(dam, name, MON_TRAP);
 				(void)set_slow(p_ptr->slow + rand_int(20) + 20);
 			}
 			else
@@ -879,7 +879,7 @@ static void hit_trap(void)
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
-		take_hit(dam, "a dart trap");
+		take_hit(dam, "a dart trap", MON_TRAP);
 				(void)do_dec_stat(A_STR);
 			}
 			else
@@ -895,7 +895,7 @@ static void hit_trap(void)
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
-		take_hit(dam, "a dart trap");
+		take_hit(dam, "a dart trap", MON_TRAP);
 				(void)do_dec_stat(A_DEX);
 			}
 			else
@@ -911,7 +911,7 @@ static void hit_trap(void)
 			{
 				msg_print("A small dart hits you!");
 				dam = damroll(1, 4);
-		take_hit(dam, "a dart trap");
+		take_hit(dam, "a dart trap", MON_TRAP);
 				(void)do_dec_stat(A_CON);
 			}
 			else
@@ -982,7 +982,7 @@ static void touch_zap_player(monster_type *m_ptr)
                 if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
 
                 take_hit(aura_damage,
-					format("%v", monster_desc_f2, m_ptr, 0x88));
+					format("%v", monster_desc_f2, m_ptr, 0x88), m_ptr->r_idx);
                 r_ptr->r_flags2 |= RF2_AURA_FIRE;
                 handle_stuff();
             }
@@ -1001,7 +1001,7 @@ static void touch_zap_player(monster_type *m_ptr)
                 
                 msg_print("You get zapped!");
                 take_hit(aura_damage,
-					format("%v", monster_desc_f2, m_ptr, 0x88));
+					format("%v", monster_desc_f2, m_ptr, 0x88), m_ptr->r_idx);
                 r_ptr->r_flags2 |= RF2_AURA_ELEC;
                 handle_stuff();
             }

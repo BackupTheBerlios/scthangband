@@ -4850,7 +4850,7 @@ void gain_level_reward(int chosen_reward)
         case REW_POLY_WND:
             msg_format("You feel the power of %s touch you.",
                 chaos_patron_shorts[p_ptr->chaos_patron]);
-            do_poly_wounds();
+            do_poly_wounds(MON_CHAOS_PATRON);
             break;
         case REW_AUGM_ABL:
             msg_format("The voice of %s booms out:",
@@ -4866,7 +4866,7 @@ void gain_level_reward(int chosen_reward)
                 chaos_patron_shorts[p_ptr->chaos_patron]);
             msg_print("'Suffer, pathetic fool!'");
             fire_ball(GF_DISINTEGRATE, 0, (skill_used * 4), 4);
-            take_hit(skill_used * 4, wrath_reason);
+            take_hit(skill_used * 4, wrath_reason, MON_CHAOS_PATRON);
             break;
        case REW_HEAL_FUL:
             msg_format("The voice of %s booms out:",
@@ -4924,7 +4924,7 @@ void gain_level_reward(int chosen_reward)
             msg_format("The voice of %s thunders:",
                 chaos_patron_shorts[p_ptr->chaos_patron]);
             msg_print("'Die, mortal!'");
-            take_hit(skill_used * 4, wrath_reason);
+            take_hit(skill_used * 4, wrath_reason, MON_CHAOS_PATRON);
             for (dummy = 0; dummy < 6; dummy++)
             {
                 (void) dec_stat(dummy, 10 + randint(15), FALSE);

@@ -482,7 +482,7 @@ static void wreck_the_pattern(void)
     msg_print("Something terrible happens!");
 
     if (!(p_ptr->invuln))
-        take_hit(damroll(10,8), "corrupting the Pattern");
+        take_hit(damroll(10,8), "corrupting the Pattern", MON_CORRUPT_PATTERN);
 
     to_ruin = randint(45) + 35;
     while (to_ruin--)
@@ -551,7 +551,7 @@ static bool pattern_effect(void)
      else if (cave[py][px].feat == FEAT_PATTERN_XTRA2)
      {
         if (!(p_ptr->invuln))
-            take_hit(200, "walking the corrupted Pattern");
+            take_hit(200, "walking the corrupted Pattern", MON_CORRUPT_PATTERN);
      }
 
      else
@@ -561,7 +561,7 @@ static bool pattern_effect(void)
         else
             if (!(p_ptr->invuln))
                 take_hit(damroll(1,3),
-                    "walking the Pattern");
+                    "walking the Pattern", MON_PATTERN);
      }
 
     return TRUE;
@@ -1163,7 +1163,7 @@ static void process_world(void)
     if ((p_ptr->poisoned) && !(p_ptr->invuln))
 	{
 		/* Take damage */
-		take_hit(1, "poison");
+		take_hit(1, "poison", MON_POISON);
 	}
 
 
@@ -1182,7 +1182,7 @@ static void process_world(void)
            {
             /* Take damage */
             msg_print("The sun's rays scorch your undead flesh!");
-            take_hit(1, "sunlight");
+            take_hit(1, "sunlight", MON_LIGHT);
             cave_no_regen = TRUE;
            }
        }
@@ -1207,7 +1207,7 @@ static void process_world(void)
 
             sprintf(ouch, "wielding %s", o_name);
             if (!(p_ptr->invuln))
-                take_hit(1, ouch);
+                take_hit(1, ouch, MON_LIGHT);
         }
     }
 
@@ -1237,7 +1237,7 @@ static void process_world(void)
                 dam_desc = "solid rock";
             }
 
-               take_hit(1 + ((skill_set[SKILL_TOUGH].value)/10), dam_desc);
+               take_hit(1 + ((skill_set[SKILL_TOUGH].value)/10), dam_desc, MON_SOLID_ROCK);
         }
 
    }
@@ -1265,7 +1265,7 @@ static void process_world(void)
 		}
 
 		/* Take damage */
-		take_hit(i, "a fatal wound");
+		take_hit(i, "a fatal wound", MON_BLEEDING);
 	}
 
 
@@ -1314,7 +1314,7 @@ static void process_world(void)
 
 		/* Take damage */
         if (!(p_ptr->invuln))
-            take_hit(i, "starvation");
+            take_hit(i, "starvation", MON_STARVATION);
 	}
 
 	/* Default regeneration */
@@ -1676,8 +1676,9 @@ static void process_world(void)
         if ((inventory[INVEN_LITE].k_idx == OBJ_GEMSTONE_TRAPEZODEDRON) &&
 			!(p_ptr->invuln))
         {
-            msg_print("The Jewel of Judgement drains life from you!");
-            take_hit(MIN(skill_set[SKILL_TOUGH].value/2, 50), "the Jewel of Judgement");
+            msg_format("The %v drains life from you!",
+				object_desc_f3, inventory+INVEN_LITE, FALSE, 0);
+            take_hit(MIN(skill_set[SKILL_TOUGH].value/2, 50), "the Shining Trapezohedron", MON_DANGEROUS_EQUIPMENT);
         }
     }
 
@@ -1996,7 +1997,7 @@ static void process_world(void)
 		if ((p_ptr->muta2 & MUT2_POLY_WOUND) &&
 			(randint(3000)==1))
 		{
-			do_poly_wounds();
+			do_poly_wounds(MON_DANGEROUS_MUTATION);
 		}
 		if ((p_ptr->muta2 & MUT2_WASTING) &&
 			(randint(3000)==13))
@@ -2156,7 +2157,7 @@ static void process_world(void)
 				}
 				
 				p_ptr->csp += healing;
-				take_hit(healing, "blood rushing to the head");
+				take_hit(healing, "blood rushing to the head", MON_DANGEROUS_MUTATION);
 			}
 		}
 		if ((p_ptr->muta2 & MUT2_DISARM) &&
@@ -2166,7 +2167,7 @@ static void process_world(void)
 			
 			disturb(0,0);
 			msg_print("You trip over your own feet!");
-			take_hit(randint(p_ptr->wt/6), "tripping");
+			take_hit(randint(p_ptr->wt/6), "tripping", MON_DANGEROUS_MUTATION);
 			
 			msg_print(NULL);
 			o_ptr = &inventory[INVEN_WIELD];

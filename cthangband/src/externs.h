@@ -357,7 +357,7 @@ extern void do_cmd_browse(object_type *o_ptr);
 extern void do_cmd_study(void);
 #endif
 #if (defined(CMD5_C) || defined(DUNGEON_C) || defined(XTRA2_C))
-extern void do_poly_wounds(void);
+extern void do_poly_wounds(int cause);
 #endif
 #if (defined(CMD2_C) || defined(CMD5_C) || defined(SPELLS1_C) || defined(XTRA2_C))
 extern void do_poly_self(void);
@@ -1646,19 +1646,19 @@ extern void teleport_player_to(int ny, int nx);
 extern void teleport_player_level(void);
 #endif
 #if (defined(CMD1_C) || defined(CMD2_C) || defined(CMD5_C) || defined(CMD6_C) || defined(DUNGEON_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(SPELLS1_C) || defined(SPELLS2_C) || defined(XTRA2_C))
-extern void take_hit(int damage, cptr hit_from);
+extern void take_hit(int damage, cptr hit_from, int monster);
 #endif
 #if (defined(CMD1_C) || defined(MELEE1_C) || defined(SPELLS1_C))
-extern void acid_dam(int dam, cptr kb_str);
+extern void acid_dam(int dam, cptr kb_str, int monster);
 #endif
 #if (defined(MELEE1_C) || defined(SPELLS1_C))
-extern void elec_dam(int dam, cptr kb_str);
+extern void elec_dam(int dam, cptr kb_str, int monster);
 #endif
 #if (defined(CMD1_C) || defined(MELEE1_C) || defined(SPELLS1_C))
-extern void fire_dam(int dam, cptr kb_str);
+extern void fire_dam(int dam, cptr kb_str, int monster);
 #endif
 #if (defined(MELEE1_C) || defined(SPELLS1_C))
-extern void cold_dam(int dam, cptr kb_str);
+extern void cold_dam(int dam, cptr kb_str, int monster);
 #endif
 #if (defined(SPELLS1_C) || defined(SPELLS2_C))
 extern bool inc_stat(int stat);
@@ -2512,7 +2512,7 @@ extern bool msg_flag;
 #if (defined(DUNGEON_C) || defined(FILES_C) || defined(MAIN_ROS_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(VARIABLE_C))
 extern bool alive;
 #endif
-#if (defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(MELEE1_C) || defined(MELEE2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
+#if (defined(DUNGEON_C) || defined(FILES_C) || defined(LOAD_C) || defined(MAIN_ROS_C) || defined(MELEE2_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(VARIABLE_C))
 extern bool death;
 #endif
 #if (defined(CAVE_C) || defined(CMD1_C) || defined(CMD2_C) || defined(DUNGEON_C) || defined(VARIABLE_C) || defined(XTRA1_C) || defined(XTRA2_C))
@@ -2986,7 +2986,7 @@ extern bool cheat_xtra;
 #if (defined(BIRTH_C) || defined(OBJECT1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_item;
 #endif
-#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+#if (defined(BIRTH_C) || defined(DUNGEON_C) || defined(LOAD_C) || defined(SAVE_C) || defined(SPELLS1_C) || defined(TABLES_C) || defined(VARIABLE_C))
 extern bool cheat_live;
 #endif
 #if (defined(BIRTH_C) || defined(CMD4_C) || defined(LOAD_C) || defined(SAVE_C) || defined(TABLES_C) || defined(VARIABLE_C) || defined(XTRA1_C))

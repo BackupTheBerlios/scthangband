@@ -1424,7 +1424,7 @@ void do_cmd_study(void)
 	p_ptr->redraw |= (PR_STUDY);
 }
 
-void do_poly_wounds(void)
+void do_poly_wounds(int cause)
 {
 
     s16b wounds = p_ptr->cut, hit_p = (p_ptr->mhp - p_ptr->chp);
@@ -1436,7 +1436,7 @@ void do_poly_wounds(void)
     if (Nasty_effect)
         {
             msg_print("A new wound was created!");
-            take_hit(change, "a polymorphed wound");
+            take_hit(change, "a polymorphed wound", cause);
             set_cut(change);
         }
     else
@@ -1462,7 +1462,7 @@ while (effects-- && more_effects)
         switch (randint(12))
         {
         case 1: case 2:
-            do_poly_wounds();
+            do_poly_wounds(MON_POLYMORPH);
             break;
         case 3: case 4:
             (void) gain_chaos_feature(0);
@@ -1528,7 +1528,7 @@ while (effects-- && more_effects)
             if (randint(6)==1)
             {
                 msg_print("You find living difficult in your present form!");
-                take_hit(damroll(randint(skill_set[SKILL_TOUGH].value/2),skill_set[SKILL_TOUGH].value/2), "a lethal chaos feature");
+                take_hit(damroll(randint(skill_set[SKILL_TOUGH].value/2),skill_set[SKILL_TOUGH].value/2), "a lethal chaos feature", MON_POLYMORPH);
             }
             /* No break; here! */
         default:
@@ -1686,7 +1686,7 @@ static void call_the_(void)
         msg_print("There is a loud explosion!");
         destroy_area(py, px, 20+(skill_set[SKILL_THAUMATURGY].value/2), TRUE);
         msg_print("The dungeon collapses...");
-        take_hit(100 + (randint(150)), "a suicidal Call the Void");
+        take_hit(100 + (randint(150)), "a suicidal Call the Void", MON_CALLING_THE_VOID);
     }
 }
 
@@ -3169,7 +3169,7 @@ void do_cmd_cast(void)
 			if (!get_aim_dir(&dir)) return;
             fire_ball(GF_HELL_FIRE, dir,
                     666, 3);
-            take_hit(50+randint(50), "the strain of casting Hellfire");
+            take_hit(50+randint(50), "the strain of casting Hellfire", MON_CASTING_HELLFIRE);
             break;
         case 30: /* Omnicide */
          p_ptr->csp -= 100;  /* Display doesn't show mana cost (100)
@@ -3196,7 +3196,7 @@ void do_cmd_cast(void)
              delete_monster_idx(i,TRUE);
 
              /* Take damage */
-             take_hit(randint(4), "the strain of casting Omnicide");
+             take_hit(randint(4), "the strain of casting Omnicide", MON_CASTING_MASS_GENOCIDE);
 
              /* Absorb power of dead soul */
              p_ptr->csp++;
@@ -3897,7 +3897,7 @@ void do_cmd_invoke(void)
             if ((p_ptr->prace == RACE_VAMPIRE) && !(p_ptr->resist_lite))
             {
                 msg_print("The daylight scorches your flesh!");
-                take_hit(damroll(2,2), "daylight");
+                take_hit(damroll(2,2), "daylight", MON_LIGHT);
                             }
                break;
        case 5: /* Animal Taming */
@@ -4026,7 +4026,7 @@ void do_cmd_invoke(void)
             if ((p_ptr->prace == RACE_VAMPIRE) && !(p_ptr->resist_lite))
             {
                 msg_print("The sunlight scorches your flesh!");
-                take_hit(50, "sunlight");
+                take_hit(50, "sunlight", MON_LIGHT);
             }
 		       break;
 	   case 30: /* Elemental Brand */

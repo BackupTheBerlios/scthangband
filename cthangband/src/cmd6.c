@@ -193,7 +193,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 		case OBJ_FOOD_DEC_STR:
 		{
-			take_hit(damroll(6, 6), "poisonous food.");
+			take_hit(damroll(6, 6), "poisonous food.", MON_POISONOUS_FOOD);
 			(void)do_dec_stat(A_STR);
 			ident = TRUE;
 			break;
@@ -201,7 +201,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 		case OBJ_FOOD_SICKNESS:
 		{
-			take_hit(damroll(6, 6), "poisonous food.");
+			take_hit(damroll(6, 6), "poisonous food.", MON_POISONOUS_FOOD);
 			(void)do_dec_stat(A_CON);
 			ident = TRUE;
 			break;
@@ -209,7 +209,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 		case OBJ_FOOD_DEC_INT:
 		{
-			take_hit(damroll(8, 8), "poisonous food.");
+			take_hit(damroll(8, 8), "poisonous food.", MON_POISONOUS_FOOD);
 			(void)do_dec_stat(A_INT);
 			ident = TRUE;
 			break;
@@ -217,7 +217,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 		case OBJ_FOOD_DEC_WIS:
 		{
-			take_hit(damroll(8, 8), "poisonous food.");
+			take_hit(damroll(8, 8), "poisonous food.", MON_POISONOUS_FOOD);
 			(void)do_dec_stat(A_WIS);
 			ident = TRUE;
 			break;
@@ -225,7 +225,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 		case OBJ_FOOD_UNHEALTH:
 		{
-			take_hit(damroll(10, 10), "poisonous food.");
+			take_hit(damroll(10, 10), "poisonous food.", MON_POISONOUS_FOOD);
 			(void)do_dec_stat(A_CON);
 			ident = TRUE;
 			break;
@@ -233,7 +233,7 @@ void do_cmd_eat_food(object_type *o_ptr)
 
 		case OBJ_FOOD_DISEASE:
 		{
-			take_hit(damroll(10, 10), "poisonous food.");
+			take_hit(damroll(10, 10), "poisonous food.", MON_POISONOUS_FOOD);
 			(void)do_dec_stat(A_STR);
 			ident = TRUE;
 			break;
@@ -532,7 +532,7 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 		case OBJ_POTION_RUINATION:
 		{
 			msg_print("Your nerves and muscles feel weak and lifeless!");
-			take_hit(damroll(10, 10), "a potion of Ruination");
+			take_hit(damroll(10, 10), "a potion of Ruination", MON_HARMFUL_POTION);
 			(void)dec_stat(A_DEX, 25, TRUE);
 			(void)dec_stat(A_WIS, 25, TRUE);
 			(void)dec_stat(A_CON, 25, TRUE);
@@ -582,7 +582,7 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 		case OBJ_POTION_DETONATIONS:
 		{
 			msg_print("Massive explosions rupture your body!");
-			take_hit(damroll(50, 20), "a potion of Detonation");
+			take_hit(damroll(50, 20), "a potion of Detonation", MON_HARMFUL_POTION);
 			(void)set_stun(p_ptr->stun + 75);
 			(void)set_cut(p_ptr->cut + 5000);
 			ident = TRUE;
@@ -592,7 +592,7 @@ void do_cmd_quaff_potion(object_type *o_ptr)
 		case OBJ_POTION_IOCAINE:
 		{
 			msg_print("A feeling of Death flows through your body.");
-			take_hit(5000, "a potion of Death");
+			take_hit(5000, "a potion of Death", MON_HARMFUL_POTION);
 			ident = TRUE;
 			break;
 		}
@@ -1559,7 +1559,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
                 150, 4); /* Note: "Double" damage since it is centered on
                             the player ... */
             if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-                take_hit(50+randint(50), "a Scroll of Fire");
+                take_hit(50+randint(50), "a Scroll of Fire", MON_HARMFUL_SCROLL);
             ident = TRUE;
             break;
         }
@@ -1570,7 +1570,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
             fire_ball(GF_ICE, 0,
                 175, 4);
             if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-                take_hit(100+randint(100), "a Scroll of Ice");
+                take_hit(100+randint(100), "a Scroll of Ice", MON_HARMFUL_SCROLL);
             ident = TRUE;
             break;
         }
@@ -1580,7 +1580,7 @@ void do_cmd_read_scroll(object_type *o_ptr)
             fire_ball(GF_CHAOS, 0,
                 222, 4);
             if (!p_ptr->resist_chaos)
-                take_hit(111+randint(111), "a Scroll of Chaos");
+                take_hit(111+randint(111), "a Scroll of Chaos", MON_HARMFUL_SCROLL);
             ident = TRUE;
             break;
         }
@@ -3203,7 +3203,7 @@ void do_cmd_activate(object_type *o_ptr)
                 msg_print("The gemstone flashes bright red!");
 				wiz_lite();
                 msg_print("The gemstone drains your vitality...");
-                take_hit(damroll(3,8), "the Gemstone 'Trapezohedron'");
+                take_hit(damroll(3,8), "the Gemstone 'Trapezohedron'", MON_DANGEROUS_EQUIPMENT);
 				(void)detect_traps();
 				mark_traps();
 				(void)detect_doors();

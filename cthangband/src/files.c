@@ -4634,6 +4634,11 @@ void do_cmd_suicide(void)
 
 	/* Cause of death */
 	died_from = SUICIDE_STRING;
+
+	{
+		monster_race *r_ptr = r_info+MON_SUICIDE;
+		if (r_ptr->r_deaths < MAX_SHORT) r_ptr->r_deaths++;
+	}
 }
 
 
@@ -6102,6 +6107,11 @@ static void handle_signal_simple(int sig)
 
 		/* Suicide */
 		death = TRUE;
+
+		{
+			monster_race *r_ptr = r_info+MON_SUICIDE;
+			if (r_ptr->r_deaths < MAX_SHORT) r_ptr->r_deaths++;
+		}
 
 		/* Close stuff */
 		close_game();

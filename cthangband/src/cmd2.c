@@ -480,7 +480,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 	if (trap & (CHEST_LOSE_STR))
 	{
 		msg_print("A small needle has pricked you!");
-		take_hit(damroll(1, 4), "a poison needle");
+		take_hit(damroll(1, 4), "a poison needle", MON_TRAP);
 		(void)do_dec_stat(A_STR);
 	}
 
@@ -488,7 +488,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 	if (trap & (CHEST_LOSE_CON))
 	{
 		msg_print("A small needle has pricked you!");
-		take_hit(damroll(1, 4), "a poison needle");
+		take_hit(damroll(1, 4), "a poison needle", MON_TRAP);
 		(void)do_dec_stat(A_CON);
 	}
 
@@ -532,7 +532,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg_print("There is a sudden explosion!");
 		msg_print("Everything inside the chest is destroyed!");
 		o_ptr->pval = 0;
-		take_hit(damroll(5, 8), "an exploding chest");
+		take_hit(damroll(5, 8), "an exploding chest", MON_TRAP);
 	}
 }
 
@@ -3505,7 +3505,7 @@ static void use_power(powertype *pw_ptr)
 			case iilog(MUT1_STERILITY):
 				/* Fake a population explosion. */
 				msg_print("You suddenly have a headache!");
-				take_hit(randint(30) + 30, "the strain of forcing abstinence");
+				take_hit(randint(30) + 30, "the strain of forcing abstinence", MON_DANGEROUS_MUTATION);
 				num_repro += MAX_REPRO;
 				break;
 			case iilog(MUT1_PANIC_HIT):
@@ -4015,7 +4015,7 @@ static bool racial_aux(powertype *pw_ptr)
 
 	if (use_hp)
 	{
-		take_hit (num, "concentrating too hard");
+		take_hit (num, "concentrating too hard", MON_CONCENTRATING_TOO_HARD);
 		p_ptr->redraw |= PR_HP;
 	}
 	else if (use_mana)
