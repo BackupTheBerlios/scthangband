@@ -180,6 +180,7 @@ bool ring_bell;				/* Ring the bell (on errors, etc) */
 bool use_color;				/* Use color if possible (slow) */
 bool verbose_haggle;		/* Verbose messages if auto_haggle is set */
 bool scroll_edge;	/* Scroll until detection reaches the edge. */
+bool show_piles; /* Show stacks with a special colour/character. */
 
 
 /* Option Set 2 -- Disturbance */

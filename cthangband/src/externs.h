@@ -4021,4 +4021,10 @@ extern void convert_articles(char *str);
 #if (defined(CMD5_C) || defined(GENERATE_C))
 extern void generate_spirit_name(spirit_type *s_ptr);
 #endif
+
+/* variable.c */
+
+#if (defined(CAVE_C) || defined(TABLES_C) || defined(VARIABLE_C))
+extern bool show_piles;
+#endif
 #endif /* INCLUDED_EXTERNS_H */

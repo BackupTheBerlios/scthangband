@@ -687,7 +687,8 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 
 	feature_type *f_ptr;
 
-	s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr;
+	bool seen_obj;
 
 	int feat;
 
@@ -993,18 +994,28 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	(*cp) = c;
 
 	/* Objects */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (o_ptr = o_list+c_ptr->o_idx, seen_obj = FALSE; o_ptr != o_list;
+		o_ptr = o_list+o_ptr->next_o_idx)
 	{
-		object_type *o_ptr;
-		
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
-		/* Memorized objects */
-		if (o_ptr->marked)
+		/* Only show memorised objects. */
+		if (!o_ptr->marked)
+		{
+			continue;
+		}
+		/* Hack -- hallucination */
+		else if (p_ptr->image)
+		{
+			image_object(ap, cp);
+			break;
+		}
+		else if (seen_obj)
+		{
+			/* Use a special stack object, if required. */
+			(*cp) = object_kind_char(k_info+OBJ_STACK);
+			(*ap) = object_kind_attr(k_info+OBJ_STACK);
+			break;
+		}
+		else
 		{
 			/* Normal char */
 			(*cp) = object_char(o_ptr);
@@ -1012,11 +1023,11 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 			/* Normal attr */
 			(*ap) = object_attr(o_ptr);
 
-			/* Hack -- hallucination */
-			if (p_ptr->image) image_object(ap, cp);
+			/* Done, if no special stack image is being used. */
+			if (!show_piles) break;
 
-			/* Done */
-			break;
+			/* One object has been seen on this square. */
+			seen_obj = TRUE;
 		}
 	}
 

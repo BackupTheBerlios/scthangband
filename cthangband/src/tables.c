@@ -2384,7 +2384,7 @@ cptr stat_names_reduced[6] =
 
 
 /*
- * Available Options (full to 3,20), 7 reserved for cheat options
+ * Available Options (full to 3,21), 7 reserved for cheat options
  *
  * Note that birth options should always be followed by BIRTHR ones which
  * store the value used in the game.
@@ -2662,6 +2662,9 @@ option_type option_info[] =
 
 	{ &testing_stack,               TRUE, OPTS_OBJ, 2, 14,
     "testing_stack",                "Allow objects to stack on floor" },
+
+	{ &show_piles, FALSE, OPTS_OBJ, 3, 21,
+	"show_piles", "Show stacks with a special colour/character" },
 
 	{ &testing_carry,               TRUE, OPTS_MON, 2, 15,
     "testing_carry",                "Allow monsters to carry objects" },

@@ -1727,6 +1727,9 @@ logaux(x, 1) logaux(x, 0) 255)
 /* A nicer name for the "unknown thing" object. */
 #define OBJ_UNKNOWN OBJ_
 
+/* Hack - the "stack" attr/char share a character. */
+#define OBJ_STACK OBJ_NO_TEA
+
 /* extra info for chests (decimal) */
 #define XT_CHEST_SMALL	10
 #define XT_CHEST_LARGE	20

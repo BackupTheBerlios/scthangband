@@ -97,9 +97,11 @@ N:0:(nothing)
 G:&:w:0
 F:EASY_KNOW
 
-# A 10 000 AU item for price comparison in shops.
+# The price of this object is used as a price comparison in shops.
+# The name and graphic representation are used for the special "stack" image.
 
-N:1:No tea
+N:1:& stack of objects
+G:&:w:0
 W:0:0lb:10,000
 
 # An unknown object.
