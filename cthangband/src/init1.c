@@ -93,20 +93,6 @@ struct flag_name
 	u32b flag; /* The flag being set. */
 };
 
-#define TR1 0
-#define TR2 1
-#define TR3 2
-#define RF1 3
-#define RF2 4
-#define RF3 5
-#define RF4 6
-#define RF5 7
-#define RF6 8
-#define SUMMON 9
-#define DF 10
-#define SHOP 11
-#define MAX_FLAG_SETS	12
-
 /*
  * Object flags
  *

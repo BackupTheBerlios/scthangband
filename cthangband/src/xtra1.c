@@ -1321,12 +1321,6 @@ bool PURE player_is_undead(void)
 	}
 }
 
-/* Flag sets. */
-#define TR0 0
-#define TR1	1
-#define TR2 2
-#define TR3 3
-
 /* "Fake" object flags for calc_bonuses_object. */
 #define TR0_TO_H	(1L<<0)	/* Bonus to hit chance. */
 #define TR0_DIS_TO_H	(1L<<1)	/* Known bonus to hit chance. */

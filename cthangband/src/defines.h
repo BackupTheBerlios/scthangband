@@ -2755,6 +2755,21 @@ logaux(x, 1) logaux(x, 0) 255)
 #define RBE_EXP_40              27
 #define RBE_EXP_80              28
 
+/* Flag set identifiers. */
+#define TR0 0 /* Special flag set for special purposes. */
+#define TR1 1
+#define TR2 2
+#define TR3 3
+#define RF1 4
+#define RF2 5
+#define RF3 6
+#define RF4 7
+#define RF5 8
+#define RF6 9
+#define SUMMON 10
+#define DF 11
+#define SHOP 12
+#define MAX_FLAG_SETS	13
 
 
 /*** Monster flag values (hard-coded) ***/
