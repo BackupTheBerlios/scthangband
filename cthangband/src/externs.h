@@ -662,9 +662,9 @@ extern s16b error_line;
 #if (defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_ROS_C))
 extern errr (*check_modification_date_hook)(int fd, cptr template_file);
 #endif
-#if (defined(INIT2_C) || defined(STORE_C))
-extern s16b store_table[MAX_STORE_TYPES][STORE_CHOICES];
-#endif
+
+
+
 #if (defined(INIT2_C) || defined(MAIN_CRB_C) || defined(MAIN_EMX_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_ROS_C) || defined(MAIN_WIN_C) || defined(MAIN_XXX_C) || defined(MAIN_C))
 extern void init_angband(void);
 #endif
