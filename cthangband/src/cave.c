@@ -686,10 +686,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 			if (feat == FEAT_PATH) f_ptr = &f_info[FEAT_PATH];
 
 			/* Normal char */
-			c = f_ptr->z_char;
+			c = f_ptr->x_char;
 
 			/* Normal attr */
-			a = f_ptr->z_attr;
+			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
 			if (view_special_lite && ((a == TERM_WHITE) || use_graphics))
@@ -771,10 +771,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 			f_ptr = &f_info[FEAT_NONE];
 
 			/* Normal attr */
-			a = f_ptr->z_attr;
+			a = f_ptr->x_attr;
 
 			/* Normal char */
-			c = f_ptr->z_char;
+			c = f_ptr->x_char;
 		}
 	}
 
@@ -791,10 +791,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 			f_ptr = &f_info[feat];
 
 			/* Normal char */
-			c = f_ptr->z_char;
+			c = f_ptr->x_char;
 
 			/* Normal attr */
-			a = f_ptr->z_attr;
+			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
 			if (view_granite_lite && ((a == TERM_WHITE) || (use_graphics)) &&
@@ -910,10 +910,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 			f_ptr = &f_info[FEAT_NONE];
 
 			/* Normal attr */
-			a = f_ptr->z_attr;
+			a = f_ptr->x_attr;
 
 			/* Normal char */
-			c = f_ptr->z_char;
+			c = f_ptr->x_char;
 		}
 	}
 
@@ -1494,7 +1494,7 @@ static byte priority(byte a, char c)
 		f_ptr = &f_info[p0];
 
 		/* Check character and attribute, accept matches */
-		if ((f_ptr->z_char == c) && (f_ptr->z_attr == a)) return (p1);
+		if ((f_ptr->x_char == c) && (f_ptr->x_attr == a)) return (p1);
 	}
 
 	/* Default */

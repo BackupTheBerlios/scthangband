@@ -3861,6 +3861,32 @@ dun_type dun_defs[MAX_CAVES] = {
 
 };
 
+/*
+ * The array of monster recall colour options
+ */
+moncol_type moncol[MAX_MONCOL] = {
+{"Deaths", TERM_WHITE},
+{"Flavour text", TERM_WHITE},
+{"Depth/speed", TERM_WHITE},
+{"Defensive auras", TERM_WHITE},
+{"Escort", TERM_WHITE},
+{"Inate attacks", TERM_WHITE},
+{"Breath attacks", TERM_WHITE},
+{"Magical attacks", TERM_WHITE},
+{"AC and HP", TERM_WHITE},
+{"Door/wall/monster/object abilities.", TERM_WHITE},
+{"Ease of detection, breeding and regeneration.", TERM_WHITE},
+{"Weaknesses", TERM_WHITE},
+{"Elemental resistances", TERM_WHITE},
+{"Non-elemental resistances", TERM_WHITE},
+{"Non-elemental immunities", TERM_WHITE},
+{"How observant a monster is", TERM_WHITE},
+{"Drop at point of death", TERM_WHITE},
+{"Melee attacks", TERM_WHITE},
+{"Quest monster status", TERM_WHITE},
+};
+
+
 wild_type wild_grid[12][12] = {
 	/* {terrain,town,seed,roadmap,dun_min,dun_max}
 	 * all entries except terrain are zeroed at this point, with values being filled in later

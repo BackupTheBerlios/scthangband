@@ -850,8 +850,8 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			if (tmp < 0) return (1);
 
 			/* Save the values */
-			f_ptr->f_char = buf[2];
-			f_ptr->f_attr = tmp;
+			f_ptr->d_char = buf[2];
+			f_ptr->d_attr = tmp;
 
 			/* Next... */
 			continue;

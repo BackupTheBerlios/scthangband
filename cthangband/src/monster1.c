@@ -92,25 +92,25 @@ static bool know_damage(int r_idx, int i)
 
 
 /* Colourful monster descriptions to make the important points more obvious. */
-#define MONCOL_DEATH	TERM_WHITE	/* How many times you've fought to the death */
-#define MONCOL_FLAVOUR	TERM_WHITE	/* The flavour text from r_info.txt */
-#define MONCOL_DEPTH	TERM_WHITE	/* Normal depth and speed */
-#define MONCOL_AURA	TERM_WHITE	/* Any defensive auras it may have */
-#define MONCOL_ESCORT	TERM_WHITE	/* Any escort it may have */
-#define MONCOL_INATE	TERM_YELLOW	/* Any inate attacks it may have */
-#define MONCOL_BREATH	TERM_YELLOW	/* Any breath attacks it may have */
-#define MONCOL_MAGIC	TERM_YELLOW	/* Any magical attacks it may have */
-#define MONCOL_ACHP	TERM_WHITE	/* The AC and HP of the monster */
-#define MONCOL_ABLE1	TERM_WHITE	/* Bashing down doors, destroying items, etc. */
-#define MONCOL_ABLE2	TERM_WHITE	/* Breeding explosively, invisibility, etc. */
-#define MONCOL_WEAK	TERM_WHITE	/* Susceptibilities to specific attacks */
-#define MONCOL_ELEM	TERM_L_GREEN	/* Elemental resistances */
-#define MONCOL_RESIST	TERM_L_GREEN	/* Other resistances */
-#define MONCOL_IMMUN	TERM_L_GREEN	/* Immunity to stunning, fear, confusion or sleep */
-#define MONCOL_OBSERVE	TERM_WHITE	/* How observant it is */
-#define MONCOL_DROP	TERM_WHITE	/* What it can drop */
-#define MONCOL_ATTACK	TERM_YELLOW	/* What melee attacks it has */
-#define MONCOL_QUEST	TERM_L_RED	/* If it is a quest monster */
+#define MONCOL_DEATH	(moncol[0].attr)	/* How many times you've fought to the death */
+#define MONCOL_FLAVOUR	(moncol[1].attr)	/* The flavour text from r_info.txt */
+#define MONCOL_DEPTH	(moncol[2].attr)	/* Normal depth and speed */
+#define MONCOL_AURA	(moncol[3].attr)	/* Any defensive auras it may have */
+#define MONCOL_ESCORT	(moncol[4].attr)	/* Any escort it may have */
+#define MONCOL_INATE	(moncol[5].attr)	/* Any inate attacks it may have */
+#define MONCOL_BREATH	(moncol[6].attr)	/* Any breath attacks it may have */
+#define MONCOL_MAGIC	(moncol[7].attr)	/* Any magical attacks it may have */
+#define MONCOL_ACHP	(moncol[8].attr)	/* The AC and HP of the monster */
+#define MONCOL_ABLE1	(moncol[9].attr)	/* Bashing down doors, destroying items, etc. */
+#define MONCOL_ABLE2	(moncol[10].attr)	/* Breeding explosively, invisibility, etc. */
+#define MONCOL_WEAK	(moncol[11].attr)	/* Susceptibilities to specific attacks */
+#define MONCOL_ELEM	(moncol[12].attr)	/* Elemental resistances */
+#define MONCOL_RESIST	(moncol[13].attr)	/* Other resistances */
+#define MONCOL_IMMUN	(moncol[14].attr)	/* Immunity to stunning, fear, confusion or sleep */
+#define MONCOL_OBSERVE	(moncol[15].attr)	/* How observant it is */
+#define MONCOL_DROP	(moncol[16].attr)	/* What it can drop */
+#define MONCOL_ATTACK	(moncol[17].attr)	/* What melee attacks it has */
+#define MONCOL_QUEST	(moncol[18].attr)	/* If it is a quest monster */
 
 /*
  * Hack -- display monster information using "roff()"

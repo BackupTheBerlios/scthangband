@@ -1812,13 +1812,203 @@ void do_cmd_macros(void)
 	Term_load();
 }
 
+#ifdef ALLOW_VISUALS
+
+/*
+ * Dump an arbitrary set of attr/char definitions to an open file.
+ *
+ * x_info is the array from which this is derived. It must have a
+ * 'name' entry, an x_attr entry giving the current attr and an
+ * x_char entry giving the current char.
+ *
+ * x_name is the name array such that x_name+x_info[i].name gives the
+ * name of item i.
+ *
+ * max is the total number of entries in array.
+ *
+ * startchar is a character which indicates the type of string. This must
+ * be the same as in process_pref_file_aux().
+ *
+ * initstring is a comment string which is displayed before the dump. It is
+ * formatted as a comment as it is printed.
+ */
+ 
+#define dump_visual(max, x_info, x_name, startchar, initstring) \
+{\
+	s16b i; \
+\
+	/* Start dumping */ \
+	fprintf(fff, "\n\n"); \
+	fprintf(fff, "# %s\n\n", initstring); \
+\
+	/* Dump entries */ \
+	for (i = 0; i < max; i++) \
+	{ \
+\
+		/* Skip non-entries */ \
+		if (!(x_info[i].name)) continue; \
+\
+		/* Dump a comment */ \
+		fprintf(fff, "# %s\n", x_name+x_info[i].name); \
+\
+		/* Dump the attr/char info */ \
+		fprintf(fff, "%c:%d:0x%02X:0x%02X\n\n", startchar, \
+		i, (byte)(x_info[i].x_attr), (byte)(x_info[i].x_char)); \
+	} \
+\
+	/* All done */ \
+	fprintf(fff, "\n\n\n\n"); \
+}
+
+static void visual_dump_mon(FILE *fff)
+dump_visual(MAX_R_IDX, r_info, r_name, 'R', "Monster attr/char definitions")
+
+static void visual_dump_obj(FILE *fff)
+dump_visual(MAX_K_IDX, k_info, k_name, 'K', "Object attr/char definitions")
+
+static void visual_dump_feat(FILE *fff)
+dump_visual(MAX_F_IDX, f_info, f_name, 'F', "Feature attr/char definitions")
+
+/*
+ * Load a name and a set of visual preferences.
+ *
+ * x_info is the array from which this is derived. It must have a 'name' entry,
+ * an 'x_attr' entry, an 'x_char' entry, a 'd_attr' entry and a 'd_char' entry.
+ * x_attr and x_char are the user-defined attr and char, and d_attr and d_char
+ * the default ones.
+ *
+ * x_name is the name array such that x_name+x_info[n].name gives the name for entry n.
+ */
+#define load_visual(x_info, x_name) \
+{ \
+	(*da) = (byte)(x_info[n].d_attr); \
+	(*dc) = (byte)(x_info[n].d_char); \
+	(*ca) = (byte)(x_info[n].x_attr); \
+	(*cc) = (byte)(x_info[n].x_char); \
+	strcpy(name, x_name+x_info[n].name); \
+}
+
+static void visual_load_mon(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+load_visual(r_info, r_name)
+
+static void visual_load_feat(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+load_visual(f_info, f_name)
+
+/* Don't load the actual attr unless aware as the default depends on the underlying colour.
+ * Unfortunately this also resets the user-defined colour because there is no way to
+ * tell if the user has changed it. */
+static void visual_load_obj(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+{
+	load_visual(k_info, k_name)
+	if (!k_info[n].aware)
+	{
+		(*da) = TERM_DARK;
+		(*ca) = TERM_DARK;
+	}
+}
+
+/*
+ * Save an arbitrary set of attr/char definitions to x_info[n].
+ */
+#define save_visual(x_info) \
+{\
+	x_info[n].x_attr = ca; \
+	x_info[n].x_char = cc; \
+}
+
+static void visual_save_mon(s16b n, byte ca, byte cc)
+save_visual(r_info)
+
+static void visual_save_obj(s16b n, byte ca, byte cc)
+save_visual(k_info)
+
+static void visual_save_feat(s16b n, byte ca, byte cc)
+save_visual(f_info)
+
+static void visual_dump_moncol(FILE *fff)
+{
+	s16b n;
+	cptr atchar="dwsorgbuDWvyRGBU";
+	char out[80] = "M";
+
+	for (n = 0; n < MAX_MONCOL; n++)
+	{
+		moncol_type *mc_ptr = &moncol[n];
+		char c1 = atchar[mc_ptr->attr/16];
+		char c2 = atchar[mc_ptr->attr%16];
+
+		/* A leading space looks neater than a leading d.*/
+		if (c1 == 'd') c1 = ' ';
+		strcat(out, format(":%c%c", c1, c2));
+	}
+	/* Start dumping */
+	fprintf(fff, "\n\n");
+	fprintf(fff, "# Monster memory attr definitions\n\n");
+	fprintf(fff, out);
+	fprintf(fff, "\n\n\n\n");
+}
+
+static void visual_load_moncol(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name)
+{
+	moncol_type *mc_ptr = &moncol[n];
+	(*da) = TERM_WHITE;
+	(*ca) = mc_ptr->attr;
+	strcpy(name, mc_ptr->name);
+}
+
+static void visual_save_moncol(s16b n, byte ca, byte cc)
+{
+	moncol_type *mc_ptr = &moncol[n];
+	mc_ptr->attr = ca;
+}
+#endif /* ALLOW_VISUALS */
 
 /*
  * Interact with "visuals"
  */
 void do_cmd_visuals(void)
 {
-	int i;
+#ifdef ALLOW_VISUALS
+	typedef struct visual_type visual_type;
+
+	struct visual_type {
+		cptr text;	/* A text string describing the option */
+		void (*dump)(FILE *fff); /* A function that dumps the preferences to an open file. */
+		/* A function that retrieves the attrs and chars for the current entry. */
+		void (*load)(s16b n, byte *da, byte *dc, byte *ca, byte *cc, char *name);
+		/* A function that saves the attrs and chars for the current entry. */
+		void (*save)(s16b n, byte ca, byte cc);
+		s16b max; /* The number of entries available. */
+		bool attr; /* Has a colour. */
+		bool chars; /* Has a character. */
+	};
+	
+	visual_type visual[] = {
+		{"monster attr/chars", visual_dump_mon, visual_load_mon, visual_save_mon, MAX_R_IDX, TRUE, TRUE},
+		{"object attr/chars", visual_dump_obj, visual_load_obj, visual_save_obj, MAX_K_IDX, TRUE, TRUE},
+		{"feature attr/chars", visual_dump_feat, visual_load_feat, visual_save_feat, MAX_F_IDX, TRUE, TRUE},
+		{"monster memory attrs", visual_dump_moncol, visual_load_moncol, visual_save_moncol, MAX_MONCOL, TRUE, FALSE},
+	};
+
+/* Just in case a specific reference needs to be made. */
+#define VISUAL_MONSTER	(&visual[0])
+#define VISUAL_OBJECT	(&visual[1])
+#define VISUAL_FEATURE	(&visual[2])
+#define VISUAL_MONCOL	(&visual[3])
+
+/* The number of members of the visual[] array. */
+#define VISUALS (sizeof(visual)/sizeof(visual_type))
+
+#else /* ALLOW_VISUALS */
+
+#define VISUALS 0
+
+#endif /* ALLOW_VISUALS */
+
+/* The line on which the command prompt appears. */
+#define CMDLINE (7+2*VISUALS)
+
+	byte i;
 
 	FILE *fff;
 
@@ -1847,22 +2037,20 @@ void do_cmd_visuals(void)
 		/* Ask for a choice */
 		prt("Interact with Visuals", 2, 0);
 
-		/* Give some choices */
-		prt("(1) Load a user pref file", 4, 5);
+		prt("(a) Load a user pref file", 4, 5);
 #ifdef ALLOW_VISUALS
-		prt("(2) Dump monster attr/chars", 5, 5);
-		prt("(3) Dump object attr/chars", 6, 5);
-		prt("(4) Dump feature attr/chars", 7, 5);
-		prt("(5) (unused)", 8, 5);
-		prt("(6) Change monster attr/chars", 9, 5);
-		prt("(7) Change object attr/chars", 10, 5);
-		prt("(8) Change feature attr/chars", 11, 5);
-		prt("(9) (unused)", 12, 5);
+		/* Give some choices */
+		for (i = 0; i < VISUALS; i++)
+		{
+			visual_type *vs_ptr = &visual[i];
+			prt(format("(%c) Dump %s", 'b'+i, vs_ptr->text), 5+i, 5);
+			prt(format("(%c) Change %s", 'b'+i+VISUALS, vs_ptr->text), 5+i+VISUALS, 5);
+		}
 #endif
-		prt("(0) Reset visuals", 13, 5);
+		prt(format("(%c) Reset visuals", 'b'+2*VISUALS), 5+2*VISUALS, 5);
 
 		/* Prompt */
-		prt("Command: ", 15, 0);
+		prt("Command: ", CMDLINE, 0);
 
 		/* Prompt */
 		i = inkey();
@@ -1871,13 +2059,13 @@ void do_cmd_visuals(void)
 		if (i == ESCAPE) break;
 
 		/* Load a 'pref' file */
-		else if (i == '1')
+		else if (i == 'a')
 		{
 			/* Prompt */
-			prt("Command: Load a user pref file", 15, 0);
+			prt("Command: Load a user pref file", CMDLINE, 0);
 
 			/* Prompt */
-			prt("File: ", 17, 0);
+			prt("File: ", CMDLINE+2, 0);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -1891,14 +2079,16 @@ void do_cmd_visuals(void)
 
 #ifdef ALLOW_VISUALS
 
-		/* Dump monster attr/chars */
-		else if (i == '2')
+		/* Dump a visual file. */
+		else if (i > 'a' && i < 'b'+VISUALS)
 		{
-			/* Prompt */
-			prt("Command: Dump monster attr/chars", 15, 0);
+			visual_type *vs_ptr = &visual[i-'b'];
 
 			/* Prompt */
-			prt("File: ", 17, 0);
+			prt(format("Command: Dump %s", vs_ptr->text), CMDLINE, 0);
+
+			/* Prompt */
+			prt("File: ", CMDLINE+2, 0);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -1921,194 +2111,71 @@ void do_cmd_visuals(void)
 			/* Failure */
 			if (!fff) continue;
 
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Monster attr/char definitions\n\n");
-
-			/* Dump monsters */
-			for (i = 0; i < MAX_R_IDX; i++)
-			{
-				monster_race *r_ptr = &r_info[i];
-
-				/* Skip non-entries */
-				if (!r_ptr->name) continue;
-
-				/* Dump a comment */
-				fprintf(fff, "# %s\n", (r_name + r_ptr->name));
-
-				/* Dump the monster attr/char info */
-				fprintf(fff, "R:%d:0x%02X:0x%02X\n\n", i,
-				        (byte)(r_ptr->x_attr), (byte)(r_ptr->x_char));
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
+			(*(vs_ptr->dump))(fff);
 
 			/* Close */
 			my_fclose(fff);
 
 			/* Message */
-			msg_print("Dumped monster attr/chars.");
+			msg_format("Dumped %s.", vs_ptr->text);
 		}
 
-		/* Dump object attr/chars */
-		else if (i == '3')
+		/* Modify a visual function. */
+		else if (i > 'a'+VISUALS && i < 'b'+2*VISUALS)
 		{
-			/* Prompt */
-			prt("Command: Dump object attr/chars", 15, 0);
+			visual_type *vs_ptr = &visual[i-'b'-VISUALS];
 
-			/* Prompt */
-			prt("File: ", 17, 0);
+			s16b r = 0, inc;
 
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Drop priv's */
-			safe_setuid_drop();
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Object attr/char definitions\n\n");
-
-			/* Dump objects */
-			for (i = 0; i < MAX_K_IDX; i++)
-			{
-				object_kind *k_ptr = &k_info[i];
-
-				/* Skip non-entries */
-				if (!k_ptr->name) continue;
-
-				/* Dump a comment */
-				fprintf(fff, "# %s\n", (k_name + k_ptr->name));
-
-				/* Dump the object attr/char info */
-				fprintf(fff, "K:%d:0x%02X:0x%02X\n\n", i,
-				        (byte)(k_ptr->x_attr), (byte)(k_ptr->x_char));
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped object attr/chars.");
-		}
-
-		/* Dump feature attr/chars */
-		else if (i == '4')
-		{
-			/* Prompt */
-			prt("Command: Dump feature attr/chars", 15, 0);
-
-			/* Prompt */
-			prt("File: ", 17, 0);
-
-			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
-
-			/* Get a filename */
-			if (!askfor_aux(tmp, 70)) continue;
-
-			/* Build the filename */
-			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
-
-			/* Drop priv's */
-			safe_setuid_drop();
-
-			/* Append to the file */
-			fff = my_fopen(buf, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
-
-			/* Failure */
-			if (!fff) continue;
-
-			/* Start dumping */
-			fprintf(fff, "\n\n");
-			fprintf(fff, "# Feature attr/char definitions\n\n");
-
-			/* Dump features */
-			for (i = 0; i < MAX_F_IDX; i++)
-			{
-				feature_type *f_ptr = &f_info[i];
-
-				/* Skip non-entries */
-				if (!f_ptr->name) continue;
-
-				/* Dump a comment */
-				fprintf(fff, "# %s\n", (f_name + f_ptr->name));
-
-				/* Dump the feature attr/char info */
-				fprintf(fff, "F:%d:0x%02X:0x%02X\n\n", i,
-				        (byte)(f_ptr->z_attr), (byte)(f_ptr->z_char));
-			}
-
-			/* All done */
-			fprintf(fff, "\n\n\n\n");
-
-			/* Close */
-			my_fclose(fff);
-
-			/* Message */
-			msg_print("Dumped feature attr/chars.");
-		}
-
-		/* Modify monster attr/chars */
-		else if (i == '6')
-		{
-			static int r = 0;
-
-			/* Prompt */
-			prt("Command: Change monster attr/chars", 15, 0);
+			prt(format("Command: Change %s", vs_ptr->text), CMDLINE, 0);
 
 			/* Hack -- query until done */
 			while (1)
 			{
-				monster_race *r_ptr = &r_info[r];
+				byte da, dc, ca, cc;
+				char name[80];
+				char *text;
 
-				int da = (byte)(r_ptr->d_attr);
-				int dc = (byte)(r_ptr->d_char);
-				int ca = (byte)(r_ptr->x_attr);
-				int cc = (byte)(r_ptr->x_char);
+				/* Grab the information for the current entry.*/
+				(*(vs_ptr->load))(r, &da, &dc, &ca, &cc, name);
 
 				/* Label the object */
-				Term_putstr(5, 17, -1, TERM_WHITE,
-				            format("Monster = %d, Name = %-40.40s",
-				                   r, (r_name + r_ptr->name)));
+				Term_putstr(5, CMDLINE+2, -1, TERM_WHITE,
+				            format("Number = %d, Name = %-40.40s",
+				                   r, name));
 
-				/* Label the Default values */
-				Term_putstr(10, 19, -1, TERM_WHITE,
-				            format("Default attr/char = %3u / %3u", da, dc));
-				Term_putstr(40, 19, -1, TERM_WHITE, "<< ? >>");
-				Term_putch(43, 19, (byte)da, (byte)dc);
+				/* Display the default/current attr/char. */
+				Term_putstr(40, CMDLINE+4, -1, TERM_WHITE, "<< ? >>");
+				Term_putstr(40, CMDLINE+5, -1, TERM_WHITE, "<< ? >>");
 
-				/* Label the Current values */
-				Term_putstr(10, 20, -1, TERM_WHITE,
-				            format("Current attr/char = %3u / %3u", ca, cc));
-				Term_putstr(40, 20, -1, TERM_WHITE, "<< ? >>");
-				Term_putch(43, 20, (byte)ca, (byte)cc);
+				Term_putch(43, CMDLINE+4, (vs_ptr->attr) ? da : TERM_WHITE, (vs_ptr->chars) ? dc : '#');
+				Term_putch(43, CMDLINE+5, (vs_ptr->attr) ? ca : TERM_WHITE, (vs_ptr->chars) ? cc : '#');
+
+				if (vs_ptr->attr && vs_ptr->chars)
+					text = format("Default attr/char = %3u / %3u", da, dc);
+				else if (vs_ptr->attr)
+					text = format("Default attr = %3u", da);
+				else if (vs_ptr->chars)
+					text = format("Default char = %3u", dc);
+				else
+					text = "A white #";
+				Term_putstr(10, CMDLINE+4, -1, TERM_WHITE, text);
+
+				if (vs_ptr->attr && vs_ptr->chars)
+					text = format("Current attr/char = %3u / %3u", ca, cc);
+				else if (vs_ptr->attr)
+					text = format("Current attr = %3u", ca);
+				else if (vs_ptr->chars)
+					text = format("Current char = %3u", cc);
+				else
+					text = "A white #";
+				Term_putstr(10, CMDLINE+5, -1, TERM_WHITE, text);
 
 				/* Prompt */
-				Term_putstr(0, 22, -1, TERM_WHITE,
-				            "Command (n/N/a/A/c/C): ");
+				Term_putstr(0, CMDLINE+7, -1, TERM_WHITE,
+				            format("Command (n/N%s%s): ", 
+					    (vs_ptr->attr) ? "/a/A" : "",
+					    (vs_ptr->chars) ? "/c/C" : ""));
 
 				/* Get a command */
 				i = inkey();
@@ -2117,136 +2184,34 @@ void do_cmd_visuals(void)
 				if (i == ESCAPE) break;
 
 				/* Analyze */
-				if (i == 'n') r = (r + MAX_R_IDX + 1) % MAX_R_IDX;
-				if (i == 'N') r = (r + MAX_R_IDX - 1) % MAX_R_IDX;
-				if (i == 'a') r_ptr->x_attr = (byte)(ca + 1);
-				if (i == 'A') r_ptr->x_attr = (byte)(ca - 1);
-				if (i == 'c') r_ptr->x_char = (byte)(cc + 1);
-				if (i == 'C') r_ptr->x_char = (byte)(cc - 1);
-			}
-		}
+				inc = (islower(i)) ? 1 : -1;
+				i = FORCELOWER(i);
 
-		/* Modify object attr/chars */
-		else if (i == '7')
-		{
-			static int k = 0;
+				if (i == 'n') r = (r+inc+vs_ptr->max) % vs_ptr->max;
+				if (i == 'a') ca += inc;
+				if (i == 'c') cc += inc;
 
-			/* Prompt */
-			prt("Command: Change object attr/chars", 15, 0);
+				/* Hack - ignore features which mimic others. Note that
+				 * a situation where two features mimic each other would 
+				 * cause problems. But who'd want to do that anyway?
+				 */
+				if (i == 'n' && vs_ptr == VISUAL_FEATURE)
+					while (f_info[r].mimic != r)
+						r = (r+inc+vs_ptr->max) % vs_ptr->max;
 
-			/* Hack -- query until done */
-			while (1)
-			{
-				object_kind *k_ptr = &k_info[k];
+				/* Hack - ignore objects which are flavoured as their
+				 * attrs and chars are hard-coded.
+				 */
 
-				int da = (byte)k_ptr->k_attr;
-				int dc = (byte)k_ptr->k_char;
-				int ca = (byte)k_ptr->x_attr;
-				int cc = (byte)k_ptr->x_char;
-
-				/* Label the object */
-				Term_putstr(5, 17, -1, TERM_WHITE,
-				            format("Object = %d, Name = %-40.40s",
-				                   k, (k_name + k_ptr->name)));
-
-				/* Label the Default values */
-				Term_putstr(10, 19, -1, TERM_WHITE,
-				            format("Default attr/char = %3d / %3d", da, dc));
-				Term_putstr(40, 19, -1, TERM_WHITE, "<< ? >>");
-				Term_putch(43, 19, (byte)da, (byte)dc);
-
-				/* Label the Current values */
-				Term_putstr(10, 20, -1, TERM_WHITE,
-				            format("Current attr/char = %3d / %3d", ca, cc));
-				Term_putstr(40, 20, -1, TERM_WHITE, "<< ? >>");
-				Term_putch(43, 20, (byte)ca, (byte)cc);
-
-				/* Prompt */
-				Term_putstr(0, 22, -1, TERM_WHITE,
-				            "Command (n/N/a/A/c/C): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (i == 'n') k = (k + MAX_K_IDX + 1) % MAX_K_IDX;
-				if (i == 'N') k = (k + MAX_K_IDX - 1) % MAX_K_IDX;
-				if (i == 'a') k_info[k].x_attr = (byte)(ca + 1);
-				if (i == 'A') k_info[k].x_attr = (byte)(ca - 1);
-				if (i == 'c') k_info[k].x_char = (byte)(cc + 1);
-				if (i == 'C') k_info[k].x_char = (byte)(cc - 1);
-			}
-		}
-
-		/* Modify feature attr/chars */
-		else if (i == '8')
-		{
-			static int f = 0;
-
-			/* Prompt */
-			prt("Command: Change feature attr/chars", 15, 0);
-
-			/* Hack -- query until done */
-			while (1)
-			{
-				feature_type *f_ptr = &f_info[f];
-
-				int da = (byte)f_ptr->f_attr;
-				int dc = (byte)f_ptr->f_char;
-				int ca = (byte)f_ptr->z_attr;
-				int cc = (byte)f_ptr->z_char;
-
-				/* Label the object */
-				Term_putstr(5, 17, -1, TERM_WHITE,
-				            format("Terrain = %d, Name = %-40.40s",
-				                   f, (f_name + f_ptr->name)));
-
-				/* Label the Default values */
-				Term_putstr(10, 19, -1, TERM_WHITE,
-				            format("Default attr/char = %3d / %3d", da, dc));
-				Term_putstr(40, 19, -1, TERM_WHITE, "<< ? >>");
-				Term_putch(43, 19, (byte)da, (byte)dc);
-
-				/* Label the Current values */
-				Term_putstr(10, 20, -1, TERM_WHITE,
-				            format("Current attr/char = %3d / %3d", ca, cc));
-				Term_putstr(40, 20, -1, TERM_WHITE, "<< ? >>");
-				Term_putch(43, 20, (byte)ca, (byte)cc);
-
-				/* Prompt */
-				Term_putstr(0, 22, -1, TERM_WHITE,
-				            "Command (n/N/a/A/c/C): ");
-
-				/* Get a command */
-				i = inkey();
-
-				/* All done */
-				if (i == ESCAPE) break;
-
-				/* Analyze */
-				if (FORCELOWER(i) == 'n')
-				{
-					/* Find the next 'real' definition */
-					int add = (islower(i)) ? 1 : MAX_F_IDX-1;
-					do
-					{
-						f = (f + add) % MAX_F_IDX;
-					} while (f_info[f].mimic != f);
-				}
-				if (i == 'a') f_info[f].z_attr = (byte)(ca + 1);
-				if (i == 'A') f_info[f].z_attr = (byte)(ca - 1);
-				if (i == 'c') f_info[f].z_char = (byte)(cc + 1);
-				if (i == 'C') f_info[f].z_char = (byte)(cc - 1);
+				/* Save the information if it has changed.*/
+				if (strchr("ac", i)) (*(vs_ptr->save))(r, ca, cc);
 			}
 		}
 
 #endif
 
 		/* Reset visuals */
-		else if (i == '0')
+		else if (i == 'b'+2*VISUALS)
 		{
 			/* Reset */
 			reset_visuals();

@@ -867,8 +867,8 @@ void reset_visuals(void)
 		feature_type *f_ptr = &f_info[i];
 
 		/* Assume we will use the underlying values */
-		f_ptr->z_attr = f_ptr->f_attr;
-		f_ptr->z_char = f_ptr->f_char;
+		f_ptr->x_attr = f_ptr->d_attr;
+		f_ptr->x_char = f_ptr->d_char;
 	}
 
 	/* Extract some info about objects */
@@ -897,6 +897,12 @@ void reset_visuals(void)
 		r_info[i].x_char = r_info[i].d_char;
 	}
 
+	/* Extract some info about monster memory colours. */
+	for (i = 0; i < MAX_MONCOL; i++)
+	{
+		/* Hack - always default to white */
+		moncol[i].attr = TERM_WHITE;
+	}
 	/* Extract attr/chars for equippy items (by tval) */
 	for (i = 0; i < 128; i++)
 	{

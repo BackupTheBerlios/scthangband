@@ -325,6 +325,7 @@ extern u16b message__head;
 extern u16b message__tail;
 extern u16b *message__ptr;
 extern char *message__buf;
+extern moncol_type moncol[MAX_MONCOL];
 extern u32b option_flag[8];
 extern u32b option_mask[8];
 extern u32b window_flag[8];

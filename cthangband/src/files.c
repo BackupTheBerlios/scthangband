@@ -423,8 +423,8 @@ errr process_pref_file_aux(char *buf)
 			n2 = strtol(zz[2], NULL, 0);
 			if (i >= MAX_F_IDX) return (1);
 			f_ptr = &f_info[i];
-			if (n1) f_ptr->z_attr = n1;
-			if (n2) f_ptr->z_char = n2;
+			if (n1) f_ptr->x_attr = n1;
+			if (n2) f_ptr->x_char = n2;
 			return (0);
 		}
 	}
@@ -541,6 +541,32 @@ errr process_pref_file_aux(char *buf)
 		}
 	}
 
+	/* Process M:<attr>:<attr>... -- set monster memory colours */
+	else if (buf[0] == 'M')
+	{
+		cptr atchar="dwsorgbuDWvyRGBU";
+
+		/* Expect M:xx:xx:xx:xx (MAX_MONCOL times) format. */
+		if (strlen(buf) < MAX_MONCOL*3+1) return 1;
+		for (i = 0; i < MAX_MONCOL; i++)
+		{
+			moncol_type *mc_ptr = &moncol[i];
+			char c1 = buf[2+i*3];
+			char c2 = buf[3+i*3];
+			/* Read the second character first. */
+			if (strchr(atchar, c2))
+				mc_ptr->attr = strchr(atchar, c2)-atchar;
+			else
+				return 1;
+			/* Then read the first character, if present. */
+			if (strchr(atchar, c1))
+				mc_ptr->attr += 16*(strchr(atchar, c1)-atchar);
+			else if (c1 != ' ')
+				return 1;
+		}
+		return 0;
+	}
+	
 	/* Process "Y:<str>" -- turn option on */
 	else if (buf[0] == 'Y')
 	{

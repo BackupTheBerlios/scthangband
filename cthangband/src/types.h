@@ -120,11 +120,11 @@ struct feature_type
 
 	s16b unused;		/* Extra bytes (unused) */
 
-	byte f_attr;		/* Object "attribute" */
-	char f_char;		/* Object "symbol" */
+	byte d_attr;		/* Object "attribute" */
+	char d_char;		/* Object "symbol" */
 
-	byte z_attr;		/* The desired attr for this feature */
-	char z_char;		/* The desired char for this feature */
+	byte x_attr;		/* The desired attr for this feature */
+	char x_char;		/* The desired char for this feature */
 };
 
 
@@ -672,6 +672,17 @@ struct option_type
 };
 
 
+
+/*
+ * Structure for monster memory colour map.
+ */
+typedef struct moncol_type moncol_type;
+
+struct moncol_type
+{
+	cptr	name;
+	byte	attr;
+};
 
 /*
  * Structure for the "quests"

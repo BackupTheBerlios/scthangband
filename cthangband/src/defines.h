@@ -329,6 +329,11 @@
 
 
 /*
+ * The number of differently coloured parts of the monster memory.
+ */
+#define MAX_MONCOL	19
+
+/*
  * Maximum dungeon level.  The player can never reach this level
  * in the dungeon, and this value is used for various calculations
  * involving object and monster creation.  It must be at least 100.
