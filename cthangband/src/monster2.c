@@ -1960,8 +1960,6 @@ bool live_monster_wide_p(monster_race *r_ptr)
  */
 bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force)
 {
-	int			i;
-
 	cave_type		*c_ptr;
 
 	monster_type	*m_ptr;
@@ -2130,18 +2128,21 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool charm, bool force
 	/* And start out fully healthy */
 	m_ptr->hp = m_ptr->maxhp;
 
-
-	/* Extract the monster base speed */
-	m_ptr->mspeed = r_ptr->speed;
-
-	/* Hack -- small racial variety */
-	if (!(r_ptr->flags1 & (RF1_UNIQUE)))
+	/* Give uniques the stated speed. */
+	if (r_ptr->flags1 & (RF1_UNIQUE))
+	{
+		/* Extract the monster base speed */
+		m_ptr->mspeed = r_ptr->speed;
+	}
+	/* Hack -- small racial variety for other monsters. */
+	else
 	{
 		/* Allow some small variation per monster */
 		int j = TURN_ENERGY/extract_energy[r_ptr->speed];
-		j = r_ptr->speed + rand_spread(0, i);
+		j = r_ptr->speed + rand_spread(0, j);
 		m_ptr->mspeed = MIN(MAX(j, 0), N_ELEMENTS(extract_energy)-1);
 	}
+
 
 
 	/* Give a random starting energy (should this be a TURN_ENERGY thing?) */
