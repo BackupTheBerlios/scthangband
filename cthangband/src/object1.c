@@ -707,11 +707,12 @@ void object_info_known(object_type *j_ptr, object_type *o_ptr, object_extra *x_p
 		j_ptr->flags3 |= TR3_IGNORE_ALL & o_ptr->flags3;
 	}
 
-	/* Copy the activation if *identified*. */
-	if (j_ptr->ident & IDENT_MENTAL)
+	/* Copy the activation if it's known to have one. */
+	if (j_ptr->flags3 & TR3_ACTIVATE)
 	{
 		j_ptr->activation = o_ptr->activation;
 	}
+
 
 	/*
 	 * Hack - known SHOW_MODS and SHOW_ARMOUR flags give dice and base AC,
