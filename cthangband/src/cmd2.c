@@ -1827,14 +1827,6 @@ static bool alter_monster(int y, int x)
 	return TRUE;
 }
 
-/* Track the command actually being executed by do_cmd_alter().
- * This is necessary to enable the "fight" command to be repeated without
- * the command continuing after the fight has finished. */
-static char alter_cmd = 0;
-
-/* Hack - set an arbitrary key as the game lacks a "fight" command. */
-#define FAKE_CMD_FIGHT	' '
-
 /*
  * Manipulate an adjacent grid in some way
  *
@@ -1842,11 +1834,16 @@ static char alter_cmd = 0;
  *
  * Consider confusion XXX XXX XXX
  *
- * This command must always take a turn, to prevent free detection
- * of invisible monsters.
+ * This command must always take a turn for the initial request to prevent free
+ * detection of invisible monsters.
  */
 void do_cmd_alter(void)
 {
+	/* Track the command actually being executed by do_cmd_alter().
+	 * This is necessary to enable the "fight" command to be repeated without
+	 * the command continuing after the fight has finished. */
+	static char alter_cmd = 0;
+
 	int			y, x, dir;
 
 	cave_type	*c_ptr;
@@ -1880,22 +1877,20 @@ void do_cmd_alter(void)
 		/* Take a turn */
 		energy_use = extract_energy[p_ptr->pspeed];
 
-		/* Avoid continuing after the monster has gone. */
-		if ((alter_cmd == FAKE_CMD_FIGHT) && !(c_ptr->m_idx))
-		{
-			energy_use = 0;
-			disturb(0, 0);
-			return;
-		}
-		
 		/* Attack monsters */
-		if (c_ptr->m_idx || alter_cmd == FAKE_CMD_FIGHT)
+		if (c_ptr->m_idx)
 		{
 			/* Attack */
 			more = alter_monster(y, x);
-			alter_cmd = FAKE_CMD_FIGHT;
+			alter_cmd = 'H';
 		}
 
+		/* Avoid continuing to fight after the monster has gone. */
+		else if (alter_cmd == 'H')
+		{
+			energy_use = 0;
+		}
+		
 		/* Tunnel through walls */
         else if (((c_ptr->feat >= FEAT_SECRET)
             && (c_ptr->feat < FEAT_MINOR_GLYPH)) ||
