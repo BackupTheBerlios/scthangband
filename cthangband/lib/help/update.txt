@@ -41,7 +41,8 @@ sCthangband 1.0.4
 * Add a somewhat accurate readme.txt, and make lib/file/readme! less ugly.
 * Make graf-xxx.prf handle unidentified objects in a more normal way.
 * Modify the code so that it compiles in MS VC++ (thanks to Iain Maclean for
-  lots of help with this) and hopefully also other compilers.
+  his help with this) and hopefully also other compilers.
+* Add makefiles for bcc, cygwin (tested by Scott Holder) and lcc.
 * Put main-ami.c in an #ifdef USE_AMI directive to prevent it from contaminating
   other systems.
 * Clean up some code.
