@@ -5763,6 +5763,51 @@ done_reflect: /* Success */
 
 
 
+typedef struct potion_smash_effect_type potion_smash_effect_type;
+struct potion_smash_effect_type
+{
+	s16b k_idx;
+	bool angry;
+	bool ident;
+
+	byte typ;
+	byte dd;
+	byte ds;
+	byte rad;
+};
+
+static potion_smash_effect_type potion_smash_effects[] =
+{
+	{OBJ_POTION_SALT_WATER, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_SLIME_MOLD_JUICE, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_LOSE_MEMORIES, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_DEC_STR, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_DEC_INT, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_DEC_WIS, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_DEC_DEX, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_DEC_CON, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_DEC_CHR, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_WATER, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_APPLE_JUICE, TRUE, FALSE, 0, 0, 0, 2},
+	{OBJ_POTION_SLOWNESS, TRUE, TRUE, GF_OLD_SLOW, 5, 1, 2},
+	{OBJ_POTION_POISON, TRUE, TRUE, GF_POIS, 3, 1, 2},
+	{OBJ_POTION_BLINDNESS, TRUE, TRUE, GF_DARK, 0, 0, 2},
+	{OBJ_POTION_BOOZE, TRUE, TRUE, GF_OLD_CONF, 0, 0, 2},
+	{OBJ_POTION_SLEEP, TRUE, TRUE, GF_OLD_SLEEP, 0, 0, 2},
+	{OBJ_POTION_DETONATIONS, TRUE, TRUE, GF_SHARDS, 25, 25, 2},
+	{OBJ_POTION_RUINATION, TRUE, TRUE, GF_SHARDS, 25, 25, 2},
+	{OBJ_POTION_IOCAINE, TRUE, FALSE, GF_DEATH_RAY, 0, 0, 1},
+	{OBJ_POTION_SPEED, FALSE, TRUE, GF_OLD_SPEED, 0, 0, 2},
+	{OBJ_POTION_CURE_LIGHT, FALSE, TRUE, GF_OLD_HEAL, 2, 3, 2},
+	{OBJ_POTION_CURE_SERIOUS, FALSE, TRUE, GF_OLD_HEAL, 4, 3, 2},
+	{OBJ_POTION_CURE_CRITICAL, FALSE, TRUE, GF_OLD_HEAL, 6, 3, 2},
+	{OBJ_POTION_CURING, FALSE, TRUE, GF_OLD_HEAL, 6, 3, 2},
+	{OBJ_POTION_HEALING, FALSE, TRUE, GF_OLD_HEAL, 10, 10, 2},
+	{OBJ_POTION_STAR_HEALING, FALSE, TRUE, GF_OLD_HEAL, 50, 50, 1},
+	{OBJ_POTION_LIFE, FALSE, TRUE, GF_OLD_HEAL, 50, 50, 1},
+	{OBJ_POTION_RES_MANA, FALSE, TRUE, GF_MANA, 10, 10, 1},
+};
+
  /*
   * Potions "smash open" and cause an area effect when
   * (1) they are shattered while in the player's inventory,
@@ -5786,155 +5831,29 @@ done_reflect: /* Success */
   */
 void potion_smash_effect(monster_type *m_ptr, int y, int x, int o_kidx)
 {
-	int       radius = 2;
-	int       dt = 0;
-	int       dam = 0;
-	bool  ident = FALSE;
-	bool angry = FALSE;
+	potion_smash_effect_type *ptr;
 
-	switch(o_kidx)
+	FOR_ALL_IN(potion_smash_effects, ptr)
 	{
+		if (ptr->k_idx == o_kidx)
+		{
+			int dam = damroll(ptr->dd, ptr->ds);
 
-		case OBJ_POTION_SALT_WATER:
-		case OBJ_POTION_SLIME_MOLD_JUICE:
-		case OBJ_POTION_LOSE_MEMORIES:
-		case OBJ_POTION_DEC_STR:
-		case OBJ_POTION_DEC_INT:
-		case OBJ_POTION_DEC_WIS:
-		case OBJ_POTION_DEC_DEX:
-		case OBJ_POTION_DEC_CON:
-		case OBJ_POTION_DEC_CHR:
-		case OBJ_POTION_WATER:   /* perhaps a 'water' attack? */
-		case OBJ_POTION_APPLE_JUICE:
+			if (ptr->typ)
+			{
+				project(m_ptr, ptr->rad, y, x, dam, ptr->typ,
+					(PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
+			}
 
-			angry = TRUE;
-			break;
+			if (ptr->ident) k_info[o_kidx].aware = TRUE;
 
-		case OBJ_POTION_INFRA_VISION:
-		case OBJ_POTION_DETECT_INVIS:
-		case OBJ_POTION_SLOW_POISON:
-		case OBJ_POTION_NEUTRALIZE_POISON:
-		case OBJ_POTION_BOLDNESS:
-		case OBJ_POTION_RES_HEAT:
-		case OBJ_POTION_RES_COLD:
-		case OBJ_POTION_HEROISM:
-		case OBJ_POTION_BERSERK_STR:
-		case OBJ_POTION_RES_LIFE_LEVELS:
-		case OBJ_POTION_RES_STR:
-		case OBJ_POTION_RES_INT:
-		case OBJ_POTION_RES_WIS:
-		case OBJ_POTION_RES_DEX:
-		case OBJ_POTION_RES_CON:
-		case OBJ_POTION_RES_CHR:
-		case OBJ_POTION_INC_STR:
-		case OBJ_POTION_INC_INT:
-		case OBJ_POTION_INC_WIS:
-		case OBJ_POTION_INC_DEX:
-		case OBJ_POTION_INC_CON:
-		case OBJ_POTION_INC_CHR:
-		case OBJ_POTION_AUGMENTATION:
-		case OBJ_POTION_ENLIGHTENMENT:
-		case OBJ_POTION_STAR_ENLIGHTENMENT:
-		case OBJ_POTION_SELF_KNOWLEDGE:
-		case OBJ_POTION_EXPERIENCE:
-		case OBJ_POTION_RESISTANCE:
-		case OBJ_POTION_INVULNERABILITY:
-		case OBJ_POTION_NEW_LIFE:
+			/* It's your fault, so they'll hate you for it. */
+			if (ptr->angry && (!m_ptr || m_ptr == m_list))
+			{
+				int m_idx = cave[y][x].m_idx;
 
-		/* All of the above potions have no effect when shattered */
-			return;
-
-		case OBJ_POTION_SLOWNESS:
-			dt = GF_OLD_SLOW;
-			dam = 5;
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case OBJ_POTION_POISON:
-			dt = GF_POIS;
-			dam = 3;
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case OBJ_POTION_BLINDNESS:
-			dt = GF_DARK;
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case OBJ_POTION_BOOZE: /* Booze */
-			dt = GF_OLD_CONF;
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case OBJ_POTION_SLEEP:
-			dt = GF_OLD_SLEEP;
-			angry = TRUE;
-			ident = TRUE;
-			break;
-		case OBJ_POTION_RUINATION:
-		case OBJ_POTION_DETONATIONS:
-			dt = GF_SHARDS;
-			dam = damroll(25, 25);
-			angry = TRUE;
-			ident = TRUE;
-			break;
-		case OBJ_POTION_IOCAINE:
-			dt = GF_DEATH_RAY;    /* !! */
-			angry = TRUE;
-			radius = 1;
-			ident = TRUE;
-			break;
-		case OBJ_POTION_SPEED:
-			dt = GF_OLD_SPEED;
-			ident = TRUE;
-			break;
-		case OBJ_POTION_CURE_LIGHT:
-			dt = GF_OLD_HEAL;
-			dam = damroll(2,3);
-			ident = TRUE;
-			break;
-		case OBJ_POTION_CURE_SERIOUS:
-			dt = GF_OLD_HEAL;
-			dam = damroll(4,3);
-			ident = TRUE;
-			break;
-		case OBJ_POTION_CURE_CRITICAL:
-		case OBJ_POTION_CURING:
-			dt = GF_OLD_HEAL;
-			dam = damroll(6,3);
-			ident = TRUE;
-			break;
-		case OBJ_POTION_HEALING:
-			dt = GF_OLD_HEAL;
-			dam = damroll(10,10);
-			ident = TRUE;
-			break;
-		case OBJ_POTION_STAR_HEALING:
-		case OBJ_POTION_LIFE:
-			dt = GF_OLD_HEAL;
-			dam = damroll(50,50);
-			radius = 1;
-			ident = TRUE;
-			break;
-      case OBJ_POTION_RES_MANA:   /* MANA */
-			dt = GF_MANA;
-			dam = damroll(10,10);
-			radius = 1;
-			ident = TRUE;
-			break;
-		default:
-			/* Do nothing */  ;
-	}
-
-	if (dt) project(m_ptr, radius, y, x, dam, dt,
-		(PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
-	/* XXX  those potions that explode need to become "known" */
-
-	/* It's your fault, so they'll hate you for it. */
-	if (angry && (!m_ptr || m_ptr == m_list))
-	{
-		int m_idx = cave[y][x].m_idx;
-
-		if (m_idx) anger_monster(m_list+m_idx);
+				if (m_idx) anger_monster(m_list+m_idx);
+			}
+		}
 	}
 }
