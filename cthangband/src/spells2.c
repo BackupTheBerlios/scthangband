@@ -5734,9 +5734,19 @@ static void cave_temp_room_unlite(void)
 
 /*
  * Mark area to be lit by lite_room() with CAVE_TEMP.
+ *
+ * This works by lighting the central 9 squares unconditionally, and then
+ * lighting others if:
+ * 1. Two adjacent non-wall squares are lit.
+ * 2. Three adjacent squares which touch one another are lit, the middle one
+ * of which is not a wall. This is provided solely to light walls.
  */
 static void cave_temp_room_aux(int y, int x)
 {
+	/* This is easier to use than ddx/ddy. */
+	int xc[8] =	{-1,0,1,1,1,0,-1,-1};
+	int yc[8] = {-1,-1,-1,0,1,1,1,0};
+
 	cave_type *c_ptr = &cave[y][x];
 
 	/* Avoid infinite recursion */
@@ -5749,13 +5759,30 @@ static void cave_temp_room_aux(int y, int x)
 	 * always be lit (this needs at least two exceptions to do anything). */
 	if (temp_n > 8)
 	{
-		int i,t;
+		int i,t, lit;
 		/* Do not "leave" the current room */
-		for (i = t = 0; i < 10; i++)
+		for (i = t = lit = 0;; i++)
 		{
-			int y2 = y+ddy[i], x2 = x+ddx[i];
-			if (in_bounds(y2, x2) && cave_floor_bold(y2,x2) &&
-				(cave[y2][x2].info & CAVE_TEMP)) t++;
+			int y2 = y+yc[i%8], x2 = x+yc[i%8];
+			if (in_bounds(y2, x2) && (cave[y2][x2].info & CAVE_TEMP))
+			{
+				switch (lit)
+				{
+					case 0: case 2: lit++; break;
+					case 1: if (cave_floor_bold(y2,x2)) lit++; break;
+				}
+				if (lit > 2) break;
+				if (cave_floor_bold(y2,x2))
+				{
+					t++;
+					if (t > 1) break;
+				}
+			}
+			else
+			{
+				lit = 0;
+				if (i > 7) return;
+			}
 		}
 
 		/* At least one other adjacent non-wall square is marked. */
@@ -5868,8 +5895,12 @@ bool lite_area(int dam, int rad)
 	/* Hook into the "project()" function */
 	(void)project(0, rad, py, px, dam, GF_LITE_WEAK, flg);
 
-	/* Lite up the room */
-	lite_room(py, px);
+	/* Hack - don't light up the town. */
+	if (dun_level || wild_grid[wildy][wildx].dungeon >= MAX_TOWNS)
+	{
+		/* Lite up the room */
+		lite_room(py, px);
+	}
 
 	/* Assume seen */
 	return (TRUE);
@@ -5893,8 +5924,12 @@ bool unlite_area(int dam, int rad)
 	/* Hook into the "project()" function */
     (void)project(0, rad, py, px, dam, GF_DARK_WEAK, flg);
 
-	/* Lite up the room */
-	unlite_room(py, px);
+	/* Hack - don't darken the town. */
+	if (dun_level || wild_grid[wildy][wildx].dungeon >= MAX_TOWNS)
+	{
+		/* Darken the room */
+		unlite_room(py, px);
+	}
 
 	/* Assume seen */
 	return (TRUE);
