@@ -2120,19 +2120,12 @@ void Term_save(void)
 }
 
 /*
- * Restore the "requested" contents from a specified saved term.
- *
- * Does not alter the term_wins array.
+ * Load a saved window from w_ptr to Term->scr.
+ * Return FALSE on error.
  */
-void Term_load_aux(int win)
+static bool Term_load_aux_do(term_win2 *w_ptr)
 {
-	term_win2 *w_ptr;
 	int y;
-
-	/* Paranoia - ignore invalid calls. */
-	if (win <= 0 || win > NUM_TERM_WINS) return;
-
-	w_ptr = term_wins+win-1;
 
 	/* Load */
 	term_win_copy(Term->scr, &w_ptr->win,
@@ -2150,9 +2143,19 @@ void Term_load_aux(int win)
 	Term->y1 = 0;
 	Term->y2 = Term->hgt - 1;
 
-	/* The screen size has changed since this was saved, so the screen should
-	 * really be redrawn. */
-	if (w_ptr->wid != Term->wid || w_ptr->hgt != Term->hgt)
+	/* Unexpected size, so part of the window may not have been copied. */
+	return (w_ptr->wid == Term->wid && w_ptr->hgt == Term->hgt);
+}
+
+/*
+ * Restore the "requested" contents from a specified saved term.
+ *
+ * Does not alter the term_wins array.
+ */
+void Term_load_aux(int win)
+{
+	/* Attempt to redraw, but catch errors. */
+	if (win <= 0 || win > NUM_TERM_WINS || !Term_load_aux_do(term_wins+win-1))
 	{
 		/* Try the resize hook if possible. */
 		if (Term->resize_hook != 0) (*Term->resize_hook)();
