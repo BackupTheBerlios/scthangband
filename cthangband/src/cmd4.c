@@ -575,12 +575,14 @@ static void do_cmd_options_autosave(cptr info)
 	{
 		cptr opts[2] =
 		{
-			"-8 \n\r2yY6nN4",
-			"--    yyynnn"
+			"\033-8 \n\r2yY6nN4xX?",
+			"\033--    yyynnnxx?"
 		};
 		char ch;
 
 		option_special *this = &autosave_info[k];
+
+		assert(strlen(opts[0]) == strlen(opts[1])); /* Hmm... */
 
 		/* Prompt XXX XXX XXX */
 		mc_put_fmt(0, 0, "%s (RET to advance, y/n to set, ESC to accept)%v",
@@ -611,6 +613,7 @@ static void do_cmd_options_autosave(cptr info)
 		/* Assume the help needed has changed. */
 		help_track(NULL);
 
+		/* Convert various synonyms to the base key set. */
 		for (i = 0; opts[0][i] && opts[0][i] != ch; i++) ;
 		ch = opts[1][i];
 
@@ -629,23 +632,41 @@ static void do_cmd_options_autosave(cptr info)
 				break;
 			}
 
-			case 'y': case 'n':
+			case 'y':
 			{
-				bool inc = (ch == 'y');
-
-				/* Hack - use print_f1 to identify boolean variables. */
-				if (this->print_f1 == print_bool_f1)
-					*((bool*)(this->var)) = inc;
-				else
-					set_s16b(this->var, inc, this->vals, this->nvals);
+				i = TRUE;
 				break;
 			}
-
+			case 'n':
+			{
+				i = FALSE;
+				break;
+			}
+			case 'x':
+			{
+				i = !(*((bool*)(this->var)));
+				break;
+			}
+			case '?':
+			{
+				/* Hack - show help on the main term. */
+				show_link(this->text);
+				break;
+			}
 			default:
 			{
-				bell(0);
-				break;
+				bell("Illegal command for options!");
 			}
+		}
+
+		/* Handle the "set something" things in one place. */
+		if (strchr("ynx", ch))
+		{
+			/* Hack - use print_f1 to identify bools. */
+			if (this->print_f1 == print_bool_f1)
+				*((bool*)(this->var)) = i;
+			else
+				set_s16b(this->var, i, this->vals, this->nvals);
 		}
 	}
 }
