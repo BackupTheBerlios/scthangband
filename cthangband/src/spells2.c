@@ -5614,7 +5614,7 @@ static void cave_temp_room_lite(void)
 		cave_type *c_ptr = &cave[y][x];
 
 		/* No longer in the array */
-		c_ptr->info &= ~(CAVE_TEMP);
+		c_ptr->info &= ~(CAVE_TEMP | CAVE_TMP2);
 
 		/* Update only non-CAVE_GLOW grids */
 		/* if (c_ptr->info & (CAVE_GLOW)) continue; */
@@ -5699,7 +5699,7 @@ static void cave_temp_room_unlite(void)
 		cave_type *c_ptr = &cave[y][x];
 
 		/* No longer in the array */
-		c_ptr->info &= ~(CAVE_TEMP);
+		c_ptr->info &= ~(CAVE_TEMP | CAVE_TMP2);
 
 		/* Darken the grid */
 		c_ptr->info &= ~(CAVE_GLOW);
@@ -5734,11 +5734,11 @@ static void cave_temp_room_unlite(void)
 
 /*
  * Mark area to be lit by lite_room() with CAVE_TEMP.
+ * Also uses CAVE_TMP2 flag.
  */
 static void cave_temp_room_aux(int y, int x)
 {
 	cave_type *c_ptr = &cave[y][x];
-	int i,t;
 
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
@@ -5746,19 +5746,15 @@ static void cave_temp_room_aux(int y, int x)
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
 
-	/* Hack - don't check the nine squares surrounding the player, as they can
-	 * always be lit (this needs at least two exceptions to do anything). */
-	if (temp_n > 8)
+	/* Just set CAVE_TMP2 if unset.
+	 * Don't do this for the centre square and those surrounding it, as they
+	 * are always to be lit. There are nine of these as the player can't reach
+	 * the edges of the level.
+	 */
+	if (temp_n > 8 && ~c_ptr->info & CAVE_TMP2)
 	{
-		/* Do not "leave" the current room */
-		for (i = t = 0; i < 10; i++)
-		{
-			if (!cave_floor_bold(y+ddy[i],x+ddx[i])) continue;
-			if (cave[y+ddy[i]][x+ddx[i]].info & CAVE_TEMP) t++;
-		}
-
-		/* At least one other adjacent non-wall square is marked. */
-		if (t < 2) return;
+		c_ptr->info |= CAVE_TMP2;
+		return;
 	}
 
 	/* Mark the grid as "seen" */
