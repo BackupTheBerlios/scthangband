@@ -6108,9 +6108,6 @@ static errr get_rnd_line(const char * file_name, uint len, char * output)
 	char	buf[1024];
     int lines=0, line, counter;
 
-    /* test hack */
-    if (cheat_wzrd && cheat_xtra) msg_print(file_name);
-
 	/* Open the file */
 	fp = my_fopen_path(ANGBAND_DIR_FILE, file_name, "r");
 
