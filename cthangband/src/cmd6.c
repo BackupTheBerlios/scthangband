@@ -841,18 +841,12 @@ void do_cmd_zap_rod(object_type *o_ptr)
 
 	/* Most rods simply use the pval to decide their recharging rate. */
 	if (o_ptr->pval >= 0) o_ptr->timeout = o_ptr->pval;
+
+	/* A few rods use negative pvals to indicate a variable timeout. */
 	else
 	{
-		/* A few rods use negative pvals to indicate a variable timeout. */
-		int timeout_table[][2] =
-		{
-			{	11,20	}, /* Trap Location */
-			{	11,21	}, /* Illumination */
-			{	16,30	}, /* Disarming */
-		};
-
-		int *t = timeout_table[-1-o_ptr->pval];
-		o_ptr->timeout = rand_range(t[0], t[1]);
+		int t = -o_ptr->pval;
+		o_ptr->timeout = rand_range(t/2+1, t);
 	}
 
 	/* Gain exp */

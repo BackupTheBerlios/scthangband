@@ -3131,8 +3131,8 @@ P:(1d1) (+0,+0) [0,+0]
 ##### Rods #####
 
 # The pval field represents the (fixed) timeout of the object after one zap,
-# negative numbers (actually represented by ranges here) representing a
-# particular hard-coded random formula.
+# negative numbers (actually represented by ranges here) representing a variable
+# timeout between pval/2+1 (rounded down) and pval.
 
 # The extra field represents the difficulty the player has in using the rod,
 # usually equal to its first allocation level.

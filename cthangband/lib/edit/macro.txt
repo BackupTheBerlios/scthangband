@@ -1610,15 +1610,15 @@ Y:l%-Pous%+Pi%=P
 # Variable default timeouts for rods
 
 X:11-20
-Y:-1
+Y:-20
 F:k_info:I:3
 
 X:11-21
-Y:-2
+Y:-21
 F:k_info:I:3
 
 X:16-30
-Y:-3
+Y:-30
 F:k_info:I:3
 
 # Convert shop names into the indices for the STORE_* macros.
