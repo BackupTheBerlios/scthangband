@@ -1722,6 +1722,51 @@ int mystic_armour(int slot)
 }
 
 /*
+ * Return whether a given object inhibits spellcasting.
+ */
+bool cumber_glove(object_type *o_ptr)
+{
+	u32b f[3];
+
+	/* Only gloves can inhibit spellcasting. */
+	if (wield_slot(o_ptr) != INVEN_HANDS) return FALSE;
+
+	object_flags(o_ptr, f, f+1, f+2);
+
+	/* Free action helps spellcasting. */
+	if (f[1] & (TR2_FREE_ACT)) return FALSE;
+	
+	/* A dexterity bonus helps spellcasting. */
+	if ((f[0] & (TR1_DEX)) && (o_ptr->pval > 0)) return FALSE;
+
+	/* Other gloves harm spellcasting. */
+	return TRUE;
+}
+
+
+/*
+ * Return whether a given object inhibits mindcrafting.
+ */
+bool cumber_helm(object_type *o_ptr)
+{
+	u32b f[3];
+
+	/* Only helmets can inhibit mindcrafting. */
+	if (wield_slot(o_ptr) != INVEN_HEAD) return FALSE;
+
+	object_flags(o_ptr, f, f+1, f+2);
+
+	/* Telepathy helps mindcraft. */
+	if (f[2] & (TR3_TELEPATHY)) return FALSE;
+	
+	/* A wisdom bonus helps mindcraft. */
+	if ((f[0] & (TR1_WIS)) && (o_ptr->pval > 0)) return FALSE;
+
+	/* Other helmets harm mindcraft. */
+	return TRUE;
+}
+
+/*
  * Calculate maximum mana.  You do not need to know any spells.
  * Note that mana is lowered by heavy (or inappropriate) armor.
  *
@@ -1757,13 +1802,8 @@ static void calc_mana(bool quiet)
 	/* Get the gloves */
 	o_ptr = &inventory[INVEN_HANDS];
 
-	/* Examine the gloves */
-	object_flags(o_ptr, &f1, &f2, &f3);
-
 	/* Normal gloves hurt mage-type spells */
-	if (o_ptr->k_idx &&
-		!(f2 & (TR2_FREE_ACT)) &&
-		!((f1 & (TR1_DEX)) && (o_ptr->pval > 0)))
+	if (cumber_glove(o_ptr))
 	{
 		/* Encumbered */
 		p_ptr->cumber_glove = TRUE;
@@ -1843,13 +1883,8 @@ static void calc_mana(bool quiet)
 	/* Get the helmet */
 	o_ptr = &inventory[INVEN_HEAD];
 
-	/* Examine the helmet */
-	object_flags(o_ptr, &f1, &f2, &f3);
-
 	/* Normal helms hurt mindcrafting */
-	if (o_ptr->k_idx &&
-		!(f3 & (TR3_TELEPATHY)) &&
-		!((f1 & (TR1_WIS)) && (o_ptr->pval > 0)))
+	if (cumber_helm(o_ptr))
 	{
 		/* Encumbered */
 		p_ptr->cumber_helm = TRUE;

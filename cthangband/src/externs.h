@@ -977,6 +977,8 @@ extern void update_stuff(void);
 extern void redraw_stuff(void);
 extern void window_stuff(void);
 extern void handle_stuff(void);
+extern bool cumber_glove(object_type *o_ptr);
+extern bool cumber_helm(object_type *o_ptr);
 extern bool ma_empty_hands();
 extern bool ma_heavy_armor();
 extern int mystic_armour(int);
