@@ -1768,6 +1768,7 @@ static void check_arrays(void)
 	check_skill_set();
 	check_timeouts();
 	check_book_info();
+	check_magic_info();
 #endif /* CHECK_ARRAYS */
 }
 

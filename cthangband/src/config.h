@@ -544,4 +544,6 @@
 
 
 /* OPTION: Check that the indices used for various arrays are correct. */
+#ifndef NDEBUG
 /* #define CHECK_ARRAYS */
+#endif /* NDEBUG */

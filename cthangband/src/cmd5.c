@@ -5055,3 +5055,44 @@ void display_spell_list(void)
 {
 	print_mindcraft(MINDCRAFT_BOOK, 1, 1, TRUE);
 }
+
+#ifdef CHECK_ARRAYS
+
+/*
+ * Check various things about the magic_info[] array.
+ */
+void check_magic_info(void)
+{
+	cptr error = 0;
+	const book_type *b_ptr;
+	const magic_type *s_ptr;
+	char buf[1024];
+	int i;
+	for (b_ptr = book_info; b_ptr < END_PTR(book_info); b_ptr++)
+	{
+		for (i = 0; i < MAX_SPELLS_PER_BOOK; i++)
+		{
+			if (~b_ptr->flags & (1L << i)) continue;
+
+			s_ptr = b_ptr->info+i;
+
+			/* Try to generate the extra string. Failure gives an assert()
+			 * error.
+			 */
+			get_magic_info(buf, 1023, b_ptr->info+i);
+
+			/* Bounds test a few parameters. */
+			if (s_ptr->skill1 >= MAX_SKILLS || s_ptr->skill2 >= MAX_SKILLS)
+			{
+				error = "uses a bad skill";
+			}
+
+			if (s_ptr->flags) error = "sets flags on initialisation";
+			if (s_ptr->min > 50) error = "has a minimum skill over 50";
+
+			if (error) quit_fmt("The %s spell %s.", s_ptr->name, error);
+		}
+	}
+}
+
+#endif /* CHECK_ARRAYS */

@@ -3779,7 +3779,7 @@ extern char *format(cptr fmt, ...);
 #if (defined(INIT2_C) || defined(MAIN_DOS_C) || defined(MAIN_GCU_C) || defined(MAIN_GTK_C) || defined(MAIN_MAC_C) || defined(MAIN_CRB_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_XAW_C) || defined(MAIN_XPJ_C) || defined(Z_FORM_C))
 extern void plog_fmt(cptr fmt, ...);
 #endif
-#if (defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAID_X11_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
+#if (defined(CMD5_C) || defined(CMD6_C) || defined(FILES_C) || defined(INIT1_C) || defined(INIT2_C) || defined(MAID_X11_C) || defined(MAIN_DOS_C) || defined(MAIN_GTK_C) || defined(MAIN_WIN_C) || defined(MAIN_X11_C) || defined(MAIN_C) || defined(OBJECT2_C) || defined(STORE_C) || defined(XTRA1_C) || defined(XTRA2_C) || defined(Z_FORM_C))
 extern void quit_fmt(cptr fmt, ...);
 #endif
 
@@ -4030,5 +4030,8 @@ extern bool PURE display_spells_p(object_type *o_ptr);
 #endif
 #if (defined(CMD5_C) || defined(OBJECT2_C))
 extern void display_spells(int y, int x, object_type *o_ptr);
+#endif
+#if (defined(CHECK_ARRAYS)) && (defined(CMD5_C) || defined(INIT2_C))
+extern void check_magic_info(void);
 #endif
 #endif /* INCLUDED_EXTERNS_H */
