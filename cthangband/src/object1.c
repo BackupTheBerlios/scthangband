@@ -680,8 +680,7 @@ static void object_flags_pid(object_kind *k_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 /*
- * Find out the known information about an object.
- * This currently only sets flags and pval.
+ * Create an object containing the known information about an object.
  */
 static void object_info_known(object_type *j_ptr, object_type *o_ptr)
 {
@@ -691,6 +690,39 @@ static void object_info_known(object_type *j_ptr, object_type *o_ptr)
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	object_wipe(j_ptr);
+
+	/* Some flags are always assumed to be known. */
+	j_ptr->k_idx = o_ptr->k_idx;
+	j_ptr->tval = o_ptr->tval;
+	j_ptr->sval = o_ptr->sval;
+	j_ptr->discount = o_ptr->discount;
+	j_ptr->number = o_ptr->number;
+	j_ptr->weight = o_ptr->weight;
+	j_ptr->ac = o_ptr->ac;
+	j_ptr->dd = o_ptr->dd;
+	j_ptr->ds = o_ptr->ds;
+	j_ptr->timeout = !!(o_ptr->timeout); /* The player is never told how long it is. */
+	j_ptr->ident = o_ptr->ident;
+	/* j_ptr->handed = o_ptr->handed; */ /* Unused */
+	j_ptr->note = o_ptr->note;
+	
+	/* Some flags are known for identified objects. */
+	if (object_known_p(o_ptr))
+	{
+		j_ptr->name1 = o_ptr->name1;
+		j_ptr->name2 = o_ptr->name2;
+		j_ptr->art_name = o_ptr->art_name;
+		j_ptr->to_h = o_ptr->to_h;
+		j_ptr->to_d = o_ptr->to_d;
+		j_ptr->to_a = o_ptr->to_a;
+		j_ptr->pval = o_ptr->pval;
+	}
+
+	/* Some flags are only used internally */
+	/* j_ptr->iy = o_ptr->iy; */
+	/* j_ptr->ix = o_ptr->ix; */
+	/* j_ptr->next_o_idx = o_ptr->next_o_idx; */
+	/* j_ptr->held_m_idx = o_ptr->held_m_idx; */
 
 	/* Assume that the player has noticed certain things when using an
 	 * unidentified item. The IDENT_TRIED flag is currently only set when
@@ -721,8 +753,8 @@ static void object_info_known(object_type *j_ptr, object_type *o_ptr)
 		/* Don't assume that the multiplier is always known. */
 		if (!spoil_base) j_ptr->art_flags3 &= ~(TR3_XTRA_MIGHT);
 
-		/* If a flag is known, set the pval. */
-		if (j_ptr->art_flags1 || j_ptr->art_flags2 || j_ptr->art_flags3)
+		/* If a pval-based flag is known from experience, set the pval. */
+		if (j_ptr->art_flags1 & TR1_PVAL_MASK)
 	{
 			j_ptr->pval = o_ptr->pval;
 		}
@@ -2728,6 +2760,7 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 	byte minx, maxy;
 
 	u32b f1, f2, f3;
+	object_type forge, *j_ptr=&forge;
 
 	cptr            info[128];
 
@@ -2743,9 +2776,13 @@ bool identify_fully_aux(object_type *o_ptr, byte flags)
 		object_aware(o_ptr);
 	}
 
-	/* Extract the known flags */
-	object_flags_known(o_ptr, &f1, &f2, &f3);
+	/* Extract the known info */
+	object_info_known(j_ptr, o_ptr);
 
+	/* Copy the flags to the traditional variables. */
+	f1 = j_ptr->art_flags1;
+	f2 = j_ptr->art_flags2;
+	f3 = j_ptr->art_flags3;
 
 	/* Mega-Hack -- describe activation */
 	if (f3 & (TR3_ACTIVATE))
