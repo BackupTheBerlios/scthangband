@@ -6,6 +6,11 @@ Changes are added to the top of this file, so for a chronological order
 read from the bottom up.
 
 sCthangband _CVS_
+* Fix the following bugs:
+  * The keys for increasing stats during character creation were displayed
+    wrongly.
+
+sCthangband 1.0.14
 * Cause ball attacked aimed in a direction to only be stopped by a wall or a
   visible monster, and those aimed at a target to be stopped by a wall or the
   target.
@@ -13,7 +18,7 @@ sCthangband _CVS_
 * Give a "Try" prompt when the player selects an object to sell with a capital.
 * Allow an ego type to be selected when creating an object in wizard mode.
 * Set the EASY_KNOW flag for non-random items in the source.
-* Fix the following bugs
+* Fix the following bugs:
   * It was possible to discover the identity of objects the player was not aware
     of using the preferences.
   * The unified use command allowed ineligible objects to be used.

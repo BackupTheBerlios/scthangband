@@ -923,12 +923,12 @@ static void display_player_birth(int points, bool details, bool rolled)
 	/* Display the information required during creation. */
 	clear_from(23);
 
-	mc_put_fmt(2, 73, "<-S/s->");
-	mc_put_fmt(3, 73, "<-I/s->");
-	mc_put_fmt(4, 73, "<-W/s->");
-	mc_put_fmt(5, 73, "<-D/s->");
-	mc_put_fmt(6, 73, "<-C/s->");
-	mc_put_fmt(7, 73, "<-H/s->");
+	mc_put_fmt(2, 73, "<-S/s+>");
+	mc_put_fmt(3, 73, "<-I/i+>");
+	mc_put_fmt(4, 73, "<-W/w+>");
+	mc_put_fmt(5, 73, "<-D/d+>");
+	mc_put_fmt(6, 73, "<-C/c+>");
+	mc_put_fmt(7, 73, "<-H/h+>");
 
 	/* These should be the same as in display_player_misc_info() */
 	mc_put_fmt(2, 1, "<N>Name");
