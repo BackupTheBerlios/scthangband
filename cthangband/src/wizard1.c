@@ -106,6 +106,8 @@ static grouper group_item[] =
     { TV_CONJURATION_BOOK,      "Books (Conjuration)" },
     { TV_NECROMANCY_BOOK,     "Books (Necromancy)" },
 
+	{ TV_CHARM, "Charm" },
+
 	{ TV_CHEST,             "Chests" },
 
 	{ TV_SPIKE,             "Various" },

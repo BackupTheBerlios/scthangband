@@ -496,6 +496,7 @@ static tval_desc tvals[] =
     { TV_THAUMATURGY_BOOK,        "Thaumaturgy Book"      },
     { TV_CONJURATION_BOOK,        "Conjuration Book"       },
     { TV_NECROMANCY_BOOK,       "Necromancy Book"     },
+	{ TV_CHARM, "Charm" },
 	{ TV_SPIKE,             "Spikes"               },
 	{ TV_DIGGING,           "Digger"               },
 	{ TV_CHEST,             "Chest"                },
