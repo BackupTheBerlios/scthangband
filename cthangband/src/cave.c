@@ -3702,7 +3702,7 @@ static bool PURE scatter_good(int ny, int nx, int y, int x, int d,
 	if (!los(y, x, ny, nx)) return FALSE;
 
 	/* Require extra restriction, if any. */
-	if (accept && !(*accept)(y, x)) return FALSE;
+	if (accept && !(*accept)(ny, nx)) return FALSE;
 
 	return TRUE;
 }
