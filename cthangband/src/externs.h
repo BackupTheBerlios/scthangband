@@ -563,7 +563,7 @@ extern void read_times(void);
 extern errr show_file(cptr name, cptr what);
 extern void do_cmd_help(cptr name);
 extern void process_player_name(void);
-extern void get_name(void);
+extern bool get_name(void);
 extern void do_cmd_suicide(void);
 extern void do_cmd_save_game(void);
 extern long total_points(void);

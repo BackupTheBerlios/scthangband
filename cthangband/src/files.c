@@ -3525,10 +3525,15 @@ void process_player_name(void)
  * Unix machines?  XXX XXX
  *
  * What a horrible name for a global function.  XXX XXX XXX
+ *
+ * Returns FALSE if the player presses ESCAPE in askfor_aux(), TRUE otherwise.
  */
-void get_name(void)
+bool get_name(void)
 {
 	char tmp[32];
+
+	/* We start with the original name. */
+	bool changed = FALSE;
 
 	/* Clear last line */
 	clear_from(22);
@@ -3546,7 +3551,11 @@ void get_name(void)
 		strcpy(tmp, player_name);
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15)) strcpy(player_name, tmp);
+		if (askfor_aux(tmp, 15))
+		{
+			strcpy(player_name, tmp);
+			changed = TRUE;
+		}
 
 		/* Process the player name */
 		process_player_name();
@@ -3563,6 +3572,8 @@ void get_name(void)
 
 	/* Erase the prompt, etc */
 	clear_from(22);
+	
+	return changed;
 }
 
 

@@ -945,6 +945,12 @@ static void display_player_birth(int points, bool details)
 		Term_putstr(73,6,-1,TERM_WHITE,"<-C/c->");
 		Term_putstr(73,7,-1,TERM_WHITE,"<-H/h->");
 
+		/* These should be the same as in display_player_misc_info() */
+		Term_putstr(1,2,-1,TERM_WHITE,"<N>Name");
+		Term_putstr(1,3,-1,TERM_WHITE,"<G>Sex"); /* Sigh... */
+		Term_putstr(1,4,-1,TERM_WHITE,"<R>Race");
+		Term_putstr(1,5,-1,TERM_WHITE,"<T>Template");
+
 
 	Term_gotoxy(2, 22);
 		Term_addch(TERM_WHITE, b1);
@@ -1029,6 +1035,8 @@ static void display_player_birth_details(void)
 #define IDX_LOAD	0x0100
 #define IDX_START	0x0200
 #define IDX_DETAILS	0x0400
+#define IDX_NAME	0x0800
+#define IDX_SEX	0x1000
 #define IDX_ALL (IDX_RACE | IDX_TEMPLATE | IDX_LOAD)
 
 /* Allow player to modify the character by spending points */
@@ -1038,6 +1046,12 @@ static bool point_mod_player(void)
 	char stat; /* Never used when i = IDX_ALL, and initialised below otherwise. */
 	s16b points; /* Initialised when i = IDX_ALL */
 	u16b i = IDX_START;
+	
+	/* The game inserts a name at the beginning, but the player can
+	 * change it. We will change the name whenever a new character is
+	 * generated, but not if the user has selected a name himself.
+	 */
+	bool own_name = FALSE;
 	
 	while(i != IDX_FINISH)
 	{ 
@@ -1089,6 +1103,12 @@ static bool point_mod_player(void)
 			case 'z': case 'Z':
 				i = IDX_RAND_ONE;
 				break;
+			case 'g': case 'G':
+				i = IDX_SEX;
+				break;
+			case 'n': case 'N':
+				i = IDX_NAME;
+				break;
 			case '/':
 				i = IDX_DETAILS;
 				break;
@@ -1110,6 +1130,11 @@ static bool point_mod_player(void)
 		if (i == IDX_DETAILS)
 		{
 			details = !details;
+		}
+		/* Allow the player to choose a name, remember if he does. */
+		if (i == IDX_NAME)
+		{
+			if (get_name()) own_name = TRUE;
 		}
 		/* Save current stats to a pref file */
 		if (i == IDX_FILE)
@@ -1147,7 +1172,6 @@ static bool point_mod_player(void)
 				p_ptr->prace += (islower(stat) ? 1 : -1);
 				p_ptr->prace %= MAX_RACES;
 				rp_ptr = &race_info[p_ptr->prace];
-				create_random_name(p_ptr->prace,player_name);
 			}
 
 		/* Modify the player's template. */
@@ -1157,6 +1181,15 @@ static bool point_mod_player(void)
 				p_ptr->ptemplate %= MAX_TEMPLATE;
 				cp_ptr = &template_info[p_ptr->ptemplate];
 			}
+
+		/* Modify the player's sex. */
+		if (i == IDX_SEX)
+		{
+			p_ptr->psex += (islower(stat) ? 1 : -1);
+			p_ptr->psex += MAX_SEXES;
+			p_ptr->psex %= MAX_SEXES;
+			sp_ptr = &sex_info[p_ptr->psex];
+		}
 
 		/* Modify a random stat. */
 		if (i == IDX_RAND_ONE)
@@ -1181,6 +1214,8 @@ static bool point_mod_player(void)
   			p_ptr->expfact = rp_ptr->r_exp;
 			/* Get an average social class. */
 			p_ptr->sc = get_social_average();
+			/* Get a name if computer-generated. */
+			if (!own_name) create_random_name(p_ptr->prace,player_name);
 		}
 		if (i & IDX_TEMPLATE)
 		{
@@ -1208,7 +1243,7 @@ static bool point_mod_player(void)
 		 * This also sets the points total (setting them from scratch every
 		 * time is simpler than adjusting them as necessary).
 		 */
-		if (i & (IDX_ALL | IDX_LOAD | IDX_STATS))
+		if (i & (IDX_ALL | IDX_LOAD | IDX_STATS | IDX_SEX))
 			{
 			byte j;
 			/* A character with stats of 0 has 64 points. */
@@ -1246,7 +1281,7 @@ static bool point_mod_player(void)
 		}
 
 		/* Update various things and display everything if something has changed. */
-		if (i & (IDX_ALL | IDX_STATS | IDX_DETAILS)) 
+		if (i & (IDX_ALL | IDX_STATS | IDX_DETAILS | IDX_NAME | IDX_SEX)) 
 		{
 			/* Calculate the bonuses and hitpoints */
 			p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
