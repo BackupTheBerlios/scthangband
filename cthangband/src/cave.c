@@ -1565,8 +1565,11 @@ static byte priority(byte a, char c)
  * Note the use of a specialized "priority" function to allow this
  * function to work with any graphic attr/char mappings, and the
  * attempts to optimize this function where possible.
+ *
+ * If max is false, cy and cx are the player's co-ordinates.
+ * If max is true, cy and cx are the bottom right corner of the map.
  */
-void display_map(int *cy, int *cx)
+void display_map(int *cy, int *cx, bool max)
 {
 	int i, j, x, y;
 
@@ -1575,18 +1578,20 @@ void display_map(int *cy, int *cx)
 
 	byte tp;
 
-	byte ma[MAP_HGT + 2][MAP_WID + 2];
-	char mc[MAP_HGT + 2][MAP_WID + 2];
-
-	byte mp[MAP_HGT + 2][MAP_WID + 2];
+	byte **ma, **mp;
+	char **mc;
 
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
 
-	const int ratio = MAX(cur_hgt/SCREEN_HGT, cur_wid/SCREEN_WID);
-	const int map_hgt = (cur_hgt+ratio-1)/ratio + 1;
-	const int map_wid = (cur_wid+ratio-1)/ratio + 1;
+	int ratio, map_hgt, map_wid;
 
+	Term_get_size(&map_wid, &map_hgt);
+
+	ratio = MAX(MAX((cur_wid+map_wid-1)/map_wid, (cur_hgt+map_hgt-1)/map_hgt), 1);
+	
+	map_hgt = (cur_hgt+ratio-1)/ratio + 1;
+	map_wid = (cur_wid+ratio-1)/ratio + 1;
 
 	/* Save lighting effects */
 	old_view_special_lite = view_special_lite;
@@ -1595,6 +1600,19 @@ void display_map(int *cy, int *cx)
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
 	view_granite_lite = FALSE;
+
+	/* Allocate temporary memory for the maps */
+	C_MAKE(ma, map_hgt + 2, byte *);
+	C_MAKE(mc, map_hgt + 2, char *);
+	C_MAKE(mp, map_hgt + 2, byte *);
+
+	/* Allocate each line in the maps */
+	for (i = 0; i < map_hgt + 2; i++)
+	{
+		C_MAKE(ma[i], map_wid + 2, byte);
+		C_MAKE(mc[i], map_wid + 2, char);
+		C_MAKE(mp[i], map_wid + 2, byte);
+	}
 
 
 	/* Clear the chars and attributes */
@@ -1679,10 +1697,31 @@ void display_map(int *cy, int *cx)
 		}
 	}
 
+	/* Free each line in the maps */
+	for (i = 0; i < map_hgt + 2; i++)
+	{
+		FREE2(ma[i]);
+		FREE2(mc[i]);
+		FREE2(mp[i]);
+	}
 
-	/* Player location */
-	(*cy) = py / ratio + 1;
-	(*cx) = px / ratio + 1;
+	/* Free arrays */
+	FREE2(ma);
+	FREE2(mc);
+	FREE2(mp);
+
+	if (max)
+	{
+		/* Edge of map */
+		(*cx) = map_wid;
+		(*cy) = map_hgt;
+	}
+	else
+	{
+		/* Player location */
+		(*cy) = py / ratio + 1;
+		(*cx) = px / ratio + 1;
+	}
 
 
 	/* Restore lighting effects */
@@ -1865,7 +1904,7 @@ void do_cmd_view_map(void)
 	}
 	else
 	{
-		display_map(&cy, &cx);
+		display_map(&cy, &cx, FALSE);
 	}
 
 	/* Wait for it */

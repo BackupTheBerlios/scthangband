@@ -1015,28 +1015,31 @@ static void win_message_display(void)
  */
 static bool win_overhead_good(void)
 {
-	/* If the map fits on the main screen, there's no point in displaying
-	 * a second copy. */
-	return !(cur_wid <= SCREEN_WID && cur_hgt <= SCREEN_HGT);
+	/* The map's always different on the surface. */
+	if (!dun_level) return TRUE;
+
+	/* The map doesn't fit on the main display. */
+	if (windows[0].term->wid < cur_wid) return TRUE;
+	if (windows[0].term->hgt < cur_hgt) return TRUE;
+	
+	/* This is shown on the main display. */
+	return FALSE;
 }
 
 /*
  * Display the overhead map in a window.
  */
 static void win_overhead_display(void)
-	{
-	int unused1, unused2;
+{
+	int cy, cx;
 
-		/* Redraw map */
-	display_map(&unused1, &unused2);
+	/* Redraw map */
+	display_map(&cy, &cx, TRUE);
 	
 	/* Hack - also give the world map if the player is in a town. */
 	if (!dun_level)
 	{
-		/* map_wid definition should be identical to that in display_map()) */
-		const int map_wid = cur_wid/MAX(cur_hgt/SCREEN_HGT, cur_wid/SCREEN_WID);
-
-		display_wild_map(map_wid+3);
+		display_wild_map(cx+3);
 	}
 }
 

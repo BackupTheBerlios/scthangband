@@ -54,7 +54,7 @@ extern void lite_spot(int y, int x);
 extern void prt_map(void);
 #endif
 #if (defined(CAVE_C) || defined(XTRA1_C))
-extern void display_map(int *cy, int *cx);
+extern void display_map(int *cy, int *cx, bool max);
 #endif
 #if (defined(CAVE_C) || defined(XTRA1_C))
 extern void display_wild_map(uint xmin);
@@ -3361,7 +3361,7 @@ extern errr Term_redraw(void);
 #if (defined(CAVE_C) || defined(UTIL_C) || defined(Z_TERM_C))
 extern errr Term_get_cursor(int *v);
 #endif
-#if (defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
+#if (defined(CAVE_C) || defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
 extern errr Term_get_size(int *w, int *h);
 #endif
 #if (defined(UTIL_C) || defined(XTRA1_C) || defined(Z_TERM_C))
