@@ -1089,7 +1089,7 @@ static char *object_desc_int(char *t, sint v)
 #define MAX_NAME_LEVEL	5
 
 /* Julian Lighton's improved code */
-void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
+void object_desc(char *buf, object_type *o1_ptr, int pref, int mode)
 {
 	cptr            basenm, modstr, extstr;
 	int                     power;
@@ -1117,20 +1117,20 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	u32b            f1, f2, f3;
 
-	object_kind             *k_ptr = &k_info[o_ptr->k_idx];
+	object_kind             *k_ptr = &k_info[o1_ptr->k_idx];
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o1_ptr, &f1, &f2, &f3);
 
 
 	/* See if the object is "aware" */
-	if (object_aware_p(o_ptr)) aware = TRUE;
+	if (object_aware_p(o1_ptr)) aware = TRUE;
 
 	/* See if the object is "known" */
-	if (object_known_p(o_ptr)) known = TRUE;
+	if (object_known_p(o1_ptr)) known = TRUE;
 
 	/* Analyze the object */
-	switch (o_ptr->tval)
+	switch (o1_ptr->tval)
 	{
 			/* Missiles/ Bows/ Weapons */
 		case TV_SHOT:
@@ -1206,11 +1206,11 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			 * Store-bought items never do.
 			 * Other items do iff "plain_descriptions" is turned off.
 			 */
-			if (aware && artifact_p(o_ptr))
+			if (aware && artifact_p(o1_ptr))
 			{
 				basenm = k_name+k_ptr->name;
 			}
-			else if (!aware || (!artifact_p(o_ptr) && !plain_descriptions && (~o_ptr->ident & IDENT_STOREB)))
+			else if (!aware || (!artifact_p(o1_ptr) && !plain_descriptions && (~o1_ptr->ident & IDENT_STOREB)))
 			{
 				/* If desired, this can be the base name */
 				if (u_ptr->flags & UNID_NO_BASE)
@@ -1232,7 +1232,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			}
 
 			/* Notice if the object is singular. */
-			if (o_ptr->number == 1) reject |= 1<<CI_PLURAL;
+			if (o1_ptr->number == 1) reject |= 1<<CI_PLURAL;
 			break;
 		}
 		default:
@@ -1262,20 +1262,20 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* Hack -- None left */
-		else if (o_ptr->number <= 0)
+		else if (o1_ptr->number <= 0)
 		{
 			t = object_desc_str(t, "no more ");
 		}
 
 		/* Extract the number */
-		else if (o_ptr->number > 1)
+		else if (o1_ptr->number > 1)
 		{
-			t = object_desc_num(t, o_ptr->number);
+			t = object_desc_num(t, o1_ptr->number);
 			t = object_desc_chr(t, ' ');
 		}
 
 		/* Hack -- The only one of its kind */
-	else if (known && allart_p(o_ptr))
+	else if (known && allart_p(o1_ptr))
 		{
 			t = object_desc_str(t, "The ");
 		}
@@ -1452,25 +1452,25 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
     {
 
 	/* Is it a new random artifact ? */
-	if (o_ptr->art_name)
+	if (o1_ptr->art_name)
     {
 		t = object_desc_chr(t, ' ');
-        t = object_desc_str(t, quark_str(o_ptr->art_name));
+        t = object_desc_str(t, quark_str(o1_ptr->art_name));
 	}
 
 	/* Grab any artifact name */
-	else if (o_ptr->name1)
+	else if (o1_ptr->name1)
 	{
-		artifact_type *a_ptr = &a_info[o_ptr->name1];
+		artifact_type *a_ptr = &a_info[o1_ptr->name1];
 
 		t = object_desc_chr(t, ' ');
 		t = object_desc_str(t, (a_name + a_ptr->name));
 	}
 
 	/* Grab any ego-item name */
-		else if (o_ptr->name2)
+		else if (o1_ptr->name2)
 	{
-		ego_item_type *e_ptr = &e_info[o_ptr->name2];
+		ego_item_type *e_ptr = &e_info[o1_ptr->name2];
 
 		t = object_desc_chr(t, ' ');
 		t = object_desc_str(t, (e_name + e_ptr->name));
@@ -1483,7 +1483,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* Hack -- Chests must be described in detail */
-	if (o_ptr->tval == TV_CHEST)
+	if (o1_ptr->tval == TV_CHEST)
 	{
 		/* Not searched yet */
 		if (!known)
@@ -1492,15 +1492,15 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 			/* May be "empty" */
-		else if (!o_ptr->pval)
+		else if (!o1_ptr->pval)
 			{
 				t = object_desc_str(t, " (empty)");
 			}
 
 		/* May be "disarmed" */
-		else if (o_ptr->pval < 0)
+		else if (o1_ptr->pval < 0)
 		{
-			if (chest_traps[o_ptr->pval])
+			if (chest_traps[o1_ptr->pval])
 			{
 				t = object_desc_str(t, " (disarmed)");
 			}
@@ -1514,7 +1514,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		else
 		{
 			/* Describe the traps */
-			switch (chest_traps[o_ptr->pval])
+			switch (chest_traps[o1_ptr->pval])
 			{
 				case 0:
 				{
@@ -1565,14 +1565,14 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	if (f3 & (TR3_SHOW_MODS)) show_weapon = TRUE;
 
 	/* Display the item like a weapon */
-	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
+	if (o1_ptr->to_h && o1_ptr->to_d) show_weapon = TRUE;
 
 	/* Display the item like armour */
-	if (o_ptr->ac) show_armour = TRUE;
+	if (o1_ptr->ac) show_armour = TRUE;
 
 
 	/* Dump base weapon info */
-	switch (o_ptr->tval)
+	switch (o1_ptr->tval)
 	{
 		/* Missiles and Weapons */
 		case TV_SHOT:
@@ -1586,9 +1586,9 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		/* Append a "damage" string */
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
-		t = object_desc_num(t, o_ptr->dd);
+		t = object_desc_num(t, o1_ptr->dd);
 		t = object_desc_chr(t, 'd');
-		t = object_desc_num(t, o_ptr->ds);
+		t = object_desc_num(t, o1_ptr->ds);
 		t = object_desc_chr(t, p2);
 
 		/* All done */
@@ -1599,7 +1599,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_BOW:
 
 		/* Mega-Hack -- Extract the "base power" */
-		power = (o_ptr->sval % 10);
+		power = (o1_ptr->sval % 10);
 
 		/* Apply the "Extra Might" flag */
 		if (f3 & (TR3_XTRA_MIGHT)) power++;
@@ -1616,13 +1616,13 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* Other stuff, if allowed */
 		default:
-		if (spoil_dam && object_aware_p(o_ptr) && (o_ptr->ds && o_ptr->dd))
+		if (spoil_dam && object_aware_p(o1_ptr) && (o1_ptr->ds && o1_ptr->dd))
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_num(t, o_ptr->dd);
+			t = object_desc_num(t, o1_ptr->dd);
 			t = object_desc_chr(t, 'd');
-			t = object_desc_num(t, o_ptr->ds);
+			t = object_desc_num(t, o1_ptr->ds);
 			t = object_desc_chr(t, p2);
 		}
 	}
@@ -1636,27 +1636,27 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o_ptr->to_h);
+			t = object_desc_int(t, o1_ptr->to_h);
 			t = object_desc_chr(t, ',');
-			t = object_desc_int(t, o_ptr->to_d);
+			t = object_desc_int(t, o1_ptr->to_d);
 			t = object_desc_chr(t, p2);
 		}
 
 		/* Show the tohit if needed */
-		else if (o_ptr->to_h)
+		else if (o1_ptr->to_h)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o_ptr->to_h);
+			t = object_desc_int(t, o1_ptr->to_h);
 			t = object_desc_chr(t, p2);
 		}
 
 		/* Show the todam if needed */
-		else if (o_ptr->to_d)
+		else if (o1_ptr->to_d)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o_ptr->to_d);
+			t = object_desc_int(t, o1_ptr->to_d);
 			t = object_desc_chr(t, p2);
 		}
 	}
@@ -1670,18 +1670,18 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
-			t = object_desc_num(t, o_ptr->ac);
+			t = object_desc_num(t, o1_ptr->ac);
 			t = object_desc_chr(t, ',');
-			t = object_desc_int(t, o_ptr->to_a);
+			t = object_desc_int(t, o1_ptr->to_a);
 			t = object_desc_chr(t, b2);
 		}
 
 		/* No base armor, but does increase armor */
-		else if (o_ptr->to_a)
+		else if (o1_ptr->to_a)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
-			t = object_desc_int(t, o_ptr->to_a);
+			t = object_desc_int(t, o1_ptr->to_a);
 			t = object_desc_chr(t, b2);
 		}
 	}
@@ -1691,7 +1691,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	{
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, b1);
-		t = object_desc_num(t, o_ptr->ac);
+		t = object_desc_num(t, o1_ptr->ac);
 		t = object_desc_chr(t, b2);
 	}
 
@@ -1702,31 +1702,31 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	/* Hack -- Wands and Staffs have charges */
 	if (known &&
-	    ((o_ptr->tval == TV_STAFF) ||
-	     (o_ptr->tval == TV_WAND)))
+	    ((o1_ptr->tval == TV_STAFF) ||
+	     (o1_ptr->tval == TV_WAND)))
 	{
 		/* Dump " (N charges)" */
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
-		t = object_desc_num(t, o_ptr->pval);
+		t = object_desc_num(t, o1_ptr->pval);
 		t = object_desc_str(t, " charge");
-		if (o_ptr->pval != 1) t = object_desc_chr(t, 's');
+		if (o1_ptr->pval != 1) t = object_desc_chr(t, 's');
 		t = object_desc_chr(t, p2);
 	}
 
 	/* Hack -- Rods have a "charging" indicator */
-	else if (known && (o_ptr->tval == TV_ROD))
+	else if (known && (o1_ptr->tval == TV_ROD))
 	{
 		/* Hack -- Dump " (charging)" if relevant */
-		if (o_ptr->pval) t = object_desc_str(t, " (charging)");
+		if (o1_ptr->pval) t = object_desc_str(t, " (charging)");
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && (!allart_p(o_ptr)))
+	else if ((o1_ptr->tval == TV_LITE) && (!allart_p(o1_ptr)))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, " (with ");
-		t = object_desc_num(t, o_ptr->pval);
+		t = object_desc_num(t, o1_ptr->pval);
 		t = object_desc_str(t, " turns of light)");
 	}
 
@@ -1743,7 +1743,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		else
 		{
 			object_type j;
-			object_info_known(&j, o_ptr);
+			object_info_known(&j, o1_ptr);
 			if (j.pval)
 			{
 				g1 = j.art_flags1;
@@ -1761,7 +1761,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		t = object_desc_chr(t, p1);
 
 			/* Dump the "pval" itself */
-			t = object_desc_int(t, o_ptr->pval);
+			t = object_desc_int(t, o1_ptr->pval);
 
 			/* Differentiate known pvals from deduced ones. */
 			if (!known) t = object_desc_chr(t, '?');
@@ -1803,7 +1803,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* Indicate "charging" artifacts XXX XXX XXX */
-	if (known && o_ptr->timeout)
+	if (known && o1_ptr->timeout)
 	{
 		/* Hack -- Dump " (charging)" if relevant */
 		t = object_desc_str(t, " (charging)");
@@ -1829,7 +1829,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			s32b value;
 			bool worthless;
 
-			object_info_known(j_ptr, o_ptr);
+			object_info_known(j_ptr, o1_ptr);
 
 			/* Without the appropriate spoiler flags, ignore the fact that
 			 * it is an ego item or artefact. */
@@ -1859,9 +1859,9 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 				sprintf(k[i++], "%ld", value);
 			}
 		}
-		if (o_ptr->discount) sprintf(k[i++], "%d%% off", o_ptr->discount);
-		if (strlen(strcpy(k[i], find_feeling(o_ptr)))) i++;
-		if (o_ptr->note) strlen(strcpy(k[i++], quark_str(o_ptr->note)));
+		if (o1_ptr->discount) sprintf(k[i++], "%d%% off", o1_ptr->discount);
+		if (strlen(strcpy(k[i], find_feeling(o1_ptr)))) i++;
+		if (o1_ptr->note) strlen(strcpy(k[i++], quark_str(o1_ptr->note)));
 
 		/* Append the inscriptions from bottom to top. */
 		while (i--)
