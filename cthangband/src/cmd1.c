@@ -409,7 +409,7 @@ static PURE bool mon_has_knee(const monster_race *r_ptr)
 	if (r_ptr->flags1 & RF1_NEVER_MOVE) return FALSE;
 
 	/* Monsters with symbols which suggest no knees... */
-	if (strchr("UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char))
+	if (strchr("UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->gfx.dc))
 		return FALSE;
 
 	/* Assume it has knees. */
@@ -1127,7 +1127,7 @@ static bool do_cmd_fire_aux(object_type *o_ptr,
 					(r_ptr->flags3 & (RF3_UNDEAD)) ||
 					(r_ptr->flags3 & (RF3_CTHULOID)) ||
 					(r_ptr->flags2 & (RF2_STUPID)) ||
-					(strchr("Evg", r_ptr->d_char)))
+					(strchr("Evg", r_ptr->gfx.dc)))
 				{
 					/* Special note at death */
 					note_dies = " is destroyed.";

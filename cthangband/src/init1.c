@@ -1392,7 +1392,7 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 			if (mimic == error_idx) return PARSE_ERROR_GENERIC;
 
 			/* Mimic fields override graphics ones entirely. */
-			if (f_ptr->priority || f_ptr->d_char || f_ptr->d_attr)
+			if (f_ptr->priority || f_ptr->gfx.dc || f_ptr->gfx.da)
 				return PARSE_ERROR_GENERIC;
 
 			/* Save the values */
@@ -1423,8 +1423,8 @@ errr parse_f_info(char *buf, header *head, vptr *extra)
 
 			/* Save the values */
 			f_ptr->priority = pri;
-			f_ptr->d_char = sym;
-			f_ptr->d_attr = color_char_to_attr(col);
+			f_ptr->gfx.dc = sym;
+			f_ptr->gfx.da = color_char_to_attr(col);
 
 			return SUCCESS;
 		}
@@ -1645,8 +1645,8 @@ errr parse_k_info(char *buf, header *head, vptr *extra)
 			if (p_id < 0 || p_id > 255) return PARSE_ERROR_GENERIC;
 
 			/* Save the values */
-			k_ptr->d_char = sym;
-			k_ptr->d_attr = tmp;
+			k_ptr->gfx.dc = sym;
+			k_ptr->gfx.da = tmp;
 
 			/* Hack - store p_id in k_ptr->u_idx until flavor_init() */
 			k_ptr->u_idx = p_id;
@@ -1949,8 +1949,8 @@ static errr parse_unid_flavourless_aux(header *head, int p_id)
 	/* Set the fields as required. */
 	u_ptr->name = 0;
 	u_ptr->p_id = p_id;
-	u_ptr->d_attr = TERM_DARK;
-	u_ptr->d_char = ' ';
+	u_ptr->gfx.da = TERM_DARK;
+	u_ptr->gfx.dc = ' ';
 
 	return SUCCESS;
 }
@@ -2047,10 +2047,10 @@ errr parse_u_info(char *buf, header *head, vptr *extra)
 				return PARSE_ERROR_GENERIC;
 			}
 			/* Extract the char */
-			u_ptr->d_char = sym;
+			u_ptr->gfx.dc = sym;
 
 			/* Extract the attr */
-			u_ptr->d_attr = color_char_to_attr(col);
+			u_ptr->gfx.da = color_char_to_attr(col);
 
 			/* Verify indices' legality */
 			try(byte_ok(p_id));
@@ -2519,8 +2519,8 @@ errr parse_r_info(char *buf, header *head, vptr *extra)
 			if (tmp < 0) return PARSE_ERROR_GENERIC;
 
 			/* Save the values */
-			r_ptr->d_char = buf[2];
-			r_ptr->d_attr = tmp;
+			r_ptr->gfx.dc = buf[2];
+			r_ptr->gfx.da = tmp;
 
 			return SUCCESS;
 		}

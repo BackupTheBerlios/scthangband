@@ -293,8 +293,8 @@ cptr add_stats(s16b sex, s16b race, s16b template, bool maximise,
 	{ \
 		for (i = 0; i < max; i++) \
 		{ \
-			x_info[i].x_attr = x_info[i].d_attr; \
-			x_info[i].x_char = x_info[i].d_char; \
+			x_info[i].gfx.xa = x_info[i].gfx.da; \
+			x_info[i].gfx.xc = x_info[i].gfx.dc; \
 		} \
 		return 0; \
 	} \
@@ -522,8 +522,8 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				n2 = strtol(zz[2], NULL, 0);
 				if (i >= MAX_R_IDX) return "no such monster";
 				r_ptr = &r_info[i];
-				if (n1) r_ptr->x_attr = n1;
-				if (n2) r_ptr->x_char = n2;
+				if (n1) r_ptr->gfx.xa = n1;
+				if (n2) r_ptr->gfx.xc = n2;
 				return (0);
 			}
 			else return "format not R:<num>:<a>/<c>";
@@ -542,8 +542,8 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				n2 = strtol(zz[2], NULL, 0);
 				if (i >= MAX_K_IDX || !k_info[i].name) return "no such object";
 				k_ptr = &k_info[i];
-				if (n1) k_ptr->x_attr = n1;
-				if (n2) k_ptr->x_char = n2;
+				if (n1) k_ptr->gfx.xa = n1;
+				if (n2) k_ptr->gfx.xc = n2;
 				return (0);
 			}
 			else return "format not K:<num>:<a>/<c>";
@@ -617,8 +617,8 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				if (i < 0 || i >= MAX_U_IDX)
 					return "no such unidentified object";
 				u_ptr = &u_info[i];
-				if (n1) u_ptr->x_attr = n1;
-				if (n2) u_ptr->x_char = n2;
+				if (n1) u_ptr->gfx.xa = n1;
+				if (n2) u_ptr->gfx.xc = n2;
 				return (0);
 			}
 			else return "format not U:<p_id>:<s_id>:<a>/<c>";
@@ -636,8 +636,8 @@ cptr process_pref_file_aux(char *buf, u16b *sf_flags)
 				n2 = strtol(zz[2], NULL, 0);
 				if (i >= MAX_F_IDX) return "no such feature";
 				f_ptr = &f_info[i];
-				if (n1) f_ptr->x_attr = n1;
-				if (n2) f_ptr->x_char = n2;
+				if (n1) f_ptr->gfx.xa = n1;
+				if (n2) f_ptr->gfx.xc = n2;
 				return (0);
 			}
 			else return "format not F:<num>:<a>/<c>";

@@ -565,7 +565,7 @@ static bool good_cat_monster(int r, int idx)
 	if (is_fake_monster(r_ptr)) return FALSE;
 
 	/* Not of this category. */
-	if (r_ptr->d_char != idx) return FALSE;
+	if (r_ptr->gfx.dc != idx) return FALSE;
 
 	return TRUE;
 }

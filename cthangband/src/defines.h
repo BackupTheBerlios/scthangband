@@ -3444,8 +3444,8 @@ extern int PlayerUID;
  * Return the "attr" for a given item.
  */
 #define object_kind_attr(T) \
-	((((!object_aware_kp(T)) || ((T)->x_attr == TERM_DARK))) ? \
-	(u_info[(T)->u_idx].x_attr) : ((T)->x_attr))
+	((((!object_aware_kp(T)) || ((T)->gfx.xa == TERM_DARK))) ? \
+	(u_info[(T)->u_idx].gfx.xa) : ((T)->gfx.xa))
 
 #define object_attr(T) object_kind_attr(k_info+(T)->k_idx)
 
@@ -3453,8 +3453,8 @@ extern int PlayerUID;
  * Return the "char" for a given item.
  */
 #define object_kind_char(T) \
-	((((!object_aware_kp(T)) || ((T)->x_char == ' '))) ? \
-	(u_info[(T)->u_idx].x_char) : ((T)->x_char))
+	((((!object_aware_kp(T)) || ((T)->gfx.xc == ' '))) ? \
+	(u_info[(T)->u_idx].gfx.xc) : ((T)->gfx.xc))
 
 #define object_char(T) object_kind_char(k_info+(T)->k_idx)
 

@@ -173,6 +173,18 @@ struct maxima
 	u16b templates; /* Elements in template_info[] */
 };
 
+/*
+ * Graphical representation for various on-screen things.
+ */
+typedef struct gfx_type gfx_type;
+struct gfx_type
+{
+	byte da;
+	char dc;
+
+	byte xa;
+	char xc;
+};
 
 /*
  * Information about terrain "features"
@@ -188,11 +200,7 @@ struct feature_type
 	byte mimic; /* Feature to mimic */
 	byte priority; /* Priority for small-scale map. See priority(). */
 
-	byte d_attr; /* Object "attribute" */
-	char d_char; /* Object "symbol" */
-
-	byte x_attr; /* The desired attr for this feature */
-	char x_char; /* The desired char for this feature */
+	gfx_type gfx; /* On-screen representation. */
 };
 
 
@@ -232,10 +240,8 @@ struct object_kind
 	s16b weight; /* Weight */
 	u16b u_idx; /* The u_info[] entry which represents this item. */
 
-	byte d_attr; /* Default object colour */
-	char d_char; /* Default object character */
-	byte x_attr; /* Desired object colour */
-	char x_char; /* Desired object character */
+	gfx_type gfx; /* On-screen representation. */
+
 	byte i_attr; /* Desired equipment list colour */
 
 	bool aware; /* The player is "aware" of the item's effects */
@@ -261,11 +267,7 @@ struct unident_type
 	byte p_id; /* Primary index */
 	byte s_id; /* Secondary index (internally generated) */
 
-	byte d_attr; /* Default colour */
-	char d_char; /* Default symbol */
-
-	byte x_attr; /* The desired attr for this object */
-	char x_char; /* The desired char for this object */
+	gfx_type gfx; /* On-screen representation. */
 };
 
 typedef struct o_base_type o_base_type;
@@ -436,14 +438,7 @@ struct monster_race
 	byte level; /* Level of creature */
 	byte rarity; /* Rarity of creature */
 
-
-	byte d_attr; /* Default monster attribute */
-	char d_char; /* Default monster character */
-
-
-	byte x_attr; /* Desired monster attribute */
-	char x_char; /* Desired monster character */
-
+	gfx_type gfx; /* On-screen representation. */
 
 	byte max_num; /* Maximum population allowed per level */
 

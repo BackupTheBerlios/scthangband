@@ -2769,8 +2769,8 @@ static sint draw_path(u16b *path, char *c, byte *a,
 		{
 			/* Hallucination sometimes alters the player's
 			 * perception. */
-			if (a[i] != f_info[f_info[c_ptr->feat].mimic].x_attr ||
-				c[i] != f_info[f_info[c_ptr->feat].mimic].x_char)
+			if (a[i] != f_info[f_info[c_ptr->feat].mimic].gfx.xa ||
+				c[i] != f_info[f_info[c_ptr->feat].mimic].gfx.xc)
 			{
 				switch (GRID(a[i], c[i]) % 3)
 				{

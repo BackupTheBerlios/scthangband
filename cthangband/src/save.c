@@ -496,8 +496,8 @@ static void wr_ghost(void)
 	wr_string(r_name + r_ptr->name);
 
 	/* Visuals */
-	wr_byte(r_ptr->d_char);
-	wr_byte(r_ptr->d_attr);
+	wr_byte(r_ptr->gfx.dc);
+	wr_byte(r_ptr->gfx.da);
 
 	/* Level/Rarity */
 	wr_byte(r_ptr->level);

@@ -581,7 +581,7 @@ static void spoil_mon_desc(void)
 		sprintf(exp, "%ld", (long)(r_ptr->mexp));
 
 		/* Hack -- use visual instead */
-		sprintf(exp, "%s '%c'", attr_to_text(r_ptr->d_attr), r_ptr->d_char);
+		sprintf(exp, "%s '%c'", attr_to_text(r_ptr->gfx.da), r_ptr->gfx.dc);
 
 		/* Dump the info */
 		fprintf(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
@@ -762,10 +762,10 @@ static void spoil_mon_info(void)
 		spoil_out("%v  (", monster_desc_aux_f3, r_ptr, 1, 0);
 
 		/* Color */
-		spoil_out(attr_to_text(r_ptr->d_attr));
+		spoil_out(attr_to_text(r_ptr->gfx.da));
 
 		/* Symbol --(-- */
-		spoil_out(" '%c')\n", r_ptr->d_char);
+		spoil_out(" '%c')\n", r_ptr->gfx.dc);
 
 
 		/* Indent */

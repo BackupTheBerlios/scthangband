@@ -1839,7 +1839,7 @@ static bool detect_monsters_string(cptr Match)
 		if (!panel_contains(y, x)) continue;
 
 		/* Detect evil monsters */
-		if (strchr(Match, r_ptr->d_char))
+		if (strchr(Match, r_ptr->gfx.dc))
 
 		{
 
@@ -4158,7 +4158,7 @@ errr genocide(bool player_cast)
 		if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
 
 		/* Skip "wrong" monsters */
-		if (r_ptr->d_char != typ) continue;
+		if (r_ptr->gfx.dc != typ) continue;
 
 		/* Skip Quest Monsters - Dean Anderson */
 		if (r_ptr->flags1 & RF1_GUARDIAN) continue;

@@ -2893,16 +2893,16 @@ struct visual_type
 /*
  * Extract pointers to the following elements of something:
  * (cptr)(x_name+x_info[i].name)
- * (byte)(x_info[i].d_attr)
- * (char)(x_info[i].d_char)
- * (byte*)(&x_info[i].x_attr)
- * (char*)(&x_info[i].x_char)
+ * (byte)(x_info[i].gfx.da)
+ * (char)(x_info[i].gfx.dc)
+ * (byte*)(&x_info[i].gfx.xa)
+ * (char*)(&x_info[i].gfx.xc)
  */
 #define get_visuals(x_info) \
-	((*da) = x_info[i].d_attr, \
-	(*dc) = x_info[i].d_char, \
-	(*xa) = &(x_info[i].x_attr), \
-	(*xc) = &(x_info[i].x_char))
+	((*da) = x_info[i].gfx.da, \
+	(*dc) = x_info[i].gfx.dc, \
+	(*xa) = &(x_info[i].gfx.xa), \
+	(*xc) = &(x_info[i].gfx.xc))
 
 
 
@@ -4063,9 +4063,9 @@ void get_symbol_f2(char *buf, uint max, cptr UNUSED fmt, va_list *vp)
  * unprintable characters.
  */
 #define get_symbol(x_ptr) \
-	get_symbol_f2, (x_ptr)->x_attr, \
-		ISPRINT((x_ptr)->x_char) ? (x_ptr)->x_char : \
-		ISPRINT((x_ptr)->d_char) ? (x_ptr)->d_char : '#'
+	get_symbol_f2, (x_ptr)->gfx.xa, \
+		ISPRINT((x_ptr)->gfx.xc) ? (x_ptr)->gfx.xc : \
+		ISPRINT((x_ptr)->gfx.dc) ? (x_ptr)->gfx.dc : '#'
 
 /*
  * Check the status of "artifacts"
@@ -4861,7 +4861,7 @@ void shops_display(int town)
 		f_ptr = &f_info[FEAT_SHOP_HEAD+store[i+offset].type];
 
 		/* Display the symbol and name of the store. */
-		mc_put_fmt(j++, 0, "%v%v", get_symbol_f2, f_ptr->x_attr, f_ptr->x_char,
+		mc_put_fmt(j++, 0, "%v%v", get_symbol_f2, f_ptr->gfx.xa, f_ptr->gfx.xc,
 			store_title_f1, i+offset);
 	}
 }

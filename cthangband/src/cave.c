@@ -460,8 +460,8 @@ static void image_monster(byte *ap, char *cp)
 		}
 		while (is_fake_monster(r_ptr));
 
-		(*cp) = r_ptr->x_char;
-		(*ap) = r_ptr->x_attr;
+		(*cp) = r_ptr->gfx.xc;
+		(*ap) = r_ptr->gfx.xa;
 	}
 }
 
@@ -544,17 +544,17 @@ static bool do_violet_unique(monster_race *r_ptr, byte *ap, char *cp)
 	if (r_ptr->flags1 & RF1_UNIQUE) a = TERM_VIOLET;
 
 	/* Monsters which would otherwise be invisible become red. */
-	else if ((*ap) == r_ptr->x_attr && (*cp) == r_ptr->x_char) a = TERM_RED;
+	else if ((*ap) == r_ptr->gfx.xa && (*cp) == r_ptr->gfx.xc) a = TERM_RED;
 
 	/* Only the above types of monster are modified here. */
 	else return FALSE;
 
 	/* Monsters which are the colour in question anyway become yellow. */
-	if (a == r_ptr->x_attr) a = TERM_YELLOW;
+	if (a == r_ptr->gfx.xa) a = TERM_YELLOW;
 
 	/* Store the result. */
 	(*ap) = a;
-	(*cp) = r_ptr->x_char;
+	(*cp) = r_ptr->gfx.xc;
 
 	/* Let the game know that something has happened. */
 	return TRUE;
@@ -699,11 +699,11 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	if (!in_bounds2(y, x))
 	{
 		f_ptr = f_info+FEAT_ILLEGAL;
-		*ap = f_ptr->x_attr;
-		*cp = f_ptr->x_char;
+		*ap = f_ptr->gfx.xa;
+		*cp = f_ptr->gfx.xc;
 
-		*tap = f_ptr->x_attr;
-		*tcp = f_ptr->x_char;
+		*tap = f_ptr->gfx.xa;
+		*tcp = f_ptr->gfx.xc;
 
 		return;
 	}
@@ -732,10 +732,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 			if (feat == FEAT_PATH) f_ptr = &f_info[FEAT_PATH];
 
 			/* Normal char */
-			c = f_ptr->x_char;
+			c = f_ptr->gfx.xc;
 
 			/* Normal attr */
-			a = f_ptr->x_attr;
+			a = f_ptr->gfx.xa;
 
 			/* Special lighting effects */
 			if (view_special_lite && ((a == TERM_WHITE) || use_graphics))
@@ -824,10 +824,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 			}
 
 			/* Normal attr */
-			a = f_ptr->x_attr;
+			a = f_ptr->gfx.xa;
 
 			/* Normal char */
-			c = f_ptr->x_char;
+			c = f_ptr->gfx.xc;
 		}
 	}
 
@@ -844,10 +844,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 			f_ptr = &f_info[feat];
 
 			/* Normal char */
-			c = f_ptr->x_char;
+			c = f_ptr->gfx.xc;
 
 			/* Normal attr */
-			a = f_ptr->x_attr;
+			a = f_ptr->gfx.xa;
 
 			/* Special lighting effects */
 			if (view_granite_lite && ((a == TERM_WHITE) || (use_graphics)) &&
@@ -971,10 +971,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 
 
 			/* Normal attr */
-			a = f_ptr->x_attr;
+			a = f_ptr->gfx.xa;
 
 			/* Normal char */
-			c = f_ptr->x_char;
+			c = f_ptr->gfx.xc;
 		}
 	}
 
@@ -1043,10 +1043,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			/* Desired attr */
-			a = r_ptr->x_attr;
+			a = r_ptr->gfx.xa;
 
 			/* Desired char */
-			c = r_ptr->x_char;
+			c = r_ptr->gfx.xc;
 
 			/* Ignore weird codes */
 			if (avoid_other)
@@ -1173,10 +1173,10 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		monster_race *r_ptr = &r_info[0];
 
 		/* Get the "player" attr */
-		a = r_ptr->x_attr;
+		a = r_ptr->gfx.xa;
 
 		/* Get the "player" char */
-		c = r_ptr->x_char;
+		c = r_ptr->gfx.xc;
 
 		/* Save the info */
 		(*ap) = a;
@@ -1558,13 +1558,13 @@ static int get_priority(int y, int x)
 	map_info(y, x, &a, &c, &da, &dc);
 
 	/* Use the priority of this terrain type if the terrain is visible. */
-	if (f_ptr->x_char == c && f_ptr->x_attr == a) return f_ptr->priority;
+	if (f_ptr->gfx.xc == c && f_ptr->gfx.xa == a) return f_ptr->priority;
 
 	/* Otherwise, look to see if it looks like terrain. */
 	for (i = 0; i < feature_priorities; i++)
 	{
 		f_ptr = priority_table[i];
-		if (f_ptr->x_char == c && f_ptr->x_attr == a) return f_ptr->priority;
+		if (f_ptr->gfx.xc == c && f_ptr->gfx.xa == a) return f_ptr->priority;
 	}
 
 	/* Not the char/attr of a feature, so give a known priority. */

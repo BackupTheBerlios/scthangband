@@ -270,10 +270,10 @@ static void set_ghost_aux(cptr gb_name, int ghost_race, int lev)
 	r_ptr->flags4 = rt_ptr->flags4;
 	r_ptr->flags5 = rt_ptr->flags5;
 	r_ptr->flags6 = rt_ptr->flags6;
-	r_ptr->d_attr = rt_ptr->d_attr;
-	r_ptr->d_char = rt_ptr->d_char;
-	r_ptr->x_attr = rt_ptr->x_attr;
-	r_ptr->x_char = rt_ptr->x_char;
+	r_ptr->gfx.da = rt_ptr->gfx.da;
+	r_ptr->gfx.dc = rt_ptr->gfx.dc;
+	r_ptr->gfx.xa = rt_ptr->gfx.xa;
+	r_ptr->gfx.xc = rt_ptr->gfx.xc;
 	r_ptr->num_blows = rt_ptr->num_blows;
 	C_COPY(r_ptr->blow, rt_ptr->blow, 4, monster_blow);
 
@@ -1960,7 +1960,7 @@ bool live_monster_p(monster_race *r_ptr)
 	if (r_ptr->flags3 & (RF3_DEMON)) return FALSE;
 	if (r_ptr->flags3 & (RF3_CTHULOID)) return FALSE;
 	if (r_ptr->flags3 & (RF3_NONLIVING)) return FALSE;
-	if (strchr("Egv", r_ptr->d_char)) return FALSE;
+	if (strchr("Egv", r_ptr->gfx.dc)) return FALSE;
 
 	return TRUE;
 }
@@ -2332,7 +2332,7 @@ static bool place_monster_okay(int place_monster_idx, int r_idx)
 	monster_race *z_ptr = &r_info[r_idx];
 
 	/* Require similar "race" */
-	if (z_ptr->d_char != r_ptr->d_char) return (FALSE);
+	if (z_ptr->gfx.dc != r_ptr->gfx.dc) return (FALSE);
 
 	/* Skip more advanced monsters */
 	if (z_ptr->level > r_ptr->level) return (FALSE);
@@ -2524,7 +2524,7 @@ static bool alloc_horde_aux(int y, int x, int level)
 		for (i = rand_range(6, 15); i; i--)
 		{
 			summon_specific(m_ptr->fy, m_ptr->fx, level,
-				SUMMON_CHAR(r_info[r_idx].d_char) | SUMMON_NO_UNIQUES);
+				SUMMON_CHAR(r_info[r_idx].gfx.dc) | SUMMON_NO_UNIQUES);
 		}
 
 		return TRUE;
@@ -2631,7 +2631,7 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 	/* Hack - summon by symbol. */
 	if (summon_specific_type & SUMMON_BY_CHAR)
 	{
-		return (r_ptr->d_char == (summon_specific_type & 0x00FF));
+		return (r_ptr->gfx.dc == (summon_specific_type & 0x00FF));
 	}
 	else if (summon_specific_type & SUMMON_BY_FLAG)
 	{
@@ -2659,18 +2659,18 @@ static bool summon_specific_okay(int summon_specific_type, int r_idx)
 	{
 		case UNFLAG(SUMMON_HOUND):
 		{
-			return ((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z'));
+			return ((r_ptr->gfx.dc == 'C') || (r_ptr->gfx.dc == 'Z'));
 		}
 
 		case UNFLAG(SUMMON_HI_UNDEAD):
 		{
-			return !!strchr("LVW", r_ptr->d_char);
+			return !!strchr("LVW", r_ptr->gfx.dc);
 		}
 
 		case UNFLAG(SUMMON_ANIMAL_RANGER):
 		{
 			return ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-				(strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
+				(strchr("abcflqrwBCIJKMRS", r_ptr->gfx.dc)) &&
 				!(r_ptr->flags3 & (RF3_DRAGON))&&
 				!(r_ptr->flags3 & (RF3_EVIL)) &&
 				!(r_ptr->flags3 & (RF3_UNDEAD))&&
@@ -2875,7 +2875,7 @@ void message_pain(monster_type *m_ptr, int dam)
 		long tmp = (newhp * 100L) / oldhp;
 		int percentage = (int)(tmp);
 		uint race, pain;
-		char d_char = r_info[m_ptr->r_idx].d_char;
+		char d_char = r_info[m_ptr->r_idx].gfx.dc;
 
 		/* Find the message set by race, the last being a default set. */
 		for (race = 0; race < N_ELEMENTS(pain_races)-1; race++)

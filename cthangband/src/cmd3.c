@@ -963,7 +963,7 @@ static void do_cmd_query_symbol_aux(u16b *who)
 		}
 
 		/* Require a base symbol if needed. */
-		if (symbol && (r_ptr->d_char != sym)) continue;
+		if (symbol && (r_ptr->gfx.dc != sym)) continue;
 
 		/* Collect this monster. */
 		who[n++] = i;

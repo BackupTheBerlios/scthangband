@@ -974,8 +974,8 @@ static void rd_ghost(void)
 	rd_string(r_name + r_ptr->name, 64);
 
 	/* Visuals */
-	rd_byte((byte *)&r_ptr->d_char);
-	rd_byte(&r_ptr->d_attr);
+	rd_byte((byte *)&r_ptr->gfx.dc);
+	rd_byte(&r_ptr->gfx.da);
 
 	/* Level/Rarity */
 	rd_byte(&r_ptr->level);
@@ -1019,8 +1019,8 @@ static void rd_ghost(void)
 	}
 
 	/* Hack -- set the "graphic" info */
-	r_ptr->x_attr = r_ptr->d_attr;
-	r_ptr->x_char = r_ptr->d_char;
+	r_ptr->gfx.xa = r_ptr->gfx.da;
+	r_ptr->gfx.xc = r_ptr->gfx.dc;
 
 }
 

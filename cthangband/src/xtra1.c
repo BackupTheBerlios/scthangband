@@ -3173,8 +3173,8 @@ static void dump_race(int w, int h, int num, char attr, monster_list_entry *ptr)
 	byte flags = (total == 1) ? 0 : MDF_NUMBER;
 
 	/* Dump the monster name. */
-	mc_put_fmt(y, x, "%v $%c%.*v", get_symbol_f2, r_ptr->x_attr,
-		r_ptr->x_char, attr, w-3, monster_desc_aux_f3, r_ptr, total, flags);
+	mc_put_fmt(y, x, "%v $%c%.*v", get_symbol_f2, r_ptr->gfx.xa,
+		r_ptr->gfx.xc, attr, w-3, monster_desc_aux_f3, r_ptr, total, flags);
 }
 
 
@@ -3356,8 +3356,8 @@ static void win_floor_display(void)
 
 		if (c_ptr->m_idx && m_ptr->ml)
 		{
-			mc_put_fmt(y++, 0, "%v %v", get_symbol_f2, r_ptr->x_attr,
-				r_ptr->x_char, monster_desc_f2, m_ptr, 0x0C);
+			mc_put_fmt(y++, 0, "%v %v", get_symbol_f2, r_ptr->gfx.xa,
+				r_ptr->gfx.xc, monster_desc_f2, m_ptr, 0x0C);
 		}
 
 		for (; y < Term->hgt && o_ptr != o_list;

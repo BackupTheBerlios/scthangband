@@ -2752,7 +2752,7 @@ static bool vault_aux_jelly(int UNUSED p, int r_idx)
 	if (r_ptr->flags3 & (RF3_EVIL)) return (FALSE);
 
 	/* Require icky thing, jelly, mould, or mushroom */
-	if (!strchr("ijm,", r_ptr->d_char)) return (FALSE);
+	if (!strchr("ijm,", r_ptr->gfx.dc)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -2837,7 +2837,7 @@ static bool vault_aux_kennel(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Require a Zephyr Hound or a dog */
-	return ((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
+	return ((r_ptr->gfx.dc == 'Z') || (r_ptr->gfx.dc == 'C'));
 
 }
 
@@ -2852,9 +2852,9 @@ static bool vault_aux_treasure(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Require "Treasure" */
-	if (!((r_ptr->d_char == '!') || (r_ptr->d_char == '|') ||
-		(r_ptr->d_char == '$') || (r_ptr->d_char == '?') ||
-		(r_ptr->d_char == '=')))
+	if (!((r_ptr->gfx.dc == '!') || (r_ptr->gfx.dc == '|') ||
+		(r_ptr->gfx.dc == '$') || (r_ptr->gfx.dc == '?') ||
+		(r_ptr->gfx.dc == '=')))
 	{
 		return (FALSE);
 	}
@@ -2877,7 +2877,7 @@ static bool vault_aux_clone(int template_race, int r_idx)
  */
 static bool vault_aux_symbol(int template_race, int r_idx)
 {
-	return ((r_info[r_idx].d_char == (r_info[template_race].d_char))
+	return ((r_info[r_idx].gfx.dc == (r_info[template_race].gfx.dc))
 		&& !(r_info[r_idx].flags1 & RF1_UNIQUE));
 }
 
@@ -2893,7 +2893,7 @@ static bool vault_aux_orc(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Hack -- Require "o" monsters */
-	if (!strchr("o", r_ptr->d_char)) return (FALSE);
+	if (!strchr("o", r_ptr->gfx.dc)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -2912,7 +2912,7 @@ static bool vault_aux_troll(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Hack -- Require "T" monsters */
-	if (!strchr("T", r_ptr->d_char)) return (FALSE);
+	if (!strchr("T", r_ptr->gfx.dc)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -2930,7 +2930,7 @@ static bool vault_aux_giant(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Hack -- Require "P" monsters */
-	if (!strchr("P", r_ptr->d_char)) return (FALSE);
+	if (!strchr("P", r_ptr->gfx.dc)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -2954,7 +2954,7 @@ static bool vault_aux_dragon(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Hack -- Require "d" or "D" monsters */
-	if (!strchr("Dd", r_ptr->d_char)) return (FALSE);
+	if (!strchr("Dd", r_ptr->gfx.dc)) return (FALSE);
 
 	/* Hack -- Require correct "breath attack" */
 	if (r_ptr->flags4 != vault_aux_dragon_mask4) return (FALSE);
@@ -2975,7 +2975,7 @@ static bool vault_aux_demon(int UNUSED p, int r_idx)
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
 	/* Hack -- Require "U" monsters */
-	if (!strchr("U", r_ptr->d_char)) return (FALSE);
+	if (!strchr("U", r_ptr->gfx.dc)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);

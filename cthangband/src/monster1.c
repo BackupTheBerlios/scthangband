@@ -1506,12 +1506,12 @@ void roff_top(int r_idx)
 
 
 	/* Access the chars */
-	c1 = r_ptr->d_char;
-	c2 = r_ptr->x_char;
+	c1 = r_ptr->gfx.dc;
+	c2 = r_ptr->gfx.xc;
 
 	/* Access the attrs */
-	a1 = r_ptr->d_attr;
-	a2 = r_ptr->x_attr;
+	a1 = r_ptr->gfx.da;
+	a2 = r_ptr->gfx.xa;
 
 	/* Clear the top line */
 	Term_erase(0, 0, 255);
