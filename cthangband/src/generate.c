@@ -14,8 +14,6 @@
 #include "angband.h"
 #define SAFE_MAX_ATTEMPTS 5000
 
-static int template_race;
-
 /*
  * Note that Level generation is *not* an important bottleneck,
  * though it can be annoyingly slow on older machines...  Thus
@@ -2723,7 +2721,7 @@ static void build_type4(int yval, int xval)
 /*
  * Helper function for "monster nest (jelly)"
  */
-static bool vault_aux_jelly(int r_idx)
+static bool vault_aux_jelly(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2744,7 +2742,7 @@ static bool vault_aux_jelly(int r_idx)
 /*
  * Helper function for "monster nest (animal)"
  */
-static bool vault_aux_animal(int r_idx)
+static bool vault_aux_animal(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2762,7 +2760,7 @@ static bool vault_aux_animal(int r_idx)
 /*
  * Helper function for "monster nest (undead)"
  */
-static bool vault_aux_undead(int r_idx)
+static bool vault_aux_undead(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2780,7 +2778,7 @@ static bool vault_aux_undead(int r_idx)
 /*
  * Helper function for "monster nest (chapel)"
  */
-static bool vault_aux_chapel(int r_idx)
+static bool vault_aux_chapel(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2800,7 +2798,7 @@ static bool vault_aux_chapel(int r_idx)
 /*
  * Helper function for "monster nest (cultist lair)"
  */
-static bool vault_aux_cult(int r_idx)
+static bool vault_aux_cult(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2820,7 +2818,7 @@ static bool vault_aux_cult(int r_idx)
 /*
  * Helper function for "monster nest (kennel)"
  */
-static bool vault_aux_kennel(int r_idx)
+static bool vault_aux_kennel(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2835,7 +2833,7 @@ static bool vault_aux_kennel(int r_idx)
 /*
  * Helper function for "monster nest (treasure)"
  */
-static bool vault_aux_treasure(int r_idx)
+static bool vault_aux_treasure(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2857,7 +2855,7 @@ static bool vault_aux_treasure(int r_idx)
 /*
  * Helper function for "monster nest (clone)"
  */
-static bool vault_aux_clone(int r_idx)
+static bool vault_aux_clone(int template_race, int r_idx)
 {
 	return (r_idx == template_race);
 }
@@ -2866,7 +2864,7 @@ static bool vault_aux_clone(int r_idx)
 /*
  * Helper function for "monster nest (symbol clone)"
  */
-static bool vault_aux_symbol(int r_idx)
+static bool vault_aux_symbol(int template_race, int r_idx)
 {
 	return ((r_info[r_idx].d_char == (r_info[template_race].d_char))
 		&& !(r_info[r_idx].flags1 & RF1_UNIQUE));
@@ -2876,7 +2874,7 @@ static bool vault_aux_symbol(int r_idx)
 /*
  * Helper function for "monster pit (orc)"
  */
-static bool vault_aux_orc(int r_idx)
+static bool vault_aux_orc(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2895,7 +2893,7 @@ static bool vault_aux_orc(int r_idx)
 /*
  * Helper function for "monster pit (troll)"
  */
-static bool vault_aux_troll(int r_idx)
+static bool vault_aux_troll(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2913,7 +2911,7 @@ static bool vault_aux_troll(int r_idx)
 /*
  * Helper function for "monster pit (giant)"
  */
-static bool vault_aux_giant(int r_idx)
+static bool vault_aux_giant(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2937,7 +2935,7 @@ static u32b vault_aux_dragon_mask4;
 /*
  * Helper function for "monster pit (dragon)"
  */
-static bool vault_aux_dragon(int r_idx)
+static bool vault_aux_dragon(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2958,7 +2956,7 @@ static bool vault_aux_dragon(int r_idx)
 /*
  * Helper function for "monster pit (demon)"
  */
-static bool vault_aux_demon(int r_idx)
+static bool vault_aux_demon(int UNUSED p, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -3001,7 +2999,7 @@ static void build_type5(int yval, int xval)
 {
 	int			y, x, y1, x1, y2, x2;
 
-	int			tmp, i;
+	int			tmp, i, p = 0;
 
 	s16b		what[64];
 
@@ -3011,7 +3009,7 @@ static void build_type5(int yval, int xval)
 
 	bool		empty = FALSE;
 
-	bool (*get_mon_num_hook)(int);
+	bool (*get_mon_num_hook)(int, int);
 
 	/* Large room */
 	y1 = yval - 4;
@@ -3086,10 +3084,10 @@ static void build_type5(int yval, int xval)
 
 	if ((tmp < 25) && (randint(2) != 1))
 	{
-            do  { template_race = rand_int(MAX_R_IDX); }
-                while ((r_info[template_race].flags1 & RF1_UNIQUE) ||
-				is_fake_monster(r_info+template_race) ||
-                     (((r_info[template_race].level) + randint(5)) >
+            do  { p = rand_int(MAX_R_IDX); }
+                while ((r_info[p].flags1 & RF1_UNIQUE) ||
+				is_fake_monster(r_info+p) ||
+                     (((r_info[p].level) + randint(5)) >
                             ((dun_depth) + randint(5))));
         if ((randint(2)!=1) && ((dun_depth) >= (25 + randint(15))))
         {
@@ -3165,7 +3163,7 @@ static void build_type5(int yval, int xval)
 #endif
 
 	/* Prepare special allocation table */
-	get_mon_num_prep(get_mon_num_hook);
+	get_mon_num_prep(get_mon_num_hook, p);
 
 
 	/* Pick some monster types */
@@ -3180,7 +3178,7 @@ static void build_type5(int yval, int xval)
 
 
 	/* Prepare normal allocation table */
-	get_mon_num_prep(NULL);
+	get_mon_num_prep(NULL, 0);
 
 
 	/* Oops */
@@ -3267,7 +3265,7 @@ static void build_type6(int yval, int xval)
 {
 	int			tmp, what[16];
 
-	int			i, j, y, x, y1, x1, y2, x2;
+	int			i, j, y, x, y1, x1, y2, x2, p = 0;
 
 	bool		empty = FALSE;
 
@@ -3275,7 +3273,7 @@ static void build_type6(int yval, int xval)
 
 	cptr		name;
 
-	bool (*get_mon_num_hook)(int);
+	bool (*get_mon_num_hook)(int, int);
 
 	/* Large room */
 	y1 = yval - 4;
@@ -3385,10 +3383,10 @@ static void build_type6(int yval, int xval)
             /* Message */
             name = "ordered clones";
 
-                do  { template_race = rand_int(MAX_R_IDX); }
-                    while ((r_info[template_race].flags1 & RF1_UNIQUE) ||
-						is_fake_monster(r_info+template_race) ||
-                            (((r_info[template_race].level) + randint(5)) >
+                do  { p = rand_int(MAX_R_IDX); }
+                    while ((r_info[p].flags1 & RF1_UNIQUE) ||
+						is_fake_monster(r_info+p) ||
+                            (((r_info[p].level) + randint(5)) >
                                 ((dun_depth) + randint(5))));
 
             /* Restrict selection */
@@ -3514,7 +3512,7 @@ static void build_type6(int yval, int xval)
 	}
 
 	/* Prepare special allocation table */
-	get_mon_num_prep(get_mon_num_hook);
+	get_mon_num_prep(get_mon_num_hook, p);
 
 
 	/* Pick some monster types */
@@ -3529,7 +3527,7 @@ static void build_type6(int yval, int xval)
 
 
 	/* Prepare normal allocation table */
-	get_mon_num_prep(NULL);
+	get_mon_num_prep(NULL, 0);
 
 
 	/* Oops */

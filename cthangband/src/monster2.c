@@ -889,9 +889,13 @@ s16b m_pop(void)
 
 
 /*
- * Apply a "monster restriction function" to the "monster allocation table"
+ * Apply a "monster restriction function" to the "monster allocation table".
+ * A monster is accepted if:
+ * (a) hook is NULL, or
+ * (b) hook(p, r_idx) is TRUE.
+ * p is used to allow a single function to handle a range of similar cases.
  */
-errr get_mon_num_prep(bool (*hook)(int))
+errr get_mon_num_prep(bool (*hook)(int, int), int p)
 {
 	int i;
 
@@ -902,7 +906,7 @@ errr get_mon_num_prep(bool (*hook)(int))
 		alloc_entry *entry = &alloc_race_table[i];
 
 		/* Accept monsters which pass the restriction, if any */
-		if (!hook || (*hook)(entry->index))
+		if (!hook || (*hook)(entry->index, p))
 		{
 			/* Accept this monster */
 			entry->prob2 = entry->prob1;
@@ -2384,12 +2388,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool charm)
 /*
  * Hack -- help pick an escort type
  */
-static int place_monster_idx = 0;
-
-/*
- * Hack -- help pick an escort type
- */
-static bool place_monster_okay(int r_idx)
+static bool place_monster_okay(int place_monster_idx, int r_idx)
 {
 	monster_race *r_ptr = &r_info[place_monster_idx];
 
@@ -2454,12 +2453,8 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 			if (!cave_empty_bold(ny, nx) || (cave[ny][nx].feat == FEAT_WATER)) continue;
 
 
-			/* Set the escort index */
-			place_monster_idx = r_idx;
-
-
 			/* Prepare allocation table for the escort. */
-			get_mon_num_prep(place_monster_okay);
+			get_mon_num_prep(place_monster_okay, r_idx);
 
 
 			/* Pick a random race */
@@ -2467,7 +2462,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool charm, 
 
 
 			/* Prepare normal allocation table */
-			get_mon_num_prep(NULL);
+			get_mon_num_prep(NULL, 0);
 
 
 			/* Handle failure */
@@ -2651,11 +2646,6 @@ bool alloc_monster(int dis, int level, bool slp)
 
 
 
-/*
- * Hack -- the "type" of the current "summon specific"
- */
-static int summon_specific_type = 0;
-
 /* Remove the flags from a SUMMON_* value. */
 #define UNFLAG(X) \
   (X & ~(SUMMON_NO_UNIQUES))
@@ -2663,7 +2653,7 @@ static int summon_specific_type = 0;
 /*
  * Hack -- help decide if a monster race is "okay" to summon
  */
-static bool summon_specific_okay(int r_idx)
+static bool summon_specific_okay(int summon_specific_type, int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2852,11 +2842,8 @@ bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool 
 
 	if (type)
 	{
-		/* Save the "summon" type */
-		summon_specific_type = type;
-
 		/* Prepare allocation table ("okay" monster) */
-		get_mon_num_prep(summon_specific_okay);
+		get_mon_num_prep(summon_specific_okay, type);
 	}
 
 
@@ -2864,7 +2851,7 @@ bool summon_specific_aux(int y1, int x1, int lev, int type, bool Group_ok, bool 
 	r_idx = get_mon_num(((dun_depth) + lev) / 2 + 5);
 
 	/* Prepare normal allocation table */
-	get_mon_num_prep(NULL);
+	get_mon_num_prep(NULL, 0);
 
 
 	/* Handle failure */

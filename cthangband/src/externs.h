@@ -1331,7 +1331,7 @@ extern void remove_non_pets(void);
 extern s16b m_pop(void);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C))
-extern errr get_mon_num_prep(bool (*hook)(int));
+extern errr get_mon_num_prep(bool (*hook)(int, int), int p);
 #endif
 #if (defined(GENERATE_C) || defined(MONSTER2_C) || defined(SPELLS1_C))
 extern s16b get_mon_num(int level);
