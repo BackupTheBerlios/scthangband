@@ -3441,6 +3441,9 @@ option_type option_info[] =
 	{ &spoil_flag,	FALSE,	8, 3, 10,
 	"spoil_flag",	"Gain knowledge of the effects of various flags."},
 
+	{ &bypass_prompt,		FALSE,	1,	2, 24,
+	"bypass_prompt",	"Bypass spirit selection prompt where appropriate" },
+
 	/*** End of Table ***/
 
 	{ NULL,                 0, 0, 0, 0,

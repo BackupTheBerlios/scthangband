@@ -426,6 +426,7 @@ extern bool spoil_value;
 extern bool spoil_stat;
 extern bool spoil_flag;
 extern bool verbose_haggle;
+extern bool bypass_prompt;
 
 
 

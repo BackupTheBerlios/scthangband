@@ -937,6 +937,15 @@ int get_spirit(int *sn, cptr prompt, bool call)
 	}
 
 
+	/* Bypassing this prompt is fine as the player can back out later if he isn't
+	doing this by a macro. */
+	if (bypass_prompt && call && total == 1)
+	{
+		i = 0;
+		flag = TRUE;
+	}
+	else
+	{
 	/* Build a prompt (accept all spirits) */
 	strnfmt(out_val, 78, "(%c-%c, *=List, ESC=exit) %^s which spirit? ",
 		I2A(0), I2A(total - 1), prompt);
@@ -1002,7 +1011,7 @@ int get_spirit(int *sn, cptr prompt, bool call)
 		/* Stop the loop */
 		flag = TRUE;
 	}
-
+	}
 
 	/* Restore the screen */
 	if (redraw) Term_load();

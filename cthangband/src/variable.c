@@ -201,6 +201,7 @@ bool show_weights;			/* Show weights in object listings */
 bool show_choices;			/* Show choices in certain sub-windows */
 bool show_details;			/* Show details in certain sub-windows */
 
+bool bypass_prompt;			/* Bypass spirit selection prompt where appropriate */
 bool ring_bell;				/* Ring the bell (on errors, etc) */
 bool use_color;				/* Use color if possible (slow) */
 bool verbose_haggle;		/* Verbose messages if auto_haggle is set */
