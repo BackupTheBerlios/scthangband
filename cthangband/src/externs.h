@@ -65,13 +65,13 @@ extern void display_wild_map(uint xmin);
 #if (defined(CAVE_C) || defined(DUNGEON_C))
 extern void do_cmd_view_map(void);
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(XTRA1_C))
 extern void forget_lite(void);
 #endif
 #if (defined(CAVE_C) || defined(XTRA1_C))
 extern void update_lite(void);
 #endif
-#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(STORE_C) || defined(XTRA1_C))
+#if (defined(CAVE_C) || defined(DUNGEON_C) || defined(XTRA1_C))
 extern void forget_view(void);
 #endif
 #if (defined(CAVE_C) || defined(XTRA1_C))

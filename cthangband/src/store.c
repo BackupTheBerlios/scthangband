@@ -4324,12 +4324,6 @@ void do_cmd_store(void)
 	/* Save the previous screen. */
 	t = Term_save_aux();
 
-	/* Forget the lite */
-	forget_lite();
-
-	/* Forget the view */
-	forget_view();
-	
 	/* Set the resize hook. */
 	add_resize_hook(resize_store);
 
